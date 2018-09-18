@@ -75,11 +75,12 @@
     		font-weight: normal;
 			position: absolute;
     		margin-left: 25px;
-    		margin-top: 20px;
+    		margin-top: 18px;
     		background-color: white;
     		padding-left: 5px;
     		padding-right: 5px;
     		width: 105px;
+			z-index: 1;
 		}
 
 		.marginTopTable2{
@@ -98,6 +99,8 @@
     		padding-left: 5px;
     		padding-right: 5px;
     		width: 105px;
+			top: 430px;
+			z-index: 1;
 		}
 
 		.requiredColor{
@@ -200,6 +203,55 @@
 			padding-top: 5px;
 		}
 
+		.maxWidth{
+		width: 100%;
+		}
+
+		.maxWidthTextBox{
+		width: 99%;
+		}
+
+		.maxWidthTextBox2{
+		width: 98%;
+		}
+
+		.maxWidthTextBox3{
+		width: 96%;
+		}
+
+		.dateBoxStyle{
+		width: 99% !important;
+		text-align: center !important;
+		}
+
+		.alignTextCenter{
+		text-align: center;
+		}
+
+		.alignTextCenter{
+		text-align: center;
+		}
+
+		.firstColumnTextStyle{
+		padding:
+		5px !important;
+		}
+
+		.topLabelContract{
+		top: 280px !important;
+		}
+
+		.topLabelContractMinus{
+			top: 100px;
+		}
+
+		.nssWidht{
+			width: 96%;
+		}
+
+		.paddingLeft{
+			padding-left: 2px;
+		}
 		
 	</ui:style>
 
@@ -259,224 +311,309 @@
 		    <g:ScrollPanel>
 		        <g:HTMLPanel> 
 			    	<g:Label width="105px" styleName='{style.headerStyle}'>Datos de contrato</g:Label>
-					<g:HorizontalPanel>
-						<g:Grid ui:field="contractDataTable" styleName='{style.paddingTable} {style.marginTopTable}'>
-							<g:row>
-								<g:customCell>
-									<g:Label styleName='{style.paddingLeft} {style.requiredColor}'>Nombre Completo</g:Label>
-								</g:customCell>
-								<g:customCell styleName='{style.secondColumnWidth}'>
-									<g:HorizontalPanel>
-									    <g:TextBox ui:field="name" styleName='{style.paddingLabel} {style.textAlignCenter}' width="176px"></g:TextBox>
-									    <g:Label ui:field="firstSurnameLabel" styleName='{style.paddingLabel} {style.paddingLeft} {style.requiredColor}' width="75px">1er Apellido</g:Label>
-									    <g:TextBox ui:field="first_surname" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="175px"></g:TextBox>
-									    <g:Label styleName='{style.paddingLabel} {style.paddingLeft}' width="62px">2º Apellido</g:Label>
-									    <g:TextBox ui:field="second_surname" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="184px"></g:TextBox>
-									</g:HorizontalPanel>
-								</g:customCell>
-							</g:row>
-							<g:row>
-								<g:customCell>
-									<g:Label styleName='{style.paddingLeft} {style.requiredColor}'>Documentos</g:Label>
-								</g:customCell>
-								<g:customCell styleName='{style.secondColumnWidth}'>
-									<g:HorizontalPanel>
-									    <g:Label ui:field="document_type" styleName='{style.paddingLabel}'></g:Label>
-									    <g:TextBox ui:field="document" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="139px"></g:TextBox> 
-									    <g:HorizontalPanel ui:field="nationalityPanel" styleName='{style.horizontalPanel}'>
-									        <g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>Nacionalidad</g:Label>
-									    	<g:SuggestBox ui:field="nationality" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="164px"></g:SuggestBox>
-									    </g:HorizontalPanel>
-								     	<g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>Nº S.S.</g:Label>
-								    	<g:TextBox ui:field="security_social_num" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="207px"></g:TextBox>
-									</g:HorizontalPanel>
-								</g:customCell>
-							</g:row>
-							<g:row>
-								<g:customCell>
-									<g:Label styleName='{style.paddingLeft}'>Actividad</g:Label>
-								</g:customCell>
-								<g:customCell styleName='{style.secondColumnWidth}'>
-								   	<g:TextBox ui:field="activity" width="733px"></g:TextBox>
-								</g:customCell>
-							</g:row>
-							<g:row>
-								<g:customCell>
-									<g:Label styleName='{style.paddingLabel} {style.paddingLeft} {style.requiredColor}'>Cuenta de cotización</g:Label>
-								</g:customCell>
-								<g:customCell styleName='{style.secondColumnWidth2}'>
-									<g:HorizontalPanel styleName='{style.horizontalPanel}' ui:field="quoteAccountPanel">
-									    <g:TextBox ui:field="quotationAccount" styleName='{style.textAlignCenter}' width="180px"></g:TextBox>
-										<g:Label styleName='{style.paddingLabel} {style.paddingLeft}  {style.requiredColor}'>Centro de trabajo</g:Label>
-										<g:TextBox ui:field="workplace" styleName='{style.paddingLabel} {style.paddingLeft} {style.margingLeft}' width="408px"></g:TextBox>
-									</g:HorizontalPanel>
-								</g:customCell>
-							</g:row>
-							<g:row>
-								<g:customCell>
-									<g:Label styleName='{style.paddingLeft} {style.requiredColor}'>Tipo de contrato</g:Label>
-								</g:customCell>
-								<g:customCell styleName='{style.secondColumnWidth}'>
-									<g:HorizontalPanel>
-									    <g:ListBox ui:field="contractType" width="740px"></g:ListBox>
-									    <g:TextBox ui:field="contractTypeFreelance" styleName='{style.paddingLabel}' width="730px"></g:TextBox>
-									</g:HorizontalPanel>
-								</g:customCell>
-							</g:row>
-							<g:row>
-								<g:customCell>
-									<g:Label styleName='{style.paddingLeft}'>Modalidad</g:Label>
-								</g:customCell>
-								<g:customCell styleName='{style.secondColumnWidth}'>
-									<g:HorizontalPanel>
-									    <g:ListBox ui:field="modality" width="740px"></g:ListBox>
-									</g:HorizontalPanel>
-								</g:customCell>
-							</g:row>
-							<g:row>
-								<g:customCell>
-									<g:Label styleName='{style.paddingLeft} {style.requiredColor}'>Periodo contratación</g:Label>
-								</g:customCell>
-								<g:customCell styleName='{style.secondColumnWidth}'>
-									<g:HorizontalPanel>
-									    <g:Label styleName='{style.paddingLabel} {style.requiredColor}'>Fecha inicio</g:Label>
-									    <a:DateBoxEx ui:field="strat_date" styleName='{style.dateBox2}'></a:DateBoxEx>
-									    <g:Label styleName='{style.paddingLabel} {style.paddingLeft} {style.requiredColor}'>Fecha fin</g:Label>
-									    <a:DateBoxEx ui:field="end_date" styleName='{style.dateBox2}'></a:DateBoxEx>
-									    <g:HorizontalPanel ui:field="seniorityDatePanel">
-									    	<g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>Fecha antigüedad</g:Label>
-									    	<a:DateBoxEx ui:field="seniority_date" styleName='{style.dateBox2}'></a:DateBoxEx>
+			    	<g:HTMLPanel>
+						<table ui:field="contractDataTable"
+							style="border-style: solid; padding: 10px 10px 10px 10px; border-width: 1px; 
+					        margin-left: 10px; margin-bottom: 10px; margin-top: 27px; width: 950px; padding-top: 10px;
+					        position: absolute;">
+							<tbody>
+							    <tr>
+							        <td></td>
+							        <td></td>
+							        <td></td>
+							        <td></td>
+							        <td></td>
+							        <td></td>
+							        <td></td>
+							    </tr>
+							    <tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Nombre Completo</g:Label>
+									</td>
+									<td colspan="2">
+										<g:TextBox ui:field="name" styleName='{style.maxWidthTextBox}'></g:TextBox>
+									</td>
+									<td>
+										<g:Label ui:field="firstSurnameLabel"
+											styleName='{style.alignTextCenter} {style.requiredColor}'>1er Apellido</g:Label>
+									</td>
+									<td >
+										<g:TextBox ui:field="first_surname" styleName='{style.maxWidthTextBox}'></g:TextBox>
+									</td>
+									<td style="width: 10%;">
+										<g:Label styleName='{style.alignTextCenter}'>2º Apellido</g:Label>
+									</td>
+									<td >
+										<g:TextBox ui:field="second_surname" styleName='{style.maxWidthTextBox3}'></g:TextBox>
+									</td>
+								</tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Documentos</g:Label>
+									</td>
+									<td ui:field="documentTypeCell">
+										<g:Label styleName='{style.alignTextCenter}' ui:field="document_type"></g:Label>
+									</td>
+									<td>
+										<g:TextBox ui:field="document" styleName='{style.maxWidthTextBox}'></g:TextBox>
+									</td>
+									<td style="width: 10%;" ui:field="nationalityLabelCell">
+										<g:Label ui:field="nationalityLabel" styleName='{style.alignTextCenter}'>Nacionalidad</g:Label>
+									</td>
+									<td ui:field="nationalityCell">
+										<g:SuggestBox ui:field="nationality" styleName='{style.maxWidthTextBox}'></g:SuggestBox>
+									</td>
+									<td style="width: 10%;">
+										<g:Label styleName='{style.alignTextCenter}'>Nº S.S.</g:Label>
+									</td>
+									<td >
+										<g:TextBox ui:field="security_social_num" styleName='{style.maxWidthTextBox}'></g:TextBox>
+									</td>
+								</tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Tipo de cotización</g:Label>
+									</td>
+									<td colspan="6">
+										<g:ListBox ui:field="ssRegimeType" styleName='{style.maxWidth}'></g:ListBox>
+									</td>
+								</tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Actividad</g:Label>
+									</td>
+									<td colspan="6">
+										<g:TextBox ui:field="activity" styleName='{style.maxWidthTextBox}'></g:TextBox>
+									</td>
+								</tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Cuenta de cotización</g:Label>
+									</td>
+									<td colspan="2">
+										<g:TextBox ui:field="quotationAccount"
+											styleName='{style.maxWidthTextBox} {style.textAlignCenter}'></g:TextBox>
+									</td>
+									<td style="width: 12%;">
+										<g:Label styleName='{style.requiredColor} {style.alignTextCenter}'>Centro de trabajo</g:Label>
+									</td>
+									<td colspan="3">
+										<g:TextBox ui:field="workplace" styleName='{style.maxWidthTextBox2}'></g:TextBox>
+									</td>
+								</tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Tipo de contrato</g:Label>
+									</td>
+									<td colspan="6" ui:field="contractTypeNode">
+										<g:ListBox ui:field="contractType" styleName='{style.maxWidth}'></g:ListBox>
+									</td>
+									<td colspan="6">
+										<g:TextBox ui:field="contractTypeFreelance"
+											styleName='{style.maxWidthTextBox}'>
+											Régimen especial de trabajadores autónomos
+										</g:TextBox>
+									</td>
+								</tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName="{style.firstColumnTextStyle}">Modalidad</g:Label>
+									</td>
+									<td colspan="6">
+										<g:ListBox ui:field="modality" styleName='{style.maxWidth}'></g:ListBox>
+									</td>
+								</tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName="{style.firstColumnTextStyle}">Periodo contratación</g:Label>
+									</td>
+									<td>
+										<g:Label styleName='{style.requiredColor}'>Fecha inicio</g:Label>
+									</td>
+									<td>
+										<a:DateBoxEx ui:field="strat_date" styleName='{style.dateBoxStyle}'></a:DateBoxEx>
+									</td>
+									<td>
+										<g:Label styleName='{style.alignTextCenter}'>Fecha fin</g:Label>
+									</td>
+									<td>
+										<a:DateBoxEx ui:field="end_date" styleName='{style.dateBoxStyle}'></a:DateBoxEx>
+									</td>
+									<td style="width: 12%;">
+										<g:Label ui:field="seniority_date_label" styleName='{style.alignTextCenter}'>Fecha
+											antigüedad</g:Label>
+									</td>
+									<td>
+										<a:DateBoxEx ui:field="seniority_date" styleName='{style.dateBoxStyle}'></a:DateBoxEx>
+									</td>
+								</tr>
+								<tr>
+									<td rowspan="2" style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName="{style.firstColumnTextStyle}">Categoría/Nivel retributario</g:Label>
+									</td>
+									<td>
+										<g:Label>Convenio</g:Label>
+									</td>
+									<td colspan="5">
+										<g:ListBox ui:field="agreement" styleName='{style.maxWidth}'></g:ListBox>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<g:Label>Nivel/Categoría</g:Label>
+									</td>
+									<td colspan="3">
+										<g:ListBox ui:field="level" styleName='{style.maxWidth}'></g:ListBox>
+									</td>
+									<td>
+										<g:Label styleName='{style.alignTextCenter}'>Mostrar como</g:Label>
+									</td>
+									<td>
+										<g:TextBox ui:field="category" styleName='{style.maxWidthTextBox3}'></g:TextBox>
+									</td>
+								</tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName="{style.firstColumnTextStyle}">Grupo de cotización</g:Label>
+									</td>
+									<td colspan="6">
+										<g:ListBox ui:field="quote_group" styleName='{style.maxWidth}'></g:ListBox>
+									</td>
+								</tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName="{style.firstColumnTextStyle}">Ocupación</g:Label>
+									</td>
+									<td colspan="6">
+										<g:ListBox ui:field="occupation" styleName='{style.maxWidth}'></g:ListBox>
+									</td>
+								</tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName="{style.firstColumnTextStyle}">Tipo de jornada</g:Label>
+									</td>
+									<td colspan="6">
+										<g:ListBox ui:field="journeyType" styleName='{style.maxWidth}'></g:ListBox>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</g:HTMLPanel>
+					<g:Label width="105px" styleName='{style.headerStyle2}'>Datos de contrato</g:Label>
+					<g:HTMLPanel>
+						<table ui:field="employeeDataTable"
+							style="padding-top: 20px; width: 950px; border-style: solid; 
+					        padding: 10px 10px 10px 10px; border-width: 1px; margin-left: 10px; margin-bottom: 20px;
+					        margin-top: 17px; position: absolute; padding-top: 20px; top: 425px;">
+							<body>
+							    <tr>
+							        <td></td>
+							        <td></td>
+							        <td></td>
+							        <td></td>
+							        <td></td>
+							        <td></td>
+							        <td></td>
+							        <td></td>
+							        <td></td>
+							    </tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName="{style.firstColumnTextStyle}">Fecha de nacimiento</g:Label>
+									</td>
+									<td colspan="2">
+										<a:DateBoxEx ui:field="birth_date" styleName='{style.dateBoxStyle}'></a:DateBoxEx>
+									</td>
+									<td>
+										<g:HorizontalPanel styleName="{style.maxWidth} {style.paddingLeft}">
+											<g:Label ui:field="age"></g:Label>
+											<g:Label styleName='{style.alignTextCenter}'>Sexo</g:Label>
 										</g:HorizontalPanel>
-									</g:HorizontalPanel>
-								</g:customCell>
-							</g:row>
-							<g:row>
-								<g:customCell>
-									<g:Label styleName='{style.paddingLeft}'>Categoría/Nivel retributario</g:Label>
-								</g:customCell>
-								<g:customCell styleName='{style.secondColumnWidth2}'>
-									<g:VerticalPanel>
-									    <g:HorizontalPanel styleName='{style.horizontalPanel}'>
-									    	<g:Label styleName='{style.paddingLabel}'>Convenio</g:Label>
-									    	<g:ListBox ui:field="agreement" styleName='{style.margingLeft}' width="670px"></g:ListBox>
-									    </g:HorizontalPanel>
-									    <g:HorizontalPanel>
-									    	<g:Label styleName='{style.paddingLabel}'>Nivel/Categoría</g:Label>
-									    	<g:ListBox ui:field="level" styleName='{style.margingLeft}' width="324px"></g:ListBox>
-									    	<g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>Mostrar como</g:Label>
-									    	<g:TextBox ui:field="category" styleName='{style.textAlignCenter} {style.margingLeft} {style.paddingLabel}' width="202px"></g:TextBox>
-									    </g:HorizontalPanel>
-									</g:VerticalPanel>
-								</g:customCell>
-							</g:row>
-							<g:row>
-								<g:customCell>
-									<g:Label styleName='{style.paddingLeft}'>Grupo de cotización</g:Label>
-								</g:customCell>
-								<g:customCell styleName='{style.secondColumnWidth}'>
-									<g:HorizontalPanel>
-									    <g:ListBox ui:field="quote_group" width="740px"></g:ListBox>
-									</g:HorizontalPanel>
-								</g:customCell>
-							</g:row>
-							<g:row>
-								<g:customCell>
-									<g:Label styleName='{style.paddingLeft}'>Ocupación</g:Label>
-								</g:customCell>
-								<g:customCell styleName='{style.secondColumnWidth}'>
-									<g:HorizontalPanel>
-									    <g:ListBox ui:field="occupation" width="740px"></g:ListBox>
-									</g:HorizontalPanel>
-								</g:customCell>
-							</g:row>
-							<g:row>
-								<g:customCell>
-									<g:Label styleName='{style.paddingLeft}'>Tipo de jornada</g:Label>
-								</g:customCell>
-								<g:customCell styleName='{style.secondColumnWidth}'>
-									<g:HorizontalPanel>
-									    <g:ListBox ui:field="journeyType" width="740px"></g:ListBox>
-									</g:HorizontalPanel>
-								</g:customCell>
-							</g:row>
-						</g:Grid>
-					</g:HorizontalPanel>
-					
-				 
-					<g:Label styleName='{style.headerStyle2}' width="103px">Datos personales</g:Label>
-					<g:HorizontalPanel>
-					    <g:HTMLPanel>
-							<g:Grid ui:field="employeeDataTable" styleName='{style.paddingTable}  {style.marginTopTable2}'>     
-								<g:row>
-									<g:customCell>
-										<g:Label styleName='{style.paddingLeft}'>Fecha de nacimiento</g:Label>
-									</g:customCell>
-									<g:customCell styleName='{style.secondColumnWidth}'>
-										<g:HorizontalPanel>
-										    <a:DateBoxEx ui:field="birth_date" styleName='{style.dateBox}' width="179px"></a:DateBoxEx>
-										    <g:Label ui:field="age" styleName='{style.paddingLabel} {style.paddingLeft}'></g:Label>
-										    <g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>Sexo</g:Label>
-										    <g:ListBox ui:field="gender" styleName='{style.margingLeft}' width="153px"></g:ListBox>
-										</g:HorizontalPanel>
-									</g:customCell>
-								</g:row>
-								<g:row>
-									<g:customCell>
-										<g:Label styleName='{style.paddingLeft}'>Dirección</g:Label>
-									</g:customCell>
-									<g:customCell styleName='{style.secondColumnWidth}'>
-									    <g:VerticalPanel>
-										    <g:HorizontalPanel>
-											    <g:SuggestBox ui:field="address" width="446px"></g:SuggestBox>
-											    <g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>Número</g:Label>
-											    <g:TextBox ui:field="addressNum" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="210px"></g:TextBox>
-											</g:HorizontalPanel>
-											<g:HorizontalPanel styleName='{style.paddingTop}'>
-											    <g:Label styleName='{style.paddingLabel}'>C.P.</g:Label>
-											    <g:TextBox ui:field="addressZip" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="139px"></g:TextBox>
-											    <g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>Localidad</g:Label>
-											    <g:TextBox ui:field="addressCity" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="180px"></g:TextBox>
-											    <g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>Provincia</g:Label>
-											    <g:TextBox ui:field="addressProvince" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="204px"></g:TextBox>
-											</g:HorizontalPanel>
-										</g:VerticalPanel>
-										<!-- g:HorizontalPanel>
-										    <g:TextBox ui:field="address" width="713px"></g:TextBox>
-										</g:HorizontalPanel -->
-									</g:customCell>
-								</g:row>      
-								<g:row>
-									<g:customCell>
-										<g:Label styleName='{style.paddingLeft}'>Contacto</g:Label>
-									</g:customCell>
-									<g:customCell styleName='{style.secondColumnWidth}'>
-										<g:HorizontalPanel>
-										    <g:Label styleName='{style.paddingLabel}'>Móvil</g:Label>
-										    <g:TextBox ui:field="mobile" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="132px"></g:TextBox>
-										    <g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>Teléfono</g:Label>
-										    <g:TextBox ui:field="phone" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="187px"></g:TextBox>
-										    <g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>eMail</g:Label>
-										    <g:TextBox ui:field="email" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="205px"></g:TextBox>
-										</g:HorizontalPanel>
-									</g:customCell>
-								</g:row>
-								<g:row>
-									<g:customCell>
-										<g:Label styleName='{style.paddingLeft}'>Método de pago</g:Label>
-									</g:customCell>
-									<g:customCell styleName='{style.secondColumnWidth}'>
-										<g:HorizontalPanel>
-										    <g:ListBox ui:field="payMethod" width="185px"></g:ListBox>
-										    <g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>Cuenta</g:Label>
-										    <g:TextBox ui:field="account" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="195px"></g:TextBox>
-										    <g:Label styleName='{style.paddingLabel} {style.paddingLeft}'>BIC</g:Label>
-										    <g:TextBox ui:field="bic" styleName='{style.paddingLabel} {style.textAlignCenter} {style.margingLeft}' width="215px"></g:TextBox>
-										</g:HorizontalPanel>
-									</g:customCell>
-								</g:row> 
-							</g:Grid>
-						</g:HTMLPanel>
-					</g:HorizontalPanel>
+									</td>
+									<td colspan="2">
+										<g:ListBox ui:field="gender" styleName='{style.maxWidth}'></g:ListBox>
+									</td>
+								</tr>
+								<tr>
+									<td rowspan="2" style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Dirección</g:Label>
+									</td>
+									<td colspan="5">
+										<g:SuggestBox ui:field="address" styleName='{style.maxWidth}'></g:SuggestBox>
+									</td>
+									<td>
+										<g:Label styleName='{style.alignTextCenter}'>Número</g:Label>
+									</td>
+									<td colspan="2">
+										<g:TextBox ui:field="addressNum" styleName='{style.maxWidthTextBox3}'></g:TextBox>
+									</td>
+								</tr>
+								<tr>
+									<td style="width: 10%;">
+										<g:Label styleName='{style.alignTextCenter}'>C.P.</g:Label>
+									</td>
+									<td>
+										<g:TextBox ui:field="addressZip" styleName='{style.maxWidthTextBox}'></g:TextBox>
+									</td>
+									<td style="width: 10%;">
+										<g:Label styleName='{style.alignTextCenter}'>Localidad</g:Label>
+									</td>
+									<td colspan="2">
+										<g:TextBox ui:field="addressCity" styleName='{style.maxWidthTextBox}'></g:TextBox>
+									</td>
+									<td>
+										<g:Label styleName='{style.alignTextCenter}'>Provincia</g:Label>
+									</td>
+									<td colspan="2">
+										<g:TextBox ui:field="addressProvince" styleName='{style.maxWidthTextBox3}'></g:TextBox>
+									</td>
+								</tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName="{style.firstColumnTextStyle}">Contacto</g:Label>
+									</td>
+									<td>
+										<g:Label styleName='{style.alignTextCenter}'>Móvil</g:Label>
+									</td>
+									<td>
+										<g:TextBox ui:field="mobile" styleName='{style.maxWidthTextBox}'></g:TextBox>
+									</td>
+									<td>
+										<g:Label styleName='{style.alignTextCenter}'>Teléfono</g:Label>
+									</td>
+									<td colspan="2">
+										<g:TextBox ui:field="phone" styleName='{style.maxWidthTextBox}'></g:TextBox>
+									</td>
+									<td>
+										<g:Label styleName='{style.alignTextCenter}'>eMail</g:Label>
+									</td>
+									<td colspan="2">
+										<g:TextBox ui:field="email" styleName='{style.maxWidthTextBox3}'></g:TextBox>
+									</td>
+								</tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName="{style.firstColumnTextStyle}">Método de pago</g:Label>
+									</td>
+									<td colspan="2">
+										<g:ListBox ui:field="payMethod" styleName='{style.maxWidth}'></g:ListBox>
+									</td>
+									<td style="width: 10%;">
+										<g:Label styleName='{style.alignTextCenter}'>Cuenta</g:Label>
+									</td>
+									<td colspan="2">
+										<g:TextBox ui:field="account" styleName='{style.maxWidthTextBox}'></g:TextBox>
+									</td>
+									<td>
+										<g:Label styleName='{style.alignTextCenter}'>BIC</g:Label>
+									</td>
+									<td colspan="2">
+										<g:TextBox ui:field="bic" styleName='{style.maxWidthTextBox3}'></g:TextBox>
+									</td>
+								</tr>
+							</body>
+						</table>
+					</g:HTMLPanel>
 		        </g:HTMLPanel> 
 		    </g:ScrollPanel>
 		</g:center>

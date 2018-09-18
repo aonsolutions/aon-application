@@ -22,6 +22,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.TableCellElement;
+import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -37,7 +40,6 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -110,6 +112,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		String nieDocumentStyle();
 		String nieNSSStyle();
 		String nieNationalityStyle();
+		String nssWidht();
 		
 	}
 	
@@ -119,13 +122,10 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	//TABLA DATOS CONTRATO
 	
 	@UiField
-	Grid contractDataTable;
+	TableElement contractDataTable;
 	
 	@UiField
 	TextBox workplace;
-	
-	@UiField
-	HorizontalPanel quoteAccountPanel;
 	
 	@UiField
 	TextBox quotationAccount;
@@ -152,7 +152,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	DateBoxEx end_date;
 	
 	@UiField
-	HorizontalPanel seniorityDatePanel;
+	Label seniority_date_label;
 	
 	@UiField
 	DateBoxEx seniority_date;
@@ -178,7 +178,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	// TABLA DATOS EMPLEADO
 	
 	@UiField
-	Grid employeeDataTable;
+	TableElement employeeDataTable;
 	
 	@UiField
 	TextBox document;
@@ -187,7 +187,10 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	Label document_type;
 	
 	@UiField
-	HorizontalPanel nationalityPanel;
+	TableCellElement nationalityLabelCell;
+	
+	@UiField
+	TableCellElement nationalityCell;
 	
 	@UiField(provided = true)
 	SuggestBox nationality;
@@ -605,7 +608,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 			showElementsContractTable();
 		}
 		fillEmployeeTable();
-		addStyleFirstColumnTable();
+//		addStyleFirstColumnTable();
 	}
 
 	private void resetElements() {
@@ -706,16 +709,24 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	}
 	
 	private void hideElementsFreelancerTable() {
-		this.contractDataTable.getRowFormatter().addStyleName(2, style.hide());
-		this.contractDataTable.getRowFormatter().addStyleName(3, style.hide());
-		this.contractDataTable.getRowFormatter().addStyleName(5, style.hide());
-		this.contractDataTable.getRowFormatter().addStyleName(8, style.hide());
-		this.contractDataTable.getRowFormatter().addStyleName(9, style.hide());
-		this.contractDataTable.getRowFormatter().removeStyleName(10, style.hide());
+		this.contractDataTable.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(6).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(11).getStyle().clearDisplay();
+//		this.contractDataTable.getRowFormatter().addStyleName(2, style.hide());
+//		this.contractDataTable.getRowFormatter().addStyleName(3, style.hide());
+//		this.contractDataTable.getRowFormatter().addStyleName(5, style.hide());
+//		this.contractDataTable.getRowFormatter().addStyleName(8, style.hide());
+//		this.contractDataTable.getRowFormatter().addStyleName(9, style.hide());
+//		this.contractDataTable.getRowFormatter().removeStyleName(10, style.hide());
 		
 		this.contractType.addStyleName(style.hide());
-		this.contractTypeFreelance.removeStyleName(style.hide());	
-		this.seniorityDatePanel.addStyleName(style.hide());
+		this.contractTypeFreelance.removeStyleName(style.hide());
+		this.seniority_date_label.addStyleName(style.hide());
+		this.seniority_date.addStyleName(style.hide());
+//		this.seniorityDatePanel.addStyleName(style.hide());
 	}
 
 	private void fillContractFreelancerTable() {
@@ -755,16 +766,24 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	}
 	
 	private void showElementsContractTable() {
-		this.contractDataTable.getRowFormatter().removeStyleName(2, style.hide());
-		this.contractDataTable.getRowFormatter().removeStyleName(3, style.hide());
-		this.contractDataTable.getRowFormatter().removeStyleName(5, style.hide());
-		this.contractDataTable.getRowFormatter().removeStyleName(8, style.hide());
-		this.contractDataTable.getRowFormatter().removeStyleName(9, style.hide());
-		this.contractDataTable.getRowFormatter().addStyleName(10, style.hide());
+		this.contractDataTable.getRows().getItem(3).getStyle().clearDisplay();
+		this.contractDataTable.getRows().getItem(4).getStyle().clearDisplay();
+		this.contractDataTable.getRows().getItem(6).getStyle().clearDisplay();
+		this.contractDataTable.getRows().getItem(9).getStyle().clearDisplay();
+		this.contractDataTable.getRows().getItem(10).getStyle().clearDisplay();
+		this.contractDataTable.getRows().getItem(11).getStyle().setDisplay(Display.NONE);;
+//		this.contractDataTable.getRowFormatter().removeStyleName(2, style.hide());
+//		this.contractDataTable.getRowFormatter().removeStyleName(3, style.hide());
+//		this.contractDataTable.getRowFormatter().removeStyleName(5, style.hide());
+//		this.contractDataTable.getRowFormatter().removeStyleName(8, style.hide());
+//		this.contractDataTable.getRowFormatter().removeStyleName(9, style.hide());
+//		this.contractDataTable.getRowFormatter().addStyleName(10, style.hide());
 		
 		this.contractType.removeStyleName(style.hide());
 		this.contractTypeFreelance.addStyleName(style.hide());
-		this.seniorityDatePanel.removeStyleName(style.hide());
+		this.seniority_date_label.removeStyleName(style.hide());
+		this.seniority_date.removeStyleName(style.hide());
+//		this.seniorityDatePanel.removeStyleName(style.hide());
 	}
 	
 	private void fillContractTable() {
@@ -1030,10 +1049,10 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		}
 	}
 
-	private void addStyleFirstColumnTable() {
-		contractDataTable.getColumnFormatter().addStyleName(0, style.backgroundColorFirstColumn());
-		employeeDataTable.getColumnFormatter().addStyleName(0, style.backgroundColorFirstColumn());
-	}
+//	private void addStyleFirstColumnTable() {
+//		contractDataTable.getColumnFormatter().addStyleName(0, style.backgroundColorFirstColumn());
+//		employeeDataTable.getColumnFormatter().addStyleName(0, style.backgroundColorFirstColumn());
+//	}
 
 	@Override
 	public void onContextMenu(ContextMenuEvent event) {
@@ -1061,30 +1080,36 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	}
 	
 	private void showNationality(String document_type_str) {
-		if(document_type_str == "Pasaporte"){
-			this.document.addStyleName(style.passDocumentStyle());
-			this.nationality.addStyleName(style.passNationalityStyle());
-			this.security_social_num.addStyleName(style.passNSSStyle());
-		}else{
-			this.document.removeStyleName(style.passDocumentStyle());
-			this.nationality.removeStyleName(style.passNationalityStyle());
-			this.security_social_num.removeStyleName(style.passNSSStyle());
-		}
+//		if(document_type_str == "Pasaporte"){
+//			this.document.addStyleName(style.passDocumentStyle());
+//			this.nationality.addStyleName(style.passNationalityStyle());
+//			this.security_social_num.addStyleName(style.passNSSStyle());
+//		}else{
+//			this.document.removeStyleName(style.passDocumentStyle());
+//			this.nationality.removeStyleName(style.passNationalityStyle());
+//			this.security_social_num.removeStyleName(style.passNSSStyle());
+//		}
+//		
+//		if(document_type_str == "NIE"){
+//			this.document.addStyleName(style.nieDocumentStyle());
+//			this.nationality.addStyleName(style.nieNationalityStyle());
+//			this.security_social_num.addStyleName(style.nieNSSStyle());
+//		}else{
+//			this.document.removeStyleName(style.nieDocumentStyle());
+//			this.nationality.removeStyleName(style.nieNationalityStyle());
+//			this.security_social_num.removeStyleName(style.nieNSSStyle());
+//		}
 		
-		if(document_type_str == "NIE"){
-			this.document.addStyleName(style.nieDocumentStyle());
-			this.nationality.addStyleName(style.nieNationalityStyle());
-			this.security_social_num.addStyleName(style.nieNSSStyle());
+		if(document_type_str == "CIF" || document_type_str == "Pasaporte" || document_type_str == "NIE"){
+			this.nationalityLabelCell.getStyle().clearDisplay();
+			this.nationalityCell.getStyle().clearDisplay();
+			security_social_num.addStyleName(style.nssWidht());
+//			nationalityPanel.removeStyleName(style.hide());
 		}else{
-			this.document.removeStyleName(style.nieDocumentStyle());
-			this.nationality.removeStyleName(style.nieNationalityStyle());
-			this.security_social_num.removeStyleName(style.nieNSSStyle());
-		}
-		
-		if(document_type_str == "CIF" || document_type_str == "Pasaporte" || document_type_str == "NIE")
-			nationalityPanel.removeStyleName(style.hide());
-		else{
-			nationalityPanel.addStyleName(style.hide());
+			security_social_num.removeStyleName(style.nssWidht());
+			this.nationalityLabelCell.getStyle().setDisplay(Display.NONE);
+			this.nationalityCell.getStyle().setDisplay(Display.NONE);
+//			nationalityPanel.addStyleName(style.hide());
 			nationality.setValue("ESPA\u00D1A");
 		}
 	}
