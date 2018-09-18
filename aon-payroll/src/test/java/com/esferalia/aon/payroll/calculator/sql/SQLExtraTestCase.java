@@ -79,7 +79,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 						this.month = Month.JULY;
 						this.start = "01/07 -1";
 						this.end = "30/06";
-						this.issue = "01/07";
+						this.issue = "1/07";
 					}
 				}, 
 				});
@@ -172,7 +172,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 						this.month = Month.MARCH;
 						this.start = "01/01 -1";
 						this.end = "31/12 -1";
-						this.issue = "01/03";
+						this.issue = "01/3";
 						this.quoteExpression = "PRORRATEAR(_P)";
 					}
 				}
@@ -266,7 +266,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 						this.month = Month.JULY;
 						this.start = "01/04";
 						this.end = "30/06";
-						this.issue = "15/07";
+						this.issue = "15/7";
 						this.quoteExpression = "PRORRATEAR()";
 					}
 				},
@@ -286,7 +286,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 						this.month = Month.JANUARY;
 						this.start = "01/10";
 						this.end = "31/12";
-						this.issue = "15/01 +1";
+						this.issue = "15/1 +1";
 						this.quoteExpression = "PRORRATEAR()";
 					}
 				}

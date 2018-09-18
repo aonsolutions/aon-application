@@ -1,11 +1,14 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
+import static com.esferalia.aon.payroll.calculator.ContextFunctions.parseExtraDate;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NATURAL_MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
+import static java.util.Calendar.DAY_OF_MONTH;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -31,7 +34,6 @@ import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculatorContext {
 
@@ -309,27 +311,32 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 	private static class ExtraPaymentFilter implements FilterCollection.Filter<IContractPayment> {
 		
 		private Month month;
-		private String issueDate;
+		private Calendar issueDate;
 		
 		public ExtraPaymentFilter(Date issueDate) {
 			int month = CommonUtil.getMonth(issueDate);
 			this.month = Month.getMonthByValue(month);
-			this.issueDate = String.format("%1$td/%1$tm", issueDate);
+			this.issueDate = Calendar.getInstance();
+			this.issueDate.setTime(issueDate);
 		}
 
 		@Override
 		public boolean accept(IContractPayment e) {
 			try {
 			IExtraPayment p = (IExtraPayment) e;
+			Calendar pIssueDate = parseExtraDate(p.getExtraIssueDate(), new Date());
 			return  p.getSalaryType() == SalaryType.EXTRA 
 					&& p.getMonth() == this.month 
-					&& AonStringUtils.equals(p.getExtraIssueDate(),issueDate);
-			} catch ( ClassCastException c ) {
+					&& pIssueDate.get(DAY_OF_MONTH) ==  issueDate.get(DAY_OF_MONTH) 
+					;
+			} catch ( Exception c ) {
 				return  e.getSalaryType() == SalaryType.EXTRA 
 						&& e.getMonth() == this.month; 
 			}
 			
 		}
+		
+		
 	}
 
 }
