@@ -234,22 +234,28 @@ public class QualitySheet extends Composite{
 		
 		productData.setWidget(0, 0, new Label("Producto"));
 		productData.setWidget(0, 1, boldLabel(map.get("product_description")));
-		productData.setWidget(0, 4, new Label("Cantidad"));
+		productData.setWidget(0, 4, new Label(isPropaco() ? "Cantidad Calc." : "Cantidad"));
 		productData.setWidget(0, 5, new Label(map.get("product_quantity")));
 	
-		productData.setWidget(1, 0, new Label("Proveedor"));
-		productData.setWidget(1, 1, new Label(map.get("product_supplier")));
-		productData.setWidget(1, 4, new Label("Destino"));
-		productData.setWidget(1, 5, listBox(Destiny.valueLinkedList(), QualitySheetCode.UFQDP1));
+		if(isPropaco()) {
+			productData.setWidget(1, 0, new Label(""));
+			productData.setWidget(1, 1, new Label(""));
+			productData.setWidget(1, 4, new Label("Cantidad"));
+			productData.setWidget(1, 5, new Label(map.get("neto")));
+		}
+		productData.setWidget(2, 0, new Label("Proveedor"));
+		productData.setWidget(2, 1, new Label(map.get("product_supplier")));
+		productData.setWidget(2, 4, new Label("Destino"));
+		productData.setWidget(2, 5, listBox(Destiny.valueLinkedList(), QualitySheetCode.UFQDP1));
 		
-		productData.setWidget(2, 0, new Label("Origen"));
-		productData.setWidget(2, 1, new Label(map.get("full_address")));
-		productData.setWidget(2, 4, new Label("Rechazado"));
-		productData.setWidget(2, 5, checkBox(QualitySheetCode.UFQDP2));	
+		productData.setWidget(3, 0, new Label("Origen"));
+		productData.setWidget(3, 1, new Label(map.get("full_address")));
+		productData.setWidget(3, 4, new Label("Rechazado"));
+		productData.setWidget(3, 5, checkBox(QualitySheetCode.UFQDP2));	
 		
-		productData.setWidget(3, 0, new Label(""));
-		productData.setWidget(3, 1, new Label(map.get("end_address")));
-		productData.getFlexCellFormatter().setColSpan(3, 1, 3);
+		productData.setWidget(4, 0, new Label(""));
+		productData.setWidget(4, 1, new Label(map.get("end_address")));
+		productData.getFlexCellFormatter().setColSpan(4, 1, 3);
 
 	}
 	
