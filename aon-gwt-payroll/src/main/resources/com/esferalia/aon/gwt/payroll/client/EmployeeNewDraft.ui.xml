@@ -9,266 +9,103 @@
 		type="com.esferalia.aon.gwt.payroll.client.EmployeeNewDraft.MyStyle">
 
 		.noselect {
-		-webkit-touch-callout: none; /* iOS Safari */
-		-webkit-user-select: none; /* Safari */
-		-khtml-user-select: none; /*
-		Konqueror HTML */
-		-moz-user-select: none; /* Firefox */
-		-ms-user-select: none; /* Internet Explorer/Edge */
-		user-select: none;
-		/* Non-prefixed version, currently
-		supported by Chrome and Opera */
+			-webkit-touch-callout: none; /* iOS Safari */
+			-webkit-user-select: none; /* Safari */
+			-khtml-user-select: none; /*Konqueror HTML */
+			-moz-user-select: none; /* Firefox */
+			-ms-user-select: none; /* Internet Explorer/Edge */
+			user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
 		}
 
 		@external gwt-Selector;
 		@external gwt-SuggestBoxPopup;
 		.gwt-SuggestBoxPopup {
-		z-index: 105;
+			z-index: 105;
 		}
 
-		.gwt-Selector .gwt-SuggestBoxPopup
-		{
-		z-index: 105;
-		height: inherit;
-		}
-
-		.backgroundColorFirstColumn {
-		background-color: #eaeaea;
-		width: 200px;
-		}
-
-		hr {
-		width: 97%;
-		}
-
-		.paddingTable
-		{
-		border-style: solid;
-		padding: 10px 10px 10px 10px;
-		border-width: 1px;
-		margin-left: 10px;
-		margin-bottom: 30px;
-		}
-
-		.paddingTable td{
-		font-family:
-		Arial;
-		font-size: small;
-		}
-
-		.paddingLeft{
-		padding-left: 10px !important;
-		}
-
-		.margingLeft{
-		margin-left: 10px !important;
-		}
-
-		.textAlignCenter{
-		text-align: center;
-		}
-
-		.marginTopTable{
-		margin-top: 20px;
-		width: 950px;
+		.gwt-Selector .gwt-SuggestBoxPopup{
+			z-index: 105;
+			height: inherit;
 		}
 
 		.headerStyle{
-		font-family: Arial;
-		font-size: 13px;
-		font-weight: normal;
-		position: absolute;
-		margin-left: 25px;
-		background-color: white;
-		padding-left: 5px;
-		padding-right: 5px;
-		height: 20px;
-		top: 10px;
-		z-index: 1;
-		}
-
-		.marginTopTable2{
-		margin-top: 10px;
-		width: 950px;
+			font-family: Arial;
+			font-size: 13px;
+			font-weight: normal;
+			position: absolute;
+			margin-left:
+			25px;
+			background-color: white;
+			padding-left: 5px;
+			padding-right: 5px;
+			height: 20px;
+			top: 10px;
+			z-index: 1;
 		}
 
 		.headerStyle2{
-		font-family: Arial;
-		font-size: 13px;
-		font-weight: normal;
-		position: absolute;
-		margin-left: 25px;
-		background-color: white;
-		padding-left: 5px;
-		padding-right: 5px;
-		height: 20px;
-		text-align: center;
-		top: 100px;
-		z-index: 1;
+			font-family: Arial;
+			font-size: 13px;
+			font-weight: normal;
+			position: absolute;
+			margin-left: 25px;
+			background-color: white;
+			padding-left: 5px;
+			padding-right: 5px;
+			height: 20px;
+			text-align: center;
+			top: 100px;
+			z-index: 1;
 		}
 
 		.requiredColor{
-		color: #2152A5;
-		font-weight: bold !important;
-		}
-
-		.secondColumnWidth{
-		width: auto;
-		}
-
-		.secondColumnWidth2{
-		width: auto;
-		padding-left: 0px !important;
+			color: #2152A5;
+			font-weight: bold !important;
 		}
 
 		.hide{
-		display: none;
-		}
-
-		.moreAddress{
-		background: white;
-		width: 20px;
-		background-color: white;
-		color: black;
-		font-weight: bold;
-		border-color: white;
-		font-size: large;
-		}
-
-		.paddingLabel{
-		padding: 2px;
-		}
-
-		.paddingConfidecial{
-		padding-left: 0px;
-		padding-top: 3px;
-		}
-
-		.paddingCheckBox{
-		padding-top: 6px;
-		}
-
-		.dateBox{
-		width:
-		100px;
-		text-align: center;
-		padding: 2px;
-		border: 1px solid #ccc;
-		border-top: 1px solid #999;
-		font-size: small;
-		font-family: Arial Unicode
-		MS, Arial, sans-serif;
-		}
-
-		.dateBox2{
-		width: 141px !important;
-		text-align:
-		center;
-		padding: 2px;
-		border: 1px solid #ccc;
-		border-top: 1px solid #999;
-		font-size: small;
-		font-family: Arial Unicode MS, Arial, sans-serif;
-		margin-left: 10px !important;
-		}
-
-		.horizontalPanel{
-		padding-left: 0px;
-		padding-bottom: 3px;
-		}
-
-		.horizontalPanel2{
-		padding-left: 0px !important;
-		}
-
-
-		.passDocumentStyle{
-		width: 102px !important;
-		}
-
-		.passNSSStyle{
-		width: 203px
-		!important;
-		}
-
-		.passNationalityStyle{
-		width: 177px !important;
-		}
-
-		.nieDocumentStyle{
-		width: 140px !important;
-		}
-
-		.nieNationalityStyle{
-		width: 177px !important;
-		}
-
-		.nieNSSStyle{
-		width: 203px !important;
-		}
-
-		.dniDocumentStyle{
-		width: 139px !important;
-		}
-
-		.dniNSSStyle{
-		width: 210px
-		!important;
+			display: none;
 		}
 
 		.buttonStyle{
-		border: none;
-		font-size: 15px;
-		font-weight:
-		bold;
-		background-color: white;
-		width: 100%
-		}
-
-		.paddingTop{
-		padding-top: 5px;
+			border: none;
+			font-size: 15px;
+			font-weight: bold;
+			background-color: white;
+			width: 100%
 		}
 
 		.maxWidth{
-		width: 100%;
+			width: 100%;
 		}
 
 		.maxWidthTextBox{
-		width: 99%;
+			width: 99%;
 		}
 
 		.maxWidthTextBox2{
-		width: 98%;
+			width: 98%;
 		}
 
 		.maxWidthTextBox3{
-		width: 96%;
+			width: 96%;
 		}
 
 		.dateBoxStyle{
-		width: 99% !important;
-		text-align: center !important;
+			width: 99% !important;
+			text-align: center !important;
 		}
 
 		.alignTextCenter{
-		text-align: center;
-		}
-
-		.alignTextCenter{
-		text-align: center;
+			text-align: center;
 		}
 
 		.firstColumnTextStyle{
-		padding:
-		5px !important;
+			padding: 5px !important;
 		}
 
 		.topLabelContract{
-		top: 280px !important;
-		}
-
-		.topLabelContractMinus{
-			top: 100px;
+			top: 280px !important;
 		}
 
 		.nssWidht{
@@ -310,17 +147,17 @@
 					        padding: 10px 10px 10px 10px; border-width: 1px; margin-left: 10px; margin-bottom: 20px;
 					        margin-top: 17px; position: absolute; padding-top: 20px;">
 							<body>
-							    <tr>
-							        <td></td>
-							        <td></td>
-							        <td></td>
-							        <td></td>
-							        <td></td>
-							        <td></td>
-							        <td></td>
-							        <td></td>
-							        <td></td>
-							    </tr>
+								<tr>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+								</tr>
 								<tr>
 									<td style="background-color: #eaeaea; width: 200px;">
 										<g:Label styleName="{style.firstColumnTextStyle}">Empleado</g:Label>
@@ -506,7 +343,7 @@
 									</td>
 									<td colspan="2">
 										<g:TextBox ui:field="quotationAccount"
-											styleName='{style.maxWidthTextBox} {style.textAlignCenter}'></g:TextBox>
+											styleName='{style.maxWidthTextBox} {style.alignTextCenter}'></g:TextBox>
 									</td>
 									<td>
 										<g:Label styleName='{style.requiredColor} {style.alignTextCenter}'>Centro de trabajo</g:Label>
