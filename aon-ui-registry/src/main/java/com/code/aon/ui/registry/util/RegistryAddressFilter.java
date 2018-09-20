@@ -39,7 +39,7 @@ public class RegistryAddressFilter implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
-	private final int QUANTITY_FOR_ENABLE_FILTER = 1;
+	private final int QUANTITY_FOR_ENABLE_FILTER = 20;
 	
 	private boolean showAddressFilterWindow;
 	private Registry registry;

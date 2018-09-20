@@ -227,7 +227,7 @@
 		<aon:commandButton id="showAddressesFilterWindow"
 			value="&#160;" title="#{bundle.aon_filter} #{bundle.aon_address}"
 			styleClass="aon-icon-commandButton aon-lookupButton aon-margin-left"
-			rendered="#{invoiceController.addresses.size()>sales.addressesFilter.quantityForEnable}" >
+			rendered="#{invoiceController.addresses.size()>invoiceController.addressesFilter.quantityForEnable}" >
 			<f:setPropertyActionListener
 				target="#{invoiceController.addressesFilter.showAddressFilterWindow}" value="#{true}" />
 		</aon:commandButton>
