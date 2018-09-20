@@ -44,6 +44,7 @@ public class PayrollAppParamsController implements Serializable {
 	private Boolean fanTestEnvironment;
 	private Boolean afiTestEnvironment;
 	private String authorizationKey;
+	private String ssContactEmail;
 	
 	private Map<String, ApplicationParameter> parameters;
 	private Map<String, String> defaultParameters;
@@ -68,6 +69,29 @@ public class PayrollAppParamsController implements Serializable {
 				setAuthorizationKey(getParameter(AppParam.PAY_authorization_key_PAY.getValue()).getValue());
 			} else {
 				setAuthorizationKey("");
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+	}
+	
+	public String getSsContactEmail() {
+		if(ssContactEmail==null){
+			initSsContactEmail();
+		}
+		return ssContactEmail;
+	}
+
+	public void setSsContactEmail(String ssContactEmail) {
+		this.ssContactEmail = ssContactEmail;
+	}
+
+	private void initSsContactEmail() {
+		try {
+			if(getParameter(AppParam.PAY_ss_contact_email_PAY.getValue()).getValue()!=null){
+				setSsContactEmail(getParameter(AppParam.PAY_ss_contact_email_PAY.getValue()).getValue());
+			} else {
+				setSsContactEmail("");
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
@@ -348,6 +372,11 @@ public class PayrollAppParamsController implements Serializable {
 			getParameter(AppParam.PAY_ss_mutual_PAY.getValue()).setValue(getSSMutual());
 		} else {
 			getParameter(AppParam.PAY_ss_mutual_PAY.getValue()).setValue(null);
+		}
+		if( StringUtils.isNotBlank(getParameter(AppParam.PAY_ss_contact_email_PAY.getValue()).getValue()) ){
+			getParameter(AppParam.PAY_ss_contact_email_PAY.getValue()).setValue(getSsContactEmail());
+		} else {
+			getParameter(AppParam.PAY_ss_contact_email_PAY.getValue()).setValue(null);
 		}
 		getParameter(AppParam.PAY_fan_test_env_PAY.getValue()).setValue(getFanTestEnvironment().toString());
 		getParameter(AppParam.PAY_afi_test_env_PAY.getValue()).setValue(getAfiTestEnvironment().toString());

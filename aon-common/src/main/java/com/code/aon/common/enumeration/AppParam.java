@@ -249,6 +249,8 @@ public enum AppParam {
 	
 	PAY_REPORT_salaryDraft_PAY,
 	
+	PAY_ss_contact_email_PAY,
+	
 	PAY_ss_mutual_PAY,
 	
 	PAY_ss_payment_bankAccount_PAY,
