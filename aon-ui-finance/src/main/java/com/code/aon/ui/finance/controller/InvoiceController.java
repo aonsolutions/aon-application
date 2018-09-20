@@ -105,6 +105,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.project.controller.IProjectConstants;
 import com.code.aon.ui.project.controller.ProjectCollectionsController;
+import com.code.aon.ui.registry.util.RegistryAddressFilter;
 import com.code.aon.ui.sign.controller.ISignatureController;
 import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
@@ -172,6 +173,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	private Double listTotal;
 	private FinanceEmailUtil emailController;
 	private AonFile invoiceAttachFile;
+	private RegistryAddressFilter addressesFilter;
 	
 	
 	public InvoiceController() {
@@ -233,6 +235,17 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		return null;
 	}
 
+	public RegistryAddressFilter getAddressesFilter() {
+		if(addressesFilter==null)
+			addressesFilter = new RegistryAddressFilter(this.getInvoice().getRegistry());
+		return addressesFilter;
+	}
+	
+	public void selectFilteredAddress(ActionEvent event) throws ManagerBeanException {
+		if(addressesFilter.getModel().isRowAvailable())
+			this.getInvoice().setRegistryAddress(addressesFilter.getSelectedAddress());
+	}
+
 	public int getFinanceGenerationMode() {
 		return financeGenerationMode;
 	}
@@ -278,12 +291,10 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	
 	public void loadAddresses(Integer id) throws ManagerBeanException {
 		this.addresses = new LinkedList<SelectItem>();
+		this.addressesFilter = null;
 		if (id != null) {
-			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(rAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
-			criteria.addOrder(rAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_ADDRESS_TYPE));
-			for (ITransferObject ito : rAddressBean.getList(criteria)) {
+			List<ITransferObject> list = getAddresses(id);
+			for (ITransferObject ito : list) {
 				RegistryAddress address = (RegistryAddress)ito;
 				String addressLabel = address.getFullAddress();
 				addressLabel = ((addressLabel.length()>30)?addressLabel.substring(0,27)+"...":addressLabel) + " - " + address.getCity();
@@ -293,7 +304,19 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			}
 		}
 	}
-
+	
+	private List<ITransferObject> getAddresses(Integer registryId) throws ManagerBeanException {
+		if (registryId != null) {
+			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(rAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_REGISTRY_ID), registryId);
+			criteria.addOrder(rAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_ADDRESS_TYPE));
+			return rAddressBean.getList(criteria);
+		}
+		return null;
+	}
+	
+	
 	public String getAddress() {
 		IAddress iAddress = getInvoice().getRegistryAddress();
 		BasicController addressController = (BasicController)FormUtil.getController(invoiceAddressControllerName);

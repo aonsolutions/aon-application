@@ -224,6 +224,13 @@
 			ajaxSingle="true">
 			<f:selectItems value="#{invoiceController.addresses}" />
 		</aon:selectOneMenu>
+		<aon:commandButton id="showAddressesFilterWindow"
+			value="&#160;" title="#{bundle.aon_filter} #{bundle.aon_address}"
+			styleClass="aon-icon-commandButton aon-lookupButton aon-margin-left"
+			rendered="#{invoiceController.addresses.size()>sales.addressesFilter.quantityForEnable}" >
+			<f:setPropertyActionListener
+				target="#{invoiceController.addressesFilter.showAddressFilterWindow}" value="#{true}" />
+		</aon:commandButton>
 		<aon:outputLabel styleClass="aon-italic"
 			value="#{bundle.registry_no_address_available}"
 			rendered="#{addressController.to.id == null and ((invoiceController.readOnly and invoiceController.to.registryAddress.id == null) or (!invoiceController.readOnly and invoiceController.addressCount == 0))}" />

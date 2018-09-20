@@ -65,6 +65,7 @@ import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.SaleInvoiceController;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.registry.util.RegistryAddressFilter;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.sales.importer.edi.EdiSalesImporterHandler;
 import com.code.aon.ui.sales.importer.edi.FtpSalesDownloadHandler;
@@ -118,6 +119,8 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	private Date savedDeliveryDate;
 	private Carrier savedCarrier;
 	private boolean showPurchaseReferenceWindow;
+	private RegistryAddressFilter addressesFilter;
+
 
 	private EdiSalesImporterHandler ediImporter;
 	@Deprecated
@@ -350,6 +353,17 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		this.showPurchaseReferenceWindow = showPurchaseReferenceWindow;
 	}
 
+	public RegistryAddressFilter getAddressesFilter() {
+		if(addressesFilter==null)
+			this.addressesFilter = new RegistryAddressFilter(((Sales)this.getTo()).getRegistry());
+		return addressesFilter;
+	}
+	
+	public void selectFilteredAddress(ActionEvent event) throws ManagerBeanException {
+		if(addressesFilter.getModel().isRowAvailable())
+			((Sales)this.getTo()).setShippingAddress(addressesFilter.getSelectedAddress());
+	}
+
 	public EdiSalesImporterHandler getEdiImporter() {
 		if(ediImporter==null){
 			ediImporter = new EdiSalesImporterHandler(this);
@@ -533,6 +547,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 
 	public void loadAddresses(Integer id) throws ManagerBeanException {
 		List<SelectItem> addresses = new LinkedList<SelectItem>();
+		this.addressesFilter = null;
 		if (id != null) {
 			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 			Criteria criteria = new Criteria();

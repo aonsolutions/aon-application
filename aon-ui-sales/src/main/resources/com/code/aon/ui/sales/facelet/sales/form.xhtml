@@ -320,6 +320,13 @@
 							disabled="#{!sales.pending}">
 							<f:selectItems value="#{sales.addresses}" />
 						</aon:selectOneMenu>
+						<aon:commandButton id="showAddressesFilterWindow"
+							value="&#160;" title="#{bundle.aon_filter} #{bundle.aon_address}"
+							styleClass="aon-icon-commandButton aon-lookupButton aon-margin-left"
+							rendered="#{sales.addresses.size()>sales.addressesFilter.quantityForEnable}" >
+							<f:setPropertyActionListener
+								target="#{sales.addressesFilter.showAddressFilterWindow}" value="#{true}" />
+						</aon:commandButton>
 						<aon:outputLabel value="#{bundle.registry_no_address_available}"
 							rendered="#{sales.addressCount == 0}"
 							styleClass="aon-italic" />
@@ -571,6 +578,9 @@
 		<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">
 			<ui:param name="bankAccountController" value="#{sales.accountHelper}" />
 			<ui:param name="modalReRender" value="payMethodDiv" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/registry/facelet/raddress/filterModal.xhtml" >
+			<ui:param name="controller" value="#{sales}" />
 		</ui:include>
 		<aon:if test="#{company.ediSupportEnabled}">
 			<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >

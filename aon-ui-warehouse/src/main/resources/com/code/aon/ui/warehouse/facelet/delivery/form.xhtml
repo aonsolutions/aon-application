@@ -201,6 +201,13 @@
 							disabled="#{!delivery.pending}">
 							<f:selectItems value="#{delivery.addresses}" />
 						</aon:selectOneMenu>
+						<aon:commandButton id="showAddressesFilterWindow"
+							value="&#160;" title="#{bundle.aon_filter} #{bundle.aon_address}"
+							styleClass="aon-icon-commandButton aon-lookupButton aon-margin-left"
+							rendered="#{delivery.addresses.size() > delivery.addressesFilter.quantityForEnable}" >
+							<f:setPropertyActionListener
+								target="#{delivery.addressesFilter.showAddressFilterWindow}" value="#{true}" />
+						</aon:commandButton>
 						<aon:outputLabel value="#{bundle.registry_no_address_available}"
 							rendered="#{delivery.addressCount == 0}"
 							styleClass="aon-italic" />
@@ -443,6 +450,9 @@
 		<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">
 			<ui:param name="bankAccountController" value="#{delivery.accountHelper}" />
 			<ui:param name="modalReRender" value="payMethodDiv" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/registry/facelet/raddress/filterModal.xhtml" >
+			<ui:param name="controller" value="#{delivery}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/product/facelet/product/item/modalPackage.xhtml">
 			<ui:param name="controller" value="#{deliveryDetail}" />

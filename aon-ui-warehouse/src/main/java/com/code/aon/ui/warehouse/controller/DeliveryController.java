@@ -73,6 +73,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.registry.controller.CorporateIdentity;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
+import com.code.aon.ui.registry.util.RegistryAddressFilter;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.warehouse.importer.FtpDeliveryUploadHandler;
@@ -121,6 +122,7 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	private UdapaDeliveryHandler udapaDeliveryHandler;
 	private boolean showEdiFtpWindow;
 	private CarrierPacking carrierPacking;
+	private RegistryAddressFilter addressesFilter;
 	
 	private FtpDeliveryUploadHandler ftpEdiUploader;
 	private DeliveryPackagesHandler packagesHandler;
@@ -303,6 +305,17 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 		return date != null ? AonDateUtils.simpleFormat(date) + " " + AonDateUtils.timeFormat(date) : "-";
 	}
 	
+	public RegistryAddressFilter getAddressesFilter() {
+		if(addressesFilter==null)
+			addressesFilter = new RegistryAddressFilter(((Delivery)this.getTo()).getRegistry());
+		return addressesFilter;
+	}
+	
+	public void selectFilteredAddress(ActionEvent event) throws ManagerBeanException {
+		if(addressesFilter.getModel().isRowAvailable())
+			((Delivery)this.getTo()).setRegistryAddress(addressesFilter.getSelectedAddress());
+	}
+
 	public boolean isShippingAlternativeAddress() {
 		return shippingAlternativeAddress;
 	}
@@ -399,6 +412,7 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 
 	public void loadAddresses(Integer id) throws ManagerBeanException {
 		List<SelectItem> addresses = new LinkedList<SelectItem>();
+		this.addressesFilter = null;
 		if (id != null) {
 			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 			Criteria criteria = new Criteria();

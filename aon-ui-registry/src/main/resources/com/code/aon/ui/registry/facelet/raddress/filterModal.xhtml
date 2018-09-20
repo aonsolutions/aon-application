@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showAddressFilterWindow">
+		<aon:if test="#{controller.addressesFilter.showAddressFilterWindow}">
+			<rich:modalPanel id="addressesFilterModalPanel"
+				minWidth="670" minHeight="370" zindex="90"
+				showWhenRendered="true" style="overflow-y:auto">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{bundle.aon_check}" />
+						<aon:outputText value="&#160;" />
+						<aon:outputText value="#{bundle.aon_address} " />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton id="showAddressFilterWindow-close" immediate="true"
+							type="close-button"
+							styleClass="aon-popupWindow-close"
+							reRender="showAddressFilterWindow">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener target="#{controller.addressesFilter.showAddressFilterWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="addressFilterForm">
+					<aon:div styleClass="aon-popupWindow-content">
+						<aon:div style="width:100%">
+							<aon:div styleClass="aon-popupWindow-content-internal">
+								<aon:div style="width:99%">
+									
+									<aon:div styleClass="aon-panelGrid-search aon-margin-bottom">
+										<aon:div styleClass="aon-panelGrid-search-info">
+											<aon:outputText value="#{bundle.aon_filter}" styleClass="aon-panelGrid-search-info-internal"/>
+										</aon:div>
+										<aon:panelGrid columns="1">
+											<aon:inputText id="addressesFilter" size="80" value="#{controller.addressesFilter.value}">
+												<a4j:support 
+													event="onkeyup"
+													actionListener="#{controller.addressesFilter.filterModel}"
+													reRender="addressesList"
+													eventsQueue="addressesFilterKeyUp"
+													requestDelay="500"
+													ajaxSingle="true"
+													ignoreDupResponses="true"
+													limitToList="true"/>
+											</aon:inputText>
+										</aon:panelGrid>	
+									</aon:div>
+									
+									<aon:div styleClass="aon-scroll-area" >
+										<aon:dataTable id="addressesList" rows="100" var="to" 
+											value="#{controller.addressesFilter.model}">
+											
+											<aon:rowSelector id="suspensionCauselList-select" 
+												actionListener="#{controller.selectFilteredAddress}" />
+					
+											<aon:column>
+												<f:facet name="header">
+													<aon:outputText value="#{bundle.aon_name}" />
+												</f:facet>
+												<aon:outputText value="#{to.fullAddress} - #{to.city}" />
+											</aon:column>
+											
+										</aon:dataTable>
+										<aon:dataScroller for="addressList" showNote="true" />
+									</aon:div>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:form>
+			
+			</rich:modalPanel>
+		</aon:if>
+	</aon:panelGroup>
+
+</ui:composition>
