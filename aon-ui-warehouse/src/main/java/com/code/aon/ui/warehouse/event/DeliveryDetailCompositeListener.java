@@ -24,14 +24,14 @@ public class DeliveryDetailCompositeListener extends ControllerAdapter {
 	@Override
 	public void afterBeanReset(ControllerEvent event) throws ControllerListenerException {
 		DeliveryDetailController controller = (DeliveryDetailController)event.getController();
-		controller.getCompositeHandler().reset();;
+		controller.getCompositeHandler().reset();
 	}
 	
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		DeliveryDetailController controller = (DeliveryDetailController)event.getController();
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-		if(ds.isAlphaEnabled()){
+		if(ds.isAlphaDomain()){
 			controller.getCompositeHandler().acceptItemComposition();
 		} else {
 			Delivery delivery = (Delivery)controller.getMasterController().getTo();

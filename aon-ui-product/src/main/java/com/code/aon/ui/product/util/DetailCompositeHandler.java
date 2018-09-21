@@ -191,6 +191,10 @@ public class DetailCompositeHandler extends DataScrollerState implements Seriali
 		setModel(null);
 	}
 	
+	public void accept(ActionEvent event) {
+		controller.onAccept(event);
+	}
+	
 	public void discard(ActionEvent event) {
 		try {
 			list = this.composeItem.getItemCompositionList();

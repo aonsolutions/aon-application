@@ -38,6 +38,7 @@
 								<aon:div styleClass="aon-toolbar">
 									<aon:commandButton id="itemComposition-accept"
 										value="#{bundle.aon_accept}"
+										actionListener="#{controller.accept}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept">
 										<rich:componentControl for="itemCompositionModalPanel"
 											event="onclick" operation="hide"/>																					
@@ -46,7 +47,7 @@
 											value="#{false}" />
 									</aon:commandButton>
 									<aon:commandButton id="itemComposition-cancel"
-										value="#{bundle.aon_cancel}"
+										value="#{bundle.aon_cancel}" ajaxSingle="#{true}"
 										reRender="showItemCompositionWindow"
 										actionListener="#{controller.discard}"
 										styleClass="aon-finding-toolbar-item aon-icon-cancel">
@@ -170,16 +171,16 @@
 													
 													<aon:column styleClass="aon-editDataTable-textColumn">
 														<f:facet name="header">
-															<aon:outputLabel for="ItemComposite_quantity"
+															<aon:outputLabel for="ItemComposition_quantity"
 																value="#{bundle.aon_quantity}" />
 														</f:facet>
 														<aon:outputText value="#{to.quantity}"
 															rendered="#{formList}">
 															<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
 														</aon:outputText>
-															<aon:inputText id="ItemComposition_quantity" 
-																value="#{controller.to.quantity}" rendered="#{formEdit}"
-																required="true" size="4" />
+														<aon:inputText id="ItemComposition_quantity" 
+															value="#{controller.to.quantity}" rendered="#{formEdit}"
+															required="true" size="4" />
 														<f:facet name="footer">
 															<aon:div styleClass="aon-text-right">
 																<aon:inputText id="ItemComposition_quantity-New" 
