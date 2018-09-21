@@ -77,6 +77,7 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 	private ListBox activity;
 	private CheckBox showPercents;
 	private ListBox costCenters;
+	private CheckBox byMonth;
 	private FlowPanel selectedCostCenter;
 	private Button cleanButton;
 
@@ -301,6 +302,24 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 			}
 		});
 		
+		byMonth = new CheckBox("Mensual");
+		if (params != null ) {
+			byMonth.setValue(params.isByMonth());
+		}
+		byMonth.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				if (byMonth.getValue()) {
+					previousPeriods.setSelectedIndex(0);
+					showPercents.setValue(false);
+				}
+				showPercents.setEnabled(!byMonth.getValue());
+				previousPeriods.setEnabled(!byMonth.getValue());
+				onSearch();
+			}
+		});
+
 		if (config != null && config.hasCostCenters()) {
 			costCenters = new ListBox();
 			costCenters.setWidth("200px");
@@ -469,16 +488,18 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 		tab.getCellFormatter().setStyleName(1,6, AON.AON_CSS.aonPanelGridEven());
 
 		tab.setWidget(2, 1, showPercents);
+		tab.setWidget(2, 2, byMonth);
+		
 		if (config != null && config.hasCostCenters()) {
-			tab.setWidget(2, 2, new Label(AON.MSG.costCenter()));
-			tab.getCellFormatter().setStyleName(2,2, AON.AON_CSS.aonPanelGridOdd());
+			tab.setWidget(2, 3, new Label(AON.MSG.costCenter()));
+			tab.getCellFormatter().setStyleName(2,3, AON.AON_CSS.aonPanelGridOdd());
 			FlexTable costCenterContainer = new FlexTable();
 			costCenterContainer.setWidget(0, 0, costCenters);
 			costCenterContainer.setWidget(0, 1, selectedCostCenter);
 			
-			tab.setWidget(2, 3, costCenterContainer);
-			tab.getFlexCellFormatter().setColSpan(2, 3, 4);
-			tab.getCellFormatter().setStyleName(2,3, AON.AON_CSS.aonPanelGridEven());
+			tab.setWidget(2, 4, costCenterContainer);
+			tab.getFlexCellFormatter().setColSpan(2, 4, 3);
+			tab.getCellFormatter().setStyleName(2,4, AON.AON_CSS.aonPanelGridEven());
 		}
 
 		FlowPanel min = new FlowPanel();
@@ -728,6 +749,7 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 			.setPercentsEnabled(showPercents.getValue())
 			.setCostCenters(costCentersSet)
 			.setSecurityLevel(SecurityLevel.safeValueOf(confidential.getSelectedIndex()))
+			.setByMonth(byMonth.getValue())
 			;
 	}
 	

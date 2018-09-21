@@ -159,6 +159,7 @@ public class AccountOperatingReport implements Serializable {
 		private static final long serialVersionUID = -1037494768508954210L;
 		
 		private AccountOperatingAccount account; 
+		private String month;
 		private double debit;
 		private double credit;
 		
@@ -186,7 +187,14 @@ public class AccountOperatingReport implements Serializable {
 			this.account = account;
 			return this;
 		}
-
+		public String getMonth() {
+			return month;
+		}
+		public AccountOperatingStatement setMonth(String month) {
+			this.month = month;
+			return this;
+		}
+		
 		public double getDebit() {
 			return debit;
 		}

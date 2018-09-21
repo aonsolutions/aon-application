@@ -67,86 +67,108 @@ public class OperatingPanel extends ScrollPanel implements HasSelectionHandlers<
 					tab.addStyleName(AON.AON_CSS.aonReportTableFontBig());
 				}
 
+				int row = 0;
+				int col = 1;
 				
 				if (report.isEmpty()) {
 					tab.setWidget(0, 0, new Label(AON.MSG.noData()));
 				} else {
 					tab.setWidget(0, 0, new Label());
 					tab.getFlexCellFormatter().setColSpan(0, 0, 2);
-
-					tab.setWidget(1, 0, new Label(AON.MSG.account()));
-					tab.getCellFormatter().setStyleName(1, 0, AON.AON_CSS.aonReportTableHeader());
-					tab.getFlexCellFormatter().setColSpan(1, 0, 2);
-	
-					int intervals = report.getIntervals().size();
-					int columnsPerInterval = 2;
-					if (report.showRatios() ) {
-						columnsPerInterval = 5;	
-					}
-					if (report.showIncreasePercent() ) {
-						columnsPerInterval = 3;
-					}
-					int columns = 2 + (intervals * columnsPerInterval);
-					if (intervals > 1 && report.showIncreasePercent()) {
-						columns = columns - 1; 
-					}
 					
-					for (int i = 0; i < columns; i++) {
-						tab.getColumnFormatter().setWidth( i,   "90px");
-					}
-					tab.getColumnFormatter().setWidth( 1, "auto");
-
-					int iter = 1;
-					int col = 1;
-					for (DateInterval inter : report.getIntervals()) {
-						tab.setWidget(0, iter, new Label(inter.getName()));
-						if (report.showIncreasePercent() && iter == 1) {
-							tab.getFlexCellFormatter().setColSpan(0, iter, 2);
-						} else {
-							tab.getFlexCellFormatter().setColSpan(0, iter, columnsPerInterval);
+					if (params.isByMonth()) {
+						tab.setWidget(0, 0, new Label(AON.MSG.account()));
+						tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonReportTableHeader());
+						int intervals = report.getIntervals().size();
+						int columns = 2 + intervals;
+						for (int i = 0; i < columns; i++) {
+							tab.getColumnFormatter().setWidth( i,   "90px");
 						}
-						tab.getCellFormatter().setStyleName(0, iter, AON.AON_CSS.aonReportTableHeader());
-						tab.getCellFormatter().addStyleName(0, iter, AON.AON_CSS.aonTextCenter());
-	
-						tab.setWidget(1, col  , new Label("S. Deudor"));
-						tab.getCellFormatter().setStyleName(1, col, AON.AON_CSS.aonReportTableHeader());
-						tab.getCellFormatter().addStyleName(1, col, AON.AON_CSS.aonTextCenter());
-						col++;
-						
-						tab.setWidget(1, col, new Label("S. Acreed."));
-						tab.getCellFormatter().setStyleName(1, col, AON.AON_CSS.aonReportTableHeader());
-						tab.getCellFormatter().addStyleName(1, col, AON.AON_CSS.aonTextCenter());
-						col++;
-						
+						tab.getColumnFormatter().setWidth( 1, "auto");
+						col = 1;
+						for (DateInterval inter : report.getIntervals()) {
+							tab.setWidget(0, col, new Label(inter.getName()));
+							tab.getCellFormatter().setStyleName(0, col, AON.AON_CSS.aonReportTableHeader());
+							tab.getCellFormatter().addStyleName(0, col, AON.AON_CSS.aonTextCenter());
+							col++;
+						}
+						row = 1;
+					} else {
+						tab.setWidget(1, 0, new Label(AON.MSG.account()));
+						tab.getCellFormatter().setStyleName(1, 0, AON.AON_CSS.aonReportTableHeader());
+						tab.getFlexCellFormatter().setColSpan(1, 0, 2);
+		
+						int intervals = report.getIntervals().size();
+						int columnsPerInterval = 0;
+						columnsPerInterval = 2;
 						if (report.showRatios() ) {
-							tab.setWidget(1, col, new Label(" % S/Vta."));	
+							columnsPerInterval = 5;	
+						}
+						if (report.showIncreasePercent() ) {
+							columnsPerInterval = 3;
+						}
+						int columns = 2 + (intervals * columnsPerInterval);
+						if (intervals > 1 && report.showIncreasePercent()) {
+							columns = columns - 1; 
+						}
+
+						for (int i = 0; i < columns; i++) {
+							tab.getColumnFormatter().setWidth( i,   "90px");
+						}
+						tab.getColumnFormatter().setWidth( 1, "auto");
+
+						int iter = 1;
+						for (DateInterval inter : report.getIntervals()) {
+							tab.setWidget(0, iter, new Label(inter.getName()));
+							if (report.showIncreasePercent() && iter == 1) {
+								tab.getFlexCellFormatter().setColSpan(0, iter, 2);
+							} else {
+								tab.getFlexCellFormatter().setColSpan(0, iter, columnsPerInterval);
+							}
+							tab.getCellFormatter().setStyleName(0, iter, AON.AON_CSS.aonReportTableHeader());
+							tab.getCellFormatter().addStyleName(0, iter, AON.AON_CSS.aonTextCenter());
+		
+							tab.setWidget(1, col  , new Label("S. Deudor"));
 							tab.getCellFormatter().setStyleName(1, col, AON.AON_CSS.aonReportTableHeader());
 							tab.getCellFormatter().addStyleName(1, col, AON.AON_CSS.aonTextCenter());
 							col++;
 							
-							tab.setWidget(1, col, new Label(" % S/Com."));
+							tab.setWidget(1, col, new Label("S. Acreed."));
 							tab.getCellFormatter().setStyleName(1, col, AON.AON_CSS.aonReportTableHeader());
 							tab.getCellFormatter().addStyleName(1, col, AON.AON_CSS.aonTextCenter());
-							col++;	
+							col++;
 							
-							tab.setWidget(1, col, new Label(" % S/Gst."));
-							tab.getColumnFormatter().setWidth( col,  "60px");
-							tab.getCellFormatter().setStyleName(1, col, AON.AON_CSS.aonReportTableHeader());
-							tab.getCellFormatter().addStyleName(1, col, AON.AON_CSS.aonTextCenter());
-							col++;
-	
+							if (report.showRatios() ) {
+								tab.setWidget(1, col, new Label(" % S/Vta."));	
+								tab.getCellFormatter().setStyleName(1, col, AON.AON_CSS.aonReportTableHeader());
+								tab.getCellFormatter().addStyleName(1, col, AON.AON_CSS.aonTextCenter());
+								col++;
+								
+								tab.setWidget(1, col, new Label(" % S/Com."));
+								tab.getCellFormatter().setStyleName(1, col, AON.AON_CSS.aonReportTableHeader());
+								tab.getCellFormatter().addStyleName(1, col, AON.AON_CSS.aonTextCenter());
+								col++;	
+								
+								tab.setWidget(1, col, new Label(" % S/Gst."));
+								tab.getColumnFormatter().setWidth( col,  "60px");
+								tab.getCellFormatter().setStyleName(1, col, AON.AON_CSS.aonReportTableHeader());
+								tab.getCellFormatter().addStyleName(1, col, AON.AON_CSS.aonTextCenter());
+								col++;
+		
+							}
+							if (report.showIncreasePercent() && col != 3) {
+								tab.setWidget(1, col, new Label(" % Incrm."));
+								tab.getCellFormatter().setStyleName(1, col, AON.AON_CSS.aonReportTableHeader());
+								tab.getCellFormatter().addStyleName(1, col, AON.AON_CSS.aonTextCenter());
+								col++;
+		
+							}
+							iter++;
 						}
-						if (report.showIncreasePercent() && col != 3) {
-							tab.setWidget(1, col, new Label(" % Incrm."));
-							tab.getCellFormatter().setStyleName(1, col, AON.AON_CSS.aonReportTableHeader());
-							tab.getCellFormatter().addStyleName(1, col, AON.AON_CSS.aonTextCenter());
-							col++;
-	
-						}
-						iter++;
+						row = 2;
 					}
+
 					
-					int row = 2;
 					
 					for (AccountOperatingAccount account : report.getAccounts()) {
 						boolean title = account.getId() == null;
@@ -185,53 +207,62 @@ public class OperatingPanel extends ScrollPanel implements HasSelectionHandlers<
 							AccountOperatingStatement aos = report.get(account.getCode(),inter);
 							Double db = (aos != null)?aos.getDebitBalance() : 0.0;
 							Double ub = (aos != null)?aos.getUnpaidBalance() : 0.0;
-	
-							String dbText = AonMathUtils.isNotZero(db)?AON.FMT.format(db):AonStringUtils.SPACE;
-							String ubText = AonMathUtils.isNotZero(ub)?AON.FMT.format(ub):AonStringUtils.SPACE;
-							
-							tab.setWidget(row, col, new Label(dbText));
-							tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextRight());
-							if (report.getParams().showIncreasePercent()) tab.getCellFormatter().addStyleName(row, col, backgroundStyle);
-							if (title) tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonReportTableBold());
-							col++;
-							tab.setWidget(row, col, new Label(ubText));
-							tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextRight());
-							if (report.getParams().showIncreasePercent()) tab.getCellFormatter().addStyleName(row, col, backgroundStyle);
-							if (title) tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonReportTableBold());
-							col++;
-							if (report.showRatios()) {
-								double percent = (aos != null)?aos.getSalesRatio() : 0.0;
-								String percentText = AonMathUtils.isNotZero(percent)?AON.FMT.format(percent) + AonStringUtils.PERCENT:AonStringUtils.SPACE;
-								tab.setWidget(row, col, new Label(percentText));
+							if (params.isByMonth()) {
+								Double saldo = AonMathUtils.round(ub - db);
+								String dbSaldo = AonMathUtils.isNotZero(saldo)?AON.FMT.format(saldo):AonStringUtils.SPACE;
+								tab.setWidget(row, col, new Label(dbSaldo));
+								tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextRight());
 								if (title) tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonReportTableBold());
-								tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBackgroundDisabled());
 								col++;
-								
-								percent = (aos != null)?aos.getPurchasesRatio() : 0.0;
-								percentText = AonMathUtils.isNotZero(percent)?AON.FMT.format(percent) + AonStringUtils.PERCENT:AonStringUtils.SPACE;
-								tab.setWidget(row, col, new Label(percentText));
+							} else {
+		
+								String dbText = AonMathUtils.isNotZero(db)?AON.FMT.format(db):AonStringUtils.SPACE;
+								String ubText = AonMathUtils.isNotZero(ub)?AON.FMT.format(ub):AonStringUtils.SPACE;
+
+								tab.setWidget(row, col, new Label(dbText));
+								tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextRight());
+								if (report.getParams().showIncreasePercent()) tab.getCellFormatter().addStyleName(row, col, backgroundStyle);
 								if (title) tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonReportTableBold());
-								tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBackgroundDisabled());
 								col++;
-	
-								percent = (aos != null)?aos.getExpensesRatio() : 0.0;
-								percentText = AonMathUtils.isNotZero(percent)?AON.FMT.format(percent) + AonStringUtils.PERCENT:AonStringUtils.SPACE;
-								tab.setWidget(row, col, new Label(percentText));
+								tab.setWidget(row, col, new Label(ubText));
+								tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextRight());
+								if (report.getParams().showIncreasePercent()) tab.getCellFormatter().addStyleName(row, col, backgroundStyle);
 								if (title) tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonReportTableBold());
-								tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBackgroundDisabled());
 								col++;
-							}
-							if (report.showIncreasePercent() && col != 4) {
-								double percent = (aos != null)?aos.getIncreasePercent() : 0.0;
-								String percentText = AonMathUtils.isNotZero(percent)?AON.FMT.format(percent) + AonStringUtils.PERCENT:AonStringUtils.SPACE;
-								tab.setWidget(row, col, new Label(percentText));
-								if (report.getParams().showIncreasePercent()) tab.getCellFormatter().setStyleName(row, col, backgroundStyle);
-								if (title) tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonReportTableBold());
-								tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextRight());
-								if (AonMathUtils.isNegative(percent)) {
-									tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonColorRed());	
+								if (report.showRatios()) {
+									double percent = (aos != null)?aos.getSalesRatio() : 0.0;
+									String percentText = AonMathUtils.isNotZero(percent)?AON.FMT.format(percent) + AonStringUtils.PERCENT:AonStringUtils.SPACE;
+									tab.setWidget(row, col, new Label(percentText));
+									if (title) tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonReportTableBold());
+									tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBackgroundDisabled());
+									col++;
+									
+									percent = (aos != null)?aos.getPurchasesRatio() : 0.0;
+									percentText = AonMathUtils.isNotZero(percent)?AON.FMT.format(percent) + AonStringUtils.PERCENT:AonStringUtils.SPACE;
+									tab.setWidget(row, col, new Label(percentText));
+									if (title) tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonReportTableBold());
+									tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBackgroundDisabled());
+									col++;
+		
+									percent = (aos != null)?aos.getExpensesRatio() : 0.0;
+									percentText = AonMathUtils.isNotZero(percent)?AON.FMT.format(percent) + AonStringUtils.PERCENT:AonStringUtils.SPACE;
+									tab.setWidget(row, col, new Label(percentText));
+									if (title) tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonReportTableBold());
+									tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBackgroundDisabled());
+									col++;
 								}
-								col++;
+								if (report.showIncreasePercent() && col != 4) {
+									double percent = (aos != null)?aos.getIncreasePercent() : 0.0;
+									String percentText = AonMathUtils.isNotZero(percent)?AON.FMT.format(percent) + AonStringUtils.PERCENT:AonStringUtils.SPACE;
+									tab.setWidget(row, col, new Label(percentText));
+									if (report.getParams().showIncreasePercent()) tab.getCellFormatter().setStyleName(row, col, backgroundStyle);
+									if (title) tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonReportTableBold());
+									tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextRight());
+									if (AonMathUtils.isNegative(percent)) {
+										tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonColorRed());	
+									}
+									col++;
+								}
 							}
 							oddIntervals++;
 						}

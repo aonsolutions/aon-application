@@ -5,7 +5,9 @@ import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
 import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -54,6 +56,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountStatementDAO {
 	
+	private static final DateFormat MONTH_DATE_FORMAT = new SimpleDateFormat("MM/yyyy");	
 	private static final com.esferalia.aon.jooq.tables.Account DET_ACCOUNT = ACCOUNT.as("detAcc");;
 	private static final com.esferalia.aon.jooq.tables.Account BAL_ACCOUNT = ACCOUNT.as("balAcc");
 
@@ -271,7 +274,22 @@ public class AccountStatementDAO {
 		}
 		LinkedHashMap<DateInterval,AccountingReportParams> intervals = getDateIntervals(ctx,params);
 		for (DateInterval inter : intervals.keySet()) {
-			operatingAccount(ctx, intervals.get(inter)).forEach(aos -> report.put(inter, aos) ); 
+			operatingAccount(ctx, intervals.get(inter))
+				.forEach(aos -> {
+					if (params.isByMonth()) {
+						int year = AonNumberUtils.toint( AonStringUtils.substring( aos.getMonth(),0 , 4));
+						int month = AonNumberUtils.toint( AonStringUtils.substring( aos.getMonth(), 4));
+						Date firstDay = AonDateUtils.getDate(year, month, 1);
+						Date lastDay = AonDateUtils.getMonthLastDay(firstDay);
+						DateInterval i = new DateInterval()
+								.setStart(firstDay)
+								.setEnd(lastDay)
+								.setName(MONTH_DATE_FORMAT.format(firstDay));
+						report.put(i, aos);	
+					} else {
+						report.put(inter, aos);	
+					}
+				}); 
 		}
 		calculate(report);
 		return report;
@@ -320,18 +338,19 @@ public class AccountStatementDAO {
 		}
 		int level = params.getLevel();
 		if (level != 2 && level != 3 && level != 4 && level != 9) level = 4;
+		Field<String> MONTH = DSL.concat(DSL.year(ACCOUNT_ENTRY.ENTRY_DATE),DSL.month(ACCOUNT_ENTRY.ENTRY_DATE));
 		Field<String> CODE = DSL.substring(ACCOUNT.CODE, 1, level);
 		AggregateFunction<BigDecimal> SUM_DEBIT = DSL.sum( ACCOUNT_ENTRY_DETAIL.DEBIT);
 		AggregateFunction<BigDecimal> SUM_CREDIT = DSL.sum( ACCOUNT_ENTRY_DETAIL.CREDIT);
 		return  ctx.getDslContext()
-			.select( CODE,SUM_DEBIT,SUM_CREDIT)
+			.select( CODE,SUM_DEBIT,SUM_CREDIT, (params.isByMonth()? MONTH:CODE) )
 				.from(ACCOUNT_ENTRY_DETAIL)
 				.join(ACCOUNT_ENTRY).on(ACCOUNT_ENTRY.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
 				.join(ACCOUNT).on(ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
 				.where(getOperatingCondition(ctx, params))
 				.and(ACCOUNT_ENTRY.ENTRY_TYPE.notIn(AccountEntryType.OPERATING.getValue(),AccountEntryType.CLOSING.getValue()))
 				.and(ACCOUNT.CODE.like("6%").or(ACCOUNT.CODE.like("7%")) )
-				.groupBy(CODE)
+				.groupBy(CODE,(params.isByMonth()? MONTH:CODE))
 				.fetch()
 				.stream()
 				.map( rec -> new  AccountOperatingStatement()
@@ -339,6 +358,7 @@ public class AccountStatementDAO {
 								.setType( AccountOperatingStatementType.getType(rec.getValue(CODE)))
 								.setCode(rec.getValue(CODE))
 								)
+						.setMonth((params.isByMonth()? rec.getValue(MONTH) : ""))
 						.setDebit(rec.getValue(SUM_DEBIT).doubleValue())
 						.setCredit(rec.getValue(SUM_CREDIT).doubleValue())
 					)
