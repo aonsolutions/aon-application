@@ -67,6 +67,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.purchase.util.PurchaseEmailUtil;
 import com.code.aon.ui.purchase.util.PurchaseUtils;
+import com.code.aon.ui.registry.util.RegistryAddressFilter;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.supplier.util.SupplierValidationManager;
@@ -110,6 +111,7 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 	private BankAccountHelper accountHelper;
 	private Date savedDeliveryDate;
 	private Carrier savedCarrier;
+	private RegistryAddressFilter addressesFilter;
 	
 	private List<String> moreRecipients;
 	private List<IEmailControllerListener> emailControllerListenerClasses;
@@ -291,6 +293,17 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 	public void setSavedCarrier(Carrier savedCarrier) {
 		this.savedCarrier = savedCarrier;
 	}
+	
+	public RegistryAddressFilter getAddressesFilter() {
+		if(addressesFilter==null)
+			this.addressesFilter = new RegistryAddressFilter(((Purchase)this.getTo()).getRegistry());
+		return addressesFilter;
+	}
+	
+	public void selectFilteredAddress(ActionEvent event) throws ManagerBeanException {
+		if(addressesFilter.getModel().isRowAvailable())
+			((Purchase)this.getTo()).setRegistryAddress(addressesFilter.getSelectedAddress());
+	}
 
 	@Override
 	public List<String> getMoreRecipients() {
@@ -410,6 +423,7 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 	
 	public void loadAddresses(Integer id) throws ManagerBeanException {
 		List<SelectItem> addresses = new LinkedList<SelectItem>();
+		this.addressesFilter = null;
 		if (id != null) {
 			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 			Criteria criteria = new Criteria();

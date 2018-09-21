@@ -55,6 +55,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.product.controller.IItemConstants;
 import com.code.aon.ui.product.controller.ItemTagPrintController;
+import com.code.aon.ui.registry.util.RegistryAddressFilter;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.supplier.util.SupplierValidationManager;
 import com.code.aon.ui.util.AonUtil;
@@ -92,6 +93,7 @@ public class IncomeController extends BasicController implements IWarehouseConst
 	private Warehouse newWarehouse;
 	private Double listTotal;
 	private BankAccountHelper accountHelper;
+	private RegistryAddressFilter addressesFilter;
 	
     public IncomeController() {
     	this.emailUtil = new WarehouseEmailUtil();
@@ -244,6 +246,17 @@ public class IncomeController extends BasicController implements IWarehouseConst
 	public void setListTotal(Double listTotal) {
 		this.listTotal = listTotal;
 	}
+	
+	public RegistryAddressFilter getAddressesFilter() {
+		if(addressesFilter==null)
+			this.addressesFilter = new RegistryAddressFilter(((Income)this.getTo()).getRegistry());
+		return addressesFilter;
+	}
+	
+	public void selectFilteredAddress(ActionEvent event) throws ManagerBeanException {
+		if(addressesFilter.getModel().isRowAvailable())
+			((Income)this.getTo()).setRegistryAddress(addressesFilter.getSelectedAddress());
+	}
 
 	public boolean isPending(){
 		Income income = (Income)this.getTo();
@@ -303,6 +316,7 @@ public class IncomeController extends BasicController implements IWarehouseConst
 
 	public void loadAddresses(Integer id) throws ManagerBeanException {
 		List<SelectItem> addresses = new LinkedList<SelectItem>();
+		this.addressesFilter = null;
 		if (id != null) {
 			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 			Criteria criteria = new Criteria();

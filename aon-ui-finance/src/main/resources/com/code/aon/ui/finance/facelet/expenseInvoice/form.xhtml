@@ -294,6 +294,9 @@
 			<ui:param name="bankAccountController" value="#{expenseInvoiceFinance.accountHelper}" />
 			<ui:param name="modalReRender" value="financeContainer,InvoiceFinance_bankAccount_div" />
 		</ui:include>
+		<ui:include src="/com/code/aon/ui/registry/facelet/raddress/filterModal.xhtml" >
+			<ui:param name="controller" value="#{expenseInvoice}" />
+		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalOcrInfo.xhtml">
 			<ui:param name="invoiceController" value="#{expenseInvoice}" />
 		</ui:include>

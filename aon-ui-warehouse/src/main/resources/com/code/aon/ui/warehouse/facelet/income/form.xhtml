@@ -170,6 +170,13 @@
 							disabled="#{!income.pending}">
 							<f:selectItems value="#{income.addresses}" />
 						</aon:selectOneMenu>
+						<aon:commandButton id="showAddressesFilterWindow"
+							value="&#160;" title="#{bundle.aon_filter} #{bundle.aon_address}"
+							styleClass="aon-icon-commandButton aon-lookupButton aon-margin-left"
+							rendered="#{income.addresses.size()>income.addressesFilter.quantityForEnable}" >
+							<f:setPropertyActionListener
+								target="#{income.addressesFilter.showAddressFilterWindow}" value="#{true}" />
+						</aon:commandButton>
 						<aon:outputLabel value="#{bundle.registry_no_address_available}"
 							rendered="#{income.addressCount == 0}"
 							styleClass="aon-italic" />
@@ -424,6 +431,9 @@
 			<ui:param name="bankAccountController" value="#{income.accountHelper}" />
 			<ui:param name="modalReRender" value="payMethodDiv" />
 		</ui:include>		
+		<ui:include src="/com/code/aon/ui/registry/facelet/raddress/filterModal.xhtml" >
+			<ui:param name="controller" value="#{income}" />
+		</ui:include>
 		<ui:include src="/com/code/aon/ui/product/facelet/product/item/modalPackage.xhtml">
 			<ui:param name="controller" value="#{incomeDetail}" />
 		</ui:include>

@@ -244,6 +244,13 @@
 							disabled="#{!purchase.pending}">
 							<f:selectItems value="#{purchase.addresses}" />
 						</aon:selectOneMenu>
+						<aon:commandButton id="showAddressesFilterWindow"
+							value="&#160;" title="#{bundle.aon_filter} #{bundle.aon_address}"
+							styleClass="aon-icon-commandButton aon-lookupButton aon-margin-left"
+							rendered="#{purchase.addresses.size()>purchase.addressesFilter.quantityForEnable}" >
+							<f:setPropertyActionListener
+								target="#{purchase.addressesFilter.showAddressFilterWindow}" value="#{true}" />
+						</aon:commandButton>
 						<aon:outputLabel value="#{bundle.registry_no_address_available}"
 							rendered="#{purchase.addressCount == 0}"
 							styleClass="aon-italic" />
@@ -491,6 +498,9 @@
 		<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">
 			<ui:param name="bankAccountController" value="#{purchase.accountHelper}" />
 			<ui:param name="modalReRender" value="payMethodDiv" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/registry/facelet/raddress/filterModal.xhtml" >
+			<ui:param name="controller" value="#{purchase}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/modalRemarks.xhtml">
 			<ui:param name="controller" value="#{purchase}" />

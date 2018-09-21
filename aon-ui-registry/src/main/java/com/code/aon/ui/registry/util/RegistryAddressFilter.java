@@ -20,21 +20,6 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.esferalia.aon.entity.IEntityAlias;
 
-/*
-		<ui:include src="/com/code/aon/ui/registry/facelet/raddress/filterModal.xhtml" >
-			<ui:param name="controller" value="#{controller}" />
-		</ui:include>	
-*/
-/*
-		<aon:commandButton id="showAddressesFilterWindow"
-			value="&#160;" title="#{bundle.aon_filter} #{bundle.aon_address}"
-			styleClass="aon-icon-commandButton aon-lookupButton aon-margin-left"
-			rendered="#{controller.addresses.size() > controller.addressesFilter.quantityForEnable}" >
-			<f:setPropertyActionListener
-				target="#{controller.addressesFilter.showAddressFilterWindow}" value="#{true}" />
-		</aon:commandButton>
- */
-
 public class RegistryAddressFilter implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
