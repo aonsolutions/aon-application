@@ -515,15 +515,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				
 				@Override
 				public void onCalculateSucces(AgreementDraftObject object) {
-					if(!categorySelected){
-						IFocusableEditor editor = getNextSalaryTableEditorForLevel(levelId);
-						if (editor != null)
-							editor.setFocus();
-					}else{
-						IFocusableEditor editor = getNextCategoryTableEditorForLevel(levelId);
-						if (editor != null)
-							editor.setFocus();
-					}
+					IFocusableEditor editor = categorySelected ? getNextCategoryTableEditorForLevel(levelId) :
+						getNextSalaryTableEditorForLevel(levelId);
+					if (editor != null)
+						editor.setFocus();
 				}
 
 				private boolean isCategorySelected() {
@@ -3179,10 +3174,16 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		int cols = 3;
 		int rows = levels != null ? levels.size() : 0;
 		
-		int next = cols * rows - 1;
-		result = salaryTableEditors.size() > next ? salaryTableEditors.get(next) : null;
+		for (int row = 0; row < rows; row++) {
+			int index = row * cols;
+			LevelEditor editor = (LevelEditor) salaryTableEditors.get(index);
+			if (editor.level.getId() == id) {
+				int next = index + 1;
+				return salaryTableEditors.size() > next ? salaryTableEditors.get(next) : null;
+			}
+		}
 		
-		return result;
+		return null;
 	}
 
 	private void loadCategoryTableEditor() {
