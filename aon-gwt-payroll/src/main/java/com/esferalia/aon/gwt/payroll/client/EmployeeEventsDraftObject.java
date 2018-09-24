@@ -447,6 +447,12 @@ public class EmployeeEventsDraftObject {
 					mapEventsVar.put(varName, varList);
 				}
 				
+//				for(String name : mapEventsVar.keySet()){
+//					for(EmployeeEventsVariable var: mapEventsVar.get(name)){
+//						Window.alert("SIN MODIF : " +name+" = "+var.getValue()+", startDate :"+var.getStartDate()+", endDate :"+var.getEndDate());
+//					}
+//				}
+				
 				modifyMapEventsVar();
 				
 				//IMPRIMIR VARIABLES
@@ -513,7 +519,7 @@ public class EmployeeEventsDraftObject {
 								eVar = new EmployeeEventsVariable(
 										DateUtils.getFirstDayOfMonth(eventVarList.get(i).getStartDate()), 
 										DateUtils.getLastDayOfMonth(eventVarList.get(i).getStartDate()),
-										days);
+										days + eventVarList.get(i).getValue());
 								days = 0.00;
 							}
 							newEventsList.add(eVar);

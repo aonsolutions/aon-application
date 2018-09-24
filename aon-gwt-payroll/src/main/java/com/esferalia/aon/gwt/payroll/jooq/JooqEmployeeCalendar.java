@@ -621,14 +621,20 @@ public class JooqEmployeeCalendar {
 											sqlStartDateType, sqlEndDateType).execute();
 						}
 						
-						String expression = calculateExpression(DateUtils.copyDateOnly(auxStartDateType),
-								DateUtils.copyDateOnly(javaEndDateType));
+						if(sqlStartDateType.getMonth() == sqlEndDateType.getMonth()){
+							String expression = calculateExpression(DateUtils.copyDateOnly(auxStartDateType),
+									DateUtils.copyDateOnly(javaEndDateType));
+							
+							dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+									CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+									CONTRACT_DATA.END_DATE)
+									.values(domain, dayType, contract, expression, 
+											sqlStartDateType, sqlEndDateType).execute();
+						}else{
+							createAndUpdateStrech(dslContext, domain, dayType, contract, sqlStartDateType, sqlEndDateType);
+						}
 						
-						dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
-								CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
-								CONTRACT_DATA.END_DATE)
-								.values(domain, dayType, contract, expression, 
-										sqlStartDateType, sqlEndDateType).execute();
+						
 					}
 					
 					dayType = calculateDayType(updateDaysTypeMap.get(dateType));
@@ -642,6 +648,54 @@ public class JooqEmployeeCalendar {
 		
 	}
 	
+	private static void createAndUpdateStrech(DSLContext dslContext, Integer domain, String dayType, Integer contract,
+			Date sqlStartDateType, Date sqlEndDateType) {
+		
+		java.util.Date startDate = new java.util.Date(sqlStartDateType.getTime());
+		java.util.Date endDate = new java.util.Date(sqlEndDateType.getTime());
+		java.util.Date iterableDate = new java.util.Date();
+		iterableDate = DateUtils.copyDateOnly(startDate);
+		Integer expression = 0;
+		
+		while(startDate.getMonth() == iterableDate.getMonth()){
+			DateUtils.addDays2Date(iterableDate, 1);
+			expression++;
+		}
+		
+		//Resto un día para volver al mes anterior
+		DateUtils.addDays2Date(iterableDate, -1);
+		Date sqlStartDate = new Date(startDate.getTime());
+		Date sqlEndDate = new Date(iterableDate.getTime());
+		
+		dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+				CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+				CONTRACT_DATA.END_DATE)
+				.values(domain, dayType, contract, expression.toString(), 
+						sqlStartDate, sqlEndDate).execute();
+		
+		//Sumo un día para volver al primer día del mes siguiente
+		expression = 0;
+		DateUtils.addDays2Date(iterableDate, 1);
+		startDate = DateUtils.copyDateOnly(iterableDate);
+		
+		while(!iterableDate.equals(endDate)){
+			DateUtils.addDays2Date(iterableDate, 1);
+			expression++;
+		}
+		expression++;
+		
+		sqlStartDate = new Date(startDate.getTime());
+		sqlEndDate = new Date(endDate.getTime());
+		
+		dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+				CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+				CONTRACT_DATA.END_DATE)
+				.values(domain, dayType, contract, expression.toString(), 
+						sqlStartDate, sqlEndDate).execute();
+		
+		
+	}
+
 	private static Date parseEndDateForStrech(java.util.Date startDateAux, java.util.Date endDateAux) {
 		java.util.Date date = DateUtils.copyDateOnly(endDateAux);
 		
