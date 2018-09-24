@@ -279,7 +279,7 @@ public class AccountStatementDAO {
 					if (params.isByMonth()) {
 						int year = AonNumberUtils.toint( AonStringUtils.substring( aos.getMonth(),0 , 4));
 						int month = AonNumberUtils.toint( AonStringUtils.substring( aos.getMonth(), 4));
-						Date firstDay = AonDateUtils.getDate(year, month, 1);
+						Date firstDay = AonDateUtils.getDate(year, (month - 1), 1);
 						Date lastDay = AonDateUtils.getMonthLastDay(firstDay);
 						DateInterval i = new DateInterval()
 								.setStart(firstDay)
