@@ -13,15 +13,22 @@ public class AccountOperatingReport implements Serializable {
 	private static final long serialVersionUID = -3255950085921957296L;
 
 	public static enum AccountOperatingStatementType implements Serializable {
-		SALES (false,"INGRESOS") { 
+//		+ IMPORTE NETO CIFRA DE NEGOCIOS
+//			700		701		702		703		704
+//			705		706		708		709
+		SALES (false,"IMPORTE NETO CIFRA DE NEGOCIOS") { 
 			@Override
 			public boolean accept(String code) {
-				return AonStringUtils.startsWith(code, "70")
-					|| AonStringUtils.startsWith(code, "71")
-					|| AonStringUtils.startsWith(code, "72")
-					|| AonStringUtils.startsWith(code, "73")
-					|| AonStringUtils.startsWith(code, "75")
-					|| AonStringUtils.startsWith(code, "76");
+				return AonStringUtils.startsWith(code, "700")
+					|| AonStringUtils.startsWith(code, "701")
+					|| AonStringUtils.startsWith(code, "702")
+					|| AonStringUtils.startsWith(code, "703")
+					|| AonStringUtils.startsWith(code, "704")
+					|| AonStringUtils.startsWith(code, "705")
+					|| AonStringUtils.startsWith(code, "706")
+					|| AonStringUtils.startsWith(code, "708")
+					|| AonStringUtils.startsWith(code, "709")
+					;
 			}
 			@Override
 			public AccountOperatingStatementType modifies() {
@@ -34,10 +41,55 @@ public class AccountOperatingReport implements Serializable {
 				return GROSS_MARGIN;
 			}
 		}
-		,PURCHASES (false,"COMPRAS"){
+//		+/- VARIACIÓN DE EXISTENCIAS PT
+//			71
+		,STOCK (false,"VARIACI\u00D3N DE EXISTENCIAS") {
 			@Override
 			public boolean accept(String code) {
-				return AonStringUtils.startsWith(code, "60")
+				return AonStringUtils.startsWith(code, "71");
+			}
+			@Override
+			public AccountOperatingStatementType modifies() {
+				return STOCK_TOTAL;
+			}
+		}
+		,STOCK_TOTAL (true,"Total VARIACI\u00D3N DE EXISTENCIAS") {
+			@Override
+			public AccountOperatingStatementType modifies() {
+				return GROSS_MARGIN;
+			}
+		}
+//		+ TRABAJOS REALIZADOS POR LA EMPRESA PARA SU ACTIVO
+//			73
+		,WORK (false,"TRABAJOS REALIZADOS POR LA EMPRESA PARA SU ACTIVO"){
+			@Override
+			public boolean accept(String code) {
+				return AonStringUtils.startsWith(code, "73");
+			}
+			@Override
+			public AccountOperatingStatementType modifies() {
+				return WORK_TOTAL;
+			}
+		}
+		,WORK_TOTAL (true,"Total TRABAJOS REALIZADOS POR LA EMPRESA PARA SU ACTIVO") {
+			@Override
+			public AccountOperatingStatementType modifies() {
+				return GROSS_MARGIN;
+			}
+		}
+//		- APROVISIONAMIENTOS
+//			600		601		602		606		607
+//			608		609		61
+		,PURCHASES (false,"APROVISIONAMIENTOS"){
+			@Override
+			public boolean accept(String code) {
+				return AonStringUtils.startsWith(code, "600")
+					|| AonStringUtils.startsWith(code, "601")
+					|| AonStringUtils.startsWith(code, "602")
+					|| AonStringUtils.startsWith(code, "606")
+					|| AonStringUtils.startsWith(code, "607")
+					|| AonStringUtils.startsWith(code, "608")
+					|| AonStringUtils.startsWith(code, "609")
 					|| AonStringUtils.startsWith(code, "61");
 			}
 			@Override
@@ -45,7 +97,7 @@ public class AccountOperatingReport implements Serializable {
 				return PURCHASES_TOTAL;
 			}
 		}
-		,PURCHASES_TOTAL (true,"Total COMPRAS"){
+		,PURCHASES_TOTAL (true,"Total APROVISIONAMIENTOS"){
 			@Override
 			public AccountOperatingStatementType modifies() {
 				return GROSS_MARGIN;
@@ -57,25 +109,29 @@ public class AccountOperatingReport implements Serializable {
 				return EBITDA;
 			}
 		}
-		,OPERATING_EXPENSES (false,"Total GASTOS FUNCIONAMIENTO"){
+//		+ OTROS INGRESOS DE EXPLOTACIÓN
+//			75		740		747
+		,OTHER_INCOMES (false, "OTROS INGRESOS DE EXPLOTACI\u00D3N") {
 			@Override
 			public boolean accept(String code) {
-				return AonStringUtils.startsWith(code, "62")
-					|| AonStringUtils.startsWith(code, "65")
-					|| AonStringUtils.startsWith(code, "66");
+				return AonStringUtils.startsWith(code, "75")
+					|| AonStringUtils.startsWith(code, "740")
+					|| AonStringUtils.startsWith(code, "747")
+					;
 			}
 			@Override
 			public AccountOperatingStatementType modifies() {
-				return OPERATING_EXPENSES_TOTAL;
+				return OTHER_INCOMES_TOTAL;
 			}
 		}
-		,OPERATING_EXPENSES_TOTAL (true,"Total GASTOS FUNCIONAMIENTO"){
+		,OTHER_INCOMES_TOTAL (true,"Total OTROS INGRESOS DE EXPLOTACI\u00D3N"){
 			@Override
 			public AccountOperatingStatementType modifies() {
-				return EXPENSES_TOTAL;
+				return EBITDA;
 			}
 		}
-		
+//		- GASTOS DE PERSONAL
+//			64
 		,SALARIES (false,"Total GASTOS DE PERSONAL"){
 			@Override
 			public boolean accept(String code) {
@@ -87,6 +143,25 @@ public class AccountOperatingReport implements Serializable {
 			}
 		}
 		,SALARIES_TOTAL (true,"Total GASTOS DE PERSONAL"){
+			@Override
+			public AccountOperatingStatementType modifies() {
+				return EXPENSES_TOTAL;
+			}
+		}
+//		- GASTOS FUNCIONAMIENTO
+//		62		65
+		,OPERATING_EXPENSES (false,"Total GASTOS FUNCIONAMIENTO"){
+			@Override
+			public boolean accept(String code) {
+				return AonStringUtils.startsWith(code, "62")
+					|| AonStringUtils.startsWith(code, "65");
+			}
+			@Override
+			public AccountOperatingStatementType modifies() {
+				return OPERATING_EXPENSES_TOTAL;
+			}
+		}
+		,OPERATING_EXPENSES_TOTAL (true,"Total GASTOS FUNCIONAMIENTO"){
 			@Override
 			public AccountOperatingStatementType modifies() {
 				return EXPENSES_TOTAL;
@@ -104,13 +179,186 @@ public class AccountOperatingReport implements Serializable {
 				return RESULT;
 			}
 		}
+		
+//		+/- INGRESOS Y GASTOS EXCEPCIONALES
+//			746		778		678		77		67		768		668
+		,EXTRA_INCOME_EXPENSES (false,"INGRESOS Y GASTOS EXCEPCIONALES") {
+			@Override
+			public boolean accept(String code) {
+				return AonStringUtils.startsWith(code, "746")
+					|| AonStringUtils.startsWith(code, "778")
+					|| AonStringUtils.startsWith(code, "678")
+					|| AonStringUtils.startsWith(code, "77")
+					|| AonStringUtils.startsWith(code, "67")
+					|| AonStringUtils.startsWith(code, "768")
+					|| AonStringUtils.startsWith(code, "668")
+					;
+			}
+			@Override
+			public AccountOperatingStatementType modifies() {
+				return EXTRA_INCOME_EXPENSES_TOTAL;
+			}
+		}
+		,EXTRA_INCOME_EXPENSES_TOTAL (true, "Total INGRESOS Y GASTOS EXCEPCIONALES"){
+			@Override
+			public AccountOperatingStatementType modifies() {
+				return RESULT;
+			}
+		}
+//		+/- INGRESOS Y GASTOS FINANCIEROS
+//			760		761		762		767		769
+//			660		661		662		664		665		669
+		,FINANCIAL_INCOME_EXPENSES (false,"INGRESOS Y GASTOS FINANCIEROS") {
+			@Override
+			public boolean accept(String code) {
+				return AonStringUtils.startsWith(code, "760")
+					|| AonStringUtils.startsWith(code, "761")
+					|| AonStringUtils.startsWith(code, "762")
+					|| AonStringUtils.startsWith(code, "767")
+					|| AonStringUtils.startsWith(code, "769")
+					|| AonStringUtils.startsWith(code, "660")
+					|| AonStringUtils.startsWith(code, "661")
+					|| AonStringUtils.startsWith(code, "662")
+					|| AonStringUtils.startsWith(code, "664")
+					|| AonStringUtils.startsWith(code, "665")
+					|| AonStringUtils.startsWith(code, "669")
+					;
+			}
+			@Override
+			public AccountOperatingStatementType modifies() {
+				return FINANCIAL_INCOME_EXPENSES_TOTAL;
+			}
+		}
+		,FINANCIAL_INCOME_EXPENSES_TOTAL (true, "Total INGRESOS Y GASTOS FINANCIEROS"){
+			@Override
+			public AccountOperatingStatementType modifies() {
+				return RESULT;
+			}
+		}
+//		- IMPUESTOS
+//			633		638		6300		6311		631
+//			634		636		639		
+		,TAXES (false,"IMPUESTOS") {
+			@Override
+			public boolean accept(String code) {
+				return AonStringUtils.startsWith(code, "633")
+					|| AonStringUtils.startsWith(code, "638")
+					|| AonStringUtils.startsWith(code, "6300")
+					|| AonStringUtils.startsWith(code, "6311")
+					|| AonStringUtils.startsWith(code, "631")
+					|| AonStringUtils.startsWith(code, "634")
+					|| AonStringUtils.startsWith(code, "636")
+					|| AonStringUtils.startsWith(code, "639")
+					;
+			}
+			@Override
+			public AccountOperatingStatementType modifies() {
+				return TAXES_TOTAL;
+			}
+		}
+		,TAXES_TOTAL (true, "Total IMPUESTOS"){
+			@Override
+			public AccountOperatingStatementType modifies() {
+				return RESULT;
+			}
+		}
+//		- AMORTIZACIÓN
+//		68
+		,AMORTIZATION (false,"AMORTIZACI\u00D3N") {
+			@Override
+			public boolean accept(String code) {
+				return AonStringUtils.startsWith(code, "68")
+				;
+			}
+			@Override
+			public AccountOperatingStatementType modifies() {
+				return AMORTIZATION_TOTAL;
+			}
+		}
+		,AMORTIZATION_TOTAL (true, "Total AMORTIZACI\u00D3N"){
+			@Override
+			public AccountOperatingStatementType modifies() {
+				return RESULT;
+			}
+		}
+//		+/- PROVISIONES
+//			7950		7957		6930		7930		6931		6932		6933
+//			7931		7932		7933		694		695		794		7954
+//			7951		7952		7955		7956		690		691		692
+//			790		791		792		663		763		666		667		673		675		696
+//			697		698		699		766		773		775		796		797		798		799
+		,PROVISION (false,"PROVISIONES") {
+			@Override
+			public boolean accept(String code) {
+				return AonStringUtils.startsWith(code, "7950")
+					|| AonStringUtils.startsWith(code, "7957")
+					|| AonStringUtils.startsWith(code, "6930")
+					|| AonStringUtils.startsWith(code, "7930")
+					|| AonStringUtils.startsWith(code, "6931")
+					|| AonStringUtils.startsWith(code, "6932")
+					|| AonStringUtils.startsWith(code, "6933")
+					|| AonStringUtils.startsWith(code, "7931")
+					|| AonStringUtils.startsWith(code, "7932")
+					|| AonStringUtils.startsWith(code, "7933")
+					|| AonStringUtils.startsWith(code, "694")
+					|| AonStringUtils.startsWith(code, "695")
+					|| AonStringUtils.startsWith(code, "794")
+					|| AonStringUtils.startsWith(code, "7954")
+					|| AonStringUtils.startsWith(code, "7951")
+					|| AonStringUtils.startsWith(code, "7952")
+					|| AonStringUtils.startsWith(code, "7955")
+					|| AonStringUtils.startsWith(code, "7956")
+					|| AonStringUtils.startsWith(code, "690")
+					|| AonStringUtils.startsWith(code, "691")
+					|| AonStringUtils.startsWith(code, "692")
+					|| AonStringUtils.startsWith(code, "790")
+					|| AonStringUtils.startsWith(code, "791")
+					|| AonStringUtils.startsWith(code, "792")
+					|| AonStringUtils.startsWith(code, "663")
+					|| AonStringUtils.startsWith(code, "763")
+					|| AonStringUtils.startsWith(code, "666")
+					|| AonStringUtils.startsWith(code, "667")
+					|| AonStringUtils.startsWith(code, "673")
+					|| AonStringUtils.startsWith(code, "675")
+					|| AonStringUtils.startsWith(code, "696")
+					|| AonStringUtils.startsWith(code, "697")
+					|| AonStringUtils.startsWith(code, "698")
+					|| AonStringUtils.startsWith(code, "699")
+					|| AonStringUtils.startsWith(code, "766")
+					|| AonStringUtils.startsWith(code, "773")
+					|| AonStringUtils.startsWith(code, "775")
+					|| AonStringUtils.startsWith(code, "796")
+					|| AonStringUtils.startsWith(code, "797")
+					|| AonStringUtils.startsWith(code, "798")
+					|| AonStringUtils.startsWith(code, "799")
+					;
+			}
+			@Override
+			public AccountOperatingStatementType modifies() {
+				return TAXES_TOTAL;
+			}
+		}
+		,PROVISION_TOTAL (true, "Total PROVISIONES"){
+			@Override
+			public AccountOperatingStatementType modifies() {
+				return RESULT;
+			}
+		}
+		
 		,OTHER (false,"OTROS CONCEPTOS") {
 			@Override
 			public boolean accept(String code) {
-				return !SALES_TOTAL.accept(code) 
-					&& !PURCHASES.accept(code) 
-					&& !OPERATING_EXPENSES.accept(code)
+				return !SALES.accept(code) 
+					&& !STOCK.accept(code)
+					&& !WORK.accept(code)
+					&& !PURCHASES.accept(code)
+					&& !OTHER_INCOMES.accept(code)
 					&& !SALARIES.accept(code)
+					&& !OPERATING_EXPENSES.accept(code)
+					&& !EXTRA_INCOME_EXPENSES.accept(code)
+					&& !FINANCIAL_INCOME_EXPENSES.accept(code)
+					&& !TAXES.accept(code)
+					&& !PROVISION.accept(code)
 					&& AonStringUtils.isNumeric(code)
 				;
 			}
