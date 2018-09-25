@@ -244,6 +244,7 @@ public class AccountOperatingReport implements Serializable {
 				return AonStringUtils.startsWith(code, "633")
 					|| AonStringUtils.startsWith(code, "638")
 					|| AonStringUtils.startsWith(code, "6300")
+					|| AonStringUtils.startsWith(code, "6301")
 					|| AonStringUtils.startsWith(code, "6311")
 					|| AonStringUtils.startsWith(code, "631")
 					|| AonStringUtils.startsWith(code, "634")
