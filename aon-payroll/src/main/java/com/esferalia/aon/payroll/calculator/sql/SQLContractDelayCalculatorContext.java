@@ -402,6 +402,7 @@ public class SQLContractDelayCalculatorContext extends
 				+" FROM " + SALARY
 				+" INNER JOIN " + SALARY_DATA + " ON (" + SALARY + "." + SalaryColumns.ID + " = " + SALARY_DATA + "." + SalaryDataColumns.SALARY + ")" 
 				+" WHERE " + SALARY + "." + SalaryColumns.CONTRACT + " = ? "
+				+" AND " + SALARY + "." + SalaryColumns.TYPE + " = 0 " 
 				+" AND " + SALARY + "." + SalaryColumns.START_DATE + " >= ? " 
 				+" AND " + SALARY + "." + SalaryColumns.END_DATE + " <= ? "
 				+" AND " + SALARY_DATA + "." + SalaryDataColumns.NAME + " = '" + CGC_BASE.getName() + "'"
