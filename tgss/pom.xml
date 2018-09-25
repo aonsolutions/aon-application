@@ -56,7 +56,7 @@
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
-					<execution>
+					<!--execution>
 						<id>xjc-response-bases</id>
 						<goals>
 							<goal>xjc</goal>
@@ -66,7 +66,7 @@
 							<packageName>net.aonsolutions.core.tgss.creta.jaxb.bases</packageName>
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
-					</execution>
+					</execution-->
 					<execution>
 						<id>xjc-response-rlc</id>
 						<goals>
@@ -80,7 +80,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			
+
 			<plugin>
 			    <groupId>org.jvnet.jaxb2.maven2</groupId>
 			    <artifactId>maven-jaxb2-plugin</artifactId>
@@ -112,12 +112,13 @@
  					<schemaIncludes>
                 		<include>DCL.xsd</include>
                 		<include>RNT.xsd</include>
+										<include>Bases.xsd</include>
                 		<include>Respuesta.xsd</include>
                 		<include>TrabajadoresTramos.xsd</include>
                 		<include>SolicitudCalculos.xsd</include>
                 		<include>SolicitudConfirmacion.xsd</include>
                 		<include>SolicitudTrabajadoresTramos.xsd</include>
-            		</schemaIncludes>			        
+            		</schemaIncludes>
 					<!-- Default to the schemaDirectory -->
 					<bindingDirectory>src/main/resources</bindingDirectory>
 					<bindingIncludes>
