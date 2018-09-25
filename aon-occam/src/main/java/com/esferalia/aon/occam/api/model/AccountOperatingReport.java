@@ -336,7 +336,7 @@ public class AccountOperatingReport implements Serializable {
 			}
 			@Override
 			public AccountOperatingStatementType modifies() {
-				return TAXES_TOTAL;
+				return PROVISION_TOTAL;
 			}
 		}
 		,PROVISION_TOTAL (true, "Total PROVISIONES"){
