@@ -534,7 +534,13 @@ public class AccountOperatingReport implements Serializable {
 	public void put(DateInterval inter, AccountOperatingStatement aos) {
 		String code = ensureAccount(aos);
 		ensureInterval( inter);
-		map.get(code).put(inter, aos);
+		AccountOperatingStatement exist = map.get(code).get(inter);
+		if ( exist == null) {
+			map.get(code).put(inter, aos);
+		} else {
+			exist.setDebit( AonMathUtils.round(exist.getDebit() + aos.getDebit() ));
+			exist.setCredit( AonMathUtils.round(exist.getCredit() + aos.getCredit() ));
+		}
 	}
 	private void ensureInterval(DateInterval inter) {
 		if (inter != null && !intervals.contains(inter)) {

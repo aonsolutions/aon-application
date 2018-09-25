@@ -272,6 +272,10 @@ public class AccountStatementDAO {
 		if (params.getActivity() != null) {
 			report.setSelectedActivity( CompanyDAO.getEnterpriseActivity(ctx, params.getActivity()) );
 		}
+		DateInterval totalPeriod = new DateInterval()
+				.setStart(report.getSelectedPeriod().getDeadline())	// Para que aparezca al final.
+				.setEnd(report.getSelectedPeriod().getDeadline())
+				.setName("Total " + report.getSelectedPeriod().getName());
 		LinkedHashMap<DateInterval,AccountingReportParams> intervals = getDateIntervals(ctx,params);
 		for (DateInterval inter : intervals.keySet()) {
 			operatingAccount(ctx, intervals.get(inter))
@@ -285,7 +289,8 @@ public class AccountStatementDAO {
 								.setStart(firstDay)
 								.setEnd(lastDay)
 								.setName(MONTH_DATE_FORMAT.format(firstDay));
-						report.put(i, aos);	
+						report.put(i, aos);
+						report.put(totalPeriod, aos);	
 					} else {
 						report.put(inter, aos);	
 					}
