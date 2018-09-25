@@ -118,7 +118,18 @@ public class Enterprises extends ResizeComposite implements
 	public void removeListener(Listener listener) {
 		listeners.remove(listener);
 	}
-
+	
+	public void refresh() {
+		setSelected(getSelected(), true);
+	}
+	
+	public TreeItem getSelected() {
+		return tree.getSelectedItem();
+	}
+	
+	public void setSelected(TreeItem treeItem, boolean fireEvents) {
+		tree.setSelectedItem(treeItem, fireEvents);
+	}
 	// -
 	
 	protected void onEnterprise(Enterprise enterprise, TreeItem rootItem) {

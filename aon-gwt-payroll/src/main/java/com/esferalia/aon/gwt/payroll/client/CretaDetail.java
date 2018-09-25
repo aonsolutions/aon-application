@@ -24,6 +24,7 @@ import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.payroll.client.MainCreta.JsFileComparator;
 import com.esferalia.aon.gwt.payroll.shared.CretaService;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.File;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsBases;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsBasesResult;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsEmployee;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsEvent;
@@ -34,7 +35,6 @@ import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.ValueUpdater;
-import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.builder.shared.InputBuilder;
@@ -162,6 +162,7 @@ public abstract class CretaDetail extends Composite {
 	private Timer jsFileToolTipTimer;
 	private HashSet<String> showingEmployees; 
 	private MultiSelectionModel<JsFile> jsFileSelectionModel;
+	private Map<String, CretaService.JsBases> basesMap;
 	private Map<String, CretaService.JsRespuesta> respuestasMap;
 	private Map<String, CretaService.JsTrabajadoresYTramos> trabajadoresYTramosMap;
 	private Map<String, MultiSelectionModel<String>> trabajadoresSelectionModel;
@@ -343,15 +344,49 @@ public abstract class CretaDetail extends Composite {
 				if (CretaDetail.this.popupTooltip != null)
 					CretaDetail.this.popupTooltip.hide();
 				
-				List<JsFile> jsFiles = new ArrayList<JsFile>(2);
+				List<JsFile> jsFiles = new ArrayList<JsFile>(3);
 				jsFiles.add(jsFile);
 				JsRespuesta jsRespuesta = CretaDetail.this.respuestasMap.get(jsFile.getId());
-				if ( jsRespuesta != null )
-					jsFiles.add(jsRespuesta);
+				if ( jsRespuesta != null ) {
+					
+					if ( !isSolicitudTrabajdoresYTramosRespuesta(jsRespuesta, jsFile))
+						jsFiles.add(jsRespuesta);
+					
+					for ( JsFile old: MainCreta.getOld(File.RESPUESTA, jsRespuesta) )
+						if ( !isSolicitudTrabajdoresYTramosRespuesta(old, jsFile)) 
+							jsFiles.add(old);
+					
+					JsBases jsBases = CretaDetail.this.basesMap.get(jsFile.getId());
+					if ( jsBases != null ) {
+						if ( replied(jsBases, jsFiles))
+							jsFiles.add(jsBases);
+
+						for ( JsFile old: MainCreta.getOld(File.BASES, jsBases) )
+							if ( replied(jsBases, jsFiles)) 
+								jsFiles.add(old);
+
+					}
+				}
 
 				CretaDetail.this.onJsFileDblClick(event.getClientX(),
 						event.getClientY(), jsFiles.toArray(new JsFile[jsFiles.size()]));
 
+			}
+			
+			boolean replied(JsFile jsBases, Collection<JsFile> jsRespuestas) {
+				for ( JsFile jsRespuesta: jsRespuestas ) 
+					if ( jsBases.getExternalReference().equals(jsRespuesta.getExternalReference()) )
+						return true;
+				
+				return false;
+			}
+
+			boolean isSolicitudTrabajdoresYTramosRespuesta(JsFile jsRespuesta, JsFile trabajadoresYTramos) {
+				if ( !CretaService.File.TRABAJADORES_TRAMOS.name().equals(trabajadoresYTramos.getName()) )
+					return false;
+				if ( trabajadoresYTramos.getExternalReference() == null )
+					return false;
+				return trabajadoresYTramos.getExternalReference().equals(jsRespuesta.getExternalReference());
 			}
 
 			@Override
@@ -379,6 +414,7 @@ public abstract class CretaDetail extends Composite {
 
 		dataGrid.setRowData(new ArrayList<CretaService.JsFile>(0));
 
+		basesMap = new HashMap<String, CretaService.JsBases>();
 		respuestasMap = new HashMap<String, CretaService.JsRespuesta>();
 		trabajadoresYTramosMap = new HashMap<String, CretaService.JsTrabajadoresYTramos>();
 
@@ -449,12 +485,13 @@ public abstract class CretaDetail extends Composite {
 	// ------------------------------------------------------------------------
 
 	public void onTrabajadoresYTramos() {
-		onTrabajadoresYTramos(new JsTrabajadoresYTramos[0], new JsRespuesta[0]);
+		onTrabajadoresYTramos(new JsTrabajadoresYTramos[0], new JsRespuesta[0], new JsBases[0]);
 	}
 
 	public void onTrabajadoresYTramos(
 			CretaService.JsTrabajadoresYTramos trabajadoresYTramos[],
-			CretaService.JsRespuesta respuestas[]) {
+			CretaService.JsRespuesta respuestas[],
+			CretaService.JsBases bases []) {
 
 		try {
 
@@ -462,10 +499,12 @@ public abstract class CretaDetail extends Composite {
 					.add(File.TRABAJADORES_TRAMOS, trabajadoresYTramos);
 
 			List<JsFile> filtered = new ArrayList<JsFile>();
-
+			
 			filtered.addAll(filter(trabajadoresYTramosMap.values()));
 
 			respuestasMap = MainCreta.add(File.RESPUESTA, respuestas);
+
+			basesMap = MainCreta.add(File.BASES, bases);
 
 			for (JsRespuesta jsRespuesta : respuestasMap.values()) {
 				if (!contains(filtered, jsRespuesta)
@@ -632,8 +671,9 @@ public abstract class CretaDetail extends Composite {
 	private native void exportSubmitComplete() /*-{
 		var that = this;
 		$wnd.__onTrabajadoresYTramos = $entry(function(trabajadoresYTramos,
-				respuestas) {
-			that.@com.esferalia.aon.gwt.payroll.client.CretaDetail::onTrabajadoresYTramos([Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsTrabajadoresYTramos;[Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsRespuesta;)(trabajadoresYTramos, respuestas);
+				respuestas,
+				bases) {
+			that.@com.esferalia.aon.gwt.payroll.client.CretaDetail::onTrabajadoresYTramos([Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsTrabajadoresYTramos;[Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsRespuesta;[Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsBases;)(trabajadoresYTramos, respuestas, bases);
 		});
 		$wnd.__onDocumentoCalculoLiquidacion = $entry(function(success,
 				errors) {

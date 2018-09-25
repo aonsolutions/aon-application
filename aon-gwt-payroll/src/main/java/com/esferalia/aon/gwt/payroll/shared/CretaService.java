@@ -3,11 +3,9 @@ package com.esferalia.aon.gwt.payroll.shared;
 import java.util.NoSuchElementException;
 
 import com.esferalia.aon.gwt.common.shared.HasId;
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.http.client.URL;
-import com.google.gwt.user.client.Window;
 
 public interface CretaService {
 
@@ -360,7 +358,9 @@ public interface CretaService {
 
 		@Override
 		public final String getId() {
-			return getCCC() + getFrom() + getType() ;
+			return getCCC() 
+				+ getFrom() 
+				+ getType() ;
 		}
 		// ----------------------------------- JSNI (Native JavaScript Methods)
 
@@ -399,6 +399,17 @@ public interface CretaService {
 		public final native JsEmployee[] getEmployees() /*-{
 			return this.employees;
 		}-*/;
+		
+		public final native String getExternalReference() /*-{
+		return this.externalReference;
+	}-*/;
+		
+
+	}
+
+	public static class JsBases extends JsFile {
+		protected JsBases() {
+		}
 
 	}
 

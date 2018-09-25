@@ -11,19 +11,18 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.payroll.shared.CretaService;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.File;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsBases;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsBasesResult;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsFile;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsRespuesta;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsTrabajadoresYTramos;
 import com.google.gwt.core.shared.GWT;
-import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -33,9 +32,6 @@ import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.xml.client.XMLParser;
-
-import net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta;
 
 public class CretaResponseDialog extends SelectDialog<CretaService.JsFile> {
 
@@ -174,12 +170,13 @@ public class CretaResponseDialog extends SelectDialog<CretaService.JsFile> {
 	}
 
 	public void onTrabajadoresYTramos() {
-		onTrabajadoresYTramos(new JsTrabajadoresYTramos[0], new JsRespuesta[0]);
+		onTrabajadoresYTramos(new JsTrabajadoresYTramos[0], new JsRespuesta[0], new JsBases[0]);
 	}
 
 	public void onTrabajadoresYTramos(
 			CretaService.JsTrabajadoresYTramos trabajadoresYTramos[],
-			CretaService.JsRespuesta respuestas[]) {
+			CretaService.JsRespuesta respuestas[],
+			CretaService.JsBases bases[]) {
 
 		try {
 			respuestasMap = MainCreta.add(File.RESPUESTA, respuestas);
@@ -299,8 +296,9 @@ public class CretaResponseDialog extends SelectDialog<CretaService.JsFile> {
 	private native void exportSubmitComplete() /*-{
 		var that = this;
 		$wnd.__onTrabajadoresYTramos = $entry(function(trabajadoresYTramos,
-				respuestas) {
-			that.@com.esferalia.aon.gwt.payroll.client.CretaResponseDialog::onTrabajadoresYTramos([Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsTrabajadoresYTramos;[Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsRespuesta;)(trabajadoresYTramos, respuestas);
+				respuestas,
+				bases) {
+			that.@com.esferalia.aon.gwt.payroll.client.CretaResponseDialog::onTrabajadoresYTramos([Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsTrabajadoresYTramos;[Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsRespuesta;[Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsBases;)(trabajadoresYTramos, respuestas, bases);
 		});
 	}-*/;
 

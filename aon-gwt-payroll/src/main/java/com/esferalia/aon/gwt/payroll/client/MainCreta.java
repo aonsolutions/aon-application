@@ -33,6 +33,7 @@ import com.esferalia.aon.gwt.payroll.shared.BankAccount;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CretaService;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.File;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsBases;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsBasesResult;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsEmployee;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsError;
@@ -91,14 +92,20 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		return add(file.name(), ts);
 	}
 	
+	public static <T extends JsFile> Collection<T> getOld(File file, T t) {
+		return getOlder(file.name(), t);
+	}
+
 	private final class MainCretaSyncCallback implements SyncCallback {
 
 		private IndeterminateTask syncTask ;
+		private List<JsBases> jsBasess;
 		private List<JsRespuesta> jsRespuestas;
 		private List<JsTrabajadoresYTramos> jsTrabajadoresYTramoss ;
 		
 		public MainCretaSyncCallback(IndeterminateTask syncTask) {
 			this.syncTask = syncTask;
+			this.jsBasess = new ArrayList<JsBases>(5);
 			this.jsRespuestas = new ArrayList<JsRespuesta>(5);
 			this.jsTrabajadoresYTramoss = new ArrayList<JsTrabajadoresYTramos>(5);
 		}
@@ -108,16 +115,27 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			syncTask.messageChanged("Sincronizaci\u00F3n completada");
 			syncTask.finished();
 			MainCreta.this.closeFootPanel();
+			MainCreta.this.enterprises.refresh();
 			
-			if ( !jsRespuestas.isEmpty() )
-				MainCreta.add(File.RESPUESTA, jsRespuestas.toArray(new JsRespuesta[jsRespuestas.size()]));
 			if ( !jsTrabajadoresYTramoss.isEmpty() )
 				MainCreta.add(File.TRABAJADORES_TRAMOS, jsTrabajadoresYTramoss.toArray(new JsTrabajadoresYTramos[jsTrabajadoresYTramoss.size()]));
+			if ( !jsRespuestas.isEmpty() )
+				MainCreta.add(File.RESPUESTA, jsRespuestas.toArray(new JsRespuesta[jsRespuestas.size()]));
+			try {
+				if ( !jsBasess.isEmpty() )
+					MainCreta.add(File.BASES, jsBasess.toArray(new JsBases[jsBasess.size()]));
+			} catch ( Throwable t ) {
+			}
 			
+			MainCreta.this.enterprises.refresh();
+			
+			jsBasess.clear();
 			jsRespuestas.clear();
 			jsTrabajadoresYTramoss.clear();
 			
 			MainCreta.this.enterprisesCretaDetail.onTrabajadoresYTramos();
+			
+
 			
 		}
 
@@ -136,6 +154,23 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			// TODO Auto-generated method stub
 		}
 
+		@Override
+		public void onBases(JsBases jsBases ){
+			syncTask.messageChanged(
+					File.BASES.getFilename()
+					+ " " + Province.getName(jsBases.getCCC().substring(4, 6))
+					+ " (" + jsBases.getCCC().substring(6) + ")"
+					+ " Sincronizado"
+					) ;
+			// TODO:
+			jsBasess.add(jsBases);
+			if ( jsBasess.size() < 5) 
+				return;
+			
+			MainCreta.add(File.BASES, jsBasess.toArray(new JsBases[5]));
+			jsBasess.clear();
+		}
+		
 		@Override
 		public void onRespuesta(JsRespuesta jsRespuesta ){
 			syncTask.messageChanged(
@@ -166,12 +201,11 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					+ " (" + jsTrabajadoresYTramos.getCCC().substring(6) + ")"
 					+ " Sincronizado"
 					) ;
-
 			jsTrabajadoresYTramoss.add(jsTrabajadoresYTramos);
 			if ( jsTrabajadoresYTramoss.size() < 5) 
 				return;
-			
 			MainCreta.add(File.TRABAJADORES_TRAMOS, jsTrabajadoresYTramoss.toArray(new JsTrabajadoresYTramos[5]));
+			
 			jsTrabajadoresYTramoss.clear();
 		}
 	}
@@ -184,6 +218,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		void onBegin();
 		void onMsg(String msg);
 		void onError(Throwable caught);
+		void onBases(JsBases bases);
 		void onRespuesta(JsRespuesta respuesta);
 		void onTrabajadoresYTramos(JsTrabajadoresYTramos trabajadoresYTramos);
 	}
@@ -1307,7 +1342,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			for (T jsFile : jsFiles)
 				if (MainCreta.accept(ccc, jsFile.getCCC()))
 					filtered.add(jsFile);
-
+			
 			return filtered;
 		}
 
@@ -1726,7 +1761,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 							// TODO: Errors !!!
 							String html = xhr.getResponseText();
 							RegExp regExp = RegExp.compile(
-									"parent.__onTrabajadoresYTramos\\s*\\(\\s*(\\[(.|[\\r\\n])*\\])\\s*,\\s*(\\[(.|[\\r\\n])*\\])\\s*\\)",
+									"parent.__onTrabajadoresYTramos\\s*\\(\\s*(\\[(.|[\\r\\n])*\\])\\s*,\\s*(\\[(.|[\\r\\n])*\\])\\s*\\,\\s*(\\[(.|[\\r\\n])*\\])\\s*\\)", 
 									"gim");
 							MatchResult matchResult = regExp.exec(html);
 							JsArray<JsFile> trabajadoresYTramosArr = eval("("+matchResult.getGroup(1)+")");
@@ -1744,6 +1779,13 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 							
 							MainCreta.add(File.RESPUESTA, respuestas);
 							
+							JsArray<JsFile> basesArr = eval("("+matchResult.getGroup(5)+")");
+							JsFile bases [] = new JsFile[basesArr.length()];
+							for ( int i = 0; i < bases.length; i++ )
+								bases[i] = basesArr.get(i);
+
+							MainCreta.add(File.BASES, bases);
+
 							cb.onSuccess(null);
 						} catch ( Throwable caught) {
 							cb.onFailure(caught);
@@ -1848,6 +1890,31 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					}
 
 
+					private void bases(String line){
+						if ( line == null)
+							return;
+						if ( line.isEmpty())
+							return;
+						if ( line.startsWith(","))
+							return;
+						
+						if ( line.startsWith("//MESSAGE ")){
+							cb.onMsg(line.substring(10));
+						}
+						else if ( line.startsWith("//END_BASES")){
+							consumer = this::end;
+							cb.onEnd();
+						}
+						else {
+							try {
+								JsBases bases = eval("("+line+")");
+								cb.onBases(bases);
+							} catch ( Throwable t ) {
+								cb.onError(t);
+							}
+						}
+					}
+
 					private void respuestas(String line){
 						if ( line == null)
 							return;
@@ -1860,8 +1927,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 							cb.onMsg(line.substring(10));
 						}
 						else if ( line.startsWith("//END_RESPUESTAS")){
-							consumer = this::end;
-							cb.onEnd();
+							consumer = this::beginBases;
 						}
 						else {
 							try {
@@ -1897,6 +1963,11 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 						}
 					}
 					
+					private void beginBases(String line) {
+						if ( line.startsWith("//BEGIN_BASES"))
+							consumer = this::bases;
+					}
+
 					private void beginRespuestas(String line) {
 						if ( line.startsWith("//BEGIN_RESPUESTAS"))
 							consumer = this::respuestas;
@@ -2063,18 +2134,41 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 
 	private static <T extends JsFile> Map<String, T> add(String key, T ts[]) {
-
 		Map<String, T> map = get(key);
 		for (T t : ts) {
-			if ( isOlder(t, map.get(t.getId())) )
-				continue;
-			
-			map.put(t.getId(), t);
+			T old ;
+			try {
+				if ( isOlder(t, map.get(t.getId())) )
+					old = t;
+				else
+					old = map.put(t.getId(), t);
+			} catch ( Throwable e ) {
+				old = map.put(t.getId(), t);
+			}
+			if ( old != null )
+				addOlder(map, old);
 		}
 
 		return Collections.unmodifiableMap(map);
 	}
+
+	private static <T extends JsFile> Collection<T> getOlder(String key, T t) {
+		Map<String, T> map = get(key);
+		String id = t.getId();
+		List<T> olds = new ArrayList<T>();
+		for ( int i = 1; map.containsKey(id+i); i++)
+			olds.add(map.get(id+i));
+		
+		return olds;
+	}
 	
+	private static <T extends JsFile>  void addOlder(Map<String, T> map, T t) {
+		int i = 1;
+		while ( map.containsKey(t.getId() + i))
+			i++;
+		
+		map.put(t.getId() + i, t);
+	}
 
 	private static <T extends JsFile> Map<String, T> get(String key) {
 		Map<String, T> map ;

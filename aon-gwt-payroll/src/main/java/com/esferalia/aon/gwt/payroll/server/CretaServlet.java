@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -85,6 +86,7 @@ import net.aonsolutions.core.tgss.creta.jaxb.bases.LiquidacionBuilder;
 import net.aonsolutions.core.tgss.creta.jaxb.bases.TramoBuilder;
 import net.aonsolutions.core.tgss.creta.jaxb.dcl.LineaDCL;
 import net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta;
+import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.ObjectFactory;
 
 @MultipartConfig
 @SuppressWarnings("serial")
@@ -347,7 +349,10 @@ public class CretaServlet extends HttpServlet
 					findRespuestas(req)
 				)
 				.filter(r -> r.getLiquidacion() != null && r.getLiquidacion().size() > 0 )
-				.filter(r -> toDate(r.getLiquidacion().get(0).getFechaHoraRecaudacion()).after(fromDate))
+				.filter(r -> toDate(r.getLiquidacion().get(0).getFechaHoraRecaudacion()).after(fromDate)),
+				findBases(req)
+				.filter(b -> b.getLiquidacion() != null && b.getLiquidacion().size() > 0 )
+				//.filter(b -> toDate(b.getLiquidacion().get(0).getFechaControl()).after(fromDate))
 		);
 		//@formatter:on
 		
@@ -564,7 +569,17 @@ public class CretaServlet extends HttpServlet
 	}
 
 	private static <T> Optional<T> unmarshall(Class<T> clazz, byte [] bytes) {
-		InputStream is = new ByteArrayInputStream(bytes);
+		
+		int offset = 0;
+		int length = bytes.length;
+		for ( ; offset < bytes.length ; offset++, length-- )
+			if ( bytes[offset] == '<') 
+				break;
+		
+		if ( length == 0 )
+			return Optional.empty();
+			
+		InputStream is = new ByteArrayInputStream(bytes, offset, length);
 		try {
 			return Optional.of(Utils.unmarshal(clazz, is));
 		} catch (Throwable t) {
@@ -576,6 +591,7 @@ public class CretaServlet extends HttpServlet
 			}
 		}
 	}
+
 
 	private static int compare(net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos t1,
 			net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos t2) {
@@ -591,6 +607,42 @@ public class CretaServlet extends HttpServlet
 		return String.format("%s-%02d", p.getAnho(), Integer.parseInt(p.getMes()));
 	}
 
+	private static net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta
+	create(net.aonsolutions.core.tgss.creta.jaxb.respuesta.Liquidacion l, 
+		net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta r ) {
+
+		net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta respuesta = 
+		new net.aonsolutions.core.tgss.creta.jaxb.respuesta.ObjectFactory().createRespuesta();
+		
+		respuesta.setErrores(r.getErrores());
+		respuesta.setAutorizado(r.getAutorizado());
+		respuesta.setReferenciaExterna(r.getReferenciaExterna());
+		respuesta.setAccionDatosBancarios(r.getAccionDatosBancarios());
+		respuesta.setIndicadorRectificacion(r.getIndicadorRectificacion());
+
+		respuesta.setLiquidacion(Collections.singletonList(l));
+		
+		return respuesta;
+		
+	}
+
+	private static net.aonsolutions.core.tgss.creta.jaxb.bases.Bases
+	create(net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion l, 
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Bases b ) {
+
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Bases bases = 
+		new net.aonsolutions.core.tgss.creta.jaxb.bases.ObjectFactory().createBases();
+		
+		bases.setAutorizado(b.getAutorizado());
+		bases.setReferenciaExterna(b.getReferenciaExterna());
+		bases.setIndicadorRectificacion(b.getIndicadorRectificacion());
+
+		bases.setLiquidacion(Collections.singletonList(l));
+		
+		return bases;
+		
+	}
+
 	private static String toJSON(net.aonsolutions.core.tgss.creta.jaxb.Liquidacion<?, ?, ?, ?, ?> l) {
 
 		StringBuffer buffer = new StringBuffer();
@@ -598,9 +650,13 @@ public class CretaServlet extends HttpServlet
 				l.getCcc().getNumero()));
 		buffer.append(String.format("\"type\":\"%s\",", l.getTipo()));
 		buffer.append(String.format("\"from\":\"%s\",", toString(l.getPeriodoDesde())));
-		buffer.append(String.format("\"to\":\"%s\",", toString(l.getPeriodoDesde())));
-		buffer.append(String.format("\"date\":\"%s\",", toString(l.getFechaHoraRecaudacion().getFechaRecaudacion())));
-		buffer.append(String.format("\"time\":\"%s\"", l.getFechaHoraRecaudacion().getHoraRecaudacion()));
+		buffer.append(String.format("\"to\":\"%s\"", toString(l.getPeriodoDesde())));
+		try {
+			buffer.append(String.format(",\"date\":\"%s\"", toString(l.getFechaHoraRecaudacion().getFechaRecaudacion())));
+			buffer.append(String.format(",\"time\":\"%s\"", l.getFechaHoraRecaudacion().getHoraRecaudacion()));
+		} catch ( UnsupportedOperationException e) {
+			
+		}
 		return buffer.toString();
 	}
 
@@ -614,12 +670,32 @@ public class CretaServlet extends HttpServlet
 		return buffer.toString();
 	}
 
+	private static String toJSON(net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajadores trabajadores) {
+		if ( trabajadores == null )
+			return "";
+
+		return toJS0N(trabajadores.getTrabajador());
+	}
+
 	private static String toJSON(net.aonsolutions.core.tgss.creta.jaxb.respuesta.Trabajadores trabajadores) {
 		if ( trabajadores == null )
 			return "";
 
 		return toJSON(trabajadores.getTrabajador());
 	}
+
+	private static String toJS0N(Collection<net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador> trabajadores) {
+		if ( trabajadores == null )
+			return "";
+		
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(trabajadores.stream()
+				.map(trabajador -> String.format("{\"naf\":\"%s\"}", trabajador.getNaf()))
+				.collect(Collectors.joining(",")));
+
+		return buffer.toString();
+	}
+
 
 	private static String toJSON(Collection<net.aonsolutions.core.tgss.creta.jaxb.respuesta.Trabajador> trabajadores) {
 		if ( trabajadores == null )
@@ -629,6 +705,19 @@ public class CretaServlet extends HttpServlet
 		buffer.append(trabajadores.stream()
 				.map(trabajador -> String.format("{\"naf\":\"%s\"}", trabajador.getNaf()))
 				.collect(Collectors.joining(",")));
+
+		return buffer.toString();
+	}
+
+
+	private static String toJSoN(Stream<net.aonsolutions.core.tgss.creta.jaxb.bases.LiquidacionMes> liquidacionesMes) {
+		if ( liquidacionesMes == null )
+			return "";
+
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(
+				liquidacionesMes.map(liquidacionMes -> String.format("%s", toJSON(liquidacionMes.getTrabajadores())))
+						.collect(Collectors.joining(",")));
 
 		return buffer.toString();
 	}
@@ -976,7 +1065,7 @@ public class CretaServlet extends HttpServlet
 					// salary.getEnterpriseName(),
 					salary.getEmployeeName(), salary.getEmployeeDocument(), salary.getEmployeeSSNumber(),
 					// salary.getEnterpriseCCC(),
-					var, p.getStart(), p.getEnd(), right, Arrays.stream(wrongs)
+					var, p.getStart(), p.getEnd(), right, Arrays.stream(wrongs) 
 							.map(wrong -> String.format("'%s'", wrong)).collect(Collectors.joining(",")))));
 		}
 
@@ -1115,12 +1204,27 @@ public class CretaServlet extends HttpServlet
 	}
 
 	
+	private static Stream<net.aonsolutions.core.tgss.creta.jaxb.bases.Bases> findBases(HttpServletRequest req) throws SQLException{
+		String login = ":-)" ; 
+		String domainName = req.getServerName();
+		Integer domainId = AonServletUtils.getDomainID(domainName);
+		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(new Date());
+		Date from = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -1);
+		
+		return
+		findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_BASES, from)
+		.map(attach-> unmarshall(net.aonsolutions.core.tgss.creta.jaxb.bases.Bases.class, attach.getData()))
+		.filter(optional -> optional.isPresent())
+		.map(optional -> optional.get())
+		;
+	}
+
 	private static Stream<net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta> findRespuestas(HttpServletRequest req) throws SQLException{
 		String login = ":-)" ; 
 		String domainName = req.getServerName();
 		Integer domainId = AonServletUtils.getDomainID(domainName);
 		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(new Date());
-		Date from = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -30);
+		Date from = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -1);
 		
 		return
 		findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_RESPUESTA, from)
@@ -1135,7 +1239,7 @@ public class CretaServlet extends HttpServlet
 		String domainName = req.getServerName();
 		Integer domainId = AonServletUtils.getDomainID(domainName);
 		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(new Date());
-		Date from = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -30);
+		Date from = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -1);
 		
 		return
 		findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_TRABAJADORES_Y_TRAMOS, from)
@@ -1239,7 +1343,8 @@ public class CretaServlet extends HttpServlet
 	
 	private static void __onTrabajadoresYTramos (PrintWriter os, 
 			Stream<net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos> ts,
-			Stream<net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta> rs) {
+			Stream<net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta> rs,
+			Stream<net.aonsolutions.core.tgss.creta.jaxb.bases.Bases> bs) {
 		
 			os.println("parent.__onTrabajadoresYTramos(");
 			os.println("[");
@@ -1251,7 +1356,7 @@ public class CretaServlet extends HttpServlet
 			String sep = "";
 			while ( tsIt.hasNext() ){
 				net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos t = tsIt.next();
-				os.printf("%s\r\n{\"name\":\"%s\",%s,\"employees\":[%s],\"file\":\"%s\"}\r\n", sep ,CretaService.File.TRABAJADORES_TRAMOS, toJSON(t.getLiquidacion()),toJS0N(t.getLiquidacion().getLiquidacionMes().stream()), marshallAndEncode(t));
+				os.printf("%s\r\n{\"name\":\"%s\",\"externalReference\":\"%s\",%s,\"employees\":[%s],\"file\":\"%s\"}\r\n", sep ,CretaService.File.TRABAJADORES_TRAMOS, t.getReferenciaExterna(), toJSON(t.getLiquidacion()),toJS0N(t.getLiquidacion().getLiquidacionMes().stream()), marshallAndEncode(t));
 				os.flush();
 				sep = ",";
 			}
@@ -1273,7 +1378,7 @@ public class CretaServlet extends HttpServlet
 				Respuesta r = rsIt.next();
 				List<net.aonsolutions.core.tgss.creta.jaxb.respuesta.Liquidacion> liquidacion = r.getLiquidacion();
 				for  (net.aonsolutions.core.tgss.creta.jaxb.respuesta.Liquidacion l : liquidacion ){
-					os.printf("%s\r\n{\"name\":\"%s\",%s,\"errors\":[%s],\"employees\":[%s],\"file\":\"%s\"}\r\n",sep, CretaService.File.RESPUESTA, toJSON(l), toJSON(l.getErrores()),toJSON(l.getLiquidacionMes().stream()), marshallAndEncode(r));
+					os.printf("%s\r\n{\"name\":\"%s\",\"externalReference\":\"%s\",%s,\"errors\":[%s],\"employees\":[%s],\"file\":\"%s\"}\r\n",sep, CretaService.File.RESPUESTA, r.getReferenciaExterna(), toJSON(l), toJSON(l.getErrores()),toJSON(l.getLiquidacionMes().stream()), marshallAndEncode(create(l,r)));
 					os.flush();
 					sep = ",";
 					
@@ -1282,6 +1387,30 @@ public class CretaServlet extends HttpServlet
 			// @formatter:on
 
 			os.println("//END_RESPUESTAS");
+			os.flush();
+			os.println("]");
+
+			os.println(",");
+
+			os.println("[");
+			os.println("//BEGIN_BASES");
+			os.flush();
+			// @formatter:off
+			Iterator<net.aonsolutions.core.tgss.creta.jaxb.bases.Bases> bsIt = bs.iterator();
+			sep = "";
+			while ( bsIt.hasNext() ){
+				net.aonsolutions.core.tgss.creta.jaxb.bases.Bases b = bsIt.next();
+				List<net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion> liquidacion = b.getLiquidacion();
+				for  (net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion l : liquidacion ){
+					os.printf("%s\r\n{\"name\":\"%s\",\"externalReference\":\"%s\",%s,\"employees\":[%s],\"file\":\"%s\"}\r\n",sep, CretaService.File.BASES, b.getReferenciaExterna(), toJSON(l), toJSoN(l.getLiquidacionMes().stream()), marshallAndEncode(create(l,b)));
+					os.flush();
+					sep = ",";
+					
+				}
+			}
+			// @formatter:on
+
+			os.println("//END_BASES");
 			os.flush();
 			os.println("]");
 
@@ -1383,6 +1512,25 @@ public class CretaServlet extends HttpServlet
 		
 	}
 	
+	private static Date toDate(net.aonsolutions.core.tgss.creta.jaxb.bases.Periodo periodo){
+		
+		
+		Calendar calendar = Calendar.getInstance();
+		
+		//Hora hora = fechaHoraRecaudacion.getHoraRecaudacion();
+		calendar.set(Calendar.MILLISECOND, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+
+		calendar.set(Calendar.DATE, 1);
+		calendar.set(Calendar.MONTH, Integer.parseInt(periodo.getMes())-1);
+		calendar.set(Calendar.YEAR, Integer.parseInt(periodo.getAnho()));
+
+		return calendar.getTime();
+		
+	}
+
 	private static <F extends net.aonsolutions.core.tgss.creta.jaxb.Fecha> Date toDate(net.aonsolutions.core.tgss.creta.jaxb.FechaHoraRecaudacion<F> fechaHoraRecaudacion){
 		
 		

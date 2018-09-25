@@ -452,12 +452,14 @@ td.datePickerMonth,
 	gwt-image: "tabBar";
 	width: auto;
 	height:auto; 
+	color: #bfbfbf;
 	background-repeat: repeat-x;
 } 
 
 @sprite .gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
 	width: auto;
 	height:auto; 
+	color: black;
 	gwt-image: "tabBar";
 	background-repeat: repeat-x;
 } 
