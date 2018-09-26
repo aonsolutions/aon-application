@@ -5,7 +5,6 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EXTRA_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTHLY_SALARY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATION;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
@@ -169,7 +168,7 @@ public class Bases {
 		}
 
 		@Override
-		public void add(Salary salary, Tramo<?> tramo, Dato datoSolicitado,
+		public void add(Salary salary, Tramo<?> tramo, DatoSolicitado datoSolicitado,
 				TramoBuilder tramoBuilder, BasesCallback... cbs) {
 			try {
 				Date fromDate = toDate(tramo.getFechaDesde());
@@ -354,19 +353,19 @@ public class Bases {
 
 	}
 
-	private static abstract class HCretaData extends CCretaData {
+	private static class HCretaData extends CCretaData {
 
 		public HCretaData(String variable) {
 			super(variable);
 		}
 
 		@Override
-		public void add(Salary salary, Tramo tramo, Dato datoSolicitado,
+		public void add(Salary salary, Tramo tramo, DatoSolicitado datoSolicitado,
 				TramoBuilder tramoBuilder, BasesCallback... cbs) {
 			// B -> El código del dato solicitado es obligatorio.
 			// P -> El código del dato solicitado es opcional.
 
-			boolean optional = isOptional();
+			boolean optional = isOptional(datoSolicitado);
 			try {
 				double newValue = get(salary, tramo.getFechaDesde(),
 						tramo.getFechaHasta());
@@ -400,31 +399,6 @@ public class Bases {
 			}
 		}
 
-		protected abstract boolean isOptional();
-	}
-
-	private static class OptionalHCretaData extends HCretaData {
-
-		public OptionalHCretaData(String variable) {
-			super(variable);
-		}
-
-		@Override
-		protected boolean isOptional() {
-			return true;
-		}
-	}
-
-	private static class MandatoryHCretaData extends HCretaData {
-
-		public MandatoryHCretaData(String variable) {
-			super(variable);
-		}
-
-		@Override
-		protected boolean isOptional() {
-			return false;
-		}
 	}
 
 	public static interface BasesCallback {
@@ -1100,14 +1074,20 @@ public class Bases {
 
 		String getComment();
 
-		void add(Salary salary, Tramo<?> tramo, Dato datoSolicitado,
+		void add(Salary salary, Tramo<?> tramo, DatoSolicitado datoSolicitado,
 				TramoBuilder tramoBuilder, BasesCallback... cb);
 
 	}
 
 	private static abstract class AbstractCCretaData implements CretaData {
 
-		protected abstract boolean isOptional();
+		protected boolean isOptional(DatoSolicitado datoSolicitado) {
+			String indicadorObligatoriedad = datoSolicitado.getIndicadorObligatoriedad();
+			if ( indicadorObligatoriedad == null )
+				return false;
+			return "P".equalsIgnoreCase(indicadorObligatoriedad.trim());
+			
+		}
 
 		protected abstract Double get(Salary salary, Fecha desde, Fecha hasta)
 				throws NoSuchVariableException,
@@ -1119,15 +1099,18 @@ public class Bases {
 
 		// CretaData ----------------------------------------------------------
 		@Override
-		public void add(Salary salary, Tramo tramo, Dato datoSolicitado,
+		public void add(Salary salary, Tramo tramo, DatoSolicitado datoSolicitado,
 				TramoBuilder tramoBuilder, BasesCallback... cbs) {
 			// B -> El código del dato solicitado es obligatorio.
 			// P -> El código del dato solicitado es opcional.
 
-			boolean optional = isOptional();
+			boolean optional = isOptional(datoSolicitado) ;
 			try {
 				double newValue = get(salary, tramo.getFechaDesde(),
 						tramo.getFechaHasta());
+
+				if (optional && newValue == 0.00)
+					return;
 
 				if (optional && newValue == 0.00)
 					return;
@@ -1158,7 +1141,7 @@ public class Bases {
 
 	}
 
-	private static abstract class CCretaData extends AbstractCCretaData {
+	private static class CCretaData extends AbstractCCretaData {
 
 		protected String variable;
 
@@ -1229,39 +1212,29 @@ public class Bases {
 			return ret;
 		}
 
-		protected abstract boolean isOptional();
 	}
+	
+	private static class PlusCCretaData extends CCretaData {
 
-	private static class MandatoryCCretaData extends CCretaData {
-
-		public MandatoryCCretaData(String variable) {
+		public PlusCCretaData(String variable) {
 			super(variable);
 		}
-
+		
 		@Override
-		protected boolean isOptional() {
-			return false;
+		public Double get(Salary salary, Fecha desde, Fecha hasta)
+				throws NoSuchVariableException, UnMatchedVariableException {
+			return Math.max(super.get(salary, desde, hasta), 0.00);
 		}
 	}
+	
 
-	private static class OptionalCCretaData extends CCretaData {
 
-		public OptionalCCretaData(String variable) {
-			super(variable);
-		}
-
-		@Override
-		protected boolean isOptional() {
-			return true;
-		}
-	}
-
-	private static abstract class CompositeCContextCretaData
+	private static class CompositeCCretaData
 			extends AbstractCCretaData {
 
 		private String variables[];
 
-		public CompositeCContextCretaData(String... variables) {
+		public CompositeCCretaData(String... variables) {
 			this.variables = variables;
 		}
 
@@ -1274,7 +1247,7 @@ public class Bases {
 		}
 
 		@Override
-		public void add(Salary salary, Tramo tramo, Dato datoSolicitado,
+		public void add(Salary salary, Tramo tramo, DatoSolicitado datoSolicitado,
 				TramoBuilder tramoBuilder, BasesCallback... cbs) {
 			try {
 				super.add(salary, tramo, datoSolicitado, tramoBuilder, cbs);
@@ -1285,7 +1258,7 @@ public class Bases {
 			} catch (NoSuchVariablesException e) {
 				for (BasesCallback cb : cbs)
 					cb.noSuchDato(salary, tramo, datoSolicitado, tramoBuilder,
-							isOptional());
+							isOptional(datoSolicitado));
 			}
 		}
 
@@ -1321,39 +1294,25 @@ public class Bases {
 		// --------------------------------------------------------------------
 	}
 
-	private static class MandatoryCompositecContextData
-			extends CompositeCContextCretaData {
-
-		public MandatoryCompositecContextData(
-				String... variables) {
-			super(variables);
-		}
-
-		// CompositeCContextCretaData -----------------------------------------
-		@Override
-		protected boolean isOptional() {
-			return false;
-		}
-	}
 
 	private static Map<String, CretaData> CONTEXT_VARIABLE_MAP = new HashMap<String, CretaData>() {
 		{
-			put("500", new MandatoryCCretaData(CGC_BASE.getName()));
-			put("535", new MandatoryCCretaData(MATERNITY_BASE.getName()));
+			put("500", new PlusCCretaData(CGC_BASE.getName()));
+			put("535", new PlusCCretaData(MATERNITY_BASE.getName()));
 
-			put("501", new OptionalCCretaData(STRUCTURAL_OVERTIME_BASE.getName()));
-			put("502", new OptionalCCretaData(
+			put("501", new CCretaData(STRUCTURAL_OVERTIME_BASE.getName()));
+			put("502", new CCretaData(
 					NON_STRUCTURAL_OVERTIME_BASE.getName()));
-			put("563", new MandatoryCCretaData(ContextVariable.PREST_IT));
+			put("563", new CCretaData(ContextVariable.PREST_IT));
 
-			put("601", new MandatoryCCretaData(CGP_BASE.getName()));
-			put("611", new MandatoryCCretaData(CGP_BASE.getName()));
-			put("635", new MandatoryCCretaData(MATERNITY_BASE.getName()));
-			put("634", new MandatoryCCretaData(MATERNITY_BASE.getName()));
+			put("601", new PlusCCretaData(CGP_BASE.getName()));
+			put("611", new PlusCCretaData(CGP_BASE.getName()));
+			put("635", new PlusCCretaData(MATERNITY_BASE.getName()));
+			put("634", new PlusCCretaData(MATERNITY_BASE.getName()));
 
-			put("663", new MandatoryCCretaData(ContextVariable.PREST_IT));
+			put("663", new CCretaData(ContextVariable.PREST_IT));
 
-			put("01", new MandatoryHCretaData(WORKED_HOURS.getName()) {
+			put("01", new HCretaData(WORKED_HOURS.getName()) {
 				@Override
 				public Double get(Salary salary, Fecha desde, Fecha hasta)
 						throws NoSuchVariableException,
@@ -1372,22 +1331,22 @@ public class Bases {
 					return getWorkedHours(salary, desde, hasta);
 				};
 			});
-			put("02", new OptionalHCretaData(EXTRA_HOURS.getName()));
+			put("02", new HCretaData(EXTRA_HOURS.getName()));
 
 			put("51", new MonthlySalaryCretaData());
 
 			
-			put("509", new MandatoryCompositecContextData(
+			put("509", new CompositeCCretaData(
 					MATERNITY_BASE.getName(),
 					ERE_BASE.getName(),
 					CGC_BASE.getName())
 					);
 			
-			put("603", new MandatoryCompositecContextData(
+			put("603", new CompositeCCretaData(
 					MATERNITY_BASE.getName(),
 					ERE_BASE.getName(), 
 					CGP_BASE.getName()));
-			put("613", new MandatoryCompositecContextData(
+			put("613", new CompositeCCretaData(
 					MATERNITY_BASE.getName(),
 					ERE_BASE.getName(),
 					CGP_BASE.getName()));
@@ -1603,6 +1562,7 @@ public class Bases {
 				}
 
 				data.add(salary, tramo, datoSolicitado, tramoBuilder, cbs);
+				
 			}
 			
 			trabajadorBuilder.addTramo(tramoBuilder.create());
