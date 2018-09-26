@@ -6,10 +6,10 @@ import com.esferalia.aon.occam.api.model.AccountOperatingReport.AccountOperating
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class AccountOperatingAccount implements Serializable {
+public class AccountOperatingAccount implements Serializable, Comparable<AccountOperatingAccount> {
 
 	private static final long serialVersionUID = -3524946313690250917L;
-
+	
 	private AccountOperatingStatementType type; 
 	private Integer id;
 	private String code;
@@ -68,6 +68,13 @@ public class AccountOperatingAccount implements Serializable {
 			&& AonStringUtils.equals(getCode(), other.getCode())
 //			&& AonStringUtils.equals(getDescription(), other.getDescription())
 				;
+	}
+	
+	@Override
+	public int compareTo(AccountOperatingAccount other) {
+		if (getType() != other.getType())
+		return getType().compareTo(other.getType());	
+		return AonStringUtils.compare(getCode(), other.getCode());
 	}
 	
 }

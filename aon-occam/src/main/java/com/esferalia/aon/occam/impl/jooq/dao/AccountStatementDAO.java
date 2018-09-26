@@ -10,12 +10,10 @@ import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.TreeMap;
 import java.util.function.Function;
@@ -381,50 +379,12 @@ public class AccountStatementDAO {
 	
 	private static void calculate(AccountOperatingReport report) {
 		if (report.isEmpty()) return;
-		for (AccountOperatingStatementType type : AccountOperatingStatementType.values()) {
-			if (type.isCalculated()) {
-				report.put(new AccountOperatingStatement()
-						.setAccount(new AccountOperatingAccount()
-								.setType(type)
-								.setCode(type.toString())
-								.setDescription(type.getDescription())));
-			}
-		}
-		for (AccountOperatingAccount account : report.getAccounts() ) {
-			AccountOperatingStatementType type = account.getType().modifies();
-			if (type != null) {
-				for (DateInterval inter : report.getIntervals() ) {
-					AccountOperatingStatement item = report.get(account.getCode(), inter);
-					if (item != null) {
-						AccountOperatingStatement sum = report.get(type.toString(), inter);
-						sum.setDebit( AonMathUtils.round(sum.getDebit() + item.getDebit()));
-						sum.setCredit( AonMathUtils.round(sum.getCredit() + item.getCredit()));
-					}
-				}
-			}
-		}
 		if (report.showRatios()) {
 			calculateRatios(report);
 		}
 		if (report.showIncreasePercent()) {
 			calculateIncreasePercent(report);
 		}
-		//ARRGGGHHHHHH!!! be elegant!!
-		LinkedList<AccountOperatingAccount> list = new LinkedList<AccountOperatingAccount>();
-		list.addAll(report.getAccounts());
-		list.sort(new Comparator<AccountOperatingAccount>() {
-
-			@Override
-			public int compare(AccountOperatingAccount first, AccountOperatingAccount second) {
-				if (first.getType() != second.getType())
-					return first.getType().compareTo(second.getType());	
-				return AonStringUtils.compare(first.getCode(), second.getCode());
-			}
-		});
-		LinkedHashSet<AccountOperatingAccount> accounts = new LinkedHashSet<AccountOperatingAccount>();
-		accounts.addAll(list);
-		report.setAccounts( accounts );
-		//ARRGGGHHHHHH!!! be elegant!!
 	}
 
 	private static void calculateRatios(AccountOperatingReport report) {

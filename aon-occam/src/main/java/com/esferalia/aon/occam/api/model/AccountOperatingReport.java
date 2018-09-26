@@ -1,7 +1,6 @@
 package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
-import java.util.LinkedHashSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -502,7 +501,7 @@ public class AccountOperatingReport implements Serializable {
 	private AccountingReportParams params;
 	private AccountPeriod selectedPeriod;
 	private EnterpriseActivity selectedActivity;
-	private LinkedHashSet<AccountOperatingAccount> accounts = new LinkedHashSet<AccountOperatingAccount>();
+	private TreeSet<AccountOperatingAccount> accounts = new TreeSet<AccountOperatingAccount>();
 	private TreeSet<DateInterval> intervals = new TreeSet<DateInterval>();
 	private TreeMap<String, TreeMap<DateInterval, AccountOperatingStatement>> map = 
 			new TreeMap<String, TreeMap<DateInterval, AccountOperatingStatement>>();
@@ -541,6 +540,19 @@ public class AccountOperatingReport implements Serializable {
 			exist.setDebit( AonMathUtils.round(exist.getDebit() + aos.getDebit() ));
 			exist.setCredit( AonMathUtils.round(exist.getCredit() + aos.getCredit() ));
 		}
+		
+		AccountOperatingStatementType modifies = aos.getAccount().getType().modifies();
+		if (modifies != null) {
+			AccountOperatingStatement total = new  AccountOperatingStatement()
+				.setAccount(new AccountOperatingAccount()
+					.setType(modifies)
+					.setCode(modifies.toString())
+					.setDescription(modifies.getDescription()))
+				.setMonth( aos.getMonth())
+				.setDebit(aos.getDebit())
+				.setCredit(aos.getCredit());
+			put(inter, total);
+		}
 	}
 	private void ensureInterval(DateInterval inter) {
 		if (inter != null && !intervals.contains(inter)) {
@@ -573,10 +585,10 @@ public class AccountOperatingReport implements Serializable {
 		return null;
 	}
 
-	public LinkedHashSet<AccountOperatingAccount> getAccounts() {
+	public TreeSet<AccountOperatingAccount> getAccounts() {
 		return accounts;
 	}
-	public void setAccounts(LinkedHashSet<AccountOperatingAccount> accounts) {
+	public void setAccounts(TreeSet<AccountOperatingAccount> accounts) {
 		this.accounts = accounts;
 	}
 	
