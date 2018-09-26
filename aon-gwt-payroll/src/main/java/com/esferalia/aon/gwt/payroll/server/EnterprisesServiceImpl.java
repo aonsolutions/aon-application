@@ -919,8 +919,11 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					+ ", " + SQLConstants.DOMAIN 
 					+ ", " + SQLConstants.ENTERPRISE_ACTIVITY 
 					+ ", " + SQLConstants.ENTERPRISE_CCC
+					+ " LEFT JOIN " + SQLConstants.SALARY + " ON (" 
+					+ SQLConstants.ENTERPRISE_CCC + "." + EnterpriseCccColumns.CCC + " = " + SQLConstants.SALARY+ "." + SalaryColumns.CCC  
+//					+ " AND " + SQLConstants.SALARY + "." + SalaryColumns.TYPE + " IN ( " + Salary.Type.SALARY.ordinal() + ")" 
+					+ ")"
 					+ ", " + SQLConstants.GEOZONE
-					+ ", " + SQLConstants.SALARY
 					
 					+ " WHERE " + SQLConstants.ENTERPRISE +"."+ EnterpriseColumns.REGISTRY + " = " + SQLConstants.REGISTRY + "." + RegistryColumns.ID
 					+ " AND " + SQLConstants.ENTERPRISE + "." + EnterpriseColumns.DOMAIN + " = " + SQLConstants.DOMAIN + "." + DomainColumns.ID 
@@ -928,7 +931,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					+ " AND " + SQLConstants.ENTERPRISE + "." + EnterpriseColumns.REGISTRY + " = " + SQLConstants.ENTERPRISE_ACTIVITY+ "." + EnterpriseActivityColumns.ENTERPRISE
 					+ " AND " + SQLConstants.ENTERPRISE_ACTIVITY + "." + EnterpriseActivityColumns.ID + " = " + SQLConstants.ENTERPRISE_CCC+ "." + EnterpriseCccColumns.ENTERPRISE_ACTIVITY
 					+ " AND " + SQLConstants.ENTERPRISE_CCC + "." + EnterpriseCccColumns.GEOZONE + " = " + SQLConstants.GEOZONE+ "." + GeozoneColumns.ID
-					+ " AND " + SQLConstants.ENTERPRISE_CCC + "." + EnterpriseCccColumns.CCC + " = " + SQLConstants.SALARY+ "." + SalaryColumns.CCC
 
 					+ " AND ( " + SQLConstants.DOMAIN + "." + DomainColumns.ID + " = ? " 
 						+ " OR " + SQLConstants.DOMAIN + "." + DomainColumns.PARENT + " = ? " + ")"
@@ -936,17 +938,11 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					+" AND (" + SQLConstants.DOMAIN + "." + DomainColumns.SCOPE 
 						+ " IN ("
 						+ " SELECT " + UserScopeColumns.SCOPE + " FROM " + SQLConstants.USER_SCOPE + " WHERE " + UserScopeColumns.USER_ID + " =  ? "
-//						+ " UNION SELECT " + SQLConstants.SCOPE + "." + ScopeColumns.ID + " FROM " + SQLConstants.SCOPE 
-//							+ " INNER JOIN " + SQLConstants.DOMAIN + " ON ( " + SQLConstants.DOMAIN + "." + DomainColumns.ID + " = " + SQLConstants.SCOPE + "." + ScopeColumns.DOMAIN + ")"     
-//							+ " INNER JOIN " + SQLConstants.USER + " ON ( " + SQLConstants.DOMAIN + "." + DomainColumns.PARENT + " = " + SQLConstants.USER + "." + UserColumns.DOMAIN + ")"     
 						+ " )"
 						+ " OR " + SQLConstants.DOMAIN + "." + DomainColumns.SCOPE + " IS NULL"
 						+ " )"     
 					
 					+ " AND " + SQLConstants.DOMAIN + "." + DomainColumns.ACTIVE + " = 1 " 
-					
-					+ " AND " + SQLConstants.SALARY + "." + SalaryColumns.END_DATE + " > ? " 
-					+ " AND " + SQLConstants.SALARY + "." + SalaryColumns.TYPE + " IN ( " + Salary.Type.SALARY.ordinal() + ")"  // TODO: Salary.Type.DELAY 
 
 					+ " ORDER BY " + SQLConstants.REGISTRY + "." + RegistryColumns.ID
 					+ ", " + SQLConstants.ENTERPRISE_ACTIVITY + "." + EnterpriseActivityColumns.ID
@@ -956,19 +952,19 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					+ " LIMIT ?, ?"
 					);
 			// @formatter:on
-
-			stmt.setInt(1, domainId);
-			stmt.setInt(2, domainId);
-			stmt.setInt(3, userId);
+			int i = 1;
+			stmt.setInt(i++, domainId);
+			stmt.setInt(i++, domainId);
+			stmt.setInt(i++, userId);
 			
 			Calendar calendar = Calendar.getInstance();
 			calendar.add(Calendar.MONTH, -3);
 			calendar.set(Calendar.DAY_OF_MONTH,1);
 			calendar.add(Calendar.DAY_OF_MONTH,-1);
-			stmt.setDate(4, new java.sql.Date(calendar.getTimeInMillis()));
+//			stmt.setDate(i++, new java.sql.Date(calendar.getTimeInMillis()));
 
-			stmt.setInt(5, offset);
-			stmt.setInt(6, limit);
+			stmt.setInt(i++, offset);
+			stmt.setInt(i++, limit);
 			
 			CCC ccc = null;
 			Employee employee = null;
