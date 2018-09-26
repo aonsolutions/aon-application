@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 import org.jooq.Record;
+import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -132,7 +133,25 @@ public class AccountingInvoiceDAO {
 					.fetch()
 					.stream()
 					.forEach( det -> {
+						InvoiceSource source = AonEnumUtils.enumValue(InvoiceSource.class,det.getValue(INVOICE_DETAIL.SOURCE));
 						final Integer invoideDetailId = det.getValue(INVOICE_DETAIL.ID);
+						ai.getInvoice().getDetails().add(new InvoiceDetail()
+								.setId(invoideDetailId)
+								.setDomain(det.getValue(INVOICE_DETAIL.DOMAIN))
+								.setSource(source)
+								.setLine(det.getValue( INVOICE_DETAIL.LINE ))
+								.setDescription(det.getValue( INVOICE_DETAIL.DESCRIPTION ))
+								.setQuantity(AonNumberUtils.zeroIfNull( det.getValue(INVOICE_DETAIL.QUANTITY)))
+								.setPrice(AonNumberUtils.zeroIfNull( det.getValue(INVOICE_DETAIL.PRICE)))
+								.setDiscountExpression(AonStringUtils.defaultIfBlank(det.getValue(INVOICE_DETAIL.DISCOUNT_EXPR),"0.0"))
+								.setTaxableBase(det.getValue(INVOICE_DETAIL.TAXABLE_BASE))
+								.setItem(det.getValue(INVOICE_DETAIL.ITEM) == null? null : new Item().setId(det.getValue(INVOICE_DETAIL.ITEM)).setCode(det.getValue(PRODUCT.CODE)))
+						);
+						ai.setAccountSource(ai.isAccountSource() || (source == InvoiceSource.ACCOUNT));
+						// TODO ¿Más de uno?
+						ai.setWorkplace(det.getValue(INVOICE_DETAIL.WORKPLACE));
+						// -----------------
+						
 						ctx.getDslContext()
 						.select(EXP_ACCOUNT.ID,
 								EXP_ACCOUNT.CODE, 
@@ -144,25 +163,6 @@ public class AccountingInvoiceDAO {
 						.fetch()
 						.stream()
 						.forEach( accDet -> {
-							InvoiceSource source = AonEnumUtils.enumValue(InvoiceSource.class,det.getValue(INVOICE_DETAIL.SOURCE)); 
-							ai.getInvoice().getDetails().add(new InvoiceDetail()
-									.setId(invoideDetailId)
-									.setDomain(det.getValue(INVOICE_DETAIL.DOMAIN))
-									.setSource(source)
-									.setLine(det.getValue( INVOICE_DETAIL.LINE ))
-									.setDescription(det.getValue( INVOICE_DETAIL.DESCRIPTION ))
-									.setQuantity(AonNumberUtils.zeroIfNull( det.getValue(INVOICE_DETAIL.QUANTITY)))
-									.setPrice(AonNumberUtils.zeroIfNull( det.getValue(INVOICE_DETAIL.PRICE)))
-									.setDiscountExpression(AonStringUtils.defaultIfBlank(det.getValue(INVOICE_DETAIL.DISCOUNT_EXPR),"0.0"))
-									.setTaxableBase(det.getValue(INVOICE_DETAIL.TAXABLE_BASE))
-									.setItem(det.getValue(INVOICE_DETAIL.ITEM) == null? null : new Item().setId(det.getValue(INVOICE_DETAIL.ITEM)).setCode(det.getValue(PRODUCT.CODE)))
-							);
-							ai.setAccountSource(ai.isAccountSource() || (source == InvoiceSource.ACCOUNT));
-							
-							// TODO ¿Más de uno?
-							ai.setWorkplace(det.getValue(INVOICE_DETAIL.WORKPLACE));
-							// -----------------
-							
 							fillInvoiceTax(ctx, invoideDetailId, accDet, det, ai, config);
 						}
 					);
