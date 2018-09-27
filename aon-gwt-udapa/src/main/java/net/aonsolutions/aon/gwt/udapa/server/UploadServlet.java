@@ -1,11 +1,17 @@
 package net.aonsolutions.aon.gwt.udapa.server;
 
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -89,12 +95,14 @@ public class UploadServlet extends HttpServlet{
             if (formItems != null && formItems.size() > 0) {
                 // iterates over form's fields
                 for (FileItem item : formItems) {
+                	byte[] bb = reduceImage(item);
+                	
                     // processes only fields that are not form fields
                     if (!item.isFormField()) {
                     	Attach attach = new Attach()
                     			.setAttachModule(id)
                     			.setAttachType(attachType)
-                    			.setData(item.get())
+                    			.setData(bb)
                     			.setDescription(item.getName())
                     			.setMimeType(MimeType.get(item.getContentType()))
                     			.setDomain(new Domain().setId(domainId).setName(domainName))
@@ -127,4 +135,47 @@ public class UploadServlet extends HttpServlet{
        
 	}
 	
+    public static int MAX_WIDTH=500;
+
+    public static int MAX_HEIGHT=500;
+	
+	private byte[] reduceImage(FileItem item) {
+		MimeType m = MimeType.get(item.getContentType());
+		byte[] b = item.get();
+		System.out.println("TAMAÑO ANTES: " + b.length);
+		ByteArrayInputStream bis = new ByteArrayInputStream(b);
+		try {
+			BufferedImage bimage = ImageIO.read(bis);
+			if(bimage.getHeight()>bimage.getWidth()){
+	            int heigt = (bimage.getHeight() * MAX_WIDTH) / bimage.getWidth();
+	            bimage = resize(bimage, MAX_WIDTH, heigt);
+	            int width = (bimage.getWidth() * MAX_HEIGHT) / bimage.getHeight();
+	            bimage = resize(bimage, width, MAX_HEIGHT);
+	        }else{
+	            int width = (bimage.getWidth() * MAX_HEIGHT) / bimage.getHeight();
+	            bimage = resize(bimage, width, MAX_HEIGHT);
+	            int heigt = (bimage.getHeight() * MAX_WIDTH) / bimage.getWidth();
+	            bimage = resize(bimage, MAX_WIDTH, heigt);
+	        }
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			ImageIO.write(bimage,  m.getExtension(), bos );
+			byte[] b2 = bos.toByteArray();
+			System.out.println("TAMAÑO DESPUES: " + b2.length);
+			return b2;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return b;
+	}
+	
+    public static BufferedImage resize(BufferedImage bufferedImage, int newW, int newH) {
+        int w = bufferedImage.getWidth();
+        int h = bufferedImage.getHeight();
+        BufferedImage bufim = new BufferedImage(newW, newH, bufferedImage.getType());
+        Graphics2D g = bufim.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g.drawImage(bufferedImage, 0, 0, newW, newH, 0, 0, w, h, null);
+        g.dispose();
+        return bufim;
+    }
 }
