@@ -128,7 +128,10 @@ public class EdiSalesImporterHandler implements Serializable {
 					getLogPanel().info("Procesando pedido " + (idx+1) + " de " + ftpFileItem.getOrders().size());
 				createSales(event, rectl, customerRegistryNote, series, testing);
 			}
-			controller.onSelect(event);
+			if(testing)
+				getLogPanel().warn("TEST activado: el pedido no se ha creado.");
+			else
+				controller.onSelect(event);
 		} else {
 			getLogPanel().info("No se han detectado pedidos.");	
 		}

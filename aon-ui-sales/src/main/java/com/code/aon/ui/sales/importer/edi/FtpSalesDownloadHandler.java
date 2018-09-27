@@ -327,12 +327,12 @@ public class FtpSalesDownloadHandler implements Serializable {
 
 	private List<RECTL> obtainStrippedFileOrders(ConnectSalesReader reader, byte[] byteFile) throws IOException {
 		List<RECTL> rectlList = new LinkedList<>();
-		String[] result = StringUtils.splitByWholeSeparator(new String(byteFile), "RECTL");
+		String[] result = StringUtils.splitByWholeSeparator(new String(byteFile, ConnectSalesReader.CHARSET_ENCODING), "RECTL");
 		
 		for(String value: result) {
 			AonFile aonFile  = new AonFile();
 			aonFile.setData(("RECTL"+value).getBytes());
-			RECTL rectl = reader.readFile(aonFile.openStream());	
+			RECTL rectl = reader.readFile(aonFile.openStream(), "UTF-8");	
 			rectlList.add(rectl);
 		}		
 		return rectlList;
