@@ -262,18 +262,34 @@ public class AccountStatementDAO {
 	}
 	public static AccountOperatingReport operatingReport(AONContext ctx , final AccountingReportParams params ) {
 		ctx.checkRead();
+		if (params.getPeriod() == null) {
+			throw new AonCoreException("Es necesario indicar el ejercicio contable");			
+		}
 		AccountOperatingReport report = new AccountOperatingReport();
 		report.setParams(params);
-		if (params.getPeriod() != null) {
-			report.setSelectedPeriod( AccountPeriodDAO.getPeriod(ctx, params.getPeriod()) );
+		report.setSelectedPeriod( AccountPeriodDAO.getPeriod(ctx, params.getPeriod()) );
+		if (!params.isByMonth() && params.getFromDate() != null && params.getFromDate().before(report.getSelectedPeriod().getInitiationDate())) {
+			throw new AonCoreException("La fecha desde indicada es anterior al inicio del ejercicio");
+		}
+		if (!params.isByMonth() && params.getToDate() != null && params.getToDate().after(report.getSelectedPeriod().getDeadline())) {
+			throw new AonCoreException("La fecha hasta indicada es posterior al final del ejercicio");
 		}
 		if (params.getActivity() != null) {
 			report.setSelectedActivity( CompanyDAO.getEnterpriseActivity(ctx, params.getActivity()) );
 		}
+		
+		String totalPeriodName = "Total " + report.getSelectedPeriod().getName(); 
+		if (   (report.getParams().getFromDate() != null && !AonDateUtils.isSameDay(report.getParams().getFromDate(),report.getSelectedPeriod().getInitiationDate()))
+			|| (report.getParams().getToDate() != null && !AonDateUtils.isSameDay(report.getParams().getToDate(),report.getSelectedPeriod().getDeadline()))
+			) {
+			totalPeriodName = "Total periodo";
+		}
+				
 		DateInterval totalPeriod = new DateInterval()
 				.setStart(report.getSelectedPeriod().getDeadline())	// Para que aparezca al final.
 				.setEnd(report.getSelectedPeriod().getDeadline())
-				.setName("Total " + report.getSelectedPeriod().getName());
+				.setName(totalPeriodName);
+		
 		LinkedHashMap<DateInterval,AccountingReportParams> intervals = getDateIntervals(ctx,params);
 		for (DateInterval inter : intervals.keySet()) {
 			operatingAccount(ctx, intervals.get(inter))
@@ -299,9 +315,6 @@ public class AccountStatementDAO {
 	}
 
 	private static LinkedHashMap<DateInterval,AccountingReportParams> getDateIntervals(AONContext ctx, AccountingReportParams params) {
-		if (params.getPeriod() == null) {
-			throw new AonCoreException("Es necesario indicar el ejercicio contable");			
-		}
 		LinkedList<AccountPeriod> periods = AccountPeriodDAO.getPeriods(ctx, p -> p.getDomainProperty().eq(ctx.getDomainId()))
 				.collect(Collectors.toCollection(LinkedList::new));
 		LinkedHashMap<DateInterval,AccountingReportParams> map = new LinkedHashMap<DateInterval,AccountingReportParams>();
@@ -379,6 +392,43 @@ public class AccountStatementDAO {
 	
 	private static void calculate(AccountOperatingReport report) {
 		if (report.isEmpty()) return;
+		if (report.getParams().isByMonth() && report.getIntervals() != null) {
+			DateInterval first = report.getIntervals().first();
+			Date start = first.getStart();
+			if (report.getParams().getFromDate() != null && report.getParams().getFromDate().before(start)) {
+				start = report.getParams().getFromDate();
+			}
+			int month = AonDateUtils.getMonth(start);
+			int year = AonDateUtils.getYear(start);
+			Date end = report.getSelectedPeriod().getDeadline();
+			if (report.getParams().getToDate() != null && report.getParams().getToDate().before(end)) {
+				end = report.getParams().getToDate();
+			}
+			int toMonth = AonDateUtils.getMonth(end);
+			if (month > toMonth) {
+				toMonth += 11;
+			}
+			for (;month <= toMonth; month++) {
+				if (month > 11) {
+					month = 0;
+					year = year + 1;
+				}
+				Date firstDay = AonDateUtils.getDate(year, month, 1);
+				Date lastDay = AonDateUtils.getMonthLastDay(firstDay);
+				DateInterval inter = new DateInterval()
+						.setStart(firstDay)
+						.setEnd(lastDay)
+						.setName(((month+1)<10?"0":"") + (month+1) +  "/" + year);
+				report.put(inter,new  AccountOperatingStatement()
+						.setAccount( new AccountOperatingAccount()
+								.setType( AccountOperatingStatementType.RESULT )
+								.setCode(AccountOperatingStatementType.RESULT.toString())
+								.setDescription(AccountOperatingStatementType.RESULT.getDescription()))
+							.setMonth( inter.getName() ));
+
+			}
+			
+		}
 		if (report.showRatios()) {
 			calculateRatios(report);
 		}

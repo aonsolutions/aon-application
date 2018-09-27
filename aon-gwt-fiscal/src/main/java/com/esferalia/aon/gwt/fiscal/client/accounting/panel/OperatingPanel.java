@@ -198,6 +198,7 @@ public class OperatingPanel extends ScrollPanel implements HasSelectionHandlers<
 							tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonTextRight());
 							tab.getCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonReportTableBold());
 							tab.getCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonFiscalPaddingRight());
+							tab.getCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonNowrap());
 						}
 	
 						col = 2;
@@ -209,15 +210,15 @@ public class OperatingPanel extends ScrollPanel implements HasSelectionHandlers<
 							Double ub = (aos != null)?aos.getUnpaidBalance() : 0.0;
 							if (params.isByMonth()) {
 								Double saldo = AonMathUtils.round(ub - db);
-								String dbSaldo = AonMathUtils.isNotZero(saldo)?AON.FMT.format(saldo):AonStringUtils.SPACE;
+								String dbSaldo = (title || AonMathUtils.isNotZero(saldo))?AON.FMT.format(saldo):AonStringUtils.SPACE;
 								tab.setWidget(row, col, new Label(dbSaldo));
 								tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextRight());
 								if (title) tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonReportTableBold());
 								col++;
 							} else {
 		
-								String dbText = AonMathUtils.isNotZero(db)?AON.FMT.format(db):AonStringUtils.SPACE;
-								String ubText = AonMathUtils.isNotZero(ub)?AON.FMT.format(ub):AonStringUtils.SPACE;
+								String dbText = (title || AonMathUtils.isNotZero(db))?AON.FMT.format(db):AonStringUtils.SPACE;
+								String ubText = (title || AonMathUtils.isNotZero(ub))?AON.FMT.format(ub):AonStringUtils.SPACE;
 
 								tab.setWidget(row, col, new Label(dbText));
 								tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextRight());
@@ -274,7 +275,7 @@ public class OperatingPanel extends ScrollPanel implements HasSelectionHandlers<
 				
 			@Override
 			public void onFailure(Throwable caught) {
-				Label label = new Label(AON.MSG.noData() + " ["+caught+"]");
+				Label label = new Label(AON.MSG.noData() + " ["+caught.getMessage()+"]");
 				root.add(label );
 			}
 		});
