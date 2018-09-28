@@ -569,4 +569,11 @@ public class CodeMirror extends JavaScriptObject {
 		return this.getDoc().getMode();
 	}-*/;
 
+	public final native void scrollIntoView(Pos pos) /*-{
+		return this.scrollIntoView(pos);
+	}-*/;
+
+	public final native void setSelection(Pos anchor, Pos head) /*-{
+		return this.getDoc().setSelection(anchor, head);
+	}-*/;
 }

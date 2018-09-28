@@ -72,6 +72,14 @@ public class CodeArea extends TextArea {
 		codeMirror.refresh();
 	}
 
+	public void scrollIntoView(Pos pos) {
+		codeMirror.scrollIntoView(pos);
+	}
+	
+	public void setSelection(Pos anchor, Pos head) {
+		codeMirror.setSelection(anchor, head);
+	}
+
 	public final void addOverlay(String mode) {
 		codeMirror.addOverlay(mode);
 	}
@@ -92,7 +100,6 @@ public class CodeArea extends TextArea {
 		return codeMirror.getTokenAt(pos, precise);
 	}
 
-	
 	public final <M extends JavaScriptObject> M getMode() {
 		return codeMirror.getMode();
 	}

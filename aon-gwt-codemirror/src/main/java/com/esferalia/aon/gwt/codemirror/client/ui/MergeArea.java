@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.codemirror.client.ui;
 
 import com.esferalia.aon.gwt.codemirror.client.ui.CodeMirror.MergeView;
 import com.esferalia.aon.gwt.codemirror.client.ui.CodeMirror.ModeConfiguration;
+import com.esferalia.aon.gwt.codemirror.client.ui.CodeMirror.Pos;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
@@ -108,6 +109,14 @@ public class MergeArea extends HTML {
 		return mergeView.getRightOriginal().getValue();
 	}
 	
+	public void scrollIntoView(Pos pos) {
+		mergeView.getEditor().scrollIntoView(pos);
+	}
+	
+	
+	public void setSelection(Pos anchor, Pos head) {
+		mergeView.getEditor().setSelection(anchor, head);
+	}
 	
 	// ---------------------------------------------------------- HTML Override
 	
