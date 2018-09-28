@@ -353,8 +353,9 @@ public abstract class CretaDetail extends Composite {
 						jsFiles.add(jsRespuesta);
 					
 					for ( JsFile old: MainCreta.getOld(File.RESPUESTA, jsRespuesta) )
-						if ( !isSolicitudTrabajdoresYTramosRespuesta(old, jsFile)) 
-							jsFiles.add(old);
+						if ( !isSolicitudTrabajdoresYTramosRespuesta(old, jsFile))
+							if ( !exist(old, jsFiles))
+								jsFiles.add(old);
 					
 					JsBases jsBases = CretaDetail.this.basesMap.get(jsFile.getId());
 					if ( jsBases != null ) {
@@ -373,6 +374,17 @@ public abstract class CretaDetail extends Composite {
 
 			}
 			
+			boolean exist(JsFile jsRespuesta, Collection<JsFile> jsRespuestas) {
+				for ( JsFile jsFile: jsRespuestas ) {
+					if ( CretaService.File.RESPUESTA.name().equals(jsFile.getName()) 
+						&& jsRespuesta.getExternalReference().equals(jsFile.getExternalReference()) ) {
+						return true;
+					}
+				}
+				
+				return false;
+			}
+
 			boolean replied(JsFile jsBases, Collection<JsFile> jsRespuestas) {
 				for ( JsFile jsRespuesta: jsRespuestas ) 
 					if ( jsBases.getExternalReference().equals(jsRespuesta.getExternalReference()) )
