@@ -37,6 +37,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.Stack;
 import java.util.function.DoubleSupplier;
@@ -67,6 +68,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
+import com.esferalia.aon.occam.impl.jooq.dao.OperationDAO;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.Period;
@@ -313,6 +315,15 @@ public class Bases {
 	}
 
 	@SuppressWarnings("serial")
+	private static class NegativeValueException extends ZeroValueException {
+
+		public NegativeValueException(String variable) {
+			super(variable);
+		}
+		
+	}
+
+	@SuppressWarnings("serial")
 	private static class AmbiguousVariableException extends Exception {
 
 		private String values[];
@@ -461,6 +472,10 @@ public class Bases {
 		};
 
 		default void zeroDato(String var, Dato datoSolicitado,
+				Tramo tramo, Salary salary) {
+		};
+
+		default void negativeDato(String var, Double value, Dato datoSolicitado,
 				Tramo tramo, Salary salary) {
 		};
 
@@ -817,6 +832,22 @@ public class Bases {
 		};
 
 		@Override
+		public void negativeDato(String  var, Double value, Dato datoSolicitado,
+				Tramo tramo, Salary salary) {
+			System.err.println(String.format(
+					"WARN: %s (%s) for %s [%s-%s-%s...%s-%s-%s] is negative %.2f",
+					var, datoSolicitado.getCodigo(),
+					salary.getEmployeeName(), tramo.getFechaDesde().getDia(),
+					tramo.getFechaDesde().getMes(),
+					tramo.getFechaDesde().getAnho(),
+					tramo.getFechaHasta().getDia(),
+					tramo.getFechaHasta().getMes(),
+					tramo.getFechaHasta().getAnho(),
+					value));
+		};
+
+
+		@Override
 		public void noSuchDato(Salary salary, Tramo tramo, Dato datoSolicitado,
 				TramoBuilder tramoBuilder, boolean optional) {
 
@@ -895,7 +926,73 @@ public class Bases {
 			}
 		}
 
+		private static class TrabajadorTramoDato {
+			
+
+			String ss;
+			String tipo;
+			String codigo;
+			String diaDesde; 
+			String mesDesde; 
+			String anhoDesde; 
+			String diaHasta; 
+			String mesHasta; 
+			String anhoHasta; 
+			
+			String expression;
+			Date startDate;
+			Date endDate;
+			
+			
+			@Override
+			public boolean equals(Object obj) {
+				if ( !(obj instanceof TrabajadorTramoDato) )
+					return false;
+				TrabajadorTramoDato that = (TrabajadorTramoDato) obj;
+				
+				return AonStringUtils.equals(this.ss, that.ss)
+					&& AonStringUtils.equals(this.tipo, that.tipo)
+					&& AonStringUtils.equals(this.codigo, that.codigo)
+					&& AonStringUtils.equals(this.diaDesde, that.diaDesde)
+					&& AonStringUtils.equals(this.mesDesde, that.mesDesde)
+					&& AonStringUtils.equals(this.anhoDesde, that.anhoDesde)
+					&& AonStringUtils.equals(this.diaHasta, that.diaHasta)
+					&& AonStringUtils.equals(this.mesHasta, that.mesHasta)
+					&& AonStringUtils.equals(this.anhoHasta, that.anhoHasta)
+						;
+			}
+			
+			@Override
+			public int hashCode() {
+				return (this.ss
+						+ this.tipo
+						+ this.codigo
+						+ this.diaDesde
+						+ this.mesDesde
+						+ this.anhoDesde
+						+ this.diaHasta
+						+ this.mesHasta
+						+ this.anhoHasta).hashCode();
+			}
+			
+			@Override
+			public String toString() {
+				return (this.ss
+						+ ", " + this.tipo
+						+ ", " + this.codigo
+						+ ", " + this.diaDesde
+						+ "/" + this.mesDesde
+						+ "/" + this.anhoDesde
+						+ ".." + this.diaHasta
+						+ "/" + this.mesHasta
+						+ "/" + this.anhoHasta);
+			}
+			
+		}
+
 		private XMLStreamWriter xsw;
+
+		private Set<TrabajadorTramoDato> unmatched;
 
 		private Map<String, Data> addedEnterpriseDataMap;
 
@@ -904,15 +1001,21 @@ public class Bases {
 
 		private Tramo<?> tramoCreta;
 		private Trabajador<?> trabajadorCreta;
+		
+		private net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramoAon;
+		private net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador trabajadorAon;
+
 
 		public Comments(XMLStreamWriter xsw) {
 			super();
 			this.xsw = xsw;
+			this.unmatched = new HashSet<TrabajadorTramoDato>();
 			this.skippedTrabajadorList = new Stack<TrabajadorData>();
 			this.addedEnterpriseDataMap = new HashMap<String, Data>();
 			this.addedTrabajadorDataMap = new HashMap<String, TrabajadorData>();
+			
 		}
-
+		
 		@Override
 		public void beforeMarshal(Object source) {
 
@@ -930,6 +1033,32 @@ public class Bases {
 						(net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo) source);
 
 			super.beforeMarshal(source);
+		}
+		
+		@Override
+		public void salaryNotFound(String ccc, Trabajador<?> trabajador, Periodo mes) {
+		}
+		
+		@Override
+		public void unMatchedVariable(Salary salary, String var, ContextData contextData, Dato datoSolicitado,
+				Tramo tramo, TramoBuilder tramoBuilder, boolean optional) {
+			unmatched.add(new TrabajadorTramoDato() {{
+					this.ss = salary.getEmployeeSSNumber();
+					this.codigo = datoSolicitado.getCodigo();
+					this.tipo = datoSolicitado.getTipoDato();
+					this.diaDesde = tramo.getFechaDesde().getDia();
+					this.mesDesde = tramo.getFechaDesde().getMes();
+					this.anhoDesde = tramo.getFechaDesde().getAnho();
+					this.diaHasta = tramo.getFechaHasta().getDia();
+					this.mesHasta = tramo.getFechaHasta().getMes();
+					this.anhoHasta = tramo.getFechaHasta().getAnho();
+					
+					this.startDate = contextData.getStartDate();
+					this.endDate = contextData.getEndDate();
+					this.expression = contextData.getExpression();
+					
+					}}
+					);
 		}
 
 		@Override
@@ -971,7 +1100,7 @@ public class Bases {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
+			trabajadorAon = trabajador;
 			trabajadorCreta = data.trabajadorCreta;
 		}
 
@@ -989,8 +1118,26 @@ public class Bases {
 		public void beforeMarshalDato(
 				net.aonsolutions.core.tgss.creta.jaxb.bases.Dato datoAon) {
 
+			unMatched(datoAon).ifPresent(t -> {
+				try {
+					xsw.writeComment(String.format("Error [%s%s%s%s%s%s]: '%s' (%8$td/%8$tm/%8$tY..%9$td/%9$tm/%9$tY) " ,
+							t.ss,
+							t.codigo,
+							t.diaDesde,
+							t.mesDesde,
+							t.diaHasta,
+							t.mesHasta,
+							
+							t.expression , 
+							t.startDate, 
+							t.endDate ));
+				} catch (XMLStreamException e) {
+				}
+			});
+
 			if (tramoCreta == null)
 				return;
+			
 
 			for (Dato datoCreta : tramoCreta.getDatosTramo().getDato()) {
 				if (!datoCreta.getTipoDato()
@@ -1016,13 +1163,18 @@ public class Bases {
 					} catch (XMLStreamException e) {
 					}
 				}
+				
+				
 
 				return;
 			}
+			
+			
 		}
 
 		public void beforeMarshalTramo(
 				net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramoAon) {
+			this.tramoAon = tramoAon;
 			for (Tramo<?> tramo : trabajadorCreta.getTramos().getTramo()) {
 				if (compare(tramo, tramoAon) == 0) {
 					tramoCreta = tramo;
@@ -1066,6 +1218,22 @@ public class Bases {
 
 			}
 
+		}
+		
+		private Optional<TrabajadorTramoDato> unMatched(net.aonsolutions.core.tgss.creta.jaxb.bases.Dato datoAon) {
+			TrabajadorTramoDato t = new TrabajadorTramoDato() {{
+				this.ss = trabajadorAon.getNaf();
+				this.codigo = datoAon.getCodigo();
+				this.tipo = datoAon.getTipoDato();
+				this.diaDesde = tramoAon.getFechaDesde().getDia();
+				this.mesDesde = tramoAon.getFechaDesde().getMes();
+				this.anhoDesde = tramoAon.getFechaDesde().getAnho();
+				this.diaHasta = tramoAon.getFechaHasta().getDia();
+				this.mesHasta = tramoAon.getFechaHasta().getMes();
+				this.anhoHasta = tramoAon.getFechaHasta().getAnho();
+			}};
+			
+			return unmatched.stream().filter( t1 -> t1.equals(t) ).findFirst() ;
 		}
 
 	}
@@ -1111,12 +1279,11 @@ public class Bases {
 
 				if (optional && newValue == 0.00)
 					return;
+				
+				newValue = check(newValue, salary, tramo, datoSolicitado, tramoBuilder, cbs);
 
 				if (optional && newValue == 0.00)
 					return;
-
-				if (newValue == 0.00)
-					zeroValue(salary, tramo, datoSolicitado, tramoBuilder, cbs);
 
 				DatoBuilder datoBuilder = new DatoBuilder();
 				datoBuilder.setCodigo(datoSolicitado.getCodigo());
@@ -1137,6 +1304,13 @@ public class Bases {
 
 				}
 			}
+		}
+		
+		protected Double check(Double value, Salary salary, Tramo tramo, DatoSolicitado datoSolicitado,
+				TramoBuilder tramoBuilder, BasesCallback... cbs ) {
+			if (value == 0.00)
+				zeroValue(salary, tramo, datoSolicitado, tramoBuilder, cbs);
+			return value;
 		}
 
 	}
@@ -1214,16 +1388,29 @@ public class Bases {
 
 	}
 	
-	private static class PlusCCretaData extends CCretaData {
+	private static class NonNegativeCCretaData extends CCretaData {
 
-		public PlusCCretaData(String variable) {
+		public NonNegativeCCretaData(String variable) {
 			super(variable);
 		}
 		
 		@Override
-		public Double get(Salary salary, Fecha desde, Fecha hasta)
-				throws NoSuchVariableException, UnMatchedVariableException {
-			return Math.max(super.get(salary, desde, hasta), 0.00);
+		protected Double check(Double value, Salary salary, Tramo tramo, DatoSolicitado datoSolicitado,
+				TramoBuilder tramoBuilder, BasesCallback... cbs) {
+ 			if ( value < 0.00 ) {
+				negativeValue(value, salary, tramo, datoSolicitado, tramoBuilder, cbs);
+				return 0.00;
+ 			}
+			
+ 			return super.check(value, salary, tramo, datoSolicitado, tramoBuilder, cbs);
+		}
+		
+
+		protected void negativeValue(Double value, Salary salary, Tramo tramo,
+				Dato datoSolicitado, TramoBuilder tramoBuilder,
+				BasesCallback... cbs) {
+			for (BasesCallback cb : cbs)
+				cb.negativeDato(variable, value, datoSolicitado, tramo, salary);
 		}
 	}
 	
@@ -1232,7 +1419,7 @@ public class Bases {
 	private static class CompositeCCretaData
 			extends AbstractCCretaData {
 
-		private String variables[];
+		protected String variables[];
 
 		public CompositeCCretaData(String... variables) {
 			this.variables = variables;
@@ -1294,21 +1481,47 @@ public class Bases {
 		// --------------------------------------------------------------------
 	}
 
+	private static class NonNegativeCompositeCCretaData extends  CompositeCCretaData {
+
+		public NonNegativeCompositeCCretaData(String... variables) {
+			super(variables);
+		}
+		
+		
+		@Override
+		protected Double check(Double value, Salary salary, Tramo tramo, DatoSolicitado datoSolicitado,
+				TramoBuilder tramoBuilder, BasesCallback... cbs) {
+ 			if ( value < 0.00 ) {
+				negativeValue(value, salary, tramo, datoSolicitado, tramoBuilder, cbs);
+				return 0.00;
+ 			}
+			return super.check(value, salary, tramo, datoSolicitado, tramoBuilder, cbs);
+		}
+		
+		protected void negativeValue(Double value, Salary salary, Tramo tramo,
+				Dato datoSolicitado, TramoBuilder tramoBuilder,
+				BasesCallback... cbs) {
+			for (BasesCallback cb : cbs)  {
+				cb.negativeDato(variables[variables.length-1], value, datoSolicitado, tramo, salary);
+			}
+		}
+	}
+
 
 	private static Map<String, CretaData> CONTEXT_VARIABLE_MAP = new HashMap<String, CretaData>() {
 		{
-			put("500", new PlusCCretaData(CGC_BASE.getName()));
-			put("535", new PlusCCretaData(MATERNITY_BASE.getName()));
+			put("500", new NonNegativeCCretaData(CGC_BASE.getName()));
+			put("535", new NonNegativeCCretaData(MATERNITY_BASE.getName()));
 
 			put("501", new CCretaData(STRUCTURAL_OVERTIME_BASE.getName()));
 			put("502", new CCretaData(
 					NON_STRUCTURAL_OVERTIME_BASE.getName()));
 			put("563", new CCretaData(ContextVariable.PREST_IT));
 
-			put("601", new PlusCCretaData(CGP_BASE.getName()));
-			put("611", new PlusCCretaData(CGP_BASE.getName()));
-			put("635", new PlusCCretaData(MATERNITY_BASE.getName()));
-			put("634", new PlusCCretaData(MATERNITY_BASE.getName()));
+			put("601", new NonNegativeCCretaData(CGP_BASE.getName()));
+			put("611", new NonNegativeCCretaData(CGP_BASE.getName()));
+			put("635", new NonNegativeCCretaData(MATERNITY_BASE.getName()));
+			put("634", new NonNegativeCCretaData(MATERNITY_BASE.getName()));
 
 			put("663", new CCretaData(ContextVariable.PREST_IT));
 
@@ -1336,17 +1549,17 @@ public class Bases {
 			put("51", new MonthlySalaryCretaData());
 
 			
-			put("509", new CompositeCCretaData(
+			put("509", new NonNegativeCompositeCCretaData(
 					MATERNITY_BASE.getName(),
 					ERE_BASE.getName(),
 					CGC_BASE.getName())
 					);
 			
-			put("603", new CompositeCCretaData(
+			put("603", new NonNegativeCompositeCCretaData(
 					MATERNITY_BASE.getName(),
 					ERE_BASE.getName(), 
 					CGP_BASE.getName()));
-			put("613", new CompositeCCretaData(
+			put("613", new NonNegativeCompositeCCretaData(
 					MATERNITY_BASE.getName(),
 					ERE_BASE.getName(),
 					CGP_BASE.getName()));

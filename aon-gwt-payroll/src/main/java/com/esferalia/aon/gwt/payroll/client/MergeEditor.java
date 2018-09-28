@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import com.esferalia.aon.gwt.codemirror.client.ui.MergeArea;
+import com.esferalia.aon.gwt.codemirror.client.ui.CodeMirror.Pos;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.RepeatingCommand;
@@ -84,9 +85,17 @@ public class MergeEditor extends ResizeComposite {
 		this.filename = filename;
 	}
 	
-	
 	public void setShowDifferences(boolean showDifferences ){
 		mergeArea.setShowDifferences(showDifferences);
+	}
+	
+	public void scrollIntoView(Pos pos) {
+		mergeArea.scrollIntoView(pos);
+	}
+	
+	
+	public void setSelection(Pos anchor, Pos head) {
+		mergeArea.setSelection(anchor, head);
 	}
 	
 	// -----------------------------------------------------------------------
@@ -143,7 +152,7 @@ public class MergeEditor extends ResizeComposite {
 	private void copy() {
 		mergeArea.setValue(mergeArea.getOrig());
 	}
-
+	
 	public static native void clickElement(Element elem) /*-{
 		elem.click();
 	}-*/;

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.images.Images;
@@ -55,14 +56,14 @@ public class CretaResults extends Composite implements RequiresResize{
 		@Template("<span style=\"{0}\">{1}</span>")
 		SafeHtml treeItem(SafeStyles style, String message);
 	}
+	
 
 	private class EventsSelectionHandler implements SelectionHandler<TreeItem> {
 
 		@Override
 		public void onSelection(SelectionEvent<TreeItem> event) {
-			// TODO Auto-generated method stub
 			Object userObject = event.getSelectedItem().getUserObject();
-			
+			CretaResults.this.selectionHandler.accept((CretaService.JsEvent) userObject);
 		}
 	}
 
@@ -104,12 +105,16 @@ public class CretaResults extends Composite implements RequiresResize{
 	private TreeItem messagesItem;
 
 	private Set<JsFile> jsFiles;
-
+	
+	private Consumer<CretaService.JsEvent> selectionHandler;
+	
 	public CretaResults() {
 		
 		images = GWT.create(Images.class);
 
 		initWidget(binder.createAndBindUi(this));
+
+		selectionHandler = e -> {};
 
 		errorsItem = new TreeItem(imageItemHTML(images._error(), "ERRORES"));
 		eventsTree.addItem(errorsItem);
@@ -128,6 +133,7 @@ public class CretaResults extends Composite implements RequiresResize{
 		errorsItem.setVisible(false);
 		warningsItem.setVisible(false);
 		messagesItem.setVisible(false);
+		
 	}
 	
 	public void setJsFiles(Set<JsFile> jsFiles) {
@@ -207,6 +213,12 @@ public class CretaResults extends Composite implements RequiresResize{
 		.stream()
 		.findFirst();
 	}
+	
+	
+	public void setSelectionHandler ( Consumer<CretaService.JsEvent> selectionHandler) {
+		this.selectionHandler = selectionHandler;
+	}
+	
 	// ------------------------------------------------------------ @UiHandlers
 
 	@UiHandler("runButton")

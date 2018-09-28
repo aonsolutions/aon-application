@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import com.esferalia.aon.gwt.codemirror.client.ui.CodeArea;
+import com.esferalia.aon.gwt.codemirror.client.ui.CodeMirror.Pos;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.RepeatingCommand;
@@ -95,11 +96,17 @@ public class FileEditor extends ResizeComposite {
 		this.filename = filename;
 	}
 	
+	public void scrollIntoView(Pos pos) {
+		codeArea.scrollIntoView(pos);
+	}
+	
+	public void setSelection(Pos anchor, Pos head) {
+		codeArea.setSelection(anchor, head);
+	}
 	
 	public void add(IsWidget widget) {
 		toolBarPanel.add(widget);
 	}
-	
 	
 	// -----------------------------------------------------------------------
 

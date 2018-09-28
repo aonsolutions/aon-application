@@ -14,6 +14,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -86,7 +87,6 @@ import net.aonsolutions.core.tgss.creta.jaxb.bases.LiquidacionBuilder;
 import net.aonsolutions.core.tgss.creta.jaxb.bases.TramoBuilder;
 import net.aonsolutions.core.tgss.creta.jaxb.dcl.LineaDCL;
 import net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta;
-import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.ObjectFactory;
 
 @MultipartConfig
 @SuppressWarnings("serial")
@@ -223,7 +223,9 @@ public class CretaServlet extends HttpServlet
 						trabajadoresYTramosIss, respuestasIss, customBasesCb, noDiffsBasesCb, skippedCallback, i54Callback));
 			} catch (EmptyBasesException e) {
 				os.printf("\"draft_request\":\"%s\",\r\n",
-						generateBorrador(e.getAutorizado(), noDiffsBasesCb.getMeses(), noDiffsBasesCb.getAnhos(),
+						generateBorrador(e.getAutorizado(), 
+								getMesControl(), getAnhoControl(),
+								noDiffsBasesCb.getMeses(), noDiffsBasesCb.getAnhos(),
 								noDiffsBasesCb.getTipos(), noDiffsBasesCb.getAceptarBasesAnteriores(),
 								noDiffsBasesCb.getCCCs()));
 			} catch (NoneSkippedException e) {
@@ -349,7 +351,8 @@ public class CretaServlet extends HttpServlet
 					findRespuestas(req)
 				)
 				.filter(r -> r.getLiquidacion() != null && r.getLiquidacion().size() > 0 )
-				.filter(r -> toDate(r.getLiquidacion().get(0).getFechaHoraRecaudacion()).after(fromDate)),
+				.filter(r -> toDate(r.getLiquidacion().get(0).getFechaHoraRecaudacion()).after(fromDate))
+				,
 				findBases(req)
 				.filter(b -> b.getLiquidacion() != null && b.getLiquidacion().size() > 0 )
 				//.filter(b -> toDate(b.getLiquidacion().get(0).getFechaControl()).after(fromDate))
@@ -491,7 +494,9 @@ public class CretaServlet extends HttpServlet
 
 	}
 
-	private static String generateBorrador(String autorizado, String meses[], String anhos[], String tipos[],
+	private static String generateBorrador(String autorizado,
+			Month mesControl, Integer anhoControl,
+			String meses[], String anhos[], String tipos[],
 			Boolean aceptarBasesAnteriores[], String cccs[])
 					throws JAXBException, IOException, XMLStreamException, FactoryConfigurationError {
 
@@ -523,7 +528,7 @@ public class CretaServlet extends HttpServlet
 		};
 
 		// @formatter:off
-		Borrador.generate(autorizado, meses, anhos, tipos, aceptarBasesAnteriores, cccs, xsw);
+		Borrador.generate(autorizado, mesControl, anhoControl, meses, anhos, tipos, aceptarBasesAnteriores, cccs, xsw);
 		// @formatter:on
 
 		os.close();
@@ -761,9 +766,15 @@ public class CretaServlet extends HttpServlet
 	private static class Event<T extends Event<?>> implements JSON {
 
 		private String message;
+		private String id = "666";
 
 		public String getMessage() {
 			return message;
+		}
+
+		public T setId(String id) {
+			this.id = id;
+			return (T) this;
 		}
 
 		public T setMessage(String message) {
@@ -775,7 +786,12 @@ public class CretaServlet extends HttpServlet
 
 		@Override
 		public String toJSON() {
-			return String.format("{" + "\"message\":\"%s\",\r\n" + "}", message);
+			return String.format("{"
+					+ "\"id\":\"%s\",\r\n"
+					+ "\"message\":\"%s\",\r\n" 
+					+ "}",
+					id,
+					message);
 		}
 	}
 
@@ -1072,10 +1088,21 @@ public class CretaServlet extends HttpServlet
 		@Override
 		public void unMatchedVariable(Salary salary, String var, ContextData contextData,
 				Dato datoSolicitado, Tramo tramo, TramoBuilder tramoBuilder, boolean optional) {
-			errors.add(new Event().setMessage(format(
+			errors.add(new Event()
+					.setId(format("%s%s%s%s%s%s", 
+					salary.getEmployeeSSNumber(),
+					datoSolicitado.getCodigo(),
+					tramo.getFechaDesde().getDia(),
+					tramo.getFechaDesde().getMes(),
+					tramo.getFechaHasta().getDia(),
+					tramo.getFechaHasta().getMes()
+					))
+					.setMessage(format(
 					"%s (IPF:%s, NAF:%s) .Tramo para %s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) incorrecto se esperaba (%7$s/%8$s/%9$s...%10$s/%11$s/%12$s)",
 					// salary.getEnterpriseName(),
-					salary.getEmployeeName(), salary.getEmployeeDocument(), salary.getEmployeeSSNumber(),
+					salary.getEmployeeName(), 
+					salary.getEmployeeDocument(), 
+					salary.getEmployeeSSNumber(),
 					// salary.getEnterpriseCCC(),
 					var,
 
@@ -1103,6 +1130,25 @@ public class CretaServlet extends HttpServlet
 				errors.add(event);
 		}
 
+		@Override
+		public void negativeDato(String  var, Double value, Dato datoSolicitado,
+				Tramo tramo, Salary salary) {
+			errors.add(new Event().setMessage(format(
+					"%s (IPF:%s, NAF:%s) .%s (%s/%s/%s..%s/%s/%s) negativo '%.2f'",
+					// salary.getEnterpriseName(),
+					salary.getEmployeeName(), 
+					salary.getEmployeeDocument(), 
+					salary.getEmployeeSSNumber(),
+					// salary.getEnterpriseCCC(),
+					var, 
+					tramo.getFechaDesde().getDia(),
+					tramo.getFechaDesde().getMes(),
+					tramo.getFechaDesde().getAnho(),
+					tramo.getFechaHasta().getDia(),
+					tramo.getFechaHasta().getMes(),
+					tramo.getFechaHasta().getAnho(),
+					value)));
+		};
 		// ----------------------------------------------------------- Warnings
 
 		@Override
@@ -1554,6 +1600,46 @@ public class CretaServlet extends HttpServlet
 	private static String getParameter (HttpServletRequest req, CretaService.Parameter param, String def) {
 		String value = req.getParameter(param.name());
 		return value != null ? value : def;
+	}
+	
+	private static int getAnhoControl() {
+		Calendar c = Calendar.getInstance();
+		c.add(Calendar.MONTH, -1);
+		return c.get(Calendar.YEAR);
+	}
+
+	private static Month getMesControl() {
+		Calendar c = Calendar.getInstance();
+		c.add(Calendar.MONTH, -1);
+		
+		switch ( c.get(Calendar.MONTH) ) {
+		case Calendar.JANUARY:
+			return Month.JANUARY;
+		case Calendar.FEBRUARY:
+			return Month.FEBRUARY;
+		case Calendar.MARCH:
+			return Month.MARCH;
+		case Calendar.APRIL:
+			return Month.APRIL;
+		case Calendar.MAY:
+			return Month.MAY;
+		case Calendar.JUNE:
+			return Month.JUNE;
+		case Calendar.JULY:
+			return Month.JULY;
+		case Calendar.AUGUST:
+			return Month.AUGUST;
+		case Calendar.SEPTEMBER:
+			return Month.SEPTEMBER;
+		case Calendar.OCTOBER:
+			return Month.OCTOBER;
+		case Calendar.NOVEMBER:
+			return Month.NOVEMBER;
+		case Calendar.DECEMBER:
+			return Month.DECEMBER;
+		}
+		
+		throw new IllegalArgumentException();
 	}
 	
 	

@@ -3,6 +3,10 @@ package com.esferalia.aon.gwt.payroll.client;
 import static com.esferalia.aon.gwt.payroll.client.EmployeeTree.showBases;
 import static com.esferalia.aon.gwt.payroll.client.EmployeeTree.showResults;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -16,6 +20,9 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 
+import javax.sound.sampled.Line;
+
+import com.esferalia.aon.gwt.codemirror.client.ui.CodeMirror.Pos;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
@@ -566,7 +573,6 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		@Override
 		public void onBases(CretaService.JsBasesResult result) {
 			
-
 			MergeEditor mergeEditor = new BasesMergeEditor();
 			mergeEditor.setOrig(result.getBasesFile());
 			mergeEditor.setMode("text/xml");
@@ -582,12 +588,21 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					.orElse("")
 				;
 
+			CretaResults cretaResults = new CretaResults() {
+				@Override
+				protected void onBases(JsBasesResult result) {
+					BaseCretaDetail.this.onBases(result);
+				}
+			};
+
 			try {
 				mergeEditor.setText(result.getChangedBasesFile());
 				mergeEditor.setTitle(CretaService.File.BASES.getFilename());
 				mergeEditor.setFilename(CretaService.File.BASES.getFilename() + suffix + ".xml");
 				detailPanel.setWidget(mergeEditor);
 				mergeEditor.autoRefresh();
+
+				cretaResults.setSelectionHandler(e -> mergeEditor.scrollIntoView(posOf(result.getBasesFile(),e.getId())));
 
 			} catch (NoSuchElementException e1) {
 				try {
@@ -597,6 +612,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					mergeEditor.setFilename(CretaService.File.BASES.getFilename() + suffix + ".xml");
 					detailPanel.setWidget(mergeEditor);
 					mergeEditor.autoRefresh();
+					cretaResults.setSelectionHandler(e -> mergeEditor.scrollIntoView(posOf(result.getBasesFile(),e.getId())));
 				} catch ( NoSuchElementException e2 ){
 					FileEditor basesEditor = new BasesFileEditor();
 					basesEditor.setMode("text/xml");
@@ -607,6 +623,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					basesEditor.setFilename(CretaService.File.BASES.getFilename() + suffix + ".xml");
 					detailPanel.setWidget(basesEditor);
 					basesEditor.autoRefresh();
+					cretaResults.setSelectionHandler(e -> basesEditor.scrollIntoView(posOf(result.getBasesFile(),e.getId())));
 
 					CheckBox reftification = new CheckBox("Reftificativa");
 					reftification.setValue(result.isRectifying());
@@ -616,12 +633,6 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				}
 			}	
 
-			CretaResults cretaResults = new CretaResults() {
-				@Override
-				protected void onBases(JsBasesResult result) {
-					BaseCretaDetail.this.onBases(result);
-				}
-			};
 			cretaResults.setJsFiles(getSelected());
 			cretaResults.addErrors(result.getErrors());
 			cretaResults.addWarnings(result.getWarnings());
@@ -2330,7 +2341,20 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		
 		return compare < 0;
 	}
+	
+	private static int lineOf(String string, String str) {
+		String lines [] = string.split("\\r?\\n");
+		for ( int i = 0; i < lines.length; i++ )
+			if ( lines[i].indexOf(str) >= 0 )
+				return i;
+		
+		return -1;
+	}
 
+	private static Pos posOf(String string, String str) {
+		int ln = lineOf(string, str);
+		return Pos.create(ln, 0);
+	}
 	// ------------------------------------------------------------------------
 
 }

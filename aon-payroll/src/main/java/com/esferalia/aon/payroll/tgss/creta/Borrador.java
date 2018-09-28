@@ -244,6 +244,33 @@ public class Borrador {
 
 	}
 
+	public static void generate(String autorizado, 
+			Month mesControl, Integer anhoControl, 
+			String meses[],String anhos[], String tipos[], Boolean aceptarBasesAnteriores[],
+			String cccs[], XMLStreamWriter writer, Listener ...listeners) throws JAXBException {
+
+		int authorized = Integer.parseInt(autorizado);
+		Integer years[] = Arrays.stream(anhos)
+				.map(anho -> Integer.parseInt(anho)).toArray(Integer[]::new);
+		Month months[] = Arrays.stream(meses)
+				.map(mes -> Month.of(Integer.parseInt(mes)))
+				.toArray(Month[]::new);
+
+		//@formatter:off
+		generate(authorized, 
+				mesControl,
+				anhoControl,
+				months, 
+				years, 
+				tipos, 
+				aceptarBasesAnteriores, 
+				cccs,
+				writer,
+				listeners);
+		//@formatter:on
+
+	}
+
 	public static void generate(String autorizado, String meses[],
 			String anhos[], String tipos[], Boolean aceptarBasesAnteriores[],
 			String cccs[], XMLStreamWriter writer, Listener ...listeners) throws JAXBException {
@@ -293,6 +320,36 @@ public class Borrador {
 		SolicitudBorrador solicitudBorrador = builder.createSolicitudBorrador();
 
 		Utils.marshal(solicitudBorrador, os, listeners);
+
+	}
+
+	public static void generate(int autorizado, Month mesControl, Integer anhoControl, Month meses[], Integer anhos[],
+			String tipos[], Boolean aceptarBasesAnteriores[], String cccs[],
+			XMLStreamWriter writer, Listener ...listeners) throws JAXBException {
+
+		SolicitudBorradorBuilder builder = new SolicitudBorradorBuilder()
+				.setAutorizado(autorizado);
+
+		//@formatter:off
+		for (int i = 0; i < cccs.length; i++) {
+			builder
+			.setCCC(cccs[i])
+			.setTipo(tipos[i])
+			.setAceptarBasesAnteriores(aceptarBasesAnteriores[i])
+			.setMesDesde(meses[i])
+			.setAnhoDesde(anhos[i])
+			.setMesHasta(meses[i])
+			.setAnhoHasta(anhos[i])
+			.setMesControl(mesControl)
+			.setAnhoControl(anhoControl)
+			.addLiquidacion()
+			;
+		}
+		//@formatter:on
+
+		SolicitudBorrador solicitudBorrador = builder.createSolicitudBorrador();
+
+		Utils.marshal(solicitudBorrador, writer, listeners);
 
 	}
 

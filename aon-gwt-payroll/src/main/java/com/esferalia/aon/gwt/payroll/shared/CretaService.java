@@ -188,6 +188,10 @@ public interface CretaService {
 
 		// ----------------------------------- JSNI (Native JavaScript Methods)
 
+		public final native String getId() /*-{
+			return this.id;
+		}-*/;
+
 		public final native String getMessage() /*-{
 			return this.message;
 		}-*/;
