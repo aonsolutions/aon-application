@@ -1,5 +1,7 @@
 package net.aonsolutions.db.up2date;
 
+import static net.aonsolutions.db.up2date.tgss.CRA2018Update.CRA2018UPDATE;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -16,8 +18,6 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-
-import net.aonsolutions.db.up2date.payroll.FundUpvUpdateII;
 
 public class Up2Date {
 	
@@ -40,7 +40,8 @@ public class Up2Date {
     		//UNEMPLOYMENT
     		//TRAININGBASES2018FIX,
     		//FELLOWBASES2018FIX,
-    		FundUpvUpdateII.FUNDUPV_UPDATE_II
+    		//FUNDUPV_UPDATE_II
+    		CRA2018UPDATE
     		
     }; 
 	

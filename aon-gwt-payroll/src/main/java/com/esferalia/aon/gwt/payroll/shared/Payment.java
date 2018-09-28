@@ -74,7 +74,12 @@ public class Payment extends Item<Payment.Type> implements Reports.Payment{
 		CRA_0053,
 		CRA_0054,
 		CRA_0055,
-		CRA_0056;
+		CRA_0056,
+		CRA_0057,
+		CRA_0058,
+		CRA_0059,
+		CRA_0060,
+		CRA_0061;
 		//@formatter:on
 
 		public String getDescription() {
@@ -165,6 +170,11 @@ public class Payment extends Item<Payment.Type> implements Reports.Payment{
 				put(CRA_0054, "INDEMNIZACIONES POR DESPIDO O CESE");
 				put(CRA_0055, "MEJORAS PREST.SS.INCAPACIDAD TEMPORAL");
 				put(CRA_0056, "MEJORAS PREST.SS.\u2260INCAPACIDAD TEMPORAL");
+				put(CRA_0057, "HORAS COMPLEMENTARIAS PACTADAS");
+				put(CRA_0058, "HORAS COMPLEMENTARIAS DE ACEPTACI\u00D3N VOLUNTARIA");
+				put(CRA_0059, "VACACIONES NO DISFRUTADAS, RETRIBUIDAS TRAS EL FALLECIMIENTO DEL TRABAJADOR");
+				put(CRA_0060, "VACACIONES RETRIBUIDAS NO DISFRUTADAS. COTIZACI\u00D3N DURANTE EL CONTRATO");
+				put(CRA_0061, "PLUS DE TRANSPORTE Y DE DISTANCIA. UTILIZACI\u00D3N DE MEDIOS COLECTIVOS APORTADOS POR LA EMPRESA");
 			}
 		};
 		//@formatter:on
@@ -228,6 +238,11 @@ public class Payment extends Item<Payment.Type> implements Reports.Payment{
 				put(CRA_0054, true);
 				put(CRA_0055, false);
 				put(CRA_0056, true);
+				put(CRA_0057, true); // CRA_0002
+				put(CRA_0058, true); // CRA_0002
+				put(CRA_0059, true); // CRA_0006
+				put(CRA_0060, true); // CRA_0006
+				put(CRA_0061, true); // CRA_0032
 			}
 		};
 		//@formatter:on
@@ -292,6 +307,11 @@ public class Payment extends Item<Payment.Type> implements Reports.Payment{
 				put(CRA_0054, true);
 				put(CRA_0055, true);
 				put(CRA_0056, false);
+				put(CRA_0057, false); // CRA_0002
+				put(CRA_0058, false); // CRA_0002
+				put(CRA_0059, false); // CRA_0006
+				put(CRA_0060, false); // CRA_0006
+				put(CRA_0061, false); // CRA_0032
 			}
 		};
 		//@formatter:on
