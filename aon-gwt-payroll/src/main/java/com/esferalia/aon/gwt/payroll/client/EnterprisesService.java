@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -63,6 +64,8 @@ public interface EnterprisesService extends RemoteService {
 	List<Extra> getWorkplacesExtras(List<Integer> workplaceIds) ;
 
 	Integer getParentDomain();
+
+	WorkplaceInfo getWorkplaceInfo(Integer workplaceId);
 	
 	
 }

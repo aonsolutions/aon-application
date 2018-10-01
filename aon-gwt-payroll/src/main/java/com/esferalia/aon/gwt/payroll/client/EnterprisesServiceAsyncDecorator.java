@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -187,5 +188,12 @@ public class EnterprisesServiceAsyncDecorator implements
 		enterprisesServiceAsync.getParentDomain(new 
 				AsyncCallbackWrapper<Integer>(callback));
 		
+	}
+
+	@Override
+	public void getWorkplaceInfo(Integer workplaceId, AsyncCallback<WorkplaceInfo> callback) {
+		AON.start();
+		enterprisesServiceAsync.getWorkplaceInfo(workplaceId,
+				new AsyncCallbackWrapper<WorkplaceInfo>(callback));
 	}
 }

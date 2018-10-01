@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -36,5 +37,6 @@ public interface EnterprisesServiceAsync {
 	void getDeductionConcepts(int offset , int limit, AsyncCallback<List<Deduction>> callback);
 	void moveAgreement2Parent(Agreement agreement, AsyncCallback<Void> callback);
 	void getParentDomain(AsyncCallback<Integer> callback);
+	void getWorkplaceInfo(Integer workplaceId, AsyncCallback<WorkplaceInfo> asyncCallback);
 
 }
