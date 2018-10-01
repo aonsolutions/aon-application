@@ -11,6 +11,7 @@ import java.util.Locale;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
@@ -212,15 +213,19 @@ public class AonFiscalFileUtils {
 		return text(changeInvalidCharacters(name),size);
 	}
 	
-	public static String getMod202Period(Period period) {
-		 if (period == Period.T1) {
-			 return "1P"; 
-		 } else if (period == Period.T2) {
-			 return "2P";
-		 } else if (period == Period.T3) {
-			 return "3P";
-		 }
-		 return "  ";
+	public static String getMod202Period(Mod202 fs) {
+		if (fs.isForalNavarra()) {
+			return "2P";
+		} else if (fs.isForalEuskadi()) {
+			return "0A";
+		} else if (fs.getPeriod() == Period.T1) {
+			return "1P";
+		} else if (fs.getPeriod() == Period.T2) {
+			return "2P";
+		} else if (fs.getPeriod() == Period.T3) {
+			return "3P";
+		}
+		return "  ";
 	}
 	
 	public static String getFileName(IFiscalModel fs) {
@@ -236,7 +241,7 @@ public class AonFiscalFileUtils {
 		
 		return  "Mod" + FiscalModelUtils.getModelName(fs) 
 				+ "_" + fs.getYear() 
-				+ "_" + ( fs.getModel() == FiscalModelType.M202 ? getMod202Period(fs.getPeriod()) : fs.getPeriod().getName()) 
+				+ "_" + ( fs.getModel() == FiscalModelType.M202 ? getMod202Period((Mod202) fs) : fs.getPeriod().getName()) 
 				+ AonStringUtils.prependIfMissing(name , "_");
 	}
 	

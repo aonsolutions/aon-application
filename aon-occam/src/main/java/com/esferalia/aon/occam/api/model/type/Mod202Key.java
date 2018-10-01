@@ -37,6 +37,11 @@ public enum Mod202Key implements IFiscalModelKey{
 	,X13("202-X13",0,"Cooperativa fiscalmente protegida.")
 	,X14("202-X14",0,"Otras entidades con posibilidad de aplicar dos tipos impositivos.")
 	
+	,X15("202-X15",0,"Contribuyente sometido a normativa de Territorio Foral de Navarra/Nafarroa")
+	,X16("202-X16",0,"Contribuyente sometido a normativa de Territorio Foral de Gipuzkoa")
+	,X17("202-X17",0,"Contribuyente sometido a normativa de Territorio Foral de Bizkaia")
+	,X18("202-X18",0,"Contribuyente sometido a normativa de Territorio Foral de Araba/\u00C1lava")
+	,X19("202-X19",0,"Entidad de capital-riesgo que aplica el r\u00E9gimen fiscal especial del art. 50 LIS")
 	
 	,C01("202-C01", 1,"Base del pago fraccionado")
 	,C02("202-C02", 2,"Resultado de la declaraci\u00F3n anterior (complementarias)")

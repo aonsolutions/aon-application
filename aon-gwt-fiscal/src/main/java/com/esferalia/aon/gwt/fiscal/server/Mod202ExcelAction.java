@@ -94,6 +94,16 @@ public class Mod202ExcelAction extends ModelIRPFExcelAction<Mod202,Mod202Key> {
 		} else if (key == Mod202Key.P03) {
 			String cnae = model.ensureDetail(key).getDescription();
 			cell.setCellValue(AonStringUtils.defaultString(cnae));
+		} else if (key == Mod202Key.X15) {
+			cell.setCellValue(amount == 1?"SI":"NO");
+		} else if (key == Mod202Key.X16) {
+			cell.setCellValue(amount == 1?"SI":"NO");
+		} else if (key == Mod202Key.X17) {
+			cell.setCellValue(amount == 1?"SI":"NO");
+		} else if (key == Mod202Key.X18) {
+			cell.setCellValue(amount == 1?"SI":"NO");
+		} else if (key == Mod202Key.X19) {
+			cell.setCellValue(amount == 1?"SI":"NO");
 		} else if (key == Mod202Key.X01) {
 			cell.setCellValue(amount == 1?"SI":"NO");
 		} else if (key == Mod202Key.X02) {

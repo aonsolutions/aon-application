@@ -94,4 +94,15 @@ public class Mod202 extends FiscalModel implements Serializable {
 		// Nothing
 	}
 	
+	public boolean isForal() {
+		return (isForalNavarra() || isForalEuskadi());		
+	}
+	public boolean isForalNavarra() {
+		return (getAmount(Mod202Key.X15) == 1);		
+	}
+	public boolean isForalEuskadi() {
+		return (getAmount(Mod202Key.X16) == 1
+			|| getAmount(Mod202Key.X17) == 1
+			|| getAmount(Mod202Key.X18) == 1);		
+	}
 }

@@ -22,6 +22,7 @@ import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
@@ -428,7 +429,12 @@ public class Model202 extends MainEntryPoint {
 		FiscalModelIdentificationData<Mod202> identificationData = new FiscalModelIdentificationData<Mod202>(callback);
 		identificationContainer.setWidget( identificationData);
 		if (currentMod.getAdministration() == Administration.COMMON_TERRITORY) {
-			declaration = new Model202AEAT(callback);
+			if (currentMod.getYear() < 2018 || (currentMod.getYear() == 2018 && currentMod.getPeriod().ordinal() < Period.T2.ordinal())) {
+				declaration = new Model202AEAT(callback);
+			} else {
+				declaration = new Model2022018AEAT(callback);
+			}
+			
 //		} else  if (currentMod202.getAdministration() == Administration.GIPUZKOA) {
 //			if (currentMod202.getPeriod().isQuarterPeriod()) {
 //				declaration = new Model110Gipuzkoa(callback);

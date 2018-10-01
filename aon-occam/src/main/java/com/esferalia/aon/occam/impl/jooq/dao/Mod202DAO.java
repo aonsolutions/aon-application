@@ -112,6 +112,13 @@ public class Mod202DAO extends FiscalModelDAO {
 		,X12(Mod202Key.X12,(mod -> mod.isAEAT() && mod.getYear() > 2016),null,null,null)
 		,X13(Mod202Key.X13,(mod -> mod.isAEAT() && mod.getYear() > 2016),null,null,null)
 		,X14(Mod202Key.X14,(mod -> mod.isAEAT() && mod.getYear() > 2016),null,null,null)
+		
+		,X15(Mod202Key.X15,(mod -> mod.isAEAT() && (mod.getYear() > 2018 || (mod.getYear() == 2018 && mod.getPeriod().ordinal() >= Period.T2.ordinal()))),null,null,null)
+		,X16(Mod202Key.X16,(mod -> mod.isAEAT() && (mod.getYear() > 2018 || (mod.getYear() == 2018 && mod.getPeriod().ordinal() >= Period.T2.ordinal()))),null,null,null)
+		,X17(Mod202Key.X17,(mod -> mod.isAEAT() && (mod.getYear() > 2018 || (mod.getYear() == 2018 && mod.getPeriod().ordinal() >= Period.T2.ordinal()))),null,null,null)
+		,X18(Mod202Key.X18,(mod -> mod.isAEAT() && (mod.getYear() > 2018 || (mod.getYear() == 2018 && mod.getPeriod().ordinal() >= Period.T2.ordinal()))),null,null,null)
+		,X19(Mod202Key.X19,(mod -> mod.isAEAT() && (mod.getYear() > 2018 || (mod.getYear() == 2018 && mod.getPeriod().ordinal() >= Period.T2.ordinal()))),null,null,null)
+		
 		,X00(Mod202Key.X00,(mod -> mod.isAEAT()),null,null,null)
 		,C01(Mod202Key.C01,(mod -> mod.isAEAT())
 			,(ctx,mod) -> mod.putAmount(Mod202Key.C01, getInitialC01(ctx,mod))
