@@ -78,7 +78,6 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 	private CheckBox showPercents;
 	private ListBox costCenters;
 	private CheckBox byMonth;
-	private InlineLabel last13Months;
 	private FlowPanel selectedCostCenter;
 	private Button cleanButton;
 
@@ -321,24 +320,6 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 			}
 		});
 		
-		last13Months = new InlineLabel("\u00DCltimos 13 Meses");
-		last13Months.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				Date end = DateUtils.getLastDayOfMonth(new Date());
-				Date start = DateUtils.addMonths2Date(new Date(), -13);
-				fromDate.setValue(start, false);
-				toDate.setValue(end, false);
-				byMonth.setValue(true);
-				previousPeriods.setSelectedIndex(0);
-				showPercents.setValue(false);
-				showPercents.setEnabled( false );
-				previousPeriods.setEnabled( false );
-				onSearch();
-			}
-		});
-
 		if (config != null && config.hasCostCenters()) {
 			costCenters = new ListBox();
 			costCenters.setWidth("200px");
@@ -510,9 +491,6 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 		FlowPanel checks = new FlowPanel();
 		checks.setStyleName(AON.AON_CSS.aonNowrap());
 		checks.add(byMonth);
-		last13Months.setStyleName(AON.AON_CSS.aonClickableLabel() );
-		last13Months.addStyleName(AON.AON_CSS.aonMarginLeft());
-		checks.add(last13Months);
 		tab.setWidget(2, 2, checks);
 		
 		if (config != null && config.hasCostCenters()) {

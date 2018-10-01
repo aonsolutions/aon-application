@@ -425,6 +425,7 @@ public class AccountOperatingReport implements Serializable {
 					.setPurchasesRatio(purchasesRatio)
 					.setExpensesRatio(expensesRatio)
 					.setIncreasePercent(increasePercent)
+					.setMonth(month)
 					;
 		}
 
@@ -535,7 +536,7 @@ public class AccountOperatingReport implements Serializable {
 		ensureInterval( inter);
 		AccountOperatingStatement exist = map.get(code).get(inter);
 		if ( exist == null) {
-			map.get(code).put(inter, aos);
+			map.get(code).put(inter, aos.clone());
 		} else {
 			exist.setDebit( AonMathUtils.round(exist.getDebit() + aos.getDebit() ));
 			exist.setCredit( AonMathUtils.round(exist.getCredit() + aos.getCredit() ));
