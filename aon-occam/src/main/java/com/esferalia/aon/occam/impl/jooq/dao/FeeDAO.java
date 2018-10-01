@@ -57,12 +57,6 @@ public class FeeDAO {
 		@Override public Property<Integer> getCategoryProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.CATEGORY);}
 	}
 	
-	public static Stream<Fee> getFeeStream2(AONContext ctx, FeeFilter filter){
-		return ctx.getDslContext().select().from(CUSTOMER_FEE).where(FEE_PROPERTIES.getConditions(filter))
-				.orderBy(CUSTOMER_FEE.LINE)
-			.fetchInto(CUSTOMER_FEE).stream().map(new FeeFiller());
-	}
-	
 	public static Stream<Fee> getFeeStream(AONContext ctx, FeeFilter filter){
 		return ctx.getDslContext().select().from(CUSTOMER_FEE)
 				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
@@ -80,6 +74,7 @@ public class FeeDAO {
 		@Override
 		public Fee apply(Record r) {
 			return new Fee()
+					.setProductCode(r.getValue(PRODUCT.CODE))
 					.setId(r.getValue(CUSTOMER_FEE.ID))
 					.setDomain(r.getValue(CUSTOMER_FEE.DOMAIN))
 					.setDescription(r.getValue(CUSTOMER_FEE.DESCRIPTION))

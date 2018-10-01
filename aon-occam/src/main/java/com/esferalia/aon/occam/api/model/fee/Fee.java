@@ -18,6 +18,7 @@ public class Fee implements Serializable{
 	private Integer customer;
 	private String customerName;
 	private String product;
+	private String productCode;
 	private Double quantity;
 	private Date startDate;
 	private Date endDate;
@@ -55,6 +56,13 @@ public class Fee implements Serializable{
 	}
 	public Fee setProduct(String product) {
 		this.product = product;
+		return this;
+	}
+	public String getProductCode() {
+		return productCode;
+	}
+	public Fee setProductCode(String productCode) {
+		this.productCode = productCode;
 		return this;
 	}
 	public Double getQuantity() {

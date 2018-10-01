@@ -42,7 +42,7 @@ public class FeeProjectionDownload extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	private static final Logger LOGGER  = Logger.getLogger(FeeProjectionDownload.class.getName());
 
-	private static final int DEFAULT_OFFICE_PORT = 2002;
+	//private static final int DEFAULT_OFFICE_PORT = 2002;
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -112,6 +112,7 @@ public class FeeProjectionDownload extends HttpServlet{
 
         createCell(row, titleStyle, "CLIENTE", 0);
         createCell(row, titleStyle, "CUOTA", 1);
+        createCell(row, titleStyle, "PRODUCTO", 2);
         
     	for(Integer i = 0; i < 12; i++){
     		Date date = AonDateUtils.addMonths(from, i);
@@ -121,7 +122,7 @@ public class FeeProjectionDownload extends HttpServlet{
     		if(isPdf){
     			monthName = monthName.substring(0,3);
     		}
-    		createCell(row, titleStyle, monthName + " " + year, i+2);
+    		createCell(row, titleStyle, monthName + " " + year, i+3);
     	}
     	
     	createCell(row, titleStyle, "TOTAL", 14);    	
@@ -141,6 +142,7 @@ public class FeeProjectionDownload extends HttpServlet{
 		CellStyle doubleStyle = getDoubleStyle(workbook, isPdf);
 		createCell(row, style, fee.getCustomerName(), 0);
 		createCell(row, style, fee.getDescription(), 1);
+		createCell(row, style, fee.getProductCode(), 2);
 		
 		int bMonth = AonDateUtils.getMonth(fee.getBillingDate()); 
 		int bYear = AonDateUtils.getYear(fee.getBillingDate()); 
@@ -156,7 +158,7 @@ public class FeeProjectionDownload extends HttpServlet{
 				Double percent = getPercent(fee.getStartDate(), fee.getEndDate(), date, period);
 				Double price = fee.getPrice() * fee.getQuantity() * percent
 							* (fee.getDiscount() != null ? (100 - fee.getDiscount())/100 : 1.0);
-				createCell(row, doubleStyle, price, i+2);
+				createCell(row, doubleStyle, price, i+3);
 			}
 		}
 		createFormulaCell(row, doubleStyle, "SUM(C" + (rowIndex+1) + ":N" + (rowIndex+1) + ")", 14);
@@ -199,20 +201,21 @@ public class FeeProjectionDownload extends HttpServlet{
 		CellStyle titleStyle = getTitleStyle(workbook, isPdf);
 		createCell(row, titleStyle, "TOTAL", 0);
 		createCell(row, titleStyle, "", 1);
+		createCell(row, titleStyle, "", 2);
 		
-		createFormulaCell(row, doubleStyle, "SUM(C2:C"+(rowIndex)+")", 2);
-		createFormulaCell(row, doubleStyle, "SUM(D2:D"+(rowIndex)+")", 3);
-		createFormulaCell(row, doubleStyle, "SUM(E2:E"+(rowIndex)+")", 4);
-		createFormulaCell(row, doubleStyle, "SUM(F2:F"+(rowIndex)+")", 5);
-		createFormulaCell(row, doubleStyle, "SUM(G2:G"+(rowIndex)+")", 6);
-		createFormulaCell(row, doubleStyle, "SUM(H2:H"+(rowIndex)+")", 7);
-		createFormulaCell(row, doubleStyle, "SUM(I2:I"+(rowIndex)+")", 8);
-		createFormulaCell(row, doubleStyle, "SUM(J2:J"+(rowIndex)+")", 9);
-		createFormulaCell(row, doubleStyle, "SUM(K2:K"+(rowIndex)+")", 10);
-		createFormulaCell(row, doubleStyle, "SUM(L2:L"+(rowIndex)+")", 11);
-		createFormulaCell(row, doubleStyle, "SUM(M2:M"+(rowIndex)+")", 12);
-		createFormulaCell(row, doubleStyle, "SUM(N2:N"+(rowIndex)+")", 13);
-		createFormulaCell(row, doubleStyle, "SUM(O2:O"+(rowIndex)+")", 14);
+		createFormulaCell(row, doubleStyle, "SUM(C2:C"+(rowIndex)+")", 3);
+		createFormulaCell(row, doubleStyle, "SUM(D2:D"+(rowIndex)+")", 4);
+		createFormulaCell(row, doubleStyle, "SUM(E2:E"+(rowIndex)+")", 5);
+		createFormulaCell(row, doubleStyle, "SUM(F2:F"+(rowIndex)+")", 6);
+		createFormulaCell(row, doubleStyle, "SUM(G2:G"+(rowIndex)+")", 7);
+		createFormulaCell(row, doubleStyle, "SUM(H2:H"+(rowIndex)+")", 8);
+		createFormulaCell(row, doubleStyle, "SUM(I2:I"+(rowIndex)+")", 9);
+		createFormulaCell(row, doubleStyle, "SUM(J2:J"+(rowIndex)+")", 10);
+		createFormulaCell(row, doubleStyle, "SUM(K2:K"+(rowIndex)+")", 11);
+		createFormulaCell(row, doubleStyle, "SUM(L2:L"+(rowIndex)+")", 12);
+		createFormulaCell(row, doubleStyle, "SUM(M2:M"+(rowIndex)+")", 13);
+		createFormulaCell(row, doubleStyle, "SUM(N2:N"+(rowIndex)+")", 14);
+		createFormulaCell(row, doubleStyle, "SUM(O2:O"+(rowIndex)+")", 15);
 	
 		return rowIndex+1;
 	}
