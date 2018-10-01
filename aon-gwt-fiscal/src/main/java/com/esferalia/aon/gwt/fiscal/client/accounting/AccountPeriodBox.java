@@ -22,6 +22,12 @@ public class AccountPeriodBox extends ListBox {
 		fill(result,false);	
 	}
 	
+	@Override
+	public void removeItem(int index) {
+		super.removeItem(index);
+		periods.remove(index);
+	}
+	
 	public void fill(LinkedList<AccountPeriod> result,boolean enableAllPeriods) {
 		int i = 0;
 		for (AccountPeriod p : result) {
@@ -66,6 +72,16 @@ public class AccountPeriodBox extends ListBox {
 			&& getSelectedIndex() < periods.size()) {
 			AccountPeriod ap = periods.get(getSelectedIndex());
 			if (ap != null ) return ap.getDeadline(); 
+		}
+		return null;
+	}
+
+	public AccountPeriod getSelectedPeriod() {
+		if (periods != null 
+			&& periods.size() > 0 
+			&& getSelectedIndex() < periods.size()) {
+			AccountPeriod ap = periods.get(getSelectedIndex());
+			return ap; 
 		}
 		return null;
 	}

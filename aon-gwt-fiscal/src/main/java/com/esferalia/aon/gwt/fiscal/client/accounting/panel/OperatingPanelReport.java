@@ -445,17 +445,28 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 			@Override
 			public void onClick(ClickEvent event) {
 				period.selectDefaultPeriod();
-				fromDate.setValue(null,false);
-				toDate.setValue(null,false);
+				AccountPeriod ap = period.getSelectedPeriod();
+				if (ap != null) {
+					fromDate.setValue(ap.getInitiationDate(),false);
+					toDate.setValue(ap.getDeadline(),false);
+				} else {
+					fromDate.setValue(null,false);
+					toDate.setValue(null,false);
+				}
 				confidential.setSelectedIndex(2);
 				level.setSelectedIndex(2);
 				if (activitiesListBoxEnabled) {
 					activity.setSelectedIndex(0);
 				}
-				period.setFocus(true);
 				centerPanel.clear();
 				costCenters.setSelectedIndex(0);
 				costCentersSet = null;
+				costCenters.setEnabled(true);
+				byMonth.setValue(false);
+				previousPeriods.setEnabled(true);
+				previousPeriods.setSelectedIndex(0);
+				period.setFocus(true);
+				onSearch();
 			}
 		});
 
