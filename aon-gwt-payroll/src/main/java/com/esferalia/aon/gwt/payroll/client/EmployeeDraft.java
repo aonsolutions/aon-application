@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractType;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ModelRecord;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfoDataBase;
+import com.esferalia.aon.gwt.payroll.shared.StreetType;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.google.gwt.ajaxloader.client.AjaxLoader;
 import com.google.gwt.ajaxloader.client.AjaxLoader.AjaxLoaderOptions;
@@ -23,6 +24,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -103,8 +105,8 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 
 	interface MyStyle extends CssResource {
 		String hide();
-
 		String nssWidht();
+		String retaTopLabel();
 	}
 
 	@UiField
@@ -143,16 +145,31 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	SuggestBox nationality;
 
 	@UiField
+	TableCellElement workplaceCell;
+	
+	@UiField
 	TextBox workplace;
+	
+	@UiField
+	TableCellElement quoteAccountLabelCell;
+	
+	@UiField
+	TableCellElement quoteAccountCell;
 
 	@UiField
 	TextBox quotationAccount;
 
 	@UiField
 	TextBox activity;
+	
+	@UiField
+	TableCellElement contractTypeNode;
 
 	@UiField
 	ListBox contractType;
+	
+	@UiField
+	TableCellElement contractFreelancerNode;
 
 	@UiField
 	TextBox contractTypeFreelance;
@@ -191,6 +208,8 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	ListBox journeyType;
 
 	// TABLA DATOS EMPLEADO
+	@UiField
+	Label labelEmployee;
 
 	@UiField
 	TableElement employeeDataTable;
@@ -206,6 +225,9 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 
 	@UiField
 	TextBox security_social_num;
+	
+	@UiField
+	ListBox street_type;
 
 	@UiField
 	SuggestBox address;
@@ -507,6 +529,13 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	void onSocialSecurityNumChangeValue(ChangeEvent event) {
 		employeeDraftObject.setEmployeeSocialSecurityNum(security_social_num.getValue());
 	}
+	
+	@UiHandler("street_type")
+	void onStreetTypeChangeValue(ChangeEvent event) {
+		Integer streetTypeIdx = street_type.getSelectedIndex();
+		String shortCode = StreetType.values()[streetTypeIdx].getShortCode();
+		employeeDraftObject.setEmployeeStreetType(shortCode);
+	}
 
 	@UiHandler("address")
 	void onAddressChangeValue(ValueChangeEvent<String> event) {
@@ -692,13 +721,19 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		this.gender.addItem("Hombre");
 		this.gender.addItem("Mujer");
 		this.gender.addItem("Desconocido");
-
+		
+		//TIPO DE VIA
+		for(int i=0; i<StreetType.values().length; i++){
+			this.street_type.addItem(StreetType.values()[i].getDescription());
+		}
+		
 		// TIPO DE PAGO
 		this.payMethod.addItem("-");
 		this.payMethod.addItem("EFECTIVO");
 		this.payMethod.addItem("GIRO");
 		this.payMethod.addItem("CHEQUE");
 		this.payMethod.addItem("TRANSFERENCIA");
+		
 	}
 
 	private void initializeSuugestBox() {
@@ -710,16 +745,21 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 
 	private void hideElementsFreelancerTable() {
 		this.contractDataTable.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
-		this.contractDataTable.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
 		this.contractDataTable.getRows().getItem(6).getStyle().setDisplay(Display.NONE);
-		this.contractDataTable.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
 		this.contractDataTable.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
-		this.contractDataTable.getRows().getItem(11).getStyle().clearDisplay();
+		this.contractDataTable.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(12).getStyle().clearDisplay();
 
-		this.contractType.addStyleName(style.hide());
-		this.contractTypeFreelance.removeStyleName(style.hide());
-		this.seniority_date_label.addStyleName(style.hide());
-		this.seniority_date.addStyleName(style.hide());
+		this.contractTypeNode.getStyle().setDisplay(Display.NONE);
+		this.quoteAccountLabelCell.getStyle().setDisplay(Display.NONE);
+		this.quoteAccountCell.getStyle().setDisplay(Display.NONE);
+		
+		this.contractFreelancerNode.getStyle().clearDisplay();
+		
+		this.labelEmployee.addStyleName(style.retaTopLabel());
+		this.employeeDataTable.getStyle().setTop(325, Unit.PX);
+		
+		this.workplaceCell.setColSpan(6);
 	}
 
 	private void fillContractFreelancerTable() {
@@ -765,16 +805,16 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 
 	private void showElementsContractTable() {
 		this.contractDataTable.getRows().getItem(3).getStyle().clearDisplay();
-		this.contractDataTable.getRows().getItem(4).getStyle().clearDisplay();
 		this.contractDataTable.getRows().getItem(6).getStyle().clearDisplay();
-		this.contractDataTable.getRows().getItem(9).getStyle().clearDisplay();
 		this.contractDataTable.getRows().getItem(10).getStyle().clearDisplay();
-		this.contractDataTable.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(11).getStyle().clearDisplay();
+		this.contractDataTable.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
 
-		this.contractType.removeStyleName(style.hide());
-		this.contractTypeFreelance.addStyleName(style.hide());
-		this.seniority_date_label.removeStyleName(style.hide());
-		this.seniority_date.removeStyleName(style.hide());
+		this.contractTypeNode.getStyle().clearDisplay();
+		this.quoteAccountLabelCell.getStyle().clearDisplay();
+		this.quoteAccountCell.getStyle().clearDisplay();
+		
+		this.contractFreelancerNode.getStyle().setDisplay(Display.NONE);
 	}
 
 	private void fillContractTable() {
@@ -1000,6 +1040,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		String security_social_num = (employeeInfo.getSocial_security_num() == null) ? "" : employeeInfo.getSocial_security_num();
 		this.security_social_num.setText(security_social_num);
 
+		this.street_type.setSelectedIndex(getStreetTypeIndex(employeeInfo.getStreetType()));
 		String address = (employeeInfo.getAddress() == null) ? "" : employeeInfo.getAddress();
 		this.address.setValue(address);
 		String address_number = (employeeInfo.getAddress_number() == null) ? "" : employeeInfo.getAddress_number();
@@ -1024,6 +1065,14 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		this.account.setText(account);
 		String bic = (employeeInfo.getBIC() == null) ? "" : employeeInfo.getBIC();
 		this.bic.setText(bic);
+	}
+	
+	private Integer getStreetTypeIndex(String streetType) {
+		for(int i=0; i<StreetType.values().length; i++){
+			if(streetType == StreetType.values()[i].getShortCode())
+				return i;
+		}
+		return -1;
 	}
 
 	private int getPayMethodIndex(String payMethodType) {

@@ -29,6 +29,7 @@ public class EmployeeInfoDataBase implements Serializable {
 	
 	//RADDRESS TABLE
 	private Integer raddress_table_id;		//ID Raddress Table
+	private String street_type;
 	private String address;					//Person Address
 	private String address_number;			//Person Address Number
 	private String zip_code;				//Person Addrezz Zip
@@ -132,6 +133,7 @@ public class EmployeeInfoDataBase implements Serializable {
 		this.nationality = employeeInfo.getNationality();
 		
 		this.raddress_table_id = employeeInfo.getRaddress_table_id();
+		this.street_type = employeeInfo.getStreetType();
 		this.address = employeeInfo.getAddress();
 		this.address_number = employeeInfo.getAddress_number();
 		this.zip_code = employeeInfo.getZip_code();
@@ -276,6 +278,14 @@ public class EmployeeInfoDataBase implements Serializable {
 
 	public void setGender(Byte gender) {
 		this.gender = gender;
+	}
+	
+	public String getStreetType() {
+		return this.street_type;	
+	}
+	
+	public void setStreetType(String shortCode) {
+		this.street_type = shortCode;	
 	}
 
 	public String getAddress() {

@@ -336,6 +336,10 @@ public class EmployeeDraftObject {
 		newEmployeeInfo.setSocial_security_num(social_security_num);
 	}
 
+	public void setEmployeeStreetType(String shortCode) {
+		newEmployeeInfo.setStreetType(shortCode);
+	}
+	
 	public void setEmployeeAddress(String address) {
 		newEmployeeInfo.setAddress(address);
 	}

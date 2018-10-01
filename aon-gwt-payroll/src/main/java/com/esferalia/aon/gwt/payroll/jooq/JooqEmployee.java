@@ -105,6 +105,7 @@ public class JooqEmployee {
 		Record raddressTable = dslContext.select().from(RADDRESS).where(RADDRESS.REGISTRY.eq(employee_registry)).fetchOne();
 		
 		employee.setRaddress_table_id(raddressTable.get(RADDRESS.ID));
+		employee.setStreetType(raddressTable.get(RADDRESS.STREET_TYPE));
 		employee.setAddress(raddressTable.get(RADDRESS.ADDRESS));
 		employee.setAddress_number(raddressTable.get(RADDRESS.NUMBER));
 		employee.setZip_code(raddressTable.get(RADDRESS.ZIP));
@@ -352,6 +353,7 @@ public class JooqEmployee {
 			geozoneId = geozone.value1();
 		
 		dslContext.update(RADDRESS)
+			.set(RADDRESS.STREET_TYPE, newEmployeeInfo.getStreetType())
 			.set(RADDRESS.ADDRESS, newEmployeeInfo.getAddress())
 			.set(RADDRESS.NUMBER, newEmployeeInfo.getAddress_number())
 			.set(RADDRESS.ZIP, newEmployeeInfo.getZip_code())
