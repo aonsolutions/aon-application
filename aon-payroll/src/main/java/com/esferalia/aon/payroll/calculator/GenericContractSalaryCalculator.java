@@ -1064,6 +1064,10 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	{
 		return results;
 	}
+	
+	protected PaymentType getPaymentType(IContractPayment contractPayment) {
+		return contractPayment.getType();
+	}
 
 	protected void resolvePayment(IContractPayment contractPayment,
 			Date start,
@@ -1097,10 +1101,12 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			.filter(r->r.getContext().containsKey(name))
 			.findAny().ifPresent( r-> expressionContext.removeVariable(name));
 			
+			PaymentType contractPaymentType = getPaymentType(contractPayment);
+			
 			if ( contractPayment.getScope() == APPLICATION ) {
 				; // Skip APPLICATION Concepts
-			} else if (contractPayment.getType() != PaymentType.CRA_0008
-					&& contractPayment.getType() != PaymentType.CRA_0055 
+			} else if (contractPaymentType != PaymentType.CRA_0008
+					&& contractPaymentType != PaymentType.CRA_0055 
 					&& !AonStringUtils.equals(ContextVariable.GUARENTEED, name)
 					&& !AonStringUtils.equals(ContextVariable.PREST_IT, name)
 					&& Period.intersects(results.stream().filter(r -> r.getValue() != null && r.getValue() != 0.00)
@@ -1117,7 +1123,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				} catch (UnsupportedOperationException e) {
 					onCheckError(contractPayment, e.getMessage());
 				}
-			} else  if ((contractPayment.getType() == PaymentType.CRA_0055
+			} else  if ((contractPaymentType == PaymentType.CRA_0055
 					|| AonStringUtils.equals(ContextVariable.GUARENTEED, name))
 					&& !Period.intersects(results.stream().filter(r -> r.getValue() != null && r.getValue() != 0.00)
 							.map(r -> r.getPeriod()).iterator(), leavePeriods.iterator())) {
@@ -1135,7 +1141,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			}  
 			
 			if ( !results.isEmpty() && 
-					contractPayment.getType() == PaymentType.CRA_0004 && 
+					contractPaymentType == PaymentType.CRA_0004 && 
 					contractPayment.getSalaryType() == SalaryType.SALARY ) {
 				if ( !results.get(0).getContext().containsKey(ContextVariable.PRORATION))
 					results = fixExtraResults(contractPayment, results, start, end, expressionContext);

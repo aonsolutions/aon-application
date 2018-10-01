@@ -831,6 +831,18 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("totalPaymentsLabel", prorationBase);
 		
 		
+		wait4Id("extra_cra_001,_no_incuida_en_otros_apartados");
+		draft("EXTRA CRA 001, NO INCUIDA EN OTROS APARTADOS");
+		calculate(Calendar.SEPTEMBER, 2018);
+		
+		double paga3 = getValue("db-amount-label-3");
+		double paga2 = getValue("db-amount-label-2");
+		double paga1 = getValue("db-amount-label-1");
+
+		double salarioBase = getValue("db-amount-label-4");
+		Assert.assertEquals(paga1, salarioBase/12.00, 0.005);
+		Assert.assertEquals(paga2, salarioBase/12.00, 0.005);
+		Assert.assertEquals(paga3, salarioBase/12.00, 0.005);
 
 	}
 

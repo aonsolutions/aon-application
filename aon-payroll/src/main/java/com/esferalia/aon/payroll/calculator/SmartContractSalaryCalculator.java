@@ -1,28 +1,37 @@
 package com.esferalia.aon.payroll.calculator;
 
+import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
+import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.payroll.calculator.ContextFunctions.parseExtraDate;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARENTEED;
+import static com.esferalia.aon.salary.enumeration.PaymentType.CRA_0001;
 import static com.esferalia.aon.watson.util.AonDateUtils.add;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.util.Calendar.MONTH;
 import static java.util.Calendar.YEAR;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
+import org.jooq.impl.DSL;
 
 import com.code.aon.common.AonException;
 import com.code.aon.ql.Criteria;
@@ -30,7 +39,6 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.DelegateContractPayment;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
-import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory.IExtraPayment;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
@@ -295,8 +303,9 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 
 		public List<ITimedResult<Double>> quote(IContractPayment payment, Date start, Date end, double amount)
 				throws AonException {
-
-			PaymentType type =  payment.getType();
+			
+			
+			PaymentType type =  getPaymentType(payment); //payment.getType();
 			
 			if ( type == null ) {
 				return delegate.quote(payment, start, end, amount);
@@ -370,6 +379,9 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	public T calculate(ISQLContractSalaryCalculatorContext ctx) throws SalaryException {
 		this.ctx = ctx;
 		gtzdos.clear();
+
+		initPaymentType(ctx);
+		
 		T t =  super.calculate(ctx);
 		return t;
 	}
@@ -377,7 +389,33 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	// IContractSalaryCalculatorContext.IListener -----------------------------
 	
 	// ------------------------------------------------------------------------
-	
+
+	@Override
+	protected PaymentType getPaymentType(IContractPayment payment) {
+		
+		if ( payment.getType()  != null 
+		&& payment.getType() != CRA_0001 )
+			return payment.getType();
+		
+		if ( payment.getConceptId() != null ) 
+			return payment.getType();
+		
+		if ( AonStringUtils.isBlank(payment.getDescription()) )
+			return payment.getType();
+
+		String description = normalize(payment.getDescription());
+		PaymentType type = PAYMENTS_DESCRIPTIONS.get(description);
+		if ( type != null )
+			return type;
+		
+		for ( Entry<String,PaymentType> entry : PAYMENTS_DESCRIPTIONS.entrySet() )
+			if ( AonStringUtils.getLevenshteinDistance(entry.getKey(), description, 2) != -1 )
+				return entry.getValue();
+		
+		return CRA_0001;
+		
+	}
+
 	@Override
 	protected List<ITimedResult<Double>> fixConstantResult(IContractPayment contractPayment,
 			ITimedResult<Double> result, Date start, Date end, ExpressionContext expressionContext)
@@ -626,6 +664,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		try {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), ctx.getId());
+			
 			extraCtx =
 			new SQLExtraSalaryCalculatorContext(
 					ctx.getConnection()
@@ -832,4 +871,83 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				
 		return false;
 	}
+	
+	private static Map<String, PaymentType> PAYMENTS_DESCRIPTIONS = new HashMap<String, PaymentType>();
+	private static Set<String> PAYMENTS_DATABASES = new HashSet<String>();
+	
+	private static void initPaymentType(ISQLContractSalaryCalculatorContext ctx) {
+		
+		Connection connection = ctx.getConnection();
+		try {
+			if ( !PAYMENTS_DATABASES.add(connection.getCatalog()) )
+				return;
+		} catch (SQLException e1) {
+			return;
+		}
+		
+		DSLContext dslContext = new AONContext(ctx.getConnection()).getDslContext();
+		
+		dslContext
+		.select(
+		AGREEMENT_PAYMENT.DESCRIPTION
+		,DSL.ifnull(AGREEMENT_PAYMENT.TYPE, PAYMENT_CONCEPT.TYPE)
+		)
+		.from(AGREEMENT_PAYMENT)
+		.leftJoin(PAYMENT_CONCEPT).onKey()
+		.where(AGREEMENT_PAYMENT.DESCRIPTION.isNotNull())
+		.groupBy(AGREEMENT_PAYMENT.DESCRIPTION)
+		.fetchLazy()
+		.forEach(
+		(r) -> {
+			try {
+				PaymentType paymentType = PaymentType.values()[r.value2()];
+				if ( paymentType == CRA_0001 )
+					return;
+				
+				String description = normalize(r.value1());
+				
+				
+				PAYMENTS_DESCRIPTIONS.put(description, paymentType);
+			} catch ( Exception e ) {
+			}
+		}
+		);
+
+		dslContext
+		.select(
+		CONTRACT_PAYMENT.DESCRIPTION
+		,DSL.ifnull(CONTRACT_PAYMENT.TYPE, PAYMENT_CONCEPT.TYPE)
+		)
+		.from(CONTRACT_PAYMENT)
+		.leftJoin(PAYMENT_CONCEPT).onKey()
+		.where(CONTRACT_PAYMENT.DESCRIPTION.isNotNull())
+		.groupBy(CONTRACT_PAYMENT.DESCRIPTION)
+		.fetchLazy()
+		.forEach(
+		(r) -> {
+			try {
+				
+				PaymentType paymentType = PaymentType.values()[r.value2()];
+				if ( paymentType == CRA_0001 )
+					return;
+				
+				String description = normalize(r.value1());
+				
+				PAYMENTS_DESCRIPTIONS.put(description, paymentType);
+			} catch ( Exception e ) {
+			}
+		}
+		);
+	}
+
+	
+	private static String normalize(String description) {
+		
+		return description
+		.toUpperCase()
+		.replaceAll("\\s","")
+		.replaceAll("\\[([^\\]])*\\]","")
+		;
+	}
+	
 }
