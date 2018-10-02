@@ -66,6 +66,8 @@ public interface EnterprisesService extends RemoteService {
 	Integer getParentDomain();
 
 	WorkplaceInfo getWorkplaceInfo(Integer workplaceId);
+
+	WorkplaceInfo setWorkplaceInfo(WorkplaceInfo workplaceInfo);
 	
 	
 }

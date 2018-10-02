@@ -20,6 +20,10 @@ public class WorkplaceInfo implements Serializable {
 	private Map<Integer, String> activities;
 	private Integer activityId;
 	
+	//WorkplaceID
+	private Integer workplaceId;
+	private Integer payrollWorkplaceId;
+	
 	public WorkplaceInfo(){
 		
 	}
@@ -102,6 +106,22 @@ public class WorkplaceInfo implements Serializable {
 
 	public void setActivityId(Integer activityId) {
 		this.activityId = activityId;
+	}
+	
+	public Integer getWorkplaceId() {
+		return this.workplaceId;
+	}
+
+	public void setWorkplaceId(Integer workplaceId) {
+		this.workplaceId = workplaceId;
+	}
+
+	public Integer getPayrollWorkplaceId() {
+		return this.payrollWorkplaceId;
+	}
+	
+	public void setPayrollWorkplaceId(Integer payrollWorkplaceId) {
+		this.payrollWorkplaceId = payrollWorkplaceId;
 	}
 	
 }

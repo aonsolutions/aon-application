@@ -38,5 +38,6 @@ public interface EnterprisesServiceAsync {
 	void moveAgreement2Parent(Agreement agreement, AsyncCallback<Void> callback);
 	void getParentDomain(AsyncCallback<Integer> callback);
 	void getWorkplaceInfo(Integer workplaceId, AsyncCallback<WorkplaceInfo> asyncCallback);
+	void setWorkplaceInfo(WorkplaceInfo workplaceInfo, AsyncCallback<WorkplaceInfo> asyncCallback);
 
 }

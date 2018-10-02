@@ -196,4 +196,11 @@ public class EnterprisesServiceAsyncDecorator implements
 		enterprisesServiceAsync.getWorkplaceInfo(workplaceId,
 				new AsyncCallbackWrapper<WorkplaceInfo>(callback));
 	}
+
+	@Override
+	public void setWorkplaceInfo(WorkplaceInfo workplaceInfo, AsyncCallback<WorkplaceInfo> callback) {
+		AON.start();
+		enterprisesServiceAsync.setWorkplaceInfo(workplaceInfo,
+				new AsyncCallbackWrapper<WorkplaceInfo>(callback));	
+	}
 }

@@ -27,6 +27,10 @@ public class JooqWorkplace {
 	public static WorkplaceInfo getWorkplaceInfo(Connection conn, Integer workplaceId) {
 		return getWorkplaceInfoDB(DSL.using(conn, getDefaultSettings()), workplaceId);
 	}
+	
+	public static WorkplaceInfo setWorkplaceInfo(Connection conn, WorkplaceInfo workplaceInfo) {
+		return setWorkplaceInfoDB(DSL.using(conn, getDefaultSettings()), workplaceInfo);
+	}
 
 	protected static Settings getDefaultSettings() {
 		if (SETTINGS == null) {
@@ -61,8 +65,16 @@ public class JooqWorkplace {
 					.where(GEOZONE.ID.eq(r.get(RADDRESS.GEOZONE)))
 					.fetchOne();
 			
-			String addressStr = r.get(RADDRESS.STREET_TYPE) + " " + r.get(RADDRESS.ADDRESS) + " " + r.get(RADDRESS.NUMBER)
-				+ " " + geozoneName.get(0);
+			String addressStr = "";
+			
+			if(r.get(RADDRESS.STREET_TYPE) != "")
+				addressStr += r.get(RADDRESS.STREET_TYPE) + " ";
+			if(r.get(RADDRESS.ADDRESS) != "")
+				addressStr += r.get(RADDRESS.ADDRESS) + " ";
+			if(r.get(RADDRESS.NUMBER) != "")
+				addressStr += r.get(RADDRESS.NUMBER) + " ";
+			
+			addressStr += geozoneName.get(0);
 			
 			addresses.put(r.get(RADDRESS.ID), addressStr);
 		}
@@ -72,6 +84,7 @@ public class JooqWorkplace {
 				.where(PAYROLL_WORKPLACE.WORKPLACE.eq(workplaceId))
 				.fetchOne();
 		
+		Integer payrollWorkplaceId = payrollWorkplaceRecord.get(PAYROLL_WORKPLACE.ID);
 		Integer workplaceCalendar = payrollWorkplaceRecord.get(PAYROLL_WORKPLACE.CALENDAR);
 		Integer workplaceAgreement = payrollWorkplaceRecord.get(PAYROLL_WORKPLACE.AGREEMENT);
 		Integer workplaceActivity = payrollWorkplaceRecord.get(PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY);
@@ -108,8 +121,32 @@ public class JooqWorkplace {
 		workplaceInfo.setActivities(activities);
 		workplaceInfo.setActivityId(workplaceActivity);
 		
+		//TablesID
+		workplaceInfo.setWorkplaceId(workplaceId);
+		workplaceInfo.setPayrollWorkplaceId(payrollWorkplaceId);
+		
 		
 		return workplaceInfo;
 	}
 	
+	private static WorkplaceInfo setWorkplaceInfoDB(DSLContext dslContext, WorkplaceInfo workplaceInfo) {
+		
+		dslContext.update(PAYROLL_WORKPLACE)
+			.set(PAYROLL_WORKPLACE.AGREEMENT, workplaceInfo.getAgreementId())
+			.set(PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY, workplaceInfo.getActivityId())
+			.set(PAYROLL_WORKPLACE.CALENDAR, (null == workplaceInfo.getCalendarId()) ? null : workplaceInfo.getCalendarId())
+			.where(PAYROLL_WORKPLACE.ID.eq(workplaceInfo.getPayrollWorkplaceId()))
+			.execute();
+		
+		dslContext.update(WORKPLACE)
+			.set(WORKPLACE.DESCRIPTION, workplaceInfo.getDescription())
+			.set(WORKPLACE.ADDRESS, workplaceInfo.getAddressId())
+			.set(WORKPLACE.ECONOMICAGREEMENT, workplaceInfo.getEconomicConcert() == -1 ? null : workplaceInfo.getEconomicConcert())
+			.set(WORKPLACE.ACTIVE, workplaceInfo.isActive())
+			.where(WORKPLACE.ID.eq(workplaceInfo.getWorkplaceId()))
+			.execute();
+		
+		return workplaceInfo;
+	}
+
 }

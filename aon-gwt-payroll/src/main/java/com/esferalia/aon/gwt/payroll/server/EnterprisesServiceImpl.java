@@ -1365,6 +1365,26 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			releaseFacesContext();
 		}
 	}
+
+	@Override
+	public WorkplaceInfo setWorkplaceInfo(WorkplaceInfo workplaceInfo) {
+		Connection connection = null;
+		try {
+			initFacesContext();
+			connection = AonServletUtils.getConnection();
+			return JooqWorkplace.setWorkplaceInfo(connection, workplaceInfo);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
+	}
 	
 	
 }
