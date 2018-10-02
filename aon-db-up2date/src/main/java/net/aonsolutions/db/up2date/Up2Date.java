@@ -1,5 +1,6 @@
 package net.aonsolutions.db.up2date;
 
+import static net.aonsolutions.db.up2date.payroll.OnAccountAgreementUpdate.ONACCOUNTAGREEMENTUPDATE;
 import static net.aonsolutions.db.up2date.tgss.CRA2018Update.CRA2018UPDATE;
 
 import java.sql.Connection;
@@ -18,6 +19,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+
+import net.aonsolutions.db.up2date.payroll.OnAccountAgreementUpdate;
 
 public class Up2Date {
 	
@@ -41,8 +44,8 @@ public class Up2Date {
     		//TRAININGBASES2018FIX,
     		//FELLOWBASES2018FIX,
     		//FUNDUPV_UPDATE_II
-    		CRA2018UPDATE
-    		
+    		//CRA2018UPDATE
+    		ONACCOUNTAGREEMENTUPDATE
     }; 
 	
 	

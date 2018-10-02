@@ -33,6 +33,11 @@ public class AonFunctions {
 		return obj;
 	}
 
+	@Variable(ContextVariable.ON_ACCOUNT_AGREEMENT)
+	public static final Object onAccountAgreement(Object obj) {
+		return obj;
+	}
+
 	// ------------------------------------------------------------------------
 	// 
 	// ------------------------------------------------------------------------

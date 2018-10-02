@@ -796,6 +796,39 @@ public class SQLFunctionsTestCase extends
 		Assert.assertEquals(1000.00, results.get(0).getValue());
 
 	}
+
+	@Test
+	public void testOnAccountAgreement() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		ContractRecord contract = newContract(aonContext, add(getToday(), Calendar.YEAR, -5), Collections.emptyMap());
+		
+		
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				contract);
+		//@formatter:on
+		
+		List<ITimedResult<Double>> results =  ctx.getExpressionContext().eval("A_CUENTA_CONVENIO(1000.00)", 
+				startDate
+				,endDate, 
+				Double.class);
+	
+		Assert.assertEquals(1, results.size());
+		
+		Assert.assertEquals(startDate, results.get(0).getPeriod().getStart());
+		Assert.assertEquals(endDate, results.get(0).getPeriod().getEnd());
+		Assert.assertEquals(1000.00, results.get(0).getValue());
+
+	}
 	//------------------------------------------------------------------------
 	
 }

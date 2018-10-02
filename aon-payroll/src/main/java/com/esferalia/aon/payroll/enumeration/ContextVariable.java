@@ -267,8 +267,10 @@ public enum ContextVariable implements IResourceable{
 //	PREST_IT("PREST_IT", VariableType.DOUBLE),
 	DIRECT_PAY("PAGO_DIRECTO", VariableType.BOOLEAN),
 	
-	MONTHLY_SALARY("MODALIDAD_MENSUAL", VariableType.BOOLEAN)
+	MONTHLY_SALARY("MODALIDAD_MENSUAL", VariableType.BOOLEAN),
 	
+	ON_ACCOUNT_AGREEMENT("A_CUENTA_CONVENIO", VariableType.UNKNOWN )
+
 
 	;
 	 
