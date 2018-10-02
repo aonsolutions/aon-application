@@ -946,6 +946,7 @@ public class JooqEmployee {
 			RaddressRecord rAddressRecord = dslContext.insertInto(RADDRESS)
 				.set(RADDRESS.DOMAIN, domain)
 				.set(RADDRESS.REGISTRY, registryId)
+				.set(RADDRESS.STREET_TYPE, newEmployeeInfo.getStreetType())
 				.set(RADDRESS.ADDRESS, newEmployeeInfo.getAddress())
 				.set(RADDRESS.NUMBER, newEmployeeInfo.getAddress_number())
 				.set(RADDRESS.ZIP, newEmployeeInfo.getZip_code())

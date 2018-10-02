@@ -662,6 +662,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		this.second_surname.setValue("");
 		this.birth_date.setValue(null);
 		this.gender.clear();
+		this.street_type.clear();
 		this.security_social_num.setValue("");
 		this.address.setValue("");
 		this.phone.setValue("");

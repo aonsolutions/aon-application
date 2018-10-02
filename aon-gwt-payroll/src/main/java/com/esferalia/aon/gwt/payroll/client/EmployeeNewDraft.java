@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ModelRecord;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfoDataBase;
+import com.esferalia.aon.gwt.payroll.shared.StreetType;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.google.gwt.ajaxloader.client.AjaxLoader;
@@ -171,6 +172,9 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 
 	@UiField
 	ListBox gender;
+	
+	@UiField
+	ListBox street_type;
 
 	@UiField
 	SuggestBox address;
@@ -451,7 +455,7 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 	void onSocialSecurityNumChangeValue(ChangeEvent event) {
 		employeeNewDraftObject.setEmployeeSocialSecurityNum(security_social_num.getValue());
 	}
-
+	
 	@UiHandler("address")
 	void onAddressChangeValue(ValueChangeEvent<String> event) {
 		employeeNewDraftObject.setEmployeeAddress(address.getValue());
@@ -657,6 +661,10 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 			Integer journeyTypeIndex = this.journeyType.getSelectedIndex();
 			Boolean journey_type = (journeyTypeIndex == 0) ? true : false;
 			employeeNewDraftObject.setContractJourneyType(journey_type);
+			
+			Integer streetTypeIdx = street_type.getSelectedIndex();
+			String shortCode = StreetType.values()[streetTypeIdx].getShortCode();
+			employeeNewDraftObject.setEmployeeStreetType(shortCode);
 
 			employeeNewDraftObject.createEmployeeContract(r -> {
 				setEmployeeNewDraftObject(employeeNewDraftObject);
@@ -719,6 +727,7 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 		this.birth_date.setValue(null);
 		this.gender.clear();
 		this.security_social_num.setValue("");
+		this.street_type.clear();
 		this.address.setValue("");
 		this.phone.setValue("");
 		this.mobile.setValue("");
@@ -757,6 +766,11 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 		this.gender.addItem("Hombre");
 		this.gender.addItem("Mujer");
 		this.gender.addItem("Desconocido");
+		
+		//TIPO DE VIA
+		for(int i=0; i<StreetType.values().length; i++){
+			this.street_type.addItem(StreetType.values()[i].getDescription());
+		}
 
 		// TIPO DE PAGO
 		this.payMethod.addItem("-");

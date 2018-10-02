@@ -237,7 +237,10 @@
 									<td rowspan="2" style="background-color: #eaeaea; width: 200px;">
 										<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Dirección</g:Label>
 									</td>
-									<td colspan="5">
+									<td>
+									    <g:ListBox ui:field="street_type" styleName='{style.maxWidth}'></g:ListBox>
+									</td>
+									<td colspan="4">
 										<g:SuggestBox ui:field="address" styleName='{style.maxWidth}'></g:SuggestBox>
 									</td>
 									<td>
