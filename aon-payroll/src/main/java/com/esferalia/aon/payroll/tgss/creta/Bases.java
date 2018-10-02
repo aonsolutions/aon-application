@@ -41,6 +41,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.Stack;
 import java.util.function.DoubleSupplier;
+import java.util.stream.Stream;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -942,6 +943,7 @@ public class Bases {
 			String expression;
 			Date startDate;
 			Date endDate;
+			Double negative;
 			
 			
 			@Override
@@ -988,10 +990,28 @@ public class Bases {
 						+ "/" + this.anhoHasta);
 			}
 			
+			public boolean equalsTramo(Object obj) {
+				if ( !(obj instanceof TrabajadorTramoDato) )
+					return false;
+				TrabajadorTramoDato that = (TrabajadorTramoDato) obj;
+				
+				return AonStringUtils.equals(this.ss, that.ss)
+					&& AonStringUtils.equals(this.diaDesde, that.diaDesde)
+					&& AonStringUtils.equals(this.mesDesde, that.mesDesde)
+					&& AonStringUtils.equals(this.anhoDesde, that.anhoDesde)
+					&& AonStringUtils.equals(this.diaHasta, that.diaHasta)
+					&& AonStringUtils.equals(this.mesHasta, that.mesHasta)
+					&& AonStringUtils.equals(this.anhoHasta, that.anhoHasta)
+						;
+			}
+			
+			
 		}
 
 		private XMLStreamWriter xsw;
 
+		private Set<TrabajadorTramoDato> defau1t;
+		private Set<TrabajadorTramoDato> negative;
 		private Set<TrabajadorTramoDato> unmatched;
 
 		private Map<String, Data> addedEnterpriseDataMap;
@@ -1009,6 +1029,8 @@ public class Bases {
 		public Comments(XMLStreamWriter xsw) {
 			super();
 			this.xsw = xsw;
+			this.defau1t = new HashSet<TrabajadorTramoDato>();
+			this.negative = new HashSet<TrabajadorTramoDato>();
 			this.unmatched = new HashSet<TrabajadorTramoDato>();
 			this.skippedTrabajadorList = new Stack<TrabajadorData>();
 			this.addedEnterpriseDataMap = new HashMap<String, Data>();
@@ -1059,6 +1081,45 @@ public class Bases {
 					
 					}}
 					);
+		}
+		
+		@Override
+		public void negativeDato(String var, Double value, Dato datoSolicitado, Tramo tramo, Salary salary) {
+			negative.add(new TrabajadorTramoDato() {{
+				this.ss = salary.getEmployeeSSNumber();
+				this.codigo = datoSolicitado.getCodigo();
+				this.tipo = datoSolicitado.getTipoDato();
+				this.diaDesde = tramo.getFechaDesde().getDia();
+				this.mesDesde = tramo.getFechaDesde().getMes();
+				this.anhoDesde = tramo.getFechaDesde().getAnho();
+				this.diaHasta = tramo.getFechaHasta().getDia();
+				this.mesHasta = tramo.getFechaHasta().getMes();
+				this.anhoHasta = tramo.getFechaHasta().getAnho();
+				
+				this.negative = value;
+				
+				}}
+				);
+		}
+		
+		@Override
+		public void defaultDato(Salary salary, Trabajador<?> trabajador, Tramo tramo, DatoSolicitado datoSolicitado,
+				TramoBuilder tramoBuilder, String value) {
+			defau1t.add(new TrabajadorTramoDato() {{
+				this.ss = salary.getEmployeeSSNumber();
+				this.codigo = datoSolicitado.getCodigo();
+				this.tipo = datoSolicitado.getTipoDato();
+				this.diaDesde = tramo.getFechaDesde().getDia();
+				this.mesDesde = tramo.getFechaDesde().getMes();
+				this.anhoDesde = tramo.getFechaDesde().getAnho();
+				this.diaHasta = tramo.getFechaHasta().getDia();
+				this.mesHasta = tramo.getFechaHasta().getMes();
+				this.anhoHasta = tramo.getFechaHasta().getAnho();
+				
+				this.expression = value;
+				
+				}}
+				);
 		}
 
 		@Override
@@ -1120,7 +1181,7 @@ public class Bases {
 
 			unMatched(datoAon).ifPresent(t -> {
 				try {
-					xsw.writeComment(String.format("Error [%s%s%s%s%s%s]: '%s' (%8$td/%8$tm/%8$tY..%9$td/%9$tm/%9$tY) " ,
+					xsw.writeComment(String.format("Arreglado [%s%s%s%s%s%s]: '%s' (%8$td/%8$tm/%8$tY..%9$td/%9$tm/%9$tY) " ,
 							t.ss,
 							t.codigo,
 							t.diaDesde,
@@ -1131,6 +1192,28 @@ public class Bases {
 							t.expression , 
 							t.startDate, 
 							t.endDate ));
+				} catch (XMLStreamException e) {
+				}
+			});
+
+			defau1t(datoAon).ifPresent(t -> {
+				try {
+					xsw.writeComment(String.format("Valor por defecto [%s%s%s%s%s%s]: '%s' (%s/%s/%s..%s/%s/%s) " ,
+							t.ss,
+							t.codigo,
+							t.diaDesde,
+							t.mesDesde,
+							t.diaHasta,
+							t.mesHasta,
+							
+							t.expression , 
+							t.diaDesde,
+							t.mesDesde,
+							t.anhoDesde,
+							t.diaHasta,
+							t.mesHasta,
+							t.anhoHasta
+							));
 				} catch (XMLStreamException e) {
 				}
 			});
@@ -1175,6 +1258,31 @@ public class Bases {
 		public void beforeMarshalTramo(
 				net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramoAon) {
 			this.tramoAon = tramoAon;
+
+			negative(tramoAon).forEach(t -> {
+				try {
+					xsw.writeComment(String.format("Eliminado [%s%s%s%s%s%s]: %s:%s '%s' (%s/%s/%s..%s/%s/%s) " ,
+							t.ss,
+							t.codigo,
+							t.diaDesde,
+							t.mesDesde,
+							t.diaHasta,
+							t.mesHasta,
+							
+							t.tipo , 
+							t.codigo , 
+							t.negative , 
+							t.diaDesde,
+							t.mesDesde,
+							t.anhoDesde,
+							t.diaHasta,
+							t.mesHasta,
+							t.anhoHasta
+							));
+				} catch (XMLStreamException e) {
+				}
+			});
+
 			for (Tramo<?> tramo : trabajadorCreta.getTramos().getTramo()) {
 				if (compare(tramo, tramoAon) == 0) {
 					tramoCreta = tramo;
@@ -1236,6 +1344,37 @@ public class Bases {
 			return unmatched.stream().filter( t1 -> t1.equals(t) ).findFirst() ;
 		}
 
+		private Stream<TrabajadorTramoDato> negative(net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo) {
+			TrabajadorTramoDato t = new TrabajadorTramoDato() {{
+				this.ss = trabajadorAon.getNaf();
+				//this.codigo = datoAon.getCodigo();
+				//this.tipo = datoAon.getTipoDato();
+				this.diaDesde = tramoAon.getFechaDesde().getDia();
+				this.mesDesde = tramoAon.getFechaDesde().getMes();
+				this.anhoDesde = tramoAon.getFechaDesde().getAnho();
+				this.diaHasta = tramoAon.getFechaHasta().getDia();
+				this.mesHasta = tramoAon.getFechaHasta().getMes();
+				this.anhoHasta = tramoAon.getFechaHasta().getAnho();
+			}};
+			
+			return negative.stream().filter( t1 -> t1.equalsTramo(t) );
+		}
+
+		private Optional<TrabajadorTramoDato> defau1t(net.aonsolutions.core.tgss.creta.jaxb.bases.Dato datoAon) {
+			TrabajadorTramoDato t = new TrabajadorTramoDato() {{
+				this.ss = trabajadorAon.getNaf();
+				this.codigo = datoAon.getCodigo();
+				this.tipo = datoAon.getTipoDato();
+				this.diaDesde = tramoAon.getFechaDesde().getDia();
+				this.mesDesde = tramoAon.getFechaDesde().getMes();
+				this.anhoDesde = tramoAon.getFechaDesde().getAnho();
+				this.diaHasta = tramoAon.getFechaHasta().getDia();
+				this.mesHasta = tramoAon.getFechaHasta().getMes();
+				this.anhoHasta = tramoAon.getFechaHasta().getAnho();
+			}};
+			
+			return defau1t.stream().filter( t1 -> t1.equals(t) ).findFirst() ;
+		}
 	}
 
 	private static interface CretaData {

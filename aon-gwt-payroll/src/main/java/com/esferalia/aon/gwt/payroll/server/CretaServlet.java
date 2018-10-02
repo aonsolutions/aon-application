@@ -74,6 +74,7 @@ import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.api.services.drive.Drive.Permissions.GetIdForEmail;
 
 import net.aonsolutions.core.tgss.creta.jaxb.Dato;
 import net.aonsolutions.core.tgss.creta.jaxb.DatoSolicitado;
@@ -781,7 +782,11 @@ public class CretaServlet extends HttpServlet
 			this.message = message;
 			return (T) this;
 		}
-
+		
+		public String getId() {
+			return id;
+		}
+		
 		// --------------------------------------------------------------- JSON
 
 		@Override
@@ -840,6 +845,7 @@ public class CretaServlet extends HttpServlet
 		public String toJSON() {
 			return String.format(
 					"{" 
+						+ "\"id\":\"%s\",\r\n"
 						+ "\"message\":\"%s\",\r\n" 
 						+ "\"type\":\"%s\",\r\n" 
 						+ "\"code\":\"%s\",\r\n"
@@ -849,6 +855,7 @@ public class CretaServlet extends HttpServlet
 						+ "%s"
 						+ "\r\n"
 						+ "}",
+					getId(),
 					getMessage(), 
 					datoSolicitado!= null ? datoSolicitado.getTipoDato() : dato.getTipoDato(), 
 					datoSolicitado!= null ?datoSolicitado.getCodigo() : dato.getCodigo(),
@@ -999,6 +1006,14 @@ public class CretaServlet extends HttpServlet
 						salary.getEmployeeDocument());
 
 			UnknownDato event = new UnknownDato()
+					.setId(format("%s%s%s%s%s%s", 
+							salary.getEmployeeSSNumber(),
+							dato.getCodigo(),
+							tramo.getFechaDesde().getDia(),
+							tramo.getFechaDesde().getMes(),
+							tramo.getFechaHasta().getDia(),
+							tramo.getFechaHasta().getMes()
+							))
 					.setValue(value)
 					.setMessage(message)
 					.setDato(dato)
@@ -1032,6 +1047,14 @@ public class CretaServlet extends HttpServlet
 						salary.getEmployeeDocument());
 
 			UnknownDato event = new UnknownDato()
+					.setId(format("%s%s%s%s%s%s", 
+							salary.getEmployeeSSNumber(),
+							datoSolicitado.getCodigo(),
+							tramo.getFechaDesde().getDia(),
+							tramo.getFechaDesde().getMes(),
+							tramo.getFechaHasta().getDia(),
+							tramo.getFechaHasta().getMes()
+							))
 					.setValue(value)
 					.setMessage(message)
 					.setDatoSolicitado(datoSolicitado)
@@ -1133,7 +1156,16 @@ public class CretaServlet extends HttpServlet
 		@Override
 		public void negativeDato(String  var, Double value, Dato datoSolicitado,
 				Tramo tramo, Salary salary) {
-			errors.add(new Event().setMessage(format(
+			errors.add(new Event()
+					.setId(format("%s%s%s%s%s%s", 
+							salary.getEmployeeSSNumber(),
+							datoSolicitado.getCodigo(),
+							tramo.getFechaDesde().getDia(),
+							tramo.getFechaDesde().getMes(),
+							tramo.getFechaHasta().getDia(),
+							tramo.getFechaHasta().getMes()
+							))
+					.setMessage(format(
 					"%s (IPF:%s, NAF:%s) .%s (%s/%s/%s..%s/%s/%s) negativo '%.2f'",
 					// salary.getEnterpriseName(),
 					salary.getEmployeeName(), 
