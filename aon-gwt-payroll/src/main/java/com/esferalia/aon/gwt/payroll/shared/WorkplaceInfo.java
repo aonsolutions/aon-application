@@ -17,6 +17,7 @@ public class WorkplaceInfo implements Serializable {
 	private Map<Integer, String> calendar;
 	private Integer calendarId;
 	private Integer agreementId;
+	private String agreementDescription;
 	private Map<Integer, String> activities;
 	private Integer activityId;
 	
@@ -82,6 +83,14 @@ public class WorkplaceInfo implements Serializable {
 
 	public void setAgreementId(Integer agreementId) {
 		this.agreementId = agreementId;
+	}
+	
+	public String getAgreementDescription() {
+		return this.agreementDescription;
+	}
+	
+	public void setAgreementDescription(String agreementDescription) {
+		this.agreementDescription = agreementDescription;
 	}
 
 	public Map<Integer, String> getActivities() {

@@ -42,7 +42,7 @@ public class WorkplaceDraftObject {
 	}
 	
 	public String getWorkplaceAgreementDescription(){
-		return this.workplace.getAgreement().getDescription();
+		return this.workplaceInfo.getAgreementDescription();
 	}
 	
 	public List<Agreement> getActiveAgreements(){
@@ -59,6 +59,7 @@ public class WorkplaceDraftObject {
 		for(int i = 0; i<activeAgreements.size(); i++)
 			if(activeAgreements.get(i).getDescription() == agreementDescription)
 				return i;
+			
 		return -1;
 	}
 	

@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
 
 import java.sql.Connection;
 import java.util.HashMap;
@@ -106,6 +107,12 @@ public class JooqWorkplace {
 			activities.put(r.get(ENTERPRISE_ACTIVITY.ID), r.get(ENTERPRISE_ACTIVITY.DESCRIPTION));
 		}
 		
+		Record agreementRecord = dslContext.select().from(AGREEMENT)
+				.where(AGREEMENT.ID.eq(workplaceAgreement))
+				.fetchOne();
+		
+		String agreementDescription = agreementRecord.get(AGREEMENT.DESCRIPTION);
+		
 		//SET General Data
 		workplaceInfo.setDescription(workplaceDescription);
 		workplaceInfo.setAddresses(addresses);
@@ -118,6 +125,7 @@ public class JooqWorkplace {
 		workplaceInfo.setCalendar(calendars);
 		workplaceInfo.setCalendarId(workplaceCalendar);
 		workplaceInfo.setAgreementId(workplaceAgreement);
+		workplaceInfo.setAgreementDescription(agreementDescription);
 		workplaceInfo.setActivities(activities);
 		workplaceInfo.setActivityId(workplaceActivity);
 		

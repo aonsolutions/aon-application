@@ -8,6 +8,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.resources.client.CssResource;
@@ -38,11 +39,14 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 	MyStyle style;
 
 	interface MyStyle extends CssResource {
-		
+		String hide();
 	}
-
+	
 	@UiField
-	Button saveButton;
+	Button enableWorkplaceButton;
+	
+	@UiField
+	Button disableWorkplaceButton;
 
 	// TABLA DATOS EMPLEADO
 
@@ -57,9 +61,6 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 	
 	@UiField
 	ListBox workplaceEconomicConcert;
-	
-	@UiField
-	CheckBox workplaceActive;
 
 	// TABLA DATOS CONTRATO
 
@@ -91,14 +92,27 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 		
 		// Inicializamos la vista del empleado
 		initWidget(uiBinder.createAndBindUi(this));
-
+		
 	}
 
 	// ------------------------------------------------- UiHandlers ------------------------------------------------------
 
+	@UiHandler("enableWorkplaceButton")
+	void onEnableWorkplaceClick(ClickEvent event) {
+		workplaceDraftObject.setWorkplaceActive(true);
+		save();
+	}
+
+	@UiHandler("disableWorkplaceButton")
+	void onDisableWorkplaceClick(ClickEvent event) {
+		workplaceDraftObject.setWorkplaceActive(false);
+		save();
+	}
+	
 	@UiHandler("workplaceDescription")
 	void onWorkplaceDescriptionChangeValue(ChangeEvent event) {
 		workplaceDraftObject.setWorkplaceDescription(workplaceDescription.getValue());
+		save();
 	}
 
 	@UiHandler("workplaceAddress")
@@ -112,16 +126,13 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 			}
 		}
 		workplaceDraftObject.setWorkplaceAddress(addressId);
+		save();
 	}
 	
 	@UiHandler("workplaceEconomicConcert")
 	void onWorkplaceEconomicConcertChangeValue(ChangeEvent event) {
 		workplaceDraftObject.setWorkplaceEconomicConcert(workplaceEconomicConcert.getSelectedIndex() - 1);
-	}
-	
-	@UiHandler("workplaceActive")
-	void onWorkplaceActiveClickValue(ClickEvent event) {
-		workplaceDraftObject.setWorkplaceActive(workplaceActive.getValue());
+		save();
 	}
 
 	@UiHandler("workplaceCalendar")
@@ -135,12 +146,14 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 			}
 		}
 		workplaceDraftObject.setWorkplaceCalendar(calendarId);
+		save();
 	}
 	
 	@UiHandler("workpalceAgreement")
 	void onContractAgreementChangeValue(ChangeEvent event) {
 		Integer agreementId = workplaceDraftObject.getAgreementId(this.workpalceAgreement.getSelectedItemText());
 		workplaceDraftObject.setWorkplaceAgreement(agreementId);
+		save();
 	}
 	
 	@UiHandler("workplaceActivity")
@@ -154,16 +167,14 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 			}
 		}
 		workplaceDraftObject.setWorkplaceActivity(activityId);
+		save();
 	}
-
-	@UiHandler("saveButton")
-	void onSaveButtonClick(ClickEvent event) {
-		
+	
+	private void save() {
 		workplaceDraftObject.updateWorkplace(
 				r -> { setWorkplaceDraftObject(workplaceDraftObject); }, 
 				t -> {}
 		);
-		
 	}
 
 	// ------------------------------------------------------ METODOS DE LA CLASE --------------------------------------------------
@@ -178,6 +189,14 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 	}
 
 	private void initializeView() {
+		if(workplaceDraftObject.getWorkplaceInfo().isActive() == 1){
+			enableWorkplaceButton.addStyleName(style.hide());
+			disableWorkplaceButton.removeStyleName(style.hide());
+		}else{
+			enableWorkplaceButton.removeStyleName(style.hide());
+			disableWorkplaceButton.addStyleName(style.hide());
+		}
+		
 		resetElements();
 		initializeListBox();
 		fillWorkplaceInfo();
@@ -189,7 +208,6 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 		this.workplaceDescription.setValue("");
 		this.workplaceAddress.clear();
 		this.workplaceEconomicConcert.clear();
-		this.workplaceActive.setValue(false);
 
 		// Clear payroll elements
 		this.workplaceCalendar.clear();
@@ -239,9 +257,6 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 		this.workplaceAddress.setSelectedIndex(workplaceDraftObject.getWorkplaceAddressIndex());
 		
 		this.workplaceEconomicConcert.setSelectedIndex(workplaceDraftObject.getWorkplaceEconomicConcert());
-		
-		//TODO: Falta Concierto Economico
-		this.workplaceActive.setValue(workplaceDraftObject.getWorkplaceInfo().isActive() == 1 ? true : false);
 		
 		if(this.workplaceCalendar.getItemCount() != 0){
 			this.workplaceCalendar.setSelectedIndex(workplaceDraftObject.getWorkplaceCalendarIndex());

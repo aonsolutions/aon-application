@@ -54,7 +54,7 @@
 			padding-right: 5px;
 			height: 20px;
 			text-align: center;
-			top: 200px;
+			top: 180px;
 			z-index: 1;
 		}
 
@@ -90,6 +90,10 @@
     		width: 100%;
 		}
 
+		.paddingTop{
+			padding-top: 5px !important;
+		}
+
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX">
@@ -98,17 +102,15 @@
 				<g:HorizontalPanel>
 					<g:HTMLPanel styleName="aon-finding-title">
 						<g:HTMLPanel styleName="aon-finding-title-internal">
-							<g:Label styleName="aon-outputText">Laboral : Nóminas</g:Label>
+							<g:Label styleName="aon-outputText">Laboral : Centro de trabajo</g:Label>
 						</g:HTMLPanel>
 					</g:HTMLPanel>
-					<g:HTMLPanel styleName="aon-finding-subtitle">
-						<g:HTMLPanel styleName="aon-finding-subtitle-internal">
-							<g:Label styleName="aon-outputText"></g:Label>
-						</g:HTMLPanel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-						<g:Button ui:field='saveButton'
-							styleName='aon-finding-toolbar-item aon-icon-accept' text="ACEPTAR"
+					<g:HTMLPanel styleName="aon-finding-toolbar-item-group {style.paddingTop}">
+						<g:Button ui:field='enableWorkplaceButton'
+							styleName='aon-finding-toolbar-item aon-icon-checked' text="ACTIVAR"
+							enabled="true" />
+						<g:Button ui:field='disableWorkplaceButton'
+							styleName='aon-finding-toolbar-item aon-icon-check' text="DESACTIVAR"
 							enabled="true" />
 					</g:HTMLPanel>
 				</g:HorizontalPanel>
@@ -154,14 +156,6 @@
 										<g:ListBox ui:field="workplaceEconomicConcert" styleName="{style.maxWidth}"></g:ListBox>
 									</td>
 								</tr>
-								<tr>
-									<td style="background-color: #eaeaea; width: 200px;">
-										<g:Label styleName="{style.firstColumnTextStyle}">Activo</g:Label>
-									</td>
-									<td colspan="3">
-										<g:CheckBox ui:field="workplaceActive"></g:CheckBox>
-									</td>
-								</tr>
 							</body>
 						</table>
 					</g:HTMLPanel>
@@ -171,7 +165,7 @@
 						<table ui:field="payrollDataTable"
 							style="border-style: solid; padding: 10px 10px 10px 10px; border-width: 1px; 
 					        margin-left: 10px; margin-bottom: 10px; margin-top: 27px; width: 950px; padding-top: 20px;
-					        position: absolute; top: 180px;">
+					        position: absolute; top: 160px;">
 							<tbody>
 							    <tr>
 									<td></td>
