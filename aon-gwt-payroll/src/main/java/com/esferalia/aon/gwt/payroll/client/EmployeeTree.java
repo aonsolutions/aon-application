@@ -1541,6 +1541,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private SalaryDraft salaryDraft;
 	private SalaryPreview salaryPreview;
 	private EventsDraft eventsDraft;
+	private WorkplaceDraft workplaceDraft;
 	private EmployeeEventsDraft employeeEventsDraft;
 	private EmployeeDraft employeeDraft;
 	private EmployeeNewDraft employeeNewDraft;
@@ -1717,11 +1718,22 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	@Override
 	public void onWorkplaceSelected(Workplace workplace) {
-		int pos = employees.getVerticalScrollPosition();
-		jsf.setRerenderHandler( () -> employees.setVerticalScrollPosition(pos) );
-
-		employeeDetail.setWidget(jsf);
-		jsf.workplaceSelected(workplace.getId());
+		EmployeesServiceAsync employeesServiceRaw = GWT.create(EmployeesService.class);
+		EmployeesServiceAsync employeesService = new EmployeesServiceAsyncDecorator(employeesServiceRaw);
+		
+		EnterprisesServiceAsync enterprisesServiceRaw = GWT.create(EnterprisesService.class);
+		EnterprisesServiceAsync enterprisesService = new EnterprisesServiceAsyncDecorator(enterprisesServiceRaw);
+		
+		WorkplaceDraftObject employeeNewDraftObject = new WorkplaceDraftObject(workplace, employeesService, enterprisesService);
+		
+		employeeDetail.setWidget(getWorkplaceDraft());
+		getWorkplaceDraft().setWorkplaceDraftObject(employeeNewDraftObject);
+		
+//		int pos = employees.getVerticalScrollPosition();
+//		jsf.setRerenderHandler( () -> employees.setVerticalScrollPosition(pos) );
+//
+//		employeeDetail.setWidget(jsf);
+//		jsf.workplaceSelected(workplace.getId());
 		this.workplace = workplace;
 	}
 
@@ -2064,6 +2076,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		if (eventsDraft == null)
 			eventsDraft = new EventsDraft();
 		return eventsDraft;
+	}
+	
+	private WorkplaceDraft getWorkplaceDraft() {
+		if (workplaceDraft == null)
+			workplaceDraft = new WorkplaceDraft();
+		return workplaceDraft;
 	}
 
 	private EmployeeEventsDraft getEmployeeEventsDraft() {

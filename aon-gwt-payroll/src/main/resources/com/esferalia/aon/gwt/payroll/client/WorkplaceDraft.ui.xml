@@ -1,0 +1,221 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+
+	<ui:with field='res'
+		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
+
+	<ui:style
+		type="com.esferalia.aon.gwt.payroll.client.WorkplaceDraft.MyStyle">
+
+		.noselect {
+			-webkit-touch-callout: none; /* iOS Safari */
+			-webkit-user-select: none; /* Safari */
+			-khtml-user-select: none; /*Konqueror HTML */
+			-moz-user-select: none; /* Firefox */
+			-ms-user-select: none; /* Internet Explorer/Edge */
+			user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+		}
+
+		@external gwt-Selector;
+		@external gwt-SuggestBoxPopup;
+		.gwt-SuggestBoxPopup {
+			z-index: 105;
+		}
+
+		.gwt-Selector .gwt-SuggestBoxPopup{
+			z-index: 105;
+			height: inherit;
+		}
+
+		.headerStyle{
+			font-family: Arial;
+			font-size: 13px;
+			font-weight: normal;
+			position: absolute;
+			margin-left:
+			25px;
+			background-color: white;
+			padding-left: 5px;
+			padding-right: 5px;
+			height: 20px;
+			top: 10px;
+			z-index: 1;
+		}
+
+		.headerStyle2{
+			font-family: Arial;
+			font-size: 13px;
+			font-weight: normal;
+			position: absolute;
+			margin-left: 25px;
+			background-color: white;
+			padding-left: 5px;
+			padding-right: 5px;
+			height: 20px;
+			text-align: center;
+			top: 200px;
+			z-index: 1;
+		}
+
+		.requiredColor{
+			color: #2152A5;
+			font-weight: bold !important;
+		}
+
+		.hide{
+			display: none;
+		}
+
+		.maxWidth{
+			width: 100%;
+		}
+
+		.maxWidthTextBox{
+			width: 99%;
+		}
+
+		.alignTextCenter{
+			text-align: center;
+		}
+
+		.firstColumnTextStyle{
+			padding: 5px !important;
+		}
+
+		.lookupStyle{
+			height: 20px;
+    		border: none !important;
+   		 	margin-left: 15px;
+    		width: 100%;
+		}
+
+	</ui:style>
+
+	<g:DockLayoutPanel unit="PX">
+		<g:north size="25">
+			<g:FlowPanel styleName="aon-finding-title-toolbar">
+				<g:HorizontalPanel>
+					<g:HTMLPanel styleName="aon-finding-title">
+						<g:HTMLPanel styleName="aon-finding-title-internal">
+							<g:Label styleName="aon-outputText">Laboral : Nóminas</g:Label>
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="aon-finding-subtitle">
+						<g:HTMLPanel styleName="aon-finding-subtitle-internal">
+							<g:Label styleName="aon-outputText"></g:Label>
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+						<g:Button ui:field='saveButton'
+							styleName='aon-finding-toolbar-item aon-icon-accept' text="ACEPTAR"
+							enabled="true" />
+					</g:HTMLPanel>
+				</g:HorizontalPanel>
+			</g:FlowPanel>
+		</g:north>
+		<g:center>
+			<g:ScrollPanel>
+				<g:HTMLPanel>
+					<g:Label styleName='{style.headerStyle}' width="103px">Datos Generales</g:Label>
+					<g:HTMLPanel>
+						<table ui:field="generalDataTable"
+							style="padding-top: 20px; width: 950px; border-style: solid; 
+					        padding: 10px 10px 10px 10px; border-width: 1px; margin-left: 10px; margin-bottom: 20px;
+					        margin-top: 17px; position: absolute; padding-top: 20px;">
+							<body>
+								<tr>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+								</tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName="{style.firstColumnTextStyle} {style.requiredColor}">Descripción</g:Label>
+									</td>
+									<td colspan="3">
+										<g:TextBox ui:field="workplaceDescription" styleName="{style.maxWidthTextBox}"></g:TextBox>
+									</td>
+								</tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Dirección</g:Label>
+									</td>
+									<td colspan="3">
+										<g:ListBox ui:field="workplaceAddress" styleName="{style.maxWidth}"></g:ListBox>
+									</td>
+								</tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName='{style.firstColumnTextStyle}'>Concierto económico</g:Label>
+									</td>
+									<td colspan="3">
+										<g:ListBox ui:field="workplaceEconomicConcert" styleName="{style.maxWidth}"></g:ListBox>
+									</td>
+								</tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName="{style.firstColumnTextStyle}">Activo</g:Label>
+									</td>
+									<td colspan="3">
+										<g:CheckBox ui:field="workplaceActive"></g:CheckBox>
+									</td>
+								</tr>
+							</body>
+						</table>
+					</g:HTMLPanel>
+					<g:Label ui:field="labelPayrollDataTable" width="105px"
+						styleName='{style.headerStyle2}'>Datos Laborables</g:Label>
+					<g:HTMLPanel>
+						<table ui:field="payrollDataTable"
+							style="border-style: solid; padding: 10px 10px 10px 10px; border-width: 1px; 
+					        margin-left: 10px; margin-bottom: 10px; margin-top: 27px; width: 950px; padding-top: 20px;
+					        position: absolute; top: 180px;">
+							<tbody>
+							    <tr>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+								</tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName='{style.firstColumnTextStyle}'>Calendario</g:Label>
+									</td>
+									<!-- td style="width: 8%;">
+										<g:TextBox ui:field="workplaceCalendarId" styleName="{style.maxWidthTextBox}"></g:TextBox>
+									</td>
+									<td style="width: 5%;">
+										<g:Button ui:field='workplaceCalendarFind'
+											styleName='aon-finding-toolbar-item aon-icon-lookup {style.lookupStyle}' enabled="false" />
+									</td-->
+									<td colspan="3">
+										<g:ListBox ui:field="workplaceCalendar" styleName="{style.maxWidth}"></g:ListBox>
+									</td>
+								</tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName='{style.firstColumnTextStyle}'>Convenio</g:Label>
+									</td>
+									<td colspan="3">
+										<g:ListBox ui:field="workpalceAgreement" styleName="{style.maxWidth}"></g:ListBox>
+									</td>
+								</tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName='{style.firstColumnTextStyle}'>Actividad</g:Label>
+									</td>
+									<td colspan="3">
+										<g:ListBox ui:field="workplaceActivity" styleName="{style.maxWidth}"></g:ListBox>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</g:HTMLPanel>
+				</g:HTMLPanel>
+			</g:ScrollPanel>
+		</g:center>
+	</g:DockLayoutPanel>
+</ui:UiBinder> 
+
