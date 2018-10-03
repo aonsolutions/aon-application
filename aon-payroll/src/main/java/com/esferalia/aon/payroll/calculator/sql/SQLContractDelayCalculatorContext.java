@@ -9,6 +9,7 @@ import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY_DATA;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY_PAYMENT;
 import static java.util.Calendar.DAY_OF_MONTH;
 
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,18 +27,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.mvel2.util.MethodStub;
+
 import com.code.aon.common.AonException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.PaymentConcept;
-import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.CompositeIterator;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
-import com.esferalia.aon.payroll.calculator.QuoteCalculator;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
-import com.esferalia.aon.payroll.calculator.TaxCalculator;
 import com.esferalia.aon.payroll.calculator.UndefinedContextVariablesException;
+import com.esferalia.aon.payroll.calculator.Variable;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
@@ -95,6 +96,28 @@ public class SQLContractDelayCalculatorContext extends
 				return ctx;
 			ctx.getExpressionContext().setVariable(ContextVariable.ACTIVE_DAYS.getName(), prevDays, startDate, endDate);
 			return ctx;
+		}
+		
+		
+		@Override
+		public boolean next() throws SQLException, ExpressionException {
+			return super.next(ctx -> load(ctx, getStart(), getEnd()) );
+		}
+		
+		@Variable(ContextVariable.ON_ACCOUNT_AGREEMENT)
+		public static Object onAccountAgreement(Object obj) {
+			return 0.00;
+		}
+		
+		public static void load(ExpressionContext context, Date startDate, Date endDate){
+			for (Method method : DelaySQLContractSalaryCalculatorContext.class.getDeclaredMethods()) {
+				Variable variable = method.getAnnotation(Variable.class);
+				if ( variable != null ) {
+					ContextVariable contextVariable = variable.value();
+					MethodStub methodStub = new MethodStub(method);
+					context.setVariable(contextVariable, methodStub, startDate, endDate);
+				}
+			}
 		}
 		
 	}
