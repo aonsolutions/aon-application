@@ -10,12 +10,6 @@
 	<description>AON MASTER</description>
 	<name>AON-MASTER</name>
 
-	<scm>
-		<developerConnection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon-master</developerConnection>
-		<connection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon-master</connection>
-	  <tag></tag>
-  </scm>
-
 
 	<dependencies>
 		<dependency>

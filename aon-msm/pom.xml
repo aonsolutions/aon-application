@@ -13,11 +13,6 @@
 	<properties>
 		<maven.build.timestamp.format>dd/MM/yyyy</maven.build.timestamp.format>
 	</properties>
-	<scm>
-		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-solutions-release</developerConnection>
-		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-solutions-release</connection>
-	  <tag></tag>
-  </scm>
 	<build>
 		<plugins>
 			<!-- Para construir el RPM -->

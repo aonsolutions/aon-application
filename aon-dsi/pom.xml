@@ -16,11 +16,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
-	<scm>
-		<developerConnection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon-dsi</developerConnection>
-		<connection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon-dsi</connection>
-	  <tag>HEAD</tag>
-  </scm>
 	<build>
 		<plugins>
                        	<plugin>

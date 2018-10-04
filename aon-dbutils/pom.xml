@@ -10,11 +10,6 @@
 	<description>AON DBUTILS</description>
 	<name>AON DB DBUTILS</name>
 
-    <scm>
-            <connection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon-dbutils</connection>
-            <developerConnection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon-dbutils</developerConnection>
-      <tag></tag>
-  </scm>
 
 	<dependencies>
 		<dependency>

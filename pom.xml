@@ -544,8 +544,8 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<!--groupId>org.codehaus.mojo</groupId-->
-				<groupId>cz.atomsoft.maven</groupId>
+				<groupId>org.codehaus.mojo</groupId>
+				<!--groupId>cz.atomsoft.maven</groupId-->
 				<artifactId>buildnumber-maven-plugin</artifactId>
 				<!--version>1.2</version-->
 				<executions>

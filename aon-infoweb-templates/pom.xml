@@ -17,12 +17,6 @@
 		<maven.build.timestamp.format>dd/MM/yyyy</maven.build.timestamp.format>
 	</properties>
 
-	<scm>
-		<developerConnection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon-infoweb-templates</developerConnection>
-		<connection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon-infoweb-templates</connection>
-	  <tag></tag>
-  </scm>
-
 	<build>
 		<plugins>
 		</plugins>
