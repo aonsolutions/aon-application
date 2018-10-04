@@ -49,7 +49,7 @@ public class EpigraphPanel extends CustomDialog {
 		setAnimationEnabled(true);
 		setGlassEnabled(true);
 		setModal(true);
-		setCaption("C.N.A.E. 2009");
+		setCaption("Actividades est. objetiva y r\u00E9gimen simpl.");
 
 		ScrollPanel scroll = new ScrollPanel();
 		scroll.setWidth("550px");
