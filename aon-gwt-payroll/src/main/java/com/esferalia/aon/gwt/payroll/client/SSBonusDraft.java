@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -155,53 +156,75 @@ public class SSBonusDraft extends Composite {
 		switch (selectedItemIndex) {
 		case 1:
 			hideChecksPanel();
+			this.formulaBonus.setEnabled(false);
+			this.formulaBonus.setValue("");
 			break;
 		case 2:
 			hideChecksPanel();
+			this.formulaBonus.setEnabled(false);
+			this.formulaBonus.setValue("");
 			break;
 		case 3:
 			hideAmountPanel();
+			clearSelectedChecks();
+			this.formulaBonus.setEnabled(false);
+			this.formulaBonus.setValue("");
 			break;
 		default:
-			hideAllPanels();;
+			hideAllPanels();
+			this.formulaBonus.setEnabled(false);
+			this.formulaBonus.setValue("");
 		}
+	}
+	
+	@UiHandler("formulaBonus")
+	void onFormulaBonusChangeValue(ChangeEvent event) {
+		if("" == formulaBonus.getValue())
+			this.formulaBonus.setEnabled(false);
 	}
 	
 	@UiHandler("applyChecks")
 	void onApplyChecksButtonClick(ClickEvent event) {
-		ArrayList<String> listCheckTrue = new ArrayList<>();
-		
-		if(checkCommonC.getValue() == true)
-			listCheckTrue.add("CGC_E");
-		if(checkCommonE.getValue() == true)
-			listCheckTrue.add("CGC");
-		if(checkAccidentC.getValue() == true)
-			listCheckTrue.add("ACC_TRAB_EMPRESA");
-		if(checkAccidentE.getValue() == true)
-			listCheckTrue.add("ACC_TRAB_TRABAJADOR");
-		if(checkUnemploymentC.getValue() == true)
-			listCheckTrue.add("DESMPL_E");
-		if(checkUnemploymentE.getValue() == true)
-			listCheckTrue.add("DESMPL");
-		if(checkFogasaC.getValue() == true)
-			listCheckTrue.add("FOGASA_E");
-		if(checkFogasaE.getValue() == true)
-			listCheckTrue.add("FOGASA");
-		if(checkFormationC.getValue() == true)
-			listCheckTrue.add("FP_E");
-		if(checkFormationE.getValue() == true)
-			listCheckTrue.add("FP");
-		
-		if(!listCheckTrue.isEmpty()){
-			String result = "(";
-			for(int i=0; i<listCheckTrue.size()-1; i++)
-				result += listCheckTrue.get(i) + " + ";
+		if("" == percentBonus.getValue()){
+			WarningDialog warning = new WarningDialog("Warning", "Faltan el porcentaje por rellenar");
+			warning.show();
+			warning.center();
+		}else{
+			ArrayList<String> listCheckTrue = new ArrayList<>();
 			
-			result += listCheckTrue.get(listCheckTrue.size()-1) + ") * (" + percentBonus.getValue() + " / 100)";
-			this.formulaBonus.setValue(result);
-		}	
+			if(checkCommonC.getValue() == true)
+				listCheckTrue.add("CGC_E");
+			if(checkCommonE.getValue() == true)
+				listCheckTrue.add("CGC");
+			if(checkAccidentC.getValue() == true)
+				listCheckTrue.add("ACC_TRAB_EMPRESA");
+			if(checkAccidentE.getValue() == true)
+				listCheckTrue.add("ACC_TRAB_TRABAJADOR");
+			if(checkUnemploymentC.getValue() == true)
+				listCheckTrue.add("DESMPL_E");
+			if(checkUnemploymentE.getValue() == true)
+				listCheckTrue.add("DESMPL");
+			if(checkFogasaC.getValue() == true)
+				listCheckTrue.add("FOGASA_E");
+			if(checkFogasaE.getValue() == true)
+				listCheckTrue.add("FOGASA");
+			if(checkFormationC.getValue() == true)
+				listCheckTrue.add("FP_E");
+			if(checkFormationE.getValue() == true)
+				listCheckTrue.add("FP");
+			
+			if(!listCheckTrue.isEmpty()){
+				String result = "(";
+				for(int i=0; i<listCheckTrue.size()-1; i++)
+					result += listCheckTrue.get(i) + " + ";
+				
+				result += listCheckTrue.get(listCheckTrue.size()-1) + ") * (" + percentBonus.getValue() + " / 100)";
+				this.formulaBonus.setValue(result);
+			}
+			this.formulaBonus.setEnabled(true);
+		}
 	}
-	
+
 	@UiHandler("applyAmount")
 	void onApplyAmountButtonClick(ClickEvent event) {
 		if("" != amountBonus.getValue()){
@@ -212,6 +235,7 @@ public class SSBonusDraft extends Composite {
 				this.formulaBonus.setValue("("+amountBonus.getValue()+" / 30) * DIAS_ALTA");
 			}
 		}
+		this.formulaBonus.setEnabled(true);
 		this.amountBonus.setValue("");
 	}
 	
@@ -232,7 +256,6 @@ public class SSBonusDraft extends Composite {
 			WarningDialog warning = new WarningDialog("Warning", "Faltan campos por rellenar");
 			warning.show();
 			warning.center();
-			//Window.alert("Faltan campos por rellenar");
 		}else{
 			//Window.alert("Modificar Bonus ID : " + idBonus.getText());
 			if(idBonus.getText() != ""){
@@ -275,6 +298,7 @@ public class SSBonusDraft extends Composite {
 		this.descriptionBonus.setText("");
 		this.typeBonus.clear();
 		this.formulaBonus.setText("");
+		this.formulaBonus.setEnabled(false);
 	}
 
 	private void initializeListBox() {
@@ -304,6 +328,21 @@ public class SSBonusDraft extends Composite {
 	
 	private void clearListBonuses() {
 		this.listBonusesTable.clear();
+	}
+	
+	private void clearSelectedChecks() {
+		checkCommonC.setValue(false);
+		checkCommonE.setValue(false);
+		checkAccidentC.setValue(false);
+		checkAccidentE.setValue(false);
+		checkUnemploymentC.setValue(false);
+		checkUnemploymentE.setValue(false);
+		checkFogasaC.setValue(false);
+		checkFogasaE.setValue(false);
+		checkFormationC.setValue(false);
+		checkFormationE.setValue(false);
+		
+		this.percentBonus.setValue("");
 	}
 	
 	private void showListBonuses() {

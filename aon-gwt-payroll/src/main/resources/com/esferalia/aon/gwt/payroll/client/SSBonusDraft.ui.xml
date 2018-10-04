@@ -31,6 +31,7 @@
 
 		.title{
 			padding-left: 25px;
+			padding-top: 5px;
     		font-size: small;
 		}
 
@@ -134,21 +135,32 @@
 		.bold{
 			font-weight: bold;
 		}
+
+		.upperMenu td{
+			width: 100%;
+		}
+
+		.help{
+			height: 14px;
+   		 	margin-right: 5px;
+    		border: none;
+		}
+
+		.upperRightMenuStyle{
+			right: 0px;
+    		position: absolute;
+		}
+
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX">
-		<g:north size="40">
-			<g:FlowPanel>
-				<g:FlowPanel styleName="aon-finding-title-toolbar">
+		<g:north size="25">
+			<g:FlowPanel styleName="aon-finding-title-toolbar">
+				<g:HorizontalPanel>
 					<g:HorizontalPanel>
 						<g:HTMLPanel styleName="aon-finding-title">
 							<g:HTMLPanel styleName="aon-finding-title-internal">
-								<g:Label styleName="aon-outputText">Bonificaciones : </g:Label>
-							</g:HTMLPanel>
-						</g:HTMLPanel>
-						<g:HTMLPanel styleName="aon-finding-subtitle">
-							<g:HTMLPanel styleName="aon-finding-subtitle-internal">
-								<g:Label styleName="aon-outputText"></g:Label>
+								<g:Label styleName="aon-outputText">Bonificaciones </g:Label>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
@@ -159,9 +171,15 @@
 								styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR"
 								enabled="true" />
 						</g:HTMLPanel>
+						<g:HTMLPanel>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.upperRightMenuStyle} aon-finding-toolbar-item-group">
+						    <g:Button ui:field='helpButton'
+								styleName='{style.help} aon-icon-help' text=""
+								enabled="true" />
+						</g:HTMLPanel>
 					</g:HorizontalPanel>
-				</g:FlowPanel>
-
+				</g:HorizontalPanel>
 			</g:FlowPanel>
 		</g:north>
 		<g:center> 
