@@ -54,10 +54,6 @@ public class OfferDetailController extends LinesController implements ICommercia
 		}
 		return compositeHandler;
 	}
-	
-	public void onItemCompositionSelect(ActionEvent event) {
-		getCompositeHandler().load(this, ((OfferDetail)this.getTo()).getItem());
-	}
 
 	public boolean isLongDescription() {
 		return longDescription;
@@ -111,6 +107,10 @@ public class OfferDetailController extends LinesController implements ICommercia
 				offerDetail.setQuantity(1);
 			}
 			offerDetail.setPrice(getPriceStrategy().getUnitPrice(offerDetail, offer.getIssueDate(), offer.getTarget()));
+			
+			if(this.isNevv() && item.getProduct().isComposition()) {
+				this.getCompositeHandler().load(this, item);
+			}
 		}
 	}	
 

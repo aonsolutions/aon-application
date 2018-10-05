@@ -53,6 +53,10 @@ public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 				((ExpenseInvoiceController)getMasterController()).creditorChanged(creditor);
 			}
 		}
+		
+		if(this.isNevv() && item.getProduct().isComposition()) {
+			this.getCompositeHandler().load(this, item);
+		}
 	}
 
 	private Creditor obtainExpenseLastCreditor(Item item) throws ManagerBeanException {

@@ -92,10 +92,6 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 		}
 		return compositeHandler;
 	}
-	
-	public void onItemCompositionSelect(ActionEvent event) {
-		getCompositeHandler().load(this, ((PurchaseDetail)this.getTo()).getItem());
-	}
 
 	public boolean isLongDescription() {
 		return longDescription;
@@ -340,6 +336,10 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 				purchaseDetail.setQuantity(1);
 			}
 			purchaseDetail.setPrice(getPriceStrategy().getUnitPurchasePrice(purchaseDetail, purchase.getIssueDate(), purchase.getSupplier()));
+			
+			if(this.isNevv() && item.getProduct().isComposition()) {
+				this.getCompositeHandler().load(this, item);
+			}
 		}
 	}
 

@@ -89,10 +89,6 @@ public class SalesDetailController extends LinesController implements ISalesCons
 		}
 		return compositeHandler;
 	}
-	
-	public void onItemCompositionSelect(ActionEvent event) {
-		getCompositeHandler().load(this, ((SalesDetail)this.getTo()).getItem());
-	}
 
 	public boolean isLongDescription() {
 		return longDescription;
@@ -299,6 +295,10 @@ public class SalesDetailController extends LinesController implements ISalesCons
 				salesDetail.setQuantity(1);
 			}
 			salesDetail.setPrice(getPriceStrategy().getUnitPrice(salesDetail, sales.getIssueDate(), sales.getCustomer()));
+			
+			if(this.isNevv() && item.getProduct().isComposition()) {
+				this.getCompositeHandler().load(this, item);
+			}
 		}
 	}	
 

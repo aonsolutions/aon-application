@@ -77,10 +77,6 @@ public class InvoiceDetailController extends LinesController implements IFinance
 		return compositeHandler;
 	}
 	
-	public void onItemCompositionSelect(ActionEvent event) {
-		getCompositeHandler().load(this, ((InvoiceDetail)this.getTo()).getItem());
-	}
-	
 	public boolean isLongDescription() {
 		return longDescription;
 	}

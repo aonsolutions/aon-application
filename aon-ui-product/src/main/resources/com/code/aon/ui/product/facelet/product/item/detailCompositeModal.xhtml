@@ -47,10 +47,10 @@
 											value="#{false}" />
 									</aon:commandButton>
 									<aon:commandButton id="itemComposition-cancel"
-										value="#{bundle.aon_cancel}" ajaxSingle="#{true}"
+										value="#{bundle.aon_discard}" ajaxSingle="#{true}"
 										reRender="showItemCompositionWindow"
 										actionListener="#{controller.discard}"
-										styleClass="aon-finding-toolbar-item aon-icon-cancel">
+										styleClass="aon-finding-toolbar-item aon-icon-rubber">
 										<rich:componentControl for="itemCompositionModalPanel"
 											event="onclick" operation="hide"/>
 										<f:setPropertyActionListener

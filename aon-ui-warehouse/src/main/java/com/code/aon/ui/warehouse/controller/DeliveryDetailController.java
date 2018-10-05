@@ -55,10 +55,6 @@ public class DeliveryDetailController extends LinesController implements IWareho
 		}
 		return compositeHandler;
 	}
-	
-	public void onItemCompositionSelect(ActionEvent event) {
-		getCompositeHandler().load(this, ((DeliveryDetail)this.getTo()).getItem());
-	}
 
 	public boolean isStockWarning() {
 		return stockWarning;
@@ -155,6 +151,10 @@ public class DeliveryDetailController extends LinesController implements IWareho
 				deliveryDetail.setQuantity(1);
 			}
 			deliveryDetail.setPrice(getPriceStrategy().getUnitPrice(deliveryDetail, delivery.getIssueTime(), delivery.getCustomer()));
+			
+			if(this.isNevv() && item.getProduct().isComposition()) {
+				this.getCompositeHandler().load(this, item);
+			}
 		}
 	}	
 

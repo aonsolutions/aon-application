@@ -46,10 +46,6 @@ public class IncomeDetailController extends LinesController implements IWarehous
 		}
 		return compositeHandler;
 	}
-	
-	public void onItemCompositionSelect(ActionEvent event) {
-		getCompositeHandler().load(this, ((IncomeDetail)this.getTo()).getItem());
-	}
 
 	public boolean isLongDescription() {
 		return longDescription;
@@ -151,6 +147,10 @@ public class IncomeDetailController extends LinesController implements IWarehous
 				incomeDetail.setQuantity(1);
 			}
 			incomeDetail.setPrice(getPriceStrategy().getUnitPurchasePrice(incomeDetail, income.getIssueTime(), income.getSupplier()));
+			
+			if(this.isNevv() && item.getProduct().isComposition()) {
+				this.getCompositeHandler().load(this, item);
+			}
 		}
 	}	
 

@@ -31,6 +31,7 @@ import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.IncomeDetail;
@@ -196,15 +197,21 @@ public class DetailCompositeHandler extends DataScrollerState implements Seriali
 	}
 	
 	public void discard(ActionEvent event) {
-		try {
-			list = this.composeItem.getItemCompositionList();
-		} catch (ManagerBeanException e) {
-			throw new AbortProcessingException("No se han podido localizar los componentes.");
+		load(controller, composeItem);
+	}
+	
+	public void checkSerialNumbers() throws ControllerListenerException {
+		if(controller!=null && composeItem!=null) {
+			if(listContainsIncompleteSerials())
+				throw new ControllerListenerException("Revise la composicion, existen Series/Lotes sin asignar.");
 		}
 	}
 	
-	public void acceptItemComposition() {
+	public void acceptItemComposition() throws ControllerListenerException {
 		if(controller!=null && composeItem!=null) {
+			if(listContainsIncompleteSerials())
+				throw new ControllerListenerException("Revise la composicion, existen Series/Lotes sin asignar.");
+			
 			if("saleInvoiceDetail".equals(controller.getBeanName())
 					|| "purchaseInvoiceDetail".equals(controller.getBeanName()))
 				addInvoiceDetailItems();
@@ -221,6 +228,13 @@ public class DetailCompositeHandler extends DataScrollerState implements Seriali
 		}
 	}
 	
+	private boolean listContainsIncompleteSerials() {
+		return list.stream()
+			.filter(ic -> ic.getCompositionItem().getProduct().isSerializable()
+					&& ic.getCompositionItem().getSerialNumber()==null)
+			.count() > 0;
+	}
+
 	private IPriceStrategy getPriceStrategy(){
 		if(priceStrategy == null)
 			if("invoiceDetail".equals(controller.getBeanName()))

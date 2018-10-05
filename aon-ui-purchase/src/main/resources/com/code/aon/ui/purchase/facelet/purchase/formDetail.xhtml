@@ -193,8 +193,7 @@
 								<aon:commandButton id="itemCompositionEdit" value="&#160;"
 									title="#{bundle.aon_to_specify} #{bundle.product_composition}"
 									styleClass="aon-icon-version aon-vertical-align-top"
-									rendered="#{controller.to.item.product.composition}"
-									actionListener="#{controller.onItemCompositionSelect}" 
+									rendered="#{controller.to.item.product.composition}" 
 									reRender="showItemCompositionWindow">
 									<f:setPropertyActionListener target="#{controller.compositeHandler.showItemCompositionWindow}"
 										value="#{true}" />								

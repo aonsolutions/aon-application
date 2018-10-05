@@ -45,6 +45,10 @@ public class PurchaseInvoiceDetailController extends InvoiceDetailController {
 		}
 		invoiceDetail.setPrice(getPriceStrategy().getUnitPurchasePrice(invoiceDetail, invoice.getIssueDate(), supplier));
 		fillTaxDataInDetail(false, true);
+		
+		if(this.isNevv() && item.getProduct().isComposition()) {
+			this.getCompositeHandler().load(this, item);
+		}
 	}	
 
 	public void onQuantityChanged(ValueChangeEvent event) {
