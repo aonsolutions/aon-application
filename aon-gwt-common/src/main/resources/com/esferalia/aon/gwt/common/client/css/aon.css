@@ -3001,12 +3001,12 @@ right
 
 	@sprite .aon-icon-enable {
 		width: auto;
-		gwt-image: "aonIconEnable";
+		gwt-image: "aon_icon_enable";
 	}
 
 	@sprite .aon-icon-disable {
 		width: auto;
-		gwt-image: "aonIconDisable";
+		gwt-image: "aon_icon_disable";
 	}
 
 	.aon-dialog-box-shadow {
