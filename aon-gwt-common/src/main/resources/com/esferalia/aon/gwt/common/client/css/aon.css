@@ -332,7 +332,7 @@ input[type="checkbox"]:focus + label {
 	border: #ccc 1px solid;
 }
 .aon-dataTable .aon-dataTable-row {
-	
+
 }
 
 
@@ -372,7 +372,7 @@ input[type="checkbox"]:focus + label {
 	display: block;
 }
 .aon-justify-content-space-between {
-	justify-content: space-between;	
+	justify-content: space-between;
 }
 .aon-flex-container {
 	display: flex;
@@ -813,12 +813,12 @@ input[type="checkbox"]:focus + label {
 	width: auto;
 	gwt-image: "aonIconRefresh";
 }
-	
+
 @sprite .aon-icon-settings {
 	width: auto;
 	gwt-image: "aonIconSettings";
 }
-	
+
 @sprite .aon-icon-synchronize {
 	width: auto;
 	gwt-image: "aonIconSynchronize";
@@ -1044,15 +1044,15 @@ input[type="checkbox"]:focus + label {
 	gwt-image: "aonIconCalculator";
 	width: auto;
 }
-@sprite .aon-letter-a-orange-icon{ 
+@sprite .aon-letter-a-orange-icon{
 	gwt-image: "aonLetterAOrangeIcon";
 	width: auto;
 }
-@sprite .aon-letter-c-green-icon{ 
+@sprite .aon-letter-c-green-icon{
 	gwt-image: "aonLetterCGreenIcon";
 	width: auto;
 }
-@sprite .aon-letter-p-blue-icon{ 
+@sprite .aon-letter-p-blue-icon{
 	gwt-image: "aonLetterPBlueIcon";
 	width: auto;
 }
@@ -1312,7 +1312,7 @@ input[type="checkbox"]:focus + label {
 }
 
 .aon-dataTble-row-highlight-top {
-	
+
 }
 
 .aon-fiscal-title {
@@ -1440,11 +1440,11 @@ input:disabled+label {
 }
 
 .aon-dataTable-chart td {
-	
+
 }
 
 .aon-dataTable-row-highlight-top {
-	
+
 }
 
 .aon-dataTable-row-highlight-top td {
@@ -2079,7 +2079,7 @@ input:disabled+label {
 .aon-invoice-panel-east{
     background-color: #cceeff;
     border: 1px solid black;
-    margin-right: 5px;	
+    margin-right: 5px;
     margin-bottom: 5px;
     min-height: 200px;
 }
@@ -2252,14 +2252,14 @@ input:disabled+label {
 	text-decoration: underline;
 }
 
-/* 
+/*
 	*********************************************
 	********************************* GWT CLASSES
-	********************************************* 
+	*********************************************
 */
 /* GWT Tree */
 .aon-Selector .gwt-Tree {
-	
+
 }
 
 .aon-Selector .gwt-Tree .gwt-TreeItem {
@@ -2382,7 +2382,7 @@ input:disabled+label {
 }
 
 .aon-Selector .gwt-TabBar .gwt-TabBarRest {
-	
+
 }
 
 .aon-Selector .gwt-TabBar .gwt-TabBarItem {
@@ -2412,7 +2412,7 @@ input:disabled+label {
 }
 
 .aon-Selector .gwt-TabPanel {
-	
+
 }
 
 .aon-Selector .gwt-TabPanelBottom {
@@ -2441,7 +2441,7 @@ input:disabled+label {
 }
 
 .aon-Selector .gwt-DialogBox .dialogContent {
-	
+
 }
 
 .aon-Selector .gwt-DialogBox .gwt-Button {
@@ -2741,10 +2741,10 @@ input:disabled+label {
 	padding: 30px 10px 30px 10px;
 }
 .aon-report {
-	
+
 }
 .aon-report-row {
-	
+
 }
 .aon-report .aon-report-row:hover {
 	background-color: #EEEEEE;
@@ -2776,11 +2776,11 @@ keyframes aon-toast { 0% {
 100%{
 top
 :
- 
+
 160
 px
 ;
- 
+
 right
 :
 15px;
@@ -2796,10 +2796,10 @@ right
 	padding: 10px;
 }
 
-/* 
+/*
 	*********************************************
 	************************************** AONHUB
-	********************************************* 
+	*********************************************
 */
 
 .commentHeader-background {
@@ -2862,12 +2862,12 @@ right
     z-index: 100;
 }
 
-@sprite .aonhub-expand-all {	
+@sprite .aonhub-expand-all {
 	gwt-image: 'expand';
 	width: auto;
 }
 
-@sprite .aonhub-collapse-all {	
+@sprite .aonhub-collapse-all {
 	gwt-image: 'collapseall';
 	width: auto;
 }
@@ -2954,7 +2954,7 @@ right
 		margin: 0px;
 		padding: 0px;
 	}
-		
+
 	@sprite .custom-dialog-header {
 		gwt-image: 'headerBack';
 		background-color: #D4CFC7;
@@ -2966,7 +2966,7 @@ right
 		height: auto;
 		width: auto;
 	}
-		
+
 	@sprite .custom-dialog-title {
 		gwt-image: 'header';
 		background-repeat: repeat-x;
@@ -2982,7 +2982,7 @@ right
 		width: auto;
 		font-size: 11px;
 	}
-		
+
 	@sprite .custom-dialog-close {
 		gwt-image: 'close';
 		background-repeat: no-repeat;
@@ -2998,35 +2998,45 @@ right
 		right: 3px;
 		top: 3px;
 	}
-	
+
+	@sprite .aon-icon-enable {
+		width: auto;
+		gwt-image: "aonIconEnable";
+	}
+
+	@sprite .aon-icon-disable {
+		width: auto;
+		gwt-image: "aonIconDisable";
+	}
+
 	.aon-dialog-box-shadow {
 		box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4);
 	}
-	
+
 	.aon-filter-dialog-box-shadow {
-		box-shadow: 0 5px 5px -5px rgba(0, 0, 0, 0.4);	
+		box-shadow: 0 5px 5px -5px rgba(0, 0, 0, 0.4);
 	}
 
 	.aon-configuration-panel{
 		background:#eee;
 		border-right: 1px solid #ddd;
 	}
-	
+
 	.aon-read-only {
     	border: none !important;
-   		color: black !important;		
+   		color: black !important;
 		background: transparent !important;
 	}
-	
+
 	.aon-documental-title{
 		font-family: "Roboto", "Noto", sans-serif !important;
 	    font-size: 14px !important;
 	    line-height: 24px !important;
 	    color: #212121 !important;
-	}	
+	}
 
-	
-	
+
+
 .aon-report-table {
 	width: 100%;
 	font: normal 0.8em fixed,"Lucida Console", monospace;
@@ -3068,7 +3078,7 @@ right
 .aon-report-table-row-bck-hover:hover {
 	text-shadow: 0.1em 0.1em 0.2em #63a0cf;
 }
-	
+
 .aon-report-table td {
 	font: normal 1em fixed,"Lucida Console", monospace;
 	padding-top: 1px;

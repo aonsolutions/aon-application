@@ -189,6 +189,8 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 	}
 
 	private void initializeView() {
+		enableWorkplaceButton.setStyleName("aon-editDataTable-button aon-icon-enable");
+		disableWorkplaceButton.setStyleName("aon-editDataTable-button aon-icon-disable");
 		if(workplaceDraftObject.getWorkplaceInfo().isActive() == 1){
 			enableWorkplaceButton.addStyleName(style.hide());
 			disableWorkplaceButton.removeStyleName(style.hide());

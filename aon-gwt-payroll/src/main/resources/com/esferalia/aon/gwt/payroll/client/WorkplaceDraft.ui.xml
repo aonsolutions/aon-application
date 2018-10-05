@@ -106,12 +106,14 @@
 						</g:HTMLPanel>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="aon-finding-toolbar-item-group {style.paddingTop}">
-						<g:Button ui:field='enableWorkplaceButton'
-							styleName='aon-finding-toolbar-item aon-icon-checked' text="ACTIVAR"
+					    <g:Button ui:field='enableWorkplaceButton'></g:Button>
+					    <g:Button ui:field='disableWorkplaceButton'></g:Button>
+						<!-- g:Button ui:field='enableWorkplaceButton'
+							styleName='aon-finding-toolbar-item' text="ACTIVAR"
 							enabled="true" />
 						<g:Button ui:field='disableWorkplaceButton'
-							styleName='aon-finding-toolbar-item aon-icon-check' text="DESACTIVAR"
-							enabled="true" />
+							styleName='aon-finding-toolbar-item' text="DESACTIVAR"
+							enabled="true" / -->
 					</g:HTMLPanel>
 				</g:HorizontalPanel>
 			</g:FlowPanel>

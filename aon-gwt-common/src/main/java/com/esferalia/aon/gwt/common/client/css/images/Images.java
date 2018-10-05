@@ -38,12 +38,12 @@ public interface Images extends ClientBundle, Tree.Resources {
 	ImageResource calendar();
 
 	ImageResource enterprise();
-	
+
 	ImageResource enterprises();
 
 	@Source("aon-icon-paste.png")
 	ImageResource aonIconPaste();
-	
+
 	@Source("laboral-calendar.png")
 	ImageResource laboralCalendar();
 
@@ -58,28 +58,28 @@ public interface Images extends ClientBundle, Tree.Resources {
 	ImageResource employee();
 
 	ImageResource oldemployee();
-	
+
 	ImageResource view();
 
 	ImageResource preview();
 
 	ImageResource minimize();
-	
+
 	ImageResource maximize();
-	
+
 	ImageResource restore();
-	
+
 	ImageResource blank();
 
 	ImageResource clipboard();
 
 	@Source("noimage.png")
 	ImageResource treeLeaf();
-	
+
 	ImageResource parent();
 
 	ImageResource agreement();
-	
+
 	ImageResource agreement_warn();
 
 	ImageResource agreement_error();
@@ -95,29 +95,29 @@ public interface Images extends ClientBundle, Tree.Resources {
 	ImageResource concept();
 
 	ImageResource payment();
-	
+
 	ImageResource deduction();
-	
+
 	ImageResource segsocial();
-	
+
 	ImageResource warn();
-	
+
 	ImageResource changed();
 
 	ImageResource x();
-	
+
 	ImageResource f();
 
 	ImageResource fx();
-	
+
 	@Source("aon-icon-statistics.png")
 	ImageResource statistics();
-	
+
 	@Source("aon-icon-it.png")
 	ImageResource itDatas();
-	
+
 	ImageResource gps();
-	
+
 	ImageResource expand();
 
 	ImageResource expandall();
@@ -125,11 +125,11 @@ public interface Images extends ClientBundle, Tree.Resources {
 	ImageResource collapse();
 
 	ImageResource collapseall();
-	
+
 	ImageResource pdfPreview();
-	
+
 	ImageResource redo();
-	
+
 	ImageResource undo();
 
 	@Source("undo-all.png")
@@ -140,12 +140,12 @@ public interface Images extends ClientBundle, Tree.Resources {
 	ImageResource aon_icon_row_parent();
 
 	ImageResource aon_icon_row_changed();
-	
+
 	ImageResource aon_icon_row_c();
-	
+
 	@Source("aon-icon-calendar.png")
 	ImageResource aon_icon_calendar();
-	
+
 	@Source("aon-icon-okwarning.png")
 	ImageResource aon_icon_okwarning();
 
@@ -154,7 +154,7 @@ public interface Images extends ClientBundle, Tree.Resources {
 	ImageResource segsocial_small();
 
 	ImageResource cost();
-	
+
 	@Source("aon-icon-issue-closed.png")
 	ImageResource aon_icon_issue_closed();
 
@@ -169,7 +169,7 @@ public interface Images extends ClientBundle, Tree.Resources {
 
 	@Source("aon-icon-issue-reopened-break.png")
 	ImageResource aon_icon_issue_reopened_break();
-	
+
 	@Source("aon-icon-issue-reopened-blue.png")
 	ImageResource aon_icon_issue_reopened_blue();
 
@@ -178,5 +178,11 @@ public interface Images extends ClientBundle, Tree.Resources {
 
 	@Source("aon-icon-progress-bar.png")
 	ImageResource aonIconProgressBar();
+
+	@Source("aon-icon-enable.png")
+	ImageResource aon_icon_enable();
+
+	@Source("aon-icon-disable.png")
+	ImageResource aon_icon_disable();
 
 }

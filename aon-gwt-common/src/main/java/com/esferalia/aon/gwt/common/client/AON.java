@@ -37,7 +37,7 @@ public class AON {
 
 	public static final CellTable.Resources AON_CELL_TABLE_STYLE = GWT.create(AonCellTable.class);
 	public static AonCalendarCSS Calendar_CSS = GWT.<AonCalendarResources> create(AonCalendarResources.class).calendar();
-	
+
 	public static void start() {
 		show(CONNECTION_STATUS_START);
 	}
@@ -53,7 +53,7 @@ public class AON {
 	private static void show(int el) {
 
 		for (int i = 0; i < el; i++) {
-			Element element = Document.get().getElementById(CONNECTION_STATUS_ELEMENTS[i]); 
+			Element element = Document.get().getElementById(CONNECTION_STATUS_ELEMENTS[i]);
 			if (element != null) {
 				element.getStyle().setDisplay(Display.NONE);
 			}
@@ -73,7 +73,7 @@ public class AON {
 
 	public static String format(Double d) {
 		return d == null ? null : CURRENCY_FORMAT.format(d);
-		
+
 	}
 
 	public static final String AON_DATA_TABLE_ROW_EVEN = "aon-dataTable-row-even";
@@ -111,12 +111,12 @@ public class AON {
 	public static final String AON_ICON_EDIT_ADD = "aon-icon-edit-add";
 	public static final String AON_ICON_EDIT_END = "aon-icon-edit-end";
 	public static final String AON_READ_ONLY = "aon-read-only";
-	
+
 	public static final String AON_ICON_ARABA = "aon-icon-araba";
 	public static final String AON_ICON_BIZKAIA = "aon-icon-bizkaia";
 	public static final String AON_ICON_NAVARRA = "aon-icon-navarra";
 	public static final String AON_ICON_GIPUZKOA = "aon-icon-gipuzkoa";
-	
+
 	public static final String AON_ICON_WORKPLACE = "aon-icon-workplace";
 	public static final String AON_ICON_EMPLOYEE = "aon-icon-employee";
 	public static final String AON_ICON_ROW_SELECTOR = "aon-icon-rowSelector";
@@ -159,6 +159,8 @@ public class AON {
 	public static final String AON_TOOLTIP = "aon-tooltip";
 	public static final String AON_ICON_CARD = "aon-icon-card";
 	public static final String AON_ICON_ERROR = "aon-icon-error";
+	public static final String AON_ICON_ENABLE = "aon-icon-enable";
+	public static final String AON_ICON_DISABLE = "aon-icon-disable";
 	public static final String AON_ICON_IRPF_PREVIEW = AON_CSS.aonIconIrpfPreview(); // "aon-icon-irpfPreview";
 	public static final String AON_ICON_EXPANDALL = AON_CSS.aonIconExpandAll(); // "aon-icon-expandAll";
 	public static final String AON_ICON_COLLAPSEALL = AON_CSS.aonIconCollapseAll(); //"aon-icon-collapseAll";
@@ -172,7 +174,7 @@ public class AON {
 	public static final String AON_ICON_CHECK_NO = AON_CSS.aonIconCheckNo();
 	public static final String AON_ICON_CHECK_YES = AON_CSS.aonIconCheckYes();
 	public static final String AON_ICON_PROGRESS_BAR = AON_CSS.aonIconProgressBar();
-	
+
 	public static final String AON_CALENDAR_STATAL_HOLIDAY = Calendar_CSS.statalHoliday();
 	public static final String AON_CALENDAR_AUTONOMI_HOLIDAY = Calendar_CSS.autonomiHoliday();
 	public static final String AON_CALENDAR_LOCAL_HOLIDAY = Calendar_CSS.localHoliday();
@@ -180,7 +182,7 @@ public class AON {
 	public static final String AON_CALENDAR_MyHOLIDAY_2 = Calendar_CSS.myHoliday_2();
 	public static final String AON_CALENDAR_MyHOLIDAY_3 = Calendar_CSS.myHoliday_3();
 	public static final String AON_CALENDAR_MyHOLIDAY_4 = Calendar_CSS.myHoliday_4();
-	
+
 	public static final String AON_ICON_ISSUE_CLOSED = "aon-icon-issue-closed";
 	public static final String AON_ICON_ISSUE_OPENED = "aon-icon-issue-opened";
 	public static final String AON_ICON_CALENDAR = "aon-icon-calendar";
