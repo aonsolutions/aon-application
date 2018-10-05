@@ -942,8 +942,9 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 + ($P{REPORT_SCRIPTLET}.isPrintProductCode()
     && $F{item}.getSerialNumber()!=null
     ? " - " : "")
-+ ($F{item}.getSerialNumber()!=null
-    ? "Lote: " + $F{item}.getSerialNumber() : "")]]></textFieldExpression>
++ ($F{item}.getSerialNumber()!=null? "Lote: " + $F{item}.getSerialNumber() : "")
++ ($F{item}.getSerialNumber()!=null && $F{item}.getSerialDate()!=null ? ", " : "")
++ ($F{item}.getSerialDate()!=null? "Fecha: " + $V{DateFormater}.format($F{item}.getSerialDate()) : "")]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
