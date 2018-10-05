@@ -18,6 +18,7 @@ import com.code.aon.common.annotations.Heritable;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.enumeration.AddressType;
+import com.code.aon.registry.enumeration.StreetType;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.RegistryAddressDB;
 
@@ -38,8 +39,10 @@ public class RegistryAddress extends RegistryAddressDB implements IAddress {
 	@Transient
     public String getFullAddress() {
     	StringBuffer buf = new StringBuffer();
-    	buf.append((getStreetType()!=null) ? getStreetType() : "");
-    	buf.append((getStreetType()!=null) ? ". " : "");
+    	if(getStreetType()!=null && getStreetType()!=StreetType.XX) {
+    		buf.append(getStreetType());
+    		buf.append(". ");
+    	}
     	buf.append(StringUtils.isEmpty(getAddress())? "":getAddress());
     	buf.append(StringUtils.isEmpty(getNumber())?"":" ");
     	buf.append(StringUtils.isEmpty(getNumber())?"":getNumber());
