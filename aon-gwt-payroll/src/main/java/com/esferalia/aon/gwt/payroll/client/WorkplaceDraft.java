@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.List;
 import java.util.Map.Entry;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.TableElement;
@@ -189,8 +190,8 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 	}
 
 	private void initializeView() {
-		enableWorkplaceButton.setStyleName("aon-editDataTable-button aon-icon-enable");
-		disableWorkplaceButton.setStyleName("aon-editDataTable-button aon-icon-disable");
+		enableWorkplaceButton.setStyleName(AON.AON_ICON_ENABLE);
+		disableWorkplaceButton.setStyleName(AON.AON_ICON_DISABLE);
 		if(workplaceDraftObject.getWorkplaceInfo().isActive() == 1){
 			enableWorkplaceButton.addStyleName(style.hide());
 			disableWorkplaceButton.removeStyleName(style.hide());

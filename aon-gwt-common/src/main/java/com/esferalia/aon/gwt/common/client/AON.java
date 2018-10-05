@@ -159,8 +159,6 @@ public class AON {
 	public static final String AON_TOOLTIP = "aon-tooltip";
 	public static final String AON_ICON_CARD = "aon-icon-card";
 	public static final String AON_ICON_ERROR = "aon-icon-error";
-	public static final String AON_ICON_ENABLE = "aon-icon-enable";
-	public static final String AON_ICON_DISABLE = "aon-icon-disable";
 	public static final String AON_ICON_IRPF_PREVIEW = AON_CSS.aonIconIrpfPreview(); // "aon-icon-irpfPreview";
 	public static final String AON_ICON_EXPANDALL = AON_CSS.aonIconExpandAll(); // "aon-icon-expandAll";
 	public static final String AON_ICON_COLLAPSEALL = AON_CSS.aonIconCollapseAll(); //"aon-icon-collapseAll";
