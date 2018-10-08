@@ -71,17 +71,17 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		EnterprisesService {
 
 	@Override
-	public Integer getDomain() {
+	public Integer getDomain(String domain) {
 		try {
-			initFacesContext();
-			return getDomainID();
-		} finally {
-			releaseFacesContext();
+			return AonServletUtils.getDomainID(domain);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
 		}
 	}
 
 	@Override
-	public ContextDescriptor getContext() {
+	public ContextDescriptor getContext(String domain) {
 		SalaryDraft draft = new SalaryDraft();
 
 		draft.setStartDate(DateUtils.getFirstDayOfMonth());
@@ -97,13 +97,12 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public Bonus saveBonusConcept(Bonus bonus) {
+	public Bonus saveBonusConcept(String domain, Bonus bonus) {
 		Connection connection = null;
 		try {
-			initFacesContext();
-			connection = AonServletUtils.getConnection();
+			connection = AonServletUtils.getConnection(domain);
 
-			Integer domainID = getDomainID();
+			Integer domainID = AonServletUtils.getDomainID(domain);
 
 			if (bonus.getId() != null && domainID.equals(bonus.getDomain())) {
 				updateBonusConcept(connection, bonus);
@@ -128,18 +127,16 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public Payment savePaymentConcept(Payment payment) {
+	public Payment savePaymentConcept(String domain, Payment payment) {
 		Connection connection = null;
 		try {
-			initFacesContext();
-			connection = AonServletUtils.getConnection();
+			connection = AonServletUtils.getConnection(domain);
 
-			Integer domainID = getDomainID();
+			Integer domainID = AonServletUtils.getDomainID(domain);
 
 			if (payment.getId() != null && domainID.equals(payment.getDomain())) {
 				updatePaymentConcept(connection, payment);
@@ -166,18 +163,16 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public Deduction saveDeductionConcept(Deduction deduction) {
+	public Deduction saveDeductionConcept(String domain, Deduction deduction) {
 		Connection connection = null;
 		try {
-			initFacesContext();
-			connection = AonServletUtils.getConnection();
+			connection = AonServletUtils.getConnection(domain);
 
-			Integer domainID = getDomainID();
+			Integer domainID = AonServletUtils.getDomainID(domain);
 
 			if (deduction.getId() != null
 					&& domainID.equals(deduction.getDomain())) {
@@ -205,15 +200,14 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public void deleteBonusConcept(Bonus bonus) {
+	public void deleteBonusConcept(String domain, Bonus bonus) {
 		Connection connection = null;
 		try {
-			connection = AonServletUtils.getConnection();
+			connection = AonServletUtils.getConnection(domain);
 
 			deleteBonusConcept(connection, bonus);
 
@@ -230,10 +224,10 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public void deleteDeductionConcept(Deduction deduction) {
+	public void deleteDeductionConcept(String domain, Deduction deduction) {
 		Connection connection = null;
 		try {
-			connection = AonServletUtils.getConnection();
+			connection = AonServletUtils.getConnection(domain);
 
 			deleteDeductionConcept(connection, deduction);
 
@@ -250,10 +244,10 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public void deletePaymentConcept(Payment payment) {
+	public void deletePaymentConcept(String domain, Payment payment) {
 		Connection connection = null;
 		try {
-			connection = AonServletUtils.getConnection();
+			connection = AonServletUtils.getConnection(domain);
 
 			deletePaymentConcept(connection, payment);
 
@@ -272,12 +266,12 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
-	public void deleteAgreement(Agreement agreement) {
+	public void deleteAgreement(String domain, Agreement agreement) {
 		Connection connection = null;
 		try {
-			connection = AonServletUtils.getConnection();
-			Integer domain = getDomain();
-			JooqAgreement.deleteAgreement(connection, domain, agreement);
+			connection = AonServletUtils.getConnection(domain);
+			Integer domainId = AonServletUtils.getDomainID(domain);
+			JooqAgreement.deleteAgreement(connection, domainId, agreement);
 
 		} catch(SQLException e) {
 			throw new RuntimeException(e);
@@ -288,17 +282,17 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public List<Enterprise> getEnterprises(int offset, int limit) {
+	public List<Enterprise> getEnterprises(String domain, String user, int offset, int limit) {
 		Connection connection = null;
 		try {
-			initFacesContext();
-			connection = AonServletUtils.getConnection();
-			return getEnterprises(connection, getUserID(), getDomainID(), offset, limit);
+			connection = AonServletUtils.getConnection(domain);
+			Integer domainId = AonServletUtils.getDomainID(domain);
+			Integer userId = AonServletUtils.getUserID(user, domain);
+			return getEnterprises(connection, userId, domainId, offset, limit);
 
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -309,16 +303,14 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 	
 	@Override
-	public List<Extra> getWorkplacesExtras(List<Integer> workplaceIds) {
+	public List<Extra> getWorkplacesExtras(String domain, List<Integer> workplaceIds) {
 		Connection connection = null;
 		try {
-			initFacesContext();
-			connection = AonServletUtils.getConnection();
+			connection = AonServletUtils.getConnection(domain);
 
 			return JooqAgreement.getWorkplacesExtras(connection, workplaceIds.toArray(new Integer[workplaceIds.size()]));
 
@@ -331,18 +323,16 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public List<Agreement> getAgreements(int offset, int limit) {
+	public List<Agreement> getAgreements(String domain, int offset, int limit) {
 		Connection connection = null;
 		try {
-			initFacesContext();
-			connection = AonServletUtils.getConnection();
-			Integer domainID = getDomainID();
-			Integer parentDomainID = getParentDomainID();
+			connection = AonServletUtils.getConnection(domain);
+			Integer domainID = AonServletUtils.getDomainID(domain);
+			Integer parentDomainID = AonServletUtils.getParentDomainID(domain);
 
 			return JooqAgreement.getAgreements(connection, offset, limit,
 					domainID, parentDomainID);
@@ -356,16 +346,14 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public void updateAgreementId(Agreement agreement) {
+	public void updateAgreementId(String domain, Agreement agreement) {
 		Connection connection = null;
 		try {
-			initFacesContext();
-			connection = AonServletUtils.getConnection();
+			connection = AonServletUtils.getConnection(domain);
 			JooqAgreement.trashRestoreAgreement(connection, agreement.getId(), true);
 		} catch(SQLException e) {
 			throw new RuntimeException(e);
@@ -376,18 +364,16 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 	
 	@Override
-	public Agreement copyAgreement(Agreement agreement) {
+	public Agreement copyAgreement(String domain, Agreement agreement) {
 		
 		Connection connection = null;
 		try {
-			initFacesContext();
-			connection = AonServletUtils.getConnection();						
-			return JooqAgreement.copyAgreement(connection, getDomain(), agreement.getId());
+			connection = AonServletUtils.getConnection(domain);						
+			return JooqAgreement.copyAgreement(connection, getDomain(domain), agreement.getId());
 		} catch(SQLException e) {
 			throw new RuntimeException(e);
 		} finally {
@@ -397,18 +383,16 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public List<Bonus> getBonusConcepts(int offset, int limit) {
+	public List<Bonus> getBonusConcepts(String domain, int offset, int limit) {
 		Connection connection = null;
 		try {
-			initFacesContext();
-			connection = AonServletUtils.getConnection();
-			Integer domainID = getDomainID();
-			Integer parentDomainID = getParentDomainID();
+			connection = AonServletUtils.getConnection(domain);
+			Integer domainID = AonServletUtils.getDomainID(domain);
+			Integer parentDomainID = AonServletUtils.getParentDomainID(domain);
 
 			return getBonusConcepts(connection, offset, limit, domainID,
 					parentDomainID);
@@ -422,18 +406,16 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public List<Deduction> getDeductionConcepts(int offset, int limit) {
+	public List<Deduction> getDeductionConcepts(String domain, int offset, int limit) {
 		Connection connection = null;
 		try {
-			initFacesContext();
-			connection = AonServletUtils.getConnection();
-			Integer domainID = getDomainID();
-			Integer parentDomainID = getParentDomainID();
+			connection = AonServletUtils.getConnection(domain);
+			Integer domainID = AonServletUtils.getDomainID(domain);
+			Integer parentDomainID = AonServletUtils.getParentDomainID(domain);
 
 			return getDeductionConcepts(connection, offset, limit, domainID,
 					parentDomainID);
@@ -447,18 +429,16 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public List<Payment> getPaymentConcepts(int offset, int limit) {
+	public List<Payment> getPaymentConcepts(String domain, int offset, int limit) {
 		Connection connection = null;
 		try {
-			initFacesContext();
-			connection = AonServletUtils.getConnection();
-			Integer domainID = getDomainID();
-			Integer parentDomainID = getParentDomainID();
+			connection = AonServletUtils.getConnection(domain);
+			Integer domainID = AonServletUtils.getDomainID(domain);
+			Integer parentDomainID = AonServletUtils.getParentDomainID(domain);
 
 			return JooqPayments.getPaymentConcepts(connection, offset, limit,
 					domainID, parentDomainID);
@@ -472,15 +452,14 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public List<Cost> getEnterprisesCosts(List<Integer> enterpriseIds) {
+	public List<Cost> getEnterprisesCosts(String domain, List<Integer> enterpriseIds) {
 		Connection connection = null;
 		try {
-			connection = AonServletUtils.getConnection();
+			connection = AonServletUtils.getConnection(domain);
 
 			return getEnterpriseCosts(connection, enterpriseIds);
 
@@ -1300,12 +1279,11 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
-	public void moveAgreement2Parent(Agreement agreement) {
+	public void moveAgreement2Parent(String domain, Agreement agreement) {
 		Connection connection = null;
 		try {
-			initFacesContext();
-			connection = AonServletUtils.getConnection();
-			Integer parentDomainID = getParentDomainID();
+			connection = AonServletUtils.getConnection(domain);
+			Integer parentDomainID = AonServletUtils.getParentDomainID(domain);
 			JooqAgreement.moveAgreement2ParentDomain(connection, parentDomainID, agreement.getId());
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -1316,18 +1294,16 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	
 	}
 	
 	@Override
-	public Integer getParentDomain() {		
+	public Integer getParentDomain(String domain) {		
 		try {
-			initFacesContext();			
-			return getParentDomainID();
-		} finally {
-			releaseFacesContext();
+			return AonServletUtils.getParentDomainID(domain);
+		} catch ( SQLException e ) {
+			throw new IllegalArgumentException(e);			
 		}
 	}
 	
@@ -1347,11 +1323,10 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public WorkplaceInfo getWorkplaceInfo(Integer workplaceId) {
+	public WorkplaceInfo getWorkplaceInfo(String domain, Integer workplaceId) {
 		Connection connection = null;
 		try {
-			initFacesContext();
-			connection = AonServletUtils.getConnection();
+			connection = AonServletUtils.getConnection(domain);
 			return JooqWorkplace.getWorkplaceInfo(connection, workplaceId);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -1362,16 +1337,14 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public WorkplaceInfo setWorkplaceInfo(WorkplaceInfo workplaceInfo) {
+	public WorkplaceInfo setWorkplaceInfo(String domain, WorkplaceInfo workplaceInfo) {
 		Connection connection = null;
 		try {
-			initFacesContext();
-			connection = AonServletUtils.getConnection();
+			connection = AonServletUtils.getConnection(domain);
 			return JooqWorkplace.setWorkplaceInfo(connection, workplaceInfo);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -1382,7 +1355,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 	

@@ -24,7 +24,7 @@ public class EmployeeNewDraftObject {
 	private EmployeeInfoDataBase newEmployeeInfo;
 	
 	private EmployeesServiceAsync employeesService;
-	private EnterprisesServiceAsync enterprisesService;
+	private DomainEnterprisesServiceAsync enterprisesService;
 	
 	private List<Agreement> agreements;
 	private WorkplaceEmployees workplaceEmployees;
@@ -33,7 +33,7 @@ public class EmployeeNewDraftObject {
 		
 	// ------------------------------------------------- CLASS METHODS -------------------------------------------------	
 	
-	public EmployeeNewDraftObject(Workplace workplace, EmployeesServiceAsync employeesService, EnterprisesServiceAsync enterprisesService) {
+	public EmployeeNewDraftObject(Workplace workplace, EmployeesServiceAsync employeesService, DomainEnterprisesServiceAsync enterprisesService) {
 		
 		this.employeesService = employeesService;
 		this.enterprisesService = enterprisesService;

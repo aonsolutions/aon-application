@@ -30,7 +30,7 @@ public class BonusEditor extends ResizeComposite {
 	
 	
 	private Bonus bonus;
-	private EnterprisesServiceAsync enterprisesService;
+	private DomainEnterprisesServiceAsync enterprisesService;
 	
 	public BonusEditor() {
 		initWidget(binder.createAndBindUi(this));
@@ -64,12 +64,7 @@ public class BonusEditor extends ResizeComposite {
 	
 	
 	private void initEnterprisesService() {
-		// Create a remote service proxy to talk to the server-side Enterprises
-		// service.
-		EnterprisesServiceAsync enterprisesServiceRaw = GWT
-				.create(EnterprisesService.class);
-		enterprisesService = new EnterprisesServiceAsyncDecorator(
-				enterprisesServiceRaw);
+		enterprisesService = DomainEnterprisesServiceAsync.newInstance();
 	}
 	
 	private void initContextProvider() {

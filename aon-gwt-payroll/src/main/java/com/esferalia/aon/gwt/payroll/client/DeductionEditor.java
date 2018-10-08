@@ -28,7 +28,7 @@ public class DeductionEditor extends ResizeComposite {
 	@UiField 
 	com.esferalia.aon.gwt.payroll.client.Deduction deductionUI;
 	
-	private EnterprisesServiceAsync enterprisesService;
+	private DomainEnterprisesServiceAsync enterprisesService;
 	
 	public DeductionEditor() {
 		initWidget(binder.createAndBindUi(this));
@@ -61,12 +61,7 @@ public class DeductionEditor extends ResizeComposite {
 	}
 	
 	private void initEnterprisesService() {
-		// Create a remote service proxy to talk to the server-side Enterprises
-		// service.
-		EnterprisesServiceAsync enterprisesServiceRaw = GWT
-				.create(EnterprisesService.class);
-		enterprisesService = new EnterprisesServiceAsyncDecorator(
-				enterprisesServiceRaw);
+		enterprisesService = DomainEnterprisesServiceAsync.newInstance();
 	}
 	
 	private void initContextProvider() {

@@ -30,7 +30,7 @@ public class PaymentEditor extends ResizeComposite {
 	com.esferalia.aon.gwt.payroll.client.Payment paymentUI;
 
 	private Payment payment;
-	private EnterprisesServiceAsync enterprisesService;
+	private DomainEnterprisesServiceAsync enterprisesService;
 
 	public PaymentEditor() {
 		initWidget(binder.createAndBindUi(this));
@@ -119,10 +119,7 @@ public class PaymentEditor extends ResizeComposite {
 	private void initEnterprisesService() {
 		// Create a remote service proxy to talk to the server-side Enterprises
 		// service.
-		EnterprisesServiceAsync enterprisesServiceRaw = GWT
-				.create(EnterprisesService.class);
-		enterprisesService = new EnterprisesServiceAsyncDecorator(
-				enterprisesServiceRaw);
+		enterprisesService = DomainEnterprisesServiceAsync.newInstance();
 	}
 
 	private void initContextProvider() {

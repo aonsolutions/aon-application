@@ -32,175 +32,175 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 	
 	@Override
-	public void getDomain(AsyncCallback<Integer> callback) {
+	public void getDomain(String domain, AsyncCallback<Integer> callback) {
 		AON.start();
 		enterprisesServiceAsync
-				.getDomain(new AsyncCallbackWrapper<Integer>(
+				.getDomain(domain, new AsyncCallbackWrapper<Integer>(
 						callback));
 	}
 
 	@Override
-	public void getContext(AsyncCallback<ContextDescriptor> callback) {
+	public void getContext(String domain, AsyncCallback<ContextDescriptor> callback) {
 		AON.start();
 		enterprisesServiceAsync
-				.getContext(new AsyncCallbackWrapper<ContextDescriptor>(
+				.getContext(domain, new AsyncCallbackWrapper<ContextDescriptor>(
 						callback));
 	}
 
 	@Override
-	public void saveBonusConcept(Bonus bonus, AsyncCallback<Bonus> callback) {
+	public void saveBonusConcept(String domain, Bonus bonus, AsyncCallback<Bonus> callback) {
 		AON.start();
-		enterprisesServiceAsync.saveBonusConcept(bonus,
+		enterprisesServiceAsync.saveBonusConcept(domain, bonus,
 				new AsyncCallbackWrapper<Bonus>(callback));
 	}
 
 	@Override
-	public void savePaymentConcept(Payment payment,
+	public void savePaymentConcept(String domain, Payment payment,
 			AsyncCallback<Payment> callback) {
 		AON.start();
-		enterprisesServiceAsync.savePaymentConcept(payment,
+		enterprisesServiceAsync.savePaymentConcept(domain, payment,
 				new AsyncCallbackWrapper<Payment>(callback));
 	}
 
 	@Override
-	public void deleteDeductionConcept(Deduction deduction,
+	public void deleteDeductionConcept(String domain, Deduction deduction,
 			AsyncCallback<Void> callback) {
 		AON.start();
-		enterprisesServiceAsync.deleteDeductionConcept(deduction,
+		enterprisesServiceAsync.deleteDeductionConcept(domain, deduction,
 				new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
-	public void deleteBonusConcept(Bonus bonus, AsyncCallback<Void> callback) {
+	public void deleteBonusConcept(String domain, Bonus bonus, AsyncCallback<Void> callback) {
 		AON.start();
-		enterprisesServiceAsync.deleteBonusConcept(bonus,
+		enterprisesServiceAsync.deleteBonusConcept(domain, bonus,
 				new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
-	public void deletePaymentConcept(Payment payment,
+	public void deletePaymentConcept(String domain, Payment payment,
 			AsyncCallback<Void> callback) {
 		AON.start();
-		enterprisesServiceAsync.deletePaymentConcept(payment,
+		enterprisesServiceAsync.deletePaymentConcept(domain, payment,
 				new AsyncCallbackWrapper<Void>(callback));
 	}
 	
 	@Override
-	public void deleteAgreement(Agreement agreement,
+	public void deleteAgreement(String domain, Agreement agreement,
 			AsyncCallback<Void> callback) {
 		AON.start();
-		enterprisesServiceAsync.deleteAgreement(agreement,  
+		enterprisesServiceAsync.deleteAgreement(domain, agreement,  
 				new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
-	public void saveDeductionConcept(Deduction deduction,
+	public void saveDeductionConcept(String domain, Deduction deduction,
 			AsyncCallback<Deduction> callback) {
 		AON.start();
-		enterprisesServiceAsync.saveDeductionConcept(deduction,
+		enterprisesServiceAsync.saveDeductionConcept(domain, deduction,
 				new AsyncCallbackWrapper<Deduction>(callback));
 	}
 
 	@Override
-	public void getEnterprises(int offset, int limit,
+	public void getEnterprises(String domain, String user, int offset, int limit,
 			AsyncCallback<List<Enterprise>> callback) {
 		AON.start();
-		enterprisesServiceAsync.getEnterprises(offset, limit,
+		enterprisesServiceAsync.getEnterprises(domain, user, offset, limit,
 				new AsyncCallbackWrapper<List<Enterprise>>(callback));
 	}
 	
 	@Override
-	public void getWorkplacesExtras(List<Integer> workplaceIds, AsyncCallback<List<Extra>> callback) {
+	public void getWorkplacesExtras(String domain, List<Integer> workplaceIds, AsyncCallback<List<Extra>> callback) {
 		AON.start();
-		enterprisesServiceAsync.getWorkplacesExtras(workplaceIds,
+		enterprisesServiceAsync.getWorkplacesExtras(domain, workplaceIds,
 				new AsyncCallbackWrapper<List<Extra>>(callback));
 	}
 
 	@Override
-	public void getAgreements(int offset, int limit,
+	public void getAgreements(String domain, int offset, int limit,
 			AsyncCallback<List<Agreement>> callback) {
 		AON.start();
-		enterprisesServiceAsync.getAgreements(offset, limit,
+		enterprisesServiceAsync.getAgreements(domain, offset, limit,
 				new AsyncCallbackWrapper<List<Agreement>>(callback));
 
 	}
 
 	@Override
-	public void getBonusConcepts(int offset, int limit,
+	public void getBonusConcepts(String domain, int offset, int limit,
 			AsyncCallback<List<Bonus>> callback) {
 		AON.start();
-		enterprisesServiceAsync.getBonusConcepts(offset, limit,
+		enterprisesServiceAsync.getBonusConcepts(domain, offset, limit,
 				new AsyncCallbackWrapper<List<Bonus>>(callback));
 	}
 
 	@Override
-	public void getDeductionConcepts(int offset, int limit,
+	public void getDeductionConcepts(String domain, int offset, int limit,
 			AsyncCallback<List<Deduction>> callback) {
 		AON.start();
-		enterprisesServiceAsync.getDeductionConcepts(offset, limit,
+		enterprisesServiceAsync.getDeductionConcepts(domain, offset, limit,
 				new AsyncCallbackWrapper<List<Deduction>>(callback));
 	}
 
 	@Override
-	public void getPaymentConcepts(int offset, int limit,
+	public void getPaymentConcepts(String domain, int offset, int limit,
 			AsyncCallback<List<Payment>> callback) {
 		AON.start();
-		enterprisesServiceAsync.getPaymentConcepts(offset, limit,
+		enterprisesServiceAsync.getPaymentConcepts(domain, offset, limit,
 				new AsyncCallbackWrapper<List<Payment>>(callback));
 	}
 
 	@Override
-	public void getEnterprisesCosts(List<Integer> enterpriseIds,
+	public void getEnterprisesCosts(String domain, List<Integer> enterpriseIds,
 			AsyncCallback<List<Cost>> callback) {
 		AON.start();
-		enterprisesServiceAsync.getEnterprisesCosts(enterpriseIds,
+		enterprisesServiceAsync.getEnterprisesCosts(domain, enterpriseIds,
 				new AsyncCallbackWrapper<List<Cost>>(callback));
 	}
 
 	@Override
-	public void updateAgreementId(Agreement agreement, 
+	public void updateAgreementId(String domain, Agreement agreement, 
 			AsyncCallback<Void> callback) {
 		AON.start();
-		enterprisesServiceAsync.updateAgreementId(agreement, 
+		enterprisesServiceAsync.updateAgreementId(domain, agreement, 
 				new AsyncCallbackWrapper<Void>(callback));
 		
 	}
 	
 	@Override
-	public void copyAgreement(Agreement agreement,
+	public void copyAgreement(String domain, Agreement agreement,
 			AsyncCallback<Agreement> callback) {
 		AON.start();
-		enterprisesServiceAsync.copyAgreement(agreement, 
+		enterprisesServiceAsync.copyAgreement(domain, agreement, 
 				new AsyncCallbackWrapper<Agreement>(callback));
 	}
 	
 	@Override
-	public void moveAgreement2Parent(Agreement agreement,
+	public void moveAgreement2Parent(String domain, Agreement agreement,
 			AsyncCallback<Void> callback) {
 		AON.start();
-		enterprisesServiceAsync.moveAgreement2Parent(agreement, new 
+		enterprisesServiceAsync.moveAgreement2Parent(domain, agreement, new 
 				AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
-	public void getParentDomain(AsyncCallback<Integer> callback) {
+	public void getParentDomain(String domain, AsyncCallback<Integer> callback) {
 		AON.start();
-		enterprisesServiceAsync.getParentDomain(new 
+		enterprisesServiceAsync.getParentDomain(domain, new 
 				AsyncCallbackWrapper<Integer>(callback));
 		
 	}
 
 	@Override
-	public void getWorkplaceInfo(Integer workplaceId, AsyncCallback<WorkplaceInfo> callback) {
+	public void getWorkplaceInfo(String domain, Integer workplaceId, AsyncCallback<WorkplaceInfo> callback) {
 		AON.start();
-		enterprisesServiceAsync.getWorkplaceInfo(workplaceId,
+		enterprisesServiceAsync.getWorkplaceInfo(domain, workplaceId,
 				new AsyncCallbackWrapper<WorkplaceInfo>(callback));
 	}
 
 	@Override
-	public void setWorkplaceInfo(WorkplaceInfo workplaceInfo, AsyncCallback<WorkplaceInfo> callback) {
+	public void setWorkplaceInfo(String domain, WorkplaceInfo workplaceInfo, AsyncCallback<WorkplaceInfo> callback) {
 		AON.start();
-		enterprisesServiceAsync.setWorkplaceInfo(workplaceInfo,
+		enterprisesServiceAsync.setWorkplaceInfo(domain, workplaceInfo,
 				new AsyncCallbackWrapper<WorkplaceInfo>(callback));	
 	}
 }

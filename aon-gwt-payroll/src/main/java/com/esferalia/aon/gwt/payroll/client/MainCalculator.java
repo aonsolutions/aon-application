@@ -224,7 +224,7 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 
 	private ListDataProvider<JsSalaryResult> resultsDataProvider;
 	
-	private EnterprisesServiceAsync enterprisesService;
+	private DomainEnterprisesServiceAsync enterprisesService;
 
 	private List<Cost> costs;
 
@@ -252,8 +252,7 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 		EnterprisesServiceAsync gwtEnterprisesService = GWT
 				.create(EnterprisesService.class);
 		
-		enterprisesService = new EnterprisesServiceAsyncDecorator(
-				gwtEnterprisesService);
+		enterprisesService = DomainEnterprisesServiceAsync.newInstance();
 		
 		initAsyncEnterprisesProvider();
 

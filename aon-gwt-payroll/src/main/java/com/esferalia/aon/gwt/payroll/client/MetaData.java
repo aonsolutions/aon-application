@@ -108,7 +108,7 @@ public class MetaData extends ResizeComposite {
 
 	private PopupPanel newPopup;
 	private List<Listener> listeners;
-	private EnterprisesServiceAsync enterprisesService;
+	private DomainEnterprisesServiceAsync enterprisesService;
 
 	public MetaData() {
 		listeners = new LinkedList<Listener>();
@@ -221,10 +221,7 @@ public class MetaData extends ResizeComposite {
 	private void initEnterprisesService() {
 		// Create a remote service proxy to talk to the server-side Enterprises
 		// service.
-		EnterprisesServiceAsync enterprisesServiceRaw = GWT
-				.create(EnterprisesService.class);
-		enterprisesService = new EnterprisesServiceAsyncDecorator(
-				enterprisesServiceRaw);
+		enterprisesService = DomainEnterprisesServiceAsync.newInstance();
 	}
 
 	private void onBonusConceptTreeItemSelected(Bonus bonus) {

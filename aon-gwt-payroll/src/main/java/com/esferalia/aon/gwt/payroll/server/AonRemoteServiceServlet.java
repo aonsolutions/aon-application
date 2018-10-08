@@ -47,41 +47,73 @@ import com.google.gwt.user.server.rpc.SerializationPolicyLoader;
 public class AonRemoteServiceServlet extends RemoteServiceServlet {
 
 	
+	/**
+	 * @deprecated Don't use this method.
+	 */
+	@Deprecated
 	Integer getUserID() {
 		HttpServletRequest request = getThreadLocalRequest();
 		return ((AuthPrincipal)request.getUserPrincipal()).getUserId();
 	}
 
+	/**
+	 * @deprecated Don't use this method.
+	 */
+	@Deprecated
 	AuthPrincipal getAuthPrincipal() {
 		HttpServletRequest request = getThreadLocalRequest();
 		return ((AuthPrincipal)request.getUserPrincipal());
 	}
 
+	/**
+	 * @deprecated Don't use this method.
+	 */
+	@Deprecated
 	Integer getPersonID() {
 		return null;
 	}
 	
 	
+	/**
+	 * @deprecated Don't use this method.
+	 */
+	@Deprecated
 	String getEntryPoint(){
 		return ((GWT) getSession().getAttribute("gwt")).getEntryPoint();
 	}
 
+	/**
+	 * @deprecated Don't use this method.
+	 */
+	@Deprecated
 	boolean isAtEnterpriseSite(){
 		return Constants.ENTERPRISE_SITE_ENTRY_POINT.equals(getEntryPoint());
 	}
 
 	
+	/**
+	 * @deprecated Don't use this method.
+	 */
+	@Deprecated
 	Integer getParentDomainID() {
 		DomainSwitcher domainSwitcher = (DomainSwitcher)AonUtil
 				.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
 		return domainSwitcher.getParentDomainId();
 	}
 
+	/**
+	 * @deprecated Don't use this method.
+	 */
+	@Deprecated
 	HttpSession getSession() {
 		HttpServletRequest request = getThreadLocalRequest();
 		return request.getSession(false);
 	}
-
+	
+	/**
+	 * @deprecated Don't use this method.
+	 */
+	@Deprecated
 	protected void initFacesContext() {
 		ServletContext context = getServletContext();
 		HttpServletRequest request = getThreadLocalRequest();
@@ -89,6 +121,10 @@ public class AonRemoteServiceServlet extends RemoteServiceServlet {
 		AonServletUtils.initFacesContext(context, request, response);
 	}
 
+	/**
+	 * @deprecated Don't use this method.
+	 */
+	@Deprecated
 	void releaseFacesContext() {
 		AonServletUtils.releaseFacesContext();
 	}
@@ -203,6 +239,10 @@ public class AonRemoteServiceServlet extends RemoteServiceServlet {
 	}
 	// ------------------------------------------------------------------------
 
+	/**
+	 * @deprecated Don't use this method.
+	 */
+	@Deprecated
 	protected static Integer getDomainID() {
 		DomainSwitcher domainSwitcher = (DomainSwitcher)AonUtil
 				.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
@@ -210,6 +250,10 @@ public class AonRemoteServiceServlet extends RemoteServiceServlet {
 	}
 
 
+	/**
+	 * @deprecated Don't use this method.
+	 */
+	@Deprecated
 	protected static Integer[] getChildDomainIDs(Integer domainId) throws ManagerBeanException {
 		IManagerBean beanManager = BeanManager
 				.getManagerBean(Domain.class);
@@ -231,9 +275,12 @@ public class AonRemoteServiceServlet extends RemoteServiceServlet {
 		return ids;
 	}
 
-	/*
+
+	/**
 	 * We assume here that one domain one enterprise. 
+	 * @deprecated Don't use this method.
 	 */
+	@Deprecated
 	protected static Integer getEnterpriseID() throws ManagerBeanException {
 		IManagerBean beanManager = BeanManager
 				.getManagerBean(com.code.aon.company.Enterprise.class);
@@ -303,6 +350,10 @@ public class AonRemoteServiceServlet extends RemoteServiceServlet {
 	/*
 	 * We assume here that one domain one enterprise. 
 	 */
+	/**
+	 * @deprecated Don't use this method.
+	 */
+	@Deprecated
 	protected static Enterprise getHEnterprise() throws ManagerBeanException {
 		IManagerBean beanManager = BeanManager
 				.getManagerBean(com.code.aon.company.Enterprise.class);
@@ -321,6 +372,10 @@ public class AonRemoteServiceServlet extends RemoteServiceServlet {
 		
 	}
 	
+	/**
+	 * @deprecated Don't use this method.
+	 */
+	@Deprecated
 	protected static EnterpriseCCC getDefaultHEnterpriseCCC() throws ManagerBeanException{
 		IManagerBean beanManager = BeanManager
 				.getManagerBean(com.esferalia.aon.payroll.EnterpriseCCC.class);
@@ -339,6 +394,10 @@ public class AonRemoteServiceServlet extends RemoteServiceServlet {
 		
 	}
 	
+	/**
+	 * @deprecated Don't use this method.
+	 */
+	@Deprecated
 	protected static Integer [] getEnterpriseIDs() throws ManagerBeanException {
 		
 		List<Integer> ids  = getEnterpriseIDs(getDomainID());
@@ -349,6 +408,10 @@ public class AonRemoteServiceServlet extends RemoteServiceServlet {
 		return ids.toArray(new Integer[ids.size()]);
 	}
 	
+	/**
+	 * @deprecated Don't use this method.
+	 */
+	@Deprecated
 	protected static List<Integer> getEnterpriseIDs(Integer domainId) throws ManagerBeanException {
 		
 		IManagerBean beanManager = BeanManager

@@ -20,54 +20,54 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("enterprises")
 public interface EnterprisesService extends RemoteService {
 	
-	Integer getDomain();
+	Integer getDomain(String domain);
 
-	ContextDescriptor getContext();
+	ContextDescriptor getContext(String domain);
 
-	Bonus saveBonusConcept(Bonus bonus);
+	Bonus saveBonusConcept(String domain, Bonus bonus);
 
-	Payment savePaymentConcept(Payment payment);
+	Payment savePaymentConcept(String domain, Payment payment);
 
-	Deduction saveDeductionConcept(Deduction deduction);
+	Deduction saveDeductionConcept(String domain, Deduction deduction);
 	
 	/**
 	 * 
 	 * @param agreement
 	 * @param value: if value > 0 move to Agreements. Else, move to Trash
 	 */	
-	void updateAgreementId(Agreement agreement);
+	void updateAgreementId(String domain, Agreement agreement);
 
-	void deleteBonusConcept(Bonus bonus);
+	void deleteBonusConcept(String domain, Bonus bonus);
 
-	void deletePaymentConcept(Payment payment);
+	void deletePaymentConcept(String domain, Payment payment);
 
-	void deleteDeductionConcept(Deduction deduction);
+	void deleteDeductionConcept(String domain, Deduction deduction);
 	
-	void deleteAgreement(Agreement agreement);
+	void deleteAgreement(String domain, Agreement agreement);
 	
-	void moveAgreement2Parent(Agreement agreement);
+	void moveAgreement2Parent(String domain, Agreement agreement);
 	
-	Agreement copyAgreement(Agreement agreement);
+	Agreement copyAgreement(String domain, Agreement agreement);
 
-	List<Agreement> getAgreements(int offset, int limit) ;
+	List<Agreement> getAgreements(String domain, int offset, int limit) ;
 
-	List<Enterprise> getEnterprises(int offset, int limit) ;
+	List<Enterprise> getEnterprises(String domain, String user, int offset, int limit) ;
 
-	List<Bonus> getBonusConcepts(int offset, int limit) ;
+	List<Bonus> getBonusConcepts(String domain, int offset, int limit) ;
 
-	List<Payment> getPaymentConcepts(int offset, int limit) ;
+	List<Payment> getPaymentConcepts(String domain, int offset, int limit) ;
 
-	List<Deduction> getDeductionConcepts(int offset, int limit) ;
+	List<Deduction> getDeductionConcepts(String domain, int offset, int limit) ;
 	
-	List<Cost> getEnterprisesCosts(List<Integer> enterpriseIds); 
+	List<Cost> getEnterprisesCosts(String domain, List<Integer> enterpriseIds); 
 	
-	List<Extra> getWorkplacesExtras(List<Integer> workplaceIds) ;
+	List<Extra> getWorkplacesExtras(String domain, List<Integer> workplaceIds) ;
 
-	Integer getParentDomain();
+	Integer getParentDomain(String domain );
 
-	WorkplaceInfo getWorkplaceInfo(Integer workplaceId);
+	WorkplaceInfo getWorkplaceInfo(String domain, Integer workplaceId);
 
-	WorkplaceInfo setWorkplaceInfo(WorkplaceInfo workplaceInfo);
+	WorkplaceInfo setWorkplaceInfo(String domain, WorkplaceInfo workplaceInfo);
 	
 	
 }

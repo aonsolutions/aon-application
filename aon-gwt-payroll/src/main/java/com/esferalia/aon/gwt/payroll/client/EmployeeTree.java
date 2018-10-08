@@ -125,14 +125,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	static class WorkPlaceCalcDialog extends CalcDialog<Workplace> {
 
-		EnterprisesServiceAsync enterpriseService;
+		DomainEnterprisesServiceAsync enterpriseService;
 
 		public WorkPlaceCalcDialog() {
 
-			EnterprisesServiceAsync enterpriseServiceRaw = GWT
-					.create(EnterprisesService.class);
-			enterpriseService = new EnterprisesServiceAsyncDecorator(
-					enterpriseServiceRaw);
+			enterpriseService = DomainEnterprisesServiceAsync.newInstance();
 
 			// Full name.
 			Column<Workplace, String> descriptionColumn = new Column<Workplace, String>(
@@ -166,7 +163,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	class NewEmployeeCommand implements ScheduledCommand {
 		private EmployeesServiceAsync employeesService;
-		private EnterprisesServiceAsync enterprisesService;
+		private DomainEnterprisesServiceAsync enterprisesService;
 		
 		@Override
 		public void execute() {
@@ -175,8 +172,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			EmployeesServiceAsync employeesServiceRaw = GWT.create(EmployeesService.class);
 			employeesService = new EmployeesServiceAsyncDecorator(employeesServiceRaw);
 			
-			EnterprisesServiceAsync enterprisesServiceRaw = GWT.create(EnterprisesService.class);
-			enterprisesService = new EnterprisesServiceAsyncDecorator(enterprisesServiceRaw);
+			enterprisesService = DomainEnterprisesServiceAsync.newInstance();
 			
 			EmployeeNewDraftObject employeeNewDraftObject = new EmployeeNewDraftObject(workplace, employeesService, enterprisesService);
 			onEmployeeNewDraftSelected(employeeNewDraftObject);
@@ -1721,10 +1717,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		EmployeesServiceAsync employeesServiceRaw = GWT.create(EmployeesService.class);
 		EmployeesServiceAsync employeesService = new EmployeesServiceAsyncDecorator(employeesServiceRaw);
 		
-		EnterprisesServiceAsync enterprisesServiceRaw = GWT.create(EnterprisesService.class);
-		EnterprisesServiceAsync enterprisesService = new EnterprisesServiceAsyncDecorator(enterprisesServiceRaw);
+		DomainEnterprisesServiceAsync domainEnterprisesServiceAsync = DomainEnterprisesServiceAsync.newInstance();
 		
-		WorkplaceDraftObject employeeNewDraftObject = new WorkplaceDraftObject(workplace, employeesService, enterprisesService);
+		WorkplaceDraftObject employeeNewDraftObject = new WorkplaceDraftObject(workplace, employeesService, domainEnterprisesServiceAsync);
 		
 		employeeDetail.setWidget(getWorkplaceDraft());
 		getWorkplaceDraft().setWorkplaceDraftObject(employeeNewDraftObject);

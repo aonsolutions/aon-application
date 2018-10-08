@@ -14,7 +14,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class WorkplaceDraftObject {
 
 	private EmployeesServiceAsync employeesService;
-	private EnterprisesServiceAsync enterprisesService;
+	private DomainEnterprisesServiceAsync enterprisesService;
 	
 	private Workplace workplace;
 	private List<Agreement> agreements;
@@ -23,7 +23,7 @@ public class WorkplaceDraftObject {
 		
 	// ------------------------------------------------- CLASS METHODS -------------------------------------------------	
 	
-	public WorkplaceDraftObject(Workplace workplace, EmployeesServiceAsync employeesService, EnterprisesServiceAsync enterprisesService) {
+	public WorkplaceDraftObject(Workplace workplace, EmployeesServiceAsync employeesService, DomainEnterprisesServiceAsync enterprisesService) {
 		
 		this.employeesService = employeesService;
 		this.enterprisesService = enterprisesService;

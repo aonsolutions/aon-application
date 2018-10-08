@@ -70,7 +70,7 @@ public class Enterprises extends ResizeComposite implements
 
 	private Images images;
 	private List<Listener> listeners;
-	private EnterprisesServiceAsync enterprisesService;
+	private DomainEnterprisesServiceAsync enterprisesService;
 
 	private boolean inactive = false;
 
@@ -79,12 +79,7 @@ public class Enterprises extends ResizeComposite implements
 		images = GWT.create(Images.class);
 		listeners = new LinkedList<Enterprises.Listener>();
 
-		// Create a remote service proxy to talk to the server-side Employees
-		// service.
-		EnterprisesServiceAsync employeesServiceRaw = GWT
-				.create(EnterprisesService.class);
-		enterprisesService = new EnterprisesServiceAsyncDecorator(
-				employeesServiceRaw );		
+		enterprisesService = DomainEnterprisesServiceAsync.newInstance();		
 				
 		initWidget(binder.createAndBindUi(this));
 

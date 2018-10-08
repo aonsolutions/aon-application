@@ -17,27 +17,27 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  * The async counterpart of <code>EnterprisesService</code>.
  */
 public interface EnterprisesServiceAsync {
-	void getDomain(AsyncCallback<Integer> callback);
-	void getContext(AsyncCallback<ContextDescriptor> callback);
-	void saveBonusConcept(Bonus bonus, AsyncCallback<Bonus> callback);
-	void savePaymentConcept(Payment payment, AsyncCallback<Payment> callback);
-	void saveDeductionConcept(Deduction deduction, AsyncCallback<Deduction> callback);
-	void deleteBonusConcept(Bonus bonus, AsyncCallback<Void> callback);
-	void deletePaymentConcept(Payment payment, AsyncCallback<Void> callback);
-	void deleteDeductionConcept(Deduction deduction, AsyncCallback<Void> callback);
-	void deleteAgreement(Agreement agreement, AsyncCallback<Void> callback);
-	void updateAgreementId(Agreement agreement, AsyncCallback<Void> callback);
-	void copyAgreement(Agreement agreement, AsyncCallback<Agreement> callback);
-	void getWorkplacesExtras(List<Integer> workplaceIds, AsyncCallback<List<Extra>> callback);
-	void getAgreements(int offset , int limit, AsyncCallback<List<Agreement>> callback);
-	void getEnterprises(int offset , int limit, AsyncCallback<List<Enterprise>> callback);
-	void getEnterprisesCosts(List<Integer> enterpriseIds, AsyncCallback<List<Cost>> callback);
-	void getBonusConcepts(int offset , int limit, AsyncCallback<List<Bonus>> callback);
-	void getPaymentConcepts(int offset , int limit, AsyncCallback<List<Payment>> callback);
-	void getDeductionConcepts(int offset , int limit, AsyncCallback<List<Deduction>> callback);
-	void moveAgreement2Parent(Agreement agreement, AsyncCallback<Void> callback);
-	void getParentDomain(AsyncCallback<Integer> callback);
-	void getWorkplaceInfo(Integer workplaceId, AsyncCallback<WorkplaceInfo> asyncCallback);
-	void setWorkplaceInfo(WorkplaceInfo workplaceInfo, AsyncCallback<WorkplaceInfo> asyncCallback);
+	void getDomain(String domain, AsyncCallback<Integer> callback);
+	void getContext(String domain, AsyncCallback<ContextDescriptor> callback);
+	void saveBonusConcept(String domain, Bonus bonus, AsyncCallback<Bonus> callback);
+	void savePaymentConcept(String domain, Payment payment, AsyncCallback<Payment> callback);
+	void saveDeductionConcept(String domain, Deduction deduction, AsyncCallback<Deduction> callback);
+	void deleteBonusConcept(String domain, Bonus bonus, AsyncCallback<Void> callback);
+	void deletePaymentConcept(String domain, Payment payment, AsyncCallback<Void> callback);
+	void deleteDeductionConcept(String domain, Deduction deduction, AsyncCallback<Void> callback);
+	void deleteAgreement(String domain, Agreement agreement, AsyncCallback<Void> callback);
+	void updateAgreementId(String domain, Agreement agreement, AsyncCallback<Void> callback);
+	void copyAgreement(String domain, Agreement agreement, AsyncCallback<Agreement> callback);
+	void getWorkplacesExtras(String domain, List<Integer> workplaceIds, AsyncCallback<List<Extra>> callback);
+	void getAgreements(String domain, int offset , int limit, AsyncCallback<List<Agreement>> callback);
+	void getEnterprises(String domain, String user,int offset , int limit, AsyncCallback<List<Enterprise>> callback);
+	void getEnterprisesCosts(String domain, List<Integer> enterpriseIds, AsyncCallback<List<Cost>> callback);
+	void getBonusConcepts(String domain, int offset , int limit, AsyncCallback<List<Bonus>> callback);
+	void getPaymentConcepts(String domain, int offset , int limit, AsyncCallback<List<Payment>> callback);
+	void getDeductionConcepts(String domain, int offset , int limit, AsyncCallback<List<Deduction>> callback);
+	void moveAgreement2Parent(String domain, Agreement agreement, AsyncCallback<Void> callback);
+	void getParentDomain(String domain, AsyncCallback<Integer> callback);
+	void getWorkplaceInfo(String domain, Integer workplaceId, AsyncCallback<WorkplaceInfo> asyncCallback);
+	void setWorkplaceInfo(String domain, WorkplaceInfo workplaceInfo, AsyncCallback<WorkplaceInfo> asyncCallback);
 
 }

@@ -81,8 +81,8 @@ public class AgreementsTree extends Composite implements KeyDownHandler, Context
 	private static Integer newsIdCounter = 0;
 	private List<Listener> listeners;
 	
-	private EnterprisesServiceAsync enterpriseService;
 	private EmployeesServiceAsync employeesServiceAsync;
+	private DomainEnterprisesServiceAsync enterpriseService;
 
 	public AgreementsTree() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -91,18 +91,13 @@ public class AgreementsTree extends Composite implements KeyDownHandler, Context
 		this.tree.addKeyDownHandler(this);
 		this.tree.addDomHandler(this, ContextMenuEvent.getType());
 		
-		// Create a remote service proxy to talk to the server-side Employees
-		// service.
-
 		EmployeesServiceAsync employeesServiceRaw = GWT
 				.create(EmployeesService.class);
 		employeesServiceAsync = new EmployeesServiceAsyncDecorator(
 				employeesServiceRaw);
-		
-		EnterprisesServiceAsync enterpriseServiceRaw = GWT
-				.create(EnterprisesService.class);
-		enterpriseService = new EnterprisesServiceAsyncDecorator(
-				enterpriseServiceRaw);
+		// Create a remote service proxy to talk to the server-side Employees
+		// service.
+		enterpriseService = DomainEnterprisesServiceAsync.newInstance();
 	}
 	
 	@UiHandler("tree")
@@ -150,7 +145,7 @@ public class AgreementsTree extends Composite implements KeyDownHandler, Context
 		listeners.remove(listener);
 	}
 	
-	public EnterprisesServiceAsync getEnterpriseService() {
+	public DomainEnterprisesServiceAsync getEnterpriseService() {
 		return enterpriseService;
 	}
 	

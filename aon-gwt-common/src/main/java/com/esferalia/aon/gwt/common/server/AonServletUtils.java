@@ -18,6 +18,7 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
 import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.jooq.tables.Enterprise;
+import com.esferalia.aon.jooq.tables.User;
 import com.esferalia.aon.occam.api.AONContext;
 
 import net.aonsolutions.core.pool.AonConnectionException;
@@ -26,30 +27,37 @@ import net.aonsolutions.core.pool.ConnectionInfo;
 
 public class AonServletUtils {
 	
+	@Deprecated
 	public static AuthPrincipal getRequestPrincipal(HttpServletRequest request) {
 		return (AuthPrincipal) request.getUserPrincipal();
 	}
+	@Deprecated
 	public static Integer getRequestDomain(HttpServletRequest request) {		
 		return getRequestPrincipal(request).getDomainId();
 	}
 	
+	@Deprecated
 	public static String getRequestDomainName(HttpServletRequest request) {
 		return getRequestPrincipal(request).getDomain();
 	}
 	
+	@Deprecated
 	public static String getRequestUser(HttpServletRequest request) {		
 		return getRequestPrincipal(request).getShortName();
 	}
 	
+	@Deprecated
 	public static Integer getRequestUserId(HttpServletRequest request) {
 		return getRequestPrincipal(request).getUserId();
 	}
 	
+	@Deprecated
 	public static String getLoggedUser() {
 		HttpServletRequest request = HttpServletRequestValve.getHttpServletRequest();
 		return getRequestUser(request);
 	}
 	
+	@Deprecated
 	public static Connection getConnection() throws SQLException {
 		try {
 			HttpServletRequest request = HttpServletRequestValve.getHttpServletRequest();
@@ -73,6 +81,26 @@ public class AonServletUtils {
 			return connection;
 		} catch (AonConnectionException e) {
 			throw new SQLException(e.getMessage(), e);
+		}
+	}
+
+	public static Integer getUserID(String user, String domainName) throws SQLException {
+		Connection connection = null;
+		try {
+			connection = getConnection(domainName);
+			AONContext aonContext = new AONContext(connection);
+			return  aonContext.getDslContext()
+			.select()
+			.from(User.USER)
+			.innerJoin(Domain.DOMAIN).onKey()
+			.where(Domain.DOMAIN.NAME.eq(domainName))
+			.and(User.USER.LOGIN.eq(user))
+			.fetchOne(User.USER.ID);
+		} catch (Exception e) {
+			throw new SQLException(e.getMessage(), e);
+		} finally {
+			if ( connection != null )
+				connection.close();
 		}
 	}
 
