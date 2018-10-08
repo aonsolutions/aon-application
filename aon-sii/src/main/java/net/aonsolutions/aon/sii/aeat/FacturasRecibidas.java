@@ -202,8 +202,10 @@ public class FacturasRecibidas extends SIIBuilt {
 
 		FacturaRecibidaType frt = new FacturaRecibidaType();
 		// CONTRAPARTE
-		frt.setContraparte(contraparte(vat));
-
+		if(vat.isIntracommunity()) {
+			frt.setContraparte(contraparteIntracomunitario(vat));
+		} else frt.setContraparte(contraparte(vat));
+		
 		// CLAVE REGIMEN IVA || TRANSCENDENCIA
 		frt.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaRecibidasType._01.getName()); // TODO
 
@@ -268,7 +270,7 @@ public class FacturasRecibidas extends SIIBuilt {
 		// TIPO FACTURA
 		frt.setTipoFactura(ClaveTipoFacturaType.F_1);// TODO De momento a piñon fijo!!!
 		if (vat.isIntracommunity()) {
-			frt.setTipoFactura(ClaveTipoFacturaType.F_5);
+			//frt.setTipoFactura(ClaveTipoFacturaType.F_5);
 		}
 
 		if (vat.isRectification()) {
@@ -581,6 +583,28 @@ public class FacturasRecibidas extends SIIBuilt {
 			otro.setID(vat.getRegistryDocument());
 			otro.setIDType(vat.getRegistryDocumentCountry().equals(Country.ES) ? 
 				IDType.NO_CENSADO.getName() : IDType.valueOf(vat.getRegistryDocumentType()).getName());
+			contraparte.setIDOtro(otro);
+		}	
+		return contraparte;
+	}
+	
+	private PersonaFisicaJuridicaType contraparteIntracomunitario(VatContext vat) {
+		PersonaFisicaJuridicaType contraparte = new PersonaFisicaJuridicaType();
+		contraparte.setNombreRazon(vat.getRegistryName());
+		if(vat.getRegistryDocumentCountry().equals(Country.ES)
+				&& validateNif(vat.getRegistryDocument(), vat.getRegistryName(),vat.getRegistryDocumentType())){
+			contraparte.setNIF(vat.getRegistryDocument());
+		} else {
+			IDOtroType otro = new IDOtroType();
+			otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getIso2()));
+
+			String document = vat.getRegistryDocument();
+			if(!document.substring(0,2).equals(vat.getRegistryDocumentCountry().getIso2())) {
+				document = vat.getRegistryDocumentCountry().getIso2() + document;
+			}
+			otro.setID(document);		
+			
+			otro.setIDType(IDType.NIF_IVA.getName());
 			contraparte.setIDOtro(otro);
 		}	
 		return contraparte;

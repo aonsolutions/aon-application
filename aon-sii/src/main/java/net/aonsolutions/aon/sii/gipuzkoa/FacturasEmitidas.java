@@ -316,7 +316,9 @@ public class FacturasEmitidas extends SIIBuilt {
 			
 			// CONTRAPARTE
 			if(vat.getRegistryDocument() != null && !vat.getRegistryDocument().equals("")){
-				fet.setContraparte(contraparte(vat));
+				if(vat.isIntracommunity()) {
+					fet.setContraparte(contraparteIntracomunitario(vat));
+				} else fet.setContraparte(contraparte(vat));
 			}
 			// TIPO DESGLOSE
 			TipoDesglose tipoDesglose = new TipoDesglose(); 
@@ -631,6 +633,28 @@ public class FacturasEmitidas extends SIIBuilt {
 			otro.setID(vat.getRegistryDocument());
 			otro.setIDType(vat.getRegistryDocumentCountry().equals(Country.ES) ? 
 				IDType.NO_CENSADO.getName() : IDType.valueOf(vat.getRegistryDocumentType()).getName());
+			contraparte.setIDOtro(otro);
+		}	
+		return contraparte;
+	}
+	
+	private PersonaFisicaJuridicaType contraparteIntracomunitario(VatContext vat) {
+		PersonaFisicaJuridicaType contraparte = new PersonaFisicaJuridicaType();
+		contraparte.setNombreRazon(vat.getRegistryName());
+		if(vat.getRegistryDocumentCountry().equals(Country.ES)
+				&& validateNif(vat.getRegistryDocument(), vat.getRegistryName(),vat.getRegistryDocumentType())){
+			contraparte.setNIF(vat.getRegistryDocument());
+		} else {
+			IDOtroType otro = new IDOtroType();
+			otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getIso2()));
+
+			String document = vat.getRegistryDocument();
+			if(!document.substring(0,2).equals(vat.getRegistryDocumentCountry().getIso2())) {
+				document = vat.getRegistryDocumentCountry().getIso2() + document;
+			}
+			otro.setID(document);		
+			
+			otro.setIDType(IDType.NIF_IVA.getName());
 			contraparte.setIDOtro(otro);
 		}	
 		return contraparte;

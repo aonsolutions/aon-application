@@ -97,7 +97,9 @@ public class OperacionesTrascendenciaTributaria extends SIIBuilt {
 		LRCobrosMetalicoType metalico = new LRCobrosMetalicoType();
 
 		metalico.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
-		metalico.setContraparte(contraparte(vat));
+		if(vat.isIntracommunity()) {
+			metalico.setContraparte(contraparteIntracomunitario(vat));
+		} else metalico.setContraparte(contraparte(vat));
 		metalico.setImporteTotal(Double.toString(AonMathUtils.round(vat.getBase() + vat.getQuota())));
 
 		suministro.getRegistroLRCobrosMetalico().add(metalico);
@@ -153,7 +155,9 @@ public class OperacionesTrascendenciaTributaria extends SIIBuilt {
 		LROperacionesSegurosType seguros = new LROperacionesSegurosType();
 
 		seguros.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
-		seguros.setContraparte(contraparte(vat));
+		if(vat.isIntracommunity()) {
+			seguros.setContraparte(contraparteIntracomunitario(vat));
+		} else seguros.setContraparte(contraparte(vat));
 		seguros.setClaveOperacion(ClaveOperacionType.A); // TODO
 		seguros.setImporteTotal(Double.toString(AonMathUtils.round(vat.getBase() + vat.getQuota())));
 
@@ -209,7 +213,9 @@ public class OperacionesTrascendenciaTributaria extends SIIBuilt {
 			LRAgenciasViajesType agencias = new LRAgenciasViajesType();	
 
 			agencias.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
-			agencias.setContraparte(contraparte(vat));
+			if(vat.isIntracommunity()) {
+				agencias.setContraparte(contraparteIntracomunitario(vat));
+			} else agencias.setContraparte(contraparte(vat));
 			agencias.setImporteTotal(Double.toString(AonMathUtils.round(vat.getBase() + vat.getQuota())));
 			
 			suministro.getRegistroLRAgenciasViajes().add(agencias);
@@ -269,6 +275,28 @@ public class OperacionesTrascendenciaTributaria extends SIIBuilt {
 			otro.setID(vat.getRegistryDocument());
 			otro.setIDType(vat.getRegistryDocumentCountry().equals(Country.ES) ? 
 				IDType.NO_CENSADO.getName() : IDType.valueOf(vat.getRegistryDocumentType()).getName());
+			contraparte.setIDOtro(otro);
+		}	
+		return contraparte;
+	}
+	
+	private PersonaFisicaJuridicaType contraparteIntracomunitario(VatContext vat) {
+		PersonaFisicaJuridicaType contraparte = new PersonaFisicaJuridicaType();
+		contraparte.setNombreRazon(vat.getRegistryName());
+		if(vat.getRegistryDocumentCountry().equals(Country.ES)
+				&& validateNif(vat.getRegistryDocument(), vat.getRegistryName(),vat.getRegistryDocumentType())){
+			contraparte.setNIF(vat.getRegistryDocument());
+		} else {
+			IDOtroType otro = new IDOtroType();
+			otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getIso2()));
+
+			String document = vat.getRegistryDocument();
+			if(!document.substring(0,2).equals(vat.getRegistryDocumentCountry().getIso2())) {
+				document = vat.getRegistryDocumentCountry().getIso2() + document;
+			}
+			otro.setID(document);		
+			
+			otro.setIDType(IDType.NIF_IVA.getName());
 			contraparte.setIDOtro(otro);
 		}	
 		return contraparte;
