@@ -94,6 +94,14 @@
 			padding-top: 5px !important;
 		}
 
+		.paddingEnableDisable{
+			position: fixed;
+    		padding-top: 0px;
+    		border: none;
+    		top: 99px;
+    		width: 32px;
+		}
+
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX">
@@ -102,7 +110,7 @@
 				<g:HorizontalPanel>
 					<g:HTMLPanel styleName="aon-finding-title">
 						<g:HTMLPanel styleName="aon-finding-title-internal">
-							<g:Label styleName="aon-outputText">Laboral : Centro de trabajo</g:Label>
+							<g:Label styleName="aon-outputText">Laboral : Centro de trabajo : Activo</g:Label>
 						</g:HTMLPanel>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="aon-finding-toolbar-item-group {style.paddingTop}">

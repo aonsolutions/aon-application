@@ -41,6 +41,7 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 
 	interface MyStyle extends CssResource {
 		String hide();
+		String paddingEnableDisable();
 	}
 	
 	@UiField
@@ -190,8 +191,10 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 	}
 
 	private void initializeView() {
-		enableWorkplaceButton.setStyleName(AON.AON_ICON_ENABLE);
-		disableWorkplaceButton.setStyleName(AON.AON_ICON_DISABLE);
+		enableWorkplaceButton.setStyleName(AON.AON_ICON_DISABLE);
+		disableWorkplaceButton.setStyleName(AON.AON_ICON_ENABLE);
+		enableWorkplaceButton.addStyleName(style.paddingEnableDisable());
+		disableWorkplaceButton.addStyleName(style.paddingEnableDisable());
 		if(workplaceDraftObject.getWorkplaceInfo().isActive() == 1){
 			enableWorkplaceButton.addStyleName(style.hide());
 			disableWorkplaceButton.removeStyleName(style.hide());
@@ -259,16 +262,22 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 		this.workplaceDescription.setValue(workplaceDraftObject.getWorkplaceInfo().getDescription());
 		this.workplaceAddress.setSelectedIndex(workplaceDraftObject.getWorkplaceAddressIndex());
 		
-		this.workplaceEconomicConcert.setSelectedIndex(workplaceDraftObject.getWorkplaceEconomicConcert());
+		if(this.workplaceEconomicConcert.getItemCount() != 0){
+			this.workplaceEconomicConcert.setSelectedIndex(workplaceDraftObject.getWorkplaceEconomicConcert());
+		}
 		
 		if(this.workplaceCalendar.getItemCount() != 0){
 			this.workplaceCalendar.setSelectedIndex(workplaceDraftObject.getWorkplaceCalendarIndex());
 		}
 		
 		String workplaceAgreement = workplaceDraftObject.getWorkplaceAgreementDescription();
-		this.workpalceAgreement.setSelectedIndex(workplaceDraftObject.getAgreementIndex(workplaceAgreement) + 1);
-		
-		this.workplaceActivity.setSelectedIndex(workplaceDraftObject.getWorkplaceActivityIndex());
+		if(this.workpalceAgreement.getItemCount() != 0){
+			this.workpalceAgreement.setSelectedIndex(workplaceDraftObject.getAgreementIndex(workplaceAgreement) + 1);
+		}
+			
+		if(this.workplaceActivity.getItemCount() != 0){
+			this.workplaceActivity.setSelectedIndex(workplaceDraftObject.getWorkplaceActivityIndex());
+		}
 	}
 
 	@Override

@@ -111,7 +111,7 @@ public class JooqWorkplace {
 				.where(AGREEMENT.ID.eq(workplaceAgreement))
 				.fetchOne();
 		
-		String agreementDescription = agreementRecord.get(AGREEMENT.DESCRIPTION);
+		String agreementDescription = (null == agreementRecord) ? null : agreementRecord.get(AGREEMENT.DESCRIPTION);
 		
 		//SET General Data
 		workplaceInfo.setDescription(workplaceDescription);
