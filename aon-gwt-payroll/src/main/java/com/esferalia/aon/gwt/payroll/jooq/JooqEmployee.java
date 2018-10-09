@@ -251,7 +251,7 @@ public class JooqEmployee {
 			.and(CONTRACT_INFO.NAME.eq("OPCION_CONTRATO"))
 			.fetchOne();
 		
-		String contractType = (contractInfoTable == null) ? "" : contractInfoTable.get(CONTRACT_INFO.EXPRESSION).split("\"")[1];
+		String contractType = (contractInfoTable == null || null == contractInfoTable.get(CONTRACT_INFO.EXPRESSION)) ? "" : contractInfoTable.get(CONTRACT_INFO.EXPRESSION).split("\"")[1];
 		Integer ordinal;
 		if(contractType == "")
 			ordinal = -1;
@@ -1105,7 +1105,7 @@ public class JooqEmployee {
 			
 			Integer enterpriseCccId = 0;
 			
-			if(enterpriseCCC == null){
+			if(enterpriseCCC == null || enterpriseCCC.isEmpty()){
 				EnterpriseCccRecord enterpriseCccRecord = dslContext.insertInto(ENTERPRISE_CCC)
 						.set(ENTERPRISE_CCC.DOMAIN, domain)
 						.set(ENTERPRISE_CCC.CCC, newEmployeeInfo.getQuote_account())

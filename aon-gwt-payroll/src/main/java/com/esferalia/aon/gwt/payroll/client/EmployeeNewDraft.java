@@ -688,8 +688,8 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 				return false;
 			}
 		} else {
-			if (quotationAccount.getValue() == "" || activity.getValue() == "" || workplace.getValue() == ""
-					|| contractType.getSelectedIndex() == 0 || strat_date.getValue() == null) {
+			if (/*quotationAccount.getValue() == "" || activity.getValue() == "" ||*/ workplace.getValue() == ""
+					|| contractType.getSelectedIndex() == 0 || strat_date.getValue() == null || modality.getSelectedIndex() == 0) {
 				return false;
 			}
 		}

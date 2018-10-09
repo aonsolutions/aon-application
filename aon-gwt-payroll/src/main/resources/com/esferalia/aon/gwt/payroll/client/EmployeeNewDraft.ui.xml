@@ -334,7 +334,7 @@
 								</tr>
 								<tr>
 									<td style="background-color: #eaeaea; width: 200px;">
-										<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Actividad</g:Label>
+										<g:Label styleName='{style.firstColumnTextStyle}'>Actividad</g:Label>
 									</td>
 									<td colspan="6">
 										<g:TextBox ui:field="activity" styleName='{style.maxWidthTextBox}'></g:TextBox>
@@ -342,7 +342,7 @@
 								</tr>
 								<tr>
 									<td style="background-color: #eaeaea; width: 200px;">
-										<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Cuenta de cotización</g:Label>
+										<g:Label styleName='{style.firstColumnTextStyle}'>Cuenta de cotización</g:Label>
 									</td>
 									<td colspan="2">
 										<g:TextBox ui:field="quotationAccount"
@@ -371,7 +371,7 @@
 								</tr>
 								<tr>
 									<td style="background-color: #eaeaea; width: 200px;">
-										<g:Label styleName="{style.firstColumnTextStyle}">Modalidad</g:Label>
+										<g:Label styleName="{style.requiredColor} {style.firstColumnTextStyle}">Modalidad</g:Label>
 									</td>
 									<td colspan="6">
 										<g:ListBox ui:field="modality" styleName='{style.maxWidth}'></g:ListBox>
