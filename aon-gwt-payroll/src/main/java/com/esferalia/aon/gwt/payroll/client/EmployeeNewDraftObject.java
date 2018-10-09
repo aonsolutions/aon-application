@@ -52,15 +52,28 @@ public class EmployeeNewDraftObject {
 	}
 	
 	public String getWorkplaceActivity(){
-		return this.workplace.getActivity().getDescription();
+		if(this.workplace.getActivity() == null)
+			return "";
+		else
+			return this.workplace.getActivity().getDescription();
 	}
 	
 	public String getWorkplaceCCC(){
-		return this.workplace.getActivity().getCccs().get(0).getCode();
+		if(null == this.workplace.getActivity())
+			return "";
+		else{
+			if(this.workplace.getActivity().getCccs() == null)
+				return "";
+			else
+				return this.workplace.getActivity().getCccs().get(0).getCode();
+		}
 	}
 	
 	public String getWorkplaceAgreement(){
-		return this.workplace.getAgreement().getDescription();
+		if(null == this.workplace.getAgreement())
+			return "";
+		else
+			return this.workplace.getAgreement().getDescription();
 	}
 	
 	public WorkplaceEmployees getWorkplaceEmployees(){

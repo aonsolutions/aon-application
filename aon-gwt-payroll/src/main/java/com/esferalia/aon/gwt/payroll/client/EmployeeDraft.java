@@ -825,6 +825,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 
 		String quote_account = (employeeInfo.getQuote_account() == null) ? "" : employeeInfo.getQuote_account();
 		this.quotationAccount.setText(quote_account);
+		this.quotationAccount.setEnabled(false);
 
 		String activity = (employeeInfo.getEnterprise_activity() == null) ? "" : employeeInfo.getEnterprise_activity();
 		this.activity.setText(activity);

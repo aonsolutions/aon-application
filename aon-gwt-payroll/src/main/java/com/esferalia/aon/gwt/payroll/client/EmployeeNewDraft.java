@@ -771,6 +771,7 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 		for(int i=0; i<StreetType.values().length; i++){
 			this.street_type.addItem(StreetType.values()[i].getDescription());
 		}
+		this.street_type.setSelectedIndex(14); //Calle por defecto
 
 		// TIPO DE PAGO
 		this.payMethod.addItem("-");
@@ -838,12 +839,15 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 		this.workplace.setValue(this.employeeNewDraftObject.getWorkplaceName());
 		employeeNewDraftObject.setWorkplace(workplace.getValue());
 		employeeNewDraftObject.setSSRegime(0);
+		this.workplace.setEnabled(false);
 
 		this.activity.setValue(this.employeeNewDraftObject.getWorkplaceActivity());
 		employeeNewDraftObject.setEnterprise_Activity(activity.getValue());
+		this.activity.setEnabled(false);
 
 		this.quotationAccount.setValue(this.employeeNewDraftObject.getWorkplaceCCC());
 		employeeNewDraftObject.setContractQuoteAccount(quotationAccount.getValue());
+		this.quotationAccount.setEnabled(false);
 
 		Integer agreementIndex = this.employeeNewDraftObject.getAgreementIndex(this.employeeNewDraftObject.getWorkplaceAgreement());
 		this.agreement.setSelectedIndex(agreementIndex + 1);
