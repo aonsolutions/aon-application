@@ -46,7 +46,7 @@ public class EmployeeCalendarDraftObjectData {
 	private Date endContract;
 	
 	private Integer employeeId;
-	private EmployeesServiceAsync employeesService;
+	private DomainEmployeesServiceAsync employeesService;
 	
 	private boolean fullTimeEmployee;
 	private int fullTimeEmployeeDraft = -1;
@@ -363,7 +363,7 @@ public class EmployeeCalendarDraftObjectData {
 	// ------------------------------------------------- CLASS METHODS -------------------------------------------------	
 	
 	public EmployeeCalendarDraftObjectData(Integer employeeId, Date startContract, Date endContract,
-			EmployeesServiceAsync employeesService) {
+			DomainEmployeesServiceAsync employeesService) {
 		
 		this.undoManager = new UndoManager<>();
 		

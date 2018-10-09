@@ -250,13 +250,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	// ----------------------------------------------- EmployeesService methods
 
 	@Override
-	public Enterprise getEnterprise() throws IllegalArgumentException {
+	public Enterprise getEnterprise(String domain, String user) throws IllegalArgumentException {
 		Connection conn = null;
 		try {
-			initFacesContext();
-			Integer userID = getUserID();
-			Integer registryID = getEnterpriseID();
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
+			Integer domainId = AonServletUtils.getDomainID(domain); 
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domain); 
+			Integer userID = AonServletUtils.getUserID(conn, user, domainId, parentDomainId);
+			Integer registryID = AonServletUtils.getEnterpriseID(domain);
 			return getEnterprise(registryID, userID, conn);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
@@ -270,18 +271,19 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnroreca) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public Enterprise[] getEnterprises() throws IllegalArgumentException {
+	public Enterprise[] getEnterprises(String domain, String user) throws IllegalArgumentException {
 		Connection conn = null;
 		try {
-			initFacesContext();
-			Integer userID = getUserID();
-			Integer registryIDs[] = getEnterpriseIDs();
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
+			Integer domainId = AonServletUtils.getDomainID(domain); 
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domain); 
+			Integer userID = AonServletUtils.getUserID(conn, user, domainId, parentDomainId);
+
+			Integer registryIDs[] = AonServletUtils.getEnterpriseIDs(domain);
 			ArrayList<Enterprise> enterprises = new ArrayList<Enterprise>();
 			for (int i = 0; i < registryIDs.length; i++) {
 				Enterprise enterprise = getEnterprise(registryIDs[i], userID,
@@ -304,17 +306,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public List<Salary> getSalaries(Employee employee)
+	public List<Salary> getSalaries(String domain, Employee employee)
 			throws IllegalArgumentException {
 		Connection conn = null;
 		try {
-			initFacesContext();
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
 			if (employee != null) {
 				return isAtEnterpriseSite() ? getSiteSalaries(conn,
 						employee.getId()) : getSalaries(conn, employee.getId());
@@ -331,17 +331,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public List<Irpf> getIrpfs(Employee employee)
+	public List<Irpf> getIrpfs(String domain, Employee employee)
 			throws IllegalArgumentException {
 		Connection conn = null;
 		try {
-			initFacesContext();
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
 			return getIrpfOutcomes(conn, employee.getId());
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
@@ -352,17 +350,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public List<Extra> getExtras(List<Employee> employees)
+	public List<Extra> getExtras(String domain, List<Employee> employees)
 			throws IllegalArgumentException {
 		Connection conn = null;
 		try {
-			initFacesContext();
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
 			Integer ids [] = employees.stream()
 					.map(e->e.getId())
 					.toArray(Integer[]::new);
@@ -376,17 +372,16 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public void insertPerson(Employee employee) throws IllegalArgumentException {
+	public void insertPerson(String domain, Employee employee) throws IllegalArgumentException {
 		Connection conn = null;
 		try {
-			initFacesContext();
-			conn = getConnection();
-			JooqEmployees.insert2Person(conn, getDomainID(),
+			conn = AonServletUtils.getConnection(domain);
+			Integer domainID = AonServletUtils.getDomainID(domain);
+			JooqEmployees.insert2Person(conn, domainID,
 					employee.getPerson(), employee.getDocument());
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
@@ -397,17 +392,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 
 	}
 
 	@Override
-	public Employee getEmployee(int employeeId) throws IllegalArgumentException {
+	public Employee getEmployee(String domain, int employeeId) throws IllegalArgumentException {
 		Connection conn = null;
 		try {
-			initFacesContext();
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
 			return JooqEmployees.getEmployee(conn, employeeId);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
@@ -418,18 +411,16 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public List<Employee> getEmployees(int workplaceId, Date fromDate,
+	public List<Employee> getEmployees(String domain, int workplaceId, Date fromDate,
 			String pattern, int offset, int limit)
 			throws IllegalArgumentException {
 		Connection conn = null;
 		try {
-			initFacesContext();
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
  			return JooqEmployees.getEmployees(conn, workplaceId, fromDate,
 					pattern, offset, limit);
 		} catch (SQLException e) {
@@ -441,17 +432,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public List<Employee> getTrashEmployees(int workplaceId)
+	public List<Employee> getTrashEmployees(String domain, int workplaceId)
 			throws IllegalArgumentException {
 		Connection conn = null;
 		try {
-			initFacesContext();
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
 			return JooqEmployees.getTrashEmployees(conn, workplaceId);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
@@ -462,16 +451,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public EmployeeCalendarData getEmployeeCalendar(int contract) {
+	public EmployeeCalendarData getEmployeeCalendar(String domain, int contract) {
 		Connection connection = null;
-		initFacesContext();
 		try {
-			connection = AonServletUtils.getConnection();
+			connection = AonServletUtils.getConnection(domain);
 			return JooqEmployeeCalendar.getEmployeeHour(connection, contract);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
@@ -482,16 +469,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public void setEmployeeCalendar(int contract, EmployeeCalendarUpdate updateInfo) {
+	public void setEmployeeCalendar(String domain, int contract, EmployeeCalendarUpdate updateInfo) {
 		Connection connection = null;
-		initFacesContext();
 		try {
-			connection = AonServletUtils.getConnection();
+			connection = AonServletUtils.getConnection(domain);
 			JooqEmployeeCalendar.setEmployeeHour(connection, contract, updateInfo);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
@@ -502,21 +487,21 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 
 	}
 
 	@Override
-	public Map<Integer, String> getHolidayDescription()
+	public Map<Integer, String> getHolidayDescription(String domain)
 			throws IllegalArgumentException {
 
 		Connection conn = null;
 		try {
-			initFacesContext();
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
+			Integer domainID = AonServletUtils.getDomainID(domain); 
+			Integer parentDomainID = AonServletUtils.getParentDomainID(domain); 
 			return JooqCalendar.getHolidayDescription(conn,
-					getParentDomainID(), getDomainID());
+					parentDomainID, domainID);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
@@ -526,19 +511,17 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 
 	}
 
 	@Override
-	public CalendarDraft getCalendar(int workplaceId, Integer pattern,
+	public CalendarDraft getCalendar(String domain, int workplaceId, Integer pattern,
 			Integer year) throws IllegalArgumentException {
 
 		Connection conn = null;
 		try {
-			initFacesContext();
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
 			return JooqCalendar.getCalendar(conn, workplaceId, pattern, year);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
@@ -549,20 +532,19 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public void saveHolidaysAndDays(int workplaceId, String holidayDescription,
+	public void saveHolidaysAndDays(String domain, int workplaceId, String holidayDescription,
 			Integer holidayListBox, Map<Date, String> map, CalendarDraft.DayType daysTypes [])
 			throws IllegalArgumentException {
 
 		Connection conn = null;
 		try {
-			initFacesContext();
-			conn = getConnection();
-			JooqCalendar.insertHolidays(conn, getDomainID(), workplaceId,
+			conn = AonServletUtils.getConnection(domain);
+			Integer domainID = AonServletUtils.getDomainID(domain); 
+			JooqCalendar.insertHolidays(conn, domainID, workplaceId,
 					holidayDescription, holidayListBox, map, daysTypes);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
@@ -573,18 +555,16 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public void deletePropertyHoliday(Integer id, Date date)
+	public void deletePropertyHoliday(String domain, Integer id, Date date)
 			throws IllegalArgumentException {
 
 		Connection conn = null;
 		try {
-			initFacesContext();
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
 			JooqCalendar.deletePropertyHoliday(conn, id, date);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
@@ -595,18 +575,16 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 
 	}
 
 	@Override
-	public List<Cost> getWorkplaceCosts(int workplaceId)
+	public List<Cost> getWorkplaceCosts(String domain, int workplaceId)
 			throws IllegalArgumentException {
 		Connection conn = null;
 		try {
-			initFacesContext();
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
 			return isAtEnterpriseSite() ? getSiteWorkplaceCosts(conn,
 					workplaceId) : getWorkplaceCosts(conn, workplaceId);
 		} catch (SQLException e) {
@@ -618,17 +596,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public List<Cost> getEnterpriseCosts(int enterpriseId)
+	public List<Cost> getEnterpriseCosts(String domain, int enterpriseId)
 			throws IllegalArgumentException {
 		Connection conn = null;
 		try {
-			initFacesContext();
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
 			return isAtEnterpriseSite() ? getSiteEnterpriseCosts(conn,
 					enterpriseId) : getEnterpriseCosts(conn, enterpriseId);
 		} catch (SQLException e) {
@@ -640,12 +616,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public String getIrpfReceiptHTML(final Irpf irpf, int zoom)
+	public String getIrpfReceiptHTML(String domain, final Irpf irpf, int zoom)
 			throws IllegalArgumentException {
 
 		try {
@@ -706,7 +681,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public String getSalaryReceiptHTML(Salary salary, int zoom)
+	public String getSalaryReceiptHTML(String domain, Salary salary, int zoom)
 			throws IllegalArgumentException {
 
 		Map<Object, Object> parameters = new HashMap<Object, Object>(
@@ -735,7 +710,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public String getSalaryReceiptHTML(Cost cost, Salary.Type types[], int zoom)
+	public String getSalaryReceiptHTML(String domain, Cost cost, Salary.Type types[], int zoom)
 			throws IllegalArgumentException {
 
 		Map<Object, Object> parameters = new HashMap<Object, Object>(
@@ -767,7 +742,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public String getCostReceiptHTML(Cost cost, Salary.Type types[], int zoom)
+	public String getCostReceiptHTML(String domain, Cost cost, Salary.Type types[], int zoom)
 			throws IllegalArgumentException {
 		try {
 			initFacesContext();
@@ -836,7 +811,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public String getSalaryDraftReceiptHTML(SalaryDraft salaryDraft, int zoom)
+	public String getSalaryDraftReceiptHTML(String domain, SalaryDraft salaryDraft, int zoom)
 			throws IllegalArgumentException {
 
 		Map<Object, Object> parameters = new HashMap<Object, Object>(
@@ -899,7 +874,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public String getIrpfDraftReceiptHTML(SalaryDraft salaryDraft, int zoom)
+	public String getIrpfDraftReceiptHTML(String domain, SalaryDraft salaryDraft, int zoom)
 			throws IllegalArgumentException {
 
 		Map<Object, Object> parameters = new HashMap<Object, Object>(
@@ -919,7 +894,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<Result> eval(String expression, SalaryDraft salaryDraft)
+	public List<Result> eval(String domain, String expression, SalaryDraft salaryDraft)
 			throws IllegalArgumentException, EvalException {
 		try {
 			initFacesContext();
@@ -953,7 +928,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public ContextDescriptor getContext(SalaryDraft salaryDraft) {
+	public ContextDescriptor getContext(String domain, SalaryDraft salaryDraft) {
 		try {
 			initFacesContext();
 			//return new ContextDescriptor();
@@ -970,19 +945,17 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public Double calculateIrpf(SalaryDraft salaryDraft)
+	public Double calculateIrpf(String domain, SalaryDraft salaryDraft)
 			throws IllegalArgumentException {
 		try {
-			initFacesContext();
 			return 0.00;// getIrpf(salaryDraft);
 		} finally {
-			releaseFacesContext();
 		}
 
 	}
 
 	@Override
-	public SalaryDraft calculateSalaryDraft(SalaryDraft salaryDraft)
+	public SalaryDraft calculateSalaryDraft(String domain, SalaryDraft salaryDraft)
 			throws IllegalArgumentException {
 		try {
 			initFacesContext();
@@ -994,7 +967,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public SalaryDraft calculateSalaryDraft(SalaryDraft salaryDraft ,Date sections [])
+	public SalaryDraft calculateSalaryDraft(String domain, SalaryDraft salaryDraft ,Date sections [])
 			throws IllegalArgumentException {
 		try {
 			initFacesContext();
@@ -1006,7 +979,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public SalaryDraft calculateSalaryDraft4Dummies(SalaryDraft salaryDraft)
+	public SalaryDraft calculateSalaryDraft4Dummies(String domain, SalaryDraft salaryDraft)
 			throws IllegalArgumentException {
 		try {
 			initFacesContext();
@@ -1018,7 +991,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public Map<String, String> getEventsVariables(Integer workplaceId,
+	public Map<String, String> getEventsVariables(String domain, Integer workplaceId,
 			Integer agreementId, Date startDate, Date endDate)
 			throws IllegalArgumentException {
 		if (agreementId == null)
@@ -1037,14 +1010,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public ContextDescriptor getEmployeeEventsVariables(Integer employeeId, Date startDate, Date endDate)
+	public ContextDescriptor getEmployeeEventsVariables(String domain, Integer employeeId, Date startDate, Date endDate)
 			throws IllegalArgumentException {
 
 		Connection connection = null;
 
 		try {
-			initFacesContext();
-			connection = getConnection();
+			connection = AonServletUtils.getConnection(domain);
+			Integer domainID = AonServletUtils.getDomainID(domain);
+			Integer parentDomainID = AonServletUtils.getParentDomainID(domain);
 
 			Integer agreementId = SQLEvents.getAgreementId(connection, employeeId);
 
@@ -1057,7 +1031,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			ContextDescriptor contextDescriptor = getContext(connection, context, startDate,  endDate);
 
 			ContextDescriptor contextDescriptorPayments = getEmployeePayments(connection, employeeId, agreementId,
-					startDate, endDate, getDomainID(), getParentDomainID());
+					startDate, endDate, domainID, parentDomainID);
 
 			contextDescriptorPayments.mix(contextDescriptor);
 			ContextDescriptor contextResult = new ContextDescriptor();
@@ -1099,7 +1073,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 
 	}
@@ -1107,14 +1080,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 
 	@Override
-	public List<Variable> getVariables(SalaryDraft salaryDraft, Date startDate,
+	public List<Variable> getVariables(String domain, SalaryDraft salaryDraft, Date startDate,
 			Date endDate, String[] names) throws IllegalArgumentException {
 		Connection connection = null;
 		try {
-			initFacesContext();
 			salaryDraft.setStartDate(startDate);
 			salaryDraft.setEndDate(endDate);
-			connection = getConnection();
+			connection = AonServletUtils.getConnection(domain);
 			SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> ctx = getSalaryCalculatorContext(
 					connection, salaryDraft, null);
 
@@ -1196,7 +1168,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 
 	}
@@ -1254,17 +1225,17 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public void saveITDataPerson(
+	public void saveITDataPerson(String domain,
 			Map<Integer, LinkedHashMap<Integer, ITDataPerson>> inserts,
 			Map<Integer, LinkedHashMap<Integer, ITDataPerson>> deletes,
 			Map<Integer, LinkedHashMap<Integer, ITDataPerson>> updates)
 			throws IllegalArgumentException {
 		Connection conn = null;
 		try {
-			initFacesContext();
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
+			Integer domainId = AonServletUtils.getDomainID(domain);
 			disableAutoCommit(conn);
-			SQLITData.save(conn, getDomainID(), inserts, deletes, updates);
+			SQLITData.save(conn, domainId, inserts, deletes, updates);
 			commit(conn);
 		} catch (SQLException ex) {
 			rollback(conn);
@@ -1277,21 +1248,22 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException ex) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public Map<String, String> getAvaiableEmployees()
+	public Map<String, String> getAvaiableEmployees(String domain)
 			throws IllegalArgumentException {
 
 		Connection conn = null;
 		try {
-			initFacesContext();
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
+			Integer domainID = AonServletUtils.getDomainID(domain);
+			Integer parentDomainID = AonServletUtils.getParentDomainID(domain);
+			
 			disableAutoCommit(conn);
-			return JooqEmployees.getAvaiableEmployees(conn, getDomainID(),
-					getParentDomainID());
+			return JooqEmployees.getAvaiableEmployees(conn, domainID,
+					parentDomainID);
 		} catch (SQLException ex) {
 			rollback(conn);
 			ex.printStackTrace();
@@ -1304,23 +1276,22 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException ex) {
 				}
 			}
-			releaseFacesContext();
 		}
 
 	}
 
 	@Override
-	public Employee pasteContract(int workplaceId, int contractId,
+	public Employee pasteContract(String domain, int workplaceId, int contractId,
 			String document, Date startDate, Date endDate, boolean check)
 			throws IllegalArgumentException {
 
 		Connection conn = null;
 		try {
 
-			initFacesContext();
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
+			Integer domainID = AonServletUtils.getDomainID(domain);
 			disableAutoCommit(conn);
-			Employee employee = JooqEmployees.paste(conn, getDomainID(),
+			Employee employee = JooqEmployees.paste(conn, domainID,
 					workplaceId, contractId, document, startDate, endDate,
 					check);
 			commit(conn);
@@ -1339,19 +1310,17 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException ex) {
 				}
 			}
-			releaseFacesContext();
 		}
 
 	}
 
 	@Override
-	public void moveContractId(Employee employee)
+	public void moveContractId(String domain, Employee employee)
 			throws IllegalArgumentException {
 		Connection conn = null;
 
 		try {
-			initFacesContext();
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
 			disableAutoCommit(conn);
 			JooqEmployees.moveContractId(conn, employee.getId());
 			commit(conn);
@@ -1367,18 +1336,16 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException ex) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public void deleteContract(Employee employee)
+	public void deleteContract(String domain, Employee employee)
 			throws IllegalArgumentException {
 
 		Connection conn = null;
 		try {
-			initFacesContext();
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
 			disableAutoCommit(conn);
 			JooqEmployees.delete(conn, employee.getId());
 			commit(conn);
@@ -1394,21 +1361,21 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException ex) {
 				}
 			}
-			releaseFacesContext();
 		}
 
 	}
 
 	@Override
-	public void saveSalaryDraft(SalaryDraft salaryDraft)
+	public void saveSalaryDraft(String domain, SalaryDraft salaryDraft)
 			throws IllegalArgumentException {
 		Connection conn = null;
 		try {
-			initFacesContext();
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
+			Integer domainID = AonServletUtils.getDomainID(domain);
+			Integer parentDomainID = AonServletUtils.getParentDomainID(domain);
 			disableAutoCommit(conn);
-			SQLSalaryDraft.save(conn, salaryDraft, getDomainID(),
-					getParentDomainID());
+			SQLSalaryDraft.save(conn, salaryDraft, domainID,
+					parentDomainID);
 			commit(conn);
 		} catch (SQLException e) {
 			rollback(conn);
@@ -1421,18 +1388,16 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 
 	}
 
 	@Override
-	public SalaryDraft saveSalary(SalaryDraft salaryDraft)
+	public SalaryDraft saveSalary(String domain, SalaryDraft salaryDraft)
 			throws IllegalArgumentException {
 		Connection conn = null;
 		try {
-			initFacesContext();
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
 			calculateAndSave(conn, salaryDraft);
 			return salaryDraft;
 		} catch (SQLException e) {
@@ -1444,18 +1409,16 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 
 	}
 
 	@Override
-	public SalaryDraft saveSalary(SalaryDraft salaryDraft, Date sections [])
+	public SalaryDraft saveSalary(String domain, SalaryDraft salaryDraft, Date sections [])
 			throws IllegalArgumentException {
 		Connection conn = null;
 		try {
-			initFacesContext();
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
 			calculateAndSave(conn, salaryDraft, sections);
 			return salaryDraft;
 		} catch (SQLException e) {
@@ -1467,13 +1430,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 
 	}
 
 	@Override
-	public String getSalaryDraftReceipt(final SalaryDraft draft, String mime)
+	public String getSalaryDraftReceipt(String domain, final SalaryDraft draft, String mime)
 			throws IllegalArgumentException {
 
 		try {
@@ -1540,7 +1502,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public String getIrpfDraftReceipt(final SalaryDraft draft, String mime)
+	public String getIrpfDraftReceipt(String domain, final SalaryDraft draft, String mime)
 			throws IllegalArgumentException {
 
 		try {
@@ -1604,7 +1566,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public String getSalaryPreviewReceiptHTML(SalaryPreview salaryPreview,
+	public String getSalaryPreviewReceiptHTML(String domain, SalaryPreview salaryPreview,
 			int zoom) throws IllegalArgumentException {
 		Map<Object, Object> parameters = new HashMap<Object, Object>(
 				JR_HTML_EXPORTER_PARAMS);
@@ -1673,18 +1635,16 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<Deduction> getAvailableDeductions(int employeeId)
+	public List<Deduction> getAvailableDeductions(String domain, int employeeId)
 			throws IllegalArgumentException {
 		Connection conn = null;
 		try {
-			initFacesContext();
-
-			conn = getConnection();
-
-			int domainId = getDomainID();
+			conn = AonServletUtils.getConnection(domain);
+			int domainId = AonServletUtils.getDomainID(domain);
+			int parentDomainId = AonServletUtils.getParentDomainID(domain);
 
 			return JooqDeductions.getConcepts(conn, domainId,
-					getParentDomainID());
+					parentDomainId);
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -1696,18 +1656,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public List<Bonus> getAvailableBonuses(int employeeId)
+	public List<Bonus> getAvailableBonuses(String domain, int employeeId)
 			throws IllegalArgumentException {
 		Connection conn = null;
 		try {
-			initFacesContext();
-
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
 			List<Bonus> availableBonuses = new ArrayList<Bonus>();
 			for (Bonus bonus : EmployeesServiceHelper.getAvailableBonuses(conn,
 					employeeId, 0))
@@ -1726,17 +1683,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public void saveEvents(Events events, Date startDate, Date endDate) {
+	public void saveEvents(String domain, Events events, Date startDate, Date endDate) {
 		Connection conn = null;
 		try {
-			initFacesContext();
-			int domainId = getDomainID();
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
+			int domainId = AonServletUtils.getDomainID(domain);
 			SQLEvents.completeEvents(conn, events, startDate, endDate);
 			SQLEvents.saveEvents(conn, events, startDate, endDate, domainId);
 		} catch (SQLException e) {
@@ -1749,17 +1704,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public Events getEvents(Integer workplaceId, Date startDate, Date endDate,
+	public Events getEvents(String domain, Integer workplaceId, Date startDate, Date endDate,
 			int offset, int limit, String names[]) {
 		Connection conn = null;
 		try {
-			initFacesContext();
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
 			return SQLEvents.getEvents(conn, workplaceId, startDate, endDate,
 					offset, limit, names);
 
@@ -1773,18 +1726,16 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 
 	}
 
 	@Override
-	public Period getAvailPeriod(Integer workplaceId, String name)
+	public Period getAvailPeriod(String domain, Integer workplaceId, String name)
 			throws IllegalArgumentException {
 		Connection conn = null;
 		try {
-			initFacesContext();
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
 			return SQLEvents.getAvailPeriod(conn, workplaceId, name);
 
 		} catch (SQLException e) {
@@ -1802,11 +1753,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public void delete(Salary[] salaries) throws IllegalArgumentException {
+	public void delete(String domain, Salary[] salaries) throws IllegalArgumentException {
 		Connection conn = null;
 		try {
-			initFacesContext();
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
 
 			int ids[] = new int[salaries.length];
 			for (int i = 0; i < salaries.length; i++)
@@ -1824,17 +1774,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public Statistics getEnterpriseStats(int enterpriseId)
+	public Statistics getEnterpriseStats(String domain, int enterpriseId)
 			throws IllegalArgumentException {
 		Connection conn = null;
 		try {
-			initFacesContext();
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
 
 			return SQLStatistics.getEnterpriseStats(conn, enterpriseId);
 
@@ -1848,17 +1796,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public Statistics getWorkplaceStats(int workplaceId)
+	public Statistics getWorkplaceStats(String domain, int workplaceId)
 			throws IllegalArgumentException {
 		Connection conn = null;
 		try {
-			initFacesContext();
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
 
 			return SQLStatistics.getWorkplaceStats(conn, workplaceId);
 
@@ -1872,17 +1818,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public ITData getEnterpriseITData(int enterpriseId)
+	public ITData getEnterpriseITData(String domain, int enterpriseId)
 			throws IllegalArgumentException {
 		Connection conn = null;
 		try {
-			initFacesContext();
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
 
 			return SQLITData.getEnterpriseITData(conn, enterpriseId);
 
@@ -1896,17 +1840,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
 	@Override
-	public ITData getWorkplaceITData(int workplaceId)
+	public ITData getWorkplaceITData(String domain,int workplaceId)
 			throws IllegalArgumentException {
 		Connection conn = null;
 		try {
-			initFacesContext();
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
 			return SQLITData.getWorplaceItTData(conn, workplaceId);
 
 		} catch (SQLException e) {
@@ -1919,7 +1861,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
@@ -1948,190 +1889,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-		}
-	}
-
-	@Override
-	public ReportData getA3Report(Date month, int[] workplaces)
-			throws IllegalArgumentException {
-		Connection conn = null;
-		try {
-			initFacesContext();
-			conn = getConnection();
-
-			Date start = DateUtils.getFirstDayOfMonth(month);
-			Date end = DateUtils.getLastDayOfMonth(month);
-
-			Report<A3Line> a3Report = JooqGPSReports.getA3Report(conn,
-					SQLUtils.date2sql(start), SQLUtils.date2sql(end),
-					workplaces);
-
-			// @formatter:off
-			ReportData reportData = new ReportData(new ReportData.StringColumn(
-					"NIF"), new ReportData.StringColumn("NOMBRE TRABAJADOR"),
-					new ReportData.DoubleColumn("PLUS TURNICIDAD"),
-					new ReportData.DoubleColumn("INCENTIVOS"),
-					new ReportData.DoubleColumn("EMBARGOS"),
-					new ReportData.DoubleColumn("ATRASOS"),
-					new ReportData.StringColumn("OBSERVACIONES"));
-			// @formatter:on
-
-			int cecoCols = 0;
-
-			for (A3Line a3Line : a3Report) {
-
-				Map<String, Double> cecos = a3Line.getCECOs();
-
-				for (int ceco = cecoCols; cecoCols < cecos.size(); cecoCols++)
-					reportData.addColums(new ReportData.StringColumn("CECO "
-							+ (ceco + 1)), new ReportData.DoubleColumn(
-							"% CECO " + (ceco + 1)));
-
-				List<Object> values = new ArrayList<Object>();
-				values.add(a3Line.getNIF());
-				values.add(a3Line.getPerson());
-				values.add(a3Line.getTurnPlus());
-				values.add(a3Line.getIncentives());
-				values.add(a3Line.getEmbargos());
-				values.add(a3Line.getDelays());
-				values.add(a3Line.getComments());
-
-				for (Entry<String, Double> ceco : cecos.entrySet()) {
-					values.add(ceco.getKey());
-					values.add(ceco.getValue());
-				}
-
-				// @formatter:off
-				reportData.addRow(values.toArray());
-				// @formatter:on
-			}
-
-			return reportData;
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			throw new IllegalArgumentException(e);
-		} finally {
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException logOrIgnrore) {
-				}
-			}
-			releaseFacesContext();
-		}
-
-	}
-
-	@Override
-	public ReportData getFTEReport(Date start, Date end, int[] workplaces)
-			throws IllegalArgumentException {
-		Connection conn = null;
-		try {
-			initFacesContext();
-			conn = getConnection();
-
-			// @formatter:off
-			ReportData reportData = new ReportData(new ReportData.StringColumn(
-					"HOTEL"), new ReportData.StringColumn("DEPARTAMENTO"),
-					new ReportData.StringColumn("PUESTO"),
-					new ReportData.IntColumn("SEMANA"),
-					new ReportData.DateColumn("FECHA"),
-					new ReportData.StringColumn("PERSONA"),
-					new ReportData.BooleanColumn("CIERRE"),
-					new ReportData.IntColumn("HORAS"),
-					new ReportData.IntColumn("PERSONAL"),
-					new ReportData.DoubleColumn("PERSONAL EFECTIVO"));
-			// @formatter:on
-
-			Report<FTELine> fteReport = JooqGPSReports.getFTEReport(conn,
-					SQLUtils.date2sql(start), SQLUtils.date2sql(end),
-					workplaces);
-
-			for (FTELine fteLine : fteReport) {
-				// @formatter:off
-				reportData.addRow(fteLine.getHotel(), fteLine.getSection(),
-						fteLine.getJob(), fteLine.getWeek(), fteLine.getDay(),
-						fteLine.getPerson(), fteLine.isClosed(),
-						fteLine.getHours(), fteLine.getStaff(),
-						fteLine.getRealStaff());
-				// @formatter:on
-			}
-
-			return reportData;
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			throw new IllegalArgumentException(e);
-		} finally {
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException logOrIgnrore) {
-				}
-			}
-			releaseFacesContext();
-		}
-
-	}
-
-	@Override
-	public ReportData getHolidayReport(Date start, Date end, int[] workplaces)
-			throws IllegalArgumentException {
-		// TODO Auto-generated method stub
-		Connection conn = null;
-		try {
-			initFacesContext();
-			conn = getConnection();
-
-			// @formatter:off
-			ReportData reportData = new ReportData(new ReportData.StringColumn(
-					"HOTEL"), new ReportData.StringColumn("DEPARTAMENTO"),
-					new ReportData.StringColumn("PUESTO"),
-					new ReportData.IntColumn("SEMANA"),
-					new ReportData.DateColumn("FECHA"),
-					new ReportData.StringColumn("PERSONA"),
-					new ReportData.BooleanColumn("CIERRE"),
-					new ReportData.IntColumn("V"), new ReportData.IntColumn(
-							"FT"), new ReportData.IntColumn("FR"),
-					new ReportData.IntColumn("LT"), new ReportData.IntColumn(
-							"LL"), new ReportData.IntColumn("LL-LT"),
-					new ReportData.IntColumn("HE"), new ReportData.IntColumn(
-							"HFD-HE"));
-			// @formatter:on
-
-			Report<HolidayLine> holidayReport = JooqGPSReports
-					.getHolidayReport(conn, SQLUtils.date2sql(start),
-							SQLUtils.date2sql(end), workplaces);
-
-			for (HolidayLine holidayLine : holidayReport) {
-				// @formatter:off
-				reportData.addRow(holidayLine.getHotel(),
-						holidayLine.getSection(), holidayLine.getJob(),
-						holidayLine.getWeek(), holidayLine.getDay(),
-						holidayLine.getPerson(), holidayLine.isClosed(),
-						holidayLine.getV(), holidayLine.getFT(),
-						holidayLine.getFR(), holidayLine.getLT(),
-						holidayLine.getLL(),
-						holidayLine.getLL() - holidayLine.getLT(),
-						holidayLine.getHE(),
-						holidayLine.getHFD() - holidayLine.getHE());
-				// @formatter:on
-			}
-
-			return reportData;
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			throw new IllegalArgumentException(e);
-		} finally {
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException logOrIgnrore) {
-				}
-			}
-			releaseFacesContext();
 		}
 	}
 
@@ -4245,11 +4002,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		return getSalaryCalculatorContextImpl(conn, draft, levelId, data);
 	}
 
-	private static ISQLContractSalaryCalculatorContext getSalaryCalculatorContext(
-			final Connection conn, final AgreementDraft draft, int levelId, Map<String, Object> data)
-			throws ExpressionException, SQLException {
-		return getSalaryCalculatorContextImpl(conn, draft, levelId, data);
-	}
 
 	private static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getNotEnjoyedCalculatorContextImpl(
 			final Connection conn, final SalaryDraft draft,
@@ -4849,34 +4601,22 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public WorkplaceEmployees getWorkplaceEmployees(Integer workplaceId) {
+	public WorkplaceEmployees getWorkplaceEmployees(String domain, Integer workplaceId) {
 		Connection connection = null;
-		initFacesContext();
 		try {
-			connection = AonServletUtils.getConnection();
+			connection = AonServletUtils.getConnection(domain);
 			return JooqEvents.getWorkplaceEmployees(connection, workplaceId);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
-			releaseFacesContext();
 		}
-//		finally {
-//			if ( connection != null ) {
-//				try {
-//					connection.close();
-//				} catch (SQLException e) {
-//				}
-//				releaseFacesContext();
-//			}
-//		}
 	}
 
 	@Override
-	public EventsWorkplace setEventsWorkplace(EventsWorkplace updateEventsWorkplace) {
+	public EventsWorkplace setEventsWorkplace(String domain, EventsWorkplace updateEventsWorkplace) {
 		Connection connection = null;
-		initFacesContext();
 		try {
-			connection = AonServletUtils.getConnection();
+			connection = AonServletUtils.getConnection(domain);
 			return JooqEvents.setWorkplaceEmployees(connection, updateEventsWorkplace);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
@@ -4886,17 +4626,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					connection.close();
 				} catch (SQLException e) {
 				}
-				releaseFacesContext();
-			}
+		}
 		}
 	}
 
 	@Override
-	public EmployeeInfoDataBase getEmployeeInfoDataBase(Integer employeeContract) {
+	public EmployeeInfoDataBase getEmployeeInfoDataBase(String domain, Integer employeeContract) {
 		Connection connection = null;
-		initFacesContext();
 		try {
-			connection = AonServletUtils.getConnection();
+			connection = AonServletUtils.getConnection(domain);
 			return JooqEmployee.getEmployeeInfo(connection, employeeContract);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
@@ -4906,17 +4644,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					connection.close();
 				} catch (SQLException e) {
 				}
-				releaseFacesContext();
 			}
 		}
 	}
 
 	@Override
-	public EmployeeInfoDataBase setEmployeeInfoDataBase(EmployeeInfoDataBase newEmployeeInfo) {
+	public EmployeeInfoDataBase setEmployeeInfoDataBase(String domain, EmployeeInfoDataBase newEmployeeInfo) {
 		Connection connection = null;
-		initFacesContext();
 		try {
-			connection = AonServletUtils.getConnection();
+			connection = AonServletUtils.getConnection(domain);
 			return JooqEmployee.setEmployeeInfo(connection, newEmployeeInfo);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
@@ -4926,17 +4662,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					connection.close();
 				} catch (SQLException e) {
 				}
-				releaseFacesContext();
 			}
 		}
 	}
 	
 	@Override
-	public EmployeeInfoDataBase createEmployeeContract(EmployeeInfoDataBase newEmployeeInfo) {
+	public EmployeeInfoDataBase createEmployeeContract(String domain, EmployeeInfoDataBase newEmployeeInfo) {
 		Connection connection = null;
-		initFacesContext();
 		try {
-			connection = AonServletUtils.getConnection();
+			connection = AonServletUtils.getConnection(domain);
 			return JooqEmployee.createEmployeeContract(connection, newEmployeeInfo);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
@@ -4946,17 +4680,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					connection.close();
 				} catch (SQLException e) {
 				}
-				releaseFacesContext();
 			}
 		}
 	}
 
 	@Override
-	public List<SSBonusData> getEmployeeSSBonuses(Integer contractId) {
+	public List<SSBonusData> getEmployeeSSBonuses(String domain, Integer contractId) {
 		Connection connection = null;
-		initFacesContext();
 		try {
-			connection = AonServletUtils.getConnection();
+			connection = AonServletUtils.getConnection(domain);
 			return JooqSSBonus.getSSBonus(connection, contractId);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
@@ -4966,17 +4698,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					connection.close();
 				} catch (SQLException e) {
 				}
-				releaseFacesContext();
 			}
 		}
 	}
 
 	@Override
-	public List<SSBonusData> setEmployeeSSBonuses(Integer contractId, List<SSBonusData> ssBonuses) {
+	public List<SSBonusData> setEmployeeSSBonuses(String domain, Integer contractId, List<SSBonusData> ssBonuses) {
 		Connection connection = null;
-		initFacesContext();
 		try {
-			connection = AonServletUtils.getConnection();
+			connection = AonServletUtils.getConnection(domain);
 			return JooqSSBonus.setSSBonus(connection, contractId, ssBonuses);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
@@ -4986,7 +4716,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					connection.close();
 				} catch (SQLException e) {
 				}
-				releaseFacesContext();
 			}
 		}
 	}

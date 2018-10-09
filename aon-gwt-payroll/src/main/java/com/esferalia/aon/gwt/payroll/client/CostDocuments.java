@@ -16,16 +16,16 @@ public class CostDocuments extends AbstractSpinnable<IDocument> implements
 
 	private List<Cost> costs;
 	private List<Salary.Type> types;
-	private EmployeesServiceAsync employeesService;
+	private DomainEmployeesServiceAsync employeesService;
 
 	public CostDocuments(List<Cost> costs,
-			EmployeesServiceAsync employeesServiceAsync) {
+			DomainEmployeesServiceAsync employeesServiceAsync) {
 		this(costs, new ArrayList<Salary.Type>(Arrays.asList(Salary.Type
 				.values())), employeesServiceAsync);
 	}
 
 	CostDocuments(List<Cost> costs, List<Salary.Type> types,
-			EmployeesServiceAsync employeesServiceAsync) {
+			DomainEmployeesServiceAsync employeesServiceAsync) {
 		this.costs = costs;
 		this.types = types;
 		this.employeesService = employeesServiceAsync;
@@ -96,7 +96,7 @@ public class CostDocuments extends AbstractSpinnable<IDocument> implements
 		return types.toArray(new Salary.Type[types.size()]);
 	}
 	
-	protected EmployeesServiceAsync getEmployeesService() {
+	protected DomainEmployeesServiceAsync getEmployeesService() {
 		return employeesService;
 	}
 

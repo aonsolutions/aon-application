@@ -151,6 +151,11 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		return domainNameURL;
 	}
 
+	public String getCurrentDomainNameURL() {
+		assignDomainNameURL(getDomainId());
+		return domainNameURL;
+	}
+
 	public void setDomainNameURL(String domainNameURL) {
 		this.domainNameURL = domainNameURL;
 	}

@@ -84,23 +84,38 @@ public class AonServletUtils {
 		}
 	}
 
-	public static Integer getUserID(String user, String domainName) throws SQLException {
-		Connection connection = null;
+//	public static Integer getUserID(String user, String domainName) throws SQLException {
+//		Connection connection = null;
+//		try {
+//			connection = getConnection(domainName);
+//			AONContext aonContext = new AONContext(connection);
+//			return  aonContext.getDslContext()
+//			.select()
+//			.from(User.USER)
+//			.innerJoin(Domain.DOMAIN).onKey()
+//			.where(Domain.DOMAIN.NAME.eq(domainName))
+//			.and(User.USER.LOGIN.eq(user))
+//			.fetchOne(User.USER.ID);
+//		} catch (Exception e) {
+//			throw new SQLException(e.getMessage(), e);
+//		} finally {
+//			if ( connection != null )
+//				connection.close();
+//		}
+//	}
+
+	public static Integer getUserID(Connection connection, String user, Integer ...domains) throws SQLException {
 		try {
-			connection = getConnection(domainName);
 			AONContext aonContext = new AONContext(connection);
 			return  aonContext.getDslContext()
 			.select()
 			.from(User.USER)
-			.innerJoin(Domain.DOMAIN).onKey()
-			.where(Domain.DOMAIN.NAME.eq(domainName))
+			.where(User.USER.DOMAIN.in(domains))
 			.and(User.USER.LOGIN.eq(user))
 			.fetchOne(User.USER.ID);
 		} catch (Exception e) {
 			throw new SQLException(e.getMessage(), e);
 		} finally {
-			if ( connection != null )
-				connection.close();
 		}
 	}
 
@@ -150,6 +165,26 @@ public class AonServletUtils {
 		}
 	}
 
+	public static Integer[] getEnterpriseIDs(String domainName) throws SQLException {
+		Connection connection = null;
+		try {
+			connection = getConnection(domainName);
+			AONContext aonContext = new AONContext(connection);
+			return  aonContext.getDslContext()
+			.select()
+			.from(Enterprise.ENTERPRISE)
+			.join(Domain.DOMAIN)
+			.on(Enterprise.ENTERPRISE.DOMAIN.eq(Domain.DOMAIN.ID))
+			.where(Domain.DOMAIN.NAME.eq(domainName))
+			.fetchArray(Enterprise.ENTERPRISE.REGISTRY)
+			;
+		} catch (Exception e) {
+			throw new SQLException(e.getMessage(), e);
+		} finally {
+			if ( connection != null )
+				connection.close();
+		}
+	}
 
 
 	public static Integer getParentDomainID(Connection connection, Integer domain) throws SQLException {

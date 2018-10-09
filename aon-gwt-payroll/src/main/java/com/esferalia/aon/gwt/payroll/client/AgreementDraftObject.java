@@ -244,12 +244,20 @@ public class AgreementDraftObject {
 		this.oldAgreementDraft = null;
 		this.agreementDraft = agreementDraft;
 		this.undoManager = new UndoManager<Undoable>();
-		this.agreementsServiceAsync = employeesServiceAsync;
 		this.shownVariables = new HashSet<String>();
 		this.draftDomain = draftDomain;
 		this.draftDomainName = draftDomainName;
 		this.newDatesChanges = new ArrayList<>();
 		this.deleteDatesChanges = new ArrayList<>();
+		this.agreementsServiceAsync = employeesServiceAsync;
+	}
+
+	public AgreementDraftObject(
+			Integer draftDomain,
+			String draftDomainName,
+			AgreementDraft agreementDraft,
+			DomainEmployeesServiceAsync employeesServiceAsync) {
+		this(draftDomain, draftDomainName, agreementDraft, employeesServiceAsync.asAgreementServiceAsync());
 	}
 
 	public boolean isMine() {

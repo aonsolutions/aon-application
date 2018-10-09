@@ -42,41 +42,41 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 	}
 
 	@Override
-	public void getEmployeeCalendar(int contract, AsyncCallback<EmployeeCalendarData> callback) {
+	public void getEmployeeCalendar(String domain, int contract, AsyncCallback<EmployeeCalendarData> callback) {
 		failure(callback);
 	}
 	
 	@Override
-	public void setEmployeeCalendar(int contract, EmployeeCalendarUpdate updateInfo, AsyncCallback<EmployeeCalendarUpdate> callback) {
+	public void setEmployeeCalendar(String domain, int contract, EmployeeCalendarUpdate updateInfo, AsyncCallback<EmployeeCalendarUpdate> callback) {
 		failure(callback);
 	}
 
 	@Override
-	public void getWorkplaceStats(int workplaceId, AsyncCallback<Statistics> callback) throws IllegalArgumentException {
+	public void getWorkplaceStats(String domain, int workplaceId, AsyncCallback<Statistics> callback) throws IllegalArgumentException {
 		failure(callback);
 	}
 
 	@Override
-	public void getEnterpriseStats(int enterpriseId, AsyncCallback<Statistics> callback)
+	public void getEnterpriseStats(String domain, int enterpriseId, AsyncCallback<Statistics> callback)
 			throws IllegalArgumentException {
 		failure(callback);
 
 	}
 
 	@Override
-	public void getWorkplaceITData(int workplaceId, AsyncCallback<ITData> callback) throws IllegalArgumentException {
+	public void getWorkplaceITData(String domain, int workplaceId, AsyncCallback<ITData> callback) throws IllegalArgumentException {
 		failure(callback);
 
 	}
 
 	@Override
-	public void getEnterpriseITData(int enterpriseId, AsyncCallback<ITData> callback) throws IllegalArgumentException {
+	public void getEnterpriseITData(String domain, int enterpriseId, AsyncCallback<ITData> callback) throws IllegalArgumentException {
 		failure(callback);
 
 	}
 
 	@Override
-	public void saveITDataPerson(Map<Integer, LinkedHashMap<Integer, ITDataPerson>> inserts,
+	public void saveITDataPerson(String domain, Map<Integer, LinkedHashMap<Integer, ITDataPerson>> inserts,
 			Map<Integer, LinkedHashMap<Integer, ITDataPerson>> deletes,
 			Map<Integer, LinkedHashMap<Integer, ITDataPerson>> updates, AsyncCallback<ITData> callback)
 			throws IllegalArgumentException {
@@ -85,20 +85,20 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 	}
 
 	@Override
-	public void getCalendar(int workplaceId, Integer pattern, Integer calendar, AsyncCallback<CalendarDraft> callback)
+	public void getCalendar(String domain, int workplaceId, Integer pattern, Integer calendar, AsyncCallback<CalendarDraft> callback)
 			throws IllegalArgumentException {
 		failure(callback);
 
 	}
 
 	@Override
-	public void getHolidayDescription(AsyncCallback<Map<Integer, String>> callback) throws IllegalArgumentException {
+	public void getHolidayDescription(String domain, AsyncCallback<Map<Integer, String>> callback) throws IllegalArgumentException {
 		failure(callback);
 
 	}
 
 	@Override
-	public void saveHolidaysAndDays(int workplaceId, String holidayDescription, Integer holidayListBox,
+	public void saveHolidaysAndDays(String domain, int workplaceId, String holidayDescription, Integer holidayListBox,
 			Map<Date, String> map, CalendarDraft.DayType dayTypes[], AsyncCallback<Void> callback)
 			throws IllegalArgumentException {
 		failure(callback);
@@ -106,39 +106,20 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 	}
 
 	@Override
-	public void deletePropertyHoliday(Integer id, Date date, AsyncCallback<Void> callback)
+	public void deletePropertyHoliday(String domain, Integer id, Date date, AsyncCallback<Void> callback)
 			throws IllegalArgumentException {
 		failure(callback);
 	}
 
-	@Override
-	public void getA3Report(Date month, int[] workplaces, AsyncCallback<ReportData> callback)
-			throws IllegalArgumentException {
-		failure(callback);
-	}
 
 	@Override
-	public void getFTEReport(Date start, Date end, int[] workplaces, AsyncCallback<ReportData> callback)
-			throws IllegalArgumentException {
+	public void getEnterprise(String domain, String user, AsyncCallback<Enterprise> callback) throws IllegalArgumentException {
 		failure(callback);
 
 	}
 
 	@Override
-	public void getHolidayReport(Date start, Date end, int[] workplaces, AsyncCallback<ReportData> callback)
-			throws IllegalArgumentException {
-		failure(callback);
-
-	}
-
-	@Override
-	public void getEnterprise(AsyncCallback<Enterprise> callback) throws IllegalArgumentException {
-		failure(callback);
-
-	}
-
-	@Override
-	public void getEnterprises(AsyncCallback<Enterprise[]> callback) throws IllegalArgumentException {
+	public void getEnterprises(String domain, String user, AsyncCallback<Enterprise[]> callback) throws IllegalArgumentException {
 		failure(callback);
 
 	}
@@ -151,80 +132,80 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 	}
 
 	@Override
-	public void getAvailableDeductions(int employeeId, AsyncCallback<List<Deduction>> callback)
+	public void getAvailableDeductions(String domain, int employeeId, AsyncCallback<List<Deduction>> callback)
 			throws IllegalArgumentException {
 		failure(callback);
 
 	}
 
 	@Override
-	public void getAvailableBonuses(int employeeId, AsyncCallback<List<Bonus>> callback)
+	public void getAvailableBonuses(String domain, int employeeId, AsyncCallback<List<Bonus>> callback)
 			throws IllegalArgumentException {
 		failure(callback);
 	}
 
 	@Override
-	public void getWorkplaceCosts(int workplaceId, AsyncCallback<List<Cost>> callback) throws IllegalArgumentException {
+	public void getWorkplaceCosts(String domain, int workplaceId, AsyncCallback<List<Cost>> callback) throws IllegalArgumentException {
 		failure(callback);
 
 	}
 
 	@Override
-	public void getEnterpriseCosts(int enterpriseId, AsyncCallback<List<Cost>> callback)
-			throws IllegalArgumentException {
-		failure(callback);
-
-	}
-
-	@Override
-	public void getSalaries(Employee employee, AsyncCallback<List<Salary>> callback) throws IllegalArgumentException {
-		failure(callback);
-
-	}
-
-	@Override
-	public void getIrpfs(Employee employee, AsyncCallback<List<Irpf>> callback) throws IllegalArgumentException {
-		failure(callback);
-
-	}
-
-	@Override
-	public void getExtras(List<Employee> employees, AsyncCallback<List<Extra>> callback)
+	public void getEnterpriseCosts(String domain, int enterpriseId, AsyncCallback<List<Cost>> callback)
 			throws IllegalArgumentException {
 		failure(callback);
 
 	}
 
 	@Override
-	public void getCostReceiptHTML(Cost cost, Type[] types, int zoom, AsyncCallback<String> callback)
+	public void getSalaries(String domain, Employee employee, AsyncCallback<List<Salary>> callback) throws IllegalArgumentException {
+		failure(callback);
+
+	}
+
+	@Override
+	public void getIrpfs(String domain, Employee employee, AsyncCallback<List<Irpf>> callback) throws IllegalArgumentException {
+		failure(callback);
+
+	}
+
+	@Override
+	public void getExtras(String domain, List<Employee> employees, AsyncCallback<List<Extra>> callback)
 			throws IllegalArgumentException {
 		failure(callback);
 
 	}
 
 	@Override
-	public void getIrpfReceiptHTML(Irpf irpf, int zoom, AsyncCallback<String> callback)
+	public void getCostReceiptHTML(String domain, Cost cost, Type[] types, int zoom, AsyncCallback<String> callback)
 			throws IllegalArgumentException {
 		failure(callback);
 
 	}
 
 	@Override
-	public void getSalaryReceiptHTML(Cost cost, Type[] types, int zoom, AsyncCallback<String> callback)
+	public void getIrpfReceiptHTML(String domain, Irpf irpf, int zoom, AsyncCallback<String> callback)
 			throws IllegalArgumentException {
 		failure(callback);
 
 	}
 
 	@Override
-	public void getSalaryReceiptHTML(Salary salary, int zoom, AsyncCallback<String> callback)
+	public void getSalaryReceiptHTML(String domain, Cost cost, Type[] types, int zoom, AsyncCallback<String> callback)
 			throws IllegalArgumentException {
 		failure(callback);
 
 	}
 
 	@Override
-	public void saveSalaryDraft(com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft,
+	public void getSalaryReceiptHTML(String domain, Salary salary, int zoom, AsyncCallback<String> callback)
+			throws IllegalArgumentException {
+		failure(callback);
+
+	}
+
+	@Override
+	public void saveSalaryDraft(String domain, com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft,
 			AsyncCallback<Void> callback) throws IllegalArgumentException {
 		failure(callback);
 
@@ -238,40 +219,40 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 	}
 
 	@Override
-	public void saveSalary(com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft,
+	public void saveSalary(String domain, com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft,
 			AsyncCallback<com.esferalia.aon.gwt.payroll.shared.SalaryDraft> callback) throws IllegalArgumentException {
 		failure(callback);
 	}
 
 	@Override
-	public void saveSalary(com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft, Date sections [],
+	public void saveSalary(String domain, com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft, Date sections [],
 			AsyncCallback<com.esferalia.aon.gwt.payroll.shared.SalaryDraft> callback) throws IllegalArgumentException {
 		failure(callback);
 	}
 
 	@Override
-	public void calculateIrpf(com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft,
+	public void calculateIrpf(String domain, com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft,
 			AsyncCallback<Double> callback) throws IllegalArgumentException {
 		failure(callback);
 
 	}
 
 	@Override
-	public void calculateSalaryDraft(com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft,
+	public void calculateSalaryDraft(String domain, com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft,
 			AsyncCallback<com.esferalia.aon.gwt.payroll.shared.SalaryDraft> callback) throws IllegalArgumentException {
 		failure(callback);
 
 	}
 
 	@Override
-	public void calculateSalaryDraft(com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft, Date sections [],
+	public void calculateSalaryDraft(String domain, com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft, Date sections [],
 			AsyncCallback<com.esferalia.aon.gwt.payroll.shared.SalaryDraft> callback) throws IllegalArgumentException {
 		failure(callback);
 
 	}
 
 	@Override
-	public void calculateSalaryDraft4Dummies(com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft,
+	public void calculateSalaryDraft4Dummies(String domain, com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft,
 			AsyncCallback<com.esferalia.aon.gwt.payroll.shared.SalaryDraft> callback) throws IllegalArgumentException {
 		failure(callback);
 
@@ -285,7 +266,7 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 	}
 
 	@Override
-	public void eval(String expression, com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft,
+	public void eval(String domain, String expression, com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft,
 			AsyncCallback<List<Result>> callback) throws IllegalArgumentException, EvalException {
 		failure(callback);
 
@@ -299,7 +280,7 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 	}
 
 	@Override
-	public void getContext(com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft,
+	public void getContext(String domain, com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft,
 			AsyncCallback<ContextDescriptor> callback) throws IllegalArgumentException {
 		failure(callback);
 
@@ -313,14 +294,14 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 	}
 
 	@Override
-	public void getSalaryDraftReceipt(com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft, String mime,
+	public void getSalaryDraftReceipt(String domain, com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft, String mime,
 			AsyncCallback<String> callback) throws IllegalArgumentException {
 		failure(callback);
 
 	}
 
 	@Override
-	public void getSalaryDraftReceiptHTML(com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryPreview, int zoom,
+	public void getSalaryDraftReceiptHTML(String domain, com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryPreview, int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException {
 		failure(callback);
 
@@ -334,81 +315,81 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 	}
 
 	@Override
-	public void getIrpfDraftReceipt(com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft, String mime,
+	public void getIrpfDraftReceipt(String domain, com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft, String mime,
 			AsyncCallback<String> callback) throws IllegalArgumentException {
 		failure(callback);
 
 	}
 
 	@Override
-	public void getIrpfDraftReceiptHTML(com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryPreview, int zoom,
+	public void getIrpfDraftReceiptHTML(String domain, com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryPreview, int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException {
 		failure(callback);
 
 	}
 
 	@Override
-	public void getSalaryPreviewReceiptHTML(SalaryPreview salaryPreview, int zoom, AsyncCallback<String> callback)
+	public void getSalaryPreviewReceiptHTML(String domain, SalaryPreview salaryPreview, int zoom, AsyncCallback<String> callback)
 			throws IllegalArgumentException {
 		failure(callback);
 
 	}
 
 	@Override
-	public void getEmployee(int employeeId, AsyncCallback<Employee> callback) throws IllegalArgumentException {
+	public void getEmployee(String domain, int employeeId, AsyncCallback<Employee> callback) throws IllegalArgumentException {
 		failure(callback);
 	}
 
 	@Override
-	public void getEmployees(int workplaceId, Date endDate, String pattern, int offset, int limit,
+	public void getEmployees(String domain, int workplaceId, Date endDate, String pattern, int offset, int limit,
 			AsyncCallback<List<Employee>> callback) throws IllegalArgumentException {
 		failure(callback);
 
 	}
 
 	@Override
-	public void getTrashEmployees(int workplaceId, AsyncCallback<List<Employee>> callback)
+	public void getTrashEmployees(String domain, int workplaceId, AsyncCallback<List<Employee>> callback)
 			throws IllegalArgumentException {
 		failure(callback);
 
 	}
 
 	@Override
-	public void saveEvents(Events events, Date startDate, Date endDate, AsyncCallback<Void> callback)
+	public void saveEvents(String domain, Events events, Date startDate, Date endDate, AsyncCallback<Void> callback)
 			throws IllegalArgumentException {
 		failure(callback);
 
 	}
 
 	@Override
-	public void getEvents(Integer workplaceId, Date startDate, Date endDate, int offset, int limit, String[] names,
+	public void getEvents(String domain, Integer workplaceId, Date startDate, Date endDate, int offset, int limit, String[] names,
 			AsyncCallback<Events> callback) throws IllegalArgumentException {
 		failure(callback);
 
 	}
 
 	@Override
-	public void getAvailPeriod(Integer workplaceId, String name, AsyncCallback<Period> callback)
+	public void getAvailPeriod(String domain, Integer workplaceId, String name, AsyncCallback<Period> callback)
 			throws IllegalArgumentException {
 		failure(callback);
 
 	}
 
 	@Override
-	public void getEventsVariables(Integer workplaceId, Integer agreementId, Date startDate, Date endDate,
+	public void getEventsVariables(String domain, Integer workplaceId, Integer agreementId, Date startDate, Date endDate,
 			AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException {
 		failure(callback);
 
 	}
 
 	@Override
-	public void getVariables(SalaryDraft salaryDraft, Date startDate, Date endDate, String[] names,
+	public void getVariables(String domain, SalaryDraft salaryDraft, Date startDate, Date endDate, String[] names,
 			AsyncCallback<List<Variable>> callback) throws IllegalArgumentException {
 		failure(callback);
 	}
 
 	@Override
-	public void delete(Salary[] salaries, AsyncCallback<Void> callback) throws IllegalArgumentException {
+	public void delete(String domain, Salary[] salaries, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		failure(callback);
 
 	}
@@ -421,32 +402,32 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 	}
 
 	@Override
-	public void pasteContract(int workplaceId, int contractId, String document, Date startDate, Date endDate,
+	public void pasteContract(String domain, int workplaceId, int contractId, String document, Date startDate, Date endDate,
 			boolean check, AsyncCallback<Employee> callback) throws IllegalArgumentException {
 		failure(callback);
 
 	}
 
 	@Override
-	public void moveContractId(Employee employee, AsyncCallback<Void> callback) throws IllegalArgumentException {
+	public void moveContractId(String domain, Employee employee, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		failure(callback);
 
 	}
 
 	@Override
-	public void deleteContract(Employee employee, AsyncCallback<Void> callback) throws IllegalArgumentException {
+	public void deleteContract(String domain, Employee employee, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		failure(callback);
 
 	}
 
 	@Override
-	public void insertPerson(Employee employee, AsyncCallback<Void> callback) throws IllegalArgumentException {
+	public void insertPerson(String domain, Employee employee, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		failure(callback);
 
 	}
 
 	@Override
-	public void getAvaiableEmployees(AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException {
+	public void getAvaiableEmployees(String domain, AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException {
 		failure(callback);
 
 	}

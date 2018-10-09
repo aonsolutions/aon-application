@@ -9,21 +9,21 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 
 public interface CalendarService {
 
-	CalendarDraft getCalendar(int workplaceId, Integer pattern, Integer calendar)
+	CalendarDraft getCalendar(String domain, int workplaceId, Integer pattern, Integer calendar)
 			throws IllegalArgumentException;
 
-	Map<Integer, String> getHolidayDescription() throws IllegalArgumentException;
+	Map<Integer, String> getHolidayDescription(String domain) throws IllegalArgumentException;
 
-	void saveHolidaysAndDays(int workplaceId, String holidayDescription,
+	void saveHolidaysAndDays(String domain, int workplaceId, String holidayDescription,
 			Integer holidayListBox, Map<Date, String> map, CalendarDraft.DayType daysTypes [])
 			throws IllegalArgumentException;
 	
-	void deletePropertyHoliday(Integer id, Date date) throws IllegalArgumentException;
+	void deletePropertyHoliday(String domain, Integer id, Date date) throws IllegalArgumentException;
 	
 	
-	EmployeeCalendarData getEmployeeCalendar(int contract);
+	EmployeeCalendarData getEmployeeCalendar(String domain, int contract);
 	
-	void setEmployeeCalendar(int contract, EmployeeCalendarUpdate updateInfo);
+	void setEmployeeCalendar(String domain, int contract, EmployeeCalendarUpdate updateInfo);
 	
 	
 }

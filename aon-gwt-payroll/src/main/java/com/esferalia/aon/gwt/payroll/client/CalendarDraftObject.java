@@ -41,7 +41,7 @@ public class CalendarDraftObject implements Calendar.Listener {
 		}
 	}
 
-	private EmployeesServiceAsync employeesService;
+	private DomainEmployeesServiceAsync employeesService;
 	private Integer workplaceId;
 	private Calendar calendar;
 	private Integer year;
@@ -50,7 +50,7 @@ public class CalendarDraftObject implements Calendar.Listener {
 	private List<Listener> listeners;
 
 	public CalendarDraftObject(Integer workplaceId,
-			EmployeesServiceAsync employeesService) {
+			DomainEmployeesServiceAsync employeesService) {
 
 		this.listeners = new ArrayList<Listener>();
 		this.workplaceId = workplaceId;
@@ -146,7 +146,7 @@ public class CalendarDraftObject implements Calendar.Listener {
 		});
 	}
 
-	public EmployeesServiceAsync getEmployeesService() {
+	public DomainEmployeesServiceAsync getEmployeesService() {
 		return employeesService;
 	}
 

@@ -96,8 +96,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 		void onIrpfsSelected(IrpfDocuments docs);
 
-		void onReportsSelected(ReportsObject reports);
-
 		void onStatisticsSelected(Statistics stats);
 
 		void onITDataSelected(ITDataObject dataObject);
@@ -178,7 +176,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 	private Images images;
 	private List<Listener> listeners;
-	private EmployeesServiceAsync employeesService;
+	private DomainEmployeesServiceAsync employeesService;
 	private DomainEnterprisesServiceAsync enterprisesService;
 
 	private boolean formers = true;
@@ -215,7 +213,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		// Create a remote service proxy to talk to the server-side Employees
 		// service.
 		EmployeesServiceAsync employeesServiceRaw = GWT.create(EmployeesService.class);
-		employeesService = new EmployeesServiceAsyncDecorator(employeesServiceRaw);
+		employeesService = DomainEmployeesServiceAsync.newInstance();
 		
 		enterprisesService = DomainEnterprisesServiceAsync.newInstance();
 		
@@ -307,10 +305,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		addImageItem(enterpriseItem, "N\u00F3minas", images.salaries());
 		addImageItem(enterpriseItem, "Estad\u00EDsticas", images.statistics());
 
-		if (Enterprise.isGPS(enterprise))
-			addImageItem(enterpriseItem, "Informes", images.gps())
-					.setUserObject(new ReportsObject(enterprise, employeesService));
-
 		if (extended) {
 			List<Activity> activities = enterprise.getActivities();
 			for (Activity activity : activities) {
@@ -399,8 +393,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		} else if (userObject instanceof CostDocuments) {
 			// onCostsSelected((CostDocuments) userObject);
 			onCostsDocumentsSelected(item);
-		} else if (userObject instanceof ReportsObject) {
-			onReportsSelected((ReportsObject) userObject);
 		} else if (userObject instanceof Statistics) {
 			onStatisticsSelected((Statistics) userObject);
 		} else if (userObject instanceof ITDataObject) {
@@ -667,7 +659,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	}
 	// ------------------------------------------------------------------------
 
-	EmployeesServiceAsync getEmployeesService() {
+	DomainEmployeesServiceAsync getEmployeesService() {
 		return employeesService;
 	}
 
@@ -1047,12 +1039,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	private void onSalariesSelected(SalariesDocuments docs) {
 		for (Listener listener : listeners) {
 			listener.onSalariesSelected(docs);
-		}
-	}
-
-	private void onReportsSelected(ReportsObject reports) {
-		for (Listener listener : listeners) {
-			listener.onReportsSelected(reports);
 		}
 	}
 

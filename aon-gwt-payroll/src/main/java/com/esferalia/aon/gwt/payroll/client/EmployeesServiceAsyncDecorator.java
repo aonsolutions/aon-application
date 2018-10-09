@@ -56,19 +56,19 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		this.employeesServiceAsync = employeesServiceAsync;
 	}
 
-	public void getEnterprise(AsyncCallback<Enterprise> callback)
+	public void getEnterprise(String domain, String user, AsyncCallback<Enterprise> callback)
 			throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync
-				.getEnterprise(new AsyncCallbackWrapper<Enterprise>(callback));
+				.getEnterprise(domain, user, new AsyncCallbackWrapper<Enterprise>(callback));
 	}
 
 	@Override
-	public void getEnterprises(AsyncCallback<Enterprise[]> callback)
+	public void getEnterprises(String domain, String user, AsyncCallback<Enterprise[]> callback)
 			throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync
-				.getEnterprises(new AsyncCallbackWrapper<Enterprise[]>(callback));
+				.getEnterprises(domain, user, new AsyncCallbackWrapper<Enterprise[]>(callback));
 	}
 
 //	@Override
@@ -81,468 +81,444 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 //	}
 
 	@Override
-	public void getAvailableDeductions(int employeeId,
+	public void getAvailableDeductions(String domain, int employeeId,
 			AsyncCallback<List<Deduction>> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getAvailableDeductions(employeeId,
+		employeesServiceAsync.getAvailableDeductions(domain, employeeId,
 				new AsyncCallbackWrapper<List<Deduction>>(callback));
 	}
 	
 	@Override
-	public void getAvailableBonuses(int employeeId,
+	public void getAvailableBonuses(String domain, int employeeId,
 			AsyncCallback<List<Bonus>> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getAvailableBonuses(employeeId,
+		employeesServiceAsync.getAvailableBonuses(domain, employeeId,
 				new AsyncCallbackWrapper<List<Bonus>>(callback));
 	}
 
-	public void getWorkplaceCosts(int workplaceId,
+	public void getWorkplaceCosts(String domain, int workplaceId,
 			AsyncCallback<List<Cost>> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getWorkplaceCosts(workplaceId,
+		employeesServiceAsync.getWorkplaceCosts(domain, workplaceId,
 				new AsyncCallbackWrapper<List<Cost>>(callback));
 	}
 
-	public void getEnterpriseCosts(int enterpriseId,
+	public void getEnterpriseCosts(String domain, int enterpriseId,
 			AsyncCallback<List<Cost>> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getEnterpriseCosts(enterpriseId,
+		employeesServiceAsync.getEnterpriseCosts(domain, enterpriseId,
 				new AsyncCallbackWrapper<List<Cost>>(callback));
 	}
 
 	@Override
-	public void getWorkplaceStats(int workplaceId,
+	public void getWorkplaceStats(String domain, int workplaceId,
 			AsyncCallback<Statistics> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getWorkplaceStats(workplaceId,
+		employeesServiceAsync.getWorkplaceStats(domain, workplaceId,
 				new AsyncCallbackWrapper<Statistics>(callback));
 	}
 
 	@Override
-	public void getEnterpriseStats(int enterpriseId,
+	public void getEnterpriseStats(String domain, int enterpriseId,
 			AsyncCallback<Statistics> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getEnterpriseStats(enterpriseId,
+		employeesServiceAsync.getEnterpriseStats(domain, enterpriseId,
 				new AsyncCallbackWrapper<Statistics>(callback));
 	}
 
 	@Override
-	public void getWorkplaceITData(int workplaceId,
+	public void getWorkplaceITData(String domain, int workplaceId,
 			AsyncCallback<ITData> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getWorkplaceITData(workplaceId,
+		employeesServiceAsync.getWorkplaceITData(domain, workplaceId,
 				new AsyncCallbackWrapper<ITData>(callback));
 	}
 
 	@Override
-	public void getEnterpriseITData(int enterpriseId,
+	public void getEnterpriseITData(String domain, int enterpriseId,
 			AsyncCallback<ITData> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getEnterpriseITData(enterpriseId,
+		employeesServiceAsync.getEnterpriseITData(domain, enterpriseId,
 				new AsyncCallbackWrapper<ITData>(callback));
 	}
 
-	public void getSalaries(Employee employee,
+	public void getSalaries(String domain, Employee employee,
 			AsyncCallback<List<Salary>> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getSalaries(employee,
+		employeesServiceAsync.getSalaries(domain, employee,
 				new AsyncCallbackWrapper<List<Salary>>(callback));
 	}
 
 	@Override
-	public void getIrpfs(Employee employee, AsyncCallback<List<Irpf>> callback)
+	public void getIrpfs(String domain, Employee employee, AsyncCallback<List<Irpf>> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getIrpfs(employee,
+		employeesServiceAsync.getIrpfs(domain, employee,
 				new AsyncCallbackWrapper<List<Irpf>>(callback));
 	}
 
 	@Override
-	public void getExtras(List<Employee> employees, AsyncCallback<List<Extra>> callback)
+	public void getExtras(String domain, List<Employee> employees, AsyncCallback<List<Extra>> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getExtras(employees,
+		employeesServiceAsync.getExtras(domain, employees,
 				new AsyncCallbackWrapper<List<Extra>>(callback));
 	}
 
 	@Override
-	public void getIrpfReceiptHTML(Irpf irpf, int zoom,
+	public void getIrpfReceiptHTML(String domain, Irpf irpf, int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getIrpfReceiptHTML(irpf, zoom,
+		employeesServiceAsync.getIrpfReceiptHTML(domain, irpf, zoom,
 				new AsyncCallbackWrapper<String>(callback));
 	}
 
-	public void getCostReceiptHTML(Cost cost, Salary.Type types[], int zoom,
+	public void getCostReceiptHTML(String domain, Cost cost, Salary.Type types[], int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getCostReceiptHTML(cost, types, zoom,
+		employeesServiceAsync.getCostReceiptHTML(domain, cost, types, zoom,
 				new AsyncCallbackWrapper<String>(callback));
 	}
 
-	public void getSalaryReceiptHTML(Cost cost, Salary.Type types[], int zoom,
+	public void getSalaryReceiptHTML(String domain, Cost cost, Salary.Type types[], int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getSalaryReceiptHTML(cost, types, zoom,
+		employeesServiceAsync.getSalaryReceiptHTML(domain, cost, types, zoom,
 				new AsyncCallbackWrapper<String>(callback));
 	}
 
-	public void getSalaryReceiptHTML(Salary salary, int zoom,
+	public void getSalaryReceiptHTML(String domain, Salary salary, int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getSalaryReceiptHTML(salary, zoom,
+		employeesServiceAsync.getSalaryReceiptHTML(domain, salary, zoom,
 				new AsyncCallbackWrapper<String>(callback));
 	}
 
-	public void getSalaryPreviewReceiptHTML(SalaryPreview salaryPreview,
+	public void getSalaryPreviewReceiptHTML(String domain, SalaryPreview salaryPreview,
 			int zoom, AsyncCallback<String> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getSalaryPreviewReceiptHTML(salaryPreview, zoom,
+		employeesServiceAsync.getSalaryPreviewReceiptHTML(domain, salaryPreview, zoom,
 				new AsyncCallbackWrapper<String>(callback));
 	}
 
 	@Override
-	public void insertPerson(Employee employee, AsyncCallback<Void> callback)
+	public void insertPerson(String domain, Employee employee, AsyncCallback<Void> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.insertPerson(employee,
+		employeesServiceAsync.insertPerson(domain, employee,
 				new AsyncCallbackWrapper<Void>(callback));
 	}
 	
 	@Override
-	public void getEmployee(int employeeId, AsyncCallback<Employee> callback) throws IllegalArgumentException {
+	public void getEmployee(String domain, int employeeId, AsyncCallback<Employee> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getEmployee(employeeId, new AsyncCallbackWrapper<Employee>(
+		employeesServiceAsync.getEmployee(domain, employeeId, new AsyncCallbackWrapper<Employee>( 
 						callback));
 	}
 
-	public void getEmployees(int workplaceId, Date endDate, String pattern,
+	public void getEmployees(String domain, int workplaceId, Date endDate, String pattern,
 			int offset, int limit, AsyncCallback<List<Employee>> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getEmployees(workplaceId, endDate, pattern,
+		employeesServiceAsync.getEmployees(domain, workplaceId, endDate, pattern,
 				offset, limit, new AsyncCallbackWrapper<List<Employee>>(
 						callback));
 	}
 
 	@Override
-	public void getTrashEmployees(int workplaceId,
+	public void getTrashEmployees(String domain, int workplaceId,
 			AsyncCallback<List<Employee>> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getTrashEmployees(workplaceId,
+		employeesServiceAsync.getTrashEmployees(domain, workplaceId,
 				new AsyncCallbackWrapper<List<Employee>>(callback));
 	}
 
 	@Override
-	public void saveSalaryDraft(SalaryDraft salaryDraft,
+	public void saveSalaryDraft(String domain, SalaryDraft salaryDraft,
 			AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.saveSalaryDraft(salaryDraft,
+		employeesServiceAsync.saveSalaryDraft(domain, salaryDraft,
 				new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
-	public void saveSalary(SalaryDraft salaryDraft,
+	public void saveSalary(String domain, SalaryDraft salaryDraft,
 			AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.saveSalary(salaryDraft,
+		employeesServiceAsync.saveSalary(domain, salaryDraft,
 				new AsyncCallbackWrapper<SalaryDraft>(callback));
 	}
 
-	public void saveSalary(SalaryDraft salaryDraft,
+	public void saveSalary(String domain, SalaryDraft salaryDraft,
 			Date sections [],
 			AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.saveSalary(salaryDraft, sections,
+		employeesServiceAsync.saveSalary(domain, salaryDraft, sections,
 				new AsyncCallbackWrapper<SalaryDraft>(callback));
 	}
 
 	@Override
-	public void eval(String expression, SalaryDraft salaryDraft,
+	public void eval(String domain, String expression, SalaryDraft salaryDraft,
 			AsyncCallback<List<Result>> callback)
 			throws IllegalArgumentException, EvalException {
 		AON.start();
-		employeesServiceAsync.eval(expression, salaryDraft,
+		employeesServiceAsync.eval(domain, expression, salaryDraft,
 				new AsyncCallbackWrapper<List<Result>>(callback));
 
 	}
 
 	@Override
-	public void getContext(SalaryDraft salaryDraft,
+	public void getContext(String domain, SalaryDraft salaryDraft,
 			AsyncCallback<ContextDescriptor> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getContext(salaryDraft,
+		employeesServiceAsync.getContext(domain, salaryDraft,
 				new AsyncCallbackWrapper<ContextDescriptor>(callback));
 	}
 
 
 	@Override
-	public void calculateIrpf(SalaryDraft salaryDraft,
+	public void calculateIrpf(String domain, SalaryDraft salaryDraft,
 			AsyncCallback<Double> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.calculateIrpf(salaryDraft,
+		employeesServiceAsync.calculateIrpf(domain, salaryDraft,
 				new AsyncCallbackWrapper<Double>(callback));
 	}
 
 	@Override
-	public void calculateSalaryDraft(SalaryDraft salaryDraft,
+	public void calculateSalaryDraft(String domain, SalaryDraft salaryDraft,
 			AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.calculateSalaryDraft(salaryDraft,
+		employeesServiceAsync.calculateSalaryDraft(domain, salaryDraft,
 				new AsyncCallbackWrapper<SalaryDraft>(callback));
 	}
 
 	@Override
-	public void calculateSalaryDraft(SalaryDraft salaryDraft,
+	public void calculateSalaryDraft(String domain, SalaryDraft salaryDraft,
 			Date sections [],
 			AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.calculateSalaryDraft(salaryDraft,
+		employeesServiceAsync.calculateSalaryDraft(domain, salaryDraft,
 				sections,
 				new AsyncCallbackWrapper<SalaryDraft>(callback));
 	}
 
 	@Override
-	public void calculateSalaryDraft4Dummies(SalaryDraft salaryDraft,
+	public void calculateSalaryDraft4Dummies(String domain, SalaryDraft salaryDraft,
 			AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.calculateSalaryDraft4Dummies(salaryDraft,
+		employeesServiceAsync.calculateSalaryDraft4Dummies(domain, salaryDraft,
 				new AsyncCallbackWrapper<SalaryDraft>(callback));
 	}
 
 	@Override
-	public void getSalaryDraftReceiptHTML(SalaryDraft salaryPreview, int zoom,
+	public void getSalaryDraftReceiptHTML(String domain, SalaryDraft salaryPreview, int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getSalaryDraftReceiptHTML(salaryPreview, zoom,
+		employeesServiceAsync.getSalaryDraftReceiptHTML(domain, salaryPreview, zoom,
 				new AsyncCallbackWrapper<String>(callback));
 	}
 
 	@Override
-	public void getSalaryDraftReceipt(SalaryDraft salaryDraft, String mime,
+	public void getSalaryDraftReceipt(String domain, SalaryDraft salaryDraft, String mime,
 			AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getSalaryDraftReceipt(salaryDraft, mime,
+		employeesServiceAsync.getSalaryDraftReceipt(domain, salaryDraft, mime,
 				new AsyncCallbackWrapper<String>(callback));
 	}
 
 	@Override
-	public void getIrpfDraftReceipt(SalaryDraft salaryDraft, String mime,
+	public void getIrpfDraftReceipt(String domain, SalaryDraft salaryDraft, String mime,
 			AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getIrpfDraftReceipt(salaryDraft, mime,
+		employeesServiceAsync.getIrpfDraftReceipt(domain, salaryDraft, mime,
 				new AsyncCallbackWrapper<String>(callback));
 
 	}
 
 	@Override
-	public void getIrpfDraftReceiptHTML(SalaryDraft salaryPreview, int zoom,
+	public void getIrpfDraftReceiptHTML(String domain, SalaryDraft salaryPreview, int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException {
 
 		AON.start();
-		employeesServiceAsync.getIrpfDraftReceiptHTML(salaryPreview, zoom,
+		employeesServiceAsync.getIrpfDraftReceiptHTML(domain, salaryPreview, zoom,
 				new AsyncCallbackWrapper<String>(callback));
 	}
 
 	@Override
-	public void saveEvents(Events events, Date startDate, Date endDate,
+	public void saveEvents(String domain, Events events, Date startDate, Date endDate,
 			AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.saveEvents(events, startDate, endDate,
+		employeesServiceAsync.saveEvents(domain, events, startDate, endDate,
 				new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
-	public void getEvents(Integer workplaceId, Date startDate, Date endDate,
+	public void getEvents(String domain, Integer workplaceId, Date startDate, Date endDate,
 			int offset, int limit, String names[],
 			AsyncCallback<Events> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getEvents(workplaceId, startDate, endDate,
+		employeesServiceAsync.getEvents(domain, workplaceId, startDate, endDate,
 				offset, limit, names,
 				new AsyncCallbackWrapper<Events>(callback));
 	}
 
 	@Override
-	public void getVariables(SalaryDraft salaryDraft, Date startDate, Date endDate,
+	public void getVariables(String domain, SalaryDraft salaryDraft, Date startDate, Date endDate,
 			String[] names, AsyncCallback<List<Variable>> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getVariables(salaryDraft, startDate, endDate,
+		employeesServiceAsync.getVariables(domain, salaryDraft, startDate, endDate,
 				names, new AsyncCallbackWrapper<List<Variable>>(callback));
 
 	}
 
 	@Override
-	public void getAvailPeriod(Integer workplaceId, String name,
+	public void getAvailPeriod(String domain, Integer workplaceId, String name,
 			AsyncCallback<Period> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getAvailPeriod(workplaceId, name,
+		employeesServiceAsync.getAvailPeriod(domain, workplaceId, name,
 				new AsyncCallbackWrapper<Period>(callback));
 	}
 
 	@Override
-	public void getEventsVariables(Integer workplaceId, Integer agreementId,
+	public void getEventsVariables(String domain, Integer workplaceId, Integer agreementId,
 			Date startDate, Date endDate,
 			AsyncCallback<Map<String, String>> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getEventsVariables(workplaceId, agreementId,
+		employeesServiceAsync.getEventsVariables(domain, workplaceId, agreementId,
 				startDate, endDate,
 				new AsyncCallbackWrapper<Map<String, String>>(callback));
 
 	}
 	
 	@Override
-	public void getEmployeeEventsVariables(Integer employeeId, Date startDate, Date endDate,
+	public void getEmployeeEventsVariables(String domain, Integer employeeId, Date startDate, Date endDate,
 			AsyncCallback<ContextDescriptor> callback) {
 		AON.start();
-		employeesServiceAsync.getEmployeeEventsVariables(employeeId, startDate, endDate,
+		employeesServiceAsync.getEmployeeEventsVariables(domain, employeeId, startDate, endDate,
 				new AsyncCallbackWrapper<ContextDescriptor>(callback));
 		
 	}
 
 	@Override
-	public void delete(Salary[] salaries, AsyncCallback<Void> callback)
+	public void delete(String domain, Salary[] salaries, AsyncCallback<Void> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.delete(salaries, new AsyncCallbackWrapper<Void>(
+		employeesServiceAsync.delete(domain, salaries, new AsyncCallbackWrapper<Void>( 
 				callback));
 	}
 
 
 	@Override
-	public void saveITDataPerson(
+	public void saveITDataPerson(String domain,
 			Map<Integer, LinkedHashMap<Integer, ITDataPerson>> inserts,
 			Map<Integer, LinkedHashMap<Integer, ITDataPerson>> deletes,
 			Map<Integer, LinkedHashMap<Integer, ITDataPerson>> updates,
 			AsyncCallback<ITData> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.saveITDataPerson(inserts, deletes, updates,
+		employeesServiceAsync.saveITDataPerson(domain, inserts, deletes, updates,
 				new AsyncCallbackWrapper<ITData>(callback));
 	}
 
 	@Override
-	public void pasteContract(int workplaceId, int contractId, String document,
+	public void pasteContract(String domain, int workplaceId, int contractId, String document,
 			Date startDate, Date endDate, boolean check,
 			AsyncCallback<Employee> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.pasteContract(workplaceId, contractId, document,
+		employeesServiceAsync.pasteContract(domain, workplaceId, contractId, document,
 				startDate, endDate, check, new AsyncCallbackWrapper<Employee>(
 						callback));
 	}
 
 	@Override
-	public void moveContractId(Employee employee, AsyncCallback<Void> callback)
+	public void moveContractId(String domain, Employee employee, AsyncCallback<Void> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.moveContractId(employee,
+		employeesServiceAsync.moveContractId(domain, employee,
 				new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
-	public void deleteContract(Employee employee, AsyncCallback<Void> callback)
+	public void deleteContract(String domain, Employee employee, AsyncCallback<Void> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.deleteContract(employee,
+		employeesServiceAsync.deleteContract(domain, employee,
 				new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
-	public void getAvaiableEmployees(AsyncCallback<Map<String, String>> callback)
+	public void getAvaiableEmployees(String domain, AsyncCallback<Map<String, String>> callback)
 			throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync
-				.getAvaiableEmployees(new AsyncCallbackWrapper<Map<String, String>>(
+				.getAvaiableEmployees(domain, new AsyncCallbackWrapper<Map<String, String>>(
 						callback));
-	}
-
-	// ------------------------------------------------- GPSReportsServiceAsync
-	@Override
-	public void getA3Report(Date month, int[] workplaces,
-			AsyncCallback<ReportData> callback) throws IllegalArgumentException {
-		AON.start();
-		employeesServiceAsync.getA3Report(month, workplaces,
-				new AsyncCallbackWrapper<ReportData>(callback));
-	}
-
-	@Override
-	public void getFTEReport(Date start, Date end, int[] workplaces,
-			AsyncCallback<ReportData> callback) throws IllegalArgumentException {
-		AON.start();
-		employeesServiceAsync.getFTEReport(start, end, workplaces,
-				new AsyncCallbackWrapper<ReportData>(callback));
 	}
 	
 	// --------------------------------------------------- CalendarServiceAsync
 	
 	@Override
-	public void getEmployeeCalendar(int contract, AsyncCallback<EmployeeCalendarData> callback) {
+	public void getEmployeeCalendar(String domain, int contract, AsyncCallback<EmployeeCalendarData> callback) {
 		AON.start();
-		employeesServiceAsync.getEmployeeCalendar(contract,
+		employeesServiceAsync.getEmployeeCalendar(domain, contract,
 				new AsyncCallbackWrapper<EmployeeCalendarData>(callback));
 	}
 	
 	@Override
-	public void setEmployeeCalendar(int contract, EmployeeCalendarUpdate updateInfo,
+	public void setEmployeeCalendar(String domain, int contract, EmployeeCalendarUpdate updateInfo,
 			AsyncCallback<EmployeeCalendarUpdate> callback) {
 		AON.start();
-		employeesServiceAsync.setEmployeeCalendar(contract, updateInfo,
+		employeesServiceAsync.setEmployeeCalendar(domain, contract, updateInfo,
 				new AsyncCallbackWrapper<EmployeeCalendarUpdate>(callback));
 		
 	}
 	
-	@Override
-	public void getHolidayReport(Date start, Date end, int[] workplaces,
-			AsyncCallback<ReportData> callback) throws IllegalArgumentException {
-		AON.start();
-		employeesServiceAsync.getHolidayReport(start, end, workplaces,
-				new AsyncCallbackWrapper<ReportData>(callback));
-	}
 
 	@Override
-	public void getCalendar(int workplaceId, Integer pattern, Integer year,
+	public void getCalendar(String domain, int workplaceId, Integer pattern, Integer year,
 			AsyncCallback<CalendarDraft> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getCalendar(workplaceId, pattern, year,
+		employeesServiceAsync.getCalendar(domain, workplaceId, pattern, year,
 				new AsyncCallbackWrapper<CalendarDraft>(callback));
 	}
 
 	@Override
-	public void getHolidayDescription(
+	public void getHolidayDescription(String domain, 
 			AsyncCallback<Map<Integer, String>> callback)
 			throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync
-				.getHolidayDescription(new AsyncCallbackWrapper<Map<Integer, String>>(
+				.getHolidayDescription(domain, new AsyncCallbackWrapper<Map<Integer, String>>(
 						callback));
 	}
 
 	@Override
-	public void saveHolidaysAndDays(int workplaceId, String holidayDescription,
+	public void saveHolidaysAndDays(String domain, int workplaceId, String holidayDescription,
 			Integer holidayListBox, Map<Date, String> map, CalendarDraft.DayType dayTypes[],
 			AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.saveHolidaysAndDays(workplaceId, holidayDescription,
+		employeesServiceAsync.saveHolidaysAndDays(domain, workplaceId, holidayDescription,
 				holidayListBox, map, dayTypes,new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
-	public void deletePropertyHoliday(Integer id, Date date,
+	public void deletePropertyHoliday(String domain, Integer id, Date date,
 			AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.deletePropertyHoliday(id, date,
+		employeesServiceAsync.deletePropertyHoliday(domain, id, date,
 				new AsyncCallbackWrapper<Void>(callback));
 
 	}
@@ -568,61 +544,61 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 
 	@Override
-	public void getWorkplaceEmployees(Integer workplaceId, AsyncCallback<WorkplaceEmployees> callback) {
+	public void getWorkplaceEmployees(String domain, Integer workplaceId, AsyncCallback<WorkplaceEmployees> callback) {
 		AON.start();
-		employeesServiceAsync.getWorkplaceEmployees(workplaceId, 
+		employeesServiceAsync.getWorkplaceEmployees(domain, workplaceId, 
 				new AsyncCallbackWrapper<WorkplaceEmployees>(callback));
 		
 	}
 
 	@Override
-	public void setEventsWorkplace(EventsWorkplace updateEventsWorkplace,
+	public void setEventsWorkplace(String domain, EventsWorkplace updateEventsWorkplace,
 			AsyncCallback<EventsWorkplace> callback) {
 		AON.start();
-		employeesServiceAsync.setEventsWorkplace(updateEventsWorkplace, 
+		employeesServiceAsync.setEventsWorkplace(domain, updateEventsWorkplace, 
 				new AsyncCallbackWrapper<EventsWorkplace>(callback));
 		
 	}
 
 	@Override
-	public void getEmployeeInfoDataBase(Integer employeeContract, AsyncCallback<EmployeeInfoDataBase> callback) {
+	public void getEmployeeInfoDataBase(String domain, Integer employeeContract, AsyncCallback<EmployeeInfoDataBase> callback) {
 		AON.start();
-		employeesServiceAsync.getEmployeeInfoDataBase(employeeContract, 
+		employeesServiceAsync.getEmployeeInfoDataBase(domain, employeeContract, 
 				new AsyncCallbackWrapper<EmployeeInfoDataBase>(callback));
 
 	}
 
 	@Override
-	public void setEmployeeInfoDataBase(EmployeeInfoDataBase newEmployeeInfo,
+	public void setEmployeeInfoDataBase(String domain, EmployeeInfoDataBase newEmployeeInfo,
 			AsyncCallback<EmployeeInfoDataBase> callback) {
 		AON.start();
-		employeesServiceAsync.setEmployeeInfoDataBase(newEmployeeInfo, 
+		employeesServiceAsync.setEmployeeInfoDataBase(domain, newEmployeeInfo, 
 				new AsyncCallbackWrapper<EmployeeInfoDataBase>(callback));
 	
 	}
 
 	@Override
-	public void getEmployeeSSBonuses(Integer contractId, AsyncCallback<List<SSBonusData>> callback) {
+	public void getEmployeeSSBonuses(String domain, Integer contractId, AsyncCallback<List<SSBonusData>> callback) {
 		AON.start();
-		employeesServiceAsync.getEmployeeSSBonuses(contractId, 
+		employeesServiceAsync.getEmployeeSSBonuses(domain, contractId, 
 				new AsyncCallbackWrapper<List<SSBonusData>>(callback));
 		
 	}
 
 	@Override
-	public void setEmployeeSSBonuses(Integer contractId, List<SSBonusData> ssBonuses,
+	public void setEmployeeSSBonuses(String domain, Integer contractId, List<SSBonusData> ssBonuses,
 			AsyncCallback<List<SSBonusData>> callback) {
 		AON.start();
-		employeesServiceAsync.setEmployeeSSBonuses(contractId, ssBonuses,
+		employeesServiceAsync.setEmployeeSSBonuses(domain, contractId, ssBonuses,
 				new AsyncCallbackWrapper<List<SSBonusData>>(callback));
 		
 	}
 
 	@Override
-	public void createEmployeeContract(EmployeeInfoDataBase newEmployeeInfo,
+	public void createEmployeeContract(String domain, EmployeeInfoDataBase newEmployeeInfo,
 			AsyncCallback<EmployeeInfoDataBase> callback) {
 		AON.start();
-		employeesServiceAsync.createEmployeeContract(newEmployeeInfo,
+		employeesServiceAsync.createEmployeeContract(domain, newEmployeeInfo,
 				new AsyncCallbackWrapper<EmployeeInfoDataBase>(callback));
 		
 	}

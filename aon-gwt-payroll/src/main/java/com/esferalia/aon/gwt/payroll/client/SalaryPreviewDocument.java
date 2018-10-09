@@ -4,12 +4,12 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class SalaryPreviewDocument implements IDocument{
 
-	private EmployeesServiceAsync employeesService;
+	private DomainEmployeesServiceAsync employeesService;
 	private com.esferalia.aon.gwt.payroll.shared.SalaryPreview salaryPreview;
 	
 
 	public SalaryPreviewDocument(
-			com.esferalia.aon.gwt.payroll.shared.SalaryPreview salaryPreview,  EmployeesServiceAsync employeesService) {
+			com.esferalia.aon.gwt.payroll.shared.SalaryPreview salaryPreview,  DomainEmployeesServiceAsync employeesService) {
 		this.salaryPreview = salaryPreview;
 		this.employeesService = employeesService;
 	}

@@ -16,14 +16,14 @@ class IrpfDocuments extends AbstractSpinnable<IDocument> implements IDocument {
 
 	private List<Irpf> irpfs;
 
-	private EmployeesServiceAsync employeesService;
+	private DomainEmployeesServiceAsync employeesService;
 
-	public IrpfDocuments(Irpf irpf, EmployeesServiceAsync employeesService) {
+	public IrpfDocuments(Irpf irpf, DomainEmployeesServiceAsync employeesService) {
 		this(Arrays.asList(irpf), employeesService);
 	}
 
 	public IrpfDocuments(List<Irpf> irpfs,
-			EmployeesServiceAsync employeesService) {
+			DomainEmployeesServiceAsync employeesService) {
 		this.irpfs = irpfs;
 		this.employeesService = employeesService;
 		last();

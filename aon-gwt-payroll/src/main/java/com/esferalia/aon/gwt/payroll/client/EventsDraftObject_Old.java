@@ -222,13 +222,13 @@ public class EventsDraftObject_Old {
 
 	private List<Listener> listeners;
 
-	private EmployeesServiceAsync employeesServiceAsync;
+	private DomainEmployeesServiceAsync employeesServiceAsync;
 	private Map<String, EventMetaData> eventsMetaDataMap;
 
 	private Map<String, EventMetaData> userEventsMetaDataMap;
 
 	public EventsDraftObject_Old(Integer workplaceId, Integer agreeementId,
-			EmployeesServiceAsync employeesServiceAsync,
+			DomainEmployeesServiceAsync employeesServiceAsync,
 			EventMetaData... eventsMetaData) {
 		this.events = new Events();
 		this.draftEvents = new DraftEvents();

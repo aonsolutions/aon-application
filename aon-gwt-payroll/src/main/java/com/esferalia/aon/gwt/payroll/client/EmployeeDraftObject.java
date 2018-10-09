@@ -23,7 +23,7 @@ public class EmployeeDraftObject {
 	private EmployeeInfoDataBase employeeInfo;
 	private EmployeeInfoDataBase newEmployeeInfo;
 	
-	private EmployeesServiceAsync employeesService;
+	private DomainEmployeesServiceAsync employeesService;
 	private DomainEnterprisesServiceAsync enterprisesService;
 	
 	private List<Agreement> agreements;
@@ -85,7 +85,7 @@ public class EmployeeDraftObject {
 		
 	// ------------------------------------------------- CLASS METHODS -------------------------------------------------	
 	
-	public EmployeeDraftObject(Employee employee, EmployeesServiceAsync employeesService, DomainEnterprisesServiceAsync enterprisesService) {
+	public EmployeeDraftObject(Employee employee, DomainEmployeesServiceAsync employeesService, DomainEnterprisesServiceAsync enterprisesService) {
 		
 		this.undoManager = new UndoManager<>();
 		this.employeesService = employeesService;

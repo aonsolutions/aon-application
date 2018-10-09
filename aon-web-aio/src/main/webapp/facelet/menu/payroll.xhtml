@@ -12,8 +12,11 @@
 
 		<script type="text/javascript">
 	          	//<![CDATA[
+				getCurrentUser = function(){
+		        	return '#{domainSwitcher.currentUser}';
+				}
 				getCurrentDomainNameURL = function(){
-		        	return '#{domainSwitcher.domainNameURL}';
+		        	return '#{domainSwitcher.currentDomainNameURL}';
 				}
 	          	//]]>
 		</script>

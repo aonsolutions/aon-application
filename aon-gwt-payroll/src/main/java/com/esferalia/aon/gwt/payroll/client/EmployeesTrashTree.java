@@ -49,7 +49,7 @@ public class EmployeesTrashTree extends Composite implements KeyDownHandler {
 	private Images images;
 
 	private List<Listener> listeners;
-	private EmployeesServiceAsync employeesService;
+	private DomainEmployeesServiceAsync employeesService;
 
 	public EmployeesTrashTree() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -59,13 +59,10 @@ public class EmployeesTrashTree extends Composite implements KeyDownHandler {
 		
 		tree.addKeyDownHandler(this);
 		
-		EmployeesServiceAsync employeesServiceRaw = GWT
-				.create(EmployeesService.class);
-		employeesService = new EmployeesServiceAsyncDecorator(
-				employeesServiceRaw);
+		employeesService = DomainEmployeesServiceAsync.newInstance();
 	}
 	
-	public EmployeesServiceAsync getEmployeesService() {
+	public DomainEmployeesServiceAsync getEmployeesService() {
 		return employeesService;
 	}
 	

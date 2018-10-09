@@ -47,20 +47,20 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		EmployeesService {
 	
 	@Override
-	public EmployeeCalendarData getEmployeeCalendar(int contract) {
+	public EmployeeCalendarData getEmployeeCalendar(String domain, int contract) {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
 		return null;
 	}
 	
 	@Override
-	public void setEmployeeCalendar(int contract, EmployeeCalendarUpdate updateInfo) {
+	public void setEmployeeCalendar(String domain, int contract, EmployeeCalendarUpdate updateInfo) {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
 	}
 	
 	@Override
-	public CalendarDraft getCalendar(int workplaceId, Integer pattern,
+	public CalendarDraft getCalendar(String domain, int workplaceId, Integer pattern,
 			Integer calendar) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -68,7 +68,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public Map<Integer, String> getHolidayDescription()
+	public Map<Integer, String> getHolidayDescription(String domain)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -76,7 +76,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public void saveHolidaysAndDays(int workplaceId, String holidayDescription,
+	public void saveHolidaysAndDays(String domain, int workplaceId, String holidayDescription,
 			Integer holidayListBox, Map<Date, String> map, CalendarDraft.DayType daysTypes[])
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
@@ -85,7 +85,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public void deletePropertyHoliday(Integer id, Date date)
+	public void deletePropertyHoliday(String domain, Integer id, Date date)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -93,7 +93,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public Statistics getWorkplaceStats(int workplaceId)
+	public Statistics getWorkplaceStats(String domain, int workplaceId)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -101,7 +101,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public Statistics getEnterpriseStats(int enterpriseId)
+	public Statistics getEnterpriseStats(String domain, int enterpriseId)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -109,7 +109,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public ITData getEnterpriseITData(int enterpriseId)
+	public ITData getEnterpriseITData(String domain, int enterpriseId)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -117,7 +117,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public ITData getWorkplaceITData(int workplaceId)
+	public ITData getWorkplaceITData(String domain, int workplaceId)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -125,7 +125,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public void saveITDataPerson(
+	public void saveITDataPerson(String domain,
 			Map<Integer, LinkedHashMap<Integer, ITDataPerson>> inserts,
 			Map<Integer, LinkedHashMap<Integer, ITDataPerson>> deletes,
 			Map<Integer, LinkedHashMap<Integer, ITDataPerson>> updates)
@@ -136,38 +136,14 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public ReportData getA3Report(Date month, int[] workplaces)
-			throws IllegalArgumentException {
+	public Enterprise getEnterprise(String domain, String user ) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
 	@Override
-	public ReportData getFTEReport(Date start, Date end, int[] workplaces)
-			throws IllegalArgumentException {
-		// TODO Auto-generated method stub
-		System.out.println("Auto-generated method stub");
-		return null;
-	}
-
-	@Override
-	public ReportData getHolidayReport(Date start, Date end, int[] workplaces)
-			throws IllegalArgumentException {
-		// TODO Auto-generated method stub
-		System.out.println("Auto-generated method stub");
-		return null;
-	}
-
-	@Override
-	public Enterprise getEnterprise() throws IllegalArgumentException {
-		// TODO Auto-generated method stub
-		System.out.println("Auto-generated method stub");
-		return null;
-	}
-
-	@Override
-	public Enterprise[] getEnterprises() throws IllegalArgumentException {
+	public Enterprise[] getEnterprises(String domain, String user) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
 		return null;
@@ -182,7 +158,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<Deduction> getAvailableDeductions(int employeeId)
+	public List<Deduction> getAvailableDeductions(String domain, int employeeId)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -190,7 +166,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 	
 	@Override
-	public List<Bonus> getAvailableBonuses(int employeeId)
+	public List<Bonus> getAvailableBonuses(String domain, int employeeId)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -198,7 +174,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 	
 	@Override
-	public List<Cost> getWorkplaceCosts(int workplaceId)
+	public List<Cost> getWorkplaceCosts(String domain, int workplaceId)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -206,7 +182,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<Cost> getEnterpriseCosts(int enterpriseId)
+	public List<Cost> getEnterpriseCosts(String domain, int enterpriseId)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -214,7 +190,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<Salary> getSalaries(Employee employee)
+	public List<Salary> getSalaries(String domain, Employee employee)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -222,7 +198,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<Irpf> getIrpfs(Employee employee)
+	public List<Irpf> getIrpfs(String domain, Employee employee)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -230,7 +206,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<Extra> getExtras(List<Employee> employee)
+	public List<Extra> getExtras(String domain, List<Employee> employee)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -238,7 +214,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String getCostReceiptHTML(Cost cost, Type[] types, int zoom)
+	public String getCostReceiptHTML(String domain, Cost cost, Type[] types, int zoom)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -246,7 +222,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String getIrpfReceiptHTML(Irpf irpf, int zoom)
+	public String getIrpfReceiptHTML(String domain, Irpf irpf, int zoom)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -254,7 +230,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String getSalaryReceiptHTML(Cost cost, Type[] types, int zoom)
+	public String getSalaryReceiptHTML(String domain, Cost cost, Type[] types, int zoom)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -262,7 +238,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String getSalaryReceiptHTML(Salary salary, int zoom)
+	public String getSalaryReceiptHTML(String domain, Salary salary, int zoom)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -270,7 +246,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public void saveSalaryDraft(SalaryDraft salaryDraft)
+	public void saveSalaryDraft(String domain, SalaryDraft salaryDraft)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -278,7 +254,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public SalaryDraft saveSalary(SalaryDraft salaryDraft)
+	public SalaryDraft saveSalary(String domain, SalaryDraft salaryDraft)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -286,7 +262,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public SalaryDraft saveSalary(SalaryDraft salaryDraft, Date sections [])
+	public SalaryDraft saveSalary(String domain, SalaryDraft salaryDraft, Date sections [])
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -303,7 +279,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public ContextDescriptor getContext(SalaryDraft salaryDraft)
+	public ContextDescriptor getContext(String domain, SalaryDraft salaryDraft)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -320,7 +296,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<Result> eval(String expression, SalaryDraft salaryDraft)
+	public List<Result> eval(String domain, String expression, SalaryDraft salaryDraft)
 			throws IllegalArgumentException, EvalException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -337,7 +313,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public Double calculateIrpf(SalaryDraft salaryDraft)
+	public Double calculateIrpf(String domain, SalaryDraft salaryDraft)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -345,7 +321,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public SalaryDraft calculateSalaryDraft(SalaryDraft salaryDraft)
+	public SalaryDraft calculateSalaryDraft(String domain, SalaryDraft salaryDraft)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -353,7 +329,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public SalaryDraft calculateSalaryDraft(SalaryDraft salaryDraft, Date sections [])
+	public SalaryDraft calculateSalaryDraft(String domain, SalaryDraft salaryDraft, Date sections [])
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -361,7 +337,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public SalaryDraft calculateSalaryDraft4Dummies(SalaryDraft salaryDraft)
+	public SalaryDraft calculateSalaryDraft4Dummies(String domain, SalaryDraft salaryDraft)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -377,7 +353,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String getSalaryDraftReceipt(SalaryDraft salaryDraft, String mime)
+	public String getSalaryDraftReceipt(String domain, SalaryDraft salaryDraft, String mime)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -385,7 +361,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String getSalaryDraftReceiptHTML(SalaryDraft salaryDraft, int zoom)
+	public String getSalaryDraftReceiptHTML(String domain, SalaryDraft salaryDraft, int zoom)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -402,7 +378,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String getIrpfDraftReceipt(SalaryDraft salaryDraft, String mime)
+	public String getIrpfDraftReceipt(String domain, SalaryDraft salaryDraft, String mime)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -410,7 +386,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String getIrpfDraftReceiptHTML(SalaryDraft salaryDraft, int zoom)
+	public String getIrpfDraftReceiptHTML(String domain, SalaryDraft salaryDraft, int zoom)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -418,7 +394,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String getSalaryPreviewReceiptHTML(SalaryPreview salaryPreview,
+	public String getSalaryPreviewReceiptHTML(String domain, SalaryPreview salaryPreview,
 			int zoom) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -426,21 +402,21 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public void insertPerson(Employee employee) throws IllegalArgumentException {
+	public void insertPerson(String domain, Employee employee) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
 		
 	}
 	
 	@Override
-	public Employee getEmployee(int employeeId) throws IllegalArgumentException {
+	public Employee getEmployee(String domain, int employeeId) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
 	@Override
-	public List<Employee> getEmployees(int workplaceId, Date endDate,
+	public List<Employee> getEmployees(String domain, int workplaceId, Date endDate,
 			String pattern, int offset, int limit)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
@@ -449,7 +425,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<Employee> getTrashEmployees(int workplaceId)
+	public List<Employee> getTrashEmployees(String domain, int workplaceId)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -457,7 +433,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public void saveEvents(Events events, Date startDate, Date endDate)
+	public void saveEvents(String domain, Events events, Date startDate, Date endDate)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -465,7 +441,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public Events getEvents(Integer workplaceId, Date startDate, Date endDate,
+	public Events getEvents(String domain, Integer workplaceId, Date startDate, Date endDate,
 			int offset, int limit, String[] names)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
@@ -474,7 +450,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<Variable> getVariables(SalaryDraft salaryDraft, Date startDate,
+	public List<Variable> getVariables(String domain, SalaryDraft salaryDraft, Date startDate,
 			Date endDate, String[] names) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -482,7 +458,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public Period getAvailPeriod(Integer workplaceId, String name)
+	public Period getAvailPeriod(String domain, Integer workplaceId, String name)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -490,7 +466,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public Map<String, String> getEventsVariables(Integer workplaceId,
+	public Map<String, String> getEventsVariables(String domain, Integer workplaceId,
 			Integer agreementId, Date startDate, Date endDate)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
@@ -507,7 +483,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public Employee pasteContract(int workplaceId, int contractId,
+	public Employee pasteContract(String domain, int workplaceId, int contractId,
 			String document, Date startDate, Date endDate, boolean check)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
@@ -516,7 +492,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public void moveContractId(Employee employee)
+	public void moveContractId(String domain, Employee employee)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -524,7 +500,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public void deleteContract(Employee employee)
+	public void deleteContract(String domain, Employee employee)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -532,14 +508,14 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public void delete(Salary[] salaries) throws IllegalArgumentException {
+	public void delete(String domain, Salary[] salaries) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
 		
 	}
 
 	@Override
-	public Map<String, String> getAvaiableEmployees()
+	public Map<String, String> getAvaiableEmployees(String domain)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -555,7 +531,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public ContextDescriptor getEmployeeEventsVariables(Integer employeeId, Date startDate, Date endDate)
+	public ContextDescriptor getEmployeeEventsVariables(String domain, Integer employeeId, Date startDate, Date endDate)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		return null;
@@ -568,43 +544,43 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public WorkplaceEmployees getWorkplaceEmployees(Integer workplaceId) {
+	public WorkplaceEmployees getWorkplaceEmployees(String domain, Integer workplaceId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public EventsWorkplace setEventsWorkplace(EventsWorkplace updateEventsWorkplace) {
+	public EventsWorkplace setEventsWorkplace(String domain, EventsWorkplace updateEventsWorkplace) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public EmployeeInfoDataBase getEmployeeInfoDataBase(Integer employeeContract) {
+	public EmployeeInfoDataBase getEmployeeInfoDataBase(String domain, Integer employeeContract) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public EmployeeInfoDataBase setEmployeeInfoDataBase(EmployeeInfoDataBase newEmployeeInfo) {
+	public EmployeeInfoDataBase setEmployeeInfoDataBase(String domain, EmployeeInfoDataBase newEmployeeInfo) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<SSBonusData> getEmployeeSSBonuses(Integer contractId) {
+	public List<SSBonusData> getEmployeeSSBonuses(String domain, Integer contractId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<SSBonusData> setEmployeeSSBonuses(Integer contractId, List<SSBonusData> ssBonuses) {
+	public List<SSBonusData> setEmployeeSSBonuses(String domain, Integer contractId, List<SSBonusData> ssBonuses) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public EmployeeInfoDataBase createEmployeeContract(EmployeeInfoDataBase newEmployeeInfo) {
+	public EmployeeInfoDataBase createEmployeeContract(String domain, EmployeeInfoDataBase newEmployeeInfo) {
 		// TODO Auto-generated method stub
 		return null;
 	}

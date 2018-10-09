@@ -63,7 +63,7 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 	private Integer colors;
 
 	public CalendarDraftObjectData(Integer workplaceId,
-			EmployeesServiceAsync employeesService) {
+			DomainEmployeesServiceAsync employeesService) {
 
 		calendarDraftObject = new CalendarDraftObject(workplaceId,
 				employeesService);

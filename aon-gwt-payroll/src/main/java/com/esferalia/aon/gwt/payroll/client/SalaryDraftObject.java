@@ -267,10 +267,10 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 	private UndoManager<Undoable> undoManager;
 	private EmployeeCalendarDraftObjectData employeeCalendarDraftObjectData;
 	private EmployeeEventsDraftObject employeeEventsDraftObject;
-	private EmployeesServiceAsync employeesServiceAsync;
+	private DomainEmployeesServiceAsync employeesServiceAsync;
 
 	public SalaryDraftObject(SalaryDraft salaryDraft, ITDataObject dataObject,
-			EmployeesServiceAsync employeesServiceAsync) {
+			DomainEmployeesServiceAsync employeesServiceAsync) {
 		this.dataObject = dataObject;
 		this.salaryDraft = salaryDraft;
 		this.draftSections = new HashSet<Date>();
@@ -513,7 +513,6 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 	public void getPaymentConcepts(AsyncCallback<List<Payment>> callback) {
 		int employeeId = salaryDraft.getEmployee().getId();
 		employeesServiceAsync.getAvailablePayments(
-				Wnd.getCurrentDomainNameURL(), // TODO: Constructor param ? 
 				employeeId, callback);
 	}
 

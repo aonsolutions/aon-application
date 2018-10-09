@@ -31,141 +31,141 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  * The client side stub for the RPC service.
  */
 @RemoteServiceRelativePath("employees")
-public interface EmployeesService extends RemoteService, CalendarService, EmployeeEventsService,
-		StatisticsService, GPSReportsService, AgreementService {
+public interface EmployeesService  extends RemoteService, CalendarService, EmployeeEventsService,
+		StatisticsService, AgreementService {
 	
-	Enterprise getEnterprise() throws IllegalArgumentException;
+	Enterprise getEnterprise(String domain, String user) throws IllegalArgumentException;
 
-	Enterprise[] getEnterprises() throws IllegalArgumentException;
+	Enterprise[] getEnterprises(String domain, String user) throws IllegalArgumentException;
 
-	List<Deduction> getAvailableDeductions(int employeeId)
+	List<Deduction> getAvailableDeductions(String domain, int employeeId)
 			throws IllegalArgumentException;
 
-	List<Bonus> getAvailableBonuses(int employeeId)
+	List<Bonus> getAvailableBonuses(String domain, int employeeId)
 			throws IllegalArgumentException;
 
-	List<Cost> getWorkplaceCosts(int workplaceId)
+	List<Cost> getWorkplaceCosts(String domain, int workplaceId)
 			throws IllegalArgumentException;
 
-	List<Cost> getEnterpriseCosts(int enterpriseId)
+	List<Cost> getEnterpriseCosts(String domain, int enterpriseId)
 			throws IllegalArgumentException;
 
-	List<Salary> getSalaries(Employee employee) throws IllegalArgumentException;
+	List<Salary> getSalaries(String domain, Employee employee) throws IllegalArgumentException;
 
-	List<Irpf> getIrpfs(Employee employee) throws IllegalArgumentException;
+	List<Irpf> getIrpfs(String domain, Employee employee) throws IllegalArgumentException;
 
-	List<Extra> getExtras(List<Employee> employees) throws IllegalArgumentException;
+	List<Extra> getExtras(String domain, List<Employee> employees) throws IllegalArgumentException;
 
-	String getCostReceiptHTML(Cost cost, Salary.Type types[], int zoom)
+	String getCostReceiptHTML(String domain, Cost cost, Salary.Type types[], int zoom)
 			throws IllegalArgumentException;
 
-	String getIrpfReceiptHTML(Irpf irpf, int zoom)
+	String getIrpfReceiptHTML(String domain, Irpf irpf, int zoom)
 			throws IllegalArgumentException;
 
-	String getSalaryReceiptHTML(Cost cost, Salary.Type types[], int zoom)
+	String getSalaryReceiptHTML(String domain, Cost cost, Salary.Type types[], int zoom)
 			throws IllegalArgumentException;
 
-	String getSalaryReceiptHTML(Salary salary, int zoom)
+	String getSalaryReceiptHTML(String domain, Salary salary, int zoom)
 			throws IllegalArgumentException;
 
-	void saveSalaryDraft(SalaryDraft salaryDraft)
+	void saveSalaryDraft(String domain, SalaryDraft salaryDraft)
 			throws IllegalArgumentException;
 
-	SalaryDraft saveSalary(SalaryDraft salaryDraft)
+	SalaryDraft saveSalary(String domain, SalaryDraft salaryDraft)
 			throws IllegalArgumentException;
 	
-	SalaryDraft saveSalary(SalaryDraft salaryDraft, Date sections [])
+	SalaryDraft saveSalary(String domain, SalaryDraft salaryDraft, Date sections [])
 			throws IllegalArgumentException;
 
-	ContextDescriptor getContext(SalaryDraft salaryDraft)
+	ContextDescriptor getContext(String domain, SalaryDraft salaryDraft)
 			throws IllegalArgumentException;
 
-	List<Result> eval(String expression, SalaryDraft salaryDraft)
+	List<Result> eval(String domain, String expression, SalaryDraft salaryDraft)
 			throws IllegalArgumentException, EvalException;
 
-	Double calculateIrpf(SalaryDraft salaryDraft)
+	Double calculateIrpf(String domain, SalaryDraft salaryDraft)
 			throws IllegalArgumentException;
 
-	SalaryDraft calculateSalaryDraft(SalaryDraft salaryDraft)
+	SalaryDraft calculateSalaryDraft(String domain, SalaryDraft salaryDraft)
 			throws IllegalArgumentException;
 
-	SalaryDraft calculateSalaryDraft(SalaryDraft salaryDraft, Date sections [])
+	SalaryDraft calculateSalaryDraft(String domain, SalaryDraft salaryDraft, Date sections [])
 			throws IllegalArgumentException;
 
-	SalaryDraft calculateSalaryDraft4Dummies(SalaryDraft salaryDraft)
+	SalaryDraft calculateSalaryDraft4Dummies(String domain, SalaryDraft salaryDraft)
 			throws IllegalArgumentException;
 
-	String getSalaryDraftReceipt(SalaryDraft salaryDraft, String mime)
+	String getSalaryDraftReceipt(String domain, SalaryDraft salaryDraft, String mime)
 			throws IllegalArgumentException;
 
-	String getSalaryDraftReceiptHTML(SalaryDraft salaryDraft, int zoom)
+	String getSalaryDraftReceiptHTML(String domain, SalaryDraft salaryDraft, int zoom)
 			throws IllegalArgumentException;
 
-	String getIrpfDraftReceipt(SalaryDraft salaryDraft, String mime)
+	String getIrpfDraftReceipt(String domain, SalaryDraft salaryDraft, String mime)
 			throws IllegalArgumentException;
 
-	String getIrpfDraftReceiptHTML(SalaryDraft salaryDraft, int zoom)
+	String getIrpfDraftReceiptHTML(String domain, SalaryDraft salaryDraft, int zoom)
 			throws IllegalArgumentException;
 
-	String getSalaryPreviewReceiptHTML(SalaryPreview salaryPreview, int zoom)
+	String getSalaryPreviewReceiptHTML(String domain, SalaryPreview salaryPreview, int zoom)
 			throws IllegalArgumentException;
 
-	void insertPerson(Employee employee) throws IllegalArgumentException;
+	void insertPerson(String domain, Employee employee) throws IllegalArgumentException;
 
-	Employee getEmployee(int employeeId) throws IllegalArgumentException;
+	Employee getEmployee(String domain, int employeeId) throws IllegalArgumentException;
 
-	List<Employee> getEmployees(int workplaceId, Date endDate, String pattern,
+	List<Employee> getEmployees(String domain, int workplaceId, Date endDate, String pattern,
 			int offset, int limit) throws IllegalArgumentException;
 
-	List<Employee> getTrashEmployees(int workplaceId)
+	List<Employee> getTrashEmployees(String domain, int workplaceId)
 			throws IllegalArgumentException;
 
-	void saveEvents(Events events, Date startDate, Date endDate)
+	void saveEvents(String domain, Events events, Date startDate, Date endDate)
 			throws IllegalArgumentException;
 
-	Events getEvents(Integer workplaceId, Date startDate, Date endDate,
+	Events getEvents(String domain, Integer workplaceId, Date startDate, Date endDate,
 			int offset, int limit, String names[])
 			throws IllegalArgumentException;
 
-	List<Variable> getVariables(SalaryDraft salaryDraft, Date startDate, Date endDate, String names[])
+	List<Variable> getVariables(String domain, SalaryDraft salaryDraft, Date startDate, Date endDate, String names[])
 			throws IllegalArgumentException;
 
-	Period getAvailPeriod(Integer workplaceId, String name)
+	Period getAvailPeriod(String domain, Integer workplaceId, String name)
 			throws IllegalArgumentException;
 
-	Map<String, String> getEventsVariables(Integer workplaceId,
+	Map<String, String> getEventsVariables(String domain, Integer workplaceId,
 			Integer agreementId, Date startDate, Date endDate)
 			throws IllegalArgumentException;
 	
-	ContextDescriptor getEmployeeEventsVariables(Integer employeeId,
+	ContextDescriptor getEmployeeEventsVariables(String domain, Integer employeeId,
 			Date startDate, Date endDate)
 			throws IllegalArgumentException;
 
-	Employee pasteContract(int workplaceId, int contractId, String document,
+	Employee pasteContract(String domain, int workplaceId, int contractId, String document,
 			Date startDate, Date endDate, boolean check)
 			throws IllegalArgumentException;
 
-	void moveContractId(Employee employee) throws IllegalArgumentException;
+	void moveContractId(String domain, Employee employee) throws IllegalArgumentException;
 
-	void deleteContract(Employee employee) throws IllegalArgumentException;
+	void deleteContract(String domain, Employee employee) throws IllegalArgumentException;
 
-	void delete(Salary salaries[]) throws IllegalArgumentException;
+	void delete(String domain, Salary salaries[]) throws IllegalArgumentException;
 
-	Map<String, String> getAvaiableEmployees() throws IllegalArgumentException;
+	Map<String, String> getAvaiableEmployees(String domain) throws IllegalArgumentException;
 
-	WorkplaceEmployees getWorkplaceEmployees(Integer workplaceId);
+	WorkplaceEmployees getWorkplaceEmployees(String domain, Integer workplaceId);
 
-	EventsWorkplace setEventsWorkplace(
+	EventsWorkplace setEventsWorkplace(String domain, 
 			com.esferalia.aon.gwt.payroll.shared.EventsWorkplace updateEventsWorkplace);
 
-	EmployeeInfoDataBase getEmployeeInfoDataBase(Integer employeeContract);
+	EmployeeInfoDataBase getEmployeeInfoDataBase(String domain, Integer employeeContract);
 
-	EmployeeInfoDataBase setEmployeeInfoDataBase(EmployeeInfoDataBase newEmployeeInfo);
+	EmployeeInfoDataBase setEmployeeInfoDataBase(String domain, EmployeeInfoDataBase newEmployeeInfo);
 
-	List<SSBonusData> getEmployeeSSBonuses(Integer contractId);
+	List<SSBonusData> getEmployeeSSBonuses(String domain, Integer contractId);
 
-	List<SSBonusData> setEmployeeSSBonuses(Integer contractId, List<SSBonusData> ssBonuses);
+	List<SSBonusData> setEmployeeSSBonuses(String domain, Integer contractId, List<SSBonusData> ssBonuses);
 
-	EmployeeInfoDataBase createEmployeeContract(EmployeeInfoDataBase newEmployeeInfo);
+	EmployeeInfoDataBase createEmployeeContract(String domain, EmployeeInfoDataBase newEmployeeInfo);
 
 }

@@ -9,19 +9,19 @@ import com.esferalia.aon.gwt.payroll.shared.Statistics;
 
 public interface StatisticsService {
 
-	public abstract Statistics getWorkplaceStats(int workplaceId)
+	public abstract Statistics getWorkplaceStats(String domain,int workplaceId)
 			throws IllegalArgumentException;
 
-	public abstract Statistics getEnterpriseStats(int enterpriseId)
+	public abstract Statistics getEnterpriseStats(String domain,int enterpriseId)
 			throws IllegalArgumentException;
 	
-	public abstract ITData getEnterpriseITData(int enterpriseId)
+	public abstract ITData getEnterpriseITData(String domain,int enterpriseId)
 			throws IllegalArgumentException;
 	
-	public abstract ITData getWorkplaceITData(int workplaceId)
+	public abstract ITData getWorkplaceITData(String domain,int workplaceId)
 			throws IllegalArgumentException;
 	
-	public abstract void saveITDataPerson(Map<Integer, LinkedHashMap<Integer, ITDataPerson>> inserts, 
+	public abstract void saveITDataPerson(String domain, Map<Integer, LinkedHashMap<Integer, ITDataPerson>> inserts, 
 			Map<Integer, LinkedHashMap<Integer, ITDataPerson>> deletes,
 			Map<Integer, LinkedHashMap<Integer, ITDataPerson>> updates) 
 			throws IllegalArgumentException;	

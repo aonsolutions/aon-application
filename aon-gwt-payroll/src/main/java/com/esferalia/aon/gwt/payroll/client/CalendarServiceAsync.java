@@ -10,21 +10,21 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface CalendarServiceAsync {
 
-	void getEmployeeCalendar(int contract, AsyncCallback<EmployeeCalendarData> callback); 
+	void getEmployeeCalendar(String domain, int contract, AsyncCallback<EmployeeCalendarData> callback); 
 	
-	void setEmployeeCalendar(int contract, EmployeeCalendarUpdate updateInfo, AsyncCallback<EmployeeCalendarUpdate> callback);
+	void setEmployeeCalendar(String domain, int contract, EmployeeCalendarUpdate updateInfo, AsyncCallback<EmployeeCalendarUpdate> callback);
 
-	void getCalendar(int workplaceId, Integer pattern, Integer calendar, AsyncCallback<CalendarDraft> callback)
+	void getCalendar(String domain, int workplaceId, Integer pattern, Integer calendar, AsyncCallback<CalendarDraft> callback)
 			throws IllegalArgumentException;
 
-	void getHolidayDescription(AsyncCallback<Map<Integer, String>> callback)
+	void getHolidayDescription(String domain, AsyncCallback<Map<Integer, String>> callback)
 			throws IllegalArgumentException;
 	
-	void saveHolidaysAndDays(int workplaceId, String holidayDescription,
+	void saveHolidaysAndDays(String domain, int workplaceId, String holidayDescription,
 			Integer holidayListBox, Map<Date, String> map, CalendarDraft.DayType dayTypes[], AsyncCallback<Void> callback)
 			throws IllegalArgumentException;
 	
-	void deletePropertyHoliday(Integer id, Date date, AsyncCallback<Void> callback) 
+	void deletePropertyHoliday(String domain, Integer id, Date date, AsyncCallback<Void> callback) 
 			throws IllegalArgumentException;
 	
 }

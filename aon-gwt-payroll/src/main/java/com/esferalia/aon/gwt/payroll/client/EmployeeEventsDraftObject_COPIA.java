@@ -212,13 +212,13 @@ public class EmployeeEventsDraftObject_COPIA extends AbstractEventsDraftObject {
 
 	private List<Listener> listeners;
 
-	private EmployeesServiceAsync employeesServiceAsync;
+	private DomainEmployeesServiceAsync employeesServiceAsync;
 	
 	private Map<String, EventMetaData> eventsMetaDataMap;
 	private Map<String, EventMetaData> userEventsMetaDataMap;
 
 	public EmployeeEventsDraftObject_COPIA(Employee employee,
-			EmployeesServiceAsync employeesServiceAsync,
+			DomainEmployeesServiceAsync employeesServiceAsync,
 			EventMetaData... eventsMetaData) {
 		this.events = new Events();
 		this.draftEvents = new EmployeeDraftEvents();

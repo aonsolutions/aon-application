@@ -133,7 +133,7 @@ public class EmployeeEventsDraftObject {
 	private Integer idEmployee;
 	private Date startContractDate;
 	private Date endContractDate;
-	private EmployeesServiceAsync employeesService;
+	private DomainEmployeesServiceAsync employeesService;
 	public UndoManager<Undoable> undoManager;
 	private EmployeeCalendarDraftObjectData employeeCalendar;
 	
@@ -141,7 +141,7 @@ public class EmployeeEventsDraftObject {
 	private ArrayList<String> employeeContractVariables;
 	private ArrayList<String> employeeContractVariablesDB;
 	
-	public EmployeeEventsDraftObject(Integer idEmployee, Date startContractDate, Date endContractDate, EmployeesServiceAsync employeesService) {
+	public EmployeeEventsDraftObject(Integer idEmployee, Date startContractDate, Date endContractDate, DomainEmployeesServiceAsync employeesService) {
 		this.mapEventsVar = new HashMap<String, ArrayList<EmployeeEventsDraftObject.EmployeeEventsVariable>>();
 		this.draftMapEventsVar = new HashMap<String, ArrayList<EmployeeEventsDraftObject.EmployeeEventsVariable>>();
 		

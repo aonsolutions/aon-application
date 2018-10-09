@@ -11,7 +11,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class SalariesDocuments extends CostDocuments {
 
 	public SalariesDocuments(List<Cost> costs,
-			EmployeesServiceAsync employeesServiceAsync) {
+			DomainEmployeesServiceAsync employeesServiceAsync) {
 		super(costs, employeesServiceAsync);
 	}
 	

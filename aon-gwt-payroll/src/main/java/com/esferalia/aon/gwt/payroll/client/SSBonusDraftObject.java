@@ -12,14 +12,14 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class SSBonusDraftObject {
 	
 	Integer contractId = null;
-	EmployeesServiceAsync employeesService = null;
+	DomainEmployeesServiceAsync employeesService = null;
 	List<SSBonusData> ssBonuses;
 
 // ------------------------------------------------------ VARIABLES ------------------------------------------------------	
 
 // ---------------------------------------------------- CLASS METHODS ----------------------------------------------------	
 	
-	public SSBonusDraftObject(Employee employee, EmployeesServiceAsync employeesService) {
+	public SSBonusDraftObject(Employee employee, DomainEmployeesServiceAsync employeesService) {
 		this.contractId = employee.getId();
 		this.employeesService = employeesService;
 		this.ssBonuses = new ArrayList<SSBonusData>();

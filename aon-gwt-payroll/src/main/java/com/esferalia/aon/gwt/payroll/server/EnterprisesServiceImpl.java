@@ -291,7 +291,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			connection = AonServletUtils.getConnection(domain);
 			Integer domainId = AonServletUtils.getDomainID(domain);
-			Integer userId = AonServletUtils.getUserID(user, domain);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domain);
+			Integer userId = AonServletUtils.getUserID(connection, user, domainId, parentDomainId);
 			return getEnterprises(connection, userId, domainId, offset, limit);
 
 		} catch (SQLException e) {

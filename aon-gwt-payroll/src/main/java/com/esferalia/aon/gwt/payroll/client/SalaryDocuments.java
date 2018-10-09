@@ -14,14 +14,14 @@ class SalaryDocuments extends AbstractSpinnable<IDocument> implements IDocument 
 
 	private List<Salary> salaries;
 
-	private EmployeesServiceAsync employeesService;
+	private DomainEmployeesServiceAsync employeesService;
 
-	public SalaryDocuments(Salary salary, EmployeesServiceAsync employeesService) {
+	public SalaryDocuments(Salary salary, DomainEmployeesServiceAsync employeesService) {
 		this(Arrays.asList(salary), employeesService);
 	}
 
 	public SalaryDocuments(List<Salary> salaries,
-			EmployeesServiceAsync employeesService) {
+			DomainEmployeesServiceAsync employeesService) {
 		this.salaries = salaries;
 		this.employeesService = employeesService;
 		last();

@@ -188,10 +188,10 @@ public class EventsDraftObject {
 
 	public UndoManager<Undoable> undoManager;
 	
-	private EmployeesServiceAsync employeesServiceAsync;
+	private DomainEmployeesServiceAsync employeesServiceAsync;
 
 	public EventsDraftObject(Integer workplaceId, Integer agreeementId,
-			EmployeesServiceAsync employeesServiceAsync,
+			DomainEmployeesServiceAsync employeesServiceAsync,
 			EventMetaData... eventsMetaData) {
 		
 		this.mapEventsObject = new HashMap<Integer, Map<String, ArrayList<EmployeeEventsVariable>>>();

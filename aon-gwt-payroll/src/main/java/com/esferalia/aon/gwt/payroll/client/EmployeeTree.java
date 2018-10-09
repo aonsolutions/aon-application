@@ -93,15 +93,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	public static String SHARE_URL = URL.encode(GWT.getModuleBaseURL() + "share");
 	static class EmployeeCalcDialog extends CalcDialog<Employee> {
 		
-		EmployeesServiceAsync employeesService ;
+		DomainEmployeesServiceAsync employeesService ;
 		
 		public EmployeeCalcDialog() {
 
 
-			EmployeesServiceAsync employeesServiceRaw = GWT
-					.create(EmployeesService.class);
-			employeesService = new EmployeesServiceAsyncDecorator(
-					employeesServiceRaw);
+			employeesService = DomainEmployeesServiceAsync.newInstance();
 
 			// Full name.
 			Column<Employee, String> fullNameColumn = new Column<Employee, String>(
@@ -162,7 +159,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	}
 
 	class NewEmployeeCommand implements ScheduledCommand {
-		private EmployeesServiceAsync employeesService;
+		private DomainEmployeesServiceAsync employeesService;
 		private DomainEnterprisesServiceAsync enterprisesService;
 		
 		@Override
@@ -170,7 +167,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			// Create a remote service proxy to talk to the server-side Employees
 			// service.
 			EmployeesServiceAsync employeesServiceRaw = GWT.create(EmployeesService.class);
-			employeesService = new EmployeesServiceAsyncDecorator(employeesServiceRaw);
+			employeesService = DomainEmployeesServiceAsync.newInstance();
 			
 			enterprisesService = DomainEnterprisesServiceAsync.newInstance();
 			
@@ -1499,7 +1496,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 					});
 		}
 
-		EmployeesServiceAsync getServiceAsync() {
+		DomainEmployeesServiceAsync getServiceAsync() {
 			return EmployeeTree.this.employees.getEmployeesService();
 		}
 	}
@@ -1531,7 +1528,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private Irpf irpf;
 	private Salary salary;
 	private Statistics stats;
-	private Reports reports;
 	private ITEditor it;
 	private CalendarDraft calendarDraft;
 	private SalaryDraft salaryDraft;
@@ -1772,12 +1768,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	}
 
-	@Override
-	public void onReportsSelected(ReportsObject reportsObject) {
-		employeeDetail.setWidget(getReports());
-		getReports().setReportsObject(reportsObject);
-
-	}
 
 	@Override
 	public void onStatisticsSelected(
@@ -2011,12 +2001,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		if (stats == null)
 			stats = new Statistics();
 		return stats;
-	}
-
-	private Reports getReports() {
-		if (reports == null)
-			reports = new Reports();
-		return reports;
 	}
 
 	public Salary getSalary() {

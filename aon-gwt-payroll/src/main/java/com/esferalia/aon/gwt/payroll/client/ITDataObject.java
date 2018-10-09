@@ -117,12 +117,12 @@ public class ITDataObject {
 	private int contador;
 
 	private UndoManager<UndoableEdit<?>> undoManager;
-	private EmployeesServiceAsync employeesService;
+	private DomainEmployeesServiceAsync employeesService;
 	private int workplaceId;
 	private ITData itData;
 
 	public ITDataObject(Integer workplace,
-			EmployeesServiceAsync employeesService) {
+			DomainEmployeesServiceAsync employeesService) {
 		this.workplaceId = workplace;
 		this.employeesService = employeesService;
 		this.undoManager = new UndoManager<UndoableEdit<?>>();

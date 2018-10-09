@@ -58,12 +58,12 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 		EmployeesServiceAsync employeesServiceAsync = new AbstractEmployeesServiceAsync() {
 			@Override
-			public void getEvents(Integer workplaceId, Date startDate,
+			public void getEvents(String domain, Integer workplaceId, Date startDate,
 					Date endDate, int offset, int limit, String[] names,
 					AsyncCallback<Events> callback)
 					throws IllegalArgumentException {
 				// TODO Auto-generated method stub
-				super.getEvents(workplaceId, startDate, endDate, offset, limit,
+				super.getEvents(domain, workplaceId, startDate, endDate, offset, limit,
 						names, callback);
 			}
 
@@ -77,7 +77,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 			}
 
 			@Override
-			public void getEmployeeEventsVariables(Integer employeeId, Date startDate, Date endDate,
+			public void getEmployeeEventsVariables(String domain, Integer employeeId, Date startDate, Date endDate,
 					AsyncCallback<ContextDescriptor> callback) {
 				// TODO Auto-generated method stub
 				
@@ -95,7 +95,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void getWorkplaceEmployees(Integer workplaceId, AsyncCallback<WorkplaceEmployees> asyncCallback) {
+			public void getWorkplaceEmployees(String domain, Integer workplaceId, AsyncCallback<WorkplaceEmployees> asyncCallback) {
 				// TODO Auto-generated method stub
 				
 			}
@@ -103,7 +103,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void setEventsWorkplace(EventsWorkplace updateEventsWorkplace,
+			public void setEventsWorkplace(String domain, EventsWorkplace updateEventsWorkplace,
 					AsyncCallback<EventsWorkplace> asyncCallback) {
 				// TODO Auto-generated method stub
 				
@@ -112,7 +112,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void getEmployeeInfoDataBase(Integer employeeContract,
+			public void getEmployeeInfoDataBase(String domain, Integer employeeContract,
 					AsyncCallback<EmployeeInfoDataBase> asyncCallback) {
 				// TODO Auto-generated method stub
 				
@@ -121,7 +121,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void setEmployeeInfoDataBase(EmployeeInfoDataBase newEmployeeInfo,
+			public void setEmployeeInfoDataBase(String domain, EmployeeInfoDataBase newEmployeeInfo,
 					AsyncCallback<EmployeeInfoDataBase> asyncCallback) {
 				// TODO Auto-generated method stub
 				
@@ -130,7 +130,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void getEmployeeSSBonuses(Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) {
+			public void getEmployeeSSBonuses(String domain, Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) {
 				// TODO Auto-generated method stub
 				
 			}
@@ -138,7 +138,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void setEmployeeSSBonuses(Integer contractId, List<SSBonusData> ssBonuses,
+			public void setEmployeeSSBonuses(String domain, Integer contractId, List<SSBonusData> ssBonuses,
 					AsyncCallback<List<SSBonusData>> asyncCallback) {
 				// TODO Auto-generated method stub
 				
@@ -147,7 +147,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void createEmployeeContract(EmployeeInfoDataBase newEmployeeInfo,
+			public void createEmployeeContract(String domain, EmployeeInfoDataBase newEmployeeInfo,
 					AsyncCallback<EmployeeInfoDataBase> asyncCallback) {
 				// TODO Auto-generated method stub
 				
@@ -166,9 +166,11 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 				.setStartDate(getFirstDayOfYear())
 				.setSocialSecurity("SOCIAL_SECURITY");
 		//@formatter:on
+		
+		DomainEmployeesServiceAsync domainEmployeesServiceAsync = DomainEmployeesServiceAsync.newInstance(employeesServiceAsync);
 
 		EmployeeEventsDraftObject_COPIA employeeDraftObject = new EmployeeEventsDraftObject_COPIA(
-				employee, employeesServiceAsync, new EventMetaData(
+				employee, domainEmployeesServiceAsync, new EventMetaData(
 						"DIAS_TRABAJADOS", DateField.DAY),
 				new AbstractEventsDraftObject.BooleanEventMetaData(
 						"DIAS_EFECTIVOS", DateField.DAY),

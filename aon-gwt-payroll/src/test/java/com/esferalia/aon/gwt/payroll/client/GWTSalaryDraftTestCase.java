@@ -59,7 +59,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 		EmployeesServiceAsync employeesServiceAsync = new AbstractEmployeesServiceAsync() {
 			@Override
-			public void calculateSalaryDraft(
+			public void calculateSalaryDraft(String domain, 
 					com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft,
 					AsyncCallback<com.esferalia.aon.gwt.payroll.shared.SalaryDraft> callback)
 					throws IllegalArgumentException {
@@ -83,7 +83,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 			}
 
 			@Override
-			public void getEmployeeEventsVariables(Integer employeeId, Date startDate, Date endDate,
+			public void getEmployeeEventsVariables(String domain, Integer employeeId, Date startDate, Date endDate,
 					AsyncCallback<ContextDescriptor> callback) {
 				// TODO Auto-generated method stub
 				
@@ -101,7 +101,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void getWorkplaceEmployees(Integer workplaceId, AsyncCallback<WorkplaceEmployees> asyncCallback) {
+			public void getWorkplaceEmployees(String domain, Integer workplaceId, AsyncCallback<WorkplaceEmployees> asyncCallback) {
 				// TODO Auto-generated method stub
 				
 			}
@@ -109,7 +109,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void setEventsWorkplace(EventsWorkplace updateEventsWorkplace,
+			public void setEventsWorkplace(String domain, EventsWorkplace updateEventsWorkplace,
 					AsyncCallback<EventsWorkplace> asyncCallback) {
 				// TODO Auto-generated method stub
 				
@@ -118,7 +118,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void getEmployeeInfoDataBase(Integer employeeContract,
+			public void getEmployeeInfoDataBase(String domain, Integer employeeContract,
 					AsyncCallback<EmployeeInfoDataBase> asyncCallback) {
 				// TODO Auto-generated method stub
 				
@@ -127,7 +127,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void setEmployeeInfoDataBase(EmployeeInfoDataBase newEmployeeInfo,
+			public void setEmployeeInfoDataBase(String domain, EmployeeInfoDataBase newEmployeeInfo,
 					AsyncCallback<EmployeeInfoDataBase> asyncCallback) {
 				// TODO Auto-generated method stub
 				
@@ -136,7 +136,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void getEmployeeSSBonuses(Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) {
+			public void getEmployeeSSBonuses(String domain, Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) {
 				// TODO Auto-generated method stub
 				
 			}
@@ -144,7 +144,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void setEmployeeSSBonuses(Integer contractId, List<SSBonusData> ssBonuses,
+			public void setEmployeeSSBonuses(String domain, Integer contractId, List<SSBonusData> ssBonuses,
 					AsyncCallback<List<SSBonusData>> asyncCallback) {
 				// TODO Auto-generated method stub
 				
@@ -153,7 +153,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void createEmployeeContract(EmployeeInfoDataBase newEmployeeInfo,
+			public void createEmployeeContract(String domain, EmployeeInfoDataBase newEmployeeInfo,
 					AsyncCallback<EmployeeInfoDataBase> asyncCallback) {
 				// TODO Auto-generated method stub
 				
@@ -161,12 +161,14 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 			
 		};
+		
+		DomainEmployeesServiceAsync domainEmployeesServiceAsync = DomainEmployeesServiceAsync.newInstance(employeesServiceAsync); 
 
 		ITDataObject itDataObject = new ITDataObject(workplaceId,
-				employeesServiceAsync);
+				domainEmployeesServiceAsync);
 
 		SalaryDraftObject salaryDraftObject = new SalaryDraftObject(
-				salaryDraft, itDataObject, employeesServiceAsync);
+				salaryDraft, itDataObject, domainEmployeesServiceAsync);
 
 		salaryDraftWidget.setSalaryDraftObject(salaryDraftObject);
 
