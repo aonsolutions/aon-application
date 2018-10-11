@@ -185,6 +185,16 @@ public class FacturasRecibidas extends SIIBuilt {
 		
 		if (vat.getRegistryDocumentCountry().equals(Country.ES)) {
 			emisor.setNIF(vat.getRegistryDocument());
+		} else if(vat.isIntracommunity()){
+			IDOtroType otro = new IDOtroType();
+			otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getIso2()));
+			String document = vat.getRegistryDocument();
+			if(!document.substring(0,2).equals(vat.getRegistryDocumentCountry().getIso2())) {
+				document = vat.getRegistryDocumentCountry().getIso2() + document;
+			}
+			otro.setID(document);		
+			otro.setIDType(IDType.NIF_IVA.getName());
+			emisor.setIDOtro(otro);
 		} else {
 			IDOtroType otro = new IDOtroType();
 			otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getIso2()));
