@@ -71,7 +71,7 @@ public class SalaryDeductionsFactory implements IDeductionsFactory {
 		}
 	}
 
-	private void manageDeductions(Deductions deductions, SalaryDeduction sd) {
+	public static void manageDeductions(Deductions deductions, SalaryDeduction sd) {
 		if (sd.getType() == DeductionType.COMMON_CONTINGENCY) {
 			deductions.setCommonContingency(sd);
 		} else if (sd.getType() == DeductionType.UNEMPLOYMENT) {

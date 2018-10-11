@@ -56,6 +56,9 @@ import java.util.SortedSet;
 import javax.faces.context.FacesContext;
 
 import org.apache.commons.lang.StringUtils;
+import org.jooq.Condition;
+import org.jooq.DSLContext;
+import org.jooq.SortField;
 import org.mvel2.CompileException;
 import org.mvel2.ast.Function;
 import org.mvel2.util.MethodStub;
@@ -99,12 +102,13 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqEmployees;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEvents;
 import com.esferalia.aon.gwt.payroll.jooq.JooqPayments;
 import com.esferalia.aon.gwt.payroll.jooq.JooqSSBonus;
+import com.esferalia.aon.gwt.payroll.report.StatelessReportManager;
 import com.esferalia.aon.gwt.payroll.server.PayrollServletUtils.SalaryFilter;
 import com.esferalia.aon.gwt.payroll.server.PayrollServletUtils.SiteFilter;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
-import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
+import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
 import com.esferalia.aon.gwt.payroll.shared.BankAccount;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
@@ -132,7 +136,6 @@ import com.esferalia.aon.gwt.payroll.shared.Irpf.IrpfResult;
 import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
-import com.esferalia.aon.gwt.payroll.shared.ReportData;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
@@ -150,13 +153,12 @@ import com.esferalia.aon.gwt.payroll.sql.SQLEvents;
 import com.esferalia.aon.gwt.payroll.sql.SQLITData;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLStatistics;
-import com.esferalia.aon.gwt.payroll.sql.SQLUtils;
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.SalaryBuilder;
-import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.calculator.CollectSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.GenericContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
@@ -164,11 +166,6 @@ import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
 import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
-import com.esferalia.aon.payroll.calculator.jooq.JooqGPSReports;
-import com.esferalia.aon.payroll.calculator.jooq.JooqGPSReports.A3Line;
-import com.esferalia.aon.payroll.calculator.jooq.JooqGPSReports.FTELine;
-import com.esferalia.aon.payroll.calculator.jooq.JooqGPSReports.HolidayLine;
-import com.esferalia.aon.payroll.calculator.jooq.JooqGPSReports.Report;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementSalaryCalculatorContext;
@@ -212,7 +209,6 @@ import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.DeferredException;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionContext.RemoveVariableError;
-import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
@@ -221,8 +217,10 @@ import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
+import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.salary.SalaryExpenseController;
+import com.esferalia.aon.ui.payroll.utils.ReportUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 import net.sf.jasperreports.engine.JRParameter;
@@ -316,7 +314,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			conn = AonServletUtils.getConnection(domain);
 			if (employee != null) {
-				return isAtEnterpriseSite() ? getSiteSalaries(conn,
+				return notAtEnterpriseSite() ? getSiteSalaries(conn,
 						employee.getId()) : getSalaries(conn, employee.getId());
 			} else {
 				throw new IllegalArgumentException(
@@ -585,7 +583,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		Connection conn = null;
 		try {
 			conn = AonServletUtils.getConnection(domain);
-			return isAtEnterpriseSite() ? getSiteWorkplaceCosts(conn,
+			return notAtEnterpriseSite() ? getSiteWorkplaceCosts(conn,
 					workplaceId) : getWorkplaceCosts(conn, workplaceId);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
@@ -605,7 +603,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		Connection conn = null;
 		try {
 			conn = AonServletUtils.getConnection(domain);
-			return isAtEnterpriseSite() ? getSiteEnterpriseCosts(conn,
+			return notAtEnterpriseSite() ? getSiteEnterpriseCosts(conn,
 					enterpriseId) : getEnterpriseCosts(conn, enterpriseId);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
@@ -619,15 +617,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public String getIrpfReceiptHTML(String domain, final Irpf irpf, int zoom)
 			throws IllegalArgumentException {
 
 		try {
-
-			initFacesContext();
-
-			Map<Object, Object> parameters = new HashMap<Object, Object>(
+			HashMap<Object, Object> parameters = new HashMap<Object, Object>(
 					JR_HTML_EXPORTER_PARAMS);
 			parameters
 					.put(JRHtmlExporterParameter.ZOOM_RATIO, zoom / 100.00f /*
@@ -640,23 +636,22 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			FacesContext ctx = FacesContext.getCurrentInstance();
 			ctx.getViewRoot().setLocale(new Locale("es", "ES"));
 
-			ReportManager reportManager = new ReportManager();
+			ReportManager reportManager = new StatelessReportManager();
 			reportManager.setOutputFormat(OutputFormat.HTML);
 
 			ICollectionProvider provider = new ICollectionProvider() {
 
 				@Override
-				public Collection getCollection() {
+				public Collection<?> getCollection() {
 					try {
 						return getCollection(true);
 					} catch (ManagerBeanException e) {
-						// TODO Auto-generated catch block
 						return null;
 					}
 				}
 
 				@Override
-				public Collection getCollection(boolean arg0)
+				public Collection<?> getCollection(boolean arg0)
 						throws ManagerBeanException {
 					return Collections.singletonList(getIrpfOutcome(irpf));
 				}
@@ -668,15 +663,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 
 			String irpfReport = "irpf";
+			
 			reportManager.execute(out, irpfReport, parameters);
 
 			return out.toString();
 
 		} catch (ReportException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
-		} finally {
-			releaseFacesContext();
 		}
 	}
 
@@ -699,7 +692,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				salary.getId());
 		parameters.put(JRHtmlExporterParameter.IMAGES_URI, imagesUri);
 
-		String html = getSalaryReceiptHTML(salary, parameters);
+		String html = getSalaryReceiptHTML(domain, salary, parameters);
 
 		for (Entry<Object, Object> image : images.entrySet()) {
 			String name = String.format("%s%s", imagesUri, image.getKey());
@@ -730,8 +723,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				cost.getEnterpriseId());
 
 		parameters.put(JRHtmlExporterParameter.IMAGES_URI, imagesUri);
+		
 
-		String html = getSalaryReceiptHTML(cost, types, parameters);
+		String html = getSalaryReceiptHTML(domain, cost, types, parameters);
 
 		for (Entry<Object, Object> image : images.entrySet()) {
 			String name = String.format("%s%s", imagesUri, image.getKey());
@@ -741,36 +735,42 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		return html;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public String getCostReceiptHTML(String domain, Cost cost, Salary.Type types[], int zoom)
 			throws IllegalArgumentException {
 		try {
-			initFacesContext();
-
-			ReportManager reportManager = new ReportManager();
+			ReportManager reportManager = new StatelessReportManager();
 			reportManager.setOutputFormat(OutputFormat.HTML);
 
 			SalaryType salaryTypes[] = new SalaryType[types.length];
 			for (int i = 0; i < types.length; i++)
 				salaryTypes[i] = SalaryType.values()[types[i].ordinal()];
 
-			reportManager.setCollectionProvider(getSalariesProvider(cost,
+			reportManager.setCollectionProvider(getSalariesProvider(
+					domain,
+					cost,
 					salaryTypes));
+
+			Map<Object, Object> parameters = new HashMap<Object, Object>(
+					JR_HTML_EXPORTER_PARAMS);
 
 			// Really I hate this spaghetti piece of code.
 			// For pass 'month' & 'year' to a report, we
 			// must put it in a controller ?????.
-			SalaryExpenseController controller = (SalaryExpenseController) AonUtil
-					.getRegisteredBean(IPayrollConstants.SALARY_EXPENSE_CONTROLLER_NAME);
-			controller.setShowSalaryExpenseWindow(false);
-			controller.setYear(cost.getYear());
-			Month month = Month.getMonthByValue(cost.getMonth());
-			controller.setMonth(month);
+			//SalaryExpenseController controller = (SalaryExpenseController) AonUtil
+			//		.getRegisteredBean(IPayrollConstants.SALARY_EXPENSE_CONTROLLER_NAME);
+			//controller.setShowSalaryExpenseWindow(false);
+			//controller.setYear(cost.getYear());
+			//Month month = Month.getMonthByValue(cost.getMonth());
+			//controller.setMonth(month);
+			parameters.put("#{salaryExpense.getYear}", cost.getYear());
+			parameters.put("#{salaryExpense.getMonth}", cost.getMonth());
+			
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			
 
-			Map<Object, Object> parameters = new HashMap<Object, Object>(
-					JR_HTML_EXPORTER_PARAMS);
 			parameters
 					.put(JRHtmlExporterParameter.ZOOM_RATIO, zoom / 100.00f /*
 																			 * not
@@ -788,7 +788,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			parameters.put(JRHtmlExporterParameter.IMAGES_URI, imagesUri);
 
-			reportManager.execute(out, controller.getReportKey(),
+			reportManager.execute(out, IPayrollConstants.COST_REPORT,
 					parameters);
 
 			for (Entry<Object, Object> image : images.entrySet()) {
@@ -799,13 +799,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			return out.toString();
 
 		} catch (ReportException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
-		} finally {
-			releaseFacesContext();
 		}
 
 	}
@@ -830,7 +826,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 		parameters.put(JRHtmlExporterParameter.IMAGES_URI, imagesUri);
 
-		String html = getSalaryDraftReceiptHTML(salaryDraft, parameters);
+		String html = getSalaryDraftReceiptHTML(domain, salaryDraft, parameters);
 
 		for (Entry<Object, Object> image : images.entrySet()) {
 			String name = String.format("%s%s", imagesUri, image.getKey());
@@ -887,7 +883,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 																		 */);
 
 		parameters.put(JRParameter.REPORT_LOCALE, new Locale("es", "ES"));
-		String html = getIrpfDraftReceiptHTML(salaryDraft, parameters);
+		String html = getIrpfDraftReceiptHTML(domain, salaryDraft, parameters);
 
 		return html;
 
@@ -896,20 +892,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public List<Result> eval(String domain, String expression, SalaryDraft salaryDraft)
 			throws IllegalArgumentException, EvalException {
-		try {
-			initFacesContext();
-			List<ITimedResult<Double>> results = eval(expression, salaryDraft,
-					Double.class);
-			List<Result> returnList = new ArrayList<Result>(results.size());
-			for (ITimedResult<Double> result : results) {
-				returnList.add(new Result(cast(result), cast(result
-						.getContext())));
-			}
-
-			return returnList;
-		} finally {
-			releaseFacesContext();
+		List<ITimedResult<Double>> results = eval(domain, expression, salaryDraft,
+				Double.class);
+		List<Result> returnList = new ArrayList<Result>(results.size());
+		for (ITimedResult<Double> result : results) {
+			returnList.add(new Result(cast(result), cast(result
+					.getContext())));
 		}
+	
+		return returnList;
 	}
 
 	@Override
@@ -929,13 +920,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	@Override
 	public ContextDescriptor getContext(String domain, SalaryDraft salaryDraft) {
-		try {
-			initFacesContext();
-			//return new ContextDescriptor();
-			return getDraftContext(salaryDraft);
-		} finally {
-			releaseFacesContext();
-		}
+		//return new ContextDescriptor();
+		return getDraftContext(domain, salaryDraft);
 	}
 
 	@Override
@@ -957,37 +943,22 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public SalaryDraft calculateSalaryDraft(String domain, SalaryDraft salaryDraft)
 			throws IllegalArgumentException {
-		try {
-			initFacesContext();
-			calculate(salaryDraft, new SmartContractSalaryCalculator<ISalary>());
-			return salaryDraft;
-		} finally {
-			releaseFacesContext();
-		}
+		calculate(domain, salaryDraft, new SmartContractSalaryCalculator<ISalary>());
+		return salaryDraft;
 	}
 
 	@Override
 	public SalaryDraft calculateSalaryDraft(String domain, SalaryDraft salaryDraft ,Date sections [])
 			throws IllegalArgumentException {
-		try {
-			initFacesContext();
-			calculate(salaryDraft, new SmartContractSalaryCalculator<ISalary>(), sections);
-			return salaryDraft;
-		} finally {
-			releaseFacesContext();
-		}
+		calculate(domain, salaryDraft, new SmartContractSalaryCalculator<ISalary>(), sections);
+		return salaryDraft;
 	}
 
 	@Override
 	public SalaryDraft calculateSalaryDraft4Dummies(String domain, SalaryDraft salaryDraft)
 			throws IllegalArgumentException {
-		try {
-			initFacesContext();
-			calculate(salaryDraft, new SmartContractSalaryCalculator<ISalary>());
-			return salaryDraft;
-		} finally {
-			releaseFacesContext();
-		}
+		calculate(domain, salaryDraft, new SmartContractSalaryCalculator<ISalary>());
+		return salaryDraft;
 	}
 
 	@Override
@@ -997,15 +968,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		if (agreementId == null)
 			return Collections.emptyMap();
 
-		try {
-			initFacesContext();
-			return getWorkplaceEventsVariables(workplaceId, agreementId,
-					startDate, endDate, getDomainID(), getParentDomainID());
+		try{
+			Integer domainID = AonServletUtils.getDomainID(domain);
+			Integer parentDomainID = AonServletUtils.getParentDomainID(domain);
+			
+			return getWorkplaceEventsVariables(domain, workplaceId, agreementId,
+					startDate, endDate, domainID, parentDomainID);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
-		} finally {
-			releaseFacesContext();
-		}
+		} 
 
 	}
 
@@ -1434,33 +1405,30 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public String getSalaryDraftReceipt(String domain, final SalaryDraft draft, String mime)
 			throws IllegalArgumentException {
 
 		try {
-
-			initFacesContext();
-
-			ReportManager reportManager = new ReportManager();
+			ReportManager reportManager = new StatelessReportManager();
 			reportManager.setOutputFormat(OutputFormat.PDF);
 
 			ICollectionProvider provider = new ICollectionProvider() {
 
 				@Override
-				public Collection getCollection() {
+				public Collection<?> getCollection() {
 					try {
 						return getCollection(true);
 					} catch (ManagerBeanException e) {
-						// TODO Auto-generated catch block
-						return null;
+									return null;
 					}
 				}
 
 				@Override
-				public Collection getCollection(boolean arg0)
+				public Collection<?> getCollection(boolean arg0)
 						throws ManagerBeanException {
-					return Collections.singletonList(getSalary(draft));
+					return Collections.singletonList(getSalary(domain, draft));
 				}
 
 			};
@@ -1469,7 +1437,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			ByteArrayOutputStream reportOut = new ByteArrayOutputStream();
 
-			String salaryReport = getSalaryReport(toSalaryType(draft.getType()));
+			String salaryReport = getSalaryReport(domain, toSalaryType(draft.getType()));
 
 			reportManager.execute(reportOut, salaryReport);
 
@@ -1490,44 +1458,36 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			return dataUri;
 
 		} catch (ReportException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
-		} finally {
-			releaseFacesContext();
 		}
-
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public String getIrpfDraftReceipt(String domain, final SalaryDraft draft, String mime)
 			throws IllegalArgumentException {
 
 		try {
-
-			initFacesContext();
-
-			ReportManager reportManager = new ReportManager();
+			ReportManager reportManager = new StatelessReportManager();
 			reportManager.setOutputFormat(OutputFormat.PDF);
 
 			ICollectionProvider provider = new ICollectionProvider() {
 
 				@Override
-				public Collection getCollection() {
+				public Collection<?> getCollection() {
 					try {
 						return getCollection(true);
 					} catch (ManagerBeanException e) {
-						// TODO Auto-generated catch block
-						return null;
+									return null;
 					}
 				}
 
 				@Override
-				public Collection getCollection(boolean arg0)
+				public Collection<?> getCollection(boolean arg0)
 						throws ManagerBeanException {
-					return Collections.singletonList(getIrpfOutcome(draft));
+					return Collections.singletonList(getIrpfOutcome(domain, draft));
 				}
 
 			};
@@ -1554,13 +1514,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			return dataUri;
 
 		} catch (ReportException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
-		} finally {
-			releaseFacesContext();
 		}
 
 	}
@@ -1584,7 +1540,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 		parameters.put(JRHtmlExporterParameter.IMAGES_URI, imagesUri);
 
-		String html = getSalaryPreviewReceiptHTML(salaryPreview, parameters);
+		String html = getSalaryPreviewReceiptHTML(domain, salaryPreview, parameters);
 
 		for (Entry<Object, Object> image : images.entrySet()) {
 			String name = String.format("%s%s", imagesUri, image.getKey());
@@ -1622,7 +1578,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			return payments;
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} finally {
 			if (conn != null) {
@@ -1647,7 +1602,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					parentDomainId);
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} finally {
 			if (conn != null) {
@@ -1674,7 +1628,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			return availableBonuses;
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} finally {
 			if (conn != null) {
@@ -1695,7 +1648,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			SQLEvents.completeEvents(conn, events, startDate, endDate);
 			SQLEvents.saveEvents(conn, events, startDate, endDate, domainId);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} finally {
 			if (conn != null) {
@@ -1717,7 +1669,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					offset, limit, names);
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} finally {
 			if (conn != null) {
@@ -1739,7 +1690,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			return SQLEvents.getAvailPeriod(conn, workplaceId, name);
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} finally {
 			if (conn != null) {
@@ -1748,7 +1698,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException logOrIgnrore) {
 				}
 			}
-			releaseFacesContext();
 		}
 	}
 
@@ -1765,7 +1714,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			deleteSalaries(conn, ids);
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} finally {
 			if (conn != null) {
@@ -1787,7 +1735,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			return SQLStatistics.getEnterpriseStats(conn, enterpriseId);
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} finally {
 			if (conn != null) {
@@ -1809,7 +1756,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			return SQLStatistics.getWorkplaceStats(conn, workplaceId);
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} finally {
 			if (conn != null) {
@@ -1831,7 +1777,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			return SQLITData.getEnterpriseITData(conn, enterpriseId);
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} finally {
 			if (conn != null) {
@@ -1852,7 +1797,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			return SQLITData.getWorplaceItTData(conn, workplaceId);
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} finally {
 			if (conn != null) {
@@ -1880,7 +1824,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					.getDatesWithChanges(conn, agreement.getId(), domainId, agreement.getDomain());
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} finally {
 			if (conn != null) {
@@ -1894,30 +1837,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	// -------------------------------------------------------- Private methods
 
-	@Deprecated
-	private String getSalaryReport(SalaryType salaryType)
-			throws ReportException {
-		Connection conn = null;
-		try {
-			conn = getConnection();
-			int enterpriseId = getEnterpriseID();
-			return PayrollServletUtils.getSalaryReport(conn, enterpriseId,
-					salaryType != null ? salaryType : SalaryType.SALARY);
-		} catch (SQLException e) {
-			throw new ReportException(e.getLocalizedMessage());
-		} catch (ManagerBeanException e) {
-			throw new ReportException(e.getLocalizedMessage());
-		} finally {
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException logOrIgnrore) {
-				}
-			}
-		}
-	}
 
-	@Deprecated
 	private String getSalaryReport(String domain, SalaryType salaryType)
 			throws ReportException {
 		Connection conn = null;
@@ -1938,30 +1858,24 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-	private String getSalaryReceiptHTML(Salary salary,
+	@SuppressWarnings("unchecked")
+	private String getSalaryReceiptHTML(String domain, Salary salary,
 			Map<Object, Object> parameters) throws IllegalArgumentException {
 
 		try {
 
-			initFacesContext();
+			String salaryReport = getSalaryReport(domain, toSalaryType(salary.getType()));
 
-			String salaryReport = getSalaryReport(toSalaryType(salary.getType()));
-
-			IManagerBean beanManager = BeanManager
-					.getManagerBean(com.esferalia.aon.payroll.Salary.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(
-					beanManager.getFieldName(IEntityAlias.SALARY_ID),
-					salary.getId());
-
+			Condition condition = com.esferalia.aon.jooq.tables.Salary.SALARY.ID.eq(salary.getId());
+			
 			FacesContext ctx = FacesContext.getCurrentInstance();
 			ctx.getViewRoot().setLocale(new Locale("es", "ES"));
-			ReportManager reportManager = new ReportManager();
+			ReportManager reportManager = new StatelessReportManager();
 
 			reportManager.setOutputFormat(OutputFormat.HTML);
 			reportManager
 					.setCollectionProvider(new PayrollServletUtils.SalaryProvider(
-							criteria, null));
+							domain, condition, null));
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 
@@ -1970,59 +1884,49 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			return out.toString();
 
 		} catch (ReportException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
-		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			throw new IllegalArgumentException(e);
-		} finally {
-			releaseFacesContext();
 		}
-
 	}
 
-	private String getSalaryReceiptHTML(Cost cost, Salary.Type types[],
+	@SuppressWarnings("unchecked")
+	private String getSalaryReceiptHTML(String domain, Cost cost, Salary.Type types[],
 			Map<Object, Object> parameters) throws IllegalArgumentException {
 		try {
-
-			initFacesContext();
-
-			ReportManager reportManager = new ReportManager();
+			ReportManager reportManager = new StatelessReportManager();
 			reportManager.setOutputFormat(OutputFormat.HTML);
 
 			SalaryType salaryTypes[] = new SalaryType[types.length];
 			for (int i = 0; i < types.length; i++)
 				salaryTypes[i] = SalaryType.values()[types[i].ordinal()];
 
-			reportManager.setCollectionProvider(getSalariesProvider(cost,
+			reportManager.setCollectionProvider(getSalariesProvider(
+					domain,
+					cost,
 					salaryTypes));
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			// TODO: SalaryType???????
-			String salaryReport = getSalaryReport(SalaryType.SALARY);
+			String salaryReport = getSalaryReport(domain, SalaryType.SALARY);
+			// TODO: Bufff ThreadLocal ...
+			ReportUtils.domain.set(domain);
+			
 			reportManager.execute(out, salaryReport, parameters);
 
 			return out.toString();
 
 		} catch (ReportException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
-		} finally {
-			releaseFacesContext();
 		}
 	}
 
-	private String getSalaryPreviewReceiptHTML(final SalaryPreview draft,
+	@SuppressWarnings("unchecked")
+	private String getSalaryPreviewReceiptHTML(String domain, final SalaryPreview draft,
 			Map<Object, Object> parameters) throws IllegalArgumentException {
 
 		try {
-
-			initFacesContext();
-
-			ReportManager reportManager = new ReportManager();
+			ReportManager reportManager = new StatelessReportManager();
 			reportManager.setOutputFormat(OutputFormat.HTML);
 
 			// ISalary salary = getSalary(draft);
@@ -2031,19 +1935,18 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			ICollectionProvider provider = new ICollectionProvider() {
 
 				@Override
-				public Collection getCollection() {
+				public Collection<?> getCollection() {
 					try {
 						return getCollection(true);
 					} catch (ManagerBeanException e) {
-						// TODO Auto-generated catch block
-						return null;
+									return null;
 					}
 				}
 
 				@Override
-				public Collection getCollection(boolean arg0)
+				public Collection<?> getCollection(boolean arg0)
 						throws ManagerBeanException {
-					return Collections.singletonList(getSalary(draft));
+					return Collections.singletonList(getSalary(domain, draft));
 				}
 
 			};
@@ -2052,46 +1955,38 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-			String salaryReport = getSalaryReport(toSalaryType(draft.getType()));
+			String salaryReport = getSalaryReport(domain, toSalaryType(draft.getType()));
 			reportManager.execute(out, salaryReport, parameters);
 
 			return out.toString();
 
 		} catch (ReportException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
-		} finally {
-			releaseFacesContext();
-		}
+		}	}
 
-	}
-
-	private String getSalaryDraftReceiptHTML(final SalaryDraft draft,
+	@SuppressWarnings("unchecked")
+	private String getSalaryDraftReceiptHTML(String domain, final SalaryDraft draft,
 			Map<Object, Object> parameters) throws IllegalArgumentException {
 
 		try {
-
-			initFacesContext();
-
-			ReportManager reportManager = new ReportManager();
+			ReportManager reportManager = new StatelessReportManager();
 			reportManager.setOutputFormat(OutputFormat.HTML);
 
 			ICollectionProvider provider = new ICollectionProvider() {
 
 				@Override
-				public Collection getCollection() {
+				public Collection<?> getCollection() {
 					try {
 						return getCollection(true);
 					} catch (ManagerBeanException e) {
-						// TODO Auto-generated catch block
 						return null;
 					}
 				}
 
 				@Override
-				public Collection getCollection(boolean arg0)
+				public Collection<?> getCollection(boolean arg0)
 						throws ManagerBeanException {
-					return Collections.singletonList(getSalary(draft));
+					return Collections.singletonList(getSalary(domain, draft));
 				}
 
 			};
@@ -2100,43 +1995,40 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-			String salaryReport = getSalaryReport(toSalaryType(draft.getType()));
+			String salaryReport = getSalaryReport(domain, toSalaryType(draft.getType()));
 			reportManager.execute(out, salaryReport, parameters);
 
 			return out.toString();
 
 		} catch (ReportException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
-		} finally {
-			releaseFacesContext();
 		}
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private String getAgreementDraftReceiptHTML(String domain, final AgreementDraft draft,
 			final int levelId, Salary.Type type, Map<Object, Object> parameters)
 			throws IllegalArgumentException {
 
 		try {
 
-			ReportManager reportManager = new ReportManager();
+			ReportManager reportManager = new StatelessReportManager();
 			reportManager.setOutputFormat(OutputFormat.HTML);
 
 			ICollectionProvider provider = new ICollectionProvider() {
 
 				@Override
-				public Collection getCollection() {
+				public Collection<?> getCollection() {
 					try {
 						return getCollection(true);
 					} catch (ManagerBeanException e) {
-						// TODO Auto-generated catch block
-						return null;
+									return null;
 					}
 				}
 
 				@Override
-				public Collection getCollection(boolean arg0)
+				public Collection<?> getCollection(boolean arg0)
 						throws ManagerBeanException {
 					return Collections.singletonList(getSalary(domain, draft, levelId));
 				}
@@ -2154,42 +2046,37 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			return out.toString();
 
 		} catch (ReportException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} finally {
 		}
 
 	}
 
-	private String getIrpfDraftReceiptHTML(final SalaryDraft draft,
+	@SuppressWarnings("unchecked")
+	private String getIrpfDraftReceiptHTML(String domain, final SalaryDraft draft,
 			Map<Object, Object> parameters) throws IllegalArgumentException {
 
-		try {
-
-			initFacesContext();
-
-			FacesContext ctx = FacesContext.getCurrentInstance();
+		try {			FacesContext ctx = FacesContext.getCurrentInstance();
 			ctx.getViewRoot().setLocale(new Locale("es", "ES"));
 
-			ReportManager reportManager = new ReportManager();
+			ReportManager reportManager = new StatelessReportManager();
 			reportManager.setOutputFormat(OutputFormat.HTML);
 
 			ICollectionProvider provider = new ICollectionProvider() {
 
 				@Override
-				public Collection getCollection() {
+				public Collection<?> getCollection() {
 					try {
 						return getCollection(true);
 					} catch (ManagerBeanException e) {
-						// TODO Auto-generated catch block
-						return null;
+									return null;
 					}
 				}
 
 				@Override
-				public Collection getCollection(boolean arg0)
+				public Collection<?> getCollection(boolean arg0)
 						throws ManagerBeanException {
-					return Collections.singletonList(getIrpfOutcome(draft));
+					return Collections.singletonList(getIrpfOutcome(domain, draft));
 				}
 
 			};
@@ -2204,34 +2091,30 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			return out.toString();
 
 		} catch (ReportException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
-		} finally {
-			releaseFacesContext();
 		}
-
 	}
 
 	// ------------------------------------------------- Private Static methods
 
 	// Note that below methods can be moved to another place safely.
 
-	private ICollectionProvider getSalariesProvider(Cost cost,
+	private ICollectionProvider getSalariesProvider(String domain, Cost cost,
 			SalaryType types[]) throws ManagerBeanException {
-		boolean asEnterpriseSite = isAtEnterpriseSite();
-		boolean calc = !isAtEnterpriseSite();
+		boolean asEnterpriseSite = notAtEnterpriseSite();
+		boolean calc = !notAtEnterpriseSite();
 		SalaryFilter filter = asEnterpriseSite ? new SiteFilter() : null;
-		return getSalariesProvider(cost, types, filter, calc);
+		return getSalariesProvider(domain, cost, types, filter, calc);
 	}
 
-	protected static ICollectionProvider getSalariesProvider(Cost cost,
+	protected static ICollectionProvider getSalariesProvider(String domain, Cost cost,
 			SalaryType types[], SalaryFilter filter, boolean calc)
 			throws ManagerBeanException {
 		IManagerBean salaryBeanManager = BeanManager
 				.getManagerBean(com.esferalia.aon.payroll.Salary.class);
-
+		
+		Condition condition = null;
 		Criteria sqlCriteria = new Criteria();
-		Criteria aliasCriteria = new Criteria();
 
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.YEAR, cost.getYear());
@@ -2253,18 +2136,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			sqlCriteria.addEqualExpression(WORKPLACE + "."
 					+ WorkplaceColumns.ID, cost.getWorkplaceId());
-
-			aliasCriteria.addEqualExpression(salaryBeanManager
-					.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID),
-					cost.getWorkplaceId());
+			condition = com.esferalia.aon.jooq.tables.Workplace.WORKPLACE.ID.eq(cost.getWorkplaceId());
 		} else {
 			sqlCriteria.addEqualExpression(ENTERPRISE + "."
 					+ EnterpriseColumns.REGISTRY, cost.getEnterpriseId());
-			aliasCriteria
-					.addEqualExpression(
-							salaryBeanManager
-									.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID),
-							cost.getEnterpriseId());
+			condition = com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE.REGISTRY.eq(cost.getEnterpriseId());
 		}
 
 		sqlCriteria.addLessThanOrEqualExpression(CONTRACT + "."
@@ -2280,26 +2156,31 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		sqlCriteria.addOrder(SQLContractSalaryCalculatorContext.PERSON_REGISTRY
 				+ "." + RegistryColumns.NAME);
 
-		aliasCriteria
-				.addBetweenExpression(salaryBeanManager
-						.getFieldName(IEntityAlias.SALARY_CHARGE_DATE),
-						startDate, endDate);
+		java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());
+		java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());
 
-		aliasCriteria.addOrder(salaryBeanManager
-				.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID));
-		aliasCriteria.addOrder(salaryBeanManager
-				.getFieldName(IEntityAlias.SALARY_EMPLOYEE_NAME));
-		aliasCriteria.addOrder(salaryBeanManager
-				.getFieldName(IEntityAlias.SALARY_CHARGE_DATE));
+		condition = condition.and(com.esferalia.aon.jooq.tables.Salary.SALARY.CHARGE_DATE.between(sqlStartDate, sqlEndDate));
 
-		aliasCriteria
-				.addInExpression(salaryBeanManager
-						.getFieldName(IEntityAlias.SALARY_TYPE), types);
+		
+		SortField<?> sortFields [] = {
+			com.esferalia.aon.jooq.tables.Workplace.WORKPLACE.ID.asc(),
+			com.esferalia.aon.jooq.tables.Salary.SALARY.EMPLOYEE_NAME.asc(),
+			com.esferalia.aon.jooq.tables.Salary.SALARY.CHARGE_DATE.asc()
+		};
+		
+		Byte btypes [] = new Byte [types.length];
+		for ( int i = 0; i < types.length; i++ )
+			btypes[i] = (byte) types[i].ordinal();
+		condition = condition.and(com.esferalia.aon.jooq.tables.Salary.SALARY.TYPE.in(btypes));
 
-		return calc ? new PayrollServletUtils.CalcSalaryProvider(startDate,
-				endDate, sqlCriteria, types,
-				new PayrollServletUtils.SalaryProvider(aliasCriteria, filter))
-				: new PayrollServletUtils.SalaryProvider(aliasCriteria, filter);
+		return calc ? new PayrollServletUtils.CalcSalaryProvider(
+				domain,
+				startDate,
+				endDate, 
+				sqlCriteria, 
+				types,
+				new PayrollServletUtils.SalaryProvider(domain, condition, filter, sortFields))
+				: new PayrollServletUtils.SalaryProvider(domain, condition, filter, sortFields);
 
 	}
 
@@ -2907,47 +2788,79 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-	private static ISalary getDBSalary(SalaryDraft salaryDraft)
+
+	private static ISalary getDBSalary(String domain, SalaryDraft salaryDraft)
 			throws ManagerBeanException {
-
-		IManagerBean beanManager = BeanManager
-				.getManagerBean(com.esferalia.aon.payroll.Salary.class);
-
-		Criteria criteria = new Criteria();
-
-		criteria.addEqualExpression(
-				beanManager.getFieldName(IEntityAlias.SALARY_CONTRACT_ID),
-				salaryDraft.getEmployee().getId());
-		criteria.addEqualExpression(
-				beanManager.getFieldName(IEntityAlias.SALARY_TYPE),
-				salaryDraft.getType());
-		criteria.addEqualExpression(
-				beanManager.getFieldName(IEntityAlias.SALARY_START_DATE),
-				salaryDraft.getStartDate());
-		criteria.addEqualExpression(
-				beanManager.getFieldName(IEntityAlias.SALARY_END_DATE),
-				salaryDraft.getEndDate());
-
-		List<ITransferObject> list = beanManager.getList(criteria);
-
-		return list.size() > 0 ? (ISalary) list.get(0) : null;
+		Connection conn = null; 
+		try {
+			conn = AonServletUtils.getConnection(domain);
+			return getDBSalary(conn, salaryDraft);
+		} catch ( SQLException e ) {
+			throw new IllegalArgumentException(e);
+		}
+		finally {
+			if ( conn != null ) {
+				try {
+					conn.close();
+				} catch ( SQLException e ) {
+				}
+			}
+		}
 	}
 
-	private static List<Variable> getDBSalaryData(ISalary salary)
+	private static ISalary getDBSalary(Connection connection, SalaryDraft salaryDraft)
+			throws ManagerBeanException {
+		
+		byte type = (byte)salaryDraft.getType().ordinal();
+		Integer contract = salaryDraft.getEmployee().getId();
+		java.sql.Date sqlStartDate = new java.sql.Date(salaryDraft.getStartDate().getTime());  
+		java.sql.Date sqlEndDate = new java.sql.Date(salaryDraft.getEndDate().getTime());  
+		
+		Condition condition = 
+		com.esferalia.aon.jooq.tables.Salary.SALARY.CONTRACT.eq(contract)
+		.and(com.esferalia.aon.jooq.tables.Salary.SALARY.TYPE.eq(type))
+		.and(com.esferalia.aon.jooq.tables.Salary.SALARY.START_DATE.eq(sqlStartDate))
+		.and(com.esferalia.aon.jooq.tables.Salary.SALARY.END_DATE.eq(sqlEndDate));
+		
+		for ( ISalary salary : PayrollServletUtils.getSalary(connection, condition) )
+			return salary;
+		
+		return null;
+	}
+
+	private static List<Variable> getDBSalaryData(String domain, ISalary salary)
+			throws ManagerBeanException {
+		Connection conn = null; 
+		try {
+			conn = AonServletUtils.getConnection(domain);
+			return getDBSalaryData(conn, salary);
+		} catch ( SQLException e ) {
+			throw new IllegalArgumentException(e);
+		}
+		finally {
+			if ( conn != null ) {
+				try {
+					conn.close();
+				} catch ( SQLException e ) {
+				}
+			}
+		}
+	}
+
+	private static List<Variable> getDBSalaryData(Connection conn, ISalary salary)
 			throws ManagerBeanException {
 
-		IManagerBean beanManager = BeanManager
-				.getManagerBean(com.esferalia.aon.payroll.SalaryData.class);
-
-		Criteria criteria = new Criteria();
-
-		criteria.addEqualExpression(
-				beanManager.getFieldName(IEntityAlias.SALARY_DATA_SALARY_ID),
-				salary.getId());
-
-		return Arrays.asList( beanManager.getList(criteria).stream()
-		.map(object -> (SalaryData) object )
-		.map(data -> {
+		AONContext aonContext = new AONContext(conn);
+		DSLContext dslContext = aonContext.getDslContext();
+		
+		Variable vars [] =
+		dslContext
+		.select()
+		.from(com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA)
+		.where(com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA.SALARY.eq(salary.getId()))
+		.fetchInto(com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA)
+		.stream()
+		.map( data -> {
 			Variable var = new StringVariable();
 			var.setName(data.getName());
 			var.setStartDate(data.getStartDate());
@@ -2956,78 +2869,48 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			var.setDomain(data.getDomain());
 			return var;
 		})
-		.toArray(Variable[]::new ) );
+		.toArray(Variable[]::new )
+		;
+		
+		return Arrays.asList(vars);
+
 	}
 
-	private static List<Salary> getSalaries(Connection connection,
-			Integer enterpriseID, Integer personId, Date toDate)
-			throws SQLException {
-
-		ResultSet rs = null;
-		PreparedStatement stmt = null;
-
+	
+	private static void calculate(String domain, SalaryDraft draft, GenericContractSalaryCalculator<ISalary,ISQLContractSalaryCalculatorContext> salaryCalculator) {
+		Connection conn = null;
 		try {
-
-			String sql = "SELECT " + SALARY + ".* " + " FROM " + SALARY + ", "
-					+ CONTRACT + ", " + WORKPLACE + " WHERE " + SALARY + "."
-					+ SalaryColumns.CONTRACT + " = " + CONTRACT + "."
-					+ ContractColumns.ID + " AND " + CONTRACT + "."
-					+ ContractColumns.WORKPLACE + " = " + WORKPLACE + "."
-					+ WorkplaceColumns.ID + " AND " + CONTRACT + "."
-					+ ContractColumns.PERSON + " = ? " + " AND " + WORKPLACE
-					+ "." + WorkplaceColumns.ENTERPRISE + " = ? " + " AND "
-					+ SALARY + "." + SalaryColumns.CHARGE_DATE + " <= ? "
-					+ " ORDER BY " + SALARY + "." + SalaryColumns.END_DATE
-					+ " ASC ";
-
-			stmt = connection.prepareStatement(sql);
-			stmt.setInt(1, personId);
-			stmt.setInt(2, enterpriseID);
-			stmt.setDate(3, new java.sql.Date(toDate.getTime()));
-			rs = stmt.executeQuery();
-
-			List<Salary> salaries = new LinkedList<Salary>();
-			while (rs.next()) {
-				Salary salary = new Salary();
-				salary.setId(rs.getInt(SalaryColumns.ID));
-
-				salary.setStartDate(rs.getDate(SalaryColumns.START_DATE));
-				salary.setEndDate(rs.getDate(SalaryColumns.END_DATE));
-				salary.setIssueDate(rs.getDate(SalaryColumns.ISSUE_DATE));
-				salary.setChargeDate(rs.getDate(SalaryColumns.CHARGE_DATE));
-
-				salary.setType(getSalaryType((Integer) rs
-						.getObject(SalaryColumns.TYPE)));
-
-				salaries.add(salary);
-			}
-
-			return salaries;
+			conn = AonServletUtils.getConnection(domain);
+			calculate(conn, draft, salaryCalculator);
+		} catch ( SQLException e ) {
+			throw new IllegalArgumentException(e);
 		} finally {
-			if (rs != null) {
-				rs.close();
-			}
-			if (stmt != null) {
-				rs.close();
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnore) {
+
+				}
 			}
 		}
+		
 	}
-
-	private static void calculate(SalaryDraft draft, GenericContractSalaryCalculator<ISalary,ISQLContractSalaryCalculatorContext> salaryCalculator) {
+	
+	private static void calculate(Connection conn, SalaryDraft draft, GenericContractSalaryCalculator<ISalary,ISQLContractSalaryCalculatorContext> salaryCalculator) {
 
 		SalaryDraftBuilder salaryDraftBuilder = new SalaryDraftBuilder(draft);
 		try {
-			calculate(draft, salaryDraftBuilder, salaryDraftBuilder, salaryCalculator);
+			calculate(conn, draft, salaryDraftBuilder, salaryDraftBuilder, salaryCalculator);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 		try {
 			salaryDraftBuilder.clearDb();
-			ISalary dbSalary = getDBSalary(draft);
+			ISalary dbSalary = getDBSalary(conn, draft);
 			if (dbSalary != null) {
 				salaryDraftBuilder.setDbSalary(dbSalary);
-				salaryDraftBuilder.setDbSalaryData(getDBSalaryData(dbSalary));
+				salaryDraftBuilder.setDbSalaryData(getDBSalaryData(conn, dbSalary));
 			}
 		} catch (SalaryException e) {
 		} catch (ManagerBeanException e) {
@@ -3035,7 +2918,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
-	private static void calculate(SalaryDraft draft, GenericContractSalaryCalculator<ISalary, ISQLContractSalaryCalculatorContext> salaryCalculator, Date sections []) {
+	private static void calculate(String domain, SalaryDraft draft, GenericContractSalaryCalculator<ISalary, ISQLContractSalaryCalculatorContext> salaryCalculator, Date sections []) {
 
 		SalaryDraftBuilder salaryDraftBuilder = new SalaryDraftBuilder(draft);
 		CollectSalaryBuilder<ISalary> collectSalaryBuilder = new CollectSalaryBuilder<ISalary>();
@@ -3044,13 +2927,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			for ( Date section : sections ) {
 				draft.setEndDate(AonDateUtils.add(section, Calendar.DAY_OF_MONTH, -1));
-				calculate(draft, collectSalaryBuilder, salaryDraftBuilder, salaryCalculator);
+				calculate(domain, draft, collectSalaryBuilder, salaryDraftBuilder, salaryCalculator);
 				draft.setStartDate(section);
 			}
 			draft.setEndDate(endDate);
 
 			draft.addDraftVariable(getActiveDaysVar(collectSalaryBuilder));
-			calculate(draft, collectSalaryBuilder, salaryDraftBuilder, salaryCalculator);
+			calculate(domain, draft, collectSalaryBuilder, salaryDraftBuilder, salaryCalculator);
 
 			collectSalaryBuilder.collect(salaryDraftBuilder);
 
@@ -3061,10 +2944,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 		try {
 			salaryDraftBuilder.clearDb();
-			ISalary dbSalary = getDBSalary(draft);
+			ISalary dbSalary = getDBSalary(domain, draft);
 			if (dbSalary != null) {
 				salaryDraftBuilder.setDbSalary(dbSalary);
-				salaryDraftBuilder.setDbSalaryData(getDBSalaryData(dbSalary));
+				salaryDraftBuilder.setDbSalaryData(getDBSalaryData(domain, dbSalary));
 			}
 		} catch (SalaryException e) {
 		} catch (ManagerBeanException e) {
@@ -3072,12 +2955,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
-	private static Map<String, String> getWorkplaceEventsVariables(
+	private static Map<String, String> getWorkplaceEventsVariables(String domain,
 			Integer workplaceId, Integer agreementId, Date startDate,
 			Date endDate, Integer domainId, Integer parentDomainId) throws SQLException {
 		Connection connection = null;
 		try {
-			connection = getConnection();
+			connection = AonServletUtils.getConnection(domain);
 
 			Set<Payment> payments = SQLEvents.getPayments(connection,
 					workplaceId, startDate, endDate);
@@ -3234,12 +3117,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private static void calculateAndSave(Connection conn, SalaryDraft draft)
 			throws SQLException {
 		if (draft.hasDbSalary())
 			deleteSalaries(conn, draft.getDbId());
 
-		JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder(conn);
+		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(conn);
 		RoundSalaryBuilder<ISalary> roundSalaryBuilder = new RoundSalaryBuilder<ISalary>(jooqSalaryBuilder,
 				d -> Math.round(d*1000.00)/1000.00);
 		jooqSalaryBuilder.setListener(new SalaryBuilderListener());
@@ -3252,7 +3136,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			autocommit = conn.getAutoCommit();
 			conn.setAutoCommit(false);
-			calculate(draft, compositeSalaryBuilder, salaryDraftBuilder, salaryCalculator);
+			calculate(conn, draft, compositeSalaryBuilder, salaryDraftBuilder, salaryCalculator);
 			jooqSalaryBuilder.execute();
 			conn.commit();
 		} finally {
@@ -3261,10 +3145,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 		try {
 			salaryDraftBuilder.clearDb();
-			ISalary dbSalary = getDBSalary(draft);
+			ISalary dbSalary = getDBSalary(conn, draft);
 			if (dbSalary != null) {
 				salaryDraftBuilder.setDbSalary(dbSalary);
-				salaryDraftBuilder.setDbSalaryData(getDBSalaryData(dbSalary));
+				salaryDraftBuilder.setDbSalaryData(getDBSalaryData(conn, dbSalary));
 			}
 		} catch (SalaryException e) {
 		} catch (ManagerBeanException e) {
@@ -3272,6 +3156,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private static void calculateAndSave(Connection conn, SalaryDraft draft, Date sections [])
 			throws SQLException {
 		if (draft.hasDbSalary())
@@ -3290,14 +3175,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			SmartContractSalaryCalculator<ISalary> salaryCalculator = new SmartContractSalaryCalculator<ISalary>();
 			for ( Date section : sections ) {
 				draft.setEndDate(AonDateUtils.add(section, Calendar.DAY_OF_MONTH, -1));
-				calculate(draft, collectSalaryBuilder, salaryDraftBuilder, salaryCalculator);
+				calculate(conn, draft, collectSalaryBuilder, salaryDraftBuilder, salaryCalculator);
 				draft.setStartDate(section);
 			}
 			draft.setEndDate(endDate);
 
 			draft.addDraftVariable(getActiveDaysVar(collectSalaryBuilder));
 
-			calculate(draft, collectSalaryBuilder, salaryDraftBuilder, salaryCalculator);
+			calculate(conn, draft, collectSalaryBuilder, salaryDraftBuilder, salaryCalculator);
 
 			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(conn);
 			RoundSalaryBuilder<ISalary> roundSalaryBuilder = new RoundSalaryBuilder<ISalary>(jooqSalaryBuilder,
@@ -3316,10 +3201,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 		try {
 			salaryDraftBuilder.clearDb();
-			ISalary dbSalary = getDBSalary(draft);
+			ISalary dbSalary = getDBSalary(conn, draft);
 			if (dbSalary != null) {
 				salaryDraftBuilder.setDbSalary(dbSalary);
-				salaryDraftBuilder.setDbSalaryData(getDBSalaryData(dbSalary));
+				salaryDraftBuilder.setDbSalaryData(getDBSalaryData(conn, dbSalary));
 			}
 			else {
 				//draft.clearDb();
@@ -3347,27 +3232,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	private static <T extends ISalaryBuilder<ISalary>, L extends SalaryDraftBuilder> void calculate(
-			SalaryDraft draft, T salaryBuilder, L draftBuilder, GenericContractSalaryCalculator<ISalary,ISQLContractSalaryCalculatorContext> calculator) {
-
-		calculator.setSalaryBuilder(salaryBuilder);
-		calculator.setListener(draftBuilder);
-
+			String domain, SalaryDraft draft, T salaryBuilder, L draftBuilder, GenericContractSalaryCalculator<ISalary,ISQLContractSalaryCalculatorContext> calculator) {
 		Connection conn = null;
-		ISQLContractSalaryCalculatorContext ctx;
 		try {
-			conn = getConnection();
-			ctx = getSalaryCalculatorContext(conn, draft, draftBuilder);
-			draftBuilder.setDefined(EmployeesServiceHelper.getDefinedMap(ctx));
-			calculator.calculate(ctx);
-		} catch (ExpressionException e) {
-			// TODO Auto-generated catch block
-			throw new IllegalArgumentException(e);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			throw new IllegalArgumentException(e);
-		} catch (SalaryException e) {
-			e.printStackTrace();
-			// TODO Auto-generated catch block
+			conn = AonServletUtils.getConnection(domain);
+			calculate(conn, draft, salaryBuilder, draftBuilder, calculator);
+		} catch ( SQLException e ) {
 			throw new IllegalArgumentException(e);
 		} finally {
 			if (conn != null) {
@@ -3380,19 +3250,39 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-	private static <T> List<ITimedResult<T>> eval(String expression,
+	private static <T extends ISalaryBuilder<ISalary>, L extends SalaryDraftBuilder> void calculate(
+			Connection conn, SalaryDraft draft, T salaryBuilder, L draftBuilder, GenericContractSalaryCalculator<ISalary,ISQLContractSalaryCalculatorContext> calculator) {
+
+		calculator.setSalaryBuilder(salaryBuilder);
+		calculator.setListener(draftBuilder);
+
+		ISQLContractSalaryCalculatorContext ctx;
+		try {
+			ctx = getSalaryCalculatorContext(conn, draft, draftBuilder);
+			draftBuilder.setDefined(EmployeesServiceHelper.getDefinedMap(ctx));
+			calculator.calculate(ctx);
+		} catch (ExpressionException e) {
+			throw new IllegalArgumentException(e);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} catch (SalaryException e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		} 
+	}
+
+	private static <T> List<ITimedResult<T>> eval(String domain, String expression,
 			SalaryDraft draft, Class<T> toType) throws EvalException {
 		Connection conn = null;
 
 		try {
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
 			ISalaryCalculatorContext ctx = getSalaryCalculatorContext(conn,
 					draft, null);
 			return ctx.getExpressionContext().eval(expression,
 					ctx.getStartDate(), ctx.getEndDate(), toType);
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} catch (InvalidVariables e) {
 			throw new EvalWarning(e.getMessage());
@@ -3433,7 +3323,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			return ctx.getExpressionContext().eval(expression,
 					ctx.getStartDate(), ctx.getEndDate(), toType);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} catch (InvalidVariables e) {
 			throw new EvalWarning(e.getMessage());
@@ -3459,10 +3348,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
-	protected static ContextDescriptor getDraftContext(SalaryDraft draft) {
+	protected static ContextDescriptor getDraftContext(String domain, SalaryDraft draft) {
 		Connection conn = null;
 		try {
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
 
 			IContractSalaryCalculatorContext calculatorCtx = getSalaryCalculatorContext(
 					conn, draft, null);
@@ -3471,10 +3360,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					draft.getEndDate());
 
 		} catch (ExpressionException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} finally {
 			if (conn != null) {
@@ -3577,7 +3464,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			return contextDescriptor;
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		}
 	}
@@ -3595,10 +3481,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					draft.getEndDate());
 
 		} catch (ExpressionException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
@@ -3612,7 +3496,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-	private static ISalary getSalary(SalaryDraft draft) {
+	private static ISalary getSalary(String domain, SalaryDraft draft) {
 
 		SalaryBuilder salaryBuilder = new SalaryBuilder();
 
@@ -3624,32 +3508,28 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		Connection conn = null;
 		ISQLContractSalaryCalculatorContext ctx;
 		try {
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
 			ctx = getSalaryCalculatorContext(conn, draft, null);
 			com.esferalia.aon.payroll.Salary salary = (com.esferalia.aon.payroll.Salary) calculator
 					.calculate(ctx);
 
-			Contract contract = PayrollServletUtils.getContract(draft
+			Contract contract = PayrollServletUtils.getContract(conn, draft
 					.getEmployee().getId());
 
 			salary.setContract(contract);
-
+			
 			// TODO: Calendar ???
 			salary.setIssueYear(ctx.getIssueDate().getYear());
 			salary.setIssueMonth(ctx.getIssueDate().getMonth());
 
 			return salary;
 		} catch (ExpressionException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} catch (SalaryException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} finally {
 			if (conn != null) {
@@ -3739,15 +3619,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					enterpriseActivity.setEnterprise(enterprise);
 					enterpriseCCC.setActivity(enterpriseActivity);
 					contract.setEnterpriseCCC(enterpriseCCC);
-				} else {
-					contract.setEnterpriseCCC(enterpriseCCC);
-					salary.setCcc(enterpriseCCC.getActivity().getType().getCode()+enterpriseCCC.getCcc());
-					EnterpriseActivity enterpriseActivity = enterpriseCCC
-							.getActivity();
-					enterprise = enterpriseActivity.getEnterprise();
-
-				}
-
+				} 
 				salary.setEnterpriseDocument(enterprise.getRegistry()
 						.getDocument());
 				salary.setEnterpriseName(enterprise.getRegistry().getFullName());
@@ -3774,13 +3646,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			return salary;
 		} catch (ExpressionException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} catch (SalaryException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} finally {
 			if (conn != null) {
@@ -3792,10 +3661,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-	private static IrpfOutcome getIrpfOutcome(SalaryDraft draft) {
+	private static IrpfOutcome getIrpfOutcome(String domain, SalaryDraft draft) {
 		Connection conn = null;
 		try {
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
 
 			Criteria contractCriteria = new Criteria();
 			contractCriteria.addEqualExpression(SQLConstants.CONTRACT + "."
@@ -3833,10 +3702,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			return listener.irpfOutcome;
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} catch (ExpressionException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} finally {
 			if (conn != null) {
@@ -4083,48 +3950,44 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		return sqlAgreementSalaryCalculatorContext;
 	}
 
-	private static ISalary getSalary(SalaryPreview draft) {
+	private static ISalary getSalary(String domain, SalaryPreview draft) {
 		SalaryBuilder salaryBuilder = new SalaryBuilder();
 
 		SmartContractSalaryCalculator<com.esferalia.aon.payroll.Salary> calculator =
 				new SmartContractSalaryCalculator<com.esferalia.aon.payroll.Salary>();
 
 		calculator.setSalaryBuilder(salaryBuilder);
-
-		Connection conn = null;
+		
+		Connection conn = null ;
 
 		ISQLContractSalaryCalculatorContext ctx;
 		try {
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
+			
 			ctx = getSQLContractSalaryCalculatorContext(conn, draft);
 			com.esferalia.aon.payroll.Salary salary = (com.esferalia.aon.payroll.Salary) calculator
 					.calculate(ctx);
 
-			Contract contract = PayrollServletUtils.getContract(draft
+			Contract contract = PayrollServletUtils.getContract(conn, draft
 					.getEmployee().getId());
 
 			salary.setContract(contract);
 
 			return salary;
 		} catch (ExpressionException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} catch (SalaryException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} finally {
-			if (conn != null) {
-				try {
+			try {
+				if ( conn != null )
 					conn.close();
-				} catch (SQLException logOrIgnore) {
-
-				}
+			} catch (SQLException e) {
+				
 			}
 		}
 
@@ -4183,20 +4046,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 
 		Salary.Type types[] = Salary.Type.values();
-
-		if (ordinal >= types.length) {
-			return null;
-		}
-
-		return types[ordinal];
-	}
-
-	private static Payment.Type getPaymentType(Integer ordinal) {
-		if (ordinal == null || ordinal < 0) {
-			return null;
-		}
-
-		Payment.Type types[] = Payment.Type.values();
 
 		if (ordinal >= types.length) {
 			return null;
@@ -4324,14 +4173,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		public CCCHandler(WorkplaceHandler workplaceHandler) {
 			super(ENTERPRISE_CCC, EnterpriseCccColumns.ID);
 			this.workplaceHandler = workplaceHandler;
-		}
-
-		/**
-		 *
-		 * @return Last, active workplace.
-		 */
-		public CCC getCCC() {
-			return ccc;
 		}
 
 		@Override
@@ -4504,7 +4345,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	private static SalaryType toSalaryType(Salary.Type type) {
 		return type != null ? SalaryType.values()[type.ordinal()] : null;
 	}
-
+	
+	@SafeVarargs
 	private static <T> T notNull(T... ts) {
 		for (T t : ts) {
 			if (t != null)
@@ -4559,11 +4401,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public EmployeeEventsData getEmployeeEvents(int contract, ArrayList<String> employeeContractVariables) {
+	public EmployeeEventsData getEmployeeEvents(String domain, int contract, ArrayList<String> employeeContractVariables) {
 		Connection connection = null;
-		initFacesContext();
 		try {
-			connection = AonServletUtils.getConnection();
+			connection = AonServletUtils.getConnection(domain);
 			return JooqEmployeeEvents.getEmployeeEvents(connection, contract, employeeContractVariables);
 
 		} catch (SQLException e) {
@@ -4574,17 +4415,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					connection.close();
 				} catch (SQLException e) {
 				}
-				releaseFacesContext();
 			}
 		}
 	}
 
 	@Override
-	public void setEmployeeEvents(int contract, EmployeeEventsUpdate updateInfo) {
+	public void setEmployeeEvents(String domain, int contract, EmployeeEventsUpdate updateInfo) {
 		Connection connection = null;
-		initFacesContext();
 		try {
-			connection = AonServletUtils.getConnection();
+			connection = AonServletUtils.getConnection(domain);
 			JooqEmployeeEvents.setEmployeeEvents(connection, contract, updateInfo);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
@@ -4594,7 +4433,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					connection.close();
 				} catch (SQLException e) {
 				}
-				releaseFacesContext();
 			}
 		}
 
@@ -4719,8 +4557,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 		}
 	}
-
 	
+	private static boolean notAtEnterpriseSite(){
+		return false;
+	}
 
 
 }

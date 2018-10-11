@@ -253,6 +253,7 @@ public class AonServletUtils {
 		return fileName.substring(0, startExt);
 	}
 
+	@Deprecated
 	public static void initFacesContext(ServletContext context,
 			HttpServletRequest request, HttpServletResponse response) {
 
@@ -284,6 +285,7 @@ public class AonServletUtils {
 		}
 	}
 
+	@Deprecated
 	public static void releaseFacesContext() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		if (facesContext != null) {

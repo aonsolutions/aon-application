@@ -75,7 +75,7 @@ public class DomainEmployeesServiceAsync {
 
 	public void setEmployeeEvents(int contract, EmployeeEventsUpdate updateInfo,
 			AsyncCallback<EmployeeEventsUpdate> callback) {
-		employeesServiceAsync.setEmployeeEvents(contract, updateInfo, callback);
+		employeesServiceAsync.setEmployeeEvents(getCurrentDomainName(), contract, updateInfo, callback);
 	}
 
 	public void setEmployeeCalendar(int contract, EmployeeCalendarUpdate updateInfo,
@@ -390,7 +390,7 @@ public class DomainEmployeesServiceAsync {
 	
 	public void getEmployeeEvents(int contract, ArrayList<String> employeeContractVariables,
 			AsyncCallback<EmployeeEventsData> callback) {
-		employeesServiceAsync.getEmployeeEvents(contract, employeeContractVariables, callback);
+		employeesServiceAsync.getEmployeeEvents(getCurrentDomainName(), contract, employeeContractVariables, callback);
 	}
 	// ------------------------------------------------------------------------
 	

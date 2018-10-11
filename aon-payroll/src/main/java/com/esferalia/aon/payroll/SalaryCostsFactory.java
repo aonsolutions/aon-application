@@ -68,7 +68,7 @@ public class SalaryCostsFactory implements ICostsFactory {
 		}
 	}
 
-	private void manageCosts(Costs costs, SalaryCost sc) {
+	public static void manageCosts(Costs costs, SalaryCost sc) {
 		if (sc.getType() == DeductionType.COMMON_CONTINGENCY) {
 			costs.setCommonContingency(sc);
 		} else if (sc.getType() == DeductionType.PROFESSIONAL_CONTINGENCY) {

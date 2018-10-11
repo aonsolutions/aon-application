@@ -31,6 +31,7 @@ import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
+import com.esferalia.aon.gwt.payroll.report.StatelessReportManager;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.salary.SalaryExpenseController;
 
@@ -107,7 +108,7 @@ public class CostExporterServlet extends HttpServlet {
 			
 			final List<ITransferObject> list = beanManager.getList(criteria);
 						
-			ReportManager reportManager = new ReportManager();
+			ReportManager reportManager = new StatelessReportManager();
 			OutputFormat outputFormat = getOutputFormat(extension);
 			reportManager.setOutputFormat(outputFormat);
 			

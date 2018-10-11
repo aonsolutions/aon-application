@@ -7,10 +7,8 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 
 public interface EmployeeEventsService {
 
-	EmployeeEventsData getEmployeeEvents(int contract, ArrayList<String> employeeContractVariables); 
+	EmployeeEventsData getEmployeeEvents(String domain, int contract, ArrayList<String> employeeContractVariables); 
 	
-	void setEmployeeEvents(int contract, EmployeeEventsUpdate updateInfo);
-	
-	
+	void setEmployeeEvents(String domain, int contract, EmployeeEventsUpdate updateInfo);
 	
 }

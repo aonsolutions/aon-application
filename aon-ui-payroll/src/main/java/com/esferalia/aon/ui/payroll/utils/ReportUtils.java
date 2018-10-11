@@ -3,6 +3,8 @@ package com.esferalia.aon.ui.payroll.utils;
 import static com.esferalia.aon.watson.util.AonStringUtils.romanIntValue;
 
 import java.lang.reflect.InvocationTargetException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -11,16 +13,14 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import net.sf.jasperreports.engine.JRImageRenderer;
-import net.sf.jasperreports.engine.JRRenderable;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.util.ComparableComparator;
+import org.jooq.DSLContext;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -32,7 +32,9 @@ import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryDirStaff;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.occam.api.model.Payment;
+import com.esferalia.aon.jooq.tables.Rattach;
+import com.esferalia.aon.jooq.tables.records.RattachRecord;
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
@@ -41,7 +43,14 @@ import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.ibm.icu.text.RuleBasedNumberFormat;
 
+import net.aonsolutions.core.pool.AonConnectionException;
+import net.aonsolutions.core.pool.AonDataSource;
+import net.sf.jasperreports.engine.JRImageRenderer;
+import net.sf.jasperreports.engine.JRRenderable;
+
 public class ReportUtils {
+	
+	public static final ThreadLocal<String> domain = new ThreadLocal<String>();
 	
 	
 	public static class ReportSalaryItem<T extends Enum<T> & IResourceable> implements ISalaryItem<T> {
@@ -269,7 +278,7 @@ public class ReportUtils {
 		return JRImageRenderer.getInstance(rattach.getData());
 	}
 
-	public static RegistryAttachment getRAttach(Integer registryId,
+	public static RegistryAttachment _getRAttach(Integer registryId,
 			RegistryAttachmentType type) throws ManagerBeanException {
 		IManagerBean beanManager = BeanManager
 				.getManagerBean(RegistryAttachment.class);
@@ -285,6 +294,48 @@ public class ReportUtils {
 
 		return list == null || list.isEmpty() ? null
 				: (RegistryAttachment) list.get(0);
+	}
+
+	public static RegistryAttachment getRAttach(Integer registryId,
+			RegistryAttachmentType type) throws ManagerBeanException {
+		Connection conn = null;
+		try {
+			conn = AonDataSource.getInstance().getConnection(domain.get());
+			AONContext aonContext = new AONContext(conn);
+			DSLContext dslContext = aonContext.getDslContext();
+			
+			RattachRecord rattachRecord =
+			dslContext
+			.select()
+			.from(Rattach.RATTACH)
+			.where(Rattach.RATTACH.REGISTRY.eq(registryId))
+			.and(Rattach.RATTACH.TYPE.eq((byte) type.ordinal()))
+			.fetchInto(Rattach.RATTACH)
+			.stream()
+			.findFirst()
+			.orElseGet(()->null)
+			;
+			
+			if ( rattachRecord == null )
+				return null;
+			
+			RegistryAttachment registryAttachment = new RegistryAttachment();
+			registryAttachment.setId(rattachRecord.getId());
+			registryAttachment.setData(rattachRecord.getData());
+			registryAttachment.setDescription(rattachRecord.getDescription());
+			
+			return registryAttachment;
+		} catch (AonConnectionException e) {
+			throw new ManagerBeanException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+		}
+		
 	}
 
 	public static List<RegistryDirStaff> getRepresentativesLabor(Integer registryId) 

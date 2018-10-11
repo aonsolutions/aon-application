@@ -9,7 +9,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -19,51 +18,58 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import javax.faces.FactoryFinder;
-import javax.faces.component.UIViewRoot;
-import javax.faces.context.FacesContext;
-import javax.faces.context.FacesContextFactory;
-import javax.faces.lifecycle.Lifecycle;
-import javax.faces.lifecycle.LifecycleFactory;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import org.jooq.Condition;
+import org.jooq.DSLContext;
+import org.jooq.SortField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
-import net.aonsolutions.core.dbutils.DatabaseUtil;
-import net.aonsolutions.core.pool.AonConnectionException;
+import com.code.aon.company.Enterprise;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.controller.ICompanyConstants;
-import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.gwt.payroll.server.OpenDocumentConverterServlet;
-import com.esferalia.aon.gwt.payroll.server.OpenDocumentConverterServlet.NoSuchDocumentException;
+import com.esferalia.aon.jooq.tables.records.ContractRecord;
+import com.esferalia.aon.jooq.tables.records.EnterpriseRecord;
+import com.esferalia.aon.jooq.tables.records.SalaryRecord;
+import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.SalaryBonus;
 import com.esferalia.aon.payroll.SalaryBuilder;
+import com.esferalia.aon.payroll.SalaryCost;
+import com.esferalia.aon.payroll.SalaryCostsFactory;
 import com.esferalia.aon.payroll.SalaryData;
-import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.SalaryDeduction;
+import com.esferalia.aon.payroll.SalaryDeductionsFactory;
+import com.esferalia.aon.payroll.SalaryEmbargo;
+import com.esferalia.aon.payroll.SalaryPayment;
+import com.esferalia.aon.payroll.SalaryPaymentsFactory;
+import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AppParamColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RattachColumns;
+import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.cost.Costs;
+import com.esferalia.aon.salary.deduction.Deductions;
+import com.esferalia.aon.salary.enumeration.DeductionType;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.payment.Payments;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
+import com.esferalia.aon.watson.util.AonDateUtils;
 
 public class PayrollServletUtils extends AonServletUtils {
 
@@ -75,7 +81,7 @@ public class PayrollServletUtils extends AonServletUtils {
 	}
 
 	public interface SalaryFilter {
-		boolean accept(Salary salary);
+		boolean accept(ISalary salary);
 	}
 
 	public static class SiteFilter implements SalaryFilter {
@@ -94,15 +100,15 @@ public class PayrollServletUtils extends AonServletUtils {
 		}
 
 		@Override
-		public boolean accept(Salary salary) {
-			Set<SalaryData> datas = salary.getSalaryDatas();
-			for (SalaryData salaryData : datas) {
-				if (ENTERPRISE_SITE_DATE.equals(salaryData.getName())) {
-					String expression = salaryData.getExpression();
-					return expression != null
-							&& expression.compareTo(utcDate) <= 0;
-				}
-			}
+		public boolean accept(ISalary salary) {
+//			Set<SalaryData> datas = (( Salary ) salary).getSalaryDatas();
+//			for (SalaryData salaryData : datas) {
+//				if (ENTERPRISE_SITE_DATE.equals(salaryData.getName())) {
+//					String expression = salaryData.getExpression();
+//					return expression != null
+//							&& expression.compareTo(utcDate) <= 0;
+//				}
+//			}
 			return true;
 		}
 	}
@@ -143,16 +149,20 @@ public class PayrollServletUtils extends AonServletUtils {
 		private final static Logger LOGGER = LoggerFactory
 				.getLogger(SalaryProvider.class);
 
-		private Criteria criteria;
+		private String domain;
+		private Condition condition;
 		private SalaryFilter filter;
+		private SortField<?> sortFields [];
 
-		public SalaryProvider(Criteria criteria, SalaryFilter filter) {
+		public SalaryProvider(String domain, Condition condition, SalaryFilter filter, SortField<?> ...sortFields) {
+			this.domain = domain;
 			this.filter = filter;
-			this.criteria = criteria;
+			this.condition = condition;
+			this.sortFields = sortFields;
 		}
 
 		@Override
-		public Collection getCollection() {
+		public Collection<?> getCollection() {
 			try {
 				return getCollection(false);
 			} catch (ManagerBeanException e) {
@@ -162,22 +172,35 @@ public class PayrollServletUtils extends AonServletUtils {
 		}
 
 		@Override
-		public Collection getCollection(boolean forceRefresh)
+		public Collection<?> getCollection(boolean forceRefresh)
 				throws ManagerBeanException {
-			IManagerBean beanManager = BeanManager
-					.getManagerBean(com.esferalia.aon.payroll.Salary.class);
-			List<?> list = beanManager.getList(criteria);
-			if (filter == null)
-				return list;
-			else
-				return filter(list);
+			
+			Connection conn = null;
+			try {
+				conn = getConnection(domain);
+
+				Collection<?> list = getSalary(conn, condition, sortFields); //beanManager.getList(criteria);
+				if (filter == null)
+					return list;
+				else
+					return filter(list);
+			} catch ( SQLException e ) {
+				throw new ManagerBeanException(e);
+			} finally{
+				if ( conn != null ) {
+					try {
+						conn.close();
+					} catch ( SQLException e ) {
+					}
+				}
+			}
 		}
 
 		private Collection filter(Collection collection) {
-			List<Salary> salaries = new ArrayList<Salary>(collection.size());
+			List<ISalary> salaries = new ArrayList<ISalary>(collection.size());
 			for (Object salary : collection) {
-				if (filter.accept((Salary) salary))
-					salaries.add((Salary) salary);
+				if (filter.accept((ISalary) salary))
+					salaries.add((ISalary) salary);
 			}
 			return salaries;
 		}
@@ -191,22 +214,26 @@ public class PayrollServletUtils extends AonServletUtils {
 
 		private Date endDate;
 		private Date startDate;
+		private String domain;
 		private Criteria criteria;
 		private SalaryType types[];
 		private SalaryProvider salaryProvider;
 
-		public CalcSalaryProvider(Date startDate, Date endDate,
+		public CalcSalaryProvider(
+				String domain,
+				Date startDate, Date endDate,
 				Criteria criteria, SalaryType types[],
 				SalaryProvider salaryProvider) {
 			this.types = types;
 			this.criteria = criteria;
+			this.domain = domain;
 			this.endDate = endDate;
 			this.startDate = startDate;
 			this.salaryProvider = salaryProvider;
 		}
 
 		@Override
-		public Collection getCollection() {
+		public Collection<?> getCollection() {
 			try {
 				return getCollection(false);
 			} catch (ManagerBeanException e) {
@@ -216,7 +243,7 @@ public class PayrollServletUtils extends AonServletUtils {
 		}
 
 		@Override
-		public Collection getCollection(boolean forceRefresh)
+		public Collection<?> getCollection(boolean forceRefresh)
 				throws ManagerBeanException {
 			if (types.length == 0)
 				return salaryProvider.getCollection(forceRefresh);
@@ -225,10 +252,10 @@ public class PayrollServletUtils extends AonServletUtils {
 			SQLContractSalaryCalculatorContext ctx = null;
 
 			try {
-				conn = getConnection();
+				conn = AonServletUtils.getConnection(domain);
 
 				SalaryBuilder salaryBuilder = new SalaryBuilder();
-				ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+				SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 				calculator.setSalaryBuilder(salaryBuilder);
 
 				List<Salary> allSalaries = new ArrayList<Salary>();
@@ -248,7 +275,7 @@ public class PayrollServletUtils extends AonServletUtils {
 							Salary salary = calculator.calculate(ctx);
 
 							salary.setIssueYear(0);
-							salary.setContract(getContract(ctx.getId()));
+							salary.setContract(getContract(conn, ctx.getId()));
 
 							int index = Collections.binarySearch(allSalaries,
 									salary, salaryComparator);
@@ -292,7 +319,7 @@ public class PayrollServletUtils extends AonServletUtils {
 			return false;
 		}
 
-		private static boolean find(Collection collection,
+		private static boolean find(Collection<?> collection,
 				SQLContractSalaryCalculatorContext ctx) {
 			Integer id = ctx.getId();
 			SalaryType type = ctx.getSalaryType();
@@ -342,31 +369,30 @@ public class PayrollServletUtils extends AonServletUtils {
 	}
 
 
-	protected static String getSalaryReport(Integer enterpriseID,
-			String report, String def) throws SQLException {
-		Connection conn = null;
-		try {
-			conn = getConnection();
-			return getSalaryReport(conn, report, def, enterpriseID);
-		} finally {
-			if (conn != null) {
-				conn.close();
-			}
-		}
-	}
+//	protected static String getSalaryReport(Integer enterpriseID,
+//			String report, String def) throws SQLException {
+//		Connection conn = null;
+//		try {
+//			conn = getConnection();
+//			return getSalaryReport(conn, report, def, enterpriseID);
+//		} finally {
+//			if (conn != null) {
+//				conn.close();
+//			}
+//		}
+//	}
 
-	protected static String getSalaryReport(final Integer enterpriseID,
+	protected static String getSalaryReport(String domain, final Integer enterpriseID,
 			SalaryType salaryType) throws SQLException {
 		Connection conn = null;
 		try {
-			conn = getConnection();
+			conn = AonServletUtils.getConnection(domain);
 			return getSalaryReport(conn, enterpriseID, salaryType);
 		} finally {
 			if (conn != null) {
 				conn.close();
 			}
 		}
-		
 	}
 
 	protected static String getSalaryReport(final Connection conn, final Integer enterpriseID,
@@ -524,23 +550,52 @@ public class PayrollServletUtils extends AonServletUtils {
 		}
 	}
 
-	protected static Contract getContract(Integer id)
+	protected static Contract getContract(Connection connection, Integer id)
 			throws ManagerBeanException {
 
-		IManagerBean beanManager = BeanManager.getManagerBean(Contract.class);
+		AONContext aonContext = new AONContext(connection);
+		DSLContext dslContext = aonContext.getDslContext();
 
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(
-				beanManager.getFieldName(IEntityAlias.CONTRACT_ID), id);
+		return 
+		dslContext
+		.select()
+		.from(com.esferalia.aon.jooq.tables.Contract.CONTRACT)
+		.innerJoin(com.esferalia.aon.jooq.tables.Workplace.WORKPLACE).onKey()
+		.innerJoin(com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE).onKey()
+		.where(com.esferalia.aon.jooq.tables.Contract.CONTRACT.ID.eq(id))
+		.fetch()
+		.stream()
+		.map( record -> {
+			
+			ContractRecord contractRecord = record.into(com.esferalia.aon.jooq.tables.Contract.CONTRACT);
+			WorkplaceRecord workplaceRecord = record.into(com.esferalia.aon.jooq.tables.Workplace.WORKPLACE);
+			EnterpriseRecord enterpriseRecord = record.into(com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE);
 
-		List<ITransferObject> list = beanManager.getList(criteria);
-
-		if (list.isEmpty()) {
-			return null;
-		}
-
-		Contract contract = (Contract) list.get(0);
-		return contract;
+			Contract contract = new Contract();
+			contract.setId(contractRecord.getId());
+			contract.setEndDate(contractRecord.getEndDate());
+			contract.setStartDate(contractRecord.getStartDate());
+			contract.setSeniorityDate(contractRecord.getSeniorityDate());
+			contract.setDescription(contractRecord.getDescription());
+			contract.setDomain(contractRecord.getDomain());
+			contract.setCategoryDescription(contractRecord.getCategoryDescription());
+			
+			WorkPlace workPlace = new WorkPlace();
+			workPlace.setId(workplaceRecord.getId());
+			workPlace.setDomain(workplaceRecord.getDomain());
+			//workPlace.setActive(workplaceRecord.getActive());
+			workPlace.setDescription(workplaceRecord.getDescription());
+			contract.setWorkPlace(workPlace);
+			
+			Enterprise enterprise = new Enterprise();
+			enterprise.setId(enterpriseRecord.getRegistry());
+			enterprise.setDomain(enterpriseRecord.getDomain());
+			workPlace.setEnterprise(enterprise);
+			
+			return contract;
+		})
+		.findAny()
+		.orElseGet(()-> null );
 
 	}
 
@@ -555,8 +610,379 @@ public class PayrollServletUtils extends AonServletUtils {
 		return epoch.getTime();
 	}
 
-	public static void main(String[] args) {
-		System.out.println(String.format("%1$tY%1$tm%1$td", new Date()));
+	public static Collection<ISalary> _getDBSalary(Connection connection, Condition where, SortField<?> ...sortFields)
+			throws ManagerBeanException {
+		
+		AONContext aonContext = new AONContext(connection);
+		DSLContext dslContext = aonContext.getDslContext();
+		
+		return 
+		dslContext
+		.select()
+		.from(com.esferalia.aon.jooq.tables.Salary.SALARY)
+		.innerJoin(com.esferalia.aon.jooq.tables.Contract.CONTRACT).onKey()
+		.innerJoin(com.esferalia.aon.jooq.tables.Workplace.WORKPLACE).onKey()
+		.innerJoin(com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE).onKey()
+		.where(where)
+		.orderBy(sortFields)
+		.fetchInto(com.esferalia.aon.jooq.tables.Salary.SALARY)
+		.stream()
+		.map( salaryRecord -> {
+			DBSalary dbSalary =
+			new DBSalary()
+			.setId(salaryRecord.getId())
+			.setDomain(salaryRecord.getDomain())
+			.setDomain(salaryRecord.getDomain())
+
+			.setCcc(salaryRecord.getCcc())
+			.setCategory(salaryRecord.getCategory())
+			.setQuoteGroup(salaryRecord.getQuoteGroup())
+			.setStartDate(salaryRecord.getStartDate())
+			.setEndDate(salaryRecord.getEndDate())
+			.setChargeDate(salaryRecord.getChargeDate())
+			.setIssueDate(salaryRecord.getIssueDate())
+			.setSeniorityDate(salaryRecord.getSeniorityDate())
+			.setRegistration(salaryRecord.getRegistration())
+			
+			.setEmployeeName(salaryRecord.getEmployeeName())
+			.setEmployeeDocument(salaryRecord.getEmployeeDocument())
+			.setSocialSecurityNumber(salaryRecord.getSocialSecurityNumber())
+
+			.setEnterpriseName(salaryRecord.getEnterpriseName())
+			.setEnterpriseAddress(salaryRecord.getEnterpriseAddress())
+			.setEnterpriseDocument(salaryRecord.getEnterpriseDocument())
+			
+			.setSsRegime(salaryRecord.getSsRegime())
+			.setTimeUnits(salaryRecord.getTimeUnits())
+			
+			.setItBase(salaryRecord.getItBase())
+			.setIrpfBase(salaryRecord.getIrpfBase())
+			.setCommonBase(salaryRecord.getCgcBase())
+			.setRawCommonBase(salaryRecord.getRawCgcBase())
+			.setProfessionalBase(salaryRecord.getCgpBase())
+			.setOvertimeBase(salaryRecord.getHextraBase())
+			.setMoneyIrpfBase(salaryRecord.getMoneyIrpfBase())
+			.setInkindIrpfBase(salaryRecord.getInkindIrpfBase())
+			.setNonEstructuralOvertimeBase(salaryRecord.getNonHextraBase())
+			.setExtraPayProration(salaryRecord.getProExtBase())
+
+			.setTotalIrpf(salaryRecord.getTotalIrpf())
+			.setTotalLiquid(salaryRecord.getTotalLiquid())
+			.setTotalPayment(salaryRecord.getTotalPayment())
+			.setTotalDeduction(salaryRecord.getTotalDeduction())
+			
+			.setRemuneration(salaryRecord.getRemuneration())
+			.setSocialSecurityContributions(salaryRecord.getSocialSecurityContributions())
+
+			.setType(SalaryType.values()[salaryRecord.getType()])
+			;
+			dslContext
+			.select()
+			.from(com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT)
+			.where(com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT.SALARY.eq(salaryRecord.getId()))
+			.fetchInto(com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT)
+			.forEach(p -> {
+				dbSalary.addPayment(
+				to(p.getType(), PaymentType.class), 
+				p.getPaymentConcept(), 
+				p.getAmount(), 
+				p.getDescription(), 
+				p.getExpression());
+			})
+			;
+			
+			dslContext
+			.select()
+			.from(com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION)
+			.where(com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION.SALARY.eq(salaryRecord.getId()))
+			.fetchInto(com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION)
+			.forEach(p -> {
+				dbSalary.addDeduction(
+				to(p.getType(), DeductionType.class), 
+				p.getDeductionConcept(), 
+				p.getAmount(), 
+				p.getDescription(), 
+				p.getExpression());
+			})
+			;
+
+			dslContext
+			.select()
+			.from(com.esferalia.aon.jooq.tables.SalaryCost.SALARY_COST)
+			.where(com.esferalia.aon.jooq.tables.SalaryCost.SALARY_COST.SALARY.eq(salaryRecord.getId()))
+			.fetchInto(com.esferalia.aon.jooq.tables.SalaryCost.SALARY_COST)
+			.forEach(p -> {
+				dbSalary.addCost(
+				to(p.getType(), DeductionType.class), 
+				p.getCostConcept(), 
+				p.getAmount(), 
+				p.getDescription(), 
+				null);
+			})
+			;
+			return dbSalary;
+		})
+		.collect(Collectors.toList())
+		;
+		
+	}
+
+	public static Collection<Salary> getSalary(Connection connection, Condition where, SortField<?> ...sortFields)
+			throws ManagerBeanException {
+		
+		AONContext aonContext = new AONContext(connection);
+		DSLContext dslContext = aonContext.getDslContext();
+		
+		return 
+		dslContext
+		.select()
+		.from(com.esferalia.aon.jooq.tables.Salary.SALARY)
+		.innerJoin(com.esferalia.aon.jooq.tables.Contract.CONTRACT).onKey()
+		.innerJoin(com.esferalia.aon.jooq.tables.Workplace.WORKPLACE).onKey()
+		.innerJoin(com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE).onKey()
+		.where(where)
+		.orderBy(sortFields)
+		.fetch()
+		.stream()
+		.map( record -> {
+			
+			SalaryRecord salaryRecord = record.into(com.esferalia.aon.jooq.tables.Salary.SALARY);
+			ContractRecord contractRecord = record.into(com.esferalia.aon.jooq.tables.Contract.CONTRACT);
+			WorkplaceRecord workplaceRecord = record.into(com.esferalia.aon.jooq.tables.Workplace.WORKPLACE);
+			EnterpriseRecord enterpriseRecord = record.into(com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE);
+
+			Salary salary = new Salary() {
+				@Override
+				public Collection<SalaryCost> getCosts() throws SalaryException {
+					return getSalaryCosts();
+				}
+				@Override
+				public Collection<SalaryCost> getCostS() throws SalaryException {
+					return getSalaryCosts();
+				}
+				@Override
+				public Collection<SalaryBonus> getBonus() throws SalaryException {
+					return getSalaryBonus();
+				}
+				@Override
+				public Collection<SalaryPayment> getPaymentS() throws SalaryException {
+					return getSalaryPayments();
+				}
+				@Override
+				public Collection<SalaryDeduction> getDeductionS() throws SalaryException {
+					return getSalaryDeductions();
+				}
+			};
+			salary.setId(salaryRecord.getId());
+			salary.setDomain(salaryRecord.getDomain());
+
+			salary.setCcc(salaryRecord.getCcc());
+			salary.setCategory(salaryRecord.getCategory());
+			salary.setQuoteGroup(salaryRecord.getQuoteGroup());
+			salary.setStartDate(salaryRecord.getStartDate());
+			salary.setEndDate(salaryRecord.getEndDate());
+			salary.setChargeDate(salaryRecord.getChargeDate());
+			salary.setIssueDate(salaryRecord.getIssueDate());
+			salary.setSeniorityDate(salaryRecord.getSeniorityDate());
+			salary.setRegistration(salaryRecord.getRegistration());
+			
+			salary.setEmployeeName(salaryRecord.getEmployeeName());
+			salary.setEmployeeDocument(salaryRecord.getEmployeeDocument());
+			salary.setSocialSecurityNumber(salaryRecord.getSocialSecurityNumber());
+
+			salary.setEnterpriseName(salaryRecord.getEnterpriseName());
+			salary.setEnterpriseAddress(salaryRecord.getEnterpriseAddress());
+			salary.setEnterpriseDocument(salaryRecord.getEnterpriseDocument());
+			
+			salary.setSsRegime(salaryRecord.getSsRegime());
+			salary.setTimeUnits(salaryRecord.getTimeUnits());
+			
+			salary.setItBase(salaryRecord.getItBase());
+			salary.setIrpfBase(salaryRecord.getIrpfBase());
+			salary.setCommonBase(salaryRecord.getCgcBase());
+			salary.setRawCommonBase(salaryRecord.getRawCgcBase());
+			salary.setProfessionalBase(salaryRecord.getCgpBase());
+			salary.setOvertimeBase(salaryRecord.getHextraBase());
+			salary.setMoneyIrpfBase(salaryRecord.getMoneyIrpfBase());
+			salary.setInkindIrpfBase(salaryRecord.getInkindIrpfBase());
+			salary.setNonEstructuralOvertimeBase(salaryRecord.getNonHextraBase());
+			salary.setExtraPayProration(salaryRecord.getProExtBase());
+
+			salary.setTotalIrpf(salaryRecord.getTotalIrpf());
+			salary.setTotalLiquid(salaryRecord.getTotalLiquid());
+			salary.setTotalPayment(salaryRecord.getTotalPayment());
+			salary.setTotalDeduction(salaryRecord.getTotalDeduction());
+			salary.setTotalEnterprise(salaryRecord.getTotalEnterprise());
+			
+			salary.setRemuneration(salaryRecord.getRemuneration());
+			salary.setSocialSecurityContributions(salaryRecord.getSocialSecurityContributions());
+
+			salary.setType(SalaryType.values()[salaryRecord.getType()]);
+			
+			salary.setIssueYear(AonDateUtils.get(salaryRecord.getIssueDate(), Calendar.YEAR));
+			
+			Set<SalaryData> salaryDatas = 
+			dslContext
+			.select()
+			.from(com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA)
+			.where(com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA.SALARY.eq(salaryRecord.getId()))
+			.fetchInto(com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA)
+			.stream()
+			.map(p -> {
+				SalaryData salaryPayment = new SalaryData();
+				salaryPayment.setId(p.getId());
+				salaryPayment.setSalary(salary);
+				salaryPayment.setDomain(p.getDomain());
+				salaryPayment.setStartDate(p.getStartDate());
+				salaryPayment.setEndDate(p.getEndDate());
+				salaryPayment.setExpression(p.getExpression());
+				return salaryPayment;
+			})
+			.collect(Collectors.toSet())
+			;
+			salary.setSalaryDatas(salaryDatas);
+
+			Set<SalaryPayment> salaryPayments = 
+			dslContext
+			.select()
+			.from(com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT)
+			.where(com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT.SALARY.eq(salaryRecord.getId()))
+			.fetchInto(com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT)
+			.stream()
+			.map(p -> {
+				SalaryPayment salaryPayment = new SalaryPayment();
+				salaryPayment.setId(p.getId());
+				salaryPayment.setSalary(salary);
+				salaryPayment.setDomain(p.getDomain());
+				salaryPayment.setType(to(p.getType(), PaymentType.class)); 
+				salaryPayment.setPaymentConcept(p.getPaymentConcept()); 
+				salaryPayment.setIrpf(p.getIrpf());
+				salaryPayment.setQuote(p.getQuote());
+				salaryPayment.setAmount(p.getAmount()); 
+				salaryPayment.setDescription(p.getDescription()); 
+				salaryPayment.setExpression(p.getExpression());
+				return salaryPayment;
+			})
+			.collect(Collectors.toSet())
+			;
+			salary.setSalaryPayments(salaryPayments);
+			
+			Payments payments = new Payments();
+			salaryPayments.forEach( p -> SalaryPaymentsFactory.managePayment(payments, p));
+			try {salary.setPayments(payments);} catch (SalaryException e) {}
+			
+			Set<SalaryDeduction> salaryDeductions =
+			dslContext
+			.select()
+			.from(com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION)
+			.where(com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION.SALARY.eq(salaryRecord.getId()))
+			.fetchInto(com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION)
+			.stream()
+			.map(p -> {
+				SalaryDeduction salaryDeduction = new SalaryDeduction();
+				salaryDeduction.setId(p.getId());
+				salaryDeduction.setSalary(salary);
+				salaryDeduction.setDomain(p.getDomain());
+				salaryDeduction.setType(to(p.getType(), DeductionType.class)); 
+				salaryDeduction.setDeductionConcept(p.getDeductionConcept()); 
+				salaryDeduction.setAmount(p.getAmount()); 
+				salaryDeduction.setDescription(p.getDescription()); 
+				salaryDeduction.setExpression(p.getExpression());
+				return salaryDeduction;
+			})
+			.collect(Collectors.toSet())
+			;
+			salary.setSalaryDeductions(salaryDeductions);
+			Deductions deductions = new Deductions();
+			salaryDeductions.forEach( d -> SalaryDeductionsFactory.manageDeductions(deductions, d));
+			try {salary.setDeductions(deductions);} catch (SalaryException e) {}
+
+			Set<SalaryCost> salaryCosts =
+			dslContext
+			.select()
+			.from(com.esferalia.aon.jooq.tables.SalaryCost.SALARY_COST)
+			.where(com.esferalia.aon.jooq.tables.SalaryCost.SALARY_COST.SALARY.eq(salaryRecord.getId()))
+			.fetchInto(com.esferalia.aon.jooq.tables.SalaryCost.SALARY_COST)
+			.stream()
+			.map(p -> {
+				SalaryCost salaryCost = new SalaryCost();
+				salaryCost.setId(p.getId());
+				salaryCost.setSalary(salary);
+				salaryCost.setDomain(p.getDomain());
+				salaryCost.setType(to(p.getType(), DeductionType.class)); 
+				salaryCost.setCostConcept(p.getCostConcept()); 
+				salaryCost.setAmount(p.getAmount()); 
+				salaryCost.setDescription(p.getDescription()); 
+				return salaryCost;
+			})
+			.collect(Collectors.toSet())
+			;
+			salary.setSalaryCosts(salaryCosts);
+			Costs costs = new Costs();
+			salaryCosts.forEach( c -> SalaryCostsFactory.manageCosts(costs, c));
+			try {salary.setEnterpriseCosts(costs);} catch (SalaryException e) {}
+
+			Set<SalaryEmbargo> salaryEmbargos =
+			dslContext
+			.select()
+			.from(com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO)
+			.where(com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO.SALARY.eq(salaryRecord.getId()))
+			.fetchInto(com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO)
+			.stream()
+			.map(p -> {
+				SalaryEmbargo salaryEmbargo = new SalaryEmbargo();
+				salaryEmbargo.setId(p.getId());
+				salaryEmbargo.setSalary(salary);
+				salaryEmbargo.setDomain(p.getDomain());
+				salaryEmbargo.setAmount(p.getAmount()); 
+				salaryEmbargo.setDescription(p.getDescription()); 
+				return salaryEmbargo;
+			})
+			.collect(Collectors.toSet())
+			;
+			salary.setSalaryEmbargos(salaryEmbargos);
+			
+			Contract contract = new Contract();
+			contract.setId(contractRecord.getId());
+			contract.setEndDate(contractRecord.getEndDate());
+			contract.setStartDate(contractRecord.getStartDate());
+			contract.setSeniorityDate(contractRecord.getSeniorityDate());
+			contract.setDescription(contractRecord.getDescription());
+			contract.setDomain(contractRecord.getDomain());
+			contract.setCategoryDescription(contractRecord.getCategoryDescription());
+			salary.setContract(contract);
+			
+			WorkPlace workPlace = new WorkPlace();
+			workPlace.setId(workplaceRecord.getId());
+			workPlace.setDomain(workplaceRecord.getDomain());
+			//workPlace.setActive(workplaceRecord.getActive());
+			workPlace.setDescription(workplaceRecord.getDescription());
+			contract.setWorkPlace(workPlace);
+			
+			Enterprise enterprise = new Enterprise();
+			enterprise.setId(enterpriseRecord.getRegistry());
+			enterprise.setDomain(enterpriseRecord.getDomain());
+			workPlace.setEnterprise(enterprise);
+			
+			return salary;
+		})
+		.peek(s -> {
+			System.out.println("Nomina :" + s.getEmployeeName() +"");
+		})
+		.collect(Collectors.toList())
+		;
+		
+	}
+
+	private static <T extends Enum<?>> T to(Byte b, Class<T> clazz) {
+		if ( b == null )
+			return null;
+		if ( b < 0 )
+			return null;
+		T ts [] = clazz.getEnumConstants();
+		if ( b >= ts.length )
+			return null;
+		return ts[b];
 	}
 
 }

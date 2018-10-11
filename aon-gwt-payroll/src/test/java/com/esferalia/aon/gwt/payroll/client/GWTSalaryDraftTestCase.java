@@ -76,7 +76,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 			
 
 			@Override
-			public void setEmployeeEvents(int contract, EmployeeEventsUpdate updateInfo,
+			public void setEmployeeEvents(String domain, int contract, EmployeeEventsUpdate updateInfo,
 					AsyncCallback<EmployeeEventsUpdate> callback) {
 				// TODO Auto-generated method stub
 				
@@ -92,7 +92,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void getEmployeeEvents(int contract, ArrayList<String> employeeContractVariables,
+			public void getEmployeeEvents(String domain, int contract, ArrayList<String> employeeContractVariables,
 					AsyncCallback<EmployeeEventsData> callback) {
 				// TODO Auto-generated method stub
 				

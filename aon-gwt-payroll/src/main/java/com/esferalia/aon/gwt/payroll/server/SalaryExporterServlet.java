@@ -2,36 +2,41 @@ package com.esferalia.aon.gwt.payroll.server;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.faces.context.FacesContext;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
+import org.jooq.Condition;
+import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
+
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.ql.Criteria;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.report.controller.ReportManager;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.gwt.common.bean.GWT;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.Constants;
+import com.esferalia.aon.gwt.payroll.report.StatelessReportManager;
 import com.esferalia.aon.gwt.payroll.server.PayrollServletUtils.SiteFilter;
+import com.esferalia.aon.jooq.tables.Contract;
+import com.esferalia.aon.jooq.tables.Enterprise;
+import com.esferalia.aon.jooq.tables.Salary;
+import com.esferalia.aon.jooq.tables.Workplace;
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.ui.payroll.utils.ReportUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
@@ -49,23 +54,29 @@ public class SalaryExporterServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
+		String domain = req.getServerName();
 		String requestURI = req.getRequestURI();
 		String extension = AonServletUtils.getExtn(requestURI);
 		String salaryRequestStr = AonServletUtils.getFileName(requestURI);
 		
 		try {
-			ServletContext ctx = getServletContext();
-			AonServletUtils.initFacesContext(ctx, req, resp);
-			FacesContext fCtx = FacesContext.getCurrentInstance();
-			fCtx.getViewRoot().setLocale(new Locale("es", "ES"));
 			
-			Criteria criteria =  getCriteria(salaryRequestStr);
+			Condition condition =  getCondition(salaryRequestStr);
+			DSL.orderBy(Workplace.WORKPLACE.ID, Salary.SALARY.EMPLOYEE_NAME);
+
 			
-			ReportManager reportManager = new ReportManager();
+			ReportManager reportManager = new StatelessReportManager();
 			OutputFormat outputFormat = getOutputFormat(extension);
 			reportManager.setOutputFormat(outputFormat);
 			
-			reportManager.setCollectionProvider(new PayrollServletUtils.SalaryProvider(criteria, new SiteFilter()));
+			
+			reportManager.setCollectionProvider(
+			new PayrollServletUtils.SalaryProvider(
+			domain, 
+			condition, 
+			new SiteFilter(), 
+			Workplace.WORKPLACE.ID.asc(), 
+			Salary.SALARY.EMPLOYEE_NAME.asc()));
 			
 			
 			MimeType mimeType = MimeType.getByExtension(extension);
@@ -73,10 +84,13 @@ public class SalaryExporterServlet extends HttpServlet {
 			
 			OutputStream os = resp.getOutputStream();
 			
-			int enterpriseId = AonRemoteServiceServlet.getEnterpriseID();
 			// TODO : SalaryType????
 			SalaryType salaryType = getSalaryType(req);
-			String salaryReport = PayrollServletUtils.getSalaryReport(enterpriseId, salaryType); 
+			Integer enterpriseID = getEnterpriseID(domain, salaryRequestStr);
+			String salaryReport = PayrollServletUtils.getSalaryReport(domain, enterpriseID, salaryType); 
+			
+			// TODO: Bufff !!!!!!!!!!!!!!!
+			ReportUtils.domain.set(domain);
 			
 			reportManager.execute(os, salaryReport);
 			
@@ -88,9 +102,7 @@ public class SalaryExporterServlet extends HttpServlet {
 			throw new ServletException(e);
 		}catch (ManagerBeanException e) {
 			throw new ServletException(e);
-		} finally{
-			AonServletUtils.releaseFacesContext();
-		}
+		} 
 	}
 
 	private static OutputFormat getOutputFormat(String extension) {
@@ -115,19 +127,55 @@ public class SalaryExporterServlet extends HttpServlet {
 		return SalaryType.SALARY;
 	}
 
-	private static Criteria getCriteria(String request) throws ManagerBeanException {
-		IManagerBean beanManager = BeanManager
-				.getManagerBean(com.esferalia.aon.payroll.Salary.class);
-		Criteria criteria = new Criteria();
+	private static Integer getEnterpriseID(String domain, String request) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = AonServletUtils.getConnection(domain);
+			AONContext aonContext = new AONContext(conn);
+			DSLContext dslContext = aonContext.getDslContext();
+			
+			Matcher matcher = 
+					MONTH_PATTERN.matcher(request);
+			
+			if ( !matcher.matches() ) {
+				int salaryId = Integer.parseInt(request);
+				return dslContext.select()
+				.from(Salary.SALARY)
+				.innerJoin(Contract.CONTRACT).onKey()
+				.innerJoin(Workplace.WORKPLACE).onKey()
+				.where(Salary.SALARY.ID.eq(salaryId))
+				.fetchOne(Workplace.WORKPLACE.ENTERPRISE)
+				;
+			} else {
+				int workplaceId = Integer.parseInt(matcher.group(4));
+		
+				if ( workplaceId != 0  )
+					return dslContext.select()
+					.from(Workplace.WORKPLACE)
+					.where(Workplace.WORKPLACE.ID.eq(workplaceId))
+					.fetchOne(Workplace.WORKPLACE.ENTERPRISE)
+					;
+				
+				int enterpriseId = Integer.parseInt(matcher.group(3));
+				return enterpriseId;
+			}
+			
+		}  finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+	}
+
+	private static Condition getCondition(String request) throws ManagerBeanException {
+		Condition condition ;
 
 		Matcher matcher = 
 				MONTH_PATTERN.matcher(request);
 		
 		if ( !matcher.matches() ) {
 			int salaryId = Integer.parseInt(request);
-			criteria.addEqualExpression(
-					beanManager.getFieldName(IEntityAlias.SALARY_ID ),
-					salaryId);
+			condition = Salary.SALARY.ID.eq(salaryId);
 		} else {
 
 			int month = Integer.parseInt(matcher.group(1));
@@ -149,25 +197,19 @@ public class SalaryExporterServlet extends HttpServlet {
 			int workplaceId = Integer.parseInt(matcher.group(4));
 	
 			if ( workplaceId != 0  ){
-				criteria.addEqualExpression(
-						beanManager.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID ),
-						workplaceId);
+				condition = Workplace.WORKPLACE.ID.eq(workplaceId);
 			}
 			else {
-				criteria.addEqualExpression(
-						beanManager.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID ),
-						enterpriseId );
+				condition = Enterprise.ENTERPRISE.REGISTRY.eq(enterpriseId);
 			}
 			
-			criteria.addBetweenExpression(
-					beanManager.getFieldName(IEntityAlias.SALARY_END_DATE),
-					startDate, 
-					endDate );
+			java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());
+			java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());
 			
-			criteria.addOrder(beanManager.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID));
-			criteria.addOrder(beanManager.getFieldName(IEntityAlias.SALARY_EMPLOYEE_NAME));
+			condition.and(Salary.SALARY.END_DATE.between(sqlStartDate, sqlEndDate));
+			
 		}
-		return criteria;
+		return condition;
 	}
 
 

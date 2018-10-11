@@ -42,6 +42,7 @@ import com.code.aon.ui.report.controller.ReportManager;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
+import com.esferalia.aon.gwt.payroll.report.StatelessReportManager;
 import com.esferalia.aon.gwt.payroll.shared.ShareService;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -106,7 +107,7 @@ public class ShareServlet extends HttpServlet implements ShareService {
 			connection.setAutoCommit(false);
 			DSLContext dslContext = DSL.using(connection, settings);
 
-			ReportManager reportManager = new ReportManager();
+			ReportManager reportManager = new StatelessReportManager();
 			reportManager.setOutputFormat(OutputFormat.PDF);
 
 			IManagerBean beanManager = BeanManager
@@ -133,7 +134,7 @@ public class ShareServlet extends HttpServlet implements ShareService {
 				
 				reportManager.setCollectionProvider(new SalaryProvider(salary
 						.getId(), beanManager));
-				byte data[] = generate(reportManager, salary);
+				byte data[] = generate(domain.getName(), reportManager, salary);
 
 				Attach attach = new Attach()
 						.setData(data)
@@ -196,10 +197,13 @@ public class ShareServlet extends HttpServlet implements ShareService {
 		os.flush();
 	}
 
-	private byte[] generate(ReportManager reportManager, Salary salary)
+	private byte[] generate(String domain, ReportManager reportManager, Salary salary)
 			throws ReportException, SQLException {
-		String salaryReport = getSalaryReport(salary.getContract()
-				.getWorkPlace().getEnterprise().getId(), salary.getType());
+		String salaryReport = getSalaryReport(
+				domain,
+				salary.getContract().getWorkPlace().getEnterprise().getId(), 
+				salary.getType()
+				);
 
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 

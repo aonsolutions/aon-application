@@ -68,7 +68,7 @@ public class SalaryPaymentsFactory implements IPaymentsFactory {
 		}
 	}
 
-	private void managePayment(Payments payments, SalaryPayment sp) {
+	public static void managePayment(Payments payments, SalaryPayment sp) {
 
 		PaymentType type = sp.getType();
 		if (type == null) {

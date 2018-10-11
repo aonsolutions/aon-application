@@ -93,7 +93,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		draft.setEmployee(employee);
 		draft.setType(Type.SALARY);
 
-		return EmployeesServiceImpl.getDraftContext(draft);
+		return EmployeesServiceImpl.getDraftContext(domain, draft);
 	}
 
 	@Override

@@ -525,7 +525,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	
 
 	@Override
-	public void setEmployeeEvents(int contract, EmployeeEventsUpdate updateInfo) {
+	public void setEmployeeEvents(String domain, int contract, EmployeeEventsUpdate updateInfo) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -538,7 +538,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public EmployeeEventsData getEmployeeEvents(int contract, ArrayList<String> employeeContractVariables) {
+	public EmployeeEventsData getEmployeeEvents(String domain, int contract, ArrayList<String> employeeContractVariables) {
 		// TODO Auto-generated method stub
 		return null;
 	}

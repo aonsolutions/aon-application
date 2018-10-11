@@ -8,8 +8,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface EmployeeEventsServiceAsync {
 
-	void getEmployeeEvents(int contract, ArrayList<String> employeeContractVariables, AsyncCallback<EmployeeEventsData> callback); 
+	void getEmployeeEvents(String domain, int contract, ArrayList<String> employeeContractVariables, AsyncCallback<EmployeeEventsData> callback); 
 	
-	void setEmployeeEvents(int contract, EmployeeEventsUpdate updateInfo, AsyncCallback<EmployeeEventsUpdate> callback);
+	void setEmployeeEvents(String domain, int contract, EmployeeEventsUpdate updateInfo, AsyncCallback<EmployeeEventsUpdate> callback);
 	
 }
