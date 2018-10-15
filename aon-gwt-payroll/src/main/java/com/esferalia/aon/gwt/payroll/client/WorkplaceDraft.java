@@ -8,18 +8,17 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
@@ -42,10 +41,19 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 	interface MyStyle extends CssResource {
 		String hide();
 		String paddingEnableDisable();
+		String maxWidth();
+		String fontDisableStyle();
+		String fontEnableStyle();
 	}
 	
 	@UiField
+	HorizontalPanel enableWorkplacePanel;
+	
+	@UiField
 	Button enableWorkplaceButton;
+	
+	@UiField
+	HorizontalPanel disableWorkplacePanel;
 	
 	@UiField
 	Button disableWorkplaceButton;
@@ -59,7 +67,7 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 	TextBox workplaceDescription;
 	
 	@UiField
-	ListBox workplaceAddress;
+	HorizontalPanel workplaceAddressPanel;
 	
 	@UiField
 	ListBox workplaceEconomicConcert;
@@ -72,9 +80,6 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 	@UiField
 	TableElement payrollDataTable;
 
-//	@UiField
-//	TextBox workplaceCalendarId;
-
 	@UiField
 	ListBox workplaceCalendar;
 
@@ -82,7 +87,7 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 	ListBox workpalceAgreement;
 
 	@UiField
-	ListBox workplaceActivity;
+	HorizontalPanel workplaceActivityPanel;
 
 	// ------------------------------------------------------ VARIABLES DE LA CLASE --------------------------------------------------
 
@@ -117,20 +122,6 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 		save();
 	}
 
-	@UiHandler("workplaceAddress")
-	void onWorkplaceAddressChangeValue(ChangeEvent event) {
-		String address = workplaceAddress.getSelectedItemText();
-		Integer addressId = -1;
-		for(Entry<Integer, String> entry : workplaceDraftObject.getWorkplaceAddresses().entrySet()){
-			if(address == entry.getValue()){
-				addressId = entry.getKey();
-				break;
-			}
-		}
-		workplaceDraftObject.setWorkplaceAddress(addressId);
-		save();
-	}
-	
 	@UiHandler("workplaceEconomicConcert")
 	void onWorkplaceEconomicConcertChangeValue(ChangeEvent event) {
 		workplaceDraftObject.setWorkplaceEconomicConcert(workplaceEconomicConcert.getSelectedIndex() - 1);
@@ -158,20 +149,6 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 		save();
 	}
 	
-	@UiHandler("workplaceActivity")
-	void onWorkplaceActivityChangeValue(ChangeEvent event) {
-		String activity = workplaceActivity.getSelectedItemText();
-		Integer activityId = -1;
-		for(Entry<Integer, String> entry : workplaceDraftObject.getWorkplaceActivities().entrySet()){
-			if(activity.equals(entry.getValue())){
-				activityId = entry.getKey();
-				break;
-			}
-		}
-		workplaceDraftObject.setWorkplaceActivity(activityId);
-		save();
-	}
-	
 	private void save() {
 		workplaceDraftObject.updateWorkplace(
 				r -> { setWorkplaceDraftObject(workplaceDraftObject); }, 
@@ -191,16 +168,18 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 	}
 
 	private void initializeView() {
-		enableWorkplaceButton.setStyleName(AON.AON_ICON_DISABLE);
-		disableWorkplaceButton.setStyleName(AON.AON_ICON_ENABLE);
+		enableWorkplaceButton.addStyleName(AON.AON_ICON_DISABLE);
+		disableWorkplaceButton.addStyleName(AON.AON_ICON_ENABLE);
 		enableWorkplaceButton.addStyleName(style.paddingEnableDisable());
 		disableWorkplaceButton.addStyleName(style.paddingEnableDisable());
 		if(workplaceDraftObject.getWorkplaceInfo().isActive() == 1){
-			enableWorkplaceButton.addStyleName(style.hide());
-			disableWorkplaceButton.removeStyleName(style.hide());
+			enableWorkplacePanel.addStyleName(style.hide());
+			disableWorkplacePanel.removeStyleName(style.hide());
+			disableWorkplacePanel.addStyleName(style.fontDisableStyle());
 		}else{
-			enableWorkplaceButton.removeStyleName(style.hide());
-			disableWorkplaceButton.addStyleName(style.hide());
+			enableWorkplacePanel.removeStyleName(style.hide());
+			enableWorkplacePanel.addStyleName(style.fontEnableStyle());
+			disableWorkplacePanel.addStyleName(style.hide());
 		}
 		
 		resetElements();
@@ -212,22 +191,20 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 		
 		// Clear general elements
 		this.workplaceDescription.setValue("");
-		this.workplaceAddress.clear();
+		this.workplaceAddressPanel.clear();
 		this.workplaceEconomicConcert.clear();
 
 		// Clear payroll elements
 		this.workplaceCalendar.clear();
 		this.workpalceAgreement.clear();
-		this.workplaceActivity.clear();
+		this.workplaceActivityPanel.clear();
 		
 	}
 
 	private void initializeListBox() {
 
 		//DIRECCION
-		for(String address : workplaceDraftObject.getWorkplaceAddresses().values()){
-			this.workplaceAddress.addItem(address);
-		}
+		initializeAddressCell();
 		
 		//CONCIERTO ECONOMICO
 		this.workplaceEconomicConcert.addItem("-");
@@ -252,15 +229,84 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 		}
 		
 		//ACTIVIDADES
-		for(String activity : workplaceDraftObject.getWorkplaceActivities().values()){
-			this.workplaceActivity.addItem(activity);
-		}
+		initializeActivityCell();
 
 	}
 	
+	private void initializeAddressCell() {
+		Widget workplaceAddressWidget;
+		if(workplaceDraftObject.getWorkplaceAddresses().values().size() == 1){
+			Integer addressId = workplaceDraftObject.getWorkplaceAddressId();
+			workplaceAddressWidget = new Label((null == addressId) ? "" : workplaceDraftObject.getWorkplaceAddresses().get(addressId));
+			workplaceAddressPanel.add(workplaceAddressWidget);
+		}else{
+			workplaceAddressWidget = new ListBox();
+			for(String address : workplaceDraftObject.getWorkplaceAddresses().values()){
+				((ListBox) workplaceAddressWidget).addItem(address);
+			}
+			workplaceAddressWidget.addStyleName(style.maxWidth());
+			((ListBox) workplaceAddressWidget).addChangeHandler(new ChangeHandler() {
+				
+				@Override
+				public void onChange(ChangeEvent event) {
+					String address = ((ListBox) workplaceAddressWidget).getSelectedItemText();
+					Integer addressId = -1;
+					for(Entry<Integer, String> entry : workplaceDraftObject.getWorkplaceAddresses().entrySet()){
+						if(address == entry.getValue()){
+							addressId = entry.getKey();
+							break;
+						}
+					}
+					workplaceDraftObject.setWorkplaceAddress(addressId);
+					save();
+				}
+			});
+			workplaceAddressPanel.add(workplaceAddressWidget);
+			if(((ListBox) workplaceAddressWidget).getItemCount() != 0){
+				((ListBox) workplaceAddressWidget).setSelectedIndex(workplaceDraftObject.getWorkplaceAddressIndex());
+			}
+		}
+	}
+
+	private void initializeActivityCell() {
+		Widget workplaceActivityWidget;
+		if(workplaceDraftObject.getWorkplaceActivities().values().size() == 1){
+			Integer activityId = workplaceDraftObject.getWorkplaceInfo().getActivityId();
+			workplaceActivityWidget = new Label(workplaceDraftObject.getWorkplaceActivities().get(activityId));
+			workplaceActivityPanel.add(workplaceActivityWidget);	
+		}else{
+			workplaceActivityWidget = new ListBox();
+			for(String activity : workplaceDraftObject.getWorkplaceActivities().values()){
+				((ListBox) workplaceActivityWidget).addItem(activity);
+			}
+			workplaceActivityWidget.addStyleName(style.maxWidth());
+			((ListBox) workplaceActivityWidget).addChangeHandler(new ChangeHandler() {
+				
+				@Override
+				public void onChange(ChangeEvent event) {
+					String activity = ((ListBox) workplaceActivityWidget).getSelectedItemText();
+					Integer activityId = -1;
+					for(Entry<Integer, String> entry : workplaceDraftObject.getWorkplaceActivities().entrySet()){
+						if(activity.equals(entry.getValue())){
+							activityId = entry.getKey();
+							break;
+						}
+					}
+					workplaceDraftObject.setWorkplaceActivity(activityId);
+					save();
+					
+				}
+			});
+			workplaceActivityPanel.add(workplaceActivityWidget);	
+			if(((ListBox) workplaceActivityWidget).getItemCount() != 0){
+				((ListBox) workplaceActivityWidget).setSelectedIndex(workplaceDraftObject.getWorkplaceActivityIndex());
+			}
+		}
+		
+	}
+
 	private void fillWorkplaceInfo() {
 		this.workplaceDescription.setValue(workplaceDraftObject.getWorkplaceInfo().getDescription());
-		this.workplaceAddress.setSelectedIndex(workplaceDraftObject.getWorkplaceAddressIndex());
 		
 		if(this.workplaceEconomicConcert.getItemCount() != 0){
 			this.workplaceEconomicConcert.setSelectedIndex(workplaceDraftObject.getWorkplaceEconomicConcert());
@@ -275,9 +321,6 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 			this.workpalceAgreement.setSelectedIndex(workplaceDraftObject.getAgreementIndex(workplaceAgreement) + 1);
 		}
 			
-		if(this.workplaceActivity.getItemCount() != 0){
-			this.workplaceActivity.setSelectedIndex(workplaceDraftObject.getWorkplaceActivityIndex());
-		}
 	}
 
 	@Override

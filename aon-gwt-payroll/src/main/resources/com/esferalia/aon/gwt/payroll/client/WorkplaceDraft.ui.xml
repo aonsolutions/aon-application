@@ -102,6 +102,26 @@
     		width: 32px;
 		}
 
+		.fontEnableStyle{
+			font-weight: bold;
+    		color: #000;
+    		white-space: nowrap;
+    		font-size: smaller;
+    		padding-left: 30px;
+    		width: 80px;
+			cursor: pointer;
+		}
+
+		.fontDisableStyle{
+			font-weight: bold;
+    		color: #000;
+    		white-space: nowrap;
+    		font-size: smaller;
+    		padding-left: 30px;
+    		width: 100px;
+			cursor: pointer;
+		}
+
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX">
@@ -110,18 +130,16 @@
 				<g:HorizontalPanel>
 					<g:HTMLPanel styleName="aon-finding-title">
 						<g:HTMLPanel styleName="aon-finding-title-internal">
-							<g:Label styleName="aon-outputText">Laboral : Centro de trabajo : Activo</g:Label>
+							<g:Label styleName="aon-outputText">Laboral : Centro de trabajo</g:Label>
 						</g:HTMLPanel>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="aon-finding-toolbar-item-group {style.paddingTop}">
-					    <g:Button ui:field='enableWorkplaceButton'></g:Button>
-					    <g:Button ui:field='disableWorkplaceButton'></g:Button>
-						<!-- g:Button ui:field='enableWorkplaceButton'
-							styleName='aon-finding-toolbar-item' text="ACTIVAR"
-							enabled="true" />
-						<g:Button ui:field='disableWorkplaceButton'
-							styleName='aon-finding-toolbar-item' text="DESACTIVAR"
-							enabled="true" / -->
+					    <g:HorizontalPanel ui:field='enableWorkplacePanel'>
+					        <g:Button ui:field='enableWorkplaceButton' styleName="{style.fontEnableStyle}" visible="false">ACTIVAR</g:Button>
+					    </g:HorizontalPanel>
+					     <g:HorizontalPanel ui:field='disableWorkplacePanel'>
+					        <g:Button ui:field='disableWorkplaceButton' styleName="{style.fontDisableStyle}" visible="false">DESACTIVAR</g:Button>
+					    </g:HorizontalPanel>
 					</g:HTMLPanel>
 				</g:HorizontalPanel>
 			</g:FlowPanel>
@@ -155,7 +173,7 @@
 										<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Dirección</g:Label>
 									</td>
 									<td colspan="3">
-										<g:ListBox ui:field="workplaceAddress" styleName="{style.maxWidth}"></g:ListBox>
+									    <g:HorizontalPanel ui:field="workplaceAddressPanel" styleName="{style.maxWidth}"></g:HorizontalPanel>
 									</td>
 								</tr>
 								<tr>
@@ -187,13 +205,6 @@
 									<td style="background-color: #eaeaea; width: 200px;">
 										<g:Label styleName='{style.firstColumnTextStyle}'>Calendario</g:Label>
 									</td>
-									<!-- td style="width: 8%;">
-										<g:TextBox ui:field="workplaceCalendarId" styleName="{style.maxWidthTextBox}"></g:TextBox>
-									</td>
-									<td style="width: 5%;">
-										<g:Button ui:field='workplaceCalendarFind'
-											styleName='aon-finding-toolbar-item aon-icon-lookup {style.lookupStyle}' enabled="false" />
-									</td-->
 									<td colspan="3">
 										<g:ListBox ui:field="workplaceCalendar" styleName="{style.maxWidth}"></g:ListBox>
 									</td>
@@ -211,7 +222,7 @@
 										<g:Label styleName='{style.firstColumnTextStyle}'>Actividad</g:Label>
 									</td>
 									<td colspan="3">
-										<g:ListBox ui:field="workplaceActivity" styleName="{style.maxWidth}"></g:ListBox>
+									    <g:HorizontalPanel ui:field="workplaceActivityPanel" styleName="{style.maxWidth}"></g:HorizontalPanel>
 									</td>
 								</tr>
 							</tbody>

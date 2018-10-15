@@ -8,7 +8,6 @@ import java.util.function.Consumer;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class WorkplaceDraftObject {
@@ -73,6 +72,13 @@ public class WorkplaceDraftObject {
 	
 	public Map<Integer, String> getWorkplaceAddresses(){
 		return this.workplaceInfo.getAddresses();
+	}
+	
+	public Integer getWorkplaceAddressId(){
+		if (null != workplaceInfo.getAddressId())
+			return workplaceInfo.getAddressId();
+		else
+			return null;
 	}
 	
 	public Integer getWorkplaceAddressIndex(){

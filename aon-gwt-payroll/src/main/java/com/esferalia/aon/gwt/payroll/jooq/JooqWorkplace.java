@@ -70,12 +70,16 @@ public class JooqWorkplace {
 			
 			if(r.get(RADDRESS.STREET_TYPE) != "")
 				addressStr += r.get(RADDRESS.STREET_TYPE) + " ";
-			if(r.get(RADDRESS.ADDRESS) != "")
+			if(null == r.get(RADDRESS.ADDRESS))
+				continue;
+			if(!r.get(RADDRESS.ADDRESS).isEmpty())
 				addressStr += r.get(RADDRESS.ADDRESS) + " ";
-			if(r.get(RADDRESS.NUMBER) != "")
-				addressStr += r.get(RADDRESS.NUMBER) + " ";
+			if(null !=r.get(RADDRESS.NUMBER))
+				if(!r.get(RADDRESS.NUMBER).isEmpty())
+					addressStr += r.get(RADDRESS.NUMBER) + " ";
 			
-			addressStr += geozoneName.get(0);
+			if(null != geozoneName)
+				addressStr += geozoneName.get(0);
 			
 			addresses.put(r.get(RADDRESS.ID), addressStr);
 		}
@@ -140,7 +144,7 @@ public class JooqWorkplace {
 	private static WorkplaceInfo setWorkplaceInfoDB(DSLContext dslContext, WorkplaceInfo workplaceInfo) {
 		
 		dslContext.update(PAYROLL_WORKPLACE)
-			.set(PAYROLL_WORKPLACE.AGREEMENT, workplaceInfo.getAgreementId() == -1 ? null : workplaceInfo.getAgreementId())
+			.set(PAYROLL_WORKPLACE.AGREEMENT, (null == workplaceInfo.getAgreementId() || workplaceInfo.getAgreementId() == -1) ? null : workplaceInfo.getAgreementId())
 			.set(PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY, workplaceInfo.getActivityId())
 			.set(PAYROLL_WORKPLACE.CALENDAR, (null == workplaceInfo.getCalendarId()) ? null : workplaceInfo.getCalendarId())
 			.where(PAYROLL_WORKPLACE.ID.eq(workplaceInfo.getPayrollWorkplaceId()))
