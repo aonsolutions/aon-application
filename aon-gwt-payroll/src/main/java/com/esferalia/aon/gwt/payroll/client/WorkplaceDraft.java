@@ -44,6 +44,7 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 		String maxWidth();
 		String fontDisableStyle();
 		String fontEnableStyle();
+		String warningColor();
 	}
 	
 	@UiField
@@ -79,9 +80,9 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 
 	@UiField
 	TableElement payrollDataTable;
-
+	
 	@UiField
-	ListBox workplaceCalendar;
+	HorizontalPanel workplaceCalendarPanel;
 
 	@UiField
 	ListBox workpalceAgreement;
@@ -125,20 +126,6 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 	@UiHandler("workplaceEconomicConcert")
 	void onWorkplaceEconomicConcertChangeValue(ChangeEvent event) {
 		workplaceDraftObject.setWorkplaceEconomicConcert(workplaceEconomicConcert.getSelectedIndex() - 1);
-		save();
-	}
-
-	@UiHandler("workplaceCalendar")
-	void onWorkplaceCalendarChangeValue(ChangeEvent event) {
-		String calendar = workplaceCalendar.getSelectedItemText();
-		Integer calendarId = -1;
-		for(Entry<Integer, String> entry : workplaceDraftObject.getWorkplacesCalendars().entrySet()){
-			if(calendar.equals(entry.getValue())){
-				calendarId = entry.getKey();
-				break;
-			}
-		}
-		workplaceDraftObject.setWorkplaceCalendar(calendarId);
 		save();
 	}
 	
@@ -195,7 +182,7 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 		this.workplaceEconomicConcert.clear();
 
 		// Clear payroll elements
-		this.workplaceCalendar.clear();
+		this.workplaceCalendarPanel.clear();
 		this.workpalceAgreement.clear();
 		this.workplaceActivityPanel.clear();
 		
@@ -216,10 +203,7 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 		
 		
 		//CALENDARIO
-		for(String calendar : workplaceDraftObject.getWorkplacesCalendars().values()){
-			if(null != calendar)
-				this.workplaceCalendar.addItem(calendar);
-		}
+		initializeCalendarCell();
 		
 		// CONVENIO
 		this.workpalceAgreement.addItem("-");
@@ -232,7 +216,7 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 		initializeActivityCell();
 
 	}
-	
+
 	private void initializeAddressCell() {
 		Widget workplaceAddressWidget;
 		if(workplaceDraftObject.getWorkplaceAddresses().values().size() == 1){
@@ -267,10 +251,55 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 			}
 		}
 	}
+	
+	private void initializeCalendarCell() {
+		Widget workplaceCalendarWidget;
+		if(workplaceDraftObject.getWorkplacesCalendars().values().size() == 0){
+			workplaceCalendarWidget = new Label("No hay calendarios disponibles");
+			workplaceCalendarWidget.addStyleName(style.warningColor());
+			workplaceCalendarPanel.add(workplaceCalendarWidget);
+		}else if(workplaceDraftObject.getWorkplacesCalendars().values().size() == 1){
+			Integer calendarId = workplaceDraftObject.getWorkplaceInfo().getCalendarId();
+			workplaceCalendarWidget = new Label(workplaceDraftObject.getWorkplacesCalendars().get(calendarId));
+			workplaceCalendarPanel.add(workplaceCalendarWidget);
+		}else{
+			workplaceCalendarWidget = new ListBox();
+			for(String calendar : workplaceDraftObject.getWorkplacesCalendars().values()){
+				if(null != calendar)
+					((ListBox) workplaceCalendarWidget).addItem(calendar);
+			}
+			workplaceCalendarWidget.addStyleName(style.maxWidth());
+			((ListBox) workplaceCalendarWidget).addChangeHandler(new ChangeHandler() {
+				
+				@Override
+				public void onChange(ChangeEvent event) {
+					String calendar = ((ListBox) workplaceCalendarWidget).getSelectedItemText();
+					Integer calendarId = -1;
+					for(Entry<Integer, String> entry : workplaceDraftObject.getWorkplacesCalendars().entrySet()){
+						if(calendar.equals(entry.getValue())){
+							calendarId = entry.getKey();
+							break;
+						}
+					}
+					workplaceDraftObject.setWorkplaceCalendar(calendarId);
+					save();
+					
+				}
+			});
+			workplaceCalendarPanel.add(workplaceCalendarWidget);
+			if(((ListBox) workplaceCalendarWidget).getItemCount() != 0){
+				((ListBox) workplaceCalendarWidget).setSelectedIndex(workplaceDraftObject.getWorkplaceCalendarIndex());
+			}
+		}	
+	}
 
 	private void initializeActivityCell() {
 		Widget workplaceActivityWidget;
-		if(workplaceDraftObject.getWorkplaceActivities().values().size() == 1){
+		if(workplaceDraftObject.getWorkplaceActivities().values().size() == 0){
+			workplaceActivityWidget = new Label("No hay actividades disponibles");
+			workplaceActivityWidget.addStyleName(style.warningColor());
+			workplaceActivityPanel.add(workplaceActivityWidget);
+		}else if(workplaceDraftObject.getWorkplaceActivities().values().size() == 1){
 			Integer activityId = workplaceDraftObject.getWorkplaceInfo().getActivityId();
 			workplaceActivityWidget = new Label(workplaceDraftObject.getWorkplaceActivities().get(activityId));
 			workplaceActivityPanel.add(workplaceActivityWidget);	
@@ -310,10 +339,6 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 		
 		if(this.workplaceEconomicConcert.getItemCount() != 0){
 			this.workplaceEconomicConcert.setSelectedIndex(workplaceDraftObject.getWorkplaceEconomicConcert());
-		}
-		
-		if(this.workplaceCalendar.getItemCount() != 0){
-			this.workplaceCalendar.setSelectedIndex(workplaceDraftObject.getWorkplaceCalendarIndex());
 		}
 		
 		String workplaceAgreement = workplaceDraftObject.getWorkplaceAgreementDescription();

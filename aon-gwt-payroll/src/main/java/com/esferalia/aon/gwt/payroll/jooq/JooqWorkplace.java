@@ -98,7 +98,8 @@ public class JooqWorkplace {
 		Map<Integer, String> calendars = new HashMap<Integer, String>();
 		
 		for(Record r : caledarRecords){
-			calendars.put(r.get(CALENDAR.ID), r.get(CALENDAR.DESCRIPTION));
+			if(null != r.get(CALENDAR.DESCRIPTION))
+				calendars.put(r.get(CALENDAR.ID), r.get(CALENDAR.DESCRIPTION));
 		}
 		
 		Result<Record> enterpriseActivityRecords = dslContext.select().from(ENTERPRISE_ACTIVITY)

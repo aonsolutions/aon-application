@@ -63,6 +63,11 @@
 			font-weight: bold !important;
 		}
 
+		.warningColor{
+			color: #f90303;
+    		font-weight: bold;
+		}
+
 		.hide{
 			display: none;
 		}
@@ -206,7 +211,7 @@
 										<g:Label styleName='{style.firstColumnTextStyle}'>Calendario</g:Label>
 									</td>
 									<td colspan="3">
-										<g:ListBox ui:field="workplaceCalendar" styleName="{style.maxWidth}"></g:ListBox>
+										 <g:HorizontalPanel ui:field="workplaceCalendarPanel" styleName="{style.maxWidth}"></g:HorizontalPanel>
 									</td>
 								</tr>
 								<tr>
