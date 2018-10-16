@@ -321,7 +321,8 @@ public class ReportUtils {
 			
 			RegistryAttachment registryAttachment = new RegistryAttachment();
 			registryAttachment.setId(rattachRecord.getId());
-			registryAttachment.setData(rattachRecord.getData());
+			byte[] data = rattachRecord.getData();
+			registryAttachment.setData(data != null ? data : new byte[] {});
 			registryAttachment.setDescription(rattachRecord.getDescription());
 			
 			return registryAttachment;
