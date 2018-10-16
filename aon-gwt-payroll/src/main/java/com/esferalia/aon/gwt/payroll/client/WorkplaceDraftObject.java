@@ -114,13 +114,17 @@ public class WorkplaceDraftObject {
 	}
 	
 	public Integer getWorkplaceActivityIndex(){
-		Integer index = 0;
-		for(Integer value : this.workplaceInfo.getActivities().keySet()){
-			if(value.equals(workplaceInfo.getActivityId())) 
-				break;
-			index ++;
+		if(null == workplaceInfo.getActivityId())
+			return -1;
+		else{
+			Integer index = 0;
+			for(Integer value : this.workplaceInfo.getActivities().keySet()){
+				if(value.equals(workplaceInfo.getActivityId())) 
+					break;
+				index ++;
+			}
+			return index;
 		}
-		return index;
 	}
 	
 	// ---------------------------------------------- DATABASE METHODS SYNC  ---------------------------------------------

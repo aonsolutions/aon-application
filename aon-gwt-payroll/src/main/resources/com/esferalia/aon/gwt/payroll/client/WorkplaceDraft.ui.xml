@@ -127,6 +127,10 @@
 			cursor: pointer;
 		}
 
+		.estiloBorrarCuandoSeActiveBoton{
+			background: none !important;
+		}
+
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX">
@@ -134,7 +138,7 @@
 			<g:FlowPanel styleName="aon-finding-title-toolbar">
 				<g:HorizontalPanel>
 					<g:HTMLPanel styleName="aon-finding-title">
-						<g:HTMLPanel styleName="aon-finding-title-internal">
+						<g:HTMLPanel styleName="aon-finding-title-internal {style.estiloBorrarCuandoSeActiveBoton}">
 							<g:Label styleName="aon-outputText">Laboral : Centro de trabajo</g:Label>
 						</g:HTMLPanel>
 					</g:HTMLPanel>

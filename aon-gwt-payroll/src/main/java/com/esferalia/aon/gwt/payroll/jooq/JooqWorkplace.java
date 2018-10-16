@@ -146,7 +146,7 @@ public class JooqWorkplace {
 		
 		dslContext.update(PAYROLL_WORKPLACE)
 			.set(PAYROLL_WORKPLACE.AGREEMENT, (null == workplaceInfo.getAgreementId() || workplaceInfo.getAgreementId() == -1) ? null : workplaceInfo.getAgreementId())
-			.set(PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY, workplaceInfo.getActivityId())
+			.set(PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY, (null == workplaceInfo.getActivityId() || workplaceInfo.getActivityId() == -1) ? null : workplaceInfo.getActivityId())
 			.set(PAYROLL_WORKPLACE.CALENDAR, (null == workplaceInfo.getCalendarId()) ? null : workplaceInfo.getCalendarId())
 			.where(PAYROLL_WORKPLACE.ID.eq(workplaceInfo.getPayrollWorkplaceId()))
 			.execute();

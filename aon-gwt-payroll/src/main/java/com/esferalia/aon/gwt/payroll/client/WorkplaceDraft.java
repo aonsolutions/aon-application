@@ -299,12 +299,13 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 			workplaceActivityWidget = new Label("No hay actividades disponibles");
 			workplaceActivityWidget.addStyleName(style.warningColor());
 			workplaceActivityPanel.add(workplaceActivityWidget);
-		}else if(workplaceDraftObject.getWorkplaceActivities().values().size() == 1){
-			Integer activityId = workplaceDraftObject.getWorkplaceInfo().getActivityId();
-			workplaceActivityWidget = new Label(workplaceDraftObject.getWorkplaceActivities().get(activityId));
-			workplaceActivityPanel.add(workplaceActivityWidget);	
+//		}else if(workplaceDraftObject.getWorkplaceActivities().values().size() == 1){
+//			Integer activityId = workplaceDraftObject.getWorkplaceInfo().getActivityId();
+//			workplaceActivityWidget = new Label(workplaceDraftObject.getWorkplaceActivities().get(activityId));
+//			workplaceActivityPanel.add(workplaceActivityWidget);	
 		}else{
 			workplaceActivityWidget = new ListBox();
+			((ListBox) workplaceActivityWidget).addItem("-");
 			for(String activity : workplaceDraftObject.getWorkplaceActivities().values()){
 				((ListBox) workplaceActivityWidget).addItem(activity);
 			}
@@ -328,7 +329,7 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 			});
 			workplaceActivityPanel.add(workplaceActivityWidget);	
 			if(((ListBox) workplaceActivityWidget).getItemCount() != 0){
-				((ListBox) workplaceActivityWidget).setSelectedIndex(workplaceDraftObject.getWorkplaceActivityIndex());
+				((ListBox) workplaceActivityWidget).setSelectedIndex(workplaceDraftObject.getWorkplaceActivityIndex()+1);
 			}
 		}
 		
