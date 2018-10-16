@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EmployeeInfoDataBase implements Serializable {
+public class EmployeeInfoDataBase implements Serializable {	
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -107,6 +107,15 @@ public class EmployeeInfoDataBase implements Serializable {
 	private Integer 
 		agreement_level_table_id;			//ID Agreement Level Table
 	private String agreement_level;			//Contract AgreementLevel
+	
+	//ACTIVITIES
+	private Map<Integer, String> activities;
+	
+	//ACTIVITIES
+	private Map<Integer, String> workplaces;
+	
+	//CCCs
+	private Map<Integer, CCCInfo> cccs = new HashMap<>();
 	
 	public EmployeeInfoDataBase() {
 		super();
@@ -690,6 +699,31 @@ public class EmployeeInfoDataBase implements Serializable {
 	
 	public void setRBankTableId(Integer rbankTableId) {
 		this.rbankTableId = rbankTableId;
+	}
+
+	public void setEnterpriseActivities(Map<Integer, String> activities) {
+		this.activities = activities;
+	}
+	
+	public Map<Integer, String> getEnterpriseActivities() {
+		return this.activities;
+	}
+
+	public void addCCC(Integer cccId, String ccc, Byte type) {
+		CCCInfo cccInfo = new CCCInfo(ccc, type);
+		this.cccs.put(cccId, cccInfo);
+	}
+	
+	public Map<Integer, CCCInfo> getCCCs() {
+		return this.cccs;
+	}
+
+	public void setWorkplaces(Map<Integer, String> workplaces) {
+		this.workplaces = workplaces;	
+	}
+	
+	public Map<Integer, String> getWorkplaces() {
+		return this.workplaces;	
 	}
 	
 }

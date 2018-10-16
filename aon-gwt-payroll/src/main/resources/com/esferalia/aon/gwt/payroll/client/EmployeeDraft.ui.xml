@@ -118,6 +118,10 @@
 		.retaTopLabel{
 			top: 330px;
 		}
+
+		.warning{
+			border-color: red;
+		}
 		
 	</ui:style>
 
@@ -238,25 +242,18 @@
 								</tr>
 								<tr>
 									<td style="background-color: #eaeaea; width: 200px;">
-										<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Actividad</g:Label>
+										<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Actividad - Cuenta de cotización</g:Label>
 									</td>
 									<td colspan="6">
-										<g:TextBox ui:field="activity" styleName='{style.maxWidthTextBox}'></g:TextBox>
+										<g:ListBox ui:field="activityCCC" styleName='{style.maxWidth}'></g:ListBox>
 									</td>
 								</tr>
 								<tr>
 								    <td style="background-color: #eaeaea; width: 200px;">
 										<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Centro de trabajo</g:Label>
 									</td>
-									<td ui:field="workplaceCell" colspan="3">
-										<g:TextBox ui:field="workplace" styleName='{style.maxWidthTextBox}'></g:TextBox>
-									</td>
-									<td  ui:field="quoteAccountLabelCell">
-										<g:Label styleName='{style.requiredColor} {style.alignTextCenter}'>Cuenta de cotización</g:Label>
-									</td>
-									<td  ui:field="quoteAccountCell" colspan="2">
-										<g:TextBox ui:field="quotationAccount"
-											styleName='{style.maxWidthTextBox4} {style.alignTextCenter}'></g:TextBox>
+									<td colspan="6">
+										<g:ListBox ui:field="workplace" styleName='{style.maxWidth}'></g:ListBox>
 									</td>
 								</tr>
 								<tr>

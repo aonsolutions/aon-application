@@ -182,22 +182,25 @@ public class JooqEmployee {
 		
 		employee.setWorkplace_table_id(employe_workplace_table_id);
 		employee.setWorkplace(workplaceTable.get(WORKPLACE.DESCRIPTION));
+		Integer workplaceEnterprise = workplaceTable.get(WORKPLACE.ENTERPRISE);
+		
+		//Workplaces
+		Result<Record> workplaceTableRecords = dslContext.select().from(WORKPLACE).where(WORKPLACE.ENTERPRISE.eq(workplaceEnterprise)).fetch();
+		Map<Integer, String> workplaces = new HashMap<Integer, String>();
+		
+		for(Record r : workplaceTableRecords){
+			workplaces.put(r.get(WORKPLACE.ID), r.get(WORKPLACE.DESCRIPTION));
+		}
+		
+		employee.setWorkplaces(workplaces);
 		
 		if(employee.getSSRegime() != 3){ //NO ES RETA
 			Integer enterpriseActivity = contractTable.get(CONTRACT.ENTERPRISE_ACTIVITY);
 			
-			//enterpriseActivity can be null
 			Record enterpriseActivityTable = dslContext.select().from(ENTERPRISE_ACTIVITY).where(ENTERPRISE_ACTIVITY.ID.eq(enterpriseActivity)).fetchOne();
-			Integer cnae2009 = enterpriseActivityTable.get(ENTERPRISE_ACTIVITY.CNAE2009);
-			//cnae2009 can be null
-			Record cnae2009Table = dslContext.select().from(CNAE2009).where(CNAE2009.ID.eq(cnae2009)).fetchOne();
-			
+			//enterpriseActivity can be null
 			employee.setEnterprise_activity_table_id((enterpriseActivityTable == null) ? null : enterpriseActivityTable.get(ENTERPRISE_ACTIVITY.ID));
-			//TODO: MIRAR EL ACCESO A CNAE2009TABLE
-			String cnae2009Str = (cnae2009Table == null) ? "" : cnae2009Table.get(CNAE2009.TITLE);
-			employee.setEnterprise_activity(enterpriseActivityTable.get(ENTERPRISE_ACTIVITY.DESCRIPTION) + " - " + cnae2009Str);
-			employee.setCname2009_table_id((cnae2009Table == null) ? null : cnae2009Table.get(CNAE2009.ID));
-			employee.setCname2009((cnae2009Table == null) ? null : cnae2009Table.get(CNAE2009.TITLE));
+			employee.setEnterprise_activity(enterpriseActivityTable.get(ENTERPRISE_ACTIVITY.DESCRIPTION));
 			
 			Integer enterpriseCCC = contractTable.get(CONTRACT.ENTERPRISE_CCC);
 			//enterpriseCCC can be null
@@ -205,6 +208,25 @@ public class JooqEmployee {
 			
 			employee.setQuote_account((enterpriseCCCTable == null) ? null : enterpriseCCCTable.get(ENTERPRISE_CCC.CCC));
 			employee.setEnterprise_ccc_table_id((enterpriseCCCTable == null) ? null : enterpriseCCCTable.get(ENTERPRISE_CCC.ID));
+			
+			//Enterprise Activities
+			Result<Record> enterpriseActivityRecords = dslContext.select().from(ENTERPRISE_ACTIVITY)
+					.where(ENTERPRISE_ACTIVITY.ENTERPRISE.eq(workplaceEnterprise))
+					.fetch();
+			
+			Map<Integer, String> activities = new HashMap<Integer, String>();
+			
+			for(Record r : enterpriseActivityRecords){
+				activities.put(r.get(ENTERPRISE_ACTIVITY.ID), r.get(ENTERPRISE_ACTIVITY.DESCRIPTION));
+			}
+			
+			employee.setEnterpriseActivities(activities);
+			
+			//Enterprise CCCs
+			Result<Record> enterpriseCCCRecords = dslContext.select().from(ENTERPRISE_CCC).where(ENTERPRISE_CCC.ID.eq(enterpriseCCC)).fetch();
+			for(Record r : enterpriseCCCRecords){
+				employee.addCCC(r.get(ENTERPRISE_CCC.ID), r.get(ENTERPRISE_CCC.CCC), r.get(ENTERPRISE_CCC.TYPE));
+			}
 		}
 		
 		Integer agreementLevel = contractTable.get(CONTRACT.AGREEMENT_LEVEL);

@@ -9,8 +9,12 @@ import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.common.shared.Dni;
+import com.esferalia.aon.gwt.common.shared.SocialSecurity;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
+import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
+import com.esferalia.aon.gwt.payroll.shared.CCCType;
 import com.esferalia.aon.gwt.payroll.shared.ContractType;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ModelRecord;
@@ -107,6 +111,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		String hide();
 		String nssWidht();
 		String retaTopLabel();
+		String warning();
 	}
 
 	@UiField
@@ -145,22 +150,10 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	SuggestBox nationality;
 
 	@UiField
-	TableCellElement workplaceCell;
+	ListBox workplace;
 	
 	@UiField
-	TextBox workplace;
-	
-	@UiField
-	TableCellElement quoteAccountLabelCell;
-	
-	@UiField
-	TableCellElement quoteAccountCell;
-
-	@UiField
-	TextBox quotationAccount;
-
-	@UiField
-	TextBox activity;
+	ListBox activityCCC;
 	
 	@UiField
 	TableCellElement contractTypeNode;
@@ -287,6 +280,8 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 
 			@Override
 			public void onValueChange(ValueChangeEvent<String> document) {
+				Dni dni = new Dni(document.getValue());
+				
 				String document_type_str = checkDocumentType(document.getValue());
 				document_type.setText(document_type_str);
 
@@ -380,10 +375,10 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 
 	// ------------------------------------------------------- UiHandlers --------------------------------------------------------
 
-	@UiHandler("quotationAccount")
-	void onQuoteAccountChangeValue(ValueChangeEvent<String> event) {
-		employeeDraftObject.setContractQuoteAccount(quotationAccount.getValue());
-	}
+//	@UiHandler("quotationAccount")
+//	void onQuoteAccountChangeValue(ValueChangeEvent<String> event) {
+//		employeeDraftObject.setContractQuoteAccount(quotationAccount.getText());
+//	}
 
 	@UiHandler("contractType")
 	void onContractTypeChangeValue(ChangeEvent event) {
@@ -491,6 +486,12 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 
 	@UiHandler("document")
 	void onDocumentChangeValue(ChangeEvent event) {
+		Dni dni = new Dni(document.getValue());
+		if(dni.checkDNI())
+			document.removeStyleName(style.warning());
+		else
+			document.addStyleName(style.warning());
+		
 		String document_type_str = checkDocumentType(document.getValue());
 		document_type.setText(document_type_str);
 
@@ -528,6 +529,12 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	@UiHandler("security_social_num")
 	void onSocialSecurityNumChangeValue(ChangeEvent event) {
 		employeeDraftObject.setEmployeeSocialSecurityNum(security_social_num.getValue());
+		
+		SocialSecurity ss = new SocialSecurity(security_social_num.getValue());
+		if(ss.checkSS())
+			security_social_num.removeStyleName(style.warning());
+		else
+			security_social_num.addStyleName(style.warning());
 	}
 	
 	@UiHandler("street_type")
@@ -641,8 +648,8 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 
 	private void resetElements() {
 		// Clear contract elements
-		this.activity.setValue("");
-		this.quotationAccount.setValue("");
+		this.activityCCC.clear();
+		this.workplace.clear();
 		this.contractType.clear();
 		this.modality.clear();
 		this.strat_date.setValue(null);
@@ -674,6 +681,18 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	}
 
 	private void initializeListBox() {
+		//ACTIVITY - CCC
+		this.activityCCC.addItem("-");
+		for(String activity : this.employeeInfo.getEnterpriseActivities().values()){
+			for(CCCInfo cccInfo : this.employeeInfo.getCCCs().values()){
+				this.activityCCC.addItem(activity + " - " + CCCType.values()[cccInfo.getType()] + "(" + cccInfo.getCcc() + ")");
+			}
+		}
+		
+		//WORKPLACE
+		for(String workplaceStr : this.employeeInfo.getWorkplaces().values())
+			this.workplace.addItem(workplaceStr);
+		
 		// TIPO DE CONTRATO
 		this.contractType.addItem("-");
 		for (Entry<Integer, ContractTypeRecord> entry : this.contract_type.getContractTypes().entrySet()) {
@@ -752,21 +771,16 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		this.contractDataTable.getRows().getItem(12).getStyle().clearDisplay();
 
 		this.contractTypeNode.getStyle().setDisplay(Display.NONE);
-		this.quoteAccountLabelCell.getStyle().setDisplay(Display.NONE);
-		this.quoteAccountCell.getStyle().setDisplay(Display.NONE);
 		
 		this.contractFreelancerNode.getStyle().clearDisplay();
 		
 		this.labelEmployee.addStyleName(style.retaTopLabel());
 		this.employeeDataTable.getStyle().setTop(325, Unit.PX);
-		
-		this.workplaceCell.setColSpan(6);
 	}
 
 	private void fillContractFreelancerTable() {
-		String workplace_description = (employeeInfo.getWorkplace() == null) ? "" : employeeInfo.getWorkplace();
-		this.workplace.setValue(workplace_description);
-		this.workplace.setEnabled(false);
+		Integer workplaceIndex = employeeDraftObject.getWorkplaceIndex();
+		this.workplace.setSelectedIndex(workplaceIndex);
 
 		this.contractTypeFreelance.setValue("R" + String.valueOf("\u00E9") + "gimen especial de trabajadores aut" + String.valueOf("\u00F3") + "nomos");
 		this.contractTypeFreelance.setEnabled(false);
@@ -812,24 +826,22 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		this.contractDataTable.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
 
 		this.contractTypeNode.getStyle().clearDisplay();
-		this.quoteAccountLabelCell.getStyle().clearDisplay();
-		this.quoteAccountCell.getStyle().clearDisplay();
+		
+		this.labelEmployee.removeStyleName(style.retaTopLabel());
+		this.employeeDataTable.getStyle().setTop(395, Unit.PX);
 		
 		this.contractFreelancerNode.getStyle().setDisplay(Display.NONE);
 	}
 
 	private void fillContractTable() {
-		String workplace_description = (employeeInfo.getWorkplace() == null) ? "" : employeeInfo.getWorkplace();
-		this.workplace.setValue(workplace_description);
-		this.workplace.setEnabled(false);
+		Integer workplaceIndex = employeeDraftObject.getWorkplaceIndex();
+		this.workplace.setSelectedIndex(workplaceIndex);
 
-		String quote_account = (employeeInfo.getQuote_account() == null) ? "" : employeeInfo.getQuote_account();
-		this.quotationAccount.setText(quote_account);
-		this.quotationAccount.setEnabled(false);
-
-		String activity = (employeeInfo.getEnterprise_activity() == null) ? "" : employeeInfo.getEnterprise_activity();
-		this.activity.setText(activity);
-		this.activity.setEnabled(false);
+		Integer activityAccountIndex = employeeDraftObject.getActivityAccountIndex();
+		this.activityCCC.setSelectedIndex(activityAccountIndex);
+		
+		
+		//TODO: ¿CÓMO COJONES LO HAGO?
 
 		Integer contractTypeInt = (employeeInfo.getContract_type() == null) ? -1 : Integer.parseInt(employeeInfo.getContract_type());
 		if (contractTypeInt != -1) {

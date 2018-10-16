@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfoDataBase;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeDraftObject {
@@ -383,6 +384,41 @@ public class EmployeeDraftObject {
 
 	public void setEmployeeBIC(String rbankBIC) {
 		newEmployeeInfo.setBIC(rbankBIC);
+	}
+
+	public Integer getActivityAccountIndex() {
+		Integer indexActivity = 1;
+		Integer indexAccount = 1;
+		
+		if(null == this.employeeInfo.getEnterprise_ccc_table_id())
+			return 0;
+		
+		for(Integer activityId : this.employeeInfo.getEnterpriseActivities().keySet()){
+			if(this.employeeInfo.getEnterprise_activity_table_id().equals(activityId))
+				break;
+			indexActivity++;
+		}
+		
+		for(Integer cccId : this.employeeInfo.getCCCs().keySet()){
+			if(this.employeeInfo.getEnterprise_ccc_table_id().equals(cccId))
+				break;
+			indexAccount++;
+		}
+			
+		return indexActivity * indexAccount;
+		
+	}
+
+	public Integer getWorkplaceIndex() {
+		Integer index = 0;
+		
+		for(Integer workplaceId : this.employeeInfo.getWorkplaces().keySet()){
+			if(this.employeeInfo.getWorkplace_table_id().equals(workplaceId))
+				break;
+			index++;
+		}
+		
+		return index;
 	}
 	
 	
