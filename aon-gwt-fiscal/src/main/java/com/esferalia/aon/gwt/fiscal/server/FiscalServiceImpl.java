@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.fiscal.shared.Memory;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.model.AccountBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport;
@@ -256,6 +257,12 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 		return ACCOUNTING.getAccountTrialBalance(domainName,domain,user,params);
 	}
 	
+	@Override
+	public AccountBalanceReport getAccountBalanceReport(String domainName, String user, int domain,
+			AccountingReportParams params) throws AonCoreException {
+		return ACCOUNTING.getAccountBalanceReport(domainName,domain,user,params);
+	}
+
 	@Override
 	public LinkedList<AccountStatement> getAccountBalance(String domainName,
 			int domain, AccountingReportParams params) throws AonCoreException {

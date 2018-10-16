@@ -3,9 +3,10 @@ package com.esferalia.aon.occam.api.model;
 import java.util.Date;
 import java.util.HashSet;
 
+import com.esferalia.aon.occam.api.model.accounting.BalanceType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 
-public class AccountingReportParams implements IAccountParams,Cloneable {
+public class AccountingReportParams implements IAccountParams, Cloneable {
 
 	private static final long serialVersionUID = -599956549562585563L;
 	
@@ -34,6 +35,8 @@ public class AccountingReportParams implements IAccountParams,Cloneable {
 	private boolean closingEntriesExcluded;
 	
 	private boolean reverseOrder;
+	
+	private BalanceType balanceType;
 	
 	@Override
 	public int getDomain() {
@@ -127,6 +130,23 @@ public class AccountingReportParams implements IAccountParams,Cloneable {
 		this.reverseOrder = reverseOrder;
 		return this;
 	}
+	public BalanceType getBalanceType() {
+		return balanceType;
+	}
+	public AccountingReportParams setBalanceType(BalanceType balanceType) {
+		this.balanceType = balanceType;
+		return this;
+	}
+	public boolean isNormal() {
+		return getBalanceType() == BalanceType.BALANCE_NORMAL;
+	}
+	public boolean isAbbreviate(){
+		return getBalanceType() == BalanceType.BALANCE_ABBREVIATE;
+	}
+	public boolean isPymes(){
+		return getBalanceType() == BalanceType.BALANCE_PYMES;
+	}
+	
 	public AccountingReportParams clone() {
 		return new AccountingReportParams()
 			.setDomain(getDomain())
@@ -148,6 +168,7 @@ public class AccountingReportParams implements IAccountParams,Cloneable {
 			.setOperatingEntriesExcluded(areOperatingEntriesExcluded())
 			.setClosingEntriesExcluded(areClosingEntriesExcluded())
 			.setReverseOrder(isReverseOrder())
+			.setBalanceType(getBalanceType())
 		;
 	}
 	

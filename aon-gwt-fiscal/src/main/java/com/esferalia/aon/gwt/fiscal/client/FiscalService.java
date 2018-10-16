@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.shared.Memory;
+import com.esferalia.aon.occam.api.model.AccountBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport;
@@ -79,6 +80,8 @@ public interface FiscalService extends RemoteService {
 	AccountOperatingReport getAccountOperatingReport(String domainName,String user,int domain, AccountingReportParams params) throws AonCoreException;	
 	// --------------------------------------------------------------- ACCOUNT TRIAL BALANCE
 	AccountTrialBalanceReport getAccountTrialBalanceReport(String domainName, String user, int domain, AccountingReportParams params) throws AonCoreException;
+	// --------------------------------------------------------------- ACCOUNT BALANCE
+	AccountBalanceReport getAccountBalanceReport(String domainName, String user, int domain, AccountingReportParams params) throws AonCoreException;
 
 
 	LinkedList<Finance> getAccountFinances(String domainName, int domain, FinanceParams params, int offset,
@@ -93,6 +96,7 @@ public interface FiscalService extends RemoteService {
 	Integer presentationFile(String domainName, Integer domainId, String user, FiscalModelType type, Integer id);
 
 	void markAsFinished(String domainName, Integer domainId, String user, IFiscalModel model);
+
 
 	
 }

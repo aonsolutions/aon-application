@@ -122,6 +122,18 @@ public class AonNumberUtils {
 	public static int zeroIfNull(Integer value) {
 		return (value==null?0:value);
 	}
+	
+	public static double todouble(Number number) {
+		if (number == null) return 0;
+		return number.doubleValue();
+	}
+
+	public static double todouble(Object obj) {
+		if (obj instanceof Number) {
+			return todouble((Number) obj);
+		}
+		return 0;
+	}
 
 
 }

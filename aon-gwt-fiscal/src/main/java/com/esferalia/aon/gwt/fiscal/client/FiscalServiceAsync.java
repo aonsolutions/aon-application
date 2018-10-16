@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.shared.Memory;
+import com.esferalia.aon.occam.api.model.AccountBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport;
@@ -95,6 +96,11 @@ public interface FiscalServiceAsync {
 	void getAccountTrialBalanceReport(String domainName, String user, int domain
 			,AccountingReportParams params
 			,AsyncCallback<AccountTrialBalanceReport> callback) throws AonCoreException;
+	// --------------------------------------------------------------- ACCOUNT BALANCE
+	void getAccountBalanceReport(String domainName, String user, int domain
+			,AccountingReportParams params
+			,AsyncCallback<AccountBalanceReport> callback) throws AonCoreException;
+	
 
 	
 	void getAccountFinances(String domainName, int domain,

@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.shared.Memory;
+import com.esferalia.aon.occam.api.model.AccountBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport;
@@ -221,6 +222,15 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		AON.start();
 		fsa.getAccountTrialBalanceReport(domainName, user, domain, params,
 				new AsyncCallbackWrapper<AccountTrialBalanceReport>(callback));
+	}
+
+	// --------------------------------------------------------------- ACCOUNT TRIAL BALANCE
+	@Override
+	public void getAccountBalanceReport(String domainName, String user, int domain,
+			AccountingReportParams params, AsyncCallback<AccountBalanceReport> callback) {
+		AON.start();
+		fsa.getAccountBalanceReport(domainName, user, domain, params,
+				new AsyncCallbackWrapper<AccountBalanceReport>(callback));
 	}
 
 	@Override

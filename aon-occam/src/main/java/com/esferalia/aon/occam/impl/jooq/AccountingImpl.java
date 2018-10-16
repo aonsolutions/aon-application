@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IAccounting;
 import com.esferalia.aon.occam.api.IDAOCallback;
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AccountBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountEntryWrapper;
@@ -297,6 +298,11 @@ public class AccountingImpl implements IAccounting {
 		return AccountStatementDAO.trialBalance(ctx, params);
 	}
 	
+	@Override
+	public AccountBalanceReport getBalanceReport(AONContext ctx, AccountingReportParams params) throws AonCoreException {
+		return AccountStatementDAO.balanceReport(ctx, params);
+	}
+
 	@Override
 	public Stream<AccountStatement> getAccountBalance(AONContext ctx, AccountingReportParams params)
 			throws AonCoreException {

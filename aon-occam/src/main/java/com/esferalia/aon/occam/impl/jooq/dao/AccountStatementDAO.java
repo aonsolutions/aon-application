@@ -15,6 +15,7 @@ import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -26,8 +27,11 @@ import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AccountBalanceReport;
+import com.esferalia.aon.occam.api.model.AccountBalanceReport.BalanceLine;
 import com.esferalia.aon.occam.api.model.AccountOperatingAccount;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport.AccountOperatingStatement;
@@ -40,11 +44,19 @@ import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport.AccountTrialB
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.DateInterval;
 import com.esferalia.aon.occam.api.model.IAccountParams;
+import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
+import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
+import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountStatementPeriod;
 import com.esferalia.aon.occam.api.model.type.AccountStatementPeriod.IAccountStatementPeriodVisitor;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.server.accounting.AccBalanceAbbreviateKey;
+import com.esferalia.aon.occam.server.accounting.AccBalanceNormalKey;
+import com.esferalia.aon.occam.server.accounting.AccBalancePYMESKey;
+import com.esferalia.aon.occam.server.accounting.AccMiningMVELContext;
+import com.esferalia.aon.occam.server.accounting.IBalanceKey;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableDouble;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -788,4 +800,165 @@ public class AccountStatementDAO {
 		condition = appendCostCenterCondition(condition,params);
 		return condition;
 	}
+	
+	
+	// *********************************************************************************************************
+	// ********************************* BALANCE DE SUMAS Y SALDOS *********************************************
+	// *********************************************************************************************************
+	public static AccountBalanceReport balanceReport(AONContext ctx, AccountingReportParams params) {
+		if (params.isAbbreviate()) {
+			return balanceReport(ctx,params,AccBalanceAbbreviateKey.values(), new IAccMiningKeyAccept() {
+				
+				@Override
+				public boolean acceptKey(Object key) {
+					try {
+						return (AccBalanceAbbreviateKey.valueOf((String) key) != null);	
+					} catch (IllegalArgumentException e) {
+						return false;
+					}
+				}
+			});
+		}
+		else if (params.isPymes()) {
+			return balanceReport(ctx,params,AccBalancePYMESKey.values(), new IAccMiningKeyAccept() {
+				
+				@Override
+				public boolean acceptKey(Object key) {
+					try {
+						return (AccBalancePYMESKey.valueOf((String) key) != null);	
+					} catch (IllegalArgumentException e) {
+						return false;
+					}
+				}
+			});
+		}
+		return balanceReport(ctx,params,AccBalanceNormalKey.values(), new IAccMiningKeyAccept() {
+			
+			@Override
+			public boolean acceptKey(Object key) {
+				try {
+					return (AccBalanceNormalKey.valueOf((String) key) != null);	
+				} catch (IllegalArgumentException e) {
+					return false;
+				}
+			}
+		});
+	}
+
+	public static AccountBalanceReport balanceReport(AONContext ctx, AccountingReportParams params, IBalanceKey[] keys,IAccMiningKeyAccept accepter) {
+		AccountBalanceReport report = new AccountBalanceReport();
+		report.setParams(params);
+		report.setSelectedPeriod( AccountPeriodDAO.getPeriod(ctx, params.getPeriod()) );
+		if (report.getSelectedPeriod() == null) {
+			throw new AonCoreException("No se ha indicado ejercicio contable");
+		}
+		if (params.getFromDate() != null && params.getFromDate().before(report.getSelectedPeriod().getInitiationDate())) {
+			throw new AonCoreException("La fecha desde indicada es anterior al inicio del ejercicio");
+		}
+		if (params.getToDate() != null && params.getToDate().after(report.getSelectedPeriod().getDeadline())) {
+			throw new AonCoreException("La fecha hasta indicada es posterior al final del ejercicio");
+		}
+		if (params.getActivity() != null) {
+			report.setSelectedActivity( CompanyDAO.getEnterpriseActivity(ctx, params.getActivity()) );
+		}
+		LinkedHashMap<DateInterval,AccountingReportParams> intervals = getDateIntervals(ctx,params);
+		for (DateInterval inter : intervals.keySet()) {
+			fillReport(ctx, intervals.get(inter), keys, accepter, report, inter.getName());
+		}
+		
+		return report;
+	}
+
+	private static void fillReport(AONContext ctx, AccountingReportParams params, IBalanceKey[] keys,IAccMiningKeyAccept accepter, AccountBalanceReport report, String bal) {
+		AccMiningMVELContext mvelCtx = new AccMiningMVELContext( accepter );
+		LinkedHashMap<String,String> initialMap = new LinkedHashMap<String,String>();
+		LinkedHashMap<String,String> computeMap = new LinkedHashMap<String,String>();  
+		
+		AccMiningParameters mParams = new AccMiningParameters();
+		mParams.setDomain(ctx.getDomainId());
+		mParams.setStartDate( params.getFromDate() );
+		mParams.setEndDate( params.getToDate() );
+		Map<String, AccountBalance> accounts = ACCOUNTING.getAccountBalances(ctx, mParams); 
+		mvelCtx.setAccounts( accounts );
+		
+		for (IBalanceKey key : keys) {
+			if ( !report.getBalances().containsKey(key.getCode()) ) {
+				report.getBalances().put( key.getCode(), new BalanceLine()
+						.setLevel(key.getLevel())
+						.setCode(key.getCode())
+						.setDescription(key.getName())
+						.setTotal(AonStringUtils.isNotBlank(key.getComputeExpression()))
+						.setAccounts( key.getInitialExpression() ));
+				mvelCtx.put(key.getCode(), 0.0 );
+			}
+			String exp = key.getInitialExpression();
+			if (AonStringUtils.isNotBlank(exp)) {
+				initialMap.put(key.getCode(), exp);
+			}
+			String computeExp = key.getComputeExpression();
+			if (AonStringUtils.isNotBlank(computeExp)) {
+				computeMap.put(key.getCode(), computeExp);
+			}
+		}
+		mvelCtx.setExpressionMap(initialMap);
+		for (String keyCode : mvelCtx.getExpressionMap().keySet()) {
+			String initialExp = mvelCtx.getExpressionMap().get(keyCode);
+			mvelCtx.put(keyCode, 0.0 );
+			if (AonStringUtils.isNotBlank(initialExp)) {
+				Object ret = mvelCtx.evaluateExpression(keyCode,initialExp);
+				mvelCtx.put(keyCode, ret );
+				report.setAmount(keyCode,bal,AonNumberUtils.todouble(ret));
+			}
+		}
+		
+		// Se chequean las cuentas que no se han tenido en cuenta, para facilitar al cliene la búsqueda del descuadre.
+		LinkedList<AccountBalance> unreadBalances = new LinkedList<AccountBalance>();
+		for (String code : mvelCtx.getAccounts().keySet()) {
+				AccountBalance accountBalance = mvelCtx.getAccounts().get(code);
+				if (!accountBalance.isChecked() ) {
+					if (AonStringUtils.length(code) == 4
+					&& !mvelCtx.getAccounts().get(AonStringUtils.substring(code, 0,3)).isChecked()
+					&& !mvelCtx.getAccounts().get(AonStringUtils.substring(code, 0,2)).isChecked()
+					&& !mvelCtx.getAccounts().get(AonStringUtils.substring(code, 0,1)).isChecked()) {
+					
+					System.out.println( "NO MARCADO ...: " + code);
+					unreadBalances.add(accountBalance);			
+				}
+			}
+		}
+		report.getUnreadAccounts().put(bal, unreadBalances);
+		/// [fin chequeo]
+		
+		mvelCtx.getExpressionMap().clear();
+		mvelCtx.setExpressionMap(computeMap);
+		for (String keyCode : mvelCtx.getExpressionMap().keySet()) {
+			String exp = mvelCtx.getExpressionMap().get(keyCode);
+			if (AonStringUtils.isNotBlank(exp)) {
+				Object ret = mvelCtx.evaluateExpression(keyCode,exp);
+				mvelCtx.put(keyCode, ret );
+				report.setAmount(keyCode,bal,AonNumberUtils.todouble(ret));
+			}
+		}
+	}
+
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

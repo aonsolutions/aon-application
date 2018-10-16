@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AccountBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountFilter;
@@ -85,6 +86,7 @@ public interface IAccounting {
 			throws AonCoreException;
 	public AccountOperatingReport getAccountOperatingReport(AONContext ctx, AccountingReportParams params) throws AonCoreException;
 	public AccountTrialBalanceReport getTrialBalanceReport(AONContext ctx, AccountingReportParams params) throws AonCoreException;
+	public AccountBalanceReport getBalanceReport(AONContext ctx, AccountingReportParams params);
 	
 	
 	public Stream<Finance> getAccountFinances(AONContext ctx, FinanceParams params,

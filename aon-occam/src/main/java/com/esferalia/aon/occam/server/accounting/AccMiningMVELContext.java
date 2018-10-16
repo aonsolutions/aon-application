@@ -98,6 +98,9 @@ public class AccMiningMVELContext implements Map<String, Object> {
 	}
 	
 	private Object mvelEval(String key,String expression) {
+		if ("BP00228".equals(key)) {
+			System.out.println("");
+		}
 		try {
 			stack.push(key);
 			return MVEL.eval( expression , this , this);
@@ -329,6 +332,7 @@ public class AccMiningMVELContext implements Map<String, Object> {
 			String acc = Integer.toString(account);
 			if (this.accounts.containsKey(acc)) {
 				AccountBalance ab = this.accounts.get(acc);
+				ab.setChecked(true);
 				d = d + ab.getCreditBalance();
 			}
 		}
@@ -341,6 +345,7 @@ public class AccMiningMVELContext implements Map<String, Object> {
 			String acc = Integer.toString(account);
 			if (this.accounts.containsKey(acc)) {
 				AccountBalance ab = this.accounts.get(acc);
+				ab.setChecked(true);
 				d = d + ab.getDebitBalance();
 			}
 		}
@@ -353,6 +358,7 @@ public class AccMiningMVELContext implements Map<String, Object> {
 			String acc = Integer.toString(account);
 			if (this.accounts.containsKey(acc)) {
 				AccountBalance ab = this.accounts.get(acc);
+				ab.setChecked(true);
 				d = d + ab.getCreditPyG();
 			}
 		}
@@ -365,6 +371,7 @@ public class AccMiningMVELContext implements Map<String, Object> {
 			String acc = Integer.toString(account);
 			if (this.accounts.containsKey(acc)) {
 				AccountBalance ab = this.accounts.get(acc);
+				ab.setChecked(true);
 				d = d + ab.getDebitPyG();
 			}
 		}

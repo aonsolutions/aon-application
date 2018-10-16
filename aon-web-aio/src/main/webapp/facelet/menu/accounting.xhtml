@@ -222,6 +222,33 @@
 								<aon:div styleClass="aon-direct-access-list">
 <!--	GWT MODULES -->								
 									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_accountStatement"
+											action="gwt_accountStatement-acc"
+											title="#{bundle.accounting_statement_module}">
+											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
+												style="margin-left: 5px; padding-left: 20px;" 
+												value="#{bundle.accounting_statement_module}"/>												
+										</aon:commandLink>
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_accountOperatingStatement"
+											action="gwt_accountOperatingStatement-acc"
+											title="#{bundle.accounting_profit_and_loss_module}">
+											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
+												style="margin-left: 5px; padding-left: 20px;" 
+												value="#{bundle.accounting_profit_and_loss_module}"/>												
+										</aon:commandLink>
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_accountTrialBalance"
+											action="gwt_accountTrialBalance-acc"
+											title="#{bundle.account_trial_balance_report}">
+											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
+												style="margin-left: 5px; padding-left: 20px;" 
+												value="#{bundle.account_trial_balance_report}"/>												
+										</aon:commandLink>
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_accountJournal"
 											action="gwt_accountJournal-acc"
 											title="#{bundle.account_journal_report}">
@@ -230,7 +257,6 @@
 												value="#{bundle.account_journal_report}"/>												
 										</aon:commandLink>
 									</aon:div>
-								
 <!--	OLD MODULES -->								
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="accountStatement"
@@ -262,30 +288,12 @@
 									
 <!--	BETA MODULES -->								
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_accountStatement"
-											action="gwt_accountStatement-acc"
-											title="#{bundle.accounting_statement_module}">
+										<aon:commandLink id="gwt_accountBalance"
+											action="gwt_accountBalance-acc"
+											title="#{bundle.accounting_balance_menu_bs}">
 											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
 												style="margin-left: 5px; padding-left: 20px;" 
-												value="#{bundle.accounting_statement_module}"/>												
-										</aon:commandLink>
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_accountTrialBalance"
-											action="gwt_accountTrialBalance-acc"
-											title="#{bundle.account_trial_balance_report}">
-											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
-												style="margin-left: 5px; padding-left: 20px;" 
-												value="#{bundle.account_trial_balance_report}"/>												
-										</aon:commandLink>
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_accountOperatingStatement"
-											action="gwt_accountOperatingStatement-acc"
-											title="#{bundle.accounting_profit_and_loss_module}">
-											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
-												style="margin-left: 5px; padding-left: 20px;" 
-												value="#{bundle.accounting_profit_and_loss_module}"/>												
+												value="#{bundle.accounting_balance_menu_bs}"/>												
 										</aon:commandLink>
 									</aon:div>
 									

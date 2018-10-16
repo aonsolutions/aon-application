@@ -7,7 +7,7 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class AccountBalance implements Serializable {
 	
-	private static final long serialVersionUID = 3243984166281855530L;
+	private static final long serialVersionUID = 2821084947789446457L;
 	
 	private double openingDebit;
 	private double openingCredit;
@@ -15,7 +15,11 @@ public class AccountBalance implements Serializable {
 	private double creditSum;
 	private double operatingDebit;
 	private double operatingCredit;
+	private boolean checked;
 	
+	public AccountBalance() {
+		
+	}
 	public AccountBalance(int type, double debit, double credit) {
 		if (type == 0) {
 			this.openingDebit = debit;
@@ -45,6 +49,13 @@ public class AccountBalance implements Serializable {
 	}
 	public double getOperatingCredit() {
 		return operatingCredit;
+	}
+	
+	public boolean isChecked() {
+		return checked;
+	}
+	public void setChecked(boolean checked) {
+		this.checked = checked;
 	}
 	
 	public double getDebitBalance() {

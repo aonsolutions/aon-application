@@ -587,7 +587,7 @@ public class AccMiningMVELTest  {
 	@Test
 	public void testBalance() {
 
-		String domainName = "mac.ecastellano.dev";
+		String domainName = "mac.ecastellano.euk";
 		int domainId = 526;
 		String user = "mac";
 		int year = 2014;
