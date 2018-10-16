@@ -63,12 +63,9 @@ import org.mvel2.CompileException;
 import org.mvel2.ast.Function;
 import org.mvel2.util.MethodStub;
 
-import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.Month;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
@@ -78,7 +75,6 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.report.controller.ReportManager;
-import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.google.sql.SQLConstants.DomainColumns;
 import com.esferalia.aon.google.sql.SQLConstants.UserColumns;
@@ -219,7 +215,6 @@ import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
-import com.esferalia.aon.ui.payroll.controller.salary.SalaryExpenseController;
 import com.esferalia.aon.ui.payroll.utils.ReportUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -2110,8 +2105,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	protected static ICollectionProvider getSalariesProvider(String domain, Cost cost,
 			SalaryType types[], SalaryFilter filter, boolean calc)
 			throws ManagerBeanException {
-		IManagerBean salaryBeanManager = BeanManager
-				.getManagerBean(com.esferalia.aon.payroll.Salary.class);
 		
 		Condition condition = null;
 		Criteria sqlCriteria = new Criteria();
@@ -3718,65 +3711,61 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	protected static com.esferalia.aon.payroll.IrpfOutcome getIrpfOutcome(
 			Irpf irpf) {
-		try {
-			IrpfOutcome irpfOutcome = new IrpfOutcome();
+		IrpfOutcome irpfOutcome = new IrpfOutcome();
 
-			IManagerBean irpfResultManagerBean = BeanManager
-					.getManagerBean(com.esferalia.aon.payroll.IrpfResult.class);
-			Criteria irpfResultCriteria = new Criteria();
-			irpfResultCriteria.addEqualExpression(irpfResultManagerBean
-					.getFieldName(IEntityAlias.IRPF_RESULT_ID), irpf
-					.getIrpfResult().getId());
-			List<ITransferObject> irpfResults = irpfResultManagerBean
-					.getList(irpfResultCriteria);
-			irpfOutcome
-					.setIrpfResult((com.esferalia.aon.payroll.IrpfResult) irpfResults
-							.get(0));
+//			IManagerBean irpfResultManagerBean = BeanManager
+//					.getManagerBean(com.esferalia.aon.payroll.IrpfResult.class);
+//			Criteria irpfResultCriteria = new Criteria();
+//			irpfResultCriteria.addEqualExpression(irpfResultManagerBean
+//					.getFieldName(IEntityAlias.IRPF_RESULT_ID), irpf
+//					.getIrpfResult().getId());
+//			List<ITransferObject> irpfResults = irpfResultManagerBean
+//					.getList(irpfResultCriteria);
+//			irpfOutcome
+//					.setIrpfResult((com.esferalia.aon.payroll.IrpfResult) irpfResults
+//							.get(0));
+//
+//			IManagerBean irpfDataManagerBean = BeanManager
+//					.getManagerBean(com.esferalia.aon.payroll.IrpfData.class);
+//
+//			Criteria irpfDataCriteria = new Criteria();
+//			irpfDataCriteria
+//					.addEqualExpression(irpfDataManagerBean
+//							.getFieldName(IEntityAlias.IRPF_DATA_ID), irpf
+//							.getIrpfData().getId());
+//			List<ITransferObject> irpfDatas = irpfDataManagerBean
+//					.getList(irpfDataCriteria);
+//			com.esferalia.aon.payroll.IrpfData irpfData = (com.esferalia.aon.payroll.IrpfData) irpfDatas
+//					.get(0);
+//			irpfOutcome.setIrpfData(irpfData);
+//
+//			Person person = irpfData.getContract().getPerson();
+//			Registry registry = irpfData.getContract().getPerson()
+//					.getRegistry();
+//
+//			irpfOutcome.setNif(registry.getDocument());
+//			Date birthDate = person.getBirthDate();
+//			if (birthDate != null) {
+//				irpfOutcome.setBirthYear(birthDate.getYear());
+//			}
+//
+//			if (irpf.getIrpfRegularization() == null)
+//				return irpfOutcome;
+//
+//			IManagerBean irpfRegularizationManagerBean = BeanManager
+//					.getManagerBean(com.esferalia.aon.payroll.IrpfRegularization.class);
+//			Criteria irpfRegularizationCriteria = new Criteria();
+//			irpfRegularizationCriteria.addEqualExpression(
+//					irpfRegularizationManagerBean
+//							.getFieldName(IEntityAlias.IRPF_REGULARIZATION_ID),
+//					irpf.getIrpfRegularization().getId());
+//			List<ITransferObject> irpfRegularizations = irpfRegularizationManagerBean
+//					.getList(irpfRegularizationCriteria);
+//			irpfOutcome
+//					.setIrpfRegularization((com.esferalia.aon.payroll.IrpfRegularization) irpfRegularizations
+//							.get(0));
 
-			IManagerBean irpfDataManagerBean = BeanManager
-					.getManagerBean(com.esferalia.aon.payroll.IrpfData.class);
-
-			Criteria irpfDataCriteria = new Criteria();
-			irpfDataCriteria
-					.addEqualExpression(irpfDataManagerBean
-							.getFieldName(IEntityAlias.IRPF_DATA_ID), irpf
-							.getIrpfData().getId());
-			List<ITransferObject> irpfDatas = irpfDataManagerBean
-					.getList(irpfDataCriteria);
-			com.esferalia.aon.payroll.IrpfData irpfData = (com.esferalia.aon.payroll.IrpfData) irpfDatas
-					.get(0);
-			irpfOutcome.setIrpfData(irpfData);
-
-			Person person = irpfData.getContract().getPerson();
-			Registry registry = irpfData.getContract().getPerson()
-					.getRegistry();
-
-			irpfOutcome.setNif(registry.getDocument());
-			Date birthDate = person.getBirthDate();
-			if (birthDate != null) {
-				irpfOutcome.setBirthYear(birthDate.getYear());
-			}
-
-			if (irpf.getIrpfRegularization() == null)
-				return irpfOutcome;
-
-			IManagerBean irpfRegularizationManagerBean = BeanManager
-					.getManagerBean(com.esferalia.aon.payroll.IrpfRegularization.class);
-			Criteria irpfRegularizationCriteria = new Criteria();
-			irpfRegularizationCriteria.addEqualExpression(
-					irpfRegularizationManagerBean
-							.getFieldName(IEntityAlias.IRPF_REGULARIZATION_ID),
-					irpf.getIrpfRegularization().getId());
-			List<ITransferObject> irpfRegularizations = irpfRegularizationManagerBean
-					.getList(irpfRegularizationCriteria);
-			irpfOutcome
-					.setIrpfRegularization((com.esferalia.aon.payroll.IrpfRegularization) irpfRegularizations
-							.get(0));
-
-			return irpfOutcome;
-		} catch (ManagerBeanException e) {
-			throw new IllegalArgumentException(e);
-		}
+		return irpfOutcome;
 
 	}
 
