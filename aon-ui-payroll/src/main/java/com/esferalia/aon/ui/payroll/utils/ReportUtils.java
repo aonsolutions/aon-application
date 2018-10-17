@@ -10,10 +10,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,18 +22,22 @@ import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.IResourceable;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryDirStaff;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.jooq.tables.Rattach;
+import com.esferalia.aon.jooq.tables.User;
 import com.esferalia.aon.jooq.tables.records.RattachRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
@@ -52,6 +57,7 @@ public class ReportUtils {
 	
 	public static final ThreadLocal<String> domain = new ThreadLocal<String>();
 	
+	public static final ThreadLocal<Map<String,byte[]>> datas = ThreadLocal.withInitial(HashMap<String,byte[]>::new);
 	
 	public static class ReportSalaryItem<T extends Enum<T> & IResourceable> implements ISalaryItem<T> {
 		
@@ -319,11 +325,55 @@ public class ReportUtils {
 			if ( rattachRecord == null )
 				return null;
 			
+			
 			RegistryAttachment registryAttachment = new RegistryAttachment();
 			registryAttachment.setId(rattachRecord.getId());
-			byte[] data = rattachRecord.getData();
-			registryAttachment.setData(data != null ? data : new byte[] {});
+			registryAttachment.setDomain(rattachRecord.getDomain());
+			byte data [] = rattachRecord.getData();
+			registryAttachment.setData(data);
+			registryAttachment.setDriveId(rattachRecord.getDriveId());
 			registryAttachment.setDescription(rattachRecord.getDescription());
+			registryAttachment.setAttachDate(rattachRecord.getAttachDate());
+			registryAttachment.setDparentId(rattachRecord.getDparentId());
+			registryAttachment.setCreationDate(rattachRecord.getCreationDate());
+			registryAttachment.setCreationUser(rattachRecord.getCreationUser());
+			
+			if ( data == null )
+				registryAttachment.setData(data = datas.get().get(registryAttachment.getDriveId()));
+			
+			try {
+				if ( data == null ) {
+					
+					String login = 
+					dslContext
+					.select()
+					.from(User.USER)
+					.where(User.USER.DOMAIN.eq(registryAttachment.getDomain()))
+					.fetchAny(User.USER.LOGIN)
+					;
+					if ( login == null ) 
+						login = 
+						dslContext
+						.select()
+						.from(User.USER)
+						.where(User.USER.DOMAIN.in(DSL.select(Domain.DOMAIN.PARENT).from(Domain.DOMAIN).where(Domain.DOMAIN.ID.eq(registryAttachment.getDomain()))
+						))
+						.fetchAny(User.USER.LOGIN)
+						;
+						
+					registryAttachment.setData(data = DriveUtils.getByteFile(
+							domain.get(), 
+							registryAttachment.getDomain(), 
+							login, 
+							registryAttachment.getDriveId(), 
+							registryAttachment.getId()));
+					
+					datas.get().put(registryAttachment.getDriveId(), data);
+				}
+			} catch ( Throwable t ) {
+				t.printStackTrace();
+				return null;
+			}
 			
 			return registryAttachment;
 		} catch (AonConnectionException e) {
