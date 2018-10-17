@@ -287,16 +287,6 @@
 									</aon:div>
 									
 <!--	BETA MODULES -->								
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_accountBalance"
-											action="gwt_accountBalance-acc"
-											title="#{bundle.accounting_balance_menu_bs}">
-											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
-												style="margin-left: 5px; padding-left: 20px;" 
-												value="#{bundle.accounting_balance_menu_bs}"/>												
-										</aon:commandLink>
-									</aon:div>
-									
 								</aon:div>
 							</aon:panelGrid>
 	
@@ -348,6 +338,16 @@
 											action="balance_sheet_search-custom"
 											actionListener="#{balanceSheet.onCustomBalance}"
 											value="#{bundle.accounting_balance_menu_custom}" />
+									</aon:div>
+<!--	BETA MODULES -->								
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_accountBalance"
+											action="gwt_accountBalance-acc"
+											title="#{bundle.accounting_balance_menu_bs}">
+											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
+												style="margin-left: 5px; padding-left: 20px;" 
+												value="#{bundle.accounting_balance_menu_bs}"/>												
+										</aon:commandLink>
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
