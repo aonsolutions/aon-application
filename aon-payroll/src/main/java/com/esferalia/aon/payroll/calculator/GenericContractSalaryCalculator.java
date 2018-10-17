@@ -5,6 +5,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_ENTERPRISE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_ENTERPRISE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMBARGO_PAID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMPLOYEE_QUOTA;
@@ -1373,6 +1374,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				CGC_BASE.getName(), 
 				CGP_BASE.getName(),
 				ERE_BASE.getName(), 
+				DIRECT_BASE.getName(), 
 				MATERNITY_BASE.getName(), 
 				STRUCTURAL_OVERTIME_BASE.getName(),
 				NON_STRUCTURAL_OVERTIME_BASE.getName(), 

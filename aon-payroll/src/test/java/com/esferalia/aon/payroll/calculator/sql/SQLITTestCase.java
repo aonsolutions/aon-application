@@ -1887,7 +1887,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				);
 		addPayment(aonContext, contract, directPay, 
 				String.format("BASE_REGULADORA * 0.00 * %s_366",  COMMON_DISEASE_DAYS),
-				String.format("BASE_REGULADORA * %s",  QUOTE_DAYS)
+				String.format("BASE_REGULADORA * %s",  QUOTE_DAYS),
+				PaymentType.CRA_0000
 				);
 		//@formatter:on
 
@@ -1911,8 +1912,6 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
 
-		cleanSystemCosts(aonContext);
-
 		Assert.assertEquals(get(_365Date, DAY_OF_MONTH)* 100.00 * 0.75,salary.getTotalPayment() );
 		Assert.assertEquals(30.00 * 100.00 , salary.getCommonBase() );
 		
@@ -1925,6 +1924,26 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				
 				, salary.getTotalEnterprise()
 				, DELTA );
+
+		startDate = add(startDate, Calendar.MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		salary = calculator.calculate(ctx);
+		
+		cleanSystemCosts(aonContext);
+
+		Assert.assertEquals(0.00,salary.getTotalPayment() );
+		Assert.assertEquals(30.00 * 100.00 , salary.getCommonBase() );
+		Assert.assertEquals((30.00 * 100.00* 23.60 / 100.00)
+				, salary.getTotalEnterprise()
+				, DELTA );
+		
+		Assert.assertEquals( 0.00, 
+				salary.getSocialSecurityContributions(), DELTA);
 
 	}
 

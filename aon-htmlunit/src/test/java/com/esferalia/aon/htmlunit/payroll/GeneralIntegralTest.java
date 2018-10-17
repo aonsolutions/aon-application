@@ -701,6 +701,11 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.DECEMBER,2016);
 		assertValue("cgcBaseLabel", cgcBase );
 
+		draft("PAGO DIRECTO, REDEFINIDO");
+		calculate(Calendar.APRIL,2018);
+		cgcBase = getValue("cgcBaseLabel");
+		calculate(Calendar.MAY,2018);
+		assertValue("cgcBaseLabel", cgcBase );
 	}
 
 	@Test

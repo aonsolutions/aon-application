@@ -911,6 +911,8 @@ public class TrabajadoresTramos {
 		
 		boolean iTPagoDirecto = (
 		getSumContextData(ContextVariable.COMMON_DISEASE_LACK_DAYS.getName(), salary, startDate, endDate)
+		+ getSumContextData(ContextVariable.COMMON_DISEASE_DAYS_366.getName(), salary, startDate, endDate)
+		+ getSumContextData(ContextVariable.OCCUPATIONAL_DISEASE_DAYS_366.getName(), salary, startDate, endDate)
 		) > 0.00;
 
 		boolean tiempoCompleto = fullTime && ("14".indexOf(tc2.charAt(0)) != -1);
