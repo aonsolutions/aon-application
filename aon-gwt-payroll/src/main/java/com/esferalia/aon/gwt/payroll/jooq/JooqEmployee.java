@@ -218,15 +218,23 @@ public class JooqEmployee {
 			
 			for(Record r : enterpriseActivityRecords){
 				activities.put(r.get(ENTERPRISE_ACTIVITY.ID), r.get(ENTERPRISE_ACTIVITY.DESCRIPTION));
+				
+				//Enterprise CCCs
+				Result<Record> enterpriseCCCRecords = dslContext.select().from(ENTERPRISE_CCC)
+						.where(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY.eq(r.get(ENTERPRISE_ACTIVITY.ID))).fetch();
+				for(Record d : enterpriseCCCRecords){
+					Integer geozoneId = d.get(ENTERPRISE_CCC.GEOZONE);
+					String geozoneName = null;
+					if(null != geozoneId){
+						Record geozoneRecord = dslContext.select().from(GEOZONE).where(GEOZONE.ID.eq(geozoneId)).fetchOne();
+						geozoneName = geozoneRecord.get(GEOZONE.NAME);
+					}
+					employee.addCCC(d.get(ENTERPRISE_CCC.ID), d.get(ENTERPRISE_CCC.CCC), d.get(ENTERPRISE_CCC.TYPE), geozoneName, r.get(ENTERPRISE_ACTIVITY.ID));
+				}
 			}
 			
 			employee.setEnterpriseActivities(activities);
 			
-			//Enterprise CCCs
-			Result<Record> enterpriseCCCRecords = dslContext.select().from(ENTERPRISE_CCC).where(ENTERPRISE_CCC.ID.eq(enterpriseCCC)).fetch();
-			for(Record r : enterpriseCCCRecords){
-				employee.addCCC(r.get(ENTERPRISE_CCC.ID), r.get(ENTERPRISE_CCC.CCC), r.get(ENTERPRISE_CCC.TYPE));
-			}
 		}
 		
 		Integer agreementLevel = contractTable.get(CONTRACT.AGREEMENT_LEVEL);
@@ -560,6 +568,7 @@ public class JooqEmployee {
 			.set(CONTRACT.SENIORITY_DATE, new Date(newEmployeeInfo.getSeniority_date().getTime()))
 			.set(CONTRACT.CATEGORY_DESCRIPTION, newEmployeeInfo.getCategory_description())
 			.set(CONTRACT.AGREEMENT_LEVEL, newEmployeeInfo.getAgreement_level_table_id())
+			.set(CONTRACT.WORKPLACE, newEmployeeInfo.getWorkplace_table_id())
 			.where(CONTRACT.ID.eq(newEmployeeInfo.getContract_table_id()))
 			.execute();
 		

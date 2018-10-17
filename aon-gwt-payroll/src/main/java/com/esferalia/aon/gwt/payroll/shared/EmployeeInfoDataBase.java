@@ -117,6 +117,8 @@ public class EmployeeInfoDataBase implements Serializable {
 	//CCCs
 	private Map<Integer, CCCInfo> cccs = new HashMap<>();
 	
+	private byte cccType;
+	
 	public EmployeeInfoDataBase() {
 		super();
 	}
@@ -709,8 +711,8 @@ public class EmployeeInfoDataBase implements Serializable {
 		return this.activities;
 	}
 
-	public void addCCC(Integer cccId, String ccc, Byte type) {
-		CCCInfo cccInfo = new CCCInfo(ccc, type);
+	public void addCCC(Integer cccId, String ccc, Byte type, String geozoneName, Integer activityId) {
+		CCCInfo cccInfo = new CCCInfo(ccc, type, geozoneName, activityId);
 		this.cccs.put(cccId, cccInfo);
 	}
 	
@@ -724,6 +726,14 @@ public class EmployeeInfoDataBase implements Serializable {
 	
 	public Map<Integer, String> getWorkplaces() {
 		return this.workplaces;	
+	}
+
+	public void setEnterprise_ccc_type(byte cccType) {
+		this.cccType = cccType;
+	}
+	
+	public byte getEnterprise_ccc_type() {
+		return this.cccType;
 	}
 	
 }

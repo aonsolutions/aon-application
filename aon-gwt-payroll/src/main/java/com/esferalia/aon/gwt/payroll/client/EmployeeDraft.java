@@ -375,11 +375,45 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 
 	// ------------------------------------------------------- UiHandlers --------------------------------------------------------
 
-//	@UiHandler("quotationAccount")
-//	void onQuoteAccountChangeValue(ValueChangeEvent<String> event) {
-//		employeeDraftObject.setContractQuoteAccount(quotationAccount.getText());
-//	}
-
+	@UiHandler("activityCCC")
+	void onContractActivityCCCChangeValue(ChangeEvent event) {
+		String activityCCC = this.activityCCC.getSelectedItemText();
+		if(activityCCC.equals("-")){
+			this.employeeDraftObject.setContractActivityId(null);
+			this.employeeDraftObject.setContractCCCId(null);
+			this.employeeDraftObject.setContractCCCType((Byte) null);
+		}else{
+			String activityStr = activityCCC.split(" -")[0];
+			String cccStr = activityCCC.split("\\[")[1].split("\\]")[0];
+			String cccTypeStr = activityCCC.split("- ")[1].split("\\[")[0];
+			String cccGeozoneStr = activityCCC.split("- ")[2];
+			int cccTypeInt = -1;
+			for(int i=0; i< CCCType.values().length; i++){
+				if(CCCType.values()[i].name().equals(cccTypeStr)){
+					cccTypeInt = i;
+					break;
+				}
+			}
+			byte cccType = (byte) cccTypeInt;
+			//Window.alert("ActivityStr : " + activityStr + ", cccStr : " + cccStr + ", cccType : " + cccType + ", cccGeozone : " + cccGeozoneStr);
+			
+			Integer activityId = this.employeeDraftObject.getActivityIdByName(activityStr);
+			Integer cccId = this.employeeDraftObject.getCCCIdByNumber(cccStr, cccType, cccGeozoneStr);
+			this.employeeDraftObject.setContractActivityId(activityId);
+			this.employeeDraftObject.setContractCCCId(cccId);
+			this.employeeDraftObject.setContractCCCType(cccType);
+			
+			//Window.alert("ActivityId : " + activityId + ", cccId : " + cccId + ", cccType : " + cccType);
+		}
+	}
+	
+	@UiHandler("workplace")
+	void onContractWorkplaceChangeValue(ChangeEvent event) {
+		String workplaceName = this.workplace.getSelectedItemText();
+		Integer workplaceId = this.employeeDraftObject.getWorkplaceIdByName(workplaceName);
+		this.employeeDraftObject.setContractWorkplaceId(workplaceId);
+	}
+	
 	@UiHandler("contractType")
 	void onContractTypeChangeValue(ChangeEvent event) {
 		if (contractType.getSelectedIndex() == 0) {
@@ -683,11 +717,13 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	private void initializeListBox() {
 		//ACTIVITY - CCC
 		this.activityCCC.addItem("-");
-		for(String activity : this.employeeInfo.getEnterpriseActivities().values()){
-			for(CCCInfo cccInfo : this.employeeInfo.getCCCs().values()){
-				this.activityCCC.addItem(activity + " - " + CCCType.values()[cccInfo.getType()] + "(" + cccInfo.getCcc() + ")");
+		if(null != this.employeeInfo.getEnterpriseActivities())
+			for(Entry<Integer,String> entry : this.employeeInfo.getEnterpriseActivities().entrySet()){
+				for(CCCInfo cccInfo : this.employeeInfo.getCCCs().values()){
+					if(cccInfo.getActivityId() == entry.getKey())
+						this.activityCCC.addItem(entry.getValue() + " - " + CCCType.values()[cccInfo.getType()] + "[" + cccInfo.getCcc() + "] - " +  cccInfo.getGeozone());
+				}
 			}
-		}
 		
 		//WORKPLACE
 		for(String workplaceStr : this.employeeInfo.getWorkplaces().values())

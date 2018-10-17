@@ -6,12 +6,14 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
+import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfoDataBase;
 import com.google.gwt.user.client.Window;
@@ -419,6 +421,59 @@ public class EmployeeDraftObject {
 		}
 		
 		return index;
+	}
+
+	public Integer getWorkplaceIdByName(String workplaceName) {
+		for(Entry<Integer, String> workplaceEntry : this.employeeInfo.getWorkplaces().entrySet())
+			if(workplaceName.equals(workplaceEntry.getValue()))
+				return workplaceEntry.getKey();
+		
+		return null;
+	}
+
+	public void setContractWorkplaceId(Integer workplaceId) {
+		newEmployeeInfo.setWorkplace_table_id(workplaceId);
+	}
+
+	public void setContractActivityId(Integer activityID) {
+		newEmployeeInfo.setEnterprise_activity_table_id(activityID);
+	}
+
+	public void setContractCCCId(Integer cccId) {
+		newEmployeeInfo.setEnterprise_ccc_table_id(cccId);
+	}
+
+	public void setContractCCCType(byte cccType) {
+		newEmployeeInfo.setEnterprise_ccc_type(cccType);
+	}
+
+	public Integer getActivityIdByName(String activityStr) {
+		for(Entry<Integer, String> activityEntry : this.employeeInfo.getEnterpriseActivities().entrySet())
+			if(activityStr.equals(activityEntry.getValue()))
+				return activityEntry.getKey();
+		
+		return null;
+	}
+
+	public Integer getCCCIdByNumber(String cccStr, byte cccType, String cccGeozoneStr) {
+		CCCInfo cccInfo = getCCCInfo(cccStr, cccType, cccGeozoneStr);
+		if(null == cccInfo)
+			return null;
+		else{
+			for(Entry<Integer, CCCInfo> cccEntry : this.employeeInfo.getCCCs().entrySet())
+				if(cccEntry.getValue().equals(cccInfo)){
+					return cccEntry.getKey();
+				}
+			return null;
+		}
+	}
+
+	private CCCInfo getCCCInfo(String cccStr, byte cccType, String cccGeozoneStr) {
+		for(CCCInfo cccInfo : this.employeeInfo.getCCCs().values()){
+			if(cccStr.equals(cccInfo.getCcc()) && cccType == cccInfo.getType() && cccGeozoneStr.equals(cccInfo.getGeozone()))
+				return cccInfo;
+		}
+		return null;
 	}
 	
 	
