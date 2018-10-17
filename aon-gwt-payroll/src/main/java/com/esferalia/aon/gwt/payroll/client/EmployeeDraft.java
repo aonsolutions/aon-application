@@ -165,7 +165,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	TableCellElement contractFreelancerNode;
 
 	@UiField
-	TextBox contractTypeFreelance;
+	Label contractTypeFreelance;
 
 	@UiField
 	ListBox modality;
@@ -818,8 +818,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		Integer workplaceIndex = employeeDraftObject.getWorkplaceIndex();
 		this.workplace.setSelectedIndex(workplaceIndex);
 
-		this.contractTypeFreelance.setValue("R" + String.valueOf("\u00E9") + "gimen especial de trabajadores aut" + String.valueOf("\u00F3") + "nomos");
-		this.contractTypeFreelance.setEnabled(false);
+		this.contractTypeFreelance.setText("R" + String.valueOf("\u00E9") + "gimen especial de trabajadores aut" + String.valueOf("\u00F3") + "nomos");
 
 		Date start_date = (employeeInfo.getStart_date() == null) ? null : employeeInfo.getStart_date();
 		if (start_date != null)
@@ -864,7 +863,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		this.contractTypeNode.getStyle().clearDisplay();
 		
 		this.labelEmployee.removeStyleName(style.retaTopLabel());
-		this.employeeDataTable.getStyle().setTop(395, Unit.PX);
+		this.employeeDataTable.getStyle().setTop(435, Unit.PX);
 		
 		this.contractFreelancerNode.getStyle().setDisplay(Display.NONE);
 	}
