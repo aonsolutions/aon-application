@@ -50,6 +50,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
+import org.mvel2.ConversionException;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
@@ -1247,7 +1248,11 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		} catch (CompileException e) {
 			onCompileError(contractPayment, e.getMessage());
 			addResult(expressionContext, name, start, end, 0.00);
-		}
+		} catch ( ConversionException e ) {
+			throw new UndefinedVariablesException();
+		} catch ( NumberFormatException e ) {
+			throw new UndefinedVariablesException();
+		} 
 
 	}
 

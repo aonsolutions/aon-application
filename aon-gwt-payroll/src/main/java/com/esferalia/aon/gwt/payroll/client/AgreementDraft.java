@@ -2312,13 +2312,12 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		TypeListBox<Payment.Type> paymentTypeListBox = new TypeListBox<Payment.Type>(Payment.Type.class, 10);
 		paymentTypeListBox.setSelected(payment.getType());
-
 		TextBox descriptionBox = new TextBox();
 		descriptionBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
 		descriptionBox.setText(payment.getDescription());
 		descriptionBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		paymentsTable.setWidget(row, 1, descriptionBox);
-
+		
 		TextBox expressionBox = new ExpressionBox();
 		expressionBox.setMaxLength(EXPRESSION_MAX_LENGTH);
 		expressionBox.setText(payment.getExpression());
@@ -2816,10 +2815,14 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	}
 
 	private com.esferalia.aon.gwt.payroll.shared.Event.Type getEventType(Payment payment) {
+		try {
 		for (Event event : agreementDraftObject.getEvents())
 			if (event instanceof PaymentEvent)
 				if (((PaymentEvent) event).getPayment().equals(payment))
 					return ((PaymentEvent) event).getType();
+		} catch ( Throwable t ) {
+			
+		}
 		return null;
 	}
 
@@ -2828,16 +2831,20 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	}
 
 	private String getIconRowStyle(Payment payment) {
-		if (isWarn(payment))
-			return AON.AON_ICON_WARN;
-		if (isError(payment))
-			return AON.AON_ICON_ERROR;
-		if (isRemove(payment))
-			return AON.AON_ICON_WARN;
-		if (isDraftPayment(payment))
-			return AON.AON_ICON_ROW_SELECTOR_CHANGED;
-		if (isNotMine(payment)) {
-			return AON.AON_ICON_ROW_SELECTOR_PARENT;
+		try {
+			if (isWarn(payment))
+				return AON.AON_ICON_WARN;
+			if (isError(payment))
+				return AON.AON_ICON_ERROR;
+			if (isRemove(payment))
+				return AON.AON_ICON_WARN;
+			if (isDraftPayment(payment))
+				return AON.AON_ICON_ROW_SELECTOR_CHANGED;
+			if (isNotMine(payment)) {
+				return AON.AON_ICON_ROW_SELECTOR_PARENT;
+			}
+		} catch ( Throwable t ) {
+			Window.alert(t.getMessage());
 		}
 		return AON.AON_ICON_ROW_SELECTOR;
 	}
