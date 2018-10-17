@@ -6,11 +6,15 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountBalanceReport.BalanceLine;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
@@ -120,16 +124,18 @@ public class BalancePanel extends ScrollPanel implements HasSelectionHandlers<Ac
 				if (inBold) tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonReportTableBold());
 				col++;
 				
-//				descriptionLabel.setStyleName(AON.AON_CSS.aonClickableLabel());
-//				descriptionLabel.addClickHandler(new ClickHandler() {
-//					
-//					@Override
-//					public void onClick(ClickEvent event) {
-//						AccountingReportParams newParams = params.clone();
-//						newParams.setAccount( new Account().setCode(bal.getCode()));
-//						SelectionEvent.fire(BalancePanel.this, newParams );						
-//					}
-//				});
+				if (AonStringUtils.isNotBlank(line.getAccounts())) {
+					descriptionLabel.setStyleName(AON.AON_CSS.aonClickableLabel());
+					descriptionLabel.addClickHandler(new ClickHandler() {
+						
+						@Override
+						public void onClick(ClickEvent event) {
+							AccountingReportParams newParams = params.clone();
+							newParams.setAccount( new Account().setCode(line.getAccounts()));
+							SelectionEvent.fire(BalancePanel.this, newParams );						
+						}
+					});
+				}
 				
 				for ( ;col < (2 + report.getPeriods().size());  col++) {
 					tab.setWidget(row,col, new Label());

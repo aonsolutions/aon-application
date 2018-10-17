@@ -18,6 +18,8 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -777,24 +779,37 @@ public class AccountStatementDAO {
 	private static Condition getTrialBalanceCondition(AONContext ctx , AccountingReportParams params) {
 		Condition condition = getBasicCondition(ctx, params, false);
 		if (params.getAccount() != null && AonStringUtils.isNotBlank(params.getAccount().getCode())) {
-			String account = AonStringUtils.replace(params.getAccount().getCode(), AonStringUtils.ASTERISK, AonStringUtils.EMPTY); 
-			if (AonStringUtils.isNotBlank(account)) {
-				if (AonStringUtils.isNumeric(account)) {
-					String code = AonStringUtils.replace(params.getAccount().getCode(), AonStringUtils.ASTERISK, AonStringUtils.PERCENT);
-					if (!AonStringUtils.endsWith(code, AonStringUtils.PERCENT)) {
-						code = code + AonStringUtils.PERCENT;
-					}	
-					condition = condition.and(ACCOUNT.CODE.like(code));
-				} else {
-					String descr = AonStringUtils.replace(params.getAccount().getCode(), AonStringUtils.ASTERISK, AonStringUtils.PERCENT);
-					if (!AonStringUtils.startsWith(descr, AonStringUtils.PERCENT)) {
-						descr = AonStringUtils.PERCENT + descr;
+			Condition accountCondition = null;
+			String[] accounts = AonStringUtils.split(params.getAccount().getCode(), '|');
+			for (String account : accounts) {
+				account = AonStringUtils.replace(account, AonStringUtils.ASTERISK, AonStringUtils.EMPTY);
+				if (AonStringUtils.isNotBlank(account)) {
+					if (AonStringUtils.isNumeric(account)) {
+						String code = AonStringUtils.replace(account, AonStringUtils.ASTERISK, AonStringUtils.PERCENT);
+						if (!AonStringUtils.endsWith(code, AonStringUtils.PERCENT)) {
+							code = code + AonStringUtils.PERCENT;
+						}	
+						Condition codeCondition = ACCOUNT.CODE.like(code); 
+						accountCondition = accountCondition == null
+								?codeCondition
+								:accountCondition.or( codeCondition );
+					} else {
+						String descr = AonStringUtils.replace(account, AonStringUtils.ASTERISK, AonStringUtils.PERCENT);
+						if (!AonStringUtils.startsWith(descr, AonStringUtils.PERCENT)) {
+							descr = AonStringUtils.PERCENT + descr;
+						}
+						if (!AonStringUtils.endsWith(descr, AonStringUtils.PERCENT)) {
+							descr = descr + AonStringUtils.PERCENT;
+						}	
+						Condition descAliasCondition = ACCOUNT.DESCRIPTION.like(descr).or(ACCOUNT.ALIAS.like(descr)); 
+						accountCondition = accountCondition == null
+								?descAliasCondition
+								:accountCondition.or( descAliasCondition );
 					}
-					if (!AonStringUtils.endsWith(descr, AonStringUtils.PERCENT)) {
-						descr = descr + AonStringUtils.PERCENT;
-					}	
-					condition = condition.and(ACCOUNT.DESCRIPTION.like(descr).or(ACCOUNT.ALIAS.like(descr)));
 				}
+			}
+			if(accountCondition != null) {
+				condition = condition.and(accountCondition);
 			}
 		}
 		condition = appendCostCenterCondition(condition,params);
@@ -888,7 +903,7 @@ public class AccountStatementDAO {
 						.setCode(key.getCode())
 						.setDescription(key.getName())
 						.setTotal(AonStringUtils.isNotBlank(key.getComputeExpression()))
-						.setAccounts( key.getInitialExpression() ));
+						.setAccounts( parseExpression(key.getInitialExpression()) ));
 				mvelCtx.put(key.getCode(), 0.0 );
 			}
 			String exp = key.getInitialExpression();
@@ -920,8 +935,6 @@ public class AccountStatementDAO {
 					&& !mvelCtx.getAccounts().get(AonStringUtils.substring(code, 0,3)).isChecked()
 					&& !mvelCtx.getAccounts().get(AonStringUtils.substring(code, 0,2)).isChecked()
 					&& !mvelCtx.getAccounts().get(AonStringUtils.substring(code, 0,1)).isChecked()) {
-					
-					System.out.println( "NO MARCADO ...: " + code);
 					unreadBalances.add(accountBalance);			
 				}
 			}
@@ -941,7 +954,19 @@ public class AccountStatementDAO {
 		}
 	}
 
-	
+	private static String parseExpression(String initialExpression) {
+		if (AonStringUtils.isBlank(initialExpression)) return null; 
+		Pattern p = Pattern.compile("-?\\d+");
+		Matcher m = p.matcher(initialExpression);
+		StringBuffer buf = new StringBuffer();
+		while (m.find()) {
+			if (buf.length() > 0) {
+				buf.append('|');	
+			}
+			buf.append(m.group());
+		}
+		return buf.toString();
+	}
 }
 
 

@@ -151,41 +151,17 @@ public class BalancePanelReport extends DockLayoutPanel implements HasAccountEnt
 			@Override
 			public void onSelection(SelectionEvent<AccountingReportParams> event) {
 				AccountingReportParams newParams = event.getSelectedItem();
+				newParams.setLevel(9);
+				newParams.setNoActivityAccountVisible(true);
+				newParams.setLowLevelAccountVisible(true);
+				TrialBalancePanel trialBalancePanel = getTrialBalanceResultPanel(newParams);
 				SimpleLayoutPanel breakdownPanel = new SimpleLayoutPanel();
-				String tabLabel = "";
 				String code = newParams.getAccount().getCode();
-				if (AonStringUtils.length( code ) < 9 ) {
-					if (newParams.getLevel() == 1) newParams.setLevel(2);
-					else if (newParams.getLevel() == 2) newParams.setLevel(3);
-					else if (newParams.getLevel() == 3) newParams.setLevel(4);
-					else if (newParams.getLevel() == 4) newParams.setLevel(9);
-					else newParams.setLevel(9);
-					BalancePanel breakdown = getResultPanel(newParams);
-					tabLabel = "Bal S/S: (" + code + "*)";
-					breakdownPanel.add(breakdown);
-				} else {
-					AccountingReportParams stmParams = new AccountingReportParams()
-							.setDomain( newParams.getDomain() )
-							.setPeriod( newParams.getPeriod() )
-							.setFromDate( newParams.getFromDate() )
-							.setToDate( newParams.getToDate() )
-							.setActivity( newParams.getActivity() )
-							.setSecurityLevel( newParams.getSecurityLevel() )
-							.setAccount( newParams.getAccount().clone() )
-					;
-					StatementPanel statement = new StatementPanel(getCurrentDomainName(), getCurrentUser(), getCurrentDomainId(), stmParams, true);
-					statement.addSelectionHandler(new AccountEntrySelectionHandler () {
-						
-						@Override
-						public void onSelection(AccountEntrySelectionEvent  event) {
-							AccountEntrySelectionEvent.fire(BalancePanelReport.this, event.getSelectedItem(), event.getCallback() );
-						}
-					});
-					
-					tabLabel = "Extr: " + code;
-					breakdownPanel.add(statement);
-				}
+				String prefix = "Bal S/S: ";
+				String tabLabel = prefix + AonStringUtils.abbreviate(code, 115);
+				breakdownPanel.add(trialBalancePanel);
 				CloseTab closeTab = new CloseTab(tabLabel, true);
+				closeTab.setTitle(prefix + code);
 				closeTab.addCloseHandler(new CloseHandler<Integer>() {
 					@Override
 					public void onClose(CloseEvent<Integer> event) {
@@ -202,5 +178,64 @@ public class BalancePanelReport extends DockLayoutPanel implements HasAccountEnt
 	public AccountingReportParams getWidgetParams() {
 		return filter.getWidgetParams();
 	}
-
+	
+	private TrialBalancePanel getTrialBalanceResultPanel(AccountingReportParams params) {
+		TrialBalancePanel resultsPanel = new TrialBalancePanel(getCurrentDomainName(), getCurrentUser(), getCurrentDomainId(), params);
+		resultsPanel.addSelectionHandler( new TrialBalanceSelectionHandler() );
+		return resultsPanel;
+	}
+	
+	public class TrialBalanceSelectionHandler implements SelectionHandler<AccountingReportParams> {
+		@Override
+		public void onSelection(SelectionEvent<AccountingReportParams> event) {
+			AccountingReportParams newParams = event.getSelectedItem();
+			SimpleLayoutPanel breakdownPanel = new SimpleLayoutPanel();
+			String tabLabel = "";
+			String prefix = "";
+			String code = newParams.getAccount().getCode();
+			if (AonStringUtils.length( code ) < 9 ) {
+				if (newParams.getLevel() == 1) newParams.setLevel(2);
+				else if (newParams.getLevel() == 2) newParams.setLevel(3);
+				else if (newParams.getLevel() == 3) newParams.setLevel(4);
+				else if (newParams.getLevel() == 4) newParams.setLevel(9);
+				else newParams.setLevel(9);
+				TrialBalancePanel breakdown = getTrialBalanceResultPanel(newParams);
+				prefix = "Bal S/S: ";
+				tabLabel = prefix + AonStringUtils.abbreviate(code, 115);
+				breakdownPanel.add(breakdown);
+			} else {
+				AccountingReportParams stmParams = new AccountingReportParams()
+						.setDomain( newParams.getDomain() )
+						.setPeriod( newParams.getPeriod() )
+						.setFromDate( newParams.getFromDate() )
+						.setToDate( newParams.getToDate() )
+						.setActivity( newParams.getActivity() )
+						.setSecurityLevel( newParams.getSecurityLevel() )
+						.setAccount( newParams.getAccount().clone() )
+				;
+				StatementPanel statement = new StatementPanel(getCurrentDomainName(), getCurrentUser(), getCurrentDomainId(), stmParams, true);
+				statement.addSelectionHandler(new AccountEntrySelectionHandler () {
+					
+					@Override
+					public void onSelection(AccountEntrySelectionEvent  event) {
+						AccountEntrySelectionEvent.fire(BalancePanelReport.this, event.getSelectedItem(), event.getCallback() );
+					}
+				});
+				prefix = "Extr: ";
+				tabLabel = prefix + code;
+				breakdownPanel.add(statement);
+			}
+			CloseTab closeTab = new CloseTab(tabLabel, true);
+			closeTab.setTitle(prefix + code);
+			closeTab.addCloseHandler(new CloseHandler<Integer>() {
+				@Override
+				public void onClose(CloseEvent<Integer> event) {
+					tabPanel.remove(breakdownPanel); 
+				}
+			});
+			tabPanel.add(breakdownPanel,closeTab);
+			tabPanel.selectTab(tabPanel.getWidgetCount() - 1);
+		}
+	}
+	
 }
