@@ -55,7 +55,12 @@ public class DownloadSiiXml extends HttpServlet{
 					.and(f.getSourceBatchProperty().eq(dataResponseId))
 					.and(f.getTypeProperty().ne(DataAttachType.REQUEST.value())),
 				AttachType.DATA);
-		}		
+		} else {
+			attach = AON.getAttach(domain.getName(), domain.getId(), login, 
+					f -> f.getSourceTypeProperty().eq(DataAttachSource.SII.value())
+					.and(f.getIdProperty().eq(dataResponseId))
+					, AttachType.DATA);
+		}
 		
 		if(attach != null && attach.getData() == null) {
 			DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), login);
@@ -65,7 +70,7 @@ public class DownloadSiiXml extends HttpServlet{
 		if(attach != null && attach.getData() != null){
 			Utils.addCorsHeader(resp);
 			resp.setContentType(MimeType.XML.getName());
-			resp.setHeader("Content-disposition", "inline; filename=\"SII_" + option.toUpperCase() + ".xml\";");
+			resp.setHeader("Content-disposition", "inline; filename=\"SII_" +(option != null? option.toUpperCase(): "DOWNLOAD") + ".xml\";");
 			ByteArrayInputStream fileInpurOs =  new ByteArrayInputStream(attach.getData());
 			AonIOUtils.copy(fileInpurOs, resp.getOutputStream());
 			resp.flushBuffer();

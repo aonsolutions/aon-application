@@ -385,11 +385,10 @@ public class FacturasEmitidas extends SIIBuilt {
 					eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.SujetaType.Exenta exenta2 = new eus.bizkaia.ogasuna.sii.documentos.suministroinformacion.SujetaType.Exenta();
 					DetalleExentaType detalleExenta = new DetalleExentaType();
 					detalleExenta.setBaseImponible(Double.toString(AonMathUtils.round(exenta))); // TODO
-				/* TODO	si es operacion intracomunitaria	
-				 * if(vat.isIntracommunity()){
-						exenta2.setCausaExencion(CausaExencionType.E_5);
-					}else*/ 
-					if(vat.isIntracommunity() || vat.isExtracommunity()){
+
+					if(vat.isIntracommunity()){
+						detalleExenta.setCausaExencion(CausaExencionType.E_5);
+					}else if(vat.isExtracommunity()){
 						detalleExenta.setCausaExencion(CausaExencionType.E_2);
 					} else {
 						detalleExenta.setCausaExencion(CausaExencionType.E_6);
@@ -654,8 +653,9 @@ public class FacturasEmitidas extends SIIBuilt {
 				document = vat.getRegistryDocumentCountry().getIso2() + document;
 			}
 			otro.setID(document);		
-			
-			otro.setIDType(IDType.NIF_IVA.getName());
+			// TODO HAY QUE ENVIAR ESTO PERO DA ERROR AL PONER NIF-IVA
+			// otro.setIDType(IDType.NIF_IVA.getName());
+			otro.setIDType(IDType.OTRO.getName());
 			contraparte.setIDOtro(otro);
 		}	
 		return contraparte;
