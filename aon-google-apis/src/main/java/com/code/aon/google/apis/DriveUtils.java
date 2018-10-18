@@ -1047,7 +1047,7 @@ public class DriveUtils implements IBlobManager {
 						|| file.getType() == RegistryAttachmentType.DOMAIN_BOOK_HISTORY.value() // Historial en configuración
 						|| file.getType() == RegistryAttachmentType.DOMAIN_INSERT_HISTORY.value()
 						|| file.getType() == RegistryAttachmentType.DOMAIN_REMOVE_HISTORY.value()
-						
+						|| file.getType() == RegistryAttachmentType.SIGNATURE.value()
 						|| file.getType() == RegistryAttachmentType.CRETA_RESPUESTA.value() 
 						|| file.getType() == RegistryAttachmentType.CRETA_TRABAJADORES_Y_TRAMOS.value() 
 						
