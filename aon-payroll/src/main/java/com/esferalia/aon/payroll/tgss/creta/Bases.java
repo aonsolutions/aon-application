@@ -1331,6 +1331,9 @@ public class Bases {
 		}
 		
 		private Optional<TrabajadorTramoDato> unMatched(net.aonsolutions.core.tgss.creta.jaxb.bases.Dato datoAon) {
+			if ( trabajadorAon == null )
+				return Optional.empty();
+			
 			TrabajadorTramoDato t = new TrabajadorTramoDato() {{
 				this.ss = trabajadorAon.getNaf();
 				this.codigo = datoAon.getCodigo();
@@ -1347,6 +1350,9 @@ public class Bases {
 		}
 
 		private Stream<TrabajadorTramoDato> negative(net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo) {
+			if ( trabajadorAon == null )
+				return Stream.empty();
+			
 			TrabajadorTramoDato t = new TrabajadorTramoDato() {{
 				this.ss = trabajadorAon.getNaf();
 				//this.codigo = datoAon.getCodigo();
@@ -1363,6 +1369,9 @@ public class Bases {
 		}
 
 		private Optional<TrabajadorTramoDato> defau1t(net.aonsolutions.core.tgss.creta.jaxb.bases.Dato datoAon) {
+			if ( trabajadorAon == null )
+				return Optional.empty();
+			
 			TrabajadorTramoDato t = new TrabajadorTramoDato() {{
 				this.ss = trabajadorAon.getNaf();
 				this.codigo = datoAon.getCodigo();
