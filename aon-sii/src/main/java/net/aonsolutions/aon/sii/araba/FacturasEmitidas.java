@@ -653,11 +653,9 @@ public class FacturasEmitidas extends SIIBuilt{
 			if(!document.substring(0,2).equals(vat.getRegistryDocumentCountry().getIso2())) {
 				document = vat.getRegistryDocumentCountry().getIso2() + document;
 			}
-			otro.setID(document);		
+			otro.setID(document.toUpperCase());		
 			
-			// TODO HAY QUE ENVIAR ESTO PERO DA ERROR AL PONER NIF-IVA
-			// otro.setIDType(IDType.NIF_IVA.getName());
-			otro.setIDType(IDType.OTRO.getName());
+			otro.setIDType(IDType.NIF_IVA.getName());
 			contraparte.setIDOtro(otro);
 		}	
 		return contraparte;
