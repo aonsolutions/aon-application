@@ -220,7 +220,7 @@ public class EmployeeInfoDataBase implements Serializable {
 	}
 
 	public String getDocument() {
-		return document;
+		return (null == document) ? "" : document;
 	}
 
 	public void setDocument(String document) {
@@ -236,7 +236,7 @@ public class EmployeeInfoDataBase implements Serializable {
 	}
 
 	public String getName() {
-		return name;
+		return (null == name) ? "" : name;
 	}
 
 	public void setName(String name) {
@@ -244,7 +244,7 @@ public class EmployeeInfoDataBase implements Serializable {
 	}
 
 	public String getFirst_surname() {
-		return first_surname;
+		return (null == first_surname) ? "" : first_surname;
 	}
 
 	public void setFirst_surname(String first_surname) {
@@ -252,7 +252,7 @@ public class EmployeeInfoDataBase implements Serializable {
 	}
 
 	public String getSecond_surname() {
-		return second_surname;
+		return (null == second_surname) ? "" : second_surname;
 	}
 
 	public void setSecond_surname(String second_surname) {
@@ -276,7 +276,7 @@ public class EmployeeInfoDataBase implements Serializable {
 	}
 
 	public String getSocial_security_num() {
-		return social_security_num;
+		return (null == social_security_num) ? "" : social_security_num;
 	}
 
 	public void setSocial_security_num(String social_security_num) {
@@ -300,7 +300,7 @@ public class EmployeeInfoDataBase implements Serializable {
 	}
 
 	public String getAddress() {
-		return address;
+		return (null == address) ? "" : address;
 	}
 
 	public void setAddress(String address) {
@@ -308,7 +308,7 @@ public class EmployeeInfoDataBase implements Serializable {
 	}
 
 	public String getAddress_number() {
-		return address_number;
+		return (null == address_number) ? "" : address_number;
 	}
 
 	public void setAddress_number(String address_number) {
@@ -316,7 +316,7 @@ public class EmployeeInfoDataBase implements Serializable {
 	}
 	
 	public String getLocality() {
-		return locality;
+		return (null == locality) ? "" : locality;
 	}
 
 	public void setLocality(String location) {
@@ -324,7 +324,7 @@ public class EmployeeInfoDataBase implements Serializable {
 	}
 
 	public String getZip_code() {
-		return zip_code;
+		return (null == zip_code) ? "" : zip_code;
 	}
 
 	public void setZip_code(String zip_code) {
@@ -340,7 +340,7 @@ public class EmployeeInfoDataBase implements Serializable {
 	}
 
 	public String getProvince() {
-		return province;
+		return (null == province) ? "" : province;
 	}
 
 	public void setProvince(String province) {
@@ -348,7 +348,7 @@ public class EmployeeInfoDataBase implements Serializable {
 	}
 
 	public String getPhone() {
-		return phone;
+		return (null == phone) ? "" : phone;
 	}
 
 	public void setPhone(String phone) {
@@ -356,7 +356,7 @@ public class EmployeeInfoDataBase implements Serializable {
 	}
 
 	public String getMobile() {
-		return mobile;
+		return (null == mobile) ? "" : mobile;
 	}
 
 	public void setMobile(String mobile) {
@@ -364,7 +364,7 @@ public class EmployeeInfoDataBase implements Serializable {
 	}
 
 	public String getEmail() {
-		return email;
+		return (null == email) ? "" : email;
 	}
 
 	public void setEmail(String email) {
@@ -428,7 +428,7 @@ public class EmployeeInfoDataBase implements Serializable {
 	}
 
 	public String getQuote_group() {
-		return quote_group;
+		return (null == quote_group || "" == quote_group) ? "0" : quote_group;
 	}
 
 	public void setQuote_group(String quote_group) {
@@ -436,7 +436,7 @@ public class EmployeeInfoDataBase implements Serializable {
 	}
 
 	public String getOcupation() {
-		return ocupation;
+		return (null == ocupation || "" == ocupation) ? "z" : ocupation;
 	}
 
 	public void setOcupation(String ocupation) {
@@ -468,7 +468,7 @@ public class EmployeeInfoDataBase implements Serializable {
 	}
 
 	public String getCategory_description() {
-		return category_description;
+		return (null == category_description) ? "" : category_description;
 	}
 
 	public void setCategory_description(String category_description) {
@@ -481,9 +481,31 @@ public class EmployeeInfoDataBase implements Serializable {
 
 	public void setContract_data(Map<String, String> contract_data) {
 		this.contract_data = contract_data;
-		this.contract_type = (this.contract_data.get("TC2") == null) ? null : this.contract_data.get("TC2").split("\"")[1];
-		this.quote_group = (this.contract_data.get("GRUPO_COTIZACION") == null) ? null : this.contract_data.get("GRUPO_COTIZACION").split("\"")[1];
-		this.ocupation = (this.contract_data.get("OCUPACION") == null) ? null : this.contract_data.get("OCUPACION").split("\"")[1];
+		
+		if(null == this.contract_data.get("TC2"))
+			this.contract_type = null;
+		else
+			if(this.contract_data.get("TC2").contains("\""))
+				this.contract_type = this.contract_data.get("TC2").split("\"")[1];
+			else
+				this.contract_type = this.contract_data.get("TC2");
+		
+		if(null == this.contract_data.get("GRUPO_COTIZACION"))
+			this.quote_group = null;
+		else
+			if(this.contract_data.get("GRUPO_COTIZACION").contains("\""))
+				this.quote_group = this.contract_data.get("GRUPO_COTIZACION").split("\"")[1];
+			else
+				this.quote_group = this.contract_data.get("GRUPO_COTIZACION");
+		
+		if(null == this.contract_data.get("OCUPACION"))
+			this.ocupation = null;
+		else
+			if(this.contract_data.get("OCUPACION").contains("\""))
+				this.ocupation = this.contract_data.get("OCUPACION").split("\"")[1];
+			else
+				this.ocupation = this.contract_data.get("OCUPACION");
+		
 		this.journeyType = (this.contract_data.get("TIEMPO_COMPLETO") == null) ? null : Boolean.parseBoolean(this.contract_data.get("TIEMPO_COMPLETO"));
 	}
 
@@ -664,7 +686,7 @@ public class EmployeeInfoDataBase implements Serializable {
 	}
 	
 	public String getTypePayMethod() {
-		return this.payMethodType; 	
+		return (null == payMethodType) ? "" : payMethodType; 	
 	}
 	
 	public void setTypePayMethod(String payMethodType) {
@@ -672,7 +694,7 @@ public class EmployeeInfoDataBase implements Serializable {
 	}
 
 	public String getBankAccount() {
-		return this.rbankAccount;
+		return (null == rbankAccount) ? "" : rbankAccount;
 	}
 	
 	public void setBankAccount(String rbankAccount) {
@@ -680,7 +702,7 @@ public class EmployeeInfoDataBase implements Serializable {
 	}
 	
 	public String getBIC() {
-		return this.rbankBIC;
+		return (null == rbankBIC) ? "" : rbankBIC;
 	}
 
 	public void setBIC(String rbankBIC) {
@@ -712,7 +734,7 @@ public class EmployeeInfoDataBase implements Serializable {
 	}
 
 	public void addCCC(Integer cccId, String ccc, Byte type, String geozoneName, Integer activityId) {
-		CCCInfo cccInfo = new CCCInfo(ccc, type, geozoneName, activityId);
+		CCCInfo cccInfo = new CCCInfo(ccc, type, geozoneName, activityId, cccId);
 		this.cccs.put(cccId, cccInfo);
 	}
 	

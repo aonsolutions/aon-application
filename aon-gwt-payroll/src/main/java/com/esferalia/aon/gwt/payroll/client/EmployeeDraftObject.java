@@ -124,11 +124,15 @@ public class EmployeeDraftObject {
 	}
 	
 	public Integer getAgreementIndex(String agreementDescription){
-		List<Agreement> activeAgreements = getActiveAgreements();
-		for(int i = 0; i<activeAgreements.size(); i++)
-			if(activeAgreements.get(i).getDescription() == agreementDescription)
-				return i;
-		return -1;
+		if(null == agreementDescription)
+			return -1;
+		else {
+			List<Agreement> activeAgreements = getActiveAgreements();
+			for(int i = 0; i<activeAgreements.size(); i++)
+				if(activeAgreements.get(i).getDescription() == agreementDescription)
+					return i;
+			return -1;
+		}
 	}
 	
 	public Integer getAgreementId(String agreementName){
@@ -360,8 +364,8 @@ public class EmployeeDraftObject {
 	}
 
 	public void setEmployeeAddressProvince(String province) {
-		newEmployeeInfo.setProvince(province);
-		newEmployeeInfo.setGeozone_name(province);
+		newEmployeeInfo.setProvince(("" == province) ? null : province);
+		newEmployeeInfo.setGeozone_name(("" == province) ? null : province);
 	}
 
 	public void setEmployeePhone(String phone) {
@@ -389,8 +393,12 @@ public class EmployeeDraftObject {
 	}
 
 	public Integer getActivityAccountIndex() {
-		Integer indexActivity = 1;
-		Integer indexAccount = 1;
+		if(null == this.employeeInfo.getEnterprise_activity_table_id())
+			return 0;
+		
+		Integer index = 1;
+		//Integer indexActivity = 1;
+		//Integer indexAccount = 1;
 		
 		if(null == this.employeeInfo.getEnterprise_ccc_table_id())
 			return 0;
@@ -398,16 +406,19 @@ public class EmployeeDraftObject {
 		for(Integer activityId : this.employeeInfo.getEnterpriseActivities().keySet()){
 			if(this.employeeInfo.getEnterprise_activity_table_id().equals(activityId))
 				break;
-			indexActivity++;
+			index++;
+			//indexActivity++;
 		}
 		
 		for(Integer cccId : this.employeeInfo.getCCCs().keySet()){
 			if(this.employeeInfo.getEnterprise_ccc_table_id().equals(cccId))
 				break;
-			indexAccount++;
+			index++;
+			//indexAccount++;
 		}
 			
-		return indexActivity * indexAccount;
+		//return indexActivity * indexAccount;
+		return index;
 		
 	}
 

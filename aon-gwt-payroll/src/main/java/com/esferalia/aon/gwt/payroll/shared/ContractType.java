@@ -264,13 +264,19 @@ public class ContractType {
 	}
 	
 	public Integer getContractModelIndex(Integer contractTypeCode, Integer contactModelCode){
-		Integer index = 0;
-		for (ModelRecord model : this.contractTypes.get(contractTypeCode).getContractModels()){
-			if(model.getEnumeration() == contactModelCode)
-				return index;
-			index++;
+		if(null == contactModelCode)
+			return null;
+		else {
+			Integer index = 0;
+			
+			for (ModelRecord model : this.contractTypes.get(contractTypeCode).getContractModels()){
+				if(model.getEnumeration() == contactModelCode)
+					return index;
+				index++;
+			}
+			return 0;
 		}
-		return -1;
+		
 	}
 
 	public Integer getContractModelId(Integer contractTypeId, String contractModelDescription) {

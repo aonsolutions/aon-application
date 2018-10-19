@@ -3,6 +3,8 @@ package com.esferalia.aon.gwt.payroll.shared;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.gwt.user.client.Window;
+
 public class Province {
 	
 	private static final Map<String, String> PROVINCES = new HashMap<String,String>(){
@@ -65,5 +67,23 @@ public class Province {
 	public static String getName(String code)  {
 		return PROVINCES.get(code);
 	}
+	
+	public static Integer getProvinceIndex(String province) {
+		if(null == province || "-" == province || "" == province)
+			return 0;
+		
+		Integer index = 1;
+		for(String provinceStr : PROVINCES.values()) {
+			Window.alert(provinceStr + " == " + province);
+			if(provinceStr.equalsIgnoreCase(province))
+				return index;
+			index++;
+		}
+			return 0;
+	}
+	
+	public static Map<String, String> getProvinces() {
+		return PROVINCES;
+	} 
 
 }

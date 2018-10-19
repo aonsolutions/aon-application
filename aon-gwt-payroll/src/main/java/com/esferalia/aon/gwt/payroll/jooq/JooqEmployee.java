@@ -79,30 +79,38 @@ public class JooqEmployee {
 		EmployeeInfoDataBase employee = new EmployeeInfoDataBase();
 		
 		//PERSON TABLE
-		Record personTable = dslContext.select().from(PERSON).where(PERSON.REGISTRY.eq(
-				dslContext.select(CONTRACT.PERSON).from(CONTRACT).where(CONTRACT.ID.eq(contract)))).fetchOne();
+		Record personTable = dslContext.select().from(PERSON)
+				.where(PERSON.REGISTRY.eq(
+						dslContext.select(CONTRACT.PERSON).from(CONTRACT)
+							.where(CONTRACT.ID.eq(contract))))
+				.fetchOne();
 	
 		employee.setPerson_table_id(personTable.get(PERSON.REGISTRY));
+		employee.setDomain(personTable.get(PERSON.DOMAIN));
 		employee.setBirth_date(personTable.get(PERSON.BIRTH_DATE));
 		employee.setGender(personTable.get(PERSON.GENDER));
 		employee.setSocial_security_num(personTable.get(PERSON.SOCIAL_SECURITY_NUM));
 		employee.setName(personTable.get(PERSON.NAME));
 		employee.setFirst_surname(personTable.get(PERSON.FIRST_SURNAME));
 		employee.setSecond_surname(personTable.get(PERSON.SECOND_SURNAME));
-		employee.setDomain(personTable.get(PERSON.DOMAIN));
+		
 		
 		Integer employee_registry = personTable.get(PERSON.REGISTRY);
 		
 		//REGISTRY TABLE
-		Record registryTable = dslContext.select().from(REGISTRY).where(REGISTRY.ID.eq(employee_registry)).fetchOne();
+		Record registryTable = dslContext.select().from(REGISTRY)
+				.where(REGISTRY.ID.eq(employee_registry))
+				.fetchOne();
 		
 		employee.setRegistry_table_id(employee_registry);
 		employee.setDocument(registryTable.get(REGISTRY.DOCUMENT));
-		employee.setDocument_type(registryTable.get(REGISTRY.DOCUMENT_TYPE));
+		employee.setDocument_type(registryTable.get(REGISTRY.DOCUMENT_TYPE)); //Esto lo saco con el formato del documento, ¿se podria obviar?
 		employee.setNationality(registryTable.get(REGISTRY.NATIONALITY));
 		
 		//RADDRESS AND GEOZONE TABLE
-		Record raddressTable = dslContext.select().from(RADDRESS).where(RADDRESS.REGISTRY.eq(employee_registry)).fetchOne();
+		Record raddressTable = dslContext.select().from(RADDRESS)
+				.where(RADDRESS.REGISTRY.eq(employee_registry))
+				.fetchOne();
 		
 		employee.setRaddress_table_id(raddressTable.get(RADDRESS.ID));
 		employee.setStreetType(raddressTable.get(RADDRESS.STREET_TYPE));
@@ -112,16 +120,25 @@ public class JooqEmployee {
 		employee.setLocality(raddressTable.get(RADDRESS.CITY));
 		
 		Integer raddress_geozone = raddressTable.get(RADDRESS.GEOZONE);
-		
-		//raddress_geozone can be null
-		Record geozoneTable = dslContext.select().from(GEOZONE).where(GEOZONE.ID.eq(raddress_geozone)).fetchOne();
-		
-		employee.setGeozone_table_id((geozoneTable == null) ? null : geozoneTable.get(GEOZONE.ID));
-		employee.setProvince((geozoneTable == null) ? null : geozoneTable.get(GEOZONE.NAME));
-		employee.setGeozone_name((geozoneTable == null) ? null : geozoneTable.get(GEOZONE.NAME));
+		if(null == raddress_geozone) {
+			employee.setGeozone_table_id(null);
+			employee.setProvince(null);
+			employee.setGeozone_name(null);
+		}else {
+			Record geozoneTable = dslContext.select().from(GEOZONE)
+					.where(GEOZONE.ID.eq(raddress_geozone))
+					.fetchOne();
+			
+			employee.setGeozone_table_id(geozoneTable.get(GEOZONE.ID));
+			employee.setProvince(geozoneTable.get(GEOZONE.NAME));
+			employee.setGeozone_name(geozoneTable.get(GEOZONE.NAME));
+		}
 		
 		//RMEDIA TABLE
-		Result<Record> rmediaTable = dslContext.select().from(RMEDIA).where(RMEDIA.REGISTRY.eq(employee_registry)).fetch();
+		Result<Record> rmediaTable = dslContext.select().from(RMEDIA)
+				.where(RMEDIA.REGISTRY.eq(employee_registry))
+				.fetch();
+		
 		for(Record record : rmediaTable){
 			if(record.get(RMEDIA.MEDIA) == 1){
 				employee.setRmedia_table_phone_id(record.get(RMEDIA.ID));
@@ -132,7 +149,6 @@ public class JooqEmployee {
 			}else if(record.get(RMEDIA.MEDIA) == 4){
 				employee.setRmedia_table_email_id(record.get(RMEDIA.ID));
 				employee.setEmail(record.get(RMEDIA.VALUE));
-				
 			}
 		}
 		
@@ -145,7 +161,14 @@ public class JooqEmployee {
 			))
 			.fetchOne();
 		
-		if(payMethodTable != null){
+		if(null == payMethodTable) {
+			employee.setTypePayMethod(null);
+			employee.setPayMethodTableId(null);
+			
+			employee.setRBankTableId(null);
+			employee.setBankAccount(null);
+			employee.setBIC(null);
+		}else{
 			employee.setTypePayMethod(payMethodTable.get(PAY_METHOD.NAME));
 			employee.setPayMethodTableId(payMethodTable.get(PAY_METHOD.ID));
 			
@@ -157,18 +180,27 @@ public class JooqEmployee {
 					))
 					.fetchOne();
 			
-			if(rBankTable != null){
+			if(null == rBankTable){
+				employee.setRBankTableId(null);
+				employee.setBankAccount(null);
+				employee.setBIC(null);
+				
+			}else {
 				employee.setRBankTableId(rBankTable.get(RBANK.ID));
 				employee.setBankAccount(rBankTable.get(RBANK.BANK_ACCOUNT));
 				employee.setBIC(rBankTable.get(RBANK.BIC));
 			}
+			
 		}
 		
 		
 		// ------------------------------------------------ CONTRACT INFO ---------------------------------------------------------
 		System.out.println("******************************* CONTRACT = "+contract+" *******************************");
 		
-		Record contractTable = dslContext.select().from(CONTRACT).where(CONTRACT.ID.eq(contract)).fetchOne();
+		//CONTRACT TABLE
+		Record contractTable = dslContext.select().from(CONTRACT)
+				.where(CONTRACT.ID.eq(contract))
+				.fetchOne();
 		
 		employee.setContract_table_id(contract);
 		employee.setStart_date(contractTable.get(CONTRACT.START_DATE));
@@ -178,38 +210,60 @@ public class JooqEmployee {
 		employee.setSSRegime(contractTable.get(CONTRACT.SS_REGIME));
 		
 		Integer employe_workplace_table_id = contractTable.get(CONTRACT.WORKPLACE);
-		Record workplaceTable = dslContext.select().from(WORKPLACE).where(WORKPLACE.ID.eq(employe_workplace_table_id)).fetchOne();
+		
+		//WORKPLACE TABLE
+		Record workplaceTable = dslContext.select().from(WORKPLACE)
+				.where(WORKPLACE.ID.eq(employe_workplace_table_id))
+				.fetchOne();
 		
 		employee.setWorkplace_table_id(employe_workplace_table_id);
 		employee.setWorkplace(workplaceTable.get(WORKPLACE.DESCRIPTION));
+		
 		Integer workplaceEnterprise = workplaceTable.get(WORKPLACE.ENTERPRISE);
 		
-		//Workplaces
-		Result<Record> workplaceTableRecords = dslContext.select().from(WORKPLACE).where(WORKPLACE.ENTERPRISE.eq(workplaceEnterprise)).fetch();
+		Result<Record> workplaceTableRecords = dslContext.select().from(WORKPLACE)
+				.where(WORKPLACE.ENTERPRISE.eq(workplaceEnterprise))
+				.fetch();
+		
 		Map<Integer, String> workplaces = new HashMap<Integer, String>();
 		
-		for(Record r : workplaceTableRecords){
+		for(Record r : workplaceTableRecords)
 			workplaces.put(r.get(WORKPLACE.ID), r.get(WORKPLACE.DESCRIPTION));
-		}
 		
 		employee.setWorkplaces(workplaces);
 		
 		if(employee.getSSRegime() != 3){ //NO ES RETA
+			//ENTERPRISE ACTIVITY TABLE
 			Integer enterpriseActivity = contractTable.get(CONTRACT.ENTERPRISE_ACTIVITY);
 			
-			Record enterpriseActivityTable = dslContext.select().from(ENTERPRISE_ACTIVITY).where(ENTERPRISE_ACTIVITY.ID.eq(enterpriseActivity)).fetchOne();
-			//enterpriseActivity can be null
-			employee.setEnterprise_activity_table_id((enterpriseActivityTable == null) ? null : enterpriseActivityTable.get(ENTERPRISE_ACTIVITY.ID));
-			employee.setEnterprise_activity(enterpriseActivityTable.get(ENTERPRISE_ACTIVITY.DESCRIPTION));
+			if(null == enterpriseActivity) {
+				employee.setEnterprise_activity_table_id(null);
+				employee.setEnterprise_activity(null);
+			}else {
+				Record enterpriseActivityTable = dslContext.select().from(ENTERPRISE_ACTIVITY)
+						.where(ENTERPRISE_ACTIVITY.ID.eq(enterpriseActivity))
+						.fetchOne();
+				
+				employee.setEnterprise_activity_table_id(enterpriseActivityTable.get(ENTERPRISE_ACTIVITY.ID));
+				employee.setEnterprise_activity(enterpriseActivityTable.get(ENTERPRISE_ACTIVITY.DESCRIPTION));
+			}
 			
+			//ENTERPRISE CCC TABLE
 			Integer enterpriseCCC = contractTable.get(CONTRACT.ENTERPRISE_CCC);
-			//enterpriseCCC can be null
-			Record enterpriseCCCTable = dslContext.select().from(ENTERPRISE_CCC).where(ENTERPRISE_CCC.ID.eq(enterpriseCCC)).fetchOne();
 			
-			employee.setQuote_account((enterpriseCCCTable == null) ? null : enterpriseCCCTable.get(ENTERPRISE_CCC.CCC));
-			employee.setEnterprise_ccc_table_id((enterpriseCCCTable == null) ? null : enterpriseCCCTable.get(ENTERPRISE_CCC.ID));
+			if(null == enterpriseCCC) {
+				employee.setQuote_account(null);
+				employee.setEnterprise_ccc_table_id(null);
+			}else {
+				Record enterpriseCCCTable = dslContext.select().from(ENTERPRISE_CCC)
+						.where(ENTERPRISE_CCC.ID.eq(enterpriseCCC))
+						.fetchOne();
+				
+				employee.setEnterprise_ccc_table_id(enterpriseCCCTable.get(ENTERPRISE_CCC.ID));
+				employee.setQuote_account(enterpriseCCCTable.get(ENTERPRISE_CCC.CCC)); //Can be null
+			}
 			
-			//Enterprise Activities
+			//ENTERPRISE ACTIVITIES-CCC
 			Result<Record> enterpriseActivityRecords = dslContext.select().from(ENTERPRISE_ACTIVITY)
 					.where(ENTERPRISE_ACTIVITY.ENTERPRISE.eq(workplaceEnterprise))
 					.fetch();
@@ -219,14 +273,18 @@ public class JooqEmployee {
 			for(Record r : enterpriseActivityRecords){
 				activities.put(r.get(ENTERPRISE_ACTIVITY.ID), r.get(ENTERPRISE_ACTIVITY.DESCRIPTION));
 				
-				//Enterprise CCCs
 				Result<Record> enterpriseCCCRecords = dslContext.select().from(ENTERPRISE_CCC)
-						.where(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY.eq(r.get(ENTERPRISE_ACTIVITY.ID))).fetch();
+						.where(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY.eq(r.get(ENTERPRISE_ACTIVITY.ID)))
+						.fetch();
+				
 				for(Record d : enterpriseCCCRecords){
 					Integer geozoneId = d.get(ENTERPRISE_CCC.GEOZONE);
 					String geozoneName = null;
 					if(null != geozoneId){
-						Record geozoneRecord = dslContext.select().from(GEOZONE).where(GEOZONE.ID.eq(geozoneId)).fetchOne();
+						Record geozoneRecord = dslContext.select().from(GEOZONE)
+								.where(GEOZONE.ID.eq(geozoneId))
+								.fetchOne();
+						
 						geozoneName = geozoneRecord.get(GEOZONE.NAME);
 					}
 					employee.addCCC(d.get(ENTERPRISE_CCC.ID), d.get(ENTERPRISE_CCC.CCC), d.get(ENTERPRISE_CCC.TYPE), geozoneName, r.get(ENTERPRISE_ACTIVITY.ID));
@@ -234,26 +292,41 @@ public class JooqEmployee {
 			}
 			
 			employee.setEnterpriseActivities(activities);
+		}
+		
+		//AGREEMENT LEVEL TABLE
+		Integer agreementLevel = contractTable.get(CONTRACT.AGREEMENT_LEVEL);
+		
+		if(null == agreementLevel) {
+			employee.setAgreement_level_table_id(null);
+			employee.setAgreement_level(null);
+			employee.setAgreement_table_id(null);
+			employee.setAgreement(null);
+		}else {
+			Record agreementLevelTable = dslContext.select().from(AGREEMENT_LEVEL)
+					.where(AGREEMENT_LEVEL.ID.eq(agreementLevel))
+					.fetchOne();
+			
+			employee.setAgreement_level_table_id(agreementLevelTable.get(AGREEMENT_LEVEL.ID));
+			employee.setAgreement_level(agreementLevelTable.get(AGREEMENT_LEVEL.DESCRIPTION)); //Can be null
+			
+			//AGREEMENT TABLE
+			Integer agreement = agreementLevelTable.get(AGREEMENT_LEVEL.AGREEMENT);
+			
+			Record agreementTable = dslContext.select().from(AGREEMENT)
+					.where(AGREEMENT.ID.eq(agreement))
+					.fetchOne();
+			
+			employee.setAgreement_table_id(agreementTable.get(AGREEMENT.ID));
+			employee.setAgreement(agreementTable.get(AGREEMENT.DESCRIPTION)); //Can be null	
 			
 		}
 		
-		Integer agreementLevel = contractTable.get(CONTRACT.AGREEMENT_LEVEL);
-		//agreementLevel can be null
-		Record agreementLevelTable = dslContext.select().from(AGREEMENT_LEVEL).where(AGREEMENT_LEVEL.ID.eq(agreementLevel)).fetchOne();
-		
-		employee.setAgreement_level_table_id((agreementLevelTable == null) ? null : agreementLevelTable.get(AGREEMENT_LEVEL.ID));
-		employee.setAgreement_level((agreementLevelTable == null) ? null : agreementLevelTable.get(AGREEMENT_LEVEL.DESCRIPTION));
-		
-		Integer agreement = (agreementLevelTable == null) ? null : agreementLevelTable.get(AGREEMENT_LEVEL.AGREEMENT);
-		//agreement can be null
-		Record agreementTable = dslContext.select().from(AGREEMENT).where(AGREEMENT.ID.eq(agreement)).fetchOne();
-		
-		employee.setAgreement((agreementTable == null) ? null : agreementTable.get(AGREEMENT.DESCRIPTION));	
-		employee.setAgreement_table_id((agreementTable == null) ? null : agreementTable.get(AGREEMENT.ID));
-		
+		//FECHA ACTUAL
 		java.util.Date actualJavaDate = new java.util.Date();
 		Date actualSQLDate = new Date(actualJavaDate.getTime());
 		
+		//CONTRACT DATA TABLE
 		Result<Record> contractDataTable = dslContext.select().from(CONTRACT_DATA)
 			.where(CONTRACT_DATA.CONTRACT.eq(contract))
 			.and(CONTRACT_DATA.START_DATE.le(actualSQLDate))
@@ -262,8 +335,10 @@ public class JooqEmployee {
 			.fetch();
 		
 		Map<String, String> contractDataMap = new HashMap<>();
+		
 		for(Record r : contractDataTable){
 			contractDataMap.put(r.get(CONTRACT_DATA.NAME), r.get(CONTRACT_DATA.EXPRESSION));
+			
 			if(r.get(CONTRACT_DATA.NAME).equals("TC2"))
 				employee.setContract_data_table_type_id(r.get(CONTRACT_DATA.ID));
 			else if(r.get(CONTRACT_DATA.NAME).equals("GRUPO_COTIZACION"))
@@ -276,20 +351,30 @@ public class JooqEmployee {
 		
 		employee.setContract_data(contractDataMap);
 		
+		//CONTRACT INFO TABLE
 		Record contractInfoTable = dslContext.select().from(CONTRACT_INFO)
 			.where(CONTRACT_INFO.CONTRACT.eq(contract))
 			.and(CONTRACT_INFO.NAME.eq("OPCION_CONTRATO"))
 			.fetchOne();
 		
-		String contractType = (contractInfoTable == null || null == contractInfoTable.get(CONTRACT_INFO.EXPRESSION)) ? "" : contractInfoTable.get(CONTRACT_INFO.EXPRESSION).split("\"")[1];
-		Integer ordinal;
-		if(contractType == "")
-			ordinal = -1;
-		else
-			ordinal = ModelOption.valueOf(contractType).ordinal();
+		if(null == contractInfoTable) {
+			employee.setContract_info_table_id(null);
+			employee.setContract_model(null);
+		}else if(null == contractInfoTable.get(CONTRACT_INFO.EXPRESSION)){
+			employee.setContract_info_table_id(contractInfoTable.get(CONTRACT_INFO.ID));
+			employee.setContract_model(null);
+		}else {
+			String contractType = contractInfoTable.get(CONTRACT_INFO.EXPRESSION);
+			
+			if(contractType.contains("\""))
+				contractType = contractType.split("\"")[1];
+			
+			Integer ordinal = ModelOption.valueOf(contractType).ordinal();
+			
+			employee.setContract_info_table_id(contractInfoTable.get(CONTRACT_INFO.ID));
+			employee.setContract_model(ordinal);	
+		}
 		
-		employee.setContract_model(ordinal);
-		employee.setContract_info_table_id((contractInfoTable == null) ? null : contractInfoTable.get(CONTRACT_INFO.ID));
 		
 		System.out.println(
 				"------------------- CONTRACT INFO ------------------- \n" +
@@ -339,17 +424,17 @@ public class JooqEmployee {
 		// ------------------------------------------------------------------------------------------------------------------------
 		
 		dslContext.update(PERSON)
-			.set(PERSON.NAME, newEmployeeInfo.getName())
-			.set(PERSON.FIRST_SURNAME, newEmployeeInfo.getFirst_surname())
-			.set(PERSON.SECOND_SURNAME, newEmployeeInfo.getSecond_surname())
+			.set(PERSON.BIRTH_DATE, (null == newEmployeeInfo.getBirth_date()) ? null : new Date(newEmployeeInfo.getBirth_date().getTime()))
 			.set(PERSON.GENDER, newEmployeeInfo.getGender())
-			.set(PERSON.BIRTH_DATE, (newEmployeeInfo.getBirth_date() == null) ? null : new Date(newEmployeeInfo.getBirth_date().getTime()))
-			.set(PERSON.SOCIAL_SECURITY_NUM, newEmployeeInfo.getSocial_security_num())
+			.set(PERSON.SOCIAL_SECURITY_NUM, ("" == newEmployeeInfo.getSocial_security_num()) ? null : newEmployeeInfo.getSocial_security_num())
+			.set(PERSON.NAME, ("" == newEmployeeInfo.getName()) ? null : newEmployeeInfo.getName())
+			.set(PERSON.FIRST_SURNAME, ("" == newEmployeeInfo.getFirst_surname()) ? null : newEmployeeInfo.getFirst_surname())
+			.set(PERSON.SECOND_SURNAME, ("" == newEmployeeInfo.getSecond_surname()) ? null : newEmployeeInfo.getSecond_surname())
 			.where(PERSON.REGISTRY.eq(newEmployeeInfo.getPerson_table_id()))
 			.execute();
 		
 		dslContext.update(REGISTRY)
-			.set(REGISTRY.DOCUMENT, newEmployeeInfo.getDocument())
+			.set(REGISTRY.DOCUMENT, ("" == newEmployeeInfo.getDocument()) ? null : newEmployeeInfo.getDocument())
 			.set(REGISTRY.DOCUMENT_TYPE, newEmployeeInfo.getDocument_type())
 			.set(REGISTRY.DOCUMENT_COUNTRY, newEmployeeInfo.getNationality())
 			.set(REGISTRY.NATIONALITY, newEmployeeInfo.getNationality())
@@ -371,28 +456,33 @@ public class JooqEmployee {
 				.where(GEOZONE.NAME.like(newEmployeeInfo.getProvince()+"%"))
 				.fetch();
 			
-			GeozoneRecord geozoneRecord  = dslContext.insertInto(GEOZONE)
-				.set(GEOZONE.DOMAIN, newEmployeeInfo.getDomain())
-				.set(GEOZONE.NAME, newEmployeeInfo.getGeozone_name())
-				.set(GEOZONE.CODE, codes.get(0).value1())
-				.returning(GEOZONE.ID)
-				.fetchOne();
+			if(codes.isEmpty()) {
+				geozoneId = null;
+			}else {
+				GeozoneRecord geozoneRecord  = dslContext.insertInto(GEOZONE)
+						.set(GEOZONE.DOMAIN, newEmployeeInfo.getDomain())
+						.set(GEOZONE.NAME, newEmployeeInfo.getGeozone_name())
+						.set(GEOZONE.CODE, codes.get(0).value1())
+						.returning(GEOZONE.ID)
+						.fetchOne();
+					
+				geozoneId = geozoneRecord.getId();
+			}
 			
-			geozoneId = geozoneRecord.getId();
 		}else
 			geozoneId = geozone.value1();
 		
 		dslContext.update(RADDRESS)
 			.set(RADDRESS.STREET_TYPE, newEmployeeInfo.getStreetType())
-			.set(RADDRESS.ADDRESS, newEmployeeInfo.getAddress())
-			.set(RADDRESS.NUMBER, newEmployeeInfo.getAddress_number())
-			.set(RADDRESS.ZIP, newEmployeeInfo.getZip_code())
-			.set(RADDRESS.CITY, newEmployeeInfo.getLocality())
+			.set(RADDRESS.ADDRESS, ("" == newEmployeeInfo.getAddress()) ? null : newEmployeeInfo.getAddress())
+			.set(RADDRESS.NUMBER, ("" == newEmployeeInfo.getAddress_number()) ? null : newEmployeeInfo.getAddress_number())
+			.set(RADDRESS.ZIP, ("" == newEmployeeInfo.getZip_code()) ? null : newEmployeeInfo.getZip_code())
+			.set(RADDRESS.CITY, ("" == newEmployeeInfo.getLocality()) ? null : newEmployeeInfo.getLocality())
 			.set(RADDRESS.GEOZONE, geozoneId)
 			.where(RADDRESS.ID.eq(newEmployeeInfo.getRaddress_table_id()))
 			.execute();
 		
-		if(geozone == null){
+		if(geozone == null && null != geozoneId){
 			Record geotreeParent = dslContext.select()
 									.from(GEOTREE)
 									.where(GEOTREE.DOMAIN.eq(newEmployeeInfo.getDomain()))
@@ -431,7 +521,7 @@ public class JooqEmployee {
 			}
 		}
 		
-		if(newEmployeeInfo.getPhone() != null){
+		if(newEmployeeInfo.getPhone() != ""){
 			if(newEmployeeInfo.getRmedia_table_phone_id() != null) //UPDATE
 				dslContext.update(RMEDIA)
 					.set(RMEDIA.VALUE, newEmployeeInfo.getPhone())
@@ -447,7 +537,7 @@ public class JooqEmployee {
 					.execute();
 		}
 		
-		if(newEmployeeInfo.getMobile() != null){
+		if(newEmployeeInfo.getMobile() != ""){
 			if(newEmployeeInfo.getRmedia_table_mobile_id() != null) //UPDATE
 				dslContext.update(RMEDIA)
 					.set(RMEDIA.VALUE, newEmployeeInfo.getMobile())
@@ -463,7 +553,7 @@ public class JooqEmployee {
 					.execute();
 		}
 		
-		if(newEmployeeInfo.getEmail() != null){
+		if(newEmployeeInfo.getEmail() != ""){
 			if(newEmployeeInfo.getRmedia_table_email_id() != null) //UPDATE
 				dslContext.update(RMEDIA)
 					.set(RMEDIA.VALUE, newEmployeeInfo.getEmail())
@@ -479,19 +569,50 @@ public class JooqEmployee {
 					.execute();
 		}
 		
-		if(newEmployeeInfo.getRBankTableId() == null && newEmployeeInfo.getPayMethodTableId() == null){
-			if(newEmployeeInfo.getTypePayMethod() != null && newEmployeeInfo.getTypePayMethod() != ""){
-				byte typePayMethod = getType(newEmployeeInfo.getTypePayMethod());
-				PayMethodRecord payMethodRecord = dslContext.insertInto(PAY_METHOD)
-						.set(PAY_METHOD.DOMAIN, newEmployeeInfo.getDomain())
-						.set(PAY_METHOD.NAME, newEmployeeInfo.getTypePayMethod())
-						.set(PAY_METHOD.TYPE, typePayMethod)
-						.returning(PAY_METHOD.ID)
-						.fetchOne();
-				
-				Integer payMethodTableId = payMethodRecord.get(PAY_METHOD.ID);
-				Integer rbankTableId = null;
-				if(newEmployeeInfo.getBankAccount() != null && newEmployeeInfo.getBankAccount() != ""){
+		if(-1 != getType(newEmployeeInfo.getTypePayMethod())) {
+			if(newEmployeeInfo.getRBankTableId() == null && newEmployeeInfo.getPayMethodTableId() == null){
+				if(newEmployeeInfo.getTypePayMethod() != "" && -1 != getType(newEmployeeInfo.getTypePayMethod())){
+					byte typePayMethod = getType(newEmployeeInfo.getTypePayMethod());
+					PayMethodRecord payMethodRecord = dslContext.insertInto(PAY_METHOD)
+							.set(PAY_METHOD.DOMAIN, newEmployeeInfo.getDomain())
+							.set(PAY_METHOD.NAME, newEmployeeInfo.getTypePayMethod())
+							.set(PAY_METHOD.TYPE, typePayMethod)
+							.returning(PAY_METHOD.ID)
+							.fetchOne();
+					
+					Integer payMethodTableId = payMethodRecord.get(PAY_METHOD.ID);
+					Integer rbankTableId = null;
+					if(newEmployeeInfo.getBankAccount() != ""){
+						RbankRecord rbankRecord = dslContext.insertInto(RBANK)
+								.set(RBANK.DOMAIN, newEmployeeInfo.getDomain())
+								.set(RBANK.REGISTRY, newEmployeeInfo.getRegistry_table_id())
+								.set(RBANK.BANK_ACCOUNT, newEmployeeInfo.getBankAccount())
+								.set(RBANK.BIC, ("" == newEmployeeInfo.getBIC()) ? null : newEmployeeInfo.getBIC())
+								.set(RBANK.ALIAS, "CUENTA")
+								.set(RBANK.ACTIVE, (byte) 1)
+								.returning(RBANK.ID)
+								.fetchOne();
+						 
+						 rbankTableId = rbankRecord.get(RBANK.ID); 
+					}
+					
+					dslContext.insertInto(RPAYMETHOD)
+						.set(RPAYMETHOD.DOMAIN, newEmployeeInfo.getDomain())
+						.set(RPAYMETHOD.REGISTRY, newEmployeeInfo.getRegistry_table_id())
+						.set(RPAYMETHOD.PAY_METHOD, payMethodTableId)
+						.set(RPAYMETHOD.RBANK, rbankTableId)
+						.execute();
+				}
+			}
+			
+			if(newEmployeeInfo.getRBankTableId() != null){
+				dslContext.update(RBANK)
+				.set(RBANK.BANK_ACCOUNT, newEmployeeInfo.getBankAccount())
+				.set(RBANK.BIC, ("" == newEmployeeInfo.getBIC()) ? null : newEmployeeInfo.getBIC())
+				.where(RBANK.ID.eq(newEmployeeInfo.getRBankTableId()))
+				.execute();
+			}else{
+				if(newEmployeeInfo.getBankAccount() != "" && newEmployeeInfo.getBIC() != ""){
 					RbankRecord rbankRecord = dslContext.insertInto(RBANK)
 							.set(RBANK.DOMAIN, newEmployeeInfo.getDomain())
 							.set(RBANK.REGISTRY, newEmployeeInfo.getRegistry_table_id())
@@ -501,56 +622,27 @@ public class JooqEmployee {
 							.set(RBANK.ACTIVE, (byte) 1)
 							.returning(RBANK.ID)
 							.fetchOne();
-					 
-					 rbankTableId = rbankRecord.get(RBANK.ID); 
-				}
-				
-				dslContext.insertInto(RPAYMETHOD)
-					.set(RPAYMETHOD.DOMAIN, newEmployeeInfo.getDomain())
-					.set(RPAYMETHOD.REGISTRY, newEmployeeInfo.getRegistry_table_id())
-					.set(RPAYMETHOD.PAY_METHOD, payMethodTableId)
-					.set(RPAYMETHOD.RBANK, rbankTableId)
+						
+						Record rpayMethodTableRecord = dslContext.select()
+								.from(RPAYMETHOD)
+								.where(RPAYMETHOD.REGISTRY.eq(newEmployeeInfo.getRegistry_table_id()))
+								.fetchOne();
+						
+						dslContext.update(RPAYMETHOD)
+						.set(RPAYMETHOD.RBANK, rbankRecord.get(RBANK.ID))
+						.where(RPAYMETHOD.ID.eq(rpayMethodTableRecord.get(RPAYMETHOD.ID)))
+						.execute();
+				}	
+			}
+			
+			if(newEmployeeInfo.getPayMethodTableId() != null && -1 != getType(newEmployeeInfo.getTypePayMethod())){
+				byte typePayMethod = getType(newEmployeeInfo.getTypePayMethod());
+				dslContext.update(PAY_METHOD)
+					.set(PAY_METHOD.NAME, newEmployeeInfo.getTypePayMethod())
+					.set(PAY_METHOD.TYPE, typePayMethod)
+					.where(PAY_METHOD.ID.eq(newEmployeeInfo.getPayMethodTableId()))
 					.execute();
 			}
-		}
-		
-		if(newEmployeeInfo.getRBankTableId() != null){
-			dslContext.update(RBANK)
-			.set(RBANK.BANK_ACCOUNT, newEmployeeInfo.getBankAccount())
-			.set(RBANK.BIC, newEmployeeInfo.getBIC())
-			.where(RBANK.ID.eq(newEmployeeInfo.getRBankTableId()))
-			.execute();
-		}else{
-			if(newEmployeeInfo.getBankAccount() != null && newEmployeeInfo.getBIC() != null){
-				RbankRecord rbankRecord = dslContext.insertInto(RBANK)
-						.set(RBANK.DOMAIN, newEmployeeInfo.getDomain())
-						.set(RBANK.REGISTRY, newEmployeeInfo.getRegistry_table_id())
-						.set(RBANK.BANK_ACCOUNT, newEmployeeInfo.getBankAccount())
-						.set(RBANK.BIC, newEmployeeInfo.getBIC())
-						.set(RBANK.ALIAS, "CUENTA")
-						.set(RBANK.ACTIVE, (byte) 1)
-						.returning(RBANK.ID)
-						.fetchOne();
-					
-					Record rpayMethodTableRecord = dslContext.select()
-							.from(RPAYMETHOD)
-							.where(RPAYMETHOD.REGISTRY.eq(newEmployeeInfo.getRegistry_table_id()))
-							.fetchOne();
-					
-					dslContext.update(RPAYMETHOD)
-					.set(RPAYMETHOD.RBANK, rbankRecord.get(RBANK.ID))
-					.where(RPAYMETHOD.ID.eq(rpayMethodTableRecord.get(RPAYMETHOD.ID)))
-					.execute();
-			}	
-		}
-		
-		if(newEmployeeInfo.getPayMethodTableId() != null){
-			byte typePayMethod = getType(newEmployeeInfo.getTypePayMethod());
-			dslContext.update(PAY_METHOD)
-				.set(PAY_METHOD.NAME, newEmployeeInfo.getTypePayMethod())
-				.set(PAY_METHOD.TYPE, typePayMethod)
-				.where(PAY_METHOD.ID.eq(newEmployeeInfo.getPayMethodTableId()))
-				.execute();
 		}
 		
 		// ------------------------------------------------------------------------------------------------------------------------
@@ -565,63 +657,37 @@ public class JooqEmployee {
 		dslContext.update(CONTRACT)
 			.set(CONTRACT.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
 			.set(CONTRACT.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
-			.set(CONTRACT.SENIORITY_DATE, new Date(newEmployeeInfo.getSeniority_date().getTime()))
-			.set(CONTRACT.CATEGORY_DESCRIPTION, newEmployeeInfo.getCategory_description())
-			.set(CONTRACT.AGREEMENT_LEVEL, newEmployeeInfo.getAgreement_level_table_id())
+			.set(CONTRACT.SENIORITY_DATE, (null == newEmployeeInfo.getSeniority_date()) ? new Date(newEmployeeInfo.getStart_date().getTime()) : new Date(newEmployeeInfo.getSeniority_date().getTime()))
+			.set(CONTRACT.CATEGORY_DESCRIPTION, ("" == newEmployeeInfo.getCategory_description()) ? null : newEmployeeInfo.getCategory_description())
+			.set(CONTRACT.AGREEMENT_LEVEL, (null == newEmployeeInfo.getAgreement_level_table_id()) ? null : newEmployeeInfo.getAgreement_level_table_id())
+			.set(CONTRACT.ENTERPRISE_CCC, newEmployeeInfo.getEnterprise_ccc_table_id())
+			.set(CONTRACT.ENTERPRISE_ACTIVITY, newEmployeeInfo.getEnterprise_activity_table_id())
 			.set(CONTRACT.WORKPLACE, newEmployeeInfo.getWorkplace_table_id())
 			.where(CONTRACT.ID.eq(newEmployeeInfo.getContract_table_id()))
 			.execute();
 		
 		if(newEmployeeInfo.getSSRegime() != 3){ //NO ES RETA
-			
-			if(newEmployeeInfo.getEnterprise_ccc_table_id() != null)
-				dslContext.update(ENTERPRISE_CCC)
-					.set(ENTERPRISE_CCC.CCC, newEmployeeInfo.getQuote_account())
-					.where(ENTERPRISE_CCC.ID.eq(newEmployeeInfo.getEnterprise_ccc_table_id()))
-					.execute();
-			else if(newEmployeeInfo.getQuote_account() != null)
-				dslContext.insertInto(ENTERPRISE_CCC)
-				.set(ENTERPRISE_CCC.DOMAIN, newEmployeeInfo.getDomain())
-				.set(ENTERPRISE_CCC.CCC, newEmployeeInfo.getQuote_account())
-				.set(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY, newEmployeeInfo.getEnterprise_activity_table_id())
-				.execute();
 		
 			if(newEmployeeInfo.getContract_data_table_type_id() != null){
-				if(newEmployeeInfo.getContract_type() != null)
-					dslContext.update(CONTRACT_DATA)
-					.set(CONTRACT_DATA.EXPRESSION, "\""+newEmployeeInfo.getContract_type()+"\"")
-					.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
-					.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
-					.where(CONTRACT_DATA.ID.eq(newEmployeeInfo.getContract_data_table_type_id()))
-					.execute();
-				else
-					dslContext.update(CONTRACT_DATA)
-					.set(CONTRACT_DATA.EXPRESSION, (String) null)
-					.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
-					.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
-					.where(CONTRACT_DATA.ID.eq(newEmployeeInfo.getContract_data_table_type_id()))
-					.execute();
+				dslContext.update(CONTRACT_DATA)
+				.set(CONTRACT_DATA.EXPRESSION, (null == newEmployeeInfo.getContract_type()) ? null : "\""+newEmployeeInfo.getContract_type()+"\"")
+				.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
+				.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
+				.where(CONTRACT_DATA.ID.eq(newEmployeeInfo.getContract_data_table_type_id()))
+				.execute();
 			}else
 				dslContext.insertInto(CONTRACT_DATA)
 				.set(CONTRACT_DATA.DOMAIN, newEmployeeInfo.getDomain())
 				.set(CONTRACT_DATA.NAME, "TC2")
 				.set(CONTRACT_DATA.CONTRACT, newEmployeeInfo.getContract_table_id())
-				.set(CONTRACT_DATA.EXPRESSION, newEmployeeInfo.getContract_type())
+				.set(CONTRACT_DATA.EXPRESSION, (null == newEmployeeInfo.getContract_type()) ? null : "\""+newEmployeeInfo.getContract_type()+"\"")
 				.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
 				.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
 				.execute();
 		
 			if(newEmployeeInfo.getContract_info_table_id() != null){
-				if(newEmployeeInfo.getContract_model() != null)
-					dslContext.update(CONTRACT_INFO)
-						.set(CONTRACT_INFO.EXPRESSION,  "\""+ ModelOption.values()[newEmployeeInfo.getContract_model()].toString()  +"\"")
-						.set(CONTRACT_INFO.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
-						.set(CONTRACT_INFO.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
-						.where(CONTRACT_INFO.ID.eq(newEmployeeInfo.getContract_info_table_id()))
-						.execute();
-				else
-					dslContext.update(CONTRACT_INFO)
-					.set(CONTRACT_INFO.EXPRESSION, (String) null)
+				dslContext.update(CONTRACT_INFO)
+					.set(CONTRACT_INFO.EXPRESSION, (null == newEmployeeInfo.getContract_model()) ? null : "\""+ ModelOption.values()[newEmployeeInfo.getContract_model()].toString()  +"\"")
 					.set(CONTRACT_INFO.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
 					.set(CONTRACT_INFO.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
 					.where(CONTRACT_INFO.ID.eq(newEmployeeInfo.getContract_info_table_id()))
@@ -637,69 +703,51 @@ public class JooqEmployee {
 				.execute();
 		
 			if(newEmployeeInfo.getContract_data_table_quote_group_id() != null){
-				if(newEmployeeInfo.getQuote_group() != null){
-					if(newEmployeeInfo.getQuote_group().contains("\""))
-						dslContext.update(CONTRACT_DATA)
-							.set(CONTRACT_DATA.EXPRESSION, newEmployeeInfo.getQuote_group())
-							.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
-							.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
-							.where(CONTRACT_DATA.ID.eq(newEmployeeInfo.getContract_data_table_quote_group_id()))
-							.execute();
-					else
-						dslContext.update(CONTRACT_DATA)
-						.set(CONTRACT_DATA.EXPRESSION, "\""+newEmployeeInfo.getQuote_group()+"\"")
-						.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
-						.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
-						.where(CONTRACT_DATA.ID.eq(newEmployeeInfo.getContract_data_table_quote_group_id()))
-						.execute();
-				}else{
+				if(newEmployeeInfo.getQuote_group().contains("\""))
 					dslContext.update(CONTRACT_DATA)
-					.set(CONTRACT_DATA.EXPRESSION, (String) null)
+					.set(CONTRACT_DATA.EXPRESSION, ("0" == newEmployeeInfo.getQuote_group()) ? null : newEmployeeInfo.getQuote_group())
 					.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
 					.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
 					.where(CONTRACT_DATA.ID.eq(newEmployeeInfo.getContract_data_table_quote_group_id()))
 					.execute();
-				}
-			}else
+				else
+					dslContext.update(CONTRACT_DATA)
+					.set(CONTRACT_DATA.EXPRESSION, ("0" == newEmployeeInfo.getQuote_group()) ? null : "\""+newEmployeeInfo.getQuote_group()+"\"")
+					.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
+					.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
+					.where(CONTRACT_DATA.ID.eq(newEmployeeInfo.getContract_data_table_quote_group_id()))
+					.execute();
+			}else if("0" != newEmployeeInfo.getQuote_group())
 				dslContext.insertInto(CONTRACT_DATA)
 				.set(CONTRACT_DATA.DOMAIN, newEmployeeInfo.getDomain())
 				.set(CONTRACT_DATA.NAME, "GRUPO_COTIZACION")
 				.set(CONTRACT_DATA.CONTRACT, newEmployeeInfo.getContract_table_id())
-				.set(CONTRACT_DATA.EXPRESSION, newEmployeeInfo.getQuote_group())
+				.set(CONTRACT_DATA.EXPRESSION, "\""+newEmployeeInfo.getQuote_group()+"\"")
 				.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
 				.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
 				.execute();
 		
 			if(newEmployeeInfo.getContract_data_table_ocupation_id() != null){
-				if(newEmployeeInfo.getOcupation() != null){
-					if (newEmployeeInfo.getOcupation().contains("\""))
-						dslContext.update(CONTRACT_DATA)
-						.set(CONTRACT_DATA.EXPRESSION, newEmployeeInfo.getOcupation())
-						.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
-						.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
-						.where(CONTRACT_DATA.ID.eq(newEmployeeInfo.getContract_data_table_ocupation_id()))
-						.execute();
-					else
-						dslContext.update(CONTRACT_DATA)
-							.set(CONTRACT_DATA.EXPRESSION, "\""+newEmployeeInfo.getOcupation()+"\"")
-							.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
-							.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
-							.where(CONTRACT_DATA.ID.eq(newEmployeeInfo.getContract_data_table_ocupation_id()))
-							.execute();
-				}else{
+				if(newEmployeeInfo.getOcupation().contains("\""))
 					dslContext.update(CONTRACT_DATA)
-					.set(CONTRACT_DATA.EXPRESSION, (String) null)
+					.set(CONTRACT_DATA.EXPRESSION, ("z" == newEmployeeInfo.getOcupation()) ? null : newEmployeeInfo.getOcupation())
 					.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
 					.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
 					.where(CONTRACT_DATA.ID.eq(newEmployeeInfo.getContract_data_table_ocupation_id()))
 					.execute();
-				} 
-			}else
+				else
+					dslContext.update(CONTRACT_DATA)
+						.set(CONTRACT_DATA.EXPRESSION, ("z" == newEmployeeInfo.getOcupation()) ? null : "\""+newEmployeeInfo.getOcupation()+"\"")
+						.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
+						.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
+						.where(CONTRACT_DATA.ID.eq(newEmployeeInfo.getContract_data_table_ocupation_id()))
+						.execute();
+			}else if("z" != newEmployeeInfo.getOcupation())
 				dslContext.insertInto(CONTRACT_DATA)
 				.set(CONTRACT_DATA.DOMAIN, newEmployeeInfo.getDomain())
 				.set(CONTRACT_DATA.NAME, "OCUPACION")
 				.set(CONTRACT_DATA.CONTRACT, newEmployeeInfo.getContract_table_id())
-				.set(CONTRACT_DATA.EXPRESSION, newEmployeeInfo.getOcupation())
+				.set(CONTRACT_DATA.EXPRESSION, "\""+newEmployeeInfo.getOcupation()+"\"")
 				.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
 				.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
 				.execute();	
@@ -708,32 +756,21 @@ public class JooqEmployee {
 		if(newEmployeeInfo.getSSRegime() == 3){ //ES RETA
 		
 			if(newEmployeeInfo.getContract_data_table_journey_type_id() != null){
-				if(newEmployeeInfo.getJourneyType() != null)
-					dslContext.update(CONTRACT_DATA)
-					.set(CONTRACT_DATA.EXPRESSION, newEmployeeInfo.getJourneyType().toString())
-					.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
-					.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
-					.where(CONTRACT_DATA.ID.eq(newEmployeeInfo.getContract_data_table_journey_type_id()))
-					.execute();
+				dslContext.update(CONTRACT_DATA)
+				.set(CONTRACT_DATA.EXPRESSION, newEmployeeInfo.getJourneyType().toString())
+				.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
+				.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
+				.where(CONTRACT_DATA.ID.eq(newEmployeeInfo.getContract_data_table_journey_type_id()))
+				.execute();
 			}else{
-				if(newEmployeeInfo.getJourneyType() != null)
-					dslContext.insertInto(CONTRACT_DATA)
-					.set(CONTRACT_DATA.DOMAIN, newEmployeeInfo.getDomain())
-					.set(CONTRACT_DATA.NAME, "TIEMPO_COMPLETO")
-					.set(CONTRACT_DATA.CONTRACT, newEmployeeInfo.getContract_table_id())
-					.set(CONTRACT_DATA.EXPRESSION, newEmployeeInfo.getJourneyType().toString())
-					.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
-					.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
-					.execute();
-				else
-					dslContext.insertInto(CONTRACT_DATA)
-					.set(CONTRACT_DATA.DOMAIN, newEmployeeInfo.getDomain())
-					.set(CONTRACT_DATA.NAME, "TIEMPO_COMPLETO")
-					.set(CONTRACT_DATA.CONTRACT, newEmployeeInfo.getContract_table_id())
-					.set(CONTRACT_DATA.EXPRESSION, (String) null)
-					.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
-					.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
-					.execute();
+				dslContext.insertInto(CONTRACT_DATA)
+				.set(CONTRACT_DATA.DOMAIN, newEmployeeInfo.getDomain())
+				.set(CONTRACT_DATA.NAME, "TIEMPO_COMPLETO")
+				.set(CONTRACT_DATA.CONTRACT, newEmployeeInfo.getContract_table_id())
+				.set(CONTRACT_DATA.EXPRESSION, (null == newEmployeeInfo.getJourneyType()) ? null : newEmployeeInfo.getJourneyType().toString())
+				.set(CONTRACT_DATA.START_DATE, new Date(newEmployeeInfo.getStart_date().getTime()))
+				.set(CONTRACT_DATA.END_DATE, (newEmployeeInfo.getEnd_date() == null) ? null : new Date(newEmployeeInfo.getEnd_date().getTime()))
+				.execute();
 			}
 		
 		}

@@ -7,17 +7,19 @@ public class CCCInfo implements Serializable{
 	private Byte type;
 	private String geozone;
 	private Integer activityId;
+	private Integer cccId;
 	
 	public CCCInfo(){
 		super();
 	}
 	
-	public CCCInfo(String ccc, Byte type, String geozone, Integer activityId) {
+	public CCCInfo(String ccc, Byte type, String geozone, Integer activityId, Integer cccId) {
 		super();
 		this.ccc = ccc;
 		this.type = type;
 		this.geozone = geozone;
 		this.activityId = activityId;
+		this.cccId = cccId;
 	}
 
 	public String getCcc() {
@@ -50,6 +52,14 @@ public class CCCInfo implements Serializable{
 
 	public void setActivityId(Integer activityId) {
 		this.activityId = activityId;
+	}
+	
+	public Integer getCCCId() {
+		return cccId;
+	}
+
+	public void setCCCId(Integer cccId) {
+		this.cccId = cccId;
 	}
 
 }
