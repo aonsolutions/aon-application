@@ -19,8 +19,9 @@ public class AccountBalanceReport implements Serializable{
 		
 		private Integer id;
 		private int level;
-		private boolean total;
+		private boolean leaf;
 		private String code;
+		private String prefix;
 		private String description;
 		private String accounts;
 		private HashMap<String,Double> amounts = new HashMap<String,Double>();
@@ -41,11 +42,11 @@ public class AccountBalanceReport implements Serializable{
 			return this;
 		}
 		
-		public boolean isTotal() {
-			return total;
+		public boolean isLeaf() {
+			return leaf;
 		}
-		public BalanceLine setTotal(boolean total) {
-			this.total = total;
+		public BalanceLine setLeaf(boolean leaf) {
+			this.leaf = leaf;
 			return this;
 		}
 		
@@ -54,6 +55,14 @@ public class AccountBalanceReport implements Serializable{
 		}
 		public BalanceLine setCode(String code) {
 			this.code = code;
+			return this;
+		}
+		
+		public String getPrefix() {
+			return prefix;
+		}
+		public BalanceLine setPrefix(String prefix) {
+			this.prefix = prefix;
 			return this;
 		}
 		

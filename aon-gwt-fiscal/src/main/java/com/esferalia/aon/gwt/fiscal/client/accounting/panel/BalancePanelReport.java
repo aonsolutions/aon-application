@@ -158,7 +158,7 @@ public class BalancePanelReport extends DockLayoutPanel implements HasAccountEnt
 				SimpleLayoutPanel breakdownPanel = new SimpleLayoutPanel();
 				String code = newParams.getAccount().getCode();
 				String prefix = "Bal S/S: ";
-				String tabLabel = prefix + AonStringUtils.abbreviate(code, 115);
+				String tabLabel = prefix + AonStringUtils.abbreviate(code, 15);
 				breakdownPanel.add(trialBalancePanel);
 				CloseTab closeTab = new CloseTab(tabLabel, true);
 				closeTab.setTitle(prefix + code);
@@ -201,7 +201,7 @@ public class BalancePanelReport extends DockLayoutPanel implements HasAccountEnt
 				else newParams.setLevel(9);
 				TrialBalancePanel breakdown = getTrialBalanceResultPanel(newParams);
 				prefix = "Bal S/S: ";
-				tabLabel = prefix + AonStringUtils.abbreviate(code, 115);
+				tabLabel = prefix + AonStringUtils.abbreviate(code, 15);
 				breakdownPanel.add(breakdown);
 			} else {
 				AccountingReportParams stmParams = new AccountingReportParams()

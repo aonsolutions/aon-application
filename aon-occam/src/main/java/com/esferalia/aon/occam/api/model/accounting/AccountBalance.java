@@ -8,7 +8,8 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 public class AccountBalance implements Serializable {
 	
 	private static final long serialVersionUID = 2821084947789446457L;
-	
+	private String accountCode;
+	private String accountDescription;
 	private double openingDebit;
 	private double openingCredit;
 	private double debitSum;
@@ -31,6 +32,18 @@ public class AccountBalance implements Serializable {
 			this.debitSum = debit;
 			this.creditSum = credit;
 		}
+	}
+	public String getAccountCode() {
+		return accountCode;
+	}
+	public void setAccountCode(String accountCode) {
+		this.accountCode = accountCode;
+	}
+	public String getAccountDescription() {
+		return accountDescription;
+	}
+	public void setAccountDescription(String accountDescription) {
+		this.accountDescription = accountDescription;
 	}
 	public double getOpeningDebit() {
 		return openingDebit;

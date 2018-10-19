@@ -1,333 +1,88 @@
 package com.esferalia.aon.occam.server.accounting;
 
-public enum AccBalanceAbbreviateKey implements IBalanceKey{
+public enum AccBOEBalanceAbbreviateKey implements IBalanceKey{
 	// ACTIVO
-	 BA00101(0,"ACTIVO NO CORRIENTE"
-		,null
-		,"BA00102+BA00111+BA00115+BA00118+BA00126+BA00134+BA00135"
-	 )
- 	,BA00102(1,"Inmovilizado intangible"
-		,null
- 		,"BA00106+BA00110"
-	)
- 	,BA00106(2,"Fondo de comercio"
- 		,"sdb({204})"
- 		,null				
-	)
- 	,BA00110(2,"Resto (A, P)"
-		,"sdb({201,202,203,205,206,207,208,209})-sab({280,290})"
-		,null				
-	)
- 	,BA00111(1,"Inmovilizado material"
-		,"sdb({210,211,212,213,214,215,216,217,218,219,23})-sab({2812,2813,2814,2815,2816,2817,2818,2819,2912,2913,2914,2915,2916,2917,2918,2919,2810,2811,2910,2911})"
-		,null
-	)
- 	,BA00115(1,"Inversiones inmobiliarias"
-		,"sdb({22})-sab({282,292})"
-		,null
-	)
- 	,BA00118(1,"Inversiones en empresas del grupo y asociadas a largo plazo"
-		,null
-		,"BA00119+BA00125"
-	)
- 	,BA00119(2,"Instrumentos de patrimonio"
-		,"sdb({2403,2404})-sab({2493,2494,293})"
-		,null				
-	)
- 	,BA00125(2,"Resto (A, P)"
-		,"sdb({2423,2424,2413,2414})-sab({2953,2954,2943,2944})"
-		,null				
-	)
- 	,BA00126(1,"Inversiones financieras a largo plazo"
-		,null
-		,"BA00127+BA00133"
-	)
- 	,BA00127(2,"Instrumentos de patrimonio"
-		,"sdb({2405,250})-sab({2495,259})"
-		,null
-	)
- 	,BA00133(2,"Resto (A, P)"
-		,"sdb({2425,252,253,254,2415,251,258,26,257,255})-sab({2955,298,2945,297})"
-		,null
-	)
- 	,BA00134(1,"Activos por impuesto diferido"
-		,"sdb({474})"
-		,null
-	)
- 	,BA00135(1,"Deudores comerciales no corrientes"
-		,null
-		,null
-	)
- 	,BA00136(0,"ACTIVO CORRIENTE"
-		,null
-		,"BA00137+BA00138+BA00149+BA00160+BA00168+BA00176+BA00177"
-	)
- 	,BA00137(1,"Activos no corrientes mantenidos para la venta (N, A)"
-		,"sdb({580,581,582,583,584}) - sab({599})"
-		,null
-	)
- 	,BA00138(1,"Existencias"
-		,"sdb({30,31,32,33,34,35,36,407})-sab({(39)})"
-		,null
-	)
- 	,BA00149(1,"Deudores comerciales y otras cuentas a cobrar"
-		,null
-		,"BA00150+BA00158+BA00159"
-	)
- 	,BA00150(2,"Clientes por ventas y prestaciones de servicios"
-		,null
- 		,"BA00151+BA00152"
-	)
- 	,BA00151(3,"Clientes por ventas y prestaciones de servicios a largo plazo"
-		,"sdb({430,431,432,435,436})-sab({437,490,4935})"
-		,null
-	)
- 	,BA00152(3,"Clientes por ventas y prestaciones de servicios a corto plazo"
-		,null
-		,null
-	)
- 	,BA00158(1,"Accionistas (socios) por desembolsos exigidos"
-		,"sdb({5580})"
-		,null
-	)
- 	,BA00159(1,"Otros deudores"
-		,"sdb({44,460,470,471,472,473,544})"
-		,null
- 	)
- 	,BA00160(1,"Inversiones en empresas del grupo y asociadas a corto plazo"
-		,null
-		,"BA00161+BA00167"
-	)
- 	,BA00161(2,"Instrumentos de patrimonio"
- 		,"sdb({5303,5304})-sab({5393,5394,593})"
- 		,null
-	)
- 	,BA00167(2,"Resto (A, P)"
-		,"sdb({5313,5314, 5323, 5324,5333, 5334, 5343,5344, 5353, 5354,5524})+sdbPositivo(5523)-sab({5943,5944,5953,5954})"
-		,null
- 	)
- 	,BA00168(1,"Inversiones financieras a corto plazo"
-		,null
-		,"BA00169+BA00175"
-	)
- 	,BA00169(2,"Instrumentos de patrimonio"
-		,"sdb({5305,540})-sab({5395,549})"
-		,null
-	)
- 	,BA00175(2,"Resto"
-		,"sdb({5325,5345,542,543,547,5315,5335,541,546,5590,5593,5355,545,548,5525,565,566})-sab({5955,598,5945,597})+sdbPositivo({551})"
-		,null
-	)
- 	,BA00176(1,"Periodificaciones a corto plazo"
-		,"sdb({480,567})"
-		,null
-	)
- 	,BA00177(1,"Efectivo y otros activos l\u00EDquidos equivalentes"
-		,"sdb({570,571,572,573,574,575,576})"
-		,null
- 	)
- 	,BA00180(0,"TOTAL ACTIVO"
-		,null
-		,"BA00101+BA00136"
-	)
- 	// PASIVO Y PATRIMONIO
-	,BP00185(0,"PATRIMONIO NETO"
-		,null
-		,"BP00186+BP00209+BP00202"
-	)
- 	,BP00186(1,"Fondos propios"
-		,null
-		,"BP00187+BP00190+BP00191+BP00194+BP00195+BP00198+BP00199+BP00200+BP00201"
-	)
- 	,BP00187(2,"Capital"
-		,null
-		,"BP00188+BP00189"
- 	)
- 	,BP00188(3,"Capital escriturado"
-		,"sab({100,101,102})"
-		,null
-	)
- 	,BP00189(3,"(Capital no exigido)"
-		,"sdb({1030,1040})"
-		,null
-	)
- 	,BP00190(2,"Prima de emisi\u00F3n"
-		,"sab({110})"
-		,null
-	)
- 	,BP00191(2,"Reservas"
-		,null
-		,"BP00193+BP01001+BP01002"
-	)
- 	,BP00193(3,"Otras reservas)"
-		,"sab({112,113,114,115,119})"
-		,null
-	)
- 	,BP01001(3,"Reserva de capitalizaci\u00F3n"
-		,null
-		,null
-	)
- 	,BP01002(3,"Reserva de nivelaci\u00F3n"
-		,null
-		,null
-	)
- 	,BP00194(2,"(Acciones y participaciones en patrimonio propias)"
-		,"sdb({108,109})"
-		,null
- 	)
- 	,BP00195(2,"Resultados de ejercicios anteriores"
-		,"sab({120})-sdb({121})"
-		,null
-	)
- 	,BP00198(2,"Otras aportaciones de socios"
-		,"sab({118})"
-		,null
-	)
- 	,BP00199(2,"Resultado del ejercicio"
-		,"sab({129,7}) - sdb({6})"
-		,null
-	)
- 	,BP00200(2,"(Dividendo a cuenta)"
-		,"sdb({557})"
-		,null
-	)
- 	,BP00201(2,"Otros instrumentos de patrimonio neto"
-		,"sab({111})"
-		,null
-	)
- 	,BP00202(1,"Ajustes por cambio de valor"
-		,"sab({1340,136,135,137})"
-		,null
-	)
- 	,BP00209(1,"Subvenciones, donaciones y legados recibidos"
-		,"sab({130,131,132})"
-		,null
-	)
- 	,BP00210(0,"PASIVO NO CORRIENTE"
-		,null
-		,"BP00211+BP00216+BP00223+BP00224+BP00225+BP00226+BP00227"
- 	)
- 	,BP00211(1,"Provisiones a largo plazo"
-		,"sab({14})"
-		,null
-	)
- 	,BP00216(1,"Deudas a largo plazo"
-		,null
-		,"BP00218+BP00219+BP00222"
-	)
- 	,BP00218(2,"Deudas con entidades de cr\u00E9dito"
-		,"sab({1605,170})"
-		,null
-	)
- 	,BP00219(2,"Acreedores por arrendamiento financiero"
-		,"sab({1625,174})"
-		,null
-	)
- 	,BP00222(2,"Otras deudas a largo plazo"
-		,"sab({1615,1635,171,172,173,175,176,177,178,179,180,185,189})"
-		,null
-	)
- 	,BP00223(1,"Deudas con empresas del grupo y asociadas a largo plazo"
-		,"sab({1603,1604,1613,1614,1623,1624,1633,1634})"
-		,null
-	)
- 	,BP00224(1,"Pasivos por impuesto diferido"
-		,"sab({479})"
-		,null
-	)
- 	,BP00225(1,"Periodificaciones a largo plazo"
-		,"sab({181})"
-		,null
-	)
- 	,BP00226(1,"Acreedores comerciales no corrientes"
-		,null
-		,null
-	)
- 	,BP00227(1,"Deuda con caracter\u00EDsticas especiales a largo plazo"
-		,"sab({15})"
-		,null
- 	)
- 	,BP00228(0,"PASIVO CORRIENTE"
-		,null
-		,"BP00229+BP00230+BP00231+BP00238+BP00239+BP00250+BP00251"
-	)
- 	,BP00229(1,"Pasivos vinculados con activos no corr. mantenidos para la venta"
-		,"sab({585,586,587,588,589})"
-		,null
-	)
- 	,BP00230(1,"Provisiones a corto plazo"
-		,"sab({499,529})"
-		,null
-	)
- 	,BP00231(1,"Deudas a corto plazo"
-		,null
-		,"BP00233+BP00234+BP00237"
-	)
- 	,BP00232(2,"Obligaciones y otros valores negociables"
-		,"sab({500,501,505,506})"
-		,null
-	)
- 	,BP00233(2,"Deudas con entidades de cr\u00E9dito"
-		,"sab({5105,520,527})"
-		,null
-	)
- 	,BP00234(2,"Acreedores por arrendamiento financiero"
-		,"sab({5125,524})"
-		,null
-	)
- 	,BP00237(2,"Otras deudas a corto plazo"
-		,"sab({194,500,501,505,506,509,5115,5135,5145,521,522,523,525,526,528,525,555,5565,5566,5595,5598,560,561,569})+sabPositivo(551)-sdb({1034,1044,190,192})"
-		,null
-	)
- 	,BP00238(1,"Deudas con empresas del grupo y asociadas a corto plazo"
-		,"sab({5103,5104,5113,5114,5123,5124,5133,5134,5143,5144,5524,5563,5564})+sabPositivo({5523})"
-		,null
-	)
- 	,BP00239(1,"Acreedores comerciales y otras cuentas a pagar"
-		,null
-		,"BP00240+BP00249"
-	)
- 	,BP00240(2,"Proveedores"
-		,null
-		,"BP00241+BP00242"
- 	)
- 	,BP00241(3,"Proveedores a largo plazo"
-		,null
-		,null
-	)
- 	,BP00242(3,"Proveedores a corto plazo"
-		,"sab({400,401,405})-sdb({406})"
-		,null
- 	)
- 	,BP00249(3,"Otros acreedores"
-		,"sab({41,438,465,466,475,476,477})"
-		,null
-	)
- 	,BP00250(1,"Periodificaciones a corto plazo"
-		,"sab({485,568})"
-		,null
-	)
- 	,BP00251(1,"Deuda con caracter\u00EDsticas especiales a corto plazo"
-		,"sab({502,507})"
-		,null
-	)
- 	,BP00252(0,"TOTAL PATRIMONIO NETO Y PASIVO"
-		,null
-		,"BP00185+BP00210+BP00228"
- 	)
+	 ANC(0,false,"A)","ACTIVO NO CORRIENTE",null,"ANCI+ANCII+ANCIII+ANCIV+ANCV+ANCVI")
+		,ANCI(1,false,"I","Inmovilizado intangible","sdb({20})-sab({280,290})",null)
+		,ANCII(1,false,"II","Inmovilizado material","sdb({21,23})-sab({281,291})",null)
+		,ANCIII(1,false,"III","Inversiones inmobiliarias","sdb({22})-sab({282,292})",null)
+		,ANCIV(1,false,"IV","Inversiones en empresas del grupo y asociadas a largo plazo","sdb({2403,2404,2413,2414,2423,2424})-sab({2493,2494,293,2943,2944,2953,2954})",null)
+		,ANCV(1,false,"V","Inversiones financieras a largo plazo","sdb({2405,2415,2425,250,251,252,253,254,255,257,258,26})-sab({2495,259,2945,2955,297,298})",null)
+		,ANCVI(1,false,"VI","Activos por impuesto diferido","sdb({474})",null)
+	
+	,AC(0,false,"B)","ACTIVO CORRIENTE",null,"ACI+ACII+ACIII+ACIV+ACV+ACVI+ACVII")
+		,ACI(1,false,"I","Activos no corrientes mantenidos para la venta","sdb({580,581,582,583,584}) - sab({599})",null)
+		,ACII(1,false,"II","Existencias","sdb({30,31,32,33,34,35,36,407})-sab({(39)})",null)
+		,ACIII(1,false,"III","Deudores comerciales y otras cuentas a cobrar",null,"ACIII1+ACIII2+ACIII3")
+			,ACIII1(2,true,"1","Clientes por ventas y prestaciones de servicios","sdb({430,431,432,435,436})-sab({437,490,493})",null)
+			,ACIII2(2,true,"2","Accionistas (socios) por desembolsos exigidos","sdb({5580})",null)
+			,ACIII3(2,true,"3","Otros deudores","sdb({44,460,470,471,472,473,544})",null)
+		,ACIV(1,false,"IV","Inversiones en empresas del grupo y asociadas a corto plazo","sdb({5303,5304,5313,5314, 5323, 5324,5333, 5334, 5343,5344, 5353, 5354,5524})+sdbPositivo(5523)-sab({5393,5394,593,5943,5944,5953,5954})",null)
+		,ACV(1,false,"V","Inversiones financieras a corto plazo","sdb({5305,540,5325,5345,542,543,547,5315,5335,541,546,5590,5593,5355,545,548,5525,565,566})-sab({5955,598,5945,597,5395,549})+sdbPositivo({551})",null)
+		,ACVI(1,false,"VI","Periodificaciones a corto plazo","sdb({480,567})",null)
+		,ACVII(1,false,"VII","Efectivo y otros activos l\u00EDquidos equivalentes","sdb({57})",null)
+	,TC(0,false,"(A+B)","TOTAL ACTIVO",null,"ANC + AC")
+
+// PASIVO Y PATRIMONIO
+	,PN(0,false,"A)","PATRIMONIO NETO",null,"PNA1+PNA2+PNA3")
+		,PNA1(1,false,"A-1)","Fondos propios",null,"PNA1I+PNA1II+PNA1III+PNA1IV+PNA1V+PNA1VI+PNA1VII+PNA1VIII+PNA1IX")
+			,PNA1I(2,false,"I","Capital",null,"PNA1I1+PNA1I2")
+				,PNA1I1(3,true,"1","Capital escriturado","sab({100,101,102})",null)
+				,PNA1I2(3,true,"2","(Capital no exigido)","sdb({1030,1040})",null)
+			,PNA1II(2,false,"II","Prima de emisi\u00F3n","sab({110})"	,null)
+			,PNA1III(2,false,"III","Reservas","sab({112,113,114,115,119})",null)
+			,PNA1IV(2,false,"IV","(Acciones y participaciones en patrimonio propias)","sdb({108,109})",null)
+			,PNA1V(2,false,"V","Resultados de ejercicios anteriores","sab({120})-sdb({121})",null)
+			,PNA1VI(2,false,"VI","Otras aportaciones de socios","sab({118})",null)
+			,PNA1VII(2,false,"VII","Resultado del ejercicio","sab({129,7}) - sdb({6})",null)
+			,PNA1VIII(2,false,"VIII","(Dividendo a cuenta)","sdb({557})",null)
+			,PNA1IX(2,false,"IX","Otros instrumentos de patrimonio neto","sab({111})",null)
+		,PNA2(1,false,"A-2)","Ajustes por cambio de valor","sab({133,1340,137})",null)
+		,PNA3(1,false,"A-3)","Subvenciones, donaciones y legados recibidos","sab({130,131,132})",null)
+		
+	,PNC(0,false,"B)","PASIVO NO CORRIENTE",null,"PNCI+PNCII+PNCIII+PNCIV+PNCV")
+		,PNCI(1,false,"I","Provisiones a largo plazo","sab({14})",null)
+		,PNCII(1,false,"II","Deudas a largo plazo",null,"PNCII1+PNCII2+PNCII3")
+			,PNCII1(2,true,"1","Deudas con entidades de cr\u00E9dito","sab({1605,170})",null)
+			,PNCII2(2,true,"2","Acreedores por arrendamiento financiero","sab({1625,174})",null)
+			,PNCII3(2,true,"3","Otras deudas a largo plazo","sab({1615,1635,171,172,173,175,176,177,178,179,180,185,189})",null)
+		,PNCIII(1,false,"III","Deudas con empresas del grupo y asociadas a largo plazo","sab({1603,1604,1613,1614,1623,1624,1633,1634})",null)
+		,PNCIV(1,false,"IV","Pasivos por impuesto diferido","sab({479})",null)
+		,PNCV(1,false,"V","Periodificaciones a largo plazo","sab({181})",null)
+		
+	,PC(0,false,"C)","PASIVO CORRIENTE",null,"PCI+PCII+PCIII+PCIV+PCV+PCVI")
+		,PCI(1,false,"I","Pasivos vinculados con activos no corr. mantenidos para la venta","sab({585,586,587,588,589})",null)
+		,PCII(1,false,"II","Provisiones a corto plazo","sab({499,529})",null)
+		,PCIII(1,false,"III","Deudas a corto plazo",null,"PCIII1+PCIII2+PCIII3")
+			,PCIII1(2,true,"1","Deudas con entidades de cr\u00E9dito","sab({5105,520,527})",null)
+			,PCIII2(2,true,"2","Acreedores por arrendamiento financiero","sab({5125,524})",null)
+			,PCIII3(2,true,"3","Otras deudas a corto plazo","sab({194,500,501,505,506,509,5115,5135,5145,521,522,523,525,526,528,525,555,5565,5566,5595,5598,560,561,569})+sabPositivo(551)-sdb({1034,1044,190,192})",null)
+		,PCIV(1,false,"IV","Deudas con empresas del grupo y asociadas a corto plazo","sab({5103,5104,5113,5114,5123,5124,5133,5134,5143,5144,5524,5563,5564})+sabPositivo({5523})",null)
+		,PCV(1,false,"V","Acreedores comerciales y otras cuentas a pagar",null,"PCV1+PCV2")
+			,PCV1(2,true,"1","Proveedores","sab({400,401,405})-sdb({406})",null)
+			,PCV2(2,true,"2","Otros acreedores","sab({41,438,465,466,475,476,477})",null)
+		,PCVI(1,false,"VI","Periodificaciones a corto plazo","sab({485,568})",null)
+		,PCVII(1,false,"VII","Deuda con caracter\u00EDsticas especiales a corto plazo","sab({502,507})",null)
+	,BP00252(0,false,"(A+B+C)","TOTAL PATRIMONIO NETO Y PASIVO",null,"PN+PNC+PC")
  	;
 
 	private int level;
+	private boolean leaf;
+	private String prefix;
 	private String name;
 	private String  initialExpressionProvider;
 	private String  computeExpressionProvider;
 	
-	private AccBalanceAbbreviateKey(int level
+	private AccBOEBalanceAbbreviateKey(int level
+			,boolean leaf
+			,String prefix
 			,String name
 			,String initialExpressionProvider
 			,String computeExpressionProvider) {
 		this.level = level;
+		this.leaf = leaf;
 		this.name = name;
+		this.prefix = prefix;
 		this.initialExpressionProvider = initialExpressionProvider;
 		this.computeExpressionProvider = computeExpressionProvider;
 	}
@@ -341,6 +96,10 @@ public enum AccBalanceAbbreviateKey implements IBalanceKey{
 		return level;
 	}
 	@Override
+	public String getPrefix() {
+		return prefix;
+	}
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -352,9 +111,14 @@ public enum AccBalanceAbbreviateKey implements IBalanceKey{
 	public String getInitialExpression() {
 		return initialExpressionProvider;
 	}
-	public AccBalanceAbbreviateKey getBalanceKey(String keyObject) {
-		return AccBalanceAbbreviateKey.valueOf(keyObject);
+	public AccBOEBalanceAbbreviateKey getBalanceKey(String keyObject) {
+		return AccBOEBalanceAbbreviateKey.valueOf(keyObject);
+	}
+	public static int getMaxLevel(){
+		return 3;
+	}
+	@Override
+	public boolean isLeaf() {
+		return this.leaf;
 	}
 }
-
-

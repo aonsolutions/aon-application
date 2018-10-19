@@ -54,9 +54,9 @@ import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountStatementPeriod;
 import com.esferalia.aon.occam.api.model.type.AccountStatementPeriod.IAccountStatementPeriodVisitor;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
-import com.esferalia.aon.occam.server.accounting.AccBalanceAbbreviateKey;
-import com.esferalia.aon.occam.server.accounting.AccBalanceNormalKey;
-import com.esferalia.aon.occam.server.accounting.AccBalancePYMESKey;
+import com.esferalia.aon.occam.server.accounting.AccBOEBalanceAbbreviateKey;
+import com.esferalia.aon.occam.server.accounting.AccBOEBalanceNormalKey;
+import com.esferalia.aon.occam.server.accounting.AccBOEBalancePYMESKey;
 import com.esferalia.aon.occam.server.accounting.AccMiningMVELContext;
 import com.esferalia.aon.occam.server.accounting.IBalanceKey;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -820,47 +820,85 @@ public class AccountStatementDAO {
 	// *********************************************************************************************************
 	// ********************************* BALANCE DE SUMAS Y SALDOS *********************************************
 	// *********************************************************************************************************
+	private static interface IBalanceKeyCallback {
+		IAccMiningKeyAccept getAccepter();
+		IBalanceKey getKey(String value);
+	}
+	
 	public static AccountBalanceReport balanceReport(AONContext ctx, AccountingReportParams params) {
 		if (params.isAbbreviate()) {
-			return balanceReport(ctx,params,AccBalanceAbbreviateKey.values(), new IAccMiningKeyAccept() {
+			return balanceReport(ctx,params,AccBOEBalanceAbbreviateKey.values(), new IBalanceKeyCallback() {
 				
 				@Override
-				public boolean acceptKey(Object key) {
-					try {
-						return (AccBalanceAbbreviateKey.valueOf((String) key) != null);	
-					} catch (IllegalArgumentException e) {
-						return false;
-					}
+				public IBalanceKey getKey(String value) {
+					return AccBOEBalanceAbbreviateKey.valueOf(value);
 				}
-			});
+				
+				@Override
+				public IAccMiningKeyAccept getAccepter() {
+					return new IAccMiningKeyAccept() {
+						
+						@Override
+						public boolean acceptKey(Object key) {
+							try {
+								return (AccBOEBalanceAbbreviateKey.valueOf((String) key) != null);	
+							} catch (IllegalArgumentException e) {
+								return false;
+							}
+						}
+					};
+				}
+			}); 
 		}
 		else if (params.isPymes()) {
-			return balanceReport(ctx,params,AccBalancePYMESKey.values(), new IAccMiningKeyAccept() {
+			return balanceReport(ctx,params,AccBOEBalancePYMESKey.values(), new IBalanceKeyCallback() {
 				
 				@Override
-				public boolean acceptKey(Object key) {
-					try {
-						return (AccBalancePYMESKey.valueOf((String) key) != null);	
-					} catch (IllegalArgumentException e) {
-						return false;
-					}
+				public IBalanceKey getKey(String value) {
+					return AccBOEBalancePYMESKey.valueOf(value);
 				}
-			});
+				
+				@Override
+				public IAccMiningKeyAccept getAccepter() {
+					return new IAccMiningKeyAccept() {
+						
+						@Override
+						public boolean acceptKey(Object key) {
+							try {
+								return (AccBOEBalanceAbbreviateKey.valueOf((String) key) != null);	
+							} catch (IllegalArgumentException e) {
+								return false;
+							}
+						}
+					};
+				}
+			}); 
 		}
-		return balanceReport(ctx,params,AccBalanceNormalKey.values(), new IAccMiningKeyAccept() {
+		return balanceReport(ctx,params,AccBOEBalanceNormalKey.values(), new IBalanceKeyCallback() {
 			
 			@Override
-			public boolean acceptKey(Object key) {
-				try {
-					return (AccBalanceNormalKey.valueOf((String) key) != null);	
-				} catch (IllegalArgumentException e) {
-					return false;
-				}
+			public IBalanceKey getKey(String value) {
+				return AccBOEBalanceNormalKey.valueOf(value);
 			}
-		});
+			
+			@Override
+			public IAccMiningKeyAccept getAccepter() {
+				return new IAccMiningKeyAccept() {
+			
+					@Override
+					public boolean acceptKey(Object key) {
+						try {
+							return (AccBOEBalanceNormalKey.valueOf((String) key) != null);	
+						} catch (IllegalArgumentException e) {
+							return false;
+						}
+					}
+				};
+			}
+		}); 
 	}
 
-	public static AccountBalanceReport balanceReport(AONContext ctx, AccountingReportParams params, IBalanceKey[] keys,IAccMiningKeyAccept accepter) {
+	public static AccountBalanceReport balanceReport(AONContext ctx, AccountingReportParams params, IBalanceKey[] keys,IBalanceKeyCallback callback) {
 		AccountBalanceReport report = new AccountBalanceReport();
 		report.setParams(params);
 		report.setSelectedPeriod( AccountPeriodDAO.getPeriod(ctx, params.getPeriod()) );
@@ -878,14 +916,14 @@ public class AccountStatementDAO {
 		}
 		LinkedHashMap<DateInterval,AccountingReportParams> intervals = getDateIntervals(ctx,params);
 		for (DateInterval inter : intervals.keySet()) {
-			fillReport(ctx, intervals.get(inter), keys, accepter, report, inter.getName());
+			fillReport(ctx, intervals.get(inter), keys, callback, report, inter.getName());
 		}
 		
 		return report;
 	}
 
-	private static void fillReport(AONContext ctx, AccountingReportParams params, IBalanceKey[] keys,IAccMiningKeyAccept accepter, AccountBalanceReport report, String bal) {
-		AccMiningMVELContext mvelCtx = new AccMiningMVELContext( accepter );
+	private static void fillReport(AONContext ctx, AccountingReportParams params, IBalanceKey[] keys, IBalanceKeyCallback callback, AccountBalanceReport report, String bal) {
+		AccMiningMVELContext mvelCtx = new AccMiningMVELContext( callback.getAccepter() );
 		LinkedHashMap<String,String> initialMap = new LinkedHashMap<String,String>();
 		LinkedHashMap<String,String> computeMap = new LinkedHashMap<String,String>();  
 		
@@ -900,9 +938,10 @@ public class AccountStatementDAO {
 			if ( !report.getBalances().containsKey(key.getCode()) ) {
 				report.getBalances().put( key.getCode(), new BalanceLine()
 						.setLevel(key.getLevel())
+						.setPrefix(key.getPrefix())
 						.setCode(key.getCode())
 						.setDescription(key.getName())
-						.setTotal(AonStringUtils.isNotBlank(key.getComputeExpression()))
+						.setLeaf(key.isLeaf())
 						.setAccounts( parseExpression(key.getInitialExpression()) ));
 				mvelCtx.put(key.getCode(), 0.0 );
 			}
@@ -935,6 +974,9 @@ public class AccountStatementDAO {
 					&& !mvelCtx.getAccounts().get(AonStringUtils.substring(code, 0,3)).isChecked()
 					&& !mvelCtx.getAccounts().get(AonStringUtils.substring(code, 0,2)).isChecked()
 					&& !mvelCtx.getAccounts().get(AonStringUtils.substring(code, 0,1)).isChecked()) {
+					Account account = AccountDAO.get(ctx, code);
+					accountBalance.setAccountDescription(account!=null?account.getDescription():null);
+					accountBalance.setAccountCode(code);
 					unreadBalances.add(accountBalance);			
 				}
 			}

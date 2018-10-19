@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.panel;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
@@ -9,8 +10,10 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountBalanceReport.BalanceLine;
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
+import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -20,10 +23,12 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 
 public class BalancePanel extends ScrollPanel implements HasSelectionHandlers<AccountingReportParams>{
@@ -65,6 +70,10 @@ public class BalancePanel extends ScrollPanel implements HasSelectionHandlers<Ac
 			
 			@Override
 			public void onSuccess(final AccountBalanceReport report) {
+				if (report.getUnreadAccounts() != null && report.getUnreadAccounts().size() > 0) {
+					Widget w = getErrorPanel(report);
+					if (w != null) root.add(w);
+				}
 				FlexTable tab = new FlexTable();
 				tab.addStyleName(AON.AON_CSS.aonReportTable());
 				int row = 0;
@@ -107,19 +116,72 @@ public class BalancePanel extends ScrollPanel implements HasSelectionHandlers<Ac
 				root.add(tab);
 			}
 				
+			private Widget getErrorPanel(AccountBalanceReport report) {
+				boolean something = false;
+				FlowPanel panel = new FlowPanel();
+				panel.setStyleName(AON.AON_CSS.aonErrorPanel());
+				panel.addStyleName(AON.AON_CSS.aonBold());
+				for (String key : report.getUnreadAccounts().keySet()) {
+					LinkedList<AccountBalance> balances = report.getUnreadAccounts().get(key); 
+					if (balances != null && balances.size() > 0) {
+						panel.add(new Label( (balances.size()>1
+									?"El saldo de las siguientes cuentas contables"
+									:"El saldo de la cuenta contable")
+								+ " no se est\u00E1 teniendo en cuenta para el c\u00E1lculo del balance del ejericio "+key 								
+						));
+						for (AccountBalance bal : balances ) {
+							Label b = new Label( "\u2022 " + bal.getAccountCode()
+								+ (AonStringUtils.isBlank( bal.getAccountDescription() )
+									?""
+									:" ["+bal.getAccountDescription()+"]")
+								+ (AonMathUtils.isGreatherThanZero( bal.getDebitBalance() ) 
+									?" Saldo deudor: " +  AON.FMT.format(bal.getDebitBalance())
+									:"")
+								+ (AonMathUtils.isGreatherThanZero( bal.getCreditBalance() ) 
+									?" Saldo acreedor: " +  AON.FMT.format(bal.getCreditBalance())
+									:"")
+							);
+							b.setStyleName(AON.AON_CSS.aonFixedFont());
+							b.addStyleName(AON.AON_CSS.aonMarginLeft());
+							panel.add(b);
+							something = true;
+						}
+					}
+					 
+				}
+				if (something) {
+					FlowPanel helpPanel = new FlowPanel();
+					helpPanel.setStyleName(AON.AON_CSS.aonTextRight());
+					Anchor anchor = new Anchor("[AYUDA]", "https://www.boe.es/buscar/act.php?id=BOE-A-2007-19884&tn=6&p=20161217");
+					anchor.setStyleName(AON.AON_CSS.aonMarginTop());
+					anchor.setTarget("_blank");
+					helpPanel.add(anchor);
+					panel.add( helpPanel );
+					return panel;
+				}
+				return null;
+			}
+
 			private void paintRow(AccountBalanceReport report, LinkedHashMap<String, Integer> columns, FlexTable tab, int row, BalanceLine line) {
 				tab.getRowFormatter().setStyleName(row, AON.AON_CSS.aonReportTableRowBckHover());
-				int col = 1;
-				Label descriptionLabel = new Label(line.getDescription() );
-				boolean inBold = line.getLevel() == 0;
-				descriptionLabel.getElement().getStyle().setMarginLeft( (line.getLevel() * 12.0) , Unit.PX);
+				int col = 0;
+				boolean inBold = !line.isLeaf();
 				double fontSize = 1.2;
-				if (line.isTotal()) {
-					if (line.getLevel() == 0) fontSize = 1.4;
-					if (line.getLevel() == 1) fontSize = 1.3;
-					if (line.getLevel() == 2) fontSize = 1.2;
+				if (!line.isLeaf()) {
+					if (line.getLevel() == 0) fontSize = 1.5;
+					if (line.getLevel() == 1) fontSize = 1.4;
+					if (line.getLevel() == 2) fontSize = 1.3;
+					if (line.getLevel() == 3) fontSize = 1.3;
 				}
+				
+				Label prefixLabel = new Label();
+				tab.setWidget(row, col, prefixLabel);
+				if (inBold) tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonReportTableBold());
+				col++;
+								
+				Label descriptionLabel = new Label(line.getPrefix() + " - " + line.getDescription() );
 				descriptionLabel.getElement().getStyle().setFontSize(fontSize, Unit.EM);
+				descriptionLabel.getElement().getStyle().setMarginLeft( (line.getLevel() * 12.0) , Unit.PX);
 				tab.setWidget(row, col, descriptionLabel);
 				if (inBold) tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonReportTableBold());
 				col++;
