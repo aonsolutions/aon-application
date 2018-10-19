@@ -40,8 +40,10 @@ import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.IrpfResult;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBonus;
+import com.esferalia.aon.payroll.SalaryBonusesFactory;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryCost;
 import com.esferalia.aon.payroll.SalaryCostsFactory;
@@ -60,6 +62,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RattachColumns;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.bonus.Bonuses;
 import com.esferalia.aon.salary.cost.Costs;
 import com.esferalia.aon.salary.deduction.Deductions;
 import com.esferalia.aon.salary.enumeration.DeductionType;
@@ -610,123 +613,6 @@ public class PayrollServletUtils extends AonServletUtils {
 		return epoch.getTime();
 	}
 
-	public static Collection<ISalary> _getDBSalary(Connection connection, Condition where, SortField<?> ...sortFields)
-			throws ManagerBeanException {
-		
-		AONContext aonContext = new AONContext(connection);
-		DSLContext dslContext = aonContext.getDslContext();
-		
-		return 
-		dslContext
-		.select()
-		.from(com.esferalia.aon.jooq.tables.Salary.SALARY)
-		.innerJoin(com.esferalia.aon.jooq.tables.Contract.CONTRACT).onKey()
-		.innerJoin(com.esferalia.aon.jooq.tables.Workplace.WORKPLACE).onKey()
-		.innerJoin(com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE).onKey()
-		.where(where)
-		.orderBy(sortFields)
-		.fetchInto(com.esferalia.aon.jooq.tables.Salary.SALARY)
-		.stream()
-		.map( salaryRecord -> {
-			DBSalary dbSalary =
-			new DBSalary()
-			.setId(salaryRecord.getId())
-			.setDomain(salaryRecord.getDomain())
-			.setDomain(salaryRecord.getDomain())
-
-			.setCcc(salaryRecord.getCcc())
-			.setCategory(salaryRecord.getCategory())
-			.setQuoteGroup(salaryRecord.getQuoteGroup())
-			.setStartDate(salaryRecord.getStartDate())
-			.setEndDate(salaryRecord.getEndDate())
-			.setChargeDate(salaryRecord.getChargeDate())
-			.setIssueDate(salaryRecord.getIssueDate())
-			.setSeniorityDate(salaryRecord.getSeniorityDate())
-			.setRegistration(salaryRecord.getRegistration())
-			
-			.setEmployeeName(salaryRecord.getEmployeeName())
-			.setEmployeeDocument(salaryRecord.getEmployeeDocument())
-			.setSocialSecurityNumber(salaryRecord.getSocialSecurityNumber())
-
-			.setEnterpriseName(salaryRecord.getEnterpriseName())
-			.setEnterpriseAddress(salaryRecord.getEnterpriseAddress())
-			.setEnterpriseDocument(salaryRecord.getEnterpriseDocument())
-			
-			.setSsRegime(salaryRecord.getSsRegime())
-			.setTimeUnits(salaryRecord.getTimeUnits())
-			
-			.setItBase(salaryRecord.getItBase())
-			.setIrpfBase(salaryRecord.getIrpfBase())
-			.setCommonBase(salaryRecord.getCgcBase())
-			.setRawCommonBase(salaryRecord.getRawCgcBase())
-			.setProfessionalBase(salaryRecord.getCgpBase())
-			.setOvertimeBase(salaryRecord.getHextraBase())
-			.setMoneyIrpfBase(salaryRecord.getMoneyIrpfBase())
-			.setInkindIrpfBase(salaryRecord.getInkindIrpfBase())
-			.setNonEstructuralOvertimeBase(salaryRecord.getNonHextraBase())
-			.setExtraPayProration(salaryRecord.getProExtBase())
-
-			.setTotalIrpf(salaryRecord.getTotalIrpf())
-			.setTotalLiquid(salaryRecord.getTotalLiquid())
-			.setTotalPayment(salaryRecord.getTotalPayment())
-			.setTotalDeduction(salaryRecord.getTotalDeduction())
-			
-			.setRemuneration(salaryRecord.getRemuneration())
-			.setSocialSecurityContributions(salaryRecord.getSocialSecurityContributions())
-
-			.setType(SalaryType.values()[salaryRecord.getType()])
-			;
-			dslContext
-			.select()
-			.from(com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT)
-			.where(com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT.SALARY.eq(salaryRecord.getId()))
-			.fetchInto(com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT)
-			.forEach(p -> {
-				dbSalary.addPayment(
-				to(p.getType(), PaymentType.class), 
-				p.getPaymentConcept(), 
-				p.getAmount(), 
-				p.getDescription(), 
-				p.getExpression());
-			})
-			;
-			
-			dslContext
-			.select()
-			.from(com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION)
-			.where(com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION.SALARY.eq(salaryRecord.getId()))
-			.fetchInto(com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION)
-			.forEach(p -> {
-				dbSalary.addDeduction(
-				to(p.getType(), DeductionType.class), 
-				p.getDeductionConcept(), 
-				p.getAmount(), 
-				p.getDescription(), 
-				p.getExpression());
-			})
-			;
-
-			dslContext
-			.select()
-			.from(com.esferalia.aon.jooq.tables.SalaryCost.SALARY_COST)
-			.where(com.esferalia.aon.jooq.tables.SalaryCost.SALARY_COST.SALARY.eq(salaryRecord.getId()))
-			.fetchInto(com.esferalia.aon.jooq.tables.SalaryCost.SALARY_COST)
-			.forEach(p -> {
-				dbSalary.addCost(
-				to(p.getType(), DeductionType.class), 
-				p.getCostConcept(), 
-				p.getAmount(), 
-				p.getDescription(), 
-				null);
-			})
-			;
-			return dbSalary;
-		})
-		.collect(Collectors.toList())
-		;
-		
-	}
-
 	public static Collection<Salary> getSalary(Connection connection, Condition where, SortField<?> ...sortFields)
 			throws ManagerBeanException {
 		
@@ -922,6 +808,30 @@ public class PayrollServletUtils extends AonServletUtils {
 			salaryCosts.forEach( c -> SalaryCostsFactory.manageCosts(costs, c));
 			try {salary.setEnterpriseCosts(costs);} catch (SalaryException e) {}
 
+			Set<SalaryBonus> salaryBonuses =
+			dslContext
+			.select()
+			.from(com.esferalia.aon.jooq.tables.SalaryBonus.SALARY_BONUS)
+			.where(com.esferalia.aon.jooq.tables.SalaryBonus.SALARY_BONUS.SALARY.eq(salaryRecord.getId()))
+			.fetchInto(com.esferalia.aon.jooq.tables.SalaryBonus.SALARY_BONUS)
+			.stream()
+			.map(p -> {
+				SalaryBonus salaryBonus = new SalaryBonus();
+				salaryBonus.setId(p.getId());
+				salaryBonus.setSalary(salary);
+				salaryBonus.setDomain(p.getDomain());
+				salaryBonus.setBonusConcept(p.getBonusConcept()); 
+				salaryBonus.setAmount(p.getAmount()); 
+				salaryBonus.setDescription(p.getDescription()); 
+				return salaryBonus;
+			})
+			.collect(Collectors.toSet())
+			;
+			salary.setSalaryBonus(salaryBonuses);
+			Bonuses bonuses = new Bonuses();
+			salaryBonuses.forEach( c -> bonuses.setTotal(bonuses.getTotal() + c.getAmount()) );
+			try {salary.setBonuses(bonuses);} catch (SalaryException e) {}
+
 			Set<SalaryEmbargo> salaryEmbargos =
 			dslContext
 			.select()
@@ -974,6 +884,52 @@ public class PayrollServletUtils extends AonServletUtils {
 		
 	}
 
+	public static Collection<IrpfResult> getIrpfResult(Connection connection, Condition where){
+		
+		AONContext aonContext = new AONContext(connection);
+		DSLContext dslContext = aonContext.getDslContext();
+		
+		return 
+		dslContext
+		.select()
+		.from(com.esferalia.aon.jooq.tables.IrpfResult.IRPF_RESULT)
+		.where(where)
+		.fetchInto(com.esferalia.aon.jooq.tables.IrpfResult.IRPF_RESULT)
+		.stream()
+		.map( record -> {
+			
+			
+			IrpfResult irpfResult = new IrpfResult();
+			
+			irpfResult.setAnnualRemuneration(record.getAnnualRemuneration());
+			irpfResult.setAnnualIrpf(record.getAnnualIrpf());
+			irpfResult.setAscendents33_65Entirely(intValue(record.getAscendents_33_65Entirely()));
+			irpfResult.setAscendents33_65Total(intValue(record.getAscendents_33_65Total()));
+			irpfResult.setAscendents65Entirely(intValue(record.getAscendents_65Entirely()));
+			irpfResult.setAscendents65Total(intValue(record.getAscendents_65Total()));
+			irpfResult.setAscendentsMayor75Entirely(intValue(record.getAscendentsMayor_75Entirely()));
+			irpfResult.setAscendentsMayor75Total(intValue(record.getAscendentsMayor_75Total()));
+			irpfResult.setAscendentsMinor75Entirely(intValue(record.getAscendentsMinor_75Entirely()));
+			irpfResult.setAscendentsMinor75Total(intValue(record.getAscendentsMinor_75Total()));
+			irpfResult.setAscendentsMovingEntirely(intValue(record.getAscendentsMovingEntirely()));
+			irpfResult.setAscendentsMovingTotal(intValue(record.getAscendentsMovingTotal()));
+			irpfResult.setBaseIrpf(record.getBaseIrpf());
+			irpfResult.setDeducciblesExpenses(record.getDeducciblesExpenses());
+			irpfResult.setDeduct80Bis(record.getDeduct_80Bis());
+			irpfResult.setDeductHomeLoanAmount(record.getDeductHomeLoanAmount());
+			
+			return irpfResult;
+		})
+		.collect(Collectors.toList())
+		;
+	}
+	
+	private static Integer intValue ( Byte aByte ) {
+		if ( aByte == null )
+			return null;
+		return aByte.intValue();
+	}
+	
 	private static <T extends Enum<?>> T to(Byte b, Class<T> clazz) {
 		if ( b == null )
 			return null;
