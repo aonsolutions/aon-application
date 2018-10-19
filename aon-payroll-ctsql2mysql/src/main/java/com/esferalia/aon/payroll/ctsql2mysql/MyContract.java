@@ -634,9 +634,9 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 			
 		}
 		
-
 		this.contractId = 
-			mysqlDB.insertContract(person, 
+			mysqlDB.insertContract(
+					person, 
 					workplace, 
 					ccc, 
 					emprper.getFecalt(), 
@@ -649,10 +649,10 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 					seniorityDate,
 					activityId,
 					enum2short(ssRegimeType),
-					this.agreementCategoryId,
-					null,
-					null, 
-					enum2short(ContractStatus.PROCESSED)
+					null, // TODO: model
+					null, // TODO: category_description
+					enum2short(ContractStatus.PROCESSED),
+					null // TODO: agreement_level
 					);
 		
 		mysqlDB.insertContract_data(com.esferalia.aon.payroll.ContractData.COD_INT, 

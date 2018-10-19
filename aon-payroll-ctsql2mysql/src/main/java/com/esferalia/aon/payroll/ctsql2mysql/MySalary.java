@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.type.SSRegimeType;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprper;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finidto;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finindem;
@@ -126,7 +127,9 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 				nomina.getFecini(), nomina.getFecfin(),
 				rel_epp_emp.getEmprnif_Descripcion(), nomina.getLocalidad(),
 				rel_epp_emp.getEmprnif_Numdoc(),
-				rel_epp_ccc.getEmprccc_Descripcion(), nomina.getNomper(),
+				rel_epp_ccc.getEmprccc_Descripcion(), 
+				enum2short(com.esferalia.aon.payroll.enumeration.SSRegimeType.GENERAL), // TODO; SS ? 		
+				nomina.getNomper(),
 				rel_epp_per.getPersona_Numss(),
 				rel_epp_per.getPersona_Numdoc(),
 				nomina.getFecant(),
@@ -253,27 +256,27 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 		nomina.visitRel_dto_nom(this);
 
 		if ("A".equals(nomina.getTipo())) {
-			nomina.visitNominadf_nomina(this);
+//			nomina.visitNominadf_nomina(this);
 		}
 
 		add(contractId, nomina.getFecnew());
 	}
 
-	@Override
-	public void visitNominadf_nomina(Nominadf nominadf, Nomina nomina)
-			throws SQLException {
-		mysqlDB.insertSalary_data(ContextVariable.CGC_BASE.getName(),
-				String.format("%.3f", nominadf.getBase_cg()),
-				nominadf.getFecini(), nominadf.getFecfin(), salaryId);
-		mysqlDB.insertSalary_data(ContextVariable.CGP_BASE.getName(),
-				String.format("%.3f", nominadf.getBase_acc()),
-				nominadf.getFecini(), nominadf.getFecfin(), salaryId);
-	}
+//	@Override
+//	public void visitNominadf_nomina(Nominadf nominadf, Nomina nomina)
+//			throws SQLException {
+//		mysqlDB.insertSalary_data(ContextVariable.CGC_BASE.getName(),
+//				String.format("%.3f", nominadf.getBase_cg()),
+//				nominadf.getFecini(), nominadf.getFecfin(), salaryId);
+//		mysqlDB.insertSalary_data(ContextVariable.CGP_BASE.getName(),
+//				String.format("%.3f", nominadf.getBase_acc()),
+//				nominadf.getFecini(), nominadf.getFecfin(), salaryId);
+//	}
 
-	@Override
-	public void visitNominaexdf_nomina(Nominaexdf nominaexdf, Nomina nomina)
-			throws SQLException {
-	}
+//	@Override
+//	public void visitNominaexdf_nomina(Nominaexdf nominaexdf, Nomina nomina)
+//			throws SQLException {
+//	}
 
 	@Override
 	public void visitRel_nmd_nom(Nominadev nominadev, Nomina nomina)
@@ -297,9 +300,17 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 
 		String function = mysqlDB.getFunction(importe, impuni, unidades);
 
-		Integer salaryPayment = mysqlDB.insertSalary_payment(this.salaryId,
-				enum2short(type), paymentConcept, description, function,
-				importe != null ? importe.doubleValue() : 0.00);
+		Integer salaryPayment = mysqlDB.insertSalary_payment(
+				this.salaryId,
+				enum2short(type), 
+				paymentConcept, 
+				description, 
+				function,
+				importe != null ? importe.doubleValue() : 0.00,
+				importe != null ? importe.doubleValue() : 0.00, // TODO: irpf
+				importe != null ? importe.doubleValue() : 0.00	// TODO: quote
+				
+				);
 		if (unidades != null && unidades.doubleValue() > 0 && impuni != null
 				&& impuni.doubleValue() > 0) {
 			mysqlDB.insertSalary_data(String.format("%d_UNITS", salaryPayment),
@@ -387,19 +398,42 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 		if (chargeDate == null)
 			chargeDate = issueDate ; //nominaex.getFecfin();
 
-		this.salaryId = mysqlDB.insertSalary(enum2short(SalaryType.EXTRA),
-				contractId, nominaex.getFecini(), nominaex.getFecfin(),
-				rel_epp_emp.getEmprnif_Descripcion(), nominaex.getLocalidad(),
+		this.salaryId = mysqlDB.insertSalary(
+				enum2short(SalaryType.EXTRA),
+				contractId, nominaex.getFecini(), 
+				nominaex.getFecfin(),
+				rel_epp_emp.getEmprnif_Descripcion(), 
+				nominaex.getLocalidad(),
 				rel_epp_emp.getEmprnif_Numdoc(),
-				rel_epp_ccc.getEmprccc_Descripcion(), nominaex.getNomper(),
+				rel_epp_ccc.getEmprccc_Descripcion(), 
+				enum2short(com.esferalia.aon.payroll.enumeration.SSRegimeType.GENERAL), // TODO; SS ? 		
+				nominaex.getNomper(),
 				rel_epp_per.getPersona_Numss(),
-				rel_epp_per.getPersona_Numdoc(), nominaex.getFecant(), null,
+				rel_epp_per.getPersona_Numdoc(), 
+				nominaex.getFecant(), 
+				null,
 				nominaex.getDescat(),
 				nominaex.getNummat(),
 				0, // TODO: Dias efectivos ..
-				totalPayment, totalDeduction, totalLiquid, 0.00, issueDate,
-				0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, baseIRPF, 0.00,
-				baseIRPF, 0.00, totalIrpf, chargeDate);
+				totalPayment, 
+				totalDeduction, 
+				totalLiquid, 
+				0.00, 
+				issueDate,
+				0.00, 
+				0.00, 
+				0.00, 
+				0.00, 
+				0.00, 
+				0.00, 
+				0.00, 
+				0.00, 
+				baseIRPF, 
+				0.00,
+				baseIRPF, 
+				0.00, 
+				totalIrpf, 
+				chargeDate);
 		insert_Fvisione(nominaex);
 		insert_Profesion(nominaex);
 		
@@ -416,8 +450,16 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 		PaymentType type = concept != null ? concept.type : mysqlDB
 				.getPaymentType(nominaex.getDescom(), "D", null);
 
-		mysqlDB.insertSalary_payment(this.salaryId, enum2short(type),
-				paymentConcept, nominaex.getDescom(), function, totalPayment);
+		mysqlDB.insertSalary_payment(
+				this.salaryId, 
+				enum2short(type),
+				paymentConcept, 
+				nominaex.getDescom(), 
+				function, 
+				totalPayment,
+				totalPayment, 	// TODO: irpf
+				totalPayment	// TODO: quote
+				);
 
 		Double importeIrpf = toDouble(nominaex.getImpirpf());
 
@@ -575,7 +617,9 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 				emprper.getFecalt(), finiquito.getFecbaj(),
 				nomina.enterpriseName, nomina.enterpriseAddress,
 				rel_epp_emp.getEmprnif_Numdoc(),
-				rel_epp_ccc.getEmprccc_Descripcion(), nomina.employeeName,
+				rel_epp_ccc.getEmprccc_Descripcion(),
+				enum2short(com.esferalia.aon.payroll.enumeration.SSRegimeType.GENERAL), // TODO; SS ? 		
+				nomina.employeeName,
 				rel_epp_per.getPersona_Numss(),
 				rel_epp_per.getPersona_Numdoc(), nomina.seniorityDate,
 				nomina.quoteGroup, nomina.category, nomina.registration,
@@ -615,9 +659,15 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 		} // vacaciones que no cotizan
 
 		if (vacImporte > 0) {
-			mysqlDB.insertSalary_payment(salaryId,
-					MysqlDB.enum2short(PaymentType.CRA_0001), "FIVAC",
-					"Vacaciones no disfrutadas", null, vacImporte);
+			mysqlDB.insertSalary_payment(
+					salaryId,
+					MysqlDB.enum2short(PaymentType.CRA_0001), 
+					"FIVAC",
+					"Vacaciones no disfrutadas", 
+					null, 
+					vacImporte,
+					vacImporte,
+					vacImporte);
 		}
 
 		Double importeIrpf = toDouble(finiquito.getImporte_irpf());
@@ -691,9 +741,18 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 				.getPaymentType(description, dinEsp, null);
 
 		double importe = toDouble(finipext.getImporte());
+		
 
-		mysqlDB.insertSalary_payment(this.salaryId, enum2short(type),
-				paymentConcept, description, null, importe);
+		mysqlDB.insertSalary_payment(
+				this.salaryId, 
+				enum2short(type),
+				paymentConcept, 
+				description, 
+				null, 
+				importe,
+				0.00, // TODO: 0.00 ?
+				0.00  // TODO: 0.00 ?
+				);
 	}
 
 	@Override
@@ -702,10 +761,19 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 		String description = finindem.getTexto();
 
 		double importe = toDouble(finindem.getImporte());
-
-		mysqlDB.insertSalary_payment(this.salaryId,
+		boolean sujetoAIrpf = "S".equalsIgnoreCase(finindem.getIrpf());
+		
+		// TODO: CRA001 ?
+		mysqlDB.insertSalary_payment(
+				this.salaryId,
 				enum2short(PaymentType.CRA_0001),
-				"INDEM", description, null, importe);
+				"INDEM", 
+				description, 
+				null, 
+				importe,
+				sujetoAIrpf ? importe: 0.00,
+				0.00
+				);
 
 		String irpf = finindem.getIrpf();
 

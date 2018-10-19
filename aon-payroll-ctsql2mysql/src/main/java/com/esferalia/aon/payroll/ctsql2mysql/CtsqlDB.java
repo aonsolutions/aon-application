@@ -98,7 +98,7 @@ public class CtsqlDB extends AbstractCtsqlDB
             	helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX, options, true);
             
             String url = line.getOptionValue(ctsqlURLOption.getOpt(), 
-            		"jdbc:ctsql://localhost:1101/empre055;DBPATH=/usr/share/ctsql/data;RTRIMCHAR=true");
+            		"jdbc:ctsql://127.0.0.1:1101/empre055;DBPATH=/home/ctl/data;RTRIMCHAR=true");
 //            String url = line.getOptionValue(ctsqlURLOption.getOpt(), 
 //            		"jdbc:ctsql://194.30.98.127:1101/empre800;DBPATH=/usr/share/ctsql/data;RTRIMCHAR=true");
             String user = line.getOptionValue(ctsqlUserOption.getOpt(), "ctl");

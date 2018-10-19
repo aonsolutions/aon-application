@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>8.2-SNAPSHOT</version>
+		<version>9.23-SNAPSHOT</version>
 	</parent>
 	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon-payroll-ctsql2mysql</artifactId>
@@ -16,10 +16,10 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
-	<scm>
+	<!--scm>
 		<developerConnection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon-payroll-ctsql2mysql</developerConnection>
 		<connection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon-payroll-ctsql2mysql</connection>
-	</scm>
+	</scm-->
 	
 	<dependencies>
 		<dependency>
@@ -104,13 +104,13 @@
 			<optional>false</optional>
 		</dependency>
 
-		<dependency>
+		<!--dependency>
 			<groupId>com.den_4</groupId>
 			<artifactId>inotify_java</artifactId>
 			<version>2.0.2</version>
 			<scope>compile</scope>
 			<optional>false</optional>
-		</dependency>
+		</dependency-->
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.payroll</artifactId>

@@ -284,9 +284,26 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 								.enum2short(SecurityLevel.OFFICIAL));
 				// Integer group = mysqlDB.insertInvoicing_group(registry, null,
 				// true);
-				mysqlDB.insertCustomer(registry, null, false, false, null,
-						status, /* null, */scopeId, false, null, true, true,
-						true, null);
+				
+				mysqlDB.insertCustomer(
+						registry, 
+						null, 			//tariff, 
+						false,			//surcharge, 
+						false,			//withholding, 
+						null,			//transaction, 
+						status, 
+						scopeId, 
+						false,			//e_invoice, 
+						null,			//invoicing_group, 
+						true,			//project_grouped, 
+						true,			//delivery_grouped, 
+						true,			//delivery_valuated, 
+						null,			//account, 
+						null,			//TODO: creation_user, 
+						null,			//TODO: creation_date, 
+						null,			//modification_user, 
+						null			//modification_date
+						);
 			}
 
 			customerId = registry;
@@ -396,7 +413,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 				Country.ES, emprnif.getAlias(), scopeId, status, docType);
 
 		// TODO: Company ... related entries, like 'logo'
-		mysqlDB.insertCompany(registry, domain, true, true, true, true);
+		mysqlDB.insertCompany(registry, domain, true, true, true, true, true);
 
 		String nroDocRep = emprnif.getNrodocrep();
 		String represantante = emprnif.getRepresentante();
@@ -445,8 +462,25 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 			}
 		}
 
-		Integer userId = mysqlDB.insertUser(domain, name, doc, registry, null,
-				true, passwd, null, (short) 0, null, null, null, null);
+		Integer userId = 
+		mysqlDB.insertUser(
+				domain, 
+				name, 
+				doc,				//login, 
+				registry,			//enterprise, 
+				registry, 
+				true,				//active, 
+				false,				//allowConcurrent, 
+				passwd, 
+				null,				//passwordExpiration, 
+				(short)0,			//toolbar 
+				null,				//locale, 
+				null,				//pageLimit, 
+				null,				//linesPageLimit, 
+				null,				//initAction, 
+				null				//lastAccess
+				);
+
 		Integer applicationId = mysqlDB.getApplicationId("aon-aio");
 
 		Integer domainApplicationId = mysqlDB.getDomainApplicationId(domain,
@@ -479,23 +513,24 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 	public void visitEmprbanc_cliente(Emprban emprban, Cliente cliente)
 			throws SQLException {
 
-		Integer bankId = mysqlDB.getBankId(mysqlDB.getDefaultDomain(),
-				emprban.getCodent());
+//		Integer bankId = mysqlDB.getBankId(mysqlDB.getDefaultDomain(),
+//				emprban.getCodent());
 
-		if (bankId == null) {
-			Emprbanc_entidad emprbanc_entidad = new Emprbanc_entidad();
-			emprban.visitEmprbanc_entidad(emprbanc_entidad);
-			String name = emprbanc_entidad.getEntidad_Descripcion();
-			if (name != null) {
-				bankId = mysqlDB.insertBank(
-						emprbanc_entidad.getEntidad_Descripcion(),
-						emprban.getCodent());
-			} else {
-				MysqlDB.error("emprban[{}]: Entidad {} without name ",
-						emprban.getCdg(), emprban.getCodent());
-				return;
-			}
-		}
+//		if (bankId == null) {
+//			Emprbanc_entidad emprbanc_entidad = new Emprbanc_entidad();
+//			emprban.visitEmprbanc_entidad(emprbanc_entidad);
+//			String name = emprbanc_entidad.getEntidad_Descripcion();
+//			if (name != null) {
+// TODO: Bank ?
+//				bankId = mysqlDB.insertBank(
+//						emprbanc_entidad.getEntidad_Descripcion(),
+//						emprban.getCodent());
+//			} else {
+//				MysqlDB.error("emprban[{}]: Entidad {} without name ",
+//						emprban.getCdg(), emprban.getCodent());
+//				return;
+//			}
+//		}
 
 		String dc = emprban.getDc();
 		String codent = emprban.getCodent();
@@ -506,9 +541,15 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 				dc != null ? dc : "XX", numcta);
 		// TODOD : Chequear con BankAccount ...
 		if (bankAccount.length() == 20) {
-
-			mysqlDB.insertRbank(customerId, bankId, bankAccount, null, null,
-					true, null);
+//			mysqlDB.insertRbank(
+//					registry, 
+//					bank_account, 
+//					bic, 
+//					sufix, 
+//					alias, 
+//					active, 
+//					account);
+			
 		}
 
 	}
@@ -551,15 +592,27 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 			String description = empract.getActeco();
 			if ( description == null || description.trim().isEmpty() )
 				description = empract.getDescripcion();
-
-			activityId = mysqlDB
-					.insertEnterprise_activity(
-							description,
-							enterprise.id,
-							cnae,
-							DefaultMysqlDB
-									.enum2short(EnterpriseActivityType.PRINCIPAL),
-							cnae2009);
+			activityId = 
+			mysqlDB
+			.insertEnterprise_activity(
+			description, 
+			enterprise.id, 
+			null,															//iae, 
+			cnae, 
+			DefaultMysqlDB.enum2short(EnterpriseActivityType.PRINCIPAL), 	//type, 
+			cnae2009, 
+			null,															//surcharge, 
+			null,															//vat_tax, 
+			null,															//retention_tax, 
+			null,															//vat_regime, 
+			null,															//retention_regime, 
+			null,															//start_date, 
+			null,															//end_date, 
+			null,															//prorata, 
+			null,															//prorata_type, 
+			true															//principal
+			);
+			
 		}
 		Date startDate = new Date(0);
 

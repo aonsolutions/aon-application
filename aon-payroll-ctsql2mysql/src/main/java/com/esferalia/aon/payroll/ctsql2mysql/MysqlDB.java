@@ -254,7 +254,7 @@ public class MysqlDB extends DefaultMysqlDB{
             	helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX, options, true);
             
             String url = line.getOptionValue(ctsqlURLOption.getOpt(), 
-            		"jdbc:mysql://127.0.0.1:3306/aon-master");
+            		"jdbc:mysql://127.0.0.1:3306/test-aonsolutions-org");
 //            String url = line.getOptionValue(ctsqlURLOption.getOpt(), 
 //            		"jdbc:mysql://194.30.98.127:3306/tadsr800-aonsolutions-net");
             String user = line.getOptionValue(ctsqlUserOption.getOpt(), "dbuser");

@@ -402,14 +402,43 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 				enum2short(SecurityLevel.OFFICIAL));
 		super.insertEnterprise(registry, domain, scope, null); // TODO: ¿
 																// Calendar ?
+		super.insertCustomer(
+				registry, 
+				domain, 
+				null, 			//tariff, 
+				false,			//surcharge, 
+				false,			//withholding, 
+				null,			//transaction, 
+				status, 
+				scope, 
+				false,			//e_invoice, 
+				null,			//invoicing_group, 
+				true,			//project_grouped, 
+				true,			//delivery_grouped, 
+				true,			//delivery_valuated, 
+				null,			//account, 
+				null,			//TODO: creation_user, 
+				null,			//TODO: creation_date, 
+				null,			//modification_user, 
+				null			//modification_date
+				);
+		
+		super.insertTarget(
+				registry, 
+				domain, 
+				null,			//tariff, 
+				(short)0,		//advertising, 
+				false,			//surcharge, 
+				false,			//withholding, 
+				(short)0,		//0transaction, 
+				status, 
+				scope, 
+				null,			//TODO: creation_user, 
+				null,			//TODO: creation_date, 
+				null,			//modification_user, 
+				null			//modification_date
+				);
 
-		super.insertCustomer(registry, domain, null, false, false, null,
-				status,
-				// null,
-				scope, false, null, true, true, true, null);
-
-		super.insertTarget(domain, registry, null, (short) 0, false, false,
-				(short) 0, status, scope);
 
 		return registry;
 	}
@@ -648,8 +677,8 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 	public Integer getBankId(Integer domain, String code) throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
-
-		flushBank();
+// TODO: Bank ?
+//		flushBank();
 
 		try {
 			stmt = mysqlConnection
@@ -796,18 +825,38 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 		String subDomainSuffix = null;
 		String owner = "ctsql2mysql";
 		boolean userManagement = true;
+		boolean enableHeredity = true;
 		boolean domainManagement = false;
 		boolean disableDomainManagement = !domainManagement;
 		Integer maxDocumentSize = 0;
 		Integer maxTotalDocumentSize = 0;
 		Integer maxDefinedUsers = 0;
 		boolean active = true;
-
-		Integer domain = insertDomain(name, description, parent,
-				enum2short(type), scope, subDomainSuffix, userManagement,
-				domainManagement, disableDomainManagement, maxDocumentSize,
-				maxTotalDocumentSize, maxDefinedUsers, active, owner, owner,
-				new Timestamp(System.currentTimeMillis()), null, null, null);
+		Integer domain = 
+		insertDomain(
+				name, 
+				description, 
+				parent, 
+				enum2short(type), 
+				scope, 
+				subDomainSuffix, 
+				enableHeredity, 
+				domainManagement, 
+				disableDomainManagement, 
+				maxDocumentSize, 
+				maxTotalDocumentSize, 
+				maxDefinedUsers, 
+				active, 
+				owner, 
+				null,			//TODO: creation_user, 
+				null,			//TODO: creation_date, 
+				null,			//modification_user, 
+				null,			//modification_date
+				null,			//expirationDate, 
+				null,			//lastAccess_user, 
+				null			//lastAccess_date
+				);
+		
 
 		AuditLevel audit_level = AuditLevel.NONE;
 
@@ -835,6 +884,7 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 		String subDomainSuffix = null;
 		String owner = "ctsql2mysql";
 		boolean userManagement = true;
+		boolean enableHeredity = true;
 		boolean domainManagement = true;
 		boolean disableDomainManagement = !domainManagement;
 		Integer maxDocumentSize = 0;
@@ -842,11 +892,30 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 		Integer maxDefinedUsers = 0;
 		boolean active = true;
 
-		Integer domain = insertDomain(name, description, parent,
-				enum2short(type), scope, subDomainSuffix, userManagement,
-				domainManagement, disableDomainManagement, maxDocumentSize,
-				maxTotalDocumentSize, maxDefinedUsers, active, owner, owner,
-				new Timestamp(System.currentTimeMillis()), null, null, null);
+		Integer domain = 
+		insertDomain(
+				name, 
+				description, 
+				parent, 
+				enum2short(type), 
+				scope, 
+				subDomainSuffix, 
+				enableHeredity, 
+				domainManagement, 
+				disableDomainManagement, 
+				maxDocumentSize, 
+				maxTotalDocumentSize, 
+				maxDefinedUsers, 
+				active, 
+				owner, 
+				null,			//TODO: creation_user, 
+				null,			//TODO: creation_date, 
+				null,			//modification_user, 
+				null,			//modification_date
+				null,			//expirationDate, 
+				null,			//lastAccess_user, 
+				null			//lastAccess_date
+				);
 
 		String login = user;
 		Integer enterprise = null;
@@ -854,10 +923,25 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 		Toolbar toolbar = Toolbar.GOOGLE;
 		String password = digestPasswd(passwd);
 		Date passwordExpiration = null;
-
-		Integer user_id = insertUser(domain, user.toUpperCase(), login,
-				enterprise, registry, active, password, passwordExpiration,
-				enum2short(toolbar), null, null, null, null);
+		Integer user_id = 
+		insertUser(
+				domain, 
+				name, 
+				login, 
+				enterprise, 
+				registry, 
+				active, 
+				false,				//allowConcurrent, 
+				password, 
+				passwordExpiration, 
+				enum2short(toolbar), 
+				null,				//locale, 
+				null,				//pageLimit, 
+				null,				//linesPageLimit, 
+				null,				//initAction, 
+				null				//lastAccess
+				);
+		
 
 		AuditLevel audit_level = AuditLevel.NONE;
 
