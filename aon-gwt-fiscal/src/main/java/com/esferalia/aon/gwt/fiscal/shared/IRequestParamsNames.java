@@ -53,6 +53,7 @@ public interface IRequestParamsNames {
 	String NO_ACTIVITY_ACCOUNT_VISIBLE = "noActivityAccountVisible";
 	String PERCENTS_ENABLED = "percentsEnabled";
 	String BY_MONTH = "byMonth";
+	String BALANCE_TYPE = "balanceType";
 
 	String INVOICE_TYPE_SALES = "invoiceTypeSales";
 	String INVOICE_TYPE_PURCHASES = "invoiceTypePurchases";

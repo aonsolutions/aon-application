@@ -35,7 +35,6 @@ public class AccountingReportParams implements IAccountParams, Cloneable {
 	private boolean closingEntriesExcluded;
 	
 	private boolean reverseOrder;
-	
 	private BalanceType balanceType;
 	
 	@Override

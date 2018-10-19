@@ -104,6 +104,7 @@ public class JsonParams extends JSONObject {
 		json.put(IRequestParamsNames.NO_ACTIVITY_ACCOUNT_VISIBLE,new JSONNumber( params.isNoActivityAccountVisible()?1:0));
 		json.put(IRequestParamsNames.PERCENTS_ENABLED,new JSONNumber( params.isPercentsEnabled()?1:0));
 		json.put(IRequestParamsNames.BY_MONTH,new JSONNumber( params.isByMonth()?1:0));
+		json.put(IRequestParamsNames.BALANCE_TYPE,params.getBalanceType()==null?JSON_NULL:new JSONNumber( params.getBalanceType().ordinal()));
 		if (params.getCostCenters() == null || params.getCostCenters().size() == 0) {
 			json.put(IRequestParamsNames.COST_CENTERS,JSON_NULL);
 		} else {

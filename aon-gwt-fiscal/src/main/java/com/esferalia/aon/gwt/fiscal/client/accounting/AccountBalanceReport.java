@@ -83,7 +83,6 @@ public class AccountBalanceReport extends MainEntryPoint {
 		buttonContainer.add(diskForm);
 
 		final Button print = new Button();
-		print.setVisible(false);
 		print.setText(AON.MSG.print());
 		print.setTitle(AON.MSG.print());
 		print.setStyleName(AON.AON_CSS.aonFindingToolbarItem());

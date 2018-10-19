@@ -45,6 +45,7 @@ public abstract class AbsExcelAction  {
 	protected Font boldFont;
 	protected Font defaulFont;	
 	protected Font smallFont;
+	protected Font smallBoldFont;
 	
 	public void initialize(String name) {
 		initialize(name, true);
@@ -79,7 +80,11 @@ public abstract class AbsExcelAction  {
 		smallFont = workbook.createFont();
 		smallFont.setFontHeightInPoints((short) 8);
 
-	    smallDateStyle = workbook.createCellStyle();
+		smallBoldFont = workbook.createFont();
+		smallBoldFont.setFontHeightInPoints((short) 8);
+		smallBoldFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+
+		smallDateStyle = workbook.createCellStyle();
 	    smallDateStyle.setDataFormat(dataFormat.getFormat(DATE_PATTERN));
 	    smallDateStyle.setAlignment( HSSFCellStyle.ALIGN_CENTER );
 	    smallDateStyle.setFont( smallFont );

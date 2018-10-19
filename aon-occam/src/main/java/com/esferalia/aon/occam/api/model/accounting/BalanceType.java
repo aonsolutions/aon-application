@@ -18,4 +18,15 @@ public enum BalanceType implements Serializable {
 	public String getName() {
 		return name;
 	}
+	
+	public static BalanceType safeValueOf( Byte i ) {
+		if (i == null) return null;
+		return safeValueOf( i.intValue() ); 
+	}
+	public static BalanceType safeValueOf( Integer i ) {
+		if (i == null) return null;
+		if (i < 0 || i >= BalanceType.values().length) return null;
+		return BalanceType.values()[i];
+	}
+	
 }
