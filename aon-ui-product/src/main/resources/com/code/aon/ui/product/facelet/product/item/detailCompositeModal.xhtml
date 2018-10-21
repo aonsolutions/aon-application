@@ -102,20 +102,15 @@
 															rendered="#{formList}">
 															<aon:abbreviateConverter maxWidth="64" />
 														</aon:outputText>
-														<!--  
-														****** TODO *********
-														<aon:commandLink id="DetailComposition_serialNumber" immediate="true"
-															value="&#160;" title="#{bundle.aon_to_specify} #{to.compositionItem.product.lotable ? bundle.aon_lot_number : bundle.aon_serial_number}"
-															styleClass="aon-icon-version" style="margin-left: 5px; padding-right: 12px;"
+														<aon:commandLink immediate="true" value="&#160;"
+															title="#{bundle.aon_to_specify} #{to.item.product.lotable ? bundle.aon_lot_number : bundle.aon_serial_number}"
+															styleClass="aon-icon-version" style="margin-left: 10px; padding: 0 15px 0 15px;"
 															rendered="#{formList and to.compositionItem.wildCard}"
 															actionListener="#{controller.onAssignSerialNumberShow}" 
 															reRender="showSerialNumberWindow" ajaxSingle="true">
-															<f:setPropertyActionListener target="#{salesDetail.showSerialNumberWindow}"
+															<f:setPropertyActionListener target="#{controller.showSerialNumberWindow}"
 																value="#{true}" />
-															<f:setPropertyActionListener target="#{controller.createSerialNumbers}"
-																value="#{false}" />
 														</aon:commandLink>
-														-->
 														<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
 															<ui:param name="lookupBean" value="#{allItemLookup}" />
 															<ui:param name="lookupTo" value="#{controller.to.compositionItem}" />
@@ -203,6 +198,9 @@
 					</aon:div>
 				</aon:div>
 				</aon:form>
+				<ui:include src="/com/code/aon/ui/product/facelet/product/item/modalSerialNumber.xhtml">
+					<ui:param name="controller" value="#{controller}" />
+				</ui:include>
 			</rich:modalPanel>
 		</aon:if>
 	</aon:panelGroup>

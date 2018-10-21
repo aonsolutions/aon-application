@@ -1,10 +1,12 @@
 package com.code.aon.ui.product.util;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +15,8 @@ import com.code.aon.AonVersion;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.customer.Customer;
@@ -21,10 +25,12 @@ import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.Item;
 import com.code.aon.product.ItemComposition;
+import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.purchase.PurchaseDetail;
+import com.code.aon.ql.Criteria;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.ui.common.components.LookupChangeEvent;
@@ -35,6 +41,7 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.IncomeDetail;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class DetailCompositeHandler extends DataScrollerState implements Serializable {
 	
@@ -61,6 +68,16 @@ public class DetailCompositeHandler extends DataScrollerState implements Seriali
 	private List<ItemComposition> list;
 	
 	private ItemComposition to;
+	
+	private Item serializableItem;
+	
+	public Item getSerializableItem() {
+		return serializableItem;
+	}
+
+	public void setSerializableItem(Item serializableItem) {
+		this.serializableItem = serializableItem;
+	}
 	
 	
 	public DetailCompositeHandler() {
@@ -117,24 +134,45 @@ public class DetailCompositeHandler extends DataScrollerState implements Seriali
 			}
 		}
 	}
-	////
-	////
 	
-	// TODO onAssignSerialNumberShow
+	public List<SelectItem> getAvailableSerials() throws ManagerBeanException{
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		if(getSerializableItem()!=null) {
+			Item item = getSerializableItem();
+			IManagerBean bean = BeanManager.getManagerBean(Item.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), item.getProduct().getId());
+			criteria.addNotNullExpression(bean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER));
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_STATUS), ProductStatus.ACTIVE);
+			for( ITransferObject to : bean.getList(criteria) ) {
+				Item i = (Item) to;
+				SelectItem si = new SelectItem(i, i.getSerialNumber());
+				list.add(si);
+			}
+		}
+        return list;
+	}
+	
+	
 	public void onAssignSerialNumberShow(ActionEvent event) throws ManagerBeanException {
-		if (getModel().isRowAvailable()) {
-//			SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
-//			setSalesDetail(salesDetail);
-//			setSerializableItem(salesDetail.getItem());
-//			setSerializableQuantity(salesDetail.getItem().getProduct().isLotable() ? salesDetail.getQuantity() : 1);
-//			setSerialNumber(null);
-//			setSerialDate(null);
-//			setSerialNumbers(obtainItemSerialNumbers(salesDetail.getItem().getProduct()));
-//			setSelectedBreakdown(null);
+		if (getDirectModel().isRowAvailable()) {
+			onSelect(event);
+			setSerializableItem(getTo().getCompositionItem());
 		} else {
 			setShowSerialNumberWindow(false);
 		}
+		onCancel(event);
 	}
+	
+	public void onAssignSerialNumber(ActionEvent event) {
+		if(getSerializableItem()!=null)
+			getTo().setCompositionItem(getSerializableItem());
+		onCancel(event);
+	}
+	
+	
+	////
+	////
 	
 	
 	public boolean isShowItemCompositionWindow() {
@@ -170,6 +208,7 @@ public class DetailCompositeHandler extends DataScrollerState implements Seriali
 		this.priceStrategy = null;
 		this.list = null;
 		this.nevv = false;
+		this.to = null;
 		
 		this.controller = controller;
 		this.composeItem = item;
@@ -209,9 +248,6 @@ public class DetailCompositeHandler extends DataScrollerState implements Seriali
 	
 	public void acceptItemComposition() throws ControllerListenerException {
 		if(controller!=null && composeItem!=null) {
-			if(listContainsIncompleteSerials())
-				throw new ControllerListenerException("Revise la composicion, existen Series/Lotes sin asignar.");
-			
 			if("saleInvoiceDetail".equals(controller.getBeanName())
 					|| "purchaseInvoiceDetail".equals(controller.getBeanName()))
 				addInvoiceDetailItems();
@@ -258,7 +294,7 @@ public class DetailCompositeHandler extends DataScrollerState implements Seriali
 					offerDetail.setId(null);
 					offerDetail.setLine(offerDetail.getLine()+1);
 					offerDetail.setItem(composition.getCompositionItem());
-					offerDetail.setDescription(composition.getDescription());
+					offerDetail.setDescription(composition.getCompositionItem().getFullName());
 					offerDetail.setQuantity(CommonUtil.round(quantity * composition.getQuantity(), 3));
 					offerDetail.setPrice(obtainCompositionItemPrice(offerDetail, offer, composition, getPriceStrategy()));
 					offerDetail.setDiscountExpression(obtainCompositionDiscount(composition));
@@ -276,7 +312,10 @@ public class DetailCompositeHandler extends DataScrollerState implements Seriali
 	/*
 	 * INVOICE DETAIL
 	 */
-	private void addInvoiceDetailItems() {
+	private void addInvoiceDetailItems() throws ControllerListenerException {
+		if(listContainsIncompleteSerials())
+			throw new ControllerListenerException("Revise la composicion, existen Series/Lotes sin asignar.");
+		
 		Invoice invoice = (Invoice)controller.getMasterController().getTo();
 		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
 		if (invoiceDetail.getItem().getProduct().isComposition()) {
@@ -286,7 +325,7 @@ public class DetailCompositeHandler extends DataScrollerState implements Seriali
 					invoiceDetail.setId(null);
 					invoiceDetail.setLine(invoiceDetail.getLine()+1);
 					invoiceDetail.setItem(composition.getCompositionItem());
-					invoiceDetail.setDescription(composition.getDescription());
+					invoiceDetail.setDescription(composition.getCompositionItem().getFullName());
 					invoiceDetail.setQuantity(CommonUtil.round(quantity * composition.getQuantity(), 3));
 					invoiceDetail.setPrice(obtainCompositionItemPrice(invoiceDetail, invoice, composition, getPriceStrategy()));
 					invoiceDetail.setDiscountExpression(obtainCompositionDiscount(invoiceDetail, composition));
@@ -313,7 +352,7 @@ public class DetailCompositeHandler extends DataScrollerState implements Seriali
 					purchaseDetail.setId(null);
 					purchaseDetail.setLine(purchaseDetail.getLine()+1);
 					purchaseDetail.setItem(composition.getCompositionItem());
-					purchaseDetail.setDescription(composition.getDescription());
+					purchaseDetail.setDescription(composition.getCompositionItem().getFullName());
 					purchaseDetail.setQuantity(CommonUtil.round(quantity * composition.getQuantity(), 3));
 					purchaseDetail.setPrice(obtainCompositionItemPrice(composition));
 					purchaseDetail.setDiscountExpression(new DiscountExpression("0.0"));
@@ -340,7 +379,7 @@ public class DetailCompositeHandler extends DataScrollerState implements Seriali
 					salesDetail.setId(null);
 					salesDetail.setLine(salesDetail.getLine()+1);
 					salesDetail.setItem(composition.getCompositionItem());
-					salesDetail.setDescription(composition.getDescription());
+					salesDetail.setDescription(composition.getCompositionItem().getFullName());
 					salesDetail.setQuantity(CommonUtil.round(quantity * composition.getQuantity(), 3));
 					salesDetail.setPrice(obtainCompositionItemPrice(salesDetail, sales, composition, getPriceStrategy()));
 					salesDetail.setDiscountExpression(obtainCompositionDiscount(composition));
@@ -356,7 +395,10 @@ public class DetailCompositeHandler extends DataScrollerState implements Seriali
 	/*
 	 * DELIVERY DETAIL
 	 */
-	private void addDeliveryDetailItems() {
+	private void addDeliveryDetailItems() throws ControllerListenerException {
+		if(listContainsIncompleteSerials())
+			throw new ControllerListenerException("Revise la composicion, existen Series/Lotes sin asignar.");
+		
 		Delivery delivery = (Delivery)controller.getMasterController().getTo();
 		DeliveryDetail deliveryDetail = (DeliveryDetail)controller.getTo();
 		if (deliveryDetail.getItem().getProduct().isComposition()) {
@@ -366,7 +408,7 @@ public class DetailCompositeHandler extends DataScrollerState implements Seriali
 					deliveryDetail.setId(null);
 					deliveryDetail.setLine(deliveryDetail.getLine()+1);
 					deliveryDetail.setItem(composition.getCompositionItem());
-					deliveryDetail.setDescription(composition.getDescription());
+					deliveryDetail.setDescription(composition.getCompositionItem().getFullName());
 					deliveryDetail.setQuantity(CommonUtil.round(quantity * composition.getQuantity(), 3));
 					deliveryDetail.setPrice(obtainCompositionItemPrice(deliveryDetail, delivery, composition, getPriceStrategy()));
 					deliveryDetail.setDiscountExpression(obtainCompositionDiscount(deliveryDetail, composition));
@@ -391,7 +433,7 @@ public class DetailCompositeHandler extends DataScrollerState implements Seriali
 					incomeDetail.setId(null);
 					incomeDetail.setLine(incomeDetail.getLine()+1);
 					incomeDetail.setItem(composition.getCompositionItem());
-					incomeDetail.setDescription(composition.getDescription());
+					incomeDetail.setDescription(composition.getCompositionItem().getFullName());
 					incomeDetail.setQuantity(CommonUtil.round(quantity * composition.getQuantity(), 3));
 					incomeDetail.setPrice(obtainCompositionItemPrice(composition));
 					incomeDetail.setDiscountExpression(new DiscountExpression("0.0"));

@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showSerialNumberWindow">
+		<aon:if test="#{controller.showSerialNumberWindow}">
+			<rich:modalPanel id="serialNumberModalPanel" minHeight="440"
+				minWidth="520" rendered="#{controller.showSerialNumberWindow}"
+				showWhenRendered="true" zindex="90">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{bundle.aon_to_specify}" />
+						<aon:outputText value="&#160;" />
+						<aon:outputText value="#{controller.serializableItem.product.lotable ? bundle.aon_lot_number : bundle.aon_serial_number}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showSerialNumberWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{controller.showSerialNumberWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="serialNumberForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="serialNumber-accept"
+										value="#{bundle.aon_accept}"
+										actionListener="#{controller.onAssignSerialNumber}"
+										styleClass="aon-finding-toolbar-item aon-icon-accept">
+										<rich:componentControl for="serialNumberModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{controller.showSerialNumberWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+									<aon:commandButton id="serialNumber-cancel"
+										value="#{bundle.aon_cancel}"
+										actionListener="#{controller.onCancel}"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel">
+										<rich:componentControl for="serialNumberModalPanel"
+											event="onclick" operation="hide"/>
+										<f:setPropertyActionListener
+											target="#{controller.showSerialNumberWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+								</aon:div>
+								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
+									<aon:panelGrid id="serialNumberGrid" columns="2" dir="true" styleClass="aon-width-all">
+
+										<aon:outputLabel value="#{bundle.aon_product}" />
+										<aon:outputText styleClass="aon-bold"
+											value="#{controller.serializableItem.product.name}" />
+
+										<aon:outputLabel for="SalesDetail_serialNumbers"
+											value="#{bundle.aon_list}" />
+										<aon:selectOneListbox id="SalesDetail_serialNumbers"
+											style="width:280px;"
+											value="#{controller.serializableItem}" size="15">
+											<f:selectItems value="#{controller.availableSerials}" />
+										</aon:selectOneListbox>
+
+									</aon:panelGrid>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</aon:if>
+	</aon:panelGroup>
+
+</ui:composition>

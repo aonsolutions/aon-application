@@ -20,13 +20,13 @@
 	<!-- *********************** -->
 
 
-	<aon:if test="#{aonRole.sysAdmin or (handler.packagesInRemark and empty handler.dataAttach.id)}">
+	<aon:if test="#{aonRole.sysAdmin or domainSwitcher.snapshotVersion or (handler.packagesInRemark and empty handler.dataAttach.id)}">
 		<aon:panel styleClass="aon-width-all aon-margin-top">
 			<aon:commandButton value="#{bundle.aon_refresh}" 
 				styleClass="aon-icon-commandButton aon-icon-sincronize aon-padding-left"
 				actionListener="#{handler.onCreateAttachFromRemarks}">
 			</aon:commandButton>
-			<aon:if test="#{aonRole.sysAdmin}">
+			<aon:if test="#{aonRole.sysAdmin or domainSwitcher.snapshotVersion}">
 				<aon:div>
 					<aon:inputTextarea cols="80" rows="4"
 						value="#{handler.dataAttachValue}" />
@@ -36,6 +36,10 @@
 	</aon:if>
 	
 	<rich:panelBar styleClass="aon-width-all" selectedPanel="packagesPanel">
+	
+		<rich:panelBarItem id="editPanel" label="Jerarquia de envases">
+		    
+		</rich:panelBarItem>
 	
 		<aon:if test="#{company.ediSupportEnabled}">
 			<rich:panelBarItem id="ediPanel" label="Estructura EDI">
