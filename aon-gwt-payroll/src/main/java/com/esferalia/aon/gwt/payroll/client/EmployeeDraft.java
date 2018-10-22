@@ -45,7 +45,6 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
@@ -117,6 +116,9 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		String warning();
 	}
 
+	@UiField
+	Label saveStatus;
+	
 	@UiField
 	Button saveButton;
 
@@ -651,6 +653,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 
 	@UiHandler("saveButton")
 	void onSaveButtonClick(ClickEvent event) {
+		this.saveStatus.setText("Guardando...");
 		String countryIso2 = getIso2(nationality.getValue());
 		employeeDraftObject.setNationality(countryIso2);
 
@@ -658,13 +661,32 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		Boolean journey_type = (journeyTypeIndex == 0) ? true : false;
 		employeeDraftObject.setContractJourneyType(journey_type);
 
+		Dni dni = null;
+		if("DNI".equals(checkDocumentType(document.getValue())))
+			dni = new Dni(document.getValue());
+		
+		SocialSecurity ss = new SocialSecurity(security_social_num.getValue());
+		
+		
 		if (payMethod.getSelectedItemText() == "TRANSFERENCIA" && (account.getValue() == "" || bic.getValue() == "")) {
 			WarningDialog dialog = new WarningDialog("Aviso", "HAY QUE RELLENAR LA CUENTA Y EL BIC");
 			dialog.center();
 			dialog.show();
-		} else {
+			this.saveStatus.setText("Error al guardar");
+		} else if(null != dni && !dni.checkDNI()) {
+			WarningDialog dialog = new WarningDialog("Aviso", "EL DOCUMENTO DE IDENTIDAD ES ERR" + String.valueOf("\u00D3") + "NEO");
+			dialog.center();
+			dialog.show();
+			this.saveStatus.setText("Error al guardar");
+		} else if(!ss.checkSS()){
+			WarningDialog dialog = new WarningDialog("Aviso", "EL N" + String.valueOf("\u00DA") + "MERO DE LA SEGURIDAD SOCIAL ES ERR" + String.valueOf("\u00D3") + "NEO");
+			dialog.center();
+			dialog.show();
+			this.saveStatus.setText("Error al guardar");
+		}else {
 			employeeDraftObject.updateEmployee(r -> {
 				setEmployeeDraftObject(employeeDraftObject);
+				saveStatus.setText("Guardado");
 			}, t -> {
 			});
 		}

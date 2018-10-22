@@ -116,6 +116,15 @@
 			margin-left: 10px;
 		}
 		
+		.fontSaveStyle{
+			font-weight: bold;
+    		color: #000;
+    		white-space: nowrap;
+    		font-size: smaller;
+    		padding-left: 30px;
+    		width: 80px;	
+		}
+		
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX">
@@ -138,6 +147,9 @@
 								styleName='aon-finding-toolbar-item aon-icon-accept' text="ACEPTAR"
 								enabled="true" />
 						</g:HTMLPanel>
+						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+						    <g:Label ui:field='saveStatus' styleName="{style.fontSaveStyle}"></g:Label>
+					    </g:HTMLPanel>
 					</g:HorizontalPanel>
 					<g:HorizontalPanel>
 						<g:HTMLPanel styleName="aon-finding-title">
@@ -415,7 +427,7 @@
 											<g:Label styleName='{style.alignTextCenter}'>  Provincia  </g:Label>
 										</td>
 										<td colspan="2"> 
-											<g:ListBox ui:field="addressProvince" styleName='aon-inputText {style.maxWidthTextBox3}'></g:ListBox>
+											<g:ListBox ui:field="addressProvince" styleName='aon-inputText {style.maxWidth}'></g:ListBox>
 										</td>
 									</tr>
 									<tr>

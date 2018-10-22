@@ -6,12 +6,14 @@ import java.util.Map.Entry;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
+import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -45,7 +47,12 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 		String fontDisableStyle();
 		String fontEnableStyle();
 		String warningColor();
+		String maxWidthTextBox();
+		String borderNone();
 	}
+	
+	@UiField
+	Label saveStatus;
 	
 	@UiField
 	HorizontalPanel enableWorkplacePanel;
@@ -137,8 +144,11 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 	}
 	
 	private void save() {
+		saveStatus.setText("Guardando...");
 		workplaceDraftObject.updateWorkplace(
-				r -> { setWorkplaceDraftObject(workplaceDraftObject); }, 
+				r -> { setWorkplaceDraftObject(workplaceDraftObject);
+					   saveStatus.setText("Guardado");
+					 }, 
 				t -> {}
 		);
 	}
@@ -222,12 +232,15 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 		if(workplaceDraftObject.getWorkplaceAddresses().values().size() == 1){
 			Integer addressId = workplaceDraftObject.getWorkplaceAddressId();
 			workplaceAddressWidget = new Label((null == addressId) ? "" : workplaceDraftObject.getWorkplaceAddresses().get(addressId));
+			workplaceAddressWidget.setStyleName("aon-inputText");
+			workplaceAddressWidget.addStyleName(style.maxWidthTextBox());
 			workplaceAddressPanel.add(workplaceAddressWidget);
 		}else{
 			workplaceAddressWidget = new ListBox();
 			for(String address : workplaceDraftObject.getWorkplaceAddresses().values()){
 				((ListBox) workplaceAddressWidget).addItem(address);
 			}
+			workplaceAddressWidget.setStyleName("aon-selectOneMenu");
 			workplaceAddressWidget.addStyleName(style.maxWidth());
 			((ListBox) workplaceAddressWidget).addChangeHandler(new ChangeHandler() {
 				
@@ -256,11 +269,16 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 		Widget workplaceCalendarWidget;
 		if(workplaceDraftObject.getWorkplacesCalendars().values().size() == 0){
 			workplaceCalendarWidget = new Label("No hay calendarios disponibles");
+			workplaceCalendarWidget.setStyleName("aon-inputText");
+			workplaceCalendarWidget.addStyleName(style.maxWidthTextBox());
 			workplaceCalendarWidget.addStyleName(style.warningColor());
+			workplaceCalendarWidget.addStyleName(style.borderNone());
 			workplaceCalendarPanel.add(workplaceCalendarWidget);
 		}else if(workplaceDraftObject.getWorkplacesCalendars().values().size() == 1){
 			Integer calendarId = workplaceDraftObject.getWorkplaceInfo().getCalendarId();
 			workplaceCalendarWidget = new Label(workplaceDraftObject.getWorkplacesCalendars().get(calendarId));
+			workplaceCalendarWidget.setStyleName("aon-inputText");
+			workplaceCalendarWidget.addStyleName(style.maxWidthTextBox());
 			workplaceCalendarPanel.add(workplaceCalendarWidget);
 		}else{
 			workplaceCalendarWidget = new ListBox();
@@ -268,6 +286,7 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 				if(null != calendar)
 					((ListBox) workplaceCalendarWidget).addItem(calendar);
 			}
+			workplaceCalendarWidget.setStyleName("aon-selectOneMenu");
 			workplaceCalendarWidget.addStyleName(style.maxWidth());
 			((ListBox) workplaceCalendarWidget).addChangeHandler(new ChangeHandler() {
 				
@@ -297,7 +316,10 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 		Widget workplaceActivityWidget;
 		if(workplaceDraftObject.getWorkplaceActivities().values().size() == 0){
 			workplaceActivityWidget = new Label("No hay actividades disponibles");
+			workplaceActivityWidget.setStyleName("aon-inputText");
+			workplaceActivityWidget.addStyleName(style.maxWidthTextBox());
 			workplaceActivityWidget.addStyleName(style.warningColor());
+			workplaceActivityWidget.addStyleName(style.borderNone());
 			workplaceActivityPanel.add(workplaceActivityWidget);
 //		}else if(workplaceDraftObject.getWorkplaceActivities().values().size() == 1){
 //			Integer activityId = workplaceDraftObject.getWorkplaceInfo().getActivityId();
@@ -309,6 +331,7 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 			for(String activity : workplaceDraftObject.getWorkplaceActivities().values()){
 				((ListBox) workplaceActivityWidget).addItem(activity);
 			}
+			workplaceActivityWidget.setStyleName("aon-selectOneMenu");
 			workplaceActivityWidget.addStyleName(style.maxWidth());
 			((ListBox) workplaceActivityWidget).addChangeHandler(new ChangeHandler() {
 				
@@ -329,7 +352,11 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 			});
 			workplaceActivityPanel.add(workplaceActivityWidget);	
 			if(((ListBox) workplaceActivityWidget).getItemCount() != 0){
-				((ListBox) workplaceActivityWidget).setSelectedIndex(workplaceDraftObject.getWorkplaceActivityIndex()+1);
+				if(((ListBox) workplaceActivityWidget).getItemCount() == 2){
+					((ListBox) workplaceActivityWidget).setSelectedIndex(1);
+					DomEvent.fireNativeEvent(Document.get().createChangeEvent(), workplaceActivityWidget);
+				}else
+					((ListBox) workplaceActivityWidget).setSelectedIndex(workplaceDraftObject.getWorkplaceActivityIndex()+1);
 			}
 		}
 		

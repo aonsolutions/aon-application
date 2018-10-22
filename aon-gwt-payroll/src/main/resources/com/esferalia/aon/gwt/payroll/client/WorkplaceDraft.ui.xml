@@ -29,33 +29,9 @@
 		}
 
 		.headerStyle{
-			font-family: Arial;
-			font-size: 13px;
-			font-weight: normal;
-			position: absolute;
-			margin-left:
-			25px;
-			background-color: white;
-			padding-left: 5px;
-			padding-right: 5px;
-			height: 20px;
-			top: 10px;
-			z-index: 1;
-		}
-
-		.headerStyle2{
-			font-family: Arial;
-			font-size: 13px;
-			font-weight: normal;
-			position: absolute;
-			margin-left: 25px;
-			background-color: white;
-			padding-left: 5px;
-			padding-right: 5px;
-			height: 20px;
-			text-align: center;
-			top: 180px;
-			z-index: 1;
+			top: -0.5em;
+			font-size: 12px;
+			margin-left: 10px;
 		}
 
 		.requiredColor{
@@ -77,7 +53,11 @@
 		}
 
 		.maxWidthTextBox{
-			width: 99%;
+			width: 99.7%;
+		}
+		
+		.maxWidthTextBox2{
+			width: 99.4%;
 		}
 
 		.alignTextCenter{
@@ -130,6 +110,26 @@
 		.estiloBorrarCuandoSeActiveBoton{
 			background: none !important;
 		}
+		
+		.borderNone{
+			border: none;
+		}
+		
+		.styleBorder{
+			border-style: solid; 
+			width: 975px; 
+			border-width: 1px; 
+			margin-top: 20px; 
+			margin-left: 10px;
+		}
+		
+		.styleBorder2{
+			border-style: solid; 
+			width: 975px; 
+			border-width: 1px; 
+			margin-top: 40px; 
+			margin-left: 10px;
+		}
 
 	</ui:style>
 
@@ -143,11 +143,16 @@
 						</g:HTMLPanel>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="aon-finding-toolbar-item-group {style.paddingTop}">
+					    <g:HorizontalPanel ui:field='saveStatusPanel'>
+					        <g:Label ui:field='saveStatus' styleName="{style.fontEnableStyle}"></g:Label>
+					    </g:HorizontalPanel>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="aon-finding-toolbar-item-group {style.paddingTop}">
 					    <g:HorizontalPanel ui:field='enableWorkplacePanel'>
-					        <g:Button ui:field='enableWorkplaceButton' styleName="{style.fontEnableStyle}" visible="false">ACTIVAR</g:Button>
+					        <g:Button ui:field='enableWorkplaceButton' styleName="{style.fontEnableStyle}" visible="false" enabled="false">ACTIVAR</g:Button>
 					    </g:HorizontalPanel>
 					     <g:HorizontalPanel ui:field='disableWorkplacePanel'>
-					        <g:Button ui:field='disableWorkplaceButton' styleName="{style.fontDisableStyle}" visible="false">DESACTIVAR</g:Button>
+					        <g:Button ui:field='disableWorkplaceButton' styleName="{style.fontDisableStyle}" visible="false" enabled="false">DESACTIVAR</g:Button>
 					    </g:HorizontalPanel>
 					</g:HTMLPanel>
 				</g:HorizontalPanel>
@@ -156,87 +161,87 @@
 		<g:center>
 			<g:ScrollPanel>
 				<g:HTMLPanel>
-					<g:Label styleName='{style.headerStyle}' width="103px">Datos Generales</g:Label>
-					<g:HTMLPanel>
-						<table ui:field="generalDataTable"
-							style="padding-top: 20px; width: 950px; border-style: solid; 
-					        padding: 10px 10px 10px 10px; border-width: 1px; margin-left: 10px; margin-bottom: 20px;
-					        margin-top: 17px; position: absolute; padding-top: 20px;">
-							<body>
-								<tr>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-								</tr>
-								<tr>
-									<td style="background-color: #eaeaea; width: 200px;">
-										<g:Label styleName="{style.firstColumnTextStyle} {style.requiredColor}">Descripción</g:Label>
-									</td>
-									<td colspan="3">
-										<g:TextBox ui:field="workplaceDescription" styleName="{style.maxWidthTextBox}"></g:TextBox>
-									</td>
-								</tr>
-								<tr>
-									<td style="background-color: #eaeaea; width: 200px;">
-										<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Dirección</g:Label>
-									</td>
-									<td colspan="3">
-									    <g:HorizontalPanel ui:field="workplaceAddressPanel" styleName="{style.maxWidth}"></g:HorizontalPanel>
-									</td>
-								</tr>
-								<tr>
-									<td style="background-color: #eaeaea; width: 200px;">
-										<g:Label styleName='{style.firstColumnTextStyle}'>Concierto económico</g:Label>
-									</td>
-									<td colspan="3">
-										<g:ListBox ui:field="workplaceEconomicConcert" styleName="{style.maxWidth}"></g:ListBox>
-									</td>
-								</tr>
-							</body>
-						</table>
-					</g:HTMLPanel>
-					<g:Label ui:field="labelPayrollDataTable" width="105px"
-						styleName='{style.headerStyle2}'>Datos Laborables</g:Label>
-					<g:HTMLPanel>
-						<table ui:field="payrollDataTable"
-							style="border-style: solid; padding: 10px 10px 10px 10px; border-width: 1px; 
-					        margin-left: 10px; margin-bottom: 10px; margin-top: 27px; width: 950px; padding-top: 20px;
-					        position: absolute; top: 160px;">
-							<tbody>
-							    <tr>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-								</tr>
-								<tr>
-									<td style="background-color: #eaeaea; width: 200px;">
-										<g:Label styleName='{style.firstColumnTextStyle}'>Calendario</g:Label>
-									</td>
-									<td colspan="3">
-										 <g:HorizontalPanel ui:field="workplaceCalendarPanel" styleName="{style.maxWidth}"></g:HorizontalPanel>
-									</td>
-								</tr>
-								<tr>
-									<td style="background-color: #eaeaea; width: 200px;">
-										<g:Label styleName='{style.firstColumnTextStyle}'>Convenio</g:Label>
-									</td>
-									<td colspan="3">
-										<g:ListBox ui:field="workpalceAgreement" styleName="{style.maxWidth}"></g:ListBox>
-									</td>
-								</tr>
-								<tr>
-									<td style="background-color: #eaeaea; width: 200px;">
-										<g:Label styleName='{style.firstColumnTextStyle}'>Actividad</g:Label>
-									</td>
-									<td colspan="3">
-									    <g:HorizontalPanel ui:field="workplaceActivityPanel" styleName="{style.maxWidth}"></g:HorizontalPanel>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</g:HTMLPanel>
+					<g:VerticalPanel styleName="{style.styleBorder}">
+						<g:Label styleName='aon-group-title {style.headerStyle}' width="105px">Datos Generales</g:Label>
+						<g:HTMLPanel>
+							<table ui:field="generalDataTable"
+								style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
+								<body>
+									<tr>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td style="background-color: #eaeaea; width: 200px;">
+											<g:Label styleName="{style.firstColumnTextStyle} {style.requiredColor}">Descripción</g:Label>
+										</td>
+										<td colspan="3">
+											<g:TextBox ui:field="workplaceDescription" styleName='aon-inputText {style.maxWidthTextBox2}'></g:TextBox>
+										</td>
+									</tr>
+									<tr>
+										<td style="background-color: #eaeaea; width: 200px;">
+											<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Dirección</g:Label>
+										</td>
+										<td colspan="3">
+										    <g:HorizontalPanel ui:field="workplaceAddressPanel" styleName="{style.maxWidth}"></g:HorizontalPanel>
+										</td>
+									</tr>
+									<tr>
+										<td style="background-color: #eaeaea; width: 200px;">
+											<g:Label styleName='{style.firstColumnTextStyle}'>Concierto económico</g:Label>
+										</td>
+										<td colspan="3">
+											<g:ListBox ui:field="workplaceEconomicConcert" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+										</td>
+									</tr>
+								</body>
+							</table>
+						</g:HTMLPanel>
+					</g:VerticalPanel>
+					<g:VerticalPanel styleName="{style.styleBorder2}">
+						<g:Label ui:field="labelPayrollDataTable" width="105px"
+							styleName='aon-group-title {style.headerStyle}'>Datos Laborables</g:Label>
+						<g:HTMLPanel>
+							<table ui:field="payrollDataTable"
+								style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
+								<tbody>
+								    <tr>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td style="background-color: #eaeaea; width: 200px;">
+											<g:Label styleName='{style.firstColumnTextStyle}'>Calendario</g:Label>
+										</td>
+										<td colspan="3">
+											 <g:HorizontalPanel ui:field="workplaceCalendarPanel" styleName="{style.maxWidth}"></g:HorizontalPanel>
+										</td>
+									</tr>
+									<tr>
+										<td style="background-color: #eaeaea; width: 200px;">
+											<g:Label styleName='{style.firstColumnTextStyle}'>Convenio</g:Label>
+										</td>
+										<td colspan="3">
+											<g:ListBox ui:field="workpalceAgreement" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+										</td>
+									</tr>
+									<tr>
+										<td style="background-color: #eaeaea; width: 200px;">
+											<g:Label styleName='{style.firstColumnTextStyle}'>Actividad</g:Label>
+										</td>
+										<td colspan="3">
+										    <g:HorizontalPanel ui:field="workplaceActivityPanel" styleName="{style.maxWidth}"></g:HorizontalPanel>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</g:HTMLPanel>
+					</g:VerticalPanel>
 				</g:HTMLPanel>
 			</g:ScrollPanel>
 		</g:center>
