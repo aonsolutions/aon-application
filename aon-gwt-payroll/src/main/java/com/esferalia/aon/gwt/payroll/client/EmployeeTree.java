@@ -166,13 +166,15 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		public void execute() {
 			// Create a remote service proxy to talk to the server-side Employees
 			// service.
-			EmployeesServiceAsync employeesServiceRaw = GWT.create(EmployeesService.class);
 			employeesService = DomainEmployeesServiceAsync.newInstance();
-			
 			enterprisesService = DomainEnterprisesServiceAsync.newInstance();
 			
 			EmployeeNewDraftObject employeeNewDraftObject = new EmployeeNewDraftObject(workplace, employeesService, enterprisesService);
 			onEmployeeNewDraftSelected(employeeNewDraftObject);
+			employeeNewDraft = getEmployeeNewDraft();
+			employeeNewDraft.setWidth(Window.getClientWidth() / 2 + "px");
+			employeeNewDraft.show();
+			employeeNewDraft.center();
 		}
 	}
 

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
@@ -35,8 +36,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.dom.client.DomEvent;
-import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.regexp.shared.RegExp;
@@ -45,7 +44,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -53,7 +51,7 @@ import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
+public class EmployeeNewDraft extends CustomDialog implements ContextMenuHandler {
 
 	// ------------------------------------------------ GOOGLE MAP ADDRESS INFO --------------------------------------------------
 
@@ -98,10 +96,17 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 
 	// -------------------------------------------------- UiBinder --------------------------------------------------
 
-	private static EmployeeDraftUiBinder uiBinder = GWT.create(EmployeeDraftUiBinder.class);
+	interface Binder extends UiBinder<Widget, EmployeeNewDraft> {
 
-	interface EmployeeDraftUiBinder extends UiBinder<Widget, EmployeeNewDraft> {
 	}
+
+	private static final Binder binder = GWT.create(Binder.class);
+	
+//	private static EmployeeDraftUiBinder uiBinder = GWT.create(EmployeeDraftUiBinder.class);
+//
+//	@SuppressWarnings("rawtypes")
+//	interface EmployeeDraftUiBinder extends UiBinder<Widget, EmployeeNewDraft> {
+//	}
 
 	// -------------------------------------------------- UiFields --------------------------------------------------
 
@@ -117,32 +122,20 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 	@UiField
 	Button saveButton;
 
-	// TABLA DATOS EMPLEADO
-
+	// TABLA DATOS CONTRATO
+	
 	@UiField
-	TableElement employeeDataTable;
+	Label labelContractDataTable;
 
-	@UiField
-	TextBox personId;
-
-	@UiField
-	Button newPerson;
-
-	@UiField
-	SuggestBox findPerson;
-
-	@UiField
-	TextBox name;
-
-	@UiField
-	Label firstSurnameLabel;
-
-	@UiField
-	TextBox first_surname;
-
-	@UiField
-	TextBox second_surname;
-
+//	@UiField
+//	TextBox personId;
+//
+//	@UiField
+//	Button newPerson;
+//
+//	@UiField
+//	SuggestBox findPerson;
+	
 	@UiField
 	TextBox document;
 
@@ -164,6 +157,77 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 	@UiField
 	TextBox security_social_num;
 
+	@UiField
+	TextBox name;
+
+	@UiField
+	Label firstSurnameLabel;
+
+	@UiField
+	TextBox first_surname;
+
+	@UiField
+	TextBox second_surname;
+
+	@UiField
+	ListBox ssRegimeType;
+
+	@UiField
+	TableElement contractDataTable;
+	
+	@UiField
+	ListBox activityCCC;
+
+	@UiField
+	TextBox workplace;
+
+	@UiField
+	TableCellElement contractTypeNode;
+
+	@UiField
+	ListBox contractType;
+
+//	@UiField
+//	Label contractTypeFreelance;
+
+	@UiField
+	ListBox modality;
+
+	@UiField
+	DateBoxEx strat_date;
+
+	@UiField
+	DateBoxEx end_date;
+
+	@UiField
+	Label seniority_date_label;
+
+	@UiField
+	DateBoxEx seniority_date;
+
+	@UiField
+	ListBox agreement;
+
+	@UiField
+	ListBox level;
+
+	@UiField
+	TextBox category;
+
+	@UiField
+	ListBox quote_group;
+
+	@UiField
+	ListBox occupation;
+
+	@UiField
+	ListBox journeyType;
+
+	// TABLA DATOS EMPLEADO
+
+	@UiField
+	TableElement employeeDataTable;
+	
 	@UiField
 	DateBoxEx birth_date;
 
@@ -209,67 +273,7 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 	@UiField
 	TextBox bic;
 
-	// TABLA DATOS CONTRATO
-
-	@UiField
-	Label labelContractDataTable;
-
-	@UiField
-	ListBox ssRegimeType;
-
-	@UiField
-	TableElement contractDataTable;
-
-	@UiField
-	TextBox activity;
-
-	@UiField
-	TextBox quotationAccount;
-
-	@UiField
-	TextBox workplace;
-
-	@UiField
-	TableCellElement contractTypeNode;
-
-	@UiField
-	ListBox contractType;
-
-	@UiField
-	TextBox contractTypeFreelance;
-
-	@UiField
-	ListBox modality;
-
-	@UiField
-	DateBoxEx strat_date;
-
-	@UiField
-	DateBoxEx end_date;
-
-	@UiField
-	Label seniority_date_label;
-
-	@UiField
-	DateBoxEx seniority_date;
-
-	@UiField
-	ListBox agreement;
-
-	@UiField
-	ListBox level;
-
-	@UiField
-	TextBox category;
-
-	@UiField
-	ListBox quote_group;
-
-	@UiField
-	ListBox occupation;
-
-	@UiField
-	ListBox journeyType;
+	
 
 	// ------------------------------------------------------ VARIABLES DE LA CLASE --------------------------------------------------
 
@@ -287,7 +291,9 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 		this.nationality = new SuggestBox(oracleCountries);
 
 		// Inicializamos la vista del empleado
-		initWidget(uiBinder.createAndBindUi(this));
+		setCaption("Nuevo valor");
+		setWidget(binder.createAndBindUi(this));
+		this.setWidth("1000px");
 
 		// Init Google Maps Places API
 		// initGoogleMapsPlaces();
@@ -347,16 +353,6 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 			}
 		});
 
-		this.findPerson.addKeyPressHandler(new KeyPressHandler() {
-
-			@Override
-			public void onKeyPress(KeyPressEvent event) {
-				int c = event.getUnicodeCharCode();
-				if (c == 32)
-					findPerson.showSuggestionList();
-			}
-		});
-
 	}
 
 	private void initGoogleMapsPlaces() {
@@ -402,18 +398,18 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 	// -----------------------------------------------------------------
 	// UiHandlers ----------------------------------------------------------
 
-	@UiHandler("findPerson")
-	void onFindPersonChangeValue(ValueChangeEvent<String> event) {
-		String person = findPerson.getValue();
-		Integer personIdNum = Integer.parseInt(person.split(" ")[0]);
-		this.personId.setValue(personIdNum.toString());
-		employeeNewDraftObject.setContractTableId(personIdNum);
-	}
+//	@UiHandler("findPerson")
+//	void onFindPersonChangeValue(ValueChangeEvent<String> event) {
+//		String person = findPerson.getValue();
+//		Integer personIdNum = Integer.parseInt(person.split(" ")[0]);
+//		this.personId.setValue(personIdNum.toString());
+//		employeeNewDraftObject.setContractTableId(personIdNum);
+//	}
 
-	@UiHandler("newPerson")
-	void onNewPersonClick(ClickEvent event) {
-		showPersonForm();
-	}
+//	@UiHandler("newPerson")
+//	void onNewPersonClick(ClickEvent event) {
+//		showPersonForm();
+//	}
 
 	@UiHandler("document")
 	void onDocumentChangeValue(ChangeEvent event) {
@@ -522,15 +518,15 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 		}
 	}
 
-	@UiHandler("activity")
-	void onActivityChangeValue(ValueChangeEvent<String> event) {
-		employeeNewDraftObject.setEnterprise_Activity(activity.getValue());
-	}
-
-	@UiHandler("quotationAccount")
-	void onQuoteAccountChangeValue(ValueChangeEvent<String> event) {
-		employeeNewDraftObject.setContractQuoteAccount(quotationAccount.getValue());
-	}
+//	@UiHandler("activity")
+//	void onActivityChangeValue(ValueChangeEvent<String> event) {
+//		employeeNewDraftObject.setEnterprise_Activity(activity.getValue());
+//	}
+//
+//	@UiHandler("quotationAccount")
+//	void onQuoteAccountChangeValue(ValueChangeEvent<String> event) {
+//		employeeNewDraftObject.setContractQuoteAccount(quotationAccount.getValue());
+//	}
 
 	@UiHandler("workplace")
 	void onWorkplaceChangeValue(ValueChangeEvent<String> event) {
@@ -640,14 +636,14 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 
 	@UiHandler("saveButton")
 	void onSaveButtonClick(ClickEvent event) {
-		if (personId.getValue() == "") {
-			// Nationality
-			String countryIso2 = getIso2(nationality.getValue());
-			employeeNewDraftObject.setNationality(countryIso2);
-
-			// Gender
-			employeeNewDraftObject.setEmployeeGender(gender.getSelectedIndex());
-		}
+//		if (personId.getValue() == "") {
+//			// Nationality
+//			String countryIso2 = getIso2(nationality.getValue());
+//			employeeNewDraftObject.setNationality(countryIso2);
+//
+//			// Gender
+//			employeeNewDraftObject.setEmployeeGender(gender.getSelectedIndex());
+//		}
 
 		if (payMethod.getSelectedItemText() == "TRANSFERENCIA" && (account.getValue() == "" || bic.getValue() == "")) {
 			WarningDialog dialog = new WarningDialog("Aviso", "HAY QUE RELLENAR LA CUENTA Y EL BIC");
@@ -674,14 +670,14 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 	}
 
 	private boolean checkIfUpdateIsPossible() {
-		if (personId.getValue() == "") {
-			if (name.getValue() == "" || first_surname.getValue() == "" || document.getValue() == ""
-					|| security_social_num.getValue() == "" || address.getValue() == "" || addressNum.getValue() == ""
-					|| addressZip.getValue() == "" || addressCity.getValue() == ""
-					|| addressProvince.getValue() == "") {
-				return false;
-			}
-		}
+//		if (personId.getValue() == "") {
+//			if (name.getValue() == "" || first_surname.getValue() == "" || document.getValue() == ""
+//					|| security_social_num.getValue() == "" || address.getValue() == "" || addressNum.getValue() == ""
+//					|| addressZip.getValue() == "" || addressCity.getValue() == ""
+//					|| addressProvince.getValue() == "") {
+//				return false;
+//			}
+//		}
 
 		if (ssRegimeType.getSelectedIndex() == 1) {
 			if (strat_date.getValue() == null) {
@@ -719,7 +715,7 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 
 	private void resetElements() {
 		// Clear employee elements
-		this.personId.setValue("");
+//		this.personId.setValue("");
 		this.document.setValue("");
 		this.name.setValue("");
 		this.first_surname.setValue("");
@@ -738,8 +734,8 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 
 		// Clear contract elements
 		this.ssRegimeType.clear();
-		this.activity.setValue("");
-		this.quotationAccount.setValue("");
+//		this.activity.setValue("");
+//		this.quotationAccount.setValue("");
 		this.contractType.clear();
 		this.modality.clear();
 		this.strat_date.setValue(null);
@@ -759,8 +755,8 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 		for (EmployeeInfo e : workplaceEmployees.getWorkplaceEmployees())
 			employees.add(e.getEmployeeId() + " - " + e.getSurName() + ", " + e.getName());
 
-		MultiWordSuggestOracle orcl = (MultiWordSuggestOracle) findPerson.getSuggestOracle();
-		orcl.addAll(employees);
+//		MultiWordSuggestOracle orcl = (MultiWordSuggestOracle) findPerson.getSuggestOracle();
+//		orcl.addAll(employees);
 
 		// SEXO
 		this.gender.addItem("Hombre");
@@ -841,13 +837,13 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 		employeeNewDraftObject.setSSRegime(0);
 		this.workplace.setEnabled(false);
 
-		this.activity.setValue(this.employeeNewDraftObject.getWorkplaceActivity());
-		employeeNewDraftObject.setEnterprise_Activity(activity.getValue());
-		this.activity.setEnabled(false);
-
-		this.quotationAccount.setValue(this.employeeNewDraftObject.getWorkplaceCCC());
-		employeeNewDraftObject.setContractQuoteAccount(quotationAccount.getValue());
-		this.quotationAccount.setEnabled(false);
+//		this.activity.setValue(this.employeeNewDraftObject.getWorkplaceActivity());
+//		employeeNewDraftObject.setEnterprise_Activity(activity.getValue());
+//		this.activity.setEnabled(false);
+//
+//		this.quotationAccount.setValue(this.employeeNewDraftObject.getWorkplaceCCC());
+//		employeeNewDraftObject.setContractQuoteAccount(quotationAccount.getValue());
+//		this.quotationAccount.setEnabled(false);
 
 		Integer agreementIndex = this.employeeNewDraftObject.getAgreementIndex(this.employeeNewDraftObject.getWorkplaceAgreement());
 		this.agreement.setSelectedIndex(agreementIndex + 1);
@@ -890,7 +886,7 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 		contractDataTable.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
 		contractDataTable.getRows().getItem(2).getStyle().setDisplay(Display.NONE);
 		contractTypeNode.getStyle().setDisplay(Display.NONE);
-		this.contractTypeFreelance.removeStyleName(style.hide());
+//		this.contractTypeFreelance.removeStyleName(style.hide());
 		contractDataTable.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
 		this.seniority_date_label.addStyleName(style.hide());
 		this.seniority_date.addStyleName(style.hide());
@@ -903,7 +899,7 @@ public class EmployeeNewDraft extends Composite implements ContextMenuHandler {
 		contractDataTable.getRows().getItem(1).getStyle().clearDisplay();
 		contractDataTable.getRows().getItem(2).getStyle().clearDisplay();
 		contractTypeNode.getStyle().clearDisplay();
-		this.contractTypeFreelance.addStyleName(style.hide());
+//		this.contractTypeFreelance.addStyleName(style.hide());
 		contractDataTable.getRows().getItem(4).getStyle().clearDisplay();
 		this.seniority_date_label.removeStyleName(style.hide());
 		this.seniority_date.removeStyleName(style.hide());
