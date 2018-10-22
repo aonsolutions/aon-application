@@ -206,7 +206,7 @@ public class SalaryExporterServlet extends HttpServlet {
 			java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());
 			java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());
 			
-			condition.and(Salary.SALARY.END_DATE.between(sqlStartDate, sqlEndDate));
+			condition = condition.and(Salary.SALARY.END_DATE.between(sqlStartDate, sqlEndDate));
 			
 		}
 		return condition;
