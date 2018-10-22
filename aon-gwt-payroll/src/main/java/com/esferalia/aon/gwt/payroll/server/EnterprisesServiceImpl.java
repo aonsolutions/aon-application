@@ -902,6 +902,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					+ ", " + SQLConstants.ENTERPRISE_CCC
 					+ " LEFT JOIN " + SQLConstants.SALARY + " ON (" 
 					+ SQLConstants.ENTERPRISE_CCC + "." + EnterpriseCccColumns.CCC + " = " + SQLConstants.SALARY+ "." + SalaryColumns.CCC  
+					+ " AND " + SQLConstants.ENTERPRISE_CCC + "." + EnterpriseCccColumns.DOMAIN + " = " + SQLConstants.SALARY+ "." + SalaryColumns.DOMAIN  
 //					+ " AND " + SQLConstants.SALARY + "." + SalaryColumns.TYPE + " IN ( " + Salary.Type.SALARY.ordinal() + ")" 
 					+ ")"
 					+ ", " + SQLConstants.GEOZONE

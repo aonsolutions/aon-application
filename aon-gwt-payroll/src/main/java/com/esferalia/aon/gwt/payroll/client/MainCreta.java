@@ -3,24 +3,20 @@ package com.esferalia.aon.gwt.payroll.client;
 import static com.esferalia.aon.gwt.payroll.client.EmployeeTree.showBases;
 import static com.esferalia.aon.gwt.payroll.client.EmployeeTree.showResults;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.LineNumberReader;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.function.Consumer;
-
-import javax.sound.sampled.Line;
 
 import com.esferalia.aon.gwt.codemirror.client.ui.CodeMirror.Pos;
 import com.esferalia.aon.gwt.common.client.AON;
@@ -32,6 +28,7 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.IndeterminateTask;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.EmployeeTree.CretaCommand;
 import com.esferalia.aon.gwt.payroll.client.EmployeeTree.EnterpriseCretaRequestCommand;
 import com.esferalia.aon.gwt.payroll.client.EmployeeTree.EnterpriseDBACommand;
@@ -1193,8 +1190,6 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			super(file, MainCreta.this.detailPanel);
 			dialog = new CretaRequestDialog.CretaEmployeeRequestDialog(this) {
 				
-				
-				
 				@Override
 				void onMonthChanged( ChangeEvent e ){
 					BasesCCCCretaRequestCommand.this.onMonthChanged(monthListBox.getSelected());
@@ -1272,13 +1267,18 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		}
 
 		void onMonthChanged( Date month ){
+			Date firstDayOfMonth = DateUtils.getFirstDayOfMonth(month);
+			Date lastDayOfMonth = DateUtils.getLastDayOfMonth(month);
+			Set<String> ss = new HashSet<String>();
 			List<Employee> employees = new LinkedList<Employee>();
 			for ( Employee e: ccc.getEmployees() ) {
-				if ( month.before(e.getStartDate()))
+				if ( lastDayOfMonth.before(e.getStartDate()))
 					continue;
-				if ( month.after(e.getEndDate()))
+				if ( firstDayOfMonth.after(e.getEndDate()))
 					continue;
-				employees.add(e);
+				
+				if ( ss.add(e.getSocialSecurity()))
+					employees.add(e);
 			}
 			dialog.setData(employees);
 		}
