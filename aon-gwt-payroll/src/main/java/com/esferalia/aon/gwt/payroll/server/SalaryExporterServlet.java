@@ -87,7 +87,7 @@ public class SalaryExporterServlet extends HttpServlet {
 			// TODO : SalaryType????
 			SalaryType salaryType = getSalaryType(req);
 			Integer enterpriseID = getEnterpriseID(domain, salaryRequestStr);
-			String salaryReport = PayrollServletUtils.getSalaryReport(domain, enterpriseID, salaryType); 
+			String salaryReport = getReportKey(domain, enterpriseID, salaryType); 
 			
 			// TODO: Bufff !!!!!!!!!!!!!!!
 			ReportUtils.domain.set(domain);
@@ -104,6 +104,15 @@ public class SalaryExporterServlet extends HttpServlet {
 			throw new ServletException(e);
 		} 
 	}
+	
+	// ------------------------------------------------------------------------
+	
+	protected String getReportKey(String domain, final Integer enterpriseID,
+			SalaryType salaryType) throws SQLException {
+		return PayrollServletUtils.getSalaryReport(domain, enterpriseID, salaryType);
+	}
+
+	// ------------------------------------------------------------------------
 
 	private static OutputFormat getOutputFormat(String extension) {
 		return OUTPUT_FORMATS.get(extension);
