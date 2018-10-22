@@ -495,6 +495,11 @@ public class Reports {
 		json.footer_ss_quotation.total_company = total_costs;
 		
 		var paymentsOrdered = payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getPaymentsOrderByCode()();
+		if ( paymentsOrdered.@java.util.List::isEmpty()() ) {
+			console.log(json);
+			return json;
+		} 
+
 		var paymentFirst = paymentsOrdered.@java.util.List::get(I)(0);
 		var accrual = {};
 		accrual.accrual_name = paymentFirst.@com.esferalia.aon.js.payroll.client.Reports.Payment::getCodeDescription()();
