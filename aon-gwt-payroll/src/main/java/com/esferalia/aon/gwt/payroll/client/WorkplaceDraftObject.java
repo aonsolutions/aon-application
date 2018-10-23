@@ -19,6 +19,7 @@ public class WorkplaceDraftObject {
 	private List<Agreement> agreements;
 	
 	private WorkplaceInfo workplaceInfo;
+	private WorkplaceInfo workplaceInfo_Old;
 		
 	// ------------------------------------------------- CLASS METHODS -------------------------------------------------	
 	
@@ -114,6 +115,8 @@ public class WorkplaceDraftObject {
 	}
 	
 	public Integer getWorkplaceActivityIndex(){
+//		Window.alert("Select Activity Id : " + workplaceInfo.getActivityId());
+		
 		if(null == workplaceInfo.getActivityId())
 			return -1;
 		else{
@@ -141,6 +144,7 @@ public class WorkplaceDraftObject {
 			@Override
 			public void onSuccess(WorkplaceInfo result) {
 				workplaceInfo = result;
+				workplaceInfo_Old = new WorkplaceInfo(result);
 				getAgreements(
 						r ->{success.accept(result);},
 						f->{}
@@ -173,6 +177,7 @@ public class WorkplaceDraftObject {
 			
 			@Override
 			public void onSuccess(WorkplaceInfo result) {
+				workplaceInfo_Old = new WorkplaceInfo(result);
 				success.accept(result);
 			}
 
@@ -211,6 +216,12 @@ public class WorkplaceDraftObject {
 
 	public void setWorkplaceActivity(Integer activityId) {
 		workplaceInfo.setActivityId(activityId);
+	}
+
+	public boolean hasChanged() {
+		boolean changed = workplaceInfo.hasChanged(workplaceInfo_Old);
+//		Window.alert("Has Changed? : " + changed);
+		return changed;
 	}
 	
 }

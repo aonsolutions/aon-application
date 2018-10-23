@@ -28,7 +28,60 @@ public class WorkplaceInfo implements Serializable {
 	public WorkplaceInfo(){
 		
 	}
-
+	
+	public WorkplaceInfo(WorkplaceInfo workplaceInfo){
+		this.description = workplaceInfo.getDescription();
+		this.addressId = workplaceInfo.getAddressId();
+		this.economicConcert = workplaceInfo.getEconomicConcert();
+		this.active = workplaceInfo.isActive();
+		this.calendarId = workplaceInfo.getCalendarId();
+		this.agreementId = workplaceInfo.getAgreementId();
+		this.agreementDescription = workplaceInfo.getAgreementDescription();
+		this.activityId = workplaceInfo.getActivityId();
+		this.workplaceId = workplaceInfo.getWorkplaceId();
+		this.payrollWorkplaceId = workplaceInfo.getPayrollWorkplaceId();
+	}
+	
+	public boolean hasChanged (WorkplaceInfo workplaceInfo_old){
+		
+//		Window.alert("Description -> " + this.description + " == " + workplaceInfo_old.getDescription());
+		if (this.description != workplaceInfo_old.getDescription()) return true;
+//		Window.alert("Address -> " + this.addressId + " == " + workplaceInfo_old.getAddressId());
+		if (!this.addressId.equals(workplaceInfo_old.getAddressId())) return true;
+//		Window.alert("EconomicConcert -> " + this.economicConcert + " == " + workplaceInfo_old.getEconomicConcert());
+		if (this.economicConcert != workplaceInfo_old.getEconomicConcert()) return true;
+//		Window.alert("Active -> " + this.active + " == " + workplaceInfo_old.isActive());
+		if (this.active != workplaceInfo_old.isActive()) return true;
+		
+//		Window.alert("Calendar -> " + this.calendarId + " == " + workplaceInfo_old.getCalendarId());
+		if(null == this.calendarId || null == workplaceInfo_old.getCalendarId()) {
+			if (this.calendarId != workplaceInfo_old.getCalendarId()) return true;
+		}else
+			if (!this.calendarId.equals(workplaceInfo_old.getCalendarId())) return true;
+		
+//		Window.alert("Agreement -> " + this.agreementId + " == " + workplaceInfo_old.getAgreementId());
+		if(null == this.agreementId || null == workplaceInfo_old.getAgreementId()) {
+			if (this.agreementId != workplaceInfo_old.getAgreementId()) return true;
+		}else
+			if (!this.agreementId.equals(workplaceInfo_old.getAgreementId())) return true;
+		
+//		Window.alert("AgreementDescription -> " + this.agreementDescription + " == " + workplaceInfo_old.getAgreementDescription());
+		if (this.agreementDescription != workplaceInfo_old.getAgreementDescription()) return true;
+		
+//		Window.alert("Activity -> " + this.activityId + " == " + workplaceInfo_old.getActivityId());
+		if(null == this.activityId || null == workplaceInfo_old.getActivityId()) {
+			if (this.activityId != workplaceInfo_old.getActivityId()) return true;
+		}else
+			if (!this.activityId.equals(workplaceInfo_old.getActivityId())) return true;
+				
+//		Window.alert("Workplace -> " + this.workplaceId + " == " + workplaceInfo_old.getWorkplaceId());
+		if (!this.workplaceId.equals(workplaceInfo_old.getWorkplaceId())) return true;
+//		Window.alert("PayrollWorkplace -> " + this.payrollWorkplaceId + " == " + workplaceInfo_old.getPayrollWorkplaceId());
+		if (!this.payrollWorkplaceId.equals(workplaceInfo_old.getPayrollWorkplaceId())) return true;
+		
+		return false; // Si no ha cambiado nada
+	}
+	
 	public String getDescription() {
 		return description;
 	}

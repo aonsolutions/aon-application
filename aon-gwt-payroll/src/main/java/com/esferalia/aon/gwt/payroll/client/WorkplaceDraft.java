@@ -18,6 +18,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -27,7 +28,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class WorkplaceDraft extends Composite implements ContextMenuHandler {
-
+	
 	// -------------------------------------------------- UiBinder --------------------------------------------------
 
 	private static EmployeeDraftUiBinder uiBinder = GWT.create(EmployeeDraftUiBinder.class);
@@ -100,6 +101,7 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 	// ------------------------------------------------------ VARIABLES DE LA CLASE --------------------------------------------------
 
 	private WorkplaceDraftObject workplaceDraftObject;
+	private Timer timer;
 
 	// ------------------------------------------------ CONSTRUCTOR ------------------------------------------------------
 
@@ -115,38 +117,39 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 	@UiHandler("enableWorkplaceButton")
 	void onEnableWorkplaceClick(ClickEvent event) {
 		workplaceDraftObject.setWorkplaceActive(true);
-		save();
+		//save();
 	}
 
 	@UiHandler("disableWorkplaceButton")
 	void onDisableWorkplaceClick(ClickEvent event) {
 		workplaceDraftObject.setWorkplaceActive(false);
-		save();
+		//save();
 	}
 	
 	@UiHandler("workplaceDescription")
 	void onWorkplaceDescriptionChangeValue(ChangeEvent event) {
 		workplaceDraftObject.setWorkplaceDescription(workplaceDescription.getValue());
-		save();
+		//save();
 	}
 
 	@UiHandler("workplaceEconomicConcert")
 	void onWorkplaceEconomicConcertChangeValue(ChangeEvent event) {
 		workplaceDraftObject.setWorkplaceEconomicConcert(workplaceEconomicConcert.getSelectedIndex() - 1);
-		save();
+		//save();
 	}
 	
 	@UiHandler("workpalceAgreement")
 	void onContractAgreementChangeValue(ChangeEvent event) {
 		Integer agreementId = workplaceDraftObject.getAgreementId(this.workpalceAgreement.getSelectedItemText());
 		workplaceDraftObject.setWorkplaceAgreement(agreementId);
-		save();
+		//save();
 	}
 	
 	private void save() {
 		saveStatus.setText("Guardando...");
 		workplaceDraftObject.updateWorkplace(
-				r -> { setWorkplaceDraftObject(workplaceDraftObject);
+				r -> { 
+					   //setWorkplaceDraftObject(workplaceDraftObject);
 					   saveStatus.setText("Guardado");
 					 }, 
 				t -> {}
@@ -158,9 +161,30 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 	public void setWorkplaceDraftObject(WorkplaceDraftObject workplaceDraftObject) {
 		this.workplaceDraftObject = workplaceDraftObject;
 		this.workplaceDraftObject.initializeWorkplace(
-				s -> { initializeView();}
+				s -> { initializeView();
+					   if(null != timer) timer.cancel();
+					   initializeScheduler();
+					 }
 				, f -> {}
 		);
+		
+	}
+
+	private void initializeScheduler() {
+		timer = new Timer() {
+
+			@Override
+			public void run() {
+				//save();
+				if(isAttached() && workplaceDraftObject.hasChanged()) {
+//					Window.alert("Guardando....");
+					save();
+				}else
+					saveStatus.setText("");
+			}
+		};
+//		timer.scheduleRepeating(8000);
+		timer.scheduleRepeating(4000);
 		
 	}
 
@@ -255,7 +279,7 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 						}
 					}
 					workplaceDraftObject.setWorkplaceAddress(addressId);
-					save();
+					//save();
 				}
 			});
 			workplaceAddressPanel.add(workplaceAddressWidget);
@@ -301,7 +325,7 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 						}
 					}
 					workplaceDraftObject.setWorkplaceCalendar(calendarId);
-					save();
+					//save();
 					
 				}
 			});
@@ -345,18 +369,22 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 							break;
 						}
 					}
+//					Window.alert("Actividad Id : " + activityId);
 					workplaceDraftObject.setWorkplaceActivity(activityId);
-					save();
+					//save();
 					
 				}
 			});
 			workplaceActivityPanel.add(workplaceActivityWidget);	
 			if(((ListBox) workplaceActivityWidget).getItemCount() != 0){
 				if(((ListBox) workplaceActivityWidget).getItemCount() == 2){
-					((ListBox) workplaceActivityWidget).setSelectedIndex(1);
-					DomEvent.fireNativeEvent(Document.get().createChangeEvent(), workplaceActivityWidget);
-				}else
-					((ListBox) workplaceActivityWidget).setSelectedIndex(workplaceDraftObject.getWorkplaceActivityIndex()+1);
+					if(null == workplaceDraftObject.getWorkplaceInfo().getActivityId()) {
+//						Window.alert("IS NULL");
+						((ListBox) workplaceActivityWidget).setSelectedIndex(1);
+						DomEvent.fireNativeEvent(Document.get().createChangeEvent(), workplaceActivityWidget);
+					}else
+						((ListBox) workplaceActivityWidget).setSelectedIndex(workplaceDraftObject.getWorkplaceActivityIndex()+1);
+				}
 			}
 		}
 		

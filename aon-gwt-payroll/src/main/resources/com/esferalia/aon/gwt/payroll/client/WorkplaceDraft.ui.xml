@@ -144,7 +144,7 @@
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="aon-finding-toolbar-item-group {style.paddingTop}">
 					    <g:HorizontalPanel ui:field='saveStatusPanel'>
-					        <g:Label ui:field='saveStatus' styleName="{style.fontEnableStyle}" visible="false"></g:Label>
+					        <g:Label ui:field='saveStatus' styleName="{style.fontEnableStyle}" visible="true"></g:Label>
 					    </g:HorizontalPanel>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="aon-finding-toolbar-item-group {style.paddingTop}">
