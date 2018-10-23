@@ -169,12 +169,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			employeesService = DomainEmployeesServiceAsync.newInstance();
 			enterprisesService = DomainEnterprisesServiceAsync.newInstance();
 			
-			EmployeeNewDraftObject employeeNewDraftObject = new EmployeeNewDraftObject(workplace, employeesService, enterprisesService);
-			onEmployeeNewDraftSelected(employeeNewDraftObject);
-			employeeNewDraft = getEmployeeNewDraft();
-			employeeNewDraft.setWidth(Window.getClientWidth() / 2 + "px");
-			employeeNewDraft.show();
-			employeeNewDraft.center();
+			EmployeeDialog employeeDialog = new EmployeeDialog();//new EmployeeNewDraftObject(workplace, employeesService, enterprisesService);
+			//onEmployeeNewDraftSelected(employeeNewDraftObject);
+			//employeeNewDraft = getEmployeeNewDraft();
+			//employeeDialog.setWidth(Window.getClientWidth() / 2 + "px");
+			employeeDialog.show();
+			employeeDialog.center();
 		}
 	}
 
