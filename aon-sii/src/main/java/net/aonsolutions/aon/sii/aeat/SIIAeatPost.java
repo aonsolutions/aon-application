@@ -77,7 +77,7 @@ public class SIIAeatPost extends SIIPost2{
 	   	byte[] requestXml = null;
 		byte[] responseXml = null;
 		
-		SuministroLRFacturasEmitidas suministro = FacturasEmitidas.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceId, list, false, terceros);
+		SuministroLRFacturasEmitidas suministro = FacturasEmitidas.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceId, list, type.isModificacion(), terceros);
 	    JAXBElement<Object> response = (JAXBElement<Object>) post(uri, suministro);
 	    		
 	    RespuestaLRFEmitidasType respuesta = (RespuestaLRFEmitidasType) response.getValue();
@@ -160,7 +160,7 @@ public class SIIAeatPost extends SIIPost2{
    		byte[] requestXml = null;
 		byte[] responseXml = null;
 		
-		SuministroLRFacturasRecibidas suministro = FacturasRecibidas.getInstance().suministroFacturasRecibidas(domain, login, company, invoiceId, list, false, terceros);
+		SuministroLRFacturasRecibidas suministro = FacturasRecibidas.getInstance().suministroFacturasRecibidas(domain, login, company, invoiceId, list, type.isModificacion(), terceros);
     	JAXBElement<Object> response = (JAXBElement<Object>) post(uri, suministro);
     		
     	RespuestaLRFRecibidasType respuesta = (RespuestaLRFRecibidasType) response.getValue();
@@ -243,7 +243,7 @@ public class SIIAeatPost extends SIIPost2{
     	byte[] requestXml = null;
     	byte[] responseXml = null;
     	
-    	SuministroLRBienesInversion suministro = BienesInversion.getInstance().suministroBienesInversion(domain, login, company, invoiceId, contextList, false, terceros);     	
+    	SuministroLRBienesInversion suministro = BienesInversion.getInstance().suministroBienesInversion(domain, login, company, invoiceId, contextList, type.isModificacion(), terceros);     	
     	JAXBElement<RespuestaLRBienesInversionType> response = (JAXBElement<RespuestaLRBienesInversionType>) post(uri, suministro);
     	RespuestaLRBienesInversionType respuesta = response.getValue();
     	
@@ -296,7 +296,7 @@ public class SIIAeatPost extends SIIPost2{
 		JSONArray array = new JSONArray();
 		byte[] requestXml = null;
     	byte[] responseXml = null;
-    	SuministroLRDetOperacionIntracomunitaria suministro = OperacionesIntracomunitarias.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, false, terceros);     	
+    	SuministroLRDetOperacionIntracomunitaria suministro = OperacionesIntracomunitarias.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, type.isModificacion(), terceros);     	
     	
     	JAXBElement<RespuestaLROComunitariasType> response = (JAXBElement<RespuestaLROComunitariasType>) post(uri, suministro);
     	RespuestaLROComunitariasType respuesta = response.getValue();
