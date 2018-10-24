@@ -339,6 +339,18 @@ public class printLiqList extends HttpServlet{
 							if("0.0".equals(p_fondo)){
 								ApplicationParameter app = AON.getApplicationParameter(domain.getName(), domain.getId(), login, AppParam.QUALITY_PFONDO);
 								p_fondo = app != null ? app.getValue(): "0.0";
+							} else {
+								LinkedList<DataResponseDetail> dddd = AON.getDataResponseDetailStream(domain.getName(), domain.getId(), login, f -> 
+								f.getDataResponseProperty().eq(r.getId()).and(f.getDataVariableProperty().eq(QualitySheetCode.UFQC2.getName())))
+								.sorted((o1, o2) -> o2.getModificationDate().compareTo(o1.getModificationDate())).collect(Collectors.toCollection(LinkedList::new));
+								if(dddd.size()> 1) {
+									map.put(QualitySheetCode.UFQC2.getName(), dddd.get(0).getDataValue());
+									p_fondo = dddd.get(0).getDataValue();
+									for(Integer j = 1; j < dddd.size(); j++) {
+										Integer n = j;
+										AON.deleteDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(dddd.get(n).getId()));
+									}
+								}
 							}
 							Double pFondo = Double.parseDouble(p_fondo.replace(",", "."));
 							cell(libro, row, style3, 23, pFondo);

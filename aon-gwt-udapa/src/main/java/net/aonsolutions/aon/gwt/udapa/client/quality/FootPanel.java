@@ -231,7 +231,7 @@ public class FootPanel extends Composite {
 			tInfo.setWidget(0, 2, new Label("P Fondo: "));
 			String p_fondo = parent.getMap().containsKey(QualitySheetCode.UFQC2.getName()) ?  parent.getMap().get(QualitySheetCode.UFQC2.getName()) : "0.0";
 			Double pfondo = Double.parseDouble(p_fondo.replace(",", "."));
-			DoubleBox dbPFondo = new DoubleBox();
+			DoubleBox dbPFondo = new DoubleBox(12, 4);
 			dbPFondo.setStyleName(AON.AON_CSS.aonTextBox());
 			dbPFondo.setValue(pfondo);
 			dbPFondo.setWidth("35px");
