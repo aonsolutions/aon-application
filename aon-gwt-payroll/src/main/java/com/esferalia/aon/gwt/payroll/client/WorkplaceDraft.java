@@ -384,7 +384,8 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 						DomEvent.fireNativeEvent(Document.get().createChangeEvent(), workplaceActivityWidget);
 					}else
 						((ListBox) workplaceActivityWidget).setSelectedIndex(workplaceDraftObject.getWorkplaceActivityIndex()+1);
-				}
+				}else
+					((ListBox) workplaceActivityWidget).setSelectedIndex(workplaceDraftObject.getWorkplaceActivityIndex()+1);
 			}
 		}
 		
