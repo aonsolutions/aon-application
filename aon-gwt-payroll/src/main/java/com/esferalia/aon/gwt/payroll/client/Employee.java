@@ -45,6 +45,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -54,7 +55,7 @@ import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Employee extends ResizeComposite implements ContextMenuHandler {
+public abstract class Employee extends ResizeComposite implements ContextMenuHandler {
 
 	// ------------------------------------------ GOOGLE MAP ADDRESS INFO (INACTIVO) --------------------------------------------------
 
@@ -117,22 +118,10 @@ public class Employee extends ResizeComposite implements ContextMenuHandler {
 	}
 
 	// TABLA DATOS CONTRATO
-
+	
 	@UiField
 	TableElement contractDataTable;
-
-	@UiField
-	TextBox name;
-
-	@UiField
-	Label firstSurnameLabel;
-
-	@UiField
-	TextBox first_surname;
-
-	@UiField
-	TextBox second_surname;
-
+	
 	@UiField
 	TextBox document;
 
@@ -147,6 +136,21 @@ public class Employee extends ResizeComposite implements ContextMenuHandler {
 
 	@UiField(provided = true)
 	SuggestBox nationality;
+	
+	@UiField
+	TextBox security_social_num;
+
+	@UiField
+	TextBox name;
+
+	@UiField
+	Label firstSurnameLabel;
+
+	@UiField
+	TextBox first_surname;
+
+	@UiField
+	TextBox second_surname;
 
 	@UiField
 	ListBox workplace;
@@ -170,7 +174,7 @@ public class Employee extends ResizeComposite implements ContextMenuHandler {
 	ListBox modality;
 
 	@UiField
-	DateBoxEx strat_date;
+	DateBoxEx start_date;
 
 	@UiField
 	DateBoxEx end_date;
@@ -214,9 +218,6 @@ public class Employee extends ResizeComposite implements ContextMenuHandler {
 
 	@UiField
 	ListBox gender;
-
-	@UiField
-	TextBox security_social_num;
 	
 	@UiField
 	ListBox street_type;
@@ -274,19 +275,6 @@ public class Employee extends ResizeComposite implements ContextMenuHandler {
 
 		// Init Google Maps Places API (INACTIVO)
 		// initGoogleMapsPlaces();
-
-		this.document.addValueChangeHandler(new ValueChangeHandler<String>() {
-
-			@Override
-			public void onValueChange(ValueChangeEvent<String> document) {
-				Dni dni = new Dni(document.getValue());
-				
-				String document_type_str = checkDocumentType(document.getValue());
-				document_type.setText(document_type_str);
-
-				showNationality(document_type_str);
-			}
-		});
 
 		this.agreement.addChangeHandler(new ChangeHandler() {
 
@@ -376,51 +364,38 @@ public class Employee extends ResizeComposite implements ContextMenuHandler {
 	
 	@UiHandler("name")
 	void onNameChangeValue(ChangeEvent event) {
-		employeeDraftObject.setEmployeeName(name.getValue());
+		onEmployeeNameChange();
 	}
+	
+	public abstract void onEmployeeNameChange();
 
 	@UiHandler("first_surname")
 	void onFirstSurnameChangeValue(ChangeEvent event) {
-		employeeDraftObject.setEmployeeFirstSurname(first_surname.getValue());
+		onEmployeeFirstSurnameChange();
 	}
+	
+	public abstract void onEmployeeFirstSurnameChange();
 
 	@UiHandler("second_surname")
 	void onSecondSurnameChangeValue(ChangeEvent event) {
-		employeeDraftObject.setEmployeeSecondSurname(second_surname.getValue());
+		onEmployeeSecondSurnameChange();
 	}
+	
+	public abstract void onEmployeeSecondSurnameChange();
 	
 	@UiHandler("document")
 	void onDocumentChangeValue(ChangeEvent event) {
-		String documentStr = document.getValue();
-		String document_type_str = checkDocumentType(documentStr);
-		document_type.setText(document_type_str);
-		
-		if("DNI".equals(document_type_str)){
-			Dni dni = new Dni(documentStr);
-			if(dni.checkDNI())
-				document.removeStyleName(style.warning());
-			else
-				document.addStyleName(style.warning());
-		}else {
-			document.removeStyleName(style.warning());
-		}
-
-		employeeDraftObject.setEmployeeDocument(document.getValue());
-		employeeDraftObject.setEmployeeDocumentType(document_type_str);
-
-		showNationality(document_type_str);
+		onEmployeeDocumentChange();
 	}
+	
+	public abstract void onEmployeeDocumentChange();
 
 	@UiHandler("security_social_num")
 	void onSocialSecurityNumChangeValue(ChangeEvent event) {
-		employeeDraftObject.setEmployeeSocialSecurityNum(security_social_num.getValue());
-		
-		SocialSecurity ss = new SocialSecurity(security_social_num.getValue());
-		if(ss.checkSS())
-			security_social_num.removeStyleName(style.warning());
-		else
-			security_social_num.addStyleName(style.warning());
+		onEmployeeSSNumChange(); 
 	}
+	
+	public abstract void onEmployeeSSNumChange();
 
 	@UiHandler("activityCCC")
 	void onContractActivityCCCChangeValue(ChangeEvent event) {
@@ -456,21 +431,17 @@ public class Employee extends ResizeComposite implements ContextMenuHandler {
 	
 	@UiHandler("workplace")
 	void onContractWorkplaceChangeValue(ChangeEvent event) {
-		String workplaceName = this.workplace.getSelectedItemText();
-		Integer workplaceId = this.employeeDraftObject.getWorkplaceIdByName(workplaceName);
-		this.employeeDraftObject.setContractWorkplaceId(workplaceId);
+		onContractWorkplaceChange();
 	}
+	
+	public abstract void onContractWorkplaceChange();
 	
 	@UiHandler("contractType")
 	void onContractTypeChangeValue(ChangeEvent event) {
-		if (contractType.getSelectedIndex() == 0) {
-			employeeDraftObject.setContractType(null);
-			employeeDraftObject.setContractModel(null);
-		} else {
-			String contract_type_id_str = contractType.getSelectedItemText().split(" -")[0];
-			employeeDraftObject.setContractType(contract_type_id_str);
-		}
+		onContractTypeChange();
 	}
+	
+	public abstract void onContractTypeChange();
 
 	@UiHandler("modality")
 	void onContractModelChangeValue(ChangeEvent event) {
@@ -486,20 +457,26 @@ public class Employee extends ResizeComposite implements ContextMenuHandler {
 		}
 	}
 
-	@UiHandler("strat_date")
+	@UiHandler("start_date")
 	void onStartDateChangeValue(ValueChangeEvent<Date> event) {
-		employeeDraftObject.setContractStartDate(strat_date.getValue());
+		onContractStartDateChange();
 	}
+	
+	public abstract void onContractStartDateChange();
 
 	@UiHandler("end_date")
 	void onEndDateChangeValue(ValueChangeEvent<Date> event) {
-		employeeDraftObject.setContractEndDate(end_date.getValue());
+		onContractEndDateChange();
 	}
+	
+	public abstract void onContractEndDateChange();
 
 	@UiHandler("seniority_date")
 	void onSeniorityDateChangeValue(ValueChangeEvent<Date> event) {
-		employeeDraftObject.setContractSeniorityDate(seniority_date.getValue());
+		onContractSeniorityDateChange();
 	}
+	
+	public abstract void onContractSeniorityDateChange();
 
 	@UiHandler("agreement")
 	void onContractAgreementChangeValue(ChangeEvent event) {
@@ -542,8 +519,10 @@ public class Employee extends ResizeComposite implements ContextMenuHandler {
 
 	@UiHandler("category")
 	void onCategoryChangeValue(ChangeEvent event) {
-		employeeDraftObject.setContractCategory(category.getValue());
+		onContractCategoryChange();
 	}
+	
+	public abstract void onContractCategoryChange();
 
 	@UiHandler("quote_group")
 	void onQuoteGroupChangeValue(ChangeEvent event) {
@@ -575,13 +554,17 @@ public class Employee extends ResizeComposite implements ContextMenuHandler {
 	
 	@UiHandler("birth_date")
 	void onBithDateChangeValue(ValueChangeEvent<Date> event) {
-		employeeDraftObject.setEmployeeBirthDate(birth_date.getValue());
+		onEmployeeBirthDateChange();
 	}
+	
+	public abstract void onEmployeeBirthDateChange();
 
 	@UiHandler("gender")
 	void onGenderChangeValue(ChangeEvent event) {
-		employeeDraftObject.setEmployeeGender(gender.getSelectedIndex());
+		onEmployeeGenderChange();
 	}
+	
+	public abstract void onEmployeeGenderChange();
 	
 	@UiHandler("street_type")
 	void onStreetTypeChangeValue(ChangeEvent event) {
@@ -592,58 +575,80 @@ public class Employee extends ResizeComposite implements ContextMenuHandler {
 
 	@UiHandler("address")
 	void onAddressChangeValue(ValueChangeEvent<String> event) {
-		employeeDraftObject.setEmployeeAddress(address.getValue());
+		onEmployeeAddressChange();
 	}
+	
+	public abstract void onEmployeeAddressChange();
 
 	@UiHandler("addressNum")
 	void onAddressNumChangeValue(ChangeEvent event) {
-		employeeDraftObject.setEmployeeAddressNumber(addressNum.getValue());
+		onEmployeeAddressNumChange();
 	}
+	
+	public abstract void onEmployeeAddressNumChange();
 
 	@UiHandler("addressZip")
 	void onAddressZipChangeValue(ChangeEvent event) {
-		employeeDraftObject.setEmployeeAddressZip(addressZip.getValue());
+		onEmployeeAddressZipChange();
 	}
+	
+	public abstract void onEmployeeAddressZipChange();
 
 	@UiHandler("addressCity")
 	void onAddressCityChangeValue(ChangeEvent event) {
-		employeeDraftObject.setEmployeeAddressLacality(addressCity.getValue());
+		onEmployeeAddressCityChange();
 	}
+	
+	public abstract void onEmployeeAddressCityChange();
 
 	@UiHandler("addressProvince")
 	void onAddressProvinceChangeValue(ChangeEvent event) {
-		employeeDraftObject.setEmployeeAddressProvince(addressProvince.getSelectedItemText());
+		onEmployeeAddressProvinceChange();
 	}
+	
+	public abstract void onEmployeeAddressProvinceChange();
 
 	@UiHandler("phone")
 	void onPhoneChangeValue(ChangeEvent event) {
-		employeeDraftObject.setEmployeePhone(phone.getValue());
+		onEmployeePhoneChange();
 	}
+	
+	public abstract void onEmployeePhoneChange();
 
 	@UiHandler("mobile")
 	void onMobileChangeValue(ChangeEvent event) {
-		employeeDraftObject.setEmployeeMobile(mobile.getValue());
+		onEmployeeMobileChange();
 	}
+	
+	public abstract void onEmployeeMobileChange();
 
 	@UiHandler("email")
 	void onEmailChangeValue(ChangeEvent event) {
-		employeeDraftObject.setEmployeeEmail(email.getValue());
+		onEmployeeEmailChange();
 	}
+	
+	public abstract void onEmployeeEmailChange();
 
 	@UiHandler("payMethod")
 	void onPayMethodChangeValue(ChangeEvent event) {
-		employeeDraftObject.setEmployeePayMethod(payMethod.getSelectedItemText());
+		onEmployeePayMethodChange();
 	}
+	
+	public abstract void onEmployeePayMethodChange();
 
 	@UiHandler("account")
 	void onAccountChangeValue(ChangeEvent event) {
-		employeeDraftObject.setEmployeeAccount(account.getValue());
+		onEmployeeAccountChange();
 	}
+	
+	public abstract void onEmployeeAccountChange();
 
 	@UiHandler("bic")
 	void onBIClChangeValue(ChangeEvent event) {
-		employeeDraftObject.setEmployeeBIC(bic.getValue());
+		onEmployeeBICChange();
 	}
+	
+	public abstract void onEmployeeBICChange();
 
 
 	// --------------------------------------------------- METODOS DE LA CLASE ----------------------------------------------------
@@ -679,7 +684,7 @@ public class Employee extends ResizeComposite implements ContextMenuHandler {
 		this.workplace.clear();
 		this.contractType.clear();
 		this.modality.clear();
-		this.strat_date.setValue(null);
+		this.start_date.setValue(null);
 		this.end_date.setValue(null);
 		this.seniority_date.setValue(null);
 		this.agreement.clear();
@@ -708,34 +713,7 @@ public class Employee extends ResizeComposite implements ContextMenuHandler {
 	}
 
 	private void initializeListBox() {
-		//ACTIVITY - CCC
-		Integer index = 0;
-		Integer indexActCCC = 0;
-		this.activityCCC.addItem("-");
-		if(null != this.employeeInfo.getEnterpriseActivities())
-			for(Entry<Integer,String> entry : this.employeeInfo.getEnterpriseActivities().entrySet()){
-				for(CCCInfo cccInfo : this.employeeInfo.getCCCs().values()){
-					if(cccInfo.getActivityId() == entry.getKey()) {
-						index++;
-						this.activityCCC.addItem(entry.getValue() + " - " + CCCType.values()[cccInfo.getType()] + "[" + cccInfo.getCcc() + "] - " +  cccInfo.getGeozone());
-//						Window.alert(cccInfo.getActivityId() + " == " + this.employeeInfo.getEnterprise_activity_table_id() + " && " + cccInfo.getCCCId() + " == " + this.employeeInfo.getEnterprise_ccc_table_id());
-						if(cccInfo.getActivityId().equals(this.employeeInfo.getEnterprise_activity_table_id()) && cccInfo.getCCCId().equals(this.employeeInfo.getEnterprise_ccc_table_id()))
-							indexActCCC = index;
-					}
-				}
-			}
-//		Window.alert("ACTIVITY/CCC INDEX = " + indexActCCC);
-		this.activityCCC.setSelectedIndex(indexActCCC);
 		
-		//WORKPLACE
-		for(String workplaceStr : this.employeeInfo.getWorkplaces().values())
-			this.workplace.addItem(workplaceStr);
-		
-		// TIPO DE CONTRATO
-		this.contractType.addItem("-");
-		for (Entry<Integer, ContractTypeRecord> entry : this.contract_type.getContractTypes().entrySet()) {
-			this.contractType.addItem(entry.getKey() + " - " + entry.getValue().getContractTypeDescription());
-		}
 
 		// MODALIDAD
 		this.modality.addItem("-");
@@ -822,7 +800,7 @@ public class Employee extends ResizeComposite implements ContextMenuHandler {
 		this.contractTypeFreelance.setText("R" + String.valueOf("\u00E9") + "gimen especial de trabajadores aut" + String.valueOf("\u00F3") + "nomos");
 
 		//Periodo contrato
-		this.strat_date.setValue(employeeInfo.getStart_date());
+		this.start_date.setValue(employeeInfo.getStart_date());
 		this.end_date.setValue(employeeInfo.getEnd_date());
 		this.seniority_date.setValue(employeeInfo.getSeniority_date());
 
@@ -914,7 +892,7 @@ public class Employee extends ResizeComposite implements ContextMenuHandler {
 
 //		Window.alert("PERIODO CONTRATO");
 		//Periodo contrato
-		this.strat_date.setValue(employeeInfo.getStart_date());
+		this.start_date.setValue(employeeInfo.getStart_date());
 		this.end_date.setValue(employeeInfo.getEnd_date());
 		this.seniority_date.setValue(employeeInfo.getSeniority_date());
 
@@ -1160,7 +1138,7 @@ public class Employee extends ResizeComposite implements ContextMenuHandler {
 
 	// --------------------------------------------------- CHECK DOCUMENT TYPE -------------------------------------------------------
 
-	private static String checkDocumentType(String document) {
+	public String checkDocumentType(String document) {
 
 		RegExp dniPattern = RegExp.compile("\\d{8}\\-?[A-HJ-NP-TV-Z]");
 		RegExp niePattern = RegExp.compile("[A-Z]{1}\\d{7}[A-Z]{1}");
@@ -1177,7 +1155,7 @@ public class Employee extends ResizeComposite implements ContextMenuHandler {
 			return "Pasaporte";
 	}
 
-	private void showNationality(String document_type_str) {
+	public void showNationality(String document_type_str) {
 		if (document_type_str == "CIF" || document_type_str == "Pasaporte" || document_type_str == "NIE") {
 			this.nationalityLabelCell.getStyle().clearDisplay();
 			this.nationalityCell.getStyle().clearDisplay();

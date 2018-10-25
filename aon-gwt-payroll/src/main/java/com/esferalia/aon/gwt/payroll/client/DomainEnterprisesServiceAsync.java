@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.List;
 
+import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
@@ -10,6 +11,7 @@ import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
@@ -122,6 +124,14 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.setWorkplaceInfo(getCurrentDomainName(), workplaceInfo, asyncCallback);
 	}
 	
+	public void getWorkplaces(Integer workplaceId, AsyncCallback<List<Workplace>> asyncCallback) {
+		enterprisesServiceAsync.getWorkplaces(workplaceId, getCurrentDomainName(), asyncCallback);
+	}
+	
+	public void getActivitiesCCC(Integer workplaceId, AsyncCallback<ActivitiesCCC> asyncCallback) {
+		enterprisesServiceAsync.getActivitiesCCC(workplaceId, getCurrentDomainName(), asyncCallback);
+	}
+	
 	// ----------------------------------------------------------------- static
 	
 	private static String getCurrentUser() {
@@ -131,4 +141,7 @@ public class DomainEnterprisesServiceAsync {
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
 	}
+
+	
+
 }

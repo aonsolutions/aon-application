@@ -1,15 +1,18 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
+import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
 import static com.esferalia.aon.jooq.tables.Calendar.CALENDAR;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
+import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
-import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jooq.DSLContext;
@@ -19,6 +22,8 @@ import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
+import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 
 public class JooqWorkplace {
@@ -162,4 +167,95 @@ public class JooqWorkplace {
 		return workplaceInfo;
 	}
 
+	public static List<Workplace> getWorkplaces(Integer workplaceId, Connection connection) {
+		return getWorkplacesDB(DSL.using(connection, getDefaultSettings()), workplaceId);
+	}
+
+	private static List<Workplace> getWorkplacesDB(DSLContext dslContext, Integer workplaceId) {
+		List<Workplace> workplaces  = new ArrayList<Workplace>();
+		
+		Record WorkplaceRecord = dslContext.select().from(WORKPLACE)
+				.where(WORKPLACE.ID.eq(workplaceId))
+				.fetchOne();
+		
+		Result<Record> workplacesRecords = dslContext.select().from(WORKPLACE)
+				.where(WORKPLACE.ENTERPRISE.eq(WorkplaceRecord.get(WORKPLACE.ENTERPRISE)))
+				.orderBy(WORKPLACE.DESCRIPTION)
+				.fetch();
+		
+		for(Record record : workplacesRecords) {
+			Workplace workplace = new Workplace();
+			workplace.setId(record.get(WORKPLACE.ID));
+			workplace.setDescription(record.get(WORKPLACE.DESCRIPTION));
+			
+			workplaces.add(workplace);
+		}
+		
+		return workplaces;
+	}
+
+	public static ActivitiesCCC getActivitiesCCC(Integer workplaceId, Connection connection) {
+		return getActivitiesCCCDB(DSL.using(connection, getDefaultSettings()), workplaceId);
+	}
+
+	private static ActivitiesCCC getActivitiesCCCDB(DSLContext dslContext, Integer workplaceId) {
+		ActivitiesCCC activitiesCCC = new ActivitiesCCC();
+		
+		//ENTERPRISE ACTIVITIES-CCC
+		Record WorkplaceRecord = dslContext.select().from(WORKPLACE)
+				.where(WORKPLACE.ID.eq(workplaceId))
+				.fetchOne();
+		
+		Result<Record> enterpriseActivityRecords = dslContext.select().from(ENTERPRISE_ACTIVITY)
+				.where(ENTERPRISE_ACTIVITY.ENTERPRISE.eq(WorkplaceRecord.get(WORKPLACE.ENTERPRISE)))
+				.fetch();
+		
+		Map<Integer, String> activities = new HashMap<Integer, String>();
+		
+		for(Record r : enterpriseActivityRecords){
+			activities.put(r.get(ENTERPRISE_ACTIVITY.ID), r.get(ENTERPRISE_ACTIVITY.DESCRIPTION));
+			
+			Result<Record> enterpriseCCCRecords = dslContext.select().from(ENTERPRISE_CCC)
+					.where(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY.eq(r.get(ENTERPRISE_ACTIVITY.ID)))
+					.fetch();
+			
+			for(Record d : enterpriseCCCRecords){
+				Integer geozoneId = d.get(ENTERPRISE_CCC.GEOZONE);
+				String geozoneName = null;
+				if(null != geozoneId){
+					Record geozoneRecord = dslContext.select().from(GEOZONE)
+							.where(GEOZONE.ID.eq(geozoneId))
+							.fetchOne();
+					
+					geozoneName = geozoneRecord.get(GEOZONE.NAME);
+				}
+				activitiesCCC.addCCC(d.get(ENTERPRISE_CCC.ID), d.get(ENTERPRISE_CCC.CCC), d.get(ENTERPRISE_CCC.TYPE), geozoneName, r.get(ENTERPRISE_ACTIVITY.ID));
+			}
+		}
+		
+		activitiesCCC.setActivities(activities);
+		
+		return activitiesCCC;
+	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

@@ -148,27 +148,6 @@
 					    </tr>
 					    <tr>
 							<td style="background-color: #eaeaea; width: 200px;">
-								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Nombre Completo</g:Label>
-							</td>
-							<td colspan="2">
-								<g:TextBox ui:field="name" styleName='aon-inputText {style.maxWidthTextBox}'></g:TextBox>
-							</td>
-							<td>
-								<g:Label ui:field="firstSurnameLabel"
-									styleName='{style.alignTextCenter} {style.requiredColor}'>1er Apellido</g:Label>
-							</td>
-							<td >
-								<g:TextBox ui:field="first_surname" styleName='aon-inputText {style.maxWidthTextBox}'></g:TextBox>
-							</td>
-							<td style="width: 10%;">
-								<g:Label styleName='{style.alignTextCenter}'>2º Apellido</g:Label>
-							</td>
-							<td >
-								<g:TextBox ui:field="second_surname" styleName='aon-inputText {style.maxWidthTextBox4}'></g:TextBox>
-							</td>
-						</tr>
-						<tr>
-							<td style="background-color: #eaeaea; width: 200px;">
 								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Documentos</g:Label>
 							</td>
 							<td ui:field="documentTypeCell">
@@ -188,6 +167,27 @@
 							</td>
 							<td >
 								<g:TextBox ui:field="security_social_num" styleName='aon-inputText {style.maxWidthTextBox}'></g:TextBox>
+							</td>
+						</tr>
+					    <tr>
+							<td style="background-color: #eaeaea; width: 200px;">
+								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Nombre Completo</g:Label>
+							</td>
+							<td colspan="2">
+								<g:TextBox ui:field="name" styleName='aon-inputText {style.maxWidthTextBox}'></g:TextBox>
+							</td>
+							<td>
+								<g:Label ui:field="firstSurnameLabel"
+									styleName='{style.alignTextCenter} {style.requiredColor}'>1er Apellido</g:Label>
+							</td>
+							<td >
+								<g:TextBox ui:field="first_surname" styleName='aon-inputText {style.maxWidthTextBox}'></g:TextBox>
+							</td>
+							<td style="width: 10%;">
+								<g:Label styleName='{style.alignTextCenter}'>2º Apellido</g:Label>
+							</td>
+							<td >
+								<g:TextBox ui:field="second_surname" styleName='aon-inputText {style.maxWidthTextBox4}'></g:TextBox>
 							</td>
 						</tr>
 						<tr>
@@ -236,7 +236,7 @@
 								<g:Label styleName='{style.requiredColor}'>Fecha inicio</g:Label>
 							</td>
 							<td>
-								<a:DateBoxEx ui:field="strat_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle}'></a:DateBoxEx>
+								<a:DateBoxEx ui:field="start_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle}'></a:DateBoxEx>
 							</td>
 							<td>
 								<g:Label styleName='{style.alignTextCenter}'>Fecha fin</g:Label>

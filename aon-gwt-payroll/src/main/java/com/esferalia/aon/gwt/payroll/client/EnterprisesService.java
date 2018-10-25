@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.List;
 
+import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
@@ -10,6 +11,7 @@ import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -68,6 +70,10 @@ public interface EnterprisesService extends RemoteService {
 	WorkplaceInfo getWorkplaceInfo(String domain, Integer workplaceId);
 
 	WorkplaceInfo setWorkplaceInfo(String domain, WorkplaceInfo workplaceInfo);
+
+	List<Workplace> getWorkplaces(Integer workplaceId, String domain);
+
+	ActivitiesCCC getActivitiesCCC(Integer workplaceId, String domain);
 	
 	
 }
