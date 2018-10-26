@@ -86,7 +86,7 @@ public class AccountBalanceReport implements Serializable{
 			return amounts;
 		}
 	}
-	
+	private ReportMetadata metadata;	
 	private AccountPeriod selectedPeriod;
 	private EnterpriseActivity selectedActivity;
 	private AccountingReportParams params;
@@ -94,6 +94,14 @@ public class AccountBalanceReport implements Serializable{
 	private LinkedHashSet<String> periods = new LinkedHashSet<String>();
 	private Map<String, LinkedList<AccountBalance>> unreadAccounts = new LinkedHashMap<String, LinkedList<AccountBalance>>();
 	
+	
+	public ReportMetadata getMetadata() {
+		return metadata;
+	}
+	public AccountBalanceReport setMetadata(ReportMetadata metadata) {
+		this.metadata = metadata;
+		return this;
+	}
 	
 	public AccountPeriod getSelectedPeriod() {
 		return selectedPeriod;

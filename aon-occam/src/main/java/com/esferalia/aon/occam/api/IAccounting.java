@@ -76,8 +76,8 @@ public interface IAccounting {
 	public String getSalaryFormatted(AONContext ctx, Date from, Date to);
 	
 	// 			BALANCE
-	public LinkedHashMap<String, AccountBalance> 
-		getAccountBalances(AONContext ctx,AccMiningParameters params) throws AonCoreException;
+	public LinkedHashMap<String, AccountBalance> getAccountBalances(AONContext ctx,AccMiningParameters params) throws AonCoreException;
+	public LinkedHashMap<String, AccountBalance> getAccountBalances(AONContext ctx,AccMiningParameters params, boolean pyg) throws AonCoreException;
 
 	// 			STATEMENT
 	public Stream<AccountStatement> getAccountBalance(AONContext ctx, AccountingReportParams params) 

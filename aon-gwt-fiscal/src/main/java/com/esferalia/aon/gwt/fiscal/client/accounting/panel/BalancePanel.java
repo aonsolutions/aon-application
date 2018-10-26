@@ -126,7 +126,7 @@ public class BalancePanel extends ScrollPanel implements HasSelectionHandlers<Ac
 					if (balances != null && balances.size() > 0) {
 						panel.add(new Label( (balances.size()>1
 									?"El saldo de las siguientes cuentas contables"
-									:"El saldo de la cuenta contable")
+									:"El saldo de la siguiente cuenta contable")
 								+ " no se est\u00E1 teniendo en cuenta para el c\u00E1lculo del balance del ejericio "+key 								
 						));
 						for (AccountBalance bal : balances ) {
@@ -207,7 +207,7 @@ public class BalancePanel extends ScrollPanel implements HasSelectionHandlers<Ac
 				
 				for ( String period : line.getAmounts().keySet() ) {
 					int column = columns.get(period);
-					Label numLabel = new Label(AON.FMT.format(line.getAmounts().get(period)));
+					Label numLabel = new Label(AON.ACCOUNT_FMT.format(line.getAmounts().get(period)));
 					// numLabel.getElement().getStyle().setMarginRight( (line.getLevel() * 12.0) , Unit.PX);
 					numLabel.getElement().getStyle().setFontSize(fontSize, Unit.EM);
 					tab.setWidget(row, column, numLabel);

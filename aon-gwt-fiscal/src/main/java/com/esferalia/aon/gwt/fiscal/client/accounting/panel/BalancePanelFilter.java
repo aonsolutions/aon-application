@@ -346,9 +346,12 @@ public class BalancePanelFilter extends SimpleLayoutPanel implements HasValueCha
 		// ************************************************************************  TIPO BALANCE
 		balanceType = new ListBox();
 		balanceType.setWidth("200px");
-		balanceType.addItem( "Normal");
-		balanceType.addItem( "Abreviado");
-		balanceType.addItem( "PYMES");
+		balanceType.addItem( "Balance de situaci\u00F3n (Normal)");
+		balanceType.addItem( "Balance de situaci\u00F3n (Abreviado)");
+		
+		balanceType.addItem( "Balance de situaci\u00F3n (PYMES)");
+		balanceType.addItem( "Cuenta de Explotaci\u00F3n (Normal)");
+		//balanceType.addItem( "Cuenta de Explotaci\u00F3n (Abreviada)");
 		balanceType.setSelectedIndex(0);
 		if (params != null ) {
 			balanceType.setSelectedIndex(params.getBalanceType().ordinal());

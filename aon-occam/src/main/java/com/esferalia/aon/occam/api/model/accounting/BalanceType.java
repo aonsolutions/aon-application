@@ -4,9 +4,10 @@ import java.io.Serializable;
 
 public enum BalanceType implements Serializable {
 	
-	 BALANCE_NORMAL		("Balance de Situación (Normal)")
-	,BALANCE_ABBREVIATE	("Balance de Situación (Abreviado)")
-	,BALANCE_PYMES		("Balance de Situación (PYMES)")
+	 BALANCE_NORMAL		("Balance de Situaci\u00F3n (Normal)")
+	,BALANCE_ABBREVIATE	("Balance de Situaci\u00F3n (Abreviado)")
+	,BALANCE_PYMES		("Balance de Situaci\u00F3n (PYMES)")
+	,PYG_NORMAL			("Cuenta de explotaci\u00F3n (Normal)")
 	;
 	
 	private String name;

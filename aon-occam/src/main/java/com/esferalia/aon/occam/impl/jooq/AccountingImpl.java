@@ -279,9 +279,11 @@ public class AccountingImpl implements IAccounting {
 	}
 	
 	// 					      BALANCE
-	public LinkedHashMap<String, AccountBalance>
-		getAccountBalances(AONContext ctx,AccMiningParameters params) throws AonCoreException {
+	public LinkedHashMap<String, AccountBalance>  getAccountBalances(AONContext ctx,AccMiningParameters params) throws AonCoreException {
 		return AccountEntryDAO.fetchBalance(ctx, params);		
+	}
+	public LinkedHashMap<String, AccountBalance> getAccountBalances(AONContext ctx,AccMiningParameters params, boolean pyg) throws AonCoreException {
+		return AccountEntryDAO.fetchBalance(ctx, params,pyg);		
 	}
 	// 					      STATEMENT
 	@Override

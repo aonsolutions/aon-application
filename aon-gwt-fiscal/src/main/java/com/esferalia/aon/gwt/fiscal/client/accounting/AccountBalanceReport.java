@@ -26,7 +26,8 @@ import com.google.gwt.user.client.ui.Label;
 
 public class AccountBalanceReport extends MainEntryPoint {
 	
-	private static final String ACC_BALANCE_REPORT_PRINT = "/aon_gwt_fiscal/roms/AccountBalanceReportExcelPrint";
+	private static final String ACC_BALANCE_REPORT_PDF_PRINT = "/aon_gwt_fiscal/roms/AccountBalanceReportPDFPrint";
+	private static final String ACC_BALANCE_REPORT_EXCEL_PRINT = "/aon_gwt_fiscal/roms/AccountBalanceReportExcelPrint";
 	
 	@Override
 	public void onModuleLoad() {
@@ -82,16 +83,16 @@ public class AccountBalanceReport extends MainEntryPoint {
 		formFlowPanel.add(userHidden);
 		buttonContainer.add(diskForm);
 
-		final Button print = new Button();
-		print.setText(AON.MSG.print());
-		print.setTitle(AON.MSG.print());
-		print.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		print.addStyleName(AON.AON_CSS.aonIconExcel());
-		print.addClickHandler(new ClickHandler() {
+		final Button pdfPrint = new Button();
+		pdfPrint.setText(AON.MSG.print());
+		pdfPrint.setTitle(AON.MSG.print());
+		pdfPrint.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		pdfPrint.addStyleName(AON.AON_CSS.aonIconPdf());
+		pdfPrint.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				diskForm.setAction(GWT.getHostPageBaseURL() + ACC_BALANCE_REPORT_PRINT);
+				diskForm.setAction(GWT.getHostPageBaseURL() + ACC_BALANCE_REPORT_PDF_PRINT);
 				accountReportParamsHidden.setValue(JsonParams.convert(panel.getWidgetParams()));
 				domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
 				domainNameHidden.setValue(getCurrentDomainName());
@@ -99,7 +100,26 @@ public class AccountBalanceReport extends MainEntryPoint {
 				diskForm.submit();
 			}
 		});
-		buttonContainer.add(print);
+		buttonContainer.add(pdfPrint);
+
+		final Button excelPrint = new Button();
+		excelPrint.setText(AON.MSG.print());
+		excelPrint.setTitle(AON.MSG.print());
+		excelPrint.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		excelPrint.addStyleName(AON.AON_CSS.aonIconExcel());
+		excelPrint.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				diskForm.setAction(GWT.getHostPageBaseURL() + ACC_BALANCE_REPORT_EXCEL_PRINT);
+				accountReportParamsHidden.setValue(JsonParams.convert(panel.getWidgetParams()));
+				domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
+				domainNameHidden.setValue(getCurrentDomainName());
+				userHidden.setValue(getCurrentUser());
+				diskForm.submit();
+			}
+		});
+		buttonContainer.add(excelPrint);
 
 		toolbarPanel.add(toolbar);
 		

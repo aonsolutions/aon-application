@@ -99,6 +99,14 @@
       <scope>provided</scope>
       <classifier>sources</classifier>
     </dependency>
+    
+    <dependency>
+		<groupId>net.aonsolutions</groupId>	
+		<artifactId>aon.accounting.report</artifactId>
+      	<version>${project.version}</version>
+      	<scope>compile</scope>
+    </dependency>
+		
     <dependency>
       <groupId>com.esferalia.aon</groupId>
       <artifactId>aon.gwt.common</artifactId>
@@ -125,6 +133,8 @@
 		<version>${project.version}</version>
 		<scope>compile</scope>
 	</dependency>
+	
+	<artifactId>aon.accounting.report</artifactId>
 	
 <!-- 
 

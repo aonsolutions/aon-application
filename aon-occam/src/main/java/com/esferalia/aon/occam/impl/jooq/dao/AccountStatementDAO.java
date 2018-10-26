@@ -48,6 +48,7 @@ import com.esferalia.aon.occam.api.model.DateInterval;
 import com.esferalia.aon.occam.api.model.IAccountParams;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
+import com.esferalia.aon.occam.api.model.accounting.BalanceType;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
@@ -57,6 +58,7 @@ import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.server.accounting.AccBOEBalanceAbbreviateKey;
 import com.esferalia.aon.occam.server.accounting.AccBOEBalanceNormalKey;
 import com.esferalia.aon.occam.server.accounting.AccBOEBalancePYMESKey;
+import com.esferalia.aon.occam.server.accounting.AccBOEPyGNormalKey;
 import com.esferalia.aon.occam.server.accounting.AccMiningMVELContext;
 import com.esferalia.aon.occam.server.accounting.IBalanceKey;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -826,7 +828,7 @@ public class AccountStatementDAO {
 	}
 	
 	public static AccountBalanceReport balanceReport(AONContext ctx, AccountingReportParams params) {
-		if (params.isAbbreviate()) {
+		if (params.getBalanceType() == BalanceType.BALANCE_ABBREVIATE) {
 			return balanceReport(ctx,params,AccBOEBalanceAbbreviateKey.values(), new IBalanceKeyCallback() {
 				
 				@Override
@@ -849,8 +851,7 @@ public class AccountStatementDAO {
 					};
 				}
 			}); 
-		}
-		else if (params.isPymes()) {
+		} else if (params.getBalanceType() == BalanceType.BALANCE_PYMES) {
 			return balanceReport(ctx,params,AccBOEBalancePYMESKey.values(), new IBalanceKeyCallback() {
 				
 				@Override
@@ -873,29 +874,54 @@ public class AccountStatementDAO {
 					};
 				}
 			}); 
-		}
-		return balanceReport(ctx,params,AccBOEBalanceNormalKey.values(), new IBalanceKeyCallback() {
-			
-			@Override
-			public IBalanceKey getKey(String value) {
-				return AccBOEBalanceNormalKey.valueOf(value);
-			}
-			
-			@Override
-			public IAccMiningKeyAccept getAccepter() {
-				return new IAccMiningKeyAccept() {
-			
-					@Override
-					public boolean acceptKey(Object key) {
-						try {
-							return (AccBOEBalanceNormalKey.valueOf((String) key) != null);	
-						} catch (IllegalArgumentException e) {
-							return false;
+		} else if (params.getBalanceType() == BalanceType.BALANCE_NORMAL) {
+			return balanceReport(ctx,params,AccBOEBalanceNormalKey.values(), new IBalanceKeyCallback() {
+				
+				@Override
+				public IBalanceKey getKey(String value) {
+					return AccBOEBalanceNormalKey.valueOf(value);
+				}
+				
+				@Override
+				public IAccMiningKeyAccept getAccepter() {
+					return new IAccMiningKeyAccept() {
+				
+						@Override
+						public boolean acceptKey(Object key) {
+							try {
+								return (AccBOEBalanceNormalKey.valueOf((String) key) != null);	
+							} catch (IllegalArgumentException e) {
+								return false;
+							}
 						}
-					}
-				};
-			}
-		}); 
+					};
+				}
+			}); 
+		} else if (params.getBalanceType() == BalanceType.PYG_NORMAL) {
+			return balanceReport(ctx,params,AccBOEPyGNormalKey.values(), new IBalanceKeyCallback() {
+				
+				@Override
+				public IBalanceKey getKey(String value) {
+					return AccBOEPyGNormalKey.valueOf(value);
+				}
+				
+				@Override
+				public IAccMiningKeyAccept getAccepter() {
+					return new IAccMiningKeyAccept() {
+				
+						@Override
+						public boolean acceptKey(Object key) {
+							try {
+								return (AccBOEPyGNormalKey.valueOf((String) key) != null);	
+							} catch (IllegalArgumentException e) {
+								return false;
+							}
+						}
+					};
+				}
+			}); 
+		} 
+		throw new AonCoreException("No se ha indicado un tipo de balance adecuado");	
 	}
 
 	public static AccountBalanceReport balanceReport(AONContext ctx, AccountingReportParams params, IBalanceKey[] keys,IBalanceKeyCallback callback) {
@@ -931,7 +957,7 @@ public class AccountStatementDAO {
 		mParams.setDomain(ctx.getDomainId());
 		mParams.setStartDate( params.getFromDate() );
 		mParams.setEndDate( params.getToDate() );
-		Map<String, AccountBalance> accounts = ACCOUNTING.getAccountBalances(ctx, mParams); 
+		Map<String, AccountBalance> accounts = ACCOUNTING.getAccountBalances(ctx, mParams, params.getBalanceType()==BalanceType.PYG_NORMAL); 
 		mvelCtx.setAccounts( accounts );
 		
 		for (IBalanceKey key : keys) {
@@ -1010,22 +1036,3 @@ public class AccountStatementDAO {
 		return buf.toString();
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

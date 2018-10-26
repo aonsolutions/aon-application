@@ -275,6 +275,12 @@ public class ACCOUNTING {
 		return getAccounting().getAccountBalances(ctx, params);
 	}
 
+	public static LinkedHashMap<String, AccountBalance> getAccountBalances(
+			AONContext ctx, AccMiningParameters params,boolean pyg)
+					throws AonCoreException {
+		return getAccounting().getAccountBalances(ctx, params,pyg);
+	}
+
 	/**
 	 * Inserta en el borrador contable un apunte de nóminas con los datos leídos
 	 * desde nóminas:

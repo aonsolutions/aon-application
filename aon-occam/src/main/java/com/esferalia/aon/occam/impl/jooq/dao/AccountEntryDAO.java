@@ -452,9 +452,13 @@ public class AccountEntryDAO {
 			}
 		}
 	}
-
 	public static LinkedHashMap<String, AccountBalance> fetchBalance(
 			AONContext ctx, AccMiningParameters params) {
+		return fetchBalance(ctx, params, false);
+	}
+
+	public static LinkedHashMap<String, AccountBalance> fetchBalance(
+			AONContext ctx, AccMiningParameters params,boolean pyg) {
 		java.sql.Date start = AonDateUtils.toSql(params.getStartDate()!= null? params.getStartDate() : AonDateUtils.getYearFirstDay(0));
 		java.sql.Date end = AonDateUtils.toSql(params.getEndDate()!= null? params.getEndDate() : AonDateUtils.getYearLastDay(9999));
 		
@@ -462,6 +466,11 @@ public class AccountEntryDAO {
 		Field<BigDecimal> sumDebit = DSL.sum(ACCOUNT_ENTRY_DETAIL.DEBIT); 
 		Field<BigDecimal> sumCredit = DSL.sum(ACCOUNT_ENTRY_DETAIL.CREDIT); 
 		LinkedHashMap<String, AccountBalance> map = new LinkedHashMap<String, AccountBalance>();
+		Condition pygCondition = pyg
+				?ACCOUNT_ENTRY.ENTRY_TYPE.ne(AccountEntryType.OPERATING.getValue())
+						.and(ACCOUNT.CODE.like("6%").or(ACCOUNT.CODE.like("7%")) )
+				:DSL.trueCondition()
+		;
 		ctx.getDslContext()
 			.select(ACCOUNT_ENTRY.ENTRY_TYPE, accountField, sumDebit, sumCredit)
 			.from( ACCOUNT_ENTRY )
@@ -470,6 +479,7 @@ public class AccountEntryDAO {
 			.where(ACCOUNT_ENTRY.DOMAIN.equal(params.getDomain()))
 			.and(ACCOUNT_ENTRY.ENTRY_DATE.between(start,end))
 			.and(ACCOUNT_ENTRY.ENTRY_TYPE.ne(AccountEntryType.CLOSING.getValue()) )
+			.and(pygCondition)
 			.groupBy(ACCOUNT_ENTRY.ENTRY_TYPE, accountField)
 			.fetch()
 			.stream()
