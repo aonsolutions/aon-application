@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfoDataBase;
+import com.esferalia.aon.gwt.payroll.shared.StreetType;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
@@ -358,12 +359,14 @@ public class EmployeeDialogObject {
 		newEmployeeInfo.setAgreement_level(agreement_level);		
 	}
 	
-	public void setContractQuoteGroup(String quote_group) {
-		newEmployeeInfo.setQuote_group(quote_group);		
+	public void setContractQuoteGroup(Integer quoteGroupIndex) {
+		String quoteGroup = getQuoteByIndex(quoteGroupIndex);
+		newEmployeeInfo.setQuote_group(quoteGroup);		
 	}
 	
-	public void setContractOccupation(String ocupation) {
-		newEmployeeInfo.setOcupation(ocupation);		
+	public void setContractOccupation(Integer occupationIndex) {
+		String contractOccupation = getOcupationByIndex(occupationIndex);
+		newEmployeeInfo.setOcupation(contractOccupation);		
 	}
 
 	public void setContractJourneyType(Boolean journey_type) {
@@ -470,6 +473,18 @@ public class EmployeeDialogObject {
 	public void setSSRegime(int ssRegime) {
 		newEmployeeInfo.setSSRegime((byte) ssRegime);
 	}
+	
+	public void setContractActivityId(Integer activityID) {
+		newEmployeeInfo.setEnterprise_activity_table_id(activityID);
+	}
+
+	public void setContractCCCId(Integer cccId) {
+		newEmployeeInfo.setEnterprise_ccc_table_id(cccId);
+	}
+
+	public void setContractCCCType(byte cccType) {
+		newEmployeeInfo.setEnterprise_ccc_type(cccType);
+	}
 
 	public boolean checkDocumentValidation(String document_type_string, String document_string) {
 		if("DNI".equals(document_type_string)){
@@ -501,6 +516,99 @@ public class EmployeeDialogObject {
 	
 	public void setContractWorkplaceId(Integer workplaceId) {
 		newEmployeeInfo.setWorkplace_table_id(workplaceId);
+	}
+	
+	private String getQuoteByIndex(Integer index) {
+		if(null == index)
+			return null;
+		
+		switch (index) {
+		case 1:
+			return "\"01\"";
+		case 2:
+			return "\"02\"";
+		case 3:
+			return "\"03\"";
+		case 4:
+			return "\"04\"";
+		case 5:
+			return "\"05\"";
+		case 6:
+			return "\"06\"";
+		case 7:
+			return "\"07\"";
+		case 8:
+			return "\"08\"";
+		case 9:
+			return "\"09\"";
+		case 10:
+			return "\"10\"";
+		case 11:
+			return "\"11\"";
+		default:
+			return null;
+		}
+	}
+	
+	private String getOcupationByIndex(Integer index) {
+		if(null == index)
+			return null;
+		
+		switch (index) {
+		case 1:
+			return "\"a\"";
+		case 2:
+			return "\"b\"";
+		case 3:
+			return "\"d\"";
+		case 4:
+			return "\"e\"";
+		case 5:
+			return "\"f\"";
+		case 6:
+			return "\"g\"";
+		case 7:
+			return "\"h\"";
+		default:
+			return null;
+		}
+	}
+
+	public Integer getActivityIdByName(String activityStr) {
+		for(Entry<Integer, String> activityEntry : this.employeeInfo.getEnterpriseActivities().entrySet())
+			if(activityStr.equals(activityEntry.getValue()))
+				return activityEntry.getKey();
+		
+		return null;
+	}
+
+	public Integer getCCCIdByNumber(String cccStr, byte cccType, String cccGeozoneStr) {
+		CCCInfo cccInfo = getCCCInfo(cccStr, cccType, cccGeozoneStr);
+		if(null == cccInfo)
+			return null;
+		else{
+			for(Entry<Integer, CCCInfo> cccEntry : this.employeeInfo.getCCCs().entrySet())
+				if(cccEntry.getValue().equals(cccInfo)){
+					return cccEntry.getKey();
+				}
+			return null;
+		}
+	}
+	
+	private CCCInfo getCCCInfo(String cccStr, byte cccType, String cccGeozoneStr) {
+		for(CCCInfo cccInfo : this.employeeInfo.getCCCs().values()){
+			if(cccStr.equals(cccInfo.getCcc()) && cccType == cccInfo.getType() && cccGeozoneStr.equals(cccInfo.getGeozone()))
+				return cccInfo;
+		}
+		return null;
+	}
+	
+	private Integer getStreetTypeIndex(String streetType) {
+		for(int i=0; i<StreetType.values().length; i++){
+			if(streetType == StreetType.values()[i].getShortCode())
+				return i;
+		}
+		return -1;
 	}
 	
 	

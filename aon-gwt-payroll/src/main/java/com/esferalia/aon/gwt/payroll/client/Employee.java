@@ -3,21 +3,9 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
-import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.esferalia.aon.gwt.common.shared.Dni;
-import com.esferalia.aon.gwt.common.shared.SocialSecurity;
-import com.esferalia.aon.gwt.payroll.shared.Agreement;
-import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
-import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
-import com.esferalia.aon.gwt.payroll.shared.CCCType;
 import com.esferalia.aon.gwt.payroll.shared.ContractType;
-import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
-import com.esferalia.aon.gwt.payroll.shared.ContractType.ModelRecord;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfoDataBase;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.esferalia.aon.gwt.payroll.shared.StreetType;
@@ -27,26 +15,18 @@ import com.google.gwt.ajaxloader.client.AjaxLoader.AjaxLoaderOptions;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
-import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
-import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -264,6 +244,7 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 	// --------------------------------------------------------- CONSTRUCTOR --------------------------------------------------------
 
 	public Employee() {
+		//Initialize Nationality SuggestBox
 		MultiWordSuggestOracle oracleCountries = new MultiWordSuggestOracle();
 		ArrayList<Country> countries = new ArrayList<>(Arrays.asList(Country.values()));
 		for (Country c : countries)
@@ -272,53 +253,11 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 
 		// Inicializamos la vista del empleado
 		initWidget(uiBinder.createAndBindUi(this));
+		initializeView();
 
 		// Init Google Maps Places API (INACTIVO)
 		// initGoogleMapsPlaces();
-
-		this.agreement.addChangeHandler(new ChangeHandler() {
-
-			@Override
-			public void onChange(ChangeEvent event) {
-				level.clear();
-				String agreementName = agreement.getSelectedItemText();
-				List<Agreement> agreements = employeeDraftObject.getAgreements();
-				level.addItem("-");
-				for (Agreement a : agreements) {
-					if (a.getId() > 0 && a.getDescription() == agreementName) {
-						Set<Level> levels = a.getLevels();
-						for (Level levelRecord : levels) {
-							Set<String> categories = a.getCategoriesMap().get(levelRecord.getId());
-							for (String categoryRecord : categories) {
-								level.addItem(levelRecord.getDescription() + " - " + categoryRecord);
-							}
-						}
-					}
-				}
-			}
-		});
-
-		this.contractType.addChangeHandler(new ChangeHandler() {
-
-			@Override
-			public void onChange(ChangeEvent event) {
-				modality.clear();
-				modality.addItem("-");
-				Integer contractTypeId = -1;
-				if (contractType.getSelectedIndex() != 0) {
-					String contract_type_id_str = contractType.getSelectedItemText().split(" -")[0];
-					contractTypeId = Integer.parseInt(contract_type_id_str);
-				}
-
-				List<ModelRecord> contractTypeModels = Employee.this.contract_type
-						.getModelsContractType(contractTypeId);
-				for (ModelRecord m : contractTypeModels) {
-					modality.addItem(m.getModelDescription());
-				}
-
-			}
-		});
-
+		
 	}
 
 	private void initGoogleMapsPlaces() {
@@ -360,73 +299,44 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 		});
 	}
 
-	// ------------------------------------------------------- UiHandlers --------------------------------------------------------
+	
+	// ------------------------------------------------------------------------
+	//								UiHandlers
+	// ------------------------------------------------------------------------
 	
 	@UiHandler("name")
 	void onNameChangeValue(ChangeEvent event) {
 		onEmployeeNameChange();
 	}
 	
-	public abstract void onEmployeeNameChange();
-
 	@UiHandler("first_surname")
 	void onFirstSurnameChangeValue(ChangeEvent event) {
 		onEmployeeFirstSurnameChange();
 	}
 	
-	public abstract void onEmployeeFirstSurnameChange();
-
 	@UiHandler("second_surname")
 	void onSecondSurnameChangeValue(ChangeEvent event) {
 		onEmployeeSecondSurnameChange();
 	}
-	
-	public abstract void onEmployeeSecondSurnameChange();
 	
 	@UiHandler("document")
 	void onDocumentChangeValue(ChangeEvent event) {
 		onEmployeeDocumentChange();
 	}
 	
-	public abstract void onEmployeeDocumentChange();
+	@UiHandler("nationality")
+	void onNationalityChangeValue(ValueChangeEvent<String> event) {
+		onEmployeeNationalityChange();
+	}
 
 	@UiHandler("security_social_num")
 	void onSocialSecurityNumChangeValue(ChangeEvent event) {
 		onEmployeeSSNumChange(); 
 	}
-	
-	public abstract void onEmployeeSSNumChange();
 
 	@UiHandler("activityCCC")
 	void onContractActivityCCCChangeValue(ChangeEvent event) {
-		String activityCCC = this.activityCCC.getSelectedItemText();
-		if(activityCCC.equals("-")){
-			this.employeeDraftObject.setContractActivityId(null);
-			this.employeeDraftObject.setContractCCCId(null);
-			this.employeeDraftObject.setContractCCCType((Byte) null);
-		}else{
-			String activityStr = activityCCC.split(" -")[0];
-			String cccStr = activityCCC.split("\\[")[1].split("\\]")[0];
-			String cccTypeStr = activityCCC.split("- ")[1].split("\\[")[0];
-			String cccGeozoneStr = activityCCC.split("- ")[2];
-			int cccTypeInt = -1;
-			for(int i=0; i< CCCType.values().length; i++){
-				if(CCCType.values()[i].name().equals(cccTypeStr)){
-					cccTypeInt = i;
-					break;
-				}
-			}
-			byte cccType = (byte) cccTypeInt;
-//			Window.alert("ActivityStr : " + activityStr + ", cccStr : " + cccStr + ", cccType : " + cccType + ", cccGeozone : " + cccGeozoneStr);
-			
-			Integer activityId = this.employeeDraftObject.getActivityIdByName(activityStr);
-			Integer cccId = this.employeeDraftObject.getCCCIdByNumber(cccStr, cccType, cccGeozoneStr);
-			this.employeeDraftObject.setContractActivityId(activityId);
-			this.employeeDraftObject.setContractCCCId(cccId);
-			this.employeeDraftObject.setContractCCCType(cccType);
-			
-//			Window.alert("ActivityId : " + activityId + ", cccId : " + cccId + ", cccType : " + cccType);
-		}
+		onContractActiviesCCCChange();
 	}
 	
 	@UiHandler("workplace")
@@ -434,248 +344,181 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 		onContractWorkplaceChange();
 	}
 	
-	public abstract void onContractWorkplaceChange();
-	
 	@UiHandler("contractType")
 	void onContractTypeChangeValue(ChangeEvent event) {
 		onContractTypeChange();
 	}
-	
-	public abstract void onContractTypeChange();
 
 	@UiHandler("modality")
 	void onContractModelChangeValue(ChangeEvent event) {
-		if (contractType.getSelectedIndex() == 0 || modality.getSelectedIndex() == 0) {
-			employeeDraftObject.setContractModel(null);
-		} else {
-			String contract_type_id_str = contractType.getSelectedItemText().split(" -")[0];
-			Integer contractTypeId = Integer.parseInt(contract_type_id_str);
-
-			String contractModelDescription = modality.getSelectedItemText();
-			Integer contractModelEnum = this.contract_type.getContractModelId(contractTypeId, contractModelDescription);
-			employeeDraftObject.setContractModel(contractModelEnum); // GET String of enum in JooqEmployee.java
-		}
+		onContractModalityChange();
 	}
 
 	@UiHandler("start_date")
 	void onStartDateChangeValue(ValueChangeEvent<Date> event) {
 		onContractStartDateChange();
 	}
-	
-	public abstract void onContractStartDateChange();
 
 	@UiHandler("end_date")
 	void onEndDateChangeValue(ValueChangeEvent<Date> event) {
 		onContractEndDateChange();
 	}
-	
-	public abstract void onContractEndDateChange();
 
 	@UiHandler("seniority_date")
 	void onSeniorityDateChangeValue(ValueChangeEvent<Date> event) {
 		onContractSeniorityDateChange();
 	}
-	
-	public abstract void onContractSeniorityDateChange();
 
 	@UiHandler("agreement")
 	void onContractAgreementChangeValue(ChangeEvent event) {
-		if (this.agreement.getSelectedIndex() == 0) {
-			employeeDraftObject.setContractAgreementId(null);
-			employeeDraftObject.setContractAgreementDescription(null);
-			employeeDraftObject.setContractAgreementLevelId(null);
-			employeeDraftObject.setContractAgreementLevelDescription(null);
-			this.category.setEnabled(false);
-			this.category.setValue("");
-			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.category);
-		} else {
-			Integer agreementId = employeeDraftObject.getAgreementId(this.agreement.getSelectedItemText());
-			employeeDraftObject.setContractAgreementId(agreementId);
-			employeeDraftObject.setContractAgreementDescription(this.agreement.getSelectedItemText());
-		}
+		onContractAgreementChange();
 	}
 
 	@UiHandler("level")
 	void onContractAgreementLevelChangeValue(ChangeEvent event) {
-		if (this.agreement.getSelectedIndex() == 0 || this.level.getSelectedIndex() == 0) {
-			employeeDraftObject.setContractAgreementLevelId(null);
-			employeeDraftObject.setContractAgreementLevelDescription(null);
-			this.category.setEnabled(false);
-			this.category.setValue("");
-			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.category);
-		} else {
-			Integer agreementLevelId = employeeDraftObject.getAgreementLevelId(this.agreement.getSelectedItemText(),
-					this.level.getSelectedItemText());
-			employeeDraftObject.setContractAgreementLevelId(agreementLevelId);
-			employeeDraftObject.setContractAgreementLevelDescription(this.level.getSelectedItemText());
-			String levelDescription = (this.level.getSelectedItemText() == null
-					|| this.level.getSelectedItemText() == "-") ? null
-							: this.level.getSelectedItemText().split("- ")[1];
-			this.category.setValue(levelDescription);
-			employeeDraftObject.setContractCategory(levelDescription);
-			this.category.setEnabled(true);
-		}
+		onContractAgreementLevelChange();
 	}
 
 	@UiHandler("category")
 	void onCategoryChangeValue(ChangeEvent event) {
 		onContractCategoryChange();
 	}
-	
-	public abstract void onContractCategoryChange();
 
 	@UiHandler("quote_group")
 	void onQuoteGroupChangeValue(ChangeEvent event) {
-		if (quote_group.getSelectedIndex() == 0) {
-			employeeDraftObject.setContractQuoteGroup(null);
-		} else {
-			String quoteGroup = getQuoteByIndex(quote_group.getSelectedIndex());
-			employeeDraftObject.setContractQuoteGroup(quoteGroup);
-		}
+		onContractQuoteGroupChange();
 	}
 
 	@UiHandler("occupation")
 	void onContractOccupationChangeValue(ChangeEvent event) {
-		if (occupation.getSelectedIndex() == 0) {
-			employeeDraftObject.setContractOccupation(null);
-		} else {
-			String contractOccupation = getOcupationByIndex(occupation.getSelectedIndex());
-			employeeDraftObject.setContractOccupation(contractOccupation);
-		}
+		onContractOccupationChange();
 	}
 
 	@UiHandler("journeyType")
 	void onContractJourneyTypeChangeValue(ChangeEvent event) {
-		// Integer journeyTypeIndex = this.journeyType.getSelectedIndex();
-		// Boolean journey_type = (journeyTypeIndex == 0) ? true : false;
-		// employeeDraftObject.setContractJourneyType(journey_type);
+		onContractJourneyTypeChange();
 	}
-
 	
 	@UiHandler("birth_date")
 	void onBithDateChangeValue(ValueChangeEvent<Date> event) {
 		onEmployeeBirthDateChange();
 	}
-	
-	public abstract void onEmployeeBirthDateChange();
 
 	@UiHandler("gender")
 	void onGenderChangeValue(ChangeEvent event) {
 		onEmployeeGenderChange();
 	}
 	
-	public abstract void onEmployeeGenderChange();
-	
 	@UiHandler("street_type")
 	void onStreetTypeChangeValue(ChangeEvent event) {
-		Integer streetTypeIdx = street_type.getSelectedIndex();
-		String shortCode = StreetType.values()[streetTypeIdx].getShortCode();
-		employeeDraftObject.setEmployeeStreetType(shortCode);
+		onEmployeeStreetTypeChange();
 	}
 
 	@UiHandler("address")
 	void onAddressChangeValue(ValueChangeEvent<String> event) {
 		onEmployeeAddressChange();
 	}
-	
-	public abstract void onEmployeeAddressChange();
 
 	@UiHandler("addressNum")
 	void onAddressNumChangeValue(ChangeEvent event) {
 		onEmployeeAddressNumChange();
 	}
-	
-	public abstract void onEmployeeAddressNumChange();
 
 	@UiHandler("addressZip")
 	void onAddressZipChangeValue(ChangeEvent event) {
 		onEmployeeAddressZipChange();
 	}
-	
-	public abstract void onEmployeeAddressZipChange();
 
 	@UiHandler("addressCity")
 	void onAddressCityChangeValue(ChangeEvent event) {
 		onEmployeeAddressCityChange();
 	}
-	
-	public abstract void onEmployeeAddressCityChange();
 
 	@UiHandler("addressProvince")
 	void onAddressProvinceChangeValue(ChangeEvent event) {
 		onEmployeeAddressProvinceChange();
 	}
-	
-	public abstract void onEmployeeAddressProvinceChange();
 
 	@UiHandler("phone")
 	void onPhoneChangeValue(ChangeEvent event) {
 		onEmployeePhoneChange();
 	}
-	
-	public abstract void onEmployeePhoneChange();
 
 	@UiHandler("mobile")
 	void onMobileChangeValue(ChangeEvent event) {
 		onEmployeeMobileChange();
 	}
-	
-	public abstract void onEmployeeMobileChange();
 
 	@UiHandler("email")
 	void onEmailChangeValue(ChangeEvent event) {
 		onEmployeeEmailChange();
 	}
-	
-	public abstract void onEmployeeEmailChange();
 
 	@UiHandler("payMethod")
 	void onPayMethodChangeValue(ChangeEvent event) {
 		onEmployeePayMethodChange();
 	}
-	
-	public abstract void onEmployeePayMethodChange();
 
 	@UiHandler("account")
 	void onAccountChangeValue(ChangeEvent event) {
 		onEmployeeAccountChange();
 	}
-	
-	public abstract void onEmployeeAccountChange();
 
 	@UiHandler("bic")
 	void onBIClChangeValue(ChangeEvent event) {
 		onEmployeeBICChange();
 	}
+
+	// ------------------------------------------------------------------------
+	//							Abstraact Methods
+	// ------------------------------------------------------------------------
 	
+	//Contract Table Methods
+	public abstract void onEmployeeNameChange();
+	public abstract void onEmployeeFirstSurnameChange();
+	public abstract void onEmployeeSecondSurnameChange();
+	public abstract void onEmployeeDocumentChange();
+	public abstract void onEmployeeNationalityChange();
+	public abstract void onEmployeeSSNumChange();
+	public abstract void onContractActiviesCCCChange();
+	public abstract void onContractWorkplaceChange();
+	public abstract void onContractTypeChange();
+	public abstract void onContractModalityChange();
+	public abstract void onContractStartDateChange();
+	public abstract void onContractEndDateChange();
+	public abstract void onContractSeniorityDateChange();
+	public abstract void onContractAgreementChange();
+	public abstract void onContractAgreementLevelChange();
+	public abstract void onContractCategoryChange();
+	public abstract void onContractQuoteGroupChange();
+	public abstract void onContractOccupationChange();
+	public abstract void onContractJourneyTypeChange();
+	
+	//Employee Table Methods
+	public abstract void onEmployeeBirthDateChange();
+	public abstract void onEmployeeGenderChange();
+	public abstract void onEmployeeStreetTypeChange();
+	public abstract void onEmployeeAddressChange();
+	public abstract void onEmployeeAddressNumChange();
+	public abstract void onEmployeeAddressZipChange();
+	public abstract void onEmployeeAddressCityChange();
+	public abstract void onEmployeeAddressProvinceChange();
+	public abstract void onEmployeePhoneChange();
+	public abstract void onEmployeeMobileChange();
+	public abstract void onEmployeeEmailChange();
+	public abstract void onEmployeePayMethodChange();
+	public abstract void onEmployeeAccountChange();
 	public abstract void onEmployeeBICChange();
 
 
-	// --------------------------------------------------- METODOS DE LA CLASE ----------------------------------------------------
-
-	public void setEmployeeDraftObject(EmployeeDraftObject employeeDraft) {
-		this.employeeDraftObject = employeeDraft;
-		this.contract_type = new ContractType();
-
-		this.employeeDraftObject.initializeEmployee(r -> {
-			employeeInfo = employeeDraftObject.getEmployeeInfo();
-			initializeView();
-		}, t -> {});
-	}
+	// ------------------------------------------------------------------------
+	//							Class Methods
+	// ------------------------------------------------------------------------
 
 	private void initializeView() {
 		resetElements();
 		initializeListBox();
-		
-		if (employeeInfo.getSSRegime() == 3) { //RETA, había algo mas que determinaba si era o no RETA
-			fillContractFreelancerTable();
-			hideElementsFreelancerTable();
-		} else {
-			fillContractTable();
-			showElementsContractTable();
-		}
-		
-		fillEmployeeTable();
+		initDisplayElements();
 	}
 
 	private void resetElements() {
@@ -713,20 +556,8 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 	}
 
 	private void initializeListBox() {
-		
-
 		// MODALIDAD
 		this.modality.addItem("-");
-
-		// CONVENIO
-		this.agreement.addItem("-");
-		List<Agreement> agreements = employeeDraftObject.getActiveAgreements();
-		for (Agreement a : agreements) {
-			this.agreement.addItem(a.getDescription());
-		}
-
-		// NIVELES/CATEGORIA
-		this.level.addItem("-");
 
 		// GRUPO DE COTIZACION
 		this.quote_group.addItem("-");
@@ -776,63 +607,10 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 		this.payMethod.addItem("EFECTIVO");
 		this.payMethod.addItem("GIRO");
 		this.payMethod.addItem("CHEQUE");
-		this.payMethod.addItem("TRANSFERENCIA");
-		
+		this.payMethod.addItem("TRANSFERENCIA");	
 	}
-
-	private void hideElementsFreelancerTable() {
-		this.contractDataTable.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
-		this.contractDataTable.getRows().getItem(6).getStyle().setDisplay(Display.NONE);
-		this.contractDataTable.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
-		this.contractDataTable.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
-		this.contractDataTable.getRows().getItem(12).getStyle().clearDisplay();
-
-		this.contractTypeNode.getStyle().setDisplay(Display.NONE);
-		
-		this.contractFreelancerNode.getStyle().clearDisplay();
-	}
-
-	private void fillContractFreelancerTable() {
-		//Centro de trabajo
-		this.workplace.setSelectedIndex(employeeDraftObject.getWorkplaceIndex());
-
-		//Tipo de contrato
-		this.contractTypeFreelance.setText("R" + String.valueOf("\u00E9") + "gimen especial de trabajadores aut" + String.valueOf("\u00F3") + "nomos");
-
-		//Periodo contrato
-		this.start_date.setValue(employeeInfo.getStart_date());
-		this.end_date.setValue(employeeInfo.getEnd_date());
-		this.seniority_date.setValue(employeeInfo.getSeniority_date());
-
-		//Convenio y categoria
-		String agreementName = employeeInfo.getAgreement();
-		Integer agreementIndex = this.employeeDraftObject.getAgreementIndex(agreementName);
-		this.agreement.setSelectedIndex(agreementIndex + 1);
-
-		String category_description = employeeInfo.getCategory_description();
-		this.category.setText(category_description);
-
-		Integer agremeentLevelCategoyIndex = getAgreementLevelCategoryIndex(agreementName, employeeInfo.getAgreement_level(), category_description);
-		
-		if(-1 == agremeentLevelCategoyIndex) {
-			this.category.setEnabled(false);
-			this.category.setValue("");
-			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.category);
-		}else
-			this.category.setEnabled(true);
-		
-		getAgreementLevels(agreementName);
-		this.level.setSelectedIndex(agremeentLevelCategoyIndex + 1);
-
-		if (employeeInfo.getJourneyType() == null)
-			this.journeyType.setSelectedIndex(0);
-		else {
-			Integer journeyTypeIndex = (employeeInfo.getJourneyType() == true) ? 0 : 1;
-			this.journeyType.setSelectedIndex(journeyTypeIndex);
-		}
-	}
-
-	private void showElementsContractTable() {
+	
+	private void initDisplayElements() {
 		this.contractDataTable.getRows().getItem(3).getStyle().clearDisplay();
 		this.contractDataTable.getRows().getItem(6).getStyle().clearDisplay();
 		this.contractDataTable.getRows().getItem(10).getStyle().clearDisplay();
@@ -844,328 +622,33 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 		this.contractFreelancerNode.getStyle().setDisplay(Display.NONE);
 	}
 
-	private void fillContractTable() {
-//		Window.alert("CENTRO DE TRABAJO");
-		//Centro de trabajo
-		this.workplace.setSelectedIndex(employeeDraftObject.getWorkplaceIndex());
+	private void showElementsFreelancerTable() {
+		this.contractDataTable.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(6).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(12).getStyle().clearDisplay();
+
+		this.contractTypeNode.getStyle().setDisplay(Display.NONE);
 		
-//		Window.alert("ACTIVIDAD");
-//		Window.alert("ACTIVIDAD ID = " + this.employeeInfo.getEnterprise_activity_table_id() + ", DESCRIPTION = " + this.employeeInfo.getEnterprise_activity());
-//		Window.alert("ACTIVIDAD CCC = " + this.employeeInfo.getEnterprise_ccc_table_id() + ", DESCRIPTION = " +  this.employeeInfo.getQuote_account());
-		//Actividad y cuenta de cotizacion
-		if(this.activityCCC.getItemCount() == 2 && null == this.employeeInfo.getEnterprise_activity_table_id()){
-			this.activityCCC.setSelectedIndex(1);
-			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.activityCCC);
-		}
-//		else {
-//			Integer activityAccountIndex = employeeDraftObject.getActivityAccountIndex();
-//			Window.alert("Activity Index = " + activityAccountIndex);
-//			this.activityCCC.setSelectedIndex(activityAccountIndex);
-//		}
-		
-//		Window.alert("TIPO DE CONTRATO Y MODELO");
-		//Tipo y modelo de contrato
-		Integer contractTypeInt = (employeeInfo.getContract_type() == null) ? null : Integer.parseInt(employeeInfo.getContract_type());
-		if(null == contractTypeInt) {
-			this.contractType.setSelectedIndex(0);
-			modality.clear();
-			modality.addItem("-");
-		}else {
-			Integer contractTypeIndex = this.contract_type.getContractTypeIndex(contractTypeInt);
-			this.contractType.setSelectedIndex(contractTypeIndex + 1);
-
-			modality.clear();
-			modality.addItem("-");
-			
-			List<ModelRecord> contractTypeModels = Employee.this.contract_type.getModelsContractType(contractTypeInt);
-			
-			for (ModelRecord m : contractTypeModels)
-				modality.addItem(m.getModelDescription());
-
-			Integer modelIndex = this.contract_type.getContractModelIndex(contractTypeInt, employeeInfo.getContract_model());
-			if (null == modelIndex) {
-				this.modality.setSelectedIndex(0);
-			} else {
-				this.modality.setSelectedIndex(modelIndex + 1);
-			}
-		}
-
-//		Window.alert("PERIODO CONTRATO");
-		//Periodo contrato
-		this.start_date.setValue(employeeInfo.getStart_date());
-		this.end_date.setValue(employeeInfo.getEnd_date());
-		this.seniority_date.setValue(employeeInfo.getSeniority_date());
-
-//		Window.alert("CONVENIO Y CATEGORIA");
-		//Convenio y categoria
-		String agreementName = employeeInfo.getAgreement();
-		Integer agreementIndex = this.employeeDraftObject.getAgreementIndex(agreementName);
-		this.agreement.setSelectedIndex(agreementIndex + 1);
-
-		String category_description = employeeInfo.getCategory_description();
-		this.category.setText(category_description);
-
-		Integer agremeentLevelCategoyIndex = getAgreementLevelCategoryIndex(agreementName, employeeInfo.getAgreement_level(), category_description);
-		
-		if(-1 == agremeentLevelCategoyIndex) {
-			this.category.setEnabled(false);
-			this.category.setValue("");
-			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.category);
-		}else
-			this.category.setEnabled(true);
-		
-		getAgreementLevels(agreementName);
-		this.level.setSelectedIndex(agremeentLevelCategoyIndex + 1);
-
-//		Window.alert("GRUPO COTIZACION");
-		//Grupo cotizacion
-		Integer quote_groupIndex = Integer.parseInt(employeeInfo.getQuote_group());
-		this.quote_group.setSelectedIndex(quote_groupIndex);
-
-//		Window.alert("OCUPACION");
-		//Ocupacion
-		Integer ocupationIndex = getCharIndex(employeeInfo.getOcupation());
-		this.occupation.setSelectedIndex(ocupationIndex);
-	}
-
-	private Integer getAgreementLevelCategoryIndex(String agreementName, String agreement_level, String category_description) {
-		if (null == agreementName || null == agreement_level || category_description == "")
-			return -1;
-
-		Integer result = 0;
-		List<Agreement> agreements = employeeDraftObject.getAgreements();
-		for (Agreement a : agreements) {
-			if (a.getId() > 0 && a.getDescription() == agreementName) {
-				Set<Level> levels = a.getLevels();
-				for (Level levelRecord : levels) {
-					Set<String> categories = a.getCategoriesMap().get(levelRecord.getId());
-					for (String categoryRecord : categories) {
-						if (levelRecord.getDescription() == agreement_level && categoryRecord == category_description)
-							return result;
-						else
-							result++;
-					}
-				}
-			}
-		}
-
-		result = 0;
-		for (Agreement a : agreements) {
-			if (a.getId() > 0 && a.getDescription() == agreementName) {
-				Set<Level> levels = a.getLevels();
-				for (Level levelRecord : levels) {
-					Set<String> categories = a.getCategoriesMap().get(levelRecord.getId());
-					for (String categoryRecord : categories) {
-						if (levelRecord.getDescription() == agreement_level)
-							return result;
-						else
-							result++;
-					}
-				}
-			}
-		}
-		return -1;
-	}
-
-	private void getAgreementLevels(String agreementName) {
-		level.clear();
-		List<Agreement> agreements = employeeDraftObject.getAgreements();
-		level.addItem("-");
-		for (Agreement a : agreements) {
-			if (a.getId() > 0 && a.getDescription() == agreementName) {
-				Set<Level> levels = a.getLevels();
-				for (Level levelRecord : levels) {
-					Set<String> categories = a.getCategoriesMap().get(levelRecord.getId());
-					for (String categoryRecord : categories) {
-						level.addItem(levelRecord.getDescription() + " - " + categoryRecord);
-					}
-				}
-			}
-		}
-	}
-
-	private int getCharIndex(String ocupation) {
-		switch (ocupation) {
-		case "a":
-			return 1;
-		case "b":
-			return 2;
-		case "d":
-			return 3;
-		case "e":
-			return 4;
-		case "f":
-			return 5;
-		case "g":
-			return 6;
-		case "h":
-			return 7;
-		default:
-			return 0;
-		}
-	}
-
-	private String getQuoteByIndex(Integer index) {
-		switch (index) {
-		case 1:
-			return "\"01\"";
-		case 2:
-			return "\"02\"";
-		case 3:
-			return "\"03\"";
-		case 4:
-			return "\"04\"";
-		case 5:
-			return "\"05\"";
-		case 6:
-			return "\"06\"";
-		case 7:
-			return "\"07\"";
-		case 8:
-			return "\"08\"";
-		case 9:
-			return "\"09\"";
-		case 10:
-			return "\"10\"";
-		case 11:
-			return "\"11\"";
-		default:
-			return null;
-		}
-	}
-
-	private String getOcupationByIndex(Integer index) {
-		switch (index) {
-		case 1:
-			return "\"a\"";
-		case 2:
-			return "\"b\"";
-		case 3:
-			return "\"d\"";
-		case 4:
-			return "\"e\"";
-		case 5:
-			return "\"f\"";
-		case 6:
-			return "\"g\"";
-		case 7:
-			return "\"h\"";
-		default:
-			return null;
-		}
-	}
-
-	private void fillEmployeeTable() {
-		//Nombre completo
-		this.name.setText(employeeInfo.getName());
-		this.first_surname.setText(employeeInfo.getFirst_surname());
-		this.second_surname.setText(employeeInfo.getSecond_surname());
-		
-		//Documento de identidad
-		String document = employeeInfo.getDocument() ;
-		this.document.setText(document);
-		String document_type_str = checkDocumentType(document);
-		document_type.setText(document_type_str);
-		showNationality(document_type_str);
-		this.nationality.setText(Country.valueOf(employeeInfo.getNationality()).getName());
-
-		//Fecha nacimiento
-		Date birth_date = employeeInfo.getBirth_date();
-		this.birth_date.setValue(birth_date);
-		Integer age = 0;
-		if (birth_date != null){
-			age = DateUtils.getYears(new Date(), birth_date);
-			if(birth_date.getMonth() > new Date().getMonth()) age--;
-			this.age.setText("(" + age.toString() + " a" + String.valueOf("\u00F1") + "os)");
-		}else
-			this.age.setText("");
-		
-		//Genero y numero SS
-		this.gender.setSelectedIndex(employeeInfo.getGender());
-		this.security_social_num.setText(employeeInfo.getSocial_security_num());
-
-		//Direccion
-		this.street_type.setSelectedIndex(getStreetTypeIndex(employeeInfo.getStreetType()));
-		this.address.setValue(employeeInfo.getAddress());
-		this.addressNum.setValue(employeeInfo.getAddress_number());
-		this.addressZip.setValue(employeeInfo.getZip_code());
-		this.addressCity.setValue(employeeInfo.getLocality());
-		Integer provinceIndex = ProvinceContract.getProvinceIndex(employeeInfo.getProvince());
-		this.addressProvince.setSelectedIndex(provinceIndex);
-		//Window.alert(employeeInfo.getProvince() + ", Index = " + provinceIndex);
-		
-
-		//Contacto
-		this.phone.setText(employeeInfo.getPhone());
-		this.mobile.setText(employeeInfo.getMobile());
-		this.email.setText(employeeInfo.getEmail());
-
-		//Metodo de pago
-		String payMethodType = employeeInfo.getTypePayMethod();
-		this.payMethod.setSelectedIndex(getPayMethodIndex(payMethodType));
-		this.account.setText(employeeInfo.getBankAccount());
-		this.bic.setText(employeeInfo.getBIC());
+		this.contractFreelancerNode.getStyle().clearDisplay();
 	}
 	
-	private Integer getStreetTypeIndex(String streetType) {
-		for(int i=0; i<StreetType.values().length; i++){
-			if(streetType == StreetType.values()[i].getShortCode())
-				return i;
-		}
-		return -1;
-	}
+	private void hideElementsFreelancerTable() {
+		this.contractDataTable.getRows().getItem(3).getStyle().clearDisplay();
+		this.contractDataTable.getRows().getItem(6).getStyle().clearDisplay();
+		this.contractDataTable.getRows().getItem(10).getStyle().clearDisplay();
+		this.contractDataTable.getRows().getItem(11).getStyle().clearDisplay();
+		this.contractDataTable.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
 
-	private int getPayMethodIndex(String payMethodType) {
-		switch (payMethodType) {
-		case "EFECTIVO":
-			return 1;
-		case "GIRO":
-			return 2;
-		case "CHEQUE":
-			return 3;
-		case "TRANSFERENCIA":
-			return 4;
-		default:
-			return 0;
-		}
+		this.contractTypeNode.getStyle().clearDisplay();
+		
+		this.contractFreelancerNode.getStyle().setDisplay(Display.NONE);
 	}
 
 	@Override
 	public void onContextMenu(ContextMenuEvent event) {
 		// TODO Auto-generated method stub
-
-	}
-
-	// --------------------------------------------------- CHECK DOCUMENT TYPE -------------------------------------------------------
-
-	public String checkDocumentType(String document) {
-
-		RegExp dniPattern = RegExp.compile("\\d{8}\\-?[A-HJ-NP-TV-Z]");
-		RegExp niePattern = RegExp.compile("[A-Z]{1}\\d{7}[A-Z]{1}");
-
-		RegExp cifPattern = RegExp.compile("[A-Z]{1}\\d{8}");
-
-		if (dniPattern.test(document.toUpperCase()))
-			return "DNI";
-		else if (niePattern.test(document.toUpperCase()))
-			return "NIE";
-		else if (cifPattern.test(document.toUpperCase()))
-			return "CIF";
-		else
-			return "Pasaporte";
-	}
-
-	public void showNationality(String document_type_str) {
-		if (document_type_str == "CIF" || document_type_str == "Pasaporte" || document_type_str == "NIE") {
-			this.nationalityLabelCell.getStyle().clearDisplay();
-			this.nationalityCell.getStyle().clearDisplay();
-			security_social_num.addStyleName(style.nssWidht());
-		} else {
-			security_social_num.removeStyleName(style.nssWidht());
-			this.nationalityLabelCell.getStyle().setDisplay(Display.NONE);
-			this.nationalityCell.getStyle().setDisplay(Display.NONE);
-			nationality.setValue("ESPA\u00D1A");
-		}
 	}
 
 	// ---------------------------------------------- GOOGLE MAPS PLACES (INACTIVO) -------------------------------------------------
@@ -1195,13 +678,5 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 		autocomplete.addListener('place_changed', listener);	
 		
 	}-*/;
-
-	private String getIso2(String country) {
-		for (int i = 0; i < Country.values().length; i++) {
-			if (Country.values()[i].getName() == country)
-				return Country.values()[i].getIso2();
-		}
-		return null;
-	}
 
 }
