@@ -13,11 +13,13 @@
 	<aon:outputLabel for="Project_name"
 		value="#{bundle.aon_name}" />
 	<aon:inputText id="Project_name" size="60"
+		value="#{projectExport.name}"
 		valueChangeListener="#{controller.addExpression}" />
 
 	<aon:outputLabel for="Project_alias"
 		value="#{bundle.aon_alias}" />
 	<aon:inputText id="Project_alias" size="30"
+		value="#{projectExport.alias}"
 		valueChangeListener="#{controller.addExpression}" />
 
 	<aon:outputLabel for="Registry_id" value="#{bundle.aon_holder}"/>
@@ -28,6 +30,7 @@
 
 	<aon:outputLabel for="Project_id" value="#{bundle.aon_id}" />
 	<aon:inputText id="Project_id" size="5"
+		value="#{projectExport.code}"
 		valueChangeListener="#{controller.addExpression}" />		
 
 	<aon:outputLabel value="#{bundle.aon_date}"/>
@@ -36,6 +39,7 @@
 			styleClass="aon-form-date-label aon-margin-left aon-margin-right"
 			value="#{bundle.aon_date_from}"/>
 		<aon:selectInputDate id="Project_date-From" 
+			value="#{projectExport.from}"
 			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}" 
 			renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}" />
 
@@ -43,6 +47,7 @@
 			styleClass="aon-form-date-label aon-margin-left aon-margin-right"
 		 	value="#{bundle.aon_date_to}"/>
 		<aon:selectInputDate id="Project_date-To"
+			value="#{projectExport.to}"
 			valueChangeListener="#{controller.addLessThanOrEqualExpression}" 
 			renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}" />
 	</aon:div>

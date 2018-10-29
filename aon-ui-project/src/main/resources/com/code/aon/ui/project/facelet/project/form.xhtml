@@ -31,6 +31,18 @@
 							value="#{bundle.daily_tracking_graphic}"
 							styleClass="aon-finding-toolbar-item aon-icon-statistics" />
 					</aon:if>		
+					
+					<ui:include src="/net/aonsolutions/aon/gwt/aio/facelet/templates/silent.xhtml" />
+
+					<aon:commandLink id="resume-expedient-export" value="Analítica"
+						onclick="resumeExpedient('#{project.to.id}')"
+						styleClass="aon-finding-toolbar-item aon-icon-excel">
+					</aon:commandLink>
+					
+					<aon:commandLink id="full-expedient-export" value="Analítica Detallada"
+						onclick="fullExpedient('#{project.to.id}')"
+						styleClass="aon-finding-toolbar-item aon-icon-excel">
+					</aon:commandLink>
 				</ui:define>
 			</ui:decorate>
 

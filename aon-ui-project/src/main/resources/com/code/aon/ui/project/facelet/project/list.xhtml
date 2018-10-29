@@ -8,13 +8,32 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-
+		
 		<aon:form id="projectList">
 
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{bundle.aon_module_groupware}" />
 				<ui:param name="controller" value="#{project}" />
-			</ui:include>
+
+				<ui:define name="additionalToolbarContent">
+					
+					<ui:include src="/net/aonsolutions/aon/gwt/aio/facelet/templates/silent.xhtml" />
+
+					<aon:commandLink id="resume-expedient-export" value="Analítica"
+						onclick="resumeExpedient('#{projectExport.code}', '#{projectExport.name}', '#{projectExport.alias}', '#{projectSearchListener.registry.id}', '#{projectSearchListener.projectType.id}', '#{projectSearchListener.active}', '#{projectExport.fromStr}', '#{projectExport.toStr}')"
+						styleClass="aon-finding-toolbar-item aon-icon-excel">
+					</aon:commandLink>
+										
+					<aon:commandLink id="full-expedient-export" value="Analítica Detallada"
+						onclick="fullExpedient('#{projectExport.code}', '#{projectExport.name}', '#{projectExport.alias}', '#{projectSearchListener.registry.id}', '#{projectSearchListener.projectType.id}', '#{projectSearchListener.active}', '#{projectExport.fromStr}', '#{projectExport.toStr}')"
+						styleClass="aon-finding-toolbar-item aon-icon-excel">
+					</aon:commandLink>
+			
+				</ui:define>
+			</ui:decorate>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">

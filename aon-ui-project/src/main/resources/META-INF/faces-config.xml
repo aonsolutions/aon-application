@@ -141,6 +141,12 @@
 	</managed-bean>	
 
 	<managed-bean>
+		<managed-bean-name>projectExport</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.project.controller.ProjectExportGwtController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
 		<managed-bean-name>projectActivityListener</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.form.listener.LinesControllerListener

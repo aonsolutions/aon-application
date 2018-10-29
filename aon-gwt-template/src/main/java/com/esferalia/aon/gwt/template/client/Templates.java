@@ -30,7 +30,11 @@ import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONNumber;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
@@ -117,6 +121,8 @@ public class Templates extends Composite implements EntryPoint {
 						exportIncomex(me);
 						exportDeliveryx(me);
 						exportDelivery(me);
+						exportFullExpedient(me);
+						exportResumeExpedient(me);
 					}
 					@Override
 					public void onFailure(Throwable caught) {print(caught);}
@@ -1578,6 +1584,47 @@ public class Templates extends Composite implements EntryPoint {
 			thiz.@com.esferalia.aon.gwt.template.client.Templates::delivery(*)();
 		}
 	}-*/;
+	
+	public void fullExpedient(String project, String name, String alias, String registry, String type, String active, String from, String to){
+		JSONObject json = new JSONObject();
+		if(project != null && !project.isEmpty()) json.put("id", new JSONNumber(Integer.parseInt(project)));
+		if(name != null && !name.isEmpty())json.put("name", new JSONString(name));
+		if(alias != null && !alias.isEmpty()) json.put("alias", new JSONString(alias));
+		if(registry != null && !registry.isEmpty()) json.put("registry", new JSONNumber(Integer.parseInt(registry)));
+		if(type != null && !type.isEmpty()) json.put("type", new JSONNumber(Integer.parseInt(type)));
+		if(active != null && !active.isEmpty()) json.put("active", new JSONString(active));
+		if(from != null && !from.isEmpty()) json.put("from", new JSONString(from));
+		if(to != null && !to.isEmpty()) json.put("to", new JSONString(to));
+		
+		API.getExpedient().downloadFullExpedient(JsonUtils.stringify(json.getJavaScriptObject()));
+	}
+	
+	public static native void exportFullExpedient(Templates thiz) /*-{
+		$wnd.fullExpedient = function(project, name, alias, registry, type, active, from, to) {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::fullExpedient(*)(project, name, alias, registry, type, active, from, to);
+		}
+	}-*/;
+	
+	public void resumeExpedient(String project, String name, String alias, String registry, String type, String active, String from, String to){
+		JSONObject json = new JSONObject();
+		if(project != null && !project.isEmpty()) json.put("id", new JSONNumber(Integer.parseInt(project)));
+		if(name != null && !name.isEmpty())json.put("name", new JSONString(name));
+		if(alias != null && !alias.isEmpty()) json.put("alias", new JSONString(alias));
+		if(registry != null && !registry.isEmpty()) json.put("registry", new JSONNumber(Integer.parseInt(registry)));
+		if(type != null && !type.isEmpty()) json.put("type", new JSONNumber(Integer.parseInt(type)));
+		if(active != null && !active.isEmpty()) json.put("active", new JSONString(active));
+		if(from != null && !from.isEmpty()) json.put("from", new JSONString(from));
+		if(to != null && !to.isEmpty()) json.put("to", new JSONString(to));
+		
+		API.getExpedient().downloadResumeExpedient(JsonUtils.stringify(json.getJavaScriptObject()));		
+	}
+	
+	public static native void exportResumeExpedient(Templates thiz) /*-{
+		$wnd.resumeExpedient = function(project, name, alias, registry, type, active, from, to) {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::resumeExpedient(*)(project, name, alias, registry, type, active, from, to);
+		}
+	}-*/;
+
 	
 	private Domain getDomain() {
 		return new Domain().setId(JsTemplates.getCurrentDomain()).setName(JsTemplates.getCurrentDomainName());

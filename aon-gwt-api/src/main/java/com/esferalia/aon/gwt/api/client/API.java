@@ -4,6 +4,7 @@ import com.esferalia.aon.gwt.api.client.commercial.Commission;
 import com.esferalia.aon.gwt.api.client.common.Common;
 import com.esferalia.aon.gwt.api.client.communication.Communication;
 import com.esferalia.aon.gwt.api.client.documental.Attachment;
+import com.esferalia.aon.gwt.api.client.expedient.Expedient;
 import com.esferalia.aon.gwt.api.client.finance.Finance;
 import com.esferalia.aon.gwt.api.client.fiscal.Fiscal;
 import com.esferalia.aon.gwt.api.client.incidence.Incidence;
@@ -79,5 +80,9 @@ public class API {
 	
 	public Fiscal getFiscal() {
 		return new Fiscal(url, accessToken, domainName, domainId, userName);
+	}
+
+	public Expedient getExpedient() {
+		return new Expedient(url, accessToken, domainName, domainId, userName);
 	}
 }

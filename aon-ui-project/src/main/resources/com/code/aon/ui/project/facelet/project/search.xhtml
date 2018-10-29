@@ -8,7 +8,7 @@
 	
 	<ui:define name="content">
 
-		<aon:form id="projectSearch">
+		<aon:form id="projectSearch" onload="#{projectExport.initialize}">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{bundle.aon_module_groupware}" />

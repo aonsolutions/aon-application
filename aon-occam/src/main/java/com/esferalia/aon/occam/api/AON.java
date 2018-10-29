@@ -33,6 +33,7 @@ import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.Expedient;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
 import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.BrandFilter;
@@ -204,6 +205,7 @@ import com.esferalia.aon.occam.impl.jooq.AttachmentImpl;
 import com.esferalia.aon.occam.impl.jooq.CommercialImpl;
 import com.esferalia.aon.occam.impl.jooq.CommissionImpl;
 import com.esferalia.aon.occam.impl.jooq.CommonImpl;
+import com.esferalia.aon.occam.impl.jooq.ExpedientImpl;
 import com.esferalia.aon.occam.impl.jooq.FinanceImpl;
 import com.esferalia.aon.occam.impl.jooq.GroupwareImpl;
 import com.esferalia.aon.occam.impl.jooq.ManagementImpl;
@@ -304,6 +306,10 @@ public class AON {
 
 	private static ITask getTask() {
 		return new TaskImpl();
+	}
+	
+	private static IExpedient getExpedient() {
+		return new ExpedientImpl();
 	}
 
 	// ********************************************
@@ -5193,4 +5199,28 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static Stream<Expedient> getResumeExpedientStream(String domainName, Integer domainId, String login, ProjectFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getExpedient().getResumeExpedientStream(ctx, domainId, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Stream<Expedient> getFullExpedientStream(String domainName, Integer domainId, String login, ProjectFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getExpedient().getFullExpedientStream(ctx, domainId, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	
 }
