@@ -12,6 +12,7 @@ public class AccountingReportParams implements IAccountParams, Cloneable {
 	
 	public static String EMPTY_COST_CENTER_ACCOUNT = "CUENTAS SIN CENTRO DE COSTO";
 	
+	private String domainName;
 	private int domain;
 	private Integer period;
 	private Date fromDate;
@@ -36,6 +37,14 @@ public class AccountingReportParams implements IAccountParams, Cloneable {
 	
 	private boolean reverseOrder;
 	private BalanceType balanceType;
+	
+	public String getDomainName() {
+		return domainName;
+	}
+	public AccountingReportParams setDomainName(String domainName) {
+		this.domainName = domainName;
+		return this;
+	}
 	
 	@Override
 	public int getDomain() {

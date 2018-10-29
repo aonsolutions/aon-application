@@ -133,6 +133,7 @@ public class AccountBalanceReportPDF {
 			canvas.rectangle(rect);
 			Paragraph p = new Paragraph(this.metadata.getFilterDescription(),HEADER_FONT_2);
 			ColumnText ct = new ColumnText(canvas);
+			ct.setAlignment(Element.ALIGN_RIGHT);
 			ct.setLeading(8);
 			ct.setSimpleColumn(rect);
 			ct.setUseAscender(true);

@@ -18,7 +18,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.http.client.URL;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
@@ -28,9 +27,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ScrollPanel;
-
-import net.aonsolutions.gwt.pdfjs.client.Viewer;
 
 public class AccountJournalReport extends MainEntryPoint {
 	
@@ -39,8 +35,10 @@ public class AccountJournalReport extends MainEntryPoint {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 
-	private static final String ACC_JORNAL_REPORT_PRINT = "/aon_gwt_fiscal/roms/AccountJournalReportExcelPrint";
+	private static final String ACC_JORNAL_REPORT_EXCEL_PRINT = "/aon_gwt_fiscal/roms/AccountJournalReportExcelPrint";
+	private static final String ACC_JORNAL_REPORT_PDF_PRINT = "/aon_gwt_fiscal/roms/AccountJournalReportPDFPrint";
 	private static final String ACC_JORNAL_FLAT_REPORT_PRINT = "/aon_gwt_fiscal/roms/AccountJournalFlatReportExcelPrint";
+// 	private static final String ACCOUNT_ENTRY_STREAM_SERVLET = URL.encode(GWT.getModuleBaseURL() + "roms/AccountEntryFlatStreamServlet");
 	
 	@Override
 	public void onModuleLoad() {
@@ -85,16 +83,35 @@ public class AccountJournalReport extends MainEntryPoint {
 		formFlowPanel.add(userHidden);
 		buttonContainer.add(diskForm);
 
+		final Button pdf = new Button();
+		pdf.setText(AON.MSG.print());
+		pdf.setTitle(AON.MSG.print());
+		pdf.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		pdf.addStyleName(AON.AON_CSS.aonIconPdf());
+		pdf.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				diskForm.setAction(GWT.getHostPageBaseURL() + ACC_JORNAL_REPORT_PDF_PRINT);
+				accountEntryParamsHidden.setValue(JsonParams.convert(panel.getWidgetParams()));
+				domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
+				domainNameHidden.setValue(getCurrentDomainName());
+				userHidden.setValue(getCurrentUser());
+				diskForm.submit();
+			}
+		});
+		buttonContainer.add(pdf);
+
 		final Button print = new Button();
 		print.setText(AON.MSG.print());
 		print.setTitle(AON.MSG.print());
 		print.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		print.addStyleName(AON.AON_CSS.aonIconPrinter());
+		print.addStyleName(AON.AON_CSS.aonIconExcel());
 		print.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				diskForm.setAction(GWT.getHostPageBaseURL() + ACC_JORNAL_REPORT_PRINT);
+				diskForm.setAction(GWT.getHostPageBaseURL() + ACC_JORNAL_REPORT_EXCEL_PRINT);
 				accountEntryParamsHidden.setValue(JsonParams.convert(panel.getWidgetParams()));
 				domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
 				domainNameHidden.setValue(getCurrentDomainName());
@@ -144,25 +161,25 @@ public class AccountJournalReport extends MainEntryPoint {
 		root.add(dockLayoutPanel);
 	}
 	
-	private void showViewer(String dataURI) {
-		CustomPopup viewerDialog = new CustomPopup();
-		String width = (Window.getClientWidth() - 100) + "px";
-		viewerDialog.setWidth(width);
-		viewerDialog.setHeight((Window.getClientHeight() - 100) + "px");
-		viewerDialog.setAnimationEnabled(true);
-		viewerDialog.setGlassEnabled(true);
-		viewerDialog.setModal(true);
-		viewerDialog.setCaption("Visor PDF");
-		Viewer viewer = new Viewer();
-		viewer.setDocument(dataURI, 1.95 );
-		viewerDialog.center();
-		viewerDialog.show();
-		ScrollPanel scrollPanel = new ScrollPanel();
-		viewerDialog.setWidth(width);
-		scrollPanel.add(viewer);
-		viewer.setWidth(width);
-		viewerDialog.add(scrollPanel);
-	}
+//	private void showViewer(String dataURI) {
+//		CustomPopup viewerDialog = new CustomPopup();
+//		String width = (Window.getClientWidth() - 100) + "px";
+//		viewerDialog.setWidth(width);
+//		viewerDialog.setHeight((Window.getClientHeight() - 100) + "px");
+//		viewerDialog.setAnimationEnabled(true);
+//		viewerDialog.setGlassEnabled(true);
+//		viewerDialog.setModal(true);
+//		viewerDialog.setCaption("Visor PDF");
+//		Viewer viewer = new Viewer();
+//		viewer.setDocument(dataURI, 1.95 );
+//		viewerDialog.center();
+//		viewerDialog.show();
+//		ScrollPanel scrollPanel = new ScrollPanel();
+//		viewerDialog.setWidth(width);
+//		scrollPanel.add(viewer);
+//		viewer.setWidth(width);
+//		viewerDialog.add(scrollPanel);
+//	}
 
 	private void showEntry(int domain,Integer entryId, ModuleCallback<AccountEntry> moduleCallback) {
 		CustomPopup entryDialog = new CustomPopup();
@@ -201,8 +218,5 @@ public class AccountJournalReport extends MainEntryPoint {
 		entryDialog.center();
 		entryDialog.show();
 	}
-	
-// ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** **
-	private static final String ACCOUNT_ENTRY_STREAM_SERVLET = URL.encode(GWT.getModuleBaseURL() + "roms/AccountEntryFlatStreamServlet");
-
+ 
 }

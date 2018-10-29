@@ -50,9 +50,10 @@ public class AccountBalanceReportPDFPrint extends HttpServlet {
 			Company company = config.getCompany();
 			String companyName = company == null ? "" : company.getName();
 			AccountBalanceReport report = ACCOUNTING.getAccountBalanceReport(domainName, domainId, user, params);
+			
 			report.setMetadata(new ReportMetadata()
 					.setCompanyName(companyName)
-					.setFilterDescription(getFilterDescription(params))
+					.setFilterDescription(getFilterDescription(report))
 					.setTitle(params.getBalanceType().getName()));
 			resp.setContentType(MimeType.PDF.getName());
 			resp.setHeader("Content-disposition", "attachment; filename=\"Balance_Oficial."+ MimeType.PDF.getExtension()+ "\";");
@@ -64,9 +65,29 @@ public class AccountBalanceReportPDFPrint extends HttpServlet {
 		}
 
 	}
+	private void concat(StringBuffer buf, String string) {
+		if (buf.length() > 0) {
+			buf.append(", ");
+		}
+		buf.append(string);
+	}
 	
-	private String getFilterDescription(AccountingReportParams params) {
-		return "";
+	private String getFilterDescription(AccountBalanceReport report) {
+		AccountingReportParams params = report.getParams();
+		StringBuffer buf = new StringBuffer();
+		if (report.getSelectedPeriod() != null) {
+			concat(buf, "Ejercicio: " + report.getSelectedPeriod().getName()); 
+		}
+		if (params.getFromDate() != null) {
+			concat(buf, "Desde: " + FORMATTER.format(params.getFromDate()) );
+		}
+		if (params.getToDate() != null) {
+			concat(buf, "Hasta: " + FORMATTER.format(params.getToDate()) );
+		}
+		if (report.getSelectedActivity() != null) {
+			concat(buf, "Act.: " + report.getSelectedActivity().getDescription() );
+		}
+		return buf.toString();
 	}
 
 	private AccountingReportParams parseParams(String accountReportParams) throws ParseException, java.text.ParseException {

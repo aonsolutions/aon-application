@@ -10,7 +10,9 @@ public class AccountEntryParams implements Serializable{
 
 	private static final long serialVersionUID = 7399522390660289406L;
 	
+	private String domainName; 
 	private int domain;
+	private String user;
 	private Integer period;
 	private Date from;
 	private Date to;
@@ -18,7 +20,6 @@ public class AccountEntryParams implements Serializable{
 	private Integer journal;
 	private Integer activity;
 	private boolean confidential; 
-//	private boolean hasConfidentialityRole; 
 	
 	private Integer account;
 	private Double debit;
@@ -28,14 +29,32 @@ public class AccountEntryParams implements Serializable{
 	private Integer balancingAccount;
 	
 	private String comments;
-	
 	private int order;
 	
+	private AccountPeriod selectedPeriod;
+	private EnterpriseActivity selectedActivity;
+	private Account selectedAccount;
+	
+	public String getDomainName() {
+		return domainName;
+	}
+	public AccountEntryParams setDomainName(String domainName) {
+		this.domainName = domainName;
+		return this;
+	}
 	public int getDomain() {
 		return domain;
 	}
 	public AccountEntryParams setDomain(int domain) {
 		this.domain = domain;
+		return this;
+	}
+	
+	public String getUser() {
+		return user;
+	}
+	public AccountEntryParams setUser(String user) {
+		this.user = user;
 		return this;
 	}
 	public Integer getPeriod() {
@@ -130,13 +149,6 @@ public class AccountEntryParams implements Serializable{
 		return this;
 	}
 	
-	public int getOrder() {
-		return order;
-	}
-	public AccountEntryParams setOrder(int order) {
-		this.order = order;
-		return this;
-	}
 	public boolean isConfidential() {
 		return confidential;
 	}
@@ -144,14 +156,36 @@ public class AccountEntryParams implements Serializable{
 		this.confidential = confidential;
 		return this;
 	}
-//	public boolean hasConfidentialityRole() {
-//		return hasConfidentialityRole;
-//	}
-//	public AccountEntryParams setHasConfidentialityRole(boolean hasConfidentialityRole) {
-//		this.hasConfidentialityRole = hasConfidentialityRole;
-//		return this;
-//	}
 	
+	public int getOrder() {
+		return order;
+	}
+	public AccountEntryParams setOrder(int order) {
+		this.order = order;
+		return this;
+	}
+	
+	public AccountPeriod getSelectedPeriod() {
+		return selectedPeriod;
+	}
+	public AccountEntryParams setSelectedPeriod(AccountPeriod selectedPeriod) {
+		this.selectedPeriod = selectedPeriod;
+		return this;
+	}
+	public EnterpriseActivity getSelectedActivity() {
+		return selectedActivity;
+	}
+	public AccountEntryParams setSelectedActivity(EnterpriseActivity selectedActivity) {
+		this.selectedActivity = selectedActivity;
+		return this;
+	}
+	public Account getSelectedAccount() {
+		return selectedAccount;
+	}
+	public AccountEntryParams setSelectedAccount(Account selectedAccount) {
+		this.selectedAccount = selectedAccount;
+		return this;
+	}
 	public boolean hasDetailProperties() {
 		return (account != null 
 			|| (debit != null  && debit != 0.0)
