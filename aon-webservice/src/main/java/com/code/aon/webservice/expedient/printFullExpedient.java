@@ -135,12 +135,12 @@ public class printFullExpedient extends HttpServlet {
 			HSSFSheet hoja = libro.createSheet("Expendientes");
 			
 			Row fila = hoja.createRow(onlyOne ? 1 : 0);
-			Integer column = onlyOne ? -3 : 0;
+			Integer column = onlyOne ? -2 : 0;
 			if(!onlyOne) {
-				boldCell(libro, fila, style, 0, "Expediente");
-				boldCell(libro, fila, style, 1, "Nombre");
-				boldCell(libro, fila, style, 2, "Alias");
+				boldCell(libro, fila, style, 0, "Nombre");
+				boldCell(libro, fila, style, 1, "Alias");
 			}
+			boldCell(libro, fila, style, column + 2, "Año");
 			boldCell(libro, fila, style, column + 3, "Tipo");
 			boldCell(libro, fila, style, column + 4, "Documento");
 			boldCell(libro, fila, style, column + 5, "Fecha");
@@ -152,16 +152,17 @@ public class printFullExpedient extends HttpServlet {
 				Row row = hoja.createRow(cont++);
 				if(onlyOne) {
 					Row f = hoja.createRow(0);
-					boldCell(libro, f, style, 0, r.getExpendient().toString());
-					boldCell(libro, f, style, 1, r.getName());
-					boldCell(libro, f, style, 2, r.getAlias());
+					boldCell(libro, f, style, 0, r.getName());
+					boldCell(libro, f, style, 1, r.getAlias());
+					boldCell(libro, f, style, 2, "");
 					boldCell(libro, f, style, 3, "");
 					boldCell(libro, f, style, 4, "");
+					boldCell(libro, f, style, 5, "");
 				} else {
-					cell(libro, row, style3, 0, r.getExpendient().toString());
-					cell(libro, row, style3, 1, r.getName());
-					cell(libro, row, style3, 2, r.getAlias());
+					cell(libro, row, style3, 0, r.getName());
+					cell(libro, row, style3, 1, r.getAlias());
 				}
+				cell(libro, row, style3, column + 2, r.getYear().toString());
 				cell(libro, row, style3, column + 3, r.getType());
 				cell(libro, row, style3, column + 4, r.getDocument());
 				cell(libro, row, style3, column + 5, AonDateUtils.simpleFormat(r.getDate()));
@@ -220,7 +221,7 @@ public class printFullExpedient extends HttpServlet {
 		
 		style.setFont(font);
 		style.setAlignment(CellStyle.ALIGN_CENTER);
-		style.setBorderBottom(CellStyle.BORDER_THIN);
+		style.setBorderBottom(CellStyle.BORDER_MEDIUM);
 		style.setBorderLeft(CellStyle.BORDER_THIN);
 		style.setBorderRight(CellStyle.BORDER_THIN);
 		style.setBorderTop(CellStyle.BORDER_THIN);
@@ -228,9 +229,7 @@ public class printFullExpedient extends HttpServlet {
 		style.setLeftBorderColor(IndexedColors.DARK_GREEN.getIndex());
 		style.setRightBorderColor(IndexedColors.DARK_GREEN.getIndex());
 		style.setTopBorderColor(IndexedColors.DARK_GREEN.getIndex());
-
-		style.setFillBackgroundColor(IndexedColors.DARK_GREEN.getIndex());
-		style.setFillPattern(CellStyle.BRICKS); 
+ 
 		style.setWrapText(true);
 		return style;
 	}

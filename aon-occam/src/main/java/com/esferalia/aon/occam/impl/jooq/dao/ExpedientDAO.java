@@ -21,8 +21,8 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
+import org.jooq.Record10;
 import org.jooq.Record7;
-import org.jooq.Record9;
 import org.jooq.SelectSeekStep1;
 import org.jooq.SelectSeekStep2;
 import org.jooq.SelectSeekStep3;
@@ -156,14 +156,14 @@ public class ExpedientDAO {
 		.orderBy(PROJECT.ID,DSL.year(DAILY_TRACKING.TRACKING_DATE), JOB_TYPE.DESCRIPTION);
 	}
 	
-	private static SelectSeekStep2<Record9<String, String, java.sql.Date, Integer, Double, String, Integer, String, String>, Byte, java.sql.Date> fullInvoice(AONContext ctx, Integer domain, ProjectFilter filter) {
+	private static SelectSeekStep2<Record10<String, String, java.sql.Date, Integer, Double, String, Integer, String, String, Integer>, Byte, java.sql.Date> fullInvoice(AONContext ctx, Integer domain, ProjectFilter filter) {
 		return ctx.getDslContext().select(DSL.when(INVOICE.TYPE.eq((byte)0), "Fra.Compras")
 											.when(INVOICE.TYPE.eq((byte)1), "Fra.Ventas")
 											.when(INVOICE.TYPE.eq((byte)2), "Fra.Gastos")
 											.when(INVOICE.TYPE.eq((byte)3), "Fra.No.deducible").as("Tipo"), 
 				INVOICE.REFERENCE_CODE.as("Document"),
 				INVOICE.ISSUE_DATE.as("Date"), INVOICE_DETAIL.PROJECT.as("Expediente"), INVOICE_DETAIL.TAXABLE_BASE.as("Base"), PRODUCT.NAME.as("Concept"),
-				INVOICE.NUMBER.as("Number"), PROJECT.ALIAS, PROJECT.NAME)
+				INVOICE.NUMBER.as("Number"), PROJECT.ALIAS, PROJECT.NAME, DSL.year(INVOICE.ISSUE_DATE).as("Year"))
 		.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 			.join(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
 			.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
@@ -172,12 +172,12 @@ public class ExpedientDAO {
 		.orderBy(INVOICE.TYPE, INVOICE.ISSUE_DATE);
 	}
 	
-	private static SelectSeekStep1<Record9<String, String, java.sql.Date, Integer, Double, String, Integer, String, String>, java.sql.Date> fullIncome(AONContext ctx, Integer domain, ProjectFilter filter) {
+	private static SelectSeekStep1<Record10<String, String, java.sql.Date, Integer, Double, String, Integer, String, String, Integer>, java.sql.Date> fullIncome(AONContext ctx, Integer domain, ProjectFilter filter) {
 		return ctx.getDslContext().select(DSL.inline("Alb.Compras").as("Tipo"),
 				INCOME.REFERENCE_CODE.as("Document"),
 				INCOME.ISSUE_TIME.as("Date"), INCOME_DETAIL.PROJECT.as("Expedient"), 
 				INCOME_DETAIL.PRICE.as("Base"), PRODUCT.NAME.as("Concept"),
-				INCOME.ID.as("Number"), PROJECT.ALIAS, PROJECT.NAME)
+				INCOME.ID.as("Number"), PROJECT.ALIAS, PROJECT.NAME, DSL.year(INCOME.ISSUE_TIME).as("Year"))
 		.from(INCOME).join(INCOME_DETAIL).on(INCOME.ID.eq(INCOME_DETAIL.INCOME).and(INCOME.STATUS.eq((byte) 0)))
 			.join(ITEM).on(INCOME_DETAIL.ITEM.eq(ITEM.ID))
 			.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
@@ -186,12 +186,12 @@ public class ExpedientDAO {
 		.orderBy(INCOME.ISSUE_TIME);
 	}
 	
-	private static SelectSeekStep1<Record9<String, String, java.sql.Date, Integer, Double, String, Integer, String, String>, java.sql.Date> fullDelivery(AONContext ctx, Integer domain, ProjectFilter filter) {
+	private static SelectSeekStep1<Record10<String, String, java.sql.Date, Integer, Double, String, Integer, String, String, Integer>, java.sql.Date> fullDelivery(AONContext ctx, Integer domain, ProjectFilter filter) {
 		return ctx.getDslContext().select(DSL.inline("Alb.Ventas").as("Tipo"),
 				DSL.concat(DELIVERY.SERIES, DSL.inline("/")).as("Document"),
 				DSL.date(DELIVERY.ISSUE_TIME).as("Date"), DELIVERY.PROJECT.as("Expedient"), 
 				DELIVERY_DETAIL.PRICE.as("Base"), PRODUCT.NAME.as("Concept"),
-				DELIVERY.NUMBER.as("Number"), PROJECT.ALIAS, PROJECT.NAME)
+				DELIVERY.NUMBER.as("Number"), PROJECT.ALIAS, PROJECT.NAME, DSL.year(DELIVERY.ISSUE_TIME).as("Year"))
 		.from(DELIVERY).join(DELIVERY_DETAIL).on(DELIVERY.ID.eq(DELIVERY_DETAIL.DELIVERY).and(DELIVERY.STATUS.eq((byte) 0)))
 			.join(ITEM).on(DELIVERY_DETAIL.ITEM.eq(ITEM.ID))
 			.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
@@ -200,11 +200,11 @@ public class ExpedientDAO {
 		.orderBy(DSL.date(DELIVERY.ISSUE_TIME));
 	}
 	
-	private static SelectSeekStep1<Record9<String, String, java.sql.Date, Integer, Double, String, Integer, String, String>, java.sql.Date> fullOffer(AONContext ctx, Integer domain, ProjectFilter filter) {
+	private static SelectSeekStep1<Record10<String, String, java.sql.Date, Integer, Double, String, Integer, String, String, Integer>, java.sql.Date> fullOffer(AONContext ctx, Integer domain, ProjectFilter filter) {
 		return ctx.getDslContext().select(DSL.inline("Ppto.Ventas").as("Tipo"), 
 				DSL.concat(OFFER.SERIES, DSL.inline("/")).as("Document"),
 				OFFER.ISSUE_DATE.as("Date"), OFFER.PROJECT.as("Expedient"), OFFER_DETAIL.PRICE.as("Base"), PRODUCT.NAME.as("Concept"),
-				OFFER.NUMBER.as("Number"), PROJECT.ALIAS, PROJECT.NAME)
+				OFFER.NUMBER.as("Number"), PROJECT.ALIAS, PROJECT.NAME, DSL.year(OFFER.ISSUE_DATE).as("Year"))
 		.from(OFFER).join(OFFER_DETAIL).on(OFFER.ID.eq(OFFER_DETAIL.OFFER))
 			.join(ITEM).on(OFFER_DETAIL.ITEM.eq(ITEM.ID))
 			.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
@@ -213,10 +213,10 @@ public class ExpedientDAO {
 		.orderBy(OFFER.ISSUE_DATE);
 	}
 	
-	private static SelectSeekStep1<Record9<String, String, java.sql.Date, Integer, Double, String, Integer, String, String>, java.sql.Date> fullJob(AONContext ctx, Integer domain, ProjectFilter filter) {
+	private static SelectSeekStep1<Record10<String, String, java.sql.Date, Integer, Double, String, Integer, String, String, Integer>, java.sql.Date> fullJob(AONContext ctx, Integer domain, ProjectFilter filter) {
 		return ctx.getDslContext().select(DSL.inline("Mano.Obra").as("Tipo"), DSL.concat(ACTIVITY_TYPE.DESCRIPTION, "").as("Document"), DAILY_TRACKING.TRACKING_DATE.as("Date"), DAILY_TRACKING.PROJECT.as("Expedient"),
 				DAILY_TRACKING.COST.mul(DAILY_TRACKING.TRACKING_DURATION).as("Base"), JOB_TYPE.DESCRIPTION.as("Concept"),
-				DAILY_TRACKING.ID.as("Number"), PROJECT.ALIAS, PROJECT.NAME)
+				DAILY_TRACKING.ID.as("Number"), PROJECT.ALIAS, PROJECT.NAME, DSL.year(DAILY_TRACKING.TRACKING_DATE).as("Year"))
 		.from(DAILY_TRACKING).join(JOB_TYPE).on(DAILY_TRACKING.JOB_TYPE.eq(JOB_TYPE.ID))
 			.join(PROJECT).on(DAILY_TRACKING.PROJECT.eq(PROJECT.ID))
 			.leftOuterJoin(ACTIVITY_TYPE).on(DAILY_TRACKING.ACTIVITY_TYPE.eq(ACTIVITY_TYPE.ID))
@@ -239,10 +239,10 @@ public class ExpedientDAO {
 		}
 	}
 	
-	private static class FullExpedientFiller implements Function<Record9<String, String, java.sql.Date, Integer, Double, String, Integer, String, String>, Expedient> {
+	private static class FullExpedientFiller implements Function<Record10<String, String, java.sql.Date, Integer, Double, String, Integer, String, String, Integer>, Expedient> {
 		
 		@Override
-		public Expedient apply(Record9<String, String, java.sql.Date, Integer, Double, String, Integer, String, String> r) {
+		public Expedient apply(Record10<String, String, java.sql.Date, Integer, Double, String, Integer, String, String, Integer> r) {
 			String document = r.value2();
 			if(document != null && "/".equals(document.substring(document.length()-1))) {
 				String n = AonStringUtils.leftPad(r.value7().toString(), 5, "0");
@@ -251,6 +251,7 @@ public class ExpedientDAO {
 				} else document = n;
 			}
 			return new Expedient()
+				.setYear(r.value10())	
 				.setType(r.value1())
 				.setDocument(document)
 				.setDate(r.value3())
