@@ -781,6 +781,9 @@ public class PayrollServletUtils extends AonServletUtils {
 			salary.setSalaryDeductions(salaryDeductions);
 			Deductions deductions = new Deductions();
 			salaryDeductions.forEach( d -> SalaryDeductionsFactory.manageDeductions(deductions, d));
+			// Buff !!!!.
+			deductions.setTotal(salary.getTotalDeduction());
+			deductions.setSocialSecurityContributions(salary.getSocialSecurityContributions());
 			try {salary.setDeductions(deductions);} catch (SalaryException e) {}
 
 			Set<SalaryCost> salaryCosts =
