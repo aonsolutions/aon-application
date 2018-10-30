@@ -5,27 +5,31 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.shared.Dni;
 import com.esferalia.aon.gwt.common.shared.SocialSecurity;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
+import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
+import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfoDataBase;
 import com.esferalia.aon.gwt.payroll.shared.StreetType;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
-import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
-import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeDialogObject {
 	private Workplace workplace;
 	private Employee employee;
+	
+	private EmployeeInfo employeeData;
+	private ContractInfo contractData;
 	
 	private EmployeeInfoDataBase employeeInfo;
 	private EmployeeInfoDataBase newEmployeeInfo;
@@ -46,10 +50,28 @@ public class EmployeeDialogObject {
 		this.employeesService = employeesService;
 		this.enterprisesService = enterprisesService;
 		this.workplaces = new ArrayList<>();
+		this.newEmployeeInfo = new EmployeeInfoDataBase();
+		
+		this.employeeData = new EmployeeInfo();
+		this.contractData = new ContractInfo();
 	}
 	
 	public String getWorkplaceName(){
 		return this.workplace.getDescription();
+	}
+	
+	public Integer getWorkplaceIndex(){
+		Integer index = 0;
+		String workplaceName = getWorkplaceName();
+		
+		for(Workplace workplace : workplaces) {
+			if(workplaceName.equals(workplace.getDescription()))
+				return index;
+			index++;
+		}
+		
+		index = 0;
+		return index;
 	}
 	
 	public String getWorkplaceActivity(){
@@ -80,6 +102,43 @@ public class EmployeeDialogObject {
 	public WorkplaceEmployees getWorkplaceEmployees(){
 		return this.workplaceEmployees;
 	}
+	
+	public EmployeeInfo getEmployeeDataByDocument(String document){
+		for(EmployeeInfo employee : workplaceEmployees.getWorkplaceEmployees())
+			if(document == employee.getDocument()) {
+				employeeData = employee;
+				return employeeData;
+			}
+		return this.employeeData;
+	}
+	
+	public EmployeeInfo getEmployeeDataBySSNum(String ssNum){
+		for(EmployeeInfo employee : workplaceEmployees.getWorkplaceEmployees())
+			if(ssNum == employee.getSsNumber()) {
+				employeeData = employee;
+				return employeeData;
+			}
+		return this.employeeData;
+	}
+	
+	public EmployeeInfo getEmployeeDataByName(String name){
+		for(EmployeeInfo employee : workplaceEmployees.getWorkplaceEmployees())
+			if(name == employee.getName()) {
+				employeeData = employee;
+				return employeeData;
+			}
+		return this.employeeData;
+	}
+	
+	public EmployeeInfo getEmployeeDataBySurName(String surName){
+		for(EmployeeInfo employee : workplaceEmployees.getWorkplaceEmployees())
+			if(surName == employee.getSurName()) {
+				employeeData = employee;
+				return employeeData;
+			}
+		return this.employeeData;
+	}
+	
 	
 	public Employee getEmployee(){
 		return this.employee;
@@ -319,28 +378,28 @@ public class EmployeeDialogObject {
 	}
 	
 	public void setContractType(String contract_type) {
-		newEmployeeInfo.setContract_type(contract_type);
+		contractData.setContractType(contract_type);
 	}
 	
 	public void setContractModel(Integer contractModelId) {
 		//Falta buscar en ModelOption el String correspondiente a ese ID
-		newEmployeeInfo.setContract_model(contractModelId);	
+		//contractData.setContractModel(contractModelId);	
 	}
 	
 	public void setContractStartDate(Date start_date) {
-		newEmployeeInfo.setStart_date(start_date);		
+		contractData.setStartDate(start_date);		
 	}
 	
 	public void setContractEndDate(Date end_date) {
-		newEmployeeInfo.setEnd_date(end_date);		
+		contractData.setEndDate(end_date);		
 	}
 	
 	public void setContractSeniorityDate(Date seniority_date) {
-		newEmployeeInfo.setSeniority_date(seniority_date);		
+		contractData.setSeniorityDate(seniority_date);		
 	}
 	
 	public void setContractAgreementId(Integer agreement_table_id) {
-		newEmployeeInfo.setAgreement_table_id(agreement_table_id);
+		contractData.setAgreementId(agreement_table_id);
 	}
 
 	public void setContractAgreementDescription(String agreement) {
@@ -348,11 +407,11 @@ public class EmployeeDialogObject {
 	}
 	
 	public void setContractCategory(String category_description) {
-		newEmployeeInfo.setCategory_description(category_description);		
+		contractData.setAgreementCategory(category_description);		
 	}
 	
 	public void setContractAgreementLevelId(Integer agreement_level_table_id) {
-		newEmployeeInfo.setAgreement_level_table_id(agreement_level_table_id);
+		contractData.setAgreementLevelId(agreement_level_table_id);
 	}
 
 	public void setContractAgreementLevelDescription(String agreement_level) {
@@ -361,56 +420,55 @@ public class EmployeeDialogObject {
 	
 	public void setContractQuoteGroup(Integer quoteGroupIndex) {
 		String quoteGroup = getQuoteByIndex(quoteGroupIndex);
-		newEmployeeInfo.setQuote_group(quoteGroup);		
+		contractData.setQuoteGroup(quoteGroup);		
 	}
 	
 	public void setContractOccupation(Integer occupationIndex) {
 		String contractOccupation = getOcupationByIndex(occupationIndex);
-		newEmployeeInfo.setOcupation(contractOccupation);		
+		contractData.setOcupation(contractOccupation);		
 	}
 
 	public void setContractJourneyType(Boolean journey_type) {
-		newEmployeeInfo.setJourneyType(journey_type);
+		contractData.setJourneyType(journey_type ? (byte) 1 : (byte) 0);
 	}
 	
 	// EMPLOYEE
 	
 	public void setEmployeeDocument(String document) {
-		newEmployeeInfo.setDocument(document);
+		employeeData.setDocument(document);
 	}
 
 	public void setEmployeeDocumentType(String document_type) {
 		if(document_type == "DNI")
-			newEmployeeInfo.setDocument_type((byte) 0);
+			employeeData.setDocumentType((byte) 0);
 		else if(document_type == "CIF")
-			newEmployeeInfo.setDocument_type((byte) 1);
+			employeeData.setDocumentType((byte) 1);
 		else if(document_type == "Pasaporte")
-			newEmployeeInfo.setDocument_type((byte) 3);
+			employeeData.setDocumentType((byte) 3);
 	}
 	
 	public void setNationality(String nationality) {
-		newEmployeeInfo.setNationality(nationality);	
+		employeeData.setNationality(nationality);	
 	}
 
 	public void setEmployeeName(String name) {
-		Window.alert("Nombre Object : " + name);
-		newEmployeeInfo.setName(name);
+		employeeData.setName(name);
 	}
 
 	public void setEmployeeFirstSurname(String first_surname) {
-		newEmployeeInfo.setFirst_surname(first_surname);
+		employeeData.setSurName(first_surname);
 	}
 
 	public void setEmployeeSecondSurname(String second_surname) {
-		newEmployeeInfo.setSecond_surname(second_surname);
+		employeeData.setSecondSurName(second_surname);
 	}
 
 	public void setEmployeeBirthDate(Date birth_date) {
-		newEmployeeInfo.setBirth_date(birth_date);
+		employeeData.setBirthdate(birth_date);
 	}
 
 	public void setEmployeeGender(int gender) {
-		newEmployeeInfo.setGender((byte) gender);
+		employeeData.setGender((byte) gender);
 	}
 	
 	public void setEmployeeGenderNull() {
@@ -418,72 +476,72 @@ public class EmployeeDialogObject {
 	}
 
 	public void setEmployeeSocialSecurityNum(String social_security_num) {
-		newEmployeeInfo.setSocial_security_num(social_security_num);
+		employeeData.setSsNumber(social_security_num);
 	}
 
 	public void setEmployeeStreetType(String shortCode) {
-		newEmployeeInfo.setStreetType(shortCode);
+		employeeData.setStreetType(shortCode);
 	}
 	
 	public void setEmployeeAddress(String address) {
-		newEmployeeInfo.setAddress(address);
+		employeeData.setAddress(address);
 	}
 
 	public void setEmployeeAddressNumber(String address_number) {
-		newEmployeeInfo.setAddress_number(address_number);
+		employeeData.setAddresNum(address_number);
 	}
 
 	public void setEmployeeAddressZip(String zip_code) {
-		newEmployeeInfo.setZip_code(zip_code);
+		employeeData.setAddressZip(zip_code);
 	}
 
-	public void setEmployeeAddressCity(String location) {
-		newEmployeeInfo.setLocality(location);
+	public void setEmployeeAddressCity(String city) {
+		employeeData.setAddressCity(city);
 	}
 
 	public void setEmployeeAddressProvince(String province) {
-		newEmployeeInfo.setProvince(province);
-		newEmployeeInfo.setGeozone_name(province);
+		employeeData.setAddressProvinces(province);
+//		newEmployeeInfo.setGeozone_name(province);
 	}
 
 	public void setEmployeePhone(String phone) {
-		newEmployeeInfo.setPhone(phone);
+		employeeData.setPhone(phone);
 	}
 
 	public void setEmployeeMobile(String mobile) {
-		newEmployeeInfo.setMobile(mobile);
+		employeeData.setMobile(mobile);
 	}
 
-	public void setEmployeeEmail(String mobile) {
-		newEmployeeInfo.setEmail(mobile);
+	public void setEmployeeEmail(String email) {
+		employeeData.setEmail(email);
 	}
 
 	public void setEmployeePayMethod(String payMethodType) {
-		newEmployeeInfo.setTypePayMethod(payMethodType);
+		employeeData.setPayMethodType(payMethodType);
 	}
 
 	public void setEmployeeAccount(String rbankAccount) {
-		newEmployeeInfo.setBankAccount(rbankAccount);
+		employeeData.setAccount(rbankAccount);
 	}
 
-	public void setEmployeeBIC(String rbankBIC) {
-		newEmployeeInfo.setBIC(rbankBIC);
+	public void setEmployeeBIC(String bic) {
+		employeeData.setBic(bic);
 	}
 
 	public void setSSRegime(int ssRegime) {
-		newEmployeeInfo.setSSRegime((byte) ssRegime);
+		contractData.setSsRegimen((byte) ssRegime);
 	}
 	
 	public void setContractActivityId(Integer activityID) {
-		newEmployeeInfo.setEnterprise_activity_table_id(activityID);
+		contractData.setActivityId(activityID);
 	}
 
 	public void setContractCCCId(Integer cccId) {
-		newEmployeeInfo.setEnterprise_ccc_table_id(cccId);
+		contractData.setCccId(cccId);
 	}
 
-	public void setContractCCCType(byte cccType) {
-		newEmployeeInfo.setEnterprise_ccc_type(cccType);
+	public void setContractCCCType(Byte cccType) {
+		contractData.setCccType(cccType);
 	}
 
 	public boolean checkDocumentValidation(String document_type_string, String document_string) {
@@ -507,15 +565,15 @@ public class EmployeeDialogObject {
 	}
 
 	public Integer getWorkplaceIdByName(String workplaceName) {
-		for(Entry<Integer, String> workplaceEntry : this.employeeInfo.getWorkplaces().entrySet())
-			if(workplaceName.equals(workplaceEntry.getValue()))
-				return workplaceEntry.getKey();
+		for(Workplace workplace : workplaces)
+			if(workplaceName.equals(workplace.getDescription()))
+				return workplace.getId();
 		
 		return null;
 	}
 	
 	public void setContractWorkplaceId(Integer workplaceId) {
-		newEmployeeInfo.setWorkplace_table_id(workplaceId);
+		contractData.setWorkplaceId(workplaceId);
 	}
 	
 	private String getQuoteByIndex(Integer index) {

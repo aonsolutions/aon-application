@@ -1,23 +1,68 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class EmployeeInfo implements Serializable{
 	
-	private Integer employeeId;
+	private Integer employeeId; //Registry Id
+	
+	//Person Table
+	private Date birthdate;
+	private Byte gender;
+	private String ssNumber;
 	private String name;
 	private String surName;
+	private String secondSurName;
+	
+	//Registry Table
+	private String document;
+	private Byte documentType;
+	private String nationality;
+	
+	//Raddress
+	private Integer raddressId;
+	private String streetType;
+	private String address;
+	private String addresNum;
+	private String addressZip;
+	private String addressCity;
+	
+	//Geozone
+	private Integer geozoneId;
+	private String addressProvinces;
+	
+	//Rmedia
+	private Integer mobileId;
+	private String mobile;
+	private Integer phoneId;
+	private String phone;
+	private Integer emailId;
+	private String email;
+	
+	//Rpaymethod
+	private Integer rpaymethodId;
+	
+	//Paymethod
+	private Integer paymethodId;
+	private String payMethodType;
+	
+	//Rbank
+	private Integer rbankId;
+	private String account;
+	private String bic;
 	
 	public EmployeeInfo(){
 		super();
 	}
 	
-	public EmployeeInfo(Integer employeeId, String name, String surName) {
+	public EmployeeInfo(Integer employeeId, String name, String surName, String document, String ssNumber) {
 		super();
 		this.employeeId = employeeId;
 		this.name = name;
 		this.surName = surName;
-		 
+		this.document = document;
+		this.ssNumber = ssNumber;
 	}
 
 	// ------------- GETTERS / SETTERS -------------
@@ -34,4 +79,232 @@ public class EmployeeInfo implements Serializable{
 		return surName;
 	}
 
+	public String getDocument() {
+		return document;
+	}
+
+	public String getSsNumber() {
+		return ssNumber;
+	}
+
+	public String getNationality() {
+		return nationality;
+	}
+
+	public void setNationality(String nationality) {
+		this.nationality = nationality;
+	}
+
+	public Byte getDocumentType() {
+		return documentType;
+	}
+
+	public void setDocumentType(Byte documentType) {
+		this.documentType = documentType;
+	}
+
+	public String getSecondSurName() {
+		return secondSurName;
+	}
+
+	public void setSecondSurName(String secondSurName) {
+		this.secondSurName = secondSurName;
+	}
+
+	public Date getBirthdate() {
+		return birthdate;
+	}
+
+	public void setBirthdate(Date birthdate) {
+		this.birthdate = birthdate;
+	}
+
+	public Byte getGender() {
+		return gender;
+	}
+
+	public void setGender(Byte gender) {
+		this.gender = gender;
+	}
+
+	public String getStreetType() {
+		return streetType;
+	}
+
+	public void setStreetType(String streetType) {
+		this.streetType = streetType;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getAddresNum() {
+		return addresNum;
+	}
+
+	public void setAddresNum(String addresNum) {
+		this.addresNum = addresNum;
+	}
+
+	public String getAddressZip() {
+		return addressZip;
+	}
+
+	public void setAddressZip(String addressZip) {
+		this.addressZip = addressZip;
+	}
+
+	public String getAddressCity() {
+		return addressCity;
+	}
+
+	public void setAddressCity(String addressCity) {
+		this.addressCity = addressCity;
+	}
+
+	public String getAddressProvinces() {
+		return addressProvinces;
+	}
+
+	public void setAddressProvinces(String addressProvinces) {
+		this.addressProvinces = addressProvinces;
+	}
+
+	public String getMobile() {
+		return mobile;
+	}
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getPayMethodType() {
+		return payMethodType;
+	}
+
+	public void setPayMethodType(String payMethodType) {
+		this.payMethodType = payMethodType;
+	}
+
+	public String getAccount() {
+		return account;
+	}
+
+	public void setAccount(String account) {
+		this.account = account;
+	}
+
+	public String getBic() {
+		return bic;
+	}
+
+	public void setBic(String bic) {
+		this.bic = bic;
+	}
+
+	public void setEmployeeId(Integer employeeId) {
+		this.employeeId = employeeId;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setSurName(String surName) {
+		this.surName = surName;
+	}
+
+	public void setDocument(String document) {
+		this.document = document;
+	}
+
+	public void setSsNumber(String ssNumber) {
+		this.ssNumber = ssNumber;
+	}
+
+	public Integer getRaddressId() {
+		return raddressId;
+	}
+
+	public void setRaddressId(Integer raddressId) {
+		this.raddressId = raddressId;
+	}
+
+	public Integer getGeozoneId() {
+		return geozoneId;
+	}
+
+	public void setGeozoneId(Integer geozoneId) {
+		this.geozoneId = geozoneId;
+	}
+
+	public Integer getMobileId() {
+		return mobileId;
+	}
+
+	public void setMobileId(Integer mobileId) {
+		this.mobileId = mobileId;
+	}
+
+	public Integer getPhoneId() {
+		return phoneId;
+	}
+
+	public void setPhoneId(Integer phoneId) {
+		this.phoneId = phoneId;
+	}
+
+	public Integer getEmailId() {
+		return emailId;
+	}
+
+	public void setEmailId(Integer emailId) {
+		this.emailId = emailId;
+	}
+
+	public Integer getRpaymethodId() {
+		return rpaymethodId;
+	}
+
+	public void setRpaymethodId(Integer rpaymethodId) {
+		this.rpaymethodId = rpaymethodId;
+	}
+
+	public Integer getPaymethodId() {
+		return paymethodId;
+	}
+
+	public void setPaymethodId(Integer paymethodId) {
+		this.paymethodId = paymethodId;
+	}
+
+	public Integer getRbankId() {
+		return rbankId;
+	}
+
+	public void setRbankId(Integer rbankId) {
+		this.rbankId = rbankId;
+	}
+	
 }

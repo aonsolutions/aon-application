@@ -2,7 +2,15 @@ package com.esferalia.aon.gwt.payroll.jooq;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
+import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
+import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
+import static com.esferalia.aon.jooq.tables.Rpaymethod.RPAYMETHOD;
+import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
+import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
+import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -15,7 +23,7 @@ import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.payroll.client.Quintet;
-import com.esferalia.aon.gwt.payroll.client.Triplet;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -41,27 +49,181 @@ public class JooqEvents {
 	}
 	
 	private static WorkplaceEmployees getWorkplaceEmployeesInformation(DSLContext dslContext, Integer workplaceId) {
-		WorkplaceEmployees workplaceEmployees = null;
+		WorkplaceEmployees workplaceEmployees = new WorkplaceEmployees();
 		System.out.println("Workplace :"+workplaceId);
 		
-		Result<Record> result = dslContext.select()
+		Integer enterpriseId = dslContext.select(WORKPLACE.ENTERPRISE)
+				.from(WORKPLACE)
+				.where(WORKPLACE.ID.eq(workplaceId))
+				.fetchOne()
+				.value1();
+		
+		Result<Record> personRecords = dslContext.select()
 				.from(PERSON)
 				.innerJoin(CONTRACT)
 				.on(PERSON.REGISTRY.eq(CONTRACT.PERSON))
-				.where(CONTRACT.WORKPLACE.eq(workplaceId))
+				.innerJoin(WORKPLACE)
+				.on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID))
+				.where(WORKPLACE.ENTERPRISE.eq(enterpriseId))
 				.and(CONTRACT.ID.gt(0))
+				.and(WORKPLACE.ACTIVE.eq((byte)1))
 				.fetch();
 		
-		ArrayList<Triplet<Integer, String, String>> listEmployeeInfo = new ArrayList<>();
-		for(Record r : result){
-			Integer id = r.get(CONTRACT.ID);
-			String name = r.get(PERSON.NAME);
-			String surName = r.get(PERSON.FIRST_SURNAME) + " " + r.get(PERSON.SECOND_SURNAME);
-			Triplet<Integer, String, String> triplet = new Triplet<Integer, String, String>(id, name, surName);
-			listEmployeeInfo.add(triplet);
+		for(Record p : personRecords){
+			EmployeeInfo employee = new EmployeeInfo();
+			
+			Record registryRecord = dslContext.select()
+					.from(REGISTRY)
+					.where(REGISTRY.ID.eq(p.get(PERSON.REGISTRY)))
+					.fetchOne();
+			
+			//PERSON TABLE
+			Integer id = p.get(PERSON.REGISTRY);
+			String name = p.get(PERSON.NAME);
+			String surName = p.get(PERSON.FIRST_SURNAME);
+			String secondSurName = p.get(PERSON.SECOND_SURNAME);
+			Date bithDate = p.get(PERSON.BIRTH_DATE);
+			Byte gender = p.get(PERSON.GENDER);
+			String ssNumber = p.get(PERSON.SOCIAL_SECURITY_NUM);
+			
+			//REGISTRY TABLE
+			String document = registryRecord.get(REGISTRY.DOCUMENT);
+			Byte documentType = registryRecord.get(REGISTRY.DOCUMENT_TYPE);
+			String nationality = registryRecord.get(REGISTRY.NATIONALITY);
+			
+			Result<Record> raddressRecords = dslContext.select()
+					.from(RADDRESS)
+					.where(RADDRESS.REGISTRY.eq(p.get(PERSON.REGISTRY)))
+					.fetch();
+			
+			//RADDRESS TABLE
+			Integer raddressId = null;
+			String streetType = null;
+			String address = null;
+			String addressNum = null;
+			String addressZip = null;
+			String addressCity = null;
+			Integer geozoneId = null;
+			String addressProvince = null;
+			
+			if(null != raddressRecords) {
+				if(null != raddressRecords.get(0).get(RADDRESS.GEOZONE)) {
+					Record geozoneRecord = dslContext.select()
+							.from(GEOZONE)
+							.where(GEOZONE.ID.eq(raddressRecords.get(0).get(RADDRESS.GEOZONE)))
+							.fetchOne();
+					
+					geozoneId = geozoneRecord.get(GEOZONE.ID);
+					addressProvince = geozoneRecord.get(GEOZONE.NAME);
+				}
+				
+				raddressId = raddressRecords.get(0).get(RADDRESS.ID);
+				streetType = raddressRecords.get(0).get(RADDRESS.STREET_TYPE);
+				address = raddressRecords.get(0).get(RADDRESS.ADDRESS);
+				addressNum = raddressRecords.get(0).get(RADDRESS.NUMBER);
+				addressZip = raddressRecords.get(0).get(RADDRESS.ZIP);
+				addressCity = raddressRecords.get(0).get(RADDRESS.CITY);
+			}
+			
+			//RMEDIA TABLE
+			Result<Record> rmediaRecords = dslContext.select()
+					.from(RMEDIA)
+					.where(RMEDIA.REGISTRY.eq(p.get(PERSON.REGISTRY)))
+					.fetch();
+			
+			Integer mobileId = null;
+			String mobile = null;
+			Integer phoneId = null;
+			String phone = null;
+			Integer emailId = null;
+			String email = null;
+			
+			for(Record record : rmediaRecords) {
+				if(1 == record.get(RMEDIA.MEDIA)) {
+					phoneId = record.get(RMEDIA.ID);
+					phone = record.get(RMEDIA.VALUE);
+				}else if(2 == record.get(RMEDIA.MEDIA)) {
+					mobileId = record.get(RMEDIA.ID);
+					mobile = record.get(RMEDIA.VALUE);
+				}else if(4 == record.get(RMEDIA.MEDIA)) {
+					emailId = record.get(RMEDIA.ID);
+					email = record.get(RMEDIA.VALUE);
+				}
+			}
+			
+			//PAY METHOD
+			Result<Record> rpaymethodRecords = dslContext.select()
+					.from(RPAYMETHOD)
+					.where(RPAYMETHOD.REGISTRY.eq(p.get(PERSON.REGISTRY)))
+					.fetch();
+			
+			Integer rpaymethodId = null;
+			Integer paymethodId = null;
+			String payMethod = null;
+			Integer rbankId = null;
+			String account = null;
+			String bic = null;
+			
+			if(null != rpaymethodRecords && !rpaymethodRecords.isEmpty()) {
+				rpaymethodId = rpaymethodRecords.get(0).get(RPAYMETHOD.ID);
+				Record paymethodRecord = dslContext.select()
+						.from(PAY_METHOD)
+						.where(PAY_METHOD.ID.eq(rpaymethodRecords.get(0).get(RPAYMETHOD.PAY_METHOD)))
+						.fetchOne();
+				
+				paymethodId = paymethodRecord.get(PAY_METHOD.ID);
+				payMethod = paymethodRecord.get(PAY_METHOD.NAME);
+				
+				if(null != rpaymethodRecords.get(0).get(RPAYMETHOD.RBANK)) {
+					Record rbankRecord = dslContext.select()
+							.from(RBANK)
+							.where(RBANK.ID.eq(rpaymethodRecords.get(0).get(RPAYMETHOD.RBANK)))
+							.fetchOne();
+					
+					rbankId = rbankRecord.get(RBANK.ID);
+					account = rbankRecord.get(RBANK.BANK_ACCOUNT);
+					bic = rbankRecord.get(RBANK.BIC);
+				}
+			}
+			
+			//SET EMPLOYEE INFO
+			employee.setEmployeeId(id);
+			employee.setName(name);
+			employee.setSurName(surName);
+			employee.setSecondSurName(secondSurName);
+			employee.setBirthdate(bithDate);
+			employee.setGender(gender);
+			employee.setSsNumber(ssNumber);
+			
+			employee.setDocument(document);
+			employee.setDocumentType(documentType);
+			employee.setNationality(nationality);
+			
+			employee.setRaddressId(raddressId);
+			employee.setStreetType(streetType);
+			employee.setAddress(address);
+			employee.setAddresNum(addressNum);
+			employee.setAddressZip(addressZip);
+			employee.setAddressCity(addressCity);
+			employee.setGeozoneId(geozoneId);
+			employee.setAddressProvinces(addressProvince);
+			
+			employee.setMobileId(mobileId);
+			employee.setMobile(mobile);
+			employee.setPhoneId(phoneId);
+			employee.setPhone(phone);
+			employee.setEmailId(emailId);
+			employee.setEmail(email);
+			
+			employee.setRpaymethodId(rpaymethodId);
+			employee.setPaymethodId(paymethodId);
+			employee.setPayMethodType(payMethod);
+			employee.setRbankId(rbankId);
+			employee.setAccount(account);
+			employee.setBic(bic);
+			
+			workplaceEmployees.addEmployee(employee);
 		}
-		
-		workplaceEmployees = new WorkplaceEmployees(listEmployeeInfo);
 		
 		return workplaceEmployees;
 	}

@@ -22,6 +22,7 @@ import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -32,6 +33,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -103,10 +105,10 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 	TableElement contractDataTable;
 	
 	@UiField
-	TextBox document;
-
-	@UiField
 	Label document_type;
+	
+	@UiField
+	SuggestBox document;
 
 	@UiField
 	TableCellElement nationalityLabelCell;
@@ -118,25 +120,28 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 	SuggestBox nationality;
 	
 	@UiField
-	TextBox security_social_num;
+	SuggestBox security_social_num;
 
 	@UiField
-	TextBox name;
+	SuggestBox name;
 
 	@UiField
 	Label firstSurnameLabel;
 
 	@UiField
-	TextBox first_surname;
+	SuggestBox first_surname;
 
 	@UiField
 	TextBox second_surname;
-
-	@UiField
-	ListBox workplace;
 	
 	@UiField
+	ListBox ssRegimeType;
+
+	@UiField
 	ListBox activityCCC;
+	
+	@UiField
+	ListBox workplace;
 	
 	@UiField
 	TableCellElement contractTypeNode;
@@ -184,8 +189,6 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 	ListBox journeyType;
 
 	// TABLA DATOS EMPLEADO
-	@UiField
-	Label labelEmployee;
 
 	@UiField
 	TableElement employeeDataTable;
@@ -218,10 +221,10 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 	ListBox addressProvince;
 
 	@UiField
-	TextBox phone;
-
-	@UiField
 	TextBox mobile;
+	
+	@UiField
+	TextBox phone;
 
 	@UiField
 	TextBox email;
@@ -256,8 +259,7 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 		initializeView();
 
 		// Init Google Maps Places API (INACTIVO)
-		// initGoogleMapsPlaces();
-		
+		// initGoogleMapsPlaces();	
 	}
 
 	private void initGoogleMapsPlaces() {
@@ -304,13 +306,50 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 	//								UiHandlers
 	// ------------------------------------------------------------------------
 	
+	// TABLA DATOS CONTRATO
+	
+	@UiHandler("document")
+	void onDocumentChangeValue(SelectionEvent<Suggestion> event) {
+		onEmployeeDocumentSuggestionChange();
+	}
+	
+	@UiHandler("document")
+	void onDocumentChangeValue(ValueChangeEvent<String> event) {
+		onEmployeeDocumentChange();
+	}
+	
+	@UiHandler("nationality")
+	void onNationalityChangeValue(ValueChangeEvent<String> event) {
+		onEmployeeNationalityChange();
+	}
+	
+	@UiHandler("security_social_num")
+	void onSocialSecurityNumChangeValue(SelectionEvent<Suggestion> event) {
+		onEmployeeSSNumSuggestionChange(); 
+	}
+	
+	@UiHandler("security_social_num")
+	void onSocialSecurityNumChangeValue(ValueChangeEvent<String> event) {
+		onEmployeeSSNumChange(); 
+	}
+	
 	@UiHandler("name")
-	void onNameChangeValue(ChangeEvent event) {
+	void onNameChangeValue(SelectionEvent<Suggestion> event) {
+		onEmployeeNameSuggestionChange();
+	}
+	
+	@UiHandler("name")
+	void onNameChangeValue(ValueChangeEvent<String> event) {
 		onEmployeeNameChange();
 	}
 	
 	@UiHandler("first_surname")
-	void onFirstSurnameChangeValue(ChangeEvent event) {
+	void onFirstSurnameChangeValue(SelectionEvent<Suggestion> event) {
+		onEmployeeFirstSurnameSuggestionChange();
+	}
+	
+	@UiHandler("first_surname")
+	void onFirstSurnameChangeValue(ValueChangeEvent<String> event) {
 		onEmployeeFirstSurnameChange();
 	}
 	
@@ -319,19 +358,9 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 		onEmployeeSecondSurnameChange();
 	}
 	
-	@UiHandler("document")
-	void onDocumentChangeValue(ChangeEvent event) {
-		onEmployeeDocumentChange();
-	}
-	
-	@UiHandler("nationality")
-	void onNationalityChangeValue(ValueChangeEvent<String> event) {
-		onEmployeeNationalityChange();
-	}
-
-	@UiHandler("security_social_num")
-	void onSocialSecurityNumChangeValue(ChangeEvent event) {
-		onEmployeeSSNumChange(); 
+	@UiHandler("ssRegimeType")
+	void onContractSSRegimenChangeValue(ChangeEvent event) {
+		onContractSSRegimenChange();
 	}
 
 	@UiHandler("activityCCC")
@@ -399,6 +428,8 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 		onContractJourneyTypeChange();
 	}
 	
+	// TABLA DATOS EMPLEADO
+	
 	@UiHandler("birth_date")
 	void onBithDateChangeValue(ValueChangeEvent<Date> event) {
 		onEmployeeBirthDateChange();
@@ -439,14 +470,14 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 		onEmployeeAddressProvinceChange();
 	}
 
-	@UiHandler("phone")
-	void onPhoneChangeValue(ChangeEvent event) {
-		onEmployeePhoneChange();
-	}
-
 	@UiHandler("mobile")
 	void onMobileChangeValue(ChangeEvent event) {
 		onEmployeeMobileChange();
+	}
+	
+	@UiHandler("phone")
+	void onPhoneChangeValue(ChangeEvent event) {
+		onEmployeePhoneChange();
 	}
 
 	@UiHandler("email")
@@ -473,13 +504,19 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 	//							Abstraact Methods
 	// ------------------------------------------------------------------------
 	
-	//Contract Table Methods
-	public abstract void onEmployeeNameChange();
-	public abstract void onEmployeeFirstSurnameChange();
-	public abstract void onEmployeeSecondSurnameChange();
+	// TABLA DATOS CONTRATO
+	
+	public abstract void onEmployeeDocumentSuggestionChange();
 	public abstract void onEmployeeDocumentChange();
 	public abstract void onEmployeeNationalityChange();
+	public abstract void onEmployeeSSNumSuggestionChange();
 	public abstract void onEmployeeSSNumChange();
+	public abstract void onEmployeeNameSuggestionChange();
+	public abstract void onEmployeeNameChange();
+	public abstract void onEmployeeFirstSurnameSuggestionChange();
+	public abstract void onEmployeeFirstSurnameChange();
+	public abstract void onEmployeeSecondSurnameChange();
+	public abstract void onContractSSRegimenChange();
 	public abstract void onContractActiviesCCCChange();
 	public abstract void onContractWorkplaceChange();
 	public abstract void onContractTypeChange();
@@ -494,7 +531,8 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 	public abstract void onContractOccupationChange();
 	public abstract void onContractJourneyTypeChange();
 	
-	//Employee Table Methods
+	// TABLA DATOS EMPLEADO
+	
 	public abstract void onEmployeeBirthDateChange();
 	public abstract void onEmployeeGenderChange();
 	public abstract void onEmployeeStreetTypeChange();
@@ -503,8 +541,8 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 	public abstract void onEmployeeAddressZipChange();
 	public abstract void onEmployeeAddressCityChange();
 	public abstract void onEmployeeAddressProvinceChange();
-	public abstract void onEmployeePhoneChange();
 	public abstract void onEmployeeMobileChange();
+	public abstract void onEmployeePhoneChange();
 	public abstract void onEmployeeEmailChange();
 	public abstract void onEmployeePayMethodChange();
 	public abstract void onEmployeeAccountChange();
@@ -522,7 +560,14 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 	}
 
 	private void resetElements() {
-		// Clear contract elements
+		// TABLA DATOS CONTRATO
+		
+		this.document.setValue("");
+		this.security_social_num.setValue("");
+		this.name.setValue("");
+		this.first_surname.setValue("");
+		this.second_surname.setValue("");
+		this.ssRegimeType.clear();
 		this.activityCCC.clear();
 		this.workplace.clear();
 		this.contractType.clear();
@@ -537,18 +582,18 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 		this.occupation.clear();
 		this.journeyType.clear();
 
-		// Clear employee elements
-		this.document.setValue("");
-		this.name.setValue("");
-		this.first_surname.setValue("");
-		this.second_surname.setValue("");
+		// TABLA DATOS EMPLEADO
+		
 		this.birth_date.setValue(null);
 		this.gender.clear();
 		this.street_type.clear();
-		this.security_social_num.setValue("");
 		this.address.setValue("");
-		this.phone.setValue("");
+		this.addressNum.setValue("");
+		this.addressZip.setValue("");
+		this.addressCity.setValue("");
+		this.addressProvince.clear();
 		this.mobile.setValue("");
+		this.phone.setValue("");
 		this.email.setValue("");
 		this.payMethod.clear();
 		this.account.setValue("");
@@ -556,14 +601,22 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 	}
 
 	private void initializeListBox() {
+		// TABLA DATOS CONTRATO
+		
+		// TIPO DE COTIZACIÓN
+		this.ssRegimeType.addItem("COMUN");
+		this.ssRegimeType.addItem("RETA");
+		this.ssRegimeType.addItem("SOCIOS COOP");
+		this.ssRegimeType.addItem("JUBILACION ACTIVA");
+		this.ssRegimeType.addItem("GARANTIA JUVENIL");
+		
 		// MODALIDAD
 		this.modality.addItem("-");
 
 		// GRUPO DE COTIZACION
 		this.quote_group.addItem("-");
 		this.quote_group.addItem("01. Alta direcci" + String.valueOf("\u00F3") + "n y personal no incluido en el E.T.");
-		this.quote_group
-				.addItem("02. Ingenieros t" + String.valueOf("\u00E9") + "cnicos, peritos y ayudantes titulados");
+		this.quote_group.addItem("02. Ingenieros t" + String.valueOf("\u00E9") + "cnicos, peritos y ayudantes titulados");
 		this.quote_group.addItem("03. Jefes administrativos y de taller");
 		this.quote_group.addItem("04. Ayudantes no titulados");
 		this.quote_group.addItem("05. Oficiales administrativos");
@@ -588,10 +641,8 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 		this.journeyType.addItem("Tiempo Completo");
 		this.journeyType.addItem("Tiempo Parcial");
 		
-		this.addressProvince.addItem("-");
-		for(String province : ProvinceContract.getProvinces().values())
-			this.addressProvince.addItem(province);
-
+		// TABLA DATOS EMPLEADO
+		
 		// SEXO
 		this.gender.addItem("Hombre");
 		this.gender.addItem("Mujer");
@@ -602,6 +653,12 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 			this.street_type.addItem(StreetType.values()[i].getDescription());
 		}
 		
+		//PROVINCIA
+		this.addressProvince.addItem("-");
+		for(String province : ProvinceContract.getProvinces().values())
+			this.addressProvince.addItem(province);
+
+		
 		// TIPO DE PAGO
 		this.payMethod.addItem("-");
 		this.payMethod.addItem("EFECTIVO");
@@ -611,39 +668,42 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 	}
 	
 	private void initDisplayElements() {
-		this.contractDataTable.getRows().getItem(3).getStyle().clearDisplay();
-		this.contractDataTable.getRows().getItem(6).getStyle().clearDisplay();
-		this.contractDataTable.getRows().getItem(10).getStyle().clearDisplay();
-		this.contractDataTable.getRows().getItem(11).getStyle().clearDisplay();
-		this.contractDataTable.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
-
-		this.contractTypeNode.getStyle().clearDisplay();
+		this.contractDataTable.getRows().getItem(4).getStyle().clearDisplay();
 		
+		this.contractTypeNode.getStyle().clearDisplay();
 		this.contractFreelancerNode.getStyle().setDisplay(Display.NONE);
+		
+		this.contractDataTable.getRows().getItem(7).getStyle().clearDisplay();
+		this.contractDataTable.getRows().getItem(11).getStyle().clearDisplay();
+		this.contractDataTable.getRows().getItem(12).getStyle().clearDisplay();
+		
+		this.contractDataTable.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
 	}
 
-	private void showElementsFreelancerTable() {
-		this.contractDataTable.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
-		this.contractDataTable.getRows().getItem(6).getStyle().setDisplay(Display.NONE);
-		this.contractDataTable.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
-		this.contractDataTable.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
-		this.contractDataTable.getRows().getItem(12).getStyle().clearDisplay();
-
-		this.contractTypeNode.getStyle().setDisplay(Display.NONE);
+	public void showElementsFreelancerTable() {
+		this.contractDataTable.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
 		
+		this.contractTypeNode.getStyle().setDisplay(Display.NONE);
 		this.contractFreelancerNode.getStyle().clearDisplay();
+		
+		this.contractDataTable.getRows().getItem(7).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
+		
+		this.contractDataTable.getRows().getItem(13).getStyle().clearDisplay();
 	}
 	
-	private void hideElementsFreelancerTable() {
-		this.contractDataTable.getRows().getItem(3).getStyle().clearDisplay();
-		this.contractDataTable.getRows().getItem(6).getStyle().clearDisplay();
-		this.contractDataTable.getRows().getItem(10).getStyle().clearDisplay();
-		this.contractDataTable.getRows().getItem(11).getStyle().clearDisplay();
-		this.contractDataTable.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
-
-		this.contractTypeNode.getStyle().clearDisplay();
+	public void hideElementsFreelancerTable() {
+		this.contractDataTable.getRows().getItem(4).getStyle().clearDisplay();
 		
+		this.contractTypeNode.getStyle().clearDisplay();
 		this.contractFreelancerNode.getStyle().setDisplay(Display.NONE);
+		
+		this.contractDataTable.getRows().getItem(7).getStyle().clearDisplay();
+		this.contractDataTable.getRows().getItem(11).getStyle().clearDisplay();
+		this.contractDataTable.getRows().getItem(12).getStyle().clearDisplay();
+		
+		this.contractDataTable.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
 	}
 
 	@Override

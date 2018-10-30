@@ -154,7 +154,7 @@
 								<g:Label styleName='{style.alignTextCenter}' ui:field="document_type"></g:Label>
 							</td>
 							<td>
-								<g:TextBox ui:field="document" styleName='aon-inputText {style.maxWidthTextBox}'></g:TextBox>
+								<g:SuggestBox ui:field="document" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
 							</td>
 							<td style="width: 10%;" ui:field="nationalityLabelCell">
 								<g:Label ui:field="nationalityLabel" styleName='{style.alignTextCenter}'>Nacionalidad</g:Label>
@@ -166,7 +166,7 @@
 								<g:Label styleName='{style.alignTextCenter}'>Nº S.S.</g:Label>
 							</td>
 							<td >
-								<g:TextBox ui:field="security_social_num" styleName='aon-inputText {style.maxWidthTextBox}'></g:TextBox>
+								<g:SuggestBox ui:field="security_social_num" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
 							</td>
 						</tr>
 					    <tr>
@@ -174,20 +174,28 @@
 								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Nombre Completo</g:Label>
 							</td>
 							<td colspan="2">
-								<g:TextBox ui:field="name" styleName='aon-inputText {style.maxWidthTextBox}'></g:TextBox>
+								<g:SuggestBox ui:field="name" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
 							</td>
 							<td>
 								<g:Label ui:field="firstSurnameLabel"
 									styleName='{style.alignTextCenter} {style.requiredColor}'>1er Apellido</g:Label>
 							</td>
 							<td >
-								<g:TextBox ui:field="first_surname" styleName='aon-inputText {style.maxWidthTextBox}'></g:TextBox>
+								<g:SuggestBox ui:field="first_surname" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
 							</td>
 							<td style="width: 10%;">
 								<g:Label styleName='{style.alignTextCenter}'>2º Apellido</g:Label>
 							</td>
 							<td >
 								<g:TextBox ui:field="second_surname" styleName='aon-inputText {style.maxWidthTextBox4}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 200px;">
+								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Tipo de cotización</g:Label>
+							</td>
+							<td colspan="6">
+								<g:ListBox ui:field="ssRegimeType" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
 						</tr>
 						<tr>
