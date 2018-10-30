@@ -3398,7 +3398,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
 				contract.getId());
 		
-		Date startIT = getToday();
+		Date startIT = add(getLastDayOfMonth(getToday()), Calendar.DAY_OF_MONTH, -2);
 		
 		addIT(aonContext, 
 				contract, 
