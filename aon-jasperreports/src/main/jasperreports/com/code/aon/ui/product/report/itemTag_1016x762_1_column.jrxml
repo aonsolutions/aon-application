@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.5.0.final using JasperReports Library version 6.5.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="itemTag_1016x762_1_column" pageWidth="287" pageHeight="215" columnWidth="287" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="e6f2b03e-3097-4960-a0f2-206be79dc16a">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -8,7 +9,7 @@
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<style name="Barcode" scaleImage="FillFrame" hAlign="Left" vAlign="Middle" isBlankWhenNull="true" fontName="Helvetica" fontSize="10">
+	<style name="Barcode" scaleImage="FillFrame" hTextAlign="Left" hImageAlign="Left" vTextAlign="Middle" vImageAlign="Middle" isBlankWhenNull="true" fontName="Helvetica" fontSize="10">
 		<box>
 			<topPen lineWidth="0.0" lineColor="#000000"/>
 			<leftPen lineWidth="0.0" lineColor="#000000"/>
@@ -59,7 +60,7 @@
 	<detail>
 		<band height="215" splitType="Stretch">
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement uuid="42d5b63e-da95-488e-a683-6490c653421b" key="textField-8" mode="Transparent" x="7" y="6" width="272" height="30" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="textField-8" mode="Transparent" x="7" y="6" width="272" height="30" forecolor="#000000" backcolor="#FFFFFF" uuid="42d5b63e-da95-488e-a683-6490c653421b">
 					<printWhenExpression><![CDATA[$F{id}!=null]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -75,7 +76,7 @@
 				<textFieldExpression><![CDATA["ETIQUETA DE PRODUCTO"]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement uuid="176b5fd1-b957-4e1b-8137-a0f027aa786b" key="textField-12" mode="Transparent" x="7" y="96" width="272" height="50" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="textField-12" mode="Transparent" x="7" y="96" width="272" height="50" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="176b5fd1-b957-4e1b-8137-a0f027aa786b">
 					<printWhenExpression><![CDATA[$F{id}!=null]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="5">
@@ -88,7 +89,8 @@
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{product}.getName()!=null?$F{product}.getName() + "\n":"")
+				<textFieldExpression><![CDATA[($F{product}.getCode()!=null?$F{product}.getCode() + " - ":"")
++ ($F{product}.getName()!=null?$F{product}.getName() + "\n":"")
 + (($F{description}!=null && !"".equals($F{description}))?$F{description}:
     ($F{product}.getBaseItem().getDescription()!=null?
         $F{product}.getBaseItem().getDescription():""))
@@ -97,7 +99,7 @@
 + ($F{detail3}!=null?", "+$F{detail3}:"")]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement uuid="291a72a6-9692-4ad7-bc2b-7ab89e667b51" key="textField-8" positionType="Float" mode="Transparent" x="7" y="186" width="272" height="20" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="textField-8" positionType="Float" mode="Transparent" x="7" y="186" width="272" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="291a72a6-9692-4ad7-bc2b-7ab89e667b51">
 					<printWhenExpression><![CDATA[$F{id}!=null]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="5">
@@ -113,7 +115,7 @@
 				<textFieldExpression><![CDATA[$P{freeText}]]></textFieldExpression>
 			</textField>
 			<componentElement>
-				<reportElement uuid="6a29d75e-33f3-4ba2-8300-03accb14907f" style="Barcode" x="7" y="36" width="272" height="40">
+				<reportElement style="Barcode" x="7" y="36" width="272" height="40" uuid="6a29d75e-33f3-4ba2-8300-03accb14907f">
 					<printWhenExpression><![CDATA[$F{id}!=null && $V{barcode}!=null && !"".equals($V{barcode})]]></printWhenExpression>
 				</reportElement>
 				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="false" checksumRequired="false" barWidth="1" barHeight="40">
@@ -121,7 +123,7 @@
 				</jr:barbecue>
 			</componentElement>
 			<staticText>
-				<reportElement uuid="b768c70b-b896-4bec-9401-c1f684560284" x="284" y="212" width="3" height="3">
+				<reportElement x="284" y="212" width="3" height="3" uuid="b768c70b-b896-4bec-9401-c1f684560284">
 					<printWhenExpression><![CDATA[$F{id}!=null]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -131,11 +133,10 @@
 					<bottomPen lineWidth="0.25" lineColor="#999999"/>
 					<rightPen lineWidth="0.25" lineColor="#999999"/>
 				</box>
-				<textElement/>
 				<text><![CDATA[Static text]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="e88df400-e42b-4723-8dca-bd2c9090dca3" x="0" y="212" width="3" height="3">
+				<reportElement x="0" y="212" width="3" height="3" uuid="e88df400-e42b-4723-8dca-bd2c9090dca3">
 					<printWhenExpression><![CDATA[$F{id}!=null]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -145,11 +146,10 @@
 					<bottomPen lineWidth="0.25" lineColor="#999999"/>
 					<rightPen lineWidth="0.0" lineColor="#999999"/>
 				</box>
-				<textElement/>
 				<text><![CDATA[Static text]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="b1b1ed69-599e-426a-b3de-9ccc951b6d47" x="284" y="0" width="3" height="3">
+				<reportElement x="284" y="0" width="3" height="3" uuid="b1b1ed69-599e-426a-b3de-9ccc951b6d47">
 					<printWhenExpression><![CDATA[$F{id}!=null]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -159,11 +159,10 @@
 					<bottomPen lineWidth="0.0" lineColor="#999999"/>
 					<rightPen lineWidth="0.25" lineColor="#999999"/>
 				</box>
-				<textElement/>
 				<text><![CDATA[Static text]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="9dafa239-61f5-44bd-b89d-92aa1047e3ba" x="0" y="0" width="3" height="3">
+				<reportElement x="0" y="0" width="3" height="3" uuid="9dafa239-61f5-44bd-b89d-92aa1047e3ba">
 					<printWhenExpression><![CDATA[$F{id}!=null]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -172,11 +171,10 @@
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement/>
 				<text><![CDATA[Static text]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement uuid="07e346a5-8080-47d1-8417-35ee52604d40" key="textField-8" mode="Transparent" x="7" y="76" width="272" height="20" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="textField-8" mode="Transparent" x="7" y="76" width="272" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="07e346a5-8080-47d1-8417-35ee52604d40">
 					<printWhenExpression><![CDATA[$F{id}!=null]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -192,7 +190,7 @@
 				<textFieldExpression><![CDATA[$V{barcode}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement uuid="9849c62b-b20e-4e80-93f3-d2d1b980735f" key="textField-8" positionType="Float" mode="Transparent" x="7" y="146" width="272" height="20" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="textField-8" positionType="Float" mode="Transparent" x="7" y="146" width="272" height="20" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="9849c62b-b20e-4e80-93f3-d2d1b980735f">
 					<printWhenExpression><![CDATA[$F{id}!=null && $F{serialNumber}!=null && ($F{product}.isLotable() || $F{product}.isSerializable())]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="5">
@@ -208,7 +206,7 @@
 				<textFieldExpression><![CDATA[(($F{product}.isLotable())?"LOTE Nº: ":"SERIE Nº: ")+ $F{serialNumber}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement uuid="27927838-9bd5-4204-902b-0debb9a4d20f" key="textField-8" positionType="Float" mode="Transparent" x="7" y="166" width="272" height="20" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="textField-8" positionType="Float" mode="Transparent" x="7" y="166" width="272" height="20" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="27927838-9bd5-4204-902b-0debb9a4d20f">
 					<printWhenExpression><![CDATA[$F{id}!=null && ($F{product}.isLotable() || $F{product}.isSerializable())]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="5">
@@ -225,7 +223,7 @@
 + new SimpleDateFormat("dd/MM/yyyy").format($F{serialDate})]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement uuid="11d91d75-5122-4cc7-8ea3-b1ca1b518e8e" x="6" y="6" width="1" height="200">
+				<reportElement x="6" y="6" width="1" height="200" uuid="11d91d75-5122-4cc7-8ea3-b1ca1b518e8e">
 					<printWhenExpression><![CDATA[$F{id}!=null]]></printWhenExpression>
 				</reportElement>
 				<graphicElement>
@@ -233,7 +231,7 @@
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement uuid="7d143838-f794-4013-9e81-38bbd5fdcd8c" x="279" y="6" width="1" height="200">
+				<reportElement x="279" y="6" width="1" height="200" uuid="7d143838-f794-4013-9e81-38bbd5fdcd8c">
 					<printWhenExpression><![CDATA[$F{id}!=null]]></printWhenExpression>
 				</reportElement>
 				<graphicElement>
