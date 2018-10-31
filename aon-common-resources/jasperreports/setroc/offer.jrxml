@@ -878,7 +878,7 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
 							<jr:columnHeader height="12" rowSpan="1">
 								<textField pattern="" isBlankWhenNull="false">
-									<reportElement key="textField-1" mode="Opaque" x="0" y="0" width="321" height="12" forecolor="#FFFFFF" backcolor="#999999" uuid="ecba1589-3cf8-457b-b5e9-235e19dc5f1d"/>
+									<reportElement key="textField-1" mode="Opaque" x="0" y="0" width="261" height="4" forecolor="#FFFFFF" backcolor="#999999" uuid="ecba1589-3cf8-457b-b5e9-235e19dc5f1d"/>
 									<box>
 										<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 										<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -892,7 +892,7 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 									<textFieldExpression><![CDATA[$R{aon_description}]]></textFieldExpression>
 								</textField>
 								<genericElement>
-									<reportElement mode="Transparent" x="0" y="0" width="0" height="12" uuid="5ed5e313-c1cb-41ea-b331-191c1de2bc25">
+									<reportElement mode="Transparent" x="0" y="4" width="261" height="2" uuid="5ed5e313-c1cb-41ea-b331-191c1de2bc25">
 										<property name="controlParameter" value="true"/>
 									</reportElement>
 									<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -910,7 +910,7 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 									</genericElementParameter>
 								</genericElement>
 								<genericElement>
-									<reportElement mode="Transparent" x="0" y="0" width="0" height="12" uuid="104d84d7-d142-40a3-b72f-12445982a1ee">
+									<reportElement mode="Transparent" x="0" y="6" width="261" height="2" uuid="104d84d7-d142-40a3-b72f-12445982a1ee">
 										<property name="controlParameter" value="true"/>
 									</reportElement>
 									<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -928,7 +928,7 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 									</genericElementParameter>
 								</genericElement>
 								<genericElement>
-									<reportElement mode="Transparent" x="0" y="0" width="0" height="12" uuid="c069389f-250d-42ae-a4f4-8bc8edcc03a1">
+									<reportElement mode="Transparent" x="0" y="8" width="261" height="2" uuid="c069389f-250d-42ae-a4f4-8bc8edcc03a1">
 										<property name="controlParameter" value="true"/>
 									</reportElement>
 									<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
@@ -946,7 +946,7 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 									</genericElementParameter>
 								</genericElement>
 								<genericElement>
-									<reportElement mode="Transparent" x="0" y="0" width="0" height="12" uuid="f06711d3-18a1-432f-ac80-e6557adb3490">
+									<reportElement mode="Transparent" x="0" y="10" width="261" height="2" uuid="f06711d3-18a1-432f-ac80-e6557adb3490">
 										<property name="controlParameter" value="true"/>
 									</reportElement>
 									<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
