@@ -2,6 +2,8 @@ package com.esferalia.aon.gwt.common.shared;
 
 import java.io.Serializable;
 
+import com.google.gwt.user.client.Window;
+
 @SuppressWarnings("serial")
 public class SocialSecurity implements Serializable{
 	

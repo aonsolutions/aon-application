@@ -29,6 +29,7 @@ import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -75,9 +76,9 @@ public class EmployeeDialog extends CustomDialog {
 		public void onEmployeeSSNumSuggestionChange() {
 			String ssNum = this.security_social_num.getValue();
 			EmployeeInfo employeeData = employeeDialogObject.getEmployeeDataBySSNum(ssNum);
-			if(null == employeeData.getEmployeeId())
+			if(null == employeeData.getEmployeeId()){
 				employeeDialogObject.setEmployeeSocialSecurityNum(ssNum);
-			else
+			}else
 				fillExistingEmployee(employeeData);	
 		}
 
@@ -131,8 +132,10 @@ public class EmployeeDialog extends CustomDialog {
 			int ssRegime = this.ssRegimeType.getSelectedIndex();
 			employeeDialogObject.setSSRegime(ssRegime);
 			
-			if(1 == ssRegime)
+			if(1 == ssRegime){
 				this.showElementsFreelancerTable();
+				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.journeyType);
+			}
 			else
 				this.hideElementsFreelancerTable();
 		}
@@ -145,10 +148,12 @@ public class EmployeeDialog extends CustomDialog {
 				employeeDialogObject.setContractCCCId(null);
 				employeeDialogObject.setContractCCCType((Byte)null);
 			}else{
+//				Window.alert(activityCCC);
 				String activityStr = activityCCC.split(" -")[0];
 				String cccStr = activityCCC.split("\\[")[1].split("\\]")[0];
 				String cccTypeStr = activityCCC.split("- ")[1].split("\\[")[0];
 				String cccGeozoneStr = activityCCC.split("- ")[2];
+//				Window.alert("ActivityStr : " + activityStr + ", CCCStr : " + cccStr + ", CCCTypeStr : " + cccTypeStr + ", CCCGeozoneStr : "+ cccGeozoneStr);
 				int cccTypeInt = -1;
 				for(int i=0; i< CCCType.values().length; i++){
 					if(CCCType.values()[i].name().equals(cccTypeStr)){
@@ -370,17 +375,24 @@ public class EmployeeDialog extends CustomDialog {
 
 		@Override
 		public void onEmployeePayMethodChange() {
-			employeeDialogObject.setEmployeePayMethod(this.payMethod.getSelectedItemText());
-		}
-
-		@Override
-		public void onEmployeeAccountChange() {
-			employeeDialogObject.setEmployeeAccount(this.account.getValue());
+			String methodPay = this.payMethod.getSelectedItemText(); 
+			employeeDialogObject.setEmployeePayMethod(methodPay);
+			if("TRANSFERENCEIA" != methodPay){
+				this.account.setValue(null);
+				onEmployeeAccountChange();
+				this.bic.setValue(null);
+				onEmployeeBICChange();
+			}
 		}
 
 		@Override
 		public void onEmployeeBICChange() {
 			employeeDialogObject.setEmployeeBIC(this.bic.getValue());
+		}
+		
+		@Override
+		public void onEmployeeAccountChange() {
+			employeeDialogObject.setEmployeeAccount(this.account.getValue());
 		}
 		
 		// ------------------------------------------------------------------------
@@ -430,15 +442,16 @@ public class EmployeeDialog extends CustomDialog {
 		}
 		
 		public void showNationality(String document_type_str) {
+//			Window.alert("Show Nationality By Type : " + document_type_str);
 			if (document_type_str == "CIF" || document_type_str == "Pasaporte" || document_type_str == "NIE") {
 				this.nationalityLabelCell.getStyle().clearDisplay();
 				this.nationalityCell.getStyle().clearDisplay();
-				security_social_num.addStyleName(style.nssWidht());
 			} else {
-				security_social_num.removeStyleName(style.nssWidht());
 				this.nationalityLabelCell.getStyle().setDisplay(Display.NONE);
 				this.nationalityCell.getStyle().setDisplay(Display.NONE);
-				nationality.setValue("ESPA\u00D1A");
+				this.nationality.setValue("ESPA\u00D1A");
+				onEmployeeNationalityChange();
+				//DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.nationality);
 			}
 		}
 		
@@ -606,6 +619,10 @@ public class EmployeeDialog extends CustomDialog {
 	}
 	
 	private void fillDefaultFields() {
+		//SS REGIME
+		this.employee.ssRegimeType.setSelectedIndex(0);
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.employee.ssRegimeType);
+		
 		//ACTIVITY CCC
 		if(this.employee.activityCCC.getItemCount() == 2) {
 			this.employee.activityCCC.setSelectedIndex(1);
@@ -621,6 +638,10 @@ public class EmployeeDialog extends CustomDialog {
 		Integer agreementIndex = this.employeeDialogObject.getAgreementIndex(this.employeeDialogObject.getWorkplaceAgreement());
 		this.employee.agreement.setSelectedIndex(agreementIndex + 1);
 		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.employee.agreement);
+		
+		//GENDER
+		this.employee.gender.setSelectedIndex(0);
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.employee.gender);
 		
 		//STREET_TYPE
 		this.employee.street_type.setSelectedIndex(14); //Calle
@@ -647,8 +668,40 @@ public class EmployeeDialog extends CustomDialog {
 	
 	@UiHandler("acceptButton")
 	void onAcceptButtonClick(ClickEvent clickEvent) {
-		hide();
-		cb.onAccept(this);
+		if(checkIfSaveIsPossible())
+			this.employeeDialogObject.createEmployeeContract(
+					r -> { 
+							hide();
+							cb.onAccept(this);
+						 }, 
+					t -> {}
+			);
+		else{
+			WarningDialog dialog = new WarningDialog("Aviso", "Hay que rellenar los campos azules obligatoriamente.");
+			dialog.center();
+			dialog.show();
+		}
+	}
+
+	private boolean checkIfSaveIsPossible() {
+		if(
+		   "" != this.employee.document.getValue() &&
+		   "" != this.employee.nationality.getValue() &&
+		   "" != this.employee.security_social_num.getValue() &&
+		   "" != this.employee.name.getValue() &&
+		   "" != this.employee.first_surname.getValue() &&
+		   0 != this.employee.activityCCC.getSelectedIndex() &&
+		   0 != this.employee.contractType.getSelectedIndex() &&
+		   0 != this.employee.modality.getSelectedIndex() &&
+		   null != this.employee.start_date.getValue() &&
+		   0 != this.employee.agreement.getSelectedIndex() &&
+		   0 != this.employee.level.getSelectedIndex() &&
+		   0 != this.employee.quote_group.getSelectedIndex() && 
+		   null != this.employee.birth_date.getValue()   
+		)
+			return true;
+		else
+			return false;
 	}
 	
 	// ------------------------------------------------------------------------

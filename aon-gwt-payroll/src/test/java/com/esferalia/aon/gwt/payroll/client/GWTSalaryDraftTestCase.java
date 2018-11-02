@@ -16,6 +16,7 @@ import org.junit.Before;
 
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfoDataBase;
@@ -153,8 +154,8 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void createEmployeeContract(String domain, EmployeeInfoDataBase newEmployeeInfo,
-					AsyncCallback<EmployeeInfoDataBase> asyncCallback) {
+			public void createEmployeeContract(String domain, EmployeeContractInfo newEmployeeInfo,
+					AsyncCallback<EmployeeContractInfo> asyncCallback) {
 				// TODO Auto-generated method stub
 				
 			}

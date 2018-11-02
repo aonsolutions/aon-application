@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfoDataBase;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Events;
@@ -187,7 +188,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void setEmployeeSSBonuses(String domain, Integer contractId, List<SSBonusData> ssBonuses,
 			AsyncCallback<List<SSBonusData>> asyncCallback);
 
-	void createEmployeeContract(String domain, EmployeeInfoDataBase newEmployeeInfo,
-			AsyncCallback<EmployeeInfoDataBase> asyncCallback);
+	void createEmployeeContract(String domain, EmployeeContractInfo employeeContractData,
+			AsyncCallback<EmployeeContractInfo> asyncCallback);
 
 }

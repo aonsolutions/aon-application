@@ -116,6 +116,7 @@ import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfoDataBase;
@@ -4494,11 +4495,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
-	public EmployeeInfoDataBase createEmployeeContract(String domain, EmployeeInfoDataBase newEmployeeInfo) {
+	public EmployeeContractInfo createEmployeeContract(String domain, EmployeeContractInfo employeeContractData) {
 		Connection connection = null;
 		try {
 			connection = AonServletUtils.getConnection(domain);
-			return JooqEmployee.createEmployeeContract(connection, newEmployeeInfo);
+			return JooqEmployee.createEmployeeContract(connection, employeeContractData);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {

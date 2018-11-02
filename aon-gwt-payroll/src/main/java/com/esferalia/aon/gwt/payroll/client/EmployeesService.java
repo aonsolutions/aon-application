@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfoDataBase;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Events;
@@ -166,6 +167,6 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	List<SSBonusData> setEmployeeSSBonuses(String domain, Integer contractId, List<SSBonusData> ssBonuses);
 
-	EmployeeInfoDataBase createEmployeeContract(String domain, EmployeeInfoDataBase newEmployeeInfo);
+	EmployeeContractInfo createEmployeeContract(String domain, EmployeeContractInfo employeeContractData);
 
 }

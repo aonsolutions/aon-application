@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfoDataBase;
 import com.esferalia.aon.gwt.payroll.shared.StreetType;
@@ -28,6 +29,7 @@ public class EmployeeDialogObject {
 	private Workplace workplace;
 	private Employee employee;
 	
+	private EmployeeContractInfo employeeContractData;
 	private EmployeeInfo employeeData;
 	private ContractInfo contractData;
 	
@@ -52,6 +54,7 @@ public class EmployeeDialogObject {
 		this.workplaces = new ArrayList<>();
 		this.newEmployeeInfo = new EmployeeInfoDataBase();
 		
+		this.employeeContractData = new EmployeeContractInfo();
 		this.employeeData = new EmployeeInfo();
 		this.contractData = new ContractInfo();
 	}
@@ -340,11 +343,14 @@ public class EmployeeDialogObject {
 		});
 	}
 	
-	public void createEmployeeContract(Consumer<EmployeeInfoDataBase> success, Consumer<Throwable> failure){
-		employeesService.createEmployeeContract(this.newEmployeeInfo, new AsyncCallback<EmployeeInfoDataBase>() {
+	public void createEmployeeContract(Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure){
+		employeeContractData.setEmployeeInfo(employeeData);
+		employeeContractData.setContractInfo(contractData);
+		
+		employeesService.createEmployeeContract(employeeContractData, new AsyncCallback<EmployeeContractInfo>() {
 			
 			@Override
-			public void onSuccess(EmployeeInfoDataBase result) {
+			public void onSuccess(EmployeeContractInfo result) {
 				success.accept(result);
 			}
 
@@ -381,9 +387,10 @@ public class EmployeeDialogObject {
 		contractData.setContractType(contract_type);
 	}
 	
-	public void setContractModel(Integer contractModelId) {
+	public void setContractModel(Integer ordinal) {
 		//Falta buscar en ModelOption el String correspondiente a ese ID
-		//contractData.setContractModel(contractModelId);	
+//		Window.alert("OPCION_CONTRATO : " + ModelOption.values()[ordinal].toString());
+		contractData.setContractModel(ordinal);//ModelOption.values()[ordinal].toString());	
 	}
 	
 	public void setContractStartDate(Date start_date) {
@@ -529,7 +536,10 @@ public class EmployeeDialogObject {
 	}
 
 	public void setSSRegime(int ssRegime) {
-		contractData.setSsRegimen((byte) ssRegime);
+		if(1 == ssRegime)
+			contractData.setSsRegimen((byte) 3);
+		else
+			contractData.setSsRegimen((byte) ssRegime);
 	}
 	
 	public void setContractActivityId(Integer activityID) {
@@ -633,10 +643,10 @@ public class EmployeeDialogObject {
 	}
 
 	public Integer getActivityIdByName(String activityStr) {
-		for(Entry<Integer, String> activityEntry : this.employeeInfo.getEnterpriseActivities().entrySet())
+		for(Entry<Integer, String> activityEntry : activitiesCCC.getActivities().entrySet()){
 			if(activityStr.equals(activityEntry.getValue()))
 				return activityEntry.getKey();
-		
+		}
 		return null;
 	}
 
@@ -645,7 +655,7 @@ public class EmployeeDialogObject {
 		if(null == cccInfo)
 			return null;
 		else{
-			for(Entry<Integer, CCCInfo> cccEntry : this.employeeInfo.getCCCs().entrySet())
+			for(Entry<Integer, CCCInfo> cccEntry : activitiesCCC.getCccs().entrySet())
 				if(cccEntry.getValue().equals(cccInfo)){
 					return cccEntry.getKey();
 				}
@@ -654,7 +664,7 @@ public class EmployeeDialogObject {
 	}
 	
 	private CCCInfo getCCCInfo(String cccStr, byte cccType, String cccGeozoneStr) {
-		for(CCCInfo cccInfo : this.employeeInfo.getCCCs().values()){
+		for(CCCInfo cccInfo : activitiesCCC.getCccs().values()){
 			if(cccStr.equals(cccInfo.getCcc()) && cccType == cccInfo.getType() && cccGeozoneStr.equals(cccInfo.getGeozone()))
 				return cccInfo;
 		}

@@ -33,7 +33,7 @@ public class ContractInfo implements Serializable{
 	
 	//Contract Info Table
 	private Integer contractmodelId;
-	private String contractModel;
+	private Integer contractModel;
 	
 	public ContractInfo(){
 		super();
@@ -81,12 +81,12 @@ public class ContractInfo implements Serializable{
 		this.contractType = contractType;
 	}
 
-	public String getContractModel() {
+	public Integer getContractModel() {
 		return contractModel;
 	}
 
-	public void setContractModel(String contractModel) {
-		this.contractModel = contractModel;
+	public void setContractModel(Integer ordinal) {
+		this.contractModel = ordinal;
 	}
 
 	public Date getStartDate() {
@@ -215,6 +215,41 @@ public class ContractInfo implements Serializable{
 
 	public void setContractmodelId(Integer contractmodelId) {
 		this.contractmodelId = contractmodelId;
+	}
+	
+	public String toString(){
+		String result = "";
+		
+		result += "---------------- NEW CONTRACT INFO ---------------- \n";
+		result += " **** Contract Table **** \n";
+		result += "Contract Id : " + contractId + "\n";
+		result += "Workplace Id : " + workplaceId + "\n";
+		result += "Enterprise CCC Id : " + cccId + "\n";
+		result += "Start Date : " + startDate + "\n";
+		result += "End Date : " + endDate + "\n";
+		result += "Seniority Date : " + seniorityDate + "\n";
+		result += "Enterprise Activity Id : " + activityId + "\n";
+		result += "SS Regimen : " + ssRegimen + "\n";
+		result += "Agreement Category : " + agreementCategory + "\n";
+		result += "Agreement Level Id : " + agreementLevelId + "\n";
+		result += "Agreement Id : " + agreementId + "\n";
+		result += " **** Enterprise CCC Table **** \n";
+		result += "Enterprise CCC Type : " + cccType + "\n";
+		result += " **** Contract Data Table **** \n";
+		result += "Contract Type Id : " + contracttypeId + "\n";
+		result += "Contract Type : " + contractType + "\n";
+		result += "Quote Group Id : " + quotegroupId + "\n";
+		result += "Quote Group : " + quoteGroup + "\n";
+		result += "Ocupation Id : " + ocupationId + "\n";
+		result += "Ocupation : "+ ocupation + "\n";
+		result += "Journey Type Id : " + journeytypeId + "\n";
+		result += "Journey Type : " + journeyType + "\n";
+		result += " **** Contract Info Table **** \n";
+		result += "Contract Model Id : " + contractmodelId + "\n";
+		result += "Contract Model : " + contractModel + "\n";
+		
+		return result;
+		
 	}
 
 }

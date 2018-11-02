@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfoDataBase;
@@ -383,9 +384,9 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.setEmployeeSSBonuses(getCurrentDomainName(),  contractId, ssBonuses, asyncCallback);
 	}
 
-	public void createEmployeeContract(EmployeeInfoDataBase newEmployeeInfo,
-			AsyncCallback<EmployeeInfoDataBase> asyncCallback) {
-		employeesServiceAsync.createEmployeeContract(getCurrentDomainName(),  newEmployeeInfo, asyncCallback);
+	public void createEmployeeContract(EmployeeContractInfo employeeContractData,
+			AsyncCallback<EmployeeContractInfo> asyncCallback) {
+		employeesServiceAsync.createEmployeeContract(getCurrentDomainName(),  employeeContractData, asyncCallback);
 	}
 	
 	public void getEmployeeEvents(int contract, ArrayList<String> employeeContractVariables,

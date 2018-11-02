@@ -662,10 +662,10 @@ public class EmployeeNewDraft extends CustomDialog implements ContextMenuHandler
 			String shortCode = StreetType.values()[streetTypeIdx].getShortCode();
 			employeeNewDraftObject.setEmployeeStreetType(shortCode);
 
-			employeeNewDraftObject.createEmployeeContract(r -> {
-				setEmployeeNewDraftObject(employeeNewDraftObject);
-			}, t -> {
-			});
+//			employeeNewDraftObject.createEmployeeContract(r -> {
+//				setEmployeeNewDraftObject(employeeNewDraftObject);
+//			}, t -> {
+//			});
 		}
 	}
 

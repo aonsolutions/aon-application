@@ -1401,10 +1401,10 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			draftObject.setEmployeeEventsDraftObject(employeeEventsDraftObject);
 			
 			//INFORMACION
-//			TreeItem employeeDraftItem = addImageItem(employeeItem, "Informaci\u00F3n", images.employee());
-//			EmployeeDraftObject employeeDraftObject = new EmployeeDraftObject(employee, employeesService, enterprisesService);
-//			employeeDraftItem.setUserObject(employeeDraftObject);
-//			employeeDraftItem.ensureDebugId(getId(employee)+"-employeedraft");
+			TreeItem employeeDraftItem = addImageItem(employeeItem, "Informaci\u00F3n", images.employee());
+			EmployeeDraftObject employeeDraftObject = new EmployeeDraftObject(employee, employeesService, enterprisesService);
+			employeeDraftItem.setUserObject(employeeDraftObject);
+			employeeDraftItem.ensureDebugId(getId(employee)+"-employeedraft");
 			
 			//INFORMACION
 			TreeItem ssBonusDraftItem = addImageItem(employeeItem, "Bonificaciones", images.segsocial());

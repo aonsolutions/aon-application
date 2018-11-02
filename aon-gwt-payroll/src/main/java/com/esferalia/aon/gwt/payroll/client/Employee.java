@@ -233,10 +233,10 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 	ListBox payMethod;
 
 	@UiField
-	TextBox account;
-
-	@UiField
 	TextBox bic;
+	
+	@UiField
+	TextBox account;
 
 	// ------------------------------------------------------ VARIABLES DE LA CLASE -------------------------------------------------
 
@@ -490,14 +490,14 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 		onEmployeePayMethodChange();
 	}
 
-	@UiHandler("account")
-	void onAccountChangeValue(ChangeEvent event) {
-		onEmployeeAccountChange();
-	}
-
 	@UiHandler("bic")
 	void onBIClChangeValue(ChangeEvent event) {
 		onEmployeeBICChange();
+	}
+	
+	@UiHandler("account")
+	void onAccountChangeValue(ChangeEvent event) {
+		onEmployeeAccountChange();
 	}
 
 	// ------------------------------------------------------------------------
@@ -545,8 +545,8 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 	public abstract void onEmployeePhoneChange();
 	public abstract void onEmployeeEmailChange();
 	public abstract void onEmployeePayMethodChange();
-	public abstract void onEmployeeAccountChange();
 	public abstract void onEmployeeBICChange();
+	public abstract void onEmployeeAccountChange();
 
 
 	// ------------------------------------------------------------------------
