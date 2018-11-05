@@ -163,7 +163,6 @@ public class printLiqList extends HttpServlet{
 			HSSFWorkbook libro = new HSSFWorkbook();		
 			
 			CellStyle style = getStyle(libro);
-			CellStyle style2 = getStyle2(libro);
 			CellStyle style3 = getStyle3(libro);
 			
 			HSSFSheet hoja = libro.createSheet("PROPACO");
@@ -308,7 +307,7 @@ public class printLiqList extends HttpServlet{
 							// KG NETOS FINALES
 							Double kgNet = kgNetSin - kgDef;
 							cell(libro, row, style3, 21, AonMathUtils.round(kgNet));
-							
+
 							// PRECIO CONTRATO
 							if(!map.containsKey("product_price")) {
 								DataResponseDetail drd = new DataResponseDetail();
@@ -318,20 +317,20 @@ public class printLiqList extends HttpServlet{
 								drd.setDataValue(incomeDetail.get().getPrice().toString());
 								AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd);
 								map.put("product_price", incomeDetail.get().getPrice() + "");
-							}  else if(map.get("product_price").equals("0") || map.get("product_price").equals("0.0")) {
-								if(incomeDetail.get().getPurchaseDetail() != null) {
-									PurchaseDetail pd = AON.getPurchaseDetail(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(incomeDetail.get().getPurchaseDetail()));
+							}  else if(incomeDetail.get().getPurchaseDetail() != null) {
+								PurchaseDetail pd = AON.getPurchaseDetail(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(incomeDetail.get().getPurchaseDetail()));
+								if(pd.getPrice() > 0.0) {
 									DataResponseDetail drd = new DataResponseDetail();
 									drd.setDomain( domain.getId());
 									drd.setDataResponse(r.getId());
 									drd.setDataVariable("product_price");
 									drd.setDataValue(pd.getPrice() + "");
 									AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd);
-									map.put("product_price", pd.getPrice() + "");
+									map.put("product_price", pd.getPrice() + "");	
 								}
 							}
 							String product_price =  map.containsKey("product_price") ? map.get("product_price") : incomeDetail.get().getPrice().toString();
-							Double contractPrice = Double.parseDouble(product_price);
+							Double contractPrice = Double.parseDouble(product_price.replace(",", "."));
 							cell(libro, row, style3, 22, contractPrice);
 							
 							// P FONDO
@@ -473,14 +472,6 @@ public class printLiqList extends HttpServlet{
 		return cell;
 	}
 	
-	private Cell cellFormula(HSSFWorkbook libro, Row row, CellStyle style, Integer index, String formula) {
-		Cell cell = row.createCell(index);
-		cell.setCellFormula(formula);
-		row.setHeightInPoints(25);
-		cell.setCellStyle(style);	
-		return cell;
-	}
-	
 	private CellStyle getStyle(HSSFWorkbook libro){		
 		CellStyle style = libro.createCellStyle();
 		style.setWrapText(true);
@@ -491,18 +482,6 @@ public class printLiqList extends HttpServlet{
 		style.setAlignment(CellStyle.ALIGN_CENTER);
 		style.setBorderBottom(CellStyle.BORDER_MEDIUM); 
 		return style;
-	}
-	
-	private CellStyle getStyle2(HSSFWorkbook libro){	
-		CellStyle style2 = libro.createCellStyle();
-		HSSFFont font2 = libro.createFont();
-		font2.setFontHeightInPoints((short)10);
-		style2.setFont(font2);
-		style2.setAlignment(CellStyle.ALIGN_RIGHT);
-		style2.setBorderBottom(CellStyle.BORDER_THIN);
-		style2.setBorderRight(CellStyle.BORDER_THIN);
-		style2.setBorderLeft(CellStyle.BORDER_THIN);
-		return style2;
 	}
 	
 	private CellStyle getStyle3(HSSFWorkbook libro){	

@@ -110,9 +110,9 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 				drd.setDataValue(id.getPrice() + "");
 				AON.insertDataResponseDetail(domainName, domainId, login, drd);
 				map.put("product_price", id.getPrice() + "");
-			} else if(map.get("product_price").equals("0") || map.get("product_price").equals("0.0")) {
-				if(id.getPurchaseDetail() != null) {
-					PurchaseDetail pd = AON.getPurchaseDetail(domainName, domainId, login, f -> f.getIdProperty().eq(id.getPurchaseDetail()));
+			} else if(id.getPurchaseDetail() != null) {
+				PurchaseDetail pd = AON.getPurchaseDetail(domainName, domainId, login, f -> f.getIdProperty().eq(id.getPurchaseDetail()));
+				if(pd.getPrice() > 0.0) {
 					DataResponseDetail drd = new DataResponseDetail();
 					drd.setDomain(domainId);
 					drd.setDataResponse(drId);
