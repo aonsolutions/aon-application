@@ -20,9 +20,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.jooq.tools.json.JSONObject;
-import org.jooq.tools.json.JSONParser;
-import org.jooq.tools.json.ParseException;
 
 import com.esferalia.aon.gwt.finance.server.AbsExcelAction;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
@@ -33,9 +30,7 @@ import com.esferalia.aon.occam.api.model.AccountBalanceReport.BalanceLine;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
-import com.esferalia.aon.occam.api.model.accounting.BalanceType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -54,7 +49,7 @@ public class AccountBalanceReportExcelPrint extends HttpServlet {
 			String domainName = req.getParameter(IRequestParamsNames.DOMAIN_NAME);
 			String user = req.getParameter(IRequestParamsNames.USER);
 			int domainId = Integer.parseInt(req.getParameter(IRequestParamsNames.DOMAIN_ID));
-			AccountingReportParams params = parseParams(accountReportParams);
+			AccountingReportParams params = JsonParser.parseAccountingParams(accountReportParams);
 
 			AonConfiguration config = AON.getConfiguration(domainName, domainId, user);
 			Company company = config.getCompany();
@@ -76,53 +71,6 @@ public class AccountBalanceReportExcelPrint extends HttpServlet {
 			throw new ServletException(e);
 		}
 
-	}
-	
-	private AccountingReportParams parseParams(String accountReportParams) throws ParseException, java.text.ParseException {
-		AccountingReportParams params = new AccountingReportParams();
-		JSONParser parser = new JSONParser();
-		JSONObject jsonParams =  (JSONObject) parser.parse(accountReportParams);
-		
-		// ******************* DOMAIN ******************* 
-		Long domain = (Long) jsonParams.get(IRequestParamsNames.DOMAIN);
-		params.setDomain(domain.intValue());
-
-		// ******************* PERIOD ******************* 
-		Long period = (Long) jsonParams.get(IRequestParamsNames.PERIOD);
-		if (period != null) {
-			params.setPeriod(period.intValue());	
-		}
-		// ******************* FROMDATE ******************* 
-		String fromDate = (String) jsonParams.get(IRequestParamsNames.FROM_DATE);
-		if (AonStringUtils.isNotBlank(fromDate)) {
-			params.setFromDate( FORMATTER.parse(fromDate));			
-		}
-		// ******************* TODATE ******************* 
-		String toDate = (String) jsonParams.get(IRequestParamsNames.TO_DATE);
-		if (AonStringUtils.isNotBlank(toDate)) {
-			params.setToDate( FORMATTER.parse(toDate));			
-		}
-		// ******************* ACTIVITY ******************* 
-		Long activity = (Long) jsonParams.get(IRequestParamsNames.ACTIVITY);
-		if (activity != null) {
-			params.setActivity(activity.intValue());	
-		}
-		// ******************* SECURITYLEVEL ******************* 
-		Long confidential = (Long) jsonParams.get(IRequestParamsNames.CONFIDENTIAL);
-		if (confidential != null) {
-			params.setSecurityLevel( SecurityLevel.safeValueOf( confidential.intValue() ));
-		}
-		// ******************* PREVIOUSPERIODS ******************* 
-		Long previousPeriods = (Long) jsonParams.get(IRequestParamsNames.PREVIOUS_PERIODS);
-		if (previousPeriods != null) {
-			params.setPreviousPeriods(previousPeriods.intValue());	
-		}
-		// *******************  BYMONTH ******************* 
-		Long balanceType = (Long) jsonParams.get(IRequestParamsNames.BALANCE_TYPE);
-		if (balanceType != null) {
-			params.setBalanceType( BalanceType.safeValueOf( balanceType.intValue() ));
-		}
-		return params;
 	}
 
 	private class ExcelAction extends AbsExcelAction implements Consumer<String>{

@@ -306,10 +306,11 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	
 	// --------------------------------------------------------------- GWT API INFO
 	
+	@Deprecated
 	public String getLoggedUser() {
 		return AonServletUtils.getLoggedUser();
 	}
-	
+	@Deprecated
 	public AonData getAonData(String domainName, Integer domainId){
 		Domain domain = AON.getDomain(domainName, domainId, getLoggedUser());
 		User user = AON.getUser(domain.getName(), domain.getId(), getLoggedUser());

@@ -128,6 +128,10 @@ public class AccountJournalFlatReportExcelPrint extends HttpServlet {
 			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
 			sheet.setColumnWidth(cellCount++, 15 * 256);
 
+			CellUtil.createCell(row, cellCount, "SEGURIDAD", headerStyle);
+			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
+			sheet.setColumnWidth(cellCount++, 12 * 256);
+
 			CellUtil.createCell(row, cellCount, "ACTIVIDAD", headerStyle);
 			sheet.setDefaultColumnStyle(cellCount, defaultStyle);
 			sheet.setColumnWidth(cellCount++, 15 * 256);
@@ -195,6 +199,7 @@ public class AccountJournalFlatReportExcelPrint extends HttpServlet {
 			addCell(AonNumberUtils.toString( entry.getJournal()));
 			addCell(entry.getEntryDate());
 			addCell(entry.getEntryType().getDescription());
+			addCell(entry.getEntrySecurityLevel().getName());
 			addCell(entry.getActivityName());
 
 			addCell(entry.getAccountCode());

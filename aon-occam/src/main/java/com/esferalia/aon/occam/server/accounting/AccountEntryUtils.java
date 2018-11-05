@@ -34,12 +34,10 @@ public class AccountEntryUtils {
 		}
 		User user = SecurityDAO.getUser(ctx);
 		if (user == null || !user.hasConfidentialityRole()) {
-			prop = prop.and(p.getConfidentialProperty().eq(
-					SecurityLevel.OFFICIAL.value()));
+			prop = prop.and(p.getConfidentialProperty().eq(SecurityLevel.OFFICIAL.value()));
 		} else {
-			if (params.isConfidential()) {
-				prop = prop.and(p.getConfidentialProperty().eq(
-						SecurityLevel.CONFIDENTIAL.value()));
+			if (params.getSecurityLevel() != null ) {
+				prop = prop.and(p.getConfidentialProperty().eq(params.getSecurityLevel().value()));
 			}
 		}
 		if (AonStringUtils.isNotBlank(params.getComments())) {

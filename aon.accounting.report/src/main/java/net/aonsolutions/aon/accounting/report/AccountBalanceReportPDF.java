@@ -5,9 +5,15 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.ACCOUNTING;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.AccountBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountBalanceReport.BalanceLine;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.ReportMetadata;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -27,7 +33,8 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 public class AccountBalanceReportPDF {
 	private static final DecimalFormat FMT = new DecimalFormat("#,##0.00;(#,##0.00)");
-	private static SimpleDateFormat FORMATTER_TIME = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+	private static SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
+	private static SimpleDateFormat TIME_FORMATTER = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 	
 	private static Font HEADER_FONT_0 = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD);
 	private static Font HEADER_FONT_1 = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD);
@@ -35,8 +42,18 @@ public class AccountBalanceReportPDF {
 	private static Font BODY_FONT = new Font(Font.FontFamily.HELVETICA, 8);
 	private static Font BODY_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD);
 
-	public void printBalanceReport(OutputStream outputStream, AccountBalanceReport report)
-			throws DocumentException {
+	public void printBalanceReport(OutputStream outputStream, AccountingReportParams params) throws DocumentException {
+		AonConfiguration config = AON.getConfiguration(params.getDomainName(), params.getDomain(), params.getUser());
+		Company company = config.getCompany();
+		String companyName = company == null ? "" : company.getName();
+		AccountBalanceReport report = ACCOUNTING.getAccountBalanceReport(params.getDomainName(), params.getDomain(), params.getUser(), params);
+		
+		report.setMetadata(new ReportMetadata()
+				.setCompanyName(companyName)
+				.setFilterDescription(getFilterDescription(report))
+				.setTitle(params.getBalanceType().getName()));
+		
+		
 		Document document = new Document();
 		document.setPageSize(PageSize.A4);
 		document.setMargins(36, 36, 50, 20);
@@ -166,7 +183,7 @@ public class AccountBalanceReportPDF {
 	        canvas.closePathStroke();
 	        
 			ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT
-					,new Phrase(FORMATTER_TIME.format( new Date()), HEADER_FONT_1)
+					,new Phrase(TIME_FORMATTER.format( new Date()), HEADER_FONT_1)
 					,document.leftMargin()
 					,document.bottom() - 10
 					, 0);
@@ -178,6 +195,37 @@ public class AccountBalanceReportPDF {
 					, 0);
 			writer.flush();
 		}
+	}
+	
+	private void concat(StringBuffer buf, String string) {
+		if (buf.length() > 0) {
+			buf.append(", ");
+		}
+		buf.append(string);
+	}
+	
+	private String getFilterDescription(AccountBalanceReport report) {
+		AccountingReportParams params = report.getParams();
+		StringBuffer buf = new StringBuffer();
+		if (report.getSelectedPeriod() != null) {
+			concat(buf, "Ejercicio: " + report.getSelectedPeriod().getName()); 
+		}
+		if (params.getFromDate() != null) {
+			concat(buf, "Desde: " + DATE_FORMATTER.format(params.getFromDate()) );
+		}
+		if (params.getToDate() != null) {
+			concat(buf, "Hasta: " + DATE_FORMATTER.format(params.getToDate()) );
+		}
+		if (report.getSelectedActivity() != null) {
+			concat(buf, "Act.: " + report.getSelectedActivity().getDescription() );
+		}
+		if (params.getSecurityLevel() != null && params.getSecurityLevel() == SecurityLevel.CONFIDENTIAL) {
+			concat(buf, "Seg: CONFID.");	
+		}
+		if (params.getSecurityLevel() != null && params.getSecurityLevel() == SecurityLevel.OFFICIAL) {
+			concat(buf, "Seg: NO CONFID.");	
+		}
+		return buf.toString();
 	}
 	
 }

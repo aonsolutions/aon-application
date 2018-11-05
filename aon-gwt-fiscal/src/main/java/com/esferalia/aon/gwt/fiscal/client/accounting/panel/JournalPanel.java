@@ -243,7 +243,6 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 				return out;
 			}
 
-
 			private AccountEntry newAccountEntry(JsFlatAccountEntry ori) {
 				AccountEntry out = new AccountEntry();
 				out.setDomain(ori.getEntryDomain());
@@ -255,13 +254,15 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 				out.setActivity(ori.getActivity());
 				out.setActivityDescription(ori.getActivityName());
 				out.setJournal(ori.getJournal());
-				out.setSecurityLevel(SecurityLevel.safeValueOf( ori.getSecurityLevel()));
+				if ("0".equals(""+ori.getSecurityLevel())) {
+					out.setSecurityLevel(SecurityLevel.OFFICIAL);
+				}
+				if ("1".equals(""+ori.getSecurityLevel())) {
+					out.setSecurityLevel(SecurityLevel.CONFIDENTIAL);
+				}
 				out.setComments(ori.getComments());
 				return out;
 			}
-			public final native String getType( Object o ) /*-{
-				return typeof o;
-			}-*/;
 
 			private FocusPanel paintEntry(final FlowPanel entrycontainer, AccountEntry entry) {
 				final FocusPanel entryPanel = AccountEntryPrinter.print(entry);

@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -35,7 +36,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -65,7 +65,7 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 	private DateBoxEx fromDate;
 	private DateBoxEx toDate;
 	private AccountEntryListBox entryListBox;
-	private CheckBox confidential;
+	private ListBox confidential;
 	private IntegerBox journal;
 	private AccountBox account;
 	private DoubleBox debit;
@@ -156,14 +156,19 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 				onSearch();
 			}
 		});
-		confidential = new CheckBox(AON.MSG.confidential());
-		confidential.addClickHandler(new ClickHandler() {
-			
+		confidential = new ListBox();
+		confidential.setWidth("100px");
+		confidential.addItem( "Asientos NO confidenciales" );
+		confidential.addItem( "Asientos confidenciales" );
+		confidential.addItem(" Todos ");
+		confidential.setSelectedIndex(2);
+		confidential.addChangeHandler(new ChangeHandler() {
 			@Override
-			public void onClick(ClickEvent event) {
+			public void onChange(ChangeEvent event) {
 				onSearch();
 			}
 		});
+		
 		account = new AccountBox(this.currentDomainName,this.currentDomainId);
 		account.setRequired(false);
 		account.addSelectionHandler(new SelectionHandler<Account>() {
@@ -348,7 +353,7 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 				fromDate.setValue(null,false);
 				toDate.setValue(null,false);
 				entryListBox.setValue(null);
-				confidential.setValue(false,false);
+				confidential.setSelectedIndex(2);
 				journal.setValue(null,false);
 				account.setAccount(null, false);;
 				debit.setValue(null,false);
@@ -482,7 +487,7 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 			.setConcept(concept.getValue())
 			.setDocument(document.getValue())
 			.setComments(comments.getValue())
-			.setConfidential(confidential.getValue())
+			.setSecurityLevel(SecurityLevel.safeValueOf(confidential.getSelectedIndex()))
 			.setOrder(order.getSelectedIndex());
 	}
 	

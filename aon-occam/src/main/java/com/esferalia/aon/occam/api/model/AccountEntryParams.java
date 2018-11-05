@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountEntryParams implements Serializable{
@@ -19,7 +20,8 @@ public class AccountEntryParams implements Serializable{
 	private AccountEntryType type;
 	private Integer journal;
 	private Integer activity;
-	private boolean confidential; 
+	private SecurityLevel securityLevel;
+	// private boolean confidential; 
 	
 	private Integer account;
 	private Double debit;
@@ -148,14 +150,20 @@ public class AccountEntryParams implements Serializable{
 		this.balancingAccount = balancingAccount;
 		return this;
 	}
-	
-	public boolean isConfidential() {
-		return confidential;
+	public SecurityLevel getSecurityLevel() {
+		return securityLevel;
 	}
-	public AccountEntryParams setConfidential(boolean confidential) {
-		this.confidential = confidential;
+	public AccountEntryParams setSecurityLevel(SecurityLevel securityLevel) {
+		this.securityLevel = securityLevel;
 		return this;
 	}
+//	public boolean isConfidential() {
+//		return confidential;
+//	}
+//	public AccountEntryParams setConfidential(boolean confidential) {
+//		this.confidential = confidential;
+//		return this;
+//	}
 	
 	public int getOrder() {
 		return order;

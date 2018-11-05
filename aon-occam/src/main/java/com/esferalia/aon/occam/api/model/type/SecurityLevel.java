@@ -5,9 +5,16 @@ import java.io.Serializable;
 
 public enum SecurityLevel implements Serializable{
 
-	OFFICIAL,
-	CONFIDENTIAL;
+	OFFICIAL("NO confidencial"),
+	CONFIDENTIAL("Confidencial");
 
+	private String name;
+	private SecurityLevel(String name) {
+		this.name = name;
+	}
+	public String getName() {
+		return name;
+	}
 	public Byte value() {
 		return (byte) ordinal();
 	}

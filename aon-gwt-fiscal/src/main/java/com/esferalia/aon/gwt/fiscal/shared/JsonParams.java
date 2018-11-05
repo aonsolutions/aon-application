@@ -66,7 +66,7 @@ public class JsonParams extends JSONObject {
 		json.put(IRequestParamsNames.TYPE   	  	,params.getType()	== null? JSON_NULL : new JSONNumber( params.getType().ordinal()));
 		json.put(IRequestParamsNames.JOURNAL   		,params.getJournal() 			== null? JSON_NULL : new JSONNumber( params.getJournal()));
 		json.put(IRequestParamsNames.ACTIVITY 		,params.getActivity() 			== null? JSON_NULL : new JSONNumber( params.getActivity()));
-		json.put(IRequestParamsNames.CONFIDENTIAL	,new JSONNumber( params.isConfidential()?1:0));
+		json.put(IRequestParamsNames.CONFIDENTIAL	,params.getSecurityLevel() == null?JSON_NULL :new JSONNumber( params.getSecurityLevel().value()));
 		json.put(IRequestParamsNames.ACCOUNT   		,params.getAccount()			== null? JSON_NULL : new JSONNumber( params.getAccount()));
 		json.put(IRequestParamsNames.DEBIT 			,params.getDebit()  			== null? JSON_NULL : new JSONNumber( params.getDebit()));
 		json.put(IRequestParamsNames.CREDIT			,params.getCredit()  			== null? JSON_NULL : new JSONNumber( params.getCredit()));

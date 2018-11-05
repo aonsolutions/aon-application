@@ -8,7 +8,10 @@ import org.jooq.tools.json.ParseException;
 
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.accounting.BalanceType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JsonParser {
@@ -47,8 +50,8 @@ public class JsonParser {
 			params.setActivity(activity.intValue());	
 		}
 		Long confidential = (Long) jsonParams.get(IRequestParamsNames.CONFIDENTIAL);
-		if (confidential!= null) {
-			params.setConfidential(confidential.intValue() == 1);	
+		if (confidential != null) {
+			params.setSecurityLevel( SecurityLevel.safeValueOf( confidential.intValue() ));
 		}
 		Long account = (Long) jsonParams.get(IRequestParamsNames.ACCOUNT);
 		if (account != null) {
@@ -85,4 +88,50 @@ public class JsonParser {
 		return params;
 	}
 
+	public static AccountingReportParams parseAccountingParams(String accountReportParams) throws ParseException, java.text.ParseException {
+		AccountingReportParams params = new AccountingReportParams();
+		JSONParser parser = new JSONParser();
+		JSONObject jsonParams =  (JSONObject) parser.parse(accountReportParams);
+		
+		// ******************* DOMAIN ******************* 
+		Long domain = (Long) jsonParams.get(IRequestParamsNames.DOMAIN);
+		params.setDomain(domain.intValue());
+
+		// ******************* PERIOD ******************* 
+		Long period = (Long) jsonParams.get(IRequestParamsNames.PERIOD);
+		if (period != null) {
+			params.setPeriod(period.intValue());	
+		}
+		// ******************* FROMDATE ******************* 
+		String fromDate = (String) jsonParams.get(IRequestParamsNames.FROM_DATE);
+		if (AonStringUtils.isNotBlank(fromDate)) {
+			params.setFromDate( FORMATTER.parse(fromDate));			
+		}
+		// ******************* TODATE ******************* 
+		String toDate = (String) jsonParams.get(IRequestParamsNames.TO_DATE);
+		if (AonStringUtils.isNotBlank(toDate)) {
+			params.setToDate( FORMATTER.parse(toDate));			
+		}
+		// ******************* ACTIVITY ******************* 
+		Long activity = (Long) jsonParams.get(IRequestParamsNames.ACTIVITY);
+		if (activity != null) {
+			params.setActivity(activity.intValue());	
+		}
+		// ******************* SECURITYLEVEL ******************* 
+		Long confidential = (Long) jsonParams.get(IRequestParamsNames.CONFIDENTIAL);
+		if (confidential != null) {
+			params.setSecurityLevel( SecurityLevel.safeValueOf( confidential.intValue() ));
+		}
+		// ******************* PREVIOUSPERIODS ******************* 
+		Long previousPeriods = (Long) jsonParams.get(IRequestParamsNames.PREVIOUS_PERIODS);
+		if (previousPeriods != null) {
+			params.setPreviousPeriods(previousPeriods.intValue());	
+		}
+		// *******************  BALANCE TYPE ******************* 
+		Long balanceType = (Long) jsonParams.get(IRequestParamsNames.BALANCE_TYPE);
+		if (balanceType != null) {
+			params.setBalanceType( BalanceType.safeValueOf( balanceType.intValue() ));
+		}
+		return params;
+	}
 }

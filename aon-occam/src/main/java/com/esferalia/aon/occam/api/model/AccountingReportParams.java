@@ -14,6 +14,7 @@ public class AccountingReportParams implements IAccountParams, Cloneable {
 	
 	private String domainName;
 	private int domain;
+	private String user;
 	private Integer period;
 	private Date fromDate;
 	private Date toDate;
@@ -54,7 +55,13 @@ public class AccountingReportParams implements IAccountParams, Cloneable {
 		this.domain = domain;
 		return this;
 	}
-	
+	public String getUser() {
+		return user;
+	}
+	public AccountingReportParams setUser(String user) {
+		this.user = user;
+		return this;
+	}
 	@Override
 	public Integer getPeriod() {
 		return period;

@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.FlatAccountEntryDetail;
 import com.esferalia.aon.occam.api.model.ReportMetadata;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
@@ -171,8 +172,11 @@ public class AccountJournalReportPDF {
 		if (params.getType() != null) {
 			concat(buf, "Tipo: " + params.getType().getDescription());
 		}
-		if (params.isConfidential()) {
+		if (params.getSecurityLevel() != null && params.getSecurityLevel() == SecurityLevel.CONFIDENTIAL) {
 			concat(buf, "Seg: CONFID.");	
+		}
+		if (params.getSecurityLevel() != null && params.getSecurityLevel() == SecurityLevel.OFFICIAL) {
+			concat(buf, "Seg: NO CONFID.");	
 		}
 		if (params.getSelectedAccount() != null) {
 			concat(buf, "Cta.: " + params.getSelectedAccount().getCode());

@@ -25,7 +25,7 @@ public class JsonWriter {
 				.put("activity", entry.getActivity())
 				.put("activityName", entry.getActivityName())
 				.put("journal", entry.getJournal())
-				.put("securityLevel", entry.getEntrySecurityLevel().name())
+				.put("securityLevel", entry.getEntrySecurityLevel().ordinal())
 				.put("comments", entry.getComments())
 				
 				.put("detailId", entry.getDetailId())
