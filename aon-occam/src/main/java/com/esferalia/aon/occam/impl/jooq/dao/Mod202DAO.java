@@ -421,6 +421,9 @@ public class Mod202DAO extends FiscalModelDAO {
 			mod202.setDomain(ctx.getDomainId());
 		}
 		initializeFiscalModel(ctx, mod202);
+		if (mod202.getPeriod() == Period.T4) {
+			mod202.setPeriod(Period.T1);
+		}
 		return mod202;
 	}
 	
