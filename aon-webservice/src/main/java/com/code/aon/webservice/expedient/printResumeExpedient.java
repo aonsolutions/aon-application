@@ -61,15 +61,15 @@ public class printResumeExpedient extends HttpServlet {
 		}
 			
 		if(filterJson.opt("name") != null) {
-			filter = filter.and(f.getNameProperty().eq(filterJson.getString("name")));
+			filter = filter.and(f.getNameProperty().like("%" + filterJson.getString("name") + "%"));
 		}		
 			
 		if(filterJson.opt("alias") != null) {
-			filter = filter.and(f.getAliasProperty().eq(filterJson.getString("alias")));
+			filter = filter.and(f.getAliasProperty().like("%" + filterJson.getString("alias") + "%"));
 		}
 			
 		if(filterJson.opt("registry") != null) {
-			filter = filter.and(f.getRegistryProperty().eq(filterJson.getInt("alias")));
+			filter = filter.and(f.getRegistryProperty().eq(filterJson.getInt("registry")));
 		}
 			
 		if(filterJson.opt("type") != null) {
