@@ -851,7 +851,7 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 								<textElement verticalAlignment="Middle">
 									<font size="8"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{item.getProduct().getCode()}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$F{item}.getProduct().getCode()]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>

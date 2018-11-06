@@ -232,7 +232,7 @@
 				<textElement verticalAlignment="Middle" markup="none">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{item.getProduct().getCode()}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{item}.getProduct().getCode()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-1" x="60" y="0" width="256" height="14" uuid="f64be1d3-da7b-4e12-8d9c-e327095fe7ec"/>

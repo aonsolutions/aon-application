@@ -285,7 +285,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{item.getProduct().getCode()}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{item}.getProduct().getCode()]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
