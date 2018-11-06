@@ -270,7 +270,7 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 				employeeDraftObject.setEmployeeAddress(place.get("route").getLongName());
 				employeeDraftObject.setEmployeeAddressNumber(place.get("street_number").getShortName());
 				employeeDraftObject.setEmployeeAddressZip(place.get("postal_code").getLongName());
-				employeeDraftObject.setEmployeeAddressLacality(place.get("locality").getLongName());
+//				employeeDraftObject.setEmployeeAddressLacality(place.get("locality").getLongName());
 				employeeDraftObject.setEmployeeAddressProvince(place.get("administrative_area_level_2").getLongName());
 
 				// Calle
@@ -559,7 +559,7 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 		initDisplayElements();
 	}
 
-	private void resetElements() {
+	public void resetElements() {
 		// TABLA DATOS CONTRATO
 		
 		this.document.setValue("");

@@ -366,13 +366,13 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.setEventsWorkplace(getCurrentDomainName(),  updateEventsWorkplace, asyncCallback);
 	}
 
-	public void getEmployeeInfoDataBase(Integer employeeContract, AsyncCallback<EmployeeInfoDataBase> asyncCallback) {
+	public void getEmployeeInfoDataBase(Integer employeeContract, AsyncCallback<EmployeeContractInfo> asyncCallback) {
 		employeesServiceAsync.getEmployeeInfoDataBase(getCurrentDomainName(),  employeeContract, asyncCallback);
 	}
 
-	public void setEmployeeInfoDataBase(EmployeeInfoDataBase newEmployeeInfo,
-			AsyncCallback<EmployeeInfoDataBase> asyncCallback) {
-		employeesServiceAsync.setEmployeeInfoDataBase(getCurrentDomainName(),  newEmployeeInfo, asyncCallback);
+	public void setEmployeeInfoDataBase(EmployeeContractInfo new_employeeContractData,
+			AsyncCallback<EmployeeContractInfo> asyncCallback) {
+		employeesServiceAsync.setEmployeeInfoDataBase(getCurrentDomainName(),  new_employeeContractData, asyncCallback);
 	}
 
 	public void getEmployeeSSBonuses(Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) {

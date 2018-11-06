@@ -29,7 +29,6 @@ import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -252,16 +251,13 @@ public class EmployeeDialog extends CustomDialog {
 			
 			if (this.agreement.getSelectedIndex() == 0) {
 				employeeDialogObject.setContractAgreementId(null);
-				employeeDialogObject.setContractAgreementDescription(null);
 				employeeDialogObject.setContractAgreementLevelId(null);
-				employeeDialogObject.setContractAgreementLevelDescription(null);
 				this.category.setEnabled(false);
 				this.category.setValue("");
 				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.category);
 			} else {
 				Integer agreementId = employeeDialogObject.getAgreementId(this.agreement.getSelectedItemText());
 				employeeDialogObject.setContractAgreementId(agreementId);
-				employeeDialogObject.setContractAgreementDescription(this.agreement.getSelectedItemText());
 			}
 		}
 
@@ -269,7 +265,6 @@ public class EmployeeDialog extends CustomDialog {
 		public void onContractAgreementLevelChange() {
 			if (this.agreement.getSelectedIndex() == 0 || this.level.getSelectedIndex() == 0) {
 				employeeDialogObject.setContractAgreementLevelId(null);
-				employeeDialogObject.setContractAgreementLevelDescription(null);
 				this.category.setEnabled(false);
 				this.category.setValue("");
 				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.category);
@@ -277,7 +272,6 @@ public class EmployeeDialog extends CustomDialog {
 				Integer agreementLevelId = employeeDialogObject.getAgreementLevelId(this.agreement.getSelectedItemText(),
 						this.level.getSelectedItemText());
 				employeeDialogObject.setContractAgreementLevelId(agreementLevelId);
-				employeeDialogObject.setContractAgreementLevelDescription(this.level.getSelectedItemText());
 				String levelDescription = (this.level.getSelectedItemText() == null
 						|| this.level.getSelectedItemText() == "-") ? null
 								: this.level.getSelectedItemText().split("- ")[1];
@@ -495,8 +489,8 @@ public class EmployeeDialog extends CustomDialog {
 	interface Binder extends UiBinder<Widget, EmployeeDialog> {
 
 	}
-	private static final Binder binder = GWT.create(Binder.class);
 	
+	private static final Binder binder = GWT.create(Binder.class);
 	
 	@UiField (provided = true)
 	Employee employee;
@@ -669,18 +663,35 @@ public class EmployeeDialog extends CustomDialog {
 	@UiHandler("acceptButton")
 	void onAcceptButtonClick(ClickEvent clickEvent) {
 		if(checkIfSaveIsPossible())
-			this.employeeDialogObject.createEmployeeContract(
-					r -> { 
-							hide();
-							cb.onAccept(this);
-						 }, 
-					t -> {}
-			);
+			if(checkPayMethod())
+				this.employeeDialogObject.createEmployeeContract(
+						r -> { 
+								hide();
+								cb.onAccept(this);
+							 }, 
+						t -> {}
+				);
+			else {
+				WarningDialog dialog = new WarningDialog("Aviso", "Si el metodo de pago es transferencia, debe rellenar obligatoriamente los campos de BIC y cuenta.");
+				dialog.center();
+				dialog.show();
+			}
+				
 		else{
 			WarningDialog dialog = new WarningDialog("Aviso", "Hay que rellenar los campos azules obligatoriamente.");
 			dialog.center();
 			dialog.show();
 		}
+	}
+
+	private boolean checkPayMethod() {
+		if(4 == this.employee.payMethod.getSelectedIndex()) {
+			if("" == this.employee.bic.getValue() || "" == this.employee.account.getValue())
+				return false;
+			else
+				return true;
+		}else
+			return true;
 	}
 
 	private boolean checkIfSaveIsPossible() {
@@ -690,18 +701,25 @@ public class EmployeeDialog extends CustomDialog {
 		   "" != this.employee.security_social_num.getValue() &&
 		   "" != this.employee.name.getValue() &&
 		   "" != this.employee.first_surname.getValue() &&
-		   0 != this.employee.activityCCC.getSelectedIndex() &&
-		   0 != this.employee.contractType.getSelectedIndex() &&
-		   0 != this.employee.modality.getSelectedIndex() &&
 		   null != this.employee.start_date.getValue() &&
 		   0 != this.employee.agreement.getSelectedIndex() &&
 		   0 != this.employee.level.getSelectedIndex() &&
-		   0 != this.employee.quote_group.getSelectedIndex() && 
 		   null != this.employee.birth_date.getValue()   
 		)
-			return true;
+			if(1 == this.employee.ssRegimeType.getSelectedIndex())
+				return true;
+			else if(
+			   0 != this.employee.activityCCC.getSelectedIndex() &&
+			   0 != this.employee.contractType.getSelectedIndex() &&
+			   0 != this.employee.modality.getSelectedIndex() &&
+			   0 != this.employee.quote_group.getSelectedIndex()	
+			)	
+				return true;
+			else
+				return false;
 		else
 			return false;
+	
 	}
 	
 	// ------------------------------------------------------------------------

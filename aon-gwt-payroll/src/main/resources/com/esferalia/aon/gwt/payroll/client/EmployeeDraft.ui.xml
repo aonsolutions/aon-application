@@ -1,13 +1,13 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
-	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:e='urn:import:com.esferalia.aon.gwt.payroll.client'>
 
 	<ui:with field='res'
 		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
 
-	<ui:style
-		type="com.esferalia.aon.gwt.payroll.client.EmployeeDraft.MyStyle">
+	<ui:style>
 		
 		.noselect {
 			-webkit-touch-callout: none; /* iOS Safari */
@@ -184,7 +184,10 @@
 		</g:north>
 		<g:center> 
 		    <g:ScrollPanel>
-		    	<g:HTMLPanel> 
+		    	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel">
+		    		<e:Employee ui:field="employee"/> 
+		    	</g:HTMLPanel>
+		    	<!-- g:HTMLPanel> 
 			        <g:VerticalPanel styleName="{style.styleBorder}"> 
 				    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Datos de contrato</g:Label>
 				    	<g:HTMLPanel>
@@ -477,7 +480,7 @@
 							</table>
 						</g:HTMLPanel>
 					</g:VerticalPanel>
-		        </g:HTMLPanel> 
+		        </g:HTMLPanel--> 
 		    </g:ScrollPanel>
 		</g:center>
 	</g:DockLayoutPanel>

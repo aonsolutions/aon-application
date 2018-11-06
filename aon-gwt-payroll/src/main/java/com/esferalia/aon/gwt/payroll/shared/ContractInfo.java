@@ -34,6 +34,7 @@ public class ContractInfo implements Serializable{
 	//Contract Info Table
 	private Integer contractmodelId;
 	private Integer contractModel;
+	private Integer retaId;
 	
 	public ContractInfo(){
 		super();
@@ -78,7 +79,10 @@ public class ContractInfo implements Serializable{
 	}
 
 	public void setContractType(String contractType) {
-		this.contractType = contractType;
+		if(null != contractType && contractType.contains("\""))
+			this.contractType = contractType.split("\"")[1];
+		else
+			this.contractType = contractType;
 	}
 
 	public Integer getContractModel() {
@@ -142,7 +146,10 @@ public class ContractInfo implements Serializable{
 	}
 
 	public void setQuoteGroup(String quoteGroup) {
-		this.quoteGroup = quoteGroup;
+		if(null != quoteGroup && quoteGroup.contains("\""))
+			this.quoteGroup = quoteGroup.split("\"")[1];
+		else
+			this.quoteGroup = quoteGroup;
 	}
 
 	public String getOcupation() {
@@ -150,7 +157,10 @@ public class ContractInfo implements Serializable{
 	}
 
 	public void setOcupation(String ocupation) {
-		this.ocupation = ocupation;
+		if(null != ocupation && ocupation.contains("\""))
+			this.ocupation = ocupation.split("\"")[1];
+		else
+			this.ocupation = ocupation;
 	}
 
 	public Byte getJourneyType() {
@@ -217,6 +227,14 @@ public class ContractInfo implements Serializable{
 		this.contractmodelId = contractmodelId;
 	}
 	
+	public Integer getRetaId() {
+		return retaId;
+	}
+
+	public void setRetaId(Integer retaId) {
+		this.retaId = retaId;
+	}
+
 	public String toString(){
 		String result = "";
 		
@@ -247,6 +265,7 @@ public class ContractInfo implements Serializable{
 		result += " **** Contract Info Table **** \n";
 		result += "Contract Model Id : " + contractmodelId + "\n";
 		result += "Contract Model : " + contractModel + "\n";
+		result += "Reta Id : " + retaId + "\n";
 		
 		return result;
 		

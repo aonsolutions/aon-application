@@ -4459,7 +4459,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public EmployeeInfoDataBase getEmployeeInfoDataBase(String domain, Integer employeeContract) {
+	public EmployeeContractInfo getEmployeeInfoDataBase(String domain, Integer employeeContract) {
 		Connection connection = null;
 		try {
 			connection = AonServletUtils.getConnection(domain);
@@ -4477,7 +4477,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public EmployeeInfoDataBase setEmployeeInfoDataBase(String domain, EmployeeInfoDataBase newEmployeeInfo) {
+	public EmployeeContractInfo setEmployeeInfoDataBase(String domain, EmployeeContractInfo newEmployeeInfo) {
 		Connection connection = null;
 		try {
 			connection = AonServletUtils.getConnection(domain);

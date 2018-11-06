@@ -5,6 +5,8 @@ import java.util.Date;
 
 public class EmployeeInfo implements Serializable{
 	
+	private Integer domain;
+	
 	private Integer employeeId; //Registry Id
 	
 	//Person Table
@@ -69,6 +71,14 @@ public class EmployeeInfo implements Serializable{
 	
 	public Integer getEmployeeId() {
 		return employeeId;
+	}
+	
+	public Integer getDomain() {
+		return domain;
+	}
+	
+	public void setDomain(Integer domain) {
+		this.domain = domain;
 	}
 
 	public String getName() {

@@ -178,10 +178,10 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void setEventsWorkplace(String domain, EventsWorkplace updateEventsWorkplace, AsyncCallback<EventsWorkplace> asyncCallback);
 
-	void getEmployeeInfoDataBase(String domain, Integer employeeContract, AsyncCallback<EmployeeInfoDataBase> asyncCallback);
+	void getEmployeeInfoDataBase(String domain, Integer employeeContract, AsyncCallback<EmployeeContractInfo> asyncCallback);
 
-	void setEmployeeInfoDataBase(String domain, EmployeeInfoDataBase newEmployeeInfo,
-			AsyncCallback<EmployeeInfoDataBase> asyncCallback);
+	void setEmployeeInfoDataBase(String domain, EmployeeContractInfo new_employeeContractData,
+			AsyncCallback<EmployeeContractInfo> asyncCallback);
 
 	void getEmployeeSSBonuses(String domain, Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback);
 

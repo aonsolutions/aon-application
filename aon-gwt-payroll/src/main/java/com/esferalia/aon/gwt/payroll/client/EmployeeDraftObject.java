@@ -1,117 +1,440 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import com.esferalia.aon.gwt.common.client.Undoable;
+import com.esferalia.aon.gwt.common.shared.Dni;
+import com.esferalia.aon.gwt.common.shared.SocialSecurity;
+import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
+import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeInfoDataBase;
-import com.google.gwt.user.client.Window;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
+import com.esferalia.aon.gwt.payroll.shared.StreetType;
+import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.occam.api.model.type.Country;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeDraftObject {
-
+	private Workplace workplace;
 	private Employee employee;
 	
-	private EmployeeInfoDataBase employeeInfo;
-	private EmployeeInfoDataBase newEmployeeInfo;
+	private EmployeeContractInfo employeeContractData;
+	private EmployeeInfo employeeData;
+	private ContractInfo contractData;
+	
+	private EmployeeContractInfo new_employeeContractData;
+	private EmployeeInfo new_employeeData;
+	private ContractInfo new_contractData;
 	
 	private DomainEmployeesServiceAsync employeesService;
 	private DomainEnterprisesServiceAsync enterprisesService;
 	
 	private List<Agreement> agreements;
+	private List<Workplace> workplaces;
 	
-	public UndoManager<Undoable> undoManager;
-	
-	// --------------------------------------------- INTERFACE REDO/UNDO -----------------------------------------------
-	
-	@SuppressWarnings("unused")
-	private class CompositeUndoable<T extends Undoable > implements Undoable {
-
-		private Collection<T> undos;
-
-		public CompositeUndoable(Collection<T> undos) {
-			this.undos = undos;
-		}
-
-		@Override
-		public void redo() {
-			for (T undo : undos)
-				undo.redo();
-		}
-
-		@Override
-		public void undo() {
-			for (T undo : undos){
-				undo.undo();
-			}
-		}
-
-	}
-	
-	class SetHourEdit implements Undoable {
-
-		private Double oldHour;
-		private Double newHour;
-		private Date day;
-		
-		public SetHourEdit(Double oldH, Double newH, Date actualDay) {
-			this.oldHour = oldH;
-			this.newHour = newH;
-			this.day = actualDay;
-		}
-		
-		@Override
-		public void undo() {
-			//if (oldHour == null)
-				//draftMapDaysHour.remove(day);
-			//else
-				//draftMapDaysHour.put(day, oldHour);	
-		}
-		
-		@Override
-		public void redo() {
-			//draftMapDaysHour.put(day, newHour);
-		}
-		
-	}
+	private ActivitiesCCC activitiesCCC;
 		
 	// ------------------------------------------------- CLASS METHODS -------------------------------------------------	
 	
-	public EmployeeDraftObject(Employee employee, DomainEmployeesServiceAsync employeesService, DomainEnterprisesServiceAsync enterprisesService) {
+	public EmployeeDraftObject(Workplace workplace, Employee employee, DomainEmployeesServiceAsync employeesService, DomainEnterprisesServiceAsync enterprisesService) {
 		
-		this.undoManager = new UndoManager<>();
 		this.employeesService = employeesService;
 		this.enterprisesService = enterprisesService;
 
+		this.workplace = workplace;
 		this.employee = employee;
 		
-		this.employeeInfo = new EmployeeInfoDataBase();
-		this.newEmployeeInfo = null;
-		
 		this.agreements = new ArrayList<>();
+		this.workplaces = new ArrayList<>();
+		
+		this.employeeContractData = new EmployeeContractInfo();
+		this.employeeData = new EmployeeInfo();
+		this.contractData = new ContractInfo();
+		
+		this.new_employeeContractData = new EmployeeContractInfo();
+		this.new_employeeData = new EmployeeInfo();
+		this.new_contractData = new ContractInfo();
 	}
 	
-	public Employee getEmployee(){
-		return this.employee;
+	// -----------------------------------------------------------------------------------------------------------------------------------------
+	// -----------------------------------------------------  METHODS LOGIC WINDOW -------------------------------------------------------------
+	// -----------------------------------------------------------------------------------------------------------------------------------------
+	
+	//CONTRACT TABLE
+	
+	public String getEmployeeDocument(){
+		return this.employeeData.getDocument();
 	}
 	
-	public EmployeeInfoDataBase getEmployeeInfo(){
-		return this.employeeInfo;
+	public String getEmployeeNationality() {
+		return getNationality(this.employeeData.getNationality());
+	}
+	
+	private String getNationality(String iso2) {
+		for (int i = 0; i < Country.values().length; i++) {
+			if (Country.values()[i].getIso2() == iso2)
+				return Country.values()[i].getName();
+		}
+		return null;
+	}
+	
+	public String getEmployeeSSNumber() {
+		return this.employeeData.getSsNumber();
+	}
+	
+	public String getEmployeeName() {
+		return this.employeeData.getName();
+	}
+	
+	public String getEmployeeSurname() {
+		return this.employeeData.getSurName();
+	}
+	
+	public String getEmployeeSecondSurname() {
+		return this.employeeData.getSecondSurName();
+	}
+	
+	public Integer getContractSSRegimen() {
+		return (int)this.contractData.getSsRegimen();
+	}
+	
+	public Integer getContractActivityCCC() {
+		return getActivityAccountIndex();
+	}
+	
+	public Integer getActivityAccountIndex() {
+		if(null == this.contractData.getActivityId())
+			return 0;
+		
+		Integer index = 0;
+		
+		if(null == this.contractData.getCccId())
+			return 0;
+		
+		for(Entry<Integer,String> entry : getActivities().entrySet())
+			if(entry.getKey().equals(this.contractData.getActivityId()))
+				for(CCCInfo cccInfo :  getCCCsByActivity(entry.getKey()))
+					if(cccInfo.getCCCId().equals(this.contractData.getCccId())) {
+						index++;
+						return index;
+					}else
+						index++;
+			else
+				index += getCCCsByActivity(entry.getKey()).size();
+			
+		return 0;
+	}
+	
+	private List<CCCInfo> getCCCsByActivity(Integer activityId) {
+		List<CCCInfo> cccs = new ArrayList<>();
+		for(CCCInfo cccInfo : getCCCs().values())
+			if(cccInfo.getActivityId().equals(activityId))
+				cccs.add(cccInfo);
+		return cccs;
+	}
+
+	public Integer getContractWorkplace() {
+		return getWorkplaceIndex();
+	}
+	
+	public Integer getWorkplaceIndex() {
+		Integer index = 0;
+		
+		for(Workplace workplace : workplaces){
+			if(this.contractData.getWorkplaceId().equals(workplace.getId()))
+				break;
+			index++;
+		}
+		
+		return index;
+	}
+	
+	public Integer getContractType() {
+		return Integer.parseInt(this.contractData.getContractType());
+	}
+	
+	public Integer getContractModel() {
+		return this.contractData.getContractModel();
+	}
+	
+	public Date getContractStartDate() {
+		return this.contractData.getStartDate();
+	}
+	
+	public Date getContractSeniorityDate() {
+		return this.contractData.getSeniorityDate();
+	}
+	
+	public Date getContractEndDate() {
+		return this.contractData.getEndDate();
+	}
+	
+	public Integer getContractAgreementId() {
+		return this.contractData.getAgreementId();
+	}
+	
+	public Integer getContractAgreement() {
+		return getAgreementIndex(this.contractData.getAgreementId());
+	}
+	
+	public Integer getAgreementIndex(Integer agreementId){
+		if(null == agreementId)
+			return -1;
+		else {
+			List<Agreement> activeAgreements = getActiveAgreements();
+			for(int i = 0; i< activeAgreements.size(); i++) {
+				if(activeAgreements.get(i).getId().equals(agreementId))
+					return i;
+			}	
+			return -1;
+		}
+	}
+	
+	public Integer getAgreementLevel() {
+		return getAgreementLevelCategoryIndex(this.contractData.getAgreementId(), this.contractData.getAgreementLevelId(), this.contractData.getAgreementCategory());
+	}
+	
+	private Integer getAgreementLevelCategoryIndex(Integer agreementId, Integer agreementLevelId, String category_description) {
+		if (null == agreementId || null == agreementLevelId || category_description == "")
+			return -1;
+
+		Integer result = 0;
+		for (Agreement a : getActiveAgreements()) {
+			if (a.getId() > 0 && a.getId().equals(agreementId)) {
+				Set<Level> levels = a.getLevels();
+				for (Level levelRecord : levels) {
+					Set<String> categories = a.getCategoriesMap().get(levelRecord.getId());
+					for (String categoryRecord : categories) {
+						if (levelRecord.getId().equals(agreementLevelId) && categoryRecord == category_description)
+							return result;
+						else
+							result++;
+					}
+				}
+			}
+		}
+
+		result = 0;
+		for (Agreement a : getActiveAgreements()) {
+			if (a.getId() > 0 && a.getId().equals(agreementId)) {
+				Set<Level> levels = a.getLevels();
+				for (Level levelRecord : levels) {
+					Set<String> categories = a.getCategoriesMap().get(levelRecord.getId());
+					for (String categoryRecord : categories) {
+						if (levelRecord.getId().equals(agreementLevelId))
+							return result;
+						else
+							result++;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	public String getContractAgreementCategory() {
+		return this.contractData.getAgreementCategory();
+	}
+	
+	public Integer getContractQuoteGroup() {
+		return Integer.parseInt(this.contractData.getQuoteGroup());
+	}
+	
+	public Integer getContractOcupation() {
+		return getCharIndex(this.contractData.getOcupation());
+	}
+	
+	private int getCharIndex(String ocupation) {
+		switch (ocupation) {
+		case "a":
+			return 1;
+		case "b":
+			return 2;
+		case "d":
+			return 3;
+		case "e":
+			return 4;
+		case "f":
+			return 5;
+		case "g":
+			return 6;
+		case "h":
+			return 7;
+		default:
+			return 0;
+		}
+	}
+	
+	public Integer getContractJourneyType() {
+		return (int)this.contractData.getJourneyType();
+	}
+	
+	//PERSON TABLE
+	
+	public Date getEmployeeBirthDate() {
+		return this.employeeData.getBirthdate();
+	}
+	
+	public Integer getEmployeeGender() {
+		return (int) this.employeeData.getGender();
+	}
+	
+	public Integer getEmployeeAddressStreetTypeIndex(){
+		return getStreetTypeIndex(this.employeeData.getStreetType());
+	}
+	
+	private Integer getStreetTypeIndex(String streetType) {
+		for(int i=0; i<StreetType.values().length; i++){
+			if(streetType == StreetType.values()[i].getShortCode())
+				return i;
+		}
+		return 0;
+	}
+	
+	public String getEmployeeAddress() {
+		return this.employeeData.getAddress();
+	}
+	
+	public String getEmployeeAddressNumber() {
+		return this.employeeData.getAddresNum();
+	}
+	
+	public String getEmployeeAddressZip() {
+		return this.employeeData.getAddressZip();
+	}
+	
+	public String getEmployeeAddressCity() {
+		return this.employeeData.getAddressCity();
+	}
+	
+	public Integer getEmployeeAddressProvince() {
+		return ProvinceContract.getProvinceIndex(this.employeeData.getAddressProvinces());
+	}
+	
+	public String getEmployeeMobile() {
+		return this.employeeData.getMobile();
+	}
+	
+	public String getEmployeePhone() {
+		return this.employeeData.getPhone();
+	}
+	
+	public String getEmployeeEmail() {
+		return this.employeeData.getEmail();
+	}
+	
+	public Integer getEmployeePayMethod() {
+		return getPayMethodIndex(this.employeeData.getPayMethodType());
+	}
+	
+	private int getPayMethodIndex(String payMethodType) {
+		switch (payMethodType) {
+		case "EFECTIVO":
+			return 1;
+		case "GIRO":
+			return 2;
+		case "CHEQUE":
+			return 3;
+		case "TRANSFERENCIA":
+			return 4;
+		default:
+			return 0;
+		}
+	}
+	
+	public String getEmployeeBIC() {
+		return this.employeeData.getBic();
+	}
+	
+	public String getEmployeeAccount() {
+		return this.employeeData.getAccount();
+	}
+	
+	// -----------------------------------------------------------------------------------------------------------------------------------------
+	// --------------------------------------------------------- AUX METHODS -------------------------------------------------------------------
+	// -----------------------------------------------------------------------------------------------------------------------------------------
+
+	public Map<Integer, String> getActivities() {
+		return activitiesCCC.getActivities();
+	}
+	
+	public Map<Integer, CCCInfo> getCCCs() {
+		return activitiesCCC.getCccs();
+	}
+	
+	public Integer getActivityIdByName(String activityStr) {
+		for(Entry<Integer, String> activityEntry : activitiesCCC.getActivities().entrySet()){
+			if(activityStr.equals(activityEntry.getValue()))
+				return activityEntry.getKey();
+		}
+		return null;
+	}
+	
+	public Integer getCCCIdByNumber(String cccStr, byte cccType, String cccGeozoneStr) {
+		CCCInfo cccInfo = getCCCInfo(cccStr, cccType, cccGeozoneStr);
+		if(null == cccInfo)
+			return null;
+		else{
+			for(Entry<Integer, CCCInfo> cccEntry : activitiesCCC.getCccs().entrySet())
+				if(cccEntry.getValue().equals(cccInfo)){
+					return cccEntry.getKey();
+				}
+			return null;
+		}
+	}
+	
+	private CCCInfo getCCCInfo(String cccStr, byte cccType, String cccGeozoneStr) {
+		for(CCCInfo cccInfo : activitiesCCC.getCccs().values()){
+			if(cccStr.equals(cccInfo.getCcc()) && cccType == cccInfo.getType() && cccGeozoneStr.equals(cccInfo.getGeozone()))
+				return cccInfo;
+		}
+		return null;
+	}
+	
+	public List<Workplace> getWorkplaces() {
+		return this.workplaces;
 	}
 	
 	public List<Agreement> getAgreements(){
 		return this.agreements;
+	}
+	
+	public boolean checkDocumentValidation(String document_type_string, String document_string) {
+		if("DNI".equals(document_type_string)){
+			Dni dni = new Dni(document_string);
+			if(dni.checkDNI())
+				return true;
+			else
+				return false;
+		}else {
+			return true;
+		}
+	}
+	
+	public boolean checkSSNumValidation(String ssNum_string) {
+		SocialSecurity ss = new SocialSecurity(ssNum_string);
+		if(ss.checkSS())
+			return true;
+		else
+			return false;
+	}
+	
+	public Integer getWorkplaceIdByName(String workplaceName) {
+		for(Workplace workplace : workplaces)
+			if(workplaceName.equals(workplace.getDescription()))
+				return workplace.getId();
+		
+		return null;
 	}
 	
 	public List<Agreement> getActiveAgreements(){
@@ -121,18 +444,6 @@ public class EmployeeDraftObject {
 				activeAgreements.add(a);
 		}
 		return activeAgreements;
-	}
-	
-	public Integer getAgreementIndex(String agreementDescription){
-		if(null == agreementDescription)
-			return -1;
-		else {
-			List<Agreement> activeAgreements = getActiveAgreements();
-			for(int i = 0; i<activeAgreements.size(); i++)
-				if(activeAgreements.get(i).getDescription() == agreementDescription)
-					return i;
-			return -1;
-		}
 	}
 	
 	public Integer getAgreementId(String agreementName){
@@ -154,37 +465,79 @@ public class EmployeeDraftObject {
 				}
 		}
 		return -1;
-	}		
-
-	
-	public Set<Level> getLevels(Integer agreementId){
-		for(Agreement a : getAgreements()){
-			if(a.getId() == agreementId){
-				return a.getLevels();
-			}	
-		}
-		return new HashSet<>();
 	}
 	
-	public Map<Integer, Set<String>> getCategories(Integer agreementId, Integer levelId){
-		for(Agreement a : getAgreements()){
-			if(a.getId() == agreementId){
-				return a.getCategoriesMap();
-			}	
+	private String getQuoteByIndex(Integer index) {
+		if(null == index)
+			return null;
+		
+		switch (index) {
+		case 1:
+			return "\"01\"";
+		case 2:
+			return "\"02\"";
+		case 3:
+			return "\"03\"";
+		case 4:
+			return "\"04\"";
+		case 5:
+			return "\"05\"";
+		case 6:
+			return "\"06\"";
+		case 7:
+			return "\"07\"";
+		case 8:
+			return "\"08\"";
+		case 9:
+			return "\"09\"";
+		case 10:
+			return "\"10\"";
+		case 11:
+			return "\"11\"";
+		default:
+			return null;
 		}
-		return null;
 	}
-
+	
+	private String getOcupationByIndex(Integer index) {
+		if(null == index)
+			return null;
+		
+		switch (index) {
+		case 1:
+			return "\"a\"";
+		case 2:
+			return "\"b\"";
+		case 3:
+			return "\"d\"";
+		case 4:
+			return "\"e\"";
+		case 5:
+			return "\"f\"";
+		case 6:
+			return "\"g\"";
+		case 7:
+			return "\"h\"";
+		default:
+			return null;
+		}
+	}
+	
 	// ---------------------------------------------- DATABASE METHODS SYNC  ---------------------------------------------
 	
-	public void initializeEmployee(Consumer<EmployeeInfoDataBase> success, Consumer<Throwable> failure) {
-		employeesService.getEmployeeInfoDataBase(this.employee.getId(), new AsyncCallback<EmployeeInfoDataBase>() {
+	public void initializeEmployee(Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure) {
+		employeesService.getEmployeeInfoDataBase(this.employee.getId(), new AsyncCallback<EmployeeContractInfo>() {
 			
 			@Override
-			public void onSuccess(EmployeeInfoDataBase result) {
-				employeeInfo = result;
-				newEmployeeInfo = new EmployeeInfoDataBase(employeeInfo);
-//				success.accept(result); //TODO: BORRAR
+			public void onSuccess(EmployeeContractInfo result) {
+				employeeContractData = result;
+				employeeData = result.getEmployeeInfo();
+				contractData = result.getContractInfo();
+				
+				new_employeeContractData = result;
+				new_employeeData = result.getEmployeeInfo();
+				new_contractData = result.getContractInfo();
+
 				getAgreements(
 						r ->{success.accept(result);},
 						f->{}
@@ -203,26 +556,63 @@ public class EmployeeDraftObject {
 			
 			@Override
 			public void onSuccess(List<Agreement> result) {
-				
 				agreements = result;
-				success.accept(result);
-				
+				getActivitiesCCC(
+						r->{success.accept(result);},
+						f->{}
+					);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+		});	
+	}
+	
+	public void getActivitiesCCC(Consumer<ActivitiesCCC> success, Consumer<Throwable> failure) {
+		enterprisesService.getActivitiesCCC(workplace.getId(), new AsyncCallback<ActivitiesCCC>() {
+			
+			@Override
+			public void onSuccess(ActivitiesCCC result) {
+				activitiesCCC = result;
+				getWorkplaces(
+						r->{success.accept(result);},
+						f->{}
+					);
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {
 				// TODO Auto-generated method stub
-				
 			}
 		});
-		
 	}
 	
-	public void updateEmployee(Consumer<EmployeeInfoDataBase> success, Consumer<Throwable> failure){
-		employeesService.setEmployeeInfoDataBase(this.newEmployeeInfo, new AsyncCallback<EmployeeInfoDataBase>() {
+	public void getWorkplaces(Consumer<List<Workplace>> success, Consumer<Throwable> failure) {
+		enterprisesService.getWorkplaces(workplace.getId(), new AsyncCallback<List<Workplace>>() {
 			
 			@Override
-			public void onSuccess(EmployeeInfoDataBase result) {
+			public void onSuccess(List<Workplace> result) {
+				workplaces = result;
+				success.accept(result);	
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+			}
+		});
+	}
+	
+	public void updateEmployee(Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure){
+		new_employeeContractData.setContractInfo(new_contractData);
+		new_employeeContractData.setEmployeeInfo(new_employeeData);
+		
+		employeesService.setEmployeeInfoDataBase(this.new_employeeContractData, new AsyncCallback<EmployeeContractInfo>() {
+			
+			@Override
+			public void onSuccess(EmployeeContractInfo result) {
 				success.accept(result);
 			}
 
@@ -237,255 +627,173 @@ public class EmployeeDraftObject {
 	// ------------------------------------------------------- SETTERS NEW EMPLOYEE INFO -------------------------------------------------------
 	// -----------------------------------------------------------------------------------------------------------------------------------------
 	
-	// CONTRACT
+	// CONTRACT TABLE
 	
-	public void setContractQuoteAccount(String quote_account) {
-		newEmployeeInfo.setQuote_account(quote_account);	
+	public void setEmployeeDocument(String document) {
+		new_employeeData.setDocument(document);
+	}
+	
+	public void setEmployeeDocumentType(String document_type) {
+		if(document_type == "DNI")
+			new_employeeData.setDocumentType((byte) 0);
+		else if(document_type == "CIF")
+			new_employeeData.setDocumentType((byte) 1);
+		else if(document_type == "Pasaporte")
+			new_employeeData.setDocumentType((byte) 3);
+		else
+			new_employeeData.setDocumentType((byte) 0);
+	}
+	
+	public void setNationality(String nationality) {
+		new_employeeData.setNationality(nationality);	
+	}
+	
+	public void setEmployeeSocialSecurityNum(String social_security_num) {
+		new_employeeData.setSsNumber(social_security_num);
+	}
+	
+	public void setEmployeeName(String name) {
+		new_employeeData.setName(name);
+	}
+	
+	public void setEmployeeFirstSurname(String first_surname) {
+		new_employeeData.setSurName(first_surname);
+	}
+
+	public void setEmployeeSecondSurname(String second_surname) {
+		new_employeeData.setSecondSurName(second_surname);
+	}
+	
+	public void setSSRegime(int ssRegime) {
+		if(1 == ssRegime)
+			new_contractData.setSsRegimen((byte) 3);
+		else
+			new_contractData.setSsRegimen((byte) ssRegime);
+	}
+	
+	public void setContractActivityId(Integer activityID) {
+		new_contractData.setActivityId(activityID);
+	}
+
+	public void setContractCCCId(Integer cccId) {
+		new_contractData.setCccId(cccId);
+	}
+
+	public void setContractCCCType(byte cccType) {
+		new_contractData.setCccType(cccType);
+	}
+	
+	public void setContractWorkplaceId(Integer workplaceId) {
+		new_contractData.setWorkplaceId(workplaceId);
 	}
 	
 	public void setContractType(String contract_type) {
-		newEmployeeInfo.setContract_type(contract_type);
+		new_contractData.setContractType(contract_type);
 	}
 	
 	public void setContractModel(Integer contractModelId) {
 		//Falta buscar en ModelOption el String correspondiente a ese ID
-		newEmployeeInfo.setContract_model(contractModelId);	
+		new_contractData.setContractModel(contractModelId);	
 	}
 	
 	public void setContractStartDate(Date start_date) {
-		newEmployeeInfo.setStart_date(start_date);		
-	}
-	
-	public void setContractEndDate(Date end_date) {
-		newEmployeeInfo.setEnd_date(end_date);		
+		new_contractData.setStartDate(start_date);		
 	}
 	
 	public void setContractSeniorityDate(Date seniority_date) {
-		newEmployeeInfo.setSeniority_date(seniority_date);		
+		new_contractData.setSeniorityDate(seniority_date);		
+	}
+	
+	public void setContractEndDate(Date end_date) {
+		new_contractData.setEndDate(end_date);		
 	}
 	
 	public void setContractAgreementId(Integer agreement_table_id) {
-		newEmployeeInfo.setAgreement_table_id(agreement_table_id);
-	}
-
-	public void setContractAgreementDescription(String agreement) {
-		newEmployeeInfo.setAgreement(agreement);	
-	}
-	
-	public void setContractCategory(String category_description) {
-		newEmployeeInfo.setCategory_description(category_description);		
+		new_contractData.setAgreementId(agreement_table_id);
 	}
 	
 	public void setContractAgreementLevelId(Integer agreement_level_table_id) {
-		newEmployeeInfo.setAgreement_level_table_id(agreement_level_table_id);
-	}
-
-	public void setContractAgreementLevelDescription(String agreement_level) {
-		newEmployeeInfo.setAgreement_level(agreement_level);		
+		new_contractData.setAgreementLevelId(agreement_level_table_id);
 	}
 	
-	public void setContractQuoteGroup(String quote_group) {
-		newEmployeeInfo.setQuote_group(quote_group);		
+	public void setContractCategory(String category_description) {
+		new_contractData.setAgreementCategory(category_description);		
 	}
 	
-	public void setContractOccupation(String ocupation) {
-		newEmployeeInfo.setOcupation(ocupation);		
+	public void setContractQuoteGroup(Integer quoteGroupIndex) {
+		String quoteGroup = getQuoteByIndex(quoteGroupIndex);
+		new_contractData.setQuoteGroup(quoteGroup);		
 	}
-
+	
+	public void setContractOccupation(Integer occupationIndex) {
+		String contractOccupation = getOcupationByIndex(occupationIndex);
+		new_contractData.setOcupation(contractOccupation);		
+	}
+	
 	public void setContractJourneyType(Boolean journey_type) {
-		newEmployeeInfo.setJourneyType(journey_type);
+		new_contractData.setJourneyType(journey_type ? (byte) 1 : (byte) 0);
 	}
 	
 	// EMPLOYEE
 	
-	public void setEmployeeDocument(String document) {
-		newEmployeeInfo.setDocument(document);
-	}
-
-	public void setEmployeeDocumentType(String document_type) {
-		if(document_type == "DNI")
-			newEmployeeInfo.setDocument_type((byte) 0);
-		else if(document_type == "CIF")
-			newEmployeeInfo.setDocument_type((byte) 1);
-		else if(document_type == "Pasaporte")
-			newEmployeeInfo.setDocument_type((byte) 3);
-	}
-	
-	public void setNationality(String nationality) {
-		newEmployeeInfo.setNationality(nationality);	
-	}
-
-	public void setEmployeeName(String name) {
-		newEmployeeInfo.setName(name);
-	}
-
-	public void setEmployeeFirstSurname(String first_surname) {
-		newEmployeeInfo.setFirst_surname(first_surname);
-	}
-
-	public void setEmployeeSecondSurname(String second_surname) {
-		newEmployeeInfo.setSecond_surname(second_surname);
-	}
-
 	public void setEmployeeBirthDate(Date birth_date) {
-		newEmployeeInfo.setBirth_date(birth_date);
+		new_employeeData.setBirthdate(birth_date);
 	}
 
 	public void setEmployeeGender(int gender) {
-		newEmployeeInfo.setGender((byte) gender);
+		new_employeeData.setGender((byte) gender);
 	}
 	
 	public void setEmployeeGenderNull() {
-		newEmployeeInfo.setGender(null);
-	}
-
-	public void setEmployeeSocialSecurityNum(String social_security_num) {
-		newEmployeeInfo.setSocial_security_num(social_security_num);
+		new_employeeData.setGender(null);
 	}
 
 	public void setEmployeeStreetType(String shortCode) {
-		newEmployeeInfo.setStreetType(shortCode);
+		new_employeeData.setStreetType(shortCode);
 	}
 	
 	public void setEmployeeAddress(String address) {
-		newEmployeeInfo.setAddress(address);
+		new_employeeData.setAddress(address);
 	}
 
 	public void setEmployeeAddressNumber(String address_number) {
-		newEmployeeInfo.setAddress_number(address_number);
+		new_employeeData.setAddresNum(address_number);
 	}
 
 	public void setEmployeeAddressZip(String zip_code) {
-		newEmployeeInfo.setZip_code(zip_code);
+		new_employeeData.setAddressZip(zip_code);
 	}
 
-	public void setEmployeeAddressLacality(String location) {
-		newEmployeeInfo.setLocality(location);
+	public void setEmployeeAddressCity(String location) {
+		new_employeeData.setAddressCity(location);
 	}
 
 	public void setEmployeeAddressProvince(String province) {
-		newEmployeeInfo.setProvince(("" == province) ? null : province);
-		newEmployeeInfo.setGeozone_name(("" == province) ? null : province);
-	}
-
-	public void setEmployeePhone(String phone) {
-		newEmployeeInfo.setPhone(phone);
+		new_employeeData.setAddressProvinces(province);
 	}
 
 	public void setEmployeeMobile(String mobile) {
-		newEmployeeInfo.setMobile(mobile);
+		new_employeeData.setMobile(mobile);
+	}
+	
+	public void setEmployeePhone(String phone) {
+		new_employeeData.setPhone(phone);
 	}
 
 	public void setEmployeeEmail(String mobile) {
-		newEmployeeInfo.setEmail(mobile);
+		new_employeeData.setEmail(mobile);
 	}
 
 	public void setEmployeePayMethod(String payMethodType) {
-		newEmployeeInfo.setTypePayMethod(payMethodType);
+		new_employeeData.setPayMethodType(payMethodType);
 	}
 
 	public void setEmployeeAccount(String rbankAccount) {
-		newEmployeeInfo.setBankAccount(rbankAccount);
+		new_employeeData.setAccount(rbankAccount);
 	}
 
 	public void setEmployeeBIC(String rbankBIC) {
-		newEmployeeInfo.setBIC(rbankBIC);
+		new_employeeData.setBic(rbankBIC);
 	}
 
-	public Integer getActivityAccountIndex() {
-		if(null == this.employeeInfo.getEnterprise_activity_table_id())
-			return 0;
-		
-		Integer index = 1;
-		//Integer indexActivity = 1;
-		//Integer indexAccount = 1;
-		
-		if(null == this.employeeInfo.getEnterprise_ccc_table_id())
-			return 0;
-		
-		for(Integer activityId : this.employeeInfo.getEnterpriseActivities().keySet()){
-			if(this.employeeInfo.getEnterprise_activity_table_id().equals(activityId))
-				break;
-			index++;
-			//indexActivity++;
-		}
-		
-		for(Integer cccId : this.employeeInfo.getCCCs().keySet()){
-			if(this.employeeInfo.getEnterprise_ccc_table_id().equals(cccId))
-				break;
-			index++;
-			//indexAccount++;
-		}
-			
-		//return indexActivity * indexAccount;
-		return index;
-		
-	}
-
-	public Integer getWorkplaceIndex() {
-		Integer index = 0;
-		
-		for(Integer workplaceId : this.employeeInfo.getWorkplaces().keySet()){
-			if(this.employeeInfo.getWorkplace_table_id().equals(workplaceId))
-				break;
-			index++;
-		}
-		
-		return index;
-	}
-
-	public Integer getWorkplaceIdByName(String workplaceName) {
-		for(Entry<Integer, String> workplaceEntry : this.employeeInfo.getWorkplaces().entrySet())
-			if(workplaceName.equals(workplaceEntry.getValue()))
-				return workplaceEntry.getKey();
-		
-		return null;
-	}
-
-	public void setContractWorkplaceId(Integer workplaceId) {
-		newEmployeeInfo.setWorkplace_table_id(workplaceId);
-	}
-
-	public void setContractActivityId(Integer activityID) {
-		newEmployeeInfo.setEnterprise_activity_table_id(activityID);
-	}
-
-	public void setContractCCCId(Integer cccId) {
-		newEmployeeInfo.setEnterprise_ccc_table_id(cccId);
-	}
-
-	public void setContractCCCType(byte cccType) {
-		newEmployeeInfo.setEnterprise_ccc_type(cccType);
-	}
-
-	public Integer getActivityIdByName(String activityStr) {
-		for(Entry<Integer, String> activityEntry : this.employeeInfo.getEnterpriseActivities().entrySet())
-			if(activityStr.equals(activityEntry.getValue()))
-				return activityEntry.getKey();
-		
-		return null;
-	}
-
-	public Integer getCCCIdByNumber(String cccStr, byte cccType, String cccGeozoneStr) {
-		CCCInfo cccInfo = getCCCInfo(cccStr, cccType, cccGeozoneStr);
-		if(null == cccInfo)
-			return null;
-		else{
-			for(Entry<Integer, CCCInfo> cccEntry : this.employeeInfo.getCCCs().entrySet())
-				if(cccEntry.getValue().equals(cccInfo)){
-					return cccEntry.getKey();
-				}
-			return null;
-		}
-	}
-
-	private CCCInfo getCCCInfo(String cccStr, byte cccType, String cccGeozoneStr) {
-		for(CCCInfo cccInfo : this.employeeInfo.getCCCs().values()){
-			if(cccStr.equals(cccInfo.getCcc()) && cccType == cccInfo.getType() && cccGeozoneStr.equals(cccInfo.getGeozone()))
-				return cccInfo;
-		}
-		return null;
-	}
-	
-	
 }

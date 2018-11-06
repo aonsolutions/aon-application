@@ -556,13 +556,13 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public EmployeeInfoDataBase getEmployeeInfoDataBase(String domain, Integer employeeContract) {
+	public EmployeeContractInfo getEmployeeInfoDataBase(String domain, Integer employeeContract) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public EmployeeInfoDataBase setEmployeeInfoDataBase(String domain, EmployeeInfoDataBase newEmployeeInfo) {
+	public EmployeeContractInfo setEmployeeInfoDataBase(String domain, EmployeeContractInfo newEmployeeInfo) {
 		// TODO Auto-generated method stub
 		return null;
 	}

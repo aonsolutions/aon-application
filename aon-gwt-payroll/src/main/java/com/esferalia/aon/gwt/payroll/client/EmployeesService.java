@@ -159,9 +159,9 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	EventsWorkplace setEventsWorkplace(String domain, 
 			com.esferalia.aon.gwt.payroll.shared.EventsWorkplace updateEventsWorkplace);
 
-	EmployeeInfoDataBase getEmployeeInfoDataBase(String domain, Integer employeeContract);
+	EmployeeContractInfo getEmployeeInfoDataBase(String domain, Integer employeeContract);
 
-	EmployeeInfoDataBase setEmployeeInfoDataBase(String domain, EmployeeInfoDataBase newEmployeeInfo);
+	EmployeeContractInfo setEmployeeInfoDataBase(String domain, EmployeeContractInfo new_employeeContractData);
 
 	List<SSBonusData> getEmployeeSSBonuses(String domain, Integer contractId);
 

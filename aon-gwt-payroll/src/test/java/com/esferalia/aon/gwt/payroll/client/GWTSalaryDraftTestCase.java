@@ -120,7 +120,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 			@Override
 			public void getEmployeeInfoDataBase(String domain, Integer employeeContract,
-					AsyncCallback<EmployeeInfoDataBase> asyncCallback) {
+					AsyncCallback<EmployeeContractInfo> asyncCallback) {
 				// TODO Auto-generated method stub
 				
 			}
@@ -128,8 +128,8 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void setEmployeeInfoDataBase(String domain, EmployeeInfoDataBase newEmployeeInfo,
-					AsyncCallback<EmployeeInfoDataBase> asyncCallback) {
+			public void setEmployeeInfoDataBase(String domain, EmployeeContractInfo newEmployeeInfo,
+					AsyncCallback<EmployeeContractInfo> asyncCallback) {
 				// TODO Auto-generated method stub
 				
 			}

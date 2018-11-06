@@ -562,19 +562,19 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 
 	@Override
-	public void getEmployeeInfoDataBase(String domain, Integer employeeContract, AsyncCallback<EmployeeInfoDataBase> callback) {
+	public void getEmployeeInfoDataBase(String domain, Integer employeeContract, AsyncCallback<EmployeeContractInfo> callback) {
 		AON.start();
 		employeesServiceAsync.getEmployeeInfoDataBase(domain, employeeContract, 
-				new AsyncCallbackWrapper<EmployeeInfoDataBase>(callback));
+				new AsyncCallbackWrapper<EmployeeContractInfo>(callback));
 
 	}
 
 	@Override
-	public void setEmployeeInfoDataBase(String domain, EmployeeInfoDataBase newEmployeeInfo,
-			AsyncCallback<EmployeeInfoDataBase> callback) {
+	public void setEmployeeInfoDataBase(String domain, EmployeeContractInfo newEmployeeInfo,
+			AsyncCallback<EmployeeContractInfo> callback) {
 		AON.start();
 		employeesServiceAsync.setEmployeeInfoDataBase(domain, newEmployeeInfo, 
-				new AsyncCallbackWrapper<EmployeeInfoDataBase>(callback));
+				new AsyncCallbackWrapper<EmployeeContractInfo>(callback));
 	
 	}
 
