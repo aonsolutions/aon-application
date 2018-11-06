@@ -1278,7 +1278,7 @@ public class Templates extends Composite implements EntryPoint {
 	//------------------------------ JavaScript Functions
 	
 	public void product(){
-			importProduct();
+		importProduct();
 	}
 
 	public static native void exportProduct(Templates thiz) /*-{

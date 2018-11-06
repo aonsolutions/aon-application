@@ -30,6 +30,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -231,13 +232,15 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			
 			HSSFWorkbook workbook = new HSSFWorkbook(bais);
 			HSSFSheet sheet = workbook.getSheetAt(0);
+			FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+
 			rowCount  = sheet.getPhysicalNumberOfRows();
 			rowIterator = sheet.iterator();
 			
 			if(importType.equals(ImportType.PRODUCT))
-				executeExcelProduct(domain, rowIterator, error);
+				executeExcelProduct(domain, rowIterator, error, evaluator);
 			else if(importType.equals(ImportType.FEE))
-				executeExcelFee(domain, rowIterator, error, ignoreInactiveClient);
+				executeExcelFee(domain, rowIterator, error, ignoreInactiveClient, evaluator);
 			else if(importType.equals(ImportType.PROPOSAL))
 				executeExcelProposal(domain, rowIterator, error);
 			else if(importType.equals(ImportType.STOCK))
@@ -263,13 +266,14 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				
 				XSSFWorkbook workbook = new XSSFWorkbook(bais);
 				XSSFSheet sheet = workbook.getSheetAt(0);
+				FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
 				rowCount  = sheet.getPhysicalNumberOfRows();
 				rowIterator = sheet.iterator();
 				
 				if(importType.equals(ImportType.PRODUCT))
-					executeExcelProduct(domain, rowIterator, error);
+					executeExcelProduct(domain, rowIterator, error, evaluator);
 				else if(importType.equals(ImportType.FEE))
-					executeExcelFee(domain, rowIterator, error, ignoreInactiveClient);
+					executeExcelFee(domain, rowIterator, error, ignoreInactiveClient, evaluator);
 				else if(importType.equals(ImportType.PROPOSAL))
 					executeExcelProposal(domain, rowIterator, error);
 				else if(importType.equals(ImportType.STOCK))
@@ -297,7 +301,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	LinkedList<Workplace> workplaces = new LinkedList<Workplace>();
 	LinkedList<InvoicingGroup> invoicingGroupList = new LinkedList<InvoicingGroup>();
 	Boolean feeBool;
-	private void executeExcelFee(final Domain domain, Iterator<Row> rowIterator, Error error, Boolean ignoreInactiveClient){
+	private void executeExcelFee(final Domain domain, Iterator<Row> rowIterator, Error error, Boolean ignoreInactiveClient, FormulaEvaluator evaluator){
 		Vector<FeeInfo> fees = new Vector<FeeInfo>();
 		
 		sellers = DBFee.getInstance().getSellers(domain, getUser().getLogin());
@@ -345,7 +349,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 							}
 
 							if(!ti.getColumns().get(cell.getColumnIndex()).equals("Texto Libre")){
-								fi = checkFee(domain, ti.getColumns().get(cell.getColumnIndex()),fi,cell, ignoreInactiveClient);
+								fi = checkFee(domain, ti.getColumns().get(cell.getColumnIndex()),fi,cell, ignoreInactiveClient, evaluator);
 								if(fi == null){
 									verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto ");
 									textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n";
@@ -432,12 +436,12 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		return feeInfo;
 	}
 	
-	private FeeInfo checkFee(Domain domain, String template,FeeInfo fee, Cell cell, Boolean ignoreInactiveCliente) {
+	private FeeInfo checkFee(Domain domain, String template,FeeInfo fee, Cell cell, Boolean ignoreInactiveCliente, FormulaEvaluator evaluator) {
 		Integer row = cell.getRowIndex()+1;
 		String column = Utils.getColumn(cell.getColumnIndex());
 		String username = getUser().getLogin();
 		Integer type = cell.getCellType();
-		Object value = getObjectValue(cell);
+		Object value = getObjectValue(cell, evaluator);
 		switch (template) {
 		case "Cliente": case "Client":
 			if(type.equals(Cell.CELL_TYPE_STRING) && !cell.getStringCellValue().equals("")){
@@ -1164,8 +1168,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		return cell.getStringCellValue().equalsIgnoreCase("inventoriable") 
 			&& ti.getColumns().get(cell.getColumnIndex()).equalsIgnoreCase("inventariable");
 	}
-
-	private void executeExcelProduct(Domain domain, Iterator<Row> rowIterator, com.esferalia.aon.gwt.template.shared.Error error) {
+	private void executeExcelProduct(Domain domain, Iterator<Row> rowIterator, com.esferalia.aon.gwt.template.shared.Error error, FormulaEvaluator evaluator) {
 		Vector<ProductInfo> products = new Vector<ProductInfo>();
 		/* LAMBDA java 1.8 */
 		Iterable<Row> rowIterable = () -> rowIterator;
@@ -1180,7 +1183,6 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		LinkedList<Tag> tagList = AON.getTagList(domain.getName(), domain.getId(), getUserLogin(), f -> f.getDomainProperty().eq(domain.getId()));
 		LinkedList<Tax> taxList = d.getParentId() != null ? AON.getTaxList(domain.getName(), domain.getId(), getUserLogin(), f -> f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(d.getParentId())))
 				: AON.getTaxList(domain.getName(), domain.getId(), getUserLogin(), f -> f.getDomainProperty().eq(domain.getId()));
-		
 		rowStream.forEach(row ->{
 			if(row.getRowNum() !=0){
 				Iterator<Cell> cellIterator = row.cellIterator();
@@ -1189,7 +1191,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
 				cellStream.forEach(cell ->{
 					if(cell.getColumnIndex() != ti.getColumns().size()){
-						Object object = getObjectValue(cell);
+						Object object = getObjectValue(cell, evaluator);
 						if(cell.getRowIndex() == 1){//Primera fila del fichero Excel
 							if(ti.getColumns().size()<= cell.getColumnIndex() || ti.getColumns().get(cell.getColumnIndex()) == null || cell.getCellType() != Cell.CELL_TYPE_STRING || (!checkInventariable(cell) && !ti.getColumns().get(cell.getColumnIndex()).equalsIgnoreCase(cell.getStringCellValue()))){
 								// El archivo no es compatible con la plantilla
@@ -1267,7 +1269,6 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
                     			map.get(pi.getProduct().getCode()).getTagList().add(tag);
             				}
             			});
-            			
             		}
             	}
 			}
@@ -1359,7 +1360,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		case "Precio Coste" : 
 			if(type.equals(Cell.CELL_TYPE_NUMERIC)){
 				product.getItem().get(0).setPurchasePrice((double) value);
-			}else {
+			} else if(type.equals(Cell.CELL_TYPE_FORMULA)) {
+				System.out.println(value);
+				product.getItem().get(0).setPurchasePrice(Double.parseDouble(value.toString()));
+			} else {
 				verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.NOT_NUMERIC.getMessage());
 				textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.NOT_NUMERIC.getMessage() +"\n";
 			}
@@ -2551,7 +2555,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	private Object getObjectValue(Cell cell){
+	private Object getObjectValue(Cell cell, FormulaEvaluator evaluator){
 		switch (cell.getCellType()) {
 			case Cell.CELL_TYPE_BLANK:
 				return null;
@@ -2560,7 +2564,8 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			case Cell.CELL_TYPE_ERROR:
 				return cell.getErrorCellValue();
 			case Cell.CELL_TYPE_FORMULA:
-				return cell.getCellFormula(); 
+				return evaluator.evaluate(cell).getNumberValue();
+				//return cell.getCellFormula(); 
 			case Cell.CELL_TYPE_NUMERIC:
 				return cell.getNumericCellValue();
 			case Cell.CELL_TYPE_STRING:
