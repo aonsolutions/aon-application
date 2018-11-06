@@ -13,7 +13,6 @@
 	<scriptlet name="ProductLinesScriptlet" class="com.code.aon.ui.company.util.ReportProductLinesScriptlet"/>
 	<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
 	<parameter name="valuated" class="java.lang.Boolean"/>
-	<field name="code" class="java.lang.String"/>
 	<field name="price" class="java.lang.Double"/>
 	<field name="quantity" class="java.lang.Double"/>
 	<field name="discountExpression" class="com.code.aon.product.util.DiscountExpression"/>
@@ -286,7 +285,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{code}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{item.getProduct().getCode()}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

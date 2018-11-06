@@ -16,7 +16,6 @@
 		<field name="quantity" class="java.lang.Double"/>
 		<field name="price" class="java.lang.Double"/>
 		<field name="discountExpression" class="com.code.aon.product.util.DiscountExpression"/>
-		<field name="code" class="java.lang.String"/>
 		<variable name="baseTotal" class="java.lang.Double" calculation="Sum">
 			<variableExpression><![CDATA[new Double($P{PriceStrategy}.getBasePrice((com.code.aon.product.strategy.ICalculable)((com.code.aon.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean()))]]></variableExpression>
 			<initialValueExpression><![CDATA[new Double(0)]]></initialValueExpression>
@@ -852,7 +851,7 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 								<textElement verticalAlignment="Middle">
 									<font size="8"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{code}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$F{item.getProduct().getCode()}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
