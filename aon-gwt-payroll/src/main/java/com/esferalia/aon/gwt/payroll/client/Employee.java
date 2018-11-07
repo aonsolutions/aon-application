@@ -20,6 +20,8 @@ import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -97,6 +99,8 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 		String nssWidht();
 		String retaTopLabel();
 		String warning();
+		String journeyDurationWarning();
+		String journeyDuration();
 	}
 
 	// TABLA DATOS CONTRATO
@@ -237,6 +241,9 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 	
 	@UiField
 	TextBox account;
+	
+	@UiField
+	Label journeyDuration;
 
 	// ------------------------------------------------------ VARIABLES DE LA CLASE -------------------------------------------------
 
@@ -428,6 +435,11 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 		onContractJourneyTypeChange();
 	}
 	
+	@UiHandler("journeyDuration")
+	void onContractJourneyDurationClick(ClickEvent event) {
+		onContractJourneyDurationClick();
+	}
+	
 	// TABLA DATOS EMPLEADO
 	
 	@UiHandler("birth_date")
@@ -530,6 +542,7 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 	public abstract void onContractQuoteGroupChange();
 	public abstract void onContractOccupationChange();
 	public abstract void onContractJourneyTypeChange();
+	public abstract void onContractJourneyDurationClick();
 	
 	// TABLA DATOS EMPLEADO
 	
@@ -581,6 +594,7 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 		this.quote_group.clear();
 		this.occupation.clear();
 		this.journeyType.clear();
+		this.journeyDuration.setText("");
 
 		// TABLA DATOS EMPLEADO
 		
@@ -678,6 +692,7 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 		this.contractDataTable.getRows().getItem(12).getStyle().clearDisplay();
 		
 		this.contractDataTable.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 	}
 
 	public void showElementsFreelancerTable() {
@@ -704,6 +719,14 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 		this.contractDataTable.getRows().getItem(12).getStyle().clearDisplay();
 		
 		this.contractDataTable.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+	}
+	
+	public void showElementsPartialTimeContract() {
+		this.contractDataTable.getRows().getItem(14).getStyle().clearDisplay();	
+	}
+	
+	public void showElementsFullTimeContract() {
+		this.contractDataTable.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 	}
 
 	@Override

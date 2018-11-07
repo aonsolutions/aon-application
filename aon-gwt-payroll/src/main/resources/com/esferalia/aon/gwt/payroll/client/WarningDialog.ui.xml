@@ -11,7 +11,7 @@
 		}
 
 		.width{
-			width: 250px;
+			width: 350px;
 		}
 
 		.paddingBlocks{
@@ -29,20 +29,28 @@
 			border-radius: 3px;
 			cursor: pointer;
 		}
+		
+		.marginTop{
+			margin-top: 20px;
+		}
 
 	</ui:style>
 
-	<g:HTMLPanel styleName="{style.form}">
-
-		<g:VerticalPanel>
-		    <g:HorizontalPanel styleName="{style.paddingBlocks}">
-		    	<g:Label ui:field="label" styleName="{style.paddingLabels} {style.width}"></g:Label> 
-		    </g:HorizontalPanel> 
-		    <g:HorizontalPanel styleName="{style.paddingBlocks}">
-		    	<g:Button styleName="{style.closeButton}" ui:field="cancelButton">Cerrar</g:Button>
-		    </g:HorizontalPanel>
-		</g:VerticalPanel>
-			
+	<g:HTMLPanel styleName="aon-width-all aon-height-all">
+		<table class="aon-width-all aon-height-all" >
+			<tr>
+				<td>
+					<g:Label ui:field="label" styleName="{style.paddingLabels} {style.width}"></g:Label> 
+				</td>
+			</tr>
+			<tr>
+			</tr>
+			<tr>
+				<td align="right">
+					<g:Button ui:field="cancelButton" styleName="{style.marginTop}" debugId="paymetDialogCancelButton">Cerrar</g:Button>
+				</td>
+			</tr>
+		</table>		
 	</g:HTMLPanel>
 
 </ui:UiBinder>

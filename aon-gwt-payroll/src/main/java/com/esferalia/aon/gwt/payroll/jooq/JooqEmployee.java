@@ -206,6 +206,9 @@ public class JooqEmployee {
 		contractData.setAgreementCategory(contractTable.get(CONTRACT.CATEGORY_DESCRIPTION));
 		contractData.setSsRegimen(contractTable.get(CONTRACT.SS_REGIME));
 		
+		contractData.setOldStartDate(contractTable.get(CONTRACT.START_DATE));
+		contractData.setOldEndDate(contractTable.get(CONTRACT.END_DATE));
+		
 		Integer employe_workplace_table_id = contractTable.get(CONTRACT.WORKPLACE);
 		
 		//WORKPLACE TABLE
@@ -302,9 +305,6 @@ public class JooqEmployee {
 		//CONTRACT DATA TABLE
 		Result<Record> contractDataTable = dslContext.select().from(CONTRACT_DATA)
 			.where(CONTRACT_DATA.CONTRACT.eq(contract))
-			//.and(CONTRACT_DATA.START_DATE.le(actualSQLDate))
-			.and(CONTRACT_DATA.END_DATE.ge(actualSQLDate)
-					.or(CONTRACT_DATA.END_DATE.isNull()))
 			.fetch();
 		
 		Map<String, String> contractDataMap = new HashMap<>();
@@ -848,16 +848,64 @@ public class JooqEmployee {
 	private static EmployeeContractInfo createEmployeeContractDB(DSLContext dslContext, EmployeeContractInfo employeeContractData) {
 		System.out.println("GUARDAR DB");
 		
-		// ------------------------------------------------------------------------------------------------------------------------
-		// ------------------------------------------------ EMPLOYEE INFO ---------------------------------------------------------
-		// ------------------------------------------------------------------------------------------------------------------------		
-		
-		
 		ContractInfo contractData = employeeContractData.getContractInfo();
 		EmployeeInfo employeeData = employeeContractData.getEmployeeInfo();
 		
 		System.out.println(contractData.toString());
 		System.out.println(employeeData.toString());
+		
+		if(null != contractData.getContractId()) {
+			Record oldEndDateRecord = dslContext.select().from(CONTRACT).where(CONTRACT.ID.eq(contractData.getContractId())).fetchOne();
+			Date oldEndDate = oldEndDateRecord.get(CONTRACT.END_DATE);
+			
+			if(null == oldEndDate) {
+				//ACTUALIZAR FECHA INICIO Y FIN: contract, contract_data, contract_info, contract_bonus, contract_deduction, contract_embargo,
+				// contract_leave, contract_payment
+				dslContext.update(CONTRACT)
+					.set(CONTRACT.END_DATE, new Date(contractData.getOldEndDate().getTime())) //Nueva fecha
+					.where(CONTRACT.ID.eq(contractData.getContractId()))
+					.execute();
+				
+				dslContext.update(CONTRACT_DATA)
+					.set(CONTRACT_DATA.END_DATE, new Date(contractData.getOldEndDate().getTime())) //Nueva fecha
+					.where(CONTRACT_DATA.CONTRACT.eq(contractData.getContractId()))
+					.execute();
+				
+				dslContext.update(CONTRACT_INFO)
+					.set(CONTRACT_INFO.END_DATE, new Date(contractData.getOldEndDate().getTime())) //Nueva fecha
+					.where(CONTRACT_INFO.CONTRACT.eq(contractData.getContractId()))
+					.execute();
+				
+				dslContext.update(CONTRACT_BONUS)
+					.set(CONTRACT_BONUS.END_DATE, new Date(contractData.getOldEndDate().getTime())) //Nueva fecha
+					.where(CONTRACT_BONUS.CONTRACT.eq(contractData.getContractId()))
+					.execute();
+				
+				dslContext.update(CONTRACT_DEDUCTION)
+					.set(CONTRACT_DEDUCTION.END_DATE, new Date(contractData.getOldEndDate().getTime())) //Nueva fecha
+					.where(CONTRACT_DEDUCTION.CONTRACT.eq(contractData.getContractId()))
+					.execute();
+				
+				dslContext.update(CONTRACT_EMBARGO)
+					.set(CONTRACT_EMBARGO.END_DATE, new Date(contractData.getOldEndDate().getTime())) //Nueva fecha
+					.where(CONTRACT_EMBARGO.CONTRACT.eq(contractData.getContractId()))
+					.execute();
+
+				dslContext.update(CONTRACT_LEAVE)
+					.set(CONTRACT_LEAVE.END_DATE, new Date(contractData.getOldEndDate().getTime())) //Nueva fecha
+					.where(CONTRACT_LEAVE.CONTRACT.eq(contractData.getContractId()))
+					.execute();
+				
+				dslContext.update(CONTRACT_PAYMENT)
+					.set(CONTRACT_PAYMENT.END_DATE, new Date(contractData.getOldEndDate().getTime())) //Nueva fecha
+					.where(CONTRACT_PAYMENT.CONTRACT.eq(contractData.getContractId()))
+					.execute();
+			}
+		}
+		
+		// ------------------------------------------------------------------------------------------------------------------------
+		// ------------------------------------------------ EMPLOYEE INFO ---------------------------------------------------------
+		// ------------------------------------------------------------------------------------------------------------------------		
 		
 		Record workplaceRecord = dslContext.select()
 									.from(WORKPLACE)
@@ -1052,36 +1100,19 @@ public class JooqEmployee {
 					.from(GEOZONE)
 					.where(GEOZONE.NAME.like(employeeData.getAddressProvinces()+"%"))
 					.fetch();
-				
-				GeozoneRecord geozoneRecord  = dslContext.insertInto(GEOZONE)
-					.set(GEOZONE.DOMAIN, domain)
-					.set(GEOZONE.NAME, employeeData.getAddressProvinces())
-					.set(GEOZONE.CODE, codes.get(0).value1())
-					.returning(GEOZONE.ID)
-					.fetchOne();
-				
-				geozoneId = geozoneRecord.getId();
+				if(!codes.isEmpty()){
+					GeozoneRecord geozoneRecord  = dslContext.insertInto(GEOZONE)
+						.set(GEOZONE.DOMAIN, domain)
+						.set(GEOZONE.NAME, employeeData.getAddressProvinces())
+						.set(GEOZONE.CODE, codes.get(0).value1())
+						.returning(GEOZONE.ID)
+						.fetchOne();
+					
+					geozoneId = geozoneRecord.getId();
+				}
 			}else
 				geozoneId = geozone.value1();
-			
-//			dslContext.insertInto(RADDRESS, RADDRESS.ID, RADDRESS.DOMAIN, RADDRESS.REGISTRY, RADDRESS.TYPE, RADDRESS.RECIPIENT, 
-//					 RADDRESS.STREET_TYPE, RADDRESS.ADDRESS, RADDRESS.NUMBER, RADDRESS.ADDRESS2, RADDRESS.ADDRESS3, RADDRESS.ZIP,
-//					 RADDRESS.CITY, RADDRESS.GEOZONE, RADDRESS.ALIAS, RADDRESS.MUNICIPALITY_CODE)
-//			 	.values(employeeData.getRaddressId(), domain, registryId, (byte) 0, (String) null, employeeData.getStreetType(), 
-//			 			employeeData.getAddress(), employeeData.getAddresNum(), (String) null, (String) null, employeeData.getAddressZip(), 
-//			 			employeeData.getAddressCity(), geozoneId, (String) null, (String) null)
-//			 	.onDuplicateKeyUpdate()
-//			 	.set(RADDRESS.DOMAIN, domain)
-//				.set(RADDRESS.REGISTRY, registryId)
-//				.set(RADDRESS.STREET_TYPE, employeeData.getStreetType())
-//				.set(RADDRESS.ADDRESS, employeeData.getAddress())
-//				.set(RADDRESS.NUMBER, employeeData.getAddresNum())
-//				.set(RADDRESS.ZIP, employeeData.getAddressZip())
-//				.set(RADDRESS.CITY, employeeData.getAddressCity())
-//				.set(RADDRESS.GEOZONE, geozoneId)
-//				.execute();
-			
-			
+
 			Integer rAddressId = employeeData.getRaddressId();
 			
 			if(null == rAddressId){
@@ -1110,7 +1141,7 @@ public class JooqEmployee {
 						.execute();
 			}
 			
-			if(geozone == null){
+			if(geozone == null && null != geozoneId){
 				Integer rAddressGeozone = geozoneId;
 				
 				GeozoneRecord geozoneParentRecord  = dslContext.insertInto(GEOZONE)
@@ -1145,14 +1176,6 @@ public class JooqEmployee {
 				.set(RMEDIA.RADDRESS, rAddressId)
 				.execute();
 			
-//			dslContext.insertInto(RMEDIA)
-//				.set(RMEDIA.DOMAIN, domain)
-//				.set(RMEDIA.REGISTRY, registryId)
-//				.set(RMEDIA.MEDIA, (byte) 1)
-//				.set(RMEDIA.VALUE, employeeData.getPhone())
-//				.set(RMEDIA.RADDRESS, rAddressId)
-//				.execute();
-			
 			dslContext.insertInto(RMEDIA, RMEDIA.ID, RMEDIA.DOMAIN, RMEDIA.REGISTRY, RMEDIA.MEDIA, RMEDIA.VALUE, RMEDIA.COMMENT, 
 					  RMEDIA.ADMINISTRATIVE, RMEDIA.COMMERCIAL, RMEDIA.TECHNICAL, RMEDIA.RADDRESS)
 			 	.values(employeeData.getMobileId(), domain, registryId, (byte) 2, employeeData.getMobile(), (String) null, 
@@ -1161,14 +1184,6 @@ public class JooqEmployee {
 			 	.set(RMEDIA.VALUE, employeeData.getMobile())
 				.set(RMEDIA.RADDRESS, rAddressId)
 				.execute();
-		
-//			dslContext.insertInto(RMEDIA)
-//				.set(RMEDIA.DOMAIN, domain)
-//				.set(RMEDIA.REGISTRY, registryId)
-//				.set(RMEDIA.MEDIA, (byte) 2)
-//				.set(RMEDIA.VALUE, employeeData.getMobile())
-//				.set(RMEDIA.RADDRESS, rAddressId)
-//				.execute();
 			
 			dslContext.insertInto(RMEDIA, RMEDIA.ID, RMEDIA.DOMAIN, RMEDIA.REGISTRY, RMEDIA.MEDIA, RMEDIA.VALUE, RMEDIA.COMMENT, 
 					  RMEDIA.ADMINISTRATIVE, RMEDIA.COMMERCIAL, RMEDIA.TECHNICAL, RMEDIA.RADDRESS)
@@ -1177,16 +1192,7 @@ public class JooqEmployee {
 			 	.onDuplicateKeyUpdate()
 			 	.set(RMEDIA.VALUE, employeeData.getEmail())
 				.set(RMEDIA.RADDRESS, rAddressId)
-				.execute();
-		
-//			dslContext.insertInto(RMEDIA)
-//				.set(RMEDIA.DOMAIN, domain)
-//				.set(RMEDIA.REGISTRY, registryId)
-//				.set(RMEDIA.MEDIA, (byte) 4)
-//				.set(RMEDIA.VALUE, employeeData.getEmail())
-//				.set(RMEDIA.RADDRESS, rAddressId)
-//				.execute();
-			
+				.execute();		
 			
 			if(null == employeeData.getRpaymethodId()){
 				if(employeeData.getPayMethodType() != null && employeeData.getPayMethodType() != ""){
@@ -1299,59 +1305,6 @@ public class JooqEmployee {
 				.set(CONTRACT.ENTERPRISE_ACTIVITY, contractData.getActivityId())
 				.where(CONTRACT.ID.eq(contractId))
 				.execute();
-			
-			//TODO: CODIGO PARA CREAR ACTIVIDAD Y CCC
-//			Record enterpriseRecord = dslContext.select()
-//				.from(ENTERPRISE)
-//				.where(ENTERPRISE.DOMAIN.eq(domain))
-//				.fetchOne();
-//			
-//			Integer enterpriseId = enterpriseRecord.get(ENTERPRISE.REGISTRY);
-//			
-//			Record enterpriseActivity = dslContext.select()
-//					.from(ENTERPRISE_ACTIVITY)
-//					.where(ENTERPRISE_ACTIVITY.DOMAIN.eq(domain))
-//					.and(ENTERPRISE_ACTIVITY.DESCRIPTION.eq(employeeContractData.getEnterprise_activity()))
-//					.fetchOne();
-//			
-//			Integer enterpiseActivityId = 0;
-//			if(enterpriseActivity == null){
-//				EnterpriseActivityRecord enterpriseActivityRecord = dslContext.insertInto(ENTERPRISE_ACTIVITY)
-//						.set(ENTERPRISE_ACTIVITY.DOMAIN, domain)
-//						.set(ENTERPRISE_ACTIVITY.DESCRIPTION, employeeContractData.getEnterprise_activity())
-//						.set(ENTERPRISE_ACTIVITY.ENTERPRISE, enterpriseId)
-//						.set(ENTERPRISE_ACTIVITY.TYPE, new Byte("0"))
-//						.returning(ENTERPRISE_ACTIVITY.ID)
-//						.fetchOne();
-//					
-//				enterpiseActivityId = enterpriseActivityRecord.getId();
-//			}else{
-//				enterpiseActivityId = enterpriseActivity.get(ENTERPRISE_ACTIVITY.ID);
-//			}
-//			
-//			Result<Record> enterpriseCCC = dslContext.select()
-//					.from(ENTERPRISE_CCC)
-//					.where(ENTERPRISE_CCC.DOMAIN.eq(domain))
-//					.and(ENTERPRISE_CCC.CCC.eq(employeeContractData.getQuote_account()))
-//					.and(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY.eq(enterpiseActivityId))
-//					.and(ENTERPRISE_CCC.GEOZONE.eq(workplaceGeozoneId))
-//					.fetch();
-//			
-//			Integer enterpriseCccId = 0;
-//			
-//			if(enterpriseCCC == null || enterpriseCCC.isEmpty()){
-//				EnterpriseCccRecord enterpriseCccRecord = dslContext.insertInto(ENTERPRISE_CCC)
-//						.set(ENTERPRISE_CCC.DOMAIN, domain)
-//						.set(ENTERPRISE_CCC.CCC, employeeContractData.getQuote_account())
-//						.set(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY, enterpiseActivityId)
-//						.set(ENTERPRISE_CCC.GEOZONE, workplaceGeozoneId)
-//						.returning(ENTERPRISE_CCC.ID)
-//						.fetchOne();
-//					
-//				enterpriseCccId = enterpriseCccRecord.getId();
-//			}else{
-//				enterpriseCccId = enterpriseCCC.get(0).get(ENTERPRISE_CCC.ID);
-//			}
 		
 			dslContext.insertInto(CONTRACT_DATA)
 				.set(CONTRACT_DATA.DOMAIN, domain)

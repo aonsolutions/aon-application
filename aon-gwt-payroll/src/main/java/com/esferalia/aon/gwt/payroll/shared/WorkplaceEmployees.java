@@ -39,7 +39,7 @@ public class WorkplaceEmployees implements Serializable {
 		ArrayList<String> names = new ArrayList<>();
 		for(EmployeeInfo employeeInfo : workplaceEmployees)
 			if("" != employeeInfo.getName())
-				names.add(employeeInfo.getName());
+				names.add(employeeInfo.getName() + ", " + employeeInfo.getSurName());
 		return names;
 	}
 	
@@ -47,7 +47,7 @@ public class WorkplaceEmployees implements Serializable {
 		ArrayList<String> surNames = new ArrayList<>();
 		for(EmployeeInfo employeeInfo : workplaceEmployees)
 			if("" != employeeInfo.getSurName())
-				surNames.add(employeeInfo.getSurName());
+				surNames.add(employeeInfo.getName() + ", " + employeeInfo.getSurName());
 		return surNames;
 	}
 	

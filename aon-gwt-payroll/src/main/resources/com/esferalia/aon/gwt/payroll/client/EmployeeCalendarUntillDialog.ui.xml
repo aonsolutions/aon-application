@@ -57,25 +57,37 @@
 		.margingButton{
 			margin-left: 10px;
 		}
+		
+		.marginTop{
+			margin-top: 20px;
+		}
 
 	</ui:style>
 
 	<g:HTMLPanel styleName="{style.form}">
-
-		<g:VerticalPanel>
-		    <g:HorizontalPanel ui:field="messageBlock">
-		        <g:Label ui:field="message"/>
-		   	</g:HorizontalPanel>
-		    <g:HorizontalPanel styleName="{style.paddingBlocks}">
-		    	<g:Label ui:field="date" styleName="{style.paddingLabelStyle}">Fecha fin:</g:Label>
-		    	<a:DateBoxEx ui:field="endDateBox"></a:DateBoxEx>
-		    </g:HorizontalPanel>
-		    <g:HorizontalPanel ui:field="buttons" styleName="{style.paddingBlocks}">
-		    	<g:Button styleName="{style.closeButton}" ui:field="cancelButton">Cerrar</g:Button>
-		    	<g:Button styleName="{style.closeButton}" ui:field="acceptButton">OK</g:Button>
-		    </g:HorizontalPanel>
-		</g:VerticalPanel>
-			
+		<table class="aon-width-all aon-height-all" >
+			<tr>
+				<td  colspan="2" >
+					<g:Label ui:field="message"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label ui:field="date" styleName="{style.paddingLabelStyle}">Fecha fin:</g:Label>
+				</td>
+				<td>
+					<a:DateBoxEx ui:field="endDateBox"></a:DateBoxEx>
+				</td>
+			</tr>
+			<tr>
+			</tr>
+			<tr>
+				<td colspan="2" align="right">
+					<g:Button ui:field="cancelButton" styleName="{style.marginTop}" debugId="paymetDialogCancelButton">Cancelar</g:Button>
+					<g:Button ui:field="acceptButton" styleName="{style.marginTop}" debugId="paymetDialogAcceptButton" >Aceptar</g:Button>
+				</td>
+			</tr>
+		</table>
 	</g:HTMLPanel>
 
 </ui:UiBinder>

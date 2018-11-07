@@ -36,6 +36,9 @@ public class ContractInfo implements Serializable{
 	private Integer contractModel;
 	private Integer retaId;
 	
+	private Date oldStartDate;
+	private Date oldEndDate;
+	
 	public ContractInfo(){
 		super();
 	}
@@ -235,6 +238,22 @@ public class ContractInfo implements Serializable{
 		this.retaId = retaId;
 	}
 
+	public Date getOldStartDate() {
+		return oldStartDate;
+	}
+
+	public void setOldStartDate(Date oldStartDate) {
+		this.oldStartDate = oldStartDate;
+	}
+
+	public Date getOldEndDate() {
+		return oldEndDate;
+	}
+
+	public void setOldEndDate(Date oldEndDate) {
+		this.oldEndDate = oldEndDate;
+	}
+
 	public String toString(){
 		String result = "";
 		
@@ -266,6 +285,8 @@ public class ContractInfo implements Serializable{
 		result += "Contract Model Id : " + contractmodelId + "\n";
 		result += "Contract Model : " + contractModel + "\n";
 		result += "Reta Id : " + retaId + "\n";
+		result += "Old Start Date : " + oldStartDate + "\n";
+		result += "Old End Date : " + oldEndDate + "\n";
 		
 		return result;
 		

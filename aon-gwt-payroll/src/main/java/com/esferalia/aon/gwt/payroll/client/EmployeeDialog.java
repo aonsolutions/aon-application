@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -10,6 +11,7 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CCCType;
+import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractType;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ModelRecord;
@@ -46,7 +48,11 @@ public class EmployeeDialog extends CustomDialog {
 			if(null == employeeData.getEmployeeId())
 				employeeDialogObject.setEmployeeDocument(document);
 			else
-				fillExistingEmployee(employeeData);	
+				employeeDialogObject.initializeEmployee(
+						employeeData.getContractId(),
+						r -> { fillExistingEmployee();}, 
+						t -> {}
+				);	
 		}
 		
 		@Override
@@ -78,7 +84,11 @@ public class EmployeeDialog extends CustomDialog {
 			if(null == employeeData.getEmployeeId()){
 				employeeDialogObject.setEmployeeSocialSecurityNum(ssNum);
 			}else
-				fillExistingEmployee(employeeData);	
+				employeeDialogObject.initializeEmployee(
+						employeeData.getContractId(),
+						r -> { fillExistingEmployee();}, 
+						t -> {}
+				);	
 		}
 
 		@Override
@@ -93,12 +103,18 @@ public class EmployeeDialog extends CustomDialog {
 		
 		@Override
 		public void onEmployeeNameSuggestionChange() {
-			String name = this.name.getValue();
-			EmployeeInfo employeeData = employeeDialogObject.getEmployeeDataByName(name);
+			String nameSurname = this.name.getValue();
+			String name = nameSurname.split(", ")[0];
+			String surname = nameSurname.split(", ")[1];
+			EmployeeInfo employeeData = employeeDialogObject.getEmployeeDataByNameSurname(name, surname);
 			if(null == employeeData.getEmployeeId())
 				employeeDialogObject.setEmployeeName(name);
 			else
-				fillExistingEmployee(employeeData);				
+				employeeDialogObject.initializeEmployee(
+						employeeData.getContractId(),
+						r -> { fillExistingEmployee();}, 
+						t -> {}
+				);				
 		}
 		
 		@Override
@@ -108,12 +124,18 @@ public class EmployeeDialog extends CustomDialog {
 
 		@Override
 		public void onEmployeeFirstSurnameSuggestionChange() {
-			String surName = this.first_surname.getValue();
-			EmployeeInfo employeeData = employeeDialogObject.getEmployeeDataBySurName(surName);
+			String nameSurname = this.first_surname.getValue();
+			String name = nameSurname.split(", ")[0];
+			String surName = nameSurname.split(", ")[1];
+			EmployeeInfo employeeData = employeeDialogObject.getEmployeeDataByNameSurname(name, surName);
 			if(null == employeeData.getEmployeeId())
 				employeeDialogObject.setEmployeeFirstSurname(surName);
 			else
-				fillExistingEmployee(employeeData);	
+				employeeDialogObject.initializeEmployee(
+						employeeData.getContractId(),
+						r -> { fillExistingEmployee();}, 
+						t -> {}
+				);	
 		}
 		
 		@Override
@@ -185,6 +207,12 @@ public class EmployeeDialog extends CustomDialog {
 			if (this.contractType.getSelectedIndex() != 0) {
 				String contract_type_id_str = this.contractType.getSelectedItemText().split(" -")[0];
 				contractTypeId = Integer.parseInt(contract_type_id_str);
+				if((contractTypeId >= 200 && contractTypeId<300) || (contractTypeId >= 500 && contractTypeId<600)) {
+					this.showElementsPartialTimeContract();
+					this.journeyDuration.addStyleName(style.journeyDurationWarning());
+					this.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
+				}else
+					this.showElementsFullTimeContract();
 			}
 
 			List<ModelRecord> contractTypeModels = contractTypeClass.getModelsContractType(contractTypeId);
@@ -308,6 +336,11 @@ public class EmployeeDialog extends CustomDialog {
 			 employeeDialogObject.setContractJourneyType(journey_type);
 		}
 		
+		@Override
+		public void onContractJourneyDurationClick() {
+//			Window.alert("MOSTRAT HORAS");			
+		}
+		
 		// TABLA DATOS EMPLEADO
 
 		@Override
@@ -393,7 +426,18 @@ public class EmployeeDialog extends CustomDialog {
 		//								Aux Methods
 		// ------------------------------------------------------------------------
 		
-		private void fillExistingEmployee(EmployeeInfo employeeData) {
+		private void fillExistingEmployee() {
+			EmployeeInfo employeeData = employeeDialogObject.getEmployeeData();
+			ContractInfo contractData = employeeDialogObject.getContractData();
+			
+			if (contractData.getSsRegimen() == 3) { //RETA, había algo mas que determinaba si era o no RETA
+				this.showElementsFreelancerTable();
+				fillContractFreelancerTable();
+			} else {
+				this.hideElementsFreelancerTable();
+				fillContractTable();
+			}
+			
 			this.document.setValue(employeeData.getDocument());
 			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.document);
 			this.nationality.setValue(Country.valueOf(employeeData.getNationality()).getName());
@@ -419,6 +463,91 @@ public class EmployeeDialog extends CustomDialog {
 			this.bic.setValue(employeeData.getBic());
 		}
 		
+		private void fillContractTable() {
+			this.document.setValue(employeeDialogObject.getEmployeeDocument());
+			showNationality(checkDocumentType(employeeDialogObject.getEmployeeDocument()));
+			this.nationality.setValue(employeeDialogObject.getEmployeeNationality());
+			this.security_social_num.setValue(employeeDialogObject.getEmployeeSSNumber());
+			this.name.setValue(employeeDialogObject.getEmployeeName());
+			this.first_surname.setValue(employeeDialogObject.getEmployeeSurname());
+			this.second_surname.setValue(employeeDialogObject.getEmployeeSecondSurname());
+			this.ssRegimeType.setSelectedIndex(employeeDialogObject.getContractSSRegimen());
+			this.activityCCC.setSelectedIndex(employeeDialogObject.getContractActivityCCC());
+			this.workplace.setSelectedIndex(employeeDialogObject.getContractWorkplace());
+			Integer contractTypeId = employeeDialogObject.getContractType();
+			this.contractType.setSelectedIndex(EmployeeDialog.this.contractType.getContractTypeIndex(contractTypeId) + 1);
+			if((contractTypeId >= 200 && contractTypeId<300) || (contractTypeId >= 500 && contractTypeId<600)) {
+				this.showElementsPartialTimeContract();
+				this.journeyDuration.addStyleName(style.journeyDurationWarning());
+				this.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
+			}else
+				this.showElementsFullTimeContract();
+			
+			this.modality.clear();
+			this.modality.addItem("-");
+			
+			List<ModelRecord> contractTypeModels = EmployeeDialog.this.contractType.getModelsContractType(employeeDialogObject.getContractType());
+			
+			for (ModelRecord m : contractTypeModels)
+				this.modality.addItem(m.getModelDescription());
+			
+			Integer modelIndex = EmployeeDialog.this.contractType.getContractModelIndex(employeeDialogObject.getContractType(), employeeDialogObject.getContractModel());
+			if (null == modelIndex) {
+				this.modality.setSelectedIndex(0);
+			} else {
+				this.modality.setSelectedIndex(modelIndex + 1);
+			}
+			
+			this.start_date.setValue(employeeDialogObject.getContractStartDate());
+			this.seniority_date.setValue(employeeDialogObject.getContractSeniorityDate());
+			this.end_date.setValue(employeeDialogObject.getContractEndDate());
+			this.agreement.setSelectedIndex(employeeDialogObject.getContractAgreement() + 1);
+			getAgreementLevels(employeeDialogObject.getContractAgreementId());
+			this.level.setSelectedIndex(employeeDialogObject.getAgreementLevel() + 1);
+			this.category.setValue(employeeDialogObject.getContractAgreementCategory());
+			this.category.setEnabled(true);
+			this.quote_group.setSelectedIndex(employeeDialogObject.getContractQuoteGroup());
+			this.occupation.setSelectedIndex(employeeDialogObject.getContractOcupation());
+		}
+
+		private void fillContractFreelancerTable() {
+			this.document.setValue(employeeDialogObject.getEmployeeDocument());
+			showNationality(checkDocumentType(employeeDialogObject.getEmployeeDocument()));
+			this.nationality.setValue(employeeDialogObject.getEmployeeNationality());
+			this.security_social_num.setValue(employeeDialogObject.getEmployeeSSNumber());
+			this.name.setValue(employeeDialogObject.getEmployeeName());
+			this.first_surname.setValue(employeeDialogObject.getEmployeeSurname());
+			this.second_surname.setValue(employeeDialogObject.getEmployeeSecondSurname());
+			this.ssRegimeType.setSelectedIndex(1);
+			this.workplace.setSelectedIndex(employeeDialogObject.getContractWorkplace());
+			this.start_date.setValue(employeeDialogObject.getContractStartDate());
+			this.seniority_date.setValue(employeeDialogObject.getContractSeniorityDate());
+			this.end_date.setValue(employeeDialogObject.getContractEndDate());
+			this.agreement.setSelectedIndex(employeeDialogObject.getContractAgreement() + 1);
+			getAgreementLevels(employeeDialogObject.getContractAgreementId());
+			this.level.setSelectedIndex(employeeDialogObject.getAgreementLevel() + 1);
+			this.category.setValue(employeeDialogObject.getContractAgreementCategory());
+			this.category.setEnabled(true);
+			this.journeyType.setSelectedIndex(employeeDialogObject.getContractJourneyType());
+		}
+		
+		private void getAgreementLevels(Integer agreementId) {
+			this.level.clear();
+			List<Agreement> agreements = employeeDialogObject.getActiveAgreements();
+			this.level.addItem("-");
+			for (Agreement a : agreements) {
+				if (a.getId() > 0 && a.getId().equals(agreementId)) {
+					Set<Level> levels = a.getLevels();
+					for (Level levelRecord : levels) {
+						Set<String> categories = a.getCategoriesMap().get(levelRecord.getId());
+						for (String categoryRecord : categories) {
+							this.level.addItem(levelRecord.getDescription() + " - " + categoryRecord);
+						}
+					}
+				}
+			}
+		}
+
 		public String checkDocumentType(String document) {
 
 			RegExp dniPattern = RegExp.compile("\\d{8}\\-?[A-HJ-NP-TV-Z]");
@@ -551,6 +680,7 @@ public class EmployeeDialog extends CustomDialog {
 			employeesDocumentsSuggest.add(document+"");
 		MultiWordSuggestOracle orclDocuments = (MultiWordSuggestOracle) this.employee.document.getSuggestOracle();
 		orclDocuments.addAll(employeesDocumentsSuggest);
+		this.employee.document.setAutoSelectEnabled(false);
 //		orclDocuments.setDefaultSuggestionsFromText(employeesDocumentsSuggest);
 		
 		//SS_NUMBER
@@ -560,6 +690,7 @@ public class EmployeeDialog extends CustomDialog {
 			employeesSSNumbersSuggest.add(ssNumber+"");
 		MultiWordSuggestOracle orclSSNumbers = (MultiWordSuggestOracle) this.employee.security_social_num.getSuggestOracle();
 		orclSSNumbers.addAll(employeesSSNumbersSuggest);
+		this.employee.security_social_num.setAutoSelectEnabled(false);
 //		orclSSNumbers.setDefaultSuggestionsFromText(employeesSSNumbersSuggest);
 		
 		//NAMES
@@ -569,6 +700,7 @@ public class EmployeeDialog extends CustomDialog {
 			employeesNamesSuggest.add(name+"");
 		MultiWordSuggestOracle orclNames = (MultiWordSuggestOracle) this.employee.name.getSuggestOracle();
 		orclNames.addAll(employeesNamesSuggest);
+		this.employee.name.setAutoSelectEnabled(false);
 //		orclNames.setDefaultSuggestionsFromText(employeesNamesSuggest);
 		
 		//SURNAME
@@ -578,6 +710,7 @@ public class EmployeeDialog extends CustomDialog {
 			employeesSurNamesSuggest.add(surName+"");
 		MultiWordSuggestOracle orclSurNames = (MultiWordSuggestOracle) this.employee.first_surname.getSuggestOracle();
 		orclSurNames.addAll(employeesSurNamesSuggest);
+		this.employee.first_surname.setAutoSelectEnabled(false);
 //		orclSurNames.setDefaultSuggestionsFromText(employeesSurNamesSuggest);
 	}
 
@@ -625,6 +758,7 @@ public class EmployeeDialog extends CustomDialog {
 		
 		//WORKPLACE
 		Integer workplaceIndex = this.employeeDialogObject.getWorkplaceIndex();
+//		Window.alert("Wrokplace Index : " + workplaceIndex);
 		this.employee.workplace.setSelectedIndex(workplaceIndex);
 		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.employee.workplace);
 		
@@ -662,26 +796,81 @@ public class EmployeeDialog extends CustomDialog {
 	
 	@UiHandler("acceptButton")
 	void onAcceptButtonClick(ClickEvent clickEvent) {
-		if(checkIfSaveIsPossible())
-			if(checkPayMethod())
-				this.employeeDialogObject.createEmployeeContract(
-						r -> { 
-								hide();
-								cb.onAccept(this);
-							 }, 
-						t -> {}
-				);
+		if(checkNotOldEmployee())
+			if(checkIfSaveIsPossible())
+				if(checkDates())
+					if(checkPayMethod())
+						this.employeeDialogObject.createEmployeeContract(
+								r -> { 
+										hide();
+										cb.onAccept(this);
+									 }, 
+								t -> {}
+						);
+					else {
+						WarningDialog dialog = new WarningDialog("Aviso", "Si el metodo de pago es transferencia, debe rellenar obligatoriamente los campos de BIC y cuenta.");
+						dialog.center();
+						dialog.show();
+					}
+						
+				else{
+					WarningDialog dialog = new WarningDialog("Aviso", "La fecha de inicio no puede ser posterior a la fecha de fin.");
+					dialog.center();
+					dialog.show();
+				}
 			else {
-				WarningDialog dialog = new WarningDialog("Aviso", "Si el metodo de pago es transferencia, debe rellenar obligatoriamente los campos de BIC y cuenta.");
+				WarningDialog dialog = new WarningDialog("Aviso", "Hay que rellenar los campos azules obligatoriamente.");
 				dialog.center();
 				dialog.show();
 			}
-				
-		else{
-			WarningDialog dialog = new WarningDialog("Aviso", "Hay que rellenar los campos azules obligatoriamente.");
-			dialog.center();
-			dialog.show();
+		else {
+			if(null != employeeDialogObject.getContractOldEndDate()){
+				EmployeeCalendarUntillDialog dialog = new EmployeeCalendarUntillDialog("AVISO", "La fecha de inicio de este contrato no puede ser previa a la fecha de fin del contrato activo actualmente. Seleccione una fecha de inicio nueva:") {
+					
+					@Override
+					protected void onAccept() {
+						employee.start_date.setValue(this.getSelectedDate());
+						employeeDialogObject.setContractStartDate(employee.start_date.getValue());
+						employee.end_date.setValue(null);
+						employeeDialogObject.setContractEndDate(employee.end_date.getValue());
+					}
+				};
+				Date oneDayAfter = new Date(employeeDialogObject.getContractOldEndDate().getTime() + (1000 * 60 * 60 * 24));
+				dialog.setDateLabel("Fecha de inicio: ");
+				dialog.setDefaultDate(oneDayAfter);
+				dialog.show();
+				dialog.center();
+			}else {
+				EmployeeCalendarUntillDialog dialog = new EmployeeCalendarUntillDialog("AVISO", "Este trabajador tiene un contrato activo (Fecha inicio : "+employeeDialogObject.getContractOldStartDate()+"), por favor seleccione una fecha de fin previa a la fecha de inicio del nuevo contrato.") {
+					
+					@Override
+					protected void onAccept() {
+//						if(null != this.getSelectedDate() && employee.start_date.getValue().after(this.getSelectedDate()))
+						if(null != this.getSelectedDate() && employeeDialogObject.getContractOldStartDate().before(this.getSelectedDate())) {
+							employeeDialogObject.setOldContractEndDate(this.getSelectedDate());
+						}
+						employee.start_date.setValue(null);
+						employeeDialogObject.setContractStartDate(employee.start_date.getValue());
+					}
+				};
+				Date oneDayBefore = new Date(new Date().getTime() - (1000 * 60 * 60 * 24));
+				dialog.setDefaultDate(oneDayBefore);
+				dialog.show();
+				dialog.center();
+			}
 		}
+	}
+
+	private boolean checkNotOldEmployee() {
+		EmployeeInfo employeeData = employeeDialogObject.getEmployeeDataByDocument(this.employee.document.getValue());
+		if(null == employeeData.getEmployeeId())
+			return true;
+		else
+			if(null == employeeDialogObject.getContractOldEndDate() || employeeDialogObject.getContractOldEndDate().after(this.employee.start_date.getValue()) || 
+					employeeDialogObject.getContractOldEndDate().equals(this.employee.start_date.getValue()))
+				return false;
+			else
+				return true;
 	}
 
 	private boolean checkPayMethod() {
@@ -720,6 +909,15 @@ public class EmployeeDialog extends CustomDialog {
 		else
 			return false;
 	
+	}
+	
+	private boolean checkDates() {
+		if(null == this.employee.end_date.getValue())
+			return true;
+		else if(this.employee.end_date.getValue().after(this.employee.start_date.getValue()))
+			return true;
+		else
+			return false;
 	}
 	
 	// ------------------------------------------------------------------------

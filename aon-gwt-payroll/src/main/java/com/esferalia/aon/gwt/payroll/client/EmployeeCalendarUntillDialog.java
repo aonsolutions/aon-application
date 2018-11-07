@@ -35,9 +35,6 @@ public abstract class EmployeeCalendarUntillDialog extends CustomDialog {
 	}
 	
 	@UiField
-	HorizontalPanel messageBlock;
-	
-	@UiField
 	Label message;
 	
 	@UiField
@@ -45,9 +42,6 @@ public abstract class EmployeeCalendarUntillDialog extends CustomDialog {
 	
 	@UiField
 	DateBoxEx endDateBox;
-	
-	@UiField
-	HorizontalPanel buttons;
 	
 	@UiField
 	Button cancelButton;
@@ -59,8 +53,6 @@ public abstract class EmployeeCalendarUntillDialog extends CustomDialog {
 		setCaption(caption);
 		
 		setWidget(binder.createAndBindUi(this));
-		
-		messageBlock.addStyleName(style.hideElement());
 		
 		endDateBox.getTextBox().addClickHandler(new ClickHandler() {
 			
@@ -94,9 +86,7 @@ public abstract class EmployeeCalendarUntillDialog extends CustomDialog {
 		
 		setWidget(binder.createAndBindUi(this));
 		
-		messageBlock.removeStyleName(style.hideElement());
 		date.addStyleName(style.dateStyle());
-		buttons.addStyleName(style.paddingButtons());
 		acceptButton.addStyleName(style.margingButton());
 		
 		this.message.setVisible(true);
@@ -139,6 +129,10 @@ public abstract class EmployeeCalendarUntillDialog extends CustomDialog {
 	
 	public void setDefaultDate(Date date){
 		endDateBox.setValue(date);
+	}
+	
+	public void setDateLabel(String label){
+		date.setText(label);
 	}
 
 }

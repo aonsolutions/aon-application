@@ -160,6 +160,12 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 			if (this.contractType.getSelectedIndex() != 0) {
 				String contract_type_id_str = this.contractType.getSelectedItemText().split(" -")[0];
 				contractTypeId = Integer.parseInt(contract_type_id_str);
+				if((contractTypeId >= 200 && contractTypeId<300) || (contractTypeId >= 500 && contractTypeId<600)) {
+					this.showElementsPartialTimeContract();
+					this.journeyDuration.addStyleName(style.journeyDurationWarning());
+					this.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
+				}else
+					this.showElementsFullTimeContract();
 			}
 
 			List<ModelRecord> contractTypeModels = contractTypeClass.getModelsContractType(contractTypeId);
@@ -282,6 +288,13 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 			 Boolean journey_type = (this.journeyType.getSelectedIndex() == 0) ? true : false;
 			 employeeDraftObject.setContractJourneyType(journey_type);
 		}
+		
+		@Override
+		public void onContractJourneyDurationClick() {
+//			Window.alert("MOSTRAT HORAS");			
+		}
+		
+		//EMPLOYEE TABLE
 
 		@Override
 		public void onEmployeeBirthDateChange() {
@@ -516,7 +529,15 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		this.employee.ssRegimeType.setSelectedIndex(employeeDraftObject.getContractSSRegimen());
 		this.employee.activityCCC.setSelectedIndex(employeeDraftObject.getContractActivityCCC());
 		this.employee.workplace.setSelectedIndex(employeeDraftObject.getContractWorkplace());
-		this.employee.contractType.setSelectedIndex(contractType.getContractTypeIndex(employeeDraftObject.getContractType()) + 1);
+		Integer contractTypeId = employeeDraftObject.getContractType();
+		this.employee.contractType.setSelectedIndex(contractType.getContractTypeIndex(contractTypeId) + 1);
+		if((contractTypeId >= 200 && contractTypeId<300) || (contractTypeId >= 500 && contractTypeId<600)) {
+			this.employee.showElementsPartialTimeContract();
+			this.employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
+			this.employee.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
+		}else
+			this.employee.showElementsFullTimeContract();
+		
 		
 		this.employee.modality.clear();
 		this.employee.modality.addItem("-");

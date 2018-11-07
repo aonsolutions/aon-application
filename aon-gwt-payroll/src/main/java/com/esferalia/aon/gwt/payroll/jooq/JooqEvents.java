@@ -72,6 +72,16 @@ public class JooqEvents {
 		for(Record p : personRecords){
 			EmployeeInfo employee = new EmployeeInfo();
 			
+			Result<Record> contractRecords = dslContext.select().from(CONTRACT)
+				.where(CONTRACT.PERSON.eq(p.get(PERSON.REGISTRY)))
+				.orderBy(CONTRACT.START_DATE.desc())
+				.fetch();
+			
+			Integer contractId = null;
+			
+			if(null != contractRecords && !contractRecords.isEmpty())
+				contractId = contractRecords.get(0).get(CONTRACT.ID);
+			
 			Record registryRecord = dslContext.select()
 					.from(REGISTRY)
 					.where(REGISTRY.ID.eq(p.get(PERSON.REGISTRY)))
@@ -187,6 +197,8 @@ public class JooqEvents {
 			}
 			
 			//SET EMPLOYEE INFO
+			employee.setContractId(contractId);
+			
 			employee.setEmployeeId(id);
 			employee.setName(name);
 			employee.setSurName(surName);
