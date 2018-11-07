@@ -1184,7 +1184,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		LinkedList<Tax> taxList = d.getParentId() != null ? AON.getTaxList(domain.getName(), domain.getId(), getUserLogin(), f -> f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(d.getParentId())))
 				: AON.getTaxList(domain.getName(), domain.getId(), getUserLogin(), f -> f.getDomainProperty().eq(domain.getId()));
 		rowStream.forEach(row ->{
-			if(row.getRowNum() !=0){
+			if(row.getRowNum() !=0 && row.getPhysicalNumberOfCells()> 3){
 				Iterator<Cell> cellIterator = row.cellIterator();
 				Iterable<Cell> cellIterable = () -> cellIterator;
 				pi = newProduct(domain);

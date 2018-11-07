@@ -417,36 +417,30 @@ public class DBProduct {
 		try {
 			ctx = AONContext.getAONContext(domain, domainId, login);
 			
-			Result<Record22<String, String, Integer, Integer, Byte, Integer, Integer, Byte, Byte, Byte, Byte, Double, Double, String, String, String, String, String, Integer, String, Byte, Byte>>
-				data =	ctx.getDslContext().selectDistinct(PRODUCT.CODE,PRODUCT.NAME,PRODUCT.CATEGORY
-						,PRODUCT.BRAND,PRODUCT.TYPE,PRODUCT.VAT, PRODUCT.RETENTION,PRODUCT.INVENTORIABLE,PRODUCT.COMPOSITION
+			Result<Record22<String, String, String, String, Byte, Integer, Integer, Byte, Byte, Byte, Byte, Double, Double, String, String, String, String, String, Integer, String, Byte, Byte>>
+				data =	ctx.getDslContext().selectDistinct(PRODUCT.CODE,PRODUCT.NAME,PCATEGORY.NAME
+						,BRAND.NAME,PRODUCT.TYPE,PRODUCT.VAT, PRODUCT.RETENTION,PRODUCT.INVENTORIABLE,PRODUCT.COMPOSITION
 						,PRODUCT.COMPOSITION_PRICE,PRODUCT.STATUS,ITEM.PURCHASE_PRICE,ITEM.PRICE,ITEM.BARCODE,ITEM.DESCRIPTION
 						,ITEM.DETAIL,ITEM.DETAIL2,ITEM.DETAIL3,PRODUCT.ID, ITEM.SERIAL_NUMBER, PRODUCT.SERIALIZABLE, PRODUCT.LOTABLE)
 						.from(PRODUCT).join(ITEM).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 						.leftOuterJoin(PRODUCT_TAG).on(PRODUCT.ID.eq(PRODUCT_TAG.PRODUCT))
+						.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.eq(PCATEGORY.ID))
+						.leftOuterJoin(BRAND).on(PRODUCT.BRAND.eq(BRAND.ID))
 						.where(condition)
 						.orderBy(PRODUCT.NAME)
 						.fetch();
 			
 			Vector<ProductInfo> v = new Vector<ProductInfo>();
 			
-			for(Record22<String, String, Integer, Integer, Byte, Integer, Integer, Byte, Byte, Byte, Byte, Double, Double, String, String, String, String, String, Integer, String, Byte, Byte> r : data){
+			for(Record22<String, String, String, String, Byte, Integer, Integer, Byte, Byte, Byte, Byte, Double, Double, String, String, String, String, String, Integer, String, Byte, Byte> r : data){
 				ProductInfo pi = new ProductInfo();
 				Item i = new Item();
 				Product p = new Product();
 				i.setCode(r.value1());p.setCode(r.getValue(PRODUCT.CODE));
 				i.setName(r.value2());p.setName(r.getValue(PRODUCT.NAME));
-				if(r.value3()!=null){
-					ProductCategory c = getCategory(domain,domainId, r.value3(), login);
-					i.setCategory(c.getName());p.setCategory(c.getId());
-				}
-				else i.setCategory("");
+				i.setCategory(r.getValue(PCATEGORY.NAME) != null ? r.getValue(PCATEGORY.NAME) : "");
 				
-				if(r.value4()!=null){
-					Brand brand = getBrand(domain,domainId, r.value4(), login);
-					i.setBrand(brand.getName());p.setBrand(brand.getId());
-				}
-				else i.setBrand("");
+				i.setBrand(r.getValue(BRAND.NAME) != null ? r.getValue(BRAND.NAME) : ""); 
 				
 				if(r.value5()!=null){
 					i.setType(com.esferalia.aon.occam.api.model.type.ProductType.values()[r.value5()]);
