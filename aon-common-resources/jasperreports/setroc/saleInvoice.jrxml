@@ -828,7 +828,7 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 						</datasetParameter>
 						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, false, new Boolean(false), new Boolean(false)))]]></dataSourceExpression>
 					</datasetRun>
-					<jr:columnGroup width="475" uuid="797ebeb3-631c-4072-b29e-16e58bc3c043">
+					<jr:columnGroup width="535" uuid="797ebeb3-631c-4072-b29e-16e58bc3c043">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Columns [6]"/>
 						<jr:groupHeader groupName="deliveryGroup">
 							<jr:cell height="15" rowSpan="1">
