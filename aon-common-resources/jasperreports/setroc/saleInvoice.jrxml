@@ -258,6 +258,15 @@
 				</graphicElement>
 			</rectangle>
 			<rectangle>
+				<reportElement mode="Transparent" x="0" y="225" width="60" height="393" uuid="4cf23319-7fe5-48a4-8e8a-f132a0d19024">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
 				<reportElement mode="Transparent" x="60" y="638" width="80" height="45" uuid="0d9f0863-e06f-4f9e-bafa-5ab446075669"/>
 				<graphicElement>
 					<pen lineWidth="0.5"/>
@@ -314,7 +323,9 @@
 				</graphicElement>
 			</line>
 			<rectangle>
-				<reportElement mode="Transparent" x="0" y="225" width="315" height="393" uuid="3c7374a3-b271-4525-8576-9cb8d539a7ae"/>
+				<reportElement mode="Transparent" x="60" y="225" width="255" height="393" uuid="3c7374a3-b271-4525-8576-9cb8d539a7ae">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
 				<graphicElement>
 					<pen lineWidth="0.5"/>
 				</graphicElement>
