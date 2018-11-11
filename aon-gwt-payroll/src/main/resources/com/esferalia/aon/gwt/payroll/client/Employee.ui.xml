@@ -141,7 +141,7 @@
 		
 	</ui:style>
 
-   	<g:HTMLPanel styleName="{style.form}" > 
+   	<g:HTMLPanel> 
         <g:VerticalPanel styleName="{style.styleBorder}"> 
 	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Datos de contrato</g:Label>
 	    	<g:HTMLPanel>

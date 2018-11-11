@@ -1,0 +1,111 @@
+<ui:UiBinder 
+    xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:es3='urn:import:com.google.gwt.user.client.ui'>
+
+    <ui:style type="com.esferalia.aon.gwt.payroll.client.ContractJourneyDialog.MyStyle">
+	
+		.width{
+			width : 30px;
+		}
+
+		.width550{
+			width : 550px;
+		}
+
+		.widthTD{
+			width: 10%;
+		}
+
+		.paddingLabelDays{
+			padding-top: 4px;
+    		padding-right: 4px;
+    		padding-left: 4px;
+		}
+
+	</ui:style>
+
+	<g:HTMLPanel styleName="aon-width-all aon-height-all">
+		<g:VerticalPanel>
+		    <g:HorizontalPanel styleName="aon-toolbar {style.width550}">
+		        <!-- table>
+					<tr class="rich-table-subheader aon-dataTable-header">
+						<td styleName="{style.widthTD}">
+							<g:Label styleName="aon-finding-toolbar-item aon-icon-reset">Nuevo</g:Label> 
+						</td>
+						<td styleName="{style.widthTD}">
+						    <g:Label styleName="aon-finding-toolbar-item aon-icon-accept">Guardar</g:Label>
+						</td>
+						<td styleName="{style.widthTD}">
+						    <g:Label styleName="aon-finding-toolbar-item aon-icon-cancel">Cancelar</g:Label>
+						</td>
+						<td>
+						  	
+						</td>
+					</tr>
+					<tr>
+					    
+					</tr>
+					<tr>
+					    
+					</tr>
+				</table -->
+		    </g:HorizontalPanel>
+		    <g:HTMLPanel styleName="{style.width550}">
+     			<table>
+					<tr class="rich-table-subheader aon-dataTable-header">
+						<td>
+							<g:Label>DESDE</g:Label> 
+						</td>
+						<td>
+						    <g:Label>HASTA</g:Label>
+						</td>
+						<td>
+						    <g:Label>DURACIÓN</g:Label>
+						</td>
+						<td>
+						  	
+						</td>
+					</tr>
+					<tr>
+					    <td>
+							<g:Label>28/11/2018</g:Label> 
+						</td>
+						<td>
+						    
+						</td>
+						<td>
+						    <g:HorizontalPanel>
+						        <g:Label styleName="{style.paddingLabelDays}">L</g:Label>
+						        <g:TextBox styleName="{style.width}"></g:TextBox>
+						        <g:Label styleName="{style.paddingLabelDays}">M</g:Label>
+						        <g:TextBox styleName="{style.width}"></g:TextBox>
+						        <g:Label styleName="{style.paddingLabelDays}">X</g:Label>
+						        <g:TextBox styleName="{style.width}"></g:TextBox>
+						        <g:Label styleName="{style.paddingLabelDays}">J</g:Label>
+						        <g:TextBox styleName="{style.width}"></g:TextBox>
+						        <g:Label styleName="{style.paddingLabelDays}">V</g:Label>
+						        <g:TextBox styleName="{style.width}"></g:TextBox>
+						        <g:Label styleName="{style.paddingLabelDays}">S</g:Label>
+						        <g:TextBox styleName="{style.width}"></g:TextBox>
+						        <g:Label styleName="{style.paddingLabelDays}">D</g:Label>
+						        <g:TextBox styleName="{style.width}"></g:TextBox>
+						    </g:HorizontalPanel>
+						</td>
+						<td>
+						    <g:Button styleName="aon-editDataTable-button aon-icon-delete"/>
+						</td>
+					</tr>
+					<tr>
+					    
+					</tr>
+					<tr>
+					    
+					</tr>
+				</table>
+		    </g:HTMLPanel>
+		</g:VerticalPanel>
+				
+	</g:HTMLPanel>
+
+</ui:UiBinder>

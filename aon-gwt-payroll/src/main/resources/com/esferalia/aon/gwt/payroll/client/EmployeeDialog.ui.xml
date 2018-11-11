@@ -16,7 +16,9 @@
 					<a:Employee ui:field="employee"/>
 				</td>
 			</tr>
-
+			<tr>
+			    
+			</tr>
 			<tr>
 				<td colspan="2" align="right">
 					<g:Button ui:field="cancelButton" debugId="paymetDialogCancelButton">Cancelar</g:Button>

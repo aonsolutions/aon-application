@@ -128,7 +128,7 @@
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX">
-		<g:north size="50">
+		<g:north size="25">
 			<g:FlowPanel>
 				<g:FlowPanel styleName="aon-finding-title-toolbar">
 					<g:HorizontalPanel>
@@ -151,7 +151,7 @@
 						    <g:Label ui:field='saveStatus' styleName="{style.fontSaveStyle}"></g:Label>
 					    </g:HTMLPanel>
 					</g:HorizontalPanel>
-					<g:HorizontalPanel>
+					<!-- g:HorizontalPanel>
 						<g:HTMLPanel styleName="aon-finding-title">
 							<g:HTMLPanel styleName="aon-finding-title-internal">
 								<g:Label styleName="aon-outputText">Laboral : N&oacute;minas</g:Label>
@@ -177,7 +177,7 @@
 								styleName='aon-finding-toolbar-item aon-icon-time' text="RESULTADOS"
 								enabled="false" />
 						</g:HTMLPanel>
-					</g:HorizontalPanel>
+					</g:HorizontalPanel -->
 				</g:FlowPanel>
 
 			</g:FlowPanel>

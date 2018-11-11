@@ -338,6 +338,9 @@ public class EmployeeDialog extends CustomDialog {
 		
 		@Override
 		public void onContractJourneyDurationClick() {
+			ContractJourneyDialog dialog = new ContractJourneyDialog();
+			dialog.center();
+			dialog.show();
 //			Window.alert("MOSTRAT HORAS");			
 		}
 		
@@ -476,12 +479,12 @@ public class EmployeeDialog extends CustomDialog {
 			this.workplace.setSelectedIndex(employeeDialogObject.getContractWorkplace());
 			Integer contractTypeId = employeeDialogObject.getContractType();
 			this.contractType.setSelectedIndex(EmployeeDialog.this.contractType.getContractTypeIndex(contractTypeId) + 1);
-			if((contractTypeId >= 200 && contractTypeId<300) || (contractTypeId >= 500 && contractTypeId<600)) {
-				this.showElementsPartialTimeContract();
-				this.journeyDuration.addStyleName(style.journeyDurationWarning());
-				this.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
-			}else
-				this.showElementsFullTimeContract();
+//			if((contractTypeId >= 200 && contractTypeId<300) || (contractTypeId >= 500 && contractTypeId<600)) {
+//				this.showElementsPartialTimeContract();
+//				this.journeyDuration.addStyleName(style.journeyDurationWarning());
+//				this.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
+//			}else
+//				this.showElementsFullTimeContract();
 			
 			this.modality.clear();
 			this.modality.addItem("-");

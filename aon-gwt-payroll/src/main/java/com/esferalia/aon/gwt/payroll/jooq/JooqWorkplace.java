@@ -54,6 +54,7 @@ public class JooqWorkplace {
 				.where(WORKPLACE.ID.eq(workplaceId))
 				.fetchOne();
 		
+		Integer workplaceDomain = workplaceRecord.get(WORKPLACE.DOMAIN);
 		Integer workplaceEnterprise = workplaceRecord.get(WORKPLACE.ENTERPRISE);
 		String workplaceDescription = workplaceRecord.get(WORKPLACE.DESCRIPTION);
 		Integer workplaceAddress = workplaceRecord.get(WORKPLACE.ADDRESS);
@@ -99,7 +100,9 @@ public class JooqWorkplace {
 		Integer workplaceAgreement = payrollWorkplaceRecord.get(PAYROLL_WORKPLACE.AGREEMENT);
 		Integer workplaceActivity = payrollWorkplaceRecord.get(PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY);
 		
-		Result<Record> caledarRecords = dslContext.select().from(CALENDAR).fetch();
+		Result<Record> caledarRecords = dslContext.select().from(CALENDAR)
+				.where(CALENDAR.DOMAIN.eq(workplaceDomain))
+				.fetch();
 		Map<Integer, String> calendars = new HashMap<Integer, String>();
 		
 		for(Record r : caledarRecords){

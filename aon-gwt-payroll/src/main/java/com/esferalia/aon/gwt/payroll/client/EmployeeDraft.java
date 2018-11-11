@@ -291,6 +291,9 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		
 		@Override
 		public void onContractJourneyDurationClick() {
+			ContractJourneyDialog dialog = new ContractJourneyDialog();
+			dialog.center();
+			dialog.show();
 //			Window.alert("MOSTRAT HORAS");			
 		}
 		
@@ -531,12 +534,12 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		this.employee.workplace.setSelectedIndex(employeeDraftObject.getContractWorkplace());
 		Integer contractTypeId = employeeDraftObject.getContractType();
 		this.employee.contractType.setSelectedIndex(contractType.getContractTypeIndex(contractTypeId) + 1);
-		if((contractTypeId >= 200 && contractTypeId<300) || (contractTypeId >= 500 && contractTypeId<600)) {
-			this.employee.showElementsPartialTimeContract();
-			this.employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
-			this.employee.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
-		}else
-			this.employee.showElementsFullTimeContract();
+//		if((contractTypeId >= 200 && contractTypeId<300) || (contractTypeId >= 500 && contractTypeId<600)) {
+//			this.employee.showElementsPartialTimeContract();
+//			this.employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
+//			this.employee.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
+//		}else
+//			this.employee.showElementsFullTimeContract();
 		
 		
 		this.employee.modality.clear();
