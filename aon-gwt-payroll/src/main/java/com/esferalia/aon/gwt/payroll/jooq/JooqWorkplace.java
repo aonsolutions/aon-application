@@ -8,6 +8,7 @@ import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -100,9 +101,25 @@ public class JooqWorkplace {
 		Integer workplaceAgreement = payrollWorkplaceRecord.get(PAYROLL_WORKPLACE.AGREEMENT);
 		Integer workplaceActivity = payrollWorkplaceRecord.get(PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY);
 		
-		Result<Record> caledarRecords = dslContext.select().from(CALENDAR)
+		Record domainRecord = dslContext.select().from(DOMAIN)
+				.where(DOMAIN.ID.eq(workplaceDomain))
+				.fetchOne();
+		
+		Integer parentDomain = domainRecord.get(DOMAIN.PARENT);
+		
+		Result<Record> caledarRecords = null;
+		if(null == parentDomain)
+			caledarRecords = dslContext.select().from(CALENDAR)
+					.where(CALENDAR.DOMAIN.eq(workplaceDomain))
+					.or(CALENDAR.DOMAIN.eq(0))
+					.fetch();
+		else
+			caledarRecords = dslContext.select().from(CALENDAR)
 				.where(CALENDAR.DOMAIN.eq(workplaceDomain))
+				.or(CALENDAR.DOMAIN.eq(parentDomain))
+				.or(CALENDAR.DOMAIN.eq(0))
 				.fetch();
+				
 		Map<Integer, String> calendars = new HashMap<Integer, String>();
 		
 		for(Record r : caledarRecords){
