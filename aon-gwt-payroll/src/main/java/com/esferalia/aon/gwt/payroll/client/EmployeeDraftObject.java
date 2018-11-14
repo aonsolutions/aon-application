@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.shared.Dni;
@@ -15,9 +16,11 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
+import com.esferalia.aon.gwt.payroll.shared.ContractJourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.esferalia.aon.gwt.payroll.shared.StreetType;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -279,6 +282,10 @@ public class EmployeeDraftObject {
 		return (int)this.contractData.getJourneyType();
 	}
 	
+	public ContractJourneyDuration getContractJourneyDuration() {
+		return this.contractData.getContractJourneyDuration();
+	}
+	
 	//PERSON TABLE
 	
 	public Date getEmployeeBirthDate() {
@@ -416,9 +423,10 @@ public class EmployeeDraftObject {
 				return true;
 			else
 				return false;
-		}else {
+		}else if("" == document_string) {
+			return false;
+		}else
 			return true;
-		}
 	}
 	
 	public boolean checkSSNumValidation(String ssNum_string) {
@@ -732,6 +740,10 @@ public class EmployeeDraftObject {
 	
 	public void setContractJourneyType(Boolean journey_type) {
 		new_contractData.setJourneyType(journey_type ? (byte) 1 : (byte) 0);
+	}
+	
+	public void setContractJourneyDuration(TreeMap<Date, ArrayList<JourneyDuration>> contractJourneyDuration) {
+		new_contractData.setContractJourneyDuration(contractJourneyDuration);
 	}
 	
 	// EMPLOYEE

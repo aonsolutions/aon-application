@@ -19,7 +19,7 @@ public class SocialSecurity implements Serializable{
 	
 	public boolean checkSS(){
 		if(null == this.socialSecurity || "" == this.socialSecurity)
-			return true;
+			return false;
 		
 		String controlCode = this.socialSecurity.substring(10, 12);;
 		String ssNumberWithoutCode = this.socialSecurity.substring(0, 10);

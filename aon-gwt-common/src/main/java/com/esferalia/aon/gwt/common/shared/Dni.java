@@ -18,8 +18,8 @@ public class Dni implements Serializable{
 	}
 	
 	public boolean checkDNI(){
-		if(null == this.dni)
-			return true;
+		if(null == this.dni || "" == this.dni)
+			return false;
 		
 		char letter = this.dni.toCharArray()[8];
 		String dniNumberWithoutLetter = this.dni.substring(0, 8);

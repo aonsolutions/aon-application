@@ -25,8 +25,12 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -37,8 +41,10 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
+import com.esferalia.aon.gwt.payroll.shared.ContractJourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.GeozoneRecord;
 import com.esferalia.aon.jooq.tables.records.PayMethodRecord;
@@ -360,6 +366,46 @@ public class JooqEmployee {
 			contractData.setRetaId(null);
 		else
 			contractData.setRetaId(contractInfoTable.get(CONTRACT_INFO.ID));
+		
+		Result<Record> journiesDB = dslContext.select().from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.NAME.like("HORAS%"))
+				.and(CONTRACT_DATA.CONTRACT.eq(contract))
+				.orderBy(CONTRACT_DATA.START_DATE)
+				.fetch();
+		
+		Map<java.util.Date, ArrayList<JourneyDuration>> journies = new HashMap<>();
+		
+		if(null != journiesDB && !journiesDB.isEmpty()) {
+			Date iterableDate = journiesDB.get(0).get(CONTRACT_DATA.START_DATE);
+			ArrayList<JourneyDuration> journeyList = new ArrayList<>();
+			for(Record r : journiesDB) {
+				if(r.get(CONTRACT_DATA.START_DATE).equals(iterableDate)) {
+					JourneyDuration journey = new JourneyDuration();
+					journey.setStartDate(r.get(CONTRACT_DATA.START_DATE));
+					journey.setEndDate(r.get(CONTRACT_DATA.END_DATE));
+					journey.setName(r.get(CONTRACT_DATA.NAME));
+					journey.setExpression(r.get(CONTRACT_DATA.EXPRESSION));
+					
+					journeyList.add(journey);
+				}else {
+					journies.put(iterableDate, journeyList);
+					journeyList = new ArrayList<>();
+					
+					iterableDate = r.get(CONTRACT_DATA.START_DATE);
+					
+					JourneyDuration journey = new JourneyDuration();
+					journey.setStartDate(r.get(CONTRACT_DATA.START_DATE));
+					journey.setEndDate(r.get(CONTRACT_DATA.END_DATE));
+					journey.setName(r.get(CONTRACT_DATA.NAME));
+					journey.setExpression(r.get(CONTRACT_DATA.EXPRESSION));
+					
+					journeyList.add(journey);
+				}
+			}
+			journies.put(iterableDate, journeyList);
+		}
+		
+		contractData.setContractJourneyDuration(journies);
 			
 		System.out.println(employeeData.toString());
 		System.out.println(contractData.toString());
@@ -727,6 +773,23 @@ public class JooqEmployee {
 				.where(CONTRACT_INFO.ID.eq(contractData.getContractmodelId()))
 				.execute();
 		}
+		
+		//ACTUALIZAR DURACION JORNADA
+		dslContext.delete(CONTRACT_DATA)
+			.where(CONTRACT_DATA.NAME.like("HORAS%"))
+			.and(CONTRACT_DATA.CONTRACT.eq(contractData.getContractId()))
+			.execute();
+		
+		 TreeMap<java.util.Date, ArrayList<JourneyDuration>> contractJourneyDuration = contractData.getContractJourneyDuration().getContractJourneyDuration();
+		 for(Entry<java.util.Date, ArrayList<JourneyDuration>> entry : contractJourneyDuration.entrySet()) {
+			 for(JourneyDuration journey : entry.getValue()) {
+				 dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+							CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+						.values(domain, journey.getName(), contractData.getContractId(), journey.getExpression(), 
+								new Date(journey.getStartDate().getTime()), (null == journey.getEndDate()) ? null : new Date(journey.getEndDate().getTime()))
+						.execute();
+			 }
+		 }
 
 		//ACTUALIZAR FECHA INICIO Y FIN: contract, contract_data, contract_info, contract_bonus, contract_deduction, contract_embargo,
 		// contract_leave, contract_payment
@@ -1369,6 +1432,18 @@ public class JooqEmployee {
 				.execute();
 			
 		}
+		
+		//ACTUALIZAR DURACION JORNADA
+		TreeMap<java.util.Date, ArrayList<JourneyDuration>> contractJourneyDuration = contractData.getContractJourneyDuration().getContractJourneyDuration();
+		 for(Entry<java.util.Date, ArrayList<JourneyDuration>> entry : contractJourneyDuration.entrySet()) {
+			 for(JourneyDuration journey : entry.getValue()) {
+				 dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+							CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+						.values(domain, journey.getName(), contractId, journey.getExpression(), 
+								new Date(journey.getStartDate().getTime()), (null == journey.getEndDate()) ? null : new Date(journey.getEndDate().getTime()))
+						.execute();
+			 }
+		 }
 		
 		return null;
 	}

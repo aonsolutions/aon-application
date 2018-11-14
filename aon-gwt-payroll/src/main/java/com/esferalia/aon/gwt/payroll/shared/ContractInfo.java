@@ -1,7 +1,10 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class ContractInfo implements Serializable{
 	
@@ -36,11 +39,15 @@ public class ContractInfo implements Serializable{
 	private Integer contractModel;
 	private Integer retaId;
 	
+	//Contract Journey Duration
+	private ContractJourneyDuration contractJourneyDuration;
+	
 	private Date oldStartDate;
 	private Date oldEndDate;
 	
 	public ContractInfo(){
 		super();
+		contractJourneyDuration = new ContractJourneyDuration();
 	}
 	
 	// ------------- GETTERS / SETTERS -------------
@@ -238,6 +245,14 @@ public class ContractInfo implements Serializable{
 		this.retaId = retaId;
 	}
 
+	public ContractJourneyDuration getContractJourneyDuration() {
+		return contractJourneyDuration;
+	}
+
+	public void setContractJourneyDuration(Map<Date, ArrayList<JourneyDuration>> journies) {
+		this.contractJourneyDuration.setContractJourneyDuration(journies);
+	}
+	
 	public Date getOldStartDate() {
 		return oldStartDate;
 	}

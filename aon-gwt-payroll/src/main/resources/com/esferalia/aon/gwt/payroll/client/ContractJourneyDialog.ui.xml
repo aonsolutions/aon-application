@@ -1,7 +1,8 @@
 <ui:UiBinder 
     xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
-	xmlns:es3='urn:import:com.google.gwt.user.client.ui'>
+	xmlns:es3='urn:import:com.google.gwt.user.client.ui'
+	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 
     <ui:style type="com.esferalia.aon.gwt.payroll.client.ContractJourneyDialog.MyStyle">
 	
@@ -9,12 +10,12 @@
 			width : 30px;
 		}
 
-		.width550{
-			width : 550px;
+		.widthBlank{
+			width: 247px;
 		}
 
-		.widthTD{
-			width: 10%;
+		.widthTB{
+			width: 30px;
 		}
 
 		.paddingLabelDays{
@@ -22,90 +23,136 @@
     		padding-right: 4px;
     		padding-left: 4px;
 		}
+		
+		.bold{
+			font-weight: bolder;
+			font-size: 11px;
+			padding: 4px;
+			text-align: center;
+		}
+		
+		.margin{
+			margin: 10px;
+		}
+		
+		.hide{
+			display: none;
+		}
+		
+		.backgroudGrey{
+			background-color: #e4e4e4;
+		}
+		
+		.borderTable{
+			border-width: 1px;
+			border-color: black;
+			border-style: groove;
+		}
+		
+		.margingLeft{
+			margin-left: 10px;
+		}
+		
+		.marginBottom{
+			margin-bottom: 10px;
+		}
+		
+		.headerStyle{
+			top: -0.5em;
+			font-size: 12px;
+			margin-left: 10px;
+		}
+		
+		.dateWidth{
+			width: 100px;
+		}
 
 	</ui:style>
 
 	<g:HTMLPanel styleName="aon-width-all aon-height-all">
 		<g:VerticalPanel>
-		    <g:HorizontalPanel styleName="aon-toolbar {style.width550}">
-		        <!-- table>
-					<tr class="rich-table-subheader aon-dataTable-header">
-						<td styleName="{style.widthTD}">
-							<g:Label styleName="aon-finding-toolbar-item aon-icon-reset">Nuevo</g:Label> 
-						</td>
-						<td styleName="{style.widthTD}">
-						    <g:Label styleName="aon-finding-toolbar-item aon-icon-accept">Guardar</g:Label>
-						</td>
-						<td styleName="{style.widthTD}">
-						    <g:Label styleName="aon-finding-toolbar-item aon-icon-cancel">Cancelar</g:Label>
-						</td>
-						<td>
-						  	
-						</td>
-					</tr>
-					<tr>
-					    
-					</tr>
-					<tr>
-					    
-					</tr>
-				</table -->
-		    </g:HorizontalPanel>
-		    <g:HTMLPanel styleName="{style.width550}">
-     			<table>
-					<tr class="rich-table-subheader aon-dataTable-header">
-						<td>
-							<g:Label>DESDE</g:Label> 
-						</td>
-						<td>
-						    <g:Label>HASTA</g:Label>
-						</td>
-						<td>
-						    <g:Label>DURACIÓN</g:Label>
-						</td>
-						<td>
-						  	
-						</td>
-					</tr>
-					<tr>
-					    <td>
-							<g:Label>28/11/2018</g:Label> 
-						</td>
-						<td>
-						    
-						</td>
-						<td>
-						    <g:HorizontalPanel>
-						        <g:Label styleName="{style.paddingLabelDays}">L</g:Label>
-						        <g:TextBox styleName="{style.width}"></g:TextBox>
-						        <g:Label styleName="{style.paddingLabelDays}">M</g:Label>
-						        <g:TextBox styleName="{style.width}"></g:TextBox>
-						        <g:Label styleName="{style.paddingLabelDays}">X</g:Label>
-						        <g:TextBox styleName="{style.width}"></g:TextBox>
-						        <g:Label styleName="{style.paddingLabelDays}">J</g:Label>
-						        <g:TextBox styleName="{style.width}"></g:TextBox>
-						        <g:Label styleName="{style.paddingLabelDays}">V</g:Label>
-						        <g:TextBox styleName="{style.width}"></g:TextBox>
-						        <g:Label styleName="{style.paddingLabelDays}">S</g:Label>
-						        <g:TextBox styleName="{style.width}"></g:TextBox>
-						        <g:Label styleName="{style.paddingLabelDays}">D</g:Label>
-						        <g:TextBox styleName="{style.width}"></g:TextBox>
-						    </g:HorizontalPanel>
-						</td>
-						<td>
-						    <g:Button styleName="aon-editDataTable-button aon-icon-delete"/>
-						</td>
-					</tr>
-					<tr>
-					    
-					</tr>
-					<tr>
-					    
-					</tr>
-				</table>
+		    <g:HorizontalPanel styleName="aon-toolbar aon-width-all">
+				<g:cell>
+					<g:Label ui:field="newJourney" styleName="aon-finding-toolbar-item aon-icon-reset">Nuevo</g:Label> 
+				</g:cell>
+				<g:cell>
+				    <g:Label ui:field="saveJourney" styleName="aon-finding-toolbar-item aon-icon-accept">Guardar</g:Label>
+				</g:cell>
+				<!-- g:cell>
+				    <g:Label ui:field="cancelJourney" styleName="aon-finding-toolbar-item aon-icon-cancel">Cancelar</g:Label>
+				</g:cell -->
+				<g:cell>
+					<g:Label styleName="{style.widthBlank}"> </g:Label>
+				</g:cell>
+			</g:HorizontalPanel>
+			<g:VerticalPanel ui:field="newJourneyTable" styleName="{style.borderTable} {style.margingLeft} {style.marginBottom}">
+				<g:Label width="105px" styleName="aon-group-title {style.headerStyle}">Nuevo</g:Label>
+		    	<g:Grid styleName="{style.margin}">
+		    		<g:row class="rich-table-subheader aon-dataTable-header">
+			    		<g:customCell>
+				    		<g:HorizontalPanel>
+				    			<g:Label styleName="{style.bold}">DESDE</g:Label>
+				    			<a:DateBoxEx ui:field="startDatePeriod" styleName="rich-calendar-input aon-selectInputDate-inputClass {style.dateWidth}"></a:DateBoxEx>
+				    		</g:HorizontalPanel>
+			    		</g:customCell>
+		    		</g:row>
+		    		<g:row>
+		    			<g:customCell>
+				    		<g:HorizontalPanel>
+				    			<g:Label styleName="{style.bold}">L</g:Label>
+				    			<g:TextBox styleName="aon-inputText {style.widthTB}" ui:field="newMonday"></g:TextBox>
+				    			<g:Label styleName="{style.bold}">M</g:Label>
+				    			<g:TextBox styleName="aon-inputText {style.widthTB}" ui:field="newTuesday"></g:TextBox>
+				    			<g:Label styleName="{style.bold}">X</g:Label>
+				    			<g:TextBox styleName="aon-inputText {style.widthTB}" ui:field="newWednesday"></g:TextBox>
+				    			<g:Label styleName="{style.bold}">J</g:Label>
+				    			<g:TextBox styleName="aon-inputText {style.widthTB}" ui:field="newThursday"></g:TextBox>
+				    			<g:Label styleName="{style.bold}">V</g:Label>
+				    			<g:TextBox styleName="aon-inputText {style.widthTB}" ui:field="newFriday"></g:TextBox>
+				    			<g:Label styleName="{style.bold}">S</g:Label>
+				    			<g:TextBox styleName="aon-inputText {style.widthTB}" ui:field="newSaturday"></g:TextBox>
+				    			<g:Label styleName="{style.bold}">D</g:Label>
+				    			<g:TextBox styleName="aon-inputText {style.widthTB}" ui:field="newSunday"></g:TextBox>
+								<g:Button styleName="aon-editDataTable-button aon-icon-accept {style.margingLeft}" ui:field="acceptJourney"></g:Button>
+				    		</g:HorizontalPanel>
+			    		</g:customCell>
+		    		</g:row>
+		    	</g:Grid>
+		    </g:VerticalPanel>
+		    <g:HTMLPanel>
+		    	<g:Grid ui:field="journeyTable" styleName="{style.margin}">
+		    		<g:row class="rich-table-subheader aon-dataTable-header">
+			    		<g:customCell>
+			    			<g:Label styleName="{style.bold}">DESDE</g:Label>
+			    		</g:customCell>
+			    		<g:customCell>
+			    			<g:Label styleName="{style.bold}">HASTA</g:Label>
+			    		</g:customCell>
+			    		<g:customCell>
+			    			<g:Label styleName="{style.bold}">DURACIÓN</g:Label>
+			    		</g:customCell>
+			    		<g:customCell>
+			    			<g:Label></g:Label>
+			    		</g:customCell>
+		    		</g:row>
+		    	</g:Grid>
 		    </g:HTMLPanel>
 		</g:VerticalPanel>
-				
 	</g:HTMLPanel>
-
 </ui:UiBinder>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

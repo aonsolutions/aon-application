@@ -21,7 +21,6 @@ import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -101,6 +100,7 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 		String warning();
 		String journeyDurationWarning();
 		String journeyDuration();
+		String marginTop();
 	}
 
 	// TABLA DATOS CONTRATO
@@ -113,6 +113,9 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 	
 	@UiField
 	SuggestBox document;
+	
+	@UiField
+	Label documentStatus;
 
 	@UiField
 	TableCellElement nationalityLabelCell;
@@ -125,6 +128,9 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 	
 	@UiField
 	SuggestBox security_social_num;
+	
+	@UiField
+	Label ssNumberStatus;
 
 	@UiField
 	SuggestBox name;
@@ -173,6 +179,9 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 
 	@UiField
 	DateBoxEx seniority_date;
+	
+	@UiField
+	Label seniority_dateStatus;
 
 	@UiField
 	ListBox agreement;

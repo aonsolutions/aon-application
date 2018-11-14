@@ -2,10 +2,12 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.shared.Dni;
@@ -13,13 +15,15 @@ import com.esferalia.aon.gwt.common.shared.SocialSecurity;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
-import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
+import com.esferalia.aon.gwt.payroll.shared.ContractJourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
+import com.esferalia.aon.occam.api.model.type.Country;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeDialogObject {
@@ -49,6 +53,9 @@ public class EmployeeDialogObject {
 		this.employeeContractData = new EmployeeContractInfo();
 		this.employeeData = new EmployeeInfo();
 		this.contractData = new ContractInfo();
+		
+		Map<java.util.Date, ArrayList<JourneyDuration>> journies = new HashMap<>();
+		contractData.setContractJourneyDuration(journies);
 	}
 	
 
@@ -82,9 +89,10 @@ public class EmployeeDialogObject {
 				return true;
 			else
 				return false;
-		}else {
+		}else if("" == document_string) {
+			return false;
+		}else
 			return true;
-		}
 	}
 	
 	public EmployeeInfo getEmployeeDataBySSNum(String ssNum){
@@ -206,81 +214,81 @@ public class EmployeeDialogObject {
 	
 	//CONTRACT TABLE
 	
-		public String getEmployeeDocument(){
-			return this.employeeData.getDocument();
-		}
+	public String getEmployeeDocument(){
+		return this.employeeData.getDocument();
+	}
+	
+	public String getEmployeeNationality() {
+		return getNationality(this.employeeData.getNationality());
+	}
 		
-		public String getEmployeeNationality() {
-			return getNationality(this.employeeData.getNationality());
+	private String getNationality(String iso2) {
+		for (int i = 0; i < Country.values().length; i++) {
+			if (Country.values()[i].getIso2() == iso2)
+				return Country.values()[i].getName();
 		}
-		
-		private String getNationality(String iso2) {
-			for (int i = 0; i < Country.values().length; i++) {
-				if (Country.values()[i].getIso2() == iso2)
-					return Country.values()[i].getName();
-			}
-			return null;
-		}
-		
-		public String getEmployeeSSNumber() {
-			return this.employeeData.getSsNumber();
-		}
-		
-		public String getEmployeeName() {
-			return this.employeeData.getName();
-		}
-		
-		public String getEmployeeSurname() {
-			return this.employeeData.getSurName();
-		}
-		
-		public String getEmployeeSecondSurname() {
-			return this.employeeData.getSecondSurName();
-		}
-		
-		public Integer getContractSSRegimen() {
-			return (int)this.contractData.getSsRegimen();
-		}
-		
-		public Integer getContractActivityCCC() {
-			return getActivityAccountIndex();
-		}
-		
-		public Integer getActivityAccountIndex() {
-			if(null == this.contractData.getActivityId())
-				return 0;
-			
-			Integer index = 0;
-			
-			if(null == this.contractData.getCccId())
-				return 0;
-			
-			for(Entry<Integer,String> entry : getActivities().entrySet())
-				if(entry.getKey().equals(this.contractData.getActivityId()))
-					for(CCCInfo cccInfo :  getCCCsByActivity(entry.getKey()))
-						if(cccInfo.getCCCId().equals(this.contractData.getCccId())) {
-							index++;
-							return index;
-						}else
-							index++;
-				else
-					index += getCCCsByActivity(entry.getKey()).size();
-				
+		return null;
+	}
+	
+	public String getEmployeeSSNumber() {
+		return this.employeeData.getSsNumber();
+	}
+	
+	public String getEmployeeName() {
+		return this.employeeData.getName();
+	}
+	
+	public String getEmployeeSurname() {
+		return this.employeeData.getSurName();
+	}
+	
+	public String getEmployeeSecondSurname() {
+		return this.employeeData.getSecondSurName();
+	}
+	
+	public Integer getContractSSRegimen() {
+		return (int)this.contractData.getSsRegimen();
+	}
+	
+	public Integer getContractActivityCCC() {
+		return getActivityAccountIndex();
+	}
+	
+	public Integer getActivityAccountIndex() {
+		if(null == this.contractData.getActivityId())
 			return 0;
-		}
 		
-		private List<CCCInfo> getCCCsByActivity(Integer activityId) {
-			List<CCCInfo> cccs = new ArrayList<>();
-			for(CCCInfo cccInfo : getCCCs().values())
-				if(cccInfo.getActivityId().equals(activityId))
-					cccs.add(cccInfo);
-			return cccs;
-		}
+		Integer index = 0;
+		
+		if(null == this.contractData.getCccId())
+			return 0;
+		
+		for(Entry<Integer,String> entry : getActivities().entrySet())
+			if(entry.getKey().equals(this.contractData.getActivityId()))
+				for(CCCInfo cccInfo :  getCCCsByActivity(entry.getKey()))
+					if(cccInfo.getCCCId().equals(this.contractData.getCccId())) {
+						index++;
+						return index;
+					}else
+						index++;
+			else
+				index += getCCCsByActivity(entry.getKey()).size();
+			
+		return 0;
+	}
+	
+	private List<CCCInfo> getCCCsByActivity(Integer activityId) {
+		List<CCCInfo> cccs = new ArrayList<>();
+		for(CCCInfo cccInfo : getCCCs().values())
+			if(cccInfo.getActivityId().equals(activityId))
+				cccs.add(cccInfo);
+		return cccs;
+	}
 
-		public Integer getContractWorkplace() {
-			return getWorkplaceIndex();
-		}
-		
+	public Integer getContractWorkplace() {
+		return getWorkplaceIndex();
+	}
+	
 //		public Integer getWorkplaceIndex() {
 //			Integer index = 0;
 //			
@@ -293,125 +301,129 @@ public class EmployeeDialogObject {
 //			return index;
 //		}
 		
-		public Integer getContractType() {
-			return Integer.parseInt(this.contractData.getContractType());
-		}
-		
-		public Integer getContractModel() {
-			return this.contractData.getContractModel();
-		}
-		
-		public Date getContractStartDate() {
-			return this.contractData.getStartDate();
-		}
-		
-		public Date getContractSeniorityDate() {
-			return this.contractData.getSeniorityDate();
-		}
-		
-		public Date getContractEndDate() {
-			return this.contractData.getEndDate();
-		}
-		
-		public Integer getContractAgreementId() {
-			return this.contractData.getAgreementId();
-		}
-		
-		public Integer getContractAgreement() {
-			return getAgreementIndex(this.contractData.getAgreementId());
-		}
-		
-		public Integer getAgreementIndex(Integer agreementId){
-			if(null == agreementId)
-				return -1;
-			else {
-				List<Agreement> activeAgreements = getActiveAgreements();
-				for(int i = 0; i< activeAgreements.size(); i++) {
-					if(activeAgreements.get(i).getId().equals(agreementId))
-						return i;
-				}	
-				return -1;
-			}
-		}
-		
-		public Integer getAgreementLevel() {
-			return getAgreementLevelCategoryIndex(this.contractData.getAgreementId(), this.contractData.getAgreementLevelId(), this.contractData.getAgreementCategory());
-		}
-		
-		private Integer getAgreementLevelCategoryIndex(Integer agreementId, Integer agreementLevelId, String category_description) {
-			if (null == agreementId || null == agreementLevelId || category_description == "")
-				return -1;
-
-			Integer result = 0;
-			for (Agreement a : getActiveAgreements()) {
-				if (a.getId() > 0 && a.getId().equals(agreementId)) {
-					Set<Level> levels = a.getLevels();
-					for (Level levelRecord : levels) {
-						Set<String> categories = a.getCategoriesMap().get(levelRecord.getId());
-						for (String categoryRecord : categories) {
-							if (levelRecord.getId().equals(agreementLevelId) && categoryRecord == category_description)
-								return result;
-							else
-								result++;
-						}
-					}
-				}
-			}
-
-			result = 0;
-			for (Agreement a : getActiveAgreements()) {
-				if (a.getId() > 0 && a.getId().equals(agreementId)) {
-					Set<Level> levels = a.getLevels();
-					for (Level levelRecord : levels) {
-						Set<String> categories = a.getCategoriesMap().get(levelRecord.getId());
-						for (String categoryRecord : categories) {
-							if (levelRecord.getId().equals(agreementLevelId))
-								return result;
-							else
-								result++;
-						}
-					}
-				}
-			}
+	public Integer getContractType() {
+		return Integer.parseInt(this.contractData.getContractType());
+	}
+	
+	public Integer getContractModel() {
+		return this.contractData.getContractModel();
+	}
+	
+	public Date getContractStartDate() {
+		return this.contractData.getStartDate();
+	}
+	
+	public Date getContractSeniorityDate() {
+		return this.contractData.getSeniorityDate();
+	}
+	
+	public Date getContractEndDate() {
+		return this.contractData.getEndDate();
+	}
+	
+	public Integer getContractAgreementId() {
+		return this.contractData.getAgreementId();
+	}
+	
+	public Integer getContractAgreement() {
+		return getAgreementIndex(this.contractData.getAgreementId());
+	}
+	
+	public Integer getAgreementIndex(Integer agreementId){
+		if(null == agreementId)
+			return -1;
+		else {
+			List<Agreement> activeAgreements = getActiveAgreements();
+			for(int i = 0; i< activeAgreements.size(); i++) {
+				if(activeAgreements.get(i).getId().equals(agreementId))
+					return i;
+			}	
 			return -1;
 		}
+	}
 		
-		public String getContractAgreementCategory() {
-			return this.contractData.getAgreementCategory();
-		}
-		
-		public Integer getContractQuoteGroup() {
-			return Integer.parseInt(this.contractData.getQuoteGroup());
-		}
-		
-		public Integer getContractOcupation() {
-			return getCharIndex(this.contractData.getOcupation());
-		}
-		
-		private int getCharIndex(String ocupation) {
-			switch (ocupation) {
-			case "a":
-				return 1;
-			case "b":
-				return 2;
-			case "d":
-				return 3;
-			case "e":
-				return 4;
-			case "f":
-				return 5;
-			case "g":
-				return 6;
-			case "h":
-				return 7;
-			default:
-				return 0;
+	public Integer getAgreementLevel() {
+		return getAgreementLevelCategoryIndex(this.contractData.getAgreementId(), this.contractData.getAgreementLevelId(), this.contractData.getAgreementCategory());
+	}
+	
+	private Integer getAgreementLevelCategoryIndex(Integer agreementId, Integer agreementLevelId, String category_description) {
+		if (null == agreementId || null == agreementLevelId || category_description == "")
+			return -1;
+
+		Integer result = 0;
+		for (Agreement a : getActiveAgreements()) {
+			if (a.getId() > 0 && a.getId().equals(agreementId)) {
+				Set<Level> levels = a.getLevels();
+				for (Level levelRecord : levels) {
+					Set<String> categories = a.getCategoriesMap().get(levelRecord.getId());
+					for (String categoryRecord : categories) {
+						if (levelRecord.getId().equals(agreementLevelId) && categoryRecord == category_description)
+							return result;
+						else
+							result++;
+					}
+				}
 			}
 		}
-		
-		public Integer getContractJourneyType() {
-			return (int)this.contractData.getJourneyType();
+
+		result = 0;
+		for (Agreement a : getActiveAgreements()) {
+			if (a.getId() > 0 && a.getId().equals(agreementId)) {
+				Set<Level> levels = a.getLevels();
+				for (Level levelRecord : levels) {
+					Set<String> categories = a.getCategoriesMap().get(levelRecord.getId());
+					for (String categoryRecord : categories) {
+						if (levelRecord.getId().equals(agreementLevelId))
+							return result;
+						else
+							result++;
+					}
+				}
+			}
 		}
+		return -1;
+	}
+		
+	public String getContractAgreementCategory() {
+		return this.contractData.getAgreementCategory();
+	}
+	
+	public Integer getContractQuoteGroup() {
+		return Integer.parseInt(this.contractData.getQuoteGroup());
+	}
+	
+	public Integer getContractOcupation() {
+		return getCharIndex(this.contractData.getOcupation());
+	}
+	
+	private int getCharIndex(String ocupation) {
+		switch (ocupation) {
+		case "a":
+			return 1;
+		case "b":
+			return 2;
+		case "d":
+			return 3;
+		case "e":
+			return 4;
+		case "f":
+			return 5;
+		case "g":
+			return 6;
+		case "h":
+			return 7;
+		default:
+			return 0;
+		}
+	}
+		
+	public Integer getContractJourneyType() {
+		return (int)this.contractData.getJourneyType();
+	}
+	
+	public ContractJourneyDuration getContractJourneyDuration() {
+		return this.contractData.getContractJourneyDuration();
+	}
 	
 	public WorkplaceEmployees getWorkplaceEmployees(){
 		return this.workplaceEmployees;
@@ -483,6 +495,9 @@ public class EmployeeDialogObject {
 				employeeContractData = result;
 				employeeData = result.getEmployeeInfo();
 				contractData = result.getContractInfo();
+				
+				Map<java.util.Date, ArrayList<JourneyDuration>> journies = new HashMap<>();
+				contractData.setContractJourneyDuration(journies);
 				
 				success.accept(result);
 			}
@@ -693,6 +708,10 @@ public class EmployeeDialogObject {
 		contractData.setJourneyType(journey_type ? (byte) 1 : (byte) 0);
 	}
 	
+	public void setContractJourneyDuration(TreeMap<Date, ArrayList<JourneyDuration>> contractJourneyDuration) {
+		contractData.setContractJourneyDuration(contractJourneyDuration);
+	}
+	
 	// EMPLOYEE TABLE
 		
 	public void setEmployeeBirthDate(Date birth_date) {
@@ -810,5 +829,6 @@ public class EmployeeDialogObject {
 			return null;
 		}
 	}
+
 		
 }

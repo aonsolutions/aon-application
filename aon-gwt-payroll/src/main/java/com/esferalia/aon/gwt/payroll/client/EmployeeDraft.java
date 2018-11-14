@@ -1,16 +1,20 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CCCType;
+import com.esferalia.aon.gwt.payroll.shared.ContractJourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.ContractType;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ModelRecord;
+import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.StreetType;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -46,11 +50,15 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 			
 			this.document_type.setText(document_type);
 			if(employeeDraftObject.checkDocumentValidation(document_type, document)) {
-				this.document.removeStyleName(this.style.warning());
 				employeeDraftObject.setEmployeeDocument(this.document.getValue());
 				employeeDraftObject.setEmployeeDocumentType(document_type);
-			}else
-				this.document.addStyleName(this.style.warning());
+				this.documentStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+				this.documentStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
+			}else {
+				this.documentStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
+				this.documentStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+				
+			}
 
 			showNationality(document_type);		
 		}
@@ -71,9 +79,12 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 			String ssNum = this.security_social_num.getValue();
 			if(employeeDraftObject.checkSSNumValidation(ssNum)) {
 				employeeDraftObject.setEmployeeSocialSecurityNum(ssNum);
-				security_social_num.removeStyleName(style.warning());
-			}else
-				security_social_num.addStyleName(style.warning());
+				this.ssNumberStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+				this.ssNumberStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
+			}else {
+				this.ssNumberStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
+				this.ssNumberStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+			}
 		}
 
 		@Override
@@ -122,12 +133,10 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 				employeeDraftObject.setContractCCCId(null);
 				employeeDraftObject.setContractCCCType((Byte)null);
 			}else{
-//				Window.alert(activityCCC);
 				String activityStr = activityCCC.split(" -")[0];
 				String cccStr = activityCCC.split("\\[")[1].split("\\]")[0];
 				String cccTypeStr = activityCCC.split("- ")[1].split("\\[")[0];
 				String cccGeozoneStr = activityCCC.split("- ")[2];
-//				Window.alert("ActivityStr : " + activityStr + ", CCCStr : " + cccStr + ", CCCTypeStr : " + cccTypeStr + ", CCCGeozoneStr : "+ cccGeozoneStr);
 				int cccTypeInt = -1;
 				for(int i=0; i< CCCType.values().length; i++){
 					if(CCCType.values()[i].name().equals(cccTypeStr)){
@@ -184,7 +193,6 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 
 		@Override
 		public void onContractModalityChange() {
-			//TODO: MIRAR SETCONTRACTMODEL CON EL GUARDAR DEL JOOQEMPLOYEE
 			if (this.contractType.getSelectedIndex() == 0 || this.modality.getSelectedIndex() == 0) {
 				employeeDraftObject.setContractModel(null);
 			} else {
@@ -210,6 +218,26 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		@Override
 		public void onContractSeniorityDateChange() {
 			employeeDraftObject.setContractSeniorityDate(this.seniority_date.getValue());
+			if(null == this.start_date.getValue() || null == this.seniority_date.getValue()) {
+				this.seniority_dateStatus.setStyleName("aon-finding-toolbar-item aon-icon-info aon-finding-toolbar-item-no-border");
+				this.seniority_dateStatus.removeStyleName(style.hide());
+				this.seniority_dateStatus.addStyleName(style.marginTop());
+				this.seniority_dateStatus.setTitle("La fecha de inicio no coincide con la de antig" + String.valueOf("\u00FC") + "edad.");
+			}else {
+				Date startDate = this.start_date.getValue();
+				DateUtils.resetTime(startDate);
+				Date seniorityDate = this.seniority_date.getValue();
+				DateUtils.resetTime(seniorityDate);
+				
+				if(startDate.equals(seniorityDate)) {
+					this.seniority_dateStatus.addStyleName(style.hide());
+				}else {
+					this.seniority_dateStatus.setStyleName("aon-finding-toolbar-item aon-icon-info aon-finding-toolbar-item-no-border");
+					this.seniority_dateStatus.removeStyleName(style.hide());
+					this.seniority_dateStatus.addStyleName(style.marginTop());
+					this.seniority_dateStatus.setTitle("La fecha de inicio no coincide con la de antig" + String.valueOf("\u00FC") + "edad.");
+				}
+			}
 		}
 
 		@Override
@@ -287,14 +315,46 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		public void onContractJourneyTypeChange() {
 			 Boolean journey_type = (this.journeyType.getSelectedIndex() == 0) ? true : false;
 			 employeeDraftObject.setContractJourneyType(journey_type);
+			 if(this.journeyType.getSelectedIndex() == 0)
+				 employee.showElementsFullTimeContract();
+			 else
+				 employee.showElementsPartialTimeContract();
 		}
 		
 		@Override
 		public void onContractJourneyDurationClick() {
-			ContractJourneyDialog dialog = new ContractJourneyDialog();
+			ContractJourneyDialog dialog = new ContractJourneyDialog(employeeDraftObject.getContractStartDate(), employeeDraftObject.getContractEndDate(),
+					employeeDraftObject.getContractJourneyDuration()) {
+
+				@Override
+				protected void onSave() {
+					ContractJourneyDuration contractJourneyDuration = this.getContractJourneyDuration();
+					if(contractJourneyDuration.getJourniesSize() != 0) {
+						String result = "Desde ";
+						Integer hours = 0;
+						for(JourneyDuration journeyDuration : contractJourneyDuration.getContractJourneyDuration().descendingMap().entrySet().iterator().next().getValue()) {
+							hours += Integer.parseInt(journeyDuration.getExpression());
+							if("HORAS_LUNES" == journeyDuration.getName()) result += formatDate(journeyDuration.getStartDate()) + " L : " + journeyDuration.getExpression() + " ";
+							if("HORAS_MARTES" == journeyDuration.getName()) result += ", M : " + journeyDuration.getExpression() + " ";
+							if("HORAS_MIERCOLES" == journeyDuration.getName()) result += ", X : " + journeyDuration.getExpression() + " ";
+							if("HORAS_JUEVES" == journeyDuration.getName()) result += ", J : " + journeyDuration.getExpression() + " ";
+							if("HORAS_VIERNES" == journeyDuration.getName()) result += ", V : " + journeyDuration.getExpression() + " ";
+							if("HORAS_SABADO" == journeyDuration.getName()) result += ", S : " + journeyDuration.getExpression() + " ";
+							if("HORAS_DOMINGO" == journeyDuration.getName()) result += ", D : " + journeyDuration.getExpression() + " ( " + hours + " horas semanales )";
+						}
+						employee.journeyDuration.setText(result);
+						employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
+						employee.journeyDuration.removeStyleName("aon-icon-exception aon-finding-toolbar-item-no-border");
+					}else {
+						employee.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+						employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
+						employee.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
+					}
+					employeeDraftObject.setContractJourneyDuration(contractJourneyDuration.getContractJourneyDuration());
+				}				
+			};
 			dialog.center();
-			dialog.show();
-//			Window.alert("MOSTRAT HORAS");			
+			dialog.show();		
 		}
 		
 		//EMPLOYEE TABLE
@@ -415,17 +475,14 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		if(checkIfSaveIsPossible())
 			if(checkPayMethod())
 				employeeDraftObject.updateEmployee(
-					r -> {
-//						setEmployeeDraftObject(employeeDraftObject);
-					}, 
+					r -> {}, 
 					t -> {}
 				);
 			else {
 				WarningDialog dialog = new WarningDialog("Aviso", "Si el metodo de pago es transferencia, debe rellenar obligatoriamente los campos de BIC y cuenta.");
 				dialog.center();
 				dialog.show();
-			}
-				
+			}	
 		else{
 			WarningDialog dialog = new WarningDialog("Aviso", "Hay que rellenar los campos azules obligatoriamente.");
 			dialog.center();
@@ -440,9 +497,11 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		this.employeeDraftObject = employeeDraftObject;
 		this.contractType = new ContractType();
 		
-		this.employeeDraftObject.initializeEmployee(r -> {
-			initializeView();
-		}, t -> {});
+		this.employeeDraftObject.initializeEmployee(
+			r -> {
+				initializeView();
+			}, t -> {}
+		);
 	}
 
 	private void initializeView() {
@@ -452,7 +511,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		initContractType();
 		initAgreements();
 		
-		if (employeeDraftObject.getContractSSRegimen() == 3) { //RETA, había algo mas que determinaba si era o no RETA
+		if (employeeDraftObject.getContractSSRegimen() == 3) {
 			this.employee.showElementsFreelancerTable();
 			fillContractFreelancerTable();
 		} else {
@@ -503,9 +562,10 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 
 	private void fillContractFreelancerTable() {
 		this.employee.document.setValue(employeeDraftObject.getEmployeeDocument());
-		showNationality(checkDocumentType(employeeDraftObject.getEmployeeDocument()));
+		this.employee.onEmployeeDocumentChange();
 		this.employee.nationality.setValue(employeeDraftObject.getEmployeeNationality());
 		this.employee.security_social_num.setValue(employeeDraftObject.getEmployeeSSNumber());
+		this.employee.onEmployeeSSNumChange();
 		this.employee.name.setValue(employeeDraftObject.getEmployeeName());
 		this.employee.first_surname.setValue(employeeDraftObject.getEmployeeSurname());
 		this.employee.second_surname.setValue(employeeDraftObject.getEmployeeSecondSurname());
@@ -513,19 +573,48 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		this.employee.workplace.setSelectedIndex(employeeDraftObject.getContractWorkplace());
 		this.employee.start_date.setValue(employeeDraftObject.getContractStartDate());
 		this.employee.seniority_date.setValue(employeeDraftObject.getContractSeniorityDate());
+		this.employee.onContractSeniorityDateChange();
 		this.employee.end_date.setValue(employeeDraftObject.getContractEndDate());
 		this.employee.agreement.setSelectedIndex(employeeDraftObject.getContractAgreement() + 1);
 		getAgreementLevels(employeeDraftObject.getContractAgreementId());
 		this.employee.level.setSelectedIndex(employeeDraftObject.getAgreementLevel() + 1);
 		this.employee.category.setValue(employeeDraftObject.getContractAgreementCategory());
 		this.employee.journeyType.setSelectedIndex(employeeDraftObject.getContractJourneyType());
+		if(1 == employeeDraftObject.getContractJourneyType()) {
+			this.employee.showElementsPartialTimeContract();
+			ContractJourneyDuration contractJourneyDuration = employeeDraftObject.getContractJourneyDuration();
+			if(contractJourneyDuration.getJourniesSize() != 0) {
+				String result = "Desde ";
+				Integer hours = 0;
+				for(JourneyDuration journeyDuration : contractJourneyDuration.getContractJourneyDuration().descendingMap().entrySet().iterator().next().getValue()) {
+					hours += Integer.parseInt(journeyDuration.getExpression());
+					if("HORAS_LUNES" == journeyDuration.getName()) result += formatDate(journeyDuration.getStartDate()) + " L : " + journeyDuration.getExpression() + " ";
+					if("HORAS_MARTES" == journeyDuration.getName()) result += ", M : " + journeyDuration.getExpression() + " ";
+					if("HORAS_MIERCOLES" == journeyDuration.getName()) result += ", X : " + journeyDuration.getExpression() + " ";
+					if("HORAS_JUEVES" == journeyDuration.getName()) result += ", J : " + journeyDuration.getExpression() + " ";
+					if("HORAS_VIERNES" == journeyDuration.getName()) result += ", V : " + journeyDuration.getExpression() + " ";
+					if("HORAS_SABADO" == journeyDuration.getName()) result += ", S : " + journeyDuration.getExpression() + " ";
+					if("HORAS_DOMINGO" == journeyDuration.getName()) result += ", D : " + journeyDuration.getExpression() + " ( " + hours + " horas semanales )";
+				}
+				employee.journeyDuration.setText(result);
+				employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
+				employee.journeyDuration.removeStyleName("aon-icon-exception aon-finding-toolbar-item-no-border");
+			}else {
+				employee.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+				employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
+				employee.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
+			}
+		}else {
+			this.employee.showElementsFullTimeContract();
+		}
 	}
 
 	private void fillContractTable() {
 		this.employee.document.setValue(employeeDraftObject.getEmployeeDocument());
-		showNationality(checkDocumentType(employeeDraftObject.getEmployeeDocument()));
+		this.employee.onEmployeeDocumentChange();
 		this.employee.nationality.setValue(employeeDraftObject.getEmployeeNationality());
 		this.employee.security_social_num.setValue(employeeDraftObject.getEmployeeSSNumber());
+		this.employee.onEmployeeSSNumChange();
 		this.employee.name.setValue(employeeDraftObject.getEmployeeName());
 		this.employee.first_surname.setValue(employeeDraftObject.getEmployeeSurname());
 		this.employee.second_surname.setValue(employeeDraftObject.getEmployeeSecondSurname());
@@ -534,13 +623,32 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		this.employee.workplace.setSelectedIndex(employeeDraftObject.getContractWorkplace());
 		Integer contractTypeId = employeeDraftObject.getContractType();
 		this.employee.contractType.setSelectedIndex(contractType.getContractTypeIndex(contractTypeId) + 1);
-//		if((contractTypeId >= 200 && contractTypeId<300) || (contractTypeId >= 500 && contractTypeId<600)) {
-//			this.employee.showElementsPartialTimeContract();
-//			this.employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
-//			this.employee.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
-//		}else
-//			this.employee.showElementsFullTimeContract();
-		
+		if((contractTypeId >= 200 && contractTypeId<300) || (contractTypeId >= 500 && contractTypeId<600)) {
+			this.employee.showElementsPartialTimeContract();
+			ContractJourneyDuration contractJourneyDuration = employeeDraftObject.getContractJourneyDuration();
+			if(contractJourneyDuration.getJourniesSize() != 0) {
+				String result = "Desde ";
+				Integer hours = 0;
+				for(JourneyDuration journeyDuration : contractJourneyDuration.getContractJourneyDuration().descendingMap().entrySet().iterator().next().getValue()) {
+					hours += Integer.parseInt(journeyDuration.getExpression());
+					if("HORAS_LUNES" == journeyDuration.getName()) result += formatDate(journeyDuration.getStartDate()) + " L : " + journeyDuration.getExpression() + " ";
+					if("HORAS_MARTES" == journeyDuration.getName()) result += ", M : " + journeyDuration.getExpression() + " ";
+					if("HORAS_MIERCOLES" == journeyDuration.getName()) result += ", X : " + journeyDuration.getExpression() + " ";
+					if("HORAS_JUEVES" == journeyDuration.getName()) result += ", J : " + journeyDuration.getExpression() + " ";
+					if("HORAS_VIERNES" == journeyDuration.getName()) result += ", V : " + journeyDuration.getExpression() + " ";
+					if("HORAS_SABADO" == journeyDuration.getName()) result += ", S : " + journeyDuration.getExpression() + " ";
+					if("HORAS_DOMINGO" == journeyDuration.getName()) result += ", D : " + journeyDuration.getExpression() + " ( " + hours + " horas semanales )";
+				}
+				employee.journeyDuration.setText(result);
+				employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
+				employee.journeyDuration.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+			}else {
+				employee.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+				employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
+				employee.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
+			}
+		}else
+			this.employee.showElementsFullTimeContract();
 		
 		this.employee.modality.clear();
 		this.employee.modality.addItem("-");
@@ -559,6 +667,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		
 		this.employee.start_date.setValue(employeeDraftObject.getContractStartDate());
 		this.employee.seniority_date.setValue(employeeDraftObject.getContractSeniorityDate());
+		this.employee.onContractSeniorityDateChange();
 		this.employee.end_date.setValue(employeeDraftObject.getContractEndDate());
 		this.employee.agreement.setSelectedIndex(employeeDraftObject.getContractAgreement() + 1);
 		getAgreementLevels(employeeDraftObject.getContractAgreementId());
@@ -568,7 +677,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		this.employee.occupation.setSelectedIndex(employeeDraftObject.getContractOcupation());
 
 	}
-
+	
 	private void getAgreementLevels(Integer agreementId) {
 		this.employee.level.clear();
 		List<Agreement> agreements = employeeDraftObject.getActiveAgreements();
@@ -682,6 +791,10 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		else
 			return false;
 	
+	}
+	
+	private String formatDate(Date date) {
+		return date.getDate() + "/" + (date.getMonth()+1) + "/" + (date.getYear()+1900);
 	}
 
 }

@@ -129,7 +129,7 @@
 		}
 		
 		.journeyDurationWarning{
-			font-weight: bolder;
+			font-weight: bold;
 			font-size: 11px;
 			cursor: pointer;
 		}
@@ -137,6 +137,10 @@
 		.journeyDuration{
 			font-size: 11px;
 			cursor: pointer;
+		}
+		
+		.marginTop{
+			margin-top: 3px;
 		}
 		
 	</ui:style>
@@ -165,7 +169,10 @@
 								<g:Label styleName='{style.alignTextCenter}' ui:field="document_type"></g:Label>
 							</td>
 							<td>
-								<g:SuggestBox ui:field="document" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
+								<g:HorizontalPanel>
+									<g:SuggestBox ui:field="document" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
+									<g:Label ui:field="documentStatus"></g:Label>
+								</g:HorizontalPanel>
 							</td>
 							<td style="width: 10%;" ui:field="nationalityLabelCell">
 								<g:Label ui:field="nationalityLabel" styleName='{style.requiredColor} {style.alignTextCenter}'>Nacionalidad</g:Label>
@@ -177,7 +184,10 @@
 								<g:Label styleName='{style.requiredColor} {style.alignTextCenter}'>Nº S.S.</g:Label>
 							</td>
 							<td >
-								<g:SuggestBox ui:field="security_social_num" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
+								<g:HorizontalPanel>
+									<g:SuggestBox ui:field="security_social_num" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
+									<g:Label ui:field="ssNumberStatus"></g:Label>
+								</g:HorizontalPanel>
 							</td>
 						</tr>
 					    <tr>
@@ -268,7 +278,10 @@
 									antigüedad</g:Label>
 							</td>
 							<td>
-								<a:DateBoxEx ui:field="seniority_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle2}'></a:DateBoxEx>
+								<g:HorizontalPanel>
+									<a:DateBoxEx ui:field="seniority_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle2}'></a:DateBoxEx>
+									<g:Label ui:field="seniority_dateStatus"></g:Label>	
+								</g:HorizontalPanel>
 							</td>
 						</tr>
 						<tr>
