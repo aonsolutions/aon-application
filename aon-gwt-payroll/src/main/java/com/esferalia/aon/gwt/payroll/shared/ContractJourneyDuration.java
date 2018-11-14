@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.google.gwt.user.client.Window;
 
 public class ContractJourneyDuration implements Serializable {
 	
@@ -42,7 +41,7 @@ public class ContractJourneyDuration implements Serializable {
 			return false;
 		}else {
 			for(Date entryDate : this.contractJourneyDuration.descendingKeySet()) {
-				Window.alert("Entry Date : " + entryDate + ", Start Date : " + startDate);
+//				Window.alert("Entry Date : " + entryDate + ", Start Date : " + startDate);
 //				Date newDate = new Date(entryDate.getTime());
 //				Window.alert("Entry Date : " + newDate + ", Start Date : " + startDate);
 //				DateUtils.resetTime(newDate);
@@ -65,7 +64,7 @@ public class ContractJourneyDuration implements Serializable {
 			
 				for(JourneyDuration journeyDuration : this.contractJourneyDuration.descendingMap().entrySet().iterator().next().getValue()) {
 					journeyDuration.setEndDate(endDate);
-					Window.alert("Journey StartDate : " + journeyDuration.getStartDate() + ", EndDate : " + endDate);
+//					Window.alert("Journey StartDate : " + journeyDuration.getStartDate() + ", EndDate : " + endDate);
 				}
 			}
 		}
