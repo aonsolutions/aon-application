@@ -4427,6 +4427,18 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 
 	}
+	
+	@Override
+	public WorkplaceEmployees getWorkplaceEmployeesEvents(String domain, Integer workplaceId) {
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection(domain);
+			return JooqEvents.getWorkplaceEmployeesEvents(connection, workplaceId);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+		}
+	}
 
 	@Override
 	public WorkplaceEmployees getWorkplaceEmployees(String domain, Integer workplaceId) {

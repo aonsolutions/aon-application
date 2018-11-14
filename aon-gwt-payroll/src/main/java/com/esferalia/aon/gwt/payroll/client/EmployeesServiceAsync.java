@@ -191,4 +191,8 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void createEmployeeContract(String domain, EmployeeContractInfo employeeContractData,
 			AsyncCallback<EmployeeContractInfo> asyncCallback);
 
+	void getWorkplaceEmployeesEvents(String currentDomainName, Integer workplaceId,
+			AsyncCallback<WorkplaceEmployees> callback);
+
+	
 }

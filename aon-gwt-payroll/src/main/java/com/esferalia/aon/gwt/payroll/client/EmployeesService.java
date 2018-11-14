@@ -169,4 +169,6 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	EmployeeContractInfo createEmployeeContract(String domain, EmployeeContractInfo employeeContractData);
 
+	WorkplaceEmployees getWorkplaceEmployeesEvents(String currentDomainName, Integer workplaceId);
+
 }

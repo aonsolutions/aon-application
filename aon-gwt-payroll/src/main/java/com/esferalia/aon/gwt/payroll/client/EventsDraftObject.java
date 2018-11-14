@@ -218,7 +218,7 @@ public class EventsDraftObject {
 	
 	public void getWorkPlaceEmployeesDB(int year, Consumer<WorkplaceEmployees> success, Consumer<Throwable> failure) {
 		
-		employeesServiceAsync.getWorkplaceEmployees(this.workplaceId, new AsyncCallback<WorkplaceEmployees>(){
+		employeesServiceAsync.getWorkplaceEmployeesEvents(this.workplaceId, new AsyncCallback<WorkplaceEmployees>(){
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -274,18 +274,18 @@ public class EventsDraftObject {
 					
 					employeeContractVariables.clear();
 					
-					createAllVariables("DIAS_VACACIONES");
-					createAllVariables("DIAS_AUSENCIA");
-					createAllVariables("DIAS_HUELGA");
-					createAllVariables("DIAS_ERE");
+//					createAllVariables("DIAS_VACACIONES");
+//					createAllVariables("DIAS_AUSENCIA");
+//					createAllVariables("DIAS_HUELGA");
+//					createAllVariables("DIAS_ERE");
 					createAllVariables("HORAS_EXTRAS");
 					createAllVariables("HORAS_COMPLEMENTARIAS");
 					
 					//Lista con las variables a descargar de la base de datos
-					employeeContractVariablesDB.add("DIAS_VACACIONES");
-					employeeContractVariablesDB.add("DIAS_AUSENCIA");
-					employeeContractVariablesDB.add("DIAS_HUELGA");
-					employeeContractVariablesDB.add("DIAS_ERE");
+//					employeeContractVariablesDB.add("DIAS_VACACIONES");
+//					employeeContractVariablesDB.add("DIAS_AUSENCIA");
+//					employeeContractVariablesDB.add("DIAS_HUELGA");
+//					employeeContractVariablesDB.add("DIAS_ERE");
 					employeeContractVariablesDB.add("HORAS_EXTRAS");
 					employeeContractVariablesDB.add("HORAS_COMPLEMENTARIAS");
 					employeeContractVariablesDB.add("IMPORTE_HORA_EXTRA");

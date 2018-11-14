@@ -150,6 +150,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 			
 		}
 
+		@Override
+		public void getWorkplaceEmployeesEvents(String currentDomainName, Integer workplaceId,
+				AsyncCallback<WorkplaceEmployees> callback) {
+			// TODO Auto-generated method stub
+			
+		}
+
 		
 	}
 
@@ -275,6 +282,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					@Override
 					public void createEmployeeContract(String domain, EmployeeContractInfo newEmployeeInfo,
 							AsyncCallback<EmployeeContractInfo> asyncCallback) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void getWorkplaceEmployeesEvents(String currentDomainName, Integer workplaceId,
+							AsyncCallback<WorkplaceEmployees> callback) {
 						// TODO Auto-generated method stub
 						
 					}

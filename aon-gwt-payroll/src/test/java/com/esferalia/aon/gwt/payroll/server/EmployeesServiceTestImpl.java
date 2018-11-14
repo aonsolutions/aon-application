@@ -585,6 +585,12 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		return null;
 	}
 
+	@Override
+	public WorkplaceEmployees getWorkplaceEmployeesEvents(String currentDomainName, Integer workplaceId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
 
 	

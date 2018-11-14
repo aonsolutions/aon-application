@@ -154,6 +154,15 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 				
 			}
 
+
+
+			@Override
+			public void getWorkplaceEmployeesEvents(String currentDomainName, Integer workplaceId,
+					AsyncCallback<WorkplaceEmployees> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
 			
 		};
 
