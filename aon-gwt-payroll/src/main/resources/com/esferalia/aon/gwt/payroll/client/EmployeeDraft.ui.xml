@@ -144,7 +144,7 @@
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 							<g:Button ui:field='saveButton'
-								styleName='aon-finding-toolbar-item aon-icon-accept' text="ACEPTAR"
+								styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR"
 								enabled="true" />
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">

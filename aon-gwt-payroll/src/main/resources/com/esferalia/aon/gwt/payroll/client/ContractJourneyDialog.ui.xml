@@ -73,10 +73,10 @@
 		<g:VerticalPanel>
 		    <g:HorizontalPanel styleName="aon-toolbar aon-width-all">
 				<g:cell>
-					<g:Label ui:field="newJourney" styleName="aon-finding-toolbar-item aon-icon-reset">Nuevo</g:Label> 
+					<g:Label ui:field="newJourney" styleName="aon-finding-toolbar-item aon-icon-reset">NUEVO</g:Label> 
 				</g:cell>
 				<g:cell>
-				    <g:Label ui:field="saveJourney" styleName="aon-finding-toolbar-item aon-icon-accept">Guardar</g:Label>
+				    <g:Label ui:field="saveJourney" styleName="aon-finding-toolbar-item aon-icon-accept">ACEPTAR</g:Label>
 				</g:cell>
 				<!-- g:cell>
 				    <g:Label ui:field="cancelJourney" styleName="aon-finding-toolbar-item aon-icon-cancel">Cancelar</g:Label>

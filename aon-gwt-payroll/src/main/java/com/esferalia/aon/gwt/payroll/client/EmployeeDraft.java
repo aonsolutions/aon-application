@@ -1,9 +1,11 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
@@ -171,10 +173,13 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 				contractTypeId = Integer.parseInt(contract_type_id_str);
 				if((contractTypeId >= 200 && contractTypeId<300) || (contractTypeId >= 500 && contractTypeId<600)) {
 					this.showElementsPartialTimeContract();
-					this.journeyDuration.addStyleName(style.journeyDurationWarning());
+					this.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+					this.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
 					this.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
-				}else
+				}else{
 					this.showElementsFullTimeContract();
+					employeeDraftObject.setContractJourneyDuration(new TreeMap<Date, ArrayList<JourneyDuration>>());
+				}
 			}
 
 			List<ModelRecord> contractTypeModels = contractTypeClass.getModelsContractType(contractTypeId);
@@ -331,20 +336,20 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 					ContractJourneyDuration contractJourneyDuration = this.getContractJourneyDuration();
 					if(contractJourneyDuration.getJourniesSize() != 0) {
 						String result = "Desde ";
-						Integer hours = 0;
+						Double hours = 0.0;
 						for(JourneyDuration journeyDuration : contractJourneyDuration.getContractJourneyDuration().descendingMap().entrySet().iterator().next().getValue()) {
-							hours += Integer.parseInt(journeyDuration.getExpression());
-							if("HORAS_LUNES" == journeyDuration.getName()) result += formatDate(journeyDuration.getStartDate()) + " L : " + journeyDuration.getExpression() + " ";
-							if("HORAS_MARTES" == journeyDuration.getName()) result += ", M : " + journeyDuration.getExpression() + " ";
-							if("HORAS_MIERCOLES" == journeyDuration.getName()) result += ", X : " + journeyDuration.getExpression() + " ";
-							if("HORAS_JUEVES" == journeyDuration.getName()) result += ", J : " + journeyDuration.getExpression() + " ";
-							if("HORAS_VIERNES" == journeyDuration.getName()) result += ", V : " + journeyDuration.getExpression() + " ";
-							if("HORAS_SABADO" == journeyDuration.getName()) result += ", S : " + journeyDuration.getExpression() + " ";
-							if("HORAS_DOMINGO" == journeyDuration.getName()) result += ", D : " + journeyDuration.getExpression() + " ( " + hours + " horas semanales )";
+							hours += Double.parseDouble(((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()));
+							if("HORAS_LUNES" == journeyDuration.getName()) result += formatDate(journeyDuration.getStartDate()) + " L : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
+							if("HORAS_MARTES" == journeyDuration.getName()) result += ", M : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
+							if("HORAS_MIERCOLES" == journeyDuration.getName()) result += ", X : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
+							if("HORAS_JUEVES" == journeyDuration.getName()) result += ", J : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
+							if("HORAS_VIERNES" == journeyDuration.getName()) result += ", V : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
+							if("HORAS_SABADO" == journeyDuration.getName()) result += ", S : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
+							if("HORAS_DOMINGO" == journeyDuration.getName()) result += ", D : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ( " + hours + " horas semanales )";
 						}
 						employee.journeyDuration.setText(result);
 						employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
-						employee.journeyDuration.removeStyleName("aon-icon-exception aon-finding-toolbar-item-no-border");
+						employee.journeyDuration.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
 					}else {
 						employee.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
 						employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
@@ -585,16 +590,16 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 			ContractJourneyDuration contractJourneyDuration = employeeDraftObject.getContractJourneyDuration();
 			if(contractJourneyDuration.getJourniesSize() != 0) {
 				String result = "Desde ";
-				Integer hours = 0;
+				Double hours = 0.0;
 				for(JourneyDuration journeyDuration : contractJourneyDuration.getContractJourneyDuration().descendingMap().entrySet().iterator().next().getValue()) {
-					hours += Integer.parseInt(journeyDuration.getExpression());
-					if("HORAS_LUNES" == journeyDuration.getName()) result += formatDate(journeyDuration.getStartDate()) + " L : " + journeyDuration.getExpression() + " ";
-					if("HORAS_MARTES" == journeyDuration.getName()) result += ", M : " + journeyDuration.getExpression() + " ";
-					if("HORAS_MIERCOLES" == journeyDuration.getName()) result += ", X : " + journeyDuration.getExpression() + " ";
-					if("HORAS_JUEVES" == journeyDuration.getName()) result += ", J : " + journeyDuration.getExpression() + " ";
-					if("HORAS_VIERNES" == journeyDuration.getName()) result += ", V : " + journeyDuration.getExpression() + " ";
-					if("HORAS_SABADO" == journeyDuration.getName()) result += ", S : " + journeyDuration.getExpression() + " ";
-					if("HORAS_DOMINGO" == journeyDuration.getName()) result += ", D : " + journeyDuration.getExpression() + " ( " + hours + " horas semanales )";
+					hours += Double.parseDouble(((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()));
+					if("HORAS_LUNES" == journeyDuration.getName()) result += formatDate(journeyDuration.getStartDate()) + " L : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
+					if("HORAS_MARTES" == journeyDuration.getName()) result += ", M : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
+					if("HORAS_MIERCOLES" == journeyDuration.getName()) result += ", X : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
+					if("HORAS_JUEVES" == journeyDuration.getName()) result += ", J : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
+					if("HORAS_VIERNES" == journeyDuration.getName()) result += ", V : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
+					if("HORAS_SABADO" == journeyDuration.getName()) result += ", S : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
+					if("HORAS_DOMINGO" == journeyDuration.getName()) result += ", D : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ( " + hours + " horas semanales )";
 				}
 				employee.journeyDuration.setText(result);
 				employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
@@ -628,16 +633,16 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 			ContractJourneyDuration contractJourneyDuration = employeeDraftObject.getContractJourneyDuration();
 			if(contractJourneyDuration.getJourniesSize() != 0) {
 				String result = "Desde ";
-				Integer hours = 0;
+				Double hours = 0.0;
 				for(JourneyDuration journeyDuration : contractJourneyDuration.getContractJourneyDuration().descendingMap().entrySet().iterator().next().getValue()) {
-					hours += Integer.parseInt(journeyDuration.getExpression());
-					if("HORAS_LUNES" == journeyDuration.getName()) result += formatDate(journeyDuration.getStartDate()) + " L : " + journeyDuration.getExpression() + " ";
-					if("HORAS_MARTES" == journeyDuration.getName()) result += ", M : " + journeyDuration.getExpression() + " ";
-					if("HORAS_MIERCOLES" == journeyDuration.getName()) result += ", X : " + journeyDuration.getExpression() + " ";
-					if("HORAS_JUEVES" == journeyDuration.getName()) result += ", J : " + journeyDuration.getExpression() + " ";
-					if("HORAS_VIERNES" == journeyDuration.getName()) result += ", V : " + journeyDuration.getExpression() + " ";
-					if("HORAS_SABADO" == journeyDuration.getName()) result += ", S : " + journeyDuration.getExpression() + " ";
-					if("HORAS_DOMINGO" == journeyDuration.getName()) result += ", D : " + journeyDuration.getExpression() + " ( " + hours + " horas semanales )";
+					hours += Double.parseDouble(((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()));
+					if("HORAS_LUNES" == journeyDuration.getName()) result += formatDate(journeyDuration.getStartDate()) + " L : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
+					if("HORAS_MARTES" == journeyDuration.getName()) result += ", M : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
+					if("HORAS_MIERCOLES" == journeyDuration.getName()) result += ", X : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
+					if("HORAS_JUEVES" == journeyDuration.getName()) result += ", J : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
+					if("HORAS_VIERNES" == journeyDuration.getName()) result += ", V : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
+					if("HORAS_SABADO" == journeyDuration.getName()) result += ", S : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
+					if("HORAS_DOMINGO" == journeyDuration.getName()) result += ", D : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ( " + hours + " horas semanales )";
 				}
 				employee.journeyDuration.setText(result);
 				employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());

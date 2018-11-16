@@ -16,6 +16,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -115,49 +116,49 @@ public abstract class ContractJourneyDialog extends CustomDialog {
 			monday.setStartDate(startDate);
 			monday.setEndDate(endDate);
 			monday.setName("HORAS_LUNES");
-			monday.setExpression((null == newMonday.getValue() || "" == newMonday.getValue()) ? "0" : newMonday.getValue());
+			monday.setExpression((null == newMonday.getValue() || "" == newMonday.getValue()) ? null : newMonday.getValue());
 			
 			//HORAS_MARTES
 			JourneyDuration tuesday = new JourneyDuration();
 			tuesday.setStartDate(startDate);
 			tuesday.setEndDate(endDate);
 			tuesday.setName("HORAS_MARTES");
-			tuesday.setExpression((null == newTuesday.getValue() || "" == newTuesday.getValue()) ? "0" : newTuesday.getValue());
+			tuesday.setExpression((null == newTuesday.getValue() || "" == newTuesday.getValue()) ? null : newTuesday.getValue());
 			
 			//HORAS_MIERCOLES
 			JourneyDuration wednesday = new JourneyDuration();
 			wednesday.setStartDate(startDate);
 			wednesday.setEndDate(endDate);
 			wednesday.setName("HORAS_MIERCOLES");
-			wednesday.setExpression((null == newWednesday.getValue() || "" == newWednesday.getValue()) ? "0" : newWednesday.getValue());
+			wednesday.setExpression((null == newWednesday.getValue() || "" == newWednesday.getValue()) ? null : newWednesday.getValue());
 			
 			//HORAS_JUEVES
 			JourneyDuration thursday = new JourneyDuration();
 			thursday.setStartDate(startDate);
 			thursday.setEndDate(endDate);
 			thursday.setName("HORAS_JUEVES");
-			thursday.setExpression((null == newThursday.getValue() || "" == newThursday.getValue()) ? "0" : newThursday.getValue());
+			thursday.setExpression((null == newThursday.getValue() || "" == newThursday.getValue()) ? null : newThursday.getValue());
 			
 			//HORAS_VIERNES
 			JourneyDuration friday = new JourneyDuration();
 			friday.setStartDate(startDate);
 			friday.setEndDate(endDate);
 			friday.setName("HORAS_VIERNES");
-			friday.setExpression((null == newFriday.getValue() || "" == newFriday.getValue()) ? "0" : newFriday.getValue());
+			friday.setExpression((null == newFriday.getValue() || "" == newFriday.getValue()) ? null : newFriday.getValue());
 			
 			//HORAS_SABADO
 			JourneyDuration saturday = new JourneyDuration();
 			saturday.setStartDate(startDate);
 			saturday.setEndDate(endDate);
 			saturday.setName("HORAS_SABADO");
-			saturday.setExpression((null == newSaturday.getValue() || "" == newSaturday.getValue()) ? "0" : newSaturday.getValue());
+			saturday.setExpression((null == newSaturday.getValue() || "" == newSaturday.getValue()) ? null : newSaturday.getValue());
 			
 			//HORAS_DOMINGO
 			JourneyDuration sunday = new JourneyDuration();
 			sunday.setStartDate(startDate);
 			sunday.setEndDate(endDate);
 			sunday.setName("HORAS_DOMINGO");
-			sunday.setExpression((null == newSunday.getValue() || "" == newSunday.getValue()) ? "0" : newSunday.getValue());
+			sunday.setExpression((null == newSunday.getValue() || "" == newSunday.getValue()) ? null : newSunday.getValue());
 			
 			journies.add(monday);
 			journies.add(tuesday);
@@ -230,7 +231,7 @@ public abstract class ContractJourneyDialog extends CustomDialog {
 			newJourneyBox();
 		}else {
 			journeyTable.removeStyleName(style.hide());
-		
+			
 			for(Entry<Date, ArrayList<JourneyDuration>> entry : contractJourneyDuration.getContractJourneyDuration().descendingMap().entrySet()) {
 				int newRow = journeyTable.insertRow(journeyTable.getRowCount());
 				Label startDate = new Label(formatDate(entry.getKey()));
@@ -319,7 +320,7 @@ public abstract class ContractJourneyDialog extends CustomDialog {
 				journeyTable.setWidget(newRow, 2, hPanel);
 				journeyTable.setWidget(newRow, 3, hPanelButtons);
 			}
-		
+			
 			journeyTable.getWidget(1, 3).removeStyleName(style.hide());
 		
 		}
