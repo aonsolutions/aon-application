@@ -64,18 +64,15 @@ import org.mvel2.ast.Function;
 import org.mvel2.util.MethodStub;
 
 import com.code.aon.common.ICollectionProvider;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.report.controller.ReportManager;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.google.sql.SQLConstants.DomainColumns;
 import com.esferalia.aon.google.sql.SQLConstants.UserColumns;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
@@ -119,7 +116,6 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeInfoDataBase;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
@@ -983,6 +979,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		Connection connection = null;
 
 		try {
+			System.out.println("ENTRANDO PARA BUSCAR VARIABLES, Domain : " + domain + ", Employee Id : " + employeeId 
+					+ ", StartDate : " + startDate + ", endDate : " + endDate );
+			
 			connection = AonServletUtils.getConnection(domain);
 			Integer domainID = AonServletUtils.getDomainID(domain);
 			Integer parentDomainID = AonServletUtils.getParentDomainID(domain);
@@ -1019,7 +1018,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				}
 			}
 
-
+			System.out.println("Context Variables Size : " +contextResult.getVariables().size());
+			
 			for(String key : contextResult.getVariables()){
 				if(contextResult.getList(key).isEmpty()){
 					System.out.println("RESULT :"+key+", value : null, type :null, startDate :null, endDate :null");
