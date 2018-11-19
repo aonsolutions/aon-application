@@ -30,6 +30,7 @@ import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
+import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfYear;
 import static java.lang.String.format;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
@@ -1406,6 +1407,107 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 	}
 
+	@Test
+	public void testCommonDiseaseITQuoteDaysVI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date contractStartDate = add(getFirstDayOfYear(getToday()), Calendar.YEAR,-1);
+		Date contractEndDate = add(getLastDayOfMonth(getFirstDayOfYear(getToday())), Calendar.DAY_OF_MONTH,-1);
+		
+		cleanSystemData(aonContext);
+		
+		addSystemData(aonContext, 
+				contractStartDate, 
+				null, 
+				new HashMap<String, String>(){
+			{
+				put(MONTH_DAYS.getName(), 
+						String.format("[ \"01\": %s ][%s]", "30", QUOTE_GROUP.getName() ) );
+			}
+		});
+		
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext,
+				contractStartDate,
+				contractEndDate,
+				new HashMap<String, String>(){
+					{
+						put(QUOTE_GROUP.getName(), "'01'" );
+					}
+				},
+				new String[] {}, 
+				new String[] {
+				"TRACE('BASE_REGULADORA=%f\r\n', BASE_REGULADORA);0.00",
+				"TRACE('BASE_CGP=%f\r\n', BASE_CGP);BASE_CGC * 1.55 / 100",
+				"TRACE('BASE_CGP=%f\r\n', BASE_CGP);BASE_CGC * 0.10 / 100",
+				"TRACE('DIAS_COTIZADOS=%f\r\n', DIAS_COTIZADOS);0.00",
+				}, null);
+		//@formatter:on
+		
+		
+		
+		//@formatter:off
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_1_3",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_4_15",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_16_20",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_21",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract,  
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES", "_P"
+				);
+		addPayment(aonContext, contract,  
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES", "_P"
+				);
+		//@formatter:on
+
+
+		Date startITDate = add(contractEndDate, Calendar.DAY_OF_MONTH, -100 );
+		
+		Date endITDate = contractEndDate;		
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				endITDate, 100.00);
+
+		Date startDate = getFirstDayOfMonth(contractEndDate);
+		Date endDate = contractEndDate;
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		
+		salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.forEach(data->System.out.println(data.getName() + " = " + data.getExpression() + "(" + data.getStartDate() + "..." + data.getEndDate() + ")"));
+		;
+
+		// (No ADJUST)
+		long count = salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.filter(data->data.getStartDate().getDate() == 1)
+		.peek(data->Assert.assertEquals(data.getEndDate().getDate(),30))
+		.peek(data->Assert.assertEquals(100.00 * 30.00, Double.parseDouble(data.getExpression())))
+		.count();
+		Assert.assertEquals(1, count);
+		
+	}
+ 
 	@Test
 	public void testOccupationalDiseaseITQuoteDaysI() throws ExpressionException, SQLException,
 			SalaryException {

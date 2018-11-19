@@ -517,7 +517,12 @@ public class ContractLeaveLoader {
 
 		Long days = getDaysBetweenDates(p.getStart(), p.getEnd()) + 1;
 
-		if (!leaves.last().getEnd().equals(p.getEnd()))
+		if (leaves.last().getEnd().compareTo(p.getEnd()) != 0)
+			return days;
+		
+		if ( ( p.getStart().compareTo(startDate) == 0 ) 
+				&& ( p.getEnd().compareTo(endDate) == 0 )
+				&& days <= 30 )
 			return days;
 
 		return getAdjustDays(ctx, p, days);
