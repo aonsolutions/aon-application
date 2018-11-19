@@ -1702,16 +1702,16 @@ public class Bases {
 			put("509", new NonNegativeCompositeCCretaData(
 					MATERNITY_BASE.getName(), 		// Base de contigencias comunes en maternidad/parternidad/riesgo
 					ERE_BASE.getName(),				// Base de contingencias comunes empresarial en ERE
+					DIRECT_BASE.getName(),			// Base Pago Directo  
 					CGC_BASE.getName(),
-					DIRECT_BASE.getName(),			//   
 					CGC_BASE_ENTERPRISE.getName()	// Base de contingencias comunes empresarial  
 					));
 			
 			put("603", new NonNegativeCompositeCCretaData(
 					MATERNITY_BASE.getName(),
 					ERE_BASE.getName(), 
-					CGP_BASE.getName(),
 					DIRECT_BASE.getName(),			//   
+					CGP_BASE.getName(),
 					CGC_BASE_ENTERPRISE.getName()	  
 					));
 			put("613", new NonNegativeCompositeCCretaData(
