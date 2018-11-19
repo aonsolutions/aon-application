@@ -6,8 +6,6 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -46,6 +44,7 @@ import com.code.aon.registry.Relationship;
 import com.code.aon.registry.enumeration.RegistryItemStatus;
 import com.code.aon.registry.enumeration.RegistryMode;
 import com.code.aon.sales.SalesDetail;
+import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.seres.connect.ConnectInvoice;
@@ -202,7 +201,8 @@ public class ConnectSaleInvoiceWriter {
 		sincc.setTotalMinoracionesDelImporteBruto_260_(null);
 		sincc.setPeriodoImposicionesFactura_325_(null);
 		sincc.setFechaPedido(null);
-		sincc.setFecha_horaEfectivaDelServicio_2_(null);
+		sincc.setFecha_horaEfectivaDelServicio_2_(SeresUtils.dateFormat().format(
+				obtainDelivery(invoice).getIssueTime()));
 		sincc.setNumeroConfirmacionDeEntrega(null);
 		return sincc;
 	}
@@ -706,6 +706,29 @@ public class ConnectSaleInvoiceWriter {
 				IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 				DeliveryDetail deliveryDetail = (DeliveryDetail)deliveryDetailBean.get(invoiceDetail.getSourceId());
 				return deliveryDetail.getDelivery().getReferenceCode();
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage());
+		}
+		return null;
+	}
+	
+	private Delivery obtainDelivery(Invoice invoice) {
+		List<InvoiceDetail> list = invoice.getDetailList().stream()
+				.map(to -> ((InvoiceDetail) to)).collect(Collectors.toList());
+		if (!list.isEmpty()) {
+			InvoiceDetail detail = list.get(0);
+			return obtainDelivery(detail);
+		}
+		return null;
+	}
+
+	private Delivery obtainDelivery(InvoiceDetail invoiceDetail) {
+		try {
+			if (invoiceDetail.getSource() == InvoiceSource.DELIVERY) {
+				IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
+				DeliveryDetail deliveryDetail = (DeliveryDetail)deliveryDetailBean.get(invoiceDetail.getSourceId());
+				return deliveryDetail.getDelivery();
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage());
