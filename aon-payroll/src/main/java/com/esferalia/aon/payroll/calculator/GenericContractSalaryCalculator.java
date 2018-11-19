@@ -646,8 +646,10 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				cgcBase += directPayBase;
 			salaryBuilder.setCgcBase(cgcBase);
 
-			if (cgcBase != null)
-				expressionContext.setVariable(CGC_BASE_ENTERPRISE, cgcBase, start, end);
+			copyResults(expressionContext, CGC_BASE_ENTERPRISE, ERE_BASE, MATERNITY_BASE, DIRECT_BASE, CGC_BASE);
+//			if (cgcBase != null)
+//				expressionContext.setVariable(CGC_BASE_ENTERPRISE, cgcBase, start, end);
+			
 
 			Double rawCgpbase = quoteCalculator.getRawCgpBase();
 
@@ -672,8 +674,11 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			if (directPayBase != null)
 				cgpBase += directPayBase;
 			salaryBuilder.setCgpBase(cgpBase);
-			if (cgpBase != null)
-				expressionContext.setVariable(CGP_BASE_ENTERPRISE, cgpBase, start, end);
+
+			copyResults(expressionContext, CGP_BASE_ENTERPRISE, ERE_BASE, MATERNITY_BASE, DIRECT_BASE, CGC_BASE);
+			copyResults(expressionContext, CGC_BASE, CGP_BASE_ENTERPRISE);
+//			if (cgpBase != null)
+//				expressionContext.setVariable(CGP_BASE_ENTERPRISE, cgpBase, start, end);
 
 			Double nonStructuralBase = quoteCalculator.getNonStructuralBase();
 			salaryBuilder.setNonHExtraBase(nonStructuralBase);
@@ -1280,6 +1285,16 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		if (valueStart.compareTo(resultEnd) <= 0) {
 			expressionContext.setVariable(name, resultValue, valueStart, resultEnd);
 		}
+	}
+
+	private static void copyResults(ExpressionContext expressionContext, ContextVariable dest, ContextVariable ...srcs ) {
+		for (ContextVariable src : srcs)
+			copyResults(expressionContext, src.getName(), dest.getName());
+		
+	}
+
+	private static void copyResults(ExpressionContext expressionContext, ContextVariable src, ContextVariable dest) {
+		copyResults(expressionContext, src.getName(), dest.getName());
 	}
 
 	private static void copyResults(ExpressionContext expressionContext, INamedContractPayment namedContractPayment) {

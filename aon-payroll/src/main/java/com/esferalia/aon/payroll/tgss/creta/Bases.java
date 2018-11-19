@@ -3,6 +3,7 @@ package com.esferalia.aon.payroll.tgss.creta;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_ENTERPRISE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_ENTERPRISE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EXTRA_HOURS;
@@ -770,6 +771,8 @@ public class Bases {
 				put("635", "Base AT Maternidad Tiempo Parcial");
 				put("634", "Base AT Maternidad Tiempo Parcial");
 				
+				put("702", "Base de FOGASA");
+
 			}
 		};
 
@@ -1721,6 +1724,8 @@ public class Bases {
 					DIRECT_BASE.getName(),			//   
 					CGC_BASE_ENTERPRISE.getName()	  
 					));
+
+			put("702", new NonNegativeCCretaData(CGP_BASE_ENTERPRISE.getName()));
 		}
 	};
 
