@@ -520,9 +520,17 @@ public class ContractLeaveLoader {
 		if (leaves.last().getEnd().compareTo(p.getEnd()) != 0)
 			return days;
 		
-		if ( ( p.getStart().compareTo(startDate) == 0 ) 
-				&& ( p.getEnd().compareTo(endDate) == 0 )
-				&& days <= 30 )
+		boolean singlenton = ( p.getStart().compareTo(startDate) == 0 ) 
+				&& ( p.getEnd().compareTo(endDate) == 0 );
+
+		// One period of 30 days NOT adjust.
+		if ( singlenton && days == 30 )
+				return days;
+		
+		int startDay = AonDateUtils.getDay(p.getStart()); 
+		int month = AonDateUtils.getMonth(p.getStart()); 
+		
+		if ( singlenton && startDay == 1 && month != Calendar.FEBRUARY && days <= 30 )
 			return days;
 
 		return getAdjustDays(ctx, p, days);
