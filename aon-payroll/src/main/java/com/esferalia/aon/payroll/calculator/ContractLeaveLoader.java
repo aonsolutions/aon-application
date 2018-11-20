@@ -1,5 +1,6 @@
 package com.esferalia.aon.payroll.calculator;
 
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTRACT_END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FULL_TIME;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_FACTOR;
@@ -520,8 +521,12 @@ public class ContractLeaveLoader {
 		if (leaves.last().getEnd().compareTo(p.getEnd()) != 0)
 			return days;
 		
+		Date contractEnd = 
+				ctx.getVariable(CONTRACT_END.getName(), p.getStart(), p.getEnd(), Date.class);
 		boolean singlenton = ( p.getStart().compareTo(startDate) == 0 ) 
-				&& ( p.getEnd().compareTo(endDate) == 0 );
+				&& ( p.getEnd().compareTo(endDate) == 0 || 
+					( contractEnd != null && p.getEnd().compareTo(contractEnd ) == 0 ) 
+					);
 
 		// One period of 30 days NOT adjust.
 		if ( singlenton && days == 30 )
@@ -596,5 +601,6 @@ public class ContractLeaveLoader {
 		
 		return directPayStart;
 	}
+	
 
 }
