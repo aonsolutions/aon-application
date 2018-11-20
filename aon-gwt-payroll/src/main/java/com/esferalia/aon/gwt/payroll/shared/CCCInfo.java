@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.shared;
 import java.io.Serializable;
 
 public class CCCInfo implements Serializable{
+	
 	private String ccc;
 	private Byte type;
 	private String geozone;
@@ -59,6 +60,14 @@ public class CCCInfo implements Serializable{
 	}
 
 	public void setCCCId(Integer cccId) {
+		this.cccId = cccId;
+	}
+
+	public Integer getCccId() {
+		return cccId;
+	}
+
+	public void setCccId(Integer cccId) {
 		this.cccId = cccId;
 	}
 

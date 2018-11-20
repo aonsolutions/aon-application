@@ -1537,6 +1537,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private SalaryPreview salaryPreview;
 	private EventsDraft eventsDraft;
 	private WorkplaceDraft workplaceDraft;
+	private ActivityDraft activityDraft;
 	private EmployeeEventsDraft employeeEventsDraft;
 	private EmployeeDraft employeeDraft;
 	private EmployeeNewDraft employeeNewDraft;
@@ -1743,6 +1744,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	@Override
 	public void onActivitySelected(Activity activity) {
+//		DomainEnterprisesServiceAsync domainEnterprisesServiceAsync = DomainEnterprisesServiceAsync.newInstance();
+//		ActivityDraftObject activityDraftObject = new ActivityDraftObject(activity, domainEnterprisesServiceAsync);
+//		
+//		employeeDetail.setWidget(getActivityDraft());
+//		getActivityDraft().setActivityDraftObject(activityDraftObject);
+
 		int pos = employees.getVerticalScrollPosition();
 		jsf.setRerenderHandler( () -> employees.setVerticalScrollPosition(pos) );
 
@@ -2064,6 +2071,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		if (workplaceDraft == null)
 			workplaceDraft = new WorkplaceDraft();
 		return workplaceDraft;
+	}
+	
+	private ActivityDraft getActivityDraft() {
+		if (activityDraft == null)
+			activityDraft = new ActivityDraft();
+		return activityDraft;
 	}
 
 	private EmployeeEventsDraft getEmployeeEventsDraft() {
