@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.List;
 
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
+import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
@@ -43,5 +44,6 @@ public interface EnterprisesServiceAsync {
 	void setWorkplaceInfo(String domain, WorkplaceInfo workplaceInfo, AsyncCallback<WorkplaceInfo> asyncCallback);
 	void getWorkplaces(Integer workplaceId, String domain, AsyncCallback<List<Workplace>> asyncCallback);
 	void getActivitiesCCC(Integer workplaceId, String currentDomainName, AsyncCallback<ActivitiesCCC> asyncCallback);
+	void getActivityInfoDataBase(Integer activityId, String domain, AsyncCallback<ActivityInfo> asyncCallback);
 
 }

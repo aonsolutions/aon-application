@@ -72,7 +72,7 @@
 		}
 		
 		.columnWidth{
-			width: 200px;
+			width: 300px;
 		}
 		
 		.columnWidth2{
@@ -109,6 +109,10 @@
 		
 		.widthO{
 			width: 0px;
+		}
+		
+		.paddingTop{
+			padding-top: 2px;
 		}
 		
 	</ui:style>
@@ -154,7 +158,7 @@
 							    		<g:Label  styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Descripción</g:Label>
 							    	</td>
 							    	<td>
-							    		<g:TextBox ui:field="activityDescription" styleName='aon-inputText {style.textBoxWidth}'></g:TextBox>
+							    		<g:TextBox ui:field="activityDescription" styleName='aon-inputText {style.maxWidth}'></g:TextBox>
 							    	</td>
 							    </tr>
 							    <tr>
@@ -162,7 +166,7 @@
 							    		<g:Label  styleName='{style.requiredColor} {style.firstColumnTextStyle}'>CNAE2009</g:Label>
 							    	</td>
 							    	<td>
-							    		<g:ListBox ui:field="activityCNAE2009" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+							    		<g:SuggestBox ui:field="activityCNAE2009" styleName='aon-inputText {style.maxWidth}'></g:SuggestBox>
 							    	</td>
 							    </tr>
 							    <tr>

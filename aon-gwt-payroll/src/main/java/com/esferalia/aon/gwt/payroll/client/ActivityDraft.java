@@ -1,5 +1,9 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
+
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.google.gwt.core.client.GWT;
@@ -21,7 +25,9 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -46,13 +52,14 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 		String elementWidth95();
 		String hide();
 		String widthO();
+		String paddingTop();
 	}
 	
 	@UiField
 	TextBox activityDescription;
 	
 	@UiField
-	ListBox activityCNAE2009;
+	SuggestBox activityCNAE2009;
 	
 	@UiField
 	Label activityRegime;
@@ -100,22 +107,59 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 			insertNewRow();
 	}
 	
+	private ListBox createCCCRegimeListBox(){
+		ListBox cccRegime = new ListBox();
+		cccRegime.addItem("Principal");
+		cccRegime.addItem("Formacion y aprendizaje");
+		cccRegime.addItem("Aprendizaje");
+		cccRegime.addItem("Representantes de comercio");
+		cccRegime.addItem("Asimilados R.General");
+		cccRegime.addItem("Becarios");
+		cccRegime.addItem("Emploead@s de hogar");
+		cccRegime.addItem("Trabajadores cuenta ajena agrarios");
+		cccRegime.getElement().getElementsByTagName("option").getItem(2).setAttribute("disabled", "disabled");
+		cccRegime.addStyleName("aon-selectOneMenu");
+		cccRegime.addStyleName(style.elementWidth80());
+	
+		return cccRegime;
+	}
+	
+	private static String getCCCRegimeCode(Byte cccRegime) {
+		switch (cccRegime) {
+		case 0:
+			return "0111";
+		case 1:
+			return "0111";
+		case 2:
+			return "0111";
+		case 3:
+			return "0111";
+		case 4:
+			return "0111";
+		case 5:
+			return "0111";
+		case 6:
+			return "0138";
+		case 7:
+			return "0163";
+		default:
+			return "0111";
+		}
+	}
+	
 	private void insertNewRow() {
 		int row = cccDataTable.insertRow(0);
 		
 		Label id = new Label("");
 		
-		ListBox types = new ListBox();
-		types.addItem("Principal");
-		types.addItem("General");
-		types.addStyleName("aon-selectOneMenu");
-		types.addStyleName(style.elementWidth80());
+		ListBox types = createCCCRegimeListBox();
 		
 		Label geozone = new Label("");
 		geozone.addStyleName(style.elementWidth80());
 		
 		HorizontalPanel hPanel = new HorizontalPanel();
 		Label typeCode = new Label("0111");
+		typeCode.addStyleName(style.paddingTop());
 		Label accountStatus = new Label();
 		TextBox account = new TextBox();
 		account.setValue("");
@@ -131,7 +175,8 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 						accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
 						accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
 						newId--;
-						activityDraftObject.insertCCC(newId, typeCode.getText()+account.getValue(), (byte) types.getSelectedIndex(), province);
+						activityDraftObject.insertCCC(newId, account.getValue(), typeCode.getText(), account.getValue(), (byte) types.getSelectedIndex(), province);
+						initPreview();
 					}else {
 						accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
 						accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
@@ -143,6 +188,14 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 		hPanel.add(typeCode);
 		hPanel.add(account);
 		hPanel.add(accountStatus);
+		
+		types.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				String newCCCRegimeCode = getCCCRegimeCode((byte)types.getSelectedIndex());
+				typeCode.setText(newCCCRegimeCode);
+			}
+		});
 		
 		Button delete = new Button();
 		delete.setStyleName("aon-editDataTable-button aon-icon-delete");
@@ -200,7 +253,7 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 
 	private void fillActivityInfo() {
 		this.activityDescription.setValue(activityDraftObject.getActivityDescription());
-		this.activityCNAE2009.addItem(activityDraftObject.getActivityCNAE2009Name());
+		this.activityCNAE2009.setValue(activityDraftObject.getActivityCNAE2009());
 		this.activityRegime.setText(activityDraftObject.getActivityRegime());
 		this.activityActive.setValue(activityDraftObject.getActivityActive());
 	}
@@ -244,24 +297,58 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 			Label id = new Label();
 			id.setText(cccInfo.getCccId().toString());
 			
-			ListBox types = new ListBox();
-			types.addItem("Principal");
-			types.addItem("General");
-			types.addStyleName("aon-selectOneMenu");
-			types.addStyleName(style.elementWidth80());
+			ListBox types = createCCCRegimeListBox();
 			types.setSelectedIndex(cccInfo.getType());
-			
-			HorizontalPanel hPanel = new HorizontalPanel();
-			Label typeCode = new Label(cccInfo.getCcc().substring(0, 4));
-			TextBox account = new TextBox();
-			account.setValue(cccInfo.getCcc().substring(4, cccInfo.getCcc().length()));
-			account.addStyleName("aon-inputText");
-			account.addStyleName(style.elementWidth95());
-			hPanel.add(typeCode);
-			hPanel.add(account);
 			
 			Label geozone = new Label(cccInfo.getGeozone());
 			geozone.addStyleName(style.elementWidth80());
+			
+			HorizontalPanel hPanel = new HorizontalPanel();
+			Label typeCode = new Label(cccInfo.getCccRegimeCode());
+			typeCode.addStyleName(style.paddingTop());
+			Label accountStatus = new Label();
+			TextBox account = new TextBox();
+			account.setValue(cccInfo.getCcc());
+			account.addStyleName("aon-inputText");
+			account.addStyleName(style.elementWidth95());
+			account.addChangeHandler(new ChangeHandler() {
+				@Override
+				public void onChange(ChangeEvent event) {
+					if(account.getValue().length() >= 2) {
+						String province = ProvinceContract.getName(account.getValue().substring(0, 2));
+						if(null != province && checkCCC(account.getValue())) {
+							geozone.setText(province);
+							accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+							accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
+							activityDraftObject.insertCCC(cccInfo.getCccId(), account.getValue(), typeCode.getText(), account.getValue(), (byte) types.getSelectedIndex(), province);
+						}else {
+							accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
+							accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+						}
+						
+					}
+				}
+			});
+			hPanel.add(typeCode);
+			hPanel.add(account);
+			hPanel.add(accountStatus);
+			String province = ProvinceContract.getName(account.getValue().substring(0, 2));
+			if(null != province && checkCCC(account.getValue())) {
+				accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+				accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
+			}else {
+				accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
+				accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+			}
+			
+			types.addChangeHandler(new ChangeHandler() {
+				@Override
+				public void onChange(ChangeEvent event) {
+					String newCCCRegimeCode = getCCCRegimeCode((byte)types.getSelectedIndex());
+					typeCode.setText(newCCCRegimeCode);
+					activityDraftObject.insertCCC(cccInfo.getCccId(), account.getValue(), typeCode.getText(), account.getValue(), (byte) types.getSelectedIndex(), province);
+				}
+			});
 			
 			Button delete = new Button();
 			delete.setStyleName("aon-editDataTable-button aon-icon-delete");
@@ -314,14 +401,30 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 	public void setActivityDraftObject(ActivityDraftObject activityDraftObject) {
 		this.activityDraftObject = activityDraftObject;
 		this.newId = 0;
-		fillActivityInfo();
-		initPreview();
+		
+		this.activityDraftObject.initializeActivity(
+				r -> {
+					initSuggestBox();
+					fillActivityInfo();
+					initPreview();
+				}, t -> {}
+			);
+		
+	}
+
+	private void initSuggestBox() {
+		List<String> cnae2009Suggest = new ArrayList<String>();
+		for(Entry<String, String> entry : activityDraftObject.getAllCNAE2009().entrySet())
+			cnae2009Suggest.add(entry.getKey() + " - " + entry.getValue());
+	
+		MultiWordSuggestOracle orclCNAE2009 = (MultiWordSuggestOracle) this.activityCNAE2009.getSuggestOracle();
+		orclCNAE2009.addAll(cnae2009Suggest);
+		this.activityCNAE2009.setAutoSelectEnabled(false);
 	}
 
 	@Override
 	public void onContextMenu(ContextMenuEvent event) {
 		// TODO Auto-generated method stub
-		
 	}
 
 }

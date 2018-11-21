@@ -5,6 +5,8 @@ import java.io.Serializable;
 public class CCCInfo implements Serializable{
 	
 	private String ccc;
+	private String cccRegimeCode;
+	private String cccAccount;
 	private Byte type;
 	private String geozone;
 	private Integer activityId;
@@ -22,6 +24,17 @@ public class CCCInfo implements Serializable{
 		this.activityId = activityId;
 		this.cccId = cccId;
 	}
+	
+	public CCCInfo(String ccc, String cccRegime, String cccAccount, Byte type, String geozone, Integer activityId, Integer cccId) {
+		super();
+		this.ccc = ccc;
+		this.cccRegimeCode = cccRegime;
+		this.cccAccount = cccAccount;
+		this.type = type;
+		this.geozone = geozone;
+		this.activityId = activityId;
+		this.cccId = cccId;
+	}
 
 	public String getCcc() {
 		return ccc;
@@ -29,6 +42,22 @@ public class CCCInfo implements Serializable{
 
 	public void setCcc(String ccc) {
 		this.ccc = ccc;
+	}
+
+	public String getCccRegimeCode() {
+		return cccRegimeCode;
+	}
+
+	public void setCccRegimeCode(String cccRegimeCode) {
+		this.cccRegimeCode = cccRegimeCode;
+	}
+
+	public String getCccAccount() {
+		return cccAccount;
+	}
+
+	public void setCccAccount(String cccAccount) {
+		this.cccAccount = cccAccount;
 	}
 
 	public Byte getType() {

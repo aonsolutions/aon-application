@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.List;
 
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
+import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
@@ -132,6 +133,10 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getActivitiesCCC(workplaceId, getCurrentDomainName(), asyncCallback);
 	}
 	
+	public void getActivityInfoDataBase(Integer activityId, AsyncCallback<ActivityInfo> asyncCallback) {
+		enterprisesServiceAsync.getActivityInfoDataBase(activityId, getCurrentDomainName(), asyncCallback);
+	}
+	
 	// ----------------------------------------------------------------- static
 	
 	private static String getCurrentUser() {
@@ -141,7 +146,5 @@ public class DomainEnterprisesServiceAsync {
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
 	}
-
-	
 
 }

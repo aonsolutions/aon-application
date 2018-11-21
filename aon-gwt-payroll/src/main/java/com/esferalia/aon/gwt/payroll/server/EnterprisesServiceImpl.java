@@ -21,11 +21,13 @@ import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.client.EnterprisesService;
+import com.esferalia.aon.gwt.payroll.jooq.JooqActivity;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
 import com.esferalia.aon.gwt.payroll.jooq.JooqPayments;
 import com.esferalia.aon.gwt.payroll.jooq.JooqWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
+import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.BankAccount;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
@@ -1386,6 +1388,24 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			connection = AonServletUtils.getConnection(domain);
 			return JooqWorkplace.getActivitiesCCC(workplaceId, connection);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+		}
+	}
+
+	@Override
+	public ActivityInfo getActivityInfoDataBase(Integer activityId, String domain) {
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection(domain);
+			return JooqActivity.getActivity(activityId, connection);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		} finally {

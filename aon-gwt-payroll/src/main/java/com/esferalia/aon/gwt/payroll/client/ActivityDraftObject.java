@@ -1,31 +1,36 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Map;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ActivityDraftObject {
 	
 	private ActivityInfo activityInfo;
+	private DomainEnterprisesServiceAsync enterprisesService;
+	private Integer activityId;
 		
 	// ------------------------------------------------- CLASS METHODS -------------------------------------------------	
 	
-	public ActivityDraftObject(Activity activity, DomainEnterprisesServiceAsync domainEnterprisesServiceAsync) {
-		this.activityInfo = new ActivityInfo(true);
+	public ActivityDraftObject(Activity activity, DomainEnterprisesServiceAsync enterprisesService) {
+		this.enterprisesService = enterprisesService;
+		this.activityId = activity.getId();
 	}
 	
 	public String getActivityDescription() {
 		return this.activityInfo.getDescription();
 	}
 	
-	public Integer getActivityCNAE2009() {
-		return this.activityInfo.getCnae2009();
+	public String getActivityCNAE2009() {
+		return this.activityInfo.getCnae2009Code() + " - " + this.activityInfo.getCnae2009Title();
 	}
 	
-	public String getActivityCNAE2009Name() {
-		return "6201 - Actividades de programacion informatica";
+	public Map<String, String> getAllCNAE2009() {
+		return this.activityInfo.getAllCNAE2009();
 	}
 	
 	public String getActivityRegime() {
@@ -44,40 +49,31 @@ public class ActivityDraftObject {
 		this.activityInfo.deleteCCC(cccId);
 	}
 	
-	public void insertCCC(Integer cccId, String ccc, Byte type, String geozone) {
-		this.activityInfo.insertCCC(cccId, ccc, type, geozone);
+	public void insertCCC(Integer cccId, String ccc, String cccRegimeCode, String cccAccount, Byte type, String geozone) {
+		this.activityInfo.insertCCC(cccId, ccc, cccRegimeCode, cccAccount, type, geozone);
 	}
 	
 	
 
 	// ---------------------------------------------- DATABASE METHODS SYNC  ---------------------------------------------
 	
-//	public void initializeEmployee(Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure) {
-//		employeesService.getEmployeeInfoDataBase(this.employee.getId(), new AsyncCallback<EmployeeContractInfo>() {
-//			
-//			@Override
-//			public void onSuccess(EmployeeContractInfo result) {
-//				employeeContractData = result;
-//				employeeData = result.getEmployeeInfo();
-//				contractData = result.getContractInfo();
-//				
-//				new_employeeContractData = result;
-//				new_employeeData = result.getEmployeeInfo();
-//				new_contractData = result.getContractInfo();
-//
-//				getAgreements(
-//						r ->{success.accept(result);},
-//						f->{}
-//				);
-//			}
-//
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				failure.accept(caught);
-//			}
-//		});
-//	}
-//	
+	//Consumer<ActivityInfo> success, Consumer<Throwable> failure
+	public void initializeActivity(Consumer<ActivityInfo> success, Consumer<Throwable> failure) {
+		enterprisesService.getActivityInfoDataBase(this.activityId, new AsyncCallback<ActivityInfo>() {
+			
+			@Override
+			public void onSuccess(ActivityInfo result) {
+				activityInfo = result;
+				success.accept(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
 //	public void getActivitiesCCC(Consumer<ActivitiesCCC> success, Consumer<Throwable> failure) {
 //		enterprisesService.getActivitiesCCC(workplace.getId(), new AsyncCallback<ActivitiesCCC>() {
 //			

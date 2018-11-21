@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
+import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
@@ -220,5 +221,12 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.getActivitiesCCC(workplaceId, domain,
 				new AsyncCallbackWrapper<ActivitiesCCC>(callback));
+	}
+
+	@Override
+	public void getActivityInfoDataBase(Integer activityId, String domain, AsyncCallback<ActivityInfo> callback) {
+		AON.start();
+		enterprisesServiceAsync.getActivityInfoDataBase(activityId, domain,
+				new AsyncCallbackWrapper<ActivityInfo>(callback));
 	}
 }
