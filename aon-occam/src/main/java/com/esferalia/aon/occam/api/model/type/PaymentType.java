@@ -190,8 +190,13 @@ public enum PaymentType {
 		}
 	},
 	CRA_0055,
-	CRA_0056;
-	
+	CRA_0056,
+	CRA_0057, // CRA_0002
+	CRA_0058, // CRA_0002
+	CRA_0059, // CRA_0006
+	CRA_0060, // CRA_0006
+	CRA_0061  // CRA_0032
+	;
 	private boolean inBBC;
 	private boolean outBBC;
 	
