@@ -66,7 +66,6 @@
 		.scrollStyle {
 			position: absolute !important;
 			right: 5px !important;
-			bottom: 50px !important;
 		}
 
 		.tableStyle {
@@ -141,11 +140,6 @@
 						<g:HTMLPanel styleName="aon-finding-title">
 							<g:HTMLPanel styleName="aon-finding-title-internal {style.eventsStyle}">
 								<g:Label styleName="aon-outputText">Incidencias</g:Label>
-							</g:HTMLPanel>
-						</g:HTMLPanel>
-						<g:HTMLPanel styleName="aon-finding-subtitle">
-							<g:HTMLPanel styleName="aon-finding-subtitle-internal">
-								<g:Label styleName="aon-outputText"></g:Label>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HorizontalPanel styleName="aon-finding-toolbar">

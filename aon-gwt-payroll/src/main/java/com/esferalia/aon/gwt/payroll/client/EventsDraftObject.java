@@ -185,6 +185,7 @@ public class EventsDraftObject {
 	private ArrayList<String> employeeContractVariablesDB;
 	
 	private Integer workplaceId;
+	private Integer agreementId;
 
 	public UndoManager<Undoable> undoManager;
 	
@@ -198,6 +199,7 @@ public class EventsDraftObject {
 		this.draftMapEventsObject = new HashMap<Integer, Map<String, ArrayList<EmployeeEventsVariable>>>();
 		
 		this.workplaceId = workplaceId;
+		this.agreementId = agreeementId;
 		this.employeesServiceAsync = employeesServiceAsync;
 		
 		this.workplaceEmployees = new ArrayList<>();
@@ -258,226 +260,194 @@ public class EventsDraftObject {
 		});
 	}
 	
-	public void initializeDBEventsVariables(int year, Consumer<ContextDescriptor> success, Consumer<Throwable> failure) {
+	public void initializeDBEventsVariables(int year, Consumer<Map<String,String>> success, Consumer<Throwable> failure) {
 		
-		for(Integer employeeId : getEmployeesId()){
-			
-			Map<String, ArrayList<EmployeeEventsVariable>> mapEmployeeEventsVar = new HashMap<String, ArrayList<EmployeeEventsVariable>>();
-			
-			employeesServiceAsync.getEmployeeEventsVariables(employeeId, new Date(year,0,1), new Date(year,11,31), 
-			new AsyncCallback<ContextDescriptor>() {
-			
-				@Override
-				public void onSuccess(ContextDescriptor context) {
-					
-					contWorkplaceEmployeesId++;
-					
-					employeeContractVariables.clear();
-					
-//					createAllVariables("DIAS_VACACIONES");
-//					createAllVariables("DIAS_AUSENCIA");
-//					createAllVariables("DIAS_HUELGA");
-//					createAllVariables("DIAS_ERE");
-					createAllVariables("HORAS_EXTRAS");
-					createAllVariables("HORAS_COMPLEMENTARIAS");
-					
-					//Lista con las variables a descargar de la base de datos
-//					employeeContractVariablesDB.add("DIAS_VACACIONES");
-//					employeeContractVariablesDB.add("DIAS_AUSENCIA");
-//					employeeContractVariablesDB.add("DIAS_HUELGA");
-//					employeeContractVariablesDB.add("DIAS_ERE");
-					employeeContractVariablesDB.add("HORAS_EXTRAS");
-					employeeContractVariablesDB.add("HORAS_COMPLEMENTARIAS");
-					employeeContractVariablesDB.add("IMPORTE_HORA_EXTRA");
-					employeeContractVariablesDB.add("VENTAS");
+		Map<String, ArrayList<EmployeeEventsVariable>> mapEmployeeEventsVar = new HashMap<String, ArrayList<EmployeeEventsVariable>>();
 		
-					for (String varName : context.getVariables()){
-						ArrayList<EmployeeEventsVariable> varList = new ArrayList<EmployeeEventsVariable>();
-						createAllVariables(varName);
-						if(context.getList(varName).isEmpty()){
-							mapEmployeeEventsVar.put(varName, varList);
-							continue;
-						}
-						for (VariableDescriptor var : context.getList(varName)){
-							Date startDate = var.getStartDate();
-							Date endDate = var.getEndDate();
-							Double value = Double.valueOf(var.getValue());
-							if(startDate.getMonth() == endDate.getMonth()){
-								EmployeeEventsVariable eVar = new EmployeeEventsVariable(startDate, endDate, value);
-								varList.add(eVar);
-							}else{
-								for(int i = startDate.getMonth(); i <= endDate.getMonth(); i++){
-									Date auxStartDate = new Date(startDate.getYear(), i, 1);
-									Date auxEndDate = new Date(startDate.getYear(), i+1, 0);
-									EmployeeEventsVariable eVar = new EmployeeEventsVariable(auxStartDate, auxEndDate, value);
-									varList.add(eVar);
-								}
-							}
-						}
-						sortListByStartDate(varList);
-											
-						mapEmployeeEventsVar.put(varName, varList);
-					}
-					
-					initializeDBCalendar(employeeId, mapEmployeeEventsVar, 
-							s -> { 
-									if(getEmployeesId().size() == contWorkplaceEmployeesId){
-										success.accept(context);
-									}
-								}, 
-							f -> {}
-					);
-					
+		employeesServiceAsync.getEventsVariables(workplaceId, agreementId, new Date(year,0,1), new Date(year,11,31), new AsyncCallback<Map<String,String>>() {
+			
+			@Override
+			public void onSuccess(Map<String, String> result) {
+				contWorkplaceEmployeesId++;
+				employeeContractVariables.clear();
+				
+				createAllVariables("HORAS_EXTRAS");
+				createAllVariables("HORAS_COMPLEMENTARIAS");
+				
+				//Lista con las variables a descargar de la base de datos
+				employeeContractVariablesDB.add("HORAS_EXTRAS");
+				employeeContractVariablesDB.add("HORAS_COMPLEMENTARIAS");
+				employeeContractVariablesDB.add("IMPORTE_HORA_EXTRA");
+				employeeContractVariablesDB.add("VENTAS");
+				
+				for(Entry<String, String> entry : result.entrySet()){
+					createAllVariables(entry.getKey());
+					ArrayList<EmployeeEventsVariable> varList = new ArrayList<EmployeeEventsVariable>();
+					mapEmployeeEventsVar.put(entry.getKey(), varList);
 				}
 				
-				private void createAllVariables(String var) {
-					employeeContractVariables.add(var);
-					allVariables.add(var);	
-				}
-
+				initializeDBCalendar(mapEmployeeEventsVar, 
+						s -> { 
+								success.accept(result);
+							}, 
+						f -> {}
+				);
+			}
+			
+			private void createAllVariables(String var) {
+				employeeContractVariables.add(var);
+				allVariables.add(var);	
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+			}
+		});
+	}
+	
+	public void initializeDBCalendar(Map<String, ArrayList<EmployeeEventsVariable>> mapEmployeeEventsVar, Consumer<EmployeeEventsData> success, Consumer<Throwable> failure) {
+		
+		for(Integer employeeId : getEmployeesId()){
+		
+			employeesServiceAsync.getEmployeeEvents(employeeId, this.employeeContractVariablesDB, new AsyncCallback<EmployeeEventsData>(){
+	
 				@Override
 				public void onFailure(Throwable caught) {
 					failure.accept(caught);
 				}
-			});	
-		}
-	}
 	
-	public void initializeDBCalendar(int employeeId, Map<String, ArrayList<EmployeeEventsVariable>> mapEmployeeEventsVar, Consumer<EmployeeEventsData> success, Consumer<Throwable> failure) {
-		
-		employeesServiceAsync.getEmployeeEvents(employeeId, this.employeeContractVariablesDB, new AsyncCallback<EmployeeEventsData>(){
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-
-			@Override
-			public void onSuccess(EmployeeEventsData result) {
-				
-				for (Entry<String, ArrayList<Quartet<java.sql.Date, java.sql.Date, String, String>>> entry : result.getContractEventsList().entrySet()){
+				@Override
+				public void onSuccess(EmployeeEventsData result) {
 					
-					String varName = entry.getKey();
-					ArrayList<EmployeeEventsVariable> varList = new ArrayList<EmployeeEventsVariable>();
+					contWorkplaceEmployeesId++;
 					
-					if(!entry.getValue().isEmpty()){
-						for(Quartet<java.sql.Date, java.sql.Date, String, String> quarter : entry.getValue()){
-							Date startDate = DateUtils.copyDateOnly(quarter.getStartDate());
-							Date endDate = null;
-							if(null != quarter.getEndDate())
-								endDate = DateUtils.copyDateOnly(quarter.getEndDate());
-							else{ //TODO: MIRAR BIEN QUE HACER CUANDO ENDDATE ES NULL
-								endDate = DateUtils.copyDateOnly(new Date((quarter.getStartDate().getYear()+1),quarter.getStartDate().getMonth(),quarter.getStartDate().getDate()));
-							}
-							Double value = Double.parseDouble(quarter.getExpression());
-							if(startDate.getMonth() == endDate.getMonth() && startDate.getYear() == endDate.getMonth()){
-								EmployeeEventsVariable eVar = new EmployeeEventsVariable(startDate, endDate, value);
-								varList.add(eVar);
-							}else{
-								for(Date date = startDate; date.before(endDate); DateUtils.addMonths2Date(date, 1)){
-									Date auxStartDate = new Date(date.getYear(), date.getMonth(), 1);
-									Date auxEndDate = new Date(date.getYear(), date.getMonth()+1, 0);
-									EmployeeEventsVariable eVar = new EmployeeEventsVariable(auxStartDate, auxEndDate, value);
+					for (Entry<String, ArrayList<Quartet<java.sql.Date, java.sql.Date, String, String>>> entry : result.getContractEventsList().entrySet()){
+						
+						String varName = entry.getKey();
+						ArrayList<EmployeeEventsVariable> varList = new ArrayList<EmployeeEventsVariable>();
+						
+						if(!entry.getValue().isEmpty()){
+							for(Quartet<java.sql.Date, java.sql.Date, String, String> quarter : entry.getValue()){
+								Date startDate = DateUtils.copyDateOnly(quarter.getStartDate());
+								Date endDate = null;
+								if(null != quarter.getEndDate())
+									endDate = DateUtils.copyDateOnly(quarter.getEndDate());
+								else{ //TODO: MIRAR BIEN QUE HACER CUANDO ENDDATE ES NULL
+									endDate = DateUtils.copyDateOnly(new Date((quarter.getStartDate().getYear()+1),quarter.getStartDate().getMonth(),quarter.getStartDate().getDate()));
+								}
+								Double value = Double.parseDouble(quarter.getExpression());
+								if(startDate.getMonth() == endDate.getMonth() && startDate.getYear() == endDate.getMonth()){
+									EmployeeEventsVariable eVar = new EmployeeEventsVariable(startDate, endDate, value);
 									varList.add(eVar);
+								}else{
+									for(Date date = startDate; date.before(endDate); DateUtils.addMonths2Date(date, 1)){
+										Date auxStartDate = new Date(date.getYear(), date.getMonth(), 1);
+										Date auxEndDate = new Date(date.getYear(), date.getMonth()+1, 0);
+										EmployeeEventsVariable eVar = new EmployeeEventsVariable(auxStartDate, auxEndDate, value);
+										varList.add(eVar);
+									}
 								}
 							}
+							sortListByStartDate(varList);
 						}
-						sortListByStartDate(varList);
+						
+						mapEmployeeEventsVar.put(varName, varList);
 					}
 					
-					mapEmployeeEventsVar.put(varName, varList);
+					modifyMapEventsVar();
+					
+					mapEventsObject.get(employeeId).putAll(mapEmployeeEventsVar);
+					
+					if(getEmployeesId().size() == contWorkplaceEmployeesId){
+						success.accept(result);
+					}
 				}
-				
-				modifyMapEventsVar();
-				
-				mapEventsObject.get(employeeId).putAll(mapEmployeeEventsVar);
-				
-				success.accept(result);
-			}
-
-			private void modifyMapEventsVar() {
-				for (String varName: mapEmployeeEventsVar.keySet()){
-					ArrayList<EmployeeEventsVariable> eventVarList = mapEmployeeEventsVar.get(varName);
-					if(varName.contains("DIAS")){
-						ArrayList<EmployeeEventsVariable> newEventVarList = groupDays(varName, eventVarList);
-						mapEmployeeEventsVar.put(varName, newEventVarList);
-					}else{
-						ArrayList<EmployeeEventsVariable> newEventVarList = checkDuplicateMonths(eventVarList);
-						mapEmployeeEventsVar.put(varName, newEventVarList);
-					}	
+	
+				private void modifyMapEventsVar() {
+					for (String varName: mapEmployeeEventsVar.keySet()){
+						ArrayList<EmployeeEventsVariable> eventVarList = mapEmployeeEventsVar.get(varName);
+						if(varName.contains("DIAS")){
+							ArrayList<EmployeeEventsVariable> newEventVarList = groupDays(varName, eventVarList);
+							mapEmployeeEventsVar.put(varName, newEventVarList);
+						}else{
+							ArrayList<EmployeeEventsVariable> newEventVarList = checkDuplicateMonths(eventVarList);
+							mapEmployeeEventsVar.put(varName, newEventVarList);
+						}	
+					}
 				}
-			}
-
-			private ArrayList<EmployeeEventsVariable> checkDuplicateMonths(ArrayList<EmployeeEventsVariable> eventVarList) {
-				ArrayList<EmployeeEventsVariable> newEventsList = new ArrayList<>();
-				int i = 0;
-				while(i < eventVarList.size()){
-					if(i+1 < eventVarList.size()){
-						if(eventVarList.get(i).getStartDate().getMonth() == eventVarList.get(i+1).getStartDate().getMonth()){
-							newEventsList.add(eventVarList.get(i+1));
-							i+=2;
+	
+				private ArrayList<EmployeeEventsVariable> checkDuplicateMonths(ArrayList<EmployeeEventsVariable> eventVarList) {
+					ArrayList<EmployeeEventsVariable> newEventsList = new ArrayList<>();
+					int i = 0;
+					while(i < eventVarList.size()){
+						if(i+1 < eventVarList.size()){
+							if(eventVarList.get(i).getStartDate().getMonth() == eventVarList.get(i+1).getStartDate().getMonth()){
+								newEventsList.add(eventVarList.get(i+1));
+								i+=2;
+							}else{
+								newEventsList.add(eventVarList.get(i));
+								i++;
+							}
 						}else{
 							newEventsList.add(eventVarList.get(i));
 							i++;
-						}
-					}else{
-						newEventsList.add(eventVarList.get(i));
-						i++;
-					}		
+						}		
+					}
+					
+					return newEventsList;
 				}
-				
-				return newEventsList;
-			}
-
-			private ArrayList<EmployeeEventsVariable> groupDays(String varName, ArrayList<EmployeeEventsVariable> eventVarList) {
-				Double days = 0.00;
-				ArrayList<EmployeeEventsVariable> newEventsList = new ArrayList<>();
-				int i = 0;
-				while(i < eventVarList.size()){
-					if(i+1 < eventVarList.size()){
-						if(eventVarList.get(i).getStartDate().getMonth() == eventVarList.get(i+1).getStartDate().getMonth()){
-							days += eventVarList.get(i).getValue();
-							i++;
+	
+				private ArrayList<EmployeeEventsVariable> groupDays(String varName, ArrayList<EmployeeEventsVariable> eventVarList) {
+					Double days = 0.00;
+					ArrayList<EmployeeEventsVariable> newEventsList = new ArrayList<>();
+					int i = 0;
+					while(i < eventVarList.size()){
+						if(i+1 < eventVarList.size()){
+							if(eventVarList.get(i).getStartDate().getMonth() == eventVarList.get(i+1).getStartDate().getMonth()){
+								days += eventVarList.get(i).getValue();
+								i++;
+							}else{
+								EmployeeEventsVariable eVar;
+								if(days == 0)
+									 eVar = new EmployeeEventsVariable(
+										DateUtils.getFirstDayOfMonth(eventVarList.get(i).getStartDate()), 
+										DateUtils.getLastDayOfMonth(eventVarList.get(i).getStartDate()),
+										eventVarList.get(i).getValue());
+								else{
+									eVar = new EmployeeEventsVariable(
+											DateUtils.getFirstDayOfMonth(eventVarList.get(i).getStartDate()), 
+											DateUtils.getLastDayOfMonth(eventVarList.get(i).getStartDate()),
+											days);
+									days = 0.00;
+								}
+								newEventsList.add(eVar);
+								i++;
+							}
 						}else{
-							EmployeeEventsVariable eVar;
-							if(days == 0)
-								 eVar = new EmployeeEventsVariable(
-									DateUtils.getFirstDayOfMonth(eventVarList.get(i).getStartDate()), 
-									DateUtils.getLastDayOfMonth(eventVarList.get(i).getStartDate()),
-									eventVarList.get(i).getValue());
-							else{
-								eVar = new EmployeeEventsVariable(
+							if(days != 0){
+								days += eventVarList.get(i).getValue();
+								EmployeeEventsVariable eVar = new EmployeeEventsVariable(
 										DateUtils.getFirstDayOfMonth(eventVarList.get(i).getStartDate()), 
 										DateUtils.getLastDayOfMonth(eventVarList.get(i).getStartDate()),
 										days);
 								days = 0.00;
+								newEventsList.add(eVar);
+								i++;
+							}else{
+								EmployeeEventsVariable eVar = new EmployeeEventsVariable(
+										DateUtils.getFirstDayOfMonth(eventVarList.get(i).getStartDate()), 
+										DateUtils.getLastDayOfMonth(eventVarList.get(i).getStartDate()),
+										eventVarList.get(i).getValue());
+								newEventsList.add(eVar);
+								i++;
 							}
-							newEventsList.add(eVar);
-							i++;
-						}
-					}else{
-						if(days != 0){
-							days += eventVarList.get(i).getValue();
-							EmployeeEventsVariable eVar = new EmployeeEventsVariable(
-									DateUtils.getFirstDayOfMonth(eventVarList.get(i).getStartDate()), 
-									DateUtils.getLastDayOfMonth(eventVarList.get(i).getStartDate()),
-									days);
-							days = 0.00;
-							newEventsList.add(eVar);
-							i++;
-						}else{
-							EmployeeEventsVariable eVar = new EmployeeEventsVariable(
-									DateUtils.getFirstDayOfMonth(eventVarList.get(i).getStartDate()), 
-									DateUtils.getLastDayOfMonth(eventVarList.get(i).getStartDate()),
-									eventVarList.get(i).getValue());
-							newEventsList.add(eVar);
-							i++;
-						}
-					}		
+						}		
+					}
+					return newEventsList;
 				}
-				return newEventsList;
-			}
-		});
+			});
+		}
 	}
 	
 	private void sortListByStartDate(ArrayList<EmployeeEventsVariable> list){
