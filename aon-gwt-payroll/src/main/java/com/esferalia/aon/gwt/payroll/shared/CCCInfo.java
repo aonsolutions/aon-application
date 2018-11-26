@@ -11,6 +11,7 @@ public class CCCInfo implements Serializable{
 	private String geozone;
 	private Integer activityId;
 	private Integer cccId;
+	private Boolean useByContracts;
 	
 	public CCCInfo(){
 		super();
@@ -25,7 +26,7 @@ public class CCCInfo implements Serializable{
 		this.cccId = cccId;
 	}
 	
-	public CCCInfo(String ccc, String cccRegime, String cccAccount, Byte type, String geozone, Integer activityId, Integer cccId) {
+	public CCCInfo(String ccc, String cccRegime, String cccAccount, Byte type, String geozone, Integer activityId, Integer cccId, Boolean useByContracts) {
 		super();
 		this.ccc = ccc;
 		this.cccRegimeCode = cccRegime;
@@ -34,6 +35,7 @@ public class CCCInfo implements Serializable{
 		this.geozone = geozone;
 		this.activityId = activityId;
 		this.cccId = cccId;
+		this.useByContracts = useByContracts;
 	}
 
 	public String getCcc() {
@@ -100,4 +102,12 @@ public class CCCInfo implements Serializable{
 		this.cccId = cccId;
 	}
 
+	public Boolean isUseByContracts() {
+		return useByContracts;
+	}
+
+	public void setUseByContracts(Boolean useByContracts) {
+		this.useByContracts = useByContracts;
+	}
+	
 }

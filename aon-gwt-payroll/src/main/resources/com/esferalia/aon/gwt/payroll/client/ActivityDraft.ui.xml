@@ -115,6 +115,11 @@
 			padding-top: 2px;
 		}
 		
+		.dateBoxStyle{
+			width: 200px !important;
+			text-align: center !important;
+		}
+		
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX">
@@ -167,6 +172,22 @@
 							    	</td>
 							    	<td>
 							    		<g:SuggestBox ui:field="activityCNAE2009" styleName='aon-inputText {style.maxWidth}'></g:SuggestBox>
+							    	</td>
+							    </tr>
+							    <tr>
+							    	<td style="background-color: #eaeaea; width: 200px;">
+							    		<g:Label styleName='{style.firstColumnTextStyle}'>Fecha inicio</g:Label>
+							    	</td>
+							    	<td>
+							    		<a:DateBoxEx ui:field="startDate" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle}'></a:DateBoxEx>
+							    	</td>
+							    </tr>
+							    <tr>
+							    	<td style="background-color: #eaeaea; width: 200px;">
+							    		<g:Label styleName='{style.firstColumnTextStyle}'>Fecha fin</g:Label>
+							    	</td>
+							    	<td>
+							    		<a:DateBoxEx ui:field="endDate" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle}'></a:DateBoxEx>
 							    	</td>
 							    </tr>
 							    <tr>

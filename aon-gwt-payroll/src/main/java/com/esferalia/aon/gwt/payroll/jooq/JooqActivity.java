@@ -41,6 +41,7 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
+import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
@@ -60,6 +61,14 @@ public class JooqActivity {
 		return getActivityInfoDB(activityId, DSL.using(conn, getDefaultSettings()));
 	}
 
+	public static ActivityInfo updateActivity(ActivityInfo activityInfo, Connection conn) {
+		return updateActivityInfoDB(activityInfo, DSL.using(conn, getDefaultSettings()));
+	}
+	
+	public static ActivityInfo createActivity(ActivityInfo activityInfo, Connection conn) {
+		return createActivityInfoDB(activityInfo, DSL.using(conn, getDefaultSettings()));
+	}
+	
 	protected static Settings getDefaultSettings() {
 		if (SETTINGS == null) {
 			SETTINGS = new Settings();
@@ -85,9 +94,12 @@ public class JooqActivity {
 				.fetchOne();
 		
 		String description = enterpriseActivity.get(ENTERPRISE_ACTIVITY.DESCRIPTION);
+		Integer enterprise = enterpriseActivity.get(ENTERPRISE_ACTIVITY.ENTERPRISE);
 		Integer domain = enterpriseActivity.get(ENTERPRISE_ACTIVITY.DOMAIN);
 		Integer cnae2009Id = enterpriseActivity.get(ENTERPRISE_ACTIVITY.CNAE2009);
-		Byte regime = enterpriseActivity.get(ENTERPRISE_ACTIVITY.VAT_REGIME);
+		Date startDate = enterpriseActivity.get(ENTERPRISE_ACTIVITY.START_DATE);
+		Date endDate = enterpriseActivity.get(ENTERPRISE_ACTIVITY.END_DATE);
+		Byte regime = (byte) 0;
 		Byte principal = enterpriseActivity.get(ENTERPRISE_ACTIVITY.PRINCIPAL);
 		
 		//ENTERPRISE_ACTIVITY_CNAE2009
@@ -101,10 +113,13 @@ public class JooqActivity {
 		//SET ACTIVITY INFO
 		activityInfo.setId(activityId);
 		activityInfo.setDescription(description);
+		activityInfo.setEnterprise(enterprise);
 		activityInfo.setDomain(domain);
 		activityInfo.setCnae2009Code(cnae2009Code);
 		activityInfo.setCnae2009Title(cnae2009Title);
 		activityInfo.setRegime(getRegimeNameByType(regime));
+		activityInfo.setStartDate(startDate);
+		activityInfo.setEndDate(endDate);
 		activityInfo.setActive((principal == 0) ? false : true);
 		
 		//ENTERPRISE_CCC
@@ -119,6 +134,16 @@ public class JooqActivity {
 			String cccRegimeCode = getCCCRegimeCode(cccRegime);
 			Integer geozoneId = r.get(ENTERPRISE_CCC.GEOZONE);
 			
+			Boolean useByContracts = false;
+			
+			Result<Record> contractRecord = dslContext.select().from(CONTRACT)
+					.where(CONTRACT.ENTERPRISE_CCC.eq(cccId))
+					.and(CONTRACT.ID.greaterThan(0))
+					.fetch();
+			
+			if(null != contractRecord && !contractRecord.isEmpty())
+				useByContracts = true;
+			
 			Result<Record> geozoneName = dslContext.select()
 					.from(GEOZONE)
 					.where(GEOZONE.ID.eq(geozoneId))
@@ -127,7 +152,131 @@ public class JooqActivity {
 			
 			String geozone = geozoneName.get(0).get(GEOZONE.NAME);
 			
-			activityInfo.insertCCC(cccId, ccc, cccRegimeCode, ccc, cccRegime, geozone);
+			activityInfo.insertCCC(cccId, ccc, cccRegimeCode, ccc, cccRegime, geozone, useByContracts);
+		}
+		
+		return activityInfo;
+	}
+	
+	private static ActivityInfo updateActivityInfoDB(ActivityInfo activityInfo, DSLContext dslContext) {
+		
+		//CNAE2009
+		Integer cnae2009Id;
+		
+		Record cnae2009Record = dslContext.select().from(CNAE2009)
+				.where(CNAE2009.CODE.eq(activityInfo.getCnae2009Code()))
+				.fetchOne();
+		
+		cnae2009Id = cnae2009Record.get(CNAE2009.ID);
+		
+		//ENTERPRISE_ACTIVITY
+		
+			//Check if this activity is principal
+			if(activityInfo.getActive())
+				dslContext.update(ENTERPRISE_ACTIVITY)
+					.set(ENTERPRISE_ACTIVITY.PRINCIPAL, (byte)0)
+					.where(ENTERPRISE_ACTIVITY.ENTERPRISE.eq(activityInfo.getEnterprise()))
+					.execute();
+		
+		
+		dslContext.update(ENTERPRISE_ACTIVITY)
+			.set(ENTERPRISE_ACTIVITY.DESCRIPTION, activityInfo.getDescription())
+			.set(ENTERPRISE_ACTIVITY.CNAE2009, cnae2009Id)
+//			.set(ENTERPRISE_ACTIVITY.VAT_REGIME, (byte) 0)
+			.set(ENTERPRISE_ACTIVITY.START_DATE, (null == activityInfo.getStartDate()) ? null : new Date(activityInfo.getStartDate().getTime()))
+			.set(ENTERPRISE_ACTIVITY.END_DATE, (null == activityInfo.getEndDate()) ? null : new Date(activityInfo.getEndDate().getTime()))
+			.set(ENTERPRISE_ACTIVITY.PRINCIPAL, activityInfo.getActive() == false ? (byte)0 : (byte)1)
+			.where(ENTERPRISE_ACTIVITY.ID.eq(activityInfo.getId()))
+			.execute();
+		
+		//ENTERPRISE_CCC
+		for(Integer cccId : activityInfo.getDeleteCccs().keySet())
+			dslContext.delete(ENTERPRISE_CCC)
+				.where(ENTERPRISE_CCC.ID.eq(cccId))
+				.execute();
+		
+		for(Entry<Integer, CCCInfo> entry : activityInfo.getCccs().entrySet()) {
+			Integer cccId = entry.getKey();
+			CCCInfo cccInfo = entry.getValue();
+			
+			Result<Record> geozoneRecords = dslContext.select().from(GEOZONE)
+					.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
+					.fetch();
+			
+			Integer geozoneId = 0;
+			if(null == geozoneRecords || geozoneRecords.isEmpty()) {
+				//TODO: No existe este geozone
+			}else {
+				geozoneId = geozoneRecords.get(0).get(GEOZONE.ID);
+			}
+			
+			if(cccId >= 0) {
+				dslContext.update(ENTERPRISE_CCC)
+					.set(ENTERPRISE_CCC.CCC, cccInfo.getCcc())
+					.set(ENTERPRISE_CCC.TYPE, cccInfo.getType())
+					.set(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY, activityInfo.getId())
+					.set(ENTERPRISE_CCC.GEOZONE, geozoneId)
+					.execute();
+			}else {
+				dslContext.insertInto(ENTERPRISE_CCC, ENTERPRISE_CCC.DOMAIN, ENTERPRISE_CCC.CCC, ENTERPRISE_CCC.TYPE, ENTERPRISE_CCC.ENTERPRISE_ACTIVITY, ENTERPRISE_CCC.GEOZONE)
+					.values(activityInfo.getDomain(), cccInfo.getCcc(), cccInfo.getType(), activityInfo.getId(), geozoneId)
+					.execute();
+			}
+			
+		}
+		
+		return activityInfo;
+	}
+	
+	private static ActivityInfo createActivityInfoDB(ActivityInfo activityInfo, DSLContext dslContext) {
+		
+		//CNAE2009
+		Integer cnae2009Id;
+		
+		Record cnae2009Record = dslContext.select().from(CNAE2009)
+				.where(CNAE2009.CODE.eq(activityInfo.getCnae2009Code()))
+				.fetchOne();
+		
+		cnae2009Id = cnae2009Record.get(CNAE2009.ID);
+		
+		//ENTERPRISE_ACTIVITY
+		
+			//Check if this activity is principal
+			if(activityInfo.getActive())
+				dslContext.update(ENTERPRISE_ACTIVITY)
+					.set(ENTERPRISE_ACTIVITY.PRINCIPAL, (byte)0)
+					.where(ENTERPRISE_ACTIVITY.ENTERPRISE.eq(activityInfo.getEnterprise()))
+					.execute();
+		
+		dslContext.insertInto(ENTERPRISE_ACTIVITY)
+			.set(ENTERPRISE_ACTIVITY.DOMAIN, activityInfo.getDomain())
+			.set(ENTERPRISE_ACTIVITY.DESCRIPTION, activityInfo.getDescription())
+			.set(ENTERPRISE_ACTIVITY.ENTERPRISE, activityInfo.getEnterprise())
+			.set(ENTERPRISE_ACTIVITY.TYPE, (byte)0)
+			.set(ENTERPRISE_ACTIVITY.CNAE2009, cnae2009Id)
+			.set(ENTERPRISE_ACTIVITY.START_DATE, (null == activityInfo.getStartDate()) ? null : new Date(activityInfo.getStartDate().getTime()))
+			.set(ENTERPRISE_ACTIVITY.END_DATE, (null == activityInfo.getEndDate()) ? null : new Date(activityInfo.getEndDate().getTime()))
+			.set(ENTERPRISE_ACTIVITY.PRINCIPAL, (activityInfo.getActive() == false) ? (byte)0 : (byte)1)
+			.execute();
+		
+		//ENTERPRISE_CCC
+		for(Entry<Integer, CCCInfo> entry : activityInfo.getCccs().entrySet()) {
+			CCCInfo cccInfo = entry.getValue();
+			
+			Result<Record> geozoneRecords = dslContext.select().from(GEOZONE)
+					.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
+					.fetch();
+			
+			Integer geozoneId = 0;
+			if(null == geozoneRecords || geozoneRecords.isEmpty()) {
+				//TODO: No existe este geozone
+			}else {
+				geozoneId = geozoneRecords.get(0).get(GEOZONE.ID);
+			}
+			
+			dslContext.insertInto(ENTERPRISE_CCC, ENTERPRISE_CCC.DOMAIN, ENTERPRISE_CCC.CCC, ENTERPRISE_CCC.TYPE, ENTERPRISE_CCC.ENTERPRISE_ACTIVITY, ENTERPRISE_CCC.GEOZONE)
+				.values(activityInfo.getDomain(), cccInfo.getCcc(), cccInfo.getType(), activityInfo.getId(), geozoneId)
+				.execute();
 		}
 		
 		return activityInfo;

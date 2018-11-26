@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,27 +9,23 @@ public class ActivityInfo implements Serializable{
 
 	private Integer id;
 	private Integer domain;
+	private Integer enterprise;
 	private String description;
 	private String cnae2009Code;
 	private String cnae2009Title;
 	private String regime;
+	private Date startDate;
+	private Date endDate;
 	private Boolean active;
 	
 	private Map<Integer, CCCInfo> cccs = new HashMap<>();
+	private Map<Integer, CCCInfo> deleteCCCs = new HashMap<>();
 	private Map<String, String> allCNAE2009 = new HashMap<>();
 	
 	public ActivityInfo() {
 		super();
 	}
 	
-	public ActivityInfo(Boolean test) {
-		if(test) {
-			cccs.put(1, new CCCInfo("01110100000", (byte)0, "ARABA/ALAVA", 1147, 1));
-			cccs.put(2, new CCCInfo("01112800000", (byte)0, "MADRID", 1147, 2));
-			cccs.put(3, new CCCInfo("01110100000", (byte)0, "GIPUZKUA", 1147, 3));
-		}
-	}
-
 	public Integer getId() {
 		return id;
 	}
@@ -43,6 +40,14 @@ public class ActivityInfo implements Serializable{
 
 	public void setDomain(Integer domain) {
 		this.domain = domain;
+	}
+	
+	public Integer getEnterprise() {
+		return this.enterprise;
+	}
+	
+	public void setEnterprise(Integer enterprise) {
+		this.enterprise = enterprise;
 	}
 
 	public String getDescription() {
@@ -77,6 +82,22 @@ public class ActivityInfo implements Serializable{
 		this.regime = regime;
 	}
 
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
 	public Boolean getActive() {
 		return active;
 	}
@@ -92,13 +113,25 @@ public class ActivityInfo implements Serializable{
 	public void setCccs(Map<Integer, CCCInfo> cccs) {
 		this.cccs = cccs;
 	}
+	
+	public Map<Integer, CCCInfo> getDeleteCccs() {
+		return deleteCCCs;
+	}
 
 	public void deleteCCC(Integer cccId) {
+		CCCInfo cccInfo = this.cccs.get(cccId);
+		this.deleteCCCs.put(cccId, cccInfo);
 		this.cccs.remove(cccId);
 	}
 
+	public void insertCCC(Integer cccId, String ccc, String cccRegime, String cccAccount, Byte type, String geozone, Boolean useByContracts) {
+		this.cccs.put(cccId, new CCCInfo(ccc, cccRegime, cccAccount, type, geozone, getId(), cccId, useByContracts));
+	}
+	
 	public void insertCCC(Integer cccId, String ccc, String cccRegime, String cccAccount, Byte type, String geozone) {
-		this.cccs.put(cccId, new CCCInfo(ccc, cccRegime, cccAccount, type, geozone, getId(), cccId));
+		Boolean useByContracts = this.cccs.get(cccId).isUseByContracts();
+		
+		this.cccs.put(cccId, new CCCInfo(ccc, cccRegime, cccAccount, type, geozone, getId(), cccId, useByContracts));
 	}
 
 	public Map<String, String> getAllCNAE2009() {

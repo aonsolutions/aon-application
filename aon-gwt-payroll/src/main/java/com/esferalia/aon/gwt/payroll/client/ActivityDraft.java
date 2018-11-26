@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.google.gwt.core.client.GWT;
@@ -63,6 +64,12 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 	
 	@UiField
 	Label activityRegime;
+	
+	@UiField
+	DateBoxEx startDate;
+	
+	@UiField
+	DateBoxEx endDate;
 	
 	@UiField
 	CheckBox activityActive;
@@ -175,7 +182,7 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 						accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
 						accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
 						newId--;
-						activityDraftObject.insertCCC(newId, account.getValue(), typeCode.getText(), account.getValue(), (byte) types.getSelectedIndex(), province);
+						activityDraftObject.insertCCC(newId, account.getValue(), typeCode.getText(), account.getValue(), (byte) types.getSelectedIndex(), province, false);
 						initPreview();
 					}else {
 						accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
@@ -255,6 +262,8 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 		this.activityDescription.setValue(activityDraftObject.getActivityDescription());
 		this.activityCNAE2009.setValue(activityDraftObject.getActivityCNAE2009());
 		this.activityRegime.setText(activityDraftObject.getActivityRegime());
+		this.startDate.setValue(activityDraftObject.getActivityStartDate());
+		this.endDate.setValue(activityDraftObject.getActivityEndDate());
 		this.activityActive.setValue(activityDraftObject.getActivityActive());
 	}
 	
@@ -355,9 +364,16 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 			delete.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-					Window.alert("Borrar Id : " + cccInfo.getCccId());
-					activityDraftObject.deleteCCC(cccInfo.getCccId());
-					initPreview();
+					if(cccInfo.isUseByContracts()) {
+						WarningDialog warnignDialog = new WarningDialog("AVISO", "No se puede eliminar una cuenta de cotización que esta "
+								+ "siendo usada por un centro de trabajo y/o por un contrato");
+						warnignDialog.center();
+						warnignDialog.show();
+					}else {
+						Window.alert("Borrar Id : " + cccInfo.getCccId());
+						activityDraftObject.deleteCCC(cccInfo.getCccId());
+						initPreview();
+					}
 				}
 			});
 		

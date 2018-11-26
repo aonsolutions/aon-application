@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -37,6 +38,14 @@ public class ActivityDraftObject {
 		return this.activityInfo.getRegime();
 	}
 	
+	public Date getActivityStartDate() {
+		return this.activityInfo.getStartDate();
+	}
+	
+	public Date getActivityEndDate() {
+		return this.activityInfo.getEndDate();
+	}
+	
 	public Boolean getActivityActive() {
 		return this.activityInfo.getActive();
 	}
@@ -47,6 +56,10 @@ public class ActivityDraftObject {
 
 	public void deleteCCC(Integer cccId) {
 		this.activityInfo.deleteCCC(cccId);
+	}
+	
+	public void insertCCC(Integer cccId, String ccc, String cccRegimeCode, String cccAccount, Byte type, String geozone, Boolean useByContracts) {
+		this.activityInfo.insertCCC(cccId, ccc, cccRegimeCode, cccAccount, type, geozone, useByContracts);
 	}
 	
 	public void insertCCC(Integer cccId, String ccc, String cccRegimeCode, String cccAccount, Byte type, String geozone) {
