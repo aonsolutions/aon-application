@@ -971,6 +971,24 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		} 
 
 	}
+	
+	@Override
+	public Map<String, String> getWorkplaceEventsVariables(String domain, Integer workplaceId,
+			Integer agreementId, Date startDate, Date endDate) throws IllegalArgumentException {
+		if (agreementId == null)
+			return Collections.emptyMap();
+
+		try{
+			Integer domainID = AonServletUtils.getDomainID(domain);
+			Integer parentDomainID = AonServletUtils.getParentDomainID(domain);
+			
+			return getEventsVariables(domain, workplaceId, agreementId,
+					startDate, endDate, domainID, parentDomainID);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} 
+	}
+
 
 	@Override
 	public ContextDescriptor getEmployeeEventsVariables(String domain, Integer employeeId, Date startDate, Date endDate)
@@ -2948,6 +2966,86 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 
 	}
+	
+	private static Map<String, String> getEventsVariables(String domain,
+			Integer workplaceId, Integer agreementId, Date startDate,
+			Date endDate, Integer domainId, Integer parentDomainId) throws SQLException {
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection(domain);
+
+			Set<Payment> payments = SQLEvents.getPayments(connection,
+					workplaceId, startDate, endDate);
+
+			if (agreementId != null) {
+				// payments.addAll(SQLAgreementDraft.getPayments(connection,
+				// agreementId, startDate, endDate));
+				payments.addAll(SQLAgreementDraft.getPaymentsAux(connection,
+						agreementId, startDate, endDate));
+			}
+
+			Map<String, String> variables = new HashMap<String, String>();
+
+			for (Payment payment : payments) {
+
+				if (StringUtils.equals(REMOVE, payment.getExpression()))
+					continue;
+
+				Set<String> paymentVars = ExpressionContext
+						.getVariableSet(payment.getExpression());
+
+				for (String var : paymentVars) {
+					if (var.endsWith("_ACTUAL"))
+						continue; // This is awfull ... very awful
+					variables.put(var, String.format("%s",
+							payment.getDescription(), payment.getExpression()));
+				}
+
+				variables.remove(payment.getName());
+			}
+			
+			// Filter ContextVariable
+			for (ContextVariable ctxVar : ContextVariable.values())
+				variables.remove(ctxVar.getName());
+
+			// Clean system variables.
+			Set<String> systemVars = getSystemVariables(connection, startDate,
+					endDate);
+			for (String var : systemVars)
+				variables.remove(var);
+			
+			System.out.println("------------------------------- VARIABLES --------------------------");
+			for(String var : variables.keySet())
+				System.out.println(var);
+				
+			Set<Level> levels = SQLAgreementDraft.getLevels(connection,
+					agreementId, domainId, parentDomainId);
+
+			SalaryTable salaryTable = SQLAgreementDraft.getSalaryTable(
+					connection, agreementId, startDate, endDate,domainId, parentDomainId);
+
+			//¿Que variables se filtran aqui?
+			System.out.println();
+			System.out.println("------------------------------- VARIABLES --------------------------");
+			Set<String> names = variables.keySet();
+			for (Level level : levels) {
+				Iterator<String> namesIt = names.iterator();
+				while (namesIt.hasNext()) {
+					String name = namesIt.next();
+					if (salaryTable.get(level.getId(), name) != null) {
+						System.out.println(name);
+						namesIt.remove();
+					}
+				}
+			}
+
+			return variables;
+
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
 
 	private static Map<String, String> getWorkplaceEventsVariables(String domain,
 			Integer workplaceId, Integer agreementId, Date startDate,
@@ -2985,6 +3083,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 				variables.remove(payment.getName());
 			}
+			
 			// Filter ContextVariable
 			for (ContextVariable ctxVar : ContextVariable.values())
 				variables.remove(ctxVar.getName());
@@ -2992,8 +3091,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			// Clean system variables.
 			Set<String> systemVars = getSystemVariables(connection, startDate,
 					endDate);
-			for (String var : systemVars)
+			for (String var : systemVars) {
+				System.out.println(var);
 				variables.remove(var);
+			}
 
 			Set<Level> levels = SQLAgreementDraft.getLevels(connection,
 					agreementId, domainId, parentDomainId);
@@ -3001,6 +3102,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			SalaryTable salaryTable = SQLAgreementDraft.getSalaryTable(
 					connection, agreementId, startDate, endDate,domainId, parentDomainId);
 
+			//¿Que variables se filtran aqui?
 			Set<String> names = variables.keySet();
 			for (Level level : levels) {
 				Iterator<String> namesIt = names.iterator();
@@ -4563,6 +4665,5 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	private static boolean notAtEnterpriseSite(){
 		return false;
 	}
-
 
 }

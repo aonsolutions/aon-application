@@ -321,6 +321,11 @@ public class DomainEmployeesServiceAsync {
 			AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException {
 		employeesServiceAsync.getEventsVariables(getCurrentDomainName(),  workplaceId, agreementId, startDate, endDate, callback);
 	}
+	
+	public void getWorkplaceEventsVariables(Integer workplaceId, Integer agreementId, Date startDate, Date endDate,
+			AsyncCallback<Map<String, String>> callback) {
+		employeesServiceAsync.getWorkplaceEventsVariables(getCurrentDomainName(),  workplaceId, agreementId, startDate, endDate, callback);
+	}
 
 	public void getEmployeeEventsVariables(Integer employeeId, Date startDate, Date endDate,
 			AsyncCallback<ContextDescriptor> callback) {

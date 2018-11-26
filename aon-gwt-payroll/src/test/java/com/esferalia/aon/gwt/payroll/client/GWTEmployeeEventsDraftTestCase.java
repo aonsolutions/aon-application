@@ -8,6 +8,7 @@ import static com.esferalia.aon.gwt.common.shared.DateUtils.getFirstDayOfYear;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 
@@ -159,6 +160,16 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 			@Override
 			public void getWorkplaceEmployeesEvents(String currentDomainName, Integer workplaceId,
 					AsyncCallback<WorkplaceEmployees> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void getWorkplaceEventsVariables(String currentDomainName, Integer workplaceId, Integer agreementId,
+					Date startDate, Date endDate, AsyncCallback<Map<String, String>> callback)
+					throws IllegalArgumentException {
 				// TODO Auto-generated method stub
 				
 			}

@@ -148,6 +148,9 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 			AsyncCallback<Map<String, String>> callback)
 			throws IllegalArgumentException;
 	
+	void getWorkplaceEventsVariables(String currentDomainName, Integer workplaceId, Integer agreementId, Date startDate,
+			Date endDate, AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException;
+	
 	void getEmployeeEventsVariables(String domain, Integer employeeId, Date startDate, Date endDate,
 			AsyncCallback<ContextDescriptor> callback);
 

@@ -264,7 +264,7 @@ public class EventsDraftObject {
 		
 		Map<String, ArrayList<EmployeeEventsVariable>> mapEmployeeEventsVar = new HashMap<String, ArrayList<EmployeeEventsVariable>>();
 		
-		employeesServiceAsync.getEventsVariables(workplaceId, agreementId, new Date(year,0,1), new Date(year,11,31), new AsyncCallback<Map<String,String>>() {
+		employeesServiceAsync.getWorkplaceEventsVariables(workplaceId, agreementId, new Date(year,0,1), new Date(year,11,31), new AsyncCallback<Map<String,String>>() {
 			
 			@Override
 			public void onSuccess(Map<String, String> result) {

@@ -405,6 +405,15 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 	
 	@Override
+	public void getWorkplaceEventsVariables(String domain, Integer workplaceId, Integer agreementId,
+			Date startDate, Date endDate, AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getWorkplaceEventsVariables(domain, workplaceId, agreementId,
+				startDate, endDate,
+				new AsyncCallbackWrapper<Map<String, String>>(callback));
+	}
+	
+	@Override
 	public void getEmployeeEventsVariables(String domain, Integer employeeId, Date startDate, Date endDate,
 			AsyncCallback<ContextDescriptor> callback) {
 		AON.start();
@@ -610,14 +619,6 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		employeesServiceAsync.getWorkplaceEmployeesEvents(domain, workplaceId,
 				new AsyncCallbackWrapper<WorkplaceEmployees>(callback));
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	
 }

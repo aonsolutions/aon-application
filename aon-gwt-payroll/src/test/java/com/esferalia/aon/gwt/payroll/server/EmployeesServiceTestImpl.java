@@ -591,6 +591,13 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		return null;
 	}
 
+	@Override
+	public Map<String, String> getWorkplaceEventsVariables(String currentDomainName, Integer workplaceId,
+			Integer agreementId, Date startDate, Date endDate) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
 
 	
