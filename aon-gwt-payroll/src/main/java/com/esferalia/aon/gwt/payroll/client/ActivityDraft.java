@@ -57,6 +57,9 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 	}
 	
 	@UiField
+	Button saveButton;
+	
+	@UiField
 	TextBox activityDescription;
 	
 	@UiField
@@ -86,16 +89,47 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 	@UiField
 	Label newAccount;
 	
+	@UiHandler("saveButton")
+	public void onSaveClick(ClickEvent event) {
+		if(checkIfSaveIsPossible() && checkIfCCCSaveIsPossible()){
+//			Window.alert("SE PUEDE GUARDAR");
+		}else{
+//			Window.alert("NO SE PUEDE GUARDAR");
+		}
+	}
+	
+	private boolean checkIfSaveIsPossible() {
+		if(
+			"" != activityDescription.getValue() &&
+			"" != activityCNAE2009.getValue() &&
+			"" != activityRegime.getText()
+		){
+			return true;
+		}else
+			return false;
+	}
+	
+	private boolean checkIfCCCSaveIsPossible() {
+		if(cccDataTable.getRowCount() == 0)
+			return true;
+		else{
+			for(int i = 0; i < cccDataTable.getRowCount(); i++){
+				HorizontalPanel hPanel = (HorizontalPanel) cccDataTable.getWidget(i, 2);
+				TextBox ccc = (TextBox) hPanel.getWidget(1);
+				String province = ProvinceContract.getName(ccc.getValue().substring(0, 2));
+				if(null == province || !checkCCC(ccc.getValue()))
+					return false;
+			}
+			return true;
+		}
+	}
+
 	@UiHandler("cccDataTable")
 	public void oncccDataTableClick(ClickEvent event) {
-		
 		event.preventDefault();
 		
 		int row = cccDataTable.getCellForEvent(event).getRowIndex();
 		int col = cccDataTable.getCellForEvent(event).getCellIndex();
-		int pos = (row * 39) + col;
-		
-//		Window.alert("Row : " + row + ", Col : " + col + ", Pos : " + pos);
 	}
 	
 	@UiHandler("activityDescription")
@@ -169,6 +203,7 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 		typeCode.addStyleName(style.paddingTop());
 		Label accountStatus = new Label();
 		TextBox account = new TextBox();
+		account.setMaxLength(11);
 		account.setValue("");
 		account.addStyleName("aon-inputText");
 		account.addStyleName(style.elementWidth95());
@@ -205,12 +240,11 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 		});
 		
 		Button delete = new Button();
-		delete.setStyleName("aon-editDataTable-button aon-icon-delete");
+		delete.setStyleName("aon-editDataTable-button aon-icon-cancel");
 		delete.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				Window.alert("Borrar Id : " + id.getText());
-				initPreview();
+				cccDataTable.removeRow(0);
 			}
 		});
 		
@@ -226,7 +260,7 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 			String code = ccc.substring(ccc.length()-2, ccc.length());
 			Integer codeInt = Integer.parseInt(code);
 			Integer cccInt = Integer.parseInt(ccc.substring(0, ccc.length()-2));
-			Window.alert("CCC : " + cccInt + ", Code : " + codeInt + ", MOD : " + cccInt % 97);
+//			Window.alert("CCC : " + cccInt + ", Code : " + codeInt + ", MOD : " + cccInt % 97);
 			if(cccInt % 97 == codeInt)
 				return true;
 			else
@@ -317,6 +351,7 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 			typeCode.addStyleName(style.paddingTop());
 			Label accountStatus = new Label();
 			TextBox account = new TextBox();
+			account.setMaxLength(11);
 			account.setValue(cccInfo.getCcc());
 			account.addStyleName("aon-inputText");
 			account.addStyleName(style.elementWidth95());
@@ -387,7 +422,7 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 	
 	private void calculateScrollPanelHeight() {
 		Integer height = 100;
-		Integer extra = 25;
+		Integer extra = 30;
 		int rows = cccDataTable.getRowCount();
 		if(rows < 4) {
 			int mod = rows%4;
