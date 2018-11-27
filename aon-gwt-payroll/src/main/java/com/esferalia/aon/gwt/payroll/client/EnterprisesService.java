@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.List;
+import java.util.Map;
 
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
@@ -77,6 +78,12 @@ public interface EnterprisesService extends RemoteService {
 	ActivitiesCCC getActivitiesCCC(Integer workplaceId, String domain);
 
 	ActivityInfo getActivityInfoDataBase(Integer activityId, String domain);
+
+	ActivityInfo updateActivityInfoDataBase(ActivityInfo activityInfo, String domain);
+
+	ActivityInfo createActivityInfoDataBase(ActivityInfo activityInfo, String domain);
+
+	Map<String, String> getCNAE2009(String domain);
 	
 	
 }

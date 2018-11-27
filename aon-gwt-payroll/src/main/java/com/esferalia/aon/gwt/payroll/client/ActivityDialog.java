@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
+import com.esferalia.aon.gwt.payroll.client.EmployeeDialog.Callback;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.google.gwt.core.client.GWT;
@@ -11,13 +13,10 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.ContextMenuEvent;
-import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -25,33 +24,33 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ActivityDraft extends Composite implements ContextMenuHandler {
+public class ActivityDialog extends CustomDialog {
 
 	private class ActivityImplementation extends Activity{
 
 		@Override
 		public void onActivityDescriptionChange() {
-			activityDraftObject.setActivityDescription(activityDescription.getValue());
+			activityDialogObject.setActivityDescription(activityDescription.getValue());
 		}
 
 		@Override
 		public void onActivityCNAE2009Change() {
-			activityDraftObject.setActivityCNAE2009(activityCNAE2009.getValue());
+			activityDialogObject.setActivityCNAE2009(activityCNAE2009.getValue());
 		}
 
 		@Override
 		public void onActivityStartDateChange() {
-			activityDraftObject.setActivityStartDate(startDate.getValue());
+			activityDialogObject.setActivityStartDate(startDate.getValue());
 		}
 
 		@Override
 		public void onActivityEndDateChange() {
-			activityDraftObject.setActivityEndDate(endDate.getValue());
+			activityDialogObject.setActivityEndDate(endDate.getValue());
 		}
 
 		@Override
 		public void onActivityActiveChange() {
-			activityDraftObject.setActivityActive(activityActive.getValue());
+			activityDialogObject.setActivityActive(activityActive.getValue());
 		}
 
 		@Override
@@ -94,7 +93,7 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 							accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
 							accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
 							newId--;
-							activityDraftObject.insertCCC(newId, account.getValue(), typeCode.getText(), account.getValue(), (byte) types.getSelectedIndex(), province, false);
+							activityDialogObject.insertCCC(newId, account.getValue(), typeCode.getText(), account.getValue(), (byte) types.getSelectedIndex(), province, false);
 							initPreview();
 						}else {
 							accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
@@ -136,40 +135,61 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 	
 	// -------------------------------------------------- UiBinder --------------------------------------------------
 	
-	interface ActivityDraftUiBinder extends UiBinder<Widget, ActivityDraft> {
+	interface ActivityDraftUiBinder extends UiBinder<Widget, ActivityDialog> {
 	
 	}
 	
-	private static ActivityDraftUiBinder uiBinder = GWT.create(ActivityDraftUiBinder.class);
+	private static ActivityDraftUiBinder binder = GWT.create(ActivityDraftUiBinder.class);
 	
 	@UiField (provided = true)
 	Activity activity;
 	
 	@UiField
-	Button saveButton;
+	Button cancelButton;
+	
+	@UiField
+	Button acceptButton;
 	
 	// -------------------------------------------- Variables de la clase---------------------------------------------
 	
-	private ActivityDraftObject activityDraftObject;
+	private Callback cb;
+	private ActivityDialogObject activityDialogObject;
 	private Integer newId;
 	
 	// ------------------------------------------------- CONSTRUCTOR --------------------------------------------------
 
-	public ActivityDraft() {	
+	public ActivityDialog() {	
 		activity = new ActivityImplementation();
 		
-		// Inicializamos la vista de la actividad
-		initWidget(uiBinder.createAndBindUi(this));
+		setCaption("Actividad");
+		setWidget(binder.createAndBindUi(this));
+	}
+	
+	public void show(Callback cb) {
+		this.cb = cb;
+		super.show();
+	}
+	
+	public void setPopupPositionAndShow(PositionCallback positionCallback, Callback callback) {
+		this.cb = callback;
+		super.setPopupPositionAndShow(positionCallback);
 	}
 	
 	// -------------------------------------------------- UiHandlers --------------------------------------------------
 	
-	@UiHandler("saveButton")
+	@UiHandler("cancelButton")
+	public void onCancelClick(ClickEvent event) {
+		hide();
+	}
+	
+	@UiHandler("acceptButton")
 	public void onSaveClick(ClickEvent event) {
 		if(checkIfSaveIsPossible()){
 			if(checkIfCCCSaveIsPossible())
-				activityDraftObject.updateActivity(
-					s -> {},
+				activityDialogObject.createActivity(
+					s -> {
+						hide();
+					},
 					f -> {}
 				);
 			else {
@@ -212,37 +232,27 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 
 	// ----------------------------------------------- METODOS DE LA CLASE ------------------------------------------------
 
-	public void setActivityDraftObject(ActivityDraftObject activityDraftObject) {
-		this.activityDraftObject = activityDraftObject;
+	public void setActivityDialogObject(ActivityDialogObject activityDialogObject) {
+		this.activityDialogObject = activityDialogObject;
 		this.newId = 0;
-		
-		this.activityDraftObject.initializeActivity(
-				r -> {
+		activityDialogObject.getCNAE2009(
+				s -> {
+					activity.activityRegime.setText(activityDialogObject.getActivityRegime());
 					initSuggestBox();
-					fillActivityInfo();
-					initPreview();
-				}, t -> {}
-			);
-		
+					initPreview();	
+				},
+				f -> {}
+		);	
 	}
 	
 	private void initSuggestBox() {
 		List<String> cnae2009Suggest = new ArrayList<String>();
-		for(Entry<String, String> entry : activityDraftObject.getAllCNAE2009().entrySet())
+		for(Entry<String, String> entry : activityDialogObject.getAllCNAE2009().entrySet())
 			cnae2009Suggest.add(entry.getKey() + " - " + entry.getValue());
 	
 		MultiWordSuggestOracle orclCNAE2009 = (MultiWordSuggestOracle) activity.activityCNAE2009.getSuggestOracle();
 		orclCNAE2009.addAll(cnae2009Suggest);
 		activity.activityCNAE2009.setAutoSelectEnabled(false);
-	}
-	
-	private void fillActivityInfo() {
-		activity.activityDescription.setValue(activityDraftObject.getActivityDescription());
-		activity.activityCNAE2009.setValue(activityDraftObject.getActivityCNAE2009());
-		activity.activityRegime.setText(activityDraftObject.getActivityRegime());
-		activity.startDate.setValue(activityDraftObject.getActivityStartDate());
-		activity.endDate.setValue(activityDraftObject.getActivityEndDate());
-		activity.activityActive.setValue(activityDraftObject.getActivityActive());
 	}
 	
 	private void initPreview() {
@@ -257,6 +267,7 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 		calculateScrollPanelHeight();
 		hideFirstColumn();
 		setColumnWidth();
+		center();
 	}
 	
 	private void paintHeader() {
@@ -280,7 +291,7 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 	}
 	
 	private void insertRows() {
-		for(CCCInfo cccInfo : activityDraftObject.getCCCs().values()) {
+		for(CCCInfo cccInfo : activityDialogObject.getCCCs().values()) {
 			int row = activity.cccDataTable.insertRow(activity.cccDataTable.getRowCount());
 			
 			Label id = new Label();
@@ -310,7 +321,7 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 							geozone.setText(province);
 							accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
 							accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
-							activityDraftObject.insertCCC(cccInfo.getCccId(), account.getValue(), typeCode.getText(), account.getValue(), (byte) types.getSelectedIndex(), province);
+							activityDialogObject.insertCCC(cccInfo.getCccId(), account.getValue(), typeCode.getText(), account.getValue(), (byte) types.getSelectedIndex(), province);
 						}else {
 							accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
 							accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
@@ -336,7 +347,7 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 				public void onChange(ChangeEvent event) {
 					String newCCCRegimeCode = getCCCRegimeCode((byte)types.getSelectedIndex());
 					typeCode.setText(newCCCRegimeCode);
-					activityDraftObject.insertCCC(cccInfo.getCccId(), account.getValue(), typeCode.getText(), account.getValue(), (byte) types.getSelectedIndex(), province);
+					activityDialogObject.insertCCC(cccInfo.getCccId(), account.getValue(), typeCode.getText(), account.getValue(), (byte) types.getSelectedIndex(), province);
 				}
 			});
 			
@@ -352,7 +363,7 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 						warnignDialog.show();
 					}else {
 //						Window.alert("Borrar Id : " + cccInfo.getCccId());
-						activityDraftObject.deleteCCC(cccInfo.getCccId());
+						activityDialogObject.deleteCCC(cccInfo.getCccId());
 						initPreview();
 					}
 				}
@@ -376,10 +387,10 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 		}else {
 			int div = rows/4;
 			int mod = rows%4;
-			if(div < 5)
+			if(div < 2)
 				activity.scrollPanel.setHeight(((height*div)+(extra*mod)+extra)+"px");
 			else
-				activity.scrollPanel.setHeight("475px");
+				activity.scrollPanel.setHeight("220px");
 		}
 	}
 	
@@ -457,11 +468,6 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 		default:
 			return "0111";
 		}
-	}
-
-	@Override
-	public void onContextMenu(ContextMenuEvent event) {
-		// TODO Auto-generated method stub
 	}
 
 }

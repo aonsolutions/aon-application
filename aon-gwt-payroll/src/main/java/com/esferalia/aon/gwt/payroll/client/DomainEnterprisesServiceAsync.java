@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.List;
+import java.util.Map;
 
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
@@ -135,6 +136,18 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void getActivityInfoDataBase(Integer activityId, AsyncCallback<ActivityInfo> asyncCallback) {
 		enterprisesServiceAsync.getActivityInfoDataBase(activityId, getCurrentDomainName(), asyncCallback);
+	}
+	
+	public void updateActivityInfoDataBase(ActivityInfo activityInfo, AsyncCallback<ActivityInfo> asyncCallback) {
+		enterprisesServiceAsync.updateActivityInfoDataBase(activityInfo, getCurrentDomainName(), asyncCallback);
+	}
+	
+	public void createActivityInfoDataBase(ActivityInfo activityInfo, AsyncCallback<ActivityInfo> asyncCallback) {
+		enterprisesServiceAsync.createActivityInfoDataBase(activityInfo, getCurrentDomainName(), asyncCallback);
+	}
+	
+	public void getCNAE2009(AsyncCallback<Map<String, String>> asyncCallback) {
+		enterprisesServiceAsync.getCNAE2009(getCurrentDomainName(), asyncCallback);
 	}
 	
 	// ----------------------------------------------------------------- static

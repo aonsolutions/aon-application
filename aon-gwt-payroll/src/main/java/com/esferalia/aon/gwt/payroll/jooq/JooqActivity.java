@@ -1,62 +1,35 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
-import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
-import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
+import static com.esferalia.aon.jooq.tables.Cnae2009.CNAE2009;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-import static com.esferalia.aon.jooq.tables.ContractBonus.CONTRACT_BONUS;
-import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
-import static com.esferalia.aon.jooq.tables.ContractDeduction.CONTRACT_DEDUCTION;
-import static com.esferalia.aon.jooq.tables.ContractEmbargo.CONTRACT_EMBARGO;
-import static com.esferalia.aon.jooq.tables.ContractInfo.CONTRACT_INFO;
-import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
-import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
-import static com.esferalia.aon.jooq.tables.Geotree.GEOTREE;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
-import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
-import static com.esferalia.aon.jooq.tables.Person.PERSON;
-import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
-import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
-import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
-import static com.esferalia.aon.jooq.tables.Rpaymethod.RPAYMETHOD;
-import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
-import static com.esferalia.aon.jooq.tables.Cnae2009.CNAE2009;
 
 import java.sql.Connection;
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
-import org.jooq.Record1;
 import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
-import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
-import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
-import com.esferalia.aon.jooq.tables.records.ContractRecord;
-import com.esferalia.aon.jooq.tables.records.GeozoneRecord;
-import com.esferalia.aon.jooq.tables.records.PayMethodRecord;
-import com.esferalia.aon.jooq.tables.records.RaddressRecord;
-import com.esferalia.aon.jooq.tables.records.RbankRecord;
-import com.esferalia.aon.jooq.tables.records.RegistryRecord;
+import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
 
 public class JooqActivity {
 
 	private static Settings SETTINGS = null;
 	
+	public static Map<String, String> getCNAE2009(Connection conn) {
+		return getCNAE2009InfoDB(DSL.using(conn, getDefaultSettings()));
+	}
+
 	public static ActivityInfo getActivity(Integer activityId, Connection conn) {
 		return getActivityInfoDB(activityId, DSL.using(conn, getDefaultSettings()));
 	}
@@ -75,6 +48,20 @@ public class JooqActivity {
 			SETTINGS.setRenderSchema(false);
 		}
 		return SETTINGS;
+	}
+	
+	private static Map<String, String> getCNAE2009InfoDB(DSLContext dslContext) {
+		
+		Map<String, String> cnae2009Map = new HashMap<>();
+		
+		Result<Record> cnae2009Records = dslContext.select().from(CNAE2009)
+				.orderBy(CNAE2009.CODE)
+				.fetch();
+		
+		for(Record r : cnae2009Records)
+			cnae2009Map.put(r.get(CNAE2009.CODE), r.get(CNAE2009.TITLE));
+		
+		return cnae2009Map;
 	}
 	
 	private static ActivityInfo getActivityInfoDB(Integer activityId, DSLContext dslContext) {
@@ -216,6 +203,7 @@ public class JooqActivity {
 					.set(ENTERPRISE_CCC.TYPE, cccInfo.getType())
 					.set(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY, activityInfo.getId())
 					.set(ENTERPRISE_CCC.GEOZONE, geozoneId)
+					.where(ENTERPRISE_CCC.ID.eq(cccId))
 					.execute();
 			}else {
 				dslContext.insertInto(ENTERPRISE_CCC, ENTERPRISE_CCC.DOMAIN, ENTERPRISE_CCC.CCC, ENTERPRISE_CCC.TYPE, ENTERPRISE_CCC.ENTERPRISE_ACTIVITY, ENTERPRISE_CCC.GEOZONE)
@@ -248,7 +236,7 @@ public class JooqActivity {
 					.where(ENTERPRISE_ACTIVITY.ENTERPRISE.eq(activityInfo.getEnterprise()))
 					.execute();
 		
-		dslContext.insertInto(ENTERPRISE_ACTIVITY)
+		EnterpriseActivityRecord activityId = dslContext.insertInto(ENTERPRISE_ACTIVITY)
 			.set(ENTERPRISE_ACTIVITY.DOMAIN, activityInfo.getDomain())
 			.set(ENTERPRISE_ACTIVITY.DESCRIPTION, activityInfo.getDescription())
 			.set(ENTERPRISE_ACTIVITY.ENTERPRISE, activityInfo.getEnterprise())
@@ -257,7 +245,10 @@ public class JooqActivity {
 			.set(ENTERPRISE_ACTIVITY.START_DATE, (null == activityInfo.getStartDate()) ? null : new Date(activityInfo.getStartDate().getTime()))
 			.set(ENTERPRISE_ACTIVITY.END_DATE, (null == activityInfo.getEndDate()) ? null : new Date(activityInfo.getEndDate().getTime()))
 			.set(ENTERPRISE_ACTIVITY.PRINCIPAL, (activityInfo.getActive() == false) ? (byte)0 : (byte)1)
-			.execute();
+			.returning(ENTERPRISE_ACTIVITY.ID)
+			.fetchOne();
+		
+		activityInfo.setId(activityId.getId());
 		
 		//ENTERPRISE_CCC
 		for(Entry<Integer, CCCInfo> entry : activityInfo.getCccs().entrySet()) {

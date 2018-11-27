@@ -138,6 +138,10 @@ public class ActivityInfo implements Serializable{
 		return this.allCNAE2009;
 	}
 	
+	public void setAllCNAE2009(Map<String, String> allCNAE2009) {
+		this.allCNAE2009 = allCNAE2009;
+	}
+	
 	public void addCNAE2009(String code, String description) {
 		this.allCNAE2009.put(code, description);
 	}

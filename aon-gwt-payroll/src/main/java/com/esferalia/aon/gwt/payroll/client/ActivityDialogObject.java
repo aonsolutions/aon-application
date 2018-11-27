@@ -4,52 +4,34 @@ import java.util.Date;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
+import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class ActivityDraftObject {
+public class ActivityDialogObject {
 	
 	private ActivityInfo activityInfo;
 	private DomainEnterprisesServiceAsync enterprisesService;
-	private Integer activityId;
 		
 	// ------------------------------------------------- CLASS METHODS -------------------------------------------------	
 	
-	public ActivityDraftObject(Activity activity, DomainEnterprisesServiceAsync enterprisesService) {
+	public ActivityDialogObject(Enterprise enterprise, DomainEnterprisesServiceAsync enterprisesService) {
 		this.enterprisesService = enterprisesService;
-		this.activityId = activity.getId();
-	}
-	
-	public String getActivityDescription() {
-		return this.activityInfo.getDescription();
-	}
-	
-	public String getActivityCNAE2009() {
-		return this.activityInfo.getCnae2009Code() + " - " + this.activityInfo.getCnae2009Title();
+		activityInfo = new ActivityInfo();
+		activityInfo.setEnterprise(enterprise.getId());
+		activityInfo.setDomain(enterprise.getDomain());
+		activityInfo.setRegime("General");
+		activityInfo.setActive(false);
 	}
 	
 	public Map<String, String> getAllCNAE2009() {
 		return this.activityInfo.getAllCNAE2009();
 	}
 	
-	public String getActivityRegime() {
+	public String getActivityRegime(){
 		return this.activityInfo.getRegime();
-	}
-	
-	public Date getActivityStartDate() {
-		return this.activityInfo.getStartDate();
-	}
-	
-	public Date getActivityEndDate() {
-		return this.activityInfo.getEndDate();
-	}
-	
-	public Boolean getActivityActive() {
-		return this.activityInfo.getActive();
-	}
-	
+	}	
 	public Map<Integer, CCCInfo> getCCCs() {
 		return this.activityInfo.getCccs();
 	}
@@ -69,14 +51,13 @@ public class ActivityDraftObject {
 	
 
 	// ---------------------------------------------- DATABASE METHODS SYNC  ---------------------------------------------
-	
-	//Consumer<ActivityInfo> success, Consumer<Throwable> failure
-	public void initializeActivity(Consumer<ActivityInfo> success, Consumer<Throwable> failure) {
-		enterprisesService.getActivityInfoDataBase(this.activityId, new AsyncCallback<ActivityInfo>() {
+
+	public void getCNAE2009(Consumer<Map<String, String>> success, Consumer<Throwable> failure){
+		enterprisesService.getCNAE2009(new AsyncCallback<Map<String, String>>() {
 			
 			@Override
-			public void onSuccess(ActivityInfo result) {
-				activityInfo = result;
+			public void onSuccess(Map<String, String> result) {
+				activityInfo.setAllCNAE2009(result);
 				success.accept(result);
 			}
 
@@ -86,9 +67,9 @@ public class ActivityDraftObject {
 			}
 		});
 	}
-
-	public void updateActivity(Consumer<ActivityInfo> success, Consumer<Throwable> failure){
-		enterprisesService.updateActivityInfoDataBase(this.activityInfo, new AsyncCallback<ActivityInfo>() {
+	
+	public void createActivity(Consumer<ActivityInfo> success, Consumer<Throwable> failure){
+		enterprisesService.createActivityInfoDataBase(this.activityInfo, new AsyncCallback<ActivityInfo>() {
 			
 			@Override
 			public void onSuccess(ActivityInfo result) {
