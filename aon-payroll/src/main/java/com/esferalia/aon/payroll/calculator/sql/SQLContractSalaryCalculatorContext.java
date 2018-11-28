@@ -4534,13 +4534,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			try {
 				throw wrapper.getCause();
 			} catch ( DeferredExpressionException deferred){
-				try {
-					deferred.eval( contractExpressionContext, Object.class);
-				} catch ( UndefinedVariablesException e){
-					return true;
-				} catch (ExpressionException e) {
-					// TODO: return true ? Really it's undefined
-				}
+//				try {
+//					deferred.eval( contractExpressionContext, Object.class);
+//				} catch ( UndefinedVariablesException e){
+//					return true;
+//				} catch (ExpressionException e) {
+//					// TODO: return true ? Really it's undefined
+//				}
 			} catch (Throwable e) { 
 				// TODO: return true ? Really it's undefined
 			} 
