@@ -1,5 +1,7 @@
 package com.esferalia.aon.payroll.tgss.creta;
 
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ADDITIONAL_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ADDITIONAL_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_ENTERPRISE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
@@ -1665,6 +1667,8 @@ public class Bases {
 		{
 			put("500", new NonNegativeCCretaData(CGC_BASE.getName()));
 			put("535", new NonNegativeCCretaData(MATERNITY_BASE.getName()));
+			
+			put("537", new NonNegativeCCretaData(ADDITIONAL_BASE.getName()));
 
 			put("501", new CCretaData(STRUCTURAL_OVERTIME_BASE.getName()));
 			put("502", new CCretaData(
@@ -1697,7 +1701,7 @@ public class Bases {
 					return getWorkedHours(salary, desde, hasta);
 				};
 			});
-			put("02", new HCretaData(EXTRA_HOURS.getName()));
+			put("02", new HCretaData(ADDITIONAL_HOURS.getName()));
 
 			put("51", new MonthlySalaryCretaData());
 

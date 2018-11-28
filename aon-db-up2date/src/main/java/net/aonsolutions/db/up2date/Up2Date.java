@@ -1,7 +1,7 @@
 package net.aonsolutions.db.up2date;
 
-import static net.aonsolutions.db.up2date.payroll.DirectPayInsert.DIRECTPAYINSERT;
-import static net.aonsolutions.db.up2date.payroll.Holidays2018Insert.HOLIDAYS2018INSERT;
+import static net.aonsolutions.db.up2date.tgss.CRA0057Update.CRA0057UPDATE;
+import static net.aonsolutions.db.up2date.tgss.CRA0058Update.CRA0058UPDATE;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -20,7 +20,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.payroll.Holidays2018Insert;
+import net.aonsolutions.db.up2date.tgss.CRA0058Update;
 
 public class Up2Date {
 	
@@ -47,7 +47,9 @@ public class Up2Date {
     		//CRA2018UPDATE
     		//ONACCOUNTAGREEMENTUPDATE
     		//DIRECTPAYINSERT
-    		HOLIDAYS2018INSERT
+    		//HOLIDAYS2018INSERT
+    		CRA0057UPDATE,
+    		CRA0058UPDATE
     		
     }; 
 	

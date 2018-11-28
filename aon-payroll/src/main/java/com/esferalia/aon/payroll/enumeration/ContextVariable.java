@@ -104,6 +104,7 @@ public enum ContextVariable implements IResourceable{
 	AGREEMENT_HOURS("HORAS_CONVENIO", VariableType.DOUBLE, false),
 	WORKED_HOURS("HORAS_TRABAJADAS", VariableType.DOUBLE, false),
 	EXTRA_HOURS("HORAS_EXTRAS", VariableType.DOUBLE, false),
+	ADDITIONAL_HOURS("HORAS_COMPLEMENTARIAS", VariableType.DOUBLE, false),
 
 	NIGHT("NOCTURNO", VariableType.BOOLEAN, false),
 	//NIGHT_HOURS("HORAS_NOCHE", VariableType.INTEGER, false),
@@ -128,6 +129,7 @@ public enum ContextVariable implements IResourceable{
 	MATERNITY_BASE("BASE_MTNAD", VariableType.DOUBLE),
 	ERE_BASE("BASE_ERE", VariableType.DOUBLE),
 	DIRECT_BASE("BASE_PAGO_DIRECTO", VariableType.DOUBLE),
+	ADDITIONAL_BASE("BASE_HORAS_COMPL", VariableType.DOUBLE),
 
 	CGC_BASE_RAW("BASE_CGC_BRUTA", VariableType.DOUBLE),
 	CGP_BASE_RAW("BASE_CGP_BRUTA", VariableType.DOUBLE),
@@ -140,7 +142,7 @@ public enum ContextVariable implements IResourceable{
 	CGC_EMPLOYEE("CGC", VariableType.DOUBLE),
 	CGC_ENTERPRISE("CGC_E", VariableType.DOUBLE),
 	IT_ENTERPRISE("IT_E", VariableType.DOUBLE),
-	IMS_ENTERPRISE("IT_E", VariableType.DOUBLE),
+	IMS_ENTERPRISE("IMS_E", VariableType.DOUBLE),
 	FP_EMPLOYEE("FP", VariableType.DOUBLE),
 	FP_ENTERPRISE("FP_E", VariableType.DOUBLE),
 	UNEMPLOY_EMPLOYEE("DESMPL", VariableType.DOUBLE),

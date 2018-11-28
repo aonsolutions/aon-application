@@ -1,5 +1,7 @@
 package com.esferalia.aon.payroll.calculator;
 
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ADDITIONAL_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ADDITIONAL_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ALL;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_ENTERPRISE;
@@ -1396,9 +1398,11 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				ERE_BASE.getName(), 
 				DIRECT_BASE.getName(), 
 				MATERNITY_BASE.getName(), 
+				ADDITIONAL_BASE.getName(), 
 				STRUCTURAL_OVERTIME_BASE.getName(),
 				NON_STRUCTURAL_OVERTIME_BASE.getName(), 
 				WORKED_HOURS.getName(),
+				ADDITIONAL_HOURS.getName(),
 
 				MONDAY_HOURS.getName(),
 				TUESDAY_HOURS.getName(),
