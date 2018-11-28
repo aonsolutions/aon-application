@@ -2060,6 +2060,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 				"_P", 
 				PaymentType.CRA_0057);
 		
+		
 		addData(aonContext, 
 				contract, 
 				startDate, 
@@ -2072,11 +2073,11 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 				}
 				);
 
-		List<Tramo> tramos = 
-		getTramos(connection, contract, startDate, endDate, ccc);
-		for ( Tramo tramo: tramos ) {
-			assertTramoActivoNormalTiempoParcial(tramo);
-		}
+//		List<Tramo> tramos = 
+//		getTramos(connection, contract, startDate, endDate, ccc);
+//		for ( Tramo tramo: tramos ) {
+//			assertTramoActivoNormalTiempoParcial(tramo);
+//		}
 		
 		
 		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramosBases = 
