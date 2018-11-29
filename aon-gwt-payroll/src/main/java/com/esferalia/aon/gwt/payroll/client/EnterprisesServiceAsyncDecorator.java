@@ -279,4 +279,11 @@ public class EnterprisesServiceAsyncDecorator implements
 		enterprisesServiceAsync.createWorkplaceInfo(workplaceInfo, enterpriseId, domain,
 				new AsyncCallbackWrapper<WorkplaceInfo>(callback));
 	}
+
+	@Override
+	public void getEnterpiseScopes(Integer enterpriseId, String domain, AsyncCallback<Map<Integer, String>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getEnterpiseScopes(enterpriseId, domain,
+				new AsyncCallbackWrapper<Map<Integer, String>>(callback));
+	}
 }

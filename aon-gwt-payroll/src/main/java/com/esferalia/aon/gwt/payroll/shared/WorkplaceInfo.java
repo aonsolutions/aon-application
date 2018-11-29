@@ -11,6 +11,8 @@ public class WorkplaceInfo implements Serializable {
 	private Map<Integer, String> addresses;
 	private Integer addressId;
 	private byte economicConcert;
+	private Map<Integer, String> scopes;
+	private Integer scopeId;
 	private byte active;
 	
 	//Payroll Data
@@ -112,6 +114,22 @@ public class WorkplaceInfo implements Serializable {
 
 	public void setEconomicConcert(byte economicConcert) {
 		this.economicConcert = economicConcert;
+	}
+
+	public Map<Integer, String> getScopes() {
+		return scopes;
+	}
+
+	public void setScopes(Map<Integer, String> scopes) {
+		this.scopes = scopes;
+	}
+
+	public Integer getScopeId() {
+		return scopeId;
+	}
+
+	public void setScopeId(Integer scopeId) {
+		this.scopeId = scopeId;
 	}
 
 	public byte isActive() {

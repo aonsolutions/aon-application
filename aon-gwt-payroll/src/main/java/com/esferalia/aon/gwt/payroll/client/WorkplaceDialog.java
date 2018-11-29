@@ -93,8 +93,10 @@ public class WorkplaceDialog extends CustomDialog {
 	@UiHandler("acceptButton")
 	public void onSaveClick(ClickEvent event) {
 		if(canSaveWorkplace()) {
-			if(workplaceDialogObject.getWorkplaceAddresses().values().size() > 1)
+			if(workplaceDialogObject.getWorkplaceAddresses().size() > 1)
 				onAddressChage();
+			if(workplaceDialogObject.getWorkplaceScopes().size() > 1)
+				onScopeChange();
 			
 			workplaceDialogObject.createWorkplace(
 					s -> {
@@ -129,6 +131,7 @@ public class WorkplaceDialog extends CustomDialog {
 	}
 	
 	private void initializeView() {
+		workplace.generalDataTable.getRows().getItem(4).getStyle().clearDisplay();
 		resetElements();
 		initializeListBox();
 	}
@@ -138,6 +141,7 @@ public class WorkplaceDialog extends CustomDialog {
 		workplace.workplaceDescription.setValue("");
 		workplace.workplaceAddressPanel.clear();
 		workplace.workplaceEconomicConcert.clear();
+		workplace.workplaceScopePanel.clear();
 
 		// Clear payroll elements
 		workplace.workplaceCalendarPanel.clear();
@@ -157,6 +161,9 @@ public class WorkplaceDialog extends CustomDialog {
 		workplace.workplaceEconomicConcert.addItem("Gipuzkoa");
 		workplace.workplaceEconomicConcert.addItem("Navarra");
 		workplace.workplaceEconomicConcert.addItem("Territorio Com"+ String.valueOf("\u00FA") +"n");
+		
+		//SCOPE
+		initializeScopeCell();
 		
 		//CALENDARIO
 		initializeCalendarCell();
@@ -193,15 +200,7 @@ public class WorkplaceDialog extends CustomDialog {
 				
 				@Override
 				public void onChange(ChangeEvent event) {
-					String address = ((ListBox) workplaceAddressWidget).getSelectedItemText();
-					Integer addressId = -1;
-					for(Entry<Integer, String> entry : workplaceDialogObject.getWorkplaceAddresses().entrySet()){
-						if(address == entry.getValue()){
-							addressId = entry.getKey();
-							break;
-						}
-					}
-					workplaceDialogObject.setWorkplaceAddress(addressId);
+					onAddressChage();
 					//save();
 				}
 			});
@@ -219,6 +218,46 @@ public class WorkplaceDialog extends CustomDialog {
 			}
 		}
 		workplaceDialogObject.setWorkplaceAddress(addressId);
+	}
+	
+	private void initializeScopeCell() {
+		Widget workplaceScopeWidget;
+		if(workplaceDialogObject.getWorkplaceScopes().values().size() == 1){
+			Integer scopeId = (Integer) workplaceDialogObject.getWorkplaceScopes().keySet().toArray()[0];
+			workplaceScopeWidget = new Label((null == scopeId) ? "" : workplaceDialogObject.getWorkplaceScopes().get(scopeId));
+			workplaceScopeWidget.setStyleName("aon-inputText");
+			workplaceScopeWidget.addStyleName(workplace.style.maxWidthTextBox());
+			workplace.workplaceAddressPanel.add(workplaceScopeWidget);
+			workplaceDialogObject.setWorkplaceScope(scopeId); //AutoSeleccion
+		}else{
+			workplaceScopeWidget = new ListBox();
+			for(String scope : workplaceDialogObject.getWorkplaceScopes().values()){
+				((ListBox) workplaceScopeWidget).addItem(scope);
+			}
+			workplaceScopeWidget.setStyleName("aon-selectOneMenu");
+			workplaceScopeWidget.addStyleName(workplace.style.maxWidth());
+			((ListBox) workplaceScopeWidget).addChangeHandler(new ChangeHandler() {
+				
+				@Override
+				public void onChange(ChangeEvent event) {
+					onScopeChange();
+					//save();
+				}
+			});
+			workplace.workplaceScopePanel.add(workplaceScopeWidget);
+		}
+	}
+	
+	private void onScopeChange() {
+		String scope = ((ListBox) workplace.workplaceScopePanel.getWidget(0)).getSelectedItemText();
+		Integer scopeId = -1;
+		for(Entry<Integer, String> entry : workplaceDialogObject.getWorkplaceScopes().entrySet()){
+			if(scope == entry.getValue()){
+				scopeId = entry.getKey();
+				break;
+			}
+		}
+		workplaceDialogObject.setWorkplaceScope(scopeId);
 	}
 	
 	private void initializeCalendarCell() {

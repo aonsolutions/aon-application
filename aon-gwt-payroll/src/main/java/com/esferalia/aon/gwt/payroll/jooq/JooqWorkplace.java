@@ -273,46 +273,13 @@ public class JooqWorkplace {
 		
 		Integer domainId = enterpriseRecord.get(ENTERPRISE.DOMAIN);
 		
-		Record domainRecord = dslContext.select().from(DOMAIN)
-				.where(DOMAIN.ID.eq(domainId))
-				.fetchOne();
-		
-		Integer parentDomainId = domainRecord.get(DOMAIN.PARENT);
-		
-		//SCOPE
-		Integer scopeId;
-		Record scopeRecord = null;
-		
-		if(null == parentDomainId)
-			scopeRecord = dslContext.select().from(SCOPE)
-					.where(SCOPE.DOMAIN.eq(domainId))
-					.and(SCOPE.DESCRIPTION.eq("GENERAL"))
-					.fetchOne();
-		else
-			scopeRecord = dslContext.select().from(SCOPE)
-			.where(SCOPE.DOMAIN.eq(domainId)
-					.or(SCOPE.DOMAIN.eq(parentDomainId))
-			).and(SCOPE.DESCRIPTION.eq("GENERAL"))
-			.fetchOne();
-		
-		if(null == scopeRecord) {
-			ScopeRecord scope = dslContext.insertInto(SCOPE)
-				.set(SCOPE.DOMAIN, domainId)
-				.set(SCOPE.DESCRIPTION, "GENERAL")
-				.returning(SCOPE.ID)
-				.fetchOne();
-			
-			scopeId = scope.getId();
-		}else
-			scopeId = scopeRecord.get(SCOPE.ID);
-		
 		//WORKPALCE
 		WorkplaceRecord workplaceRecord = dslContext.insertInto(WORKPLACE)
 			.set(WORKPLACE.DOMAIN, domainId)
 			.set(WORKPLACE.ENTERPRISE, enterpriseId)
 			.set(WORKPLACE.DESCRIPTION, workplaceInfo.getDescription())
 			.set(WORKPLACE.ADDRESS, workplaceInfo.getAddressId())
-			.set(WORKPLACE.SCOPE, scopeId)
+			.set(WORKPLACE.SCOPE, workplaceInfo.getScopeId())
 			.set(WORKPLACE.ECONOMICAGREEMENT, workplaceInfo.getEconomicConcert())
 			.returning(WORKPLACE.ID)
 			.fetchOne();

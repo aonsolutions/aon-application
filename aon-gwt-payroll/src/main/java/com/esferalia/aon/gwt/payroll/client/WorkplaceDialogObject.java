@@ -50,6 +50,10 @@ public class WorkplaceDialogObject {
 		return this.workplaceInfo.getAddresses();
 	}
 	
+	public Map<Integer, String> getWorkplaceScopes(){
+		return this.workplaceInfo.getScopes();
+	}
+	
 	public Map<Integer, String> getWorkplacesCalendars(){
 		return this.workplaceInfo.getCalendars();
 	}
@@ -128,6 +132,25 @@ public class WorkplaceDialogObject {
 			@Override
 			public void onSuccess(Map<Integer, String> result) {
 				workplaceInfo.setActivities(result);
+				getEnterpriseScopes(
+						s -> {success.accept(result);},
+						f -> {}
+					);
+			}
+		});
+	}
+	
+	private void getEnterpriseScopes(Consumer<Map<Integer, String>> success, Consumer<Throwable> failure) {
+		enterprisesService.getEnterpiseScopes(this.enterprise.getId(), new AsyncCallback<Map<Integer,String>>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void onSuccess(Map<Integer, String> result) {
+				workplaceInfo.setScopes(result);
 				success.accept(result);
 			}
 		});
@@ -160,6 +183,10 @@ public class WorkplaceDialogObject {
 
 	public void setWorkplaceEconomicConcert(int economicCocncert) {
 		workplaceInfo.setEconomicConcert((byte) economicCocncert);
+	}
+	
+	public void setWorkplaceScope(Integer scopeId) {
+		workplaceInfo.setScopeId(scopeId);
 	}
 
 	public void setWorkplaceActive(Boolean active) {

@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -168,6 +169,8 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 			enableWorkplacePanel.addStyleName(style.fontEnableStyle());
 			disableWorkplacePanel.addStyleName(style.hide());
 		}
+		
+		workplace.generalDataTable.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
 
 		resetElements();
 		initializeListBox();
@@ -180,6 +183,7 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 		workplace.workplaceDescription.setValue("");
 		workplace.workplaceAddressPanel.clear();
 		workplace.workplaceEconomicConcert.clear();
+		workplace.workplaceScopePanel.clear();
 
 		// Clear payroll elements
 		workplace.workplaceCalendarPanel.clear();

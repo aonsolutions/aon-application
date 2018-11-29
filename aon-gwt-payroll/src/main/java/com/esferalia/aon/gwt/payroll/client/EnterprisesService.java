@@ -92,5 +92,7 @@ public interface EnterprisesService extends RemoteService {
 	Map<Integer, String> getEnterpiseActivities(Integer enterpriseId, String domain);
 
 	WorkplaceInfo createWorkplaceInfo(WorkplaceInfo workplaceInfo, Integer enterpriseId, String domain);
+
+	Map<Integer, String> getEnterpiseScopes(Integer enterpriseId, String domain);
 	
 }

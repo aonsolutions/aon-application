@@ -54,6 +54,9 @@ public abstract class Workplace extends ResizeComposite implements ContextMenuHa
 	
 	@UiField
 	ListBox workplaceEconomicConcert;
+	
+	@UiField
+	HorizontalPanel workplaceScopePanel;
 
 	// TABLA DATOS CENTRO DE TRABAJO (LABORAL)
 

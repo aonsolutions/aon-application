@@ -166,6 +166,10 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.createWorkplaceInfo(workplaceInfo, enterpriseId, getCurrentDomainName(), asyncCallback);
 	}
 	
+	public void getEnterpiseScopes(Integer enterpriseId, AsyncCallback<Map<Integer, String>> asyncCallback) {
+		enterprisesServiceAsync.getEnterpiseScopes(enterpriseId, getCurrentDomainName(), asyncCallback);
+	}
+	
 	// ----------------------------------------------------------------- static
 	
 	private static String getCurrentUser() {

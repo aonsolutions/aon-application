@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
+import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
 import java.sql.Connection;
 import java.util.HashMap;
@@ -17,6 +18,8 @@ import org.jooq.Record1;
 import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
+
+import com.code.aon.config.Scope;
 
 public class JooqEnterprise {
 
@@ -32,6 +35,10 @@ public class JooqEnterprise {
 	
 	public static Map<Integer, String> getEnterpriseActivities(Connection conn, Integer enterpriseId) {
 		return getEnterpriseActivitiesInfoDB(DSL.using(conn, getDefaultSettings()), enterpriseId);
+	}
+	
+	public static Map<Integer, String> getEnterpriseScopes(Connection conn, Integer enterpriseId) {
+		return getEnterpriseScopesInfoDB(DSL.using(conn, getDefaultSettings()), enterpriseId);
 	}
 
 	protected static Settings getDefaultSettings() {
@@ -123,6 +130,55 @@ public class JooqEnterprise {
 		}
 		
 		return activities;
+	}
+	
+
+	private static Map<Integer, String> getEnterpriseScopesInfoDB(DSLContext dslContext, Integer enterpriseId) {
+		Map<Integer, String> scopes = new HashMap<Integer, String>();
+		
+		Record enterpriseRecord = dslContext.select().from(ENTERPRISE)
+					.where(ENTERPRISE.REGISTRY.eq(enterpriseId))
+					.fetchOne();
+		
+		Integer domainId = enterpriseRecord.get(ENTERPRISE.DOMAIN);
+		
+		Record domainRecord = dslContext.select().from(DOMAIN)
+				.where(DOMAIN.ID.eq(domainId))
+				.fetchOne();
+		
+		Integer parentDomianId = domainRecord.get(DOMAIN.PARENT);
+		String domainDescription = domainRecord.get(DOMAIN.DESCRIPTION);
+		
+		if(null == parentDomianId) {
+			Result<Record> scopeRecords = dslContext.select().from(SCOPE)
+					.where(SCOPE.DOMAIN.eq(domainId))
+					.fetch();
+			
+			if(null != scopeRecords && !scopeRecords.isEmpty())
+				for(Record r : scopeRecords)
+					scopes.put(r.get(SCOPE.ID), r.get(SCOPE.DESCRIPTION) + " (" + domainDescription +")");
+			
+		}else {
+			Result<Record> scopeRecords = dslContext.select().from(SCOPE)
+					.where(SCOPE.DOMAIN.eq(domainId)
+							.or(SCOPE.DOMAIN.eq(parentDomianId))
+					)
+					.fetch();
+			
+			if(null != scopeRecords && !scopeRecords.isEmpty()) {
+				Record parentDomainRecord = dslContext.select().from(DOMAIN)
+					.where(DOMAIN.ID.eq(parentDomianId))
+					.fetchOne();
+			
+				String parentDescription = parentDomainRecord.get(DOMAIN.DESCRIPTION);
+			
+				for(Record r : scopeRecords)			
+					scopes.put(r.get(SCOPE.ID), r.get(SCOPE.DESCRIPTION) + " (" + parentDescription +")");
+		
+			}
+		}
+		
+		return scopes;
 	}
 	
 }

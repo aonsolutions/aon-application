@@ -1544,6 +1544,24 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			}
 		}
 	}
+
+	@Override
+	public Map<Integer, String> getEnterpiseScopes(Integer enterpriseId, String domain) {
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection(domain);
+			return JooqEnterprise.getEnterpriseScopes(connection, enterpriseId);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+		}
+	}
 	
 	
 }

@@ -53,5 +53,6 @@ public interface EnterprisesServiceAsync {
 	void getEnterpiseCalendars(Integer enterpriseId, String domain, AsyncCallback<Map<Integer, String>> asyncCallback);
 	void getEnterpiseActivities(Integer enterpriseId, String domain, AsyncCallback<Map<Integer, String>> asyncCallback);
 	void createWorkplaceInfo(WorkplaceInfo workplaceInfo, Integer enterpriseId, String domain, AsyncCallback<WorkplaceInfo> asyncCallback);
+	void getEnterpiseScopes(Integer enterpriseId, String domain, AsyncCallback<Map<Integer, String>> asyncCallback);
 
 }
