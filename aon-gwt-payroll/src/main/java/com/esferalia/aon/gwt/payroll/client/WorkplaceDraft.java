@@ -7,7 +7,6 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -24,10 +23,29 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class WorkplaceDraft extends Composite implements ContextMenuHandler {
+	
+	private class WorkplaceImplementation extends Workplace{
+
+		@Override
+		public void onWorkplaceDescriptionChange() {
+			workplaceDraftObject.setWorkplaceDescription(workplaceDescription.getValue());
+		}
+
+		@Override
+		public void onWorkplaceEconomicConcertChange() {
+			workplaceDraftObject.setWorkplaceEconomicConcert(workplaceEconomicConcert.getSelectedIndex() - 1);
+		}
+
+		@Override
+		public void onWorkplaceAgreementChange() {
+			Integer agreementId = workplaceDraftObject.getAgreementId(this.workpalceAgreement.getSelectedItemText());
+			workplaceDraftObject.setWorkplaceAgreement(agreementId);
+		}
+		
+	}
 	
 	// -------------------------------------------------- UiBinder --------------------------------------------------
 
@@ -66,37 +84,9 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 	
 	@UiField
 	Button disableWorkplaceButton;
-
-	// TABLA DATOS EMPLEADO
-
-	@UiField
-	TableElement generalDataTable;
 	
-	@UiField
-	TextBox workplaceDescription;
-	
-	@UiField
-	HorizontalPanel workplaceAddressPanel;
-	
-	@UiField
-	ListBox workplaceEconomicConcert;
-
-	// TABLA DATOS CONTRATO
-
-	@UiField
-	Label labelPayrollDataTable;
-
-	@UiField
-	TableElement payrollDataTable;
-	
-	@UiField
-	HorizontalPanel workplaceCalendarPanel;
-
-	@UiField
-	ListBox workpalceAgreement;
-
-	@UiField
-	HorizontalPanel workplaceActivityPanel;
+	@UiField (provided = true)
+	Workplace workplace;
 
 	// ------------------------------------------------------ VARIABLES DE LA CLASE --------------------------------------------------
 
@@ -106,10 +96,10 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 	// ------------------------------------------------ CONSTRUCTOR ------------------------------------------------------
 
 	public WorkplaceDraft() {
+		workplace = new WorkplaceImplementation();
 		
 		// Inicializamos la vista del empleado
 		initWidget(uiBinder.createAndBindUi(this));
-		
 	}
 
 	// ------------------------------------------------- UiHandlers ------------------------------------------------------
@@ -126,30 +116,10 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 		//save();
 	}
 	
-	@UiHandler("workplaceDescription")
-	void onWorkplaceDescriptionChangeValue(ChangeEvent event) {
-		workplaceDraftObject.setWorkplaceDescription(workplaceDescription.getValue());
-		//save();
-	}
-
-	@UiHandler("workplaceEconomicConcert")
-	void onWorkplaceEconomicConcertChangeValue(ChangeEvent event) {
-		workplaceDraftObject.setWorkplaceEconomicConcert(workplaceEconomicConcert.getSelectedIndex() - 1);
-		//save();
-	}
-	
-	@UiHandler("workpalceAgreement")
-	void onContractAgreementChangeValue(ChangeEvent event) {
-		Integer agreementId = workplaceDraftObject.getAgreementId(this.workpalceAgreement.getSelectedItemText());
-		workplaceDraftObject.setWorkplaceAgreement(agreementId);
-		//save();
-	}
-	
 	private void save() {
 		saveStatus.setText("Guardando...");
 		workplaceDraftObject.updateWorkplace(
 				r -> { 
-					   //setWorkplaceDraftObject(workplaceDraftObject);
 					   saveStatus.setText("Guardado");
 					 }, 
 				t -> {}
@@ -167,7 +137,6 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 					 }
 				, f -> {}
 		);
-		
 	}
 
 	private void initializeScheduler() {
@@ -175,17 +144,14 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 
 			@Override
 			public void run() {
-				//save();
 				if(isAttached() && workplaceDraftObject.hasChanged()) {
-//					Window.alert("Guardando....");
 					save();
 				}else
 					saveStatus.setText("");
 			}
 		};
-//		timer.scheduleRepeating(8000);
-		timer.scheduleRepeating(4000);
 		
+		timer.scheduleRepeating(4000);
 	}
 
 	private void initializeView() {
@@ -202,48 +168,46 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 			enableWorkplacePanel.addStyleName(style.fontEnableStyle());
 			disableWorkplacePanel.addStyleName(style.hide());
 		}
-		
+
 		resetElements();
 		initializeListBox();
 		fillWorkplaceInfo();
 	}
-
+	
 	private void resetElements() {
 		
 		// Clear general elements
-		this.workplaceDescription.setValue("");
-		this.workplaceAddressPanel.clear();
-		this.workplaceEconomicConcert.clear();
+		workplace.workplaceDescription.setValue("");
+		workplace.workplaceAddressPanel.clear();
+		workplace.workplaceEconomicConcert.clear();
 
 		// Clear payroll elements
-		this.workplaceCalendarPanel.clear();
-		this.workpalceAgreement.clear();
-		this.workplaceActivityPanel.clear();
+		workplace.workplaceCalendarPanel.clear();
+		workplace.workpalceAgreement.clear();
+		workplace.workplaceActivityPanel.clear();
 		
 	}
 
 	private void initializeListBox() {
-
 		//DIRECCION
 		initializeAddressCell();
 		
 		//CONCIERTO ECONOMICO
-		this.workplaceEconomicConcert.addItem("-");
-		this.workplaceEconomicConcert.addItem(String.valueOf("\u00C1")+"lava");
-		this.workplaceEconomicConcert.addItem("Bizkaia");
-		this.workplaceEconomicConcert.addItem("Gipuzkoa");
-		this.workplaceEconomicConcert.addItem("Navarra");
-		this.workplaceEconomicConcert.addItem("Territorio Com"+ String.valueOf("\u00FA") +"n");
-		
+		workplace.workplaceEconomicConcert.addItem("-");
+		workplace.workplaceEconomicConcert.addItem(String.valueOf("\u00C1")+"lava");
+		workplace.workplaceEconomicConcert.addItem("Bizkaia");
+		workplace.workplaceEconomicConcert.addItem("Gipuzkoa");
+		workplace.workplaceEconomicConcert.addItem("Navarra");
+		workplace.workplaceEconomicConcert.addItem("Territorio Com"+ String.valueOf("\u00FA") +"n");
 		
 		//CALENDARIO
 		initializeCalendarCell();
 		
 		// CONVENIO
-		this.workpalceAgreement.addItem("-");
+		workplace.workpalceAgreement.addItem("-");
 		List<Agreement> agreements = workplaceDraftObject.getActiveAgreements();
 		for (Agreement a : agreements) {
-			this.workpalceAgreement.addItem(a.getDescription());
+			workplace.workpalceAgreement.addItem(a.getDescription());
 		}
 		
 		//ACTIVIDADES
@@ -258,7 +222,7 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 			workplaceAddressWidget = new Label((null == addressId) ? "" : workplaceDraftObject.getWorkplaceAddresses().get(addressId));
 			workplaceAddressWidget.setStyleName("aon-inputText");
 			workplaceAddressWidget.addStyleName(style.maxWidthTextBox());
-			workplaceAddressPanel.add(workplaceAddressWidget);
+			workplace.workplaceAddressPanel.add(workplaceAddressWidget);
 		}else{
 			workplaceAddressWidget = new ListBox();
 			for(String address : workplaceDraftObject.getWorkplaceAddresses().values()){
@@ -282,7 +246,7 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 					//save();
 				}
 			});
-			workplaceAddressPanel.add(workplaceAddressWidget);
+			workplace.workplaceAddressPanel.add(workplaceAddressWidget);
 			if(((ListBox) workplaceAddressWidget).getItemCount() != 0){
 				((ListBox) workplaceAddressWidget).setSelectedIndex(workplaceDraftObject.getWorkplaceAddressIndex());
 			}
@@ -297,13 +261,13 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 			workplaceCalendarWidget.addStyleName(style.maxWidthTextBox());
 			workplaceCalendarWidget.addStyleName(style.warningColor());
 			workplaceCalendarWidget.addStyleName(style.borderNone());
-			workplaceCalendarPanel.add(workplaceCalendarWidget);
+			workplace.workplaceCalendarPanel.add(workplaceCalendarWidget);
 		}else if(workplaceDraftObject.getWorkplacesCalendars().values().size() == 1){
 			Integer calendarId = workplaceDraftObject.getWorkplaceInfo().getCalendarId();
 			workplaceCalendarWidget = new Label(workplaceDraftObject.getWorkplacesCalendars().get(calendarId));
 			workplaceCalendarWidget.setStyleName("aon-inputText");
 			workplaceCalendarWidget.addStyleName(style.maxWidthTextBox());
-			workplaceCalendarPanel.add(workplaceCalendarWidget);
+			workplace.workplaceCalendarPanel.add(workplaceCalendarWidget);
 		}else{
 			workplaceCalendarWidget = new ListBox();
 			for(String calendar : workplaceDraftObject.getWorkplacesCalendars().values()){
@@ -329,7 +293,7 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 					
 				}
 			});
-			workplaceCalendarPanel.add(workplaceCalendarWidget);
+			workplace.workplaceCalendarPanel.add(workplaceCalendarWidget);
 			if(((ListBox) workplaceCalendarWidget).getItemCount() != 0){
 				((ListBox) workplaceCalendarWidget).setSelectedIndex(workplaceDraftObject.getWorkplaceCalendarIndex());
 			}
@@ -344,7 +308,7 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 			workplaceActivityWidget.addStyleName(style.maxWidthTextBox());
 			workplaceActivityWidget.addStyleName(style.warningColor());
 			workplaceActivityWidget.addStyleName(style.borderNone());
-			workplaceActivityPanel.add(workplaceActivityWidget);
+			workplace.workplaceActivityPanel.add(workplaceActivityWidget);
 //		}else if(workplaceDraftObject.getWorkplaceActivities().values().size() == 1){
 //			Integer activityId = workplaceDraftObject.getWorkplaceInfo().getActivityId();
 //			workplaceActivityWidget = new Label(workplaceDraftObject.getWorkplaceActivities().get(activityId));
@@ -369,13 +333,12 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 							break;
 						}
 					}
-//					Window.alert("Actividad Id : " + activityId);
 					workplaceDraftObject.setWorkplaceActivity(activityId);
 					//save();
 					
 				}
 			});
-			workplaceActivityPanel.add(workplaceActivityWidget);	
+			workplace.workplaceActivityPanel.add(workplaceActivityWidget);	
 			if(((ListBox) workplaceActivityWidget).getItemCount() != 0){
 				if(((ListBox) workplaceActivityWidget).getItemCount() == 2){
 					if(null == workplaceDraftObject.getWorkplaceInfo().getActivityId()) {
@@ -392,17 +355,16 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 	}
 
 	private void fillWorkplaceInfo() {
-		this.workplaceDescription.setValue(workplaceDraftObject.getWorkplaceInfo().getDescription());
+		workplace.workplaceDescription.setValue(workplaceDraftObject.getWorkplaceInfo().getDescription());
 		
-		if(this.workplaceEconomicConcert.getItemCount() != 0){
-			this.workplaceEconomicConcert.setSelectedIndex(workplaceDraftObject.getWorkplaceEconomicConcert());
+		if(workplace.workplaceEconomicConcert.getItemCount() != 0){
+			workplace.workplaceEconomicConcert.setSelectedIndex(workplaceDraftObject.getWorkplaceEconomicConcert());
 		}
 		
 		String workplaceAgreement = workplaceDraftObject.getWorkplaceAgreementDescription();
-		if(this.workpalceAgreement.getItemCount() != 0){
-			this.workpalceAgreement.setSelectedIndex(workplaceDraftObject.getAgreementIndex(workplaceAgreement) + 1);
-		}
-			
+		if(workplace.workpalceAgreement.getItemCount() != 0){
+			workplace.workpalceAgreement.setSelectedIndex(workplaceDraftObject.getAgreementIndex(workplaceAgreement) + 1);
+		}	
 	}
 
 	@Override

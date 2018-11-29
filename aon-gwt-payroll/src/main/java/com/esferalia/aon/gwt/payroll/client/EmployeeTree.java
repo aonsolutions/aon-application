@@ -196,6 +196,24 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			activityDialog.show();
 		}
 	}
+	
+	class NewWorkplaceCommand implements ScheduledCommand {
+		private DomainEnterprisesServiceAsync enterprisesService;
+		
+		@Override
+		public void execute() {
+			// Create a remote service proxy to talk to the server-side Employees
+			// service.
+			enterprisesService = DomainEnterprisesServiceAsync.newInstance();
+			
+			WorkplaceDialog workplaceDialog = new WorkplaceDialog();
+			WorkplaceDialogObject workplaceDialogObject = new WorkplaceDialogObject(enterprise, enterprisesService);
+			workplaceDialog.setWorkplaceDialogObject(workplaceDialogObject);
+			enterpriseContextMenu.hide();
+			workplaceDialog.center();
+			workplaceDialog.show();
+		}
+	}
 
 	class CopyEmployeeCommand implements ScheduledCommand {
 
@@ -1373,8 +1391,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			MenuItem newWorkPlaceItem = newPopup.addItem(
 					getHTML("Centro", AON.AON_ICON_WORKPLACE,
 							AON.AON_ICON_CMD_BUTTON),
-					true, new NewEmployeeCommand());
-			newWorkPlaceItem.setEnabled(false);
+					true, new NewWorkplaceCommand());
+			newWorkPlaceItem.setEnabled(true);
 
 			MenuItem newActivityItem = newPopup.addItem(
 					getHTML("Actividad", AON.AON_ICON_INE,

@@ -251,4 +251,32 @@ public class EnterprisesServiceAsyncDecorator implements
 		enterprisesServiceAsync.getCNAE2009(domain,
 				new AsyncCallbackWrapper<Map<String, String>>(callback));
 	}
+
+	@Override
+	public void getEnterpiseAddresses(Integer enterpriseId, String domain, AsyncCallback<Map<Integer, String>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getEnterpiseAddresses(enterpriseId, domain,
+				new AsyncCallbackWrapper<Map<Integer, String>>(callback));
+	}
+
+	@Override
+	public void getEnterpiseCalendars(Integer enterpriseId, String domain, AsyncCallback<Map<Integer, String>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getEnterpiseCalendars(enterpriseId, domain,
+				new AsyncCallbackWrapper<Map<Integer, String>>(callback));
+	}
+
+	@Override
+	public void getEnterpiseActivities(Integer enterpriseId, String domain, AsyncCallback<Map<Integer, String>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getEnterpiseActivities(enterpriseId, domain,
+				new AsyncCallbackWrapper<Map<Integer, String>>(callback));
+	}
+
+	@Override
+	public void createWorkplaceInfo(WorkplaceInfo workplaceInfo, Integer enterpriseId, String domain, AsyncCallback<WorkplaceInfo> callback) {
+		AON.start();
+		enterprisesServiceAsync.createWorkplaceInfo(workplaceInfo, enterpriseId, domain,
+				new AsyncCallbackWrapper<WorkplaceInfo>(callback));
+	}
 }

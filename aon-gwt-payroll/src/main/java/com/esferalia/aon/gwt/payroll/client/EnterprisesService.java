@@ -84,6 +84,13 @@ public interface EnterprisesService extends RemoteService {
 	ActivityInfo createActivityInfoDataBase(ActivityInfo activityInfo, String domain);
 
 	Map<String, String> getCNAE2009(String domain);
+
+	Map<Integer, String> getEnterpiseAddresses(Integer enterpriseId, String domain);
 	
+	Map<Integer, String> getEnterpiseCalendars(Integer enterpriseId, String domain);
+	
+	Map<Integer, String> getEnterpiseActivities(Integer enterpriseId, String domain);
+
+	WorkplaceInfo createWorkplaceInfo(WorkplaceInfo workplaceInfo, Integer enterpriseId, String domain);
 	
 }

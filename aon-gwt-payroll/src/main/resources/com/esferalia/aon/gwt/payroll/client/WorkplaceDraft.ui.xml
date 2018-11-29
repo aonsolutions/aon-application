@@ -1,6 +1,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:e='urn:import:com.esferalia.aon.gwt.payroll.client'>
 
 	<ui:with field='res'
 		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
@@ -159,91 +161,7 @@
 			</g:FlowPanel>
 		</g:north>
 		<g:center>
-			<g:ScrollPanel>
-				<g:HTMLPanel>
-					<g:VerticalPanel styleName="{style.styleBorder}">
-						<g:Label styleName='aon-group-title {style.headerStyle}' width="105px">Datos Generales</g:Label>
-						<g:HTMLPanel>
-							<table ui:field="generalDataTable"
-								style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
-								<body>
-									<tr>
-										<td></td>
-										<td></td>
-										<td></td>
-										<td></td>
-									</tr>
-									<tr>
-										<td style="background-color: #eaeaea; width: 200px;">
-											<g:Label styleName="{style.firstColumnTextStyle} {style.requiredColor}">Descripción</g:Label>
-										</td>
-										<td colspan="3">
-											<g:TextBox ui:field="workplaceDescription" styleName='aon-inputText {style.maxWidthTextBox2}'></g:TextBox>
-										</td>
-									</tr>
-									<tr>
-										<td style="background-color: #eaeaea; width: 200px;">
-											<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Dirección</g:Label>
-										</td>
-										<td colspan="3">
-										    <g:HorizontalPanel ui:field="workplaceAddressPanel" styleName="{style.maxWidth}"></g:HorizontalPanel>
-										</td>
-									</tr>
-									<tr>
-										<td style="background-color: #eaeaea; width: 200px;">
-											<g:Label styleName='{style.firstColumnTextStyle}'>Concierto económico</g:Label>
-										</td>
-										<td colspan="3">
-											<g:ListBox ui:field="workplaceEconomicConcert" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
-										</td>
-									</tr>
-								</body>
-							</table>
-						</g:HTMLPanel>
-					</g:VerticalPanel>
-					<g:VerticalPanel styleName="{style.styleBorder2}">
-						<g:Label ui:field="labelPayrollDataTable" width="105px"
-							styleName='aon-group-title {style.headerStyle}'>Datos Laborables</g:Label>
-						<g:HTMLPanel>
-							<table ui:field="payrollDataTable"
-								style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
-								<tbody>
-								    <tr>
-										<td></td>
-										<td></td>
-										<td></td>
-										<td></td>
-									</tr>
-									<tr>
-										<td style="background-color: #eaeaea; width: 200px;">
-											<g:Label styleName='{style.firstColumnTextStyle}'>Calendario</g:Label>
-										</td>
-										<td colspan="3">
-											 <g:HorizontalPanel ui:field="workplaceCalendarPanel" styleName="{style.maxWidth}"></g:HorizontalPanel>
-										</td>
-									</tr>
-									<tr>
-										<td style="background-color: #eaeaea; width: 200px;">
-											<g:Label styleName='{style.firstColumnTextStyle}'>Convenio</g:Label>
-										</td>
-										<td colspan="3">
-											<g:ListBox ui:field="workpalceAgreement" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
-										</td>
-									</tr>
-									<tr>
-										<td style="background-color: #eaeaea; width: 200px;">
-											<g:Label styleName='{style.firstColumnTextStyle}'>Actividad</g:Label>
-										</td>
-										<td colspan="3">
-										    <g:HorizontalPanel ui:field="workplaceActivityPanel" styleName="{style.maxWidth}"></g:HorizontalPanel>
-										</td>
-									</tr>
-								</tbody>
-							</table>
-						</g:HTMLPanel>
-					</g:VerticalPanel>
-				</g:HTMLPanel>
-			</g:ScrollPanel>
+			<e:Workplace ui:field="workplace"/>
 		</g:center>
 	</g:DockLayoutPanel>
 </ui:UiBinder> 

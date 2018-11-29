@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
 import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
+import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.Calendar.CALENDAR;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
@@ -9,6 +10,7 @@ import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -26,6 +28,8 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
+import com.esferalia.aon.jooq.tables.records.ScopeRecord;
+import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 
 public class JooqWorkplace {
 
@@ -37,6 +41,10 @@ public class JooqWorkplace {
 	
 	public static WorkplaceInfo setWorkplaceInfo(Connection conn, WorkplaceInfo workplaceInfo) {
 		return setWorkplaceInfoDB(DSL.using(conn, getDefaultSettings()), workplaceInfo);
+	}
+	
+	public static WorkplaceInfo createWorkplace(Connection conn, WorkplaceInfo workplaceInfo, Integer enterpriseId) {
+		return createWorkplaceInfoDB(DSL.using(conn, getDefaultSettings()), workplaceInfo, enterpriseId);
 	}
 
 	protected static Settings getDefaultSettings() {
@@ -256,6 +264,71 @@ public class JooqWorkplace {
 		activitiesCCC.setActivities(activities);
 		
 		return activitiesCCC;
+	}
+
+	private static WorkplaceInfo createWorkplaceInfoDB(DSLContext dslContext, WorkplaceInfo workplaceInfo, Integer enterpriseId) {
+		Record enterpriseRecord = dslContext.select().from(ENTERPRISE)
+				.where(ENTERPRISE.REGISTRY.eq(enterpriseId))
+				.fetchOne();
+		
+		Integer domainId = enterpriseRecord.get(ENTERPRISE.DOMAIN);
+		
+		Record domainRecord = dslContext.select().from(DOMAIN)
+				.where(DOMAIN.ID.eq(domainId))
+				.fetchOne();
+		
+		Integer parentDomainId = domainRecord.get(DOMAIN.PARENT);
+		
+		//SCOPE
+		Integer scopeId;
+		Record scopeRecord = null;
+		
+		if(null == parentDomainId)
+			scopeRecord = dslContext.select().from(SCOPE)
+					.where(SCOPE.DOMAIN.eq(domainId))
+					.and(SCOPE.DESCRIPTION.eq("GENERAL"))
+					.fetchOne();
+		else
+			scopeRecord = dslContext.select().from(SCOPE)
+			.where(SCOPE.DOMAIN.eq(domainId)
+					.or(SCOPE.DOMAIN.eq(parentDomainId))
+			).and(SCOPE.DESCRIPTION.eq("GENERAL"))
+			.fetchOne();
+		
+		if(null == scopeRecord) {
+			ScopeRecord scope = dslContext.insertInto(SCOPE)
+				.set(SCOPE.DOMAIN, domainId)
+				.set(SCOPE.DESCRIPTION, "GENERAL")
+				.returning(SCOPE.ID)
+				.fetchOne();
+			
+			scopeId = scope.getId();
+		}else
+			scopeId = scopeRecord.get(SCOPE.ID);
+		
+		//WORKPALCE
+		WorkplaceRecord workplaceRecord = dslContext.insertInto(WORKPLACE)
+			.set(WORKPLACE.DOMAIN, domainId)
+			.set(WORKPLACE.ENTERPRISE, enterpriseId)
+			.set(WORKPLACE.DESCRIPTION, workplaceInfo.getDescription())
+			.set(WORKPLACE.ADDRESS, workplaceInfo.getAddressId())
+			.set(WORKPLACE.SCOPE, scopeId)
+			.set(WORKPLACE.ECONOMICAGREEMENT, workplaceInfo.getEconomicConcert())
+			.returning(WORKPLACE.ID)
+			.fetchOne();
+		
+		Integer workplaceId = workplaceRecord.getId();
+		
+		//PAYROLL_WORKPLACE
+		dslContext.insertInto(PAYROLL_WORKPLACE)
+			.set(PAYROLL_WORKPLACE.DOMAIN, domainId)
+			.set(PAYROLL_WORKPLACE.WORKPLACE, workplaceId)
+			.set(PAYROLL_WORKPLACE.AGREEMENT, workplaceInfo.getAgreementId())
+			.set(PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY, workplaceInfo.getActivityId())
+			.set(PAYROLL_WORKPLACE.CALENDAR, workplaceInfo.getCalendarId())
+			.execute();
+		
+		return workplaceInfo;
 	}
 
 	

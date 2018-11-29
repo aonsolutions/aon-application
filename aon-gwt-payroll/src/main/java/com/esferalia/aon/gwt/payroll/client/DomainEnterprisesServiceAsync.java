@@ -150,6 +150,22 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getCNAE2009(getCurrentDomainName(), asyncCallback);
 	}
 	
+	public void getEnterpiseAddresses(Integer enterpriseId, AsyncCallback<Map<Integer, String>> asyncCallback) {
+		enterprisesServiceAsync.getEnterpiseAddresses(enterpriseId, getCurrentDomainName(), asyncCallback);
+	}
+	
+	public void getEnterpiseCalendars(Integer enterpriseId, AsyncCallback<Map<Integer, String>> asyncCallback) {
+		enterprisesServiceAsync.getEnterpiseCalendars(enterpriseId, getCurrentDomainName(), asyncCallback);
+	}
+	
+	public void getEnterpiseActivities(Integer enterpriseId, AsyncCallback<Map<Integer, String>> asyncCallback) {
+		enterprisesServiceAsync.getEnterpiseActivities(enterpriseId, getCurrentDomainName(), asyncCallback);
+	}
+	
+	public void createWorkplaceInfo(WorkplaceInfo workplaceInfo, Integer enterpriseId, AsyncCallback<WorkplaceInfo> asyncCallback) {
+		enterprisesServiceAsync.createWorkplaceInfo(workplaceInfo, enterpriseId, getCurrentDomainName(), asyncCallback);
+	}
+	
 	// ----------------------------------------------------------------- static
 	
 	private static String getCurrentUser() {
