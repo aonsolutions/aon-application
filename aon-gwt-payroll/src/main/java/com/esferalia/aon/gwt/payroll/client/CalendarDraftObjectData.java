@@ -156,6 +156,10 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 				});
 	}
 	
+	public DayType getDayType(int weekDay) {
+		return myDayTypesDrafts[weekDay];
+	}
+	
 	public void setDayType(int weekDay, DayType dayType ) {
 		myDayTypesDrafts[weekDay] = dayType;
 	}

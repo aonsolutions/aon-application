@@ -89,7 +89,7 @@
 				<g:FlowPanel>
 
 					<g:MenuBar>
-						<g:MenuItem text="Archivo" enabled="false">
+						<g:MenuItem text="Archivo" enabled="false" visible="false">
 							<g:MenuBar vertical="true">
 								<g:MenuItem styleName="gwt-MenuItem aon-icon-new"
 									ui:field="newCalendarMenuItem" text="Nuevo" enabled="false" />
@@ -104,7 +104,7 @@
 									ui:field="printMenuItem" text="Imprimir..." enabled="false" />
 							</g:MenuBar>
 						</g:MenuItem>
-						<g:MenuItem text="Edici&oacute;n" enabled="false">
+						<g:MenuItem text="Edici&oacute;n" enabled="false" visible="false">
 							<g:MenuBar vertical="true">
 								<g:MenuItem styleName="gwt-MenuItem aon-icon-undo"
 									ui:field="undoMenuItem" text="Deshacer" enabled="false" />
@@ -112,7 +112,7 @@
 									ui:field="redoMenuItem" text="Rehacer" enabled="false" />
 							</g:MenuBar>
 						</g:MenuItem>
-						<g:MenuItem text="Gesti&oacute;n" enabled="false">
+						<g:MenuItem text="Gesti&oacute;n" enabled="false" visible="false">
 							<g:MenuBar vertical="true">
 								<g:MenuItem styleName="gwt-MenuItem aon-icon-task"
 									ui:field="addEventMenuItem" text="Añadir..." enabled="false" />
@@ -141,6 +141,8 @@
 										styleName='aon-finding-toolbar-item aon-icon-delete' text="Eliminar" visible="false" />
 									<g:Button ui:field='addEvent'
 										styleName='aon-finding-toolbar-item aon-icon-task' text="Añadir Festivo" />
+									<g:Button ui:field='workDays'
+										styleName='aon-finding-toolbar-item aon-icon-time' text="D&iacute;as Laborables" />
 									<g:Button ui:field='saveButton'
 										styleName='aon-finding-toolbar-item aon-icon-save' text="Guardar"
 										enabled="false" />

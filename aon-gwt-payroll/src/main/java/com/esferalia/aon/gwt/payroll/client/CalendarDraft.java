@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -10,12 +12,16 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.FilterDialog;
+import com.esferalia.aon.gwt.common.shared.HasId;
 import com.esferalia.aon.gwt.payroll.client.CalendarDraftObjectData.MyHolidayDraft;
+import com.esferalia.aon.gwt.payroll.shared.CalendarDraft.DayType;
 import com.esferalia.aon.gwt.payroll.shared.HolidayDraft;
 import com.esferalia.aon.watson.util.AonWordUtils;
+import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Position;
@@ -28,6 +34,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -47,6 +54,41 @@ import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 public class CalendarDraft extends Composite implements
 		CalendarDraftObjectData.CalendarDraftListener {
+
+	static class WeekDay implements HasId<Integer> {
+		
+		private static WeekDay MONDAY = new WeekDay(Calendar.MONDAY, "Lunes");
+		private static WeekDay TUESDAY = new WeekDay(Calendar.TUESDAY, "Martes");
+		private static WeekDay WEDNESDAY = new WeekDay(Calendar.WEDNESDAY, "Mi\u00E9rcoles");
+		private static WeekDay THURSDAY = new WeekDay(Calendar.THURSDAY, "Jueves");
+		private static WeekDay FRIDAY = new WeekDay(Calendar.FRIDAY, "Viernes");
+		private static WeekDay SATURDAY = new WeekDay(Calendar.SATURDAY, "S\u00E1bado");
+		private static WeekDay SUNDAY = new WeekDay(Calendar.SUNDAY, "Domingo");
+		
+		private String name;
+		private int weekDay;
+		
+		WeekDay(int weekDay, String name) {
+			this.name = name;
+			this.weekDay = weekDay;
+		}
+		
+		public int getDay() {
+			return weekDay -1;
+		}
+
+		@Override
+		public Integer getId() {
+			return weekDay;
+		}
+		
+		@Override
+		public String toString() {
+			return name;
+		}
+		
+		
+	}
 
 	interface Style extends CssResource {
 
@@ -91,6 +133,8 @@ public class CalendarDraft extends Composite implements
 	interface CalendarDraftUiBinder extends UiBinder<Widget, CalendarDraft> {
 	}
 	
+	
+
 	class EnableButtons implements CalendarDraftObjectData.CalendarEvents {
 		
 		private CalendarDraftObjectData calendarDraftObjectData;
@@ -167,6 +211,67 @@ public class CalendarDraft extends Composite implements
 		
 		loadCalendarPanel(value, Integer.parseInt(yearLabel.getText()),
 				calendarDraftObjectData);
+	}
+
+	@UiHandler("workDays")
+	void onWorkDaysClick(ClickEvent event) {
+		
+		List<WeekDay> weekDays = new ArrayList<WeekDay>(7);
+		weekDays.add(WeekDay.MONDAY);
+		weekDays.add(WeekDay.TUESDAY);
+		weekDays.add(WeekDay.WEDNESDAY);
+		weekDays.add(WeekDay.THURSDAY);
+		weekDays.add(WeekDay.FRIDAY);
+		weekDays.add(WeekDay.SATURDAY);
+		weekDays.add(WeekDay.SUNDAY);
+		
+		SelectDialog<WeekDay> selectDialog = new SelectDialog<WeekDay>() {
+			{
+				hideSelectLabel();
+				setCaption("D\u00EDas Laborables");
+				
+				addColumn(
+				new Column<WeekDay, String>(new TextCell())
+				{
+					@Override
+					public String getValue(WeekDay weekDay) {
+						return weekDay.toString();
+					}
+				}
+				, "D\u00EDa de la Semana");
+				
+				
+				
+				setData(weekDays);
+				
+				List<WeekDay> workingDays = new ArrayList<WeekDay>();
+				weekDays.stream()
+				.filter(w -> calendarDraftObjectData.getDayType(w.getDay()) == DayType.WORKING_DAY )
+				.forEach( w -> workingDays.add(w));
+				;
+				setSelectedData(workingDays);
+				
+			}
+			
+			@Override
+			void onAcceptClick(ClickEvent event) {
+				super.onAcceptClick(event);
+				
+				Set<WeekDay> selected = getSelectedData();
+				
+				weekDays.stream().filter(w -> selected.contains(w)).forEach(w -> calendarDraftObjectData.setWorkingDay(w.getDay()));
+				weekDays.stream().filter(w -> !selected.contains(w)).forEach(w -> calendarDraftObjectData.setNonWorkingDay(w.getDay()));
+				
+				setEnableSaveButton();
+				
+//				getSelectedData().stream()
+//				.forEach(w -> calendarDraftObjectData.setWorkingDay(w.getDay()));
+				
+			}
+		};
+
+		selectDialog.center();
+		selectDialog.show();
 	}
 
 	@UiHandler("addEvent")

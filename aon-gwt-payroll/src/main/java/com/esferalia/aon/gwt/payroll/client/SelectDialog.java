@@ -25,6 +25,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AbstractDataProvider;
@@ -155,6 +156,9 @@ public class SelectDialog<T extends HasId<?>> extends CustomDialog {
 	private static final Binder binder = GWT.create(Binder.class);
 
 	protected static final int PAGE_SIZE = 25;
+	
+	@UiField 
+	Label selectLabel;
 
 	@UiField
 	Button acceptButton;
@@ -301,5 +305,9 @@ public class SelectDialog<T extends HasId<?>> extends CustomDialog {
 	protected boolean enableAccept () {
 		return selectionModel.getSelectedSet()
 		.size() > 0;
+	}
+	
+	protected void hideSelectLabel() {
+		selectLabel.setVisible(false);
 	}
 }
