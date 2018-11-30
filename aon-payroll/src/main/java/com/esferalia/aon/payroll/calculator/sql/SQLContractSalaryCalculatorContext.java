@@ -42,6 +42,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MORE_THAN_65;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATION;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.OFF_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PATERNITY_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAYMENT_VARIABLE;
@@ -3814,6 +3815,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			quote = Period.intersect(quote, periods);
 			intersects = Period.intersect(intersects, periods);
 		}
+		
+		List<Period> offs = ctx.getPeriods(OFF_DAYS);
+		intersects = Period.sub(intersects, offs);
 
 		// for (Period period : quote) {
 		// if (!containsVariable(QUOTE_DAYS, period)) {

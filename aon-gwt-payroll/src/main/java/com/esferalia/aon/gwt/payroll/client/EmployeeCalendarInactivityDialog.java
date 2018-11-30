@@ -69,6 +69,8 @@ public abstract class EmployeeCalendarInactivityDialog extends CustomDialog {
 		typeInactivity.clear();
 		typeInactivity.addItem("Excedencia");
 		typeInactivity.addItem("Fijo/Discontinuo");
+		typeInactivity.addItem("Permiso no Retribuido");
+		typeInactivity.addItem("Suspensi\u00f3n de Emploeo y Sueldo");
 		
 		startDateBox.getTextBox().addClickHandler(new ClickHandler() {
 			@Override
@@ -119,6 +121,8 @@ public abstract class EmployeeCalendarInactivityDialog extends CustomDialog {
 		typeInactivity.clear();
 		typeInactivity.addItem("Excedencia");
 		typeInactivity.addItem("Fijo/Discontinuo");
+		typeInactivity.addItem("Permiso no Retribuido");
+		typeInactivity.addItem("Suspensi\u00f3n de Emploeo y Sueldo");
 		
 		startDateBox.getTextBox().addClickHandler(new ClickHandler() {
 			@Override

@@ -617,8 +617,13 @@ public class JooqEmployeeCalendar {
 							dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
 									CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
 									CONTRACT_DATA.END_DATE)
-									.values(domain, "CAUSA_INACTIVIDAD", contract, typeInactivity, 
-											sqlStartDateType, sqlEndDateType).execute();
+									.values(domain, 
+											"CAUSA_INACTIVIDAD", 
+											contract, 
+											String.format("\"%s\"",typeInactivity.toUpperCase()), 
+											sqlStartDateType, 
+											sqlEndDateType)
+											.execute();
 						}
 						
 						if(sqlStartDateType.getMonth() == sqlEndDateType.getMonth()){
