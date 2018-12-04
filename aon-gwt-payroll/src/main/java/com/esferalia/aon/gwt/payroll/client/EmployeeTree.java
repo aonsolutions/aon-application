@@ -1572,6 +1572,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private SalaryDraft salaryDraft;
 	private SalaryPreview salaryPreview;
 	private EventsDraft eventsDraft;
+	private EnterpriseDraft enterpriseDraft;
 	private WorkplaceDraft workplaceDraft;
 	private ActivityDraft activityDraft;
 	private EmployeeEventsDraft employeeEventsDraft;
@@ -1740,6 +1741,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	@Override
 	public void onEnterpriseSelected(Enterprise enterprise) {
+//		DomainEnterprisesServiceAsync domainEnterprisesServiceAsync = DomainEnterprisesServiceAsync.newInstance();
+//		EnterpriseDraftObject activityDraftObject = new EnterpriseDraftObject(enterprise, domainEnterprisesServiceAsync);
+//		
+//		employeeDetail.setWidget(getEnterpriseDraft());
+//		getEnterpriseDraft().setEnterpriseDraftObject(activityDraftObject);
+		
 		int pos = employees.getVerticalScrollPosition();
 		jsf.setRerenderHandler( () -> employees.setVerticalScrollPosition(pos) );
 
@@ -1780,17 +1787,17 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	@Override
 	public void onActivitySelected(Activity activity) {
-//		DomainEnterprisesServiceAsync domainEnterprisesServiceAsync = DomainEnterprisesServiceAsync.newInstance();
-//		ActivityDraftObject activityDraftObject = new ActivityDraftObject(activity, domainEnterprisesServiceAsync);
-//		
-//		employeeDetail.setWidget(getActivityDraft());
-//		getActivityDraft().setActivityDraftObject(activityDraftObject);
+		DomainEnterprisesServiceAsync domainEnterprisesServiceAsync = DomainEnterprisesServiceAsync.newInstance();
+		ActivityDraftObject activityDraftObject = new ActivityDraftObject(activity, domainEnterprisesServiceAsync);
+		
+		employeeDetail.setWidget(getActivityDraft());
+		getActivityDraft().setActivityDraftObject(activityDraftObject);
 
-		int pos = employees.getVerticalScrollPosition();
-		jsf.setRerenderHandler( () -> employees.setVerticalScrollPosition(pos) );
-
-		employeeDetail.setWidget(jsf);
-		jsf.activitySelected(activity.getId());
+//		int pos = employees.getVerticalScrollPosition();
+//		jsf.setRerenderHandler( () -> employees.setVerticalScrollPosition(pos) );
+//
+//		employeeDetail.setWidget(jsf);
+//		jsf.activitySelected(activity.getId());
 		this.activity = activity;
 	}
 
@@ -2101,6 +2108,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		if (eventsDraft == null)
 			eventsDraft = new EventsDraft();
 		return eventsDraft;
+	}
+	
+	private EnterpriseDraft getEnterpriseDraft() {
+		if (enterpriseDraft == null)
+			enterpriseDraft = new EnterpriseDraft();
+		return enterpriseDraft;
 	}
 	
 	private WorkplaceDraft getWorkplaceDraft() {

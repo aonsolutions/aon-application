@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -285,5 +286,12 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.getEnterpiseScopes(enterpriseId, domain,
 				new AsyncCallbackWrapper<Map<Integer, String>>(callback));
+	}
+
+	@Override
+	public void getEnterpriseInfo(Integer enterpriseId, String domain, AsyncCallback<EnterpriseInfo> callback) {
+		AON.start();
+		enterprisesServiceAsync.getEnterpriseInfo(enterpriseId, domain,
+				new AsyncCallbackWrapper<EnterpriseInfo>(callback));
 	}
 }

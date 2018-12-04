@@ -227,7 +227,7 @@ public class WorkplaceDialog extends CustomDialog {
 			workplaceScopeWidget = new Label((null == scopeId) ? "" : workplaceDialogObject.getWorkplaceScopes().get(scopeId));
 			workplaceScopeWidget.setStyleName("aon-inputText");
 			workplaceScopeWidget.addStyleName(workplace.style.maxWidthTextBox());
-			workplace.workplaceAddressPanel.add(workplaceScopeWidget);
+			workplace.workplaceScopePanel.add(workplaceScopeWidget);
 			workplaceDialogObject.setWorkplaceScope(scopeId); //AutoSeleccion
 		}else{
 			workplaceScopeWidget = new ListBox();

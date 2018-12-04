@@ -1,0 +1,414 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+
+	<ui:with field='res'
+		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
+
+	<ui:style 
+		type="com.esferalia.aon.gwt.payroll.client.Enterprise.MyStyle">
+		
+		.noselect {
+			-webkit-touch-callout: none; /* iOS Safari */
+			-webkit-user-select: none; /* Safari */
+			-khtml-user-select: none; /* Konqueror HTML */
+			-moz-user-select: none; /* Firefox */
+			-ms-user-select: none; /* Internet Explorer/Edge */
+			user-select: none; /* Non-prefixed version, currently
+				                                  supported by Chrome and Opera */
+		}
+		
+		@external gwt-Selector;
+		@external gwt-SuggestBoxPopup;
+		.gwt-SuggestBoxPopup {
+			z-index: 105;
+		}
+
+		.gwt-Selector .gwt-SuggestBoxPopup{
+			z-index: 105;
+			height: inherit;
+		}
+
+		.headerStyle{
+			top: -0.5em;
+			font-size: 12px;
+			margin-left: 10px;
+		}
+
+		.requiredColor{
+			color: #2152A5;
+			font-weight: bold !important;
+		}
+
+		.warningColor{
+			color: #f90303;
+    		font-weight: bold;
+		}
+
+		.hide{
+			display: none;
+		}
+
+		.maxWidth{
+			width: 100%;
+		}
+
+		.maxWidthTextBox{
+			width: 99.7%;
+		}
+		
+		.maxWidthTextBox2{
+			width: 99.4%;
+		}
+		
+		.maxWidthTextBox3{
+			width: 97%;
+		}
+		
+		.maxWidthTextBox4{
+			width: 98%;
+		}
+		
+		.maxWidthTextBox5{
+			width: 99%;
+		}
+
+		.alignTextCenter{
+			text-align: center;
+		}
+
+		.firstColumnTextStyle{
+			padding: 5px !important;
+		}
+
+		.lookupStyle{
+			height: 20px;
+    		border: none !important;
+   		 	margin-left: 15px;
+    		width: 100%;
+		}
+
+		.paddingTop{
+			padding-top: 5px !important;
+		}
+
+		.paddingEnableDisable{
+			position: fixed;
+    		padding-top: 0px;
+    		border: none;
+    		top: 99px;
+    		width: 32px;
+		}
+
+		.fontEnableStyle{
+			font-weight: bold;
+    		color: #000;
+    		white-space: nowrap;
+    		font-size: smaller;
+    		padding-left: 30px;
+    		width: 80px;
+			cursor: pointer;
+		}
+
+		.fontDisableStyle{
+			font-weight: bold;
+    		color: #000;
+    		white-space: nowrap;
+    		font-size: smaller;
+    		padding-left: 30px;
+    		width: 100px;
+			cursor: pointer;
+		}
+
+		.estiloBorrarCuandoSeActiveBoton{
+			background: none !important;
+		}
+		
+		.borderNone{
+			border: none;
+		}
+		
+		.styleBorder{
+			border-style: solid; 
+			width: 975px; 
+			border-width: 1px; 
+			margin-top: 20px; 
+			margin-left: 10px;
+		}
+		
+		.styleBorder2{
+			border-style: solid; 
+			width: 975px; 
+			border-width: 1px; 
+			margin-top: 40px; 
+			margin-left: 10px;
+		}
+		
+		.paddingLabel{
+			text-align : center;
+			padding-left: 5px;
+			padding-right: 21px;
+		}
+		
+	</ui:style>
+
+	<g:HTMLPanel>
+		<g:ScrollPanel>
+			<g:HTMLPanel>
+				<g:VerticalPanel styleName="{style.styleBorder}">
+					<g:Label styleName='aon-group-title {style.headerStyle}' width="105px">Datos Empresa</g:Label>
+					<g:HTMLPanel>
+						<table ui:field="enterpriseDataTable"
+							style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
+							<body>
+								<tr>
+									<td></td>
+							        <td></td>
+							        <td></td>
+							        <td></td>
+							        <td></td>
+							        <td></td>
+							        <td></td>
+							        <td></td>
+								</tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName="{style.firstColumnTextStyle} {style.requiredColor}">Nombre</g:Label>
+									</td>
+									<td colspan="7">
+										<g:TextBox ui:field="enterpriseName" styleName='aon-inputText {style.maxWidthTextBox2}'></g:TextBox>
+									</td>
+								</tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName='{style.firstColumnTextStyle}'>Nombre Comercial / Alias</g:Label>
+									</td>
+									<td colspan="7">
+									    <g:TextBox ui:field="enterpriseAlias" styleName='aon-inputText {style.maxWidthTextBox2}'></g:TextBox>
+									</td>
+								</tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Documento</g:Label>
+									</td>
+									<td ui:field="documentTypeCell">
+										<g:Label styleName='{style.alignTextCenter}' ui:field="documentType"></g:Label>
+									</td>
+									<td colspan="3">
+										<g:HorizontalPanel styleName="{style.maxWidth}">
+											<g:SuggestBox ui:field="document" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
+											<g:Label ui:field="documentStatus"></g:Label>
+										</g:HorizontalPanel>
+									</td>
+									<td style="width: 10%;" ui:field="nationalityLabelCell">
+										<g:Label ui:field="nationalityLabel" styleName='{style.alignTextCenter}'>País Emisión</g:Label>
+									</td>
+									<td ui:field="nationalityCell" colspan="2">
+										<g:SuggestBox ui:field="nationality" styleName='aon-inputText {style.maxWidthTextBox4}'></g:SuggestBox>
+									</td>
+								</tr>
+								<tr>
+									<td rowspan="2" style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Dirección</g:Label>
+									</td>
+									<td>
+									    <g:ListBox ui:field="streetType" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+									</td>
+									<td colspan="4">
+										<g:SuggestBox ui:field="address" styleName='aon-inputText {style.maxWidthTextBox4}'></g:SuggestBox>
+									</td>
+									<td>
+										<g:Label styleName='{style.alignTextCenter}'>Número</g:Label>
+									</td>
+									<td>
+										<g:TextBox ui:field="addressNum" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
+									</td>
+								</tr>
+								<tr>
+									<td style="width: 10%;">
+										<g:Label styleName='{style.alignTextCenter}'>C.P.</g:Label>
+									</td>
+									<td>
+										<g:TextBox ui:field="addressZip" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
+									</td>
+									<td style="width: 10%;">
+										<g:Label styleName='{style.alignTextCenter}'>Localidad</g:Label>
+									</td>
+									<td>
+										<g:TextBox ui:field="addressCity" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
+									</td>
+									<td>
+										<g:Label styleName='{style.alignTextCenter}'>  Provincia  </g:Label>
+									</td>
+									<td colspan="2"> 
+										<g:ListBox ui:field="addressProvince" styleName='aon-inputText {style.maxWidth}'></g:ListBox>
+									</td>
+								</tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName="{style.firstColumnTextStyle}">Contacto</g:Label>
+									</td>
+									<td>
+										<g:Label styleName='{style.alignTextCenter}'>Móvil</g:Label>
+									</td>
+									<td>
+										<g:TextBox ui:field="mobile" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
+									</td>
+									<td>
+										<g:Label styleName='{style.alignTextCenter}'>Teléfono</g:Label>
+									</td>
+									<td>
+										<g:TextBox ui:field="phone" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
+									</td>
+									<td>
+										<g:Label styleName='{style.alignTextCenter}'>eMail</g:Label>
+									</td>
+									<td colspan="2">
+										<g:TextBox ui:field="email" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
+									</td>
+								</tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName="{style.firstColumnTextStyle}">Web</g:Label>
+									</td>
+									<td colspan="7">
+										<g:TextBox ui:field="enterpriseWeb" styleName='aon-inputText {style.maxWidthTextBox2}'></g:TextBox>
+									</td>
+								</tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName="{style.firstColumnTextStyle} {style.requiredColor}">Ámbito</g:Label>
+									</td>
+									<td colspan="7">
+										<g:HorizontalPanel ui:field="enterpriseScopePanel" styleName='aon-selectOneMenu {style.maxWidth}'></g:HorizontalPanel>
+									</td>
+								</tr>
+							</body>
+						</table>
+					</g:HTMLPanel>
+				</g:VerticalPanel>
+				<g:VerticalPanel styleName="{style.styleBorder2}">
+					<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Logo y Firma</g:Label>
+					<g:HTMLPanel>
+						<table ui:field="enterpriseLogoTable"
+							style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
+							<tbody>
+							    <tr>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+								</tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 100px;">
+										<g:Label styleName='{style.firstColumnTextStyle}'>Logo</g:Label>
+									</td>
+									<td>
+										 <g:HorizontalPanel ui:field="enterpriseLogoPanel" styleName="{style.maxWidth}">
+										 	<g:Image ui:field="enterpriseLogo"></g:Image>
+										 	<g:VerticalPanel>
+										 		<g:Button ui:field="uploadLogo">Subir</g:Button>
+										 		<g:Button ui:field="deleteLogo">Borrar</g:Button>
+										 	</g:VerticalPanel>
+										 </g:HorizontalPanel>
+									</td>
+									<td style="background-color: #eaeaea; width: 100px;">
+										<g:Label styleName='{style.firstColumnTextStyle}'>Firma</g:Label>
+									</td>
+									<td>
+										 <g:HorizontalPanel ui:field="enterpriseSignPanel" styleName="{style.maxWidth}">
+										 	<g:Image ui:field="enterpriseSign"></g:Image>
+										 	<g:VerticalPanel>
+										 		<g:Button ui:field="uploadSign">Subir</g:Button>
+										 		<g:Button ui:field="deleteSign">Borrar</g:Button>
+										 	</g:VerticalPanel>
+										 </g:HorizontalPanel>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</g:HTMLPanel>
+				</g:VerticalPanel>
+				<g:VerticalPanel styleName="{style.styleBorder2}">
+					<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Otros Datos</g:Label>
+					<g:HTMLPanel>
+						<table ui:field="enterpriseOthersTable"
+							style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
+							<tbody>
+							    <tr>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+								</tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName='{style.firstColumnTextStyle}'>Actividad</g:Label>
+									</td>
+									<td colspan="2">
+										 <g:Label ui:field="enterpriseActivity"></g:Label>
+									</td>
+									<td>
+										<g:Label styleName='{style.firstColumnTextStyle}'>Centro Trabajo</g:Label>
+									</td>
+									<td colspan="2">
+										 <g:Label ui:field="enterpriseWorkplace"></g:Label>
+									</td>
+								</tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName='{style.firstColumnTextStyle}'>Modelo Recibo Salarial</g:Label>
+									</td>
+									<td colspan="2">
+										 <g:ListBox ui:field="enterprisePaysheetModel" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+									</td>
+									<td style="width: 20.1%;">
+										<g:Label styleName='{style.firstColumnTextStyle}'>Modelo Recibo Costes Empresa</g:Label>
+									</td>
+									<td colspan="2">
+										 <g:ListBox ui:field="enterpriseCostModel" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+									</td>
+								</tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName='{style.firstColumnTextStyle}'>Envío Nóminas</g:Label>
+									</td>
+									<td colspan="2">
+										 <g:ListBox ui:field="enterprisePaysheetSendType" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+									</td>
+									<td colspan="3">
+										<g:HorizontalPanel ui:field="enterprisePaysheetSendPanel" styleName="{style.maxWidth}">
+											<g:Label styleName="{style.paddingLabel}">A la dirección : </g:Label>
+											<g:TextBox ui:field="enterprisePaysheetSendEmail" styleName='aon-inputText {style.maxWidthTextBox5}'></g:TextBox>
+										</g:HorizontalPanel>
+									</td>
+								</tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName='{style.firstColumnTextStyle}'>Convenio</g:Label>
+									</td>
+									<td colspan="5">
+										 <g:ListBox ui:field="enterpriseAgreement" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+									</td>
+								</tr>
+								<tr>
+									<td style="background-color: #eaeaea; width: 200px;">
+										<g:Label styleName='{style.firstColumnTextStyle}'>Calendario</g:Label>
+									</td>
+									<td colspan="5">
+										<g:HorizontalPanel ui:field="enterpriseCalendarPanel" styleName="{style.maxWidth}"></g:HorizontalPanel>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</g:HTMLPanel>
+				</g:VerticalPanel>
+			</g:HTMLPanel>
+		</g:ScrollPanel>
+	</g:HTMLPanel>
+			
+</ui:UiBinder> 
+
