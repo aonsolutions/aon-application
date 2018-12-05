@@ -587,12 +587,12 @@ public class CollectSalaryBuilder<T  extends ISalary> implements ISalaryBuilder<
 					cost.cost, 
 					cost.context);
 		
-		for ( Bonus bonus: bonuses ) 
-			builder.addBonus(
-					bonus.amount, 
-					bonus.description, 
-					bonus.bonus, 
-					bonus.context);
+//		for ( Bonus bonus: bonuses ) 
+//			builder.addBonus(
+//					bonus.amount, 
+//					bonus.description, 
+//					bonus.bonus, 
+//					bonus.context);
 		
 		for ( Embargo embargo: embargos )
 			builder.addEmbargo(
