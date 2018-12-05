@@ -35,6 +35,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_A11("303-CTA11",false,null,"Exonerados de la declaraci\u00F3n-resumen anual del IVA, modelo 390: \u00BFExiste volumen de operaciones (art. 121 LIVA)?")
 	,CT_A12("303-CTA12",false,null,"Sujeto pasivo que tributa exclusivamente a una Administraci\u00F3n tributaria Foral con IVA a la importaci\u00F3n liquidado por la Aduana pendiente de ingreso")
 	,CT_A13("303-CTA13",false,null,"\u00BFHa llevado voluntariamente los Libros registro del IVA a trav\u00E9s de la Sede electr\u00F3nica de la AEAT durante el ejercicio?")
+	,CT_A14("303-CTA14",false,null,"\u00BFEst\u00E1 exonerado de la Declaraci\u00F3n-resumen anual del IVA, modelo 390?")
 	
 	,CT_C01("303-CTC01",true ,"1","R\u00E9gimen general - Base imponible")
 	,CT_C02("303-CTC02",false,"2","R\u00E9gimen general - Tipo %")
@@ -423,10 +424,11 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_C96("303-CTA96",false,"96","Operaciones realizadas por sujetos pasivos acogidos al r\u00E9gimen especial del recargo de equivalencia")
 	,CT_C97("303-CTA97",false,"97","Operaciones en r\u00E9gimen especial de bienes usados, objetos de arte, antig\u00fcedades y objetos de colecci\u00F3n")
 	,CT_C98("303-CTA98",false,"98","Operaciones en r\u00E9gimen especial de Agencias de Viajes")
-	,CT_C79("303-CTA79",false,"79","Entregas de bienes inmuebles y operaciones fi nancieras no habituales") 
+	,CT_C79("303-CTA79",false,"79","Entregas de bienes inmuebles y operaciones financieras no habituales") 
 	,CT_C99("303-CTA99",false,"99","Entregas de bienes de inversi\u00F3n") 
 	,CT_C87("303-CTA87",false,"87","Entregas de bienes inmuebles y de inversi\u00F3n y operaciones financieras no habituales")  
 	,CT_C88("303-CTA88",false,"88","Total volumen de operaciones")
+	,CT_C107("303-CTA107",false,"107","Territorio com\u00FAn")
 	
 	,CT_P1C("303-CTP1C",false,null,"CNAE")
 	,CT_P1I("303-CTP1I",false,null,"Imp. tot. Operaciones ")

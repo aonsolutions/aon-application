@@ -503,6 +503,7 @@ public class Model3032018AEAT extends Model303Base {
 									,Mod303Key.CT_U5D,Mod303Key.CT_U5C,Mod303Key.CT_U5E
 									
 									,Mod303Key.CT_U13,Mod303Key.CT_C89,Mod303Key.CT_C90,Mod303Key.CT_C91,Mod303Key.CT_C92
+									,Mod303Key.CT_C107
 									,Mod303Key.CT_C80,Mod303Key.CT_C81,Mod303Key.CT_C82,Mod303Key.CT_C93,Mod303Key.CT_C94
 									,Mod303Key.CT_C83,Mod303Key.CT_C84,Mod303Key.CT_C85,Mod303Key.CT_C86,Mod303Key.CT_C95
 									,Mod303Key.CT_C96,Mod303Key.CT_C97,Mod303Key.CT_C98,Mod303Key.CT_C79,Mod303Key.CT_C99 
@@ -566,6 +567,13 @@ public class Model3032018AEAT extends Model303Base {
 		a13.addItem("(2) NO", "2");
 		paintListBox(a13, Mod303Key.CT_A13, table);
 		
+		final ListBox a14 = new ListBox();
+		a14.setWidth("150px");
+		a14.addItem("(0) Para todos los periodos distintos del \u00FAltimo (12 y 4T)", "0");   
+		a14.addItem("(1) SI", "1");
+		a14.addItem("(2) NO", "2");
+		paintListBox(a14, Mod303Key.CT_A14, table);
+
 		container.add(addGroupPanel("", table));
 		
 		declarationScrollPanel.setWidget(container);

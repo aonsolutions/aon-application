@@ -530,7 +530,7 @@ public class AccountingUtilitiesDAO {
 	public static AccUtilitiesResult unbalancedEntries(AONContext ctx) {
 		AccUtilitiesResult result = new AccUtilitiesResult();
 		Domain domain = DomainDAO.getDomain(ctx, p-> p.getIdProperty().eq(ctx.getDomainId()));
-		if (domain.isChild() ) {
+		if (domain.isChild() || domain.isStandalone()) {
 			unbalancedEntries(ctx,domain,result);
 		} else {
 			LinkedList<Domain> domains = DomainDAO.getDomainList(ctx

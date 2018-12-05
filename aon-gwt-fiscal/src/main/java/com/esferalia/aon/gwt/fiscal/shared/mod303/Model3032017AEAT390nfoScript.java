@@ -10,10 +10,11 @@ import com.esferalia.aon.occam.api.model.type.Mod303Key;
 
 public enum Model3032017AEAT390nfoScript implements IModelScript<Mod303Key> {
 	 R00 ("Informaci\u00F3n de la tributaci\u00F3n por raz\u00F3n de territorio (s\u00F3lo para sujetos pasivos que tributan a varias Administraciones)",null,TITLE)
-	,M39001(Mod303Key.CT_C89.getDescription(),new Mod303Key[]{Mod303Key.CT_C89},NONE)
-	,M39002(Mod303Key.CT_C90.getDescription(),new Mod303Key[]{Mod303Key.CT_C90},NONE)
-	,M39003(Mod303Key.CT_C91.getDescription(),new Mod303Key[]{Mod303Key.CT_C91},NONE)
-	,M39004(Mod303Key.CT_C92.getDescription(),new Mod303Key[]{Mod303Key.CT_C92},NONE)
+	,M39001 (Mod303Key.CT_C89.getDescription(),new Mod303Key[]{Mod303Key.CT_C89},NONE)
+	,M39002 (Mod303Key.CT_C90.getDescription(),new Mod303Key[]{Mod303Key.CT_C90},NONE)
+	,M39003 (Mod303Key.CT_C91.getDescription(),new Mod303Key[]{Mod303Key.CT_C91},NONE)
+	,M39004 (Mod303Key.CT_C92.getDescription(),new Mod303Key[]{Mod303Key.CT_C92},NONE)
+	,M390041(Mod303Key.CT_C107.getDescription(),new Mod303Key[]{Mod303Key.CT_C107},NONE)
 	,R01 ("Operaciones realizadas en el ejercicio",null,TITLE)
 	
 	,M39005(Mod303Key.CT_C80.getDescription(),new Mod303Key[]{Mod303Key.CT_C80},NONE)

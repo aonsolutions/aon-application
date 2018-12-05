@@ -74,6 +74,7 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 		,CT_A11(Mod303Key.CT_A11)
 		,CT_A12(Mod303Key.CT_A12,null,null,(ctx,mod) -> add(Mod303Key.CT_A12,mod,2),null,null,null,null,true)
 		,CT_A13(Mod303Key.CT_A13,null,null,(ctx,mod) -> add(Mod303Key.CT_A13,mod,2),null,null,null,null,true)
+		,CT_A14(Mod303Key.CT_A14,null,null,(ctx,mod) -> add(Mod303Key.CT_A14,mod,0),null,null,null,null,true)
 		
 		// ---------------------------------------------------------
 		// ----------------------------------------- REGIMEN GENERAL
