@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.server.fiscal.format.Mod184Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 @WebServlet(name = "Mod184 Print", urlPatterns = { "/aon_gwt_fiscal/ms/Model184Print" })
 public class Mod184Print extends HttpServlet {
@@ -86,7 +87,10 @@ public class Mod184Print extends HttpServlet {
 		fileString = fileString.replace("\r", "");
 		String encodedFile = URLEncoder.encode(fileString, "ISO-8859-1");
 
-		String urlParameters = 
+		int y = AonNumberUtils.toint(year);
+		String urlParameters = null;
+		if (y < 2018) {
+			urlParameters = 
 				"HID=IE7184A" + 
 				"&IDI=ES" + 
 				"&LEV=000000000000" +
@@ -96,6 +100,17 @@ public class Mod184Print extends HttpServlet {
 				"&FIN=" + 
 				"&EJF=" + year +
 				"&MOD=184";
+		} else {
+			urlParameters = 
+				"&IDI=ES" +
+				"&LEV=000000000000" +
+				"&FIC="	+ encodedFile + 
+				"&RUT=" + 
+				"&PRG=" + 
+				"&FIN=" + 
+				"&EJF=" + year +
+				"&MOD=184";
+		}
 		
 //		String request = "https://www2.agenciatributaria.gob.es/l/zi22zilk0022";
 //		String request = "https://www6.aeat.es/es13/l/zi22zilk0022";
