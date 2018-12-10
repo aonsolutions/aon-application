@@ -705,7 +705,16 @@ public class Model1842016IncomePanel extends SimpleLayoutPanel implements Focusa
 			|| ("D".equals(income.getKey()) && "02".equals(income.getSubKey()) && income.getRegime() != 3)
 			|| ("L".equals(income.getKey()) )
 			);
-
+		netYield.setEnabled(
+			   ("A".equals(income.getKey()) && "01".equals(income.getSubKey())) 
+			|| ("A".equals(income.getKey()) && "02".equals(income.getSubKey()))
+			|| ("C".equals(income.getKey()) && "01".equals(income.getSubKey()))
+			|| ("C".equals(income.getKey()) && "02".equals(income.getSubKey()))
+			|| ("D".equals(income.getKey()) && "01".equals(income.getSubKey()))
+			|| ("D".equals(income.getKey()) && "02".equals(income.getSubKey()))
+			|| ("E".equals(income.getKey()))
+			|| ("H".equals(income.getKey()))
+			);
 		reductionPercent.setEnabled(
 			   ("A".equals(income.getKey()) && "03".equals(income.getSubKey()))
 			|| ("C".equals(income.getKey()) && "03".equals(income.getSubKey()))
