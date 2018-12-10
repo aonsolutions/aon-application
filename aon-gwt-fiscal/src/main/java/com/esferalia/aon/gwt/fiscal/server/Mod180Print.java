@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.server.fiscal.format.Mod180Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 @WebServlet(name = "Mod180 Print", urlPatterns = { "/aon_gwt_fiscal/ms/Model180Print" })
 public class Mod180Print extends HttpServlet {
@@ -87,7 +88,10 @@ public class Mod180Print extends HttpServlet {
 		fileString = fileString.replace("\r", "");
 		String encodedFile = URLEncoder.encode(fileString, "ISO-8859-1");
 
-		String urlParameters = 
+		int y = AonNumberUtils.toint(year);
+		String urlParameters = null;
+		if (y < 2018) {
+			urlParameters = 
 				"HID=IE7180A" +
 				"&IDI=ES" + 
 				"&FIC="	+ encodedFile + 
@@ -96,6 +100,17 @@ public class Mod180Print extends HttpServlet {
 				"&FIN=" + 
 				"&EJF=" + year +
 				"&MOD=180";
+		} else {
+			urlParameters = 
+				"&IDI=ES" +
+				"&LEV=000000000000" +
+				"&FIC="	+ encodedFile + 
+				"&RUT=" + 
+				"&PRG=" + 
+				"&FIN=" + 
+				"&EJF=" + year +
+				"&MOD=180";
+		}
 		
 //		String request = "https://www2.agenciatributaria.gob.es/wlpl/OVCT-IPDF/ovweb/vistaprevia";
 		String request = "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";
