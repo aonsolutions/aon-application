@@ -71,6 +71,10 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 		String borderNone();
 	}
 	
+
+	@UiField
+	Button newContractButton;
+	
 	@UiField
 	Label saveStatus;
 	
@@ -105,6 +109,11 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 
 	// ------------------------------------------------- UiHandlers ------------------------------------------------------
 
+	@UiHandler("newContractButton")
+	void onNewContractClick(ClickEvent event) {
+		EmployeeTree.showNewContract();
+	}
+	
 	@UiHandler("enableWorkplaceButton")
 	void onEnableWorkplaceClick(ClickEvent event) {
 		workplaceDraftObject.setWorkplaceActive(true);
