@@ -12,13 +12,12 @@ import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -75,6 +74,9 @@ public abstract class Enterprise extends ResizeComposite implements ContextMenuH
 	@UiField 
 	TableCellElement nationalityLabelCell;
 	
+	@UiField 
+	TableCellElement nationalityCell;
+	
 	@UiField (provided = true)
 	SuggestBox nationality;
 	
@@ -113,26 +115,11 @@ public abstract class Enterprise extends ResizeComposite implements ContextMenuH
 	
 	// TABLA LOGOS EMPRESA
 	
-	@UiField
-	HorizontalPanel enterpriseLogoPanel;
-	
-	@UiField
-	Image enterpriseLogo;
-	
-	@UiField 
-	Button uploadLogo;
-	
-	@UiField
-	Button deleteLogo;
-	
-	@UiField
-	Image enterpriseSign;
-	
-	@UiField
-	Button uploadSign;
-	
-	@UiField
-	Button deleteSign;
+//	@UiField
+//	HorizontalPanel enterpriseLogoPanel;
+//	
+//	@UiField
+//	HorizontalPanel enterpriseSignPanel;
 	
 	// TABLA OTRO DATOS
 	
@@ -183,34 +170,130 @@ public abstract class Enterprise extends ResizeComposite implements ContextMenuH
 
 	// ------------------------------------------------- UiHandlers ------------------------------------------------------
 	
-//	@UiHandler("workplaceDescription")
-//	void onWorkplaceDescriptionChangeValue(ChangeEvent event) {
-//		onWorkplaceDescriptionChange();
-//	}
-//
-//	@UiHandler("workplaceEconomicConcert")
-//	void onWorkplaceEconomicConcertChangeValue(ChangeEvent event) {
-//		onWorkplaceEconomicConcertChange();
-//	}
-//	
-//	@UiHandler("workpalceAgreement")
-//	void onContractAgreementChangeValue(ChangeEvent event) {
-//		onWorkplaceAgreementChange();
-//	}
+	@UiHandler("enterpriseName")
+	void onEnterpriseNameChangeValue(ChangeEvent event) {
+		onEnterpriseNameChange();
+	}
+	
+	@UiHandler("enterpriseAlias")
+	void onEnterpriseAliasChangeValue(ChangeEvent event) {
+		onEnterpriseAliasChange();
+	}
+
+	@UiHandler("document")
+	void onEnterpriseDocumentChangeValue(ValueChangeEvent<String> event) {
+		onEnterpriseDocumentChange();
+	}
+	
+	@UiHandler("nationality")
+	void onEnterpriseNationalityChangeValue(ValueChangeEvent<String> event) {
+		onEnterpriseNationalityChange();
+	}
+	
+	@UiHandler("streetType")
+	void onEnterpriseStreetTypeChangeValue(ChangeEvent event) {
+		onEnterpriseStreetTypeChange();
+	}
+	
+	@UiHandler("address")
+	void onEnterpriseAddressChangeValue(ValueChangeEvent<String> event) {
+		onEnterpriseAddressChange();
+	}
+	
+	@UiHandler("addressNum")
+	void onEnterpriseAddressNumChangeValue(ChangeEvent event) {
+		onEnterpriseAddressNumChange();
+	}
+	
+	@UiHandler("addressZip")
+	void onEnterpriseAddressZipChangeValue(ChangeEvent event) {
+		onEnterpriseAddressZipChange();
+	}
+	
+	@UiHandler("addressCity")
+	void onEnterpriseAddressCityChangeValue(ChangeEvent event) {
+		onEnterpriseAddressCityChange();
+	}
+	
+	@UiHandler("addressProvince")
+	void onEnterpriseAddressProvinceChangeValue(ChangeEvent event) {
+		onEnterpriseAddressProvinceChange();
+	}
+	
+	@UiHandler("mobile")
+	void onEnterpriseMobileChangeValue(ChangeEvent event) {
+		onEnterpriseMobileChange();
+	}
+	
+	@UiHandler("phone")
+	void onEnterprisePhoneChangeValue(ChangeEvent event) {
+		onEnterprisePhoneChange();
+	}
+	
+	@UiHandler("email")
+	void onEnterpriseEmailChangeValue(ChangeEvent event) {
+		onEnterpriseEmailChange();
+	}
+	
+	@UiHandler("enterpriseWeb")
+	void onEnterpriseWebChangeValue(ChangeEvent event) {
+		onEnterpriseWebChange();
+	}
+	
+	@UiHandler("enterprisePaysheetModel")
+	void onEnterprisePaysheetModelChangeValue(ChangeEvent event) {
+		onEnterprisePaysheetModelChange();
+	}
+	
+	@UiHandler("enterpriseCostModel")
+	void onEnterpriseCostModelChangeValue(ChangeEvent event) {
+		onEnterpriseCostModelChange();
+	}
+	
+	@UiHandler("enterprisePaysheetSendType")
+	void onEnterprisePaysheetSendTypeChangeValue(ChangeEvent event) {
+		onEnterprisePaysheetSendTypeChange();
+	}
+	
+	@UiHandler("enterprisePaysheetSendEmail")
+	void onEnterprisePaysheetSendEmailChangeValue(ChangeEvent event) {
+		onEnterprisePaysheetSendEmailChange();
+	}
+	
+	@UiHandler("enterpriseAgreement")
+	void onEnterpriseAgreementChangeValue(ChangeEvent event) {
+		onEnterpriseAgreementChange();
+	}
 	
 	// ------------------------------------------------------------------------
 	//							Abstraact Methods
 	// ------------------------------------------------------------------------
 	
-	// TABLA DATOS CENTRO DE TRABAJO
+	// TABLA DATOS EMPRESA
 	
-//	public abstract void onWorkplaceDescriptionChange();
-//	public abstract void onWorkplaceEconomicConcertChange();
+	public abstract void onEnterpriseNameChange();
+	public abstract void onEnterpriseAliasChange();
+	public abstract void onEnterpriseDocumentChange();
+	public abstract void onEnterpriseNationalityChange();
+	public abstract void onEnterpriseStreetTypeChange();
+	public abstract void onEnterpriseAddressChange();
+	public abstract void onEnterpriseAddressNumChange();
+	public abstract void onEnterpriseAddressZipChange();
+	public abstract void onEnterpriseAddressCityChange();
+	public abstract void onEnterpriseAddressProvinceChange();
+	public abstract void onEnterpriseMobileChange();
+	public abstract void onEnterprisePhoneChange();
+	public abstract void onEnterpriseEmailChange();
+	public abstract void onEnterpriseWebChange();
 	
-	// TABLA DATOS CENTRO DE TRABAJO (LABORAL)
+	// TABLA OTROS DATOS EMPRESA
 	
-//	public abstract void onWorkplaceAgreementChange();
-
+	public abstract void onEnterprisePaysheetModelChange();
+	public abstract void onEnterpriseCostModelChange();
+	public abstract void onEnterprisePaysheetSendTypeChange();
+	public abstract void onEnterprisePaysheetSendEmailChange();
+	public abstract void onEnterpriseAgreementChange();
+	
 	// ------------------------------------------------------ METODOS DE LA CLASE --------------------------------------------------
 
 	public void initializeView() {

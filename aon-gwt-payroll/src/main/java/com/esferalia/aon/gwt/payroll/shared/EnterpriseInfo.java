@@ -42,6 +42,8 @@ public class EnterpriseInfo implements Serializable {
 	//Enterprise date table
 	private Integer paysheetModelId;
 	private Byte paysheetModel;
+	private Integer paysheetModeDraftlId;
+	private Byte paysheetModelDraft;
 	private Integer costsModelId;
 	private Byte costsModel;
 	private Integer paysheetSendTypeId;
@@ -265,6 +267,22 @@ public class EnterpriseInfo implements Serializable {
 
 	public void setPaysheetModel(Byte paysheetModel) {
 		this.paysheetModel = paysheetModel;
+	}
+
+	public Integer getPaysheetModeDraftlId() {
+		return paysheetModeDraftlId;
+	}
+
+	public void setPaysheetModeDraftlId(Integer paysheetModeDraftlId) {
+		this.paysheetModeDraftlId = paysheetModeDraftlId;
+	}
+
+	public Byte getPaysheetModelDraft() {
+		return paysheetModelDraft;
+	}
+
+	public void setPaysheetModelDraft(Byte paysheetModelDraft) {
+		this.paysheetModelDraft = paysheetModelDraft;
 	}
 
 	public Integer getCostsModelId() {

@@ -288,7 +288,7 @@
 						</table>
 					</g:HTMLPanel>
 				</g:VerticalPanel>
-				<g:VerticalPanel styleName="{style.styleBorder2}">
+				<!-- g:VerticalPanel styleName="{style.styleBorder2}">
 					<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Logo y Firma</g:Label>
 					<g:HTMLPanel>
 						<table ui:field="enterpriseLogoTable"
@@ -306,11 +306,7 @@
 									</td>
 									<td>
 										 <g:HorizontalPanel ui:field="enterpriseLogoPanel" styleName="{style.maxWidth}">
-										 	<g:Image ui:field="enterpriseLogo"></g:Image>
-										 	<g:VerticalPanel>
-										 		<g:Button ui:field="uploadLogo">Subir</g:Button>
-										 		<g:Button ui:field="deleteLogo">Borrar</g:Button>
-										 	</g:VerticalPanel>
+										 	
 										 </g:HorizontalPanel>
 									</td>
 									<td style="background-color: #eaeaea; width: 100px;">
@@ -318,18 +314,14 @@
 									</td>
 									<td>
 										 <g:HorizontalPanel ui:field="enterpriseSignPanel" styleName="{style.maxWidth}">
-										 	<g:Image ui:field="enterpriseSign"></g:Image>
-										 	<g:VerticalPanel>
-										 		<g:Button ui:field="uploadSign">Subir</g:Button>
-										 		<g:Button ui:field="deleteSign">Borrar</g:Button>
-										 	</g:VerticalPanel>
+										 	
 										 </g:HorizontalPanel>
 									</td>
 								</tr>
 							</tbody>
 						</table>
 					</g:HTMLPanel>
-				</g:VerticalPanel>
+				</g:VerticalPanel -->
 				<g:VerticalPanel styleName="{style.styleBorder2}">
 					<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Otros Datos</g:Label>
 					<g:HTMLPanel>

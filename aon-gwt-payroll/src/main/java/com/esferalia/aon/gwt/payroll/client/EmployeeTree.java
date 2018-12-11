@@ -2371,8 +2371,38 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		employeeTree.employeeDetail.setWidget(employeeTree.getEmployeeCalendarDraft());
 		employeeTree.getEmployeeCalendarDraft().setEmployeeCalendarDraftObject(employeeCalendarDraftobjectData);
 	}
+	
+	protected static void showNewWorkplace() {
+		DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
+		
+		WorkplaceDialog workplaceDialog = new WorkplaceDialog();
+		WorkplaceDialogObject workplaceDialogObject = new WorkplaceDialogObject(getEmployeeTree().enterprise, enterprisesService);
+		workplaceDialog.setWorkplaceDialogObject(workplaceDialogObject);
+		workplaceDialog.center();
+		workplaceDialog.show();
+	}
+	
+	protected static void showNewActivity() {
+		DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
+		
+		ActivityDialog activityDialog = new ActivityDialog();
+		ActivityDialogObject activityDialogObject = new ActivityDialogObject(getEmployeeTree().enterprise, enterprisesService);
+		activityDialog.setActivityDialogObject(activityDialogObject);
+		activityDialog.center();
+		activityDialog.show();
+	}
 
-
+	protected static void showNewContract() {
+		DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
+		DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
+		
+		EmployeeDialog employeeDialog = new EmployeeDialog();
+		EmployeeDialogObject employeeDialogObject = new EmployeeDialogObject(getEmployeeTree().workplace, employeesService, enterprisesService);
+		employeeDialog.setEmployeeDialogObject(employeeDialogObject);
+		employeeDialog.center();
+		employeeDialog.show();
+	}
+	
 	private static void showSalaryDraft(int employeeId, int workplaceId,
 			Date startDate, Date endDate) {
 		EmployeeTree employeeTree = getEmployeeTree();

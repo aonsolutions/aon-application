@@ -154,6 +154,16 @@
 							styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR"
 							enabled="true" />
 					</g:HTMLPanel>
+					<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+						<g:Button ui:field='newWorkplaceButton'
+							styleName='aon-finding-toolbar-item aon-icon-reset' text="NUEVO CENTRO TRABAJO"
+							enabled="true" />
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+						<g:Button ui:field='newActivityButton'
+							styleName='aon-finding-toolbar-item aon-icon-reset' text="NUEVA ACTIVIDAD"
+							enabled="true" />
+					</g:HTMLPanel>
 				</g:HorizontalPanel>
 			</g:FlowPanel>
 		</g:north>

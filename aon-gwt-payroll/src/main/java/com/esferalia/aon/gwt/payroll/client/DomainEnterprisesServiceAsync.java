@@ -175,6 +175,10 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getEnterpriseInfo(enterpriseId, getCurrentDomainName(), asyncCallback);
 	}
 	
+	public void updateEnterprise(EnterpriseInfo enterpriseInfo, AsyncCallback<EnterpriseInfo> asyncCallback) {
+		enterprisesServiceAsync.updateEnterprise(enterpriseInfo, getCurrentDomainName(), asyncCallback);
+	}
+	
 	// ----------------------------------------------------------------- static
 	
 	private static String getCurrentUser() {

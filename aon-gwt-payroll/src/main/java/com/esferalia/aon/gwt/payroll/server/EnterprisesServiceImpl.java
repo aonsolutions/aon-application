@@ -1581,6 +1581,24 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			}
 		}
 	}
+
+	@Override
+	public EnterpriseInfo updateEnterprise(EnterpriseInfo enterpriseInfo, String domain) {
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection(domain);
+			return JooqEnterprise.setEnterpriseInfo(connection, enterpriseInfo);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+		}
+	}
 	
 	
 }

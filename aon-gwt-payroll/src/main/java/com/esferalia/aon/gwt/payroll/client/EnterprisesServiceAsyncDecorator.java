@@ -294,4 +294,11 @@ public class EnterprisesServiceAsyncDecorator implements
 		enterprisesServiceAsync.getEnterpriseInfo(enterpriseId, domain,
 				new AsyncCallbackWrapper<EnterpriseInfo>(callback));
 	}
+
+	@Override
+	public void updateEnterprise(EnterpriseInfo enterpriseInfo, String domain, AsyncCallback<EnterpriseInfo> callback) {
+		AON.start();
+		enterprisesServiceAsync.updateEnterprise(enterpriseInfo, domain,
+				new AsyncCallbackWrapper<EnterpriseInfo>(callback));
+	}
 }

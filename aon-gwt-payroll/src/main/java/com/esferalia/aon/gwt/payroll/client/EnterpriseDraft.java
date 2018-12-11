@@ -7,13 +7,19 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -22,6 +28,103 @@ import com.google.gwt.user.client.ui.Widget;
 public class EnterpriseDraft extends Composite implements ContextMenuHandler {
 	
 	private class EnterpriseImplementation extends Enterprise{
+
+		@Override
+		public void onEnterpriseNameChange() {
+			enterpriseDraftObject.setName(this.enterpriseName.getValue());
+		}
+
+		@Override
+		public void onEnterpriseAliasChange() {
+			enterpriseDraftObject.setAlias(this.enterpriseAlias.getValue());
+		}
+
+		@Override
+		public void onEnterpriseDocumentChange() {
+			enterpriseDraftObject.setDocument(this.document.getValue());
+			onDocumentChange();
+		}
+
+		@Override
+		public void onEnterpriseNationalityChange() {
+			enterpriseDraftObject.setNationality(this.nationality.getValue());
+		}
+
+		@Override
+		public void onEnterpriseStreetTypeChange() {
+			enterpriseDraftObject.setAddressStreetType(this.streetType.getSelectedItemText());
+		}
+
+		@Override
+		public void onEnterpriseAddressChange() {
+			enterpriseDraftObject.setAddress(this.address.getValue());
+		}
+
+		@Override
+		public void onEnterpriseAddressNumChange() {
+			enterpriseDraftObject.setAddressNum(this.addressNum.getValue());
+		}
+
+		@Override
+		public void onEnterpriseAddressZipChange() {
+			enterpriseDraftObject.setAddressZip(this.addressZip.getValue());
+		}
+
+		@Override
+		public void onEnterpriseAddressCityChange() {
+			enterpriseDraftObject.setAddressCity(this.addressCity.getValue());
+		}
+
+		@Override
+		public void onEnterpriseAddressProvinceChange() {
+			enterpriseDraftObject.setAddressProvince(this.addressProvince.getSelectedItemText());
+		}
+
+		@Override
+		public void onEnterpriseMobileChange() {
+			enterpriseDraftObject.setMobile(this.mobile.getValue());
+		}
+
+		@Override
+		public void onEnterprisePhoneChange() {
+			enterpriseDraftObject.setPhone(this.phone.getValue());
+		}
+
+		@Override
+		public void onEnterpriseEmailChange() {
+			enterpriseDraftObject.setEmail(this.email.getValue());
+		}
+
+		@Override
+		public void onEnterpriseWebChange() {
+			enterpriseDraftObject.setWeb(this.enterpriseWeb.getValue());
+		}
+
+		@Override
+		public void onEnterprisePaysheetModelChange() {
+			enterpriseDraftObject.setPaySheetModel(this.enterprisePaysheetModel.getSelectedIndex());
+		}
+
+		@Override
+		public void onEnterpriseCostModelChange() {
+			enterpriseDraftObject.setCostModel(this.enterpriseCostModel.getSelectedIndex());
+		}
+
+		@Override
+		public void onEnterprisePaysheetSendTypeChange() {
+			enterpriseDraftObject.setPaySheetSendType(this.enterprisePaysheetSendType.getSelectedIndex());
+			checkPaysheetSendType();
+		}
+
+		@Override
+		public void onEnterprisePaysheetSendEmailChange() {
+			enterpriseDraftObject.setPaySheetSendEmail(this.enterprisePaysheetSendEmail.getValue());
+		}
+
+		@Override
+		public void onEnterpriseAgreementChange() {
+			enterpriseDraftObject.setAgreement(this.enterpriseAgreement.getSelectedItemText());
+		}
 		
 	}
 	
@@ -50,6 +153,15 @@ public class EnterpriseDraft extends Composite implements ContextMenuHandler {
 	
 	@UiField (provided = true)
 	Enterprise enterprise;
+	
+	@UiField
+	Button saveButton;
+	
+	@UiField
+	Button newWorkplaceButton;
+	
+	@UiField
+	Button newActivityButton;
 
 	// ------------------------------------------------------ VARIABLES DE LA CLASE --------------------------------------------------
 
@@ -66,7 +178,38 @@ public class EnterpriseDraft extends Composite implements ContextMenuHandler {
 
 	// ------------------------------------------------- UiHandlers ------------------------------------------------------
 	
+	@UiHandler("saveButton")
+	void onEnterpriseSaveClcik(ClickEvent event) {
+		if(canSave())
+			enterpriseDraftObject.updateEnterprise(
+					s -> {},
+					f -> {}
+			);
+		else {
+			WarningDialog warningDialog = new WarningDialog("Aviso", "Los campos azules se deben rellenar obligatoriamente.");
+			warningDialog.center();
+			warningDialog.show();
+		}
+	}
+
+	private boolean canSave() {
+		if("" == enterprise.enterpriseName.getValue() || "" == enterprise.document.getValue() || 
+		   "" == enterprise.address.getValue() || "" == enterprise.addressNum.getValue() || "" == enterprise.addressZip.getValue() ||
+		   "" == enterprise.addressCity.getValue() || 0 == enterprise.addressProvince.getSelectedIndex())
+			return false;
+		else
+			return true;
+	}
 	
+	@UiHandler("newWorkplaceButton")
+	void onNewWorkplaceClcik(ClickEvent event) {
+		EmployeeTree.showNewWorkplace();
+	}
+	
+	@UiHandler("newActivityButton")
+	void onNewActivityClcik(ClickEvent event) {
+		EmployeeTree.showNewActivity();
+	}
 
 	// ------------------------------------------------------ METODOS DE LA CLASE --------------------------------------------------
 
@@ -111,7 +254,7 @@ public class EnterpriseDraft extends Composite implements ContextMenuHandler {
 			enterpriseScopeWidget.setStyleName("aon-inputText");
 			enterpriseScopeWidget.addStyleName(style.maxWidthTextBox());
 			enterprise.enterpriseScopePanel.add(enterpriseScopeWidget);
-			enterpriseDraftObject.setScope(scopeId); //AutoSeleccion
+			enterpriseDraftObject.setScopeId(scopeId); //AutoSeleccion
 		}else{
 			enterpriseScopeWidget = new ListBox();
 			for(String scope : enterpriseDraftObject.getEnterprisecopes().values()){
@@ -123,8 +266,7 @@ public class EnterpriseDraft extends Composite implements ContextMenuHandler {
 				
 				@Override
 				public void onChange(ChangeEvent event) {
-//					onScopeChange();
-					//save();
+					enterpriseDraftObject.setScope(((ListBox) enterpriseScopeWidget).getSelectedItemText());
 				}
 			});
 			if(((ListBox) enterpriseScopeWidget).getItemCount() != 0){
@@ -149,6 +291,7 @@ public class EnterpriseDraft extends Composite implements ContextMenuHandler {
 			enterpriseCalendarWidget.setStyleName("aon-inputText");
 			enterpriseCalendarWidget.addStyleName(style.maxWidthTextBox());
 			enterprise.enterpriseCalendarPanel.add(enterpriseCalendarWidget);
+			enterpriseDraftObject.setCalendarId(calendarId); //AutoSeleccion
 		}else{
 			enterpriseCalendarWidget = new ListBox();
 			for(String calendar : enterpriseDraftObject.getEnterpriseCalendars().values()){
@@ -161,17 +304,7 @@ public class EnterpriseDraft extends Composite implements ContextMenuHandler {
 				
 				@Override
 				public void onChange(ChangeEvent event) {
-//					String calendar = ((ListBox) workplaceCalendarWidget).getSelectedItemText();
-//					Integer calendarId = -1;
-//					for(Entry<Integer, String> entry : workplaceDraftObject.getWorkplacesCalendars().entrySet()){
-//						if(calendar.equals(entry.getValue())){
-//							calendarId = entry.getKey();
-//							break;
-//						}
-//					}
-//					workplaceDraftObject.setWorkplaceCalendar(calendarId);
-					//save();
-					
+					enterpriseDraftObject.setCalendar(((ListBox) enterpriseCalendarWidget).getSelectedItemText());
 				}
 			});
 			enterprise.enterpriseCalendarPanel.add(enterpriseCalendarWidget);
@@ -185,7 +318,7 @@ public class EnterpriseDraft extends Composite implements ContextMenuHandler {
 		enterprise.enterpriseName.setValue(enterpriseDraftObject.getName());
 		enterprise.enterpriseAlias.setValue(enterpriseDraftObject.getAlias());
 		enterprise.document.setValue(enterpriseDraftObject.getDocument());
-		onEnterpriseDocumentChange();
+		onDocumentChange();
 		enterprise.nationality.setValue(enterpriseDraftObject.getDocumentCountry());
 		enterprise.streetType.setSelectedIndex(enterpriseDraftObject.getAddressStreetTypeIndex());
 		enterprise.address.setValue(enterpriseDraftObject.getAddress());
@@ -199,13 +332,12 @@ public class EnterpriseDraft extends Composite implements ContextMenuHandler {
 		enterprise.enterpriseWeb.setValue(enterpriseDraftObject.getWeb());
 		
 		//Crear Imagen
-//		Image img = new Image("data:image/png;base64," + enterpriseDraftObject.getLogo());
+//		FileUpload fileUpload = new FileUpload(); 
+//		enterprise.enterpriseLogoPanel.add(fileUpload);
+//
+//		Image img = new Image(enterpriseDraftObject.getSignature());
 //		img.setPixelSize(100, 100);
-//		
-//		enterprise.enterpriseLogoPanel.add(img);
-		
-//		enterprise.enterpriseLogo = new Image(enterpriseDraftObject.getLogo());
-//		enterprise.enterpriseSign = new Image(enterpriseDraftObject.getSignature());
+//		enterprise.enterpriseSignPanel.add(img);
 		
 		enterprise.enterprisePaysheetModel.setSelectedIndex(enterpriseDraftObject.getPaySheetModelIndex());
 		enterprise.enterpriseCostModel.setSelectedIndex(enterpriseDraftObject.getCostsModelIndex());
@@ -220,6 +352,7 @@ public class EnterpriseDraft extends Composite implements ContextMenuHandler {
 	private void checkPaysheetSendType() {
 		if(enterpriseDraftObject.getPaysheetSendIndex() == 0) {
 			enterprise.enterprisePaysheetSendPanel.removeStyleName(style.hide());
+			enterprise.enterprisePaysheetSendPanel.setStyleName(style.maxWidth());
 			enterprise.enterprisePaysheetSendEmail.setValue(enterpriseDraftObject.getPaysheetSendEmail());
 		}else {
 			enterprise.enterprisePaysheetSendPanel.setStyleName(style.hide());
@@ -227,7 +360,7 @@ public class EnterpriseDraft extends Composite implements ContextMenuHandler {
 		
 	}
 
-	private void onEnterpriseDocumentChange() {
+	private void onDocumentChange() {
 		String document = enterpriseDraftObject.getDocument();
 		String document_type = checkDocumentType(document);
 		
@@ -265,8 +398,10 @@ public class EnterpriseDraft extends Composite implements ContextMenuHandler {
 	private void showNationality(String document_type_str) {
 		if (document_type_str == "CIF" || document_type_str == "Pasaporte" || document_type_str == "NIE") {
 			enterprise.nationalityLabelCell.getStyle().clearDisplay();
+			enterprise.nationalityCell.getStyle().clearDisplay();
 		} else {
 			enterprise.nationalityLabelCell.getStyle().setDisplay(Display.NONE);
+			enterprise.nationalityCell.getStyle().setDisplay(Display.NONE);
 			enterprise.nationality.setValue("ESPA\u00D1A");
 		}
 	}

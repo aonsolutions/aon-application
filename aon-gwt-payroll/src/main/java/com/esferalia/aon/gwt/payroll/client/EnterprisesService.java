@@ -97,5 +97,7 @@ public interface EnterprisesService extends RemoteService {
 	Map<Integer, String> getEnterpiseScopes(Integer enterpriseId, String domain);
 
 	EnterpriseInfo getEnterpriseInfo(Integer enterpriseId, String domain);
+
+	EnterpriseInfo updateEnterprise(EnterpriseInfo enterpriseInfo, String domain);
 	
 }

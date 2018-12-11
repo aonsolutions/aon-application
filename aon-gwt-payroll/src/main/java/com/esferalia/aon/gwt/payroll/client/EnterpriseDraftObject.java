@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.shared.Dni;
@@ -13,7 +14,6 @@ import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.esferalia.aon.gwt.payroll.shared.StreetType;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.server.Base64Utils;
 
 public class EnterpriseDraftObject {
 
@@ -52,7 +52,7 @@ public class EnterpriseDraftObject {
 	}
 	
 
-	public int getAgreementIndex() {
+	public Integer getAgreementIndex() {
 		if(null == getAgreement())
 			return -1;
 		
@@ -177,6 +177,9 @@ public class EnterpriseDraftObject {
 	}
 	
 	public Integer getAgreement() {
+		if(null == this.enterpriseInfo.getEnterpriseAgreement())
+			return null;
+		
 		return Integer.parseInt(this.enterpriseInfo.getEnterpriseAgreement());
 	}
 	
@@ -305,28 +308,32 @@ public class EnterpriseDraftObject {
 		});
 	}
 	
-//	public void updateEnterprise(Consumer<WorkplaceInfo> success, Consumer<Throwable> failure){
-//		
-//		enterprisesService.setWorkplaceInfo(this.workplaceInfo, new AsyncCallback<WorkplaceInfo>() {
-//			
-//			@Override
-//			public void onSuccess(WorkplaceInfo result) {
-//				workplaceInfo_Old = new WorkplaceInfo(result);
-//				success.accept(result);
-//			}
-//
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				failure.accept(caught);
-//			}
-//		});
-//		
-//	}
-	
-	public void setDocument(String document) {
-		enterpriseInfo.setDocument(document);
-	}
+	public void updateEnterprise(Consumer<EnterpriseInfo> success, Consumer<Throwable> failure) {
+		
+		enterprisesService.updateEnterprise(this.enterpriseInfo , new AsyncCallback<EnterpriseInfo>() {
 
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+
+			@Override
+			public void onSuccess(EnterpriseInfo result) {
+				success.accept(result);
+			}
+		});	
+	}
+	
+	// ------------------------------------------------- SETTER METHODS -------------------------------------------------
+	
+	public void setName(String name) {
+		enterpriseInfo.setName(name);
+	}
+	
+	public void setAlias(String alias) {
+		enterpriseInfo.setAlias(alias);
+	}
+	
 	public void setDocumentType(String documentType) {
 		if(documentType == "DNI")
 			enterpriseInfo.setDocumentType((byte) 0);
@@ -337,9 +344,116 @@ public class EnterpriseDraftObject {
 		else
 			enterpriseInfo.setDocumentType((byte) 0);
 	}
+	
+	public void setDocument(String document) {
+		enterpriseInfo.setDocument(document);
+	}
+	
+	public void setNationality(String nationality) {
+		enterpriseInfo.setDocumentCountry(nationality);
+	}
+	
+	public void setAddressStreetType(String streetType){
+		enterpriseInfo.setStreetType(getStreetType2(streetType));
+	}
+	
+	private String getStreetType2(String streetType) {
+		for(int i=0; i<StreetType.values().length; i++){
+			if(streetType == StreetType.values()[i].getDescription())
+				return StreetType.values()[i].getShortCode();
+		}
+		return null;
+	}
+	
+	public void setAddress(String address) {
+		enterpriseInfo.setAddress(address);
+	}
+	
+	public void setAddressNum(String addressNum) {
+		enterpriseInfo.setAddressNum(addressNum);
+	}
+	
+	public void setAddressZip(String addressZip) {
+		enterpriseInfo.setAddressZip(addressZip);
+	}
+	
+	public void setAddressCity(String addressCity) {
+		enterpriseInfo.setAddressCity(addressCity);
+	}
+	
+	public void setAddressProvince(String addressProvince) {
+		enterpriseInfo.setAddressProvince(addressProvince);
+	}
+	
+	public void setMobile (String mobile) {
+		enterpriseInfo.setMobile(mobile);
+	}
+	
+	public void setPhone(String phone) {
+		enterpriseInfo.setPhone(phone);
+	}
+	
+	public void setEmail(String email) {
+		enterpriseInfo.setEmail(email);
+	}
+	
+	public void setWeb(String web) {
+		enterpriseInfo.setWeb(web);
+	}
 
-	public void setScope(Integer scopeId) {
+	public void setScope(String scope) {
+		Integer scopeId = getScopeId(scope);
 		enterpriseInfo.setScopeId(scopeId);
 	}
 	
+	private Integer getScopeId(String scope) {
+		for(Entry<Integer, String> entry : getEnterprisecopes().entrySet()) {
+			if(entry.getValue().equals(scope))
+				return entry.getKey();
+		}
+
+		return null;
+	}
+
+	public void setScopeId(Integer scopeId) {
+		enterpriseInfo.setScopeId(scopeId);
+	}
+	
+	public void setPaySheetModel(int paySheetModel) {
+		enterpriseInfo.setPaysheetModel((byte) paySheetModel);
+	}
+	
+	public void setCostModel(int costModel) {
+		enterpriseInfo.setCostsModel((byte) costModel);
+	}
+	
+	public void setPaySheetSendType(int paySheetModelTypeSend) {
+		enterpriseInfo.setPaysheetSendType((byte) paySheetModelTypeSend);
+	}
+	
+	public void setPaySheetSendEmail(String email) {
+		enterpriseInfo.setPaysheetEmail(email);
+	}
+	
+	public void setAgreement(String agreement) {
+		Integer agreementId = getAgreementId(agreement);
+		enterpriseInfo.setEnterpriseAgreement(agreementId.toString());
+	}
+	
+	public void setCalendar(String calendar) {
+		Integer calendarId = getCalendarId(calendar);
+		enterpriseInfo.setCalendarId(calendarId);
+	}
+	
+	private Integer getCalendarId(String calendar) {
+		for(Entry<Integer, String> entry : getEnterpriseCalendars().entrySet()) {
+			if(entry.getValue().equals(calendar))
+				return entry.getKey();
+		}
+		return null;
+	}
+
+	public void setCalendarId(Integer calendarId) {
+		enterpriseInfo.setCalendarId(calendarId);
+	}
 }

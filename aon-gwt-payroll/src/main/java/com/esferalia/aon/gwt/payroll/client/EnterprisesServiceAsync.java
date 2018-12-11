@@ -56,5 +56,6 @@ public interface EnterprisesServiceAsync {
 	void createWorkplaceInfo(WorkplaceInfo workplaceInfo, Integer enterpriseId, String domain, AsyncCallback<WorkplaceInfo> asyncCallback);
 	void getEnterpiseScopes(Integer enterpriseId, String domain, AsyncCallback<Map<Integer, String>> asyncCallback);
 	void getEnterpriseInfo(Integer enterpriseId, String domain, AsyncCallback<EnterpriseInfo> asyncCallback);
+	void updateEnterprise(EnterpriseInfo enterpriseInfo, String domain, AsyncCallback<EnterpriseInfo> asyncCallback);
 
 }
