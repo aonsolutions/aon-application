@@ -109,7 +109,7 @@ public class Mod193Print extends HttpServlet {
 				"&EJF=" + mod193.getYear() +
 				"&MOD=193";
 			request = "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";
-		} else {
+		} else if (mod193.getYear() < 2018) {
 			urlParameters = 
 				"HID=IE7193A" + 
 				"&IDI=ES" +
@@ -121,11 +121,20 @@ public class Mod193Print extends HttpServlet {
 				"&EJF=" + mod193.getYear() +
 				"&MOD=193";
 			request = "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";
+		} else {
+			urlParameters = 
+				"&IDI=ES" +
+				"&LEV=000000000000" +
+				"&FIC="	+ encodedFile + 
+				"&RUT=" + 
+				"&PRG=" + 
+				"&FIN=" + 
+				"&EJF=" + mod193.getYear() +
+				"&MOD=193";
+			request = "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";
 		}
-
 		
 		URL url = new URL(request);
-
 		SSLContext ctx = SSLContext.getInstance("TLS");
 		ctx.init(new KeyManager[0],
 				new TrustManager[] { new DefaultTrustManager() },
