@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod349Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902018;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
@@ -136,6 +137,14 @@ public interface IFiscal {
 	public void deleteMod3902015(AONContext ctx,Mod3902015 mod390);
 	public Mod3902015 changeStatusMod3902015(AONContext ctx, Mod3902015 mod184, FiscalStatus newStatus);
 	
+	// 							MOD390 -- 2018
+	public Mod3902018 getMod3902018(AONContext ctx,Mod390 mod390);
+	public Mod3902018 getMod3902018(AONContext ctx,Integer id);
+	public String getMod3902018XML(AONContext aonContext, int id);
+	public Mod3902018 saveMod3902018(AONContext ctx, Mod3902018 mod390);
+	public void deleteMod3902018(AONContext ctx,Mod3902018 mod390);
+	public Mod3902018 changeStatusMod3902018(AONContext ctx, Mod3902018 mod184, FiscalStatus newStatus);
+
 	// 				   		  MOD303
 	public Mod303 getMod303(AONContext ctx, int id);
 	public LinkedList<Mod303> getMod303s(AONContext ctx, int domain);

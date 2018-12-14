@@ -1,0 +1,166 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:fiscal='urn:import:com.esferalia.aon.gwt.fiscal.client.widget'>
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+
+	<g:HTMLPanel styleName="{aonResources.css.aonMarginTop}">
+	
+		<table class="{aonResources.css.aonWidthAll}">
+			<colgroup>
+				<col style="width: auto;" />
+				<col style="width: 40px;" />
+				<col style="width: 120px;"/>
+			</colgroup>
+			<tr>
+				<td colspan="3" class="{aonResources.css.aonInfoMessageBlock}">
+					<g:Label text="{msg.page8HelpText}"/>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="3" class="{aonResources.css.aonPageHeader}">
+					<g:Label text="{msg.taxByTerritory}" />
+				</td>
+			</tr>
+			
+			<tr>
+				<td>
+					<g:Label text="{msg.regQuotaArt80}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+				</td>
+				<td>
+					<aon:BoxLabel text="658"/>
+				</td>
+				<td>
+					<aon:DoubleBox ui:field="box658"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="{msg.resultSum}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+				</td>
+				<td>
+					<aon:BoxLabel text="84"/>
+				</td>
+				<td>
+					<aon:DoubleBox ui:field="box84"/>
+				</td>
+			</tr>
+
+			<tr>
+				<td class="{aonResources.css.aonTextRight}">
+					<g:Label text="{msg.commonTerritory}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+				</td>
+				<td>
+					<aon:BoxLabel text="87"/>
+				</td>
+				<td>
+					<aon:DoubleBox ui:field="box87"/>
+					<span>%</span>
+				</td>
+			</tr>
+			
+
+			<tr>
+				<td class="{aonResources.css.aonTextRight}">
+					<g:Label text="{msg.alava}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+				</td>
+				<td>
+					<aon:BoxLabel text="88"/>
+				</td>
+				<td>
+					<aon:DoubleBox ui:field="box88"/>
+					<span>%</span>
+				</td>
+			</tr>
+
+			<tr>
+				<td class="{aonResources.css.aonTextRight}">
+					<g:Label text="{msg.gipuzkoa}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+				</td>
+				<td>
+					<aon:BoxLabel text="89"/>
+				</td>
+				<td>
+					<aon:DoubleBox ui:field="box89"/>
+					<span>%</span>
+				</td>
+			</tr>
+
+			<tr>
+				<td class="{aonResources.css.aonTextRight}">
+					<g:Label text="{msg.bizkaia}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+				</td>
+				<td>
+					<aon:BoxLabel text="90"/>
+				</td>
+				<td>
+					<aon:DoubleBox ui:field="box90"/>
+					<span>%</span>
+				</td>
+			</tr>
+
+			<tr>
+				<td class="{aonResources.css.aonTextRight}">
+					<g:Label text="{msg.navarra}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+				</td>
+				<td>
+					<aon:BoxLabel text="91"/>
+				</td>
+				<td>
+					<aon:DoubleBox ui:field="box91"/>
+					<span>%</span>
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<g:Label text="{msg.commonTerritoryResult}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+				</td>
+				<td>
+					<aon:BoxLabel text="92"/>
+				</td>
+				<td>
+					<aon:DoubleBox ui:field="box92"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="{msg.importIVACustoms}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+				</td>
+				<td>
+					<aon:BoxLabel text="659"/>
+				</td>
+				<td>
+					<aon:DoubleBox ui:field="box659"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="{msg.commonTerritoryQuotaCompensation}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+				</td>
+				<td>
+					<aon:BoxLabel text="93"/>
+				</td>
+				<td>
+					<aon:DoubleBox ui:field="box93"/>
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<g:Label text="{msg.commonTerritoryDeclarationResult}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+				</td>
+				<td>
+					<aon:BoxLabel text="94"/>
+				</td>
+				<td>
+					<aon:DoubleBox ui:field="box94"/>
+				</td>
+			</tr>
+		</table>
+	</g:HTMLPanel>
+	
+</ui:UiBinder>

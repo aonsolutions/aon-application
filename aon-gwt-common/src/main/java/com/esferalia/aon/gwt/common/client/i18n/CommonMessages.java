@@ -1283,7 +1283,10 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("A devolver")
 	String toPayback();
-
+	
+	@DefaultMessage("Cuotas pendientes de compensaci\u00F3n al t\u00E9rmino del ejercicio")
+	String pendingQuotes();
+	
 	@DefaultMessage("Per\u00EDodos que tributan en R\u00E9gimen especial del grupo de entidades")
 	String entityGroupRegimePeriods();
 

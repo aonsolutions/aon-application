@@ -1,0 +1,85 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:fiscal='urn:import:com.esferalia.aon.gwt.fiscal.client.widget'>
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+
+	<g:HTMLPanel styleName="{aonResources.css.aonMarginTop}">
+		<table class="{aonResources.css.aonWidthAll}">
+			<colgroup>
+				<col style="width: auto;" />
+				<col style="width: 40px;" />
+				<col style="width: 180px;" class="{aonResources.css.aonTextCenter}" />
+			</colgroup>
+			<tr>
+				<td colspan="3" class="{aonResources.css.aonInfoMessageBlock}">
+					<g:Label text="{msg.page7HelpText}"/>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="3" class="{aonResources.css.aonPageHeader}">
+					<g:Label text="{msg.annualLiquidationResult}" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="{msg.regQuotaArt80}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+				</td>
+				<td>
+					<aon:BoxLabel text="658"/>
+				</td>
+				<td>
+					<aon:DoubleBox ui:field="box658"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="{msg.resultSum}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+				</td>
+				<td>
+					<aon:BoxLabel text="84"/>
+				</td>
+				<td>
+					<aon:DoubleBox ui:field="box84"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="{msg.importIVACustoms}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+				</td>
+				<td>
+					<aon:BoxLabel text="659"/>
+				</td>
+				<td>
+					<aon:DoubleBox ui:field="box659"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="{msg.previousYearCompensation}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+				</td>
+				<td>
+					<aon:BoxLabel text="85"/>
+				</td>
+				<td>
+					<aon:DoubleBox ui:field="box85"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="{msg.liquidationResult}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+				</td>
+				<td>
+					<aon:BoxLabel text="86"/>
+				</td>
+				<td>
+					<aon:DoubleBox ui:field="box86"/>
+				</td>
+			</tr>
+		</table>
+	</g:HTMLPanel>
+
+</ui:UiBinder>

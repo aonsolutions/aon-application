@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod349Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902018;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
@@ -2250,17 +2251,6 @@ public class FISCAL {
 				ctx.close();
 		}
 	}
-	public static Mod3902015 changeStatusMod3902015(String domainName, String userLogin, Mod3902015 mod390, FiscalStatus status) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, mod390.getDomain(), userLogin);
-			return getFiscal().changeStatusMod3902015(ctx, mod390,  status);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
 	// ----------------------------------MODELO 390 - 2014
 	public static Mod3902014 getMod3902014(String domainName, int domainId,
 			String login, Mod390 mod390) {
@@ -2382,6 +2372,88 @@ public class FISCAL {
 				ctx.close();
 		}
 	}
+	public static Mod3902015 changeStatusMod3902015(String domainName, String userLogin, Mod3902015 mod390, FiscalStatus status) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod390.getDomain(), userLogin);
+			return getFiscal().changeStatusMod3902015(ctx, mod390,  status);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	// ----------------------------------MODELO 390 - 2018
+	public static Mod3902018 getMod3902018(String domainName, int domainId,
+			String login, Integer id) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getFiscal().getMod3902018(ctx, id);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod3902018 getMod3902018(String domainName, int domainId,
+			String login, Mod390 mod390) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getFiscal().getMod3902018(ctx, mod390);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static String getMod3902018XML(String domainName, int domainId,
+			String login, int id) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getFiscal().getMod3902018XML(ctx, id);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod3902018 saveMod3902018(String domainName, int domainId,
+			String login, Mod3902018 mod390) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getFiscal().saveMod3902018(ctx, mod390);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static void deleteMod3902018(String domainName, int domainId,
+			String login, Mod3902018 mod390) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getFiscal().deleteMod3902018(ctx, mod390);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	public static Mod3902018 changeStatusMod3902018(String domainName, String userLogin, Mod3902018 mod390, FiscalStatus status) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod390.getDomain(), userLogin);
+			return getFiscal().changeStatusMod3902018(ctx, mod390,  status);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	// --------------------------------------------------------------------
 
 	public static Stream<VatSummaryContext> getVatSummaryContext(String domainName, int domainId, String user, VatParams params) {
 		AONContext ctx = null;

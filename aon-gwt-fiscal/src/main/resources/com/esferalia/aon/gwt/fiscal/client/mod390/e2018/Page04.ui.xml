@@ -1,0 +1,226 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:m3902018='urn:import:com.esferalia.aon.gwt.fiscal.client.mod390.e2018'>
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+
+	<g:HTMLPanel styleName="{aonResources.css.aonMarginTop} {aonResources.css.aonMarginBottom}">
+		<table class="{aonResources.css.aonWidthAll}">		
+			<tr>
+				<td class="{aonResources.css.aonPageHeader}">
+					<g:Label text="{msg.simplifiedRegimeOperations}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<table class="{aonResources.css.aonWidthAll}">
+						<tr>
+							<td class="{aonResources.css.aonWidthHalf}">
+								<m3902018:SimplifiedRegimePanel ui:field="activity1"/>
+							</td>
+							<td class="{aonResources.css.aonWidthHalf}">
+								<m3902018:SimplifiedRegimePanel ui:field="activity2"/>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td class="{aonResources.css.aonPageHeader}">
+					<g:Label text="{msg.farmerActivity}"/>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="4">
+					<table class="{aonResources.css.aonWidthAll} {aonResources.css.aonDataTable} {aonResources.css.aonTextCenter}">
+						<tr>
+							<td class="{aonResources.css.aonDataTableHeader}"><g:Label text="{msg.code}"/></td>
+							<td class="{aonResources.css.aonDataTableHeader}"><g:Label text="{msg.f02Msg}"/></td>
+							<td class="{aonResources.css.aonDataTableHeader}"><g:Label text="{msg.f03Msg}"/></td>
+							<td class="{aonResources.css.aonDataTableHeader}"><g:Label text="{msg.f04Msg}"/></td>
+							<td class="{aonResources.css.aonDataTableHeader}"><g:Label text="{msg.f05Msg}"/></td>
+							<td class="{aonResources.css.aonDataTableHeader}"><g:Label text="{msg.page6J}"/></td>
+						</tr>
+						<tr>
+							<td><g:TextBox ui:field="f01A" styleName="{aonResources.css.aonInputText}"/></td>
+							<td><aon:DoubleBox ui:field="f01B"/></td>
+							<td><aon:DoubleBox ui:field="f01C"/></td>
+							<td><aon:DoubleBox ui:field="f01D"/></td>
+							<td><aon:DoubleBox ui:field="f01E"/></td>
+							<td><aon:DoubleBox ui:field="f01K"/></td>
+						</tr>
+						<tr>
+							<td><g:TextBox ui:field="f02A" styleName="{aonResources.css.aonInputText}"/></td>
+							<td><aon:DoubleBox ui:field="f02B"/></td>
+							<td><aon:DoubleBox ui:field="f02C"/></td>
+							<td><aon:DoubleBox ui:field="f02D"/></td>
+							<td><aon:DoubleBox ui:field="f02E"/></td>
+							<td><aon:DoubleBox ui:field="f02K"/></td>
+						</tr>
+						<tr>
+							<td><g:TextBox ui:field="f03A" styleName="{aonResources.css.aonInputText}"/></td>
+							<td><aon:DoubleBox ui:field="f03B"/></td>
+							<td><aon:DoubleBox ui:field="f03C"/></td>
+							<td><aon:DoubleBox ui:field="f03D"/></td>
+							<td><aon:DoubleBox ui:field="f03E"/></td>
+							<td><aon:DoubleBox ui:field="f03K"/></td>
+						</tr>
+						<tr>
+							<td><g:TextBox ui:field="f04A" styleName="{aonResources.css.aonInputText}"/></td>
+							<td><aon:DoubleBox ui:field="f04B"/></td>
+							<td><aon:DoubleBox ui:field="f04C"/></td>
+							<td><aon:DoubleBox ui:field="f04D"/></td>
+							<td><aon:DoubleBox ui:field="f04E"/></td>
+							<td><aon:DoubleBox ui:field="f04K"/></td>
+						</tr>
+						<tr>
+							<td><g:TextBox ui:field="f05A" styleName="{aonResources.css.aonInputText}"/></td>
+							<td><aon:DoubleBox ui:field="f05B"/></td>
+							<td><aon:DoubleBox ui:field="f05C"/></td>
+							<td><aon:DoubleBox ui:field="f05D"/></td>
+							<td><aon:DoubleBox ui:field="f05E"/></td>
+							<td><aon:DoubleBox ui:field="f05K"/></td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<table class="{aonResources.css.aonWidthAll}">
+					<colgroup>
+						<col style="width:auto;"/>
+						<col style="width:40px;"/>
+						<col style="width:110px;"/>
+					</colgroup>
+					<tr>
+						<td class="{aonResources.css.aonPageHeader}" colspan="3">
+							<g:Label text="{msg.outputVat}"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.box74Msg}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+						</td>
+						<td>
+							<aon:BoxLabel text="74"/>
+						</td>
+						<td>
+							<aon:DoubleBox ui:field="box74"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.box75Msg}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+						</td>
+						<td>
+							<aon:BoxLabel text="75"/>
+						</td>
+						<td>
+							<aon:DoubleBox ui:field="box75"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.box76Msg}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+						</td>
+						<td>
+							<aon:BoxLabel text="76"/>
+						</td>
+						<td>
+							<aon:DoubleBox ui:field="box76"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.box77Msg}"  styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+						</td>
+						<td>
+							<aon:BoxLabel text="77"/>
+						</td>
+						<td>
+							<aon:DoubleBox ui:field="box77"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.box78Msg}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+						</td>
+						<td>
+							<aon:BoxLabel text="78"/>
+						</td>
+						<td>
+							<aon:DoubleBox ui:field="box78"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.box79Msg}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+						</td>
+						<td>
+							<aon:BoxLabel text="79"/>
+						</td>
+						<td>
+							<aon:DoubleBox ui:field="box79"/>
+						</td>
+					</tr>
+					<tr>
+						<td class="{aonResources.css.aonPageHeader}" colspan="3">
+							<g:Label text="{msg.inputVat}"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.box80Msg}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+						</td>
+						<td>
+							<aon:BoxLabel text="80"/>
+						</td>
+						<td>
+							<aon:DoubleBox ui:field="box80"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.investAssetRegularization}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+						</td>
+						<td>
+							<aon:BoxLabel text="81"/>
+						</td>
+						<td>
+							<aon:DoubleBox ui:field="box81"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.deductionSum}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+						</td>
+						<td>
+							<aon:BoxLabel text="82"/>
+						</td>
+						<td>
+							<aon:DoubleBox ui:field="box82"/>
+						</td>
+					</tr>
+					<tr>
+						<td class="{aonResources.css.aonPageHeader}" colspan="3">
+							<g:Label text="&#160;"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.box83Msg}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+						</td>
+						<td>
+							<aon:BoxLabel text="83"/>
+						</td>
+						<td>
+							<aon:DoubleBox ui:field="box83"/>
+						</td>
+					</tr>
+				</table>
+			</tr>
+		</table>
+	</g:HTMLPanel>
+</ui:UiBinder>

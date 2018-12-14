@@ -72,7 +72,8 @@ public class NewDeclarationPopup extends CustomDialog {
 		});
 		tab.setWidget(row, 1, admonList);
 		row++;
-
+		Button acceptButton = new Button();
+		
 		// YEAR
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		tab.setWidget(row, 0, new Label(AON.MSG.year()));
@@ -84,6 +85,11 @@ public class NewDeclarationPopup extends CustomDialog {
 			@Override
 			public void onValueChange(ValueChangeEvent<Integer> event) {
 				mod390.setYear(yearBox.getValue());
+				oldStyle.setVisible((mod390.getYear() < 2018));
+				acceptButton.setVisible( 
+					(mod390.getYear() >= 2018)
+					|| (mod390.getYear() < 2018 && oldStyle.getSelectedIndex() != 0)
+				);
 			}
 		});
 		tab.setWidget(row, 1,yearBox);
@@ -141,11 +147,9 @@ public class NewDeclarationPopup extends CustomDialog {
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 		tab.setWidget(row, 0, withoutActivity);
 		row++;
-		
-		
-		Button acceptButton = new Button();
 
 		// ORIGEN DATOS.
+		oldStyle.setVisible((mod390.getYear() < 2018));
 		oldStyle.addStyleName(AON.AON_CSS.aonMarginTop()); 
 		oldStyle.addStyleName(AON.AON_CSS.aonMarginBottom());
 		oldStyle.addItem("<Seleccione una opci\u00F3n>");
@@ -174,7 +178,7 @@ public class NewDeclarationPopup extends CustomDialog {
 
 		acceptButton.setStyleName(AON.AON_CSS.aonConfirmDialogOkButton());
 		acceptButton.setText( AON.MSG.accept());
-		acceptButton.setVisible(false);
+		acceptButton.setVisible((mod390.getYear() >= 2018));
 		
 		acceptButton.addClickHandler(new ClickHandler() {
 			

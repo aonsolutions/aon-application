@@ -31,6 +31,7 @@ public class Mod390 implements IFiscalModel, HasAudit {
 	private String receipt;
 	private String replacedReceipt;
 	private String comments;
+	private String xmlFormat;
 	
 	private boolean oldStyle;
 	
@@ -230,6 +231,13 @@ public class Mod390 implements IFiscalModel, HasAudit {
 		return this;
 	}
 	
+	public String getXmlFormat() {
+		return this.xmlFormat;
+	}
+	public Mod390 setXmlFormat(String xmlFormat) {
+		this.xmlFormat = xmlFormat;
+		return this;
+	}
 	// ---------------------------------------------------------- AUDIT
 	@Override
 	public String getCreationUser() {

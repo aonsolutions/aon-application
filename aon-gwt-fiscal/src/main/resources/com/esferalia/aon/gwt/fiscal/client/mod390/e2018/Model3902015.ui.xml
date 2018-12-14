@@ -1,0 +1,88 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:fiscal='urn:import:com.esferalia.aon.gwt.fiscal.client.widget'>
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+	
+	<g:DockLayoutPanel ui:field="dockLayoutPanel">
+		<g:north size="121">
+			<g:FlowPanel>
+				<g:HTMLPanel height="26px" 
+					styleName="{aonResources.css.aonFindingTitleToolbar} {aonResources.css.aonWidthAll}">
+					<table cellpadding="0" cellspacing="0" class="{aonResources.css.aonWidthAll}">				
+						<tr>
+							<td class="{aonResources.css.aonFindingTitle}">
+								<g:FlowPanel styleName="{aonResources.css.aonFindingTitleInternal}">
+									<g:Label text="{msg.mod390}" />
+								</g:FlowPanel>
+							</td>
+							<td>
+								<g:HTMLPanel styleName="{aonResources.css.aonFindingSubtitleIternal}">
+									<g:Label/>
+								</g:HTMLPanel>
+							</td>
+							<td class="{aonResources.css.aonFindingToolbar}">
+								<g:FlowPanel styleName="{aonResources.css.aonFindingToolbarItemGroup}">
+									<g:Button ui:field="newButton" text="{msg.newAction}" 
+										styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconReset}"/>
+									<g:Button ui:field="saveButton"  text="{msg.saveAction}" 
+										styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconSave}"/>
+									<g:Button ui:field="cancelButton" text="{msg.cancelAction}" 
+										styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconCancel}" />
+									<g:Button ui:field="deleteButton" text="{msg.deleteAction}" 
+										styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconDelete}" />
+									<g:Button ui:field="printButton" text="{msg.predeclaration}"
+										styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconAeat}" />
+									<g:Button ui:field="generateFileButton" text="{msg.generateFile}"
+										styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconAeatBW}"  />
+									<g:Anchor ui:field="download" visible="false"/>							
+									<g:FlowPanel ui:field="formContainer"/>
+								</g:FlowPanel>
+							</td>
+						</tr>
+					</table>
+				</g:HTMLPanel>
+				<g:SimplePanel ui:field="headerPanel"/>
+				<g:HTMLPanel styleName="{aonResources.css.aonScrollArea}">
+					<table class="{aonResources.css.aonPanelGrid} {aonResources.css.aonWidthAll}">
+						<colgroup>
+							<col style="width: 100px;" />
+							<col style="width: auto;" />
+							<col style="width: 180px;" />
+						</colgroup>
+						<tr>
+							<td class="{aonResources.css.aonPanelGridOdd}">
+								<g:Label text="{msg.deponentData}" />
+							</td>
+							<td class="{aonResources.css.aonPanelGridEven}">
+								<fiscal:EnterpriseSuggestBox ui:field="enterpriseSuggest" />
+							</td>  
+							<td class="{aonResources.css.aonPanelGridEven}" 
+								style="text-align: center; color: red; font-weight: bold;">
+								<g:Label ui:field="simplifiedRegime"
+									 text="{msg.simplifiedRegime}" />
+							</td>
+						</tr>
+					</table> 
+				</g:HTMLPanel>
+			</g:FlowPanel>
+		</g:north>
+		
+		<g:west size="200">
+			<g:ScrollPanel styleName="{aonResources.css.aonLinkPanel}">
+				<g:FlowPanel ui:field='linkContainer' styleName="{aonResources.css.aonLinkContainer}">
+				</g:FlowPanel>
+			</g:ScrollPanel>
+		</g:west>
+
+		<g:center>
+			<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
+				<g:DeckPanel ui:field="pagesPanel">
+				</g:DeckPanel>
+			</g:ScrollPanel>
+		</g:center>
+	</g:DockLayoutPanel>	
+</ui:UiBinder>

@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2014.Model3902014;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015;
+import com.esferalia.aon.gwt.fiscal.client.mod390.e2018.Model3902018;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -184,34 +185,12 @@ public class Model390 extends MainEntryPoint {
 			} else if (selected.getYear() == 2015 || selected.getYear() == 2016 || selected.getYear() == 2017) {
 				Model3902015 model3902015 = new Model3902015(selected,new Model390Callback(), getAonData());
 				declarationContainer.setWidget(model3902015);
-			}
-			
-/*		
-		} else if (selected.isBizkaia()) {
-			if (selected.getYear() < 2017) {
-				declarationContainer.setWidget( new Model3902017BIZKAIA(selected,new Model390Callback()));	
-			} else if (!selected.isLastPeriod()) { 
-				declarationContainer.setWidget( new Model3902017BIZKAIA(selected,new Model390Callback()));
+			}  else if (selected.getYear() == 2018) {
+				Model3902018 model3902018 = new Model3902018(selected,new Model390Callback(), getAonData());
+				declarationContainer.setWidget(model3902018);
 			} else {
-				showErrorPanel("Periodo no soportado. Proceda a realizar el modelo 390.");	
+				showErrorPanel("Administraci\u00F3n y/o ejercicio no soportado.");
 			}
-		} else if (selected.isAraba()) {
-			if (selected.getYear() < 2017) {
-				declarationContainer.setWidget( new Model3902017ARABA(selected,new Model390Callback()));	
-			} else if (!selected.isLastPeriod()) { 
-				declarationContainer.setWidget( new Model3902017ARABA(selected,new Model390Callback()));
-			} else {
-				showErrorPanel("Periodo no soportado. Proceda a realizar el modelo 390.");	
-			}
-		} else if (selected.isGipuzkoa()) {
-			if (selected.getYear() < 2017) {
-				declarationContainer.setWidget( new Model3902017GIPUZKOA(selected,new Model390Callback()));	
-			} else if (!selected.isLastPeriod()) { 
-				declarationContainer.setWidget( new Model3902017GIPUZKOA(selected,new Model390Callback()));
-			} else {
-				showErrorPanel("Periodo no soportado. Proceda a realizar el modelo 390.");	
-			}
- */		
 		} else {
 			showErrorPanel("Administraci\u00F3n y/o ejercicio no soportado.");
 		}
