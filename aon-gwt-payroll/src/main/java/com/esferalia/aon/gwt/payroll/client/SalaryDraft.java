@@ -4776,13 +4776,13 @@ public class SalaryDraft extends ResizeComposite
 			Deduction cost = costs.get(i);
 			paymentsTable.insertRow(beforeRow + i);
 			Double percent = getPercent(cost, salaryDraftObject);
-			Deduction.Type type = cost.getType();
+			Deduction.Type type = cost.getType()  != null  ? cost.getType() : Deduction.Type.OTHER ;
 
 			String description = COSTS_DESCRIPTIONS.get(cost.getName());
 			if (AonStringUtils.isBlank(description))
-				description = cost.getDescription();
+				description = type != Deduction.Type.OTHER ? type.getDescription() : cost.getDescription();
 			if (AonStringUtils.isBlank(description))
-				description = type != null ? type.getDescription() : Deduction.Type.OTHER.getDescription();
+				description = Deduction.Type.OTHER.getDescription();
 			
 
 			dumpSystemDeduction(cost, percent, description, beforeRow + i, null, AON.AON_ICON_COST,
@@ -5494,11 +5494,11 @@ public class SalaryDraft extends ResizeComposite
 		switch (type) {
 		case IRPF:
 			return NumberUtils.isValid(irpfBase) ? amount / irpfBase * 100 : null;
-		// case JOB_TRAINING:
-		// case UNEMPLOYMENT:
 		// case COMMON_CONTINGENCY:
 		// return amount / cgcBase * 100;
 		case FOGASA:
+		case JOB_TRAINING:
+		case UNEMPLOYMENT:
 		case PROFESSIONAL_CONTINGENCY:
 			return NumberUtils.isValid(cgpBase) ? amount / cgpBase * 100 : null;
 		case STRUCTURAL_OVERTIME:

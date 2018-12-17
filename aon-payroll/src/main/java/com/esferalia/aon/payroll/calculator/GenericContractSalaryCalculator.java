@@ -678,7 +678,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			salaryBuilder.setCgpBase(cgpBase);
 
 			copyResults(expressionContext, CGP_BASE_ENTERPRISE, ERE_BASE, MATERNITY_BASE, DIRECT_BASE, CGC_BASE);
-			copyResults(expressionContext, CGC_BASE, CGP_BASE_ENTERPRISE);
+			copyResults(expressionContext, CGP_BASE, CGP_BASE_ENTERPRISE);
 //			if (cgpBase != null)
 //				expressionContext.setVariable(CGP_BASE_ENTERPRISE, cgpBase, start, end);
 
@@ -1389,8 +1389,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	}
 
 	protected void fillData(IContractSalaryCalculatorContext ctx) throws SalaryException {
-		ExpressionContext expressionContext = ctx.getExpressionContext();
-		for (String name : new String[] { 
+		fillData(ctx, 
+				new String[] { 
 				TC2.getName(), 
 				QUOTE_DAYS.getName(), 
 				CGC_BASE.getName(), 
@@ -1413,7 +1413,12 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				SUNDAY_HOURS.getName(),
 				
 				PREST_IT
-				}) {
+				});
+	}
+
+	protected void fillData(IContractSalaryCalculatorContext ctx, String  names []) throws SalaryException {
+		ExpressionContext expressionContext = ctx.getExpressionContext();
+		for (String name : names) {
 			try {
 				for (ITimedVariable<Object> data : expressionContext.getVariables(name)) {
 					try {

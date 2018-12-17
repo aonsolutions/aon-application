@@ -353,7 +353,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		salaryBuilder.setCgcBase(cgcBase);
 		salaryBuilder.setNonHExtraBase(nonHExtraBase);
 
-		cgpBase = Math.min(cgcBase + nonHExtraBase + hExtraBase, f.apply(cgcBase));
+		cgpBase = Math.min(cgcBase + nonHExtraBase + hExtraBase, f.apply(cgpBase));
 		salaryBuilder.setCgpBase(cgpBase);
 
 		totalEnterprise = f.apply(totalEnterprise);
