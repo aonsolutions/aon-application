@@ -19,8 +19,13 @@ import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.FileList;
 
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
+import net.aonsolutions.aon.google.apis.drive.DriveUtils;
+import net.aonsolutions.aon.google.apis.drive.SearchFiles;
+
+
 
 @WebServlet(name = "DownloadAttachment", urlPatterns = {"/aon_gwt_aio/download_attachment/*",
 														"/aon_gwt_fiscal/download_attachment/*"})
@@ -35,21 +40,32 @@ public class DownloadAttachmentServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException{
 		System.out.println("GET METHOD");
 		
-		HashMap<String, String> parameters = SecurityUtils.getInstance().getParameters(req.getPathInfo().substring(1));
+		String[] pathInfo = req.getPathInfo().split("/");
+		String domainName = pathInfo[1]; 
+		String userName = pathInfo[2];
+		
+		HashMap<String, String> parameters = SecurityUtils.getInstance().getParameters(pathInfo[3]);
 		Integer domainId = Integer.parseInt(parameters.get("domain"));
 		Integer id = Integer.parseInt(parameters.get("id"));
 		String attachType = parameters.get("attach_type");
 	
-		String[] pathInfo = req.getPathInfo().split("/");
-		String domainName = pathInfo[1]; 
-		String userName = pathInfo[2];
-
 		Domain domain = AON.getDomain(domainName, domainId, userName);
 		
 		Attach attach = AON.getAttach(domain.getName(), domain.getId(), userName, f -> f.getIdProperty().eq(id), AttachType.getAttachType(attachType), true);
+
 		if(attach.getDriveId() != null) {
+			
 			DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), userName);
 			Drive drive = AonDrive.getInstace().serviceInitialize(g);
+			String[] keys = {"fileId", "aontype"};
+			String[] values = {attach.getId() + "", "registry"};
+			FileList fl = SearchFiles.searchFilesProperties(drive, keys, values);
+
+			if(!fl.getItems().get(0).getId().equals(attach.getDriveId())) {
+				attach.setDriveId(fl.getItems().get(0).getId());
+				AON.updateAttach(domain.getName(), domain.getId(), "", attach);
+			}
+			
 			attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
 		}
       

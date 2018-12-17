@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.document.client.nuevo;
 
 
+import java.util.HashMap;
+
 import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.documental.JsAttach;
@@ -10,12 +12,15 @@ import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.issues.client.AonDialog2;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
@@ -50,6 +55,8 @@ public class AttachListPanel extends Composite {
     	exportDownload(this);
     	exportEdit(this);
     	exportRemove(this);
+    	exportSetOver(this);
+    	exportIsOver(this);
         initWidget(binder.createAndBindUi(this));
         
         grid.setItems(items);
@@ -109,91 +116,126 @@ public class AttachListPanel extends Composite {
 		}
 	}-*/;
    
+   public void aaa(JsAttach attach) {
+	   Window.alert(attach.getId()+"");
+   }
+   
    public void edit(String id){
-	   PaperInput nameBox = new PaperInput();
-	   nameBox.setLabel("Nombre");
-	   nameBox.setWidth("100%");
-	   nameBox.setList("as");
-	   
-	   AonComboBox categoryBox = new AonComboBox();
-	   categoryBox.setLabel("Categor\u00eda");
-	   categoryBox.setWidth("100%");
-	   categoryBox.setItemLabelPath("name");
-	   categoryBox.setItemValuePath("name");
-	   parent.getAPI().getAttachment().getCategories(new AsyncCallback<JSON<JsLabel>>() {
+	   parent.getAPI().getAttachment().getAttach(id, new AsyncCallback<JSON<JsAttach>>() {
+	
+		@Override
+		public void onSuccess(JSON<JsAttach> js) {
+			JsAttach attach = js.getOneData();
+			PaperInput nameBox = new PaperInput();
+			nameBox.setLabel("Nombre");
+			nameBox.setWidth("100%");
+			nameBox.setList("as");
+			nameBox.setValue(attach.getTitle());
+			   
+			AonComboBox categoryBox = new AonComboBox();
+			categoryBox.setLabel("Categor\u00eda");
+			categoryBox.setWidth("100%");
+			categoryBox.setItemLabelPath("name");
+			categoryBox.setItemValuePath("name");
+			parent.getAPI().getAttachment().getCategories(new AsyncCallback<JSON<JsLabel>>() {
 				
-		   @Override
-		   public void onSuccess(JSON<JsLabel> result) {
-			   categoryBox.setItems(result.getData());
-			}
+				@Override
+				public void onSuccess(JSON<JsLabel> result) {
+					categoryBox.setItems(result.getData());
+					categoryBox.setValue(attach.getCategory().getName());
+				}
+						
+				@Override public void onFailure(Throwable caught) {}
+			});
+					
+			AonComboBox tagBox = new AonComboBox();
+			tagBox.setWidth("100%");
+			tagBox.setLabel("Etiqueta");
+			tagBox.setItemLabelPath("name");
+			tagBox.setItemValuePath("name");
+			parent.getAPI().getAttachment().getTags(new AsyncCallback<JSON<JsLabel>>() {
+					
+				@Override
+				public void onSuccess(JSON<JsLabel> result) {
+					tagBox.setItems(result.getData());
+				}
 				
-		   @Override public void onFailure(Throwable caught) {}
-		});
+				@Override public void onFailure(Throwable caught) {}
+			});
 			
-		AonComboBox tagBox = new AonComboBox();
-		tagBox.setWidth("100%");
-		tagBox.setLabel("Etiqueta");
-		tagBox.setItemLabelPath("name");
-		tagBox.setItemValuePath("name");
-		parent.getAPI().getAttachment().getTags(new AsyncCallback<JSON<JsLabel>>() {
-			
-			@Override
-			public void onSuccess(JSON<JsLabel> result) {
-				tagBox.setItems(result.getData());
-			}
-			
-			@Override public void onFailure(Throwable caught) {}
-		});
-		
-		AonComboBox scopeBox = new AonComboBox();
-		scopeBox.setWidth("100%");
-		scopeBox.setLabel("\u00c1mbito");
-		scopeBox.setItemLabelPath("name");
-		scopeBox.setItemValuePath("name");
-		parent.getAPI().getAttachment().getScopes(new AsyncCallback<JSON<JsObject>>() {
-			
-			@Override
-			public void onSuccess(JSON<JsObject> result) {
-				scopeBox.setItems(result.getData());
-			}
-			
-			@Override public void onFailure(Throwable caught) {}
-		});
-		
-		HorizontalPanel hp = new HorizontalPanel();
-		Label confidentialLabel = new Label("Confidencial");
-		confidentialLabel.getElement().getStyle().setPaddingTop(20, Unit.PX);
-		confidentialLabel.getElement().getStyle().setPaddingRight(10, Unit.PX);
-		confidentialLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);		
-		hp.add(confidentialLabel);
+			AonComboBox scopeBox = new AonComboBox();
+			scopeBox.setWidth("100%");
+			scopeBox.setLabel("\u00c1mbito");
+			scopeBox.setItemLabelPath("name");
+			scopeBox.setItemValuePath("name");
+			parent.getAPI().getAttachment().getScopes(new AsyncCallback<JSON<JsObject>>() {
 				
-		PaperToggleButton confidential = new PaperToggleButton();
-		confidential.getElement().getStyle().setPaddingTop(13, Unit.PX);
-		hp.add(confidential);
+				@Override
+				public void onSuccess(JSON<JsObject> result) {
+					scopeBox.setItems(result.getData());
+					scopeBox.setValue(attach.getScope().getName());
+				}
+				
+				@Override public void onFailure(Throwable caught) {}
+			});
+				
+			HorizontalPanel hp = new HorizontalPanel();
+			Label confidentialLabel = new Label("Confidencial");
+			confidentialLabel.getElement().getStyle().setPaddingTop(20, Unit.PX);
+			confidentialLabel.getElement().getStyle().setPaddingRight(10, Unit.PX);
+			confidentialLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);		
+			hp.add(confidentialLabel);
+						
+			PaperToggleButton confidential = new PaperToggleButton();
+			confidential.setChecked(attach.isConfidential());
+			confidential.getElement().getStyle().setPaddingTop(13, Unit.PX);
+			hp.add(confidential);
+			
+			VerticalPanel vp = new VerticalPanel();
+			vp.setWidth("100%");
+			vp.add(nameBox);
+			vp.add(categoryBox);
+			vp.add(tagBox);
+			vp.add(scopeBox);
+			vp.add(hp);
+			AonDialog dialog = new AonDialog("Editar Archivo", vp) {
+				
+				@Override protected void onCancel() {hide();}
+				
+				@Override
+				protected void onAccept() {
+					JSONObject json = new JSONObject();
+					json.put("name", new JSONString(nameBox.getValue()));
+					JsLabel categoryItem = (JsLabel) categoryBox.getSelectedItem().cast();
+					json.put("category", new JSONString(categoryItem.getId()));
+					JsLabel tagItem = (JsLabel) tagBox.getSelectedItem().cast();
+					json.put("tag", new JSONString(tagItem.getId()));
+					JsLabel scopeItem = (JsLabel) scopeBox.getSelectedItem().cast();
+					json.put("scope", new JSONString(scopeItem.getId()));
+					json.put("confidential", new JSONString(Boolean.toString(confidential.getChecked())));
+					String requestData = JsonUtils.stringify(json.getJavaScriptObject());
+					parent.getAPI().getAttachment().updateAttach(id, requestData, new AsyncCallback<JsAttach>() {
+						
+						@Override
+						public void onSuccess(JsAttach result) {
+							hide();
+						}
+						
+						@Override public void onFailure(Throwable caught) {}
+					});
+				}	
+			};
+					
+			dialog.setAutoHideEnabled(true);
+			dialog.addAutoHidePartner(categoryBox.getElementById("overlay"));
+			dialog.addAutoHidePartner(tagBox.getElementById("overlay"));
+			dialog.addAutoHidePartner(scopeBox.getElementById("overlay"));
+			dialog.getElement().getStyle().setWidth(310, Unit.PX);
+			dialog.center();			
+		}
 		
-		VerticalPanel vp = new VerticalPanel();
-		vp.setWidth("100%");
-		vp.add(nameBox);
-		vp.add(categoryBox);
-		vp.add(tagBox);
-		vp.add(scopeBox);
-		vp.add(hp);
-		AonDialog dialog = new AonDialog("Editar Archivo", vp) {
-			
-			@Override protected void onCancel() {hide();}
-			
-			@Override
-			protected void onAccept() {
-
-			}	
-		};
-			
-		dialog.setAutoHideEnabled(true);
-		dialog.addAutoHidePartner(categoryBox.getElementById("overlay"));
-		dialog.addAutoHidePartner(tagBox.getElementById("overlay"));
-		dialog.addAutoHidePartner(scopeBox.getElementById("overlay"));
-		dialog.getElement().getStyle().setWidth(310, Unit.PX);
-		dialog.center();
+		@Override public void onFailure(Throwable caught) {}
+	   });
    }
 
    public static native void exportEdit(AttachListPanel thiz) /*-{
@@ -230,6 +272,31 @@ public class AttachListPanel extends Composite {
    public static native void exportRemove(AttachListPanel thiz) /*-{
 		$wnd.remove = function(id) {
 			thiz.@com.esferalia.aon.gwt.document.client.nuevo.AttachListPanel::remove(*)(id);
+		}
+	}-*/;
+   
+   
+   HashMap<Integer, Boolean> overMap = new HashMap<>(); 
+   public Boolean isOver(String id) {
+	   if(overMap.containsKey(Integer.parseInt(id))) {
+		   return overMap.get(Integer.parseInt(id));
+	   } else return false;
+   }
+
+   
+   public static native void exportIsOver(AttachListPanel thiz) /*-{
+		$wnd.isOver = function(id) {
+			thiz.@com.esferalia.aon.gwt.document.client.nuevo.AttachListPanel::isOver(*)(id);
+		}
+	}-*/;
+   
+   public void setOver(String id, Boolean bool) {
+	   overMap.put(Integer.parseInt(id), bool);
+   }
+   
+   public static native void exportSetOver(AttachListPanel thiz) /*-{
+		$wnd.setOver = function(id, bool) {
+			thiz.@com.esferalia.aon.gwt.document.client.nuevo.AttachListPanel::setOver(*)(id, bool);
 		}
 	}-*/;
 }

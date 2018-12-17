@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.api.client.documental;
 
+import com.esferalia.aon.gwt.api.client.incidence.JsLabel;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.view.client.ProvidesKey;
 
@@ -36,4 +37,15 @@ public class JsAttach extends JavaScriptObject{
 		return this.attach_type;
 	}-*/;
 
+	public final native JsLabel getCategory() /*-{
+		return this.category;
+	}-*/;
+	
+	public final native JsLabel getScope() /*-{
+		return this.scope;
+	}-*/;
+	
+	public final native Boolean isConfidential() /*-{
+		return this.confidential;
+	}-*/;
 }

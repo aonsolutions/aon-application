@@ -277,20 +277,23 @@ public class Attach implements Serializable {
 	public Scope getFullScope() {
 		return fullScope;
 	}
-	public void setFullScope(Scope fullScope) {
+	public Attach setFullScope(Scope fullScope) {
 		this.fullScope = fullScope;
+		return this;
 	}
 	public Category getFullCategory() {
 		return fullCategory;
 	}
-	public void setFullCategory(Category fullCategory) {
+	public Attach setFullCategory(Category fullCategory) {
 		this.fullCategory = fullCategory;
+		return this;
 	}
 	public LinkedList<Tag> getTagList() {
 		return tagList;
 	}
-	public void setTagList(LinkedList<Tag> tagList) {
+	public Attach setTagList(LinkedList<Tag> tagList) {
 		this.tagList = tagList;
+		return this;
 	}
 	
 	public String getTagListString(){

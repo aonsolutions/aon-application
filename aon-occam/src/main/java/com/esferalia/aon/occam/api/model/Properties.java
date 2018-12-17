@@ -74,6 +74,7 @@ public interface Properties {
 		Property<Date> getAttachDateProperty();
 		Property<Timestamp> getAttachDateTimeStampProperty();
 		Property<Integer> getCategoryProperty();
+		Property<Integer> getTagProperty();
 		Property<Date> getAttachCreationDateProperty();
 		Property<Timestamp> getCreationDateTimeStampProperty();
 		Property<String> getCreationUserProperty();

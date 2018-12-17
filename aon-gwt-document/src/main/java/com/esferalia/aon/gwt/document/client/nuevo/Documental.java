@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.document.client.nuevo;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
@@ -31,6 +33,7 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.Polymer;
+import com.vaadin.polymer.iron.IronCollapseElement;
 import com.vaadin.polymer.iron.IronIconsElement;
 import com.vaadin.polymer.iron.IronListElement;
 import com.vaadin.polymer.paper.PaperDialogElement;
@@ -65,9 +68,18 @@ public class Documental implements EntryPoint {
 	private AonData aonData;
 	private Attachment attachment;
 	private Documental me = this;;
+	HashMap<String, LinkedList<String>> filterMap;
 	
 	public API getAPI() {
 		return API;
+	}
+	
+	public HashMap<String, LinkedList<String>> getFilterMap() {
+		return filterMap;
+	}
+	
+	public void setFilterMap(HashMap<String, LinkedList<String>> filterMap) {
+		this.filterMap = filterMap;
 	}
 	
 	public AonData getAonData() {
@@ -104,6 +116,7 @@ public class Documental implements EntryPoint {
 	public void onModuleLoad() {
 		Polymer.importHref(Arrays.asList(
 				IronIconsElement.SRC,
+				IronCollapseElement.SRC,
 				PaperInputElement.SRC,
 				PaperTextareaElement.SRC,
 				PaperDialogElement.SRC,
@@ -130,14 +143,20 @@ public class Documental implements EntryPoint {
 		Widget ui = binder.createAndBindUi(this);
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
-		
+		initializeFilterMap();
 		createAonToolbar();
 		createSearchPanel();
 		createAttachListPanel();
 	}
 	
+	public void initializeFilterMap() {
+		filterMap = new HashMap<>();
+		LinkedList<String> list = new LinkedList<>();
+		list.add("all");
+		filterMap.put("type", list);
+	}
+	
 	private void createAonToolbar(){
-		
 		toolbar.add(new AonToolbar("Documental") {
 
 			@Override protected void onMenuButtonClick() {
@@ -281,11 +300,18 @@ public class Documental implements EntryPoint {
 	}
 	
 	private void createSearchPanel(){
-		searchContent.add(new FilterPanel());
+		searchContent.add(new FilterPanel(me));
 	}
 	
-	private void createAttachListPanel() {
-		getAPI().getAttachment().getAttachList(new AsyncCallback<JSON<JsAttach>>() {
+	public void createAttachListPanel() {
+		LinkedList<String> list = new LinkedList<>();
+		list.add("1");
+		getFilterMap().put("page", list);
+		list = new LinkedList<>();
+		list.add("30");
+		getFilterMap().put("per_page", list);
+		
+		getAPI().getAttachment().getAttachList(getFilterMap(), new AsyncCallback<JSON<JsAttach>>() {
 				
 			@Override
 			public void onSuccess(JSON<JsAttach> result) {

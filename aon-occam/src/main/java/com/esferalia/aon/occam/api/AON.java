@@ -2102,6 +2102,24 @@ public class AON {
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 
+	
+	public static Stream<Attach> getDocumentalAttachStream(String domainName,
+			Integer domainId, String login, AttachFilter filter,
+			AttachType attachType, Boolean withData) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+
+			if (attachType.equals(AttachType.REGISTRY))
+				return getAttachment().getDocumentalRegistryAttachStream(ctx, filter, withData);
+			
+			return null;
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static Stream<Attach> getAttachStream(String domainName,
 			Integer domainId, String login, AttachFilter filter,
 			AttachType attachType, Boolean withData) {
@@ -2300,6 +2318,18 @@ public class AON {
 		}
 	}
 
+	public static LinkedList<Tag> getRegistryAttachTag(String domainName,
+			Integer domainId, String login, Integer rattachId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getAttachment().getRegistryAttachmentTag(ctx, rattachId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static Integer insertRegistryAttachTag(String domainName,
 			Integer domainId, String login, Integer rattachId, Integer tagId) {
 		AONContext ctx = null;
@@ -2319,6 +2349,17 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			getAttachment().deleteRegistryAttachTag(ctx, rattachId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	public static void deleteTagRegistryAttach(String domainName,
+			Integer domainId, String login, Integer tagId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getAttachment().deleteTagRegistryAttach(ctx, tagId);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -3729,6 +3770,42 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static Category insertCategory(String domainName, Integer domainId, String login, Category category ) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().insertCategory(ctx, category);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+
+	public static Category updateCategory(String domainName, Integer domainId, String login, Category category ) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().updateCategory(ctx, category);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+
+	public static Category deleteCategory(String domainName, Integer domainId, String login, Integer categoryId ) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().deleteCategory(ctx, categoryId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 
 	public static LinkedList<Category> getCategoryList(String domainName,
 			Integer domainId, String login) {

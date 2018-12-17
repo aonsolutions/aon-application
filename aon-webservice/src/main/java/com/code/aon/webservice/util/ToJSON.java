@@ -40,8 +40,8 @@ import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
-import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class ToJSON {
@@ -64,11 +64,22 @@ public class ToJSON {
 			icon = "aon-documental:video";
 		}  
 
+		JSONArray tagArray = new JSONArray();
+		if(attach.getTagList() != null)
+			attach.getTagList().stream().forEach(r -> {
+				tagArray.put(ToJSON.tagToJSON(r));
+			});
 		return new JSONObject()
 			.put("id", attach.getId())
 			.put("domain", attach.getDomain().getId())
+			.put("category", attach.getFullCategory() != null ? ToJSON.categoryToJSON(attach.getFullCategory()):new JSONObject())
+			.put("scope", attach.getFullCategory() != null ? ToJSON.scopeToJSON(attach.getFullScope()): new JSONObject())
+			.put("date", AonDateUtils.simpleFormat(attach.getDate()))
+			.put("confidential", attach.getConfidential())
+			.put("size", AonFileUtils.byteCountToDisplaySize( attach.getDparentId() != null ? Long.parseLong( attach.getDparentId()): 0))
 			.put("title", attach.getDescription())
-			.put("icon", icon);
+			.put("icon", icon)
+			.put("tags", tagArray);
 	}
 	
 	public static JSONObject categoryToJSON(Category category){	

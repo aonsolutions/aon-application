@@ -10,11 +10,14 @@ import static com.esferalia.aon.jooq.tables.PayrollBatchAttach.PAYROLL_BATCH_ATT
 import static com.esferalia.aon.jooq.tables.ProjectAttach.PROJECT_ATTACH;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.RattachTag.RATTACH_TAG;
+import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.SepeBatchAttach.SEPE_BATCH_ATTACH;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.LinkedList;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
@@ -40,6 +43,7 @@ import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -103,9 +107,15 @@ public class AttachmentDAO {
 			DATA_ATTACH.DRIVE_ID, DATA_ATTACH.CREATION_DATE, DATA_ATTACH.CREATION_USER,
 			DATA_ATTACH.MODIFICATION_DATE, DATA_ATTACH.MODIFICATION_USER};
 
-	public static Stream<Attach> getRegistryAttachStream(AONContext ctx, AttachFilter filter, Boolean withData){		
-		SelectJoinStep<Record> select = ctx.getDslContext().select(rattachWD).from(RATTACH);
-		if(withData) select = ctx.getDslContext().select().from(RATTACH);
+	public static Stream<Attach> getDocumentalRegistryAttachStream(AONContext ctx, AttachFilter filter, Boolean withData){	
+		SelectJoinStep<Record> select = ctx.getDslContext().selectDistinct(rattachWD).from(RATTACH).leftOuterJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH));
+		if(withData) select = ctx.getDslContext().selectDistinct().from(RATTACH).leftOuterJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH));
+		return RATTACH_PROPERTIES.build(select, filter).fetchInto(RATTACH).stream().map(new FullDocumentalRattachFiller(ctx));		
+	}
+	
+	public static Stream<Attach> getRegistryAttachStream(AONContext ctx, AttachFilter filter, Boolean withData){	
+		SelectJoinStep<Record> select = ctx.getDslContext().selectDistinct(rattachWD).from(RATTACH).leftOuterJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH));
+		if(withData) select = ctx.getDslContext().selectDistinct().from(RATTACH).leftOuterJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH));
 		return RATTACH_PROPERTIES.build(select, filter).fetchInto(RATTACH).stream().map(new FullRattachFiller(ctx));		
 	}
 	
@@ -626,6 +636,15 @@ public class AttachmentDAO {
 		ctx.getDslContext().delete(RATTACH_TAG).where(RATTACH_TAG.RATTACH.eq(rattachId)).execute();
 	}
 	
+	public static void deleteTagRegistryAttach(AONContext ctx, Integer tagId){
+		ctx.getDslContext().delete(RATTACH_TAG).where(RATTACH_TAG.TAG.eq(tagId)).execute();
+	}
+	
+	public static LinkedList<Tag> getRegistryAttachTag(AONContext ctx, Integer rattachId){
+		return ctx.getDslContext().select().from(TAG).join(RATTACH_TAG).on(TAG.ID.eq(RATTACH_TAG.TAG)).where(RATTACH_TAG.RATTACH.eq(rattachId))
+		.fetchInto(TAG).stream().map(new TagFiller()).collect(Collectors.toCollection(LinkedList::new));
+	}
+	
 	//------------------ DRIVE DOMAIN ID LIST
 	
 	public static SelectConditionStep<Record1<Integer>> rattachDomainList(AONContext ctx){
@@ -685,9 +704,9 @@ public class AttachmentDAO {
 			.where(SEPE_BATCH_ATTACH.DATA.isNotNull());
 	}
 	
-	private static class FullRattachFiller implements Function<RattachRecord, Attach> {
+	private static class FullDocumentalRattachFiller implements Function<RattachRecord, Attach> {
 		AONContext ctx;
-		public FullRattachFiller(AONContext ctx) {
+		public FullDocumentalRattachFiller(AONContext ctx) {
 			this.ctx = ctx;
 		}
 		
@@ -695,7 +714,9 @@ public class AttachmentDAO {
 		public Attach apply(RattachRecord r) {
 			return new Attach().setAttachModule(r.getRegistry())
 							.setAttachType(AttachType.REGISTRY)
+							.setTagList(AON.getRegistryAttachTag(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), r.getId()))
 							.setCategory(r.getCategory())
+							.setFullCategory(AON.getCategory(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), r.getCategory()))
 							.setConfidential(r.getSecurityLevel() == 1)
 							.setCreationDate(r.getCreationDate())
 							.setCreationUser(r.getCreationUser())
@@ -710,6 +731,40 @@ public class AttachmentDAO {
 							.setModificationDate(r.getModificationDate())
 							.setModificationUser(r.getModificationUser())
 							.setScope(r.getScope())
+							.setFullScope(AON.getScope(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), r.getScope()))
+							.setType(r.getType())
+							;			
+		}
+	}
+	
+	
+	private static class FullRattachFiller implements Function<RattachRecord, Attach> {
+		AONContext ctx;
+		public FullRattachFiller(AONContext ctx) {
+			this.ctx = ctx;
+		}
+		
+		@Override
+		public Attach apply(RattachRecord r) {
+			return new Attach().setAttachModule(r.getRegistry())
+							.setAttachType(AttachType.REGISTRY)
+							.setCategory(r.getCategory())
+						//	.setFullCategory(AON.getCategory(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), r.getCategory()))
+							.setConfidential(r.getSecurityLevel() == 1)
+							.setCreationDate(r.getCreationDate())
+							.setCreationUser(r.getCreationUser())
+							.setData(r.getData())
+							.setDate(r.getAttachDate())
+							.setDescription(r.getDescription())
+							.setDomain(AON.getDomain(ctx.getDomainName(), r.getDomain(), ctx.getUser()))
+							.setDparentId(r.getDparentId())
+							.setDriveId(r.getDriveId())
+							.setId(r.getId())
+							.setMimeType(r.getMimetype()!= null ? MimeType.values()[r.getMimetype()] : MimeType.OCTECT_STREAM)
+							.setModificationDate(r.getModificationDate())
+							.setModificationUser(r.getModificationUser())
+							.setScope(r.getScope())
+						//	.setFullScope(AON.getScope(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), r.getScope()))
 							.setType(r.getType());			
 		}
 	}
@@ -886,6 +941,19 @@ public class AttachmentDAO {
 							.setCreationUser(r.getValue(DATA_ATTACH.CREATION_USER))
 							.setModificationDate(r.getValue(DATA_ATTACH.MODIFICATION_DATE))
 							.setModificationUser(r.getValue(DATA_ATTACH.MODIFICATION_USER));
+		}
+	}
+	
+	
+	private static class TagFiller implements Function<Record, Tag> {
+		
+		@Override
+		public Tag apply(Record r) {
+			return new Tag().setId(r.getValue(TAG.ID))
+					.setColor(r.getValue(TAG.COLOR))
+					.setDomain(r.getValue(TAG.DOMAIN))
+					.setName(r.getValue(TAG.NAME))
+					.setType(r.getValue(TAG.TYPE));
 		}
 	}
 	

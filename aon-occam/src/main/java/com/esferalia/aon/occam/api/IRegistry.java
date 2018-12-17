@@ -47,6 +47,10 @@ public interface IRegistry {
 	public Category getCategory(AONContext ctx, Integer categoryId);
 	public LinkedList<Category> getCategoryList(AONContext ctx);
 	public Stream<Category> getCategoryStream(AONContext ctx, CategoryFilter filter);
+	public Category insertCategory(AONContext ctx, Category category);
+	public Category updateCategory(AONContext ctx, Category category);
+	public Category deleteCategory(AONContext ctx, Integer categoryId);
+	
 	
 	public Stream<Creditor> getBasicCreditors(AONContext ctx, CreditorFilter filter);
 	

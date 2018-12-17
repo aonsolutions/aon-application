@@ -983,7 +983,7 @@ public class Documents implements EntryPoint {
 			@Override
 			public void onSuccess(Boolean result) {
 				// TODO
-				betaVersion.setVisible(false); //result);
+				betaVersion.setVisible(true); //result);
 			}
 			
 			@Override public void onFailure(Throwable caught) {}

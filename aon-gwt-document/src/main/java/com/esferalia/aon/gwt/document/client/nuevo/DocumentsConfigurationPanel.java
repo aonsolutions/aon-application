@@ -1,10 +1,15 @@
 package com.esferalia.aon.gwt.document.client.nuevo;
 
+import java.util.LinkedList;
+
 import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.JsLabel;
+import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
+import com.esferalia.aon.occam.api.model.type.TagType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Cursor;
+import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -26,6 +31,7 @@ import com.vaadin.polymer.iron.widget.IronCollapse;
 import com.vaadin.polymer.iron.widget.IronIcon;
 import com.vaadin.polymer.iron.widget.IronSelector;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
+import com.vaadin.polymer.paper.widget.PaperInput;
 import com.vaadin.polymer.paper.widget.PaperItem;
 
 public class DocumentsConfigurationPanel extends Composite {
@@ -49,6 +55,7 @@ public class DocumentsConfigurationPanel extends Composite {
     @UiField IronCollapse tagCollapse;
     @UiField IronSelector tagSelector;
         
+    
     private static Binder binder = GWT.create(Binder.class);
 	
     private Documental parent;
@@ -62,10 +69,17 @@ public class DocumentsConfigurationPanel extends Composite {
     }
     
     
+    private static final String ALL_FILES = "Todos los Archivos";
+    private static final String SYSTEM_FILES = "Mensajes del Sistema";
+    private static final String PARENT_FILES = "Archivos del Entorno";
+    
     private void createMenu() {
-		menuSelector.add(buildMenu("Todos los Archivos", "attachment"));
-		menuSelector.add(buildMenu("Mensajes de Sistema", "mail"));
-		menuSelector.add(buildMenu("Lote", "mail"));
+
+		menuSelector.add(buildMenu(ALL_FILES, "attachment"));
+		menuSelector.add(buildMenu(SYSTEM_FILES, "settings"));
+		if(parent.getAonData().getDomain().getParentId() != null) {
+			menuSelector.add(buildMenu(PARENT_FILES, "folder"));
+		}
     }
     
     private void createCategory() {
@@ -73,8 +87,7 @@ public class DocumentsConfigurationPanel extends Composite {
 			
 			@Override
 			public void onSuccess(JSON<JsLabel> result) {
-				load(result.getData(), categorySelector, categoryCollapse, addCategoryClickHandler(),
-						editCategoryClickHandler(), deleteCategoryClickHandler());
+				load(result.getData(), categorySelector, categoryCollapse, true);
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -94,8 +107,7 @@ public class DocumentsConfigurationPanel extends Composite {
 			
 			@Override
 			public void onSuccess(JSON<JsLabel> result) {
-				load(result.getData(), tagSelector, tagCollapse, addTagClickHandler(),
-						editTagClickHandler(), deleteTagClickHandler());
+				load(result.getData(), tagSelector, tagCollapse, false);
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -115,27 +127,88 @@ public class DocumentsConfigurationPanel extends Composite {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				
+				PaperInput pi = new PaperInput();
+				pi.setLabel("Categoria");
+				AonDialog dialog =  new AonDialog("Nueva Categoria",pi){
+					@Override protected void onCancel() {hide();}
+					@Override protected void onAccept() {
+						PaperInput pi = (PaperInput) getContentWidget().getWidget(0);
+						if(!"".equals(pi.getValue())){
+							parent.getAPI().getAttachment().createCategory("{\"name\":\""+ pi.getValue() +"\","
+								+ "\"type\":\""+ TagType.TASK_TYPE.ordinal() +"\"" +"}", new AsyncCallback<JsLabel>() {
+							
+								@Override
+								public void onSuccess(JsLabel result) {
+									categorySelector.removeFromParent();
+									categorySelector = new IronSelector();
+									categoryCollapse.add(categorySelector);
+									createCategory();
+								}
+							
+								@Override public void onFailure(Throwable caught) {}
+							});		
+							hide();
+						}
+					}
+				};
+				dialog.center();
 			}
 		};
     }
     
-    private ClickHandler editCategoryClickHandler(){
+    private ClickHandler editCategoryClickHandler(JsLabel label){
     	return new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				
+				event.preventDefault();
+				PaperInput pi = new PaperInput();
+				pi.setLabel("Categoria");
+				pi.setValue(label.getName());
+				AonDialog dialog =  new AonDialog("Editar Categoria",pi){
+					@Override protected void onCancel() {hide();}
+					@Override protected void onAccept() {
+						PaperInput pi = (PaperInput) getContentWidget().getWidget(0);
+						if(!"".equals(pi.getValue())){
+							
+							parent.getAPI().getAttachment().updateCategory(label, "{\"name\":\""+ pi.getValue() +"\"}", new AsyncCallback<JsLabel>() {
+							
+								@Override
+								public void onSuccess(JsLabel result) {
+									categorySelector.removeFromParent();
+									categorySelector = new IronSelector();
+									categoryCollapse.add(categorySelector);
+									createCategory();			
+								}
+								
+								@Override public void onFailure(Throwable caught) {}
+							});
+							hide();
+						}
+					}
+				};
+				dialog.center();
 			}
 		};
     }
     
-    private ClickHandler deleteCategoryClickHandler(){
+    private ClickHandler deleteCategoryClickHandler(JsLabel label){
     	return new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				
+				event.preventDefault();
+				parent.getAPI().getAttachment().deleteCategory(label, new AsyncCallback<JsLabel>() {
+					
+					@Override public void onSuccess(JsLabel result) {
+						categorySelector.removeFromParent();
+						categorySelector = new IronSelector();
+						categoryCollapse.add(categorySelector);
+						createCategory();	
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});
 			}
 		};
     }
@@ -145,27 +218,86 @@ public class DocumentsConfigurationPanel extends Composite {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				
+				PaperInput pi = new PaperInput();
+				pi.setLabel("Etiqueta");
+				AonDialog dialog =  new AonDialog("Nueva Etiqueta",pi){
+					@Override protected void onCancel() {hide();}
+					@Override protected void onAccept() {
+						PaperInput pi = (PaperInput) getContentWidget().getWidget(0);
+						if(!"".equals(pi.getValue())){
+							parent.getAPI().getAttachment().createTag("{\"name\":\""+ pi.getValue() +"\","
+								+ "\"type\":\""+ TagType.TASK_TYPE.ordinal() +"\"" +"}", new AsyncCallback<JsLabel>() {
+							
+								@Override
+								public void onSuccess(JsLabel result) {
+									tagSelector.removeFromParent();
+									tagSelector = new IronSelector();
+									tagCollapse.add(tagSelector);
+									createTag();	
+								}
+							
+								@Override public void onFailure(Throwable caught) {}
+							});		
+							hide();
+						}
+					}
+				};
+				dialog.center();
 			}
 		};
     }
     
-    private ClickHandler editTagClickHandler(){
+    private ClickHandler editTagClickHandler(JsLabel label){
     	return new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				
+				PaperInput pi = new PaperInput();
+				pi.setLabel("Etiqueta");
+				pi.setValue(label.getName());
+				AonDialog dialog =  new AonDialog("Editar Etiqueta",pi){
+					@Override protected void onCancel() {hide();}
+					@Override protected void onAccept() {
+						PaperInput pi = (PaperInput) getContentWidget().getWidget(0);
+						if(!"".equals(pi.getValue())){
+							
+							parent.getAPI().getAttachment().updateTag(label, "{\"name\":\""+ pi.getValue() +"\"}", new AsyncCallback<JsLabel>() {
+							
+								@Override
+								public void onSuccess(JsLabel result) {
+									tagSelector.removeFromParent();
+									tagSelector = new IronSelector();
+									tagCollapse.add(tagSelector);
+									createTag();			
+								}
+								
+								@Override public void onFailure(Throwable caught) {}
+							});
+							hide();
+						}
+					}
+				};
+				dialog.center();
 			}
 		};
     }
     
-    private ClickHandler deleteTagClickHandler(){
+    private ClickHandler deleteTagClickHandler(JsLabel label){
     	return new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				
+				parent.getAPI().getAttachment().deleteTag(label, new AsyncCallback<JsLabel>() {
+					
+					@Override public void onSuccess(JsLabel result) {
+						tagSelector.removeFromParent();
+						tagSelector = new IronSelector();
+						tagCollapse.add(tagSelector);
+						createTag();	
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});
 			}
 		};
     }
@@ -182,38 +314,50 @@ public class DocumentsConfigurationPanel extends Composite {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				Window.alert(title);
+				LinkedList<String> list = new LinkedList<>();
+				if(ALL_FILES.equals(title)) {
+					list.add("all");
+				}else if(SYSTEM_FILES.equals(title)) {
+					list.add("system");
+				} else if(PARENT_FILES.equals(title)) {
+					list.add("parent");
+				}
+				parent.getFilterMap().put("type", list);
+				parent.createAttachListPanel();
 			}
 		});
 		return item;
     }
     
-    private void load(AonJsArray<JsLabel> data, IronSelector selector, IronCollapse collapse,
-    		ClickHandler addHandler, ClickHandler editHandler, ClickHandler deleteHandler){
+    private void load(AonJsArray<JsLabel> data, IronSelector selector, IronCollapse collapse, Boolean isCategory){
    		for(JsLabel label : data.toLinkedList()){
    			HorizontalPanel hp = new HorizontalPanel();
    			PaperItem item = new PaperItem();
-					
+			
+   			Boolean selected = parent.getFilterMap().containsKey(isCategory ? "category" : "tag") &&
+   					parent.getFilterMap().get(isCategory ? "category" : "tag").contains(label.getId());
    			IronIcon ii = new IronIcon();
-   			ii.setIcon("label");
+   			ii.setIcon(selected ? "check" : "label");
    			ii.getElement().getStyle().setColor("#"+label.getColor());
-					
+   			
+   			Label l = new Label(label.getName());
+   			if(selected) l.getElement().getStyle().setFontWeight(FontWeight.BOLD);
    			item.add(ii);
-   			item.add(new Label(label.getName()));
+   			item.add(l);
    			item.setStyle("min-height: 30px;");	
-					
+   					
    			PaperIconButton edit = new PaperIconButton();
    			edit.setIcon("create");
    			//edit.setDisabled(admin);
    			edit.setStyle("min-height: 30px;padding-top:0px;");
-   			edit.addClickHandler(editHandler);
+   			edit.addClickHandler(isCategory ? editCategoryClickHandler(label) : editTagClickHandler(label));
    			edit.setVisible(false);
 					
    			PaperIconButton del = new PaperIconButton();
    			del.setIcon("delete");
    			//del.setDisabled(admin);
    			del.setStyle("min-height: 30px;padding-top:0px;");
-   			del.addClickHandler(deleteHandler);
+   			del.addClickHandler(isCategory ? deleteCategoryClickHandler(label) : deleteTagClickHandler(label));
    			del.setVisible(false);
 					
    			HorizontalPanel hoption = new HorizontalPanel();
@@ -222,6 +366,35 @@ public class DocumentsConfigurationPanel extends Composite {
 			hoption.add(edit);
 			hoption.add(del);
 
+			item.addDomHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					String key = isCategory ? "category" : "tag";
+					if(parent.getFilterMap().containsKey(key))
+						if(parent.getFilterMap().get(key).contains(label.getId())) {
+							parent.getFilterMap().get(key).remove(label.getId());
+						} else parent.getFilterMap().get(key).add(label.getId());
+					else {
+						LinkedList<String> list = new LinkedList<>();
+						list.add(label.getId());
+						parent.getFilterMap().put(key, list);
+					}
+					parent.createAttachListPanel();
+					if(isCategory) {
+						categorySelector.removeFromParent();
+						categorySelector = new IronSelector();
+						categoryCollapse.add(categorySelector);
+						createCategory();	
+					} else {
+						tagSelector.removeFromParent();
+						tagSelector = new IronSelector();
+						tagCollapse.add(tagSelector);
+						createTag();		
+					}
+				}
+			}, ClickEvent.getType());
+			
 			hp.add(item);
 			hp.add(hoption);
 			hp.setWidth("100%");
@@ -242,6 +415,8 @@ public class DocumentsConfigurationPanel extends Composite {
 					del.setVisible(false);
 				}
 			}, MouseOutEvent.getType());
+			
+
 			selector.add(hp);
    		}			
    		PaperIconButton add = new PaperIconButton();
@@ -249,7 +424,7 @@ public class DocumentsConfigurationPanel extends Composite {
    		//pib.setDisabled(admin);
    		add.setStyle("min-height: 30px;");
    		add.getElement().getStyle().setLeft(290, Unit.PX);
-   		add.addClickHandler(addHandler);
+   		add.addClickHandler(isCategory ? addCategoryClickHandler() : addTagClickHandler());
    		selector.add(add);
    		if(!collapse.getOpened())
    			collapse.toggle();				

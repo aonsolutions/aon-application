@@ -1,12 +1,15 @@
 package com.esferalia.aon.occam.api;
 
+import java.util.LinkedList;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.office.Tag;
 
 public interface IAttachment {
 
+	public Stream<Attach> getDocumentalRegistryAttachStream(AONContext ctx, AttachFilter filter, Boolean withData);
 	public Stream<Attach> getRegistryAttachStream(AONContext ctx, AttachFilter filter, Boolean withData);
 	public Stream<Attach> getContractAttachStream(AONContext ctx, AttachFilter filter, Boolean withData);
 	public Stream<Attach> getInvoiceAttachStream(AONContext ctx, AttachFilter filter, Boolean withData);
@@ -69,6 +72,9 @@ public interface IAttachment {
 	public void deleteSepeAttach(AONContext ctx, AttachFilter filter);
 	public void deleteDataAttach(AONContext ctx, AttachFilter filter);
 	
+	public LinkedList<Tag> getRegistryAttachmentTag(AONContext ctx, Integer rattachId);
 	public Integer insertRegistryAttachTag(AONContext ctx, Integer rattachId, Integer tagId);
 	public void deleteRegistryAttachTag(AONContext ctx, Integer rattachId);
+	public void deleteTagRegistryAttach(AONContext ctx, Integer tagId);
+
 }

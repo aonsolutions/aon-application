@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.common.shared.Constants;
 import com.esferalia.aon.gwt.document.client.Documents;
+import com.esferalia.aon.gwt.document.client.nuevo.Documental;
 import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.DepositEntryPoint;
 import com.esferalia.aon.gwt.issues.client.Issues;
 import com.esferalia.aon.gwt.stat.client.MainEntryPoint;
@@ -20,8 +21,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import net.aonsolutions.aon.gwt.aio.shared.Modules;
 import net.aonsolutions.aon.gwt.communication.client.Communication;
 import net.aonsolutions.aon.gwt.invoice.client.Invoice;
-import net.aonsolutions.aon.gwt.sii.client.Sii;
 import net.aonsolutions.aon.gwt.seres.client.Seres;
+import net.aonsolutions.aon.gwt.sii.client.Sii;
 import net.aonsolutions.aon.gwt.udapa.client.Udapa;
 import net.aonsolutions.aon.gwt.warehouse.client.Warehouse;
 
@@ -30,8 +31,8 @@ public class Aio implements EntryPoint {
 	final IAioAsync impl = GWT.create(IAio.class);
 
 	private Issues issues;
-	private Documents documents;
-	//private Documental documental;
+	//private Documents documents;
+	private Documental documental;
 	
 	
 	public static native String getCurrentDomainName()
@@ -102,11 +103,11 @@ public class Aio implements EntryPoint {
 
 				@Override
 				public void onSuccess() {
-					documents = new Documents(aonData);
-					documents.onModuleLoad();
+					//documents = new Documents(aonData);
+					//documents.onModuleLoad();
 					// NUEVO DOCUMENTAL CON POLYMEROS
-					//documental = new Documental(aonData);
-					//documental.onModuleLoad();
+					documental = new Documental(aonData);
+					documental.onModuleLoad();
 				}
 			});		
 			break;
@@ -268,7 +269,8 @@ public class Aio implements EntryPoint {
 	public void onReload(){
 		String entryPoint = getParameter(GWT.getModuleName(), Constants.ENTRY_POINT_PARAM);
 		if(entryPoint.equals(Modules.ISSUES)) issues.remove();
-		if(entryPoint.equals(Modules.DOCUMENT)) documents.remove();
+		//if(entryPoint.equals(Modules.DOCUMENT)) documents.remove();
+		if(entryPoint.equals(Modules.DOCUMENT)) documental.remove();
 		onModuleLoad();
 	}
 	

@@ -2,6 +2,7 @@ package com.code.aon.webservice.documental;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -18,8 +19,13 @@ import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Properties.AttachProperties;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.CategoryType;
 import com.esferalia.aon.occam.api.model.type.TagType;
@@ -48,8 +54,11 @@ public class DocumentalServlet extends HttpServlet{
 		String md5 = Utils.getMd5(userName+domain.getName());
 		if(accessToken.equals(md5)){
 			switch (pathInfo[3]) {
+			case "file":
+				object = getAttachJSON(domain, userName, Integer.parseInt(pathInfo[4]));
+				break;
 			case "files":
-				object = getAttachJSON(domain, userName);
+				object = getAttachJSON(domain, userName, req.getParameterMap());
 				break;
 			case "certificates":
 				object = getCertificateAttachJSON(domain, userName);
@@ -91,6 +100,27 @@ public class DocumentalServlet extends HttpServlet{
 			case "remove": case "delete":
 				object = removeAttach(domain, userName, json);
 				break;
+			case "file":
+				object = updateAttachJSON(domain, userName, Integer.parseInt(pathInfo[4]), json);
+				break;
+			case "category":
+				if("create".equals(pathInfo[4])) {
+					object = createCategory(domain, userName, json);
+				} else if("edit".equals(pathInfo[4])) {
+					object = editCategory(domain, userName, Integer.parseInt(pathInfo[5]), json);
+				} else if("delete".equals(pathInfo[4])) {
+					object = deleteCategory(domain, userName, Integer.parseInt(pathInfo[5]));
+				}
+				break;
+			case "tag":
+				if("create".equals(pathInfo[4])) {
+					object = createTag(domain, userName, json);
+				} else if("edit".equals(pathInfo[4])) {
+					object = editTag(domain, userName, Integer.parseInt(pathInfo[5]), json);
+				} else if("delete".equals(pathInfo[4])) {
+					object = deleteTag(domain, userName, Integer.parseInt(pathInfo[5]));
+				}
+				break;
 			default:
 				break;
 			}
@@ -107,21 +137,34 @@ public class DocumentalServlet extends HttpServlet{
 	private JSONObject removeAttach(Domain domain, String login, JSONObject json) {
 		Integer id = json.getInt("id");
 		AttachType attachType = AttachType.getAttachType(json.getString("attach_type"));
+		AON.deleteRegistryAttachTag(domain.getName(), domain.getId(), login, id);
 		AON.deleteAttach(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(id), attachType);
 		return json;
 	}
 	
-	private JSONArray getAttachJSON(Domain domain, String login) {
+	private JSONArray getAttachJSON(Domain domain, String login, Map<String, String[]> filterMap) {
 		JSONArray array = new JSONArray();
-		AON.getAttachStream(domain.getName(), domain.getId(), login, 
-				f -> f.getDomainProperty().eq(domain.getId())
-				.and(f.getTypeProperty().eq(RegistryAttachmentType.CORPORATE_IDENTITY.value())
-				.page(1)
-				.perPage(30)
-			), AttachType.REGISTRY, false).forEach(a -> {
-				array.put(ToJSON.attachToJSON(a));
-			});
+		
+		AON.getDocumentalAttachStream(domain.getName(), domain.getId(), login, 
+				f -> attachFilter(domain, filterMap, f),AttachType.REGISTRY, false).forEach(a -> {
+			array.put(ToJSON.attachToJSON(a));
+		});
 		return array;
+	}
+	
+	private JSONObject getAttachJSON(Domain domain, String login, Integer id) {
+		return ToJSON.attachToJSON(AON.getAttach(domain.getName(), domain.getId(), login,
+				f -> f.getIdProperty().eq(id), AttachType.REGISTRY, false));
+	}
+
+	private JSONObject updateAttachJSON(Domain domain, String login, Integer id, JSONObject json) {
+		Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(id), AttachType.REGISTRY, true);
+		attach.setDescription(json.getString("name"));
+		attach.setConfidential(Boolean.toString(true).equals(json.getString("confidential")));
+		if(json.opt("category") != null) attach.setCategory(Integer.parseInt(json.getString("category")));
+		if(json.opt("scope") != null) attach.setScope(Integer.parseInt(json.getString("scope")));
+		AON.updateAttach(domain.getName(), domain.getId(), login, attach);
+		return ToJSON.attachToJSON(attach);
 	}
 	
 	private JSONArray getCertificateAttachJSON(Domain domain, String login) {
@@ -137,6 +180,7 @@ public class DocumentalServlet extends HttpServlet{
 			), AttachType.REGISTRY, false).forEach(a -> {
 				array.put(ToJSON.attachToJSON(a));
 			});
+		
 		return array;
 	}
 	
@@ -166,6 +210,28 @@ public class DocumentalServlet extends HttpServlet{
 			)).forEach(a -> array.put(ToJSON.categoryToJSON(a)));
 		return array;
 	}
+	
+	private JSONObject createCategory(Domain domain, String login, JSONObject json) {
+		Category category = new Category().setName(json.getString("name"))
+				.setType(CategoryType.REGISTRY_ATTACHMENT.value())
+				.setDomain(domain.getId());
+		
+		category = AON.insertCategory(domain.getName(), domain.getId(), login, category);
+		return ToJSON.categoryToJSON(category);
+	}
+	
+	private JSONObject editCategory(Domain domain, String login, Integer catId, JSONObject json) {
+		Category cat = AON.getCategory(domain.getName(), domain.getId(), login, catId);
+		cat.setName(json.getString("name"));
+		AON.updateCategory(domain.getName(), domain.getId(), login, cat);
+		return ToJSON.categoryToJSON(cat);
+	}
+	
+	private JSONObject deleteCategory(Domain domain, String login, Integer catId) {
+		Category category = AON.deleteCategory(domain.getName(), domain.getId(), login, catId);	
+		return ToJSON.categoryToJSON(category);
+	}
+	
 	private JSONArray getTagJSON(Domain domain, String login) {
 		JSONArray array = new JSONArray();
 		AON.getTagStream(domain.getName(), domain.getId(), login, 
@@ -175,10 +241,89 @@ public class DocumentalServlet extends HttpServlet{
 		return array;
 	}
 	
+	private JSONObject createTag(Domain domain, String login, JSONObject json) {
+		Tag tag = new Tag().setName(json.getString("name"))
+				.setType(TagType.RATTACH.value())
+				.setDomain(domain.getId());
+		
+		tag = AON.insertTag(domain.getName(), domain.getId(), login, tag);
+		return ToJSON.tagToJSON(tag);
+	}
+	
+	private JSONObject editTag(Domain domain, String login, Integer tagId, JSONObject json) {
+		Tag tag = AON.getTag(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(tagId));
+		tag.setName(json.getString("name"));
+		AON.updateTag(domain.getName(), domain.getId(), login, tag);
+		return ToJSON.tagToJSON(tag);
+	}
+	
+	private JSONObject deleteTag(Domain domain, String login, Integer tagId) {
+		AON.deleteTagRegistryAttach(domain.getName(), domain.getId(), login, tagId);
+		AON.deleteTag(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(tagId));
+		return ToJSON.tagToJSON(new Tag());
+	}
+	
 	private JSONArray getScopeJSON(Domain domain, String login) {
 		JSONArray array = new JSONArray();
 		AON.getScopeStream(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()))
 		.forEach(s -> array.put(ToJSON.scopeToJSON(s)));
 		return array;
 	}
+	
+	
+    private Filter attachFilter(Domain domain, Map<String, String[]> filterMap, AttachProperties f) {
+    	Integer domainId = filterMap.containsKey("type") && filterMap.get("type")[0].equals("parent") ?
+    			domain.getParentId() : domain.getId();
+    	Filter filter = f.getDomainProperty().eq(domainId);
+
+    	if(filterMap.containsKey("type")) {
+    		String type = filterMap.get("type")[0];
+    		filter = filter.and("system".equals(type)
+  				? f.getTypeProperty().eq(RegistryAttachmentType.SYSTEM_MESSAGE.value())
+   				: f.getTypeProperty().eq(RegistryAttachmentType.CORPORATE_IDENTITY.value()));
+    	}
+    	
+    	if(filterMap.containsKey("description")){
+    		String description = filterMap.get("description")[0];
+    		filter = filter.and(f.getDescriptionProperty().like("%"+ description + "%"));
+		}
+    	
+    	if(filterMap.containsKey("category")){
+    		Filter fcategory = f.getCategoryProperty().eq(Integer.parseInt(filterMap.get("category")[0])); 
+			for(Integer i = 1; i < filterMap.get("category").length ; i++){
+				fcategory = fcategory.or(f.getCategoryProperty().eq(Integer.parseInt(filterMap.get("category")[i])));
+			}
+			filter = filter.and(fcategory);
+		}
+    	
+    	if(filterMap.containsKey("tag")){
+    		Filter ftag = f.getTagProperty().eq(Integer.parseInt(filterMap.get("tag")[0])); 
+			for(Integer i = 1; i < filterMap.get("tag").length ; i++){
+				ftag = ftag.or(f.getTagProperty().eq(Integer.parseInt(filterMap.get("tag")[i])));
+			}
+			filter = filter.and(ftag);
+    	}
+    	
+    	if(filterMap.containsKey("scope")){
+    		Filter fscope = f.getScopeProperty().eq(Integer.parseInt(filterMap.get("scope")[0])); 
+			for(Integer i = 1; i < filterMap.get("scope").length ; i++){
+				fscope = fscope.or(f.getScopeProperty().eq(Integer.parseInt(filterMap.get("scope")[i])));
+			}
+			filter = filter.and(fscope);
+		}
+    	
+		if(filterMap.containsKey("per_page")){
+			String per_page = filterMap.get("per_page")[0];
+			Integer perPage = Integer.parseInt(per_page);
+			filter.perPage(perPage);
+		}
+		if(filterMap.containsKey("page")){
+			String page_str = filterMap.get("page")[0];
+			Integer page = Integer.parseInt(page_str);
+			filter.page(page);
+		}
+
+		return filter;
+    }
+    
 }

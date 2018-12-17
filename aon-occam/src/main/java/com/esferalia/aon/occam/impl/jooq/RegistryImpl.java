@@ -56,6 +56,24 @@ public class RegistryImpl implements IRegistry{
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryDAO.getCategory(ctx, categoryId));
 	}
+
+	@Override
+	public Category insertCategory(AONContext ctx, Category category) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.insertCategory(ctx, category));
+	}
+	
+	@Override
+	public Category updateCategory(AONContext ctx, Category category) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.updateCategory(ctx, category));
+	}
+
+	@Override
+	public Category deleteCategory(AONContext ctx, Integer categoryId) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.deleteCategory(ctx, categoryId));
+	}
 	
 	@Override
 	public LinkedList<Category> getCategoryList(AONContext ctx) {
@@ -307,4 +325,6 @@ public class RegistryImpl implements IRegistry{
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryDAO.deleteRPayMethod(ctx, filter));
 	}
+
+
 }

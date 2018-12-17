@@ -52,12 +52,33 @@
                     	<iron-icon style="position:absolute;" icon="[[item.icon]]"/>
                         <div class="pad">
                             <div class="primary">	
-                           		[[item.title]]                      
+                           		[[item.title]]       
+								<template is="dom-if" if="{{item.confidential}}"> 
+									<iron-icon style="height: 18px;" icon="lock"/>
+                           		</template>
+                           		<template is="dom-if" if="{{item.category.name}}"> 
+                           			<span style="background-color: gray;color: white;
+										font-size: 12px;font-weight: 600;padding: 2px;
+									    margin-right: 5px;">[[item.category.name]]
+									</span>
+								</template>
+								<template is="dom-repeat" items="[[item.tags]]" as="label"> 
+									<span style="background-color: gray;color: white;
+											font-size: 12px;font-weight: 600;padding: 2px;
+											    margin-right: 5px;">[[label.name]]
+									</span>
+								</template>  
                             </div>
+                            <template is="dom-if" if="{{item.date}}"> 
+	                            <div class="secondary">[[item.date]] - [[item.size]] </div>
+                            </template>
+                            <template is="dom-if" if="{{!item.date}}"> 
+	                            <div class="secondary">[[item.size]] </div>
+							</template>
                         </div>
 						<paper-icon-button icon="file-download" alt="[[item.id]]" onclick="download(this.alt)"></paper-icon-button>
 						<paper-icon-button icon="create" alt="[[item.id]]" onclick="edit(this.alt)"></paper-icon-button>
-                        <paper-icon-button icon="delete" alt="[[item.id]]" onclick="remove(this.alt)"></paper-icon-button>
+                 		<paper-icon-button icon="delete" alt="[[item.id]]" onclick="remove(this.alt)"></paper-icon-button>
                     </div>
         		</div>
         	</template>

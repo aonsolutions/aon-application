@@ -47,6 +47,10 @@ public abstract class AonDialog extends PopupPanel  {
 		this.content.add(widget);
 	}
 	
+	public HTMLPanel getContentWidget(){
+		return content;
+	}
+	
 	public PaperButton getAccept(){
 		return accept;
 	}

@@ -1,15 +1,22 @@
 package com.esferalia.aon.occam.impl.jooq;
 
+import java.util.LinkedList;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IAttachment;
 import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
 
 public class AttachmentImpl implements IAttachment{
 
+	@Override
+	public Stream<Attach> getDocumentalRegistryAttachStream(AONContext ctx, AttachFilter filter, Boolean withData) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.getDocumentalRegistryAttachStream(ctx, filter, withData));
+	}
 	@Override
 	public Stream<Attach> getRegistryAttachStream(AONContext ctx, AttachFilter filter, Boolean withData) {
 		return 	ctx.getDslContext().transactionResult(
@@ -348,5 +355,17 @@ public class AttachmentImpl implements IAttachment{
 		ctx.getDslContext().transaction(configuration -> {
 			AttachmentDAO.deleteRegistryAttachTag(ctx, rattachId);
 		} );
+	}
+	
+	@Override
+	public void deleteTagRegistryAttach(AONContext ctx, Integer tagId) {
+		ctx.getDslContext().transaction(configuration -> {
+			AttachmentDAO.deleteTagRegistryAttach(ctx, tagId);
+		} );
+	}
+	@Override
+	public LinkedList<Tag> getRegistryAttachmentTag(AONContext ctx, Integer rattachId) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+		AttachmentDAO.getRegistryAttachTag(ctx, rattachId));	
 	}
 }

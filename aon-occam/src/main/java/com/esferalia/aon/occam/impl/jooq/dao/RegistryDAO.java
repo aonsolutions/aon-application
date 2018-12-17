@@ -10,6 +10,7 @@ import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Question.QUESTION;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
+import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
@@ -206,6 +207,38 @@ public class RegistryDAO {
 		return ctx.getDslContext()
 				.select().from(CATEGORY).where(CATEGORY.ID.eq(categoryId)).limit(1)
 				.fetchInto(CATEGORY).stream().map(new FullCategoryFiller()).findFirst().orElse(new Category());
+	}
+	
+	
+	public static Category insertCategory(AONContext ctx, Category category){
+		CategoryRecord cr = ctx.getDslContext()
+				.insertInto(CATEGORY)
+				.set(CATEGORY.DOMAIN, category.getDomain())
+				.set(CATEGORY.NAME, category.getName())
+				.set(CATEGORY.TYPE, category.getType())
+				.returning().fetchOne();
+		return new FullCategoryFiller().apply(cr);
+	}
+	
+	public static Category updateCategory(AONContext ctx, Category category){
+		ctx.getDslContext().update(CATEGORY)
+			.set(CATEGORY.NAME, category.getName())
+			.where(CATEGORY.ID.eq(category.getId()))
+			.execute();
+		return category;
+	}
+	
+	public static Category deleteCategory(AONContext ctx, Integer categoryId){
+		Integer nullvalue = null;
+		ctx.getDslContext()
+			.update(RATTACH)
+		.set(RATTACH.CATEGORY, nullvalue)
+		.where(RATTACH.CATEGORY.eq(categoryId));
+
+		ctx.getDslContext().delete(CATEGORY)
+			.where(CATEGORY.ID.eq(categoryId))
+			.execute();
+		return new Category();
 	}
 	
 	public static LinkedList<Category> getCategoryList(AONContext ctx){
