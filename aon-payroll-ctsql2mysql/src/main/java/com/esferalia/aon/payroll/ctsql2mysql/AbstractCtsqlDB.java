@@ -68,6 +68,11 @@ public class AbstractCtsqlDB {
 				+ ",indgrupo" 
 				+ ",pariente" 
 				+ ",noirpf" 
+				+ ",nosegsoc" 
+				+ ",jubiladoactivo" 
+				+ ",certificado" 
+				+ ",familiar" 
+				+ ",noresidente" 
 				+ " FROM emprper"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -357,6 +362,54 @@ public class AbstractCtsqlDB {
 
 
 	/**
+	 * Tipocausabaja
+	 * 
+	 */
+	public class Tipocausabaja {
+		
+		private ResultSet rs;
+		
+		protected Tipocausabaja (ResultSet rs) 
+		throws SQLException {
+			this.rs =rs;
+		}
+		
+		/**
+		 * Código
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCdg()
+		throws SQLException {
+			return rs.getString(1);
+		}
+		/**
+		 * Causa de la baja
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getDescripcion()
+		throws SQLException {
+			return rs.getString(2);
+		}
+		/**
+		 * Causa de la baja abreviada
+		 * @return the column 'desabr' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getDesabr()
+		throws SQLException {
+			return rs.getString(3);
+		}
+
+
+	}
+	
+
+	
+
+
+	/**
 	 * Tipocnae2009
 	 * 
 	 */
@@ -430,6 +483,11 @@ public class AbstractCtsqlDB {
 				+ ",indgrupo" 
 				+ ",pariente" 
 				+ ",noirpf" 
+				+ ",nosegsoc" 
+				+ ",jubiladoactivo" 
+				+ ",certificado" 
+				+ ",familiar" 
+				+ ",noresidente" 
 				+ " FROM emprper"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -795,54 +853,6 @@ public class AbstractCtsqlDB {
 	
 
 	
-
-
-	/**
-	 * Nszodet
-	 * 
-	 */
-	public class Nszodet {
-		
-		private ResultSet rs;
-		
-		protected Nszodet (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
-		
-		/**
-		 * $column.remarks
-		 * @return the column 'sod0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSod0()
-		throws SQLException {
-			return rs.getString(1);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'sod1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSod1()
-		throws SQLException {
-			return rs.getString(2);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nod0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNod0()
-		throws SQLException {
-			return rs.getInt(3);
-		}
-
-
-	}
-	
-
-	
 		
 	private PreparedStatement emprlban_emprbanStmt = null;
 		
@@ -880,7 +890,7 @@ public class AbstractCtsqlDB {
 				+ ",bic" 
 				+ " FROM entidad"
 				+ " WHERE" 
-				+ " cdg = ?  " 			); 
+				+ " cdg = ?  "  + "AND" 				+ " cdg = ?  " 			); 
 	}
 
 	private void closeCibtne_cnabrpmeStmt() 
@@ -888,75 +898,6 @@ public class AbstractCtsqlDB {
 		if ( _cibtne_cnabrpmeStmt != null ) { 
 			_cibtne_cnabrpmeStmt.close();
 			_cibtne_cnabrpmeStmt = null;	
-		}
-	}
-	private PreparedStatement _cibcus_cnabrpmeStmt = null;
-		
-	private void initCibcus_cnabrpmeStmt() 
-	throws SQLException{
-		this._cibcus_cnabrpmeStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "codent" 
-				+ ",cdg" 
-				+ ",domsuc" 
-				+ ",munsuc" 
-				+ ",cpsuc" 
-				+ ",bic" 
-				+ " FROM sucursal"
-				+ " WHERE" 
-				+ " codent = ?  "  + "AND" 				+ " cdg = ?  " 			); 
-	}
-
-	private void closeCibcus_cnabrpmeStmt() 
-	throws SQLException{
-		if ( _cibcus_cnabrpmeStmt != null ) { 
-			_cibcus_cnabrpmeStmt.close();
-			_cibcus_cnabrpmeStmt = null;	
-		}
-	}
-	private PreparedStatement _daditne_cnabrpmeStmt = null;
-		
-	private void initDaditne_cnabrpmeStmt() 
-	throws SQLException{
-		this._daditne_cnabrpmeStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",descripcion" 
-				+ ",bic" 
-				+ " FROM entidad"
-				+ " WHERE" 
-				+ " cdg = ?  " 			); 
-	}
-
-	private void closeDaditne_cnabrpmeStmt() 
-	throws SQLException{
-		if ( _daditne_cnabrpmeStmt != null ) { 
-			_daditne_cnabrpmeStmt.close();
-			_daditne_cnabrpmeStmt = null;	
-		}
-	}
-	private PreparedStatement _lasrucus_cnabrpmeStmt = null;
-		
-	private void initLasrucus_cnabrpmeStmt() 
-	throws SQLException{
-		this._lasrucus_cnabrpmeStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "codent" 
-				+ ",cdg" 
-				+ ",domsuc" 
-				+ ",munsuc" 
-				+ ",cpsuc" 
-				+ ",bic" 
-				+ " FROM sucursal"
-				+ " WHERE" 
-				+ " codent = ?  "  + "AND" 				+ " cdg = ?  " 			); 
-	}
-
-	private void closeLasrucus_cnabrpmeStmt() 
-	throws SQLException{
-		if ( _lasrucus_cnabrpmeStmt != null ) { 
-			_lasrucus_cnabrpmeStmt.close();
-			_lasrucus_cnabrpmeStmt = null;	
 		}
 	}
 	private PreparedStatement _etneilc_cnabrpmeStmt = null;
@@ -1000,6 +941,7 @@ public class AbstractCtsqlDB {
 				+ ",divisa" 
 				+ ",soloases" 
 				+ ",envioss" 
+				+ ",grupotrabajo" 
 				+ " FROM cliente"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -1112,84 +1054,11 @@ public class AbstractCtsqlDB {
 					 initCibtne_cnabrpmeStmt();
 				
 				_cibtne_cnabrpmeStmt.setString(1, this.getCodent()); 
+				_cibtne_cnabrpmeStmt.setString(2, this.getCodent()); 
 				rs = _cibtne_cnabrpmeStmt.executeQuery();
 				Entidad entidad = new Entidad(rs); 
 				while ( rs.next() ) {
 					ctsqlDBVisitor.visitEmprbanc_entbic(this, entidad);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		/**
-		 * Visit Sucursal that's parent of this Emprban. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitEmprbanc_sucbic(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( _cibcus_cnabrpmeStmt == null )
-					 initCibcus_cnabrpmeStmt();
-				
-				_cibcus_cnabrpmeStmt.setString(1, this.getCodent()); 
-				_cibcus_cnabrpmeStmt.setString(2, this.getCodsuc()); 
-				rs = _cibcus_cnabrpmeStmt.executeQuery();
-				Sucursal sucursal = new Sucursal(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitEmprbanc_sucbic(this, sucursal);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		/**
-		 * Visit Entidad that's parent of this Emprban. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitEmprbanc_entidad(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( _daditne_cnabrpmeStmt == null )
-					 initDaditne_cnabrpmeStmt();
-				
-				_daditne_cnabrpmeStmt.setString(1, this.getCodent()); 
-				rs = _daditne_cnabrpmeStmt.executeQuery();
-				Entidad entidad = new Entidad(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitEmprbanc_entidad(this, entidad);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		/**
-		 * Visit Sucursal that's parent of this Emprban. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitEmprbanc_sucursal(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( _lasrucus_cnabrpmeStmt == null )
-					 initLasrucus_cnabrpmeStmt();
-				
-				_lasrucus_cnabrpmeStmt.setString(1, this.getCodent()); 
-				_lasrucus_cnabrpmeStmt.setString(2, this.getCodsuc()); 
-				rs = _lasrucus_cnabrpmeStmt.executeQuery();
-				Sucursal sucursal = new Sucursal(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitEmprbanc_sucursal(this, sucursal);
 				}
 			}
 			finally {
@@ -1247,6 +1116,153 @@ public class AbstractCtsqlDB {
 					rs.close();
 			}
 		}
+	}
+	
+
+	
+
+	private PreparedStatement _somart_p_rtStmt = null;
+		
+	private void initSomart_p_rtStmt() 
+	throws SQLException{
+		this._somart_p_rtStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",persona" 
+				+ ",numss" 
+				+ ",fecha_desde" 
+				+ ",fecha_hasta" 
+				+ ",dias_cotizados" 
+				+ ",grupo_cotizacion" 
+				+ ",tipo_contrato" 
+				+ ",cnae" 
+				+ ",estado" 
+				+ " FROM tr_tramos"
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				+ " persona = ?  "  + "AND" 				+ " fecha_desde = ?  " 			); 
+	}
+
+	private void closeSomart_p_rtStmt() 
+	throws SQLException{
+		if ( _somart_p_rtStmt != null ) { 
+			_somart_p_rtStmt.close();
+			_somart_p_rtStmt = null;	
+		}
+	}
+
+	/**
+	 * Tr_peculiar
+	 * 
+	 */
+	public class Tr_peculiar {
+		
+		private ResultSet rs;
+		
+		protected Tr_peculiar (ResultSet rs) 
+		throws SQLException {
+			this.rs =rs;
+		}
+		
+		/**
+		 * Código de liquidación
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCdg()
+		throws SQLException {
+			return rs.getInt(1);
+		}
+		/**
+		 * Código de persona
+		 * @return the column 'persona' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getPersona()
+		throws SQLException {
+			return rs.getInt(2);
+		}
+		/**
+		 * Fecha inicial del tramo
+		 * @return the column 'fecha_desde' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFecha_desde()
+		throws SQLException {
+			return rs.getDate(3);
+		}
+		/**
+		 * Código de la peculiaridad de cotización
+		 * @return the column 'cod_pec' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCod_pec()
+		throws SQLException {
+			return rs.getString(4);
+		}
+		/**
+		 * Fracción de cuota afectada
+		 * @return the column 'fraccion_cuota' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getFraccion_cuota()
+		throws SQLException {
+			return rs.getString(5);
+		}
+		/**
+		 * Código identificativo de fomento de empleo
+		 * @return the column 'colect_incentivado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getColect_incentivado()
+		throws SQLException {
+			return rs.getString(6);
+		}
+		/**
+		 * Cuantía de la peculiaridad de cotización
+		 * @return the column 'valor_pec' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getValor_pec()
+		throws SQLException {
+			return rs.getBigDecimal(7);
+		}
+		/**
+		 * Estado de la peculiaridad
+		 * @return the column 'estado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEstado()
+		throws SQLException {
+			return rs.getString(8);
+		}
+
+		/**
+		 * Visit Tr_tramos that's parent of this Tr_peculiar. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitTr_p_tramos(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _somart_p_rtStmt == null )
+					 initSomart_p_rtStmt();
+				
+				_somart_p_rtStmt.setInt(1, this.getCdg()); 
+				_somart_p_rtStmt.setInt(2, this.getPersona()); 
+				_somart_p_rtStmt.setDate(3, this.getFecha_desde()); 
+				rs = _somart_p_rtStmt.executeQuery();
+				Tr_tramos tr_tramos = new Tr_tramos(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitTr_p_tramos(this, tr_tramos);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+
 	}
 	
 
@@ -1580,11 +1596,11 @@ public class AbstractCtsqlDB {
 				+ ",acteco" 
 				+ ",epiiae" 
 				+ ",cnae" 
+				+ ",cnae2009" 
 				+ ",fecnew" 
 				+ ",hornew" 
 				+ ",fecmod" 
 				+ ",hormod" 
-				+ ",cnae2009" 
 				+ ",indred" 
 				+ ",indmutua" 
 				+ ",indtc1" 
@@ -1601,6 +1617,8 @@ public class AbstractCtsqlDB {
 				+ ",indfirma" 
 				+ ",indregimen" 
 				+ ",prevencion" 
+				+ ",indsiltra" 
+				+ ",autoriza" 
 				+ " FROM empract"
 				+ " WHERE" 
 				+ " codemp = ?  " 			); 
@@ -1727,6 +1745,11 @@ public class AbstractCtsqlDB {
 				+ ",indgrupo" 
 				+ ",pariente" 
 				+ ",noirpf" 
+				+ ",nosegsoc" 
+				+ ",jubiladoactivo" 
+				+ ",certificado" 
+				+ ",familiar" 
+				+ ",noresidente" 
 				+ " FROM emprper"
 				+ " WHERE" 
 				+ " codemp = ?  " 			); 
@@ -1762,6 +1785,7 @@ public class AbstractCtsqlDB {
 				+ ",subclave" 
 				+ ",natret" 
 				+ ",noirpf" 
+				+ ",noresidente" 
 				+ " FROM otrperc"
 				+ " WHERE" 
 				+ " codemp = ?  " 			); 
@@ -1802,66 +1826,39 @@ public class AbstractCtsqlDB {
 		}
 	}
 		
-	private PreparedStatement impr11x_emprnifStmt = null;
+	private PreparedStatement regidocu_emprnifStmt = null;
 		
-	private void initImpr11x_emprnifStmt() 
+	private void initRegidocu_emprnifStmt() 
 	throws SQLException{
-		this.impr11x_emprnifStmt = ctsqlConnection.prepareStatement(
+		this.regidocu_emprnifStmt = ctsqlConnection.prepareStatement(
 				"SELECT "
 				+ "cdg" 
-				+ ",tipo" 
+				+ ",codcli" 
 				+ ",codemp" 
-				+ ",codadm" 
-				+ ",provincia" 
-				+ ",anio" 
-				+ ",trimestre" 
-				+ ",mes" 
-				+ ",tradinper" 
-				+ ",tradinimp" 
-				+ ",tradinret" 
-				+ ",traespper" 
-				+ ",traespimp" 
-				+ ",traespret" 
-				+ ",actdinper" 
-				+ ",actdinimp" 
-				+ ",actdinret" 
-				+ ",actespper" 
-				+ ",actespimp" 
-				+ ",actespret" 
-				+ ",predinper" 
-				+ ",predinimp" 
-				+ ",predinret" 
-				+ ",preespper" 
-				+ ",preespimp" 
-				+ ",preespret" 
-				+ ",liqtotal" 
-				+ ",fpago" 
-				+ ",entidad" 
-				+ ",sucursal" 
-				+ ",dc" 
-				+ ",cuenta" 
-				+ ",fecha" 
+				+ ",codact" 
+				+ ",codper" 
+				+ ",tipo" 
+				+ ",fechaefe" 
+				+ ",fechaent" 
+				+ ",fechapre" 
+				+ ",lugar" 
+				+ ",observa" 
+				+ ",fechaenv" 
+				+ ",tipdom" 
 				+ ",fecnew" 
 				+ ",hornew" 
 				+ ",fecmod" 
 				+ ",hormod" 
-				+ ",divisa" 
-				+ ",imgper" 
-				+ ",imgimp" 
-				+ ",imgret" 
-				+ ",modimpuesto" 
-				+ ",nrc" 
-				+ ",fecremimp" 
-				+ " FROM impr11x"
+				+ " FROM regidocu"
 				+ " WHERE" 
 				+ " codemp = ?  " 			); 
 	}
 
-	private void closeImpr11x_emprnifStmt() 
+	private void closeRegidocu_emprnifStmt() 
 	throws SQLException{
-		if ( impr11x_emprnifStmt != null ) { 
-			impr11x_emprnifStmt.close();
-			impr11x_emprnifStmt = null;	
+		if ( regidocu_emprnifStmt != null ) { 
+			regidocu_emprnifStmt.close();
+			regidocu_emprnifStmt = null;	
 		}
 	}
 		
@@ -1887,6 +1884,7 @@ public class AbstractCtsqlDB {
 				+ ",fecmod" 
 				+ ",hormod" 
 				+ ",divisa" 
+				+ ",feccierre" 
 				+ " FROM impr190"
 				+ " WHERE" 
 				+ " codemp = ?  " 			); 
@@ -1922,6 +1920,7 @@ public class AbstractCtsqlDB {
 				+ ",fecmod" 
 				+ ",hormod" 
 				+ ",divisa" 
+				+ ",feccierre" 
 				+ " FROM impr190"
 				+ " WHERE" 
 				+ " codemp = ?  " 			); 
@@ -1957,6 +1956,7 @@ public class AbstractCtsqlDB {
 				+ ",fecmod" 
 				+ ",hormod" 
 				+ ",divisa" 
+				+ ",feccierre" 
 				+ " FROM impr190"
 				+ " WHERE" 
 				+ " codemp = ?  " 			); 
@@ -2013,42 +2013,6 @@ public class AbstractCtsqlDB {
 		}
 	}
 		
-	private PreparedStatement regidocu_emprnifStmt = null;
-		
-	private void initRegidocu_emprnifStmt() 
-	throws SQLException{
-		this.regidocu_emprnifStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",codcli" 
-				+ ",codemp" 
-				+ ",codact" 
-				+ ",codper" 
-				+ ",tipo" 
-				+ ",fechaefe" 
-				+ ",fechaent" 
-				+ ",fechapre" 
-				+ ",lugar" 
-				+ ",observa" 
-				+ ",fechaenv" 
-				+ ",tipdom" 
-				+ ",fecnew" 
-				+ ",hornew" 
-				+ ",fecmod" 
-				+ ",hormod" 
-				+ " FROM regidocu"
-				+ " WHERE" 
-				+ " codemp = ?  " 			); 
-	}
-
-	private void closeRegidocu_emprnifStmt() 
-	throws SQLException{
-		if ( regidocu_emprnifStmt != null ) { 
-			regidocu_emprnifStmt.close();
-			regidocu_emprnifStmt = null;	
-		}
-	}
-		
 	private PreparedStatement fk_cert_rem_emprStmt = null;
 		
 	private void initFk_cert_rem_emprStmt() 
@@ -2070,6 +2034,278 @@ public class AbstractCtsqlDB {
 		if ( fk_cert_rem_emprStmt != null ) { 
 			fk_cert_rem_emprStmt.close();
 			fk_cert_rem_emprStmt = null;	
+		}
+	}
+		
+	private PreparedStatement hon_emprnifStmt = null;
+		
+	private void initHon_emprnifStmt() 
+	throws SQLException{
+		this.hon_emprnifStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",codcli" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",tipo" 
+				+ ",texto" 
+				+ ",facturar" 
+				+ " FROM honorarios"
+				+ " WHERE" 
+				+ " codemp = ?  " 			); 
+	}
+
+	private void closeHon_emprnifStmt() 
+	throws SQLException{
+		if ( hon_emprnifStmt != null ) { 
+			hon_emprnifStmt.close();
+			hon_emprnifStmt = null;	
+		}
+	}
+		
+	private PreparedStatement impr11x_emprnifStmt = null;
+		
+	private void initImpr11x_emprnifStmt() 
+	throws SQLException{
+		this.impr11x_emprnifStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",tipo" 
+				+ ",codemp" 
+				+ ",codadm" 
+				+ ",provincia" 
+				+ ",anio" 
+				+ ",trimestre" 
+				+ ",mes" 
+				+ ",tradinper" 
+				+ ",tradinimp" 
+				+ ",tradinret" 
+				+ ",traespper" 
+				+ ",traespimp" 
+				+ ",traespret" 
+				+ ",actdinper" 
+				+ ",actdinimp" 
+				+ ",actdinret" 
+				+ ",actespper" 
+				+ ",actespimp" 
+				+ ",actespret" 
+				+ ",predinper" 
+				+ ",predinimp" 
+				+ ",predinret" 
+				+ ",preespper" 
+				+ ",preespimp" 
+				+ ",preespret" 
+				+ ",imgper" 
+				+ ",imgimp" 
+				+ ",imgret" 
+				+ ",liqtotal" 
+				+ ",fpago" 
+				+ ",iban" 
+				+ ",entidad" 
+				+ ",sucursal" 
+				+ ",dc" 
+				+ ",cuenta" 
+				+ ",fecha" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",divisa" 
+				+ ",modimpuesto" 
+				+ ",nrc" 
+				+ ",fecremimp" 
+				+ ",ibannrc" 
+				+ ",entidadnrc" 
+				+ ",sucursalnrc" 
+				+ ",dcnrc" 
+				+ ",cuentanrc" 
+				+ " FROM impr11x"
+				+ " WHERE" 
+				+ " codemp = ?  " 			); 
+	}
+
+	private void closeImpr11x_emprnifStmt() 
+	throws SQLException{
+		if ( impr11x_emprnifStmt != null ) { 
+			impr11x_emprnifStmt.close();
+			impr11x_emprnifStmt = null;	
+		}
+	}
+		
+	private PreparedStatement impr216_emprnifStmt = null;
+		
+	private void initImpr216_emprnifStmt() 
+	throws SQLException{
+		this.impr216_emprnifStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",tipo" 
+				+ ",codemp" 
+				+ ",codadm" 
+				+ ",provincia" 
+				+ ",anio" 
+				+ ",mes" 
+				+ ",numrent" 
+				+ ",imprent" 
+				+ ",retrent" 
+				+ ",numrentno" 
+				+ ",imprentno" 
+				+ ",totalant" 
+				+ ",total" 
+				+ ",modimpuesto" 
+				+ ",fpago" 
+				+ ",nrc" 
+				+ ",iban" 
+				+ ",entidad" 
+				+ ",sucursal" 
+				+ ",dc" 
+				+ ",cuenta" 
+				+ ",complementaria" 
+				+ ",justificante" 
+				+ ",fecha" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",divisa" 
+				+ " FROM impr216"
+				+ " WHERE" 
+				+ " codemp = ?  " 			); 
+	}
+
+	private void closeImpr216_emprnifStmt() 
+	throws SQLException{
+		if ( impr216_emprnifStmt != null ) { 
+			impr216_emprnifStmt.close();
+			impr216_emprnifStmt = null;	
+		}
+	}
+		
+	private PreparedStatement impr296_codempStmt = null;
+		
+	private void initImpr296_codempStmt() 
+	throws SQLException{
+		this.impr296_codempStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",codemp" 
+				+ ",codadm" 
+				+ ",provincia" 
+				+ ",anio" 
+				+ ",num_percep" 
+				+ ",imp_percep" 
+				+ ",imp_retenc" 
+				+ ",fecha" 
+				+ ",descuadrado" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",divisa" 
+				+ " FROM impr296"
+				+ " WHERE" 
+				+ " codemp = ?  " 			); 
+	}
+
+	private void closeImpr296_codempStmt() 
+	throws SQLException{
+		if ( impr296_codempStmt != null ) { 
+			impr296_codempStmt.close();
+			impr296_codempStmt = null;	
+		}
+	}
+		
+	private PreparedStatement impr296_represStmt = null;
+		
+	private void initImpr296_represStmt() 
+	throws SQLException{
+		this.impr296_represStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",codemp" 
+				+ ",codadm" 
+				+ ",provincia" 
+				+ ",anio" 
+				+ ",num_percep" 
+				+ ",imp_percep" 
+				+ ",imp_retenc" 
+				+ ",fecha" 
+				+ ",descuadrado" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",divisa" 
+				+ " FROM impr296"
+				+ " WHERE" 
+				+ " codemp = ?  " 			); 
+	}
+
+	private void closeImpr296_represStmt() 
+	throws SQLException{
+		if ( impr296_represStmt != null ) { 
+			impr296_represStmt.close();
+			impr296_represStmt = null;	
+		}
+	}
+		
+	private PreparedStatement impr296_cargoStmt = null;
+		
+	private void initImpr296_cargoStmt() 
+	throws SQLException{
+		this.impr296_cargoStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",codemp" 
+				+ ",codadm" 
+				+ ",provincia" 
+				+ ",anio" 
+				+ ",num_percep" 
+				+ ",imp_percep" 
+				+ ",imp_retenc" 
+				+ ",fecha" 
+				+ ",descuadrado" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",divisa" 
+				+ " FROM impr296"
+				+ " WHERE" 
+				+ " codemp = ?  " 			); 
+	}
+
+	private void closeImpr296_cargoStmt() 
+	throws SQLException{
+		if ( impr296_cargoStmt != null ) { 
+			impr296_cargoStmt.close();
+			impr296_cargoStmt = null;	
+		}
+	}
+		
+	private PreparedStatement fpe_emprnifStmt = null;
+		
+	private void initFpe_emprnifStmt() 
+	throws SQLException{
+		this.fpe_emprnifStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",nivel" 
+				+ ",codcon" 
+				+ ",codcli" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",codper" 
+				+ " FROM fpercep"
+				+ " WHERE" 
+				+ " codemp = ?  " 			); 
+	}
+
+	private void closeFpe_emprnifStmt() 
+	throws SQLException{
+		if ( fpe_emprnifStmt != null ) { 
+			fpe_emprnifStmt.close();
+			fpe_emprnifStmt = null;	
 		}
 	}
 
@@ -2114,6 +2350,7 @@ public class AbstractCtsqlDB {
 				+ ",divisa" 
 				+ ",soloases" 
 				+ ",envioss" 
+				+ ",grupotrabajo" 
 				+ " FROM cliente"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -2589,6 +2826,33 @@ public class AbstractCtsqlDB {
 		throws SQLException {
 			return rs.getString(34);
 		}
+		/**
+		 * Fecha inicio portal
+		 * @return the column 'feciniportal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFeciniportal()
+		throws SQLException {
+			return rs.getDate(35);
+		}
+		/**
+		 * Fecha cierre nóminas
+		 * @return the column 'feccierrenomina' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFeccierrenomina()
+		throws SQLException {
+			return rs.getDate(36);
+		}
+		/**
+		 * Meses historico portal
+		 * @return the column 'meseshistorico' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getMeseshistorico()
+		throws SQLException {
+			return rs.getInt(37);
+		}
 
 		/**
 		 * Visit Cliente that's parent of this Emprnif. 
@@ -2960,22 +3224,22 @@ public class AbstractCtsqlDB {
 		}
 		
 		/**
-		 * Visit Impr11x that're children of this Emprnif. 
+		 * Visit Regidocu that're children of this Emprnif. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
 		 */
-		public void visitImpr11x_emprnif(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		public void visitRegidocu_emprnif(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 			ResultSet 			rs 	= null;
 			try {
 				
-				if ( impr11x_emprnifStmt == null )
-					 initImpr11x_emprnifStmt();
+				if ( regidocu_emprnifStmt == null )
+					 initRegidocu_emprnifStmt();
 				
-				impr11x_emprnifStmt.setInt(1, this.getCdg()); 
-				rs = impr11x_emprnifStmt.executeQuery();
-				Impr11x impr11x = new Impr11x(rs); 
+				regidocu_emprnifStmt.setInt(1, this.getCdg()); 
+				rs = regidocu_emprnifStmt.executeQuery();
+				Regidocu regidocu = new Regidocu(rs); 
 				while ( rs.next() ) {
-					ctsqlDBVisitor.visitImpr11x_emprnif(impr11x, this);
+					ctsqlDBVisitor.visitRegidocu_emprnif(regidocu, this);
 				}
 			}
 			finally {
@@ -3085,31 +3349,6 @@ public class AbstractCtsqlDB {
 		}
 		
 		/**
-		 * Visit Regidocu that're children of this Emprnif. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitRegidocu_emprnif(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( regidocu_emprnifStmt == null )
-					 initRegidocu_emprnifStmt();
-				
-				regidocu_emprnifStmt.setInt(1, this.getCdg()); 
-				rs = regidocu_emprnifStmt.executeQuery();
-				Regidocu regidocu = new Regidocu(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitRegidocu_emprnif(regidocu, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		
-		/**
 		 * Visit Rem_cert_empr that're children of this Emprnif. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
@@ -3126,6 +3365,181 @@ public class AbstractCtsqlDB {
 				Rem_cert_empr rem_cert_empr = new Rem_cert_empr(rs); 
 				while ( rs.next() ) {
 					ctsqlDBVisitor.visitFk_cert_rem_empr(rem_cert_empr, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Honorarios that're children of this Emprnif. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitHon_emprnif(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( hon_emprnifStmt == null )
+					 initHon_emprnifStmt();
+				
+				hon_emprnifStmt.setInt(1, this.getCdg()); 
+				rs = hon_emprnifStmt.executeQuery();
+				Honorarios honorarios = new Honorarios(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitHon_emprnif(honorarios, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Impr11x that're children of this Emprnif. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitImpr11x_emprnif(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( impr11x_emprnifStmt == null )
+					 initImpr11x_emprnifStmt();
+				
+				impr11x_emprnifStmt.setInt(1, this.getCdg()); 
+				rs = impr11x_emprnifStmt.executeQuery();
+				Impr11x impr11x = new Impr11x(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitImpr11x_emprnif(impr11x, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Impr216 that're children of this Emprnif. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitImpr216_emprnif(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( impr216_emprnifStmt == null )
+					 initImpr216_emprnifStmt();
+				
+				impr216_emprnifStmt.setInt(1, this.getCdg()); 
+				rs = impr216_emprnifStmt.executeQuery();
+				Impr216 impr216 = new Impr216(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitImpr216_emprnif(impr216, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Impr296 that're children of this Emprnif. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitImpr296_codemp(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( impr296_codempStmt == null )
+					 initImpr296_codempStmt();
+				
+				impr296_codempStmt.setInt(1, this.getCdg()); 
+				rs = impr296_codempStmt.executeQuery();
+				Impr296 impr296 = new Impr296(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitImpr296_codemp(impr296, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Impr296 that're children of this Emprnif. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitImpr296_repres(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( impr296_represStmt == null )
+					 initImpr296_represStmt();
+				
+				impr296_represStmt.setInt(1, this.getCdg()); 
+				rs = impr296_represStmt.executeQuery();
+				Impr296 impr296 = new Impr296(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitImpr296_repres(impr296, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Impr296 that're children of this Emprnif. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitImpr296_cargo(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( impr296_cargoStmt == null )
+					 initImpr296_cargoStmt();
+				
+				impr296_cargoStmt.setInt(1, this.getCdg()); 
+				rs = impr296_cargoStmt.executeQuery();
+				Impr296 impr296 = new Impr296(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitImpr296_cargo(impr296, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Fpercep that're children of this Emprnif. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitFpe_emprnif(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( fpe_emprnifStmt == null )
+					 initFpe_emprnifStmt();
+				
+				fpe_emprnifStmt.setInt(1, this.getCdg()); 
+				rs = fpe_emprnifStmt.executeQuery();
+				Fpercep fpercep = new Fpercep(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitFpe_emprnif(fpercep, this);
 				}
 			}
 			finally {
@@ -3179,6 +3593,7 @@ public class AbstractCtsqlDB {
 				+ ",divisa" 
 				+ ",soloases" 
 				+ ",envioss" 
+				+ ",grupotrabajo" 
 				+ " FROM cliente"
 				+ " WHERE" 
 				+ " coddlg = ?  " 			); 
@@ -3192,6 +3607,26 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	private PreparedStatement _secalpkrow_gld_lerStmt = null;
+		
+	private void initSecalpkrow_gld_lerStmt() 
+	throws SQLException{
+		this._secalpkrow_gld_lerStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM workplaces"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeSecalpkrow_gld_lerStmt() 
+	throws SQLException{
+		if ( _secalpkrow_gld_lerStmt != null ) { 
+			_secalpkrow_gld_lerStmt.close();
+			_secalpkrow_gld_lerStmt = null;	
+		}
+	}
 	private PreparedStatement _aiv_gld_lerStmt = null;
 		
 	private void initAiv_gld_lerStmt() 
@@ -3337,7 +3772,40 @@ public class AbstractCtsqlDB {
 		throws SQLException {
 			return rs.getString(10);
 		}
+		/**
+		 * Centro de trabajo de facturación
+		 * @return the column 'workplace' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getWorkplace()
+		throws SQLException {
+			return rs.getString(11);
+		}
 
+		/**
+		 * Visit Workplaces that's parent of this Delegacion. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitRel_dlg_workplaces(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _secalpkrow_gld_lerStmt == null )
+					 initSecalpkrow_gld_lerStmt();
+				
+				_secalpkrow_gld_lerStmt.setString(1, this.getWorkplace()); 
+				rs = _secalpkrow_gld_lerStmt.executeQuery();
+				Workplaces workplaces = new Workplaces(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitRel_dlg_workplaces(this, workplaces);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
 		/**
 		 * Visit Tipovia that's parent of this Delegacion. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
@@ -3412,201 +3880,6 @@ public class AbstractCtsqlDB {
 					rs.close();
 			}
 		}
-	}
-	
-
-	
-
-
-	/**
-	 * Nszcont
-	 * 
-	 */
-	public class Nszcont {
-		
-		private ResultSet rs;
-		
-		protected Nszcont (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
-		
-		/**
-		 * $column.remarks
-		 * @return the column 'stc0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getStc0()
-		throws SQLException {
-			return rs.getString(1);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'stc1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getStc1()
-		throws SQLException {
-			return rs.getString(2);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'stc2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getStc2()
-		throws SQLException {
-			return rs.getString(3);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntc0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtc0()
-		throws SQLException {
-			return rs.getInt(4);
-		}
-
-
-	}
-	
-
-	
-
-
-	/**
-	 * Nszconv
-	 * 
-	 */
-	public class Nszconv {
-		
-		private ResultSet rs;
-		
-		protected Nszconv (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
-		
-		/**
-		 * $column.remarks
-		 * @return the column 'sco0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSco0()
-		throws SQLException {
-			return rs.getString(1);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'sco1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSco1()
-		throws SQLException {
-			return rs.getString(2);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'sco2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSco2()
-		throws SQLException {
-			return rs.getString(3);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nco0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNco0()
-		throws SQLException {
-			return rs.getInt(4);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nco1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNco1()
-		throws SQLException {
-			return rs.getInt(5);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nco2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNco2()
-		throws SQLException {
-			return rs.getInt(6);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nco3' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNco3()
-		throws SQLException {
-			return rs.getInt(7);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nco4' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNco4()
-		throws SQLException {
-			return rs.getInt(8);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nco5' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNco5()
-		throws SQLException {
-			return rs.getInt(9);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nco6' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNco6()
-		throws SQLException {
-			return rs.getInt(10);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nco7' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNco7()
-		throws SQLException {
-			return rs.getInt(11);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nco8' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNco8()
-		throws SQLException {
-			return rs.getInt(12);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nco9' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNco9()
-		throws SQLException {
-			return rs.getInt(13);
-		}
-
-
 	}
 	
 
@@ -3830,6 +4103,7 @@ public class AbstractCtsqlDB {
 				+ ",divisa" 
 				+ ",soloases" 
 				+ ",envioss" 
+				+ ",grupotrabajo" 
 				+ " FROM cliente"
 				+ " WHERE" 
 				+ " tipemp = ?  " 			); 
@@ -3883,6 +4157,9 @@ public class AbstractCtsqlDB {
 				+ ",cecon" 
 				+ ",modimpuesto" 
 				+ ",mod190" 
+				+ ",feciniportal" 
+				+ ",feccierrenomina" 
+				+ ",meseshistorico" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " tipempr = ?  " 			); 
@@ -4068,99 +4345,6 @@ public class AbstractCtsqlDB {
 	
 
 	
-
-
-	/**
-	 * Nszcopa
-	 * 
-	 */
-	public class Nszcopa {
-		
-		private ResultSet rs;
-		
-		protected Nszcopa (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
-		
-		/**
-		 * $column.remarks
-		 * @return the column 'spg0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSpg0()
-		throws SQLException {
-			return rs.getString(1);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'spg1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSpg1()
-		throws SQLException {
-			return rs.getString(2);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'spg2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSpg2()
-		throws SQLException {
-			return rs.getString(3);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'spg3' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSpg3()
-		throws SQLException {
-			return rs.getString(4);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'spg4' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSpg4()
-		throws SQLException {
-			return rs.getString(5);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'spg5' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSpg5()
-		throws SQLException {
-			return rs.getString(6);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'spg6' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSpg6()
-		throws SQLException {
-			return rs.getString(7);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'spg7' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSpg7()
-		throws SQLException {
-			return rs.getString(8);
-		}
-
-
-	}
-	
-
-	
 		
 	private PreparedStatement rel_epp_perStmt = null;
 		
@@ -4189,6 +4373,11 @@ public class AbstractCtsqlDB {
 				+ ",indgrupo" 
 				+ ",pariente" 
 				+ ",noirpf" 
+				+ ",nosegsoc" 
+				+ ",jubiladoactivo" 
+				+ ",certificado" 
+				+ ",familiar" 
+				+ ",noresidente" 
 				+ " FROM emprper"
 				+ " WHERE" 
 				+ " codper = ?  " 			); 
@@ -4224,6 +4413,7 @@ public class AbstractCtsqlDB {
 				+ ",subclave" 
 				+ ",natret" 
 				+ ",noirpf" 
+				+ ",noresidente" 
 				+ " FROM otrperc"
 				+ " WHERE" 
 				+ " codper = ?  " 			); 
@@ -4328,6 +4518,148 @@ public class AbstractCtsqlDB {
 		if ( jautpersonaStmt != null ) { 
 			jautpersonaStmt.close();
 			jautpersonaStmt = null;	
+		}
+	}
+		
+	private PreparedStatement tr_persona_numsStmt = null;
+		
+	private void initTr_persona_numsStmt() 
+	throws SQLException{
+		this.tr_persona_numsStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",persona" 
+				+ ",numss" 
+				+ ",fecha_desde" 
+				+ ",fecha_hasta" 
+				+ ",dias_cotizados" 
+				+ ",grupo_cotizacion" 
+				+ ",tipo_contrato" 
+				+ ",cnae" 
+				+ ",estado" 
+				+ " FROM tr_tramos"
+				+ " WHERE" 
+				+ " persona = ?  " 			); 
+	}
+
+	private void closeTr_persona_numsStmt() 
+	throws SQLException{
+		if ( tr_persona_numsStmt != null ) { 
+			tr_persona_numsStmt.close();
+			tr_persona_numsStmt = null;	
+		}
+	}
+		
+	private PreparedStatement tr_persona_inddStmt = null;
+		
+	private void initTr_persona_inddStmt() 
+	throws SQLException{
+		this.tr_persona_inddStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",persona" 
+				+ ",numss" 
+				+ ",fecha_desde" 
+				+ ",fecha_hasta" 
+				+ ",dias_cotizados" 
+				+ ",grupo_cotizacion" 
+				+ ",tipo_contrato" 
+				+ ",cnae" 
+				+ ",estado" 
+				+ " FROM tr_tramos"
+				+ " WHERE" 
+				+ " persona = ?  " 			); 
+	}
+
+	private void closeTr_persona_inddStmt() 
+	throws SQLException{
+		if ( tr_persona_inddStmt != null ) { 
+			tr_persona_inddStmt.close();
+			tr_persona_inddStmt = null;	
+		}
+	}
+		
+	private PreparedStatement tr_persona_numdStmt = null;
+		
+	private void initTr_persona_numdStmt() 
+	throws SQLException{
+		this.tr_persona_numdStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",persona" 
+				+ ",numss" 
+				+ ",fecha_desde" 
+				+ ",fecha_hasta" 
+				+ ",dias_cotizados" 
+				+ ",grupo_cotizacion" 
+				+ ",tipo_contrato" 
+				+ ",cnae" 
+				+ ",estado" 
+				+ " FROM tr_tramos"
+				+ " WHERE" 
+				+ " persona = ?  " 			); 
+	}
+
+	private void closeTr_persona_numdStmt() 
+	throws SQLException{
+		if ( tr_persona_numdStmt != null ) { 
+			tr_persona_numdStmt.close();
+			tr_persona_numdStmt = null;	
+		}
+	}
+		
+	private PreparedStatement tr_persona_atc2Stmt = null;
+		
+	private void initTr_persona_atc2Stmt() 
+	throws SQLException{
+		this.tr_persona_atc2Stmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",persona" 
+				+ ",numss" 
+				+ ",fecha_desde" 
+				+ ",fecha_hasta" 
+				+ ",dias_cotizados" 
+				+ ",grupo_cotizacion" 
+				+ ",tipo_contrato" 
+				+ ",cnae" 
+				+ ",estado" 
+				+ " FROM tr_tramos"
+				+ " WHERE" 
+				+ " persona = ?  " 			); 
+	}
+
+	private void closeTr_persona_atc2Stmt() 
+	throws SQLException{
+		if ( tr_persona_atc2Stmt != null ) { 
+			tr_persona_atc2Stmt.close();
+			tr_persona_atc2Stmt = null;	
+		}
+	}
+		
+	private PreparedStatement fpe_personaStmt = null;
+		
+	private void initFpe_personaStmt() 
+	throws SQLException{
+		this.fpe_personaStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",nivel" 
+				+ ",codcon" 
+				+ ",codcli" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",codper" 
+				+ " FROM fpercep"
+				+ " WHERE" 
+				+ " codper = ?  " 			); 
+	}
+
+	private void closeFpe_personaStmt() 
+	throws SQLException{
+		if ( fpe_personaStmt != null ) { 
+			fpe_personaStmt.close();
+			fpe_personaStmt = null;	
 		}
 	}
 
@@ -5019,44 +5351,821 @@ public class AbstractCtsqlDB {
 					rs.close();
 			}
 		}
+		
+		/**
+		 * Visit Tr_tramos that're children of this Persona. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitTr_persona_nums(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( tr_persona_numsStmt == null )
+					 initTr_persona_numsStmt();
+				
+				tr_persona_numsStmt.setInt(1, this.getCdg()); 
+				rs = tr_persona_numsStmt.executeQuery();
+				Tr_tramos tr_tramos = new Tr_tramos(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitTr_persona_nums(tr_tramos, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Tr_tramos that're children of this Persona. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitTr_persona_indd(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( tr_persona_inddStmt == null )
+					 initTr_persona_inddStmt();
+				
+				tr_persona_inddStmt.setInt(1, this.getCdg()); 
+				rs = tr_persona_inddStmt.executeQuery();
+				Tr_tramos tr_tramos = new Tr_tramos(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitTr_persona_indd(tr_tramos, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Tr_tramos that're children of this Persona. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitTr_persona_numd(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( tr_persona_numdStmt == null )
+					 initTr_persona_numdStmt();
+				
+				tr_persona_numdStmt.setInt(1, this.getCdg()); 
+				rs = tr_persona_numdStmt.executeQuery();
+				Tr_tramos tr_tramos = new Tr_tramos(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitTr_persona_numd(tr_tramos, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Tr_tramos that're children of this Persona. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitTr_persona_atc2(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( tr_persona_atc2Stmt == null )
+					 initTr_persona_atc2Stmt();
+				
+				tr_persona_atc2Stmt.setInt(1, this.getCdg()); 
+				rs = tr_persona_atc2Stmt.executeQuery();
+				Tr_tramos tr_tramos = new Tr_tramos(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitTr_persona_atc2(tr_tramos, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Fpercep that're children of this Persona. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitFpe_persona(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( fpe_personaStmt == null )
+					 initFpe_personaStmt();
+				
+				fpe_personaStmt.setInt(1, this.getCdg()); 
+				rs = fpe_personaStmt.executeQuery();
+				Fpercep fpercep = new Fpercep(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitFpe_persona(fpercep, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
 	}
 	
 
 	
+		
+	private PreparedStatement lin296_impr296Stmt = null;
+		
+	private void initLin296_impr296Stmt() 
+	throws SQLException{
+		this.lin296_impr296Stmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",linea" 
+				+ ",numdoc" 
+				+ ",procedencia" 
+				+ ",fecha" 
+				+ ",base_din" 
+				+ ",ret_din" 
+				+ ",por_din" 
+				+ ",base_esp" 
+				+ ",ret_esp" 
+				+ ",base_esp_no" 
+				+ ",ret_esp_no" 
+				+ ",nomapel" 
+				+ ",provincia" 
+				+ " FROM lin296"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
 
+	private void closeLin296_impr296Stmt() 
+	throws SQLException{
+		if ( lin296_impr296Stmt != null ) { 
+			lin296_impr296Stmt.close();
+			lin296_impr296Stmt = null;	
+		}
+	}
+
+	private PreparedStatement _pmedoc_692rpmiStmt = null;
+		
+	private void initPmedoc_692rpmiStmt() 
+	throws SQLException{
+		this._pmedoc_692rpmiStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",codcli" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",descripcion" 
+				+ ",alias" 
+				+ ",inddoc" 
+				+ ",paiemi" 
+				+ ",numdoc" 
+				+ ",representante" 
+				+ ",cargo" 
+				+ ",fecnac" 
+				+ ",nrodocrep" 
+				+ ",codadm" 
+				+ ",tipempr" 
+				+ ",sexo" 
+				+ ",feccon" 
+				+ ",obsnif" 
+				+ ",datreg" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",tipdocrep" 
+				+ ",paidocrep" 
+				+ ",indirpf" 
+				+ ",indcal" 
+				+ ",indnom" 
+				+ ",indcoste" 
+				+ ",divisa" 
+				+ ",envioss" 
+				+ ",cecon" 
+				+ ",modimpuesto" 
+				+ ",mod190" 
+				+ ",feciniportal" 
+				+ ",feccierrenomina" 
+				+ ",meseshistorico" 
+				+ " FROM emprnif"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closePmedoc_692rpmiStmt() 
+	throws SQLException{
+		if ( _pmedoc_692rpmiStmt != null ) { 
+			_pmedoc_692rpmiStmt.close();
+			_pmedoc_692rpmiStmt = null;	
+		}
+	}
+	private PreparedStatement _nomda_692rpmiStmt = null;
+		
+	private void initNomda_692rpmiStmt() 
+	throws SQLException{
+		this._nomda_692rpmiStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM admon"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeNomda_692rpmiStmt() 
+	throws SQLException{
+		if ( _nomda_692rpmiStmt != null ) { 
+			_nomda_692rpmiStmt.close();
+			_nomda_692rpmiStmt = null;	
+		}
+	}
+	private PreparedStatement _aicnivorp_692rpmiStmt = null;
+		
+	private void initAicnivorp_692rpmiStmt() 
+	throws SQLException{
+		this._aicnivorp_692rpmiStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",compro" 
+				+ " FROM provincia"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeAicnivorp_692rpmiStmt() 
+	throws SQLException{
+		if ( _aicnivorp_692rpmiStmt != null ) { 
+			_aicnivorp_692rpmiStmt.close();
+			_aicnivorp_692rpmiStmt = null;	
+		}
+	}
+	private PreparedStatement _serper_692rpmiStmt = null;
+		
+	private void initSerper_692rpmiStmt() 
+	throws SQLException{
+		this._serper_692rpmiStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",codcli" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",descripcion" 
+				+ ",alias" 
+				+ ",inddoc" 
+				+ ",paiemi" 
+				+ ",numdoc" 
+				+ ",representante" 
+				+ ",cargo" 
+				+ ",fecnac" 
+				+ ",nrodocrep" 
+				+ ",codadm" 
+				+ ",tipempr" 
+				+ ",sexo" 
+				+ ",feccon" 
+				+ ",obsnif" 
+				+ ",datreg" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",tipdocrep" 
+				+ ",paidocrep" 
+				+ ",indirpf" 
+				+ ",indcal" 
+				+ ",indnom" 
+				+ ",indcoste" 
+				+ ",divisa" 
+				+ ",envioss" 
+				+ ",cecon" 
+				+ ",modimpuesto" 
+				+ ",mod190" 
+				+ ",feciniportal" 
+				+ ",feccierrenomina" 
+				+ ",meseshistorico" 
+				+ " FROM emprnif"
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				+ " cdg = ?  " 			); 
+	}
+
+	private void closeSerper_692rpmiStmt() 
+	throws SQLException{
+		if ( _serper_692rpmiStmt != null ) { 
+			_serper_692rpmiStmt.close();
+			_serper_692rpmiStmt = null;	
+		}
+	}
+	private PreparedStatement _asivid_692rpmiStmt = null;
+		
+	private void initAsivid_692rpmiStmt() 
+	throws SQLException{
+		this._asivid_692rpmiStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",redondeo" 
+				+ ",mask1" 
+				+ ",mask2" 
+				+ " FROM divisa"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeAsivid_692rpmiStmt() 
+	throws SQLException{
+		if ( _asivid_692rpmiStmt != null ) { 
+			_asivid_692rpmiStmt.close();
+			_asivid_692rpmiStmt = null;	
+		}
+	}
 
 	/**
-	 * Nszprov
+	 * Impr296
 	 * 
 	 */
-	public class Nszprov {
+	public class Impr296 {
 		
 		private ResultSet rs;
 		
-		protected Nszprov (ResultSet rs) 
+		protected Impr296 (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
 		
 		/**
-		 * $column.remarks
-		 * @return the column 'spr0' value; if the value is SQL NULL, the value returned is null
+		 * Código 296
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getSpr0()
+		public Integer getCdg()
+		throws SQLException {
+			return rs.getInt(1);
+		}
+		/**
+		 * Código de empresa
+		 * @return the column 'codemp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCodemp()
+		throws SQLException {
+			return rs.getInt(2);
+		}
+		/**
+		 * Administración de hacienda
+		 * @return the column 'codadm' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCodadm()
+		throws SQLException {
+			return rs.getString(3);
+		}
+		/**
+		 * Provincia
+		 * @return the column 'provincia' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getProvincia()
+		throws SQLException {
+			return rs.getString(4);
+		}
+		/**
+		 * Anio devengo
+		 * @return the column 'anio' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getAnio()
+		throws SQLException {
+			return rs.getInt(5);
+		}
+		/**
+		 * Número perceptores
+		 * @return the column 'num_percep' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getNum_percep()
+		throws SQLException {
+			return rs.getInt(6);
+		}
+		/**
+		 * Importe percepciones
+		 * @return the column 'imp_percep' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getImp_percep()
+		throws SQLException {
+			return rs.getBigDecimal(7);
+		}
+		/**
+		 * Importe retenciones
+		 * @return the column 'imp_retenc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getImp_retenc()
+		throws SQLException {
+			return rs.getBigDecimal(8);
+		}
+		/**
+		 * Fecha de cálculo
+		 * @return the column 'fecha' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFecha()
+		throws SQLException {
+			return rs.getDate(9);
+		}
+		/**
+		 * Descuadrado
+		 * @return the column 'descuadrado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getDescuadrado()
+		throws SQLException {
+			return rs.getString(10);
+		}
+		/**
+		 * Fecha Creacion Fila
+		 * @return the column 'fecnew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFecnew()
+		throws SQLException {
+			return rs.getDate(11);
+		}
+		/**
+		 * Hora Creacion Fila
+		 * @return the column 'hornew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getHornew()
+		throws SQLException {
+			return rs.getTime(12);
+		}
+		/**
+		 * Fecha Modificacion Fila
+		 * @return the column 'fecmod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFecmod()
+		throws SQLException {
+			return rs.getDate(13);
+		}
+		/**
+		 * Hora Modificacion Fila
+		 * @return the column 'hormod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getHormod()
+		throws SQLException {
+			return rs.getTime(14);
+		}
+		/**
+		 * Divisa
+		 * @return the column 'divisa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getDivisa()
+		throws SQLException {
+			return rs.getString(15);
+		}
+
+		/**
+		 * Visit Emprnif that's parent of this Impr296. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitImpr296_codemp(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _pmedoc_692rpmiStmt == null )
+					 initPmedoc_692rpmiStmt();
+				
+				_pmedoc_692rpmiStmt.setInt(1, this.getCodemp()); 
+				rs = _pmedoc_692rpmiStmt.executeQuery();
+				Emprnif emprnif = new Emprnif(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitImpr296_codemp(this, emprnif);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		/**
+		 * Visit Admon that's parent of this Impr296. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitImpr296_admon(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _nomda_692rpmiStmt == null )
+					 initNomda_692rpmiStmt();
+				
+				_nomda_692rpmiStmt.setString(1, this.getCodadm()); 
+				rs = _nomda_692rpmiStmt.executeQuery();
+				Admon admon = new Admon(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitImpr296_admon(this, admon);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		/**
+		 * Visit Provincia that's parent of this Impr296. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitImpr296_provincia(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _aicnivorp_692rpmiStmt == null )
+					 initAicnivorp_692rpmiStmt();
+				
+				_aicnivorp_692rpmiStmt.setString(1, this.getProvincia()); 
+				rs = _aicnivorp_692rpmiStmt.executeQuery();
+				Provincia provincia = new Provincia(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitImpr296_provincia(this, provincia);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		/**
+		 * Visit Emprnif that's parent of this Impr296. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitImpr296_repres(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _serper_692rpmiStmt == null )
+					 initSerper_692rpmiStmt();
+				
+				_serper_692rpmiStmt.setInt(1, this.getCodemp()); 
+				_serper_692rpmiStmt.setInt(2, this.getCodemp()); 
+				rs = _serper_692rpmiStmt.executeQuery();
+				Emprnif emprnif = new Emprnif(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitImpr296_repres(this, emprnif);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		/**
+		 * Visit Divisa that's parent of this Impr296. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitImpr296_divisa(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _asivid_692rpmiStmt == null )
+					 initAsivid_692rpmiStmt();
+				
+				_asivid_692rpmiStmt.setString(1, this.getDivisa()); 
+				rs = _asivid_692rpmiStmt.executeQuery();
+				Divisa divisa = new Divisa(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitImpr296_divisa(this, divisa);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+
+		
+		/**
+		 * Visit Lin296 that're children of this Impr296. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitLin296_impr296(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( lin296_impr296Stmt == null )
+					 initLin296_impr296Stmt();
+				
+				lin296_impr296Stmt.setInt(1, this.getCdg()); 
+				rs = lin296_impr296Stmt.executeQuery();
+				Lin296 lin296 = new Lin296(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitLin296_impr296(lin296, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+	}
+	
+
+	
+
+	private PreparedStatement _sogracopit_nilStmt = null;
+		
+	private void initSogracopit_nilStmt() 
+	throws SQLException{
+		this._sogracopit_nilStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM tipocargos"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeSogracopit_nilStmt() 
+	throws SQLException{
+		if ( _sogracopit_nilStmt != null ) { 
+			_sogracopit_nilStmt.close();
+			_sogracopit_nilStmt = null;	
+		}
+	}
+	private PreparedStatement _secalpkrow_lerStmt = null;
+		
+	private void initSecalpkrow_lerStmt() 
+	throws SQLException{
+		this._secalpkrow_lerStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM workplaces"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeSecalpkrow_lerStmt() 
+	throws SQLException{
+		if ( _secalpkrow_lerStmt != null ) { 
+			_secalpkrow_lerStmt.close();
+			_secalpkrow_lerStmt = null;	
+		}
+	}
+	private PreparedStatement _secalpkrownil_lerStmt = null;
+		
+	private void initSecalpkrownil_lerStmt() 
+	throws SQLException{
+		this._secalpkrownil_lerStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "workplace" 
+				+ ",facturar" 
+				+ ",descripcion" 
+				+ " FROM linworkplaces"
+				+ " WHERE" 
+				+ " workplace = ?  "  + "AND" 				+ " facturar = ?  " 			); 
+	}
+
+	private void closeSecalpkrownil_lerStmt() 
+	throws SQLException{
+		if ( _secalpkrownil_lerStmt != null ) { 
+			_secalpkrownil_lerStmt.close();
+			_secalpkrownil_lerStmt = null;	
+		}
+	}
+
+	/**
+	 * Lintipocargos
+	 * 
+	 */
+	public class Lintipocargos {
+		
+		private ResultSet rs;
+		
+		protected Lintipocargos (ResultSet rs) 
+		throws SQLException {
+			this.rs =rs;
+		}
+		
+		/**
+		 * Código del cargo
+		 * @return the column 'tipocargo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTipocargo()
 		throws SQLException {
 			return rs.getString(1);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'spr1' value; if the value is SQL NULL, the value returned is null
+		 * Centro de trabajo de facturación
+		 * @return the column 'workplace' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getSpr1()
+		public String getWorkplace()
 		throws SQLException {
 			return rs.getString(2);
 		}
+		/**
+		 * Código de facturación
+		 * @return the column 'facturar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getFacturar()
+		throws SQLException {
+			return rs.getString(3);
+		}
 
+		/**
+		 * Visit Tipocargos that's parent of this Lintipocargos. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitLin_tipocargos(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _sogracopit_nilStmt == null )
+					 initSogracopit_nilStmt();
+				
+				_sogracopit_nilStmt.setString(1, this.getTipocargo()); 
+				rs = _sogracopit_nilStmt.executeQuery();
+				Tipocargos tipocargos = new Tipocargos(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitLin_tipocargos(this, tipocargos);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		/**
+		 * Visit Workplaces that's parent of this Lintipocargos. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitRel_workplaces(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _secalpkrow_lerStmt == null )
+					 initSecalpkrow_lerStmt();
+				
+				_secalpkrow_lerStmt.setString(1, this.getWorkplace()); 
+				rs = _secalpkrow_lerStmt.executeQuery();
+				Workplaces workplaces = new Workplaces(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitRel_workplaces(this, workplaces);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		/**
+		 * Visit Linworkplaces that's parent of this Lintipocargos. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitRel_linworkplaces(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _secalpkrownil_lerStmt == null )
+					 initSecalpkrownil_lerStmt();
+				
+				_secalpkrownil_lerStmt.setString(1, this.getWorkplace()); 
+				_secalpkrownil_lerStmt.setString(2, this.getFacturar()); 
+				rs = _secalpkrownil_lerStmt.executeQuery();
+				Linworkplaces linworkplaces = new Linworkplaces(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitRel_linworkplaces(this, linworkplaces);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
 
 	}
 	
@@ -5115,6 +6224,74 @@ public class AbstractCtsqlDB {
 		}
 	}
 		
+	private PreparedStatement rel_cos_epiStmt = null;
+		
+	private void initRel_cos_epiStmt() 
+	throws SQLException{
+		this.rel_cos_epiStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",numero" 
+				+ ",codemp" 
+				+ ",descripcion" 
+				+ ",anionac" 
+				+ ",sitfam" 
+				+ ",xminus" 
+				+ ",imp_pension" 
+				+ ",imp_anual" 
+				+ ",imp_irreg" 
+				+ ",imp_ss" 
+				+ ",solicita" 
+				+ ",minimo" 
+				+ ",aprendiz" 
+				+ ",temporal" 
+				+ ",alto" 
+				+ ",codbas" 
+				+ ",codepi" 
+				+ ",procot" 
+				+ ",proret" 
+				+ ",plunumaut" 
+				+ ",pluprcmin" 
+				+ ",pluprcmax" 
+				+ ",semana" 
+				+ ",semanatp" 
+				+ ",cantp" 
+				+ ",indtp" 
+				+ ",codpct" 
+				+ ",imp_actual" 
+				+ ",imp_ext_actual" 
+				+ ",ss_actual" 
+				+ ",irpf_actual" 
+				+ ",neto_actual" 
+				+ ",ss_emp_actual" 
+				+ ",coste_actual" 
+				+ ",imp_supuesto" 
+				+ ",imp_ext_supuesto" 
+				+ ",ss_supuesto" 
+				+ ",irpf_supuesto" 
+				+ ",neto_supuesto" 
+				+ ",ss_emp_supuesto" 
+				+ ",coste_supuesto" 
+				+ ",imp_diferencia" 
+				+ ",imp_ext_diferencia" 
+				+ ",ss_diferencia" 
+				+ ",irpf_diferencia" 
+				+ ",neto_diferencia" 
+				+ ",ss_emp_diferencia" 
+				+ ",coste_diferencia" 
+				+ " FROM costes"
+				+ " WHERE" 
+				+ " codepi = ?  " 			); 
+	}
+
+	private void closeRel_cos_epiStmt() 
+	throws SQLException{
+		if ( rel_cos_epiStmt != null ) { 
+			rel_cos_epiStmt.close();
+			rel_cos_epiStmt = null;	
+		}
+	}
+		
 	private PreparedStatement rel_tra_epiStmt = null;
 		
 	private void initRel_tra_epiStmt() 
@@ -5139,6 +6316,7 @@ public class AbstractCtsqlDB {
 				+ ",proret" 
 				+ ",nummat" 
 				+ ",codcont" 
+				+ ",descont" 
 				+ ",codtc2" 
 				+ ",destc2" 
 				+ ",fecinicont" 
@@ -5182,6 +6360,7 @@ public class AbstractCtsqlDB {
 				+ ",diastp" 
 				+ ",guardalegal" 
 				+ ",iban" 
+				+ ",fecfinperiprue" 
 				+ " FROM trabajo"
 				+ " WHERE" 
 				+ " codepi = ?  " 			); 
@@ -5275,74 +6454,6 @@ public class AbstractCtsqlDB {
 			jepigrafeStmt = null;	
 		}
 	}
-		
-	private PreparedStatement rel_cos_epiStmt = null;
-		
-	private void initRel_cos_epiStmt() 
-	throws SQLException{
-		this.rel_cos_epiStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",numero" 
-				+ ",codemp" 
-				+ ",descripcion" 
-				+ ",anionac" 
-				+ ",sitfam" 
-				+ ",xminus" 
-				+ ",imp_pension" 
-				+ ",imp_anual" 
-				+ ",imp_irreg" 
-				+ ",imp_ss" 
-				+ ",solicita" 
-				+ ",minimo" 
-				+ ",aprendiz" 
-				+ ",temporal" 
-				+ ",alto" 
-				+ ",codbas" 
-				+ ",codepi" 
-				+ ",procot" 
-				+ ",proret" 
-				+ ",plunumaut" 
-				+ ",pluprcmin" 
-				+ ",pluprcmax" 
-				+ ",semana" 
-				+ ",semanatp" 
-				+ ",cantp" 
-				+ ",indtp" 
-				+ ",codpct" 
-				+ ",imp_actual" 
-				+ ",imp_ext_actual" 
-				+ ",ss_actual" 
-				+ ",irpf_actual" 
-				+ ",neto_actual" 
-				+ ",ss_emp_actual" 
-				+ ",coste_actual" 
-				+ ",imp_supuesto" 
-				+ ",imp_ext_supuesto" 
-				+ ",ss_supuesto" 
-				+ ",irpf_supuesto" 
-				+ ",neto_supuesto" 
-				+ ",ss_emp_supuesto" 
-				+ ",coste_supuesto" 
-				+ ",imp_diferencia" 
-				+ ",imp_ext_diferencia" 
-				+ ",ss_diferencia" 
-				+ ",irpf_diferencia" 
-				+ ",neto_diferencia" 
-				+ ",ss_emp_diferencia" 
-				+ ",coste_diferencia" 
-				+ " FROM costes"
-				+ " WHERE" 
-				+ " codepi = ?  " 			); 
-	}
-
-	private void closeRel_cos_epiStmt() 
-	throws SQLException{
-		if ( rel_cos_epiStmt != null ) { 
-			rel_cos_epiStmt.close();
-			rel_cos_epiStmt = null;	
-		}
-	}
 
 
 	/**
@@ -5430,6 +6541,31 @@ public class AbstractCtsqlDB {
 		}
 		
 		/**
+		 * Visit Costes that're children of this Epigrafe. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitRel_cos_epi(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( rel_cos_epiStmt == null )
+					 initRel_cos_epiStmt();
+				
+				rel_cos_epiStmt.setString(1, this.getCdg()); 
+				rs = rel_cos_epiStmt.executeQuery();
+				Costes costes = new Costes(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitRel_cos_epi(costes, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
 		 * Visit Trabajo that're children of this Epigrafe. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
@@ -5471,31 +6607,6 @@ public class AbstractCtsqlDB {
 				Httrabajador httrabajador = new Httrabajador(rs); 
 				while ( rs.next() ) {
 					ctsqlDBVisitor.visitJepigrafe(httrabajador, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		
-		/**
-		 * Visit Costes that're children of this Epigrafe. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitRel_cos_epi(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( rel_cos_epiStmt == null )
-					 initRel_cos_epiStmt();
-				
-				rel_cos_epiStmt.setString(1, this.getCdg()); 
-				rs = rel_cos_epiStmt.executeQuery();
-				Costes costes = new Costes(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitRel_cos_epi(costes, this);
 				}
 			}
 			finally {
@@ -5701,6 +6812,11 @@ public class AbstractCtsqlDB {
 				+ ",indgrupo" 
 				+ ",pariente" 
 				+ ",noirpf" 
+				+ ",nosegsoc" 
+				+ ",jubiladoactivo" 
+				+ ",certificado" 
+				+ ",familiar" 
+				+ ",noresidente" 
 				+ " FROM emprper"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -5769,13 +6885,22 @@ public class AbstractCtsqlDB {
 			return rs.getDate(2);
 		}
 		/**
+		 * Código de la causa de baja
+		 * @return the column 'codcausa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCodcausa()
+		throws SQLException {
+			return rs.getString(3);
+		}
+		/**
 		 * Causa de Baja
 		 * @return the column 'causa' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
 		public String getCausa()
 		throws SQLException {
-			return rs.getString(3);
+			return rs.getString(4);
 		}
 		/**
 		 * Fecha Desde Vacaciones
@@ -5784,7 +6909,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getVacfecini()
 		throws SQLException {
-			return rs.getDate(4);
+			return rs.getDate(5);
 		}
 		/**
 		 * Importe Vacaciones
@@ -5793,7 +6918,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getVacimporte()
 		throws SQLException {
-			return rs.getBigDecimal(5);
+			return rs.getBigDecimal(6);
 		}
 		/**
 		 * Total Conceptos Finiquito
@@ -5802,7 +6927,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getTotal_conceptos()
 		throws SQLException {
-			return rs.getBigDecimal(6);
+			return rs.getBigDecimal(7);
 		}
 		/**
 		 * Base I.R.P.F.
@@ -5811,7 +6936,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase()
 		throws SQLException {
-			return rs.getBigDecimal(7);
+			return rs.getBigDecimal(8);
 		}
 		/**
 		 * % I.R.P.F.
@@ -5820,7 +6945,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getIrpf()
 		throws SQLException {
-			return rs.getBigDecimal(8);
+			return rs.getBigDecimal(9);
 		}
 		/**
 		 * Importe Retenido I.R.P.F.
@@ -5829,7 +6954,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_irpf()
 		throws SQLException {
-			return rs.getBigDecimal(9);
+			return rs.getBigDecimal(10);
 		}
 		/**
 		 * Importe Liquido
@@ -5838,7 +6963,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getLiquido()
 		throws SQLException {
-			return rs.getBigDecimal(10);
+			return rs.getBigDecimal(11);
 		}
 		/**
 		 * Importe Indemnizaciones no sujetas a I.R.P.F.
@@ -5847,7 +6972,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImportesin()
 		throws SQLException {
-			return rs.getBigDecimal(11);
+			return rs.getBigDecimal(12);
 		}
 		/**
 		 * Fecha Creacion Fila
@@ -5856,7 +6981,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFecnew()
 		throws SQLException {
-			return rs.getDate(12);
+			return rs.getDate(13);
 		}
 		/**
 		 * Hora Creacion Fila
@@ -5865,7 +6990,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Time getHornew()
 		throws SQLException {
-			return rs.getTime(13);
+			return rs.getTime(14);
 		}
 		/**
 		 * Fecha Modificacion Fila
@@ -5874,7 +6999,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFecmod()
 		throws SQLException {
-			return rs.getDate(14);
+			return rs.getDate(15);
 		}
 		/**
 		 * Hora Modificacion Fila
@@ -5883,7 +7008,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Time getHormod()
 		throws SQLException {
-			return rs.getTime(15);
+			return rs.getTime(16);
 		}
 		/**
 		 * Codigo de Finiquito
@@ -5892,7 +7017,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getCdg()
 		throws SQLException {
-			return rs.getInt(16);
+			return rs.getInt(17);
 		}
 		/**
 		 * Calculo o Simulacion
@@ -5901,7 +7026,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getSimula()
 		throws SQLException {
-			return rs.getString(17);
+			return rs.getString(18);
 		}
 		/**
 		 * Fecha de Cobro Real
@@ -5910,7 +7035,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFeccobreal()
 		throws SQLException {
-			return rs.getDate(18);
+			return rs.getDate(19);
 		}
 		/**
 		 * Divisa
@@ -5919,7 +7044,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getDivisa()
 		throws SQLException {
-			return rs.getString(19);
+			return rs.getString(20);
 		}
 		/**
 		 * Días vacaciones
@@ -5928,7 +7053,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDiasvac()
 		throws SQLException {
-			return rs.getInt(20);
+			return rs.getInt(21);
 		}
 		/**
 		 * Coste S.S. empresa
@@ -5937,7 +7062,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getCostessemp()
 		throws SQLException {
-			return rs.getBigDecimal(21);
+			return rs.getBigDecimal(22);
 		}
 		/**
 		 * Grupo de tarifa
@@ -5946,7 +7071,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getCodbas()
 		throws SQLException {
-			return rs.getString(22);
+			return rs.getString(23);
 		}
 		/**
 		 * Base Contingencias Generales
@@ -5955,7 +7080,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBasecg()
 		throws SQLException {
-			return rs.getBigDecimal(23);
+			return rs.getBigDecimal(24);
 		}
 		/**
 		 * % Contingencias Generales
@@ -5964,7 +7089,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getPrccg()
 		throws SQLException {
-			return rs.getBigDecimal(24);
+			return rs.getBigDecimal(25);
 		}
 		/**
 		 * Importe Contingencias Generales
@@ -5973,7 +7098,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImportecg()
 		throws SQLException {
-			return rs.getBigDecimal(25);
+			return rs.getBigDecimal(26);
 		}
 		/**
 		 * Base Accidente de Trabajo
@@ -5982,7 +7107,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBaseacc()
 		throws SQLException {
-			return rs.getBigDecimal(26);
+			return rs.getBigDecimal(27);
 		}
 		/**
 		 * % Accidente de Trabajo
@@ -5991,7 +7116,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getPrcacc()
 		throws SQLException {
-			return rs.getBigDecimal(27);
+			return rs.getBigDecimal(28);
 		}
 		/**
 		 * Importe Accidente de Trabajo
@@ -6000,7 +7125,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporteacc()
 		throws SQLException {
-			return rs.getBigDecimal(28);
+			return rs.getBigDecimal(29);
 		}
 		/**
 		 * Fecha visionado empresa
@@ -6009,7 +7134,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFvisione()
 		throws SQLException {
-			return rs.getDate(29);
+			return rs.getDate(30);
 		}
 		/**
 		 * Fecha visionado trabajador
@@ -6018,7 +7143,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFvisiont()
 		throws SQLException {
-			return rs.getDate(30);
+			return rs.getDate(31);
 		}
 
 		/**
@@ -6150,6 +7275,182 @@ public class AbstractCtsqlDB {
 
 	
 
+	private PreparedStatement _pecrepf_nilStmt = null;
+		
+	private void initPecrepf_nilStmt() 
+	throws SQLException{
+		this._pecrepf_nilStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",nivel" 
+				+ ",codcon" 
+				+ ",codcli" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",codper" 
+				+ " FROM fpercep"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closePecrepf_nilStmt() 
+	throws SQLException{
+		if ( _pecrepf_nilStmt != null ) { 
+			_pecrepf_nilStmt.close();
+			_pecrepf_nilStmt = null;	
+		}
+	}
+	private PreparedStatement _otnemelpmoc_nilStmt = null;
+		
+	private void initOtnemelpmoc_nilStmt() 
+	throws SQLException{
+		this._otnemelpmoc_nilStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",tipcot" 
+				+ ",descripcion" 
+				+ ",desabr" 
+				+ ",tipcom" 
+				+ ",fijovar" 
+				+ ",indcom" 
+				+ ",dinesp" 
+				+ ",concepto" 
+				+ ",excinc" 
+				+ " FROM complemento"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeOtnemelpmoc_nilStmt() 
+	throws SQLException{
+		if ( _otnemelpmoc_nilStmt != null ) { 
+			_otnemelpmoc_nilStmt.close();
+			_otnemelpmoc_nilStmt = null;	
+		}
+	}
+
+	/**
+	 * Linfpercep
+	 * 
+	 */
+	public class Linfpercep {
+		
+		private ResultSet rs;
+		
+		protected Linfpercep (ResultSet rs) 
+		throws SQLException {
+			this.rs =rs;
+		}
+		
+		/**
+		 * Código de formula
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCdg()
+		throws SQLException {
+			return rs.getInt(1);
+		}
+		/**
+		 * Fecha de inicio
+		 * @return the column 'fecini' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFecini()
+		throws SQLException {
+			return rs.getDate(2);
+		}
+		/**
+		 * Fecha de fin
+		 * @return the column 'fecfin' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFecfin()
+		throws SQLException {
+			return rs.getDate(3);
+		}
+		/**
+		 * Orden de cálculo
+		 * @return the column 'orden' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getOrden()
+		throws SQLException {
+			return rs.getInt(4);
+		}
+		/**
+		 * Código de complemento
+		 * @return the column 'codcom' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCodcom()
+		throws SQLException {
+			return rs.getString(5);
+		}
+		/**
+		 * Fórmula
+		 * @return the column 'formula' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getFormula()
+		throws SQLException {
+			return rs.getString(6);
+		}
+
+		/**
+		 * Visit Fpercep that's parent of this Linfpercep. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitLin_fpercep(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _pecrepf_nilStmt == null )
+					 initPecrepf_nilStmt();
+				
+				_pecrepf_nilStmt.setInt(1, this.getCdg()); 
+				rs = _pecrepf_nilStmt.executeQuery();
+				Fpercep fpercep = new Fpercep(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitLin_fpercep(this, fpercep);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		/**
+		 * Visit Complemento that's parent of this Linfpercep. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitLin_complemento(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _otnemelpmoc_nilStmt == null )
+					 initOtnemelpmoc_nilStmt();
+				
+				_otnemelpmoc_nilStmt.setString(1, this.getCodcom()); 
+				rs = _otnemelpmoc_nilStmt.executeQuery();
+				Complemento complemento = new Complemento(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitLin_complemento(this, complemento);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+
+	}
+	
+
+	
+
 	private PreparedStatement _reprpme_tianimonStmt = null;
 		
 	private void initReprpme_tianimonStmt() 
@@ -6177,6 +7478,11 @@ public class AbstractCtsqlDB {
 				+ ",indgrupo" 
 				+ ",pariente" 
 				+ ",noirpf" 
+				+ ",nosegsoc" 
+				+ ",jubiladoactivo" 
+				+ ",certificado" 
+				+ ",familiar" 
+				+ ",noresidente" 
 				+ " FROM emprper"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -6414,6 +7720,30 @@ public class AbstractCtsqlDB {
 
 	
 		
+	private PreparedStatement formcont_emprcccStmt = null;
+		
+	private void initFormcont_emprcccStmt() 
+	throws SQLException{
+		this.formcont_emprcccStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",tipccc" 
+				+ ",mes" 
+				+ ",anio" 
+				+ ",importe" 
+				+ " FROM formcont"
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				+ " tipccc = ?  " 			); 
+	}
+
+	private void closeFormcont_emprcccStmt() 
+	throws SQLException{
+		if ( formcont_emprcccStmt != null ) { 
+			formcont_emprcccStmt.close();
+			formcont_emprcccStmt = null;	
+		}
+	}
+		
 	private PreparedStatement rel_epp_cccStmt = null;
 		
 	private void initRel_epp_cccStmt() 
@@ -6441,6 +7771,11 @@ public class AbstractCtsqlDB {
 				+ ",indgrupo" 
 				+ ",pariente" 
 				+ ",noirpf" 
+				+ ",nosegsoc" 
+				+ ",jubiladoactivo" 
+				+ ",certificado" 
+				+ ",familiar" 
+				+ ",noresidente" 
 				+ " FROM emprper"
 				+ " WHERE" 
 				+ " codact = ?  "  + "AND" 				+ " codccc = ?  " 			); 
@@ -6451,30 +7786,6 @@ public class AbstractCtsqlDB {
 		if ( rel_epp_cccStmt != null ) { 
 			rel_epp_cccStmt.close();
 			rel_epp_cccStmt = null;	
-		}
-	}
-		
-	private PreparedStatement formcont_emprcccStmt = null;
-		
-	private void initFormcont_emprcccStmt() 
-	throws SQLException{
-		this.formcont_emprcccStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",tipccc" 
-				+ ",mes" 
-				+ ",anio" 
-				+ ",importe" 
-				+ " FROM formcont"
-				+ " WHERE" 
-				+ " cdg = ?  "  + "AND" 				+ " tipccc = ?  " 			); 
-	}
-
-	private void closeFormcont_emprcccStmt() 
-	throws SQLException{
-		if ( formcont_emprcccStmt != null ) { 
-			formcont_emprcccStmt.close();
-			formcont_emprcccStmt = null;	
 		}
 	}
 
@@ -6515,11 +7826,11 @@ public class AbstractCtsqlDB {
 				+ ",acteco" 
 				+ ",epiiae" 
 				+ ",cnae" 
+				+ ",cnae2009" 
 				+ ",fecnew" 
 				+ ",hornew" 
 				+ ",fecmod" 
 				+ ",hormod" 
-				+ ",cnae2009" 
 				+ ",indred" 
 				+ ",indmutua" 
 				+ ",indtc1" 
@@ -6536,6 +7847,8 @@ public class AbstractCtsqlDB {
 				+ ",indfirma" 
 				+ ",indregimen" 
 				+ ",prevencion" 
+				+ ",indsiltra" 
+				+ ",autoriza" 
 				+ " FROM empract"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -6677,32 +7990,6 @@ public class AbstractCtsqlDB {
 
 		
 		/**
-		 * Visit Emprper that're children of this Emprccc. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitRel_epp_ccc(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( rel_epp_cccStmt == null )
-					 initRel_epp_cccStmt();
-				
-				rel_epp_cccStmt.setInt(1, this.getCdg()); 
-				rel_epp_cccStmt.setString(2, this.getTipccc()); 
-				rs = rel_epp_cccStmt.executeQuery();
-				Emprper emprper = new Emprper(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitRel_epp_ccc(emprper, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		
-		/**
 		 * Visit Formcont that're children of this Emprccc. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
@@ -6727,90 +8014,32 @@ public class AbstractCtsqlDB {
 					rs.close();
 			}
 		}
-	}
-	
-
-	
-
-
-	/**
-	 * Nszdomi
-	 * 
-	 */
-	public class Nszdomi {
-		
-		private ResultSet rs;
-		
-		protected Nszdomi (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
 		
 		/**
-		 * $column.remarks
-		 * @return the column 'sdm0' value; if the value is SQL NULL, the value returned is null
+		 * Visit Emprper that're children of this Emprccc. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
 		 */
-		public String getSdm0()
-		throws SQLException {
-			return rs.getString(1);
+		public void visitRel_epp_ccc(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( rel_epp_cccStmt == null )
+					 initRel_epp_cccStmt();
+				
+				rel_epp_cccStmt.setInt(1, this.getCdg()); 
+				rel_epp_cccStmt.setString(2, this.getTipccc()); 
+				rs = rel_epp_cccStmt.executeQuery();
+				Emprper emprper = new Emprper(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitRel_epp_ccc(emprper, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
 		}
-		/**
-		 * $column.remarks
-		 * @return the column 'sdm1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSdm1()
-		throws SQLException {
-			return rs.getString(2);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'sdm2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSdm2()
-		throws SQLException {
-			return rs.getString(3);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'sdm3' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSdm3()
-		throws SQLException {
-			return rs.getString(4);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'sdm4' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSdm4()
-		throws SQLException {
-			return rs.getString(5);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'sdm5' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSdm5()
-		throws SQLException {
-			return rs.getString(6);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'sdm6' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSdm6()
-		throws SQLException {
-			return rs.getString(7);
-		}
-
-
 	}
 	
 
@@ -6866,86 +8095,6 @@ public class AbstractCtsqlDB {
 		if ( rel_tco_codpctStmt != null ) { 
 			rel_tco_codpctStmt.close();
 			rel_tco_codpctStmt = null;	
-		}
-	}
-		
-	private PreparedStatement rel_tra_pctStmt = null;
-		
-	private void initRel_tra_pctStmt() 
-	throws SQLException{
-		this.rel_tra_pctStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",fecini" 
-				+ ",fecfin" 
-				+ ",fecant" 
-				+ ",ctacar" 
-				+ ",profesion" 
-				+ ",codcon" 
-				+ ",codcat" 
-				+ ",nivel" 
-				+ ",descat" 
-				+ ",codbas" 
-				+ ",codepi" 
-				+ ",irpf" 
-				+ ",cno" 
-				+ ",procot" 
-				+ ",proret" 
-				+ ",nummat" 
-				+ ",codcont" 
-				+ ",codtc2" 
-				+ ",destc2" 
-				+ ",fecinicont" 
-				+ ",fecfincont" 
-				+ ",diascont" 
-				+ ",autorizacion" 
-				+ ",fecaut" 
-				+ ",codent" 
-				+ ",codsuc" 
-				+ ",numcta" 
-				+ ",plunumaut" 
-				+ ",plufecaut" 
-				+ ",pluprcmin" 
-				+ ",pluprcmax" 
-				+ ",coered" 
-				+ ",semana" 
-				+ ",semanatp" 
-				+ ",cantp" 
-				+ ",baseant" 
-				+ ",indalt" 
-				+ ",inddtoit" 
-				+ ",inddtootr" 
-				+ ",codpct" 
-				+ ",indtp" 
-				+ ",indirpf" 
-				+ ",concol" 
-				+ ",indactcon" 
-				+ ",especial" 
-				+ ",fecnew" 
-				+ ",hornew" 
-				+ ",fecmod" 
-				+ ",hormod" 
-				+ ",dc" 
-				+ ",historico" 
-				+ ",indceutamelilla" 
-				+ ",colectivo" 
-				+ ",relacion" 
-				+ ",ocupacion" 
-				+ ",ocupacion2009" 
-				+ ",tipotp" 
-				+ ",diastp" 
-				+ ",guardalegal" 
-				+ ",iban" 
-				+ " FROM trabajo"
-				+ " WHERE" 
-				+ " codpct = ?  " 			); 
-	}
-
-	private void closeRel_tra_pctStmt() 
-	throws SQLException{
-		if ( rel_tra_pctStmt != null ) { 
-			rel_tra_pctStmt.close();
-			rel_tra_pctStmt = null;	
 		}
 	}
 		
@@ -7014,6 +8163,88 @@ public class AbstractCtsqlDB {
 		if ( rel_cos_pctStmt != null ) { 
 			rel_cos_pctStmt.close();
 			rel_cos_pctStmt = null;	
+		}
+	}
+		
+	private PreparedStatement rel_tra_pctStmt = null;
+		
+	private void initRel_tra_pctStmt() 
+	throws SQLException{
+		this.rel_tra_pctStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",fecant" 
+				+ ",ctacar" 
+				+ ",profesion" 
+				+ ",codcon" 
+				+ ",codcat" 
+				+ ",nivel" 
+				+ ",descat" 
+				+ ",codbas" 
+				+ ",codepi" 
+				+ ",irpf" 
+				+ ",cno" 
+				+ ",procot" 
+				+ ",proret" 
+				+ ",nummat" 
+				+ ",codcont" 
+				+ ",descont" 
+				+ ",codtc2" 
+				+ ",destc2" 
+				+ ",fecinicont" 
+				+ ",fecfincont" 
+				+ ",diascont" 
+				+ ",autorizacion" 
+				+ ",fecaut" 
+				+ ",codent" 
+				+ ",codsuc" 
+				+ ",numcta" 
+				+ ",plunumaut" 
+				+ ",plufecaut" 
+				+ ",pluprcmin" 
+				+ ",pluprcmax" 
+				+ ",coered" 
+				+ ",semana" 
+				+ ",semanatp" 
+				+ ",cantp" 
+				+ ",baseant" 
+				+ ",indalt" 
+				+ ",inddtoit" 
+				+ ",inddtootr" 
+				+ ",codpct" 
+				+ ",indtp" 
+				+ ",indirpf" 
+				+ ",concol" 
+				+ ",indactcon" 
+				+ ",especial" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",dc" 
+				+ ",historico" 
+				+ ",indceutamelilla" 
+				+ ",colectivo" 
+				+ ",relacion" 
+				+ ",ocupacion" 
+				+ ",ocupacion2009" 
+				+ ",tipotp" 
+				+ ",diastp" 
+				+ ",guardalegal" 
+				+ ",iban" 
+				+ ",fecfinperiprue" 
+				+ " FROM trabajo"
+				+ " WHERE" 
+				+ " codpct = ?  " 			); 
+	}
+
+	private void closeRel_tra_pctStmt() 
+	throws SQLException{
+		if ( rel_tra_pctStmt != null ) { 
+			rel_tra_pctStmt.close();
+			rel_tra_pctStmt = null;	
 		}
 	}
 
@@ -7112,31 +8343,6 @@ public class AbstractCtsqlDB {
 		}
 		
 		/**
-		 * Visit Trabajo that're children of this Porcoti. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitRel_tra_pct(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( rel_tra_pctStmt == null )
-					 initRel_tra_pctStmt();
-				
-				rel_tra_pctStmt.setString(1, this.getCdg()); 
-				rs = rel_tra_pctStmt.executeQuery();
-				Trabajo trabajo = new Trabajo(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitRel_tra_pct(trabajo, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		
-		/**
 		 * Visit Costes that're children of this Porcoti. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
@@ -7153,6 +8359,31 @@ public class AbstractCtsqlDB {
 				Costes costes = new Costes(rs); 
 				while ( rs.next() ) {
 					ctsqlDBVisitor.visitRel_cos_pct(costes, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Trabajo that're children of this Porcoti. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitRel_tra_pct(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( rel_tra_pctStmt == null )
+					 initRel_tra_pctStmt();
+				
+				rel_tra_pctStmt.setString(1, this.getCdg()); 
+				rs = rel_tra_pctStmt.executeQuery();
+				Trabajo trabajo = new Trabajo(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitRel_tra_pct(trabajo, this);
 				}
 			}
 			finally {
@@ -7353,75 +8584,212 @@ public class AbstractCtsqlDB {
 
 	
 
+	private PreparedStatement _bewsotad_nilStmt = null;
+		
+	private void initBewsotad_nilStmt() 
+	throws SQLException{
+		this._bewsotad_nilStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",nivel" 
+				+ ",codigo" 
+				+ ",descripcion" 
+				+ ",email" 
+				+ " FROM datosweb"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeBewsotad_nilStmt() 
+	throws SQLException{
+		if ( _bewsotad_nilStmt != null ) { 
+			_bewsotad_nilStmt.close();
+			_bewsotad_nilStmt = null;	
+		}
+	}
 
 	/**
-	 * Nszcatg
+	 * Lindatosweb
 	 * 
 	 */
-	public class Nszcatg {
+	public class Lindatosweb {
 		
 		private ResultSet rs;
 		
-		protected Nszcatg (ResultSet rs) 
+		protected Lindatosweb (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
 		
 		/**
-		 * $column.remarks
-		 * @return the column 'scg0' value; if the value is SQL NULL, the value returned is null
+		 * Código
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getScg0()
+		public Integer getCdg()
 		throws SQLException {
-			return rs.getString(1);
+			return rs.getInt(1);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'scg1' value; if the value is SQL NULL, the value returned is null
+		 * Fichero
+		 * @return the column 'fichero' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getScg1()
+		public String getFichero()
 		throws SQLException {
 			return rs.getString(2);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'scg2' value; if the value is SQL NULL, the value returned is null
+		 * Tipo
+		 * @return the column 'tipo' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getScg2()
+		public String getTipo()
 		throws SQLException {
 			return rs.getString(3);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'scg3' value; if the value is SQL NULL, the value returned is null
+		 * Año
+		 * @return the column 'anio' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getScg3()
+		public Integer getAnio()
 		throws SQLException {
-			return rs.getString(4);
+			return rs.getInt(4);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'scg4' value; if the value is SQL NULL, the value returned is null
+		 * Mes
+		 * @return the column 'mes' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getScg4()
+		public Integer getMes()
 		throws SQLException {
-			return rs.getString(5);
+			return rs.getInt(5);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'scg5' value; if the value is SQL NULL, the value returned is null
+		 * Dirección
+		 * @return the column 'direccion' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getScg5()
+		public String getDireccion()
 		throws SQLException {
 			return rs.getString(6);
 		}
+		/**
+		 * Financiero
+		 * @return the column 'financiero' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getFinanciero()
+		throws SQLException {
+			return rs.getString(7);
+		}
+		/**
+		 * R.R.H.H.
+		 * @return the column 'rrhh' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getRrhh()
+		throws SQLException {
+			return rs.getString(8);
+		}
+		/**
+		 * Contabilidad
+		 * @return the column 'contabilidad' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getContabilidad()
+		throws SQLException {
+			return rs.getString(9);
+		}
+		/**
+		 * Administrativo
+		 * @return the column 'administrativo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getAdministrativo()
+		throws SQLException {
+			return rs.getString(10);
+		}
+		/**
+		 * Nóminas
+		 * @return the column 'nominas' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNominas()
+		throws SQLException {
+			return rs.getString(11);
+		}
+		/**
+		 * Informaciones
+		 * @return the column 'informaciones' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getInformaciones()
+		throws SQLException {
+			return rs.getString(12);
+		}
+		/**
+		 * Otros
+		 * @return the column 'otros' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getOtros()
+		throws SQLException {
+			return rs.getString(13);
+		}
+		/**
+		 * Descripción
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getDescripcion()
+		throws SQLException {
+			return rs.getString(14);
+		}
+		/**
+		 * Remesa
+		 * @return the column 'remesa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getRemesa()
+		throws SQLException {
+			return rs.getString(15);
+		}
+		/**
+		 * Estado
+		 * @return the column 'estado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEstado()
+		throws SQLException {
+			return rs.getInt(16);
+		}
 
+		/**
+		 * Visit Datosweb that's parent of this Lindatosweb. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitLin_datosweb(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _bewsotad_nilStmt == null )
+					 initBewsotad_nilStmt();
+				
+				_bewsotad_nilStmt.setInt(1, this.getCdg()); 
+				rs = _bewsotad_nilStmt.executeQuery();
+				Datosweb datosweb = new Datosweb(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitLin_datosweb(this, datosweb);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
 
 	}
 	
@@ -7485,32 +8853,372 @@ public class AbstractCtsqlDB {
 
 	
 		
-	private PreparedStatement rel_bpe_bonStmt = null;
+	private PreparedStatement lin_honorariosStmt = null;
 		
-	private void initRel_bpe_bonStmt() 
+	private void initLin_honorariosStmt() 
 	throws SQLException{
-		this.rel_bpe_bonStmt = ctsqlConnection.prepareStatement(
+		this.lin_honorariosStmt = ctsqlConnection.prepareStatement(
 				"SELECT "
-				+ "numero" 
-				+ ",cdg" 
+				+ "cdg" 
 				+ ",fecini" 
 				+ ",fecfin" 
-				+ ",horas" 
-				+ ",importe" 
 				+ ",tipo" 
-				+ ",prorrateo" 
-				+ " FROM bonifica"
+				+ ",hasta" 
+				+ ",importe" 
+				+ " FROM linhonorarios"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
 	}
 
-	private void closeRel_bpe_bonStmt() 
+	private void closeLin_honorariosStmt() 
 	throws SQLException{
-		if ( rel_bpe_bonStmt != null ) { 
-			rel_bpe_bonStmt.close();
-			rel_bpe_bonStmt = null;	
+		if ( lin_honorariosStmt != null ) { 
+			lin_honorariosStmt.close();
+			lin_honorariosStmt = null;	
 		}
 	}
+
+	private PreparedStatement _etneilc_nohStmt = null;
+		
+	private void initEtneilc_nohStmt() 
+	throws SQLException{
+		this._etneilc_nohStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",coddlg" 
+				+ ",descripcion" 
+				+ ",alias" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",tipovia" 
+				+ ",nomvia" 
+				+ ",numero" 
+				+ ",otrdir" 
+				+ ",codpos" 
+				+ ",localidad" 
+				+ ",provincia" 
+				+ ",persona" 
+				+ ",telefono" 
+				+ ",telefono2" 
+				+ ",telefono3" 
+				+ ",fax" 
+				+ ",email" 
+				+ ",inddoc" 
+				+ ",paiemi" 
+				+ ",numdoc" 
+				+ ",tipemp" 
+				+ ",obscli" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",inactivo" 
+				+ ",indcal" 
+				+ ",indnom" 
+				+ ",indcoste" 
+				+ ",divisa" 
+				+ ",soloases" 
+				+ ",envioss" 
+				+ ",grupotrabajo" 
+				+ " FROM cliente"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeEtneilc_nohStmt() 
+	throws SQLException{
+		if ( _etneilc_nohStmt != null ) { 
+			_etneilc_nohStmt.close();
+			_etneilc_nohStmt = null;	
+		}
+	}
+	private PreparedStatement _finrpme_nohStmt = null;
+		
+	private void initFinrpme_nohStmt() 
+	throws SQLException{
+		this._finrpme_nohStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",codcli" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",descripcion" 
+				+ ",alias" 
+				+ ",inddoc" 
+				+ ",paiemi" 
+				+ ",numdoc" 
+				+ ",representante" 
+				+ ",cargo" 
+				+ ",fecnac" 
+				+ ",nrodocrep" 
+				+ ",codadm" 
+				+ ",tipempr" 
+				+ ",sexo" 
+				+ ",feccon" 
+				+ ",obsnif" 
+				+ ",datreg" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",tipdocrep" 
+				+ ",paidocrep" 
+				+ ",indirpf" 
+				+ ",indcal" 
+				+ ",indnom" 
+				+ ",indcoste" 
+				+ ",divisa" 
+				+ ",envioss" 
+				+ ",cecon" 
+				+ ",modimpuesto" 
+				+ ",mod190" 
+				+ ",feciniportal" 
+				+ ",feccierrenomina" 
+				+ ",meseshistorico" 
+				+ " FROM emprnif"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeFinrpme_nohStmt() 
+	throws SQLException{
+		if ( _finrpme_nohStmt != null ) { 
+			_finrpme_nohStmt.close();
+			_finrpme_nohStmt = null;	
+		}
+	}
+	private PreparedStatement _tcarpme_nohStmt = null;
+		
+	private void initTcarpme_nohStmt() 
+	throws SQLException{
+		this._tcarpme_nohStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",codnsz" 
+				+ ",codemp" 
+				+ ",convenio" 
+				+ ",descripcion" 
+				+ ",alias" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",acteco" 
+				+ ",epiiae" 
+				+ ",cnae" 
+				+ ",cnae2009" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",indred" 
+				+ ",indmutua" 
+				+ ",indtc1" 
+				+ ",indcal" 
+				+ ",indnom" 
+				+ ",indcoste" 
+				+ ",envioss" 
+				+ ",flc" 
+				+ ",colss" 
+				+ ",ingespemp" 
+				+ ",modpago" 
+				+ ",tiponomina" 
+				+ ",indlogo" 
+				+ ",indfirma" 
+				+ ",indregimen" 
+				+ ",prevencion" 
+				+ ",indsiltra" 
+				+ ",autoriza" 
+				+ " FROM empract"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeTcarpme_nohStmt() 
+	throws SQLException{
+		if ( _tcarpme_nohStmt != null ) { 
+			_tcarpme_nohStmt.close();
+			_tcarpme_nohStmt = null;	
+		}
+	}
+
+	/**
+	 * Honorarios
+	 * 
+	 */
+	public class Honorarios {
+		
+		private ResultSet rs;
+		
+		protected Honorarios (ResultSet rs) 
+		throws SQLException {
+			this.rs =rs;
+		}
+		
+		/**
+		 * Código de honorario
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCdg()
+		throws SQLException {
+			return rs.getInt(1);
+		}
+		/**
+		 * Código de cliente
+		 * @return the column 'codcli' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCodcli()
+		throws SQLException {
+			return rs.getInt(2);
+		}
+		/**
+		 * Código de empresa
+		 * @return the column 'codemp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCodemp()
+		throws SQLException {
+			return rs.getInt(3);
+		}
+		/**
+		 * Código de actividad
+		 * @return the column 'codact' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCodact()
+		throws SQLException {
+			return rs.getInt(4);
+		}
+		/**
+		 * Tipo de honorario
+		 * @return the column 'tipo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getTipo()
+		throws SQLException {
+			return rs.getInt(5);
+		}
+		/**
+		 * Texto
+		 * @return the column 'texto' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTexto()
+		throws SQLException {
+			return rs.getString(6);
+		}
+		/**
+		 * Código de facturación
+		 * @return the column 'facturar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getFacturar()
+		throws SQLException {
+			return rs.getString(7);
+		}
+
+		/**
+		 * Visit Cliente that's parent of this Honorarios. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitHon_cliente(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _etneilc_nohStmt == null )
+					 initEtneilc_nohStmt();
+				
+				_etneilc_nohStmt.setInt(1, this.getCodcli()); 
+				rs = _etneilc_nohStmt.executeQuery();
+				Cliente cliente = new Cliente(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitHon_cliente(this, cliente);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		/**
+		 * Visit Emprnif that's parent of this Honorarios. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitHon_emprnif(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _finrpme_nohStmt == null )
+					 initFinrpme_nohStmt();
+				
+				_finrpme_nohStmt.setInt(1, this.getCodemp()); 
+				rs = _finrpme_nohStmt.executeQuery();
+				Emprnif emprnif = new Emprnif(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitHon_emprnif(this, emprnif);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		/**
+		 * Visit Empract that's parent of this Honorarios. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitHon_empract(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _tcarpme_nohStmt == null )
+					 initTcarpme_nohStmt();
+				
+				_tcarpme_nohStmt.setInt(1, this.getCodact()); 
+				rs = _tcarpme_nohStmt.executeQuery();
+				Empract empract = new Empract(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitHon_empract(this, empract);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+
+		
+		/**
+		 * Visit Linhonorarios that're children of this Honorarios. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitLin_honorarios(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( lin_honorariosStmt == null )
+					 initLin_honorariosStmt();
+				
+				lin_honorariosStmt.setInt(1, this.getCdg()); 
+				rs = lin_honorariosStmt.executeQuery();
+				Linhonorarios linhonorarios = new Linhonorarios(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitLin_honorarios(linhonorarios, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+	}
+	
+
+	
 
 
 	/**
@@ -7618,31 +9326,6 @@ public class AbstractCtsqlDB {
 		}
 
 
-		
-		/**
-		 * Visit Bonifica that're children of this Tipboni. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitRel_bpe_bon(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( rel_bpe_bonStmt == null )
-					 initRel_bpe_bonStmt();
-				
-				rel_bpe_bonStmt.setInt(1, this.getCdg()); 
-				rs = rel_bpe_bonStmt.executeQuery();
-				Bonifica bonifica = new Bonifica(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitRel_bpe_bon(bonifica, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
 	}
 	
 
@@ -7676,6 +9359,8 @@ public class AbstractCtsqlDB {
 				+ ",indcom" 
 				+ ",tipcom" 
 				+ ",dinesp" 
+				+ ",concepto" 
+				+ ",excinc" 
 				+ " FROM percniv"
 				+ " WHERE" 
 				+ " cdg = ?  "  + "AND" 				+ " nivel = ?  " 			); 
@@ -8135,13 +9820,22 @@ public class AbstractCtsqlDB {
 			return rs.getString(9);
 		}
 		/**
+		 * Convenio colectivo
+		 * @return the column 'concol' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getConcol()
+		throws SQLException {
+			return rs.getString(10);
+		}
+		/**
 		 * Numero identificacion empresa
 		 * @return the column 'numidemp' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
 		public String getNumidemp()
 		throws SQLException {
-			return rs.getString(10);
+			return rs.getString(11);
 		}
 		/**
 		 * Indicador razon social
@@ -8150,7 +9844,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getIndrs()
 		throws SQLException {
-			return rs.getString(11);
+			return rs.getString(12);
 		}
 		/**
 		 * Codigo Actividad
@@ -8159,7 +9853,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getCodact()
 		throws SQLException {
-			return rs.getInt(12);
+			return rs.getInt(13);
 		}
 		/**
 		 * Razon social
@@ -8168,7 +9862,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getRazon()
 		throws SQLException {
-			return rs.getString(13);
+			return rs.getString(14);
 		}
 		/**
 		 * Provincia N.A.F.
@@ -8177,7 +9871,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getProvnaf()
 		throws SQLException {
-			return rs.getString(14);
+			return rs.getString(15);
 		}
 		/**
 		 * Numero N.A.F.
@@ -8186,7 +9880,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getNumnaf()
 		throws SQLException {
-			return rs.getString(15);
+			return rs.getString(16);
 		}
 		/**
 		 * Tipo identificacion IPF
@@ -8195,7 +9889,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getTipidipf()
 		throws SQLException {
-			return rs.getString(16);
+			return rs.getString(17);
 		}
 		/**
 		 * Pais IPF
@@ -8204,7 +9898,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getPaisipf()
 		throws SQLException {
-			return rs.getString(17);
+			return rs.getString(18);
 		}
 		/**
 		 * Nacionalidad
@@ -8213,7 +9907,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getNacion()
 		throws SQLException {
-			return rs.getString(18);
+			return rs.getString(19);
 		}
 		/**
 		 * Primer apellido
@@ -8222,7 +9916,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getApel1()
 		throws SQLException {
-			return rs.getString(19);
+			return rs.getString(20);
 		}
 		/**
 		 * Segundo apellido
@@ -8231,7 +9925,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getApel2()
 		throws SQLException {
-			return rs.getString(20);
+			return rs.getString(21);
 		}
 		/**
 		 * Nombre
@@ -8240,7 +9934,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getNombre()
 		throws SQLException {
-			return rs.getString(21);
+			return rs.getString(22);
 		}
 		/**
 		 * Tipo Via
@@ -8249,7 +9943,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getTipovia()
 		throws SQLException {
-			return rs.getString(22);
+			return rs.getString(23);
 		}
 		/**
 		 * Nombre Via
@@ -8258,7 +9952,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getNomvia()
 		throws SQLException {
-			return rs.getString(23);
+			return rs.getString(24);
 		}
 		/**
 		 * Numero
@@ -8267,7 +9961,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getNumero()
 		throws SQLException {
-			return rs.getString(24);
+			return rs.getString(25);
 		}
 		/**
 		 * Bloque
@@ -8276,7 +9970,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getBloque()
 		throws SQLException {
-			return rs.getString(25);
+			return rs.getString(26);
 		}
 		/**
 		 * Escalera
@@ -8285,7 +9979,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getEscalera()
 		throws SQLException {
-			return rs.getString(26);
+			return rs.getString(27);
 		}
 		/**
 		 * Piso
@@ -8294,7 +9988,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getPiso()
 		throws SQLException {
-			return rs.getString(27);
+			return rs.getString(28);
 		}
 		/**
 		 * Puerta
@@ -8303,7 +9997,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getPuerta()
 		throws SQLException {
-			return rs.getString(28);
+			return rs.getString(29);
 		}
 		/**
 		 * Codigo Postal
@@ -8312,7 +10006,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getCodpos()
 		throws SQLException {
-			return rs.getString(29);
+			return rs.getString(30);
 		}
 		/**
 		 * Municipio-Entidad
@@ -8321,7 +10015,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getMunic()
 		throws SQLException {
-			return rs.getString(30);
+			return rs.getString(31);
 		}
 		/**
 		 * Localidad
@@ -8330,7 +10024,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getLocalidad()
 		throws SQLException {
-			return rs.getString(31);
+			return rs.getString(32);
 		}
 		/**
 		 * Provincia
@@ -8339,7 +10033,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getProvincia()
 		throws SQLException {
-			return rs.getString(32);
+			return rs.getString(33);
 		}
 		/**
 		 * Accion
@@ -8348,7 +10042,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getAccion()
 		throws SQLException {
-			return rs.getString(33);
+			return rs.getString(34);
 		}
 		/**
 		 * Situacion
@@ -8357,7 +10051,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getSituacion()
 		throws SQLException {
-			return rs.getString(34);
+			return rs.getString(35);
 		}
 		/**
 		 * Fecha Real
@@ -8366,7 +10060,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFecreal()
 		throws SQLException {
-			return rs.getDate(35);
+			return rs.getDate(36);
 		}
 		/**
 		 * Grupo cotizacion
@@ -8375,7 +10069,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getGrucot()
 		throws SQLException {
-			return rs.getString(36);
+			return rs.getString(37);
 		}
 		/**
 		 * Epigrafe de A.T.
@@ -8384,7 +10078,16 @@ public class AbstractCtsqlDB {
 		 */
 		public String getEpigat()
 		throws SQLException {
-			return rs.getString(37);
+			return rs.getString(38);
+		}
+		/**
+		 * Prorrateo Cotizacion
+		 * @return the column 'procot' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getProcot()
+		throws SQLException {
+			return rs.getString(39);
 		}
 		/**
 		 * Contrato de trabajo
@@ -8393,7 +10096,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getContrab()
 		throws SQLException {
-			return rs.getString(38);
+			return rs.getString(40);
 		}
 		/**
 		 * Coeficiente tiempo parcial
@@ -8402,7 +10105,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getCoeftp()
 		throws SQLException {
-			return rs.getString(39);
+			return rs.getString(41);
 		}
 		/**
 		 * Indicador impresion
@@ -8411,7 +10114,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getIndimp()
 		throws SQLException {
-			return rs.getString(40);
+			return rs.getString(42);
 		}
 		/**
 		 * Dias trabajados
@@ -8420,7 +10123,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getDiastrab()
 		throws SQLException {
-			return rs.getString(41);
+			return rs.getString(43);
 		}
 		/**
 		 * Coeficiente de permanencia
@@ -8429,7 +10132,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getCoefper()
 		throws SQLException {
-			return rs.getBigDecimal(42);
+			return rs.getBigDecimal(44);
 		}
 		/**
 		 * Fecha Nacimiento
@@ -8438,7 +10141,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFecnac()
 		throws SQLException {
-			return rs.getDate(43);
+			return rs.getDate(45);
 		}
 		/**
 		 * Sexo
@@ -8447,7 +10150,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getSexo()
 		throws SQLException {
-			return rs.getString(44);
+			return rs.getString(46);
 		}
 		/**
 		 * Categoria profesional
@@ -8456,7 +10159,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getCatprof()
 		throws SQLException {
-			return rs.getString(45);
+			return rs.getString(47);
 		}
 		/**
 		 * Numero identificacion trabajador
@@ -8465,7 +10168,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getAlfaclave()
 		throws SQLException {
-			return rs.getString(46);
+			return rs.getString(48);
 		}
 		/**
 		 * Entidad menor
@@ -8474,7 +10177,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getEntidad()
 		throws SQLException {
-			return rs.getString(47);
+			return rs.getString(49);
 		}
 		/**
 		 * Colectivo del trabajador
@@ -8483,7 +10186,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getColtrab()
 		throws SQLException {
-			return rs.getString(48);
+			return rs.getString(50);
 		}
 		/**
 		 * Tipo empresario
@@ -8492,7 +10195,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getCalemp()
 		throws SQLException {
-			return rs.getString(49);
+			return rs.getString(51);
 		}
 		/**
 		 * Regimen S.S.
@@ -8501,7 +10204,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getRegss()
 		throws SQLException {
-			return rs.getString(50);
+			return rs.getString(52);
 		}
 		/**
 		 * Relacion Laboral de Caracter Especial
@@ -8510,7 +10213,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getRlabcaresp()
 		throws SQLException {
-			return rs.getString(51);
+			return rs.getString(53);
 		}
 		/**
 		 * Provincia de S.S. del Trabajador Sustituido
@@ -8519,7 +10222,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getProvsstrasust()
 		throws SQLException {
-			return rs.getString(52);
+			return rs.getString(54);
 		}
 		/**
 		 * Numero de S.S. del Trabajador Sustituido
@@ -8528,7 +10231,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getNumsstrasust()
 		throws SQLException {
-			return rs.getString(53);
+			return rs.getString(55);
 		}
 		/**
 		 * Causa de Sustitucion
@@ -8537,7 +10240,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getCausasust()
 		throws SQLException {
-			return rs.getString(54);
+			return rs.getString(56);
 		}
 		/**
 		 * Autorización para trabajar
@@ -8546,7 +10249,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getAutorizacion()
 		throws SQLException {
-			return rs.getString(55);
+			return rs.getString(57);
 		}
 		/**
 		 * Fecha autorización
@@ -8555,7 +10258,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFecaut()
 		throws SQLException {
-			return rs.getDate(56);
+			return rs.getDate(58);
 		}
 		/**
 		 * Fecha de Inicio de Contrato
@@ -8564,7 +10267,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFecinicont()
 		throws SQLException {
-			return rs.getDate(57);
+			return rs.getDate(59);
 		}
 		/**
 		 * Indicador de subrogacion parcial
@@ -8573,7 +10276,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getIndsubrog()
 		throws SQLException {
-			return rs.getString(58);
+			return rs.getString(60);
 		}
 		/**
 		 * Empresa Origen del Contrato
@@ -8582,7 +10285,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getEmporigen()
 		throws SQLException {
-			return rs.getString(59);
+			return rs.getString(61);
 		}
 		/**
 		 * Trabajadores con exclusion de cotizacion
@@ -8591,7 +10294,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getExcoti()
 		throws SQLException {
-			return rs.getString(60);
+			return rs.getString(62);
 		}
 		/**
 		 * Provincia del CCC del empresario usuario
@@ -8600,7 +10303,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getProvempusu()
 		throws SQLException {
-			return rs.getString(61);
+			return rs.getString(63);
 		}
 		/**
 		 * Numero de CCC del empresario usuario
@@ -8609,7 +10312,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getNumempusu()
 		throws SQLException {
-			return rs.getString(62);
+			return rs.getString(64);
 		}
 		/**
 		 * Contrato Interno
@@ -8618,7 +10321,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getContrint()
 		throws SQLException {
-			return rs.getString(63);
+			return rs.getString(65);
 		}
 		/**
 		 * Pariente 1º o 2º Grado
@@ -8627,7 +10330,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getPariente()
 		throws SQLException {
-			return rs.getString(64);
+			return rs.getString(66);
 		}
 		/**
 		 * Denominación de la Explotación
@@ -8636,7 +10339,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getEmbarcacion()
 		throws SQLException {
-			return rs.getString(65);
+			return rs.getString(67);
 		}
 		/**
 		 * Ocupación
@@ -8645,7 +10348,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getOcupacion()
 		throws SQLException {
-			return rs.getString(66);
+			return rs.getString(68);
 		}
 
 
@@ -8703,6 +10406,11 @@ public class AbstractCtsqlDB {
 				+ ",indgrupo" 
 				+ ",pariente" 
 				+ ",noirpf" 
+				+ ",nosegsoc" 
+				+ ",jubiladoactivo" 
+				+ ",certificado" 
+				+ ",familiar" 
+				+ ",noresidente" 
 				+ " FROM emprper"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -8770,9 +10478,9 @@ public class AbstractCtsqlDB {
 		 * @return the column 'cantidad' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getCantidad()
+		public BigDecimal getCantidad()
 		throws SQLException {
-			return rs.getInt(5);
+			return rs.getBigDecimal(5);
 		}
 		/**
 		 * Fecha Creacion Fila
@@ -8818,6 +10526,33 @@ public class AbstractCtsqlDB {
 		public BigDecimal getImporte()
 		throws SQLException {
 			return rs.getBigDecimal(10);
+		}
+		/**
+		 * Coeficiente reductor ERE
+		 * @return the column 'coeficiente' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getCoeficiente()
+		throws SQLException {
+			return rs.getBigDecimal(11);
+		}
+		/**
+		 * Base diaria contingencias comunes
+		 * @return the column 'basediacc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getBasediacc()
+		throws SQLException {
+			return rs.getBigDecimal(12);
+		}
+		/**
+		 * Base diaria accidente de trabajo
+		 * @return the column 'basediaacc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getBasediaacc()
+		throws SQLException {
+			return rs.getBigDecimal(13);
 		}
 
 		/**
@@ -8873,78 +10608,6 @@ public class AbstractCtsqlDB {
 	
 
 	
-		
-	private PreparedStatement finexdf_findfStmt = null;
-		
-	private void initFinexdf_findfStmt() 
-	throws SQLException{
-		this.finexdf_findfStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",fecini" 
-				+ ",fecfin" 
-				+ ",codcom" 
-				+ ",importe" 
-				+ ",descom" 
-				+ " FROM finipextdf"
-				+ " WHERE" 
-				+ " cdg = ?  " 			); 
-	}
-
-	private void closeFinexdf_findfStmt() 
-	throws SQLException{
-		if ( finexdf_findfStmt != null ) { 
-			finexdf_findfStmt.close();
-			finexdf_findfStmt = null;	
-		}
-	}
-		
-	private PreparedStatement finiddf_findfStmt = null;
-		
-	private void initFiniddf_findfStmt() 
-	throws SQLException{
-		this.finiddf_findfStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",orden" 
-				+ ",texto" 
-				+ ",importe" 
-				+ ",irpf" 
-				+ " FROM finindemdf"
-				+ " WHERE" 
-				+ " cdg = ?  " 			); 
-	}
-
-	private void closeFiniddf_findfStmt() 
-	throws SQLException{
-		if ( finiddf_findfStmt != null ) { 
-			finiddf_findfStmt.close();
-			finiddf_findfStmt = null;	
-		}
-	}
-		
-	private PreparedStatement findtodf_findfStmt = null;
-		
-	private void initFindtodf_findfStmt() 
-	throws SQLException{
-		this.findtodf_findfStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",orden" 
-				+ ",texto" 
-				+ ",importe" 
-				+ " FROM finidtodf"
-				+ " WHERE" 
-				+ " cdg = ?  " 			); 
-	}
-
-	private void closeFindtodf_findfStmt() 
-	throws SQLException{
-		if ( findtodf_findfStmt != null ) { 
-			findtodf_findfStmt.close();
-			findtodf_findfStmt = null;	
-		}
-	}
 
 	private PreparedStatement _reprpme_fdnifStmt = null;
 		
@@ -8973,6 +10636,11 @@ public class AbstractCtsqlDB {
 				+ ",indgrupo" 
 				+ ",pariente" 
 				+ ",noirpf" 
+				+ ",nosegsoc" 
+				+ ",jubiladoactivo" 
+				+ ",certificado" 
+				+ ",familiar" 
+				+ ",noresidente" 
 				+ " FROM emprper"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -9041,13 +10709,22 @@ public class AbstractCtsqlDB {
 			return rs.getDate(2);
 		}
 		/**
+		 * Código de la causa de baja
+		 * @return the column 'codcausa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCodcausa()
+		throws SQLException {
+			return rs.getString(3);
+		}
+		/**
 		 * Causa de Baja
 		 * @return the column 'causa' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
 		public String getCausa()
 		throws SQLException {
-			return rs.getString(3);
+			return rs.getString(4);
 		}
 		/**
 		 * Fecha Desde Vacaciones
@@ -9056,7 +10733,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getVacfecini()
 		throws SQLException {
-			return rs.getDate(4);
+			return rs.getDate(5);
 		}
 		/**
 		 * Importe Vacaciones
@@ -9065,7 +10742,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getVacimporte()
 		throws SQLException {
-			return rs.getBigDecimal(5);
+			return rs.getBigDecimal(6);
 		}
 		/**
 		 * Total Conceptos Finiquito
@@ -9074,7 +10751,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getTotal_conceptos()
 		throws SQLException {
-			return rs.getBigDecimal(6);
+			return rs.getBigDecimal(7);
 		}
 		/**
 		 * Base I.R.P.F.
@@ -9083,7 +10760,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase()
 		throws SQLException {
-			return rs.getBigDecimal(7);
+			return rs.getBigDecimal(8);
 		}
 		/**
 		 * % I.R.P.F.
@@ -9092,7 +10769,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getIrpf()
 		throws SQLException {
-			return rs.getBigDecimal(8);
+			return rs.getBigDecimal(9);
 		}
 		/**
 		 * Importe Retenido I.R.P.F.
@@ -9101,7 +10778,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_irpf()
 		throws SQLException {
-			return rs.getBigDecimal(9);
+			return rs.getBigDecimal(10);
 		}
 		/**
 		 * Importe Liquido
@@ -9110,7 +10787,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getLiquido()
 		throws SQLException {
-			return rs.getBigDecimal(10);
+			return rs.getBigDecimal(11);
 		}
 		/**
 		 * Importe Indemnizaciones no sujetas a I.R.P.F.
@@ -9119,7 +10796,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImportesin()
 		throws SQLException {
-			return rs.getBigDecimal(11);
+			return rs.getBigDecimal(12);
 		}
 		/**
 		 * Fecha Creacion Fila
@@ -9128,7 +10805,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFecnew()
 		throws SQLException {
-			return rs.getDate(12);
+			return rs.getDate(13);
 		}
 		/**
 		 * Hora Creacion Fila
@@ -9137,7 +10814,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Time getHornew()
 		throws SQLException {
-			return rs.getTime(13);
+			return rs.getTime(14);
 		}
 		/**
 		 * Fecha Modificacion Fila
@@ -9146,7 +10823,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFecmod()
 		throws SQLException {
-			return rs.getDate(14);
+			return rs.getDate(15);
 		}
 		/**
 		 * Hora Modificacion Fila
@@ -9155,7 +10832,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Time getHormod()
 		throws SQLException {
-			return rs.getTime(15);
+			return rs.getTime(16);
 		}
 		/**
 		 * Codigo de Finiquito de Diferencias
@@ -9164,7 +10841,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getCdg()
 		throws SQLException {
-			return rs.getInt(16);
+			return rs.getInt(17);
 		}
 		/**
 		 * Codigo de la Nomina Resumen de Atrasos
@@ -9173,7 +10850,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getCdgnom()
 		throws SQLException {
-			return rs.getInt(17);
+			return rs.getInt(18);
 		}
 		/**
 		 * Fecha de Cobro Real
@@ -9182,7 +10859,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFeccobreal()
 		throws SQLException {
-			return rs.getDate(18);
+			return rs.getDate(19);
 		}
 		/**
 		 * Divisa
@@ -9191,7 +10868,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getDivisa()
 		throws SQLException {
-			return rs.getString(19);
+			return rs.getString(20);
 		}
 		/**
 		 * Días vacaciones
@@ -9200,7 +10877,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDiasvac()
 		throws SQLException {
-			return rs.getInt(20);
+			return rs.getInt(21);
 		}
 		/**
 		 * Coste S.S. empresa
@@ -9209,7 +10886,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getCostessemp()
 		throws SQLException {
-			return rs.getBigDecimal(21);
+			return rs.getBigDecimal(22);
 		}
 		/**
 		 * Grupo de tarifa
@@ -9218,7 +10895,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getCodbas()
 		throws SQLException {
-			return rs.getString(22);
+			return rs.getString(23);
 		}
 		/**
 		 * Base Contingencias Generales
@@ -9227,7 +10904,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBasecg()
 		throws SQLException {
-			return rs.getBigDecimal(23);
+			return rs.getBigDecimal(24);
 		}
 		/**
 		 * % Contingencias Generales
@@ -9236,7 +10913,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getPrccg()
 		throws SQLException {
-			return rs.getBigDecimal(24);
+			return rs.getBigDecimal(25);
 		}
 		/**
 		 * Importe Contingencias Generales
@@ -9245,7 +10922,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImportecg()
 		throws SQLException {
-			return rs.getBigDecimal(25);
+			return rs.getBigDecimal(26);
 		}
 		/**
 		 * Base Accidente de Trabajo
@@ -9254,7 +10931,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBaseacc()
 		throws SQLException {
-			return rs.getBigDecimal(26);
+			return rs.getBigDecimal(27);
 		}
 		/**
 		 * % Accidente de Trabajo
@@ -9263,7 +10940,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getPrcacc()
 		throws SQLException {
-			return rs.getBigDecimal(27);
+			return rs.getBigDecimal(28);
 		}
 		/**
 		 * Importe Accidente de Trabajo
@@ -9272,7 +10949,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporteacc()
 		throws SQLException {
-			return rs.getBigDecimal(28);
+			return rs.getBigDecimal(29);
 		}
 
 		/**
@@ -9324,81 +11001,81 @@ public class AbstractCtsqlDB {
 			}
 		}
 
+	}
+	
+
+	
+
+
+	/**
+	 * Baseartista
+	 * 
+	 */
+	public class Baseartista {
 		
-		/**
-		 * Visit Finipextdf that're children of this Finiquitodf. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitFinexdf_findf(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( finexdf_findfStmt == null )
-					 initFinexdf_findfStmt();
-				
-				finexdf_findfStmt.setInt(1, this.getCdg()); 
-				rs = finexdf_findfStmt.executeQuery();
-				Finipextdf finipextdf = new Finipextdf(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitFinexdf_findf(finipextdf, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
+		private ResultSet rs;
+		
+		protected Baseartista (ResultSet rs) 
+		throws SQLException {
+			this.rs =rs;
 		}
 		
 		/**
-		 * Visit Finindemdf that're children of this Finiquitodf. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * Tramo
+		 * @return the column 'tramo' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public void visitFiniddf_findf(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( finiddf_findfStmt == null )
-					 initFiniddf_findfStmt();
-				
-				finiddf_findfStmt.setInt(1, this.getCdg()); 
-				rs = finiddf_findfStmt.executeQuery();
-				Finindemdf finindemdf = new Finindemdf(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitFiniddf_findf(finindemdf, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
+		public Integer getTramo()
+		throws SQLException {
+			return rs.getInt(1);
 		}
-		
 		/**
-		 * Visit Finidtodf that're children of this Finiquitodf. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * Inicio de vigencia
+		 * @return the column 'fecini' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public void visitFindtodf_findf(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( findtodf_findfStmt == null )
-					 initFindtodf_findfStmt();
-				
-				findtodf_findfStmt.setInt(1, this.getCdg()); 
-				rs = findtodf_findfStmt.executeQuery();
-				Finidtodf finidtodf = new Finidtodf(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitFindtodf_findf(finidtodf, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
+		public Date getFecini()
+		throws SQLException {
+			return rs.getDate(2);
 		}
+		/**
+		 * Fin de vigencia
+		 * @return the column 'fecfin' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFecfin()
+		throws SQLException {
+			return rs.getDate(3);
+		}
+		/**
+		 * Desde retribución
+		 * @return the column 'desde_retribucion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getDesde_retribucion()
+		throws SQLException {
+			return rs.getBigDecimal(4);
+		}
+		/**
+		 * Hasta retribución
+		 * @return the column 'hasta_retribucion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getHasta_retribucion()
+		throws SQLException {
+			return rs.getBigDecimal(5);
+		}
+		/**
+		 * Euros/día
+		 * @return the column 'eurosdia' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getEurosdia()
+		throws SQLException {
+			return rs.getBigDecimal(6);
+		}
+
+
 	}
 	
 
@@ -9412,6 +11089,7 @@ public class AbstractCtsqlDB {
 				"SELECT "
 				+ "codper" 
 				+ ",fecbaj" 
+				+ ",codcausa" 
 				+ ",causa" 
 				+ ",vacfecini" 
 				+ ",vacimporte" 
@@ -9532,6 +11210,144 @@ public class AbstractCtsqlDB {
 	
 
 	
+		
+	private PreparedStatement lin_tipocargosStmt = null;
+		
+	private void initLin_tipocargosStmt() 
+	throws SQLException{
+		this.lin_tipocargosStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "tipocargo" 
+				+ ",workplace" 
+				+ ",facturar" 
+				+ " FROM lintipocargos"
+				+ " WHERE" 
+				+ " tipocargo = ?  " 			); 
+	}
+
+	private void closeLin_tipocargosStmt() 
+	throws SQLException{
+		if ( lin_tipocargosStmt != null ) { 
+			lin_tipocargosStmt.close();
+			lin_tipocargosStmt = null;	
+		}
+	}
+		
+	private PreparedStatement rel_tipocargosStmt = null;
+		
+	private void initRel_tipocargosStmt() 
+	throws SQLException{
+		this.rel_tipocargosStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",orden" 
+				+ ",tipocargo" 
+				+ ",texto" 
+				+ ",facturar" 
+				+ ",unidades" 
+				+ ",importe" 
+				+ ",fijo" 
+				+ " FROM lincargos"
+				+ " WHERE" 
+				+ " tipocargo = ?  " 			); 
+	}
+
+	private void closeRel_tipocargosStmt() 
+	throws SQLException{
+		if ( rel_tipocargosStmt != null ) { 
+			rel_tipocargosStmt.close();
+			rel_tipocargosStmt = null;	
+		}
+	}
+
+
+	/**
+	 * Tipocargos
+	 * 
+	 */
+	public class Tipocargos {
+		
+		private ResultSet rs;
+		
+		protected Tipocargos (ResultSet rs) 
+		throws SQLException {
+			this.rs =rs;
+		}
+		
+		/**
+		 * Código del cargo
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCdg()
+		throws SQLException {
+			return rs.getString(1);
+		}
+		/**
+		 * Descripción del cargo
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getDescripcion()
+		throws SQLException {
+			return rs.getString(2);
+		}
+
+
+		
+		/**
+		 * Visit Lintipocargos that're children of this Tipocargos. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitLin_tipocargos(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( lin_tipocargosStmt == null )
+					 initLin_tipocargosStmt();
+				
+				lin_tipocargosStmt.setString(1, this.getCdg()); 
+				rs = lin_tipocargosStmt.executeQuery();
+				Lintipocargos lintipocargos = new Lintipocargos(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitLin_tipocargos(lintipocargos, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Lincargos that're children of this Tipocargos. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitRel_tipocargos(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( rel_tipocargosStmt == null )
+					 initRel_tipocargosStmt();
+				
+				rel_tipocargosStmt.setString(1, this.getCdg()); 
+				rs = rel_tipocargosStmt.executeQuery();
+				Lincargos lincargos = new Lincargos(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitRel_tipocargos(lincargos, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+	}
+	
+
+	
 
 	private PreparedStatement _ilc_rav_lerStmt = null;
 		
@@ -9574,6 +11390,7 @@ public class AbstractCtsqlDB {
 				+ ",divisa" 
 				+ ",soloases" 
 				+ ",envioss" 
+				+ ",grupotrabajo" 
 				+ " FROM cliente"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -9626,6 +11443,9 @@ public class AbstractCtsqlDB {
 				+ ",cecon" 
 				+ ",modimpuesto" 
 				+ ",mod190" 
+				+ ",feciniportal" 
+				+ ",feccierrenomina" 
+				+ ",meseshistorico" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -9655,11 +11475,11 @@ public class AbstractCtsqlDB {
 				+ ",acteco" 
 				+ ",epiiae" 
 				+ ",cnae" 
+				+ ",cnae2009" 
 				+ ",fecnew" 
 				+ ",hornew" 
 				+ ",fecmod" 
 				+ ",hormod" 
-				+ ",cnae2009" 
 				+ ",indred" 
 				+ ",indmutua" 
 				+ ",indtc1" 
@@ -9676,6 +11496,8 @@ public class AbstractCtsqlDB {
 				+ ",indfirma" 
 				+ ",indregimen" 
 				+ ",prevencion" 
+				+ ",indsiltra" 
+				+ ",autoriza" 
 				+ " FROM empract"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -10066,6 +11888,7 @@ public class AbstractCtsqlDB {
 				"SELECT "
 				+ "codper" 
 				+ ",fecbaj" 
+				+ ",codcausa" 
 				+ ",causa" 
 				+ ",vacfecini" 
 				+ ",vacimporte" 
@@ -10195,6 +12018,133 @@ public class AbstractCtsqlDB {
 	
 
 	
+		
+	private PreparedStatement lin_cargosStmt = null;
+		
+	private void initLin_cargosStmt() 
+	throws SQLException{
+		this.lin_cargosStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",orden" 
+				+ ",tipocargo" 
+				+ ",texto" 
+				+ ",facturar" 
+				+ ",unidades" 
+				+ ",importe" 
+				+ ",fijo" 
+				+ " FROM lincargos"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeLin_cargosStmt() 
+	throws SQLException{
+		if ( lin_cargosStmt != null ) { 
+			lin_cargosStmt.close();
+			lin_cargosStmt = null;	
+		}
+	}
+
+
+	/**
+	 * Cargos
+	 * 
+	 */
+	public class Cargos {
+		
+		private ResultSet rs;
+		
+		protected Cargos (ResultSet rs) 
+		throws SQLException {
+			this.rs =rs;
+		}
+		
+		/**
+		 * Código de factura
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCdg()
+		throws SQLException {
+			return rs.getInt(1);
+		}
+		/**
+		 * Código de actividad
+		 * @return the column 'codact' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCodact()
+		throws SQLException {
+			return rs.getInt(2);
+		}
+		/**
+		 * Descripción de actividad
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getDescripcion()
+		throws SQLException {
+			return rs.getString(3);
+		}
+		/**
+		 * Código BBX
+		 * @return the column 'codbbx' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCodbbx()
+		throws SQLException {
+			return rs.getString(4);
+		}
+		/**
+		 * Año de facturación
+		 * @return the column 'anio' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getAnio()
+		throws SQLException {
+			return rs.getInt(5);
+		}
+		/**
+		 * Mes de facturación
+		 * @return the column 'mes' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getMes()
+		throws SQLException {
+			return rs.getInt(6);
+		}
+
+
+		
+		/**
+		 * Visit Lincargos that're children of this Cargos. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitLin_cargos(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( lin_cargosStmt == null )
+					 initLin_cargosStmt();
+				
+				lin_cargosStmt.setInt(1, this.getCdg()); 
+				rs = lin_cargosStmt.executeQuery();
+				Lincargos lincargos = new Lincargos(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitLin_cargos(lincargos, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+	}
+	
+
+	
 
 	private PreparedStatement _asivid_asivid_nilStmt = null;
 		
@@ -10319,52 +12269,6 @@ public class AbstractCtsqlDB {
 
 	
 
-	private PreparedStatement _fdnif_fdxenifStmt = null;
-		
-	private void initFdnif_fdxenifStmt() 
-	throws SQLException{
-		this._fdnif_fdxenifStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "codper" 
-				+ ",fecbaj" 
-				+ ",causa" 
-				+ ",vacfecini" 
-				+ ",vacimporte" 
-				+ ",total_conceptos" 
-				+ ",base" 
-				+ ",irpf" 
-				+ ",importe_irpf" 
-				+ ",liquido" 
-				+ ",importesin" 
-				+ ",fecnew" 
-				+ ",hornew" 
-				+ ",fecmod" 
-				+ ",hormod" 
-				+ ",cdg" 
-				+ ",cdgnom" 
-				+ ",feccobreal" 
-				+ ",divisa" 
-				+ ",diasvac" 
-				+ ",costessemp" 
-				+ ",codbas" 
-				+ ",basecg" 
-				+ ",prccg" 
-				+ ",importecg" 
-				+ ",baseacc" 
-				+ ",prcacc" 
-				+ ",importeacc" 
-				+ " FROM finiquitodf"
-				+ " WHERE" 
-				+ " cdg = ?  " 			); 
-	}
-
-	private void closeFdnif_fdxenifStmt() 
-	throws SQLException{
-		if ( _fdnif_fdxenifStmt != null ) { 
-			_fdnif_fdxenifStmt.close();
-			_fdnif_fdxenifStmt = null;	
-		}
-	}
 	private PreparedStatement _moc_fdxenifStmt = null;
 		
 	private void initMoc_fdxenifStmt() 
@@ -10379,6 +12283,8 @@ public class AbstractCtsqlDB {
 				+ ",fijovar" 
 				+ ",indcom" 
 				+ ",dinesp" 
+				+ ",concepto" 
+				+ ",excinc" 
 				+ " FROM complemento"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -10461,30 +12367,6 @@ public class AbstractCtsqlDB {
 		}
 
 		/**
-		 * Visit Finiquitodf that's parent of this Finipextdf. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitFinexdf_findf(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( _fdnif_fdxenifStmt == null )
-					 initFdnif_fdxenifStmt();
-				
-				_fdnif_fdxenifStmt.setInt(1, this.getCdg()); 
-				rs = _fdnif_fdxenifStmt.executeQuery();
-				Finiquitodf finiquitodf = new Finiquitodf(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitFinexdf_findf(this, finiquitodf);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		/**
 		 * Visit Complemento that's parent of this Finipextdf. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
@@ -10508,6 +12390,99 @@ public class AbstractCtsqlDB {
 					rs.close();
 			}
 		}
+
+	}
+	
+
+	
+
+
+	/**
+	 * Remesace
+	 * 
+	 */
+	public class Remesace {
+		
+		private ResultSet rs;
+		
+		protected Remesace (ResultSet rs) 
+		throws SQLException {
+			this.rs =rs;
+		}
+		
+		/**
+		 * Código Trabajador
+		 * @return the column 'trabajador' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getTrabajador()
+		throws SQLException {
+			return rs.getInt(1);
+		}
+		/**
+		 * Cod.Empresa
+		 * @return the column 'codemp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCodemp()
+		throws SQLException {
+			return rs.getInt(2);
+		}
+		/**
+		 * Fecha Registro
+		 * @return the column 'fregistro' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFregistro()
+		throws SQLException {
+			return rs.getDate(3);
+		}
+		/**
+		 * Fecha Envio
+		 * @return the column 'fenvio' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFenvio()
+		throws SQLException {
+			return rs.getDate(4);
+		}
+		/**
+		 * Fichero
+		 * @return the column 'fichero' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getFichero()
+		throws SQLException {
+			return rs.getString(5);
+		}
+		/**
+		 * Cód Causa
+		 * @return the column 'causa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCausa()
+		throws SQLException {
+			return rs.getString(6);
+		}
+		/**
+		 * Fecha Alta
+		 * @return the column 'falta' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFalta()
+		throws SQLException {
+			return rs.getDate(7);
+		}
+		/**
+		 * Fecha Baja
+		 * @return the column 'fbaja' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFbaja()
+		throws SQLException {
+			return rs.getDate(8);
+		}
+
 
 	}
 	
@@ -11275,32 +13250,359 @@ public class AbstractCtsqlDB {
 	
 
 	
+		
+	private PreparedStatement tr_d_tramosStmt = null;
+		
+	private void initTr_d_tramosStmt() 
+	throws SQLException{
+		this.tr_d_tramosStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",persona" 
+				+ ",fecha_desde" 
+				+ ",tipo_dato" 
+				+ ",codigo" 
+				+ ",valor" 
+				+ ",estado" 
+				+ " FROM tr_datos"
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				+ " persona = ?  "  + "AND" 				+ " fecha_desde = ?  " 			); 
+	}
 
+	private void closeTr_d_tramosStmt() 
+	throws SQLException{
+		if ( tr_d_tramosStmt != null ) { 
+			tr_d_tramosStmt.close();
+			tr_d_tramosStmt = null;	
+		}
+	}
+		
+	private PreparedStatement tr_p_tramosStmt = null;
+		
+	private void initTr_p_tramosStmt() 
+	throws SQLException{
+		this.tr_p_tramosStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",persona" 
+				+ ",fecha_desde" 
+				+ ",cod_pec" 
+				+ ",fraccion_cuota" 
+				+ ",colect_incentivado" 
+				+ ",valor_pec" 
+				+ ",estado" 
+				+ " FROM tr_peculiar"
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				+ " persona = ?  "  + "AND" 				+ " fecha_desde = ?  " 			); 
+	}
+
+	private void closeTr_p_tramosStmt() 
+	throws SQLException{
+		if ( tr_p_tramosStmt != null ) { 
+			tr_p_tramosStmt.close();
+			tr_p_tramosStmt = null;	
+		}
+	}
+
+	private PreparedStatement _noicadiuqil_rtStmt = null;
+		
+	private void initNoicadiuqil_rtStmt() 
+	throws SQLException{
+		this._noicadiuqil_rtStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",actividad" 
+				+ ",descripcion" 
+				+ ",regimen" 
+				+ ",numeross" 
+				+ ",tipo" 
+				+ ",mes_desde" 
+				+ ",anho_desde" 
+				+ ",mes_hasta" 
+				+ ",anho_hasta" 
+				+ ",mes_control" 
+				+ ",anho_control" 
+				+ ",referencia_externa" 
+				+ ",fecha_recaudacion" 
+				+ ",hora_recaudacion" 
+				+ ",estado" 
+				+ ",bloqueado" 
+				+ ",similar" 
+				+ " FROM tr_liquidacion"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeNoicadiuqil_rtStmt() 
+	throws SQLException{
+		if ( _noicadiuqil_rtStmt != null ) { 
+			_noicadiuqil_rtStmt.close();
+			_noicadiuqil_rtStmt = null;	
+		}
+	}
+	private PreparedStatement _smun_anosrep_rtStmt = null;
+		
+	private void initSmun_anosrep_rtStmt() 
+	throws SQLException{
+		this._smun_anosrep_rtStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",inddoc" 
+				+ ",paiemi" 
+				+ ",numdoc" 
+				+ ",descripcion" 
+				+ ",apellido2" 
+				+ ",nombre" 
+				+ ",alias" 
+				+ ",aliastc2" 
+				+ ",tipovia" 
+				+ ",nomvia" 
+				+ ",numero" 
+				+ ",otrdir" 
+				+ ",codpos" 
+				+ ",localidad" 
+				+ ",provincia" 
+				+ ",telefono" 
+				+ ",fax" 
+				+ ",email" 
+				+ ",lugnac" 
+				+ ",pronac" 
+				+ ",painac" 
+				+ ",fecnac" 
+				+ ",padre" 
+				+ ",madre" 
+				+ ",nacion" 
+				+ ",numss" 
+				+ ",estciv" 
+				+ ",obsper" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",sexo" 
+				+ " FROM persona"
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				+ " cdg = ?  "  + "AND" 				+ " cdg = ?  "  + "AND" 				+ " cdg = ?  " 			); 
+	}
+
+	private void closeSmun_anosrep_rtStmt() 
+	throws SQLException{
+		if ( _smun_anosrep_rtStmt != null ) { 
+			_smun_anosrep_rtStmt.close();
+			_smun_anosrep_rtStmt = null;	
+		}
+	}
 
 	/**
-	 * Db_version
+	 * Tr_tramos
 	 * 
 	 */
-	public class Db_version {
+	public class Tr_tramos {
 		
 		private ResultSet rs;
 		
-		protected Db_version (ResultSet rs) 
+		protected Tr_tramos (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
 		
 		/**
-		 * Numero de la versión de la DB
-		 * @return the column 'version_number' value; if the value is SQL NULL, the value returned is null
+		 * Código de liquidación
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getVersion_number()
+		public Integer getCdg()
 		throws SQLException {
-			return rs.getString(1);
+			return rs.getInt(1);
+		}
+		/**
+		 * Código de persona
+		 * @return the column 'persona' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getPersona()
+		throws SQLException {
+			return rs.getInt(2);
+		}
+		/**
+		 * Numero Seguridad Social
+		 * @return the column 'numss' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNumss()
+		throws SQLException {
+			return rs.getString(3);
+		}
+		/**
+		 * Fecha inicial del tramo
+		 * @return the column 'fecha_desde' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFecha_desde()
+		throws SQLException {
+			return rs.getDate(4);
+		}
+		/**
+		 * Fecha final del tramo
+		 * @return the column 'fecha_hasta' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFecha_hasta()
+		throws SQLException {
+			return rs.getDate(5);
+		}
+		/**
+		 * Días cotizados
+		 * @return the column 'dias_cotizados' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getDias_cotizados()
+		throws SQLException {
+			return rs.getInt(6);
+		}
+		/**
+		 * Grupo de cotización
+		 * @return the column 'grupo_cotizacion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getGrupo_cotizacion()
+		throws SQLException {
+			return rs.getString(7);
+		}
+		/**
+		 * Contrato de trabajo
+		 * @return the column 'tipo_contrato' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTipo_contrato()
+		throws SQLException {
+			return rs.getString(8);
+		}
+		/**
+		 * Código nacional de actividad económica
+		 * @return the column 'cnae' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCnae()
+		throws SQLException {
+			return rs.getString(9);
+		}
+		/**
+		 * Estado del tramo
+		 * @return the column 'estado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEstado()
+		throws SQLException {
+			return rs.getString(10);
 		}
 
+		/**
+		 * Visit Tr_liquidacion that's parent of this Tr_tramos. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitRel_tr_liquidacion(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _noicadiuqil_rtStmt == null )
+					 initNoicadiuqil_rtStmt();
+				
+				_noicadiuqil_rtStmt.setInt(1, this.getCdg()); 
+				rs = _noicadiuqil_rtStmt.executeQuery();
+				Tr_liquidacion tr_liquidacion = new Tr_liquidacion(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitRel_tr_liquidacion(this, tr_liquidacion);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		/**
+		 * Visit Persona that's parent of this Tr_tramos. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitTr_persona_nums(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _smun_anosrep_rtStmt == null )
+					 initSmun_anosrep_rtStmt();
+				
+				_smun_anosrep_rtStmt.setInt(1, this.getPersona()); 
+				_smun_anosrep_rtStmt.setInt(2, this.getPersona()); 
+				_smun_anosrep_rtStmt.setInt(3, this.getPersona()); 
+				_smun_anosrep_rtStmt.setInt(4, this.getPersona()); 
+				rs = _smun_anosrep_rtStmt.executeQuery();
+				Persona persona = new Persona(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitTr_persona_nums(this, persona);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
 
+		
+		/**
+		 * Visit Tr_datos that're children of this Tr_tramos. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitTr_d_tramos(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( tr_d_tramosStmt == null )
+					 initTr_d_tramosStmt();
+				
+				tr_d_tramosStmt.setInt(1, this.getCdg()); 
+				tr_d_tramosStmt.setInt(2, this.getPersona()); 
+				tr_d_tramosStmt.setDate(3, this.getFecha_desde()); 
+				rs = tr_d_tramosStmt.executeQuery();
+				Tr_datos tr_datos = new Tr_datos(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitTr_d_tramos(tr_datos, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Tr_peculiar that're children of this Tr_tramos. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitTr_p_tramos(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( tr_p_tramosStmt == null )
+					 initTr_p_tramosStmt();
+				
+				tr_p_tramosStmt.setInt(1, this.getCdg()); 
+				tr_p_tramosStmt.setInt(2, this.getPersona()); 
+				tr_p_tramosStmt.setDate(3, this.getFecha_desde()); 
+				rs = tr_p_tramosStmt.executeQuery();
+				Tr_peculiar tr_peculiar = new Tr_peculiar(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitTr_p_tramos(tr_peculiar, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
 	}
 	
 
@@ -11476,6 +13778,7 @@ public class AbstractCtsqlDB {
 				+ ",divisa" 
 				+ ",soloases" 
 				+ ",envioss" 
+				+ ",grupotrabajo" 
 				+ " FROM cliente"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -11528,6 +13831,9 @@ public class AbstractCtsqlDB {
 				+ ",cecon" 
 				+ ",modimpuesto" 
 				+ ",mod190" 
+				+ ",feciniportal" 
+				+ ",feccierrenomina" 
+				+ ",meseshistorico" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -11557,11 +13863,11 @@ public class AbstractCtsqlDB {
 				+ ",acteco" 
 				+ ",epiiae" 
 				+ ",cnae" 
+				+ ",cnae2009" 
 				+ ",fecnew" 
 				+ ",hornew" 
 				+ ",fecmod" 
 				+ ",hormod" 
-				+ ",cnae2009" 
 				+ ",indred" 
 				+ ",indmutua" 
 				+ ",indtc1" 
@@ -11578,6 +13884,8 @@ public class AbstractCtsqlDB {
 				+ ",indfirma" 
 				+ ",indregimen" 
 				+ ",prevencion" 
+				+ ",indsiltra" 
+				+ ",autoriza" 
 				+ " FROM empract"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -11617,6 +13925,11 @@ public class AbstractCtsqlDB {
 				+ ",indgrupo" 
 				+ ",pariente" 
 				+ ",noirpf" 
+				+ ",nosegsoc" 
+				+ ",jubiladoactivo" 
+				+ ",certificado" 
+				+ ",familiar" 
+				+ ",noresidente" 
 				+ " FROM emprper"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -11868,6 +14181,11 @@ public class AbstractCtsqlDB {
 				+ ",indgrupo" 
 				+ ",pariente" 
 				+ ",noirpf" 
+				+ ",nosegsoc" 
+				+ ",jubiladoactivo" 
+				+ ",certificado" 
+				+ ",familiar" 
+				+ ",noresidente" 
 				+ " FROM emprper"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -11993,278 +14311,6 @@ public class AbstractCtsqlDB {
 	
 
 	
-		
-	private PreparedStatement emprbanc_sucursalStmt = null;
-		
-	private void initEmprbanc_sucursalStmt() 
-	throws SQLException{
-		this.emprbanc_sucursalStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",codent" 
-				+ ",codsuc" 
-				+ ",dc" 
-				+ ",numcta" 
-				+ ",codcli" 
-				+ ",iban" 
-				+ ",sufijo" 
-				+ " FROM emprban"
-				+ " WHERE" 
-				+ " codent = ?  "  + "AND" 				+ " codsuc = ?  " 			); 
-	}
-
-	private void closeEmprbanc_sucursalStmt() 
-	throws SQLException{
-		if ( emprbanc_sucursalStmt != null ) { 
-			emprbanc_sucursalStmt.close();
-			emprbanc_sucursalStmt = null;	
-		}
-	}
-		
-	private PreparedStatement rel_tra_sucStmt = null;
-		
-	private void initRel_tra_sucStmt() 
-	throws SQLException{
-		this.rel_tra_sucStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",fecini" 
-				+ ",fecfin" 
-				+ ",fecant" 
-				+ ",ctacar" 
-				+ ",profesion" 
-				+ ",codcon" 
-				+ ",codcat" 
-				+ ",nivel" 
-				+ ",descat" 
-				+ ",codbas" 
-				+ ",codepi" 
-				+ ",irpf" 
-				+ ",cno" 
-				+ ",procot" 
-				+ ",proret" 
-				+ ",nummat" 
-				+ ",codcont" 
-				+ ",codtc2" 
-				+ ",destc2" 
-				+ ",fecinicont" 
-				+ ",fecfincont" 
-				+ ",diascont" 
-				+ ",autorizacion" 
-				+ ",fecaut" 
-				+ ",codent" 
-				+ ",codsuc" 
-				+ ",numcta" 
-				+ ",plunumaut" 
-				+ ",plufecaut" 
-				+ ",pluprcmin" 
-				+ ",pluprcmax" 
-				+ ",coered" 
-				+ ",semana" 
-				+ ",semanatp" 
-				+ ",cantp" 
-				+ ",baseant" 
-				+ ",indalt" 
-				+ ",inddtoit" 
-				+ ",inddtootr" 
-				+ ",codpct" 
-				+ ",indtp" 
-				+ ",indirpf" 
-				+ ",concol" 
-				+ ",indactcon" 
-				+ ",especial" 
-				+ ",fecnew" 
-				+ ",hornew" 
-				+ ",fecmod" 
-				+ ",hormod" 
-				+ ",dc" 
-				+ ",historico" 
-				+ ",indceutamelilla" 
-				+ ",colectivo" 
-				+ ",relacion" 
-				+ ",ocupacion" 
-				+ ",ocupacion2009" 
-				+ ",tipotp" 
-				+ ",diastp" 
-				+ ",guardalegal" 
-				+ ",iban" 
-				+ " FROM trabajo"
-				+ " WHERE" 
-				+ " codent = ?  "  + "AND" 				+ " codsuc = ?  " 			); 
-	}
-
-	private void closeRel_tra_sucStmt() 
-	throws SQLException{
-		if ( rel_tra_sucStmt != null ) { 
-			rel_tra_sucStmt.close();
-			rel_tra_sucStmt = null;	
-		}
-	}
-		
-	private PreparedStatement jsucursalStmt = null;
-		
-	private void initJsucursalStmt() 
-	throws SQLException{
-		this.jsucursalStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",actividad" 
-				+ ",domicilio" 
-				+ ",apellido1" 
-				+ ",apellido2" 
-				+ ",nombre" 
-				+ ",inddoc" 
-				+ ",paiemi" 
-				+ ",numdoc" 
-				+ ",lugnac" 
-				+ ",pronac" 
-				+ ",fecnac" 
-				+ ",padre" 
-				+ ",madre" 
-				+ ",tipovia" 
-				+ ",nomvia" 
-				+ ",numero" 
-				+ ",otrdir" 
-				+ ",codpos" 
-				+ ",localidad" 
-				+ ",provincia" 
-				+ ",estado" 
-				+ ",ccc" 
-				+ ",profesion" 
-				+ ",categoria" 
-				+ ",descategoria" 
-				+ ",tarifa" 
-				+ ",epigrafe" 
-				+ ",cno" 
-				+ ",nivel" 
-				+ ",cotizacion" 
-				+ ",retribucion" 
-				+ ",actualizar" 
-				+ ",fecalta" 
-				+ ",fecbaja" 
-				+ ",fecantiguedad" 
-				+ ",numeross" 
-				+ ",matricula" 
-				+ ",contrato" 
-				+ ",contratotc2" 
-				+ ",fecinicio" 
-				+ ",fecfin" 
-				+ ",diascontrato" 
-				+ ",entidad" 
-				+ ",sucursal" 
-				+ ",dc" 
-				+ ",cuenta" 
-				+ ",indirpf" 
-				+ ",irpf" 
-				+ ",especial" 
-				+ ",dtoincidencia" 
-				+ ",dtoit" 
-				+ ",coeficiente" 
-				+ ",jornada" 
-				+ ",tiempoparcial" 
-				+ ",jornadatp" 
-				+ ",minutosdiastp" 
-				+ ",baseantiguedad" 
-				+ ",pluriempleo" 
-				+ ",minpluriempleo" 
-				+ ",maxpluriempleo" 
-				+ ",fecpluriempleo" 
-				+ " FROM httrabajador"
-				+ " WHERE" 
-				+ " entidad = ?  "  + "AND" 				+ " sucursal = ?  " 			); 
-	}
-
-	private void closeJsucursalStmt() 
-	throws SQLException{
-		if ( jsucursalStmt != null ) { 
-			jsucursalStmt.close();
-			jsucursalStmt = null;	
-		}
-	}
-		
-	private PreparedStatement jautsucursalStmt = null;
-		
-	private void initJautsucursalStmt() 
-	throws SQLException{
-		this.jautsucursalStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",persona" 
-				+ ",fecinigestion" 
-				+ ",fecfingestion" 
-				+ ",honorarios" 
-				+ ",observaciones" 
-				+ ",tipovia" 
-				+ ",nomvia" 
-				+ ",numero" 
-				+ ",otrdir" 
-				+ ",codpos" 
-				+ ",localidad" 
-				+ ",provincia" 
-				+ ",entidad" 
-				+ ",sucursal" 
-				+ ",dc" 
-				+ ",cuenta" 
-				+ ",tipautonomo" 
-				+ ",fecconstitucion" 
-				+ ",fecalta" 
-				+ ",mutua" 
-				+ ",codregistro" 
-				+ ",desregistro" 
-				+ ",tomo" 
-				+ ",libro" 
-				+ ",folio" 
-				+ ",seccion" 
-				+ ",hoja" 
-				+ ",otros" 
-				+ ",baseminima" 
-				+ ",baseelegida" 
-				+ ",basemaxima" 
-				+ ",incremento" 
-				+ ",incapacidad" 
-				+ ",fecnew" 
-				+ ",hornew" 
-				+ ",fecmod" 
-				+ ",hormod" 
-				+ " FROM autonomos"
-				+ " WHERE" 
-				+ " entidad = ?  "  + "AND" 				+ " sucursal = ?  " 			); 
-	}
-
-	private void closeJautsucursalStmt() 
-	throws SQLException{
-		if ( jautsucursalStmt != null ) { 
-			jautsucursalStmt.close();
-			jautsucursalStmt = null;	
-		}
-	}
-		
-	private PreparedStatement emprbanc_sucbicStmt = null;
-		
-	private void initEmprbanc_sucbicStmt() 
-	throws SQLException{
-		this.emprbanc_sucbicStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",codent" 
-				+ ",codsuc" 
-				+ ",dc" 
-				+ ",numcta" 
-				+ ",codcli" 
-				+ ",iban" 
-				+ ",sufijo" 
-				+ " FROM emprban"
-				+ " WHERE" 
-				+ " codent = ?  "  + "AND" 				+ " codsuc = ?  " 			); 
-	}
-
-	private void closeEmprbanc_sucbicStmt() 
-	throws SQLException{
-		if ( emprbanc_sucbicStmt != null ) { 
-			emprbanc_sucbicStmt.close();
-			emprbanc_sucbicStmt = null;	
-		}
-	}
 
 	private PreparedStatement _daditne_lasrucusStmt = null;
 		
@@ -12381,136 +14427,6 @@ public class AbstractCtsqlDB {
 			}
 		}
 
-		
-		/**
-		 * Visit Emprban that're children of this Sucursal. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitEmprbanc_sucursal(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( emprbanc_sucursalStmt == null )
-					 initEmprbanc_sucursalStmt();
-				
-				emprbanc_sucursalStmt.setString(1, this.getCodent()); 
-				emprbanc_sucursalStmt.setString(2, this.getCdg()); 
-				rs = emprbanc_sucursalStmt.executeQuery();
-				Emprban emprban = new Emprban(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitEmprbanc_sucursal(emprban, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		
-		/**
-		 * Visit Trabajo that're children of this Sucursal. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitRel_tra_suc(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( rel_tra_sucStmt == null )
-					 initRel_tra_sucStmt();
-				
-				rel_tra_sucStmt.setString(1, this.getCodent()); 
-				rel_tra_sucStmt.setString(2, this.getCdg()); 
-				rs = rel_tra_sucStmt.executeQuery();
-				Trabajo trabajo = new Trabajo(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitRel_tra_suc(trabajo, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		
-		/**
-		 * Visit Httrabajador that're children of this Sucursal. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitJsucursal(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( jsucursalStmt == null )
-					 initJsucursalStmt();
-				
-				jsucursalStmt.setString(1, this.getCodent()); 
-				jsucursalStmt.setString(2, this.getCdg()); 
-				rs = jsucursalStmt.executeQuery();
-				Httrabajador httrabajador = new Httrabajador(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitJsucursal(httrabajador, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		
-		/**
-		 * Visit Autonomos that're children of this Sucursal. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitJautsucursal(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( jautsucursalStmt == null )
-					 initJautsucursalStmt();
-				
-				jautsucursalStmt.setString(1, this.getCodent()); 
-				jautsucursalStmt.setString(2, this.getCdg()); 
-				rs = jautsucursalStmt.executeQuery();
-				Autonomos autonomos = new Autonomos(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitJautsucursal(autonomos, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		
-		/**
-		 * Visit Emprban that're children of this Sucursal. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitEmprbanc_sucbic(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( emprbanc_sucbicStmt == null )
-					 initEmprbanc_sucbicStmt();
-				
-				emprbanc_sucbicStmt.setString(1, this.getCodent()); 
-				emprbanc_sucbicStmt.setString(2, this.getCdg()); 
-				rs = emprbanc_sucbicStmt.executeQuery();
-				Emprban emprban = new Emprban(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitEmprbanc_sucbic(emprban, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
 	}
 	
 
@@ -13285,84 +15201,6 @@ public class AbstractCtsqlDB {
 
 
 	/**
-	 * Nszanex
-	 * 
-	 */
-	public class Nszanex {
-		
-		private ResultSet rs;
-		
-		protected Nszanex (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
-		
-		/**
-		 * $column.remarks
-		 * @return the column 'san0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSan0()
-		throws SQLException {
-			return rs.getString(1);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'san1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSan1()
-		throws SQLException {
-			return rs.getString(2);
-		}
-
-
-	}
-	
-
-	
-
-
-	/**
-	 * Nszmupa
-	 * 
-	 */
-	public class Nszmupa {
-		
-		private ResultSet rs;
-		
-		protected Nszmupa (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
-		
-		/**
-		 * $column.remarks
-		 * @return the column 'smu0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSmu0()
-		throws SQLException {
-			return rs.getString(1);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'smu1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSmu1()
-		throws SQLException {
-			return rs.getString(2);
-		}
-
-
-	}
-	
-
-	
-
-
-	/**
 	 * Minor_31
 	 * 
 	 */
@@ -13604,216 +15442,6 @@ public class AbstractCtsqlDB {
 
 	
 
-
-	/**
-	 * Nszreac
-	 * 
-	 */
-	public class Nszreac {
-		
-		private ResultSet rs;
-		
-		protected Nszreac (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
-		
-		/**
-		 * $column.remarks
-		 * @return the column 'sre0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSre0()
-		throws SQLException {
-			return rs.getString(1);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'sre1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSre1()
-		throws SQLException {
-			return rs.getString(2);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nre0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNre0()
-		throws SQLException {
-			return rs.getInt(3);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nre1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNre1()
-		throws SQLException {
-			return rs.getInt(4);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nre2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNre2()
-		throws SQLException {
-			return rs.getInt(5);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nre3' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNre3()
-		throws SQLException {
-			return rs.getInt(6);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nre4' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNre4()
-		throws SQLException {
-			return rs.getInt(7);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nre5' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNre5()
-		throws SQLException {
-			return rs.getInt(8);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nre6' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNre6()
-		throws SQLException {
-			return rs.getInt(9);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nre7' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNre7()
-		throws SQLException {
-			return rs.getInt(10);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nre8' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNre8()
-		throws SQLException {
-			return rs.getInt(11);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nre9' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNre9()
-		throws SQLException {
-			return rs.getInt(12);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nre10' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNre10()
-		throws SQLException {
-			return rs.getInt(13);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nre11' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNre11()
-		throws SQLException {
-			return rs.getInt(14);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nre12' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNre12()
-		throws SQLException {
-			return rs.getInt(15);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nre13' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNre13()
-		throws SQLException {
-			return rs.getInt(16);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nre14' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNre14()
-		throws SQLException {
-			return rs.getInt(17);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nre15' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNre15()
-		throws SQLException {
-			return rs.getInt(18);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nre16' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNre16()
-		throws SQLException {
-			return rs.getInt(19);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nre17' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNre17()
-		throws SQLException {
-			return rs.getInt(20);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nre18' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNre18()
-		throws SQLException {
-			return rs.getInt(21);
-		}
-
-
-	}
-	
-
-	
-
 	private PreparedStatement _ipe_pel_lerStmt = null;
 		
 	private void initIpe_pel_lerStmt() 
@@ -13969,6 +15597,11 @@ public class AbstractCtsqlDB {
 				+ ",indgrupo" 
 				+ ",pariente" 
 				+ ",noirpf" 
+				+ ",nosegsoc" 
+				+ ",jubiladoactivo" 
+				+ ",certificado" 
+				+ ",familiar" 
+				+ ",noresidente" 
 				+ " FROM emprper"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -14256,6 +15889,11 @@ public class AbstractCtsqlDB {
 				+ ",indgrupo" 
 				+ ",pariente" 
 				+ ",noirpf" 
+				+ ",nosegsoc" 
+				+ ",jubiladoactivo" 
+				+ ",certificado" 
+				+ ",familiar" 
+				+ ",noresidente" 
 				+ " FROM emprper"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -14675,7 +16313,7 @@ public class AbstractCtsqlDB {
 			return rs.getBigDecimal(41);
 		}
 		/**
-		 * Base IRPF Dinararia
+		 * Base IRPF Dineraria
 		 * @return the column 'base_irpf' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -14756,13 +16394,22 @@ public class AbstractCtsqlDB {
 			return rs.getBigDecimal(50);
 		}
 		/**
+		 * Base ERE
+		 * @return the column 'base_ere' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getBase_ere()
+		throws SQLException {
+			return rs.getBigDecimal(51);
+		}
+		/**
 		 * Total 1
 		 * @return the column 'total_1' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
 		public BigDecimal getTotal_1()
 		throws SQLException {
-			return rs.getBigDecimal(51);
+			return rs.getBigDecimal(52);
 		}
 		/**
 		 * Grupo de Tarifa
@@ -14771,7 +16418,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getCodbas()
 		throws SQLException {
-			return rs.getString(52);
+			return rs.getString(53);
 		}
 		/**
 		 * Contingencias Generales
@@ -14780,7 +16427,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_cg()
 		throws SQLException {
-			return rs.getBigDecimal(53);
+			return rs.getBigDecimal(54);
 		}
 		/**
 		 * Accidentes Trabajo - Enfermedad Profesional
@@ -14789,7 +16436,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_acc()
 		throws SQLException {
-			return rs.getBigDecimal(54);
+			return rs.getBigDecimal(55);
 		}
 		/**
 		 * Porcentaje Contingencias Generales
@@ -14798,7 +16445,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getPrc_cg()
 		throws SQLException {
-			return rs.getBigDecimal(55);
+			return rs.getBigDecimal(56);
 		}
 		/**
 		 * Porcentaje Accidentes
@@ -14807,7 +16454,16 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getPrc_acc()
 		throws SQLException {
-			return rs.getBigDecimal(56);
+			return rs.getBigDecimal(57);
+		}
+		/**
+		 * Porcentaje FP
+		 * @return the column 'prc_fp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getPrc_fp()
+		throws SQLException {
+			return rs.getBigDecimal(58);
 		}
 		/**
 		 * Porcentaje Horas Extras Estructurales
@@ -14816,7 +16472,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getPrc_hex()
 		throws SQLException {
-			return rs.getBigDecimal(57);
+			return rs.getBigDecimal(59);
 		}
 		/**
 		 * Porcentaje Horas Extras NO Estructurales
@@ -14825,7 +16481,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getPrc_hexno()
 		throws SQLException {
-			return rs.getBigDecimal(58);
+			return rs.getBigDecimal(60);
 		}
 		/**
 		 * Importe Contingencias Comunes
@@ -14834,7 +16490,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_cg()
 		throws SQLException {
-			return rs.getBigDecimal(59);
+			return rs.getBigDecimal(61);
 		}
 		/**
 		 * Importe Accidentes Trabajo
@@ -14843,7 +16499,16 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_acc()
 		throws SQLException {
-			return rs.getBigDecimal(60);
+			return rs.getBigDecimal(62);
+		}
+		/**
+		 * Importe FP
+		 * @return the column 'importe_fp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getImporte_fp()
+		throws SQLException {
+			return rs.getBigDecimal(63);
 		}
 		/**
 		 * Importe Horas Extras Estructurales
@@ -14852,7 +16517,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_hex()
 		throws SQLException {
-			return rs.getBigDecimal(61);
+			return rs.getBigDecimal(64);
 		}
 		/**
 		 * Importe Horas Extras NO Estructurales
@@ -14861,7 +16526,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_hexno()
 		throws SQLException {
-			return rs.getBigDecimal(62);
+			return rs.getBigDecimal(65);
 		}
 		/**
 		 * Tope Minimo para C.G.
@@ -14870,7 +16535,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getMincg()
 		throws SQLException {
-			return rs.getBigDecimal(63);
+			return rs.getBigDecimal(66);
 		}
 		/**
 		 * Tope Maximo para C.G.
@@ -14879,7 +16544,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getMaxcg()
 		throws SQLException {
-			return rs.getBigDecimal(64);
+			return rs.getBigDecimal(67);
 		}
 		/**
 		 * Tope Minimo para Accidentes
@@ -14888,7 +16553,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getMinacc()
 		throws SQLException {
-			return rs.getBigDecimal(65);
+			return rs.getBigDecimal(68);
 		}
 		/**
 		 * Tope Maximo para Accidentes
@@ -14897,7 +16562,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getMaxacc()
 		throws SQLException {
-			return rs.getBigDecimal(66);
+			return rs.getBigDecimal(69);
 		}
 		/**
 		 * Cuota Total de la Emrpesa
@@ -14906,7 +16571,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getCuota_empresa()
 		throws SQLException {
-			return rs.getBigDecimal(67);
+			return rs.getBigDecimal(70);
 		}
 		/**
 		 * Accidentes Trabajo Sin Horas Extras
@@ -14915,7 +16580,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_acc_sin_hex()
 		throws SQLException {
-			return rs.getBigDecimal(68);
+			return rs.getBigDecimal(71);
 		}
 		/**
 		 * Importe Cuotas Deducciones
@@ -14924,7 +16589,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_cuotas()
 		throws SQLException {
-			return rs.getBigDecimal(69);
+			return rs.getBigDecimal(72);
 		}
 		/**
 		 * Porcentaje IRPF
@@ -14933,7 +16598,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getPrc_irpf()
 		throws SQLException {
-			return rs.getBigDecimal(70);
+			return rs.getBigDecimal(73);
 		}
 		/**
 		 * Importe IRPF
@@ -14942,7 +16607,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_irpf()
 		throws SQLException {
-			return rs.getBigDecimal(71);
+			return rs.getBigDecimal(74);
 		}
 		/**
 		 * Fecha Creacion Fila
@@ -14951,7 +16616,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFecnew()
 		throws SQLException {
-			return rs.getDate(72);
+			return rs.getDate(75);
 		}
 		/**
 		 * Hora Creacion Fila
@@ -14960,7 +16625,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Time getHornew()
 		throws SQLException {
-			return rs.getTime(73);
+			return rs.getTime(76);
 		}
 		/**
 		 * Fecha Modificacion Fila
@@ -14969,7 +16634,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFecmod()
 		throws SQLException {
-			return rs.getDate(74);
+			return rs.getDate(77);
 		}
 		/**
 		 * Hora Modificacion Fila
@@ -14978,7 +16643,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Time getHormod()
 		throws SQLException {
-			return rs.getTime(75);
+			return rs.getTime(78);
 		}
 		/**
 		 * Dias Trabajados
@@ -14987,7 +16652,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDiastrab()
 		throws SQLException {
-			return rs.getInt(76);
+			return rs.getInt(79);
 		}
 		/**
 		 * Dias Efectivos
@@ -14996,7 +16661,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDiasefec()
 		throws SQLException {
-			return rs.getInt(77);
+			return rs.getInt(80);
 		}
 		/**
 		 * Base Calculo Antiguedad
@@ -15005,7 +16670,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBaseant()
 		throws SQLException {
-			return rs.getBigDecimal(78);
+			return rs.getBigDecimal(81);
 		}
 		/**
 		 * Prorrateo Retribucion
@@ -15014,7 +16679,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getProret()
 		throws SQLException {
-			return rs.getString(79);
+			return rs.getString(82);
 		}
 		/**
 		 * Prorrateo Cotizacion
@@ -15023,7 +16688,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getProcot()
 		throws SQLException {
-			return rs.getString(80);
+			return rs.getString(83);
 		}
 		/**
 		 * Codigo Convenio
@@ -15032,7 +16697,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getCodcon()
 		throws SQLException {
-			return rs.getString(81);
+			return rs.getString(84);
 		}
 		/**
 		 * Asimilado a % Cotizacion
@@ -15041,7 +16706,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getCodpct()
 		throws SQLException {
-			return rs.getString(82);
+			return rs.getString(85);
 		}
 		/**
 		 * Fecha Cobro Real
@@ -15050,7 +16715,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFeccobreal()
 		throws SQLException {
-			return rs.getDate(83);
+			return rs.getDate(86);
 		}
 		/**
 		 * Tipo de divisa
@@ -15059,7 +16724,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getDivisa()
 		throws SQLException {
-			return rs.getString(84);
+			return rs.getString(87);
 		}
 		/**
 		 * Base Imponible IRPF de ejercicios anteriores
@@ -15068,7 +16733,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_irpf_ant()
 		throws SQLException {
-			return rs.getBigDecimal(85);
+			return rs.getBigDecimal(88);
 		}
 		/**
 		 * Importe de IRPF de ejercicios anteriores
@@ -15077,7 +16742,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_irpf_ant()
 		throws SQLException {
-			return rs.getBigDecimal(86);
+			return rs.getBigDecimal(89);
 		}
 		/**
 		 * Importe de cuotas S.S. de ejercicios anteriores
@@ -15086,7 +16751,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_cuotas_ant()
 		throws SQLException {
-			return rs.getBigDecimal(87);
+			return rs.getBigDecimal(90);
 		}
 		/**
 		 * Base de Contingencias Generales en Pesetas
@@ -15095,7 +16760,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_cg_pts()
 		throws SQLException {
-			return rs.getBigDecimal(88);
+			return rs.getBigDecimal(91);
 		}
 		/**
 		 * Base de Accidentes de Trabajo en Pesetas
@@ -15104,7 +16769,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_acc_pts()
 		throws SQLException {
-			return rs.getBigDecimal(89);
+			return rs.getBigDecimal(92);
 		}
 		/**
 		 * Base de Accidentes de Trabajo sin Horas Extras en Pesetas
@@ -15113,7 +16778,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_acc_sin_h_pts()
 		throws SQLException {
-			return rs.getBigDecimal(90);
+			return rs.getBigDecimal(93);
 		}
 		/**
 		 * Codigo de Nomina Resumen de Atrasos
@@ -15122,7 +16787,61 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getCdgnom()
 		throws SQLException {
-			return rs.getInt(91);
+			return rs.getInt(94);
+		}
+		/**
+		 * Contingencias comunes ERE
+		 * @return the column 'base_con_ere' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getBase_con_ere()
+		throws SQLException {
+			return rs.getBigDecimal(95);
+		}
+		/**
+		 * Accidentes de trabajo ERE
+		 * @return the column 'base_acc_ere' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getBase_acc_ere()
+		throws SQLException {
+			return rs.getBigDecimal(96);
+		}
+		/**
+		 * Contingencias comunes ERE no aporta
+		 * @return the column 'base_con_ere_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getBase_con_ere_no()
+		throws SQLException {
+			return rs.getBigDecimal(97);
+		}
+		/**
+		 * Accidentes de trabajo ERE no aporta
+		 * @return the column 'base_acc_ere_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getBase_acc_ere_no()
+		throws SQLException {
+			return rs.getBigDecimal(98);
+		}
+		/**
+		 * Contingencias comunes sin ERE
+		 * @return the column 'base_con_ere_sin' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getBase_con_ere_sin()
+		throws SQLException {
+			return rs.getBigDecimal(99);
+		}
+		/**
+		 * Accidentes de trabajo sin ERE
+		 * @return the column 'base_acc_ere_sin' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getBase_acc_ere_sin()
+		throws SQLException {
+			return rs.getBigDecimal(100);
 		}
 
 		/**
@@ -15224,171 +16943,6 @@ public class AbstractCtsqlDB {
 					rs.close();
 			}
 		}
-	}
-	
-
-	
-
-
-	/**
-	 * Nszfini
-	 * 
-	 */
-	public class Nszfini {
-		
-		private ResultSet rs;
-		
-		protected Nszfini (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
-		
-		/**
-		 * $column.remarks
-		 * @return the column 'sfq0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSfq0()
-		throws SQLException {
-			return rs.getString(1);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'sfq1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSfq1()
-		throws SQLException {
-			return rs.getString(2);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nfq0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNfq0()
-		throws SQLException {
-			return rs.getInt(3);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nfq1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNfq1()
-		throws SQLException {
-			return rs.getInt(4);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nfq2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNfq2()
-		throws SQLException {
-			return rs.getInt(5);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nfq3' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNfq3()
-		throws SQLException {
-			return rs.getInt(6);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nfq4' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNfq4()
-		throws SQLException {
-			return rs.getInt(7);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nfq5' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNfq5()
-		throws SQLException {
-			return rs.getInt(8);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nfq6' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNfq6()
-		throws SQLException {
-			return rs.getInt(9);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nfq7' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNfq7()
-		throws SQLException {
-			return rs.getInt(10);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nfq8' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNfq8()
-		throws SQLException {
-			return rs.getInt(11);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nfq9' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNfq9()
-		throws SQLException {
-			return rs.getInt(12);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nfq10' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNfq10()
-		throws SQLException {
-			return rs.getInt(13);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nfq11' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNfq11()
-		throws SQLException {
-			return rs.getInt(14);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nfq12' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNfq12()
-		throws SQLException {
-			return rs.getInt(15);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nfq13' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNfq13()
-		throws SQLException {
-			return rs.getInt(16);
-		}
-
-
 	}
 	
 
@@ -15496,6 +17050,8 @@ public class AbstractCtsqlDB {
 				+ ",indcom" 
 				+ ",tipcom" 
 				+ ",dinesp" 
+				+ ",concepto" 
+				+ ",excinc" 
 				+ " FROM percniv"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -15526,11 +17082,11 @@ public class AbstractCtsqlDB {
 				+ ",acteco" 
 				+ ",epiiae" 
 				+ ",cnae" 
+				+ ",cnae2009" 
 				+ ",fecnew" 
 				+ ",hornew" 
 				+ ",fecmod" 
 				+ ",hormod" 
-				+ ",cnae2009" 
 				+ ",indred" 
 				+ ",indmutua" 
 				+ ",indtc1" 
@@ -15547,6 +17103,8 @@ public class AbstractCtsqlDB {
 				+ ",indfirma" 
 				+ ",indregimen" 
 				+ ",prevencion" 
+				+ ",indsiltra" 
+				+ ",autoriza" 
 				+ " FROM empract"
 				+ " WHERE" 
 				+ " convenio = ?  " 			); 
@@ -15620,6 +17178,7 @@ public class AbstractCtsqlDB {
 				+ ",proret" 
 				+ ",nummat" 
 				+ ",codcont" 
+				+ ",descont" 
 				+ ",codtc2" 
 				+ ",destc2" 
 				+ ",fecinicont" 
@@ -15663,6 +17222,7 @@ public class AbstractCtsqlDB {
 				+ ",diastp" 
 				+ ",guardalegal" 
 				+ ",iban" 
+				+ ",fecfinperiprue" 
 				+ " FROM trabajo"
 				+ " WHERE" 
 				+ " codcon = ?  " 			); 
@@ -15673,6 +17233,32 @@ public class AbstractCtsqlDB {
 		if ( rel_tra_conStmt != null ) { 
 			rel_tra_conStmt.close();
 			rel_tra_conStmt = null;	
+		}
+	}
+		
+	private PreparedStatement fpe_convenioStmt = null;
+		
+	private void initFpe_convenioStmt() 
+	throws SQLException{
+		this.fpe_convenioStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",nivel" 
+				+ ",codcon" 
+				+ ",codcli" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",codper" 
+				+ " FROM fpercep"
+				+ " WHERE" 
+				+ " codcon = ?  " 			); 
+	}
+
+	private void closeFpe_convenioStmt() 
+	throws SQLException{
+		if ( fpe_convenioStmt != null ) { 
+			fpe_convenioStmt.close();
+			fpe_convenioStmt = null;	
 		}
 	}
 
@@ -15903,6 +17489,31 @@ public class AbstractCtsqlDB {
 					rs.close();
 			}
 		}
+		
+		/**
+		 * Visit Fpercep that're children of this Convenio. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitFpe_convenio(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( fpe_convenioStmt == null )
+					 initFpe_convenioStmt();
+				
+				fpe_convenioStmt.setString(1, this.getCdg()); 
+				rs = fpe_convenioStmt.executeQuery();
+				Fpercep fpercep = new Fpercep(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitFpe_convenio(fpercep, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
 	}
 	
 
@@ -15995,13 +17606,22 @@ public class AbstractCtsqlDB {
 			return rs.getDate(8);
 		}
 		/**
+		 * Código de la causa de baja
+		 * @return the column 'codcausa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCodcausa()
+		throws SQLException {
+			return rs.getString(9);
+		}
+		/**
 		 * Causa de Baja
 		 * @return the column 'causa' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
 		public String getCausa()
 		throws SQLException {
-			return rs.getString(9);
+			return rs.getString(10);
 		}
 
 
@@ -16303,45 +17923,6 @@ public class AbstractCtsqlDB {
 	
 
 	
-
-
-	/**
-	 * Nsztido
-	 * 
-	 */
-	public class Nsztido {
-		
-		private ResultSet rs;
-		
-		protected Nsztido (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
-		
-		/**
-		 * $column.remarks
-		 * @return the column 'std0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getStd0()
-		throws SQLException {
-			return rs.getString(1);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'std1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getStd1()
-		throws SQLException {
-			return rs.getString(2);
-		}
-
-
-	}
-	
-
-	
 		
 	private PreparedStatement rel_inc_tipStmt = null;
 		
@@ -16359,6 +17940,9 @@ public class AbstractCtsqlDB {
 				+ ",fecmod" 
 				+ ",hormod" 
 				+ ",importe" 
+				+ ",coeficiente" 
+				+ ",basediacc" 
+				+ ",basediaacc" 
 				+ " FROM trabinci"
 				+ " WHERE" 
 				+ " codinc = ?  " 			); 
@@ -16572,6 +18156,9 @@ public class AbstractCtsqlDB {
 				+ ",riesgo" 
 				+ ",causa_alta" 
 				+ ",fecha_at" 
+				+ ",especial" 
+				+ ",fecprimerconf" 
+				+ ",periocidad" 
 				+ " FROM parteit"
 				+ " WHERE" 
 				+ " cdg = ?  "  + "AND" 				+ " fecini = ?  " 			); 
@@ -16660,6 +18247,15 @@ public class AbstractCtsqlDB {
 		public String getParproc()
 		throws SQLException {
 			return rs.getString(7);
+		}
+		/**
+		 * $column.remarks
+		 * @return the column 'fecproxconf' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFecproxconf()
+		throws SQLException {
+			return rs.getDate(8);
 		}
 
 		/**
@@ -16803,6 +18399,7 @@ public class AbstractCtsqlDB {
 				+ ",fecmod" 
 				+ ",hormod" 
 				+ ",divisa" 
+				+ ",feccierre" 
 				+ " FROM impr190"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -16920,13 +18517,58 @@ public class AbstractCtsqlDB {
 			return rs.getBigDecimal(10);
 		}
 		/**
+		 * Percepcion ILT
+		 * @return the column 'imp_per_ilt' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getImp_per_ilt()
+		throws SQLException {
+			return rs.getBigDecimal(11);
+		}
+		/**
+		 * Importe Retencion ILT
+		 * @return the column 'imp_ret_ilt' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getImp_ret_ilt()
+		throws SQLException {
+			return rs.getBigDecimal(12);
+		}
+		/**
+		 * Importe Percepciones en Especie ILT
+		 * @return the column 'imp_per_esp_ilt' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getImp_per_esp_ilt()
+		throws SQLException {
+			return rs.getBigDecimal(13);
+		}
+		/**
+		 * Importe Ingresos a Cuenta ILT
+		 * @return the column 'imp_ing_cta_ilt' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getImp_ing_cta_ilt()
+		throws SQLException {
+			return rs.getBigDecimal(14);
+		}
+		/**
+		 * Importe Ingresos Repercutidos ILT
+		 * @return the column 'imp_ing_rep_ilt' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getImp_ing_rep_ilt()
+		throws SQLException {
+			return rs.getBigDecimal(15);
+		}
+		/**
 		 * Ejercicio Devengo
 		 * @return the column 'devengo' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
 		public Integer getDevengo()
 		throws SQLException {
-			return rs.getInt(11);
+			return rs.getInt(16);
 		}
 		/**
 		 * Anio Nacimiento
@@ -16935,7 +18577,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getAnionac()
 		throws SQLException {
-			return rs.getInt(12);
+			return rs.getInt(17);
 		}
 		/**
 		 * Grado de Minusvalia
@@ -16944,7 +18586,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getXminus()
 		throws SQLException {
-			return rs.getInt(13);
+			return rs.getInt(18);
 		}
 		/**
 		 * Situacion Familiar
@@ -16953,7 +18595,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getSitfam()
 		throws SQLException {
-			return rs.getInt(14);
+			return rs.getInt(19);
 		}
 		/**
 		 * NIF Conyuge
@@ -16962,7 +18604,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getNifcony()
 		throws SQLException {
-			return rs.getString(15);
+			return rs.getString(20);
 		}
 		/**
 		 * Hijos menores de 3 anios
@@ -16971,7 +18613,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getHijo_3()
 		throws SQLException {
-			return rs.getInt(16);
+			return rs.getInt(21);
 		}
 		/**
 		 * Hijos entre 3 y 16
@@ -16980,7 +18622,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getHijo_16()
 		throws SQLException {
-			return rs.getInt(17);
+			return rs.getInt(22);
 		}
 		/**
 		 * Hijos entre 16 y 25
@@ -16989,7 +18631,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getHijo_25()
 		throws SQLException {
-			return rs.getInt(18);
+			return rs.getInt(23);
 		}
 		/**
 		 * Hijos Discapacitados entre 33 y 65
@@ -16998,7 +18640,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getMinus_33()
 		throws SQLException {
-			return rs.getInt(19);
+			return rs.getInt(24);
 		}
 		/**
 		 * Hijos Discapacitados mas de 65
@@ -17007,7 +18649,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getMinus_65()
 		throws SQLException {
-			return rs.getInt(20);
+			return rs.getInt(25);
 		}
 		/**
 		 * Numero total de hijos
@@ -17016,7 +18658,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getHijos()
 		throws SQLException {
-			return rs.getInt(21);
+			return rs.getInt(26);
 		}
 		/**
 		 * Tipo de Relacion
@@ -17025,7 +18667,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getRelacion()
 		throws SQLException {
-			return rs.getInt(22);
+			return rs.getInt(27);
 		}
 		/**
 		 * Importe Reducciones
@@ -17034,7 +18676,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImp_reducc()
 		throws SQLException {
-			return rs.getBigDecimal(23);
+			return rs.getBigDecimal(28);
 		}
 		/**
 		 * Importe Gastos
@@ -17043,7 +18685,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImp_gastos()
 		throws SQLException {
-			return rs.getBigDecimal(24);
+			return rs.getBigDecimal(29);
 		}
 		/**
 		 * Importe Pension Compensatoria
@@ -17052,7 +18694,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImp_pension()
 		throws SQLException {
-			return rs.getBigDecimal(25);
+			return rs.getBigDecimal(30);
 		}
 		/**
 		 * Importe Anualidades
@@ -17061,79 +18703,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImp_anual()
 		throws SQLException {
-			return rs.getBigDecimal(26);
-		}
-		/**
-		 * Nombre y Apellidos
-		 * @return the column 'nomapel' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getNomapel()
-		throws SQLException {
-			return rs.getString(27);
-		}
-		/**
-		 * Provincia
-		 * @return the column 'provincia' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getProvincia()
-		throws SQLException {
-			return rs.getString(28);
-		}
-		/**
-		 * Ceuta / Melilla
-		 * @return the column 'c_m' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getC_m()
-		throws SQLException {
-			return rs.getString(29);
-		}
-		/**
-		 * Total Descendientes por Entero
-		 * @return the column 'descentero' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getDescentero()
-		throws SQLException {
-			return rs.getInt(30);
-		}
-		/**
-		 * Total Ascendientes
-		 * @return the column 'totalasc' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getTotalasc()
-		throws SQLException {
-			return rs.getInt(31);
-		}
-		/**
-		 * Total Ascendentes por Entero
-		 * @return the column 'ascentero' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getAscentero()
-		throws SQLException {
-			return rs.getInt(32);
-		}
-		/**
-		 * Ascendientes Discapacitados entre 33 y 65
-		 * @return the column 'ascminus_33' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getAscminus_33()
-		throws SQLException {
-			return rs.getInt(33);
-		}
-		/**
-		 * Ascendientes Discapacitados mas de 65
-		 * @return the column 'ascminus_65' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getAscminus_65()
-		throws SQLException {
-			return rs.getInt(34);
+			return rs.getBigDecimal(31);
 		}
 		/**
 		 * Movilidad geográfica
@@ -17142,7 +18712,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getMovilidad()
 		throws SQLException {
-			return rs.getDate(35);
+			return rs.getDate(32);
 		}
 		/**
 		 * Prolongación actividad laboral
@@ -17151,7 +18721,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getProlongacion()
 		throws SQLException {
-			return rs.getString(36);
+			return rs.getString(33);
 		}
 		/**
 		 * Hipoteca
@@ -17160,7 +18730,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getHipoteca()
 		throws SQLException {
-			return rs.getString(37);
+			return rs.getString(34);
 		}
 		/**
 		 * Descendientes Menores de 3 años
@@ -17169,7 +18739,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDescme3()
 		throws SQLException {
-			return rs.getInt(38);
+			return rs.getInt(35);
 		}
 		/**
 		 * Descendientes Menores de 3 años Enteros
@@ -17178,7 +18748,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDescme3e()
 		throws SQLException {
-			return rs.getInt(39);
+			return rs.getInt(36);
 		}
 		/**
 		 * Descendientes Mayores de 3 años
@@ -17187,7 +18757,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDescma3()
 		throws SQLException {
-			return rs.getInt(40);
+			return rs.getInt(37);
 		}
 		/**
 		 * Descendientes Mayores de 3 años Enteros
@@ -17196,7 +18766,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDescma3e()
 		throws SQLException {
-			return rs.getInt(41);
+			return rs.getInt(38);
 		}
 		/**
 		 * Cómputo 1º
@@ -17205,7 +18775,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getComputo1()
 		throws SQLException {
-			return rs.getInt(42);
+			return rs.getInt(39);
 		}
 		/**
 		 * Cómputo 2º
@@ -17214,7 +18784,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getComputo2()
 		throws SQLException {
-			return rs.getInt(43);
+			return rs.getInt(40);
 		}
 		/**
 		 * Cómputo 3º
@@ -17223,7 +18793,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getComputo3()
 		throws SQLException {
-			return rs.getInt(44);
+			return rs.getInt(41);
 		}
 		/**
 		 * Descendientes Discapacitados >=33% <65%
@@ -17232,7 +18802,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDescdi33()
 		throws SQLException {
-			return rs.getInt(45);
+			return rs.getInt(42);
 		}
 		/**
 		 * Descendientes Discapacitados >=33% <65% Enteros
@@ -17241,7 +18811,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDescdi33e()
 		throws SQLException {
-			return rs.getInt(46);
+			return rs.getInt(43);
 		}
 		/**
 		 * Descendientes Discapacitados Movilidad Reducida
@@ -17250,7 +18820,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDescdimr()
 		throws SQLException {
-			return rs.getInt(47);
+			return rs.getInt(44);
 		}
 		/**
 		 * Descendientes Discapacitados Movilidad Reducida Enteros
@@ -17259,7 +18829,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDescdimre()
 		throws SQLException {
-			return rs.getInt(48);
+			return rs.getInt(45);
 		}
 		/**
 		 * Descendientes Discapacitados >65%
@@ -17268,7 +18838,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDescdi65()
 		throws SQLException {
-			return rs.getInt(49);
+			return rs.getInt(46);
 		}
 		/**
 		 * Descendientes Discapacitados >65% Enteros
@@ -17277,7 +18847,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDescdi65e()
 		throws SQLException {
-			return rs.getInt(50);
+			return rs.getInt(47);
 		}
 		/**
 		 * Ascendientes Menores de 75 años
@@ -17286,7 +18856,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getAscme75()
 		throws SQLException {
-			return rs.getInt(51);
+			return rs.getInt(48);
 		}
 		/**
 		 * Ascendientes Menores de 75 años Enteros
@@ -17295,7 +18865,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getAscme75e()
 		throws SQLException {
-			return rs.getInt(52);
+			return rs.getInt(49);
 		}
 		/**
 		 * Ascendientes Mayores de 75 años
@@ -17304,7 +18874,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getAscma75()
 		throws SQLException {
-			return rs.getInt(53);
+			return rs.getInt(50);
 		}
 		/**
 		 * Ascendientes Mayores de 75 años Enteros
@@ -17313,7 +18883,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getAscma75e()
 		throws SQLException {
-			return rs.getInt(54);
+			return rs.getInt(51);
 		}
 		/**
 		 * Ascendientes Discapacitados >=33% <65%
@@ -17322,7 +18892,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getAscdi33()
 		throws SQLException {
-			return rs.getInt(55);
+			return rs.getInt(52);
 		}
 		/**
 		 * Ascendientes Discapacitados >=33% <65% Enteros
@@ -17331,7 +18901,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getAscdi33e()
 		throws SQLException {
-			return rs.getInt(56);
+			return rs.getInt(53);
 		}
 		/**
 		 * Ascendientes Discapacitados Movilidad Reducida
@@ -17340,7 +18910,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getAscdimr()
 		throws SQLException {
-			return rs.getInt(57);
+			return rs.getInt(54);
 		}
 		/**
 		 * Ascendientes Discapacitados Movilidad Reducida Enteros
@@ -17349,7 +18919,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getAscdimre()
 		throws SQLException {
-			return rs.getInt(58);
+			return rs.getInt(55);
 		}
 		/**
 		 * Ascendientes Discapacitados >65%
@@ -17358,7 +18928,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getAscdi65()
 		throws SQLException {
-			return rs.getInt(59);
+			return rs.getInt(56);
 		}
 		/**
 		 * Ascendientes Discapacitados >65% Enteros
@@ -17367,7 +18937,79 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getAscdi65e()
 		throws SQLException {
-			return rs.getInt(60);
+			return rs.getInt(57);
+		}
+		/**
+		 * Nombre y Apellidos
+		 * @return the column 'nomapel' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNomapel()
+		throws SQLException {
+			return rs.getString(58);
+		}
+		/**
+		 * Provincia
+		 * @return the column 'provincia' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getProvincia()
+		throws SQLException {
+			return rs.getString(59);
+		}
+		/**
+		 * Ceuta / Melilla
+		 * @return the column 'c_m' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getC_m()
+		throws SQLException {
+			return rs.getString(60);
+		}
+		/**
+		 * Total Descendientes por Entero
+		 * @return the column 'descentero' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getDescentero()
+		throws SQLException {
+			return rs.getInt(61);
+		}
+		/**
+		 * Total Ascendientes
+		 * @return the column 'totalasc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getTotalasc()
+		throws SQLException {
+			return rs.getInt(62);
+		}
+		/**
+		 * Total Ascendentes por Entero
+		 * @return the column 'ascentero' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getAscentero()
+		throws SQLException {
+			return rs.getInt(63);
+		}
+		/**
+		 * Ascendientes Discapacitados entre 33 y 65
+		 * @return the column 'ascminus_33' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getAscminus_33()
+		throws SQLException {
+			return rs.getInt(64);
+		}
+		/**
+		 * Ascendientes Discapacitados mas de 65
+		 * @return the column 'ascminus_65' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getAscminus_65()
+		throws SQLException {
+			return rs.getInt(65);
 		}
 
 		/**
@@ -17455,6 +19097,8 @@ public class AbstractCtsqlDB {
 				+ ",indcom" 
 				+ ",tipcom" 
 				+ ",dinesp" 
+				+ ",concepto" 
+				+ ",excinc" 
 				+ " FROM percniv"
 				+ " WHERE" 
 				+ " codcom = ?  " 			); 
@@ -17496,6 +19140,8 @@ public class AbstractCtsqlDB {
 				+ ",indcom" 
 				+ ",tipcom" 
 				+ ",dinesp" 
+				+ ",concepto" 
+				+ ",excinc" 
 				+ " FROM percniv"
 				+ " WHERE" 
 				+ " codcomapl = ?  " 			); 
@@ -17506,6 +19152,122 @@ public class AbstractCtsqlDB {
 		if ( rel_pcn_capStmt != null ) { 
 			rel_pcn_capStmt.close();
 			rel_pcn_capStmt = null;	
+		}
+	}
+		
+	private PreparedStatement rel_lpl_comStmt = null;
+		
+	private void initRel_lpl_comStmt() 
+	throws SQLException{
+		this.rel_lpl_comStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",importe" 
+				+ ",codcom" 
+				+ " FROM linplus"
+				+ " WHERE" 
+				+ " codcom = ?  " 			); 
+	}
+
+	private void closeRel_lpl_comStmt() 
+	throws SQLException{
+		if ( rel_lpl_comStmt != null ) { 
+			rel_lpl_comStmt.close();
+			rel_lpl_comStmt = null;	
+		}
+	}
+		
+	private PreparedStatement rel_pcp_comStmt = null;
+		
+	private void initRel_pcp_comStmt() 
+	throws SQLException{
+		this.rel_pcp_comStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",numero" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",fecret" 
+				+ ",codcom" 
+				+ ",descom" 
+				+ ",desabr" 
+				+ ",calculo" 
+				+ ",tipcot" 
+				+ ",unidades" 
+				+ ",impuni" 
+				+ ",importe" 
+				+ ",mes" 
+				+ ",garilt" 
+				+ ",comapl" 
+				+ ",redext" 
+				+ ",fijovar" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",indcom" 
+				+ ",tipcom" 
+				+ ",dinesp" 
+				+ ",concepto" 
+				+ ",excinc" 
+				+ " FROM percep"
+				+ " WHERE" 
+				+ " codcom = ?  " 			); 
+	}
+
+	private void closeRel_pcp_comStmt() 
+	throws SQLException{
+		if ( rel_pcp_comStmt != null ) { 
+			rel_pcp_comStmt.close();
+			rel_pcp_comStmt = null;	
+		}
+	}
+		
+	private PreparedStatement rel_pcp_comaplStmt = null;
+		
+	private void initRel_pcp_comaplStmt() 
+	throws SQLException{
+		this.rel_pcp_comaplStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",numero" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",fecret" 
+				+ ",codcom" 
+				+ ",descom" 
+				+ ",desabr" 
+				+ ",calculo" 
+				+ ",tipcot" 
+				+ ",unidades" 
+				+ ",impuni" 
+				+ ",importe" 
+				+ ",mes" 
+				+ ",garilt" 
+				+ ",comapl" 
+				+ ",redext" 
+				+ ",fijovar" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",indcom" 
+				+ ",tipcom" 
+				+ ",dinesp" 
+				+ ",concepto" 
+				+ ",excinc" 
+				+ " FROM percep"
+				+ " WHERE" 
+				+ " comapl = ?  " 			); 
+	}
+
+	private void closeRel_pcp_comaplStmt() 
+	throws SQLException{
+		if ( rel_pcp_comaplStmt != null ) { 
+			rel_pcp_comaplStmt.close();
+			rel_pcp_comaplStmt = null;	
 		}
 	}
 		
@@ -17557,94 +19319,6 @@ public class AbstractCtsqlDB {
 		if ( rel_pex_comStmt != null ) { 
 			rel_pex_comStmt.close();
 			rel_pex_comStmt = null;	
-		}
-	}
-		
-	private PreparedStatement rel_pcp_comStmt = null;
-		
-	private void initRel_pcp_comStmt() 
-	throws SQLException{
-		this.rel_pcp_comStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",numero" 
-				+ ",fecini" 
-				+ ",fecfin" 
-				+ ",fecret" 
-				+ ",codcom" 
-				+ ",descom" 
-				+ ",desabr" 
-				+ ",calculo" 
-				+ ",tipcot" 
-				+ ",unidades" 
-				+ ",impuni" 
-				+ ",importe" 
-				+ ",mes" 
-				+ ",garilt" 
-				+ ",comapl" 
-				+ ",redext" 
-				+ ",fijovar" 
-				+ ",fecnew" 
-				+ ",hornew" 
-				+ ",fecmod" 
-				+ ",hormod" 
-				+ ",indcom" 
-				+ ",tipcom" 
-				+ ",dinesp" 
-				+ " FROM percep"
-				+ " WHERE" 
-				+ " codcom = ?  " 			); 
-	}
-
-	private void closeRel_pcp_comStmt() 
-	throws SQLException{
-		if ( rel_pcp_comStmt != null ) { 
-			rel_pcp_comStmt.close();
-			rel_pcp_comStmt = null;	
-		}
-	}
-		
-	private PreparedStatement rel_pcp_comaplStmt = null;
-		
-	private void initRel_pcp_comaplStmt() 
-	throws SQLException{
-		this.rel_pcp_comaplStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",numero" 
-				+ ",fecini" 
-				+ ",fecfin" 
-				+ ",fecret" 
-				+ ",codcom" 
-				+ ",descom" 
-				+ ",desabr" 
-				+ ",calculo" 
-				+ ",tipcot" 
-				+ ",unidades" 
-				+ ",impuni" 
-				+ ",importe" 
-				+ ",mes" 
-				+ ",garilt" 
-				+ ",comapl" 
-				+ ",redext" 
-				+ ",fijovar" 
-				+ ",fecnew" 
-				+ ",hornew" 
-				+ ",fecmod" 
-				+ ",hormod" 
-				+ ",indcom" 
-				+ ",tipcom" 
-				+ ",dinesp" 
-				+ " FROM percep"
-				+ " WHERE" 
-				+ " comapl = ?  " 			); 
-	}
-
-	private void closeRel_pcp_comaplStmt() 
-	throws SQLException{
-		if ( rel_pcp_comaplStmt != null ) { 
-			rel_pcp_comaplStmt.close();
-			rel_pcp_comaplStmt = null;	
 		}
 	}
 		
@@ -17723,27 +19397,28 @@ public class AbstractCtsqlDB {
 		}
 	}
 		
-	private PreparedStatement rel_lpl_comStmt = null;
+	private PreparedStatement lin_complementoStmt = null;
 		
-	private void initRel_lpl_comStmt() 
+	private void initLin_complementoStmt() 
 	throws SQLException{
-		this.rel_lpl_comStmt = ctsqlConnection.prepareStatement(
+		this.lin_complementoStmt = ctsqlConnection.prepareStatement(
 				"SELECT "
 				+ "cdg" 
 				+ ",fecini" 
 				+ ",fecfin" 
-				+ ",importe" 
+				+ ",orden" 
 				+ ",codcom" 
-				+ " FROM linplus"
+				+ ",formula" 
+				+ " FROM linfpercep"
 				+ " WHERE" 
 				+ " codcom = ?  " 			); 
 	}
 
-	private void closeRel_lpl_comStmt() 
+	private void closeLin_complementoStmt() 
 	throws SQLException{
-		if ( rel_lpl_comStmt != null ) { 
-			rel_lpl_comStmt.close();
-			rel_lpl_comStmt = null;	
+		if ( lin_complementoStmt != null ) { 
+			lin_complementoStmt.close();
+			lin_complementoStmt = null;	
 		}
 	}
 
@@ -17833,6 +19508,24 @@ public class AbstractCtsqlDB {
 		throws SQLException {
 			return rs.getString(8);
 		}
+		/**
+		 * Concepto
+		 * @return the column 'concepto' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getConcepto()
+		throws SQLException {
+			return rs.getString(9);
+		}
+		/**
+		 * Indicativo excluido/incluido
+		 * @return the column 'excinc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getExcinc()
+		throws SQLException {
+			return rs.getString(10);
+		}
 
 
 		
@@ -17912,22 +19605,22 @@ public class AbstractCtsqlDB {
 		}
 		
 		/**
-		 * Visit Nominaex that're children of this Complemento. 
+		 * Visit Linplus that're children of this Complemento. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
 		 */
-		public void visitRel_pex_com(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		public void visitRel_lpl_com(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 			ResultSet 			rs 	= null;
 			try {
 				
-				if ( rel_pex_comStmt == null )
-					 initRel_pex_comStmt();
+				if ( rel_lpl_comStmt == null )
+					 initRel_lpl_comStmt();
 				
-				rel_pex_comStmt.setString(1, this.getCdg()); 
-				rs = rel_pex_comStmt.executeQuery();
-				Nominaex nominaex = new Nominaex(rs); 
+				rel_lpl_comStmt.setString(1, this.getCdg()); 
+				rs = rel_lpl_comStmt.executeQuery();
+				Linplus linplus = new Linplus(rs); 
 				while ( rs.next() ) {
-					ctsqlDBVisitor.visitRel_pex_com(nominaex, this);
+					ctsqlDBVisitor.visitRel_lpl_com(linplus, this);
 				}
 			}
 			finally {
@@ -17978,6 +19671,31 @@ public class AbstractCtsqlDB {
 				Percep percep = new Percep(rs); 
 				while ( rs.next() ) {
 					ctsqlDBVisitor.visitRel_pcp_comapl(percep, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Nominaex that're children of this Complemento. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitRel_pex_com(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( rel_pex_comStmt == null )
+					 initRel_pex_comStmt();
+				
+				rel_pex_comStmt.setString(1, this.getCdg()); 
+				rs = rel_pex_comStmt.executeQuery();
+				Nominaex nominaex = new Nominaex(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitRel_pex_com(nominaex, this);
 				}
 			}
 			finally {
@@ -18062,22 +19780,22 @@ public class AbstractCtsqlDB {
 		}
 		
 		/**
-		 * Visit Linplus that're children of this Complemento. 
+		 * Visit Linfpercep that're children of this Complemento. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
 		 */
-		public void visitRel_lpl_com(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		public void visitLin_complemento(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 			ResultSet 			rs 	= null;
 			try {
 				
-				if ( rel_lpl_comStmt == null )
-					 initRel_lpl_comStmt();
+				if ( lin_complementoStmt == null )
+					 initLin_complementoStmt();
 				
-				rel_lpl_comStmt.setString(1, this.getCdg()); 
-				rs = rel_lpl_comStmt.executeQuery();
-				Linplus linplus = new Linplus(rs); 
+				lin_complementoStmt.setString(1, this.getCdg()); 
+				rs = lin_complementoStmt.executeQuery();
+				Linfpercep linfpercep = new Linfpercep(rs); 
 				while ( rs.next() ) {
-					ctsqlDBVisitor.visitRel_lpl_com(linplus, this);
+					ctsqlDBVisitor.visitLin_complemento(linfpercep, this);
 				}
 			}
 			finally {
@@ -18266,16 +19984,19 @@ public class AbstractCtsqlDB {
 				+ ",base_perdes" 
 				+ ",remuneracion" 
 				+ ",base_it" 
+				+ ",base_ere" 
 				+ ",total_1" 
 				+ ",codbas" 
 				+ ",base_cg" 
 				+ ",base_acc" 
 				+ ",prc_cg" 
 				+ ",prc_acc" 
+				+ ",prc_fp" 
 				+ ",prc_hex" 
 				+ ",prc_hexno" 
 				+ ",importe_cg" 
 				+ ",importe_acc" 
+				+ ",importe_fp" 
 				+ ",importe_hex" 
 				+ ",importe_hexno" 
 				+ ",mincg" 
@@ -18307,6 +20028,12 @@ public class AbstractCtsqlDB {
 				+ ",base_acc_pts" 
 				+ ",base_acc_sin_h_pts" 
 				+ ",cdgnom" 
+				+ ",base_con_ere" 
+				+ ",base_acc_ere" 
+				+ ",base_con_ere_no" 
+				+ ",base_acc_ere_no" 
+				+ ",base_con_ere_sin" 
+				+ ",base_acc_ere_sin" 
 				+ " FROM nominadf"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -18436,149 +20163,6 @@ public class AbstractCtsqlDB {
 
 	
 
-	private PreparedStatement _noitca_da_kfStmt = null;
-		
-	private void initNoitca_da_kfStmt() 
-	throws SQLException{
-		this._noitca_da_kfStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "id" 
-				+ ",menu" 
-				+ ",name" 
-				+ ",application_id" 
-				+ " FROM action"
-				+ " WHERE" 
-				+ " id = ?  " 			); 
-	}
-
-	private void closeNoitca_da_kfStmt() 
-	throws SQLException{
-		if ( _noitca_da_kfStmt != null ) { 
-			_noitca_da_kfStmt.close();
-			_noitca_da_kfStmt = null;	
-		}
-	}
-	private PreparedStatement _resu_da_kfStmt = null;
-		
-	private void initResu_da_kfStmt() 
-	throws SQLException{
-		this._resu_da_kfStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "id" 
-				+ ",name" 
-				+ ",login" 
-				+ ",available" 
-				+ ",validate" 
-				+ ",aon_key" 
-				+ ",status" 
-				+ " FROM usuario"
-				+ " WHERE" 
-				+ " id = ?  " 			); 
-	}
-
-	private void closeResu_da_kfStmt() 
-	throws SQLException{
-		if ( _resu_da_kfStmt != null ) { 
-			_resu_da_kfStmt.close();
-			_resu_da_kfStmt = null;	
-		}
-	}
-
-	/**
-	 * Action_denied
-	 * 
-	 */
-	public class Action_denied {
-		
-		private ResultSet rs;
-		
-		protected Action_denied (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
-		
-		/**
-		 * Identificador unico
-		 * @return the column 'id' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getId()
-		throws SQLException {
-			return rs.getInt(1);
-		}
-		/**
-		 * Identificador de la Acción
-		 * @return the column 'action_id' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getAction_id()
-		throws SQLException {
-			return rs.getInt(2);
-		}
-		/**
-		 * Identificador del Usuario
-		 * @return the column 'user_id' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getUser_id()
-		throws SQLException {
-			return rs.getInt(3);
-		}
-
-		/**
-		 * Visit Action that's parent of this Action_denied. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitFk_ad_action(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( _noitca_da_kfStmt == null )
-					 initNoitca_da_kfStmt();
-				
-				_noitca_da_kfStmt.setInt(1, this.getAction_id()); 
-				rs = _noitca_da_kfStmt.executeQuery();
-				Action action = new Action(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitFk_ad_action(this, action);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		/**
-		 * Visit Usuario that's parent of this Action_denied. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitFk_ad_user(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( _resu_da_kfStmt == null )
-					 initResu_da_kfStmt();
-				
-				_resu_da_kfStmt.setInt(1, this.getUser_id()); 
-				rs = _resu_da_kfStmt.executeQuery();
-				Usuario usuario = new Usuario(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitFk_ad_user(this, usuario);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-
-	}
-	
-
-	
-
 	private PreparedStatement _unnif_unotdnifStmt = null;
 		
 	private void initUnnif_unotdnifStmt() 
@@ -18587,6 +20171,7 @@ public class AbstractCtsqlDB {
 				"SELECT "
 				+ "codper" 
 				+ ",fecbaj" 
+				+ ",codcausa" 
 				+ ",causa" 
 				+ ",vacfecini" 
 				+ ",vacimporte" 
@@ -18844,34 +20429,6 @@ public class AbstractCtsqlDB {
 
 	
 
-	private PreparedStatement _nob_epb_lerStmt = null;
-		
-	private void initNob_epb_lerStmt() 
-	throws SQLException{
-		this._nob_epb_lerStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",descripcion" 
-				+ ",calculo" 
-				+ ",prc_cg" 
-				+ ",prc_acc" 
-				+ ",prc_accfgs" 
-				+ ",boniss" 
-				+ ",mayor60" 
-				+ ",rdl052006" 
-				+ ",restait" 
-				+ " FROM tipboni"
-				+ " WHERE" 
-				+ " cdg = ?  " 			); 
-	}
-
-	private void closeNob_epb_lerStmt() 
-	throws SQLException{
-		if ( _nob_epb_lerStmt != null ) { 
-			_nob_epb_lerStmt.close();
-			_nob_epb_lerStmt = null;	
-		}
-	}
 	private PreparedStatement _reprpme_acifinobStmt = null;
 		
 	private void initReprpme_acifinobStmt() 
@@ -18899,6 +20456,11 @@ public class AbstractCtsqlDB {
 				+ ",indgrupo" 
 				+ ",pariente" 
 				+ ",noirpf" 
+				+ ",nosegsoc" 
+				+ ",jubiladoactivo" 
+				+ ",certificado" 
+				+ ",familiar" 
+				+ ",noresidente" 
 				+ " FROM emprper"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -18997,31 +20559,88 @@ public class AbstractCtsqlDB {
 		throws SQLException {
 			return rs.getString(8);
 		}
-
 		/**
-		 * Visit Tipboni that's parent of this Bonifica. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * Descripcion de Bonificacion
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public void visitRel_bpe_bon(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( _nob_epb_lerStmt == null )
-					 initNob_epb_lerStmt();
-				
-				_nob_epb_lerStmt.setInt(1, this.getCdg()); 
-				rs = _nob_epb_lerStmt.executeQuery();
-				Tipboni tipboni = new Tipboni(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitRel_bpe_bon(this, tipboni);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
+		public String getDescripcion()
+		throws SQLException {
+			return rs.getString(9);
 		}
+		/**
+		 * Forma de Calculo
+		 * @return the column 'calculo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCalculo()
+		throws SQLException {
+			return rs.getString(10);
+		}
+		/**
+		 * % Bonificacion Contingencias Generales
+		 * @return the column 'prc_cg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getPrc_cg()
+		throws SQLException {
+			return rs.getBigDecimal(11);
+		}
+		/**
+		 * % Bonificacion Accidentes
+		 * @return the column 'prc_acc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getPrc_acc()
+		throws SQLException {
+			return rs.getBigDecimal(12);
+		}
+		/**
+		 * % bonificacion Base Conjunto
+		 * @return the column 'prc_accfgs' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getPrc_accfgs()
+		throws SQLException {
+			return rs.getBigDecimal(13);
+		}
+		/**
+		 * Bonificación S.S.
+		 * @return the column 'boniss' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getBoniss()
+		throws SQLException {
+			return rs.getString(14);
+		}
+		/**
+		 * Mayores de 60 años y mas de 5 años de Antigüedad
+		 * @return the column 'mayor60' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getMayor60()
+		throws SQLException {
+			return rs.getString(15);
+		}
+		/**
+		 * Real Decreto Ley 5/2006
+		 * @return the column 'rdl052006' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getRdl052006()
+		throws SQLException {
+			return rs.getString(16);
+		}
+		/**
+		 * Restar I.T.
+		 * @return the column 'restait' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getRestait()
+		throws SQLException {
+			return rs.getString(17);
+		}
+
 		/**
 		 * Visit Emprper that's parent of this Bonifica. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
@@ -19213,6 +20832,11 @@ public class AbstractCtsqlDB {
 				+ ",indgrupo" 
 				+ ",pariente" 
 				+ ",noirpf" 
+				+ ",nosegsoc" 
+				+ ",jubiladoactivo" 
+				+ ",certificado" 
+				+ ",familiar" 
+				+ ",noresidente" 
 				+ " FROM emprper"
 				+ " WHERE" 
 				+ " codact = ?  " 			); 
@@ -19250,6 +20874,42 @@ public class AbstractCtsqlDB {
 		if ( avisos_empractStmt != null ) { 
 			avisos_empractStmt.close();
 			avisos_empractStmt = null;	
+		}
+	}
+		
+	private PreparedStatement regidocu_empractStmt = null;
+		
+	private void initRegidocu_empractStmt() 
+	throws SQLException{
+		this.regidocu_empractStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",codcli" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",codper" 
+				+ ",tipo" 
+				+ ",fechaefe" 
+				+ ",fechaent" 
+				+ ",fechapre" 
+				+ ",lugar" 
+				+ ",observa" 
+				+ ",fechaenv" 
+				+ ",tipdom" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ " FROM regidocu"
+				+ " WHERE" 
+				+ " codact = ?  " 			); 
+	}
+
+	private void closeRegidocu_empractStmt() 
+	throws SQLException{
+		if ( regidocu_empractStmt != null ) { 
+			regidocu_empractStmt.close();
+			regidocu_empractStmt = null;	
 		}
 	}
 		
@@ -19293,42 +20953,6 @@ public class AbstractCtsqlDB {
 		if ( rel_var_actStmt != null ) { 
 			rel_var_actStmt.close();
 			rel_var_actStmt = null;	
-		}
-	}
-		
-	private PreparedStatement regidocu_empractStmt = null;
-		
-	private void initRegidocu_empractStmt() 
-	throws SQLException{
-		this.regidocu_empractStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",codcli" 
-				+ ",codemp" 
-				+ ",codact" 
-				+ ",codper" 
-				+ ",tipo" 
-				+ ",fechaefe" 
-				+ ",fechaent" 
-				+ ",fechapre" 
-				+ ",lugar" 
-				+ ",observa" 
-				+ ",fechaenv" 
-				+ ",tipdom" 
-				+ ",fecnew" 
-				+ ",hornew" 
-				+ ",fecmod" 
-				+ ",hormod" 
-				+ " FROM regidocu"
-				+ " WHERE" 
-				+ " codact = ?  " 			); 
-	}
-
-	private void closeRegidocu_empractStmt() 
-	throws SQLException{
-		if ( regidocu_empractStmt != null ) { 
-			regidocu_empractStmt.close();
-			regidocu_empractStmt = null;	
 		}
 	}
 		
@@ -19412,6 +21036,58 @@ public class AbstractCtsqlDB {
 			jactividadStmt = null;	
 		}
 	}
+		
+	private PreparedStatement hon_empractStmt = null;
+		
+	private void initHon_empractStmt() 
+	throws SQLException{
+		this.hon_empractStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",codcli" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",tipo" 
+				+ ",texto" 
+				+ ",facturar" 
+				+ " FROM honorarios"
+				+ " WHERE" 
+				+ " codact = ?  " 			); 
+	}
+
+	private void closeHon_empractStmt() 
+	throws SQLException{
+		if ( hon_empractStmt != null ) { 
+			hon_empractStmt.close();
+			hon_empractStmt = null;	
+		}
+	}
+		
+	private PreparedStatement fpe_empractStmt = null;
+		
+	private void initFpe_empractStmt() 
+	throws SQLException{
+		this.fpe_empractStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",nivel" 
+				+ ",codcon" 
+				+ ",codcli" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",codper" 
+				+ " FROM fpercep"
+				+ " WHERE" 
+				+ " codact = ?  " 			); 
+	}
+
+	private void closeFpe_empractStmt() 
+	throws SQLException{
+		if ( fpe_empractStmt != null ) { 
+			fpe_empractStmt.close();
+			fpe_empractStmt = null;	
+		}
+	}
 
 	private PreparedStatement _finrpme_tcarpmeStmt = null;
 		
@@ -19453,6 +21129,9 @@ public class AbstractCtsqlDB {
 				+ ",cecon" 
 				+ ",modimpuesto" 
 				+ ",mod190" 
+				+ ",feciniportal" 
+				+ ",feccierrenomina" 
+				+ ",meseshistorico" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -19601,13 +21280,22 @@ public class AbstractCtsqlDB {
 			return rs.getString(11);
 		}
 		/**
+		 * Codigo Nacional Actividad Economica - 2009
+		 * @return the column 'cnae2009' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCnae2009()
+		throws SQLException {
+			return rs.getString(12);
+		}
+		/**
 		 * Fecha Creacion Fila
 		 * @return the column 'fecnew' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
 		public Date getFecnew()
 		throws SQLException {
-			return rs.getDate(12);
+			return rs.getDate(13);
 		}
 		/**
 		 * Hora Creacion Fila
@@ -19616,7 +21304,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Time getHornew()
 		throws SQLException {
-			return rs.getTime(13);
+			return rs.getTime(14);
 		}
 		/**
 		 * Fecha Modificacion Fila
@@ -19625,7 +21313,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFecmod()
 		throws SQLException {
-			return rs.getDate(14);
+			return rs.getDate(15);
 		}
 		/**
 		 * Hora Modificacion Fila
@@ -19634,16 +21322,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Time getHormod()
 		throws SQLException {
-			return rs.getTime(15);
-		}
-		/**
-		 * Codigo Nacional Actividad Economica - 2009
-		 * @return the column 'cnae2009' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getCnae2009()
-		throws SQLException {
-			return rs.getString(16);
+			return rs.getTime(16);
 		}
 		/**
 		 * Sistema Red
@@ -19788,6 +21467,24 @@ public class AbstractCtsqlDB {
 		public String getPrevencion()
 		throws SQLException {
 			return rs.getString(32);
+		}
+		/**
+		 * SILTRA
+		 * @return the column 'indsiltra' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getIndsiltra()
+		throws SQLException {
+			return rs.getString(33);
+		}
+		/**
+		 * Autorización
+		 * @return the column 'autoriza' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getAutoriza()
+		throws SQLException {
+			return rs.getString(34);
 		}
 
 		/**
@@ -20016,31 +21713,6 @@ public class AbstractCtsqlDB {
 		}
 		
 		/**
-		 * Visit Variaciones that're children of this Empract. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitRel_var_act(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( rel_var_actStmt == null )
-					 initRel_var_actStmt();
-				
-				rel_var_actStmt.setInt(1, this.getCdg()); 
-				rs = rel_var_actStmt.executeQuery();
-				Variaciones variaciones = new Variaciones(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitRel_var_act(variaciones, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		
-		/**
 		 * Visit Regidocu that're children of this Empract. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
@@ -20066,6 +21738,31 @@ public class AbstractCtsqlDB {
 		}
 		
 		/**
+		 * Visit Variaciones that're children of this Empract. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitRel_var_act(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( rel_var_actStmt == null )
+					 initRel_var_actStmt();
+				
+				rel_var_actStmt.setInt(1, this.getCdg()); 
+				rs = rel_var_actStmt.executeQuery();
+				Variaciones variaciones = new Variaciones(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitRel_var_act(variaciones, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
 		 * Visit Httrabajador that're children of this Empract. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
@@ -20082,6 +21779,56 @@ public class AbstractCtsqlDB {
 				Httrabajador httrabajador = new Httrabajador(rs); 
 				while ( rs.next() ) {
 					ctsqlDBVisitor.visitJactividad(httrabajador, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Honorarios that're children of this Empract. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitHon_empract(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( hon_empractStmt == null )
+					 initHon_empractStmt();
+				
+				hon_empractStmt.setInt(1, this.getCdg()); 
+				rs = hon_empractStmt.executeQuery();
+				Honorarios honorarios = new Honorarios(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitHon_empract(honorarios, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Fpercep that're children of this Empract. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitFpe_empract(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( fpe_empractStmt == null )
+					 initFpe_empractStmt();
+				
+				fpe_empractStmt.setInt(1, this.getCdg()); 
+				rs = fpe_empractStmt.executeQuery();
+				Fpercep fpercep = new Fpercep(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitFpe_empract(fpercep, this);
 				}
 			}
 			finally {
@@ -20121,6 +21868,11 @@ public class AbstractCtsqlDB {
 				+ ",indgrupo" 
 				+ ",pariente" 
 				+ ",noirpf" 
+				+ ",nosegsoc" 
+				+ ",jubiladoactivo" 
+				+ ",certificado" 
+				+ ",familiar" 
+				+ ",noresidente" 
 				+ " FROM emprper"
 				+ " WHERE" 
 				+ " codcco = ?  " 			); 
@@ -20151,11 +21903,11 @@ public class AbstractCtsqlDB {
 				+ ",acteco" 
 				+ ",epiiae" 
 				+ ",cnae" 
+				+ ",cnae2009" 
 				+ ",fecnew" 
 				+ ",hornew" 
 				+ ",fecmod" 
 				+ ",hormod" 
-				+ ",cnae2009" 
 				+ ",indred" 
 				+ ",indmutua" 
 				+ ",indtc1" 
@@ -20172,6 +21924,8 @@ public class AbstractCtsqlDB {
 				+ ",indfirma" 
 				+ ",indregimen" 
 				+ ",prevencion" 
+				+ ",indsiltra" 
+				+ ",autoriza" 
 				+ " FROM empract"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -20280,147 +22034,131 @@ public class AbstractCtsqlDB {
 	
 
 	
-
-	private PreparedStatement _noitca_ea_kfStmt = null;
 		
-	private void initNoitca_ea_kfStmt() 
+	private PreparedStatement rel_cra_trb_perStmt = null;
+		
+	private void initRel_cra_trb_perStmt() 
 	throws SQLException{
-		this._noitca_ea_kfStmt = ctsqlConnection.prepareStatement(
+		this.rel_cra_trb_perStmt = ctsqlConnection.prepareStatement(
 				"SELECT "
-				+ "id" 
-				+ ",menu" 
-				+ ",name" 
-				+ ",application_id" 
-				+ " FROM action"
+				+ "cdg" 
+				+ ",codper" 
+				+ ",orden" 
+				+ ",anio" 
+				+ ",mes" 
+				+ ",tiprec" 
+				+ ",codrec" 
+				+ ",descripcion" 
+				+ ",concepto" 
+				+ ",importe" 
+				+ ",excinc" 
+				+ " FROM cra_cre"
 				+ " WHERE" 
-				+ " id = ?  " 			); 
+				+ " cdg = ?  "  + "AND" 				+ " codper = ?  " 			); 
 	}
 
-	private void closeNoitca_ea_kfStmt() 
+	private void closeRel_cra_trb_perStmt() 
 	throws SQLException{
-		if ( _noitca_ea_kfStmt != null ) { 
-			_noitca_ea_kfStmt.close();
-			_noitca_ea_kfStmt = null;	
+		if ( rel_cra_trb_perStmt != null ) { 
+			rel_cra_trb_perStmt.close();
+			rel_cra_trb_perStmt = null;	
 		}
 	}
-	private PreparedStatement _noisses_ea_kfStmt = null;
+
+	private PreparedStatement _gdc_edd_arc_lerStmt = null;
 		
-	private void initNoisses_ea_kfStmt() 
+	private void initGdc_edd_arc_lerStmt() 
 	throws SQLException{
-		this._noisses_ea_kfStmt = ctsqlConnection.prepareStatement(
+		this._gdc_edd_arc_lerStmt = ctsqlConnection.prepareStatement(
 				"SELECT "
-				+ "id" 
-				+ ",enddate" 
-				+ ",remote_address" 
-				+ ",remote_host" 
-				+ ",session_id" 
-				+ ",startdate" 
-				+ ",application_id" 
-				+ ",user_id" 
-				+ " FROM session"
+				+ "cdg" 
+				+ ",codact" 
+				+ ",desact" 
+				+ ",codreg" 
+				+ ",codccc" 
+				+ ",anio" 
+				+ ",mes" 
+				+ ",remesado" 
+				+ " FROM cra_dde"
 				+ " WHERE" 
-				+ " id = ?  " 			); 
+				+ " cdg = ?  " 			); 
 	}
 
-	private void closeNoisses_ea_kfStmt() 
+	private void closeGdc_edd_arc_lerStmt() 
 	throws SQLException{
-		if ( _noisses_ea_kfStmt != null ) { 
-			_noisses_ea_kfStmt.close();
-			_noisses_ea_kfStmt = null;	
+		if ( _gdc_edd_arc_lerStmt != null ) { 
+			_gdc_edd_arc_lerStmt.close();
+			_gdc_edd_arc_lerStmt = null;	
 		}
 	}
 
 	/**
-	 * Action_entry
+	 * Cra_trb
 	 * 
 	 */
-	public class Action_entry {
+	public class Cra_trb {
 		
 		private ResultSet rs;
 		
-		protected Action_entry (ResultSet rs) 
+		protected Cra_trb (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
 		
 		/**
-		 * Identificador unico
-		 * @return the column 'id' value; if the value is SQL NULL, the value returned is null
+		 * Código de fichero CRA
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getId()
+		public Integer getCdg()
 		throws SQLException {
 			return rs.getInt(1);
 		}
 		/**
-		 * Fecha de ejecucción
-		 * @return the column 'executiondate' value; if the value is SQL NULL, the value returned is null
+		 * Código de persona
+		 * @return the column 'codper' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Timestamp getExecutiondate()
+		public Integer getCodper()
 		throws SQLException {
-			return rs.getTimestamp(2);
+			return rs.getInt(2);
 		}
 		/**
-		 * Identificador de la Acción
-		 * @return the column 'action_id' value; if the value is SQL NULL, the value returned is null
+		 * Apellidos y nombre
+		 * @return the column 'apenom' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getAction_id()
+		public String getApenom()
 		throws SQLException {
-			return rs.getInt(3);
+			return rs.getString(3);
 		}
 		/**
-		 * Identificador de la Sesión
-		 * @return the column 'session_id' value; if the value is SQL NULL, the value returned is null
+		 * Código de cuenta de cotización
+		 * @return the column 'numss' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getSession_id()
+		public String getNumss()
 		throws SQLException {
-			return rs.getInt(4);
+			return rs.getString(4);
 		}
 
 		/**
-		 * Visit Action that's parent of this Action_entry. 
+		 * Visit Cra_dde that's parent of this Cra_trb. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
 		 */
-		public void visitFk_ae_action(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		public void visitRel_cra_dde_cdg(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 			ResultSet 			rs 	= null;
 			try {
 				
-				if ( _noitca_ea_kfStmt == null )
-					 initNoitca_ea_kfStmt();
+				if ( _gdc_edd_arc_lerStmt == null )
+					 initGdc_edd_arc_lerStmt();
 				
-				_noitca_ea_kfStmt.setInt(1, this.getAction_id()); 
-				rs = _noitca_ea_kfStmt.executeQuery();
-				Action action = new Action(rs); 
+				_gdc_edd_arc_lerStmt.setInt(1, this.getCdg()); 
+				rs = _gdc_edd_arc_lerStmt.executeQuery();
+				Cra_dde cra_dde = new Cra_dde(rs); 
 				while ( rs.next() ) {
-					ctsqlDBVisitor.visitFk_ae_action(this, action);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		/**
-		 * Visit Session that's parent of this Action_entry. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitFk_ae_session(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( _noisses_ea_kfStmt == null )
-					 initNoisses_ea_kfStmt();
-				
-				_noisses_ea_kfStmt.setInt(1, this.getSession_id()); 
-				rs = _noisses_ea_kfStmt.executeQuery();
-				Session session = new Session(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitFk_ae_session(this, session);
+					ctsqlDBVisitor.visitRel_cra_dde_cdg(this, cra_dde);
 				}
 			}
 			finally {
@@ -20429,6 +22167,32 @@ public class AbstractCtsqlDB {
 			}
 		}
 
+		
+		/**
+		 * Visit Cra_cre that're children of this Cra_trb. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitRel_cra_trb_per(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( rel_cra_trb_perStmt == null )
+					 initRel_cra_trb_perStmt();
+				
+				rel_cra_trb_perStmt.setInt(1, this.getCdg()); 
+				rel_cra_trb_perStmt.setInt(2, this.getCodper()); 
+				rs = rel_cra_trb_perStmt.executeQuery();
+				Cra_cre cra_cre = new Cra_cre(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitRel_cra_trb_per(cra_cre, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
 	}
 	
 
@@ -20436,107 +22200,44 @@ public class AbstractCtsqlDB {
 
 
 	/**
-	 * Masivo
+	 * Tr_parametro
 	 * 
 	 */
-	public class Masivo {
+	public class Tr_parametro {
 		
 		private ResultSet rs;
 		
-		protected Masivo (ResultSet rs) 
+		protected Tr_parametro (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
 		
 		/**
-		 * $column.remarks
-		 * @return the column 'cdg1' value; if the value is SQL NULL, the value returned is null
+		 * Codigo
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getCdg1()
+		public String getCdg()
 		throws SQLException {
 			return rs.getString(1);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'cdg2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getCdg2()
-		throws SQLException {
-			return rs.getString(2);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'cdg3' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getCdg3()
-		throws SQLException {
-			return rs.getString(3);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'cdg4' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getCdg4()
-		throws SQLException {
-			return rs.getString(4);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'cdg5' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getCdg5()
-		throws SQLException {
-			return rs.getString(5);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'cdg6' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getCdg6()
-		throws SQLException {
-			return rs.getString(6);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'cdg7' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getCdg7()
-		throws SQLException {
-			return rs.getString(7);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'cdg8' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getCdg8()
-		throws SQLException {
-			return rs.getString(8);
-		}
-		/**
-		 * $column.remarks
+		 * Descripcion
 		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
 		public String getDescripcion()
 		throws SQLException {
-			return rs.getString(9);
+			return rs.getString(2);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'dato' value; if the value is SQL NULL, the value returned is null
+		 * Numero Sig.
+		 * @return the column 'valornum' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getDato()
+		public Integer getValornum()
 		throws SQLException {
-			return rs.getString(10);
+			return rs.getInt(3);
 		}
 
 
@@ -20791,6 +22492,9 @@ public class AbstractCtsqlDB {
 				+ ",cecon" 
 				+ ",modimpuesto" 
 				+ ",mod190" 
+				+ ",feciniportal" 
+				+ ",feccierrenomina" 
+				+ ",meseshistorico" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " codcli = ?  " 			); 
@@ -20946,6 +22650,42 @@ public class AbstractCtsqlDB {
 		}
 	}
 		
+	private PreparedStatement regidocu_clienteStmt = null;
+		
+	private void initRegidocu_clienteStmt() 
+	throws SQLException{
+		this.regidocu_clienteStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",codcli" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",codper" 
+				+ ",tipo" 
+				+ ",fechaefe" 
+				+ ",fechaent" 
+				+ ",fechapre" 
+				+ ",lugar" 
+				+ ",observa" 
+				+ ",fechaenv" 
+				+ ",tipdom" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ " FROM regidocu"
+				+ " WHERE" 
+				+ " codcli = ?  " 			); 
+	}
+
+	private void closeRegidocu_clienteStmt() 
+	throws SQLException{
+		if ( regidocu_clienteStmt != null ) { 
+			regidocu_clienteStmt.close();
+			regidocu_clienteStmt = null;	
+		}
+	}
+		
 	private PreparedStatement rel_var_cliStmt = null;
 		
 	private void initRel_var_cliStmt() 
@@ -20989,42 +22729,78 @@ public class AbstractCtsqlDB {
 		}
 	}
 		
-	private PreparedStatement regidocu_clienteStmt = null;
+	private PreparedStatement hon_clienteStmt = null;
 		
-	private void initRegidocu_clienteStmt() 
+	private void initHon_clienteStmt() 
 	throws SQLException{
-		this.regidocu_clienteStmt = ctsqlConnection.prepareStatement(
+		this.hon_clienteStmt = ctsqlConnection.prepareStatement(
 				"SELECT "
 				+ "cdg" 
 				+ ",codcli" 
 				+ ",codemp" 
 				+ ",codact" 
-				+ ",codper" 
 				+ ",tipo" 
-				+ ",fechaefe" 
-				+ ",fechaent" 
-				+ ",fechapre" 
-				+ ",lugar" 
-				+ ",observa" 
-				+ ",fechaenv" 
-				+ ",tipdom" 
-				+ ",fecnew" 
-				+ ",hornew" 
-				+ ",fecmod" 
-				+ ",hormod" 
-				+ " FROM regidocu"
+				+ ",texto" 
+				+ ",facturar" 
+				+ " FROM honorarios"
 				+ " WHERE" 
 				+ " codcli = ?  " 			); 
 	}
 
-	private void closeRegidocu_clienteStmt() 
+	private void closeHon_clienteStmt() 
 	throws SQLException{
-		if ( regidocu_clienteStmt != null ) { 
-			regidocu_clienteStmt.close();
-			regidocu_clienteStmt = null;	
+		if ( hon_clienteStmt != null ) { 
+			hon_clienteStmt.close();
+			hon_clienteStmt = null;	
+		}
+	}
+		
+	private PreparedStatement fpe_clienteStmt = null;
+		
+	private void initFpe_clienteStmt() 
+	throws SQLException{
+		this.fpe_clienteStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",nivel" 
+				+ ",codcon" 
+				+ ",codcli" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",codper" 
+				+ " FROM fpercep"
+				+ " WHERE" 
+				+ " codcli = ?  " 			); 
+	}
+
+	private void closeFpe_clienteStmt() 
+	throws SQLException{
+		if ( fpe_clienteStmt != null ) { 
+			fpe_clienteStmt.close();
+			fpe_clienteStmt = null;	
 		}
 	}
 
+	private PreparedStatement _ojabartprg_ilc_lerStmt = null;
+		
+	private void initOjabartprg_ilc_lerStmt() 
+	throws SQLException{
+		this._ojabartprg_ilc_lerStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM grupotrabajo"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeOjabartprg_ilc_lerStmt() 
+	throws SQLException{
+		if ( _ojabartprg_ilc_lerStmt != null ) { 
+			_ojabartprg_ilc_lerStmt.close();
+			_ojabartprg_ilc_lerStmt = null;	
+		}
+	}
 	private PreparedStatement _aiv_ilc_lerStmt = null;
 		
 	private void initAiv_ilc_lerStmt() 
@@ -21142,6 +22918,7 @@ public class AbstractCtsqlDB {
 				+ ",localidad" 
 				+ ",provincia" 
 				+ ",telefono" 
+				+ ",workplace" 
 				+ " FROM delegacion"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -21506,7 +23283,40 @@ public class AbstractCtsqlDB {
 		throws SQLException {
 			return rs.getString(35);
 		}
+		/**
+		 * Grupo de trabajo
+		 * @return the column 'grupotrabajo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getGrupotrabajo()
+		throws SQLException {
+			return rs.getString(36);
+		}
 
+		/**
+		 * Visit Grupotrabajo that's parent of this Cliente. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitRel_cli_grptrabajo(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _ojabartprg_ilc_lerStmt == null )
+					 initOjabartprg_ilc_lerStmt();
+				
+				_ojabartprg_ilc_lerStmt.setString(1, this.getGrupotrabajo()); 
+				rs = _ojabartprg_ilc_lerStmt.executeQuery();
+				Grupotrabajo grupotrabajo = new Grupotrabajo(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitRel_cli_grptrabajo(this, grupotrabajo);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
 		/**
 		 * Visit Tipovia that's parent of this Cliente. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
@@ -21828,6 +23638,31 @@ public class AbstractCtsqlDB {
 		}
 		
 		/**
+		 * Visit Regidocu that're children of this Cliente. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitRegidocu_cliente(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( regidocu_clienteStmt == null )
+					 initRegidocu_clienteStmt();
+				
+				regidocu_clienteStmt.setInt(1, this.getCdg()); 
+				rs = regidocu_clienteStmt.executeQuery();
+				Regidocu regidocu = new Regidocu(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitRegidocu_cliente(regidocu, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
 		 * Visit Variaciones that're children of this Cliente. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
@@ -21853,22 +23688,47 @@ public class AbstractCtsqlDB {
 		}
 		
 		/**
-		 * Visit Regidocu that're children of this Cliente. 
+		 * Visit Honorarios that're children of this Cliente. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
 		 */
-		public void visitRegidocu_cliente(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		public void visitHon_cliente(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 			ResultSet 			rs 	= null;
 			try {
 				
-				if ( regidocu_clienteStmt == null )
-					 initRegidocu_clienteStmt();
+				if ( hon_clienteStmt == null )
+					 initHon_clienteStmt();
 				
-				regidocu_clienteStmt.setInt(1, this.getCdg()); 
-				rs = regidocu_clienteStmt.executeQuery();
-				Regidocu regidocu = new Regidocu(rs); 
+				hon_clienteStmt.setInt(1, this.getCdg()); 
+				rs = hon_clienteStmt.executeQuery();
+				Honorarios honorarios = new Honorarios(rs); 
 				while ( rs.next() ) {
-					ctsqlDBVisitor.visitRegidocu_cliente(regidocu, this);
+					ctsqlDBVisitor.visitHon_cliente(honorarios, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Fpercep that're children of this Cliente. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitFpe_cliente(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( fpe_clienteStmt == null )
+					 initFpe_clienteStmt();
+				
+				fpe_clienteStmt.setInt(1, this.getCdg()); 
+				rs = fpe_clienteStmt.executeQuery();
+				Fpercep fpercep = new Fpercep(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitFpe_cliente(fpercep, this);
 				}
 			}
 			finally {
@@ -22017,30 +23877,6 @@ public class AbstractCtsqlDB {
 		if ( _daditnetuajStmt != null ) { 
 			_daditnetuajStmt.close();
 			_daditnetuajStmt = null;	
-		}
-	}
-	private PreparedStatement _lasrucustuajStmt = null;
-		
-	private void initLasrucustuajStmt() 
-	throws SQLException{
-		this._lasrucustuajStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "codent" 
-				+ ",cdg" 
-				+ ",domsuc" 
-				+ ",munsuc" 
-				+ ",cpsuc" 
-				+ ",bic" 
-				+ " FROM sucursal"
-				+ " WHERE" 
-				+ " codent = ?  "  + "AND" 				+ " cdg = ?  " 			); 
-	}
-
-	private void closeLasrucustuajStmt() 
-	throws SQLException{
-		if ( _lasrucustuajStmt != null ) { 
-			_lasrucustuajStmt.close();
-			_lasrucustuajStmt = null;	
 		}
 	}
 	private PreparedStatement _autumtuajStmt = null;
@@ -22517,31 +24353,6 @@ public class AbstractCtsqlDB {
 			}
 		}
 		/**
-		 * Visit Sucursal that's parent of this Autonomos. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitJautsucursal(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( _lasrucustuajStmt == null )
-					 initLasrucustuajStmt();
-				
-				_lasrucustuajStmt.setString(1, this.getEntidad()); 
-				_lasrucustuajStmt.setString(2, this.getSucursal()); 
-				rs = _lasrucustuajStmt.executeQuery();
-				Sucursal sucursal = new Sucursal(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitJautsucursal(this, sucursal);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		/**
 		 * Visit Mutua that's parent of this Autonomos. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
@@ -22721,6 +24532,7 @@ public class AbstractCtsqlDB {
 				+ ",divisa" 
 				+ ",soloases" 
 				+ ",envioss" 
+				+ ",grupotrabajo" 
 				+ " FROM cliente"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -22773,6 +24585,9 @@ public class AbstractCtsqlDB {
 				+ ",cecon" 
 				+ ",modimpuesto" 
 				+ ",mod190" 
+				+ ",feciniportal" 
+				+ ",feccierrenomina" 
+				+ ",meseshistorico" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -22802,11 +24617,11 @@ public class AbstractCtsqlDB {
 				+ ",acteco" 
 				+ ",epiiae" 
 				+ ",cnae" 
+				+ ",cnae2009" 
 				+ ",fecnew" 
 				+ ",hornew" 
 				+ ",fecmod" 
 				+ ",hormod" 
-				+ ",cnae2009" 
 				+ ",indred" 
 				+ ",indmutua" 
 				+ ",indtc1" 
@@ -22823,6 +24638,8 @@ public class AbstractCtsqlDB {
 				+ ",indfirma" 
 				+ ",indregimen" 
 				+ ",prevencion" 
+				+ ",indsiltra" 
+				+ ",autoriza" 
 				+ " FROM empract"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -23032,156 +24849,6 @@ public class AbstractCtsqlDB {
 
 	
 
-
-	/**
-	 * Nszcoco
-	 * 
-	 */
-	public class Nszcoco {
-		
-		private ResultSet rs;
-		
-		protected Nszcoco (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
-		
-		/**
-		 * $column.remarks
-		 * @return the column 'scn0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getScn0()
-		throws SQLException {
-			return rs.getString(1);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'scn1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getScn1()
-		throws SQLException {
-			return rs.getString(2);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'scn2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getScn2()
-		throws SQLException {
-			return rs.getString(3);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'scn3' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getScn3()
-		throws SQLException {
-			return rs.getString(4);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ncn0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNcn0()
-		throws SQLException {
-			return rs.getBigDecimal(5);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ncn1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNcn1()
-		throws SQLException {
-			return rs.getBigDecimal(6);
-		}
-
-
-	}
-	
-
-	
-
-
-	/**
-	 * Nszrece
-	 * 
-	 */
-	public class Nszrece {
-		
-		private ResultSet rs;
-		
-		protected Nszrece (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
-		
-		/**
-		 * $column.remarks
-		 * @return the column 'src0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSrc0()
-		throws SQLException {
-			return rs.getString(1);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'src1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSrc1()
-		throws SQLException {
-			return rs.getString(2);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nrc0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNrc0()
-		throws SQLException {
-			return rs.getInt(3);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nrc1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNrc1()
-		throws SQLException {
-			return rs.getInt(4);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nrc2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNrc2()
-		throws SQLException {
-			return rs.getInt(5);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nrc3' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNrc3()
-		throws SQLException {
-			return rs.getInt(6);
-		}
-
-
-	}
-	
-
-	
-
 	private PreparedStatement _nomda_x11rpmiStmt = null;
 		
 	private void initNomda_x11rpmiStmt() 
@@ -23263,6 +24930,9 @@ public class AbstractCtsqlDB {
 				+ ",cecon" 
 				+ ",modimpuesto" 
 				+ ",mod190" 
+				+ ",feciniportal" 
+				+ ",feccierrenomina" 
+				+ ",meseshistorico" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -23547,121 +25217,13 @@ public class AbstractCtsqlDB {
 			return rs.getBigDecimal(26);
 		}
 		/**
-		 * Total Liquidacion
-		 * @return the column 'liqtotal' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getLiqtotal()
-		throws SQLException {
-			return rs.getBigDecimal(27);
-		}
-		/**
-		 * Forma de Pago
-		 * @return the column 'fpago' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getFpago()
-		throws SQLException {
-			return rs.getString(28);
-		}
-		/**
-		 * Entidad Bancaria
-		 * @return the column 'entidad' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEntidad()
-		throws SQLException {
-			return rs.getString(29);
-		}
-		/**
-		 * Sucursal Bancaria
-		 * @return the column 'sucursal' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSucursal()
-		throws SQLException {
-			return rs.getString(30);
-		}
-		/**
-		 * Digito Control
-		 * @return the column 'dc' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getDc()
-		throws SQLException {
-			return rs.getString(31);
-		}
-		/**
-		 * Numero de Cuenta
-		 * @return the column 'cuenta' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getCuenta()
-		throws SQLException {
-			return rs.getString(32);
-		}
-		/**
-		 * Fecha Calculo
-		 * @return the column 'fecha' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Date getFecha()
-		throws SQLException {
-			return rs.getDate(33);
-		}
-		/**
-		 * Fecha Creacion Fila
-		 * @return the column 'fecnew' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Date getFecnew()
-		throws SQLException {
-			return rs.getDate(34);
-		}
-		/**
-		 * Hora Creacion Fila
-		 * @return the column 'hornew' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Time getHornew()
-		throws SQLException {
-			return rs.getTime(35);
-		}
-		/**
-		 * Fecha Modificacion Fila
-		 * @return the column 'fecmod' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Date getFecmod()
-		throws SQLException {
-			return rs.getDate(36);
-		}
-		/**
-		 * Hora Modificacion Fila
-		 * @return the column 'hormod' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Time getHormod()
-		throws SQLException {
-			return rs.getTime(37);
-		}
-		/**
-		 * Divisa
-		 * @return the column 'divisa' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getDivisa()
-		throws SQLException {
-			return rs.getString(38);
-		}
-		/**
 		 * Derechos-Imagen-Num. Perceptores
 		 * @return the column 'imgper' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
 		public Integer getImgper()
 		throws SQLException {
-			return rs.getInt(39);
+			return rs.getInt(27);
 		}
 		/**
 		 * Derechos-Imagen-Importe
@@ -23670,7 +25232,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImgimp()
 		throws SQLException {
-			return rs.getBigDecimal(40);
+			return rs.getBigDecimal(28);
 		}
 		/**
 		 * Derechos-Imagen-Retencion
@@ -23679,7 +25241,124 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImgret()
 		throws SQLException {
-			return rs.getBigDecimal(41);
+			return rs.getBigDecimal(29);
+		}
+		/**
+		 * Total Liquidacion
+		 * @return the column 'liqtotal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getLiqtotal()
+		throws SQLException {
+			return rs.getBigDecimal(30);
+		}
+		/**
+		 * Forma de Pago
+		 * @return the column 'fpago' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getFpago()
+		throws SQLException {
+			return rs.getString(31);
+		}
+		/**
+		 * IBAN
+		 * @return the column 'iban' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getIban()
+		throws SQLException {
+			return rs.getString(32);
+		}
+		/**
+		 * Entidad Bancaria
+		 * @return the column 'entidad' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEntidad()
+		throws SQLException {
+			return rs.getString(33);
+		}
+		/**
+		 * Sucursal Bancaria
+		 * @return the column 'sucursal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getSucursal()
+		throws SQLException {
+			return rs.getString(34);
+		}
+		/**
+		 * Digito Control
+		 * @return the column 'dc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getDc()
+		throws SQLException {
+			return rs.getString(35);
+		}
+		/**
+		 * Numero de Cuenta
+		 * @return the column 'cuenta' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCuenta()
+		throws SQLException {
+			return rs.getString(36);
+		}
+		/**
+		 * Fecha Calculo
+		 * @return the column 'fecha' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFecha()
+		throws SQLException {
+			return rs.getDate(37);
+		}
+		/**
+		 * Fecha Creacion Fila
+		 * @return the column 'fecnew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFecnew()
+		throws SQLException {
+			return rs.getDate(38);
+		}
+		/**
+		 * Hora Creacion Fila
+		 * @return the column 'hornew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getHornew()
+		throws SQLException {
+			return rs.getTime(39);
+		}
+		/**
+		 * Fecha Modificacion Fila
+		 * @return the column 'fecmod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFecmod()
+		throws SQLException {
+			return rs.getDate(40);
+		}
+		/**
+		 * Hora Modificacion Fila
+		 * @return the column 'hormod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getHormod()
+		throws SQLException {
+			return rs.getTime(41);
+		}
+		/**
+		 * Divisa
+		 * @return the column 'divisa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getDivisa()
+		throws SQLException {
+			return rs.getString(42);
 		}
 		/**
 		 * Modalidad declaraciones de impuestos
@@ -23688,7 +25367,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getModimpuesto()
 		throws SQLException {
-			return rs.getString(42);
+			return rs.getString(43);
 		}
 		/**
 		 * Número de referencia completo
@@ -23697,7 +25376,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getNrc()
 		throws SQLException {
-			return rs.getString(43);
+			return rs.getString(44);
 		}
 		/**
 		 * Fecha de remesa o impresión
@@ -23706,7 +25385,52 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFecremimp()
 		throws SQLException {
-			return rs.getDate(44);
+			return rs.getDate(45);
+		}
+		/**
+		 * IBAN
+		 * @return the column 'ibannrc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getIbannrc()
+		throws SQLException {
+			return rs.getString(46);
+		}
+		/**
+		 * Entidad Bancaria
+		 * @return the column 'entidadnrc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEntidadnrc()
+		throws SQLException {
+			return rs.getString(47);
+		}
+		/**
+		 * Sucursal Bancaria
+		 * @return the column 'sucursalnrc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getSucursalnrc()
+		throws SQLException {
+			return rs.getString(48);
+		}
+		/**
+		 * Digito Control
+		 * @return the column 'dcnrc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getDcnrc()
+		throws SQLException {
+			return rs.getString(49);
+		}
+		/**
+		 * Numero de Cuenta
+		 * @return the column 'cuentanrc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCuentanrc()
+		throws SQLException {
+			return rs.getString(50);
 		}
 
 		/**
@@ -23875,6 +25599,9 @@ public class AbstractCtsqlDB {
 				+ ",cecon" 
 				+ ",modimpuesto" 
 				+ ",mod190" 
+				+ ",feciniportal" 
+				+ ",feccierrenomina" 
+				+ ",meseshistorico" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -24026,6 +25753,7 @@ public class AbstractCtsqlDB {
 				+ ",proret" 
 				+ ",nummat" 
 				+ ",codcont" 
+				+ ",descont" 
 				+ ",codtc2" 
 				+ ",destc2" 
 				+ ",fecinicont" 
@@ -24069,6 +25797,7 @@ public class AbstractCtsqlDB {
 				+ ",diastp" 
 				+ ",guardalegal" 
 				+ ",iban" 
+				+ ",fecfinperiprue" 
 				+ " FROM trabajo"
 				+ " WHERE" 
 				+ " codtc2 = ?  " 			); 
@@ -24446,279 +26175,25 @@ public class AbstractCtsqlDB {
 	
 
 	
+
+	private PreparedStatement _gerpit_ucodigerStmt = null;
 		
-	private PreparedStatement fk_ae_sessionStmt = null;
-		
-	private void initFk_ae_sessionStmt() 
+	private void initGerpit_ucodigerStmt() 
 	throws SQLException{
-		this.fk_ae_sessionStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "id" 
-				+ ",executiondate" 
-				+ ",action_id" 
-				+ ",session_id" 
-				+ " FROM action_entry"
-				+ " WHERE" 
-				+ " session_id = ?  " 			); 
-	}
-
-	private void closeFk_ae_sessionStmt() 
-	throws SQLException{
-		if ( fk_ae_sessionStmt != null ) { 
-			fk_ae_sessionStmt.close();
-			fk_ae_sessionStmt = null;	
-		}
-	}
-
-	private PreparedStatement _noitacilppa_kfStmt = null;
-		
-	private void initNoitacilppa_kfStmt() 
-	throws SQLException{
-		this._noitacilppa_kfStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "id" 
-				+ ",audit_level" 
-				+ ",name" 
-				+ " FROM application"
-				+ " WHERE" 
-				+ " id = ?  " 			); 
-	}
-
-	private void closeNoitacilppa_kfStmt() 
-	throws SQLException{
-		if ( _noitacilppa_kfStmt != null ) { 
-			_noitacilppa_kfStmt.close();
-			_noitacilppa_kfStmt = null;	
-		}
-	}
-	private PreparedStatement _resu_kfStmt = null;
-		
-	private void initResu_kfStmt() 
-	throws SQLException{
-		this._resu_kfStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "id" 
-				+ ",name" 
-				+ ",login" 
-				+ ",available" 
-				+ ",validate" 
-				+ ",aon_key" 
-				+ ",status" 
-				+ " FROM usuario"
-				+ " WHERE" 
-				+ " id = ?  " 			); 
-	}
-
-	private void closeResu_kfStmt() 
-	throws SQLException{
-		if ( _resu_kfStmt != null ) { 
-			_resu_kfStmt.close();
-			_resu_kfStmt = null;	
-		}
-	}
-
-	/**
-	 * Session
-	 * 
-	 */
-	public class Session {
-		
-		private ResultSet rs;
-		
-		protected Session (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
-		
-		/**
-		 * Identificador unico
-		 * @return the column 'id' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getId()
-		throws SQLException {
-			return rs.getInt(1);
-		}
-		/**
-		 * Fecha de finalización
-		 * @return the column 'enddate' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Timestamp getEnddate()
-		throws SQLException {
-			return rs.getTimestamp(2);
-		}
-		/**
-		 * IP Remota
-		 * @return the column 'remote_address' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getRemote_address()
-		throws SQLException {
-			return rs.getString(3);
-		}
-		/**
-		 * Equipo Remoto
-		 * @return the column 'remote_host' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getRemote_host()
-		throws SQLException {
-			return rs.getString(4);
-		}
-		/**
-		 * Identificador web de la sesión
-		 * @return the column 'session_id' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSession_id()
-		throws SQLException {
-			return rs.getString(5);
-		}
-		/**
-		 * Fecha de inicio
-		 * @return the column 'startdate' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Timestamp getStartdate()
-		throws SQLException {
-			return rs.getTimestamp(6);
-		}
-		/**
-		 * Identificador de la Aplicación
-		 * @return the column 'application_id' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getApplication_id()
-		throws SQLException {
-			return rs.getInt(7);
-		}
-		/**
-		 * Identificador del Usuario
-		 * @return the column 'user_id' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getUser_id()
-		throws SQLException {
-			return rs.getInt(8);
-		}
-
-		/**
-		 * Visit Application that's parent of this Session. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitFk_application(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( _noitacilppa_kfStmt == null )
-					 initNoitacilppa_kfStmt();
-				
-				_noitacilppa_kfStmt.setInt(1, this.getApplication_id()); 
-				rs = _noitacilppa_kfStmt.executeQuery();
-				Application application = new Application(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitFk_application(this, application);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		/**
-		 * Visit Usuario that's parent of this Session. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitFk_user(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( _resu_kfStmt == null )
-					 initResu_kfStmt();
-				
-				_resu_kfStmt.setInt(1, this.getUser_id()); 
-				rs = _resu_kfStmt.executeQuery();
-				Usuario usuario = new Usuario(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitFk_user(this, usuario);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-
-		
-		/**
-		 * Visit Action_entry that're children of this Session. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitFk_ae_session(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( fk_ae_sessionStmt == null )
-					 initFk_ae_sessionStmt();
-				
-				fk_ae_sessionStmt.setInt(1, this.getId()); 
-				rs = fk_ae_sessionStmt.executeQuery();
-				Action_entry action_entry = new Action_entry(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitFk_ae_session(action_entry, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-	}
-	
-
-	
-
-	private PreparedStatement _reprpme_ucodigerStmt = null;
-		
-	private void initReprpme_ucodigerStmt() 
-	throws SQLException{
-		this._reprpme_ucodigerStmt = ctsqlConnection.prepareStatement(
+		this._gerpit_ucodigerStmt = ctsqlConnection.prepareStatement(
 				"SELECT "
 				+ "cdg" 
-				+ ",codper" 
-				+ ",codnsz" 
-				+ ",fecalt" 
-				+ ",fecbaj" 
-				+ ",codemp" 
-				+ ",codact" 
-				+ ",domicilio" 
-				+ ",codccc" 
-				+ ",codcco" 
-				+ ",fecnew" 
-				+ ",hornew" 
-				+ ",fecmod" 
-				+ ",hormod" 
-				+ ",contr_temp" 
-				+ ",mayor65" 
-				+ ",afi" 
-				+ ",indagrario" 
-				+ ",indgrupo" 
-				+ ",pariente" 
-				+ ",noirpf" 
-				+ " FROM emprper"
+				+ ",descripcion" 
+				+ " FROM tipreg"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
 	}
 
-	private void closeReprpme_ucodigerStmt() 
+	private void closeGerpit_ucodigerStmt() 
 	throws SQLException{
-		if ( _reprpme_ucodigerStmt != null ) { 
-			_reprpme_ucodigerStmt.close();
-			_reprpme_ucodigerStmt = null;	
+		if ( _gerpit_ucodigerStmt != null ) { 
+			_gerpit_ucodigerStmt.close();
+			_gerpit_ucodigerStmt = null;	
 		}
 	}
 	private PreparedStatement _etneilc_ucodigerStmt = null;
@@ -24762,6 +26237,7 @@ public class AbstractCtsqlDB {
 				+ ",divisa" 
 				+ ",soloases" 
 				+ ",envioss" 
+				+ ",grupotrabajo" 
 				+ " FROM cliente"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -24814,6 +26290,9 @@ public class AbstractCtsqlDB {
 				+ ",cecon" 
 				+ ",modimpuesto" 
 				+ ",mod190" 
+				+ ",feciniportal" 
+				+ ",feccierrenomina" 
+				+ ",meseshistorico" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -24843,11 +26322,11 @@ public class AbstractCtsqlDB {
 				+ ",acteco" 
 				+ ",epiiae" 
 				+ ",cnae" 
+				+ ",cnae2009" 
 				+ ",fecnew" 
 				+ ",hornew" 
 				+ ",fecmod" 
 				+ ",hormod" 
-				+ ",cnae2009" 
 				+ ",indred" 
 				+ ",indmutua" 
 				+ ",indtc1" 
@@ -24864,6 +26343,8 @@ public class AbstractCtsqlDB {
 				+ ",indfirma" 
 				+ ",indregimen" 
 				+ ",prevencion" 
+				+ ",indsiltra" 
+				+ ",autoriza" 
 				+ " FROM empract"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -24876,24 +26357,48 @@ public class AbstractCtsqlDB {
 			_tcarpme_ucodigerStmt = null;	
 		}
 	}
-	private PreparedStatement _gerpit_ucodigerStmt = null;
+	private PreparedStatement _reprpme_ucodigerStmt = null;
 		
-	private void initGerpit_ucodigerStmt() 
+	private void initReprpme_ucodigerStmt() 
 	throws SQLException{
-		this._gerpit_ucodigerStmt = ctsqlConnection.prepareStatement(
+		this._reprpme_ucodigerStmt = ctsqlConnection.prepareStatement(
 				"SELECT "
 				+ "cdg" 
-				+ ",descripcion" 
-				+ " FROM tipreg"
+				+ ",codper" 
+				+ ",codnsz" 
+				+ ",fecalt" 
+				+ ",fecbaj" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",domicilio" 
+				+ ",codccc" 
+				+ ",codcco" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",contr_temp" 
+				+ ",mayor65" 
+				+ ",afi" 
+				+ ",indagrario" 
+				+ ",indgrupo" 
+				+ ",pariente" 
+				+ ",noirpf" 
+				+ ",nosegsoc" 
+				+ ",jubiladoactivo" 
+				+ ",certificado" 
+				+ ",familiar" 
+				+ ",noresidente" 
+				+ " FROM emprper"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
 	}
 
-	private void closeGerpit_ucodigerStmt() 
+	private void closeReprpme_ucodigerStmt() 
 	throws SQLException{
-		if ( _gerpit_ucodigerStmt != null ) { 
-			_gerpit_ucodigerStmt.close();
-			_gerpit_ucodigerStmt = null;	
+		if ( _reprpme_ucodigerStmt != null ) { 
+			_reprpme_ucodigerStmt.close();
+			_reprpme_ucodigerStmt = null;	
 		}
 	}
 
@@ -25065,22 +26570,22 @@ public class AbstractCtsqlDB {
 		}
 
 		/**
-		 * Visit Emprper that's parent of this Regidocu. 
+		 * Visit Tipreg that's parent of this Regidocu. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
 		 */
-		public void visitRegidocu_emprper(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		public void visitRegidocu_tipreg(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 			ResultSet 			rs 	= null;
 			try {
 				
-				if ( _reprpme_ucodigerStmt == null )
-					 initReprpme_ucodigerStmt();
+				if ( _gerpit_ucodigerStmt == null )
+					 initGerpit_ucodigerStmt();
 				
-				_reprpme_ucodigerStmt.setInt(1, this.getCodper()); 
-				rs = _reprpme_ucodigerStmt.executeQuery();
-				Emprper emprper = new Emprper(rs); 
+				_gerpit_ucodigerStmt.setString(1, this.getTipo()); 
+				rs = _gerpit_ucodigerStmt.executeQuery();
+				Tipreg tipreg = new Tipreg(rs); 
 				while ( rs.next() ) {
-					ctsqlDBVisitor.visitRegidocu_emprper(this, emprper);
+					ctsqlDBVisitor.visitRegidocu_tipreg(this, tipreg);
 				}
 			}
 			finally {
@@ -25161,22 +26666,22 @@ public class AbstractCtsqlDB {
 			}
 		}
 		/**
-		 * Visit Tipreg that's parent of this Regidocu. 
+		 * Visit Emprper that's parent of this Regidocu. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
 		 */
-		public void visitRegidocu_tipreg(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		public void visitRegidocu_emprper(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 			ResultSet 			rs 	= null;
 			try {
 				
-				if ( _gerpit_ucodigerStmt == null )
-					 initGerpit_ucodigerStmt();
+				if ( _reprpme_ucodigerStmt == null )
+					 initReprpme_ucodigerStmt();
 				
-				_gerpit_ucodigerStmt.setString(1, this.getTipo()); 
-				rs = _gerpit_ucodigerStmt.executeQuery();
-				Tipreg tipreg = new Tipreg(rs); 
+				_reprpme_ucodigerStmt.setInt(1, this.getCodper()); 
+				rs = _reprpme_ucodigerStmt.executeQuery();
+				Emprper emprper = new Emprper(rs); 
 				while ( rs.next() ) {
-					ctsqlDBVisitor.visitRegidocu_tipreg(this, tipreg);
+					ctsqlDBVisitor.visitRegidocu_emprper(this, emprper);
 				}
 			}
 			finally {
@@ -25212,6 +26717,7 @@ public class AbstractCtsqlDB {
 				+ ",base_hexest" 
 				+ ",base_cccemp" 
 				+ ",base_occemp" 
+				+ ",base_solidaria" 
 				+ ",comp_ecal" 
 				+ ",comp_acc" 
 				+ ",red_concom" 
@@ -25369,6 +26875,7 @@ public class AbstractCtsqlDB {
 				+ ",localidad" 
 				+ ",provincia" 
 				+ ",telefono" 
+				+ ",workplace" 
 				+ " FROM delegacion"
 				+ " WHERE" 
 				+ " provincia = ?  " 			); 
@@ -25423,6 +26930,7 @@ public class AbstractCtsqlDB {
 				+ ",divisa" 
 				+ ",soloases" 
 				+ ",envioss" 
+				+ ",grupotrabajo" 
 				+ " FROM cliente"
 				+ " WHERE" 
 				+ " provincia = ?  " 			); 
@@ -25580,69 +27088,6 @@ public class AbstractCtsqlDB {
 		}
 	}
 		
-	private PreparedStatement impr11x_provinciaStmt = null;
-		
-	private void initImpr11x_provinciaStmt() 
-	throws SQLException{
-		this.impr11x_provinciaStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",tipo" 
-				+ ",codemp" 
-				+ ",codadm" 
-				+ ",provincia" 
-				+ ",anio" 
-				+ ",trimestre" 
-				+ ",mes" 
-				+ ",tradinper" 
-				+ ",tradinimp" 
-				+ ",tradinret" 
-				+ ",traespper" 
-				+ ",traespimp" 
-				+ ",traespret" 
-				+ ",actdinper" 
-				+ ",actdinimp" 
-				+ ",actdinret" 
-				+ ",actespper" 
-				+ ",actespimp" 
-				+ ",actespret" 
-				+ ",predinper" 
-				+ ",predinimp" 
-				+ ",predinret" 
-				+ ",preespper" 
-				+ ",preespimp" 
-				+ ",preespret" 
-				+ ",liqtotal" 
-				+ ",fpago" 
-				+ ",entidad" 
-				+ ",sucursal" 
-				+ ",dc" 
-				+ ",cuenta" 
-				+ ",fecha" 
-				+ ",fecnew" 
-				+ ",hornew" 
-				+ ",fecmod" 
-				+ ",hormod" 
-				+ ",divisa" 
-				+ ",imgper" 
-				+ ",imgimp" 
-				+ ",imgret" 
-				+ ",modimpuesto" 
-				+ ",nrc" 
-				+ ",fecremimp" 
-				+ " FROM impr11x"
-				+ " WHERE" 
-				+ " provincia = ?  " 			); 
-	}
-
-	private void closeImpr11x_provinciaStmt() 
-	throws SQLException{
-		if ( impr11x_provinciaStmt != null ) { 
-			impr11x_provinciaStmt.close();
-			impr11x_provinciaStmt = null;	
-		}
-	}
-		
 	private PreparedStatement impr190_provinciaStmt = null;
 		
 	private void initImpr190_provinciaStmt() 
@@ -25665,6 +27110,7 @@ public class AbstractCtsqlDB {
 				+ ",fecmod" 
 				+ ",hormod" 
 				+ ",divisa" 
+				+ ",feccierre" 
 				+ " FROM impr190"
 				+ " WHERE" 
 				+ " provincia = ?  " 			); 
@@ -25675,40 +27121,6 @@ public class AbstractCtsqlDB {
 		if ( impr190_provinciaStmt != null ) { 
 			impr190_provinciaStmt.close();
 			impr190_provinciaStmt = null;	
-		}
-	}
-		
-	private PreparedStatement opfile_provinciaStmt = null;
-		
-	private void initOpfile_provinciaStmt() 
-	throws SQLException{
-		this.opfile_provinciaStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",apellido1" 
-				+ ",apellido2" 
-				+ ",nombre" 
-				+ ",tipovia" 
-				+ ",nomvia" 
-				+ ",numero" 
-				+ ",otrdir" 
-				+ ",codpos" 
-				+ ",localidad" 
-				+ ",provincia" 
-				+ ",importe" 
-				+ ",retencion" 
-				+ ",segsocial" 
-				+ ",fecnac" 
-				+ " FROM opfile"
-				+ " WHERE" 
-				+ " provincia = ?  " 			); 
-	}
-
-	private void closeOpfile_provinciaStmt() 
-	throws SQLException{
-		if ( opfile_provinciaStmt != null ) { 
-			opfile_provinciaStmt.close();
-			opfile_provinciaStmt = null;	
 		}
 	}
 		
@@ -25874,6 +27286,40 @@ public class AbstractCtsqlDB {
 		}
 	}
 		
+	private PreparedStatement opfile_provinciaStmt = null;
+		
+	private void initOpfile_provinciaStmt() 
+	throws SQLException{
+		this.opfile_provinciaStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",apellido1" 
+				+ ",apellido2" 
+				+ ",nombre" 
+				+ ",tipovia" 
+				+ ",nomvia" 
+				+ ",numero" 
+				+ ",otrdir" 
+				+ ",codpos" 
+				+ ",localidad" 
+				+ ",provincia" 
+				+ ",importe" 
+				+ ",retencion" 
+				+ ",segsocial" 
+				+ ",fecnac" 
+				+ " FROM opfile"
+				+ " WHERE" 
+				+ " provincia = ?  " 			); 
+	}
+
+	private void closeOpfile_provinciaStmt() 
+	throws SQLException{
+		if ( opfile_provinciaStmt != null ) { 
+			opfile_provinciaStmt.close();
+			opfile_provinciaStmt = null;	
+		}
+	}
+		
 	private PreparedStatement jautprovinciaStmt = null;
 		
 	private void initJautprovinciaStmt() 
@@ -25928,6 +27374,191 @@ public class AbstractCtsqlDB {
 		if ( jautprovinciaStmt != null ) { 
 			jautprovinciaStmt.close();
 			jautprovinciaStmt = null;	
+		}
+	}
+		
+	private PreparedStatement impr11x_provinciaStmt = null;
+		
+	private void initImpr11x_provinciaStmt() 
+	throws SQLException{
+		this.impr11x_provinciaStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",tipo" 
+				+ ",codemp" 
+				+ ",codadm" 
+				+ ",provincia" 
+				+ ",anio" 
+				+ ",trimestre" 
+				+ ",mes" 
+				+ ",tradinper" 
+				+ ",tradinimp" 
+				+ ",tradinret" 
+				+ ",traespper" 
+				+ ",traespimp" 
+				+ ",traespret" 
+				+ ",actdinper" 
+				+ ",actdinimp" 
+				+ ",actdinret" 
+				+ ",actespper" 
+				+ ",actespimp" 
+				+ ",actespret" 
+				+ ",predinper" 
+				+ ",predinimp" 
+				+ ",predinret" 
+				+ ",preespper" 
+				+ ",preespimp" 
+				+ ",preespret" 
+				+ ",imgper" 
+				+ ",imgimp" 
+				+ ",imgret" 
+				+ ",liqtotal" 
+				+ ",fpago" 
+				+ ",iban" 
+				+ ",entidad" 
+				+ ",sucursal" 
+				+ ",dc" 
+				+ ",cuenta" 
+				+ ",fecha" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",divisa" 
+				+ ",modimpuesto" 
+				+ ",nrc" 
+				+ ",fecremimp" 
+				+ ",ibannrc" 
+				+ ",entidadnrc" 
+				+ ",sucursalnrc" 
+				+ ",dcnrc" 
+				+ ",cuentanrc" 
+				+ " FROM impr11x"
+				+ " WHERE" 
+				+ " provincia = ?  " 			); 
+	}
+
+	private void closeImpr11x_provinciaStmt() 
+	throws SQLException{
+		if ( impr11x_provinciaStmt != null ) { 
+			impr11x_provinciaStmt.close();
+			impr11x_provinciaStmt = null;	
+		}
+	}
+		
+	private PreparedStatement impr216_provinciaStmt = null;
+		
+	private void initImpr216_provinciaStmt() 
+	throws SQLException{
+		this.impr216_provinciaStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",tipo" 
+				+ ",codemp" 
+				+ ",codadm" 
+				+ ",provincia" 
+				+ ",anio" 
+				+ ",mes" 
+				+ ",numrent" 
+				+ ",imprent" 
+				+ ",retrent" 
+				+ ",numrentno" 
+				+ ",imprentno" 
+				+ ",totalant" 
+				+ ",total" 
+				+ ",modimpuesto" 
+				+ ",fpago" 
+				+ ",nrc" 
+				+ ",iban" 
+				+ ",entidad" 
+				+ ",sucursal" 
+				+ ",dc" 
+				+ ",cuenta" 
+				+ ",complementaria" 
+				+ ",justificante" 
+				+ ",fecha" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",divisa" 
+				+ " FROM impr216"
+				+ " WHERE" 
+				+ " provincia = ?  " 			); 
+	}
+
+	private void closeImpr216_provinciaStmt() 
+	throws SQLException{
+		if ( impr216_provinciaStmt != null ) { 
+			impr216_provinciaStmt.close();
+			impr216_provinciaStmt = null;	
+		}
+	}
+		
+	private PreparedStatement impr296_provinciaStmt = null;
+		
+	private void initImpr296_provinciaStmt() 
+	throws SQLException{
+		this.impr296_provinciaStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",codemp" 
+				+ ",codadm" 
+				+ ",provincia" 
+				+ ",anio" 
+				+ ",num_percep" 
+				+ ",imp_percep" 
+				+ ",imp_retenc" 
+				+ ",fecha" 
+				+ ",descuadrado" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",divisa" 
+				+ " FROM impr296"
+				+ " WHERE" 
+				+ " provincia = ?  " 			); 
+	}
+
+	private void closeImpr296_provinciaStmt() 
+	throws SQLException{
+		if ( impr296_provinciaStmt != null ) { 
+			impr296_provinciaStmt.close();
+			impr296_provinciaStmt = null;	
+		}
+	}
+		
+	private PreparedStatement lin296_provinciaStmt = null;
+		
+	private void initLin296_provinciaStmt() 
+	throws SQLException{
+		this.lin296_provinciaStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",linea" 
+				+ ",numdoc" 
+				+ ",procedencia" 
+				+ ",fecha" 
+				+ ",base_din" 
+				+ ",ret_din" 
+				+ ",por_din" 
+				+ ",base_esp" 
+				+ ",ret_esp" 
+				+ ",base_esp_no" 
+				+ ",ret_esp_no" 
+				+ ",nomapel" 
+				+ ",provincia" 
+				+ " FROM lin296"
+				+ " WHERE" 
+				+ " provincia = ?  " 			); 
+	}
+
+	private void closeLin296_provinciaStmt() 
+	throws SQLException{
+		if ( lin296_provinciaStmt != null ) { 
+			lin296_provinciaStmt.close();
+			lin296_provinciaStmt = null;	
 		}
 	}
 
@@ -26146,31 +27777,6 @@ public class AbstractCtsqlDB {
 		}
 		
 		/**
-		 * Visit Impr11x that're children of this Provincia. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitImpr11x_provincia(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( impr11x_provinciaStmt == null )
-					 initImpr11x_provinciaStmt();
-				
-				impr11x_provinciaStmt.setString(1, this.getCdg()); 
-				rs = impr11x_provinciaStmt.executeQuery();
-				Impr11x impr11x = new Impr11x(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitImpr11x_provincia(impr11x, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		
-		/**
 		 * Visit Impr190 that're children of this Provincia. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
@@ -26187,31 +27793,6 @@ public class AbstractCtsqlDB {
 				Impr190 impr190 = new Impr190(rs); 
 				while ( rs.next() ) {
 					ctsqlDBVisitor.visitImpr190_provincia(impr190, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		
-		/**
-		 * Visit Opfile that're children of this Provincia. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitOpfile_provincia(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( opfile_provinciaStmt == null )
-					 initOpfile_provinciaStmt();
-				
-				opfile_provinciaStmt.setString(1, this.getCdg()); 
-				rs = opfile_provinciaStmt.executeQuery();
-				Opfile opfile = new Opfile(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitOpfile_provincia(opfile, this);
 				}
 			}
 			finally {
@@ -26271,6 +27852,31 @@ public class AbstractCtsqlDB {
 		}
 		
 		/**
+		 * Visit Opfile that're children of this Provincia. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitOpfile_provincia(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( opfile_provinciaStmt == null )
+					 initOpfile_provinciaStmt();
+				
+				opfile_provinciaStmt.setString(1, this.getCdg()); 
+				rs = opfile_provinciaStmt.executeQuery();
+				Opfile opfile = new Opfile(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitOpfile_provincia(opfile, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
 		 * Visit Autonomos that're children of this Provincia. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
@@ -26287,6 +27893,106 @@ public class AbstractCtsqlDB {
 				Autonomos autonomos = new Autonomos(rs); 
 				while ( rs.next() ) {
 					ctsqlDBVisitor.visitJautprovincia(autonomos, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Impr11x that're children of this Provincia. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitImpr11x_provincia(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( impr11x_provinciaStmt == null )
+					 initImpr11x_provinciaStmt();
+				
+				impr11x_provinciaStmt.setString(1, this.getCdg()); 
+				rs = impr11x_provinciaStmt.executeQuery();
+				Impr11x impr11x = new Impr11x(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitImpr11x_provincia(impr11x, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Impr216 that're children of this Provincia. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitImpr216_provincia(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( impr216_provinciaStmt == null )
+					 initImpr216_provinciaStmt();
+				
+				impr216_provinciaStmt.setString(1, this.getCdg()); 
+				rs = impr216_provinciaStmt.executeQuery();
+				Impr216 impr216 = new Impr216(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitImpr216_provincia(impr216, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Impr296 that're children of this Provincia. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitImpr296_provincia(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( impr296_provinciaStmt == null )
+					 initImpr296_provinciaStmt();
+				
+				impr296_provinciaStmt.setString(1, this.getCdg()); 
+				rs = impr296_provinciaStmt.executeQuery();
+				Impr296 impr296 = new Impr296(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitImpr296_provincia(impr296, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Lin296 that're children of this Provincia. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitLin296_provincia(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( lin296_provinciaStmt == null )
+					 initLin296_provinciaStmt();
+				
+				lin296_provinciaStmt.setString(1, this.getCdg()); 
+				rs = lin296_provinciaStmt.executeQuery();
+				Lin296 lin296 = new Lin296(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitLin296_provincia(lin296, this);
 				}
 			}
 			finally {
@@ -26419,6 +28125,132 @@ public class AbstractCtsqlDB {
 
 	
 		
+	private PreparedStatement lin_datoswebStmt = null;
+		
+	private void initLin_datoswebStmt() 
+	throws SQLException{
+		this.lin_datoswebStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",fichero" 
+				+ ",tipo" 
+				+ ",anio" 
+				+ ",mes" 
+				+ ",direccion" 
+				+ ",financiero" 
+				+ ",rrhh" 
+				+ ",contabilidad" 
+				+ ",administrativo" 
+				+ ",nominas" 
+				+ ",informaciones" 
+				+ ",otros" 
+				+ ",descripcion" 
+				+ ",remesa" 
+				+ ",estado" 
+				+ " FROM lindatosweb"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeLin_datoswebStmt() 
+	throws SQLException{
+		if ( lin_datoswebStmt != null ) { 
+			lin_datoswebStmt.close();
+			lin_datoswebStmt = null;	
+		}
+	}
+
+
+	/**
+	 * Datosweb
+	 * 
+	 */
+	public class Datosweb {
+		
+		private ResultSet rs;
+		
+		protected Datosweb (ResultSet rs) 
+		throws SQLException {
+			this.rs =rs;
+		}
+		
+		/**
+		 * cdg
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCdg()
+		throws SQLException {
+			return rs.getInt(1);
+		}
+		/**
+		 * Nivel
+		 * @return the column 'nivel' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNivel()
+		throws SQLException {
+			return rs.getString(2);
+		}
+		/**
+		 * Código
+		 * @return the column 'codigo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCodigo()
+		throws SQLException {
+			return rs.getInt(3);
+		}
+		/**
+		 * Descripción
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getDescripcion()
+		throws SQLException {
+			return rs.getString(4);
+		}
+		/**
+		 * e-mail
+		 * @return the column 'email' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmail()
+		throws SQLException {
+			return rs.getString(5);
+		}
+
+
+		
+		/**
+		 * Visit Lindatosweb that're children of this Datosweb. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitLin_datosweb(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( lin_datoswebStmt == null )
+					 initLin_datoswebStmt();
+				
+				lin_datoswebStmt.setInt(1, this.getCdg()); 
+				rs = lin_datoswebStmt.executeQuery();
+				Lindatosweb lindatosweb = new Lindatosweb(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitLin_datosweb(lindatosweb, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+	}
+	
+
+	
+		
 	private PreparedStatement nomdtoex_nominaexStmt = null;
 		
 	private void initNomdtoex_nominaexStmt() 
@@ -26447,45 +28279,6 @@ public class AbstractCtsqlDB {
 		}
 	}
 
-	private PreparedStatement _rep_xep_lerStmt = null;
-		
-	private void initRep_xep_lerStmt() 
-	throws SQLException{
-		this._rep_xep_lerStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",codper" 
-				+ ",codnsz" 
-				+ ",fecalt" 
-				+ ",fecbaj" 
-				+ ",codemp" 
-				+ ",codact" 
-				+ ",domicilio" 
-				+ ",codccc" 
-				+ ",codcco" 
-				+ ",fecnew" 
-				+ ",hornew" 
-				+ ",fecmod" 
-				+ ",hormod" 
-				+ ",contr_temp" 
-				+ ",mayor65" 
-				+ ",afi" 
-				+ ",indagrario" 
-				+ ",indgrupo" 
-				+ ",pariente" 
-				+ ",noirpf" 
-				+ " FROM emprper"
-				+ " WHERE" 
-				+ " cdg = ?  " 			); 
-	}
-
-	private void closeRep_xep_lerStmt() 
-	throws SQLException{
-		if ( _rep_xep_lerStmt != null ) { 
-			_rep_xep_lerStmt.close();
-			_rep_xep_lerStmt = null;	
-		}
-	}
 	private PreparedStatement _moc_xep_lerStmt = null;
 		
 	private void initMoc_xep_lerStmt() 
@@ -26500,6 +28293,8 @@ public class AbstractCtsqlDB {
 				+ ",fijovar" 
 				+ ",indcom" 
 				+ ",dinesp" 
+				+ ",concepto" 
+				+ ",excinc" 
 				+ " FROM complemento"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -26533,6 +28328,50 @@ public class AbstractCtsqlDB {
 		if ( _asivid_xep_lerStmt != null ) { 
 			_asivid_xep_lerStmt.close();
 			_asivid_xep_lerStmt = null;	
+		}
+	}
+	private PreparedStatement _rep_xep_lerStmt = null;
+		
+	private void initRep_xep_lerStmt() 
+	throws SQLException{
+		this._rep_xep_lerStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",codper" 
+				+ ",codnsz" 
+				+ ",fecalt" 
+				+ ",fecbaj" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",domicilio" 
+				+ ",codccc" 
+				+ ",codcco" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",contr_temp" 
+				+ ",mayor65" 
+				+ ",afi" 
+				+ ",indagrario" 
+				+ ",indgrupo" 
+				+ ",pariente" 
+				+ ",noirpf" 
+				+ ",nosegsoc" 
+				+ ",jubiladoactivo" 
+				+ ",certificado" 
+				+ ",familiar" 
+				+ ",noresidente" 
+				+ " FROM emprper"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeRep_xep_lerStmt() 
+	throws SQLException{
+		if ( _rep_xep_lerStmt != null ) { 
+			_rep_xep_lerStmt.close();
+			_rep_xep_lerStmt = null;	
 		}
 	}
 
@@ -26839,30 +28678,6 @@ public class AbstractCtsqlDB {
 		}
 
 		/**
-		 * Visit Emprper that's parent of this Nominaex. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitRel_pex_per(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( _rep_xep_lerStmt == null )
-					 initRep_xep_lerStmt();
-				
-				_rep_xep_lerStmt.setInt(1, this.getCdg()); 
-				rs = _rep_xep_lerStmt.executeQuery();
-				Emprper emprper = new Emprper(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitRel_pex_per(this, emprper);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		/**
 		 * Visit Complemento that's parent of this Nominaex. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
@@ -26910,6 +28725,30 @@ public class AbstractCtsqlDB {
 					rs.close();
 			}
 		}
+		/**
+		 * Visit Emprper that's parent of this Nominaex. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitRel_pex_per(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _rep_xep_lerStmt == null )
+					 initRep_xep_lerStmt();
+				
+				_rep_xep_lerStmt.setInt(1, this.getCdg()); 
+				rs = _rep_xep_lerStmt.executeQuery();
+				Emprper emprper = new Emprper(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitRel_pex_per(this, emprper);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
 
 		
 		/**
@@ -26942,336 +28781,435 @@ public class AbstractCtsqlDB {
 
 	
 
+	private PreparedStatement _692rpmi_692nilStmt = null;
+		
+	private void init692rpmi_692nilStmt() 
+	throws SQLException{
+		this._692rpmi_692nilStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",codemp" 
+				+ ",codadm" 
+				+ ",provincia" 
+				+ ",anio" 
+				+ ",num_percep" 
+				+ ",imp_percep" 
+				+ ",imp_retenc" 
+				+ ",fecha" 
+				+ ",descuadrado" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",divisa" 
+				+ " FROM impr296"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void close692rpmi_692nilStmt() 
+	throws SQLException{
+		if ( _692rpmi_692nilStmt != null ) { 
+			_692rpmi_692nilStmt.close();
+			_692rpmi_692nilStmt = null;	
+		}
+	}
+	private PreparedStatement _aicnivorp_692nilStmt = null;
+		
+	private void initAicnivorp_692nilStmt() 
+	throws SQLException{
+		this._aicnivorp_692nilStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",compro" 
+				+ " FROM provincia"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeAicnivorp_692nilStmt() 
+	throws SQLException{
+		if ( _aicnivorp_692nilStmt != null ) { 
+			_aicnivorp_692nilStmt.close();
+			_aicnivorp_692nilStmt = null;	
+		}
+	}
 
 	/**
-	 * Nszmest
+	 * Lin296
 	 * 
 	 */
-	public class Nszmest {
+	public class Lin296 {
 		
 		private ResultSet rs;
 		
-		protected Nszmest (ResultSet rs) 
+		protected Lin296 (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
 		
 		/**
-		 * $column.remarks
-		 * @return the column 'snp0' value; if the value is SQL NULL, the value returned is null
+		 * Codigo de 296
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getSnp0()
+		public Integer getCdg()
 		throws SQLException {
-			return rs.getString(1);
+			return rs.getInt(1);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'snp1' value; if the value is SQL NULL, the value returned is null
+		 * Numero de Linea
+		 * @return the column 'linea' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getSnp1()
+		public Integer getLinea()
 		throws SQLException {
-			return rs.getString(2);
+			return rs.getInt(2);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'nnp0' value; if the value is SQL NULL, the value returned is null
+		 * NIF Perceptor
+		 * @return the column 'numdoc' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getNnp0()
+		public String getNumdoc()
 		throws SQLException {
-			return rs.getInt(3);
+			return rs.getString(3);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'nnp1' value; if the value is SQL NULL, the value returned is null
+		 * Procedencia
+		 * @return the column 'procedencia' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getNnp1()
+		public String getProcedencia()
 		throws SQLException {
-			return rs.getInt(4);
+			return rs.getString(4);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'nnp2' value; if the value is SQL NULL, the value returned is null
+		 * Fecha fin nómina
+		 * @return the column 'fecha' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getNnp2()
+		public Date getFecha()
 		throws SQLException {
-			return rs.getInt(5);
+			return rs.getDate(5);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'nnp3' value; if the value is SQL NULL, the value returned is null
+		 * Importe base dineraria
+		 * @return the column 'base_din' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getNnp3()
+		public BigDecimal getBase_din()
 		throws SQLException {
-			return rs.getInt(6);
+			return rs.getBigDecimal(6);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'nnp4' value; if the value is SQL NULL, the value returned is null
+		 * Importe retención dineraria
+		 * @return the column 'ret_din' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getNnp4()
+		public BigDecimal getRet_din()
 		throws SQLException {
-			return rs.getInt(7);
+			return rs.getBigDecimal(7);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'nnp5' value; if the value is SQL NULL, the value returned is null
+		 * Porcentaje retención dineraria
+		 * @return the column 'por_din' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getNnp5()
+		public BigDecimal getPor_din()
 		throws SQLException {
-			return rs.getInt(8);
+			return rs.getBigDecimal(8);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'nnp6' value; if the value is SQL NULL, the value returned is null
+		 * Importe base especie
+		 * @return the column 'base_esp' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getNnp6()
+		public BigDecimal getBase_esp()
 		throws SQLException {
-			return rs.getInt(9);
+			return rs.getBigDecimal(9);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'nnp7' value; if the value is SQL NULL, the value returned is null
+		 * Importe retención especie
+		 * @return the column 'ret_esp' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getNnp7()
+		public BigDecimal getRet_esp()
 		throws SQLException {
-			return rs.getInt(10);
+			return rs.getBigDecimal(10);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'nnp8' value; if the value is SQL NULL, the value returned is null
+		 * Importe base especie no repercutido
+		 * @return the column 'base_esp_no' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getNnp8()
+		public BigDecimal getBase_esp_no()
 		throws SQLException {
-			return rs.getInt(11);
+			return rs.getBigDecimal(11);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'nnp9' value; if the value is SQL NULL, the value returned is null
+		 * Importe retención especie no repercutido
+		 * @return the column 'ret_esp_no' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getNnp9()
+		public BigDecimal getRet_esp_no()
 		throws SQLException {
-			return rs.getInt(12);
+			return rs.getBigDecimal(12);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'nnp10' value; if the value is SQL NULL, the value returned is null
+		 * Nombre y Apellidos
+		 * @return the column 'nomapel' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getNnp10()
+		public String getNomapel()
 		throws SQLException {
-			return rs.getInt(13);
+			return rs.getString(13);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'nnp11' value; if the value is SQL NULL, the value returned is null
+		 * Provincia
+		 * @return the column 'provincia' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getNnp11()
+		public String getProvincia()
 		throws SQLException {
-			return rs.getInt(14);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nnp12' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNnp12()
-		throws SQLException {
-			return rs.getInt(15);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nnp13' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNnp13()
-		throws SQLException {
-			return rs.getInt(16);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nnp14' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNnp14()
-		throws SQLException {
-			return rs.getInt(17);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nnp15' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNnp15()
-		throws SQLException {
-			return rs.getInt(18);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nnp16' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNnp16()
-		throws SQLException {
-			return rs.getInt(19);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nnp17' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNnp17()
-		throws SQLException {
-			return rs.getInt(20);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nnp18' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNnp18()
-		throws SQLException {
-			return rs.getInt(21);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nnp19' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNnp19()
-		throws SQLException {
-			return rs.getInt(22);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nnp20' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNnp20()
-		throws SQLException {
-			return rs.getInt(23);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nnp21' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNnp21()
-		throws SQLException {
-			return rs.getInt(24);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nnp22' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNnp22()
-		throws SQLException {
-			return rs.getInt(25);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nnp23' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNnp23()
-		throws SQLException {
-			return rs.getInt(26);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nnp24' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNnp24()
-		throws SQLException {
-			return rs.getInt(27);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nnp25' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNnp25()
-		throws SQLException {
-			return rs.getInt(28);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nnp26' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNnp26()
-		throws SQLException {
-			return rs.getInt(29);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nnp27' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNnp27()
-		throws SQLException {
-			return rs.getInt(30);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nnp28' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNnp28()
-		throws SQLException {
-			return rs.getBigDecimal(31);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nnp29' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNnp29()
-		throws SQLException {
-			return rs.getInt(32);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nnp30' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNnp30()
-		throws SQLException {
-			return rs.getInt(33);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nnp31' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNnp31()
-		throws SQLException {
-			return rs.getBigDecimal(34);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nnp32' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNnp32()
-		throws SQLException {
-			return rs.getInt(35);
+			return rs.getString(14);
 		}
 
+		/**
+		 * Visit Impr296 that's parent of this Lin296. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitLin296_impr296(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _692rpmi_692nilStmt == null )
+					 init692rpmi_692nilStmt();
+				
+				_692rpmi_692nilStmt.setInt(1, this.getCdg()); 
+				rs = _692rpmi_692nilStmt.executeQuery();
+				Impr296 impr296 = new Impr296(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitLin296_impr296(this, impr296);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		/**
+		 * Visit Provincia that's parent of this Lin296. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitLin296_provincia(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _aicnivorp_692nilStmt == null )
+					 initAicnivorp_692nilStmt();
+				
+				_aicnivorp_692nilStmt.setString(1, this.getProvincia()); 
+				rs = _aicnivorp_692nilStmt.executeQuery();
+				Provincia provincia = new Provincia(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitLin296_provincia(this, provincia);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+
+	}
+	
+
+	
+
+	private PreparedStatement _somart_d_rtStmt = null;
+		
+	private void initSomart_d_rtStmt() 
+	throws SQLException{
+		this._somart_d_rtStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",persona" 
+				+ ",numss" 
+				+ ",fecha_desde" 
+				+ ",fecha_hasta" 
+				+ ",dias_cotizados" 
+				+ ",grupo_cotizacion" 
+				+ ",tipo_contrato" 
+				+ ",cnae" 
+				+ ",estado" 
+				+ " FROM tr_tramos"
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				+ " persona = ?  "  + "AND" 				+ " fecha_desde = ?  " 			); 
+	}
+
+	private void closeSomart_d_rtStmt() 
+	throws SQLException{
+		if ( _somart_d_rtStmt != null ) { 
+			_somart_d_rtStmt.close();
+			_somart_d_rtStmt = null;	
+		}
+	}
+	private PreparedStatement _atercogidoc_rtStmt = null;
+		
+	private void initAtercogidoc_rtStmt() 
+	throws SQLException{
+		this._atercogidoc_rtStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "indicador" 
+				+ ",cdg" 
+				+ ",descripcion" 
+				+ ",usuario" 
+				+ ",aplicable" 
+				+ " FROM codigocreta"
+				+ " WHERE" 
+				+ " indicador = ?  "  + "AND" 				+ " cdg = ?  " 			); 
+	}
+
+	private void closeAtercogidoc_rtStmt() 
+	throws SQLException{
+		if ( _atercogidoc_rtStmt != null ) { 
+			_atercogidoc_rtStmt.close();
+			_atercogidoc_rtStmt = null;	
+		}
+	}
+
+	/**
+	 * Tr_datos
+	 * 
+	 */
+	public class Tr_datos {
+		
+		private ResultSet rs;
+		
+		protected Tr_datos (ResultSet rs) 
+		throws SQLException {
+			this.rs =rs;
+		}
+		
+		/**
+		 * Código de liquidación
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCdg()
+		throws SQLException {
+			return rs.getInt(1);
+		}
+		/**
+		 * Código de persona
+		 * @return the column 'persona' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getPersona()
+		throws SQLException {
+			return rs.getInt(2);
+		}
+		/**
+		 * Fecha inicial del tramo
+		 * @return the column 'fecha_desde' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFecha_desde()
+		throws SQLException {
+			return rs.getDate(3);
+		}
+		/**
+		 * Identificación del tipo de dato
+		 * @return the column 'tipo_dato' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTipo_dato()
+		throws SQLException {
+			return rs.getString(4);
+		}
+		/**
+		 * Código del dato
+		 * @return the column 'codigo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCodigo()
+		throws SQLException {
+			return rs.getString(5);
+		}
+		/**
+		 * Valor del dato
+		 * @return the column 'valor' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getValor()
+		throws SQLException {
+			return rs.getString(6);
+		}
+		/**
+		 * Estado del dato
+		 * @return the column 'estado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEstado()
+		throws SQLException {
+			return rs.getString(7);
+		}
+
+		/**
+		 * Visit Tr_tramos that's parent of this Tr_datos. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitTr_d_tramos(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _somart_d_rtStmt == null )
+					 initSomart_d_rtStmt();
+				
+				_somart_d_rtStmt.setInt(1, this.getCdg()); 
+				_somart_d_rtStmt.setInt(2, this.getPersona()); 
+				_somart_d_rtStmt.setDate(3, this.getFecha_desde()); 
+				rs = _somart_d_rtStmt.executeQuery();
+				Tr_tramos tr_tramos = new Tr_tramos(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitTr_d_tramos(this, tr_tramos);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		/**
+		 * Visit Codigocreta that's parent of this Tr_datos. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitTr_codigocreta(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _atercogidoc_rtStmt == null )
+					 initAtercogidoc_rtStmt();
+				
+				_atercogidoc_rtStmt.setString(1, this.getTipo_dato()); 
+				_atercogidoc_rtStmt.setString(2, this.getCodigo()); 
+				rs = _atercogidoc_rtStmt.executeQuery();
+				Codigocreta codigocreta = new Codigocreta(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitTr_codigocreta(this, codigocreta);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
 
 	}
 	
@@ -27333,6 +29271,11 @@ public class AbstractCtsqlDB {
 				+ ",indgrupo" 
 				+ ",pariente" 
 				+ ",noirpf" 
+				+ ",nosegsoc" 
+				+ ",jubiladoactivo" 
+				+ ",certificado" 
+				+ ",familiar" 
+				+ ",noresidente" 
 				+ " FROM emprper"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -27770,57 +29713,6 @@ public class AbstractCtsqlDB {
 		}
 	}
 		
-	private PreparedStatement rel_pex_divisaStmt = null;
-		
-	private void initRel_pex_divisaStmt() 
-	throws SQLException{
-		this.rel_pex_divisaStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",numero" 
-				+ ",anio" 
-				+ ",mes" 
-				+ ",fecini" 
-				+ ",fecfin" 
-				+ ",codcom" 
-				+ ",importe" 
-				+ ",fijovar" 
-				+ ",irpf" 
-				+ ",impirpf" 
-				+ ",liquido" 
-				+ ",fecnew" 
-				+ ",hornew" 
-				+ ",fecmod" 
-				+ ",hormod" 
-				+ ",feccob" 
-				+ ",descom" 
-				+ ",feccobreal" 
-				+ ",divisa" 
-				+ ",fecemi" 
-				+ ",nomemp" 
-				+ ",nomper" 
-				+ ",direccion" 
-				+ ",localidad" 
-				+ ",descat" 
-				+ ",profesion" 
-				+ ",nummat" 
-				+ ",fecant" 
-				+ ",total_deducir" 
-				+ ",fvisione" 
-				+ ",fvisiont" 
-				+ " FROM nominaex"
-				+ " WHERE" 
-				+ " divisa = ?  " 			); 
-	}
-
-	private void closeRel_pex_divisaStmt() 
-	throws SQLException{
-		if ( rel_pex_divisaStmt != null ) { 
-			rel_pex_divisaStmt.close();
-			rel_pex_divisaStmt = null;	
-		}
-	}
-		
 	private PreparedStatement rel_cli_divisaStmt = null;
 		
 	private void initRel_cli_divisaStmt() 
@@ -27862,6 +29754,7 @@ public class AbstractCtsqlDB {
 				+ ",divisa" 
 				+ ",soloases" 
 				+ ",envioss" 
+				+ ",grupotrabajo" 
 				+ " FROM cliente"
 				+ " WHERE" 
 				+ " divisa = ?  " 			); 
@@ -27915,6 +29808,9 @@ public class AbstractCtsqlDB {
 				+ ",cecon" 
 				+ ",modimpuesto" 
 				+ ",mod190" 
+				+ ",feciniportal" 
+				+ ",feccierrenomina" 
+				+ ",meseshistorico" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " divisa = ?  " 			); 
@@ -27984,16 +29880,19 @@ public class AbstractCtsqlDB {
 				+ ",base_perdes" 
 				+ ",remuneracion" 
 				+ ",base_it" 
+				+ ",base_ere" 
 				+ ",total_1" 
 				+ ",codbas" 
 				+ ",base_cg" 
 				+ ",base_acc" 
 				+ ",prc_cg" 
 				+ ",prc_acc" 
+				+ ",prc_fp" 
 				+ ",prc_hex" 
 				+ ",prc_hexno" 
 				+ ",importe_cg" 
 				+ ",importe_acc" 
+				+ ",importe_fp" 
 				+ ",importe_hex" 
 				+ ",importe_hexno" 
 				+ ",mincg" 
@@ -28026,6 +29925,27 @@ public class AbstractCtsqlDB {
 				+ ",base_acc_sin_h_pts" 
 				+ ",fvisione" 
 				+ ",fvisiont" 
+				+ ",base_con_ere" 
+				+ ",base_acc_ere" 
+				+ ",base_con_ere_no" 
+				+ ",base_acc_ere_no" 
+				+ ",base_con_ere_sin" 
+				+ ",base_acc_ere_sin" 
+				+ ",prc_cg_emp" 
+				+ ",prc_atep_emp" 
+				+ ",prc_desemp_emp" 
+				+ ",prc_fp_emp" 
+				+ ",prc_fogasa_emp" 
+				+ ",prc_hex_emp" 
+				+ ",prc_hexno_emp" 
+				+ ",importe_cg_emp" 
+				+ ",importe_atep_emp" 
+				+ ",importe_desemp_emp" 
+				+ ",importe_fp_emp" 
+				+ ",importe_fogasa_emp" 
+				+ ",importe_hex_emp" 
+				+ ",importe_hexno_emp" 
+				+ ",importe_cuotas_emp" 
 				+ " FROM nomina"
 				+ " WHERE" 
 				+ " divisa = ?  " 			); 
@@ -28039,6 +29959,57 @@ public class AbstractCtsqlDB {
 		}
 	}
 		
+	private PreparedStatement rel_pex_divisaStmt = null;
+		
+	private void initRel_pex_divisaStmt() 
+	throws SQLException{
+		this.rel_pex_divisaStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",numero" 
+				+ ",anio" 
+				+ ",mes" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",codcom" 
+				+ ",importe" 
+				+ ",fijovar" 
+				+ ",irpf" 
+				+ ",impirpf" 
+				+ ",liquido" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",feccob" 
+				+ ",descom" 
+				+ ",feccobreal" 
+				+ ",divisa" 
+				+ ",fecemi" 
+				+ ",nomemp" 
+				+ ",nomper" 
+				+ ",direccion" 
+				+ ",localidad" 
+				+ ",descat" 
+				+ ",profesion" 
+				+ ",nummat" 
+				+ ",fecant" 
+				+ ",total_deducir" 
+				+ ",fvisione" 
+				+ ",fvisiont" 
+				+ " FROM nominaex"
+				+ " WHERE" 
+				+ " divisa = ?  " 			); 
+	}
+
+	private void closeRel_pex_divisaStmt() 
+	throws SQLException{
+		if ( rel_pex_divisaStmt != null ) { 
+			rel_pex_divisaStmt.close();
+			rel_pex_divisaStmt = null;	
+		}
+	}
+		
 	private PreparedStatement finiquito_divisaStmt = null;
 		
 	private void initFiniquito_divisaStmt() 
@@ -28047,6 +30018,7 @@ public class AbstractCtsqlDB {
 				"SELECT "
 				+ "codper" 
 				+ ",fecbaj" 
+				+ ",codcausa" 
 				+ ",causa" 
 				+ ",vacfecini" 
 				+ ",vacimporte" 
@@ -28096,6 +30068,7 @@ public class AbstractCtsqlDB {
 				"SELECT "
 				+ "codper" 
 				+ ",fecbaj" 
+				+ ",codcausa" 
 				+ ",causa" 
 				+ ",vacfecini" 
 				+ ",vacimporte" 
@@ -28143,6 +30116,7 @@ public class AbstractCtsqlDB {
 				"SELECT "
 				+ "codper" 
 				+ ",fecbaj" 
+				+ ",codcausa" 
 				+ ",causa" 
 				+ ",vacfecini" 
 				+ ",vacimporte" 
@@ -28182,69 +30156,6 @@ public class AbstractCtsqlDB {
 		}
 	}
 		
-	private PreparedStatement impr11x_divisaStmt = null;
-		
-	private void initImpr11x_divisaStmt() 
-	throws SQLException{
-		this.impr11x_divisaStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",tipo" 
-				+ ",codemp" 
-				+ ",codadm" 
-				+ ",provincia" 
-				+ ",anio" 
-				+ ",trimestre" 
-				+ ",mes" 
-				+ ",tradinper" 
-				+ ",tradinimp" 
-				+ ",tradinret" 
-				+ ",traespper" 
-				+ ",traespimp" 
-				+ ",traespret" 
-				+ ",actdinper" 
-				+ ",actdinimp" 
-				+ ",actdinret" 
-				+ ",actespper" 
-				+ ",actespimp" 
-				+ ",actespret" 
-				+ ",predinper" 
-				+ ",predinimp" 
-				+ ",predinret" 
-				+ ",preespper" 
-				+ ",preespimp" 
-				+ ",preespret" 
-				+ ",liqtotal" 
-				+ ",fpago" 
-				+ ",entidad" 
-				+ ",sucursal" 
-				+ ",dc" 
-				+ ",cuenta" 
-				+ ",fecha" 
-				+ ",fecnew" 
-				+ ",hornew" 
-				+ ",fecmod" 
-				+ ",hormod" 
-				+ ",divisa" 
-				+ ",imgper" 
-				+ ",imgimp" 
-				+ ",imgret" 
-				+ ",modimpuesto" 
-				+ ",nrc" 
-				+ ",fecremimp" 
-				+ " FROM impr11x"
-				+ " WHERE" 
-				+ " divisa = ?  " 			); 
-	}
-
-	private void closeImpr11x_divisaStmt() 
-	throws SQLException{
-		if ( impr11x_divisaStmt != null ) { 
-			impr11x_divisaStmt.close();
-			impr11x_divisaStmt = null;	
-		}
-	}
-		
 	private PreparedStatement impr190_divisaStmt = null;
 		
 	private void initImpr190_divisaStmt() 
@@ -28267,6 +30178,7 @@ public class AbstractCtsqlDB {
 				+ ",fecmod" 
 				+ ",hormod" 
 				+ ",divisa" 
+				+ ",feccierre" 
 				+ " FROM impr190"
 				+ " WHERE" 
 				+ " divisa = ?  " 			); 
@@ -28336,16 +30248,19 @@ public class AbstractCtsqlDB {
 				+ ",base_perdes" 
 				+ ",remuneracion" 
 				+ ",base_it" 
+				+ ",base_ere" 
 				+ ",total_1" 
 				+ ",codbas" 
 				+ ",base_cg" 
 				+ ",base_acc" 
 				+ ",prc_cg" 
 				+ ",prc_acc" 
+				+ ",prc_fp" 
 				+ ",prc_hex" 
 				+ ",prc_hexno" 
 				+ ",importe_cg" 
 				+ ",importe_acc" 
+				+ ",importe_fp" 
 				+ ",importe_hex" 
 				+ ",importe_hexno" 
 				+ ",mincg" 
@@ -28377,6 +30292,12 @@ public class AbstractCtsqlDB {
 				+ ",base_acc_pts" 
 				+ ",base_acc_sin_h_pts" 
 				+ ",cdgnom" 
+				+ ",base_con_ere" 
+				+ ",base_acc_ere" 
+				+ ",base_con_ere_no" 
+				+ ",base_acc_ere_no" 
+				+ ",base_con_ere_sin" 
+				+ ",base_acc_ere_sin" 
 				+ " FROM nominadf"
 				+ " WHERE" 
 				+ " divisa = ?  " 			); 
@@ -28387,6 +30308,158 @@ public class AbstractCtsqlDB {
 		if ( nominadf_divisaStmt != null ) { 
 			nominadf_divisaStmt.close();
 			nominadf_divisaStmt = null;	
+		}
+	}
+		
+	private PreparedStatement impr11x_divisaStmt = null;
+		
+	private void initImpr11x_divisaStmt() 
+	throws SQLException{
+		this.impr11x_divisaStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",tipo" 
+				+ ",codemp" 
+				+ ",codadm" 
+				+ ",provincia" 
+				+ ",anio" 
+				+ ",trimestre" 
+				+ ",mes" 
+				+ ",tradinper" 
+				+ ",tradinimp" 
+				+ ",tradinret" 
+				+ ",traespper" 
+				+ ",traespimp" 
+				+ ",traespret" 
+				+ ",actdinper" 
+				+ ",actdinimp" 
+				+ ",actdinret" 
+				+ ",actespper" 
+				+ ",actespimp" 
+				+ ",actespret" 
+				+ ",predinper" 
+				+ ",predinimp" 
+				+ ",predinret" 
+				+ ",preespper" 
+				+ ",preespimp" 
+				+ ",preespret" 
+				+ ",imgper" 
+				+ ",imgimp" 
+				+ ",imgret" 
+				+ ",liqtotal" 
+				+ ",fpago" 
+				+ ",iban" 
+				+ ",entidad" 
+				+ ",sucursal" 
+				+ ",dc" 
+				+ ",cuenta" 
+				+ ",fecha" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",divisa" 
+				+ ",modimpuesto" 
+				+ ",nrc" 
+				+ ",fecremimp" 
+				+ ",ibannrc" 
+				+ ",entidadnrc" 
+				+ ",sucursalnrc" 
+				+ ",dcnrc" 
+				+ ",cuentanrc" 
+				+ " FROM impr11x"
+				+ " WHERE" 
+				+ " divisa = ?  " 			); 
+	}
+
+	private void closeImpr11x_divisaStmt() 
+	throws SQLException{
+		if ( impr11x_divisaStmt != null ) { 
+			impr11x_divisaStmt.close();
+			impr11x_divisaStmt = null;	
+		}
+	}
+		
+	private PreparedStatement impr216_divisaStmt = null;
+		
+	private void initImpr216_divisaStmt() 
+	throws SQLException{
+		this.impr216_divisaStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",tipo" 
+				+ ",codemp" 
+				+ ",codadm" 
+				+ ",provincia" 
+				+ ",anio" 
+				+ ",mes" 
+				+ ",numrent" 
+				+ ",imprent" 
+				+ ",retrent" 
+				+ ",numrentno" 
+				+ ",imprentno" 
+				+ ",totalant" 
+				+ ",total" 
+				+ ",modimpuesto" 
+				+ ",fpago" 
+				+ ",nrc" 
+				+ ",iban" 
+				+ ",entidad" 
+				+ ",sucursal" 
+				+ ",dc" 
+				+ ",cuenta" 
+				+ ",complementaria" 
+				+ ",justificante" 
+				+ ",fecha" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",divisa" 
+				+ " FROM impr216"
+				+ " WHERE" 
+				+ " divisa = ?  " 			); 
+	}
+
+	private void closeImpr216_divisaStmt() 
+	throws SQLException{
+		if ( impr216_divisaStmt != null ) { 
+			impr216_divisaStmt.close();
+			impr216_divisaStmt = null;	
+		}
+	}
+		
+	private PreparedStatement impr296_divisaStmt = null;
+		
+	private void initImpr296_divisaStmt() 
+	throws SQLException{
+		this.impr296_divisaStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",codemp" 
+				+ ",codadm" 
+				+ ",provincia" 
+				+ ",anio" 
+				+ ",num_percep" 
+				+ ",imp_percep" 
+				+ ",imp_retenc" 
+				+ ",fecha" 
+				+ ",descuadrado" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",divisa" 
+				+ " FROM impr296"
+				+ " WHERE" 
+				+ " divisa = ?  " 			); 
+	}
+
+	private void closeImpr296_divisaStmt() 
+	throws SQLException{
+		if ( impr296_divisaStmt != null ) { 
+			impr296_divisaStmt.close();
+			impr296_divisaStmt = null;	
 		}
 	}
 
@@ -28528,31 +30601,6 @@ public class AbstractCtsqlDB {
 		}
 		
 		/**
-		 * Visit Nominaex that're children of this Divisa. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitRel_pex_divisa(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( rel_pex_divisaStmt == null )
-					 initRel_pex_divisaStmt();
-				
-				rel_pex_divisaStmt.setString(1, this.getCdg()); 
-				rs = rel_pex_divisaStmt.executeQuery();
-				Nominaex nominaex = new Nominaex(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitRel_pex_divisa(nominaex, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		
-		/**
 		 * Visit Cliente that're children of this Divisa. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
@@ -28619,6 +30667,31 @@ public class AbstractCtsqlDB {
 				Nomina nomina = new Nomina(rs); 
 				while ( rs.next() ) {
 					ctsqlDBVisitor.visitRel_nom_divisa(nomina, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Nominaex that're children of this Divisa. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitRel_pex_divisa(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( rel_pex_divisaStmt == null )
+					 initRel_pex_divisaStmt();
+				
+				rel_pex_divisaStmt.setString(1, this.getCdg()); 
+				rs = rel_pex_divisaStmt.executeQuery();
+				Nominaex nominaex = new Nominaex(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitRel_pex_divisa(nominaex, this);
 				}
 			}
 			finally {
@@ -28703,31 +30776,6 @@ public class AbstractCtsqlDB {
 		}
 		
 		/**
-		 * Visit Impr11x that're children of this Divisa. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitImpr11x_divisa(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( impr11x_divisaStmt == null )
-					 initImpr11x_divisaStmt();
-				
-				impr11x_divisaStmt.setString(1, this.getCdg()); 
-				rs = impr11x_divisaStmt.executeQuery();
-				Impr11x impr11x = new Impr11x(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitImpr11x_divisa(impr11x, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		
-		/**
 		 * Visit Impr190 that're children of this Divisa. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
@@ -28776,6 +30824,81 @@ public class AbstractCtsqlDB {
 					rs.close();
 			}
 		}
+		
+		/**
+		 * Visit Impr11x that're children of this Divisa. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitImpr11x_divisa(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( impr11x_divisaStmt == null )
+					 initImpr11x_divisaStmt();
+				
+				impr11x_divisaStmt.setString(1, this.getCdg()); 
+				rs = impr11x_divisaStmt.executeQuery();
+				Impr11x impr11x = new Impr11x(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitImpr11x_divisa(impr11x, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Impr216 that're children of this Divisa. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitImpr216_divisa(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( impr216_divisaStmt == null )
+					 initImpr216_divisaStmt();
+				
+				impr216_divisaStmt.setString(1, this.getCdg()); 
+				rs = impr216_divisaStmt.executeQuery();
+				Impr216 impr216 = new Impr216(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitImpr216_divisa(impr216, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Impr296 that're children of this Divisa. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitImpr296_divisa(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( impr296_divisaStmt == null )
+					 initImpr296_divisaStmt();
+				
+				impr296_divisaStmt.setString(1, this.getCdg()); 
+				rs = impr296_divisaStmt.executeQuery();
+				Impr296 impr296 = new Impr296(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitImpr296_divisa(impr296, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
 	}
 	
 
@@ -28808,6 +30931,11 @@ public class AbstractCtsqlDB {
 				+ ",indgrupo" 
 				+ ",pariente" 
 				+ ",noirpf" 
+				+ ",nosegsoc" 
+				+ ",jubiladoactivo" 
+				+ ",certificado" 
+				+ ",familiar" 
+				+ ",noresidente" 
 				+ " FROM emprper"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -29042,157 +31170,13 @@ public class AbstractCtsqlDB {
 			return rs.getBigDecimal(23);
 		}
 		/**
-		 * Base Calculo Retencion
-		 * @return the column 'base_calculo' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getBase_calculo()
-		throws SQLException {
-			return rs.getBigDecimal(24);
-		}
-		/**
-		 * Anualidades por Alimentos
-		 * @return the column 'imp_anualid' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getImp_anualid()
-		throws SQLException {
-			return rs.getBigDecimal(25);
-		}
-		/**
-		 * Cuota Calculo Retencion
-		 * @return the column 'cuota_calculo' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getCuota_calculo()
-		throws SQLException {
-			return rs.getBigDecimal(26);
-		}
-		/**
-		 * Cuota Anualidades
-		 * @return the column 'cuota_anualid' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getCuota_anualid()
-		throws SQLException {
-			return rs.getBigDecimal(27);
-		}
-		/**
-		 * Retencion I.R.P.F. acumulada
-		 * @return the column 'irpf_acu' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getIrpf_acu()
-		throws SQLException {
-			return rs.getBigDecimal(28);
-		}
-		/**
-		 * Tipo I.R.P.F. calculado
-		 * @return the column 'irpf_cal' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getIrpf_cal()
-		throws SQLException {
-			return rs.getBigDecimal(29);
-		}
-		/**
-		 * I.R.P.F. asignado
-		 * @return the column 'irpf' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getIrpf()
-		throws SQLException {
-			return rs.getBigDecimal(30);
-		}
-		/**
-		 * I.R.P.F. Anterior
-		 * @return the column 'irpf_anterior' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getIrpf_anterior()
-		throws SQLException {
-			return rs.getBigDecimal(31);
-		}
-		/**
-		 * I.R.P.F. Anterior Procede de Regularizacion
-		 * @return the column 'regula' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getRegula()
-		throws SQLException {
-			return rs.getString(32);
-		}
-		/**
-		 * Dias de contrato
-		 * @return the column 'diascont' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getDiascont()
-		throws SQLException {
-			return rs.getInt(33);
-		}
-		/**
-		 * Indicador de hijos
-		 * @return the column 'hijos' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getHijos()
-		throws SQLException {
-			return rs.getString(34);
-		}
-		/**
-		 * Fecha Creacion Fila
-		 * @return the column 'fecnew' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Date getFecnew()
-		throws SQLException {
-			return rs.getDate(35);
-		}
-		/**
-		 * Hora Creacion Fila
-		 * @return the column 'hornew' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Time getHornew()
-		throws SQLException {
-			return rs.getTime(36);
-		}
-		/**
-		 * Fecha Modificacion Fila
-		 * @return the column 'fecmod' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Date getFecmod()
-		throws SQLException {
-			return rs.getDate(37);
-		}
-		/**
-		 * Hora Modificacion Fila
-		 * @return the column 'hormod' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Time getHormod()
-		throws SQLException {
-			return rs.getTime(38);
-		}
-		/**
-		 * Minoracion Foral por Minusvalia
-		 * @return the column 'minforal' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getMinforal()
-		throws SQLException {
-			return rs.getBigDecimal(39);
-		}
-		/**
 		 * Discapacidad trabajador activos
 		 * @return the column 'imp_discapacidadt' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
 		public BigDecimal getImp_discapacidadt()
 		throws SQLException {
-			return rs.getBigDecimal(40);
+			return rs.getBigDecimal(24);
 		}
 		/**
 		 * Cuidado de hijos
@@ -29201,7 +31185,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImp_cuidadohijo()
 		throws SQLException {
-			return rs.getBigDecimal(41);
+			return rs.getBigDecimal(25);
 		}
 		/**
 		 * Discapacidad
@@ -29210,7 +31194,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImp_discapacidad()
 		throws SQLException {
-			return rs.getBigDecimal(42);
+			return rs.getBigDecimal(26);
 		}
 		/**
 		 * Pensionistas
@@ -29219,7 +31203,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImp_pensionista()
 		throws SQLException {
-			return rs.getBigDecimal(43);
+			return rs.getBigDecimal(27);
 		}
 		/**
 		 * Prolongacion actividad laboral
@@ -29228,7 +31212,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImp_prolongacion()
 		throws SQLException {
-			return rs.getBigDecimal(44);
+			return rs.getBigDecimal(28);
 		}
 		/**
 		 * Movilidad geográfica
@@ -29237,7 +31221,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImp_movilidad()
 		throws SQLException {
-			return rs.getBigDecimal(45);
+			return rs.getBigDecimal(29);
 		}
 		/**
 		 * Por asistencia
@@ -29245,6 +31229,150 @@ public class AbstractCtsqlDB {
 		 * @throws SQLException
 		 */
 		public BigDecimal getImp_asistencia()
+		throws SQLException {
+			return rs.getBigDecimal(30);
+		}
+		/**
+		 * Base Calculo Retencion
+		 * @return the column 'base_calculo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getBase_calculo()
+		throws SQLException {
+			return rs.getBigDecimal(31);
+		}
+		/**
+		 * Anualidades por Alimentos
+		 * @return the column 'imp_anualid' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getImp_anualid()
+		throws SQLException {
+			return rs.getBigDecimal(32);
+		}
+		/**
+		 * Cuota Calculo Retencion
+		 * @return the column 'cuota_calculo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getCuota_calculo()
+		throws SQLException {
+			return rs.getBigDecimal(33);
+		}
+		/**
+		 * Cuota Anualidades
+		 * @return the column 'cuota_anualid' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getCuota_anualid()
+		throws SQLException {
+			return rs.getBigDecimal(34);
+		}
+		/**
+		 * Retencion I.R.P.F. acumulada
+		 * @return the column 'irpf_acu' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getIrpf_acu()
+		throws SQLException {
+			return rs.getBigDecimal(35);
+		}
+		/**
+		 * Tipo I.R.P.F. calculado
+		 * @return the column 'irpf_cal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getIrpf_cal()
+		throws SQLException {
+			return rs.getBigDecimal(36);
+		}
+		/**
+		 * I.R.P.F. asignado
+		 * @return the column 'irpf' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getIrpf()
+		throws SQLException {
+			return rs.getBigDecimal(37);
+		}
+		/**
+		 * I.R.P.F. Anterior
+		 * @return the column 'irpf_anterior' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getIrpf_anterior()
+		throws SQLException {
+			return rs.getBigDecimal(38);
+		}
+		/**
+		 * I.R.P.F. Anterior Procede de Regularizacion
+		 * @return the column 'regula' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getRegula()
+		throws SQLException {
+			return rs.getString(39);
+		}
+		/**
+		 * Dias de contrato
+		 * @return the column 'diascont' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getDiascont()
+		throws SQLException {
+			return rs.getInt(40);
+		}
+		/**
+		 * Indicador de hijos
+		 * @return the column 'hijos' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getHijos()
+		throws SQLException {
+			return rs.getString(41);
+		}
+		/**
+		 * Fecha Creacion Fila
+		 * @return the column 'fecnew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFecnew()
+		throws SQLException {
+			return rs.getDate(42);
+		}
+		/**
+		 * Hora Creacion Fila
+		 * @return the column 'hornew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getHornew()
+		throws SQLException {
+			return rs.getTime(43);
+		}
+		/**
+		 * Fecha Modificacion Fila
+		 * @return the column 'fecmod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFecmod()
+		throws SQLException {
+			return rs.getDate(44);
+		}
+		/**
+		 * Hora Modificacion Fila
+		 * @return the column 'hormod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getHormod()
+		throws SQLException {
+			return rs.getTime(45);
+		}
+		/**
+		 * Minoracion Foral por Minusvalia
+		 * @return the column 'minforal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getMinforal()
 		throws SQLException {
 			return rs.getBigDecimal(46);
 		}
@@ -29285,7 +31413,7 @@ public class AbstractCtsqlDB {
 			return rs.getBigDecimal(50);
 		}
 		/**
-		 * Porcentaje reduccion hipoteca
+		 * Porcentaje reducción hipoteca
 		 * @return the column 'prcredhipoteca' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -29328,6 +31456,147 @@ public class AbstractCtsqlDB {
 			}
 		}
 
+	}
+	
+
+	
+		
+	private PreparedStatement rel_cra_dde_cdgStmt = null;
+		
+	private void initRel_cra_dde_cdgStmt() 
+	throws SQLException{
+		this.rel_cra_dde_cdgStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",codper" 
+				+ ",apenom" 
+				+ ",numss" 
+				+ " FROM cra_trb"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeRel_cra_dde_cdgStmt() 
+	throws SQLException{
+		if ( rel_cra_dde_cdgStmt != null ) { 
+			rel_cra_dde_cdgStmt.close();
+			rel_cra_dde_cdgStmt = null;	
+		}
+	}
+
+
+	/**
+	 * Cra_dde
+	 * 
+	 */
+	public class Cra_dde {
+		
+		private ResultSet rs;
+		
+		protected Cra_dde (ResultSet rs) 
+		throws SQLException {
+			this.rs =rs;
+		}
+		
+		/**
+		 * Código de fichero CRA
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCdg()
+		throws SQLException {
+			return rs.getInt(1);
+		}
+		/**
+		 * Código de actividad
+		 * @return the column 'codact' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCodact()
+		throws SQLException {
+			return rs.getInt(2);
+		}
+		/**
+		 * Descripción de actividad
+		 * @return the column 'desact' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getDesact()
+		throws SQLException {
+			return rs.getString(3);
+		}
+		/**
+		 * Régimen de la S.S.
+		 * @return the column 'codreg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCodreg()
+		throws SQLException {
+			return rs.getString(4);
+		}
+		/**
+		 * Código de cuenta de cotización
+		 * @return the column 'codccc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCodccc()
+		throws SQLException {
+			return rs.getString(5);
+		}
+		/**
+		 * Año periodo de liquidación
+		 * @return the column 'anio' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getAnio()
+		throws SQLException {
+			return rs.getInt(6);
+		}
+		/**
+		 * Mes periodo de liquidación
+		 * @return the column 'mes' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getMes()
+		throws SQLException {
+			return rs.getInt(7);
+		}
+		/**
+		 * Remesado
+		 * @return the column 'remesado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getRemesado()
+		throws SQLException {
+			return rs.getString(8);
+		}
+
+
+		
+		/**
+		 * Visit Cra_trb that're children of this Cra_dde. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitRel_cra_dde_cdg(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( rel_cra_dde_cdgStmt == null )
+					 initRel_cra_dde_cdgStmt();
+				
+				rel_cra_dde_cdgStmt.setInt(1, this.getCdg()); 
+				rs = rel_cra_dde_cdgStmt.executeQuery();
+				Cra_trb cra_trb = new Cra_trb(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitRel_cra_dde_cdg(cra_trb, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
 	}
 	
 
@@ -29396,6 +31665,7 @@ public class AbstractCtsqlDB {
 				+ ",divisa" 
 				+ ",soloases" 
 				+ ",envioss" 
+				+ ",grupotrabajo" 
 				+ " FROM cliente"
 				+ " WHERE" 
 				+ " paiemi = ?  " 			); 
@@ -29449,6 +31719,9 @@ public class AbstractCtsqlDB {
 				+ ",cecon" 
 				+ ",modimpuesto" 
 				+ ",mod190" 
+				+ ",feciniportal" 
+				+ ",feccierrenomina" 
+				+ ",meseshistorico" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " paiemi = ?  " 			); 
@@ -29502,6 +31775,9 @@ public class AbstractCtsqlDB {
 				+ ",cecon" 
 				+ ",modimpuesto" 
 				+ ",mod190" 
+				+ ",feciniportal" 
+				+ ",feccierrenomina" 
+				+ ",meseshistorico" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " paidocrep = ?  " 			); 
@@ -29943,6 +32219,11 @@ public class AbstractCtsqlDB {
 				+ ",indgrupo" 
 				+ ",pariente" 
 				+ ",noirpf" 
+				+ ",nosegsoc" 
+				+ ",jubiladoactivo" 
+				+ ",certificado" 
+				+ ",familiar" 
+				+ ",noresidente" 
 				+ " FROM emprper"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -29969,6 +32250,8 @@ public class AbstractCtsqlDB {
 				+ ",fijovar" 
 				+ ",indcom" 
 				+ ",dinesp" 
+				+ ",concepto" 
+				+ ",excinc" 
 				+ " FROM complemento"
 				+ " WHERE" 
 				+ " cdg = ?  "  + "AND" 				+ " cdg = ?  " 			); 
@@ -30220,6 +32503,24 @@ public class AbstractCtsqlDB {
 		throws SQLException {
 			return rs.getString(25);
 		}
+		/**
+		 * Concepto
+		 * @return the column 'concepto' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getConcepto()
+		throws SQLException {
+			return rs.getString(26);
+		}
+		/**
+		 * Indicativo excluido/incluido
+		 * @return the column 'excinc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getExcinc()
+		throws SQLException {
+			return rs.getString(27);
+		}
 
 		/**
 		 * Visit Emprper that's parent of this Percep. 
@@ -30276,52 +32577,6 @@ public class AbstractCtsqlDB {
 
 	
 
-	private PreparedStatement _fdnif_fddinifStmt = null;
-		
-	private void initFdnif_fddinifStmt() 
-	throws SQLException{
-		this._fdnif_fddinifStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "codper" 
-				+ ",fecbaj" 
-				+ ",causa" 
-				+ ",vacfecini" 
-				+ ",vacimporte" 
-				+ ",total_conceptos" 
-				+ ",base" 
-				+ ",irpf" 
-				+ ",importe_irpf" 
-				+ ",liquido" 
-				+ ",importesin" 
-				+ ",fecnew" 
-				+ ",hornew" 
-				+ ",fecmod" 
-				+ ",hormod" 
-				+ ",cdg" 
-				+ ",cdgnom" 
-				+ ",feccobreal" 
-				+ ",divisa" 
-				+ ",diasvac" 
-				+ ",costessemp" 
-				+ ",codbas" 
-				+ ",basecg" 
-				+ ",prccg" 
-				+ ",importecg" 
-				+ ",baseacc" 
-				+ ",prcacc" 
-				+ ",importeacc" 
-				+ " FROM finiquitodf"
-				+ " WHERE" 
-				+ " cdg = ?  " 			); 
-	}
-
-	private void closeFdnif_fddinifStmt() 
-	throws SQLException{
-		if ( _fdnif_fddinifStmt != null ) { 
-			_fdnif_fddinifStmt.close();
-			_fdnif_fddinifStmt = null;	
-		}
-	}
 
 	/**
 	 * Finindemdf
@@ -30382,30 +32637,6 @@ public class AbstractCtsqlDB {
 			return rs.getString(5);
 		}
 
-		/**
-		 * Visit Finiquitodf that's parent of this Finindemdf. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitFiniddf_findf(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( _fdnif_fddinifStmt == null )
-					 initFdnif_fddinifStmt();
-				
-				_fdnif_fddinifStmt.setInt(1, this.getCdg()); 
-				rs = _fdnif_fddinifStmt.executeQuery();
-				Finiquitodf finiquitodf = new Finiquitodf(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitFiniddf_findf(this, finiquitodf);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
 
 	}
 	
@@ -30488,6 +32719,7 @@ public class AbstractCtsqlDB {
 				+ ",proret" 
 				+ ",nummat" 
 				+ ",codcont" 
+				+ ",descont" 
 				+ ",codtc2" 
 				+ ",destc2" 
 				+ ",fecinicont" 
@@ -30531,6 +32763,7 @@ public class AbstractCtsqlDB {
 				+ ",diastp" 
 				+ ",guardalegal" 
 				+ ",iban" 
+				+ ",fecfinperiprue" 
 				+ " FROM trabajo"
 				+ " WHERE" 
 				+ " codent = ?  " 			); 
@@ -30907,84 +33140,124 @@ public class AbstractCtsqlDB {
 
 	
 
+	private PreparedStatement _soiraronoh_nilStmt = null;
+		
+	private void initSoiraronoh_nilStmt() 
+	throws SQLException{
+		this._soiraronoh_nilStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",codcli" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",tipo" 
+				+ ",texto" 
+				+ ",facturar" 
+				+ " FROM honorarios"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeSoiraronoh_nilStmt() 
+	throws SQLException{
+		if ( _soiraronoh_nilStmt != null ) { 
+			_soiraronoh_nilStmt.close();
+			_soiraronoh_nilStmt = null;	
+		}
+	}
 
 	/**
-	 * Nszcere
+	 * Linhonorarios
 	 * 
 	 */
-	public class Nszcere {
+	public class Linhonorarios {
 		
 		private ResultSet rs;
 		
-		protected Nszcere (ResultSet rs) 
+		protected Linhonorarios (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
 		
 		/**
-		 * $column.remarks
-		 * @return the column 'scr0' value; if the value is SQL NULL, the value returned is null
+		 * Código de actividad
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getScr0()
+		public Integer getCdg()
 		throws SQLException {
-			return rs.getString(1);
+			return rs.getInt(1);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'ncr0' value; if the value is SQL NULL, the value returned is null
+		 * Fecha de inicio
+		 * @return the column 'fecini' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getNcr0()
+		public Date getFecini()
 		throws SQLException {
-			return rs.getInt(2);
+			return rs.getDate(2);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'ncr1' value; if the value is SQL NULL, the value returned is null
+		 * Fecha de fin
+		 * @return the column 'fecfin' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getNcr1()
+		public Date getFecfin()
 		throws SQLException {
-			return rs.getInt(3);
+			return rs.getDate(3);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'ncr2' value; if the value is SQL NULL, the value returned is null
+		 * Tipo
+		 * @return the column 'tipo' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getNcr2()
+		public String getTipo()
 		throws SQLException {
-			return rs.getInt(4);
+			return rs.getString(4);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'ncr3' value; if the value is SQL NULL, the value returned is null
+		 * Hasta
+		 * @return the column 'hasta' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getNcr3()
+		public Integer getHasta()
 		throws SQLException {
 			return rs.getInt(5);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'ncr4' value; if the value is SQL NULL, the value returned is null
+		 * Importe
+		 * @return the column 'importe' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getNcr4()
+		public BigDecimal getImporte()
 		throws SQLException {
-			return rs.getInt(6);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ncr5' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNcr5()
-		throws SQLException {
-			return rs.getInt(7);
+			return rs.getBigDecimal(6);
 		}
 
+		/**
+		 * Visit Honorarios that's parent of this Linhonorarios. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitLin_honorarios(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _soiraronoh_nilStmt == null )
+					 initSoiraronoh_nilStmt();
+				
+				_soiraronoh_nilStmt.setInt(1, this.getCdg()); 
+				rs = _soiraronoh_nilStmt.executeQuery();
+				Honorarios honorarios = new Honorarios(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitLin_honorarios(this, honorarios);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
 
 	}
 	
@@ -31018,6 +33291,11 @@ public class AbstractCtsqlDB {
 				+ ",indgrupo" 
 				+ ",pariente" 
 				+ ",noirpf" 
+				+ ",nosegsoc" 
+				+ ",jubiladoactivo" 
+				+ ",certificado" 
+				+ ",familiar" 
+				+ ",noresidente" 
 				+ " FROM emprper"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -31165,39 +33443,167 @@ public class AbstractCtsqlDB {
 
 	
 
+	private PreparedStatement _rep_brt_arc_lerStmt = null;
+		
+	private void initRep_brt_arc_lerStmt() 
+	throws SQLException{
+		this._rep_brt_arc_lerStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",codper" 
+				+ ",apenom" 
+				+ ",numss" 
+				+ " FROM cra_trb"
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				+ " codper = ?  " 			); 
+	}
+
+	private void closeRep_brt_arc_lerStmt() 
+	throws SQLException{
+		if ( _rep_brt_arc_lerStmt != null ) { 
+			_rep_brt_arc_lerStmt.close();
+			_rep_brt_arc_lerStmt = null;	
+		}
+	}
 
 	/**
-	 * Nszavis
+	 * Cra_cre
 	 * 
 	 */
-	public class Nszavis {
+	public class Cra_cre {
 		
 		private ResultSet rs;
 		
-		protected Nszavis (ResultSet rs) 
+		protected Cra_cre (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
 		
 		/**
-		 * $column.remarks
-		 * @return the column 'sav0' value; if the value is SQL NULL, the value returned is null
+		 * Código de fichero CRA
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getSav0()
+		public Integer getCdg()
 		throws SQLException {
-			return rs.getString(1);
+			return rs.getInt(1);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'sav1' value; if the value is SQL NULL, the value returned is null
+		 * Código de persona
+		 * @return the column 'codper' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getSav1()
+		public Integer getCodper()
 		throws SQLException {
-			return rs.getString(2);
+			return rs.getInt(2);
+		}
+		/**
+		 * Número de orden
+		 * @return the column 'orden' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getOrden()
+		throws SQLException {
+			return rs.getInt(3);
+		}
+		/**
+		 * Año de devengo
+		 * @return the column 'anio' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getAnio()
+		throws SQLException {
+			return rs.getInt(4);
+		}
+		/**
+		 * Mes de devengo
+		 * @return the column 'mes' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getMes()
+		throws SQLException {
+			return rs.getInt(5);
+		}
+		/**
+		 * Tipo de recibo
+		 * @return the column 'tiprec' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTiprec()
+		throws SQLException {
+			return rs.getString(6);
+		}
+		/**
+		 * Código de recibo
+		 * @return the column 'codrec' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCodrec()
+		throws SQLException {
+			return rs.getInt(7);
+		}
+		/**
+		 * Descripción del concepto
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getDescripcion()
+		throws SQLException {
+			return rs.getString(8);
+		}
+		/**
+		 * Concepto
+		 * @return the column 'concepto' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getConcepto()
+		throws SQLException {
+			return rs.getString(9);
+		}
+		/**
+		 * Importe
+		 * @return the column 'importe' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getImporte()
+		throws SQLException {
+			return rs.getBigDecimal(10);
+		}
+		/**
+		 * Indicativo excluido/incluido
+		 * @return the column 'excinc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getExcinc()
+		throws SQLException {
+			return rs.getString(11);
 		}
 
+		/**
+		 * Visit Cra_trb that's parent of this Cra_cre. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitRel_cra_trb_per(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _rep_brt_arc_lerStmt == null )
+					 initRep_brt_arc_lerStmt();
+				
+				_rep_brt_arc_lerStmt.setInt(1, this.getCdg()); 
+				_rep_brt_arc_lerStmt.setInt(2, this.getCodper()); 
+				rs = _rep_brt_arc_lerStmt.executeQuery();
+				Cra_trb cra_trb = new Cra_trb(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitRel_cra_trb_per(this, cra_trb);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
 
 	}
 	
@@ -31260,6 +33666,8 @@ public class AbstractCtsqlDB {
 				+ ",fijovar" 
 				+ ",indcom" 
 				+ ",dinesp" 
+				+ ",concepto" 
+				+ ",excinc" 
 				+ " FROM complemento"
 				+ " WHERE" 
 				+ " cdg = ?  "  + "AND" 				+ " cdg = ?  " 			); 
@@ -31483,6 +33891,24 @@ public class AbstractCtsqlDB {
 		public String getDinesp()
 		throws SQLException {
 			return rs.getString(22);
+		}
+		/**
+		 * Concepto
+		 * @return the column 'concepto' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getConcepto()
+		throws SQLException {
+			return rs.getString(23);
+		}
+		/**
+		 * Indicativo excluido/incluido
+		 * @return the column 'excinc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getExcinc()
+		throws SQLException {
+			return rs.getString(24);
 		}
 
 		/**
@@ -31873,6 +34299,7 @@ public class AbstractCtsqlDB {
 				+ ",proret" 
 				+ ",nummat" 
 				+ ",codcont" 
+				+ ",descont" 
 				+ ",codtc2" 
 				+ ",destc2" 
 				+ ",fecinicont" 
@@ -31916,6 +34343,7 @@ public class AbstractCtsqlDB {
 				+ ",diastp" 
 				+ ",guardalegal" 
 				+ ",iban" 
+				+ ",fecfinperiprue" 
 				+ " FROM trabajo"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -31960,6 +34388,8 @@ public class AbstractCtsqlDB {
 				+ ",indcom" 
 				+ ",tipcom" 
 				+ ",dinesp" 
+				+ ",concepto" 
+				+ ",excinc" 
 				+ " FROM percep"
 				+ " WHERE" 
 				+ " numero = ?  " 			); 
@@ -31987,6 +34417,15 @@ public class AbstractCtsqlDB {
 				+ ",importe" 
 				+ ",tipo" 
 				+ ",prorrateo" 
+				+ ",descripcion" 
+				+ ",calculo" 
+				+ ",prc_cg" 
+				+ ",prc_acc" 
+				+ ",prc_accfgs" 
+				+ ",boniss" 
+				+ ",mayor60" 
+				+ ",rdl052006" 
+				+ ",restait" 
 				+ " FROM bonifica"
 				+ " WHERE" 
 				+ " numero = ?  " 			); 
@@ -32024,6 +34463,31 @@ public class AbstractCtsqlDB {
 		if ( avisos_emprperStmt != null ) { 
 			avisos_emprperStmt.close();
 			avisos_emprperStmt = null;	
+		}
+	}
+		
+	private PreparedStatement prc_emprperStmt = null;
+		
+	private void initPrc_emprperStmt() 
+	throws SQLException{
+		this.prc_emprperStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",orden" 
+				+ ",prc" 
+				+ ",texto" 
+				+ " FROM prcdivtrab"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closePrc_emprperStmt() 
+	throws SQLException{
+		if ( prc_emprperStmt != null ) { 
+			prc_emprperStmt.close();
+			prc_emprperStmt = null;	
 		}
 	}
 		
@@ -32083,16 +34547,19 @@ public class AbstractCtsqlDB {
 				+ ",base_perdes" 
 				+ ",remuneracion" 
 				+ ",base_it" 
+				+ ",base_ere" 
 				+ ",total_1" 
 				+ ",codbas" 
 				+ ",base_cg" 
 				+ ",base_acc" 
 				+ ",prc_cg" 
 				+ ",prc_acc" 
+				+ ",prc_fp" 
 				+ ",prc_hex" 
 				+ ",prc_hexno" 
 				+ ",importe_cg" 
 				+ ",importe_acc" 
+				+ ",importe_fp" 
 				+ ",importe_hex" 
 				+ ",importe_hexno" 
 				+ ",mincg" 
@@ -32125,6 +34592,27 @@ public class AbstractCtsqlDB {
 				+ ",base_acc_sin_h_pts" 
 				+ ",fvisione" 
 				+ ",fvisiont" 
+				+ ",base_con_ere" 
+				+ ",base_acc_ere" 
+				+ ",base_con_ere_no" 
+				+ ",base_acc_ere_no" 
+				+ ",base_con_ere_sin" 
+				+ ",base_acc_ere_sin" 
+				+ ",prc_cg_emp" 
+				+ ",prc_atep_emp" 
+				+ ",prc_desemp_emp" 
+				+ ",prc_fp_emp" 
+				+ ",prc_fogasa_emp" 
+				+ ",prc_hex_emp" 
+				+ ",prc_hexno_emp" 
+				+ ",importe_cg_emp" 
+				+ ",importe_atep_emp" 
+				+ ",importe_desemp_emp" 
+				+ ",importe_fp_emp" 
+				+ ",importe_fogasa_emp" 
+				+ ",importe_hex_emp" 
+				+ ",importe_hexno_emp" 
+				+ ",importe_cuotas_emp" 
 				+ " FROM nomina"
 				+ " WHERE" 
 				+ " numero = ?  " 			); 
@@ -32135,6 +34623,57 @@ public class AbstractCtsqlDB {
 		if ( rel_nom_perStmt != null ) { 
 			rel_nom_perStmt.close();
 			rel_nom_perStmt = null;	
+		}
+	}
+		
+	private PreparedStatement rel_pex_perStmt = null;
+		
+	private void initRel_pex_perStmt() 
+	throws SQLException{
+		this.rel_pex_perStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",numero" 
+				+ ",anio" 
+				+ ",mes" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",codcom" 
+				+ ",importe" 
+				+ ",fijovar" 
+				+ ",irpf" 
+				+ ",impirpf" 
+				+ ",liquido" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",feccob" 
+				+ ",descom" 
+				+ ",feccobreal" 
+				+ ",divisa" 
+				+ ",fecemi" 
+				+ ",nomemp" 
+				+ ",nomper" 
+				+ ",direccion" 
+				+ ",localidad" 
+				+ ",descat" 
+				+ ",profesion" 
+				+ ",nummat" 
+				+ ",fecant" 
+				+ ",total_deducir" 
+				+ ",fvisione" 
+				+ ",fvisiont" 
+				+ " FROM nominaex"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeRel_pex_perStmt() 
+	throws SQLException{
+		if ( rel_pex_perStmt != null ) { 
+			rel_pex_perStmt.close();
+			rel_pex_perStmt = null;	
 		}
 	}
 		
@@ -32154,6 +34693,9 @@ public class AbstractCtsqlDB {
 				+ ",fecmod" 
 				+ ",hormod" 
 				+ ",importe" 
+				+ ",coeficiente" 
+				+ ",basediacc" 
+				+ ",basediaacc" 
 				+ " FROM trabinci"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -32268,6 +34810,9 @@ public class AbstractCtsqlDB {
 				+ ",riesgo" 
 				+ ",causa_alta" 
 				+ ",fecha_at" 
+				+ ",especial" 
+				+ ",fecprimerconf" 
+				+ ",periocidad" 
 				+ " FROM parteit"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -32278,6 +34823,35 @@ public class AbstractCtsqlDB {
 		if ( rel_pit_eppStmt != null ) { 
 			rel_pit_eppStmt.close();
 			rel_pit_eppStmt = null;	
+		}
+	}
+		
+	private PreparedStatement embargo_emprperStmt = null;
+		
+	private void initEmbargo_emprperStmt() 
+	throws SQLException{
+		this.embargo_emprperStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",fecha" 
+				+ ",codper" 
+				+ ",concepto" 
+				+ ",afecta" 
+				+ ",importe" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ " FROM embargo"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeEmbargo_emprperStmt() 
+	throws SQLException{
+		if ( embargo_emprperStmt != null ) { 
+			embargo_emprperStmt.close();
+			embargo_emprperStmt = null;	
 		}
 	}
 		
@@ -32363,6 +34937,7 @@ public class AbstractCtsqlDB {
 				"SELECT "
 				+ "codper" 
 				+ ",fecbaj" 
+				+ ",codcausa" 
 				+ ",causa" 
 				+ ",vacfecini" 
 				+ ",vacimporte" 
@@ -32412,6 +34987,7 @@ public class AbstractCtsqlDB {
 				"SELECT "
 				+ "codper" 
 				+ ",fecbaj" 
+				+ ",codcausa" 
 				+ ",causa" 
 				+ ",vacfecini" 
 				+ ",vacimporte" 
@@ -32459,6 +35035,7 @@ public class AbstractCtsqlDB {
 				"SELECT "
 				+ "codper" 
 				+ ",fecbaj" 
+				+ ",codcausa" 
 				+ ",causa" 
 				+ ",vacfecini" 
 				+ ",vacimporte" 
@@ -32565,6 +35142,13 @@ public class AbstractCtsqlDB {
 				+ ",imp_pension" 
 				+ ",imp_css" 
 				+ ",imp_ascen" 
+				+ ",imp_discapacidadt" 
+				+ ",imp_cuidadohijo" 
+				+ ",imp_discapacidad" 
+				+ ",imp_pensionista" 
+				+ ",imp_prolongacion" 
+				+ ",imp_movilidad" 
+				+ ",imp_asistencia" 
 				+ ",base_calculo" 
 				+ ",imp_anualid" 
 				+ ",cuota_calculo" 
@@ -32581,13 +35165,6 @@ public class AbstractCtsqlDB {
 				+ ",fecmod" 
 				+ ",hormod" 
 				+ ",minforal" 
-				+ ",imp_discapacidadt" 
-				+ ",imp_cuidadohijo" 
-				+ ",imp_discapacidad" 
-				+ ",imp_pensionista" 
-				+ ",imp_prolongacion" 
-				+ ",imp_movilidad" 
-				+ ",imp_asistencia" 
 				+ ",retanualn" 
 				+ ",retanualb" 
 				+ ",difret" 
@@ -32604,6 +35181,42 @@ public class AbstractCtsqlDB {
 		if ( calculo_emprperStmt != null ) { 
 			calculo_emprperStmt.close();
 			calculo_emprperStmt = null;	
+		}
+	}
+		
+	private PreparedStatement regidocu_emprperStmt = null;
+		
+	private void initRegidocu_emprperStmt() 
+	throws SQLException{
+		this.regidocu_emprperStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",codcli" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",codper" 
+				+ ",tipo" 
+				+ ",fechaefe" 
+				+ ",fechaent" 
+				+ ",fechapre" 
+				+ ",lugar" 
+				+ ",observa" 
+				+ ",fechaenv" 
+				+ ",tipdom" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ " FROM regidocu"
+				+ " WHERE" 
+				+ " codper = ?  " 			); 
+	}
+
+	private void closeRegidocu_emprperStmt() 
+	throws SQLException{
+		if ( regidocu_emprperStmt != null ) { 
+			regidocu_emprperStmt.close();
+			regidocu_emprperStmt = null;	
 		}
 	}
 		
@@ -32663,16 +35276,19 @@ public class AbstractCtsqlDB {
 				+ ",base_perdes" 
 				+ ",remuneracion" 
 				+ ",base_it" 
+				+ ",base_ere" 
 				+ ",total_1" 
 				+ ",codbas" 
 				+ ",base_cg" 
 				+ ",base_acc" 
 				+ ",prc_cg" 
 				+ ",prc_acc" 
+				+ ",prc_fp" 
 				+ ",prc_hex" 
 				+ ",prc_hexno" 
 				+ ",importe_cg" 
 				+ ",importe_acc" 
+				+ ",importe_fp" 
 				+ ",importe_hex" 
 				+ ",importe_hexno" 
 				+ ",mincg" 
@@ -32704,6 +35320,12 @@ public class AbstractCtsqlDB {
 				+ ",base_acc_pts" 
 				+ ",base_acc_sin_h_pts" 
 				+ ",cdgnom" 
+				+ ",base_con_ere" 
+				+ ",base_acc_ere" 
+				+ ",base_con_ere_no" 
+				+ ",base_acc_ere_no" 
+				+ ",base_con_ere_sin" 
+				+ ",base_acc_ere_sin" 
 				+ " FROM nominadf"
 				+ " WHERE" 
 				+ " numero = ?  " 			); 
@@ -32717,144 +35339,27 @@ public class AbstractCtsqlDB {
 		}
 	}
 		
-	private PreparedStatement embargo_emprperStmt = null;
+	private PreparedStatement fk_cert_remesa_empStmt = null;
 		
-	private void initEmbargo_emprperStmt() 
+	private void initFk_cert_remesa_empStmt() 
 	throws SQLException{
-		this.embargo_emprperStmt = ctsqlConnection.prepareStatement(
+		this.fk_cert_remesa_empStmt = ctsqlConnection.prepareStatement(
 				"SELECT "
-				+ "cdg" 
-				+ ",fecha" 
-				+ ",codper" 
-				+ ",concepto" 
-				+ ",afecta" 
-				+ ",importe" 
-				+ ",fecnew" 
-				+ ",hornew" 
-				+ ",fecmod" 
-				+ ",hormod" 
-				+ " FROM embargo"
+				+ "id" 
+				+ ",rem_cert_empr" 
+				+ ",empleado" 
+				+ ",fecha_baja" 
+				+ ",causa_suspension" 
+				+ " FROM rem_cert_empr_det"
 				+ " WHERE" 
-				+ " cdg = ?  " 			); 
+				+ " empleado = ?  " 			); 
 	}
 
-	private void closeEmbargo_emprperStmt() 
+	private void closeFk_cert_remesa_empStmt() 
 	throws SQLException{
-		if ( embargo_emprperStmt != null ) { 
-			embargo_emprperStmt.close();
-			embargo_emprperStmt = null;	
-		}
-	}
-		
-	private PreparedStatement rel_pex_perStmt = null;
-		
-	private void initRel_pex_perStmt() 
-	throws SQLException{
-		this.rel_pex_perStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",numero" 
-				+ ",anio" 
-				+ ",mes" 
-				+ ",fecini" 
-				+ ",fecfin" 
-				+ ",codcom" 
-				+ ",importe" 
-				+ ",fijovar" 
-				+ ",irpf" 
-				+ ",impirpf" 
-				+ ",liquido" 
-				+ ",fecnew" 
-				+ ",hornew" 
-				+ ",fecmod" 
-				+ ",hormod" 
-				+ ",feccob" 
-				+ ",descom" 
-				+ ",feccobreal" 
-				+ ",divisa" 
-				+ ",fecemi" 
-				+ ",nomemp" 
-				+ ",nomper" 
-				+ ",direccion" 
-				+ ",localidad" 
-				+ ",descat" 
-				+ ",profesion" 
-				+ ",nummat" 
-				+ ",fecant" 
-				+ ",total_deducir" 
-				+ ",fvisione" 
-				+ ",fvisiont" 
-				+ " FROM nominaex"
-				+ " WHERE" 
-				+ " cdg = ?  " 			); 
-	}
-
-	private void closeRel_pex_perStmt() 
-	throws SQLException{
-		if ( rel_pex_perStmt != null ) { 
-			rel_pex_perStmt.close();
-			rel_pex_perStmt = null;	
-		}
-	}
-		
-	private PreparedStatement regidocu_emprperStmt = null;
-		
-	private void initRegidocu_emprperStmt() 
-	throws SQLException{
-		this.regidocu_emprperStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",codcli" 
-				+ ",codemp" 
-				+ ",codact" 
-				+ ",codper" 
-				+ ",tipo" 
-				+ ",fechaefe" 
-				+ ",fechaent" 
-				+ ",fechapre" 
-				+ ",lugar" 
-				+ ",observa" 
-				+ ",fechaenv" 
-				+ ",tipdom" 
-				+ ",fecnew" 
-				+ ",hornew" 
-				+ ",fecmod" 
-				+ ",hormod" 
-				+ " FROM regidocu"
-				+ " WHERE" 
-				+ " codper = ?  " 			); 
-	}
-
-	private void closeRegidocu_emprperStmt() 
-	throws SQLException{
-		if ( regidocu_emprperStmt != null ) { 
-			regidocu_emprperStmt.close();
-			regidocu_emprperStmt = null;	
-		}
-	}
-		
-	private PreparedStatement prc_emprperStmt = null;
-		
-	private void initPrc_emprperStmt() 
-	throws SQLException{
-		this.prc_emprperStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",fecini" 
-				+ ",fecfin" 
-				+ ",orden" 
-				+ ",prc" 
-				+ ",texto" 
-				+ " FROM prcdivtrab"
-				+ " WHERE" 
-				+ " cdg = ?  " 			); 
-	}
-
-	private void closePrc_emprperStmt() 
-	throws SQLException{
-		if ( prc_emprperStmt != null ) { 
-			prc_emprperStmt.close();
-			prc_emprperStmt = null;	
+		if ( fk_cert_remesa_empStmt != null ) { 
+			fk_cert_remesa_empStmt.close();
+			fk_cert_remesa_empStmt = null;	
 		}
 	}
 		
@@ -32895,30 +35400,6 @@ public class AbstractCtsqlDB {
 		if ( pit_remesa_empStmt != null ) { 
 			pit_remesa_empStmt.close();
 			pit_remesa_empStmt = null;	
-		}
-	}
-		
-	private PreparedStatement fk_cert_remesa_empStmt = null;
-		
-	private void initFk_cert_remesa_empStmt() 
-	throws SQLException{
-		this.fk_cert_remesa_empStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "id" 
-				+ ",rem_cert_empr" 
-				+ ",empleado" 
-				+ ",fecha_baja" 
-				+ ",causa_suspension" 
-				+ " FROM rem_cert_empr_det"
-				+ " WHERE" 
-				+ " empleado = ?  " 			); 
-	}
-
-	private void closeFk_cert_remesa_empStmt() 
-	throws SQLException{
-		if ( fk_cert_remesa_empStmt != null ) { 
-			fk_cert_remesa_empStmt.close();
-			fk_cert_remesa_empStmt = null;	
 		}
 	}
 
@@ -33014,6 +35495,9 @@ public class AbstractCtsqlDB {
 				+ ",cecon" 
 				+ ",modimpuesto" 
 				+ ",mod190" 
+				+ ",feciniportal" 
+				+ ",feccierrenomina" 
+				+ ",meseshistorico" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -33043,11 +35527,11 @@ public class AbstractCtsqlDB {
 				+ ",acteco" 
 				+ ",epiiae" 
 				+ ",cnae" 
+				+ ",cnae2009" 
 				+ ",fecnew" 
 				+ ",hornew" 
 				+ ",fecmod" 
 				+ ",hormod" 
-				+ ",cnae2009" 
 				+ ",indred" 
 				+ ",indmutua" 
 				+ ",indtc1" 
@@ -33064,6 +35548,8 @@ public class AbstractCtsqlDB {
 				+ ",indfirma" 
 				+ ",indregimen" 
 				+ ",prevencion" 
+				+ ",indsiltra" 
+				+ ",autoriza" 
 				+ " FROM empract"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -33192,7 +35678,7 @@ public class AbstractCtsqlDB {
 			return rs.getInt(2);
 		}
 		/**
-		 * Código interno
+		 * Codigo BBX
 		 * @return the column 'codnsz' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -33361,6 +35847,51 @@ public class AbstractCtsqlDB {
 		public String getNoirpf()
 		throws SQLException {
 			return rs.getString(21);
+		}
+		/**
+		 * No seg. soc. (de trabajador)
+		 * @return the column 'nosegsoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNosegsoc()
+		throws SQLException {
+			return rs.getString(22);
+		}
+		/**
+		 * Trabajador jubilado en activo
+		 * @return the column 'jubiladoactivo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getJubiladoactivo()
+		throws SQLException {
+			return rs.getString(23);
+		}
+		/**
+		 * Certificado Procesado
+		 * @return the column 'certificado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCertificado()
+		throws SQLException {
+			return rs.getString(24);
+		}
+		/**
+		 * Familiar de 1º grado
+		 * @return the column 'familiar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getFamiliar()
+		throws SQLException {
+			return rs.getString(25);
+		}
+		/**
+		 * Trabajador no residente
+		 * @return the column 'noresidente' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNoresidente()
+		throws SQLException {
+			return rs.getString(26);
 		}
 
 		/**
@@ -33611,6 +36142,31 @@ public class AbstractCtsqlDB {
 		}
 		
 		/**
+		 * Visit Prcdivtrab that're children of this Emprper. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitPrc_emprper(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( prc_emprperStmt == null )
+					 initPrc_emprperStmt();
+				
+				prc_emprperStmt.setInt(1, this.getCdg()); 
+				rs = prc_emprperStmt.executeQuery();
+				Prcdivtrab prcdivtrab = new Prcdivtrab(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitPrc_emprper(prcdivtrab, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
 		 * Visit Nomina that're children of this Emprper. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
@@ -33627,6 +36183,31 @@ public class AbstractCtsqlDB {
 				Nomina nomina = new Nomina(rs); 
 				while ( rs.next() ) {
 					ctsqlDBVisitor.visitRel_nom_per(nomina, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Nominaex that're children of this Emprper. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitRel_pex_per(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( rel_pex_perStmt == null )
+					 initRel_pex_perStmt();
+				
+				rel_pex_perStmt.setInt(1, this.getCdg()); 
+				rs = rel_pex_perStmt.executeQuery();
+				Nominaex nominaex = new Nominaex(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitRel_pex_per(nominaex, this);
 				}
 			}
 			finally {
@@ -33727,6 +36308,31 @@ public class AbstractCtsqlDB {
 				Parteit parteit = new Parteit(rs); 
 				while ( rs.next() ) {
 					ctsqlDBVisitor.visitRel_pit_epp(parteit, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Embargo that're children of this Emprper. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitEmbargo_emprper(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( embargo_emprperStmt == null )
+					 initEmbargo_emprperStmt();
+				
+				embargo_emprperStmt.setInt(1, this.getCdg()); 
+				rs = embargo_emprperStmt.executeQuery();
+				Embargo embargo = new Embargo(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitEmbargo_emprper(embargo, this);
 				}
 			}
 			finally {
@@ -33911,81 +36517,6 @@ public class AbstractCtsqlDB {
 		}
 		
 		/**
-		 * Visit Nominadf that're children of this Emprper. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitNominadf_emprper(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( nominadf_emprperStmt == null )
-					 initNominadf_emprperStmt();
-				
-				nominadf_emprperStmt.setInt(1, this.getCdg()); 
-				rs = nominadf_emprperStmt.executeQuery();
-				Nominadf nominadf = new Nominadf(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitNominadf_emprper(nominadf, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		
-		/**
-		 * Visit Embargo that're children of this Emprper. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitEmbargo_emprper(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( embargo_emprperStmt == null )
-					 initEmbargo_emprperStmt();
-				
-				embargo_emprperStmt.setInt(1, this.getCdg()); 
-				rs = embargo_emprperStmt.executeQuery();
-				Embargo embargo = new Embargo(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitEmbargo_emprper(embargo, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		
-		/**
-		 * Visit Nominaex that're children of this Emprper. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitRel_pex_per(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( rel_pex_perStmt == null )
-					 initRel_pex_perStmt();
-				
-				rel_pex_perStmt.setInt(1, this.getCdg()); 
-				rs = rel_pex_perStmt.executeQuery();
-				Nominaex nominaex = new Nominaex(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitRel_pex_per(nominaex, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		
-		/**
 		 * Visit Regidocu that're children of this Emprper. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
@@ -34011,47 +36542,22 @@ public class AbstractCtsqlDB {
 		}
 		
 		/**
-		 * Visit Prcdivtrab that're children of this Emprper. 
+		 * Visit Nominadf that're children of this Emprper. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
 		 */
-		public void visitPrc_emprper(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		public void visitNominadf_emprper(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 			ResultSet 			rs 	= null;
 			try {
 				
-				if ( prc_emprperStmt == null )
-					 initPrc_emprperStmt();
+				if ( nominadf_emprperStmt == null )
+					 initNominadf_emprperStmt();
 				
-				prc_emprperStmt.setInt(1, this.getCdg()); 
-				rs = prc_emprperStmt.executeQuery();
-				Prcdivtrab prcdivtrab = new Prcdivtrab(rs); 
+				nominadf_emprperStmt.setInt(1, this.getCdg()); 
+				rs = nominadf_emprperStmt.executeQuery();
+				Nominadf nominadf = new Nominadf(rs); 
 				while ( rs.next() ) {
-					ctsqlDBVisitor.visitPrc_emprper(prcdivtrab, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		
-		/**
-		 * Visit Remesa_parte_it that're children of this Emprper. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitPit_remesa_emp(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( pit_remesa_empStmt == null )
-					 initPit_remesa_empStmt();
-				
-				pit_remesa_empStmt.setInt(1, this.getCdg()); 
-				rs = pit_remesa_empStmt.executeQuery();
-				Remesa_parte_it remesa_parte_it = new Remesa_parte_it(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitPit_remesa_emp(remesa_parte_it, this);
+					ctsqlDBVisitor.visitNominadf_emprper(nominadf, this);
 				}
 			}
 			finally {
@@ -34084,45 +36590,31 @@ public class AbstractCtsqlDB {
 					rs.close();
 			}
 		}
-	}
-	
-
-	
-
-
-	/**
-	 * Nszbanc
-	 * 
-	 */
-	public class Nszbanc {
-		
-		private ResultSet rs;
-		
-		protected Nszbanc (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
 		
 		/**
-		 * $column.remarks
-		 * @return the column 'sbk0' value; if the value is SQL NULL, the value returned is null
+		 * Visit Remesa_parte_it that're children of this Emprper. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
 		 */
-		public String getSbk0()
-		throws SQLException {
-			return rs.getString(1);
+		public void visitPit_remesa_emp(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( pit_remesa_empStmt == null )
+					 initPit_remesa_empStmt();
+				
+				pit_remesa_empStmt.setInt(1, this.getCdg()); 
+				rs = pit_remesa_empStmt.executeQuery();
+				Remesa_parte_it remesa_parte_it = new Remesa_parte_it(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitPit_remesa_emp(remesa_parte_it, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
 		}
-		/**
-		 * $column.remarks
-		 * @return the column 'sbk1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSbk1()
-		throws SQLException {
-			return rs.getString(2);
-		}
-
-
 	}
 	
 
@@ -34501,6 +36993,11 @@ public class AbstractCtsqlDB {
 				+ ",indgrupo" 
 				+ ",pariente" 
 				+ ",noirpf" 
+				+ ",nosegsoc" 
+				+ ",jubiladoactivo" 
+				+ ",certificado" 
+				+ ",familiar" 
+				+ ",noresidente" 
 				+ " FROM emprper"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -34569,13 +37066,22 @@ public class AbstractCtsqlDB {
 			return rs.getDate(2);
 		}
 		/**
+		 * Código de la causa de baja
+		 * @return the column 'codcausa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCodcausa()
+		throws SQLException {
+			return rs.getString(3);
+		}
+		/**
 		 * Causa de Baja
 		 * @return the column 'causa' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
 		public String getCausa()
 		throws SQLException {
-			return rs.getString(3);
+			return rs.getString(4);
 		}
 		/**
 		 * Fecha Desde Vacaciones
@@ -34584,7 +37090,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getVacfecini()
 		throws SQLException {
-			return rs.getDate(4);
+			return rs.getDate(5);
 		}
 		/**
 		 * Importe Vacaciones
@@ -34593,7 +37099,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getVacimporte()
 		throws SQLException {
-			return rs.getBigDecimal(5);
+			return rs.getBigDecimal(6);
 		}
 		/**
 		 * Total Conceptos Finiquito
@@ -34602,7 +37108,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getTotal_conceptos()
 		throws SQLException {
-			return rs.getBigDecimal(6);
+			return rs.getBigDecimal(7);
 		}
 		/**
 		 * Base I.R.P.F.
@@ -34611,7 +37117,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase()
 		throws SQLException {
-			return rs.getBigDecimal(7);
+			return rs.getBigDecimal(8);
 		}
 		/**
 		 * % I.R.P.F.
@@ -34620,7 +37126,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getIrpf()
 		throws SQLException {
-			return rs.getBigDecimal(8);
+			return rs.getBigDecimal(9);
 		}
 		/**
 		 * Importe Retenido I.R.P.F.
@@ -34629,7 +37135,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_irpf()
 		throws SQLException {
-			return rs.getBigDecimal(9);
+			return rs.getBigDecimal(10);
 		}
 		/**
 		 * Importe Liquido
@@ -34638,7 +37144,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getLiquido()
 		throws SQLException {
-			return rs.getBigDecimal(10);
+			return rs.getBigDecimal(11);
 		}
 		/**
 		 * Importe Indemnizaciones no sujetas a I.R.P.F.
@@ -34647,7 +37153,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImportesin()
 		throws SQLException {
-			return rs.getBigDecimal(11);
+			return rs.getBigDecimal(12);
 		}
 		/**
 		 * Fecha Creacion Fila
@@ -34656,7 +37162,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFecnew()
 		throws SQLException {
-			return rs.getDate(12);
+			return rs.getDate(13);
 		}
 		/**
 		 * Hora Creacion Fila
@@ -34665,7 +37171,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Time getHornew()
 		throws SQLException {
-			return rs.getTime(13);
+			return rs.getTime(14);
 		}
 		/**
 		 * Fecha Modificacion Fila
@@ -34674,7 +37180,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFecmod()
 		throws SQLException {
-			return rs.getDate(14);
+			return rs.getDate(15);
 		}
 		/**
 		 * Hora Modificacion Fila
@@ -34683,7 +37189,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Time getHormod()
 		throws SQLException {
-			return rs.getTime(15);
+			return rs.getTime(16);
 		}
 		/**
 		 * Codigo de Finiquito Nuevo
@@ -34692,7 +37198,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getCdg()
 		throws SQLException {
-			return rs.getInt(16);
+			return rs.getInt(17);
 		}
 		/**
 		 * Calculo o simulacion
@@ -34701,7 +37207,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getSimula()
 		throws SQLException {
-			return rs.getString(17);
+			return rs.getString(18);
 		}
 		/**
 		 * Fecha de Cobro Real
@@ -34710,7 +37216,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFeccobreal()
 		throws SQLException {
-			return rs.getDate(18);
+			return rs.getDate(19);
 		}
 		/**
 		 * Divisa
@@ -34719,7 +37225,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getDivisa()
 		throws SQLException {
-			return rs.getString(19);
+			return rs.getString(20);
 		}
 		/**
 		 * Días vacaciones
@@ -34728,7 +37234,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDiasvac()
 		throws SQLException {
-			return rs.getInt(20);
+			return rs.getInt(21);
 		}
 		/**
 		 * Coste S.S. empresa
@@ -34737,7 +37243,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getCostessemp()
 		throws SQLException {
-			return rs.getBigDecimal(21);
+			return rs.getBigDecimal(22);
 		}
 		/**
 		 * Grupo de tarifa
@@ -34746,7 +37252,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getCodbas()
 		throws SQLException {
-			return rs.getString(22);
+			return rs.getString(23);
 		}
 		/**
 		 * Base Contingencias Generales
@@ -34755,7 +37261,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBasecg()
 		throws SQLException {
-			return rs.getBigDecimal(23);
+			return rs.getBigDecimal(24);
 		}
 		/**
 		 * % Contingencias Generales
@@ -34764,7 +37270,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getPrccg()
 		throws SQLException {
-			return rs.getBigDecimal(24);
+			return rs.getBigDecimal(25);
 		}
 		/**
 		 * Importe Contingencias Generales
@@ -34773,7 +37279,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImportecg()
 		throws SQLException {
-			return rs.getBigDecimal(25);
+			return rs.getBigDecimal(26);
 		}
 		/**
 		 * Base Accidente de Trabajo
@@ -34782,7 +37288,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBaseacc()
 		throws SQLException {
-			return rs.getBigDecimal(26);
+			return rs.getBigDecimal(27);
 		}
 		/**
 		 * % Accidente de Trabajo
@@ -34791,7 +37297,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getPrcacc()
 		throws SQLException {
-			return rs.getBigDecimal(27);
+			return rs.getBigDecimal(28);
 		}
 		/**
 		 * Importe Accidente de Trabajo
@@ -34800,7 +37306,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporteacc()
 		throws SQLException {
-			return rs.getBigDecimal(28);
+			return rs.getBigDecimal(29);
 		}
 
 		/**
@@ -34932,163 +37438,295 @@ public class AbstractCtsqlDB {
 
 	
 		
-	private PreparedStatement fk_af_actionStmt = null;
+	private PreparedStatement lin_workplacesStmt = null;
 		
-	private void initFk_af_actionStmt() 
+	private void initLin_workplacesStmt() 
 	throws SQLException{
-		this.fk_af_actionStmt = ctsqlConnection.prepareStatement(
+		this.lin_workplacesStmt = ctsqlConnection.prepareStatement(
 				"SELECT "
-				+ "id" 
-				+ ",position" 
-				+ ",action_id" 
-				+ ",user_id" 
-				+ " FROM action_favorite"
+				+ "workplace" 
+				+ ",facturar" 
+				+ ",descripcion" 
+				+ " FROM linworkplaces"
 				+ " WHERE" 
-				+ " action_id = ?  " 			); 
+				+ " workplace = ?  " 			); 
 	}
 
-	private void closeFk_af_actionStmt() 
+	private void closeLin_workplacesStmt() 
 	throws SQLException{
-		if ( fk_af_actionStmt != null ) { 
-			fk_af_actionStmt.close();
-			fk_af_actionStmt = null;	
+		if ( lin_workplacesStmt != null ) { 
+			lin_workplacesStmt.close();
+			lin_workplacesStmt = null;	
 		}
 	}
 		
-	private PreparedStatement fk_ae_actionStmt = null;
+	private PreparedStatement rel_dlg_workplacesStmt = null;
 		
-	private void initFk_ae_actionStmt() 
+	private void initRel_dlg_workplacesStmt() 
 	throws SQLException{
-		this.fk_ae_actionStmt = ctsqlConnection.prepareStatement(
+		this.rel_dlg_workplacesStmt = ctsqlConnection.prepareStatement(
 				"SELECT "
-				+ "id" 
-				+ ",executiondate" 
-				+ ",action_id" 
-				+ ",session_id" 
-				+ " FROM action_entry"
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",tipovia" 
+				+ ",nomvia" 
+				+ ",numero" 
+				+ ",otrdir" 
+				+ ",codpos" 
+				+ ",localidad" 
+				+ ",provincia" 
+				+ ",telefono" 
+				+ ",workplace" 
+				+ " FROM delegacion"
 				+ " WHERE" 
-				+ " action_id = ?  " 			); 
+				+ " workplace = ?  " 			); 
 	}
 
-	private void closeFk_ae_actionStmt() 
+	private void closeRel_dlg_workplacesStmt() 
 	throws SQLException{
-		if ( fk_ae_actionStmt != null ) { 
-			fk_ae_actionStmt.close();
-			fk_ae_actionStmt = null;	
+		if ( rel_dlg_workplacesStmt != null ) { 
+			rel_dlg_workplacesStmt.close();
+			rel_dlg_workplacesStmt = null;	
 		}
 	}
 		
-	private PreparedStatement fk_ad_actionStmt = null;
+	private PreparedStatement rel_workplacesStmt = null;
 		
-	private void initFk_ad_actionStmt() 
+	private void initRel_workplacesStmt() 
 	throws SQLException{
-		this.fk_ad_actionStmt = ctsqlConnection.prepareStatement(
+		this.rel_workplacesStmt = ctsqlConnection.prepareStatement(
 				"SELECT "
-				+ "id" 
-				+ ",action_id" 
-				+ ",user_id" 
-				+ " FROM action_denied"
+				+ "tipocargo" 
+				+ ",workplace" 
+				+ ",facturar" 
+				+ " FROM lintipocargos"
 				+ " WHERE" 
-				+ " action_id = ?  " 			); 
+				+ " workplace = ?  " 			); 
 	}
 
-	private void closeFk_ad_actionStmt() 
+	private void closeRel_workplacesStmt() 
 	throws SQLException{
-		if ( fk_ad_actionStmt != null ) { 
-			fk_ad_actionStmt.close();
-			fk_ad_actionStmt = null;	
+		if ( rel_workplacesStmt != null ) { 
+			rel_workplacesStmt.close();
+			rel_workplacesStmt = null;	
 		}
 	}
 
-	private PreparedStatement _ppa_noitca_kfStmt = null;
-		
-	private void initPpa_noitca_kfStmt() 
-	throws SQLException{
-		this._ppa_noitca_kfStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "id" 
-				+ ",audit_level" 
-				+ ",name" 
-				+ " FROM application"
-				+ " WHERE" 
-				+ " id = ?  " 			); 
-	}
-
-	private void closePpa_noitca_kfStmt() 
-	throws SQLException{
-		if ( _ppa_noitca_kfStmt != null ) { 
-			_ppa_noitca_kfStmt.close();
-			_ppa_noitca_kfStmt = null;	
-		}
-	}
 
 	/**
-	 * Action
+	 * Workplaces
 	 * 
 	 */
-	public class Action {
+	public class Workplaces {
 		
 		private ResultSet rs;
 		
-		protected Action (ResultSet rs) 
+		protected Workplaces (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
 		
 		/**
-		 * Identificador unico
-		 * @return the column 'id' value; if the value is SQL NULL, the value returned is null
+		 * Centro de trabajo de facturación
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getId()
+		public String getCdg()
 		throws SQLException {
-			return rs.getInt(1);
+			return rs.getString(1);
 		}
 		/**
-		 * Indica si la Accion esta o no dentro del menu
-		 * @return the column 'menu' value; if the value is SQL NULL, the value returned is null
+		 * Descripción del centro
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getMenu()
+		public String getDescripcion()
 		throws SQLException {
-			return rs.getInt(2);
+			return rs.getString(2);
+		}
+
+
+		
+		/**
+		 * Visit Linworkplaces that're children of this Workplaces. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitLin_workplaces(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( lin_workplacesStmt == null )
+					 initLin_workplacesStmt();
+				
+				lin_workplacesStmt.setString(1, this.getCdg()); 
+				rs = lin_workplacesStmt.executeQuery();
+				Linworkplaces linworkplaces = new Linworkplaces(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitLin_workplaces(linworkplaces, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Delegacion that're children of this Workplaces. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitRel_dlg_workplaces(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( rel_dlg_workplacesStmt == null )
+					 initRel_dlg_workplacesStmt();
+				
+				rel_dlg_workplacesStmt.setString(1, this.getCdg()); 
+				rs = rel_dlg_workplacesStmt.executeQuery();
+				Delegacion delegacion = new Delegacion(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitRel_dlg_workplaces(delegacion, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Lintipocargos that're children of this Workplaces. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitRel_workplaces(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( rel_workplacesStmt == null )
+					 initRel_workplacesStmt();
+				
+				rel_workplacesStmt.setString(1, this.getCdg()); 
+				rs = rel_workplacesStmt.executeQuery();
+				Lintipocargos lintipocargos = new Lintipocargos(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitRel_workplaces(lintipocargos, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+	}
+	
+
+	
+		
+	private PreparedStatement rel_linworkplacesStmt = null;
+		
+	private void initRel_linworkplacesStmt() 
+	throws SQLException{
+		this.rel_linworkplacesStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "tipocargo" 
+				+ ",workplace" 
+				+ ",facturar" 
+				+ " FROM lintipocargos"
+				+ " WHERE" 
+				+ " workplace = ?  "  + "AND" 				+ " facturar = ?  " 			); 
+	}
+
+	private void closeRel_linworkplacesStmt() 
+	throws SQLException{
+		if ( rel_linworkplacesStmt != null ) { 
+			rel_linworkplacesStmt.close();
+			rel_linworkplacesStmt = null;	
+		}
+	}
+
+	private PreparedStatement _secalpkrow_nilStmt = null;
+		
+	private void initSecalpkrow_nilStmt() 
+	throws SQLException{
+		this._secalpkrow_nilStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM workplaces"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeSecalpkrow_nilStmt() 
+	throws SQLException{
+		if ( _secalpkrow_nilStmt != null ) { 
+			_secalpkrow_nilStmt.close();
+			_secalpkrow_nilStmt = null;	
+		}
+	}
+
+	/**
+	 * Linworkplaces
+	 * 
+	 */
+	public class Linworkplaces {
+		
+		private ResultSet rs;
+		
+		protected Linworkplaces (ResultSet rs) 
+		throws SQLException {
+			this.rs =rs;
+		}
+		
+		/**
+		 * Centro de trabajo de facturación
+		 * @return the column 'workplace' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getWorkplace()
+		throws SQLException {
+			return rs.getString(1);
 		}
 		/**
-		 * Nombre de la Accion
-		 * @return the column 'name' value; if the value is SQL NULL, the value returned is null
+		 * Código de facturación
+		 * @return the column 'facturar' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getName()
+		public String getFacturar()
+		throws SQLException {
+			return rs.getString(2);
+		}
+		/**
+		 * Descripción
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getDescripcion()
 		throws SQLException {
 			return rs.getString(3);
 		}
-		/**
-		 * Aplicacion a la que pertenece la Accion
-		 * @return the column 'application_id' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getApplication_id()
-		throws SQLException {
-			return rs.getInt(4);
-		}
 
 		/**
-		 * Visit Application that's parent of this Action. 
+		 * Visit Workplaces that's parent of this Linworkplaces. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
 		 */
-		public void visitFk_action_app(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		public void visitLin_workplaces(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 			ResultSet 			rs 	= null;
 			try {
 				
-				if ( _ppa_noitca_kfStmt == null )
-					 initPpa_noitca_kfStmt();
+				if ( _secalpkrow_nilStmt == null )
+					 initSecalpkrow_nilStmt();
 				
-				_ppa_noitca_kfStmt.setInt(1, this.getApplication_id()); 
-				rs = _ppa_noitca_kfStmt.executeQuery();
-				Application application = new Application(rs); 
+				_secalpkrow_nilStmt.setString(1, this.getWorkplace()); 
+				rs = _secalpkrow_nilStmt.executeQuery();
+				Workplaces workplaces = new Workplaces(rs); 
 				while ( rs.next() ) {
-					ctsqlDBVisitor.visitFk_action_app(this, application);
+					ctsqlDBVisitor.visitLin_workplaces(this, workplaces);
 				}
 			}
 			finally {
@@ -35099,72 +37737,23 @@ public class AbstractCtsqlDB {
 
 		
 		/**
-		 * Visit Action_favorite that're children of this Action. 
+		 * Visit Lintipocargos that're children of this Linworkplaces. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
 		 */
-		public void visitFk_af_action(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		public void visitRel_linworkplaces(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 			ResultSet 			rs 	= null;
 			try {
 				
-				if ( fk_af_actionStmt == null )
-					 initFk_af_actionStmt();
+				if ( rel_linworkplacesStmt == null )
+					 initRel_linworkplacesStmt();
 				
-				fk_af_actionStmt.setInt(1, this.getId()); 
-				rs = fk_af_actionStmt.executeQuery();
-				Action_favorite action_favorite = new Action_favorite(rs); 
+				rel_linworkplacesStmt.setString(1, this.getWorkplace()); 
+				rel_linworkplacesStmt.setString(2, this.getFacturar()); 
+				rs = rel_linworkplacesStmt.executeQuery();
+				Lintipocargos lintipocargos = new Lintipocargos(rs); 
 				while ( rs.next() ) {
-					ctsqlDBVisitor.visitFk_af_action(action_favorite, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		
-		/**
-		 * Visit Action_entry that're children of this Action. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitFk_ae_action(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( fk_ae_actionStmt == null )
-					 initFk_ae_actionStmt();
-				
-				fk_ae_actionStmt.setInt(1, this.getId()); 
-				rs = fk_ae_actionStmt.executeQuery();
-				Action_entry action_entry = new Action_entry(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitFk_ae_action(action_entry, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		
-		/**
-		 * Visit Action_denied that're children of this Action. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitFk_ad_action(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( fk_ad_actionStmt == null )
-					 initFk_ad_actionStmt();
-				
-				fk_ad_actionStmt.setInt(1, this.getId()); 
-				rs = fk_ad_actionStmt.executeQuery();
-				Action_denied action_denied = new Action_denied(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitFk_ad_action(action_denied, this);
+					ctsqlDBVisitor.visitRel_linworkplaces(lintipocargos, this);
 				}
 			}
 			finally {
@@ -35430,6 +38019,7 @@ public class AbstractCtsqlDB {
 				"SELECT "
 				+ "codper" 
 				+ ",fecbaj" 
+				+ ",codcausa" 
 				+ ",causa" 
 				+ ",vacfecini" 
 				+ ",vacimporte" 
@@ -35482,6 +38072,8 @@ public class AbstractCtsqlDB {
 				+ ",fijovar" 
 				+ ",indcom" 
 				+ ",dinesp" 
+				+ ",concepto" 
+				+ ",excinc" 
 				+ " FROM complemento"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -36151,143 +38743,14 @@ public class AbstractCtsqlDB {
 		throws SQLException {
 			return rs.getString(14);
 		}
-
-
-	}
-	
-
-	
-
-
-	/**
-	 * Nszinci
-	 * 
-	 */
-	public class Nszinci {
-		
-		private ResultSet rs;
-		
-		protected Nszinci (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
-		
 		/**
-		 * $column.remarks
-		 * @return the column 'sin0' value; if the value is SQL NULL, the value returned is null
+		 * Directorio sistema RED
+		 * @return the column 'directorio' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getSin0()
+		public String getDirectorio()
 		throws SQLException {
-			return rs.getString(1);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nin0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNin0()
-		throws SQLException {
-			return rs.getInt(2);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nin1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNin1()
-		throws SQLException {
-			return rs.getInt(3);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nin2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNin2()
-		throws SQLException {
-			return rs.getInt(4);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nin3' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNin3()
-		throws SQLException {
-			return rs.getInt(5);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nin4' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNin4()
-		throws SQLException {
-			return rs.getInt(6);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nin5' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNin5()
-		throws SQLException {
-			return rs.getInt(7);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nin6' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNin6()
-		throws SQLException {
-			return rs.getInt(8);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nin7' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNin7()
-		throws SQLException {
-			return rs.getInt(9);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nin8' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNin8()
-		throws SQLException {
-			return rs.getInt(10);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nin9' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNin9()
-		throws SQLException {
-			return rs.getInt(11);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nin10' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNin10()
-		throws SQLException {
-			return rs.getInt(12);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nin11' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNin11()
-		throws SQLException {
-			return rs.getInt(13);
+			return rs.getString(15);
 		}
 
 
@@ -36318,6 +38781,7 @@ public class AbstractCtsqlDB {
 				+ ",base_hexest" 
 				+ ",base_cccemp" 
 				+ ",base_occemp" 
+				+ ",base_solidaria" 
 				+ ",comp_ecal" 
 				+ ",comp_acc" 
 				+ ",red_concom" 
@@ -36723,285 +39187,6 @@ public class AbstractCtsqlDB {
 
 	
 
-
-	/**
-	 * Nszcala
-	 * 
-	 */
-	public class Nszcala {
-		
-		private ResultSet rs;
-		
-		protected Nszcala (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
-		
-		/**
-		 * $column.remarks
-		 * @return the column 'sca0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSca0()
-		throws SQLException {
-			return rs.getString(1);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'sca1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSca1()
-		throws SQLException {
-			return rs.getString(2);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'sca2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSca2()
-		throws SQLException {
-			return rs.getString(3);
-		}
-
-
-	}
-	
-
-	
-		
-	private PreparedStatement fk_userStmt = null;
-		
-	private void initFk_userStmt() 
-	throws SQLException{
-		this.fk_userStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "id" 
-				+ ",enddate" 
-				+ ",remote_address" 
-				+ ",remote_host" 
-				+ ",session_id" 
-				+ ",startdate" 
-				+ ",application_id" 
-				+ ",user_id" 
-				+ " FROM session"
-				+ " WHERE" 
-				+ " user_id = ?  " 			); 
-	}
-
-	private void closeFk_userStmt() 
-	throws SQLException{
-		if ( fk_userStmt != null ) { 
-			fk_userStmt.close();
-			fk_userStmt = null;	
-		}
-	}
-		
-	private PreparedStatement fk_af_userStmt = null;
-		
-	private void initFk_af_userStmt() 
-	throws SQLException{
-		this.fk_af_userStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "id" 
-				+ ",position" 
-				+ ",action_id" 
-				+ ",user_id" 
-				+ " FROM action_favorite"
-				+ " WHERE" 
-				+ " user_id = ?  " 			); 
-	}
-
-	private void closeFk_af_userStmt() 
-	throws SQLException{
-		if ( fk_af_userStmt != null ) { 
-			fk_af_userStmt.close();
-			fk_af_userStmt = null;	
-		}
-	}
-		
-	private PreparedStatement fk_ad_userStmt = null;
-		
-	private void initFk_ad_userStmt() 
-	throws SQLException{
-		this.fk_ad_userStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "id" 
-				+ ",action_id" 
-				+ ",user_id" 
-				+ " FROM action_denied"
-				+ " WHERE" 
-				+ " user_id = ?  " 			); 
-	}
-
-	private void closeFk_ad_userStmt() 
-	throws SQLException{
-		if ( fk_ad_userStmt != null ) { 
-			fk_ad_userStmt.close();
-			fk_ad_userStmt = null;	
-		}
-	}
-
-
-	/**
-	 * Usuario
-	 * 
-	 */
-	public class Usuario {
-		
-		private ResultSet rs;
-		
-		protected Usuario (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
-		
-		/**
-		 * Identificador unico
-		 * @return the column 'id' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getId()
-		throws SQLException {
-			return rs.getInt(1);
-		}
-		/**
-		 * Nombre del Usuario
-		 * @return the column 'name' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getName()
-		throws SQLException {
-			return rs.getString(2);
-		}
-		/**
-		 * Login del Usuario
-		 * @return the column 'login' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getLogin()
-		throws SQLException {
-			return rs.getString(3);
-		}
-		/**
-		 * Indica si el Usuario esta disponible o no
-		 * @return the column 'available' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getAvailable()
-		throws SQLException {
-			return rs.getInt(4);
-		}
-		/**
-		 * Indica si el Usuario requiere validacion o no de la clave hardwa
-		 * @return the column 'validate' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getValidate()
-		throws SQLException {
-			return rs.getInt(5);
-		}
-		/**
-		 * Campo alfanumerico donde se guarda la ultima clave hardware gene
-		 * @return the column 'aon_key' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getAon_key()
-		throws SQLException {
-			return rs.getString(6);
-		}
-		/**
-		 * Estado del Usuario con respecto a su primera validacion de la cl
-		 * @return the column 'status' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getStatus()
-		throws SQLException {
-			return rs.getInt(7);
-		}
-
-
-		
-		/**
-		 * Visit Session that're children of this Usuario. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitFk_user(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( fk_userStmt == null )
-					 initFk_userStmt();
-				
-				fk_userStmt.setInt(1, this.getId()); 
-				rs = fk_userStmt.executeQuery();
-				Session session = new Session(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitFk_user(session, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		
-		/**
-		 * Visit Action_favorite that're children of this Usuario. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitFk_af_user(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( fk_af_userStmt == null )
-					 initFk_af_userStmt();
-				
-				fk_af_userStmt.setInt(1, this.getId()); 
-				rs = fk_af_userStmt.executeQuery();
-				Action_favorite action_favorite = new Action_favorite(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitFk_af_user(action_favorite, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		
-		/**
-		 * Visit Action_denied that're children of this Usuario. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitFk_ad_user(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( fk_ad_userStmt == null )
-					 initFk_ad_userStmt();
-				
-				fk_ad_userStmt.setInt(1, this.getId()); 
-				rs = fk_ad_userStmt.executeQuery();
-				Action_denied action_denied = new Action_denied(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitFk_ad_user(action_denied, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-	}
-	
-
-	
-
 	private PreparedStatement _ulp_lpl_lerStmt = null;
 		
 	private void initUlp_lpl_lerStmt() 
@@ -37036,6 +39221,8 @@ public class AbstractCtsqlDB {
 				+ ",fijovar" 
 				+ ",indcom" 
 				+ ",dinesp" 
+				+ ",concepto" 
+				+ ",excinc" 
 				+ " FROM complemento"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -37162,39 +39349,506 @@ public class AbstractCtsqlDB {
 
 	
 
+	private PreparedStatement _nomda_612rpmiStmt = null;
+		
+	private void initNomda_612rpmiStmt() 
+	throws SQLException{
+		this._nomda_612rpmiStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM admon"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeNomda_612rpmiStmt() 
+	throws SQLException{
+		if ( _nomda_612rpmiStmt != null ) { 
+			_nomda_612rpmiStmt.close();
+			_nomda_612rpmiStmt = null;	
+		}
+	}
+	private PreparedStatement _aicnivorp_612rpmiStmt = null;
+		
+	private void initAicnivorp_612rpmiStmt() 
+	throws SQLException{
+		this._aicnivorp_612rpmiStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",compro" 
+				+ " FROM provincia"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeAicnivorp_612rpmiStmt() 
+	throws SQLException{
+		if ( _aicnivorp_612rpmiStmt != null ) { 
+			_aicnivorp_612rpmiStmt.close();
+			_aicnivorp_612rpmiStmt = null;	
+		}
+	}
+	private PreparedStatement _finrpme_612rpmiStmt = null;
+		
+	private void initFinrpme_612rpmiStmt() 
+	throws SQLException{
+		this._finrpme_612rpmiStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",codcli" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",descripcion" 
+				+ ",alias" 
+				+ ",inddoc" 
+				+ ",paiemi" 
+				+ ",numdoc" 
+				+ ",representante" 
+				+ ",cargo" 
+				+ ",fecnac" 
+				+ ",nrodocrep" 
+				+ ",codadm" 
+				+ ",tipempr" 
+				+ ",sexo" 
+				+ ",feccon" 
+				+ ",obsnif" 
+				+ ",datreg" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",tipdocrep" 
+				+ ",paidocrep" 
+				+ ",indirpf" 
+				+ ",indcal" 
+				+ ",indnom" 
+				+ ",indcoste" 
+				+ ",divisa" 
+				+ ",envioss" 
+				+ ",cecon" 
+				+ ",modimpuesto" 
+				+ ",mod190" 
+				+ ",feciniportal" 
+				+ ",feccierrenomina" 
+				+ ",meseshistorico" 
+				+ " FROM emprnif"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeFinrpme_612rpmiStmt() 
+	throws SQLException{
+		if ( _finrpme_612rpmiStmt != null ) { 
+			_finrpme_612rpmiStmt.close();
+			_finrpme_612rpmiStmt = null;	
+		}
+	}
+	private PreparedStatement _asivid_612rpmiStmt = null;
+		
+	private void initAsivid_612rpmiStmt() 
+	throws SQLException{
+		this._asivid_612rpmiStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",redondeo" 
+				+ ",mask1" 
+				+ ",mask2" 
+				+ " FROM divisa"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeAsivid_612rpmiStmt() 
+	throws SQLException{
+		if ( _asivid_612rpmiStmt != null ) { 
+			_asivid_612rpmiStmt.close();
+			_asivid_612rpmiStmt = null;	
+		}
+	}
 
 	/**
-	 * Nszregi
+	 * Impr216
 	 * 
 	 */
-	public class Nszregi {
+	public class Impr216 {
 		
 		private ResultSet rs;
 		
-		protected Nszregi (ResultSet rs) 
+		protected Impr216 (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
 		
 		/**
-		 * $column.remarks
-		 * @return the column 'srg0' value; if the value is SQL NULL, the value returned is null
+		 * Codigo de 216
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getSrg0()
+		public Integer getCdg()
 		throws SQLException {
-			return rs.getString(1);
+			return rs.getInt(1);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'srg1' value; if the value is SQL NULL, the value returned is null
+		 * Tipo de impreso
+		 * @return the column 'tipo' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getSrg1()
+		public String getTipo()
 		throws SQLException {
 			return rs.getString(2);
 		}
+		/**
+		 * Codigo de empresa
+		 * @return the column 'codemp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCodemp()
+		throws SQLException {
+			return rs.getInt(3);
+		}
+		/**
+		 * Administracion Hacienda
+		 * @return the column 'codadm' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCodadm()
+		throws SQLException {
+			return rs.getString(4);
+		}
+		/**
+		 * Provincia
+		 * @return the column 'provincia' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getProvincia()
+		throws SQLException {
+			return rs.getString(5);
+		}
+		/**
+		 * Año
+		 * @return the column 'anio' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getAnio()
+		throws SQLException {
+			return rs.getInt(6);
+		}
+		/**
+		 * Mes
+		 * @return the column 'mes' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getMes()
+		throws SQLException {
+			return rs.getInt(7);
+		}
+		/**
+		 * Número de rentas
+		 * @return the column 'numrent' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getNumrent()
+		throws SQLException {
+			return rs.getInt(8);
+		}
+		/**
+		 * Base retenciones e ingresos a cuenta
+		 * @return the column 'imprent' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getImprent()
+		throws SQLException {
+			return rs.getBigDecimal(9);
+		}
+		/**
+		 * Retenciones e ingresos cuenta
+		 * @return the column 'retrent' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getRetrent()
+		throws SQLException {
+			return rs.getBigDecimal(10);
+		}
+		/**
+		 * Número de rentas no sometidas
+		 * @return the column 'numrentno' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getNumrentno()
+		throws SQLException {
+			return rs.getInt(11);
+		}
+		/**
+		 * Importe de las rentas no sometidas
+		 * @return the column 'imprentno' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getImprentno()
+		throws SQLException {
+			return rs.getBigDecimal(12);
+		}
+		/**
+		 * Total declaración anterior
+		 * @return the column 'totalant' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getTotalant()
+		throws SQLException {
+			return rs.getBigDecimal(13);
+		}
+		/**
+		 * Total declaración
+		 * @return the column 'total' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getTotal()
+		throws SQLException {
+			return rs.getBigDecimal(14);
+		}
+		/**
+		 * Modalidad declaraciones de impuestos
+		 * @return the column 'modimpuesto' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getModimpuesto()
+		throws SQLException {
+			return rs.getString(15);
+		}
+		/**
+		 * Forma de pago
+		 * @return the column 'fpago' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getFpago()
+		throws SQLException {
+			return rs.getString(16);
+		}
+		/**
+		 * Número de referencia completo
+		 * @return the column 'nrc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNrc()
+		throws SQLException {
+			return rs.getString(17);
+		}
+		/**
+		 * IBAN
+		 * @return the column 'iban' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getIban()
+		throws SQLException {
+			return rs.getString(18);
+		}
+		/**
+		 * Entidad bancaria
+		 * @return the column 'entidad' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEntidad()
+		throws SQLException {
+			return rs.getString(19);
+		}
+		/**
+		 * Sucursal
+		 * @return the column 'sucursal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getSucursal()
+		throws SQLException {
+			return rs.getString(20);
+		}
+		/**
+		 * Dígito de control
+		 * @return the column 'dc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getDc()
+		throws SQLException {
+			return rs.getString(21);
+		}
+		/**
+		 * Número de cuenta
+		 * @return the column 'cuenta' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCuenta()
+		throws SQLException {
+			return rs.getString(22);
+		}
+		/**
+		 * Declaración complementaria
+		 * @return the column 'complementaria' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getComplementaria()
+		throws SQLException {
+			return rs.getString(23);
+		}
+		/**
+		 * Número de justificante
+		 * @return the column 'justificante' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getJustificante()
+		throws SQLException {
+			return rs.getString(24);
+		}
+		/**
+		 * Fecha de cálculo
+		 * @return the column 'fecha' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFecha()
+		throws SQLException {
+			return rs.getDate(25);
+		}
+		/**
+		 * Fecha Creacion Fila
+		 * @return the column 'fecnew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFecnew()
+		throws SQLException {
+			return rs.getDate(26);
+		}
+		/**
+		 * Hora Creacion Fila
+		 * @return the column 'hornew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getHornew()
+		throws SQLException {
+			return rs.getTime(27);
+		}
+		/**
+		 * Fecha Modificacion Fila
+		 * @return the column 'fecmod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFecmod()
+		throws SQLException {
+			return rs.getDate(28);
+		}
+		/**
+		 * Hora Modificacion Fila
+		 * @return the column 'hormod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getHormod()
+		throws SQLException {
+			return rs.getTime(29);
+		}
+		/**
+		 * Divisa
+		 * @return the column 'divisa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getDivisa()
+		throws SQLException {
+			return rs.getString(30);
+		}
 
+		/**
+		 * Visit Admon that's parent of this Impr216. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitImpr216_admon(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _nomda_612rpmiStmt == null )
+					 initNomda_612rpmiStmt();
+				
+				_nomda_612rpmiStmt.setString(1, this.getCodadm()); 
+				rs = _nomda_612rpmiStmt.executeQuery();
+				Admon admon = new Admon(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitImpr216_admon(this, admon);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		/**
+		 * Visit Provincia that's parent of this Impr216. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitImpr216_provincia(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _aicnivorp_612rpmiStmt == null )
+					 initAicnivorp_612rpmiStmt();
+				
+				_aicnivorp_612rpmiStmt.setString(1, this.getProvincia()); 
+				rs = _aicnivorp_612rpmiStmt.executeQuery();
+				Provincia provincia = new Provincia(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitImpr216_provincia(this, provincia);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		/**
+		 * Visit Emprnif that's parent of this Impr216. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitImpr216_emprnif(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _finrpme_612rpmiStmt == null )
+					 initFinrpme_612rpmiStmt();
+				
+				_finrpme_612rpmiStmt.setInt(1, this.getCodemp()); 
+				rs = _finrpme_612rpmiStmt.executeQuery();
+				Emprnif emprnif = new Emprnif(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitImpr216_emprnif(this, emprnif);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		/**
+		 * Visit Divisa that's parent of this Impr216. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitImpr216_divisa(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _asivid_612rpmiStmt == null )
+					 initAsivid_612rpmiStmt();
+				
+				_asivid_612rpmiStmt.setString(1, this.getDivisa()); 
+				rs = _asivid_612rpmiStmt.executeQuery();
+				Divisa divisa = new Divisa(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitImpr216_divisa(this, divisa);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
 
 	}
 	
@@ -37314,16 +39968,19 @@ public class AbstractCtsqlDB {
 				+ ",base_perdes" 
 				+ ",remuneracion" 
 				+ ",base_it" 
+				+ ",base_ere" 
 				+ ",total_1" 
 				+ ",codbas" 
 				+ ",base_cg" 
 				+ ",base_acc" 
 				+ ",prc_cg" 
 				+ ",prc_acc" 
+				+ ",prc_fp" 
 				+ ",prc_hex" 
 				+ ",prc_hexno" 
 				+ ",importe_cg" 
 				+ ",importe_acc" 
+				+ ",importe_fp" 
 				+ ",importe_hex" 
 				+ ",importe_hexno" 
 				+ ",mincg" 
@@ -37355,6 +40012,12 @@ public class AbstractCtsqlDB {
 				+ ",base_acc_pts" 
 				+ ",base_acc_sin_h_pts" 
 				+ ",cdgnom" 
+				+ ",base_con_ere" 
+				+ ",base_acc_ere" 
+				+ ",base_con_ere_no" 
+				+ ",base_acc_ere_no" 
+				+ ",base_con_ere_sin" 
+				+ ",base_acc_ere_sin" 
 				+ " FROM nominadf"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -37587,405 +40250,6 @@ public class AbstractCtsqlDB {
 		public BigDecimal getImporte()
 		throws SQLException {
 			return rs.getBigDecimal(5);
-		}
-
-
-	}
-	
-
-	
-
-
-	/**
-	 * Nszbolc
-	 * 
-	 */
-	public class Nszbolc {
-		
-		private ResultSet rs;
-		
-		protected Nszbolc (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
-		
-		/**
-		 * $column.remarks
-		 * @return the column 'sbl0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSbl0()
-		throws SQLException {
-			return rs.getString(1);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl0()
-		throws SQLException {
-			return rs.getInt(2);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl1()
-		throws SQLException {
-			return rs.getInt(3);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl2()
-		throws SQLException {
-			return rs.getInt(4);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl3' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl3()
-		throws SQLException {
-			return rs.getInt(5);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl4' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl4()
-		throws SQLException {
-			return rs.getInt(6);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl5' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl5()
-		throws SQLException {
-			return rs.getInt(7);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl6' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl6()
-		throws SQLException {
-			return rs.getInt(8);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl7' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl7()
-		throws SQLException {
-			return rs.getInt(9);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl8' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl8()
-		throws SQLException {
-			return rs.getInt(10);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl9' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl9()
-		throws SQLException {
-			return rs.getInt(11);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl10' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl10()
-		throws SQLException {
-			return rs.getInt(12);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl11' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl11()
-		throws SQLException {
-			return rs.getInt(13);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl12' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl12()
-		throws SQLException {
-			return rs.getInt(14);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl13' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl13()
-		throws SQLException {
-			return rs.getInt(15);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl14' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl14()
-		throws SQLException {
-			return rs.getInt(16);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl15' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl15()
-		throws SQLException {
-			return rs.getInt(17);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl16' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl16()
-		throws SQLException {
-			return rs.getInt(18);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl17' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl17()
-		throws SQLException {
-			return rs.getInt(19);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl18' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl18()
-		throws SQLException {
-			return rs.getInt(20);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl19' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl19()
-		throws SQLException {
-			return rs.getInt(21);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl20' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl20()
-		throws SQLException {
-			return rs.getInt(22);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl21' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl21()
-		throws SQLException {
-			return rs.getInt(23);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl22' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl22()
-		throws SQLException {
-			return rs.getInt(24);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl23' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl23()
-		throws SQLException {
-			return rs.getInt(25);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl24' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl24()
-		throws SQLException {
-			return rs.getInt(26);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl25' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl25()
-		throws SQLException {
-			return rs.getInt(27);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl26' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl26()
-		throws SQLException {
-			return rs.getInt(28);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl27' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl27()
-		throws SQLException {
-			return rs.getInt(29);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl28' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl28()
-		throws SQLException {
-			return rs.getInt(30);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl29' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl29()
-		throws SQLException {
-			return rs.getInt(31);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl30' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl30()
-		throws SQLException {
-			return rs.getInt(32);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl31' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl31()
-		throws SQLException {
-			return rs.getInt(33);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl212' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl212()
-		throws SQLException {
-			return rs.getInt(34);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl33' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl33()
-		throws SQLException {
-			return rs.getInt(35);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl34' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl34()
-		throws SQLException {
-			return rs.getInt(36);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl35' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl35()
-		throws SQLException {
-			return rs.getInt(37);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl36' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl36()
-		throws SQLException {
-			return rs.getInt(38);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl37' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl37()
-		throws SQLException {
-			return rs.getInt(39);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl38' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl38()
-		throws SQLException {
-			return rs.getInt(40);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl39' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl39()
-		throws SQLException {
-			return rs.getInt(41);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nbl40' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNbl40()
-		throws SQLException {
-			return rs.getInt(42);
 		}
 
 
@@ -38303,11 +40567,11 @@ public class AbstractCtsqlDB {
 				+ ",acteco" 
 				+ ",epiiae" 
 				+ ",cnae" 
+				+ ",cnae2009" 
 				+ ",fecnew" 
 				+ ",hornew" 
 				+ ",fecmod" 
 				+ ",hormod" 
-				+ ",cnae2009" 
 				+ ",indred" 
 				+ ",indmutua" 
 				+ ",indtc1" 
@@ -38324,6 +40588,8 @@ public class AbstractCtsqlDB {
 				+ ",indfirma" 
 				+ ",indregimen" 
 				+ ",prevencion" 
+				+ ",indsiltra" 
+				+ ",autoriza" 
 				+ " FROM empract"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -38543,30 +40809,6 @@ public class AbstractCtsqlDB {
 		if ( _daditnejStmt != null ) { 
 			_daditnejStmt.close();
 			_daditnejStmt = null;	
-		}
-	}
-	private PreparedStatement _lasrucusjStmt = null;
-		
-	private void initLasrucusjStmt() 
-	throws SQLException{
-		this._lasrucusjStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "codent" 
-				+ ",cdg" 
-				+ ",domsuc" 
-				+ ",munsuc" 
-				+ ",cpsuc" 
-				+ ",bic" 
-				+ " FROM sucursal"
-				+ " WHERE" 
-				+ " codent = ?  "  + "AND" 				+ " cdg = ?  " 			); 
-	}
-
-	private void closeLasrucusjStmt() 
-	throws SQLException{
-		if ( _lasrucusjStmt != null ) { 
-			_lasrucusjStmt.close();
-			_lasrucusjStmt = null;	
 		}
 	}
 	private PreparedStatement _afiratjStmt = null;
@@ -39424,31 +41666,6 @@ public class AbstractCtsqlDB {
 			}
 		}
 		/**
-		 * Visit Sucursal that's parent of this Httrabajador. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitJsucursal(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( _lasrucusjStmt == null )
-					 initLasrucusjStmt();
-				
-				_lasrucusjStmt.setString(1, this.getEntidad()); 
-				_lasrucusjStmt.setString(2, this.getSucursal()); 
-				rs = _lasrucusjStmt.executeQuery();
-				Sucursal sucursal = new Sucursal(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitJsucursal(this, sucursal);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		/**
 		 * Visit Basecoti that's parent of this Httrabajador. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
@@ -39690,6 +41907,11 @@ public class AbstractCtsqlDB {
 				+ ",indgrupo" 
 				+ ",pariente" 
 				+ ",noirpf" 
+				+ ",nosegsoc" 
+				+ ",jubiladoactivo" 
+				+ ",certificado" 
+				+ ",familiar" 
+				+ ",noresidente" 
 				+ " FROM emprper"
 				+ " WHERE" 
 				+ " domicilio = ?  " 			); 
@@ -39929,6 +42151,7 @@ public class AbstractCtsqlDB {
 				+ ",divisa" 
 				+ ",soloases" 
 				+ ",envioss" 
+				+ ",grupotrabajo" 
 				+ " FROM cliente"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -40396,6 +42619,7 @@ public class AbstractCtsqlDB {
 				+ ",divisa" 
 				+ ",soloases" 
 				+ ",envioss" 
+				+ ",grupotrabajo" 
 				+ " FROM cliente"
 				+ " WHERE" 
 				+ " inddoc = ?  " 			); 
@@ -40449,6 +42673,9 @@ public class AbstractCtsqlDB {
 				+ ",cecon" 
 				+ ",modimpuesto" 
 				+ ",mod190" 
+				+ ",feciniportal" 
+				+ ",feccierrenomina" 
+				+ ",meseshistorico" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " inddoc = ?  " 			); 
@@ -40502,6 +42729,9 @@ public class AbstractCtsqlDB {
 				+ ",cecon" 
 				+ ",modimpuesto" 
 				+ ",mod190" 
+				+ ",feciniportal" 
+				+ ",feccierrenomina" 
+				+ ",meseshistorico" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " tipdocrep = ?  " 			); 
@@ -40878,197 +43108,53 @@ public class AbstractCtsqlDB {
 
 
 	/**
-	 * Calen
+	 * Tr_serie
 	 * 
 	 */
-	public class Calen {
+	public class Tr_serie {
 		
 		private ResultSet rs;
 		
-		protected Calen (ResultSet rs) 
+		protected Tr_serie (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
 		
 		/**
-		 * Codigo
-		 * @return the column 'codigo' value; if the value is SQL NULL, the value returned is null
+		 * Tipo
+		 * @return the column 'tipo' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getCodigo()
+		public String getTipo()
 		throws SQLException {
 			return rs.getString(1);
 		}
 		/**
-		 * Empresa
-		 * @return the column 'empresa' value; if the value is SQL NULL, the value returned is null
+		 * agno
+		 * @return the column 'agno' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getEmpresa()
+		public Integer getAgno()
 		throws SQLException {
-			return rs.getString(2);
+			return rs.getInt(2);
 		}
 		/**
-		 * Domicilio
-		 * @return the column 'domct' value; if the value is SQL NULL, the value returned is null
+		 * mes
+		 * @return the column 'mes' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getDomct()
+		public Integer getMes()
 		throws SQLException {
-			return rs.getString(3);
+			return rs.getInt(3);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'cp' value; if the value is SQL NULL, the value returned is null
+		 * Num Sig
+		 * @return the column 'valornum' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getCp()
+		public Integer getValornum()
 		throws SQLException {
-			return rs.getString(4);
-		}
-		/**
-		 * Municipio
-		 * @return the column 'municipio' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getMunicipio()
-		throws SQLException {
-			return rs.getString(5);
-		}
-		/**
-		 * Niss
-		 * @return the column 'niss' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getNiss()
-		throws SQLException {
-			return rs.getString(6);
-		}
-		/**
-		 * Actividad
-		 * @return the column 'actividad' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getActividad()
-		throws SQLException {
-			return rs.getString(7);
-		}
-		/**
-		 * Convcol
-		 * @return the column 'convcol' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getConvcol()
-		throws SQLException {
-			return rs.getString(8);
-		}
-		/**
-		 * Hor 1
-		 * @return the column 'hor1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getHor1()
-		throws SQLException {
-			return rs.getString(9);
-		}
-		/**
-		 * Hor 2
-		 * @return the column 'hor2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getHor2()
-		throws SQLException {
-			return rs.getString(10);
-		}
-		/**
-		 * Hor 3
-		 * @return the column 'hor3' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getHor3()
-		throws SQLException {
-			return rs.getString(11);
-		}
-		/**
-		 * Hor 4
-		 * @return the column 'hor4' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getHor4()
-		throws SQLException {
-			return rs.getString(12);
-		}
-		/**
-		 * Hor 5
-		 * @return the column 'hor5' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getHor5()
-		throws SQLException {
-			return rs.getString(13);
-		}
-		/**
-		 * Hor 6
-		 * @return the column 'hor6' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getHor6()
-		throws SQLException {
-			return rs.getString(14);
-		}
-		/**
-		 * Hor 7
-		 * @return the column 'hor7' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getHor7()
-		throws SQLException {
-			return rs.getString(15);
-		}
-		/**
-		 * Hor 8
-		 * @return the column 'hor8' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getHor8()
-		throws SQLException {
-			return rs.getString(16);
-		}
-		/**
-		 * Hor 9
-		 * @return the column 'hor9' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getHor9()
-		throws SQLException {
-			return rs.getString(17);
-		}
-		/**
-		 * Fieloc 1
-		 * @return the column 'fieloc1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getFieloc1()
-		throws SQLException {
-			return rs.getString(18);
-		}
-		/**
-		 * Fieloc 2
-		 * @return the column 'fieloc2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getFieloc2()
-		throws SQLException {
-			return rs.getString(19);
-		}
-		/**
-		 * C
-		 * @return the column 'c' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getC()
-		throws SQLException {
-			return rs.getString(20);
+			return rs.getInt(4);
 		}
 
 
@@ -41133,6 +43219,74 @@ public class AbstractCtsqlDB {
 		}
 	}
 		
+	private PreparedStatement rel_cos_basStmt = null;
+		
+	private void initRel_cos_basStmt() 
+	throws SQLException{
+		this.rel_cos_basStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",numero" 
+				+ ",codemp" 
+				+ ",descripcion" 
+				+ ",anionac" 
+				+ ",sitfam" 
+				+ ",xminus" 
+				+ ",imp_pension" 
+				+ ",imp_anual" 
+				+ ",imp_irreg" 
+				+ ",imp_ss" 
+				+ ",solicita" 
+				+ ",minimo" 
+				+ ",aprendiz" 
+				+ ",temporal" 
+				+ ",alto" 
+				+ ",codbas" 
+				+ ",codepi" 
+				+ ",procot" 
+				+ ",proret" 
+				+ ",plunumaut" 
+				+ ",pluprcmin" 
+				+ ",pluprcmax" 
+				+ ",semana" 
+				+ ",semanatp" 
+				+ ",cantp" 
+				+ ",indtp" 
+				+ ",codpct" 
+				+ ",imp_actual" 
+				+ ",imp_ext_actual" 
+				+ ",ss_actual" 
+				+ ",irpf_actual" 
+				+ ",neto_actual" 
+				+ ",ss_emp_actual" 
+				+ ",coste_actual" 
+				+ ",imp_supuesto" 
+				+ ",imp_ext_supuesto" 
+				+ ",ss_supuesto" 
+				+ ",irpf_supuesto" 
+				+ ",neto_supuesto" 
+				+ ",ss_emp_supuesto" 
+				+ ",coste_supuesto" 
+				+ ",imp_diferencia" 
+				+ ",imp_ext_diferencia" 
+				+ ",ss_diferencia" 
+				+ ",irpf_diferencia" 
+				+ ",neto_diferencia" 
+				+ ",ss_emp_diferencia" 
+				+ ",coste_diferencia" 
+				+ " FROM costes"
+				+ " WHERE" 
+				+ " codbas = ?  " 			); 
+	}
+
+	private void closeRel_cos_basStmt() 
+	throws SQLException{
+		if ( rel_cos_basStmt != null ) { 
+			rel_cos_basStmt.close();
+			rel_cos_basStmt = null;	
+		}
+	}
+		
 	private PreparedStatement rel_tra_basStmt = null;
 		
 	private void initRel_tra_basStmt() 
@@ -41157,6 +43311,7 @@ public class AbstractCtsqlDB {
 				+ ",proret" 
 				+ ",nummat" 
 				+ ",codcont" 
+				+ ",descont" 
 				+ ",codtc2" 
 				+ ",destc2" 
 				+ ",fecinicont" 
@@ -41200,6 +43355,7 @@ public class AbstractCtsqlDB {
 				+ ",diastp" 
 				+ ",guardalegal" 
 				+ ",iban" 
+				+ ",fecfinperiprue" 
 				+ " FROM trabajo"
 				+ " WHERE" 
 				+ " codbas = ?  " 			); 
@@ -41291,74 +43447,6 @@ public class AbstractCtsqlDB {
 		if ( jtarifaStmt != null ) { 
 			jtarifaStmt.close();
 			jtarifaStmt = null;	
-		}
-	}
-		
-	private PreparedStatement rel_cos_basStmt = null;
-		
-	private void initRel_cos_basStmt() 
-	throws SQLException{
-		this.rel_cos_basStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",numero" 
-				+ ",codemp" 
-				+ ",descripcion" 
-				+ ",anionac" 
-				+ ",sitfam" 
-				+ ",xminus" 
-				+ ",imp_pension" 
-				+ ",imp_anual" 
-				+ ",imp_irreg" 
-				+ ",imp_ss" 
-				+ ",solicita" 
-				+ ",minimo" 
-				+ ",aprendiz" 
-				+ ",temporal" 
-				+ ",alto" 
-				+ ",codbas" 
-				+ ",codepi" 
-				+ ",procot" 
-				+ ",proret" 
-				+ ",plunumaut" 
-				+ ",pluprcmin" 
-				+ ",pluprcmax" 
-				+ ",semana" 
-				+ ",semanatp" 
-				+ ",cantp" 
-				+ ",indtp" 
-				+ ",codpct" 
-				+ ",imp_actual" 
-				+ ",imp_ext_actual" 
-				+ ",ss_actual" 
-				+ ",irpf_actual" 
-				+ ",neto_actual" 
-				+ ",ss_emp_actual" 
-				+ ",coste_actual" 
-				+ ",imp_supuesto" 
-				+ ",imp_ext_supuesto" 
-				+ ",ss_supuesto" 
-				+ ",irpf_supuesto" 
-				+ ",neto_supuesto" 
-				+ ",ss_emp_supuesto" 
-				+ ",coste_supuesto" 
-				+ ",imp_diferencia" 
-				+ ",imp_ext_diferencia" 
-				+ ",ss_diferencia" 
-				+ ",irpf_diferencia" 
-				+ ",neto_diferencia" 
-				+ ",ss_emp_diferencia" 
-				+ ",coste_diferencia" 
-				+ " FROM costes"
-				+ " WHERE" 
-				+ " codbas = ?  " 			); 
-	}
-
-	private void closeRel_cos_basStmt() 
-	throws SQLException{
-		if ( rel_cos_basStmt != null ) { 
-			rel_cos_basStmt.close();
-			rel_cos_basStmt = null;	
 		}
 	}
 
@@ -41457,6 +43545,31 @@ public class AbstractCtsqlDB {
 		}
 		
 		/**
+		 * Visit Costes that're children of this Basecoti. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitRel_cos_bas(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( rel_cos_basStmt == null )
+					 initRel_cos_basStmt();
+				
+				rel_cos_basStmt.setString(1, this.getCdg()); 
+				rs = rel_cos_basStmt.executeQuery();
+				Costes costes = new Costes(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitRel_cos_bas(costes, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
 		 * Visit Trabajo that're children of this Basecoti. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
@@ -41505,124 +43618,6 @@ public class AbstractCtsqlDB {
 					rs.close();
 			}
 		}
-		
-		/**
-		 * Visit Costes that're children of this Basecoti. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitRel_cos_bas(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( rel_cos_basStmt == null )
-					 initRel_cos_basStmt();
-				
-				rel_cos_basStmt.setString(1, this.getCdg()); 
-				rs = rel_cos_basStmt.executeQuery();
-				Costes costes = new Costes(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitRel_cos_bas(costes, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-	}
-	
-
-	
-
-
-	/**
-	 * Nszcdtr
-	 * 
-	 */
-	public class Nszcdtr {
-		
-		private ResultSet rs;
-		
-		protected Nszcdtr (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
-		
-		/**
-		 * $column.remarks
-		 * @return the column 'scd0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getScd0()
-		throws SQLException {
-			return rs.getString(1);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'scd1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getScd1()
-		throws SQLException {
-			return rs.getString(2);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ncd0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNcd0()
-		throws SQLException {
-			return rs.getInt(3);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ncd1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNcd1()
-		throws SQLException {
-			return rs.getInt(4);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ncd2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNcd2()
-		throws SQLException {
-			return rs.getInt(5);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ncd3' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNcd3()
-		throws SQLException {
-			return rs.getBigDecimal(6);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ncd4' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNcd4()
-		throws SQLException {
-			return rs.getInt(7);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ncd5' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNcd5()
-		throws SQLException {
-			return rs.getInt(8);
-		}
-
-
 	}
 	
 
@@ -41800,122 +43795,362 @@ public class AbstractCtsqlDB {
 	
 
 	
-
-	private PreparedStatement _noitca_fa_kfStmt = null;
 		
-	private void initNoitca_fa_kfStmt() 
+	private PreparedStatement lin_fpercepStmt = null;
+		
+	private void initLin_fpercepStmt() 
 	throws SQLException{
-		this._noitca_fa_kfStmt = ctsqlConnection.prepareStatement(
+		this.lin_fpercepStmt = ctsqlConnection.prepareStatement(
 				"SELECT "
-				+ "id" 
-				+ ",menu" 
-				+ ",name" 
-				+ ",application_id" 
-				+ " FROM action"
+				+ "cdg" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",orden" 
+				+ ",codcom" 
+				+ ",formula" 
+				+ " FROM linfpercep"
 				+ " WHERE" 
-				+ " id = ?  " 			); 
+				+ " cdg = ?  " 			); 
 	}
 
-	private void closeNoitca_fa_kfStmt() 
+	private void closeLin_fpercepStmt() 
 	throws SQLException{
-		if ( _noitca_fa_kfStmt != null ) { 
-			_noitca_fa_kfStmt.close();
-			_noitca_fa_kfStmt = null;	
+		if ( lin_fpercepStmt != null ) { 
+			lin_fpercepStmt.close();
+			lin_fpercepStmt = null;	
 		}
 	}
-	private PreparedStatement _resu_fa_kfStmt = null;
+
+	private PreparedStatement _oinevnoc_epfStmt = null;
 		
-	private void initResu_fa_kfStmt() 
+	private void initOinevnoc_epfStmt() 
 	throws SQLException{
-		this._resu_fa_kfStmt = ctsqlConnection.prepareStatement(
+		this._oinevnoc_epfStmt = ctsqlConnection.prepareStatement(
 				"SELECT "
-				+ "id" 
-				+ ",name" 
-				+ ",login" 
-				+ ",available" 
-				+ ",validate" 
-				+ ",aon_key" 
-				+ ",status" 
-				+ " FROM usuario"
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",inddia" 
+				+ ",tipcon" 
+				+ " FROM convenio"
 				+ " WHERE" 
-				+ " id = ?  " 			); 
+				+ " cdg = ?  " 			); 
 	}
 
-	private void closeResu_fa_kfStmt() 
+	private void closeOinevnoc_epfStmt() 
 	throws SQLException{
-		if ( _resu_fa_kfStmt != null ) { 
-			_resu_fa_kfStmt.close();
-			_resu_fa_kfStmt = null;	
+		if ( _oinevnoc_epfStmt != null ) { 
+			_oinevnoc_epfStmt.close();
+			_oinevnoc_epfStmt = null;	
+		}
+	}
+	private PreparedStatement _etneilc_epfStmt = null;
+		
+	private void initEtneilc_epfStmt() 
+	throws SQLException{
+		this._etneilc_epfStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",coddlg" 
+				+ ",descripcion" 
+				+ ",alias" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",tipovia" 
+				+ ",nomvia" 
+				+ ",numero" 
+				+ ",otrdir" 
+				+ ",codpos" 
+				+ ",localidad" 
+				+ ",provincia" 
+				+ ",persona" 
+				+ ",telefono" 
+				+ ",telefono2" 
+				+ ",telefono3" 
+				+ ",fax" 
+				+ ",email" 
+				+ ",inddoc" 
+				+ ",paiemi" 
+				+ ",numdoc" 
+				+ ",tipemp" 
+				+ ",obscli" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",inactivo" 
+				+ ",indcal" 
+				+ ",indnom" 
+				+ ",indcoste" 
+				+ ",divisa" 
+				+ ",soloases" 
+				+ ",envioss" 
+				+ ",grupotrabajo" 
+				+ " FROM cliente"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeEtneilc_epfStmt() 
+	throws SQLException{
+		if ( _etneilc_epfStmt != null ) { 
+			_etneilc_epfStmt.close();
+			_etneilc_epfStmt = null;	
+		}
+	}
+	private PreparedStatement _finrpme_epfStmt = null;
+		
+	private void initFinrpme_epfStmt() 
+	throws SQLException{
+		this._finrpme_epfStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",codcli" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",descripcion" 
+				+ ",alias" 
+				+ ",inddoc" 
+				+ ",paiemi" 
+				+ ",numdoc" 
+				+ ",representante" 
+				+ ",cargo" 
+				+ ",fecnac" 
+				+ ",nrodocrep" 
+				+ ",codadm" 
+				+ ",tipempr" 
+				+ ",sexo" 
+				+ ",feccon" 
+				+ ",obsnif" 
+				+ ",datreg" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",tipdocrep" 
+				+ ",paidocrep" 
+				+ ",indirpf" 
+				+ ",indcal" 
+				+ ",indnom" 
+				+ ",indcoste" 
+				+ ",divisa" 
+				+ ",envioss" 
+				+ ",cecon" 
+				+ ",modimpuesto" 
+				+ ",mod190" 
+				+ ",feciniportal" 
+				+ ",feccierrenomina" 
+				+ ",meseshistorico" 
+				+ " FROM emprnif"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeFinrpme_epfStmt() 
+	throws SQLException{
+		if ( _finrpme_epfStmt != null ) { 
+			_finrpme_epfStmt.close();
+			_finrpme_epfStmt = null;	
+		}
+	}
+	private PreparedStatement _tcarpme_epfStmt = null;
+		
+	private void initTcarpme_epfStmt() 
+	throws SQLException{
+		this._tcarpme_epfStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",codnsz" 
+				+ ",codemp" 
+				+ ",convenio" 
+				+ ",descripcion" 
+				+ ",alias" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",acteco" 
+				+ ",epiiae" 
+				+ ",cnae" 
+				+ ",cnae2009" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",indred" 
+				+ ",indmutua" 
+				+ ",indtc1" 
+				+ ",indcal" 
+				+ ",indnom" 
+				+ ",indcoste" 
+				+ ",envioss" 
+				+ ",flc" 
+				+ ",colss" 
+				+ ",ingespemp" 
+				+ ",modpago" 
+				+ ",tiponomina" 
+				+ ",indlogo" 
+				+ ",indfirma" 
+				+ ",indregimen" 
+				+ ",prevencion" 
+				+ ",indsiltra" 
+				+ ",autoriza" 
+				+ " FROM empract"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeTcarpme_epfStmt() 
+	throws SQLException{
+		if ( _tcarpme_epfStmt != null ) { 
+			_tcarpme_epfStmt.close();
+			_tcarpme_epfStmt = null;	
+		}
+	}
+	private PreparedStatement _anosrep_epfStmt = null;
+		
+	private void initAnosrep_epfStmt() 
+	throws SQLException{
+		this._anosrep_epfStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",inddoc" 
+				+ ",paiemi" 
+				+ ",numdoc" 
+				+ ",descripcion" 
+				+ ",apellido2" 
+				+ ",nombre" 
+				+ ",alias" 
+				+ ",aliastc2" 
+				+ ",tipovia" 
+				+ ",nomvia" 
+				+ ",numero" 
+				+ ",otrdir" 
+				+ ",codpos" 
+				+ ",localidad" 
+				+ ",provincia" 
+				+ ",telefono" 
+				+ ",fax" 
+				+ ",email" 
+				+ ",lugnac" 
+				+ ",pronac" 
+				+ ",painac" 
+				+ ",fecnac" 
+				+ ",padre" 
+				+ ",madre" 
+				+ ",nacion" 
+				+ ",numss" 
+				+ ",estciv" 
+				+ ",obsper" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",sexo" 
+				+ " FROM persona"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeAnosrep_epfStmt() 
+	throws SQLException{
+		if ( _anosrep_epfStmt != null ) { 
+			_anosrep_epfStmt.close();
+			_anosrep_epfStmt = null;	
 		}
 	}
 
 	/**
-	 * Action_favorite
+	 * Fpercep
 	 * 
 	 */
-	public class Action_favorite {
+	public class Fpercep {
 		
 		private ResultSet rs;
 		
-		protected Action_favorite (ResultSet rs) 
+		protected Fpercep (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
 		
 		/**
-		 * Identificador unico
-		 * @return the column 'id' value; if the value is SQL NULL, the value returned is null
+		 * Código de formula
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getId()
+		public Integer getCdg()
 		throws SQLException {
 			return rs.getInt(1);
 		}
 		/**
-		 * Posición dentro de las Acciones Favoritas
-		 * @return the column 'position' value; if the value is SQL NULL, the value returned is null
+		 * Nivel de la formula
+		 * @return the column 'nivel' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getPosition()
+		public String getNivel()
 		throws SQLException {
-			return rs.getInt(2);
+			return rs.getString(2);
 		}
 		/**
-		 * Identificador de la Acción
-		 * @return the column 'action_id' value; if the value is SQL NULL, the value returned is null
+		 * Código de convenio
+		 * @return the column 'codcon' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getAction_id()
+		public String getCodcon()
 		throws SQLException {
-			return rs.getInt(3);
+			return rs.getString(3);
 		}
 		/**
-		 * Identificador del Usuario
-		 * @return the column 'user_id' value; if the value is SQL NULL, the value returned is null
+		 * Código de cliente
+		 * @return the column 'codcli' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getUser_id()
+		public Integer getCodcli()
 		throws SQLException {
 			return rs.getInt(4);
 		}
+		/**
+		 * Código de empresa
+		 * @return the column 'codemp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCodemp()
+		throws SQLException {
+			return rs.getInt(5);
+		}
+		/**
+		 * Código de actividad
+		 * @return the column 'codact' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCodact()
+		throws SQLException {
+			return rs.getInt(6);
+		}
+		/**
+		 * Código de persona
+		 * @return the column 'codper' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCodper()
+		throws SQLException {
+			return rs.getInt(7);
+		}
 
 		/**
-		 * Visit Action that's parent of this Action_favorite. 
+		 * Visit Convenio that's parent of this Fpercep. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
 		 */
-		public void visitFk_af_action(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		public void visitFpe_convenio(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 			ResultSet 			rs 	= null;
 			try {
 				
-				if ( _noitca_fa_kfStmt == null )
-					 initNoitca_fa_kfStmt();
+				if ( _oinevnoc_epfStmt == null )
+					 initOinevnoc_epfStmt();
 				
-				_noitca_fa_kfStmt.setInt(1, this.getAction_id()); 
-				rs = _noitca_fa_kfStmt.executeQuery();
-				Action action = new Action(rs); 
+				_oinevnoc_epfStmt.setString(1, this.getCodcon()); 
+				rs = _oinevnoc_epfStmt.executeQuery();
+				Convenio convenio = new Convenio(rs); 
 				while ( rs.next() ) {
-					ctsqlDBVisitor.visitFk_af_action(this, action);
+					ctsqlDBVisitor.visitFpe_convenio(this, convenio);
 				}
 			}
 			finally {
@@ -41924,22 +44159,94 @@ public class AbstractCtsqlDB {
 			}
 		}
 		/**
-		 * Visit Usuario that's parent of this Action_favorite. 
+		 * Visit Cliente that's parent of this Fpercep. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
 		 */
-		public void visitFk_af_user(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		public void visitFpe_cliente(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 			ResultSet 			rs 	= null;
 			try {
 				
-				if ( _resu_fa_kfStmt == null )
-					 initResu_fa_kfStmt();
+				if ( _etneilc_epfStmt == null )
+					 initEtneilc_epfStmt();
 				
-				_resu_fa_kfStmt.setInt(1, this.getUser_id()); 
-				rs = _resu_fa_kfStmt.executeQuery();
-				Usuario usuario = new Usuario(rs); 
+				_etneilc_epfStmt.setInt(1, this.getCodcli()); 
+				rs = _etneilc_epfStmt.executeQuery();
+				Cliente cliente = new Cliente(rs); 
 				while ( rs.next() ) {
-					ctsqlDBVisitor.visitFk_af_user(this, usuario);
+					ctsqlDBVisitor.visitFpe_cliente(this, cliente);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		/**
+		 * Visit Emprnif that's parent of this Fpercep. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitFpe_emprnif(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _finrpme_epfStmt == null )
+					 initFinrpme_epfStmt();
+				
+				_finrpme_epfStmt.setInt(1, this.getCodemp()); 
+				rs = _finrpme_epfStmt.executeQuery();
+				Emprnif emprnif = new Emprnif(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitFpe_emprnif(this, emprnif);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		/**
+		 * Visit Empract that's parent of this Fpercep. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitFpe_empract(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _tcarpme_epfStmt == null )
+					 initTcarpme_epfStmt();
+				
+				_tcarpme_epfStmt.setInt(1, this.getCodact()); 
+				rs = _tcarpme_epfStmt.executeQuery();
+				Empract empract = new Empract(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitFpe_empract(this, empract);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		/**
+		 * Visit Persona that's parent of this Fpercep. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitFpe_persona(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _anosrep_epfStmt == null )
+					 initAnosrep_epfStmt();
+				
+				_anosrep_epfStmt.setInt(1, this.getCodper()); 
+				rs = _anosrep_epfStmt.executeQuery();
+				Persona persona = new Persona(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitFpe_persona(this, persona);
 				}
 			}
 			finally {
@@ -41948,6 +44255,31 @@ public class AbstractCtsqlDB {
 			}
 		}
 
+		
+		/**
+		 * Visit Linfpercep that're children of this Fpercep. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitLin_fpercep(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( lin_fpercepStmt == null )
+					 initLin_fpercepStmt();
+				
+				lin_fpercepStmt.setInt(1, this.getCdg()); 
+				rs = lin_fpercepStmt.executeQuery();
+				Linfpercep linfpercep = new Linfpercep(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitLin_fpercep(linfpercep, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
 	}
 	
 
@@ -42170,333 +44502,6 @@ public class AbstractCtsqlDB {
 
 	
 
-
-	/**
-	 * Nszrari
-	 * 
-	 */
-	public class Nszrari {
-		
-		private ResultSet rs;
-		
-		protected Nszrari (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
-		
-		/**
-		 * $column.remarks
-		 * @return the column 'sra0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSra0()
-		throws SQLException {
-			return rs.getString(1);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra0()
-		throws SQLException {
-			return rs.getInt(2);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra1()
-		throws SQLException {
-			return rs.getInt(3);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra2()
-		throws SQLException {
-			return rs.getInt(4);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra3' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra3()
-		throws SQLException {
-			return rs.getInt(5);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra4' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra4()
-		throws SQLException {
-			return rs.getInt(6);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra5' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra5()
-		throws SQLException {
-			return rs.getInt(7);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra6' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra6()
-		throws SQLException {
-			return rs.getInt(8);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra7' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra7()
-		throws SQLException {
-			return rs.getInt(9);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra8' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra8()
-		throws SQLException {
-			return rs.getInt(10);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra9' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra9()
-		throws SQLException {
-			return rs.getInt(11);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra10' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra10()
-		throws SQLException {
-			return rs.getInt(12);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra11' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra11()
-		throws SQLException {
-			return rs.getInt(13);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra12' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra12()
-		throws SQLException {
-			return rs.getInt(14);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra13' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra13()
-		throws SQLException {
-			return rs.getInt(15);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra14' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra14()
-		throws SQLException {
-			return rs.getInt(16);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra15' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra15()
-		throws SQLException {
-			return rs.getInt(17);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra16' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra16()
-		throws SQLException {
-			return rs.getInt(18);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra17' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra17()
-		throws SQLException {
-			return rs.getInt(19);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra18' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra18()
-		throws SQLException {
-			return rs.getInt(20);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra19' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra19()
-		throws SQLException {
-			return rs.getInt(21);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra20' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra20()
-		throws SQLException {
-			return rs.getInt(22);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra21' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra21()
-		throws SQLException {
-			return rs.getInt(23);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra22' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra22()
-		throws SQLException {
-			return rs.getInt(24);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra23' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra23()
-		throws SQLException {
-			return rs.getInt(25);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra24' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra24()
-		throws SQLException {
-			return rs.getInt(26);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra25' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra25()
-		throws SQLException {
-			return rs.getInt(27);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra26' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra26()
-		throws SQLException {
-			return rs.getInt(28);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra27' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra27()
-		throws SQLException {
-			return rs.getInt(29);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra28' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra28()
-		throws SQLException {
-			return rs.getInt(30);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra29' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra29()
-		throws SQLException {
-			return rs.getInt(31);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra30' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra30()
-		throws SQLException {
-			return rs.getInt(32);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra32' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra32()
-		throws SQLException {
-			return rs.getInt(33);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nra33' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNra33()
-		throws SQLException {
-			return rs.getInt(34);
-		}
-
-
-	}
-	
-
-	
-
 	private PreparedStatement _finrpme_modrpmeStmt = null;
 		
 	private void initFinrpme_modrpmeStmt() 
@@ -42537,6 +44542,9 @@ public class AbstractCtsqlDB {
 				+ ",cecon" 
 				+ ",modimpuesto" 
 				+ ",mod190" 
+				+ ",feciniportal" 
+				+ ",feccierrenomina" 
+				+ ",meseshistorico" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -42566,11 +44574,11 @@ public class AbstractCtsqlDB {
 				+ ",acteco" 
 				+ ",epiiae" 
 				+ ",cnae" 
+				+ ",cnae2009" 
 				+ ",fecnew" 
 				+ ",hornew" 
 				+ ",fecmod" 
 				+ ",hormod" 
-				+ ",cnae2009" 
 				+ ",indred" 
 				+ ",indmutua" 
 				+ ",indtc1" 
@@ -42587,6 +44595,8 @@ public class AbstractCtsqlDB {
 				+ ",indfirma" 
 				+ ",indregimen" 
 				+ ",prevencion" 
+				+ ",indsiltra" 
+				+ ",autoriza" 
 				+ " FROM empract"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -42640,6 +44650,7 @@ public class AbstractCtsqlDB {
 				+ ",divisa" 
 				+ ",soloases" 
 				+ ",envioss" 
+				+ ",grupotrabajo" 
 				+ " FROM cliente"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -42860,6 +44871,30 @@ public class AbstractCtsqlDB {
 
 	
 		
+	private PreparedStatement rel_mut_linStmt = null;
+		
+	private void initRel_mut_linStmt() 
+	throws SQLException{
+		this.rel_mut_linStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",prcacctrab" 
+				+ ",prcit" 
+				+ " FROM linmutua"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeRel_mut_linStmt() 
+	throws SQLException{
+		if ( rel_mut_linStmt != null ) { 
+			rel_mut_linStmt.close();
+			rel_mut_linStmt = null;	
+		}
+	}
+		
 	private PreparedStatement rel_ccc_mutStmt = null;
 		
 	private void initRel_ccc_mutStmt() 
@@ -42883,30 +44918,6 @@ public class AbstractCtsqlDB {
 		if ( rel_ccc_mutStmt != null ) { 
 			rel_ccc_mutStmt.close();
 			rel_ccc_mutStmt = null;	
-		}
-	}
-		
-	private PreparedStatement rel_mut_linStmt = null;
-		
-	private void initRel_mut_linStmt() 
-	throws SQLException{
-		this.rel_mut_linStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",fecini" 
-				+ ",fecfin" 
-				+ ",prcacctrab" 
-				+ ",prcit" 
-				+ " FROM linmutua"
-				+ " WHERE" 
-				+ " cdg = ?  " 			); 
-	}
-
-	private void closeRel_mut_linStmt() 
-	throws SQLException{
-		if ( rel_mut_linStmt != null ) { 
-			rel_mut_linStmt.close();
-			rel_mut_linStmt = null;	
 		}
 	}
 		
@@ -43003,31 +45014,6 @@ public class AbstractCtsqlDB {
 
 		
 		/**
-		 * Visit Emprccc that're children of this Mutua. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitRel_ccc_mut(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( rel_ccc_mutStmt == null )
-					 initRel_ccc_mutStmt();
-				
-				rel_ccc_mutStmt.setString(1, this.getCdg()); 
-				rs = rel_ccc_mutStmt.executeQuery();
-				Emprccc emprccc = new Emprccc(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitRel_ccc_mut(emprccc, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		
-		/**
 		 * Visit Linmutua that're children of this Mutua. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
@@ -43044,6 +45030,31 @@ public class AbstractCtsqlDB {
 				Linmutua linmutua = new Linmutua(rs); 
 				while ( rs.next() ) {
 					ctsqlDBVisitor.visitRel_mut_lin(linmutua, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Emprccc that're children of this Mutua. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitRel_ccc_mut(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( rel_ccc_mutStmt == null )
+					 initRel_ccc_mutStmt();
+				
+				rel_ccc_mutStmt.setString(1, this.getCdg()); 
+				rs = rel_ccc_mutStmt.executeQuery();
+				Emprccc emprccc = new Emprccc(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitRel_ccc_mut(emprccc, this);
 				}
 			}
 			finally {
@@ -43076,639 +45087,6 @@ public class AbstractCtsqlDB {
 					rs.close();
 			}
 		}
-	}
-	
-
-	
-
-
-	/**
-	 * Nszempr
-	 * 
-	 */
-	public class Nszempr {
-		
-		private ResultSet rs;
-		
-		protected Nszempr (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
-		
-		/**
-		 * $column.remarks
-		 * @return the column 'sem0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSem0()
-		throws SQLException {
-			return rs.getString(1);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'sem1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSem1()
-		throws SQLException {
-			return rs.getString(2);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem0()
-		throws SQLException {
-			return rs.getInt(3);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem1()
-		throws SQLException {
-			return rs.getInt(4);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem2()
-		throws SQLException {
-			return rs.getInt(5);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem3' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem3()
-		throws SQLException {
-			return rs.getInt(6);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem4' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem4()
-		throws SQLException {
-			return rs.getInt(7);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem5' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem5()
-		throws SQLException {
-			return rs.getInt(8);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem6' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem6()
-		throws SQLException {
-			return rs.getInt(9);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem7' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem7()
-		throws SQLException {
-			return rs.getInt(10);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem8' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem8()
-		throws SQLException {
-			return rs.getInt(11);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem9' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem9()
-		throws SQLException {
-			return rs.getInt(12);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem10' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem10()
-		throws SQLException {
-			return rs.getInt(13);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem11' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem11()
-		throws SQLException {
-			return rs.getInt(14);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem12' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem12()
-		throws SQLException {
-			return rs.getInt(15);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem13' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem13()
-		throws SQLException {
-			return rs.getInt(16);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem14' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem14()
-		throws SQLException {
-			return rs.getInt(17);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem15' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem15()
-		throws SQLException {
-			return rs.getInt(18);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem16' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem16()
-		throws SQLException {
-			return rs.getInt(19);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem17' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem17()
-		throws SQLException {
-			return rs.getInt(20);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem18' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem18()
-		throws SQLException {
-			return rs.getInt(21);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem19' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem19()
-		throws SQLException {
-			return rs.getInt(22);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem20' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem20()
-		throws SQLException {
-			return rs.getInt(23);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem21' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem21()
-		throws SQLException {
-			return rs.getInt(24);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem22' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem22()
-		throws SQLException {
-			return rs.getInt(25);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem23' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem23()
-		throws SQLException {
-			return rs.getInt(26);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem24' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem24()
-		throws SQLException {
-			return rs.getInt(27);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem25' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem25()
-		throws SQLException {
-			return rs.getInt(28);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem26' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem26()
-		throws SQLException {
-			return rs.getInt(29);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem27' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem27()
-		throws SQLException {
-			return rs.getInt(30);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem28' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem28()
-		throws SQLException {
-			return rs.getInt(31);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem29' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem29()
-		throws SQLException {
-			return rs.getInt(32);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem30' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem30()
-		throws SQLException {
-			return rs.getInt(33);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem31' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem31()
-		throws SQLException {
-			return rs.getInt(34);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem32' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem32()
-		throws SQLException {
-			return rs.getInt(35);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem33' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem33()
-		throws SQLException {
-			return rs.getInt(36);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem34' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem34()
-		throws SQLException {
-			return rs.getInt(37);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem35' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem35()
-		throws SQLException {
-			return rs.getInt(38);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem36' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem36()
-		throws SQLException {
-			return rs.getInt(39);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem37' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem37()
-		throws SQLException {
-			return rs.getInt(40);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem38' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem38()
-		throws SQLException {
-			return rs.getInt(41);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem39' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem39()
-		throws SQLException {
-			return rs.getInt(42);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem40' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem40()
-		throws SQLException {
-			return rs.getInt(43);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem41' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem41()
-		throws SQLException {
-			return rs.getInt(44);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem42' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem42()
-		throws SQLException {
-			return rs.getInt(45);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem43' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem43()
-		throws SQLException {
-			return rs.getInt(46);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem44' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem44()
-		throws SQLException {
-			return rs.getInt(47);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem45' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem45()
-		throws SQLException {
-			return rs.getInt(48);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem46' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem46()
-		throws SQLException {
-			return rs.getInt(49);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem47' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem47()
-		throws SQLException {
-			return rs.getInt(50);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem48' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem48()
-		throws SQLException {
-			return rs.getInt(51);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem49' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem49()
-		throws SQLException {
-			return rs.getInt(52);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem50' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem50()
-		throws SQLException {
-			return rs.getInt(53);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem51' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem51()
-		throws SQLException {
-			return rs.getInt(54);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem52' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem52()
-		throws SQLException {
-			return rs.getInt(55);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem53' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem53()
-		throws SQLException {
-			return rs.getInt(56);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem54' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem54()
-		throws SQLException {
-			return rs.getInt(57);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem55' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem55()
-		throws SQLException {
-			return rs.getInt(58);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem56' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem56()
-		throws SQLException {
-			return rs.getInt(59);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem57' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem57()
-		throws SQLException {
-			return rs.getInt(60);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem58' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem58()
-		throws SQLException {
-			return rs.getInt(61);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem59' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem59()
-		throws SQLException {
-			return rs.getInt(62);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem60' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem60()
-		throws SQLException {
-			return rs.getInt(63);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem61' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem61()
-		throws SQLException {
-			return rs.getInt(64);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem62' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem62()
-		throws SQLException {
-			return rs.getInt(65);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem63' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem63()
-		throws SQLException {
-			return rs.getInt(66);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem64' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem64()
-		throws SQLException {
-			return rs.getInt(67);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nem65' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNem65()
-		throws SQLException {
-			return rs.getInt(68);
-		}
-
-
 	}
 	
 
@@ -44097,129 +45475,6 @@ public class AbstractCtsqlDB {
 
 	
 
-
-	/**
-	 * Nszpaga
-	 * 
-	 */
-	public class Nszpaga {
-		
-		private ResultSet rs;
-		
-		protected Nszpaga (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
-		
-		/**
-		 * $column.remarks
-		 * @return the column 'spe0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSpe0()
-		throws SQLException {
-			return rs.getString(1);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'npe0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNpe0()
-		throws SQLException {
-			return rs.getInt(2);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'npe1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNpe1()
-		throws SQLException {
-			return rs.getInt(3);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'npe2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNpe2()
-		throws SQLException {
-			return rs.getInt(4);
-		}
-
-
-	}
-	
-
-	
-
-
-	/**
-	 * Nszotpe
-	 * 
-	 */
-	public class Nszotpe {
-		
-		private ResultSet rs;
-		
-		protected Nszotpe (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
-		
-		/**
-		 * $column.remarks
-		 * @return the column 'sop0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSop0()
-		throws SQLException {
-			return rs.getString(1);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'sop1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSop1()
-		throws SQLException {
-			return rs.getString(2);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nop0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNop0()
-		throws SQLException {
-			return rs.getInt(3);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nop1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNop1()
-		throws SQLException {
-			return rs.getInt(4);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nop2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNop2()
-		throws SQLException {
-			return rs.getInt(5);
-		}
-
-
-	}
-	
-
-	
-
 	private PreparedStatement _oinevnoc_artcrpmeStmt = null;
 		
 	private void initOinevnoc_artcrpmeStmt() 
@@ -44259,11 +45514,11 @@ public class AbstractCtsqlDB {
 				+ ",acteco" 
 				+ ",epiiae" 
 				+ ",cnae" 
+				+ ",cnae2009" 
 				+ ",fecnew" 
 				+ ",hornew" 
 				+ ",fecmod" 
 				+ ",hormod" 
-				+ ",cnae2009" 
 				+ ",indred" 
 				+ ",indmutua" 
 				+ ",indtc1" 
@@ -44280,6 +45535,8 @@ public class AbstractCtsqlDB {
 				+ ",indfirma" 
 				+ ",indregimen" 
 				+ ",prevencion" 
+				+ ",indsiltra" 
+				+ ",autoriza" 
 				+ " FROM empract"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -44332,6 +45589,9 @@ public class AbstractCtsqlDB {
 				+ ",cecon" 
 				+ ",modimpuesto" 
 				+ ",mod190" 
+				+ ",feciniportal" 
+				+ ",feccierrenomina" 
+				+ ",meseshistorico" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -44699,6 +45959,11 @@ public class AbstractCtsqlDB {
 				+ ",indgrupo" 
 				+ ",pariente" 
 				+ ",noirpf" 
+				+ ",nosegsoc" 
+				+ ",jubiladoactivo" 
+				+ ",certificado" 
+				+ ",familiar" 
+				+ ",noresidente" 
 				+ " FROM emprper"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -44971,81 +46236,6 @@ public class AbstractCtsqlDB {
 
 
 	/**
-	 * Nszpeop
-	 * 
-	 */
-	public class Nszpeop {
-		
-		private ResultSet rs;
-		
-		protected Nszpeop (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
-		
-		/**
-		 * $column.remarks
-		 * @return the column 'spp0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSpp0()
-		throws SQLException {
-			return rs.getString(1);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'spp1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSpp1()
-		throws SQLException {
-			return rs.getString(2);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'npp0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNpp0()
-		throws SQLException {
-			return rs.getInt(3);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'npp1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNpp1()
-		throws SQLException {
-			return rs.getInt(4);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'npp2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNpp2()
-		throws SQLException {
-			return rs.getInt(5);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'npp3' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNpp3()
-		throws SQLException {
-			return rs.getInt(6);
-		}
-
-
-	}
-	
-
-	
-
-
-	/**
 	 * Procesos
 	 * 
 	 */
@@ -45100,81 +46290,6 @@ public class AbstractCtsqlDB {
 	
 
 	
-
-
-	/**
-	 * Nszunco
-	 * 
-	 */
-	public class Nszunco {
-		
-		private ResultSet rs;
-		
-		protected Nszunco (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
-		
-		/**
-		 * $column.remarks
-		 * @return the column 'suc0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSuc0()
-		throws SQLException {
-			return rs.getString(1);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'suc1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSuc1()
-		throws SQLException {
-			return rs.getString(2);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nuc0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNuc0()
-		throws SQLException {
-			return rs.getInt(3);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nuc1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNuc1()
-		throws SQLException {
-			return rs.getInt(4);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nuc2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNuc2()
-		throws SQLException {
-			return rs.getInt(5);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nuc3' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNuc3()
-		throws SQLException {
-			return rs.getInt(6);
-		}
-
-
-	}
-	
-
-	
 		
 	private PreparedStatement rel_dlg_viaStmt = null;
 		
@@ -45192,6 +46307,7 @@ public class AbstractCtsqlDB {
 				+ ",localidad" 
 				+ ",provincia" 
 				+ ",telefono" 
+				+ ",workplace" 
 				+ " FROM delegacion"
 				+ " WHERE" 
 				+ " tipovia = ?  " 			); 
@@ -45246,6 +46362,7 @@ public class AbstractCtsqlDB {
 				+ ",divisa" 
 				+ ",soloases" 
 				+ ",envioss" 
+				+ ",grupotrabajo" 
 				+ " FROM cliente"
 				+ " WHERE" 
 				+ " tipovia = ?  " 			); 
@@ -45350,40 +46467,6 @@ public class AbstractCtsqlDB {
 		}
 	}
 		
-	private PreparedStatement opfile_tipoviaStmt = null;
-		
-	private void initOpfile_tipoviaStmt() 
-	throws SQLException{
-		this.opfile_tipoviaStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",apellido1" 
-				+ ",apellido2" 
-				+ ",nombre" 
-				+ ",tipovia" 
-				+ ",nomvia" 
-				+ ",numero" 
-				+ ",otrdir" 
-				+ ",codpos" 
-				+ ",localidad" 
-				+ ",provincia" 
-				+ ",importe" 
-				+ ",retencion" 
-				+ ",segsocial" 
-				+ ",fecnac" 
-				+ " FROM opfile"
-				+ " WHERE" 
-				+ " tipovia = ?  " 			); 
-	}
-
-	private void closeOpfile_tipoviaStmt() 
-	throws SQLException{
-		if ( opfile_tipoviaStmt != null ) { 
-			opfile_tipoviaStmt.close();
-			opfile_tipoviaStmt = null;	
-		}
-	}
-		
 	private PreparedStatement jtipviaStmt = null;
 		
 	private void initJtipviaStmt() 
@@ -45462,6 +46545,40 @@ public class AbstractCtsqlDB {
 		if ( jtipviaStmt != null ) { 
 			jtipviaStmt.close();
 			jtipviaStmt = null;	
+		}
+	}
+		
+	private PreparedStatement opfile_tipoviaStmt = null;
+		
+	private void initOpfile_tipoviaStmt() 
+	throws SQLException{
+		this.opfile_tipoviaStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",apellido1" 
+				+ ",apellido2" 
+				+ ",nombre" 
+				+ ",tipovia" 
+				+ ",nomvia" 
+				+ ",numero" 
+				+ ",otrdir" 
+				+ ",codpos" 
+				+ ",localidad" 
+				+ ",provincia" 
+				+ ",importe" 
+				+ ",retencion" 
+				+ ",segsocial" 
+				+ ",fecnac" 
+				+ " FROM opfile"
+				+ " WHERE" 
+				+ " tipovia = ?  " 			); 
+	}
+
+	private void closeOpfile_tipoviaStmt() 
+	throws SQLException{
+		if ( opfile_tipoviaStmt != null ) { 
+			opfile_tipoviaStmt.close();
+			opfile_tipoviaStmt = null;	
 		}
 	}
 		
@@ -45658,31 +46775,6 @@ public class AbstractCtsqlDB {
 		}
 		
 		/**
-		 * Visit Opfile that're children of this Tipovia. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitOpfile_tipovia(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( opfile_tipoviaStmt == null )
-					 initOpfile_tipoviaStmt();
-				
-				opfile_tipoviaStmt.setString(1, this.getCdg()); 
-				rs = opfile_tipoviaStmt.executeQuery();
-				Opfile opfile = new Opfile(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitOpfile_tipovia(opfile, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		
-		/**
 		 * Visit Httrabajador that're children of this Tipovia. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
@@ -45699,6 +46791,31 @@ public class AbstractCtsqlDB {
 				Httrabajador httrabajador = new Httrabajador(rs); 
 				while ( rs.next() ) {
 					ctsqlDBVisitor.visitJtipvia(httrabajador, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Opfile that're children of this Tipovia. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitOpfile_tipovia(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( opfile_tipoviaStmt == null )
+					 initOpfile_tipoviaStmt();
+				
+				opfile_tipoviaStmt.setString(1, this.getCdg()); 
+				rs = opfile_tipoviaStmt.executeQuery();
+				Opfile opfile = new Opfile(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitOpfile_tipovia(opfile, this);
 				}
 			}
 			finally {
@@ -45735,809 +46852,6 @@ public class AbstractCtsqlDB {
 	
 
 	
-
-
-	/**
-	 * Nszdcpr
-	 * 
-	 */
-	public class Nszdcpr {
-		
-		private ResultSet rs;
-		
-		protected Nszdcpr (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
-		
-		/**
-		 * $column.remarks
-		 * @return the column 'sdc0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSdc0()
-		throws SQLException {
-			return rs.getString(1);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'sdc1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSdc1()
-		throws SQLException {
-			return rs.getString(2);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc0()
-		throws SQLException {
-			return rs.getBigDecimal(3);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc1()
-		throws SQLException {
-			return rs.getInt(4);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc2()
-		throws SQLException {
-			return rs.getInt(5);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc3' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc3()
-		throws SQLException {
-			return rs.getInt(6);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc4' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc4()
-		throws SQLException {
-			return rs.getBigDecimal(7);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc5' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc5()
-		throws SQLException {
-			return rs.getInt(8);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc6' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc6()
-		throws SQLException {
-			return rs.getBigDecimal(9);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc7' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc7()
-		throws SQLException {
-			return rs.getBigDecimal(10);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc8' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc8()
-		throws SQLException {
-			return rs.getBigDecimal(11);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc9' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc9()
-		throws SQLException {
-			return rs.getBigDecimal(12);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc10' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc10()
-		throws SQLException {
-			return rs.getBigDecimal(13);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc11' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc11()
-		throws SQLException {
-			return rs.getBigDecimal(14);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc12' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc12()
-		throws SQLException {
-			return rs.getBigDecimal(15);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc13' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc13()
-		throws SQLException {
-			return rs.getBigDecimal(16);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc14' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc14()
-		throws SQLException {
-			return rs.getBigDecimal(17);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc15' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc15()
-		throws SQLException {
-			return rs.getBigDecimal(18);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc16' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc16()
-		throws SQLException {
-			return rs.getBigDecimal(19);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc17' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc17()
-		throws SQLException {
-			return rs.getBigDecimal(20);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc18' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc18()
-		throws SQLException {
-			return rs.getBigDecimal(21);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc19' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc19()
-		throws SQLException {
-			return rs.getBigDecimal(22);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc20' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc20()
-		throws SQLException {
-			return rs.getBigDecimal(23);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc21' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc21()
-		throws SQLException {
-			return rs.getBigDecimal(24);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc22' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc22()
-		throws SQLException {
-			return rs.getBigDecimal(25);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc23' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc23()
-		throws SQLException {
-			return rs.getBigDecimal(26);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc24' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc24()
-		throws SQLException {
-			return rs.getBigDecimal(27);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc25' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc25()
-		throws SQLException {
-			return rs.getBigDecimal(28);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc26' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc26()
-		throws SQLException {
-			return rs.getBigDecimal(29);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc27' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc27()
-		throws SQLException {
-			return rs.getBigDecimal(30);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc28' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc28()
-		throws SQLException {
-			return rs.getBigDecimal(31);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc29' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc29()
-		throws SQLException {
-			return rs.getBigDecimal(32);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc30' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc30()
-		throws SQLException {
-			return rs.getBigDecimal(33);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc31' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc31()
-		throws SQLException {
-			return rs.getBigDecimal(34);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc32' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc32()
-		throws SQLException {
-			return rs.getBigDecimal(35);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc33' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc33()
-		throws SQLException {
-			return rs.getBigDecimal(36);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc34' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc34()
-		throws SQLException {
-			return rs.getInt(37);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc35' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc35()
-		throws SQLException {
-			return rs.getInt(38);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc36' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc36()
-		throws SQLException {
-			return rs.getInt(39);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc37' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc37()
-		throws SQLException {
-			return rs.getInt(40);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc38' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc38()
-		throws SQLException {
-			return rs.getInt(41);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc39' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc39()
-		throws SQLException {
-			return rs.getInt(42);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc40' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc40()
-		throws SQLException {
-			return rs.getInt(43);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc41' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc41()
-		throws SQLException {
-			return rs.getInt(44);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc42' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc42()
-		throws SQLException {
-			return rs.getInt(45);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc43' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc43()
-		throws SQLException {
-			return rs.getInt(46);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc44' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc44()
-		throws SQLException {
-			return rs.getInt(47);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc45' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc45()
-		throws SQLException {
-			return rs.getInt(48);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc46' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc46()
-		throws SQLException {
-			return rs.getInt(49);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc47' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc47()
-		throws SQLException {
-			return rs.getInt(50);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc48' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc48()
-		throws SQLException {
-			return rs.getInt(51);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc49' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc49()
-		throws SQLException {
-			return rs.getInt(52);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc50' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc50()
-		throws SQLException {
-			return rs.getInt(53);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc51' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc51()
-		throws SQLException {
-			return rs.getInt(54);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc52' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc52()
-		throws SQLException {
-			return rs.getInt(55);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc53' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc53()
-		throws SQLException {
-			return rs.getInt(56);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc54' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc54()
-		throws SQLException {
-			return rs.getInt(57);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc55' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc55()
-		throws SQLException {
-			return rs.getInt(58);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc56' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc56()
-		throws SQLException {
-			return rs.getInt(59);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc57' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc57()
-		throws SQLException {
-			return rs.getInt(60);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc58' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc58()
-		throws SQLException {
-			return rs.getInt(61);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc59' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc59()
-		throws SQLException {
-			return rs.getInt(62);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc60' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc60()
-		throws SQLException {
-			return rs.getInt(63);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc61' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc61()
-		throws SQLException {
-			return rs.getInt(64);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc62' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc62()
-		throws SQLException {
-			return rs.getInt(65);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc63' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc63()
-		throws SQLException {
-			return rs.getInt(66);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc64' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc64()
-		throws SQLException {
-			return rs.getBigDecimal(67);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc65' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc65()
-		throws SQLException {
-			return rs.getInt(68);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc66' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc66()
-		throws SQLException {
-			return rs.getInt(69);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc67' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNdc67()
-		throws SQLException {
-			return rs.getBigDecimal(70);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc68' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc68()
-		throws SQLException {
-			return rs.getInt(71);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc69' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc69()
-		throws SQLException {
-			return rs.getInt(72);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc70' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc70()
-		throws SQLException {
-			return rs.getInt(73);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc71' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc71()
-		throws SQLException {
-			return rs.getInt(74);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc72' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc72()
-		throws SQLException {
-			return rs.getInt(75);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc73' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc73()
-		throws SQLException {
-			return rs.getInt(76);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc74' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc74()
-		throws SQLException {
-			return rs.getInt(77);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ndc75' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNdc75()
-		throws SQLException {
-			return rs.getInt(78);
-		}
-
-
-	}
-	
-
-	
-		
-	private PreparedStatement rel_tra_contStmt = null;
-		
-	private void initRel_tra_contStmt() 
-	throws SQLException{
-		this.rel_tra_contStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",fecini" 
-				+ ",fecfin" 
-				+ ",fecant" 
-				+ ",ctacar" 
-				+ ",profesion" 
-				+ ",codcon" 
-				+ ",codcat" 
-				+ ",nivel" 
-				+ ",descat" 
-				+ ",codbas" 
-				+ ",codepi" 
-				+ ",irpf" 
-				+ ",cno" 
-				+ ",procot" 
-				+ ",proret" 
-				+ ",nummat" 
-				+ ",codcont" 
-				+ ",codtc2" 
-				+ ",destc2" 
-				+ ",fecinicont" 
-				+ ",fecfincont" 
-				+ ",diascont" 
-				+ ",autorizacion" 
-				+ ",fecaut" 
-				+ ",codent" 
-				+ ",codsuc" 
-				+ ",numcta" 
-				+ ",plunumaut" 
-				+ ",plufecaut" 
-				+ ",pluprcmin" 
-				+ ",pluprcmax" 
-				+ ",coered" 
-				+ ",semana" 
-				+ ",semanatp" 
-				+ ",cantp" 
-				+ ",baseant" 
-				+ ",indalt" 
-				+ ",inddtoit" 
-				+ ",inddtootr" 
-				+ ",codpct" 
-				+ ",indtp" 
-				+ ",indirpf" 
-				+ ",concol" 
-				+ ",indactcon" 
-				+ ",especial" 
-				+ ",fecnew" 
-				+ ",hornew" 
-				+ ",fecmod" 
-				+ ",hormod" 
-				+ ",dc" 
-				+ ",historico" 
-				+ ",indceutamelilla" 
-				+ ",colectivo" 
-				+ ",relacion" 
-				+ ",ocupacion" 
-				+ ",ocupacion2009" 
-				+ ",tipotp" 
-				+ ",diastp" 
-				+ ",guardalegal" 
-				+ ",iban" 
-				+ " FROM trabajo"
-				+ " WHERE" 
-				+ " codcont = ?  " 			); 
-	}
-
-	private void closeRel_tra_contStmt() 
-	throws SQLException{
-		if ( rel_tra_contStmt != null ) { 
-			rel_tra_contStmt.close();
-			rel_tra_contStmt = null;	
-		}
-	}
 		
 	private PreparedStatement jcontratoStmt = null;
 		
@@ -46764,31 +47078,6 @@ public class AbstractCtsqlDB {
 
 		
 		/**
-		 * Visit Trabajo that're children of this Tipocont. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitRel_tra_cont(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( rel_tra_contStmt == null )
-					 initRel_tra_contStmt();
-				
-				rel_tra_contStmt.setString(1, this.getCdg()); 
-				rs = rel_tra_contStmt.executeQuery();
-				Trabajo trabajo = new Trabajo(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitRel_tra_cont(trabajo, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		
-		/**
 		 * Visit Httrabajador that're children of this Tipocont. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
@@ -46817,47 +47106,6 @@ public class AbstractCtsqlDB {
 
 	
 
-	private PreparedStatement _loc_art_lerStmt = null;
-		
-	private void initLoc_art_lerStmt() 
-	throws SQLException{
-		this._loc_art_lerStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",descripcion" 
-				+ ",descripcorta" 
-				+ " FROM colectivos"
-				+ " WHERE" 
-				+ " cdg = ?  " 			); 
-	}
-
-	private void closeLoc_art_lerStmt() 
-	throws SQLException{
-		if ( _loc_art_lerStmt != null ) { 
-			_loc_art_lerStmt.close();
-			_loc_art_lerStmt = null;	
-		}
-	}
-	private PreparedStatement _tua_art_lerStmt = null;
-		
-	private void initTua_art_lerStmt() 
-	throws SQLException{
-		this._tua_art_lerStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",descripcion" 
-				+ " FROM tipaut"
-				+ " WHERE" 
-				+ " cdg = ?  " 			); 
-	}
-
-	private void closeTua_art_lerStmt() 
-	throws SQLException{
-		if ( _tua_art_lerStmt != null ) { 
-			_tua_art_lerStmt.close();
-			_tua_art_lerStmt = null;	
-		}
-	}
 	private PreparedStatement _noc_art_lerStmt = null;
 		
 	private void initNoc_art_lerStmt() 
@@ -46921,33 +47169,6 @@ public class AbstractCtsqlDB {
 			_ipe_art_lerStmt = null;	
 		}
 	}
-	private PreparedStatement _tnoc_art_lerStmt = null;
-		
-	private void initTnoc_art_lerStmt() 
-	throws SQLException{
-		this._tnoc_art_lerStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "cdg" 
-				+ ",descripcion" 
-				+ ",codpct" 
-				+ ",desemple" 
-				+ ",mujersub" 
-				+ ",incaread" 
-				+ ",primertra" 
-				+ ",gradomin" 
-				+ ",excsocial" 
-				+ " FROM tipocont"
-				+ " WHERE" 
-				+ " cdg = ?  " 			); 
-	}
-
-	private void closeTnoc_art_lerStmt() 
-	throws SQLException{
-		if ( _tnoc_art_lerStmt != null ) { 
-			_tnoc_art_lerStmt.close();
-			_tnoc_art_lerStmt = null;	
-		}
-	}
 	private PreparedStatement _2ct_art_lerStmt = null;
 		
 	private void init2ct_art_lerStmt() 
@@ -46989,30 +47210,6 @@ public class AbstractCtsqlDB {
 		if ( _tne_art_lerStmt != null ) { 
 			_tne_art_lerStmt.close();
 			_tne_art_lerStmt = null;	
-		}
-	}
-	private PreparedStatement _cus_art_lerStmt = null;
-		
-	private void initCus_art_lerStmt() 
-	throws SQLException{
-		this._cus_art_lerStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "codent" 
-				+ ",cdg" 
-				+ ",domsuc" 
-				+ ",munsuc" 
-				+ ",cpsuc" 
-				+ ",bic" 
-				+ " FROM sucursal"
-				+ " WHERE" 
-				+ " codent = ?  "  + "AND" 				+ " cdg = ?  " 			); 
-	}
-
-	private void closeCus_art_lerStmt() 
-	throws SQLException{
-		if ( _cus_art_lerStmt != null ) { 
-			_cus_art_lerStmt.close();
-			_cus_art_lerStmt = null;	
 		}
 	}
 	private PreparedStatement _tcp_art_lerStmt = null;
@@ -47063,6 +47260,11 @@ public class AbstractCtsqlDB {
 				+ ",indgrupo" 
 				+ ",pariente" 
 				+ ",noirpf" 
+				+ ",nosegsoc" 
+				+ ",jubiladoactivo" 
+				+ ",certificado" 
+				+ ",familiar" 
+				+ ",noresidente" 
 				+ " FROM emprper"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -47073,6 +47275,47 @@ public class AbstractCtsqlDB {
 		if ( _reprpme_ojabartStmt != null ) { 
 			_reprpme_ojabartStmt.close();
 			_reprpme_ojabartStmt = null;	
+		}
+	}
+	private PreparedStatement _tua_art_lerStmt = null;
+		
+	private void initTua_art_lerStmt() 
+	throws SQLException{
+		this._tua_art_lerStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM tipaut"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeTua_art_lerStmt() 
+	throws SQLException{
+		if ( _tua_art_lerStmt != null ) { 
+			_tua_art_lerStmt.close();
+			_tua_art_lerStmt = null;	
+		}
+	}
+	private PreparedStatement _loc_art_lerStmt = null;
+		
+	private void initLoc_art_lerStmt() 
+	throws SQLException{
+		this._loc_art_lerStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",descripcorta" 
+				+ " FROM colectivos"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeLoc_art_lerStmt() 
+	throws SQLException{
+		if ( _loc_art_lerStmt != null ) { 
+			_loc_art_lerStmt.close();
+			_loc_art_lerStmt = null;	
 		}
 	}
 
@@ -47189,7 +47432,7 @@ public class AbstractCtsqlDB {
 			return rs.getString(11);
 		}
 		/**
-		 * Epigrafe
+		 * Epigrafe Accidentes de Trabajo
 		 * @return the column 'codepi' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -47252,13 +47495,22 @@ public class AbstractCtsqlDB {
 			return rs.getString(18);
 		}
 		/**
+		 * Descripcion contrato interno
+		 * @return the column 'descont' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getDescont()
+		throws SQLException {
+			return rs.getString(19);
+		}
+		/**
 		 * Tipo Contrato TC2
 		 * @return the column 'codtc2' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
 		public String getCodtc2()
 		throws SQLException {
-			return rs.getString(19);
+			return rs.getString(20);
 		}
 		/**
 		 * Descripcion Contrato TC2
@@ -47267,7 +47519,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getDestc2()
 		throws SQLException {
-			return rs.getString(20);
+			return rs.getString(21);
 		}
 		/**
 		 * Fecha Inicio Contrato
@@ -47276,7 +47528,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFecinicont()
 		throws SQLException {
-			return rs.getDate(21);
+			return rs.getDate(22);
 		}
 		/**
 		 * Fecha Fin Contrato
@@ -47285,7 +47537,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFecfincont()
 		throws SQLException {
-			return rs.getDate(22);
+			return rs.getDate(23);
 		}
 		/**
 		 * Duracion Contrato (Dias)
@@ -47294,7 +47546,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDiascont()
 		throws SQLException {
-			return rs.getInt(23);
+			return rs.getInt(24);
 		}
 		/**
 		 * Autorización para trabajar
@@ -47303,7 +47555,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getAutorizacion()
 		throws SQLException {
-			return rs.getString(24);
+			return rs.getString(25);
 		}
 		/**
 		 * Fecha autorización
@@ -47312,7 +47564,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFecaut()
 		throws SQLException {
-			return rs.getDate(25);
+			return rs.getDate(26);
 		}
 		/**
 		 * Entidad Bancaria
@@ -47321,7 +47573,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getCodent()
 		throws SQLException {
-			return rs.getString(26);
+			return rs.getString(27);
 		}
 		/**
 		 * Sucursal Bancaria
@@ -47330,7 +47582,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getCodsuc()
 		throws SQLException {
-			return rs.getString(27);
+			return rs.getString(28);
 		}
 		/**
 		 * Numero Cuenta Bancaria
@@ -47339,7 +47591,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getNumcta()
 		throws SQLException {
-			return rs.getString(28);
+			return rs.getString(29);
 		}
 		/**
 		 * Numero de Autorizacion Pluriempleo
@@ -47348,7 +47600,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getPlunumaut()
 		throws SQLException {
-			return rs.getString(29);
+			return rs.getString(30);
 		}
 		/**
 		 * Fecha Autorizacion Pluriempleo
@@ -47357,7 +47609,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getPlufecaut()
 		throws SQLException {
-			return rs.getDate(30);
+			return rs.getDate(31);
 		}
 		/**
 		 * Pluriempleo: % sobre Tope Minimo Cotizacion
@@ -47366,7 +47618,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getPluprcmin()
 		throws SQLException {
-			return rs.getBigDecimal(31);
+			return rs.getBigDecimal(32);
 		}
 		/**
 		 * Pluriempleo: % sobre Tope Maximo Cotizacion
@@ -47375,7 +47627,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getPluprcmax()
 		throws SQLException {
-			return rs.getBigDecimal(32);
+			return rs.getBigDecimal(33);
 		}
 		/**
 		 * Coeficiente Reductor Salarios
@@ -47384,7 +47636,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getCoered()
 		throws SQLException {
-			return rs.getBigDecimal(33);
+			return rs.getBigDecimal(34);
 		}
 		/**
 		 * Minutos Jornada Semanal Real
@@ -47393,7 +47645,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getSemana()
 		throws SQLException {
-			return rs.getInt(34);
+			return rs.getInt(35);
 		}
 		/**
 		 * Minutos Jornada Semanal Tiempo Parcial
@@ -47402,7 +47654,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getSemanatp()
 		throws SQLException {
-			return rs.getInt(35);
+			return rs.getInt(36);
 		}
 		/**
 		 * Cantidad Minutos/Dias Cotizacion Tiempo Parcial
@@ -47411,7 +47663,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getCantp()
 		throws SQLException {
-			return rs.getInt(36);
+			return rs.getInt(37);
 		}
 		/**
 		 * Base Calculo Antiguedad
@@ -47420,7 +47672,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBaseant()
 		throws SQLException {
-			return rs.getBigDecimal(37);
+			return rs.getBigDecimal(38);
 		}
 		/**
 		 * Toma Fecha Alta como Fecha Antiguedad para Pagas
@@ -47429,7 +47681,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getIndalt()
 		throws SQLException {
-			return rs.getString(38);
+			return rs.getString(39);
 		}
 		/**
 		 * Descontar Dias IT
@@ -47438,7 +47690,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getInddtoit()
 		throws SQLException {
-			return rs.getString(39);
+			return rs.getString(40);
 		}
 		/**
 		 * Descontar Dias Incidencias
@@ -47447,7 +47699,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getInddtootr()
 		throws SQLException {
-			return rs.getString(40);
+			return rs.getString(41);
 		}
 		/**
 		 * Asimilado a % Cotizacion
@@ -47456,7 +47708,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getCodpct()
 		throws SQLException {
-			return rs.getString(41);
+			return rs.getString(42);
 		}
 		/**
 		 * Indicador Tiempo de Contrato
@@ -47465,7 +47717,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getIndtp()
 		throws SQLException {
-			return rs.getString(42);
+			return rs.getString(43);
 		}
 		/**
 		 * Indicador IRPF
@@ -47474,7 +47726,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getIndirpf()
 		throws SQLException {
-			return rs.getString(43);
+			return rs.getString(44);
 		}
 		/**
 		 * Codigo Convenio Colectivo TC2
@@ -47483,7 +47735,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getConcol()
 		throws SQLException {
-			return rs.getString(44);
+			return rs.getString(45);
 		}
 		/**
 		 * Actualizar Percepciones segun Convenio
@@ -47492,7 +47744,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getIndactcon()
 		throws SQLException {
-			return rs.getString(45);
+			return rs.getString(46);
 		}
 		/**
 		 * Marca Trabajador Especial
@@ -47501,7 +47753,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getEspecial()
 		throws SQLException {
-			return rs.getString(46);
+			return rs.getString(47);
 		}
 		/**
 		 * Fecha Creacion Fila
@@ -47510,7 +47762,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFecnew()
 		throws SQLException {
-			return rs.getDate(47);
+			return rs.getDate(48);
 		}
 		/**
 		 * Hora Creacion Fila
@@ -47519,7 +47771,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Time getHornew()
 		throws SQLException {
-			return rs.getTime(48);
+			return rs.getTime(49);
 		}
 		/**
 		 * Fecha Modificacion Fila
@@ -47528,7 +47780,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFecmod()
 		throws SQLException {
-			return rs.getDate(49);
+			return rs.getDate(50);
 		}
 		/**
 		 * Hora Modificacion Fila
@@ -47537,7 +47789,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Time getHormod()
 		throws SQLException {
-			return rs.getTime(50);
+			return rs.getTime(51);
 		}
 		/**
 		 * Digito de Control Cuenta Bancaria
@@ -47546,7 +47798,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getDc()
 		throws SQLException {
-			return rs.getString(51);
+			return rs.getString(52);
 		}
 		/**
 		 * Historico de Modificaciones
@@ -47555,7 +47807,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getHistorico()
 		throws SQLException {
-			return rs.getString(52);
+			return rs.getString(53);
 		}
 		/**
 		 * Res. y Per. Ceuta Melilla
@@ -47564,7 +47816,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getIndceutamelilla()
 		throws SQLException {
-			return rs.getString(53);
+			return rs.getString(54);
 		}
 		/**
 		 * Colectivo
@@ -47573,7 +47825,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getColectivo()
 		throws SQLException {
-			return rs.getString(54);
+			return rs.getString(55);
 		}
 		/**
 		 * Relación Laboral
@@ -47582,7 +47834,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getRelacion()
 		throws SQLException {
-			return rs.getString(55);
+			return rs.getString(56);
 		}
 		/**
 		 * Ocupación 1993 Rev.1
@@ -47591,7 +47843,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getOcupacion()
 		throws SQLException {
-			return rs.getString(56);
+			return rs.getString(57);
 		}
 		/**
 		 * Ocupación 2009
@@ -47600,7 +47852,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getOcupacion2009()
 		throws SQLException {
-			return rs.getString(57);
+			return rs.getString(58);
 		}
 		/**
 		 * Indicador de tipo de tiempo de contrato
@@ -47609,7 +47861,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getTipotp()
 		throws SQLException {
-			return rs.getString(58);
+			return rs.getString(59);
 		}
 		/**
 		 * Dias de tiempo de contrato
@@ -47618,7 +47870,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDiastp()
 		throws SQLException {
-			return rs.getInt(59);
+			return rs.getInt(60);
 		}
 		/**
 		 * Reducción jornada guarda legal
@@ -47627,7 +47879,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getGuardalegal()
 		throws SQLException {
-			return rs.getString(60);
+			return rs.getString(61);
 		}
 		/**
 		 * IBAN
@@ -47636,57 +47888,18 @@ public class AbstractCtsqlDB {
 		 */
 		public String getIban()
 		throws SQLException {
-			return rs.getString(61);
+			return rs.getString(62);
+		}
+		/**
+		 * Fecha fin periodo de prueba
+		 * @return the column 'fecfinperiprue' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFecfinperiprue()
+		throws SQLException {
+			return rs.getDate(63);
 		}
 
-		/**
-		 * Visit Colectivos that's parent of this Trabajo. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitRel_tra_col(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( _loc_art_lerStmt == null )
-					 initLoc_art_lerStmt();
-				
-				_loc_art_lerStmt.setString(1, this.getColectivo()); 
-				rs = _loc_art_lerStmt.executeQuery();
-				Colectivos colectivos = new Colectivos(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitRel_tra_col(this, colectivos);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		/**
-		 * Visit Tipaut that's parent of this Trabajo. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitRel_tra_aut(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( _tua_art_lerStmt == null )
-					 initTua_art_lerStmt();
-				
-				_tua_art_lerStmt.setString(1, this.getAutorizacion()); 
-				rs = _tua_art_lerStmt.executeQuery();
-				Tipaut tipaut = new Tipaut(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitRel_tra_aut(this, tipaut);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
 		/**
 		 * Visit Convenio that's parent of this Trabajo. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
@@ -47760,30 +47973,6 @@ public class AbstractCtsqlDB {
 			}
 		}
 		/**
-		 * Visit Tipocont that's parent of this Trabajo. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitRel_tra_cont(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( _tnoc_art_lerStmt == null )
-					 initTnoc_art_lerStmt();
-				
-				_tnoc_art_lerStmt.setString(1, this.getCodcont()); 
-				rs = _tnoc_art_lerStmt.executeQuery();
-				Tipocont tipocont = new Tipocont(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitRel_tra_cont(this, tipocont);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		/**
 		 * Visit Tipcotc2 that's parent of this Trabajo. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
@@ -47824,31 +48013,6 @@ public class AbstractCtsqlDB {
 				Entidad entidad = new Entidad(rs); 
 				while ( rs.next() ) {
 					ctsqlDBVisitor.visitRel_tra_ent(this, entidad);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		/**
-		 * Visit Sucursal that's parent of this Trabajo. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitRel_tra_suc(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( _cus_art_lerStmt == null )
-					 initCus_art_lerStmt();
-				
-				_cus_art_lerStmt.setString(1, this.getCodent()); 
-				_cus_art_lerStmt.setString(2, this.getCodsuc()); 
-				rs = _cus_art_lerStmt.executeQuery();
-				Sucursal sucursal = new Sucursal(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitRel_tra_suc(this, sucursal);
 				}
 			}
 			finally {
@@ -47904,6 +48068,54 @@ public class AbstractCtsqlDB {
 					rs.close();
 			}
 		}
+		/**
+		 * Visit Tipaut that's parent of this Trabajo. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitRel_tra_aut(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _tua_art_lerStmt == null )
+					 initTua_art_lerStmt();
+				
+				_tua_art_lerStmt.setString(1, this.getAutorizacion()); 
+				rs = _tua_art_lerStmt.executeQuery();
+				Tipaut tipaut = new Tipaut(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitRel_tra_aut(this, tipaut);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		/**
+		 * Visit Colectivos that's parent of this Trabajo. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitRel_tra_col(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _loc_art_lerStmt == null )
+					 initLoc_art_lerStmt();
+				
+				_loc_art_lerStmt.setString(1, this.getColectivo()); 
+				rs = _loc_art_lerStmt.executeQuery();
+				Colectivos colectivos = new Colectivos(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitRel_tra_col(this, colectivos);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
 
 	}
 	
@@ -47918,6 +48130,7 @@ public class AbstractCtsqlDB {
 				"SELECT "
 				+ "codper" 
 				+ ",fecbaj" 
+				+ ",codcausa" 
 				+ ",causa" 
 				+ ",vacfecini" 
 				+ ",vacimporte" 
@@ -48046,6 +48259,125 @@ public class AbstractCtsqlDB {
 
 	
 		
+	private PreparedStatement rel_cli_grptrabajoStmt = null;
+		
+	private void initRel_cli_grptrabajoStmt() 
+	throws SQLException{
+		this.rel_cli_grptrabajoStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",coddlg" 
+				+ ",descripcion" 
+				+ ",alias" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",tipovia" 
+				+ ",nomvia" 
+				+ ",numero" 
+				+ ",otrdir" 
+				+ ",codpos" 
+				+ ",localidad" 
+				+ ",provincia" 
+				+ ",persona" 
+				+ ",telefono" 
+				+ ",telefono2" 
+				+ ",telefono3" 
+				+ ",fax" 
+				+ ",email" 
+				+ ",inddoc" 
+				+ ",paiemi" 
+				+ ",numdoc" 
+				+ ",tipemp" 
+				+ ",obscli" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",inactivo" 
+				+ ",indcal" 
+				+ ",indnom" 
+				+ ",indcoste" 
+				+ ",divisa" 
+				+ ",soloases" 
+				+ ",envioss" 
+				+ ",grupotrabajo" 
+				+ " FROM cliente"
+				+ " WHERE" 
+				+ " grupotrabajo = ?  " 			); 
+	}
+
+	private void closeRel_cli_grptrabajoStmt() 
+	throws SQLException{
+		if ( rel_cli_grptrabajoStmt != null ) { 
+			rel_cli_grptrabajoStmt.close();
+			rel_cli_grptrabajoStmt = null;	
+		}
+	}
+
+
+	/**
+	 * Grupotrabajo
+	 * 
+	 */
+	public class Grupotrabajo {
+		
+		private ResultSet rs;
+		
+		protected Grupotrabajo (ResultSet rs) 
+		throws SQLException {
+			this.rs =rs;
+		}
+		
+		/**
+		 * Código
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCdg()
+		throws SQLException {
+			return rs.getString(1);
+		}
+		/**
+		 * Descripción
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getDescripcion()
+		throws SQLException {
+			return rs.getString(2);
+		}
+
+
+		
+		/**
+		 * Visit Cliente that're children of this Grupotrabajo. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitRel_cli_grptrabajo(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( rel_cli_grptrabajoStmt == null )
+					 initRel_cli_grptrabajoStmt();
+				
+				rel_cli_grptrabajoStmt.setString(1, this.getCdg()); 
+				rs = rel_cli_grptrabajoStmt.executeQuery();
+				Cliente cliente = new Cliente(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitRel_cli_grptrabajo(cliente, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+	}
+	
+
+	
+		
 	private PreparedStatement rel_tra_colStmt = null;
 		
 	private void initRel_tra_colStmt() 
@@ -48070,6 +48402,7 @@ public class AbstractCtsqlDB {
 				+ ",proret" 
 				+ ",nummat" 
 				+ ",codcont" 
+				+ ",descont" 
 				+ ",codtc2" 
 				+ ",destc2" 
 				+ ",fecinicont" 
@@ -48113,6 +48446,7 @@ public class AbstractCtsqlDB {
 				+ ",diastp" 
 				+ ",guardalegal" 
 				+ ",iban" 
+				+ ",fecfinperiprue" 
 				+ " FROM trabajo"
 				+ " WHERE" 
 				+ " colectivo = ?  " 			); 
@@ -48194,117 +48528,6 @@ public class AbstractCtsqlDB {
 					rs.close();
 			}
 		}
-	}
-	
-
-	
-
-
-	/**
-	 * Nszboni
-	 * 
-	 */
-	public class Nszboni {
-		
-		private ResultSet rs;
-		
-		protected Nszboni (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
-		
-		/**
-		 * $column.remarks
-		 * @return the column 'stb0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getStb0()
-		throws SQLException {
-			return rs.getString(1);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'stb1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getStb1()
-		throws SQLException {
-			return rs.getString(2);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'stb2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getStb2()
-		throws SQLException {
-			return rs.getString(3);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'stb3' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getStb3()
-		throws SQLException {
-			return rs.getString(4);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'stb4' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getStb4()
-		throws SQLException {
-			return rs.getString(5);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntb0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNtb0()
-		throws SQLException {
-			return rs.getBigDecimal(6);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntb1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNtb1()
-		throws SQLException {
-			return rs.getBigDecimal(7);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntb2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNtb2()
-		throws SQLException {
-			return rs.getBigDecimal(8);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntb3' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNtb3()
-		throws SQLException {
-			return rs.getBigDecimal(9);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntb4' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNtb4()
-		throws SQLException {
-			return rs.getBigDecimal(10);
-		}
-
-
 	}
 	
 
@@ -48470,6 +48693,9 @@ public class AbstractCtsqlDB {
 				+ ",cecon" 
 				+ ",modimpuesto" 
 				+ ",mod190" 
+				+ ",feciniportal" 
+				+ ",feccierrenomina" 
+				+ ",meseshistorico" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " codadm = ?  " 			); 
@@ -48480,6 +48706,42 @@ public class AbstractCtsqlDB {
 		if ( rel_emp_admStmt != null ) { 
 			rel_emp_admStmt.close();
 			rel_emp_admStmt = null;	
+		}
+	}
+		
+	private PreparedStatement impr190_admonStmt = null;
+		
+	private void initImpr190_admonStmt() 
+	throws SQLException{
+		this.impr190_admonStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",codemp" 
+				+ ",codadm" 
+				+ ",provincia" 
+				+ ",anio" 
+				+ ",num_percep" 
+				+ ",imp_percep" 
+				+ ",imp_retenc" 
+				+ ",fecha" 
+				+ ",disco" 
+				+ ",descuadrado" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",divisa" 
+				+ ",feccierre" 
+				+ " FROM impr190"
+				+ " WHERE" 
+				+ " codadm = ?  " 			); 
+	}
+
+	private void closeImpr190_admonStmt() 
+	throws SQLException{
+		if ( impr190_admonStmt != null ) { 
+			impr190_admonStmt.close();
+			impr190_admonStmt = null;	
 		}
 	}
 		
@@ -48515,8 +48777,12 @@ public class AbstractCtsqlDB {
 				+ ",preespper" 
 				+ ",preespimp" 
 				+ ",preespret" 
+				+ ",imgper" 
+				+ ",imgimp" 
+				+ ",imgret" 
 				+ ",liqtotal" 
 				+ ",fpago" 
+				+ ",iban" 
 				+ ",entidad" 
 				+ ",sucursal" 
 				+ ",dc" 
@@ -48527,12 +48793,14 @@ public class AbstractCtsqlDB {
 				+ ",fecmod" 
 				+ ",hormod" 
 				+ ",divisa" 
-				+ ",imgper" 
-				+ ",imgimp" 
-				+ ",imgret" 
 				+ ",modimpuesto" 
 				+ ",nrc" 
 				+ ",fecremimp" 
+				+ ",ibannrc" 
+				+ ",entidadnrc" 
+				+ ",sucursalnrc" 
+				+ ",dcnrc" 
+				+ ",cuentanrc" 
 				+ " FROM impr11x"
 				+ " WHERE" 
 				+ " codadm = ?  " 			); 
@@ -48546,11 +48814,60 @@ public class AbstractCtsqlDB {
 		}
 	}
 		
-	private PreparedStatement impr190_admonStmt = null;
+	private PreparedStatement impr216_admonStmt = null;
 		
-	private void initImpr190_admonStmt() 
+	private void initImpr216_admonStmt() 
 	throws SQLException{
-		this.impr190_admonStmt = ctsqlConnection.prepareStatement(
+		this.impr216_admonStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",tipo" 
+				+ ",codemp" 
+				+ ",codadm" 
+				+ ",provincia" 
+				+ ",anio" 
+				+ ",mes" 
+				+ ",numrent" 
+				+ ",imprent" 
+				+ ",retrent" 
+				+ ",numrentno" 
+				+ ",imprentno" 
+				+ ",totalant" 
+				+ ",total" 
+				+ ",modimpuesto" 
+				+ ",fpago" 
+				+ ",nrc" 
+				+ ",iban" 
+				+ ",entidad" 
+				+ ",sucursal" 
+				+ ",dc" 
+				+ ",cuenta" 
+				+ ",complementaria" 
+				+ ",justificante" 
+				+ ",fecha" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",divisa" 
+				+ " FROM impr216"
+				+ " WHERE" 
+				+ " codadm = ?  " 			); 
+	}
+
+	private void closeImpr216_admonStmt() 
+	throws SQLException{
+		if ( impr216_admonStmt != null ) { 
+			impr216_admonStmt.close();
+			impr216_admonStmt = null;	
+		}
+	}
+		
+	private PreparedStatement impr296_admonStmt = null;
+		
+	private void initImpr296_admonStmt() 
+	throws SQLException{
+		this.impr296_admonStmt = ctsqlConnection.prepareStatement(
 				"SELECT "
 				+ "cdg" 
 				+ ",codemp" 
@@ -48561,23 +48878,22 @@ public class AbstractCtsqlDB {
 				+ ",imp_percep" 
 				+ ",imp_retenc" 
 				+ ",fecha" 
-				+ ",disco" 
 				+ ",descuadrado" 
 				+ ",fecnew" 
 				+ ",hornew" 
 				+ ",fecmod" 
 				+ ",hormod" 
 				+ ",divisa" 
-				+ " FROM impr190"
+				+ " FROM impr296"
 				+ " WHERE" 
 				+ " codadm = ?  " 			); 
 	}
 
-	private void closeImpr190_admonStmt() 
+	private void closeImpr296_admonStmt() 
 	throws SQLException{
-		if ( impr190_admonStmt != null ) { 
-			impr190_admonStmt.close();
-			impr190_admonStmt = null;	
+		if ( impr296_admonStmt != null ) { 
+			impr296_admonStmt.close();
+			impr296_admonStmt = null;	
 		}
 	}
 
@@ -48642,6 +48958,31 @@ public class AbstractCtsqlDB {
 		}
 		
 		/**
+		 * Visit Impr190 that're children of this Admon. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitImpr190_admon(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( impr190_admonStmt == null )
+					 initImpr190_admonStmt();
+				
+				impr190_admonStmt.setString(1, this.getCdg()); 
+				rs = impr190_admonStmt.executeQuery();
+				Impr190 impr190 = new Impr190(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitImpr190_admon(impr190, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
 		 * Visit Impr11x that're children of this Admon. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
@@ -48667,22 +49008,47 @@ public class AbstractCtsqlDB {
 		}
 		
 		/**
-		 * Visit Impr190 that're children of this Admon. 
+		 * Visit Impr216 that're children of this Admon. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
 		 */
-		public void visitImpr190_admon(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		public void visitImpr216_admon(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 			ResultSet 			rs 	= null;
 			try {
 				
-				if ( impr190_admonStmt == null )
-					 initImpr190_admonStmt();
+				if ( impr216_admonStmt == null )
+					 initImpr216_admonStmt();
 				
-				impr190_admonStmt.setString(1, this.getCdg()); 
-				rs = impr190_admonStmt.executeQuery();
-				Impr190 impr190 = new Impr190(rs); 
+				impr216_admonStmt.setString(1, this.getCdg()); 
+				rs = impr216_admonStmt.executeQuery();
+				Impr216 impr216 = new Impr216(rs); 
 				while ( rs.next() ) {
-					ctsqlDBVisitor.visitImpr190_admon(impr190, this);
+					ctsqlDBVisitor.visitImpr216_admon(impr216, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Impr296 that're children of this Admon. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitImpr296_admon(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( impr296_admonStmt == null )
+					 initImpr296_admonStmt();
+				
+				impr296_admonStmt.setString(1, this.getCdg()); 
+				rs = impr296_admonStmt.executeQuery();
+				Impr296 impr296 = new Impr296(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitImpr296_admon(impr296, this);
 				}
 			}
 			finally {
@@ -48743,6 +49109,9 @@ public class AbstractCtsqlDB {
 				+ ",indcom" 
 				+ ",tipcom" 
 				+ ",dinesp" 
+				+ ",concepto" 
+				+ ",excinc" 
+				+ ",tipcot" 
 				+ " FROM nominadev"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -48806,6 +49175,11 @@ public class AbstractCtsqlDB {
 				+ ",indgrupo" 
 				+ ",pariente" 
 				+ ",noirpf" 
+				+ ",nosegsoc" 
+				+ ",jubiladoactivo" 
+				+ ",certificado" 
+				+ ",familiar" 
+				+ ",noresidente" 
 				+ " FROM emprper"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -49225,7 +49599,7 @@ public class AbstractCtsqlDB {
 			return rs.getBigDecimal(41);
 		}
 		/**
-		 * Base IRPF Dinararia
+		 * Base IRPF Dineraria
 		 * @return the column 'base_irpf' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -49306,13 +49680,22 @@ public class AbstractCtsqlDB {
 			return rs.getBigDecimal(50);
 		}
 		/**
+		 * Base ERE
+		 * @return the column 'base_ere' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getBase_ere()
+		throws SQLException {
+			return rs.getBigDecimal(51);
+		}
+		/**
 		 * Total 1
 		 * @return the column 'total_1' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
 		public BigDecimal getTotal_1()
 		throws SQLException {
-			return rs.getBigDecimal(51);
+			return rs.getBigDecimal(52);
 		}
 		/**
 		 * Grupo de Tarifa
@@ -49321,7 +49704,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getCodbas()
 		throws SQLException {
-			return rs.getString(52);
+			return rs.getString(53);
 		}
 		/**
 		 * Contingencias Generales
@@ -49330,7 +49713,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_cg()
 		throws SQLException {
-			return rs.getBigDecimal(53);
+			return rs.getBigDecimal(54);
 		}
 		/**
 		 * Accidentes Trabajo - Enfermedad Profesional
@@ -49339,7 +49722,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_acc()
 		throws SQLException {
-			return rs.getBigDecimal(54);
+			return rs.getBigDecimal(55);
 		}
 		/**
 		 * Porcentaje Contingencias Generales
@@ -49348,7 +49731,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getPrc_cg()
 		throws SQLException {
-			return rs.getBigDecimal(55);
+			return rs.getBigDecimal(56);
 		}
 		/**
 		 * Porcentaje Accidentes
@@ -49357,7 +49740,16 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getPrc_acc()
 		throws SQLException {
-			return rs.getBigDecimal(56);
+			return rs.getBigDecimal(57);
+		}
+		/**
+		 * Porcentaje FP
+		 * @return the column 'prc_fp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getPrc_fp()
+		throws SQLException {
+			return rs.getBigDecimal(58);
 		}
 		/**
 		 * Porcentaje Horas Extras Estructurales
@@ -49366,7 +49758,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getPrc_hex()
 		throws SQLException {
-			return rs.getBigDecimal(57);
+			return rs.getBigDecimal(59);
 		}
 		/**
 		 * Porcentaje Horas Extras NO Estructurales
@@ -49375,7 +49767,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getPrc_hexno()
 		throws SQLException {
-			return rs.getBigDecimal(58);
+			return rs.getBigDecimal(60);
 		}
 		/**
 		 * Importe Contingencias Comunes
@@ -49384,7 +49776,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_cg()
 		throws SQLException {
-			return rs.getBigDecimal(59);
+			return rs.getBigDecimal(61);
 		}
 		/**
 		 * Importe Accidentes Trabajo
@@ -49393,7 +49785,16 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_acc()
 		throws SQLException {
-			return rs.getBigDecimal(60);
+			return rs.getBigDecimal(62);
+		}
+		/**
+		 * Importe FP
+		 * @return the column 'importe_fp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getImporte_fp()
+		throws SQLException {
+			return rs.getBigDecimal(63);
 		}
 		/**
 		 * Importe Horas Extras Estructurales
@@ -49402,7 +49803,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_hex()
 		throws SQLException {
-			return rs.getBigDecimal(61);
+			return rs.getBigDecimal(64);
 		}
 		/**
 		 * Importe Horas Extras NO Estructurales
@@ -49411,7 +49812,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_hexno()
 		throws SQLException {
-			return rs.getBigDecimal(62);
+			return rs.getBigDecimal(65);
 		}
 		/**
 		 * Tope Minimo para C.G.
@@ -49420,7 +49821,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getMincg()
 		throws SQLException {
-			return rs.getBigDecimal(63);
+			return rs.getBigDecimal(66);
 		}
 		/**
 		 * Tope Maximo para C.G.
@@ -49429,7 +49830,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getMaxcg()
 		throws SQLException {
-			return rs.getBigDecimal(64);
+			return rs.getBigDecimal(67);
 		}
 		/**
 		 * Tope Minimo para Accidentes
@@ -49438,7 +49839,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getMinacc()
 		throws SQLException {
-			return rs.getBigDecimal(65);
+			return rs.getBigDecimal(68);
 		}
 		/**
 		 * Tope Maximo para Accidentes
@@ -49447,7 +49848,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getMaxacc()
 		throws SQLException {
-			return rs.getBigDecimal(66);
+			return rs.getBigDecimal(69);
 		}
 		/**
 		 * Cuota Total de la Emrpesa
@@ -49456,7 +49857,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getCuota_empresa()
 		throws SQLException {
-			return rs.getBigDecimal(67);
+			return rs.getBigDecimal(70);
 		}
 		/**
 		 * Accidentes Trabajo Sin Horas Extras
@@ -49465,7 +49866,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_acc_sin_hex()
 		throws SQLException {
-			return rs.getBigDecimal(68);
+			return rs.getBigDecimal(71);
 		}
 		/**
 		 * Importe Cuotas Deducciones
@@ -49474,7 +49875,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_cuotas()
 		throws SQLException {
-			return rs.getBigDecimal(69);
+			return rs.getBigDecimal(72);
 		}
 		/**
 		 * Porcentaje IRPF
@@ -49483,7 +49884,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getPrc_irpf()
 		throws SQLException {
-			return rs.getBigDecimal(70);
+			return rs.getBigDecimal(73);
 		}
 		/**
 		 * Importe IRPF
@@ -49492,7 +49893,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_irpf()
 		throws SQLException {
-			return rs.getBigDecimal(71);
+			return rs.getBigDecimal(74);
 		}
 		/**
 		 * Fecha Creacion Fila
@@ -49501,7 +49902,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFecnew()
 		throws SQLException {
-			return rs.getDate(72);
+			return rs.getDate(75);
 		}
 		/**
 		 * Hora Creacion Fila
@@ -49510,7 +49911,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Time getHornew()
 		throws SQLException {
-			return rs.getTime(73);
+			return rs.getTime(76);
 		}
 		/**
 		 * Fecha Modificacion Fila
@@ -49519,7 +49920,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFecmod()
 		throws SQLException {
-			return rs.getDate(74);
+			return rs.getDate(77);
 		}
 		/**
 		 * Hora Modificacion Fila
@@ -49528,7 +49929,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Time getHormod()
 		throws SQLException {
-			return rs.getTime(75);
+			return rs.getTime(78);
 		}
 		/**
 		 * Dias Trabajados
@@ -49537,7 +49938,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDiastrab()
 		throws SQLException {
-			return rs.getInt(76);
+			return rs.getInt(79);
 		}
 		/**
 		 * Dias Efectivos
@@ -49546,7 +49947,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDiasefec()
 		throws SQLException {
-			return rs.getInt(77);
+			return rs.getInt(80);
 		}
 		/**
 		 * Base Calculo Antiguedad
@@ -49555,7 +49956,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBaseant()
 		throws SQLException {
-			return rs.getBigDecimal(78);
+			return rs.getBigDecimal(81);
 		}
 		/**
 		 * Prorrateo Retribucion
@@ -49564,7 +49965,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getProret()
 		throws SQLException {
-			return rs.getString(79);
+			return rs.getString(82);
 		}
 		/**
 		 * Prorrateo Cotizacion
@@ -49573,7 +49974,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getProcot()
 		throws SQLException {
-			return rs.getString(80);
+			return rs.getString(83);
 		}
 		/**
 		 * Codigo Convenio
@@ -49582,7 +49983,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getCodcon()
 		throws SQLException {
-			return rs.getString(81);
+			return rs.getString(84);
 		}
 		/**
 		 * Asimilado a % Cotizacion
@@ -49591,7 +49992,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getCodpct()
 		throws SQLException {
-			return rs.getString(82);
+			return rs.getString(85);
 		}
 		/**
 		 * Fecha Cobro Real
@@ -49600,7 +50001,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFeccobreal()
 		throws SQLException {
-			return rs.getDate(83);
+			return rs.getDate(86);
 		}
 		/**
 		 * Tipo de divisa
@@ -49609,7 +50010,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getDivisa()
 		throws SQLException {
-			return rs.getString(84);
+			return rs.getString(87);
 		}
 		/**
 		 * Base Imponible IRPF de ejercicios anteriores
@@ -49618,7 +50019,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_irpf_ant()
 		throws SQLException {
-			return rs.getBigDecimal(85);
+			return rs.getBigDecimal(88);
 		}
 		/**
 		 * Importe de IRPF de ejercicios anteriores
@@ -49627,7 +50028,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_irpf_ant()
 		throws SQLException {
-			return rs.getBigDecimal(86);
+			return rs.getBigDecimal(89);
 		}
 		/**
 		 * Importe de cuotas S.S. de ejercicios anteriores
@@ -49636,7 +50037,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_cuotas_ant()
 		throws SQLException {
-			return rs.getBigDecimal(87);
+			return rs.getBigDecimal(90);
 		}
 		/**
 		 * Base de Contingencias Generales en Pesetas
@@ -49645,7 +50046,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_cg_pts()
 		throws SQLException {
-			return rs.getBigDecimal(88);
+			return rs.getBigDecimal(91);
 		}
 		/**
 		 * Base de Accidentes de Trabajo en Pesetas
@@ -49654,7 +50055,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_acc_pts()
 		throws SQLException {
-			return rs.getBigDecimal(89);
+			return rs.getBigDecimal(92);
 		}
 		/**
 		 * Base de Accidentes de Trabajo sin Horas Extras en Pesetas
@@ -49663,7 +50064,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_acc_sin_h_pts()
 		throws SQLException {
-			return rs.getBigDecimal(90);
+			return rs.getBigDecimal(93);
 		}
 		/**
 		 * Fecha visionado empresa
@@ -49672,7 +50073,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFvisione()
 		throws SQLException {
-			return rs.getDate(91);
+			return rs.getDate(94);
 		}
 		/**
 		 * Fecha visionado trabajador
@@ -49681,7 +50082,196 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFvisiont()
 		throws SQLException {
-			return rs.getDate(92);
+			return rs.getDate(95);
+		}
+		/**
+		 * Contingencias comunes ERE
+		 * @return the column 'base_con_ere' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getBase_con_ere()
+		throws SQLException {
+			return rs.getBigDecimal(96);
+		}
+		/**
+		 * Accidentes de trabajo ERE
+		 * @return the column 'base_acc_ere' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getBase_acc_ere()
+		throws SQLException {
+			return rs.getBigDecimal(97);
+		}
+		/**
+		 * Contingencias comunes ERE no aporta
+		 * @return the column 'base_con_ere_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getBase_con_ere_no()
+		throws SQLException {
+			return rs.getBigDecimal(98);
+		}
+		/**
+		 * Accidentes de trabajo ERE no aporta
+		 * @return the column 'base_acc_ere_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getBase_acc_ere_no()
+		throws SQLException {
+			return rs.getBigDecimal(99);
+		}
+		/**
+		 * Contingencias comunes sin ERE
+		 * @return the column 'base_con_ere_sin' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getBase_con_ere_sin()
+		throws SQLException {
+			return rs.getBigDecimal(100);
+		}
+		/**
+		 * Accidentes de trabajo sin ERE
+		 * @return the column 'base_acc_ere_sin' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getBase_acc_ere_sin()
+		throws SQLException {
+			return rs.getBigDecimal(101);
+		}
+		/**
+		 * Porcentaje contingencias generales empresa
+		 * @return the column 'prc_cg_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getPrc_cg_emp()
+		throws SQLException {
+			return rs.getBigDecimal(102);
+		}
+		/**
+		 * Porcentaje AT y EP empresa
+		 * @return the column 'prc_atep_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getPrc_atep_emp()
+		throws SQLException {
+			return rs.getBigDecimal(103);
+		}
+		/**
+		 * Porcentaje desempleo empresa
+		 * @return the column 'prc_desemp_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getPrc_desemp_emp()
+		throws SQLException {
+			return rs.getBigDecimal(104);
+		}
+		/**
+		 * Porcentaje FP empresa
+		 * @return the column 'prc_fp_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getPrc_fp_emp()
+		throws SQLException {
+			return rs.getBigDecimal(105);
+		}
+		/**
+		 * Porcentaje FOGASA empresa
+		 * @return the column 'prc_fogasa_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getPrc_fogasa_emp()
+		throws SQLException {
+			return rs.getBigDecimal(106);
+		}
+		/**
+		 * Porcentaje horas extras estructurales empresa
+		 * @return the column 'prc_hex_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getPrc_hex_emp()
+		throws SQLException {
+			return rs.getBigDecimal(107);
+		}
+		/**
+		 * Porcentaje horas extras NO estructurales empresa
+		 * @return the column 'prc_hexno_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getPrc_hexno_emp()
+		throws SQLException {
+			return rs.getBigDecimal(108);
+		}
+		/**
+		 * Importe contingencias comunes empresa
+		 * @return the column 'importe_cg_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getImporte_cg_emp()
+		throws SQLException {
+			return rs.getBigDecimal(109);
+		}
+		/**
+		 * Importe AT y EP empresa
+		 * @return the column 'importe_atep_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getImporte_atep_emp()
+		throws SQLException {
+			return rs.getBigDecimal(110);
+		}
+		/**
+		 * Importe accidentes trabajo empresa
+		 * @return the column 'importe_desemp_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getImporte_desemp_emp()
+		throws SQLException {
+			return rs.getBigDecimal(111);
+		}
+		/**
+		 * Importe accidentes trabajo empresa
+		 * @return the column 'importe_fp_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getImporte_fp_emp()
+		throws SQLException {
+			return rs.getBigDecimal(112);
+		}
+		/**
+		 * Importe accidentes trabajo empresa
+		 * @return the column 'importe_fogasa_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getImporte_fogasa_emp()
+		throws SQLException {
+			return rs.getBigDecimal(113);
+		}
+		/**
+		 * Importe horas extras estructurales empresa
+		 * @return the column 'importe_hex_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getImporte_hex_emp()
+		throws SQLException {
+			return rs.getBigDecimal(114);
+		}
+		/**
+		 * Importe horas extras NO estructurales empresa
+		 * @return the column 'importe_hexno_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getImporte_hexno_emp()
+		throws SQLException {
+			return rs.getBigDecimal(115);
+		}
+		/**
+		 * Importe cuotas deducciones empresa
+		 * @return the column 'importe_cuotas_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getImporte_cuotas_emp()
+		throws SQLException {
+			return rs.getBigDecimal(116);
 		}
 
 		/**
@@ -49813,81 +50403,6 @@ public class AbstractCtsqlDB {
 
 	
 
-
-	/**
-	 * Nszpoco
-	 * 
-	 */
-	public class Nszpoco {
-		
-		private ResultSet rs;
-		
-		protected Nszpoco (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
-		
-		/**
-		 * $column.remarks
-		 * @return the column 'spz0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSpz0()
-		throws SQLException {
-			return rs.getString(1);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'spz1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSpz1()
-		throws SQLException {
-			return rs.getString(2);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'npz0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNpz0()
-		throws SQLException {
-			return rs.getBigDecimal(3);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'npz1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNpz1()
-		throws SQLException {
-			return rs.getBigDecimal(4);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'npz2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNpz2()
-		throws SQLException {
-			return rs.getBigDecimal(5);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'npz3' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNpz3()
-		throws SQLException {
-			return rs.getBigDecimal(6);
-		}
-
-
-	}
-	
-
-	
-
 	private PreparedStatement _mon_otd_lerStmt = null;
 		
 	private void initMon_otd_lerStmt() 
@@ -49944,16 +50459,19 @@ public class AbstractCtsqlDB {
 				+ ",base_perdes" 
 				+ ",remuneracion" 
 				+ ",base_it" 
+				+ ",base_ere" 
 				+ ",total_1" 
 				+ ",codbas" 
 				+ ",base_cg" 
 				+ ",base_acc" 
 				+ ",prc_cg" 
 				+ ",prc_acc" 
+				+ ",prc_fp" 
 				+ ",prc_hex" 
 				+ ",prc_hexno" 
 				+ ",importe_cg" 
 				+ ",importe_acc" 
+				+ ",importe_fp" 
 				+ ",importe_hex" 
 				+ ",importe_hexno" 
 				+ ",mincg" 
@@ -49986,6 +50504,27 @@ public class AbstractCtsqlDB {
 				+ ",base_acc_sin_h_pts" 
 				+ ",fvisione" 
 				+ ",fvisiont" 
+				+ ",base_con_ere" 
+				+ ",base_acc_ere" 
+				+ ",base_con_ere_no" 
+				+ ",base_acc_ere_no" 
+				+ ",base_con_ere_sin" 
+				+ ",base_acc_ere_sin" 
+				+ ",prc_cg_emp" 
+				+ ",prc_atep_emp" 
+				+ ",prc_desemp_emp" 
+				+ ",prc_fp_emp" 
+				+ ",prc_fogasa_emp" 
+				+ ",prc_hex_emp" 
+				+ ",prc_hexno_emp" 
+				+ ",importe_cg_emp" 
+				+ ",importe_atep_emp" 
+				+ ",importe_desemp_emp" 
+				+ ",importe_fp_emp" 
+				+ ",importe_fogasa_emp" 
+				+ ",importe_hex_emp" 
+				+ ",importe_hexno_emp" 
+				+ ",importe_cuotas_emp" 
 				+ " FROM nomina"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -50264,16 +50803,19 @@ public class AbstractCtsqlDB {
 				+ ",base_perdes" 
 				+ ",remuneracion" 
 				+ ",base_it" 
+				+ ",base_ere" 
 				+ ",total_1" 
 				+ ",codbas" 
 				+ ",base_cg" 
 				+ ",base_acc" 
 				+ ",prc_cg" 
 				+ ",prc_acc" 
+				+ ",prc_fp" 
 				+ ",prc_hex" 
 				+ ",prc_hexno" 
 				+ ",importe_cg" 
 				+ ",importe_acc" 
+				+ ",importe_fp" 
 				+ ",importe_hex" 
 				+ ",importe_hexno" 
 				+ ",mincg" 
@@ -50306,6 +50848,27 @@ public class AbstractCtsqlDB {
 				+ ",base_acc_sin_h_pts" 
 				+ ",fvisione" 
 				+ ",fvisiont" 
+				+ ",base_con_ere" 
+				+ ",base_acc_ere" 
+				+ ",base_con_ere_no" 
+				+ ",base_acc_ere_no" 
+				+ ",base_con_ere_sin" 
+				+ ",base_acc_ere_sin" 
+				+ ",prc_cg_emp" 
+				+ ",prc_atep_emp" 
+				+ ",prc_desemp_emp" 
+				+ ",prc_fp_emp" 
+				+ ",prc_fogasa_emp" 
+				+ ",prc_hex_emp" 
+				+ ",prc_hexno_emp" 
+				+ ",importe_cg_emp" 
+				+ ",importe_atep_emp" 
+				+ ",importe_desemp_emp" 
+				+ ",importe_fp_emp" 
+				+ ",importe_fogasa_emp" 
+				+ ",importe_hex_emp" 
+				+ ",importe_hexno_emp" 
+				+ ",importe_cuotas_emp" 
 				+ " FROM nomina"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -50622,13 +51185,22 @@ public class AbstractCtsqlDB {
 			return rs.getBigDecimal(16);
 		}
 		/**
+		 * Base especial de solidaridad
+		 * @return the column 'base_solidaria' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getBase_solidaria()
+		throws SQLException {
+			return rs.getBigDecimal(17);
+		}
+		/**
 		 * Compensaciones IT Enfermedad Comun
 		 * @return the column 'comp_ecal' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
 		public BigDecimal getComp_ecal()
 		throws SQLException {
-			return rs.getBigDecimal(17);
+			return rs.getBigDecimal(18);
 		}
 		/**
 		 * Compensaciones IT Accidentes Trabajo
@@ -50637,7 +51209,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getComp_acc()
 		throws SQLException {
-			return rs.getBigDecimal(18);
+			return rs.getBigDecimal(19);
 		}
 		/**
 		 * Reducciones contingencias Comunes
@@ -50646,7 +51218,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getRed_concom()
 		throws SQLException {
-			return rs.getBigDecimal(19);
+			return rs.getBigDecimal(20);
 		}
 		/**
 		 * Bonif. Redudcc. INEM
@@ -50655,7 +51227,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getRed_inem()
 		throws SQLException {
-			return rs.getBigDecimal(20);
+			return rs.getBigDecimal(21);
 		}
 		/**
 		 * Indicador de Impresion
@@ -50664,7 +51236,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getImprime()
 		throws SQLException {
-			return rs.getString(21);
+			return rs.getString(22);
 		}
 		/**
 		 * Divisa
@@ -50673,7 +51245,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getDivisa()
 		throws SQLException {
-			return rs.getString(22);
+			return rs.getString(23);
 		}
 		/**
 		 * Se ha insertado en el fichero FAN
@@ -50682,7 +51254,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getTc2red()
 		throws SQLException {
-			return rs.getString(23);
+			return rs.getString(24);
 		}
 		/**
 		 * Fecha Creacion Fila
@@ -50691,7 +51263,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFecnew()
 		throws SQLException {
-			return rs.getDate(24);
+			return rs.getDate(25);
 		}
 		/**
 		 * Hora Creacion Fila
@@ -50700,7 +51272,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Time getHornew()
 		throws SQLException {
-			return rs.getTime(25);
+			return rs.getTime(26);
 		}
 		/**
 		 * Fecha Modificacion Fila
@@ -50709,7 +51281,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFecmod()
 		throws SQLException {
-			return rs.getDate(26);
+			return rs.getDate(27);
 		}
 		/**
 		 * Hora Modificacion Fila
@@ -50718,7 +51290,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Time getHormod()
 		throws SQLException {
-			return rs.getTime(27);
+			return rs.getTime(28);
 		}
 		/**
 		 * Régimen
@@ -50727,7 +51299,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getIndregimen()
 		throws SQLException {
-			return rs.getString(28);
+			return rs.getString(29);
 		}
 
 
@@ -51179,229 +51751,31 @@ public class AbstractCtsqlDB {
 			return rs.getBigDecimal(42);
 		}
 		/**
-		 * Numero Empresa Persona
-		 * @return the column 'numero' value; if the value is SQL NULL, the value returned is null
+		 * Base especial de solidaridad
+		 * @return the column 'base_solidaria' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getNumero()
+		public BigDecimal getBase_solidaria()
 		throws SQLException {
-			return rs.getInt(43);
+			return rs.getBigDecimal(43);
 		}
 		/**
-		 * Codigo Persona
-		 * @return the column 'codper' value; if the value is SQL NULL, the value returned is null
+		 * % Especial de solidaridad
+		 * @return the column 'prc_solidaria' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getCodper()
+		public BigDecimal getPrc_solidaria()
 		throws SQLException {
-			return rs.getInt(44);
+			return rs.getBigDecimal(44);
 		}
 		/**
-		 * Dias Alta
-		 * @return the column 'dias' value; if the value is SQL NULL, the value returned is null
+		 * Cuota especial de solidaridad
+		 * @return the column 'cuota_solidaria' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getDias()
+		public BigDecimal getCuota_solidaria()
 		throws SQLException {
-			return rs.getInt(45);
-		}
-		/**
-		 * Grupo Tarifa
-		 * @return the column 'codbas' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getCodbas()
-		throws SQLException {
-			return rs.getString(46);
-		}
-		/**
-		 * Contrato TC2
-		 * @return the column 'codtc2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getCodtc2()
-		throws SQLException {
-			return rs.getString(47);
-		}
-		/**
-		 * Epigrafe
-		 * @return the column 'codepi' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getCodepi()
-		throws SQLException {
-			return rs.getString(48);
-		}
-		/**
-		 * Numero de Horas
-		 * @return the column 'horas' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getHoras()
-		throws SQLException {
-			return rs.getInt(49);
-		}
-		/**
-		 * Dias IT
-		 * @return the column 'diasit' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getDiasit()
-		throws SQLException {
-			return rs.getInt(50);
-		}
-		/**
-		 * Dias Maternidad
-		 * @return the column 'diasmat' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getDiasmat()
-		throws SQLException {
-			return rs.getInt(51);
-		}
-		/**
-		 * Base Accidentes
-		 * @return the column 'base_acc' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getBase_acc()
-		throws SQLException {
-			return rs.getBigDecimal(52);
-		}
-		/**
-		 * Fecha Concesion Bonif.
-		 * @return the column 'fecha' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Date getFecha()
-		throws SQLException {
-			return rs.getDate(53);
-		}
-		/**
-		 * Situaciones Especiales
-		 * @return the column 'sitesp' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSitesp()
-		throws SQLException {
-			return rs.getString(54);
-		}
-		/**
-		 * Nombre
-		 * @return the column 'nombre' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getNombre()
-		throws SQLException {
-			return rs.getString(55);
-		}
-		/**
-		 * Apellidos
-		 * @return the column 'apellidos' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getApellidos()
-		throws SQLException {
-			return rs.getString(56);
-		}
-		/**
-		 * Indicador de impresion de tc2 1
-		 * @return the column 'mostrar' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getMostrar()
-		throws SQLException {
-			return rs.getString(57);
-		}
-		/**
-		 * Clave Reducción
-		 * @return the column 'cdgred' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getCdgred()
-		throws SQLException {
-			return rs.getString(58);
-		}
-		/**
-		 * Desglose de cuotas
-		 * @return the column 'desglose' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getDesglose()
-		throws SQLException {
-			return rs.getString(59);
-		}
-		/**
-		 * Comision Mutua
-		 * @return the column 'comision' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getComision()
-		throws SQLException {
-			return rs.getString(60);
-		}
-		/**
-		 * Tipo de TC1
-		 * @return the column 'tipotc1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getTipotc1()
-		throws SQLException {
-			return rs.getString(61);
-		}
-		/**
-		 * Codigo de TC2
-		 * @return the column 'tc2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getTc2()
-		throws SQLException {
-			return rs.getInt(62);
-		}
-		/**
-		 * Divisa
-		 * @return the column 'divisa' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getDivisa()
-		throws SQLException {
-			return rs.getString(63);
-		}
-		/**
-		 * Fecha Creacion Fila
-		 * @return the column 'fecnew' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Date getFecnew()
-		throws SQLException {
-			return rs.getDate(64);
-		}
-		/**
-		 * Hora Creacion Fila
-		 * @return the column 'hornew' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Time getHornew()
-		throws SQLException {
-			return rs.getTime(65);
-		}
-		/**
-		 * Fecha Modificacion Fila
-		 * @return the column 'fecmod' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Date getFecmod()
-		throws SQLException {
-			return rs.getDate(66);
-		}
-		/**
-		 * Hora Modificacion Fila
-		 * @return the column 'hormod' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Time getHormod()
-		throws SQLException {
-			return rs.getTime(67);
+			return rs.getBigDecimal(45);
 		}
 		/**
 		 * Código Otros Conceptos
@@ -51410,7 +51784,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getCdg_otrcon()
 		throws SQLException {
-			return rs.getString(68);
+			return rs.getString(46);
 		}
 		/**
 		 * Base Otros Conceptos
@@ -51419,7 +51793,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_otrcon()
 		throws SQLException {
-			return rs.getBigDecimal(69);
+			return rs.getBigDecimal(47);
 		}
 		/**
 		 * % Otros Conceptos
@@ -51428,7 +51802,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getPrc_otrcon()
 		throws SQLException {
-			return rs.getBigDecimal(70);
+			return rs.getBigDecimal(48);
 		}
 		/**
 		 * Cuota Otros Conceptos
@@ -51437,7 +51811,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getCuota_otrcon()
 		throws SQLException {
-			return rs.getBigDecimal(71);
+			return rs.getBigDecimal(49);
 		}
 		/**
 		 * Base Contingencias Comunes Cotización Empresarial
@@ -51446,7 +51820,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_concom_ce()
 		throws SQLException {
-			return rs.getBigDecimal(72);
+			return rs.getBigDecimal(50);
 		}
 		/**
 		 * % Contingencias Comunes Cotización Empresarial
@@ -51455,7 +51829,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getPrc_concom_ce()
 		throws SQLException {
-			return rs.getBigDecimal(73);
+			return rs.getBigDecimal(51);
 		}
 		/**
 		 * Cuota Contingencias Comunes Cotización Empresarial
@@ -51464,7 +51838,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getCuota_concom_ce()
 		throws SQLException {
-			return rs.getBigDecimal(74);
+			return rs.getBigDecimal(52);
 		}
 		/**
 		 * Base Desempleo Cotización Empresarial
@@ -51473,7 +51847,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_desem_ce()
 		throws SQLException {
-			return rs.getBigDecimal(75);
+			return rs.getBigDecimal(53);
 		}
 		/**
 		 * % Desempleo Cotización Empresarial
@@ -51482,7 +51856,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getPrc_desem_ce()
 		throws SQLException {
-			return rs.getBigDecimal(76);
+			return rs.getBigDecimal(54);
 		}
 		/**
 		 * Cuota Desempleo Cotización Empresarial
@@ -51491,7 +51865,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getCuota_desem_ce()
 		throws SQLException {
-			return rs.getBigDecimal(77);
+			return rs.getBigDecimal(55);
 		}
 		/**
 		 * Base Desempleo
@@ -51500,7 +51874,142 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_desem()
 		throws SQLException {
-			return rs.getBigDecimal(78);
+			return rs.getBigDecimal(56);
+		}
+		/**
+		 * Numero Empresa Persona
+		 * @return the column 'numero' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getNumero()
+		throws SQLException {
+			return rs.getInt(57);
+		}
+		/**
+		 * Codigo Persona
+		 * @return the column 'codper' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCodper()
+		throws SQLException {
+			return rs.getInt(58);
+		}
+		/**
+		 * Dias Alta
+		 * @return the column 'dias' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getDias()
+		throws SQLException {
+			return rs.getInt(59);
+		}
+		/**
+		 * Grupo Tarifa
+		 * @return the column 'codbas' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCodbas()
+		throws SQLException {
+			return rs.getString(60);
+		}
+		/**
+		 * Contrato TC2
+		 * @return the column 'codtc2' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCodtc2()
+		throws SQLException {
+			return rs.getString(61);
+		}
+		/**
+		 * Epigrafe
+		 * @return the column 'codepi' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCodepi()
+		throws SQLException {
+			return rs.getString(62);
+		}
+		/**
+		 * Numero de Horas
+		 * @return the column 'horas' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getHoras()
+		throws SQLException {
+			return rs.getInt(63);
+		}
+		/**
+		 * Dias IT
+		 * @return the column 'diasit' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getDiasit()
+		throws SQLException {
+			return rs.getInt(64);
+		}
+		/**
+		 * Dias Maternidad
+		 * @return the column 'diasmat' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getDiasmat()
+		throws SQLException {
+			return rs.getInt(65);
+		}
+		/**
+		 * Base Accidentes
+		 * @return the column 'base_acc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getBase_acc()
+		throws SQLException {
+			return rs.getBigDecimal(66);
+		}
+		/**
+		 * Fecha Concesion Bonif.
+		 * @return the column 'fecha' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFecha()
+		throws SQLException {
+			return rs.getDate(67);
+		}
+		/**
+		 * Situaciones Especiales
+		 * @return the column 'sitesp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getSitesp()
+		throws SQLException {
+			return rs.getString(68);
+		}
+		/**
+		 * Nombre
+		 * @return the column 'nombre' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNombre()
+		throws SQLException {
+			return rs.getString(69);
+		}
+		/**
+		 * Apellidos
+		 * @return the column 'apellidos' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getApellidos()
+		throws SQLException {
+			return rs.getString(70);
+		}
+		/**
+		 * Indicador de impresion de tc2 1
+		 * @return the column 'mostrar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getMostrar()
+		throws SQLException {
+			return rs.getString(71);
 		}
 		/**
 		 * Horas Complementarias
@@ -51509,7 +52018,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getHorcomp()
 		throws SQLException {
-			return rs.getInt(79);
+			return rs.getInt(72);
 		}
 		/**
 		 * Importe Horas Complementarias
@@ -51518,7 +52027,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImpcomp()
 		throws SQLException {
-			return rs.getBigDecimal(80);
+			return rs.getBigDecimal(73);
 		}
 		/**
 		 * Horas Presenciales
@@ -51527,7 +52036,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getHorpres()
 		throws SQLException {
-			return rs.getInt(81);
+			return rs.getInt(74);
 		}
 		/**
 		 * Importe Horas Presenciales
@@ -51536,7 +52045,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImppres()
 		throws SQLException {
-			return rs.getBigDecimal(82);
+			return rs.getBigDecimal(75);
 		}
 		/**
 		 * Horas Distancia
@@ -51545,7 +52054,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getHordist()
 		throws SQLException {
-			return rs.getInt(83);
+			return rs.getInt(76);
 		}
 		/**
 		 * Importe Horas Distancia
@@ -51554,7 +52063,97 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImpdist()
 		throws SQLException {
-			return rs.getBigDecimal(84);
+			return rs.getBigDecimal(77);
+		}
+		/**
+		 * Clave Reducción
+		 * @return the column 'cdgred' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCdgred()
+		throws SQLException {
+			return rs.getString(78);
+		}
+		/**
+		 * Desglose de cuotas
+		 * @return the column 'desglose' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getDesglose()
+		throws SQLException {
+			return rs.getString(79);
+		}
+		/**
+		 * Comision Mutua
+		 * @return the column 'comision' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getComision()
+		throws SQLException {
+			return rs.getString(80);
+		}
+		/**
+		 * Tipo de TC1
+		 * @return the column 'tipotc1' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTipotc1()
+		throws SQLException {
+			return rs.getString(81);
+		}
+		/**
+		 * Codigo de TC2
+		 * @return the column 'tc2' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getTc2()
+		throws SQLException {
+			return rs.getInt(82);
+		}
+		/**
+		 * Divisa
+		 * @return the column 'divisa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getDivisa()
+		throws SQLException {
+			return rs.getString(83);
+		}
+		/**
+		 * Fecha Creacion Fila
+		 * @return the column 'fecnew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFecnew()
+		throws SQLException {
+			return rs.getDate(84);
+		}
+		/**
+		 * Hora Creacion Fila
+		 * @return the column 'hornew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getHornew()
+		throws SQLException {
+			return rs.getTime(85);
+		}
+		/**
+		 * Fecha Modificacion Fila
+		 * @return the column 'fecmod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFecmod()
+		throws SQLException {
+			return rs.getDate(86);
+		}
+		/**
+		 * Hora Modificacion Fila
+		 * @return the column 'hormod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getHormod()
+		throws SQLException {
+			return rs.getTime(87);
 		}
 		/**
 		 * Régimen
@@ -51563,7 +52162,52 @@ public class AbstractCtsqlDB {
 		 */
 		public String getIndregimen()
 		throws SQLException {
-			return rs.getString(85);
+			return rs.getString(88);
+		}
+		/**
+		 * Tipo XML
+		 * @return the column 'xmltipo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getXmltipo()
+		throws SQLException {
+			return rs.getString(89);
+		}
+		/**
+		 * Fecha XML
+		 * @return the column 'xmlfecha' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getXmlfecha()
+		throws SQLException {
+			return rs.getDate(90);
+		}
+		/**
+		 * Hora XML
+		 * @return the column 'xmlhora' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getXmlhora()
+		throws SQLException {
+			return rs.getTime(91);
+		}
+		/**
+		 * Fichero XML
+		 * @return the column 'xmlfichero' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getXmlfichero()
+		throws SQLException {
+			return rs.getString(92);
+		}
+		/**
+		 * Importe XML
+		 * @return the column 'xmlimporte' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getXmlimporte()
+		throws SQLException {
+			return rs.getBigDecimal(93);
 		}
 
 
@@ -51572,84 +52216,185 @@ public class AbstractCtsqlDB {
 
 	
 
+	private PreparedStatement _sograc_nilStmt = null;
+		
+	private void initSograc_nilStmt() 
+	throws SQLException{
+		this._sograc_nilStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",codact" 
+				+ ",descripcion" 
+				+ ",codbbx" 
+				+ ",anio" 
+				+ ",mes" 
+				+ " FROM cargos"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeSograc_nilStmt() 
+	throws SQLException{
+		if ( _sograc_nilStmt != null ) { 
+			_sograc_nilStmt.close();
+			_sograc_nilStmt = null;	
+		}
+	}
+	private PreparedStatement _sogracopit_lerStmt = null;
+		
+	private void initSogracopit_lerStmt() 
+	throws SQLException{
+		this._sogracopit_lerStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM tipocargos"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeSogracopit_lerStmt() 
+	throws SQLException{
+		if ( _sogracopit_lerStmt != null ) { 
+			_sogracopit_lerStmt.close();
+			_sogracopit_lerStmt = null;	
+		}
+	}
 
 	/**
-	 * Nszbase
+	 * Lincargos
 	 * 
 	 */
-	public class Nszbase {
+	public class Lincargos {
 		
 		private ResultSet rs;
 		
-		protected Nszbase (ResultSet rs) 
+		protected Lincargos (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
 		
 		/**
-		 * $column.remarks
-		 * @return the column 'sbc0' value; if the value is SQL NULL, the value returned is null
+		 * Código de factura
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getSbc0()
+		public Integer getCdg()
 		throws SQLException {
-			return rs.getString(1);
+			return rs.getInt(1);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'sbc1' value; if the value is SQL NULL, the value returned is null
+		 * Orden
+		 * @return the column 'orden' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getSbc1()
+		public Integer getOrden()
 		throws SQLException {
-			return rs.getString(2);
+			return rs.getInt(2);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'nbc0' value; if the value is SQL NULL, the value returned is null
+		 * Código del cargo
+		 * @return the column 'tipocargo' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public BigDecimal getNbc0()
+		public String getTipocargo()
 		throws SQLException {
-			return rs.getBigDecimal(3);
+			return rs.getString(3);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'nbc1' value; if the value is SQL NULL, the value returned is null
+		 * Texto
+		 * @return the column 'texto' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public BigDecimal getNbc1()
+		public String getTexto()
 		throws SQLException {
-			return rs.getBigDecimal(4);
+			return rs.getString(4);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'nbc2' value; if the value is SQL NULL, the value returned is null
+		 * Código de facturación
+		 * @return the column 'facturar' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public BigDecimal getNbc2()
+		public String getFacturar()
 		throws SQLException {
-			return rs.getBigDecimal(5);
+			return rs.getString(5);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'nbc3' value; if the value is SQL NULL, the value returned is null
+		 * Unidades
+		 * @return the column 'unidades' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public BigDecimal getNbc3()
+		public Integer getUnidades()
 		throws SQLException {
-			return rs.getBigDecimal(6);
+			return rs.getInt(6);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'nbc4' value; if the value is SQL NULL, the value returned is null
+		 * Importe
+		 * @return the column 'importe' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public BigDecimal getNbc4()
+		public BigDecimal getImporte()
 		throws SQLException {
 			return rs.getBigDecimal(7);
 		}
+		/**
+		 * Fijo
+		 * @return the column 'fijo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getFijo()
+		throws SQLException {
+			return rs.getString(8);
+		}
 
+		/**
+		 * Visit Cargos that's parent of this Lincargos. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitLin_cargos(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _sograc_nilStmt == null )
+					 initSograc_nilStmt();
+				
+				_sograc_nilStmt.setInt(1, this.getCdg()); 
+				rs = _sograc_nilStmt.executeQuery();
+				Cargos cargos = new Cargos(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitLin_cargos(this, cargos);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		/**
+		 * Visit Tipocargos that's parent of this Lincargos. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitRel_tipocargos(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _sogracopit_lerStmt == null )
+					 initSogracopit_lerStmt();
+				
+				_sogracopit_lerStmt.setString(1, this.getTipocargo()); 
+				rs = _sogracopit_lerStmt.executeQuery();
+				Tipocargos tipocargos = new Tipocargos(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitRel_tipocargos(this, tipocargos);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
 
 	}
 	
@@ -51680,6 +52425,7 @@ public class AbstractCtsqlDB {
 				+ ",proret" 
 				+ ",nummat" 
 				+ ",codcont" 
+				+ ",descont" 
 				+ ",codtc2" 
 				+ ",destc2" 
 				+ ",fecinicont" 
@@ -51723,6 +52469,7 @@ public class AbstractCtsqlDB {
 				+ ",diastp" 
 				+ ",guardalegal" 
 				+ ",iban" 
+				+ ",fecfinperiprue" 
 				+ " FROM trabajo"
 				+ " WHERE" 
 				+ " autorizacion = ?  " 			); 
@@ -51884,6 +52631,8 @@ public class AbstractCtsqlDB {
 				+ ",fijovar" 
 				+ ",indcom" 
 				+ ",dinesp" 
+				+ ",concepto" 
+				+ ",excinc" 
 				+ " FROM complemento"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -52475,6 +53224,7 @@ public class AbstractCtsqlDB {
 				"SELECT "
 				+ "codper" 
 				+ ",fecbaj" 
+				+ ",codcausa" 
 				+ ",causa" 
 				+ ",vacfecini" 
 				+ ",vacimporte" 
@@ -52529,6 +53279,8 @@ public class AbstractCtsqlDB {
 				+ ",fijovar" 
 				+ ",indcom" 
 				+ ",dinesp" 
+				+ ",concepto" 
+				+ ",excinc" 
 				+ " FROM complemento"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -52666,117 +53418,6 @@ public class AbstractCtsqlDB {
 
 
 	/**
-	 * Nszilte
-	 * 
-	 */
-	public class Nszilte {
-		
-		private ResultSet rs;
-		
-		protected Nszilte (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
-		
-		/**
-		 * $column.remarks
-		 * @return the column 'sil0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSil0()
-		throws SQLException {
-			return rs.getString(1);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'sil1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSil1()
-		throws SQLException {
-			return rs.getString(2);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'sil2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSil2()
-		throws SQLException {
-			return rs.getString(3);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nil0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNil0()
-		throws SQLException {
-			return rs.getInt(4);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nil1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNil1()
-		throws SQLException {
-			return rs.getInt(5);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nil2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNil2()
-		throws SQLException {
-			return rs.getBigDecimal(6);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nil3' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNil3()
-		throws SQLException {
-			return rs.getBigDecimal(7);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nil4' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNil4()
-		throws SQLException {
-			return rs.getBigDecimal(8);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nil5' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNil5()
-		throws SQLException {
-			return rs.getBigDecimal(9);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nil6' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNil6()
-		throws SQLException {
-			return rs.getBigDecimal(10);
-		}
-
-
-	}
-	
-
-	
-
-
-	/**
 	 * Empresa
 	 * 
 	 */
@@ -52881,6 +53522,243 @@ public class AbstractCtsqlDB {
 		}
 
 
+	}
+	
+
+	
+		
+	private PreparedStatement tr_liquidacionStmt = null;
+		
+	private void initRel_tr_liquidacionStmt() 
+	throws SQLException{
+		this.tr_liquidacionStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",persona" 
+				+ ",numss" 
+				+ ",fecha_desde" 
+				+ ",fecha_hasta" 
+				+ ",dias_cotizados" 
+				+ ",grupo_cotizacion" 
+				+ ",tipo_contrato" 
+				+ ",cnae" 
+				+ ",estado" 
+				+ " FROM tr_tramos"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeRel_tr_liquidacionStmt() 
+	throws SQLException{
+		if ( tr_liquidacionStmt != null ) { 
+			tr_liquidacionStmt.close();
+			tr_liquidacionStmt = null;	
+		}
+	}
+
+
+	/**
+	 * Tr_liquidacion
+	 * 
+	 */
+	public class Tr_liquidacion {
+		
+		private ResultSet rs;
+		
+		protected Tr_liquidacion (ResultSet rs) 
+		throws SQLException {
+			this.rs =rs;
+		}
+		
+		/**
+		 * Código de liquidación
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCdg()
+		throws SQLException {
+			return rs.getInt(1);
+		}
+		/**
+		 * Código de actividad
+		 * @return the column 'actividad' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getActividad()
+		throws SQLException {
+			return rs.getInt(2);
+		}
+		/**
+		 * Descripción de actividad
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getDescripcion()
+		throws SQLException {
+			return rs.getString(3);
+		}
+		/**
+		 * Régimen de la Seguridad Social
+		 * @return the column 'regimen' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getRegimen()
+		throws SQLException {
+			return rs.getString(4);
+		}
+		/**
+		 * Número de inscripción a la Seguridad Social
+		 * @return the column 'numeross' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNumeross()
+		throws SQLException {
+			return rs.getString(5);
+		}
+		/**
+		 * Tipo de liquidación
+		 * @return the column 'tipo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTipo()
+		throws SQLException {
+			return rs.getString(6);
+		}
+		/**
+		 * Mes inicial de la liquidación
+		 * @return the column 'mes_desde' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getMes_desde()
+		throws SQLException {
+			return rs.getInt(7);
+		}
+		/**
+		 * Año inicial de la liquidación
+		 * @return the column 'anho_desde' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getAnho_desde()
+		throws SQLException {
+			return rs.getInt(8);
+		}
+		/**
+		 * Mes final de la liquidación
+		 * @return the column 'mes_hasta' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getMes_hasta()
+		throws SQLException {
+			return rs.getInt(9);
+		}
+		/**
+		 * Año final de la liquidación
+		 * @return the column 'anho_hasta' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getAnho_hasta()
+		throws SQLException {
+			return rs.getInt(10);
+		}
+		/**
+		 * Mes de abono
+		 * @return the column 'mes_control' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getMes_control()
+		throws SQLException {
+			return rs.getInt(11);
+		}
+		/**
+		 * Año de abono
+		 * @return the column 'anho_control' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getAnho_control()
+		throws SQLException {
+			return rs.getInt(12);
+		}
+		/**
+		 * Identificador de la liquidación
+		 * @return the column 'referencia_externa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getReferencia_externa()
+		throws SQLException {
+			return rs.getString(13);
+		}
+		/**
+		 * Fecha de recaudación
+		 * @return the column 'fecha_recaudacion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFecha_recaudacion()
+		throws SQLException {
+			return rs.getDate(14);
+		}
+		/**
+		 * Hora de recaudación
+		 * @return the column 'hora_recaudacion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getHora_recaudacion()
+		throws SQLException {
+			return rs.getTime(15);
+		}
+		/**
+		 * Estado de la liquidación
+		 * @return the column 'estado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEstado()
+		throws SQLException {
+			return rs.getString(16);
+		}
+		/**
+		 * bloqueado
+		 * @return the column 'bloqueado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getBloqueado()
+		throws SQLException {
+			return rs.getString(17);
+		}
+		/**
+		 * similar
+		 * @return the column 'similar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getSimilar()
+		throws SQLException {
+			return rs.getString(18);
+		}
+
+
+		
+		/**
+		 * Visit Tr_tramos that're children of this Tr_liquidacion. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitRel_tr_liquidacion(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( tr_liquidacionStmt == null )
+					 initRel_tr_liquidacionStmt();
+				
+				tr_liquidacionStmt.setInt(1, this.getCdg()); 
+				rs = tr_liquidacionStmt.executeQuery();
+				Tr_tramos tr_tramos = new Tr_tramos(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitRel_tr_liquidacion(tr_tramos, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
 	}
 	
 
@@ -53300,6 +54178,7 @@ public class AbstractCtsqlDB {
 				+ ",cias" 
 				+ ",fecconf" 
 				+ ",parproc" 
+				+ ",fecproxconf" 
 				+ " FROM parteconf"
 				+ " WHERE" 
 				+ " cdg = ?  "  + "AND" 				+ " fecini = ?  " 			); 
@@ -53340,6 +54219,11 @@ public class AbstractCtsqlDB {
 				+ ",indgrupo" 
 				+ ",pariente" 
 				+ ",noirpf" 
+				+ ",nosegsoc" 
+				+ ",jubiladoactivo" 
+				+ ",certificado" 
+				+ ",familiar" 
+				+ ",noresidente" 
 				+ " FROM emprper"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -53581,6 +54465,33 @@ public class AbstractCtsqlDB {
 		public Date getFecha_at()
 		throws SQLException {
 			return rs.getDate(24);
+		}
+		/**
+		 * Especial
+		 * @return the column 'especial' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEspecial()
+		throws SQLException {
+			return rs.getString(25);
+		}
+		/**
+		 * $column.remarks
+		 * @return the column 'fecprimerconf' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFecprimerconf()
+		throws SQLException {
+			return rs.getDate(26);
+		}
+		/**
+		 * Periocidad
+		 * @return the column 'periocidad' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPeriocidad()
+		throws SQLException {
+			return rs.getString(27);
 		}
 
 		/**
@@ -53935,109 +54846,6 @@ public class AbstractCtsqlDB {
 
 
 	/**
-	 * Nszepig
-	 * 
-	 */
-	public class Nszepig {
-		
-		private ResultSet rs;
-		
-		protected Nszepig (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
-		
-		/**
-		 * $column.remarks
-		 * @return the column 'sea0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSea0()
-		throws SQLException {
-			return rs.getString(1);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'sea1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSea1()
-		throws SQLException {
-			return rs.getString(2);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nea0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNea0()
-		throws SQLException {
-			return rs.getBigDecimal(3);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'nea1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNea1()
-		throws SQLException {
-			return rs.getBigDecimal(4);
-		}
-
-
-	}
-	
-
-	
-
-	private PreparedStatement _fdnif_fdotdnifStmt = null;
-		
-	private void initFdnif_fdotdnifStmt() 
-	throws SQLException{
-		this._fdnif_fdotdnifStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "codper" 
-				+ ",fecbaj" 
-				+ ",causa" 
-				+ ",vacfecini" 
-				+ ",vacimporte" 
-				+ ",total_conceptos" 
-				+ ",base" 
-				+ ",irpf" 
-				+ ",importe_irpf" 
-				+ ",liquido" 
-				+ ",importesin" 
-				+ ",fecnew" 
-				+ ",hornew" 
-				+ ",fecmod" 
-				+ ",hormod" 
-				+ ",cdg" 
-				+ ",cdgnom" 
-				+ ",feccobreal" 
-				+ ",divisa" 
-				+ ",diasvac" 
-				+ ",costessemp" 
-				+ ",codbas" 
-				+ ",basecg" 
-				+ ",prccg" 
-				+ ",importecg" 
-				+ ",baseacc" 
-				+ ",prcacc" 
-				+ ",importeacc" 
-				+ " FROM finiquitodf"
-				+ " WHERE" 
-				+ " cdg = ?  " 			); 
-	}
-
-	private void closeFdnif_fdotdnifStmt() 
-	throws SQLException{
-		if ( _fdnif_fdotdnifStmt != null ) { 
-			_fdnif_fdotdnifStmt.close();
-			_fdnif_fdotdnifStmt = null;	
-		}
-	}
-
-	/**
 	 * Finidtodf
 	 * 
 	 */
@@ -54087,30 +54895,6 @@ public class AbstractCtsqlDB {
 			return rs.getBigDecimal(4);
 		}
 
-		/**
-		 * Visit Finiquitodf that's parent of this Finidtodf. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitFindtodf_findf(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( _fdnif_fdotdnifStmt == null )
-					 initFdnif_fdotdnifStmt();
-				
-				_fdnif_fdotdnifStmt.setInt(1, this.getCdg()); 
-				rs = _fdnif_fdotdnifStmt.executeQuery();
-				Finiquitodf finiquitodf = new Finiquitodf(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitFindtodf_findf(this, finiquitodf);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
 
 	}
 	
@@ -54209,6 +54993,9 @@ public class AbstractCtsqlDB {
 				+ ",cecon" 
 				+ ",modimpuesto" 
 				+ ",mod190" 
+				+ ",feciniportal" 
+				+ ",feccierrenomina" 
+				+ ",meseshistorico" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -54379,6 +55166,15 @@ public class AbstractCtsqlDB {
 		throws SQLException {
 			return rs.getString(16);
 		}
+		/**
+		 * Trabajador no residente
+		 * @return the column 'noresidente' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNoresidente()
+		throws SQLException {
+			return rs.getString(17);
+		}
 
 		/**
 		 * Visit Persona that's parent of this Otrperc. 
@@ -54433,41 +55229,120 @@ public class AbstractCtsqlDB {
 	
 
 	
+		
+	private PreparedStatement tr_codigocretaStmt = null;
+		
+	private void initTr_codigocretaStmt() 
+	throws SQLException{
+		this.tr_codigocretaStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",persona" 
+				+ ",fecha_desde" 
+				+ ",tipo_dato" 
+				+ ",codigo" 
+				+ ",valor" 
+				+ ",estado" 
+				+ " FROM tr_datos"
+				+ " WHERE" 
+				+ " tipo_dato = ?  "  + "AND" 				+ " codigo = ?  " 			); 
+	}
+
+	private void closeTr_codigocretaStmt() 
+	throws SQLException{
+		if ( tr_codigocretaStmt != null ) { 
+			tr_codigocretaStmt.close();
+			tr_codigocretaStmt = null;	
+		}
+	}
 
 
 	/**
-	 * Nszadmh
+	 * Codigocreta
 	 * 
 	 */
-	public class Nszadmh {
+	public class Codigocreta {
 		
 		private ResultSet rs;
 		
-		protected Nszadmh (ResultSet rs) 
+		protected Codigocreta (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
 		
 		/**
-		 * $column.remarks
-		 * @return the column 'sah0' value; if the value is SQL NULL, the value returned is null
+		 * Indicador
+		 * @return the column 'indicador' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getSah0()
+		public String getIndicador()
 		throws SQLException {
 			return rs.getString(1);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'sah1' value; if the value is SQL NULL, the value returned is null
+		 * Código
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getSah1()
+		public String getCdg()
 		throws SQLException {
 			return rs.getString(2);
 		}
+		/**
+		 * Descripción
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getDescripcion()
+		throws SQLException {
+			return rs.getString(3);
+		}
+		/**
+		 * Aplicable por usuario
+		 * @return the column 'usuario' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getUsuario()
+		throws SQLException {
+			return rs.getString(4);
+		}
+		/**
+		 * Ambito de aplicación
+		 * @return the column 'aplicable' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getAplicable()
+		throws SQLException {
+			return rs.getString(5);
+		}
 
 
+		
+		/**
+		 * Visit Tr_datos that're children of this Codigocreta. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitTr_codigocreta(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( tr_codigocretaStmt == null )
+					 initTr_codigocretaStmt();
+				
+				tr_codigocretaStmt.setString(1, this.getIndicador()); 
+				tr_codigocretaStmt.setString(2, this.getCdg()); 
+				rs = tr_codigocretaStmt.executeQuery();
+				Tr_datos tr_datos = new Tr_datos(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitTr_codigocreta(tr_datos, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
 	}
 	
 
@@ -54612,503 +55487,53 @@ public class AbstractCtsqlDB {
 
 
 	/**
-	 * Nsztrab
+	 * Tr_fichero
 	 * 
 	 */
-	public class Nsztrab {
+	public class Tr_fichero {
 		
 		private ResultSet rs;
 		
-		protected Nsztrab (ResultSet rs) 
+		protected Tr_fichero (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
 		
 		/**
-		 * $column.remarks
-		 * @return the column 'str0' value; if the value is SQL NULL, the value returned is null
+		 * Numero Liquidación
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getStr0()
+		public Integer getCdg()
 		throws SQLException {
-			return rs.getString(1);
+			return rs.getInt(1);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'str1' value; if the value is SQL NULL, the value returned is null
+		 * Referencia
+		 * @return the column 'fichero' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getStr1()
+		public String getFichero()
 		throws SQLException {
 			return rs.getString(2);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'str2' value; if the value is SQL NULL, the value returned is null
+		 * Tipo
+		 * @return the column 'tipo' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getStr2()
+		public String getTipo()
 		throws SQLException {
 			return rs.getString(3);
 		}
 		/**
-		 * $column.remarks
-		 * @return the column 'ntr0' value; if the value is SQL NULL, the value returned is null
+		 * Fecha Registro
+		 * @return the column 'fregistro' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public BigDecimal getNtr0()
+		public Date getFregistro()
 		throws SQLException {
-			return rs.getBigDecimal(4);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNtr1()
-		throws SQLException {
-			return rs.getBigDecimal(5);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNtr2()
-		throws SQLException {
-			return rs.getBigDecimal(6);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr3' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNtr3()
-		throws SQLException {
-			return rs.getBigDecimal(7);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr4' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNtr4()
-		throws SQLException {
-			return rs.getBigDecimal(8);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr5' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNtr5()
-		throws SQLException {
-			return rs.getBigDecimal(9);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr6' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNtr6()
-		throws SQLException {
-			return rs.getBigDecimal(10);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr7' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNtr7()
-		throws SQLException {
-			return rs.getBigDecimal(11);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr8' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNtr8()
-		throws SQLException {
-			return rs.getBigDecimal(12);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr9' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNtr9()
-		throws SQLException {
-			return rs.getBigDecimal(13);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr10' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNtr10()
-		throws SQLException {
-			return rs.getBigDecimal(14);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr11' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNtr11()
-		throws SQLException {
-			return rs.getBigDecimal(15);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr12' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNtr12()
-		throws SQLException {
-			return rs.getBigDecimal(16);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr13' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNtr13()
-		throws SQLException {
-			return rs.getBigDecimal(17);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr14' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr14()
-		throws SQLException {
-			return rs.getInt(18);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr15' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr15()
-		throws SQLException {
-			return rs.getInt(19);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr16' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr16()
-		throws SQLException {
-			return rs.getInt(20);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr17' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr17()
-		throws SQLException {
-			return rs.getInt(21);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr18' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr18()
-		throws SQLException {
-			return rs.getInt(22);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr19' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr19()
-		throws SQLException {
-			return rs.getInt(23);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr20' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr20()
-		throws SQLException {
-			return rs.getInt(24);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr21' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr21()
-		throws SQLException {
-			return rs.getInt(25);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr22' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr22()
-		throws SQLException {
-			return rs.getInt(26);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr23' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr23()
-		throws SQLException {
-			return rs.getInt(27);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr24' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr24()
-		throws SQLException {
-			return rs.getInt(28);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr25' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr25()
-		throws SQLException {
-			return rs.getInt(29);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr26' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr26()
-		throws SQLException {
-			return rs.getInt(30);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr27' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr27()
-		throws SQLException {
-			return rs.getInt(31);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr28' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr28()
-		throws SQLException {
-			return rs.getInt(32);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr29' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr29()
-		throws SQLException {
-			return rs.getInt(33);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr30' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNtr30()
-		throws SQLException {
-			return rs.getBigDecimal(34);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr31' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr31()
-		throws SQLException {
-			return rs.getInt(35);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr32' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr32()
-		throws SQLException {
-			return rs.getInt(36);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr33' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr33()
-		throws SQLException {
-			return rs.getInt(37);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr34' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr34()
-		throws SQLException {
-			return rs.getInt(38);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr35' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr35()
-		throws SQLException {
-			return rs.getInt(39);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr36' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNtr36()
-		throws SQLException {
-			return rs.getBigDecimal(40);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr37' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNtr37()
-		throws SQLException {
-			return rs.getBigDecimal(41);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr38' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getNtr38()
-		throws SQLException {
-			return rs.getBigDecimal(42);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr39' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr39()
-		throws SQLException {
-			return rs.getInt(43);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr40' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr40()
-		throws SQLException {
-			return rs.getInt(44);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr41' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr41()
-		throws SQLException {
-			return rs.getInt(45);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr42' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr42()
-		throws SQLException {
-			return rs.getInt(46);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr43' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr43()
-		throws SQLException {
-			return rs.getInt(47);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr44' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr44()
-		throws SQLException {
-			return rs.getInt(48);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr45' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr45()
-		throws SQLException {
-			return rs.getInt(49);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr46' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr46()
-		throws SQLException {
-			return rs.getInt(50);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr47' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr47()
-		throws SQLException {
-			return rs.getInt(51);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr48' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr48()
-		throws SQLException {
-			return rs.getInt(52);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr49' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr49()
-		throws SQLException {
-			return rs.getInt(53);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'ntr50' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getNtr50()
-		throws SQLException {
-			return rs.getInt(54);
+			return rs.getDate(4);
 		}
 
 
@@ -55133,6 +55558,11 @@ public class AbstractCtsqlDB {
 				+ ",imp_per_esp" 
 				+ ",imp_ing_cta" 
 				+ ",imp_ing_rep" 
+				+ ",imp_per_ilt" 
+				+ ",imp_ret_ilt" 
+				+ ",imp_per_esp_ilt" 
+				+ ",imp_ing_cta_ilt" 
+				+ ",imp_ing_rep_ilt" 
 				+ ",devengo" 
 				+ ",anionac" 
 				+ ",xminus" 
@@ -55149,14 +55579,6 @@ public class AbstractCtsqlDB {
 				+ ",imp_gastos" 
 				+ ",imp_pension" 
 				+ ",imp_anual" 
-				+ ",nomapel" 
-				+ ",provincia" 
-				+ ",c_m" 
-				+ ",descentero" 
-				+ ",totalasc" 
-				+ ",ascentero" 
-				+ ",ascminus_33" 
-				+ ",ascminus_65" 
 				+ ",movilidad" 
 				+ ",prolongacion" 
 				+ ",hipoteca" 
@@ -55183,6 +55605,14 @@ public class AbstractCtsqlDB {
 				+ ",ascdimre" 
 				+ ",ascdi65" 
 				+ ",ascdi65e" 
+				+ ",nomapel" 
+				+ ",provincia" 
+				+ ",c_m" 
+				+ ",descentero" 
+				+ ",totalasc" 
+				+ ",ascentero" 
+				+ ",ascminus_33" 
+				+ ",ascminus_65" 
 				+ " FROM lin190"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -55236,6 +55666,9 @@ public class AbstractCtsqlDB {
 				+ ",cecon" 
 				+ ",modimpuesto" 
 				+ ",mod190" 
+				+ ",feciniportal" 
+				+ ",feccierrenomina" 
+				+ ",meseshistorico" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -55329,6 +55762,9 @@ public class AbstractCtsqlDB {
 				+ ",cecon" 
 				+ ",modimpuesto" 
 				+ ",mod190" 
+				+ ",feciniportal" 
+				+ ",feccierrenomina" 
+				+ ",meseshistorico" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " cdg = ?  "  + "AND" 				+ " cdg = ?  " 			); 
@@ -55522,6 +55958,15 @@ public class AbstractCtsqlDB {
 		throws SQLException {
 			return rs.getString(16);
 		}
+		/**
+		 * Fecha cierre
+		 * @return the column 'feccierre' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getFeccierre()
+		throws SQLException {
+			return rs.getDate(17);
+		}
 
 		/**
 		 * Visit Emprnif that's parent of this Impr190. 
@@ -55702,6 +56147,11 @@ public class AbstractCtsqlDB {
 				+ ",indgrupo" 
 				+ ",pariente" 
 				+ ",noirpf" 
+				+ ",nosegsoc" 
+				+ ",jubiladoactivo" 
+				+ ",certificado" 
+				+ ",familiar" 
+				+ ",noresidente" 
 				+ " FROM emprper"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -55844,211 +56294,6 @@ public class AbstractCtsqlDB {
 		public Date getFecha()
 		throws SQLException {
 			return rs.getDate(2);
-		}
-
-
-	}
-	
-
-	
-		
-	private PreparedStatement fk_action_appStmt = null;
-		
-	private void initFk_action_appStmt() 
-	throws SQLException{
-		this.fk_action_appStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "id" 
-				+ ",menu" 
-				+ ",name" 
-				+ ",application_id" 
-				+ " FROM action"
-				+ " WHERE" 
-				+ " application_id = ?  " 			); 
-	}
-
-	private void closeFk_action_appStmt() 
-	throws SQLException{
-		if ( fk_action_appStmt != null ) { 
-			fk_action_appStmt.close();
-			fk_action_appStmt = null;	
-		}
-	}
-		
-	private PreparedStatement fk_applicationStmt = null;
-		
-	private void initFk_applicationStmt() 
-	throws SQLException{
-		this.fk_applicationStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "id" 
-				+ ",enddate" 
-				+ ",remote_address" 
-				+ ",remote_host" 
-				+ ",session_id" 
-				+ ",startdate" 
-				+ ",application_id" 
-				+ ",user_id" 
-				+ " FROM session"
-				+ " WHERE" 
-				+ " application_id = ?  " 			); 
-	}
-
-	private void closeFk_applicationStmt() 
-	throws SQLException{
-		if ( fk_applicationStmt != null ) { 
-			fk_applicationStmt.close();
-			fk_applicationStmt = null;	
-		}
-	}
-
-
-	/**
-	 * Application
-	 * 
-	 */
-	public class Application {
-		
-		private ResultSet rs;
-		
-		protected Application (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
-		
-		/**
-		 * Identificador unico
-		 * @return the column 'id' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getId()
-		throws SQLException {
-			return rs.getInt(1);
-		}
-		/**
-		 * Nivel de auditoria
-		 * @return the column 'audit_level' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getAudit_level()
-		throws SQLException {
-			return rs.getInt(2);
-		}
-		/**
-		 * Nombre de la Aplicacion
-		 * @return the column 'name' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getName()
-		throws SQLException {
-			return rs.getString(3);
-		}
-
-
-		
-		/**
-		 * Visit Action that're children of this Application. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitFk_action_app(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( fk_action_appStmt == null )
-					 initFk_action_appStmt();
-				
-				fk_action_appStmt.setInt(1, this.getId()); 
-				rs = fk_action_appStmt.executeQuery();
-				Action action = new Action(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitFk_action_app(action, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		
-		/**
-		 * Visit Session that're children of this Application. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitFk_application(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( fk_applicationStmt == null )
-					 initFk_applicationStmt();
-				
-				fk_applicationStmt.setInt(1, this.getId()); 
-				rs = fk_applicationStmt.executeQuery();
-				Session session = new Session(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitFk_application(session, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-	}
-	
-
-	
-
-
-	/**
-	 * Nszcomp
-	 * 
-	 */
-	public class Nszcomp {
-		
-		private ResultSet rs;
-		
-		protected Nszcomp (ResultSet rs) 
-		throws SQLException {
-			this.rs =rs;
-		}
-		
-		/**
-		 * $column.remarks
-		 * @return the column 'scp0' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getScp0()
-		throws SQLException {
-			return rs.getString(1);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'scp1' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getScp1()
-		throws SQLException {
-			return rs.getString(2);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'scp2' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getScp2()
-		throws SQLException {
-			return rs.getString(3);
-		}
-		/**
-		 * $column.remarks
-		 * @return the column 'scp3' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getScp3()
-		throws SQLException {
-			return rs.getString(4);
 		}
 
 
@@ -56213,16 +56458,19 @@ public class AbstractCtsqlDB {
 				+ ",base_perdes" 
 				+ ",remuneracion" 
 				+ ",base_it" 
+				+ ",base_ere" 
 				+ ",total_1" 
 				+ ",codbas" 
 				+ ",base_cg" 
 				+ ",base_acc" 
 				+ ",prc_cg" 
 				+ ",prc_acc" 
+				+ ",prc_fp" 
 				+ ",prc_hex" 
 				+ ",prc_hexno" 
 				+ ",importe_cg" 
 				+ ",importe_acc" 
+				+ ",importe_fp" 
 				+ ",importe_hex" 
 				+ ",importe_hexno" 
 				+ ",mincg" 
@@ -56255,6 +56503,27 @@ public class AbstractCtsqlDB {
 				+ ",base_acc_sin_h_pts" 
 				+ ",fvisione" 
 				+ ",fvisiont" 
+				+ ",base_con_ere" 
+				+ ",base_acc_ere" 
+				+ ",base_con_ere_no" 
+				+ ",base_acc_ere_no" 
+				+ ",base_con_ere_sin" 
+				+ ",base_acc_ere_sin" 
+				+ ",prc_cg_emp" 
+				+ ",prc_atep_emp" 
+				+ ",prc_desemp_emp" 
+				+ ",prc_fp_emp" 
+				+ ",prc_fogasa_emp" 
+				+ ",prc_hex_emp" 
+				+ ",prc_hexno_emp" 
+				+ ",importe_cg_emp" 
+				+ ",importe_atep_emp" 
+				+ ",importe_desemp_emp" 
+				+ ",importe_fp_emp" 
+				+ ",importe_fogasa_emp" 
+				+ ",importe_hex_emp" 
+				+ ",importe_hexno_emp" 
+				+ ",importe_cuotas_emp" 
 				+ " FROM nomina"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -56415,6 +56684,33 @@ public class AbstractCtsqlDB {
 		public String getDinesp()
 		throws SQLException {
 			return rs.getString(15);
+		}
+		/**
+		 * Concepto
+		 * @return the column 'concepto' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getConcepto()
+		throws SQLException {
+			return rs.getString(16);
+		}
+		/**
+		 * Indicativo excluido/incluido
+		 * @return the column 'excinc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getExcinc()
+		throws SQLException {
+			return rs.getString(17);
+		}
+		/**
+		 * Tipo de Cotizacion
+		 * @return the column 'tipcot' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTipcot()
+		throws SQLException {
+			return rs.getString(18);
 		}
 
 		/**
@@ -56592,6 +56888,70 @@ public class AbstractCtsqlDB {
 			Remesa_inss remesa_inss = new Remesa_inss(rs); 
 			while ( rs.next() ) {
 				ctsqlDBVisitor.visitRemesa_inss(remesa_inss);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Tipocausabaja's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitTipocausabaja(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		Statement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.createStatement();
+			rs = stmt.executeQuery("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",desabr" 
+				+ " FROM tipocausabaja");
+			Tipocausabaja tipocausabaja = new Tipocausabaja(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitTipocausabaja(tipocausabaja);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Tipocausabaja's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitTipocausabaja(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",desabr" 
+				+ " FROM tipocausabaja" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Tipocausabaja tipocausabaja = new Tipocausabaja(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitTipocausabaja(tipocausabaja);
 			}
 		}
 		finally {
@@ -56859,35 +57219,6 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Nszodet's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitNszodet(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "sod0" 
-				+ ",sod1" 
-				+ ",nod0" 
-				+ " FROM nszodet");
-			Nszodet nszodet = new Nszodet(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszodet(nszodet);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
 	 * Visit all Emprban's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
@@ -56951,6 +57282,86 @@ public class AbstractCtsqlDB {
 			Emprban emprban = new Emprban(rs); 
 			while ( rs.next() ) {
 				ctsqlDBVisitor.visitEmprban(emprban);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Tr_peculiar's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitTr_peculiar(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		Statement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.createStatement();
+			rs = stmt.executeQuery("SELECT "
+				+ "cdg" 
+				+ ",persona" 
+				+ ",fecha_desde" 
+				+ ",cod_pec" 
+				+ ",fraccion_cuota" 
+				+ ",colect_incentivado" 
+				+ ",valor_pec" 
+				+ ",estado" 
+				+ " FROM tr_peculiar");
+			Tr_peculiar tr_peculiar = new Tr_peculiar(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitTr_peculiar(tr_peculiar);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Tr_peculiar's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitTr_peculiar(Integer cdg, Integer persona, Date fecha_desde, String cod_pec, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",persona" 
+				+ ",fecha_desde" 
+				+ ",cod_pec" 
+				+ ",fraccion_cuota" 
+				+ ",colect_incentivado" 
+				+ ",valor_pec" 
+				+ ",estado" 
+				+ " FROM tr_peculiar" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " persona = ?  "  + "AND" 				  
+				+ " fecha_desde = ?  "  + "AND" 				  
+				+ " cod_pec = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, persona); 
+				stmt.setDate(3, fecha_desde ); 
+				stmt.setString(4, cod_pec ); 
+
+			rs = stmt.executeQuery();
+			Tr_peculiar tr_peculiar = new Tr_peculiar(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitTr_peculiar(tr_peculiar);
 			}
 		}
 		finally {
@@ -57169,6 +57580,9 @@ public class AbstractCtsqlDB {
 				+ ",cecon" 
 				+ ",modimpuesto" 
 				+ ",mod190" 
+				+ ",feciniportal" 
+				+ ",feccierrenomina" 
+				+ ",meseshistorico" 
 				+ " FROM emprnif");
 			Emprnif emprnif = new Emprnif(rs); 
 			while ( rs.next() ) {
@@ -57228,6 +57642,9 @@ public class AbstractCtsqlDB {
 				+ ",cecon" 
 				+ ",modimpuesto" 
 				+ ",mod190" 
+				+ ",feciniportal" 
+				+ ",feccierrenomina" 
+				+ ",meseshistorico" 
 				+ " FROM emprnif" 
 				+ " WHERE" 
 				+ " cdg = ?  " 				  
@@ -57271,6 +57688,7 @@ public class AbstractCtsqlDB {
 				+ ",localidad" 
 				+ ",provincia" 
 				+ ",telefono" 
+				+ ",workplace" 
 				+ " FROM delegacion");
 			Delegacion delegacion = new Delegacion(rs); 
 			while ( rs.next() ) {
@@ -57306,6 +57724,7 @@ public class AbstractCtsqlDB {
 				+ ",localidad" 
 				+ ",provincia" 
 				+ ",telefono" 
+				+ ",workplace" 
 				+ " FROM delegacion" 
 				+ " WHERE" 
 				+ " cdg = ?  " 				  
@@ -57317,75 +57736,6 @@ public class AbstractCtsqlDB {
 			Delegacion delegacion = new Delegacion(rs); 
 			while ( rs.next() ) {
 				ctsqlDBVisitor.visitDelegacion(delegacion);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
-	 * Visit all Nszcont's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitNszcont(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "stc0" 
-				+ ",stc1" 
-				+ ",stc2" 
-				+ ",ntc0" 
-				+ " FROM nszcont");
-			Nszcont nszcont = new Nszcont(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszcont(nszcont);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
-	 * Visit all Nszconv's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitNszconv(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "sco0" 
-				+ ",sco1" 
-				+ ",sco2" 
-				+ ",nco0" 
-				+ ",nco1" 
-				+ ",nco2" 
-				+ ",nco3" 
-				+ ",nco4" 
-				+ ",nco5" 
-				+ ",nco6" 
-				+ ",nco7" 
-				+ ",nco8" 
-				+ ",nco9" 
-				+ " FROM nszconv");
-			Nszconv nszconv = new Nszconv(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszconv(nszconv);
 			}
 		}
 		finally {
@@ -57671,40 +58021,6 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Nszcopa's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitNszcopa(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "spg0" 
-				+ ",spg1" 
-				+ ",spg2" 
-				+ ",spg3" 
-				+ ",spg4" 
-				+ ",spg5" 
-				+ ",spg6" 
-				+ ",spg7" 
-				+ " FROM nszcopa");
-			Nszcopa nszcopa = new Nszcopa(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszcopa(nszcopa);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
 	 * Visit all Persona's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
@@ -57831,23 +58147,149 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Nszprov's .
+	 * Visit all Impr296's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
 	 */
-	public void visitNszprov(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+	public void visitImpr296(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 		ResultSet rs 	= null;
 		Statement stmt 	= null;
 		try {
 			
 			stmt = ctsqlConnection.createStatement();
 			rs = stmt.executeQuery("SELECT "
-				+ "spr0" 
-				+ ",spr1" 
-				+ " FROM nszprov");
-			Nszprov nszprov = new Nszprov(rs); 
+				+ "cdg" 
+				+ ",codemp" 
+				+ ",codadm" 
+				+ ",provincia" 
+				+ ",anio" 
+				+ ",num_percep" 
+				+ ",imp_percep" 
+				+ ",imp_retenc" 
+				+ ",fecha" 
+				+ ",descuadrado" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",divisa" 
+				+ " FROM impr296");
+			Impr296 impr296 = new Impr296(rs); 
 			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszprov(nszprov);
+				ctsqlDBVisitor.visitImpr296(impr296);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Impr296's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitImpr296(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",codemp" 
+				+ ",codadm" 
+				+ ",provincia" 
+				+ ",anio" 
+				+ ",num_percep" 
+				+ ",imp_percep" 
+				+ ",imp_retenc" 
+				+ ",fecha" 
+				+ ",descuadrado" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",divisa" 
+				+ " FROM impr296" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Impr296 impr296 = new Impr296(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitImpr296(impr296);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Lintipocargos's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLintipocargos(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		Statement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.createStatement();
+			rs = stmt.executeQuery("SELECT "
+				+ "tipocargo" 
+				+ ",workplace" 
+				+ ",facturar" 
+				+ " FROM lintipocargos");
+			Lintipocargos lintipocargos = new Lintipocargos(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLintipocargos(lintipocargos);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Lintipocargos's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLintipocargos(String tipocargo, String workplace, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "tipocargo" 
+				+ ",workplace" 
+				+ ",facturar" 
+				+ " FROM lintipocargos" 
+				+ " WHERE" 
+				+ " tipocargo = ?  "  + "AND" 				  
+				+ " workplace = ?  " 				  
+				);
+
+				stmt.setString(1, tipocargo ); 
+				stmt.setString(2, workplace ); 
+
+			rs = stmt.executeQuery();
+			Lintipocargos lintipocargos = new Lintipocargos(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLintipocargos(lintipocargos);
 			}
 		}
 		finally {
@@ -57998,6 +58440,7 @@ public class AbstractCtsqlDB {
 			rs = stmt.executeQuery("SELECT "
 				+ "codper" 
 				+ ",fecbaj" 
+				+ ",codcausa" 
 				+ ",causa" 
 				+ ",vacfecini" 
 				+ ",vacimporte" 
@@ -58053,6 +58496,7 @@ public class AbstractCtsqlDB {
 			stmt = ctsqlConnection.prepareStatement("SELECT "
 				+ "codper" 
 				+ ",fecbaj" 
+				+ ",codcausa" 
 				+ ",causa" 
 				+ ",vacfecini" 
 				+ ",vacimporte" 
@@ -58092,6 +58536,80 @@ public class AbstractCtsqlDB {
 			Finiquito finiquito = new Finiquito(rs); 
 			while ( rs.next() ) {
 				ctsqlDBVisitor.visitFiniquito(finiquito);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Linfpercep's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLinfpercep(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		Statement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.createStatement();
+			rs = stmt.executeQuery("SELECT "
+				+ "cdg" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",orden" 
+				+ ",codcom" 
+				+ ",formula" 
+				+ " FROM linfpercep");
+			Linfpercep linfpercep = new Linfpercep(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLinfpercep(linfpercep);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Linfpercep's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLinfpercep(Integer cdg, Date fecini, String codcom, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",orden" 
+				+ ",codcom" 
+				+ ",formula" 
+				+ " FROM linfpercep" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " fecini = ?  "  + "AND" 				  
+				+ " codcom = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setDate(2, fecini ); 
+				stmt.setString(3, codcom ); 
+
+			rs = stmt.executeQuery();
+			Linfpercep linfpercep = new Linfpercep(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLinfpercep(linfpercep);
 			}
 		}
 		finally {
@@ -58279,78 +58797,6 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Nszdomi's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitNszdomi(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "sdm0" 
-				+ ",sdm1" 
-				+ ",sdm2" 
-				+ ",sdm3" 
-				+ ",sdm4" 
-				+ ",sdm5" 
-				+ ",sdm6" 
-				+ " FROM nszdomi");
-			Nszdomi nszdomi = new Nszdomi(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszdomi(nszdomi);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
-	 * Visit all Nszdomi's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitNszdomi(String sdm0, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		PreparedStatement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.prepareStatement("SELECT "
-				+ "sdm0" 
-				+ ",sdm1" 
-				+ ",sdm2" 
-				+ ",sdm3" 
-				+ ",sdm4" 
-				+ ",sdm5" 
-				+ ",sdm6" 
-				+ " FROM nszdomi" 
-				+ " WHERE" 
-				+ " sdm0 = ?  " 				  
-				);
-
-				stmt.setString(1, sdm0 ); 
-
-			rs = stmt.executeQuery();
-			Nszdomi nszdomi = new Nszdomi(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszdomi(nszdomi);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
 	 * Visit all Porcoti's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
@@ -58489,27 +58935,87 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Nszcatg's .
+	 * Visit all Lindatosweb's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
 	 */
-	public void visitNszcatg(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+	public void visitLindatosweb(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 		ResultSet rs 	= null;
 		Statement stmt 	= null;
 		try {
 			
 			stmt = ctsqlConnection.createStatement();
 			rs = stmt.executeQuery("SELECT "
-				+ "scg0" 
-				+ ",scg1" 
-				+ ",scg2" 
-				+ ",scg3" 
-				+ ",scg4" 
-				+ ",scg5" 
-				+ " FROM nszcatg");
-			Nszcatg nszcatg = new Nszcatg(rs); 
+				+ "cdg" 
+				+ ",fichero" 
+				+ ",tipo" 
+				+ ",anio" 
+				+ ",mes" 
+				+ ",direccion" 
+				+ ",financiero" 
+				+ ",rrhh" 
+				+ ",contabilidad" 
+				+ ",administrativo" 
+				+ ",nominas" 
+				+ ",informaciones" 
+				+ ",otros" 
+				+ ",descripcion" 
+				+ ",remesa" 
+				+ ",estado" 
+				+ " FROM lindatosweb");
+			Lindatosweb lindatosweb = new Lindatosweb(rs); 
 			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszcatg(nszcatg);
+				ctsqlDBVisitor.visitLindatosweb(lindatosweb);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Lindatosweb's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLindatosweb(Integer cdg, String fichero, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",fichero" 
+				+ ",tipo" 
+				+ ",anio" 
+				+ ",mes" 
+				+ ",direccion" 
+				+ ",financiero" 
+				+ ",rrhh" 
+				+ ",contabilidad" 
+				+ ",administrativo" 
+				+ ",nominas" 
+				+ ",informaciones" 
+				+ ",otros" 
+				+ ",descripcion" 
+				+ ",remesa" 
+				+ ",estado" 
+				+ " FROM lindatosweb" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " fichero = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setString(2, fichero ); 
+
+			rs = stmt.executeQuery();
+			Lindatosweb lindatosweb = new Lindatosweb(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLindatosweb(lindatosweb);
 			}
 		}
 		finally {
@@ -58576,6 +59082,78 @@ public class AbstractCtsqlDB {
 			Unidades unidades = new Unidades(rs); 
 			while ( rs.next() ) {
 				ctsqlDBVisitor.visitUnidades(unidades);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Honorarios's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitHonorarios(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		Statement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.createStatement();
+			rs = stmt.executeQuery("SELECT "
+				+ "cdg" 
+				+ ",codcli" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",tipo" 
+				+ ",texto" 
+				+ ",facturar" 
+				+ " FROM honorarios");
+			Honorarios honorarios = new Honorarios(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitHonorarios(honorarios);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Honorarios's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitHonorarios(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",codcli" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",tipo" 
+				+ ",texto" 
+				+ ",facturar" 
+				+ " FROM honorarios" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Honorarios honorarios = new Honorarios(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitHonorarios(honorarios);
 			}
 		}
 		finally {
@@ -58903,6 +59481,7 @@ public class AbstractCtsqlDB {
 				+ ",paisemp" 
 				+ ",provccc" 
 				+ ",numccc" 
+				+ ",concol" 
 				+ ",numidemp" 
 				+ ",indrs" 
 				+ ",codact" 
@@ -58931,6 +59510,7 @@ public class AbstractCtsqlDB {
 				+ ",fecreal" 
 				+ ",grucot" 
 				+ ",epigat" 
+				+ ",procot" 
 				+ ",contrab" 
 				+ ",coeftp" 
 				+ ",indimp" 
@@ -58994,6 +59574,7 @@ public class AbstractCtsqlDB {
 				+ ",paisemp" 
 				+ ",provccc" 
 				+ ",numccc" 
+				+ ",concol" 
 				+ ",numidemp" 
 				+ ",indrs" 
 				+ ",codact" 
@@ -59022,6 +59603,7 @@ public class AbstractCtsqlDB {
 				+ ",fecreal" 
 				+ ",grucot" 
 				+ ",epigat" 
+				+ ",procot" 
 				+ ",contrab" 
 				+ ",coeftp" 
 				+ ",indimp" 
@@ -59094,6 +59676,9 @@ public class AbstractCtsqlDB {
 				+ ",fecmod" 
 				+ ",hormod" 
 				+ ",importe" 
+				+ ",coeficiente" 
+				+ ",basediacc" 
+				+ ",basediaacc" 
 				+ " FROM trabinci");
 			Trabinci trabinci = new Trabinci(rs); 
 			while ( rs.next() ) {
@@ -59129,6 +59714,9 @@ public class AbstractCtsqlDB {
 				+ ",fecmod" 
 				+ ",hormod" 
 				+ ",importe" 
+				+ ",coeficiente" 
+				+ ",basediacc" 
+				+ ",basediaacc" 
 				+ " FROM trabinci" 
 				+ " WHERE" 
 				+ " cdg = ?  "  + "AND" 				  
@@ -59168,6 +59756,7 @@ public class AbstractCtsqlDB {
 			rs = stmt.executeQuery("SELECT "
 				+ "codper" 
 				+ ",fecbaj" 
+				+ ",codcausa" 
 				+ ",causa" 
 				+ ",vacfecini" 
 				+ ",vacimporte" 
@@ -59221,6 +59810,7 @@ public class AbstractCtsqlDB {
 			stmt = ctsqlConnection.prepareStatement("SELECT "
 				+ "codper" 
 				+ ",fecbaj" 
+				+ ",codcausa" 
 				+ ",causa" 
 				+ ",vacfecini" 
 				+ ",vacimporte" 
@@ -59258,6 +59848,78 @@ public class AbstractCtsqlDB {
 			Finiquitodf finiquitodf = new Finiquitodf(rs); 
 			while ( rs.next() ) {
 				ctsqlDBVisitor.visitFiniquitodf(finiquitodf);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Baseartista's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitBaseartista(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		Statement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.createStatement();
+			rs = stmt.executeQuery("SELECT "
+				+ "tramo" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",desde_retribucion" 
+				+ ",hasta_retribucion" 
+				+ ",eurosdia" 
+				+ " FROM baseartista");
+			Baseartista baseartista = new Baseartista(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitBaseartista(baseartista);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Baseartista's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitBaseartista(Date fecini, Integer tramo, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "tramo" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",desde_retribucion" 
+				+ ",hasta_retribucion" 
+				+ ",eurosdia" 
+				+ " FROM baseartista" 
+				+ " WHERE" 
+				+ " fecini = ?  "  + "AND" 				  
+				+ " tramo = ?  " 				  
+				);
+
+				stmt.setDate(1, fecini ); 
+				stmt.setInt(2, tramo); 
+
+			rs = stmt.executeQuery();
+			Baseartista baseartista = new Baseartista(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitBaseartista(baseartista);
 			}
 		}
 		finally {
@@ -59326,6 +59988,68 @@ public class AbstractCtsqlDB {
 			Finidto finidto = new Finidto(rs); 
 			while ( rs.next() ) {
 				ctsqlDBVisitor.visitFinidto(finidto);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Tipocargos's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitTipocargos(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		Statement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.createStatement();
+			rs = stmt.executeQuery("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM tipocargos");
+			Tipocargos tipocargos = new Tipocargos(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitTipocargos(tipocargos);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Tipocargos's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitTipocargos(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM tipocargos" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Tipocargos tipocargos = new Tipocargos(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitTipocargos(tipocargos);
 			}
 		}
 		finally {
@@ -59517,6 +60241,76 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
+	 * Visit all Cargos's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitCargos(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		Statement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.createStatement();
+			rs = stmt.executeQuery("SELECT "
+				+ "cdg" 
+				+ ",codact" 
+				+ ",descripcion" 
+				+ ",codbbx" 
+				+ ",anio" 
+				+ ",mes" 
+				+ " FROM cargos");
+			Cargos cargos = new Cargos(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitCargos(cargos);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Cargos's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitCargos(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",codact" 
+				+ ",descripcion" 
+				+ ",codbbx" 
+				+ ",anio" 
+				+ ",mes" 
+				+ " FROM cargos" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Cargos cargos = new Cargos(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitCargos(cargos);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
 	 * Visit all Lin_divisa's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
@@ -59654,6 +60448,80 @@ public class AbstractCtsqlDB {
 			Finipextdf finipextdf = new Finipextdf(rs); 
 			while ( rs.next() ) {
 				ctsqlDBVisitor.visitFinipextdf(finipextdf);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Remesace's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitRemesace(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		Statement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.createStatement();
+			rs = stmt.executeQuery("SELECT "
+				+ "trabajador" 
+				+ ",codemp" 
+				+ ",fregistro" 
+				+ ",fenvio" 
+				+ ",fichero" 
+				+ ",causa" 
+				+ ",falta" 
+				+ ",fbaja" 
+				+ " FROM remesace");
+			Remesace remesace = new Remesace(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitRemesace(remesace);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Remesace's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitRemesace(Integer trabajador, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "trabajador" 
+				+ ",codemp" 
+				+ ",fregistro" 
+				+ ",fenvio" 
+				+ ",fichero" 
+				+ ",causa" 
+				+ ",falta" 
+				+ ",fbaja" 
+				+ " FROM remesace" 
+				+ " WHERE" 
+				+ " trabajador = ?  " 				  
+				);
+
+				stmt.setInt(1, trabajador); 
+
+			rs = stmt.executeQuery();
+			Remesace remesace = new Remesace(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitRemesace(remesace);
 			}
 		}
 		finally {
@@ -60071,22 +60939,31 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Db_version's .
+	 * Visit all Tr_tramos's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
 	 */
-	public void visitDb_version(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+	public void visitTr_tramos(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 		ResultSet rs 	= null;
 		Statement stmt 	= null;
 		try {
 			
 			stmt = ctsqlConnection.createStatement();
 			rs = stmt.executeQuery("SELECT "
-				+ "version_number" 
-				+ " FROM db_version");
-			Db_version db_version = new Db_version(rs); 
+				+ "cdg" 
+				+ ",persona" 
+				+ ",numss" 
+				+ ",fecha_desde" 
+				+ ",fecha_hasta" 
+				+ ",dias_cotizados" 
+				+ ",grupo_cotizacion" 
+				+ ",tipo_contrato" 
+				+ ",cnae" 
+				+ ",estado" 
+				+ " FROM tr_tramos");
+			Tr_tramos tr_tramos = new Tr_tramos(rs); 
 			while ( rs.next() ) {
-				ctsqlDBVisitor.visitDb_version(db_version);
+				ctsqlDBVisitor.visitTr_tramos(tr_tramos);
 			}
 		}
 		finally {
@@ -60098,28 +60975,41 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Db_version's .
+	 * Visit all Tr_tramos's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
 	 */
-	public void visitDb_version(String version_number, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+	public void visitTr_tramos(Integer cdg, Integer persona, Date fecha_desde, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 		ResultSet rs 	= null;
 		PreparedStatement stmt 	= null;
 		try {
 			
 			stmt = ctsqlConnection.prepareStatement("SELECT "
-				+ "version_number" 
-				+ " FROM db_version" 
+				+ "cdg" 
+				+ ",persona" 
+				+ ",numss" 
+				+ ",fecha_desde" 
+				+ ",fecha_hasta" 
+				+ ",dias_cotizados" 
+				+ ",grupo_cotizacion" 
+				+ ",tipo_contrato" 
+				+ ",cnae" 
+				+ ",estado" 
+				+ " FROM tr_tramos" 
 				+ " WHERE" 
-				+ " version_number = ?  " 				  
+				+ " cdg = ?  "  + "AND" 				  
+				+ " persona = ?  "  + "AND" 				  
+				+ " fecha_desde = ?  " 				  
 				);
 
-				stmt.setString(1, version_number ); 
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, persona); 
+				stmt.setDate(3, fecha_desde ); 
 
 			rs = stmt.executeQuery();
-			Db_version db_version = new Db_version(rs); 
+			Tr_tramos tr_tramos = new Tr_tramos(rs); 
 			while ( rs.next() ) {
-				ctsqlDBVisitor.visitDb_version(db_version);
+				ctsqlDBVisitor.visitTr_tramos(tr_tramos);
 			}
 		}
 		finally {
@@ -60657,62 +61547,6 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Nszanex's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitNszanex(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "san0" 
-				+ ",san1" 
-				+ " FROM nszanex");
-			Nszanex nszanex = new Nszanex(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszanex(nszanex);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
-	 * Visit all Nszmupa's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitNszmupa(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "smu0" 
-				+ ",smu1" 
-				+ " FROM nszmupa");
-			Nszmupa nszmupa = new Nszmupa(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszmupa(nszmupa);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
 	 * Visit all Minor_31's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
@@ -60875,53 +61709,6 @@ public class AbstractCtsqlDB {
 			Linirpf linirpf = new Linirpf(rs); 
 			while ( rs.next() ) {
 				ctsqlDBVisitor.visitLinirpf(linirpf);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
-	 * Visit all Nszreac's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitNszreac(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "sre0" 
-				+ ",sre1" 
-				+ ",nre0" 
-				+ ",nre1" 
-				+ ",nre2" 
-				+ ",nre3" 
-				+ ",nre4" 
-				+ ",nre5" 
-				+ ",nre6" 
-				+ ",nre7" 
-				+ ",nre8" 
-				+ ",nre9" 
-				+ ",nre10" 
-				+ ",nre11" 
-				+ ",nre12" 
-				+ ",nre13" 
-				+ ",nre14" 
-				+ ",nre15" 
-				+ ",nre16" 
-				+ ",nre17" 
-				+ ",nre18" 
-				+ " FROM nszreac");
-			Nszreac nszreac = new Nszreac(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszreac(nszreac);
 			}
 		}
 		finally {
@@ -61160,16 +61947,19 @@ public class AbstractCtsqlDB {
 				+ ",base_perdes" 
 				+ ",remuneracion" 
 				+ ",base_it" 
+				+ ",base_ere" 
 				+ ",total_1" 
 				+ ",codbas" 
 				+ ",base_cg" 
 				+ ",base_acc" 
 				+ ",prc_cg" 
 				+ ",prc_acc" 
+				+ ",prc_fp" 
 				+ ",prc_hex" 
 				+ ",prc_hexno" 
 				+ ",importe_cg" 
 				+ ",importe_acc" 
+				+ ",importe_fp" 
 				+ ",importe_hex" 
 				+ ",importe_hexno" 
 				+ ",mincg" 
@@ -61201,6 +61991,12 @@ public class AbstractCtsqlDB {
 				+ ",base_acc_pts" 
 				+ ",base_acc_sin_h_pts" 
 				+ ",cdgnom" 
+				+ ",base_con_ere" 
+				+ ",base_acc_ere" 
+				+ ",base_con_ere_no" 
+				+ ",base_acc_ere_no" 
+				+ ",base_con_ere_sin" 
+				+ ",base_acc_ere_sin" 
 				+ " FROM nominadf");
 			Nominadf nominadf = new Nominadf(rs); 
 			while ( rs.next() ) {
@@ -61276,16 +62072,19 @@ public class AbstractCtsqlDB {
 				+ ",base_perdes" 
 				+ ",remuneracion" 
 				+ ",base_it" 
+				+ ",base_ere" 
 				+ ",total_1" 
 				+ ",codbas" 
 				+ ",base_cg" 
 				+ ",base_acc" 
 				+ ",prc_cg" 
 				+ ",prc_acc" 
+				+ ",prc_fp" 
 				+ ",prc_hex" 
 				+ ",prc_hexno" 
 				+ ",importe_cg" 
 				+ ",importe_acc" 
+				+ ",importe_fp" 
 				+ ",importe_hex" 
 				+ ",importe_hexno" 
 				+ ",mincg" 
@@ -61317,6 +62116,12 @@ public class AbstractCtsqlDB {
 				+ ",base_acc_pts" 
 				+ ",base_acc_sin_h_pts" 
 				+ ",cdgnom" 
+				+ ",base_con_ere" 
+				+ ",base_acc_ere" 
+				+ ",base_con_ere_no" 
+				+ ",base_acc_ere_no" 
+				+ ",base_con_ere_sin" 
+				+ ",base_acc_ere_sin" 
 				+ " FROM nominadf" 
 				+ " WHERE" 
 				+ " cdg = ?  " 				  
@@ -61328,48 +62133,6 @@ public class AbstractCtsqlDB {
 			Nominadf nominadf = new Nominadf(rs); 
 			while ( rs.next() ) {
 				ctsqlDBVisitor.visitNominadf(nominadf);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
-	 * Visit all Nszfini's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitNszfini(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "sfq0" 
-				+ ",sfq1" 
-				+ ",nfq0" 
-				+ ",nfq1" 
-				+ ",nfq2" 
-				+ ",nfq3" 
-				+ ",nfq4" 
-				+ ",nfq5" 
-				+ ",nfq6" 
-				+ ",nfq7" 
-				+ ",nfq8" 
-				+ ",nfq9" 
-				+ ",nfq10" 
-				+ ",nfq11" 
-				+ ",nfq12" 
-				+ ",nfq13" 
-				+ " FROM nszfini");
-			Nszfini nszfini = new Nszfini(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszfini(nszfini);
 			}
 		}
 		finally {
@@ -61466,6 +62229,7 @@ public class AbstractCtsqlDB {
 				+ ",codtra" 
 				+ ",descripcion" 
 				+ ",fecha" 
+				+ ",codcausa" 
 				+ ",causa" 
 				+ " FROM calfiniquito");
 			Calfiniquito calfiniquito = new Calfiniquito(rs); 
@@ -61500,6 +62264,7 @@ public class AbstractCtsqlDB {
 				+ ",codtra" 
 				+ ",descripcion" 
 				+ ",fecha" 
+				+ ",codcausa" 
 				+ ",causa" 
 				+ " FROM calfiniquito" 
 				+ " WHERE" 
@@ -61685,34 +62450,6 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Nsztido's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitNsztido(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "std0" 
-				+ ",std1" 
-				+ " FROM nsztido");
-			Nsztido nsztido = new Nsztido(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNsztido(nsztido);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
 	 * Visit all Tipinc's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
@@ -61859,6 +62596,7 @@ public class AbstractCtsqlDB {
 				+ ",cias" 
 				+ ",fecconf" 
 				+ ",parproc" 
+				+ ",fecproxconf" 
 				+ " FROM parteconf");
 			Parteconf parteconf = new Parteconf(rs); 
 			while ( rs.next() ) {
@@ -61891,6 +62629,7 @@ public class AbstractCtsqlDB {
 				+ ",cias" 
 				+ ",fecconf" 
 				+ ",parproc" 
+				+ ",fecproxconf" 
 				+ " FROM parteconf" 
 				+ " WHERE" 
 				+ " cdg = ?  "  + "AND" 				  
@@ -62000,6 +62739,11 @@ public class AbstractCtsqlDB {
 				+ ",imp_per_esp" 
 				+ ",imp_ing_cta" 
 				+ ",imp_ing_rep" 
+				+ ",imp_per_ilt" 
+				+ ",imp_ret_ilt" 
+				+ ",imp_per_esp_ilt" 
+				+ ",imp_ing_cta_ilt" 
+				+ ",imp_ing_rep_ilt" 
 				+ ",devengo" 
 				+ ",anionac" 
 				+ ",xminus" 
@@ -62016,14 +62760,6 @@ public class AbstractCtsqlDB {
 				+ ",imp_gastos" 
 				+ ",imp_pension" 
 				+ ",imp_anual" 
-				+ ",nomapel" 
-				+ ",provincia" 
-				+ ",c_m" 
-				+ ",descentero" 
-				+ ",totalasc" 
-				+ ",ascentero" 
-				+ ",ascminus_33" 
-				+ ",ascminus_65" 
 				+ ",movilidad" 
 				+ ",prolongacion" 
 				+ ",hipoteca" 
@@ -62050,6 +62786,14 @@ public class AbstractCtsqlDB {
 				+ ",ascdimre" 
 				+ ",ascdi65" 
 				+ ",ascdi65e" 
+				+ ",nomapel" 
+				+ ",provincia" 
+				+ ",c_m" 
+				+ ",descentero" 
+				+ ",totalasc" 
+				+ ",ascentero" 
+				+ ",ascminus_33" 
+				+ ",ascminus_65" 
 				+ " FROM lin190");
 			Lin190 lin190 = new Lin190(rs); 
 			while ( rs.next() ) {
@@ -62085,6 +62829,11 @@ public class AbstractCtsqlDB {
 				+ ",imp_per_esp" 
 				+ ",imp_ing_cta" 
 				+ ",imp_ing_rep" 
+				+ ",imp_per_ilt" 
+				+ ",imp_ret_ilt" 
+				+ ",imp_per_esp_ilt" 
+				+ ",imp_ing_cta_ilt" 
+				+ ",imp_ing_rep_ilt" 
 				+ ",devengo" 
 				+ ",anionac" 
 				+ ",xminus" 
@@ -62101,14 +62850,6 @@ public class AbstractCtsqlDB {
 				+ ",imp_gastos" 
 				+ ",imp_pension" 
 				+ ",imp_anual" 
-				+ ",nomapel" 
-				+ ",provincia" 
-				+ ",c_m" 
-				+ ",descentero" 
-				+ ",totalasc" 
-				+ ",ascentero" 
-				+ ",ascminus_33" 
-				+ ",ascminus_65" 
 				+ ",movilidad" 
 				+ ",prolongacion" 
 				+ ",hipoteca" 
@@ -62135,6 +62876,14 @@ public class AbstractCtsqlDB {
 				+ ",ascdimre" 
 				+ ",ascdi65" 
 				+ ",ascdi65e" 
+				+ ",nomapel" 
+				+ ",provincia" 
+				+ ",c_m" 
+				+ ",descentero" 
+				+ ",totalasc" 
+				+ ",ascentero" 
+				+ ",ascminus_33" 
+				+ ",ascminus_65" 
 				+ " FROM lin190" 
 				+ " WHERE" 
 				+ " cdg = ?  "  + "AND" 				  
@@ -62178,6 +62927,8 @@ public class AbstractCtsqlDB {
 				+ ",fijovar" 
 				+ ",indcom" 
 				+ ",dinesp" 
+				+ ",concepto" 
+				+ ",excinc" 
 				+ " FROM complemento");
 			Complemento complemento = new Complemento(rs); 
 			while ( rs.next() ) {
@@ -62211,6 +62962,8 @@ public class AbstractCtsqlDB {
 				+ ",fijovar" 
 				+ ",indcom" 
 				+ ",dinesp" 
+				+ ",concepto" 
+				+ ",excinc" 
 				+ " FROM complemento" 
 				+ " WHERE" 
 				+ " cdg = ?  " 				  
@@ -62370,70 +63123,6 @@ public class AbstractCtsqlDB {
 			Nomdfdto nomdfdto = new Nomdfdto(rs); 
 			while ( rs.next() ) {
 				ctsqlDBVisitor.visitNomdfdto(nomdfdto);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
-	 * Visit all Action_denied's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitAction_denied(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "id" 
-				+ ",action_id" 
-				+ ",user_id" 
-				+ " FROM action_denied");
-			Action_denied action_denied = new Action_denied(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitAction_denied(action_denied);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
-	 * Visit all Action_denied's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitAction_denied(Integer id, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		PreparedStatement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.prepareStatement("SELECT "
-				+ "id" 
-				+ ",action_id" 
-				+ ",user_id" 
-				+ " FROM action_denied" 
-				+ " WHERE" 
-				+ " id = ?  " 				  
-				);
-
-				stmt.setInt(1, id); 
-
-			rs = stmt.executeQuery();
-			Action_denied action_denied = new Action_denied(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitAction_denied(action_denied);
 			}
 		}
 		finally {
@@ -62620,6 +63309,15 @@ public class AbstractCtsqlDB {
 				+ ",importe" 
 				+ ",tipo" 
 				+ ",prorrateo" 
+				+ ",descripcion" 
+				+ ",calculo" 
+				+ ",prc_cg" 
+				+ ",prc_acc" 
+				+ ",prc_accfgs" 
+				+ ",boniss" 
+				+ ",mayor60" 
+				+ ",rdl052006" 
+				+ ",restait" 
 				+ " FROM bonifica");
 			Bonifica bonifica = new Bonifica(rs); 
 			while ( rs.next() ) {
@@ -62653,6 +63351,15 @@ public class AbstractCtsqlDB {
 				+ ",importe" 
 				+ ",tipo" 
 				+ ",prorrateo" 
+				+ ",descripcion" 
+				+ ",calculo" 
+				+ ",prc_cg" 
+				+ ",prc_acc" 
+				+ ",prc_accfgs" 
+				+ ",boniss" 
+				+ ",mayor60" 
+				+ ",rdl052006" 
+				+ ",restait" 
 				+ " FROM bonifica" 
 				+ " WHERE" 
 				+ " numero = ?  "  + "AND" 				  
@@ -62701,11 +63408,11 @@ public class AbstractCtsqlDB {
 				+ ",acteco" 
 				+ ",epiiae" 
 				+ ",cnae" 
+				+ ",cnae2009" 
 				+ ",fecnew" 
 				+ ",hornew" 
 				+ ",fecmod" 
 				+ ",hormod" 
-				+ ",cnae2009" 
 				+ ",indred" 
 				+ ",indmutua" 
 				+ ",indtc1" 
@@ -62722,6 +63429,8 @@ public class AbstractCtsqlDB {
 				+ ",indfirma" 
 				+ ",indregimen" 
 				+ ",prevencion" 
+				+ ",indsiltra" 
+				+ ",autoriza" 
 				+ " FROM empract");
 			Empract empract = new Empract(rs); 
 			while ( rs.next() ) {
@@ -62758,11 +63467,11 @@ public class AbstractCtsqlDB {
 				+ ",acteco" 
 				+ ",epiiae" 
 				+ ",cnae" 
+				+ ",cnae2009" 
 				+ ",fecnew" 
 				+ ",hornew" 
 				+ ",fecmod" 
 				+ ",hormod" 
-				+ ",cnae2009" 
 				+ ",indred" 
 				+ ",indmutua" 
 				+ ",indtc1" 
@@ -62779,6 +63488,8 @@ public class AbstractCtsqlDB {
 				+ ",indfirma" 
 				+ ",indregimen" 
 				+ ",prevencion" 
+				+ ",indsiltra" 
+				+ ",autoriza" 
 				+ " FROM empract" 
 				+ " WHERE" 
 				+ " cdg = ?  " 				  
@@ -62865,25 +63576,25 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Action_entry's .
+	 * Visit all Cra_trb's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
 	 */
-	public void visitAction_entry(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+	public void visitCra_trb(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 		ResultSet rs 	= null;
 		Statement stmt 	= null;
 		try {
 			
 			stmt = ctsqlConnection.createStatement();
 			rs = stmt.executeQuery("SELECT "
-				+ "id" 
-				+ ",executiondate" 
-				+ ",action_id" 
-				+ ",session_id" 
-				+ " FROM action_entry");
-			Action_entry action_entry = new Action_entry(rs); 
+				+ "cdg" 
+				+ ",codper" 
+				+ ",apenom" 
+				+ ",numss" 
+				+ " FROM cra_trb");
+			Cra_trb cra_trb = new Cra_trb(rs); 
 			while ( rs.next() ) {
-				ctsqlDBVisitor.visitAction_entry(action_entry);
+				ctsqlDBVisitor.visitCra_trb(cra_trb);
 			}
 		}
 		finally {
@@ -62895,31 +63606,33 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Action_entry's .
+	 * Visit all Cra_trb's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
 	 */
-	public void visitAction_entry(Integer id, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+	public void visitCra_trb(Integer cdg, Integer codper, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 		ResultSet rs 	= null;
 		PreparedStatement stmt 	= null;
 		try {
 			
 			stmt = ctsqlConnection.prepareStatement("SELECT "
-				+ "id" 
-				+ ",executiondate" 
-				+ ",action_id" 
-				+ ",session_id" 
-				+ " FROM action_entry" 
+				+ "cdg" 
+				+ ",codper" 
+				+ ",apenom" 
+				+ ",numss" 
+				+ " FROM cra_trb" 
 				+ " WHERE" 
-				+ " id = ?  " 				  
+				+ " cdg = ?  "  + "AND" 				  
+				+ " codper = ?  " 				  
 				);
 
-				stmt.setInt(1, id); 
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, codper); 
 
 			rs = stmt.executeQuery();
-			Action_entry action_entry = new Action_entry(rs); 
+			Cra_trb cra_trb = new Cra_trb(rs); 
 			while ( rs.next() ) {
-				ctsqlDBVisitor.visitAction_entry(action_entry);
+				ctsqlDBVisitor.visitCra_trb(cra_trb);
 			}
 		}
 		finally {
@@ -62931,31 +63644,24 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Masivo's .
+	 * Visit all Tr_parametro's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
 	 */
-	public void visitMasivo(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+	public void visitTr_parametro(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 		ResultSet rs 	= null;
 		Statement stmt 	= null;
 		try {
 			
 			stmt = ctsqlConnection.createStatement();
 			rs = stmt.executeQuery("SELECT "
-				+ "cdg1" 
-				+ ",cdg2" 
-				+ ",cdg3" 
-				+ ",cdg4" 
-				+ ",cdg5" 
-				+ ",cdg6" 
-				+ ",cdg7" 
-				+ ",cdg8" 
+				+ "cdg" 
 				+ ",descripcion" 
-				+ ",dato" 
-				+ " FROM masivo");
-			Masivo masivo = new Masivo(rs); 
+				+ ",valornum" 
+				+ " FROM tr_parametro");
+			Tr_parametro tr_parametro = new Tr_parametro(rs); 
 			while ( rs.next() ) {
-				ctsqlDBVisitor.visitMasivo(masivo);
+				ctsqlDBVisitor.visitTr_parametro(tr_parametro);
 			}
 		}
 		finally {
@@ -62967,51 +63673,30 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Masivo's .
+	 * Visit all Tr_parametro's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
 	 */
-	public void visitMasivo(String cdg1, String cdg2, String cdg3, String cdg4, String cdg5, String cdg6, String cdg7, String cdg8, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+	public void visitTr_parametro(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 		ResultSet rs 	= null;
 		PreparedStatement stmt 	= null;
 		try {
 			
 			stmt = ctsqlConnection.prepareStatement("SELECT "
-				+ "cdg1" 
-				+ ",cdg2" 
-				+ ",cdg3" 
-				+ ",cdg4" 
-				+ ",cdg5" 
-				+ ",cdg6" 
-				+ ",cdg7" 
-				+ ",cdg8" 
+				+ "cdg" 
 				+ ",descripcion" 
-				+ ",dato" 
-				+ " FROM masivo" 
+				+ ",valornum" 
+				+ " FROM tr_parametro" 
 				+ " WHERE" 
-				+ " cdg1 = ?  "  + "AND" 				  
-				+ " cdg2 = ?  "  + "AND" 				  
-				+ " cdg3 = ?  "  + "AND" 				  
-				+ " cdg4 = ?  "  + "AND" 				  
-				+ " cdg5 = ?  "  + "AND" 				  
-				+ " cdg6 = ?  "  + "AND" 				  
-				+ " cdg7 = ?  "  + "AND" 				  
-				+ " cdg8 = ?  " 				  
+				+ " cdg = ?  " 				  
 				);
 
-				stmt.setString(1, cdg1 ); 
-				stmt.setString(2, cdg2 ); 
-				stmt.setString(3, cdg3 ); 
-				stmt.setString(4, cdg4 ); 
-				stmt.setString(5, cdg5 ); 
-				stmt.setString(6, cdg6 ); 
-				stmt.setString(7, cdg7 ); 
-				stmt.setString(8, cdg8 ); 
+				stmt.setString(1, cdg ); 
 
 			rs = stmt.executeQuery();
-			Masivo masivo = new Masivo(rs); 
+			Tr_parametro tr_parametro = new Tr_parametro(rs); 
 			while ( rs.next() ) {
-				ctsqlDBVisitor.visitMasivo(masivo);
+				ctsqlDBVisitor.visitTr_parametro(tr_parametro);
 			}
 		}
 		finally {
@@ -63147,6 +63832,7 @@ public class AbstractCtsqlDB {
 				+ ",divisa" 
 				+ ",soloases" 
 				+ ",envioss" 
+				+ ",grupotrabajo" 
 				+ " FROM cliente");
 			Cliente cliente = new Cliente(rs); 
 			while ( rs.next() ) {
@@ -63207,6 +63893,7 @@ public class AbstractCtsqlDB {
 				+ ",divisa" 
 				+ ",soloases" 
 				+ ",envioss" 
+				+ ",grupotrabajo" 
 				+ " FROM cliente" 
 				+ " WHERE" 
 				+ " cdg = ?  " 				  
@@ -63505,70 +64192,6 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Nszcoco's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitNszcoco(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "scn0" 
-				+ ",scn1" 
-				+ ",scn2" 
-				+ ",scn3" 
-				+ ",ncn0" 
-				+ ",ncn1" 
-				+ " FROM nszcoco");
-			Nszcoco nszcoco = new Nszcoco(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszcoco(nszcoco);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
-	 * Visit all Nszrece's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitNszrece(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "src0" 
-				+ ",src1" 
-				+ ",nrc0" 
-				+ ",nrc1" 
-				+ ",nrc2" 
-				+ ",nrc3" 
-				+ " FROM nszrece");
-			Nszrece nszrece = new Nszrece(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszrece(nszrece);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
 	 * Visit all Impr11x's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
@@ -63606,8 +64229,12 @@ public class AbstractCtsqlDB {
 				+ ",preespper" 
 				+ ",preespimp" 
 				+ ",preespret" 
+				+ ",imgper" 
+				+ ",imgimp" 
+				+ ",imgret" 
 				+ ",liqtotal" 
 				+ ",fpago" 
+				+ ",iban" 
 				+ ",entidad" 
 				+ ",sucursal" 
 				+ ",dc" 
@@ -63618,12 +64245,14 @@ public class AbstractCtsqlDB {
 				+ ",fecmod" 
 				+ ",hormod" 
 				+ ",divisa" 
-				+ ",imgper" 
-				+ ",imgimp" 
-				+ ",imgret" 
 				+ ",modimpuesto" 
 				+ ",nrc" 
 				+ ",fecremimp" 
+				+ ",ibannrc" 
+				+ ",entidadnrc" 
+				+ ",sucursalnrc" 
+				+ ",dcnrc" 
+				+ ",cuentanrc" 
 				+ " FROM impr11x");
 			Impr11x impr11x = new Impr11x(rs); 
 			while ( rs.next() ) {
@@ -63675,8 +64304,12 @@ public class AbstractCtsqlDB {
 				+ ",preespper" 
 				+ ",preespimp" 
 				+ ",preespret" 
+				+ ",imgper" 
+				+ ",imgimp" 
+				+ ",imgret" 
 				+ ",liqtotal" 
 				+ ",fpago" 
+				+ ",iban" 
 				+ ",entidad" 
 				+ ",sucursal" 
 				+ ",dc" 
@@ -63687,12 +64320,14 @@ public class AbstractCtsqlDB {
 				+ ",fecmod" 
 				+ ",hormod" 
 				+ ",divisa" 
-				+ ",imgper" 
-				+ ",imgimp" 
-				+ ",imgret" 
 				+ ",modimpuesto" 
 				+ ",nrc" 
 				+ ",fecremimp" 
+				+ ",ibannrc" 
+				+ ",entidadnrc" 
+				+ ",sucursalnrc" 
+				+ ",dcnrc" 
+				+ ",cuentanrc" 
 				+ " FROM impr11x" 
 				+ " WHERE" 
 				+ " cdg = ?  " 				  
@@ -63996,80 +64631,6 @@ public class AbstractCtsqlDB {
 			Cuota cuota = new Cuota(rs); 
 			while ( rs.next() ) {
 				ctsqlDBVisitor.visitCuota(cuota);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
-	 * Visit all Session's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitSession(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "id" 
-				+ ",enddate" 
-				+ ",remote_address" 
-				+ ",remote_host" 
-				+ ",session_id" 
-				+ ",startdate" 
-				+ ",application_id" 
-				+ ",user_id" 
-				+ " FROM session");
-			Session session = new Session(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitSession(session);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
-	 * Visit all Session's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitSession(Integer id, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		PreparedStatement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.prepareStatement("SELECT "
-				+ "id" 
-				+ ",enddate" 
-				+ ",remote_address" 
-				+ ",remote_host" 
-				+ ",session_id" 
-				+ ",startdate" 
-				+ ",application_id" 
-				+ ",user_id" 
-				+ " FROM session" 
-				+ " WHERE" 
-				+ " id = ?  " 				  
-				);
-
-				stmt.setInt(1, id); 
-
-			rs = stmt.executeQuery();
-			Session session = new Session(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitSession(session);
 			}
 		}
 		finally {
@@ -64385,6 +64946,74 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
+	 * Visit all Datosweb's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitDatosweb(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		Statement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.createStatement();
+			rs = stmt.executeQuery("SELECT "
+				+ "cdg" 
+				+ ",nivel" 
+				+ ",codigo" 
+				+ ",descripcion" 
+				+ ",email" 
+				+ " FROM datosweb");
+			Datosweb datosweb = new Datosweb(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitDatosweb(datosweb);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Datosweb's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitDatosweb(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",nivel" 
+				+ ",codigo" 
+				+ ",descripcion" 
+				+ ",email" 
+				+ " FROM datosweb" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Datosweb datosweb = new Datosweb(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitDatosweb(datosweb);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
 	 * Visit all Nominaex's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
@@ -64509,56 +65138,163 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Nszmest's .
+	 * Visit all Lin296's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
 	 */
-	public void visitNszmest(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+	public void visitLin296(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 		ResultSet rs 	= null;
 		Statement stmt 	= null;
 		try {
 			
 			stmt = ctsqlConnection.createStatement();
 			rs = stmt.executeQuery("SELECT "
-				+ "snp0" 
-				+ ",snp1" 
-				+ ",nnp0" 
-				+ ",nnp1" 
-				+ ",nnp2" 
-				+ ",nnp3" 
-				+ ",nnp4" 
-				+ ",nnp5" 
-				+ ",nnp6" 
-				+ ",nnp7" 
-				+ ",nnp8" 
-				+ ",nnp9" 
-				+ ",nnp10" 
-				+ ",nnp11" 
-				+ ",nnp12" 
-				+ ",nnp13" 
-				+ ",nnp14" 
-				+ ",nnp15" 
-				+ ",nnp16" 
-				+ ",nnp17" 
-				+ ",nnp18" 
-				+ ",nnp19" 
-				+ ",nnp20" 
-				+ ",nnp21" 
-				+ ",nnp22" 
-				+ ",nnp23" 
-				+ ",nnp24" 
-				+ ",nnp25" 
-				+ ",nnp26" 
-				+ ",nnp27" 
-				+ ",nnp28" 
-				+ ",nnp29" 
-				+ ",nnp30" 
-				+ ",nnp31" 
-				+ ",nnp32" 
-				+ " FROM nszmest");
-			Nszmest nszmest = new Nszmest(rs); 
+				+ "cdg" 
+				+ ",linea" 
+				+ ",numdoc" 
+				+ ",procedencia" 
+				+ ",fecha" 
+				+ ",base_din" 
+				+ ",ret_din" 
+				+ ",por_din" 
+				+ ",base_esp" 
+				+ ",ret_esp" 
+				+ ",base_esp_no" 
+				+ ",ret_esp_no" 
+				+ ",nomapel" 
+				+ ",provincia" 
+				+ " FROM lin296");
+			Lin296 lin296 = new Lin296(rs); 
 			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszmest(nszmest);
+				ctsqlDBVisitor.visitLin296(lin296);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Lin296's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLin296(Integer cdg, Integer linea, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",linea" 
+				+ ",numdoc" 
+				+ ",procedencia" 
+				+ ",fecha" 
+				+ ",base_din" 
+				+ ",ret_din" 
+				+ ",por_din" 
+				+ ",base_esp" 
+				+ ",ret_esp" 
+				+ ",base_esp_no" 
+				+ ",ret_esp_no" 
+				+ ",nomapel" 
+				+ ",provincia" 
+				+ " FROM lin296" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " linea = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, linea); 
+
+			rs = stmt.executeQuery();
+			Lin296 lin296 = new Lin296(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLin296(lin296);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Tr_datos's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitTr_datos(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		Statement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.createStatement();
+			rs = stmt.executeQuery("SELECT "
+				+ "cdg" 
+				+ ",persona" 
+				+ ",fecha_desde" 
+				+ ",tipo_dato" 
+				+ ",codigo" 
+				+ ",valor" 
+				+ ",estado" 
+				+ " FROM tr_datos");
+			Tr_datos tr_datos = new Tr_datos(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitTr_datos(tr_datos);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Tr_datos's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitTr_datos(Integer cdg, Integer persona, Date fecha_desde, String tipo_dato, String codigo, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",persona" 
+				+ ",fecha_desde" 
+				+ ",tipo_dato" 
+				+ ",codigo" 
+				+ ",valor" 
+				+ ",estado" 
+				+ " FROM tr_datos" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " persona = ?  "  + "AND" 				  
+				+ " fecha_desde = ?  "  + "AND" 				  
+				+ " tipo_dato = ?  "  + "AND" 				  
+				+ " codigo = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, persona); 
+				stmt.setDate(3, fecha_desde ); 
+				stmt.setString(4, tipo_dato ); 
+				stmt.setString(5, codigo ); 
+
+			rs = stmt.executeQuery();
+			Tr_datos tr_datos = new Tr_datos(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitTr_datos(tr_datos);
 			}
 		}
 		finally {
@@ -64832,6 +65568,13 @@ public class AbstractCtsqlDB {
 				+ ",imp_pension" 
 				+ ",imp_css" 
 				+ ",imp_ascen" 
+				+ ",imp_discapacidadt" 
+				+ ",imp_cuidadohijo" 
+				+ ",imp_discapacidad" 
+				+ ",imp_pensionista" 
+				+ ",imp_prolongacion" 
+				+ ",imp_movilidad" 
+				+ ",imp_asistencia" 
 				+ ",base_calculo" 
 				+ ",imp_anualid" 
 				+ ",cuota_calculo" 
@@ -64848,13 +65591,6 @@ public class AbstractCtsqlDB {
 				+ ",fecmod" 
 				+ ",hormod" 
 				+ ",minforal" 
-				+ ",imp_discapacidadt" 
-				+ ",imp_cuidadohijo" 
-				+ ",imp_discapacidad" 
-				+ ",imp_pensionista" 
-				+ ",imp_prolongacion" 
-				+ ",imp_movilidad" 
-				+ ",imp_asistencia" 
 				+ ",retanualn" 
 				+ ",retanualb" 
 				+ ",difret" 
@@ -64909,6 +65645,13 @@ public class AbstractCtsqlDB {
 				+ ",imp_pension" 
 				+ ",imp_css" 
 				+ ",imp_ascen" 
+				+ ",imp_discapacidadt" 
+				+ ",imp_cuidadohijo" 
+				+ ",imp_discapacidad" 
+				+ ",imp_pensionista" 
+				+ ",imp_prolongacion" 
+				+ ",imp_movilidad" 
+				+ ",imp_asistencia" 
 				+ ",base_calculo" 
 				+ ",imp_anualid" 
 				+ ",cuota_calculo" 
@@ -64925,13 +65668,6 @@ public class AbstractCtsqlDB {
 				+ ",fecmod" 
 				+ ",hormod" 
 				+ ",minforal" 
-				+ ",imp_discapacidadt" 
-				+ ",imp_cuidadohijo" 
-				+ ",imp_discapacidad" 
-				+ ",imp_pensionista" 
-				+ ",imp_prolongacion" 
-				+ ",imp_movilidad" 
-				+ ",imp_asistencia" 
 				+ ",retanualn" 
 				+ ",retanualb" 
 				+ ",difret" 
@@ -64955,6 +65691,80 @@ public class AbstractCtsqlDB {
 			Calculo calculo = new Calculo(rs); 
 			while ( rs.next() ) {
 				ctsqlDBVisitor.visitCalculo(calculo);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Cra_dde's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitCra_dde(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		Statement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.createStatement();
+			rs = stmt.executeQuery("SELECT "
+				+ "cdg" 
+				+ ",codact" 
+				+ ",desact" 
+				+ ",codreg" 
+				+ ",codccc" 
+				+ ",anio" 
+				+ ",mes" 
+				+ ",remesado" 
+				+ " FROM cra_dde");
+			Cra_dde cra_dde = new Cra_dde(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitCra_dde(cra_dde);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Cra_dde's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitCra_dde(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",codact" 
+				+ ",desact" 
+				+ ",codreg" 
+				+ ",codccc" 
+				+ ",anio" 
+				+ ",mes" 
+				+ ",remesado" 
+				+ " FROM cra_dde" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Cra_dde cra_dde = new Cra_dde(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitCra_dde(cra_dde);
 			}
 		}
 		finally {
@@ -65064,6 +65874,8 @@ public class AbstractCtsqlDB {
 				+ ",indcom" 
 				+ ",tipcom" 
 				+ ",dinesp" 
+				+ ",concepto" 
+				+ ",excinc" 
 				+ " FROM percep");
 			Percep percep = new Percep(rs); 
 			while ( rs.next() ) {
@@ -65114,6 +65926,8 @@ public class AbstractCtsqlDB {
 				+ ",indcom" 
 				+ ",tipcom" 
 				+ ",dinesp" 
+				+ ",concepto" 
+				+ ",excinc" 
 				+ " FROM percep" 
 				+ " WHERE" 
 				+ " numero = ?  "  + "AND" 				  
@@ -65272,28 +66086,69 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Nszcere's .
+	 * Visit all Linhonorarios's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
 	 */
-	public void visitNszcere(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+	public void visitLinhonorarios(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 		ResultSet rs 	= null;
 		Statement stmt 	= null;
 		try {
 			
 			stmt = ctsqlConnection.createStatement();
 			rs = stmt.executeQuery("SELECT "
-				+ "scr0" 
-				+ ",ncr0" 
-				+ ",ncr1" 
-				+ ",ncr2" 
-				+ ",ncr3" 
-				+ ",ncr4" 
-				+ ",ncr5" 
-				+ " FROM nszcere");
-			Nszcere nszcere = new Nszcere(rs); 
+				+ "cdg" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",tipo" 
+				+ ",hasta" 
+				+ ",importe" 
+				+ " FROM linhonorarios");
+			Linhonorarios linhonorarios = new Linhonorarios(rs); 
 			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszcere(nszcere);
+				ctsqlDBVisitor.visitLinhonorarios(linhonorarios);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Linhonorarios's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLinhonorarios(Integer cdg, Date fecini, String tipo, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",tipo" 
+				+ ",hasta" 
+				+ ",importe" 
+				+ " FROM linhonorarios" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " fecini = ?  "  + "AND" 				  
+				+ " tipo = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setDate(2, fecini ); 
+				stmt.setString(3, tipo ); 
+
+			rs = stmt.executeQuery();
+			Linhonorarios linhonorarios = new Linhonorarios(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLinhonorarios(linhonorarios);
 			}
 		}
 		finally {
@@ -65385,23 +66240,79 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Nszavis's .
+	 * Visit all Cra_cre's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
 	 */
-	public void visitNszavis(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+	public void visitCra_cre(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 		ResultSet rs 	= null;
 		Statement stmt 	= null;
 		try {
 			
 			stmt = ctsqlConnection.createStatement();
 			rs = stmt.executeQuery("SELECT "
-				+ "sav0" 
-				+ ",sav1" 
-				+ " FROM nszavis");
-			Nszavis nszavis = new Nszavis(rs); 
+				+ "cdg" 
+				+ ",codper" 
+				+ ",orden" 
+				+ ",anio" 
+				+ ",mes" 
+				+ ",tiprec" 
+				+ ",codrec" 
+				+ ",descripcion" 
+				+ ",concepto" 
+				+ ",importe" 
+				+ ",excinc" 
+				+ " FROM cra_cre");
+			Cra_cre cra_cre = new Cra_cre(rs); 
 			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszavis(nszavis);
+				ctsqlDBVisitor.visitCra_cre(cra_cre);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Cra_cre's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitCra_cre(Integer cdg, Integer codper, Integer orden, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",codper" 
+				+ ",orden" 
+				+ ",anio" 
+				+ ",mes" 
+				+ ",tiprec" 
+				+ ",codrec" 
+				+ ",descripcion" 
+				+ ",concepto" 
+				+ ",importe" 
+				+ ",excinc" 
+				+ " FROM cra_cre" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " codper = ?  "  + "AND" 				  
+				+ " orden = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, codper); 
+				stmt.setInt(3, orden); 
+
+			rs = stmt.executeQuery();
+			Cra_cre cra_cre = new Cra_cre(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitCra_cre(cra_cre);
 			}
 		}
 		finally {
@@ -65446,6 +66357,8 @@ public class AbstractCtsqlDB {
 				+ ",indcom" 
 				+ ",tipcom" 
 				+ ",dinesp" 
+				+ ",concepto" 
+				+ ",excinc" 
 				+ " FROM percniv");
 			Percniv percniv = new Percniv(rs); 
 			while ( rs.next() ) {
@@ -65493,6 +66406,8 @@ public class AbstractCtsqlDB {
 				+ ",indcom" 
 				+ ",tipcom" 
 				+ ",dinesp" 
+				+ ",concepto" 
+				+ ",excinc" 
 				+ " FROM percniv" 
 				+ " WHERE" 
 				+ " cdg = ?  "  + "AND" 				  
@@ -65753,6 +66668,11 @@ public class AbstractCtsqlDB {
 				+ ",indgrupo" 
 				+ ",pariente" 
 				+ ",noirpf" 
+				+ ",nosegsoc" 
+				+ ",jubiladoactivo" 
+				+ ",certificado" 
+				+ ",familiar" 
+				+ ",noresidente" 
 				+ " FROM emprper");
 			Emprper emprper = new Emprper(rs); 
 			while ( rs.next() ) {
@@ -65799,6 +66719,11 @@ public class AbstractCtsqlDB {
 				+ ",indgrupo" 
 				+ ",pariente" 
 				+ ",noirpf" 
+				+ ",nosegsoc" 
+				+ ",jubiladoactivo" 
+				+ ",certificado" 
+				+ ",familiar" 
+				+ ",noresidente" 
 				+ " FROM emprper" 
 				+ " WHERE" 
 				+ " cdg = ?  " 				  
@@ -65810,34 +66735,6 @@ public class AbstractCtsqlDB {
 			Emprper emprper = new Emprper(rs); 
 			while ( rs.next() ) {
 				ctsqlDBVisitor.visitEmprper(emprper);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
-	 * Visit all Nszbanc's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitNszbanc(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "sbk0" 
-				+ ",sbk1" 
-				+ " FROM nszbanc");
-			Nszbanc nszbanc = new Nszbanc(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszbanc(nszbanc);
 			}
 		}
 		finally {
@@ -66004,6 +66901,7 @@ public class AbstractCtsqlDB {
 			rs = stmt.executeQuery("SELECT "
 				+ "codper" 
 				+ ",fecbaj" 
+				+ ",codcausa" 
 				+ ",causa" 
 				+ ",vacfecini" 
 				+ ",vacimporte" 
@@ -66057,6 +66955,7 @@ public class AbstractCtsqlDB {
 			stmt = ctsqlConnection.prepareStatement("SELECT "
 				+ "codper" 
 				+ ",fecbaj" 
+				+ ",codcausa" 
 				+ ",causa" 
 				+ ",vacfecini" 
 				+ ",vacimporte" 
@@ -66105,25 +67004,23 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Action's .
+	 * Visit all Workplaces's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
 	 */
-	public void visitAction(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+	public void visitWorkplaces(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 		ResultSet rs 	= null;
 		Statement stmt 	= null;
 		try {
 			
 			stmt = ctsqlConnection.createStatement();
 			rs = stmt.executeQuery("SELECT "
-				+ "id" 
-				+ ",menu" 
-				+ ",name" 
-				+ ",application_id" 
-				+ " FROM action");
-			Action action = new Action(rs); 
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM workplaces");
+			Workplaces workplaces = new Workplaces(rs); 
 			while ( rs.next() ) {
-				ctsqlDBVisitor.visitAction(action);
+				ctsqlDBVisitor.visitWorkplaces(workplaces);
 			}
 		}
 		finally {
@@ -66135,31 +67032,95 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Action's .
+	 * Visit all Workplaces's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
 	 */
-	public void visitAction(Integer id, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+	public void visitWorkplaces(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 		ResultSet rs 	= null;
 		PreparedStatement stmt 	= null;
 		try {
 			
 			stmt = ctsqlConnection.prepareStatement("SELECT "
-				+ "id" 
-				+ ",menu" 
-				+ ",name" 
-				+ ",application_id" 
-				+ " FROM action" 
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM workplaces" 
 				+ " WHERE" 
-				+ " id = ?  " 				  
+				+ " cdg = ?  " 				  
 				);
 
-				stmt.setInt(1, id); 
+				stmt.setString(1, cdg ); 
 
 			rs = stmt.executeQuery();
-			Action action = new Action(rs); 
+			Workplaces workplaces = new Workplaces(rs); 
 			while ( rs.next() ) {
-				ctsqlDBVisitor.visitAction(action);
+				ctsqlDBVisitor.visitWorkplaces(workplaces);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Linworkplaces's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLinworkplaces(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		Statement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.createStatement();
+			rs = stmt.executeQuery("SELECT "
+				+ "workplace" 
+				+ ",facturar" 
+				+ ",descripcion" 
+				+ " FROM linworkplaces");
+			Linworkplaces linworkplaces = new Linworkplaces(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLinworkplaces(linworkplaces);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Linworkplaces's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLinworkplaces(String workplace, String facturar, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "workplace" 
+				+ ",facturar" 
+				+ ",descripcion" 
+				+ " FROM linworkplaces" 
+				+ " WHERE" 
+				+ " workplace = ?  "  + "AND" 				  
+				+ " facturar = ?  " 				  
+				);
+
+				stmt.setString(1, workplace ); 
+				stmt.setString(2, facturar ); 
+
+			rs = stmt.executeQuery();
+			Linworkplaces linworkplaces = new Linworkplaces(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLinworkplaces(linworkplaces);
 			}
 		}
 		finally {
@@ -66580,6 +67541,7 @@ public class AbstractCtsqlDB {
 				+ ",usuario" 
 				+ ",contrasena" 
 				+ ",correo" 
+				+ ",directorio" 
 				+ " FROM perfil");
 			Perfil perfil = new Perfil(rs); 
 			while ( rs.next() ) {
@@ -66619,6 +67581,7 @@ public class AbstractCtsqlDB {
 				+ ",usuario" 
 				+ ",contrasena" 
 				+ ",correo" 
+				+ ",directorio" 
 				+ " FROM perfil" 
 				+ " WHERE" 
 				+ " cdg = ?  " 				  
@@ -66630,45 +67593,6 @@ public class AbstractCtsqlDB {
 			Perfil perfil = new Perfil(rs); 
 			while ( rs.next() ) {
 				ctsqlDBVisitor.visitPerfil(perfil);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
-	 * Visit all Nszinci's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitNszinci(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "sin0" 
-				+ ",nin0" 
-				+ ",nin1" 
-				+ ",nin2" 
-				+ ",nin3" 
-				+ ",nin4" 
-				+ ",nin5" 
-				+ ",nin6" 
-				+ ",nin7" 
-				+ ",nin8" 
-				+ ",nin9" 
-				+ ",nin10" 
-				+ ",nin11" 
-				+ " FROM nszinci");
-			Nszinci nszinci = new Nszinci(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszinci(nszinci);
 			}
 		}
 		finally {
@@ -66840,107 +67764,6 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Nszcala's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitNszcala(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "sca0" 
-				+ ",sca1" 
-				+ ",sca2" 
-				+ " FROM nszcala");
-			Nszcala nszcala = new Nszcala(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszcala(nszcala);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
-	 * Visit all Usuario's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitUsuario(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "id" 
-				+ ",name" 
-				+ ",login" 
-				+ ",available" 
-				+ ",validate" 
-				+ ",aon_key" 
-				+ ",status" 
-				+ " FROM usuario");
-			Usuario usuario = new Usuario(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitUsuario(usuario);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
-	 * Visit all Usuario's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitUsuario(Integer id, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		PreparedStatement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.prepareStatement("SELECT "
-				+ "id" 
-				+ ",name" 
-				+ ",login" 
-				+ ",available" 
-				+ ",validate" 
-				+ ",aon_key" 
-				+ ",status" 
-				+ " FROM usuario" 
-				+ " WHERE" 
-				+ " id = ?  " 				  
-				);
-
-				stmt.setInt(1, id); 
-
-			rs = stmt.executeQuery();
-			Usuario usuario = new Usuario(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitUsuario(usuario);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
 	 * Visit all Linplus's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
@@ -67011,23 +67834,113 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Nszregi's .
+	 * Visit all Impr216's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
 	 */
-	public void visitNszregi(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+	public void visitImpr216(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 		ResultSet rs 	= null;
 		Statement stmt 	= null;
 		try {
 			
 			stmt = ctsqlConnection.createStatement();
 			rs = stmt.executeQuery("SELECT "
-				+ "srg0" 
-				+ ",srg1" 
-				+ " FROM nszregi");
-			Nszregi nszregi = new Nszregi(rs); 
+				+ "cdg" 
+				+ ",tipo" 
+				+ ",codemp" 
+				+ ",codadm" 
+				+ ",provincia" 
+				+ ",anio" 
+				+ ",mes" 
+				+ ",numrent" 
+				+ ",imprent" 
+				+ ",retrent" 
+				+ ",numrentno" 
+				+ ",imprentno" 
+				+ ",totalant" 
+				+ ",total" 
+				+ ",modimpuesto" 
+				+ ",fpago" 
+				+ ",nrc" 
+				+ ",iban" 
+				+ ",entidad" 
+				+ ",sucursal" 
+				+ ",dc" 
+				+ ",cuenta" 
+				+ ",complementaria" 
+				+ ",justificante" 
+				+ ",fecha" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",divisa" 
+				+ " FROM impr216");
+			Impr216 impr216 = new Impr216(rs); 
 			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszregi(nszregi);
+				ctsqlDBVisitor.visitImpr216(impr216);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Impr216's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitImpr216(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",tipo" 
+				+ ",codemp" 
+				+ ",codadm" 
+				+ ",provincia" 
+				+ ",anio" 
+				+ ",mes" 
+				+ ",numrent" 
+				+ ",imprent" 
+				+ ",retrent" 
+				+ ",numrentno" 
+				+ ",imprentno" 
+				+ ",totalant" 
+				+ ",total" 
+				+ ",modimpuesto" 
+				+ ",fpago" 
+				+ ",nrc" 
+				+ ",iban" 
+				+ ",entidad" 
+				+ ",sucursal" 
+				+ ",dc" 
+				+ ",cuenta" 
+				+ ",complementaria" 
+				+ ",justificante" 
+				+ ",fecha" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",divisa" 
+				+ " FROM impr216" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Impr216 impr216 = new Impr216(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitImpr216(impr216);
 			}
 		}
 		finally {
@@ -67252,74 +68165,6 @@ public class AbstractCtsqlDB {
 			Exclusion exclusion = new Exclusion(rs); 
 			while ( rs.next() ) {
 				ctsqlDBVisitor.visitExclusion(exclusion);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
-	 * Visit all Nszbolc's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitNszbolc(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "sbl0" 
-				+ ",nbl0" 
-				+ ",nbl1" 
-				+ ",nbl2" 
-				+ ",nbl3" 
-				+ ",nbl4" 
-				+ ",nbl5" 
-				+ ",nbl6" 
-				+ ",nbl7" 
-				+ ",nbl8" 
-				+ ",nbl9" 
-				+ ",nbl10" 
-				+ ",nbl11" 
-				+ ",nbl12" 
-				+ ",nbl13" 
-				+ ",nbl14" 
-				+ ",nbl15" 
-				+ ",nbl16" 
-				+ ",nbl17" 
-				+ ",nbl18" 
-				+ ",nbl19" 
-				+ ",nbl20" 
-				+ ",nbl21" 
-				+ ",nbl22" 
-				+ ",nbl23" 
-				+ ",nbl24" 
-				+ ",nbl25" 
-				+ ",nbl26" 
-				+ ",nbl27" 
-				+ ",nbl28" 
-				+ ",nbl29" 
-				+ ",nbl30" 
-				+ ",nbl31" 
-				+ ",nbl212" 
-				+ ",nbl33" 
-				+ ",nbl34" 
-				+ ",nbl35" 
-				+ ",nbl36" 
-				+ ",nbl37" 
-				+ ",nbl38" 
-				+ ",nbl39" 
-				+ ",nbl40" 
-				+ " FROM nszbolc");
-			Nszbolc nszbolc = new Nszbolc(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszbolc(nszbolc);
 			}
 		}
 		finally {
@@ -67747,41 +68592,65 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Calen's .
+	 * Visit all Tr_serie's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
 	 */
-	public void visitCalen(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+	public void visitTr_serie(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 		ResultSet rs 	= null;
 		Statement stmt 	= null;
 		try {
 			
 			stmt = ctsqlConnection.createStatement();
 			rs = stmt.executeQuery("SELECT "
-				+ "codigo" 
-				+ ",empresa" 
-				+ ",domct" 
-				+ ",cp" 
-				+ ",municipio" 
-				+ ",niss" 
-				+ ",actividad" 
-				+ ",convcol" 
-				+ ",hor1" 
-				+ ",hor2" 
-				+ ",hor3" 
-				+ ",hor4" 
-				+ ",hor5" 
-				+ ",hor6" 
-				+ ",hor7" 
-				+ ",hor8" 
-				+ ",hor9" 
-				+ ",fieloc1" 
-				+ ",fieloc2" 
-				+ ",c" 
-				+ " FROM calen");
-			Calen calen = new Calen(rs); 
+				+ "tipo" 
+				+ ",agno" 
+				+ ",mes" 
+				+ ",valornum" 
+				+ " FROM tr_serie");
+			Tr_serie tr_serie = new Tr_serie(rs); 
 			while ( rs.next() ) {
-				ctsqlDBVisitor.visitCalen(calen);
+				ctsqlDBVisitor.visitTr_serie(tr_serie);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Tr_serie's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitTr_serie(String tipo, Integer agno, Integer mes, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "tipo" 
+				+ ",agno" 
+				+ ",mes" 
+				+ ",valornum" 
+				+ " FROM tr_serie" 
+				+ " WHERE" 
+				+ " tipo = ?  "  + "AND" 				  
+				+ " agno = ?  "  + "AND" 				  
+				+ " mes = ?  " 				  
+				);
+
+				stmt.setString(1, tipo ); 
+				stmt.setInt(2, agno); 
+				stmt.setInt(3, mes); 
+
+			rs = stmt.executeQuery();
+			Tr_serie tr_serie = new Tr_serie(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitTr_serie(tr_serie);
 			}
 		}
 		finally {
@@ -67846,40 +68715,6 @@ public class AbstractCtsqlDB {
 			Basecoti basecoti = new Basecoti(rs); 
 			while ( rs.next() ) {
 				ctsqlDBVisitor.visitBasecoti(basecoti);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
-	 * Visit all Nszcdtr's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitNszcdtr(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "scd0" 
-				+ ",scd1" 
-				+ ",ncd0" 
-				+ ",ncd1" 
-				+ ",ncd2" 
-				+ ",ncd3" 
-				+ ",ncd4" 
-				+ ",ncd5" 
-				+ " FROM nszcdtr");
-			Nszcdtr nszcdtr = new Nszcdtr(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszcdtr(nszcdtr);
 			}
 		}
 		finally {
@@ -67975,25 +68810,28 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Action_favorite's .
+	 * Visit all Fpercep's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
 	 */
-	public void visitAction_favorite(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+	public void visitFpercep(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 		ResultSet rs 	= null;
 		Statement stmt 	= null;
 		try {
 			
 			stmt = ctsqlConnection.createStatement();
 			rs = stmt.executeQuery("SELECT "
-				+ "id" 
-				+ ",position" 
-				+ ",action_id" 
-				+ ",user_id" 
-				+ " FROM action_favorite");
-			Action_favorite action_favorite = new Action_favorite(rs); 
+				+ "cdg" 
+				+ ",nivel" 
+				+ ",codcon" 
+				+ ",codcli" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",codper" 
+				+ " FROM fpercep");
+			Fpercep fpercep = new Fpercep(rs); 
 			while ( rs.next() ) {
-				ctsqlDBVisitor.visitAction_favorite(action_favorite);
+				ctsqlDBVisitor.visitFpercep(fpercep);
 			}
 		}
 		finally {
@@ -68005,31 +68843,34 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Action_favorite's .
+	 * Visit all Fpercep's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
 	 */
-	public void visitAction_favorite(Integer id, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+	public void visitFpercep(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 		ResultSet rs 	= null;
 		PreparedStatement stmt 	= null;
 		try {
 			
 			stmt = ctsqlConnection.prepareStatement("SELECT "
-				+ "id" 
-				+ ",position" 
-				+ ",action_id" 
-				+ ",user_id" 
-				+ " FROM action_favorite" 
+				+ "cdg" 
+				+ ",nivel" 
+				+ ",codcon" 
+				+ ",codcli" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",codper" 
+				+ " FROM fpercep" 
 				+ " WHERE" 
-				+ " id = ?  " 				  
+				+ " cdg = ?  " 				  
 				);
 
-				stmt.setInt(1, id); 
+				stmt.setInt(1, cdg); 
 
 			rs = stmt.executeQuery();
-			Action_favorite action_favorite = new Action_favorite(rs); 
+			Fpercep fpercep = new Fpercep(rs); 
 			while ( rs.next() ) {
-				ctsqlDBVisitor.visitAction_favorite(action_favorite);
+				ctsqlDBVisitor.visitFpercep(fpercep);
 			}
 		}
 		finally {
@@ -68177,66 +69018,6 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Nszrari's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitNszrari(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "sra0" 
-				+ ",nra0" 
-				+ ",nra1" 
-				+ ",nra2" 
-				+ ",nra3" 
-				+ ",nra4" 
-				+ ",nra5" 
-				+ ",nra6" 
-				+ ",nra7" 
-				+ ",nra8" 
-				+ ",nra9" 
-				+ ",nra10" 
-				+ ",nra11" 
-				+ ",nra12" 
-				+ ",nra13" 
-				+ ",nra14" 
-				+ ",nra15" 
-				+ ",nra16" 
-				+ ",nra17" 
-				+ ",nra18" 
-				+ ",nra19" 
-				+ ",nra20" 
-				+ ",nra21" 
-				+ ",nra22" 
-				+ ",nra23" 
-				+ ",nra24" 
-				+ ",nra25" 
-				+ ",nra26" 
-				+ ",nra27" 
-				+ ",nra28" 
-				+ ",nra29" 
-				+ ",nra30" 
-				+ ",nra32" 
-				+ ",nra33" 
-				+ " FROM nszrari");
-			Nszrari nszrari = new Nszrari(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszrari(nszrari);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
 	 * Visit all Emprdom's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
@@ -68358,100 +69139,6 @@ public class AbstractCtsqlDB {
 			Mutua mutua = new Mutua(rs); 
 			while ( rs.next() ) {
 				ctsqlDBVisitor.visitMutua(mutua);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
-	 * Visit all Nszempr's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitNszempr(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "sem0" 
-				+ ",sem1" 
-				+ ",nem0" 
-				+ ",nem1" 
-				+ ",nem2" 
-				+ ",nem3" 
-				+ ",nem4" 
-				+ ",nem5" 
-				+ ",nem6" 
-				+ ",nem7" 
-				+ ",nem8" 
-				+ ",nem9" 
-				+ ",nem10" 
-				+ ",nem11" 
-				+ ",nem12" 
-				+ ",nem13" 
-				+ ",nem14" 
-				+ ",nem15" 
-				+ ",nem16" 
-				+ ",nem17" 
-				+ ",nem18" 
-				+ ",nem19" 
-				+ ",nem20" 
-				+ ",nem21" 
-				+ ",nem22" 
-				+ ",nem23" 
-				+ ",nem24" 
-				+ ",nem25" 
-				+ ",nem26" 
-				+ ",nem27" 
-				+ ",nem28" 
-				+ ",nem29" 
-				+ ",nem30" 
-				+ ",nem31" 
-				+ ",nem32" 
-				+ ",nem33" 
-				+ ",nem34" 
-				+ ",nem35" 
-				+ ",nem36" 
-				+ ",nem37" 
-				+ ",nem38" 
-				+ ",nem39" 
-				+ ",nem40" 
-				+ ",nem41" 
-				+ ",nem42" 
-				+ ",nem43" 
-				+ ",nem44" 
-				+ ",nem45" 
-				+ ",nem46" 
-				+ ",nem47" 
-				+ ",nem48" 
-				+ ",nem49" 
-				+ ",nem50" 
-				+ ",nem51" 
-				+ ",nem52" 
-				+ ",nem53" 
-				+ ",nem54" 
-				+ ",nem55" 
-				+ ",nem56" 
-				+ ",nem57" 
-				+ ",nem58" 
-				+ ",nem59" 
-				+ ",nem60" 
-				+ ",nem61" 
-				+ ",nem62" 
-				+ ",nem63" 
-				+ ",nem64" 
-				+ ",nem65" 
-				+ " FROM nszempr");
-			Nszempr nszempr = new Nszempr(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszempr(nszempr);
 			}
 		}
 		finally {
@@ -68703,67 +69390,6 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Nszpaga's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitNszpaga(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "spe0" 
-				+ ",npe0" 
-				+ ",npe1" 
-				+ ",npe2" 
-				+ " FROM nszpaga");
-			Nszpaga nszpaga = new Nszpaga(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszpaga(nszpaga);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
-	 * Visit all Nszotpe's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitNszotpe(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "sop0" 
-				+ ",sop1" 
-				+ ",nop0" 
-				+ ",nop1" 
-				+ ",nop2" 
-				+ " FROM nszotpe");
-			Nszotpe nszotpe = new Nszotpe(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszotpe(nszotpe);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
 	 * Visit all Emprctra's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
@@ -68960,38 +69586,6 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Nszpeop's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitNszpeop(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "spp0" 
-				+ ",spp1" 
-				+ ",npp0" 
-				+ ",npp1" 
-				+ ",npp2" 
-				+ ",npp3" 
-				+ " FROM nszpeop");
-			Nszpeop nszpeop = new Nszpeop(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszpeop(nszpeop);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
 	 * Visit all Procesos's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
@@ -69060,38 +69654,6 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Nszunco's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitNszunco(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "suc0" 
-				+ ",suc1" 
-				+ ",nuc0" 
-				+ ",nuc1" 
-				+ ",nuc2" 
-				+ ",nuc3" 
-				+ " FROM nszunco");
-			Nszunco nszunco = new Nszunco(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszunco(nszunco);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
 	 * Visit all Tipovia's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
@@ -69143,110 +69705,6 @@ public class AbstractCtsqlDB {
 			Tipovia tipovia = new Tipovia(rs); 
 			while ( rs.next() ) {
 				ctsqlDBVisitor.visitTipovia(tipovia);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
-	 * Visit all Nszdcpr's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitNszdcpr(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "sdc0" 
-				+ ",sdc1" 
-				+ ",ndc0" 
-				+ ",ndc1" 
-				+ ",ndc2" 
-				+ ",ndc3" 
-				+ ",ndc4" 
-				+ ",ndc5" 
-				+ ",ndc6" 
-				+ ",ndc7" 
-				+ ",ndc8" 
-				+ ",ndc9" 
-				+ ",ndc10" 
-				+ ",ndc11" 
-				+ ",ndc12" 
-				+ ",ndc13" 
-				+ ",ndc14" 
-				+ ",ndc15" 
-				+ ",ndc16" 
-				+ ",ndc17" 
-				+ ",ndc18" 
-				+ ",ndc19" 
-				+ ",ndc20" 
-				+ ",ndc21" 
-				+ ",ndc22" 
-				+ ",ndc23" 
-				+ ",ndc24" 
-				+ ",ndc25" 
-				+ ",ndc26" 
-				+ ",ndc27" 
-				+ ",ndc28" 
-				+ ",ndc29" 
-				+ ",ndc30" 
-				+ ",ndc31" 
-				+ ",ndc32" 
-				+ ",ndc33" 
-				+ ",ndc34" 
-				+ ",ndc35" 
-				+ ",ndc36" 
-				+ ",ndc37" 
-				+ ",ndc38" 
-				+ ",ndc39" 
-				+ ",ndc40" 
-				+ ",ndc41" 
-				+ ",ndc42" 
-				+ ",ndc43" 
-				+ ",ndc44" 
-				+ ",ndc45" 
-				+ ",ndc46" 
-				+ ",ndc47" 
-				+ ",ndc48" 
-				+ ",ndc49" 
-				+ ",ndc50" 
-				+ ",ndc51" 
-				+ ",ndc52" 
-				+ ",ndc53" 
-				+ ",ndc54" 
-				+ ",ndc55" 
-				+ ",ndc56" 
-				+ ",ndc57" 
-				+ ",ndc58" 
-				+ ",ndc59" 
-				+ ",ndc60" 
-				+ ",ndc61" 
-				+ ",ndc62" 
-				+ ",ndc63" 
-				+ ",ndc64" 
-				+ ",ndc65" 
-				+ ",ndc66" 
-				+ ",ndc67" 
-				+ ",ndc68" 
-				+ ",ndc69" 
-				+ ",ndc70" 
-				+ ",ndc71" 
-				+ ",ndc72" 
-				+ ",ndc73" 
-				+ ",ndc74" 
-				+ ",ndc75" 
-				+ " FROM nszdcpr");
-			Nszdcpr nszdcpr = new Nszdcpr(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszdcpr(nszdcpr);
 			}
 		}
 		finally {
@@ -69363,6 +69821,7 @@ public class AbstractCtsqlDB {
 				+ ",proret" 
 				+ ",nummat" 
 				+ ",codcont" 
+				+ ",descont" 
 				+ ",codtc2" 
 				+ ",destc2" 
 				+ ",fecinicont" 
@@ -69406,6 +69865,7 @@ public class AbstractCtsqlDB {
 				+ ",diastp" 
 				+ ",guardalegal" 
 				+ ",iban" 
+				+ ",fecfinperiprue" 
 				+ " FROM trabajo");
 			Trabajo trabajo = new Trabajo(rs); 
 			while ( rs.next() ) {
@@ -69449,6 +69909,7 @@ public class AbstractCtsqlDB {
 				+ ",proret" 
 				+ ",nummat" 
 				+ ",codcont" 
+				+ ",descont" 
 				+ ",codtc2" 
 				+ ",destc2" 
 				+ ",fecinicont" 
@@ -69492,6 +69953,7 @@ public class AbstractCtsqlDB {
 				+ ",diastp" 
 				+ ",guardalegal" 
 				+ ",iban" 
+				+ ",fecfinperiprue" 
 				+ " FROM trabajo" 
 				+ " WHERE" 
 				+ " cdg = ?  "  + "AND" 				  
@@ -69586,6 +70048,68 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
+	 * Visit all Grupotrabajo's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitGrupotrabajo(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		Statement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.createStatement();
+			rs = stmt.executeQuery("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM grupotrabajo");
+			Grupotrabajo grupotrabajo = new Grupotrabajo(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitGrupotrabajo(grupotrabajo);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Grupotrabajo's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitGrupotrabajo(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM grupotrabajo" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Grupotrabajo grupotrabajo = new Grupotrabajo(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitGrupotrabajo(grupotrabajo);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
 	 * Visit all Colectivos's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
@@ -69639,42 +70163,6 @@ public class AbstractCtsqlDB {
 			Colectivos colectivos = new Colectivos(rs); 
 			while ( rs.next() ) {
 				ctsqlDBVisitor.visitColectivos(colectivos);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
-	 * Visit all Nszboni's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitNszboni(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "stb0" 
-				+ ",stb1" 
-				+ ",stb2" 
-				+ ",stb3" 
-				+ ",stb4" 
-				+ ",ntb0" 
-				+ ",ntb1" 
-				+ ",ntb2" 
-				+ ",ntb3" 
-				+ ",ntb4" 
-				+ " FROM nszboni");
-			Nszboni nszboni = new Nszboni(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszboni(nszboni);
 			}
 		}
 		finally {
@@ -69881,16 +70369,19 @@ public class AbstractCtsqlDB {
 				+ ",base_perdes" 
 				+ ",remuneracion" 
 				+ ",base_it" 
+				+ ",base_ere" 
 				+ ",total_1" 
 				+ ",codbas" 
 				+ ",base_cg" 
 				+ ",base_acc" 
 				+ ",prc_cg" 
 				+ ",prc_acc" 
+				+ ",prc_fp" 
 				+ ",prc_hex" 
 				+ ",prc_hexno" 
 				+ ",importe_cg" 
 				+ ",importe_acc" 
+				+ ",importe_fp" 
 				+ ",importe_hex" 
 				+ ",importe_hexno" 
 				+ ",mincg" 
@@ -69923,6 +70414,27 @@ public class AbstractCtsqlDB {
 				+ ",base_acc_sin_h_pts" 
 				+ ",fvisione" 
 				+ ",fvisiont" 
+				+ ",base_con_ere" 
+				+ ",base_acc_ere" 
+				+ ",base_con_ere_no" 
+				+ ",base_acc_ere_no" 
+				+ ",base_con_ere_sin" 
+				+ ",base_acc_ere_sin" 
+				+ ",prc_cg_emp" 
+				+ ",prc_atep_emp" 
+				+ ",prc_desemp_emp" 
+				+ ",prc_fp_emp" 
+				+ ",prc_fogasa_emp" 
+				+ ",prc_hex_emp" 
+				+ ",prc_hexno_emp" 
+				+ ",importe_cg_emp" 
+				+ ",importe_atep_emp" 
+				+ ",importe_desemp_emp" 
+				+ ",importe_fp_emp" 
+				+ ",importe_fogasa_emp" 
+				+ ",importe_hex_emp" 
+				+ ",importe_hexno_emp" 
+				+ ",importe_cuotas_emp" 
 				+ " FROM nomina");
 			Nomina nomina = new Nomina(rs); 
 			while ( rs.next() ) {
@@ -69998,16 +70510,19 @@ public class AbstractCtsqlDB {
 				+ ",base_perdes" 
 				+ ",remuneracion" 
 				+ ",base_it" 
+				+ ",base_ere" 
 				+ ",total_1" 
 				+ ",codbas" 
 				+ ",base_cg" 
 				+ ",base_acc" 
 				+ ",prc_cg" 
 				+ ",prc_acc" 
+				+ ",prc_fp" 
 				+ ",prc_hex" 
 				+ ",prc_hexno" 
 				+ ",importe_cg" 
 				+ ",importe_acc" 
+				+ ",importe_fp" 
 				+ ",importe_hex" 
 				+ ",importe_hexno" 
 				+ ",mincg" 
@@ -70040,6 +70555,27 @@ public class AbstractCtsqlDB {
 				+ ",base_acc_sin_h_pts" 
 				+ ",fvisione" 
 				+ ",fvisiont" 
+				+ ",base_con_ere" 
+				+ ",base_acc_ere" 
+				+ ",base_con_ere_no" 
+				+ ",base_acc_ere_no" 
+				+ ",base_con_ere_sin" 
+				+ ",base_acc_ere_sin" 
+				+ ",prc_cg_emp" 
+				+ ",prc_atep_emp" 
+				+ ",prc_desemp_emp" 
+				+ ",prc_fp_emp" 
+				+ ",prc_fogasa_emp" 
+				+ ",prc_hex_emp" 
+				+ ",prc_hexno_emp" 
+				+ ",importe_cg_emp" 
+				+ ",importe_atep_emp" 
+				+ ",importe_desemp_emp" 
+				+ ",importe_fp_emp" 
+				+ ",importe_fogasa_emp" 
+				+ ",importe_hex_emp" 
+				+ ",importe_hexno_emp" 
+				+ ",importe_cuotas_emp" 
 				+ " FROM nomina" 
 				+ " WHERE" 
 				+ " cdg = ?  " 				  
@@ -70051,38 +70587,6 @@ public class AbstractCtsqlDB {
 			Nomina nomina = new Nomina(rs); 
 			while ( rs.next() ) {
 				ctsqlDBVisitor.visitNomina(nomina);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
-	 * Visit all Nszpoco's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitNszpoco(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "spz0" 
-				+ ",spz1" 
-				+ ",npz0" 
-				+ ",npz1" 
-				+ ",npz2" 
-				+ ",npz3" 
-				+ " FROM nszpoco");
-			Nszpoco nszpoco = new Nszpoco(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszpoco(nszpoco);
 			}
 		}
 		finally {
@@ -70341,6 +70845,7 @@ public class AbstractCtsqlDB {
 				+ ",base_hexest" 
 				+ ",base_cccemp" 
 				+ ",base_occemp" 
+				+ ",base_solidaria" 
 				+ ",comp_ecal" 
 				+ ",comp_acc" 
 				+ ",red_concom" 
@@ -70394,6 +70899,7 @@ public class AbstractCtsqlDB {
 				+ ",base_hexest" 
 				+ ",base_cccemp" 
 				+ ",base_occemp" 
+				+ ",base_solidaria" 
 				+ ",comp_ecal" 
 				+ ",comp_acc" 
 				+ ",red_concom" 
@@ -70481,6 +70987,20 @@ public class AbstractCtsqlDB {
 				+ ",base_dedcol" 
 				+ ",prc_dedcol" 
 				+ ",cuota_dedcol" 
+				+ ",base_solidaria" 
+				+ ",prc_solidaria" 
+				+ ",cuota_solidaria" 
+				+ ",cdg_otrcon" 
+				+ ",base_otrcon" 
+				+ ",prc_otrcon" 
+				+ ",cuota_otrcon" 
+				+ ",base_concom_ce" 
+				+ ",prc_concom_ce" 
+				+ ",cuota_concom_ce" 
+				+ ",base_desem_ce" 
+				+ ",prc_desem_ce" 
+				+ ",cuota_desem_ce" 
+				+ ",base_desem" 
 				+ ",numero" 
 				+ ",codper" 
 				+ ",dias" 
@@ -70496,6 +71016,12 @@ public class AbstractCtsqlDB {
 				+ ",nombre" 
 				+ ",apellidos" 
 				+ ",mostrar" 
+				+ ",horcomp" 
+				+ ",impcomp" 
+				+ ",horpres" 
+				+ ",imppres" 
+				+ ",hordist" 
+				+ ",impdist" 
 				+ ",cdgred" 
 				+ ",desglose" 
 				+ ",comision" 
@@ -70506,24 +71032,12 @@ public class AbstractCtsqlDB {
 				+ ",hornew" 
 				+ ",fecmod" 
 				+ ",hormod" 
-				+ ",cdg_otrcon" 
-				+ ",base_otrcon" 
-				+ ",prc_otrcon" 
-				+ ",cuota_otrcon" 
-				+ ",base_concom_ce" 
-				+ ",prc_concom_ce" 
-				+ ",cuota_concom_ce" 
-				+ ",base_desem_ce" 
-				+ ",prc_desem_ce" 
-				+ ",cuota_desem_ce" 
-				+ ",base_desem" 
-				+ ",horcomp" 
-				+ ",impcomp" 
-				+ ",horpres" 
-				+ ",imppres" 
-				+ ",hordist" 
-				+ ",impdist" 
 				+ ",indregimen" 
+				+ ",xmltipo" 
+				+ ",xmlfecha" 
+				+ ",xmlhora" 
+				+ ",xmlfichero" 
+				+ ",xmlimporte" 
 				+ " FROM tc1");
 			Tc1 tc1 = new Tc1(rs); 
 			while ( rs.next() ) {
@@ -70591,6 +71105,20 @@ public class AbstractCtsqlDB {
 				+ ",base_dedcol" 
 				+ ",prc_dedcol" 
 				+ ",cuota_dedcol" 
+				+ ",base_solidaria" 
+				+ ",prc_solidaria" 
+				+ ",cuota_solidaria" 
+				+ ",cdg_otrcon" 
+				+ ",base_otrcon" 
+				+ ",prc_otrcon" 
+				+ ",cuota_otrcon" 
+				+ ",base_concom_ce" 
+				+ ",prc_concom_ce" 
+				+ ",cuota_concom_ce" 
+				+ ",base_desem_ce" 
+				+ ",prc_desem_ce" 
+				+ ",cuota_desem_ce" 
+				+ ",base_desem" 
 				+ ",numero" 
 				+ ",codper" 
 				+ ",dias" 
@@ -70606,6 +71134,12 @@ public class AbstractCtsqlDB {
 				+ ",nombre" 
 				+ ",apellidos" 
 				+ ",mostrar" 
+				+ ",horcomp" 
+				+ ",impcomp" 
+				+ ",horpres" 
+				+ ",imppres" 
+				+ ",hordist" 
+				+ ",impdist" 
 				+ ",cdgred" 
 				+ ",desglose" 
 				+ ",comision" 
@@ -70616,24 +71150,12 @@ public class AbstractCtsqlDB {
 				+ ",hornew" 
 				+ ",fecmod" 
 				+ ",hormod" 
-				+ ",cdg_otrcon" 
-				+ ",base_otrcon" 
-				+ ",prc_otrcon" 
-				+ ",cuota_otrcon" 
-				+ ",base_concom_ce" 
-				+ ",prc_concom_ce" 
-				+ ",cuota_concom_ce" 
-				+ ",base_desem_ce" 
-				+ ",prc_desem_ce" 
-				+ ",cuota_desem_ce" 
-				+ ",base_desem" 
-				+ ",horcomp" 
-				+ ",impcomp" 
-				+ ",horpres" 
-				+ ",imppres" 
-				+ ",hordist" 
-				+ ",impdist" 
 				+ ",indregimen" 
+				+ ",xmltipo" 
+				+ ",xmlfecha" 
+				+ ",xmlhora" 
+				+ ",xmlfichero" 
+				+ ",xmlimporte" 
 				+ " FROM tc1" 
 				+ " WHERE" 
 				+ " cdg = ?  " 				  
@@ -70656,28 +71178,71 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Nszbase's .
+	 * Visit all Lincargos's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
 	 */
-	public void visitNszbase(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+	public void visitLincargos(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 		ResultSet rs 	= null;
 		Statement stmt 	= null;
 		try {
 			
 			stmt = ctsqlConnection.createStatement();
 			rs = stmt.executeQuery("SELECT "
-				+ "sbc0" 
-				+ ",sbc1" 
-				+ ",nbc0" 
-				+ ",nbc1" 
-				+ ",nbc2" 
-				+ ",nbc3" 
-				+ ",nbc4" 
-				+ " FROM nszbase");
-			Nszbase nszbase = new Nszbase(rs); 
+				+ "cdg" 
+				+ ",orden" 
+				+ ",tipocargo" 
+				+ ",texto" 
+				+ ",facturar" 
+				+ ",unidades" 
+				+ ",importe" 
+				+ ",fijo" 
+				+ " FROM lincargos");
+			Lincargos lincargos = new Lincargos(rs); 
 			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszbase(nszbase);
+				ctsqlDBVisitor.visitLincargos(lincargos);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Lincargos's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLincargos(Integer cdg, Integer orden, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",orden" 
+				+ ",tipocargo" 
+				+ ",texto" 
+				+ ",facturar" 
+				+ ",unidades" 
+				+ ",importe" 
+				+ ",fijo" 
+				+ " FROM lincargos" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " orden = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, orden); 
+
+			rs = stmt.executeQuery();
+			Lincargos lincargos = new Lincargos(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLincargos(lincargos);
 			}
 		}
 		finally {
@@ -71203,42 +71768,6 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Nszilte's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitNszilte(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "sil0" 
-				+ ",sil1" 
-				+ ",sil2" 
-				+ ",nil0" 
-				+ ",nil1" 
-				+ ",nil2" 
-				+ ",nil3" 
-				+ ",nil4" 
-				+ ",nil5" 
-				+ ",nil6" 
-				+ " FROM nszilte");
-			Nszilte nszilte = new Nszilte(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszilte(nszilte);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
 	 * Visit all Empresa's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
@@ -71306,6 +71835,100 @@ public class AbstractCtsqlDB {
 			Empresa empresa = new Empresa(rs); 
 			while ( rs.next() ) {
 				ctsqlDBVisitor.visitEmpresa(empresa);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Tr_liquidacion's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitTr_liquidacion(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		Statement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.createStatement();
+			rs = stmt.executeQuery("SELECT "
+				+ "cdg" 
+				+ ",actividad" 
+				+ ",descripcion" 
+				+ ",regimen" 
+				+ ",numeross" 
+				+ ",tipo" 
+				+ ",mes_desde" 
+				+ ",anho_desde" 
+				+ ",mes_hasta" 
+				+ ",anho_hasta" 
+				+ ",mes_control" 
+				+ ",anho_control" 
+				+ ",referencia_externa" 
+				+ ",fecha_recaudacion" 
+				+ ",hora_recaudacion" 
+				+ ",estado" 
+				+ ",bloqueado" 
+				+ ",similar" 
+				+ " FROM tr_liquidacion");
+			Tr_liquidacion tr_liquidacion = new Tr_liquidacion(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitTr_liquidacion(tr_liquidacion);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Tr_liquidacion's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitTr_liquidacion(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",actividad" 
+				+ ",descripcion" 
+				+ ",regimen" 
+				+ ",numeross" 
+				+ ",tipo" 
+				+ ",mes_desde" 
+				+ ",anho_desde" 
+				+ ",mes_hasta" 
+				+ ",anho_hasta" 
+				+ ",mes_control" 
+				+ ",anho_control" 
+				+ ",referencia_externa" 
+				+ ",fecha_recaudacion" 
+				+ ",hora_recaudacion" 
+				+ ",estado" 
+				+ ",bloqueado" 
+				+ ",similar" 
+				+ " FROM tr_liquidacion" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Tr_liquidacion tr_liquidacion = new Tr_liquidacion(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitTr_liquidacion(tr_liquidacion);
 			}
 		}
 		finally {
@@ -71474,6 +72097,9 @@ public class AbstractCtsqlDB {
 				+ ",riesgo" 
 				+ ",causa_alta" 
 				+ ",fecha_at" 
+				+ ",especial" 
+				+ ",fecprimerconf" 
+				+ ",periocidad" 
 				+ " FROM parteit");
 			Parteit parteit = new Parteit(rs); 
 			while ( rs.next() ) {
@@ -71523,6 +72149,9 @@ public class AbstractCtsqlDB {
 				+ ",riesgo" 
 				+ ",causa_alta" 
 				+ ",fecha_at" 
+				+ ",especial" 
+				+ ",fecprimerconf" 
+				+ ",periocidad" 
 				+ " FROM parteit" 
 				+ " WHERE" 
 				+ " cdg = ?  "  + "AND" 				  
@@ -71689,36 +72318,6 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Nszepig's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitNszepig(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "sea0" 
-				+ ",sea1" 
-				+ ",nea0" 
-				+ ",nea1" 
-				+ " FROM nszepig");
-			Nszepig nszepig = new Nszepig(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszepig(nszepig);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
 	 * Visit all Finidtodf's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
@@ -71814,6 +72413,7 @@ public class AbstractCtsqlDB {
 				+ ",subclave" 
 				+ ",natret" 
 				+ ",noirpf" 
+				+ ",noresidente" 
 				+ " FROM otrperc");
 			Otrperc otrperc = new Otrperc(rs); 
 			while ( rs.next() ) {
@@ -71855,6 +72455,7 @@ public class AbstractCtsqlDB {
 				+ ",subclave" 
 				+ ",natret" 
 				+ ",noirpf" 
+				+ ",noresidente" 
 				+ " FROM otrperc" 
 				+ " WHERE" 
 				+ " cdg = ?  " 				  
@@ -71877,23 +72478,65 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Nszadmh's .
+	 * Visit all Codigocreta's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
 	 */
-	public void visitNszadmh(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+	public void visitCodigocreta(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 		ResultSet rs 	= null;
 		Statement stmt 	= null;
 		try {
 			
 			stmt = ctsqlConnection.createStatement();
 			rs = stmt.executeQuery("SELECT "
-				+ "sah0" 
-				+ ",sah1" 
-				+ " FROM nszadmh");
-			Nszadmh nszadmh = new Nszadmh(rs); 
+				+ "indicador" 
+				+ ",cdg" 
+				+ ",descripcion" 
+				+ ",usuario" 
+				+ ",aplicable" 
+				+ " FROM codigocreta");
+			Codigocreta codigocreta = new Codigocreta(rs); 
 			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszadmh(nszadmh);
+				ctsqlDBVisitor.visitCodigocreta(codigocreta);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Codigocreta's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitCodigocreta(String indicador, String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "indicador" 
+				+ ",cdg" 
+				+ ",descripcion" 
+				+ ",usuario" 
+				+ ",aplicable" 
+				+ " FROM codigocreta" 
+				+ " WHERE" 
+				+ " indicador = ?  "  + "AND" 				  
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, indicador ); 
+				stmt.setString(2, cdg ); 
+
+			rs = stmt.executeQuery();
+			Codigocreta codigocreta = new Codigocreta(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitCodigocreta(codigocreta);
 			}
 		}
 		finally {
@@ -72031,75 +72674,63 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Nsztrab's .
+	 * Visit all Tr_fichero's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
 	 */
-	public void visitNsztrab(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+	public void visitTr_fichero(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 		ResultSet rs 	= null;
 		Statement stmt 	= null;
 		try {
 			
 			stmt = ctsqlConnection.createStatement();
 			rs = stmt.executeQuery("SELECT "
-				+ "str0" 
-				+ ",str1" 
-				+ ",str2" 
-				+ ",ntr0" 
-				+ ",ntr1" 
-				+ ",ntr2" 
-				+ ",ntr3" 
-				+ ",ntr4" 
-				+ ",ntr5" 
-				+ ",ntr6" 
-				+ ",ntr7" 
-				+ ",ntr8" 
-				+ ",ntr9" 
-				+ ",ntr10" 
-				+ ",ntr11" 
-				+ ",ntr12" 
-				+ ",ntr13" 
-				+ ",ntr14" 
-				+ ",ntr15" 
-				+ ",ntr16" 
-				+ ",ntr17" 
-				+ ",ntr18" 
-				+ ",ntr19" 
-				+ ",ntr20" 
-				+ ",ntr21" 
-				+ ",ntr22" 
-				+ ",ntr23" 
-				+ ",ntr24" 
-				+ ",ntr25" 
-				+ ",ntr26" 
-				+ ",ntr27" 
-				+ ",ntr28" 
-				+ ",ntr29" 
-				+ ",ntr30" 
-				+ ",ntr31" 
-				+ ",ntr32" 
-				+ ",ntr33" 
-				+ ",ntr34" 
-				+ ",ntr35" 
-				+ ",ntr36" 
-				+ ",ntr37" 
-				+ ",ntr38" 
-				+ ",ntr39" 
-				+ ",ntr40" 
-				+ ",ntr41" 
-				+ ",ntr42" 
-				+ ",ntr43" 
-				+ ",ntr44" 
-				+ ",ntr45" 
-				+ ",ntr46" 
-				+ ",ntr47" 
-				+ ",ntr48" 
-				+ ",ntr49" 
-				+ ",ntr50" 
-				+ " FROM nsztrab");
-			Nsztrab nsztrab = new Nsztrab(rs); 
+				+ "cdg" 
+				+ ",fichero" 
+				+ ",tipo" 
+				+ ",fregistro" 
+				+ " FROM tr_fichero");
+			Tr_fichero tr_fichero = new Tr_fichero(rs); 
 			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNsztrab(nsztrab);
+				ctsqlDBVisitor.visitTr_fichero(tr_fichero);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Tr_fichero's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitTr_fichero(Integer cdg, String fichero, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",fichero" 
+				+ ",tipo" 
+				+ ",fregistro" 
+				+ " FROM tr_fichero" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " fichero = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setString(2, fichero ); 
+
+			rs = stmt.executeQuery();
+			Tr_fichero tr_fichero = new Tr_fichero(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitTr_fichero(tr_fichero);
 			}
 		}
 		finally {
@@ -72138,6 +72769,7 @@ public class AbstractCtsqlDB {
 				+ ",fecmod" 
 				+ ",hormod" 
 				+ ",divisa" 
+				+ ",feccierre" 
 				+ " FROM impr190");
 			Impr190 impr190 = new Impr190(rs); 
 			while ( rs.next() ) {
@@ -72179,6 +72811,7 @@ public class AbstractCtsqlDB {
 				+ ",fecmod" 
 				+ ",hormod" 
 				+ ",divisa" 
+				+ ",feccierre" 
 				+ " FROM impr190" 
 				+ " WHERE" 
 				+ " cdg = ?  " 				  
@@ -72339,100 +72972,6 @@ public class AbstractCtsqlDB {
 	}
 
 	/**
-	 * Visit all Application's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitApplication(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "id" 
-				+ ",audit_level" 
-				+ ",name" 
-				+ " FROM application");
-			Application application = new Application(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitApplication(application);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
-	 * Visit all Application's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitApplication(Integer id, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		PreparedStatement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.prepareStatement("SELECT "
-				+ "id" 
-				+ ",audit_level" 
-				+ ",name" 
-				+ " FROM application" 
-				+ " WHERE" 
-				+ " id = ?  " 				  
-				);
-
-				stmt.setInt(1, id); 
-
-			rs = stmt.executeQuery();
-			Application application = new Application(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitApplication(application);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
-	 * Visit all Nszcomp's .
-	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-	 * @throws SQLException
-	 */
-	public void visitNszcomp(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-		ResultSet rs 	= null;
-		Statement stmt 	= null;
-		try {
-			
-			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT "
-				+ "scp0" 
-				+ ",scp1" 
-				+ ",scp2" 
-				+ ",scp3" 
-				+ " FROM nszcomp");
-			Nszcomp nszcomp = new Nszcomp(rs); 
-			while ( rs.next() ) {
-				ctsqlDBVisitor.visitNszcomp(nszcomp);
-			}
-		}
-		finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
-		}
-	}
-
-	/**
 	 * Visit all Tipreg's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
@@ -72521,6 +73060,9 @@ public class AbstractCtsqlDB {
 				+ ",indcom" 
 				+ ",tipcom" 
 				+ ",dinesp" 
+				+ ",concepto" 
+				+ ",excinc" 
+				+ ",tipcot" 
 				+ " FROM nominadev");
 			Nominadev nominadev = new Nominadev(rs); 
 			while ( rs.next() ) {
@@ -72561,6 +73103,9 @@ public class AbstractCtsqlDB {
 				+ ",indcom" 
 				+ ",tipcom" 
 				+ ",dinesp" 
+				+ ",concepto" 
+				+ ",excinc" 
+				+ ",tipcot" 
 				+ " FROM nominadev" 
 				+ " WHERE" 
 				+ " cdg = ?  "  + "AND" 				  
@@ -72592,10 +73137,8 @@ public class AbstractCtsqlDB {
 		closeReprpme_untinStmt();
 		closeEmprlban_emprbanStmt();
 		closeCibtne_cnabrpmeStmt();
-		closeCibcus_cnabrpmeStmt();
-		closeDaditne_cnabrpmeStmt();
-		closeLasrucus_cnabrpmeStmt();
 		closeEtneilc_cnabrpmeStmt();
+		closeSomart_p_rtStmt();
 		closeSomonotuatuajStmt();
 		closeEmpract_emprnifStmt();
 		closeEmprctra_emprnifStmt();
@@ -72604,13 +73147,19 @@ public class AbstractCtsqlDB {
 		closeRel_epp_empStmt();
 		closeOtrperc_emprnifStmt();
 		closeAvisos_codempStmt();
-		closeImpr11x_emprnifStmt();
+		closeRegidocu_emprnifStmt();
 		closeImpr190_codempStmt();
 		closeImpr190_represStmt();
 		closeImpr190_cargoStmt();
 		closeRel_var_empStmt();
-		closeRegidocu_emprnifStmt();
 		closeFk_cert_rem_emprStmt();
+		closeHon_emprnifStmt();
+		closeImpr11x_emprnifStmt();
+		closeImpr216_emprnifStmt();
+		closeImpr296_codempStmt();
+		closeImpr296_represStmt();
+		closeImpr296_cargoStmt();
+		closeFpe_emprnifStmt();
 		closeIlc_pme_lerStmt();
 		closeCod_pme_lerStmt();
 		closeIap_pme_lerStmt();
@@ -72620,6 +73169,7 @@ public class AbstractCtsqlDB {
 		close2cod_pme_lerStmt();
 		close2iap_pme_lerStmt();
 		closeCliente_delegacionStmt();
+		closeSecalpkrow_gld_lerStmt();
 		closeAiv_gld_lerStmt();
 		closeOrp_gld_lerStmt();
 		closeRel_cli_empStmt();
@@ -72629,52 +73179,71 @@ public class AbstractCtsqlDB {
 		closeOtrperc_personaStmt();
 		closeLintc2_personaStmt();
 		closeJautpersonaStmt();
+		closeTr_persona_numsStmt();
+		closeTr_persona_inddStmt();
+		closeTr_persona_numdStmt();
+		closeTr_persona_atc2Stmt();
+		closeFpe_personaStmt();
 		closeCod_rep_lerStmt();
 		closeMep_rep_lerStmt();
 		closeAiv_rep_lerStmt();
 		closeDrp_rep_lerStmt();
 		closeAnp_rep_lerStmt();
 		closeCan_rep_lerStmt();
+		closeLin296_impr296Stmt();
+		closePmedoc_692rpmiStmt();
+		closeNomda_692rpmiStmt();
+		closeAicnivorp_692rpmiStmt();
+		closeSerper_692rpmiStmt();
+		closeAsivid_692rpmiStmt();
+		closeSogracopit_nilStmt();
+		closeSecalpkrow_lerStmt();
+		closeSecalpkrownil_lerStmt();
 		closeRel_lep_epiStmt();
 		closeRel_cat_epiStmt();
+		closeRel_cos_epiStmt();
 		closeRel_tra_epiStmt();
 		closeJepigrafeStmt();
-		closeRel_cos_epiStmt();
 		closeLinautom_automatiStmt();
 		closeRel_fpe_finStmt();
 		closeRel_fii_finStmt();
 		closeRel_fid_finStmt();
 		closePpe_nif_lerStmt();
 		closeAsivid_otiuqinifStmt();
+		closePecrepf_nilStmt();
+		closeOtnemelpmoc_nilStmt();
 		closeReprpme_tianimonStmt();
-		closeRel_epp_cccStmt();
 		closeFormcont_emprcccStmt();
+		closeRel_epp_cccStmt();
 		closeTum_ccc_lerStmt();
 		closeTcarpme_cccrpmeStmt();
 		closeRel_lpc_pctStmt();
 		closeRel_tco_codpctStmt();
-		closeRel_tra_pctStmt();
 		closeRel_cos_pctStmt();
+		closeRel_tra_pctStmt();
 		closeNob_tth_lerStmt();
-		closeRel_bpe_bonStmt();
+		closeBewsotad_nilStmt();
+		closeLin_honorariosStmt();
+		closeEtneilc_nohStmt();
+		closeFinrpme_nohStmt();
+		closeTcarpme_nohStmt();
 		closePercniv_nivelStmt();
 		closeNoc_vin_lerStmt();
 		closeNil_tum_lerStmt();
 		closePit_cni_lerStmt();
 		closeReprpme_icnibartStmt();
-		closeFinexdf_findfStmt();
-		closeFiniddf_findfStmt();
-		closeFindtodf_findfStmt();
 		closeReprpme_fdnifStmt();
 		closeAsivid_fdnifStmt();
 		closeNif_dif_lerStmt();
+		closeLin_tipocargosStmt();
+		closeRel_tipocargosStmt();
 		closeIlc_rav_lerStmt();
 		closePme_rav_lerStmt();
 		closeTca_rav_lerStmt();
 		closeMod_rav_lerStmt();
 		closeNif_iif_lerStmt();
+		closeLin_cargosStmt();
 		closeAsivid_asivid_nilStmt();
-		closeFdnif_fdxenifStmt();
 		closeMoc_fdxenifStmt();
 		closeProvincia_comunidaStmt();
 		closeIap_moc_lerStmt();
@@ -72684,17 +73253,16 @@ public class AbstractCtsqlDB {
 		closeIpe_tac_lerStmt();
 		closeRel_lpr_preStmt();
 		closeMod_erp_lerStmt();
+		closeTr_d_tramosStmt();
+		closeTr_p_tramosStmt();
+		closeNoicadiuqil_rtStmt();
+		closeSmun_anosrep_rtStmt();
 		closeIlcdoc_sosivaStmt();
 		closePmedoc_sosivaStmt();
 		closeTcarpme_sosivaStmt();
 		closeReprpme_sosivaStmt();
 		closeRpme_trec_mer_kfStmt();
 		closePme_asemer_trec_kfStmt();
-		closeEmprbanc_sucursalStmt();
-		closeRel_tra_sucStmt();
-		closeJsucursalStmt();
-		closeJautsucursalStmt();
-		closeEmprbanc_sucbicStmt();
 		closeDaditne_lasrucusStmt();
 		closeLcomunica_costesStmt();
 		closeLbonifica_costesStmt();
@@ -72715,6 +73283,7 @@ public class AbstractCtsqlDB {
 		closeEmpract_convenioStmt();
 		closeEmprctra_convenioStmt();
 		closeRel_tra_conStmt();
+		closeFpe_convenioStmt();
 		closeFdxeanimon_lerStmt();
 		closeErp_rpl_lerStmt();
 		closeRel_inc_tipStmt();
@@ -72725,19 +73294,17 @@ public class AbstractCtsqlDB {
 		closeRel_pga_comStmt();
 		closeRel_pcn_comStmt();
 		closeRel_pcn_capStmt();
-		closeRel_pex_comStmt();
+		closeRel_lpl_comStmt();
 		closeRel_pcp_comStmt();
 		closeRel_pcp_comaplStmt();
+		closeRel_pex_comStmt();
 		closeRel_fpe_comStmt();
 		closeFinexdf_comStmt();
 		closeFinexnu_comStmt();
-		closeRel_lpl_comStmt();
+		closeLin_complementoStmt();
 		close9002eancniljStmt();
 		closeFdanimon_otdfdmonStmt();
-		closeNoitca_da_kfStmt();
-		closeResu_da_kfStmt();
 		closeUnnif_unotdnifStmt();
-		closeNob_epb_lerStmt();
 		closeReprpme_acifinobStmt();
 		closeEmprctra_empractStmt();
 		closeEmprccc_empractStmt();
@@ -72746,15 +73313,17 @@ public class AbstractCtsqlDB {
 		closeEmprlban_empractStmt();
 		closeRel_epp_actStmt();
 		closeAvisos_empractStmt();
-		closeRel_var_actStmt();
 		closeRegidocu_empractStmt();
+		closeRel_var_actStmt();
 		closeJactividadStmt();
+		closeHon_empractStmt();
+		closeFpe_empractStmt();
 		closeFinrpme_tcarpmeStmt();
 		closeOinevnoc_tcarpmeStmt();
 		closeRel_epp_ccoStmt();
 		closeTca_occ_lerStmt();
-		closeNoitca_ea_kfStmt();
-		closeNoisses_ea_kfStmt();
+		closeRel_cra_trb_perStmt();
+		closeGdc_edd_arc_lerStmt();
 		closeMoc_tth_lerStmt();
 		closeRel_emp_cliStmt();
 		closeRel_dom_cliStmt();
@@ -72762,8 +73331,11 @@ public class AbstractCtsqlDB {
 		closeEmprbanc_clienteStmt();
 		closeEmprlban_clienteStmt();
 		closeAvisos_codcliStmt();
-		closeRel_var_cliStmt();
 		closeRegidocu_clienteStmt();
+		closeRel_var_cliStmt();
+		closeHon_clienteStmt();
+		closeFpe_clienteStmt();
+		closeOjabartprg_ilc_lerStmt();
 		closeAiv_ilc_lerStmt();
 		closeOrp_ilc_lerStmt();
 		closeCod_ilc_lerStmt();
@@ -72776,7 +73348,6 @@ public class AbstractCtsqlDB {
 		closeAivopittuajStmt();
 		closeAicnivorptuajStmt();
 		closeDaditnetuajStmt();
-		closeLasrucustuajStmt();
 		closeAutumtuajStmt();
 		closeEtneilc_nablrpmeStmt();
 		closeFinrpme_nablrpmeStmt();
@@ -72790,49 +73361,57 @@ public class AbstractCtsqlDB {
 		closeRpme_mer_trec_kfStmt();
 		closeRel_tra_tc2Stmt();
 		closeJcontratotc2Stmt();
-		closeFk_ae_sessionStmt();
-		closeNoitacilppa_kfStmt();
-		closeResu_kfStmt();
-		closeReprpme_ucodigerStmt();
+		closeGerpit_ucodigerStmt();
 		closeEtneilc_ucodigerStmt();
 		closeFinrpme_ucodigerStmt();
 		closeTcarpme_ucodigerStmt();
-		closeGerpit_ucodigerStmt();
+		closeReprpme_ucodigerStmt();
 		close2ct_ipe2ctnilStmt();
 		closeRel_dlg_proStmt();
 		closeRel_cli_proStmt();
 		closeRel_dom_proStmt();
 		closeRel_per_prdStmt();
 		closeRel_per_prnStmt();
-		closeImpr11x_provinciaStmt();
 		closeImpr190_provinciaStmt();
-		closeOpfile_provinciaStmt();
 		closeJpronacStmt();
 		closeJprovinciaStmt();
+		closeOpfile_provinciaStmt();
 		closeJautprovinciaStmt();
+		closeImpr11x_provinciaStmt();
+		closeImpr216_provinciaStmt();
+		closeImpr296_provinciaStmt();
+		closeLin296_provinciaStmt();
 		closeAdinumoc_aicnivorpStmt();
 		closeNoicapuconiljStmt();
+		closeLin_datoswebStmt();
 		closeNomdtoex_nominaexStmt();
-		closeRep_xep_lerStmt();
 		closeMoc_xep_lerStmt();
 		closeAsivid_xep_lerStmt();
+		closeRep_xep_lerStmt();
+		close692rpmi_692nilStmt();
+		closeAicnivorp_692nilStmt();
+		closeSomart_d_rtStmt();
+		closeAtercogidoc_rtStmt();
 		closeLincomun_comunicaStmt();
 		closeReprpme_acinumocStmt();
 		closeCodpit_acinumocStmt();
 		closeLin_divisa_divisaStmt();
 		closeLin_divisa_divisa2Stmt();
 		closeNominaexdf_divisaStmt();
-		closeRel_pex_divisaStmt();
 		closeRel_cli_divisaStmt();
 		closeRel_emp_divisaStmt();
 		closeRel_nom_divisaStmt();
+		closeRel_pex_divisaStmt();
 		closeFiniquito_divisaStmt();
 		closeFindf_divisaStmt();
 		closeFinnu_divisaStmt();
-		closeImpr11x_divisaStmt();
 		closeImpr190_divisaStmt();
 		closeNominadf_divisaStmt();
+		closeImpr11x_divisaStmt();
+		closeImpr216_divisaStmt();
+		closeImpr296_divisaStmt();
 		closeReprpme_oluclacStmt();
+		closeRel_cra_dde_cdgStmt();
 		closeRel_com_paiStmt();
 		closeRel_cli_paiStmt();
 		closeRel_emp_paiStmt();
@@ -72842,14 +73421,15 @@ public class AbstractCtsqlDB {
 		closeJpaiemiStmt();
 		closePpe_pcp_lerStmt();
 		closeMoc_pcp_lerStmt();
-		closeFdnif_fddinifStmt();
 		closeSucursal_entidadStmt();
 		closeEmprbanc_entidadStmt();
 		closeRel_tra_entStmt();
 		closeJentidadStmt();
 		closeJautentidadStmt();
 		closeEmprbanc_entbicStmt();
+		closeSoiraronoh_nilStmt();
 		closeReprpme_ograbmeStmt();
+		closeRep_brt_arc_lerStmt();
 		closeNoc_ncp_lerStmt();
 		closeLevin_vincrepStmt();
 		closeMoc_ncp_lerStmt();
@@ -72858,11 +73438,14 @@ public class AbstractCtsqlDB {
 		closeRel_pcp_eppStmt();
 		closeBonifica_emprperStmt();
 		closeAvisos_emprperStmt();
+		closePrc_emprperStmt();
 		closeRel_nom_perStmt();
+		closeRel_pex_perStmt();
 		closeTrabinci_emprperStmt();
 		closeNominait_emprperStmt();
 		closeRel_dto_perStmt();
 		closeRel_pit_eppStmt();
+		closeEmbargo_emprperStmt();
 		closePitnu_emprperStmt();
 		closeNitnu_emprperStmt();
 		closeRel_fin_eppStmt();
@@ -72870,13 +73453,10 @@ public class AbstractCtsqlDB {
 		closeFinnu_emprperStmt();
 		closeComunica_emprperStmt();
 		closeCalculo_emprperStmt();
-		closeNominadf_emprperStmt();
-		closeEmbargo_emprperStmt();
-		closeRel_pex_perStmt();
 		closeRegidocu_emprperStmt();
-		closePrc_emprperStmt();
-		closePit_remesa_empStmt();
+		closeNominadf_emprperStmt();
 		closeFk_cert_remesa_empStmt();
+		closePit_remesa_empStmt();
 		closeRep_ppe_lerStmt();
 		closePme_ppe_lerStmt();
 		closeTca_ppe_lerStmt();
@@ -72890,10 +73470,11 @@ public class AbstractCtsqlDB {
 		closeFindtonu_finnuStmt();
 		closeReprpme_unnifStmt();
 		closeAsivid_unnifStmt();
-		closeFk_af_actionStmt();
-		closeFk_ae_actionStmt();
-		closeFk_ad_actionStmt();
-		closePpa_noitca_kfStmt();
+		closeLin_workplacesStmt();
+		closeRel_dlg_workplacesStmt();
+		closeRel_workplacesStmt();
+		closeRel_linworkplacesStmt();
+		closeSecalpkrow_nilStmt();
 		closeAivopit_elifpoStmt();
 		closeAicnivorp_elifpoStmt();
 		closeUnnif_unxenifStmt();
@@ -72904,11 +73485,12 @@ public class AbstractCtsqlDB {
 		close2ct_2ctnilStmt();
 		closeAnosrep_2ctnilStmt();
 		closeJlincnae2009Stmt();
-		closeFk_userStmt();
-		closeFk_af_userStmt();
-		closeFk_ad_userStmt();
 		closeUlp_lpl_lerStmt();
 		closeMoc_lpl_lerStmt();
+		closeNomda_612rpmiStmt();
+		closeAicnivorp_612rpmiStmt();
+		closeFinrpme_612rpmiStmt();
+		closeAsivid_612rpmiStmt();
 		closeFdanimon_vedfdmonStmt();
 		closeCni_tth_lerStmt();
 		closeRel_htt_bonStmt();
@@ -72925,7 +73507,6 @@ public class AbstractCtsqlDB {
 		closeOtartnocjStmt();
 		close2ctotartnocjStmt();
 		closeDaditnejStmt();
-		closeLasrucusjStmt();
 		closeAfiratjStmt();
 		closeEfargipejStmt();
 		closeEmprctra_domicilioStmt();
@@ -72945,20 +73526,24 @@ public class AbstractCtsqlDB {
 		closeJinddocStmt();
 		closeRel_lba_basStmt();
 		closeRel_cat_comStmt();
+		closeRel_cos_basStmt();
 		closeRel_tra_basStmt();
 		closeJtarifaStmt();
-		closeRel_cos_basStmt();
 		closeNil_rav_lerStmt();
-		closeNoitca_fa_kfStmt();
-		closeResu_fa_kfStmt();
+		closeLin_fpercepStmt();
+		closeOinevnoc_epfStmt();
+		closeEtneilc_epfStmt();
+		closeFinrpme_epfStmt();
+		closeTcarpme_epfStmt();
+		closeAnosrep_epfStmt();
 		closeEancniljStmt();
 		closeLinirpf_elemirpfStmt();
 		closeFinrpme_modrpmeStmt();
 		closeTcarpme_modrpmeStmt();
 		closeEtneilc_modrpmeStmt();
 		closeOilicimod_modrpmeStmt();
-		closeRel_ccc_mutStmt();
 		closeRel_mut_linStmt();
+		closeRel_ccc_mutStmt();
 		closeJautmutuaStmt();
 		closeSab_abl_lerStmt();
 		closeRel_per_linStmt();
@@ -72972,29 +73557,29 @@ public class AbstractCtsqlDB {
 		closeRel_cli_viaStmt();
 		closeRel_dom_viaStmt();
 		closeRel_per_viaStmt();
-		closeOpfile_tipoviaStmt();
 		closeJtipviaStmt();
+		closeOpfile_tipoviaStmt();
 		closeJauttipoviaStmt();
-		closeRel_tra_contStmt();
 		closeJcontratoStmt();
 		closeTcpdoc_oct_lerStmt();
-		closeLoc_art_lerStmt();
-		closeTua_art_lerStmt();
 		closeNoc_art_lerStmt();
 		closeSab_art_lerStmt();
 		closeIpe_art_lerStmt();
-		closeTnoc_art_lerStmt();
 		close2ct_art_lerStmt();
 		closeTne_art_lerStmt();
-		closeCus_art_lerStmt();
 		closeTcp_art_lerStmt();
 		closeReprpme_ojabartStmt();
+		closeTua_art_lerStmt();
+		closeLoc_art_lerStmt();
 		closeUnnif_undinifStmt();
+		closeRel_cli_grptrabajoStmt();
 		closeRel_tra_colStmt();
 		closeTcp_cpl_lerStmt();
 		closeRel_emp_admStmt();
-		closeImpr11x_admonStmt();
 		closeImpr190_admonStmt();
+		closeImpr11x_admonStmt();
+		closeImpr216_admonStmt();
+		closeImpr296_admonStmt();
 		closeRel_dto_nomStmt();
 		closeRel_nmd_nomStmt();
 		closePrc_nominaStmt();
@@ -73004,6 +73589,8 @@ public class AbstractCtsqlDB {
 		closeAnimon_crpStmt();
 		closeLintc2epi_tc2Stmt();
 		closeLintc2_tc2Stmt();
+		closeSograc_nilStmt();
+		closeSogracopit_lerStmt();
 		closeRel_tra_autStmt();
 		closeNoc_agp_lerStmt();
 		closeMoc_agp_lerStmt();
@@ -73011,15 +73598,16 @@ public class AbstractCtsqlDB {
 		closeCccrpme_tnocmrofStmt();
 		closeNif_epf_lerStmt();
 		closeMoc_epf_lerStmt();
+		closeRel_tr_liquidacionStmt();
 		closeRel_nominaexdfStmt();
 		closeAsivid_fdxeanimonStmt();
 		closeParteconf_parteitStmt();
 		closePpe_tip_lerStmt();
 		closeRel_per_nacStmt();
 		closeXeanimon_xeotdmonStmt();
-		closeFdnif_fdotdnifStmt();
 		closeAnosrep_creprtoStmt();
 		closeFinrpme_creprtoStmt();
+		closeTr_codigocretaStmt();
 		closeJlincnaeStmt();
 		closeLin190_impr190Stmt();
 		closePmedoc_091rpmiStmt();
@@ -73028,8 +73616,6 @@ public class AbstractCtsqlDB {
 		closeSerper_091rpmiStmt();
 		closeAsivid_091rpmiStmt();
 		closeReprpme_crpStmt();
-		closeFk_action_appStmt();
-		closeFk_applicationStmt();
 		closeRegidocu_tipregStmt();
 		closeMon_dmn_lerStmt();
 		super.finalize();

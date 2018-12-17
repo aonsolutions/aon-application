@@ -601,15 +601,15 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 			cnae, 
 			DefaultMysqlDB.enum2short(EnterpriseActivityType.PRINCIPAL), 	//type, 
 			cnae2009, 
-			null,															//surcharge, 
+			false,															//surcharge, 
 			null,															//vat_tax, 
 			null,															//retention_tax, 
-			null,															//vat_regime, 
-			null,															//retention_regime, 
+			(short)0,														//vat_regime, 
+			(short)0,														//retention_regime, 
 			null,															//start_date, 
 			null,															//end_date, 
-			null,															//prorata, 
-			null,															//prorata_type, 
+			0.00,															//prorata, 
+			false,															//prorata_type, 
 			true															//principal
 			);
 			
@@ -809,8 +809,14 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 				workplace = mysqlDB.insertWorkplace(enterprise.id, description,
 						raddress, null, enterprise.scopeId,
 						MysqlDB.enum2short(enterprise.economicAgreement), true);
-
-				mysqlDB.insertPayroll_workplace(workplace, agreement, null,
+				
+				Integer activity = emprCtra.codAct != null  ? 
+						getActivityId(emprCtra.codAct ):null;
+				
+				mysqlDB.insertPayroll_workplace(
+						workplace, 
+						agreement, 
+						activity,
 						calendar);
 
 				if (calendar != null) {

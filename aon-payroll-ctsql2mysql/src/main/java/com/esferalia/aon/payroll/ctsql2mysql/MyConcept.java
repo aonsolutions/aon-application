@@ -14,6 +14,8 @@ import java.util.Map;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Bonifica;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Complemento;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipboni;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractMysqlDB.Payment_concept;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.sql.AbstractSQL.IPaymentConcept;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -95,28 +97,28 @@ public class MyConcept extends DefaultCtsqlDBVisitor implements IConcepts {
 	public static String getExprFormat(String calculo, String indCom, String codeApl, String redExt, double garilt) 
 	throws SQLException {
 		if (calculo.equals("1")) {
-			return String.format("%%1$s * %s / %s", 
+			return String.format("/*user*/%%1$s/**/ * %s / %s", 
 					WORKED_DAYS , MONTH_DAYS );
 		}else if (calculo.equals("2")) {
-			return String.format("%%1$s * %s ", 
+			return String.format("/*user*/%%1$s/**/ * %s ", 
 					WORKED_DAYS );
 		}else if (calculo.equals("3")) {
-			return String.format("%%1$s * %s ", 
+			return String.format("/*user*/%%1$s/**/ * %s ", 
 					ACTUAL_DAYS );
 		}else if (calculo.equals("4")) {
-			return String.format("%%1$s * %s ", 
+			return String.format("/*user*/%%1$s/**/ * %s ", 
 					SPECIAL_DAYS);
 		}else if (calculo.equals("5")) {
-			return String.format("%s * %%1$s / 100 ", 
+			return String.format("%s * /*user*/%%1$s/**/ / 100 ", 
 					codeApl );
 		}else if (calculo.equals("6")) {
 			if ("V".equals(indCom)) { 
-				return String.format("%%1$s * %s / 30", 
+				return String.format("/*user*/%%1$s/**/ * %s / 30", 
 						HOLIDAYS ); // Jodete
 			}
 			if ("P".equals(indCom)) {
 				if ( "S".equalsIgnoreCase(redExt)) {
-					return String.format("%%1$s * %s / %s", 
+					return String.format("/*user*/%%1$s/**/ * %s / %s", 
 							WORKED_WEEKS , PAY_WEEKS );
 				}
 /*
@@ -320,13 +322,22 @@ public class MyConcept extends DefaultCtsqlDBVisitor implements IConcepts {
 			return;
 		}
 		
+		Concept<PaymentType> concept  = mysqlDB.getSystemPaymentConcept(complemento);
+		if ( concept != null ) {
+			paymentConcepts.put(cdg, concept);
+			return;
+		}
+		
 		String code = formatCode ( complemento.getCdg() );
 		String description = complemento.getDescripcion() ;
 		if ( description == null ) {
 			description = complemento.getDesabr();
 		}
-		PaymentType type = mysqlDB.getPaymentType(description, 
-				complemento.getDinesp(), complemento.getTipcot());
+		PaymentType type =
+				mysqlDB.getPaymentType(complemento, PaymentType.CRA_0000);
+//				mysqlDB.getPaymentType(description, 
+//				complemento.getDinesp(), complemento.getTipcot())
+				;
 		
 		String tipoCot = complemento.getTipcot();
 		String dinEsp = complemento.getDinesp();
@@ -342,7 +353,7 @@ public class MyConcept extends DefaultCtsqlDBVisitor implements IConcepts {
 					null, 
 					DefaultMysqlDB.format(irpfExpr, code), 
 					DefaultMysqlDB.format(quoteExpr, code));
-		Concept<PaymentType> concept = 
+		concept = 
 			new Concept<PaymentType>(paymentConcept, code, type, tipoCot, description);
 		paymentConcepts.put(complemento.getCdg() , concept );
 	}

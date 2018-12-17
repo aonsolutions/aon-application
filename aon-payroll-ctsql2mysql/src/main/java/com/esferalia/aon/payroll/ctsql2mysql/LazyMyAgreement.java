@@ -50,7 +50,7 @@ public class LazyMyAgreement extends MyAgreement {
 	}
 	
 	@Override
-	public Integer getAgreementCategory(String codCon, String nivel,
+	public String getAgreementCategory(String codCon, String nivel,
 			String oldCdg) {
 		getAgreement(codCon);
 		return super.getAgreementCategory(oldCdg, nivel, oldCdg);

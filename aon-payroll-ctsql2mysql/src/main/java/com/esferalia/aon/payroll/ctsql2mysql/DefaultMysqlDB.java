@@ -17,7 +17,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.BitSet;
@@ -38,8 +37,6 @@ import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.config.enumeration.Toolbar;
-import net.aonsolutions.core.dbutils.AonSQLException;
-import net.aonsolutions.core.dbutils.AonSQLFile;
 import com.code.aon.master.VersionManager;
 import com.code.aon.person.enumeration.Gender;
 import com.code.aon.person.enumeration.MaritalStatus;
@@ -47,8 +44,18 @@ import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.registry.enumeration.StreetType;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Complemento;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nominadev;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Percep;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Percniv;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipdoc;
+import com.esferalia.aon.payroll.ctsql2mysql.IConcepts.Concept;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.enumeration.PaymentType;
+import com.esferalia.aon.watson.util.AonStringUtils;
+
+import net.aonsolutions.core.dbutils.AonSQLException;
+import net.aonsolutions.core.dbutils.AonSQLFile;
 
 /**
  * @author rtrepiana
@@ -94,6 +101,9 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 	}
 
 	protected static class InvalidTelephoneException extends Exception {
+	}
+
+	protected static class CustomQuoteExpressionException extends Exception {
 	}
 
 	final static Locale SPANISH = new Locale("es");
@@ -285,6 +295,10 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 			cnaes.set(id);
 		}
 		rs.close();
+	}
+
+	protected Integer getSystemDomain() {
+		return 0;
 	}
 
 	@Override
@@ -546,41 +560,43 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 			Pattern.CASE_INSENSITIVE);
 	private Pattern dismissalPattern = Pattern.compile(
 			"INDEMNIZACION.*DESPIDO", Pattern.CASE_INSENSITIVE);
-
-	public PaymentType getPaymentType(String description, String dinEsp,
-			String tipCot) {
-
-		if ("5".equals(tipCot)) {
-			return PaymentType.STRUCTURAL_HOURS;
-		}
-
-		if ("6".equals(tipCot)) {
-			return PaymentType.NON_STRUCTURAL_HOURS;
-		}
-
-		if ("E".equalsIgnoreCase(dinEsp)) {
-			return PaymentType.CRA_0013;
-		}
-
-		if (description == null) {
-			return PaymentType.CRA_0001;
-		}
-		if (baseSalaryPattern.matcher(description).find()) {
-			return PaymentType.CRA_0001;
-		} else if (overtimePattern.matcher(description).find()) {
-			return PaymentType.NON_STRUCTURAL_HOURS;
-		} else if (noticePattern.matcher(description).find()) {
-			return PaymentType.MOVING_COMPENSATION;
-		} else if (movingPattern.matcher(description).find()) {
-			return PaymentType.MOVING_COMPENSATION;
-		} else if (dismissalPattern.matcher(description).find()) {
-			return PaymentType.MOVING_COMPENSATION;
-		} else if (compensationPattern.matcher(description).find()) {
-			return PaymentType.CRA_0001;
-		}
-		return PaymentType.CRA_0001;
-
-	}
+	
+	
+	
+//	public PaymentType getPaymentType(String description, String dinEsp,
+//			String tipCot) {
+//
+//		if ("5".equals(tipCot)) {
+//			return PaymentType.STRUCTURAL_HOURS;
+//		}
+//
+//		if ("6".equals(tipCot)) {
+//			return PaymentType.NON_STRUCTURAL_HOURS;
+//		}
+//
+//		if ("E".equalsIgnoreCase(dinEsp)) {
+//			return PaymentType.CRA_0013;
+//		}
+//
+//		if (description == null) {
+//			return PaymentType.CRA_0001;
+//		}
+//		if (baseSalaryPattern.matcher(description).find()) {
+//			return PaymentType.CRA_0001;
+//		} else if (overtimePattern.matcher(description).find()) {
+//			return PaymentType.NON_STRUCTURAL_HOURS;
+//		} else if (noticePattern.matcher(description).find()) {
+//			return PaymentType.MOVING_COMPENSATION;
+//		} else if (movingPattern.matcher(description).find()) {
+//			return PaymentType.MOVING_COMPENSATION;
+//		} else if (dismissalPattern.matcher(description).find()) {
+//			return PaymentType.MOVING_COMPENSATION;
+//		} else if (compensationPattern.matcher(description).find()) {
+//			return PaymentType.CRA_0001;
+//		}
+//		return PaymentType.CRA_0001;
+//
+//	}
 
 	public String getFunction(BigDecimal importe, BigDecimal impuni,
 			BigDecimal unidades) {
@@ -622,6 +638,11 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 		}
 	}
 
+	public Integer getDeductionConceptId(Integer domain, ContextVariable var) 
+			throws SQLException {
+		return getDeductionConceptId(domain, var.getName());
+	}
+
 	public Integer getDeductionConceptId(Integer domain, String code)
 			throws SQLException {
 		ResultSet rs = null;
@@ -640,6 +661,122 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 			} else {
 				return null;
 			}
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+		}
+	}
+	
+
+	public PaymentType getPaymentType(Nominadev nominadev, PaymentType def) throws SQLException{
+		PaymentType paymentType =  getPaymentType(nominadev.getConcepto(), null);
+		if ( paymentType != null)
+			return paymentType;
+		return paymentType != null ? paymentType : def ;
+	}
+
+	public PaymentType getPaymentType(Complemento complemento, PaymentType def) throws SQLException{
+		PaymentType paymentType =  getPaymentType(complemento.getConcepto(), null);
+		if ( paymentType != null && paymentType != PaymentType.CRA_0001  )
+			return paymentType;
+		return paymentType != null ? paymentType : def ;
+	}
+
+	public PaymentType getPaymentType(Percep percep, PaymentType def) throws SQLException{
+		PaymentType paymentType =  getPaymentType(percep.getConcepto(), null);
+		if ( paymentType != null && paymentType != PaymentType.CRA_0001  )
+			return paymentType;
+		paymentType = getPaymentType(percep.getCalculo(),  percep.getIndcom(), percep.getMes(), paymentType);
+		return paymentType != null ? paymentType : def ;
+	}
+
+	public PaymentType getPaymentType(Percniv percniv, PaymentType def) throws SQLException{
+		PaymentType paymentType =  getPaymentType(percniv.getConcepto(), null);
+		if ( paymentType != null && paymentType != PaymentType.CRA_0001  )
+			return paymentType;
+		paymentType = getPaymentType(percniv.getCalculo(),  percniv.getIndcom(), percniv.getMes(), paymentType);
+		return paymentType != null ? paymentType : def ;
+	}
+
+	private PaymentType getPaymentType(String concepto, PaymentType def) {
+		if ( AonStringUtils.isBlank(concepto) )
+			return def;
+		
+		PaymentType paymentType = 
+				PaymentType.valueOf(String.format("CRA_%s", concepto));
+		if ( paymentType == null )
+			return def;
+		return paymentType;
+	}
+	
+	private PaymentType getPaymentType(String calculo, String indcom, Integer mes, PaymentType def){
+		if ( "6".equals(calculo) && "P".equals(indcom) && mes != null && mes >= 1 && mes <= 12)
+			return PaymentType.CRA_0004;
+		
+		return def;	
+	}
+	
+	public String getQuote(Percniv percniv, Concept<PaymentType> concept) throws SQLException, CustomQuoteExpressionException{
+		PaymentType paymentType = getPaymentType(percniv.getConcepto(), null);
+		return getQuote(paymentType, concept);
+	}
+
+	public String getQuote(Percep percep, Concept<PaymentType> concept) throws SQLException, CustomQuoteExpressionException{
+		PaymentType paymentType = getPaymentType(percep.getConcepto(), null);
+		return getQuote(paymentType, concept);
+	}
+
+	private String getQuote(PaymentType paymentType, Concept<PaymentType> concept)
+			throws CustomQuoteExpressionException {
+		if ( paymentType == concept.type  )
+			if ( paymentType.isBBCCExcluded() != paymentType.isBBCCIncluded() )
+				return null; // PaymentType same as Concept and quote expression can't be customize, so use the one at Concept.
+			else 
+				throw new CustomQuoteExpressionException();
+		
+		if ( paymentType.isBBCCIncluded() &&  !paymentType.isBBCCExcluded() )
+			return ContextVariable.ALL;
+		
+		if ( !paymentType.isBBCCIncluded() &&  paymentType.isBBCCExcluded() )
+			return null;
+		
+		throw new CustomQuoteExpressionException();
+	}
+
+	public Concept<PaymentType> getSystemPaymentConcept(Complemento complemento)
+			throws SQLException {
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		
+		PaymentType paymentType = getPaymentType(complemento.getConcepto(), null);
+		if ( paymentType == null )
+			return null;
+		
+		try {
+			stmt = mysqlConnection
+					.prepareStatement("SELECT * FROM payment_concept WHERE domain= ? AND type = ? ");
+			stmt.setInt(1, getSystemDomain());
+			stmt.setInt(2, paymentType.ordinal());
+			rs = stmt.executeQuery();
+			if ( !rs.next() )
+				return null;
+			
+			Concept<PaymentType>  concept = 
+					new Concept<PaymentType>(
+							rs.getInt("id"),
+							rs.getString("code"),
+							paymentType,
+							rs.getString("description"),
+							complemento.getTipcot()
+							);
+			
+			if ( !rs.next() )
+				return concept;
+
+			return null;
+
 		} finally {
 			if (rs != null)
 				rs.close();
@@ -1051,5 +1188,16 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 			}
 		}
 	}
+	
+	
+	private static String normalize(String str) {
+		
+		return str
+		.toUpperCase()
+		.replaceAll("\\s","")
+		.replaceAll("\\[([^\\]])*\\]","") 
+		;
+	}
+	
 
 }

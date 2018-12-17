@@ -28,7 +28,12 @@ import org.apache.commons.cli.PosixParser;
 import org.apache.commons.codec.binary.Base64;
 
 import net.aonsolutions.core.dbutils.AonSQLException;
+
+import com.code.aon.common.enumeration.Country;
+import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.master.VersionManager;
+import com.code.aon.registry.enumeration.DocumentType;
 
 /********************************************************************
  * Copyright (c) 2010, esferalia NETWORKS S.A
@@ -350,8 +355,25 @@ public class Ctsql2Mysql {
 	protected Integer newDomain(MysqlDB mysqlDB) throws IOException,
 			InterruptedException, SQLException, AonSQLException {
 
-		return mysqlDB.newConsultancyDomain(domainName, domainUser,
+		Integer domain = mysqlDB.newConsultancyDomain(domainName, domainUser,
 				domainPasswd, null /* TODO : scope ? */);
+
+		int registry = mysqlDB.insertRegistry(
+				domain, 
+				null,										//document, 
+				(short)DocumentType.CIF.ordinal(),			//document_type, 
+				Country.ES.getValue(),						//document_country, 
+				domainName,									//name, 
+				domainName,									//alias, 
+				null,										//type, 
+				Country.ES.getValue(),						//nationality, 
+				(short)(SecurityLevel.OFFICIAL.ordinal())	//security_level
+				);
+		
+		// TODO: Company ... related entries, like 'logo'
+		mysqlDB.insertCompany(registry, domain, true, true, true, true, true);
+		
+		return domain;
 	}
 
 	public boolean drop() {

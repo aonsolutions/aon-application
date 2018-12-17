@@ -9,11 +9,13 @@ public interface IAgreements {
 
 	public Integer getAgreement(String oldCdg) ;
 	
-	public Integer getAgreementCategory(String codCon, String nivel, String oldCdg);
+	public Integer getAgreementLevel(String codCon, String oldCdg);
+
+	public String getAgreementCategory(String codCon, String nivel, String oldCdg);
 	
 	public boolean containsExtra(String oldCdg, String codCom );
 
-	public Integer insertAgreementCategory(String codCon, String nivel, String oldCdg) 
+	public String insertAgreementCategory(String codCon, String nivel, String oldCdg) 
 		throws SQLException;
 	
 	public int hasPayment(String cdg, String nivel, String codcom,  Percep percep) 

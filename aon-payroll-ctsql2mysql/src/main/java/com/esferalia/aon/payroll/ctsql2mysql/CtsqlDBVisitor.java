@@ -16,34 +16,34 @@ import java.sql.SQLException;
 
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Trabdto;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Remesa_inss;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipocausabaja;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipocnae2009;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nominaitnu;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Lincalcu;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszodet;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprban;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tr_peculiar;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Autbases;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cuota_31;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprnif;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Delegacion;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszcont;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszconv;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Opercepciones;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Minor_48;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipempr;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Linautom;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszcopa;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Persona;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszprov;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Impr296;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Lintipocargos;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Epigrafe;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Automat;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finiquito;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Linfpercep;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nominait;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprccc;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszdomi;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Porcoti;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Httbonificacion;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszcatg;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Lindatosweb;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Unidades;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Honorarios;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipboni;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nivel;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cuota_48;
@@ -51,39 +51,38 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Linmutua;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Datosafi;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Trabinci;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finiquitodf;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Baseartista;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finidto;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipocargos;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Variaciones;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finindem;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cargos;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Lin_divisa;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finipextdf;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Remesace;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Minor_20;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Comunidad;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Calendar;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Variables;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Categoria;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Prestaciones;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Db_version;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tr_tramos;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cuota_20;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Avisos;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Rem_cert_empr_det;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Sucursal;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Basehogar;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Costes;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszanex;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszmupa;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Minor_31;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Config;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Linirpf;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszreac;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Linepigr;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Parteitnu;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nominadf;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszfini;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Convenio;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Calfiniquito;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nomdfdtoex;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Linprestacion;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nsztido;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipinc;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Elemcoti;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Parteconf;
@@ -92,113 +91,99 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Lin190;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Complemento;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Lincnae2009;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nomdfdto;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Action_denied;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finidtonu;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Remesaafi;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Bonifica;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Empract;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprccos;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Action_entry;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Masivo;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cra_trb;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tr_parametro;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Httcomplemento;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cliente;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Autonomos;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Minora;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprlban;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszcoco;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszrece;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Impr11x;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Rem_cert_empr;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipcotc2;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Trabajadores;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cuota;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Session;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Regidocu;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Lintc2epi;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Provincia;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Linocupacion;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Datosweb;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nominaex;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszmest;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Lin296;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tr_datos;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Comunica;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipocnae;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Divisa;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Calculo;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cra_dde;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Pais;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Percep;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finindemdf;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Entidad;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszcere;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Linhonorarios;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Embargo;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszavis;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cra_cre;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Percniv;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tiposdoc;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Ajustes;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Httaviso;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprper;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszbanc;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Lbonifica;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Ocupacion;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finiquitonu;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Action;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Workplaces;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Linworkplaces;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Opfile;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finipextnu;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Lincomun;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Linelem;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Linpercepcion;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Perfil;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszinci;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Lintc2;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cnae2009;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszcala;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Usuario;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Linplus;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszregi;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Impr216;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Complevar;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nomdfdev;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Exclusion;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszbolc;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Httincidencia;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Httrabajador;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Domicilio;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipdoc;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Calen;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tr_serie;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Basecoti;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszcdtr;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Linvariables;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Action_favorite;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Fpercep;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Lincnae;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Elemirpf;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszrari;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprdom;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Mutua;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszempr;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Remesainss;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Linbasec;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Percepcion;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszpaga;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszotpe;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprctra;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Remesa_parte_it;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszpeop;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Procesos;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszunco;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipovia;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszdcpr;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipocont;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Trabajo;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finindemnu;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Grupotrabajo;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Colectivos;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszboni;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Linporco;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Admon;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nomina;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszpoco;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nomdto;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Minor_01;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Prcdivnom;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tc2;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tc1;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszbase;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Lincargos;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipaut;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Detalle;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Pagaext;
@@ -206,24 +191,21 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cuota_01;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Lcomunica;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Formcont;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finipext;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszilte;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Empresa;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tr_liquidacion;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nominaexdf;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Parteit;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nacion;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nomdtoex;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszepig;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finidtodf;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Otrperc;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszadmh;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Codigocreta;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cnae;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Printers;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nsztrab;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tr_fichero;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Impr190;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Prcdivtrab;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Sincomun;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Application;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszcomp;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipreg;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nominadev;
 
@@ -244,6 +226,10 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 
+	 void visitTipocausabaja(Tipocausabaja tipocausabaja)
+	throws SQLException;
+
+
 	 void visitTipocnae2009(Tipocnae2009 tipocnae2009)
 	throws SQLException;
 
@@ -256,14 +242,14 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 
-	 void visitNszodet(Nszodet nszodet)
-	throws SQLException;
-
-
 	 void visitEmprban(Emprban emprban)
 	throws SQLException;
 
 	void visitEmprlban_emprban(Emprlban emprlban, Emprban emprban)
+	throws SQLException;
+
+
+	 void visitTr_peculiar(Tr_peculiar tr_peculiar)
 	throws SQLException;
 
 
@@ -299,7 +285,7 @@ public interface CtsqlDBVisitor {
 	void visitAvisos_codemp(Avisos avisos, Emprnif emprnif)
 	throws SQLException;
 
-	void visitImpr11x_emprnif(Impr11x impr11x, Emprnif emprnif)
+	void visitRegidocu_emprnif(Regidocu regidocu, Emprnif emprnif)
 	throws SQLException;
 
 	void visitImpr190_codemp(Impr190 impr190, Emprnif emprnif)
@@ -314,10 +300,28 @@ public interface CtsqlDBVisitor {
 	void visitRel_var_emp(Variaciones variaciones, Emprnif emprnif)
 	throws SQLException;
 
-	void visitRegidocu_emprnif(Regidocu regidocu, Emprnif emprnif)
+	void visitFk_cert_rem_empr(Rem_cert_empr rem_cert_empr, Emprnif emprnif)
 	throws SQLException;
 
-	void visitFk_cert_rem_empr(Rem_cert_empr rem_cert_empr, Emprnif emprnif)
+	void visitHon_emprnif(Honorarios honorarios, Emprnif emprnif)
+	throws SQLException;
+
+	void visitImpr11x_emprnif(Impr11x impr11x, Emprnif emprnif)
+	throws SQLException;
+
+	void visitImpr216_emprnif(Impr216 impr216, Emprnif emprnif)
+	throws SQLException;
+
+	void visitImpr296_codemp(Impr296 impr296, Emprnif emprnif)
+	throws SQLException;
+
+	void visitImpr296_repres(Impr296 impr296, Emprnif emprnif)
+	throws SQLException;
+
+	void visitImpr296_cargo(Impr296 impr296, Emprnif emprnif)
+	throws SQLException;
+
+	void visitFpe_emprnif(Fpercep fpercep, Emprnif emprnif)
 	throws SQLException;
 
 
@@ -325,14 +329,6 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 	void visitCliente_delegacion(Cliente cliente, Delegacion delegacion)
-	throws SQLException;
-
-
-	 void visitNszcont(Nszcont nszcont)
-	throws SQLException;
-
-
-	 void visitNszconv(Nszconv nszconv)
 	throws SQLException;
 
 
@@ -358,10 +354,6 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 
-	 void visitNszcopa(Nszcopa nszcopa)
-	throws SQLException;
-
-
 	 void visitPersona(Persona persona)
 	throws SQLException;
 
@@ -377,8 +369,30 @@ public interface CtsqlDBVisitor {
 	void visitJautpersona(Autonomos autonomos, Persona persona)
 	throws SQLException;
 
+	void visitTr_persona_nums(Tr_tramos tr_tramos, Persona persona)
+	throws SQLException;
 
-	 void visitNszprov(Nszprov nszprov)
+	void visitTr_persona_indd(Tr_tramos tr_tramos, Persona persona)
+	throws SQLException;
+
+	void visitTr_persona_numd(Tr_tramos tr_tramos, Persona persona)
+	throws SQLException;
+
+	void visitTr_persona_atc2(Tr_tramos tr_tramos, Persona persona)
+	throws SQLException;
+
+	void visitFpe_persona(Fpercep fpercep, Persona persona)
+	throws SQLException;
+
+
+	 void visitImpr296(Impr296 impr296)
+	throws SQLException;
+
+	void visitLin296_impr296(Lin296 lin296, Impr296 impr296)
+	throws SQLException;
+
+
+	 void visitLintipocargos(Lintipocargos lintipocargos)
 	throws SQLException;
 
 
@@ -391,13 +405,13 @@ public interface CtsqlDBVisitor {
 	void visitRel_cat_epi(Categoria categoria, Epigrafe epigrafe)
 	throws SQLException;
 
+	void visitRel_cos_epi(Costes costes, Epigrafe epigrafe)
+	throws SQLException;
+
 	void visitRel_tra_epi(Trabajo trabajo, Epigrafe epigrafe)
 	throws SQLException;
 
 	void visitJepigrafe(Httrabajador httrabajador, Epigrafe epigrafe)
-	throws SQLException;
-
-	void visitRel_cos_epi(Costes costes, Epigrafe epigrafe)
 	throws SQLException;
 
 
@@ -421,6 +435,10 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 
+	 void visitLinfpercep(Linfpercep linfpercep)
+	throws SQLException;
+
+
 	 void visitNominait(Nominait nominait)
 	throws SQLException;
 
@@ -428,14 +446,10 @@ public interface CtsqlDBVisitor {
 	 void visitEmprccc(Emprccc emprccc)
 	throws SQLException;
 
-	void visitRel_epp_ccc(Emprper emprper, Emprccc emprccc)
-	throws SQLException;
-
 	void visitFormcont_emprccc(Formcont formcont, Emprccc emprccc)
 	throws SQLException;
 
-
-	 void visitNszdomi(Nszdomi nszdomi)
+	void visitRel_epp_ccc(Emprper emprper, Emprccc emprccc)
 	throws SQLException;
 
 
@@ -448,10 +462,10 @@ public interface CtsqlDBVisitor {
 	void visitRel_tco_codpct(Tipocont tipocont, Porcoti porcoti)
 	throws SQLException;
 
-	void visitRel_tra_pct(Trabajo trabajo, Porcoti porcoti)
+	void visitRel_cos_pct(Costes costes, Porcoti porcoti)
 	throws SQLException;
 
-	void visitRel_cos_pct(Costes costes, Porcoti porcoti)
+	void visitRel_tra_pct(Trabajo trabajo, Porcoti porcoti)
 	throws SQLException;
 
 
@@ -459,7 +473,7 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 
-	 void visitNszcatg(Nszcatg nszcatg)
+	 void visitLindatosweb(Lindatosweb lindatosweb)
 	throws SQLException;
 
 
@@ -467,10 +481,14 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 
-	 void visitTipboni(Tipboni tipboni)
+	 void visitHonorarios(Honorarios honorarios)
 	throws SQLException;
 
-	void visitRel_bpe_bon(Bonifica bonifica, Tipboni tipboni)
+	void visitLin_honorarios(Linhonorarios linhonorarios, Honorarios honorarios)
+	throws SQLException;
+
+
+	 void visitTipboni(Tipboni tipboni)
 	throws SQLException;
 
 
@@ -500,17 +518,22 @@ public interface CtsqlDBVisitor {
 	 void visitFiniquitodf(Finiquitodf finiquitodf)
 	throws SQLException;
 
-	void visitFinexdf_findf(Finipextdf finipextdf, Finiquitodf finiquitodf)
-	throws SQLException;
 
-	void visitFiniddf_findf(Finindemdf finindemdf, Finiquitodf finiquitodf)
-	throws SQLException;
-
-	void visitFindtodf_findf(Finidtodf finidtodf, Finiquitodf finiquitodf)
+	 void visitBaseartista(Baseartista baseartista)
 	throws SQLException;
 
 
 	 void visitFinidto(Finidto finidto)
+	throws SQLException;
+
+
+	 void visitTipocargos(Tipocargos tipocargos)
+	throws SQLException;
+
+	void visitLin_tipocargos(Lintipocargos lintipocargos, Tipocargos tipocargos)
+	throws SQLException;
+
+	void visitRel_tipocargos(Lincargos lincargos, Tipocargos tipocargos)
 	throws SQLException;
 
 
@@ -522,11 +545,22 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 
+	 void visitCargos(Cargos cargos)
+	throws SQLException;
+
+	void visitLin_cargos(Lincargos lincargos, Cargos cargos)
+	throws SQLException;
+
+
 	 void visitLin_divisa(Lin_divisa lin_divisa)
 	throws SQLException;
 
 
 	 void visitFinipextdf(Finipextdf finipextdf)
+	throws SQLException;
+
+
+	 void visitRemesace(Remesace remesace)
 	throws SQLException;
 
 
@@ -563,7 +597,13 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 
-	 void visitDb_version(Db_version db_version)
+	 void visitTr_tramos(Tr_tramos tr_tramos)
+	throws SQLException;
+
+	void visitTr_d_tramos(Tr_datos tr_datos, Tr_tramos tr_tramos)
+	throws SQLException;
+
+	void visitTr_p_tramos(Tr_peculiar tr_peculiar, Tr_tramos tr_tramos)
 	throws SQLException;
 
 
@@ -582,21 +622,6 @@ public interface CtsqlDBVisitor {
 	 void visitSucursal(Sucursal sucursal)
 	throws SQLException;
 
-	void visitEmprbanc_sucursal(Emprban emprban, Sucursal sucursal)
-	throws SQLException;
-
-	void visitRel_tra_suc(Trabajo trabajo, Sucursal sucursal)
-	throws SQLException;
-
-	void visitJsucursal(Httrabajador httrabajador, Sucursal sucursal)
-	throws SQLException;
-
-	void visitJautsucursal(Autonomos autonomos, Sucursal sucursal)
-	throws SQLException;
-
-	void visitEmprbanc_sucbic(Emprban emprban, Sucursal sucursal)
-	throws SQLException;
-
 
 	 void visitBasehogar(Basehogar basehogar)
 	throws SQLException;
@@ -612,14 +637,6 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 
-	 void visitNszanex(Nszanex nszanex)
-	throws SQLException;
-
-
-	 void visitNszmupa(Nszmupa nszmupa)
-	throws SQLException;
-
-
 	 void visitMinor_31(Minor_31 minor_31)
 	throws SQLException;
 
@@ -629,10 +646,6 @@ public interface CtsqlDBVisitor {
 
 
 	 void visitLinirpf(Linirpf linirpf)
-	throws SQLException;
-
-
-	 void visitNszreac(Nszreac nszreac)
 	throws SQLException;
 
 
@@ -651,10 +664,6 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 	void visitNomdfdto_nominadf(Nomdfdto nomdfdto, Nominadf nominadf)
-	throws SQLException;
-
-
-	 void visitNszfini(Nszfini nszfini)
 	throws SQLException;
 
 
@@ -682,6 +691,9 @@ public interface CtsqlDBVisitor {
 	void visitRel_tra_con(Trabajo trabajo, Convenio convenio)
 	throws SQLException;
 
+	void visitFpe_convenio(Fpercep fpercep, Convenio convenio)
+	throws SQLException;
+
 
 	 void visitCalfiniquito(Calfiniquito calfiniquito)
 	throws SQLException;
@@ -692,10 +704,6 @@ public interface CtsqlDBVisitor {
 
 
 	 void visitLinprestacion(Linprestacion linprestacion)
-	throws SQLException;
-
-
-	 void visitNsztido(Nsztido nsztido)
 	throws SQLException;
 
 
@@ -740,13 +748,16 @@ public interface CtsqlDBVisitor {
 	void visitRel_pcn_cap(Percniv percniv, Complemento complemento)
 	throws SQLException;
 
-	void visitRel_pex_com(Nominaex nominaex, Complemento complemento)
+	void visitRel_lpl_com(Linplus linplus, Complemento complemento)
 	throws SQLException;
 
 	void visitRel_pcp_com(Percep percep, Complemento complemento)
 	throws SQLException;
 
 	void visitRel_pcp_comapl(Percep percep, Complemento complemento)
+	throws SQLException;
+
+	void visitRel_pex_com(Nominaex nominaex, Complemento complemento)
 	throws SQLException;
 
 	void visitRel_fpe_com(Finipext finipext, Complemento complemento)
@@ -758,7 +769,7 @@ public interface CtsqlDBVisitor {
 	void visitFinexnu_com(Finipextnu finipextnu, Complemento complemento)
 	throws SQLException;
 
-	void visitRel_lpl_com(Linplus linplus, Complemento complemento)
+	void visitLin_complemento(Linfpercep linfpercep, Complemento complemento)
 	throws SQLException;
 
 
@@ -767,10 +778,6 @@ public interface CtsqlDBVisitor {
 
 
 	 void visitNomdfdto(Nomdfdto nomdfdto)
-	throws SQLException;
-
-
-	 void visitAction_denied(Action_denied action_denied)
 	throws SQLException;
 
 
@@ -810,13 +817,19 @@ public interface CtsqlDBVisitor {
 	void visitAvisos_empract(Avisos avisos, Empract empract)
 	throws SQLException;
 
-	void visitRel_var_act(Variaciones variaciones, Empract empract)
-	throws SQLException;
-
 	void visitRegidocu_empract(Regidocu regidocu, Empract empract)
 	throws SQLException;
 
+	void visitRel_var_act(Variaciones variaciones, Empract empract)
+	throws SQLException;
+
 	void visitJactividad(Httrabajador httrabajador, Empract empract)
+	throws SQLException;
+
+	void visitHon_empract(Honorarios honorarios, Empract empract)
+	throws SQLException;
+
+	void visitFpe_empract(Fpercep fpercep, Empract empract)
 	throws SQLException;
 
 
@@ -827,11 +840,14 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 
-	 void visitAction_entry(Action_entry action_entry)
+	 void visitCra_trb(Cra_trb cra_trb)
+	throws SQLException;
+
+	void visitRel_cra_trb_per(Cra_cre cra_cre, Cra_trb cra_trb)
 	throws SQLException;
 
 
-	 void visitMasivo(Masivo masivo)
+	 void visitTr_parametro(Tr_parametro tr_parametro)
 	throws SQLException;
 
 
@@ -860,10 +876,16 @@ public interface CtsqlDBVisitor {
 	void visitAvisos_codcli(Avisos avisos, Cliente cliente)
 	throws SQLException;
 
+	void visitRegidocu_cliente(Regidocu regidocu, Cliente cliente)
+	throws SQLException;
+
 	void visitRel_var_cli(Variaciones variaciones, Cliente cliente)
 	throws SQLException;
 
-	void visitRegidocu_cliente(Regidocu regidocu, Cliente cliente)
+	void visitHon_cliente(Honorarios honorarios, Cliente cliente)
+	throws SQLException;
+
+	void visitFpe_cliente(Fpercep fpercep, Cliente cliente)
 	throws SQLException;
 
 
@@ -879,14 +901,6 @@ public interface CtsqlDBVisitor {
 
 
 	 void visitEmprlban(Emprlban emprlban)
-	throws SQLException;
-
-
-	 void visitNszcoco(Nszcoco nszcoco)
-	throws SQLException;
-
-
-	 void visitNszrece(Nszrece nszrece)
 	throws SQLException;
 
 
@@ -919,13 +933,6 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 
-	 void visitSession(Session session)
-	throws SQLException;
-
-	void visitFk_ae_session(Action_entry action_entry, Session session)
-	throws SQLException;
-
-
 	 void visitRegidocu(Regidocu regidocu)
 	throws SQLException;
 
@@ -952,13 +959,7 @@ public interface CtsqlDBVisitor {
 	void visitRel_per_prn(Persona persona, Provincia provincia)
 	throws SQLException;
 
-	void visitImpr11x_provincia(Impr11x impr11x, Provincia provincia)
-	throws SQLException;
-
 	void visitImpr190_provincia(Impr190 impr190, Provincia provincia)
-	throws SQLException;
-
-	void visitOpfile_provincia(Opfile opfile, Provincia provincia)
 	throws SQLException;
 
 	void visitJpronac(Httrabajador httrabajador, Provincia provincia)
@@ -967,11 +968,33 @@ public interface CtsqlDBVisitor {
 	void visitJprovincia(Httrabajador httrabajador, Provincia provincia)
 	throws SQLException;
 
+	void visitOpfile_provincia(Opfile opfile, Provincia provincia)
+	throws SQLException;
+
 	void visitJautprovincia(Autonomos autonomos, Provincia provincia)
+	throws SQLException;
+
+	void visitImpr11x_provincia(Impr11x impr11x, Provincia provincia)
+	throws SQLException;
+
+	void visitImpr216_provincia(Impr216 impr216, Provincia provincia)
+	throws SQLException;
+
+	void visitImpr296_provincia(Impr296 impr296, Provincia provincia)
+	throws SQLException;
+
+	void visitLin296_provincia(Lin296 lin296, Provincia provincia)
 	throws SQLException;
 
 
 	 void visitLinocupacion(Linocupacion linocupacion)
+	throws SQLException;
+
+
+	 void visitDatosweb(Datosweb datosweb)
+	throws SQLException;
+
+	void visitLin_datosweb(Lindatosweb lindatosweb, Datosweb datosweb)
 	throws SQLException;
 
 
@@ -982,7 +1005,11 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 
-	 void visitNszmest(Nszmest nszmest)
+	 void visitLin296(Lin296 lin296)
+	throws SQLException;
+
+
+	 void visitTr_datos(Tr_datos tr_datos)
 	throws SQLException;
 
 
@@ -1009,9 +1036,6 @@ public interface CtsqlDBVisitor {
 	void visitNominaexdf_divisa(Nominaexdf nominaexdf, Divisa divisa)
 	throws SQLException;
 
-	void visitRel_pex_divisa(Nominaex nominaex, Divisa divisa)
-	throws SQLException;
-
 	void visitRel_cli_divisa(Cliente cliente, Divisa divisa)
 	throws SQLException;
 
@@ -1019,6 +1043,9 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 	void visitRel_nom_divisa(Nomina nomina, Divisa divisa)
+	throws SQLException;
+
+	void visitRel_pex_divisa(Nominaex nominaex, Divisa divisa)
 	throws SQLException;
 
 	void visitFiniquito_divisa(Finiquito finiquito, Divisa divisa)
@@ -1030,17 +1057,30 @@ public interface CtsqlDBVisitor {
 	void visitFinnu_divisa(Finiquitonu finiquitonu, Divisa divisa)
 	throws SQLException;
 
-	void visitImpr11x_divisa(Impr11x impr11x, Divisa divisa)
-	throws SQLException;
-
 	void visitImpr190_divisa(Impr190 impr190, Divisa divisa)
 	throws SQLException;
 
 	void visitNominadf_divisa(Nominadf nominadf, Divisa divisa)
 	throws SQLException;
 
+	void visitImpr11x_divisa(Impr11x impr11x, Divisa divisa)
+	throws SQLException;
+
+	void visitImpr216_divisa(Impr216 impr216, Divisa divisa)
+	throws SQLException;
+
+	void visitImpr296_divisa(Impr296 impr296, Divisa divisa)
+	throws SQLException;
+
 
 	 void visitCalculo(Calculo calculo)
+	throws SQLException;
+
+
+	 void visitCra_dde(Cra_dde cra_dde)
+	throws SQLException;
+
+	void visitRel_cra_dde_cdg(Cra_trb cra_trb, Cra_dde cra_dde)
 	throws SQLException;
 
 
@@ -1099,7 +1139,7 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 
-	 void visitNszcere(Nszcere nszcere)
+	 void visitLinhonorarios(Linhonorarios linhonorarios)
 	throws SQLException;
 
 
@@ -1107,7 +1147,7 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 
-	 void visitNszavis(Nszavis nszavis)
+	 void visitCra_cre(Cra_cre cra_cre)
 	throws SQLException;
 
 
@@ -1142,7 +1182,13 @@ public interface CtsqlDBVisitor {
 	void visitAvisos_emprper(Avisos avisos, Emprper emprper)
 	throws SQLException;
 
+	void visitPrc_emprper(Prcdivtrab prcdivtrab, Emprper emprper)
+	throws SQLException;
+
 	void visitRel_nom_per(Nomina nomina, Emprper emprper)
+	throws SQLException;
+
+	void visitRel_pex_per(Nominaex nominaex, Emprper emprper)
 	throws SQLException;
 
 	void visitTrabinci_emprper(Trabinci trabinci, Emprper emprper)
@@ -1155,6 +1201,9 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 	void visitRel_pit_epp(Parteit parteit, Emprper emprper)
+	throws SQLException;
+
+	void visitEmbargo_emprper(Embargo embargo, Emprper emprper)
 	throws SQLException;
 
 	void visitPitnu_emprper(Parteitnu parteitnu, Emprper emprper)
@@ -1178,29 +1227,16 @@ public interface CtsqlDBVisitor {
 	void visitCalculo_emprper(Calculo calculo, Emprper emprper)
 	throws SQLException;
 
-	void visitNominadf_emprper(Nominadf nominadf, Emprper emprper)
-	throws SQLException;
-
-	void visitEmbargo_emprper(Embargo embargo, Emprper emprper)
-	throws SQLException;
-
-	void visitRel_pex_per(Nominaex nominaex, Emprper emprper)
-	throws SQLException;
-
 	void visitRegidocu_emprper(Regidocu regidocu, Emprper emprper)
 	throws SQLException;
 
-	void visitPrc_emprper(Prcdivtrab prcdivtrab, Emprper emprper)
-	throws SQLException;
-
-	void visitPit_remesa_emp(Remesa_parte_it remesa_parte_it, Emprper emprper)
+	void visitNominadf_emprper(Nominadf nominadf, Emprper emprper)
 	throws SQLException;
 
 	void visitFk_cert_remesa_emp(Rem_cert_empr_det rem_cert_empr_det, Emprper emprper)
 	throws SQLException;
 
-
-	 void visitNszbanc(Nszbanc nszbanc)
+	void visitPit_remesa_emp(Remesa_parte_it remesa_parte_it, Emprper emprper)
 	throws SQLException;
 
 
@@ -1228,16 +1264,23 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 
-	 void visitAction(Action action)
+	 void visitWorkplaces(Workplaces workplaces)
 	throws SQLException;
 
-	void visitFk_af_action(Action_favorite action_favorite, Action action)
+	void visitLin_workplaces(Linworkplaces linworkplaces, Workplaces workplaces)
 	throws SQLException;
 
-	void visitFk_ae_action(Action_entry action_entry, Action action)
+	void visitRel_dlg_workplaces(Delegacion delegacion, Workplaces workplaces)
 	throws SQLException;
 
-	void visitFk_ad_action(Action_denied action_denied, Action action)
+	void visitRel_workplaces(Lintipocargos lintipocargos, Workplaces workplaces)
+	throws SQLException;
+
+
+	 void visitLinworkplaces(Linworkplaces linworkplaces)
+	throws SQLException;
+
+	void visitRel_linworkplaces(Lintipocargos lintipocargos, Linworkplaces linworkplaces)
 	throws SQLException;
 
 
@@ -1265,10 +1308,6 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 
-	 void visitNszinci(Nszinci nszinci)
-	throws SQLException;
-
-
 	 void visitLintc2(Lintc2 lintc2)
 	throws SQLException;
 
@@ -1280,28 +1319,11 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 
-	 void visitNszcala(Nszcala nszcala)
-	throws SQLException;
-
-
-	 void visitUsuario(Usuario usuario)
-	throws SQLException;
-
-	void visitFk_user(Session session, Usuario usuario)
-	throws SQLException;
-
-	void visitFk_af_user(Action_favorite action_favorite, Usuario usuario)
-	throws SQLException;
-
-	void visitFk_ad_user(Action_denied action_denied, Usuario usuario)
-	throws SQLException;
-
-
 	 void visitLinplus(Linplus linplus)
 	throws SQLException;
 
 
-	 void visitNszregi(Nszregi nszregi)
+	 void visitImpr216(Impr216 impr216)
 	throws SQLException;
 
 
@@ -1314,10 +1336,6 @@ public interface CtsqlDBVisitor {
 
 
 	 void visitExclusion(Exclusion exclusion)
-	throws SQLException;
-
-
-	 void visitNszbolc(Nszbolc nszbolc)
 	throws SQLException;
 
 
@@ -1385,7 +1403,7 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 
-	 void visitCalen(Calen calen)
+	 void visitTr_serie(Tr_serie tr_serie)
 	throws SQLException;
 
 
@@ -1398,17 +1416,13 @@ public interface CtsqlDBVisitor {
 	void visitRel_cat_com(Categoria categoria, Basecoti basecoti)
 	throws SQLException;
 
+	void visitRel_cos_bas(Costes costes, Basecoti basecoti)
+	throws SQLException;
+
 	void visitRel_tra_bas(Trabajo trabajo, Basecoti basecoti)
 	throws SQLException;
 
 	void visitJtarifa(Httrabajador httrabajador, Basecoti basecoti)
-	throws SQLException;
-
-	void visitRel_cos_bas(Costes costes, Basecoti basecoti)
-	throws SQLException;
-
-
-	 void visitNszcdtr(Nszcdtr nszcdtr)
 	throws SQLException;
 
 
@@ -1416,7 +1430,10 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 
-	 void visitAction_favorite(Action_favorite action_favorite)
+	 void visitFpercep(Fpercep fpercep)
+	throws SQLException;
+
+	void visitLin_fpercep(Linfpercep linfpercep, Fpercep fpercep)
 	throws SQLException;
 
 
@@ -1431,10 +1448,6 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 
-	 void visitNszrari(Nszrari nszrari)
-	throws SQLException;
-
-
 	 void visitEmprdom(Emprdom emprdom)
 	throws SQLException;
 
@@ -1442,17 +1455,13 @@ public interface CtsqlDBVisitor {
 	 void visitMutua(Mutua mutua)
 	throws SQLException;
 
-	void visitRel_ccc_mut(Emprccc emprccc, Mutua mutua)
-	throws SQLException;
-
 	void visitRel_mut_lin(Linmutua linmutua, Mutua mutua)
 	throws SQLException;
 
-	void visitJautmutua(Autonomos autonomos, Mutua mutua)
+	void visitRel_ccc_mut(Emprccc emprccc, Mutua mutua)
 	throws SQLException;
 
-
-	 void visitNszempr(Nszempr nszempr)
+	void visitJautmutua(Autonomos autonomos, Mutua mutua)
 	throws SQLException;
 
 
@@ -1471,14 +1480,6 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 
-	 void visitNszpaga(Nszpaga nszpaga)
-	throws SQLException;
-
-
-	 void visitNszotpe(Nszotpe nszotpe)
-	throws SQLException;
-
-
 	 void visitEmprctra(Emprctra emprctra)
 	throws SQLException;
 
@@ -1487,15 +1488,7 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 
-	 void visitNszpeop(Nszpeop nszpeop)
-	throws SQLException;
-
-
 	 void visitProcesos(Procesos procesos)
-	throws SQLException;
-
-
-	 void visitNszunco(Nszunco nszunco)
 	throws SQLException;
 
 
@@ -1514,24 +1507,17 @@ public interface CtsqlDBVisitor {
 	void visitRel_per_via(Persona persona, Tipovia tipovia)
 	throws SQLException;
 
-	void visitOpfile_tipovia(Opfile opfile, Tipovia tipovia)
+	void visitJtipvia(Httrabajador httrabajador, Tipovia tipovia)
 	throws SQLException;
 
-	void visitJtipvia(Httrabajador httrabajador, Tipovia tipovia)
+	void visitOpfile_tipovia(Opfile opfile, Tipovia tipovia)
 	throws SQLException;
 
 	void visitJauttipovia(Autonomos autonomos, Tipovia tipovia)
 	throws SQLException;
 
 
-	 void visitNszdcpr(Nszdcpr nszdcpr)
-	throws SQLException;
-
-
 	 void visitTipocont(Tipocont tipocont)
-	throws SQLException;
-
-	void visitRel_tra_cont(Trabajo trabajo, Tipocont tipocont)
 	throws SQLException;
 
 	void visitJcontrato(Httrabajador httrabajador, Tipocont tipocont)
@@ -1546,14 +1532,17 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 
+	 void visitGrupotrabajo(Grupotrabajo grupotrabajo)
+	throws SQLException;
+
+	void visitRel_cli_grptrabajo(Cliente cliente, Grupotrabajo grupotrabajo)
+	throws SQLException;
+
+
 	 void visitColectivos(Colectivos colectivos)
 	throws SQLException;
 
 	void visitRel_tra_col(Trabajo trabajo, Colectivos colectivos)
-	throws SQLException;
-
-
-	 void visitNszboni(Nszboni nszboni)
 	throws SQLException;
 
 
@@ -1567,10 +1556,16 @@ public interface CtsqlDBVisitor {
 	void visitRel_emp_adm(Emprnif emprnif, Admon admon)
 	throws SQLException;
 
+	void visitImpr190_admon(Impr190 impr190, Admon admon)
+	throws SQLException;
+
 	void visitImpr11x_admon(Impr11x impr11x, Admon admon)
 	throws SQLException;
 
-	void visitImpr190_admon(Impr190 impr190, Admon admon)
+	void visitImpr216_admon(Impr216 impr216, Admon admon)
+	throws SQLException;
+
+	void visitImpr296_admon(Impr296 impr296, Admon admon)
 	throws SQLException;
 
 
@@ -1584,10 +1579,6 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 	void visitPrc_nomina(Prcdivnom prcdivnom, Nomina nomina)
-	throws SQLException;
-
-
-	 void visitNszpoco(Nszpoco nszpoco)
 	throws SQLException;
 
 
@@ -1617,7 +1608,7 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 
-	 void visitNszbase(Nszbase nszbase)
+	 void visitLincargos(Lincargos lincargos)
 	throws SQLException;
 
 
@@ -1652,11 +1643,14 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 
-	 void visitNszilte(Nszilte nszilte)
+	 void visitEmpresa(Empresa empresa)
 	throws SQLException;
 
 
-	 void visitEmpresa(Empresa empresa)
+	 void visitTr_liquidacion(Tr_liquidacion tr_liquidacion)
+	throws SQLException;
+
+	void visitRel_tr_liquidacion(Tr_tramos tr_tramos, Tr_liquidacion tr_liquidacion)
 	throws SQLException;
 
 
@@ -1685,10 +1679,6 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 
-	 void visitNszepig(Nszepig nszepig)
-	throws SQLException;
-
-
 	 void visitFinidtodf(Finidtodf finidtodf)
 	throws SQLException;
 
@@ -1697,7 +1687,10 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 
-	 void visitNszadmh(Nszadmh nszadmh)
+	 void visitCodigocreta(Codigocreta codigocreta)
+	throws SQLException;
+
+	void visitTr_codigocreta(Tr_datos tr_datos, Codigocreta codigocreta)
 	throws SQLException;
 
 
@@ -1712,7 +1705,7 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 
-	 void visitNsztrab(Nsztrab nsztrab)
+	 void visitTr_fichero(Tr_fichero tr_fichero)
 	throws SQLException;
 
 
@@ -1728,20 +1721,6 @@ public interface CtsqlDBVisitor {
 
 
 	 void visitSincomun(Sincomun sincomun)
-	throws SQLException;
-
-
-	 void visitApplication(Application application)
-	throws SQLException;
-
-	void visitFk_action_app(Action action, Application application)
-	throws SQLException;
-
-	void visitFk_application(Session session, Application application)
-	throws SQLException;
-
-
-	 void visitNszcomp(Nszcomp nszcomp)
 	throws SQLException;
 
 

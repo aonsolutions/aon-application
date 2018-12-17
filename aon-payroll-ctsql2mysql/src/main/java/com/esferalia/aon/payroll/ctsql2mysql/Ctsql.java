@@ -1,15 +1,11 @@
 package com.esferalia.aon.payroll.ctsql2mysql;
 
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -19,6 +15,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 /********************************************************************
 * Copyright (c) 2010, esferalia NETWORKS S.A
@@ -33,10 +31,10 @@ import org.apache.commons.cli.PosixParser;
 *********************************************************************
 */
 
-public class CtsqlDB extends AbstractCtsqlDB
+public class Ctsql extends AbstractCtsqlDB
 {
 	
-	public CtsqlDB( Connection ctsqlConnection) {
+	public Ctsql( Connection ctsqlConnection) {
 		super(ctsqlConnection);
 	}
 	
@@ -78,11 +76,18 @@ public class CtsqlDB extends AbstractCtsqlDB
     	OptionBuilder.withDescription(  "clave para conectarse." );
     	Option ctsqlPasswdOption = OptionBuilder.create( "passwd" );
     	
+    	OptionBuilder.isRequired(true);
+    	OptionBuilder.hasArg(true);
+    	OptionBuilder.withArgName( "query" );
+    	OptionBuilder.withType(String.class);
+    	OptionBuilder.withDescription(  "select para ejecutarse." );
+    	Option queryOption = OptionBuilder.create( "query" );
 
     	options.addOption(helpOption);
     	options.addOption(ctsqlURLOption);
     	options.addOption(ctsqlUserOption);
     	options.addOption(ctsqlPasswdOption);
+    	options.addOption(queryOption);
     	
     	
     	HelpFormatter helpFormatter = new HelpFormatter();
@@ -105,42 +110,40 @@ public class CtsqlDB extends AbstractCtsqlDB
             String passwd = line.getOptionValue(ctsqlPasswdOption.getOpt(), "ctl");
             
             Connection connection =  DriverManager.getConnection(url, user, passwd);
-    		System.out.println( "Success :  Connection "  );
-    		DatabaseMetaData dbMetaData = connection.getMetaData(); 
-    		System.out.println( "Success :  DatabaseMetaData "  );
-    		DBContext dbContext = new DBContext(dbMetaData);
-
-    		System.out.println( "Success :  DBContext "  );
-    		
-            Writer out = new FileWriter("src/main/java/com/esferalia/aon/payroll/ctsql2mysql/AbstractCtsqlDB.java");
-            Reader in =  new FileReader("src/main/java/com/esferalia/aon/payroll/ctsql2mysql/templates/CtsqlDB.java.vm");
-    		DBContext.evaluate(dbContext, out, "DBContext", in);
-    		in.close();
-    		out.close();
-    		
-    		System.out.println( "Success :  AbstractCtsqlDB.java "  );
-
-            out = new FileWriter("src/main/java/com/esferalia/aon/payroll/ctsql2mysql/CtsqlDBVisitor.java");
-            in =  new FileReader("src/main/java/com/esferalia/aon/payroll/ctsql2mysql/templates/CtsqlDBVisitor.java.vm");
-            DBContext.evaluate(dbContext, out, "DBContext", in);
-    		in.close();
-    		out.close();
-
-    		System.out.println( "Success :  CtsqlDBVisitor.java "  );
-
-            out = new FileWriter("src/main/java/com/esferalia/aon/payroll/ctsql2mysql/DefaultCtsqlDBVisitor.java");
-            in =  new FileReader("src/main/java/com/esferalia/aon/payroll/ctsql2mysql/templates/DefaultCtsqlDBVisitor.java.vm");
-            DBContext.evaluate(dbContext, out, "DBContext", in);
-    		in.close();
-    		out.close();
+            System.out.println( "Success :  DefaultCtsqlDBVisitor.java "  );
             
-    		System.out.println( "Success :  DefaultCtsqlDBVisitor.java "  );
+            String query = line.getOptionValue(queryOption.getOpt(), "query");
+
+            ResultSet rs =  connection.createStatement().executeQuery(query);
+            
+            ResultSetMetaData rsmd = rs.getMetaData();
+            int columnsNumber = rsmd.getColumnCount();
+            int lengths [] = new int [columnsNumber+1];
+            for (int i = 1; i <= columnsNumber; i++) {
+                if (i > 1) System.out.print(" | ");
+                String name = rsmd.getColumnName(i);
+                System.out.print(name);
+                lengths[i] = Math.max(rsmd.getColumnDisplaySize(i), name.length());
+                System.out.print(AonStringUtils.repeat(' ', lengths[i] - name.length() ));
+            }
+            System.out.println();
+            while (rs.next()) {
+                for (int i = 1; i <= columnsNumber; i++) {
+                    if (i > 1) System.out.print(" | ");
+                    String str = rs.getString(i);
+                    if ( str == null )
+                    	str = "";
+                    System.out.print(str);
+                    System.out.print(AonStringUtils.repeat(' ', lengths[i] - str.length() ));
+                }
+                System.out.println("");
+            }
     	}
         catch( ParseException exp ) {
             // oops, something went wrong
             System.err.println( "Error : " + exp.getMessage() );
         	helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX, options, true);
-        } 
+        }
 
 	}
 	

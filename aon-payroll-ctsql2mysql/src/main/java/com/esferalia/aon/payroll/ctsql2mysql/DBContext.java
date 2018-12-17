@@ -253,8 +253,9 @@ public class DBContext extends VelocityContext{
 				{
 					String fkName = rs.getString("FK_NAME");
 					String fkTable = rs.getString("FKTABLE_NAME");
+					String pkTable = rs.getString("PKTABLE_NAME");
 					if ( ! fkName.equals(previousFK) ) {
-						foreignKey = new ForeignKey(fkName, fkTable);
+						foreignKey = new ForeignKey(fkName, fkTable, pkTable);
 						childs.add(foreignKey);
 						previousFK = fkName;
 					}
@@ -278,8 +279,9 @@ public class DBContext extends VelocityContext{
 				{
 					String fkName = rs.getString("FK_NAME");
 					String pkTable = rs.getString("PKTABLE_NAME");
+					String fkTable = rs.getString("FKTABLE_NAME");
 					if ( ! pkTable.equals(previousTable) ) {
-						foreignKey = new ForeignKey(fkName, pkTable);
+						foreignKey = new ForeignKey(fkName, pkTable, fkTable);
 						parents.add(foreignKey);
 						previousTable = pkTable;
 					}
@@ -294,14 +296,15 @@ public class DBContext extends VelocityContext{
 
 	public class ForeignKey {
 		private String name;
+		private Table other;
 		private Table table;
 		private ArrayList<Column> pkColumns;
 		private ArrayList<Column> fkColumns;
 		
-		public ForeignKey( String name ,
-				String table ) throws SQLException 
+		public ForeignKey( String name , String table, String other ) throws SQLException 
 		{
 			this.name = name;
+			this.other = tables.get(other); //new Table (table, "");
 			this.table = tables.get(table); //new Table (table, "");
 			this.fkColumns = new ArrayList<Column>();
 			this.pkColumns = new ArrayList<Column>();
@@ -336,6 +339,11 @@ public class DBContext extends VelocityContext{
 
 		@Override
 		public String toString() {
+			if ( StringUtils.equals(name, other.getName()))
+				return "Rel_" + name;
+			if ( StringUtils.equals(name, table.getName()))
+				return "Rel_" + name;
+			
 			return StringUtils.capitalize(name);
 		}
 	}

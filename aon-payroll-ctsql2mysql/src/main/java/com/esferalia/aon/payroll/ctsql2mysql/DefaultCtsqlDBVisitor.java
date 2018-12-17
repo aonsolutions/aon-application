@@ -23,34 +23,34 @@ import java.math.BigDecimal;
 
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Trabdto;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Remesa_inss;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipocausabaja;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipocnae2009;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nominaitnu;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Lincalcu;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszodet;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprban;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tr_peculiar;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Autbases;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cuota_31;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprnif;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Delegacion;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszcont;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszconv;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Opercepciones;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Minor_48;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipempr;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Linautom;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszcopa;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Persona;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszprov;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Impr296;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Lintipocargos;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Epigrafe;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Automat;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finiquito;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Linfpercep;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nominait;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprccc;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszdomi;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Porcoti;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Httbonificacion;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszcatg;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Lindatosweb;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Unidades;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Honorarios;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipboni;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nivel;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cuota_48;
@@ -58,39 +58,38 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Linmutua;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Datosafi;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Trabinci;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finiquitodf;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Baseartista;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finidto;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipocargos;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Variaciones;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finindem;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cargos;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Lin_divisa;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finipextdf;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Remesace;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Minor_20;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Comunidad;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Calendar;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Variables;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Categoria;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Prestaciones;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Db_version;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tr_tramos;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cuota_20;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Avisos;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Rem_cert_empr_det;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Sucursal;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Basehogar;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Costes;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszanex;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszmupa;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Minor_31;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Config;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Linirpf;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszreac;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Linepigr;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Parteitnu;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nominadf;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszfini;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Convenio;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Calfiniquito;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nomdfdtoex;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Linprestacion;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nsztido;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipinc;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Elemcoti;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Parteconf;
@@ -99,113 +98,99 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Lin190;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Complemento;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Lincnae2009;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nomdfdto;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Action_denied;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finidtonu;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Remesaafi;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Bonifica;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Empract;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprccos;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Action_entry;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Masivo;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cra_trb;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tr_parametro;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Httcomplemento;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cliente;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Autonomos;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Minora;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprlban;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszcoco;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszrece;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Impr11x;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Rem_cert_empr;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipcotc2;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Trabajadores;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cuota;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Session;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Regidocu;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Lintc2epi;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Provincia;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Linocupacion;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Datosweb;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nominaex;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszmest;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Lin296;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tr_datos;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Comunica;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipocnae;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Divisa;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Calculo;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cra_dde;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Pais;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Percep;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finindemdf;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Entidad;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszcere;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Linhonorarios;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Embargo;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszavis;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cra_cre;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Percniv;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tiposdoc;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Ajustes;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Httaviso;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprper;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszbanc;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Lbonifica;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Ocupacion;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finiquitonu;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Action;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Workplaces;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Linworkplaces;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Opfile;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finipextnu;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Lincomun;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Linelem;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Linpercepcion;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Perfil;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszinci;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Lintc2;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cnae2009;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszcala;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Usuario;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Linplus;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszregi;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Impr216;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Complevar;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nomdfdev;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Exclusion;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszbolc;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Httincidencia;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Httrabajador;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Domicilio;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipdoc;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Calen;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tr_serie;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Basecoti;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszcdtr;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Linvariables;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Action_favorite;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Fpercep;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Lincnae;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Elemirpf;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszrari;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprdom;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Mutua;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszempr;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Remesainss;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Linbasec;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Percepcion;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszpaga;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszotpe;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprctra;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Remesa_parte_it;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszpeop;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Procesos;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszunco;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipovia;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszdcpr;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipocont;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Trabajo;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finindemnu;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Grupotrabajo;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Colectivos;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszboni;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Linporco;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Admon;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nomina;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszpoco;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nomdto;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Minor_01;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Prcdivnom;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tc2;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tc1;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszbase;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Lincargos;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipaut;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Detalle;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Pagaext;
@@ -213,24 +198,21 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cuota_01;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Lcomunica;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Formcont;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finipext;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszilte;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Empresa;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tr_liquidacion;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nominaexdf;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Parteit;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nacion;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nomdtoex;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszepig;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finidtodf;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Otrperc;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszadmh;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Codigocreta;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cnae;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Printers;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nsztrab;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tr_fichero;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Impr190;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Prcdivtrab;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Sincomun;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Application;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nszcomp;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipreg;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nominadev;
 
@@ -276,7 +258,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private String emprperCodnsz;  
 		
 		/**
-		 * Código interno
+		 * Codigo BBX
 		 * @return the column 'codnsz' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -481,6 +463,61 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprper_Noirpf() {
 			return emprperNoirpf;
 		}
+		
+		private String emprperNosegsoc;  
+		
+		/**
+		 * No seg. soc. (de trabajador)
+		 * @return the column 'nosegsoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Nosegsoc() {
+			return emprperNosegsoc;
+		}
+		
+		private String emprperJubiladoactivo;  
+		
+		/**
+		 * Trabajador jubilado en activo
+		 * @return the column 'jubiladoactivo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Jubiladoactivo() {
+			return emprperJubiladoactivo;
+		}
+		
+		private String emprperCertificado;  
+		
+		/**
+		 * Certificado Procesado
+		 * @return the column 'certificado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Certificado() {
+			return emprperCertificado;
+		}
+		
+		private String emprperFamiliar;  
+		
+		/**
+		 * Familiar de 1º grado
+		 * @return the column 'familiar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Familiar() {
+			return emprperFamiliar;
+		}
+		
+		private String emprperNoresidente;  
+		
+		/**
+		 * Trabajador no residente
+		 * @return the column 'noresidente' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Noresidente() {
+			return emprperNoresidente;
+		}
 		public void visitRel_dto_per(Trabdto trabdto, Emprper emprper)
 		throws SQLException {
 			emprperCdg = emprper.getCdg();  
@@ -504,6 +541,11 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprperIndgrupo = emprper.getIndgrupo();  
 			emprperPariente = emprper.getPariente();  
 			emprperNoirpf = emprper.getNoirpf();  
+			emprperNosegsoc = emprper.getNosegsoc();  
+			emprperJubiladoactivo = emprper.getJubiladoactivo();  
+			emprperCertificado = emprper.getCertificado();  
+			emprperFamiliar = emprper.getFamiliar();  
+			emprperNoresidente = emprper.getNoresidente();  
 		}
 	
 	}
@@ -515,6 +557,12 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	public void visitPit_remesa_inss(Remesa_parte_it remesa_parte_it, Remesa_inss remesa_inss)
 	throws SQLException {
 	}
+
+
+	public void visitTipocausabaja(Tipocausabaja tipocausabaja)
+	throws SQLException{
+	}
+
 
 
 	public void visitTipocnae2009(Tipocnae2009 tipocnae2009)
@@ -559,7 +607,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private String emprperCodnsz;  
 		
 		/**
-		 * Código interno
+		 * Codigo BBX
 		 * @return the column 'codnsz' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -764,6 +812,61 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprper_Noirpf() {
 			return emprperNoirpf;
 		}
+		
+		private String emprperNosegsoc;  
+		
+		/**
+		 * No seg. soc. (de trabajador)
+		 * @return the column 'nosegsoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Nosegsoc() {
+			return emprperNosegsoc;
+		}
+		
+		private String emprperJubiladoactivo;  
+		
+		/**
+		 * Trabajador jubilado en activo
+		 * @return the column 'jubiladoactivo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Jubiladoactivo() {
+			return emprperJubiladoactivo;
+		}
+		
+		private String emprperCertificado;  
+		
+		/**
+		 * Certificado Procesado
+		 * @return the column 'certificado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Certificado() {
+			return emprperCertificado;
+		}
+		
+		private String emprperFamiliar;  
+		
+		/**
+		 * Familiar de 1º grado
+		 * @return the column 'familiar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Familiar() {
+			return emprperFamiliar;
+		}
+		
+		private String emprperNoresidente;  
+		
+		/**
+		 * Trabajador no residente
+		 * @return the column 'noresidente' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Noresidente() {
+			return emprperNoresidente;
+		}
 		public void visitNitnu_emprper(Nominaitnu nominaitnu, Emprper emprper)
 		throws SQLException {
 			emprperCdg = emprper.getCdg();  
@@ -787,17 +890,16 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprperIndgrupo = emprper.getIndgrupo();  
 			emprperPariente = emprper.getPariente();  
 			emprperNoirpf = emprper.getNoirpf();  
+			emprperNosegsoc = emprper.getNosegsoc();  
+			emprperJubiladoactivo = emprper.getJubiladoactivo();  
+			emprperCertificado = emprper.getCertificado();  
+			emprperFamiliar = emprper.getFamiliar();  
+			emprperNoresidente = emprper.getNoresidente();  
 		}
 	
 	}
 
 	public void visitLincalcu(Lincalcu lincalcu)
-	throws SQLException{
-	}
-
-
-
-	public void visitNszodet(Nszodet nszodet)
 	throws SQLException{
 	}
 
@@ -854,216 +956,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			entidadCdg = entidad.getCdg();  
 			entidadDescripcion = entidad.getDescripcion();  
 			entidadBic = entidad.getBic();  
-		}
-	
-	}
-	/**
-	 * Emprbanc_sucbic shows join between Sucursal and Emprban
-	 */
-	public static class Emprbanc_sucbic extends  DefaultCtsqlDBVisitor {
-		
-		
-		private String sucursalCodent;  
-		
-		/**
-		 * Codigo de Entidad
-		 * @return the column 'codent' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSucursal_Codent() {
-			return sucursalCodent;
-		}
-		
-		private String sucursalCdg;  
-		
-		/**
-		 * Codigo de Sucursal
-		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSucursal_Cdg() {
-			return sucursalCdg;
-		}
-		
-		private String sucursalDomsuc;  
-		
-		/**
-		 * Domicilio de Sucursal
-		 * @return the column 'domsuc' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSucursal_Domsuc() {
-			return sucursalDomsuc;
-		}
-		
-		private String sucursalMunsuc;  
-		
-		/**
-		 * Municipio de Sucursal
-		 * @return the column 'munsuc' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSucursal_Munsuc() {
-			return sucursalMunsuc;
-		}
-		
-		private String sucursalCpsuc;  
-		
-		/**
-		 * Codigo Postal de Sucursal
-		 * @return the column 'cpsuc' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSucursal_Cpsuc() {
-			return sucursalCpsuc;
-		}
-		
-		private String sucursalBic;  
-		
-		/**
-		 * BIC
-		 * @return the column 'bic' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSucursal_Bic() {
-			return sucursalBic;
-		}
-		public void visitEmprbanc_sucbic(Emprban emprban, Sucursal sucursal)
-		throws SQLException {
-			sucursalCodent = sucursal.getCodent();  
-			sucursalCdg = sucursal.getCdg();  
-			sucursalDomsuc = sucursal.getDomsuc();  
-			sucursalMunsuc = sucursal.getMunsuc();  
-			sucursalCpsuc = sucursal.getCpsuc();  
-			sucursalBic = sucursal.getBic();  
-		}
-	
-	}
-	/**
-	 * Emprbanc_entidad shows join between Entidad and Emprban
-	 */
-	public static class Emprbanc_entidad extends  DefaultCtsqlDBVisitor {
-		
-		
-		private String entidadCdg;  
-		
-		/**
-		 * Codigo de Entidad
-		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEntidad_Cdg() {
-			return entidadCdg;
-		}
-		
-		private String entidadDescripcion;  
-		
-		/**
-		 * Descripcion de Entidad
-		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEntidad_Descripcion() {
-			return entidadDescripcion;
-		}
-		
-		private String entidadBic;  
-		
-		/**
-		 * BIC
-		 * @return the column 'bic' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEntidad_Bic() {
-			return entidadBic;
-		}
-		public void visitEmprbanc_entidad(Emprban emprban, Entidad entidad)
-		throws SQLException {
-			entidadCdg = entidad.getCdg();  
-			entidadDescripcion = entidad.getDescripcion();  
-			entidadBic = entidad.getBic();  
-		}
-	
-	}
-	/**
-	 * Emprbanc_sucursal shows join between Sucursal and Emprban
-	 */
-	public static class Emprbanc_sucursal extends  DefaultCtsqlDBVisitor {
-		
-		
-		private String sucursalCodent;  
-		
-		/**
-		 * Codigo de Entidad
-		 * @return the column 'codent' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSucursal_Codent() {
-			return sucursalCodent;
-		}
-		
-		private String sucursalCdg;  
-		
-		/**
-		 * Codigo de Sucursal
-		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSucursal_Cdg() {
-			return sucursalCdg;
-		}
-		
-		private String sucursalDomsuc;  
-		
-		/**
-		 * Domicilio de Sucursal
-		 * @return the column 'domsuc' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSucursal_Domsuc() {
-			return sucursalDomsuc;
-		}
-		
-		private String sucursalMunsuc;  
-		
-		/**
-		 * Municipio de Sucursal
-		 * @return the column 'munsuc' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSucursal_Munsuc() {
-			return sucursalMunsuc;
-		}
-		
-		private String sucursalCpsuc;  
-		
-		/**
-		 * Codigo Postal de Sucursal
-		 * @return the column 'cpsuc' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSucursal_Cpsuc() {
-			return sucursalCpsuc;
-		}
-		
-		private String sucursalBic;  
-		
-		/**
-		 * BIC
-		 * @return the column 'bic' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSucursal_Bic() {
-			return sucursalBic;
-		}
-		public void visitEmprbanc_sucursal(Emprban emprban, Sucursal sucursal)
-		throws SQLException {
-			sucursalCodent = sucursal.getCodent();  
-			sucursalCdg = sucursal.getCdg();  
-			sucursalDomsuc = sucursal.getDomsuc();  
-			sucursalMunsuc = sucursal.getMunsuc();  
-			sucursalCpsuc = sucursal.getCpsuc();  
-			sucursalBic = sucursal.getBic();  
 		}
 	
 	}
@@ -1457,6 +1349,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getCliente_Envioss() {
 			return clienteEnvioss;
 		}
+		
+		private String clienteGrupotrabajo;  
+		
+		/**
+		 * Grupo de trabajo
+		 * @return the column 'grupotrabajo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Grupotrabajo() {
+			return clienteGrupotrabajo;
+		}
 		public void visitEmprbanc_cliente(Emprban emprban, Cliente cliente)
 		throws SQLException {
 			clienteCdg = cliente.getCdg();  
@@ -1494,6 +1397,143 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			clienteDivisa = cliente.getDivisa();  
 			clienteSoloases = cliente.getSoloases();  
 			clienteEnvioss = cliente.getEnvioss();  
+			clienteGrupotrabajo = cliente.getGrupotrabajo();  
+		}
+	
+	}
+
+	public void visitTr_peculiar(Tr_peculiar tr_peculiar)
+	throws SQLException{
+	}
+
+
+	/**
+	 * Tr_p_tramos shows join between Tr_tramos and Tr_peculiar
+	 */
+	public static class Tr_p_tramos extends  DefaultCtsqlDBVisitor {
+		
+		
+		private Integer tr_tramosCdg;  
+		
+		/**
+		 * Código de liquidación
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getTr_tramos_Cdg() {
+			return tr_tramosCdg;
+		}
+		
+		private Integer tr_tramosPersona;  
+		
+		/**
+		 * Código de persona
+		 * @return the column 'persona' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getTr_tramos_Persona() {
+			return tr_tramosPersona;
+		}
+		
+		private String tr_tramosNumss;  
+		
+		/**
+		 * Numero Seguridad Social
+		 * @return the column 'numss' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTr_tramos_Numss() {
+			return tr_tramosNumss;
+		}
+		
+		private Date tr_tramosFecha_desde;  
+		
+		/**
+		 * Fecha inicial del tramo
+		 * @return the column 'fecha_desde' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getTr_tramos_Fecha_desde() {
+			return tr_tramosFecha_desde;
+		}
+		
+		private Date tr_tramosFecha_hasta;  
+		
+		/**
+		 * Fecha final del tramo
+		 * @return the column 'fecha_hasta' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getTr_tramos_Fecha_hasta() {
+			return tr_tramosFecha_hasta;
+		}
+		
+		private Integer tr_tramosDias_cotizados;  
+		
+		/**
+		 * Días cotizados
+		 * @return the column 'dias_cotizados' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getTr_tramos_Dias_cotizados() {
+			return tr_tramosDias_cotizados;
+		}
+		
+		private String tr_tramosGrupo_cotizacion;  
+		
+		/**
+		 * Grupo de cotización
+		 * @return the column 'grupo_cotizacion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTr_tramos_Grupo_cotizacion() {
+			return tr_tramosGrupo_cotizacion;
+		}
+		
+		private String tr_tramosTipo_contrato;  
+		
+		/**
+		 * Contrato de trabajo
+		 * @return the column 'tipo_contrato' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTr_tramos_Tipo_contrato() {
+			return tr_tramosTipo_contrato;
+		}
+		
+		private String tr_tramosCnae;  
+		
+		/**
+		 * Código nacional de actividad económica
+		 * @return the column 'cnae' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTr_tramos_Cnae() {
+			return tr_tramosCnae;
+		}
+		
+		private String tr_tramosEstado;  
+		
+		/**
+		 * Estado del tramo
+		 * @return the column 'estado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTr_tramos_Estado() {
+			return tr_tramosEstado;
+		}
+		public void visitTr_p_tramos(Tr_peculiar tr_peculiar, Tr_tramos tr_tramos)
+		throws SQLException {
+			tr_tramosCdg = tr_tramos.getCdg();  
+			tr_tramosPersona = tr_tramos.getPersona();  
+			tr_tramosNumss = tr_tramos.getNumss();  
+			tr_tramosFecha_desde = tr_tramos.getFecha_desde();  
+			tr_tramosFecha_hasta = tr_tramos.getFecha_hasta();  
+			tr_tramosDias_cotizados = tr_tramos.getDias_cotizados();  
+			tr_tramosGrupo_cotizacion = tr_tramos.getGrupo_cotizacion();  
+			tr_tramosTipo_contrato = tr_tramos.getTipo_contrato();  
+			tr_tramosCnae = tr_tramos.getCnae();  
+			tr_tramosEstado = tr_tramos.getEstado();  
 		}
 	
 	}
@@ -2001,7 +2041,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	public void visitAvisos_codemp(Avisos avisos, Emprnif emprnif)
 	throws SQLException {
 	}
-	public void visitImpr11x_emprnif(Impr11x impr11x, Emprnif emprnif)
+	public void visitRegidocu_emprnif(Regidocu regidocu, Emprnif emprnif)
 	throws SQLException {
 	}
 	public void visitImpr190_codemp(Impr190 impr190, Emprnif emprnif)
@@ -2016,10 +2056,28 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	public void visitRel_var_emp(Variaciones variaciones, Emprnif emprnif)
 	throws SQLException {
 	}
-	public void visitRegidocu_emprnif(Regidocu regidocu, Emprnif emprnif)
+	public void visitFk_cert_rem_empr(Rem_cert_empr rem_cert_empr, Emprnif emprnif)
 	throws SQLException {
 	}
-	public void visitFk_cert_rem_empr(Rem_cert_empr rem_cert_empr, Emprnif emprnif)
+	public void visitHon_emprnif(Honorarios honorarios, Emprnif emprnif)
+	throws SQLException {
+	}
+	public void visitImpr11x_emprnif(Impr11x impr11x, Emprnif emprnif)
+	throws SQLException {
+	}
+	public void visitImpr216_emprnif(Impr216 impr216, Emprnif emprnif)
+	throws SQLException {
+	}
+	public void visitImpr296_codemp(Impr296 impr296, Emprnif emprnif)
+	throws SQLException {
+	}
+	public void visitImpr296_repres(Impr296 impr296, Emprnif emprnif)
+	throws SQLException {
+	}
+	public void visitImpr296_cargo(Impr296 impr296, Emprnif emprnif)
+	throws SQLException {
+	}
+	public void visitFpe_emprnif(Fpercep fpercep, Emprnif emprnif)
 	throws SQLException {
 	}
 
@@ -2413,6 +2471,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getCliente_Envioss() {
 			return clienteEnvioss;
 		}
+		
+		private String clienteGrupotrabajo;  
+		
+		/**
+		 * Grupo de trabajo
+		 * @return the column 'grupotrabajo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Grupotrabajo() {
+			return clienteGrupotrabajo;
+		}
 		public void visitRel_emp_cli(Emprnif emprnif, Cliente cliente)
 		throws SQLException {
 			clienteCdg = cliente.getCdg();  
@@ -2450,6 +2519,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			clienteDivisa = cliente.getDivisa();  
 			clienteSoloases = cliente.getSoloases();  
 			clienteEnvioss = cliente.getEnvioss();  
+			clienteGrupotrabajo = cliente.getGrupotrabajo();  
 		}
 	
 	}
@@ -2737,6 +2807,40 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	}
 
 	/**
+	 * Rel_dlg_workplaces shows join between Workplaces and Delegacion
+	 */
+	public static class Rel_dlg_workplaces extends  DefaultCtsqlDBVisitor {
+		
+		
+		private String workplacesCdg;  
+		
+		/**
+		 * Centro de trabajo de facturación
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getWorkplaces_Cdg() {
+			return workplacesCdg;
+		}
+		
+		private String workplacesDescripcion;  
+		
+		/**
+		 * Descripción del centro
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getWorkplaces_Descripcion() {
+			return workplacesDescripcion;
+		}
+		public void visitRel_dlg_workplaces(Delegacion delegacion, Workplaces workplaces)
+		throws SQLException {
+			workplacesCdg = workplaces.getCdg();  
+			workplacesDescripcion = workplaces.getDescripcion();  
+		}
+	
+	}
+	/**
 	 * Rel_dlg_via shows join between Tipovia and Delegacion
 	 */
 	public static class Rel_dlg_via extends  DefaultCtsqlDBVisitor {
@@ -2817,18 +2921,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	
 	}
 
-	public void visitNszcont(Nszcont nszcont)
-	throws SQLException{
-	}
-
-
-
-	public void visitNszconv(Nszconv nszconv)
-	throws SQLException{
-	}
-
-
-
 	public void visitOpercepciones(Opercepciones opercepciones)
 	throws SQLException{
 	}
@@ -2905,12 +2997,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	
 	}
 
-	public void visitNszcopa(Nszcopa nszcopa)
-	throws SQLException{
-	}
-
-
-
 	public void visitPersona(Persona persona)
 	throws SQLException{
 	}
@@ -2925,6 +3011,21 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	throws SQLException {
 	}
 	public void visitJautpersona(Autonomos autonomos, Persona persona)
+	throws SQLException {
+	}
+	public void visitTr_persona_nums(Tr_tramos tr_tramos, Persona persona)
+	throws SQLException {
+	}
+	public void visitTr_persona_indd(Tr_tramos tr_tramos, Persona persona)
+	throws SQLException {
+	}
+	public void visitTr_persona_numd(Tr_tramos tr_tramos, Persona persona)
+	throws SQLException {
+	}
+	public void visitTr_persona_atc2(Tr_tramos tr_tramos, Persona persona)
+	throws SQLException {
+	}
+	public void visitFpe_persona(Fpercep fpercep, Persona persona)
 	throws SQLException {
 	}
 
@@ -3145,11 +3246,1192 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	
 	}
 
-	public void visitNszprov(Nszprov nszprov)
+	public void visitImpr296(Impr296 impr296)
+	throws SQLException{
+	}
+
+	public void visitLin296_impr296(Lin296 lin296, Impr296 impr296)
+	throws SQLException {
+	}
+
+	/**
+	 * Impr296_codemp shows join between Emprnif and Impr296
+	 */
+	public static class Impr296_codemp extends  DefaultCtsqlDBVisitor {
+		
+		
+		private Integer emprnifCdg;  
+		
+		/**
+		 * Codigo de Empresa
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprnif_Cdg() {
+			return emprnifCdg;
+		}
+		
+		private Integer emprnifCodcli;  
+		
+		/**
+		 * Codigo de Cliente
+		 * @return the column 'codcli' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprnif_Codcli() {
+			return emprnifCodcli;
+		}
+		
+		private Date emprnifFecini;  
+		
+		/**
+		 * Fecha Inicio Relacion
+		 * @return the column 'fecini' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Fecini() {
+			return emprnifFecini;
+		}
+		
+		private Date emprnifFecfin;  
+		
+		/**
+		 * Fecha Fin Relacion
+		 * @return the column 'fecfin' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Fecfin() {
+			return emprnifFecfin;
+		}
+		
+		private String emprnifDescripcion;  
+		
+		/**
+		 * Descripcion de Empresa
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Descripcion() {
+			return emprnifDescripcion;
+		}
+		
+		private String emprnifAlias;  
+		
+		/**
+		 * Alias Breve Empresa
+		 * @return the column 'alias' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Alias() {
+			return emprnifAlias;
+		}
+		
+		private String emprnifInddoc;  
+		
+		/**
+		 * Tipo Documento
+		 * @return the column 'inddoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Inddoc() {
+			return emprnifInddoc;
+		}
+		
+		private String emprnifPaiemi;  
+		
+		/**
+		 * Pais Emisor
+		 * @return the column 'paiemi' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Paiemi() {
+			return emprnifPaiemi;
+		}
+		
+		private String emprnifNumdoc;  
+		
+		/**
+		 * Numero Documento
+		 * @return the column 'numdoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Numdoc() {
+			return emprnifNumdoc;
+		}
+		
+		private String emprnifRepresentante;  
+		
+		/**
+		 * Representante
+		 * @return the column 'representante' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Representante() {
+			return emprnifRepresentante;
+		}
+		
+		private String emprnifCargo;  
+		
+		/**
+		 * Cargo Representante
+		 * @return the column 'cargo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Cargo() {
+			return emprnifCargo;
+		}
+		
+		private Date emprnifFecnac;  
+		
+		/**
+		 * Fecha Nacimiento Representante
+		 * @return the column 'fecnac' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Fecnac() {
+			return emprnifFecnac;
+		}
+		
+		private String emprnifNrodocrep;  
+		
+		/**
+		 * Numero Documento Representante
+		 * @return the column 'nrodocrep' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Nrodocrep() {
+			return emprnifNrodocrep;
+		}
+		
+		private String emprnifCodadm;  
+		
+		/**
+		 * Administracion Hacienda
+		 * @return the column 'codadm' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Codadm() {
+			return emprnifCodadm;
+		}
+		
+		private String emprnifTipempr;  
+		
+		/**
+		 * Tipo de Empresario
+		 * @return the column 'tipempr' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Tipempr() {
+			return emprnifTipempr;
+		}
+		
+		private String emprnifSexo;  
+		
+		/**
+		 * Sexo
+		 * @return the column 'sexo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Sexo() {
+			return emprnifSexo;
+		}
+		
+		private Date emprnifFeccon;  
+		
+		/**
+		 * Fecha Constitucion / Nacimiento
+		 * @return the column 'feccon' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feccon() {
+			return emprnifFeccon;
+		}
+		
+		private String emprnifObsnif;  
+		
+		/**
+		 * Observaciones
+		 * @return the column 'obsnif' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Obsnif() {
+			return emprnifObsnif;
+		}
+		
+		private String emprnifDatreg;  
+		
+		/**
+		 * Datos de Inscripcion en el Registro
+		 * @return the column 'datreg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Datreg() {
+			return emprnifDatreg;
+		}
+		
+		private Date emprnifFecnew;  
+		
+		/**
+		 * Fecha Creacion Fila
+		 * @return the column 'fecnew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Fecnew() {
+			return emprnifFecnew;
+		}
+		
+		private Time emprnifHornew;  
+		
+		/**
+		 * Hora Creacion Fila
+		 * @return the column 'hornew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getEmprnif_Hornew() {
+			return emprnifHornew;
+		}
+		
+		private Date emprnifFecmod;  
+		
+		/**
+		 * Fecha Modificacion Fila
+		 * @return the column 'fecmod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Fecmod() {
+			return emprnifFecmod;
+		}
+		
+		private Time emprnifHormod;  
+		
+		/**
+		 * Hora Modificacion Fila
+		 * @return the column 'hormod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getEmprnif_Hormod() {
+			return emprnifHormod;
+		}
+		
+		private String emprnifTipdocrep;  
+		
+		/**
+		 * Tipo Documento Representante
+		 * @return the column 'tipdocrep' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Tipdocrep() {
+			return emprnifTipdocrep;
+		}
+		
+		private String emprnifPaidocrep;  
+		
+		/**
+		 * Pais Emisor Documento Representante
+		 * @return the column 'paidocrep' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Paidocrep() {
+			return emprnifPaidocrep;
+		}
+		
+		private String emprnifIndirpf;  
+		
+		/**
+		 * Indicador IRPF
+		 * @return the column 'indirpf' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Indirpf() {
+			return emprnifIndirpf;
+		}
+		
+		private String emprnifIndcal;  
+		
+		/**
+		 * Calendario Laboral
+		 * @return the column 'indcal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Indcal() {
+			return emprnifIndcal;
+		}
+		
+		private String emprnifIndnom;  
+		
+		/**
+		 * Nomina de Empresa
+		 * @return the column 'indnom' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Indnom() {
+			return emprnifIndnom;
+		}
+		
+		private String emprnifIndcoste;  
+		
+		/**
+		 * Estudio Costes
+		 * @return the column 'indcoste' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Indcoste() {
+			return emprnifIndcoste;
+		}
+		
+		private String emprnifDivisa;  
+		
+		/**
+		 * Divisa
+		 * @return the column 'divisa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Divisa() {
+			return emprnifDivisa;
+		}
+		
+		private String emprnifEnvioss;  
+		
+		/**
+		 * Envio de Seguros Sociales
+		 * @return the column 'envioss' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Envioss() {
+			return emprnifEnvioss;
+		}
+		
+		private String emprnifCecon;  
+		
+		/**
+		 * Concierto Economico
+		 * @return the column 'cecon' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Cecon() {
+			return emprnifCecon;
+		}
+		
+		private String emprnifModimpuesto;  
+		
+		/**
+		 * Modalidad declaraciones de impuestos
+		 * @return the column 'modimpuesto' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Modimpuesto() {
+			return emprnifModimpuesto;
+		}
+		
+		private String emprnifMod190;  
+		
+		/**
+		 * Modelo 190
+		 * @return the column 'mod190' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Mod190() {
+			return emprnifMod190;
+		}
+		
+		private Date emprnifFeciniportal;  
+		
+		/**
+		 * Fecha inicio portal
+		 * @return the column 'feciniportal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feciniportal() {
+			return emprnifFeciniportal;
+		}
+		
+		private Date emprnifFeccierrenomina;  
+		
+		/**
+		 * Fecha cierre nóminas
+		 * @return the column 'feccierrenomina' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feccierrenomina() {
+			return emprnifFeccierrenomina;
+		}
+		
+		private Integer emprnifMeseshistorico;  
+		
+		/**
+		 * Meses historico portal
+		 * @return the column 'meseshistorico' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprnif_Meseshistorico() {
+			return emprnifMeseshistorico;
+		}
+		public void visitImpr296_codemp(Impr296 impr296, Emprnif emprnif)
+		throws SQLException {
+			emprnifCdg = emprnif.getCdg();  
+			emprnifCodcli = emprnif.getCodcli();  
+			emprnifFecini = emprnif.getFecini();  
+			emprnifFecfin = emprnif.getFecfin();  
+			emprnifDescripcion = emprnif.getDescripcion();  
+			emprnifAlias = emprnif.getAlias();  
+			emprnifInddoc = emprnif.getInddoc();  
+			emprnifPaiemi = emprnif.getPaiemi();  
+			emprnifNumdoc = emprnif.getNumdoc();  
+			emprnifRepresentante = emprnif.getRepresentante();  
+			emprnifCargo = emprnif.getCargo();  
+			emprnifFecnac = emprnif.getFecnac();  
+			emprnifNrodocrep = emprnif.getNrodocrep();  
+			emprnifCodadm = emprnif.getCodadm();  
+			emprnifTipempr = emprnif.getTipempr();  
+			emprnifSexo = emprnif.getSexo();  
+			emprnifFeccon = emprnif.getFeccon();  
+			emprnifObsnif = emprnif.getObsnif();  
+			emprnifDatreg = emprnif.getDatreg();  
+			emprnifFecnew = emprnif.getFecnew();  
+			emprnifHornew = emprnif.getHornew();  
+			emprnifFecmod = emprnif.getFecmod();  
+			emprnifHormod = emprnif.getHormod();  
+			emprnifTipdocrep = emprnif.getTipdocrep();  
+			emprnifPaidocrep = emprnif.getPaidocrep();  
+			emprnifIndirpf = emprnif.getIndirpf();  
+			emprnifIndcal = emprnif.getIndcal();  
+			emprnifIndnom = emprnif.getIndnom();  
+			emprnifIndcoste = emprnif.getIndcoste();  
+			emprnifDivisa = emprnif.getDivisa();  
+			emprnifEnvioss = emprnif.getEnvioss();  
+			emprnifCecon = emprnif.getCecon();  
+			emprnifModimpuesto = emprnif.getModimpuesto();  
+			emprnifMod190 = emprnif.getMod190();  
+			emprnifFeciniportal = emprnif.getFeciniportal();  
+			emprnifFeccierrenomina = emprnif.getFeccierrenomina();  
+			emprnifMeseshistorico = emprnif.getMeseshistorico();  
+		}
+	
+	}
+	/**
+	 * Impr296_admon shows join between Admon and Impr296
+	 */
+	public static class Impr296_admon extends  DefaultCtsqlDBVisitor {
+		
+		
+		private String admonCdg;  
+		
+		/**
+		 * Codigo de Administracion
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getAdmon_Cdg() {
+			return admonCdg;
+		}
+		
+		private String admonDescripcion;  
+		
+		/**
+		 * Descripcion de Administracion
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getAdmon_Descripcion() {
+			return admonDescripcion;
+		}
+		public void visitImpr296_admon(Impr296 impr296, Admon admon)
+		throws SQLException {
+			admonCdg = admon.getCdg();  
+			admonDescripcion = admon.getDescripcion();  
+		}
+	
+	}
+	/**
+	 * Impr296_provincia shows join between Provincia and Impr296
+	 */
+	public static class Impr296_provincia extends  DefaultCtsqlDBVisitor {
+		
+		
+		private String provinciaCdg;  
+		
+		/**
+		 * Codigo de Provincia
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getProvincia_Cdg() {
+			return provinciaCdg;
+		}
+		
+		private String provinciaDescripcion;  
+		
+		/**
+		 * Descripcion de Provincia
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getProvincia_Descripcion() {
+			return provinciaDescripcion;
+		}
+		
+		private String provinciaCompro;  
+		
+		/**
+		 * Codigo de Comunidad
+		 * @return the column 'compro' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getProvincia_Compro() {
+			return provinciaCompro;
+		}
+		public void visitImpr296_provincia(Impr296 impr296, Provincia provincia)
+		throws SQLException {
+			provinciaCdg = provincia.getCdg();  
+			provinciaDescripcion = provincia.getDescripcion();  
+			provinciaCompro = provincia.getCompro();  
+		}
+	
+	}
+	/**
+	 * Impr296_repres shows join between Emprnif and Impr296
+	 */
+	public static class Impr296_repres extends  DefaultCtsqlDBVisitor {
+		
+		
+		private Integer emprnifCdg;  
+		
+		/**
+		 * Codigo de Empresa
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprnif_Cdg() {
+			return emprnifCdg;
+		}
+		
+		private Integer emprnifCodcli;  
+		
+		/**
+		 * Codigo de Cliente
+		 * @return the column 'codcli' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprnif_Codcli() {
+			return emprnifCodcli;
+		}
+		
+		private Date emprnifFecini;  
+		
+		/**
+		 * Fecha Inicio Relacion
+		 * @return the column 'fecini' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Fecini() {
+			return emprnifFecini;
+		}
+		
+		private Date emprnifFecfin;  
+		
+		/**
+		 * Fecha Fin Relacion
+		 * @return the column 'fecfin' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Fecfin() {
+			return emprnifFecfin;
+		}
+		
+		private String emprnifDescripcion;  
+		
+		/**
+		 * Descripcion de Empresa
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Descripcion() {
+			return emprnifDescripcion;
+		}
+		
+		private String emprnifAlias;  
+		
+		/**
+		 * Alias Breve Empresa
+		 * @return the column 'alias' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Alias() {
+			return emprnifAlias;
+		}
+		
+		private String emprnifInddoc;  
+		
+		/**
+		 * Tipo Documento
+		 * @return the column 'inddoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Inddoc() {
+			return emprnifInddoc;
+		}
+		
+		private String emprnifPaiemi;  
+		
+		/**
+		 * Pais Emisor
+		 * @return the column 'paiemi' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Paiemi() {
+			return emprnifPaiemi;
+		}
+		
+		private String emprnifNumdoc;  
+		
+		/**
+		 * Numero Documento
+		 * @return the column 'numdoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Numdoc() {
+			return emprnifNumdoc;
+		}
+		
+		private String emprnifRepresentante;  
+		
+		/**
+		 * Representante
+		 * @return the column 'representante' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Representante() {
+			return emprnifRepresentante;
+		}
+		
+		private String emprnifCargo;  
+		
+		/**
+		 * Cargo Representante
+		 * @return the column 'cargo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Cargo() {
+			return emprnifCargo;
+		}
+		
+		private Date emprnifFecnac;  
+		
+		/**
+		 * Fecha Nacimiento Representante
+		 * @return the column 'fecnac' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Fecnac() {
+			return emprnifFecnac;
+		}
+		
+		private String emprnifNrodocrep;  
+		
+		/**
+		 * Numero Documento Representante
+		 * @return the column 'nrodocrep' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Nrodocrep() {
+			return emprnifNrodocrep;
+		}
+		
+		private String emprnifCodadm;  
+		
+		/**
+		 * Administracion Hacienda
+		 * @return the column 'codadm' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Codadm() {
+			return emprnifCodadm;
+		}
+		
+		private String emprnifTipempr;  
+		
+		/**
+		 * Tipo de Empresario
+		 * @return the column 'tipempr' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Tipempr() {
+			return emprnifTipempr;
+		}
+		
+		private String emprnifSexo;  
+		
+		/**
+		 * Sexo
+		 * @return the column 'sexo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Sexo() {
+			return emprnifSexo;
+		}
+		
+		private Date emprnifFeccon;  
+		
+		/**
+		 * Fecha Constitucion / Nacimiento
+		 * @return the column 'feccon' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feccon() {
+			return emprnifFeccon;
+		}
+		
+		private String emprnifObsnif;  
+		
+		/**
+		 * Observaciones
+		 * @return the column 'obsnif' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Obsnif() {
+			return emprnifObsnif;
+		}
+		
+		private String emprnifDatreg;  
+		
+		/**
+		 * Datos de Inscripcion en el Registro
+		 * @return the column 'datreg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Datreg() {
+			return emprnifDatreg;
+		}
+		
+		private Date emprnifFecnew;  
+		
+		/**
+		 * Fecha Creacion Fila
+		 * @return the column 'fecnew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Fecnew() {
+			return emprnifFecnew;
+		}
+		
+		private Time emprnifHornew;  
+		
+		/**
+		 * Hora Creacion Fila
+		 * @return the column 'hornew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getEmprnif_Hornew() {
+			return emprnifHornew;
+		}
+		
+		private Date emprnifFecmod;  
+		
+		/**
+		 * Fecha Modificacion Fila
+		 * @return the column 'fecmod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Fecmod() {
+			return emprnifFecmod;
+		}
+		
+		private Time emprnifHormod;  
+		
+		/**
+		 * Hora Modificacion Fila
+		 * @return the column 'hormod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getEmprnif_Hormod() {
+			return emprnifHormod;
+		}
+		
+		private String emprnifTipdocrep;  
+		
+		/**
+		 * Tipo Documento Representante
+		 * @return the column 'tipdocrep' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Tipdocrep() {
+			return emprnifTipdocrep;
+		}
+		
+		private String emprnifPaidocrep;  
+		
+		/**
+		 * Pais Emisor Documento Representante
+		 * @return the column 'paidocrep' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Paidocrep() {
+			return emprnifPaidocrep;
+		}
+		
+		private String emprnifIndirpf;  
+		
+		/**
+		 * Indicador IRPF
+		 * @return the column 'indirpf' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Indirpf() {
+			return emprnifIndirpf;
+		}
+		
+		private String emprnifIndcal;  
+		
+		/**
+		 * Calendario Laboral
+		 * @return the column 'indcal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Indcal() {
+			return emprnifIndcal;
+		}
+		
+		private String emprnifIndnom;  
+		
+		/**
+		 * Nomina de Empresa
+		 * @return the column 'indnom' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Indnom() {
+			return emprnifIndnom;
+		}
+		
+		private String emprnifIndcoste;  
+		
+		/**
+		 * Estudio Costes
+		 * @return the column 'indcoste' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Indcoste() {
+			return emprnifIndcoste;
+		}
+		
+		private String emprnifDivisa;  
+		
+		/**
+		 * Divisa
+		 * @return the column 'divisa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Divisa() {
+			return emprnifDivisa;
+		}
+		
+		private String emprnifEnvioss;  
+		
+		/**
+		 * Envio de Seguros Sociales
+		 * @return the column 'envioss' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Envioss() {
+			return emprnifEnvioss;
+		}
+		
+		private String emprnifCecon;  
+		
+		/**
+		 * Concierto Economico
+		 * @return the column 'cecon' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Cecon() {
+			return emprnifCecon;
+		}
+		
+		private String emprnifModimpuesto;  
+		
+		/**
+		 * Modalidad declaraciones de impuestos
+		 * @return the column 'modimpuesto' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Modimpuesto() {
+			return emprnifModimpuesto;
+		}
+		
+		private String emprnifMod190;  
+		
+		/**
+		 * Modelo 190
+		 * @return the column 'mod190' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Mod190() {
+			return emprnifMod190;
+		}
+		
+		private Date emprnifFeciniportal;  
+		
+		/**
+		 * Fecha inicio portal
+		 * @return the column 'feciniportal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feciniportal() {
+			return emprnifFeciniportal;
+		}
+		
+		private Date emprnifFeccierrenomina;  
+		
+		/**
+		 * Fecha cierre nóminas
+		 * @return the column 'feccierrenomina' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feccierrenomina() {
+			return emprnifFeccierrenomina;
+		}
+		
+		private Integer emprnifMeseshistorico;  
+		
+		/**
+		 * Meses historico portal
+		 * @return the column 'meseshistorico' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprnif_Meseshistorico() {
+			return emprnifMeseshistorico;
+		}
+		public void visitImpr296_repres(Impr296 impr296, Emprnif emprnif)
+		throws SQLException {
+			emprnifCdg = emprnif.getCdg();  
+			emprnifCodcli = emprnif.getCodcli();  
+			emprnifFecini = emprnif.getFecini();  
+			emprnifFecfin = emprnif.getFecfin();  
+			emprnifDescripcion = emprnif.getDescripcion();  
+			emprnifAlias = emprnif.getAlias();  
+			emprnifInddoc = emprnif.getInddoc();  
+			emprnifPaiemi = emprnif.getPaiemi();  
+			emprnifNumdoc = emprnif.getNumdoc();  
+			emprnifRepresentante = emprnif.getRepresentante();  
+			emprnifCargo = emprnif.getCargo();  
+			emprnifFecnac = emprnif.getFecnac();  
+			emprnifNrodocrep = emprnif.getNrodocrep();  
+			emprnifCodadm = emprnif.getCodadm();  
+			emprnifTipempr = emprnif.getTipempr();  
+			emprnifSexo = emprnif.getSexo();  
+			emprnifFeccon = emprnif.getFeccon();  
+			emprnifObsnif = emprnif.getObsnif();  
+			emprnifDatreg = emprnif.getDatreg();  
+			emprnifFecnew = emprnif.getFecnew();  
+			emprnifHornew = emprnif.getHornew();  
+			emprnifFecmod = emprnif.getFecmod();  
+			emprnifHormod = emprnif.getHormod();  
+			emprnifTipdocrep = emprnif.getTipdocrep();  
+			emprnifPaidocrep = emprnif.getPaidocrep();  
+			emprnifIndirpf = emprnif.getIndirpf();  
+			emprnifIndcal = emprnif.getIndcal();  
+			emprnifIndnom = emprnif.getIndnom();  
+			emprnifIndcoste = emprnif.getIndcoste();  
+			emprnifDivisa = emprnif.getDivisa();  
+			emprnifEnvioss = emprnif.getEnvioss();  
+			emprnifCecon = emprnif.getCecon();  
+			emprnifModimpuesto = emprnif.getModimpuesto();  
+			emprnifMod190 = emprnif.getMod190();  
+			emprnifFeciniportal = emprnif.getFeciniportal();  
+			emprnifFeccierrenomina = emprnif.getFeccierrenomina();  
+			emprnifMeseshistorico = emprnif.getMeseshistorico();  
+		}
+	
+	}
+	/**
+	 * Impr296_divisa shows join between Divisa and Impr296
+	 */
+	public static class Impr296_divisa extends  DefaultCtsqlDBVisitor {
+		
+		
+		private String divisaCdg;  
+		
+		/**
+		 * Codigo de Divisa
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getDivisa_Cdg() {
+			return divisaCdg;
+		}
+		
+		private String divisaDescripcion;  
+		
+		/**
+		 * Descripcion de Divisa
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getDivisa_Descripcion() {
+			return divisaDescripcion;
+		}
+		
+		private Integer divisaRedondeo;  
+		
+		/**
+		 * Tipo de Redondeo
+		 * @return the column 'redondeo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getDivisa_Redondeo() {
+			return divisaRedondeo;
+		}
+		
+		private Integer divisaMask1;  
+		
+		/**
+		 * Tipo de Mascara para impresion de valores 0
+		 * @return the column 'mask1' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getDivisa_Mask1() {
+			return divisaMask1;
+		}
+		
+		private Integer divisaMask2;  
+		
+		/**
+		 * Tipo de Mascara para impresion de valores sin 0
+		 * @return the column 'mask2' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getDivisa_Mask2() {
+			return divisaMask2;
+		}
+		public void visitImpr296_divisa(Impr296 impr296, Divisa divisa)
+		throws SQLException {
+			divisaCdg = divisa.getCdg();  
+			divisaDescripcion = divisa.getDescripcion();  
+			divisaRedondeo = divisa.getRedondeo();  
+			divisaMask1 = divisa.getMask1();  
+			divisaMask2 = divisa.getMask2();  
+		}
+	
+	}
+
+	public void visitLintipocargos(Lintipocargos lintipocargos)
 	throws SQLException{
 	}
 
 
+	/**
+	 * Lin_tipocargos shows join between Tipocargos and Lintipocargos
+	 */
+	public static class Lin_tipocargos extends  DefaultCtsqlDBVisitor {
+		
+		
+		private String tipocargosCdg;  
+		
+		/**
+		 * Código del cargo
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTipocargos_Cdg() {
+			return tipocargosCdg;
+		}
+		
+		private String tipocargosDescripcion;  
+		
+		/**
+		 * Descripción del cargo
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTipocargos_Descripcion() {
+			return tipocargosDescripcion;
+		}
+		public void visitLin_tipocargos(Lintipocargos lintipocargos, Tipocargos tipocargos)
+		throws SQLException {
+			tipocargosCdg = tipocargos.getCdg();  
+			tipocargosDescripcion = tipocargos.getDescripcion();  
+		}
+	
+	}
+	/**
+	 * Rel_workplaces shows join between Workplaces and Lintipocargos
+	 */
+	public static class Rel_workplaces extends  DefaultCtsqlDBVisitor {
+		
+		
+		private String workplacesCdg;  
+		
+		/**
+		 * Centro de trabajo de facturación
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getWorkplaces_Cdg() {
+			return workplacesCdg;
+		}
+		
+		private String workplacesDescripcion;  
+		
+		/**
+		 * Descripción del centro
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getWorkplaces_Descripcion() {
+			return workplacesDescripcion;
+		}
+		public void visitRel_workplaces(Lintipocargos lintipocargos, Workplaces workplaces)
+		throws SQLException {
+			workplacesCdg = workplaces.getCdg();  
+			workplacesDescripcion = workplaces.getDescripcion();  
+		}
+	
+	}
+	/**
+	 * Rel_linworkplaces shows join between Linworkplaces and Lintipocargos
+	 */
+	public static class Rel_linworkplaces extends  DefaultCtsqlDBVisitor {
+		
+		
+		private String linworkplacesWorkplace;  
+		
+		/**
+		 * Centro de trabajo de facturación
+		 * @return the column 'workplace' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getLinworkplaces_Workplace() {
+			return linworkplacesWorkplace;
+		}
+		
+		private String linworkplacesFacturar;  
+		
+		/**
+		 * Código de facturación
+		 * @return the column 'facturar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getLinworkplaces_Facturar() {
+			return linworkplacesFacturar;
+		}
+		
+		private String linworkplacesDescripcion;  
+		
+		/**
+		 * Descripción
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getLinworkplaces_Descripcion() {
+			return linworkplacesDescripcion;
+		}
+		public void visitRel_linworkplaces(Lintipocargos lintipocargos, Linworkplaces linworkplaces)
+		throws SQLException {
+			linworkplacesWorkplace = linworkplaces.getWorkplace();  
+			linworkplacesFacturar = linworkplaces.getFacturar();  
+			linworkplacesDescripcion = linworkplaces.getDescripcion();  
+		}
+	
+	}
 
 	public void visitEpigrafe(Epigrafe epigrafe)
 	throws SQLException{
@@ -3161,13 +4443,13 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	public void visitRel_cat_epi(Categoria categoria, Epigrafe epigrafe)
 	throws SQLException {
 	}
+	public void visitRel_cos_epi(Costes costes, Epigrafe epigrafe)
+	throws SQLException {
+	}
 	public void visitRel_tra_epi(Trabajo trabajo, Epigrafe epigrafe)
 	throws SQLException {
 	}
 	public void visitJepigrafe(Httrabajador httrabajador, Epigrafe epigrafe)
-	throws SQLException {
-	}
-	public void visitRel_cos_epi(Costes costes, Epigrafe epigrafe)
 	throws SQLException {
 	}
 
@@ -3226,7 +4508,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private String emprperCodnsz;  
 		
 		/**
-		 * Código interno
+		 * Codigo BBX
 		 * @return the column 'codnsz' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -3431,6 +4713,61 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprper_Noirpf() {
 			return emprperNoirpf;
 		}
+		
+		private String emprperNosegsoc;  
+		
+		/**
+		 * No seg. soc. (de trabajador)
+		 * @return the column 'nosegsoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Nosegsoc() {
+			return emprperNosegsoc;
+		}
+		
+		private String emprperJubiladoactivo;  
+		
+		/**
+		 * Trabajador jubilado en activo
+		 * @return the column 'jubiladoactivo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Jubiladoactivo() {
+			return emprperJubiladoactivo;
+		}
+		
+		private String emprperCertificado;  
+		
+		/**
+		 * Certificado Procesado
+		 * @return the column 'certificado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Certificado() {
+			return emprperCertificado;
+		}
+		
+		private String emprperFamiliar;  
+		
+		/**
+		 * Familiar de 1º grado
+		 * @return the column 'familiar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Familiar() {
+			return emprperFamiliar;
+		}
+		
+		private String emprperNoresidente;  
+		
+		/**
+		 * Trabajador no residente
+		 * @return the column 'noresidente' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Noresidente() {
+			return emprperNoresidente;
+		}
 		public void visitRel_fin_epp(Finiquito finiquito, Emprper emprper)
 		throws SQLException {
 			emprperCdg = emprper.getCdg();  
@@ -3454,6 +4791,11 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprperIndgrupo = emprper.getIndgrupo();  
 			emprperPariente = emprper.getPariente();  
 			emprperNoirpf = emprper.getNoirpf();  
+			emprperNosegsoc = emprper.getNosegsoc();  
+			emprperJubiladoactivo = emprper.getJubiladoactivo();  
+			emprperCertificado = emprper.getCertificado();  
+			emprperFamiliar = emprper.getFamiliar();  
+			emprperNoresidente = emprper.getNoresidente();  
 		}
 	
 	}
@@ -3528,6 +4870,236 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	
 	}
 
+	public void visitLinfpercep(Linfpercep linfpercep)
+	throws SQLException{
+	}
+
+
+	/**
+	 * Lin_fpercep shows join between Fpercep and Linfpercep
+	 */
+	public static class Lin_fpercep extends  DefaultCtsqlDBVisitor {
+		
+		
+		private Integer fpercepCdg;  
+		
+		/**
+		 * Código de formula
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getFpercep_Cdg() {
+			return fpercepCdg;
+		}
+		
+		private String fpercepNivel;  
+		
+		/**
+		 * Nivel de la formula
+		 * @return the column 'nivel' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getFpercep_Nivel() {
+			return fpercepNivel;
+		}
+		
+		private String fpercepCodcon;  
+		
+		/**
+		 * Código de convenio
+		 * @return the column 'codcon' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getFpercep_Codcon() {
+			return fpercepCodcon;
+		}
+		
+		private Integer fpercepCodcli;  
+		
+		/**
+		 * Código de cliente
+		 * @return the column 'codcli' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getFpercep_Codcli() {
+			return fpercepCodcli;
+		}
+		
+		private Integer fpercepCodemp;  
+		
+		/**
+		 * Código de empresa
+		 * @return the column 'codemp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getFpercep_Codemp() {
+			return fpercepCodemp;
+		}
+		
+		private Integer fpercepCodact;  
+		
+		/**
+		 * Código de actividad
+		 * @return the column 'codact' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getFpercep_Codact() {
+			return fpercepCodact;
+		}
+		
+		private Integer fpercepCodper;  
+		
+		/**
+		 * Código de persona
+		 * @return the column 'codper' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getFpercep_Codper() {
+			return fpercepCodper;
+		}
+		public void visitLin_fpercep(Linfpercep linfpercep, Fpercep fpercep)
+		throws SQLException {
+			fpercepCdg = fpercep.getCdg();  
+			fpercepNivel = fpercep.getNivel();  
+			fpercepCodcon = fpercep.getCodcon();  
+			fpercepCodcli = fpercep.getCodcli();  
+			fpercepCodemp = fpercep.getCodemp();  
+			fpercepCodact = fpercep.getCodact();  
+			fpercepCodper = fpercep.getCodper();  
+		}
+	
+	}
+	/**
+	 * Lin_complemento shows join between Complemento and Linfpercep
+	 */
+	public static class Lin_complemento extends  DefaultCtsqlDBVisitor {
+		
+		
+		private String complementoCdg;  
+		
+		/**
+		 * Codigo de Complemento
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getComplemento_Cdg() {
+			return complementoCdg;
+		}
+		
+		private String complementoTipcot;  
+		
+		/**
+		 * Tipo de Cotizacion
+		 * @return the column 'tipcot' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getComplemento_Tipcot() {
+			return complementoTipcot;
+		}
+		
+		private String complementoDescripcion;  
+		
+		/**
+		 * Descripcion de Complemento
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getComplemento_Descripcion() {
+			return complementoDescripcion;
+		}
+		
+		private String complementoDesabr;  
+		
+		/**
+		 * Descripcion Abreviada de Complemento
+		 * @return the column 'desabr' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getComplemento_Desabr() {
+			return complementoDesabr;
+		}
+		
+		private String complementoTipcom;  
+		
+		/**
+		 * Tipo de Complemento
+		 * @return the column 'tipcom' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getComplemento_Tipcom() {
+			return complementoTipcom;
+		}
+		
+		private String complementoFijovar;  
+		
+		/**
+		 * Fijo o Variable
+		 * @return the column 'fijovar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getComplemento_Fijovar() {
+			return complementoFijovar;
+		}
+		
+		private String complementoIndcom;  
+		
+		/**
+		 * Indicador de Complemento
+		 * @return the column 'indcom' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getComplemento_Indcom() {
+			return complementoIndcom;
+		}
+		
+		private String complementoDinesp;  
+		
+		/**
+		 * Dinerario o en Especie
+		 * @return the column 'dinesp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getComplemento_Dinesp() {
+			return complementoDinesp;
+		}
+		
+		private String complementoConcepto;  
+		
+		/**
+		 * Concepto
+		 * @return the column 'concepto' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getComplemento_Concepto() {
+			return complementoConcepto;
+		}
+		
+		private String complementoExcinc;  
+		
+		/**
+		 * Indicativo excluido/incluido
+		 * @return the column 'excinc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getComplemento_Excinc() {
+			return complementoExcinc;
+		}
+		public void visitLin_complemento(Linfpercep linfpercep, Complemento complemento)
+		throws SQLException {
+			complementoCdg = complemento.getCdg();  
+			complementoTipcot = complemento.getTipcot();  
+			complementoDescripcion = complemento.getDescripcion();  
+			complementoDesabr = complemento.getDesabr();  
+			complementoTipcom = complemento.getTipcom();  
+			complementoFijovar = complemento.getFijovar();  
+			complementoIndcom = complemento.getIndcom();  
+			complementoDinesp = complemento.getDinesp();  
+			complementoConcepto = complemento.getConcepto();  
+			complementoExcinc = complemento.getExcinc();  
+		}
+	
+	}
+
 	public void visitNominait(Nominait nominait)
 	throws SQLException{
 	}
@@ -3564,7 +5136,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private String emprperCodnsz;  
 		
 		/**
-		 * Código interno
+		 * Codigo BBX
 		 * @return the column 'codnsz' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -3769,6 +5341,61 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprper_Noirpf() {
 			return emprperNoirpf;
 		}
+		
+		private String emprperNosegsoc;  
+		
+		/**
+		 * No seg. soc. (de trabajador)
+		 * @return the column 'nosegsoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Nosegsoc() {
+			return emprperNosegsoc;
+		}
+		
+		private String emprperJubiladoactivo;  
+		
+		/**
+		 * Trabajador jubilado en activo
+		 * @return the column 'jubiladoactivo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Jubiladoactivo() {
+			return emprperJubiladoactivo;
+		}
+		
+		private String emprperCertificado;  
+		
+		/**
+		 * Certificado Procesado
+		 * @return the column 'certificado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Certificado() {
+			return emprperCertificado;
+		}
+		
+		private String emprperFamiliar;  
+		
+		/**
+		 * Familiar de 1º grado
+		 * @return the column 'familiar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Familiar() {
+			return emprperFamiliar;
+		}
+		
+		private String emprperNoresidente;  
+		
+		/**
+		 * Trabajador no residente
+		 * @return the column 'noresidente' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Noresidente() {
+			return emprperNoresidente;
+		}
 		public void visitNominait_emprper(Nominait nominait, Emprper emprper)
 		throws SQLException {
 			emprperCdg = emprper.getCdg();  
@@ -3792,6 +5419,11 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprperIndgrupo = emprper.getIndgrupo();  
 			emprperPariente = emprper.getPariente();  
 			emprperNoirpf = emprper.getNoirpf();  
+			emprperNosegsoc = emprper.getNosegsoc();  
+			emprperJubiladoactivo = emprper.getJubiladoactivo();  
+			emprperCertificado = emprper.getCertificado();  
+			emprperFamiliar = emprper.getFamiliar();  
+			emprperNoresidente = emprper.getNoresidente();  
 		}
 	
 	}
@@ -3800,10 +5432,10 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	throws SQLException{
 	}
 
-	public void visitRel_epp_ccc(Emprper emprper, Emprccc emprccc)
+	public void visitFormcont_emprccc(Formcont formcont, Emprccc emprccc)
 	throws SQLException {
 	}
-	public void visitFormcont_emprccc(Formcont formcont, Emprccc emprccc)
+	public void visitRel_epp_ccc(Emprper emprper, Emprccc emprccc)
 	throws SQLException {
 	}
 
@@ -3968,6 +5600,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return empractCnae;
 		}
 		
+		private String empractCnae2009;  
+		
+		/**
+		 * Codigo Nacional Actividad Economica - 2009
+		 * @return the column 'cnae2009' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Cnae2009() {
+			return empractCnae2009;
+		}
+		
 		private Date empractFecnew;  
 		
 		/**
@@ -4010,17 +5653,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		 */
 		public Time getEmpract_Hormod() {
 			return empractHormod;
-		}
-		
-		private String empractCnae2009;  
-		
-		/**
-		 * Codigo Nacional Actividad Economica - 2009
-		 * @return the column 'cnae2009' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEmpract_Cnae2009() {
-			return empractCnae2009;
 		}
 		
 		private String empractIndred;  
@@ -4198,6 +5830,28 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmpract_Prevencion() {
 			return empractPrevencion;
 		}
+		
+		private String empractIndsiltra;  
+		
+		/**
+		 * SILTRA
+		 * @return the column 'indsiltra' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Indsiltra() {
+			return empractIndsiltra;
+		}
+		
+		private String empractAutoriza;  
+		
+		/**
+		 * Autorización
+		 * @return the column 'autoriza' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Autoriza() {
+			return empractAutoriza;
+		}
 		public void visitEmprccc_empract(Emprccc emprccc, Empract empract)
 		throws SQLException {
 			empractCdg = empract.getCdg();  
@@ -4211,11 +5865,11 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			empractActeco = empract.getActeco();  
 			empractEpiiae = empract.getEpiiae();  
 			empractCnae = empract.getCnae();  
+			empractCnae2009 = empract.getCnae2009();  
 			empractFecnew = empract.getFecnew();  
 			empractHornew = empract.getHornew();  
 			empractFecmod = empract.getFecmod();  
 			empractHormod = empract.getHormod();  
-			empractCnae2009 = empract.getCnae2009();  
 			empractIndred = empract.getIndred();  
 			empractIndmutua = empract.getIndmutua();  
 			empractIndtc1 = empract.getIndtc1();  
@@ -4232,15 +5886,11 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			empractIndfirma = empract.getIndfirma();  
 			empractIndregimen = empract.getIndregimen();  
 			empractPrevencion = empract.getPrevencion();  
+			empractIndsiltra = empract.getIndsiltra();  
+			empractAutoriza = empract.getAutoriza();  
 		}
 	
 	}
-
-	public void visitNszdomi(Nszdomi nszdomi)
-	throws SQLException{
-	}
-
-
 
 	public void visitPorcoti(Porcoti porcoti)
 	throws SQLException{
@@ -4252,10 +5902,10 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	public void visitRel_tco_codpct(Tipocont tipocont, Porcoti porcoti)
 	throws SQLException {
 	}
-	public void visitRel_tra_pct(Trabajo trabajo, Porcoti porcoti)
+	public void visitRel_cos_pct(Costes costes, Porcoti porcoti)
 	throws SQLException {
 	}
-	public void visitRel_cos_pct(Costes costes, Porcoti porcoti)
+	public void visitRel_tra_pct(Trabajo trabajo, Porcoti porcoti)
 	throws SQLException {
 	}
 
@@ -5020,11 +6670,81 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	
 	}
 
-	public void visitNszcatg(Nszcatg nszcatg)
+	public void visitLindatosweb(Lindatosweb lindatosweb)
 	throws SQLException{
 	}
 
 
+	/**
+	 * Lin_datosweb shows join between Datosweb and Lindatosweb
+	 */
+	public static class Lin_datosweb extends  DefaultCtsqlDBVisitor {
+		
+		
+		private Integer datoswebCdg;  
+		
+		/**
+		 * cdg
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getDatosweb_Cdg() {
+			return datoswebCdg;
+		}
+		
+		private String datoswebNivel;  
+		
+		/**
+		 * Nivel
+		 * @return the column 'nivel' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getDatosweb_Nivel() {
+			return datoswebNivel;
+		}
+		
+		private Integer datoswebCodigo;  
+		
+		/**
+		 * Código
+		 * @return the column 'codigo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getDatosweb_Codigo() {
+			return datoswebCodigo;
+		}
+		
+		private String datoswebDescripcion;  
+		
+		/**
+		 * Descripción
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getDatosweb_Descripcion() {
+			return datoswebDescripcion;
+		}
+		
+		private String datoswebEmail;  
+		
+		/**
+		 * e-mail
+		 * @return the column 'email' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getDatosweb_Email() {
+			return datoswebEmail;
+		}
+		public void visitLin_datosweb(Lindatosweb lindatosweb, Datosweb datosweb)
+		throws SQLException {
+			datoswebCdg = datosweb.getCdg();  
+			datoswebNivel = datosweb.getNivel();  
+			datoswebCodigo = datosweb.getCodigo();  
+			datoswebDescripcion = datosweb.getDescripcion();  
+			datoswebEmail = datosweb.getEmail();  
+		}
+	
+	}
 
 	public void visitUnidades(Unidades unidades)
 	throws SQLException{
@@ -5032,13 +6752,1333 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 
 
 
+	public void visitHonorarios(Honorarios honorarios)
+	throws SQLException{
+	}
+
+	public void visitLin_honorarios(Linhonorarios linhonorarios, Honorarios honorarios)
+	throws SQLException {
+	}
+
+	/**
+	 * Hon_cliente shows join between Cliente and Honorarios
+	 */
+	public static class Hon_cliente extends  DefaultCtsqlDBVisitor {
+		
+		
+		private Integer clienteCdg;  
+		
+		/**
+		 * Codigo de Cliente
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCliente_Cdg() {
+			return clienteCdg;
+		}
+		
+		private Integer clienteCoddlg;  
+		
+		/**
+		 * Delegacion
+		 * @return the column 'coddlg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCliente_Coddlg() {
+			return clienteCoddlg;
+		}
+		
+		private String clienteDescripcion;  
+		
+		/**
+		 * Descripcion de Cliente
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Descripcion() {
+			return clienteDescripcion;
+		}
+		
+		private String clienteAlias;  
+		
+		/**
+		 * Alias Breve
+		 * @return the column 'alias' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Alias() {
+			return clienteAlias;
+		}
+		
+		private Date clienteFecini;  
+		
+		/**
+		 * Fecha Inicio Relacion
+		 * @return the column 'fecini' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getCliente_Fecini() {
+			return clienteFecini;
+		}
+		
+		private Date clienteFecfin;  
+		
+		/**
+		 * Fecha Fin Relacion
+		 * @return the column 'fecfin' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getCliente_Fecfin() {
+			return clienteFecfin;
+		}
+		
+		private String clienteTipovia;  
+		
+		/**
+		 * Tipo de Via
+		 * @return the column 'tipovia' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Tipovia() {
+			return clienteTipovia;
+		}
+		
+		private String clienteNomvia;  
+		
+		/**
+		 * Nombre de Via
+		 * @return the column 'nomvia' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Nomvia() {
+			return clienteNomvia;
+		}
+		
+		private String clienteNumero;  
+		
+		/**
+		 * Numero
+		 * @return the column 'numero' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Numero() {
+			return clienteNumero;
+		}
+		
+		private String clienteOtrdir;  
+		
+		/**
+		 * Bloque, Escalera, Piso, Puerta
+		 * @return the column 'otrdir' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Otrdir() {
+			return clienteOtrdir;
+		}
+		
+		private String clienteCodpos;  
+		
+		/**
+		 * Codigo Postal
+		 * @return the column 'codpos' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Codpos() {
+			return clienteCodpos;
+		}
+		
+		private String clienteLocalidad;  
+		
+		/**
+		 * Localidad
+		 * @return the column 'localidad' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Localidad() {
+			return clienteLocalidad;
+		}
+		
+		private String clienteProvincia;  
+		
+		/**
+		 * Provincia
+		 * @return the column 'provincia' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Provincia() {
+			return clienteProvincia;
+		}
+		
+		private String clientePersona;  
+		
+		/**
+		 * Persona de Contacto
+		 * @return the column 'persona' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Persona() {
+			return clientePersona;
+		}
+		
+		private String clienteTelefono;  
+		
+		/**
+		 * Telefono
+		 * @return the column 'telefono' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Telefono() {
+			return clienteTelefono;
+		}
+		
+		private String clienteTelefono2;  
+		
+		/**
+		 * 2º Telefono
+		 * @return the column 'telefono2' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Telefono2() {
+			return clienteTelefono2;
+		}
+		
+		private String clienteTelefono3;  
+		
+		/**
+		 * 3º Telefono
+		 * @return the column 'telefono3' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Telefono3() {
+			return clienteTelefono3;
+		}
+		
+		private String clienteFax;  
+		
+		/**
+		 * Fax
+		 * @return the column 'fax' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Fax() {
+			return clienteFax;
+		}
+		
+		private String clienteEmail;  
+		
+		/**
+		 * Direccion E-Mail
+		 * @return the column 'email' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Email() {
+			return clienteEmail;
+		}
+		
+		private String clienteInddoc;  
+		
+		/**
+		 * Tipo Documento
+		 * @return the column 'inddoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Inddoc() {
+			return clienteInddoc;
+		}
+		
+		private String clientePaiemi;  
+		
+		/**
+		 * Pais Emisor
+		 * @return the column 'paiemi' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Paiemi() {
+			return clientePaiemi;
+		}
+		
+		private String clienteNumdoc;  
+		
+		/**
+		 * Numero Documento
+		 * @return the column 'numdoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Numdoc() {
+			return clienteNumdoc;
+		}
+		
+		private String clienteTipemp;  
+		
+		/**
+		 * Tipo de Empresario
+		 * @return the column 'tipemp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Tipemp() {
+			return clienteTipemp;
+		}
+		
+		private String clienteObscli;  
+		
+		/**
+		 * Observaciones
+		 * @return the column 'obscli' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Obscli() {
+			return clienteObscli;
+		}
+		
+		private Date clienteFecnew;  
+		
+		/**
+		 * Fecha Creacion Fila
+		 * @return the column 'fecnew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getCliente_Fecnew() {
+			return clienteFecnew;
+		}
+		
+		private Time clienteHornew;  
+		
+		/**
+		 * Hora Creacion Fila
+		 * @return the column 'hornew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getCliente_Hornew() {
+			return clienteHornew;
+		}
+		
+		private Date clienteFecmod;  
+		
+		/**
+		 * Fecha Modificacion Fila
+		 * @return the column 'fecmod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getCliente_Fecmod() {
+			return clienteFecmod;
+		}
+		
+		private Time clienteHormod;  
+		
+		/**
+		 * Hora Modificacion Fila
+		 * @return the column 'hormod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getCliente_Hormod() {
+			return clienteHormod;
+		}
+		
+		private String clienteInactivo;  
+		
+		/**
+		 * Indicador de Inactivo
+		 * @return the column 'inactivo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Inactivo() {
+			return clienteInactivo;
+		}
+		
+		private String clienteIndcal;  
+		
+		/**
+		 * Calendario Laboral
+		 * @return the column 'indcal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Indcal() {
+			return clienteIndcal;
+		}
+		
+		private String clienteIndnom;  
+		
+		/**
+		 * Nomina de Empresa
+		 * @return the column 'indnom' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Indnom() {
+			return clienteIndnom;
+		}
+		
+		private String clienteIndcoste;  
+		
+		/**
+		 * Estudio Costes
+		 * @return the column 'indcoste' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Indcoste() {
+			return clienteIndcoste;
+		}
+		
+		private String clienteDivisa;  
+		
+		/**
+		 * Divisa
+		 * @return the column 'divisa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Divisa() {
+			return clienteDivisa;
+		}
+		
+		private String clienteSoloases;  
+		
+		/**
+		 * Cliente solo asesoria
+		 * @return the column 'soloases' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Soloases() {
+			return clienteSoloases;
+		}
+		
+		private String clienteEnvioss;  
+		
+		/**
+		 * Envio de Seguros Sociales
+		 * @return the column 'envioss' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Envioss() {
+			return clienteEnvioss;
+		}
+		
+		private String clienteGrupotrabajo;  
+		
+		/**
+		 * Grupo de trabajo
+		 * @return the column 'grupotrabajo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Grupotrabajo() {
+			return clienteGrupotrabajo;
+		}
+		public void visitHon_cliente(Honorarios honorarios, Cliente cliente)
+		throws SQLException {
+			clienteCdg = cliente.getCdg();  
+			clienteCoddlg = cliente.getCoddlg();  
+			clienteDescripcion = cliente.getDescripcion();  
+			clienteAlias = cliente.getAlias();  
+			clienteFecini = cliente.getFecini();  
+			clienteFecfin = cliente.getFecfin();  
+			clienteTipovia = cliente.getTipovia();  
+			clienteNomvia = cliente.getNomvia();  
+			clienteNumero = cliente.getNumero();  
+			clienteOtrdir = cliente.getOtrdir();  
+			clienteCodpos = cliente.getCodpos();  
+			clienteLocalidad = cliente.getLocalidad();  
+			clienteProvincia = cliente.getProvincia();  
+			clientePersona = cliente.getPersona();  
+			clienteTelefono = cliente.getTelefono();  
+			clienteTelefono2 = cliente.getTelefono2();  
+			clienteTelefono3 = cliente.getTelefono3();  
+			clienteFax = cliente.getFax();  
+			clienteEmail = cliente.getEmail();  
+			clienteInddoc = cliente.getInddoc();  
+			clientePaiemi = cliente.getPaiemi();  
+			clienteNumdoc = cliente.getNumdoc();  
+			clienteTipemp = cliente.getTipemp();  
+			clienteObscli = cliente.getObscli();  
+			clienteFecnew = cliente.getFecnew();  
+			clienteHornew = cliente.getHornew();  
+			clienteFecmod = cliente.getFecmod();  
+			clienteHormod = cliente.getHormod();  
+			clienteInactivo = cliente.getInactivo();  
+			clienteIndcal = cliente.getIndcal();  
+			clienteIndnom = cliente.getIndnom();  
+			clienteIndcoste = cliente.getIndcoste();  
+			clienteDivisa = cliente.getDivisa();  
+			clienteSoloases = cliente.getSoloases();  
+			clienteEnvioss = cliente.getEnvioss();  
+			clienteGrupotrabajo = cliente.getGrupotrabajo();  
+		}
+	
+	}
+	/**
+	 * Hon_emprnif shows join between Emprnif and Honorarios
+	 */
+	public static class Hon_emprnif extends  DefaultCtsqlDBVisitor {
+		
+		
+		private Integer emprnifCdg;  
+		
+		/**
+		 * Codigo de Empresa
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprnif_Cdg() {
+			return emprnifCdg;
+		}
+		
+		private Integer emprnifCodcli;  
+		
+		/**
+		 * Codigo de Cliente
+		 * @return the column 'codcli' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprnif_Codcli() {
+			return emprnifCodcli;
+		}
+		
+		private Date emprnifFecini;  
+		
+		/**
+		 * Fecha Inicio Relacion
+		 * @return the column 'fecini' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Fecini() {
+			return emprnifFecini;
+		}
+		
+		private Date emprnifFecfin;  
+		
+		/**
+		 * Fecha Fin Relacion
+		 * @return the column 'fecfin' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Fecfin() {
+			return emprnifFecfin;
+		}
+		
+		private String emprnifDescripcion;  
+		
+		/**
+		 * Descripcion de Empresa
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Descripcion() {
+			return emprnifDescripcion;
+		}
+		
+		private String emprnifAlias;  
+		
+		/**
+		 * Alias Breve Empresa
+		 * @return the column 'alias' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Alias() {
+			return emprnifAlias;
+		}
+		
+		private String emprnifInddoc;  
+		
+		/**
+		 * Tipo Documento
+		 * @return the column 'inddoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Inddoc() {
+			return emprnifInddoc;
+		}
+		
+		private String emprnifPaiemi;  
+		
+		/**
+		 * Pais Emisor
+		 * @return the column 'paiemi' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Paiemi() {
+			return emprnifPaiemi;
+		}
+		
+		private String emprnifNumdoc;  
+		
+		/**
+		 * Numero Documento
+		 * @return the column 'numdoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Numdoc() {
+			return emprnifNumdoc;
+		}
+		
+		private String emprnifRepresentante;  
+		
+		/**
+		 * Representante
+		 * @return the column 'representante' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Representante() {
+			return emprnifRepresentante;
+		}
+		
+		private String emprnifCargo;  
+		
+		/**
+		 * Cargo Representante
+		 * @return the column 'cargo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Cargo() {
+			return emprnifCargo;
+		}
+		
+		private Date emprnifFecnac;  
+		
+		/**
+		 * Fecha Nacimiento Representante
+		 * @return the column 'fecnac' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Fecnac() {
+			return emprnifFecnac;
+		}
+		
+		private String emprnifNrodocrep;  
+		
+		/**
+		 * Numero Documento Representante
+		 * @return the column 'nrodocrep' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Nrodocrep() {
+			return emprnifNrodocrep;
+		}
+		
+		private String emprnifCodadm;  
+		
+		/**
+		 * Administracion Hacienda
+		 * @return the column 'codadm' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Codadm() {
+			return emprnifCodadm;
+		}
+		
+		private String emprnifTipempr;  
+		
+		/**
+		 * Tipo de Empresario
+		 * @return the column 'tipempr' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Tipempr() {
+			return emprnifTipempr;
+		}
+		
+		private String emprnifSexo;  
+		
+		/**
+		 * Sexo
+		 * @return the column 'sexo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Sexo() {
+			return emprnifSexo;
+		}
+		
+		private Date emprnifFeccon;  
+		
+		/**
+		 * Fecha Constitucion / Nacimiento
+		 * @return the column 'feccon' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feccon() {
+			return emprnifFeccon;
+		}
+		
+		private String emprnifObsnif;  
+		
+		/**
+		 * Observaciones
+		 * @return the column 'obsnif' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Obsnif() {
+			return emprnifObsnif;
+		}
+		
+		private String emprnifDatreg;  
+		
+		/**
+		 * Datos de Inscripcion en el Registro
+		 * @return the column 'datreg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Datreg() {
+			return emprnifDatreg;
+		}
+		
+		private Date emprnifFecnew;  
+		
+		/**
+		 * Fecha Creacion Fila
+		 * @return the column 'fecnew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Fecnew() {
+			return emprnifFecnew;
+		}
+		
+		private Time emprnifHornew;  
+		
+		/**
+		 * Hora Creacion Fila
+		 * @return the column 'hornew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getEmprnif_Hornew() {
+			return emprnifHornew;
+		}
+		
+		private Date emprnifFecmod;  
+		
+		/**
+		 * Fecha Modificacion Fila
+		 * @return the column 'fecmod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Fecmod() {
+			return emprnifFecmod;
+		}
+		
+		private Time emprnifHormod;  
+		
+		/**
+		 * Hora Modificacion Fila
+		 * @return the column 'hormod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getEmprnif_Hormod() {
+			return emprnifHormod;
+		}
+		
+		private String emprnifTipdocrep;  
+		
+		/**
+		 * Tipo Documento Representante
+		 * @return the column 'tipdocrep' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Tipdocrep() {
+			return emprnifTipdocrep;
+		}
+		
+		private String emprnifPaidocrep;  
+		
+		/**
+		 * Pais Emisor Documento Representante
+		 * @return the column 'paidocrep' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Paidocrep() {
+			return emprnifPaidocrep;
+		}
+		
+		private String emprnifIndirpf;  
+		
+		/**
+		 * Indicador IRPF
+		 * @return the column 'indirpf' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Indirpf() {
+			return emprnifIndirpf;
+		}
+		
+		private String emprnifIndcal;  
+		
+		/**
+		 * Calendario Laboral
+		 * @return the column 'indcal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Indcal() {
+			return emprnifIndcal;
+		}
+		
+		private String emprnifIndnom;  
+		
+		/**
+		 * Nomina de Empresa
+		 * @return the column 'indnom' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Indnom() {
+			return emprnifIndnom;
+		}
+		
+		private String emprnifIndcoste;  
+		
+		/**
+		 * Estudio Costes
+		 * @return the column 'indcoste' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Indcoste() {
+			return emprnifIndcoste;
+		}
+		
+		private String emprnifDivisa;  
+		
+		/**
+		 * Divisa
+		 * @return the column 'divisa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Divisa() {
+			return emprnifDivisa;
+		}
+		
+		private String emprnifEnvioss;  
+		
+		/**
+		 * Envio de Seguros Sociales
+		 * @return the column 'envioss' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Envioss() {
+			return emprnifEnvioss;
+		}
+		
+		private String emprnifCecon;  
+		
+		/**
+		 * Concierto Economico
+		 * @return the column 'cecon' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Cecon() {
+			return emprnifCecon;
+		}
+		
+		private String emprnifModimpuesto;  
+		
+		/**
+		 * Modalidad declaraciones de impuestos
+		 * @return the column 'modimpuesto' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Modimpuesto() {
+			return emprnifModimpuesto;
+		}
+		
+		private String emprnifMod190;  
+		
+		/**
+		 * Modelo 190
+		 * @return the column 'mod190' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Mod190() {
+			return emprnifMod190;
+		}
+		
+		private Date emprnifFeciniportal;  
+		
+		/**
+		 * Fecha inicio portal
+		 * @return the column 'feciniportal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feciniportal() {
+			return emprnifFeciniportal;
+		}
+		
+		private Date emprnifFeccierrenomina;  
+		
+		/**
+		 * Fecha cierre nóminas
+		 * @return the column 'feccierrenomina' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feccierrenomina() {
+			return emprnifFeccierrenomina;
+		}
+		
+		private Integer emprnifMeseshistorico;  
+		
+		/**
+		 * Meses historico portal
+		 * @return the column 'meseshistorico' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprnif_Meseshistorico() {
+			return emprnifMeseshistorico;
+		}
+		public void visitHon_emprnif(Honorarios honorarios, Emprnif emprnif)
+		throws SQLException {
+			emprnifCdg = emprnif.getCdg();  
+			emprnifCodcli = emprnif.getCodcli();  
+			emprnifFecini = emprnif.getFecini();  
+			emprnifFecfin = emprnif.getFecfin();  
+			emprnifDescripcion = emprnif.getDescripcion();  
+			emprnifAlias = emprnif.getAlias();  
+			emprnifInddoc = emprnif.getInddoc();  
+			emprnifPaiemi = emprnif.getPaiemi();  
+			emprnifNumdoc = emprnif.getNumdoc();  
+			emprnifRepresentante = emprnif.getRepresentante();  
+			emprnifCargo = emprnif.getCargo();  
+			emprnifFecnac = emprnif.getFecnac();  
+			emprnifNrodocrep = emprnif.getNrodocrep();  
+			emprnifCodadm = emprnif.getCodadm();  
+			emprnifTipempr = emprnif.getTipempr();  
+			emprnifSexo = emprnif.getSexo();  
+			emprnifFeccon = emprnif.getFeccon();  
+			emprnifObsnif = emprnif.getObsnif();  
+			emprnifDatreg = emprnif.getDatreg();  
+			emprnifFecnew = emprnif.getFecnew();  
+			emprnifHornew = emprnif.getHornew();  
+			emprnifFecmod = emprnif.getFecmod();  
+			emprnifHormod = emprnif.getHormod();  
+			emprnifTipdocrep = emprnif.getTipdocrep();  
+			emprnifPaidocrep = emprnif.getPaidocrep();  
+			emprnifIndirpf = emprnif.getIndirpf();  
+			emprnifIndcal = emprnif.getIndcal();  
+			emprnifIndnom = emprnif.getIndnom();  
+			emprnifIndcoste = emprnif.getIndcoste();  
+			emprnifDivisa = emprnif.getDivisa();  
+			emprnifEnvioss = emprnif.getEnvioss();  
+			emprnifCecon = emprnif.getCecon();  
+			emprnifModimpuesto = emprnif.getModimpuesto();  
+			emprnifMod190 = emprnif.getMod190();  
+			emprnifFeciniportal = emprnif.getFeciniportal();  
+			emprnifFeccierrenomina = emprnif.getFeccierrenomina();  
+			emprnifMeseshistorico = emprnif.getMeseshistorico();  
+		}
+	
+	}
+	/**
+	 * Hon_empract shows join between Empract and Honorarios
+	 */
+	public static class Hon_empract extends  DefaultCtsqlDBVisitor {
+		
+		
+		private Integer empractCdg;  
+		
+		/**
+		 * Codigo de Actividad
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmpract_Cdg() {
+			return empractCdg;
+		}
+		
+		private String empractCodnsz;  
+		
+		/**
+		 * Codigo BBX
+		 * @return the column 'codnsz' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Codnsz() {
+			return empractCodnsz;
+		}
+		
+		private Integer empractCodemp;  
+		
+		/**
+		 * Codigo de Empresa
+		 * @return the column 'codemp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmpract_Codemp() {
+			return empractCodemp;
+		}
+		
+		private String empractConvenio;  
+		
+		/**
+		 * Codigo de Convenio
+		 * @return the column 'convenio' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Convenio() {
+			return empractConvenio;
+		}
+		
+		private String empractDescripcion;  
+		
+		/**
+		 * Descripcion de Actividad
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Descripcion() {
+			return empractDescripcion;
+		}
+		
+		private String empractAlias;  
+		
+		/**
+		 * Alias Breve
+		 * @return the column 'alias' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Alias() {
+			return empractAlias;
+		}
+		
+		private Date empractFecini;  
+		
+		/**
+		 * Fecha Inicial Relacion
+		 * @return the column 'fecini' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmpract_Fecini() {
+			return empractFecini;
+		}
+		
+		private Date empractFecfin;  
+		
+		/**
+		 * Fecha Final Relacion
+		 * @return the column 'fecfin' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmpract_Fecfin() {
+			return empractFecfin;
+		}
+		
+		private String empractActeco;  
+		
+		/**
+		 * Actividad Economica
+		 * @return the column 'acteco' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Acteco() {
+			return empractActeco;
+		}
+		
+		private String empractEpiiae;  
+		
+		/**
+		 * Epigrafe IAE
+		 * @return the column 'epiiae' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Epiiae() {
+			return empractEpiiae;
+		}
+		
+		private String empractCnae;  
+		
+		/**
+		 * Codigo Nacional Actividad Economica - 1993 Rev.1
+		 * @return the column 'cnae' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Cnae() {
+			return empractCnae;
+		}
+		
+		private String empractCnae2009;  
+		
+		/**
+		 * Codigo Nacional Actividad Economica - 2009
+		 * @return the column 'cnae2009' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Cnae2009() {
+			return empractCnae2009;
+		}
+		
+		private Date empractFecnew;  
+		
+		/**
+		 * Fecha Creacion Fila
+		 * @return the column 'fecnew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmpract_Fecnew() {
+			return empractFecnew;
+		}
+		
+		private Time empractHornew;  
+		
+		/**
+		 * Hora Creacion Fila
+		 * @return the column 'hornew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getEmpract_Hornew() {
+			return empractHornew;
+		}
+		
+		private Date empractFecmod;  
+		
+		/**
+		 * Fecha Modificacion Fila
+		 * @return the column 'fecmod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmpract_Fecmod() {
+			return empractFecmod;
+		}
+		
+		private Time empractHormod;  
+		
+		/**
+		 * Hora Modificacion Fila
+		 * @return the column 'hormod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getEmpract_Hormod() {
+			return empractHormod;
+		}
+		
+		private String empractIndred;  
+		
+		/**
+		 * Sistema Red
+		 * @return the column 'indred' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Indred() {
+			return empractIndred;
+		}
+		
+		private String empractIndmutua;  
+		
+		/**
+		 * Prestacion IT a cargo de Mutua
+		 * @return the column 'indmutua' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Indmutua() {
+			return empractIndmutua;
+		}
+		
+		private String empractIndtc1;  
+		
+		/**
+		 * Impresion TC1 Separado
+		 * @return the column 'indtc1' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Indtc1() {
+			return empractIndtc1;
+		}
+		
+		private String empractIndcal;  
+		
+		/**
+		 * Calendario Laboral
+		 * @return the column 'indcal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Indcal() {
+			return empractIndcal;
+		}
+		
+		private String empractIndnom;  
+		
+		/**
+		 * Nomina de Empresa
+		 * @return the column 'indnom' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Indnom() {
+			return empractIndnom;
+		}
+		
+		private String empractIndcoste;  
+		
+		/**
+		 * Estudio Costes
+		 * @return the column 'indcoste' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Indcoste() {
+			return empractIndcoste;
+		}
+		
+		private String empractEnvioss;  
+		
+		/**
+		 * Envio de Seguros Sociales
+		 * @return the column 'envioss' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Envioss() {
+			return empractEnvioss;
+		}
+		
+		private String empractFlc;  
+		
+		/**
+		 * Cotiza a la Fundacion Laboral de la Construccion
+		 * @return the column 'flc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Flc() {
+			return empractFlc;
+		}
+		
+		private String empractColss;  
+		
+		/**
+		 * Colabora con la Seguridad Social
+		 * @return the column 'colss' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Colss() {
+			return empractColss;
+		}
+		
+		private String empractIngespemp;  
+		
+		/**
+		 * Ingreso R.Especie A/C Empresa
+		 * @return the column 'ingespemp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Ingespemp() {
+			return empractIngespemp;
+		}
+		
+		private String empractModpago;  
+		
+		/**
+		 * Modalidad de Pago
+		 * @return the column 'modpago' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Modpago() {
+			return empractModpago;
+		}
+		
+		private String empractTiponomina;  
+		
+		/**
+		 * Tipo Nómina Gráfica
+		 * @return the column 'tiponomina' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Tiponomina() {
+			return empractTiponomina;
+		}
+		
+		private String empractIndlogo;  
+		
+		/**
+		 * Indicador de Logo
+		 * @return the column 'indlogo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Indlogo() {
+			return empractIndlogo;
+		}
+		
+		private String empractIndfirma;  
+		
+		/**
+		 * Indicador de Firma
+		 * @return the column 'indfirma' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Indfirma() {
+			return empractIndfirma;
+		}
+		
+		private String empractIndregimen;  
+		
+		/**
+		 * Régimen
+		 * @return the column 'indregimen' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Indregimen() {
+			return empractIndregimen;
+		}
+		
+		private String empractPrevencion;  
+		
+		/**
+		 * Servicio de prevención
+		 * @return the column 'prevencion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Prevencion() {
+			return empractPrevencion;
+		}
+		
+		private String empractIndsiltra;  
+		
+		/**
+		 * SILTRA
+		 * @return the column 'indsiltra' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Indsiltra() {
+			return empractIndsiltra;
+		}
+		
+		private String empractAutoriza;  
+		
+		/**
+		 * Autorización
+		 * @return the column 'autoriza' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Autoriza() {
+			return empractAutoriza;
+		}
+		public void visitHon_empract(Honorarios honorarios, Empract empract)
+		throws SQLException {
+			empractCdg = empract.getCdg();  
+			empractCodnsz = empract.getCodnsz();  
+			empractCodemp = empract.getCodemp();  
+			empractConvenio = empract.getConvenio();  
+			empractDescripcion = empract.getDescripcion();  
+			empractAlias = empract.getAlias();  
+			empractFecini = empract.getFecini();  
+			empractFecfin = empract.getFecfin();  
+			empractActeco = empract.getActeco();  
+			empractEpiiae = empract.getEpiiae();  
+			empractCnae = empract.getCnae();  
+			empractCnae2009 = empract.getCnae2009();  
+			empractFecnew = empract.getFecnew();  
+			empractHornew = empract.getHornew();  
+			empractFecmod = empract.getFecmod();  
+			empractHormod = empract.getHormod();  
+			empractIndred = empract.getIndred();  
+			empractIndmutua = empract.getIndmutua();  
+			empractIndtc1 = empract.getIndtc1();  
+			empractIndcal = empract.getIndcal();  
+			empractIndnom = empract.getIndnom();  
+			empractIndcoste = empract.getIndcoste();  
+			empractEnvioss = empract.getEnvioss();  
+			empractFlc = empract.getFlc();  
+			empractColss = empract.getColss();  
+			empractIngespemp = empract.getIngespemp();  
+			empractModpago = empract.getModpago();  
+			empractTiponomina = empract.getTiponomina();  
+			empractIndlogo = empract.getIndlogo();  
+			empractIndfirma = empract.getIndfirma();  
+			empractIndregimen = empract.getIndregimen();  
+			empractPrevencion = empract.getPrevencion();  
+			empractIndsiltra = empract.getIndsiltra();  
+			empractAutoriza = empract.getAutoriza();  
+		}
+	
+	}
+
 	public void visitTipboni(Tipboni tipboni)
 	throws SQLException{
 	}
 
-	public void visitRel_bpe_bon(Bonifica bonifica, Tipboni tipboni)
-	throws SQLException {
-	}
 
 
 	public void visitNivel(Nivel nivel)
@@ -5254,7 +8294,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private String emprperCodnsz;  
 		
 		/**
-		 * Código interno
+		 * Codigo BBX
 		 * @return the column 'codnsz' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -5459,6 +8499,61 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprper_Noirpf() {
 			return emprperNoirpf;
 		}
+		
+		private String emprperNosegsoc;  
+		
+		/**
+		 * No seg. soc. (de trabajador)
+		 * @return the column 'nosegsoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Nosegsoc() {
+			return emprperNosegsoc;
+		}
+		
+		private String emprperJubiladoactivo;  
+		
+		/**
+		 * Trabajador jubilado en activo
+		 * @return the column 'jubiladoactivo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Jubiladoactivo() {
+			return emprperJubiladoactivo;
+		}
+		
+		private String emprperCertificado;  
+		
+		/**
+		 * Certificado Procesado
+		 * @return the column 'certificado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Certificado() {
+			return emprperCertificado;
+		}
+		
+		private String emprperFamiliar;  
+		
+		/**
+		 * Familiar de 1º grado
+		 * @return the column 'familiar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Familiar() {
+			return emprperFamiliar;
+		}
+		
+		private String emprperNoresidente;  
+		
+		/**
+		 * Trabajador no residente
+		 * @return the column 'noresidente' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Noresidente() {
+			return emprperNoresidente;
+		}
 		public void visitTrabinci_emprper(Trabinci trabinci, Emprper emprper)
 		throws SQLException {
 			emprperCdg = emprper.getCdg();  
@@ -5482,6 +8577,11 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprperIndgrupo = emprper.getIndgrupo();  
 			emprperPariente = emprper.getPariente();  
 			emprperNoirpf = emprper.getNoirpf();  
+			emprperNosegsoc = emprper.getNosegsoc();  
+			emprperJubiladoactivo = emprper.getJubiladoactivo();  
+			emprperCertificado = emprper.getCertificado();  
+			emprperFamiliar = emprper.getFamiliar();  
+			emprperNoresidente = emprper.getNoresidente();  
 		}
 	
 	}
@@ -5490,15 +8590,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	throws SQLException{
 	}
 
-	public void visitFinexdf_findf(Finipextdf finipextdf, Finiquitodf finiquitodf)
-	throws SQLException {
-	}
-	public void visitFiniddf_findf(Finindemdf finindemdf, Finiquitodf finiquitodf)
-	throws SQLException {
-	}
-	public void visitFindtodf_findf(Finidtodf finidtodf, Finiquitodf finiquitodf)
-	throws SQLException {
-	}
 
 	/**
 	 * Findf_emprper shows join between Emprper and Finiquitodf
@@ -5531,7 +8622,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private String emprperCodnsz;  
 		
 		/**
-		 * Código interno
+		 * Codigo BBX
 		 * @return the column 'codnsz' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -5736,6 +8827,61 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprper_Noirpf() {
 			return emprperNoirpf;
 		}
+		
+		private String emprperNosegsoc;  
+		
+		/**
+		 * No seg. soc. (de trabajador)
+		 * @return the column 'nosegsoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Nosegsoc() {
+			return emprperNosegsoc;
+		}
+		
+		private String emprperJubiladoactivo;  
+		
+		/**
+		 * Trabajador jubilado en activo
+		 * @return the column 'jubiladoactivo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Jubiladoactivo() {
+			return emprperJubiladoactivo;
+		}
+		
+		private String emprperCertificado;  
+		
+		/**
+		 * Certificado Procesado
+		 * @return the column 'certificado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Certificado() {
+			return emprperCertificado;
+		}
+		
+		private String emprperFamiliar;  
+		
+		/**
+		 * Familiar de 1º grado
+		 * @return the column 'familiar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Familiar() {
+			return emprperFamiliar;
+		}
+		
+		private String emprperNoresidente;  
+		
+		/**
+		 * Trabajador no residente
+		 * @return the column 'noresidente' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Noresidente() {
+			return emprperNoresidente;
+		}
 		public void visitFindf_emprper(Finiquitodf finiquitodf, Emprper emprper)
 		throws SQLException {
 			emprperCdg = emprper.getCdg();  
@@ -5759,6 +8905,11 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprperIndgrupo = emprper.getIndgrupo();  
 			emprperPariente = emprper.getPariente();  
 			emprperNoirpf = emprper.getNoirpf();  
+			emprperNosegsoc = emprper.getNosegsoc();  
+			emprperJubiladoactivo = emprper.getJubiladoactivo();  
+			emprperCertificado = emprper.getCertificado();  
+			emprperFamiliar = emprper.getFamiliar();  
+			emprperNoresidente = emprper.getNoresidente();  
 		}
 	
 	}
@@ -5833,6 +8984,12 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	
 	}
 
+	public void visitBaseartista(Baseartista baseartista)
+	throws SQLException{
+	}
+
+
+
 	public void visitFinidto(Finidto finidto)
 	throws SQLException{
 	}
@@ -5864,6 +9021,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		 */
 		public Date getFiniquito_Fecbaj() {
 			return finiquitoFecbaj;
+		}
+		
+		private String finiquitoCodcausa;  
+		
+		/**
+		 * Código de la causa de baja
+		 * @return the column 'codcausa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getFiniquito_Codcausa() {
+			return finiquitoCodcausa;
 		}
 		
 		private String finiquitoCausa;  
@@ -6177,6 +9345,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		throws SQLException {
 			finiquitoCodper = finiquito.getCodper();  
 			finiquitoFecbaj = finiquito.getFecbaj();  
+			finiquitoCodcausa = finiquito.getCodcausa();  
 			finiquitoCausa = finiquito.getCausa();  
 			finiquitoVacfecini = finiquito.getVacfecini();  
 			finiquitoVacimporte = finiquito.getVacimporte();  
@@ -6208,6 +9377,18 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		}
 	
 	}
+
+	public void visitTipocargos(Tipocargos tipocargos)
+	throws SQLException{
+	}
+
+	public void visitLin_tipocargos(Lintipocargos lintipocargos, Tipocargos tipocargos)
+	throws SQLException {
+	}
+	public void visitRel_tipocargos(Lincargos lincargos, Tipocargos tipocargos)
+	throws SQLException {
+	}
+
 
 	public void visitVariaciones(Variaciones variaciones)
 	throws SQLException{
@@ -6604,6 +9785,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getCliente_Envioss() {
 			return clienteEnvioss;
 		}
+		
+		private String clienteGrupotrabajo;  
+		
+		/**
+		 * Grupo de trabajo
+		 * @return the column 'grupotrabajo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Grupotrabajo() {
+			return clienteGrupotrabajo;
+		}
 		public void visitRel_var_cli(Variaciones variaciones, Cliente cliente)
 		throws SQLException {
 			clienteCdg = cliente.getCdg();  
@@ -6641,6 +9833,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			clienteDivisa = cliente.getDivisa();  
 			clienteSoloases = cliente.getSoloases();  
 			clienteEnvioss = cliente.getEnvioss();  
+			clienteGrupotrabajo = cliente.getGrupotrabajo();  
 		}
 	
 	}
@@ -7023,6 +10216,39 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprnif_Mod190() {
 			return emprnifMod190;
 		}
+		
+		private Date emprnifFeciniportal;  
+		
+		/**
+		 * Fecha inicio portal
+		 * @return the column 'feciniportal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feciniportal() {
+			return emprnifFeciniportal;
+		}
+		
+		private Date emprnifFeccierrenomina;  
+		
+		/**
+		 * Fecha cierre nóminas
+		 * @return the column 'feccierrenomina' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feccierrenomina() {
+			return emprnifFeccierrenomina;
+		}
+		
+		private Integer emprnifMeseshistorico;  
+		
+		/**
+		 * Meses historico portal
+		 * @return the column 'meseshistorico' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprnif_Meseshistorico() {
+			return emprnifMeseshistorico;
+		}
 		public void visitRel_var_emp(Variaciones variaciones, Emprnif emprnif)
 		throws SQLException {
 			emprnifCdg = emprnif.getCdg();  
@@ -7059,6 +10285,9 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprnifCecon = emprnif.getCecon();  
 			emprnifModimpuesto = emprnif.getModimpuesto();  
 			emprnifMod190 = emprnif.getMod190();  
+			emprnifFeciniportal = emprnif.getFeciniportal();  
+			emprnifFeccierrenomina = emprnif.getFeccierrenomina();  
+			emprnifMeseshistorico = emprnif.getMeseshistorico();  
 		}
 	
 	}
@@ -7189,6 +10418,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return empractCnae;
 		}
 		
+		private String empractCnae2009;  
+		
+		/**
+		 * Codigo Nacional Actividad Economica - 2009
+		 * @return the column 'cnae2009' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Cnae2009() {
+			return empractCnae2009;
+		}
+		
 		private Date empractFecnew;  
 		
 		/**
@@ -7231,17 +10471,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		 */
 		public Time getEmpract_Hormod() {
 			return empractHormod;
-		}
-		
-		private String empractCnae2009;  
-		
-		/**
-		 * Codigo Nacional Actividad Economica - 2009
-		 * @return the column 'cnae2009' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEmpract_Cnae2009() {
-			return empractCnae2009;
 		}
 		
 		private String empractIndred;  
@@ -7419,6 +10648,28 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmpract_Prevencion() {
 			return empractPrevencion;
 		}
+		
+		private String empractIndsiltra;  
+		
+		/**
+		 * SILTRA
+		 * @return the column 'indsiltra' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Indsiltra() {
+			return empractIndsiltra;
+		}
+		
+		private String empractAutoriza;  
+		
+		/**
+		 * Autorización
+		 * @return the column 'autoriza' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Autoriza() {
+			return empractAutoriza;
+		}
 		public void visitRel_var_act(Variaciones variaciones, Empract empract)
 		throws SQLException {
 			empractCdg = empract.getCdg();  
@@ -7432,11 +10683,11 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			empractActeco = empract.getActeco();  
 			empractEpiiae = empract.getEpiiae();  
 			empractCnae = empract.getCnae();  
+			empractCnae2009 = empract.getCnae2009();  
 			empractFecnew = empract.getFecnew();  
 			empractHornew = empract.getHornew();  
 			empractFecmod = empract.getFecmod();  
 			empractHormod = empract.getHormod();  
-			empractCnae2009 = empract.getCnae2009();  
 			empractIndred = empract.getIndred();  
 			empractIndmutua = empract.getIndmutua();  
 			empractIndtc1 = empract.getIndtc1();  
@@ -7453,6 +10704,8 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			empractIndfirma = empract.getIndfirma();  
 			empractIndregimen = empract.getIndregimen();  
 			empractPrevencion = empract.getPrevencion();  
+			empractIndsiltra = empract.getIndsiltra();  
+			empractAutoriza = empract.getAutoriza();  
 		}
 	
 	}
@@ -7726,6 +10979,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		 */
 		public Date getFiniquito_Fecbaj() {
 			return finiquitoFecbaj;
+		}
+		
+		private String finiquitoCodcausa;  
+		
+		/**
+		 * Código de la causa de baja
+		 * @return the column 'codcausa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getFiniquito_Codcausa() {
+			return finiquitoCodcausa;
 		}
 		
 		private String finiquitoCausa;  
@@ -8039,6 +11303,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		throws SQLException {
 			finiquitoCodper = finiquito.getCodper();  
 			finiquitoFecbaj = finiquito.getFecbaj();  
+			finiquitoCodcausa = finiquito.getCodcausa();  
 			finiquitoCausa = finiquito.getCausa();  
 			finiquitoVacfecini = finiquito.getVacfecini();  
 			finiquitoVacimporte = finiquito.getVacimporte();  
@@ -8070,6 +11335,15 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		}
 	
 	}
+
+	public void visitCargos(Cargos cargos)
+	throws SQLException{
+	}
+
+	public void visitLin_cargos(Lincargos lincargos, Cargos cargos)
+	throws SQLException {
+	}
+
 
 	public void visitLin_divisa(Lin_divisa lin_divisa)
 	throws SQLException{
@@ -8152,352 +11426,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	}
 
 
-	/**
-	 * Finexdf_findf shows join between Finiquitodf and Finipextdf
-	 */
-	public static class Finexdf_findf extends  DefaultCtsqlDBVisitor {
-		
-		
-		private Integer finiquitodfCodper;  
-		
-		/**
-		 * Codigo de Trabajador
-		 * @return the column 'codper' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getFiniquitodf_Codper() {
-			return finiquitodfCodper;
-		}
-		
-		private Date finiquitodfFecbaj;  
-		
-		/**
-		 * Fecha de Baja
-		 * @return the column 'fecbaj' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Date getFiniquitodf_Fecbaj() {
-			return finiquitodfFecbaj;
-		}
-		
-		private String finiquitodfCausa;  
-		
-		/**
-		 * Causa de Baja
-		 * @return the column 'causa' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getFiniquitodf_Causa() {
-			return finiquitodfCausa;
-		}
-		
-		private Date finiquitodfVacfecini;  
-		
-		/**
-		 * Fecha Desde Vacaciones
-		 * @return the column 'vacfecini' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Date getFiniquitodf_Vacfecini() {
-			return finiquitodfVacfecini;
-		}
-		
-		private BigDecimal finiquitodfVacimporte;  
-		
-		/**
-		 * Importe Vacaciones
-		 * @return the column 'vacimporte' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Vacimporte() {
-			return finiquitodfVacimporte;
-		}
-		
-		private BigDecimal finiquitodfTotal_conceptos;  
-		
-		/**
-		 * Total Conceptos Finiquito
-		 * @return the column 'total_conceptos' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Total_conceptos() {
-			return finiquitodfTotal_conceptos;
-		}
-		
-		private BigDecimal finiquitodfBase;  
-		
-		/**
-		 * Base I.R.P.F.
-		 * @return the column 'base' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Base() {
-			return finiquitodfBase;
-		}
-		
-		private BigDecimal finiquitodfIrpf;  
-		
-		/**
-		 * % I.R.P.F.
-		 * @return the column 'irpf' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Irpf() {
-			return finiquitodfIrpf;
-		}
-		
-		private BigDecimal finiquitodfImporte_irpf;  
-		
-		/**
-		 * Importe Retenido I.R.P.F.
-		 * @return the column 'importe_irpf' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Importe_irpf() {
-			return finiquitodfImporte_irpf;
-		}
-		
-		private BigDecimal finiquitodfLiquido;  
-		
-		/**
-		 * Importe Liquido
-		 * @return the column 'liquido' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Liquido() {
-			return finiquitodfLiquido;
-		}
-		
-		private BigDecimal finiquitodfImportesin;  
-		
-		/**
-		 * Importe Indemnizaciones no sujetas a I.R.P.F.
-		 * @return the column 'importesin' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Importesin() {
-			return finiquitodfImportesin;
-		}
-		
-		private Date finiquitodfFecnew;  
-		
-		/**
-		 * Fecha Creacion Fila
-		 * @return the column 'fecnew' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Date getFiniquitodf_Fecnew() {
-			return finiquitodfFecnew;
-		}
-		
-		private Time finiquitodfHornew;  
-		
-		/**
-		 * Hora Creacion Fila
-		 * @return the column 'hornew' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Time getFiniquitodf_Hornew() {
-			return finiquitodfHornew;
-		}
-		
-		private Date finiquitodfFecmod;  
-		
-		/**
-		 * Fecha Modificacion Fila
-		 * @return the column 'fecmod' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Date getFiniquitodf_Fecmod() {
-			return finiquitodfFecmod;
-		}
-		
-		private Time finiquitodfHormod;  
-		
-		/**
-		 * Hora Modificacion Fila
-		 * @return the column 'hormod' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Time getFiniquitodf_Hormod() {
-			return finiquitodfHormod;
-		}
-		
-		private Integer finiquitodfCdg;  
-		
-		/**
-		 * Codigo de Finiquito de Diferencias
-		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getFiniquitodf_Cdg() {
-			return finiquitodfCdg;
-		}
-		
-		private Integer finiquitodfCdgnom;  
-		
-		/**
-		 * Codigo de la Nomina Resumen de Atrasos
-		 * @return the column 'cdgnom' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getFiniquitodf_Cdgnom() {
-			return finiquitodfCdgnom;
-		}
-		
-		private Date finiquitodfFeccobreal;  
-		
-		/**
-		 * Fecha de Cobro Real
-		 * @return the column 'feccobreal' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Date getFiniquitodf_Feccobreal() {
-			return finiquitodfFeccobreal;
-		}
-		
-		private String finiquitodfDivisa;  
-		
-		/**
-		 * Divisa
-		 * @return the column 'divisa' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getFiniquitodf_Divisa() {
-			return finiquitodfDivisa;
-		}
-		
-		private Integer finiquitodfDiasvac;  
-		
-		/**
-		 * Días vacaciones
-		 * @return the column 'diasvac' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getFiniquitodf_Diasvac() {
-			return finiquitodfDiasvac;
-		}
-		
-		private BigDecimal finiquitodfCostessemp;  
-		
-		/**
-		 * Coste S.S. empresa
-		 * @return the column 'costessemp' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Costessemp() {
-			return finiquitodfCostessemp;
-		}
-		
-		private String finiquitodfCodbas;  
-		
-		/**
-		 * Grupo de tarifa
-		 * @return the column 'codbas' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getFiniquitodf_Codbas() {
-			return finiquitodfCodbas;
-		}
-		
-		private BigDecimal finiquitodfBasecg;  
-		
-		/**
-		 * Base Contingencias Generales
-		 * @return the column 'basecg' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Basecg() {
-			return finiquitodfBasecg;
-		}
-		
-		private BigDecimal finiquitodfPrccg;  
-		
-		/**
-		 * % Contingencias Generales
-		 * @return the column 'prccg' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Prccg() {
-			return finiquitodfPrccg;
-		}
-		
-		private BigDecimal finiquitodfImportecg;  
-		
-		/**
-		 * Importe Contingencias Generales
-		 * @return the column 'importecg' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Importecg() {
-			return finiquitodfImportecg;
-		}
-		
-		private BigDecimal finiquitodfBaseacc;  
-		
-		/**
-		 * Base Accidente de Trabajo
-		 * @return the column 'baseacc' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Baseacc() {
-			return finiquitodfBaseacc;
-		}
-		
-		private BigDecimal finiquitodfPrcacc;  
-		
-		/**
-		 * % Accidente de Trabajo
-		 * @return the column 'prcacc' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Prcacc() {
-			return finiquitodfPrcacc;
-		}
-		
-		private BigDecimal finiquitodfImporteacc;  
-		
-		/**
-		 * Importe Accidente de Trabajo
-		 * @return the column 'importeacc' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Importeacc() {
-			return finiquitodfImporteacc;
-		}
-		public void visitFinexdf_findf(Finipextdf finipextdf, Finiquitodf finiquitodf)
-		throws SQLException {
-			finiquitodfCodper = finiquitodf.getCodper();  
-			finiquitodfFecbaj = finiquitodf.getFecbaj();  
-			finiquitodfCausa = finiquitodf.getCausa();  
-			finiquitodfVacfecini = finiquitodf.getVacfecini();  
-			finiquitodfVacimporte = finiquitodf.getVacimporte();  
-			finiquitodfTotal_conceptos = finiquitodf.getTotal_conceptos();  
-			finiquitodfBase = finiquitodf.getBase();  
-			finiquitodfIrpf = finiquitodf.getIrpf();  
-			finiquitodfImporte_irpf = finiquitodf.getImporte_irpf();  
-			finiquitodfLiquido = finiquitodf.getLiquido();  
-			finiquitodfImportesin = finiquitodf.getImportesin();  
-			finiquitodfFecnew = finiquitodf.getFecnew();  
-			finiquitodfHornew = finiquitodf.getHornew();  
-			finiquitodfFecmod = finiquitodf.getFecmod();  
-			finiquitodfHormod = finiquitodf.getHormod();  
-			finiquitodfCdg = finiquitodf.getCdg();  
-			finiquitodfCdgnom = finiquitodf.getCdgnom();  
-			finiquitodfFeccobreal = finiquitodf.getFeccobreal();  
-			finiquitodfDivisa = finiquitodf.getDivisa();  
-			finiquitodfDiasvac = finiquitodf.getDiasvac();  
-			finiquitodfCostessemp = finiquitodf.getCostessemp();  
-			finiquitodfCodbas = finiquitodf.getCodbas();  
-			finiquitodfBasecg = finiquitodf.getBasecg();  
-			finiquitodfPrccg = finiquitodf.getPrccg();  
-			finiquitodfImportecg = finiquitodf.getImportecg();  
-			finiquitodfBaseacc = finiquitodf.getBaseacc();  
-			finiquitodfPrcacc = finiquitodf.getPrcacc();  
-			finiquitodfImporteacc = finiquitodf.getImporteacc();  
-		}
-	
-	}
 	/**
 	 * Finexdf_com shows join between Complemento and Finipextdf
 	 */
@@ -8591,6 +11519,28 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getComplemento_Dinesp() {
 			return complementoDinesp;
 		}
+		
+		private String complementoConcepto;  
+		
+		/**
+		 * Concepto
+		 * @return the column 'concepto' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getComplemento_Concepto() {
+			return complementoConcepto;
+		}
+		
+		private String complementoExcinc;  
+		
+		/**
+		 * Indicativo excluido/incluido
+		 * @return the column 'excinc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getComplemento_Excinc() {
+			return complementoExcinc;
+		}
 		public void visitFinexdf_com(Finipextdf finipextdf, Complemento complemento)
 		throws SQLException {
 			complementoCdg = complemento.getCdg();  
@@ -8601,9 +11551,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			complementoFijovar = complemento.getFijovar();  
 			complementoIndcom = complemento.getIndcom();  
 			complementoDinesp = complemento.getDinesp();  
+			complementoConcepto = complemento.getConcepto();  
+			complementoExcinc = complemento.getExcinc();  
 		}
 	
 	}
+
+	public void visitRemesace(Remesace remesace)
+	throws SQLException{
+	}
+
+
 
 	public void visitMinor_20(Minor_20 minor_20)
 	throws SQLException{
@@ -9060,11 +12018,661 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	
 	}
 
-	public void visitDb_version(Db_version db_version)
+	public void visitTr_tramos(Tr_tramos tr_tramos)
 	throws SQLException{
 	}
 
+	public void visitTr_d_tramos(Tr_datos tr_datos, Tr_tramos tr_tramos)
+	throws SQLException {
+	}
+	public void visitTr_p_tramos(Tr_peculiar tr_peculiar, Tr_tramos tr_tramos)
+	throws SQLException {
+	}
 
+	/**
+	 * Rel_tr_liquidacion shows join between Tr_liquidacion and Tr_tramos
+	 */
+	public static class Rel_tr_liquidacion extends  DefaultCtsqlDBVisitor {
+		
+		
+		private Integer tr_liquidacionCdg;  
+		
+		/**
+		 * Código de liquidación
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getTr_liquidacion_Cdg() {
+			return tr_liquidacionCdg;
+		}
+		
+		private Integer tr_liquidacionActividad;  
+		
+		/**
+		 * Código de actividad
+		 * @return the column 'actividad' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getTr_liquidacion_Actividad() {
+			return tr_liquidacionActividad;
+		}
+		
+		private String tr_liquidacionDescripcion;  
+		
+		/**
+		 * Descripción de actividad
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTr_liquidacion_Descripcion() {
+			return tr_liquidacionDescripcion;
+		}
+		
+		private String tr_liquidacionRegimen;  
+		
+		/**
+		 * Régimen de la Seguridad Social
+		 * @return the column 'regimen' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTr_liquidacion_Regimen() {
+			return tr_liquidacionRegimen;
+		}
+		
+		private String tr_liquidacionNumeross;  
+		
+		/**
+		 * Número de inscripción a la Seguridad Social
+		 * @return the column 'numeross' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTr_liquidacion_Numeross() {
+			return tr_liquidacionNumeross;
+		}
+		
+		private String tr_liquidacionTipo;  
+		
+		/**
+		 * Tipo de liquidación
+		 * @return the column 'tipo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTr_liquidacion_Tipo() {
+			return tr_liquidacionTipo;
+		}
+		
+		private Integer tr_liquidacionMes_desde;  
+		
+		/**
+		 * Mes inicial de la liquidación
+		 * @return the column 'mes_desde' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getTr_liquidacion_Mes_desde() {
+			return tr_liquidacionMes_desde;
+		}
+		
+		private Integer tr_liquidacionAnho_desde;  
+		
+		/**
+		 * Año inicial de la liquidación
+		 * @return the column 'anho_desde' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getTr_liquidacion_Anho_desde() {
+			return tr_liquidacionAnho_desde;
+		}
+		
+		private Integer tr_liquidacionMes_hasta;  
+		
+		/**
+		 * Mes final de la liquidación
+		 * @return the column 'mes_hasta' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getTr_liquidacion_Mes_hasta() {
+			return tr_liquidacionMes_hasta;
+		}
+		
+		private Integer tr_liquidacionAnho_hasta;  
+		
+		/**
+		 * Año final de la liquidación
+		 * @return the column 'anho_hasta' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getTr_liquidacion_Anho_hasta() {
+			return tr_liquidacionAnho_hasta;
+		}
+		
+		private Integer tr_liquidacionMes_control;  
+		
+		/**
+		 * Mes de abono
+		 * @return the column 'mes_control' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getTr_liquidacion_Mes_control() {
+			return tr_liquidacionMes_control;
+		}
+		
+		private Integer tr_liquidacionAnho_control;  
+		
+		/**
+		 * Año de abono
+		 * @return the column 'anho_control' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getTr_liquidacion_Anho_control() {
+			return tr_liquidacionAnho_control;
+		}
+		
+		private String tr_liquidacionReferencia_externa;  
+		
+		/**
+		 * Identificador de la liquidación
+		 * @return the column 'referencia_externa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTr_liquidacion_Referencia_externa() {
+			return tr_liquidacionReferencia_externa;
+		}
+		
+		private Date tr_liquidacionFecha_recaudacion;  
+		
+		/**
+		 * Fecha de recaudación
+		 * @return the column 'fecha_recaudacion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getTr_liquidacion_Fecha_recaudacion() {
+			return tr_liquidacionFecha_recaudacion;
+		}
+		
+		private Time tr_liquidacionHora_recaudacion;  
+		
+		/**
+		 * Hora de recaudación
+		 * @return the column 'hora_recaudacion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getTr_liquidacion_Hora_recaudacion() {
+			return tr_liquidacionHora_recaudacion;
+		}
+		
+		private String tr_liquidacionEstado;  
+		
+		/**
+		 * Estado de la liquidación
+		 * @return the column 'estado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTr_liquidacion_Estado() {
+			return tr_liquidacionEstado;
+		}
+		
+		private String tr_liquidacionBloqueado;  
+		
+		/**
+		 * bloqueado
+		 * @return the column 'bloqueado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTr_liquidacion_Bloqueado() {
+			return tr_liquidacionBloqueado;
+		}
+		
+		private String tr_liquidacionSimilar;  
+		
+		/**
+		 * similar
+		 * @return the column 'similar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTr_liquidacion_Similar() {
+			return tr_liquidacionSimilar;
+		}
+		public void visitRel_tr_liquidacion(Tr_tramos tr_tramos, Tr_liquidacion tr_liquidacion)
+		throws SQLException {
+			tr_liquidacionCdg = tr_liquidacion.getCdg();  
+			tr_liquidacionActividad = tr_liquidacion.getActividad();  
+			tr_liquidacionDescripcion = tr_liquidacion.getDescripcion();  
+			tr_liquidacionRegimen = tr_liquidacion.getRegimen();  
+			tr_liquidacionNumeross = tr_liquidacion.getNumeross();  
+			tr_liquidacionTipo = tr_liquidacion.getTipo();  
+			tr_liquidacionMes_desde = tr_liquidacion.getMes_desde();  
+			tr_liquidacionAnho_desde = tr_liquidacion.getAnho_desde();  
+			tr_liquidacionMes_hasta = tr_liquidacion.getMes_hasta();  
+			tr_liquidacionAnho_hasta = tr_liquidacion.getAnho_hasta();  
+			tr_liquidacionMes_control = tr_liquidacion.getMes_control();  
+			tr_liquidacionAnho_control = tr_liquidacion.getAnho_control();  
+			tr_liquidacionReferencia_externa = tr_liquidacion.getReferencia_externa();  
+			tr_liquidacionFecha_recaudacion = tr_liquidacion.getFecha_recaudacion();  
+			tr_liquidacionHora_recaudacion = tr_liquidacion.getHora_recaudacion();  
+			tr_liquidacionEstado = tr_liquidacion.getEstado();  
+			tr_liquidacionBloqueado = tr_liquidacion.getBloqueado();  
+			tr_liquidacionSimilar = tr_liquidacion.getSimilar();  
+		}
+	
+	}
+	/**
+	 * Tr_persona_nums shows join between Persona and Tr_tramos
+	 */
+	public static class Tr_persona_nums extends  DefaultCtsqlDBVisitor {
+		
+		
+		private Integer personaCdg;  
+		
+		/**
+		 * Codigo de Persona
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getPersona_Cdg() {
+			return personaCdg;
+		}
+		
+		private String personaInddoc;  
+		
+		/**
+		 * Tipo Documento
+		 * @return the column 'inddoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Inddoc() {
+			return personaInddoc;
+		}
+		
+		private String personaPaiemi;  
+		
+		/**
+		 * Pais Emisor
+		 * @return the column 'paiemi' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Paiemi() {
+			return personaPaiemi;
+		}
+		
+		private String personaNumdoc;  
+		
+		/**
+		 * Numero Documento
+		 * @return the column 'numdoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Numdoc() {
+			return personaNumdoc;
+		}
+		
+		private String personaDescripcion;  
+		
+		/**
+		 * Primer Apellido/Razon Social
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Descripcion() {
+			return personaDescripcion;
+		}
+		
+		private String personaApellido2;  
+		
+		/**
+		 * Segundo Apellido
+		 * @return the column 'apellido2' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Apellido2() {
+			return personaApellido2;
+		}
+		
+		private String personaNombre;  
+		
+		/**
+		 * Nombre
+		 * @return the column 'nombre' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Nombre() {
+			return personaNombre;
+		}
+		
+		private String personaAlias;  
+		
+		/**
+		 * Alias
+		 * @return the column 'alias' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Alias() {
+			return personaAlias;
+		}
+		
+		private String personaAliastc2;  
+		
+		/**
+		 * Alias TC2
+		 * @return the column 'aliastc2' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Aliastc2() {
+			return personaAliastc2;
+		}
+		
+		private String personaTipovia;  
+		
+		/**
+		 * Tipo de Via
+		 * @return the column 'tipovia' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Tipovia() {
+			return personaTipovia;
+		}
+		
+		private String personaNomvia;  
+		
+		/**
+		 * Nombre de Via
+		 * @return the column 'nomvia' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Nomvia() {
+			return personaNomvia;
+		}
+		
+		private String personaNumero;  
+		
+		/**
+		 * Numero
+		 * @return the column 'numero' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Numero() {
+			return personaNumero;
+		}
+		
+		private String personaOtrdir;  
+		
+		/**
+		 * Bloque, Escalera, Piso, Puerta
+		 * @return the column 'otrdir' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Otrdir() {
+			return personaOtrdir;
+		}
+		
+		private String personaCodpos;  
+		
+		/**
+		 * Codigo Postal
+		 * @return the column 'codpos' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Codpos() {
+			return personaCodpos;
+		}
+		
+		private String personaLocalidad;  
+		
+		/**
+		 * Localidad
+		 * @return the column 'localidad' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Localidad() {
+			return personaLocalidad;
+		}
+		
+		private String personaProvincia;  
+		
+		/**
+		 * Provincia
+		 * @return the column 'provincia' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Provincia() {
+			return personaProvincia;
+		}
+		
+		private String personaTelefono;  
+		
+		/**
+		 * Telefono
+		 * @return the column 'telefono' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Telefono() {
+			return personaTelefono;
+		}
+		
+		private String personaFax;  
+		
+		/**
+		 * Fax
+		 * @return the column 'fax' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Fax() {
+			return personaFax;
+		}
+		
+		private String personaEmail;  
+		
+		/**
+		 * E-Mail
+		 * @return the column 'email' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Email() {
+			return personaEmail;
+		}
+		
+		private String personaLugnac;  
+		
+		/**
+		 * Lugar de Nacimiento
+		 * @return the column 'lugnac' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Lugnac() {
+			return personaLugnac;
+		}
+		
+		private String personaPronac;  
+		
+		/**
+		 * Provincia de Nacimiento
+		 * @return the column 'pronac' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Pronac() {
+			return personaPronac;
+		}
+		
+		private String personaPainac;  
+		
+		/**
+		 * Pais de Nacimiento
+		 * @return the column 'painac' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Painac() {
+			return personaPainac;
+		}
+		
+		private Date personaFecnac;  
+		
+		/**
+		 * Fecha de Nacimiento
+		 * @return the column 'fecnac' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getPersona_Fecnac() {
+			return personaFecnac;
+		}
+		
+		private String personaPadre;  
+		
+		/**
+		 * Nombre del Padre
+		 * @return the column 'padre' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Padre() {
+			return personaPadre;
+		}
+		
+		private String personaMadre;  
+		
+		/**
+		 * Nombre de la Madre
+		 * @return the column 'madre' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Madre() {
+			return personaMadre;
+		}
+		
+		private String personaNacion;  
+		
+		/**
+		 * Nacionalidad
+		 * @return the column 'nacion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Nacion() {
+			return personaNacion;
+		}
+		
+		private String personaNumss;  
+		
+		/**
+		 * Numero Seguridad Social
+		 * @return the column 'numss' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Numss() {
+			return personaNumss;
+		}
+		
+		private String personaEstciv;  
+		
+		/**
+		 * Estado Civil
+		 * @return the column 'estciv' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Estciv() {
+			return personaEstciv;
+		}
+		
+		private String personaObsper;  
+		
+		/**
+		 * Observaciones Persona
+		 * @return the column 'obsper' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Obsper() {
+			return personaObsper;
+		}
+		
+		private Date personaFecnew;  
+		
+		/**
+		 * Fecha Creacion Fila
+		 * @return the column 'fecnew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getPersona_Fecnew() {
+			return personaFecnew;
+		}
+		
+		private Time personaHornew;  
+		
+		/**
+		 * Hora Creacion Fila
+		 * @return the column 'hornew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getPersona_Hornew() {
+			return personaHornew;
+		}
+		
+		private Date personaFecmod;  
+		
+		/**
+		 * Fecha Modificacion Fila
+		 * @return the column 'fecmod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getPersona_Fecmod() {
+			return personaFecmod;
+		}
+		
+		private Time personaHormod;  
+		
+		/**
+		 * Hora Modificacion Fila
+		 * @return the column 'hormod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getPersona_Hormod() {
+			return personaHormod;
+		}
+		
+		private String personaSexo;  
+		
+		/**
+		 * Sexo
+		 * @return the column 'sexo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Sexo() {
+			return personaSexo;
+		}
+		public void visitTr_persona_nums(Tr_tramos tr_tramos, Persona persona)
+		throws SQLException {
+			personaCdg = persona.getCdg();  
+			personaInddoc = persona.getInddoc();  
+			personaPaiemi = persona.getPaiemi();  
+			personaNumdoc = persona.getNumdoc();  
+			personaDescripcion = persona.getDescripcion();  
+			personaApellido2 = persona.getApellido2();  
+			personaNombre = persona.getNombre();  
+			personaAlias = persona.getAlias();  
+			personaAliastc2 = persona.getAliastc2();  
+			personaTipovia = persona.getTipovia();  
+			personaNomvia = persona.getNomvia();  
+			personaNumero = persona.getNumero();  
+			personaOtrdir = persona.getOtrdir();  
+			personaCodpos = persona.getCodpos();  
+			personaLocalidad = persona.getLocalidad();  
+			personaProvincia = persona.getProvincia();  
+			personaTelefono = persona.getTelefono();  
+			personaFax = persona.getFax();  
+			personaEmail = persona.getEmail();  
+			personaLugnac = persona.getLugnac();  
+			personaPronac = persona.getPronac();  
+			personaPainac = persona.getPainac();  
+			personaFecnac = persona.getFecnac();  
+			personaPadre = persona.getPadre();  
+			personaMadre = persona.getMadre();  
+			personaNacion = persona.getNacion();  
+			personaNumss = persona.getNumss();  
+			personaEstciv = persona.getEstciv();  
+			personaObsper = persona.getObsper();  
+			personaFecnew = persona.getFecnew();  
+			personaHornew = persona.getHornew();  
+			personaFecmod = persona.getFecmod();  
+			personaHormod = persona.getHormod();  
+			personaSexo = persona.getSexo();  
+		}
+	
+	}
 
 	public void visitCuota_20(Cuota_20 cuota_20)
 	throws SQLException{
@@ -9467,6 +13075,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getCliente_Envioss() {
 			return clienteEnvioss;
 		}
+		
+		private String clienteGrupotrabajo;  
+		
+		/**
+		 * Grupo de trabajo
+		 * @return the column 'grupotrabajo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Grupotrabajo() {
+			return clienteGrupotrabajo;
+		}
 		public void visitAvisos_codcli(Avisos avisos, Cliente cliente)
 		throws SQLException {
 			clienteCdg = cliente.getCdg();  
@@ -9504,6 +13123,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			clienteDivisa = cliente.getDivisa();  
 			clienteSoloases = cliente.getSoloases();  
 			clienteEnvioss = cliente.getEnvioss();  
+			clienteGrupotrabajo = cliente.getGrupotrabajo();  
 		}
 	
 	}
@@ -9886,6 +13506,39 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprnif_Mod190() {
 			return emprnifMod190;
 		}
+		
+		private Date emprnifFeciniportal;  
+		
+		/**
+		 * Fecha inicio portal
+		 * @return the column 'feciniportal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feciniportal() {
+			return emprnifFeciniportal;
+		}
+		
+		private Date emprnifFeccierrenomina;  
+		
+		/**
+		 * Fecha cierre nóminas
+		 * @return the column 'feccierrenomina' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feccierrenomina() {
+			return emprnifFeccierrenomina;
+		}
+		
+		private Integer emprnifMeseshistorico;  
+		
+		/**
+		 * Meses historico portal
+		 * @return the column 'meseshistorico' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprnif_Meseshistorico() {
+			return emprnifMeseshistorico;
+		}
 		public void visitAvisos_codemp(Avisos avisos, Emprnif emprnif)
 		throws SQLException {
 			emprnifCdg = emprnif.getCdg();  
@@ -9922,6 +13575,9 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprnifCecon = emprnif.getCecon();  
 			emprnifModimpuesto = emprnif.getModimpuesto();  
 			emprnifMod190 = emprnif.getMod190();  
+			emprnifFeciniportal = emprnif.getFeciniportal();  
+			emprnifFeccierrenomina = emprnif.getFeccierrenomina();  
+			emprnifMeseshistorico = emprnif.getMeseshistorico();  
 		}
 	
 	}
@@ -10052,6 +13708,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return empractCnae;
 		}
 		
+		private String empractCnae2009;  
+		
+		/**
+		 * Codigo Nacional Actividad Economica - 2009
+		 * @return the column 'cnae2009' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Cnae2009() {
+			return empractCnae2009;
+		}
+		
 		private Date empractFecnew;  
 		
 		/**
@@ -10094,17 +13761,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		 */
 		public Time getEmpract_Hormod() {
 			return empractHormod;
-		}
-		
-		private String empractCnae2009;  
-		
-		/**
-		 * Codigo Nacional Actividad Economica - 2009
-		 * @return the column 'cnae2009' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEmpract_Cnae2009() {
-			return empractCnae2009;
 		}
 		
 		private String empractIndred;  
@@ -10282,6 +13938,28 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmpract_Prevencion() {
 			return empractPrevencion;
 		}
+		
+		private String empractIndsiltra;  
+		
+		/**
+		 * SILTRA
+		 * @return the column 'indsiltra' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Indsiltra() {
+			return empractIndsiltra;
+		}
+		
+		private String empractAutoriza;  
+		
+		/**
+		 * Autorización
+		 * @return the column 'autoriza' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Autoriza() {
+			return empractAutoriza;
+		}
 		public void visitAvisos_empract(Avisos avisos, Empract empract)
 		throws SQLException {
 			empractCdg = empract.getCdg();  
@@ -10295,11 +13973,11 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			empractActeco = empract.getActeco();  
 			empractEpiiae = empract.getEpiiae();  
 			empractCnae = empract.getCnae();  
+			empractCnae2009 = empract.getCnae2009();  
 			empractFecnew = empract.getFecnew();  
 			empractHornew = empract.getHornew();  
 			empractFecmod = empract.getFecmod();  
 			empractHormod = empract.getHormod();  
-			empractCnae2009 = empract.getCnae2009();  
 			empractIndred = empract.getIndred();  
 			empractIndmutua = empract.getIndmutua();  
 			empractIndtc1 = empract.getIndtc1();  
@@ -10316,6 +13994,8 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			empractIndfirma = empract.getIndfirma();  
 			empractIndregimen = empract.getIndregimen();  
 			empractPrevencion = empract.getPrevencion();  
+			empractIndsiltra = empract.getIndsiltra();  
+			empractAutoriza = empract.getAutoriza();  
 		}
 	
 	}
@@ -10350,7 +14030,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private String emprperCodnsz;  
 		
 		/**
-		 * Código interno
+		 * Codigo BBX
 		 * @return the column 'codnsz' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -10555,6 +14235,61 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprper_Noirpf() {
 			return emprperNoirpf;
 		}
+		
+		private String emprperNosegsoc;  
+		
+		/**
+		 * No seg. soc. (de trabajador)
+		 * @return the column 'nosegsoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Nosegsoc() {
+			return emprperNosegsoc;
+		}
+		
+		private String emprperJubiladoactivo;  
+		
+		/**
+		 * Trabajador jubilado en activo
+		 * @return the column 'jubiladoactivo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Jubiladoactivo() {
+			return emprperJubiladoactivo;
+		}
+		
+		private String emprperCertificado;  
+		
+		/**
+		 * Certificado Procesado
+		 * @return the column 'certificado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Certificado() {
+			return emprperCertificado;
+		}
+		
+		private String emprperFamiliar;  
+		
+		/**
+		 * Familiar de 1º grado
+		 * @return the column 'familiar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Familiar() {
+			return emprperFamiliar;
+		}
+		
+		private String emprperNoresidente;  
+		
+		/**
+		 * Trabajador no residente
+		 * @return the column 'noresidente' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Noresidente() {
+			return emprperNoresidente;
+		}
 		public void visitAvisos_emprper(Avisos avisos, Emprper emprper)
 		throws SQLException {
 			emprperCdg = emprper.getCdg();  
@@ -10578,6 +14313,11 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprperIndgrupo = emprper.getIndgrupo();  
 			emprperPariente = emprper.getPariente();  
 			emprperNoirpf = emprper.getNoirpf();  
+			emprperNosegsoc = emprper.getNosegsoc();  
+			emprperJubiladoactivo = emprper.getJubiladoactivo();  
+			emprperCertificado = emprper.getCertificado();  
+			emprperFamiliar = emprper.getFamiliar();  
+			emprperNoresidente = emprper.getNoresidente();  
 		}
 	
 	}
@@ -10688,7 +14428,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private String emprperCodnsz;  
 		
 		/**
-		 * Código interno
+		 * Codigo BBX
 		 * @return the column 'codnsz' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -10893,6 +14633,61 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprper_Noirpf() {
 			return emprperNoirpf;
 		}
+		
+		private String emprperNosegsoc;  
+		
+		/**
+		 * No seg. soc. (de trabajador)
+		 * @return the column 'nosegsoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Nosegsoc() {
+			return emprperNosegsoc;
+		}
+		
+		private String emprperJubiladoactivo;  
+		
+		/**
+		 * Trabajador jubilado en activo
+		 * @return the column 'jubiladoactivo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Jubiladoactivo() {
+			return emprperJubiladoactivo;
+		}
+		
+		private String emprperCertificado;  
+		
+		/**
+		 * Certificado Procesado
+		 * @return the column 'certificado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Certificado() {
+			return emprperCertificado;
+		}
+		
+		private String emprperFamiliar;  
+		
+		/**
+		 * Familiar de 1º grado
+		 * @return the column 'familiar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Familiar() {
+			return emprperFamiliar;
+		}
+		
+		private String emprperNoresidente;  
+		
+		/**
+		 * Trabajador no residente
+		 * @return the column 'noresidente' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Noresidente() {
+			return emprperNoresidente;
+		}
 		public void visitFk_cert_remesa_emp(Rem_cert_empr_det rem_cert_empr_det, Emprper emprper)
 		throws SQLException {
 			emprperCdg = emprper.getCdg();  
@@ -10916,6 +14711,11 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprperIndgrupo = emprper.getIndgrupo();  
 			emprperPariente = emprper.getPariente();  
 			emprperNoirpf = emprper.getNoirpf();  
+			emprperNosegsoc = emprper.getNosegsoc();  
+			emprperJubiladoactivo = emprper.getJubiladoactivo();  
+			emprperCertificado = emprper.getCertificado();  
+			emprperFamiliar = emprper.getFamiliar();  
+			emprperNoresidente = emprper.getNoresidente();  
 		}
 	
 	}
@@ -10924,21 +14724,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	throws SQLException{
 	}
 
-	public void visitEmprbanc_sucursal(Emprban emprban, Sucursal sucursal)
-	throws SQLException {
-	}
-	public void visitRel_tra_suc(Trabajo trabajo, Sucursal sucursal)
-	throws SQLException {
-	}
-	public void visitJsucursal(Httrabajador httrabajador, Sucursal sucursal)
-	throws SQLException {
-	}
-	public void visitJautsucursal(Autonomos autonomos, Sucursal sucursal)
-	throws SQLException {
-	}
-	public void visitEmprbanc_sucbic(Emprban emprban, Sucursal sucursal)
-	throws SQLException {
-	}
 
 	/**
 	 * Sucursal_entidad shows join between Entidad and Sucursal
@@ -11131,18 +14916,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	
 	}
 
-	public void visitNszanex(Nszanex nszanex)
-	throws SQLException{
-	}
-
-
-
-	public void visitNszmupa(Nszmupa nszmupa)
-	throws SQLException{
-	}
-
-
-
 	public void visitMinor_31(Minor_31 minor_31)
 	throws SQLException{
 	}
@@ -11206,12 +14979,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		}
 	
 	}
-
-	public void visitNszreac(Nszreac nszreac)
-	throws SQLException{
-	}
-
-
 
 	public void visitLinepigr(Linepigr linepigr)
 	throws SQLException{
@@ -11289,7 +15056,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private String emprperCodnsz;  
 		
 		/**
-		 * Código interno
+		 * Codigo BBX
 		 * @return the column 'codnsz' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -11494,6 +15261,61 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprper_Noirpf() {
 			return emprperNoirpf;
 		}
+		
+		private String emprperNosegsoc;  
+		
+		/**
+		 * No seg. soc. (de trabajador)
+		 * @return the column 'nosegsoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Nosegsoc() {
+			return emprperNosegsoc;
+		}
+		
+		private String emprperJubiladoactivo;  
+		
+		/**
+		 * Trabajador jubilado en activo
+		 * @return the column 'jubiladoactivo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Jubiladoactivo() {
+			return emprperJubiladoactivo;
+		}
+		
+		private String emprperCertificado;  
+		
+		/**
+		 * Certificado Procesado
+		 * @return the column 'certificado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Certificado() {
+			return emprperCertificado;
+		}
+		
+		private String emprperFamiliar;  
+		
+		/**
+		 * Familiar de 1º grado
+		 * @return the column 'familiar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Familiar() {
+			return emprperFamiliar;
+		}
+		
+		private String emprperNoresidente;  
+		
+		/**
+		 * Trabajador no residente
+		 * @return the column 'noresidente' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Noresidente() {
+			return emprperNoresidente;
+		}
 		public void visitPitnu_emprper(Parteitnu parteitnu, Emprper emprper)
 		throws SQLException {
 			emprperCdg = emprper.getCdg();  
@@ -11517,6 +15339,11 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprperIndgrupo = emprper.getIndgrupo();  
 			emprperPariente = emprper.getPariente();  
 			emprperNoirpf = emprper.getNoirpf();  
+			emprperNosegsoc = emprper.getNosegsoc();  
+			emprperJubiladoactivo = emprper.getJubiladoactivo();  
+			emprperCertificado = emprper.getCertificado();  
+			emprperFamiliar = emprper.getFamiliar();  
+			emprperNoresidente = emprper.getNoresidente();  
 		}
 	
 	}
@@ -11563,7 +15390,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private String emprperCodnsz;  
 		
 		/**
-		 * Código interno
+		 * Codigo BBX
 		 * @return the column 'codnsz' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -11768,6 +15595,61 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprper_Noirpf() {
 			return emprperNoirpf;
 		}
+		
+		private String emprperNosegsoc;  
+		
+		/**
+		 * No seg. soc. (de trabajador)
+		 * @return the column 'nosegsoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Nosegsoc() {
+			return emprperNosegsoc;
+		}
+		
+		private String emprperJubiladoactivo;  
+		
+		/**
+		 * Trabajador jubilado en activo
+		 * @return the column 'jubiladoactivo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Jubiladoactivo() {
+			return emprperJubiladoactivo;
+		}
+		
+		private String emprperCertificado;  
+		
+		/**
+		 * Certificado Procesado
+		 * @return the column 'certificado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Certificado() {
+			return emprperCertificado;
+		}
+		
+		private String emprperFamiliar;  
+		
+		/**
+		 * Familiar de 1º grado
+		 * @return the column 'familiar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Familiar() {
+			return emprperFamiliar;
+		}
+		
+		private String emprperNoresidente;  
+		
+		/**
+		 * Trabajador no residente
+		 * @return the column 'noresidente' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Noresidente() {
+			return emprperNoresidente;
+		}
 		public void visitNominadf_emprper(Nominadf nominadf, Emprper emprper)
 		throws SQLException {
 			emprperCdg = emprper.getCdg();  
@@ -11791,6 +15673,11 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprperIndgrupo = emprper.getIndgrupo();  
 			emprperPariente = emprper.getPariente();  
 			emprperNoirpf = emprper.getNoirpf();  
+			emprperNosegsoc = emprper.getNosegsoc();  
+			emprperJubiladoactivo = emprper.getJubiladoactivo();  
+			emprperCertificado = emprper.getCertificado();  
+			emprperFamiliar = emprper.getFamiliar();  
+			emprperNoresidente = emprper.getNoresidente();  
 		}
 	
 	}
@@ -11865,12 +15752,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	
 	}
 
-	public void visitNszfini(Nszfini nszfini)
-	throws SQLException{
-	}
-
-
-
 	public void visitConvenio(Convenio convenio)
 	throws SQLException{
 	}
@@ -11894,6 +15775,9 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	throws SQLException {
 	}
 	public void visitRel_tra_con(Trabajo trabajo, Convenio convenio)
+	throws SQLException {
+	}
+	public void visitFpe_convenio(Fpercep fpercep, Convenio convenio)
 	throws SQLException {
 	}
 
@@ -12320,12 +16204,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	
 	}
 
-	public void visitNsztido(Nsztido nsztido)
-	throws SQLException{
-	}
-
-
-
 	public void visitTipinc(Tipinc tipinc)
 	throws SQLException{
 	}
@@ -12618,6 +16496,39 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public Date getParteit_Fecha_at() {
 			return parteitFecha_at;
 		}
+		
+		private String parteitEspecial;  
+		
+		/**
+		 * Especial
+		 * @return the column 'especial' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getParteit_Especial() {
+			return parteitEspecial;
+		}
+		
+		private Date parteitFecprimerconf;  
+		
+		/**
+		 * $col.remarks
+		 * @return the column 'fecprimerconf' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getParteit_Fecprimerconf() {
+			return parteitFecprimerconf;
+		}
+		
+		private String parteitPeriocidad;  
+		
+		/**
+		 * Periocidad
+		 * @return the column 'periocidad' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getParteit_Periocidad() {
+			return parteitPeriocidad;
+		}
 		public void visitParteconf_parteit(Parteconf parteconf, Parteit parteit)
 		throws SQLException {
 			parteitCdg = parteit.getCdg();  
@@ -12644,6 +16555,9 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			parteitRiesgo = parteit.getRiesgo();  
 			parteitCausa_alta = parteit.getCausa_alta();  
 			parteitFecha_at = parteit.getFecha_at();  
+			parteitEspecial = parteit.getEspecial();  
+			parteitFecprimerconf = parteit.getFecprimerconf();  
+			parteitPeriocidad = parteit.getPeriocidad();  
 		}
 	
 	}
@@ -12843,6 +16757,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getImpr190_Divisa() {
 			return impr190Divisa;
 		}
+		
+		private Date impr190Feccierre;  
+		
+		/**
+		 * Fecha cierre
+		 * @return the column 'feccierre' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getImpr190_Feccierre() {
+			return impr190Feccierre;
+		}
 		public void visitLin190_impr190(Lin190 lin190, Impr190 impr190)
 		throws SQLException {
 			impr190Cdg = impr190.getCdg();  
@@ -12861,6 +16786,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			impr190Fecmod = impr190.getFecmod();  
 			impr190Hormod = impr190.getHormod();  
 			impr190Divisa = impr190.getDivisa();  
+			impr190Feccierre = impr190.getFeccierre();  
 		}
 	
 	}
@@ -12878,13 +16804,16 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	public void visitRel_pcn_cap(Percniv percniv, Complemento complemento)
 	throws SQLException {
 	}
-	public void visitRel_pex_com(Nominaex nominaex, Complemento complemento)
+	public void visitRel_lpl_com(Linplus linplus, Complemento complemento)
 	throws SQLException {
 	}
 	public void visitRel_pcp_com(Percep percep, Complemento complemento)
 	throws SQLException {
 	}
 	public void visitRel_pcp_comapl(Percep percep, Complemento complemento)
+	throws SQLException {
+	}
+	public void visitRel_pex_com(Nominaex nominaex, Complemento complemento)
 	throws SQLException {
 	}
 	public void visitRel_fpe_com(Finipext finipext, Complemento complemento)
@@ -12896,7 +16825,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	public void visitFinexnu_com(Finipextnu finipextnu, Complemento complemento)
 	throws SQLException {
 	}
-	public void visitRel_lpl_com(Linplus linplus, Complemento complemento)
+	public void visitLin_complemento(Linfpercep linfpercep, Complemento complemento)
 	throws SQLException {
 	}
 
@@ -13418,7 +17347,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private BigDecimal nominadfBase_irpf;  
 		
 		/**
-		 * Base IRPF Dinararia
+		 * Base IRPF Dineraria
 		 * @return the column 'base_irpf' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -13514,6 +17443,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return nominadfBase_it;
 		}
 		
+		private BigDecimal nominadfBase_ere;  
+		
+		/**
+		 * Base ERE
+		 * @return the column 'base_ere' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNominadf_Base_ere() {
+			return nominadfBase_ere;
+		}
+		
 		private BigDecimal nominadfTotal_1;  
 		
 		/**
@@ -13580,6 +17520,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return nominadfPrc_acc;
 		}
 		
+		private BigDecimal nominadfPrc_fp;  
+		
+		/**
+		 * Porcentaje FP
+		 * @return the column 'prc_fp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNominadf_Prc_fp() {
+			return nominadfPrc_fp;
+		}
+		
 		private BigDecimal nominadfPrc_hex;  
 		
 		/**
@@ -13622,6 +17573,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		 */
 		public BigDecimal getNominadf_Importe_acc() {
 			return nominadfImporte_acc;
+		}
+		
+		private BigDecimal nominadfImporte_fp;  
+		
+		/**
+		 * Importe FP
+		 * @return the column 'importe_fp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNominadf_Importe_fp() {
+			return nominadfImporte_fp;
 		}
 		
 		private BigDecimal nominadfImporte_hex;  
@@ -13964,6 +17926,72 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public Integer getNominadf_Cdgnom() {
 			return nominadfCdgnom;
 		}
+		
+		private BigDecimal nominadfBase_con_ere;  
+		
+		/**
+		 * Contingencias comunes ERE
+		 * @return the column 'base_con_ere' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNominadf_Base_con_ere() {
+			return nominadfBase_con_ere;
+		}
+		
+		private BigDecimal nominadfBase_acc_ere;  
+		
+		/**
+		 * Accidentes de trabajo ERE
+		 * @return the column 'base_acc_ere' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNominadf_Base_acc_ere() {
+			return nominadfBase_acc_ere;
+		}
+		
+		private BigDecimal nominadfBase_con_ere_no;  
+		
+		/**
+		 * Contingencias comunes ERE no aporta
+		 * @return the column 'base_con_ere_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNominadf_Base_con_ere_no() {
+			return nominadfBase_con_ere_no;
+		}
+		
+		private BigDecimal nominadfBase_acc_ere_no;  
+		
+		/**
+		 * Accidentes de trabajo ERE no aporta
+		 * @return the column 'base_acc_ere_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNominadf_Base_acc_ere_no() {
+			return nominadfBase_acc_ere_no;
+		}
+		
+		private BigDecimal nominadfBase_con_ere_sin;  
+		
+		/**
+		 * Contingencias comunes sin ERE
+		 * @return the column 'base_con_ere_sin' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNominadf_Base_con_ere_sin() {
+			return nominadfBase_con_ere_sin;
+		}
+		
+		private BigDecimal nominadfBase_acc_ere_sin;  
+		
+		/**
+		 * Accidentes de trabajo sin ERE
+		 * @return the column 'base_acc_ere_sin' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNominadf_Base_acc_ere_sin() {
+			return nominadfBase_acc_ere_sin;
+		}
 		public void visitNomdfdto_nominadf(Nomdfdto nomdfdto, Nominadf nominadf)
 		throws SQLException {
 			nominadfCdg = nominadf.getCdg();  
@@ -14016,16 +18044,19 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			nominadfBase_perdes = nominadf.getBase_perdes();  
 			nominadfRemuneracion = nominadf.getRemuneracion();  
 			nominadfBase_it = nominadf.getBase_it();  
+			nominadfBase_ere = nominadf.getBase_ere();  
 			nominadfTotal_1 = nominadf.getTotal_1();  
 			nominadfCodbas = nominadf.getCodbas();  
 			nominadfBase_cg = nominadf.getBase_cg();  
 			nominadfBase_acc = nominadf.getBase_acc();  
 			nominadfPrc_cg = nominadf.getPrc_cg();  
 			nominadfPrc_acc = nominadf.getPrc_acc();  
+			nominadfPrc_fp = nominadf.getPrc_fp();  
 			nominadfPrc_hex = nominadf.getPrc_hex();  
 			nominadfPrc_hexno = nominadf.getPrc_hexno();  
 			nominadfImporte_cg = nominadf.getImporte_cg();  
 			nominadfImporte_acc = nominadf.getImporte_acc();  
+			nominadfImporte_fp = nominadf.getImporte_fp();  
 			nominadfImporte_hex = nominadf.getImporte_hex();  
 			nominadfImporte_hexno = nominadf.getImporte_hexno();  
 			nominadfMincg = nominadf.getMincg();  
@@ -14057,164 +18088,12 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			nominadfBase_acc_pts = nominadf.getBase_acc_pts();  
 			nominadfBase_acc_sin_h_pts = nominadf.getBase_acc_sin_h_pts();  
 			nominadfCdgnom = nominadf.getCdgnom();  
-		}
-	
-	}
-
-	public void visitAction_denied(Action_denied action_denied)
-	throws SQLException{
-	}
-
-
-	/**
-	 * Fk_ad_action shows join between Action and Action_denied
-	 */
-	public static class Fk_ad_action extends  DefaultCtsqlDBVisitor {
-		
-		
-		private Integer actionId;  
-		
-		/**
-		 * Identificador unico
-		 * @return the column 'id' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getAction_Id() {
-			return actionId;
-		}
-		
-		private Integer actionMenu;  
-		
-		/**
-		 * Indica si la Accion esta o no dentro del menu
-		 * @return the column 'menu' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getAction_Menu() {
-			return actionMenu;
-		}
-		
-		private String actionName;  
-		
-		/**
-		 * Nombre de la Accion
-		 * @return the column 'name' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getAction_Name() {
-			return actionName;
-		}
-		
-		private Integer actionApplication_id;  
-		
-		/**
-		 * Aplicacion a la que pertenece la Accion
-		 * @return the column 'application_id' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getAction_Application_id() {
-			return actionApplication_id;
-		}
-		public void visitFk_ad_action(Action_denied action_denied, Action action)
-		throws SQLException {
-			actionId = action.getId();  
-			actionMenu = action.getMenu();  
-			actionName = action.getName();  
-			actionApplication_id = action.getApplication_id();  
-		}
-	
-	}
-	/**
-	 * Fk_ad_user shows join between Usuario and Action_denied
-	 */
-	public static class Fk_ad_user extends  DefaultCtsqlDBVisitor {
-		
-		
-		private Integer usuarioId;  
-		
-		/**
-		 * Identificador unico
-		 * @return the column 'id' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getUsuario_Id() {
-			return usuarioId;
-		}
-		
-		private String usuarioName;  
-		
-		/**
-		 * Nombre del Usuario
-		 * @return the column 'name' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getUsuario_Name() {
-			return usuarioName;
-		}
-		
-		private String usuarioLogin;  
-		
-		/**
-		 * Login del Usuario
-		 * @return the column 'login' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getUsuario_Login() {
-			return usuarioLogin;
-		}
-		
-		private Integer usuarioAvailable;  
-		
-		/**
-		 * Indica si el Usuario esta disponible o no
-		 * @return the column 'available' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getUsuario_Available() {
-			return usuarioAvailable;
-		}
-		
-		private Integer usuarioValidate;  
-		
-		/**
-		 * Indica si el Usuario requiere validacion o no de la clave hardwa
-		 * @return the column 'validate' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getUsuario_Validate() {
-			return usuarioValidate;
-		}
-		
-		private String usuarioAon_key;  
-		
-		/**
-		 * Campo alfanumerico donde se guarda la ultima clave hardware gene
-		 * @return the column 'aon_key' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getUsuario_Aon_key() {
-			return usuarioAon_key;
-		}
-		
-		private Integer usuarioStatus;  
-		
-		/**
-		 * Estado del Usuario con respecto a su primera validacion de la cl
-		 * @return the column 'status' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getUsuario_Status() {
-			return usuarioStatus;
-		}
-		public void visitFk_ad_user(Action_denied action_denied, Usuario usuario)
-		throws SQLException {
-			usuarioId = usuario.getId();  
-			usuarioName = usuario.getName();  
-			usuarioLogin = usuario.getLogin();  
-			usuarioAvailable = usuario.getAvailable();  
-			usuarioValidate = usuario.getValidate();  
-			usuarioAon_key = usuario.getAon_key();  
-			usuarioStatus = usuario.getStatus();  
+			nominadfBase_con_ere = nominadf.getBase_con_ere();  
+			nominadfBase_acc_ere = nominadf.getBase_acc_ere();  
+			nominadfBase_con_ere_no = nominadf.getBase_con_ere_no();  
+			nominadfBase_acc_ere_no = nominadf.getBase_acc_ere_no();  
+			nominadfBase_con_ere_sin = nominadf.getBase_con_ere_sin();  
+			nominadfBase_acc_ere_sin = nominadf.getBase_acc_ere_sin();  
 		}
 	
 	}
@@ -14250,6 +18129,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		 */
 		public Date getFiniquitonu_Fecbaj() {
 			return finiquitonuFecbaj;
+		}
+		
+		private String finiquitonuCodcausa;  
+		
+		/**
+		 * Código de la causa de baja
+		 * @return the column 'codcausa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getFiniquitonu_Codcausa() {
+			return finiquitonuCodcausa;
 		}
 		
 		private String finiquitonuCausa;  
@@ -14541,6 +18431,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		throws SQLException {
 			finiquitonuCodper = finiquitonu.getCodper();  
 			finiquitonuFecbaj = finiquitonu.getFecbaj();  
+			finiquitonuCodcausa = finiquitonu.getCodcausa();  
 			finiquitonuCausa = finiquitonu.getCausa();  
 			finiquitonuVacfecini = finiquitonu.getVacfecini();  
 			finiquitonuVacimporte = finiquitonu.getVacimporte();  
@@ -14583,136 +18474,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 
 
 	/**
-	 * Rel_bpe_bon shows join between Tipboni and Bonifica
-	 */
-	public static class Rel_bpe_bon extends  DefaultCtsqlDBVisitor {
-		
-		
-		private Integer tipboniCdg;  
-		
-		/**
-		 * Codigo de Bonificacion
-		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getTipboni_Cdg() {
-			return tipboniCdg;
-		}
-		
-		private String tipboniDescripcion;  
-		
-		/**
-		 * Descripcion de Bonificacion
-		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getTipboni_Descripcion() {
-			return tipboniDescripcion;
-		}
-		
-		private String tipboniCalculo;  
-		
-		/**
-		 * Forma de Calculo
-		 * @return the column 'calculo' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getTipboni_Calculo() {
-			return tipboniCalculo;
-		}
-		
-		private BigDecimal tipboniPrc_cg;  
-		
-		/**
-		 * % Bonificacion Contingencias Generales
-		 * @return the column 'prc_cg' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getTipboni_Prc_cg() {
-			return tipboniPrc_cg;
-		}
-		
-		private BigDecimal tipboniPrc_acc;  
-		
-		/**
-		 * % Bonificacion Accidentes
-		 * @return the column 'prc_acc' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getTipboni_Prc_acc() {
-			return tipboniPrc_acc;
-		}
-		
-		private BigDecimal tipboniPrc_accfgs;  
-		
-		/**
-		 * % bonificacion Base Conjunto
-		 * @return the column 'prc_accfgs' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getTipboni_Prc_accfgs() {
-			return tipboniPrc_accfgs;
-		}
-		
-		private String tipboniBoniss;  
-		
-		/**
-		 * Bonificación S.S.
-		 * @return the column 'boniss' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getTipboni_Boniss() {
-			return tipboniBoniss;
-		}
-		
-		private String tipboniMayor60;  
-		
-		/**
-		 * Mayores de 60 años y mas de 5 años de Antigüedad
-		 * @return the column 'mayor60' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getTipboni_Mayor60() {
-			return tipboniMayor60;
-		}
-		
-		private String tipboniRdl052006;  
-		
-		/**
-		 * Real Decreto Ley 5/2006
-		 * @return the column 'rdl052006' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getTipboni_Rdl052006() {
-			return tipboniRdl052006;
-		}
-		
-		private String tipboniRestait;  
-		
-		/**
-		 * Restar I.T.
-		 * @return the column 'restait' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getTipboni_Restait() {
-			return tipboniRestait;
-		}
-		public void visitRel_bpe_bon(Bonifica bonifica, Tipboni tipboni)
-		throws SQLException {
-			tipboniCdg = tipboni.getCdg();  
-			tipboniDescripcion = tipboni.getDescripcion();  
-			tipboniCalculo = tipboni.getCalculo();  
-			tipboniPrc_cg = tipboni.getPrc_cg();  
-			tipboniPrc_acc = tipboni.getPrc_acc();  
-			tipboniPrc_accfgs = tipboni.getPrc_accfgs();  
-			tipboniBoniss = tipboni.getBoniss();  
-			tipboniMayor60 = tipboni.getMayor60();  
-			tipboniRdl052006 = tipboni.getRdl052006();  
-			tipboniRestait = tipboni.getRestait();  
-		}
-	
-	}
-	/**
 	 * Bonifica_emprper shows join between Emprper and Bonifica
 	 */
 	public static class Bonifica_emprper extends  DefaultCtsqlDBVisitor {
@@ -14743,7 +18504,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private String emprperCodnsz;  
 		
 		/**
-		 * Código interno
+		 * Codigo BBX
 		 * @return the column 'codnsz' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -14948,6 +18709,61 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprper_Noirpf() {
 			return emprperNoirpf;
 		}
+		
+		private String emprperNosegsoc;  
+		
+		/**
+		 * No seg. soc. (de trabajador)
+		 * @return the column 'nosegsoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Nosegsoc() {
+			return emprperNosegsoc;
+		}
+		
+		private String emprperJubiladoactivo;  
+		
+		/**
+		 * Trabajador jubilado en activo
+		 * @return the column 'jubiladoactivo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Jubiladoactivo() {
+			return emprperJubiladoactivo;
+		}
+		
+		private String emprperCertificado;  
+		
+		/**
+		 * Certificado Procesado
+		 * @return the column 'certificado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Certificado() {
+			return emprperCertificado;
+		}
+		
+		private String emprperFamiliar;  
+		
+		/**
+		 * Familiar de 1º grado
+		 * @return the column 'familiar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Familiar() {
+			return emprperFamiliar;
+		}
+		
+		private String emprperNoresidente;  
+		
+		/**
+		 * Trabajador no residente
+		 * @return the column 'noresidente' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Noresidente() {
+			return emprperNoresidente;
+		}
 		public void visitBonifica_emprper(Bonifica bonifica, Emprper emprper)
 		throws SQLException {
 			emprperCdg = emprper.getCdg();  
@@ -14971,6 +18787,11 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprperIndgrupo = emprper.getIndgrupo();  
 			emprperPariente = emprper.getPariente();  
 			emprperNoirpf = emprper.getNoirpf();  
+			emprperNosegsoc = emprper.getNosegsoc();  
+			emprperJubiladoactivo = emprper.getJubiladoactivo();  
+			emprperCertificado = emprper.getCertificado();  
+			emprperFamiliar = emprper.getFamiliar();  
+			emprperNoresidente = emprper.getNoresidente();  
 		}
 	
 	}
@@ -15000,13 +18821,19 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	public void visitAvisos_empract(Avisos avisos, Empract empract)
 	throws SQLException {
 	}
-	public void visitRel_var_act(Variaciones variaciones, Empract empract)
-	throws SQLException {
-	}
 	public void visitRegidocu_empract(Regidocu regidocu, Empract empract)
 	throws SQLException {
 	}
+	public void visitRel_var_act(Variaciones variaciones, Empract empract)
+	throws SQLException {
+	}
 	public void visitJactividad(Httrabajador httrabajador, Empract empract)
+	throws SQLException {
+	}
+	public void visitHon_empract(Honorarios honorarios, Empract empract)
+	throws SQLException {
+	}
+	public void visitFpe_empract(Fpercep fpercep, Empract empract)
 	throws SQLException {
 	}
 
@@ -15389,6 +19216,39 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprnif_Mod190() {
 			return emprnifMod190;
 		}
+		
+		private Date emprnifFeciniportal;  
+		
+		/**
+		 * Fecha inicio portal
+		 * @return the column 'feciniportal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feciniportal() {
+			return emprnifFeciniportal;
+		}
+		
+		private Date emprnifFeccierrenomina;  
+		
+		/**
+		 * Fecha cierre nóminas
+		 * @return the column 'feccierrenomina' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feccierrenomina() {
+			return emprnifFeccierrenomina;
+		}
+		
+		private Integer emprnifMeseshistorico;  
+		
+		/**
+		 * Meses historico portal
+		 * @return the column 'meseshistorico' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprnif_Meseshistorico() {
+			return emprnifMeseshistorico;
+		}
 		public void visitEmpract_emprnif(Empract empract, Emprnif emprnif)
 		throws SQLException {
 			emprnifCdg = emprnif.getCdg();  
@@ -15425,6 +19285,9 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprnifCecon = emprnif.getCecon();  
 			emprnifModimpuesto = emprnif.getModimpuesto();  
 			emprnifMod190 = emprnif.getMod190();  
+			emprnifFeciniportal = emprnif.getFeciniportal();  
+			emprnifFeccierrenomina = emprnif.getFeccierrenomina();  
+			emprnifMeseshistorico = emprnif.getMeseshistorico();  
 		}
 	
 	}
@@ -15622,6 +19485,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return empractCnae;
 		}
 		
+		private String empractCnae2009;  
+		
+		/**
+		 * Codigo Nacional Actividad Economica - 2009
+		 * @return the column 'cnae2009' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Cnae2009() {
+			return empractCnae2009;
+		}
+		
 		private Date empractFecnew;  
 		
 		/**
@@ -15664,17 +19538,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		 */
 		public Time getEmpract_Hormod() {
 			return empractHormod;
-		}
-		
-		private String empractCnae2009;  
-		
-		/**
-		 * Codigo Nacional Actividad Economica - 2009
-		 * @return the column 'cnae2009' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEmpract_Cnae2009() {
-			return empractCnae2009;
 		}
 		
 		private String empractIndred;  
@@ -15852,6 +19715,28 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmpract_Prevencion() {
 			return empractPrevencion;
 		}
+		
+		private String empractIndsiltra;  
+		
+		/**
+		 * SILTRA
+		 * @return the column 'indsiltra' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Indsiltra() {
+			return empractIndsiltra;
+		}
+		
+		private String empractAutoriza;  
+		
+		/**
+		 * Autorización
+		 * @return the column 'autoriza' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Autoriza() {
+			return empractAutoriza;
+		}
 		public void visitRel_cco_act(Emprccos emprccos, Empract empract)
 		throws SQLException {
 			empractCdg = empract.getCdg();  
@@ -15865,11 +19750,11 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			empractActeco = empract.getActeco();  
 			empractEpiiae = empract.getEpiiae();  
 			empractCnae = empract.getCnae();  
+			empractCnae2009 = empract.getCnae2009();  
 			empractFecnew = empract.getFecnew();  
 			empractHornew = empract.getHornew();  
 			empractFecmod = empract.getFecmod();  
 			empractHormod = empract.getHormod();  
-			empractCnae2009 = empract.getCnae2009();  
 			empractIndred = empract.getIndred();  
 			empractIndmutua = empract.getIndmutua();  
 			empractIndtc1 = empract.getIndtc1();  
@@ -15886,181 +19771,128 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			empractIndfirma = empract.getIndfirma();  
 			empractIndregimen = empract.getIndregimen();  
 			empractPrevencion = empract.getPrevencion();  
+			empractIndsiltra = empract.getIndsiltra();  
+			empractAutoriza = empract.getAutoriza();  
 		}
 	
 	}
 
-	public void visitAction_entry(Action_entry action_entry)
+	public void visitCra_trb(Cra_trb cra_trb)
 	throws SQLException{
 	}
 
+	public void visitRel_cra_trb_per(Cra_cre cra_cre, Cra_trb cra_trb)
+	throws SQLException {
+	}
 
 	/**
-	 * Fk_ae_action shows join between Action and Action_entry
+	 * Rel_cra_dde_cdg shows join between Cra_dde and Cra_trb
 	 */
-	public static class Fk_ae_action extends  DefaultCtsqlDBVisitor {
+	public static class Rel_cra_dde_cdg extends  DefaultCtsqlDBVisitor {
 		
 		
-		private Integer actionId;  
-		
-		/**
-		 * Identificador unico
-		 * @return the column 'id' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getAction_Id() {
-			return actionId;
-		}
-		
-		private Integer actionMenu;  
+		private Integer cra_ddeCdg;  
 		
 		/**
-		 * Indica si la Accion esta o no dentro del menu
-		 * @return the column 'menu' value; if the value is SQL NULL, the value returned is null
+		 * Código de fichero CRA
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getAction_Menu() {
-			return actionMenu;
+		public Integer getCra_dde_Cdg() {
+			return cra_ddeCdg;
 		}
 		
-		private String actionName;  
+		private Integer cra_ddeCodact;  
 		
 		/**
-		 * Nombre de la Accion
-		 * @return the column 'name' value; if the value is SQL NULL, the value returned is null
+		 * Código de actividad
+		 * @return the column 'codact' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getAction_Name() {
-			return actionName;
+		public Integer getCra_dde_Codact() {
+			return cra_ddeCodact;
 		}
 		
-		private Integer actionApplication_id;  
+		private String cra_ddeDesact;  
 		
 		/**
-		 * Aplicacion a la que pertenece la Accion
-		 * @return the column 'application_id' value; if the value is SQL NULL, the value returned is null
+		 * Descripción de actividad
+		 * @return the column 'desact' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getAction_Application_id() {
-			return actionApplication_id;
+		public String getCra_dde_Desact() {
+			return cra_ddeDesact;
 		}
-		public void visitFk_ae_action(Action_entry action_entry, Action action)
+		
+		private String cra_ddeCodreg;  
+		
+		/**
+		 * Régimen de la S.S.
+		 * @return the column 'codreg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCra_dde_Codreg() {
+			return cra_ddeCodreg;
+		}
+		
+		private String cra_ddeCodccc;  
+		
+		/**
+		 * Código de cuenta de cotización
+		 * @return the column 'codccc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCra_dde_Codccc() {
+			return cra_ddeCodccc;
+		}
+		
+		private Integer cra_ddeAnio;  
+		
+		/**
+		 * Año periodo de liquidación
+		 * @return the column 'anio' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCra_dde_Anio() {
+			return cra_ddeAnio;
+		}
+		
+		private Integer cra_ddeMes;  
+		
+		/**
+		 * Mes periodo de liquidación
+		 * @return the column 'mes' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCra_dde_Mes() {
+			return cra_ddeMes;
+		}
+		
+		private String cra_ddeRemesado;  
+		
+		/**
+		 * Remesado
+		 * @return the column 'remesado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCra_dde_Remesado() {
+			return cra_ddeRemesado;
+		}
+		public void visitRel_cra_dde_cdg(Cra_trb cra_trb, Cra_dde cra_dde)
 		throws SQLException {
-			actionId = action.getId();  
-			actionMenu = action.getMenu();  
-			actionName = action.getName();  
-			actionApplication_id = action.getApplication_id();  
-		}
-	
-	}
-	/**
-	 * Fk_ae_session shows join between Session and Action_entry
-	 */
-	public static class Fk_ae_session extends  DefaultCtsqlDBVisitor {
-		
-		
-		private Integer sessionId;  
-		
-		/**
-		 * Identificador unico
-		 * @return the column 'id' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getSession_Id() {
-			return sessionId;
-		}
-		
-		private Timestamp sessionEnddate;  
-		
-		/**
-		 * Fecha de finalización
-		 * @return the column 'enddate' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Timestamp getSession_Enddate() {
-			return sessionEnddate;
-		}
-		
-		private String sessionRemote_address;  
-		
-		/**
-		 * IP Remota
-		 * @return the column 'remote_address' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSession_Remote_address() {
-			return sessionRemote_address;
-		}
-		
-		private String sessionRemote_host;  
-		
-		/**
-		 * Equipo Remoto
-		 * @return the column 'remote_host' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSession_Remote_host() {
-			return sessionRemote_host;
-		}
-		
-		private String sessionSession_id;  
-		
-		/**
-		 * Identificador web de la sesión
-		 * @return the column 'session_id' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSession_Session_id() {
-			return sessionSession_id;
-		}
-		
-		private Timestamp sessionStartdate;  
-		
-		/**
-		 * Fecha de inicio
-		 * @return the column 'startdate' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Timestamp getSession_Startdate() {
-			return sessionStartdate;
-		}
-		
-		private Integer sessionApplication_id;  
-		
-		/**
-		 * Identificador de la Aplicación
-		 * @return the column 'application_id' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getSession_Application_id() {
-			return sessionApplication_id;
-		}
-		
-		private Integer sessionUser_id;  
-		
-		/**
-		 * Identificador del Usuario
-		 * @return the column 'user_id' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getSession_User_id() {
-			return sessionUser_id;
-		}
-		public void visitFk_ae_session(Action_entry action_entry, Session session)
-		throws SQLException {
-			sessionId = session.getId();  
-			sessionEnddate = session.getEnddate();  
-			sessionRemote_address = session.getRemote_address();  
-			sessionRemote_host = session.getRemote_host();  
-			sessionSession_id = session.getSession_id();  
-			sessionStartdate = session.getStartdate();  
-			sessionApplication_id = session.getApplication_id();  
-			sessionUser_id = session.getUser_id();  
+			cra_ddeCdg = cra_dde.getCdg();  
+			cra_ddeCodact = cra_dde.getCodact();  
+			cra_ddeDesact = cra_dde.getDesact();  
+			cra_ddeCodreg = cra_dde.getCodreg();  
+			cra_ddeCodccc = cra_dde.getCodccc();  
+			cra_ddeAnio = cra_dde.getAnio();  
+			cra_ddeMes = cra_dde.getMes();  
+			cra_ddeRemesado = cra_dde.getRemesado();  
 		}
 	
 	}
 
-	public void visitMasivo(Masivo masivo)
+	public void visitTr_parametro(Tr_parametro tr_parametro)
 	throws SQLException{
 	}
 
@@ -16848,13 +20680,53 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	public void visitAvisos_codcli(Avisos avisos, Cliente cliente)
 	throws SQLException {
 	}
-	public void visitRel_var_cli(Variaciones variaciones, Cliente cliente)
-	throws SQLException {
-	}
 	public void visitRegidocu_cliente(Regidocu regidocu, Cliente cliente)
 	throws SQLException {
 	}
+	public void visitRel_var_cli(Variaciones variaciones, Cliente cliente)
+	throws SQLException {
+	}
+	public void visitHon_cliente(Honorarios honorarios, Cliente cliente)
+	throws SQLException {
+	}
+	public void visitFpe_cliente(Fpercep fpercep, Cliente cliente)
+	throws SQLException {
+	}
 
+	/**
+	 * Rel_cli_grptrabajo shows join between Grupotrabajo and Cliente
+	 */
+	public static class Rel_cli_grptrabajo extends  DefaultCtsqlDBVisitor {
+		
+		
+		private String grupotrabajoCdg;  
+		
+		/**
+		 * Código
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getGrupotrabajo_Cdg() {
+			return grupotrabajoCdg;
+		}
+		
+		private String grupotrabajoDescripcion;  
+		
+		/**
+		 * Descripción
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getGrupotrabajo_Descripcion() {
+			return grupotrabajoDescripcion;
+		}
+		public void visitRel_cli_grptrabajo(Cliente cliente, Grupotrabajo grupotrabajo)
+		throws SQLException {
+			grupotrabajoCdg = grupotrabajo.getCdg();  
+			grupotrabajoDescripcion = grupotrabajo.getDescripcion();  
+		}
+	
+	}
 	/**
 	 * Rel_cli_via shows join between Tipovia and Cliente
 	 */
@@ -17152,6 +21024,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getDelegacion_Telefono() {
 			return delegacionTelefono;
 		}
+		
+		private String delegacionWorkplace;  
+		
+		/**
+		 * Centro de trabajo de facturación
+		 * @return the column 'workplace' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getDelegacion_Workplace() {
+			return delegacionWorkplace;
+		}
 		public void visitCliente_delegacion(Cliente cliente, Delegacion delegacion)
 		throws SQLException {
 			delegacionCdg = delegacion.getCdg();  
@@ -17164,6 +21047,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			delegacionLocalidad = delegacion.getLocalidad();  
 			delegacionProvincia = delegacion.getProvincia();  
 			delegacionTelefono = delegacion.getTelefono();  
+			delegacionWorkplace = delegacion.getWorkplace();  
 		}
 	
 	}
@@ -17791,88 +21675,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	
 	}
 	/**
-	 * Jautsucursal shows join between Sucursal and Autonomos
-	 */
-	public static class Jautsucursal extends  DefaultCtsqlDBVisitor {
-		
-		
-		private String sucursalCodent;  
-		
-		/**
-		 * Codigo de Entidad
-		 * @return the column 'codent' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSucursal_Codent() {
-			return sucursalCodent;
-		}
-		
-		private String sucursalCdg;  
-		
-		/**
-		 * Codigo de Sucursal
-		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSucursal_Cdg() {
-			return sucursalCdg;
-		}
-		
-		private String sucursalDomsuc;  
-		
-		/**
-		 * Domicilio de Sucursal
-		 * @return the column 'domsuc' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSucursal_Domsuc() {
-			return sucursalDomsuc;
-		}
-		
-		private String sucursalMunsuc;  
-		
-		/**
-		 * Municipio de Sucursal
-		 * @return the column 'munsuc' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSucursal_Munsuc() {
-			return sucursalMunsuc;
-		}
-		
-		private String sucursalCpsuc;  
-		
-		/**
-		 * Codigo Postal de Sucursal
-		 * @return the column 'cpsuc' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSucursal_Cpsuc() {
-			return sucursalCpsuc;
-		}
-		
-		private String sucursalBic;  
-		
-		/**
-		 * BIC
-		 * @return the column 'bic' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSucursal_Bic() {
-			return sucursalBic;
-		}
-		public void visitJautsucursal(Autonomos autonomos, Sucursal sucursal)
-		throws SQLException {
-			sucursalCodent = sucursal.getCodent();  
-			sucursalCdg = sucursal.getCdg();  
-			sucursalDomsuc = sucursal.getDomsuc();  
-			sucursalMunsuc = sucursal.getMunsuc();  
-			sucursalCpsuc = sucursal.getCpsuc();  
-			sucursalBic = sucursal.getBic();  
-		}
-	
-	}
-	/**
 	 * Jautmutua shows join between Mutua and Autonomos
 	 */
 	public static class Jautmutua extends  DefaultCtsqlDBVisitor {
@@ -18308,6 +22110,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getCliente_Envioss() {
 			return clienteEnvioss;
 		}
+		
+		private String clienteGrupotrabajo;  
+		
+		/**
+		 * Grupo de trabajo
+		 * @return the column 'grupotrabajo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Grupotrabajo() {
+			return clienteGrupotrabajo;
+		}
 		public void visitEmprlban_cliente(Emprlban emprlban, Cliente cliente)
 		throws SQLException {
 			clienteCdg = cliente.getCdg();  
@@ -18345,6 +22158,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			clienteDivisa = cliente.getDivisa();  
 			clienteSoloases = cliente.getSoloases();  
 			clienteEnvioss = cliente.getEnvioss();  
+			clienteGrupotrabajo = cliente.getGrupotrabajo();  
 		}
 	
 	}
@@ -18727,6 +22541,39 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprnif_Mod190() {
 			return emprnifMod190;
 		}
+		
+		private Date emprnifFeciniportal;  
+		
+		/**
+		 * Fecha inicio portal
+		 * @return the column 'feciniportal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feciniportal() {
+			return emprnifFeciniportal;
+		}
+		
+		private Date emprnifFeccierrenomina;  
+		
+		/**
+		 * Fecha cierre nóminas
+		 * @return the column 'feccierrenomina' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feccierrenomina() {
+			return emprnifFeccierrenomina;
+		}
+		
+		private Integer emprnifMeseshistorico;  
+		
+		/**
+		 * Meses historico portal
+		 * @return the column 'meseshistorico' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprnif_Meseshistorico() {
+			return emprnifMeseshistorico;
+		}
 		public void visitEmprlban_emprnif(Emprlban emprlban, Emprnif emprnif)
 		throws SQLException {
 			emprnifCdg = emprnif.getCdg();  
@@ -18763,6 +22610,9 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprnifCecon = emprnif.getCecon();  
 			emprnifModimpuesto = emprnif.getModimpuesto();  
 			emprnifMod190 = emprnif.getMod190();  
+			emprnifFeciniportal = emprnif.getFeciniportal();  
+			emprnifFeccierrenomina = emprnif.getFeccierrenomina();  
+			emprnifMeseshistorico = emprnif.getMeseshistorico();  
 		}
 	
 	}
@@ -18893,6 +22743,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return empractCnae;
 		}
 		
+		private String empractCnae2009;  
+		
+		/**
+		 * Codigo Nacional Actividad Economica - 2009
+		 * @return the column 'cnae2009' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Cnae2009() {
+			return empractCnae2009;
+		}
+		
 		private Date empractFecnew;  
 		
 		/**
@@ -18935,17 +22796,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		 */
 		public Time getEmpract_Hormod() {
 			return empractHormod;
-		}
-		
-		private String empractCnae2009;  
-		
-		/**
-		 * Codigo Nacional Actividad Economica - 2009
-		 * @return the column 'cnae2009' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEmpract_Cnae2009() {
-			return empractCnae2009;
 		}
 		
 		private String empractIndred;  
@@ -19123,6 +22973,28 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmpract_Prevencion() {
 			return empractPrevencion;
 		}
+		
+		private String empractIndsiltra;  
+		
+		/**
+		 * SILTRA
+		 * @return the column 'indsiltra' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Indsiltra() {
+			return empractIndsiltra;
+		}
+		
+		private String empractAutoriza;  
+		
+		/**
+		 * Autorización
+		 * @return the column 'autoriza' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Autoriza() {
+			return empractAutoriza;
+		}
 		public void visitEmprlban_empract(Emprlban emprlban, Empract empract)
 		throws SQLException {
 			empractCdg = empract.getCdg();  
@@ -19136,11 +23008,11 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			empractActeco = empract.getActeco();  
 			empractEpiiae = empract.getEpiiae();  
 			empractCnae = empract.getCnae();  
+			empractCnae2009 = empract.getCnae2009();  
 			empractFecnew = empract.getFecnew();  
 			empractHornew = empract.getHornew();  
 			empractFecmod = empract.getFecmod();  
 			empractHormod = empract.getHormod();  
-			empractCnae2009 = empract.getCnae2009();  
 			empractIndred = empract.getIndred();  
 			empractIndmutua = empract.getIndmutua();  
 			empractIndtc1 = empract.getIndtc1();  
@@ -19157,6 +23029,8 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			empractIndfirma = empract.getIndfirma();  
 			empractIndregimen = empract.getIndregimen();  
 			empractPrevencion = empract.getPrevencion();  
+			empractIndsiltra = empract.getIndsiltra();  
+			empractAutoriza = empract.getAutoriza();  
 		}
 	
 	}
@@ -19266,18 +23140,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		}
 	
 	}
-
-	public void visitNszcoco(Nszcoco nszcoco)
-	throws SQLException{
-	}
-
-
-
-	public void visitNszrece(Nszrece nszrece)
-	throws SQLException{
-	}
-
-
 
 	public void visitImpr11x(Impr11x impr11x)
 	throws SQLException{
@@ -19743,6 +23605,39 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprnif_Mod190() {
 			return emprnifMod190;
 		}
+		
+		private Date emprnifFeciniportal;  
+		
+		/**
+		 * Fecha inicio portal
+		 * @return the column 'feciniportal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feciniportal() {
+			return emprnifFeciniportal;
+		}
+		
+		private Date emprnifFeccierrenomina;  
+		
+		/**
+		 * Fecha cierre nóminas
+		 * @return the column 'feccierrenomina' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feccierrenomina() {
+			return emprnifFeccierrenomina;
+		}
+		
+		private Integer emprnifMeseshistorico;  
+		
+		/**
+		 * Meses historico portal
+		 * @return the column 'meseshistorico' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprnif_Meseshistorico() {
+			return emprnifMeseshistorico;
+		}
 		public void visitImpr11x_emprnif(Impr11x impr11x, Emprnif emprnif)
 		throws SQLException {
 			emprnifCdg = emprnif.getCdg();  
@@ -19779,6 +23674,9 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprnifCecon = emprnif.getCecon();  
 			emprnifModimpuesto = emprnif.getModimpuesto();  
 			emprnifMod190 = emprnif.getMod190();  
+			emprnifFeciniportal = emprnif.getFeciniportal();  
+			emprnifFeccierrenomina = emprnif.getFeccierrenomina();  
+			emprnifMeseshistorico = emprnif.getMeseshistorico();  
 		}
 	
 	}
@@ -20240,6 +24138,39 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprnif_Mod190() {
 			return emprnifMod190;
 		}
+		
+		private Date emprnifFeciniportal;  
+		
+		/**
+		 * Fecha inicio portal
+		 * @return the column 'feciniportal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feciniportal() {
+			return emprnifFeciniportal;
+		}
+		
+		private Date emprnifFeccierrenomina;  
+		
+		/**
+		 * Fecha cierre nóminas
+		 * @return the column 'feccierrenomina' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feccierrenomina() {
+			return emprnifFeccierrenomina;
+		}
+		
+		private Integer emprnifMeseshistorico;  
+		
+		/**
+		 * Meses historico portal
+		 * @return the column 'meseshistorico' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprnif_Meseshistorico() {
+			return emprnifMeseshistorico;
+		}
 		public void visitFk_cert_rem_empr(Rem_cert_empr rem_cert_empr, Emprnif emprnif)
 		throws SQLException {
 			emprnifCdg = emprnif.getCdg();  
@@ -20276,6 +24207,9 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprnifCecon = emprnif.getCecon();  
 			emprnifModimpuesto = emprnif.getModimpuesto();  
 			emprnifMod190 = emprnif.getMod190();  
+			emprnifFeciniportal = emprnif.getFeciniportal();  
+			emprnifFeccierrenomina = emprnif.getFeccierrenomina();  
+			emprnifMeseshistorico = emprnif.getMeseshistorico();  
 		}
 	
 	}
@@ -20304,419 +24238,42 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 
 
 
-	public void visitSession(Session session)
-	throws SQLException{
-	}
-
-	public void visitFk_ae_session(Action_entry action_entry, Session session)
-	throws SQLException {
-	}
-
-	/**
-	 * Fk_application shows join between Application and Session
-	 */
-	public static class Fk_application extends  DefaultCtsqlDBVisitor {
-		
-		
-		private Integer applicationId;  
-		
-		/**
-		 * Identificador unico
-		 * @return the column 'id' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getApplication_Id() {
-			return applicationId;
-		}
-		
-		private Integer applicationAudit_level;  
-		
-		/**
-		 * Nivel de auditoria
-		 * @return the column 'audit_level' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getApplication_Audit_level() {
-			return applicationAudit_level;
-		}
-		
-		private String applicationName;  
-		
-		/**
-		 * Nombre de la Aplicacion
-		 * @return the column 'name' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getApplication_Name() {
-			return applicationName;
-		}
-		public void visitFk_application(Session session, Application application)
-		throws SQLException {
-			applicationId = application.getId();  
-			applicationAudit_level = application.getAudit_level();  
-			applicationName = application.getName();  
-		}
-	
-	}
-	/**
-	 * Fk_user shows join between Usuario and Session
-	 */
-	public static class Fk_user extends  DefaultCtsqlDBVisitor {
-		
-		
-		private Integer usuarioId;  
-		
-		/**
-		 * Identificador unico
-		 * @return the column 'id' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getUsuario_Id() {
-			return usuarioId;
-		}
-		
-		private String usuarioName;  
-		
-		/**
-		 * Nombre del Usuario
-		 * @return the column 'name' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getUsuario_Name() {
-			return usuarioName;
-		}
-		
-		private String usuarioLogin;  
-		
-		/**
-		 * Login del Usuario
-		 * @return the column 'login' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getUsuario_Login() {
-			return usuarioLogin;
-		}
-		
-		private Integer usuarioAvailable;  
-		
-		/**
-		 * Indica si el Usuario esta disponible o no
-		 * @return the column 'available' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getUsuario_Available() {
-			return usuarioAvailable;
-		}
-		
-		private Integer usuarioValidate;  
-		
-		/**
-		 * Indica si el Usuario requiere validacion o no de la clave hardwa
-		 * @return the column 'validate' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getUsuario_Validate() {
-			return usuarioValidate;
-		}
-		
-		private String usuarioAon_key;  
-		
-		/**
-		 * Campo alfanumerico donde se guarda la ultima clave hardware gene
-		 * @return the column 'aon_key' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getUsuario_Aon_key() {
-			return usuarioAon_key;
-		}
-		
-		private Integer usuarioStatus;  
-		
-		/**
-		 * Estado del Usuario con respecto a su primera validacion de la cl
-		 * @return the column 'status' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getUsuario_Status() {
-			return usuarioStatus;
-		}
-		public void visitFk_user(Session session, Usuario usuario)
-		throws SQLException {
-			usuarioId = usuario.getId();  
-			usuarioName = usuario.getName();  
-			usuarioLogin = usuario.getLogin();  
-			usuarioAvailable = usuario.getAvailable();  
-			usuarioValidate = usuario.getValidate();  
-			usuarioAon_key = usuario.getAon_key();  
-			usuarioStatus = usuario.getStatus();  
-		}
-	
-	}
-
 	public void visitRegidocu(Regidocu regidocu)
 	throws SQLException{
 	}
 
 
 	/**
-	 * Regidocu_emprper shows join between Emprper and Regidocu
+	 * Regidocu_tipreg shows join between Tipreg and Regidocu
 	 */
-	public static class Regidocu_emprper extends  DefaultCtsqlDBVisitor {
+	public static class Regidocu_tipreg extends  DefaultCtsqlDBVisitor {
 		
 		
-		private Integer emprperCdg;  
+		private String tipregCdg;  
 		
 		/**
-		 * Codigo de Trabajador
+		 * Codigo de Tipo de Registro
 		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getEmprper_Cdg() {
-			return emprperCdg;
+		public String getTipreg_Cdg() {
+			return tipregCdg;
 		}
 		
-		private Integer emprperCodper;  
+		private String tipregDescripcion;  
 		
 		/**
-		 * Codigo de Persona
-		 * @return the column 'codper' value; if the value is SQL NULL, the value returned is null
+		 * Descripcion de Tipo de Registro
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getEmprper_Codper() {
-			return emprperCodper;
+		public String getTipreg_Descripcion() {
+			return tipregDescripcion;
 		}
-		
-		private String emprperCodnsz;  
-		
-		/**
-		 * Código interno
-		 * @return the column 'codnsz' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEmprper_Codnsz() {
-			return emprperCodnsz;
-		}
-		
-		private Date emprperFecalt;  
-		
-		/**
-		 * Fecha de Alta
-		 * @return the column 'fecalt' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Date getEmprper_Fecalt() {
-			return emprperFecalt;
-		}
-		
-		private Date emprperFecbaj;  
-		
-		/**
-		 * Fecha de Baja
-		 * @return the column 'fecbaj' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Date getEmprper_Fecbaj() {
-			return emprperFecbaj;
-		}
-		
-		private Integer emprperCodemp;  
-		
-		/**
-		 * Codigo de Empresa
-		 * @return the column 'codemp' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getEmprper_Codemp() {
-			return emprperCodemp;
-		}
-		
-		private Integer emprperCodact;  
-		
-		/**
-		 * Codigo de Actividad
-		 * @return the column 'codact' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getEmprper_Codact() {
-			return emprperCodact;
-		}
-		
-		private Integer emprperDomicilio;  
-		
-		/**
-		 * Centro de Trabajo
-		 * @return the column 'domicilio' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getEmprper_Domicilio() {
-			return emprperDomicilio;
-		}
-		
-		private String emprperCodccc;  
-		
-		/**
-		 * Cuenta Cotizacion
-		 * @return the column 'codccc' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEmprper_Codccc() {
-			return emprperCodccc;
-		}
-		
-		private Integer emprperCodcco;  
-		
-		/**
-		 * Centro de Coste
-		 * @return the column 'codcco' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getEmprper_Codcco() {
-			return emprperCodcco;
-		}
-		
-		private Date emprperFecnew;  
-		
-		/**
-		 * Fecha Creacion Fila
-		 * @return the column 'fecnew' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Date getEmprper_Fecnew() {
-			return emprperFecnew;
-		}
-		
-		private Time emprperHornew;  
-		
-		/**
-		 * Hora Creacion Fila
-		 * @return the column 'hornew' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Time getEmprper_Hornew() {
-			return emprperHornew;
-		}
-		
-		private Date emprperFecmod;  
-		
-		/**
-		 * Fecha Modificacion Fila
-		 * @return the column 'fecmod' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Date getEmprper_Fecmod() {
-			return emprperFecmod;
-		}
-		
-		private Time emprperHormod;  
-		
-		/**
-		 * Hora Modificacion Fila
-		 * @return the column 'hormod' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Time getEmprper_Hormod() {
-			return emprperHormod;
-		}
-		
-		private String emprperContr_temp;  
-		
-		/**
-		 * Contrato temporal
-		 * @return the column 'contr_temp' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEmprper_Contr_temp() {
-			return emprperContr_temp;
-		}
-		
-		private String emprperMayor65;  
-		
-		/**
-		 * Mayores de 65 años y mas de 35 años Cotizados
-		 * @return the column 'mayor65' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEmprper_Mayor65() {
-			return emprperMayor65;
-		}
-		
-		private String emprperAfi;  
-		
-		/**
-		 * Insertado en AFI
-		 * @return the column 'afi' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEmprper_Afi() {
-			return emprperAfi;
-		}
-		
-		private String emprperIndagrario;  
-		
-		/**
-		 * Tipo Contrato Agrario
-		 * @return the column 'indagrario' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEmprper_Indagrario() {
-			return emprperIndagrario;
-		}
-		
-		private String emprperIndgrupo;  
-		
-		/**
-		 * Artista
-		 * @return the column 'indgrupo' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEmprper_Indgrupo() {
-			return emprperIndgrupo;
-		}
-		
-		private String emprperPariente;  
-		
-		/**
-		 * Pariente 1º o 2º Grado
-		 * @return the column 'pariente' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEmprper_Pariente() {
-			return emprperPariente;
-		}
-		
-		private String emprperNoirpf;  
-		
-		/**
-		 * No I.R.P.F. (de empresa)
-		 * @return the column 'noirpf' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEmprper_Noirpf() {
-			return emprperNoirpf;
-		}
-		public void visitRegidocu_emprper(Regidocu regidocu, Emprper emprper)
+		public void visitRegidocu_tipreg(Regidocu regidocu, Tipreg tipreg)
 		throws SQLException {
-			emprperCdg = emprper.getCdg();  
-			emprperCodper = emprper.getCodper();  
-			emprperCodnsz = emprper.getCodnsz();  
-			emprperFecalt = emprper.getFecalt();  
-			emprperFecbaj = emprper.getFecbaj();  
-			emprperCodemp = emprper.getCodemp();  
-			emprperCodact = emprper.getCodact();  
-			emprperDomicilio = emprper.getDomicilio();  
-			emprperCodccc = emprper.getCodccc();  
-			emprperCodcco = emprper.getCodcco();  
-			emprperFecnew = emprper.getFecnew();  
-			emprperHornew = emprper.getHornew();  
-			emprperFecmod = emprper.getFecmod();  
-			emprperHormod = emprper.getHormod();  
-			emprperContr_temp = emprper.getContr_temp();  
-			emprperMayor65 = emprper.getMayor65();  
-			emprperAfi = emprper.getAfi();  
-			emprperIndagrario = emprper.getIndagrario();  
-			emprperIndgrupo = emprper.getIndgrupo();  
-			emprperPariente = emprper.getPariente();  
-			emprperNoirpf = emprper.getNoirpf();  
+			tipregCdg = tipreg.getCdg();  
+			tipregDescripcion = tipreg.getDescripcion();  
 		}
 	
 	}
@@ -21110,6 +24667,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getCliente_Envioss() {
 			return clienteEnvioss;
 		}
+		
+		private String clienteGrupotrabajo;  
+		
+		/**
+		 * Grupo de trabajo
+		 * @return the column 'grupotrabajo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Grupotrabajo() {
+			return clienteGrupotrabajo;
+		}
 		public void visitRegidocu_cliente(Regidocu regidocu, Cliente cliente)
 		throws SQLException {
 			clienteCdg = cliente.getCdg();  
@@ -21147,6 +24715,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			clienteDivisa = cliente.getDivisa();  
 			clienteSoloases = cliente.getSoloases();  
 			clienteEnvioss = cliente.getEnvioss();  
+			clienteGrupotrabajo = cliente.getGrupotrabajo();  
 		}
 	
 	}
@@ -21529,6 +25098,39 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprnif_Mod190() {
 			return emprnifMod190;
 		}
+		
+		private Date emprnifFeciniportal;  
+		
+		/**
+		 * Fecha inicio portal
+		 * @return the column 'feciniportal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feciniportal() {
+			return emprnifFeciniportal;
+		}
+		
+		private Date emprnifFeccierrenomina;  
+		
+		/**
+		 * Fecha cierre nóminas
+		 * @return the column 'feccierrenomina' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feccierrenomina() {
+			return emprnifFeccierrenomina;
+		}
+		
+		private Integer emprnifMeseshistorico;  
+		
+		/**
+		 * Meses historico portal
+		 * @return the column 'meseshistorico' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprnif_Meseshistorico() {
+			return emprnifMeseshistorico;
+		}
 		public void visitRegidocu_emprnif(Regidocu regidocu, Emprnif emprnif)
 		throws SQLException {
 			emprnifCdg = emprnif.getCdg();  
@@ -21565,6 +25167,9 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprnifCecon = emprnif.getCecon();  
 			emprnifModimpuesto = emprnif.getModimpuesto();  
 			emprnifMod190 = emprnif.getMod190();  
+			emprnifFeciniportal = emprnif.getFeciniportal();  
+			emprnifFeccierrenomina = emprnif.getFeccierrenomina();  
+			emprnifMeseshistorico = emprnif.getMeseshistorico();  
 		}
 	
 	}
@@ -21695,6 +25300,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return empractCnae;
 		}
 		
+		private String empractCnae2009;  
+		
+		/**
+		 * Codigo Nacional Actividad Economica - 2009
+		 * @return the column 'cnae2009' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Cnae2009() {
+			return empractCnae2009;
+		}
+		
 		private Date empractFecnew;  
 		
 		/**
@@ -21737,17 +25353,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		 */
 		public Time getEmpract_Hormod() {
 			return empractHormod;
-		}
-		
-		private String empractCnae2009;  
-		
-		/**
-		 * Codigo Nacional Actividad Economica - 2009
-		 * @return the column 'cnae2009' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEmpract_Cnae2009() {
-			return empractCnae2009;
 		}
 		
 		private String empractIndred;  
@@ -21925,6 +25530,28 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmpract_Prevencion() {
 			return empractPrevencion;
 		}
+		
+		private String empractIndsiltra;  
+		
+		/**
+		 * SILTRA
+		 * @return the column 'indsiltra' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Indsiltra() {
+			return empractIndsiltra;
+		}
+		
+		private String empractAutoriza;  
+		
+		/**
+		 * Autorización
+		 * @return the column 'autoriza' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Autoriza() {
+			return empractAutoriza;
+		}
 		public void visitRegidocu_empract(Regidocu regidocu, Empract empract)
 		throws SQLException {
 			empractCdg = empract.getCdg();  
@@ -21938,11 +25565,11 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			empractActeco = empract.getActeco();  
 			empractEpiiae = empract.getEpiiae();  
 			empractCnae = empract.getCnae();  
+			empractCnae2009 = empract.getCnae2009();  
 			empractFecnew = empract.getFecnew();  
 			empractHornew = empract.getHornew();  
 			empractFecmod = empract.getFecmod();  
 			empractHormod = empract.getHormod();  
-			empractCnae2009 = empract.getCnae2009();  
 			empractIndred = empract.getIndred();  
 			empractIndmutua = empract.getIndmutua();  
 			empractIndtc1 = empract.getIndtc1();  
@@ -21959,40 +25586,330 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			empractIndfirma = empract.getIndfirma();  
 			empractIndregimen = empract.getIndregimen();  
 			empractPrevencion = empract.getPrevencion();  
+			empractIndsiltra = empract.getIndsiltra();  
+			empractAutoriza = empract.getAutoriza();  
 		}
 	
 	}
 	/**
-	 * Regidocu_tipreg shows join between Tipreg and Regidocu
+	 * Regidocu_emprper shows join between Emprper and Regidocu
 	 */
-	public static class Regidocu_tipreg extends  DefaultCtsqlDBVisitor {
+	public static class Regidocu_emprper extends  DefaultCtsqlDBVisitor {
 		
 		
-		private String tipregCdg;  
+		private Integer emprperCdg;  
 		
 		/**
-		 * Codigo de Tipo de Registro
+		 * Codigo de Trabajador
 		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getTipreg_Cdg() {
-			return tipregCdg;
+		public Integer getEmprper_Cdg() {
+			return emprperCdg;
 		}
 		
-		private String tipregDescripcion;  
+		private Integer emprperCodper;  
 		
 		/**
-		 * Descripcion de Tipo de Registro
-		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * Codigo de Persona
+		 * @return the column 'codper' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getTipreg_Descripcion() {
-			return tipregDescripcion;
+		public Integer getEmprper_Codper() {
+			return emprperCodper;
 		}
-		public void visitRegidocu_tipreg(Regidocu regidocu, Tipreg tipreg)
+		
+		private String emprperCodnsz;  
+		
+		/**
+		 * Codigo BBX
+		 * @return the column 'codnsz' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Codnsz() {
+			return emprperCodnsz;
+		}
+		
+		private Date emprperFecalt;  
+		
+		/**
+		 * Fecha de Alta
+		 * @return the column 'fecalt' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprper_Fecalt() {
+			return emprperFecalt;
+		}
+		
+		private Date emprperFecbaj;  
+		
+		/**
+		 * Fecha de Baja
+		 * @return the column 'fecbaj' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprper_Fecbaj() {
+			return emprperFecbaj;
+		}
+		
+		private Integer emprperCodemp;  
+		
+		/**
+		 * Codigo de Empresa
+		 * @return the column 'codemp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprper_Codemp() {
+			return emprperCodemp;
+		}
+		
+		private Integer emprperCodact;  
+		
+		/**
+		 * Codigo de Actividad
+		 * @return the column 'codact' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprper_Codact() {
+			return emprperCodact;
+		}
+		
+		private Integer emprperDomicilio;  
+		
+		/**
+		 * Centro de Trabajo
+		 * @return the column 'domicilio' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprper_Domicilio() {
+			return emprperDomicilio;
+		}
+		
+		private String emprperCodccc;  
+		
+		/**
+		 * Cuenta Cotizacion
+		 * @return the column 'codccc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Codccc() {
+			return emprperCodccc;
+		}
+		
+		private Integer emprperCodcco;  
+		
+		/**
+		 * Centro de Coste
+		 * @return the column 'codcco' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprper_Codcco() {
+			return emprperCodcco;
+		}
+		
+		private Date emprperFecnew;  
+		
+		/**
+		 * Fecha Creacion Fila
+		 * @return the column 'fecnew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprper_Fecnew() {
+			return emprperFecnew;
+		}
+		
+		private Time emprperHornew;  
+		
+		/**
+		 * Hora Creacion Fila
+		 * @return the column 'hornew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getEmprper_Hornew() {
+			return emprperHornew;
+		}
+		
+		private Date emprperFecmod;  
+		
+		/**
+		 * Fecha Modificacion Fila
+		 * @return the column 'fecmod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprper_Fecmod() {
+			return emprperFecmod;
+		}
+		
+		private Time emprperHormod;  
+		
+		/**
+		 * Hora Modificacion Fila
+		 * @return the column 'hormod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getEmprper_Hormod() {
+			return emprperHormod;
+		}
+		
+		private String emprperContr_temp;  
+		
+		/**
+		 * Contrato temporal
+		 * @return the column 'contr_temp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Contr_temp() {
+			return emprperContr_temp;
+		}
+		
+		private String emprperMayor65;  
+		
+		/**
+		 * Mayores de 65 años y mas de 35 años Cotizados
+		 * @return the column 'mayor65' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Mayor65() {
+			return emprperMayor65;
+		}
+		
+		private String emprperAfi;  
+		
+		/**
+		 * Insertado en AFI
+		 * @return the column 'afi' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Afi() {
+			return emprperAfi;
+		}
+		
+		private String emprperIndagrario;  
+		
+		/**
+		 * Tipo Contrato Agrario
+		 * @return the column 'indagrario' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Indagrario() {
+			return emprperIndagrario;
+		}
+		
+		private String emprperIndgrupo;  
+		
+		/**
+		 * Artista
+		 * @return the column 'indgrupo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Indgrupo() {
+			return emprperIndgrupo;
+		}
+		
+		private String emprperPariente;  
+		
+		/**
+		 * Pariente 1º o 2º Grado
+		 * @return the column 'pariente' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Pariente() {
+			return emprperPariente;
+		}
+		
+		private String emprperNoirpf;  
+		
+		/**
+		 * No I.R.P.F. (de empresa)
+		 * @return the column 'noirpf' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Noirpf() {
+			return emprperNoirpf;
+		}
+		
+		private String emprperNosegsoc;  
+		
+		/**
+		 * No seg. soc. (de trabajador)
+		 * @return the column 'nosegsoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Nosegsoc() {
+			return emprperNosegsoc;
+		}
+		
+		private String emprperJubiladoactivo;  
+		
+		/**
+		 * Trabajador jubilado en activo
+		 * @return the column 'jubiladoactivo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Jubiladoactivo() {
+			return emprperJubiladoactivo;
+		}
+		
+		private String emprperCertificado;  
+		
+		/**
+		 * Certificado Procesado
+		 * @return the column 'certificado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Certificado() {
+			return emprperCertificado;
+		}
+		
+		private String emprperFamiliar;  
+		
+		/**
+		 * Familiar de 1º grado
+		 * @return the column 'familiar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Familiar() {
+			return emprperFamiliar;
+		}
+		
+		private String emprperNoresidente;  
+		
+		/**
+		 * Trabajador no residente
+		 * @return the column 'noresidente' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Noresidente() {
+			return emprperNoresidente;
+		}
+		public void visitRegidocu_emprper(Regidocu regidocu, Emprper emprper)
 		throws SQLException {
-			tipregCdg = tipreg.getCdg();  
-			tipregDescripcion = tipreg.getDescripcion();  
+			emprperCdg = emprper.getCdg();  
+			emprperCodper = emprper.getCodper();  
+			emprperCodnsz = emprper.getCodnsz();  
+			emprperFecalt = emprper.getFecalt();  
+			emprperFecbaj = emprper.getFecbaj();  
+			emprperCodemp = emprper.getCodemp();  
+			emprperCodact = emprper.getCodact();  
+			emprperDomicilio = emprper.getDomicilio();  
+			emprperCodccc = emprper.getCodccc();  
+			emprperCodcco = emprper.getCodcco();  
+			emprperFecnew = emprper.getFecnew();  
+			emprperHornew = emprper.getHornew();  
+			emprperFecmod = emprper.getFecmod();  
+			emprperHormod = emprper.getHormod();  
+			emprperContr_temp = emprper.getContr_temp();  
+			emprperMayor65 = emprper.getMayor65();  
+			emprperAfi = emprper.getAfi();  
+			emprperIndagrario = emprper.getIndagrario();  
+			emprperIndgrupo = emprper.getIndgrupo();  
+			emprperPariente = emprper.getPariente();  
+			emprperNoirpf = emprper.getNoirpf();  
+			emprperNosegsoc = emprper.getNosegsoc();  
+			emprperJubiladoactivo = emprper.getJubiladoactivo();  
+			emprperCertificado = emprper.getCertificado();  
+			emprperFamiliar = emprper.getFamiliar();  
+			emprperNoresidente = emprper.getNoresidente();  
 		}
 	
 	}
@@ -22184,6 +26101,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return tc2Base_occemp;
 		}
 		
+		private BigDecimal tc2Base_solidaria;  
+		
+		/**
+		 * Base especial de solidaridad
+		 * @return the column 'base_solidaria' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getTc2_Base_solidaria() {
+			return tc2Base_solidaria;
+		}
+		
 		private BigDecimal tc2Comp_ecal;  
 		
 		/**
@@ -22333,6 +26261,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			tc2Base_hexest = tc2.getBase_hexest();  
 			tc2Base_cccemp = tc2.getBase_cccemp();  
 			tc2Base_occemp = tc2.getBase_occemp();  
+			tc2Base_solidaria = tc2.getBase_solidaria();  
 			tc2Comp_ecal = tc2.getComp_ecal();  
 			tc2Comp_acc = tc2.getComp_acc();  
 			tc2Red_concom = tc2.getRed_concom();  
@@ -22368,13 +26297,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	public void visitRel_per_prn(Persona persona, Provincia provincia)
 	throws SQLException {
 	}
-	public void visitImpr11x_provincia(Impr11x impr11x, Provincia provincia)
-	throws SQLException {
-	}
 	public void visitImpr190_provincia(Impr190 impr190, Provincia provincia)
-	throws SQLException {
-	}
-	public void visitOpfile_provincia(Opfile opfile, Provincia provincia)
 	throws SQLException {
 	}
 	public void visitJpronac(Httrabajador httrabajador, Provincia provincia)
@@ -22383,7 +26306,22 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	public void visitJprovincia(Httrabajador httrabajador, Provincia provincia)
 	throws SQLException {
 	}
+	public void visitOpfile_provincia(Opfile opfile, Provincia provincia)
+	throws SQLException {
+	}
 	public void visitJautprovincia(Autonomos autonomos, Provincia provincia)
+	throws SQLException {
+	}
+	public void visitImpr11x_provincia(Impr11x impr11x, Provincia provincia)
+	throws SQLException {
+	}
+	public void visitImpr216_provincia(Impr216 impr216, Provincia provincia)
+	throws SQLException {
+	}
+	public void visitImpr296_provincia(Impr296 impr296, Provincia provincia)
+	throws SQLException {
+	}
+	public void visitLin296_provincia(Lin296 lin296, Provincia provincia)
 	throws SQLException {
 	}
 
@@ -22486,6 +26424,15 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	
 	}
 
+	public void visitDatosweb(Datosweb datosweb)
+	throws SQLException{
+	}
+
+	public void visitLin_datosweb(Lindatosweb lindatosweb, Datosweb datosweb)
+	throws SQLException {
+	}
+
+
 	public void visitNominaex(Nominaex nominaex)
 	throws SQLException{
 	}
@@ -22494,268 +26441,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	throws SQLException {
 	}
 
-	/**
-	 * Rel_pex_per shows join between Emprper and Nominaex
-	 */
-	public static class Rel_pex_per extends  DefaultCtsqlDBVisitor {
-		
-		
-		private Integer emprperCdg;  
-		
-		/**
-		 * Codigo de Trabajador
-		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getEmprper_Cdg() {
-			return emprperCdg;
-		}
-		
-		private Integer emprperCodper;  
-		
-		/**
-		 * Codigo de Persona
-		 * @return the column 'codper' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getEmprper_Codper() {
-			return emprperCodper;
-		}
-		
-		private String emprperCodnsz;  
-		
-		/**
-		 * Código interno
-		 * @return the column 'codnsz' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEmprper_Codnsz() {
-			return emprperCodnsz;
-		}
-		
-		private Date emprperFecalt;  
-		
-		/**
-		 * Fecha de Alta
-		 * @return the column 'fecalt' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Date getEmprper_Fecalt() {
-			return emprperFecalt;
-		}
-		
-		private Date emprperFecbaj;  
-		
-		/**
-		 * Fecha de Baja
-		 * @return the column 'fecbaj' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Date getEmprper_Fecbaj() {
-			return emprperFecbaj;
-		}
-		
-		private Integer emprperCodemp;  
-		
-		/**
-		 * Codigo de Empresa
-		 * @return the column 'codemp' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getEmprper_Codemp() {
-			return emprperCodemp;
-		}
-		
-		private Integer emprperCodact;  
-		
-		/**
-		 * Codigo de Actividad
-		 * @return the column 'codact' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getEmprper_Codact() {
-			return emprperCodact;
-		}
-		
-		private Integer emprperDomicilio;  
-		
-		/**
-		 * Centro de Trabajo
-		 * @return the column 'domicilio' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getEmprper_Domicilio() {
-			return emprperDomicilio;
-		}
-		
-		private String emprperCodccc;  
-		
-		/**
-		 * Cuenta Cotizacion
-		 * @return the column 'codccc' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEmprper_Codccc() {
-			return emprperCodccc;
-		}
-		
-		private Integer emprperCodcco;  
-		
-		/**
-		 * Centro de Coste
-		 * @return the column 'codcco' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getEmprper_Codcco() {
-			return emprperCodcco;
-		}
-		
-		private Date emprperFecnew;  
-		
-		/**
-		 * Fecha Creacion Fila
-		 * @return the column 'fecnew' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Date getEmprper_Fecnew() {
-			return emprperFecnew;
-		}
-		
-		private Time emprperHornew;  
-		
-		/**
-		 * Hora Creacion Fila
-		 * @return the column 'hornew' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Time getEmprper_Hornew() {
-			return emprperHornew;
-		}
-		
-		private Date emprperFecmod;  
-		
-		/**
-		 * Fecha Modificacion Fila
-		 * @return the column 'fecmod' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Date getEmprper_Fecmod() {
-			return emprperFecmod;
-		}
-		
-		private Time emprperHormod;  
-		
-		/**
-		 * Hora Modificacion Fila
-		 * @return the column 'hormod' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Time getEmprper_Hormod() {
-			return emprperHormod;
-		}
-		
-		private String emprperContr_temp;  
-		
-		/**
-		 * Contrato temporal
-		 * @return the column 'contr_temp' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEmprper_Contr_temp() {
-			return emprperContr_temp;
-		}
-		
-		private String emprperMayor65;  
-		
-		/**
-		 * Mayores de 65 años y mas de 35 años Cotizados
-		 * @return the column 'mayor65' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEmprper_Mayor65() {
-			return emprperMayor65;
-		}
-		
-		private String emprperAfi;  
-		
-		/**
-		 * Insertado en AFI
-		 * @return the column 'afi' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEmprper_Afi() {
-			return emprperAfi;
-		}
-		
-		private String emprperIndagrario;  
-		
-		/**
-		 * Tipo Contrato Agrario
-		 * @return the column 'indagrario' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEmprper_Indagrario() {
-			return emprperIndagrario;
-		}
-		
-		private String emprperIndgrupo;  
-		
-		/**
-		 * Artista
-		 * @return the column 'indgrupo' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEmprper_Indgrupo() {
-			return emprperIndgrupo;
-		}
-		
-		private String emprperPariente;  
-		
-		/**
-		 * Pariente 1º o 2º Grado
-		 * @return the column 'pariente' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEmprper_Pariente() {
-			return emprperPariente;
-		}
-		
-		private String emprperNoirpf;  
-		
-		/**
-		 * No I.R.P.F. (de empresa)
-		 * @return the column 'noirpf' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEmprper_Noirpf() {
-			return emprperNoirpf;
-		}
-		public void visitRel_pex_per(Nominaex nominaex, Emprper emprper)
-		throws SQLException {
-			emprperCdg = emprper.getCdg();  
-			emprperCodper = emprper.getCodper();  
-			emprperCodnsz = emprper.getCodnsz();  
-			emprperFecalt = emprper.getFecalt();  
-			emprperFecbaj = emprper.getFecbaj();  
-			emprperCodemp = emprper.getCodemp();  
-			emprperCodact = emprper.getCodact();  
-			emprperDomicilio = emprper.getDomicilio();  
-			emprperCodccc = emprper.getCodccc();  
-			emprperCodcco = emprper.getCodcco();  
-			emprperFecnew = emprper.getFecnew();  
-			emprperHornew = emprper.getHornew();  
-			emprperFecmod = emprper.getFecmod();  
-			emprperHormod = emprper.getHormod();  
-			emprperContr_temp = emprper.getContr_temp();  
-			emprperMayor65 = emprper.getMayor65();  
-			emprperAfi = emprper.getAfi();  
-			emprperIndagrario = emprper.getIndagrario();  
-			emprperIndgrupo = emprper.getIndgrupo();  
-			emprperPariente = emprper.getPariente();  
-			emprperNoirpf = emprper.getNoirpf();  
-		}
-	
-	}
 	/**
 	 * Rel_pex_com shows join between Complemento and Nominaex
 	 */
@@ -22849,6 +26534,28 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getComplemento_Dinesp() {
 			return complementoDinesp;
 		}
+		
+		private String complementoConcepto;  
+		
+		/**
+		 * Concepto
+		 * @return the column 'concepto' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getComplemento_Concepto() {
+			return complementoConcepto;
+		}
+		
+		private String complementoExcinc;  
+		
+		/**
+		 * Indicativo excluido/incluido
+		 * @return the column 'excinc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getComplemento_Excinc() {
+			return complementoExcinc;
+		}
 		public void visitRel_pex_com(Nominaex nominaex, Complemento complemento)
 		throws SQLException {
 			complementoCdg = complemento.getCdg();  
@@ -22859,6 +26566,8 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			complementoFijovar = complemento.getFijovar();  
 			complementoIndcom = complemento.getIndcom();  
 			complementoDinesp = complemento.getDinesp();  
+			complementoConcepto = complemento.getConcepto();  
+			complementoExcinc = complemento.getExcinc();  
 		}
 	
 	}
@@ -22932,25 +26641,10 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		}
 	
 	}
-
-	public void visitNszmest(Nszmest nszmest)
-	throws SQLException{
-	}
-
-
-
-	public void visitComunica(Comunica comunica)
-	throws SQLException{
-	}
-
-	public void visitLincomun_comunica(Lincomun lincomun, Comunica comunica)
-	throws SQLException {
-	}
-
 	/**
-	 * Comunica_emprper shows join between Emprper and Comunica
+	 * Rel_pex_per shows join between Emprper and Nominaex
 	 */
-	public static class Comunica_emprper extends  DefaultCtsqlDBVisitor {
+	public static class Rel_pex_per extends  DefaultCtsqlDBVisitor {
 		
 		
 		private Integer emprperCdg;  
@@ -22978,7 +26672,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private String emprperCodnsz;  
 		
 		/**
-		 * Código interno
+		 * Codigo BBX
 		 * @return the column 'codnsz' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -23183,6 +26877,840 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprper_Noirpf() {
 			return emprperNoirpf;
 		}
+		
+		private String emprperNosegsoc;  
+		
+		/**
+		 * No seg. soc. (de trabajador)
+		 * @return the column 'nosegsoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Nosegsoc() {
+			return emprperNosegsoc;
+		}
+		
+		private String emprperJubiladoactivo;  
+		
+		/**
+		 * Trabajador jubilado en activo
+		 * @return the column 'jubiladoactivo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Jubiladoactivo() {
+			return emprperJubiladoactivo;
+		}
+		
+		private String emprperCertificado;  
+		
+		/**
+		 * Certificado Procesado
+		 * @return the column 'certificado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Certificado() {
+			return emprperCertificado;
+		}
+		
+		private String emprperFamiliar;  
+		
+		/**
+		 * Familiar de 1º grado
+		 * @return the column 'familiar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Familiar() {
+			return emprperFamiliar;
+		}
+		
+		private String emprperNoresidente;  
+		
+		/**
+		 * Trabajador no residente
+		 * @return the column 'noresidente' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Noresidente() {
+			return emprperNoresidente;
+		}
+		public void visitRel_pex_per(Nominaex nominaex, Emprper emprper)
+		throws SQLException {
+			emprperCdg = emprper.getCdg();  
+			emprperCodper = emprper.getCodper();  
+			emprperCodnsz = emprper.getCodnsz();  
+			emprperFecalt = emprper.getFecalt();  
+			emprperFecbaj = emprper.getFecbaj();  
+			emprperCodemp = emprper.getCodemp();  
+			emprperCodact = emprper.getCodact();  
+			emprperDomicilio = emprper.getDomicilio();  
+			emprperCodccc = emprper.getCodccc();  
+			emprperCodcco = emprper.getCodcco();  
+			emprperFecnew = emprper.getFecnew();  
+			emprperHornew = emprper.getHornew();  
+			emprperFecmod = emprper.getFecmod();  
+			emprperHormod = emprper.getHormod();  
+			emprperContr_temp = emprper.getContr_temp();  
+			emprperMayor65 = emprper.getMayor65();  
+			emprperAfi = emprper.getAfi();  
+			emprperIndagrario = emprper.getIndagrario();  
+			emprperIndgrupo = emprper.getIndgrupo();  
+			emprperPariente = emprper.getPariente();  
+			emprperNoirpf = emprper.getNoirpf();  
+			emprperNosegsoc = emprper.getNosegsoc();  
+			emprperJubiladoactivo = emprper.getJubiladoactivo();  
+			emprperCertificado = emprper.getCertificado();  
+			emprperFamiliar = emprper.getFamiliar();  
+			emprperNoresidente = emprper.getNoresidente();  
+		}
+	
+	}
+
+	public void visitLin296(Lin296 lin296)
+	throws SQLException{
+	}
+
+
+	/**
+	 * Lin296_impr296 shows join between Impr296 and Lin296
+	 */
+	public static class Lin296_impr296 extends  DefaultCtsqlDBVisitor {
+		
+		
+		private Integer impr296Cdg;  
+		
+		/**
+		 * Código 296
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getImpr296_Cdg() {
+			return impr296Cdg;
+		}
+		
+		private Integer impr296Codemp;  
+		
+		/**
+		 * Código de empresa
+		 * @return the column 'codemp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getImpr296_Codemp() {
+			return impr296Codemp;
+		}
+		
+		private String impr296Codadm;  
+		
+		/**
+		 * Administración de hacienda
+		 * @return the column 'codadm' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getImpr296_Codadm() {
+			return impr296Codadm;
+		}
+		
+		private String impr296Provincia;  
+		
+		/**
+		 * Provincia
+		 * @return the column 'provincia' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getImpr296_Provincia() {
+			return impr296Provincia;
+		}
+		
+		private Integer impr296Anio;  
+		
+		/**
+		 * Anio devengo
+		 * @return the column 'anio' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getImpr296_Anio() {
+			return impr296Anio;
+		}
+		
+		private Integer impr296Num_percep;  
+		
+		/**
+		 * Número perceptores
+		 * @return the column 'num_percep' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getImpr296_Num_percep() {
+			return impr296Num_percep;
+		}
+		
+		private BigDecimal impr296Imp_percep;  
+		
+		/**
+		 * Importe percepciones
+		 * @return the column 'imp_percep' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getImpr296_Imp_percep() {
+			return impr296Imp_percep;
+		}
+		
+		private BigDecimal impr296Imp_retenc;  
+		
+		/**
+		 * Importe retenciones
+		 * @return the column 'imp_retenc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getImpr296_Imp_retenc() {
+			return impr296Imp_retenc;
+		}
+		
+		private Date impr296Fecha;  
+		
+		/**
+		 * Fecha de cálculo
+		 * @return the column 'fecha' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getImpr296_Fecha() {
+			return impr296Fecha;
+		}
+		
+		private String impr296Descuadrado;  
+		
+		/**
+		 * Descuadrado
+		 * @return the column 'descuadrado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getImpr296_Descuadrado() {
+			return impr296Descuadrado;
+		}
+		
+		private Date impr296Fecnew;  
+		
+		/**
+		 * Fecha Creacion Fila
+		 * @return the column 'fecnew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getImpr296_Fecnew() {
+			return impr296Fecnew;
+		}
+		
+		private Time impr296Hornew;  
+		
+		/**
+		 * Hora Creacion Fila
+		 * @return the column 'hornew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getImpr296_Hornew() {
+			return impr296Hornew;
+		}
+		
+		private Date impr296Fecmod;  
+		
+		/**
+		 * Fecha Modificacion Fila
+		 * @return the column 'fecmod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getImpr296_Fecmod() {
+			return impr296Fecmod;
+		}
+		
+		private Time impr296Hormod;  
+		
+		/**
+		 * Hora Modificacion Fila
+		 * @return the column 'hormod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getImpr296_Hormod() {
+			return impr296Hormod;
+		}
+		
+		private String impr296Divisa;  
+		
+		/**
+		 * Divisa
+		 * @return the column 'divisa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getImpr296_Divisa() {
+			return impr296Divisa;
+		}
+		public void visitLin296_impr296(Lin296 lin296, Impr296 impr296)
+		throws SQLException {
+			impr296Cdg = impr296.getCdg();  
+			impr296Codemp = impr296.getCodemp();  
+			impr296Codadm = impr296.getCodadm();  
+			impr296Provincia = impr296.getProvincia();  
+			impr296Anio = impr296.getAnio();  
+			impr296Num_percep = impr296.getNum_percep();  
+			impr296Imp_percep = impr296.getImp_percep();  
+			impr296Imp_retenc = impr296.getImp_retenc();  
+			impr296Fecha = impr296.getFecha();  
+			impr296Descuadrado = impr296.getDescuadrado();  
+			impr296Fecnew = impr296.getFecnew();  
+			impr296Hornew = impr296.getHornew();  
+			impr296Fecmod = impr296.getFecmod();  
+			impr296Hormod = impr296.getHormod();  
+			impr296Divisa = impr296.getDivisa();  
+		}
+	
+	}
+	/**
+	 * Lin296_provincia shows join between Provincia and Lin296
+	 */
+	public static class Lin296_provincia extends  DefaultCtsqlDBVisitor {
+		
+		
+		private String provinciaCdg;  
+		
+		/**
+		 * Codigo de Provincia
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getProvincia_Cdg() {
+			return provinciaCdg;
+		}
+		
+		private String provinciaDescripcion;  
+		
+		/**
+		 * Descripcion de Provincia
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getProvincia_Descripcion() {
+			return provinciaDescripcion;
+		}
+		
+		private String provinciaCompro;  
+		
+		/**
+		 * Codigo de Comunidad
+		 * @return the column 'compro' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getProvincia_Compro() {
+			return provinciaCompro;
+		}
+		public void visitLin296_provincia(Lin296 lin296, Provincia provincia)
+		throws SQLException {
+			provinciaCdg = provincia.getCdg();  
+			provinciaDescripcion = provincia.getDescripcion();  
+			provinciaCompro = provincia.getCompro();  
+		}
+	
+	}
+
+	public void visitTr_datos(Tr_datos tr_datos)
+	throws SQLException{
+	}
+
+
+	/**
+	 * Tr_d_tramos shows join between Tr_tramos and Tr_datos
+	 */
+	public static class Tr_d_tramos extends  DefaultCtsqlDBVisitor {
+		
+		
+		private Integer tr_tramosCdg;  
+		
+		/**
+		 * Código de liquidación
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getTr_tramos_Cdg() {
+			return tr_tramosCdg;
+		}
+		
+		private Integer tr_tramosPersona;  
+		
+		/**
+		 * Código de persona
+		 * @return the column 'persona' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getTr_tramos_Persona() {
+			return tr_tramosPersona;
+		}
+		
+		private String tr_tramosNumss;  
+		
+		/**
+		 * Numero Seguridad Social
+		 * @return the column 'numss' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTr_tramos_Numss() {
+			return tr_tramosNumss;
+		}
+		
+		private Date tr_tramosFecha_desde;  
+		
+		/**
+		 * Fecha inicial del tramo
+		 * @return the column 'fecha_desde' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getTr_tramos_Fecha_desde() {
+			return tr_tramosFecha_desde;
+		}
+		
+		private Date tr_tramosFecha_hasta;  
+		
+		/**
+		 * Fecha final del tramo
+		 * @return the column 'fecha_hasta' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getTr_tramos_Fecha_hasta() {
+			return tr_tramosFecha_hasta;
+		}
+		
+		private Integer tr_tramosDias_cotizados;  
+		
+		/**
+		 * Días cotizados
+		 * @return the column 'dias_cotizados' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getTr_tramos_Dias_cotizados() {
+			return tr_tramosDias_cotizados;
+		}
+		
+		private String tr_tramosGrupo_cotizacion;  
+		
+		/**
+		 * Grupo de cotización
+		 * @return the column 'grupo_cotizacion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTr_tramos_Grupo_cotizacion() {
+			return tr_tramosGrupo_cotizacion;
+		}
+		
+		private String tr_tramosTipo_contrato;  
+		
+		/**
+		 * Contrato de trabajo
+		 * @return the column 'tipo_contrato' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTr_tramos_Tipo_contrato() {
+			return tr_tramosTipo_contrato;
+		}
+		
+		private String tr_tramosCnae;  
+		
+		/**
+		 * Código nacional de actividad económica
+		 * @return the column 'cnae' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTr_tramos_Cnae() {
+			return tr_tramosCnae;
+		}
+		
+		private String tr_tramosEstado;  
+		
+		/**
+		 * Estado del tramo
+		 * @return the column 'estado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTr_tramos_Estado() {
+			return tr_tramosEstado;
+		}
+		public void visitTr_d_tramos(Tr_datos tr_datos, Tr_tramos tr_tramos)
+		throws SQLException {
+			tr_tramosCdg = tr_tramos.getCdg();  
+			tr_tramosPersona = tr_tramos.getPersona();  
+			tr_tramosNumss = tr_tramos.getNumss();  
+			tr_tramosFecha_desde = tr_tramos.getFecha_desde();  
+			tr_tramosFecha_hasta = tr_tramos.getFecha_hasta();  
+			tr_tramosDias_cotizados = tr_tramos.getDias_cotizados();  
+			tr_tramosGrupo_cotizacion = tr_tramos.getGrupo_cotizacion();  
+			tr_tramosTipo_contrato = tr_tramos.getTipo_contrato();  
+			tr_tramosCnae = tr_tramos.getCnae();  
+			tr_tramosEstado = tr_tramos.getEstado();  
+		}
+	
+	}
+	/**
+	 * Tr_codigocreta shows join between Codigocreta and Tr_datos
+	 */
+	public static class Tr_codigocreta extends  DefaultCtsqlDBVisitor {
+		
+		
+		private String codigocretaIndicador;  
+		
+		/**
+		 * Indicador
+		 * @return the column 'indicador' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCodigocreta_Indicador() {
+			return codigocretaIndicador;
+		}
+		
+		private String codigocretaCdg;  
+		
+		/**
+		 * Código
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCodigocreta_Cdg() {
+			return codigocretaCdg;
+		}
+		
+		private String codigocretaDescripcion;  
+		
+		/**
+		 * Descripción
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCodigocreta_Descripcion() {
+			return codigocretaDescripcion;
+		}
+		
+		private String codigocretaUsuario;  
+		
+		/**
+		 * Aplicable por usuario
+		 * @return the column 'usuario' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCodigocreta_Usuario() {
+			return codigocretaUsuario;
+		}
+		
+		private String codigocretaAplicable;  
+		
+		/**
+		 * Ambito de aplicación
+		 * @return the column 'aplicable' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCodigocreta_Aplicable() {
+			return codigocretaAplicable;
+		}
+		public void visitTr_codigocreta(Tr_datos tr_datos, Codigocreta codigocreta)
+		throws SQLException {
+			codigocretaIndicador = codigocreta.getIndicador();  
+			codigocretaCdg = codigocreta.getCdg();  
+			codigocretaDescripcion = codigocreta.getDescripcion();  
+			codigocretaUsuario = codigocreta.getUsuario();  
+			codigocretaAplicable = codigocreta.getAplicable();  
+		}
+	
+	}
+
+	public void visitComunica(Comunica comunica)
+	throws SQLException{
+	}
+
+	public void visitLincomun_comunica(Lincomun lincomun, Comunica comunica)
+	throws SQLException {
+	}
+
+	/**
+	 * Comunica_emprper shows join between Emprper and Comunica
+	 */
+	public static class Comunica_emprper extends  DefaultCtsqlDBVisitor {
+		
+		
+		private Integer emprperCdg;  
+		
+		/**
+		 * Codigo de Trabajador
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprper_Cdg() {
+			return emprperCdg;
+		}
+		
+		private Integer emprperCodper;  
+		
+		/**
+		 * Codigo de Persona
+		 * @return the column 'codper' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprper_Codper() {
+			return emprperCodper;
+		}
+		
+		private String emprperCodnsz;  
+		
+		/**
+		 * Codigo BBX
+		 * @return the column 'codnsz' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Codnsz() {
+			return emprperCodnsz;
+		}
+		
+		private Date emprperFecalt;  
+		
+		/**
+		 * Fecha de Alta
+		 * @return the column 'fecalt' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprper_Fecalt() {
+			return emprperFecalt;
+		}
+		
+		private Date emprperFecbaj;  
+		
+		/**
+		 * Fecha de Baja
+		 * @return the column 'fecbaj' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprper_Fecbaj() {
+			return emprperFecbaj;
+		}
+		
+		private Integer emprperCodemp;  
+		
+		/**
+		 * Codigo de Empresa
+		 * @return the column 'codemp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprper_Codemp() {
+			return emprperCodemp;
+		}
+		
+		private Integer emprperCodact;  
+		
+		/**
+		 * Codigo de Actividad
+		 * @return the column 'codact' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprper_Codact() {
+			return emprperCodact;
+		}
+		
+		private Integer emprperDomicilio;  
+		
+		/**
+		 * Centro de Trabajo
+		 * @return the column 'domicilio' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprper_Domicilio() {
+			return emprperDomicilio;
+		}
+		
+		private String emprperCodccc;  
+		
+		/**
+		 * Cuenta Cotizacion
+		 * @return the column 'codccc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Codccc() {
+			return emprperCodccc;
+		}
+		
+		private Integer emprperCodcco;  
+		
+		/**
+		 * Centro de Coste
+		 * @return the column 'codcco' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprper_Codcco() {
+			return emprperCodcco;
+		}
+		
+		private Date emprperFecnew;  
+		
+		/**
+		 * Fecha Creacion Fila
+		 * @return the column 'fecnew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprper_Fecnew() {
+			return emprperFecnew;
+		}
+		
+		private Time emprperHornew;  
+		
+		/**
+		 * Hora Creacion Fila
+		 * @return the column 'hornew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getEmprper_Hornew() {
+			return emprperHornew;
+		}
+		
+		private Date emprperFecmod;  
+		
+		/**
+		 * Fecha Modificacion Fila
+		 * @return the column 'fecmod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprper_Fecmod() {
+			return emprperFecmod;
+		}
+		
+		private Time emprperHormod;  
+		
+		/**
+		 * Hora Modificacion Fila
+		 * @return the column 'hormod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getEmprper_Hormod() {
+			return emprperHormod;
+		}
+		
+		private String emprperContr_temp;  
+		
+		/**
+		 * Contrato temporal
+		 * @return the column 'contr_temp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Contr_temp() {
+			return emprperContr_temp;
+		}
+		
+		private String emprperMayor65;  
+		
+		/**
+		 * Mayores de 65 años y mas de 35 años Cotizados
+		 * @return the column 'mayor65' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Mayor65() {
+			return emprperMayor65;
+		}
+		
+		private String emprperAfi;  
+		
+		/**
+		 * Insertado en AFI
+		 * @return the column 'afi' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Afi() {
+			return emprperAfi;
+		}
+		
+		private String emprperIndagrario;  
+		
+		/**
+		 * Tipo Contrato Agrario
+		 * @return the column 'indagrario' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Indagrario() {
+			return emprperIndagrario;
+		}
+		
+		private String emprperIndgrupo;  
+		
+		/**
+		 * Artista
+		 * @return the column 'indgrupo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Indgrupo() {
+			return emprperIndgrupo;
+		}
+		
+		private String emprperPariente;  
+		
+		/**
+		 * Pariente 1º o 2º Grado
+		 * @return the column 'pariente' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Pariente() {
+			return emprperPariente;
+		}
+		
+		private String emprperNoirpf;  
+		
+		/**
+		 * No I.R.P.F. (de empresa)
+		 * @return the column 'noirpf' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Noirpf() {
+			return emprperNoirpf;
+		}
+		
+		private String emprperNosegsoc;  
+		
+		/**
+		 * No seg. soc. (de trabajador)
+		 * @return the column 'nosegsoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Nosegsoc() {
+			return emprperNosegsoc;
+		}
+		
+		private String emprperJubiladoactivo;  
+		
+		/**
+		 * Trabajador jubilado en activo
+		 * @return the column 'jubiladoactivo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Jubiladoactivo() {
+			return emprperJubiladoactivo;
+		}
+		
+		private String emprperCertificado;  
+		
+		/**
+		 * Certificado Procesado
+		 * @return the column 'certificado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Certificado() {
+			return emprperCertificado;
+		}
+		
+		private String emprperFamiliar;  
+		
+		/**
+		 * Familiar de 1º grado
+		 * @return the column 'familiar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Familiar() {
+			return emprperFamiliar;
+		}
+		
+		private String emprperNoresidente;  
+		
+		/**
+		 * Trabajador no residente
+		 * @return the column 'noresidente' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Noresidente() {
+			return emprperNoresidente;
+		}
 		public void visitComunica_emprper(Comunica comunica, Emprper emprper)
 		throws SQLException {
 			emprperCdg = emprper.getCdg();  
@@ -23206,6 +27734,11 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprperIndgrupo = emprper.getIndgrupo();  
 			emprperPariente = emprper.getPariente();  
 			emprperNoirpf = emprper.getNoirpf();  
+			emprperNosegsoc = emprper.getNosegsoc();  
+			emprperJubiladoactivo = emprper.getJubiladoactivo();  
+			emprperCertificado = emprper.getCertificado();  
+			emprperFamiliar = emprper.getFamiliar();  
+			emprperNoresidente = emprper.getNoresidente();  
 		}
 	
 	}
@@ -23263,9 +27796,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	public void visitNominaexdf_divisa(Nominaexdf nominaexdf, Divisa divisa)
 	throws SQLException {
 	}
-	public void visitRel_pex_divisa(Nominaex nominaex, Divisa divisa)
-	throws SQLException {
-	}
 	public void visitRel_cli_divisa(Cliente cliente, Divisa divisa)
 	throws SQLException {
 	}
@@ -23273,6 +27803,9 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	throws SQLException {
 	}
 	public void visitRel_nom_divisa(Nomina nomina, Divisa divisa)
+	throws SQLException {
+	}
+	public void visitRel_pex_divisa(Nominaex nominaex, Divisa divisa)
 	throws SQLException {
 	}
 	public void visitFiniquito_divisa(Finiquito finiquito, Divisa divisa)
@@ -23284,13 +27817,19 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	public void visitFinnu_divisa(Finiquitonu finiquitonu, Divisa divisa)
 	throws SQLException {
 	}
-	public void visitImpr11x_divisa(Impr11x impr11x, Divisa divisa)
-	throws SQLException {
-	}
 	public void visitImpr190_divisa(Impr190 impr190, Divisa divisa)
 	throws SQLException {
 	}
 	public void visitNominadf_divisa(Nominadf nominadf, Divisa divisa)
+	throws SQLException {
+	}
+	public void visitImpr11x_divisa(Impr11x impr11x, Divisa divisa)
+	throws SQLException {
+	}
+	public void visitImpr216_divisa(Impr216 impr216, Divisa divisa)
+	throws SQLException {
+	}
+	public void visitImpr296_divisa(Impr296 impr296, Divisa divisa)
 	throws SQLException {
 	}
 
@@ -23331,7 +27870,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private String emprperCodnsz;  
 		
 		/**
-		 * Código interno
+		 * Codigo BBX
 		 * @return the column 'codnsz' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -23536,6 +28075,61 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprper_Noirpf() {
 			return emprperNoirpf;
 		}
+		
+		private String emprperNosegsoc;  
+		
+		/**
+		 * No seg. soc. (de trabajador)
+		 * @return the column 'nosegsoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Nosegsoc() {
+			return emprperNosegsoc;
+		}
+		
+		private String emprperJubiladoactivo;  
+		
+		/**
+		 * Trabajador jubilado en activo
+		 * @return the column 'jubiladoactivo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Jubiladoactivo() {
+			return emprperJubiladoactivo;
+		}
+		
+		private String emprperCertificado;  
+		
+		/**
+		 * Certificado Procesado
+		 * @return the column 'certificado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Certificado() {
+			return emprperCertificado;
+		}
+		
+		private String emprperFamiliar;  
+		
+		/**
+		 * Familiar de 1º grado
+		 * @return the column 'familiar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Familiar() {
+			return emprperFamiliar;
+		}
+		
+		private String emprperNoresidente;  
+		
+		/**
+		 * Trabajador no residente
+		 * @return the column 'noresidente' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Noresidente() {
+			return emprperNoresidente;
+		}
 		public void visitCalculo_emprper(Calculo calculo, Emprper emprper)
 		throws SQLException {
 			emprperCdg = emprper.getCdg();  
@@ -23559,9 +28153,23 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprperIndgrupo = emprper.getIndgrupo();  
 			emprperPariente = emprper.getPariente();  
 			emprperNoirpf = emprper.getNoirpf();  
+			emprperNosegsoc = emprper.getNosegsoc();  
+			emprperJubiladoactivo = emprper.getJubiladoactivo();  
+			emprperCertificado = emprper.getCertificado();  
+			emprperFamiliar = emprper.getFamiliar();  
+			emprperNoresidente = emprper.getNoresidente();  
 		}
 	
 	}
+
+	public void visitCra_dde(Cra_dde cra_dde)
+	throws SQLException{
+	}
+
+	public void visitRel_cra_dde_cdg(Cra_trb cra_trb, Cra_dde cra_dde)
+	throws SQLException {
+	}
+
 
 	public void visitPais(Pais pais)
 	throws SQLException{
@@ -23626,7 +28234,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private String emprperCodnsz;  
 		
 		/**
-		 * Código interno
+		 * Codigo BBX
 		 * @return the column 'codnsz' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -23831,6 +28439,61 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprper_Noirpf() {
 			return emprperNoirpf;
 		}
+		
+		private String emprperNosegsoc;  
+		
+		/**
+		 * No seg. soc. (de trabajador)
+		 * @return the column 'nosegsoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Nosegsoc() {
+			return emprperNosegsoc;
+		}
+		
+		private String emprperJubiladoactivo;  
+		
+		/**
+		 * Trabajador jubilado en activo
+		 * @return the column 'jubiladoactivo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Jubiladoactivo() {
+			return emprperJubiladoactivo;
+		}
+		
+		private String emprperCertificado;  
+		
+		/**
+		 * Certificado Procesado
+		 * @return the column 'certificado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Certificado() {
+			return emprperCertificado;
+		}
+		
+		private String emprperFamiliar;  
+		
+		/**
+		 * Familiar de 1º grado
+		 * @return the column 'familiar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Familiar() {
+			return emprperFamiliar;
+		}
+		
+		private String emprperNoresidente;  
+		
+		/**
+		 * Trabajador no residente
+		 * @return the column 'noresidente' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Noresidente() {
+			return emprperNoresidente;
+		}
 		public void visitRel_pcp_epp(Percep percep, Emprper emprper)
 		throws SQLException {
 			emprperCdg = emprper.getCdg();  
@@ -23854,6 +28517,11 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprperIndgrupo = emprper.getIndgrupo();  
 			emprperPariente = emprper.getPariente();  
 			emprperNoirpf = emprper.getNoirpf();  
+			emprperNosegsoc = emprper.getNosegsoc();  
+			emprperJubiladoactivo = emprper.getJubiladoactivo();  
+			emprperCertificado = emprper.getCertificado();  
+			emprperFamiliar = emprper.getFamiliar();  
+			emprperNoresidente = emprper.getNoresidente();  
 		}
 	
 	}
@@ -23950,6 +28618,28 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getComplemento_Dinesp() {
 			return complementoDinesp;
 		}
+		
+		private String complementoConcepto;  
+		
+		/**
+		 * Concepto
+		 * @return the column 'concepto' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getComplemento_Concepto() {
+			return complementoConcepto;
+		}
+		
+		private String complementoExcinc;  
+		
+		/**
+		 * Indicativo excluido/incluido
+		 * @return the column 'excinc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getComplemento_Excinc() {
+			return complementoExcinc;
+		}
 		public void visitRel_pcp_com(Percep percep, Complemento complemento)
 		throws SQLException {
 			complementoCdg = complemento.getCdg();  
@@ -23960,6 +28650,8 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			complementoFijovar = complemento.getFijovar();  
 			complementoIndcom = complemento.getIndcom();  
 			complementoDinesp = complemento.getDinesp();  
+			complementoConcepto = complemento.getConcepto();  
+			complementoExcinc = complemento.getExcinc();  
 		}
 	
 	}
@@ -23969,352 +28661,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	}
 
 
-	/**
-	 * Finiddf_findf shows join between Finiquitodf and Finindemdf
-	 */
-	public static class Finiddf_findf extends  DefaultCtsqlDBVisitor {
-		
-		
-		private Integer finiquitodfCodper;  
-		
-		/**
-		 * Codigo de Trabajador
-		 * @return the column 'codper' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getFiniquitodf_Codper() {
-			return finiquitodfCodper;
-		}
-		
-		private Date finiquitodfFecbaj;  
-		
-		/**
-		 * Fecha de Baja
-		 * @return the column 'fecbaj' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Date getFiniquitodf_Fecbaj() {
-			return finiquitodfFecbaj;
-		}
-		
-		private String finiquitodfCausa;  
-		
-		/**
-		 * Causa de Baja
-		 * @return the column 'causa' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getFiniquitodf_Causa() {
-			return finiquitodfCausa;
-		}
-		
-		private Date finiquitodfVacfecini;  
-		
-		/**
-		 * Fecha Desde Vacaciones
-		 * @return the column 'vacfecini' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Date getFiniquitodf_Vacfecini() {
-			return finiquitodfVacfecini;
-		}
-		
-		private BigDecimal finiquitodfVacimporte;  
-		
-		/**
-		 * Importe Vacaciones
-		 * @return the column 'vacimporte' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Vacimporte() {
-			return finiquitodfVacimporte;
-		}
-		
-		private BigDecimal finiquitodfTotal_conceptos;  
-		
-		/**
-		 * Total Conceptos Finiquito
-		 * @return the column 'total_conceptos' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Total_conceptos() {
-			return finiquitodfTotal_conceptos;
-		}
-		
-		private BigDecimal finiquitodfBase;  
-		
-		/**
-		 * Base I.R.P.F.
-		 * @return the column 'base' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Base() {
-			return finiquitodfBase;
-		}
-		
-		private BigDecimal finiquitodfIrpf;  
-		
-		/**
-		 * % I.R.P.F.
-		 * @return the column 'irpf' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Irpf() {
-			return finiquitodfIrpf;
-		}
-		
-		private BigDecimal finiquitodfImporte_irpf;  
-		
-		/**
-		 * Importe Retenido I.R.P.F.
-		 * @return the column 'importe_irpf' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Importe_irpf() {
-			return finiquitodfImporte_irpf;
-		}
-		
-		private BigDecimal finiquitodfLiquido;  
-		
-		/**
-		 * Importe Liquido
-		 * @return the column 'liquido' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Liquido() {
-			return finiquitodfLiquido;
-		}
-		
-		private BigDecimal finiquitodfImportesin;  
-		
-		/**
-		 * Importe Indemnizaciones no sujetas a I.R.P.F.
-		 * @return the column 'importesin' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Importesin() {
-			return finiquitodfImportesin;
-		}
-		
-		private Date finiquitodfFecnew;  
-		
-		/**
-		 * Fecha Creacion Fila
-		 * @return the column 'fecnew' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Date getFiniquitodf_Fecnew() {
-			return finiquitodfFecnew;
-		}
-		
-		private Time finiquitodfHornew;  
-		
-		/**
-		 * Hora Creacion Fila
-		 * @return the column 'hornew' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Time getFiniquitodf_Hornew() {
-			return finiquitodfHornew;
-		}
-		
-		private Date finiquitodfFecmod;  
-		
-		/**
-		 * Fecha Modificacion Fila
-		 * @return the column 'fecmod' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Date getFiniquitodf_Fecmod() {
-			return finiquitodfFecmod;
-		}
-		
-		private Time finiquitodfHormod;  
-		
-		/**
-		 * Hora Modificacion Fila
-		 * @return the column 'hormod' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Time getFiniquitodf_Hormod() {
-			return finiquitodfHormod;
-		}
-		
-		private Integer finiquitodfCdg;  
-		
-		/**
-		 * Codigo de Finiquito de Diferencias
-		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getFiniquitodf_Cdg() {
-			return finiquitodfCdg;
-		}
-		
-		private Integer finiquitodfCdgnom;  
-		
-		/**
-		 * Codigo de la Nomina Resumen de Atrasos
-		 * @return the column 'cdgnom' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getFiniquitodf_Cdgnom() {
-			return finiquitodfCdgnom;
-		}
-		
-		private Date finiquitodfFeccobreal;  
-		
-		/**
-		 * Fecha de Cobro Real
-		 * @return the column 'feccobreal' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Date getFiniquitodf_Feccobreal() {
-			return finiquitodfFeccobreal;
-		}
-		
-		private String finiquitodfDivisa;  
-		
-		/**
-		 * Divisa
-		 * @return the column 'divisa' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getFiniquitodf_Divisa() {
-			return finiquitodfDivisa;
-		}
-		
-		private Integer finiquitodfDiasvac;  
-		
-		/**
-		 * Días vacaciones
-		 * @return the column 'diasvac' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getFiniquitodf_Diasvac() {
-			return finiquitodfDiasvac;
-		}
-		
-		private BigDecimal finiquitodfCostessemp;  
-		
-		/**
-		 * Coste S.S. empresa
-		 * @return the column 'costessemp' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Costessemp() {
-			return finiquitodfCostessemp;
-		}
-		
-		private String finiquitodfCodbas;  
-		
-		/**
-		 * Grupo de tarifa
-		 * @return the column 'codbas' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getFiniquitodf_Codbas() {
-			return finiquitodfCodbas;
-		}
-		
-		private BigDecimal finiquitodfBasecg;  
-		
-		/**
-		 * Base Contingencias Generales
-		 * @return the column 'basecg' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Basecg() {
-			return finiquitodfBasecg;
-		}
-		
-		private BigDecimal finiquitodfPrccg;  
-		
-		/**
-		 * % Contingencias Generales
-		 * @return the column 'prccg' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Prccg() {
-			return finiquitodfPrccg;
-		}
-		
-		private BigDecimal finiquitodfImportecg;  
-		
-		/**
-		 * Importe Contingencias Generales
-		 * @return the column 'importecg' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Importecg() {
-			return finiquitodfImportecg;
-		}
-		
-		private BigDecimal finiquitodfBaseacc;  
-		
-		/**
-		 * Base Accidente de Trabajo
-		 * @return the column 'baseacc' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Baseacc() {
-			return finiquitodfBaseacc;
-		}
-		
-		private BigDecimal finiquitodfPrcacc;  
-		
-		/**
-		 * % Accidente de Trabajo
-		 * @return the column 'prcacc' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Prcacc() {
-			return finiquitodfPrcacc;
-		}
-		
-		private BigDecimal finiquitodfImporteacc;  
-		
-		/**
-		 * Importe Accidente de Trabajo
-		 * @return the column 'importeacc' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Importeacc() {
-			return finiquitodfImporteacc;
-		}
-		public void visitFiniddf_findf(Finindemdf finindemdf, Finiquitodf finiquitodf)
-		throws SQLException {
-			finiquitodfCodper = finiquitodf.getCodper();  
-			finiquitodfFecbaj = finiquitodf.getFecbaj();  
-			finiquitodfCausa = finiquitodf.getCausa();  
-			finiquitodfVacfecini = finiquitodf.getVacfecini();  
-			finiquitodfVacimporte = finiquitodf.getVacimporte();  
-			finiquitodfTotal_conceptos = finiquitodf.getTotal_conceptos();  
-			finiquitodfBase = finiquitodf.getBase();  
-			finiquitodfIrpf = finiquitodf.getIrpf();  
-			finiquitodfImporte_irpf = finiquitodf.getImporte_irpf();  
-			finiquitodfLiquido = finiquitodf.getLiquido();  
-			finiquitodfImportesin = finiquitodf.getImportesin();  
-			finiquitodfFecnew = finiquitodf.getFecnew();  
-			finiquitodfHornew = finiquitodf.getHornew();  
-			finiquitodfFecmod = finiquitodf.getFecmod();  
-			finiquitodfHormod = finiquitodf.getHormod();  
-			finiquitodfCdg = finiquitodf.getCdg();  
-			finiquitodfCdgnom = finiquitodf.getCdgnom();  
-			finiquitodfFeccobreal = finiquitodf.getFeccobreal();  
-			finiquitodfDivisa = finiquitodf.getDivisa();  
-			finiquitodfDiasvac = finiquitodf.getDiasvac();  
-			finiquitodfCostessemp = finiquitodf.getCostessemp();  
-			finiquitodfCodbas = finiquitodf.getCodbas();  
-			finiquitodfBasecg = finiquitodf.getBasecg();  
-			finiquitodfPrccg = finiquitodf.getPrccg();  
-			finiquitodfImportecg = finiquitodf.getImportecg();  
-			finiquitodfBaseacc = finiquitodf.getBaseacc();  
-			finiquitodfPrcacc = finiquitodf.getPrcacc();  
-			finiquitodfImporteacc = finiquitodf.getImporteacc();  
-		}
-	
-	}
 
 	public void visitEntidad(Entidad entidad)
 	throws SQLException{
@@ -24340,11 +28686,105 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	}
 
 
-	public void visitNszcere(Nszcere nszcere)
+	public void visitLinhonorarios(Linhonorarios linhonorarios)
 	throws SQLException{
 	}
 
 
+	/**
+	 * Lin_honorarios shows join between Honorarios and Linhonorarios
+	 */
+	public static class Lin_honorarios extends  DefaultCtsqlDBVisitor {
+		
+		
+		private Integer honorariosCdg;  
+		
+		/**
+		 * Código de honorario
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getHonorarios_Cdg() {
+			return honorariosCdg;
+		}
+		
+		private Integer honorariosCodcli;  
+		
+		/**
+		 * Código de cliente
+		 * @return the column 'codcli' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getHonorarios_Codcli() {
+			return honorariosCodcli;
+		}
+		
+		private Integer honorariosCodemp;  
+		
+		/**
+		 * Código de empresa
+		 * @return the column 'codemp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getHonorarios_Codemp() {
+			return honorariosCodemp;
+		}
+		
+		private Integer honorariosCodact;  
+		
+		/**
+		 * Código de actividad
+		 * @return the column 'codact' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getHonorarios_Codact() {
+			return honorariosCodact;
+		}
+		
+		private Integer honorariosTipo;  
+		
+		/**
+		 * Tipo de honorario
+		 * @return the column 'tipo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getHonorarios_Tipo() {
+			return honorariosTipo;
+		}
+		
+		private String honorariosTexto;  
+		
+		/**
+		 * Texto
+		 * @return the column 'texto' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getHonorarios_Texto() {
+			return honorariosTexto;
+		}
+		
+		private String honorariosFacturar;  
+		
+		/**
+		 * Código de facturación
+		 * @return the column 'facturar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getHonorarios_Facturar() {
+			return honorariosFacturar;
+		}
+		public void visitLin_honorarios(Linhonorarios linhonorarios, Honorarios honorarios)
+		throws SQLException {
+			honorariosCdg = honorarios.getCdg();  
+			honorariosCodcli = honorarios.getCodcli();  
+			honorariosCodemp = honorarios.getCodemp();  
+			honorariosCodact = honorarios.getCodact();  
+			honorariosTipo = honorarios.getTipo();  
+			honorariosTexto = honorarios.getTexto();  
+			honorariosFacturar = honorarios.getFacturar();  
+		}
+	
+	}
 
 	public void visitEmbargo(Embargo embargo)
 	throws SQLException{
@@ -24382,7 +28822,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private String emprperCodnsz;  
 		
 		/**
-		 * Código interno
+		 * Codigo BBX
 		 * @return the column 'codnsz' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -24587,6 +29027,61 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprper_Noirpf() {
 			return emprperNoirpf;
 		}
+		
+		private String emprperNosegsoc;  
+		
+		/**
+		 * No seg. soc. (de trabajador)
+		 * @return the column 'nosegsoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Nosegsoc() {
+			return emprperNosegsoc;
+		}
+		
+		private String emprperJubiladoactivo;  
+		
+		/**
+		 * Trabajador jubilado en activo
+		 * @return the column 'jubiladoactivo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Jubiladoactivo() {
+			return emprperJubiladoactivo;
+		}
+		
+		private String emprperCertificado;  
+		
+		/**
+		 * Certificado Procesado
+		 * @return the column 'certificado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Certificado() {
+			return emprperCertificado;
+		}
+		
+		private String emprperFamiliar;  
+		
+		/**
+		 * Familiar de 1º grado
+		 * @return the column 'familiar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Familiar() {
+			return emprperFamiliar;
+		}
+		
+		private String emprperNoresidente;  
+		
+		/**
+		 * Trabajador no residente
+		 * @return the column 'noresidente' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Noresidente() {
+			return emprperNoresidente;
+		}
 		public void visitEmbargo_emprper(Embargo embargo, Emprper emprper)
 		throws SQLException {
 			emprperCdg = emprper.getCdg();  
@@ -24610,15 +29105,78 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprperIndgrupo = emprper.getIndgrupo();  
 			emprperPariente = emprper.getPariente();  
 			emprperNoirpf = emprper.getNoirpf();  
+			emprperNosegsoc = emprper.getNosegsoc();  
+			emprperJubiladoactivo = emprper.getJubiladoactivo();  
+			emprperCertificado = emprper.getCertificado();  
+			emprperFamiliar = emprper.getFamiliar();  
+			emprperNoresidente = emprper.getNoresidente();  
 		}
 	
 	}
 
-	public void visitNszavis(Nszavis nszavis)
+	public void visitCra_cre(Cra_cre cra_cre)
 	throws SQLException{
 	}
 
 
+	/**
+	 * Rel_cra_trb_per shows join between Cra_trb and Cra_cre
+	 */
+	public static class Rel_cra_trb_per extends  DefaultCtsqlDBVisitor {
+		
+		
+		private Integer cra_trbCdg;  
+		
+		/**
+		 * Código de fichero CRA
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCra_trb_Cdg() {
+			return cra_trbCdg;
+		}
+		
+		private Integer cra_trbCodper;  
+		
+		/**
+		 * Código de persona
+		 * @return the column 'codper' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCra_trb_Codper() {
+			return cra_trbCodper;
+		}
+		
+		private String cra_trbApenom;  
+		
+		/**
+		 * Apellidos y nombre
+		 * @return the column 'apenom' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCra_trb_Apenom() {
+			return cra_trbApenom;
+		}
+		
+		private String cra_trbNumss;  
+		
+		/**
+		 * Código de cuenta de cotización
+		 * @return the column 'numss' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCra_trb_Numss() {
+			return cra_trbNumss;
+		}
+		public void visitRel_cra_trb_per(Cra_cre cra_cre, Cra_trb cra_trb)
+		throws SQLException {
+			cra_trbCdg = cra_trb.getCdg();  
+			cra_trbCodper = cra_trb.getCodper();  
+			cra_trbApenom = cra_trb.getApenom();  
+			cra_trbNumss = cra_trb.getNumss();  
+		}
+	
+	}
 
 	public void visitPercniv(Percniv percniv)
 	throws SQLException{
@@ -24810,6 +29368,28 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getComplemento_Dinesp() {
 			return complementoDinesp;
 		}
+		
+		private String complementoConcepto;  
+		
+		/**
+		 * Concepto
+		 * @return the column 'concepto' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getComplemento_Concepto() {
+			return complementoConcepto;
+		}
+		
+		private String complementoExcinc;  
+		
+		/**
+		 * Indicativo excluido/incluido
+		 * @return the column 'excinc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getComplemento_Excinc() {
+			return complementoExcinc;
+		}
 		public void visitRel_pcn_com(Percniv percniv, Complemento complemento)
 		throws SQLException {
 			complementoCdg = complemento.getCdg();  
@@ -24820,6 +29400,8 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			complementoFijovar = complemento.getFijovar();  
 			complementoIndcom = complemento.getIndcom();  
 			complementoDinesp = complemento.getDinesp();  
+			complementoConcepto = complemento.getConcepto();  
+			complementoExcinc = complemento.getExcinc();  
 		}
 	
 	}
@@ -25612,7 +30194,13 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	public void visitAvisos_emprper(Avisos avisos, Emprper emprper)
 	throws SQLException {
 	}
+	public void visitPrc_emprper(Prcdivtrab prcdivtrab, Emprper emprper)
+	throws SQLException {
+	}
 	public void visitRel_nom_per(Nomina nomina, Emprper emprper)
+	throws SQLException {
+	}
+	public void visitRel_pex_per(Nominaex nominaex, Emprper emprper)
 	throws SQLException {
 	}
 	public void visitTrabinci_emprper(Trabinci trabinci, Emprper emprper)
@@ -25625,6 +30213,9 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	throws SQLException {
 	}
 	public void visitRel_pit_epp(Parteit parteit, Emprper emprper)
+	throws SQLException {
+	}
+	public void visitEmbargo_emprper(Embargo embargo, Emprper emprper)
 	throws SQLException {
 	}
 	public void visitPitnu_emprper(Parteitnu parteitnu, Emprper emprper)
@@ -25648,25 +30239,16 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	public void visitCalculo_emprper(Calculo calculo, Emprper emprper)
 	throws SQLException {
 	}
-	public void visitNominadf_emprper(Nominadf nominadf, Emprper emprper)
-	throws SQLException {
-	}
-	public void visitEmbargo_emprper(Embargo embargo, Emprper emprper)
-	throws SQLException {
-	}
-	public void visitRel_pex_per(Nominaex nominaex, Emprper emprper)
-	throws SQLException {
-	}
 	public void visitRegidocu_emprper(Regidocu regidocu, Emprper emprper)
 	throws SQLException {
 	}
-	public void visitPrc_emprper(Prcdivtrab prcdivtrab, Emprper emprper)
-	throws SQLException {
-	}
-	public void visitPit_remesa_emp(Remesa_parte_it remesa_parte_it, Emprper emprper)
+	public void visitNominadf_emprper(Nominadf nominadf, Emprper emprper)
 	throws SQLException {
 	}
 	public void visitFk_cert_remesa_emp(Rem_cert_empr_det rem_cert_empr_det, Emprper emprper)
+	throws SQLException {
+	}
+	public void visitPit_remesa_emp(Remesa_parte_it remesa_parte_it, Emprper emprper)
 	throws SQLException {
 	}
 
@@ -26467,6 +31049,39 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprnif_Mod190() {
 			return emprnifMod190;
 		}
+		
+		private Date emprnifFeciniportal;  
+		
+		/**
+		 * Fecha inicio portal
+		 * @return the column 'feciniportal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feciniportal() {
+			return emprnifFeciniportal;
+		}
+		
+		private Date emprnifFeccierrenomina;  
+		
+		/**
+		 * Fecha cierre nóminas
+		 * @return the column 'feccierrenomina' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feccierrenomina() {
+			return emprnifFeccierrenomina;
+		}
+		
+		private Integer emprnifMeseshistorico;  
+		
+		/**
+		 * Meses historico portal
+		 * @return the column 'meseshistorico' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprnif_Meseshistorico() {
+			return emprnifMeseshistorico;
+		}
 		public void visitRel_epp_emp(Emprper emprper, Emprnif emprnif)
 		throws SQLException {
 			emprnifCdg = emprnif.getCdg();  
@@ -26503,6 +31118,9 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprnifCecon = emprnif.getCecon();  
 			emprnifModimpuesto = emprnif.getModimpuesto();  
 			emprnifMod190 = emprnif.getMod190();  
+			emprnifFeciniportal = emprnif.getFeciniportal();  
+			emprnifFeccierrenomina = emprnif.getFeccierrenomina();  
+			emprnifMeseshistorico = emprnif.getMeseshistorico();  
 		}
 	
 	}
@@ -26633,6 +31251,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return empractCnae;
 		}
 		
+		private String empractCnae2009;  
+		
+		/**
+		 * Codigo Nacional Actividad Economica - 2009
+		 * @return the column 'cnae2009' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Cnae2009() {
+			return empractCnae2009;
+		}
+		
 		private Date empractFecnew;  
 		
 		/**
@@ -26675,17 +31304,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		 */
 		public Time getEmpract_Hormod() {
 			return empractHormod;
-		}
-		
-		private String empractCnae2009;  
-		
-		/**
-		 * Codigo Nacional Actividad Economica - 2009
-		 * @return the column 'cnae2009' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEmpract_Cnae2009() {
-			return empractCnae2009;
 		}
 		
 		private String empractIndred;  
@@ -26863,6 +31481,28 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmpract_Prevencion() {
 			return empractPrevencion;
 		}
+		
+		private String empractIndsiltra;  
+		
+		/**
+		 * SILTRA
+		 * @return the column 'indsiltra' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Indsiltra() {
+			return empractIndsiltra;
+		}
+		
+		private String empractAutoriza;  
+		
+		/**
+		 * Autorización
+		 * @return the column 'autoriza' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Autoriza() {
+			return empractAutoriza;
+		}
 		public void visitRel_epp_act(Emprper emprper, Empract empract)
 		throws SQLException {
 			empractCdg = empract.getCdg();  
@@ -26876,11 +31516,11 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			empractActeco = empract.getActeco();  
 			empractEpiiae = empract.getEpiiae();  
 			empractCnae = empract.getCnae();  
+			empractCnae2009 = empract.getCnae2009();  
 			empractFecnew = empract.getFecnew();  
 			empractHornew = empract.getHornew();  
 			empractFecmod = empract.getFecmod();  
 			empractHormod = empract.getHormod();  
-			empractCnae2009 = empract.getCnae2009();  
 			empractIndred = empract.getIndred();  
 			empractIndmutua = empract.getIndmutua();  
 			empractIndtc1 = empract.getIndtc1();  
@@ -26897,6 +31537,8 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			empractIndfirma = empract.getIndfirma();  
 			empractIndregimen = empract.getIndregimen();  
 			empractPrevencion = empract.getPrevencion();  
+			empractIndsiltra = empract.getIndsiltra();  
+			empractAutoriza = empract.getAutoriza();  
 		}
 	
 	}
@@ -27278,12 +31920,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		}
 	
 	}
-
-	public void visitNszbanc(Nszbanc nszbanc)
-	throws SQLException{
-	}
-
-
 
 	public void visitLbonifica(Lbonifica lbonifica)
 	throws SQLException{
@@ -27943,7 +32579,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private String emprperCodnsz;  
 		
 		/**
-		 * Código interno
+		 * Codigo BBX
 		 * @return the column 'codnsz' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -28148,6 +32784,61 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprper_Noirpf() {
 			return emprperNoirpf;
 		}
+		
+		private String emprperNosegsoc;  
+		
+		/**
+		 * No seg. soc. (de trabajador)
+		 * @return the column 'nosegsoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Nosegsoc() {
+			return emprperNosegsoc;
+		}
+		
+		private String emprperJubiladoactivo;  
+		
+		/**
+		 * Trabajador jubilado en activo
+		 * @return the column 'jubiladoactivo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Jubiladoactivo() {
+			return emprperJubiladoactivo;
+		}
+		
+		private String emprperCertificado;  
+		
+		/**
+		 * Certificado Procesado
+		 * @return the column 'certificado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Certificado() {
+			return emprperCertificado;
+		}
+		
+		private String emprperFamiliar;  
+		
+		/**
+		 * Familiar de 1º grado
+		 * @return the column 'familiar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Familiar() {
+			return emprperFamiliar;
+		}
+		
+		private String emprperNoresidente;  
+		
+		/**
+		 * Trabajador no residente
+		 * @return the column 'noresidente' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Noresidente() {
+			return emprperNoresidente;
+		}
 		public void visitFinnu_emprper(Finiquitonu finiquitonu, Emprper emprper)
 		throws SQLException {
 			emprperCdg = emprper.getCdg();  
@@ -28171,6 +32862,11 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprperIndgrupo = emprper.getIndgrupo();  
 			emprperPariente = emprper.getPariente();  
 			emprperNoirpf = emprper.getNoirpf();  
+			emprperNosegsoc = emprper.getNosegsoc();  
+			emprperJubiladoactivo = emprper.getJubiladoactivo();  
+			emprperCertificado = emprper.getCertificado();  
+			emprperFamiliar = emprper.getFamiliar();  
+			emprperNoresidente = emprper.getNoresidente();  
 		}
 	
 	}
@@ -28245,63 +32941,60 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	
 	}
 
-	public void visitAction(Action action)
+	public void visitWorkplaces(Workplaces workplaces)
 	throws SQLException{
 	}
 
-	public void visitFk_af_action(Action_favorite action_favorite, Action action)
+	public void visitLin_workplaces(Linworkplaces linworkplaces, Workplaces workplaces)
 	throws SQLException {
 	}
-	public void visitFk_ae_action(Action_entry action_entry, Action action)
+	public void visitRel_dlg_workplaces(Delegacion delegacion, Workplaces workplaces)
 	throws SQLException {
 	}
-	public void visitFk_ad_action(Action_denied action_denied, Action action)
+	public void visitRel_workplaces(Lintipocargos lintipocargos, Workplaces workplaces)
+	throws SQLException {
+	}
+
+
+	public void visitLinworkplaces(Linworkplaces linworkplaces)
+	throws SQLException{
+	}
+
+	public void visitRel_linworkplaces(Lintipocargos lintipocargos, Linworkplaces linworkplaces)
 	throws SQLException {
 	}
 
 	/**
-	 * Fk_action_app shows join between Application and Action
+	 * Lin_workplaces shows join between Workplaces and Linworkplaces
 	 */
-	public static class Fk_action_app extends  DefaultCtsqlDBVisitor {
+	public static class Lin_workplaces extends  DefaultCtsqlDBVisitor {
 		
 		
-		private Integer applicationId;  
-		
-		/**
-		 * Identificador unico
-		 * @return the column 'id' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getApplication_Id() {
-			return applicationId;
-		}
-		
-		private Integer applicationAudit_level;  
+		private String workplacesCdg;  
 		
 		/**
-		 * Nivel de auditoria
-		 * @return the column 'audit_level' value; if the value is SQL NULL, the value returned is null
+		 * Centro de trabajo de facturación
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getApplication_Audit_level() {
-			return applicationAudit_level;
+		public String getWorkplaces_Cdg() {
+			return workplacesCdg;
 		}
 		
-		private String applicationName;  
+		private String workplacesDescripcion;  
 		
 		/**
-		 * Nombre de la Aplicacion
-		 * @return the column 'name' value; if the value is SQL NULL, the value returned is null
+		 * Descripción del centro
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getApplication_Name() {
-			return applicationName;
+		public String getWorkplaces_Descripcion() {
+			return workplacesDescripcion;
 		}
-		public void visitFk_action_app(Action action, Application application)
+		public void visitLin_workplaces(Linworkplaces linworkplaces, Workplaces workplaces)
 		throws SQLException {
-			applicationId = application.getId();  
-			applicationAudit_level = application.getAudit_level();  
-			applicationName = application.getName();  
+			workplacesCdg = workplaces.getCdg();  
+			workplacesDescripcion = workplaces.getDescripcion();  
 		}
 	
 	}
@@ -28423,6 +33116,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		 */
 		public Date getFiniquitonu_Fecbaj() {
 			return finiquitonuFecbaj;
+		}
+		
+		private String finiquitonuCodcausa;  
+		
+		/**
+		 * Código de la causa de baja
+		 * @return the column 'codcausa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getFiniquitonu_Codcausa() {
+			return finiquitonuCodcausa;
 		}
 		
 		private String finiquitonuCausa;  
@@ -28714,6 +33418,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		throws SQLException {
 			finiquitonuCodper = finiquitonu.getCodper();  
 			finiquitonuFecbaj = finiquitonu.getFecbaj();  
+			finiquitonuCodcausa = finiquitonu.getCodcausa();  
 			finiquitonuCausa = finiquitonu.getCausa();  
 			finiquitonuVacfecini = finiquitonu.getVacfecini();  
 			finiquitonuVacimporte = finiquitonu.getVacimporte();  
@@ -28836,6 +33541,28 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getComplemento_Dinesp() {
 			return complementoDinesp;
 		}
+		
+		private String complementoConcepto;  
+		
+		/**
+		 * Concepto
+		 * @return the column 'concepto' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getComplemento_Concepto() {
+			return complementoConcepto;
+		}
+		
+		private String complementoExcinc;  
+		
+		/**
+		 * Indicativo excluido/incluido
+		 * @return the column 'excinc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getComplemento_Excinc() {
+			return complementoExcinc;
+		}
 		public void visitFinexnu_com(Finipextnu finipextnu, Complemento complemento)
 		throws SQLException {
 			complementoCdg = complemento.getCdg();  
@@ -28846,6 +33573,8 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			complementoFijovar = complemento.getFijovar();  
 			complementoIndcom = complemento.getIndcom();  
 			complementoDinesp = complemento.getDinesp();  
+			complementoConcepto = complemento.getConcepto();  
+			complementoExcinc = complemento.getExcinc();  
 		}
 	
 	}
@@ -29192,12 +33921,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 
 
 
-	public void visitNszinci(Nszinci nszinci)
-	throws SQLException{
-	}
-
-
-
 	public void visitLintc2(Lintc2 lintc2)
 	throws SQLException{
 	}
@@ -29385,6 +34108,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return tc2Base_occemp;
 		}
 		
+		private BigDecimal tc2Base_solidaria;  
+		
+		/**
+		 * Base especial de solidaridad
+		 * @return the column 'base_solidaria' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getTc2_Base_solidaria() {
+			return tc2Base_solidaria;
+		}
+		
 		private BigDecimal tc2Comp_ecal;  
 		
 		/**
@@ -29534,6 +34268,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			tc2Base_hexest = tc2.getBase_hexest();  
 			tc2Base_cccemp = tc2.getBase_cccemp();  
 			tc2Base_occemp = tc2.getBase_occemp();  
+			tc2Base_solidaria = tc2.getBase_solidaria();  
 			tc2Comp_ecal = tc2.getComp_ecal();  
 			tc2Comp_acc = tc2.getComp_acc();  
 			tc2Red_concom = tc2.getRed_concom();  
@@ -29977,27 +34712,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	}
 
 
-	public void visitNszcala(Nszcala nszcala)
-	throws SQLException{
-	}
-
-
-
-	public void visitUsuario(Usuario usuario)
-	throws SQLException{
-	}
-
-	public void visitFk_user(Session session, Usuario usuario)
-	throws SQLException {
-	}
-	public void visitFk_af_user(Action_favorite action_favorite, Usuario usuario)
-	throws SQLException {
-	}
-	public void visitFk_ad_user(Action_denied action_denied, Usuario usuario)
-	throws SQLException {
-	}
-
-
 	public void visitLinplus(Linplus linplus)
 	throws SQLException{
 	}
@@ -30130,6 +34844,28 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getComplemento_Dinesp() {
 			return complementoDinesp;
 		}
+		
+		private String complementoConcepto;  
+		
+		/**
+		 * Concepto
+		 * @return the column 'concepto' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getComplemento_Concepto() {
+			return complementoConcepto;
+		}
+		
+		private String complementoExcinc;  
+		
+		/**
+		 * Indicativo excluido/incluido
+		 * @return the column 'excinc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getComplemento_Excinc() {
+			return complementoExcinc;
+		}
 		public void visitRel_lpl_com(Linplus linplus, Complemento complemento)
 		throws SQLException {
 			complementoCdg = complemento.getCdg();  
@@ -30140,15 +34876,621 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			complementoFijovar = complemento.getFijovar();  
 			complementoIndcom = complemento.getIndcom();  
 			complementoDinesp = complemento.getDinesp();  
+			complementoConcepto = complemento.getConcepto();  
+			complementoExcinc = complemento.getExcinc();  
 		}
 	
 	}
 
-	public void visitNszregi(Nszregi nszregi)
+	public void visitImpr216(Impr216 impr216)
 	throws SQLException{
 	}
 
 
+	/**
+	 * Impr216_admon shows join between Admon and Impr216
+	 */
+	public static class Impr216_admon extends  DefaultCtsqlDBVisitor {
+		
+		
+		private String admonCdg;  
+		
+		/**
+		 * Codigo de Administracion
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getAdmon_Cdg() {
+			return admonCdg;
+		}
+		
+		private String admonDescripcion;  
+		
+		/**
+		 * Descripcion de Administracion
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getAdmon_Descripcion() {
+			return admonDescripcion;
+		}
+		public void visitImpr216_admon(Impr216 impr216, Admon admon)
+		throws SQLException {
+			admonCdg = admon.getCdg();  
+			admonDescripcion = admon.getDescripcion();  
+		}
+	
+	}
+	/**
+	 * Impr216_provincia shows join between Provincia and Impr216
+	 */
+	public static class Impr216_provincia extends  DefaultCtsqlDBVisitor {
+		
+		
+		private String provinciaCdg;  
+		
+		/**
+		 * Codigo de Provincia
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getProvincia_Cdg() {
+			return provinciaCdg;
+		}
+		
+		private String provinciaDescripcion;  
+		
+		/**
+		 * Descripcion de Provincia
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getProvincia_Descripcion() {
+			return provinciaDescripcion;
+		}
+		
+		private String provinciaCompro;  
+		
+		/**
+		 * Codigo de Comunidad
+		 * @return the column 'compro' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getProvincia_Compro() {
+			return provinciaCompro;
+		}
+		public void visitImpr216_provincia(Impr216 impr216, Provincia provincia)
+		throws SQLException {
+			provinciaCdg = provincia.getCdg();  
+			provinciaDescripcion = provincia.getDescripcion();  
+			provinciaCompro = provincia.getCompro();  
+		}
+	
+	}
+	/**
+	 * Impr216_emprnif shows join between Emprnif and Impr216
+	 */
+	public static class Impr216_emprnif extends  DefaultCtsqlDBVisitor {
+		
+		
+		private Integer emprnifCdg;  
+		
+		/**
+		 * Codigo de Empresa
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprnif_Cdg() {
+			return emprnifCdg;
+		}
+		
+		private Integer emprnifCodcli;  
+		
+		/**
+		 * Codigo de Cliente
+		 * @return the column 'codcli' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprnif_Codcli() {
+			return emprnifCodcli;
+		}
+		
+		private Date emprnifFecini;  
+		
+		/**
+		 * Fecha Inicio Relacion
+		 * @return the column 'fecini' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Fecini() {
+			return emprnifFecini;
+		}
+		
+		private Date emprnifFecfin;  
+		
+		/**
+		 * Fecha Fin Relacion
+		 * @return the column 'fecfin' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Fecfin() {
+			return emprnifFecfin;
+		}
+		
+		private String emprnifDescripcion;  
+		
+		/**
+		 * Descripcion de Empresa
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Descripcion() {
+			return emprnifDescripcion;
+		}
+		
+		private String emprnifAlias;  
+		
+		/**
+		 * Alias Breve Empresa
+		 * @return the column 'alias' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Alias() {
+			return emprnifAlias;
+		}
+		
+		private String emprnifInddoc;  
+		
+		/**
+		 * Tipo Documento
+		 * @return the column 'inddoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Inddoc() {
+			return emprnifInddoc;
+		}
+		
+		private String emprnifPaiemi;  
+		
+		/**
+		 * Pais Emisor
+		 * @return the column 'paiemi' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Paiemi() {
+			return emprnifPaiemi;
+		}
+		
+		private String emprnifNumdoc;  
+		
+		/**
+		 * Numero Documento
+		 * @return the column 'numdoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Numdoc() {
+			return emprnifNumdoc;
+		}
+		
+		private String emprnifRepresentante;  
+		
+		/**
+		 * Representante
+		 * @return the column 'representante' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Representante() {
+			return emprnifRepresentante;
+		}
+		
+		private String emprnifCargo;  
+		
+		/**
+		 * Cargo Representante
+		 * @return the column 'cargo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Cargo() {
+			return emprnifCargo;
+		}
+		
+		private Date emprnifFecnac;  
+		
+		/**
+		 * Fecha Nacimiento Representante
+		 * @return the column 'fecnac' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Fecnac() {
+			return emprnifFecnac;
+		}
+		
+		private String emprnifNrodocrep;  
+		
+		/**
+		 * Numero Documento Representante
+		 * @return the column 'nrodocrep' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Nrodocrep() {
+			return emprnifNrodocrep;
+		}
+		
+		private String emprnifCodadm;  
+		
+		/**
+		 * Administracion Hacienda
+		 * @return the column 'codadm' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Codadm() {
+			return emprnifCodadm;
+		}
+		
+		private String emprnifTipempr;  
+		
+		/**
+		 * Tipo de Empresario
+		 * @return the column 'tipempr' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Tipempr() {
+			return emprnifTipempr;
+		}
+		
+		private String emprnifSexo;  
+		
+		/**
+		 * Sexo
+		 * @return the column 'sexo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Sexo() {
+			return emprnifSexo;
+		}
+		
+		private Date emprnifFeccon;  
+		
+		/**
+		 * Fecha Constitucion / Nacimiento
+		 * @return the column 'feccon' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feccon() {
+			return emprnifFeccon;
+		}
+		
+		private String emprnifObsnif;  
+		
+		/**
+		 * Observaciones
+		 * @return the column 'obsnif' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Obsnif() {
+			return emprnifObsnif;
+		}
+		
+		private String emprnifDatreg;  
+		
+		/**
+		 * Datos de Inscripcion en el Registro
+		 * @return the column 'datreg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Datreg() {
+			return emprnifDatreg;
+		}
+		
+		private Date emprnifFecnew;  
+		
+		/**
+		 * Fecha Creacion Fila
+		 * @return the column 'fecnew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Fecnew() {
+			return emprnifFecnew;
+		}
+		
+		private Time emprnifHornew;  
+		
+		/**
+		 * Hora Creacion Fila
+		 * @return the column 'hornew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getEmprnif_Hornew() {
+			return emprnifHornew;
+		}
+		
+		private Date emprnifFecmod;  
+		
+		/**
+		 * Fecha Modificacion Fila
+		 * @return the column 'fecmod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Fecmod() {
+			return emprnifFecmod;
+		}
+		
+		private Time emprnifHormod;  
+		
+		/**
+		 * Hora Modificacion Fila
+		 * @return the column 'hormod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getEmprnif_Hormod() {
+			return emprnifHormod;
+		}
+		
+		private String emprnifTipdocrep;  
+		
+		/**
+		 * Tipo Documento Representante
+		 * @return the column 'tipdocrep' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Tipdocrep() {
+			return emprnifTipdocrep;
+		}
+		
+		private String emprnifPaidocrep;  
+		
+		/**
+		 * Pais Emisor Documento Representante
+		 * @return the column 'paidocrep' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Paidocrep() {
+			return emprnifPaidocrep;
+		}
+		
+		private String emprnifIndirpf;  
+		
+		/**
+		 * Indicador IRPF
+		 * @return the column 'indirpf' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Indirpf() {
+			return emprnifIndirpf;
+		}
+		
+		private String emprnifIndcal;  
+		
+		/**
+		 * Calendario Laboral
+		 * @return the column 'indcal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Indcal() {
+			return emprnifIndcal;
+		}
+		
+		private String emprnifIndnom;  
+		
+		/**
+		 * Nomina de Empresa
+		 * @return the column 'indnom' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Indnom() {
+			return emprnifIndnom;
+		}
+		
+		private String emprnifIndcoste;  
+		
+		/**
+		 * Estudio Costes
+		 * @return the column 'indcoste' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Indcoste() {
+			return emprnifIndcoste;
+		}
+		
+		private String emprnifDivisa;  
+		
+		/**
+		 * Divisa
+		 * @return the column 'divisa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Divisa() {
+			return emprnifDivisa;
+		}
+		
+		private String emprnifEnvioss;  
+		
+		/**
+		 * Envio de Seguros Sociales
+		 * @return the column 'envioss' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Envioss() {
+			return emprnifEnvioss;
+		}
+		
+		private String emprnifCecon;  
+		
+		/**
+		 * Concierto Economico
+		 * @return the column 'cecon' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Cecon() {
+			return emprnifCecon;
+		}
+		
+		private String emprnifModimpuesto;  
+		
+		/**
+		 * Modalidad declaraciones de impuestos
+		 * @return the column 'modimpuesto' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Modimpuesto() {
+			return emprnifModimpuesto;
+		}
+		
+		private String emprnifMod190;  
+		
+		/**
+		 * Modelo 190
+		 * @return the column 'mod190' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Mod190() {
+			return emprnifMod190;
+		}
+		
+		private Date emprnifFeciniportal;  
+		
+		/**
+		 * Fecha inicio portal
+		 * @return the column 'feciniportal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feciniportal() {
+			return emprnifFeciniportal;
+		}
+		
+		private Date emprnifFeccierrenomina;  
+		
+		/**
+		 * Fecha cierre nóminas
+		 * @return the column 'feccierrenomina' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feccierrenomina() {
+			return emprnifFeccierrenomina;
+		}
+		
+		private Integer emprnifMeseshistorico;  
+		
+		/**
+		 * Meses historico portal
+		 * @return the column 'meseshistorico' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprnif_Meseshistorico() {
+			return emprnifMeseshistorico;
+		}
+		public void visitImpr216_emprnif(Impr216 impr216, Emprnif emprnif)
+		throws SQLException {
+			emprnifCdg = emprnif.getCdg();  
+			emprnifCodcli = emprnif.getCodcli();  
+			emprnifFecini = emprnif.getFecini();  
+			emprnifFecfin = emprnif.getFecfin();  
+			emprnifDescripcion = emprnif.getDescripcion();  
+			emprnifAlias = emprnif.getAlias();  
+			emprnifInddoc = emprnif.getInddoc();  
+			emprnifPaiemi = emprnif.getPaiemi();  
+			emprnifNumdoc = emprnif.getNumdoc();  
+			emprnifRepresentante = emprnif.getRepresentante();  
+			emprnifCargo = emprnif.getCargo();  
+			emprnifFecnac = emprnif.getFecnac();  
+			emprnifNrodocrep = emprnif.getNrodocrep();  
+			emprnifCodadm = emprnif.getCodadm();  
+			emprnifTipempr = emprnif.getTipempr();  
+			emprnifSexo = emprnif.getSexo();  
+			emprnifFeccon = emprnif.getFeccon();  
+			emprnifObsnif = emprnif.getObsnif();  
+			emprnifDatreg = emprnif.getDatreg();  
+			emprnifFecnew = emprnif.getFecnew();  
+			emprnifHornew = emprnif.getHornew();  
+			emprnifFecmod = emprnif.getFecmod();  
+			emprnifHormod = emprnif.getHormod();  
+			emprnifTipdocrep = emprnif.getTipdocrep();  
+			emprnifPaidocrep = emprnif.getPaidocrep();  
+			emprnifIndirpf = emprnif.getIndirpf();  
+			emprnifIndcal = emprnif.getIndcal();  
+			emprnifIndnom = emprnif.getIndnom();  
+			emprnifIndcoste = emprnif.getIndcoste();  
+			emprnifDivisa = emprnif.getDivisa();  
+			emprnifEnvioss = emprnif.getEnvioss();  
+			emprnifCecon = emprnif.getCecon();  
+			emprnifModimpuesto = emprnif.getModimpuesto();  
+			emprnifMod190 = emprnif.getMod190();  
+			emprnifFeciniportal = emprnif.getFeciniportal();  
+			emprnifFeccierrenomina = emprnif.getFeccierrenomina();  
+			emprnifMeseshistorico = emprnif.getMeseshistorico();  
+		}
+	
+	}
+	/**
+	 * Impr216_divisa shows join between Divisa and Impr216
+	 */
+	public static class Impr216_divisa extends  DefaultCtsqlDBVisitor {
+		
+		
+		private String divisaCdg;  
+		
+		/**
+		 * Codigo de Divisa
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getDivisa_Cdg() {
+			return divisaCdg;
+		}
+		
+		private String divisaDescripcion;  
+		
+		/**
+		 * Descripcion de Divisa
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getDivisa_Descripcion() {
+			return divisaDescripcion;
+		}
+		
+		private Integer divisaRedondeo;  
+		
+		/**
+		 * Tipo de Redondeo
+		 * @return the column 'redondeo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getDivisa_Redondeo() {
+			return divisaRedondeo;
+		}
+		
+		private Integer divisaMask1;  
+		
+		/**
+		 * Tipo de Mascara para impresion de valores 0
+		 * @return the column 'mask1' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getDivisa_Mask1() {
+			return divisaMask1;
+		}
+		
+		private Integer divisaMask2;  
+		
+		/**
+		 * Tipo de Mascara para impresion de valores sin 0
+		 * @return the column 'mask2' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getDivisa_Mask2() {
+			return divisaMask2;
+		}
+		public void visitImpr216_divisa(Impr216 impr216, Divisa divisa)
+		throws SQLException {
+			divisaCdg = divisa.getCdg();  
+			divisaDescripcion = divisa.getDescripcion();  
+			divisaRedondeo = divisa.getRedondeo();  
+			divisaMask1 = divisa.getMask1();  
+			divisaMask2 = divisa.getMask2();  
+		}
+	
+	}
 
 	public void visitComplevar(Complevar complevar)
 	throws SQLException{
@@ -30621,7 +35963,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private BigDecimal nominadfBase_irpf;  
 		
 		/**
-		 * Base IRPF Dinararia
+		 * Base IRPF Dineraria
 		 * @return the column 'base_irpf' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -30717,6 +36059,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return nominadfBase_it;
 		}
 		
+		private BigDecimal nominadfBase_ere;  
+		
+		/**
+		 * Base ERE
+		 * @return the column 'base_ere' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNominadf_Base_ere() {
+			return nominadfBase_ere;
+		}
+		
 		private BigDecimal nominadfTotal_1;  
 		
 		/**
@@ -30783,6 +36136,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return nominadfPrc_acc;
 		}
 		
+		private BigDecimal nominadfPrc_fp;  
+		
+		/**
+		 * Porcentaje FP
+		 * @return the column 'prc_fp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNominadf_Prc_fp() {
+			return nominadfPrc_fp;
+		}
+		
 		private BigDecimal nominadfPrc_hex;  
 		
 		/**
@@ -30825,6 +36189,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		 */
 		public BigDecimal getNominadf_Importe_acc() {
 			return nominadfImporte_acc;
+		}
+		
+		private BigDecimal nominadfImporte_fp;  
+		
+		/**
+		 * Importe FP
+		 * @return the column 'importe_fp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNominadf_Importe_fp() {
+			return nominadfImporte_fp;
 		}
 		
 		private BigDecimal nominadfImporte_hex;  
@@ -31167,6 +36542,72 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public Integer getNominadf_Cdgnom() {
 			return nominadfCdgnom;
 		}
+		
+		private BigDecimal nominadfBase_con_ere;  
+		
+		/**
+		 * Contingencias comunes ERE
+		 * @return the column 'base_con_ere' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNominadf_Base_con_ere() {
+			return nominadfBase_con_ere;
+		}
+		
+		private BigDecimal nominadfBase_acc_ere;  
+		
+		/**
+		 * Accidentes de trabajo ERE
+		 * @return the column 'base_acc_ere' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNominadf_Base_acc_ere() {
+			return nominadfBase_acc_ere;
+		}
+		
+		private BigDecimal nominadfBase_con_ere_no;  
+		
+		/**
+		 * Contingencias comunes ERE no aporta
+		 * @return the column 'base_con_ere_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNominadf_Base_con_ere_no() {
+			return nominadfBase_con_ere_no;
+		}
+		
+		private BigDecimal nominadfBase_acc_ere_no;  
+		
+		/**
+		 * Accidentes de trabajo ERE no aporta
+		 * @return the column 'base_acc_ere_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNominadf_Base_acc_ere_no() {
+			return nominadfBase_acc_ere_no;
+		}
+		
+		private BigDecimal nominadfBase_con_ere_sin;  
+		
+		/**
+		 * Contingencias comunes sin ERE
+		 * @return the column 'base_con_ere_sin' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNominadf_Base_con_ere_sin() {
+			return nominadfBase_con_ere_sin;
+		}
+		
+		private BigDecimal nominadfBase_acc_ere_sin;  
+		
+		/**
+		 * Accidentes de trabajo sin ERE
+		 * @return the column 'base_acc_ere_sin' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNominadf_Base_acc_ere_sin() {
+			return nominadfBase_acc_ere_sin;
+		}
 		public void visitNomdfdev_nominadf(Nomdfdev nomdfdev, Nominadf nominadf)
 		throws SQLException {
 			nominadfCdg = nominadf.getCdg();  
@@ -31219,16 +36660,19 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			nominadfBase_perdes = nominadf.getBase_perdes();  
 			nominadfRemuneracion = nominadf.getRemuneracion();  
 			nominadfBase_it = nominadf.getBase_it();  
+			nominadfBase_ere = nominadf.getBase_ere();  
 			nominadfTotal_1 = nominadf.getTotal_1();  
 			nominadfCodbas = nominadf.getCodbas();  
 			nominadfBase_cg = nominadf.getBase_cg();  
 			nominadfBase_acc = nominadf.getBase_acc();  
 			nominadfPrc_cg = nominadf.getPrc_cg();  
 			nominadfPrc_acc = nominadf.getPrc_acc();  
+			nominadfPrc_fp = nominadf.getPrc_fp();  
 			nominadfPrc_hex = nominadf.getPrc_hex();  
 			nominadfPrc_hexno = nominadf.getPrc_hexno();  
 			nominadfImporte_cg = nominadf.getImporte_cg();  
 			nominadfImporte_acc = nominadf.getImporte_acc();  
+			nominadfImporte_fp = nominadf.getImporte_fp();  
 			nominadfImporte_hex = nominadf.getImporte_hex();  
 			nominadfImporte_hexno = nominadf.getImporte_hexno();  
 			nominadfMincg = nominadf.getMincg();  
@@ -31260,17 +36704,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			nominadfBase_acc_pts = nominadf.getBase_acc_pts();  
 			nominadfBase_acc_sin_h_pts = nominadf.getBase_acc_sin_h_pts();  
 			nominadfCdgnom = nominadf.getCdgnom();  
+			nominadfBase_con_ere = nominadf.getBase_con_ere();  
+			nominadfBase_acc_ere = nominadf.getBase_acc_ere();  
+			nominadfBase_con_ere_no = nominadf.getBase_con_ere_no();  
+			nominadfBase_acc_ere_no = nominadf.getBase_acc_ere_no();  
+			nominadfBase_con_ere_sin = nominadf.getBase_con_ere_sin();  
+			nominadfBase_acc_ere_sin = nominadf.getBase_acc_ere_sin();  
 		}
 	
 	}
 
 	public void visitExclusion(Exclusion exclusion)
-	throws SQLException{
-	}
-
-
-
-	public void visitNszbolc(Nszbolc nszbolc)
 	throws SQLException{
 	}
 
@@ -32180,6 +37624,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return empractCnae;
 		}
 		
+		private String empractCnae2009;  
+		
+		/**
+		 * Codigo Nacional Actividad Economica - 2009
+		 * @return the column 'cnae2009' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Cnae2009() {
+			return empractCnae2009;
+		}
+		
 		private Date empractFecnew;  
 		
 		/**
@@ -32222,17 +37677,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		 */
 		public Time getEmpract_Hormod() {
 			return empractHormod;
-		}
-		
-		private String empractCnae2009;  
-		
-		/**
-		 * Codigo Nacional Actividad Economica - 2009
-		 * @return the column 'cnae2009' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEmpract_Cnae2009() {
-			return empractCnae2009;
 		}
 		
 		private String empractIndred;  
@@ -32410,6 +37854,28 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmpract_Prevencion() {
 			return empractPrevencion;
 		}
+		
+		private String empractIndsiltra;  
+		
+		/**
+		 * SILTRA
+		 * @return the column 'indsiltra' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Indsiltra() {
+			return empractIndsiltra;
+		}
+		
+		private String empractAutoriza;  
+		
+		/**
+		 * Autorización
+		 * @return the column 'autoriza' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Autoriza() {
+			return empractAutoriza;
+		}
 		public void visitJactividad(Httrabajador httrabajador, Empract empract)
 		throws SQLException {
 			empractCdg = empract.getCdg();  
@@ -32423,11 +37889,11 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			empractActeco = empract.getActeco();  
 			empractEpiiae = empract.getEpiiae();  
 			empractCnae = empract.getCnae();  
+			empractCnae2009 = empract.getCnae2009();  
 			empractFecnew = empract.getFecnew();  
 			empractHornew = empract.getHornew();  
 			empractFecmod = empract.getFecmod();  
 			empractHormod = empract.getHormod();  
-			empractCnae2009 = empract.getCnae2009();  
 			empractIndred = empract.getIndred();  
 			empractIndmutua = empract.getIndmutua();  
 			empractIndtc1 = empract.getIndtc1();  
@@ -32444,6 +37910,8 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			empractIndfirma = empract.getIndfirma();  
 			empractIndregimen = empract.getIndregimen();  
 			empractPrevencion = empract.getPrevencion();  
+			empractIndsiltra = empract.getIndsiltra();  
+			empractAutoriza = empract.getAutoriza();  
 		}
 	
 	}
@@ -33102,88 +38570,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	
 	}
 	/**
-	 * Jsucursal shows join between Sucursal and Httrabajador
-	 */
-	public static class Jsucursal extends  DefaultCtsqlDBVisitor {
-		
-		
-		private String sucursalCodent;  
-		
-		/**
-		 * Codigo de Entidad
-		 * @return the column 'codent' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSucursal_Codent() {
-			return sucursalCodent;
-		}
-		
-		private String sucursalCdg;  
-		
-		/**
-		 * Codigo de Sucursal
-		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSucursal_Cdg() {
-			return sucursalCdg;
-		}
-		
-		private String sucursalDomsuc;  
-		
-		/**
-		 * Domicilio de Sucursal
-		 * @return the column 'domsuc' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSucursal_Domsuc() {
-			return sucursalDomsuc;
-		}
-		
-		private String sucursalMunsuc;  
-		
-		/**
-		 * Municipio de Sucursal
-		 * @return the column 'munsuc' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSucursal_Munsuc() {
-			return sucursalMunsuc;
-		}
-		
-		private String sucursalCpsuc;  
-		
-		/**
-		 * Codigo Postal de Sucursal
-		 * @return the column 'cpsuc' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSucursal_Cpsuc() {
-			return sucursalCpsuc;
-		}
-		
-		private String sucursalBic;  
-		
-		/**
-		 * BIC
-		 * @return the column 'bic' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSucursal_Bic() {
-			return sucursalBic;
-		}
-		public void visitJsucursal(Httrabajador httrabajador, Sucursal sucursal)
-		throws SQLException {
-			sucursalCodent = sucursal.getCodent();  
-			sucursalCdg = sucursal.getCdg();  
-			sucursalDomsuc = sucursal.getDomsuc();  
-			sucursalMunsuc = sucursal.getMunsuc();  
-			sucursalCpsuc = sucursal.getCpsuc();  
-			sucursalBic = sucursal.getBic();  
-		}
-	
-	}
-	/**
 	 * Jtarifa shows join between Basecoti and Httrabajador
 	 */
 	public static class Jtarifa extends  DefaultCtsqlDBVisitor {
@@ -33757,6 +39143,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getCliente_Envioss() {
 			return clienteEnvioss;
 		}
+		
+		private String clienteGrupotrabajo;  
+		
+		/**
+		 * Grupo de trabajo
+		 * @return the column 'grupotrabajo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Grupotrabajo() {
+			return clienteGrupotrabajo;
+		}
 		public void visitRel_dom_cli(Domicilio domicilio, Cliente cliente)
 		throws SQLException {
 			clienteCdg = cliente.getCdg();  
@@ -33794,6 +39191,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			clienteDivisa = cliente.getDivisa();  
 			clienteSoloases = cliente.getSoloases();  
 			clienteEnvioss = cliente.getEnvioss();  
+			clienteGrupotrabajo = cliente.getGrupotrabajo();  
 		}
 	
 	}
@@ -33822,7 +39220,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	}
 
 
-	public void visitCalen(Calen calen)
+	public void visitTr_serie(Tr_serie tr_serie)
 	throws SQLException{
 	}
 
@@ -33838,21 +39236,15 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	public void visitRel_cat_com(Categoria categoria, Basecoti basecoti)
 	throws SQLException {
 	}
+	public void visitRel_cos_bas(Costes costes, Basecoti basecoti)
+	throws SQLException {
+	}
 	public void visitRel_tra_bas(Trabajo trabajo, Basecoti basecoti)
 	throws SQLException {
 	}
 	public void visitJtarifa(Httrabajador httrabajador, Basecoti basecoti)
 	throws SQLException {
 	}
-	public void visitRel_cos_bas(Costes costes, Basecoti basecoti)
-	throws SQLException {
-	}
-
-
-	public void visitNszcdtr(Nszcdtr nszcdtr)
-	throws SQLException{
-	}
-
 
 
 	public void visitLinvariables(Linvariables linvariables)
@@ -33895,160 +39287,1801 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	
 	}
 
-	public void visitAction_favorite(Action_favorite action_favorite)
+	public void visitFpercep(Fpercep fpercep)
 	throws SQLException{
 	}
 
+	public void visitLin_fpercep(Linfpercep linfpercep, Fpercep fpercep)
+	throws SQLException {
+	}
 
 	/**
-	 * Fk_af_action shows join between Action and Action_favorite
+	 * Fpe_convenio shows join between Convenio and Fpercep
 	 */
-	public static class Fk_af_action extends  DefaultCtsqlDBVisitor {
+	public static class Fpe_convenio extends  DefaultCtsqlDBVisitor {
 		
 		
-		private Integer actionId;  
-		
-		/**
-		 * Identificador unico
-		 * @return the column 'id' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getAction_Id() {
-			return actionId;
-		}
-		
-		private Integer actionMenu;  
+		private String convenioCdg;  
 		
 		/**
-		 * Indica si la Accion esta o no dentro del menu
-		 * @return the column 'menu' value; if the value is SQL NULL, the value returned is null
+		 * Codigo de Convenio
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getAction_Menu() {
-			return actionMenu;
+		public String getConvenio_Cdg() {
+			return convenioCdg;
 		}
 		
-		private String actionName;  
+		private String convenioDescripcion;  
 		
 		/**
-		 * Nombre de la Accion
-		 * @return the column 'name' value; if the value is SQL NULL, the value returned is null
+		 * Descripcion de Convenio
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getAction_Name() {
-			return actionName;
+		public String getConvenio_Descripcion() {
+			return convenioDescripcion;
 		}
 		
-		private Integer actionApplication_id;  
+		private String convenioInddia;  
 		
 		/**
-		 * Aplicacion a la que pertenece la Accion
-		 * @return the column 'application_id' value; if the value is SQL NULL, the value returned is null
+		 * Indicador Dias Descuento
+		 * @return the column 'inddia' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getAction_Application_id() {
-			return actionApplication_id;
+		public String getConvenio_Inddia() {
+			return convenioInddia;
 		}
-		public void visitFk_af_action(Action_favorite action_favorite, Action action)
+		
+		private String convenioTipcon;  
+		
+		/**
+		 * Tipo de Convenio
+		 * @return the column 'tipcon' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getConvenio_Tipcon() {
+			return convenioTipcon;
+		}
+		public void visitFpe_convenio(Fpercep fpercep, Convenio convenio)
 		throws SQLException {
-			actionId = action.getId();  
-			actionMenu = action.getMenu();  
-			actionName = action.getName();  
-			actionApplication_id = action.getApplication_id();  
+			convenioCdg = convenio.getCdg();  
+			convenioDescripcion = convenio.getDescripcion();  
+			convenioInddia = convenio.getInddia();  
+			convenioTipcon = convenio.getTipcon();  
 		}
 	
 	}
 	/**
-	 * Fk_af_user shows join between Usuario and Action_favorite
+	 * Fpe_cliente shows join between Cliente and Fpercep
 	 */
-	public static class Fk_af_user extends  DefaultCtsqlDBVisitor {
+	public static class Fpe_cliente extends  DefaultCtsqlDBVisitor {
 		
 		
-		private Integer usuarioId;  
-		
-		/**
-		 * Identificador unico
-		 * @return the column 'id' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getUsuario_Id() {
-			return usuarioId;
-		}
-		
-		private String usuarioName;  
+		private Integer clienteCdg;  
 		
 		/**
-		 * Nombre del Usuario
-		 * @return the column 'name' value; if the value is SQL NULL, the value returned is null
+		 * Codigo de Cliente
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getUsuario_Name() {
-			return usuarioName;
+		public Integer getCliente_Cdg() {
+			return clienteCdg;
 		}
 		
-		private String usuarioLogin;  
+		private Integer clienteCoddlg;  
 		
 		/**
-		 * Login del Usuario
-		 * @return the column 'login' value; if the value is SQL NULL, the value returned is null
+		 * Delegacion
+		 * @return the column 'coddlg' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getUsuario_Login() {
-			return usuarioLogin;
+		public Integer getCliente_Coddlg() {
+			return clienteCoddlg;
 		}
 		
-		private Integer usuarioAvailable;  
+		private String clienteDescripcion;  
 		
 		/**
-		 * Indica si el Usuario esta disponible o no
-		 * @return the column 'available' value; if the value is SQL NULL, the value returned is null
+		 * Descripcion de Cliente
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getUsuario_Available() {
-			return usuarioAvailable;
+		public String getCliente_Descripcion() {
+			return clienteDescripcion;
 		}
 		
-		private Integer usuarioValidate;  
+		private String clienteAlias;  
 		
 		/**
-		 * Indica si el Usuario requiere validacion o no de la clave hardwa
-		 * @return the column 'validate' value; if the value is SQL NULL, the value returned is null
+		 * Alias Breve
+		 * @return the column 'alias' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getUsuario_Validate() {
-			return usuarioValidate;
+		public String getCliente_Alias() {
+			return clienteAlias;
 		}
 		
-		private String usuarioAon_key;  
+		private Date clienteFecini;  
 		
 		/**
-		 * Campo alfanumerico donde se guarda la ultima clave hardware gene
-		 * @return the column 'aon_key' value; if the value is SQL NULL, the value returned is null
+		 * Fecha Inicio Relacion
+		 * @return the column 'fecini' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public String getUsuario_Aon_key() {
-			return usuarioAon_key;
+		public Date getCliente_Fecini() {
+			return clienteFecini;
 		}
 		
-		private Integer usuarioStatus;  
+		private Date clienteFecfin;  
 		
 		/**
-		 * Estado del Usuario con respecto a su primera validacion de la cl
-		 * @return the column 'status' value; if the value is SQL NULL, the value returned is null
+		 * Fecha Fin Relacion
+		 * @return the column 'fecfin' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
-		public Integer getUsuario_Status() {
-			return usuarioStatus;
+		public Date getCliente_Fecfin() {
+			return clienteFecfin;
 		}
-		public void visitFk_af_user(Action_favorite action_favorite, Usuario usuario)
+		
+		private String clienteTipovia;  
+		
+		/**
+		 * Tipo de Via
+		 * @return the column 'tipovia' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Tipovia() {
+			return clienteTipovia;
+		}
+		
+		private String clienteNomvia;  
+		
+		/**
+		 * Nombre de Via
+		 * @return the column 'nomvia' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Nomvia() {
+			return clienteNomvia;
+		}
+		
+		private String clienteNumero;  
+		
+		/**
+		 * Numero
+		 * @return the column 'numero' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Numero() {
+			return clienteNumero;
+		}
+		
+		private String clienteOtrdir;  
+		
+		/**
+		 * Bloque, Escalera, Piso, Puerta
+		 * @return the column 'otrdir' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Otrdir() {
+			return clienteOtrdir;
+		}
+		
+		private String clienteCodpos;  
+		
+		/**
+		 * Codigo Postal
+		 * @return the column 'codpos' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Codpos() {
+			return clienteCodpos;
+		}
+		
+		private String clienteLocalidad;  
+		
+		/**
+		 * Localidad
+		 * @return the column 'localidad' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Localidad() {
+			return clienteLocalidad;
+		}
+		
+		private String clienteProvincia;  
+		
+		/**
+		 * Provincia
+		 * @return the column 'provincia' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Provincia() {
+			return clienteProvincia;
+		}
+		
+		private String clientePersona;  
+		
+		/**
+		 * Persona de Contacto
+		 * @return the column 'persona' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Persona() {
+			return clientePersona;
+		}
+		
+		private String clienteTelefono;  
+		
+		/**
+		 * Telefono
+		 * @return the column 'telefono' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Telefono() {
+			return clienteTelefono;
+		}
+		
+		private String clienteTelefono2;  
+		
+		/**
+		 * 2º Telefono
+		 * @return the column 'telefono2' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Telefono2() {
+			return clienteTelefono2;
+		}
+		
+		private String clienteTelefono3;  
+		
+		/**
+		 * 3º Telefono
+		 * @return the column 'telefono3' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Telefono3() {
+			return clienteTelefono3;
+		}
+		
+		private String clienteFax;  
+		
+		/**
+		 * Fax
+		 * @return the column 'fax' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Fax() {
+			return clienteFax;
+		}
+		
+		private String clienteEmail;  
+		
+		/**
+		 * Direccion E-Mail
+		 * @return the column 'email' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Email() {
+			return clienteEmail;
+		}
+		
+		private String clienteInddoc;  
+		
+		/**
+		 * Tipo Documento
+		 * @return the column 'inddoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Inddoc() {
+			return clienteInddoc;
+		}
+		
+		private String clientePaiemi;  
+		
+		/**
+		 * Pais Emisor
+		 * @return the column 'paiemi' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Paiemi() {
+			return clientePaiemi;
+		}
+		
+		private String clienteNumdoc;  
+		
+		/**
+		 * Numero Documento
+		 * @return the column 'numdoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Numdoc() {
+			return clienteNumdoc;
+		}
+		
+		private String clienteTipemp;  
+		
+		/**
+		 * Tipo de Empresario
+		 * @return the column 'tipemp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Tipemp() {
+			return clienteTipemp;
+		}
+		
+		private String clienteObscli;  
+		
+		/**
+		 * Observaciones
+		 * @return the column 'obscli' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Obscli() {
+			return clienteObscli;
+		}
+		
+		private Date clienteFecnew;  
+		
+		/**
+		 * Fecha Creacion Fila
+		 * @return the column 'fecnew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getCliente_Fecnew() {
+			return clienteFecnew;
+		}
+		
+		private Time clienteHornew;  
+		
+		/**
+		 * Hora Creacion Fila
+		 * @return the column 'hornew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getCliente_Hornew() {
+			return clienteHornew;
+		}
+		
+		private Date clienteFecmod;  
+		
+		/**
+		 * Fecha Modificacion Fila
+		 * @return the column 'fecmod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getCliente_Fecmod() {
+			return clienteFecmod;
+		}
+		
+		private Time clienteHormod;  
+		
+		/**
+		 * Hora Modificacion Fila
+		 * @return the column 'hormod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getCliente_Hormod() {
+			return clienteHormod;
+		}
+		
+		private String clienteInactivo;  
+		
+		/**
+		 * Indicador de Inactivo
+		 * @return the column 'inactivo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Inactivo() {
+			return clienteInactivo;
+		}
+		
+		private String clienteIndcal;  
+		
+		/**
+		 * Calendario Laboral
+		 * @return the column 'indcal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Indcal() {
+			return clienteIndcal;
+		}
+		
+		private String clienteIndnom;  
+		
+		/**
+		 * Nomina de Empresa
+		 * @return the column 'indnom' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Indnom() {
+			return clienteIndnom;
+		}
+		
+		private String clienteIndcoste;  
+		
+		/**
+		 * Estudio Costes
+		 * @return the column 'indcoste' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Indcoste() {
+			return clienteIndcoste;
+		}
+		
+		private String clienteDivisa;  
+		
+		/**
+		 * Divisa
+		 * @return the column 'divisa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Divisa() {
+			return clienteDivisa;
+		}
+		
+		private String clienteSoloases;  
+		
+		/**
+		 * Cliente solo asesoria
+		 * @return the column 'soloases' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Soloases() {
+			return clienteSoloases;
+		}
+		
+		private String clienteEnvioss;  
+		
+		/**
+		 * Envio de Seguros Sociales
+		 * @return the column 'envioss' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Envioss() {
+			return clienteEnvioss;
+		}
+		
+		private String clienteGrupotrabajo;  
+		
+		/**
+		 * Grupo de trabajo
+		 * @return the column 'grupotrabajo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Grupotrabajo() {
+			return clienteGrupotrabajo;
+		}
+		public void visitFpe_cliente(Fpercep fpercep, Cliente cliente)
 		throws SQLException {
-			usuarioId = usuario.getId();  
-			usuarioName = usuario.getName();  
-			usuarioLogin = usuario.getLogin();  
-			usuarioAvailable = usuario.getAvailable();  
-			usuarioValidate = usuario.getValidate();  
-			usuarioAon_key = usuario.getAon_key();  
-			usuarioStatus = usuario.getStatus();  
+			clienteCdg = cliente.getCdg();  
+			clienteCoddlg = cliente.getCoddlg();  
+			clienteDescripcion = cliente.getDescripcion();  
+			clienteAlias = cliente.getAlias();  
+			clienteFecini = cliente.getFecini();  
+			clienteFecfin = cliente.getFecfin();  
+			clienteTipovia = cliente.getTipovia();  
+			clienteNomvia = cliente.getNomvia();  
+			clienteNumero = cliente.getNumero();  
+			clienteOtrdir = cliente.getOtrdir();  
+			clienteCodpos = cliente.getCodpos();  
+			clienteLocalidad = cliente.getLocalidad();  
+			clienteProvincia = cliente.getProvincia();  
+			clientePersona = cliente.getPersona();  
+			clienteTelefono = cliente.getTelefono();  
+			clienteTelefono2 = cliente.getTelefono2();  
+			clienteTelefono3 = cliente.getTelefono3();  
+			clienteFax = cliente.getFax();  
+			clienteEmail = cliente.getEmail();  
+			clienteInddoc = cliente.getInddoc();  
+			clientePaiemi = cliente.getPaiemi();  
+			clienteNumdoc = cliente.getNumdoc();  
+			clienteTipemp = cliente.getTipemp();  
+			clienteObscli = cliente.getObscli();  
+			clienteFecnew = cliente.getFecnew();  
+			clienteHornew = cliente.getHornew();  
+			clienteFecmod = cliente.getFecmod();  
+			clienteHormod = cliente.getHormod();  
+			clienteInactivo = cliente.getInactivo();  
+			clienteIndcal = cliente.getIndcal();  
+			clienteIndnom = cliente.getIndnom();  
+			clienteIndcoste = cliente.getIndcoste();  
+			clienteDivisa = cliente.getDivisa();  
+			clienteSoloases = cliente.getSoloases();  
+			clienteEnvioss = cliente.getEnvioss();  
+			clienteGrupotrabajo = cliente.getGrupotrabajo();  
+		}
+	
+	}
+	/**
+	 * Fpe_emprnif shows join between Emprnif and Fpercep
+	 */
+	public static class Fpe_emprnif extends  DefaultCtsqlDBVisitor {
+		
+		
+		private Integer emprnifCdg;  
+		
+		/**
+		 * Codigo de Empresa
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprnif_Cdg() {
+			return emprnifCdg;
+		}
+		
+		private Integer emprnifCodcli;  
+		
+		/**
+		 * Codigo de Cliente
+		 * @return the column 'codcli' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprnif_Codcli() {
+			return emprnifCodcli;
+		}
+		
+		private Date emprnifFecini;  
+		
+		/**
+		 * Fecha Inicio Relacion
+		 * @return the column 'fecini' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Fecini() {
+			return emprnifFecini;
+		}
+		
+		private Date emprnifFecfin;  
+		
+		/**
+		 * Fecha Fin Relacion
+		 * @return the column 'fecfin' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Fecfin() {
+			return emprnifFecfin;
+		}
+		
+		private String emprnifDescripcion;  
+		
+		/**
+		 * Descripcion de Empresa
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Descripcion() {
+			return emprnifDescripcion;
+		}
+		
+		private String emprnifAlias;  
+		
+		/**
+		 * Alias Breve Empresa
+		 * @return the column 'alias' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Alias() {
+			return emprnifAlias;
+		}
+		
+		private String emprnifInddoc;  
+		
+		/**
+		 * Tipo Documento
+		 * @return the column 'inddoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Inddoc() {
+			return emprnifInddoc;
+		}
+		
+		private String emprnifPaiemi;  
+		
+		/**
+		 * Pais Emisor
+		 * @return the column 'paiemi' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Paiemi() {
+			return emprnifPaiemi;
+		}
+		
+		private String emprnifNumdoc;  
+		
+		/**
+		 * Numero Documento
+		 * @return the column 'numdoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Numdoc() {
+			return emprnifNumdoc;
+		}
+		
+		private String emprnifRepresentante;  
+		
+		/**
+		 * Representante
+		 * @return the column 'representante' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Representante() {
+			return emprnifRepresentante;
+		}
+		
+		private String emprnifCargo;  
+		
+		/**
+		 * Cargo Representante
+		 * @return the column 'cargo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Cargo() {
+			return emprnifCargo;
+		}
+		
+		private Date emprnifFecnac;  
+		
+		/**
+		 * Fecha Nacimiento Representante
+		 * @return the column 'fecnac' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Fecnac() {
+			return emprnifFecnac;
+		}
+		
+		private String emprnifNrodocrep;  
+		
+		/**
+		 * Numero Documento Representante
+		 * @return the column 'nrodocrep' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Nrodocrep() {
+			return emprnifNrodocrep;
+		}
+		
+		private String emprnifCodadm;  
+		
+		/**
+		 * Administracion Hacienda
+		 * @return the column 'codadm' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Codadm() {
+			return emprnifCodadm;
+		}
+		
+		private String emprnifTipempr;  
+		
+		/**
+		 * Tipo de Empresario
+		 * @return the column 'tipempr' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Tipempr() {
+			return emprnifTipempr;
+		}
+		
+		private String emprnifSexo;  
+		
+		/**
+		 * Sexo
+		 * @return the column 'sexo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Sexo() {
+			return emprnifSexo;
+		}
+		
+		private Date emprnifFeccon;  
+		
+		/**
+		 * Fecha Constitucion / Nacimiento
+		 * @return the column 'feccon' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feccon() {
+			return emprnifFeccon;
+		}
+		
+		private String emprnifObsnif;  
+		
+		/**
+		 * Observaciones
+		 * @return the column 'obsnif' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Obsnif() {
+			return emprnifObsnif;
+		}
+		
+		private String emprnifDatreg;  
+		
+		/**
+		 * Datos de Inscripcion en el Registro
+		 * @return the column 'datreg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Datreg() {
+			return emprnifDatreg;
+		}
+		
+		private Date emprnifFecnew;  
+		
+		/**
+		 * Fecha Creacion Fila
+		 * @return the column 'fecnew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Fecnew() {
+			return emprnifFecnew;
+		}
+		
+		private Time emprnifHornew;  
+		
+		/**
+		 * Hora Creacion Fila
+		 * @return the column 'hornew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getEmprnif_Hornew() {
+			return emprnifHornew;
+		}
+		
+		private Date emprnifFecmod;  
+		
+		/**
+		 * Fecha Modificacion Fila
+		 * @return the column 'fecmod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Fecmod() {
+			return emprnifFecmod;
+		}
+		
+		private Time emprnifHormod;  
+		
+		/**
+		 * Hora Modificacion Fila
+		 * @return the column 'hormod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getEmprnif_Hormod() {
+			return emprnifHormod;
+		}
+		
+		private String emprnifTipdocrep;  
+		
+		/**
+		 * Tipo Documento Representante
+		 * @return the column 'tipdocrep' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Tipdocrep() {
+			return emprnifTipdocrep;
+		}
+		
+		private String emprnifPaidocrep;  
+		
+		/**
+		 * Pais Emisor Documento Representante
+		 * @return the column 'paidocrep' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Paidocrep() {
+			return emprnifPaidocrep;
+		}
+		
+		private String emprnifIndirpf;  
+		
+		/**
+		 * Indicador IRPF
+		 * @return the column 'indirpf' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Indirpf() {
+			return emprnifIndirpf;
+		}
+		
+		private String emprnifIndcal;  
+		
+		/**
+		 * Calendario Laboral
+		 * @return the column 'indcal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Indcal() {
+			return emprnifIndcal;
+		}
+		
+		private String emprnifIndnom;  
+		
+		/**
+		 * Nomina de Empresa
+		 * @return the column 'indnom' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Indnom() {
+			return emprnifIndnom;
+		}
+		
+		private String emprnifIndcoste;  
+		
+		/**
+		 * Estudio Costes
+		 * @return the column 'indcoste' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Indcoste() {
+			return emprnifIndcoste;
+		}
+		
+		private String emprnifDivisa;  
+		
+		/**
+		 * Divisa
+		 * @return the column 'divisa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Divisa() {
+			return emprnifDivisa;
+		}
+		
+		private String emprnifEnvioss;  
+		
+		/**
+		 * Envio de Seguros Sociales
+		 * @return the column 'envioss' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Envioss() {
+			return emprnifEnvioss;
+		}
+		
+		private String emprnifCecon;  
+		
+		/**
+		 * Concierto Economico
+		 * @return the column 'cecon' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Cecon() {
+			return emprnifCecon;
+		}
+		
+		private String emprnifModimpuesto;  
+		
+		/**
+		 * Modalidad declaraciones de impuestos
+		 * @return the column 'modimpuesto' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Modimpuesto() {
+			return emprnifModimpuesto;
+		}
+		
+		private String emprnifMod190;  
+		
+		/**
+		 * Modelo 190
+		 * @return the column 'mod190' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Mod190() {
+			return emprnifMod190;
+		}
+		
+		private Date emprnifFeciniportal;  
+		
+		/**
+		 * Fecha inicio portal
+		 * @return the column 'feciniportal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feciniportal() {
+			return emprnifFeciniportal;
+		}
+		
+		private Date emprnifFeccierrenomina;  
+		
+		/**
+		 * Fecha cierre nóminas
+		 * @return the column 'feccierrenomina' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feccierrenomina() {
+			return emprnifFeccierrenomina;
+		}
+		
+		private Integer emprnifMeseshistorico;  
+		
+		/**
+		 * Meses historico portal
+		 * @return the column 'meseshistorico' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprnif_Meseshistorico() {
+			return emprnifMeseshistorico;
+		}
+		public void visitFpe_emprnif(Fpercep fpercep, Emprnif emprnif)
+		throws SQLException {
+			emprnifCdg = emprnif.getCdg();  
+			emprnifCodcli = emprnif.getCodcli();  
+			emprnifFecini = emprnif.getFecini();  
+			emprnifFecfin = emprnif.getFecfin();  
+			emprnifDescripcion = emprnif.getDescripcion();  
+			emprnifAlias = emprnif.getAlias();  
+			emprnifInddoc = emprnif.getInddoc();  
+			emprnifPaiemi = emprnif.getPaiemi();  
+			emprnifNumdoc = emprnif.getNumdoc();  
+			emprnifRepresentante = emprnif.getRepresentante();  
+			emprnifCargo = emprnif.getCargo();  
+			emprnifFecnac = emprnif.getFecnac();  
+			emprnifNrodocrep = emprnif.getNrodocrep();  
+			emprnifCodadm = emprnif.getCodadm();  
+			emprnifTipempr = emprnif.getTipempr();  
+			emprnifSexo = emprnif.getSexo();  
+			emprnifFeccon = emprnif.getFeccon();  
+			emprnifObsnif = emprnif.getObsnif();  
+			emprnifDatreg = emprnif.getDatreg();  
+			emprnifFecnew = emprnif.getFecnew();  
+			emprnifHornew = emprnif.getHornew();  
+			emprnifFecmod = emprnif.getFecmod();  
+			emprnifHormod = emprnif.getHormod();  
+			emprnifTipdocrep = emprnif.getTipdocrep();  
+			emprnifPaidocrep = emprnif.getPaidocrep();  
+			emprnifIndirpf = emprnif.getIndirpf();  
+			emprnifIndcal = emprnif.getIndcal();  
+			emprnifIndnom = emprnif.getIndnom();  
+			emprnifIndcoste = emprnif.getIndcoste();  
+			emprnifDivisa = emprnif.getDivisa();  
+			emprnifEnvioss = emprnif.getEnvioss();  
+			emprnifCecon = emprnif.getCecon();  
+			emprnifModimpuesto = emprnif.getModimpuesto();  
+			emprnifMod190 = emprnif.getMod190();  
+			emprnifFeciniportal = emprnif.getFeciniportal();  
+			emprnifFeccierrenomina = emprnif.getFeccierrenomina();  
+			emprnifMeseshistorico = emprnif.getMeseshistorico();  
+		}
+	
+	}
+	/**
+	 * Fpe_empract shows join between Empract and Fpercep
+	 */
+	public static class Fpe_empract extends  DefaultCtsqlDBVisitor {
+		
+		
+		private Integer empractCdg;  
+		
+		/**
+		 * Codigo de Actividad
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmpract_Cdg() {
+			return empractCdg;
+		}
+		
+		private String empractCodnsz;  
+		
+		/**
+		 * Codigo BBX
+		 * @return the column 'codnsz' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Codnsz() {
+			return empractCodnsz;
+		}
+		
+		private Integer empractCodemp;  
+		
+		/**
+		 * Codigo de Empresa
+		 * @return the column 'codemp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmpract_Codemp() {
+			return empractCodemp;
+		}
+		
+		private String empractConvenio;  
+		
+		/**
+		 * Codigo de Convenio
+		 * @return the column 'convenio' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Convenio() {
+			return empractConvenio;
+		}
+		
+		private String empractDescripcion;  
+		
+		/**
+		 * Descripcion de Actividad
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Descripcion() {
+			return empractDescripcion;
+		}
+		
+		private String empractAlias;  
+		
+		/**
+		 * Alias Breve
+		 * @return the column 'alias' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Alias() {
+			return empractAlias;
+		}
+		
+		private Date empractFecini;  
+		
+		/**
+		 * Fecha Inicial Relacion
+		 * @return the column 'fecini' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmpract_Fecini() {
+			return empractFecini;
+		}
+		
+		private Date empractFecfin;  
+		
+		/**
+		 * Fecha Final Relacion
+		 * @return the column 'fecfin' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmpract_Fecfin() {
+			return empractFecfin;
+		}
+		
+		private String empractActeco;  
+		
+		/**
+		 * Actividad Economica
+		 * @return the column 'acteco' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Acteco() {
+			return empractActeco;
+		}
+		
+		private String empractEpiiae;  
+		
+		/**
+		 * Epigrafe IAE
+		 * @return the column 'epiiae' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Epiiae() {
+			return empractEpiiae;
+		}
+		
+		private String empractCnae;  
+		
+		/**
+		 * Codigo Nacional Actividad Economica - 1993 Rev.1
+		 * @return the column 'cnae' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Cnae() {
+			return empractCnae;
+		}
+		
+		private String empractCnae2009;  
+		
+		/**
+		 * Codigo Nacional Actividad Economica - 2009
+		 * @return the column 'cnae2009' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Cnae2009() {
+			return empractCnae2009;
+		}
+		
+		private Date empractFecnew;  
+		
+		/**
+		 * Fecha Creacion Fila
+		 * @return the column 'fecnew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmpract_Fecnew() {
+			return empractFecnew;
+		}
+		
+		private Time empractHornew;  
+		
+		/**
+		 * Hora Creacion Fila
+		 * @return the column 'hornew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getEmpract_Hornew() {
+			return empractHornew;
+		}
+		
+		private Date empractFecmod;  
+		
+		/**
+		 * Fecha Modificacion Fila
+		 * @return the column 'fecmod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmpract_Fecmod() {
+			return empractFecmod;
+		}
+		
+		private Time empractHormod;  
+		
+		/**
+		 * Hora Modificacion Fila
+		 * @return the column 'hormod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getEmpract_Hormod() {
+			return empractHormod;
+		}
+		
+		private String empractIndred;  
+		
+		/**
+		 * Sistema Red
+		 * @return the column 'indred' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Indred() {
+			return empractIndred;
+		}
+		
+		private String empractIndmutua;  
+		
+		/**
+		 * Prestacion IT a cargo de Mutua
+		 * @return the column 'indmutua' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Indmutua() {
+			return empractIndmutua;
+		}
+		
+		private String empractIndtc1;  
+		
+		/**
+		 * Impresion TC1 Separado
+		 * @return the column 'indtc1' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Indtc1() {
+			return empractIndtc1;
+		}
+		
+		private String empractIndcal;  
+		
+		/**
+		 * Calendario Laboral
+		 * @return the column 'indcal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Indcal() {
+			return empractIndcal;
+		}
+		
+		private String empractIndnom;  
+		
+		/**
+		 * Nomina de Empresa
+		 * @return the column 'indnom' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Indnom() {
+			return empractIndnom;
+		}
+		
+		private String empractIndcoste;  
+		
+		/**
+		 * Estudio Costes
+		 * @return the column 'indcoste' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Indcoste() {
+			return empractIndcoste;
+		}
+		
+		private String empractEnvioss;  
+		
+		/**
+		 * Envio de Seguros Sociales
+		 * @return the column 'envioss' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Envioss() {
+			return empractEnvioss;
+		}
+		
+		private String empractFlc;  
+		
+		/**
+		 * Cotiza a la Fundacion Laboral de la Construccion
+		 * @return the column 'flc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Flc() {
+			return empractFlc;
+		}
+		
+		private String empractColss;  
+		
+		/**
+		 * Colabora con la Seguridad Social
+		 * @return the column 'colss' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Colss() {
+			return empractColss;
+		}
+		
+		private String empractIngespemp;  
+		
+		/**
+		 * Ingreso R.Especie A/C Empresa
+		 * @return the column 'ingespemp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Ingespemp() {
+			return empractIngespemp;
+		}
+		
+		private String empractModpago;  
+		
+		/**
+		 * Modalidad de Pago
+		 * @return the column 'modpago' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Modpago() {
+			return empractModpago;
+		}
+		
+		private String empractTiponomina;  
+		
+		/**
+		 * Tipo Nómina Gráfica
+		 * @return the column 'tiponomina' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Tiponomina() {
+			return empractTiponomina;
+		}
+		
+		private String empractIndlogo;  
+		
+		/**
+		 * Indicador de Logo
+		 * @return the column 'indlogo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Indlogo() {
+			return empractIndlogo;
+		}
+		
+		private String empractIndfirma;  
+		
+		/**
+		 * Indicador de Firma
+		 * @return the column 'indfirma' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Indfirma() {
+			return empractIndfirma;
+		}
+		
+		private String empractIndregimen;  
+		
+		/**
+		 * Régimen
+		 * @return the column 'indregimen' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Indregimen() {
+			return empractIndregimen;
+		}
+		
+		private String empractPrevencion;  
+		
+		/**
+		 * Servicio de prevención
+		 * @return the column 'prevencion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Prevencion() {
+			return empractPrevencion;
+		}
+		
+		private String empractIndsiltra;  
+		
+		/**
+		 * SILTRA
+		 * @return the column 'indsiltra' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Indsiltra() {
+			return empractIndsiltra;
+		}
+		
+		private String empractAutoriza;  
+		
+		/**
+		 * Autorización
+		 * @return the column 'autoriza' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Autoriza() {
+			return empractAutoriza;
+		}
+		public void visitFpe_empract(Fpercep fpercep, Empract empract)
+		throws SQLException {
+			empractCdg = empract.getCdg();  
+			empractCodnsz = empract.getCodnsz();  
+			empractCodemp = empract.getCodemp();  
+			empractConvenio = empract.getConvenio();  
+			empractDescripcion = empract.getDescripcion();  
+			empractAlias = empract.getAlias();  
+			empractFecini = empract.getFecini();  
+			empractFecfin = empract.getFecfin();  
+			empractActeco = empract.getActeco();  
+			empractEpiiae = empract.getEpiiae();  
+			empractCnae = empract.getCnae();  
+			empractCnae2009 = empract.getCnae2009();  
+			empractFecnew = empract.getFecnew();  
+			empractHornew = empract.getHornew();  
+			empractFecmod = empract.getFecmod();  
+			empractHormod = empract.getHormod();  
+			empractIndred = empract.getIndred();  
+			empractIndmutua = empract.getIndmutua();  
+			empractIndtc1 = empract.getIndtc1();  
+			empractIndcal = empract.getIndcal();  
+			empractIndnom = empract.getIndnom();  
+			empractIndcoste = empract.getIndcoste();  
+			empractEnvioss = empract.getEnvioss();  
+			empractFlc = empract.getFlc();  
+			empractColss = empract.getColss();  
+			empractIngespemp = empract.getIngespemp();  
+			empractModpago = empract.getModpago();  
+			empractTiponomina = empract.getTiponomina();  
+			empractIndlogo = empract.getIndlogo();  
+			empractIndfirma = empract.getIndfirma();  
+			empractIndregimen = empract.getIndregimen();  
+			empractPrevencion = empract.getPrevencion();  
+			empractIndsiltra = empract.getIndsiltra();  
+			empractAutoriza = empract.getAutoriza();  
+		}
+	
+	}
+	/**
+	 * Fpe_persona shows join between Persona and Fpercep
+	 */
+	public static class Fpe_persona extends  DefaultCtsqlDBVisitor {
+		
+		
+		private Integer personaCdg;  
+		
+		/**
+		 * Codigo de Persona
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getPersona_Cdg() {
+			return personaCdg;
+		}
+		
+		private String personaInddoc;  
+		
+		/**
+		 * Tipo Documento
+		 * @return the column 'inddoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Inddoc() {
+			return personaInddoc;
+		}
+		
+		private String personaPaiemi;  
+		
+		/**
+		 * Pais Emisor
+		 * @return the column 'paiemi' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Paiemi() {
+			return personaPaiemi;
+		}
+		
+		private String personaNumdoc;  
+		
+		/**
+		 * Numero Documento
+		 * @return the column 'numdoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Numdoc() {
+			return personaNumdoc;
+		}
+		
+		private String personaDescripcion;  
+		
+		/**
+		 * Primer Apellido/Razon Social
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Descripcion() {
+			return personaDescripcion;
+		}
+		
+		private String personaApellido2;  
+		
+		/**
+		 * Segundo Apellido
+		 * @return the column 'apellido2' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Apellido2() {
+			return personaApellido2;
+		}
+		
+		private String personaNombre;  
+		
+		/**
+		 * Nombre
+		 * @return the column 'nombre' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Nombre() {
+			return personaNombre;
+		}
+		
+		private String personaAlias;  
+		
+		/**
+		 * Alias
+		 * @return the column 'alias' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Alias() {
+			return personaAlias;
+		}
+		
+		private String personaAliastc2;  
+		
+		/**
+		 * Alias TC2
+		 * @return the column 'aliastc2' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Aliastc2() {
+			return personaAliastc2;
+		}
+		
+		private String personaTipovia;  
+		
+		/**
+		 * Tipo de Via
+		 * @return the column 'tipovia' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Tipovia() {
+			return personaTipovia;
+		}
+		
+		private String personaNomvia;  
+		
+		/**
+		 * Nombre de Via
+		 * @return the column 'nomvia' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Nomvia() {
+			return personaNomvia;
+		}
+		
+		private String personaNumero;  
+		
+		/**
+		 * Numero
+		 * @return the column 'numero' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Numero() {
+			return personaNumero;
+		}
+		
+		private String personaOtrdir;  
+		
+		/**
+		 * Bloque, Escalera, Piso, Puerta
+		 * @return the column 'otrdir' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Otrdir() {
+			return personaOtrdir;
+		}
+		
+		private String personaCodpos;  
+		
+		/**
+		 * Codigo Postal
+		 * @return the column 'codpos' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Codpos() {
+			return personaCodpos;
+		}
+		
+		private String personaLocalidad;  
+		
+		/**
+		 * Localidad
+		 * @return the column 'localidad' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Localidad() {
+			return personaLocalidad;
+		}
+		
+		private String personaProvincia;  
+		
+		/**
+		 * Provincia
+		 * @return the column 'provincia' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Provincia() {
+			return personaProvincia;
+		}
+		
+		private String personaTelefono;  
+		
+		/**
+		 * Telefono
+		 * @return the column 'telefono' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Telefono() {
+			return personaTelefono;
+		}
+		
+		private String personaFax;  
+		
+		/**
+		 * Fax
+		 * @return the column 'fax' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Fax() {
+			return personaFax;
+		}
+		
+		private String personaEmail;  
+		
+		/**
+		 * E-Mail
+		 * @return the column 'email' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Email() {
+			return personaEmail;
+		}
+		
+		private String personaLugnac;  
+		
+		/**
+		 * Lugar de Nacimiento
+		 * @return the column 'lugnac' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Lugnac() {
+			return personaLugnac;
+		}
+		
+		private String personaPronac;  
+		
+		/**
+		 * Provincia de Nacimiento
+		 * @return the column 'pronac' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Pronac() {
+			return personaPronac;
+		}
+		
+		private String personaPainac;  
+		
+		/**
+		 * Pais de Nacimiento
+		 * @return the column 'painac' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Painac() {
+			return personaPainac;
+		}
+		
+		private Date personaFecnac;  
+		
+		/**
+		 * Fecha de Nacimiento
+		 * @return the column 'fecnac' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getPersona_Fecnac() {
+			return personaFecnac;
+		}
+		
+		private String personaPadre;  
+		
+		/**
+		 * Nombre del Padre
+		 * @return the column 'padre' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Padre() {
+			return personaPadre;
+		}
+		
+		private String personaMadre;  
+		
+		/**
+		 * Nombre de la Madre
+		 * @return the column 'madre' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Madre() {
+			return personaMadre;
+		}
+		
+		private String personaNacion;  
+		
+		/**
+		 * Nacionalidad
+		 * @return the column 'nacion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Nacion() {
+			return personaNacion;
+		}
+		
+		private String personaNumss;  
+		
+		/**
+		 * Numero Seguridad Social
+		 * @return the column 'numss' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Numss() {
+			return personaNumss;
+		}
+		
+		private String personaEstciv;  
+		
+		/**
+		 * Estado Civil
+		 * @return the column 'estciv' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Estciv() {
+			return personaEstciv;
+		}
+		
+		private String personaObsper;  
+		
+		/**
+		 * Observaciones Persona
+		 * @return the column 'obsper' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Obsper() {
+			return personaObsper;
+		}
+		
+		private Date personaFecnew;  
+		
+		/**
+		 * Fecha Creacion Fila
+		 * @return the column 'fecnew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getPersona_Fecnew() {
+			return personaFecnew;
+		}
+		
+		private Time personaHornew;  
+		
+		/**
+		 * Hora Creacion Fila
+		 * @return the column 'hornew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getPersona_Hornew() {
+			return personaHornew;
+		}
+		
+		private Date personaFecmod;  
+		
+		/**
+		 * Fecha Modificacion Fila
+		 * @return the column 'fecmod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getPersona_Fecmod() {
+			return personaFecmod;
+		}
+		
+		private Time personaHormod;  
+		
+		/**
+		 * Hora Modificacion Fila
+		 * @return the column 'hormod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getPersona_Hormod() {
+			return personaHormod;
+		}
+		
+		private String personaSexo;  
+		
+		/**
+		 * Sexo
+		 * @return the column 'sexo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getPersona_Sexo() {
+			return personaSexo;
+		}
+		public void visitFpe_persona(Fpercep fpercep, Persona persona)
+		throws SQLException {
+			personaCdg = persona.getCdg();  
+			personaInddoc = persona.getInddoc();  
+			personaPaiemi = persona.getPaiemi();  
+			personaNumdoc = persona.getNumdoc();  
+			personaDescripcion = persona.getDescripcion();  
+			personaApellido2 = persona.getApellido2();  
+			personaNombre = persona.getNombre();  
+			personaAlias = persona.getAlias();  
+			personaAliastc2 = persona.getAliastc2();  
+			personaTipovia = persona.getTipovia();  
+			personaNomvia = persona.getNomvia();  
+			personaNumero = persona.getNumero();  
+			personaOtrdir = persona.getOtrdir();  
+			personaCodpos = persona.getCodpos();  
+			personaLocalidad = persona.getLocalidad();  
+			personaProvincia = persona.getProvincia();  
+			personaTelefono = persona.getTelefono();  
+			personaFax = persona.getFax();  
+			personaEmail = persona.getEmail();  
+			personaLugnac = persona.getLugnac();  
+			personaPronac = persona.getPronac();  
+			personaPainac = persona.getPainac();  
+			personaFecnac = persona.getFecnac();  
+			personaPadre = persona.getPadre();  
+			personaMadre = persona.getMadre();  
+			personaNacion = persona.getNacion();  
+			personaNumss = persona.getNumss();  
+			personaEstciv = persona.getEstciv();  
+			personaObsper = persona.getObsper();  
+			personaFecnew = persona.getFecnew();  
+			personaHornew = persona.getHornew();  
+			personaFecmod = persona.getFecmod();  
+			personaHormod = persona.getHormod();  
+			personaSexo = persona.getSexo();  
 		}
 	
 	}
@@ -34112,12 +41145,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	public void visitLinirpf_elemirpf(Linirpf linirpf, Elemirpf elemirpf)
 	throws SQLException {
 	}
-
-
-	public void visitNszrari(Nszrari nszrari)
-	throws SQLException{
-	}
-
 
 
 	public void visitEmprdom(Emprdom emprdom)
@@ -34504,6 +41531,39 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprnif_Mod190() {
 			return emprnifMod190;
 		}
+		
+		private Date emprnifFeciniportal;  
+		
+		/**
+		 * Fecha inicio portal
+		 * @return the column 'feciniportal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feciniportal() {
+			return emprnifFeciniportal;
+		}
+		
+		private Date emprnifFeccierrenomina;  
+		
+		/**
+		 * Fecha cierre nóminas
+		 * @return the column 'feccierrenomina' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feccierrenomina() {
+			return emprnifFeccierrenomina;
+		}
+		
+		private Integer emprnifMeseshistorico;  
+		
+		/**
+		 * Meses historico portal
+		 * @return the column 'meseshistorico' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprnif_Meseshistorico() {
+			return emprnifMeseshistorico;
+		}
 		public void visitEmprdom_emprnif(Emprdom emprdom, Emprnif emprnif)
 		throws SQLException {
 			emprnifCdg = emprnif.getCdg();  
@@ -34540,6 +41600,9 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprnifCecon = emprnif.getCecon();  
 			emprnifModimpuesto = emprnif.getModimpuesto();  
 			emprnifMod190 = emprnif.getMod190();  
+			emprnifFeciniportal = emprnif.getFeciniportal();  
+			emprnifFeccierrenomina = emprnif.getFeccierrenomina();  
+			emprnifMeseshistorico = emprnif.getMeseshistorico();  
 		}
 	
 	}
@@ -34670,6 +41733,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return empractCnae;
 		}
 		
+		private String empractCnae2009;  
+		
+		/**
+		 * Codigo Nacional Actividad Economica - 2009
+		 * @return the column 'cnae2009' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Cnae2009() {
+			return empractCnae2009;
+		}
+		
 		private Date empractFecnew;  
 		
 		/**
@@ -34712,17 +41786,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		 */
 		public Time getEmpract_Hormod() {
 			return empractHormod;
-		}
-		
-		private String empractCnae2009;  
-		
-		/**
-		 * Codigo Nacional Actividad Economica - 2009
-		 * @return the column 'cnae2009' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEmpract_Cnae2009() {
-			return empractCnae2009;
 		}
 		
 		private String empractIndred;  
@@ -34900,6 +41963,28 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmpract_Prevencion() {
 			return empractPrevencion;
 		}
+		
+		private String empractIndsiltra;  
+		
+		/**
+		 * SILTRA
+		 * @return the column 'indsiltra' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Indsiltra() {
+			return empractIndsiltra;
+		}
+		
+		private String empractAutoriza;  
+		
+		/**
+		 * Autorización
+		 * @return the column 'autoriza' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Autoriza() {
+			return empractAutoriza;
+		}
 		public void visitEmprdom_empract(Emprdom emprdom, Empract empract)
 		throws SQLException {
 			empractCdg = empract.getCdg();  
@@ -34913,11 +41998,11 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			empractActeco = empract.getActeco();  
 			empractEpiiae = empract.getEpiiae();  
 			empractCnae = empract.getCnae();  
+			empractCnae2009 = empract.getCnae2009();  
 			empractFecnew = empract.getFecnew();  
 			empractHornew = empract.getHornew();  
 			empractFecmod = empract.getFecmod();  
 			empractHormod = empract.getHormod();  
-			empractCnae2009 = empract.getCnae2009();  
 			empractIndred = empract.getIndred();  
 			empractIndmutua = empract.getIndmutua();  
 			empractIndtc1 = empract.getIndtc1();  
@@ -34934,6 +42019,8 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			empractIndfirma = empract.getIndfirma();  
 			empractIndregimen = empract.getIndregimen();  
 			empractPrevencion = empract.getPrevencion();  
+			empractIndsiltra = empract.getIndsiltra();  
+			empractAutoriza = empract.getAutoriza();  
 		}
 	
 	}
@@ -35327,6 +42414,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getCliente_Envioss() {
 			return clienteEnvioss;
 		}
+		
+		private String clienteGrupotrabajo;  
+		
+		/**
+		 * Grupo de trabajo
+		 * @return the column 'grupotrabajo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCliente_Grupotrabajo() {
+			return clienteGrupotrabajo;
+		}
 		public void visitEmprdom_cliente(Emprdom emprdom, Cliente cliente)
 		throws SQLException {
 			clienteCdg = cliente.getCdg();  
@@ -35364,6 +42462,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			clienteDivisa = cliente.getDivisa();  
 			clienteSoloases = cliente.getSoloases();  
 			clienteEnvioss = cliente.getEnvioss();  
+			clienteGrupotrabajo = cliente.getGrupotrabajo();  
 		}
 	
 	}
@@ -35610,21 +42709,15 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	throws SQLException{
 	}
 
-	public void visitRel_ccc_mut(Emprccc emprccc, Mutua mutua)
+	public void visitRel_mut_lin(Linmutua linmutua, Mutua mutua)
 	throws SQLException {
 	}
-	public void visitRel_mut_lin(Linmutua linmutua, Mutua mutua)
+	public void visitRel_ccc_mut(Emprccc emprccc, Mutua mutua)
 	throws SQLException {
 	}
 	public void visitJautmutua(Autonomos autonomos, Mutua mutua)
 	throws SQLException {
 	}
-
-
-	public void visitNszempr(Nszempr nszempr)
-	throws SQLException{
-	}
-
 
 
 	public void visitRemesainss(Remesainss remesainss)
@@ -35692,18 +42785,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	public void visitRel_per_lin(Linpercepcion linpercepcion, Percepcion percepcion)
 	throws SQLException {
 	}
-
-
-	public void visitNszpaga(Nszpaga nszpaga)
-	throws SQLException{
-	}
-
-
-
-	public void visitNszotpe(Nszotpe nszotpe)
-	throws SQLException{
-	}
-
 
 
 	public void visitEmprctra(Emprctra emprctra)
@@ -35896,6 +42977,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return empractCnae;
 		}
 		
+		private String empractCnae2009;  
+		
+		/**
+		 * Codigo Nacional Actividad Economica - 2009
+		 * @return the column 'cnae2009' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Cnae2009() {
+			return empractCnae2009;
+		}
+		
 		private Date empractFecnew;  
 		
 		/**
@@ -35938,17 +43030,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		 */
 		public Time getEmpract_Hormod() {
 			return empractHormod;
-		}
-		
-		private String empractCnae2009;  
-		
-		/**
-		 * Codigo Nacional Actividad Economica - 2009
-		 * @return the column 'cnae2009' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getEmpract_Cnae2009() {
-			return empractCnae2009;
 		}
 		
 		private String empractIndred;  
@@ -36126,6 +43207,28 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmpract_Prevencion() {
 			return empractPrevencion;
 		}
+		
+		private String empractIndsiltra;  
+		
+		/**
+		 * SILTRA
+		 * @return the column 'indsiltra' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Indsiltra() {
+			return empractIndsiltra;
+		}
+		
+		private String empractAutoriza;  
+		
+		/**
+		 * Autorización
+		 * @return the column 'autoriza' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmpract_Autoriza() {
+			return empractAutoriza;
+		}
 		public void visitEmprctra_empract(Emprctra emprctra, Empract empract)
 		throws SQLException {
 			empractCdg = empract.getCdg();  
@@ -36139,11 +43242,11 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			empractActeco = empract.getActeco();  
 			empractEpiiae = empract.getEpiiae();  
 			empractCnae = empract.getCnae();  
+			empractCnae2009 = empract.getCnae2009();  
 			empractFecnew = empract.getFecnew();  
 			empractHornew = empract.getHornew();  
 			empractFecmod = empract.getFecmod();  
 			empractHormod = empract.getHormod();  
-			empractCnae2009 = empract.getCnae2009();  
 			empractIndred = empract.getIndred();  
 			empractIndmutua = empract.getIndmutua();  
 			empractIndtc1 = empract.getIndtc1();  
@@ -36160,6 +43263,8 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			empractIndfirma = empract.getIndfirma();  
 			empractIndregimen = empract.getIndregimen();  
 			empractPrevencion = empract.getPrevencion();  
+			empractIndsiltra = empract.getIndsiltra();  
+			empractAutoriza = empract.getAutoriza();  
 		}
 	
 	}
@@ -36542,6 +43647,39 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprnif_Mod190() {
 			return emprnifMod190;
 		}
+		
+		private Date emprnifFeciniportal;  
+		
+		/**
+		 * Fecha inicio portal
+		 * @return the column 'feciniportal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feciniportal() {
+			return emprnifFeciniportal;
+		}
+		
+		private Date emprnifFeccierrenomina;  
+		
+		/**
+		 * Fecha cierre nóminas
+		 * @return the column 'feccierrenomina' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feccierrenomina() {
+			return emprnifFeccierrenomina;
+		}
+		
+		private Integer emprnifMeseshistorico;  
+		
+		/**
+		 * Meses historico portal
+		 * @return the column 'meseshistorico' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprnif_Meseshistorico() {
+			return emprnifMeseshistorico;
+		}
 		public void visitEmprctra_emprnif(Emprctra emprctra, Emprnif emprnif)
 		throws SQLException {
 			emprnifCdg = emprnif.getCdg();  
@@ -36578,6 +43716,9 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprnifCecon = emprnif.getCecon();  
 			emprnifModimpuesto = emprnif.getModimpuesto();  
 			emprnifMod190 = emprnif.getMod190();  
+			emprnifFeciniportal = emprnif.getFeciniportal();  
+			emprnifFeccierrenomina = emprnif.getFeccierrenomina();  
+			emprnifMeseshistorico = emprnif.getMeseshistorico();  
 		}
 	
 	}
@@ -36902,7 +44043,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private String emprperCodnsz;  
 		
 		/**
-		 * Código interno
+		 * Codigo BBX
 		 * @return the column 'codnsz' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -37107,6 +44248,61 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprper_Noirpf() {
 			return emprperNoirpf;
 		}
+		
+		private String emprperNosegsoc;  
+		
+		/**
+		 * No seg. soc. (de trabajador)
+		 * @return the column 'nosegsoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Nosegsoc() {
+			return emprperNosegsoc;
+		}
+		
+		private String emprperJubiladoactivo;  
+		
+		/**
+		 * Trabajador jubilado en activo
+		 * @return the column 'jubiladoactivo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Jubiladoactivo() {
+			return emprperJubiladoactivo;
+		}
+		
+		private String emprperCertificado;  
+		
+		/**
+		 * Certificado Procesado
+		 * @return the column 'certificado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Certificado() {
+			return emprperCertificado;
+		}
+		
+		private String emprperFamiliar;  
+		
+		/**
+		 * Familiar de 1º grado
+		 * @return the column 'familiar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Familiar() {
+			return emprperFamiliar;
+		}
+		
+		private String emprperNoresidente;  
+		
+		/**
+		 * Trabajador no residente
+		 * @return the column 'noresidente' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Noresidente() {
+			return emprperNoresidente;
+		}
 		public void visitPit_remesa_emp(Remesa_parte_it remesa_parte_it, Emprper emprper)
 		throws SQLException {
 			emprperCdg = emprper.getCdg();  
@@ -37130,23 +44326,16 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprperIndgrupo = emprper.getIndgrupo();  
 			emprperPariente = emprper.getPariente();  
 			emprperNoirpf = emprper.getNoirpf();  
+			emprperNosegsoc = emprper.getNosegsoc();  
+			emprperJubiladoactivo = emprper.getJubiladoactivo();  
+			emprperCertificado = emprper.getCertificado();  
+			emprperFamiliar = emprper.getFamiliar();  
+			emprperNoresidente = emprper.getNoresidente();  
 		}
 	
 	}
 
-	public void visitNszpeop(Nszpeop nszpeop)
-	throws SQLException{
-	}
-
-
-
 	public void visitProcesos(Procesos procesos)
-	throws SQLException{
-	}
-
-
-
-	public void visitNszunco(Nszunco nszunco)
 	throws SQLException{
 	}
 
@@ -37168,10 +44357,10 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	public void visitRel_per_via(Persona persona, Tipovia tipovia)
 	throws SQLException {
 	}
-	public void visitOpfile_tipovia(Opfile opfile, Tipovia tipovia)
+	public void visitJtipvia(Httrabajador httrabajador, Tipovia tipovia)
 	throws SQLException {
 	}
-	public void visitJtipvia(Httrabajador httrabajador, Tipovia tipovia)
+	public void visitOpfile_tipovia(Opfile opfile, Tipovia tipovia)
 	throws SQLException {
 	}
 	public void visitJauttipovia(Autonomos autonomos, Tipovia tipovia)
@@ -37179,19 +44368,10 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	}
 
 
-	public void visitNszdcpr(Nszdcpr nszdcpr)
-	throws SQLException{
-	}
-
-
-
 	public void visitTipocont(Tipocont tipocont)
 	throws SQLException{
 	}
 
-	public void visitRel_tra_cont(Trabajo trabajo, Tipocont tipocont)
-	throws SQLException {
-	}
 	public void visitJcontrato(Httrabajador httrabajador, Tipocont tipocont)
 	throws SQLException {
 	}
@@ -37248,86 +44428,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	}
 
 
-	/**
-	 * Rel_tra_col shows join between Colectivos and Trabajo
-	 */
-	public static class Rel_tra_col extends  DefaultCtsqlDBVisitor {
-		
-		
-		private String colectivosCdg;  
-		
-		/**
-		 * Clave
-		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getColectivos_Cdg() {
-			return colectivosCdg;
-		}
-		
-		private String colectivosDescripcion;  
-		
-		/**
-		 * Denominación larga
-		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getColectivos_Descripcion() {
-			return colectivosDescripcion;
-		}
-		
-		private String colectivosDescripcorta;  
-		
-		/**
-		 * Denominación corta
-		 * @return the column 'descripcorta' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getColectivos_Descripcorta() {
-			return colectivosDescripcorta;
-		}
-		public void visitRel_tra_col(Trabajo trabajo, Colectivos colectivos)
-		throws SQLException {
-			colectivosCdg = colectivos.getCdg();  
-			colectivosDescripcion = colectivos.getDescripcion();  
-			colectivosDescripcorta = colectivos.getDescripcorta();  
-		}
-	
-	}
-	/**
-	 * Rel_tra_aut shows join between Tipaut and Trabajo
-	 */
-	public static class Rel_tra_aut extends  DefaultCtsqlDBVisitor {
-		
-		
-		private String tipautCdg;  
-		
-		/**
-		 * Codigo de Tipo de Autorización
-		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getTipaut_Cdg() {
-			return tipautCdg;
-		}
-		
-		private String tipautDescripcion;  
-		
-		/**
-		 * Descripcion de Tipo de Autorización
-		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getTipaut_Descripcion() {
-			return tipautDescripcion;
-		}
-		public void visitRel_tra_aut(Trabajo trabajo, Tipaut tipaut)
-		throws SQLException {
-			tipautCdg = tipaut.getCdg();  
-			tipautDescripcion = tipaut.getDescripcion();  
-		}
-	
-	}
 	/**
 	 * Rel_tra_con shows join between Convenio and Trabajo
 	 */
@@ -37467,124 +44567,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	
 	}
 	/**
-	 * Rel_tra_cont shows join between Tipocont and Trabajo
-	 */
-	public static class Rel_tra_cont extends  DefaultCtsqlDBVisitor {
-		
-		
-		private String tipocontCdg;  
-		
-		/**
-		 * Codigo de Contrato Interno
-		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getTipocont_Cdg() {
-			return tipocontCdg;
-		}
-		
-		private String tipocontDescripcion;  
-		
-		/**
-		 * Descripcion de Contrato Interno
-		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getTipocont_Descripcion() {
-			return tipocontDescripcion;
-		}
-		
-		private String tipocontCodpct;  
-		
-		/**
-		 * Asimilado a % Cotizacion
-		 * @return the column 'codpct' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getTipocont_Codpct() {
-			return tipocontCodpct;
-		}
-		
-		private String tipocontDesemple;  
-		
-		/**
-		 * Desempleado
-		 * @return the column 'desemple' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getTipocont_Desemple() {
-			return tipocontDesemple;
-		}
-		
-		private String tipocontMujersub;  
-		
-		/**
-		 * Mujer subrepresentada
-		 * @return the column 'mujersub' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getTipocont_Mujersub() {
-			return tipocontMujersub;
-		}
-		
-		private String tipocontIncaread;  
-		
-		/**
-		 * Incapacitado readmitido
-		 * @return the column 'incaread' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getTipocont_Incaread() {
-			return tipocontIncaread;
-		}
-		
-		private String tipocontPrimertra;  
-		
-		/**
-		 * Primer trabajador contratado por autonomo
-		 * @return the column 'primertra' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getTipocont_Primertra() {
-			return tipocontPrimertra;
-		}
-		
-		private Integer tipocontGradomin;  
-		
-		/**
-		 * Grado de minusvalia
-		 * @return the column 'gradomin' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getTipocont_Gradomin() {
-			return tipocontGradomin;
-		}
-		
-		private String tipocontExcsocial;  
-		
-		/**
-		 * Exclusion social
-		 * @return the column 'excsocial' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getTipocont_Excsocial() {
-			return tipocontExcsocial;
-		}
-		public void visitRel_tra_cont(Trabajo trabajo, Tipocont tipocont)
-		throws SQLException {
-			tipocontCdg = tipocont.getCdg();  
-			tipocontDescripcion = tipocont.getDescripcion();  
-			tipocontCodpct = tipocont.getCodpct();  
-			tipocontDesemple = tipocont.getDesemple();  
-			tipocontMujersub = tipocont.getMujersub();  
-			tipocontIncaread = tipocont.getIncaread();  
-			tipocontPrimertra = tipocont.getPrimertra();  
-			tipocontGradomin = tipocont.getGradomin();  
-			tipocontExcsocial = tipocont.getExcsocial();  
-		}
-	
-	}
-	/**
 	 * Rel_tra_tc2 shows join between Tipcotc2 and Trabajo
 	 */
 	public static class Rel_tra_tc2 extends  DefaultCtsqlDBVisitor {
@@ -37689,88 +44671,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	
 	}
 	/**
-	 * Rel_tra_suc shows join between Sucursal and Trabajo
-	 */
-	public static class Rel_tra_suc extends  DefaultCtsqlDBVisitor {
-		
-		
-		private String sucursalCodent;  
-		
-		/**
-		 * Codigo de Entidad
-		 * @return the column 'codent' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSucursal_Codent() {
-			return sucursalCodent;
-		}
-		
-		private String sucursalCdg;  
-		
-		/**
-		 * Codigo de Sucursal
-		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSucursal_Cdg() {
-			return sucursalCdg;
-		}
-		
-		private String sucursalDomsuc;  
-		
-		/**
-		 * Domicilio de Sucursal
-		 * @return the column 'domsuc' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSucursal_Domsuc() {
-			return sucursalDomsuc;
-		}
-		
-		private String sucursalMunsuc;  
-		
-		/**
-		 * Municipio de Sucursal
-		 * @return the column 'munsuc' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSucursal_Munsuc() {
-			return sucursalMunsuc;
-		}
-		
-		private String sucursalCpsuc;  
-		
-		/**
-		 * Codigo Postal de Sucursal
-		 * @return the column 'cpsuc' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSucursal_Cpsuc() {
-			return sucursalCpsuc;
-		}
-		
-		private String sucursalBic;  
-		
-		/**
-		 * BIC
-		 * @return the column 'bic' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getSucursal_Bic() {
-			return sucursalBic;
-		}
-		public void visitRel_tra_suc(Trabajo trabajo, Sucursal sucursal)
-		throws SQLException {
-			sucursalCodent = sucursal.getCodent();  
-			sucursalCdg = sucursal.getCdg();  
-			sucursalDomsuc = sucursal.getDomsuc();  
-			sucursalMunsuc = sucursal.getMunsuc();  
-			sucursalCpsuc = sucursal.getCpsuc();  
-			sucursalBic = sucursal.getBic();  
-		}
-	
-	}
-	/**
 	 * Rel_tra_pct shows join between Porcoti and Trabajo
 	 */
 	public static class Rel_tra_pct extends  DefaultCtsqlDBVisitor {
@@ -37847,7 +44747,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private String emprperCodnsz;  
 		
 		/**
-		 * Código interno
+		 * Codigo BBX
 		 * @return the column 'codnsz' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -38052,6 +44952,61 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprper_Noirpf() {
 			return emprperNoirpf;
 		}
+		
+		private String emprperNosegsoc;  
+		
+		/**
+		 * No seg. soc. (de trabajador)
+		 * @return the column 'nosegsoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Nosegsoc() {
+			return emprperNosegsoc;
+		}
+		
+		private String emprperJubiladoactivo;  
+		
+		/**
+		 * Trabajador jubilado en activo
+		 * @return the column 'jubiladoactivo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Jubiladoactivo() {
+			return emprperJubiladoactivo;
+		}
+		
+		private String emprperCertificado;  
+		
+		/**
+		 * Certificado Procesado
+		 * @return the column 'certificado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Certificado() {
+			return emprperCertificado;
+		}
+		
+		private String emprperFamiliar;  
+		
+		/**
+		 * Familiar de 1º grado
+		 * @return the column 'familiar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Familiar() {
+			return emprperFamiliar;
+		}
+		
+		private String emprperNoresidente;  
+		
+		/**
+		 * Trabajador no residente
+		 * @return the column 'noresidente' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Noresidente() {
+			return emprperNoresidente;
+		}
 		public void visitTrabajo_emprper(Trabajo trabajo, Emprper emprper)
 		throws SQLException {
 			emprperCdg = emprper.getCdg();  
@@ -38075,6 +45030,91 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprperIndgrupo = emprper.getIndgrupo();  
 			emprperPariente = emprper.getPariente();  
 			emprperNoirpf = emprper.getNoirpf();  
+			emprperNosegsoc = emprper.getNosegsoc();  
+			emprperJubiladoactivo = emprper.getJubiladoactivo();  
+			emprperCertificado = emprper.getCertificado();  
+			emprperFamiliar = emprper.getFamiliar();  
+			emprperNoresidente = emprper.getNoresidente();  
+		}
+	
+	}
+	/**
+	 * Rel_tra_aut shows join between Tipaut and Trabajo
+	 */
+	public static class Rel_tra_aut extends  DefaultCtsqlDBVisitor {
+		
+		
+		private String tipautCdg;  
+		
+		/**
+		 * Codigo de Tipo de Autorización
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTipaut_Cdg() {
+			return tipautCdg;
+		}
+		
+		private String tipautDescripcion;  
+		
+		/**
+		 * Descripcion de Tipo de Autorización
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTipaut_Descripcion() {
+			return tipautDescripcion;
+		}
+		public void visitRel_tra_aut(Trabajo trabajo, Tipaut tipaut)
+		throws SQLException {
+			tipautCdg = tipaut.getCdg();  
+			tipautDescripcion = tipaut.getDescripcion();  
+		}
+	
+	}
+	/**
+	 * Rel_tra_col shows join between Colectivos and Trabajo
+	 */
+	public static class Rel_tra_col extends  DefaultCtsqlDBVisitor {
+		
+		
+		private String colectivosCdg;  
+		
+		/**
+		 * Clave
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getColectivos_Cdg() {
+			return colectivosCdg;
+		}
+		
+		private String colectivosDescripcion;  
+		
+		/**
+		 * Denominación larga
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getColectivos_Descripcion() {
+			return colectivosDescripcion;
+		}
+		
+		private String colectivosDescripcorta;  
+		
+		/**
+		 * Denominación corta
+		 * @return the column 'descripcorta' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getColectivos_Descripcorta() {
+			return colectivosDescripcorta;
+		}
+		public void visitRel_tra_col(Trabajo trabajo, Colectivos colectivos)
+		throws SQLException {
+			colectivosCdg = colectivos.getCdg();  
+			colectivosDescripcion = colectivos.getDescripcion();  
+			colectivosDescripcorta = colectivos.getDescripcorta();  
 		}
 	
 	}
@@ -38110,6 +45150,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		 */
 		public Date getFiniquitonu_Fecbaj() {
 			return finiquitonuFecbaj;
+		}
+		
+		private String finiquitonuCodcausa;  
+		
+		/**
+		 * Código de la causa de baja
+		 * @return the column 'codcausa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getFiniquitonu_Codcausa() {
+			return finiquitonuCodcausa;
 		}
 		
 		private String finiquitonuCausa;  
@@ -38401,6 +45452,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		throws SQLException {
 			finiquitonuCodper = finiquitonu.getCodper();  
 			finiquitonuFecbaj = finiquitonu.getFecbaj();  
+			finiquitonuCodcausa = finiquitonu.getCodcausa();  
 			finiquitonuCausa = finiquitonu.getCausa();  
 			finiquitonuVacfecini = finiquitonu.getVacfecini();  
 			finiquitonuVacimporte = finiquitonu.getVacimporte();  
@@ -38431,6 +45483,15 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	
 	}
 
+	public void visitGrupotrabajo(Grupotrabajo grupotrabajo)
+	throws SQLException{
+	}
+
+	public void visitRel_cli_grptrabajo(Cliente cliente, Grupotrabajo grupotrabajo)
+	throws SQLException {
+	}
+
+
 	public void visitColectivos(Colectivos colectivos)
 	throws SQLException{
 	}
@@ -38438,12 +45499,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	public void visitRel_tra_col(Trabajo trabajo, Colectivos colectivos)
 	throws SQLException {
 	}
-
-
-	public void visitNszboni(Nszboni nszboni)
-	throws SQLException{
-	}
-
 
 
 	public void visitLinporco(Linporco linporco)
@@ -38505,10 +45560,16 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	public void visitRel_emp_adm(Emprnif emprnif, Admon admon)
 	throws SQLException {
 	}
+	public void visitImpr190_admon(Impr190 impr190, Admon admon)
+	throws SQLException {
+	}
 	public void visitImpr11x_admon(Impr11x impr11x, Admon admon)
 	throws SQLException {
 	}
-	public void visitImpr190_admon(Impr190 impr190, Admon admon)
+	public void visitImpr216_admon(Impr216 impr216, Admon admon)
+	throws SQLException {
+	}
+	public void visitImpr296_admon(Impr296 impr296, Admon admon)
 	throws SQLException {
 	}
 
@@ -38558,7 +45619,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private String emprperCodnsz;  
 		
 		/**
-		 * Código interno
+		 * Codigo BBX
 		 * @return the column 'codnsz' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -38763,6 +45824,61 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprper_Noirpf() {
 			return emprperNoirpf;
 		}
+		
+		private String emprperNosegsoc;  
+		
+		/**
+		 * No seg. soc. (de trabajador)
+		 * @return the column 'nosegsoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Nosegsoc() {
+			return emprperNosegsoc;
+		}
+		
+		private String emprperJubiladoactivo;  
+		
+		/**
+		 * Trabajador jubilado en activo
+		 * @return the column 'jubiladoactivo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Jubiladoactivo() {
+			return emprperJubiladoactivo;
+		}
+		
+		private String emprperCertificado;  
+		
+		/**
+		 * Certificado Procesado
+		 * @return the column 'certificado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Certificado() {
+			return emprperCertificado;
+		}
+		
+		private String emprperFamiliar;  
+		
+		/**
+		 * Familiar de 1º grado
+		 * @return the column 'familiar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Familiar() {
+			return emprperFamiliar;
+		}
+		
+		private String emprperNoresidente;  
+		
+		/**
+		 * Trabajador no residente
+		 * @return the column 'noresidente' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Noresidente() {
+			return emprperNoresidente;
+		}
 		public void visitRel_nom_per(Nomina nomina, Emprper emprper)
 		throws SQLException {
 			emprperCdg = emprper.getCdg();  
@@ -38786,6 +45902,11 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprperIndgrupo = emprper.getIndgrupo();  
 			emprperPariente = emprper.getPariente();  
 			emprperNoirpf = emprper.getNoirpf();  
+			emprperNosegsoc = emprper.getNosegsoc();  
+			emprperJubiladoactivo = emprper.getJubiladoactivo();  
+			emprperCertificado = emprper.getCertificado();  
+			emprperFamiliar = emprper.getFamiliar();  
+			emprperNoresidente = emprper.getNoresidente();  
 		}
 	
 	}
@@ -38859,12 +45980,6 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		}
 	
 	}
-
-	public void visitNszpoco(Nszpoco nszpoco)
-	throws SQLException{
-	}
-
-
 
 	public void visitNomdto(Nomdto nomdto)
 	throws SQLException{
@@ -39331,7 +46446,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private BigDecimal nominaBase_irpf;  
 		
 		/**
-		 * Base IRPF Dinararia
+		 * Base IRPF Dineraria
 		 * @return the column 'base_irpf' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -39427,6 +46542,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return nominaBase_it;
 		}
 		
+		private BigDecimal nominaBase_ere;  
+		
+		/**
+		 * Base ERE
+		 * @return the column 'base_ere' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_ere() {
+			return nominaBase_ere;
+		}
+		
 		private BigDecimal nominaTotal_1;  
 		
 		/**
@@ -39493,6 +46619,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return nominaPrc_acc;
 		}
 		
+		private BigDecimal nominaPrc_fp;  
+		
+		/**
+		 * Porcentaje FP
+		 * @return the column 'prc_fp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_fp() {
+			return nominaPrc_fp;
+		}
+		
 		private BigDecimal nominaPrc_hex;  
 		
 		/**
@@ -39535,6 +46672,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		 */
 		public BigDecimal getNomina_Importe_acc() {
 			return nominaImporte_acc;
+		}
+		
+		private BigDecimal nominaImporte_fp;  
+		
+		/**
+		 * Importe FP
+		 * @return the column 'importe_fp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_fp() {
+			return nominaImporte_fp;
 		}
 		
 		private BigDecimal nominaImporte_hex;  
@@ -39888,6 +47036,237 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public Date getNomina_Fvisiont() {
 			return nominaFvisiont;
 		}
+		
+		private BigDecimal nominaBase_con_ere;  
+		
+		/**
+		 * Contingencias comunes ERE
+		 * @return the column 'base_con_ere' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_con_ere() {
+			return nominaBase_con_ere;
+		}
+		
+		private BigDecimal nominaBase_acc_ere;  
+		
+		/**
+		 * Accidentes de trabajo ERE
+		 * @return the column 'base_acc_ere' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_acc_ere() {
+			return nominaBase_acc_ere;
+		}
+		
+		private BigDecimal nominaBase_con_ere_no;  
+		
+		/**
+		 * Contingencias comunes ERE no aporta
+		 * @return the column 'base_con_ere_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_con_ere_no() {
+			return nominaBase_con_ere_no;
+		}
+		
+		private BigDecimal nominaBase_acc_ere_no;  
+		
+		/**
+		 * Accidentes de trabajo ERE no aporta
+		 * @return the column 'base_acc_ere_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_acc_ere_no() {
+			return nominaBase_acc_ere_no;
+		}
+		
+		private BigDecimal nominaBase_con_ere_sin;  
+		
+		/**
+		 * Contingencias comunes sin ERE
+		 * @return the column 'base_con_ere_sin' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_con_ere_sin() {
+			return nominaBase_con_ere_sin;
+		}
+		
+		private BigDecimal nominaBase_acc_ere_sin;  
+		
+		/**
+		 * Accidentes de trabajo sin ERE
+		 * @return the column 'base_acc_ere_sin' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_acc_ere_sin() {
+			return nominaBase_acc_ere_sin;
+		}
+		
+		private BigDecimal nominaPrc_cg_emp;  
+		
+		/**
+		 * Porcentaje contingencias generales empresa
+		 * @return the column 'prc_cg_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_cg_emp() {
+			return nominaPrc_cg_emp;
+		}
+		
+		private BigDecimal nominaPrc_atep_emp;  
+		
+		/**
+		 * Porcentaje AT y EP empresa
+		 * @return the column 'prc_atep_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_atep_emp() {
+			return nominaPrc_atep_emp;
+		}
+		
+		private BigDecimal nominaPrc_desemp_emp;  
+		
+		/**
+		 * Porcentaje desempleo empresa
+		 * @return the column 'prc_desemp_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_desemp_emp() {
+			return nominaPrc_desemp_emp;
+		}
+		
+		private BigDecimal nominaPrc_fp_emp;  
+		
+		/**
+		 * Porcentaje FP empresa
+		 * @return the column 'prc_fp_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_fp_emp() {
+			return nominaPrc_fp_emp;
+		}
+		
+		private BigDecimal nominaPrc_fogasa_emp;  
+		
+		/**
+		 * Porcentaje FOGASA empresa
+		 * @return the column 'prc_fogasa_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_fogasa_emp() {
+			return nominaPrc_fogasa_emp;
+		}
+		
+		private BigDecimal nominaPrc_hex_emp;  
+		
+		/**
+		 * Porcentaje horas extras estructurales empresa
+		 * @return the column 'prc_hex_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_hex_emp() {
+			return nominaPrc_hex_emp;
+		}
+		
+		private BigDecimal nominaPrc_hexno_emp;  
+		
+		/**
+		 * Porcentaje horas extras NO estructurales empresa
+		 * @return the column 'prc_hexno_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_hexno_emp() {
+			return nominaPrc_hexno_emp;
+		}
+		
+		private BigDecimal nominaImporte_cg_emp;  
+		
+		/**
+		 * Importe contingencias comunes empresa
+		 * @return the column 'importe_cg_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_cg_emp() {
+			return nominaImporte_cg_emp;
+		}
+		
+		private BigDecimal nominaImporte_atep_emp;  
+		
+		/**
+		 * Importe AT y EP empresa
+		 * @return the column 'importe_atep_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_atep_emp() {
+			return nominaImporte_atep_emp;
+		}
+		
+		private BigDecimal nominaImporte_desemp_emp;  
+		
+		/**
+		 * Importe accidentes trabajo empresa
+		 * @return the column 'importe_desemp_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_desemp_emp() {
+			return nominaImporte_desemp_emp;
+		}
+		
+		private BigDecimal nominaImporte_fp_emp;  
+		
+		/**
+		 * Importe accidentes trabajo empresa
+		 * @return the column 'importe_fp_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_fp_emp() {
+			return nominaImporte_fp_emp;
+		}
+		
+		private BigDecimal nominaImporte_fogasa_emp;  
+		
+		/**
+		 * Importe accidentes trabajo empresa
+		 * @return the column 'importe_fogasa_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_fogasa_emp() {
+			return nominaImporte_fogasa_emp;
+		}
+		
+		private BigDecimal nominaImporte_hex_emp;  
+		
+		/**
+		 * Importe horas extras estructurales empresa
+		 * @return the column 'importe_hex_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_hex_emp() {
+			return nominaImporte_hex_emp;
+		}
+		
+		private BigDecimal nominaImporte_hexno_emp;  
+		
+		/**
+		 * Importe horas extras NO estructurales empresa
+		 * @return the column 'importe_hexno_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_hexno_emp() {
+			return nominaImporte_hexno_emp;
+		}
+		
+		private BigDecimal nominaImporte_cuotas_emp;  
+		
+		/**
+		 * Importe cuotas deducciones empresa
+		 * @return the column 'importe_cuotas_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_cuotas_emp() {
+			return nominaImporte_cuotas_emp;
+		}
 		public void visitRel_dto_nom(Nomdto nomdto, Nomina nomina)
 		throws SQLException {
 			nominaCdg = nomina.getCdg();  
@@ -39940,16 +47319,19 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			nominaBase_perdes = nomina.getBase_perdes();  
 			nominaRemuneracion = nomina.getRemuneracion();  
 			nominaBase_it = nomina.getBase_it();  
+			nominaBase_ere = nomina.getBase_ere();  
 			nominaTotal_1 = nomina.getTotal_1();  
 			nominaCodbas = nomina.getCodbas();  
 			nominaBase_cg = nomina.getBase_cg();  
 			nominaBase_acc = nomina.getBase_acc();  
 			nominaPrc_cg = nomina.getPrc_cg();  
 			nominaPrc_acc = nomina.getPrc_acc();  
+			nominaPrc_fp = nomina.getPrc_fp();  
 			nominaPrc_hex = nomina.getPrc_hex();  
 			nominaPrc_hexno = nomina.getPrc_hexno();  
 			nominaImporte_cg = nomina.getImporte_cg();  
 			nominaImporte_acc = nomina.getImporte_acc();  
+			nominaImporte_fp = nomina.getImporte_fp();  
 			nominaImporte_hex = nomina.getImporte_hex();  
 			nominaImporte_hexno = nomina.getImporte_hexno();  
 			nominaMincg = nomina.getMincg();  
@@ -39982,6 +47364,27 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			nominaBase_acc_sin_h_pts = nomina.getBase_acc_sin_h_pts();  
 			nominaFvisione = nomina.getFvisione();  
 			nominaFvisiont = nomina.getFvisiont();  
+			nominaBase_con_ere = nomina.getBase_con_ere();  
+			nominaBase_acc_ere = nomina.getBase_acc_ere();  
+			nominaBase_con_ere_no = nomina.getBase_con_ere_no();  
+			nominaBase_acc_ere_no = nomina.getBase_acc_ere_no();  
+			nominaBase_con_ere_sin = nomina.getBase_con_ere_sin();  
+			nominaBase_acc_ere_sin = nomina.getBase_acc_ere_sin();  
+			nominaPrc_cg_emp = nomina.getPrc_cg_emp();  
+			nominaPrc_atep_emp = nomina.getPrc_atep_emp();  
+			nominaPrc_desemp_emp = nomina.getPrc_desemp_emp();  
+			nominaPrc_fp_emp = nomina.getPrc_fp_emp();  
+			nominaPrc_fogasa_emp = nomina.getPrc_fogasa_emp();  
+			nominaPrc_hex_emp = nomina.getPrc_hex_emp();  
+			nominaPrc_hexno_emp = nomina.getPrc_hexno_emp();  
+			nominaImporte_cg_emp = nomina.getImporte_cg_emp();  
+			nominaImporte_atep_emp = nomina.getImporte_atep_emp();  
+			nominaImporte_desemp_emp = nomina.getImporte_desemp_emp();  
+			nominaImporte_fp_emp = nomina.getImporte_fp_emp();  
+			nominaImporte_fogasa_emp = nomina.getImporte_fogasa_emp();  
+			nominaImporte_hex_emp = nomina.getImporte_hex_emp();  
+			nominaImporte_hexno_emp = nomina.getImporte_hexno_emp();  
+			nominaImporte_cuotas_emp = nomina.getImporte_cuotas_emp();  
 		}
 	
 	}
@@ -40457,7 +47860,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private BigDecimal nominaBase_irpf;  
 		
 		/**
-		 * Base IRPF Dinararia
+		 * Base IRPF Dineraria
 		 * @return the column 'base_irpf' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -40553,6 +47956,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return nominaBase_it;
 		}
 		
+		private BigDecimal nominaBase_ere;  
+		
+		/**
+		 * Base ERE
+		 * @return the column 'base_ere' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_ere() {
+			return nominaBase_ere;
+		}
+		
 		private BigDecimal nominaTotal_1;  
 		
 		/**
@@ -40619,6 +48033,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return nominaPrc_acc;
 		}
 		
+		private BigDecimal nominaPrc_fp;  
+		
+		/**
+		 * Porcentaje FP
+		 * @return the column 'prc_fp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_fp() {
+			return nominaPrc_fp;
+		}
+		
 		private BigDecimal nominaPrc_hex;  
 		
 		/**
@@ -40661,6 +48086,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		 */
 		public BigDecimal getNomina_Importe_acc() {
 			return nominaImporte_acc;
+		}
+		
+		private BigDecimal nominaImporte_fp;  
+		
+		/**
+		 * Importe FP
+		 * @return the column 'importe_fp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_fp() {
+			return nominaImporte_fp;
 		}
 		
 		private BigDecimal nominaImporte_hex;  
@@ -41014,6 +48450,237 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public Date getNomina_Fvisiont() {
 			return nominaFvisiont;
 		}
+		
+		private BigDecimal nominaBase_con_ere;  
+		
+		/**
+		 * Contingencias comunes ERE
+		 * @return the column 'base_con_ere' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_con_ere() {
+			return nominaBase_con_ere;
+		}
+		
+		private BigDecimal nominaBase_acc_ere;  
+		
+		/**
+		 * Accidentes de trabajo ERE
+		 * @return the column 'base_acc_ere' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_acc_ere() {
+			return nominaBase_acc_ere;
+		}
+		
+		private BigDecimal nominaBase_con_ere_no;  
+		
+		/**
+		 * Contingencias comunes ERE no aporta
+		 * @return the column 'base_con_ere_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_con_ere_no() {
+			return nominaBase_con_ere_no;
+		}
+		
+		private BigDecimal nominaBase_acc_ere_no;  
+		
+		/**
+		 * Accidentes de trabajo ERE no aporta
+		 * @return the column 'base_acc_ere_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_acc_ere_no() {
+			return nominaBase_acc_ere_no;
+		}
+		
+		private BigDecimal nominaBase_con_ere_sin;  
+		
+		/**
+		 * Contingencias comunes sin ERE
+		 * @return the column 'base_con_ere_sin' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_con_ere_sin() {
+			return nominaBase_con_ere_sin;
+		}
+		
+		private BigDecimal nominaBase_acc_ere_sin;  
+		
+		/**
+		 * Accidentes de trabajo sin ERE
+		 * @return the column 'base_acc_ere_sin' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_acc_ere_sin() {
+			return nominaBase_acc_ere_sin;
+		}
+		
+		private BigDecimal nominaPrc_cg_emp;  
+		
+		/**
+		 * Porcentaje contingencias generales empresa
+		 * @return the column 'prc_cg_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_cg_emp() {
+			return nominaPrc_cg_emp;
+		}
+		
+		private BigDecimal nominaPrc_atep_emp;  
+		
+		/**
+		 * Porcentaje AT y EP empresa
+		 * @return the column 'prc_atep_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_atep_emp() {
+			return nominaPrc_atep_emp;
+		}
+		
+		private BigDecimal nominaPrc_desemp_emp;  
+		
+		/**
+		 * Porcentaje desempleo empresa
+		 * @return the column 'prc_desemp_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_desemp_emp() {
+			return nominaPrc_desemp_emp;
+		}
+		
+		private BigDecimal nominaPrc_fp_emp;  
+		
+		/**
+		 * Porcentaje FP empresa
+		 * @return the column 'prc_fp_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_fp_emp() {
+			return nominaPrc_fp_emp;
+		}
+		
+		private BigDecimal nominaPrc_fogasa_emp;  
+		
+		/**
+		 * Porcentaje FOGASA empresa
+		 * @return the column 'prc_fogasa_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_fogasa_emp() {
+			return nominaPrc_fogasa_emp;
+		}
+		
+		private BigDecimal nominaPrc_hex_emp;  
+		
+		/**
+		 * Porcentaje horas extras estructurales empresa
+		 * @return the column 'prc_hex_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_hex_emp() {
+			return nominaPrc_hex_emp;
+		}
+		
+		private BigDecimal nominaPrc_hexno_emp;  
+		
+		/**
+		 * Porcentaje horas extras NO estructurales empresa
+		 * @return the column 'prc_hexno_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_hexno_emp() {
+			return nominaPrc_hexno_emp;
+		}
+		
+		private BigDecimal nominaImporte_cg_emp;  
+		
+		/**
+		 * Importe contingencias comunes empresa
+		 * @return the column 'importe_cg_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_cg_emp() {
+			return nominaImporte_cg_emp;
+		}
+		
+		private BigDecimal nominaImporte_atep_emp;  
+		
+		/**
+		 * Importe AT y EP empresa
+		 * @return the column 'importe_atep_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_atep_emp() {
+			return nominaImporte_atep_emp;
+		}
+		
+		private BigDecimal nominaImporte_desemp_emp;  
+		
+		/**
+		 * Importe accidentes trabajo empresa
+		 * @return the column 'importe_desemp_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_desemp_emp() {
+			return nominaImporte_desemp_emp;
+		}
+		
+		private BigDecimal nominaImporte_fp_emp;  
+		
+		/**
+		 * Importe accidentes trabajo empresa
+		 * @return the column 'importe_fp_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_fp_emp() {
+			return nominaImporte_fp_emp;
+		}
+		
+		private BigDecimal nominaImporte_fogasa_emp;  
+		
+		/**
+		 * Importe accidentes trabajo empresa
+		 * @return the column 'importe_fogasa_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_fogasa_emp() {
+			return nominaImporte_fogasa_emp;
+		}
+		
+		private BigDecimal nominaImporte_hex_emp;  
+		
+		/**
+		 * Importe horas extras estructurales empresa
+		 * @return the column 'importe_hex_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_hex_emp() {
+			return nominaImporte_hex_emp;
+		}
+		
+		private BigDecimal nominaImporte_hexno_emp;  
+		
+		/**
+		 * Importe horas extras NO estructurales empresa
+		 * @return the column 'importe_hexno_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_hexno_emp() {
+			return nominaImporte_hexno_emp;
+		}
+		
+		private BigDecimal nominaImporte_cuotas_emp;  
+		
+		/**
+		 * Importe cuotas deducciones empresa
+		 * @return the column 'importe_cuotas_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_cuotas_emp() {
+			return nominaImporte_cuotas_emp;
+		}
 		public void visitPrc_nomina(Prcdivnom prcdivnom, Nomina nomina)
 		throws SQLException {
 			nominaCdg = nomina.getCdg();  
@@ -41066,16 +48733,19 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			nominaBase_perdes = nomina.getBase_perdes();  
 			nominaRemuneracion = nomina.getRemuneracion();  
 			nominaBase_it = nomina.getBase_it();  
+			nominaBase_ere = nomina.getBase_ere();  
 			nominaTotal_1 = nomina.getTotal_1();  
 			nominaCodbas = nomina.getCodbas();  
 			nominaBase_cg = nomina.getBase_cg();  
 			nominaBase_acc = nomina.getBase_acc();  
 			nominaPrc_cg = nomina.getPrc_cg();  
 			nominaPrc_acc = nomina.getPrc_acc();  
+			nominaPrc_fp = nomina.getPrc_fp();  
 			nominaPrc_hex = nomina.getPrc_hex();  
 			nominaPrc_hexno = nomina.getPrc_hexno();  
 			nominaImporte_cg = nomina.getImporte_cg();  
 			nominaImporte_acc = nomina.getImporte_acc();  
+			nominaImporte_fp = nomina.getImporte_fp();  
 			nominaImporte_hex = nomina.getImporte_hex();  
 			nominaImporte_hexno = nomina.getImporte_hexno();  
 			nominaMincg = nomina.getMincg();  
@@ -41108,6 +48778,27 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			nominaBase_acc_sin_h_pts = nomina.getBase_acc_sin_h_pts();  
 			nominaFvisione = nomina.getFvisione();  
 			nominaFvisiont = nomina.getFvisiont();  
+			nominaBase_con_ere = nomina.getBase_con_ere();  
+			nominaBase_acc_ere = nomina.getBase_acc_ere();  
+			nominaBase_con_ere_no = nomina.getBase_con_ere_no();  
+			nominaBase_acc_ere_no = nomina.getBase_acc_ere_no();  
+			nominaBase_con_ere_sin = nomina.getBase_con_ere_sin();  
+			nominaBase_acc_ere_sin = nomina.getBase_acc_ere_sin();  
+			nominaPrc_cg_emp = nomina.getPrc_cg_emp();  
+			nominaPrc_atep_emp = nomina.getPrc_atep_emp();  
+			nominaPrc_desemp_emp = nomina.getPrc_desemp_emp();  
+			nominaPrc_fp_emp = nomina.getPrc_fp_emp();  
+			nominaPrc_fogasa_emp = nomina.getPrc_fogasa_emp();  
+			nominaPrc_hex_emp = nomina.getPrc_hex_emp();  
+			nominaPrc_hexno_emp = nomina.getPrc_hexno_emp();  
+			nominaImporte_cg_emp = nomina.getImporte_cg_emp();  
+			nominaImporte_atep_emp = nomina.getImporte_atep_emp();  
+			nominaImporte_desemp_emp = nomina.getImporte_desemp_emp();  
+			nominaImporte_fp_emp = nomina.getImporte_fp_emp();  
+			nominaImporte_fogasa_emp = nomina.getImporte_fogasa_emp();  
+			nominaImporte_hex_emp = nomina.getImporte_hex_emp();  
+			nominaImporte_hexno_emp = nomina.getImporte_hexno_emp();  
+			nominaImporte_cuotas_emp = nomina.getImporte_cuotas_emp();  
 		}
 	
 	}
@@ -41130,11 +48821,127 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 
 
 
-	public void visitNszbase(Nszbase nszbase)
+	public void visitLincargos(Lincargos lincargos)
 	throws SQLException{
 	}
 
 
+	/**
+	 * Lin_cargos shows join between Cargos and Lincargos
+	 */
+	public static class Lin_cargos extends  DefaultCtsqlDBVisitor {
+		
+		
+		private Integer cargosCdg;  
+		
+		/**
+		 * Código de factura
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCargos_Cdg() {
+			return cargosCdg;
+		}
+		
+		private Integer cargosCodact;  
+		
+		/**
+		 * Código de actividad
+		 * @return the column 'codact' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCargos_Codact() {
+			return cargosCodact;
+		}
+		
+		private String cargosDescripcion;  
+		
+		/**
+		 * Descripción de actividad
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCargos_Descripcion() {
+			return cargosDescripcion;
+		}
+		
+		private String cargosCodbbx;  
+		
+		/**
+		 * Código BBX
+		 * @return the column 'codbbx' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getCargos_Codbbx() {
+			return cargosCodbbx;
+		}
+		
+		private Integer cargosAnio;  
+		
+		/**
+		 * Año de facturación
+		 * @return the column 'anio' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCargos_Anio() {
+			return cargosAnio;
+		}
+		
+		private Integer cargosMes;  
+		
+		/**
+		 * Mes de facturación
+		 * @return the column 'mes' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCargos_Mes() {
+			return cargosMes;
+		}
+		public void visitLin_cargos(Lincargos lincargos, Cargos cargos)
+		throws SQLException {
+			cargosCdg = cargos.getCdg();  
+			cargosCodact = cargos.getCodact();  
+			cargosDescripcion = cargos.getDescripcion();  
+			cargosCodbbx = cargos.getCodbbx();  
+			cargosAnio = cargos.getAnio();  
+			cargosMes = cargos.getMes();  
+		}
+	
+	}
+	/**
+	 * Rel_tipocargos shows join between Tipocargos and Lincargos
+	 */
+	public static class Rel_tipocargos extends  DefaultCtsqlDBVisitor {
+		
+		
+		private String tipocargosCdg;  
+		
+		/**
+		 * Código del cargo
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTipocargos_Cdg() {
+			return tipocargosCdg;
+		}
+		
+		private String tipocargosDescripcion;  
+		
+		/**
+		 * Descripción del cargo
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTipocargos_Descripcion() {
+			return tipocargosDescripcion;
+		}
+		public void visitRel_tipocargos(Lincargos lincargos, Tipocargos tipocargos)
+		throws SQLException {
+			tipocargosCdg = tipocargos.getCdg();  
+			tipocargosDescripcion = tipocargos.getDescripcion();  
+		}
+	
+	}
 
 	public void visitTipaut(Tipaut tipaut)
 	throws SQLException{
@@ -41307,6 +49114,28 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getComplemento_Dinesp() {
 			return complementoDinesp;
 		}
+		
+		private String complementoConcepto;  
+		
+		/**
+		 * Concepto
+		 * @return the column 'concepto' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getComplemento_Concepto() {
+			return complementoConcepto;
+		}
+		
+		private String complementoExcinc;  
+		
+		/**
+		 * Indicativo excluido/incluido
+		 * @return the column 'excinc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getComplemento_Excinc() {
+			return complementoExcinc;
+		}
 		public void visitRel_pga_com(Pagaext pagaext, Complemento complemento)
 		throws SQLException {
 			complementoCdg = complemento.getCdg();  
@@ -41317,6 +49146,8 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			complementoFijovar = complemento.getFijovar();  
 			complementoIndcom = complemento.getIndcom();  
 			complementoDinesp = complemento.getDinesp();  
+			complementoConcepto = complemento.getConcepto();  
+			complementoExcinc = complemento.getExcinc();  
 		}
 	
 	}
@@ -42064,6 +49895,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return finiquitoFecbaj;
 		}
 		
+		private String finiquitoCodcausa;  
+		
+		/**
+		 * Código de la causa de baja
+		 * @return the column 'codcausa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getFiniquito_Codcausa() {
+			return finiquitoCodcausa;
+		}
+		
 		private String finiquitoCausa;  
 		
 		/**
@@ -42375,6 +50217,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		throws SQLException {
 			finiquitoCodper = finiquito.getCodper();  
 			finiquitoFecbaj = finiquito.getFecbaj();  
+			finiquitoCodcausa = finiquito.getCodcausa();  
 			finiquitoCausa = finiquito.getCausa();  
 			finiquitoVacfecini = finiquito.getVacfecini();  
 			finiquitoVacimporte = finiquito.getVacimporte();  
@@ -42499,6 +50342,28 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getComplemento_Dinesp() {
 			return complementoDinesp;
 		}
+		
+		private String complementoConcepto;  
+		
+		/**
+		 * Concepto
+		 * @return the column 'concepto' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getComplemento_Concepto() {
+			return complementoConcepto;
+		}
+		
+		private String complementoExcinc;  
+		
+		/**
+		 * Indicativo excluido/incluido
+		 * @return the column 'excinc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getComplemento_Excinc() {
+			return complementoExcinc;
+		}
 		public void visitRel_fpe_com(Finipext finipext, Complemento complemento)
 		throws SQLException {
 			complementoCdg = complemento.getCdg();  
@@ -42509,20 +50374,25 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			complementoFijovar = complemento.getFijovar();  
 			complementoIndcom = complemento.getIndcom();  
 			complementoDinesp = complemento.getDinesp();  
+			complementoConcepto = complemento.getConcepto();  
+			complementoExcinc = complemento.getExcinc();  
 		}
 	
 	}
-
-	public void visitNszilte(Nszilte nszilte)
-	throws SQLException{
-	}
-
-
 
 	public void visitEmpresa(Empresa empresa)
 	throws SQLException{
 	}
 
+
+
+	public void visitTr_liquidacion(Tr_liquidacion tr_liquidacion)
+	throws SQLException{
+	}
+
+	public void visitRel_tr_liquidacion(Tr_tramos tr_tramos, Tr_liquidacion tr_liquidacion)
+	throws SQLException {
+	}
 
 
 	public void visitNominaexdf(Nominaexdf nominaexdf)
@@ -42643,7 +50513,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private String emprperCodnsz;  
 		
 		/**
-		 * Código interno
+		 * Codigo BBX
 		 * @return the column 'codnsz' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -42848,6 +50718,61 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprper_Noirpf() {
 			return emprperNoirpf;
 		}
+		
+		private String emprperNosegsoc;  
+		
+		/**
+		 * No seg. soc. (de trabajador)
+		 * @return the column 'nosegsoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Nosegsoc() {
+			return emprperNosegsoc;
+		}
+		
+		private String emprperJubiladoactivo;  
+		
+		/**
+		 * Trabajador jubilado en activo
+		 * @return the column 'jubiladoactivo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Jubiladoactivo() {
+			return emprperJubiladoactivo;
+		}
+		
+		private String emprperCertificado;  
+		
+		/**
+		 * Certificado Procesado
+		 * @return the column 'certificado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Certificado() {
+			return emprperCertificado;
+		}
+		
+		private String emprperFamiliar;  
+		
+		/**
+		 * Familiar de 1º grado
+		 * @return the column 'familiar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Familiar() {
+			return emprperFamiliar;
+		}
+		
+		private String emprperNoresidente;  
+		
+		/**
+		 * Trabajador no residente
+		 * @return the column 'noresidente' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Noresidente() {
+			return emprperNoresidente;
+		}
 		public void visitRel_pit_epp(Parteit parteit, Emprper emprper)
 		throws SQLException {
 			emprperCdg = emprper.getCdg();  
@@ -42871,6 +50796,11 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprperIndgrupo = emprper.getIndgrupo();  
 			emprperPariente = emprper.getPariente();  
 			emprperNoirpf = emprper.getNoirpf();  
+			emprperNosegsoc = emprper.getNosegsoc();  
+			emprperJubiladoactivo = emprper.getJubiladoactivo();  
+			emprperCertificado = emprper.getCertificado();  
+			emprperFamiliar = emprper.getFamiliar();  
+			emprperNoresidente = emprper.getNoresidente();  
 		}
 	
 	}
@@ -43284,363 +51214,11 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	
 	}
 
-	public void visitNszepig(Nszepig nszepig)
-	throws SQLException{
-	}
-
-
-
 	public void visitFinidtodf(Finidtodf finidtodf)
 	throws SQLException{
 	}
 
 
-	/**
-	 * Findtodf_findf shows join between Finiquitodf and Finidtodf
-	 */
-	public static class Findtodf_findf extends  DefaultCtsqlDBVisitor {
-		
-		
-		private Integer finiquitodfCodper;  
-		
-		/**
-		 * Codigo de Trabajador
-		 * @return the column 'codper' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getFiniquitodf_Codper() {
-			return finiquitodfCodper;
-		}
-		
-		private Date finiquitodfFecbaj;  
-		
-		/**
-		 * Fecha de Baja
-		 * @return the column 'fecbaj' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Date getFiniquitodf_Fecbaj() {
-			return finiquitodfFecbaj;
-		}
-		
-		private String finiquitodfCausa;  
-		
-		/**
-		 * Causa de Baja
-		 * @return the column 'causa' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getFiniquitodf_Causa() {
-			return finiquitodfCausa;
-		}
-		
-		private Date finiquitodfVacfecini;  
-		
-		/**
-		 * Fecha Desde Vacaciones
-		 * @return the column 'vacfecini' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Date getFiniquitodf_Vacfecini() {
-			return finiquitodfVacfecini;
-		}
-		
-		private BigDecimal finiquitodfVacimporte;  
-		
-		/**
-		 * Importe Vacaciones
-		 * @return the column 'vacimporte' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Vacimporte() {
-			return finiquitodfVacimporte;
-		}
-		
-		private BigDecimal finiquitodfTotal_conceptos;  
-		
-		/**
-		 * Total Conceptos Finiquito
-		 * @return the column 'total_conceptos' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Total_conceptos() {
-			return finiquitodfTotal_conceptos;
-		}
-		
-		private BigDecimal finiquitodfBase;  
-		
-		/**
-		 * Base I.R.P.F.
-		 * @return the column 'base' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Base() {
-			return finiquitodfBase;
-		}
-		
-		private BigDecimal finiquitodfIrpf;  
-		
-		/**
-		 * % I.R.P.F.
-		 * @return the column 'irpf' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Irpf() {
-			return finiquitodfIrpf;
-		}
-		
-		private BigDecimal finiquitodfImporte_irpf;  
-		
-		/**
-		 * Importe Retenido I.R.P.F.
-		 * @return the column 'importe_irpf' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Importe_irpf() {
-			return finiquitodfImporte_irpf;
-		}
-		
-		private BigDecimal finiquitodfLiquido;  
-		
-		/**
-		 * Importe Liquido
-		 * @return the column 'liquido' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Liquido() {
-			return finiquitodfLiquido;
-		}
-		
-		private BigDecimal finiquitodfImportesin;  
-		
-		/**
-		 * Importe Indemnizaciones no sujetas a I.R.P.F.
-		 * @return the column 'importesin' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Importesin() {
-			return finiquitodfImportesin;
-		}
-		
-		private Date finiquitodfFecnew;  
-		
-		/**
-		 * Fecha Creacion Fila
-		 * @return the column 'fecnew' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Date getFiniquitodf_Fecnew() {
-			return finiquitodfFecnew;
-		}
-		
-		private Time finiquitodfHornew;  
-		
-		/**
-		 * Hora Creacion Fila
-		 * @return the column 'hornew' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Time getFiniquitodf_Hornew() {
-			return finiquitodfHornew;
-		}
-		
-		private Date finiquitodfFecmod;  
-		
-		/**
-		 * Fecha Modificacion Fila
-		 * @return the column 'fecmod' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Date getFiniquitodf_Fecmod() {
-			return finiquitodfFecmod;
-		}
-		
-		private Time finiquitodfHormod;  
-		
-		/**
-		 * Hora Modificacion Fila
-		 * @return the column 'hormod' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Time getFiniquitodf_Hormod() {
-			return finiquitodfHormod;
-		}
-		
-		private Integer finiquitodfCdg;  
-		
-		/**
-		 * Codigo de Finiquito de Diferencias
-		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getFiniquitodf_Cdg() {
-			return finiquitodfCdg;
-		}
-		
-		private Integer finiquitodfCdgnom;  
-		
-		/**
-		 * Codigo de la Nomina Resumen de Atrasos
-		 * @return the column 'cdgnom' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getFiniquitodf_Cdgnom() {
-			return finiquitodfCdgnom;
-		}
-		
-		private Date finiquitodfFeccobreal;  
-		
-		/**
-		 * Fecha de Cobro Real
-		 * @return the column 'feccobreal' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Date getFiniquitodf_Feccobreal() {
-			return finiquitodfFeccobreal;
-		}
-		
-		private String finiquitodfDivisa;  
-		
-		/**
-		 * Divisa
-		 * @return the column 'divisa' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getFiniquitodf_Divisa() {
-			return finiquitodfDivisa;
-		}
-		
-		private Integer finiquitodfDiasvac;  
-		
-		/**
-		 * Días vacaciones
-		 * @return the column 'diasvac' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public Integer getFiniquitodf_Diasvac() {
-			return finiquitodfDiasvac;
-		}
-		
-		private BigDecimal finiquitodfCostessemp;  
-		
-		/**
-		 * Coste S.S. empresa
-		 * @return the column 'costessemp' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Costessemp() {
-			return finiquitodfCostessemp;
-		}
-		
-		private String finiquitodfCodbas;  
-		
-		/**
-		 * Grupo de tarifa
-		 * @return the column 'codbas' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public String getFiniquitodf_Codbas() {
-			return finiquitodfCodbas;
-		}
-		
-		private BigDecimal finiquitodfBasecg;  
-		
-		/**
-		 * Base Contingencias Generales
-		 * @return the column 'basecg' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Basecg() {
-			return finiquitodfBasecg;
-		}
-		
-		private BigDecimal finiquitodfPrccg;  
-		
-		/**
-		 * % Contingencias Generales
-		 * @return the column 'prccg' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Prccg() {
-			return finiquitodfPrccg;
-		}
-		
-		private BigDecimal finiquitodfImportecg;  
-		
-		/**
-		 * Importe Contingencias Generales
-		 * @return the column 'importecg' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Importecg() {
-			return finiquitodfImportecg;
-		}
-		
-		private BigDecimal finiquitodfBaseacc;  
-		
-		/**
-		 * Base Accidente de Trabajo
-		 * @return the column 'baseacc' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Baseacc() {
-			return finiquitodfBaseacc;
-		}
-		
-		private BigDecimal finiquitodfPrcacc;  
-		
-		/**
-		 * % Accidente de Trabajo
-		 * @return the column 'prcacc' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Prcacc() {
-			return finiquitodfPrcacc;
-		}
-		
-		private BigDecimal finiquitodfImporteacc;  
-		
-		/**
-		 * Importe Accidente de Trabajo
-		 * @return the column 'importeacc' value; if the value is SQL NULL, the value returned is null
-		 * @throws SQLException
-		 */
-		public BigDecimal getFiniquitodf_Importeacc() {
-			return finiquitodfImporteacc;
-		}
-		public void visitFindtodf_findf(Finidtodf finidtodf, Finiquitodf finiquitodf)
-		throws SQLException {
-			finiquitodfCodper = finiquitodf.getCodper();  
-			finiquitodfFecbaj = finiquitodf.getFecbaj();  
-			finiquitodfCausa = finiquitodf.getCausa();  
-			finiquitodfVacfecini = finiquitodf.getVacfecini();  
-			finiquitodfVacimporte = finiquitodf.getVacimporte();  
-			finiquitodfTotal_conceptos = finiquitodf.getTotal_conceptos();  
-			finiquitodfBase = finiquitodf.getBase();  
-			finiquitodfIrpf = finiquitodf.getIrpf();  
-			finiquitodfImporte_irpf = finiquitodf.getImporte_irpf();  
-			finiquitodfLiquido = finiquitodf.getLiquido();  
-			finiquitodfImportesin = finiquitodf.getImportesin();  
-			finiquitodfFecnew = finiquitodf.getFecnew();  
-			finiquitodfHornew = finiquitodf.getHornew();  
-			finiquitodfFecmod = finiquitodf.getFecmod();  
-			finiquitodfHormod = finiquitodf.getHormod();  
-			finiquitodfCdg = finiquitodf.getCdg();  
-			finiquitodfCdgnom = finiquitodf.getCdgnom();  
-			finiquitodfFeccobreal = finiquitodf.getFeccobreal();  
-			finiquitodfDivisa = finiquitodf.getDivisa();  
-			finiquitodfDiasvac = finiquitodf.getDiasvac();  
-			finiquitodfCostessemp = finiquitodf.getCostessemp();  
-			finiquitodfCodbas = finiquitodf.getCodbas();  
-			finiquitodfBasecg = finiquitodf.getBasecg();  
-			finiquitodfPrccg = finiquitodf.getPrccg();  
-			finiquitodfImportecg = finiquitodf.getImportecg();  
-			finiquitodfBaseacc = finiquitodf.getBaseacc();  
-			finiquitodfPrcacc = finiquitodf.getPrcacc();  
-			finiquitodfImporteacc = finiquitodf.getImporteacc();  
-		}
-	
-	}
 
 	public void visitOtrperc(Otrperc otrperc)
 	throws SQLException{
@@ -44444,6 +52022,39 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprnif_Mod190() {
 			return emprnifMod190;
 		}
+		
+		private Date emprnifFeciniportal;  
+		
+		/**
+		 * Fecha inicio portal
+		 * @return the column 'feciniportal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feciniportal() {
+			return emprnifFeciniportal;
+		}
+		
+		private Date emprnifFeccierrenomina;  
+		
+		/**
+		 * Fecha cierre nóminas
+		 * @return the column 'feccierrenomina' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feccierrenomina() {
+			return emprnifFeccierrenomina;
+		}
+		
+		private Integer emprnifMeseshistorico;  
+		
+		/**
+		 * Meses historico portal
+		 * @return the column 'meseshistorico' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprnif_Meseshistorico() {
+			return emprnifMeseshistorico;
+		}
 		public void visitOtrperc_emprnif(Otrperc otrperc, Emprnif emprnif)
 		throws SQLException {
 			emprnifCdg = emprnif.getCdg();  
@@ -44480,14 +52091,20 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprnifCecon = emprnif.getCecon();  
 			emprnifModimpuesto = emprnif.getModimpuesto();  
 			emprnifMod190 = emprnif.getMod190();  
+			emprnifFeciniportal = emprnif.getFeciniportal();  
+			emprnifFeccierrenomina = emprnif.getFeccierrenomina();  
+			emprnifMeseshistorico = emprnif.getMeseshistorico();  
 		}
 	
 	}
 
-	public void visitNszadmh(Nszadmh nszadmh)
+	public void visitCodigocreta(Codigocreta codigocreta)
 	throws SQLException{
 	}
 
+	public void visitTr_codigocreta(Tr_datos tr_datos, Codigocreta codigocreta)
+	throws SQLException {
+	}
 
 
 	public void visitCnae(Cnae cnae)
@@ -44505,7 +52122,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 
 
 
-	public void visitNsztrab(Nsztrab nsztrab)
+	public void visitTr_fichero(Tr_fichero tr_fichero)
 	throws SQLException{
 	}
 
@@ -44898,6 +52515,39 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprnif_Mod190() {
 			return emprnifMod190;
 		}
+		
+		private Date emprnifFeciniportal;  
+		
+		/**
+		 * Fecha inicio portal
+		 * @return the column 'feciniportal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feciniportal() {
+			return emprnifFeciniportal;
+		}
+		
+		private Date emprnifFeccierrenomina;  
+		
+		/**
+		 * Fecha cierre nóminas
+		 * @return the column 'feccierrenomina' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feccierrenomina() {
+			return emprnifFeccierrenomina;
+		}
+		
+		private Integer emprnifMeseshistorico;  
+		
+		/**
+		 * Meses historico portal
+		 * @return the column 'meseshistorico' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprnif_Meseshistorico() {
+			return emprnifMeseshistorico;
+		}
 		public void visitImpr190_codemp(Impr190 impr190, Emprnif emprnif)
 		throws SQLException {
 			emprnifCdg = emprnif.getCdg();  
@@ -44934,6 +52584,9 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprnifCecon = emprnif.getCecon();  
 			emprnifModimpuesto = emprnif.getModimpuesto();  
 			emprnifMod190 = emprnif.getMod190();  
+			emprnifFeciniportal = emprnif.getFeciniportal();  
+			emprnifFeccierrenomina = emprnif.getFeccierrenomina();  
+			emprnifMeseshistorico = emprnif.getMeseshistorico();  
 		}
 	
 	}
@@ -45396,6 +53049,39 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprnif_Mod190() {
 			return emprnifMod190;
 		}
+		
+		private Date emprnifFeciniportal;  
+		
+		/**
+		 * Fecha inicio portal
+		 * @return the column 'feciniportal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feciniportal() {
+			return emprnifFeciniportal;
+		}
+		
+		private Date emprnifFeccierrenomina;  
+		
+		/**
+		 * Fecha cierre nóminas
+		 * @return the column 'feccierrenomina' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getEmprnif_Feccierrenomina() {
+			return emprnifFeccierrenomina;
+		}
+		
+		private Integer emprnifMeseshistorico;  
+		
+		/**
+		 * Meses historico portal
+		 * @return the column 'meseshistorico' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprnif_Meseshistorico() {
+			return emprnifMeseshistorico;
+		}
 		public void visitImpr190_repres(Impr190 impr190, Emprnif emprnif)
 		throws SQLException {
 			emprnifCdg = emprnif.getCdg();  
@@ -45432,6 +53118,9 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprnifCecon = emprnif.getCecon();  
 			emprnifModimpuesto = emprnif.getModimpuesto();  
 			emprnifMod190 = emprnif.getMod190();  
+			emprnifFeciniportal = emprnif.getFeciniportal();  
+			emprnifFeccierrenomina = emprnif.getFeccierrenomina();  
+			emprnifMeseshistorico = emprnif.getMeseshistorico();  
 		}
 	
 	}
@@ -45542,7 +53231,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private String emprperCodnsz;  
 		
 		/**
-		 * Código interno
+		 * Codigo BBX
 		 * @return the column 'codnsz' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -45747,6 +53436,61 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprper_Noirpf() {
 			return emprperNoirpf;
 		}
+		
+		private String emprperNosegsoc;  
+		
+		/**
+		 * No seg. soc. (de trabajador)
+		 * @return the column 'nosegsoc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Nosegsoc() {
+			return emprperNosegsoc;
+		}
+		
+		private String emprperJubiladoactivo;  
+		
+		/**
+		 * Trabajador jubilado en activo
+		 * @return the column 'jubiladoactivo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Jubiladoactivo() {
+			return emprperJubiladoactivo;
+		}
+		
+		private String emprperCertificado;  
+		
+		/**
+		 * Certificado Procesado
+		 * @return the column 'certificado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Certificado() {
+			return emprperCertificado;
+		}
+		
+		private String emprperFamiliar;  
+		
+		/**
+		 * Familiar de 1º grado
+		 * @return the column 'familiar' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Familiar() {
+			return emprperFamiliar;
+		}
+		
+		private String emprperNoresidente;  
+		
+		/**
+		 * Trabajador no residente
+		 * @return the column 'noresidente' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprper_Noresidente() {
+			return emprperNoresidente;
+		}
 		public void visitPrc_emprper(Prcdivtrab prcdivtrab, Emprper emprper)
 		throws SQLException {
 			emprperCdg = emprper.getCdg();  
@@ -45770,29 +53514,16 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprperIndgrupo = emprper.getIndgrupo();  
 			emprperPariente = emprper.getPariente();  
 			emprperNoirpf = emprper.getNoirpf();  
+			emprperNosegsoc = emprper.getNosegsoc();  
+			emprperJubiladoactivo = emprper.getJubiladoactivo();  
+			emprperCertificado = emprper.getCertificado();  
+			emprperFamiliar = emprper.getFamiliar();  
+			emprperNoresidente = emprper.getNoresidente();  
 		}
 	
 	}
 
 	public void visitSincomun(Sincomun sincomun)
-	throws SQLException{
-	}
-
-
-
-	public void visitApplication(Application application)
-	throws SQLException{
-	}
-
-	public void visitFk_action_app(Action action, Application application)
-	throws SQLException {
-	}
-	public void visitFk_application(Session session, Application application)
-	throws SQLException {
-	}
-
-
-	public void visitNszcomp(Nszcomp nszcomp)
 	throws SQLException{
 	}
 
@@ -46272,7 +54003,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private BigDecimal nominaBase_irpf;  
 		
 		/**
-		 * Base IRPF Dinararia
+		 * Base IRPF Dineraria
 		 * @return the column 'base_irpf' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -46368,6 +54099,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return nominaBase_it;
 		}
 		
+		private BigDecimal nominaBase_ere;  
+		
+		/**
+		 * Base ERE
+		 * @return the column 'base_ere' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_ere() {
+			return nominaBase_ere;
+		}
+		
 		private BigDecimal nominaTotal_1;  
 		
 		/**
@@ -46434,6 +54176,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return nominaPrc_acc;
 		}
 		
+		private BigDecimal nominaPrc_fp;  
+		
+		/**
+		 * Porcentaje FP
+		 * @return the column 'prc_fp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_fp() {
+			return nominaPrc_fp;
+		}
+		
 		private BigDecimal nominaPrc_hex;  
 		
 		/**
@@ -46476,6 +54229,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		 */
 		public BigDecimal getNomina_Importe_acc() {
 			return nominaImporte_acc;
+		}
+		
+		private BigDecimal nominaImporte_fp;  
+		
+		/**
+		 * Importe FP
+		 * @return the column 'importe_fp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_fp() {
+			return nominaImporte_fp;
 		}
 		
 		private BigDecimal nominaImporte_hex;  
@@ -46829,6 +54593,237 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public Date getNomina_Fvisiont() {
 			return nominaFvisiont;
 		}
+		
+		private BigDecimal nominaBase_con_ere;  
+		
+		/**
+		 * Contingencias comunes ERE
+		 * @return the column 'base_con_ere' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_con_ere() {
+			return nominaBase_con_ere;
+		}
+		
+		private BigDecimal nominaBase_acc_ere;  
+		
+		/**
+		 * Accidentes de trabajo ERE
+		 * @return the column 'base_acc_ere' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_acc_ere() {
+			return nominaBase_acc_ere;
+		}
+		
+		private BigDecimal nominaBase_con_ere_no;  
+		
+		/**
+		 * Contingencias comunes ERE no aporta
+		 * @return the column 'base_con_ere_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_con_ere_no() {
+			return nominaBase_con_ere_no;
+		}
+		
+		private BigDecimal nominaBase_acc_ere_no;  
+		
+		/**
+		 * Accidentes de trabajo ERE no aporta
+		 * @return the column 'base_acc_ere_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_acc_ere_no() {
+			return nominaBase_acc_ere_no;
+		}
+		
+		private BigDecimal nominaBase_con_ere_sin;  
+		
+		/**
+		 * Contingencias comunes sin ERE
+		 * @return the column 'base_con_ere_sin' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_con_ere_sin() {
+			return nominaBase_con_ere_sin;
+		}
+		
+		private BigDecimal nominaBase_acc_ere_sin;  
+		
+		/**
+		 * Accidentes de trabajo sin ERE
+		 * @return the column 'base_acc_ere_sin' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_acc_ere_sin() {
+			return nominaBase_acc_ere_sin;
+		}
+		
+		private BigDecimal nominaPrc_cg_emp;  
+		
+		/**
+		 * Porcentaje contingencias generales empresa
+		 * @return the column 'prc_cg_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_cg_emp() {
+			return nominaPrc_cg_emp;
+		}
+		
+		private BigDecimal nominaPrc_atep_emp;  
+		
+		/**
+		 * Porcentaje AT y EP empresa
+		 * @return the column 'prc_atep_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_atep_emp() {
+			return nominaPrc_atep_emp;
+		}
+		
+		private BigDecimal nominaPrc_desemp_emp;  
+		
+		/**
+		 * Porcentaje desempleo empresa
+		 * @return the column 'prc_desemp_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_desemp_emp() {
+			return nominaPrc_desemp_emp;
+		}
+		
+		private BigDecimal nominaPrc_fp_emp;  
+		
+		/**
+		 * Porcentaje FP empresa
+		 * @return the column 'prc_fp_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_fp_emp() {
+			return nominaPrc_fp_emp;
+		}
+		
+		private BigDecimal nominaPrc_fogasa_emp;  
+		
+		/**
+		 * Porcentaje FOGASA empresa
+		 * @return the column 'prc_fogasa_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_fogasa_emp() {
+			return nominaPrc_fogasa_emp;
+		}
+		
+		private BigDecimal nominaPrc_hex_emp;  
+		
+		/**
+		 * Porcentaje horas extras estructurales empresa
+		 * @return the column 'prc_hex_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_hex_emp() {
+			return nominaPrc_hex_emp;
+		}
+		
+		private BigDecimal nominaPrc_hexno_emp;  
+		
+		/**
+		 * Porcentaje horas extras NO estructurales empresa
+		 * @return the column 'prc_hexno_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_hexno_emp() {
+			return nominaPrc_hexno_emp;
+		}
+		
+		private BigDecimal nominaImporte_cg_emp;  
+		
+		/**
+		 * Importe contingencias comunes empresa
+		 * @return the column 'importe_cg_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_cg_emp() {
+			return nominaImporte_cg_emp;
+		}
+		
+		private BigDecimal nominaImporte_atep_emp;  
+		
+		/**
+		 * Importe AT y EP empresa
+		 * @return the column 'importe_atep_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_atep_emp() {
+			return nominaImporte_atep_emp;
+		}
+		
+		private BigDecimal nominaImporte_desemp_emp;  
+		
+		/**
+		 * Importe accidentes trabajo empresa
+		 * @return the column 'importe_desemp_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_desemp_emp() {
+			return nominaImporte_desemp_emp;
+		}
+		
+		private BigDecimal nominaImporte_fp_emp;  
+		
+		/**
+		 * Importe accidentes trabajo empresa
+		 * @return the column 'importe_fp_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_fp_emp() {
+			return nominaImporte_fp_emp;
+		}
+		
+		private BigDecimal nominaImporte_fogasa_emp;  
+		
+		/**
+		 * Importe accidentes trabajo empresa
+		 * @return the column 'importe_fogasa_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_fogasa_emp() {
+			return nominaImporte_fogasa_emp;
+		}
+		
+		private BigDecimal nominaImporte_hex_emp;  
+		
+		/**
+		 * Importe horas extras estructurales empresa
+		 * @return the column 'importe_hex_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_hex_emp() {
+			return nominaImporte_hex_emp;
+		}
+		
+		private BigDecimal nominaImporte_hexno_emp;  
+		
+		/**
+		 * Importe horas extras NO estructurales empresa
+		 * @return the column 'importe_hexno_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_hexno_emp() {
+			return nominaImporte_hexno_emp;
+		}
+		
+		private BigDecimal nominaImporte_cuotas_emp;  
+		
+		/**
+		 * Importe cuotas deducciones empresa
+		 * @return the column 'importe_cuotas_emp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_cuotas_emp() {
+			return nominaImporte_cuotas_emp;
+		}
 		public void visitRel_nmd_nom(Nominadev nominadev, Nomina nomina)
 		throws SQLException {
 			nominaCdg = nomina.getCdg();  
@@ -46881,16 +54876,19 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			nominaBase_perdes = nomina.getBase_perdes();  
 			nominaRemuneracion = nomina.getRemuneracion();  
 			nominaBase_it = nomina.getBase_it();  
+			nominaBase_ere = nomina.getBase_ere();  
 			nominaTotal_1 = nomina.getTotal_1();  
 			nominaCodbas = nomina.getCodbas();  
 			nominaBase_cg = nomina.getBase_cg();  
 			nominaBase_acc = nomina.getBase_acc();  
 			nominaPrc_cg = nomina.getPrc_cg();  
 			nominaPrc_acc = nomina.getPrc_acc();  
+			nominaPrc_fp = nomina.getPrc_fp();  
 			nominaPrc_hex = nomina.getPrc_hex();  
 			nominaPrc_hexno = nomina.getPrc_hexno();  
 			nominaImporte_cg = nomina.getImporte_cg();  
 			nominaImporte_acc = nomina.getImporte_acc();  
+			nominaImporte_fp = nomina.getImporte_fp();  
 			nominaImporte_hex = nomina.getImporte_hex();  
 			nominaImporte_hexno = nomina.getImporte_hexno();  
 			nominaMincg = nomina.getMincg();  
@@ -46923,6 +54921,27 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			nominaBase_acc_sin_h_pts = nomina.getBase_acc_sin_h_pts();  
 			nominaFvisione = nomina.getFvisione();  
 			nominaFvisiont = nomina.getFvisiont();  
+			nominaBase_con_ere = nomina.getBase_con_ere();  
+			nominaBase_acc_ere = nomina.getBase_acc_ere();  
+			nominaBase_con_ere_no = nomina.getBase_con_ere_no();  
+			nominaBase_acc_ere_no = nomina.getBase_acc_ere_no();  
+			nominaBase_con_ere_sin = nomina.getBase_con_ere_sin();  
+			nominaBase_acc_ere_sin = nomina.getBase_acc_ere_sin();  
+			nominaPrc_cg_emp = nomina.getPrc_cg_emp();  
+			nominaPrc_atep_emp = nomina.getPrc_atep_emp();  
+			nominaPrc_desemp_emp = nomina.getPrc_desemp_emp();  
+			nominaPrc_fp_emp = nomina.getPrc_fp_emp();  
+			nominaPrc_fogasa_emp = nomina.getPrc_fogasa_emp();  
+			nominaPrc_hex_emp = nomina.getPrc_hex_emp();  
+			nominaPrc_hexno_emp = nomina.getPrc_hexno_emp();  
+			nominaImporte_cg_emp = nomina.getImporte_cg_emp();  
+			nominaImporte_atep_emp = nomina.getImporte_atep_emp();  
+			nominaImporte_desemp_emp = nomina.getImporte_desemp_emp();  
+			nominaImporte_fp_emp = nomina.getImporte_fp_emp();  
+			nominaImporte_fogasa_emp = nomina.getImporte_fogasa_emp();  
+			nominaImporte_hex_emp = nomina.getImporte_hex_emp();  
+			nominaImporte_hexno_emp = nomina.getImporte_hexno_emp();  
+			nominaImporte_cuotas_emp = nomina.getImporte_cuotas_emp();  
 		}
 	
 	}

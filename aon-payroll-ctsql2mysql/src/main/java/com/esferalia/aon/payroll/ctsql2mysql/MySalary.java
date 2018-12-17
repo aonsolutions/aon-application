@@ -171,6 +171,7 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 		if (importeAcc > 0) {
 
 			double accPercentage = toDouble(nomina.getPrc_acc());
+			double jobPercentage = toDouble(nomina.getPrc_fp());
 
 			if (accPercentage == 0.00) {
 				accPercentage = importeAcc / cgpBase * 100;
@@ -185,23 +186,46 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 						String.format(SPANISH, "%.2f", accPercentage));
 			}
 
-			if (accPercentage == 1.65 || accPercentage == 1.70) {
-				double jobPercentage = 0.10;
-				double uePercentage = accPercentage - jobPercentage;
-
-				double importeJob = jobPercentage * importeAcc / accPercentage;
-				String jobFunction = String.format(SPANISH, "%.2f",
-						jobPercentage);
+			if (jobPercentage > 0.00 ) {
+//				double uePercentage = accPercentage;
+				double importeJob = toDouble(nomina.getImporte_fp());
+//				String jobFunction = String.format(SPANISH, "%.2f",
+//						jobPercentage);
 				mysqlDB.insertSalary_deduction(this.salaryId,
 						enum2short(DeductionType.JOB_TRAINING), "FP",
-						jobFunction, null, importeJob);
-
-				String ueFunction = String
-						.format(SPANISH, "%.2f", uePercentage);
+						null /*jobFunction*/, 
+						null, 
+						importeJob);
+//				String ueFunction = String
+//						.format(SPANISH, "%.2f", uePercentage);
 				mysqlDB.insertSalary_deduction(this.salaryId,
-						enum2short(DeductionType.UNEMPLOYMENT), "DESMP",
-						ueFunction, null, importeAcc - importeJob);
-			} else {
+						enum2short(DeductionType.UNEMPLOYMENT), 
+						ContextVariable.UNEMPLOY_EMPLOYEE.getName(),
+						null /*ueFunction*/,
+						null,
+						importeAcc);
+				
+			} else if (accPercentage == 1.65 || accPercentage == 1.70) {
+				jobPercentage = 0.10;
+//				double uePercentage = accPercentage - jobPercentage;
+				double importeJob = jobPercentage * importeAcc / accPercentage;
+//				String jobFunction = String.format(SPANISH, "%.2f",
+//						jobPercentage);
+				mysqlDB.insertSalary_deduction(this.salaryId,
+						enum2short(DeductionType.JOB_TRAINING), "FP",
+						null /*jobFunction*/,
+						null,
+						importeJob);
+//				String ueFunction = String
+//						.format(SPANISH, "%.2f", uePercentage);
+				mysqlDB.insertSalary_deduction(this.salaryId,
+						enum2short(DeductionType.UNEMPLOYMENT), 
+						ContextVariable.UNEMPLOY_EMPLOYEE.getName(),
+						null /*ueFunction*/, 
+						null, 
+						importeAcc - importeJob);
+			} 
+			else {
 				String accFunction = String.format(SPANISH, "%.2f",
 						accPercentage);
 				mysqlDB.insertSalary_deduction(this.salaryId,
@@ -209,6 +233,60 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 						"CGP", accFunction, null, importeAcc);
 			}
 		}
+		
+		double importeCgEmp = toDouble(nomina.getImporte_cg_emp());
+		mysqlDB.insertSalary_cost(
+				this.salaryId,
+				importeCgEmp,
+				null,
+				enum2short(DeductionType.COMMON_CONTINGENCY),
+				ContextVariable.CGC_ENTERPRISE.getName()
+				);
+		
+		double importeDesempEmp = toDouble(nomina.getImporte_desemp_emp());
+		mysqlDB.insertSalary_cost(
+				this.salaryId,
+				importeDesempEmp,
+				null,
+				enum2short(DeductionType.UNEMPLOYMENT),
+				ContextVariable.UNEMPLOY_ENTERPRISE.getName()
+				);
+
+		double importeFogasaEmp = toDouble(nomina.getImporte_fogasa_emp());
+		mysqlDB.insertSalary_cost(
+				this.salaryId,
+				importeFogasaEmp,
+				null,
+				enum2short(DeductionType.FOGASA),
+				ContextVariable.FOGASA_ENTERPRISE.getName()
+				);
+
+		double importeFpEmp = toDouble(nomina.getImporte_fp_emp());
+		mysqlDB.insertSalary_cost(
+				this.salaryId,
+				importeFpEmp,
+				null,
+				enum2short(DeductionType.JOB_TRAINING),
+				ContextVariable.FP_ENTERPRISE.getName()
+				);
+
+		double importeAtepEmp = toDouble(nomina.getImporte_atep_emp());
+		double importeIt = 0.00;
+		double importeIms = importeAtepEmp;
+		mysqlDB.insertSalary_cost(
+				this.salaryId,
+				importeIms,
+				null,
+				enum2short(DeductionType.PROFESSIONAL_CONTINGENCY),
+				ContextVariable.IMS_ENTERPRISE.getName()
+				);
+		mysqlDB.insertSalary_cost(
+				this.salaryId,
+				importeIt,
+				null,
+				enum2short(DeductionType.PROFESSIONAL_CONTINGENCY),
+				ContextVariable.IT_ENTERPRISE.getName()
+				);
 
 		Double importeHex = toDouble(nomina.getImporte_hex());
 		if (importeHex > 0) {
@@ -285,6 +363,7 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 		String description = nominadev.getDescom();
 		String codCom = nominadev.getCodcom();
 		String dinEsp = nominadev.getDinesp();
+		String concepto = nominadev.getConcepto();
 
 		Concept<PaymentType> concept = concepts.getPaymentConcept(codCom);
 
@@ -292,7 +371,7 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 				.formatCode(codCom);
 
 		PaymentType type = concept != null ? concept.type : mysqlDB
-				.getPaymentType(description, dinEsp, null);
+				.getPaymentType(nominadev, PaymentType.CRA_0000);
 
 		BigDecimal importe = nominadev.getImporte();
 		BigDecimal impuni = nominadev.getImpuni();
@@ -447,8 +526,9 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 		String paymentConcept = concept != null ? concept.code : MyConcept
 				.formatCode(nominaex.getCodcom());
 
-		PaymentType type = concept != null ? concept.type : mysqlDB
-				.getPaymentType(nominaex.getDescom(), "D", null);
+		PaymentType type = PaymentType.CRA_0000; 
+//				concept != null ? concept.type : mysqlDB
+//				.getPaymentType(nominaex.getDescom(), "D", null);
 
 		mysqlDB.insertSalary_payment(
 				this.salaryId, 
@@ -677,7 +757,10 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 			String description = String.format(SPANISH, "%.2f",
 					irpfPercentage != null ? irpfPercentage : 0);
 			mysqlDB.insertSalary_deduction(this.salaryId,
-					enum2short(DeductionType.IRPF), "IRPF", description, null,
+					enum2short(DeductionType.IRPF), 
+					"IRPF", 
+					description, 
+					null,
 					importeIrpf);
 
 		}
@@ -686,7 +769,8 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 			String cgFunction = String.format(SPANISH, "%.2f",
 					cgPercentage != null ? cgPercentage : 0);
 			mysqlDB.insertSalary_deduction(this.salaryId,
-					enum2short(DeductionType.COMMON_CONTINGENCY), "CGC",
+					enum2short(DeductionType.COMMON_CONTINGENCY), 
+					ContextVariable.CGC_EMPLOYEE.getName(),
 					cgFunction, null, importeCg);
 		}
 
@@ -702,20 +786,23 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 				String jobFunction = String.format(SPANISH, "%.2f",
 						jobPercentage);
 				mysqlDB.insertSalary_deduction(this.salaryId,
-						enum2short(DeductionType.JOB_TRAINING), "FP",
+						enum2short(DeductionType.JOB_TRAINING), 
+						ContextVariable.FP_EMPLOYEE.getName() ,
 						jobFunction, null, importeJob);
 
 				String ueFunction = String
 						.format(SPANISH, "%.2f", uePercentage);
 				mysqlDB.insertSalary_deduction(this.salaryId,
-						enum2short(DeductionType.UNEMPLOYMENT), "DESMP",
-						ueFunction, null, importeAcc - importeJob);
+						enum2short(DeductionType.UNEMPLOYMENT), 
+						ContextVariable.UNEMPLOY_EMPLOYEE.getName(),
+						null /*ueFunction*/, null, importeAcc - importeJob);
 			} else {
 				String accFunction = String.format(SPANISH, "%.2f",
 						accPercentage);
 				mysqlDB.insertSalary_deduction(this.salaryId,
 						enum2short(DeductionType.PROFESSIONAL_CONTINGENCY),
-						"CGP", accFunction, null, importeAcc);
+						"CGP", 
+						accFunction, null, importeAcc);
 			}
 		}
 
@@ -737,8 +824,10 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 		String paymentConcept = concept != null ? concept.code : MyConcept
 				.formatCode(codCom);
 
-		PaymentType type = concept != null ? concept.type : mysqlDB
-				.getPaymentType(description, dinEsp, null);
+		PaymentType type = concept != null ? concept.type :
+			PaymentType.CRA_0000
+//				mysqlDB.getPaymentType(description, dinEsp, null)
+				;
 
 		double importe = toDouble(finipext.getImporte());
 		

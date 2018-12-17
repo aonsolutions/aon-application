@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.esferalia.aon.calendar.enumeration.DayType;
+import com.esferalia.aon.payroll.calculator.QuoteCalculator.GeneralQuote;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Categoria;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Convenio;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprper;
@@ -23,7 +24,9 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nivel;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Pagaext;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Percep;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Percniv;
+import com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.CustomQuoteExpressionException;
 import com.esferalia.aon.payroll.ctsql2mysql.IConcepts.Concept;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
@@ -53,7 +56,7 @@ public class MyAgreement extends DefaultCtsqlDBVisitor implements IAgreements {
 
 	private Map<String, Integer>	agreements;
 	private Map<String, Map<String, Integer>>	levels;
-	private Map<String, Map<String, Map<String, Integer>>>	categories;
+	private Map<String, Map<String, Map<String, String>>>	categories;
 	
 	
 	private Map<String,Map<String,List<String>>> agreementPayments;
@@ -72,7 +75,7 @@ public class MyAgreement extends DefaultCtsqlDBVisitor implements IAgreements {
 		this.concepts = concepts;
 		this.startDate = startDate == null ? START_DATE : new java.sql.Date(startDate.getTime());
 		this.levels = new HashMap<String, Map<String,Integer>>();
-		this.categories = new HashMap<String, Map<String,Map<String,Integer>>>();
+		this.categories = new HashMap<String, Map<String,Map<String,String>>>();
 		this.agreements = new HashMap<String, Integer>();
 		this.agreementPayments = new HashMap<String, Map<String,List<String>>>();
 		
@@ -99,12 +102,13 @@ public class MyAgreement extends DefaultCtsqlDBVisitor implements IAgreements {
 		return agreements.get(oldCdg);
 	}
 	
+	@Override
 	public Integer getAgreementLevel(String codCon, String oldCdg) {
 		return DefaultMysqlDB.get(levels, codCon, oldCdg);
 	}
 	
 	@Override
-	public Integer getAgreementCategory(String codCon, String nivel, String oldCdg) {
+	public String getAgreementCategory(String codCon, String nivel, String oldCdg) {
 		return DefaultMysqlDB.get(categories, codCon, nivel, oldCdg);
 	}
 	
@@ -115,7 +119,7 @@ public class MyAgreement extends DefaultCtsqlDBVisitor implements IAgreements {
 	}
 	
 	@Override
-	public Integer insertAgreementCategory(String codCon, String nivel, String oldCdg) 
+	public String insertAgreementCategory(String codCon, String nivel, String oldCdg) 
 	throws SQLException {
 		Integer agreementLevel =getAgreementLevel(codCon, nivel) ;
 		if ( agreementLevel == null )
@@ -126,9 +130,9 @@ public class MyAgreement extends DefaultCtsqlDBVisitor implements IAgreements {
 		Integer agreementCategory = 
 			mysqlDB.insertAgreement_level_category(agreementLevel, descripcion);
 		
-		DefaultMysqlDB.save(categories, codCon, nivel, oldCdg, agreementCategory );
+		DefaultMysqlDB.save(categories, codCon, nivel, oldCdg, descripcion /*agreementCategory*/ );
 		
-		return agreementCategory;
+		return descripcion;
 	}
 
 	
@@ -313,7 +317,7 @@ public class MyAgreement extends DefaultCtsqlDBVisitor implements IAgreements {
 		int categoryId =
 			mysqlDB.insertAgreement_level_category(level, description);
 		
-		DefaultMysqlDB.save(categories, categoria.getCodcon(), categoria.getNivel(), categoria.getCdg(), categoryId);
+		DefaultMysqlDB.save(categories, categoria.getCodcon(), categoria.getNivel(), categoria.getCdg(), description /*categoryId*/);
 	}
 	
 	@Override
@@ -376,10 +380,12 @@ public class MyAgreement extends DefaultCtsqlDBVisitor implements IAgreements {
 		
 		String description = percniv.getDescom();
 		
-		PaymentType paymetType = 
-			mysqlDB.getPaymentType( description, 
-								percniv.getDinesp(), 
-								percniv.getTipcot());
+		PaymentType paymetType =
+			mysqlDB.getPaymentType(percniv, PaymentType.CRA_0000);	
+//			mysqlDB.getPaymentType( description, 
+//								percniv.getDinesp(), 
+//								percniv.getTipcot())
+			;
 		
 		Concept<PaymentType> concept = 
 			concepts.getPaymentConcept(percniv.getCodcom());
@@ -426,10 +432,18 @@ public class MyAgreement extends DefaultCtsqlDBVisitor implements IAgreements {
 										MyConcept.getQuoteExprFormat(tipCot));
 			quote = DefaultMysqlDB.format ( quoteFormat, variable );
 		} else {
-			quote = DefaultMysqlDB.format ( quoteFormat, concept.code );
+			quote = DefaultMysqlDB.format ( quoteFormat, ContextVariable.PAYMENT /*concept.code*/  );
 		}
 
-		String irpf = DefaultMysqlDB.format ( irpfFormat, concept.code );
+		String irpf = DefaultMysqlDB.format ( irpfFormat, ContextVariable.PAYMENT /*concept.code*/ );
+		
+		
+		try {
+			irpf = quote = mysqlDB.getQuote(percniv, concept);
+		} catch ( Exception e ) {
+			
+		}
+		
 		
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(startDate);
