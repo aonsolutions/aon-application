@@ -946,7 +946,11 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		double decemberExtra = ( 1750.00 * 1.10 ) * ((months * 30) + days ) / 360;
 		int julyExtraMonths = (months >= 6 ? months -6 : months );
 		double julyExtra = ( 1750.00 * 1.10 ) * ((julyExtraMonths  * 30) + days ) / 360 ;
-		
+
+		if ( months == Calendar.DECEMBER && days > 15 )
+			decemberExtra = 0.00; 
+		// 'December Extra...' have been already emitted. 
+
 		Assert.assertEquals( decemberExtra + julyExtra, settle.getTotalPayment(), DELTA);
 
 	}
@@ -1019,6 +1023,9 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		int julyExtraMonths = (months >= Calendar.JULY ? months - Calendar.JULY : months );
 		double julyExtra = ( 1750.00 * 1.10 ) * ((julyExtraMonths * 30) + days ) / 360 ;
 		
+		if ( months == Calendar.DECEMBER && days > 15 )
+			decemberExtra = 0.00; 
+		// 'December Extra...' have been already emitted. 
 		Assert.assertEquals( decemberExtra + julyExtra, settle.getTotalPayment(), DELTA);
 
 	}
@@ -1092,6 +1099,10 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		int days = get(getToday(), Calendar.DAY_OF_MONTH );
 		
 		double decemberExtra = ( 1750.00 * 1.10 ) * ((months * 30) + days ) / 360;
+
+		if ( months == Calendar.DECEMBER && days > 15 )
+			decemberExtra = 0.00; 
+		// 'December Extra...' have been already emitted. 
 		
 		Assert.assertEquals( decemberExtra , settle.getTotalPayment(), DELTA);
 	}
@@ -1327,6 +1338,10 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		double julyExtra = ( 1750.00 * 1.10 ) * ((julyExtraMonths * 30) + days ) / 360 ;
 		double bonusExtra = months == 11 ? ( 1750.00 * 1.10 ) * days  / 30 : 0.00;
 		
+		if ( months == Calendar.DECEMBER && days > 15 )
+			decemberExtra = 0.00; 
+		// 'December Extra...' have been already emitted. 
+
 		Assert.assertEquals( decemberExtra + julyExtra + bonusExtra, settle.getTotalPayment(), DELTA);
 
 	}
@@ -1562,6 +1577,10 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		int julyExtraMonths = (months >= 6 ? months -6 : months );
 		double julyExtra = ( 1750.00 * 1.10 ) * ((julyExtraMonths  * 30) + days ) / 360 ;
 		
+		if ( months == Calendar.DECEMBER && days > 15 )
+			decemberExtra = 0.00; 
+		// 'December Extra...' have been already emitted. 
+
 		Assert.assertEquals( decemberExtra + julyExtra + manualPayment, settle.getTotalPayment(), DELTA);
 
 	}
