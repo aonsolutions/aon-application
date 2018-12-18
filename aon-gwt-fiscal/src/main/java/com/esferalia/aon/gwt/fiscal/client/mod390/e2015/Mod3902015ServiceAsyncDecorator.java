@@ -16,34 +16,34 @@ public class Mod3902015ServiceAsyncDecorator implements Mod3902015ServiceAsync {
 	}
 
 	@Override
-	public void getMod3902015(String domainName, Integer domain, Mod390 mod390,
+	public void getMod3902015(String domainName, Integer domain,String user, Mod390 mod390,
 			AsyncCallback<Mod3902015> callback) {
 		AON.start();
-		fsa.getMod3902015(domainName, domain, mod390, new AsyncCallbackWrapper<Mod3902015>(
+		fsa.getMod3902015(domainName, domain,user, mod390, new AsyncCallbackWrapper<Mod3902015>(
 				callback));
 	}
 
 	@Override
-	public void saveMod3902015(String domainName, Integer domain, Mod3902015 mod390,
+	public void saveMod3902015(String domainName, Integer domain,String user, Mod3902015 mod390,
 			AsyncCallback<Mod3902015> callback) {
 		AON.start();
-		fsa.saveMod3902015(domainName, domain, mod390,
+		fsa.saveMod3902015(domainName, domain, user,mod390,
 				new AsyncCallbackWrapper<Mod3902015>(callback));
 	}
 
 	@Override
-	public void deleteMod3902015(String domainName, Integer domain, Mod3902015 mod390,
+	public void deleteMod3902015(String domainName, Integer domain,String user, Mod3902015 mod390,
 			AsyncCallback<Void> callback) {
 		AON.start();
-		fsa.deleteMod3902015(domainName, domain, mod390,
+		fsa.deleteMod3902015(domainName, domain, user,mod390,
 				new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
-	public void changeStatus(String domainName, Mod3902015 mod390, FiscalStatus status,
+	public void changeStatus(String domainName,String user, Mod3902015 mod390, FiscalStatus status,
 			AsyncCallback<Mod3902015> callback) {
 		AON.start();
-		fsa.changeStatus(domainName, mod390, status,new AsyncCallbackWrapper<Mod3902015>(callback));
+		fsa.changeStatus(domainName, user,mod390, status,new AsyncCallbackWrapper<Mod3902015>(callback));
 	}
 
 	@Override

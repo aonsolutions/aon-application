@@ -141,6 +141,7 @@ public class Model3902014 extends ResizeComposite {
 	Hidden mod390Hidden;
 	Hidden domainIdHidden;
 	Hidden domainNameHidden;
+	Hidden userHidden;
 
 	public Model3902014(final Model390Callback mod390CallBack) {
 		this.mod390CallBack = mod390CallBack;
@@ -194,6 +195,8 @@ public class Model3902014 extends ResizeComposite {
 		formFlowPanel.add(domainIdHidden);
 		domainNameHidden = new Hidden("domainName");
 		formFlowPanel.add(domainNameHidden);
+		userHidden= new Hidden("user");
+		userHidden.setValue(getCurrentUser());
 		formContainer.add(diskForm);
 		
 		initWidget(ui);
@@ -207,6 +210,10 @@ public class Model3902014 extends ResizeComposite {
 	public static native int getCurrentDomain()
 	/*-{
 		return $wnd.getCurrentDomain();
+	}-*/;
+	public static native String getCurrentUser()
+	/*-{
+		return $wnd.getCurrentUser();
 	}-*/;
 
 	private void refreshPages(Mod3902014 m390) {
@@ -229,7 +236,7 @@ public class Model3902014 extends ResizeComposite {
 		popup.setAnimationEnabled(true);
 		popup.center();
 		try {
-			MOD390_SERVICE.getMod3902014(getCurrentDomainName(), getCurrentDomain(),m390, new AsyncCallback<Mod3902014>() {
+			MOD390_SERVICE.getMod3902014(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(),m390, new AsyncCallback<Mod3902014>() {
 				@Override
 				public void onSuccess(Mod3902014 selected) {
 					if (selected == null) {
@@ -285,7 +292,7 @@ public class Model3902014 extends ResizeComposite {
 			populateMod390();
 			cleanErrorMessage();
 			validate(this.mod390);
-			MOD390_SERVICE.saveMod3902014(getCurrentDomainName(),getCurrentDomain(),this.mod390
+			MOD390_SERVICE.saveMod3902014(getCurrentDomainName(),getCurrentDomain(), getCurrentUser(),this.mod390
 					, new AsyncCallback<Mod3902014>() {
 						@Override
 						public void onSuccess(Mod3902014 result) {
@@ -308,7 +315,7 @@ public class Model3902014 extends ResizeComposite {
 	@UiHandler("deleteButton")
 	void onDeleteButtonClick(ClickEvent event) {
 		if (Window.confirm(AON.MSG.confirmDeleteAction())) {
-			MOD390_SERVICE.deleteMod3902014(getCurrentDomainName(),getCurrentDomain(),
+			MOD390_SERVICE.deleteMod3902014(getCurrentDomainName(),getCurrentDomain(), getCurrentUser(),
 					this.mod390, new AsyncCallback<Void>() {
 				@Override
 				public void onSuccess(Void result) {
@@ -331,7 +338,7 @@ public class Model3902014 extends ResizeComposite {
 	
 	public void onNew( int year) {
 		cleanErrorMessage();
-		Model390.MOD390_SERVICE.initialize(getCurrentDomainName(),domain, year,
+		Model390.MOD390_SERVICE.initialize(getCurrentDomainName(),domain, getCurrentUser(),year,
 				new AsyncCallback<Mod390>() {
 			@Override
 			public void onSuccess(Mod390 mod390) {
@@ -388,6 +395,7 @@ public class Model3902014 extends ResizeComposite {
 		mod390Hidden.setValue(String.valueOf(mod390.getId()));
 		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
 		domainNameHidden.setValue(getCurrentDomainName());
+		userHidden.setValue(getCurrentUser());
 		diskForm.submit();
 	}
 
@@ -397,6 +405,7 @@ public class Model3902014 extends ResizeComposite {
 		mod390Hidden.setValue(String.valueOf(mod390.getId()));
 		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
 		domainNameHidden.setValue(getCurrentDomainName());
+		userHidden.setValue(getCurrentUser());
 		diskForm.submit();
 	}
 

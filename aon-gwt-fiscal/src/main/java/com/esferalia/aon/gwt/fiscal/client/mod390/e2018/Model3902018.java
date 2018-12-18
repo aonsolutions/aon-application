@@ -74,6 +74,7 @@ public class Model3902018 extends DockLayoutPanel  {
 	private Hidden mod390Hidden = new Hidden("mod390");
 	private Hidden domainIdHidden = new Hidden("domainId");
 	private Hidden domainNameHidden = new Hidden("domainName");
+	private Hidden userHidden = new Hidden("user");
 	private AonData aonData;
 	private Model390Callback cbk;
 	public Model3902018(Mod390 mod390, final Model390Callback cbk, AonData aonData) {
@@ -94,7 +95,7 @@ public class Model3902018 extends DockLayoutPanel  {
 		popup.setAnimationEnabled(true);
 		popup.center();
 		try {
-			MOD390_SERVICE.getMod3902018(getCurrentDomainName(), getCurrentDomain(),
+			MOD390_SERVICE.getMod3902018(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(),
 					mod390, new AsyncCallback<Mod3902018>() {
 				@Override
 				public void onSuccess(Mod3902018 selected) {
@@ -182,7 +183,7 @@ public class Model3902018 extends DockLayoutPanel  {
 					}
 					cbk.cleanErrorPanel();
 					validate(m390, cbk);
-					MOD390_SERVICE.saveMod3902018(getCurrentDomainName(),getCurrentDomain(),m390
+					MOD390_SERVICE.saveMod3902018(getCurrentDomainName(),getCurrentDomain(),getCurrentUser(),m390
 							, new AsyncCallback<Mod3902018>() {
 								@Override
 								public void onSuccess(Mod3902018 result) {
@@ -235,7 +236,7 @@ public class Model3902018 extends DockLayoutPanel  {
 
 					@Override
 					public void onAccept() {
-						MOD390_SERVICE.deleteMod3902018(getCurrentDomainName(),getCurrentDomain(),
+						MOD390_SERVICE.deleteMod3902018(getCurrentDomainName(),getCurrentDomain(),getCurrentUser(),
 								m390, new AsyncCallback<Void>() {
 							@Override
 							public void onSuccess(Void result) {
@@ -275,7 +276,7 @@ public class Model3902018 extends DockLayoutPanel  {
 			@Override
 			public void onClick(ClickEvent event) {
 				markAsFinishedButton.setEnabled(false);
-				MOD390_SERVICE.changeStatus(getCurrentDomainName(), m390, FiscalStatus.FINISHED, new AsyncCallback<Mod3902018>() {
+				MOD390_SERVICE.changeStatus(getCurrentDomainName(), getCurrentUser(), m390, FiscalStatus.FINISHED, new AsyncCallback<Mod3902018>() {
 					@Override
 					public void onSuccess(Mod3902018 result) {
 						select(result, cbk);
@@ -302,7 +303,7 @@ public class Model3902018 extends DockLayoutPanel  {
 			@Override
 			public void onClick(ClickEvent event) {
 				markAsSentButton.setEnabled(false);
-				MOD390_SERVICE.changeStatus(getCurrentDomainName(), m390, FiscalStatus.SENT, new AsyncCallback<Mod3902018>() {
+				MOD390_SERVICE.changeStatus(getCurrentDomainName(), getCurrentUser(), m390, FiscalStatus.SENT, new AsyncCallback<Mod3902018>() {
 					@Override
 					public void onSuccess(Mod3902018 result) {
 						select(result, cbk);
@@ -333,7 +334,7 @@ public class Model3902018 extends DockLayoutPanel  {
 			@Override
 			public void onClick(ClickEvent event) {
 				markAsPendingButton.setEnabled(false);
-				MOD390_SERVICE.changeStatus(getCurrentDomainName(), m390, FiscalStatus.PENDING, new AsyncCallback<Mod3902018>() {
+				MOD390_SERVICE.changeStatus(getCurrentDomainName(), getCurrentUser(), m390, FiscalStatus.PENDING, new AsyncCallback<Mod3902018>() {
 					@Override
 					public void onSuccess(Mod3902018 result) {
 						select(result, cbk);
@@ -359,6 +360,7 @@ public class Model3902018 extends DockLayoutPanel  {
 		formFlowPanel.add(mod390Hidden);
 		formFlowPanel.add(domainIdHidden);
 		formFlowPanel.add(domainNameHidden);
+		formFlowPanel.add(userHidden);
 		formContainer.add(diskForm);
 		toolbarPanel.add(formContainer);
 		return toolbarPanel;
@@ -393,7 +395,7 @@ public class Model3902018 extends DockLayoutPanel  {
 
 				@Override
 				public void onAccept() {
-					MOD390_SERVICE.deleteMod3902018(getCurrentDomainName(),getCurrentDomain(),
+					MOD390_SERVICE.deleteMod3902018(getCurrentDomainName(),getCurrentDomain(),getCurrentUser(),
 							m390, new AsyncCallback<Void>() {
 						@Override
 						public void onSuccess(Void result) {
@@ -501,6 +503,7 @@ public class Model3902018 extends DockLayoutPanel  {
 		mod390Hidden.setValue(String.valueOf(id));
 		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
 		domainNameHidden.setValue(getCurrentDomainName());
+		userHidden.setValue(getCurrentUser());
 		diskForm.submit();
 	}
 
@@ -727,7 +730,7 @@ public class Model3902018 extends DockLayoutPanel  {
 					public void onValueChange(ValueChangeEvent<String> event) {
 						m390.setComments(event.getValue());
 						styleCommentsButton(m390,commentsButton);
-						Model390.MOD390_SERVICE.saveComments(getCurrentDomainName(), m390, new AsyncCallback<Mod390>() {
+						Model390.MOD390_SERVICE.saveComments(getCurrentDomainName(),getCurrentUser(), m390, new AsyncCallback<Mod390>() {
 							@Override
 							public void onSuccess(Mod390 result) {
 								toast.hide();

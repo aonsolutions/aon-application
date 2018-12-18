@@ -198,7 +198,7 @@ public class Model390 extends MainEntryPoint {
 
 	private void onNew(int year) {
 		cleanErrorPanel();
-		MOD390_SERVICE.initialize(getCurrentDomainName(),getCurrentDomain(),year,
+		MOD390_SERVICE.initialize(getCurrentDomainName(),getCurrentDomain(),getCurrentUser(),year,
 				new AsyncCallback<Mod390>() {
 					@Override
 					public void onSuccess(Mod390 m390) {

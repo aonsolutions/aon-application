@@ -16,29 +16,29 @@ public class Model390ServiceAsyncDecorator implements Model390ServiceAsync {
 	}
 
 	@Override
-	public void getMod390s(String domainName, Integer domain,
+	public void getMod390s(String domainName, Integer domain, String user,
 			AsyncCallback<LinkedList<Mod390>> callback) {
 		AON.start();
-		fsa.getMod390s(domainName, domain,
+		fsa.getMod390s(domainName, domain, user,
 				new AsyncCallbackWrapper<LinkedList<Mod390>>(callback));
 	}
 
 	@Override
-	public void create(String domainName, int domain, Mod390 mod390, AsyncCallback<Mod390> callback) {
+	public void create(String domainName, int domain, String user, Mod390 mod390, AsyncCallback<Mod390> callback) {
 		AON.start();
-		fsa.create(domainName, domain, mod390, new AsyncCallbackWrapper<Mod390>(callback));
+		fsa.create(domainName, domain, user, mod390, new AsyncCallbackWrapper<Mod390>(callback));
 		
 	}
 
 	@Override
-	public void initialize(String domainName, int domain, int year, AsyncCallback<Mod390> callback) {
+	public void initialize(String domainName, int domain, String user, int year, AsyncCallback<Mod390> callback) {
 		AON.start();
-		fsa.initialize(domainName, domain, year, new AsyncCallbackWrapper<Mod390>(callback));
+		fsa.initialize(domainName, domain, user, year, new AsyncCallbackWrapper<Mod390>(callback));
 	}
 
 	@Override
-	public void saveComments(String domainName, Mod390 mod390, AsyncCallback<Mod390> callback) {
+	public void saveComments(String domainName, String user, Mod390 mod390, AsyncCallback<Mod390> callback) {
 		AON.start();
-		fsa.saveComments(domainName, mod390, new AsyncCallbackWrapper<Mod390>(callback));
+		fsa.saveComments(domainName, user, mod390, new AsyncCallbackWrapper<Mod390>(callback));
 	}
 }
