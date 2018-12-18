@@ -73,6 +73,7 @@ import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
@@ -1741,17 +1742,17 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	@Override
 	public void onEnterpriseSelected(Enterprise enterprise) {
-//		DomainEnterprisesServiceAsync domainEnterprisesServiceAsync = DomainEnterprisesServiceAsync.newInstance();
-//		EnterpriseDraftObject activityDraftObject = new EnterpriseDraftObject(enterprise, domainEnterprisesServiceAsync);
-//		
-//		employeeDetail.setWidget(getEnterpriseDraft());
-//		getEnterpriseDraft().setEnterpriseDraftObject(activityDraftObject);
+		DomainEnterprisesServiceAsync domainEnterprisesServiceAsync = DomainEnterprisesServiceAsync.newInstance();
+		EnterpriseDraftObject activityDraftObject = new EnterpriseDraftObject(enterprise, domainEnterprisesServiceAsync);
 		
-		int pos = employees.getVerticalScrollPosition();
-		jsf.setRerenderHandler( () -> employees.setVerticalScrollPosition(pos) );
-
-		employeeDetail.setWidget(jsf);
-		jsf.enterpriseSelected(enterprise.getId());
+		employeeDetail.setWidget(getEnterpriseDraft());
+		getEnterpriseDraft().setEnterpriseDraftObject(activityDraftObject);
+		
+//		int pos = employees.getVerticalScrollPosition();
+//		jsf.setRerenderHandler( () -> employees.setVerticalScrollPosition(pos) );
+//
+//		employeeDetail.setWidget(jsf);
+//		jsf.enterpriseSelected(enterprise.getId());
 		this.enterprise = enterprise;
 	}
 
@@ -1777,6 +1778,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	@Override
 	public void onEmployeeSelected(Employee employee) {
+//		DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
+//		DomainEnterprisesServiceAsync domainEnterprisesServiceAsync = DomainEnterprisesServiceAsync.newInstance();
+//		
+//		EmployeeDraftObject employeeDraftObject = new EmployeeDraftObject(getEmployeeTree().workplace, employee, employeesService, domainEnterprisesServiceAsync);
+//		employeeDetail.setWidget(getEmployeeDraft());
+//		getEmployeeDraft().setEmployeeDraftObject(employeeDraftObject);
+		
 		int pos = employees.getVerticalScrollPosition();
 		jsf.setRerenderHandler( () -> employees.setVerticalScrollPosition(pos) );
 
@@ -1820,7 +1828,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		getCost().setCostDocuments(docs);
 
 	}
-
 
 	@Override
 	public void onStatisticsSelected(
@@ -2401,6 +2408,16 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		employeeDialog.setEmployeeDialogObject(employeeDialogObject);
 		employeeDialog.center();
 		employeeDialog.show();
+	}
+	
+	protected static void invokeRefreshWorkplace() {
+		getEmployeeTree().employees.refresh(getEmployeeTree().workplace);
+	}
+	
+	protected static void invokeRefreshEnterprise() {
+//		Window.alert("Refresh Enterprise : " + singlenton.enterprise + ", Employees : " + singlenton.employees);
+		getEmployeeTree().employees.refresh(getEmployeeTree().enterprise);
+//		singlenton.employees.refresh(singlenton.enterprise);
 	}
 	
 	private static void showSalaryDraft(int employeeId, int workplaceId,

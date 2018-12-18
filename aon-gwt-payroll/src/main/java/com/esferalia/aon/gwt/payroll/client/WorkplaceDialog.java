@@ -42,6 +42,10 @@ public class WorkplaceDialog extends CustomDialog {
 		
 	}
 	
+	interface Callback {
+		void onAccept(WorkplaceDialog dialog);
+	}
+	
 	// -------------------------------------------------- UiBinder --------------------------------------------------
 	
 	interface WorkplaceDialogUiBinder extends UiBinder<Widget, WorkplaceDialog> {
@@ -101,6 +105,8 @@ public class WorkplaceDialog extends CustomDialog {
 			workplaceDialogObject.createWorkplace(
 					s -> {
 						hide();
+						EmployeeTree.invokeRefreshEnterprise();
+						cb.onAccept(this);
 					},
 					f -> {}
 			);

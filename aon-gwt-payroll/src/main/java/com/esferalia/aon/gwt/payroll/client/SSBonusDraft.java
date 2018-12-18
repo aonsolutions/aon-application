@@ -406,7 +406,8 @@ public class SSBonusDraft extends Composite {
 					endDateBonus.setValue(bonus.getEndDate());
 					descriptionBonus.setValue(bonus.getDescription());
 					typeBonus.setSelectedIndex(bonus.getType());
-					formulaBonus.setValue(bonus.getFormula());	
+					formulaBonus.setValue(bonus.getFormula());
+					formulaBonus.setEnabled(true);
 				}
 			});
 			listBonusesTable.setWidget(row, 1, editImage);

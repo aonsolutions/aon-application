@@ -195,21 +195,21 @@
 			            <g:Label styleName="{style.bold}">1. Periodo de bonificación</g:Label>
 			            <g:HorizontalPanel>
 			                <g:Label styleName="{style.paddingLabel} {style.bold}">Fecha incio</g:Label>
-			                <a:DateBoxEx ui:field='startDateBonus' styleName="{style.dateBox}"></a:DateBoxEx>
+			                <a:DateBoxEx ui:field='startDateBonus' styleName="rich-calendar-input aon-selectInputDate-inputClass {style.dateBox}"></a:DateBoxEx>
 			                <g:Label styleName="{style.paddingLabel} {style.bold}">Fecha fin</g:Label>
-			                <a:DateBoxEx ui:field='endDateBonus' styleName="{style.dateBox}"></a:DateBoxEx>
+			                <a:DateBoxEx ui:field='endDateBonus' styleName="rich-calendar-input aon-selectInputDate-inputClass {style.dateBox}"></a:DateBoxEx>
 			            </g:HorizontalPanel>
 			            <g:Label styleName="{style.bold}">2. Descripción de la bonificación</g:Label>
-			            <g:TextBox ui:field='descriptionBonus' styleName="{style.widthBox}"></g:TextBox>
+			            <g:TextBox ui:field='descriptionBonus' styleName="aon-inputText {style.widthBox}"></g:TextBox>
 			            <g:Label styleName="{style.bold}">3. Tipo de bonificación</g:Label>
-			            <g:ListBox ui:field='typeBonus' width="405px"></g:ListBox>
+			            <g:ListBox ui:field='typeBonus' width="405px" styleName='aon-inputText'></g:ListBox>
 			            <g:Label styleName="{style.bold}">4. Fórmula de la bonificación</g:Label>
-			            <g:TextBox ui:field='formulaBonus' styleName="{style.widthBox}"></g:TextBox>
+			            <g:TextBox ui:field='formulaBonus' styleName="aon-inputText {style.widthBox}"></g:TextBox>
 			            <g:HTMLPanel ui:field='checksPanel' styleName="{style.paddingHide}"> <!-- TABLE -->
 			                <hr align="left" noshade="noshade" style="margin-bottom: 20px;width: 80%;border-width: 0.5px;"/>
 			                <g:HorizontalPanel>
 			                	<g:Label styleName="{style.paddingTop} {style.bold}">Porcentaje: </g:Label>
-			            		<g:TextBox ui:field='percentBonus' width="300px"></g:TextBox>
+			            		<g:TextBox ui:field='percentBonus' width="300px" styleName="aon-inputText"></g:TextBox>
 			            		<g:Label styleName="{style.paddingTop} {style.bold} {style.paddingLeft}">%</g:Label>
 			            	</g:HorizontalPanel>
 			                <g:Grid>
@@ -286,14 +286,14 @@
 			                <hr align="left" noshade="noshade" style="margin-bottom: 20px;width: 80%;border-width: 0.5px;"/>
 			                <g:HorizontalPanel>
 			                	<g:Label styleName="{style.paddingTop} {style.bold}">Cantidad: </g:Label>
-			            		<g:TextBox ui:field='amountBonus' width="300px"></g:TextBox>
+			            		<g:TextBox ui:field='amountBonus' width="300px" styleName="aon-inputText"></g:TextBox>
 			            	</g:HorizontalPanel>
 			            	<g:Button ui:field='applyAmount' styleName="{style.button}">Aplicar</g:Button>
 			            </g:HTMLPanel>
              		</g:HTMLPanel>
              		<g:HTMLPanel ui:field='listBonusesPanel' styleName="{style.paddingHide}">
              		    <g:Label styleName="{style.title2}">LISTA BONIFICACIONES</g:Label>
-             			<hr align="left" noshade="noshade" style="margin-bottom: 20px;width: 80%;border-width: 0.5px;"/>
+             			<hr align="left" noshade="noshade" style="margin-bottom: 20px;width: 81%;border-width: 0.5px;"/>
              			<g:ScrollPanel>
              				<g:Grid ui:field="listBonusesTable" width="95%" styleName="{style.noselect}">
              				    <g:row>

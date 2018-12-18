@@ -1406,7 +1406,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			employeeDraftItem.setUserObject(employeeDraftObject);
 			employeeDraftItem.ensureDebugId(getId(employee)+"-employeedraft");
 			
-			//INFORMACION
+			//BONIFICACIONES
 			TreeItem ssBonusDraftItem = addImageItem(employeeItem, "Bonificaciones", images.segsocial());
 			SSBonusDraftObject ssBonusDraftObject = new SSBonusDraftObject(employee, employeesService);
 			ssBonusDraftItem.setUserObject(ssBonusDraftObject);

@@ -875,6 +875,7 @@ public class EmployeeDialog extends CustomDialog {
 						this.employeeDialogObject.createEmployeeContract(
 								r -> { 
 										hide();
+										EmployeeTree.invokeRefreshWorkplace();
 										cb.onAccept(this);
 									 }, 
 								t -> {}

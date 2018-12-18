@@ -133,6 +133,10 @@ public class ActivityDialog extends CustomDialog {
 		
 	}
 	
+	interface Callback {
+		void onAccept(ActivityDialog dialog);
+	}
+	
 	// -------------------------------------------------- UiBinder --------------------------------------------------
 	
 	interface ActivityDraftUiBinder extends UiBinder<Widget, ActivityDialog> {
@@ -189,6 +193,8 @@ public class ActivityDialog extends CustomDialog {
 				activityDialogObject.createActivity(
 					s -> {
 						hide();
+						EmployeeTree.invokeRefreshEnterprise();
+//						cb.onAccept(this);
 					},
 					f -> {}
 				);
