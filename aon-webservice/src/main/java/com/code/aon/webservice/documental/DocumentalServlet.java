@@ -135,10 +135,15 @@ public class DocumentalServlet extends HttpServlet{
 	}
 	
 	private JSONObject removeAttach(Domain domain, String login, JSONObject json) {
-		Integer id = json.getInt("id");
+		JSONArray array = json.getJSONArray("id");
+		Integer[] ids = new Integer[array.length()];
+		for(Integer i = 0; i < array.length(); i++) {
+			Integer id = array.getInt(i);
+			ids[i] = id;
+			AON.deleteRegistryAttachTag(domain.getName(), domain.getId(), login, id);
+		};
 		AttachType attachType = AttachType.getAttachType(json.getString("attach_type"));
-		AON.deleteRegistryAttachTag(domain.getName(), domain.getId(), login, id);
-		AON.deleteAttach(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(id), attachType);
+		AON.deleteAttach(domain.getName(), domain.getId(), login, f -> f.getIdProperty().in(ids), attachType);
 		return json;
 	}
 	

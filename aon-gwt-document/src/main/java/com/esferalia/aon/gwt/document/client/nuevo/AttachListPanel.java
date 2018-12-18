@@ -1,12 +1,11 @@
 package com.esferalia.aon.gwt.document.client.nuevo;
 
 
-import java.util.HashMap;
+import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.documental.JsAttach;
-import com.esferalia.aon.gwt.api.client.incidence.JsIssue;
 import com.esferalia.aon.gwt.api.client.incidence.JsLabel;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
@@ -50,13 +49,14 @@ public class AttachListPanel extends Composite {
     Documental parent;
     Integer top = 0;
     
-    public AttachListPanel(Documental parent, AonJsArray<JsAttach> items) {    
-    	this.parent = parent;
+    public AttachListPanel(Documental parent1, AonJsArray<JsAttach> items) {    
+    	this.parent = parent1;
+    	exportSelection(this);
     	exportDownload(this);
     	exportEdit(this);
     	exportRemove(this);
-    	exportSetOver(this);
-    	exportIsOver(this);
+
+    	
         initWidget(binder.createAndBindUi(this));
         
         grid.setItems(items);
@@ -70,23 +70,26 @@ public class AttachListPanel extends Composite {
 				Integer offsetHeight = grid.getElement().getOffsetHeight();
 				Integer physicalSize = grid.getElement().getScrollHeight();
 				Integer maxScrollPosition = physicalSize - offsetHeight;
-				/*if(scrollTop > maxScrollPosition && parent.more){
-					parent.issueFilter.setPage(parent.issueFilter.getPage()+1);
-					parent.updateIssueList(parent.issueFilter, true);		
+				if(scrollTop > maxScrollPosition && parent.more){
+					LinkedList<String> list = new LinkedList<>();
+					Integer page = Integer.parseInt(parent.getFilterMap().get("page").get(0)) + 1;
+					list.add(page.toString());
+					parent.getFilterMap().put("page", list);
+					parent.updateAttachListPanel();		
 					top = scrollTop;
-				}*/
+				}
 			}
 		}, ScrollEvent.getType());
 
     }
     
-   public void updateItems(AonJsArray<JsIssue> issues){
-	   grid.setItems(issues);
+   public void updateItems(AonJsArray<JsAttach> attach){
+	   grid.setItems(attach);
 	   grid.getElement().setScrollTop(top);
 	   top = 0;
    }
    
-   public AonJsArray<JsIssue> getItems(){
+   public AonJsArray<JsAttach> getItems(){
 	   return grid.getItems().cast();
    }
    
@@ -245,19 +248,20 @@ public class AttachListPanel extends Composite {
 	}-*/;
    
    public void remove(String id) {
-		AonDialog2 d = new AonDialog2("Borrar Tarea",new Label("Est\u00e1s seguro de Borrar definitivamente este fichero") ) {
+		AonDialog2 d = new AonDialog2("Borrar Documento",new Label("Est\u00e1s seguro de Borrar definitivamente este fichero") ) {
 			
 			@Override protected void onCancel() {hide();}
 			
 			@Override
 			protected void onAccept() {
-				String requestData = "{\"id\":"+ id + ","
+				String requestData = "{\"id\":["+ id + "],"
 						+ "\"attach_type\":\"registry\"}";
 				parent.getAPI().getAttachment().removeAttach(requestData, new AsyncCallback<JSON<JsAttach>>() {
 					
 					@Override
 					public void onSuccess(JSON<JsAttach> result) {
 						// TODO ACTUALIZAR LIST!!!
+						parent.createAttachListPanel();
 						hide();
 					}
 					
@@ -276,27 +280,16 @@ public class AttachListPanel extends Composite {
 	}-*/;
    
    
-   HashMap<Integer, Boolean> overMap = new HashMap<>(); 
-   public Boolean isOver(String id) {
-	   if(overMap.containsKey(Integer.parseInt(id))) {
-		   return overMap.get(Integer.parseInt(id));
-	   } else return false;
+   public void selection(String id) {
+	   if(parent.getSelectedAttach().contains(id)) parent.getSelectedAttach().remove(id);
+	   else parent.getSelectedAttach().add(id);
+	   parent.activeMultiselectionFunctions(parent.getSelectedAttach().size() > 0);
    }
 
-   
-   public static native void exportIsOver(AttachListPanel thiz) /*-{
-		$wnd.isOver = function(id) {
-			thiz.@com.esferalia.aon.gwt.document.client.nuevo.AttachListPanel::isOver(*)(id);
+   public static native void exportSelection(AttachListPanel thiz) /*-{
+		$wnd.selection = function(id) {
+			thiz.@com.esferalia.aon.gwt.document.client.nuevo.AttachListPanel::selection(*)(id);
 		}
 	}-*/;
-   
-   public void setOver(String id, Boolean bool) {
-	   overMap.put(Integer.parseInt(id), bool);
-   }
-   
-   public static native void exportSetOver(AttachListPanel thiz) /*-{
-		$wnd.setOver = function(id, bool) {
-			thiz.@com.esferalia.aon.gwt.document.client.nuevo.AttachListPanel::setOver(*)(id, bool);
-		}
-	}-*/;
+  
 }

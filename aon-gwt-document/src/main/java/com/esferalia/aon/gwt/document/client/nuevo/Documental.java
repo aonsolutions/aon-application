@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.api.client.documental.Attachment;
 import com.esferalia.aon.gwt.api.client.documental.JsAttach;
 import com.esferalia.aon.gwt.api.client.incidence.JsLabel;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.polymer.AonToolbar;
@@ -36,12 +37,14 @@ import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronCollapseElement;
 import com.vaadin.polymer.iron.IronIconsElement;
 import com.vaadin.polymer.iron.IronListElement;
+import com.vaadin.polymer.paper.PaperCheckboxElement;
 import com.vaadin.polymer.paper.PaperDialogElement;
 import com.vaadin.polymer.paper.PaperIconButtonElement;
 import com.vaadin.polymer.paper.PaperInputElement;
 import com.vaadin.polymer.paper.PaperSliderElement;
 import com.vaadin.polymer.paper.PaperTextareaElement;
 import com.vaadin.polymer.paper.PaperToggleButtonElement;
+import com.vaadin.polymer.paper.widget.PaperInput;
 import com.vaadin.polymer.paper.widget.PaperToggleButton;
 import com.vaadin.polymer.vaadin.VaadinComboBoxElement;
 import com.vaadin.polymer.vaadin.widget.VaadinUpload;
@@ -69,7 +72,8 @@ public class Documental implements EntryPoint {
 	private Attachment attachment;
 	private Documental me = this;;
 	HashMap<String, LinkedList<String>> filterMap;
-	
+	LinkedList<String> selectedAttach = new LinkedList<>(); 
+	Boolean more = true;
 	public API getAPI() {
 		return API;
 	}
@@ -82,7 +86,16 @@ public class Documental implements EntryPoint {
 		this.filterMap = filterMap;
 	}
 	
+	public LinkedList<String> getSelectedAttach() {
+		return selectedAttach;
+	}
+
+	public void setSelectedAttach(LinkedList<String> selectedAttach) {
+		this.selectedAttach = selectedAttach;
+	}
+
 	public AonData getAonData() {
+		
 		return aonData;
 	}
 	
@@ -125,6 +138,7 @@ public class Documental implements EntryPoint {
 				IronListElement.SRC,
 				PaperToggleButtonElement.SRC,
 				PaperSliderElement.SRC,
+				PaperCheckboxElement.SRC,
 				AonComboBoxElement.SRC,
 				AonIconsElement.SRC,
 				"aon-icons/aon-documental-icons.html",
@@ -173,7 +187,9 @@ public class Documental implements EntryPoint {
 			@Override protected void onRefreshButtonClick() {}
 			@Override protected void onMoreOptionButtonClick() {}
 			@Override protected void onEditButtonClick() {}
-			@Override protected void onDeleteButtonClick() {}
+			@Override protected void onDeleteButtonClick() {
+				deleteSelectedDocuments();
+			}
 			@Override protected void onAddButtonClick() {
 				addFileClick();
 			}
@@ -182,13 +198,23 @@ public class Documental implements EntryPoint {
 			@Override protected void onFastFilterButtonClick() {}
 			@Override protected void onTitleClick() {}
 			@Override protected void onDownloadButtonClick() {}
+			@Override protected void onSendButtonClick() {
+				sendSelectedDocuments();
+			}
 			
 		}
+		.setVisibleSendButton(false)
 		.setVisibleEditButton(false)
 		.setVisibleDeleteButton(false)
 		.setVisibleMoreOptionButton(false)
 		.setVisibleInfoButton(false)
 		.setVisibleStatsButton(false));
+	}
+	
+	public void activeMultiselectionFunctions(Boolean active) {
+		AonToolbar t = (AonToolbar) toolbar.getWidget(0);
+		t.setVisibleSendButton(active);
+		t.setVisibleDeleteButton(active);
 	}
 	
 	void addFileClick() {
@@ -270,9 +296,9 @@ public class Documental implements EntryPoint {
 				String dataRequest = "?domain_name="+ aonData.getDomain().getName() 
 						+ "&domain_id="+ aonData.getDomain().getId()
 						+ "&login="+ "system"
-						+ "&category="+ category.getId()
-						+ "&tag=" + tag.getId()
-						+ "&scope=" + scope.getId()
+						+ "&category="+ (category != null ? category.getId() : "")
+						+ "&tag=" + (tag != null ? tag.getId() : "")
+						+ "&scope=" + (scope != null ? scope.getId() : "")
 						+ "&confidential=" + confidential.getChecked();
 				upload.setTarget(GWT.getModuleBaseURL() + "uploadDocumental"+ dataRequest);
 				ScrollPanel scroll = new ScrollPanel();
@@ -315,6 +341,7 @@ public class Documental implements EntryPoint {
 				
 			@Override
 			public void onSuccess(JSON<JsAttach> result) {
+				more = result.getData().length() >= 30;
 				content.setWidget(new AttachListPanel(me, result.getData()));
 			}
 				
@@ -322,7 +349,111 @@ public class Documental implements EntryPoint {
 		});   
 	}
 	
+	public void updateAttachListPanel() {
+		getAPI().getAttachment().getAttachList(getFilterMap(), new AsyncCallback<JSON<JsAttach>>() {
+				
+			@Override
+			public void onSuccess(JSON<JsAttach> result) {
+				more = result.getData().length() >= 30;
+				AttachListPanel attachList = (AttachListPanel) content.getWidget();
+				attachList.updateItems(attachList.getItems().concat(result.getData()).cast());
+			}
+				
+			@Override public void onFailure(Throwable caught) {}
+		});   
+	}
+	
+	
 	public void remove() {
 		dockLayoutPanel.removeFromParent();
+	}
+	
+	String ids = "" ;
+	private void deleteSelectedDocuments() {	
+		AonDialog d = new AonDialog("Borrar Documentos",new Label("Est\u00e1s seguro de Borrar definitivamente los ficheros seleccionados") ) {
+			
+			@Override protected void onCancel() {hide();}
+			
+			@Override
+			protected void onAccept() {
+				ids = "" ;
+				getSelectedAttach().stream().forEach(r -> {
+					if(!ids.equals("")) {
+						ids = ids + ",";
+					}
+					ids = ids + r;
+				});
+				String requestData = "{\"id\":[" + ids + "],"
+						+ "\"attach_type\":\"registry\"}";
+				getAPI().getAttachment().removeAttach(requestData, new AsyncCallback<JSON<JsAttach>>() {
+					
+					@Override
+					public void onSuccess(JSON<JsAttach> result) {
+						setSelectedAttach(new LinkedList<>());
+						createAttachListPanel();
+						hide();
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});
+			}
+		};
+		d.getElement().getStyle().setWidth(255, Unit.PX);
+		d.center();
+		
+	}
+	
+	private void sendSelectedDocuments() {
+		VerticalPanel panel = new VerticalPanel();
+		panel.setStyleName(AON.AON_CSS.aonWidthAll());
+		AonComboBox emailComboBox = new AonComboBox();
+    	emailComboBox.setLabel("De");
+    	emailComboBox.setItemLabelPath("name");
+    	emailComboBox.setItemValuePath("name");
+		API.getCommon().getMailAccounts(new AsyncCallback<JSON<JsObject>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsObject> result) {
+		    	emailComboBox.setItems(result.getData());
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+		panel.add(emailComboBox);
+		
+		PaperInput toText = new PaperInput();
+		toText.setLabel("Para");
+
+		panel.add(toText);
+		AonComboBox signComboBox = new AonComboBox();
+    	signComboBox.setLabel("Firma de Correo");
+    	signComboBox.setItemLabelPath("name");
+    	signComboBox.setItemValuePath("name");
+    	API.getCommon().getSignatures(new AsyncCallback<JSON<JsObject>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsObject> result) {
+				signComboBox.setItems(result.getData());
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+    	panel.add(signComboBox);
+    	
+    	AonDialog dialog = new AonDialog("Enviar Documentos", panel) {
+			
+			@Override protected void onCancel() {hide();}
+			
+			@Override 
+			protected void onAccept() {
+				// TODO SEND MAIL!!!
+				hide();
+			}
+		};
+		dialog.addAutoHidePartner(emailComboBox.getElementById("overlay"));
+		dialog.addAutoHidePartner(signComboBox.getElementById("overlay"));
+		dialog.setAutoHideEnabled(true);
+		dialog.getElement().getStyle().setWidth(310, Unit.PX);
+		dialog.center();
 	}
 }

@@ -22,7 +22,6 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.FileList;
 
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
-import net.aonsolutions.aon.google.apis.drive.DriveUtils;
 import net.aonsolutions.aon.google.apis.drive.SearchFiles;
 
 
@@ -57,15 +56,18 @@ public class DownloadAttachmentServlet extends HttpServlet {
 			
 			DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), userName);
 			Drive drive = AonDrive.getInstace().serviceInitialize(g);
-			String[] keys = {"fileId", "aontype"};
-			String[] values = {attach.getId() + "", "registry"};
+			String[] keys = {"fileId", "aontype", "domain"};
+			String[] values = {attach.getId() + "", "registry", attach.getDomain().getName()};
 			FileList fl = SearchFiles.searchFilesProperties(drive, keys, values);
 
 			if(!fl.getItems().get(0).getId().equals(attach.getDriveId())) {
 				attach.setDriveId(fl.getItems().get(0).getId());
 				AON.updateAttach(domain.getName(), domain.getId(), "", attach);
 			}
-			
+			if("0".equals(attach.getDparentId())) {
+				attach.setDparentId(fl.getItems().get(0).getFileSize().toString());
+				AON.updateAttach(domain.getName(), domain.getId(), "", attach);
+			}
 			attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
 		}
       

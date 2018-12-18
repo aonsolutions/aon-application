@@ -35,7 +35,7 @@
             }
             
             .iron-list-doc .pad {
-            	padding-left: 30px;
+            	padding-left: 10px;
                 display: inline-block;
                 @apply(--layout-flex);
                 @apply(--layout-vertical);
@@ -49,7 +49,8 @@
             <template>
                 <div>
                     <div class="item">
-                    	<iron-icon style="position:absolute;" icon="[[item.icon]]"/>
+                    	<paper-checkbox alt="[[item.id]]" style="padding-top:5px;" onclick="selection(this.alt)"></paper-checkbox>
+                    	<iron-icon icon="[[item.icon]]"/>
                         <div class="pad">
                             <div class="primary">	
                            		[[item.title]]       

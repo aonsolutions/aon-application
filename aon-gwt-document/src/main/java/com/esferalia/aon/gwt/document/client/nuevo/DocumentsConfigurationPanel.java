@@ -20,7 +20,6 @@ import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -380,7 +379,6 @@ public class DocumentsConfigurationPanel extends Composite {
 						list.add(label.getId());
 						parent.getFilterMap().put(key, list);
 					}
-					parent.createAttachListPanel();
 					if(isCategory) {
 						categorySelector.removeFromParent();
 						categorySelector = new IronSelector();
@@ -392,6 +390,7 @@ public class DocumentsConfigurationPanel extends Composite {
 						tagCollapse.add(tagSelector);
 						createTag();		
 					}
+					parent.createAttachListPanel();
 				}
 			}, ClickEvent.getType());
 			

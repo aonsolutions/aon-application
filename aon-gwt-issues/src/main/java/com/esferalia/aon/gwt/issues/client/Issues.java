@@ -296,6 +296,7 @@ public class Issues implements EntryPoint {
 			@Override protected void onMoreOptionButtonClick() {}
 			@Override protected void onEditButtonClick() {}
 			@Override protected void onDeleteButtonClick() {}
+			@Override protected void onSendButtonClick() {}
 		}.setVisibleEditButton(false)
 		.setVisibleDeleteButton(false)
 		.setVisibleMoreOptionButton(false)

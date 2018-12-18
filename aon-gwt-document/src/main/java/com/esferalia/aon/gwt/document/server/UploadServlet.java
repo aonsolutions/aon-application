@@ -31,8 +31,6 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.google.api.services.drive.Drive;
 
-import net.aonsolutions.aon.google.apis.drive.AonDrive;
-
 @SuppressWarnings("serial")
 @WebServlet(name = "Upload Documental Files", urlPatterns = {"/aon_gwt_aio/uploadDocumental/*"})
 public class UploadServlet extends HttpServlet{
@@ -52,11 +50,11 @@ public class UploadServlet extends HttpServlet{
 		Integer domainId = Integer.parseInt(domain_id);
 		String login = req.getParameter("login");
 		String categoryStr = req.getParameter("category");
-		Integer category = Integer.parseInt(categoryStr);
+		Integer category = !"".equals(categoryStr) ?  Integer.parseInt(categoryStr) : null;
 		String tagStr = req.getParameter("tag");
-		Integer tag = Integer.parseInt(tagStr);
+		Integer tag = !"".equals(tagStr) ? Integer.parseInt(tagStr) : null;
 		String scopeStr = req.getParameter("scope");
-		Integer scope = Integer.parseInt(scopeStr);
+		Integer scope = !"".equals(scopeStr) ? Integer.parseInt(scopeStr) : null;
 		Boolean confidential = "true".equalsIgnoreCase(req.getParameter("confidential"));
 
 		
@@ -118,9 +116,10 @@ public class UploadServlet extends HttpServlet{
                     			.setConfidential(confidential)
                     			.setDparentId(Long.toString(item.getSize()));
                     	Integer attachId = AON.insertAttach(domainName, domainId, login, attach);
-                    	
-                    	AON.insertRegistryAttachTag(domainName, domainId, login, attachId, tag);
-                    	
+                    	if(tag != null) {
+                        	AON.insertRegistryAttachTag(domainName, domainId, login, attachId, tag);
+                    	}
+
                     	attach.setId(attachId);
 
                     	FileInfo fi = new FileInfo();
@@ -156,8 +155,7 @@ public class UploadServlet extends HttpServlet{
                     	
                     	// TODO INSERT TAGS !!!!!
                     	// TODO RESPONSE JsAttachment!!!! (json)
-                    	
-                    	
+                   
                     }
                 }
             }
