@@ -39,7 +39,6 @@ public class OperationDAO extends FiscalModelDAO {
 		
 		Date dateFrom = params.getFromDate();
 		Date dateTo = params.getToDate();
-		int activity = params.getActivity().intValue();
 		boolean expenses = params.getExpenses();  	// true=gastos/compras, false=ventas/ingresos
 		boolean irpf = params.getIrpf(); 			// true=listado IRPF, false=listado IVA
 		
@@ -69,10 +68,11 @@ public class OperationDAO extends FiscalModelDAO {
 		
 		// Si la actividad está en Regimen de IRPF exento (Listado IRPF) o Regimen de IVA exento o en recargo de equivalencia (Listado de IVA)
 		// no sale ningún dato
-		if (ctx.getDslContext()
+		if (params.getActivity() != null &&
+			ctx.getDslContext()
 			.select()
 			.from(ENTERPRISE_ACTIVITY)
-			.where(ENTERPRISE_ACTIVITY.ID.equal(activity))
+			.where(ENTERPRISE_ACTIVITY.ID.equal(params.getActivity()))
 			.and(activityCondition)
 			.fetch()
 			.isEmpty()) {
@@ -168,7 +168,11 @@ public class OperationDAO extends FiscalModelDAO {
 		                .and(dateCondition)
 		                .and(ACCOUNT_ENTRY.ENTRY_TYPE.notEqual(AccountEntryType.OPERATING.getValue()))
 		                .and(condition)
-		                .and(ACCOUNT_ENTRY.ACTIVITY.equal(activity).or(ACCOUNT_ENTRY.ACTIVITY.isNull()))  // Actividad Null, quiere decir que el apunte o factura, se reparte entre todas las actividades		                
+		                .and(
+			                params.getActivity() == null 
+			                	? DSL.trueCondition()
+	                			: ACCOUNT_ENTRY.ACTIVITY.equal(params.getActivity()).or(ACCOUNT_ENTRY.ACTIVITY.isNull())
+	                		)  // Actividad Null, quiere decir que el apunte o factura, se reparte entre todas las actividades		                
 		                .groupBy(groupBy)
 		                .orderBy(orderBy)
 						
