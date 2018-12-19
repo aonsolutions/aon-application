@@ -149,7 +149,7 @@ public class FootPanel extends Composite {
 						
 						@Override
 						public void onClick(ClickEvent event) {							
-							String requestData = "{\"id\":\"" + js.getId() +"\","
+							String requestData = "{\"id\":[" + js.getId() +"],"
 									+ "\"attach_type\":\""+ js.getAttachType() + "\""
 									+ "}";
 							getAPI().getAttachment().removeAttach(requestData, new AsyncCallback<JSON<JsAttach>>() {

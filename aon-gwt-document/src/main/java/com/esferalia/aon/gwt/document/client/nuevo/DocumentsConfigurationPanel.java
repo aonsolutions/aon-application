@@ -344,28 +344,8 @@ public class DocumentsConfigurationPanel extends Composite {
    			item.add(ii);
    			item.add(l);
    			item.setStyle("min-height: 30px;");	
-   					
-   			PaperIconButton edit = new PaperIconButton();
-   			edit.setIcon("create");
-   			//edit.setDisabled(admin);
-   			edit.setStyle("min-height: 30px;padding-top:0px;");
-   			edit.addClickHandler(isCategory ? editCategoryClickHandler(label) : editTagClickHandler(label));
-   			edit.setVisible(false);
-					
-   			PaperIconButton del = new PaperIconButton();
-   			del.setIcon("delete");
-   			//del.setDisabled(admin);
-   			del.setStyle("min-height: 30px;padding-top:0px;");
-   			del.addClickHandler(isCategory ? deleteCategoryClickHandler(label) : deleteTagClickHandler(label));
-   			del.setVisible(false);
-					
-   			HorizontalPanel hoption = new HorizontalPanel();
-			hoption.getElement().getStyle().setPosition(Position.ABSOLUTE);
-			hoption.getElement().getStyle().setRight(10, Unit.PX);
-			hoption.add(edit);
-			hoption.add(del);
-
-			item.addDomHandler(new ClickHandler() {
+   			
+   			item.addDomHandler(new ClickHandler() {
 				
 				@Override
 				public void onClick(ClickEvent event) {
@@ -393,29 +373,51 @@ public class DocumentsConfigurationPanel extends Composite {
 					parent.createAttachListPanel();
 				}
 			}, ClickEvent.getType());
-			
+   			
 			hp.add(item);
-			hp.add(hoption);
 			hp.setWidth("100%");
-			hp.addDomHandler(new MouseOverHandler() {
-				
-				@Override
-				public void onMouseOver(MouseOverEvent event) {
-					edit.setVisible(true);
-					del.setVisible(true);
-				}
-			}, MouseOverEvent.getType());
-			
-			hp.addDomHandler(new MouseOutHandler() {
-						
-				@Override
-				public void onMouseOut(MouseOutEvent event) {
-					edit.setVisible(false);
-					del.setVisible(false);
-				}
-			}, MouseOutEvent.getType());
-			
+   			
+   			if(parent.getAonData().getDomain().getId() == label.getDomain()) {
+   				PaperIconButton edit = new PaperIconButton();
+   				edit.setIcon("create");
+   				//edit.setDisabled(admin);
+   				edit.setStyle("min-height: 30px;padding-top:0px;");
+   				edit.addClickHandler(isCategory ? editCategoryClickHandler(label) : editTagClickHandler(label));
+   				edit.setVisible(false);
+					
+   				PaperIconButton del = new PaperIconButton();
+   				del.setIcon("delete");
+   				//del.setDisabled(admin);
+   				del.setStyle("min-height: 30px;padding-top:0px;");
+   				del.addClickHandler(isCategory ? deleteCategoryClickHandler(label) : deleteTagClickHandler(label));
+   				del.setVisible(false);
+   				
+   				HorizontalPanel hoption = new HorizontalPanel();
+   				hoption.getElement().getStyle().setPosition(Position.ABSOLUTE);
+   				hoption.getElement().getStyle().setRight(10, Unit.PX);
+   				hoption.add(edit);
+   				hoption.add(del);
 
+				hp.add(hoption);
+		
+				hp.addDomHandler(new MouseOverHandler() {
+				
+					@Override
+					public void onMouseOver(MouseOverEvent event) {
+						edit.setVisible(true);
+						del.setVisible(true);
+					}
+				}, MouseOverEvent.getType());
+			
+				hp.addDomHandler(new MouseOutHandler() {
+						
+					@Override
+					public void onMouseOut(MouseOutEvent event) {
+						edit.setVisible(false);
+						del.setVisible(false);
+					}
+				}, MouseOutEvent.getType());
+			}
 			selector.add(hp);
    		}			
    		PaperIconButton add = new PaperIconButton();

@@ -52,9 +52,9 @@ public class AttachListPanel extends Composite {
     public AttachListPanel(Documental parent1, AonJsArray<JsAttach> items) {    
     	this.parent = parent1;
     	exportSelection(this);
-    	exportDownload(this);
-    	exportEdit(this);
-    	exportRemove(this);
+    	exportDownloadDocument(this);
+    	exportEditDocument(this);
+    	exportRemoveDocument(this);
 
     	
         initWidget(binder.createAndBindUi(this));
@@ -109,13 +109,13 @@ public class AttachListPanel extends Composite {
 		});
    }
    
-   public void download(String id){
+   public void downloadDocument(String id){
 	   parent.getAPI().getAttachment().download(id);
    }
 
-   public static native void exportDownload(AttachListPanel thiz) /*-{
-		$wnd.download = function(id) {
-			thiz.@com.esferalia.aon.gwt.document.client.nuevo.AttachListPanel::download(*)(id);
+   public static native void exportDownloadDocument(AttachListPanel thiz) /*-{
+		$wnd.downloadDocument = function(id) {
+			thiz.@com.esferalia.aon.gwt.document.client.nuevo.AttachListPanel::downloadDocument(*)(id);
 		}
 	}-*/;
    
@@ -123,7 +123,7 @@ public class AttachListPanel extends Composite {
 	   Window.alert(attach.getId()+"");
    }
    
-   public void edit(String id){
+   public void editDocument(String id){
 	   parent.getAPI().getAttachment().getAttach(id, new AsyncCallback<JSON<JsAttach>>() {
 	
 		@Override
@@ -241,13 +241,13 @@ public class AttachListPanel extends Composite {
 	   });
    }
 
-   public static native void exportEdit(AttachListPanel thiz) /*-{
-		$wnd.edit = function(id) {
-			thiz.@com.esferalia.aon.gwt.document.client.nuevo.AttachListPanel::edit(*)(id);
+   public static native void exportEditDocument(AttachListPanel thiz) /*-{
+		$wnd.editDocument = function(id) {
+			thiz.@com.esferalia.aon.gwt.document.client.nuevo.AttachListPanel::editDocument(*)(id);
 		}
 	}-*/;
    
-   public void remove(String id) {
+   public void removeDocument(String id) {
 		AonDialog2 d = new AonDialog2("Borrar Documento",new Label("Est\u00e1s seguro de Borrar definitivamente este fichero") ) {
 			
 			@Override protected void onCancel() {hide();}
@@ -273,12 +273,11 @@ public class AttachListPanel extends Composite {
 		d.center();
    }
 
-   public static native void exportRemove(AttachListPanel thiz) /*-{
-		$wnd.remove = function(id) {
-			thiz.@com.esferalia.aon.gwt.document.client.nuevo.AttachListPanel::remove(*)(id);
+   public static native void exportRemoveDocument(AttachListPanel thiz) /*-{
+		$wnd.removeDocument = function(id) {
+			thiz.@com.esferalia.aon.gwt.document.client.nuevo.AttachListPanel::removeDocument(*)(id);
 		}
 	}-*/;
-   
    
    public void selection(String id) {
 	   if(parent.getSelectedAttach().contains(id)) parent.getSelectedAttach().remove(id);

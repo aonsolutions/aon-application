@@ -136,13 +136,15 @@ public class DocumentalServlet extends HttpServlet{
 	
 	private JSONObject removeAttach(Domain domain, String login, JSONObject json) {
 		JSONArray array = json.getJSONArray("id");
+		AttachType attachType = AttachType.getAttachType(json.getString("attach_type"));
 		Integer[] ids = new Integer[array.length()];
 		for(Integer i = 0; i < array.length(); i++) {
 			Integer id = array.getInt(i);
 			ids[i] = id;
-			AON.deleteRegistryAttachTag(domain.getName(), domain.getId(), login, id);
+			if(AttachType.REGISTRY.equals(attachType)) {
+				AON.deleteRegistryAttachTag(domain.getName(), domain.getId(), login, id);
+			}
 		};
-		AttachType attachType = AttachType.getAttachType(json.getString("attach_type"));
 		AON.deleteAttach(domain.getName(), domain.getId(), login, f -> f.getIdProperty().in(ids), attachType);
 		return json;
 	}
@@ -209,10 +211,17 @@ public class DocumentalServlet extends HttpServlet{
 	
 	private JSONArray getCategoryJSON(Domain domain, String login) {
 		JSONArray array = new JSONArray();
-		AON.getCategoryStream(domain.getName(), domain.getId(), login, 
+		if(!domain.isParent() && domain.isEnableHeredity()) {
+			AON.getCategoryStream(domain.getName(), domain.getId(), login, 
+					f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
+					.and(f.getTypeProperty().eq(CategoryType.REGISTRY_ATTACHMENT.value())
+				)).forEach(a -> array.put(ToJSON.categoryToJSON(a)));
+		}else {
+			AON.getCategoryStream(domain.getName(), domain.getId(), login, 
 				f -> f.getDomainProperty().eq(domain.getId())
 				.and(f.getTypeProperty().eq(CategoryType.REGISTRY_ATTACHMENT.value())
 			)).forEach(a -> array.put(ToJSON.categoryToJSON(a)));
+		}
 		return array;
 	}
 	
@@ -239,10 +248,17 @@ public class DocumentalServlet extends HttpServlet{
 	
 	private JSONArray getTagJSON(Domain domain, String login) {
 		JSONArray array = new JSONArray();
-		AON.getTagStream(domain.getName(), domain.getId(), login, 
+		if(!domain.isParent() && domain.isEnableHeredity()) {
+			AON.getTagStream(domain.getName(), domain.getId(), login, 
+					f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
+					.and(f.getTypeProperty().eq(TagType.RATTACH.value())
+				)).forEach(a -> array.put(ToJSON.tagToJSON(a)));
+		} else {
+			AON.getTagStream(domain.getName(), domain.getId(), login, 
 				f -> f.getDomainProperty().eq(domain.getId())
 				.and(f.getTypeProperty().eq(TagType.RATTACH.value())
 			)).forEach(a -> array.put(ToJSON.tagToJSON(a)));
+		}
 		return array;
 	}
 	

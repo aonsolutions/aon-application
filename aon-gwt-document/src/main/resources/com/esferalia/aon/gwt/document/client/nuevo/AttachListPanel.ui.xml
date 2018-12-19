@@ -77,9 +77,9 @@
 	                            <div class="secondary">[[item.size]] </div>
 							</template>
                         </div>
-						<paper-icon-button icon="file-download" alt="[[item.id]]" onclick="download(this.alt)"></paper-icon-button>
-						<paper-icon-button icon="create" alt="[[item.id]]" onclick="edit(this.alt)"></paper-icon-button>
-                 		<paper-icon-button icon="delete" alt="[[item.id]]" onclick="remove(this.alt)"></paper-icon-button>
+						<paper-icon-button icon="file-download" alt="[[item.id]]" onclick="downloadDocument(this.alt)"></paper-icon-button>
+						<paper-icon-button icon="create" alt="[[item.id]]" onclick="editDocument(this.alt)"></paper-icon-button>
+                 		<paper-icon-button icon="delete" alt="[[item.id]]" onclick="removeDocument(this.alt)"></paper-icon-button>
                     </div>
         		</div>
         	</template>
