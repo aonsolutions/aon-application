@@ -217,8 +217,8 @@ public class OperatingPanel extends ScrollPanel implements HasSelectionHandlers<
 								col++;
 							} else {
 		
-								String dbText = (title || AonMathUtils.isNotZero(db))?AON.FMT.format(db):AonStringUtils.SPACE;
-								String ubText = (title || AonMathUtils.isNotZero(ub))?AON.FMT.format(ub):AonStringUtils.SPACE;
+								String dbText = (AonMathUtils.isNotZero(db))?AON.FMT.format(db):AonStringUtils.SPACE;
+								String ubText = (AonMathUtils.isNotZero(ub))?AON.FMT.format(ub):AonStringUtils.SPACE;
 
 								tab.setWidget(row, col, new Label(dbText));
 								tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextRight());
