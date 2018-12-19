@@ -616,6 +616,21 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		return new SmartQuoteCalculator(super.getQuoteCalculator(ctx));
 	}
 	
+	@Override
+	protected double resolveBonus(Date bonusStart, Date bonusEnd, IContractBonus contractBonus,
+			ExpressionContext expressionContext) throws ExpressionException, UndefinedVariablesException {
+		double bonus = super.resolveBonus(bonusStart, bonusEnd, contractBonus, expressionContext);
+		
+		boolean sectioned =  
+		expressionContext.getPeriods(ContextVariable.CGC_BASE)
+		.stream().filter(p -> p.getStart().compareTo(bonusStart) == 0)
+		.count() > 0;
+		if ( !sectioned )
+			ContextFunctions.section(expressionContext, AonDateUtils.add(bonusStart, Calendar.DAY_OF_MONTH,-1));
+		
+		return bonus;
+	}
+	
 	// ------------------------------------------------------------------------
 	
 	private List<ITimedResult<Double>> getPaymentBR(Date date, IContractPayment payment) {

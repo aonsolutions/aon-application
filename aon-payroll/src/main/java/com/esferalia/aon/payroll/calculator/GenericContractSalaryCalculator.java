@@ -917,45 +917,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					continue; // TODO : must be done in context ?
 				}
 
-				try {
-					List<ITimedResult<Double>> amounts = expressionContext.eval(contractBonus.getExpression(),
-							bonusStart, bonusEnd, Double.class);
-
-					double bonus = 0.00;
-					for (ITimedResult<Double> amount : amounts) {
-						Double value = amount.getValue();
-						if (value != null) {
-							String description = null;
-							try {
-								Period period = amount.getPeriod();
-								description = expressionContext.evalTemplate(contractBonus.getDescription(),
-										period.getStart(), period.getEnd());
-							} catch (CompileException e) {
-								onCompileError(contractBonus, DESCRIPTION_SYNTAX_ERROR);
-							} catch (UndefinedVariablesException e) {
-								onCheckError(contractBonus,
-										String.format(DESCRIPTION_UNDEF_ERROR, e.getVariableNames()[0]));
-							} catch (Exception e) {
-								onCheckError(contractBonus, DESCRIPTION_UNKNOWN_ERROR);
-							}
-							salaryBuilder.addBonus(value, description, contractBonus, amount.getContext());
-						}
-						if (amount.getValue() != null)
-							bonus += amount.getValue();
-					}
-					total += bonus;
-
-				} catch (InvalidVariables e) {
-					onInvalidData(contractBonus, e.getMessage(), e.getVariables());
-				} catch (CheckException e) {
-					onCheckError(contractBonus, e.getMessage());
-				} catch (HideException e) {
-					// Hide, do nothing
-				} catch (RemoveException | RemoveVariableError e) {
-					onRemove(contractBonus);
-				} catch (CompileException e) {
-					onCompileError(contractBonus, e.getMessage());
-				}
+				total += resolveBonus(bonusStart, bonusEnd, contractBonus, expressionContext);
 			}
 
 		} catch (UndefinedVariablesException e) {
@@ -967,6 +929,53 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		}
 
 		return total;
+	}
+
+	protected double resolveBonus(Date bonusStart, Date bonusEnd, IContractBonus contractBonus,
+			ExpressionContext expressionContext) throws ExpressionException, UndefinedVariablesException {
+		double bonus = 0.00;
+		try {
+			List<ITimedResult<Double>> amounts = expressionContext.eval(contractBonus.getExpression(),
+					bonusStart, bonusEnd, Double.class);
+
+			
+			//amounts = fixBonusResults(contractBonus, amounts);
+			
+			for (ITimedResult<Double> amount : amounts) {
+				Double value = amount.getValue();
+				if (value != null) {
+					String description = null;
+					try {
+						Period period = amount.getPeriod();
+						description = expressionContext.evalTemplate(contractBonus.getDescription(),
+								period.getStart(), period.getEnd());
+					} catch (CompileException e) {
+						onCompileError(contractBonus, DESCRIPTION_SYNTAX_ERROR);
+					} catch (UndefinedVariablesException e) {
+						onCheckError(contractBonus,
+								String.format(DESCRIPTION_UNDEF_ERROR, e.getVariableNames()[0]));
+					} catch (Exception e) {
+						onCheckError(contractBonus, DESCRIPTION_UNKNOWN_ERROR);
+					}
+					salaryBuilder.addBonus(value, description, contractBonus, amount.getContext());
+				}
+				if (amount.getValue() != null)
+					bonus += amount.getValue();
+			}
+			return bonus;
+
+		} catch (InvalidVariables e) {
+			onInvalidData(contractBonus, e.getMessage(), e.getVariables());
+		} catch (CheckException e) {
+			onCheckError(contractBonus, e.getMessage());
+		} catch (HideException e) {
+			// Hide, do nothing
+		} catch (RemoveException | RemoveVariableError e) {
+			onRemove(contractBonus);
+		} catch (CompileException e) {
+			onCompileError(contractBonus, e.getMessage());
+		}
+		return bonus;
 	}
 
 	protected void forEachPaymentPeriod(IContractPayment contractPayment, Date start, Date end,

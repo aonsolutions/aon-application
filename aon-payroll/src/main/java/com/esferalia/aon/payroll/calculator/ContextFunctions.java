@@ -200,13 +200,25 @@ public class ContextFunctions {
 
 	public static void section(ExpressionContext context, Date date) {
 		
+		long monthDays = Long.MAX_VALUE;
+		
+		try {
+			monthDays = context.getVariable(ContextVariable.MONTH_DAYS.getName(), 
+					date, 
+					date,
+					Number.class)
+					.longValue();
+		} catch ( Throwable t) {
+			
+		}
+		
 		for ( String name : new String[ ]{
 				ContextVariable.PREST_IT,
 				ContextVariable.CGC_BASE.getName(),
 				ContextVariable.CGP_BASE.getName(),
 				ContextVariable.MATERNITY_BASE.getName(),
 				ContextVariable.STRUCTURAL_OVERTIME_BASE.getName(),
-				ContextVariable.NON_STRUCTURAL_OVERTIME_BASE.getName(),
+				ContextVariable.NON_STRUCTURAL_OVERTIME_BASE.getName()
 				})
 		{
 			for ( ITimedVariable<Object> var : context.getVariables(name) ) {
@@ -214,7 +226,10 @@ public class ContextFunctions {
 					
 					Period varPeriod = var.getPeriod();
 					Double varValue = ((Number)var.getValue(varPeriod)).doubleValue();
-					long varDays = getDaysBetweenDates(varPeriod.getStart(), varPeriod.getEnd())+ 1;
+					
+					//TODO: Checks that 'varPeriod' is whole month. 
+					long varDays = Math.min(getDaysBetweenDates(varPeriod.getStart(), varPeriod.getEnd())+ 1, 
+							monthDays);
 					
 					ITimedVariable<Object> firstVariable = new ITimedVariable<Object>() {
 						
@@ -231,7 +246,11 @@ public class ContextFunctions {
 					};
 					
 					context.putVariable(name, firstVariable);
-
+					
+					long firstDays = getDaysBetweenDates(
+							firstVariable.getPeriod().getStart(), 
+							firstVariable.getPeriod().getEnd() ) +1;
+					
 					ITimedVariable<Object> lastVariable = new ITimedVariable<Object>() {
 						@Override
 						public Period getPeriod() {
@@ -241,6 +260,7 @@ public class ContextFunctions {
 						@Override
 						public Object getValue(Period period) {
 							long days = getDaysBetweenDates(period.getStart(), period.getEnd()) +1;
+							days = Math.min(varDays - firstDays , days);
 							return varValue * days / varDays;
 						}
 					};

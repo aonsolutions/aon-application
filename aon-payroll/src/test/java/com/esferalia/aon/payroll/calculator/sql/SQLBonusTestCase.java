@@ -7,6 +7,8 @@ import static com.esferalia.aon.jooq.tables.BonusConcept.BONUS_CONCEPT;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractBonus.CONTRACT_BONUS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.BONUS_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.REGULATORY_BASE;
@@ -26,6 +28,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -35,13 +38,17 @@ import com.esferalia.aon.jooq.tables.records.ContractBonusRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBonus;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator.Listener;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
+import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
@@ -891,6 +898,138 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 		assertEquals(0, salary.getSalaryBonus().size());
 	}
 
+	@Test
+	public void tesAutoStartSection() throws ExpressionException, SQLException,
+			SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		
+		Date startContract = add(getToday(), Calendar.DAY_OF_MONTH, -100);
+		
+		//@formatter:off
+		ContractRecord contract = newContract(
+			aonContext, 
+			startContract, 
+			new HashMap<String,String>(){
+			{
+				put(ContextVariable.TC2.getName(), "'100'");
+				put(ContextVariable.MONTH_DAYS.getName(), "30.00");
+			}
+			},
+			new String[] { 
+					"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+					"500.00*DIAS_TRABAJADOS/DIAS_MES",
+					"TRACE('DIAS_MES=%f\r\n',DIAS_MES);0.00",
+					"TRACE('DIAS_TRABAJADOS=%f\r\n',DIAS_TRABAJADOS);0.00",
+					"TRACE('DIAS_COTIZADOS=%f\r\n',DIAS_COTIZADOS);0.00"
+					}, 
+			new String[] {
+					"TRACE('BASE_CGC = %f\r\n', BASE_CGC );BASE_CGC * 0.10", 
+					"BASE_CGP * 0.05",
+					},
+			null
+		);
+		//@formatter:on
+
+		addSSRegimeData(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()), null,
+				new HashMap<String, String>() {
+					{
+						put("PORCENTAJE_CGC_E", "23.60");
+					}
+				});
+
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()), "CGC_E",
+				DeductionType.COMMON_CONTINGENCY,
+				"( BASE_CGC_E = BASE_CGC) * PORCENTAJE_CGC_E/100");
+
+		Date startBonus = add(getFirstDayOfMonth(getToday()), Calendar.DAY_OF_MONTH, 10);
+		//@formatter:off
+		BonusConceptRecord concept = addBonusConcept(aonContext, 
+				BonusType.SOCIAL_SECURITY,"/*read-only*/666/**/");
+		addBonus(aonContext, contract, startBonus, concept);
+		//@formatter:on
+
+
+
+		// Current month. Not all days worked.
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection,
+						getFirstDayOfMonth(getToday()),
+						getLastDayOfMonth(getToday()),
+						getLastDayOfMonth(getToday()), contract);
+
+		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
+		new SmartContractSalaryCalculator<Salary>(jooqSalaryBuilder).calculate(ctx);
+		jooqSalaryBuilder.execute();
+
+		Date firstDayOfMonth = getFirstDayOfMonth(getToday());
+		Date prevBonus = add(startBonus, DAY_OF_MONTH, -1);
+		Date lastDayOfMonth = getLastDayOfMonth(getToday());
+		AON.getSalaryData(aonContext,
+				props -> props.getContractProperty().eq(contract.getId()))
+				.forEach(salary -> {
+
+					// 500 Base de contingencias comunes.
+					List<ContextData> datas = salary.getContextData()
+							.get(CGC_BASE.getName());
+					Assert.assertEquals(2, datas.size());
+					Assert.assertEquals(firstDayOfMonth, datas.get(0).getStartDate());
+					Assert.assertEquals(prevBonus, datas.get(0).getEndDate());
+					Assert.assertEquals(1500.00 * 10.00 / 30.00,
+							Double.parseDouble(datas.get(0).getExpression())
+							, DELTA);
+					Assert.assertEquals(startBonus, datas.get(1).getStartDate());
+					Assert.assertEquals(lastDayOfMonth, datas.get(1).getEndDate());
+					Assert.assertEquals(1500.00 *20.00 / 30.00,
+							Double.parseDouble(datas.get(1).getExpression())
+							,DELTA);
+
+					// 501 Base de Horas Extras Fuerza Mayor
+//					datas = salary.getContextData()
+//							.get(STRUCTURAL_OVERTIME_BASE.getName());
+//					Assert.assertEquals(2, datas.size());
+//					Assert.assertEquals(firstDayOfMonth, datas.get(0).getStartDate());
+//					Assert.assertEquals(prevBonus, datas.get(0).getEndDate());
+//					Assert.assertEquals(startBonus, datas.get(1).getStartDate());
+//					Assert.assertEquals(lastDayOfMonth, datas.get(1).getEndDate());
+//					Assert.assertEquals(0.00,
+//							Double.parseDouble(datas.get(0).getExpression()));
+
+					// 502 Base de Horas Extras
+//					datas = salary.getContextData()
+//							.get(NON_STRUCTURAL_OVERTIME_BASE.getName());
+//					Assert.assertEquals(2, datas.size());
+//					Assert.assertEquals(firstDayOfMonth, datas.get(0).getStartDate());
+//					Assert.assertEquals(prevBonus, datas.get(0).getEndDate());
+//					Assert.assertEquals(startBonus, datas.get(1).getStartDate());
+//					Assert.assertEquals(lastDayOfMonth, datas.get(1).getEndDate());
+//					Assert.assertEquals(0.00,
+//							Double.parseDouble(datas.get(0).getExpression()));
+
+					// 601 o 611 Base de Accidentes de Trabajo.
+					datas = salary.getContextData().get(CGP_BASE.getName());
+					Assert.assertEquals(2, datas.size());
+					Assert.assertEquals(firstDayOfMonth, datas.get(0).getStartDate());
+					Assert.assertEquals(prevBonus, datas.get(0).getEndDate());
+					Assert.assertEquals(1500.00 * 10.00 / 30.00,
+							Double.parseDouble(datas.get(0).getExpression())
+							, DELTA);
+					Assert.assertEquals(startBonus, datas.get(1).getStartDate());
+					Assert.assertEquals(lastDayOfMonth, datas.get(1).getEndDate());
+					Assert.assertEquals(1500.00 *20.00 / 30.00,
+							Double.parseDouble(datas.get(1).getExpression())
+							,DELTA);
+
+				});
+		;
+
+	}
 	// ------------------------------------------------------------------------
 
 	protected final ContractBonusRecord addBonus(AONContext aonContext,
