@@ -136,35 +136,39 @@
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX">
-		<g:north size="25">
-			<g:FlowPanel styleName="aon-finding-title-toolbar">
-				<g:HorizontalPanel>
-					<g:HTMLPanel styleName="aon-finding-title">
-						<g:HTMLPanel styleName="aon-finding-title-internal">
-							<g:Label styleName="aon-outputText">Empresa : Edici&oacute;n</g:Label>
+		<g:north size="72">
+			<g:FlowPanel>
+				<g:MenuBar>
+				</g:MenuBar>
+				<g:FlowPanel styleName="aon-finding-title-toolbar">
+					<g:HorizontalPanel>
+						<g:HTMLPanel styleName="aon-finding-title">
+							<g:HTMLPanel styleName="aon-finding-title-internal">
+								<g:Label styleName="aon-outputText">Empresa : Edici&oacute;n</g:Label>
+							</g:HTMLPanel>
 						</g:HTMLPanel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="aon-finding-subtitle">
-						<g:HTMLPanel styleName="aon-finding-subtitle-internal">
-							<g:Label styleName="aon-outputText"></g:Label>
+						<g:HTMLPanel styleName="aon-finding-subtitle">
+							<g:HTMLPanel styleName="aon-finding-subtitle-internal">
+								<g:Label styleName="aon-outputText"></g:Label>
+							</g:HTMLPanel>
 						</g:HTMLPanel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-						<g:Button ui:field='saveButton'
-							styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR"
-							enabled="true" />
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-						<g:Button ui:field='newWorkplaceButton'
-							styleName='aon-finding-toolbar-item aon-icon-reset' text="NUEVO CENTRO TRABAJO"
-							enabled="true" />
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-						<g:Button ui:field='newActivityButton'
-							styleName='aon-finding-toolbar-item aon-icon-reset' text="NUEVA ACTIVIDAD"
-							enabled="true" />
-					</g:HTMLPanel>
-				</g:HorizontalPanel>
+						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+							<g:Button ui:field='saveButton'
+								styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR"
+								enabled="true" />
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+							<g:Button ui:field='newWorkplaceButton'
+								styleName='aon-finding-toolbar-item aon-icon-reset' text="NUEVO CENTRO TRABAJO"
+								enabled="true" />
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+							<g:Button ui:field='newActivityButton'
+								styleName='aon-finding-toolbar-item aon-icon-reset' text="NUEVA ACTIVIDAD"
+								enabled="true" />
+						</g:HTMLPanel>
+					</g:HorizontalPanel>
+				</g:FlowPanel>
 			</g:FlowPanel>
 		</g:north>
 		<g:center>

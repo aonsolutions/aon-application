@@ -136,38 +136,42 @@
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX">
-		<g:north size="25">
-			<g:FlowPanel styleName="aon-finding-title-toolbar">
-				<g:HorizontalPanel>
-					<g:HTMLPanel styleName="aon-finding-title">
-						<g:HTMLPanel styleName="aon-finding-title-internal {style.estiloBorrarCuandoSeActiveBoton}">
-							<g:Label styleName="aon-outputText">Laboral : Centro de trabajo :</g:Label>
+		<g:north size="72">
+			<g:FlowPanel>
+				<g:MenuBar>
+				</g:MenuBar>
+				<g:FlowPanel styleName="aon-finding-title-toolbar">
+					<g:HorizontalPanel>
+						<g:HTMLPanel styleName="aon-finding-title">
+							<g:HTMLPanel styleName="aon-finding-title-internal {style.estiloBorrarCuandoSeActiveBoton}">
+								<g:Label styleName="aon-outputText">Laboral : Centro de trabajo :</g:Label>
+							</g:HTMLPanel>
 						</g:HTMLPanel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="aon-finding-subtitle">
-						<g:HTMLPanel styleName="aon-finding-subtitle-internal">
-							<g:Label styleName="aon-outputText"></g:Label>
+						<g:HTMLPanel styleName="aon-finding-subtitle">
+							<g:HTMLPanel styleName="aon-finding-subtitle-internal">
+								<g:Label styleName="aon-outputText"></g:Label>
+							</g:HTMLPanel>
 						</g:HTMLPanel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-						<g:Button ui:field='newContractButton'
-							styleName='aon-finding-toolbar-item aon-icon-reset' text="NUEVO CONTRATO"
-							enabled="true" />
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="aon-finding-toolbar-item-group {style.paddingTop}">
-					    <g:HorizontalPanel ui:field='saveStatusPanel'>
-					        <g:Label ui:field='saveStatus' styleName="{style.fontEnableStyle}" visible="true"></g:Label>
-					    </g:HorizontalPanel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="aon-finding-toolbar-item-group {style.paddingTop}">
-					    <g:HorizontalPanel ui:field='enableWorkplacePanel'>
-					        <g:Button ui:field='enableWorkplaceButton' styleName="{style.fontEnableStyle}" visible="false" enabled="false">ACTIVAR</g:Button>
-					    </g:HorizontalPanel>
-					     <g:HorizontalPanel ui:field='disableWorkplacePanel'>
-					        <g:Button ui:field='disableWorkplaceButton' styleName="{style.fontDisableStyle}" visible="false" enabled="false">DESACTIVAR</g:Button>
-					    </g:HorizontalPanel>
-					</g:HTMLPanel>
-				</g:HorizontalPanel>
+						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+							<g:Button ui:field='newContractButton'
+								styleName='aon-finding-toolbar-item aon-icon-reset' text="NUEVO CONTRATO"
+								enabled="true" />
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="aon-finding-toolbar-item-group {style.paddingTop}">
+						    <g:HorizontalPanel ui:field='saveStatusPanel'>
+						        <g:Label ui:field='saveStatus' styleName="{style.fontEnableStyle}" visible="true"></g:Label>
+						    </g:HorizontalPanel>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="aon-finding-toolbar-item-group {style.paddingTop}">
+						    <g:HorizontalPanel ui:field='enableWorkplacePanel'>
+						        <g:Button ui:field='enableWorkplaceButton' styleName="{style.fontEnableStyle}" visible="false" enabled="false">ACTIVAR</g:Button>
+						    </g:HorizontalPanel>
+						     <g:HorizontalPanel ui:field='disableWorkplacePanel'>
+						        <g:Button ui:field='disableWorkplaceButton' styleName="{style.fontDisableStyle}" visible="false" enabled="false">DESACTIVAR</g:Button>
+						    </g:HorizontalPanel>
+						</g:HTMLPanel>
+					</g:HorizontalPanel>
+				</g:FlowPanel>
 			</g:FlowPanel>
 		</g:north>
 		<g:center>

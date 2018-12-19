@@ -128,8 +128,10 @@
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX">
-		<g:north size="25">
+		<g:north size="72">
 			<g:FlowPanel>
+				<g:MenuBar>
+				</g:MenuBar>
 				<g:FlowPanel styleName="aon-finding-title-toolbar">
 					<g:HorizontalPanel>
 						<g:HTMLPanel styleName="aon-finding-title">

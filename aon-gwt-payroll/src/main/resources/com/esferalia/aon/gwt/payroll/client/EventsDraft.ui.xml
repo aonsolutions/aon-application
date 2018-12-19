@@ -133,8 +133,10 @@
 	<ui:import field="com.esferalia.aon.gwt.payroll.client.EventsDraft.*" />
 
 	<g:DockLayoutPanel unit="PX" ui:field="mainPanel">
-		<g:north size="30">
+		<g:north size="72">
 			<g:FlowPanel>
+				<g:MenuBar>
+				</g:MenuBar>
 				<g:FlowPanel styleName="aon-finding-title-toolbar">
 					<g:HorizontalPanel>
 						<g:HTMLPanel styleName="aon-finding-title">
