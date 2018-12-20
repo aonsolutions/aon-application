@@ -47,7 +47,7 @@
     </style>
        <i:IronList ui:field="grid" as="item" addStyleNames="fit" selectionEnabled="true">
             <template>
-                <div>
+                <div alt="[[item.id]]" onmouseover="overDocumental(this.alt)">
                     <div class="item">
                     	<paper-checkbox alt="[[item.id]]" style="padding-top:5px;" onclick="selection(this.alt)"></paper-checkbox>
                     	<iron-icon icon="[[item.icon]]"/>

@@ -198,7 +198,7 @@ public class FilterPanel extends Composite {
 						if(jsLabel != null){
 							typeButton.setTitle(jsLabel.getName());
 							typeLabel.setText("Tipo:"+jsLabel.getName()+"; ");
-							getIssues().issueFilter.setType(jsLabel.getId());
+							getIssues().issueFilter.setType(jsLabel.getId() + "");
 							getIssues().updateIssueList(issues.issueFilter, false);
 							popup.hide();											
 						}
@@ -243,7 +243,7 @@ public class FilterPanel extends Composite {
 						if(jsLabel != null){
 							tagButton.setTitle(jsLabel.getName());
 							tagLabel.setText("Etiqueta:"+jsLabel.getName()+"; ");
-							getIssues().issueFilter.setLabels(jsLabel.getId());
+							getIssues().issueFilter.setLabels(jsLabel.getId() + "");
 							getIssues().updateIssueList(issues.issueFilter, false);	
 							popup.hide();
 						}

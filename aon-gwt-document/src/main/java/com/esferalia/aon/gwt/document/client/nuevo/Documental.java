@@ -24,6 +24,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -330,13 +331,14 @@ public class Documental implements EntryPoint {
 	}
 	
 	public void createAttachListPanel() {
+		Window.alert("hasi!");
 		LinkedList<String> list = new LinkedList<>();
 		list.add("1");
 		getFilterMap().put("page", list);
 		list = new LinkedList<>();
 		list.add("30");
 		getFilterMap().put("per_page", list);
-		
+		Window.alert("eskaera prestatu!");
 		getAPI().getAttachment().getAttachList(getFilterMap(), new AsyncCallback<JSON<JsAttach>>() {
 				
 			@Override
@@ -369,6 +371,8 @@ public class Documental implements EntryPoint {
 	}
 	
 	String ids = "" ;
+	String ids2 = "" ;
+
 	private void deleteSelectedDocuments() {	
 		AonDialog d = new AonDialog("Borrar Documentos",new Label("Est\u00e1s seguro de Borrar definitivamente los ficheros seleccionados") ) {
 			
@@ -446,8 +450,25 @@ public class Documental implements EntryPoint {
 			
 			@Override 
 			protected void onAccept() {
-				// TODO SEND MAIL!!!
+				// TODO SEND MAIL!!!+
+				JsObject jsEmail = (JsObject) emailComboBox.getSelectedItem();
+				JsObject jsSign = (JsObject) signComboBox.getSelectedItem();
+				ids2 = "" ;
+				getSelectedAttach().stream().forEach(r -> {
+					if(!ids2.equals("")) {
+						ids2 = ids2 + ",";
+					}
+					ids2 = ids2 + r;
+				});
+				String requestData = "{\"id\":["+ ids2 + "],"
+						+ "\"mail_account\":\""+ jsEmail.getId() +"\","
+						+ "\"signature\":\""+ ((jsSign != null) ? jsSign.getId() : "-1" )+"\"," 
+						+ "\"to\":\""+ toText.getValue() + "\""
+						+ "}";
+
+				API.getAttachment().sendDocuments(requestData);
 				hide();
+
 			}
 		};
 		dialog.addAutoHidePartner(emailComboBox.getElementById("overlay"));

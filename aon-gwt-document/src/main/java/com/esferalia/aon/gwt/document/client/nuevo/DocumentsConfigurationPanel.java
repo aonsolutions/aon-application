@@ -59,7 +59,11 @@ public class DocumentsConfigurationPanel extends Composite {
 	
     private Documental parent;
     
-    public DocumentsConfigurationPanel(Documental parent) {
+    public Documental getDocumental() {
+		return parent;
+	}
+       
+	public DocumentsConfigurationPanel(Documental parent) {
     	this.parent = parent;
     	initWidget(binder.createAndBindUi(this));
     	createMenu();
@@ -76,13 +80,13 @@ public class DocumentsConfigurationPanel extends Composite {
 
 		menuSelector.add(buildMenu(ALL_FILES, "attachment"));
 		menuSelector.add(buildMenu(SYSTEM_FILES, "settings"));
-		if(parent.getAonData().getDomain().getParentId() != null) {
+		if(!getDocumental().getAonData().getDomain().isParent() && getDocumental().getAonData().getDomain().isEnableHeredity()) {
 			menuSelector.add(buildMenu(PARENT_FILES, "folder"));
 		}
     }
     
     private void createCategory() {
-    	parent.getAPI().getAttachment().getCategories(new AsyncCallback<JSON<JsLabel>>() {
+    	getDocumental().getAPI().getAttachment().getCategories(new AsyncCallback<JSON<JsLabel>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsLabel> result) {
@@ -102,7 +106,7 @@ public class DocumentsConfigurationPanel extends Composite {
     }
     
     private void createTag() {
-    	parent.getAPI().getAttachment().getTags(new AsyncCallback<JSON<JsLabel>>() {
+    	getDocumental().getAPI().getAttachment().getTags(new AsyncCallback<JSON<JsLabel>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsLabel> result) {
@@ -133,7 +137,7 @@ public class DocumentsConfigurationPanel extends Composite {
 					@Override protected void onAccept() {
 						PaperInput pi = (PaperInput) getContentWidget().getWidget(0);
 						if(!"".equals(pi.getValue())){
-							parent.getAPI().getAttachment().createCategory("{\"name\":\""+ pi.getValue() +"\","
+							getDocumental().getAPI().getAttachment().createCategory("{\"name\":\""+ pi.getValue() +"\","
 								+ "\"type\":\""+ TagType.TASK_TYPE.ordinal() +"\"" +"}", new AsyncCallback<JsLabel>() {
 							
 								@Override
@@ -170,7 +174,7 @@ public class DocumentsConfigurationPanel extends Composite {
 						PaperInput pi = (PaperInput) getContentWidget().getWidget(0);
 						if(!"".equals(pi.getValue())){
 							
-							parent.getAPI().getAttachment().updateCategory(label, "{\"name\":\""+ pi.getValue() +"\"}", new AsyncCallback<JsLabel>() {
+							getDocumental().getAPI().getAttachment().updateCategory(label, "{\"name\":\""+ pi.getValue() +"\"}", new AsyncCallback<JsLabel>() {
 							
 								@Override
 								public void onSuccess(JsLabel result) {
@@ -197,7 +201,7 @@ public class DocumentsConfigurationPanel extends Composite {
 			@Override
 			public void onClick(ClickEvent event) {
 				event.preventDefault();
-				parent.getAPI().getAttachment().deleteCategory(label, new AsyncCallback<JsLabel>() {
+				getDocumental().getAPI().getAttachment().deleteCategory(label, new AsyncCallback<JsLabel>() {
 					
 					@Override public void onSuccess(JsLabel result) {
 						categorySelector.removeFromParent();
@@ -224,7 +228,7 @@ public class DocumentsConfigurationPanel extends Composite {
 					@Override protected void onAccept() {
 						PaperInput pi = (PaperInput) getContentWidget().getWidget(0);
 						if(!"".equals(pi.getValue())){
-							parent.getAPI().getAttachment().createTag("{\"name\":\""+ pi.getValue() +"\","
+							getDocumental().getAPI().getAttachment().createTag("{\"name\":\""+ pi.getValue() +"\","
 								+ "\"type\":\""+ TagType.TASK_TYPE.ordinal() +"\"" +"}", new AsyncCallback<JsLabel>() {
 							
 								@Override
@@ -260,7 +264,7 @@ public class DocumentsConfigurationPanel extends Composite {
 						PaperInput pi = (PaperInput) getContentWidget().getWidget(0);
 						if(!"".equals(pi.getValue())){
 							
-							parent.getAPI().getAttachment().updateTag(label, "{\"name\":\""+ pi.getValue() +"\"}", new AsyncCallback<JsLabel>() {
+							getDocumental().getAPI().getAttachment().updateTag(label, "{\"name\":\""+ pi.getValue() +"\"}", new AsyncCallback<JsLabel>() {
 							
 								@Override
 								public void onSuccess(JsLabel result) {
@@ -286,7 +290,7 @@ public class DocumentsConfigurationPanel extends Composite {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				parent.getAPI().getAttachment().deleteTag(label, new AsyncCallback<JsLabel>() {
+				getDocumental().getAPI().getAttachment().deleteTag(label, new AsyncCallback<JsLabel>() {
 					
 					@Override public void onSuccess(JsLabel result) {
 						tagSelector.removeFromParent();
@@ -321,8 +325,8 @@ public class DocumentsConfigurationPanel extends Composite {
 				} else if(PARENT_FILES.equals(title)) {
 					list.add("parent");
 				}
-				parent.getFilterMap().put("type", list);
-				parent.createAttachListPanel();
+				getDocumental().getFilterMap().put("type", list);
+				getDocumental().createAttachListPanel();
 			}
 		});
 		return item;
@@ -333,8 +337,8 @@ public class DocumentsConfigurationPanel extends Composite {
    			HorizontalPanel hp = new HorizontalPanel();
    			PaperItem item = new PaperItem();
 			
-   			Boolean selected = parent.getFilterMap().containsKey(isCategory ? "category" : "tag") &&
-   					parent.getFilterMap().get(isCategory ? "category" : "tag").contains(label.getId());
+   			Boolean selected = getDocumental().getFilterMap().containsKey(isCategory ? "category" : "tag") &&
+   					getDocumental().getFilterMap().get(isCategory ? "category" : "tag").contains(label.getId() + "");
    			IronIcon ii = new IronIcon();
    			ii.setIcon(selected ? "check" : "label");
    			ii.getElement().getStyle().setColor("#"+label.getColor());
@@ -350,14 +354,14 @@ public class DocumentsConfigurationPanel extends Composite {
 				@Override
 				public void onClick(ClickEvent event) {
 					String key = isCategory ? "category" : "tag";
-					if(parent.getFilterMap().containsKey(key))
-						if(parent.getFilterMap().get(key).contains(label.getId())) {
-							parent.getFilterMap().get(key).remove(label.getId());
-						} else parent.getFilterMap().get(key).add(label.getId());
+					if(getDocumental().getFilterMap().containsKey(key))
+						if(getDocumental().getFilterMap().get(key).contains(label.getId() + "")) {
+							getDocumental().getFilterMap().get(key).remove(label.getId() + "");
+						} else getDocumental().getFilterMap().get(key).add(label.getId() + "");
 					else {
 						LinkedList<String> list = new LinkedList<>();
-						list.add(label.getId());
-						parent.getFilterMap().put(key, list);
+						list.add(label.getId() + "");
+						getDocumental().getFilterMap().put(key, list);
 					}
 					if(isCategory) {
 						categorySelector.removeFromParent();
@@ -370,14 +374,16 @@ public class DocumentsConfigurationPanel extends Composite {
 						tagCollapse.add(tagSelector);
 						createTag();		
 					}
-					parent.createAttachListPanel();
+					getDocumental().createAttachListPanel();
 				}
 			}, ClickEvent.getType());
    			
 			hp.add(item);
 			hp.setWidth("100%");
    			
-   			if(parent.getAonData().getDomain().getId() == label.getDomain()) {
+			
+   			if(getDocumental().getAonData().getDomain().getId() == label.getDomain() &&
+   					getDocumental().getAonData().getUser().hasDocumentManagerRole()) {
    				PaperIconButton edit = new PaperIconButton();
    				edit.setIcon("create");
    				//edit.setDisabled(admin);

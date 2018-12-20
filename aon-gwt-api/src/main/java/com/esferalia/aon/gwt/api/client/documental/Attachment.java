@@ -5,7 +5,6 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.Methods;
-import com.esferalia.aon.gwt.api.client.incidence.JsIssue;
 import com.esferalia.aon.gwt.api.client.incidence.JsLabel;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -42,6 +41,7 @@ public class Attachment extends Methods{
 	
 	public void getAttachList(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsAttach>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		Window.alert("filter ondoren!");
 		get(url + "attachment/" + getDomainName() + "/" + getUserName() + "/files" + filter, callback);
 	}
 	
@@ -113,11 +113,16 @@ public class Attachment extends Methods{
 			
 			@Override
 			public void onSuccess(String result) {
-				Window.open(getUrl() + "download_attachment/"  + getDomainName() + "/" + getUserName() + "/" +  result, "_blank", null);
+				Window.open(url + "download_attachment/"  + getDomainName() + "/" + getUserName() + "/" +  result, "_blank", null);
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
 		});
+	}
+	
+	
+	public void sendDocuments(String requestData){
+		post(getUrl() + "documental_notification/" + getDomainName() + "/" + getUserName()  , requestData);
 	}
 	
 	//---------------------- Métodos Get & Set

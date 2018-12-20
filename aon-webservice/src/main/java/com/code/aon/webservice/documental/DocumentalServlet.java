@@ -160,8 +160,8 @@ public class DocumentalServlet extends HttpServlet{
 	}
 	
 	private JSONObject getAttachJSON(Domain domain, String login, Integer id) {
-		return ToJSON.attachToJSON(AON.getAttach(domain.getName(), domain.getId(), login,
-				f -> f.getIdProperty().eq(id), AttachType.REGISTRY, false));
+		return ToJSON.attachToJSON(AON.getDocumentalAttachStream(domain.getName(), domain.getId(), login,
+				f -> f.getIdProperty().eq(id), AttachType.REGISTRY, false).findFirst().orElse(new Attach()));
 	}
 
 	private JSONObject updateAttachJSON(Domain domain, String login, Integer id, JSONObject json) {

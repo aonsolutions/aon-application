@@ -55,8 +55,8 @@ public class AttachListPanel extends Composite {
     	exportDownloadDocument(this);
     	exportEditDocument(this);
     	exportRemoveDocument(this);
-
-    	
+    	exportOverDocumental(this);
+    
         initWidget(binder.createAndBindUi(this));
         
         grid.setItems(items);
@@ -210,17 +210,18 @@ public class AttachListPanel extends Composite {
 					JSONObject json = new JSONObject();
 					json.put("name", new JSONString(nameBox.getValue()));
 					JsLabel categoryItem = (JsLabel) categoryBox.getSelectedItem().cast();
-					json.put("category", new JSONString(categoryItem.getId()));
+					json.put("category", new JSONString(categoryItem != null ?  categoryItem.getId() + "" : ""));
 					JsLabel tagItem = (JsLabel) tagBox.getSelectedItem().cast();
-					json.put("tag", new JSONString(tagItem.getId()));
+					json.put("tag", new JSONString(tagItem != null ? tagItem.getId() + "" : ""));
 					JsLabel scopeItem = (JsLabel) scopeBox.getSelectedItem().cast();
-					json.put("scope", new JSONString(scopeItem.getId()));
+					json.put("scope", new JSONString(scopeItem != null ? scopeItem.getId() + "" : ""));
 					json.put("confidential", new JSONString(Boolean.toString(confidential.getChecked())));
 					String requestData = JsonUtils.stringify(json.getJavaScriptObject());
 					parent.getAPI().getAttachment().updateAttach(id, requestData, new AsyncCallback<JsAttach>() {
 						
 						@Override
 						public void onSuccess(JsAttach result) {
+							parent.createAttachListPanel();
 							hide();
 						}
 						
@@ -284,11 +285,21 @@ public class AttachListPanel extends Composite {
 	   else parent.getSelectedAttach().add(id);
 	   parent.activeMultiselectionFunctions(parent.getSelectedAttach().size() > 0);
    }
-
+   
    public static native void exportSelection(AttachListPanel thiz) /*-{
 		$wnd.selection = function(id) {
 			thiz.@com.esferalia.aon.gwt.document.client.nuevo.AttachListPanel::selection(*)(id);
 		}
 	}-*/;
-  
+   
+   String actualId = "";
+   public void overDocumental(String id) {
+	   actualId = id;
+   }
+
+   public static native void exportOverDocumental(AttachListPanel thiz) /*-{
+		$wnd.overDocumental = function(id) {
+			thiz.@com.esferalia.aon.gwt.document.client.nuevo.AttachListPanel::overDocumental(*)(id);
+		}
+	}-*/;
 }
