@@ -144,7 +144,7 @@ public class DocumentalServlet extends HttpServlet{
 			if(AttachType.REGISTRY.equals(attachType)) {
 				AON.deleteRegistryAttachTag(domain.getName(), domain.getId(), login, id);
 			}
-		};
+		}
 		AON.deleteAttach(domain.getName(), domain.getId(), login, f -> f.getIdProperty().in(ids), attachType);
 		return json;
 	}

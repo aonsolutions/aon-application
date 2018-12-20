@@ -41,7 +41,6 @@ public class Attachment extends Methods{
 	
 	public void getAttachList(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsAttach>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		Window.alert("filter ondoren!");
 		get(url + "attachment/" + getDomainName() + "/" + getUserName() + "/files" + filter, callback);
 	}
 	

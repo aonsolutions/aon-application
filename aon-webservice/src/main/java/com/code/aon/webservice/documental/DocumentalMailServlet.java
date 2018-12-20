@@ -64,7 +64,10 @@ public class DocumentalMailServlet extends HttpServlet{
 		String to = json.getString("to");
 		JSONArray array = json.getJSONArray("id");
 		Integer[] ids = new Integer[array.length()];
-		
+		for(Integer i = 0; i < array.length(); i++) {
+			Integer id = array.getInt(i);
+			ids[i] = id;
+		}
 		LinkedList<Attach> attachStream = AON.getAttachStream(domain.getName(), domain.getId(), login, f -> f.getIdProperty().in(ids), AttachType.REGISTRY, false)
 				.collect(Collectors.toCollection(LinkedList::new));
 		
@@ -80,28 +83,28 @@ public class DocumentalMailServlet extends HttpServlet{
 		
 	public void sendNotification(Domain domain, User user, LinkedList<Attach> attachList, Signature signature, MailAccount mailAccount, String to, String scheme){
 		String content = getContent(domain, user, attachList, signature, scheme);
-		sendEmail(domain, user.getLogin(), mailAccount.getId(), to, mailAccount.getEmail(), "Notificación Documental", content, scheme);
+		sendEmail(domain, user.getLogin(), mailAccount.getId(), to, "Notificación Documental", content, scheme);
 	}
 	
-	private String getUrl(Domain domain, Integer id, String scheme) {
+	private String getUrl(Domain domain, String login, Integer id, String scheme) {
 		String str ="domain="+ domain.getId() + "&id=" + id + "&attach_type=registry";
 		String base64 = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
-		return scheme + "://" + domain.getName() + "/aon_gwt_aio/download_attachment/"+base64;
+		return scheme + "://" + domain.getName() + "/aon_gwt_aio/download_attachment/"+ domain.getName() + "/" + login + "/" + base64;
 	}	
 	
 	
 	private String getContent(Domain domain, User user, LinkedList<Attach> attachList, Signature signature, String scheme) {
 		msg = "<div> Estimado Colaborador, </div><div><p></p></div>";
 		Domain userDomain = AON.getDomain(domain.getName(), user.getDomain(), user.getLogin());
-		msg = "<div style='margin-left: -30px;'>"
+		msg = msg + "<div style='margin-left: -30px;'>"
 				+"<div style='margin: 7px 15px 14px 30px;line-height: 18px;font-size: 13px;box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.075);'>";
 		msg = msg + "<p> El usuario <b>"+ (user.getName() != null ? user.getName() : user.getLogin()) +"</b> de la empresa <b>" + userDomain.getDescription() +
 			"</b> ha compartido "+ " los siguientes archivos: </p>";
 		msg = msg + "<br>";
 		
 		for(Attach attach : attachList) {
-			msg = msg + "<a href=\""+ getUrl(domain, attach.getId(), scheme) +"\" style=\"text-decoration: none;color:#fff;\">"
-				+ "<div style=\"color:#fff;background-color:#4d90fe;padding: 15px;font-weight: bold;width: 120px;\">"
+			msg = msg + "<a href=\""+ getUrl(domain, user.getLogin(), attach.getId(), scheme) +"\" style=\"text-decoration: none;color:#fff;\">"
+				+ "<div style=\"color:#fff;background-color:#4d90fe;padding: 15px;font-weight: bold;width: 120px;margin-bottom:10px;\">"
 					+ attach.getDescription()
 				+ "</div>"
 			+ "</a>";
@@ -111,7 +114,7 @@ public class DocumentalMailServlet extends HttpServlet{
 
 		msg = msg + "</div> </div>";
 		return msg;
-	}
+	} 
 	
 	private void printSignature(Domain domain, String login, Signature signature){
 		if(signature != null && signature.getSignature() != null
@@ -127,7 +130,7 @@ public class DocumentalMailServlet extends HttpServlet{
 				+ "</div></div>";
 	}
 	
-	public void sendEmail(Domain domain, String login, Integer mailAccountId, String to, String bcc, String issue, String message, String scheme){
+	public void sendEmail(Domain domain, String login, Integer mailAccountId, String to, String issue, String message, String scheme){
 		try {
 			JSONObject json = new JSONObject();
 			json.put("mailAccountId", mailAccountId)
@@ -138,7 +141,7 @@ public class DocumentalMailServlet extends HttpServlet{
 				.put("domainName", domain.getName())
 				.put("domainId", domain.getId())
 				.put("md5", "")
-				.put("bcc", bcc);
+				.put("bcc", "");
 			
 			sendPostHttpClient(domain, login, json, scheme);			
 		} catch (JSONException e) {
