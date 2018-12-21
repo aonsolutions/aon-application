@@ -15,14 +15,12 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.esferalia.aon.gwt.payroll.client.EmployeeCalendarDraftObjectData.DayType;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeCalendarDraftObjectData {
@@ -50,6 +48,7 @@ public class EmployeeCalendarDraftObjectData {
 	
 	private boolean fullTimeEmployee;
 	private int fullTimeEmployeeDraft = -1;
+	private Integer contractType;
 	
 	private String typeInactivityDays;
 	
@@ -80,6 +79,7 @@ public class EmployeeCalendarDraftObjectData {
 			put("DIAS_HUELGA", DayType.STRIKEDAY);
 			put("DIAS_ERE", DayType.EREDAY);
 			put("DIAS_INACTIVIDAD", DayType.INACTIVITY);
+			put("PEONADAS", DayType.PEONADAS);
 		}
 	};
 	
@@ -97,6 +97,7 @@ public class EmployeeCalendarDraftObjectData {
 		T visitITDay(DayType dayType);
 		T visitNoTypeDay(DayType dayType);
 		T visitInactivityDay(DayType dayType);
+		T visitPeonadasDay(DayType dayType);
 	}
 	
 	public static enum DayType{
@@ -158,6 +159,12 @@ public class EmployeeCalendarDraftObjectData {
 			@Override
 			public <T> T visit(DayTypeVisitor<T> visitor) {
 				return visitor.visitInactivityDay(this);
+			}
+		},
+		PEONADAS{
+			@Override
+			public <T> T visit(DayTypeVisitor<T> visitor) {
+				return visitor.visitPeonadasDay(this);
 			}
 		},
 		NOTYPEDAY {
@@ -388,6 +395,10 @@ public class EmployeeCalendarDraftObjectData {
 		this.employeeId = employeeId;
 		this.employeesService = employeesService;
 		
+	}
+	
+	public Integer getContractType(){
+		return this.contractType;
 	}
 	
 	public Integer getEmployeeId(){
@@ -997,6 +1008,7 @@ public class EmployeeCalendarDraftObjectData {
 				if (fullTimeEmployeeDraft == -1)
 					fullTimeEmployeeDraft = result.isFullTimeJourney() ? 1 : 0;
 				
+				contractType = result.getContractType();
 				success.accept(result);
 				
 			}

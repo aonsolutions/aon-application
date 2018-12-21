@@ -69,6 +69,10 @@
 			background-color: #71b1e8;
 		}
 
+		.peonadasColor{
+			background-color: #d692f9;
+		}
+
 		.tableStyle {
 			border-collapse: collapse;
 			margin-left: 0.8em;
@@ -150,6 +154,13 @@
 
 		.inactivityStyle {
 			background-color: #71b1e8;
+			border-radius: 15px;
+			padding: 3px;
+			color: #ffffff;
+		}
+
+		.peonadasStyle {
+			background-color: #d692f9;
 			border-radius: 15px;
 			padding: 3px;
 			color: #ffffff;
@@ -280,6 +291,10 @@
 			cursor:pointer;
 		}
 
+		.hide{
+			display : none;
+		}
+
 		@external holidayStyle;	
 
 		</ui:style>
@@ -378,6 +393,10 @@
 						<g:Label styleName="{style.paddingLabels}">ERE</g:Label>
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.inactivityColor}" ui:field="inactivityDayButton"/>
 						<g:Label styleName="{style.paddingLabels}">Inactividad</g:Label>
+						<g:HorizontalPanel ui:field="peonadasPanel" styleName="{style.hide}">
+						    <g:Button styleName="{style.typeButtonUpperMenuStyle} {style.peonadasColor}" ui:field="peonadasDayButton"/>
+							<g:Label styleName="{style.paddingLabels}">Peonadas</g:Label>
+						</g:HorizontalPanel>
 						<g:Button styleName="{style.borderButtonUpperMenuStyle} {style.imagenButtonUpperMenuStyle}" ui:field="hourButton"/>
 						<g:Button styleName="{style.borderButtonUpperMenuStyle} {style.imagenButtonUpperMenuStyle}" ui:field="extraHoursButton"/>
 						<g:Label styleName="{style.paddingLabels}" ui:field="hourLabelUpperMenu"/>

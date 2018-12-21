@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 import static com.esferalia.aon.jooq.tables.Holiday.HOLIDAY;
 import static com.esferalia.aon.jooq.tables.HolidayDetail.HOLIDAY_DETAIL;
 import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
+import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -67,6 +68,7 @@ public class JooqEmployeeCalendar {
 		HashMap<java.util.Date, String> contractFestiveDaysList = new HashMap<java.util.Date, String>();
 		ArrayList<Byte> contractNonWorkingDaysList = new ArrayList<Byte>();
 		Boolean fullTimeJourney = false;
+		Integer contractType = 0;
 		String typeInactivityDays = null;
 		
 		// ------------------------------------------------------ JORNADA COMPLETA -------------------------------------------------------
@@ -95,6 +97,22 @@ public class JooqEmployeeCalendar {
 		}
 		
 		fullTimeJourney = isFullTimeJourney(journeyTypeEmployee);
+		
+		// ---------------------------------------------- CHECK AGRARIO ---------------------------------------------------------
+		
+		Record contractRecord = dslContext.select().from(CONTRACT)
+				.where(CONTRACT.ID.eq(contract))
+				.fetchOne();
+		
+		Integer contrat_ccc = contractRecord.get(CONTRACT.ENTERPRISE_CCC);
+		if(null == contrat_ccc)
+			contractType = -1;
+		else{
+			Record enterpriseCCCRecord = dslContext.select().from(ENTERPRISE_CCC)
+				.where(ENTERPRISE_CCC.ID.eq(contrat_ccc))
+				.fetchOne();
+			contractType = (int) enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE);
+		}
 		
 		// ---------------------------------------------- HORAS SEMANALES ---------------------------------------------------------
 		
@@ -191,7 +209,8 @@ public class JooqEmployeeCalendar {
 							ContextVariable.ERE_DAYS.getName()
 							,ContextVariable.STRIKE_DAYS.getName()
 							,ContextVariable.HOLIDAYS.getName()
-							,"DIAS_INACTIVIDAD"))
+							,"DIAS_INACTIVIDAD"
+							,"PEONADAS"))
 					.fetch();
 		
 		for(Record r: contractDayTypesEmployeeInfo){
@@ -353,11 +372,11 @@ public class JooqEmployeeCalendar {
 		
 		employeeInfoCalendar = new EmployeeCalendarData(contractHoursList, contractExtraHoursList, contractDayTypesList, contractITDayTypeList, 
 				contractFestiveDaysList, contractNonWorkingDaysList, fullTimeJourney, contractCoefficientEREDayTypeList, contractCoefficientStrikeDayTypeList,
-				contractInactivityDaysList);
+				contractInactivityDaysList, contractType);
 		
 		return employeeInfoCalendar;
 	}
-	
+
 	// -------------- AUX METHODS GET EMPLOYEE INFO ------------
 	
 	private static ArrayList<String> getValueDayOfWeek(Result<Record> contractHoursEmployeeInfo, String dayOfWeek) {
@@ -379,6 +398,16 @@ public class JooqEmployeeCalendar {
 			return true;
 		else
 			return false;
+	}
+	
+	private static Integer parseContractType(String journeyTypeEmployee) {
+		if(null == journeyTypeEmployee)
+			return -1;
+		
+		if(journeyTypeEmployee.contains("\"")){
+			return Integer.parseInt(journeyTypeEmployee.split("\"")[1]);
+		}
+		return Integer.parseInt(journeyTypeEmployee);
 	}
 
 	
@@ -559,7 +588,8 @@ public class JooqEmployeeCalendar {
 				  ,ContextVariable.ERE_FACTOR.getName()
 				  ,ContextVariable.STRIKE_FACTOR.getName()
 				  ,"DIAS_INACTIVIDAD"
-				  ,"CAUSA_INACTIVIDAD"))
+				  ,"CAUSA_INACTIVIDAD"
+				  ,"PEONADAS"))
 		   .execute();
 		
 		HashMap<java.util.Date, DayType> updateDaysTypeMap = updateInfo.getDaysTypeMap();
@@ -600,7 +630,7 @@ public class JooqEmployeeCalendar {
 						
 						if(dayType.equals("DIAS_HUELGA")){
 							String coeficiente = strikeDaysValues.get(auxStartDateType).toString();
-							 dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+							dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
 										CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
 										CONTRACT_DATA.END_DATE)
 										.values(domain, "COEFICIENTE_HUELGA", contract, coeficiente, 
@@ -768,7 +798,7 @@ public class JooqEmployeeCalendar {
 	
 	private static boolean validDayType(String dayType) {
 		return dayType.equals("DIAS_ERE") || dayType.equals("DIAS_HUELGA") 
-				|| dayType.equals("DIAS_VACACIONES") || dayType.equals("DIAS_INACTIVIDAD");
+				|| dayType.equals("DIAS_VACACIONES") || dayType.equals("DIAS_INACTIVIDAD") || dayType.equals("PEONADAS");
 	}
 
 	private static String calculateDayType(DayType dayType) {
@@ -785,6 +815,9 @@ public class JooqEmployeeCalendar {
 			break;
 		case INACTIVITY:
 			result = "DIAS_INACTIVIDAD";
+			break;
+		case PEONADAS:
+			result = "PEONADAS";
 			break;
 		case FREEDAY:
 			result = "";

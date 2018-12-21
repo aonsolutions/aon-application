@@ -138,6 +138,12 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 					return null;
 				}
 
+				@Override
+				public Void visitPeonadasDay(DayType dayType) {
+					calendarGrid.getWidget(row, col).addStyleName(style.peonadasStyle());
+					return null;
+				}
+
 			});	
 		}
 	}
@@ -275,11 +281,13 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		String suspensionStyle();
 		String itStyle();
 		String inactivityStyle();
+		String peonadasStyle();
 		String cellStyle();
 		String ocultarHorasStyle();
 		String onChange();
 		String setOutOfContractStyle();
 		String pointer();
+		String hide();
 	}
 
 	
@@ -360,6 +368,12 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	
 	@UiField
 	Button inactivityDayButton;
+	
+	@UiField
+	HorizontalPanel peonadasPanel;
+	
+	@UiField
+	Button peonadasDayButton;
 	
 	@UiField
 	Button holidayDayButton;
@@ -843,6 +857,11 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		addHolidays();
 	}
 	
+	@UiHandler("peonadasDayButton")
+	public void onPeonadasClick(ClickEvent event) {
+		addPeonadas();
+	}
+	
 	@UiHandler("strikeDayButton")
 	public void onStrikeClick(ClickEvent event) {
 		EmployeeCalendarPercentDialog strikeDialog;
@@ -1096,6 +1115,10 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			hourLabelUpperMenu.setText("Horas");
 		}
 		
+		if(this.calendarEmployeeInfo.getContractType() == 7)
+			this.peonadasPanel.removeStyleName(style.hide());
+		else
+			this.peonadasPanel.addStyleName(style.hide());
 		
 		cleanStyleChanges();
 		cleanCalendar();
@@ -1961,6 +1984,11 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	private void addHolidays() {
 		applyDayTypeSelectedDates(DayType.HOLIDAY);
 	}
+	
+	private void addPeonadas() {
+		applyDayTypeSelectedDates(DayType.PEONADAS);
+	}
+	
 	private void addNoWorkingDay() {
 		//applyNonWorkingDayTypeSelectedDates(-1.00, DayType.NOWORKINGDAY);
 		applyNonWorkingDayTypeSelectedDates(null, DayType.NOWORKINGDAY);
