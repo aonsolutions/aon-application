@@ -202,7 +202,7 @@ public abstract class AonToolbar extends Composite {
    		onDownloadButtonClick();
    	}
    	
-// ----------- DOWNLOAD BUTTON
+// ----------- SEND BUTTON
     
    	protected abstract void onSendButtonClick();
 

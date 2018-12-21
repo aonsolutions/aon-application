@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.api.client.documental;
 
 import com.esferalia.aon.gwt.api.client.incidence.JsLabel;
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.view.client.ProvidesKey;
 
 public class JsAttach extends JavaScriptObject{
@@ -39,6 +40,10 @@ public class JsAttach extends JavaScriptObject{
 
 	public final native JsLabel getCategory() /*-{
 		return this.category;
+	}-*/;
+	
+	public final native JsArray<JsLabel> getTags() /*-{
+		return this.tags;	
 	}-*/;
 	
 	public final native JsLabel getScope() /*-{

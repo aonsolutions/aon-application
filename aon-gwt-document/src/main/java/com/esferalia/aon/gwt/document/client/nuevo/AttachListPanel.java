@@ -9,11 +9,13 @@ import com.esferalia.aon.gwt.api.client.documental.JsAttach;
 import com.esferalia.aon.gwt.api.client.incidence.JsLabel;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
-import com.esferalia.aon.gwt.issues.client.AonDialog2;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.logical.shared.ResizeEvent;
@@ -31,10 +33,13 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.iron.widget.IronList;
+import com.vaadin.polymer.paper.widget.PaperIconButton;
 import com.vaadin.polymer.paper.widget.PaperInput;
 import com.vaadin.polymer.paper.widget.PaperToggleButton;
 
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
+import net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent;
+import net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler;
 
 
 public class AttachListPanel extends Composite {
@@ -52,11 +57,7 @@ public class AttachListPanel extends Composite {
     public AttachListPanel(Documental parent1, AonJsArray<JsAttach> items) {    
     	this.parent = parent1;
     	exportSelection(this);
-    	exportDownloadDocument(this);
-    	exportEditDocument(this);
-    	exportRemoveDocument(this);
-    	exportOverDocumental(this);
-    
+    	exportOptionsDocument(this);
         initWidget(binder.createAndBindUi(this));
         
         grid.setItems(items);
@@ -80,8 +81,7 @@ public class AttachListPanel extends Composite {
 				}
 			}
 		}, ScrollEvent.getType());
-
-    }
+   }
     
    public void updateItems(AonJsArray<JsAttach> attach){
 	   grid.setItems(attach);
@@ -112,12 +112,6 @@ public class AttachListPanel extends Composite {
    public void downloadDocument(String id){
 	   parent.getAPI().getAttachment().download(id);
    }
-
-   public static native void exportDownloadDocument(AttachListPanel thiz) /*-{
-		$wnd.downloadDocument = function(id) {
-			thiz.@com.esferalia.aon.gwt.document.client.nuevo.AttachListPanel::downloadDocument(*)(id);
-		}
-	}-*/;
    
    public void aaa(JsAttach attach) {
 	   Window.alert(attach.getId()+"");
@@ -165,7 +159,32 @@ public class AttachListPanel extends Composite {
 				
 				@Override public void onFailure(Throwable caught) {}
 			});
+
+			HorizontalPanel tagPanel = new HorizontalPanel();
+			JsArray<JsLabel> tags = attach.getTags();
+			for(Integer i = 0 ; i < tags.length(); i++) {
+				tagList.add(tags.get(i));
+				tagPanel.add(buildTagPanel(tags.get(i)));
+			}
 			
+			tagBox.addValueChangedHandler(new ValueChangedEventHandler() {
+				
+				@Override
+				public void onValueChanged(ValueChangedEvent event) {
+					JsLabel tag = tagBox.getSelectedItem().cast();
+					Boolean addTag = true;
+					for(Integer i = 0 ; i < tagList.size(); i++) {
+						if(tagList.get(i).getName().equals(tag.getName())) {
+							addTag = false;
+						}
+					}
+					if(addTag) {
+						tagList.add(tag);
+						tagPanel.add(buildTagPanel(tag));
+					}
+				}
+			});
+
 			AonComboBox scopeBox = new AonComboBox();
 			scopeBox.setWidth("100%");
 			scopeBox.setLabel("\u00c1mbito");
@@ -199,6 +218,7 @@ public class AttachListPanel extends Composite {
 			vp.add(nameBox);
 			vp.add(categoryBox);
 			vp.add(tagBox);
+			vp.add(tagPanel);
 			vp.add(scopeBox);
 			vp.add(hp);
 			AonDialog dialog = new AonDialog("Editar Archivo", vp) {
@@ -211,8 +231,12 @@ public class AttachListPanel extends Composite {
 					json.put("name", new JSONString(nameBox.getValue()));
 					JsLabel categoryItem = (JsLabel) categoryBox.getSelectedItem().cast();
 					json.put("category", new JSONString(categoryItem != null ?  categoryItem.getId() + "" : ""));
-					JsLabel tagItem = (JsLabel) tagBox.getSelectedItem().cast();
-					json.put("tag", new JSONString(tagItem != null ? tagItem.getId() + "" : ""));
+					ids = "";
+					for(Integer i = 0 ; i< tagList.size(); i++) {
+						if(!"".equals(ids)) ids = ids + ","; 
+						ids = ids + tagList.get(i).getId();
+					}
+					json.put("tag", new JSONString(ids));
 					JsLabel scopeItem = (JsLabel) scopeBox.getSelectedItem().cast();
 					json.put("scope", new JSONString(scopeItem != null ? scopeItem.getId() + "" : ""));
 					json.put("confidential", new JSONString(Boolean.toString(confidential.getChecked())));
@@ -241,15 +265,38 @@ public class AttachListPanel extends Composite {
 		@Override public void onFailure(Throwable caught) {}
 	   });
    }
-
-   public static native void exportEditDocument(AttachListPanel thiz) /*-{
-		$wnd.editDocument = function(id) {
-			thiz.@com.esferalia.aon.gwt.document.client.nuevo.AttachListPanel::editDocument(*)(id);
-		}
-	}-*/;
    
+   LinkedList<JsLabel> tagList = new LinkedList<>();
+   String ids; 
+   private HorizontalPanel buildTagPanel(JsLabel tag) {
+	   HorizontalPanel labelPanel = new HorizontalPanel();
+		labelPanel.getElement().getStyle().setPaddingLeft(5, Unit.PX);
+		Label label = new Label(tag.getName());
+		label.getElement().getStyle().setPadding(3, Unit.PX);
+		label.getElement().getStyle().setBackgroundColor("#ddd");
+		PaperIconButton icon = new PaperIconButton();
+		icon.setIcon("close");
+		icon.getElement().getStyle().setWidth(16, Unit.PX);
+		icon.getElement().getStyle().setHeight(16, Unit.PX);
+		icon.getElement().getStyle().setMargin(0, Unit.PX);
+		icon.getElement().getStyle().setPadding(0, Unit.PX);
+		icon.getElement().getStyle().setPaddingTop(4, Unit.PX);
+		icon.setNoink(true);
+		icon.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				tagList.remove(tag);
+				labelPanel.removeFromParent();
+			}
+		});
+		labelPanel.add(label);
+		labelPanel.add(icon);
+		return labelPanel;
+   }
+  
    public void removeDocument(String id) {
-		AonDialog2 d = new AonDialog2("Borrar Documento",new Label("Est\u00e1s seguro de Borrar definitivamente este fichero") ) {
+		AonDialog d = new AonDialog("Borrar Documento",new Label("Est\u00e1s seguro de Borrar definitivamente este fichero") ) {
 			
 			@Override protected void onCancel() {hide();}
 			
@@ -273,17 +320,11 @@ public class AttachListPanel extends Composite {
 		d.getElement().getStyle().setWidth(255, Unit.PX);
 		d.center();
    }
-
-   public static native void exportRemoveDocument(AttachListPanel thiz) /*-{
-		$wnd.removeDocument = function(id) {
-			thiz.@com.esferalia.aon.gwt.document.client.nuevo.AttachListPanel::removeDocument(*)(id);
-		}
-	}-*/;
    
    public void selection(String id) {
 	   if(parent.getSelectedAttach().contains(id)) parent.getSelectedAttach().remove(id);
 	   else parent.getSelectedAttach().add(id);
-	   parent.activeMultiselectionFunctions(parent.getSelectedAttach().size() > 0);
+	   parent.activeMultiselectionFunctions(parent.getSelectedAttach().size());
    }
    
    public static native void exportSelection(AttachListPanel thiz) /*-{
@@ -291,15 +332,14 @@ public class AttachListPanel extends Composite {
 			thiz.@com.esferalia.aon.gwt.document.client.nuevo.AttachListPanel::selection(*)(id);
 		}
 	}-*/;
-   
-   String actualId = "";
-   public void overDocumental(String id) {
-	   actualId = id;
+  
+   public void optionsDocument(ClickEvent event, String id) {
    }
 
-   public static native void exportOverDocumental(AttachListPanel thiz) /*-{
-		$wnd.overDocumental = function(id) {
-			thiz.@com.esferalia.aon.gwt.document.client.nuevo.AttachListPanel::overDocumental(*)(id);
+   public static native boolean exportOptionsDocument(AttachListPanel thiz) /*-{
+		$wnd.optionsDocument = function(event, id) {
+			thiz.@com.esferalia.aon.gwt.document.client.nuevo.AttachListPanel::optionsDocument(*)(event, id);
 		}
 	}-*/;
+   
 }

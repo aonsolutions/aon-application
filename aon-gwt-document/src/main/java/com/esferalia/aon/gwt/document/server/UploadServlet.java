@@ -52,7 +52,7 @@ public class UploadServlet extends HttpServlet{
 		String categoryStr = req.getParameter("category");
 		Integer category = !"".equals(categoryStr) ?  Integer.parseInt(categoryStr) : null;
 		String tagStr = req.getParameter("tag");
-		Integer tag = !"".equals(tagStr) ? Integer.parseInt(tagStr) : null;
+		String[] tags = tagStr.substring(1, tagStr.length() - 1).split(",");
 		String scopeStr = req.getParameter("scope");
 		Integer scope = !"".equals(scopeStr) ? Integer.parseInt(scopeStr) : null;
 		Boolean confidential = "true".equalsIgnoreCase(req.getParameter("confidential"));
@@ -102,24 +102,27 @@ public class UploadServlet extends HttpServlet{
                 for (FileItem item : formItems) {
                     // processes only fields that are not form fields
                     if (!item.isFormField()) {
+                    	Domain domain = AON.getDomain(domainName, domainId, login);
                     	Attach attach = new Attach()
                     			.setAttachModule(1) // TODO
                     			.setAttachType(AttachType.REGISTRY)
                     			.setData(item.get())
                     			.setDescription(item.getName())
                     			.setMimeType(MimeType.get(item.getContentType()))
-                    			.setDomain(new Domain().setId(domainId).setName(domainName))
+                    			.setDomain(domain)
                     			.setType(RegistryAttachmentType.CORPORATE_IDENTITY.value())
                     			.setCategory(category)
                     			.setDate(new Date())
                     			.setScope(scope)
                     			.setConfidential(confidential)
                     			.setDparentId(Long.toString(item.getSize()));
-                    	Integer attachId = AON.insertAttach(domainName, domainId, login, attach);
-                    	if(tag != null) {
-                        	AON.insertRegistryAttachTag(domainName, domainId, login, attachId, tag);
+                    	Integer attachId = AON.insertAttach(domain.getName(), domain.getId(), login, attach);
+                    	
+                    	for(Integer i = 0 ; i < tags.length ; i++) {
+                    		Integer tagId = Integer.parseInt(tags[i]);
+                    		AON.insertRegistryAttachTag(domain.getName(), domain.getId(), login, attachId, tagId);
                     	}
-
+                    	
                     	attach.setId(attachId);
 
                     	FileInfo fi = new FileInfo();
@@ -130,8 +133,8 @@ public class UploadServlet extends HttpServlet{
             			fi.setAonType("registry");
             			fi.setCategory(category);
             			fi.setTitle(attach.getDescription());
-            			fi.setDomain(domainName);
-            			fi.setDomainId(domainId);
+            			fi.setDomain(attach.getDomain().getName());
+            			fi.setDomainId(attach.getDomain().getId());
             			fi.setSecurityLevel(attach.getConfidential() ? SecurityLevel.CONFIDENTIAL.value() :  SecurityLevel.OFFICIAL.value());
             			fi.setDate(attach.getDate());
             			fi.setScopeId(scope);
@@ -144,7 +147,8 @@ public class UploadServlet extends HttpServlet{
    								.toString() };// TODO
    						DriveUtils.types = types;
 
-   						DriveUtils.sync2(drive, new Domain().setName(domainName).setId(domainId), user, fi);
+   						DriveUtils.sync2(drive, domain, user, fi);
+   						SendNotification.sendGmail(domain, user, attach, true);
     					
                     /* DRIVE V3!!!
                     	Drive drive = AonDrive.getInstace().serviceInitialize(d);

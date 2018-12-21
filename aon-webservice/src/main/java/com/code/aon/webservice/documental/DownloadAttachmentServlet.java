@@ -53,7 +53,6 @@ public class DownloadAttachmentServlet extends HttpServlet {
 		Attach attach = AON.getAttach(domain.getName(), domain.getId(), userName, f -> f.getIdProperty().eq(id), AttachType.getAttachType(attachType), true);
 
 		if(attach.getDriveId() != null) {
-			
 			DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), userName);
 			Drive drive = AonDrive.getInstace().serviceInitialize(g);
 			String[] keys = {"fileId", "aontype", "domain"};

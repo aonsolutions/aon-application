@@ -168,9 +168,29 @@ public class DocumentalServlet extends HttpServlet{
 		Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(id), AttachType.REGISTRY, true);
 		attach.setDescription(json.getString("name"));
 		attach.setConfidential(Boolean.toString(true).equals(json.getString("confidential")));
-		if(json.opt("category") != null) attach.setCategory(Integer.parseInt(json.getString("category")));
-		if(json.opt("scope") != null) attach.setScope(Integer.parseInt(json.getString("scope")));
+		
+		if(json.opt("category") != null) { 
+			String categoryStr = json.getString("category");
+			Integer category = !"".equals(categoryStr) ?  Integer.parseInt(categoryStr) : null;
+			attach.setCategory(category);
+		}
+		if(json.opt("scope") != null) {
+			String scopeStr = json.getString("scope");
+			Integer scope = !"".equals(scopeStr) ?  Integer.parseInt(scopeStr) : null;
+			attach.setScope(scope);
+		}
+		if(json.opt("tag") != null) {
+			String tagStr = json.getString("tag");
+			String[] tags = tagStr.split(",");
+			AON.deleteRegistryAttachTag(domain.getName(), domain.getId(), login, attach.getId());
+			for(Integer i = 0; i< tags.length; i++) {
+				Integer tagId = Integer.parseInt(tags[i]);
+				AON.insertRegistryAttachTag(domain.getName(), domain.getId(), login, attach.getId(), tagId);
+			}
+		}
 		AON.updateAttach(domain.getName(), domain.getId(), login, attach);
+		User user = AON.getUser(domain.getName(), domain.getId(), login);
+		SendNotification.sendGmail(domain, user, attach, false);
 		return ToJSON.attachToJSON(attach);
 	}
 	

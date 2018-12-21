@@ -18,10 +18,14 @@ import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesResources;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -44,6 +48,7 @@ import com.vaadin.polymer.paper.PaperInputElement;
 import com.vaadin.polymer.paper.PaperSliderElement;
 import com.vaadin.polymer.paper.PaperTextareaElement;
 import com.vaadin.polymer.paper.PaperToggleButtonElement;
+import com.vaadin.polymer.paper.widget.PaperIconButton;
 import com.vaadin.polymer.paper.widget.PaperInput;
 import com.vaadin.polymer.paper.widget.PaperToggleButton;
 import com.vaadin.polymer.vaadin.VaadinComboBoxElement;
@@ -52,6 +57,8 @@ import com.vaadin.polymer.vaadin.widget.VaadinUpload;
 import net.aonsolutions.polymer.aon.AonComboBoxElement;
 import net.aonsolutions.polymer.aon.AonIconsElement;
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
+import net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent;
+import net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler;
 
 public class Documental implements EntryPoint {
 	
@@ -186,7 +193,9 @@ public class Documental implements EntryPoint {
 			
 			@Override protected void onRefreshButtonClick() {}
 			@Override protected void onMoreOptionButtonClick() {}
-			@Override protected void onEditButtonClick() {}
+			@Override protected void onEditButtonClick() {
+				editSelectedDocument();
+			}
 			@Override protected void onDeleteButtonClick() {
 				deleteSelectedDocuments();
 			}
@@ -197,7 +206,9 @@ public class Documental implements EntryPoint {
 			@Override protected void onStatsButtonClick() {}
 			@Override protected void onFastFilterButtonClick() {}
 			@Override protected void onTitleClick() {}
-			@Override protected void onDownloadButtonClick() {}
+			@Override protected void onDownloadButtonClick() {
+				downloadSelectedDocument();
+			}
 			@Override protected void onSendButtonClick() {
 				sendSelectedDocuments();
 			}
@@ -211,10 +222,14 @@ public class Documental implements EntryPoint {
 		.setVisibleStatsButton(false));
 	}
 	
-	public void activeMultiselectionFunctions(Boolean active) {
+	public void activeMultiselectionFunctions(Integer size) {
 		AonToolbar t = (AonToolbar) toolbar.getWidget(0);
-		t.setVisibleSendButton(active);
-		t.setVisibleDeleteButton(active);
+		t.setVisibleSendButton(size> 0);
+		t.setVisibleDownloadButton(size == 1);
+		if(getAonData().getUser().hasDocumentManagerRole()) {
+			t.setVisibleEditButton(size == 1);
+			t.setVisibleDeleteButton(size > 0);
+		}
 	}
 	
 	void addFileClick() {
@@ -248,6 +263,26 @@ public class Documental implements EntryPoint {
 			@Override public void onFailure(Throwable caught) {}
 		});
 		
+		HorizontalPanel tagPanel = new HorizontalPanel();
+		
+		tagBox.addValueChangedHandler(new ValueChangedEventHandler() {
+			
+			@Override
+			public void onValueChanged(ValueChangedEvent event) {
+				JsLabel tag = tagBox.getSelectedItem().cast();
+				Boolean addTag = true;
+				for(Integer i = 0 ; i < tagList.size(); i++) {
+					if(tagList.get(i).getName().equals(tag.getName())) {
+						addTag = false;
+					}
+				}
+				if(addTag) {
+					tagList.add(tag);
+					tagPanel.add(buildTagPanel(tag));
+				}
+			}
+		});
+		
 		AonComboBox scopeBox = new AonComboBox();
 		scopeBox.setWidth("100%");
 		scopeBox.setLabel("\u00c1mbito");
@@ -278,6 +313,7 @@ public class Documental implements EntryPoint {
 		vp.setWidth("100%");
 		vp.add(categoryBox);
 		vp.add(tagBox);
+		vp.add(tagPanel);
 		vp.add(scopeBox);
 		vp.add(hp);
 		AonDialog dialog = new AonDialog("Nuevo Archivo", vp) {
@@ -287,7 +323,11 @@ public class Documental implements EntryPoint {
 			@Override
 			protected void onAccept() {
 				JsObject category = (JsObject) categoryBox.getSelectedItem();
-				JsObject tag = (JsObject) tagBox.getSelectedItem();
+				ids = "";
+				for(Integer i = 0 ; i< tagList.size(); i++) {
+					if(!"".equals(ids)) ids = ids + ","; 
+					ids = ids + tagList.get(i).getId();
+				}
 				JsObject scope = (JsObject) scopeBox.getSelectedItem();
 				for(Integer i = vp.getWidgetCount() - 1 ; i >= 0; i--){
 					vp.getWidget(i).removeFromParent();
@@ -297,7 +337,7 @@ public class Documental implements EntryPoint {
 						+ "&domain_id="+ aonData.getDomain().getId()
 						+ "&login="+ "system"
 						+ "&category="+ (category != null ? category.getId() : "")
-						+ "&tag=" + (tag != null ? tag.getId() : "")
+						+ "&tag=[" + ids +"]"
 						+ "&scope=" + (scope != null ? scope.getId() : "")
 						+ "&confidential=" + confidential.getChecked();
 				upload.setTarget(GWT.getModuleBaseURL() + "uploadDocumental"+ dataRequest);
@@ -323,6 +363,35 @@ public class Documental implements EntryPoint {
 		dialog.addAutoHidePartner(scopeBox.getElementById("overlay"));
 		dialog.getElement().getStyle().setWidth(310, Unit.PX);
 		dialog.center();
+	}
+	
+	LinkedList<JsLabel> tagList = new LinkedList<>();
+
+	private HorizontalPanel buildTagPanel(JsLabel tag) {
+		HorizontalPanel labelPanel = new HorizontalPanel();
+		labelPanel.getElement().getStyle().setPaddingLeft(5, Unit.PX);
+		Label label = new Label(tag.getName());
+		label.getElement().getStyle().setPadding(3, Unit.PX);
+		label.getElement().getStyle().setBackgroundColor("#ddd");
+		PaperIconButton icon = new PaperIconButton();
+		icon.setIcon("close");
+		icon.getElement().getStyle().setWidth(16, Unit.PX);
+		icon.getElement().getStyle().setHeight(16, Unit.PX);
+		icon.getElement().getStyle().setMargin(0, Unit.PX);
+		icon.getElement().getStyle().setPadding(0, Unit.PX);
+		icon.getElement().getStyle().setPaddingTop(4, Unit.PX);
+		icon.setNoink(true);
+		icon.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				tagList.remove(tag);
+				labelPanel.removeFromParent();
+			}
+		});
+		labelPanel.add(label);
+		labelPanel.add(icon);
+		return labelPanel;
 	}
 	
 	private void createSearchPanel(){
@@ -361,7 +430,6 @@ public class Documental implements EntryPoint {
 			@Override public void onFailure(Throwable caught) {}
 		});   
 	}
-	
 	
 	public void remove() {
 		dockLayoutPanel.removeFromParent();
@@ -402,6 +470,161 @@ public class Documental implements EntryPoint {
 		d.getElement().getStyle().setWidth(255, Unit.PX);
 		d.center();
 		
+	}
+
+	private void editSelectedDocument() {	
+		getSelectedAttach().stream().forEach(r -> {
+		getAPI().getAttachment().getAttach(r, new AsyncCallback<JSON<JsAttach>>() {
+				
+			@Override
+			public void onSuccess(JSON<JsAttach> js) {
+				JsAttach attach = js.getOneData();
+				PaperInput nameBox = new PaperInput();
+				nameBox.setLabel("Nombre");
+				nameBox.setWidth("100%");
+				nameBox.setList("as");
+				nameBox.setValue(attach.getTitle());
+				   
+				AonComboBox categoryBox = new AonComboBox();
+				categoryBox.setLabel("Categor\u00eda");
+				categoryBox.setWidth("100%");
+				categoryBox.setItemLabelPath("name");
+				categoryBox.setItemValuePath("name");
+				getAPI().getAttachment().getCategories(new AsyncCallback<JSON<JsLabel>>() {
+					
+					@Override
+					public void onSuccess(JSON<JsLabel> result) {
+						categoryBox.setItems(result.getData());
+						categoryBox.setValue(attach.getCategory().getName());
+					}
+							
+					@Override public void onFailure(Throwable caught) {}
+				});
+						
+				AonComboBox tagBox = new AonComboBox();
+				tagBox.setWidth("100%");
+				tagBox.setLabel("Etiqueta");
+				tagBox.setItemLabelPath("name");
+				tagBox.setItemValuePath("name");
+				getAPI().getAttachment().getTags(new AsyncCallback<JSON<JsLabel>>() {
+						
+					@Override
+					public void onSuccess(JSON<JsLabel> result) {
+						tagBox.setItems(result.getData());
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});
+				HorizontalPanel tagPanel = new HorizontalPanel();
+				JsArray<JsLabel> tags = attach.getTags();
+				for(Integer i = 0 ; i < tags.length(); i++) {
+					tagList.add(tags.get(i));
+					tagPanel.add(buildTagPanel(tags.get(i)));
+				}
+				
+				tagBox.addValueChangedHandler(new ValueChangedEventHandler() {
+					
+					@Override
+					public void onValueChanged(ValueChangedEvent event) {
+						JsLabel tag = tagBox.getSelectedItem().cast();
+						Boolean addTag = true;
+						for(Integer i = 0 ; i < tagList.size(); i++) {
+							if(tagList.get(i).getName().equals(tag.getName())) {
+								addTag = false;
+							}
+						}
+						if(addTag) {
+							tagList.add(tag);
+							tagPanel.add(buildTagPanel(tag));
+						}
+					}
+				});
+				AonComboBox scopeBox = new AonComboBox();
+				scopeBox.setWidth("100%");
+				scopeBox.setLabel("\u00c1mbito");
+				scopeBox.setItemLabelPath("name");
+				scopeBox.setItemValuePath("name");
+				getAPI().getAttachment().getScopes(new AsyncCallback<JSON<JsObject>>() {
+					
+					@Override
+					public void onSuccess(JSON<JsObject> result) {
+						scopeBox.setItems(result.getData());
+						scopeBox.setValue(attach.getScope().getName());
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});
+					
+				HorizontalPanel hp = new HorizontalPanel();
+				Label confidentialLabel = new Label("Confidencial");
+				confidentialLabel.getElement().getStyle().setPaddingTop(20, Unit.PX);
+				confidentialLabel.getElement().getStyle().setPaddingRight(10, Unit.PX);
+				confidentialLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);		
+				hp.add(confidentialLabel);
+								
+				PaperToggleButton confidential = new PaperToggleButton();
+				confidential.setChecked(attach.isConfidential());
+				confidential.getElement().getStyle().setPaddingTop(13, Unit.PX);
+				hp.add(confidential);
+				
+				VerticalPanel vp = new VerticalPanel();
+				vp.setWidth("100%");
+				vp.add(nameBox);
+				vp.add(categoryBox);
+				vp.add(tagBox);
+				vp.add(tagPanel);
+				vp.add(scopeBox);
+				vp.add(hp);
+				AonDialog dialog = new AonDialog("Editar Archivo", vp) {
+					
+					@Override protected void onCancel() {hide();}
+					
+					@Override
+					protected void onAccept() {
+						JSONObject json = new JSONObject();
+						json.put("name", new JSONString(nameBox.getValue()));
+						JsLabel categoryItem = (JsLabel) categoryBox.getSelectedItem().cast();
+						json.put("category", new JSONString(categoryItem != null ?  categoryItem.getId() + "" : ""));
+						ids = "";
+						for(Integer i = 0 ; i< tagList.size(); i++) {
+							if(!"".equals(ids)) ids = ids + ","; 
+							ids = ids + tagList.get(i).getId();
+						}
+						json.put("tag", new JSONString(ids));
+						JsLabel scopeItem = (JsLabel) scopeBox.getSelectedItem().cast();
+						json.put("scope", new JSONString(scopeItem != null ? scopeItem.getId() + "" : ""));
+						json.put("confidential", new JSONString(Boolean.toString(confidential.getChecked())));
+						String requestData = JsonUtils.stringify(json.getJavaScriptObject());
+						getAPI().getAttachment().updateAttach(r, requestData, new AsyncCallback<JsAttach>() {
+							
+							@Override
+							public void onSuccess(JsAttach result) {
+								createAttachListPanel();
+								hide();
+							}
+							
+							@Override public void onFailure(Throwable caught) {}
+						});
+					}	
+				};
+							
+				dialog.setAutoHideEnabled(true);
+				dialog.addAutoHidePartner(categoryBox.getElementById("overlay"));
+				dialog.addAutoHidePartner(tagBox.getElementById("overlay"));
+				dialog.addAutoHidePartner(scopeBox.getElementById("overlay"));
+				dialog.getElement().getStyle().setWidth(310, Unit.PX);
+				dialog.center();			
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+		});
+	}
+	
+	private void downloadSelectedDocument() {
+		getSelectedAttach().stream().forEach(r -> {
+			getAPI().getAttachment().download(r); 
+		});
 	}
 	
 	private void sendSelectedDocuments() {
