@@ -40,6 +40,7 @@ import com.esferalia.aon.occam.api.model.DateInterval;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @WebServlet(name = "AccountOperatingReport Excel Print ", urlPatterns = { "/aon_gwt_fiscal/roms/AccountOperatingReportExcelPrint" })
@@ -190,11 +191,15 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 		protected void headerRow() {
 			int intervals = report.getIntervals().size();
 			int columnsPerInterval = 2;
-			if (report.showRatios() ) {
-				columnsPerInterval = 5;	
-			}
-			if (report.showIncreasePercent() ) {
-				columnsPerInterval = 3;
+			if (report.getParams().isByMonth() ) {
+				columnsPerInterval = 1;
+			} else {
+				if (report.showRatios() ) {
+					columnsPerInterval = 5;	
+				}
+				if (report.showIncreasePercent() ) {
+					columnsPerInterval = 3;
+				}
 			}
 			int columns = 2 + (intervals * columnsPerInterval);
 			if (intervals > 1 && report.showIncreasePercent()) {
@@ -337,25 +342,27 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 			++rowCount;
 			
 			// ----------------------------------------------- ROW 6 - Intervals
-			row = sheet.createRow(rowCount);
-			mergeHeaderRegion(rowCount, rowCount, 0, 1);
-			CellUtil.createCell(row, cellCount, "", headerStyle);
-			cellCount = 2;
-			for (DateInterval inter : report.getIntervals()) {
-				if (report.showIncreasePercent() && cellCount == 2) {
-					mergeHeaderRegion(rowCount, rowCount, cellCount, cellCount+1);
-					CellUtil.createCell(row, cellCount, inter.getName(), columnHeaderStyle);
-					CellUtil.createCell(row, cellCount+1, "", columnHeaderStyle);
-					cellCount = cellCount + 1;
-				} else {
-					mergeHeaderRegion(rowCount, rowCount, cellCount, cellCount+columnsPerInterval-1);
-					CellUtil.createCell(row, cellCount, inter.getName(), columnHeaderStyle);
-					CellUtil.createCell(row, cellCount+1, "", columnHeaderStyle);
-					cellCount = cellCount + columnsPerInterval-1;
+			if (!report.getParams().isByMonth() ) {
+				row = sheet.createRow(rowCount);
+				mergeHeaderRegion(rowCount, rowCount, 0, 1);
+				CellUtil.createCell(row, cellCount, "", headerStyle);
+				cellCount = 2;
+				for (DateInterval inter : report.getIntervals()) {
+					if (report.showIncreasePercent() && cellCount == 2) {
+						mergeHeaderRegion(rowCount, rowCount, cellCount, cellCount+1);
+						CellUtil.createCell(row, cellCount, inter.getName(), columnHeaderStyle);
+						CellUtil.createCell(row, cellCount+1, "", columnHeaderStyle);
+						cellCount = cellCount + 1;
+					} else {
+						mergeHeaderRegion(rowCount, rowCount, cellCount, cellCount+columnsPerInterval-1);
+						CellUtil.createCell(row, cellCount, inter.getName(), columnHeaderStyle);
+						CellUtil.createCell(row, cellCount+1, "", columnHeaderStyle);
+						cellCount = cellCount + columnsPerInterval-1;
+					}
+					cellCount++;
 				}
-				cellCount++;
+				++rowCount;
 			}
-			++rowCount;
 			
 			// ----------------------------------------------- ROW 7 - Co9lumn Header
 			row = sheet.createRow(rowCount);
@@ -366,27 +373,32 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 			//CellUtil.createCell(row, cellCount, "", columnHeaderStyle);
 			cellCount = 2;
 			int iter = 0;
-			for (@SuppressWarnings("unused") DateInterval inter : report.getIntervals()) {
-				CellUtil.createCell(row, cellCount, "S. Deudor", columnHeaderStyle);
-				sheet.setColumnWidth(cellCount++, 12 * 256);
-				
-				CellUtil.createCell(row, cellCount, "S. Acreed", columnHeaderStyle);
-				sheet.setColumnWidth(cellCount++, 12 * 256);
-				
-				if (report.showRatios() ) {
-					CellUtil.createCell(row, cellCount, "% S/Vta.", columnHeaderStyle);
+			for (DateInterval inter : report.getIntervals()) {
+				if (report.getParams().isByMonth() ) {
+					CellUtil.createCell(row, cellCount, inter.getName(), columnHeaderStyle);
+					sheet.setColumnWidth(cellCount++, 12 * 256);
+				} else {
+					CellUtil.createCell(row, cellCount, "S. Deudor", columnHeaderStyle);
 					sheet.setColumnWidth(cellCount++, 12 * 256);
 					
-					CellUtil.createCell(row, cellCount, "% S/Com.", columnHeaderStyle);
+					CellUtil.createCell(row, cellCount, "S. Acreed", columnHeaderStyle);
 					sheet.setColumnWidth(cellCount++, 12 * 256);
-					
-					CellUtil.createCell(row, cellCount, "% S/Gst.", columnHeaderStyle);
-					sheet.setColumnWidth(cellCount++, 12 * 256);
-
-				}
-				if (report.showIncreasePercent() && iter != 0) {
-					CellUtil.createCell(row, cellCount, "% Incrm.", columnHeaderStyle);
-					sheet.setColumnWidth(cellCount++, 12 * 256);
+				
+					if (report.showRatios() ) {
+						CellUtil.createCell(row, cellCount, "% S/Vta.", columnHeaderStyle);
+						sheet.setColumnWidth(cellCount++, 12 * 256);
+						
+						CellUtil.createCell(row, cellCount, "% S/Com.", columnHeaderStyle);
+						sheet.setColumnWidth(cellCount++, 12 * 256);
+						
+						CellUtil.createCell(row, cellCount, "% S/Gst.", columnHeaderStyle);
+						sheet.setColumnWidth(cellCount++, 12 * 256);
+	
+					}
+					if (report.showIncreasePercent() && iter != 0) {
+						CellUtil.createCell(row, cellCount, "% Incrm.", columnHeaderStyle);
+						sheet.setColumnWidth(cellCount++, 12 * 256);
+					}
 				}
 				iter++;
 			}
@@ -420,12 +432,19 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 				AccountOperatingStatement aos = report.get(account.getCode(),inter);
 				Double db = (aos != null)?aos.getDebitBalance() : 0.0;
 				Double ub = (aos != null)?aos.getUnpaidBalance() : 0.0;
-				cell = addCell(db);
-				if (title) cell.setCellStyle(titleCellStyle);
-				++col;
-				cell = addCell(ub);
-				if (title) cell.setCellStyle(titleCellStyle);
-				++col;
+				if (report.getParams().isByMonth() ) {
+					Double saldo = (aos != null)? AonMathUtils.round( aos.getUnpaidBalance() - aos.getDebitBalance() ) : 0.0;
+					cell = addCell(saldo);
+					if (title) cell.setCellStyle(titleCellStyle);
+				} else {
+					cell = addCell(db);
+					if (title) cell.setCellStyle(titleCellStyle);
+					++col;
+					cell = addCell(ub);
+					if (title) cell.setCellStyle(titleCellStyle);
+					++col;
+				}
+				
 				if (report.showRatios()) {
 					double percent = (aos != null)?aos.getSalesRatio() : 0.0;
 					cell = addCell(percent);

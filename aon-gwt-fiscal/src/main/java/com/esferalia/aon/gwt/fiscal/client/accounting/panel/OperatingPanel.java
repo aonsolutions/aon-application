@@ -150,7 +150,6 @@ public class OperatingPanel extends ScrollPanel implements HasSelectionHandlers<
 								col++;	
 								
 								tab.setWidget(1, col, new Label(" % S/Gst."));
-								tab.getColumnFormatter().setWidth( col,  "60px");
 								tab.getCellFormatter().setStyleName(1, col, AON.AON_CSS.aonReportTableHeader());
 								tab.getCellFormatter().addStyleName(1, col, AON.AON_CSS.aonTextCenter());
 								col++;
@@ -235,6 +234,7 @@ public class OperatingPanel extends ScrollPanel implements HasSelectionHandlers<
 									String percentText = AonMathUtils.isNotZero(percent)?AON.FMT.format(percent) + AonStringUtils.PERCENT:AonStringUtils.SPACE;
 									tab.setWidget(row, col, new Label(percentText));
 									if (title) tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonReportTableBold());
+									tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextRight());
 									tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBackgroundDisabled());
 									col++;
 									
@@ -242,6 +242,7 @@ public class OperatingPanel extends ScrollPanel implements HasSelectionHandlers<
 									percentText = AonMathUtils.isNotZero(percent)?AON.FMT.format(percent) + AonStringUtils.PERCENT:AonStringUtils.SPACE;
 									tab.setWidget(row, col, new Label(percentText));
 									if (title) tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonReportTableBold());
+									tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextRight());
 									tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBackgroundDisabled());
 									col++;
 		
@@ -249,6 +250,7 @@ public class OperatingPanel extends ScrollPanel implements HasSelectionHandlers<
 									percentText = AonMathUtils.isNotZero(percent)?AON.FMT.format(percent) + AonStringUtils.PERCENT:AonStringUtils.SPACE;
 									tab.setWidget(row, col, new Label(percentText));
 									if (title) tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonReportTableBold());
+									tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextRight());
 									tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBackgroundDisabled());
 									col++;
 								}

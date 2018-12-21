@@ -63,6 +63,7 @@ import com.esferalia.aon.occam.server.accounting.AccMiningMVELContext;
 import com.esferalia.aon.occam.server.accounting.IBalanceKey;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableDouble;
+import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -70,6 +71,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountStatementDAO {
 	
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");	
 	private static final DateFormat MONTH_DATE_FORMAT = new SimpleDateFormat("MM/yyyy");	
 	private static final com.esferalia.aon.jooq.tables.Account DET_ACCOUNT = ACCOUNT.as("detAcc");;
 	private static final com.esferalia.aon.jooq.tables.Account BAL_ACCOUNT = ACCOUNT.as("balAcc");
@@ -414,17 +416,33 @@ public class AccountStatementDAO {
 			if (report.getParams().getFromDate() != null && report.getParams().getFromDate().before(start)) {
 				start = report.getParams().getFromDate();
 			}
-			int month = AonDateUtils.getMonth(start);
-			int year = AonDateUtils.getYear(start);
 			Date end = report.getSelectedPeriod().getDeadline();
 			if (report.getParams().getToDate() != null && report.getParams().getToDate().before(end)) {
 				end = report.getParams().getToDate();
 			}
+			while (start.before(end)) {
+				Date lastDay = AonDateUtils.getMonthLastDay(start);
+				DateInterval inter = new DateInterval()
+						.setStart(start)
+						.setEnd(lastDay)
+						.setName( MONTH_DATE_FORMAT.format(start) );
+				report.put(inter,new  AccountOperatingStatement()
+						.setAccount( new AccountOperatingAccount()
+								.setType( AccountOperatingStatementType.RESULT )
+								.setCode(AccountOperatingStatementType.RESULT.toString())
+								.setDescription(AccountOperatingStatementType.RESULT.getDescription()))
+							.setMonth( inter.getName() ));
+				start = AonDateUtils.addMonths(start, 1);
+				start = AonDateUtils.getMonthFirstDay(start);
+			}
+			
+/*			
 			int toMonth = AonDateUtils.getMonth(end);
 			if (month > toMonth) {
 				toMonth += 11;
 			}
 			for (;month <= toMonth; month++) {
+				System.out.println( month);
 				if (month > 11) {
 					month = 0;
 					year = year + 1;
@@ -441,9 +459,8 @@ public class AccountStatementDAO {
 								.setCode(AccountOperatingStatementType.RESULT.toString())
 								.setDescription(AccountOperatingStatementType.RESULT.getDescription()))
 							.setMonth( inter.getName() ));
-
 			}
-			
+*/
 		}
 		if (report.showRatios()) {
 			calculateRatios(report);

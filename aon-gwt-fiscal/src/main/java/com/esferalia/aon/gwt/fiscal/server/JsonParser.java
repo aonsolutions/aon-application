@@ -132,6 +132,37 @@ public class JsonParser {
 		if (balanceType != null) {
 			params.setBalanceType( BalanceType.safeValueOf( balanceType.intValue() ));
 		}
+		// *******************  ACCOUNT LEVEL ******************* 
+		Long accountLevel = (Long) jsonParams.get(IRequestParamsNames.LEVEL);
+		if (accountLevel != null) {
+			params.setLevel( accountLevel.intValue() );
+		}
+		// *******************  PERCENTS ENABLED ******************* 
+		Long percentsEnabled  = (Long) jsonParams.get(IRequestParamsNames.PERCENTS_ENABLED);
+		if (percentsEnabled != null) {
+			params.setPercentsEnabled(percentsEnabled==1);
+		}
+		// *******************  BY_MONTH ******************* 
+		Long byMonth  = (Long) jsonParams.get(IRequestParamsNames.BY_MONTH);
+		if (byMonth != null) {
+			params.setByMonth(byMonth==1);
+		}
+		// *******************  LOW_LEVEL_ACCOUNT_VISIBLE ******************* 
+		Long lowLwvelVisible = (Long) jsonParams.get(IRequestParamsNames.LOW_LEVEL_ACCOUNT_VISIBLE);
+		if (lowLwvelVisible != null) {
+			params.setLowLevelAccountVisible(lowLwvelVisible==1);
+		}
+		// *******************  NO_ACTIVITY_ACCOUNT_VISIBLE ******************* 
+		Long noActivityAccountVisible = (Long) jsonParams.get(IRequestParamsNames.NO_ACTIVITY_ACCOUNT_VISIBLE);
+		if (noActivityAccountVisible != null) {
+			params.setNoActivityAccountVisible(noActivityAccountVisible==1);
+		}
+		
+//		IRequestParamsNames.ACCOUNT,params.getAccount().getId() == null? JSON_NULL : new JSONNumber( params.getAccount().getId()));
+//		IRequestParamsNames.ACCOUNT_CODE,AonStringUtils.isBlank(params.getAccount().getCode())? JSON_NULL : new JSONString( params.getAccount().getCode()));
+//		IRequestParamsNames.ACCOUNT_DESCRIPTION,AonStringUtils.isBlank(params.getAccount().getDescription())? JSON_NULL : new JSONString( params.getAccount().getDescription()));
+//		IRequestParamsNames.DOCUMENT,AonStringUtils.isBlank(params.getDocumentNumber())? JSON_NULL : new JSONString( params.getDocumentNumber()));
+//		IRequestParamsNames.COST_CENTERS,JSON_NULL);
 		return params;
 	}
 }
