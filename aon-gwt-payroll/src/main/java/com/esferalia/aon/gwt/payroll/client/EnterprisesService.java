@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
+import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -67,6 +69,8 @@ public interface EnterprisesService extends RemoteService {
 	List<Cost> getEnterprisesCosts(String domain, List<Integer> enterpriseIds); 
 	
 	List<Extra> getWorkplacesExtras(String domain, List<Integer> workplaceIds) ;
+
+	List<Employee> getCCCEmployees(String domain, Date month, List<Integer> cccIds); 
 
 	Integer getParentDomain(String domain );
 

@@ -21,6 +21,7 @@ import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraftObject.EventMetaD
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
+import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.Category;
 import com.esferalia.aon.gwt.payroll.shared.CategoryDraft;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
@@ -86,6 +87,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 		void onEnterpriseSelected(Enterprise enterprise);
 
+		void onCCCSelected(CCC ccc);
+
 		void onActivitySelected(Activity activity);
 
 		void onWorkplaceSelected(Workplace workplace);
@@ -123,6 +126,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		void onAgreementDraftSelected(AgreementDraftObject agreementDraftObject);
 
 		void onEmployeeContextMenu(Employee employee, ContextMenuEvent event);
+
+		void onCCCContextMenu(CCC ccc, ContextMenuEvent event);
 
 		void onWorkplaceContextMenu(Workplace workplace, ContextMenuEvent event);
 
@@ -311,6 +316,11 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 				String description = activity.getDescription();
 				TreeItem activityItem = addImageItem(enterpriseItem, description, images.ine());
 				activityItem.setUserObject(activity);
+				
+				activity.getCccs().forEach( (ccc ) ->{
+					TreeItem cccItem = addImageItem(activityItem, ccc.getRegime() + ccc.getGeozone() + ccc.getCode(), images.segsocial());
+					cccItem.setUserObject(ccc);
+				} );
 			}
 		}
 
@@ -383,6 +393,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			onSalaryPreviewSelected((SalaryPreviewDocument) userObject);
 		} else if (userObject instanceof Activity) {
 			onActivitySelected((Activity) userObject);
+		} else if (userObject instanceof CCC) {
+			onCCCSelected((CCC) userObject);
 		}
 		// I apologize about this. Inheritance it's like Kate Beckinsale. Due
 		// 'SalariesDocuments' extends 'CostDocuments' its test must be first.
@@ -481,6 +493,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			onWorkplaceContextMenu((Workplace) userObject, event);
 		} else if (userObject instanceof Employee) {
 			onEmployeeContextMenu((Employee) userObject, event);
+		} else if (userObject instanceof CCC) {
+			onCCCContextMenu((CCC) userObject, event);
 		} else if (userObject instanceof SalaryPreviewDocument) {
 		} else if (userObject instanceof Activity) {
 		} else if (userObject instanceof CostDocuments) {
@@ -1237,6 +1251,18 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	private void onActivitySelected(Activity activity) {
 		for (Listener listener : listeners) {
 			listener.onActivitySelected(activity);
+		}
+	}
+
+	private void onCCCSelected(CCC ccc) {
+		for (Listener listener : listeners) {
+			listener.onCCCSelected(ccc);
+		}
+	}
+
+	private void onCCCContextMenu(CCC ccc, ContextMenuEvent event) {
+		for (Listener listener : listeners) {
+			listener.onCCCContextMenu(ccc, event);
 		}
 	}
 

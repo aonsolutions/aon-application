@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import static com.esferalia.aon.gwt.payroll.shared.CalculateService.WORKPLACES;
+import static com.esferalia.aon.watson.util.AonStringUtils.isBlank;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,10 +23,14 @@ import com.esferalia.aon.gwt.common.client.metrics.StatsEventLogger;
 import com.esferalia.aon.gwt.common.client.widget.DetailPanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
+import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.IndeterminateTask;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasId;
-import com.esferalia.aon.gwt.payroll.client.MainCreta.BasesCCCCretaRequestCommand;
+import com.esferalia.aon.gwt.payroll.client.MainCreta.AbstractBaseCretaDetail;
+import com.esferalia.aon.gwt.payroll.client.MainCreta.AbstractCCCCretaRequestCommand;
+import com.esferalia.aon.gwt.payroll.client.MainCreta.SyncCallback;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptEvent;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptHandler;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
@@ -33,8 +38,13 @@ import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CalculateService;
 import com.esferalia.aon.gwt.payroll.shared.CretaService;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.File;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsBases;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsBasesResult;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsEmployee;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsFile;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsRespuesta;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsTrabajadoresYTramos;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
@@ -50,6 +60,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -71,9 +82,9 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.MenuItemSeparator;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
-import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
@@ -1005,6 +1016,27 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	}
 
+	class CCCCretaRequestCommand extends CreateRequestCommand implements CCCCommand{
+
+		public CCCCretaRequestCommand(File file) {
+			super(file, employeeDetail);
+
+			dialog.selectLabel.setVisible(false);
+			dialog.selectDataGrid.setVisible(false);
+		}
+
+		@Override
+		protected String getDescription(CCC ccc) {
+			return Province.getName(ccc.getGeozone()) + " " + ccc.getCode();
+		}
+		
+		@Override
+		public void setCCC(CCC ccc) {
+			dialog.setData(Collections.singletonList(ccc));
+			dialog.setSelectedData(Collections.singletonList(ccc));
+		}
+
+	}
 	class WorkplaceDBACommand extends DBACommand implements WorkplaceCommand  {
 		
 		protected Workplace workplace;
@@ -1038,6 +1070,30 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	}
 	
+	private class CCCDBACommand extends EmployeeTree.DBACommand implements CCCCommand{
+
+		public CCCDBACommand() {
+			super(employeeDetail);
+
+		}
+
+		@Override
+		protected String getDescription(CCC ccc) {
+			return Province.getName(ccc.getGeozone()) + " " + ccc.getCode();
+		}
+		
+		@Override
+		public void setCCC(CCC ccc) {
+			setData(Collections.singletonList(ccc));
+			setSelectedData(Collections.singletonList(ccc));
+			setBankAccounts(enterprise.getBankAccounts());
+
+			if (AonStringUtils.isBlank(getHolder()))
+				setHolder(enterprise.getName());
+		}
+
+	}
+
 	public interface EnterpriseCommand extends ScheduledCommand{
 		void setEnterprise(Enterprise enterprise);
 	}
@@ -1271,6 +1327,88 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 					salaryResult.getEndDate());
 		}
 	}
+
+	private static interface CCCCommand extends ScheduledCommand {
+		void setCCC(CCC ccc);
+	}
+	
+	protected class BasesCCCCretaRequestCommand extends MainCreta.AbstractCCCCretaRequestCommand
+	implements CretaRequestDialog.Callback<Employee>, CCCCommand {
+
+		public BasesCCCCretaRequestCommand(File file) {
+			super(file, EmployeeTree.this.employeeDetail);
+		}
+		
+		@Override
+		protected void onMonthChanged(Date month) {
+			
+			DomainEnterprisesServiceAsync.newInstance().getCCCEmployees(month, 
+					Collections.singletonList(getCCC().getId()), 
+					new AsyncCallback<List<Employee>>() {
+						
+						@Override
+						public void onFailure(Throwable caught) {
+						}
+
+						@Override
+						public void onSuccess(List<Employee> result) {
+							setData(result);
+						}
+					} );
+		}
+	}
+	
+	private class CCCContextMenu extends ContextMenu {
+
+		CCCCommand cccCommands[] = new CCCCommand[7];
+
+		public CCCContextMenu() {
+
+			addItem("SLD-Fichero de Solicitud de Trabajadores y Tramos",
+					cccCommands[0] = new CCCCretaRequestCommand(CretaService.File.SOLICITUD_TRABAJADORES_TRAMOS),
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			addItem("SLD-Fichero de Solicitud de Borrador",
+					cccCommands[1] = new CCCCretaRequestCommand(CretaService.File.SOLICITUD_BORRADOR),
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			addItem("SLD-Fichero de Solicitud de Confirmaci\u00F3n",
+					cccCommands[2] = new CCCCretaRequestCommand(CretaService.File.SOLICITUD_CONFIRMACION),
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			addItem("SLD-Fichero de Solicitud de C\u00E1lculos",
+					cccCommands[3] = new CCCCretaRequestCommand(CretaService.File.SOLICITUD_CALCULOS),
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			addItem("SLD-Fichero de Comunicaci\u00F3n de Datos Bancarios", 
+					cccCommands[4] = new CCCDBACommand(),
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			addSeparator();
+			addItem("SLD-Fichero de Bases (Desde las n\u00F3minas en AON Solutions)",
+					cccCommands[5] = new BasesCCCCretaRequestCommand(File.BASES) { // new MainCCCCretaRequestCommand(File.BASES){
+						@Override
+						protected void onRequestDone(String json, int fromMonth, int fromYear, int toMonth,
+								int toYear, String tipo, Collection<CCC> cccs) {
+							JsBasesResult result = showBases(json, detailPanel, this);
+							showResults(result, 
+									resultsPanel, 
+									r -> { /*TODO: */},  
+									r -> showResultsPanel() );
+						}				
+						
+					},
+					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+//			addItem("SLD-Fichero de Bases (Desde el fichero de Trabajadores y Tramos)",
+//					cccCommands[6] = new CCCCreateResponseCommand(File.BASES, File.TRABAJADORES_TRAMOS),
+//					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+			addSeparator();
+			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME, AON.AON_ICON_CMD_BUTTON);
+		}
+
+		void setCCC(CCC ccc) {
+			for (CCCCommand cmd : cccCommands)
+				if (cmd != null)
+					cmd.setCCC(ccc);
+		}
+
+	}
+	
 
 	class WorkplaceContextMenu extends ContextMenu {
 
@@ -1541,6 +1679,204 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		}
 	}
 
+	private class BaseCretaDetail extends AbstractBaseCretaDetail {
+		
+		public BaseCretaDetail() {
+			super(EmployeeTree.this.employeeDetail, 
+				EmployeeTree.this.resultsPanel, 
+				EmployeeTree.this::reftification,
+				EmployeeTree.this::showResultsPanel);
+		}
+
+		@Override
+		protected String getDescription(String ccc) {
+			return null;
+		}
+
+		@Override
+		protected <T extends JsFile> List<T> filter(Collection<T> jsFiles) {
+			return null;
+		}
+	}
+	
+	private class CCCCretaDetail extends BaseCretaDetail {
+
+		private CCC ccc;
+		
+		public void setCCC(CCC ccc) {
+			this.ccc = ccc;
+		}
+
+		@Override
+		protected <T extends JsFile> List<T> filter(Collection<T> jsFiles) {
+			List<T> filtered = new ArrayList<T>();
+
+			for (T jsFile : jsFiles)
+				if (MainCreta.accept(ccc, jsFile.getCCC()))
+					filtered.add(jsFile);
+			
+			return filtered;
+		}
+
+		@Override
+		protected String getDescription(String fullccc) {
+			return MainCreta.getDescription(ccc, fullccc);
+		}
+
+		@Override
+		void onClickBorradorButton(ClickEvent e) {
+			onRequestCommand(File.SOLICITUD_BORRADOR);
+		}
+
+		@Override
+		void onClickConfirmacionButton(ClickEvent e) {
+			onRequestCommand(File.SOLICITUD_CONFIRMACION);
+		}
+
+		@Override
+		void onClickTrabajadoresYTramosButton(ClickEvent e) {
+			onRequestCommand(File.SOLICITUD_TRABAJADORES_TRAMOS);
+		}
+
+		@Override
+		void onClickDBAButton(ClickEvent e) {
+			CCCDBACommand cmd = new CCCDBACommand();
+			cmd.setCCC(ccc);
+			cmd.execute();
+		}
+
+		protected void onRequestCommand(File file) {
+			CCCCretaRequestCommand cmd = new CCCCretaRequestCommand(file);
+			cmd.setCCC(ccc);
+			cmd.execute();
+		}
+
+		@Override
+		String getEmployeeFullName(JsEmployee jsEmployee) {
+			for ( Employee e : ccc.getEmployees() )
+				if ( jsEmployee.getNaf().equals(e.getSocialSecurity())) 
+					return e.getFullname();
+			
+			return super.getEmployeeFullName(jsEmployee);
+		}
+	}
+
+	
+	
+	private class EmployeeTreeSyncCallback implements SyncCallback {
+
+		private IndeterminateTask syncTask ;
+		private List<JsBases> jsBasess;
+		private List<JsRespuesta> jsRespuestas;
+		private List<JsTrabajadoresYTramos> jsTrabajadoresYTramoss ;
+		
+		public EmployeeTreeSyncCallback(IndeterminateTask syncTask) {
+			this.syncTask = syncTask;
+			this.jsBasess = new ArrayList<JsBases>(5);
+			this.jsRespuestas = new ArrayList<JsRespuesta>(5);
+			this.jsTrabajadoresYTramoss = new ArrayList<JsTrabajadoresYTramos>(5);
+		}
+		
+		@Override
+		public void onEnd() {
+			syncTask.messageChanged("Sincronizaci\u00F3n completada");
+			syncTask.finished();
+			closeFootPanel();
+			//MainCreta.this.enterprises.refresh();
+			
+			if ( !jsTrabajadoresYTramoss.isEmpty() )
+				MainCreta.add(File.TRABAJADORES_TRAMOS, jsTrabajadoresYTramoss.toArray(new JsTrabajadoresYTramos[jsTrabajadoresYTramoss.size()]));
+			if ( !jsRespuestas.isEmpty() )
+				MainCreta.add(File.RESPUESTA, jsRespuestas.toArray(new JsRespuesta[jsRespuestas.size()]));
+			try {
+				if ( !jsBasess.isEmpty() )
+					MainCreta.add(File.BASES, jsBasess.toArray(new JsBases[jsBasess.size()]));
+			} catch ( Throwable t ) {
+			}
+			
+			//MainCreta.this.enterprises.refresh();
+			
+			jsBasess.clear();
+			jsRespuestas.clear();
+			jsTrabajadoresYTramoss.clear();
+			
+			EmployeeTree.this.cccCretaDetail.onTrabajadoresYTramos();
+			
+
+			
+		}
+
+		@Override
+		public void onBegin() {
+			syncTask.setDescription("Sincronizando mensajes");
+		}
+
+		@Override
+		public void onMsg(String msg) {
+			syncTask.messageChanged(msg);
+		}
+
+		@Override
+		public void onError(Throwable caught) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void onBases(JsBases jsBases ){
+			syncTask.messageChanged(
+					File.BASES.getFilename()
+					+ " " + Province.getName(jsBases.getCCC().substring(4, 6))
+					+ " (" + jsBases.getCCC().substring(6) + ")"
+					+ " Sincronizado"
+					) ;
+			// TODO:
+			jsBasess.add(jsBases);
+			if ( jsBasess.size() < 5) 
+				return;
+			
+			MainCreta.add(File.BASES, jsBasess.toArray(new JsBases[5]));
+			jsBasess.clear();
+		}
+		
+		@Override
+		public void onRespuesta(JsRespuesta jsRespuesta ){
+			syncTask.messageChanged(
+					File.RESPUESTA.getFilename()
+					+ " " + jsRespuesta.getDate()
+					+ " " + jsRespuesta.getType() 
+					+ " " + Province.getName(jsRespuesta.getCCC().substring(4, 6))
+					+ " (" + jsRespuesta.getCCC().substring(6) + ")"
+					+ " Sincronizado"
+					) ;
+
+			jsRespuestas.add(jsRespuesta);
+			if ( jsRespuestas.size() < 5) 
+				return;
+			
+			MainCreta.add(File.RESPUESTA, jsRespuestas.toArray(new JsRespuesta[5]));
+			jsRespuestas.clear();
+		
+		}
+
+		@Override
+		public void onTrabajadoresYTramos(JsTrabajadoresYTramos jsTrabajadoresYTramos) {
+			syncTask.messageChanged(
+					File.TRABAJADORES_TRAMOS.getFilename()
+					+ " " + jsTrabajadoresYTramos.getDate()
+					+ " " + jsTrabajadoresYTramos.getType() 
+					+ " " + Province.getName(jsTrabajadoresYTramos.getCCC().substring(4, 6))
+					+ " (" + jsTrabajadoresYTramos.getCCC().substring(6) + ")"
+					+ " Sincronizado"
+					) ;
+			jsTrabajadoresYTramoss.add(jsTrabajadoresYTramos);
+			if ( jsTrabajadoresYTramoss.size() < 5) 
+				return;
+			MainCreta.add(File.TRABAJADORES_TRAMOS, jsTrabajadoresYTramoss.toArray(new JsTrabajadoresYTramos[5]));
+			
+			jsTrabajadoresYTramoss.clear();
+		}
+	}
+
 	private static EmployeeTree singlenton;
 
 	interface Binder extends UiBinder<Widget, EmployeeTree> {
@@ -1591,7 +1927,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private FileEditor fileEditor;
 
 	private ResultsPanel resultsPanel;
+	private ProgressPanel progressPanel;
 
+	private CCCContextMenu cccContextMenu;
 	private EmployeeContextMenu employeeContextMenu;
 	private WorkplaceContextMenu workplaceContextMenu;
 	private EnterpriseContextMenu enterpriseContextMenu;
@@ -1609,13 +1947,16 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private MenuItem pasteItem;
 
 	private Storage storage;
-
+	
+	// Cret@
+	private CCCCretaDetail cccCretaDetail;
 
 	/**
 	 * This method constructs the application user interface by instantiating
 	 * controls and hooking up event handler.
 	 */
 	public void onModuleLoad() {
+		
 		logEvent("start");
 		// Inject rich styles.
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
@@ -1808,6 +2149,14 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 //		jsf.activitySelected(activity.getId());
 		this.activity = activity;
 	}
+	
+	@Override
+	public void onCCCSelected(CCC ccc) {
+
+		getCCCCretaDetail().setCCC(ccc);
+		getCCCCretaDetail().onTrabajadoresYTramos();
+		employeeDetail.setWidget(getCCCCretaDetail());
+	}
 
 	@Override
 	public void onSalariesSelected(SalaryDocuments docs) {
@@ -1880,6 +2229,16 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			SalaryPreviewDocument salaryPreviewDocument) {
 		employeeDetail.setWidget(getSalaryPreview());
 		getSalaryPreview().setSalaryPreviewDocument(salaryPreviewDocument);
+	}
+
+	@Override
+	public void onCCCContextMenu(CCC ccc,
+			ContextMenuEvent event) {
+		NativeEvent nativeEvent = event.getNativeEvent();
+		getCCCContextMenu().setPopupPosition(nativeEvent.getClientX(),
+				nativeEvent.getClientY());
+		getCCCContextMenu().setCCC(ccc);
+		getCCCContextMenu().show();
 	}
 
 	@Override
@@ -2033,9 +2392,19 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		tab.addStyleName(AON.AON_ICON_TIME);
 		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
 		EmployeeTree.this.footTabPanel.add(EmployeeTree.this.resultsPanel, tab);
+		footTabPanel.selectTab(resultsPanel);
 		EmployeeTree.this.splitLayoutPanel.setWidgetSize(
 				EmployeeTree.this.footPanel, Window.getClientHeight() / 4);
 
+	}
+
+	private void showProgressPanel() {
+		InlineLabel tab = new InlineLabel("Progreso");
+		tab.addStyleName(AON.AON_ICON_PROGRESS_BAR);
+		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
+		footTabPanel.add(progressPanel, tab);
+		footTabPanel.selectTab(progressPanel);
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
 	}
 
 	private ITEditor getIt() {
@@ -2134,6 +2503,26 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			activityDraft = new ActivityDraft();
 		return activityDraft;
 	}
+	
+	private CCCCretaDetail getCCCCretaDetail() {
+		if ( cccCretaDetail == null ) {
+			cccCretaDetail = new CCCCretaDetail();
+			
+			progressPanel = new ProgressPanel();
+			
+			progressPanel.addAttachHandler(e ->  {
+				// Synchronize cret@ messages. 
+				IndeterminateTask syncTask = new IndeterminateTask();
+				syncTask.setDescription("Sincronizando mensajes");
+				progressPanel.showIndeterminateTask(syncTask);
+				MainCreta.sync( new EmployeeTreeSyncCallback(syncTask));
+			});
+			showProgressPanel();
+
+
+		}
+		return cccCretaDetail;
+	}
 
 	private EmployeeEventsDraft getEmployeeEventsDraft() {
 		if (employeeEventsDraft == null)
@@ -2208,6 +2597,14 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		return workplaceContextMenu;
 	}
 
+	private CCCContextMenu getCCCContextMenu() {
+
+		if (cccContextMenu == null)
+			cccContextMenu = new CCCContextMenu();
+
+		return cccContextMenu;
+	}
+
 	private Employee getClipboardEmployee() {
 
 		if (storage.getItem(EMPLOYEE) != null) {
@@ -2217,6 +2614,24 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	}
 	
+	public boolean isReftification() {
+		return 
+		(( CretaResults ) resultsPanel.getChild())
+		.getParameter(CretaService.Parameter.INDICADOR_RECTIFICACION)
+		.map( s -> "on".equalsIgnoreCase(s))
+		.orElse(false)
+		;
+	}
+
+	private void reftification(Void v) { 
+		MainCreta.run(Collections.singletonMap(CretaService.Parameter.INDICADOR_RECTIFICACION, isReftification() ? "off" : "on"), resultsPanel);
+	}
+
+	private void showResultsPanel(Void v) {
+		showResultsPanel();
+	}
+	
+
 	// ------------------------------------------------------ Protected methods
 	
 	protected static JsBasesResult showBases(String json , DetailPanel detailPanel) {
@@ -2277,6 +2692,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		return result;
 	}
 
+	protected static JsBasesResult showBases(String json , DetailPanel detailPanel, AbstractCCCCretaRequestCommand cretaCommand) {
+		JsBasesResult result = eval("(" + json + ")");
+		showBases(result, detailPanel, cretaCommand);
+		return result;
+	}
+
 	protected static void showBases(CretaService.JsBasesResult result, DetailPanel detailPanel, ClickHandler clickHandler) {
 		MergeEditor mergeEditor = new MainCreta.BasesMergeEditor();
 		mergeEditor.setOrig(result.getBasesFile());
@@ -2326,6 +2747,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	}
 
 	protected static void showBases(CretaService.JsBasesResult result, DetailPanel detailPanel, BasesCCCCretaRequestCommand cretaCommand) {
+		showBases(result, detailPanel, e->cretaCommand.reexecute(d-> {d.reftificationMarkCheckBox.setValue(!result.isRectifying());}));
+	}
+
+	protected static void showBases(CretaService.JsBasesResult result, DetailPanel detailPanel, AbstractCCCCretaRequestCommand cretaCommand) {
 		showBases(result, detailPanel, e->cretaCommand.reexecute(d-> {d.reftificationMarkCheckBox.setValue(!result.isRectifying());}));
 	}
 

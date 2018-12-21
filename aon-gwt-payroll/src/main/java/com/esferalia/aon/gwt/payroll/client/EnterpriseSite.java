@@ -11,16 +11,15 @@ import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.DetailPanel;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
+import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -200,6 +199,11 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	}
 
 	@Override
+	public void onCCCSelected(CCC ccc) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
 	public void onActivitySelected(Activity activity) {
 		// TODO Auto-generated method stub
 	}
@@ -209,7 +213,12 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 			SalaryPreviewDocument salaryPreviewDocument) {
 		// TODO Auto-generated method stub
 	}
-
+	
+	@Override
+	public void onCCCContextMenu(CCC ccc, ContextMenuEvent event) {
+		// TODO Auto-generated method stub
+	}
+	
 	@Override
 	public void onWorkplaceContextMenu(Workplace workplace,
 			ContextMenuEvent event) {

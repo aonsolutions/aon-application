@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.codemirror.client.ui.CodeMirror.Pos;
@@ -309,8 +310,14 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		results.run();
 	}
 	
+	public static void run(Map<CretaService.Parameter, String> params, ResultsPanel resultsPanel) {
+		CretaResults results = ( CretaResults ) resultsPanel.getChild();
+		for ( Map.Entry<CretaService.Parameter, String> entry: params.entrySet() )
+			results.setParameter(entry.getKey(), entry.getValue());
+		results.run();
+	}
 
-	public void reftification() {
+	public void reftification(Void v) {
 		run(Collections.singletonMap(CretaService.Parameter.INDICADOR_RECTIFICACION, isReftification() ? "off" : "on"));
 	}
 	
@@ -422,6 +429,10 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		footTabPanel.add(resultsPanel, tab);
 		footTabPanel.selectTab(resultsPanel);
 		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
+	}
+
+	private void showResultsPanel(Void v) {
+		showResultsPanel();
 	}
 
 	private void showProgressPanel() {
@@ -565,8 +576,29 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			submit(SaveService.SAVE_URL+ "/" + CretaService.File.BASES, mergeArea.getText());
 		}
 	}
-	private abstract class BaseCretaDetail extends CretaDetail {
-
+	protected static abstract class AbstractBaseCretaDetail extends CretaDetail {
+		
+		interface Callback {
+		    void callback() throws Exception;
+		}
+		
+		private DetailPanel detailPanel;
+		private ResultsPanel resultsPanel;
+		private Consumer<Void> showResults;
+		private Consumer<Void> onReftificativa;
+		
+		public AbstractBaseCretaDetail(
+				DetailPanel detailPanel, 
+				ResultsPanel resultsPanel,
+				Consumer<Void> onReftificativa,
+				Consumer<Void> showResults
+				) {
+			this.detailPanel = detailPanel;
+			this.resultsPanel = resultsPanel;
+			this.onReftificativa = onReftificativa;
+			this.showResults = showResults;
+		}
+		
 		@Override
 		public void onBases(CretaService.JsBasesResult result) {
 			
@@ -588,7 +620,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			CretaResults cretaResults = new CretaResults() {
 				@Override
 				protected void onBases(JsBasesResult result) {
-					BaseCretaDetail.this.onBases(result);
+					AbstractBaseCretaDetail.this.onBases(result);
 				}
 			};
 
@@ -625,7 +657,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					CheckBox reftification = new CheckBox("Reftificativa");
 					reftification.setValue(result.isRectifying());
 					reftification.setStyleName("aon-finding-toolbar-item");
-					reftification.addClickHandler(e->MainCreta.this.reftification());
+					reftification.addClickHandler(e-> onReftificativa.accept(null));
 					basesEditor.add(reftification);
 				}
 			}	
@@ -642,13 +674,13 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			if (result.getErrors().length > 0 || 
 				result.getWarnings().length > 0 || 
 				result.getUnknown().length > 0)
-				showResultsPanel();
+				showResults.accept(null);
 
 			CheckBox reftification = new CheckBox("Reftificativa");
 			reftification.setValue(result.isRectifying());
 			//reftification.setValue(isReftification());
 			reftification.setStyleName("aon-finding-toolbar-item");
-			reftification.addClickHandler(e->MainCreta.this.reftification());
+			reftification.addClickHandler(e-> onReftificativa.accept(null));
 			mergeEditor.add(reftification);
 		}
 		
@@ -665,7 +697,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			resultsPanel.setWidget(cretaResults);
 
 			if (errors.length > 0 || msgs.length > 0 )
-				showResultsPanel();
+				showResults.accept(null);
 		}
 
 		@Override
@@ -677,7 +709,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			basesButton.addStyleName(AON.AON_ICON_SEGSOCIAL_SMALL);
 			basesButton.addClickHandler( e-> {
 				setSelected(jsFiles[filesEditor.getSelectedIndex()]);
-				bases(jsFiles[filesEditor.getSelectedIndex()], this::onBases ); 
+				MainCreta.bases(jsFiles[filesEditor.getSelectedIndex()], this::onBases ); 
 				});
 			
 			filesEditor.add(basesButton);
@@ -713,6 +745,28 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			return super.getEmployeeFullName(jsEmployee);
 		}
 
+	}
+	
+	private class BaseCretaDetail extends AbstractBaseCretaDetail {
+		
+		public BaseCretaDetail() {
+			super(detailPanel, 
+				resultsPanel, 
+				MainCreta.this::reftification,
+				MainCreta.this::showResultsPanel);
+		}
+
+		@Override
+		protected String getDescription(String ccc) {
+			return null;
+		}
+
+		@Override
+		protected <T extends JsFile> List<T> filter(Collection<T> jsFiles) {
+			return null;
+		}
+		
+		
 	}
 
 	private class MainEnterpriseCretaRequestCommand extends EnterpriseCretaRequestCommand implements EnterpriseCommand {
@@ -842,7 +896,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	private class EnterpriseCretaDetail extends BaseCretaDetail {
 
 		private Enterprise enterprise;
-
+		
 		@Override
 		protected <T extends JsFile> List<T> filter(Collection<T> jsFiles) {
 			List<T> filtered = new ArrayList<T>();
@@ -1047,7 +1101,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	private class ActivityCretaDetail extends BaseCretaDetail {
 
 		private Activity activity;
-
+		
 		public void setActivity(Activity enterprise) {
 			this.activity = enterprise;
 		}
@@ -1179,27 +1233,27 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		}
 
 	}
-
-	protected class BasesCCCCretaRequestCommand extends CretaCommand
-		implements CretaRequestDialog.Callback<Employee>, CCCCommand {
-		
+	
+	protected static abstract class AbstractCCCCretaRequestCommand extends CretaCommand
+	implements CretaRequestDialog.Callback<Employee>, CCCCommand {
+	
 		private CCC ccc;
 		private CretaRequestDialog<Employee> dialog;
-
-		public BasesCCCCretaRequestCommand(File file) {
-			super(file, MainCreta.this.detailPanel);
+	
+		public AbstractCCCCretaRequestCommand(File file, DetailPanel detailPanel) {
+			super(file, detailPanel);
 			dialog = new CretaRequestDialog.CretaEmployeeRequestDialog(this) {
 				
 				@Override
 				void onMonthChanged( ChangeEvent e ){
-					BasesCCCCretaRequestCommand.this.onMonthChanged(monthListBox.getSelected());
+					AbstractCCCCretaRequestCommand.this.onMonthChanged(monthListBox.getSelected());
 				}
 				
 			};
 			dialog.setVisibleReftificationMark(true);
 			dialog.typeListBox.addChangeHandler(event -> dialog.setVisibleI54("L03".equals(dialog.getType())));
 		}
-
+	
 		// ---------------------------------------------------------- CCCCommand
 		
 		@Override
@@ -1207,7 +1261,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			this.ccc = ccc;
 			onMonthChanged(dialog.getFromMonth());
 		}
-
+	
 		// ------------------------------- CretaRequestDialog.Callback<Employee>
 		
 		@Override
@@ -1215,7 +1269,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			dialog.center();
 			dialog.show();
 		}
-
+	
 		@Override
 		public boolean onAccept(CretaRequestDialog<Employee> dialog) {
 			String tipo = dialog.getType();
@@ -1234,7 +1288,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			String i54 = dialog.getI54();
 			boolean reftificationMark = dialog.reftificationMark();
 			
-
+	
 			CCC cccCopy  = new CCC();
 			cccCopy.setId(ccc.getId());
 			cccCopy.setCode(ccc.getCode());
@@ -1255,7 +1309,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				calcsDetailed,
 				i54,
 				reftificationMark);
-
+	
 			return true;
 		}
 		
@@ -1265,8 +1319,16 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			consumer.accept(dialog);
 			onAccept(dialog);
 		}
-
-		void onMonthChanged( Date month ){
+		
+		protected CCC getCCC() {
+			return ccc;
+		}
+		
+		protected void setData(List<Employee> employees) {
+			dialog.setData(employees);
+		}
+	
+		protected void onMonthChanged( Date month ){
 			Date firstDayOfMonth = DateUtils.getFirstDayOfMonth(month);
 			Date lastDayOfMonth = DateUtils.getLastDayOfMonth(month);
 			Set<String> ss = new HashSet<String>();
@@ -1282,8 +1344,18 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			}
 			dialog.setData(employees);
 		}
+		
 
 
+	}
+
+	
+	protected class BasesCCCCretaRequestCommand extends AbstractCCCCretaRequestCommand
+		implements CretaRequestDialog.Callback<Employee>, CCCCommand {
+
+		public BasesCCCCretaRequestCommand(File file) {
+			super(file, MainCreta.this.detailPanel);
+		}
 	}
 
 	private class MainCCCDBACommand extends EmployeeTree.DBACommand implements CCCCommand {
@@ -1341,7 +1413,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	private class CCCCretaDetail extends BaseCretaDetail {
 
 		private CCC ccc;
-
+		
 		public void setCCC(CCC ccc) {
 			this.ccc = ccc;
 		}
@@ -1555,7 +1627,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	private class EnterprisesCretaDetail extends BaseCretaDetail {
 
 		private List<Enterprise> enterprises;
-
+		
 		public void setEnterprises(List<Enterprise> enterprises) {
 			this.enterprises = enterprises;
 		}
@@ -2028,7 +2100,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	}
 	
-	protected void bases(JsFile jsFile, Consumer<JsBasesResult> onBases) {
+	protected static void bases(JsFile jsFile, Consumer<JsBasesResult> onBases) {
 		
 		MainCreta.submit(CretaService.CRETA_URL + "/" + CretaService.File.BASES,
 				Collections.emptyMap(),
@@ -2051,17 +2123,18 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		
 	}
 	
-	// ------------------------------------------------------------------------
+	protected static boolean accept(CCC ccc, String fullccc) {
+		return fullccc.endsWith(ccc.getCode());
+	}
 
-
-	private static String getDescription(CCC ccc, String fullccc) {
+	protected static String getDescription(CCC ccc, String fullccc) {
 		String province = fullccc.substring(4, 6);
 		return Province.getName(province);
 	}
 
-	private static boolean accept(CCC ccc, String fullccc) {
-		return fullccc.endsWith(ccc.getCode());
-	}
+	// ------------------------------------------------------------------------
+
+
 
 	private static String getDescription(Activity activity, String fullccc) {
 		String province = fullccc.substring(4, 6);

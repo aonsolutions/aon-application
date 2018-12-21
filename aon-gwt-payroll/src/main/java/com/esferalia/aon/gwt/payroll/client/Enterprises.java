@@ -199,6 +199,8 @@ public class Enterprises extends ResizeComposite implements
 			onEnterpriseSelected((Enterprise) userObject);
 		} else if (userObject instanceof Activity) {
 			onActivitySelected((Activity) userObject);
+		} else if (userObject instanceof CCC ) {
+			onCCCSelected((CCC) userObject);
 		} else if (userObject instanceof List<?>) {
 			onEnterprisesSelected((List<Enterprise>) userObject);
 		} 

@@ -173,6 +173,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseActivityColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseCccColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.GeozoneColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.IrpfDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.IrpfRegularizationColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.IrpfResultColumns;
@@ -2665,8 +2666,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 						.getString(EnterpriseActivityColumns.DESCRIPTION));
 				activity.setCnae2009(rs
 						.getInt(EnterpriseActivityColumns.CNAE2009));
-
+				
+				getEnterpriseActivityCCCs(connection, activity.getId())
+				.forEach(ccc -> activity.addCcc(ccc));
+				
 				activities.add(activity);
+				
+				
 			}
 
 			return activities;
@@ -2678,6 +2684,52 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				rs.close();
 			}
 		}
+	}
+
+	private static List<CCC> getEnterpriseActivityCCCs(
+			Connection connection, Integer enterpriseActivityId) throws SQLException {
+
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		List<CCC> cccs = new LinkedList<CCC>();
+		
+		try {
+			//@formatter:off
+			String sql = "SELECT * "
+					+ " FROM " + ENTERPRISE_CCC
+					+ " INNER JOIN " + SQLConstants.GEOZONE 
+					+ " ON ( " + SQLConstants.ENTERPRISE_CCC + "." + EnterpriseCccColumns.GEOZONE 
+					+ " = " + SQLConstants.GEOZONE + "." + GeozoneColumns.ID + ")"
+					+ " WHERE " + EnterpriseCccColumns.ENTERPRISE_ACTIVITY + " = ? ";
+			//@formatter:on
+
+			stmt = connection.prepareStatement(sql);
+			stmt.setInt(1, enterpriseActivityId);
+			rs = stmt.executeQuery();
+
+			
+			while (rs.next()) {
+
+				CCC ccc = new CCC();
+				ccc.setId(rs.getInt(EnterpriseCccColumns.ID));
+				ccc.setGeozone(rs.getString(SQLConstants.GEOZONE + "." +GeozoneColumns.CODE));
+				ccc.setCode(rs.getString(SQLConstants.ENTERPRISE_CCC + "." + EnterpriseCccColumns.CCC));
+				ccc.setRegime(getSSRegime(rs.getInt(SQLConstants.ENTERPRISE_CCC + "." + EnterpriseCccColumns.TYPE)).getCode());
+				cccs.add(ccc);
+			}
+
+		} catch (Throwable t ) {
+			
+		}
+		finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (stmt != null) {
+				rs.close();
+			}
+		}
+		return cccs;
 	}
 
 	private static List<BankAccount> getEnterpriseBankAccounts(

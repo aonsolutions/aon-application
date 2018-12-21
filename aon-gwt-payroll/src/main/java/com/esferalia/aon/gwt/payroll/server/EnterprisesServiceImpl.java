@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.server;
 
+import static com.esferalia.aon.jooq.tables.Person.PERSON;
+import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.ENTERPRISE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
 
@@ -16,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.esferalia.aon.google.sql.SQLConstants.PersonColumns;
 import com.esferalia.aon.google.sql.SQLConstants.UserScopeColumns;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -53,6 +56,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.BonusConceptColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractBonusColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractDeductionColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.DeductionConceptColumns;
@@ -482,6 +486,25 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	@Override
+	public List<Employee> getCCCEmployees(String domain, java.util.Date month, List<Integer> cccIds) {
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection(domain);
+
+			return getCCCEmployees(connection, new java.sql.Date(month.getTime()), cccIds);
+
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+		}
+	}
 	// --------------------------------------------------------- Private methods
 
 	private static void deletePaymentConcept(Connection connection,
@@ -1285,7 +1308,72 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			}
 		}
 	}
-	
+
+	private static List<Employee> getCCCEmployees(Connection connection,
+			Date month,List<Integer> cccIds) throws SQLException {
+
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+
+		try {
+
+			// We asume that one enterprise one domain. This way SELECT it's
+			// more clear.
+			// @formatter:off
+			String sql = "SELECT * "
+					+ " FROM "
+					+ CONTRACT
+					+ " INNER JOIN " + SQLConstants.PERSON + " ON (" + CONTRACT + "." + ContractColumns.PERSON  + " = " + SQLConstants.PERSON + "." + PersonColumns.REGISTRY + ")"
+					+ " WHERE "
+					+ " " + CONTRACT + "." + ContractColumns.START_DATE + " <=  ?"  
+					+ " AND (" + CONTRACT + "." + ContractColumns.END_DATE + " >=  ? "
+					+ " OR " + CONTRACT + "." + ContractColumns.END_DATE + " IS NULL "
+					+ " )"
+					+ " AND " + CONTRACT + "." + ContractColumns.ENTERPRISE_CCC + " IN ( " + StringUtils.reduce(Collections.nCopies( cccIds.size(), "?"), ", ") + " )"
+					;
+			// @formatter:on
+
+			stmt = connection.prepareStatement(sql);
+			int parameterIndex = 1;
+			stmt.setDate(parameterIndex++, month);
+			stmt.setDate(parameterIndex++, month);
+
+			for (Integer cccId : cccIds) {
+				stmt.setInt(parameterIndex++, cccId);
+			}
+
+			rs = stmt.executeQuery();
+
+			List<Employee> employees = new LinkedList<Employee>();
+			while (rs.next()) {
+				
+				Employee employee = new Employee();
+				employee.setId(rs.getInt(CONTRACT + "." + ContractColumns.ID));
+				employee.setStartDate(rs.getDate(CONTRACT + "." + ContractColumns.START_DATE));
+				employee.setEndDate(rs.getDate(CONTRACT + "." + ContractColumns.END_DATE));
+				employee.setSeniorityDate(rs.getDate(CONTRACT + "." + ContractColumns.SENIORITY_DATE));
+
+				employee.setName(rs.getString(SQLConstants.PERSON +"." + PersonColumns.NAME));
+				employee.setFirstSurname(rs.getString(SQLConstants.PERSON +"." + PersonColumns.FIRST_SURNAME));
+				employee.setSecondSurName(rs.getString(SQLConstants.PERSON +"." + PersonColumns.SECOND_SURNAME));
+				
+				employee.setSocialSecurity(rs.getString(SQLConstants.PERSON +"." + PersonColumns.SOCIAL_SECURITY_NUM));
+				
+				employees.add(employee);
+			}
+
+			return employees;
+
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (stmt != null) {
+				stmt.close();
+			}
+		}
+	}
+
 	@Override
 	public void moveAgreement2Parent(String domain, Agreement agreement) {
 		Connection connection = null;
