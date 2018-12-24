@@ -429,7 +429,7 @@ public class AttachListPanel extends Composite {
 	   downloadItem.addClickHandler(new ClickHandler() {
 		   @Override
 		   public void onClick(ClickEvent event) {
-			   removeDocument(id);
+			   downloadDocument(id);
 			   popup.hide();
 		   }
 	   });
