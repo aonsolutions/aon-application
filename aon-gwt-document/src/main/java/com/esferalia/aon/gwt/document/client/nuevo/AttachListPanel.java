@@ -12,10 +12,16 @@ import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.logical.shared.ResizeEvent;
@@ -30,11 +36,15 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.vaadin.polymer.iron.widget.IronIcon;
 import com.vaadin.polymer.iron.widget.IronList;
+import com.vaadin.polymer.iron.widget.IronSelector;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
 import com.vaadin.polymer.paper.widget.PaperInput;
+import com.vaadin.polymer.paper.widget.PaperItem;
 import com.vaadin.polymer.paper.widget.PaperToggleButton;
 
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
@@ -333,12 +343,119 @@ public class AttachListPanel extends Composite {
 		}
 	}-*/;
   
-   public void optionsDocument(ClickEvent event, String id) {
+   public void optionsDocument(Element e, String id) {
+	   PopupPanel popup = new PopupPanel();
+	   IronSelector selector = new IronSelector();
+	   Integer size = 50;
+	   
+	   if(parent.getAonData().getUser().hasDocumentManagerRole()) {
+		   PaperItem editItem = new PaperItem();
+		   editItem.getElement().getStyle().setCursor(Cursor.POINTER);
+		   editItem.addDomHandler(new MouseOverHandler() {
+			   @Override
+			   public void onMouseOver(MouseOverEvent event) {
+				   editItem.getElement().getStyle().setBackgroundColor("#ddd");
+			   }
+		   }, MouseOverEvent.getType());
+		   editItem.addDomHandler(new MouseOutHandler() {
+			   @Override
+			   public void onMouseOut(MouseOutEvent event) {
+				   editItem.getElement().getStyle().setBackgroundColor("#fff");
+			   }
+		   }, MouseOutEvent.getType());
+		   IronIcon ii = new IronIcon();
+		   ii.setIcon("create");
+	   
+		   editItem.add(ii);
+		   editItem.add(new Label("Editar"));
+		   editItem.addClickHandler(new ClickHandler() {
+			   @Override
+			   public void onClick(ClickEvent event) {
+				   editDocument(id);
+				   popup.hide();
+			   }
+		   });
+		   selector.add(editItem);
+	   
+		   PaperItem deleteItem = new PaperItem();
+		   deleteItem.getElement().getStyle().setCursor(Cursor.POINTER);
+		   deleteItem.addDomHandler(new MouseOverHandler() {
+			   @Override
+			   public void onMouseOver(MouseOverEvent event) {
+				   deleteItem.getElement().getStyle().setBackgroundColor("#ddd");
+			   }
+		   }, MouseOverEvent.getType());
+		   deleteItem.addDomHandler(new MouseOutHandler() {
+			   @Override
+			   public void onMouseOut(MouseOutEvent event) {
+				   deleteItem.getElement().getStyle().setBackgroundColor("#fff");
+			   }
+		   }, MouseOutEvent.getType());
+	   
+		   IronIcon deleteIcon = new IronIcon();
+		   deleteIcon.setIcon("delete");
+	   
+		   deleteItem.add(deleteIcon);
+		   deleteItem.add(new Label("Borrar"));
+		   deleteItem.addClickHandler(new ClickHandler() {
+			   @Override
+			   public void onClick(ClickEvent event) {
+				   removeDocument(id);
+				   popup.hide();
+			   }
+		   });
+		   selector.add(deleteItem);
+		   size = size + 100;
+	   }
+	   PaperItem downloadItem = new PaperItem();
+	   downloadItem.getElement().getStyle().setCursor(Cursor.POINTER);
+	   downloadItem.addDomHandler(new MouseOverHandler() {
+		   @Override
+		   public void onMouseOver(MouseOverEvent event) {
+			   downloadItem.getElement().getStyle().setBackgroundColor("#ddd");
+		   }
+	   }, MouseOverEvent.getType());
+	   downloadItem.addDomHandler(new MouseOutHandler() {
+		   @Override
+		   public void onMouseOut(MouseOutEvent event) {
+			   downloadItem.getElement().getStyle().setBackgroundColor("#fff");
+		   }
+	   }, MouseOutEvent.getType());
+	   IronIcon downloadIcon = new IronIcon();
+	   downloadIcon.setIcon("file-download");
+	   
+	   downloadItem.add(downloadIcon);
+	   downloadItem.add(new Label("Descargar"));
+	   downloadItem.addClickHandler(new ClickHandler() {
+		   @Override
+		   public void onClick(ClickEvent event) {
+			   removeDocument(id);
+			   popup.hide();
+		   }
+	   });
+	   
+	  
+	   selector.add(downloadItem);
+	   
+	   popup.add(selector);
+	   Integer top = e.getAbsoluteTop()
+			   + e.getOffsetHeight();
+	   Integer width = Window.getClientWidth();
+	   Integer height = Window.getClientHeight();
+	   Integer left = width - 250;
+
+	   if(top > height - size) {
+		   top = top - size;
+	   }
+	    
+	   popup.setAutoHideEnabled(true);
+	   popup.setPopupPosition(left, top);
+	   popup.show();	  
    }
 
    public static native boolean exportOptionsDocument(AttachListPanel thiz) /*-{
-		$wnd.optionsDocument = function(event, id) {
-			thiz.@com.esferalia.aon.gwt.document.client.nuevo.AttachListPanel::optionsDocument(*)(event, id);
+		$wnd.optionsDocument = function(e,id) {
+			thiz.@com.esferalia.aon.gwt.document.client.nuevo.AttachListPanel::optionsDocument(*)(e, id);
 		}
 	}-*/;
    
