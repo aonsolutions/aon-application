@@ -58,14 +58,15 @@ public class DownloadAttachmentServlet extends HttpServlet {
 			String[] keys = {"fileId", "aontype", "domain"};
 			String[] values = {attach.getId() + "", "registry", attach.getDomain().getName()};
 			FileList fl = SearchFiles.searchFilesProperties(drive, keys, values);
-
-			if(!fl.getItems().get(0).getId().equals(attach.getDriveId())) {
-				attach.setDriveId(fl.getItems().get(0).getId());
-				AON.updateAttach(domain.getName(), domain.getId(), "", attach);
-			}
-			if("0".equals(attach.getDparentId())) {
-				attach.setDparentId(fl.getItems().get(0).getFileSize().toString());
-				AON.updateAttach(domain.getName(), domain.getId(), "", attach);
+			if(fl.getItems().size() > 0) {
+				if(!fl.getItems().get(0).getId().equals(attach.getDriveId())) {
+					attach.setDriveId(fl.getItems().get(0).getId());
+					AON.updateAttach(domain.getName(), domain.getId(), "", attach);
+				}
+				if("0".equals(attach.getDparentId())) {
+					attach.setDparentId(fl.getItems().get(0).getFileSize().toString());
+					AON.updateAttach(domain.getName(), domain.getId(), "", attach);
+				}
 			}
 			attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
 		}

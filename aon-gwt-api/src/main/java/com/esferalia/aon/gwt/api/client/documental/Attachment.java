@@ -119,7 +119,6 @@ public class Attachment extends Methods{
 		});
 	}
 	
-	
 	public void sendDocuments(String requestData){
 		post(getUrl() + "documental_notification/" + getDomainName() + "/" + getUserName()  , requestData);
 	}

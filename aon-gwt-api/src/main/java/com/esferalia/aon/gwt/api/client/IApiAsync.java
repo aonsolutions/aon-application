@@ -6,5 +6,4 @@ public interface IApiAsync {
 
 	void base(String str, AsyncCallback<String> callback);
 
-
 }

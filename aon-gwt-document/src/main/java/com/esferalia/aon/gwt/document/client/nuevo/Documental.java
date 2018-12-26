@@ -74,6 +74,8 @@ public class Documental implements EntryPoint {
 	@UiField HTMLPanel searchContent;
 	@UiField SimpleLayoutPanel content;
 	
+	final IDocumentalAsync idoc = GWT.create(IDocumental.class);
+
 	private API API;
 	private AonData aonData;
 	private Attachment attachment;
@@ -81,6 +83,7 @@ public class Documental implements EntryPoint {
 	HashMap<String, LinkedList<String>> filterMap;
 	LinkedList<String> selectedAttach = new LinkedList<>(); 
 	Boolean more = true;
+	
 	public API getAPI() {
 		return API;
 	}
@@ -96,7 +99,11 @@ public class Documental implements EntryPoint {
 	public LinkedList<String> getSelectedAttach() {
 		return selectedAttach;
 	}
-
+	
+	public IDocumentalAsync getIDoc() {
+		return idoc;
+	}
+	
 	public void setSelectedAttach(LinkedList<String> selectedAttach) {
 		this.selectedAttach = selectedAttach;
 	}

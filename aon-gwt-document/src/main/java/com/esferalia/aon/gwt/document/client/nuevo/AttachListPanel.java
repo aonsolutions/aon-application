@@ -68,6 +68,7 @@ public class AttachListPanel extends Composite {
     	this.parent = parent1;
     	exportSelection(this);
     	exportOptionsDocument(this);
+    	exportViewDocument(this);
         initWidget(binder.createAndBindUi(this));
         
         grid.setItems(items);
@@ -305,6 +306,20 @@ public class AttachListPanel extends Composite {
 		return labelPanel;
    }
   
+   public void viewDocument(String id) {
+	   parent.getIDoc().getAttachLink(parent.getAonData().getDomain(), Integer.parseInt(id), new AsyncCallback<String>() {
+			
+		@Override
+		public void onSuccess(String result) {
+			if(result != null) Window.open(result, "_blank", null);
+			else parent.getAPI().getAttachment().download(id);
+		}
+		
+		@Override
+			public void onFailure(Throwable caught) {}
+		});
+   }
+   
    public void removeDocument(String id) {
 		AonDialog d = new AonDialog("Borrar Documento",new Label("Est\u00e1s seguro de Borrar definitivamente este fichero") ) {
 			
@@ -346,7 +361,35 @@ public class AttachListPanel extends Composite {
    public void optionsDocument(Element e, String id) {
 	   PopupPanel popup = new PopupPanel();
 	   IronSelector selector = new IronSelector();
-	   Integer size = 50;
+	   Integer size = 100;
+	   
+	   PaperItem viewItem = new PaperItem();
+	   viewItem.getElement().getStyle().setCursor(Cursor.POINTER);
+	   viewItem.addDomHandler(new MouseOverHandler() {
+		   @Override
+		   public void onMouseOver(MouseOverEvent event) {
+			   viewItem.getElement().getStyle().setBackgroundColor("#ddd");
+		   }
+	   }, MouseOverEvent.getType());
+	   viewItem.addDomHandler(new MouseOutHandler() {
+		   @Override
+		   public void onMouseOut(MouseOutEvent event) {
+			   viewItem.getElement().getStyle().setBackgroundColor("#fff");
+		   }
+	   }, MouseOutEvent.getType());
+	   IronIcon viewIcon = new IronIcon();
+	   viewIcon.setIcon("visibility");
+   
+	   viewItem.add(viewIcon);
+	   viewItem.add(new Label("Visualizar"));
+	   viewItem.addClickHandler(new ClickHandler() {
+		   @Override
+		   public void onClick(ClickEvent event) {
+			   viewDocument(id);
+			   popup.hide();
+		   }
+	   });
+	   selector.add(viewItem);
 	   
 	   if(parent.getAonData().getUser().hasDocumentManagerRole()) {
 		   PaperItem editItem = new PaperItem();
@@ -456,6 +499,12 @@ public class AttachListPanel extends Composite {
    public static native boolean exportOptionsDocument(AttachListPanel thiz) /*-{
 		$wnd.optionsDocument = function(e,id) {
 			thiz.@com.esferalia.aon.gwt.document.client.nuevo.AttachListPanel::optionsDocument(*)(e, id);
+		}
+	}-*/;
+   
+   public static native boolean exportViewDocument(AttachListPanel thiz) /*-{
+		$wnd.viewDocument = function(id) {
+			thiz.@com.esferalia.aon.gwt.document.client.nuevo.AttachListPanel::viewDocument(*)(id);
 		}
 	}-*/;
    

@@ -53,7 +53,9 @@
                     	<iron-icon icon="[[item.icon]]"/>
                         <div class="pad">
                             <div class="primary">
-                           		[[item.title]]
+								<span alt="[[item.id]]" onclick="viewDocument(this.alt)"> 
+	                           		[[item.title]]
+								</span>
 								<template is="dom-if" if="{{item.confidential}}"> 
 									<iron-icon style="height: 18px;" icon="lock"/>
                            		</template>
