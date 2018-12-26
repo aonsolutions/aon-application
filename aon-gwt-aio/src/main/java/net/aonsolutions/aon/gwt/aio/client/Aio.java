@@ -6,8 +6,6 @@ import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.common.shared.Constants;
-import com.esferalia.aon.gwt.document.client.Documents;
-import com.esferalia.aon.gwt.document.client.nuevo.Documental;
 import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.DepositEntryPoint;
 import com.esferalia.aon.gwt.issues.client.Issues;
 import com.esferalia.aon.gwt.stat.client.MainEntryPoint;
@@ -20,6 +18,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import net.aonsolutions.aon.gwt.aio.shared.Modules;
 import net.aonsolutions.aon.gwt.communication.client.Communication;
+import net.aonsolutions.aon.gwt.document.client.Documental;
 import net.aonsolutions.aon.gwt.invoice.client.Invoice;
 import net.aonsolutions.aon.gwt.seres.client.Seres;
 import net.aonsolutions.aon.gwt.sii.client.Sii;
@@ -31,7 +30,6 @@ public class Aio implements EntryPoint {
 	final IAioAsync impl = GWT.create(IAio.class);
 
 	private Issues issues;
-	//private Documents documents;
 	private Documental documental;
 	
 	
@@ -94,7 +92,7 @@ public class Aio implements EntryPoint {
 		case Modules.DOCUMENT:
 			JsAio.addOnBeforeUnloadHandler(this);
 			JsAio.addOnReloadHandler(this);
-			GWT.runAsync(Documents.class, new RunAsyncCallback() {
+			GWT.runAsync(Documental.class, new RunAsyncCallback() {
 
 				@Override
 				public void onFailure(Throwable reason) {
@@ -103,9 +101,6 @@ public class Aio implements EntryPoint {
 
 				@Override
 				public void onSuccess() {
-					//documents = new Documents(aonData);
-					//documents.onModuleLoad();
-					// NUEVO DOCUMENTAL CON POLYMEROS
 					documental = new Documental(aonData);
 					documental.onModuleLoad();
 				}

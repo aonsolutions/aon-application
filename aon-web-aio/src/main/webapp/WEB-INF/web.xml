@@ -367,48 +367,6 @@
 		<url-pattern>/aon_gwt_aio/gwt_marketplace</url-pattern>
 	</servlet-mapping>
 
-	<!-- Aon GWT Document -->
-
-	<servlet>
-		<servlet-name>DocumentGwtServlet</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.document.server.DocumentsServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>DocumentGwtServlet</servlet-name>
-		<!-- url-pattern>/aon_gwt_document/gwt_document</url-pattern-->
-		<url-pattern>/aon_gwt_aio/gwt_document</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
-		<servlet-name>UploadFiles</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.document.server.UploadFilesServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>UploadFiles</servlet-name>
-		<!-- url-pattern>/aon_gwt_document/gwt_upload</url-pattern-->
-		<url-pattern>/aon_gwt_aio/gwt_document_upload</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
-		<servlet-name>MultipleUploadFiles</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.document.server.MultipleUploadFilesServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>MultipleUploadFiles</servlet-name>
-		<!-- url-pattern>/aon_gwt_document/gwt_multiple_upload</url-pattern-->
-		<url-pattern>/aon_gwt_aio/gwt_document_multiple_upload</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
-		<servlet-name>DownloadFiles</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.document.server.DownloadFilesServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>DownloadFiles</servlet-name>
-		<!-- url-pattern>/aon_gwt_document/gwt_download/*</url-pattern-->
-		<url-pattern>/aon_gwt_aio/gwt_document_download/*</url-pattern>
-	</servlet-mapping>
-
 	<!-- SignIn with Google Servlet -->
 	<servlet>
 		<servlet-name>OpenIDAuthServlet</servlet-name>

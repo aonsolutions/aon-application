@@ -244,7 +244,7 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>com.esferalia.aon</groupId>
+      <groupId>net.aonsolutions</groupId>
       <artifactId>aon.gwt.document</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>

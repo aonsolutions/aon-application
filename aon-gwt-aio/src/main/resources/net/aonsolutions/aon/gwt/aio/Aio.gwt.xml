@@ -8,7 +8,7 @@
 	<inherits name="com.esferalia.aon.occam.api.Occam" />
 	<inherits name="com.esferalia.aon.gwt.api.Api" />
 	<inherits name='com.esferalia.aon.gwt.issues.IssuesAio' />
-	<inherits name='com.esferalia.aon.gwt.document.DocumentAio' />
+	<inherits name='net.aonsolutions.aon.gwt.document.DocumentAio' />
 	<inherits name='com.esferalia.aon.gwt.stat.StatAio' />
 	<inherits name='com.esferalia.aon.gwt.dump.DumpAio' />
 	<inherits name='com.esferalia.aon.gwt.template.TemplateAio' />

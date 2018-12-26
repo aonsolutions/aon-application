@@ -1,0 +1,511 @@
+package net.aonsolutions.aon.gwt.document.client;
+
+
+import java.util.LinkedList;
+
+import com.esferalia.aon.gwt.api.client.AonJsArray;
+import com.esferalia.aon.gwt.api.client.JSON;
+import com.esferalia.aon.gwt.api.client.documental.JsAttach;
+import com.esferalia.aon.gwt.api.client.incidence.JsLabel;
+import com.esferalia.aon.gwt.api.client.incidence.JsObject;
+import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsonUtils;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style.Cursor;
+import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.dom.client.ScrollEvent;
+import com.google.gwt.event.dom.client.ScrollHandler;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
+import com.vaadin.polymer.iron.widget.IronIcon;
+import com.vaadin.polymer.iron.widget.IronList;
+import com.vaadin.polymer.iron.widget.IronSelector;
+import com.vaadin.polymer.paper.widget.PaperIconButton;
+import com.vaadin.polymer.paper.widget.PaperInput;
+import com.vaadin.polymer.paper.widget.PaperItem;
+import com.vaadin.polymer.paper.widget.PaperToggleButton;
+
+import net.aonsolutions.polymer.aon.widget.AonComboBox;
+import net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent;
+import net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler;
+
+
+public class AttachListPanel extends Composite {
+	
+    interface Binder extends UiBinder<HTMLPanel, AttachListPanel> {
+    	
+    }
+    
+    private static Binder binder = GWT.create(Binder.class);
+
+    @UiField IronList grid;
+    Documental parent;
+    Integer top = 0;
+    
+    public AttachListPanel(Documental parent1, AonJsArray<JsAttach> items) {    
+    	this.parent = parent1;
+    	exportSelection(this);
+    	exportOptionsDocument(this);
+    	exportViewDocument(this);
+        initWidget(binder.createAndBindUi(this));
+        
+        grid.setItems(items);
+      
+        autoHeight(grid, 260);
+        
+        grid.addDomHandler(new ScrollHandler() {
+			@Override
+			public void onScroll(ScrollEvent event) {
+				Integer scrollTop = grid.getElement().getScrollTop();
+				Integer offsetHeight = grid.getElement().getOffsetHeight();
+				Integer physicalSize = grid.getElement().getScrollHeight();
+				Integer maxScrollPosition = physicalSize - offsetHeight;
+				if(scrollTop > maxScrollPosition && parent.more){
+					LinkedList<String> list = new LinkedList<>();
+					Integer page = Integer.parseInt(parent.getFilterMap().get("page").get(0)) + 1;
+					list.add(page.toString());
+					parent.getFilterMap().put("page", list);
+					parent.updateAttachListPanel();		
+					top = scrollTop;
+				}
+			}
+		}, ScrollEvent.getType());
+   }
+    
+   public void updateItems(AonJsArray<JsAttach> attach){
+	   grid.setItems(attach);
+	   grid.getElement().setScrollTop(top);
+	   top = 0;
+   }
+   
+   public AonJsArray<JsAttach> getItems(){
+	   return grid.getItems().cast();
+   }
+   
+   public static native int getPhysicalSize(IronList i) /*-{ 
+   		return i._physicalSize;
+ 	}-*/;
+   
+
+   public void autoHeight(Widget widget, Integer value){
+	   widget.getElement().getStyle().setHeight(Window.getClientHeight() - value, Unit.PX);
+	   Window.addResizeHandler(new ResizeHandler() {
+			
+			@Override
+			public void onResize(ResizeEvent event) {
+				widget.getElement().getStyle().setHeight(Window.getClientHeight() - value, Unit.PX);
+			}
+		});
+   }
+   
+   public void downloadDocument(String id){
+	   parent.getAPI().getAttachment().download(id);
+   }
+   
+   public void aaa(JsAttach attach) {
+	   Window.alert(attach.getId()+"");
+   }
+   
+   public void editDocument(String id){
+	   parent.getAPI().getAttachment().getAttach(id, new AsyncCallback<JSON<JsAttach>>() {
+	
+		@Override
+		public void onSuccess(JSON<JsAttach> js) {
+			JsAttach attach = js.getOneData();
+			PaperInput nameBox = new PaperInput();
+			nameBox.setLabel("Nombre");
+			nameBox.setWidth("100%");
+			nameBox.setList("as");
+			nameBox.setValue(attach.getTitle());
+			   
+			AonComboBox categoryBox = new AonComboBox();
+			categoryBox.setLabel("Categor\u00eda");
+			categoryBox.setWidth("100%");
+			categoryBox.setItemLabelPath("name");
+			categoryBox.setItemValuePath("name");
+			parent.getAPI().getAttachment().getCategories(new AsyncCallback<JSON<JsLabel>>() {
+				
+				@Override
+				public void onSuccess(JSON<JsLabel> result) {
+					categoryBox.setItems(result.getData());
+					categoryBox.setValue(attach.getCategory().getName());
+				}
+						
+				@Override public void onFailure(Throwable caught) {}
+			});
+					
+			AonComboBox tagBox = new AonComboBox();
+			tagBox.setWidth("100%");
+			tagBox.setLabel("Etiqueta");
+			tagBox.setItemLabelPath("name");
+			tagBox.setItemValuePath("name");
+			parent.getAPI().getAttachment().getTags(new AsyncCallback<JSON<JsLabel>>() {
+					
+				@Override
+				public void onSuccess(JSON<JsLabel> result) {
+					tagBox.setItems(result.getData());
+				}
+				
+				@Override public void onFailure(Throwable caught) {}
+			});
+
+			HorizontalPanel tagPanel = new HorizontalPanel();
+			JsArray<JsLabel> tags = attach.getTags();
+			for(Integer i = 0 ; i < tags.length(); i++) {
+				tagList.add(tags.get(i));
+				tagPanel.add(buildTagPanel(tags.get(i)));
+			}
+			
+			tagBox.addValueChangedHandler(new ValueChangedEventHandler() {
+				
+				@Override
+				public void onValueChanged(ValueChangedEvent event) {
+					JsLabel tag = tagBox.getSelectedItem().cast();
+					Boolean addTag = true;
+					for(Integer i = 0 ; i < tagList.size(); i++) {
+						if(tagList.get(i).getName().equals(tag.getName())) {
+							addTag = false;
+						}
+					}
+					if(addTag) {
+						tagList.add(tag);
+						tagPanel.add(buildTagPanel(tag));
+					}
+				}
+			});
+
+			AonComboBox scopeBox = new AonComboBox();
+			scopeBox.setWidth("100%");
+			scopeBox.setLabel("\u00c1mbito");
+			scopeBox.setItemLabelPath("name");
+			scopeBox.setItemValuePath("name");
+			parent.getAPI().getAttachment().getScopes(new AsyncCallback<JSON<JsObject>>() {
+				
+				@Override
+				public void onSuccess(JSON<JsObject> result) {
+					scopeBox.setItems(result.getData());
+					scopeBox.setValue(attach.getScope().getName());
+				}
+				
+				@Override public void onFailure(Throwable caught) {}
+			});
+				
+			HorizontalPanel hp = new HorizontalPanel();
+			Label confidentialLabel = new Label("Confidencial");
+			confidentialLabel.getElement().getStyle().setPaddingTop(20, Unit.PX);
+			confidentialLabel.getElement().getStyle().setPaddingRight(10, Unit.PX);
+			confidentialLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);		
+			hp.add(confidentialLabel);
+						
+			PaperToggleButton confidential = new PaperToggleButton();
+			confidential.setChecked(attach.isConfidential());
+			confidential.getElement().getStyle().setPaddingTop(13, Unit.PX);
+			hp.add(confidential);
+			
+			VerticalPanel vp = new VerticalPanel();
+			vp.setWidth("100%");
+			vp.add(nameBox);
+			vp.add(categoryBox);
+			vp.add(tagBox);
+			vp.add(tagPanel);
+			vp.add(scopeBox);
+			vp.add(hp);
+			AonDialog dialog = new AonDialog("Editar Archivo", vp) {
+				
+				@Override protected void onCancel() {hide();}
+				
+				@Override
+				protected void onAccept() {
+					JSONObject json = new JSONObject();
+					json.put("name", new JSONString(nameBox.getValue()));
+					JsLabel categoryItem = (JsLabel) categoryBox.getSelectedItem().cast();
+					json.put("category", new JSONString(categoryItem != null ?  categoryItem.getId() + "" : ""));
+					ids = "";
+					for(Integer i = 0 ; i< tagList.size(); i++) {
+						if(!"".equals(ids)) ids = ids + ","; 
+						ids = ids + tagList.get(i).getId();
+					}
+					json.put("tag", new JSONString(ids));
+					JsLabel scopeItem = (JsLabel) scopeBox.getSelectedItem().cast();
+					json.put("scope", new JSONString(scopeItem != null ? scopeItem.getId() + "" : ""));
+					json.put("confidential", new JSONString(Boolean.toString(confidential.getChecked())));
+					String requestData = JsonUtils.stringify(json.getJavaScriptObject());
+					parent.getAPI().getAttachment().updateAttach(id, requestData, new AsyncCallback<JsAttach>() {
+						
+						@Override
+						public void onSuccess(JsAttach result) {
+							parent.createAttachListPanel();
+							hide();
+						}
+						
+						@Override public void onFailure(Throwable caught) {}
+					});
+				}	
+			};
+					
+			dialog.setAutoHideEnabled(true);
+			dialog.addAutoHidePartner(categoryBox.getElementById("overlay"));
+			dialog.addAutoHidePartner(tagBox.getElementById("overlay"));
+			dialog.addAutoHidePartner(scopeBox.getElementById("overlay"));
+			dialog.getElement().getStyle().setWidth(310, Unit.PX);
+			dialog.center();			
+		}
+		
+		@Override public void onFailure(Throwable caught) {}
+	   });
+   }
+   
+   LinkedList<JsLabel> tagList = new LinkedList<>();
+   String ids; 
+   private HorizontalPanel buildTagPanel(JsLabel tag) {
+	   HorizontalPanel labelPanel = new HorizontalPanel();
+		labelPanel.getElement().getStyle().setPaddingLeft(5, Unit.PX);
+		Label label = new Label(tag.getName());
+		label.getElement().getStyle().setPadding(3, Unit.PX);
+		label.getElement().getStyle().setBackgroundColor("#ddd");
+		PaperIconButton icon = new PaperIconButton();
+		icon.setIcon("close");
+		icon.getElement().getStyle().setWidth(16, Unit.PX);
+		icon.getElement().getStyle().setHeight(16, Unit.PX);
+		icon.getElement().getStyle().setMargin(0, Unit.PX);
+		icon.getElement().getStyle().setPadding(0, Unit.PX);
+		icon.getElement().getStyle().setPaddingTop(4, Unit.PX);
+		icon.setNoink(true);
+		icon.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				tagList.remove(tag);
+				labelPanel.removeFromParent();
+			}
+		});
+		labelPanel.add(label);
+		labelPanel.add(icon);
+		return labelPanel;
+   }
+  
+   public void viewDocument(String id) {
+	   parent.getIDoc().getAttachLink(parent.getAonData().getDomain(), Integer.parseInt(id), new AsyncCallback<String>() {
+			
+		@Override
+		public void onSuccess(String result) {
+			if(result != null) Window.open(result, "_blank", null);
+			else parent.getAPI().getAttachment().download(id);
+		}
+		
+		@Override
+			public void onFailure(Throwable caught) {}
+		});
+   }
+   
+   public void removeDocument(String id) {
+		AonDialog d = new AonDialog("Borrar Documento",new Label("Est\u00e1s seguro de Borrar definitivamente este fichero") ) {
+			
+			@Override protected void onCancel() {hide();}
+			
+			@Override
+			protected void onAccept() {
+				String requestData = "{\"id\":["+ id + "],"
+						+ "\"attach_type\":\"registry\"}";
+				parent.getAPI().getAttachment().removeAttach(requestData, new AsyncCallback<JSON<JsAttach>>() {
+					
+					@Override
+					public void onSuccess(JSON<JsAttach> result) {
+						// TODO ACTUALIZAR LIST!!!
+						parent.createAttachListPanel();
+						hide();
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});
+			}
+		};
+		d.getElement().getStyle().setWidth(255, Unit.PX);
+		d.center();
+   }
+   
+   public void selection(String id) {
+	   if(parent.getSelectedAttach().contains(id)) parent.getSelectedAttach().remove(id);
+	   else parent.getSelectedAttach().add(id);
+	   parent.activeMultiselectionFunctions(parent.getSelectedAttach().size());
+   }
+   
+   public static native void exportSelection(AttachListPanel thiz) /*-{
+		$wnd.selection = function(id) {
+			thiz.@net.aonsolutions.aon.gwt.document.client.AttachListPanel::selection(*)(id);
+		}
+	}-*/;
+  
+   public void optionsDocument(Element e, String id) {
+	   PopupPanel popup = new PopupPanel();
+	   IronSelector selector = new IronSelector();
+	   Integer size = 100;
+	   
+	   PaperItem viewItem = new PaperItem();
+	   viewItem.getElement().getStyle().setCursor(Cursor.POINTER);
+	   viewItem.addDomHandler(new MouseOverHandler() {
+		   @Override
+		   public void onMouseOver(MouseOverEvent event) {
+			   viewItem.getElement().getStyle().setBackgroundColor("#ddd");
+		   }
+	   }, MouseOverEvent.getType());
+	   viewItem.addDomHandler(new MouseOutHandler() {
+		   @Override
+		   public void onMouseOut(MouseOutEvent event) {
+			   viewItem.getElement().getStyle().setBackgroundColor("#fff");
+		   }
+	   }, MouseOutEvent.getType());
+	   IronIcon viewIcon = new IronIcon();
+	   viewIcon.setIcon("visibility");
+   
+	   viewItem.add(viewIcon);
+	   viewItem.add(new Label("Visualizar"));
+	   viewItem.addClickHandler(new ClickHandler() {
+		   @Override
+		   public void onClick(ClickEvent event) {
+			   viewDocument(id);
+			   popup.hide();
+		   }
+	   });
+	   selector.add(viewItem);
+	   
+	   if(parent.getAonData().getUser().hasDocumentManagerRole()) {
+		   PaperItem editItem = new PaperItem();
+		   editItem.getElement().getStyle().setCursor(Cursor.POINTER);
+		   editItem.addDomHandler(new MouseOverHandler() {
+			   @Override
+			   public void onMouseOver(MouseOverEvent event) {
+				   editItem.getElement().getStyle().setBackgroundColor("#ddd");
+			   }
+		   }, MouseOverEvent.getType());
+		   editItem.addDomHandler(new MouseOutHandler() {
+			   @Override
+			   public void onMouseOut(MouseOutEvent event) {
+				   editItem.getElement().getStyle().setBackgroundColor("#fff");
+			   }
+		   }, MouseOutEvent.getType());
+		   IronIcon ii = new IronIcon();
+		   ii.setIcon("create");
+	   
+		   editItem.add(ii);
+		   editItem.add(new Label("Editar"));
+		   editItem.addClickHandler(new ClickHandler() {
+			   @Override
+			   public void onClick(ClickEvent event) {
+				   editDocument(id);
+				   popup.hide();
+			   }
+		   });
+		   selector.add(editItem);
+	   
+		   PaperItem deleteItem = new PaperItem();
+		   deleteItem.getElement().getStyle().setCursor(Cursor.POINTER);
+		   deleteItem.addDomHandler(new MouseOverHandler() {
+			   @Override
+			   public void onMouseOver(MouseOverEvent event) {
+				   deleteItem.getElement().getStyle().setBackgroundColor("#ddd");
+			   }
+		   }, MouseOverEvent.getType());
+		   deleteItem.addDomHandler(new MouseOutHandler() {
+			   @Override
+			   public void onMouseOut(MouseOutEvent event) {
+				   deleteItem.getElement().getStyle().setBackgroundColor("#fff");
+			   }
+		   }, MouseOutEvent.getType());
+	   
+		   IronIcon deleteIcon = new IronIcon();
+		   deleteIcon.setIcon("delete");
+	   
+		   deleteItem.add(deleteIcon);
+		   deleteItem.add(new Label("Borrar"));
+		   deleteItem.addClickHandler(new ClickHandler() {
+			   @Override
+			   public void onClick(ClickEvent event) {
+				   removeDocument(id);
+				   popup.hide();
+			   }
+		   });
+		   selector.add(deleteItem);
+		   size = size + 100;
+	   }
+	   PaperItem downloadItem = new PaperItem();
+	   downloadItem.getElement().getStyle().setCursor(Cursor.POINTER);
+	   downloadItem.addDomHandler(new MouseOverHandler() {
+		   @Override
+		   public void onMouseOver(MouseOverEvent event) {
+			   downloadItem.getElement().getStyle().setBackgroundColor("#ddd");
+		   }
+	   }, MouseOverEvent.getType());
+	   downloadItem.addDomHandler(new MouseOutHandler() {
+		   @Override
+		   public void onMouseOut(MouseOutEvent event) {
+			   downloadItem.getElement().getStyle().setBackgroundColor("#fff");
+		   }
+	   }, MouseOutEvent.getType());
+	   IronIcon downloadIcon = new IronIcon();
+	   downloadIcon.setIcon("file-download");
+	   
+	   downloadItem.add(downloadIcon);
+	   downloadItem.add(new Label("Descargar"));
+	   downloadItem.addClickHandler(new ClickHandler() {
+		   @Override
+		   public void onClick(ClickEvent event) {
+			   downloadDocument(id);
+			   popup.hide();
+		   }
+	   });
+	   
+	  
+	   selector.add(downloadItem);
+	   
+	   popup.add(selector);
+	   Integer top = e.getAbsoluteTop()
+			   + e.getOffsetHeight();
+	   Integer width = Window.getClientWidth();
+	   Integer height = Window.getClientHeight();
+	   Integer left = width - 250;
+
+	   if(top > height - size) {
+		   top = top - size;
+	   }
+	    
+	   popup.setAutoHideEnabled(true);
+	   popup.setPopupPosition(left, top);
+	   popup.show();	  
+   }
+
+   public static native boolean exportOptionsDocument(AttachListPanel thiz) /*-{
+		$wnd.optionsDocument = function(e,id) {
+			thiz.@net.aonsolutions.aon.gwt.document.client.AttachListPanel::optionsDocument(*)(e, id);
+		}
+	}-*/;
+   
+   public static native boolean exportViewDocument(AttachListPanel thiz) /*-{
+		$wnd.viewDocument = function(id) {
+			thiz.@net.aonsolutions.aon.gwt.document.client.AttachListPanel::viewDocument(*)(id);
+		}
+	}-*/;
+   
+}
