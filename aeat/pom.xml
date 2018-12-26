@@ -64,6 +64,23 @@
 					                <clearOutputDir>false</clearOutputDir>
 						</configuration>
                                         </execution>
+					<execution>
+						<id>xjc-2019</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+						<configuration>
+							<sources>
+                    						<source>src/main/xsd/AEATRetenciones2019.xsd</source>
+					                </sources>
+							<packageName>net.aonsolutions.core.aeat.v2019.jaxb</packageName> 
+					                <!--
+					                    Don't clear the output directory before generating the sources.
+					                    Clearing the output directory removes the 2019 schema from above.
+					                -->
+					                <clearOutputDir>false</clearOutputDir>
+						</configuration>
+                                        </execution>
 				</executions>
 			</plugin>
 		</plugins>
