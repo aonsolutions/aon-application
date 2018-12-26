@@ -67,6 +67,7 @@
 								<g:Button ui:field='publishButton' styleName='aon-finding-toolbar-item aon-icon-google-drive' text="Publicar" />
 								<g:ListBox ui:field='salaryTypeListBox' styleName=''  />
 								<g:ListBox ui:field='dateListBox' styleName=''  />
+								<g:ListBox ui:field='reportTypeListBox' styleName='' visible="false" />
 								<!--  g:ListBox ui:field='endDateBox' styleName=''  /-->
 							</g:HTMLPanel>
 						</g:HorizontalPanel>

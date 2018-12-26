@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.esferalia.aon.gwt.payroll.client.Cost.Listener;
+import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
+import com.esferalia.aon.gwt.payroll.shared.Salary.TypeVisitor;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -18,7 +19,6 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ResizeComposite;
@@ -132,6 +132,8 @@ public class Salary extends ResizeComposite {
 	ListBox dateListBox;
 	@UiField
 	ListBox salaryTypeListBox;
+	@UiField
+	ListBox reportTypeListBox;
 
 	private int zoom = DEFAULT_ZOOM;
 
@@ -232,6 +234,11 @@ public class Salary extends ResizeComposite {
 		onSalaryTypeChanged();
 	}
 
+	@UiHandler("reportTypeListBox")
+	void onReportTypeListBox(ChangeEvent e) {
+		onReportTypeChanged();
+	}
+
 	@UiHandler("publishButton")
 	void onPublishButtonClicked(ClickEvent e) {
 		onPublish(salaryDocuments);
@@ -277,6 +284,7 @@ public class Salary extends ResizeComposite {
 		if (salaryDocuments.size() > 0) {
 			viewPDF();
 			syncSalaryTypeListBox();
+			syncReportTypeListBox();
 			saveButton.setEnabled(true);
 			deleteButton.setEnabled(true);
 		} else {
@@ -290,9 +298,15 @@ public class Salary extends ResizeComposite {
 	}
 
 	private void onSalaryTypeChanged() {
+		syncReportTypeListBox();
 		selectNewestSalary(getSelectedType());
 		syncSalaryDateListBox();
 		onSalaryDateChanged();
+	}
+
+	private void onReportTypeChanged() {
+		salaryDocuments.getCurrent().setType(getReportType());
+		viewPDF();
 	}
 
 	private void onSalaryDateChanged() {
@@ -327,6 +341,44 @@ public class Salary extends ResizeComposite {
 		syncSalaryDateListBox();
 	}
 
+	private void syncReportTypeListBox() {
+		reportTypeListBox.setVisible(false);
+		salaryDocuments.getCurrent().setType(com.esferalia.aon.gwt.payroll.shared.Salary.Type.SALARY);
+		getSelectedType().accept( new TypeVisitor<Void>() {
+
+			@Override
+			public Void visitSalary(Type type) {
+				return null;
+			}
+
+			@Override
+			public Void visitExtra(Type type) {
+				return null;
+			}
+
+			@Override
+			public Void visitSettle(Type type) {
+				reportTypeListBox.clear();
+				reportTypeListBox.addItem("CARTA", com.esferalia.aon.gwt.payroll.shared.Salary.Type.SETTLE.name());
+				reportTypeListBox.addItem("N\u00D3MINA", com.esferalia.aon.gwt.payroll.shared.Salary.Type.SALARY.name());
+				reportTypeListBox.setSelectedIndex(0);
+				reportTypeListBox.setVisible(true);
+				return null;
+			}
+
+			@Override
+			public Void visitDelay(Type type) {
+				return null;
+			}
+
+			@Override
+			public Void visitNotEnjoyedVacations(Type type) {
+				return null;
+			}
+			
+		});
+	}
+
 	private void syncSalaryDateListBox() {
 		dateListBox.clear();
 
@@ -345,6 +397,11 @@ public class Salary extends ResizeComposite {
 		}
 
 		dateListBox.setSelectedIndex(index);
+	}
+
+	private com.esferalia.aon.gwt.payroll.shared.Salary.Type getReportType() {
+		return com.esferalia.aon.gwt.payroll.shared.Salary.Type
+		.valueOf(reportTypeListBox.getSelectedValue());
 	}
 
 	private com.esferalia.aon.gwt.payroll.shared.Salary.Type getSelectedType() {
