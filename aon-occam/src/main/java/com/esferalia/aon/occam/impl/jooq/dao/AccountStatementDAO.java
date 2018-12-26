@@ -58,12 +58,12 @@ import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.server.accounting.AccBOEBalanceAbbreviateKey;
 import com.esferalia.aon.occam.server.accounting.AccBOEBalanceNormalKey;
 import com.esferalia.aon.occam.server.accounting.AccBOEBalancePYMESKey;
+import com.esferalia.aon.occam.server.accounting.AccBOEPyGAbbreviateKey;
 import com.esferalia.aon.occam.server.accounting.AccBOEPyGNormalKey;
 import com.esferalia.aon.occam.server.accounting.AccMiningMVELContext;
 import com.esferalia.aon.occam.server.accounting.IBalanceKey;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableDouble;
-import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -71,7 +71,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountStatementDAO {
 	
-	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");	
+	// private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");	
 	private static final DateFormat MONTH_DATE_FORMAT = new SimpleDateFormat("MM/yyyy");	
 	private static final com.esferalia.aon.jooq.tables.Account DET_ACCOUNT = ACCOUNT.as("detAcc");;
 	private static final com.esferalia.aon.jooq.tables.Account BAL_ACCOUNT = ACCOUNT.as("balAcc");
@@ -937,6 +937,29 @@ public class AccountStatementDAO {
 					};
 				}
 			}); 
+		} else if (params.getBalanceType() == BalanceType.PYG_ABBREVIATE) {
+			return balanceReport(ctx,params,AccBOEPyGAbbreviateKey.values(), new IBalanceKeyCallback() {
+				
+				@Override
+				public IBalanceKey getKey(String value) {
+					return AccBOEPyGAbbreviateKey.valueOf(value);
+				}
+				
+				@Override
+				public IAccMiningKeyAccept getAccepter() {
+					return new IAccMiningKeyAccept() {
+				
+						@Override
+						public boolean acceptKey(Object key) {
+							try {
+								return (AccBOEPyGAbbreviateKey.valueOf((String) key) != null);	
+							} catch (IllegalArgumentException e) {
+								return false;
+							}
+						}
+					};
+				}
+			}); 
 		} 
 		throw new AonCoreException("No se ha indicado un tipo de balance adecuado");	
 	}
@@ -974,7 +997,8 @@ public class AccountStatementDAO {
 		mParams.setDomain(ctx.getDomainId());
 		mParams.setStartDate( params.getFromDate() );
 		mParams.setEndDate( params.getToDate() );
-		Map<String, AccountBalance> accounts = ACCOUNTING.getAccountBalances(ctx, mParams, params.getBalanceType()==BalanceType.PYG_NORMAL); 
+		Map<String, AccountBalance> accounts = ACCOUNTING.getAccountBalances(ctx, mParams
+				, params.getBalanceType()==BalanceType.PYG_NORMAL || params.getBalanceType()==BalanceType.PYG_ABBREVIATE); 
 		mvelCtx.setAccounts( accounts );
 		
 		for (IBalanceKey key : keys) {

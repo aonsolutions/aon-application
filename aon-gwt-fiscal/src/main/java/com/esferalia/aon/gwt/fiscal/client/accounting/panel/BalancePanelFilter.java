@@ -351,7 +351,7 @@ public class BalancePanelFilter extends SimpleLayoutPanel implements HasValueCha
 		
 		balanceType.addItem( "Balance de situaci\u00F3n (PYMES)");
 		balanceType.addItem( "Cuenta de Explotaci\u00F3n (Normal)");
-		//balanceType.addItem( "Cuenta de Explotaci\u00F3n (Abreviada)");
+		balanceType.addItem( "Cuenta de Explotaci\u00F3n (Abreviada)");
 		balanceType.setSelectedIndex(0);
 		if (params != null ) {
 			balanceType.setSelectedIndex(params.getBalanceType().ordinal());

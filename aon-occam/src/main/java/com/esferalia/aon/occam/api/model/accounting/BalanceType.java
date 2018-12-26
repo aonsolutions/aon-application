@@ -8,6 +8,7 @@ public enum BalanceType implements Serializable {
 	,BALANCE_ABBREVIATE	("Balance de Situaci\u00F3n (Abreviado)")
 	,BALANCE_PYMES		("Balance de Situaci\u00F3n (PYMES)")
 	,PYG_NORMAL			("Cuenta de explotaci\u00F3n (Normal)")
+	,PYG_ABBREVIATE		("Cuenta de explotaci\u00F3n (Abreviado)")
 	;
 	
 	private String name;
