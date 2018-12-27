@@ -52,10 +52,16 @@ public class JooqEmployeeEvents {
 		for(String name: employeeContractVariables){
 			ArrayList<Quartet<Date, Date, String, String>> varibaleList = new ArrayList<Quartet<Date, Date, String, String>>();
 			
+			Result<Record> contractRecord = dslContext.select().from(CONTRACT)
+					.where(CONTRACT.PERSON.eq(contract))
+					.fetch();
+			
+			Integer contractId = contractRecord.get(0).get(CONTRACT.ID);
+			
 			Result<Record> variableEmployeeInfo = dslContext
 					  .select()
 					  .from(CONTRACT_DATA)
-					  .where(CONTRACT_DATA.CONTRACT.eq(contract))
+					  .where(CONTRACT_DATA.CONTRACT.eq(contractId))
 					  .and(CONTRACT_DATA.NAME.eq(name))
 					  .fetch();
 			

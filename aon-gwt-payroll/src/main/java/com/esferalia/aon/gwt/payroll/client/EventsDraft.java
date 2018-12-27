@@ -322,9 +322,11 @@ public class EventsDraft extends ResizeComposite {
 		String selectItem = typeView.getSelectedItemText();
 		if (selectItem == "MES"){
 			initializeFirstRow(variableList);
+			initializeValueForAllByMonth(employeeList, variableList);
 			initializeTableByMonth(employeeList, variableList);
 		}else if (selectItem == "VARIABLE"){
 			initializeFirstRow(monthList);
+			initializeValueForAllByVar(employeeList);
 			initializeTableByVar(employeeList);
 		}		
 	}
@@ -359,19 +361,58 @@ public class EventsDraft extends ResizeComposite {
 		}	
 	}
 	
+	private void initializeValueForAllByMonth(ArrayList<EventEmployee> employeeList, ArrayList<String> variableList) {
+		int columns = this.getColCount();
+		
+		//Rellenamos primera colunma con campos blancos
+		Label blankLabel = new Label();
+		blankLabel.addStyleName(style.blankHeaderCell());
+		eventsTable.setWidget(1, 0, blankLabel);
+		
+		for(int column=0; column<columns; column++){
+			EventTableCell eventCell = new EventTableCell(1, column+1);
+			eventCell.addValueChangeHandler(new ValueChangeHandler<String>() {
+				
+				@Override
+				public void onValueChange(ValueChangeEvent<String> event) {
+					for(int row=0; row<employeeList.size(); row++){
+						Double value = Double.parseDouble(eventCell.getValue());
+						Date startDate = new Date(actualYear, actualMonth, 1);
+						Date endDate = DateUtils.getLastDayOfMonth(startDate);
+						Integer employeeId = draftObject.getEventEmployeeId(eventsTable.getText(row+2, 0));
+						String varName = eventsTable.getText(0, eventCell.getColumn());
+						
+						draftObject.addEvent(employeeId, varName, value, startDate, endDate);
+						
+						EventTableCell eventCell_Aux = (EventTableCell) eventsTable.getWidget(row+2, eventCell.getColumn());
+						eventCell_Aux.setTextBoxValue(value.toString());
+						eventCell_Aux.setOnChangeStyle();
+					}
+					
+					eventCell.setTextBoxValue("-");
+				}
+			});
+			
+			eventCell.setTextBoxValue("-");
+			
+			eventsTable.setWidget(1, column+1, eventCell);
+		}
+		
+	}
+	
 	// Metodo para rellenar la tabla cuando la vista elegida es por mes
 	private void initializeTableByMonth(ArrayList<EventEmployee> employeeList, ArrayList<String> variableList) {
 		int columns = this.getColCount();
-		for(int row=0; row<employeeList.size(); row++){
+		for(int row=1; row<employeeList.size()+1; row++){
 			//Rellenamos primera colunma con los nombres de los empleados
-			eventsTable.setText(row+1, 0, employeeList.get(row).getCompleteEmployeeName());
+			eventsTable.setText(row+1, 0, employeeList.get(row-1).getCompleteEmployeeName());
 			eventsTable.getCellFormatter().addStyleName(row+1, 0, style.headerCell());
 			
 			for(int column=0; column<columns; column++){
 				//Rellenamos el resto de columnas con la informacion de cada empleado
 				Date findingDate = new Date(this.actualYear, this.actualMonth, 1);
 				DateUtils.resetTime(findingDate);
-				Integer employeeId = this.draftObject.getEventEmployeeId(employeeList.get(row).getCompleteEmployeeName());
+				Integer employeeId = this.draftObject.getEventEmployeeId(employeeList.get(row-1).getCompleteEmployeeName());
 				
 				EmployeeEventsVariable variable = this.draftObject.getEmployeeVariableByDate(employeeId, findingDate, variableList.get(column));
 				EventTableCell eventCell = new EventTableCell(row+1, column+1);
@@ -402,12 +443,51 @@ public class EventsDraft extends ResizeComposite {
 					eventCell.setBlockVariableStyle();
 				}
 				
-				if(this.draftObject.hasChanged(employeeId, variableList.get(column), variable)){
-					eventCell.setOnChangeStyle();
-				}
+//				if(this.draftObject.hasChanged(employeeId, variableList.get(column), variable)){
+//					eventCell.setOnChangeStyle();
+//				}
 				
 				eventsTable.setWidget(row+1, column+1, eventCell);
 			}
+		}
+		
+	}
+	
+	private void initializeValueForAllByVar(ArrayList<EventEmployee> employeeList) {
+		int columns = this.getColCount();
+		
+		//Rellenamos primera colunma con campos blancos
+		Label blankLabel = new Label();
+		blankLabel.addStyleName(style.blankHeaderCell());
+		eventsTable.setWidget(1, 0, blankLabel);
+		
+		for(int column=0; column<columns; column++){
+			EventTableCell eventCell = new EventTableCell(1, column+1);
+			eventCell.addValueChangeHandler(new ValueChangeHandler<String>() {
+				
+				@Override
+				public void onValueChange(ValueChangeEvent<String> event) {
+					for(int row=0; row<employeeList.size(); row++){
+						String varName = varListView.getSelectedValue();
+						Double value = Double.parseDouble(eventCell.getValue());
+						Date startDate = new Date(actualYear, eventCell.getColumn()-1, 1);
+						Date endDate = DateUtils.getLastDayOfMonth(startDate);
+						Integer employeeId = draftObject.getEventEmployeeId(eventsTable.getText(row+2, 0));
+						
+						draftObject.addEvent(employeeId, varName, value, startDate, endDate);
+						
+						EventTableCell eventCell_Aux = (EventTableCell) eventsTable.getWidget(row+2, eventCell.getColumn());
+						eventCell_Aux.setTextBoxValue(value.toString());
+						eventCell_Aux.setOnChangeStyle();
+					}
+					
+					eventCell.setTextBoxValue("-");
+				}
+			});
+			
+			eventCell.setTextBoxValue("-");
+			
+			eventsTable.setWidget(1, column+1, eventCell);
 		}
 		
 	}
@@ -418,16 +498,16 @@ public class EventsDraft extends ResizeComposite {
 		String varName = varListView.getSelectedValue();
 		int columns = this.getColCount();
 		
-		for(int row=0; row<employeeList.size(); row++){
+		for(int row=1; row<employeeList.size()+1; row++){
 			//Rellenamos primera colunma con los nombres de los empleados
-			eventsTable.setText(row+1, 0, employeeList.get(row).getCompleteEmployeeName());
+			eventsTable.setText(row+1, 0, employeeList.get(row-1).getCompleteEmployeeName());
 			eventsTable.getCellFormatter().addStyleName(row+1, 0, style.headerCell());
 			
 			for(int column=0; column<columns; column++){
 				//Rellenamos el resto de columnas con la informacion de cada empleado
 				Date findingDate = new Date(this.actualYear, column, 1);
 				DateUtils.resetTime(findingDate);
-				Integer employeeId = this.draftObject.getEventEmployeeId(employeeList.get(row).getCompleteEmployeeName());
+				Integer employeeId = this.draftObject.getEventEmployeeId(employeeList.get(row-1).getCompleteEmployeeName());
 				
 				EmployeeEventsVariable variable = this.draftObject.getEmployeeVariableByDate(employeeId, findingDate, varName);
 				EventTableCell eventCell = new EventTableCell(row+1, column+1);
@@ -457,9 +537,9 @@ public class EventsDraft extends ResizeComposite {
 					eventCell.setBlockVariableStyle();
 				}
 				
-				if(this.draftObject.hasChanged(employeeId, varName, variable)){
-					eventCell.setOnChangeStyle();
-				}
+//				if(this.draftObject.hasChanged(employeeId, varName, variable)){
+//					eventCell.setOnChangeStyle();
+//				}
 				
 				eventsTable.setWidget(row+1, column+1, eventCell);
 			}

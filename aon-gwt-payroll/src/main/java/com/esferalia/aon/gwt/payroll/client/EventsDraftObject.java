@@ -24,6 +24,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.VariableDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -243,6 +244,7 @@ public class EventsDraftObject {
 							employeeDB.getEmployeeId()
 					);
 					mapEventsObject.put(employeeDB.getEmployeeId(), new HashMap<String, ArrayList<EmployeeEventsVariable>>());
+					draftMapEventsObject.put(employeeDB.getEmployeeId(), new HashMap<String, ArrayList<EmployeeEventsVariable>>());
 					
 					workplaceEmployeesId.add(employee.getEmployeeId());
 					workplaceEmployees.add(employee);
@@ -282,6 +284,7 @@ public class EventsDraftObject {
 				
 				for(Entry<String, String> entry : result.entrySet()){
 					createAllVariables(entry.getKey());
+					employeeContractVariablesDB.add(entry.getKey());
 					ArrayList<EmployeeEventsVariable> varList = new ArrayList<EmployeeEventsVariable>();
 					mapEmployeeEventsVar.put(entry.getKey(), varList);
 				}
@@ -295,6 +298,7 @@ public class EventsDraftObject {
 			}
 			
 			private void createAllVariables(String var) {
+//				Window.alert(var);
 				employeeContractVariables.add(var);
 				allVariables.add(var);	
 			}
@@ -358,9 +362,21 @@ public class EventsDraftObject {
 					modifyMapEventsVar();
 					
 					mapEventsObject.get(employeeId).putAll(mapEmployeeEventsVar);
+					draftMapEventsObject.get(employeeId).putAll(mapEmployeeEventsVar);
 					
 					if(getEmployeesId().size() == contWorkplaceEmployeesId){
-						success.accept(result);
+//						Window.alert("Map Events Object Size = " + mapEventsObject.size());
+						Timer timer = new Timer() {
+
+							@Override
+							public void run() {
+								success.accept(result);
+								this.cancel();
+							}
+						};
+						
+						timer.schedule(2000);
+//						success.accept(result);
 					}
 				}
 	
@@ -513,6 +529,7 @@ public class EventsDraftObject {
 		if(this.draftMapEventsObject.containsKey(employeeId)){
 			if(this.draftMapEventsObject.get(employeeId).containsKey(varName)){
 				for(EmployeeEventsVariable var : this.draftMapEventsObject.get(employeeId).get(varName)){
+//					Window.alert("Borrar Var : " + var.getStartDate() + " == " + startDate);
 					if(var.getStartDate().equals(startDate)){
 						removeVar = var;
 						continue;
@@ -587,9 +604,9 @@ public class EventsDraftObject {
 	private List<Quintet<Integer, String, Date, Date, String>> createUpdateEventsWorkplace() {
 		Map<Integer, Map<String, ArrayList<EmployeeEventsVariable>>> updateMap = new HashMap<Integer, Map<String, ArrayList<EmployeeEventsVariable>>>();
 		
-		for (Entry<Integer, Map<String, ArrayList<EmployeeEventsVariable>>> entry : mapEventsObject.entrySet()){
-			updateMap.put(entry.getKey(), entry.getValue());
-		}
+//		for (Entry<Integer, Map<String, ArrayList<EmployeeEventsVariable>>> entry : mapEventsObject.entrySet()){
+//			updateMap.put(entry.getKey(), entry.getValue());
+//		}
 		
 		for (Entry<Integer, Map<String, ArrayList<EmployeeEventsVariable>>> entry : draftMapEventsObject.entrySet()){
 			Integer employeeId = entry.getKey();

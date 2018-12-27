@@ -451,16 +451,13 @@ public class JooqEvents {
 		varNotToUpdate.add("DIAS_HUELGA");
 		varNotToUpdate.add("DIAS_VACACIONES");
 		
-		Integer numBorrado = 0;
-		Integer old_employeeId = null;
+		for(Quintet<Integer, String, java.util.Date, java.util.Date, String> varQuintet : updateEventsWorkplace.getUpdateEventsWorkplace()){
+			Integer employeeId = varQuintet.getContractId();
+			deleteEmployeeEventsVariables(dslContext, employeeId);
+		}
 		
 		for(Quintet<Integer, String, java.util.Date, java.util.Date, String> varQuintet : updateEventsWorkplace.getUpdateEventsWorkplace()){
 			Integer employeeId = varQuintet.getContractId();
-			if(old_employeeId != employeeId){
-				numBorrado++;
-				deleteEmployeeEventsVariables(dslContext, employeeId);
-				old_employeeId = employeeId;
-			}
 			
 			addEmployeeEventsVariable(
 					dslContext, 
@@ -472,23 +469,24 @@ public class JooqEvents {
 					varNotToUpdate);
 		}
 		
-		System.out.println("Numero de variables :"+ updateEventsWorkplace.getUpdateEventsWorkplace().size());
-		System.out.println("Numero de borrados :"+numBorrado);		
-		
 		return updateEventsWorkplace;
 	}
 
 	private static void deleteEmployeeEventsVariables(DSLContext dslContext, Integer employeeContractId) {
+		Result<Record> contractRecord = dslContext.select()
+				.from(CONTRACT)
+				.where(CONTRACT.PERSON.eq(employeeContractId))
+				.fetch();
+		 
+		Integer contract = contractRecord.get(0).get(CONTRACT.ID);
+		
 		dslContext.delete(CONTRACT_DATA)
-		   .where(CONTRACT_DATA.CONTRACT.eq(employeeContractId))
+		   .where(CONTRACT_DATA.CONTRACT.eq(contract))
 		   .and(CONTRACT_DATA.NAME.in(
 				   ContextVariable.WORKED_DAYS.getName()
 				  ,ContextVariable.LEAVE_DAYS.getName()
 				  ,ContextVariable.WORKED_HOURS.getName()
 				  ,ContextVariable.REAL_DAYS.getName()
-//				  ,ContextVariable.ERE_DAYS.getName()
-//				  ,ContextVariable.STRIKE_DAYS.getName()
-//				  ,ContextVariable.HOLIDAYS.getName()
 				  ,ContextVariable.EXTRA_HOURS.getName())
 				.or(CONTRACT_DATA.NAME.eq("DIAS_EFECTIVOS"))
 				.or(CONTRACT_DATA.NAME.eq("HORAS_COMPLEMENTARIAS"))
@@ -501,6 +499,7 @@ public class JooqEvents {
 				.or(CONTRACT_DATA.NAME.eq("IMPORTE_HORA_EXTRA"))
 				.or(CONTRACT_DATA.NAME.eq("VENTAS"))
 				.or(CONTRACT_DATA.NAME.eq("HORAS_EXTRAS_FZA"))
+				.or(CONTRACT_DATA.NAME.eq("HORAS_EXTRAS"))
 				)
 		   .execute();
 		
@@ -510,10 +509,13 @@ public class JooqEvents {
 			java.util.Date start_date, java.util.Date end_date, String expression,
 			ArrayList<String> varNotToUpdate) {
 		
-		Integer domain = dslContext.select(CONTRACT.DOMAIN)
+		Result<Record> contractRecord = dslContext.select()
 				.from(CONTRACT)
-				.where(CONTRACT.ID.eq(employeeContractId))
-				.fetchOne().value1();
+				.where(CONTRACT.PERSON.eq(employeeContractId))
+				.fetch();
+		 
+		Integer domain = contractRecord.get(0).get(CONTRACT.DOMAIN);
+		Integer contract = contractRecord.get(0).get(CONTRACT.ID);
 		
 		if(!varNotToUpdate.contains(varName))
 			if(null != expression){
@@ -523,7 +525,7 @@ public class JooqEvents {
 				
 				dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT,
 						CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-						.values(domain, varName, employeeContractId, expression, 
+						.values(domain, varName, contract, expression, 
 								sqlStartDate, sqlEndDate)
 						.execute();
 			}
