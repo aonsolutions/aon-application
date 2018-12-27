@@ -204,7 +204,7 @@ public class CommissionCalculateFilter extends Composite {
 					customerLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 					customerLabel.setWidth("20px");
 					fpanel2.add(customerLabel);
-				
+					
 					AonSuggestOracleMap oracle = new AonSuggestOracleMap();
 					r.getData().stream().forEach(s -> oracle.add(s.getName(), s.getId()));
 					SuggestBox sb = new SuggestBox(oracle);		
@@ -212,13 +212,13 @@ public class CommissionCalculateFilter extends Composite {
 					sb.getElement().getStyle().setBorderWidth(1, Unit.PX);
 					sb.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
 					sb.getElement().getStyle().setBorderColor("#dedede");	
-					sb.addValueChangeHandler(new ValueChangeHandler<String>() {
-					
+					sb.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
+						
 						@Override
-						public void onValueChange(ValueChangeEvent<String> event) {
+						public void onSelection(SelectionEvent<Suggestion> event) {
 							LinkedList<String> list = new LinkedList<>();
 							list.add(oracle.getMap().get(sb.getValue()) + "");
-							CommissionCalculateFilter.this.onChange("registry", list);	
+							CommissionCalculateFilter.this.onChange("registry", list);
 						}
 					});
 					fpanel2.add(sb);
@@ -249,15 +249,16 @@ public class CommissionCalculateFilter extends Composite {
 				sb.getElement().getStyle().setBorderWidth(1, Unit.PX);
 				sb.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
 				sb.getElement().getStyle().setBorderColor("#dedede");	
-				sb.addValueChangeHandler(new ValueChangeHandler<String>() {
+				sb.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
 					
 					@Override
-					public void onValueChange(ValueChangeEvent<String> event) {
+					public void onSelection(SelectionEvent<Suggestion> event) {
 						LinkedList<String> list = new LinkedList<>();
 						list.add(oracle.getMap().get(sb.getValue()) + "");
-						CommissionCalculateFilter.this.onChange("seller", list);
+						CommissionCalculateFilter.this.onChange("seller", list);						
 					}
 				});
+
 				fpanel2.add(sb);
 			}
 			

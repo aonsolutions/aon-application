@@ -36,6 +36,7 @@
 					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.invoice</compileSourcesArtifact>
 					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.seres</compileSourcesArtifact>
 					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.communication</compileSourcesArtifact>
+  					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.commercial</compileSourcesArtifact>
 					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.fiscal</compileSourcesArtifact>
 					</compileSourcesArtifacts>
 					<extraJvmArgs>-Xmx2048M</extraJvmArgs>
@@ -245,6 +246,19 @@
 		<dependency>
 			<groupId>net.aonsolutions</groupId>
 			<artifactId>aon.gwt.communication</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+			<classifier>sources</classifier>
+		</dependency>
+
+		<dependency>
+			<groupId>net.aonsolutions</groupId>
+			<artifactId>aon.gwt.commercial</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.aonsolutions</groupId>
+			<artifactId>aon.gwt.commercial</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 			<classifier>sources</classifier>

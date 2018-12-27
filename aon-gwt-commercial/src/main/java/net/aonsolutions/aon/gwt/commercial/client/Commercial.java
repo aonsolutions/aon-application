@@ -8,13 +8,12 @@ import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.common.shared.Constants;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import net.aonsolutions.aon.gwt.commercial.client.commission.CommissionCalculate;
 
 public class Commercial implements EntryPoint{
 
-	final ICommercialAsync impl = GWT.create(ICommercial.class);
+	private AonData aonData;
 
 	public static native String getCurrentDomainName()
 	/*-{
@@ -31,20 +30,21 @@ public class Commercial implements EntryPoint{
 		return $wnd.getSubEntryPoint();
 	}-*/;
 	
+	public Commercial(AonData aonData) {
+		this.aonData = aonData;
+	}
+	
+	public AonData getAonData() {
+		return aonData;
+	}
+	
 	@Override
 	public void onModuleLoad() {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
 		
 		String entryPoint = getParameter(GWT.getModuleName(), Constants.ENTRY_POINT_PARAM);
-		impl.getAonData(getCurrentDomainName(), getCurrentDomain(), new AsyncCallback<AonData>() {
-			
-			@Override public void onSuccess(AonData aonData) {
-				selection(entryPoint, aonData);
-			}
-			
-			@Override public void onFailure(Throwable arg0) {}
-		});
+		selection(entryPoint, getAonData());
 	}
 
 	private void selection(String entryPoint, AonData aonData){

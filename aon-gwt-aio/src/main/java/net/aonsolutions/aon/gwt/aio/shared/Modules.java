@@ -14,5 +14,6 @@ public interface Modules {
 	public static final String INVOICE = "invoice";
 	@Deprecated public static final String SERES = "seres";
 	public static final String COMMUNICATION = "communication";
+	public static final String COMMISSION = "commission_calculate";
 	public static final String DEPOSIT = "deposit";
 }

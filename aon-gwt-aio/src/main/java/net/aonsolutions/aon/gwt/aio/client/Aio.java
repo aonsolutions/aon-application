@@ -17,6 +17,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import net.aonsolutions.aon.gwt.aio.shared.Modules;
+import net.aonsolutions.aon.gwt.commercial.client.Commercial;
 import net.aonsolutions.aon.gwt.communication.client.Communication;
 import net.aonsolutions.aon.gwt.document.client.Documental;
 import net.aonsolutions.aon.gwt.invoice.client.Invoice;
@@ -246,6 +247,20 @@ public class Aio implements EntryPoint {
 				@Override
 				public void onSuccess() {
 					new DepositEntryPoint(aonData).onModuleLoad(getSubEntryPoint());
+				}
+			});		
+			break;
+		case Modules.COMMISSION:
+			GWT.runAsync(Commercial.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					new Commercial(aonData).onModuleLoad();
 				}
 			});		
 			break;
