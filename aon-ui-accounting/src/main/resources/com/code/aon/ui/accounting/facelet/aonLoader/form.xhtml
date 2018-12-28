@@ -12,7 +12,6 @@
 	<ui:define name="content">
 
 		<aon:form id="aonLoaderForm">
-
     		<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarID" value="aonToolbar" />
@@ -69,6 +68,7 @@
 					<h:panelGrid id="attachGrid" columns="2">
 						<aon:outputText rendered="#{aonLoader.aonFile.size > 0}"
 							value="#{aonLoader.aonFile.fileName} - ( #{aonLoader.aonFile.size} bytes)" />
+
 						<aon:fileUpload id="attach_file"
 							addControlLabel="#{bundle.aon_fileUpload_add}"
 							stopControlLabel="#{bundle.aon_fileUpload_stop}"
@@ -81,6 +81,7 @@
 							</f:facet>
 							<a4j:support event="onuploadcomplete" reRender="attachGrid,aonToolbar,paramsGrid" />
 						</aon:fileUpload>
+
 					</h:panelGrid>
 				</a4j:region>
 			</aon:panelGrid>
@@ -129,6 +130,14 @@
 								value="#{bundle.aon_loader_forceRegistryInsert}" />
 						</aon:div>
 						
+						<aon:outputText value ="&#160;"/>
+						<aon:div>
+							<aon:selectBooleanCheckbox id="aonLoader_updateAccountDescription"
+								value="#{aonLoader.params.updateAccountDescription}" />
+							<aon:outputLabel
+								for="aonLoader_updateAccountDescription"
+								value="En caso de que la cuenta contable que se intenta cargar exista, modificar la descripción con la del fichero." />
+						</aon:div>
 	
 						<aon:if test="#{aonRole.confidentiality}">
 							<aon:outputText value ="&#160;"/>

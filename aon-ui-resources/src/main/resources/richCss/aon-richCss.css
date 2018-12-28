@@ -2505,13 +2505,13 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 	font-weight:bold;
 	cursor:hand;
 	background:transparent url(images/aon-content/aon-fileupload-button.png) scroll left center no-repeat;	
-	padding:3px 1.5em !important;
+	padding:3px 1.0em !important;
 	margin:0;
 	border:transparent 1px solid;
 	
 	}
 .rich-fileupload-button-press{
-	padding:3px 1.5em !important;
+	padding:3px 1.0em !important;
 	font-weight:bold;
 	border:transparent 1px solid;
 	background:transparent url(images/aon-content/aon-fileupload-button.png) scroll left center no-repeat;	

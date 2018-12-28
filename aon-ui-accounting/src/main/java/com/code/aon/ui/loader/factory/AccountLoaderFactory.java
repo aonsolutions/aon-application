@@ -12,6 +12,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.loader.Column;
 import com.code.aon.ui.loader.ILoaderEngine;
@@ -19,6 +20,7 @@ import com.code.aon.ui.loader.ILoaderFactory;
 import com.code.aon.ui.loader.LoaderParams;
 import com.code.aon.ui.loader.pojo.ILoadedPojo;
 import com.code.aon.ui.loader.pojo.LoadedAccount;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -142,8 +144,18 @@ public class AccountLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		c.addEqualExpression(codeAlias, loaded.getCuenta());
 		List<ITransferObject> list = getBean().getList(c);
 		if (list != null && list.size() >0 ) {
-			account = (Account) list.get(0);	
-			engine.log("Cuenta ya existente, se ignora la del fichero ["+ account.getFullDescription() +"]");
+			account = (Account) list.get(0);
+			if (params.isUpdateAccountDescription()) {
+				int currentDomain = DomainManager.getCurrentDomain();
+				if (account.getDomain() == currentDomain) {
+					account.setDescription(loaded.getDescripcion());		
+					account = (Account) getBean().update(account);
+				} else {
+					engine.log("La cuenta es de dominio superior, no se puede modificar ["+ account.getFullDescription() +"]");	
+				}
+			} else {
+				engine.log("Cuenta ya existente, se ignora la del fichero ["+ account.getFullDescription() +"]");
+			}
 		} else {
 			account = (Account) getBean().insert(account);
 		}

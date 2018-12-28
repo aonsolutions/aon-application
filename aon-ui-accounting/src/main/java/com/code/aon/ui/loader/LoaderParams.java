@@ -26,6 +26,7 @@ public class LoaderParams implements Serializable {
 	private boolean documentValidable;
 	private boolean forceRegistryInsert;
 	private boolean ignoreExistingDomains;
+	private boolean updateAccountDescription;
 	private String password;
 	
 	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
@@ -110,6 +111,12 @@ public class LoaderParams implements Serializable {
 	}
 	public void setIgnoreExistingDomains(boolean ignoreExistingDomains) {
 		this.ignoreExistingDomains = ignoreExistingDomains;
+	}
+	public boolean isUpdateAccountDescription() {
+		return updateAccountDescription;
+	}
+	public void setUpdateAccountDescription(boolean updateAccountDescription) {
+		this.updateAccountDescription = updateAccountDescription;
 	}
 	public String getPassword() {
 		return password;
