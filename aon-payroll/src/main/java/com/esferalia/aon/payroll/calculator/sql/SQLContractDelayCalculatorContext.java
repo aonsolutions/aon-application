@@ -641,6 +641,17 @@ public class SQLContractDelayCalculatorContext extends
 				+ ")"
 				;
 
+		private static final String MATERNITY_BASE = 
+				"IFNULL((SELECT"
+				+ " SUM(" + SalaryDataColumns.EXPRESSION + ")"
+				+ " FROM " + SALARY_DATA 
+				+ " WHERE " + SalaryDataColumns.SALARY + " = " + SALARY +"." + SalaryColumns.ID 
+				+ " AND " + SalaryDataColumns.NAME + " = 'BASE_MTNAD'"
+				+ " AND " + SalaryDataColumns.START_DATE + " = ? " 
+				+ " AND " + SalaryDataColumns.END_DATE + " =  ? " 
+				+ "),0.00)"
+				;
+
 		private static final String SALARY_SQL = 
 				"SELECT " 
 				
@@ -653,6 +664,7 @@ public class SQLContractDelayCalculatorContext extends
 				+ " AS GTZDOIT" 
 
 				+ ", " + SALARY_DATA + "."+ SalaryDataColumns.EXPRESSION 
+				+ " + " + MATERNITY_BASE
 				+ " AS " + SalaryColumns.CGC_BASE
 				
 				+ ", (IFNULL( "+ SALARY_PAYMENT +"." + SalaryPaymentColumns.IRPF  + " + @GTZDOIT"
@@ -884,6 +896,8 @@ public class SQLContractDelayCalculatorContext extends
 			int i = 1;
 			java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());
 			java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());
+			stmt.setDate(i++, sqlStartDate); 
+			stmt.setDate(i++, sqlEndDate); 
 			stmt.setDate(i++, sqlStartDate); 
 			stmt.setDate(i++, sqlEndDate); 
 			stmt.setDate(i++, sqlStartDate); 
