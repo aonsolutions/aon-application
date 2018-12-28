@@ -47,9 +47,9 @@
    		</dependency>
    				
 		<dependency>
-   		 	<groupId>org.json</groupId>
+    		<groupId>org.json</groupId>
     		<artifactId>json</artifactId>
-	 		<version>20180130</version>
+    		<version>20180813</version>
 		</dependency>
 		
 		<dependency>
