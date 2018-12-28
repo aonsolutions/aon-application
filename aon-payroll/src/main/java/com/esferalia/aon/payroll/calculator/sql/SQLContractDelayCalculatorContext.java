@@ -652,6 +652,18 @@ public class SQLContractDelayCalculatorContext extends
 				+ "),0.00)"
 				;
 
+		private static final String PREST_IT = 
+				"(SELECT"
+				+ " SUM(" + SalaryDataColumns.EXPRESSION + ")"
+				+ " FROM " + SALARY_DATA 
+				+ " WHERE " + SalaryDataColumns.SALARY + " = " + SALARY +"." + SalaryColumns.ID 
+				+ " AND " + SalaryDataColumns.NAME + " = 'PREST_IT'"
+				+ " AND " + SalaryDataColumns.START_DATE + " = ? " 
+				+ " AND " + SalaryDataColumns.END_DATE + " =  ? " 
+				+ " AND " + SalaryDataColumns.EXPRESSION + " != '0.0' "
+				+ ")"
+				;
+
 		private static final String SALARY_SQL = 
 				"SELECT " 
 				
@@ -667,12 +679,12 @@ public class SQLContractDelayCalculatorContext extends
 				+ " + " + MATERNITY_BASE
 				+ " AS " + SalaryColumns.CGC_BASE
 				
-				+ ", (IFNULL( "+ SALARY_PAYMENT +"." + SalaryPaymentColumns.IRPF  + " + @GTZDOIT"
+				+ ", (IFNULL( " + "IFNULL(" + SALARY_PAYMENT +"." + SalaryPaymentColumns.IRPF +","+ PREST_IT + ")" + " + @GTZDOIT"
 				+ ", (" + SalaryColumns.IRPF_BASE + "- (" + PREST_IT_IRPF_SQL + " + @GTZDO )) / " + ALL_WORKED_DAYS + " * " + WORKED_DAYS + ")"
 				+ ")"
 				+ " AS " + SalaryColumns.IRPF_BASE
 
-				+ ", (IFNULL( " + SALARY_PAYMENT +"." + SalaryPaymentColumns.AMOUNT + " + @GTZDOIT"
+				+ ", (IFNULL( " + "IFNULL(" + SALARY_PAYMENT +"." + SalaryPaymentColumns.AMOUNT + "," + PREST_IT +")" + " + @GTZDOIT"
 				+ ", (" + SalaryColumns.TOTAL_PAYMENT + "- (" + PREST_IT_AMOUNT_SQL + " + @GTZDO )) / " + ALL_WORKED_DAYS + " * " + WORKED_DAYS +")"
 				+ ")"
 				+ " AS " + SalaryColumns.TOTAL_PAYMENT
@@ -896,6 +908,10 @@ public class SQLContractDelayCalculatorContext extends
 			int i = 1;
 			java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());
 			java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());
+			stmt.setDate(i++, sqlStartDate); 
+			stmt.setDate(i++, sqlEndDate); 
+			stmt.setDate(i++, sqlStartDate); 
+			stmt.setDate(i++, sqlEndDate); 
 			stmt.setDate(i++, sqlStartDate); 
 			stmt.setDate(i++, sqlEndDate); 
 			stmt.setDate(i++, sqlStartDate); 
