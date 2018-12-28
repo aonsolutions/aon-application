@@ -85,12 +85,12 @@ public class GoogleDriveController implements Serializable {
 		Drive drive=getClientSession();
 		
 		FileList files = DriveUtils.getRootFiles(drive);
-		DriveFile[] driveFiles= new DriveFile[files.getItems().size()];
+		DriveFile[] driveFiles= new DriveFile[files.getFiles().size()];
 		for(int i=0;i<driveFiles.length;i++){
-			driveFiles[i]=new DriveFile(files.getItems().get(i).getId(),files.getItems().get(i).getAlternateLink()
-					,files.getItems().get(i).getTitle(),files.getItems().get(i).getMimeType());
+			driveFiles[i]=new DriveFile(files.getFiles().get(i).getId(),files.getFiles().get(i).getWebViewLink()
+					,files.getFiles().get(i).getName(),files.getFiles().get(i).getMimeType());
 			
-			System.out.println(files.getItems().get(i).getMimeType());
+			System.out.println(files.getFiles().get(i).getMimeType());
 		}
 		
 		return driveFiles; //DriveUtils.getFiles(drive);//new DriveFile[]{new DriveFile("_1", "Hello"), new DriveFile("_2", "World!!!") };
@@ -142,7 +142,7 @@ public class GoogleDriveController implements Serializable {
 	public void fileUploaded(UploadEvent event) throws IOException {
 		Drive drive=getClientSession();
 		DriveFile file=new DriveFile("","", event.getUploadItem().getFileName(), event.getUploadItem().getContentType());
-		DriveUtils.insertFile(drive,event.getUploadItem().getFile(), file,null);
+		DriveUtils.insertFile(drive,event.getUploadItem().getFile(), file);
 	}
 	
 	public void fileDownloaded(ActionEvent event) throws IOException {
@@ -157,7 +157,7 @@ public class GoogleDriveController implements Serializable {
 		InputStream data = DriveUtils.downloadFile(drive, driveFile);
 		
 		response.setContentType(driveFile.getMimeType());
-		response.setHeader("Content-Disposition", "attachment; filename=\"" + driveFile.getTitle() + "\";");
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + driveFile.getName() + "\";");
 		response.getOutputStream().write(AonIOUtils.toByteArray(data));
 		response.flushBuffer();
 		ctx.responseComplete();

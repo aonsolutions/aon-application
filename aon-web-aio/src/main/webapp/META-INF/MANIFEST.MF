@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Implementation-Title: AON WEB AIO
+buildNumber: 
+Implementation-Version: 9.23-SNAPSHOT
+Built-By: anderibz
+Specification-Vendor: esferalia Networks S.A.
+Specification-Title: AON WEB AIO
+Implementation-Vendor-Id: com.code.aon
+Implementation-Vendor: esferalia Networks S.A.
+buildDate: 28/12/2018 08:30:20
+dbVersion: 
+buildRevision: 5dca96
+Created-By: Apache Maven 3.6.0
+Build-Jdk: 1.8.0_192
+Specification-Version: 9.23-SNAPSHOT
+

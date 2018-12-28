@@ -40,12 +40,11 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.drive.model.File;
-import com.google.api.services.drive.model.Property;
 
 public class DBDrive {
 	
 	
-	public static Vector<FileInfo> getAttachLimit(Domain domain, User user, AttachType attachType,
+	public static LinkedList<Attach> getAttachLimit(Domain domain, User user, AttachType attachType,
 			Byte[] types, Integer page, Integer perPage){
 		
 		return AON.getAttachStream(domain.getName(), domain.getId(), user.getLogin(),
@@ -54,8 +53,8 @@ public class DBDrive {
 				.and(f.getMimeTypeProperty().isNotNull())
 				.and(f.getTypeProperty().in(types))
 				.page(page).perPage(perPage),
-				attachType, true).map(new AttachToFileInfo())
-				.collect(Collectors.toCollection(Vector::new));
+				attachType, true)
+				.collect(Collectors.toCollection(LinkedList::new));
 	}	
 	
 	public static Stream<Attach> getAttachStreamLimit(Domain domain, User user, AttachType attachType, Byte[] types, Integer page, Integer perPage){
@@ -135,9 +134,9 @@ public class DBDrive {
 	
 	public static void updateDriveId(Domain domain, User user, File file, Integer attachId){
 		String aonType = "";
-		for (Property p : file.getProperties()) {
-			if(p.getKey().equals("aontype"))
-				aonType = p.getValue();
+		for (String key : file.getProperties().keySet()) {
+			if(key.equals("aontype"))
+				aonType = file.getProperties().get(key);
 		}
 		AON.updateAttachDriveId(domain.getName(), domain.getId(), user.getLogin(), attachId, file.getId(), AttachType.getAttachType(aonType));
 	}
@@ -156,9 +155,9 @@ public class DBDrive {
 			ctx = AONContext.getAONContext(domainName, domainId, "");
 			
 			String aonType = "";
-			for (Property p : f.getProperties()) {
-				if(p.getKey().equals("aontype"))
-					aonType = p.getValue();
+			for (String key : f.getProperties().keySet()) {
+				if(key.equals("aontype"))
+					aonType = f.getProperties().get(key);
 			}
 			switch (aonType) {
 			case "registry":	

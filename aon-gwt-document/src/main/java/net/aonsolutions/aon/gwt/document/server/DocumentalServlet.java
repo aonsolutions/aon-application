@@ -34,20 +34,20 @@ public class DocumentalServlet  extends AonRemoteServiceServlet implements IDocu
 			Drive drive = AonDrive.getInstace().serviceInitialize(g);
 			String[] keys = {"fileId", "aontype", "domain"};
 			String[] values = {attach.getId() + "", "registry", attach.getDomain().getName()};
-			FileList fl = SearchFiles.searchFilesProperties(drive, keys, values);
-			if(fl.getItems().size() > 0) {
-				if(!fl.getItems().get(0).getId().equals(attach.getDriveId())) {
-					attach.setDriveId(fl.getItems().get(0).getId());
+			FileList fl = SearchFiles.searchFilesAppProperties(drive, keys, values);
+			if(fl.getFiles().size() > 0) {
+				if(!fl.getFiles().get(0).getId().equals(attach.getDriveId())) {
+					attach.setDriveId(fl.getFiles().get(0).getId());
 					AON.updateAttach(domain.getName(), domain.getId(), "", attach);
 				}
 				if("0".equals(attach.getDparentId())) {
-					attach.setDparentId(fl.getItems().get(0).getFileSize().toString());
+					attach.setDparentId(fl.getFiles().get(0).getSize().toString());
 					AON.updateAttach(domain.getName(), domain.getId(), "", attach);
 				}
-				return fl.getItems().get(0).getAlternateLink();
+				return fl.getFiles().get(0).getWebViewLink();
 			} else {
-				File file = DriveUtils.getFile(drive, attach.getDriveId());
-				return file.getAlternateLink();
+				File file = DriveUtils.getFile(drive, attach.getDriveId(), "*");
+				return file.getWebViewLink();
 			}
 		}
 		return null;

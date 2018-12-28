@@ -347,7 +347,7 @@ public class Documental implements EntryPoint {
 						+ "&tag=[" + ids +"]"
 						+ "&scope=" + (scope != null ? scope.getId() : "")
 						+ "&confidential=" + confidential.getChecked();
-				upload.setTarget(GWT.getModuleBaseURL() + "uploadDocumental"+ dataRequest);
+				upload.setTarget(GWT.getModuleBaseURL() + "uploadDocumentalx"+ dataRequest);
 				ScrollPanel scroll = new ScrollPanel();
 				scroll.setHeight("300px");
 				scroll.add(upload);

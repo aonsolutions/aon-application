@@ -19,7 +19,9 @@ public class BasicAttachment implements IAttachment {
 	private byte[] data;
 	
 	private String description;
-
+	
+	private String aonType;
+	
 	private String driveId;
 	
 	@Override
@@ -101,6 +103,16 @@ public class BasicAttachment implements IAttachment {
 			return DigestUtils.md5Hex(this.data);	
 		}
 		return null;
+	}
+
+	@Override
+	public String getAonType() {
+		return aonType;
+	}
+
+	@Override
+	public void setAonType(String aonType) {
+		this.aonType = aonType;
 	}
 	
 }

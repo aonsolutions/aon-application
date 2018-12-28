@@ -90,6 +90,14 @@ public class OfferAttachment extends OfferAttachmentDB implements IAttachment, I
 	@Override
 	public void reset() {
 		this.data = null;
+	}
+	@Override
+	public String getAonType() {
+		return "offer";
+	}
+	@Override
+	public void setAonType(String aonType) {
+		
 	}	
 
 }

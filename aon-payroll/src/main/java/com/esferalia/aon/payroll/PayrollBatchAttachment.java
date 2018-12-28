@@ -104,5 +104,13 @@ public class PayrollBatchAttachment extends PayrollBatchAttachmentDB implements 
 	public void reset() {
 		this.data = null;
 	}
+	@Override
+	public String getAonType() {
+		return "payroll";
+	}
+	@Override
+	public void setAonType(String aonType) {
+		
+	}
 	
 }

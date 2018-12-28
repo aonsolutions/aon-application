@@ -76,23 +76,23 @@
     <dependency>
       <groupId>com.google.api-client</groupId>
       <artifactId>google-api-client</artifactId>
-      <version>1.21.0</version>
+      <version>1.27.0</version>
     </dependency>
     <dependency>
       <groupId>com.google.api-client</groupId>
       <artifactId>google-api-client-servlet</artifactId>
-      <version>1.21.0</version>
+      <version>1.27.0</version>
     </dependency>
     <dependency>
       <groupId>com.google.http-client</groupId>
       <artifactId>google-http-client-jackson2</artifactId>
-      <version>1.21.0</version>
+      <version>1.27.0</version>
     </dependency>
     <!-- Google Calendar API -->
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-calendar</artifactId>
-      <version>v3-rev157-1.21.0</version>
+      <version>v3-rev364-1.25.0</version>
     </dependency>
     <!-- Google UrlShortener API -->
     <dependency>
@@ -100,29 +100,29 @@
       <artifactId>google-api-services-urlshortener</artifactId>
       <version>v1-rev41-1.21.0</version>
     </dependency>
-    <!-- Google Drive API-->
+    <!-- Google Drive API -->
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-drive</artifactId>
-      <version>v2-rev194-1.21.0</version>
+      <version>v3-rev136-1.25.0</version>
     </dependency>
     <!-- Gmail API -->
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-gmail</artifactId>
-      <version>v1-rev34-1.21.0</version>
+      <version>v1-rev98-1.25.0</version>
     </dependency>
     <!-- Google Task API -->
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-tasks</artifactId>
-      <version>v1-rev41-1.21.0</version>
+      <version>v1-rev55-1.25.0</version>
     </dependency>
     <!-- Google Oauth2 API -->
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-oauth2</artifactId>
-      <version>v2-rev98-1.21.0</version>
+      <version>v2-rev141-1.25.0</version>
     </dependency>
     <!-- Google Contacts API -->
     <dependency>
@@ -135,16 +135,14 @@
       <artifactId>mail</artifactId>
       <version>1.4</version>
     </dependency>
+    
+    <!-- GSON -->
     <dependency>
-      <groupId>org.json</groupId>
-      <artifactId>json</artifactId>
-      <version>20090211</version>
-    </dependency>
-    <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-      <version>2.2.4</version>
-    </dependency>
+    	<groupId>com.google.code.gson</groupId>
+    	<artifactId>gson</artifactId>
+    	<version>2.8.5</version>
+	</dependency>
+    
     <dependency>
       <groupId>commons-net</groupId>
       <artifactId>commons-net</artifactId>
@@ -184,7 +182,7 @@
         <dependency>
           <groupId>com.google.oauth-client</groupId>
           <artifactId>google-oauth-client</artifactId>
-          <version>1.21.0</version>
+          <version>1.27.0</version>
         </dependency>
         <dependency>
           <groupId>commons-lang</groupId>
@@ -267,14 +265,14 @@
                       <include>com.esferalia.aon:aon.watson:${project.version}</include>
                       <include>net.aonsolutions:aon.google.apis.v2:${project.version}</include>
                       <!-- Google -->
-                      <include>com.google.api-client:google-api-client:1.21.0</include>
-                      <include>com.google.http-client:google-http-client:1.21.0</include>
-                      <include>com.google.http-client:google-http-client-jackson2:1.21.0</include>
-                      <include>com.google.apis:google-api-services-drive:v2-rev194-1.21.0</include>
-                      <include>com.google.apis:google-api-services-calendar:v3-rev157-1.21.0</include>
-                      <include>com.google.oauth-client:google-oauth-client:1.21.0</include>
-                      <include>com.google.apis:google-api-services-oauth2:v2-rev98-1.21.0</include>
-                      <include>com.google.apis:google-api-services-gmail:v1-rev34-1.21.0</include>
+                      <include>com.google.api-client:google-api-client:1.27.0</include>
+                      <include>com.google.http-client:google-http-client:1.27.0</include>
+                      <include>com.google.http-client:google-http-client-jackson2:1.27.0</include>
+                      <include>com.google.apis:google-api-services-drive:v3-rev136-1.25.0</include>
+                      <include>com.google.apis:google-api-services-calendar:v3-rev364-1.25.0</include>
+                      <include>com.google.oauth-client:google-oauth-client:1.27.0</include>
+                      <include>com.google.apis:google-api-services-oauth2:v2-rev141-1.25.0</include>
+                      <include>com.google.apis:google-api-services-gmail:v1-rev98-1.25.0</include>
                     </includes>
                   </dependency>
                   <sources>

@@ -27,9 +27,9 @@
 		
 		<!-- Google Drive -->
 		<dependency>
-			<groupId>com.google.apis</groupId>
-			<artifactId>google-api-services-drive</artifactId>
-			<version>v2-rev194-1.21.0</version>
+    		<groupId>com.google.apis</groupId>
+    		<artifactId>google-api-services-drive</artifactId>
+    		<version>v3-rev136-1.25.0</version>
 		</dependency>
 		
 		<!-- Gmail API -->

@@ -49,19 +49,6 @@ case $1 in
   search) 
     $JAVA -classpath $CLASSPATH com.code.aon.google.apis.drive.SearchFiles "${@:2}"
     ;;	
-  cp)
-    $JAVA -classpath $CLASSPATH com.code.aon.google.apis.drive.CopyFiles "${@:2}"
-    ;;
-  rm)
-    $JAVA -classpath $CLASSPATH com.code.aon.google.apis.drive.RemoveFiles "${@:2}"
-    ;;
-  sc)
-    $JAVA -classpath $CLASSPATH com.code.aon.google.apis.drive.ServiconveniosSynchronize "${@:2}"
-    ;;
-  sort)
-    $JAVA -classpath $CLASSPATH com.code.aon.google.apis.drive.SortFiles "${@:2}"
-    ;;
- 
   *) 
     [[ -n $1 ]] && echo "Unknown subcommand: '$1'"
     echo "Type '$0 help' for usage."

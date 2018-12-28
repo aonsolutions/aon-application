@@ -92,5 +92,13 @@ public class InvoiceAttachment extends InvoiceAttachmentDB implements IAttachmen
 	public void reset() {
 		this.data = null;
 	}
+	@Override
+	public String getAonType() {
+		return "invoice";
+	}
+	@Override
+	public void setAonType(String aonType) {
+		
+	}
 	
 }

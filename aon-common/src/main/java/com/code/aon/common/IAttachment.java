@@ -82,6 +82,9 @@ public interface IAttachment extends ITransferObject, Cloneable {
      */
     void setData(byte[] data);
 	
+    String getAonType();
+    void setAonType(String aonType);
+
     /**
      * Return the attach description.
      * 

@@ -104,5 +104,13 @@ public class SepeBatchAttachment extends SepeBatchAttachmentDB implements IAttac
 	public void reset() {
 		this.data = null;
 	}
+	@Override
+	public String getAonType() {
+		return "sepe";
+	}
+	@Override
+	public void setAonType(String aonType) {
+		
+	}
 	
 }

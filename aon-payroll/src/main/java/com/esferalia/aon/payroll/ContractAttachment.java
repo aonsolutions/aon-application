@@ -96,5 +96,15 @@ public class ContractAttachment extends ContractAttachmentDB implements IAttachm
 	public void reset() {
 		this.data = null;
 	}
+
+	@Override
+	public String getAonType() {
+		return "contract";
+	}
+
+	@Override
+	public void setAonType(String aonType) {
+		
+	}
 	
 }

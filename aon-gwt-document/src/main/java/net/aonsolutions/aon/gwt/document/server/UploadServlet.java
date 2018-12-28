@@ -18,7 +18,6 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.json.JSONObject;
 
-import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.FileInfo;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -31,8 +30,10 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.google.api.services.drive.Drive;
 
+import net.aonsolutions.aon.google.apis.drive.AonDrive;
+
 @SuppressWarnings("serial")
-@WebServlet(name = "Upload Documental Files", urlPatterns = {"/aon_gwt_aio/uploadDocumental/*"})
+@WebServlet(name = "Upload Documental Filesx", urlPatterns = {"/aon_gwt_aio/uploadDocumentalx/*"})
 public class UploadServlet extends HttpServlet{
 	
 	 private static final String UPLOAD_DIRECTORY = "upload";
@@ -141,25 +142,10 @@ public class UploadServlet extends HttpServlet{
             			fi.setFileId(attach.getId());
             			                   	
                     	DomainGserviceaccount d = AON.getDomainGserviceaccount(domainName, domainId, login);
-                    	User user = AON.getUser(domainName, domainId, login);
-                    	Drive drive = DriveUtils.serviceInitialize(d);
-   						String[] types = { RegistryAttachmentType.CORPORATE_IDENTITY
-   								.toString() };// TODO
-   						DriveUtils.types = types;
-
-   						DriveUtils.sync2(drive, domain, user, fi);
-   						SendNotification.sendGmail(domain, user, attach, true);
-    					
-                    /* DRIVE V3!!!
                     	Drive drive = AonDrive.getInstace().serviceInitialize(d);
                     	User user = AON.getUser(domainName, domainId, login);
                     	AonDrive.getInstace().sync(drive, user, attach, false);
-                    */	
-                    	// TODO LAMBDA FUNCTION UPLOAD FILE!!!! 
-                    	
-                    	// TODO INSERT TAGS !!!!!
-                    	// TODO RESPONSE JsAttachment!!!! (json)
-                   
+                    	SendNotification.sendGmail(domain, user, attach, true);
                     }
                 }
             }

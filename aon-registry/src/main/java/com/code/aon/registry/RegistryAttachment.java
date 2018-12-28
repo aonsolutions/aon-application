@@ -181,5 +181,15 @@ public class RegistryAttachment extends RegistryAttachmentDB implements IAttachm
 	public void reset() {
 		this.data = null;
 	}
+
+	@Override
+	public String getAonType() {
+		return "registry";
+	}
+
+	@Override
+	public void setAonType(String aonType) {
+		
+	}
 	
 }

@@ -20,7 +20,6 @@ import org.apache.commons.cli.PosixParser;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.google.apis.jooq.DBSync;
-import net.aonsolutions.core.pool.AonConnectionException;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
@@ -30,16 +29,17 @@ import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
-import com.google.api.services.drive.model.Property;
+
+import net.aonsolutions.core.pool.AonConnectionException;
 
 public class DeleteFiles {
 	
 	private static void deleteDriveIds(File f, Domain domain, Integer id){
 		String aonType = null;
 		if(f.getProperties() != null){
-			for (Property property : f.getProperties()) {
-				if(property.getKey().equals("aontype"))
-					aonType = property.getValue();
+			for (String key : f.getProperties().keySet()) {
+				if(key.equals("aontype"))
+					aonType = f.getProperties().get(key);
 			}
 			
 			if (aonType.equals("registry")) DBConsults.deleteDriveIdRegistryAttach(domain, f.getId(), id);
@@ -57,9 +57,9 @@ public class DeleteFiles {
 		String aonType = null;
 		
 		if(f.getProperties() != null){
-			for (Property property : f.getProperties()) {
-				if(property.getKey().equals("aontype"))
-					aonType = property.getValue();
+			for (String key : f.getProperties().keySet()) {
+				if(key.equals("aontype"))
+					aonType = f.getProperties().get(key);
 			}
 			if (aonType.equals("registry")){
 				String driveid = DBConsults.getAttachDriveId(domain, getUser(), AttachType.REGISTRY, id);
@@ -128,14 +128,13 @@ public class DeleteFiles {
 		Integer idAux = -1;
 		String aonType = null;
 		if(f.getProperties() != null){
-			for (Property property : f.getProperties()) {
-				if(property.getKey().equals("fileId")){
-					String fileId = property.getValue();
+			for (String key : f.getProperties().keySet()) {
+				if(key.equals("fileId")) {
+					String fileId = f.getProperties().get(key);
 					idAux = Integer.parseInt(fileId);
 				}
-				if(property.getKey().equals("aontype")){
-					System.out.println(property.getValue());
-					aonType = property.getValue();
+				if(key.equals("aontype")) {
+					aonType = f.getProperties().get(key);
 				}
 			}
 		}
@@ -182,14 +181,14 @@ public class DeleteFiles {
 			for (String type : types) {
 				if(type.equals("all")) {
 					FileList fl = SearchFiles.searchFilesProperties(drive, "fileId", id.toString());
-					for (File f : fl.getItems()) {
+					for (File f : fl.getFiles()) {
 						deleteFile(drive, f, domain);
 					}
 				} else {
 					String keys[] = {"aontype","fileId"};
 					String values[] = {type, id.toString()};
 					FileList fl = SearchFiles.searchFilesProperties(drive, keys, values);
-					for (File f : fl.getItems()) {
+					for (File f : fl.getFiles()) {
 						deleteFile(drive, f, domain);
 					}
 				}
@@ -200,8 +199,8 @@ public class DeleteFiles {
 	public static void deleteFilesAll(Drive drive, Domain domain) throws IOException {
 		SearchFiles.types = types;
 		FileList fl = SearchFiles.searchFilesAllAndTypes(drive, domain.getName());
-		if (fl.getItems() != null){
-			for (File f : fl.getItems()) {
+		if (fl.getFiles() != null){
+			for (File f : fl.getFiles()) {
 				deleteFile(drive, f, domain);
 			}
 		}

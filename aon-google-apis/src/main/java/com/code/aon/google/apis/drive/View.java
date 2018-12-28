@@ -1,33 +1,32 @@
 package com.code.aon.google.apis.drive;
 
 import com.google.api.services.drive.model.File;
-import com.google.api.services.drive.model.Property;
 
 public class View {
 
 	public static void file(File f){
-		System.out.println("> "+f.getTitle());
+		System.out.println("> "+f.getName());
 		System.out.println("   --> ID:"+f.getId());
 		System.out.println("   --> MIME TYPE:"+f.getMimeType());
-		System.out.println("   --> SIZE:"+f.getFileSize());
-		System.out.println("   --> LINK:"+f.getAlternateLink());
+		System.out.println("   --> SIZE:"+f.getSize());
+		System.out.println("   --> LINK:"+f.getWebViewLink());
 		if(f.getProperties() != null){
-			for(Property p : f.getProperties()){
-				if(p.getKey().equals("fileId")){
-					System.out.println("   --> DB-ID:"+p.getValue());
+			for(String key : f.getProperties().keySet()){
+				if(key.equals("fileId")){
+					System.out.println("   --> DB-ID:" + f.getProperties().get(key));
 				}
-				if(p.getKey().equals("oldDriveId")){
-					System.out.println("   --> OLD DRIVE ID: "+ p.getValue());
+				if(key.equals("oldDriveId")){
+					System.out.println("   --> OLD DRIVE ID: " + f.getProperties().get(key));
 				}
-				if(p.getKey().equals("aontype"))
-					System.out.println("   --> AON TYPE: "+ p.getValue());
+				if(key.equals("aontype"))
+					System.out.println("   --> AON TYPE: " + f.getProperties().get(key));
 			}
 		}
 		System.out.println("");
 	}
 	
 	public static void file(File f, String driveId){
-		System.out.println("> "+f.getTitle());
+		System.out.println("> "+f.getName());
 		System.out.println("   --> ID:"+f.getId());
 		System.out.println("   --> OLD DRIVE ID: "+ driveId);
 		System.out.println("");
@@ -44,7 +43,7 @@ public class View {
 	
 	public static void delete(File f){
 		System.out.println("> Archivo eliminado:");
-		System.out.println("   --> TITLE:"+f.getTitle());
+		System.out.println("   --> TITLE:"+f.getName());
 		System.out.println("   --> ID:"+f.getId());
 		System.out.println("");
 	}

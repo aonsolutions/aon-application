@@ -96,5 +96,15 @@ public class ItemAttachment extends ItemAttachmentDB implements IAttachment, Clo
 	public void reset() {
 		this.data = null;
 	}
+
+	@Override
+	public String getAonType() {
+		return "item";
+	}
+
+	@Override
+	public void setAonType(String aonType) {
+		
+	}
 	
 }

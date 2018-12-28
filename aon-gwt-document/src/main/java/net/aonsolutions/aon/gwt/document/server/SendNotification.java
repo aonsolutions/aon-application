@@ -27,10 +27,10 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
-import com.google.api.services.drive.model.Permission;
-import com.google.api.services.drive.model.Property;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.urlshortener.Urlshortener;
+
+import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 public class SendNotification {
 
@@ -139,15 +139,9 @@ public class SendNotification {
 			if(attach.getDriveId() != null){
 				Drive drive = DriveUtils.serviceInitialize(g);
 				File file = DriveUtils.getFile(drive, attach.getDriveId());
-				link = file.getAlternateLink();
-				Permission p = new Permission();
-				p.setValue(domain.getName());
-				p.setType("anyone");// user || group || domain || anyone
-				p.setRole("reader");// owner || reader || writer || commenter
-				drive.permissions().insert(file.getId(), p).execute();
-				Property property = drive.properties().get(file.getId(), "shortUrl").execute();
-				
-				return property.getValue();	
+				link = file.getWebViewLink();
+				AonDrive.getInstace().setPermissionDomain(drive, file.getId(), domain.getName());
+				return link;	
 			}
 			else{
 				String md5 = md5(domain, user, attach);

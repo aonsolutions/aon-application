@@ -70,7 +70,7 @@ public class SearchFiles {
 			for (String type2 : types) {
 				FileList aux = drive.files().list().setQ("properties has {etag='type' and value ='"+type2+"'} and fullText contains '"+searcher+"'"
 						+"and properties has {key='" + "domain" + "' and value='" + domain + "' and visibility='PRIVATE'}").execute();
-				fl.getItems().addAll(aux.getItems());
+				fl.getFiles().addAll(aux.getFiles());
 				
 			}
 		}
@@ -118,7 +118,7 @@ public class SearchFiles {
 			for (String type2 : types) {
 				FileList aux = drive.files().list().setQ("properties has {etag='type' and value ='"+type2+"'} and title contains '"+searcher+"'"
 						+"and properties has {key='" + "domain" + "' and value='" + domain + "' and visibility='PRIVATE'}").execute();
-				fl.getItems().addAll(aux.getItems());
+				fl.getFiles().addAll(aux.getFiles());
 			}
 		}
 		return fl;
@@ -150,7 +150,7 @@ public class SearchFiles {
 			for (String type2 : types) {
 				FileList aux = drive.files().list().setQ("properties has {key='type' and value ='"+type2+"'} and mimetype contains '"+searcher+"'"
 						+"and properties has {key='" + "domain" + "' and value='" + domain + "' and visibility='PRIVATE'}").execute();
-				fl.getItems().addAll(aux.getItems());
+				fl.getFiles().addAll(aux.getFiles());
 			}
 		}
 		return fl;
@@ -175,8 +175,8 @@ public class SearchFiles {
 			for (String type2 : types) {
 				//FileList aux = drive.files().list().setQ("properties has {key='type' and value ='"+type2+"'}").execute();
 				FileList aux = searchFilesProperties(drive, "type", type2);
-				if(fl.getItems() != null)
-					fl.getItems().addAll(aux.getItems());	
+				if(fl.getFiles() != null)
+					fl.getFiles().addAll(aux.getFiles());	
 				else 
 					fl = aux;
 			}
@@ -201,8 +201,8 @@ public class SearchFiles {
 				FileList aux = drive.files().list().setQ("properties has {key='" + key + "' and value='" + type2 + "'and visibility='PRIVATE'}"
 						+"and properties has {key='" + "domain" + "' and value='" + domain + "' and visibility='PRIVATE'}").execute();
 
-				if(fl.getItems() != null)
-					fl.getItems().addAll(aux.getItems());	
+				if(fl.getFiles() != null)
+					fl.getFiles().addAll(aux.getFiles());	
 				else 
 					fl = aux;
 			}
@@ -243,8 +243,8 @@ public class SearchFiles {
 				View.error1();
 				System.exit(0);
 			}
-			if(fl.getItems()!=null){
-				for (File f : fl.getItems()) {
+			if(fl.getFiles()!=null){
+				for (File f : fl.getFiles()) {
 					if(out.equals("normally"))
 						View.file(f);
 					else if(out.equals("id"))

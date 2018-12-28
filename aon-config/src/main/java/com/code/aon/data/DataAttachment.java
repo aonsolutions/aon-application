@@ -130,6 +130,14 @@ public class DataAttachment extends DataAttachmentDB implements IAttachment, IBl
 			.appendSuper(super.hashCode())
 			.append(size)
 			.toHashCode();
+	}
+	@Override
+	public String getAonType() {
+		return "data";
+	}
+	@Override
+	public void setAonType(String aonType) {
+		
 	}   	
 
 }

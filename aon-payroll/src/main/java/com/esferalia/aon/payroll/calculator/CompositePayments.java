@@ -14,7 +14,6 @@ import java.util.NoSuchElementException;
 import com.code.aon.AonVersion;
 import com.esferalia.aon.payroll.DelegateContractPayment;
 import com.esferalia.aon.salary.expression.Period;
-import com.google.api.services.drive.Drive.Permissions.GetIdForEmail;
 
 public class CompositePayments<T extends IContractPayment> extends
 		CompositeCollection<T> {
@@ -36,8 +35,7 @@ public class CompositePayments<T extends IContractPayment> extends
 		private CompositePayments<T> payments;
 		private Map<String, Map<Integer, List<Period>>> processed;
 
-		public PaymentsIterator(Iterator<T> iterator,
-				CompositePayments<T> payments) {
+		public PaymentsIterator(Iterator<T> iterator, CompositePayments<T> payments) {
 			this.iterator = iterator;
 			this.payments = payments;
 			this.next = EmptyIterator.EMPTY_ITERATOR;

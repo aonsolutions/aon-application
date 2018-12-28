@@ -111,4 +111,14 @@ public class ProjectAttachment extends ProjectAttachmentDB implements IAttachmen
 		return getAttachType() == ProjectAttachmentType.DOCUMENT;
 	}
 
+	@Override
+	public String getAonType() {
+		return "project";
+	}
+
+	@Override
+	public void setAonType(String aonType) {
+		
+	}
+
 }

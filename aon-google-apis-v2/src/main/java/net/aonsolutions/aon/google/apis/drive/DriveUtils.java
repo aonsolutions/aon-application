@@ -205,6 +205,20 @@ public class DriveUtils {
 		return true;
 	}
 	
+	public Boolean setPermissionDomain(Drive drive, String fileId, String domain){
+		Permission permission =new Permission()
+				.setDomain(domain)
+				.setType("anyone")//user || group || domain || anyone
+				.setRole("reader");//owner || reader || writer || commenter		  		
+		try {
+			drive.permissions().create(fileId, permission).execute();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
     public Boolean setPermissions(Drive drive, String fileId, Vector<String> emails){
    	 	for (String email : emails) {
    	 		if(!setPermission(drive, fileId,email))

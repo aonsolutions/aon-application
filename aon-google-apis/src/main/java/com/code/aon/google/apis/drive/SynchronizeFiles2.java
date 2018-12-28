@@ -22,14 +22,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.google.apis.DriveUtils;
-import com.code.aon.google.apis.FileInfo;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.google.apis.jooq.DBDrive;
 import com.code.aon.google.apis.jooq.DBSync;
-import net.aonsolutions.core.pool.AonConnectionException;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.ContractAttachmentType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
@@ -41,6 +40,9 @@ import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.attachment.SepeBatchAttachmentType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.drive.Drive;
+
+import net.aonsolutions.aon.google.apis.drive.AonDrive;
+import net.aonsolutions.core.pool.AonConnectionException;
 
 public class SynchronizeFiles2 {
 
@@ -79,10 +81,10 @@ public class SynchronizeFiles2 {
 			Integer perPage = 10;
 			Integer page = 1;
 			while(perPage == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.REGISTRY, RegistryAttachmentType.drive(), page, perPage);
-				if(v.size() != 0) sync(drive, domain, v);
+				LinkedList<Attach> attahcList = DBDrive.getAttachLimit(domain, getUser(), AttachType.REGISTRY, RegistryAttachmentType.drive(), page, perPage);
+				if(attahcList.size() != 0) sync(drive, domain, attahcList);
 				if (numero >= num) return;
-				perPage = v.size();
+				perPage = attahcList.size();
 				page++;
 			}
 		}
@@ -90,10 +92,10 @@ public class SynchronizeFiles2 {
 			Integer perPage = 10;
 			Integer page = 1;
 			while(perPage == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.CONTRACT, ContractAttachmentType.drive(), page, perPage);
-				if(v.size() != 0) sync(drive, domain, v);
+				LinkedList<Attach> attahcList = DBDrive.getAttachLimit(domain, getUser(), AttachType.CONTRACT, ContractAttachmentType.drive(), page, perPage);
+				if(attahcList.size() != 0) sync(drive, domain, attahcList);
 				if (numero >= num) return;
-				perPage = v.size();
+				perPage = attahcList.size();
 				page++;
 			}
 		}
@@ -101,10 +103,10 @@ public class SynchronizeFiles2 {
 			Integer perPage = 10;
 			Integer page = 1;
 			while(perPage == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.ITEM, ItemAttachmentType.drive(), page, perPage);
-				if(v.size() != 0) sync(drive, domain, v);
+				LinkedList<Attach> attahcList = DBDrive.getAttachLimit(domain, getUser(), AttachType.ITEM, ItemAttachmentType.drive(), page, perPage);
+				if(attahcList.size() != 0) sync(drive, domain, attahcList);
 				if (numero >= num) return;
-				perPage = v.size();
+				perPage = attahcList.size();
 				page++;
 			}
 		}
@@ -112,10 +114,10 @@ public class SynchronizeFiles2 {
 			Integer perPage = 10;
 			Integer page = 1;
 			while(perPage == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.INVOICE, InvoiceAttachmentType.drive(),page, perPage);
-				if(v.size() != 0) sync(drive, domain, v);
+				LinkedList<Attach> attahcList = DBDrive.getAttachLimit(domain, getUser(), AttachType.INVOICE, InvoiceAttachmentType.drive(),page, perPage);
+				if(attahcList.size() != 0) sync(drive, domain, attahcList);
 				if (numero >= num) return;
-				perPage = v.size();
+				perPage = attahcList.size();
 				page++;
 			}
 		}
@@ -123,10 +125,10 @@ public class SynchronizeFiles2 {
 			Integer perPage = 10;
 			Integer page = 1;
 			while(perPage == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.OFFER, new Byte[]{}, page, perPage);
-				if(v.size() != 0) sync(drive, domain, v);
+				LinkedList<Attach> attahcList = DBDrive.getAttachLimit(domain, getUser(), AttachType.OFFER, new Byte[]{}, page, perPage);
+				if(attahcList.size() != 0) sync(drive, domain, attahcList);
 				if (numero >= num) return;
-				perPage = v.size();
+				perPage = attahcList.size();
 				page++;
 			}
 		}	
@@ -134,10 +136,10 @@ public class SynchronizeFiles2 {
 			Integer perPage = 10;
 			Integer page = 1;
 			while(perPage == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.PAYROLL, PayrollBatchAttachmentType.drive(), page, perPage);
-				if(v.size() != 0) sync(drive, domain, v);
+				LinkedList<Attach> attahcList = DBDrive.getAttachLimit(domain, getUser(), AttachType.PAYROLL, PayrollBatchAttachmentType.drive(), page, perPage);
+				if(attahcList.size() != 0) sync(drive, domain, attahcList);
 				if (numero >= num) return;
-				perPage = v.size();
+				perPage = attahcList.size();
 				page++;
 			}
 		}
@@ -145,10 +147,10 @@ public class SynchronizeFiles2 {
 			Integer perPage = 10;
 			Integer page = 1;
 			while(perPage == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.PROJECT, ProjectAttachmentType.drive(), page, perPage);
-				if(v.size() != 0) sync(drive, domain, v);
+				LinkedList<Attach> attahcList = DBDrive.getAttachLimit(domain, getUser(), AttachType.PROJECT, ProjectAttachmentType.drive(), page, perPage);
+				if(attahcList.size() != 0) sync(drive, domain, attahcList);
 				if (numero >= num) return;
-				perPage = v.size();
+				perPage = attahcList.size();
 				page++;
 			}
 		}
@@ -156,10 +158,10 @@ public class SynchronizeFiles2 {
 			Integer perPage = 10;
 			Integer page = 1;
 			while(perPage == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.SEPE, SepeBatchAttachmentType.drive(), page, perPage);
-				if(v.size() != 0) sync(drive, domain, v);
+				LinkedList<Attach> attahcList = DBDrive.getAttachLimit(domain, getUser(), AttachType.SEPE, SepeBatchAttachmentType.drive(), page, perPage);
+				if(attahcList.size() != 0) sync(drive, domain, attahcList);
 				if (numero >= num) return;
-				perPage = v.size();
+				perPage = attahcList.size();
 				page++;
 			}
 		}
@@ -167,10 +169,10 @@ public class SynchronizeFiles2 {
 			Integer perPage = 10;
 			Integer page = 1;
 			while(perPage == 10){
-				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.DATA, DataAttachType.drive(), page, perPage);
-				if(v.size() != 0) sync(drive, domain, v);
+				LinkedList<Attach> attahcList = DBDrive.getAttachLimit(domain, getUser(), AttachType.DATA, DataAttachType.drive(), page, perPage);
+				if(attahcList.size() != 0) sync(drive, domain, attahcList);
 				if (numero >= num) return;
-				perPage = v.size();
+				perPage = attahcList.size();
 				page++;
 			}
 		}
@@ -179,10 +181,10 @@ public class SynchronizeFiles2 {
 		}
 	}
 
-	public static void sync(Drive drive, Domain domain, Vector<FileInfo> vector){
-		vector.stream().forEach(f->{
+	public static void sync(Drive drive, Domain domain, LinkedList<Attach> attachList){
+		attachList.stream().forEach(attach->{
 			try {
-				if (DriveUtils.sync2(drive, domain, getUser(), f)) {
+				if (AonDrive.getInstace().sync(drive, getUser(), attach, dryRun)) {
 					numero++;
 				}
 				if (numero >= num) return;
@@ -206,10 +208,6 @@ public class SynchronizeFiles2 {
 			t[8] = "data";
 			types = t;
 		}
-		
-		DriveUtils.types = types;
-		DriveUtils.domains = domains;
-		DriveUtils.dryRun = dryRun;
 		
 		Map<String, Integer> domainMap = DBSync.getDomainMap();
 		if (domains == null || domains.length == 0 || domains[0].equals("ALL")) {

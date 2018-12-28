@@ -47,12 +47,13 @@ public class AonDrive extends DriveUtils{
 			return null;
 		}
 		else{
-			File file = new File().setShared(true)
+			File file = new File()
 					.setName(attach.getDescription())
 					.setMimeType(attach.getMimeType().getName())
 					.setModifiedTime(new DateTime(new Date()))
 					.setParents(Collections.singletonList(parent.getId()))
-					.setProperties(getProperties(drive, attach));
+					.setAppProperties(getProperties(drive, attach))
+					;
 			
 			return createFile(drive, file, attach.getData());
 		}	
@@ -123,31 +124,39 @@ public class AonDrive extends DriveUtils{
 		return setPermissions(drive, file.getId(), emails);
 	}
 
-	public void sync(Drive drive, User user, Attach attach, Boolean dryRun){		
+	public Boolean sync(Drive drive, User user, Attach attach, Boolean dryRun){		
 		if (!checkTypes(attach)) {
 			if(attach.getDriveId() == null){
-				if (dryRun) LOGGER.log(Level.INFO, "Dry Run "+attach.getDescription()+" : Not at Drive. It will be created & uploaded.");
+				if (dryRun) { 
+					LOGGER.log(Level.INFO, "Dry Run "+attach.getDescription()+" : Not at Drive. It will be created & uploaded.");
+					return true;
+				}
 				File file = principal(drive, attach);			
 				if(file.getId() != null){
 					attach.setDriveId(file.getId());
 					updateDriveId(attach);
 					deleteData(attach);
 					LOGGER.log(Level.INFO,"'"+attach.getDescription()+"': Not at Drive. It was created & uploaded ["+file.getId()+"].");
+					return true;
 				} else LOGGER.log(Level.SEVERE,"Parent of file is null");
 			} else if(attach.getData() != null) {
 				File file = getFile(drive, attach.getDriveId());
 				if (file.getMd5Checksum() == null || !file.getMd5Checksum().equals(
 						AonFileUtils.getMD5Checksum(attach.getData()))) {
-					if (dryRun)	LOGGER.log(Level.INFO,"Dry Run '"+ attach.getDescription() +"': Changed. It will be synchronized/uploaded.");
+					if (dryRun)	{
+						LOGGER.log(Level.INFO,"Dry Run '"+ attach.getDescription() +"': Changed. It will be synchronized/uploaded.");
+						return true;
+					}
 					file = updateFile(drive, file, attach.getData());
 					if (file.getId() != null) {
 						deleteData(attach);	
 						LOGGER.log(Level.INFO,"'"+attach.getDescription()+"': Changed. It was synchronized/uploaded ["+file.getId()+"].");
-					}
-					LOGGER.log(Level.WARNING,"'"+ attach.getDescription() +"': Changed. It was NOT synchronized/uploaded");
+						return true;
+					} else LOGGER.log(Level.WARNING,"'"+ attach.getDescription() +"': Changed. It was NOT synchronized/uploaded");
 				} else LOGGER.log(Level.FINE,"Skip '"+attach.getDescription()+"': New data it's the same that at drive ( MD5s are the same ).");
 			}
 		} else LOGGER.log(Level.WARNING,"Skip '"+attach.getDescription()+"': won't be synchronized.");
+		return false;
 	}
 	
 	public void syncX(Drive drive, User user, Attach attach, Boolean dryRun){		
@@ -201,7 +210,7 @@ public class AonDrive extends DriveUtils{
 		String[] keys = new String[] {"domain","aontype","fileId"};
 		String[] properties = new String[] {attach.getDomain().getName(),attach.getAttachType().getName(), attach.getId().toString()};
 		FileList fl = SearchFiles.searchFilesProperties(drive, keys, properties);
-		if(!fl.isEmpty() && fl.getFiles().size() > 0) {
+		if(fl.getFiles().size() > 0) {
 			if(dryRun) {
 				LOGGER.log(Level.WARNING,"'"+ attach.getDescription() +"': UPDATE DRIVE ID");
 			} else {

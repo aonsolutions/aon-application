@@ -5,8 +5,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.GeneralSecurityException;
-import java.security.KeyStoreException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -27,14 +25,15 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.MimeResolver;
-import com.code.aon.google.apis.DriveUtils;
-import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
+
+import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 /**
  * The Class DownloadUtil.
@@ -64,32 +63,16 @@ public class DownloadUtil {
 				String domainName = AonUtil.getDomainName();
 				Domain domain = new Domain().setName(domainName).setId(attach.getDomain());
 			
-				Integer domainId2 = 0;
-				Domain domain2 = new Domain().setName(domainName).setId(domainId2);
-				
 				User user = new User().setLogin(AonUtil.getRemoteUser() != null ? AonUtil.getRemoteUser() : "");
 				
-				DomainGserviceaccount googleAccount = DBConsults
-						.getServiceAccount(domain,user);
+				DomainGserviceaccount googleAccount = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), user.getLogin());
 				
-				DomainGserviceaccount googleAccount2 = DBConsults
-						.getServiceAccount(domain2,user);
+				Drive drive = AonDrive.getInstace().serviceInitialize(googleAccount);
+				File file = AonDrive.getInstace().getFile(drive,  attach.getDriveId());
 				
-				Drive drive = DriveUtils.serviceInitialize(googleAccount);
-				File file = DriveUtils.getFile(drive, domain, user, attach.getDriveId(),attach.getId());
-				if(file.getDescription().equals("OLDRIVE"))
-					drive = DriveUtils.serviceInitializeOld(googleAccount);
-				else if(file.getDescription().equals("DOMAINZERODRIVE"))
-					drive = DriveUtils.serviceInitialize(googleAccount2);
-				else if(file.getDescription().equals("DOMAINZEROOLDDRIVE"))
-					drive = DriveUtils.serviceInitializeOld(googleAccount2);
-				in = DriveUtils.downloadFile(drive, file);
+				in = AonDrive.getInstace().downloadFile(drive, file.getId());
 				data = IOUtils.toByteArray(in);
-			} catch (KeyStoreException e) {
-				LOGGER.error(e.getMessage()); 
 			} catch (IOException e) {
-				LOGGER.error(e.getMessage()); 
-			} catch (GeneralSecurityException e) {
 				LOGGER.error(e.getMessage()); 
 			} finally {
 				IOUtils.closeQuietly(in);
