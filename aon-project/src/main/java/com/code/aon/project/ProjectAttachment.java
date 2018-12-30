@@ -33,7 +33,7 @@ public class ProjectAttachment extends ProjectAttachmentDB implements IAttachmen
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Integer size;
-	
+
 	private byte[] data;
 
 	public ProjectAttachment() {
@@ -56,7 +56,7 @@ public class ProjectAttachment extends ProjectAttachmentDB implements IAttachmen
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
-	}	
+	}
 
     @Transient
 	@Column(name="data")
@@ -71,15 +71,15 @@ public class ProjectAttachment extends ProjectAttachmentDB implements IAttachmen
 		this.data = data;
 		setSize(ArrayUtils.getLength(data));
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.appendSuper(super.hashCode())
 			.append(size)
 			.toHashCode();
-	}   	
-	
+	}
+
 	@Override
 	@Transient
 	public String[] getBlobProperties() {
@@ -104,21 +104,23 @@ public class ProjectAttachment extends ProjectAttachmentDB implements IAttachmen
 	@Override
 	public void reset() {
 		this.data = null;
-	}	
-	
+	}
+
 	@Transient
 	public boolean isDocument() {
 		return getAttachType() == ProjectAttachmentType.DOCUMENT;
 	}
 
 	@Override
+	@Transient
 	public String getAonType() {
 		return "project";
 	}
 
 	@Override
+	@Transient
 	public void setAonType(String aonType) {
-		
+
 	}
 
 }

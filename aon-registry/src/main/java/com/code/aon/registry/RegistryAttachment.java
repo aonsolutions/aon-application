@@ -52,11 +52,11 @@ public class RegistryAttachment extends RegistryAttachmentDB implements IAttachm
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Set<RegistryAttachmentTag> tags = new HashSet<RegistryAttachmentTag>();
-	
+
 	private byte[] data;
-	
+
 	private Integer size;
-	
+
 	private String MD5;
 
     public RegistryAttachment() {
@@ -75,18 +75,18 @@ public class RegistryAttachment extends RegistryAttachmentDB implements IAttachm
 	public void setData(byte[] data) {
 		this.data = data;
 		setSize(ArrayUtils.getLength(data));
-		setMD5(DigestUtils.md5Hex(ArrayUtils.nullToEmpty(data)));			
+		setMD5(DigestUtils.md5Hex(ArrayUtils.nullToEmpty(data)));
 	}
-    
+
 	@Formula("IFNULL(LENGTH(data),IFNULL(dparent_id,0))")
 	public Integer getSize() {
-		return size;	
+		return size;
 	}
 
 	public void setSize(Integer size) {
 		this.size = size;
 	}
-	
+
 	@Transient
 	public String getSizeToDisplay() {
 		return FileUtils.byteCountToDisplaySize(getSize()!=null?getSize():0);
@@ -117,13 +117,13 @@ public class RegistryAttachment extends RegistryAttachmentDB implements IAttachm
 			return StringUtils.join(tags, ", ");
 		}
 		return null;
-	}	
+	}
 
 	@Transient
 	public String getTagList() throws ManagerBeanException {
 		return getTagList(null);
 	}
-	
+
 	@OneToMany(mappedBy = "attachment", cascade={CascadeType.REMOVE})
 	public Set<RegistryAttachmentTag> getTags() {
 		return this.tags;
@@ -132,8 +132,8 @@ public class RegistryAttachment extends RegistryAttachmentDB implements IAttachm
 	public void setTags( Set<RegistryAttachmentTag> tags ) {
 		this.tags = tags;
 	}
-	
-	@Formula("MD5(data)")	
+
+	@Formula("MD5(data)")
 	public String getMD5() {
 		return MD5;
 	}
@@ -141,7 +141,7 @@ public class RegistryAttachment extends RegistryAttachmentDB implements IAttachm
 	public void setMD5(String mD5) {
 		MD5 = mD5;
 	}
-	
+
 	@Transient
 	public String getDownloadURL() {
 		return "/aonDocuments/" + getId() + "-" + getMD5();
@@ -154,8 +154,8 @@ public class RegistryAttachment extends RegistryAttachmentDB implements IAttachm
 			.append(size)
 			.append(MD5)
 			.toHashCode();
-	}   	
-	
+	}
+
 	@Override
 	@Transient
 	public String[] getBlobProperties() {
@@ -183,13 +183,14 @@ public class RegistryAttachment extends RegistryAttachmentDB implements IAttachm
 	}
 
 	@Override
+	@Transient
 	public String getAonType() {
 		return "registry";
 	}
 
 	@Override
+	@Transient
 	public void setAonType(String aonType) {
-		
 	}
-	
+
 }

@@ -39,11 +39,11 @@ public class SepeBatchAttachment extends SepeBatchAttachmentDB implements IAttac
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private SepeBatchType sourceType;
-	
+
 	private Integer size;
-	
+
 	private byte[] data;
-	
+
 	@Formula("IFNULL(LENGTH(data),0)")
 	public Integer getSize() {
 		return size;
@@ -51,12 +51,12 @@ public class SepeBatchAttachment extends SepeBatchAttachmentDB implements IAttac
 	public void setSize(Integer size) {
 		this.size = size;
 	}
-	
+
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
 	}
-	
+
 	@Column(name="source_type", insertable=false, updatable=false)
 	public SepeBatchType getSourceType() {
 		return sourceType;
@@ -78,7 +78,7 @@ public class SepeBatchAttachment extends SepeBatchAttachmentDB implements IAttac
 		this.data = data;
 		setSize(ArrayUtils.getLength(data));
 	}
-	
+
 	@Override
 	@Transient
 	public String[] getBlobProperties() {
@@ -105,12 +105,14 @@ public class SepeBatchAttachment extends SepeBatchAttachmentDB implements IAttac
 		this.data = null;
 	}
 	@Override
+	@Transient
 	public String getAonType() {
 		return "sepe";
 	}
 	@Override
+	@Transient
 	public void setAonType(String aonType) {
-		
+
 	}
-	
+
 }

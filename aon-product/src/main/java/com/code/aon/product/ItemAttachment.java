@@ -29,12 +29,12 @@ import com.esferalia.aon.entity.master.ItemAttachmentDB;
 public class ItemAttachment extends ItemAttachmentDB implements IAttachment, Cloneable, IBlobObject {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-	
+
     private Integer size;
-	
+
 	private byte[] data;
 
-    
+
 	@Formula("IFNULL(LENGTH(data),0)")
 	public Integer getSize() {
 		return size;
@@ -43,7 +43,7 @@ public class ItemAttachment extends ItemAttachmentDB implements IAttachment, Clo
 	public void setSize(Integer size) {
 		this.size = size;
 	}
-	
+
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
@@ -62,15 +62,15 @@ public class ItemAttachment extends ItemAttachmentDB implements IAttachment, Clo
 		this.data = data;
 		setSize(ArrayUtils.getLength(data));
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.appendSuper(super.hashCode())
 			.append(size)
 			.toHashCode();
-	}   	
-	
+	}
+
 	@Override
 	@Transient
 	public String[] getBlobProperties() {
@@ -98,13 +98,15 @@ public class ItemAttachment extends ItemAttachmentDB implements IAttachment, Clo
 	}
 
 	@Override
+	@Transient
 	public String getAonType() {
 		return "item";
 	}
 
 	@Override
+	@Transient
 	public void setAonType(String aonType) {
-		
+
 	}
-	
+
 }

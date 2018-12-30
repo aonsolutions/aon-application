@@ -53,7 +53,7 @@ public class DataAttachment extends DataAttachmentDB implements IAttachment, IBl
 	public boolean isSourceProduction() {
 		return getSource() == DataAttachmentSource.PRODUCTION;
 	}
- 
+
 	@Transient
 	public boolean isTypeRequest() {
 		return getType() == DataAttachmentType.REQUEST;
@@ -66,7 +66,7 @@ public class DataAttachment extends DataAttachmentDB implements IAttachment, IBl
 	public boolean isTypeResponseError() {
 		return getType() == DataAttachmentType.RESPONSE_ERROR;
 	}
- 
+
 	@Transient
 	@Column(name="data")
 	public byte[] getData() {
@@ -82,12 +82,12 @@ public class DataAttachment extends DataAttachmentDB implements IAttachment, IBl
 
 	@Formula("LENGTH(data)")
 	public Integer getSize() {
-		return size;	
+		return size;
 	}
 	public void setSize(Integer size) {
 		this.size = size;
 	}
-	
+
 	@Transient
 	public String getSizeToDisplay() {
 		return FileUtils.byteCountToDisplaySize(getSize()!=null?getSize():0);
@@ -132,12 +132,14 @@ public class DataAttachment extends DataAttachmentDB implements IAttachment, IBl
 			.toHashCode();
 	}
 	@Override
+	@Transient
 	public String getAonType() {
 		return "data";
 	}
 	@Override
+	@Transient
 	public void setAonType(String aonType) {
-		
-	}   	
+
+	}
 
 }

@@ -29,9 +29,9 @@ public class InvoiceAttachment extends InvoiceAttachmentDB implements IAttachmen
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
     private Integer size;
-    
+
     private byte[] data;
-    
+
     @Formula("IFNULL(LENGTH(data),0)")
 	public Integer getSize() {
 		return size;
@@ -39,7 +39,7 @@ public class InvoiceAttachment extends InvoiceAttachmentDB implements IAttachmen
 	public void setSize(Integer size) {
 		this.size = size;
 	}
-	
+
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
@@ -58,15 +58,15 @@ public class InvoiceAttachment extends InvoiceAttachmentDB implements IAttachmen
 		this.data = data;
 		setSize(ArrayUtils.getLength(data));
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.appendSuper(super.hashCode())
 			.append(size)
 			.toHashCode();
-	}   	
-	
+	}
+
 	@Override
 	@Transient
 	public String[] getBlobProperties() {
@@ -93,12 +93,14 @@ public class InvoiceAttachment extends InvoiceAttachmentDB implements IAttachmen
 		this.data = null;
 	}
 	@Override
+	@Transient
 	public String getAonType() {
 		return "invoice";
 	}
 	@Override
+	@Transient
 	public void setAonType(String aonType) {
-		
+
 	}
-	
+
 }

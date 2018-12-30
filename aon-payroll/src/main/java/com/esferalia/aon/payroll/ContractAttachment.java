@@ -32,13 +32,13 @@ public class ContractAttachment extends ContractAttachmentDB implements IAttachm
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
     private Integer size;
-    
+
     private byte[] data;
 
     public ContractAttachment() {
     	setSecurityLevel( SecurityLevel.OFFICIAL);
     }
-    
+
     @Formula("IFNULL(LENGTH(data),0)")
 	public Integer getSize() {
 		return size;
@@ -51,7 +51,7 @@ public class ContractAttachment extends ContractAttachmentDB implements IAttachm
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
 	}
-	
+
 	@Transient
 	public boolean isPdfType(){
 		return this.getMimeType()==MimeType.MIME_PDF;
@@ -70,7 +70,7 @@ public class ContractAttachment extends ContractAttachmentDB implements IAttachm
 		this.data = data;
 		setSize(ArrayUtils.getLength(data));
 	}
-	
+
 	@Override
 	@Transient
 	public String[] getBlobProperties() {
@@ -91,20 +91,22 @@ public class ContractAttachment extends ContractAttachmentDB implements IAttachm
 		}
 		return HibernateBlobManager.getInstance();
 	}
-	
+
 	@Override
 	public void reset() {
 		this.data = null;
 	}
 
 	@Override
+	@Transient
 	public String getAonType() {
 		return "contract";
 	}
 
 	@Override
+	@Transient
 	public void setAonType(String aonType) {
-		
+
 	}
-	
+
 }

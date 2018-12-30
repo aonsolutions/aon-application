@@ -29,9 +29,9 @@ public class OfferAttachment extends OfferAttachmentDB implements IAttachment, I
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
     private Integer size;
-    
+
     private byte[] data;
-	    
+
 	@Formula("IFNULL(LENGTH(data),0)")
 	public Integer getSize() {
 		return size;
@@ -43,7 +43,7 @@ public class OfferAttachment extends OfferAttachmentDB implements IAttachment, I
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
 	}
-	
+
     @Transient
 	@Column(name="data")
 	public byte[] getData() {
@@ -57,15 +57,15 @@ public class OfferAttachment extends OfferAttachmentDB implements IAttachment, I
 		this.data = data;
 		setSize(ArrayUtils.getLength(data));
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.appendSuper(super.hashCode())
 			.append(size)
 			.toHashCode();
-	}   	
-	
+	}
+
 	@Override
 	@Transient
 	public String[] getBlobProperties() {
@@ -92,13 +92,14 @@ public class OfferAttachment extends OfferAttachmentDB implements IAttachment, I
 		this.data = null;
 	}
 	@Override
+	@Transient
 	public String getAonType() {
 		return "offer";
 	}
 	@Override
+	@Transient
 	public void setAonType(String aonType) {
-		
-	}	
+
+	}
 
 }
-
