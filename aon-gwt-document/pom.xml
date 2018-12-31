@@ -120,6 +120,7 @@
       <version>1.7.0.0</version>
       <scope>provided</scope>
     </dependency>
+    
     <dependency>
       <groupId>net.aonsolutions.polymer</groupId>
       <artifactId>aon.gwt.polymer</artifactId>
@@ -131,6 +132,7 @@
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
       <version>1.4</version>
+      <scope>provided</scope>
     </dependency>
     
   </dependencies>
