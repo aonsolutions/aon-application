@@ -60,7 +60,7 @@
 									<iron-icon style="height: 18px;" icon="lock"/>
                            		</template>
                            		<template is="dom-if" if="{{item.category.name}}"> 
-                           			<span style="background-color: gray;color: white;
+                           			<span style="background-color: #1219A2;color: white;
 										font-size: 12px;font-weight: 600;padding: 2px;
 									    margin-right: 5px;">[[item.category.name]]
 									</span>

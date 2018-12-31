@@ -198,7 +198,10 @@ public class Documental implements EntryPoint {
 				}	
 			}
 			
-			@Override protected void onRefreshButtonClick() {}
+			@Override protected void onRefreshButtonClick() {
+				initializeFilterMap();
+				createAttachListPanel();
+			}
 			@Override protected void onMoreOptionButtonClick() {}
 			@Override protected void onEditButtonClick() {
 				editSelectedDocument();

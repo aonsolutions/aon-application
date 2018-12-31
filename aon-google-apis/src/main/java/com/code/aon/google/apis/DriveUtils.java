@@ -202,73 +202,11 @@ public class DriveUtils implements IBlobManager {
 	}
 	
 	public static byte[] getByteFile(Domain domain, User user, String driveId, Integer attachId){
-		HashMap<Integer, DomainGserviceaccount> map = DBConsults.getServiceAccountMap(domain, user);
-		
-		if(map.containsKey(domain.getId())){
-			try {
-				Drive drive = serviceInitialize(map.get(domain.getId()));
-				File file = getFileApp(drive, domain, user, driveId, attachId );
-				if(file == null){
-					drive= serviceInitializeOld(map.get(domain.getId()));
-					file = getFileApp(drive, domain, user, driveId, attachId);
-				}
-				if(file != null){
-					InputStream data = downloadFile(drive, file);
-					return AonIOUtils.toByteArray(data);
-				}
-			} catch (IOException | GeneralSecurityException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		if(domain.getParentId() != null && map.containsKey(domain.getParentId())){
-			try{
-				Drive drive = serviceInitialize(map.get(domain.getParentId()));
-				File file = getFileApp(drive, domain, user, driveId, attachId );
-				if(file == null){
-					drive= serviceInitializeOld(map.get(domain.getParentId()));
-					file = getFileApp(drive, domain, user, driveId, attachId);
-				}
-				if(file != null){
-					InputStream data = downloadFile(drive, file);
-					return AonIOUtils.toByteArray(data);
-				}
-			} catch (IOException | GeneralSecurityException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		if(map.containsKey(0)){
-			try {
-				Drive drive = serviceInitialize(map.get(0));
-				File file = getFileApp(drive, domain, user, driveId, attachId );
-				if(file == null){
-					drive= serviceInitializeOld(map.get(0));
-					file = getFileApp(drive, domain, user, driveId, attachId);
-				}
-				if(file != null){
-					InputStream data = downloadFile(drive, file);
-					return AonIOUtils.toByteArray(data);
-				}
-			} catch (IOException | GeneralSecurityException e) {
-				e.printStackTrace();
-			}
-		}
-		return null;
+		DomainGserviceaccount d = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), user.getLogin());
+		Drive drive = AonDrive.getInstace().serviceInitialize(d);
+		return AonDrive.getInstace().downloadFileByteArray(drive, driveId);
 	}
-	
-	public static File getFileApp(Drive drive, Domain domain, User user, String driveId, Integer attachId) throws IOException {
-		File f = null;
-		FileList fileList =SearchFiles.searchFilesProperties(drive, "oldDriveId",driveId);
-		if(fileList.getFiles().size()>0){
-			f = fileList.getFiles().get(0);
-			if(attachId != null){
-				DBDrive.updateDriveId(domain, user, f, attachId);
-			}
-		} else
-			f = getFile(drive, driveId);
-		return f;
-	}
+
 	
 	public static File getFile(Drive drive, String driveId){
 		try {

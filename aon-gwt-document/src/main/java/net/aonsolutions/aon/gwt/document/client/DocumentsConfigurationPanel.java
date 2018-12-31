@@ -333,15 +333,16 @@ public class DocumentsConfigurationPanel extends Composite {
     }
     
     private void load(AonJsArray<JsLabel> data, IronSelector selector, IronCollapse collapse, Boolean isCategory){
-   		for(JsLabel label : data.toLinkedList()){
+    	for(JsLabel label : data.toLinkedList()){
    			HorizontalPanel hp = new HorizontalPanel();
    			PaperItem item = new PaperItem();
 			
    			Boolean selected = getDocumental().getFilterMap().containsKey(isCategory ? "category" : "tag") &&
    					getDocumental().getFilterMap().get(isCategory ? "category" : "tag").contains(label.getId() + "");
+   			
    			IronIcon ii = new IronIcon();
    			ii.setIcon(selected ? "check" : "label");
-   			ii.getElement().getStyle().setColor("#"+label.getColor());
+   			ii.getElement().getStyle().setColor(selected ? "#"+label.getColor() : "#1219A2");
    			
    			Label l = new Label(label.getName());
    			if(selected) l.getElement().getStyle().setFontWeight(FontWeight.BOLD);
