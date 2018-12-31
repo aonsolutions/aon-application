@@ -22,7 +22,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.Domain;
 import com.code.aon.config.Scope;
-import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Category;
@@ -40,6 +39,8 @@ import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
+
+import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 public class CorporateIdentityController extends RegistryAttachController implements ICorporateIdentityController {
 	
@@ -166,11 +167,8 @@ public class CorporateIdentityController extends RegistryAttachController implem
 					.setName(domainName).setId(ra.getDomain());
 			User user = new User().setLogin(AonUtil.getRemoteUser() != null ? AonUtil.getRemoteUser() : "");
 			DomainGserviceaccount d = DBConsults.getServiceAccount(domain, user);
-			Drive drive = DriveUtils.serviceInitialize(d);
-			File f = DriveUtils.getFile(drive, domain, user, ra.getDriveId(),ra.getId());
-			if ( "OLDRIVE".equals(f.getDescription()) ) {
-				drive = DriveUtils.serviceInitializeOld(d);	
-			}
+			Drive drive = AonDrive.getInstace().serviceInitialize(d);
+			File f = AonDrive.getInstace().getFile(drive, ra.getDriveId());
 			ra.setMD5(f.getMd5Checksum());
 		}
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
