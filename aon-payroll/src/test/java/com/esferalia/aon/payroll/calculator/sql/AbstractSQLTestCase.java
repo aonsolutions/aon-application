@@ -682,6 +682,11 @@ public abstract class AbstractSQLTestCase {
 		return newContract(aonContext, payments, deductions, null);
 	}
 
+	public static final ContractRecord newContract(AONContext aonContext, Date startDate, String[] payments, String[] deductions,
+			AgreementLevelCategoryRecord category) {
+		return newContract(aonContext, startDate, Collections.emptyMap(), payments, deductions, category);
+	}
+
 	public static final ContractRecord newContract(AONContext aonContext, String[] payments, String[] deductions,
 			AgreementLevelCategoryRecord category) {
 		Calendar calendar = Calendar.getInstance();

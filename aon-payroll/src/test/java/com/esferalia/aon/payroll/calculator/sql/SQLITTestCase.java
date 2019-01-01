@@ -4637,8 +4637,10 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 		
+
 		//@formatter:off
 		ContractRecord contract = newContract(aonContext, 
+				add(getFirstDayOfYear(getToday()),Calendar.YEAR, -1),
 				new String[] {
 				"250.00" ,
 				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
@@ -4664,6 +4666,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		int workDays = (get(startITDate, Calendar.DAY_OF_MONTH) -1 );
+		System.out.println("workDays:" + workDays + "," + startITDate );
 		Assert.assertEquals( (1750.0 ) * workDays/30.00, salary.getTotalPayment());
 
 	}
