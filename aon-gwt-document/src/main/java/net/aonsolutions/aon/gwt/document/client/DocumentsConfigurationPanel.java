@@ -342,7 +342,7 @@ public class DocumentsConfigurationPanel extends Composite {
    			
    			IronIcon ii = new IronIcon();
    			ii.setIcon(selected ? "check" : "label");
-   			ii.getElement().getStyle().setColor(selected ? "#"+label.getColor() : "#1219A2");
+   			if(isCategory) ii.getElement().getStyle().setColor(selected ? "#"+label.getColor() : "#1219A2");
    			
    			Label l = new Label(label.getName());
    			if(selected) l.getElement().getStyle().setFontWeight(FontWeight.BOLD);
