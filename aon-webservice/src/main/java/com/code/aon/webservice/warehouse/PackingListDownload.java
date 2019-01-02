@@ -68,7 +68,7 @@ public class PackingListDownload extends HttpServlet{
 		JSONArray array = new JSONArray();
 		if(CarrierPackingType.SHIPMENT_REQUEST.equals(carrierPacking.getType())
 			&& !CarrierPackingStatus.FINISHED.equals(carrierPacking.getStatus())){
-			json.put("type", carrierPacking.getType());
+			json.put("type", carrierPacking.getType().getName());
 			AON.getPurchaseStream(domain.getName(), domain.getId(), login, 
 					f -> f.getCarrierPackingProperty().eq(carrierPackingId)
 					.and(f.getDomainProperty().eq(domain.getId())))
@@ -122,7 +122,7 @@ public class PackingListDownload extends HttpServlet{
 				array.put(purchaseJSON);
 			});
 		} else  if(CarrierPackingType.WAYBILL.equals(carrierPacking.getType())){
-			json.put("type", carrierPacking.getType());
+			json.put("type", carrierPacking.getType().getName());
 			AON.getDeliveryStream(domain.getName(), domain.getId(), login, f-> f.getCarrierPackingProperty().eq(carrierPackingId))
 			.forEach(delivery -> {
 				JSONObject deliveryJSON = ToJSON.deliveryToJSON(delivery);
