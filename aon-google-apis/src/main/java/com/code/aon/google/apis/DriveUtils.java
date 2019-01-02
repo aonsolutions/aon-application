@@ -204,7 +204,12 @@ public class DriveUtils implements IBlobManager {
 	public static byte[] getByteFile(Domain domain, User user, String driveId, Integer attachId){
 		DomainGserviceaccount d = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), user.getLogin());
 		Drive drive = AonDrive.getInstace().serviceInitialize(d);
-		return AonDrive.getInstace().downloadFileByteArray(drive, driveId);
+		byte[] b = AonDrive.getInstace().downloadFileByteArray(drive, driveId);
+		if(b == null) {
+			Drive driveOld = AonDrive.getInstace().serviceInitializeOld(d);
+			b = AonDrive.getInstace().downloadFileByteArray(driveOld, driveId);
+		}
+		return b;
 	}
 
 	
