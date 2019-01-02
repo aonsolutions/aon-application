@@ -30,8 +30,8 @@ public class Mod303Writer {
 	
 	private enum Writers {
 		 AEAT_2018T4	(mod303 -> (mod303.isAEAT() && ((mod303.getYear() > 2018) 
-				 		|| (mod303.getYear() == 2018 && mod303.isLastPeriod()))) 	, Mod303WriterAEAT2018T4::new)
-		,AEAT_2018		(mod303 -> (mod303.isAEAT() && mod303.getYear() == 2018) 	, Mod303WriterAEAT2018::new)
+				 		|| (mod303.getYear() == 2018 && mod303.isLastPeriod()))) 	, Mod303WriterAEAT20184T::new)
+		,AEAT_2018		(mod303 -> (mod303.isAEAT() && mod303.getYear() == 2018 && !mod303.isLastPeriod()) 	, Mod303WriterAEAT2018::new)
 		,AEAT_2017		(mod303 -> (mod303.isAEAT() && mod303.getYear() == 2017) 	, Mod303WriterAEAT2017::new)
 		,AEAT_2016		(mod303 -> (mod303.isAEAT() && mod303.getYear() <= 2016) 	, Mod303WriterAEAT2016::new)
 		,BIZKAIA_2017	(mod303 -> (mod303.isBizkaia() && mod303.getYear() > 2016) 	, Mod303WriterBIZKAIA2017::new)
