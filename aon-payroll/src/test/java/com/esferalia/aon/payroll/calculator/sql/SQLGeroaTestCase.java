@@ -88,8 +88,7 @@ public class SQLGeroaTestCase extends AbstractSQLTestCase {
 						}
 				, new String[] {
 						"BASE_CGC * 0.10", 
-						"BASE_CGP * 0.05",
-						"BASE_IRPF * PORCENTAJE_IRPF/100"
+						"BASE_CGP * 0.05"
 						
 				}, null);
 		

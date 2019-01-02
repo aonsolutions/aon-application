@@ -1475,7 +1475,9 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
 		AgreementExtraRecord julyExtra = getExtra(aonContext, agreement.getId(), "01/07");
 		
-		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, getToday(), getToday());
+		Date extraDate = add(add(getFirstDayOfYear(getToday()), Calendar.MONTH, 5), Calendar.DATE, 14 ); // 15/06
+
+		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, extraDate, extraDate);
 		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
 		new SmartContractSalaryCalculator<Salary>( jooqSalaryBuilder ).calculate(extraCtx);
 		jooqSalaryBuilder.execute();
