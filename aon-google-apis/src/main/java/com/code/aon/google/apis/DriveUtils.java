@@ -206,6 +206,13 @@ public class DriveUtils implements IBlobManager {
 		Drive drive = AonDrive.getInstace().serviceInitialize(d);
 		byte[] b = AonDrive.getInstace().downloadFileByteArray(drive, driveId);
 		if(b == null) {
+			FileList fl = net.aonsolutions.aon.google.apis.drive.SearchFiles.searchFilesAppProperties(drive, "oldDriveId", driveId);
+			if(fl.getFiles().size() > 0) {
+				String newDriveId = fl.getFiles().get(0).getId();
+				b = AonDrive.getInstace().downloadFileByteArray(drive, newDriveId);	
+			}
+		}
+		if(b == null) {
 			Drive driveOld = AonDrive.getInstace().serviceInitializeOld(d);
 			b = AonDrive.getInstace().downloadFileByteArray(driveOld, driveId);
 		}
@@ -441,6 +448,24 @@ public class DriveUtils implements IBlobManager {
 
 	/************************* DESCARGAR ARCHIVO DE DRIVE *********************/
 	
+	public static byte[] getByteFile(Domain domain, String login, Attach attach) {
+		DomainGserviceaccount d = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), login);
+		Drive drive = AonDrive.getInstace().serviceInitialize(d);
+		byte[] b = AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId());
+		if(b == null) {
+			FileList fl = net.aonsolutions.aon.google.apis.drive.SearchFiles.searchFilesAppProperties(drive, "oldDriveId", attach.getDriveId());
+			if(fl.getFiles().size() > 0) {
+				String newDriveId = fl.getFiles().get(0).getId();
+				AonDrive.getInstace().updateDriveId(attach);
+				b = AonDrive.getInstace().downloadFileByteArray(drive, newDriveId);	
+			}
+		}
+		if(b == null) {
+			Drive driveOld = AonDrive.getInstace().serviceInitializeOld(d);
+			b = AonDrive.getInstace().downloadFileByteArray(driveOld, attach.getDriveId());
+		} 
+		return b;
+	}
 	
 	public static byte[] getByteFile(String domainName, Integer domainId, String login, String driveId, Integer attachId) {
 		Domain domain = AON.getDomain(domainName, domainId, login);
