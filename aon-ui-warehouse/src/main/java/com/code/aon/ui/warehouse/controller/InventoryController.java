@@ -222,7 +222,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 		wt.setId(AON.insertWarehouseTransfer(domainName, domainId, user, wt));
 		
 		AON.insertWarehouseTransferDetail(domainName, domainId, user, 
-			AON.getStockStream(domainName, domainId, user, f -> f.getWarehouseProperty().eq(warehouse.getId())).map(s -> {
+			AON.getStockStream(domainName, domainId, user, f -> f.getItemProperty().isNotNull().and(f.getWarehouseProperty().eq(warehouse.getId()))).map(s -> {
 				return new WarehouseTransferDetail()
 					.setDomain(DomainManager.getCurrentDomain())
 					.setItem(new com.esferalia.aon.occam.api.model.product.Item().setId(s.getItem()))
@@ -257,8 +257,10 @@ public class InventoryController extends BasicController implements IAuditableCo
 				Iterator<?> initStockListIter = stockBean.getList(c).iterator();
 				while (initStockListIter.hasNext()){
 					Stock initStock = (Stock) initStockListIter.next();
-					initStock.setQuantity(0.0);
-					stockBean.update(initStock);
+					if(initStock != null && initStock.getItem() != null && initStock.getItem().getId() != null) {
+						initStock.setQuantity(0.0);
+						stockBean.update(initStock);
+					}
 				}
 			}
 			
