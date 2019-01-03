@@ -53,7 +53,7 @@ public class JooqEmployeeEvents {
 			ArrayList<Quartet<Date, Date, String, String>> varibaleList = new ArrayList<Quartet<Date, Date, String, String>>();
 			
 			Result<Record> contractRecord = dslContext.select().from(CONTRACT)
-					.where(CONTRACT.PERSON.eq(contract))
+					.where(CONTRACT.ID.eq(contract))
 					.fetch();
 			
 			Integer contractId = contractRecord.get(0).get(CONTRACT.ID);

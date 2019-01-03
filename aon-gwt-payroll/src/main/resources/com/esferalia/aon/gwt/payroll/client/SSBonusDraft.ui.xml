@@ -31,7 +31,7 @@
 
 		.title{
 			padding-left: 25px;
-			padding-top: 5px;
+			padding-top: 15px;
     		font-size: small;
 		}
 

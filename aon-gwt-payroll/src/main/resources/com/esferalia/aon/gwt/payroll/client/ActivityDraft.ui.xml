@@ -20,7 +20,7 @@
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX">
-		<g:north size="72">
+		<g:north size="51">
 			<g:FlowPanel>
 				<g:MenuBar>
 				</g:MenuBar>
