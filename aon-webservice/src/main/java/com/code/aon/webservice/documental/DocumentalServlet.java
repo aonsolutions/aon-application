@@ -309,11 +309,17 @@ public class DocumentalServlet extends HttpServlet{
 	private JSONArray getScopeJSON(Domain domain, String login) {
 		User user = AON.getUser(domain.getName(), domain.getId(), login);
 		JSONArray array = new JSONArray();
-		if(!domain.isParent() && domain.isEnableHeredity() && !user.getDomain().equals(domain.getId())) {
-			AON.getScopeStream(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()))
-				.forEach(s -> array.put(ToJSON.scopeToJSON(s)));
-			AON.getUserScopeStream(domain.getName(), domain.getId(), login, user.getId(), f -> f.getDomainProperty().eq(domain.getParentId()))
-				.forEach(s -> array.put(ToJSON.scopeToJSON(s)));
+		if(!domain.isParent() && domain.isEnableHeredity()) {
+			if(user.getDomain().equals(domain.getId())) {
+				AON.getUserScopeStream(domain.getName(), domain.getId(), login, user.getId(), 
+						f -> f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
+					.forEach(s -> array.put(ToJSON.scopeToJSON(s)));
+			} else {
+				AON.getScopeStream(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()))
+					.forEach(s -> array.put(ToJSON.scopeToJSON(s)));
+				AON.getUserScopeStream(domain.getName(), domain.getId(), login, user.getId(), f -> f.getDomainProperty().eq(domain.getParentId()))
+					.forEach(s -> array.put(ToJSON.scopeToJSON(s)));
+			}
 		} else {
 			AON.getUserScopeStream(domain.getName(), domain.getId(), login, user.getId(), f -> f.getDomainProperty().eq(domain.getId()))
 				.forEach(s -> array.put(ToJSON.scopeToJSON(s)));
