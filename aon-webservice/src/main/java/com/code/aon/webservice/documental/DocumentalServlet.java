@@ -184,8 +184,10 @@ public class DocumentalServlet extends HttpServlet{
 			String[] tags = tagStr.split(",");
 			AON.deleteRegistryAttachTag(domain.getName(), domain.getId(), login, attach.getId());
 			for(Integer i = 0; i< tags.length; i++) {
-				Integer tagId = Integer.parseInt(tags[i]);
-				AON.insertRegistryAttachTag(domain.getName(), domain.getId(), login, attach.getId(), tagId);
+				if(!"".equals(tags[i])) {
+					Integer tagId = Integer.parseInt(tags[i]);
+					AON.insertRegistryAttachTag(domain.getName(), domain.getId(), login, attach.getId(), tagId);
+				}
 			}
 		}
 		AON.updateAttach(domain.getName(), domain.getId(), login, attach);
@@ -305,12 +307,19 @@ public class DocumentalServlet extends HttpServlet{
 	}
 	
 	private JSONArray getScopeJSON(Domain domain, String login) {
+		User user = AON.getUser(domain.getName(), domain.getId(), login);
 		JSONArray array = new JSONArray();
-		AON.getScopeStream(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()))
-		.forEach(s -> array.put(ToJSON.scopeToJSON(s)));
+		if(!domain.isParent() && domain.isEnableHeredity() && !user.getDomain().equals(domain.getId())) {
+			AON.getScopeStream(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()))
+				.forEach(s -> array.put(ToJSON.scopeToJSON(s)));
+			AON.getUserScopeStream(domain.getName(), domain.getId(), login, user.getId(), f -> f.getDomainProperty().eq(domain.getParentId()))
+				.forEach(s -> array.put(ToJSON.scopeToJSON(s)));
+		} else {
+			AON.getUserScopeStream(domain.getName(), domain.getId(), login, user.getId(), f -> f.getDomainProperty().eq(domain.getId()))
+				.forEach(s -> array.put(ToJSON.scopeToJSON(s)));
+		}
 		return array;
 	}
-	
 	
     private Filter attachFilter(Domain domain, Map<String, String[]> filterMap, AttachProperties f) {
     	Integer domainId = filterMap.containsKey("type") && filterMap.get("type")[0].equals("parent") ?
@@ -322,6 +331,9 @@ public class DocumentalServlet extends HttpServlet{
     		filter = filter.and("system".equals(type)
   				? f.getTypeProperty().eq(RegistryAttachmentType.SYSTEM_MESSAGE.value())
    				: f.getTypeProperty().eq(RegistryAttachmentType.CORPORATE_IDENTITY.value()));
+    		if("parent".equals(type)) {
+    			filter = filter.and(f.getSecurityLevelProperty().eq((byte) 0));
+    		}
     	}
     	
     	if(filterMap.containsKey("description")){

@@ -370,6 +370,17 @@ public class AON {
 		}
 	}
 	
+	public static Stream<Scope> getUserScopeStream(String domainName, Integer domainId, String login, Integer userId, ScopeFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getSecurity().getUserScopeStream(ctx, userId, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static Scope insertScope(String domainName, Integer domainId, String login, Scope scope) {
 		AONContext ctx = null;
 		try {

@@ -37,6 +37,11 @@ public class SecurityImpl implements ISecurity {
 	public Stream<Scope> getScopeStream(AONContext ctx, ScopeFilter filter) {
 		return SecurityDAO.getScopeStream(ctx, filter);
 	}
+	
+	@Override
+	public Stream<Scope> getUserScopeStream(AONContext ctx, Integer userId, ScopeFilter filter) {
+		return SecurityDAO.getUserScopeStream(ctx, userId, filter);
+	}
 
 	@Override
 	public Scope insertScope(AONContext ctx, Scope scope) {

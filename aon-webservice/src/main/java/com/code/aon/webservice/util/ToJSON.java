@@ -62,7 +62,9 @@ public class ToJSON {
 			icon = "aon-documental:audio";
 		} else if(attach.getMimeType().getName().contains("video")) {
 			icon = "aon-documental:video";
-		}  
+		} else if(MimeType.ZIP.equals(attach.getMimeType())) {
+			icon = "view-list";
+		}
 
 		JSONArray tagArray = new JSONArray();
 		if(attach.getTagList() != null)

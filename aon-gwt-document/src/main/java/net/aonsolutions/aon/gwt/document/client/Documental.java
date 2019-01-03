@@ -274,7 +274,7 @@ public class Documental implements EntryPoint {
 		});
 		
 		HorizontalPanel tagPanel = new HorizontalPanel();
-		
+		tagList = new LinkedList<>();
 		tagBox.addValueChangedHandler(new ValueChangedEventHandler() {
 			
 			@Override
@@ -328,7 +328,10 @@ public class Documental implements EntryPoint {
 		vp.add(hp);
 		AonDialog dialog = new AonDialog("Nuevo Archivo", vp) {
 			
-			@Override protected void onCancel() {hide();}
+			@Override protected void onCancel() {
+				tagList = new LinkedList<>();
+				hide();
+			}
 			
 			@Override
 			protected void onAccept() {
@@ -338,6 +341,7 @@ public class Documental implements EntryPoint {
 					if(!"".equals(ids)) ids = ids + ","; 
 					ids = ids + tagList.get(i).getId();
 				}
+				tagList = new LinkedList<>();
 				JsObject scope = (JsObject) scopeBox.getSelectedItem();
 				for(Integer i = vp.getWidgetCount() - 1 ; i >= 0; i--){
 					vp.getWidget(i).removeFromParent();
@@ -526,6 +530,7 @@ public class Documental implements EntryPoint {
 					@Override public void onFailure(Throwable caught) {}
 				});
 				HorizontalPanel tagPanel = new HorizontalPanel();
+				tagList = new LinkedList<>();
 				JsArray<JsLabel> tags = attach.getTags();
 				for(Integer i = 0 ; i < tags.length(); i++) {
 					tagList.add(tags.get(i));

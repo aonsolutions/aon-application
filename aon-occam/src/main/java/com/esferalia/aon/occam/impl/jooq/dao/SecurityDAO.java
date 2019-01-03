@@ -293,6 +293,14 @@ public class SecurityDAO {
 				.fetch().stream().map(new ScopeFiller());
 	}
 	
+	public static Stream<Scope> getUserScopeStream(AONContext ctx,  Integer userId, ScopeFilter filter){
+		return ctx.getDslContext().select().from(SCOPE)
+				.join(USER_SCOPE).on(USER_SCOPE.SCOPE.eq(SCOPE.ID))
+				.where(SCOPE_PROPERTIES.getConditions(filter))
+				.and(USER_SCOPE.USER_ID.eq(userId))
+				.fetch().stream().map(new ScopeFiller());
+	}
+	
 	public static Scope insertScope(AONContext ctx, Scope scope){
 		return ctx.getDslContext().insertInto(SCOPE, SCOPE.DOMAIN, SCOPE.DESCRIPTION)
 			.values(scope.getDomain(), scope.getDescription())
