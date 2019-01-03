@@ -215,7 +215,7 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 			public void onKeyUp(KeyUpEvent event) {
 				if ((event.isControlKeyDown() && event.getNativeKeyCode() == KeyCodes.KEY_F3)
 						|| event.getNativeKeyCode() == KeyCodes.KEY_NUM_PLUS
-						|| event.getNativeKeyCode() == KEY_PLUS) {
+						|| (!event.isShiftKeyDown() && event.getNativeKeyCode() == KEY_PLUS)) {
 					showAccountDialog();
 				}
 			}

@@ -30,6 +30,8 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -131,6 +133,16 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 	
 	private void fillNorthPanel(SimpleLayoutPanel northPanel, int tabIndex ,final AonConfiguration config, AccountingReportParams params) {
 		
+		FlexTable mainTab = new FlexTable();
+		mainTab.setStyleName(AON.AON_CSS.aonPanelGridSearch());
+		mainTab.addStyleName(AON.AON_CSS.aonWidthAll());
+		mainTab.getColumnFormatter().setWidth(0, "auto");
+		mainTab.getColumnFormatter().setWidth(1, "50px");
+		
+		FlexTable tab = new FlexTable();
+		tab.addStyleName(AON.AON_CSS.aonWidthAll());		
+		mainTab.setWidget(0, 0, tab);
+
 		FlexTable dateTab = new FlexTable();
 		period = new AccountPeriodBox();
 		fromDate = new DateBoxEx();
@@ -218,6 +230,20 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 				onSearch();
 			}
 		});
+		account.addKeyUpHandler(new KeyUpHandler() {
+			
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				String accountValue = account.getValue();
+				if (AonStringUtils.contains(accountValue, "*")) {
+					Label msg = new Label("Si desea mostrar mas de una cuenta, utilice el \"Balance de sumas y saldos\"");
+					msg.setStyleName(AON.AON_CSS.aonColorRed());
+					tab.setWidget(2, 1, msg);			
+				} else {
+					tab.clearCell(2, 1);
+				}
+			}
+		});
 
 		if (activitiesListBoxEnabled) {
 			activity = new ListBox();
@@ -245,18 +271,6 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 				}
 			});
 		}
-		FlexTable mainTab = new FlexTable();
-		mainTab.setStyleName(AON.AON_CSS.aonPanelGridSearch());
-		mainTab.addStyleName(AON.AON_CSS.aonWidthAll());
-		mainTab.getColumnFormatter().setWidth(0, "auto");
-		mainTab.getColumnFormatter().setWidth(1, "50px");
-		
-		
-		
-		FlexTable tab = new FlexTable();
-		tab.addStyleName(AON.AON_CSS.aonWidthAll());
-		
-		mainTab.setWidget(0, 0, tab);
 		
 		tab.getColumnFormatter().setWidth(0, "1%");
 		tab.getColumnFormatter().setWidth(1, "1%");
