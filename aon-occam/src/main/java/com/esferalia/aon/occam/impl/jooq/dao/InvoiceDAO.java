@@ -697,8 +697,7 @@ public class InvoiceDAO {
 						.and(INVOICE_DETAIL.WAREHOUSE.isNull())
 						.and(INVOICE.ISSUE_DATE.greaterOrEqual(AonDateUtils.toSql(startDate))))
 				
-				.orderBy(INVOICE.ISSUE_DATE.desc()
-						,INVOICE_DETAIL.ID.desc())
+				.orderBy(INVOICE.ISSUE_DATE.desc())// ,INVOICE_DETAIL.ID.desc())
 				.fetch().stream().map(new InvoiceDetailFiller())
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
@@ -729,8 +728,7 @@ public class InvoiceDAO {
 						.and(INVOICE.ISSUE_DATE.greaterOrEqual(AonDateUtils.toSql(startDate))))
 						
 				
-				.orderBy(INVOICE.ISSUE_DATE.desc()
-						,INVOICE_DETAIL.ID.desc())
+				.orderBy(INVOICE.ISSUE_DATE.desc())//,INVOICE_DETAIL.ID.desc())
 				.fetch().stream().map(new InvoiceDetailFiller())
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
@@ -758,8 +756,7 @@ public class InvoiceDAO {
 						.and(INVOICE_DETAIL.WAREHOUSE.isNull()))
 				
 				
-				.orderBy(INVOICE.ISSUE_DATE.desc()
-						,INVOICE_DETAIL.ID.desc())
+				.orderBy(INVOICE.ISSUE_DATE.desc())//,INVOICE_DETAIL.ID.desc())
 				.fetch().stream().map(new InvoiceDetailFiller())
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
@@ -788,8 +785,7 @@ public class InvoiceDAO {
 						.and(INVOICE_DETAIL.WAREHOUSE.isNull()))
 				
 				
-				.orderBy(INVOICE.ISSUE_DATE.desc()
-						,INVOICE_DETAIL.ID.desc())
+				.orderBy(INVOICE.ISSUE_DATE.desc()) //,INVOICE_DETAIL.ID.desc())
 				.fetch().stream().map(new InvoiceDetailFiller())
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
