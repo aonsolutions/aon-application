@@ -187,7 +187,7 @@ public class Model190 extends MainEntryPoint {
 
 	private void newModel() {
 		cleanErrorPanel();
-		SERVICE.initialize(getCurrentDomainName(), getCurrentUser(),getCurrentDomain(), 2017,
+		SERVICE.initialize(getCurrentDomainName(), getCurrentUser(),getCurrentDomain(), 2018,
 				new AsyncCallback<Mod190>() {
 					@Override
 					public void onSuccess(Mod190 m190) {
