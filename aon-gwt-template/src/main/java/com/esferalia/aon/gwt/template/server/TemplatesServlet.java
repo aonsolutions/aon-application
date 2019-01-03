@@ -885,8 +885,11 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 								stockBool = false;
 							} 
 						}
-						else if(stockBool){
+						else if(stockBool && ti.getColumns().size() >= cell.getColumnIndex()){
 							if(cell.getColumnIndex() !=0){
+								if(cell.getColumnIndex()> 2) {
+									System.out.println("VA A FALLAR!");
+								}
 								Cell beforeCell = rowAux.getCell(cell.getColumnIndex()-1);
 								if((beforeCell == null || beforeCell.getCellType() == Cell.CELL_TYPE_BLANK) && isRequiredStock(ti.getColumns().get(cell.getColumnIndex()-1))){
 									if(beforeCell == null){
@@ -929,7 +932,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 						rowCount = -1;
 						stockBool = false;
 					}
-					else if(stockBool){
+					else if(stockBool && ti.getColumns().size() >= row.getLastCellNum()){
 						if(row.getLastCellNum() != -1){
 							Short cellnum = row.getLastCellNum();
 							if(row.getLastCellNum() == ti.getColumns().size())cellnum--;
