@@ -20,7 +20,6 @@ import com.code.aon.ui.loader.ILoaderFactory;
 import com.code.aon.ui.loader.LoaderParams;
 import com.code.aon.ui.loader.pojo.ILoadedPojo;
 import com.code.aon.ui.loader.pojo.LoadedAccount;
-import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -94,36 +93,27 @@ public class AccountLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		account.setDescription(loaded.getDescripcion());
 		account.setAlias(loaded.getAlias());
 		
-		String code4 = AonStringUtils.substring(loaded.getCuenta(),0,4);
+		String code4 = AonStringUtils.length(loaded.getCuenta())>4?AonStringUtils.substring(loaded.getCuenta(),0,4):null;
+		String code3 = AonStringUtils.length(loaded.getCuenta())>3?AonStringUtils.substring(loaded.getCuenta(),0,3):null;
+		String code2 = AonStringUtils.length(loaded.getCuenta())>2?AonStringUtils.substring(loaded.getCuenta(),0,2):null;
+		String code1 = AonStringUtils.length(loaded.getCuenta())>1?AonStringUtils.substring(loaded.getCuenta(),0,1):null;
+
 		Criteria c = new Criteria();
-		c.addEqualExpression(codeAlias, code4);
-		if (getBean().getCount(c) != 1) {
-			String code3 = AonStringUtils.substring(loaded.getCuenta(),0,3);
+		if (code4 != null) {
+			c.addEqualExpression(codeAlias, code4);
+			if (getBean().getCount(c) != 1) {
+				Account account4 = new Account();
+				account4.setCode(code4);
+				account4.setDescription(loaded.getDescripcion());
+				account4.setAlias(loaded.getAlias());
+				getBean().insert(account4);			
+				engine.log("Cuenta de nivel 4 creada ["+ account4.getFullDescription() +"]");
+			}
+		}
+		if (code3 != null) {
 			c = new Criteria();
 			c.addEqualExpression(codeAlias, code3);
 			if (getBean().getCount(c) != 1) {
-				String code2 = AonStringUtils.substring(loaded.getCuenta(),0,2);
-				c = new Criteria();
-				c.addEqualExpression(codeAlias, code2);
-				if (getBean().getCount(c) != 1) {
-					String code1 = AonStringUtils.substring(loaded.getCuenta(),0,1);
-					c = new Criteria();
-					c.addEqualExpression(codeAlias, code1);
-					if (getBean().getCount(c) != 1) {
-						Account account1 = new Account();
-						account1.setCode(code1);
-						account1.setDescription(loaded.getDescripcion());
-						account1.setAlias(loaded.getAlias());
-						getBean().insert(account1);
-						engine.log("Cuenta de nivel 1 creada ["+ account1.getFullDescription() +"]");
-					}
-					Account account2 = new Account();
-					account2.setCode(code2);
-					account2.setDescription(loaded.getDescripcion());
-					account2.setAlias(loaded.getAlias());
-					getBean().insert(account2);			
-					engine.log("Cuenta de nivel 2 creada ["+ account2.getFullDescription() +"]");
-				}
 				Account account3 = new Account();
 				account3.setCode(code3);
 				account3.setDescription(loaded.getDescripcion());
@@ -131,12 +121,30 @@ public class AccountLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 				getBean().insert(account3);			
 				engine.log("Cuenta de nivel 3 creada ["+ account3.getFullDescription() +"]");
 			}
-			Account account4 = new Account();
-			account4.setCode(code4);
-			account4.setDescription(loaded.getDescripcion());
-			account4.setAlias(loaded.getAlias());
-			getBean().insert(account4);			
-			engine.log("Cuenta de nivel 4 creada ["+ account4.getFullDescription() +"]");
+		}
+		if (code2 != null) {
+			c = new Criteria();
+			c.addEqualExpression(codeAlias, code2);
+			if (getBean().getCount(c) != 1) {
+				Account account2 = new Account();
+				account2.setCode(code2);
+				account2.setDescription(loaded.getDescripcion());
+				account2.setAlias(loaded.getAlias());
+				getBean().insert(account2);			
+				engine.log("Cuenta de nivel 2 creada ["+ account2.getFullDescription() +"]");
+			}
+		}
+		if (code1 != null) {
+			c = new Criteria();
+			c.addEqualExpression(codeAlias, code1);
+			if (getBean().getCount(c) != 1) {
+				Account account1 = new Account();
+				account1.setCode(code1);
+				account1.setDescription(loaded.getDescripcion());
+				account1.setAlias(loaded.getAlias());
+				getBean().insert(account1);
+				engine.log("Cuenta de nivel 1 creada ["+ account1.getFullDescription() +"]");
+			}
 		}
 		
 		account.setCode(loaded.getCuenta());
