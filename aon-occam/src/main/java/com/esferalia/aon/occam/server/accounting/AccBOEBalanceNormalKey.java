@@ -54,7 +54,7 @@ public enum AccBOEBalanceNormalKey implements IBalanceKey{
 		 	,ACIV2(2,true,"2","Cr\u00E9ditos a empresas","sdb({5323,5324,5343,5344})-sab({5953,5954})",null)
 		 	,ACIV3(2,true,"3","Valores representativos de deuda","sdb({5313,5314,5333,5334})-sab({5943,5944})",null)
 		 	,ACIV4(2,true,"4","Derivados",null,null)
-		 	,ACIV5(2,true,"5","Otros activos financieros","sdb({5353,5354,5524})+sdbPositivo(5523)",null)
+		 	,ACIV5(2,true,"5","Otros activos financieros","sdb({5353,5354})+sdbPositivo({5523,5524})",null)
  	
 	 	,ACV(1,false,"V","Inversiones financieras a corto plazo",null,"ACV1+ACV2+ACV3+ACV4+ACV5")
 		 	,ACV1(2,true,"1","Instrumentos de patrimonio","sdb({5305,540})-sab({5395,549})",null)
@@ -121,7 +121,7 @@ public enum AccBOEBalanceNormalKey implements IBalanceKey{
 				,PCIII3(2,true,"3","Acreedores por arrendamiento financiero","sab({5125,524})",null)
 				,PCIII4(2,true,"4","Derivados","sab({5595,5598})",null)
 				,PCIII5(2,true,"5","Otros pasivos financieros","sab({194,509,5115,5135,5145,521,522,523,525,526,528,5525,555,5565,5566,560,561,569})+sabPositivo(551)-sdb({1034,1044,190,192})",null)
-			,PCIV(1,false,"IV","Deudas con empresas del grupo y asociadas a corto plazo","sab({5103,5104,5113,5114,5123,5124,5133,5134,5143,5144,5524,5563,5564})+sabPositivo({5523})",null)
+			,PCIV(1,false,"IV","Deudas con empresas del grupo y asociadas a corto plazo","sab({5103,5104,5113,5114,5123,5124,5133,5134,5143,5144,5563,5564})+sabPositivo({5523,5524})",null)
 			,PCV(1,false,"V","Acreedores comerciales y otras cuentas a pagar",null,"PCV1+PCV2+PCV3+PCV4+PCV5+PCV6+PCV7")
 				,PCV1(2,true,"1","Proveedores","sab({400,401,405})-sdb({406})",null)
 				,PCV2(2,true,"2","Proveedores, empresas del grupo y asociadas","sab({403,404})",null)
