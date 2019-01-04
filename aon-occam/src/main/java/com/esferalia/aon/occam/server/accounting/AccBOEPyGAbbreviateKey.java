@@ -2,7 +2,7 @@ package com.esferalia.aon.occam.server.accounting;
 
 public enum AccBOEPyGAbbreviateKey implements IBalanceKey{
 	
-	  CEA001(1,true , "1." ,"Importe neto de la cifra de negocios.","sap({700,701,702,703,704})-sdp({706,708,709})",null)
+	  CEA001(1,true , "1." ,"Importe neto de la cifra de negocios.","sap({700,701,702,703,704,705})-sdp({706,708,709})",null)
 	 ,CEA002(1,true , "2." ,"Variación de existencias de productos terminados y en curso de fabricación.","sap({71,7930})-sdp({6930})",null)	
 	 ,CEA003(1,true , "3." ,"Trabajos realizados por la empresa para su activo.","sap({73})",null)
 	 ,CEA004(1,true , "4." ,"Aprovisionamientos.","sap({600,601,602,606,607,608,609,61,7931,7932,7933})-sdp({6931,6932,6933})",null)
