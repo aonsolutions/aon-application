@@ -79,26 +79,34 @@ public abstract class ModPrintAEAT extends HttpServlet{
 	
 	protected void init(JSONObject json) throws JSONException, UnsupportedEncodingException {
 		this.print = json.opt("print") != null;
-		
 		this.id = json.getInt("mod");
 		this.domainName = json.getString("domainName");
 		this.domainId = json.getInt("domainId");
 		this.user = json.getString("user");	
-		if(json.opt("cert") != null && !"null".equals(json.optString("cert"))) {
-			Integer c = json.getInt("cert");
-			Attach attach = AON.getAttach(domainName, domainId, user, f ->
-				f.getIdProperty().eq(c)
-				.and(f.getTypeProperty().eq(RegistryAttachmentType.DIGITAL_CERTIFICATE.value())), AttachType.REGISTRY, true);
-			if(attach.getData() == null){
-				DomainGserviceaccount g = AON.getDomainGserviceaccount(domainName, domainId, user);
-				Drive drive = AonDrive.getInstace().serviceInitialize(g);
-				attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
+		if(json.opt("cert") != null && !"".equals(json.optString("cert")) && !"null".equals(json.optString("cert"))) {
+			try {
+				Integer c = json.getInt("cert");
+				Attach attach = AON.getAttach(domainName, domainId, user, f ->
+					f.getIdProperty().eq(c)
+					.and(f.getTypeProperty().eq(RegistryAttachmentType.DIGITAL_CERTIFICATE.value())), AttachType.REGISTRY, true);
+				if(attach.getData() == null){
+					DomainGserviceaccount g = AON.getDomainGserviceaccount(domainName, domainId, user);
+					Drive drive = AonDrive.getInstace().serviceInitialize(g);
+					attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
+				}
+				this.cert = attach.getData();
+				this.pass = URLDecoder.decode(json.getString("pass"),  "UTF-8");
+				this.name = URLDecoder.decode(json.getString("name"),  "UTF-8");
+				this.document = json.getString("document");
+				this.nrc = json.opt("nrc") != null ? json.getString("nrc") : null;
+			} catch (Exception e) {
+				System.out.println(e);
+				System.out.println("ERROR!!!! ");
+				try {
+					System.out.println(json.optString("cert"));
+					System.out.println(json.optInt("cert"));
+				}catch (Exception e2) {}
 			}
-			this.cert = attach.getData();
-			this.pass = URLDecoder.decode(json.getString("pass"),  "UTF-8");
-			this.name = URLDecoder.decode(json.getString("name"),  "UTF-8");
-			this.document = json.getString("document");
-			this.nrc = json.opt("nrc") != null ? json.getString("nrc") : null;
 		}			
 	}	
 	
