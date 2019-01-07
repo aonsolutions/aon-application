@@ -191,7 +191,15 @@ public class IncomeDAO {
 	public static LinkedList<IncomeDetail> getLastIncomeDetailListUntilDate(AONContext ctx, Item item, Date startDate, Integer workplaceId, Integer warehouseId, Date date){
 		Condition workplaceCondition = INCOME.WORKPLACE.isNull();
 		if(workplaceId != null) workplaceCondition = INCOME.WORKPLACE.eq(workplaceId);
-		return ctx.getDslContext()
+		LinkedList<Integer> list = ctx.getDslContext().select(INVOICE_DETAIL.SOURCE_ID)
+				.from(INVOICE_DETAIL)															
+				.where(INVOICE_DETAIL.SOURCE.eq((byte)4))
+				.and(INVOICE_DETAIL.WORKPLACE.eq(workplaceId))
+				.and(INVOICE_DETAIL.WAREHOUSE.isNull()).fetch().stream()
+				.map(r -> r.getValue(INVOICE_DETAIL.SOURCE_ID))
+				.collect(Collectors.toCollection(LinkedList::new));
+		if(list.size() > 0) {
+			return ctx.getDslContext()
 				.select(INCOME.ISSUE_TIME, INCOME_DETAIL.PRICE, INCOME_DETAIL.ID, INCOME_DETAIL.DISCOUNT_EXPR
 						,INCOME_DETAIL.QUANTITY)
 				.from(INCOME).join(INCOME_DETAIL).on(INCOME.ID.equal(INCOME_DETAIL.INCOME))
@@ -199,15 +207,23 @@ public class IncomeDAO {
 				.and(workplaceCondition).and(INCOME_DETAIL.WAREHOUSE.eq(warehouseId))
 				.and(INCOME.ISSUE_TIME.lessOrEqual(AonDateUtils.toSql(date)))
 				.and(INCOME.ISSUE_TIME.greaterOrEqual(AonDateUtils.toSql(startDate)))
-				.and(INCOME_DETAIL.ID.notIn(ctx.getDslContext().select(INVOICE_DETAIL.SOURCE_ID)
-						.from(INVOICE_DETAIL)															
-						.where(INVOICE_DETAIL.SOURCE.eq((byte)4))
-						.and(INVOICE_DETAIL.WORKPLACE.eq(workplaceId))
-						.and(INVOICE_DETAIL.WAREHOUSE.isNull())))
+				.and(INCOME_DETAIL.ID.notIn(list))
 				.orderBy(INCOME.ISSUE_TIME.desc()
-						,INCOME_DETAIL.ID.desc())
-				.fetch().stream().map(new SpecialIncomeDetailFiller())
-				.collect(Collectors.toCollection(LinkedList::new));
+						,INCOME_DETAIL.ID.desc()).fetch().stream()
+				.map(new SpecialIncomeDetailFiller()).collect(Collectors.toCollection(LinkedList::new));
+		} else {
+			return ctx.getDslContext()
+				.select(INCOME.ISSUE_TIME, INCOME_DETAIL.PRICE, INCOME_DETAIL.ID, INCOME_DETAIL.DISCOUNT_EXPR
+							,INCOME_DETAIL.QUANTITY)
+				.from(INCOME).join(INCOME_DETAIL).on(INCOME.ID.equal(INCOME_DETAIL.INCOME))
+				.where(INCOME_DETAIL.ITEM.eq(item.getId()))
+				.and(workplaceCondition).and(INCOME_DETAIL.WAREHOUSE.eq(warehouseId))
+				.and(INCOME.ISSUE_TIME.lessOrEqual(AonDateUtils.toSql(date)))
+				.and(INCOME.ISSUE_TIME.greaterOrEqual(AonDateUtils.toSql(startDate)))
+				.orderBy(INCOME.ISSUE_TIME.desc()
+							,INCOME_DETAIL.ID.desc()).fetch().stream()
+				.map(new SpecialIncomeDetailFiller()).collect(Collectors.toCollection(LinkedList::new));	
+		}
 	}
 	
 	public static LinkedList<IncomeDetail> getIncomeDetailList(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId){
