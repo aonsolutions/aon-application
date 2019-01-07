@@ -1,0 +1,196 @@
+ description                     ,Año,Mes,Día, description                                            
+ Fiestas ESTATALES               ,2019,1,1, Año Nuevo                                              
+ Fiestas ESTATALES               ,2019,1,6, Epifanía del Señor                                     
+ Fiestas ESTATALES               ,2019,4,19, Viernes Santo                                          
+ Fiestas ESTATALES,2019,5,1,Fiesta del Trabajo
+ Fiestas ESTATALES               ,2019,8,15, Asunción de la Virgen                                  
+ Fiestas ESTATALES               ,2019,10,12, Fiesta Nacional de España                              
+ Fiestas ESTATALES               ,2019,11,1, Todos los Santos                                       
+ Fiestas ESTATALES               ,2019,12,6, Día de la Constitución Española                        
+ Fiestas ESTATALES               ,2019,12,8, La Inmaculada Concepción                               
+ Fiestas ESTATALES,2019,12,25,Natividad del Señor
+ Festivos ANDALUCIA,2019,1,7,Lunes siguiente a Año Nuevo
+ Festivos ANDALUCIA              ,2019,2,28, Día de Andalucía                                       
+ Festivos ANDALUCIA              ,2019,4,18, Jueves Santo                                           
+ Festivos ANDALUCIA              ,2019,12,9,Día de la Inmaculada Concepción                                           
+ Festivos PAÍS VASCO             ,2019,3,19,San José
+ Festivos PAÍS VASCO             ,2019,4,18,Jueves Santo
+ Festivos PAÍS VASCO             ,2019,4,22,Lunes de Pascua
+ Festivos PAÍS VASCO             ,2019,7,25, Santiago Apóstol                                       
+ Festivos ARAGÓN                 ,2019,1,7,Lunes siguiente a Epifanía del Señor
+ Festivos ARAGÓN              ,2019,4,18, Jueves Santo                                           
+ Festivos ARAGÓN                 ,2019,4,23," San Jorge,  Día de Aragón       "
+ Festivos ARAGÓN                 ,2019,12,9,Lunes siguiente a Inmaculada Concepción
+ Festivos ASTURIAS               ,2019,1,7,Lunes siguiente a Epifanía del Señor
+ Festivos ASTURIAS            ,2019,4,18, Jueves Santo                                           
+ Festivos ASTURIAS               ,2019,9,8, Día de Asturias                                        
+ Festivos ASTURIAS               ,2019,12,8,Lunes siguiente a Inmaculada Concepción
+ Festivos VITORIA-GASTEIZ        ,2019,4,28, San Prudencio                                          
+ Festivos VITORIA-GASTEIZ        ,2019,7,25,Santiago Apóstol
+ Festivos BALEARES               ,2019,3,1, Día de las Islas Baleares                              
+ Festivos BALEARES               ,2019,4,18, Jueves Santo                                           
+ Festivos BALEARES               ,2019,4,22, Lunes de Pascua                                        
+ Festivos BALEARES               ,2019,12,16,San Esteban
+ Festivos CANARIAS               ,2019,1,7,Lunes siguiente a Epifanía del Señor
+ Festivos CANARIAS               ,2019,4,18,Jueves Santo
+ Festivos CANARIAS               ,2019,5,30, Día de Canarias                                        
+ Festivos CANTABRIA              ,2019,4,18, Jueves Santo                                           
+ Festivos CANTABRIA              ,2019,4,22,Lunes de Pascua
+ Festivos CANTABRIA              ,2019,7,25,Santiago Apóstol
+ Festivos CANTABRIA              ,2019,12,9,Lunes siguiente a Inmaculada Concepción
+ Festivos CASTILLA - LA MANCHA   ,2019,4,18, Jueves Santo                                           
+ Festivos CASTILLA - LA MANCHA   ,2019,5,31, Día de la Región de Castilla- La Mancha                
+ Festivos CASTILLA - LA MANCHA   ,2019,4,22,Lunes de Pascua
+ Festivos CASTILLA - LA MANCHA   ,2019,6,20, Corpus Christi                                         
+ Festivos CASTILLA Y LEÓN        ,2019,1,7, Lunes siguiente a Epifanía del Señor
+ Festivos CASTILLA Y LEÓN        ,2019,4,18, Jueves Santo                                           
+ Festivos CASTILLA Y LEÓN        ,2019,4,23, Día de Castilla y León
+ Festivos CASTILLA Y LEÓN        ,2019,12,9,Lunes siguiente a Inmaculada Concepción
+ Festivos CATALUÑA               ,2019,4,22, Lunes de Pascua                                        
+ Festivos CATALUÑA               ,2019,6,24, San Juan                                               
+ Festivos CATALUÑA               ,2019,9,11, Fiesta Nacional de Cataluña
+ Festivos CATALUÑA               ,2019,3,19,San José
+ Festivos CATALUÑA               ,2019,12,26, San Esteban  
+ Festivos COMUNIDAD VALENCIANA   ,2019,3,19,San José
+ Festivos COMUNIDAD VALENCIANA   ,2019,4,22, Lunes de Pascua                                        
+ Festivos COMUNIDAD VALENCIANA   ,2019,6,24,San Juán
+ Festivos COMUNIDAD VALENCIANA   ,2019,10,9,Día de la Comunitat Valenciana
+ Festivos EXTREMADURA            ,2019,1,7,Lunes siguiente a Epifanía del Señor
+ Festivos EXTREMADURA            ,2019,4,18, Jueves Santo                                           
+ Festivos EXTREMADURA            ,2019,9,9, Día de Extremadura                                     
+ Festivos EXTREMADURA            ,2019,12,9,Lunes siguiente a Inmaculada Concepción
+ Festivos GALICIA                ,2019,3,19,San José
+ Festivos GALICIA                ,2019,4,18,Jueves Santo
+ Festivos GALICIA                ,2019,5,17,Día de las Letras Gallegas
+ Festivos GALICIA                ,2019,7,25, Día Nacional de Galicia                                
+ Festivos COMUNIDAD DE MADRID    ,2019,1,7,Lunes siguiente a Epifanía del Señor
+ Festivos COMUNIDAD DE MADRID    ,2019,4,18, Jueves Santo                                           
+ Festivos COMUNIDAD DE MADRID    ,2019,5,2, Fiesta de la Comunidad de Madrid
+ Festivos COMUNIDAD DE MADRID    ,2019,12,9,Lunes siguiente a Inmaculada Concepción
+ Festivos REGIÓN DE MURCIA       ,2019,1,7,Lunes siguiente a Epifanía del Señor
+ Festivos REGIÓN DE MURCIA       ,2019,4,18, Jueves Santo                                           
+ Festivos REGIÓN DE MURCIA       ,2019,6,10, Día de la Región de Murcia                             
+ Festivos REGIÓN DE MURCIA       ,2019,3,19,San José
+ Festivos NAVARRA                ,2019,1,7,Lunes siguiente a Epifanía del Señor
+ Festivos NAVARRA                ,2019,4,18,Jueves Santo
+ Festivos NAVARRA                ,2019,4,22,Lunes de Pascua
+ Festivos NAVARRA                ,2019,3,19,San José
+ Festivos LA RIOJA               ,2019,4,18, Jueves Santo                                           
+ Festivos LA RIOJA               ,2019,4,22, Lunes de Pascua                                        
+ Festivos LA RIOJA               ,2019,6,10, Día de La Rioja                                        
+ Festivos LA RIOJA               ,2019,12,9,Lunes siguiente a Inmaculada Concepción
+ Festivos CIUDAD DE CEUTA        ,2019,7,1,Dia siguiente a Epifanía del Señor
+ Festivos CIUDAD DE CEUTA        ,2019,4,18,Jueves Santo
+ Festivos CIUDAD DE CEUTA        ,2019,6,13,San Antonio
+ Festivos CIUDAD DE CEUTA        ,2019,8,12, Fiesta del Sacrificio (Aid El Kebir)  
+ Festivos CIUDAD DE CEUTA        ,2019,9,2,Día de Ceuta
+ Festivos CIUDAD DE MELILLA      ,2019,1,7,Lunes siguiente a Epifanía del Señor
+ Festivos CIUDAD DE MELILLA      ,2019,4,18, Jueves Santo                                           
+ Festivos CIUDAD DE MELILLA      ,2019,8,12, Fiesta del Sacrificio (Aid El Kebir)                   
+ Festivos CIUDAD DE MELILLA      ,2019,12,9,Dia siguiente a Inmaculada Concepción
+ Festivos A CORUÑA               ,2019,3,5, Martes de Carnaval                                     
+ Festivos A CORUÑA               ,2019,6,24,San Juan
+ Festivos A CORUÑA               ,2019,10,7,Virgen del Rosario
+ Festivos ALBACETE               ,2019,6,24, San Juan                                               
+ Festivos ALBACETE               ,2019,9,9, Virgen de los Llanos                                   
+ Festivos ALICANTE               ,2019,5,2, Santa Faz                                              
+ Festivos ALICANTE               ,2019,6,25, San Juan                                               
+ Festivos ALMERÍA                ,2019,6,24,San Juan
+ Festivos ALMERÍA                ,2019,8,24,La Virgen del Mar
+ Festivos ÁVILA                  ,2019,5,2, San Segundo                              
+ Festivos ÁVILA                  ,2019,10,15, Santa Teresa de Jesús                                  
+ Festivos BADAJOZ                ,2019,3,5, Martes de Carnaval                                     
+ Festivos BADAJOZ                ,2019,6,24, San Juan                                               
+ Festivos BARCELONA              ,2019,6,10,Pascua Granada                                          
+ Festivos BARCELONA              ,2019,9,24, Día de la Merced                                       
+ Festivos BILBAO                 ,2019,7,31, San Ignacio                             
+ Festivos BILBAO                 ,2019,8,23, Viernes de la Semana Grande                            
+ Festivos BURGOS                 ,2019,6,21, Curpillos                                              
+ Festivos BURGOS                 ,2019,6,29, San Pedro y San Pablo                                  
+ Festivos CÁCERES                ,2019,4,23, San Jorge                                              
+ Festivos CÁCERES                ,2019,5,31, San Fernando                                           
+ Festivos CÁDIZ                  ,2019,3,4, Lunes de Carnaval                                      
+ Festivos CÁDIZ                  ,2019,10,7, Virgen del Rosario                                     
+ Festivos CASTELLÓN              ,2019,3,25, Fiestas de la Magdalena                                     
+ Festivos CASTELLÓN              ,2019,6,29, San Pedro y San Pablo                                  
+ Festivos CEUTA                  ,2019,6,13, San Antonio                                            
+ Festivos CEUTA                  ,2019,8,5, Virgen de África                                       
+ Festivos CEUTA                  ,2019,8,12, Fiesta del Sacrificio                                 
+ Festivos CEUTA                  ,2019,9,2,Día de Ceuta
+ Festivos CIUDAD REAL            ,2019,6,10, Virgen de Alarcos                                      
+ Festivos CIUDAD REAL            ,2019,8,22,Virgen del Prado
+ Festivos CÓRDOBA                ,2019,9,9, Virgen de Guadalupe                                 
+ Festivos CÓRDOBA                ,2019,10,24, San Rafael                                             
+ Festivos CUENCA                 ,2019,1,28, San Julián                                             
+ Festivos CUENCA                 ,2019,6,1, Virgen de la Luz                                       
+ Festivos GIRONA                 ,2019,7,25, San Jaime                                              
+ Festivos GIRONA                 ,2019,10,29,Sant Narcis
+ Festivos GRANADA                ,2019,1,2,Toma de Granada
+ Festivos GRANADA                ,2019,6,20,Corpus Christi
+ Festivos GUADALAJARA            ,2019,9,12, Jueves de Feria                              
+ Festivos GUADALAJARA            ,2019,9,13, Viernes de la Semana de Feria                          
+ Festivos HUELVA                 ,2019,8,3, Fiestas Colombinas                                     
+ Festivos HUELVA                 ,2019,9,9, Virgen de la Cinta                                     
+ Festivos HUESCA                 ,2019,1,22, San Vicente                                            
+ Festivos HUESCA                 ,2019,8,10, San Lorenzo                                            
+ Festivos JAÉN                   ,2019,6,11,Virgen de la Capilla
+ Festivos JAÉN                   ,2019,10,18,San Lucas
+ Festivos LAS PALMAS             ,2019,3,5, Martes de Carnaval                                     
+ Festivos LAS PALMAS             ,2019,6,24, San Juan Bautista                                      
+ Festivos LAS PALMAS             ,2019,9,9,Nuestra Señora del Pino
+ Festivos LEÓN                   ,2019,6,24, San Juan                                               
+ Festivos LEÓN                   ,2019,10,5, San Froilán                                            
+ Festivos LLEIDA                 ,2019,9,30, San Miquel                                             
+ Festivos LOGROÑO                ,2019,6,11, San Bernabé                                            
+ Festivos LOGROÑO                ,2019,9,21, San Mateo                                              
+ Festivos LUGO                   ,2019,3,5, Martes de Carnaval                                     
+ Festivos LUGO                   ,2019,10,5, San Froilán                                            
+ Festivos MADRID                 ,2019,5,15, San Isidro                           
+ Festivos MADRID                 ,2019,11,9, Nuestra Señora de la Almudena                          
+ Festivos MÁLAGA                 ,2019,8,19, Reconquista de Málaga para la Corona de Castilla       
+ Festivos MÁLAGA                 ,2019,9,9, Virgen de la Victoria                                  
+ Festivos MELILLA                ,2019,8,12,Fiesta del Sacrificio
+ Festivos MELILLA                ,2019,9,9,Virgen de la Victoria                                        
+ Festivos MELILLA                ,2019,9,17,Día de Melilla                                      
+ Festivos MURCIA                 ,2019,4,23, Bando de la Huerta                                     
+ Festivos MURCIA                 ,2019,9,17, Fiesta de la Romería                                   
+ Festivos OURENSE                ,2019,3,5, Martes de Carnaval                                     
+ Festivos OURENSE                ,2019,11,11, San Martiño                                            
+ Festivos OVIEDO                 ,2019,6,11, Martes de Campo                                        
+ Festivos OVIEDO                 ,2019,9,21, San Mateo                                              
+ Festivos PALENCIA               ,2019,2,2,Virgen de la Calle                                        
+ Festivos PALENCIA               ,2019,9,2, San Antolín                                            
+ Festivos PALMA DE MALLORCA      ,2019,1,21, San Sebastián                                          
+ Festivos PALMA DE MALLORCA      ,2019,6,24,San Juan
+ Festivos PAMPLONA               ,2019,12,3, San Francisco Javier                                   
+ Festivos PONTEVEDRA             ,2019,3,6, Miércoles de Ceniza                                    
+ Festivos PONTEVEDRA             ,2019,7,11, San Benito                                   
+ Festivos SALAMANCA              ,2019,6,12, San Juan de Sahagún                  
+ Festivos SALAMANCA              ,2019,9,9, Virgen de la Vega                                      
+ Festivos SAN SEBASTIÁN          ,2019,1,21, Día de San Sebastián                                   
+ Festivos SAN SEBASTIÁN          ,2019,7,31, San Ignacio de Loiola
+ Festivos SANTA CRUZ DE TENERIFE ,2019,3,5, Martes de Carnaval                                     
+ Festivos SANTA CRUZ DE TENERIFE ,2019,2,2,Festividad de la Virgen de la Candelaria
+ Festivos SANTA CRUZ DE TENERIFE ,2019,5,3, Día de la Santa Cruz                                   
+ Festivos SANTANDER              ,2019,6,10,Virgen del Mar
+ Festivos SANTANDER              ,2019,8,30, Santos Mártires                                        
+ Festivos SEGOVIA                ,2019,6,24,San Juan
+ Festivos SEGOVIA                ,2019,10,25, San Frutos                                             
+ Festivos SEVILLA                ,2019,5,8,Miércoles de Feria
+ Festivos SEVILLA                ,2019,6,20, Corpus Christi                                         
+ Festivos SORIA                  ,2019,6,27, Jueves de La Saca                                      
+ Festivos SORIA                  ,2019,10,2,San Saturio                          
+ Festivos TARRAGONA              ,2019,8,19, Sant Magí                                              
+ Festivos TARRAGONA              ,2019,9,23, Santa Tecla                                            
+ Festivos TERUEL                 ,2019,2,15,Bodas de Isabel
+ Festivos TERUEL                 ,2019,7,8, Lunes de Vaquillas                                     
+ Festivos TOLEDO                 ,2019,1,23, San Ildefonso                                          
+ Festivos TOLEDO                 ,2019,3,19,San José
+ Festivos VALENCIA               ,2019,1,22,San Vicente Ferrer
+ Festivos VALENCIA               ,2019,4,29, San Vicente Ferrer                                     
+ Festivos VALLADOLID             ,2019,5,13, San Pedro Regalado                                     
+ Festivos VALLADOLID             ,2019,9,9, Nuestra Sra. de San Lorenzo                            
+ Festivos ZAMORA                 ,2019,6,10, La Hiniesta                                            
+ Festivos ZAMORA                 ,2019,6,29, San Pedro                                              
+ Festivos ZARAGOZA               ,2019,3,5,Cincomarzada                                            
+ Festivos ZARAGOZA               ,2019,1,29,San Valero
