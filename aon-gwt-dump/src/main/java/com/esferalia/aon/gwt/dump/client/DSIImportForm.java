@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.dump.client;
 
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,6 +29,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -383,9 +383,8 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 		this.suggestBox.addKeyUpHandler(new KeyUpHandler() {		
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
-				if ((event.getNativeKeyCode() == KeyEvent.CTRL_MASK) && 
-						(event.getNativeKeyCode() == KeyEvent.VK_SPACE))
-						suggestBox.showSuggestionList();
+				if(event.isControlKeyDown() && event.getNativeKeyCode() == KeyCodes.KEY_SPACE)
+					suggestBox.showSuggestionList();
 			}
 		});
 		
