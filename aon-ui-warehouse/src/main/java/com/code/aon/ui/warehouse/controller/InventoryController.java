@@ -2,6 +2,7 @@ package com.code.aon.ui.warehouse.controller;
 
 import static com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Stock.STOCK;
+import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.product.Item;
+import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -387,6 +389,21 @@ public class InventoryController extends BasicController implements IAuditableCo
 		return wt;
 	}
 	
+	
+	private void activeProduct(String domainName, Integer domainId, String login, Integer productId){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			ctx.getDslContext()
+				.update(PRODUCT)
+				.set(PRODUCT.STATUS, (byte) ProductStatus.ACTIVE.ordinal())
+				.where(PRODUCT.ID.eq(productId))
+				.execute();
+		}finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
 	private CaseConditionStep<Double> updateWT;
 	private void createWarehouseTransfer( Inventory inventory, boolean newElements ) throws ManagerBeanException {
 		List<InventoryDetail> details = getDetails(inventory, newElements);
@@ -409,6 +426,11 @@ public class InventoryController extends BasicController implements IAuditableCo
 					if(dMap.containsKey(d.getItem().getId())) {
 						dMap.put(d.getItem().getId(), dMap.get(d.getItem().getId()) + d.getRealQuantity());
 					} else dMap.put(d.getItem().getId(), d.getRealQuantity());
+					
+					if(ProductStatus.DISCONTINUED.equals(d.getItem().getProduct().getStatus())
+							&& dMap.get(d.getItem().getId()) > 0) {
+						activeProduct(domainName, domainId, user, d.getItem().getProduct().getId());
+					}
 				});
 				
 				dMap.keySet().stream().forEach(i -> {
