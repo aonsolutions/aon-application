@@ -96,60 +96,60 @@ public class HomeIntegralTest extends BaseIntegralTestCase {
 		wait4Id("tramo,_1");
 
 		draft("TRAMO, 1");
-		calculate(Calendar.MAY, 2019);
+		calculate(Calendar.JANUARY, 2019);
 		assertValue("cgpBaseLabel", 206.00);
 		assertValue("cgcBaseLabel", 206.00);
 		assertText("common_contingency", 206.00*4.55/100.00);
 
 		draft("TRAMO, 2");
-		calculate(Calendar.MAY, 2019);
+		calculate(Calendar.JANUARY, 2019);
 		assertValue("cgpBaseLabel", 340.00);
 		assertValue("cgcBaseLabel", 340.00);
 		assertText("common_contingency", 340.00*4.55/100.00);
 
 		draft("TRAMO, 3");
-		calculate(Calendar.MAY, 2019);
+		calculate(Calendar.JANUARY, 2019);
 		assertValue("cgpBaseLabel", 474.00);
 		assertValue("cgcBaseLabel", 474.00);
 	
 		draft("TRAMO, 3 (DOS PERCEPCIONES)");
-		calculate(Calendar.MAY, 2019);
+		calculate(Calendar.JANUARY, 2019);
 		assertValue("cgpBaseLabel", 474.00);
 		assertValue("cgcBaseLabel", 474.00);
 		assertText("common_contingency", 474.00*4.55/100.00);
 
 		draft("TRAMO, 4");
-		calculate(Calendar.MAY, 2019);
+		calculate(Calendar.JANUARY, 2019);
 		assertValue("cgpBaseLabel", 608.00);
 		assertValue("cgcBaseLabel", 608.00);
 
 		draft("TRAMO, 5");
-		calculate(Calendar.MAY, 2019);
+		calculate(Calendar.JANUARY, 2019);
 		assertValue("cgpBaseLabel", 743.00);
 		assertValue("cgcBaseLabel", 743.00);
 
 		draft("TRAMO, 6");
-		calculate(Calendar.MAY, 2019);
+		calculate(Calendar.JANUARY, 2019);
 		assertValue("cgpBaseLabel", 877.00);
 		assertValue("cgcBaseLabel", 877.00);
 
 		draft("TRAMO, 7");
-		calculate(Calendar.MAY, 2019);
+		calculate(Calendar.JANUARY, 2019);
 		assertValue("cgpBaseLabel", 1050.00);
 		assertValue("cgcBaseLabel", 1050.00);
 
 		draft("TRAMO, 8");
-		calculate(Calendar.MAY, 2019);
+		calculate(Calendar.JANUARY, 2019);
 		assertValue("cgpBaseLabel", 1097.00);
 		assertValue("cgcBaseLabel", 1097.00);
 
 		draft("TRAMO, 9");
-		calculate(Calendar.MAY, 2019);
+		calculate(Calendar.JANUARY, 2019);
 		assertValue("cgpBaseLabel", 1232.00);
 		assertValue("cgcBaseLabel", 1232.00);
 
 		draft("TRAMO, _10");
-		calculate(Calendar.MAY, 2019);
+		calculate(Calendar.JANUARY, 2019);
 		assertValue("cgpBaseLabel", 1555.00);
 		assertValue("cgcBaseLabel", 1555.00);
 	}
