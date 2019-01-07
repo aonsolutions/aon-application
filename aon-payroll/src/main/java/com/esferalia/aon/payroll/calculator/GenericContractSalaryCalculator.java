@@ -757,6 +757,9 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					} else if (type.isTaxDeduction()) {
 						totalIrpf += deduction;
 					}
+				} catch (HideException e) {
+					if (AonStringUtils.isNotBlank(e.getMessage()))
+						onCheckError(e.getMessage());
 				} catch (RemoveException e) {
 					// TODO: Something ??? It's really necessary...
 				} catch (InvalidVariables e) {

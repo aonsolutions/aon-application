@@ -412,11 +412,11 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Id("salario,_minimo");
 
 		draft("SALARIO, MÍNIMO");
-		calculate(Calendar.JANUARY,2018);
-		assertText("totalPaymentLabel", 735.9);
+		calculate(Calendar.JANUARY,2019);
+		assertText("totalPaymentLabel", 900.00);
 
 		draft("INDICADOR, PÚBLICO DE RENTA DE EFECTOS MÚLTIPLES");
-		calculate(Calendar.JANUARY,2018);
+		calculate(Calendar.JANUARY,2019);
 		assertText("totalPaymentLabel", 537.84);
 	}
 	
@@ -443,6 +443,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.AUGUST,2018);
 		assertValue("cgcBaseLabel", 3803.70);
 		assertValue("cgpBaseLabel", 3803.70);
+		calculate(Calendar.JANUARY,2019);
+		assertValue("cgcBaseLabel", 4070.10);
+		assertValue("cgpBaseLabel", 4070.10);
 
 		draft("BASE, MÍNIMA ( GRUPO 01 )");
 		calculate(Calendar.DECEMBER,2016);
