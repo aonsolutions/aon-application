@@ -12,12 +12,12 @@ import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
-import net.aonsolutions.aon.accounting.report.AccountOperatingReportPDF;
+import net.aonsolutions.aon.accounting.report.AccountTrialBalanceReportPDF;
 
-@WebServlet(name = "AccountOperatingReport PDF Print ", urlPatterns = { "/aon_gwt_fiscal/roms/AccountOperatingReportPDFPrint" })
-public class AccountOperatingReportPDFPrint extends HttpServlet {
+@WebServlet(name = "AccountTrialBalanceReport PDF Print ", urlPatterns = { "/aon_gwt_fiscal/roms/AccountTrialBalanceReportPDFPrint" })
+public class AccountTrialBalanceReportPDFPrint extends HttpServlet {
 
-	private static final long serialVersionUID = -9044819783653454112L;
+	private static final long serialVersionUID = -4766235945316332658L;
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
@@ -25,15 +25,16 @@ public class AccountOperatingReportPDFPrint extends HttpServlet {
 
 		try {
 			String accountReportParams = req.getParameter( IRequestParamsNames.ACCOUNT_REPORT_PARAMS );
+			System.out.println("JSON PARAMS: " + accountReportParams);
 			AccountingReportParams params = JsonParser.parseAccountingParams(accountReportParams);
 			params.setDomain(Integer.parseInt(req.getParameter(IRequestParamsNames.DOMAIN_ID)));
 			params.setUser(req.getParameter(IRequestParamsNames.USER));
 			params.setDomainName(req.getParameter(IRequestParamsNames.DOMAIN_NAME));
 			
 			resp.setContentType(MimeType.PDF.getName());
-			resp.setHeader("Content-disposition", "attachment; filename=\"Cuenta de explotaci\u00F3n."+ MimeType.PDF.getExtension()+ "\";");
-			AccountOperatingReportPDF reportPDF = new AccountOperatingReportPDF();
-			reportPDF.printOperatingReport(resp.getOutputStream(), params);
+			resp.setHeader("Content-disposition", "attachment; filename=\"Balance Sumas y Saldos."+ MimeType.PDF.getExtension()+ "\";");
+			AccountTrialBalanceReportPDF reportPDF = new AccountTrialBalanceReportPDF();
+			reportPDF.trialBalanceReportReport(resp.getOutputStream(), params);
 			resp.flushBuffer();
 		} catch (Throwable e) {
 			throw new ServletException(e);

@@ -7,6 +7,7 @@ import org.jooq.tools.json.JSONParser;
 import org.jooq.tools.json.ParseException;
 
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
@@ -111,6 +112,13 @@ public class JsonParser {
 		String toDate = (String) jsonParams.get(IRequestParamsNames.TO_DATE);
 		if (AonStringUtils.isNotBlank(toDate)) {
 			params.setToDate( FORMATTER.parse(toDate));			
+		}
+		// ******************* ACCOUNT CODE ******************* 
+		String accountCode = (String) jsonParams.get(IRequestParamsNames.ACCOUNT_CODE);
+		if (AonStringUtils.isNotBlank(accountCode)) {
+			Account account = new Account();
+			account.setCode(accountCode);
+			params.setAccount(account);			
 		}
 		// ******************* ACTIVITY ******************* 
 		Long activity = (Long) jsonParams.get(IRequestParamsNames.ACTIVITY);

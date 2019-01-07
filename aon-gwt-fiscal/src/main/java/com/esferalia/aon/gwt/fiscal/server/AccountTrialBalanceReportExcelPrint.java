@@ -437,7 +437,7 @@ public class AccountTrialBalanceReportExcelPrint extends HttpServlet {
 			// Saldo previo
 			if (report.hasInPeriodPreviousAmounts()) {
 				addCell(bal.getInPeriodBeforeDebitBalance());
-				addCell(bal.getInPeriodBeforeUnpaidBalance());
+				addCell(bal.getInPeriodUnpaidBalance());
 			}
 			addCell(bal.getInPeriodDebit());
 			addCell(bal.getInPeriodCredit());
@@ -476,7 +476,7 @@ public class AccountTrialBalanceReportExcelPrint extends HttpServlet {
 			if (report.hasInPeriodPreviousAmounts()) {
 				cell = addCell(tot.getInPeriodBeforeDebitBalance());
 				cell.setCellStyle(titleCellStyle);
-				cell = addCell(tot.getInPeriodBeforeUnpaidBalance());
+				cell = addCell(tot.getInPeriodUnpaidBalance());
 				cell.setCellStyle(titleCellStyle);
 			}
 			cell = addCell(tot.getInPeriodDebit());

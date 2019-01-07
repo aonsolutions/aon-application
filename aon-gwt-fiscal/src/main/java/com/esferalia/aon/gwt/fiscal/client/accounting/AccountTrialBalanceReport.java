@@ -27,6 +27,7 @@ import com.google.gwt.user.client.ui.Label;
 public class AccountTrialBalanceReport extends MainEntryPoint {
 	
 	private static final String ACC_TRIAL_BALANCE_REPORT_PRINT = "/aon_gwt_fiscal/roms/AccountTrialBalanceReportExcelPrint";
+	private static final String ACC_TRIAL_BALANCE_REPORT_PDF_PRINT  = "/aon_gwt_fiscal/roms/AccountTrialBalanceReportPDFPrint";
 	
 	@Override
 	public void onModuleLoad() {
@@ -81,6 +82,25 @@ public class AccountTrialBalanceReport extends MainEntryPoint {
 		formFlowPanel.add(domainNameHidden);
 		formFlowPanel.add(userHidden);
 		buttonContainer.add(diskForm);
+
+		final Button pdf = new Button();
+		pdf.setText(AON.MSG.print());
+		pdf.setTitle(AON.MSG.print());
+		pdf.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		pdf.addStyleName(AON.AON_CSS.aonIconPdf());
+		pdf.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				diskForm.setAction(GWT.getHostPageBaseURL() + ACC_TRIAL_BALANCE_REPORT_PDF_PRINT);
+				accountReportParamsHidden.setValue(JsonParams.convert(panel.getWidgetParams()));
+				domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
+				domainNameHidden.setValue(getCurrentDomainName());
+				userHidden.setValue(getCurrentUser());
+				diskForm.submit();
+			}
+		});
+		buttonContainer.add(pdf);
 
 		final Button print = new Button();
 		print.setText(AON.MSG.print());
