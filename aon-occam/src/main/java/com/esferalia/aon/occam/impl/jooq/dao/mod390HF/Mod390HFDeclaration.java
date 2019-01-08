@@ -10,6 +10,7 @@ public abstract class Mod390HFDeclaration {
 	
 	public static Mod390HFDeclaration getInstance( Mod390HF mod) {
 		
+		if (BIZKAIA_2018_Declaration.accept(mod)) 	return new BIZKAIA_2018_Declaration();
 		if (BIZKAIA_2017_Declaration.accept(mod)) 	return new BIZKAIA_2017_Declaration();
 		if (GIPUZKOA_2017_Declaration.accept(mod)) 	return new GIPUZKOA_2017_Declaration();
 		if (ARABA_2017_Declaration.accept(mod)) 	return new ARABA_2017_Declaration();
