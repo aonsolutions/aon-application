@@ -107,7 +107,9 @@ public abstract class ModPrintAEAT extends HttpServlet{
 					System.out.println(json.optInt("cert"));
 				}catch (Exception e2) {}
 			}
-		}			
+		} else {
+			this.cert = null;
+		}
 	}	
 	
 	public Integer getId() {

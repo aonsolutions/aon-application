@@ -177,7 +177,7 @@ public class Model115AEAT extends Model115Base {
 						if(getModel().isSent()) {
 							getCallback().showInfoPanel("La presentaci\u00F3n del modelo ya se ha realizado con anterioridad.");
 						} else if(getModel().isFinished()) {
-							submitAEAT(MODEL115_PRINT_AEAT, getCert(), getPass(), getName(), getDocument(), getNRC());
+							submitAEAT(MODEL115_PRINT_AEAT, getCert(), getPass(), getName(), getDocument(), showNRC ? getNRC() : null);
 							getCallback().showVisorAEAT();
 						} else {
 							getCallback().showInfoPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");

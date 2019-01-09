@@ -39,6 +39,7 @@ public class Mod115PrintAEAT extends ModPrintAEAT {
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		System.out.println("POST Mod115 Print AEAT");
 		try {
 			JSONObject json = getRequestJSON(req);
 			init(json);
