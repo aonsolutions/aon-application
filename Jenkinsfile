@@ -57,6 +57,8 @@ node {
 
     	sh "sudo docker run --name aon-application -d -p 8080:8080 -e DB_HOST=172.17.0.1 -e DB_USER=dbuser -e DB_PASSWD=serubd2000 aonsolutions/aon-application:${rolling_version}-tomcat9-jre8"
 
+    	sh "sudo ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime"
+
     	sh "echo 127.0.0.1 payroll-test.aonsolutions.org | sudo tee -a /etc/hosts"
 
     	sh "echo 127.0.0.1 home-payroll-test.aonsolutions.org | sudo tee -a /etc/hosts"
