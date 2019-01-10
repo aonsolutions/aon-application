@@ -51,7 +51,7 @@ public class UploadServlet extends HttpServlet{
 		String categoryStr = req.getParameter("category");
 		Integer category = !"".equals(categoryStr) ?  Integer.parseInt(categoryStr) : null;
 		String tagStr = req.getParameter("tag");
-		String[] tags = tagStr.substring(1, tagStr.length() - 1).split(",");
+		String[] tags = tagStr.substring(0, tagStr.length()).split(",");
 		String scopeStr = req.getParameter("scope");
 		Integer scope = !"".equals(scopeStr) ? Integer.parseInt(scopeStr) : null;
 		Boolean confidential = "true".equalsIgnoreCase(req.getParameter("confidential"));
@@ -116,14 +116,14 @@ public class UploadServlet extends HttpServlet{
                     			.setConfidential(confidential)
                     			.setDparentId(Long.toString(item.getSize()));
                     	Integer attachId = AON.insertAttach(domain.getName(), domain.getId(), login, attach);
-                    	
+                   	
                     	for(Integer i = 0 ; i < tags.length ; i++) {
                     		if(!"".equals(tags[i])){
                     			Integer tagId = Integer.parseInt(tags[i]);
                     			AON.insertRegistryAttachTag(domain.getName(), domain.getId(), login, attachId, tagId);
                     		}
                     	}
-                    	
+                   	
                     	attach.setId(attachId);
             			                   	
                     	DomainGserviceaccount d = AON.getDomainGserviceaccount(domainName, domainId, login);

@@ -351,7 +351,7 @@ public class Documental implements EntryPoint {
 						+ "&domain_id="+ aonData.getDomain().getId()
 						+ "&login="+ getAonData().getUser().getLogin()
 						+ "&category="+ (category != null ? category.getId() : "")
-						+ "&tag=[" + ids +"]"
+						+ "&tag=" + ids +""
 						+ "&scope=" + (scope != null ? scope.getId() : "")
 						+ "&confidential=" + confidential.getChecked();
 				upload.setTarget(GWT.getModuleBaseURL() + "uploadDocumentalx"+ dataRequest);
