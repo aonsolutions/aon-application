@@ -18,7 +18,6 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.json.JSONObject;
 
-import com.code.aon.google.apis.FileInfo;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
@@ -27,7 +26,6 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.google.api.services.drive.Drive;
 
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
@@ -120,26 +118,13 @@ public class UploadServlet extends HttpServlet{
                     	Integer attachId = AON.insertAttach(domain.getName(), domain.getId(), login, attach);
                     	
                     	for(Integer i = 0 ; i < tags.length ; i++) {
-                    		Integer tagId = Integer.parseInt(tags[i]);
-                    		AON.insertRegistryAttachTag(domain.getName(), domain.getId(), login, attachId, tagId);
+                    		if(!"".equals(tags[i])){
+                    			Integer tagId = Integer.parseInt(tags[i]);
+                    			AON.insertRegistryAttachTag(domain.getName(), domain.getId(), login, attachId, tagId);
+                    		}
                     	}
                     	
                     	attach.setId(attachId);
-
-                    	FileInfo fi = new FileInfo();
-            			fi.setData(attach.getData());
-            			fi.setMimetype(attach.getMimeType().value());
-            			fi.setType(RegistryAttachmentType.CORPORATE_IDENTITY.value());
-            			fi.setAttachType(AttachType.REGISTRY);
-            			fi.setAonType("registry");
-            			fi.setCategory(category);
-            			fi.setTitle(attach.getDescription());
-            			fi.setDomain(attach.getDomain().getName());
-            			fi.setDomainId(attach.getDomain().getId());
-            			fi.setSecurityLevel(attach.getConfidential() ? SecurityLevel.CONFIDENTIAL.value() :  SecurityLevel.OFFICIAL.value());
-            			fi.setDate(attach.getDate());
-            			fi.setScopeId(scope);
-            			fi.setFileId(attach.getId());
             			                   	
                     	DomainGserviceaccount d = AON.getDomainGserviceaccount(domainName, domainId, login);
                     	Drive drive = AonDrive.getInstace().serviceInitialize(d);

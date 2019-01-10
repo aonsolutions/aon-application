@@ -8,6 +8,7 @@ import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Vector;
 
 import org.apache.commons.io.IOUtils;
@@ -374,7 +375,7 @@ public class DriveUtils implements IBlobManager {
 
 	/*********************** Sincronizar BD a Google Drive ***************************/
 
-	public static Boolean paysheet(DomainGserviceaccount d, Attach attach, Vector<String> emails) {
+	public static Boolean paysheet(DomainGserviceaccount d, Attach attach, LinkedList<String> emails) {
 		return AonDrive.getInstace().paysheet(d, attach, emails);
 	}
 

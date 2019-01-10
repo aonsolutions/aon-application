@@ -1,31 +1,24 @@
 package com.esferalia.aon.gwt.payroll.server;
 
-import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
 import static com.esferalia.aon.gwt.payroll.server.PayrollServletUtils.getSalaryReport;
-import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
-import static com.esferalia.aon.payroll.calculator.jooq.JooqCommon.getDefaultSettings;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Vector;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.jooq.DSLContext;
-import org.jooq.conf.Settings;
-import org.jooq.impl.DSL;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
@@ -35,13 +28,11 @@ import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.RelationalExpression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.report.StatelessReportManager;
 import com.esferalia.aon.gwt.payroll.shared.ShareService;
 import com.esferalia.aon.occam.api.AON;
@@ -51,6 +42,7 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ShareServlet extends HttpServlet implements ShareService {
 
@@ -96,78 +88,62 @@ public class ShareServlet extends HttpServlet implements ShareService {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		boolean autoCommit = true;
-		Connection connection = null;
+	
+		initFacesContext(req, resp);
+
 		try {
-			initFacesContext(req, resp);
-
-			Settings settings = getDefaultSettings();
-			connection = getConnection();
-			autoCommit = connection.getAutoCommit();
-			connection.setAutoCommit(false);
-			DSLContext dslContext = DSL.using(connection, settings);
-
 			ReportManager reportManager = new StatelessReportManager();
 			reportManager.setOutputFormat(OutputFormat.PDF);
 
 			IManagerBean beanManager = BeanManager
-					.getManagerBean(com.esferalia.aon.payroll.Salary.class);
+				.getManagerBean(com.esferalia.aon.payroll.Salary.class);
 			Criteria criteria = getCriteria(beanManager, req);
 			List<Salary> salaries = getSalaries(beanManager, criteria);
 
-			PrintStream os = new PrintStream(resp.getOutputStream(), false,
-					"UTF-8");
+			PrintStream os = new PrintStream(resp.getOutputStream(), false,"UTF-8");
 
 			for (Salary salary : salaries) {
-
-				Vector<String> emails = getEmails(dslContext, salary
-						.getContract().getPerson().getId());
+				Domain domain = AON.getDomain(req.getServerName(), salary.getDomain(), "");
+				
+				LinkedList<String> emails = AON.getRMediaStream(domain.getName(), domain.getId(), "", 
+					f -> f.getRegistryProperty().eq(salary.getContract().getPerson().getId())
+					.and(f.getMediaProperty().eq(com.esferalia.aon.occam.api.model.type.MediaType.EMAIL.value())))
+					.map(r -> r.getValue()).collect(Collectors.toCollection(LinkedList::new));
 				if ( emails == null  || emails.isEmpty() ) {
-					doJson(salary, 0, null, "Trabajador sin email",
-							os);
+					doJson(salary, 0, null, "Trabajador sin email", os);
 					continue;
 				}
-					
 				
-				Domain domain = AON.getDomain(req.getServerName(), salary.getDomain(), "");
 				DomainGserviceaccount domainGserviceaccount = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), "");
 				
 				reportManager.setCollectionProvider(new SalaryProvider(salary
-						.getId(), beanManager));
+					.getId(), beanManager));
 				byte data[] = generate(domain.getName(), reportManager, salary);
 
 				Attach attach = new Attach()
-						.setData(data)
-						.setAttachType(AttachType.PAYSHEET)
-						.setAttachModule(salary.getContract().getPerson().getId())
-						.setDomain(domain)
-						.setMimeType(MimeType.PDF)
-						.setDate(new Date(System.currentTimeMillis()))
-						.setDescription(getDescrition(salary))
-						.setDate(salary.getIssueDate());
-								
+					.setData(data)
+					.setAttachType(AttachType.PAYSHEET)
+					.setAttachModule(salary.getContract().getPerson().getId())
+					.setDomain(domain)
+					.setMimeType(MimeType.PDF)
+					.setDate(new Date(System.currentTimeMillis()))
+					.setDescription(getDescrition(salary))
+					.setDate(salary.getIssueDate());
+							
 				Boolean ok = DriveUtils.paysheet(domainGserviceaccount, attach, emails);
 				
 				doJson(salary, data.length, attach.getDescription(), !ok ? "Error al compartir" : "",	os);
 			}
 
 			os.close();
-
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
 		} catch (ReportException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			releaseFacesContext();
-			if (connection != null)
-				try {
-					connection.setAutoCommit(autoCommit);
-				} catch (SQLException e) {
-				}
 		}
 	}
 
@@ -187,9 +163,9 @@ public class ShareServlet extends HttpServlet implements ShareService {
 		os.print('{');
 		os.printf("\"id\":\"%d\"", salary.getId());
 		os.printf(",\"size\":\"%d\"", size);
-		if (!StringUtils.isBlank(error))
+		if (!AonStringUtils.isBlank(error))
 			os.printf(",\"error\":\"%s\"", error);
-		if (!StringUtils.isBlank(description))
+		if (!AonStringUtils.isBlank(description))
 			os.printf(",\"description\":\"%s\"", description);
 		os.printf(",\"employeeId\":\"%d\"", salary.getContract().getId());
 		os.printf(",\"employeeName\":\"%s\"", salary.getEmployeeName());
@@ -243,7 +219,7 @@ public class ShareServlet extends HttpServlet implements ShareService {
 
 		String month = req.getParameter(MONTH);
 		String year = req.getParameter(YEAR);
-		if (!StringUtils.isBlank(month) && !StringUtils.isBlank(year)) {
+		if (!AonStringUtils.isBlank(month) && !AonStringUtils.isBlank(year)) {
 
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.YEAR, Integer.valueOf(year));
@@ -359,17 +335,4 @@ public class ShareServlet extends HttpServlet implements ShareService {
 						salary.getType().getName(ES),
 						salary.getStartDate(), salary.getEndDate());
 	}
-
-	private static Vector<String> getEmails(DSLContext dslContext,
-			int registryId) {
-		String emails[] = dslContext.selectFrom(RMEDIA)
-				.where(RMEDIA.REGISTRY.eq(registryId))
-				.and(RMEDIA.MEDIA.eq((byte) MediaType.EMAIL.ordinal()))
-				.fetchArray(RMEDIA.VALUE);
-		Vector<String> ret = new Vector<String>(emails.length);
-		for (String email : emails)
-			ret.add(email);
-		return ret;
-	}
-	
 }

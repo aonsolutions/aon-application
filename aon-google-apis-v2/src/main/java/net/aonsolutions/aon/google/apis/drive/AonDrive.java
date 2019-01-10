@@ -3,7 +3,7 @@ package net.aonsolutions.aon.google.apis.drive;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Vector;
+import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -108,7 +108,7 @@ public class AonDrive extends DriveUtils{
 		return new File();
 	}
 	
-	public Boolean paysheet(DomainGserviceaccount d, Attach attach, Vector<String> emails) {
+	public Boolean paysheet(DomainGserviceaccount d, Attach attach, LinkedList<String> emails) {
 		Drive drive = serviceInitialize(d);
 		File file = new File();
 		String[] keys = {"domain", "aontype", "aonmodule", "date"};

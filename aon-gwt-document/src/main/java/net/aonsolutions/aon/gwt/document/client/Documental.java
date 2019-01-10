@@ -349,7 +349,7 @@ public class Documental implements EntryPoint {
 				VaadinUpload upload = new VaadinUpload();
 				String dataRequest = "?domain_name="+ aonData.getDomain().getName() 
 						+ "&domain_id="+ aonData.getDomain().getId()
-						+ "&login="+ "system"
+						+ "&login="+ getAonData().getUser().getLogin()
 						+ "&category="+ (category != null ? category.getId() : "")
 						+ "&tag=[" + ids +"]"
 						+ "&scope=" + (scope != null ? scope.getId() : "")

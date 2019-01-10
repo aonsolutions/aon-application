@@ -81,27 +81,27 @@ public class SendNotification {
 				}
 			}
 		});
-		
-		
-		try {
-			DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), user.getLogin());		
-			Gmail gmail = GmailUtils.serviceInitialize(g);
-			MimeMessage email = createEmail(to , g.getGoogleAccount(), isNew ? "Nuevo Documento" : "Documento Editado", getContent(domain, user, attach, isNew), "DOCUMENTAL | " + domain.getDescription());
-			GmailUtils.sendMessage(gmail, "me", email); 
-		} catch (MessagingException | IOException | GeneralSecurityException e) {
-			e.printStackTrace();
+		if(to.size()> 0) {
+			try {
+				DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), user.getLogin());		
+				Gmail gmail = GmailUtils.serviceInitialize(g);
+				MimeMessage email = createEmail(to , g.getGoogleAccount(), isNew ? "Nuevo Documento" : "Documento Editado", getContent(domain, user, attach, to, isNew), "DOCUMENTAL | " + domain.getDescription());
+				GmailUtils.sendMessage(gmail, "me", email); 
+			} catch (MessagingException | IOException | GeneralSecurityException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
 	
-	private static String getContent(Domain domain, User user, Attach attach, Boolean isNew) {
+	private static String getContent(Domain domain, User user, Attach attach, LinkedList<String> to, Boolean isNew) {
 		Domain userDomain = AON.getDomain(domain.getName(), user.getDomain(), user.getLogin());
 		String msg = "<div style='margin-left: -30px;'>"
 				+"<div style='margin: 7px 15px 14px 30px;line-height: 18px;font-size: 13px;box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.075);'>";
 		msg = msg + "<p> El usuario <b>"+ (user.getName() != null ? user.getName() : user.getLogin()) +"</b> de la empresa <b>" + userDomain.getDescription() +
 			(isNew ? "</b> ha compartido "+ (userDomain.getId().equals(attach.getDomain().getId()) ? "" : "en la empresa <b>" + attach.getDomain().getDescription()+ "</b>") + " el archivo: </p> <p> <b>" : "</b> ha editado el archivo: </p><p><b>") + attach.getDescription() + "." + attach.getMimeType().getExtension() + "</b></p>";
 		msg = msg + "<br>"
-				+ "<a href=\""+ getUrl(domain, user, attach) +"\" style=\"text-decoration: none;color:#fff;\">"
+				+ "<a href=\""+ getUrl(domain, user, attach, to) +"\" style=\"text-decoration: none;color:#fff;\">"
 					+ "<div style=\"color:#fff;background-color:#4d90fe;padding: 15px;font-weight: bold;width: 120px;\">"
 						+ "Ver Documento"
 					+ "</div>"
@@ -130,7 +130,7 @@ public class SendNotification {
 	    return email;
 	  }
 	
-	public static String getUrl(Domain domain, User user, Attach attach){		
+	public static String getUrl(Domain domain, User user, Attach attach, LinkedList<String> mails){		
 		String link = "";
 		try {
 			DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), user.getLogin());
@@ -140,7 +140,7 @@ public class SendNotification {
 				Drive drive = DriveUtils.serviceInitialize(g);
 				File file = DriveUtils.getFile(drive, attach.getDriveId());
 				link = file.getWebViewLink();
-				AonDrive.getInstace().setPermissionDomain(drive, file.getId(), domain.getName());
+				AonDrive.getInstace().setPermissions(drive, file.getId(), mails);
 				return link;	
 			}
 			else{

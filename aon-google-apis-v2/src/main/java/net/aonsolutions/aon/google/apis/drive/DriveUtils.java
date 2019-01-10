@@ -7,8 +7,8 @@ import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -205,21 +205,7 @@ public class DriveUtils {
 		return true;
 	}
 	
-	public Boolean setPermissionDomain(Drive drive, String fileId, String domain){
-		Permission permission =new Permission()
-				.setDomain(domain)
-				.setType("anyone")//user || group || domain || anyone
-				.setRole("reader");//owner || reader || writer || commenter		  		
-		try {
-			drive.permissions().create(fileId, permission).execute();
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		}
-		return true;
-	}
-	
-    public Boolean setPermissions(Drive drive, String fileId, Vector<String> emails){
+    public Boolean setPermissions(Drive drive, String fileId, LinkedList<String> emails){
    	 	for (String email : emails) {
    	 		if(!setPermission(drive, fileId,email))
    	 			return false;
