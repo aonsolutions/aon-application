@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountBalanceReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountJournalReport;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountLedgerReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountOperatingReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountStatementReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountTrialBalanceReport;
@@ -73,6 +74,7 @@ public class MainEntryPoint implements EntryPoint {
 	//    ================================================================== ACCOUNTING
 	//
 	private static final String ACC_JOURNAL_REPORT_ENTRY_POINT = "JournalReportModule";
+	private static final String ACC_LEDGER_REPORT_ENTRY_POINT = "LedgerReportModule";
 	private static final String ACC_STATEMENT_REPORT_ENTRY_POINT = "StatementReportModule";
 	private static final String ACC_OPERATING_REPORT_ENTRY_POINT = "AccountOperatingReport";
 	private static final String ACC_TRIAL_BALANCE_REPORT_ENTRY_POINT = "AccountTrialBalanceReport";
@@ -455,6 +457,21 @@ public class MainEntryPoint implements EntryPoint {
 				public void onSuccess() {
 					AccountJournalReport accountJournalReport = new AccountJournalReport();
 					accountJournalReport.onModuleLoad();
+				}
+				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(ACC_LEDGER_REPORT_ENTRY_POINT)) {
+			GWT.runAsync(AccountJournalReport.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					AccountLedgerReport accountLedgerReport = new AccountLedgerReport();
+					accountLedgerReport.onModuleLoad();
 				}
 				
 			});

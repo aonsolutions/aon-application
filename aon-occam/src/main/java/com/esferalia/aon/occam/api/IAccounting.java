@@ -80,6 +80,7 @@ public interface IAccounting {
 	public LinkedHashMap<String, AccountBalance> getAccountBalances(AONContext ctx,AccMiningParameters params, boolean pyg) throws AonCoreException;
 
 	// 			STATEMENT
+	public Stream<FlatAccountEntryDetail> getLedger(AONContext ctx, AccountingReportParams params, int offset, int limit, IDAOCallback callback);
 	public Stream<AccountStatement> getAccountBalance(AONContext ctx, AccountingReportParams params) 
 			throws AonCoreException;
 	public Stream<AccountStatement> getAccountStatement(AONContext ctx, AccountingReportParams params)

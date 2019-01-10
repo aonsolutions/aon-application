@@ -33,6 +33,10 @@ public class FlatAccountEntryDetail implements Serializable{
 	private String concept;
 	private double debit;
 	private double credit;
+	private double debitBalance;
+	private double unpaidBalance;
+	private double initialDebitBalance;
+	private double initialUnpaidBalance;
 	private Integer balancingAccount;
 	private String balancingAccountCode;
 	private String balancingAccountDescription;
@@ -197,6 +201,34 @@ public class FlatAccountEntryDetail implements Serializable{
 	}
 	public FlatAccountEntryDetail setCredit(double credit) {
 		this.credit = credit;
+		return this;
+	}
+	public double getDebitBalance() {
+		return debitBalance;
+	}
+	public FlatAccountEntryDetail setDebitBalance(double debitBalance) {
+		this.debitBalance = debitBalance;
+		return this;
+	}
+	public double getUnpaidBalance() {
+		return unpaidBalance;
+	}
+	public FlatAccountEntryDetail setUnpaidBalance(double unpaidBalance) {
+		this.unpaidBalance = unpaidBalance;
+		return this;
+	}
+	public double getInitialDebitBalance() {
+		return initialDebitBalance;
+	}
+	public FlatAccountEntryDetail setInitialDebitBalance(double initialDebitBalance) {
+		this.initialDebitBalance = initialDebitBalance;
+		return this;
+	}
+	public double getInitialUnpaidBalance() {
+		return initialUnpaidBalance;
+	}
+	public FlatAccountEntryDetail setInitialUnpaidBalance(double initialUnpaidBalance) {
+		this.initialUnpaidBalance = initialUnpaidBalance;
 		return this;
 	}
 	public Integer getBalancingAccount() {

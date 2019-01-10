@@ -157,6 +157,11 @@ public class AccountingImpl implements IAccounting {
 	}
 
 	@Override
+	public Stream<FlatAccountEntryDetail> getLedger(AONContext ctx, AccountingReportParams params, int offset, int limit, IDAOCallback callback) {
+		return AccountStatementDAO.ledger(ctx, params, offset, limit, callback); 
+	}
+
+	@Override
 	public Stream<AccountEntry> getAccountEntries(AONContext ctx,
 			AccountEntryFilter filter, int offset, int numberOfRows) {
 		return AccountEntryDAO.fetch(ctx, filter,offset,numberOfRows);

@@ -215,6 +215,23 @@ public class ACCOUNTING {
 		return stream; 
 	}
 
+	public static Stream<FlatAccountEntryDetail> getLedgerStream(String domainName,
+			int domain, String user, final AccountingReportParams params, int offset,
+			int limit) throws AonCoreException {
+	 	final AONContext ctx = AONContext.getAONContext(domainName, domain, user);
+	 	Stream<FlatAccountEntryDetail> stream = getAccounting().getLedger(ctx, params, offset, limit,
+				new IDAOCallback() {			
+					@Override
+					public void onFinish() {
+						if (ctx != null) {
+							ctx.close();
+						}
+					}
+	 			}
+	 	);
+		return stream; 
+	}
+
 	public static AccountEntry save(String domainName, int domain, String user,
 			AccountEntry ae) {
 		AONContext ctx = null;

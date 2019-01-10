@@ -125,6 +125,10 @@
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/accounting/accountJournal.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>gwt_accountLedger</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/accounting/accountLedger.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>gwt_accountStatement</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/accounting/accountStatement.xhtml</to-view-id>
 		</navigation-case>

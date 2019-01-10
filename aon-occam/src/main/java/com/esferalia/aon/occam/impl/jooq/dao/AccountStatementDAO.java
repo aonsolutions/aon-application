@@ -3,6 +3,8 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
 import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
+import static com.esferalia.aon.jooq.tables.AccountPeriod.ACCOUNT_PERIOD;
+import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -27,11 +29,11 @@ import org.jooq.AggregateFunction;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
-import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.IDAOCallback;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountBalanceReport.BalanceLine;
@@ -46,6 +48,7 @@ import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport.AccountTrialBalance;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.DateInterval;
+import com.esferalia.aon.occam.api.model.FlatAccountEntryDetail;
 import com.esferalia.aon.occam.api.model.IAccountParams;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
@@ -65,6 +68,7 @@ import com.esferalia.aon.occam.server.accounting.AccMiningMVELContext;
 import com.esferalia.aon.occam.server.accounting.IBalanceKey;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableDouble;
+import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -76,6 +80,111 @@ public class AccountStatementDAO {
 	private static final DateFormat MONTH_DATE_FORMAT = new SimpleDateFormat("MM/yyyy");	
 	private static final com.esferalia.aon.jooq.tables.Account DET_ACCOUNT = ACCOUNT.as("detAcc");;
 	private static final com.esferalia.aon.jooq.tables.Account BAL_ACCOUNT = ACCOUNT.as("balAcc");
+	
+	public static Stream<FlatAccountEntryDetail> ledger(AONContext ctx , final AccountingReportParams params, int offset, int limit, IDAOCallback callback ) {
+		System.out.println( "ledger ..: offset : " + offset + " limit ..: " + limit);
+		ctx.checkRead();
+		MutableInt oldAccountId = new MutableInt(-1);
+		MutableDouble debitBalance = new MutableDouble(0);
+		MutableDouble unpaidBalance = new MutableDouble(0);
+		return ctx.getDslContext()
+			.select(ACCOUNT_ENTRY.ID,ACCOUNT_ENTRY.DOMAIN,ACCOUNT_ENTRY.ACCOUNT_PERIOD
+					,ACCOUNT_PERIOD.NAME,ACCOUNT_ENTRY.ENTRY_DATE,ACCOUNT_ENTRY.ENTRY_TYPE
+					,ACCOUNT_ENTRY.ACTIVITY,ACCOUNT_ENTRY.JOURNAL,ACCOUNT_ENTRY.SECURITY_LEVEL
+					,ACCOUNT_ENTRY.COMMENTS
+					,ACCOUNT_ENTRY.CREATION_USER,ACCOUNT_ENTRY.CREATION_DATE
+					,ACCOUNT_ENTRY.MODIFICATION_USER,ACCOUNT_ENTRY.MODIFICATION_DATE
+					,ACCOUNT_ENTRY_DETAIL.ID,ACCOUNT_ENTRY_DETAIL.ACCOUNT,DET_ACCOUNT.CODE
+					,DET_ACCOUNT.DESCRIPTION,ACCOUNT_ENTRY_DETAIL.CONCEPT
+					,ACCOUNT_ENTRY_DETAIL.DEBIT,ACCOUNT_ENTRY_DETAIL.CREDIT
+					,ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT,BAL_ACCOUNT.CODE,BAL_ACCOUNT.DESCRIPTION
+					,ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER
+					,ENTERPRISE_ACTIVITY.DESCRIPTION)
+				.from(ACCOUNT_ENTRY)
+				.innerJoin(ACCOUNT_PERIOD).on(ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(ACCOUNT_PERIOD.ID))
+				.innerJoin(ACCOUNT_ENTRY_DETAIL).on(ACCOUNT_ENTRY.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
+				.innerJoin(DET_ACCOUNT).on(DET_ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
+				.leftOuterJoin(BAL_ACCOUNT).on(BAL_ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT))
+				.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(ACCOUNT_ENTRY.ACTIVITY))
+				.where(getLedgerCondition(ctx, params))
+				.orderBy(DET_ACCOUNT.CODE,ACCOUNT_ENTRY.ENTRY_DATE,ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY)
+				.limit(offset, limit)
+				.fetch()
+				.stream()
+				.onClose(new Runnable() {
+					@Override
+					public void run() {
+						if (callback != null) {
+							callback.onFinish();
+						}
+					}
+				})
+				.map( record -> {
+					FlatAccountEntryDetail flat = new FlatAccountEntryDetail( )
+						.setEntryId(record.getValue(ACCOUNT_ENTRY.ID))
+						.setEntryDomain(record.getValue(ACCOUNT_ENTRY.DOMAIN))
+						.setEntryPperiod(record.getValue(ACCOUNT_ENTRY.ACCOUNT_PERIOD))
+						.setEntryPeriodName(record.getValue(ACCOUNT_PERIOD.NAME))
+						.setEntryDate(record.getValue(ACCOUNT_ENTRY.ENTRY_DATE))
+						.setEntryType(AccountEntryType.safeValueOf( record.getValue(ACCOUNT_ENTRY.ENTRY_TYPE)))
+						.setActivity(record.getValue(ACCOUNT_ENTRY.ACTIVITY))
+						.setActivityName(record.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION))
+						.setJournal(record.getValue(ACCOUNT_ENTRY.JOURNAL))
+						.setComments(record.getValue(ACCOUNT_ENTRY.COMMENTS))
+						.setEntrySecurityLevel(SecurityLevel.safeValueOf(record.getValue(ACCOUNT_ENTRY.SECURITY_LEVEL)))
+						.setEntryCreationUser(record.getValue(ACCOUNT_ENTRY.CREATION_USER))
+						.setEntryCreationDate(record.getValue(ACCOUNT_ENTRY.CREATION_DATE))
+						.setEntryModificationUser(record.getValue(ACCOUNT_ENTRY.MODIFICATION_USER))
+						.setEntryModificationDate(record.getValue(ACCOUNT_ENTRY.MODIFICATION_DATE))
+						.setDetailId(record.getValue(ACCOUNT_ENTRY_DETAIL.ID) )
+						.setAccount(record.getValue(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
+						.setAccountCode(record.getValue(DET_ACCOUNT.CODE))
+						.setAccountDescription(record.getValue(DET_ACCOUNT.DESCRIPTION))
+						.setConcept(record.getValue(ACCOUNT_ENTRY_DETAIL.CONCEPT))
+						.setDebit(record.getValue(ACCOUNT_ENTRY_DETAIL.DEBIT))
+						.setCredit(record.getValue(ACCOUNT_ENTRY_DETAIL.CREDIT))
+						.setBalancingAccount(record.getValue(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT))
+						.setBalancingAccountCode(record.getValue(BAL_ACCOUNT.CODE))
+						.setBalancingAccountDescription(record.getValue(BAL_ACCOUNT.DESCRIPTION))
+						.setDocumentNumber(record.getValue(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER))
+						;
+					if (!AonNumberUtils.equals(oldAccountId.getValue(), flat.getAccount())) {
+						oldAccountId.setValue(flat.getAccount());
+						ctx.getDslContext().select(
+								 DSL.sum(ACCOUNT_ENTRY_DETAIL.DEBIT)
+								,DSL.sum(ACCOUNT_ENTRY_DETAIL.CREDIT)
+							)
+							.from(ACCOUNT_ENTRY_DETAIL)
+							.innerJoin(ACCOUNT_ENTRY).on(ACCOUNT_ENTRY.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))			
+							.where(ACCOUNT_ENTRY_DETAIL.DOMAIN.eq(flat.getEntryDomain()))
+							  .and(ACCOUNT_ENTRY_DETAIL.ACCOUNT.eq(flat.getAccount()))
+							  .and(ACCOUNT_ENTRY.ENTRY_DATE.lessThan(AonDateUtils.toSql( flat.getEntryDate())))
+							.fetch()
+							.stream()
+							.forEach(sumRec -> {
+								BigDecimal sumDebit  = sumRec.getValue(DSL.sum(ACCOUNT_ENTRY_DETAIL.DEBIT));
+								BigDecimal sumCredit = sumRec.getValue(DSL.sum(ACCOUNT_ENTRY_DETAIL.CREDIT));
+								if (sumDebit == null) sumDebit = new BigDecimal(0);
+								if (sumCredit == null) sumCredit = new BigDecimal(0);
+								double db = AonMathUtils.round(sumDebit.doubleValue() - sumCredit.doubleValue());
+								double ub = AonMathUtils.round(sumCredit.doubleValue() - sumDebit.doubleValue());
+								flat.setInitialDebitBalance(AonMathUtils.isGreatherThanZero(db)?db:0.0);
+								flat.setInitialUnpaidBalance(AonMathUtils.isGreatherThanZero(ub)?ub:0.0);
+								debitBalance.setValue(AonMathUtils.isGreatherThanZero(db)?db:0.0);
+								unpaidBalance.setValue(AonMathUtils.isGreatherThanZero(ub)?ub:0.0);
+							});
+						;
+					}
+					double db = AonMathUtils.round(debitBalance.getValue()  - unpaidBalance.getValue() + flat.getDebit()  - flat.getCredit());
+					double ub = AonMathUtils.round(unpaidBalance.getValue() - debitBalance.getValue()  + flat.getCredit() - flat.getDebit());
+					debitBalance.setValue(AonMathUtils.isGreatherThanZero(db)?db:0.0);
+					unpaidBalance.setValue(AonMathUtils.isGreatherThanZero(ub)?ub:0.0);
+					flat.setDebitBalance(AonMathUtils.isGreatherThanZero(db)?db:0.0);
+					flat.setUnpaidBalance(AonMathUtils.isGreatherThanZero(ub)?ub:0.0);
+					return flat;
+				}
+			);
+	}
 
 	public static Stream<AccountStatement> balance(AONContext ctx , final AccountingReportParams params ) {
 		ctx.checkRead();
@@ -836,6 +945,45 @@ public class AccountStatementDAO {
 		return condition;
 	}
 	
+	private static Condition getLedgerCondition(AONContext ctx , AccountingReportParams params) {
+		Condition condition = getBasicCondition(ctx, params, true);
+		if (params.getAccount() != null && AonStringUtils.isNotBlank(params.getAccount().getCode())) {
+			Condition accountCondition = null;
+			String[] accounts = AonStringUtils.split(params.getAccount().getCode(), '|');
+			for (String account : accounts) {
+				account = AonStringUtils.replace(account, AonStringUtils.ASTERISK, AonStringUtils.EMPTY);
+				if (AonStringUtils.isNotBlank(account)) {
+					if (AonStringUtils.isNumeric(account)) {
+						String code = AonStringUtils.replace(account, AonStringUtils.ASTERISK, AonStringUtils.PERCENT);
+						if (!AonStringUtils.endsWith(code, AonStringUtils.PERCENT)) {
+							code = code + AonStringUtils.PERCENT;
+						}	
+						Condition codeCondition = DET_ACCOUNT.CODE.like(code); 
+						accountCondition = accountCondition == null
+								?codeCondition
+								:accountCondition.or( codeCondition );
+					} else {
+						String descr = AonStringUtils.replace(account, AonStringUtils.ASTERISK, AonStringUtils.PERCENT);
+						if (!AonStringUtils.startsWith(descr, AonStringUtils.PERCENT)) {
+							descr = AonStringUtils.PERCENT + descr;
+						}
+						if (!AonStringUtils.endsWith(descr, AonStringUtils.PERCENT)) {
+							descr = descr + AonStringUtils.PERCENT;
+						}	
+						Condition descAliasCondition = DET_ACCOUNT.DESCRIPTION.like(descr).or(DET_ACCOUNT.ALIAS.like(descr)); 
+						accountCondition = accountCondition == null
+								?descAliasCondition
+								:accountCondition.or( descAliasCondition );
+					}
+				}
+			}
+			if(accountCondition != null) {
+				condition = condition.and(accountCondition);
+			}
+		}
+		condition = appendCostCenterCondition(condition,params);
+		return condition;
+	}
 	
 	// *********************************************************************************************************
 	// ********************************* BALANCE DE SUMAS Y SALDOS *********************************************
