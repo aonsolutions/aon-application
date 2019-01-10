@@ -10,6 +10,7 @@ import static com.esferalia.aon.jooq.tables.ContractEmbargo.CONTRACT_EMBARGO;
 import static com.esferalia.aon.jooq.tables.ContractInfo.CONTRACT_INFO;
 import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Geotree.GEOTREE;
@@ -448,11 +449,18 @@ public class JooqEmployee {
 		Integer domain = employeeData.getDomain();
 		Integer registryId = employeeData.getEmployeeId();
 		
-		Record1<Integer> geozone = dslContext.select(GEOZONE.ID)
+		Record domainRecord = dslContext.select().from(DOMAIN)
+				.where(DOMAIN.ID.eq(domain))
+				.fetchOne();
+		
+		Integer parentDomain = domainRecord.get(DOMAIN.PARENT);
+		
+		Result<Record> geozone = dslContext.select()
 				.from(GEOZONE)
 				.where(GEOZONE.NAME.eq(employeeData.getAddressProvinces()))
-					.and(GEOZONE.DOMAIN.eq(domain))
-				.fetchOne();
+					.and(GEOZONE.DOMAIN.eq(domain)
+							.or(GEOZONE.DOMAIN.eq(parentDomain)))
+				.fetch();
 		
 		Integer geozoneId = null;
 		
@@ -473,7 +481,7 @@ public class JooqEmployee {
 				geozoneId = geozoneRecord.getId();
 			}
 		}else
-			geozoneId = geozone.value1();
+			geozoneId = geozone.get(0).get(GEOZONE.ID);
 
 		Integer rAddressId = employeeData.getRaddressId();
 		
@@ -508,7 +516,7 @@ public class JooqEmployee {
 			
 			GeozoneRecord geozoneParentRecord  = dslContext.insertInto(GEOZONE)
 					.set(GEOZONE.DOMAIN, domain)
-					.set(GEOZONE.NAME, "ESPAÃ‘A")
+					.set(GEOZONE.NAME, "ESPAÑA")
 					.set(GEOZONE.CODE, "ES")
 					.set(GEOZONE.SYSTEM, (byte) 1)
 					.returning(GEOZONE.ID)
@@ -1001,11 +1009,18 @@ public class JooqEmployee {
 				.set(PERSON.SOCIAL_SECURITY_NUM, employeeData.getSsNumber())
 				.execute();
 			
-			Record1<Integer> geozone = dslContext.select(GEOZONE.ID)
+			Record domainRecord = dslContext.select().from(DOMAIN)
+					.where(DOMAIN.ID.eq(domain))
+					.fetchOne();
+			
+			Integer parentDomain = domainRecord.get(DOMAIN.PARENT);
+			
+			Result<Record> geozone = dslContext.select()
 					.from(GEOZONE)
 					.where(GEOZONE.NAME.eq(employeeData.getAddressProvinces()))
-						.and(GEOZONE.DOMAIN.eq(domain))
-					.fetchOne();
+						.and(GEOZONE.DOMAIN.eq(domain)
+								.or(GEOZONE.DOMAIN.eq(parentDomain)))
+					.fetch();
 			
 			Integer geozoneId = null;
 			
@@ -1026,7 +1041,7 @@ public class JooqEmployee {
 						geozoneId = geozoneRecord.getId();
 				}
 			}else
-				geozoneId = geozone.value1();
+				geozoneId = geozone.get(0).get(GEOZONE.ID);
 			
 			RaddressRecord rAddressRecord = dslContext.insertInto(RADDRESS)
 				.set(RADDRESS.DOMAIN, domain)

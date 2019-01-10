@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -176,6 +177,12 @@ public class JooqActivity {
 			.where(ENTERPRISE_ACTIVITY.ID.eq(activityInfo.getId()))
 			.execute();
 		
+		Record domainRecord = dslContext.select().from(DOMAIN)
+				.where(DOMAIN.ID.eq(activityInfo.getDomain()))
+				.fetchOne();
+		
+		Integer parentDomain = domainRecord.get(DOMAIN.PARENT);
+		
 		//ENTERPRISE_CCC
 		for(Integer cccId : activityInfo.getDeleteCccs().keySet())
 			dslContext.delete(ENTERPRISE_CCC)
@@ -186,9 +193,19 @@ public class JooqActivity {
 			Integer cccId = entry.getKey();
 			CCCInfo cccInfo = entry.getValue();
 			
-			Result<Record> geozoneRecords = dslContext.select().from(GEOZONE)
-					.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
-					.fetch();
+			Result<Record> geozoneRecords = null;
+			if(null == parentDomain) {
+				geozoneRecords = dslContext.select().from(GEOZONE)
+						.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
+						.and(GEOZONE.DOMAIN.eq(activityInfo.getDomain()))
+						.fetch();
+			}else {
+				geozoneRecords = dslContext.select().from(GEOZONE)
+						.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
+						.and(GEOZONE.DOMAIN.eq(activityInfo.getDomain()).or(GEOZONE.DOMAIN.eq(parentDomain)))
+						.fetch();
+			}
+			
 			
 			Integer geozoneId = 0;
 			if(null == geozoneRecords || geozoneRecords.isEmpty()) {
@@ -250,13 +267,28 @@ public class JooqActivity {
 		
 		activityInfo.setId(activityId.getId());
 		
+		Record domainRecord = dslContext.select().from(DOMAIN)
+				.where(DOMAIN.ID.eq(activityInfo.getDomain()))
+				.fetchOne();
+		
+		Integer parentDomain = domainRecord.get(DOMAIN.PARENT);
+		
 		//ENTERPRISE_CCC
 		for(Entry<Integer, CCCInfo> entry : activityInfo.getCccs().entrySet()) {
 			CCCInfo cccInfo = entry.getValue();
 			
-			Result<Record> geozoneRecords = dslContext.select().from(GEOZONE)
-					.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
-					.fetch();
+			Result<Record> geozoneRecords = null;
+			if(null == parentDomain) {
+				geozoneRecords = dslContext.select().from(GEOZONE)
+						.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
+						.and(GEOZONE.DOMAIN.eq(activityInfo.getDomain()))
+						.fetch();
+			}else {
+				geozoneRecords = dslContext.select().from(GEOZONE)
+						.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
+						.and(GEOZONE.DOMAIN.eq(activityInfo.getDomain()).or(GEOZONE.DOMAIN.eq(parentDomain)))
+						.fetch();
+			}
 			
 			Integer geozoneId = 0;
 			if(null == geozoneRecords || geozoneRecords.isEmpty()) {
