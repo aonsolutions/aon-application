@@ -151,7 +151,7 @@ ${project.version}            <manifestEntries>
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
-      <version>1.1</version>
+      <version>99.0-does-not-exist</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -163,7 +163,7 @@ ${project.version}            <manifestEntries>
     <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
-      <version>3.1</version>
+      <version>20040616</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
