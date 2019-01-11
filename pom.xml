@@ -432,7 +432,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.5.1</version>
+				<version>3.8.0</version>
 				<configuration>
 					<source>${compileSource}</source>
 					<target>${compileTarget}</target>
@@ -443,7 +443,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.10</version>
+				<version>3.0.0-M3</version>
 				<configuration>
 					<workingDirectory>target</workingDirectory>
 					<excludes>
@@ -455,7 +455,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.4</version>
+				<version>3.1.1</version>
 				<configuration>
 					<archive>
 						<manifest>
@@ -469,7 +469,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>2.2</version>
+				<version>3.0.1</version>
 				<executions>
 					<execution>
 						<goals>
@@ -482,7 +482,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.9</version>
+				<version>3.0.1</version>
 				<configuration>
 					<skip>true</skip>
 				</configuration>
@@ -491,7 +491,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>2.3.2</version>
+				<version>2.5.3</version>
 				<configuration>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<tagBase>http://dev.esferalia.net/repos/aon-application/releases</tagBase>
@@ -508,7 +508,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
-				<version>2.8.2</version>
+				<version>3.0.0-M1</version>
 				<dependencies>
 					<dependency>
 						<groupId>org.apache.maven.wagon</groupId>
@@ -526,7 +526,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.7</version>
+				<version>3.0.0</version>
 				<executions>
 					<execution>
 						<id>add-source</id>
@@ -548,7 +548,7 @@
 				<groupId>org.codehaus.mojo</groupId>
 				<!--groupId>cz.atomsoft.maven</groupId-->
 				<artifactId>buildnumber-maven-plugin</artifactId>
-				<!--version>1.2</version-->
+				<version>1.4</version>
 				<executions>
 					<execution>
 						<phase>validate</phase>
@@ -567,7 +567,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>versions-maven-plugin</artifactId>
-				<version>2.4</version>
+				<version>2.7</version>
 			</plugin>
 
 		</plugins>
