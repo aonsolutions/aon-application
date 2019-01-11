@@ -1,4 +1,4 @@
-FROM tomcat:9.0-jre11
+FROM tomcat:9.0-jre8
 
 ARG AON_VERSION=9.23-SNAPSHOT
 

@@ -38,9 +38,9 @@ node {
     	// Run the docker build
     	def rolling_version = new Date().format('yyyy.MM.dd-HH.mm.ss')
     	sh "docker build --no-cache --build-arg AON_VERSION=${pom.version} -t aonsolutions/aon-db-up2date:${rolling_version}-jre-alpine ./aon-db-up2date"
-    	sh "docker build --no-cache --build-arg AON_VERSION=${pom.version} -t aonsolutions/aon-application:${rolling_version}-tomcat9-jre11 ."
+    	sh "docker build --no-cache --build-arg AON_VERSION=${pom.version} -t aonsolutions/aon-application:${rolling_version}-tomcat9-jre8 ."
 	// For intermediate builds micro-services aren't used.
-    	//sh "docker build --no-cache --build-arg AON_VERSION=${pom.version} -t aonsolutions/aon-micro-services:${rolling_version}-tomcat9-jre11 -f ./aon-micro-services/Dockerfile ."
+    	//sh "docker build --no-cache --build-arg AON_VERSION=${pom.version} -t aonsolutions/aon-micro-services:${rolling_version}-tomcat9-jre8 -f ./aon-micro-services/Dockerfile ."
 
     	// Mark the Integration Tests 'stage'....
     	stage 'Integration Tests'
@@ -55,7 +55,7 @@ node {
 
     	sh "sudo docker run -e DB_HOST=172.17.0.1 -e DB_USER=dbuser -e DB_PASSWD=serubd2000 aonsolutions/aon-db-up2date:${rolling_version}-jre-alpine"
 
-    	sh "sudo docker run --name aon-application -d -p 8080:8080 -e DB_HOST=172.17.0.1 -e DB_USER=dbuser -e DB_PASSWD=serubd2000 aonsolutions/aon-application:${rolling_version}-tomcat9-jre11"
+    	sh "sudo docker run --name aon-application -d -p 8080:8080 -e DB_HOST=172.17.0.1 -e DB_USER=dbuser -e DB_PASSWD=serubd2000 aonsolutions/aon-application:${rolling_version}-tomcat9-jre8"
 
     	sh "sudo ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime"
 
@@ -90,16 +90,16 @@ node {
         sh "echo yes | ${mvnHome}/bin/mvn  -Drpm.release=false -DskipTests=true -Dmaven.test.failure.ignore=true clean install"
 
     	sh "docker build --no-cache --build-arg AON_VERSION=${pom.version} -t aonsolutions/aon-db-up2date:${rolling_version}-jre-alpine ./aon-db-up2date"
-    	sh "docker build --no-cache --build-arg AON_VERSION=${pom.version} -t aonsolutions/aon-application:${rolling_version}-tomcat9-jre11 ."
-    	sh "docker build --no-cache --build-arg AON_VERSION=${pom.version} -t aonsolutions/aon-micro-services:${rolling_version}-tomcat9-jre11 -f ./aon-micro-services/Dockerfile ."
+    	sh "docker build --no-cache --build-arg AON_VERSION=${pom.version} -t aonsolutions/aon-application:${rolling_version}-tomcat9-jre8 ."
+    	sh "docker build --no-cache --build-arg AON_VERSION=${pom.version} -t aonsolutions/aon-micro-services:${rolling_version}-tomcat9-jre8 -f ./aon-micro-services/Dockerfile ."
 
         stage 'Docker Publish'
 
         sh "docker login -u rtrepiana -p aon945121010"
 
         sh "docker push aonsolutions/aon-db-up2date:${rolling_version}-jre-alpine"
-        sh "docker push aonsolutions/aon-application:${rolling_version}-tomcat9-jre11"
-        sh "docker push aonsolutions/aon-micro-services:${rolling_version}-tomcat9-jre11"
+        sh "docker push aonsolutions/aon-application:${rolling_version}-tomcat9-jre8"
+        sh "docker push aonsolutions/aon-micro-services:${rolling_version}-tomcat9-jre8"
 
         sh "aws ecs list-task-definitions --family-prefix SNAPSH0T-DB-UP2DATE > snapshot-db-up2date-task-definitions.json"
 	def snapshot_db_up2date_task_definitions_json = readFile 'snapshot-db-up2date-task-definitions.json'
@@ -136,7 +136,7 @@ node {
 	def snapshot_network_mode = getNetworkMode(last_snapshot_task_definition_json)
 	def snapshot_execution_role_arn = getExecutionRoleArn(last_snapshot_task_definition_json)
 	def snapshot_compatibilities = getCompatibilities(last_snapshot_task_definition_json)
-	def snapshot_container_definitions_json = getContainerDefinitions(last_snapshot_task_definition_json, "aonsolutions/aon-application:${rolling_version}-tomcat9-jre11")
+	def snapshot_container_definitions_json = getContainerDefinitions(last_snapshot_task_definition_json, "aonsolutions/aon-application:${rolling_version}-tomcat9-jre8")
 	sh "aws ecs register-task-definition --family SNAPSH0T --task-role-arn '${snapshot_execution_role_arn}' --execution-role-arn '${snapshot_execution_role_arn}' --network-mode '${snapshot_network_mode}' --cpu '${snapshot_cpu}' --memory '${snapshot_memory}'  --requires-compatibilities ${snapshot_compatibilities} --container-definitions '${snapshot_container_definitions_json}' > snapshot-task-definition.json"
 
 	def snapshot_task_definition_json = readFile 'snapshot-task-definition.json'
@@ -156,7 +156,7 @@ node {
 	def snapshot_services_network_mode = getNetworkMode(last_snapshot_services_task_definition_json)
 	def snapshot_services_execution_role_arn = getExecutionRoleArn(last_snapshot_services_task_definition_json)
 	def snapshot_services_compatibilities = getCompatibilities(last_snapshot_services_task_definition_json)
-	def snapshot_services_container_definitions_json = getContainerDefinitions(last_snapshot_services_task_definition_json, "aonsolutions/aon-micro-services:${rolling_version}-tomcat9-jre11")
+	def snapshot_services_container_definitions_json = getContainerDefinitions(last_snapshot_services_task_definition_json, "aonsolutions/aon-micro-services:${rolling_version}-tomcat9-jre8")
 	sh "aws ecs register-task-definition --family SNAPSH0T-SERVICES --task-role-arn '${snapshot_services_execution_role_arn}' --execution-role-arn '${snapshot_services_execution_role_arn}' --network-mode '${snapshot_services_network_mode}' --cpu '${snapshot_services_cpu}' --memory '${snapshot_services_memory}'  --requires-compatibilities ${snapshot_services_compatibilities} --container-definitions '${snapshot_services_container_definitions_json}' > snapshot-services-task-definition.json"
 
 
@@ -190,7 +190,7 @@ node {
 	def release_network_mode = getNetworkMode(last_release_task_definition_json)
 	def release_execution_role_arn = getExecutionRoleArn(last_release_task_definition_json)
 	def release_compatibilities = getCompatibilities(last_release_task_definition_json)
-	def release_container_definitions_json = getContainerDefinitions(last_release_task_definition_json, "aonsolutions/aon-application:${rolling_version}-tomcat9-jre11")
+	def release_container_definitions_json = getContainerDefinitions(last_release_task_definition_json, "aonsolutions/aon-application:${rolling_version}-tomcat9-jre8")
 	sh "aws ecs register-task-definition --family RELE4SE --task-role-arn '${release_execution_role_arn}' --execution-role-arn '${release_execution_role_arn}' --network-mode '${release_network_mode}' --cpu '${release_cpu}' --memory '${release_memory}' --container-definitions '${release_container_definitions_json}' --requires-compatibilities ${release_compatibilities} > release-task-definition.json"
 
 	sh "aws ecs list-task-definitions --family-prefix RELEASE-SERVICES > release-services-task-definitions.json"
@@ -204,7 +204,7 @@ node {
 	def release_services_network_mode = getNetworkMode(last_release_services_task_definition_json)
 	def release_services_execution_role_arn = getExecutionRoleArn(last_release_services_task_definition_json)
 	def release_services_compatibilities = getCompatibilities(last_release_services_task_definition_json)
-	def release_services_container_definitions_json = getContainerDefinitions(last_release_services_task_definition_json, "aonsolutions/aon-micro-services:${rolling_version}-tomcat9-jre11")
+	def release_services_container_definitions_json = getContainerDefinitions(last_release_services_task_definition_json, "aonsolutions/aon-micro-services:${rolling_version}-tomcat9-jre8")
 	sh "aws ecs register-task-definition --family RELEASE-SERVICES --task-role-arn '${release_services_execution_role_arn}' --execution-role-arn '${release_services_execution_role_arn}' --network-mode '${release_services_network_mode}' --cpu '${release_services_cpu}' --memory '${release_services_memory}'  --requires-compatibilities ${release_services_compatibilities} --container-definitions '${release_services_container_definitions_json}' > release-services-task-definition.json"
     }
 
