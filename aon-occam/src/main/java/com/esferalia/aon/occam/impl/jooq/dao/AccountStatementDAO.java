@@ -755,7 +755,8 @@ public class AccountStatementDAO {
 		if (!report.getParams().isNoActivityAccountVisible()) {
 			TreeMap<String, AccountTrialBalance> balances = new TreeMap<String, AccountTrialBalance>();
 			for (String account : report.getBalances().keySet()) {
-				if (report.getBalances().get(account).hasPeriodEntries() ) {
+				if (report.getBalances().get(account).hasPeriodEntries() 
+				 || report.getBalances().get(account).hasInPeriodOpeningEntries()) {
 					balances.put(account, report.getBalances().get(account));
 				}
 			}

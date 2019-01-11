@@ -164,6 +164,9 @@ public class AccountTrialBalanceReport implements Serializable{
 				);
 				return AonMathUtils.isGreatherThanZero(d)?d:0.0;
 		}
+		public boolean hasInPeriodOpeningEntries() {
+			return AonMathUtils.isNotZero(getInPeriodOpeningDebit()) || AonMathUtils.isNotZero(getInPeriodOpeningCredit());
+		}
 		public boolean hasPeriodEntries() {
 			return AonMathUtils.isNotZero(getInPeriodDebit()) || AonMathUtils.isNotZero(getInPeriodCredit());
 		}
