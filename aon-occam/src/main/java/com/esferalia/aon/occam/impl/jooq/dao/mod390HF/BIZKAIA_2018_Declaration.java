@@ -1,16 +1,26 @@
 package com.esferalia.aon.occam.impl.jooq.dao.mod390HF;
 
+import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
+import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
+import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
+import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod390HFDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -286,10 +296,44 @@ public class BIZKAIA_2018_Declaration extends Mod390HFDeclaration {
 		,BZ_C098	(Mod390Key.BZ_C098,null,null,null,"BZ_C096-BZ_C097",null)
 
 		// Ingresos efectuados en le Dip. Foral de Bizkaia
-		,BZ_C099	(Mod390Key.BZ_C099)
-		
+		,BZ_C099	(Mod390Key.BZ_C099,null,null,
+				(ctx,mod) -> {
+					add( Mod390Key.BZ_C099, mod, Mod390HFDAO.getM303YearModels(ctx, mod)
+							.mapToDouble(fm -> fm.getAmount(Mod303Key.BZ_C040))
+							.filter(result -> AonMathUtils.isNotZero(result))
+							.sum());
+				} 
+				,null
+				,"<li>Declaraciones a ingresar en el mismo ejercicio:<ul style=\"padding-left: 20px;\">" 
+						+"@code{c40Key='"+ Mod303Key.BZ_C040.getValue() +"';}"
+						+"@foreach{fm : m303Models}"
+							+"@if{ fm.getAmount(c40Key) > 0 }"
+								+"<li>Resultado @{fm.getPeriod().getName()} @{fm.isComplementary()?' (C) ':'     '}:	Casilla [040] --> @{fm.getAmount(c40Key)}</li>"
+							+"@end{}"
+						+"@end{}"
+						+"</ul></li>"
+						+"<li>Resultado: <b>@{BZ_C099}</b></li>"
+			)
 		// Devoluciones practicadas en la Dip. Foral de Bizkaia
-		,BZ_C100	(Mod390Key.BZ_C100)
+		,BZ_C100	(Mod390Key.BZ_C100,null,null,
+				(ctx,mod) -> {
+					add( Mod390Key.BZ_C100, mod, 
+							Mod390HFDAO.getM303YearModels(ctx, mod)
+							.mapToDouble(fm -> fm.getAmount(Mod303Key.BZ_C039))
+							.filter(result -> AonMathUtils.isNotZero(result))
+							.sum());						
+				} 
+				,null
+				,"<li>Declaraciones a devolver en el mismo ejercicio:<ul style=\"padding-left: 20px;\">" 
+						+"@code{c39Key='"+ Mod303Key.BZ_C039.getValue() +"';}"
+						+"@foreach{fm : m303Models}"
+							+"@if{ fm.getAmount(c39Key) > 0 }"
+								+"<li>Resultado @{fm.getPeriod().getName()} @{fm.isComplementary()?' (C) ':'     '}:	Casilla [039] --> @{fm.getAmount(c39Key)}</li>"
+							+"@end{}"
+						+"@end{}"
+						+"</ul></li>"
+						+"<li>Resultado: <b>@{BZ_C100}</b></li>"
+			)
 
 		// Resultado
 		,BZ_C110	(Mod390Key.BZ_C110,null,null,null,"BZ_C098-BZ_C099+BZ_C100",null)   

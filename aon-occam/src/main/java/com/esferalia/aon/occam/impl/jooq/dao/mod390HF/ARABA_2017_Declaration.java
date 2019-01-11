@@ -4,6 +4,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
@@ -485,9 +486,43 @@ public class ARABA_2017_Declaration extends Mod390HFDeclaration {
 		// Cuota atribuible al Territorio Histórico de Álava	
 		,AR_C125	(Mod390Key.AR_C125,null,null,null,"AR_C114*AR_C120/100",null)
 		// Ingresos efectuados en la Diputación Foral de Álava
-		,AR_C126	(Mod390Key.AR_C126)
+		,AR_C126	(Mod390Key.AR_C126,null,null,
+				(ctx,mod) -> {
+					add( Mod390Key.AR_C126, mod, Mod390HFDAO.getM303YearModels(ctx, mod)
+							.mapToDouble(fm -> fm.getAmount(Mod303Key.AR_C080))
+							.filter(result -> AonMathUtils.isNotZero(result))
+							.sum());
+				} 
+				,null
+				,"<li>Declaraciones a ingresar en el mismo ejercicio:<ul style=\"padding-left: 20px;\">" 
+						+"@code{c80Key='"+ Mod303Key.AR_C080.getValue() +"';}"
+						+"@foreach{fm : m303Models}"
+							+"@if{ fm.getAmount(c80Key) > 0 }"
+								+"<li>Resultado @{fm.getPeriod().getName()} @{fm.isComplementary()?' (C) ':'     '}:	Casilla [080] --> @{fm.getAmount(c80Key)}</li>"
+							+"@end{}"
+						+"@end{}"
+						+"</ul></li>"
+						+"<li>Resultado: <b>@{AR_C126}</b></li>"
+			)
 		// Devoluciónes practicadas/solicitadas en la Diputación Foral de Álava
-		,AR_C127	(Mod390Key.AR_C127)
+		,AR_C127	(Mod390Key.AR_C127,null,null,
+				(ctx,mod) -> {
+					add( Mod390Key.AR_C127, mod, Mod390HFDAO.getM303YearModels(ctx, mod)
+							.mapToDouble(fm -> fm.getAmount(Mod303Key.AR_C081))
+							.filter(result -> AonMathUtils.isNotZero(result))
+							.sum());
+				} 
+				,null
+				,"<li>Declaraciones a devolver en el mismo ejercicio:<ul style=\"padding-left: 20px;\">" 
+						+"@code{c81Key='"+ Mod303Key.AR_C081.getValue() +"';}"
+						+"@foreach{fm : m303Models}"
+							+"@if{ fm.getAmount(c81Key) > 0 }"
+								+"<li>Resultado @{fm.getPeriod().getName()} @{fm.isComplementary()?' (C) ':'     '}:	Casilla [081] --> @{fm.getAmount(c81Key)}</li>"
+							+"@end{}"
+						+"@end{}"
+						+"</ul></li>"
+						+"<li>Resultado: <b>@{AR_C127}</b></li>"
+			)
 		// DIFERENCIA
 		,AR_C128	(Mod390Key.AR_C128,null,null,null,"AR_C126+AR_C127",null)
 		// Resultado a compensar o a devolver o a ingresar del ejercicio

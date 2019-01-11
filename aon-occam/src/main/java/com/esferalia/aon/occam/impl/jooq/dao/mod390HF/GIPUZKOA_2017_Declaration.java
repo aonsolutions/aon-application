@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
+import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
@@ -232,7 +233,24 @@ public class GIPUZKOA_2017_Declaration extends Mod390HFDeclaration {
 		// Cuotas a compensar de períodos anteriores en el Territorio Histórico de Álava	
 		,GP_C037(Mod390Key.GP_C037)
 		// Total INGRESOS efectuados durante el presente ejercicion
-		,GP_C038(Mod390Key.GP_C038)
+		,GP_C038(Mod390Key.GP_C038,null,null,
+				(ctx,mod) -> {
+					add( Mod390Key.GP_C035, mod, Mod390HFDAO.getM303YearModels(ctx, mod)
+							.mapToDouble(fm -> fm.getAmount(Mod303Key.GP_C035))
+							.filter(result -> AonMathUtils.isGreatherThanZero(result))
+							.sum());
+				} 
+				,null
+				,"<li>Declaraciones a ingresar en el mismo ejercicio:<ul style=\"padding-left: 20px;\">" 
+						+"@code{c35Key='"+ Mod303Key.GP_C035.getValue() +"';}"
+						+"@foreach{fm : m303Models}"
+							+"@if{ fm.getAmount(c35Key) > 0 }"
+								+"<li>Resultado @{fm.getPeriod().getName()} @{fm.isComplementary()?' (C) ':'     '}:	Casilla [035] --> @{fm.getAmount(c35Key)}</li>"
+							+"@end{}"
+						+"@end{}"
+						+"</ul></li>"
+						+"<li>Resultado: <b>@{GP_C038}</b></li>"
+			)
 		// Total DEVOLUCIONES practicadas durante el presente ejercicion
 		,GP_C039(Mod390Key.GP_C039)
 		// RESULTADO DE LA AUTOLIQUIDACIÓN	

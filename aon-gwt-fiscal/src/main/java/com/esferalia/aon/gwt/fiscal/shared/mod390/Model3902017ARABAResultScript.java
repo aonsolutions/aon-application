@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.shared.mod390;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE_KEY;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
 
@@ -17,8 +18,8 @@ public enum Model3902017ARABAResultScript implements IModelScript<Mod390Key> {
 	,R005 (Mod390Key.AR_C123.getDescription(),new Mod390Key[]{Mod390Key.AR_C123},NONE)
 	,R006 (Mod390Key.AR_C124.getDescription(),new Mod390Key[]{Mod390Key.AR_C124},NONE)
 	,R007 (Mod390Key.AR_C125.getDescription(),new Mod390Key[]{Mod390Key.AR_C125},COMPUTE)
-	,R008 (Mod390Key.AR_C126.getDescription(),new Mod390Key[]{Mod390Key.AR_C126},NONE)
-	,R009 (Mod390Key.AR_C127.getDescription(),new Mod390Key[]{Mod390Key.AR_C127},NONE)
+	,R008 (Mod390Key.AR_C126.getDescription(),new Mod390Key[]{Mod390Key.AR_C126},COMPUTE_KEY)
+	,R009 (Mod390Key.AR_C127.getDescription(),new Mod390Key[]{Mod390Key.AR_C127},COMPUTE_KEY)
 	,R010 (Mod390Key.AR_C128.getDescription(),new Mod390Key[]{Mod390Key.AR_C128},COMPUTE)
 	,R011 (Mod390Key.AR_C129.getDescription(),new Mod390Key[]{Mod390Key.AR_C129},COMPUTE)
 	,R012 (Mod390Key.AR_C130.getDescription(),new Mod390Key[]{Mod390Key.AR_C130},NONE)

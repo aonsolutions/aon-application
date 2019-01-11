@@ -248,11 +248,12 @@ public class Mod390HFDAO extends FiscalModelDAO {
 		return "<li><b>Resultado:</b> " + ((String) mvelCtx.get(EXP_KEY)) + "= <b>@{"+keyDAO.toString()+"}" + "</b></li>";
 	}
 
-	private static String getComputeKey(AONContext ctx, Mod390HF mod, IModelScript<Mod390Key> script,IMod390KeyDAO keyDAO) {
+	protected static String getComputeKey(AONContext ctx, Mod390HF mod, IModelScript<Mod390Key> script,IMod390KeyDAO keyDAO) {
 		Mod390HFDeclaration dec = Mod390HFDeclaration.getInstance(mod);
 		Mod390HFMVELContext mvelCtx = getMvelContext( dec, mod );
 		mvelCtx.put("periodModels", getSamePeriodModels(ctx, mod).collect(Collectors.toCollection(LinkedList::new)));
 		mvelCtx.put("lastPeriodModels", getLastPeriodModels(ctx, mod).collect(Collectors.toCollection(LinkedList::new)));
+		mvelCtx.put("m303Models", getM303YearModels(ctx, mod).collect(Collectors.toCollection(LinkedList::new)));
 		return getCompute(ctx, mod, script,mvelCtx);
 	}
 	
@@ -433,5 +434,18 @@ public class Mod390HFDAO extends FiscalModelDAO {
 		return VATDAO.getVatAccrualPaymentInputQuota(ctx,fromDate,toDate);
 	}
 	
+	public static Stream<FiscalModel> getM303YearModels(AONContext ctx,FiscalModel fiscalModel) {
+		return getModelSelect(ctx, fiscalModel)
+				.and(FS_MODEL.MODEL.eq( FiscalModelType.M303.getValue()))
+				.and(FS_MODEL.YEAR.eq(fiscalModel.getYear()))
+				.and(FS_MODEL.ADMINISTRATION.eq(fiscalModel.getAdministration().getValue()))
+				.orderBy(FS_MODEL.PERIOD.asc())
+				.fetch()
+				.stream()
+				.map( record -> map(record))
+				.peek( model -> getModelDetails(ctx,model)
+								.forEach( detail -> model.put( detail) )
+					 );
+	}
 	
 }

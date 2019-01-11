@@ -130,7 +130,7 @@ public class FiscalModelDAO {
 		return effectivePreviousModels.stream();
 	}
 	
-	private static SelectConditionStep<Record> getModelSelect(AONContext ctx, FiscalModel fiscalModel) {
+	protected static SelectConditionStep<Record> getModelSelect(AONContext ctx, FiscalModel fiscalModel) {
 		return ctx.getDslContext()
 			.select(FS_MODEL.fields())
 			.select(FINANCE.fields())
