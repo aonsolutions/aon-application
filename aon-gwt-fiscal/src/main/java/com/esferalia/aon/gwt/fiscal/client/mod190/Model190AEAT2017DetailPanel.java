@@ -533,7 +533,7 @@ public class Model190AEAT2017DetailPanel extends SimpleLayoutPanel implements Fo
 				callback.onValueChanged(detail);
 			}
 		});
-		tab5.setWidget(1, 0, geographicMobility);
+		tab5.setWidget(1, 0, homeLoanCommunnication);
 
 		DoubleBox applicableReduction = new DoubleBox();
 		applicableReduction.setValue(detail.getApplicableReduction());
