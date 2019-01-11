@@ -1374,7 +1374,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		case "Precio Venta Base" :
 			if(type.equals(Cell.CELL_TYPE_NUMERIC)){
 				product.getItem().get(0).setPrice((double) value);
-			}else {
+			} else {
 				verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.NOT_NUMERIC.getMessage());
 				textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.NOT_NUMERIC.getMessage() +"\n";
 			}
@@ -1382,7 +1382,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		case "Categor\u00eda" :
 			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
 				String strAux = toString(value);
-				if(strAux.length() > 31){
+				if(strAux.length() > 32){
 					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TOO_LARGE.getMessage());
 					textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TOO_LARGE.getMessage() +"\n";
 				} else {
