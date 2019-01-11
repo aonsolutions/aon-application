@@ -353,7 +353,7 @@ public abstract class BaseIntegralTestCase {
 			htmlPage.setFocusedElement(firstSpan);
 			lastSpan.type(KeyboardEvent.DOM_VK_PAGE_DOWN);
 			lastSpan = (HtmlSpan)((HtmlDivision)getElementById("monthListBox-celllist")).getFirstByXPath("div/div[last()]/span");
-			lastDate = dateFormat.parse(firstSpan.getTextContent());
+			lastDate = dateFormat.parse(lastSpan.getTextContent());
 			LOGGER.warning("Last visible date is : " + dateFormat.format(lastDate) );
 		}
 		
@@ -382,7 +382,7 @@ public abstract class BaseIntegralTestCase {
 			htmlPage.setFocusedElement(firstSpan);
 			lastSpan.type(KeyboardEvent.DOM_VK_PAGE_DOWN);
 			lastSpan = (HtmlSpan)((HtmlDivision)getElementById("fromMonthListBox-celllist")).getFirstByXPath("div/div[last()]/span");
-			lastDate = dateFormat.parse(firstSpan.getTextContent());
+			lastDate = dateFormat.parse(lastSpan.getTextContent());
 			LOGGER.warning("Last visible date is : " + dateFormat.format(lastDate) );
 		}
 		
