@@ -33,7 +33,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <version>3.2.2</version>
-        <configuration>
+        <!--configuration>
           <archive>
             <manifest>
               <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
@@ -46,15 +46,15 @@
               <buildRevision>${buildNumber}</buildRevision>
             </manifestEntries>
           </archive>
-        </configuration>
+        </configuration-->
         <executions>
           <execution>
             <id>execution1</id>
             <phase>package</phase>
             <configuration />
-            <goals>
+            <!--goals>
               <goal>manifest</goal>
-            </goals>
+            </goals-->
           </execution>
         </executions>
       </plugin>
