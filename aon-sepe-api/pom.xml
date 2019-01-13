@@ -46,7 +46,6 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.7</version>
 				<executions>
 					<execution>
 						<id>add-source-contratos</id>
@@ -113,7 +112,7 @@
 			<plugin>
 				<groupId>org.jvnet.jax-ws-commons</groupId>
 		        <artifactId>jaxws-maven-plugin</artifactId>
-		        <version>2.2</version>
+		        <version>5.2</version>
 		        <executions>
 				<!-- Contrat@ wsdl files -->
 		          <execution>
@@ -205,7 +204,7 @@
 			<plugin>
 				<groupId>org.jvnet.jaxb2.maven2</groupId>
 				<artifactId>maven-jaxb2-plugin</artifactId>
-				<version>0.8.2</version>
+				<version>0.14.0</version>
 				<executions>
 					<!-- ================================ -->
 					<!-- Esquemas de ficheros a comunicar -->

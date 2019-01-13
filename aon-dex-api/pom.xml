@@ -15,7 +15,6 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.7</version>
 				<executions>
 					<execution>
 						<id>add-source</id>
@@ -36,7 +35,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jaxws-maven-plugin</artifactId>
-				<version>1.2</version>
+				<version>2.5</version>
 				<executions>
 					<execution>
 						<id>facturas-exec</id>

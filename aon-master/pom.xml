@@ -59,7 +59,6 @@
 			<plugin>
 				<groupId>com.igormaznitsa</groupId>
 				<artifactId>jcp</artifactId>
-				<version>6.0.0</version>
 				<executions>
 					<execution>
 						<id>preprocessSources</id>
@@ -79,103 +78,5 @@
 		</plugins>
 	</build>
 
-	<profiles>
-		<profile>
-			<id>rpm-release</id>
-			<activation>
-				<property>
-					<name>rpm.release</name>
-					<value>true</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<!-- Para construir el RPM -->
-					<plugin>
-
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>rpm-maven-plugin</artifactId>
-						<version>2.0.1</version>
-						<extensions>true</extensions>
-
-						<executions>
-							<execution>
-								<id>rpm-build</id>
-								<goals>
-									<goal>attached-rpm</goal>
-								</goals>
-							</execution>
-						</executions>
-
-						<configuration>
-							<group>Applications/Aon</group>
-							<release>${buildNumber}</release>
-							<copyright>2010, esferalia Networks S.A</copyright>
-							<requires>
-								<require>slf4j</require>
-								<require>aon-dbutils</require>
-								<require>apache-commons-lang</require>
-								<require>mysql-connector-java</require>
-								<require>apache-commons-logging</require>
-							</requires>
-							<mappings>
-								<mapping>
-									<filemode>644</filemode>
-									<username>root</username>
-									<groupname>root</groupname>
-									<directory>/usr/share/java</directory>
-									<sources>
-										<source>
-											<location>target</location>
-											<includes>
-												<include>${project.artifactId}-${project.version}.jar</include>
-											</includes>
-										</source>
-										<softlinkSource>
-											<location>/usr/share/java/${project.artifactId}-${project.version}.jar</location>
-											<destination>${project.artifactId}.jar</destination>
-
-										</softlinkSource>
-									</sources>
-
-								</mapping>
-								<mapping>
-									<sources>
-										<source>
-											<location>src/main/scripts</location>
-											<excludes>
-												<exclude>postinstall</exclude>
-											</excludes>
-										</source>
-									</sources>
-									<filemode>755</filemode>
-									<username>root</username>
-									<groupname>root</groupname>
-									<directory>/usr/share/aon-master/bin</directory>
-								</mapping>
-
-								<mapping>
-									<directory>/etc/cron.daily</directory>
-									<sources>
-										<softlinkSource>
-											<location>/usr/share/aon-master/bin/automysqlbackup.sh</location>
-											<destination>automysqlbackup</destination>
-										</softlinkSource>
-									</sources>
-								</mapping>
-								
-							</mappings>
-
-							<postinstallScriptlet>
-								<scriptFile>src/main/scripts/postinstall</scriptFile>
-								<fileEncoding>utf-8</fileEncoding>
-							</postinstallScriptlet>
-
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 </project>
  
