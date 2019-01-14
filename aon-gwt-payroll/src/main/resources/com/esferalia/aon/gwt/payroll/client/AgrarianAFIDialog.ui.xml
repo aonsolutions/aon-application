@@ -1,0 +1,108 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+
+	<ui:Style type="com.esferalia.aon.gwt.payroll.client.AgrarianAFIDialog.MyStyle">
+	
+		.styleBorder{
+			border-style: solid;
+			border-width: 1px; 
+			margin: 15px 2px 15px 0px;
+			width: 99%;
+		}
+		
+		.headerStyle{
+			top: -0.5em;
+			font-size: 12px;
+			margin-left: 10px;
+		}
+		
+		.bold{
+			font-weight: bold;
+		}
+		
+		.hide{
+			display: none;
+		}
+		
+		.paddingText{
+			padding: 3px 5px;
+		}
+		
+		.widthName{
+			width: intrinsic;           /* Safari/WebKit uses a non-standard name */
+  			width: -moz-max-content;    /* Firefox/Gecko */
+  			width: -webkit-max-content; /* Chrome */	
+		}
+		
+		.paddingDays{
+			padding: 2px;
+		}
+		
+		.widthDays{
+			width: 18px;
+		}
+		
+		.textCenter{
+			text-align: center;
+		}
+	
+	</ui:Style>
+
+
+	<g:HTMLPanel styleName="aon-width-all aon-height-all"> 
+		<table class="aon-width-all aon-height-all">
+			<tr>
+				<td>
+					<g:HTMLPanel>
+						<g:VerticalPanel styleName="{style.styleBorder}">
+							<g:Label styleName="aon-group-title {style.headerStyle}">Datos Jonada</g:Label>
+							<g:HTMLPanel>
+								<table class="aon-width-all aon-height-all" ui:field="dataTable">
+									<tr>
+										<td style="background-color: #eaeaea; width: 100px; height: 22px;">
+											<g:Label>Empresa:</g:Label>
+										</td>
+										<td>
+											<g:Label ui:field="enterprise"></g:Label>
+										</td>
+									</tr>
+									<tr>
+										<td style="background-color: #eaeaea; width: 100px;  height: 22px;">
+											<g:Label>Mes documento</g:Label>
+										</td>
+										<td>
+											<g:HorizontalPanel>
+												<g:Label styleName="{style.paddingText}">Mes:</g:Label>
+												<g:ListBox ui:field="monthList" styleName="aon-selectOneMenu"></g:ListBox>
+												<g:Label styleName="{style.paddingText}">Año:</g:Label>
+												<g:ListBox ui:field="yearList" styleName="aon-selectOneMenu"></g:ListBox>
+												<g:Button ui:field="searchAgrarian" styleName="aon-lookupButton"></g:Button>
+											</g:HorizontalPanel>
+										</td>
+									</tr>
+								</table>
+							</g:HTMLPanel>
+						</g:VerticalPanel>
+						<g:VerticalPanel ui:field="employeePanel" styleName="{style.styleBorder}">
+							<g:Label styleName="aon-group-title {style.headerStyle}">Empleados</g:Label>
+							<g:Grid ui:field="employeeTable"></g:Grid>
+						</g:VerticalPanel>
+					</g:HTMLPanel>
+				</td>
+			</tr>
+			<tr>
+			    
+			</tr>
+			<tr>
+				<td colspan="2" align="right">
+					<g:Button ui:field="cancelButton" debugId="paymetDialogCancelButton">Cancelar</g:Button>
+					<g:Button ui:field="acceptButton" debugId="paymetDialogAcceptButton" >Aceptar</g:Button>
+				</td>
+			</tr>
+		</table>
+
+
+	</g:HTMLPanel>
+
+</ui:UiBinder>

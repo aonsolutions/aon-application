@@ -67,7 +67,8 @@
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
 								<g:Button ui:field='basesButton' styleName='aon-finding-toolbar-item aon-icon-segsocial-small aon-uppercase' text="{BASES.getFilename}" enabled="false"/> 
-								<g:Button ui:field='dbaButton' styleName='aon-finding-toolbar-item aon-icon-segsocial-small aon-uppercase' text="{COMUNICACION_DATOS_BANCARIOS.getFilename}" /> 
+								<g:Button ui:field='dbaButton' styleName='aon-finding-toolbar-item aon-icon-segsocial-small aon-uppercase' text="{COMUNICACION_DATOS_BANCARIOS.getFilename}" />
+								<g:Button ui:field='agrarianButton' styleName='aon-finding-toolbar-item aon-icon-segsocial-small aon-uppercase' text="JORNADAS REALES AGRARIAS" visible="false"/> 
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>

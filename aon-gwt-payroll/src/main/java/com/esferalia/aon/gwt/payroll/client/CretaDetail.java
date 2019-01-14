@@ -154,6 +154,9 @@ public abstract class CretaDetail extends Composite {
 	Button confirmacionButton;
 	@UiField
 	MenuItem confirmacionMenuItem;
+	
+	@UiField
+	Button agrarianButton;
 
 	@UiField(provided = true)
 	DataGrid<JsFile> dataGrid;
@@ -469,6 +472,13 @@ public abstract class CretaDetail extends Composite {
 
 	@UiHandler("dbaButton")
 	void onClickDBAButton(ClickEvent e) {
+	}
+	
+	@UiHandler("agrarianButton")
+	void onClickAgrarianButton(ClickEvent e) {
+		AgrarianAFIDialog dialog = new AgrarianAFIDialog();
+		dialog.show();
+		dialog.center();
 	}
 
 	@UiHandler("basesButton")
