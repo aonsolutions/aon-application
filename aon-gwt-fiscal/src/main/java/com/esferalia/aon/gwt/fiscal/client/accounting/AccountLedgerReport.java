@@ -127,12 +127,6 @@ public class AccountLedgerReport extends MainEntryPoint {
 		buttonContainer.add(print);
 
 		final Button excel = new Button();
-		
-		
-		excel.setVisible(false);
-		
-		
-		
 		excel.setText(AON.MSG.export());
 		excel.setTitle(AON.MSG.export());
 		excel.setStyleName(AON.AON_CSS.aonFindingToolbarItem());

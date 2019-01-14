@@ -82,7 +82,6 @@ public class AccountStatementDAO {
 	private static final com.esferalia.aon.jooq.tables.Account BAL_ACCOUNT = ACCOUNT.as("balAcc");
 	
 	public static Stream<FlatAccountEntryDetail> ledger(AONContext ctx , final AccountingReportParams params, int offset, int limit, IDAOCallback callback ) {
-		System.out.println( "ledger ..: offset : " + offset + " limit ..: " + limit);
 		ctx.checkRead();
 		MutableInt oldAccountId = new MutableInt(-1);
 		MutableDouble debitBalance = new MutableDouble(0);

@@ -131,6 +131,30 @@ public class LedgerPanel extends ScrollPanel implements HasAccountEntrySelection
 	private void search(AccountingReportParams params) {
 		offset.setValue(0);
 		container.clear();
+		
+		StringBuffer buf = new StringBuffer();
+		buf.append(AonStringUtils.rightPad("N\u00BA Diario",10));
+		buf.append(AonStringUtils.rightPad("Fecha",11));
+		buf.append(AonStringUtils.rightPad("Concepto", 33));
+		buf.append(AonStringUtils.leftPad("Debe",17));		
+		buf.append(AonStringUtils.leftPad("Haber",17));
+		buf.append(AonStringUtils.leftPad("Saldo Deudor",17));
+		buf.append(AonStringUtils.leftPad("Saldo Acreedor",17));
+		buf.append(AonStringUtils.SPACE);
+		buf.append(AonStringUtils.rightPad("Contrapartida",26));
+		buf.append(AonStringUtils.SPACE);
+		buf.append(AonStringUtils.rightPad("N\u00BA Documento",15));
+		Label headerLabel = new Label();
+		headerLabel.setStyleName(AON.AON_CSS.aonBold());
+		headerLabel.addStyleName(AON.AON_CSS.aonMarginTop());
+		headerLabel.addStyleName(AON.AON_CSS.aonBorderBottom());
+		headerLabel.addStyleName(AON.AON_CSS.aonBorderTop());
+		headerLabel.addStyleName(AON.AON_CSS.aonPre());
+		headerLabel.addStyleName(AON.AON_CSS.aonPre());
+		headerLabel.setText(buf.toString());
+		container.add(headerLabel);
+		
+		
 		oldId = -1;
 		search(params,offset.getValue(),limit, null);
 	}
@@ -140,7 +164,7 @@ public class LedgerPanel extends ScrollPanel implements HasAccountEntrySelection
 		final AonToast toast = new AonToast();
 		final InlineLabel label =  new InlineLabel("Un momento, por favor ...");
 		toast.show("Cargando ...", label);
-		
+
 		XMLHttpRequest xhr = XMLHttpRequest.create();
 		xhr.open(FormPanel.METHOD_POST, LEDGER_STREAM_SERVLET);
 		xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
@@ -159,30 +183,6 @@ public class LedgerPanel extends ScrollPanel implements HasAccountEntrySelection
 						}
 						JavaScriptObject unk = JsonUtils.safeEval(text);
 						JsArray<JsFlatAccountEntryDetail> array = unk.cast();
-						if (array.length() > 0) {
-							StringBuffer buf = new StringBuffer();
-							buf.append(AonStringUtils.rightPad("N\u00BA Diario",10));
-							buf.append(AonStringUtils.rightPad("Fecha",11));
-							buf.append(AonStringUtils.rightPad("Concepto", 33));
-							buf.append(AonStringUtils.leftPad("Debe",17));		
-							buf.append(AonStringUtils.leftPad("Haber",17));
-							buf.append(AonStringUtils.leftPad("Saldo Deudor",17));
-							buf.append(AonStringUtils.leftPad("Saldo Acreedor",17));
-							buf.append(AonStringUtils.SPACE);
-							buf.append(AonStringUtils.rightPad("Contrapartida",26));
-							buf.append(AonStringUtils.SPACE);
-							buf.append(AonStringUtils.rightPad("N\u00BA Documento",15));
-							Label headerLabel = new Label();
-							headerLabel.setStyleName(AON.AON_CSS.aonBold());
-							headerLabel.addStyleName(AON.AON_CSS.aonMarginTop());
-							headerLabel.addStyleName(AON.AON_CSS.aonBorderBottom());
-							headerLabel.addStyleName(AON.AON_CSS.aonBorderTop());
-							headerLabel.addStyleName(AON.AON_CSS.aonPre());
-							headerLabel.addStyleName(AON.AON_CSS.aonPre());
-							headerLabel.setText(buf.toString());
-							container.add(headerLabel);
-							
-						}
 						
 						for (int i = 0; i < array.length(); i++ ) {
 							JsFlatAccountEntryDetail flatEntry = array.get(i);
