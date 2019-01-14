@@ -8,25 +8,20 @@ import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesCSS;
 import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesResources;
-import com.esferalia.aon.gwt.common.client.polymer.AonFilterDialog;
-import com.esferalia.aon.gwt.common.client.widget.AonSuggestOracle;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.occam.api.model.type.OfferType;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -36,9 +31,9 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;
+import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 
 public class CommissionCalculateFilter extends Composite {
 	
@@ -192,19 +187,20 @@ public class CommissionCalculateFilter extends Composite {
 		
 		panel.add(hp);
 		
-		FlowPanel fpanel2 = new FlowPanel(); 
+		HorizontalPanel fpanel2 = new HorizontalPanel(); 
 		fpanel2.getElement().getStyle().setMarginTop(1, Unit.EM);
 		
 		if(parent.isInvoice()) {
+			HorizontalPanel customerHP = new HorizontalPanel();
+			InlineLabel customerLabel = new InlineLabel("Cliente");
+			customerLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+			customerLabel.setWidth("20px");
+			customerHP.add(customerLabel);
+			
 			parent.getAPI().getRegistry().getCustomers(new AsyncCallback<JSON<JsObject>>() {
 			
 				@Override
 				public void onSuccess(JSON<JsObject> r) {
-					InlineLabel customerLabel = new InlineLabel("Cliente");
-					customerLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
-					customerLabel.setWidth("20px");
-					fpanel2.add(customerLabel);
-					
 					AonSuggestOracleMap oracle = new AonSuggestOracleMap();
 					r.getData().stream().forEach(s -> oracle.add(s.getName(), s.getId()));
 					SuggestBox sb = new SuggestBox(oracle);		
@@ -221,7 +217,7 @@ public class CommissionCalculateFilter extends Composite {
 							CommissionCalculateFilter.this.onChange("registry", list);
 						}
 					});
-					fpanel2.add(sb);
+					customerHP.add(sb);
 				}
 			
 				@Override
@@ -229,18 +225,21 @@ public class CommissionCalculateFilter extends Composite {
 				
 				}
 			});	
+			fpanel2.add(customerHP);
 		}
+		
+		
+		HorizontalPanel sellerHP = new HorizontalPanel();
+
+		InlineLabel sellerLabel = new InlineLabel("Comercial");
+		sellerLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+		sellerLabel.setWidth("20px");
+		sellerHP.add(sellerLabel);
 		
 		parent.getAPI().getRegistry().getSellers(new AsyncCallback<JSON<JsObject>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsObject> r) {
-				
-				InlineLabel sellerLabel = new InlineLabel("Comercial");
-				sellerLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
-				sellerLabel.setWidth("20px");
-				fpanel2.add(sellerLabel);
-				
 				AonSuggestOracleMap oracle = new AonSuggestOracleMap();
 				r.getData().stream().forEach(s -> oracle.add(s.getName(), s.getId()));
 				SuggestBox sb = new SuggestBox(oracle);		
@@ -259,7 +258,7 @@ public class CommissionCalculateFilter extends Composite {
 					}
 				});
 
-				fpanel2.add(sb);
+				sellerHP.add(sb);
 			}
 			
 			@Override
@@ -267,17 +266,20 @@ public class CommissionCalculateFilter extends Composite {
 				
 			}
 		});	
+		fpanel2.add(sellerHP);
 		
 		if(parent.isOffer()) {
+			HorizontalPanel supplierHP = new HorizontalPanel();
+
+			InlineLabel supplierLabel = new InlineLabel("Proveedor");
+			supplierLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+			supplierLabel.setWidth("20px");
+			supplierHP.add(supplierLabel);
+		
 			parent.getAPI().getRegistry().getSuppliers(new AsyncCallback<JSON<JsObject>>() {
 			
 				@Override
 				public void onSuccess(JSON<JsObject> r) {
-					InlineLabel supplierLabel = new InlineLabel("Proveedor");
-					supplierLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
-					supplierLabel.setWidth("20px");
-					fpanel2.add(supplierLabel);
-				
 					AonSuggestOracleMap oracle = new AonSuggestOracleMap();
 					r.getData().stream().forEach(s -> oracle.add(s.getName(), s.getId()));
 					SuggestBox sb = new SuggestBox(oracle);		
@@ -295,21 +297,24 @@ public class CommissionCalculateFilter extends Composite {
 							CommissionCalculateFilter.this.onChange("supplier", list);
 						}
 					});
-					fpanel2.add(sb);
+					supplierHP.add(sb);
 				}
 			
 				@Override public void onFailure(Throwable caught) {}
-			});		
+			});	
+			fpanel2.add(supplierHP);
 		
+			HorizontalPanel targetHP = new HorizontalPanel();
+			
+			InlineLabel targetLabel = new InlineLabel("Cliente Potencial");
+			targetLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+			targetLabel.setWidth("20px");
+			targetHP.add(targetLabel);
+			
 			parent.getAPI().getRegistry().getTargets(new AsyncCallback<JSON<JsObject>>() {
 			
 				@Override
 				public void onSuccess(JSON<JsObject> r) {				
-					InlineLabel targetLabel = new InlineLabel("Cliente Potencial");
-					targetLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
-					targetLabel.setWidth("20px");
-					fpanel2.add(targetLabel);
-					
 					AonSuggestOracleMap oracle = new AonSuggestOracleMap();
 					r.getData().stream().forEach(s -> oracle.add(s.getName(), s.getId()));
 					SuggestBox sb = new SuggestBox(oracle);
@@ -327,11 +332,12 @@ public class CommissionCalculateFilter extends Composite {
 							CommissionCalculateFilter.this.onChange("target", list);
 						}	
 					});
-					fpanel2.add(sb);
+					targetHP.add(sb);
 				}	
 				
 				@Override public void onFailure(Throwable caught) {}
 			});	
+			fpanel2.add(targetHP);
 		}
 		
 		// Type	
@@ -362,22 +368,5 @@ public class CommissionCalculateFilter extends Composite {
 		fpanel2.add(typeListBox);
 		
 		panel.add(fpanel2);
-		// STATUS		
-		
-				
-
-		// SERIES - FROM - TO // OR SELECT ONE ON ONNE
-		// CUSTOMER 
-		// COMERCIAL
-		// TIPO
-		
-		
-		
-		
-    }
-    
-    private void statusDialog() {
-    	
 	}
-
 }
