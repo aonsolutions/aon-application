@@ -22,44 +22,51 @@ public class ProductInfo implements IsSerializable{
 	public Integer getRow() {
 		return row;
 	}
-	public void setRow(Integer row) {
+	public ProductInfo setRow(Integer row) {
 		this.row = row;
+		return this;
 	}
 	public Boolean getIsProduct() {
 		return isProduct;
 	}
-	public void setIsProduct(Boolean isProduct) {
+	public ProductInfo setIsProduct(Boolean isProduct) {
 		this.isProduct = isProduct;
+		return this;
 	}
 	public Product getProduct() {
 		return product;
 	}
-	public void setProduct(Product product) {
+	public ProductInfo setProduct(Product product) {
 		this.product = product;
+		return this;
 	}
 	public LinkedList<Tag> getTagList() {
 		return tagList;
 	}
-	public void setTagList(LinkedList<Tag> tagList) {
+	public ProductInfo setTagList(LinkedList<Tag> tagList) {
 		this.tagList = tagList;
+		return this;
 	}
 	public Vector<Item> getItem() {
 		return item;
 	}
-	public void setItem(Vector<Item> item) {
+	public ProductInfo setItem(Vector<Item> item) {
 		this.item = item;
+		return this;
 	}
 	public Set<ProductTag> getTags() {
 		return tags;
 	}
-	public void setTags(Set<ProductTag> tags) {
+	public ProductInfo setTags(Set<ProductTag> tags) {
 		this.tags = tags;
+		return this;
 	}
 	public Item getDownloadItem() {
 		return downloadItem;
 	}
-	public void setDownloadItem(Item downloadItem) {
+	public ProductInfo setDownloadItem(Item downloadItem) {
 		this.downloadItem = downloadItem;
+		return this;
 	}
 
 	

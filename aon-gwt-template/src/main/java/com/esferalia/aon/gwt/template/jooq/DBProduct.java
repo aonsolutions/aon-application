@@ -15,9 +15,12 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.Vector;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Record22;
@@ -412,7 +415,7 @@ public class DBProduct {
 		}
 	}
 		
-	public static Vector<ProductInfo> getProducts(String domain,Integer domainId, Condition condition, String login) {
+	public static LinkedList<ProductInfo> getProducts(String domain,Integer domainId, Condition condition, String login) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId, login);
@@ -430,7 +433,7 @@ public class DBProduct {
 						.orderBy(PRODUCT.NAME)
 						.fetch();
 			
-			Vector<ProductInfo> v = new Vector<ProductInfo>();
+			LinkedList<ProductInfo> v = new LinkedList<ProductInfo>();
 			
 			for(Record22<String, String, String, String, Byte, Integer, Integer, Byte, Byte, Byte, Byte, Double, Double, String, String, String, String, String, Integer, String, Byte, Byte> r : data){
 				ProductInfo pi = new ProductInfo();
@@ -507,6 +510,79 @@ public class DBProduct {
 			if (ctx != null) ctx.close();
 		}
 	}
+	
+	public static LinkedList<ProductInfo> getProducts222(String domain,Integer domainId, Condition condition, String login) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain, domainId, login);
+			
+			return ctx.getDslContext().selectDistinct(PRODUCT.CODE,PRODUCT.NAME,PCATEGORY.NAME
+						,BRAND.NAME,PRODUCT.TYPE,PRODUCT.VAT, PRODUCT.RETENTION,PRODUCT.INVENTORIABLE,PRODUCT.COMPOSITION
+						,PRODUCT.COMPOSITION_PRICE,PRODUCT.STATUS,ITEM.PURCHASE_PRICE,ITEM.PRICE,ITEM.BARCODE,ITEM.DESCRIPTION
+						,ITEM.DETAIL,ITEM.DETAIL2,ITEM.DETAIL3,PRODUCT.ID, ITEM.SERIAL_NUMBER, PRODUCT.SERIALIZABLE, PRODUCT.LOTABLE)
+						.from(PRODUCT).join(ITEM).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+						.leftOuterJoin(PRODUCT_TAG).on(PRODUCT.ID.eq(PRODUCT_TAG.PRODUCT))
+						.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.eq(PCATEGORY.ID))
+						.leftOuterJoin(BRAND).on(PRODUCT.BRAND.eq(BRAND.ID))
+						.where(condition)
+						.orderBy(PRODUCT.NAME)
+						.fetch().stream().map(new ProductInfoFiller())
+						.collect(Collectors.toCollection(LinkedList::new));
+			
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static class ProductInfoFiller implements Function<Record, ProductInfo> {
+		@Override
+		public ProductInfo apply(Record r) {
+			
+			ProductInfo pi = new ProductInfo();
+			Item i = new Item()
+					.setCode(r.getValue(PRODUCT.CODE))
+					.setName(r.getValue(PRODUCT.NAME))
+					.setCategory(r.getValue(PCATEGORY.NAME) != null ? r.getValue(PCATEGORY.NAME) : "")
+					.setBrand(r.getValue(BRAND.NAME) != null ? r.getValue(BRAND.NAME) : "")
+					.setType(r.getValue(PRODUCT.TYPE) != null ? com.esferalia.aon.occam.api.model.type.ProductType.values()[r.getValue(PRODUCT.TYPE)] : null)
+					.setVat(new com.esferalia.aon.occam.api.model.product.Tax().setName(""))
+					.setRetention(new com.esferalia.aon.occam.api.model.product.Tax().setName(""))
+					.setInventoriable(r.getValue(PRODUCT.INVENTORIABLE) == 1)
+					.setComposition(r.getValue(PRODUCT.INVENTORIABLE) == 1)
+					.setCompositionPrice(r.getValue(PRODUCT.COMPOSITION_PRICE) == 1)
+					.setStatus(r.getValue(PRODUCT.STATUS))
+					.setPurchasePrice(r.getValue(ITEM.PURCHASE_PRICE))
+					.setPrice(r.getValue(ITEM.PRICE))
+					.setBarcode(r.getValue(ITEM.BARCODE) != null ? r.getValue(ITEM.BARCODE) : "")
+					.setDescription(r.getValue(ITEM.DESCRIPTION) != null ? r.getValue(ITEM.DESCRIPTION) : "")
+					.setDetail(r.getValue(ITEM.DETAIL) != null ? r.getValue(ITEM.DETAIL) : "")
+					.setDetail2(r.getValue(ITEM.DETAIL2) != null ? r.getValue(ITEM.DETAIL2) : "")
+					.setDetail3(r.getValue(ITEM.DETAIL3) != null ? r.getValue(ITEM.DETAIL3) : "")
+					.setSerialNumber(r.getValue(ITEM.SERIAL_NUMBER) != null ? r.getValue(ITEM.SERIAL_NUMBER) : "")
+					;
+					
+			Product p = new Product()
+					.setCode(r.getValue(PRODUCT.CODE))
+					.setName(r.getValue(PRODUCT.NAME))
+					.setType(r.getValue(PRODUCT.TYPE) != null ?  ProductType.values()[r.getValue(PRODUCT.TYPE)].value() : null)
+					.setInventoriable(r.getValue(PRODUCT.INVENTORIABLE))
+					.setComposition(r.getValue(PRODUCT.INVENTORIABLE))
+					.setCompositionPrice(r.getValue(PRODUCT.COMPOSITION_PRICE))
+					.setStatus(r.getValue(PRODUCT.STATUS))
+					.setSerializable(r.getValue(PRODUCT.SERIALIZABLE) != null ? r.getValue(PRODUCT.SERIALIZABLE) : null)
+					.setLotable(r.getValue(PRODUCT.LOTABLE) != null ? r.getValue(PRODUCT.LOTABLE) : null)
+					;
+			
+			pi.setProduct(p);
+		//	Set<ProductTag> tags = getTags(ctx.getDslContext(), r.value19());
+			pi.setTags(new HashSet<ProductTag>());
+			pi.setDownloadItem(i);
+				
+			
+			return pi;
+		}
+	}
+	
 	
 	public static Set<ProductTag> getTags(DSLContext dslContext, Integer id ){
 		Result<Record1<String>> data = dslContext.select(TAG.NAME)

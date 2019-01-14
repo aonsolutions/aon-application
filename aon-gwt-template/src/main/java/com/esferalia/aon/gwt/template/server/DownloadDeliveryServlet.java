@@ -11,6 +11,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Vector;
 
@@ -392,7 +393,7 @@ public class DownloadDeliveryServlet extends HttpServlet {
 			}
         }
         
-        Vector<ProductInfo> v =  DBProduct.getProducts(domainName,domainId,c, login);
+        LinkedList<ProductInfo> v =  DBProduct.getProducts(domainName,domainId,c, login);
 
         for(Integer j = 0; j< v.size();j++){
         	Row row = hoja.createRow(j+2);

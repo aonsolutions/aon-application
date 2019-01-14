@@ -12,8 +12,8 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.Locale;
-import java.util.Vector;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -101,7 +101,6 @@ public class DownloadProductServlet extends HttpServlet {
         String login = p_request.getParameter("username");
         
         String tags = p_request.getParameter("tags");
-        
         
         Integer domainId = Integer.parseInt(domain_id);
         String domainName = AonServletUtils.getRequestDomainName(p_request);
@@ -232,7 +231,10 @@ public class DownloadProductServlet extends HttpServlet {
         }
         if(!statuses.equals("null") && !statuses.equals("") && !statuses.equals("undefined")){
         	String s= statuses.substring(1) ;
-        	while(s !=""){
+        	if(s.indexOf("$") == -1) {
+        		c = c.and(PRODUCT.STATUS.eq((byte)Integer.parseInt(s)));
+        	}
+ /*      	while(s !=""){
         		Integer index = s.indexOf("$");
         		if(index == -1){
         			c = c.and(PRODUCT.STATUS.eq((byte)Integer.parseInt(s)));
@@ -242,7 +244,7 @@ public class DownloadProductServlet extends HttpServlet {
         			c = c.and(PRODUCT.STATUS.eq((byte)Integer.parseInt(s.substring(0, index))));
         			s = s.substring(index+1);
         		}
-        	}
+        	}*/
         }
         if(!tags.equals("null") && !tags.equals("") && !tags.equals("undefined")){
         	String s= tags.substring(1) ;
@@ -415,8 +417,20 @@ public class DownloadProductServlet extends HttpServlet {
 				e.printStackTrace();
 			}
         }
-
-        Vector<ProductInfo> v =  DBProduct.getProducts(domainName,domainId,c, login);
+        
+        LinkedList<ProductInfo> v =  new LinkedList<ProductInfo>();
+        Boolean hasVat = false;
+        Boolean hasRet = false;
+        Boolean hasTag = false;
+        
+        for (String r : aux.getColumns()) {
+			if("Etiqueta".equals(r)) hasTag = true;
+			if("IVA".equals(r)) hasVat = true;
+			if("IRPF".equals(r)) hasRet = true;
+        }
+        if(hasVat || hasRet || hasTag) {
+        	v = DBProduct.getProducts(domainName, domainId, c, login);
+        } else v = DBProduct.getProducts222(domainName,domainId,c, login);
 
         for(Integer j = 0; j< v.size();j++){
         	Row row = hoja.createRow(j+2);
