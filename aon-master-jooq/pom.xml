@@ -36,7 +36,7 @@
 				<!-- Specify the maven code generator plugin -->
 				<groupId>org.jooq</groupId>
 				<artifactId>jooq-codegen-maven</artifactId>
-				<version>3.8.4</version>
+				<version>3.11.9</version>
 
 				<!-- The plugin should hook into the generate goal -->
 				<executions>
@@ -70,11 +70,11 @@
 
 					<!-- Generator parameters -->
 					<generator>
-						<name>org.jooq.util.DefaultGenerator</name>
+						<name>org.jooq.codegen.DefaultGenerator</name>
 
 						<database>
 							<!-- MySQL database dialect from jooq-meta. -->
-							<name>org.jooq.util.mysql.MySQLDatabase</name>
+							<name>org.jooq.meta.mysql.MySQLDatabase</name>
 
       							<!-- All elements are generated from our schema  -->
 							<includes>.*</includes>
@@ -107,7 +107,7 @@
 		<dependency>
 			<groupId>org.jooq</groupId>
 			<artifactId>jooq</artifactId>
-			<version>3.8.4</version>
+			<version>3.11.9</version>
 		</dependency>
 
 	</dependencies>

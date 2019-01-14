@@ -66,13 +66,13 @@
 		<dependency>
 			<groupId>org.jooq</groupId>
 			<artifactId>jool</artifactId>
-			<version>0.9.6</version>
+			<version>0.9.12</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.jooq</groupId>
 			<artifactId>jooq</artifactId>
-			<version>3.8.4</version>
+			<version>3.11.9</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
