@@ -11,7 +11,6 @@ import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.fiscal.client.mod184.Model184Income2016.IModel184IncomeCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184Income;
 import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -398,8 +397,6 @@ public class Model1842016IncomePanel extends SimpleLayoutPanel implements Focusa
 			@Override
 			public void onValueChange(ValueChangeEvent<Double> event) {
 				income.setAccountingResult(accountingResult.getValue());
-				income.setNetYield( AonMathUtils.round(income.getAccountingResult() - income.getExpenses()));
-				netYield.setValue(income.getNetYield());
 				callback.onValueChanged(income);
 			}
 		});
@@ -411,15 +408,20 @@ public class Model1842016IncomePanel extends SimpleLayoutPanel implements Focusa
 			@Override
 			public void onValueChange(ValueChangeEvent<Double> event) {
 				income.setExpenses(expenses.getValue());
-				income.setNetYield( AonMathUtils.round(income.getAccountingResult() - income.getExpenses()));
-				netYield.setValue(income.getNetYield());
 				callback.onValueChanged(income);
 			}
 		});
 		tab2.setWidget(5, 1, expenses);
 		
-		netYield.setEnabled(false);
 		netYield.setValue(income.getNetYield());
+		netYield.addValueChangeHandler(new ValueChangeHandler<Double>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Double> event) {
+				income.setNetYield(netYield.getValue());
+				callback.onValueChanged(income);
+			}
+		});
 		tab2.setWidget(5, 2, netYield);
 		
 		
