@@ -803,7 +803,11 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 	public Integer getTimeUnits() {
 		return salaryDraft.getTimeUnits();
 	}
-
+	
+	
+	public boolean isSettle() {
+		return salaryDraft.getType() == Type.SETTLE;
+	}
 	
 	// ------------------------------------------
 	// Payroll

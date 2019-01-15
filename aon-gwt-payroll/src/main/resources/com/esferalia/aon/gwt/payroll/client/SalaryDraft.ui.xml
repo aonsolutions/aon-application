@@ -259,6 +259,8 @@
 									enabled="false" />
 								<g:Button debugId='salaryButton' ui:field='salaryButton'
 									styleName='aon-finding-toolbar-item aon-icon-accept' text="EMITIR NOMINA" />
+								<g:Button debugId='salaryButton' ui:field='settleButton'
+									styleName='aon-finding-toolbar-item aon-icon-accept' text="EMITIR FINIQUITO" visible="false"/>
 								<g:Button debugId='printPreviewButton' ui:field='printPreviewButton'
 									styleName='aon-finding-toolbar-item {res.css.aonIconPdfPreview}'
 									text="Vista Preliminar" />

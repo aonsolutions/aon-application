@@ -2255,6 +2255,8 @@ public class SalaryDraft extends ResizeComposite
 	Button acceptButton;
 	@UiField
 	Button salaryButton;
+	@UiField
+	Button settleButton;
 
 	@UiField
 	Button fxButton;
@@ -2360,7 +2362,10 @@ public class SalaryDraft extends ResizeComposite
 
 	@Override
 	public void onChange(SalarySelect salarySelect) {
+		salaryButton.setVisible(!isSettle());
+		settleButton.setVisible(isSettle());
 		salaryDraftObject.calculate(this);
+		
 	}
 
 	@Override
@@ -3162,47 +3167,51 @@ public class SalaryDraft extends ResizeComposite
 		salaryDraftObject.save(this);
 	}
 
+	@UiHandler("settleButton")
+	void onSettleButtonClick(ClickEvent event) {
+		salaryDraftObject.emitSalary(this);
+	}
+	
 	@UiHandler("salaryButton")
 	void onSalaryButtonClick(ClickEvent event) {
-		if (autoSave)
-			salaryDraftObject.saveITData(new CalculateCallback() {
-				@Override
-				public Calculate getCalculate() {
-					return SalaryDraft.this.getCalculate();
-				}
 
-				@Override
-				public void onCalculateSucces(SalaryDraftObject object) {
-					
-					salaryDraftObject.save(new CalculateCallback() {
+			
+		salaryDraftObject.saveITData(new CalculateCallback() {
+			@Override
+			public Calculate getCalculate() {
+				return SalaryDraft.this.getCalculate();
+			}
 
-						@Override
-						public Calculate getCalculate() {
-							return SalaryDraft.this.getCalculate();
-						}
-						@Override
-						public void onCalculateSucces(SalaryDraftObject object) {
-							SalaryDraft.this.onCalculateSucces(object); // TODO:
-																		// It's
-																		// necessary
-																		// ?
-							SalaryDraft.this.salaryDraftObject.emitSalary(SalaryDraft.this);
-						}
+			@Override
+			public void onCalculateSucces(SalaryDraftObject object) {
+				
+				salaryDraftObject.save(new CalculateCallback() {
 
-						@Override
-						public void onCalculateFailure(Throwable throwable) {
-							SalaryDraft.this.onCalculateFailure(throwable);
-						}
-					});
-				}
+					@Override
+					public Calculate getCalculate() {
+						return SalaryDraft.this.getCalculate();
+					}
+					@Override
+					public void onCalculateSucces(SalaryDraftObject object) {
+						SalaryDraft.this.onCalculateSucces(object); // TODO:
+																	// It's
+																	// necessary
+																	// ?
+						SalaryDraft.this.salaryDraftObject.emitSalary(SalaryDraft.this);
+					}
 
-				@Override
-				public void onCalculateFailure(Throwable throwable) {
-					SalaryDraft.this.onCalculateFailure(throwable);
-				}
-			});
-		else
-			salaryDraftObject.emitSalary(this);
+					@Override
+					public void onCalculateFailure(Throwable throwable) {
+						SalaryDraft.this.onCalculateFailure(throwable);
+					}
+				});
+			}
+
+			@Override
+			public void onCalculateFailure(Throwable throwable) {
+				SalaryDraft.this.onCalculateFailure(throwable);
+			}
+		});
 	}
 
 	@UiHandler("contextTableButton")
