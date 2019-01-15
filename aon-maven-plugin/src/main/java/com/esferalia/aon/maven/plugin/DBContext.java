@@ -26,12 +26,12 @@ import org.apache.velocity.app.Velocity;
 /********************************************************************
 * Copyright (c) 2011, esferalia NETWORKS S.A
 *
-* The copyright of the computer program herein is the property 
+* The copyright of the computer program herein is the property
 * of esferalia NETWORKS.
 *********************************************************************
-* The program may be used and/or copied only with the written 
-* permission of esferalia NETWORKS, or in accordance with the 
-* terms and conditions stipulated in the agreement contract 
+* The program may be used and/or copied only with the written
+* permission of esferalia NETWORKS, or in accordance with the
+* terms and conditions stipulated in the agreement contract
 * under which the program has been supplied.
 *********************************************************************
 */
@@ -39,9 +39,9 @@ import org.apache.velocity.app.Velocity;
 
 
 public class DBContext extends VelocityContext{
-	
-	
-	private static final Hashtable<Integer, String> SQLTYPE2JAVACLASS= 
+
+
+	private static final Hashtable<Integer, String> SQLTYPE2JAVACLASS=
 		new Hashtable<Integer, String>() {
 			private static final long serialVersionUID = 1L;
 
@@ -49,14 +49,14 @@ public class DBContext extends VelocityContext{
 				put(Types.TIME, "Time");
 				put(Types.DATE, "Date");
 				put(Types.TIMESTAMP, "Timestamp");
-				
+
 				put(Types.CHAR, "String");
 				put(Types.VARCHAR, "String");
 				put(Types.LONGVARCHAR, "String");
 				put(Types.LONGNVARCHAR, "String");
 				//put(Types.LONGVARCHAR, "InputStream");
 				//put(Types.LONGNVARCHAR, "InputStream");
-				
+
 
 				put(Types.BIGINT, "Long");
 				put(Types.DOUBLE, "Double");
@@ -64,33 +64,33 @@ public class DBContext extends VelocityContext{
 				put(Types.INTEGER, "Integer");
 				put(Types.DECIMAL, "BigDecimal");
 				put(Types.SMALLINT, "Integer");
-				
+
 				put(Types.BINARY, "Byte");
 
 				put(Types.BIT, "Boolean");
 				put(Types.BOOLEAN, "Boolean");
-				
-				
+
+
 				put(Types.BLOB, "Blob");
 				put(Types.LONGVARBINARY, "InputStream");
-				
+
 			}
 		};
 
-		
-	
+
+
 	private DatabaseMetaData dbMetaData;
 	private HashMap<String, Table> tables ;
-	
+
 	public class Column {
-		
+
 		private int type;
 		private int size;
 		private String name;
 		private String remarks;
 		private String defaultValue;
 		private boolean isAutoIncrement;
-		
+
 
 		private void init (ResultSet rs) throws SQLException
 		{
@@ -109,11 +109,11 @@ public class DBContext extends VelocityContext{
 		public Column( ResultSet rs ) throws SQLException {
 			init(rs);
 		}
-		
+
 		public String getName() {
 			return name;
 		}
-		
+
 		public String getJavaName() {
 			return DBContext.this.getJavaName(name);
 		}
@@ -121,7 +121,7 @@ public class DBContext extends VelocityContext{
 		public int getType(){
 			return type;
 		}
-		
+
 		public int getSize(){
 			return size;
 		}
@@ -129,14 +129,14 @@ public class DBContext extends VelocityContext{
 		public String getRemarks() {
 			return remarks;
 		}
-		
+
 		public String getDefaultValue() {
 			if ( defaultValue == null )
 				return null;
 			switch (type) {
 			case Types.BIT:
 			case Types.BOOLEAN:
-				return defaultValue.equals("0") ? "false" : "true"; 
+				return defaultValue.equals("0") ? "false" : "true";
 			case Types.CHAR:
 			case Types.VARCHAR:
 				return '"' + defaultValue + '"';
@@ -155,14 +155,14 @@ public class DBContext extends VelocityContext{
 			}
 			return SQLTYPE2JAVACLASS.get(type);
 		}
-		
+
 		public boolean isAutoIncrement() {
 			return isAutoIncrement;
 		}
-		
+
 		@Override
 		public String toString() {
-			
+
 			return StringUtils.capitalize(getJavaName());
 		}
 	}
@@ -173,37 +173,40 @@ public class DBContext extends VelocityContext{
 		private String remarks;
 		private List<Column> pkColumns;
 		private Map<String,Column> columns;
-		private ArrayList<ForeignKey> childs; 
-		private ArrayList<ForeignKey> parents; 
+		private ArrayList<ForeignKey> childs;
+		private ArrayList<ForeignKey> parents;
 		private boolean isAutoIncrement = false;
-		
+
 		public Table( String name, String remarks) throws SQLException {
 			this.name = name;
 			this.remarks = remarks != null ? remarks : "";
 			this.initColumns();
 		}
-		
+
 		private void initColumns() throws SQLException{
 			this.columns = new LinkedHashMap<String, Column>();
 			this.size = 0;
 			ResultSet rs ;
-			rs = dbMetaData.getColumns(null, null, name, null);
+
+			String catalog = dbMetaData.getConnection().getCatalog();
+			String schema = dbMetaData.getConnection().getSchema();
+			rs = dbMetaData.getColumns(catalog, schema, name, null);
 			while  (rs.next() ){
 				String name = rs.getString("COLUMN_NAME");
 				Column column = new Column(rs);
 				columns.put(name, column);
-				if ( column.type != Types.BLOB && 
-					column.type != Types.LONGVARCHAR &&	
-					column.type != Types.LONGNVARCHAR &&	
+				if ( column.type != Types.BLOB &&
+					column.type != Types.LONGVARCHAR &&
+					column.type != Types.LONGNVARCHAR &&
 					column.type != Types.LONGVARBINARY){
 					this.size += column.size;
 				}
 				this.isAutoIncrement |= column.isAutoIncrement();
 			}
 			rs.close();
-			
+
 			this.pkColumns = new LinkedList<Column>();
-			rs = dbMetaData.getPrimaryKeys(null, null, name);
+			rs = dbMetaData.getPrimaryKeys(catalog, schema, name);
 			while  (rs.next() ){
 				String name = rs.getString("COLUMN_NAME");
 				this.pkColumns.add(this.columns.get(name));
@@ -214,11 +217,11 @@ public class DBContext extends VelocityContext{
 		public int getSize() {
 			return this.size;
 		}
-		
+
 		public String getName() {
 			return name;
 		}
-		
+
 		public String getJavaName() {
 			return DBContext.this.getJavaName(name);
 		}
@@ -226,17 +229,17 @@ public class DBContext extends VelocityContext{
 		public String getRemarks() {
 			return remarks;
 		}
-		
+
 		public boolean isAutoIncrement() {
 			return isAutoIncrement;
 		}
-		
+
 		@Override
 		public String toString() {
-			
+
 			return StringUtils.capitalize(getJavaName());
 		}
-		
+
 		public int getColumnCount() {
 			return this.columns.size();
 		}
@@ -250,14 +253,14 @@ public class DBContext extends VelocityContext{
 		}
 
 		public Column [] getColumns() throws SQLException {
-			return this.columns.values().toArray(new Column[]{}); 
+			return this.columns.values().toArray(new Column[]{});
 		}
-		
+
 		public ForeignKey [] getChilds() throws SQLException {
 			if ( childs == null ){
-				childs = 
+				childs =
 					new ArrayList<ForeignKey>();
-				ResultSet rs = 
+				ResultSet rs =
 					dbMetaData.getExportedKeys(null,null, name);
 				ForeignKey foreignKey = null;
 				String previousFK = null;
@@ -277,12 +280,12 @@ public class DBContext extends VelocityContext{
 			}
 			return childs.toArray(new ForeignKey[]{});
 		}
-	
+
 		public ForeignKey [] getParents() throws SQLException {
 			if ( parents == null ){
-				parents = 
+				parents =
 					new ArrayList<ForeignKey>();
-				ResultSet rs = 
+				ResultSet rs =
 					dbMetaData.getImportedKeys(null,null, name);
 				ForeignKey foreignKey = null;
 				String previousTable = null;
@@ -309,39 +312,39 @@ public class DBContext extends VelocityContext{
 		private Table table;
 		private ArrayList<Column> pkColumns;
 		private ArrayList<Column> fkColumns;
-		
+
 		public ForeignKey( String name ,
-				String table ) throws SQLException 
+				String table ) throws SQLException
 		{
 			this.name = name;
 			this.table = tables.get(table); //new Table (table, "");
 			this.fkColumns = new ArrayList<Column>();
 			this.pkColumns = new ArrayList<Column>();
 		}
-		
-		
+
+
 		public String getName() {
 			return name;
 		}
-		
+
 		public Table getTable() {
 			return table;
 		}
-		
+
 		public List<Column> getFkColumns() {
 			return fkColumns;
 		}
-		
+
 		public List<Column> getPkColumns() {
 			return pkColumns;
 		}
 
-		public void addFkColumn ( String table, String column ) 
+		public void addFkColumn ( String table, String column )
 		throws SQLException{
 			fkColumns.add(tables.get(table).getColumn(column));
 		}
-		
-		public void addPkColumn ( String table, String column ) 
+
+		public void addPkColumn ( String table, String column )
 		throws SQLException{
 			pkColumns.add(tables.get(table).getColumn(column));
 		}
@@ -351,15 +354,18 @@ public class DBContext extends VelocityContext{
 			return StringUtils.capitalize(name);
 		}
 	}
-	
+
 	public DBContext(DatabaseMetaData dbMetaData) throws SQLException {
 		super();
-		
+
 		this.dbMetaData = dbMetaData;
 		this.tables = new HashMap<String, Table>();
-		
-		ResultSet rs = 
-			dbMetaData.getTables(null, null, null, new String [] {"TABLE"});
+
+		String catalog = dbMetaData.getConnection().getCatalog();
+		String schema = dbMetaData.getConnection().getSchema();
+
+		ResultSet rs =
+			dbMetaData.getTables(catalog , schema, null, new String [] {"TABLE"});
 		while ( rs.next() ) {
 			String name  = rs.getString("TABLE_NAME");
 			String remarks = rs.getString("REMARKS");
@@ -367,14 +373,14 @@ public class DBContext extends VelocityContext{
 			tables.put(name, table);
 		}
 		rs.close();
-		
+
 		put("StringUtils", this );
 	}
-	
+
 	public String getJavaName(String name) {
-		StringBuffer javaName = 
+		StringBuffer javaName =
 			new StringBuffer();
-		StringTokenizer tk = 
+		StringTokenizer tk =
 			new StringTokenizer(name, "_", false);
 		javaName.append(tk.nextToken());
 		while ( tk.hasMoreTokens()) {
@@ -382,10 +388,10 @@ public class DBContext extends VelocityContext{
 		}
 		return javaName.toString();
 	}
-	
+
 	public List<Table> getTables(String patterns []) {
 		List<Table> list = new LinkedList<Table>();
-		
+
 		for (String tableName: tables.keySet()) {
 			for (String pattern : patterns) {
 				if ( Pattern.matches(pattern, tableName) ) {
@@ -394,16 +400,16 @@ public class DBContext extends VelocityContext{
 				}
 			}
 		}
-		
+
 		return list;
 	}
-	
-	
-	public String reverse(String str ) { 
+
+
+	public String reverse(String str ) {
 		return StringUtils.reverse(str);
 	}
-	
-	public String capitalize(String str ) { 
+
+	public String capitalize(String str ) {
 		return StringUtils.capitalize(str);
 	}
 
@@ -412,7 +418,7 @@ public class DBContext extends VelocityContext{
     {
     	return Velocity.evaluate(context, writer, logTag, reader);
     }
-	
+
 	public static boolean evaluate( Connection conn, Writer writer,String logTag, Reader reader )
     throws IOException, SQLException
     {
@@ -420,5 +426,5 @@ public class DBContext extends VelocityContext{
 		DBContext dbContext = new DBContext(dbMetaData);
     	return Velocity.evaluate(dbContext, writer, logTag, reader);
     }
-	
+
 }

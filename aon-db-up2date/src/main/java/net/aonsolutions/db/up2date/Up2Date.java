@@ -13,6 +13,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+import java.util.TimeZone;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -28,8 +30,8 @@ import net.aonsolutions.db.up2date.tgss.Bases2019Update;
 import net.aonsolutions.db.up2date.tgss.Bases2019UpdateII;
 
 public class Up2Date {
-	
-	
+
+
 
     private static Update [] UPDATES  = {
     		//IRPF2018UPDATE,
@@ -59,19 +61,19 @@ public class Up2Date {
     		//HOLIDAYS2019INSERT,
     		//BASES2019UPDATE
     		BASES2019UPDATEII
-    		
-    }; 
-	
-	
+
+    };
+
+
 	// ------------------------------------------------------------------------
-	
-	
+
+
 
 
     @SuppressWarnings("static-access")
     public static void main(String[] args) {
-    	 
-    	
+
+
 		 Option hostOption = OptionBuilder
 		     .hasArg()
 			 .isRequired()
@@ -103,14 +105,14 @@ public class Up2Date {
 				 .withLongOpt("help")
 		         .withDescription("Display this help and exit.")
 		         .create("?");
-		 
+
 		 Options options = new Options();
 		 options.addOption(helpOption);
 		 options.addOption(hostOption);
 		 options.addOption(portOption);
 		 options.addOption(userOption);
 		 options.addOption(passwordOption);
-		 
+
 		 Statement statement = null;
 		 ResultSet databasesRs = null;
 		 Connection connection = null;
@@ -119,28 +121,31 @@ public class Up2Date {
 		 try {
 			Class.forName("com.mysql.jdbc.Driver");
 			CommandLine commandLine = parser.parse(options, args);
-			
+
 			String host = commandLine.getOptionValue(hostOption.getLongOpt());
 			String port = commandLine.getOptionValue(portOption.getLongOpt(), "3306");
 			String user = commandLine.getOptionValue(userOption.getLongOpt());
 			String password = commandLine.getOptionValue(passwordOption.getLongOpt());
-			
+
+			Properties properties = new Properties();
+			properties.setProperty("user", user);
+			properties.setProperty("password", password);
+			properties.setProperty("serverTimezone", TimeZone.getDefault().getID());
 			String url = String.format("jdbc:mysql://%s:%s/information_schema", host, port);
-			
-			connection = DriverManager.getConnection(url, user, password);
-			
+			connection = DriverManager.getConnection(url, properties);
+
 			statement = connection.createStatement();
 			databasesRs = statement.executeQuery("SELECT `TABLE_SCHEMA` FROM `TABLES` WHERE `TABLE_NAME`='registry'");
 			List<String> databases = new ArrayList<String>();
 			while ( databasesRs.next() )
 				databases.add(databasesRs.getString(1));
-			
+
 			for ( String database : databases ) {
-				
+
 				System.out.print(String.format("Updating database  `%s`" ,database  ));
-				
+
 				statement.executeQuery(String.format("USE `%s`", database));
-				
+
 				for ( Update update : UPDATES ) {
 					try {
 						update.upgrade(connection);
@@ -150,14 +155,14 @@ public class Up2Date {
 					}
 				}
 
-				
+
 			}
-			
+
 		} catch (ParseException e) {
 			// oops, somthing went wrong
 			System.out.println("Error: " + e.getLocalizedMessage());
 			new HelpFormatter().printHelp(Up2Date.class.getSimpleName(), options);
-		} catch (SQLException e) { 
+		} catch (SQLException e) {
 			System.out.println("Error: " + e.getLocalizedMessage());
 		} catch (ClassNotFoundException e) {
 			System.out.println("Error: " + e.getLocalizedMessage());
@@ -173,7 +178,7 @@ public class Up2Date {
 				System.err.println("Oops, something went wrong, " + e.getLocalizedMessage());
 			}
 		}
-	     
+
 	}
 
 }

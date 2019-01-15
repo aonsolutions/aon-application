@@ -13,6 +13,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TimeZone;
 import java.util.Vector;
 
 public class ConnectionInfo {
@@ -22,6 +23,7 @@ public class ConnectionInfo {
 	private static final String DRIVER_CLASS_PROPERTY = "driverClass";
 	private static final String USER_PROPERTY = "user";
 	private static final String PASSWORD_PROPERTY = "password";
+	private static final String TIMEZONE_PROPERTY = "timezone";
 	private static final String JDBC_URL_PROPERTY = "jdbcUrl";
 
 	private static final String MYSQL_SCHEMA = "mysql";
@@ -32,6 +34,7 @@ public class ConnectionInfo {
 	private String url;
 	private String user;
 	private String password;
+	private String timeZone;
 
 	private static ConnectionInfo DEFAULT_CONNNECTION;
 
@@ -81,6 +84,14 @@ public class ConnectionInfo {
 		this.password = password;
 	}
 
+	public String getTimeZone() {
+		return timeZone;
+	}
+
+	public void setTimeZone(String timeZone) {
+		this.timeZone = timeZone;
+	}
+
 	public void load(InputStream in) throws IOException {
 		Properties props = new Properties();
 		props.load(in);
@@ -88,6 +99,7 @@ public class ConnectionInfo {
 		setUser(props.getProperty(USER_PROPERTY));
 		setPassword(props.getProperty(PASSWORD_PROPERTY));
 		setUrl(props.getProperty(JDBC_URL_PROPERTY));
+		setTimeZone(props.getProperty(TIMEZONE_PROPERTY, TimeZone.getDefault().getID()));
 	}
 
 	public void load(File propertiesfile) throws AonConnectionException {
@@ -123,12 +135,16 @@ public class ConnectionInfo {
 	private Connection getConnection(String schema) throws AonConnectionException {
 		try {
 			Class.forName(getDriverClass());
-			return DriverManager.getConnection(getSchemaUrl(schema), getUser(),getPassword());
+			Properties properties = new Properties();
+			properties.setProperty("user", getUser());
+			properties.setProperty("password", getPassword());
+			properties.setProperty("serverTimezone", getTimeZone());
+			return DriverManager.getConnection(getSchemaUrl(schema), properties);
 		} catch (ClassNotFoundException e) {
 			throw new AonConnectionException(e.getMessage(),e);
 		} catch (SQLException e) {
 			throw new AonConnectionException(e.getMessage(),e);		}
-		
+
 	}
 
 	public String getSchemaUrl(String schema) {
@@ -184,9 +200,9 @@ public class ConnectionInfo {
 			closeQuietly(rs);
 			closeQuietly(ps);
 			closeQuietly(c);
-		}	
+		}
 	}
-	
+
 	public List<String> getSchemaDomains(String schema) throws AonConnectionException{
 		Connection c = null;
 		PreparedStatement ps = null;
@@ -201,7 +217,7 @@ public class ConnectionInfo {
 			List<String> list = new Vector<String>();
 			while (rs.next()) {
 				list.add(rs.getString(1));
-				
+
 			}
 			return list;
 		} catch (SQLException e) {
@@ -210,9 +226,9 @@ public class ConnectionInfo {
 			closeQuietly(rs);
 			closeQuietly(ps);
 			closeQuietly(c);
-		}	
+		}
 	}
-	
+
 	public String getSchemaFirstDomain(String schema) throws AonConnectionException{
 		Connection c = null;
 		PreparedStatement ps = null;
@@ -227,7 +243,7 @@ public class ConnectionInfo {
 			String s = "";
 			if (rs.next()) {
 				s = rs.getString(1);
-				
+
 			}
 			return s;
 		} catch (SQLException e) {
@@ -236,9 +252,9 @@ public class ConnectionInfo {
 			closeQuietly(rs);
 			closeQuietly(ps);
 			closeQuietly(c);
-		}	
+		}
 	}
-	
+
 	public Map<String, String> getDomains() throws AonConnectionException {
 		Connection c = null;
 		PreparedStatement ps = null;
@@ -275,7 +291,7 @@ public class ConnectionInfo {
 			closeQuietly(c);
 		}
 	}
-	
+
 	public Map<String, Integer> getDomainMap() throws AonConnectionException {
 		Connection c = null;
 		PreparedStatement ps = null;

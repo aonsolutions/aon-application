@@ -453,7 +453,7 @@ public class DBContext extends VelocityContext{
 
     	try {
     		// first of all load JDBC driver
-            Class.forName("org.gjt.mm.mysql.Driver");
+            Class.forName("com.mysql.jdbc.Driver");
             Class.forName("com.transtools.jdbc.CtsqlJdbcDriver");
 
             // parse the command line arguments

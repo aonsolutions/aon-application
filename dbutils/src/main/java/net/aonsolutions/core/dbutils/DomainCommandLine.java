@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Properties;
+import java.util.TimeZone;
 
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -25,43 +27,50 @@ public class DomainCommandLine {
 	private static final String DRIVER_CLASS_ARGUMENT = "driverClass";
 
 	public static final String FILE_ARGUMENT = "file";
-	
+
 	public static final String DESCRIPTION_ARGUMENT = "description";
-	
+
 	public static final String OWNER_ARGUMENT = "owner";
-	
+
 	public static final String NEW_NAME_ARGUMENT = "newName";
 
 	public static final String DOMAIN_ARGUMENT = "domain";
-	
+
 	public static final String PARENT_ARGUMENT = "parent";
 
 	public static final String INCLUDE_PARENT_ARGUMENT = "includeParent";
 
 	private static final String PASSWORD_ARGUMENT = "password";
 
+	private static final String TIMEZONE_ARGUMENT = "timezone";
+
 	private static final String USER_ARGUMENT = "user";
 
 	private static final String URL_ARGUMENT = "url";
-	
+
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainCommandLine.class);
-	
+
 	private Options options;
-	
+
 	private CommandLine line;
-	
+
 	public DomainCommandLine() {
 		options = new Options();
-		
+
 		Option userOption = OptionBuilder.withDescription( "user of database connection" )
 				.withArgName( "login" ).hasArg().create(USER_ARGUMENT);
-		userOption.setRequired(true);		
+		userOption.setRequired(true);
 		options.addOption(userOption);
 
 		Option passwordOption = OptionBuilder.withDescription( "password of database connection" )
 				.withArgName( PASSWORD_ARGUMENT ).hasArg().create(PASSWORD_ARGUMENT);
 		passwordOption.setRequired(true);
 		options.addOption(passwordOption);
+
+		Option timezoneOption = OptionBuilder.withDescription( "time zone of database connection" )
+				.withArgName( TIMEZONE_ARGUMENT ).hasArg().create(TIMEZONE_ARGUMENT);
+		passwordOption.setRequired(false);
+		options.addOption(timezoneOption);
 
 		Option urlOption = OptionBuilder.withDescription( "url, example: jdbc:mysql://localhost:3306/pro-aonsolutions-net" )
 				.withArgName( "jdbcUrl" ).hasArg().create(URL_ARGUMENT);
@@ -80,14 +89,14 @@ public class DomainCommandLine {
 	public Option getOption( String value ) {
 		return this.options.getOption(value);
 	}
-	
+
 	public void addOption( Option option ) {
 		options.addOption(option);
 	}
 
 	public void parse( String className, String[] arguments ) {
 		BasicParser parser = new BasicParser();
-		
+
 		try {
 			line = parser.parse(options, arguments);
 		} catch (ParseException e) {
@@ -95,7 +104,7 @@ public class DomainCommandLine {
 			HelpFormatter formatter = new HelpFormatter();
 			formatter.printHelp( className, options, true );
 			System.exit(-1);
-		}	
+		}
 
 		String driver = "com.mysql.jdbc.Driver";
 		if ( line.hasOption(DRIVER_CLASS_ARGUMENT) ) {
@@ -104,21 +113,25 @@ public class DomainCommandLine {
 		if (! DbUtils.loadDriver(driver) ) {
 			LOGGER.error( "Error loading driver: {}", driver );
 			System.exit(-1);
-		}		
+		}
 	}
 
 	public String getValue(String argument) {
 		return line.getOptionValue(argument);
-	}	
+	}
+
+	public String getValue(String argument, String def) {
+		return line.getOptionValue(argument, def);
+	}
 
 	public boolean hasOption(String argument) {
 		return line.hasOption(argument);
-	}	
-	
+	}
+
 	private String getUrl() {
 		return getValue(URL_ARGUMENT);
 	}
-	
+
 	private String getUser() {
 		return getValue(USER_ARGUMENT);
 	}
@@ -126,7 +139,11 @@ public class DomainCommandLine {
 	private String getPassword() {
 		return getValue(PASSWORD_ARGUMENT);
 	}
-	
+
+	private String getTimeZone() {
+		return getValue(TIMEZONE_ARGUMENT, TimeZone.getDefault().getID());
+	}
+
 	private String getDomain() {
 		return getValue(DOMAIN_ARGUMENT);
 	}
@@ -136,20 +153,24 @@ public class DomainCommandLine {
 	}
 
 	public Connection getConnection() throws SQLException {
-		return DriverManager.getConnection(getUrl(), getUser(), getPassword());
+		Properties properties = new Properties();
+		properties.setProperty("user", getUser());
+		properties.setProperty("password", getPassword());
+		properties.setProperty("serverTimezone", getTimeZone());
+		return DriverManager.getConnection(getUrl(), properties);
 	}
 
 	public Integer getDomainId( Connection connection, String domainName ) {
 		QueryRunner run = new QueryRunner();
 		try {
 			ResultSetHandler<Integer> h = new ScalarHandler<Integer>();
-			return run.query( connection, "SELECT id FROM domain WHERE name =?", h, domainName); 
+			return run.query( connection, "SELECT id FROM domain WHERE name =?", h, domainName);
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
-		}		
+		}
 		return null;
 	}
-	
+
 	private List<Integer> getDomainIds( Connection connection ) {
 		QueryRunner run = new QueryRunner();
 		try {
@@ -157,10 +178,10 @@ public class DomainCommandLine {
 			return run.query( connection, "SELECT id FROM domain", h );
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
-		}		
-		return null;	
-	}	
-	
+		}
+		return null;
+	}
+
 	public Integer[] getDomains( Connection connection ) {
 		Integer[] domains = null;
 		if ( hasDomain() ) {
@@ -169,15 +190,15 @@ public class DomainCommandLine {
 			if ( domainId == null ) {
 				LOGGER.error("Domain {} not found", domainName);
 			} else {
-				domains = new Integer[]{domainId};	
+				domains = new Integer[]{domainId};
 			}
 		} else {
 			List<Integer> list = getDomainIds(connection);
 			if (! list.isEmpty() ) {
 				domains = list.toArray(new Integer[list.size()]);
 			}
-		}		
+		}
 		return domains;
 	}
-	
+
 }

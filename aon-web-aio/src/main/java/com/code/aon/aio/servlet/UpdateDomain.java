@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.TimeZone;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -36,12 +37,12 @@ import com.code.aon.common.AonException;
 import com.code.aon.common.util.AdminUtil;
 
 public class UpdateDomain extends HttpServlet {
-	
+
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final String DEPLOYED_XML = "/var/lib/jbossas/server/default/conf/aon.workspace/deployed.xml";
 //	private static final String DEPLOYED_XML = "/mnt/iNetServer.x86_64/var/lib/jbossas/server/default/conf/aon.workspace/deployed.xml";
-	
+
 	private static final String USER_PARAM = "user";
 	private static final String PASSWORD_PARAM = "password";
 	private static final String DOMAIN_NAME_PARAM = "domain-name";
@@ -49,26 +50,27 @@ public class UpdateDomain extends HttpServlet {
 	private static final String DOMAIN_TYPE_PARAM = "domain-type";
     private static final String DOMAIN_USER_PARAM = "domain-user";
     private static final String DOMAIN_PASSWORD_PARAM = "domain-password";
-	
+
 	private static final String SCRIPT = "new_domain.py";
-	
+
 	private static final String SP_HOST = "--host=";
 	private static final String SP_USER = "--user=";
 	private static final String SP_PASSWD = "--passwd=";
 	private static final String SP_DB = "--db=";
-	
+
 	private static final String SP_DOMAIN_NAME = "--domain-name=";
 	private static final String SP_DOMAIN_DESCRIPTION = "--domain-description=";
 	private static final String SP_DOMAIN_TYPE = "--domain-type=";
     private static final String SP_DOMAIN_USER = "--domain-user=";
     private static final String SP_DOMAIN_PASSWORD = "--domain-password=";
 
-	
+
 	private static final String DEPLOYED_OPTION_TAG = "option";
-	private static final String DEPLOYED_URL_PROPERTY = "hibernate.connection.url"; 
-	private static final String DEPLOYED_USER_PROPERTY = "hibernate.connection.username"; 
-	private static final String DEPLOYED_PASSWORD_PROPERTY = "hibernate.connection.password"; 
-	
+	private static final String DEPLOYED_URL_PROPERTY = "hibernate.connection.url";
+	private static final String DEPLOYED_USER_PROPERTY = "hibernate.connection.username";
+	private static final String DEPLOYED_PASSWORD_PROPERTY = "hibernate.connection.password";
+	private static final String DEPLOYED_TIMEZONE_PROPERTY = "hibernate.connection.timezone";
+
 	public UpdateDomain() {
 		super();
 	}
@@ -90,7 +92,8 @@ public class UpdateDomain extends HttpServlet {
 			String dbhost = getHost(dburl);
 			String dbuser = props.getProperty(DEPLOYED_USER_PROPERTY);
 			String dbpassword = props.getProperty(DEPLOYED_PASSWORD_PROPERTY);
-		
+			String dbtimezone = props.getProperty(DEPLOYED_TIMEZONE_PROPERTY, TimeZone.getDefault().getID());
+
 			String user = request.getParameter(USER_PARAM);
 			if (StringUtils.isBlank(user)) {
 				throw new AonException("Usuario es un dato requerido");
@@ -105,8 +108,8 @@ public class UpdateDomain extends HttpServlet {
 			String domain = tok[1];
 			user = tok[0];
 			String password = request.getParameter(PASSWORD_PARAM);
-			
-			String[] databaseInfo = getDatabaseInfo(dburl,dbuser,dbpassword, domain, user, password );  
+
+			String[] databaseInfo = getDatabaseInfo(dburl,dbuser,dbpassword, dbtimezone, domain, user, password );
 			String database = databaseInfo[0];
 			String suffix = databaseInfo[1];
 			String domainName = request.getParameter(DOMAIN_NAME_PARAM);
@@ -116,7 +119,7 @@ public class UpdateDomain extends HttpServlet {
 			if (!StringUtils.endsWith(domainName, suffix)) {
 				throw new AonException("Su usuario solo puede crear subdominios de '"+ suffix +"'.");
 			}
-			
+
 			String domainUser = request.getParameter(DOMAIN_USER_PARAM);
 			if (StringUtils.isBlank(domainUser)) {
 				throw new AonException("El usuario del dominio es un dato requerido.");
@@ -125,10 +128,10 @@ public class UpdateDomain extends HttpServlet {
 			if (StringUtils.isBlank(domainPassword)) {
 				throw new AonException("La clave del usuario del dominio es un dato requerido.");
 			}
-			
+
 			String domainDescription = request.getParameter(DOMAIN_DESCRIPTION_PARAM);
 			String domainType = request.getParameter(DOMAIN_TYPE_PARAM);
-			
+
 			List<String> commandLine = new LinkedList<String>();
 			commandLine.add(SCRIPT);
 			commandLine.add(SP_HOST + dbhost);
@@ -148,16 +151,16 @@ public class UpdateDomain extends HttpServlet {
 			if (StringUtils.isNotBlank(domainUser)) {
 				commandLine.add(SP_DOMAIN_USER + domainUser);
 			}
-			
+
 			if (StringUtils.isNotBlank(domainPassword)) {
 				commandLine.add(SP_DOMAIN_PASSWORD + domainPassword);
 			}
-			
+
 			String[] command = commandLine.toArray(new String[commandLine.size()]);
 			for (String t : command) {
 				System.out.print( t );
 			}
-			
+
 			Runtime r = Runtime.getRuntime();
 			Process p = r.exec(command);
 			BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -182,7 +185,7 @@ public class UpdateDomain extends HttpServlet {
 			response.getWriter().print("Se ha producido un error interno. [" + e.getMessage()+ "]");
 			response.getWriter().print("</body></html>");
 			response.getWriter().flush();
-			
+
 			response.getWriter().flush();
 			e.printStackTrace();
 		}
@@ -196,7 +199,7 @@ public class UpdateDomain extends HttpServlet {
 		line = StringUtils.replace(line, "[0m", "</p>");
 		return line;
 	}
-	
+
 	private Properties getConnectionProperties() throws SAXException, IOException, ParserConfigurationException  {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
@@ -208,18 +211,18 @@ public class UpdateDomain extends HttpServlet {
 			Node node = list.item(i);
 			NamedNodeMap map = node.getAttributes();
 			Node attr  = map.getNamedItem("name");
-			
-			if (DEPLOYED_URL_PROPERTY.equals(attr.getNodeValue()) 
+
+			if (DEPLOYED_URL_PROPERTY.equals(attr.getNodeValue())
 				|| DEPLOYED_USER_PROPERTY.equals(attr.getNodeValue())
 				|| DEPLOYED_PASSWORD_PROPERTY.equals(attr.getNodeValue())) {
-				
+
 				Node value = map.getNamedItem("value");
 				props.put(attr.getNodeValue(), value.getNodeValue());
 			}
 		}
 		return props;
 	}
-	
+
 	private String getHost(String url) throws URISyntaxException {
 		String[] tokens = StringUtils.split(url,"//");
 		String host = StringUtils.split(tokens[1],":")[0];
@@ -227,8 +230,8 @@ public class UpdateDomain extends HttpServlet {
 		return host;
 	}
 
-	private String[] getDatabaseInfo(String dburl, String dbuser, String dbpassword, String domain, String user, String password) throws ClassNotFoundException, SQLException, AonException {
-		Class.forName("org.gjt.mm.mysql.Driver");
+	private String[] getDatabaseInfo(String dburl, String dbuser, String dbpassword, String dbtimezone, String domain, String user, String password) throws ClassNotFoundException, SQLException, AonException {
+		Class.forName("com.mysql.jdbc.Driver");
 		Connection c = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -237,8 +240,12 @@ public class UpdateDomain extends HttpServlet {
 		PreparedStatement userStmt = null;
 		ResultSet userRs = null;
 		try {
-			c = DriverManager.getConnection(dburl,dbuser,dbpassword);
-			
+			Properties properties = new Properties();
+			properties.setProperty("user", dbuser);
+			properties.setProperty("password", dbpassword);
+			properties.setProperty("serverTimezone", dbtimezone);
+			c = DriverManager.getConnection(dburl,properties);
+
 			String sql = "SELECT T.TABLE_SCHEMA FROM INFORMATION_SCHEMA.TABLES as T WHERE T.TABLE_NAME = 'domain'";
 			stmt = c.prepareStatement(sql);
 			rs = stmt.executeQuery();
@@ -251,7 +258,7 @@ public class UpdateDomain extends HttpServlet {
 				domainRs = domainStmt.executeQuery();
 				if (domainRs.next()) {
 					int id = domainRs.getInt(1);
-					
+
 					String userSql = "SELECT `password` FROM `"+db+"`.`user` WHERE domain = "+id+" and login = '" + user + "'";
 					userStmt = c.prepareStatement(userSql);
 					userRs = userStmt.executeQuery();
@@ -259,15 +266,15 @@ public class UpdateDomain extends HttpServlet {
 						String saved_passwd = userRs.getString(1);
 						String sent_passwd  = AdminUtil.encodeSHA(password);
 						if (!StringUtils.equals(saved_passwd, sent_passwd)) {
-							throw new AonException("La contraseña no es correcta.");
+							throw new AonException("La contraseï¿½a no es correcta.");
 						}
 					} else {
 						throw new AonException("Usuario no registrado");
 					}
 					database = db;
-					suffix = domainRs.getString(2); 
+					suffix = domainRs.getString(2);
 					break;
-				} 
+				}
 				domainRs.close();
 				domainStmt.close();
 			}
@@ -275,7 +282,7 @@ public class UpdateDomain extends HttpServlet {
 				throw new AonException("Usuario@Dominio no registrado");
 			}
 			return new String[]{database,suffix};
-			
+
 		} finally {
 			DbUtils.closeQuietly(userStmt);
 			DbUtils.closeQuietly(userRs);

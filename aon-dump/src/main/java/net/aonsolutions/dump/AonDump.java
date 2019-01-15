@@ -16,9 +16,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Collectors;
+import java.util.TimeZone;
 
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -51,18 +53,22 @@ public class AonDump {
 	public Connection connection;
 	public DSLContext dslContext;
 	public Stack<Integer> stackContId;
-	
+
 	private List<Table<?>> tables ;
 
 
  	public AonDump(String url, String usr, String password) throws SQLException {
 		// Create a connection to our DataBase
-		connection = DriverManager.getConnection(url, usr, password);
+		Properties properties = new Properties();
+		properties.setProperty("user", usr);
+		properties.setProperty("password", password);
+		properties.setProperty("serverTimezone", TimeZone.getDefault().getID());
+		connection = DriverManager.getConnection(url, properties);
 
 		// Establish settings
 		settings = new Settings();
 		settings.setRenderSchema(false);
-		
+
 		//settings.setRenderFormatted(true);
 		settings.setRenderNameStyle(RenderNameStyle.QUOTED);
 		settings.setRenderKeywordStyle(RenderKeywordStyle.UPPER);
@@ -103,7 +109,7 @@ public class AonDump {
 		// Get the Schema code and filter it to find our DataBase
 		Optional<Schema> schema = DSL.using(connection, SQLDialect.MARIADB).meta().getSchemas().stream()
 				.filter(s -> s.getName().equals(dataBase)).findFirst();
-		
+
 		if ( tables == null )
 			tables = schema.get().getTables();
 
@@ -148,18 +154,18 @@ public class AonDump {
 			if ( map != null) {
 				Condition condition = (DSL.field("domain")).equal(idDomain);
 				for (Map.Entry<Condition, ForeignKey<? extends Record,?>> e : map.entrySet()){
-					
+
 					List<?> references = t.getReferences();
 					List<ForeignKey<?, ?>> newReferences = new LinkedList<ForeignKey<?,?>>();
 					newReferences.addAll((Collection<ForeignKey<?, ?>>) references);
 					ForeignKey<? extends Record, ?> fk = e.getValue();
 					newReferences.add(fk);
-					
+
 					downloadTable(t, idsMap, cb, out, tablesStack, Collections.emptyList(),
 							newReferences, (DSL.field("domain")).equal(idDomain), e.getKey());
-					
+
 					condition = condition.andNot(e.getKey());
-					
+
 				}
 				downloadTable(t, idsMap, cb, out, tablesStack, Collections.emptyList(),
 						t.getReferences(), condition);
@@ -168,14 +174,14 @@ public class AonDump {
 				downloadTable(t, idsMap, cb, out, tablesStack, Collections.emptyList(),
 						t.getReferences(), (DSL.field("domain")).equal(idDomain));
 			}
-				
+
 		});
 
 		// Get attachs from DataBase and UPDATE them
 		gestionAttachs(cb, dslContext, tablasAttach, idDomain, idsMap);
 
 		cb.footer();
-		
+
 		return idsMap;
 	}
 
@@ -189,9 +195,9 @@ public class AonDump {
 
 		// Map <Table, Number of lines we are going to download>
 		Map<Table<?>, Integer> dumpTables = new HashMap<Table<?>, Integer>();
-		
+
 		//formatter:off
-		Map<Table<?>, Integer> domainTables = 
+		Map<Table<?>, Integer> domainTables =
 				tables.stream()
 				.filter(t -> t.field("domain") != null)
 				.collect(Collectors.toMap(t -> t, t -> dslContext
@@ -209,8 +215,8 @@ public class AonDump {
 				dumpTables.put(t, k);
 		});
 		//formatter:on
-		
-		
+
+
 		return dumpTables;
 	}
 
@@ -262,26 +268,26 @@ public class AonDump {
 			if (!idsMap.containsTable(tableReference.getName())){
 				continue;
 			}
-			
+
 			if (idsMap.getTableInformation(tableReference.getName()) == null) {
 				downloadTable(tableReference, idsMap, cb, out, tablesStack, Collections.emptyList(), tableReference.getReferences(), where);
 			}
-			
+
 		}
 
 		// Initialize the Ids map of every table we have to download
 		idsMap.setTableName(t.getName());
 
-		for (Condition c : filter ) 
+		for (Condition c : filter )
 			where  = where.and(c);
-		
+
 		//System.err.println("downloadTableReferenceDomain : " + t.getName() + "->" + where );
 		downloadTableReferenceDomain(t, references, idsMap, cb, myTablesCiclic, where);
 
 		tablesStack.pop();
 
 	}
-	
+
 	protected void downloadTableReferenceDomain(Table<?> t, List<?> references, IdsMap idsMap, CallbackDump cb,
 			List<Table<?>> tablesCiclic, Condition where) {
 
@@ -291,7 +297,7 @@ public class AonDump {
 		Integer numRows = 0;
 		String varTableName = "";
 		stackContId.push((int) (Math.random() * Integer.MAX_VALUE));
-		
+
 		try {
 
 			for (Record r : dslContext.select().from(t).where(where).orderBy(t.field(0).desc()).fetchLazy()) {
@@ -302,7 +308,7 @@ public class AonDump {
 				 * (@(nombre_campo) +1)
 				 */
 				Field<Integer> fieldId = (Field<Integer>) t.getPrimaryKey().getFields().get(0);
-				
+
 				// insertMap will contain all the information we want to upload to our table
 				Map<Field<Integer>, Field<Integer>> fkInsertMap = new HashMap<Field<Integer>, Field<Integer>>();
 				Map<Field<?>, Object> insertMap = new HashMap<Field<?>, Object>();
@@ -342,8 +348,8 @@ public class AonDump {
 					insertMore = insertMore.set(fkInsertMap);
 				else
 					insertMore = insert.set(fkInsertMap);
-				
-				Set<String> fkInsertSet = new HashSet<String>(); 
+
+				Set<String> fkInsertSet = new HashSet<String>();
 				fkInsertMap.keySet().forEach(f->fkInsertSet.add(f.getName()));;
 
 				// Fill the remaining fields
@@ -463,10 +469,10 @@ public class AonDump {
 	private static class FkErrorException extends Exception {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 1L;
-		
+
 		public FkErrorException(ForeignKey<?, ?> fk) {
 		}
 	}

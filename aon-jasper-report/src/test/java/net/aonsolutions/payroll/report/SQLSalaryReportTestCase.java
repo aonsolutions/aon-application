@@ -10,6 +10,8 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Properties;
+import java.util.TimeZone;
 
 import org.jooq.DSLContext;
 import org.jooq.conf.ParamType;
@@ -22,7 +24,7 @@ import org.junit.Test;
 import net.sf.jasperreports.engine.JRException;
 
 public class SQLSalaryReportTestCase {
-	
+
 	private Connection connection;
 
 	public static String getDbPort() {
@@ -46,40 +48,49 @@ public class SQLSalaryReportTestCase {
 		return System.getProperty("dbPasswd", "serubd2000");
 	}
 
+	public static String getDbTimeZone() {
+		return System.getProperty("dbTimeZone", TimeZone.getDefault().getID());
+	}
+
 	public static Connection connect() throws ClassNotFoundException, SQLException{
 		// first of all load JDBC driver
-		Class.forName("org.gjt.mm.mysql.Driver");
+		Class.forName("com.mysql.jdbc.Driver");
 
 		String dbHost = getDbHost();
 		String dbPort = getDbPort();
 		String dbName = getDbName();
 		String dbUser = getDbUser();
 		String dbPasswd = getDbPasswd();
+		String dbTimeZone = getDbTimeZone();
 
+		Properties properties = new Properties();
+		properties.setProperty("user", dbUser);
+		properties.setProperty("password", dbPasswd);
+		properties.setProperty("serverTimezone", dbTimeZone);
 		String url = String.format("jdbc:mysql://%s:%s/%s", dbHost, dbPort, dbName);
-		Connection connection = DriverManager.getConnection(url, dbUser, dbPasswd);
+		Connection connection = DriverManager.getConnection(url, properties);
 
 
 		return connection;
 	}
-	
+
 	@Before
 	public void setUp() throws ClassNotFoundException, SQLException{
 		connection = connect();
 	}
-	
+
 
 	@Ignore("Comming soon")
 	@Test
 	public void testSalaryReportI() throws SQLException, JRException, IOException {
-		
+
 		Settings settings = new  Settings();
 		settings.setRenderSchema(false);
 		settings.setParamType(ParamType.INLINED);
 		DSLContext dslContext = DSL.using(connection, settings);
-		
-		
-		List<Integer> salaryIds = 
+
+
+		List<Integer> salaryIds =
 		dslContext
 		.select()
 		.from(SALARY)
@@ -88,17 +99,17 @@ public class SQLSalaryReportTestCase {
 		.limit(1)
 		.fetch(SALARY.ID)
 		;
-		
+
 		FileOutputStream fos = new FileOutputStream("salary.pdf");
-		
+
 		try {
 			SalaryReport.print(dslContext, SALARY.ID.in(salaryIds), fos);
 		} catch ( Throwable t ) {
 			t.printStackTrace();
 		}
-		
+
 		fos.close();
 	}
 
-	
+
 }

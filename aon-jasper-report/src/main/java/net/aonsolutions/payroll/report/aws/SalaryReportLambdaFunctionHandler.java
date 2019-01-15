@@ -97,7 +97,7 @@ public class SalaryReportLambdaFunctionHandler implements RequestStreamHandler {
 		connectionInfo.setUrl(url);
 		connectionInfo.setUser(dbUser);
 		connectionInfo.setPassword(dbPasswd);
-		connectionInfo.setDriverClass("org.gjt.mm.mysql.Driver");
+		connectionInfo.setDriverClass("com.mysql.jdbc.Driver");
 
 		context.getLogger().log(url + "," + dbUser + "," + dbPasswd);
 		

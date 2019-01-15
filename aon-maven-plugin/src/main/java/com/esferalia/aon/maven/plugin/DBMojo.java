@@ -1,17 +1,17 @@
 /**
- * 
+ *
  */
 package com.esferalia.aon.maven.plugin;
 
 /********************************************************************
 * Copyright (c) 2011, esferalia NETWORKS S.A
 *
-* The copyright of the computer program herein is the property 
+* The copyright of the computer program herein is the property
 * of esferalia NETWORKS.
 *********************************************************************
-* The program may be used and/or copied only with the written 
-* permission of esferalia NETWORKS, or in accordance with the 
-* terms and conditions stipulated in the agreement contract 
+* The program may be used and/or copied only with the written
+* permission of esferalia NETWORKS, or in accordance with the
+* terms and conditions stipulated in the agreement contract
 * under which the program has been supplied.
 *********************************************************************
 */
@@ -31,6 +31,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+import java.util.Properties;
+import java.util.TimeZone;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -47,22 +49,22 @@ import com.code.aon.master.VersionManager;
  * @author rtrepiana
  *
  * @goal 	generate-db
- * @phase	generate-sources	
+ * @phase	generate-sources
  * @requiresDependencyResolution
  * @threadSafe
- *  
+ *
  */
 public class DBMojo extends AbstractMojo {
-	
+
 	private static final Object LOCK = new Object();
-	
+
     // ----------------------------------------------------------------------
     // Mojo parameters
     // ----------------------------------------------------------------------
 
     /**
      * Specifies the variable name in template's context for tables.
-     * 
+     *
      * @parameter default-value="tables"
      * @readonly
      */
@@ -70,7 +72,7 @@ public class DBMojo extends AbstractMojo {
 
     /**
      * Specifies the variable name in template's context for targetPackage.
-     * 
+     *
      * @parameter default-value="package"
      * @readonly
      */
@@ -78,7 +80,7 @@ public class DBMojo extends AbstractMojo {
 
     /**
      * Specifies the directory containing template files.
-     * 
+     *
      * @parameter default-value="com/esferalia/aon/master/vm/"
      * @readonly
      */
@@ -86,7 +88,7 @@ public class DBMojo extends AbstractMojo {
 
     /**
      * The Maven Project Object
-     * 
+     *
      * @parameter expression="${project}"
      * @readonly
      */
@@ -94,7 +96,7 @@ public class DBMojo extends AbstractMojo {
 
     /**
      * The maven project's helper.
-     * 
+     *
      * @component role="org.apache.maven.project.MavenProjectHelper"
      * @readonly
      */
@@ -106,41 +108,48 @@ public class DBMojo extends AbstractMojo {
 
     /**
      * Host to connect to.
-     * 
+     *
      * @parameter default-value="127.0.0.1"
      */
     private String dbHost ;
-	
+
     /**
      * Port number to use for connection.
-     * 
+     *
      * @parameter default-value="3306"
      */
     private String dbPort;
 
     /**
-     *  
+     *
      * @parameter default-value="aon-master"
      */
     private String dbName ;
-    
+
     /**
      * User for login.
-     * 
+     *
      * @parameter default-value="dbuser"
      */
     private String dbUser ;
 
     /**
      * Password to use when connecting to server.
-     * 
+     *
      * @parameter default-value="serubd2000"
      */
     private String dbPasswd ;
-    
+
+		/**
+     * TimeZone to use when connecting to server.
+     *
+     * @parameter default-value="Europe/Madrid"
+     */
+    private String dbTimeZone ;
+
     /**
      * Comma separated list of database tables to generate files for. <br/>
-     * 
+     *
      * @parameter expression="${dbtables}"
      */
     protected String dbtables;
@@ -148,14 +157,14 @@ public class DBMojo extends AbstractMojo {
 
     /**
      * Specifies the java package for generated files.
-     * 
+     *
      * @parameter default-value="com.esferalia.aon.master.sql"
      */
     private String targetPackage ;
 
     /**
      * Specifies the destination directory where should generate files. <br/>
-     * 
+     *
      * @parameter default-value="${project.build.directory}/generated-sources/aon-master"
      */
     protected File outputDirectory;
@@ -163,18 +172,18 @@ public class DBMojo extends AbstractMojo {
     /**
      * Comma separated template file names present in the <code>sourceDirectory</code>
      * directory. <br/>
-     * 
+     *
      * @parameter default-value="AbstractSQL.java.vm,SQLReader.java.vm,SQLWriter.java.vm,SQLConstants.java.vm" expression="${templates}"
      */
     protected String templates;
 
-    
+
 
     @Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		synchronized( LOCK) {
 	    	validateParameters();
-	    	
+
 	    	Connection connection = null;
 	        try {
 	        	VersionManager versionManager = new VersionManager();
@@ -199,40 +208,40 @@ public class DBMojo extends AbstractMojo {
 				        connection = getConnection(dbName);
 	        		}
 	        	}
-		        
+
 	        	getLog().info("Ensure database structure. Updating... ");
 		        versionManager.uptodateDatabase(connection);
-		        
-		        DatabaseMetaData dbMetaData = connection.getMetaData(); 
+
+		        DatabaseMetaData dbMetaData = connection.getMetaData();
 				DBContext dbContext = new DBContext(dbMetaData);
-				
+
 				dbContext.put(packageVariable, targetPackage);
 				dbContext.put(tablesVariable, dbContext.getTables(getTables()) );
-	
+
 				String templateArr [] = getTemplates();
 				for (String  template : templateArr) {
-	
+
 			    	Writer writer = null;
 			    	Reader reader = null;
-	
+
 			    	try {
 						reader = getAsReader(template);
 						writer = new FileWriter(getOuputFile(template));
 						Velocity.evaluate(dbContext, writer, "DBContext", reader);
 		        	}
 		        	finally {
-		        		if ( reader != null ) 
+		        		if ( reader != null )
 		        			reader.close();
-		        		if ( writer != null ) 
+		        		if ( writer != null )
 		        			writer.close();
 		        	}
 				}
-		        
+
 		        if ( project != null )
 		        {
 		            project.addCompileSourceRoot( outputDirectory.getAbsolutePath() );
 		        }
-				
+
 			} catch ( IOException e ) {
 				throw new MojoExecutionException( e.getMessage(), e );
 			} catch ( SQLException e ) {
@@ -249,7 +258,7 @@ public class DBMojo extends AbstractMojo {
 			}
 		}
 	}
-    
+
     private String [] getTables() {
     	return toArray(dbtables);
     }
@@ -257,22 +266,22 @@ public class DBMojo extends AbstractMojo {
     private String [] getTemplates() {
     	return toArray(templates);
     }
-    
+
     private Reader getAsReader(String template) {
     	ClassLoader cl = DBMojo.class.getClassLoader();
     	InputStream in = cl.getResourceAsStream(sourceDirectory + template );
     	return new InputStreamReader(in);
     }
-    
+
     private File getOuputFile(String template) {
-    	String targetDir = targetPackage.replace('.', '/'); 
+    	String targetDir = targetPackage.replace('.', '/');
     	File packageDir = new File(outputDirectory, targetDir);
     	packageDir.mkdirs();
     	int endIndex = template.lastIndexOf('.');
     	String javaFileName = template.substring(0, endIndex );
     	return new File(packageDir, javaFileName);
     }
-    
+
     private String [] toArray(String commaList ) {
     	ArrayList<String> strings = new ArrayList<String>();
     	StringTokenizer tk = new StringTokenizer(commaList, ",");
@@ -282,11 +291,11 @@ public class DBMojo extends AbstractMojo {
     	return strings.toArray(new String []{});
     }
 
-    
+
     /**
      * Drops database ..
      */
-    private void dropDataBase(Connection connection, String dbName) 
+    private void dropDataBase(Connection connection, String dbName)
     	throws SQLException {
     	Statement stmt  = null;
     	try  {
@@ -300,10 +309,10 @@ public class DBMojo extends AbstractMojo {
     			stmt.close();
     	}
     }
-    
+
     /**
      * dbtables is required
-     * 
+     *
      * @throws MojoExecutionException
      */
     private void validateParameters()
@@ -322,21 +331,25 @@ public class DBMojo extends AbstractMojo {
             throw new MojoExecutionException( msg.toString() );
         }
     }
-    
+
     private Connection getConnection(String dbName)
         throws MojoExecutionException, SQLException {
-      
+
     	try {
     		// first of all load JDBC driver
-    		Class.forName("org.gjt.mm.mysql.Driver");
+    		Class.forName("com.mysql.jdbc.Driver");
     	}catch (ClassNotFoundException e) {
     		throw new MojoExecutionException( e.getMessage(), e );
 		}
-    	String url = String.format("jdbc:mysql://%s:%s/%s", 
+    	String url = String.format("jdbc:mysql://%s:%s/%s",
     			dbHost, dbPort, dbName != null ? dbName : "");
-    	
-		return DriverManager.getConnection(url, dbUser, dbPasswd);
-    	
+
+		Properties properties = new Properties();
+		properties.setProperty("user", dbUser);
+		properties.setProperty("password", dbPasswd);
+		properties.setProperty("serverTimezone", dbTimeZone);
+		return DriverManager.getConnection(url, properties);
+
     }
 
 

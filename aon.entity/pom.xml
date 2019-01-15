@@ -84,7 +84,7 @@
 							<properties>
 								<param>hibernate.dialect=org.hibernate.dialect.MySQLInnoDBDialect</param>
 								<param>hibernate.connection.url=jdbc:mysql://127.0.0.1:3306/aon_reveng_${buildNumber}?autoReconnect=true</param>
-								<param>hibernate.connection.driver_class=org.gjt.mm.mysql.Driver</param>
+								<param>hibernate.connection.driver_class=com.mysql.jdbc.Driver</param>
 								<param>hibernate.connection.username=dbuser</param>
 								<param>hibernate.connection.password=serubd2000</param>
 								<param>hibernate.default_catalog=aon_reveng_${buildNumber}</param>

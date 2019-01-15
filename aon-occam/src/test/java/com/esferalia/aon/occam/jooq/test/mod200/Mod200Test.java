@@ -44,7 +44,7 @@ public class Mod200Test {
 	// 	[*] Antes de comenzar el test, se carga el driver JDBC y se conecta a la base de datos.
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
-		Class.forName( org.gjt.mm.mysql.Driver.class.getName() );
+		Class.forName( com.mysql.jdbc.Driver.class.getName() );
 		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID, LOGIN);
 	}
 	

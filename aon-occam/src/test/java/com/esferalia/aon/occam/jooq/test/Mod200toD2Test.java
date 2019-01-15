@@ -36,7 +36,7 @@ public class Mod200toD2Test {
 
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
-		Class.forName( org.gjt.mm.mysql.Driver.class.getName() );
+		Class.forName( com.mysql.jdbc.Driver.class.getName() );
 	}
 	
 	@Test

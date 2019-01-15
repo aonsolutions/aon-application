@@ -62,7 +62,7 @@
 
 					<!-- JDBC connection parameters -->
 					<jdbc>
-						<driver>org.gjt.mm.mysql.Driver</driver>
+						<driver>com.mysql.jdbc.Driver</driver>
 						<url>jdbc:mysql://127.0.0.1:3306</url>
 						<user>dbuser</user>
 						<password>serubd2000</password>

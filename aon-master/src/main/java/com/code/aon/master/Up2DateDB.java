@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Properties;
+import java.util.TimeZone;
 
 import net.aonsolutions.core.dbutils.AonSQLException;
 
@@ -16,14 +18,15 @@ public class Up2DateDB {
 		private String user;
 		private String password;
 		private String driver;
+		private String timeZone;
 
-		
+
 	}
-	
+
 	private static class IllegalArgumentsException extends RuntimeException	{
 		private static final long serialVersionUID = 1L;
 	}
-	
+
 	/**
 	 * @param args
 	 */
@@ -31,13 +34,16 @@ public class Up2DateDB {
 		Connection connection = null;
 		Arguments arguments = parseArgs(args);
 		VersionManager manager = new VersionManager();
+		Properties properties = new Properties();
+		properties.setProperty("user", arguments.user);
+		properties.setProperty("password", arguments.password);
+		properties.setProperty("serverTimezone", arguments.timeZone);
 		try {
 			Class.forName(arguments.driver);
-			connection = DriverManager.getConnection(arguments.url,
-					arguments.user, arguments.password);
-			
+			connection = DriverManager.getConnection(arguments.url,properties);
+
 			manager.uptodateDatabase(connection);
-			
+
 		} catch ( IllegalArgumentsException e ){
 			System.err.printf( "%s:%s\r\n" ,e.getClass().getName(), e.getMessage());
 			printUsage(args);
@@ -54,8 +60,7 @@ public class Up2DateDB {
 			for ( String schema : schemas ) {
 				try {
 					connection = DriverManager.getConnection(
-							String.format("%s/%s",arguments.url,schema),
-							arguments.user, arguments.password);
+							String.format("%s/%s",arguments.url,schema),properties);
 					System.out.printf("Actualizando '%s'...", schema);
 					manager.uptodateDatabase(connection);
 					System.out.printf("OK\r\n");
@@ -69,7 +74,7 @@ public class Up2DateDB {
 						}
 					}
 					exit = -1;
-				} 
+				}
 			}
 			System.exit(exit);
 		}
@@ -89,7 +94,7 @@ public class Up2DateDB {
 
 	private static void printUsage(String[] args)
 	{
-		System.err.printf("Usage : %s url user password driver \r\n", 
+		System.err.printf("Usage : %s url user password driver \r\n",
 				Up2DateDB.class.getName());
 	}
 
@@ -98,14 +103,15 @@ public class Up2DateDB {
 	{
 		if ( args.length < 4 )
 			throw new IllegalArgumentsException();
-	
+
 		Arguments arguments = new Arguments();
-		
+
 		arguments.url = args[0];
 		arguments.user = args[1];
 		arguments.password = args[2];
 		arguments.driver = args[3];
-		
+		arguments.timeZone = TimeZone.getDefault().getID();
+
 		return arguments;
 	}
 

@@ -38,26 +38,26 @@ import com.code.aon.registry.enumeration.DocumentType;
 /********************************************************************
  * Copyright (c) 2010, esferalia NETWORKS S.A
  *
- * The copyright of the computer program herein is the property 
+ * The copyright of the computer program herein is the property
  * of esferalia NETWORKS.
  *********************************************************************
- * The program may be used and/or copied only with the written 
- * permission of esferalia NETWORKS, or in accordance with the 
- * terms and conditions stipulated in the agreement contract 
+ * The program may be used and/or copied only with the written
+ * permission of esferalia NETWORKS, or in accordance with the
+ * terms and conditions stipulated in the agreement contract
  * under which the program has been supplied.
  *********************************************************************
  */
 
 /**
  * Ctsql2Mysql
- * 
+ *
  */
 public class Ctsql2Mysql {
 
 	{
 		// first of all load JDBC drivers
 		try {
-			Class.forName("org.gjt.mm.mysql.Driver");
+			Class.forName("com.mysql.jdbc.Driver");
 			Class.forName("com.transtools.jdbc.CtsqlJdbcDriver");
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -71,6 +71,7 @@ public class Ctsql2Mysql {
 	private String mysqlURL;
 	private String mysqlUser;
 	private String mysqlPasswd;
+	private String mysqlTimeZone;
 	private boolean dryRun;
 	private boolean merge;
 	private boolean disabled;
@@ -166,6 +167,13 @@ public class Ctsql2Mysql {
 
 		OptionBuilder.isRequired(false);
 		OptionBuilder.hasArg(true);
+		OptionBuilder.withArgName("time zone");
+		OptionBuilder.withType(String.class);
+		OptionBuilder.withDescription("mysql server canonical time zone (for example, Europe/Madrid, Etc/GMT-5, UTC, etc.).");
+		Option mysqlTimeZoneOption = OptionBuilder.create("mysqltimezone");
+
+		OptionBuilder.isRequired(false);
+		OptionBuilder.hasArg(true);
 		OptionBuilder.withArgName("date");
 		OptionBuilder.withType(String.class);
 		OptionBuilder
@@ -185,14 +193,14 @@ public class Ctsql2Mysql {
 		OptionBuilder.withArgName("cifs");
 		OptionBuilder.withValueSeparator(',');
 		OptionBuilder.withType(String.class);
-		OptionBuilder.withDescription("traspasar únicamente estas empresas");
+		OptionBuilder.withDescription("traspasar ï¿½nicamente estas empresas");
 		Option enterprisesOption = OptionBuilder.create("enterprises");
 
 		OptionBuilder.isRequired(false);
 		OptionBuilder.hasArg(true);
 		OptionBuilder.withArgName("clave");
 		OptionBuilder.withType(String.class);
-		OptionBuilder.withDescription("clave genérica para todos los usuarios");
+		OptionBuilder.withDescription("clave genï¿½rica para todos los usuarios");
 		Option passwdOption = OptionBuilder.create("passwd");
 
 		OptionBuilder.isRequired(true);
@@ -222,7 +230,7 @@ public class Ctsql2Mysql {
 		OptionBuilder.withType(String.class);
 		OptionBuilder.withValueSeparator((char) 0);
 		OptionBuilder
-				.withDescription("Tablas de ctsql que lanzan la sincronización ( sólo para el demonio ). ");
+				.withDescription("Tablas de ctsql que lanzan la sincronizaciï¿½n ( sï¿½lo para el demonio ). ");
 		Option tablesOption = OptionBuilder.create("table");
 
 		OptionBuilder.isRequired(false);
@@ -238,13 +246,13 @@ public class Ctsql2Mysql {
 		OptionBuilder.withType(String.class);
 		OptionBuilder.withValueSeparator((char) 0);
 		OptionBuilder
-				.withDescription("Comandos despues de la sincronización ( sólo para el demonio ). ");
+				.withDescription("Comandos despues de la sincronizaciï¿½n ( sï¿½lo para el demonio ). ");
 		Option commandsOption = OptionBuilder.create("command");
 
 		OptionBuilder.isRequired(false);
 		OptionBuilder.hasArg(false);
 		OptionBuilder
-				.withDescription("Añadir a la base de datos existente. No borrar la base de datos.");
+				.withDescription("Aï¿½adir a la base de datos existente. No borrar la base de datos.");
 		Option mergeOption = OptionBuilder.create("merge");
 
 		options.addOption(helpOption);
@@ -256,6 +264,7 @@ public class Ctsql2Mysql {
 		options.addOption(mysqlUserOption);
 		options.addOption(ctsqlPasswdOption);
 		options.addOption(mysqlPasswdOption);
+		options.addOption(mysqlTimeZoneOption);
 		options.addOption(fromDateOption);
 		options.addOption(passwdOption);
 		options.addOption(domainOption);
@@ -292,6 +301,8 @@ public class Ctsql2Mysql {
 			mysqlUser = line.getOptionValue(mysqlUserOption.getOpt(), "dbuser");
 			mysqlPasswd = line.getOptionValue(mysqlPasswdOption.getOpt(),
 					"serubd2000");
+			mysqlTimeZone = line.getOptionValue(mysqlTimeZoneOption.getOpt(),
+					TimeZone.getDefault().getID());
 
 			dryRun = line.hasOption(dryRunOption.getOpt());
 
@@ -359,20 +370,20 @@ public class Ctsql2Mysql {
 				domainPasswd, null /* TODO : scope ? */);
 
 		int registry = mysqlDB.insertRegistry(
-				domain, 
-				null,										//document, 
-				(short)DocumentType.CIF.ordinal(),			//document_type, 
-				Country.ES.getValue(),						//document_country, 
-				domainName,									//name, 
-				domainName,									//alias, 
-				null,										//type, 
-				Country.ES.getValue(),						//nationality, 
+				domain,
+				null,										//document,
+				(short)DocumentType.CIF.ordinal(),			//document_type,
+				Country.ES.getValue(),						//document_country,
+				domainName,									//name,
+				domainName,									//alias,
+				null,										//type,
+				Country.ES.getValue(),						//nationality,
 				(short)(SecurityLevel.OFFICIAL.ordinal())	//security_level
 				);
-		
+
 		// TODO: Company ... related entries, like 'logo'
 		mysqlDB.insertCompany(registry, domain, true, true, true, true, true);
-		
+
 		return domain;
 	}
 
@@ -401,7 +412,11 @@ public class Ctsql2Mysql {
 	}
 
 	protected Connection getMysqlConnection() throws SQLException {
-		return DriverManager.getConnection(mysqlURL, mysqlUser, mysqlPasswd);
+		Properties mysqlProperties = new Properties();
+		mysqlProperties.setProperty("user", mysqlUser);
+		mysqlProperties.setProperty("password", mysqlPasswd);
+		mysqlProperties.setProperty("serverTimezone", mysqlTimeZone);
+		return DriverManager.getConnection(mysqlURL, mysqlProperties);
 	}
 
 	protected void dropDatabase() throws SQLException {
@@ -415,8 +430,11 @@ public class Ctsql2Mysql {
 		Statement stmt = null;
 		Connection connection = null;
 		try {
-			connection = DriverManager.getConnection(mysqlServerURL, mysqlUser,
-					mysqlPasswd);
+			Properties mysqlProperties = new Properties();
+			mysqlProperties.setProperty("user", mysqlUser);
+			mysqlProperties.setProperty("password", mysqlPasswd);
+			mysqlProperties.setProperty("serverTimezone", mysqlTimeZone);
+			connection = DriverManager.getConnection(mysqlServerURL, mysqlProperties);
 			stmt = connection.createStatement();
 			MysqlDB.info("ctsql2mysql : DROP DATABASE `{}`", dbName);
 			stmt.execute("DROP DATABASE `" + dbName + "`");
@@ -444,8 +462,11 @@ public class Ctsql2Mysql {
 			String mysqlServerURL = matcher.group(1);
 			String dbName = matcher.group(2);
 
-			Connection connection = DriverManager.getConnection(mysqlServerURL,
-					mysqlUser, mysqlPasswd);
+			Properties mysqlProperties = new Properties();
+			mysqlProperties.setProperty("user", mysqlUser);
+			mysqlProperties.setProperty("password", mysqlPasswd);
+			mysqlProperties.setProperty("serverTimezone", mysqlTimeZone);
+			Connection connection = DriverManager.getConnection(mysqlServerURL, mysqlProperties);
 
 			VersionManager versionManager = new VersionManager();
 			versionManager.createDatabase(connection, dbName);
@@ -491,7 +512,7 @@ public class Ctsql2Mysql {
 			 * //TODO: Consultancy document number. Country.ES, null, //TODO:
 			 * Consultancy name. Country.ES, null, //TODO: Consultancy alias.
 			 * null, DefaultMysqlDB.enum2short(CustomerStatus.ACTIVE));
-			 * 
+			 *
 			 * // TODO: Company ... related entries, like 'logo'
 			 * mysqlWriter.insertCompany(registry, domain, false, false, false,
 			 * false);
@@ -537,7 +558,7 @@ public class Ctsql2Mysql {
 			ClassNotFoundException, java.text.ParseException, AonSQLException,
 			IOException, InterruptedException {
 		Ctsql2Mysql ctsql2Mysql = new Ctsql2Mysql(args);
-		
+
 		if (ctsql2Mysql.drop()) {
 			try {
 				ctsql2Mysql.dropDatabase();

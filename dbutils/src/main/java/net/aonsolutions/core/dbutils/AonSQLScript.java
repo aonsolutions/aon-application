@@ -8,6 +8,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import java.util.Properties;
+import java.util.TimeZone;
+
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.StringUtils;
@@ -17,13 +20,13 @@ import org.slf4j.LoggerFactory;
 public class AonSQLScript {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AonSQLScript.class.getName());
-	
+
 	private static final String MSG1 = " row(s) updated/inserted.";
-		
+
 	private AonSQLFile file;
 	private Connection c;
 	private Integer domain;
-	
+
 	public AonSQLScript(AonSQLFile file, Connection c) {
 		this.file = file;
 		this.c = c;
@@ -36,7 +39,7 @@ public class AonSQLScript {
 	public Connection getConnection() {
 		return c;
 	}
-	
+
 	public Integer getDomain() {
 		return domain;
 	}
@@ -44,7 +47,7 @@ public class AonSQLScript {
 	public void setDomain(Integer domain) {
 		this.domain = domain;
 	}
-	
+
 	private void setDomainVariable() throws SQLException {
 		if ( getDomain() != null ) {
 			execute( "SET @Domain = " + getDomain() );
@@ -60,14 +63,14 @@ public class AonSQLScript {
 			}
 			int result = statement.executeUpdate(sql);
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug(result + MSG1);	
-			}			
+				LOGGER.debug(result + MSG1);
+			}
 		} finally {
 			DbUtils.closeQuietly(statement);
 		}
 
 	}
-	
+
 	public void execute() throws AonSQLException {
 		boolean autoCommit = false;
 		boolean autoCommitChanged = false;
@@ -90,7 +93,7 @@ public class AonSQLScript {
 			}
 			getFile().close();
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("Trying to commit . :o ");	
+				LOGGER.debug("Trying to commit . :o ");
 			}
 			getConnection().commit();
 			if (LOGGER.isDebugEnabled()) {
@@ -125,15 +128,20 @@ public class AonSQLScript {
 			}
 		}
 	}
-	
+
 	public static void main(String[] args) {
 		String url = "jdbc:mysql://volga:3306/mysql";
 		String user = "dbuser";
 		String password = "serubd2000";
-		
+		String timezone = TimeZone.getDefault().getID();
+
 		Connection connection  = null ;
 		try {
-			connection = DriverManager.getConnection(url, user, password);
+			Properties properties = new Properties();
+			properties.setProperty("user", user);
+			properties.setProperty("password", password);
+			properties.setProperty("serverTimezone", timezone);
+			connection = DriverManager.getConnection(url, properties);
 			File file = new File("/tmp/t4/aimar-esferalia-com.sql");
 			BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
 			AonSQLFile sqlFile = new AonSQLFile(in, CharEncoding.ISO_8859_1);

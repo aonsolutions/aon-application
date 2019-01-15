@@ -11,6 +11,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
+import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,16 +33,17 @@ import com.code.aon.common.AonException;
 import com.code.aon.common.util.AdminUtil;
 
 public class DomainServletUtil implements IDomainServletConstants{
-	
+
 	private String dbURL;
 	private String dbHost;
 	private String dbUser;
 	private String dbPassword;
+	private String dbTimeZone;
 	private String dbName;
 	private String user;
 	private String domain;
 	private String password;
-	
+
 	private String domainName;
 	private String domainDescription;
 	private String domainType;
@@ -52,10 +55,12 @@ public class DomainServletUtil implements IDomainServletConstants{
 
 	private DomainServletUtil() {
 		// Para el main y pruebas
+		dbTimeZone = TimeZone.getDefault().getID();
 	}
-	
+
 	public DomainServletUtil(HttpServletRequest request) throws AonException {
 		try {
+			dbTimeZone = TimeZone.getDefault().getID();
 			initializeConnectionProperties();
 			parseParameters(request);
 		} catch (SAXException e) {
@@ -72,7 +77,7 @@ public class DomainServletUtil implements IDomainServletConstants{
 			throw new AonException(e);
 		}
 	}
-	
+
 	public String getDbURL() {
 		return dbURL;
 	}
@@ -101,62 +106,69 @@ public class DomainServletUtil implements IDomainServletConstants{
 		this.dbPassword = dbPassword;
 	}
 
+	public String getDbTimeZone() {
+		return dbTimeZone;
+	}
+	public void setDbTimeZone(String dbTimeZone) {
+		this.dbTimeZone = dbTimeZone;
+	}
+
 	public String getDbName() {
 		return dbName;
 	}
 	public void setDbName(String dbName) {
 		this.dbName = dbName;
 	}
-	
+
 	public String getUser() {
 		return user;
 	}
 	public void setUser(String user) {
 		this.user = user;
 	}
-	
+
 	public String getDomain() {
 		return domain;
 	}
 	public void setDomain(String domain) {
 		this.domain = domain;
 	}
-	
+
 	public String getPassword() {
 		return password;
 	}
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
+
 	public String getDomainName() {
 		return domainName;
 	}
 	public void setDomainName(String domainName) {
 		this.domainName = domainName;
 	}
-	
+
 	public String getDomainDescription() {
 		return domainDescription;
 	}
 	public void setDomainDescription(String domainDescription) {
 		this.domainDescription = domainDescription;
 	}
-	
+
 	public String getDomainType() {
 		return domainType;
 	}
 	public void setDomainType(String domainType) {
 		this.domainType = domainType;
 	}
-	
+
 	public String getDomainUser() {
 		return domainUser;
 	}
 	public void setDomainUser(String domainUser) {
 		this.domainUser = domainUser;
 	}
-	
+
 	public String getDomainPassword() {
 		return domainPassword;
 	}
@@ -198,25 +210,28 @@ public class DomainServletUtil implements IDomainServletConstants{
 			if (DEPLOYED_URL_PROPERTY.equals(attr.getNodeValue())) {
 				setDbURL( map.getNamedItem(DEPLOYED_VALUE_ATTR).getNodeValue() );
 				setDbHost( getHost(getDbURL()) );
-			}	
+			}
 			if (DEPLOYED_USER_PROPERTY.equals(attr.getNodeValue())){
 				setDbUser( map.getNamedItem(DEPLOYED_VALUE_ATTR).getNodeValue() );
 			}
 			if (DEPLOYED_PASSWORD_PROPERTY.equals(attr.getNodeValue())){
 				setDbPassword( map.getNamedItem(DEPLOYED_VALUE_ATTR).getNodeValue() );
 			}
+			if (DEPLOYED_TIMEZONE_PROPERTY.equals(attr.getNodeValue())){
+				setDbTimeZone( map.getNamedItem(DEPLOYED_VALUE_ATTR).getNodeValue() );
+			}
 		}
 	}
-	
+
 	private String getHost(String url) throws URISyntaxException {
 		String[] tokens = StringUtils.split(url,"//");
 		String host = StringUtils.split(tokens[1],":")[0];
 		host = StringUtils.split(host,",")[0];
 		return host;
 	}
-	
+
 	private void validateUser() throws ClassNotFoundException, SQLException, AonException {
-		Class.forName("org.gjt.mm.mysql.Driver");
+		Class.forName("com.mysql.jdbc.Driver");
 		Connection c = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -225,8 +240,13 @@ public class DomainServletUtil implements IDomainServletConstants{
 		PreparedStatement userStmt = null;
 		ResultSet userRs = null;
 		try {
-			c = DriverManager.getConnection(getDbURL(),getDbUser(),getDbPassword());
-			
+			Properties properties = new Properties();
+			properties.setProperty("user", getDbUser());
+			properties.setProperty("password", getDbPassword());
+			properties.setProperty("serverTimezone", getDbTimeZone());
+
+			c = DriverManager.getConnection(getDbURL(),properties);
+
 			stmt = c.prepareStatement(TABLE_SCHEMA_SENTENCE);
 			rs = stmt.executeQuery();
 			setDbName( null );
@@ -237,7 +257,7 @@ public class DomainServletUtil implements IDomainServletConstants{
 				domainRs = domainStmt.executeQuery();
 				if (domainRs.next()) {
 					int id = domainRs.getInt(1);
-					
+
 					String userSql = "SELECT `password` FROM `"+db+"`.`user` WHERE domain = "+id+" and login = '" + getUser() + "'";
 					userStmt = c.prepareStatement(userSql);
 					userRs = userStmt.executeQuery();
@@ -245,13 +265,13 @@ public class DomainServletUtil implements IDomainServletConstants{
 						String saved_passwd = userRs.getString(1);
 						String sent_passwd  = AdminUtil.encodeSHA(getPassword());
 						if (!StringUtils.equals(saved_passwd, sent_passwd)) {
-							throw new AonException("La contraseña no es correcta.");
+							throw new AonException("La contraseï¿½a no es correcta.");
 						}
 					} else {
 						throw new AonException("Usuario no registrado");
 					}
 					break;
-				} 
+				}
 				domainRs.close();
 				domainStmt.close();
 			}
@@ -281,17 +301,17 @@ public class DomainServletUtil implements IDomainServletConstants{
 		setUser(tok[0]);
 		setDomain(tok[1]);
 		if (!StringUtils.equals(AON_SOLUTIONS_NET_DOMAIN, getDomain())) {
-			throw new AonException("Usuario inválido en " + AON_SOLUTIONS_NET_DOMAIN);
+			throw new AonException("Usuario invï¿½lido en " + AON_SOLUTIONS_NET_DOMAIN);
 		}
 		setPassword( request.getParameter(PASSWORD_PARAM) );
 		validateUser();
-		
+
 		System.out.println( userDomain );
 		setDomainOwner(userDomain);
-		
+
 		String db_target = request.getParameter(DOMAIN_TARGET);
 		if (StringUtils.isBlank(db_target)) {
-			throw new AonException("El objeto del dominio es un dato requerido (test,demo,pro)");	
+			throw new AonException("El objeto del dominio es un dato requerido (test,demo,pro)");
 		}
 		if (DEMO_DATABASE_PARAM.equals(db_target)) {
 			setDbName(DEMO_DATABASE);
@@ -306,9 +326,9 @@ public class DomainServletUtil implements IDomainServletConstants{
 			throw new AonException("Nombre del dominio es un dato requerido.");
 		}
 		if (!StringUtils.endsWith(getDomainName(), DOMAIN_SUFFIX)) {
-			throw new AonException("Actualmente sólo se pueden crear subdominios de '"+ DOMAIN_SUFFIX +"'.");
+			throw new AonException("Actualmente sï¿½lo se pueden crear subdominios de '"+ DOMAIN_SUFFIX +"'.");
 		}
-		
+
 		setDomainUser( request.getParameter(DOMAIN_USER_PARAM));
 		if (StringUtils.isBlank(getDomainUser())) {
 			throw new AonException("El usuario del dominio es un dato requerido.");
@@ -317,27 +337,27 @@ public class DomainServletUtil implements IDomainServletConstants{
 		if (StringUtils.isBlank(getDomainPassword())) {
 			throw new AonException("La clave del usuario del dominio es un dato requerido.");
 		}
-		
+
 		setDomainDescription( request.getParameter(DOMAIN_DESCRIPTION_PARAM));
 		setDomainType( request.getParameter(DOMAIN_TYPE_PARAM));
-		
+
 		String definedUsers =request.getParameter(DOMAIN_MAX_DEFINED_USERS);
 		if (StringUtils.isNotBlank(definedUsers)) {
 			try {
 				Integer.parseInt(definedUsers);
 			} catch (NumberFormatException e) {
-				throw new AonException("El número máximo de usuarios debe ser un valor numérico entero.");	
+				throw new AonException("El nï¿½mero mï¿½ximo de usuarios debe ser un valor numï¿½rico entero.");
 			}
 			setDomainMaxDefinedUsers(definedUsers);
 		}
-		
+
 		String modules_parsed = "";
 		String[] modules = request.getParameterValues(DOMAIN_MODULES);
 		if (modules != null && modules.length > 0) {
 			for (String module : modules) {
 				if (StringUtils.isNotBlank(module)) {
 					if (StringUtils.isNotBlank(modules_parsed)) {
-						modules_parsed=modules_parsed+",";	
+						modules_parsed=modules_parsed+",";
 					}
 					String[] mods = StringUtils.split(module,',');
 					parseModules(mods);
@@ -346,18 +366,18 @@ public class DomainServletUtil implements IDomainServletConstants{
 			}
 		}
 		setDomainModules(modules_parsed);
-		
+
 	}
-	
+
 	private void parseModules(String[] modules) throws AonException {
 		for (String mod : modules) {
 			try {
 				Module.valueOf(mod.toUpperCase());
 			} catch (IllegalArgumentException e) {
 				StringBuilder buf = new StringBuilder(100);
-				buf.append("El módulo '");
+				buf.append("El mï¿½dulo '");
 				buf.append(mod);
-				buf.append("' no es un módulo válido, debe ser uno de los siguientes:");
+				buf.append("' no es un mï¿½dulo vï¿½lido, debe ser uno de los siguientes:");
 				for (Module m:Module.values()) {
 					buf.append(" '");
 					buf.append(m.getName());
@@ -365,9 +385,9 @@ public class DomainServletUtil implements IDomainServletConstants{
 				}
 				throw new AonException( buf.toString() );
 			}
-			
+
 		}
-		
+
 	}
 
 	public String[] getNewDomainCommand() {
@@ -386,6 +406,7 @@ public class DomainServletUtil implements IDomainServletConstants{
 		commandLine.add(SP_DB + getDbName());
 		commandLine.add(SP_DOMAIN_NAME + getDomainName());
 		commandLine.add(SP_DOMAIN_OWNER + getDomainOwner());
+		commandLine.add(SP_TIMEZONE + getDbTimeZone());
 
 		if (StringUtils.isNotBlank(getDomainDescription())) {
 			commandLine.add(SP_DOMAIN_DESCRIPTION + getDomainDescription());
@@ -398,7 +419,7 @@ public class DomainServletUtil implements IDomainServletConstants{
 		if (StringUtils.isNotBlank(getDomainUser())) {
 			commandLine.add(SP_DOMAIN_USER + getDomainUser());
 		}
-		
+
 		if (StringUtils.isNotBlank(getDomainPassword())) {
 			commandLine.add(SP_DOMAIN_PASSWORD + getDomainPassword());
 		}
@@ -406,14 +427,14 @@ public class DomainServletUtil implements IDomainServletConstants{
 		if (StringUtils.isNotBlank(getDomainMaxDefinedUsers())) {
 			commandLine.add(SP_DOMAIN_MAX_DEFINED_USERS + getDomainMaxDefinedUsers());
 		}
-		
+
 		if (StringUtils.isNotBlank(getDomainModules())) {
 			commandLine.add(SP_DOMAIN_MODULES + getDomainModules());
 		}
 
 		return commandLine.toArray(new String[commandLine.size()]);
 	}
-	
+
 	private String parseLine(String line) {
 		line = StringUtils.replace(line, "[91m", "<p style='color: red;'>");
 		line = StringUtils.replace(line, "[32m", "<p style='color: green;'>");
@@ -438,13 +459,13 @@ public class DomainServletUtil implements IDomainServletConstants{
 		} catch (IOException e) {
 			throw new AonException(e);
 		}
-		
+
 	}
-	
+
 	public static void main(String[] args) throws AonException {
 		DomainServletUtil d = new DomainServletUtil();
 		d.parseModules(new String[]{"MARKETING"});
 	}
-	
-	
+
+
 }

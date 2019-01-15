@@ -14,6 +14,8 @@ import java.sql.SQLException;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TimeZone;
+
 
 import net.aonsolutions.core.pool.AonConnectionException;
 
@@ -35,14 +37,16 @@ public class IngenetConnectionInfo {
 	private String url;
 	private String user;
 	private String password;
+	private String timeZone;
 
 	private static IngenetConnectionInfo DEFAULT_CONNNECTION;
 
 	public IngenetConnectionInfo()  {
+		this.timeZone = TimeZone.getDefault().getID();
 	}
 
 	public static final IngenetConnectionInfo getDefaultConnectionInfo()
-			throws AonConnectionException {	
+			throws AonConnectionException {
 		synchronized (DEFAULT_CONFIG_FILE) {
 			if (DEFAULT_CONNNECTION == null) {
 				DEFAULT_CONNNECTION = new IngenetConnectionInfo();
@@ -78,6 +82,14 @@ public class IngenetConnectionInfo {
 
 	public String getPassword() {
 		return password;
+	}
+
+	public String getTimeZone() {
+		return timeZone;
+	}
+
+	public void setTimeZone(String timeZone) {
+		this.timeZone = timeZone;
 	}
 
 	public void setPassword(String password) {
@@ -143,12 +155,16 @@ public class IngenetConnectionInfo {
 	private Connection getConnection(String schema) throws AonConnectionException {
 		try {
 			Class.forName(getDriverClass());
-			return DriverManager.getConnection(getSchemaUrl(schema), getUser(),getPassword());
+			Properties properties = new Properties();
+			properties.setProperty("user", getUser());
+			properties.setProperty("password", getPassword());
+			properties.setProperty("serverTimezone", getTimeZone());
+			return DriverManager.getConnection(getSchemaUrl(schema), properties);
 		} catch (ClassNotFoundException e) {
 			throw new AonConnectionException(e.getMessage(),e);
 		} catch (SQLException e) {
 			throw new AonConnectionException(e.getMessage(),e);		}
-		
+
 	}
 
 	public String getSchemaUrl(String schema) {
@@ -182,7 +198,7 @@ public class IngenetConnectionInfo {
 		}
 		return true;
 	}
-	
+
 	public Map<String, Integer> getDomainMap() throws AonConnectionException {
 		Connection c = null;
 		PreparedStatement ps1 = null;
@@ -249,7 +265,7 @@ public class IngenetConnectionInfo {
 			closeQuietly(c);
 		}
 	}
-	
+
 	public int getDomainScope(int domainId) throws AonConnectionException {
 		Connection c = null;
 		PreparedStatement ps1 = null;

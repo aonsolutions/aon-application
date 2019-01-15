@@ -245,7 +245,7 @@ public class MysqlDB extends DefaultMysqlDB{
     	try {
     		
     		// first of all load JDBC drivers
-            Class.forName("org.gjt.mm.mysql.Driver");
+            Class.forName("com.mysql.jdbc.Driver");
 
             // parse the command line arguments
             CommandLine line = parser.parse( options, args );

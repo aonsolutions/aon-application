@@ -21,6 +21,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.function.Consumer;
 
+import java.util.Properties;
+import java.util.TimeZone;
+
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -58,12 +61,18 @@ public class FiscalModelsReport {
 	private static String URL = "jdbc:mysql://127.0.0.1:3306/pro-aonsolutions-net";
 	private static String USER = "root";
 	private static String PASSWORD = "password";
+	private static String TIMEZONE = "Europe/Madrid";
 	private static DSLContext CTX;
 
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
-		Class.forName(org.gjt.mm.mysql.Driver.class.getName());
-		Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+		Class.forName(com.mysql.jdbc.Driver.class.getName());
+
+		Properties properties = new Properties();
+		properties.setProperty("user", USER);
+		properties.setProperty("password", PASSWORD);
+		properties.setProperty("serverTimezone", TIMEZONE);
+		Connection conn = DriverManager.getConnection(URL, properties);
 		Settings settings = new Settings();
 		settings.setRenderSchema(false);
 		settings.setParamType(ParamType.INLINED);
@@ -82,15 +91,15 @@ public class FiscalModelsReport {
 		final String PERIOD = "PERIOD";
 		final String STATUS = "STATUS";
 		final String COUNT 	= "COUNT";
-		Field<Byte> YEAR_PERIOD = DSL.inline( (byte) 16 ).as(PERIOD); 
-		
+		Field<Byte> YEAR_PERIOD = DSL.inline( (byte) 16 ).as(PERIOD);
+
 		Domain PARENT = DOMAIN.as("PARENT");
 		InvoiceExcelAction action = new InvoiceExcelAction();
 		action.initialize("MODELOS FISCALES");
 		Field<Integer> count = DSL.count();
 		// Field<Integer> vatCount = DSL.count(FS_VAT_DECLARATION.ID);
 
-		CTX.select().from( 
+		CTX.select().from(
 			CTX.select(PARENT.ID.as(ID)
 					, PARENT.DESCRIPTION.as(DESCRIPTION)
 					, PARENT.NAME.as(NAME)
@@ -245,9 +254,9 @@ public class FiscalModelsReport {
 				.groupBy(PARENT.ID, DSL.inline("347"), FS_MOD347.ADMINISTRATION, FS_MOD347.YEAR, YEAR_PERIOD, FS_MOD347.STATUS)
 			).union
 			(
-			CTX.select(PARENT.ID.as(ID)	
-					, PARENT.DESCRIPTION.as(DESCRIPTION)	
-					, PARENT.NAME.as(NAME)	
+			CTX.select(PARENT.ID.as(ID)
+					, PARENT.DESCRIPTION.as(DESCRIPTION)
+					, PARENT.NAME.as(NAME)
 					, PARENT.OWNER.as(OWNER)
 					, DSL.inline("349").as(MODEL)
 					, FS_MOD349.ADMINISTRATION.as(ADMON)
@@ -367,7 +376,7 @@ public class FiscalModelsReport {
 			this.year = year;
 			return this;
 		}
-		
+
 		public int getCount() {
 			return count;
 		}
@@ -402,14 +411,14 @@ public class FiscalModelsReport {
 			dataFormat = workbook.getCreationHelper().createDataFormat();
 			rowCount = 0;
 			cellCount = 0;
-			
+
 			smallFont = workbook.createFont();
 			smallFont.setFontHeightInPoints((short) 8);
 
 			defaultStyle = workbook.createCellStyle();
 			defaultStyle.setFont(smallFont);
 			defaultStyle.setAlignment(HSSFCellStyle.ALIGN_LEFT);
-			
+
 			numberStyle = workbook.createCellStyle();
 			numberStyle.setDataFormat(dataFormat.getFormat(NUMBER_PATTERN));
 			numberStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
@@ -478,9 +487,9 @@ public class FiscalModelsReport {
 			sheet.setColumnWidth(cellCount++, 5*256);
 			CellUtil.createCell(row, cellCount, "ADM", headerCellStyle);
 			sheet.setColumnWidth(cellCount++, 5*256);
-			CellUtil.createCell(row, cellCount, "AÑO", headerCellStyle);
+			CellUtil.createCell(row, cellCount, "Aï¿½O", headerCellStyle);
 			sheet.setColumnWidth(cellCount++, 5*256);
-			
+
 			for (int i = 5; i < 55; i = (i+3) ) {
 				CellUtil.createCell(row, cellCount, "P", headerCellStyle);
 				sheet.setColumnWidth(cellCount++, 4*256);
@@ -492,7 +501,7 @@ public class FiscalModelsReport {
 
 //			sheet.addMergedRegion(new CellRangeAddress((rowCount - 1), (rowCount - 1), 0, 3));
 
-			
+
 			row = sheet.createRow(rowCount++);
 			CellUtil.createCell(row, 5, "ENE", headerCellStyle);
 			CellUtil.createCell(row, 7, "FEB", headerCellStyle);
@@ -506,10 +515,10 @@ public class FiscalModelsReport {
 			CellUtil.createCell(row, 23, "OCT", headerCellStyle);
 			CellUtil.createCell(row, 25, "NOV", headerCellStyle);
 			CellUtil.createCell(row, 27, "DIC", headerCellStyle);
-			CellUtil.createCell(row, 29, "1ºT", headerCellStyle);
-			CellUtil.createCell(row, 31, "2ºT", headerCellStyle);
-			CellUtil.createCell(row, 33, "3ºT", headerCellStyle);
-			CellUtil.createCell(row, 35, "4ºT", headerCellStyle);
+			CellUtil.createCell(row, 29, "1ï¿½T", headerCellStyle);
+			CellUtil.createCell(row, 31, "2ï¿½T", headerCellStyle);
+			CellUtil.createCell(row, 33, "3ï¿½T", headerCellStyle);
+			CellUtil.createCell(row, 35, "4ï¿½T", headerCellStyle);
 			CellUtil.createCell(row, 37, "ANU", headerCellStyle);
 
 		}
@@ -526,7 +535,7 @@ public class FiscalModelsReport {
 			String model = mod.getModel();
 			int year = mod.getYear();
 			Administration admon = mod.getAdministration();
-			if (!AonStringUtils.equals(domain, lastDomain) 
+			if (!AonStringUtils.equals(domain, lastDomain)
 				|| !AonStringUtils.equals(model, lastModel)
 				|| year != lastYear
 				|| admon != lastAdmon) {
@@ -550,7 +559,7 @@ public class FiscalModelsReport {
 			if (cell == null) {
 				addCell(mod.getCount());
 			} else {
-				cell.setCellValue( cell.getNumericCellValue() + mod.getCount() ); 
+				cell.setCellValue( cell.getNumericCellValue() + mod.getCount() );
 			}
 		}
 	}

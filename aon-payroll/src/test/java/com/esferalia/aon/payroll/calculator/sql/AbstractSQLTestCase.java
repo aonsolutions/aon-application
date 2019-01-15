@@ -49,6 +49,8 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
+import java.util.TimeZone;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.jooq.Configuration;
@@ -105,9 +107,9 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 import net.aonsolutions.core.dbutils.AonSQLException;
 
 public abstract class AbstractSQLTestCase {
-	
+
 	private static final String UNSET = "UNSET";
-	
+
 	public static class Extra {
 		public Month month;
 		public String start;
@@ -278,13 +280,13 @@ public abstract class AbstractSQLTestCase {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
 	}
 
-	protected final void addSSRegimePayment(AONContext aonContext, 
-			SSRegimeType ssRegimetype, 
+	protected final void addSSRegimePayment(AONContext aonContext,
+			SSRegimeType ssRegimetype,
 			Date startDate,
 			PaymentConceptRecord concept,
-			PaymentType paymentType, 
-			String expression, 
-			String quoteExpression, 
+			PaymentType paymentType,
+			String expression,
+			String quoteExpression,
 			String irpfExpression,
 			SalaryType salaryType) {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
@@ -300,28 +302,28 @@ public abstract class AbstractSQLTestCase {
 						(byte) (paymentType != null ? paymentType.ordinal() : PaymentType.CRA_0001.ordinal()))
 				.set(SYSTEM_PAYMENT.SALARY_TYPE,
 						(byte) (salaryType != null ? salaryType.ordinal() : SalaryType.SALARY.ordinal()))
-		
+
 				.execute();
 
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
 	}
 
-	protected final void addSSRegimePayment(AONContext aonContext, 
-			SSRegimeType ssRegimetype, 
+	protected final void addSSRegimePayment(AONContext aonContext,
+			SSRegimeType ssRegimetype,
 			Date startDate,
-			PaymentType paymentType, 
-			String expression, 
-			String quoteExpression, 
+			PaymentType paymentType,
+			String expression,
+			String quoteExpression,
 			String irpfExpression,
 			SalaryType salaryType) {
-		addSSRegimePayment(aonContext, 
-				ssRegimetype, 
-				startDate, 
-				null, 
-				paymentType, 
-				expression, 
+		addSSRegimePayment(aonContext,
+				ssRegimetype,
+				startDate,
+				null,
+				paymentType,
+				expression,
 				quoteExpression,
-				irpfExpression, 
+				irpfExpression,
 				salaryType);
 	}
 
@@ -374,6 +376,10 @@ public abstract class AbstractSQLTestCase {
 		return System.getProperty("dbPasswd", "serubd2000");
 	}
 
+	public static String getDbTimeZone() {
+		return System.getProperty("dbTimeZone", TimeZone.getDefault().getID());
+	}
+
 	public static Date addMonths(Date date, int value) {
 		return add(date, MONTH, value);
 	}
@@ -399,16 +405,21 @@ public abstract class AbstractSQLTestCase {
 
 	public static Connection connect() throws ClassNotFoundException, SQLException, AonSQLException {
 		// first of all load JDBC driver
-		Class.forName("org.gjt.mm.mysql.Driver");
+		Class.forName("com.mysql.jdbc.Driver");
 
 		String dbHost = getDbHost();
 		String dbPort = getDbPort();
 		String dbName = getDbName();
 		String dbUser = getDbUser();
 		String dbPasswd = getDbPasswd();
+		String dbTimeZone = getDbTimeZone();
 
+		Properties properties = new Properties();
+		properties.setProperty("user", dbUser);
+		properties.setProperty("password", dbPasswd);
+		properties.setProperty("serverTimezone", dbTimeZone);
 		String url = String.format("jdbc:mysql://%s:%s", dbHost, dbPort, dbName);
-		Connection connection = DriverManager.getConnection(url, dbUser, dbPasswd);
+		Connection connection = DriverManager.getConnection(url, properties);
 
 		ResultSet rs = connection.createStatement().executeQuery("SHOW DATABASES");
 		while (rs.next()) {
@@ -575,7 +586,7 @@ public abstract class AbstractSQLTestCase {
 				payments[i] = (AgreementPaymentRecord)records[i];
 		return payments;
 	}
-	
+
 	public static PaymentConceptRecord getPaymentConcept(AONContext aonContext, int id) {
 		return aonContext.getDslContext().select().from(PAYMENT_CONCEPT).where(PAYMENT_CONCEPT.ID.eq(id))
 				.fetchOneInto(PAYMENT_CONCEPT);
@@ -823,21 +834,21 @@ public abstract class AbstractSQLTestCase {
 				.execute();
 		return workplace;
 	}
-	
+
 	public static CalendarRecord newCalendar(AONContext aonContext,
-			Integer domainId, 
+			Integer domainId,
 			Integer holidayId,
-			Double mondayHours, 
-			Double tuesdayHours, 
-			Double wednesdayHours, 
-			Double thursdayHours, 
-			Double fridayHours, 
-			Double saturdayHours, 
+			Double mondayHours,
+			Double tuesdayHours,
+			Double wednesdayHours,
+			Double thursdayHours,
+			Double fridayHours,
+			Double saturdayHours,
 			Double sundayHours) {
-		return 
+		return
 		aonContext.getDslContext()
 		.insertInto(CALENDAR)
-		
+
 		.set(CALENDAR.DOMAIN, domainId)
 		.set(CALENDAR.HOLIDAY, holidayId)
 
@@ -848,7 +859,7 @@ public abstract class AbstractSQLTestCase {
 		.set(CALENDAR.FRIDAY_HOURS, fridayHours)
 		.set(CALENDAR.SATURDAY_HOURS, saturdayHours)
 		.set(CALENDAR.SUNDAY_HOURS, sundayHours)
-		
+
 		.set(CALENDAR.MONDAY, mondayHours != null ? (byte)0 : (byte)1 )
 		.set(CALENDAR.TUESDAY, tuesdayHours != null ? (byte)0 : (byte)1 )
 		.set(CALENDAR.TUESDAY, wednesdayHours != null ? (byte)0 : (byte)1 )
@@ -860,12 +871,12 @@ public abstract class AbstractSQLTestCase {
 		.returning()
 		.fetchOne()
 		;
-		
+
 	}
-	
+
 	public static HolidayRecord newHoliday(AONContext aonContext, Integer domainId, Integer parentId, Date ...holidays) {
-		HolidayRecord holidayRecord =  
-		
+		HolidayRecord holidayRecord =
+
 		aonContext.getDslContext()
 		.insertInto(HOLIDAY)
 		.set(HOLIDAY.DOMAIN, domainId)
@@ -873,7 +884,7 @@ public abstract class AbstractSQLTestCase {
 		.returning()
 		.fetchOne()
 		;
-		
+
 
 		for (Date holiday : holidays)
 			aonContext.getDslContext()
@@ -883,13 +894,13 @@ public abstract class AbstractSQLTestCase {
 			.set(HOLIDAY_DETAIL.DOMAIN, holidayRecord.getDomain())
 			.execute()
 			;
-		
-		return holidayRecord;
-		
-	}
-	
 
-	
+		return holidayRecord;
+
+	}
+
+
+
 	public static final RegistryRecord newPerson(AONContext aonContext, int domainId, String document) {
 		RegistryRecord person = aonContext.getDslContext().insertInto(REGISTRY).set(REGISTRY.DOMAIN, domainId)
 				.set(REGISTRY.NAME, "").set(REGISTRY.ALIAS, "").set(REGISTRY.DOCUMENT, document)
@@ -942,7 +953,7 @@ public abstract class AbstractSQLTestCase {
 		});
 
 	}
-	
+
 
 	public static final void addData(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate,
 			Map<String, String> datas) {
@@ -1056,7 +1067,7 @@ public abstract class AbstractSQLTestCase {
 		addPayment(aonContext, contract, concept, null, expression, "_P", quoteExpression, type);
 	}
 
-	public static final void addPayment(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate,  
+	public static final void addPayment(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate,
 			PaymentConceptRecord concept, String expression) {
 		addPayment(aonContext, contract, startDate, endDate, concept, expression, expression, "_P", "_P", PaymentType.CRA_0001);
 	}
@@ -1066,15 +1077,15 @@ public abstract class AbstractSQLTestCase {
 		addPayment(aonContext, contract, contract.getStartDate(), contract.getEndDate(), concept, description, expression, irpfExpression, quoteExpression, type);
 	}
 
-	public static final void addPayment(AONContext aonContext, 
-			ContractRecord contract, 
-			Date startDate, 
-			Date endDate, 
+	public static final void addPayment(AONContext aonContext,
+			ContractRecord contract,
+			Date startDate,
+			Date endDate,
 			PaymentConceptRecord concept,
-			String description, 
-			String expression, 
-			String irpfExpression, 
-			String quoteExpression, 
+			String description,
+			String expression,
+			String irpfExpression,
+			String quoteExpression,
 			PaymentType type) {
 		aonContext.getDslContext().insertInto(CONTRACT_PAYMENT)
 				.set(CONTRACT_PAYMENT.DOMAIN, contract.getDomain())
@@ -1091,15 +1102,15 @@ public abstract class AbstractSQLTestCase {
 
 	}
 
-	public static final void addPayment(AONContext aonContext, 
-			ContractRecord contract, 
-			Date startDate, 
-			Date endDate, 
+	public static final void addPayment(AONContext aonContext,
+			ContractRecord contract,
+			Date startDate,
+			Date endDate,
 			PaymentConceptRecord concept,
-			String description, 
-			String expression, 
-			String irpfExpression, 
-			String quoteExpression, 
+			String description,
+			String expression,
+			String irpfExpression,
+			String quoteExpression,
 			PaymentType type,
 			Byte month) {
 		aonContext.getDslContext().insertInto(CONTRACT_PAYMENT)
@@ -1192,7 +1203,7 @@ public abstract class AbstractSQLTestCase {
 	public static void addPayment(AONContext aonContext, ContractRecord contract, String expression) {
 		addPayment(aonContext, contract, expression, "_P");
 	}
-	
+
 	public static void addPayment(AONContext aonContext, ContractRecord contract, String expression,
 			String quoteExpression) {
 		aonContext.getDslContext().insertInto(CONTRACT_PAYMENT)
@@ -1251,16 +1262,16 @@ public abstract class AbstractSQLTestCase {
 				.returning().fetchOne();
 
 	}
-	
+
 	public static int smartCalculateAndSave(Connection connection,
 			ISQLContractSalaryCalculatorContext ctx) throws SalaryException {
 		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
 		RoundSalaryBuilder<ISalary> roundSalaryBuilder = new RoundSalaryBuilder<ISalary>(jooqSalaryBuilder,
 				d -> Math.round(d*100.00)/100.00);
-		
+
 		new SmartContractSalaryCalculator<ISalary>(roundSalaryBuilder).calculate(ctx);
 		return jooqSalaryBuilder.execute();
 	}
-	
+
 
 }

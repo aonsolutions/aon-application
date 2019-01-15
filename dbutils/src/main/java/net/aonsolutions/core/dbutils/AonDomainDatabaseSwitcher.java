@@ -18,6 +18,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.Properties;
+import java.util.TimeZone;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -34,18 +36,18 @@ public class AonDomainDatabaseSwitcher {
 	private static final String IS_AUTOINCREMENT = "IS_AUTOINCREMENT";
 	private static final String SET_FOREIGN_KEY_CHECKS_0 = "SET FOREIGN_KEY_CHECKS=0;";
 	private static final String SET_FOREIGN_KEY_CHECKS_1 = "SET FOREIGN_KEY_CHECKS=1;";
-			
+
 	private static final List<String> tables = new LinkedList<String>();
 	private static final Stack<String> stack = new Stack<String>();
 
 	private static final String ACCOUNT = "account";
-	
+
 	private static final AonInternalReference BANK_STATEMENT_LINK_REFERENCE = new AonInternalReference(
 			"bank_statement_link", "source", "source_id"
 			, new Integer[] {2,3}
 			, new String[] {"bank_concept","account"});
-	
-	private static final AonInternalReference APP_PARAM_REFERENCES = new AonInternalReference( 
+
+	private static final AonInternalReference APP_PARAM_REFERENCES = new AonInternalReference(
 			"app_param", "name", "value"
 			, new String[] {
 				 "ACC_DEFAULT_ALLOWANCE_ACC"
@@ -87,17 +89,17 @@ public class AonDomainDatabaseSwitcher {
 				,"account_period"
 				,"tax"
 				,"tax"});
-	
+
 	private static final AonInternalReference INVOICE_DETAIL_REFERENCES = new AonInternalReference(
 			"invoice_detail", "source", "source_id"
 			, new Integer[] {1,2,3,4,8}
 			, new String[] {"purchase_detail","sales_detail","delivery_detail","income_detail","offer_detail"});
-	
+
 	private static final AonInternalReference ALARM_REFERENCES = new AonInternalReference(
 			"alarm", "source", "source_id"
 			, new Integer[] {0,1,3,4}
 			, new String[] {"notice","task","commercial_tracking","mk_action_target"});
-	
+
 	private static final Map<String,AonInternalReference> INTERNAL_REFERENCES_TABLES = new HashMap<String, AonInternalReference>();
 
 	static {
@@ -106,7 +108,7 @@ public class AonDomainDatabaseSwitcher {
 		INTERNAL_REFERENCES_TABLES.put("alarm",ALARM_REFERENCES);
 		INTERNAL_REFERENCES_TABLES.put("app_param",APP_PARAM_REFERENCES);
 	}
-	
+
 	private Map<String,Map<Integer,Integer>> keys;
 	private Connection source;
 	private Connection target;
@@ -115,8 +117,8 @@ public class AonDomainDatabaseSwitcher {
 	private Integer sourceDomainId;
 	private String parentDomain;
 	private Integer parentDomainId;
-	private DatabaseMetaData metaData; 
-	
+	private DatabaseMetaData metaData;
+
 	private Integer newDomain;
 
 	public AonDomainDatabaseSwitcher(Connection source,Connection target, String domainName, String parentDomain, String sourceDomain) {
@@ -137,11 +139,11 @@ public class AonDomainDatabaseSwitcher {
 	public Connection getSourceConnection() {
 		return source;
 	}
-	
+
 	public Connection getTargetConnection() {
 		return target;
 	}
-	
+
 	public String getDomainName() {
 		return domainName;
 	}
@@ -158,14 +160,14 @@ public class AonDomainDatabaseSwitcher {
 				throw new AonSQLException("No es posible encontrar el dominio fuente '"+this.sourceDomain+"'.");
 			}
 			this.metaData = getSourceConnection().getMetaData();
-    		
+
             ResultSet rs = this.metaData.getTables(null, null, null, null);
             if (!rs.next()) {
             	System.out.println("No existen tablas en la BD origen!");
                 rs.close();
             } else {
             	if (tables.size() == 0) {
-            		System.out.println("Construyendo el orden de inserción!");
+            		System.out.println("Construyendo el orden de inserciï¿½n!");
 	            	addTable(DOMAIN);
 	                do {
 	                	String tableName = rs.getString(TABLE_NAME);
@@ -174,7 +176,7 @@ public class AonDomainDatabaseSwitcher {
 		                    if (isMergeableTable(tableName)) {
 		                    	addTable(tableName);
 		                    } else {
-		                    	System.out.printf("Ignorando la tabla --> %s \r\n",tableName);    	
+		                    	System.out.printf("Ignorando la tabla --> %s \r\n",tableName);
 		                    }
 	            		}
 	                } while (rs.next());
@@ -183,25 +185,25 @@ public class AonDomainDatabaseSwitcher {
             	}
             }
             getTargetConnection().setAutoCommit(false);
-            
+
             Statement s = getTargetConnection().createStatement();
             s.execute(SET_FOREIGN_KEY_CHECKS_0);
             System.out.println("Claves refereciales deshabilitadas");
             s.close();
-            
+
             int i = 0;
             for (String table: tables) {
             	i++;
             	System.out.println();
     			System.out.printf( "%d.- Merging table %s\r\n",i,table );
-   				merge(table);	
+   				merge(table);
             }
 
             // Para resolver el problema de identificadores cruzados.
-            // entre las tablas bank_statement_link y finance_tracking y fbatch 
+            // entre las tablas bank_statement_link y finance_tracking y fbatch
             updateBankStatementLink();
             // ------------------------------------------------------
-            
+
             if (this.sourceDomain == null) {
                 String stmt = "UPDATE domain SET description=name,name = ?,active=1 where id = ?";
                 PreparedStatement ps = getTargetConnection().prepareStatement(stmt);
@@ -210,7 +212,7 @@ public class AonDomainDatabaseSwitcher {
                 ps.execute();
                 ps.close();
             }
-            
+
             getTargetConnection().commit();
 			System.out.println( "COMMIT!");
 
@@ -235,7 +237,7 @@ public class AonDomainDatabaseSwitcher {
 	private boolean ensureParentDomainId() throws SQLException {
 		this.parentDomainId = null;
 		if (StringUtils.isNotEmpty(this.parentDomain)) {
-			String sentence = "SELECT id FROM domain WHERE name = ?"; 
+			String sentence = "SELECT id FROM domain WHERE name = ?";
 			PreparedStatement targetStmnt = getTargetConnection().prepareStatement(sentence);
 			targetStmnt.setString(1, this.parentDomain);
 			ResultSet targetRs = targetStmnt.executeQuery();
@@ -253,7 +255,7 @@ public class AonDomainDatabaseSwitcher {
 	private boolean ensureSourceDomainId() throws SQLException {
 		this.sourceDomainId = null;
 		if (StringUtils.isNotEmpty(this.sourceDomain)) {
-			String sentence = "SELECT id FROM domain WHERE name = ?"; 
+			String sentence = "SELECT id FROM domain WHERE name = ?";
 			PreparedStatement sourceStmnt = getSourceConnection().prepareStatement(sentence);
 			sourceStmnt.setString(1, this.sourceDomain);
 			ResultSet sourceRs = sourceStmnt.executeQuery();
@@ -265,7 +267,7 @@ public class AonDomainDatabaseSwitcher {
 			sourceStmnt.close();
 			return (this.sourceDomainId != null);
 		} else {
-			String sentence = "SELECT id FROM domain"; 
+			String sentence = "SELECT id FROM domain";
 			PreparedStatement sourceStmnt = getSourceConnection().prepareStatement(sentence);
 			ResultSet sourceRs = sourceStmnt.executeQuery();
 			int count = 0;
@@ -276,7 +278,7 @@ public class AonDomainDatabaseSwitcher {
 			sourceRs.close();
 			sourceStmnt.close();
 			if (count != 1) {
-				System.out.printf("Existe más de un dominio y no se indicó el dominio fuente en la entrada standard (parámetro 4)");
+				System.out.printf("Existe mï¿½s de un dominio y no se indicï¿½ el dominio fuente en la entrada standard (parï¿½metro 4)");
 				return false;
 			}
 		}
@@ -284,24 +286,24 @@ public class AonDomainDatabaseSwitcher {
 	}
 
 	private void updateBankStatementLink() throws SQLException {
-		Table t = getTable("bank_statement_link"); 
+		Table t = getTable("bank_statement_link");
         String stmt = "UPDATE bank_statement_link SET source_id=? where id = ?";
         PreparedStatement ups = getTargetConnection().prepareStatement(stmt);
-		
-		String sen = "SELECT id,source,source_id from bank_statement_link WHERE source IN (0,1) AND source_id IS NOT NULL AND domain = " + newDomain; 
+
+		String sen = "SELECT id,source,source_id from bank_statement_link WHERE source IN (0,1) AND source_id IS NOT NULL AND domain = " + newDomain;
 		PreparedStatement ts = getTargetConnection().prepareStatement(sen);
 		ResultSet rs = ts.executeQuery();
 		String fkTable = null;
 		while (rs.next()) {
 			Integer id = rs.getInt(1);
 			Integer source = rs.getInt(2);
-			fkTable = source==0?"finance_tracking":"fbatch";	
+			fkTable = source==0?"finance_tracking":"fbatch";
 			Integer sourceId = rs.getInt(3);
 			sourceId = getReferenceValue(t, sourceId, "source_id", fkTable, false);
 			if (sourceId == null) {
-				ups.setInt(1, -1);	
+				ups.setInt(1, -1);
 			} else {
-				ups.setInt(1, sourceId);	
+				ups.setInt(1, sourceId);
 			}
 			ups.setInt(2, id);
 			ups.execute();
@@ -323,32 +325,32 @@ public class AonDomainDatabaseSwitcher {
 			if (DOMAIN.equals(columnName)) {
 				mergeable = true;
 				break;
-			} 
+			}
 		}
 		columnRs.close();
 		return mergeable;
 	}
 
 	private boolean validateVersion() throws SQLException {
-		String sentence = "SELECT version_number FROM db_version"; 
-		
+		String sentence = "SELECT version_number FROM db_version";
+
 		PreparedStatement sourceStmnt = getSourceConnection().prepareStatement(sentence);
 		ResultSet sourceRs = sourceStmnt.executeQuery();
 		sourceRs.next();
 		String sourceVersion = sourceRs.getString(1);
 		sourceRs.close();
 		sourceStmnt.close();
-		
+
 		PreparedStatement targetStmnt = getTargetConnection().prepareStatement(sentence);
 		ResultSet targetRs = targetStmnt.executeQuery();
 		targetRs.next();
 		String targetVersion = targetRs.getString(1);
 		targetRs.close();
 		targetStmnt.close();
-		
+
 		System.out.printf("Source connection version ..: %s\r\n",sourceVersion);
 		System.out.printf("Target connection version ..: %s\r\n",targetVersion);
-		
+
 		return StringUtils.equals(sourceVersion, targetVersion);
 	}
 
@@ -359,18 +361,18 @@ public class AonDomainDatabaseSwitcher {
 			while (ekRs.next()) {
 				String fkTable = ekRs.getString(PKTABLE_NAME);
 				if (isMergeableTable(fkTable)) {
-					addTable(fkTable);	
+					addTable(fkTable);
 				}
 			}
 			if (INTERNAL_REFERENCES_TABLES.containsKey(table)) {
 				for (String referencedTable : INTERNAL_REFERENCES_TABLES.get(table).getFkTableNames() ) {
 					if (isMergeableTable(referencedTable)) {
-						addTable(referencedTable);	
+						addTable(referencedTable);
 					}
 				}
 			}
 			ekRs.close();
-			tables.add(table);	
+			tables.add(table);
 			stack.pop();
 		}
 	}
@@ -385,12 +387,12 @@ public class AonDomainDatabaseSwitcher {
 			if ( this.sourceDomainId != null) {
 				sentence += " WHERE domain = " + this.sourceDomainId;
 			} else {
-				sentence += " WHERE domain IS NOT NULL";			
+				sentence += " WHERE domain IS NOT NULL";
 			}
 		}
 		PreparedStatement stmt = getSourceConnection().prepareStatement(sentence,t.getSelectColumns());
 		String insertStmt = t.getInsertStatement();
-		PreparedStatement insert = getTargetConnection().prepareStatement(insertStmt,t.isAutoincrementPK()?Statement.RETURN_GENERATED_KEYS:Statement.NO_GENERATED_KEYS); 
+		PreparedStatement insert = getTargetConnection().prepareStatement(insertStmt,t.isAutoincrementPK()?Statement.RETURN_GENERATED_KEYS:Statement.NO_GENERATED_KEYS);
 		ResultSet rs = 	stmt.executeQuery();
 		int i = 0;
 		while (rs.next()) {
@@ -412,7 +414,7 @@ public class AonDomainDatabaseSwitcher {
 			updateReferences(t);
 		}
 	}
-	
+
 	private void updateReferences(Table t) throws SQLException {
 		PreparedStatement stmt = getTargetConnection().prepareStatement("SELECT * FROM " + t.getName() + " WHERE domain = " + newDomain,t.getSelectColumns());
 		for (int i = 0 ;i < t.getFkTables().length; i++  ) {
@@ -420,14 +422,14 @@ public class AonDomainDatabaseSwitcher {
 			if (t.getName().equals(fkTable) ) {
 				String fkColumn = t.getFkColumns()[i];
 				String updateStmt = "UPDATE " + fkTable + " SET " + fkColumn + " =  ? WHERE " + t.getPkColumn() + "=?";
-				PreparedStatement update = getTargetConnection().prepareStatement(updateStmt); 
+				PreparedStatement update = getTargetConnection().prepareStatement(updateStmt);
 				ResultSet rs = 	stmt.executeQuery();
 				while (rs.next()) {
 					int id = rs.getInt( t.getPkColumn() );
 					Integer value = rs.getInt( fkColumn );
 					if (!rs.wasNull()) {
 						Integer newValue = keys.get(fkTable).get(value);
-						update.setInt(1, newValue);	
+						update.setInt(1, newValue);
 						update.setInt(2, id);
 						update.execute();
 						System.out.printf( " Recursive %s id %d  ---> %d updated!\r\n",fkTable,id,newValue);
@@ -445,7 +447,7 @@ public class AonDomainDatabaseSwitcher {
 		Integer newId = null;
 		Map<Integer, Integer> idsMap = keys.get(t.getName());
 		if (idsMap == null) {
-			keys.put(t.getName(), new HashMap<Integer, Integer>());	
+			keys.put(t.getName(), new HashMap<Integer, Integer>());
 		}
 		boolean notFound = (keys.get(t.getName()).get(id) == null);
 		if (notFound) {
@@ -472,14 +474,14 @@ public class AonDomainDatabaseSwitcher {
 									Integer valueInteger = getInteger(value);
 									value = getReferenceValue(t, valueInteger, column, fkTable.getName(), false);
 									if (value == null) {
-										value = -1;	
+										value = -1;
 									}
-									
+
 								}
 							}
 						}
 					}
-					
+
 				}
 				insert.setObject((x + 1),value);
 			}
@@ -490,7 +492,7 @@ public class AonDomainDatabaseSwitcher {
 					newId = insertRs.getInt(1);
 					keys.get(t.getName()).put(id, newId);
 					if (DOMAIN.equals(t.getName())) {
-						newDomain = newId; 
+						newDomain = newId;
 						System.out.println( "--------------------------------" );
 						System.out.println( " NEW DOMAIN ---> " + newDomain );
 						System.out.println( "--------------------------------" );
@@ -502,16 +504,16 @@ public class AonDomainDatabaseSwitcher {
 		}
 		return newId;
 	}
-	
+
 	private Object ensureAccountSeries(Object value) throws SQLException {
 		Integer valueInteger = null;
 		if (value != null) {
 			if (value instanceof String) {
-				 // Se comprueba que el valor del parámetro sea el codigo de la series y en 
+				 // Se comprueba que el valor del parï¿½metro sea el codigo de la series y en
 				 //	ese caso se devuelve el id de la serie en caso contrario se devuelve el dato original.
 				 // ATENCION! Puede haber un error en el caso de que el id de la serie coincida con el code.
-				 // poco probable porque el code de la serie suele ser el año.
-				String sentence = "SELECT id FROM series WHERE code = '" + value + "'"; 
+				 // poco probable porque el code de la serie suele ser el aï¿½o.
+				String sentence = "SELECT id FROM series WHERE code = '" + value + "'";
 				Statement s = null;
 				ResultSet rs = null;
 				try {
@@ -534,8 +536,8 @@ public class AonDomainDatabaseSwitcher {
 						}
 					}
 				}
-				 
-			} 
+
+			}
 		}
 		return valueInteger;
 	}
@@ -549,8 +551,8 @@ public class AonDomainDatabaseSwitcher {
 				try {
 					valueInteger = Integer.parseInt((String) value) ;
 				} catch (NumberFormatException e) {
-					throw new IllegalStateException( "El valor " + value + " no se puede convertir a Integer "); 
-				} 
+					throw new IllegalStateException( "El valor " + value + " no se puede convertir a Integer ");
+				}
 			} else {
 				throw new IllegalStateException( "El valor " + value + " no se puede convertir a Integer ");
 			}
@@ -561,7 +563,7 @@ public class AonDomainDatabaseSwitcher {
 	private Integer getReferenceValue(Table t, Integer value, String column, String fkTable, boolean required ) throws SQLException {
 		if ( "domain".equals(t.getName()) && "domain".equals(fkTable) && this.parentDomainId != null) {
 			value = this.parentDomainId;
-		}  
+		}
 		if (!fkTable.equals(t.getName())) {
 			Integer newValue = null;
 			if ( "domain".equals(t.getName()) ) {
@@ -574,33 +576,33 @@ public class AonDomainDatabaseSwitcher {
 			if (newValue == null) {
 				if ( isSystemTableById(fkTable) ) {
 					ensureSystemTableById(fkTable, value);
-					newValue = (Integer) value; 
+					newValue = (Integer) value;
 				} else if ( isSystemTableByCode(fkTable) ) {
 					newValue = getIdFromSystemTableByCode(fkTable, (Integer) value );
 				} else {
 					Map<Integer,Integer> map = keys.get(fkTable);
 					if (map == null) {
-						throw new IllegalStateException("Insertando " + t.getName() + ". Mapa no encontrado para la tabla " + fkTable + ".");	
+						throw new IllegalStateException("Insertando " + t.getName() + ". Mapa no encontrado para la tabla " + fkTable + ".");
 					}
 					newValue = map.get(value);
 				}
 			}
 			if (newValue == null) {
 				if (required) {
-					throw new IllegalStateException("ID no encontrado, tabla=" + fkTable + ", valor=" + value);	
+					throw new IllegalStateException("ID no encontrado, tabla=" + fkTable + ", valor=" + value);
 				}
-				System.out.println( "WARNING! ID no encontrado para la tabla "+ t.getName()+", fk tabla=" + fkTable + ", valor=" + value); 
-			} 
+				System.out.println( "WARNING! ID no encontrado para la tabla "+ t.getName()+", fk tabla=" + fkTable + ", valor=" + value);
+			}
 			if (t.getPkColumn().equals(column)) {
 				keys.get(t.getName()).put((Integer) value, newValue);
 			}
 			value = newValue;
-		} 
+		}
 		return value;
 	}
 
 	private void ensureSystemTableById(String fkTable, Integer value) throws SQLException {
-		String sentence = "SELECT id FROM "  +fkTable+ " WHERE id = " + value; 
+		String sentence = "SELECT id FROM "  +fkTable+ " WHERE id = " + value;
 		Statement targetStmnt = getTargetConnection().createStatement();
 		ResultSet targetRs = targetStmnt.executeQuery(sentence);
 		if (!targetRs.next()) {
@@ -626,7 +628,7 @@ public class AonDomainDatabaseSwitcher {
 			|| fkTable.equals("role")
 			|| fkTable.equals("application_role")
 			|| fkTable.equals("action");
-				
+
 	}
 
 	private boolean isSystemTableByCode(String fkTable) {
@@ -639,50 +641,50 @@ public class AonDomainDatabaseSwitcher {
 			|| fkTable.equals("geozone_irpf_handicap");
 	}
 	private Integer getIdFromSystemTableByCode(String table, Integer id) throws SQLException {
-		String sentence = "SELECT code FROM "  +table + " WHERE id = " + id; 
+		String sentence = "SELECT code FROM "  +table + " WHERE id = " + id;
 		Statement sourceStmnt = getSourceConnection().createStatement();
 		ResultSet sourceRs = sourceStmnt.executeQuery(sentence);
 		sourceRs.next();
 		String code = sourceRs.getString(1);
-		String targetSentence = "SELECT id FROM "  +table + " WHERE code = '" + code + "'"; 
+		String targetSentence = "SELECT id FROM "  +table + " WHERE code = '" + code + "'";
 		Statement targetStmnt = getSourceConnection().createStatement();
 		ResultSet targetRs = targetStmnt.executeQuery(targetSentence);
 		targetRs.next();
-		Integer returnValue = targetRs.getInt(1); 
+		Integer returnValue = targetRs.getInt(1);
 		sourceStmnt.close();
 		sourceRs.close();
 		targetStmnt.close();
 		targetRs.close();
-		System.out.printf( " \t Valor de tabla única: %s --> %d  code %s --> %d \r\n",table,id,code,returnValue);
-		return returnValue; 
+		System.out.printf( " \t Valor de tabla ï¿½nica: %s --> %d  code %s --> %d \r\n",table,id,code,returnValue);
+		return returnValue;
 	}
-	
+
 	private Table getTable(String table) throws SQLException {
-		Table t = new Table(table); 
+		Table t = new Table(table);
 		ResultSet columnRs = this.metaData.getColumns(null, null, table, null);
 		List<String> insertColumns = new LinkedList<String>();
-		List<String> selectColumns = new LinkedList<String>();		
+		List<String> selectColumns = new LinkedList<String>();
 		while (columnRs.next()) {
 			String ai = columnRs.getString(IS_AUTOINCREMENT);
 			String columnName = columnRs.getString(COLUMN_NAME);
 			if (!"YES".equals(ai)) {
 				insertColumns.add( columnName );
 				t.setAutoincrementPK(true);
-			} 
+			}
 			selectColumns.add( columnName );
 		}
 		columnRs.close();
 		t.setInsertColumns(Arrays.asList(insertColumns.toArray()).toArray(new String[insertColumns.toArray().length]));
 		t.setSelectColumns(Arrays.asList(selectColumns.toArray()).toArray(new String[selectColumns.toArray().length]));
-		
+
 		ResultSet pkColumnsRs = this.metaData.getPrimaryKeys(null, null, table);
 		if (pkColumnsRs.next()) {
-			t.setPkColumn( pkColumnsRs.getString(COLUMN_NAME) );	
-		} 
+			t.setPkColumn( pkColumnsRs.getString(COLUMN_NAME) );
+		}
 		pkColumnsRs.close();
-		
+
 		List<String> fkTables = new LinkedList<String>();
-		List<String> fkColumns = new LinkedList<String>();		
+		List<String> fkColumns = new LinkedList<String>();
 		ResultSet ekRs = this.metaData.getImportedKeys(null, null, table);
 		while (ekRs.next()) {
 			fkTables.add(ekRs.getString(PKTABLE_NAME));
@@ -692,10 +694,10 @@ public class AonDomainDatabaseSwitcher {
 		t.setFkTables(Arrays.asList(fkTables.toArray()).toArray(new String[fkTables.toArray().length]));
 		t.setFkColumns(Arrays.asList(fkColumns.toArray()).toArray(new String[fkColumns.toArray().length]));
 		ekRs.close();
-		
+
 		return t;
 	}
-	
+
 	private class Table {
 		String name;
 		String[] selectColumns;
@@ -704,11 +706,11 @@ public class AonDomainDatabaseSwitcher {
 		String[] fkColumns;
 		String pkColumn;
 		boolean autoincrementPK;
-		
+
 		public Table(String name) {
 			this.name = name;
 		}
-		
+
 		public String getName() {
 			return name;
 		}
@@ -749,12 +751,12 @@ public class AonDomainDatabaseSwitcher {
 			this.autoincrementPK = autoincrementPK;
 		}
 		public boolean isRecursive() {
-			int i =ArrayUtils.indexOf(getFkTables(), name); 
+			int i =ArrayUtils.indexOf(getFkTables(), name);
 			return (!DOMAIN.equals(name) && i != -1);
 		}
 
 		private String getInsertColumnsToString() {
-			StringBuffer buf = new StringBuffer(); 
+			StringBuffer buf = new StringBuffer();
 			for (String col : getInsertColumns()) {
 				if (buf.length() > 0) {
 					buf.append(",");
@@ -773,7 +775,7 @@ public class AonDomainDatabaseSwitcher {
 			}
 			return buf.toString();
 		}
-		
+
 		public String getInsertStatement() {
 			StringBuffer buf = new StringBuffer();
 			buf.append("INSERT INTO ");
@@ -786,7 +788,7 @@ public class AonDomainDatabaseSwitcher {
 			return buf.toString();
 		}
 	}
-	
+
 	public static void main(String[] args) throws SQLException, ClassNotFoundException, AonSQLException, FileNotFoundException, IOException {
 		/*
 		Class.forName("com.mysql.jdbc.Driver");
@@ -799,18 +801,23 @@ public class AonDomainDatabaseSwitcher {
         source.close();
         target.close();
 		 */
-        
+
 		Class.forName("com.mysql.jdbc.Driver");
-        
-		
+
+
 		String targetURL = args[0];
 		String targetUser = args.length > 1 ? args[1] : "dbuser";
 		String targetPassword = args.length > 2 ? args[2] : "serubd2000";
-		
+		String targetTimeZone = args.length > 3 ? args[3] : TimeZone.getDefault().getID();
+
 		Connection target  = null ;
 		Connection source = null;
 		try {
-			target = DriverManager.getConnection(targetURL,targetUser,targetPassword);
+			Properties targetProperties = new Properties();
+			targetProperties.setProperty("user", targetUser);
+			targetProperties.setProperty("password", targetPassword);
+			targetProperties.setProperty("serverTimezone", targetTimeZone);
+			target = DriverManager.getConnection(targetURL, targetProperties);
 			int databases = 0;
 			LineNumberReader reader = new LineNumberReader(new InputStreamReader (System.in));
 			String line =  reader.readLine();
@@ -818,59 +825,67 @@ public class AonDomainDatabaseSwitcher {
 				try {
 					String words [] = line.split("\\s+");
 
-					// line example : jdbc:mysql://127.0.0.1/demo-esferalia-com dbuser seurbd2000 demo.esferalia.com parent.esferalia.com
-					
+					// line example : jdbc:mysql://127.0.0.1/demo-esferalia-com dbuser seurbd2000 demo.esferalia.com parent.esferalia.com Europe/Madrid
+
 					String sourceURL = words[0];
 
 					String sorceUser = "dbuser";
 					if (words.length > 1) {
-						sorceUser = words[1];	
+						sorceUser = words[1];
 					}
-					
-					String sourcePassword = "serubd2000"; 
+
+					String sourcePassword = "serubd2000";
 					if (words.length > 2) {
-						sourcePassword = words[2];	
+						sourcePassword = words[2];
 					}
-					
+
 					String domainName = "";
 					if (words.length > 3) {
-						domainName = words[3];	
+						domainName = words[3];
 					}
-					
+
 					String parentDomain = "";
 					if (words.length > 4) {
-						parentDomain = words[4];	
+						parentDomain = words[4];
 					}
-					
+
+					String sourceTimeZone = TimeZone.getDefault().getID();
+					if (words.length > 5) {
+						parentDomain = words[5];
+					}
+
 					System.out.printf("Merging %s...", domainName);
 
-					source = DriverManager.getConnection(sourceURL,sorceUser,sourcePassword);
+					Properties sourceProperties = new Properties();
+					sourceProperties.setProperty("user", sorceUser);
+					sourceProperties.setProperty("password", sourcePassword);
+					sourceProperties.setProperty("serverTimezone", sourceTimeZone);
+					source = DriverManager.getConnection(sourceURL,sourceProperties);
 					AonDomainDatabaseSwitcher merger = new AonDomainDatabaseSwitcher(source, target, domainName,parentDomain,domainName);
 					merger.execute();
 					merger.clean();
 					merger = null;
-					
+
 					System.out.printf("OK.\r\n");
 				}
 				catch ( Exception e ){
 					System.out.printf("ERROR %s.\r\n", e.getMessage());
 				}
 				finally {
-					if ( source != null ) 
+					if ( source != null )
 						source.close();
-					
+
 				}
 				++databases;
 				System.gc();
 		        line =  reader.readLine();
 			}
 	        target.close();
-	        
+
 	        System.out.printf("Movidos: %d dominios.\r\n", databases );
 		} finally {
-			if ( target != null ) 
+			if ( target != null )
 				source.close();
 		}
 	}
 }
-

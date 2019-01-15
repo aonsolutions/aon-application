@@ -9,7 +9,7 @@
 		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
 		<property name="show_sql">true</property>		
 		<property name="connection.url">jdbc:mysql://127.0.0.1:3306/aon_reveng_${buildNumber}?autoReconnect=true</property>		
-		<property name="connection.driver_class">org.gjt.mm.mysql.Driver</property>		
+		<property name="connection.driver_class">com.mysql.jdbc.Driver</property>		
 		<property name="connection.username">dbuser</property>		
 		<property name="connection.password">serubd2000</property>		
 		

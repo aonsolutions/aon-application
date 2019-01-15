@@ -24,7 +24,7 @@ public class AccountingBreakdownFormatterTest {
 	
 	public static void main(String[] args) throws ClassNotFoundException, FileNotFoundException {
 		
-		Class.forName( org.gjt.mm.mysql.Driver.class.getName() );
+		Class.forName( com.mysql.jdbc.Driver.class.getName() );
 		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID, USER);
 
 		Mod130 mod130 = FISCAL.initializeMod130(DOMAIN_NAME, DOMAIN_ID, USER, null);
