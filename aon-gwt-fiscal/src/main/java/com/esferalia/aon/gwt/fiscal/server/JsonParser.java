@@ -32,11 +32,11 @@ public class JsonParser {
 		}
 		String fromDate = (String) jsonParams.get(IRequestParamsNames.FROM_DATE);
 		if (AonStringUtils.isNotBlank(fromDate)) {
-			params.setFrom( FORMATTER.parse(fromDate));			
+			params.setFromDate( FORMATTER.parse(fromDate));			
 		}
 		String toDate = (String) jsonParams.get(IRequestParamsNames.TO_DATE);
 		if (AonStringUtils.isNotBlank(toDate)) {
-			params.setTo( FORMATTER.parse(toDate));			
+			params.setToDate( FORMATTER.parse(toDate));			
 		}
 		Long type = (Long) jsonParams.get(IRequestParamsNames.TYPE);
 		if (type!= null) {

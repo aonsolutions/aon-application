@@ -39,6 +39,10 @@ public class AccountingReportParams implements IAccountParams, Cloneable {
 	private boolean reverseOrder;
 	private BalanceType balanceType;
 	
+	private AccountPeriod selectedPeriod;
+	private EnterpriseActivity selectedActivity;
+	private Account selectedAccount;
+	
 	public String getDomainName() {
 		return domainName;
 	}
@@ -162,6 +166,29 @@ public class AccountingReportParams implements IAccountParams, Cloneable {
 		return getBalanceType() == BalanceType.BALANCE_PYMES;
 	}
 	
+	public AccountPeriod getSelectedPeriod() {
+		return selectedPeriod;
+	}
+	public AccountingReportParams setSelectedPeriod(AccountPeriod selectedPeriod) {
+		this.selectedPeriod = selectedPeriod;
+		return this;
+	}
+	public EnterpriseActivity getSelectedActivity() {
+		return selectedActivity;
+	}
+	public AccountingReportParams setSelectedActivity(EnterpriseActivity selectedActivity) {
+		this.selectedActivity = selectedActivity;
+		return this;
+	}
+	public Account getSelectedAccount() {
+		return selectedAccount;
+	}
+	public AccountingReportParams setSelectedAccount(Account selectedAccount) {
+		this.selectedAccount = selectedAccount;
+		return this;
+	}
+	
+	
 	public AccountingReportParams clone() {
 		return new AccountingReportParams()
 			.setDomain(getDomain())
@@ -184,6 +211,9 @@ public class AccountingReportParams implements IAccountParams, Cloneable {
 			.setClosingEntriesExcluded(areClosingEntriesExcluded())
 			.setReverseOrder(isReverseOrder())
 			.setBalanceType(getBalanceType())
+			.setSelectedPeriod(getSelectedPeriod())
+			.setSelectedActivity(getSelectedActivity())
+			.setSelectedAccount(getSelectedAccount())
 		;
 	}
 	

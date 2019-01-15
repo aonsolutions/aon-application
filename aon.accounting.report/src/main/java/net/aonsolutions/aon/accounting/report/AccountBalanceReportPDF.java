@@ -3,7 +3,6 @@ package net.aonsolutions.aon.accounting.report;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
@@ -18,27 +17,17 @@ import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
-import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.ColumnText;
-import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfWriter;
 
 public class AccountBalanceReportPDF {
+
 	private static final DecimalFormat FMT = new DecimalFormat("#,##0.00;(#,##0.00)");
 	private static SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
-	private static SimpleDateFormat TIME_FORMATTER = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-	
-	private static Font HEADER_FONT_0 = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD);
-	private static Font HEADER_FONT_1 = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD);
-	private static Font HEADER_FONT_2 = new Font(Font.FontFamily.HELVETICA, 6);
 	private static Font BODY_FONT = new Font(Font.FontFamily.HELVETICA, 8);
 	private static Font BODY_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD);
 
@@ -62,7 +51,7 @@ public class AccountBalanceReportPDF {
 		float w = pageWidth - document.leftMargin() - document.rightMargin();
 		
 		PdfWriter writer = PdfWriter.getInstance(document, outputStream);
-		writer.setPageEvent(new ReportPageEvent(report.getMetadata()));
+		writer.setPageEvent(new AccountReportPdfPageEvent(report.getMetadata()));
 		document.open();
 		
 		int columns = 1 + report.getPeriods().size(); 
@@ -119,84 +108,6 @@ public class AccountBalanceReportPDF {
 		document.close();
 	}
 
-	private class ReportPageEvent extends PdfPageEventHelper {
-		
-		private ReportMetadata metadata;
-		
-		private ReportPageEvent(ReportMetadata metadata) {
-			this.metadata = metadata;
-		}
-		
-		public void onStartPage(PdfWriter writer, Document document) {
-			PdfContentByte canvas = writer.getDirectContent();
-			
-			float pageWidth = document.getPageSize().getWidth(); 
-			float pageHeight = document.getPageSize().getHeight();
-			float w = pageWidth - document.leftMargin() - document.rightMargin();
-			
-			ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT
-					,new Phrase(this.metadata.getCompanyName(), HEADER_FONT_1)
-					,document.leftMargin()
-					,pageHeight - 15
-					,0);
-			
-			Rectangle rect = new Rectangle(
-					 (w / 2)
-					,pageHeight - 10
-					,w + document.leftMargin()  
-					,pageHeight - 30
-			);
-
-			canvas.rectangle(rect);
-			Paragraph p = new Paragraph(this.metadata.getFilterDescription(),HEADER_FONT_2);
-			ColumnText ct = new ColumnText(canvas);
-			ct.setAlignment(Element.ALIGN_RIGHT);
-			ct.setLeading(8);
-			ct.setSimpleColumn(rect);
-			ct.setUseAscender(true);
-			ct.addText(p);
-	        try {
-	            ct.go();
-	        } catch (DocumentException e) {
-	            throw new ExceptionConverter(e);
-	        }
-			ColumnText.showTextAligned(canvas, Element.ALIGN_CENTER
-					,new Phrase(this.metadata.getTitle(), HEADER_FONT_0)
-					,(pageWidth/2) 
-					,pageHeight - 40
-					,0);
-			
-			canvas.setColorStroke(BaseColor.BLACK);
-	        canvas.moveTo(document.leftMargin(), document.top() + 5);
-	        canvas.lineTo(pageWidth - document.rightMargin(), document.top() + 5);
-	        canvas.closePathStroke();
-		}
-
-		public void onEndPage(PdfWriter writer, Document document) {
-			PdfContentByte canvas = writer.getDirectContent();
-			
-			float pageWidth = document.getPageSize().getWidth(); 
-
-			canvas.setColorStroke(BaseColor.BLACK);
-	        canvas.moveTo(document.leftMargin(), document.bottom() - 2);
-	        canvas.lineTo(pageWidth - document.rightMargin(), document.bottom() - 2);
-	        canvas.closePathStroke();
-	        
-			ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT
-					,new Phrase(TIME_FORMATTER.format( new Date()), HEADER_FONT_1)
-					,document.leftMargin()
-					,document.bottom() - 10
-					, 0);
-			ColumnText.showTextAligned(canvas
-					, Element.ALIGN_LEFT
-					,new Phrase("P\u00E1g: " + (metadata.getPageOffset() + writer.getPageNumber()), HEADER_FONT_1)
-					,(document.getPageSize().getWidth() - document.rightMargin() - 40)
-					,document.bottom() - 10
-					, 0);
-			writer.flush();
-		}
-	}
-	
 	private void concat(StringBuffer buf, String string) {
 		if (buf.length() > 0) {
 			buf.append(", ");

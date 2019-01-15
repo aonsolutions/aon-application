@@ -7,7 +7,7 @@ import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class AccountEntryParams implements Serializable{
+public class AccountEntryParams implements IAccountParams,Serializable{
 
 	private static final long serialVersionUID = 7399522390660289406L;
 	
@@ -15,8 +15,8 @@ public class AccountEntryParams implements Serializable{
 	private int domain;
 	private String user;
 	private Integer period;
-	private Date from;
-	private Date to;
+	private Date fromDate;
+	private Date toDate;
 	private AccountEntryType type;
 	private Integer journal;
 	private Integer activity;
@@ -66,15 +66,15 @@ public class AccountEntryParams implements Serializable{
 		this.period = period;
 		return this;
 	}
-	public Date getFrom() {
-		return from;
+	public Date getFromDate() {
+		return fromDate;
 	}
-	public AccountEntryParams setFrom(Date from) {
-		this.from = from;
+	public AccountEntryParams setFromDate(Date fromDate) {
+		this.fromDate = fromDate;
 		return this;
 	}
-	public Date getTo() {
-		return to;
+	public Date getToDate() {
+		return toDate;
 	}
 	public AccountEntryType getType() {
 		return type;
@@ -97,8 +97,8 @@ public class AccountEntryParams implements Serializable{
 		this.activity = activity;
 		return this;
 	}
-	public AccountEntryParams setTo(Date to) {
-		this.to = to;
+	public AccountEntryParams setToDate(Date toDate) {
+		this.toDate = toDate;
 		return this;
 	}
 	public Integer getAccount() {

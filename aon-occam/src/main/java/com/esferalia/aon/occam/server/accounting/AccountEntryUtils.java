@@ -23,11 +23,11 @@ public class AccountEntryUtils {
 		if (params.getActivity()  != null && params.getActivity().intValue() != 0 ) {
 			prop = prop.and(p.getActivityProperty().eq(params.getActivity()));
 		}
-		if (params.getFrom() != null) {
-			prop = prop.and(p.getEntryDateProperty().ge(params.getFrom()));
+		if (params.getFromDate() != null) {
+			prop = prop.and(p.getEntryDateProperty().ge(params.getFromDate()));
 		}
-		if (params.getTo() != null) {
-			prop = prop.and(p.getEntryDateProperty().le(params.getTo()));
+		if (params.getToDate() != null) {
+			prop = prop.and(p.getEntryDateProperty().le(params.getToDate()));
 		}
 		if (params.getType() != null) {
 			prop = prop.and(p.getEntryTypeProperty().eq((byte) params.getType().ordinal()));

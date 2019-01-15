@@ -12,7 +12,15 @@ public class ReportMetadata implements Serializable {
 	private String companyName;
 	private String keyWords;
 	private String filterDescription;
+
+	private boolean showCover;
+
 	private int pageOffset;
+	private String pageOffsetText;
+	
+	private boolean hideFilter;
+	private boolean hideDateTimeOnFooter;
+	private String footerText;
 
 	public String getTitle() {
 		return title;
@@ -68,6 +76,15 @@ public class ReportMetadata implements Serializable {
 		return this;
 	}
 
+	public boolean isShowCover() {
+		return showCover;
+	}
+
+	public ReportMetadata setShowCover(boolean showCover) {
+		this.showCover = showCover;
+		return this;
+	}
+
 	public int getPageOffset() {
 		return pageOffset;
 	}
@@ -76,4 +93,42 @@ public class ReportMetadata implements Serializable {
 		this.pageOffset = pageOffset;
 		return this;
 	}
+
+	public String getPageOffsetText() {
+		return pageOffsetText;
+	}
+
+	public ReportMetadata setPageOffsetText(String pageOffsetText) {
+		this.pageOffsetText = pageOffsetText;
+		return this;
+	}
+
+	public boolean isHideFilter() {
+		return hideFilter;
+	}
+
+	public ReportMetadata setHideFilter(boolean hideFilter) {
+		this.hideFilter = hideFilter;
+		return this;
+	}
+
+	public boolean isHideDateTimeOnFooter() {
+		return hideDateTimeOnFooter;
+	}
+
+	public ReportMetadata setHideDateTimeOnFooter(boolean hideDateTimeOnFooter) {
+		this.hideDateTimeOnFooter = hideDateTimeOnFooter;
+		return this;
+	}
+
+	public String getFooterText() {
+		return footerText;
+	}
+
+	public ReportMetadata setFooterText(String footerText) {
+		this.footerText = footerText;
+		return this;
+	}
+	
+	
 }

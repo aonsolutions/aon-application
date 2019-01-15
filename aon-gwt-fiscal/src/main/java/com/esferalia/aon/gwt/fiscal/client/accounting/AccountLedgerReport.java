@@ -82,13 +82,6 @@ public class AccountLedgerReport extends MainEntryPoint {
 		buttonContainer.add(diskForm);
 
 		final Button pdf = new Button();
-		
-		
-		
-		pdf.setVisible(false);
-		
-		
-		
 		pdf.setText(AON.MSG.print());
 		pdf.setTitle(AON.MSG.print());
 		pdf.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
