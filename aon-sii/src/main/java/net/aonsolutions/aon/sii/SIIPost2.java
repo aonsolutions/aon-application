@@ -60,14 +60,19 @@ public class SIIPost2 extends WebServiceGatewaySupport{
     		setUnmarshaller(unmarshaller);
 		} catch (KeyStoreException e) {
 			e.printStackTrace();
+			throw new IllegalStateException(e.getMessage());
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
+			throw new IllegalStateException(e.getMessage());
 		} catch (CertificateException e) {
 			e.printStackTrace();
+			throw new IllegalStateException(e.getMessage());
 		} catch (IOException e) {
 			e.printStackTrace();
+			throw new IllegalStateException(e.getMessage());
 		} catch (UnrecoverableKeyException e) {
 			e.printStackTrace();
+			throw new IllegalStateException(e.getMessage());
 		}
 	}
 
