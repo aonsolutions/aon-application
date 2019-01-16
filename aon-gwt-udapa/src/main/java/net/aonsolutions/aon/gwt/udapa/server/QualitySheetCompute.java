@@ -49,6 +49,10 @@ public class QualitySheetCompute {
 		COMPUTE_MAP.put(QualitySheetCode.UFQCD141.getName(),"(Qufqcd141 == 0 ? Qufqcd14/Qufqcc01)*100 : Qufqcd141");
 		COMPUTE_MAP.put(QualitySheetCode.UFQCD151.getName(),"(Qufqcd151 == 0 ? Qufqcd15/Qufqcc01)*100 : Qufqcd151");
 		COMPUTE_MAP.put(QualitySheetCode.UFQCD161.getName(),"(Qufqcd161 == 0 ? Qufqcd16/Qufqcc01)*100 : Qufqcd161");
+		COMPUTE_MAP.put(QualitySheetCode.UFQCD171.getName(),"(Qufqcd171 == 0 ? Qufqcd17/Qufqcc01)*100 : Qufqcd171");
+		COMPUTE_MAP.put(QualitySheetCode.UFQCD181.getName(),"(Qufqcd181 == 0 ? Qufqcd18/Qufqcc01)*100 : Qufqcd181");
+		COMPUTE_MAP.put(QualitySheetCode.UFQCD191.getName(),"(Qufqcd191 == 0 ? Qufqcd19/Qufqcc01)*100 : Qufqcd191");
+		
 		
 		COMPUTE_MAP.put(QualitySheetCode.UFQCD02.getName(),"(Qufqcd021*Qufqcc01)/100");
 		COMPUTE_MAP.put(QualitySheetCode.UFQCD03.getName(),"(Qufqcd031*Qufqcc01)/100");
@@ -64,9 +68,12 @@ public class QualitySheetCompute {
 		COMPUTE_MAP.put(QualitySheetCode.UFQCD14.getName(),"(Qufqcd141*Qufqcc01)/100");
 		COMPUTE_MAP.put(QualitySheetCode.UFQCD15.getName(),"(Qufqcd151*Qufqcc01)/100");
 		COMPUTE_MAP.put(QualitySheetCode.UFQCD16.getName(),"(Qufqcd161*Qufqcc01)/100");
+		COMPUTE_MAP.put(QualitySheetCode.UFQCD17.getName(),"(Qufqcd171*Qufqcc01)/100");
+		COMPUTE_MAP.put(QualitySheetCode.UFQCD18.getName(),"(Qufqcd181*Qufqcc01)/100");
+		COMPUTE_MAP.put(QualitySheetCode.UFQCD19.getName(),"(Qufqcd191*Qufqcc01)/100");
 	
-		COMPUTE_MAP.put(QualitySheetCode.UFQCD11.getName(),"PROPACO ? Qufqcd02+Qufqcd03+Qufqcd04+Qufqcd05+Qufqcd06+Qufqcd07+Qufqcd08+Qufqcd09+Qufqcd10+Qufqcd12+Qufqcd13+Qufqcd14+Qufqcd15+Qufqcd16"
-																+ " : Qufqcd02+Qufqcd03+Qufqcd04+Qufqcd05+Qufqcd06+Qufqcd07+Qufqcd08+Qufqcd09+Qufqcd10+Qufqcc10+Qufqcd12+Qufqcd13+Qufqcd14+Qufqcd15+Qufqcd16");
+		COMPUTE_MAP.put(QualitySheetCode.UFQCD11.getName(),"PROPACO ? Qufqcd02+Qufqcd03+Qufqcd04+Qufqcd05+Qufqcd06+Qufqcd07+Qufqcd08+Qufqcd09+Qufqcd10+Qufqcd12+Qufqcd13+Qufqcd14+Qufqcd15+Qufqcd16+Qufqcd17+Qufqcd18+Qufqcd19"
+																+ " : Qufqcd02+Qufqcd03+Qufqcd04+Qufqcd05+Qufqcd06+Qufqcd07+Qufqcd08+Qufqcd09+Qufqcd10+Qufqcc10+Qufqcd12+Qufqcd13+Qufqcd14+Qufqcd15+Qufqcd16+Qufqcd17+Qufqcd18+Qufqcd19");
 		COMPUTE_MAP.put(QualitySheetCode.UFQCD111.getName(),"(Qufqcd11/Qufqcc01)*100");
 	}
 	

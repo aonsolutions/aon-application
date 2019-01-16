@@ -17,6 +17,9 @@ public enum Defects {
 	TALLOS("Tallos"),
 	VERDES("Verdes"),
 	VIROSIS("Virosis"),
+	PODRIDAS("Podridas"),
+	APLASTAMIENTOS("Aplastamientos"),
+	PALOMILLA("Palomillas"),
 	TIERRAS_PIEDRA("Tierras Piedra")
 ;
 	

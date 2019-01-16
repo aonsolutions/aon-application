@@ -485,7 +485,7 @@ public class QualitySheet extends Composite{
 		hp2.add(label2);
 		caliberControl.setWidget(tIndex, 3, hp2);
 
-		for(Integer j = tIndex + 1; j < 18; j++) {
+		for(Integer j = tIndex + 1; j < 21; j++) {
 			caliberControl.setWidget(j, 2, new Label());
 			caliberControl.setWidget(j, 3, new Label());	
 		}
