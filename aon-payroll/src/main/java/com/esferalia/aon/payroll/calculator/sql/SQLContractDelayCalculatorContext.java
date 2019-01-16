@@ -947,7 +947,7 @@ public class SQLContractDelayCalculatorContext extends
 				+ " WHERE " + SQLConstants.SALARY + "." + SalaryColumns.CONTRACT + " = ? " 
 				+ " AND " 	+ SQLConstants.SALARY + "." + SalaryColumns.TYPE + "  = ? " 
 				+ " AND " 	+ SQLConstants.SALARY + "." + SalaryColumns.START_DATE + "  = ? " 
-				+ " AND " 	+ SQLConstants.SALARY + "." + SalaryColumns.END_DATE + " = ? " 
+				+ " AND " 	+ SQLConstants.SALARY + "." + SalaryColumns.END_DATE + " >= ? " 
 				+ " AND " 	+ SQLConstants.SALARY_PAYMENT + "." + SalaryPaymentColumns.TYPE + " = ? "
 				+ " AND " 	+ SQLConstants.SALARY_PAYMENT + "." + SalaryPaymentColumns.AMOUNT + " = 0.00 "
 				+ " AND " 	+ SQLConstants.SALARY_PAYMENT + "." + SalaryPaymentColumns.IRPF + " = 0.00 "
