@@ -33,8 +33,8 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <version>3.2.2</version>
-        <!--configuration>
-          <archive>
+        <configuration>
+          <!--archive>
             <manifest>
               <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
@@ -45,8 +45,26 @@
               <buildDate>${maven.build.timestamp}</buildDate>
               <buildRevision>${buildNumber}</buildRevision>
             </manifestEntries>
-          </archive>
-        </configuration-->
+          </archive-->
+          <webResources>
+            <resource>
+              <!-- this is relative to the pom.xml directory -->
+              <directory>../aon-web-aio/src/main/webapp</directory>
+              <!-- the list has a default value of ** -->  
+              <includes>
+                <include>js/**</include>
+                <include>css/**</include>
+                <include>images/**</include>
+              </includes>
+              <!-- there's no default value for this 
+              <excludes>
+                <exclude>**/*.jsp</exclude>
+                <exclude>**/*.xhtml</exclude>
+              </excludes>
+              -->
+            </resource>
+          </webResources>          
+        </configuration>
         <executions>
           <execution>
             <id>execution1</id>
