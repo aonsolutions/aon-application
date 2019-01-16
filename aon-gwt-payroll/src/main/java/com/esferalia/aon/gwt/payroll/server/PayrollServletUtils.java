@@ -257,7 +257,35 @@ public class PayrollServletUtils extends AonServletUtils {
 			try {
 				conn = AonServletUtils.getConnection(domain);
 
-				SalaryBuilder salaryBuilder = new SalaryBuilder();
+				SalaryBuilder salaryBuilder = new SalaryBuilder() {
+					@Override
+					public void createNewSalary() {
+						this.salary = new com.esferalia.aon.payroll.Salary() {
+							@Override
+							public Collection<SalaryCost> getCosts() throws SalaryException {
+								return getSalaryCosts();
+							}
+							@Override
+							public Collection<SalaryCost> getCostS() throws SalaryException {
+								return getSalaryCosts();
+							}
+							@Override
+							public Collection<SalaryBonus> getBonus() throws SalaryException {
+								return getSalaryBonus();
+							}
+							@Override
+							public Collection<SalaryPayment> getPaymentS() throws SalaryException {
+								return getSalaryPayments();
+							}
+							@Override
+							public Collection<SalaryDeduction> getDeductionS() throws SalaryException {
+								return getSalaryDeductions();
+							}
+						};
+						// default ones
+						salary.setTotalIrpf(0.00);
+					};
+				};
 				SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 				calculator.setSalaryBuilder(salaryBuilder);
 
@@ -276,6 +304,24 @@ public class PayrollServletUtils extends AonServletUtils {
 					while (ctx.next())
 						if (!find(salaries, ctx)) {
 							Salary salary = calculator.calculate(ctx);
+
+							Payments payments = new Payments();
+							salary.getSalaryPayments().forEach( p -> SalaryPaymentsFactory.managePayment(payments, p));
+							try {salary.setPayments(payments);} catch (SalaryException e) {}
+							
+							Deductions deductions = new Deductions();
+							salary.getSalaryDeductions().forEach( d -> SalaryDeductionsFactory.manageDeductions(deductions, d));
+							deductions.setTotal(getOrZero(salary.getTotalDeduction()));
+							deductions.setSocialSecurityContributions(getOrZero(salary.getSocialSecurityContributions()));
+							try {salary.setDeductions(deductions);} catch (SalaryException e) {}
+							
+							Costs costs = new Costs();
+							salary.getSalaryCosts().forEach( c -> SalaryCostsFactory.manageCosts(costs, c));
+							try {salary.setEnterpriseCosts(costs);} catch (SalaryException e) {}
+							
+							Bonuses bonuses = new Bonuses();
+							salary.getSalaryBonus().forEach( c -> bonuses.setTotal(bonuses.getTotal() + c.getAmount()) );
+							try {salary.setBonuses(bonuses);} catch (SalaryException e) {}
 
 							salary.setIssueYear(0);
 							salary.setContract(getContract(conn, ctx.getId()));
@@ -942,6 +988,19 @@ public class PayrollServletUtils extends AonServletUtils {
 		if ( b >= ts.length )
 			return null;
 		return ts[b];
+	}
+	
+	private static int getOrZero(Integer value) {
+		return getOr(value, 0);
+	}
+
+	private static double getOrZero(Double value) {
+		return getOr(value, 0.00);
+	}
+
+
+	private static <T> T getOr(T value, T def) {
+		return value != null ? value : def;
 	}
 
 }

@@ -151,7 +151,14 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.IrpfOutcome;
+import com.esferalia.aon.payroll.SalaryBonus;
 import com.esferalia.aon.payroll.SalaryBuilder;
+import com.esferalia.aon.payroll.SalaryCost;
+import com.esferalia.aon.payroll.SalaryCostsFactory;
+import com.esferalia.aon.payroll.SalaryDeduction;
+import com.esferalia.aon.payroll.SalaryDeductionsFactory;
+import com.esferalia.aon.payroll.SalaryPayment;
+import com.esferalia.aon.payroll.SalaryPaymentsFactory;
 import com.esferalia.aon.payroll.calculator.CollectSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.GenericContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
@@ -195,7 +202,10 @@ import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryBuilderListener;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.bonus.Bonuses;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
+import com.esferalia.aon.salary.cost.Costs;
+import com.esferalia.aon.salary.deduction.Deductions;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.CheckException;
@@ -212,6 +222,7 @@ import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.IPayment;
+import com.esferalia.aon.salary.payment.Payments;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.utils.ReportUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -3646,7 +3657,35 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	private static ISalary getSalary(String domain, SalaryDraft draft) {
 
-		SalaryBuilder salaryBuilder = new SalaryBuilder();
+		SalaryBuilder salaryBuilder = new SalaryBuilder() {
+			@Override
+			public void createNewSalary() {
+				this.salary = new com.esferalia.aon.payroll.Salary() {
+					@Override
+					public Collection<SalaryCost> getCosts() throws SalaryException {
+						return getSalaryCosts();
+					}
+					@Override
+					public Collection<SalaryCost> getCostS() throws SalaryException {
+						return getSalaryCosts();
+					}
+					@Override
+					public Collection<SalaryBonus> getBonus() throws SalaryException {
+						return getSalaryBonus();
+					}
+					@Override
+					public Collection<SalaryPayment> getPaymentS() throws SalaryException {
+						return getSalaryPayments();
+					}
+					@Override
+					public Collection<SalaryDeduction> getDeductionS() throws SalaryException {
+						return getSalaryDeductions();
+					}
+				};
+				// default ones
+				salary.setTotalIrpf(0.00);
+			};
+		};
 
 		SmartContractSalaryCalculator<com.esferalia.aon.payroll.Salary> calculator =
 				new SmartContractSalaryCalculator<com.esferalia.aon.payroll.Salary>();
@@ -3660,6 +3699,25 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			ctx = getSalaryCalculatorContext(conn, draft, null);
 			com.esferalia.aon.payroll.Salary salary = (com.esferalia.aon.payroll.Salary) calculator
 					.calculate(ctx);
+			
+			Payments payments = new Payments();
+			salary.getSalaryPayments().forEach( p -> SalaryPaymentsFactory.managePayment(payments, p));
+			try {salary.setPayments(payments);} catch (SalaryException e) {}
+			
+			Deductions deductions = new Deductions();
+			salary.getSalaryDeductions().forEach( d -> SalaryDeductionsFactory.manageDeductions(deductions, d));
+			deductions.setTotal(getOrZero(salary.getTotalDeduction()));
+			deductions.setSocialSecurityContributions(getOrZero(salary.getSocialSecurityContributions()));
+			try {salary.setDeductions(deductions);} catch (SalaryException e) {}
+			
+			Costs costs = new Costs();
+			salary.getSalaryCosts().forEach( c -> SalaryCostsFactory.manageCosts(costs, c));
+			try {salary.setEnterpriseCosts(costs);} catch (SalaryException e) {}
+			
+			Bonuses bonuses = new Bonuses();
+			salary.getSalaryBonus().forEach( c -> bonuses.setTotal(bonuses.getTotal() + c.getAmount()) );
+			try {salary.setBonuses(bonuses);} catch (SalaryException e) {}
+			
 
 			Contract contract = PayrollServletUtils.getContract(conn, draft
 					.getEmployee().getId());
@@ -3689,10 +3747,39 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+
 	private static com.esferalia.aon.payroll.Salary getSalary( String domain,
 			AgreementDraft draft, int levelId) {
 
-		SalaryBuilder salaryBuilder = new SalaryBuilder();
+		SalaryBuilder salaryBuilder = new SalaryBuilder() {
+			@Override
+			public void createNewSalary() {
+				this.salary = new com.esferalia.aon.payroll.Salary() {
+					@Override
+					public Collection<SalaryCost> getCosts() throws SalaryException {
+						return getSalaryCosts();
+					}
+					@Override
+					public Collection<SalaryCost> getCostS() throws SalaryException {
+						return getSalaryCosts();
+					}
+					@Override
+					public Collection<SalaryBonus> getBonus() throws SalaryException {
+						return getSalaryBonus();
+					}
+					@Override
+					public Collection<SalaryPayment> getPaymentS() throws SalaryException {
+						return getSalaryPayments();
+					}
+					@Override
+					public Collection<SalaryDeduction> getDeductionS() throws SalaryException {
+						return getSalaryDeductions();
+					}
+				};
+				// default ones
+				salary.setTotalIrpf(0.00);
+			};
+		};
 
 		SmartContractSalaryCalculator<com.esferalia.aon.payroll.Salary> calculator =
 				new SmartContractSalaryCalculator<com.esferalia.aon.payroll.Salary>();
@@ -3707,6 +3794,25 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			com.esferalia.aon.payroll.Salary salary = (com.esferalia.aon.payroll.Salary) calculator
 					.calculate(ctx);
 
+			Payments payments = new Payments();
+			salary.getSalaryPayments().forEach( p -> SalaryPaymentsFactory.managePayment(payments, p));
+			try {salary.setPayments(payments);} catch (SalaryException e) {}
+			
+			Deductions deductions = new Deductions();
+			salary.getSalaryDeductions().forEach( d -> SalaryDeductionsFactory.manageDeductions(deductions, d));
+			deductions.setTotal(getOrZero(salary.getTotalDeduction()));
+			deductions.setSocialSecurityContributions(getOrZero(salary.getSocialSecurityContributions()));
+			try {salary.setDeductions(deductions);} catch (SalaryException e) {}
+			
+			Costs costs = new Costs();
+			salary.getSalaryCosts().forEach( c -> SalaryCostsFactory.manageCosts(costs, c));
+			try {salary.setEnterpriseCosts(costs);} catch (SalaryException e) {}
+			
+			Bonuses bonuses = new Bonuses();
+			salary.getSalaryBonus().forEach( c -> bonuses.setTotal(bonuses.getTotal() + c.getAmount()) );
+			try {salary.setBonuses(bonuses);} catch (SalaryException e) {}
+
+			
 			// fill salary , ugly code
 			salary.setEmployeeDocument(StringUtils.repeat(" ", 9));
 			String levelDescription = StringUtils.repeat(" ", 2);
@@ -4717,5 +4823,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	private static boolean notAtEnterpriseSite(){
 		return false;
 	}
+	
+	private static double getOrZero(Double value) {
+		return value != null ? value : 0.00;
+	}
+	
 
 }
