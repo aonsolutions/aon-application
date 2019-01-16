@@ -40,9 +40,9 @@ public class QualitySheetConstants {
 		QualitySheetCode.UFQCD12, QualitySheetCode.UFQCD121,
 		QualitySheetCode.UFQCD10, QualitySheetCode.UFQCD101,
 		QualitySheetCode.UFQCD16, QualitySheetCode.UFQCD161,
-		QualitySheetCode.UFQCD16, QualitySheetCode.UFQCD161,
 		QualitySheetCode.UFQCD17, QualitySheetCode.UFQCD171,
-		QualitySheetCode.UFQCD18, QualitySheetCode.UFQCD181
+		QualitySheetCode.UFQCD18, QualitySheetCode.UFQCD181,
+		QualitySheetCode.UFQCD19, QualitySheetCode.UFQCD191
 	};
 	
 	public static QualitySheetCode[] CALIBER = new QualitySheetCode[]{
