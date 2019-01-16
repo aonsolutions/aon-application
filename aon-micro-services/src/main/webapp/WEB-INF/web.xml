@@ -105,4 +105,14 @@
 		<url-pattern>/aon_gwt_payroll/calculate</url-pattern>
 	</servlet-mapping>
 
+	<!-- Resource Servlet -->
+	<servlet>
+		<servlet-name>ResourceServlet</servlet-name>
+		<servlet-class>com.code.aon.ui.resources.servlet.ResourceServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ResourceServlet</servlet-name>
+		<url-pattern>/aonResource/*</url-pattern>
+	</servlet-mapping>
+
 </web-app>

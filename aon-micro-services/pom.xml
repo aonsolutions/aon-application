@@ -130,6 +130,12 @@
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>com.code.aon</groupId>
+      <artifactId>aon.ui.resources</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
 
 
     <!-- EXTERNAL LIBRARIES -->
