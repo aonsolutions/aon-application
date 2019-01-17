@@ -54,19 +54,16 @@ public class AccountOperatingReportPDF {
 		
 		AccountOperatingReport report = ACCOUNTING.getAccountOperatingReport(domainName, user, domainId, params );
 		
-		ReportMetadata metadata = new ReportMetadata()
+		ReportMetadata metadata = params.getReportMetadata()
 				.setCompanyName(companyName)
-				.setFilterDescription(getFilterDescription(report,params))
-				.setTitle("CUENTA DE EXPLOTACI\u00D3N")
-				;
+				.setFilterDescription(getFilterDescription(params))
+			;
 		
 		Document document = new Document();
-		// document.setPageSize(PageSize.A4.rotate());
 		document.setPageSize(report.getIntervals().size()<3?PageSize.A4:PageSize.A4.rotate());
-		document.setMargins(36, 36, 50, 30);
+		document.setMargins(30, 30, 50, 30);
 		
 		PdfWriter writer = PdfWriter.getInstance(document, outputStream);
-//		writer.setPageEvent(new ReportPageEvent(metadata));
 		writer.setPageEvent(new AccountReportPdfPageEvent(metadata));
 		document.open();
 		
@@ -242,10 +239,10 @@ public class AccountOperatingReportPDF {
 		buf.append(string);
 	}
 	
-	private String getFilterDescription(AccountOperatingReport report, AccountingReportParams params) {
+	private String getFilterDescription(AccountingReportParams params) {
 		StringBuffer buf = new StringBuffer();
-		if (report.getSelectedPeriod() != null) {
-			concat(buf, "Ejr.: " + report.getSelectedPeriod().getName() );
+		if (params.getSelectedPeriod() != null) {
+			concat(buf, "Ejr.: " + params.getSelectedPeriod().getName() );
 		}
 		if (params.getFromDate() != null) {
 			concat(buf, "Desde: " + DATE_FORMATTER.format(params.getFromDate()) );
@@ -253,8 +250,8 @@ public class AccountOperatingReportPDF {
 		if (params.getToDate() != null) {
 			concat(buf, "Hasta: " + DATE_FORMATTER.format(params.getToDate()) );
 		}
-		if (report.getSelectedActivity() != null) {
-			concat(buf, "Act.: " + report.getSelectedActivity().getDescription() );
+		if (params.getSelectedActivity() != null) {
+			concat(buf, "Act.: " + params.getSelectedActivity().getDescription() );
 		}
 		if (params.getSecurityLevel() != null && params.getSecurityLevel() == SecurityLevel.CONFIDENTIAL) {
 			concat(buf, "Seg: CONFID.");	

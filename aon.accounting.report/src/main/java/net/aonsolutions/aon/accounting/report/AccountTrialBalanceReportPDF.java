@@ -46,10 +46,10 @@ public class AccountTrialBalanceReportPDF {
 		
 		AccountTrialBalanceReport report = ACCOUNTING.getAccountTrialBalance(domainName, domainId, user, params );
 		
-		ReportMetadata metadata = new ReportMetadata()
+		ReportMetadata metadata = params.getReportMetadata()
 				.setCompanyName(companyName)
-				.setFilterDescription(getFilterDescription(report,params))
-				.setTitle("BALANCE DE SUMAS Y SALDOS");
+				.setFilterDescription(getFilterDescription(params))
+			;
 		
 		int columns = 2; 
 		if (report.hasBeforePeriodAmounts()) {
@@ -67,7 +67,7 @@ public class AccountTrialBalanceReportPDF {
 		Document document = new Document();
 		// document.setPageSize(PageSize.A4.rotate());
 		document.setPageSize(columns<9?PageSize.A4:PageSize.A4.rotate());
-		document.setMargins(36, 36, 50, 30);
+		document.setMargins(30, 30, 50, 30);
 		
 		PdfWriter writer = PdfWriter.getInstance(document, outputStream);
 		writer.setPageEvent(new AccountReportPdfPageEvent(metadata));
@@ -94,8 +94,8 @@ public class AccountTrialBalanceReportPDF {
 		table.addCell( emptyCell );
 		
 		if (report.hasBeforePeriodAmounts()) {
-			String msg = report.getSelectedPeriod() != null
-					?"Saldos anter. al " + DATE_FORMATTER.format(report.getSelectedPeriod().getInitiationDate())
+			String msg = report.getParams().getSelectedPeriod() != null
+					?"Saldos anter. al " + DATE_FORMATTER.format(report.getParams().getSelectedPeriod().getInitiationDate())
 					:"Saldos anteriores";
 			Paragraph debitParagrph = new Paragraph(8, msg, BODY_FONT_BOLD);
 			debitParagrph.setAlignment( Element.ALIGN_CENTER);
@@ -276,10 +276,10 @@ public class AccountTrialBalanceReportPDF {
 		buf.append(string);
 	}
 	
-	private String getFilterDescription(AccountTrialBalanceReport report, AccountingReportParams params) {
+	private String getFilterDescription(AccountingReportParams params) {
 		StringBuffer buf = new StringBuffer();
-		if (report.getSelectedPeriod() != null) {
-			concat(buf, "Ejr.: " + report.getSelectedPeriod().getName() );
+		if (params.getSelectedPeriod() != null) {
+			concat(buf, "Ejr.: " + params.getSelectedPeriod().getName() );
 		}
 		if (params.getFromDate() != null) {
 			concat(buf, "Desde: " + DATE_FORMATTER.format(params.getFromDate()) );
@@ -287,8 +287,8 @@ public class AccountTrialBalanceReportPDF {
 		if (params.getToDate() != null) {
 			concat(buf, "Hasta: " + DATE_FORMATTER.format(params.getToDate()) );
 		}
-		if (report.getSelectedActivity() != null) {
-			concat(buf, "Act.: " + report.getSelectedActivity().getDescription() );
+		if (params.getSelectedActivity() != null) {
+			concat(buf, "Act.: " + params.getSelectedActivity().getDescription() );
 		}
 		if (params.getSecurityLevel() != null && params.getSecurityLevel() == SecurityLevel.CONFIDENTIAL) {
 			concat(buf, "Seg: CONFID.");	

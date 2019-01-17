@@ -7,8 +7,6 @@ import java.util.LinkedList;
 public class AccountStatementReport implements Serializable {
 	
 	private static final long serialVersionUID = -3255950085921957296L;
-	
-	private EnterpriseActivity selectedActivity;
 	private AccountingReportParams params;
 	
 	private LinkedList<AccountStatement> summary;
@@ -20,14 +18,6 @@ public class AccountStatementReport implements Serializable {
 	public AccountStatementReport setParams(AccountingReportParams params) {
 		this.params = params;
 		return this; 
-	}
-	
-	public EnterpriseActivity getSelectedActivity() {
-		return selectedActivity;
-	}
-	public AccountStatementReport setSelectedActivity(EnterpriseActivity selectedActivity) {
-		this.selectedActivity = selectedActivity;
-		return this;
 	}
 	
 	public Account getAccount() {

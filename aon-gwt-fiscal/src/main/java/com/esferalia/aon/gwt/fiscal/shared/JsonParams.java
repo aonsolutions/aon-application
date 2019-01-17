@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONNull;
@@ -75,6 +76,15 @@ public class JsonParams extends JSONObject {
 		json.put(IRequestParamsNames.BALANCING_ACCOUNT,params.getBalancingAccount() == null? JSON_NULL : new JSONNumber( params.getBalancingAccount()));
 		json.put(IRequestParamsNames.COMMENTS		,AonStringUtils.isBlank(params.getComments())? JSON_NULL : new JSONString( params.getComments()));
 		json.put(IRequestParamsNames.ORDER 			,new JSONNumber( params.getOrder()));
+		json.put(IRequestParamsNames.TITLE,AonStringUtils.isBlank(params.getTitle())? JSON_NULL : new JSONString( URL.encode( params.getTitle() )));
+		json.put(IRequestParamsNames.SUBJECT,AonStringUtils.isBlank(params.getSubject())? JSON_NULL : new JSONString( URL.encode( params.getSubject())));
+		json.put(IRequestParamsNames.SHOW_COVER,new JSONNumber( params.isShowCover()?1:0));
+		json.put(IRequestParamsNames.PAGE_OFFSET,new JSONNumber( params.getPageOffset()));
+		json.put(IRequestParamsNames.PAGE_OFFSET_TEXT,AonStringUtils.isBlank(params.getPageOffsetText())? JSON_NULL : new JSONString( URL.encode( params.getPageOffsetText())));
+		json.put(IRequestParamsNames.HIDE_FILTER,new JSONNumber( params.isHideFilter()?1:0));
+		json.put(IRequestParamsNames.HEADER_TEXT,AonStringUtils.isBlank(params.getHeaderText())? JSON_NULL : new JSONString( URL.encode( params.getHeaderText())));
+		json.put(IRequestParamsNames.HIDE_DATETIME_ON_FOOTER,new JSONNumber( params.isHideDateTimeOnFooter()?1:0));
+		json.put(IRequestParamsNames.FOOTER_TEXT,AonStringUtils.isBlank(params.getFooterText())? JSON_NULL : new JSONString( URL.encode( params.getFooterText())));
 		return json.toString();
 	}
 	
@@ -105,6 +115,16 @@ public class JsonParams extends JSONObject {
 		json.put(IRequestParamsNames.PERCENTS_ENABLED,new JSONNumber( params.isPercentsEnabled()?1:0));
 		json.put(IRequestParamsNames.BY_MONTH,new JSONNumber( params.isByMonth()?1:0));
 		json.put(IRequestParamsNames.BALANCE_TYPE,params.getBalanceType()==null?JSON_NULL:new JSONNumber( params.getBalanceType().ordinal()));
+		json.put(IRequestParamsNames.TITLE,AonStringUtils.isBlank(params.getTitle())? JSON_NULL : new JSONString( URL.encode( params.getTitle() )));
+		json.put(IRequestParamsNames.SUBJECT,AonStringUtils.isBlank(params.getSubject())? JSON_NULL : new JSONString( URL.encode( params.getSubject())));
+		json.put(IRequestParamsNames.SHOW_COVER,new JSONNumber( params.isShowCover()?1:0));
+		json.put(IRequestParamsNames.PAGE_OFFSET,new JSONNumber( params.getPageOffset()));
+		json.put(IRequestParamsNames.PAGE_OFFSET_TEXT,AonStringUtils.isBlank(params.getPageOffsetText())? JSON_NULL : new JSONString( URL.encode( params.getPageOffsetText())));
+		json.put(IRequestParamsNames.HIDE_FILTER,new JSONNumber( params.isHideFilter()?1:0));
+		json.put(IRequestParamsNames.HEADER_TEXT,AonStringUtils.isBlank(params.getHeaderText())? JSON_NULL : new JSONString( URL.encode( params.getHeaderText())));
+		json.put(IRequestParamsNames.HIDE_DATETIME_ON_FOOTER,new JSONNumber( params.isHideDateTimeOnFooter()?1:0));
+		json.put(IRequestParamsNames.FOOTER_TEXT,AonStringUtils.isBlank(params.getFooterText())? JSON_NULL : new JSONString( URL.encode( params.getFooterText())));
+		
 		if (params.getCostCenters() == null || params.getCostCenters().size() == 0) {
 			json.put(IRequestParamsNames.COST_CENTERS,JSON_NULL);
 		} else {

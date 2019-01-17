@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 
 import org.jooq.tools.json.JSONObject;
@@ -16,6 +18,7 @@ import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JsonParser {
+	private static final String ENCODING = "utf-8";
 	private static SimpleDateFormat FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
 
 	public static AccountEntryParams parse(String accountEntryParams) throws ParseException, java.text.ParseException {
@@ -85,6 +88,71 @@ public class JsonParser {
 		Long order = (Long) jsonParams.get(IRequestParamsNames.ORDER);
 		if (order != null) {
 			params.setOrder(order.intValue());	
+		}
+		// ******************* TITLE ******************* 
+		String title = (String) jsonParams.get(IRequestParamsNames.TITLE);
+		if (AonStringUtils.isNotBlank(title)) {
+			try {
+				params.setTitle(URLDecoder.decode( title , ENCODING ));
+			} catch (UnsupportedEncodingException e) {
+				params.setTitle(title);
+			}			
+		}
+		// ******************* SUBJECT ******************* 
+		String subject = (String) jsonParams.get(IRequestParamsNames.SUBJECT);
+		if (AonStringUtils.isNotBlank(subject)) {
+			try {
+				params.setSubject(URLDecoder.decode( subject, ENCODING ));
+			} catch (UnsupportedEncodingException e) {
+				params.setSubject(subject);			
+			}			
+		}
+		// *******************  SHOW COVER ******************* 
+		Long showCover = (Long) jsonParams.get(IRequestParamsNames.SHOW_COVER);
+		if (showCover != null) {
+			params.setShowCover(showCover==1);
+		}
+		// ******************* PAGE OFFSET ******************* 
+		Long pageOffset = (Long) jsonParams.get(IRequestParamsNames.PAGE_OFFSET);
+		if (pageOffset!= null) {
+			params.setPageOffset(pageOffset.intValue());	
+		}
+		// ******************* PAGE OFFSET TEXT ******************* 
+		String pageOffsetText = (String) jsonParams.get(IRequestParamsNames.PAGE_OFFSET_TEXT);
+		if (AonStringUtils.isNotBlank(pageOffsetText)) {
+			try {
+				params.setPageOffsetText(URLDecoder.decode( pageOffsetText, ENCODING ));
+			} catch (UnsupportedEncodingException e) {
+				params.setPageOffsetText(pageOffsetText);			
+			}			
+		}
+		// *******************  HIDE FILTER ******************* 
+		Long hideFilter = (Long) jsonParams.get(IRequestParamsNames.HIDE_FILTER);
+		if (hideFilter != null) {
+			params.setHideFilter(hideFilter==1);
+		}
+		// ******************* HEADER TEXT ******************* 
+		String headerText = (String) jsonParams.get(IRequestParamsNames.HEADER_TEXT);
+		if (AonStringUtils.isNotBlank(headerText)) {
+			try {
+				params.setHeaderText(URLDecoder.decode( headerText, ENCODING ));
+			} catch (UnsupportedEncodingException e) {
+				params.setHeaderText(headerText);			
+			}			
+		}
+		// *******************  HIDE DATETIME ON FOOTER ******************* 
+		Long hideDateTimeOnFooter = (Long) jsonParams.get(IRequestParamsNames.HIDE_DATETIME_ON_FOOTER);
+		if (hideDateTimeOnFooter != null) {
+			params.setHideDateTimeOnFooter(hideDateTimeOnFooter==1);
+		}
+		// ******************* PAGE OFFSET TEXT ******************* 
+		String footerText = (String) jsonParams.get(IRequestParamsNames.FOOTER_TEXT);
+		if (AonStringUtils.isNotBlank(footerText)) {
+			try {
+				params.setFooterText(URLDecoder.decode( footerText, ENCODING ));
+			} catch (UnsupportedEncodingException e) {
+				params.setFooterText(footerText);			
+			}			
 		}
 		return params;
 	}
@@ -166,11 +234,71 @@ public class JsonParser {
 			params.setNoActivityAccountVisible(noActivityAccountVisible==1);
 		}
 		
-//		IRequestParamsNames.ACCOUNT,params.getAccount().getId() == null? JSON_NULL : new JSONNumber( params.getAccount().getId()));
-//		IRequestParamsNames.ACCOUNT_CODE,AonStringUtils.isBlank(params.getAccount().getCode())? JSON_NULL : new JSONString( params.getAccount().getCode()));
-//		IRequestParamsNames.ACCOUNT_DESCRIPTION,AonStringUtils.isBlank(params.getAccount().getDescription())? JSON_NULL : new JSONString( params.getAccount().getDescription()));
-//		IRequestParamsNames.DOCUMENT,AonStringUtils.isBlank(params.getDocumentNumber())? JSON_NULL : new JSONString( params.getDocumentNumber()));
-//		IRequestParamsNames.COST_CENTERS,JSON_NULL);
+		// ******************* TITLE ******************* 
+		String title = (String) jsonParams.get(IRequestParamsNames.TITLE);
+		if (AonStringUtils.isNotBlank(title)) {
+			try {
+				params.setTitle(URLDecoder.decode( title , ENCODING ));
+			} catch (UnsupportedEncodingException e) {
+				params.setTitle(title);
+			}			
+		}
+		// ******************* SUBJECT ******************* 
+		String subject = (String) jsonParams.get(IRequestParamsNames.SUBJECT);
+		if (AonStringUtils.isNotBlank(subject)) {
+			try {
+				params.setSubject(URLDecoder.decode( subject, ENCODING ));
+			} catch (UnsupportedEncodingException e) {
+				params.setSubject(subject);			
+			}			
+		}
+		// *******************  SHOW COVER ******************* 
+		Long showCover = (Long) jsonParams.get(IRequestParamsNames.SHOW_COVER);
+		if (showCover != null) {
+			params.setShowCover(showCover==1);
+		}
+		// ******************* PAGE OFFSET ******************* 
+		Long pageOffset = (Long) jsonParams.get(IRequestParamsNames.PAGE_OFFSET);
+		if (pageOffset!= null) {
+			params.setPageOffset(pageOffset.intValue());	
+		}
+		// ******************* PAGE OFFSET TEXT ******************* 
+		String pageOffsetText = (String) jsonParams.get(IRequestParamsNames.PAGE_OFFSET_TEXT);
+		if (AonStringUtils.isNotBlank(pageOffsetText)) {
+			try {
+				params.setPageOffsetText(URLDecoder.decode( pageOffsetText, ENCODING ));
+			} catch (UnsupportedEncodingException e) {
+				params.setPageOffsetText(pageOffsetText);			
+			}			
+		}
+		// *******************  HIDE FILTER ******************* 
+		Long hideFilter = (Long) jsonParams.get(IRequestParamsNames.HIDE_FILTER);
+		if (hideFilter != null) {
+			params.setHideFilter(hideFilter==1);
+		}
+		// ******************* HEADER TEXT ******************* 
+		String headerText = (String) jsonParams.get(IRequestParamsNames.HEADER_TEXT);
+		if (AonStringUtils.isNotBlank(headerText)) {
+			try {
+				params.setHeaderText(URLDecoder.decode( headerText, ENCODING ));
+			} catch (UnsupportedEncodingException e) {
+				params.setHeaderText(headerText);			
+			}			
+		}
+		// *******************  HIDE DATETIME ON FOOTER ******************* 
+		Long hideDateTimeOnFooter = (Long) jsonParams.get(IRequestParamsNames.HIDE_DATETIME_ON_FOOTER);
+		if (hideDateTimeOnFooter != null) {
+			params.setHideDateTimeOnFooter(hideDateTimeOnFooter==1);
+		}
+		// ******************* PAGE OFFSET TEXT ******************* 
+		String footerText = (String) jsonParams.get(IRequestParamsNames.FOOTER_TEXT);
+		if (AonStringUtils.isNotBlank(footerText)) {
+			try {
+				params.setFooterText(URLDecoder.decode( footerText, ENCODING ));
+			} catch (UnsupportedEncodingException e) {
+				params.setFooterText(footerText);			
+			}			
+		}
 		return params;
 	}
 }

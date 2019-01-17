@@ -37,6 +37,17 @@ public class AccountEntryParams implements IAccountParams,Serializable{
 	private EnterpriseActivity selectedActivity;
 	private Account selectedAccount;
 	
+	// Report Metadata
+	private String title;
+	private String subject;
+	private boolean showCover;
+	private int pageOffset;
+	private String pageOffsetText;
+	private boolean hideFilter;
+	private String headerText;
+	private boolean hideDateTimeOnFooter;
+	private String footerText;
+
 	public String getDomainName() {
 		return domainName;
 	}
@@ -202,4 +213,81 @@ public class AccountEntryParams implements IAccountParams,Serializable{
 			|| AonStringUtils.isNotEmpty( document  ) );
 	}
 	
+	public String getTitle() {
+		return title;
+	}
+	public AccountEntryParams setTitle(String title) {
+		this.title = title;
+		return this;
+	}
+	public String getSubject() {
+		return subject;
+	}
+	public AccountEntryParams setSubject(String subject) {
+		this.subject = subject;
+		return this;
+	}
+	public boolean isShowCover() {
+		return showCover;
+	}
+	public AccountEntryParams setShowCover(boolean showCover) {
+		this.showCover = showCover;
+		return this;
+	}
+	public int getPageOffset() {
+		return pageOffset;
+	}
+	public AccountEntryParams setPageOffset(int pageOffset) {
+		this.pageOffset = pageOffset;
+		return this;
+	}
+	public String getPageOffsetText() {
+		return pageOffsetText;
+	}
+	public AccountEntryParams setPageOffsetText(String pageOffsetText) {
+		this.pageOffsetText = pageOffsetText;
+		return this;
+	}
+	public boolean isHideFilter() {
+		return hideFilter;
+	}
+	public AccountEntryParams setHideFilter(boolean hideFilter) {
+		this.hideFilter = hideFilter;
+		return this;
+	}
+	public String getHeaderText() {
+		return headerText;
+	}
+	public AccountEntryParams setHeaderText(String headerText) {
+		this.headerText = headerText;
+		return this;
+	}
+	public boolean isHideDateTimeOnFooter() {
+		return hideDateTimeOnFooter;
+	}
+	public AccountEntryParams setHideDateTimeOnFooter(boolean hideDateTimeOnFooter) {
+		this.hideDateTimeOnFooter = hideDateTimeOnFooter;
+		return this;
+	}
+	public String getFooterText() {
+		return footerText;
+	}
+	public AccountEntryParams setFooterText(String footerText) {
+		this.footerText = footerText;
+		return this;
+	}
+
+	public ReportMetadata getReportMetadata() {
+		return new ReportMetadata()
+				.setTitle(getTitle())
+				.setSubject(getSubject())
+				.setShowCover(isShowCover())
+				.setPageOffset(getPageOffset())
+				.setPageOffsetText(getPageOffsetText())
+				.setHideFilter(isHideFilter())
+				.setHeaderText(getHeaderText())
+				.setHideDateTimeOnFooter(isHideDateTimeOnFooter())
+				.setFooterText(getFooterText())
+				;
+	}
 }

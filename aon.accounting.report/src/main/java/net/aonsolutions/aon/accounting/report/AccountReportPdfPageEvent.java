@@ -50,6 +50,10 @@ public class AccountReportPdfPageEvent extends PdfPageEventHelper {
 					,(pageWidth / 2)
 					,(pageHeight / 2)
 					,0);
+			ColumnText.showTextAligned(canvas, Element.ALIGN_CENTER, new Phrase(this.metadata.getSubject(), HEADER_FONT_COVER_0)
+					,(pageWidth / 2)
+					,(pageHeight / 2) - 20
+					,0);
 			ColumnText.showTextAligned(canvas, Element.ALIGN_RIGHT, new Phrase(this.metadata.getFilterDescription(), HEADER_FONT_0)
 					,(pageWidth - document.rightMargin() - 40)
 					,(pageHeight / 5)
@@ -60,13 +64,11 @@ public class AccountReportPdfPageEvent extends PdfPageEventHelper {
 					new Phrase(this.metadata.getCompanyName(), HEADER_FONT_1), document.leftMargin(), pageHeight - 15, 0);
 			
 			Rectangle rect = new Rectangle((w / 2), pageHeight - 10, w + document.leftMargin(), pageHeight - 30);
-			
 			canvas.rectangle(rect);
-			String filterDescrition = null;
-			if (!metadata.isHideFilter()) {
-				filterDescrition = this.metadata.getFilterDescription();
-			}
-			Paragraph p = new Paragraph(filterDescrition, HEADER_FONT_2);
+			String headerText = metadata.isHideDateTimeOnFooter()
+					?metadata.getHeaderText()
+					:this.metadata.getFilterDescription();
+			Paragraph p = new Paragraph(headerText, HEADER_FONT_2);
 			ColumnText ct = new ColumnText(canvas);
 			ct.setAlignment(Element.ALIGN_RIGHT);
 			ct.setLeading(8);
@@ -93,28 +95,28 @@ public class AccountReportPdfPageEvent extends PdfPageEventHelper {
 			float pageWidth = document.getPageSize().getWidth();
 			
 			canvas.setColorStroke(BaseColor.BLACK);
-			canvas.moveTo(document.leftMargin(), document.bottom() - 10);
-			canvas.lineTo(pageWidth - document.rightMargin(), document.bottom() - 10);
+			canvas.moveTo(document.leftMargin(), document.bottom() - 5);
+			canvas.lineTo(pageWidth - document.rightMargin(), document.bottom() - 5);
 			canvas.closePathStroke();
 			
 			String footerText = metadata.isHideDateTimeOnFooter()
 					?metadata.getFooterText()
-							:TIME_FORMATTER.format(new Date());
-					ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT,
-							new Phrase(footerText, HEADER_FONT_1), document.leftMargin(),
-							document.bottom() - 20, 0);
-					if (metadata.getPageOffset() > 0) {
-						ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT,
-								new Phrase( 
-										(AonStringUtils.isBlank(metadata.getPageOffsetText())?"Total P\u00E1g: ":metadata.getPageOffsetText() + " ")
-										+ (metadata.getPageOffset() + writer.getPageNumber()), HEADER_FONT_1)
-								,(document.getPageSize().getWidth() - document.rightMargin() - 40) / 2
-								, document.bottom() - 20
-								, 0);
-					}
-					ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT,
-							new Phrase("P\u00E1g: " + writer.getPageNumber(), HEADER_FONT_1),
-							(document.getPageSize().getWidth() - document.rightMargin() - 40), document.bottom() - 20, 0);
+					:TIME_FORMATTER.format(new Date());
+			ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT,
+					new Phrase(footerText, HEADER_FONT_1), document.leftMargin(),
+					document.bottom() - 15, 0);
+			if (metadata.getPageOffset() > 0) {
+				ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT,
+						new Phrase( 
+								(AonStringUtils.isBlank(metadata.getPageOffsetText())?"Total P\u00E1g: ":metadata.getPageOffsetText() + " ")
+								+ (metadata.getPageOffset() + writer.getPageNumber()), HEADER_FONT_1)
+						,(document.getPageSize().getWidth() - document.rightMargin() - 40) / 2
+						, document.bottom() - 15
+						, 0);
+			}
+			ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT,
+					new Phrase("P\u00E1g: " + writer.getPageNumber(), HEADER_FONT_1),
+					(document.getPageSize().getWidth() - document.rightMargin() - 40), document.bottom() - 15, 0);
 		}
 		writer.flush();
 	}

@@ -63,10 +63,10 @@ public class AccountLedgerReportPDF {
 		}
 		ctx.finalize();
 		
-		ReportMetadata metadata = new ReportMetadata()
+		ReportMetadata metadata = params.getReportMetadata()
 				.setCompanyName(companyName)
 				.setFilterDescription(getFilterDescription(params))
-				.setTitle("LISTADO MAYOR DE CUENTAS");
+			;
 		
 		Document document = new Document();
 		document.setPageSize(PageSize.A4);

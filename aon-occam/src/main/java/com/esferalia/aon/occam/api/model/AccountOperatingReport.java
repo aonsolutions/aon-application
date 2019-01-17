@@ -500,8 +500,8 @@ public class AccountOperatingReport implements Serializable {
 	}
 
 	private AccountingReportParams params;
-	private AccountPeriod selectedPeriod;
-	private EnterpriseActivity selectedActivity;
+//	private AccountPeriod selectedPeriod;
+//	private EnterpriseActivity selectedActivity;
 	private TreeSet<AccountOperatingAccount> accounts = new TreeSet<AccountOperatingAccount>();
 	private TreeSet<DateInterval> intervals = new TreeSet<DateInterval>();
 	private TreeMap<String, TreeMap<DateInterval, AccountOperatingStatement>> map = 
@@ -515,21 +515,21 @@ public class AccountOperatingReport implements Serializable {
 		return this;
 	}
 	
-	public AccountPeriod getSelectedPeriod() {
-		return selectedPeriod;
-	}
-	public AccountOperatingReport setSelectedPeriod(AccountPeriod period) {
-		this.selectedPeriod = period;
-		return this;
-	}
-	
-	public EnterpriseActivity getSelectedActivity() {
-		return selectedActivity;
-	}
-	public AccountOperatingReport setSelectedActivity(EnterpriseActivity selectedActivity) {
-		this.selectedActivity = selectedActivity;
-		return this;
-	}
+//	public AccountPeriod getSelectedPeriod() {
+//		return selectedPeriod;
+//	}
+//	public AccountOperatingReport setSelectedPeriod(AccountPeriod period) {
+//		this.selectedPeriod = period;
+//		return this;
+//	}
+//	
+//	public EnterpriseActivity getSelectedActivity() {
+//		return selectedActivity;
+//	}
+//	public AccountOperatingReport setSelectedActivity(EnterpriseActivity selectedActivity) {
+//		this.selectedActivity = selectedActivity;
+//		return this;
+//	}
 	
 	public void put(DateInterval inter, AccountOperatingStatement aos) {
 		String code = ensureAccount(aos);

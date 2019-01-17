@@ -394,27 +394,27 @@ public class AccountStatementDAO {
 		}
 		AccountOperatingReport report = new AccountOperatingReport();
 		report.setParams(params);
-		report.setSelectedPeriod( AccountPeriodDAO.getPeriod(ctx, params.getPeriod()) );
-		if (!params.isByMonth() && params.getFromDate() != null && params.getFromDate().before(report.getSelectedPeriod().getInitiationDate())) {
+		params.setSelectedPeriod( AccountPeriodDAO.getPeriod(ctx, params.getPeriod()) );
+		if (!params.isByMonth() && params.getFromDate() != null && params.getFromDate().before(params.getSelectedPeriod().getInitiationDate())) {
 			throw new AonCoreException("La fecha desde indicada es anterior al inicio del ejercicio");
 		}
-		if (!params.isByMonth() && params.getToDate() != null && params.getToDate().after(report.getSelectedPeriod().getDeadline())) {
+		if (!params.isByMonth() && params.getToDate() != null && params.getToDate().after(params.getSelectedPeriod().getDeadline())) {
 			throw new AonCoreException("La fecha hasta indicada es posterior al final del ejercicio");
 		}
 		if (params.getActivity() != null) {
-			report.setSelectedActivity( CompanyDAO.getEnterpriseActivity(ctx, params.getActivity()) );
+			params.setSelectedActivity( CompanyDAO.getEnterpriseActivity(ctx, params.getActivity()) );
 		}
 		
-		String totalPeriodName = "Total " + report.getSelectedPeriod().getName(); 
-		if (   (report.getParams().getFromDate() != null && !AonDateUtils.isSameDay(report.getParams().getFromDate(),report.getSelectedPeriod().getInitiationDate()))
-			|| (report.getParams().getToDate() != null && !AonDateUtils.isSameDay(report.getParams().getToDate(),report.getSelectedPeriod().getDeadline()))
+		String totalPeriodName = "Total " + params.getSelectedPeriod().getName(); 
+		if (   (report.getParams().getFromDate() != null && !AonDateUtils.isSameDay(report.getParams().getFromDate(),params.getSelectedPeriod().getInitiationDate()))
+			|| (report.getParams().getToDate() != null && !AonDateUtils.isSameDay(report.getParams().getToDate(),params.getSelectedPeriod().getDeadline()))
 			) {
 			totalPeriodName = "Total periodo";
 		}
 				
 		DateInterval totalPeriod = new DateInterval()
-				.setStart(report.getSelectedPeriod().getDeadline())	// Para que aparezca al final.
-				.setEnd(report.getSelectedPeriod().getDeadline())
+				.setStart(params.getSelectedPeriod().getDeadline())	// Para que aparezca al final.
+				.setEnd(params.getSelectedPeriod().getDeadline())
 				.setName(totalPeriodName);
 		
 		LinkedHashMap<DateInterval,AccountingReportParams> intervals = getDateIntervals(ctx,params);
@@ -525,7 +525,7 @@ public class AccountStatementDAO {
 			if (report.getParams().getFromDate() != null && report.getParams().getFromDate().before(start)) {
 				start = report.getParams().getFromDate();
 			}
-			Date end = report.getSelectedPeriod().getDeadline();
+			Date end = report.getParams().getSelectedPeriod().getDeadline();
 			if (report.getParams().getToDate() != null && report.getParams().getToDate().before(end)) {
 				end = report.getParams().getToDate();
 			}
@@ -675,19 +675,14 @@ public class AccountStatementDAO {
 
 		// Se busca si existen saldo desde el inicio del ejericio hasta la fecha selecciona
 		boolean hasInPeriodPreviousAmounts = ap != null && params.getFromDate().after(ap.getInitiationDate());
-		
-		
+		params.setSelectedPeriod(ap);
+		params.setSelectedActivity( CompanyDAO.getEnterpriseActivity(ctx, params.getActivity()) );
 		AccountTrialBalanceReport report = new AccountTrialBalanceReport()
-			.setSelectedPeriod(ap)
 			.setParams(params)
 			.setHasBeforePeriodAmounts(hasBeforePeriodAmounts)
 			.setHasOpeningAmounts(hasOpeningAmounts)
 			.setHasInPeriodPreviousAmounts( hasInPeriodPreviousAmounts )
 			;
-		if (params.getActivity() != null) {
-			report.setSelectedActivity( CompanyDAO.getEnterpriseActivity(ctx, params.getActivity()) );
-		}
-
 		// Configuramos los periodos de fechas:
 		EnumMap<AccountStatementPeriod,Condition> conditions = new EnumMap<AccountStatementPeriod,Condition>(AccountStatementPeriod.class);
 

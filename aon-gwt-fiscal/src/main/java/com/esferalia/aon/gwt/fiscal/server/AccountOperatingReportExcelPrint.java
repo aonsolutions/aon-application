@@ -288,8 +288,8 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 			row = sheet.createRow(rowCount);
 			mergeHeaderRegion(rowCount, rowCount, 0, columns-1);
 			String title = "CUENTA DE EXPLOTACI\u00D3N";
-			if (report.getSelectedPeriod() != null) {
-				title = title + " - " + report.getSelectedPeriod().getName();
+			if (report.getParams().getSelectedPeriod() != null) {
+				title = title + " - " + report.getParams().getSelectedPeriod().getName();
 			}
 			CellUtil.createCell(row, 0, title, titleStyle);
 			row.setHeight((short) 500);
@@ -300,8 +300,8 @@ public class AccountOperatingReportExcelPrint extends HttpServlet {
 			if (report.getParams().getActivity() != null && report.getParams().getActivity() < 0) {
 				activityDescription = "Actividad: Sin Actividad";
 			}
-			if (report.getSelectedActivity() != null) {
-				activityDescription = "Actividad: " + report.getSelectedActivity().getDescription();
+			if (report.getParams().getSelectedActivity() != null) {
+				activityDescription = "Actividad: " + report.getParams().getSelectedActivity().getDescription();
 			}
 			if (AonStringUtils.isNotBlank(activityDescription)) {
 				row = sheet.createRow(rowCount);

@@ -14,11 +14,10 @@ public class ReportMetadata implements Serializable {
 	private String filterDescription;
 
 	private boolean showCover;
-
 	private int pageOffset;
 	private String pageOffsetText;
-	
 	private boolean hideFilter;
+	private String headerText;
 	private boolean hideDateTimeOnFooter;
 	private String footerText;
 
@@ -109,6 +108,14 @@ public class ReportMetadata implements Serializable {
 
 	public ReportMetadata setHideFilter(boolean hideFilter) {
 		this.hideFilter = hideFilter;
+		return this;
+	}
+	
+	public String getHeaderText() {
+		return headerText;
+	}
+	public ReportMetadata setHeaderText(String headerText) {
+		this.headerText = headerText;
 		return this;
 	}
 

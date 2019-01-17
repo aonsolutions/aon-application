@@ -11,7 +11,6 @@ import com.esferalia.aon.occam.api.model.AccountBalanceReport.BalanceLine;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
-import com.esferalia.aon.occam.api.model.ReportMetadata;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
@@ -37,15 +36,14 @@ public class AccountBalanceReportPDF {
 		String companyName = company == null ? "" : company.getName();
 		AccountBalanceReport report = ACCOUNTING.getAccountBalanceReport(params.getDomainName(), params.getDomain(), params.getUser(), params);
 		
-		report.setMetadata(new ReportMetadata()
+		report.setMetadata(params.getReportMetadata()
 				.setCompanyName(companyName)
 				.setFilterDescription(getFilterDescription(report))
-				.setTitle(params.getBalanceType().getName()));
-		
+			);
 		
 		Document document = new Document();
 		document.setPageSize(PageSize.A4);
-		document.setMargins(36, 36, 50, 20);
+		document.setMargins(30, 30, 50, 30);
 		
 		float pageWidth = document.getPageSize().getWidth(); 
 		float w = pageWidth - document.leftMargin() - document.rightMargin();

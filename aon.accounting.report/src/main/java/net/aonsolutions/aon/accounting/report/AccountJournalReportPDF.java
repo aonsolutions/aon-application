@@ -60,14 +60,14 @@ public class AccountJournalReportPDF {
 		}
 		ctx.finalize();
 		
-		ReportMetadata metadata = new ReportMetadata()
+		ReportMetadata metadata = params.getReportMetadata()
 				.setCompanyName(companyName)
 				.setFilterDescription(getFilterDescription(params))
-				.setTitle("LISTADO DIARIO DE MOVIMIENTOS");
+			;
 		
 		Document document = new Document();
 		document.setPageSize(PageSize.A4);
-		document.setMargins(36, 36, 50, 30);
+		document.setMargins(30, 30, 50, 30);
 		
 		PdfWriter writer = PdfWriter.getInstance(document, outputStream);
 		writer.setPageEvent(new AccountReportPdfPageEvent(metadata));

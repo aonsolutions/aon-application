@@ -43,6 +43,18 @@ public class AccountingReportParams implements IAccountParams, Cloneable {
 	private EnterpriseActivity selectedActivity;
 	private Account selectedAccount;
 	
+	// Report Metadata
+	private String title;
+	private String subject;
+	private boolean showCover;
+	private int pageOffset;
+	private String pageOffsetText;
+	private boolean hideFilter;
+	private String headerText;
+	private boolean hideDateTimeOnFooter;
+	private String footerText;
+	
+	
 	public String getDomainName() {
 		return domainName;
 	}
@@ -188,35 +200,6 @@ public class AccountingReportParams implements IAccountParams, Cloneable {
 		return this;
 	}
 	
-	
-	public AccountingReportParams clone() {
-		return new AccountingReportParams()
-			.setDomain(getDomain())
-			.setPeriod(getPeriod())
-			.setFromDate(getFromDate())
-			.setToDate(getToDate())
-			.setAccount(getAccount()==null?null:getAccount().clone())
-			.setLevel(getLevel())
-			.setActivity(getActivity())
-			.setSecurityLevel(getSecurityLevel())
-			.setLowLevelAccountVisible(isLowLevelAccountVisible())
-			.setNoActivityAccountVisible(isNoActivityAccountVisible())
-			.setDocumentNumber(getDocumentNumber())
-			.setPreviousPeriods(getPreviousPeriods())
-			.setPercentsEnabled(isPercentsEnabled())
-			.setByMonth(isByMonth())
-			.addAllCostCenter(getCostCenters())
-			.setOperatingEntriesExcluded(areOpeningEntriesExcluded())
-			.setOperatingEntriesExcluded(areOperatingEntriesExcluded())
-			.setClosingEntriesExcluded(areClosingEntriesExcluded())
-			.setReverseOrder(isReverseOrder())
-			.setBalanceType(getBalanceType())
-			.setSelectedPeriod(getSelectedPeriod())
-			.setSelectedActivity(getSelectedActivity())
-			.setSelectedAccount(getSelectedAccount())
-		;
-	}
-	
 	// ***********************************************
 	// ***********************************************
 	// ***********************************************
@@ -322,8 +305,124 @@ public class AccountingReportParams implements IAccountParams, Cloneable {
 		}
 		return this;
 	}
-	// ***********************************************
-	// ***********************************************
-	// ***********************************************
 	
+	// ***********************************************
+	public String getTitle() {
+		return title;
+	}
+	public AccountingReportParams setTitle(String title) {
+		this.title = title;
+		return this;
+	}
+	public String getSubject() {
+		return subject;
+	}
+	public AccountingReportParams setSubject(String subject) {
+		this.subject = subject;
+		return this;
+	}
+	public boolean isShowCover() {
+		return showCover;
+	}
+	public AccountingReportParams setShowCover(boolean showCover) {
+		this.showCover = showCover;
+		return this;
+	}
+	public int getPageOffset() {
+		return pageOffset;
+	}
+	public AccountingReportParams setPageOffset(int pageOffset) {
+		this.pageOffset = pageOffset;
+		return this;
+	}
+	public String getPageOffsetText() {
+		return pageOffsetText;
+	}
+	public AccountingReportParams setPageOffsetText(String pageOffsetText) {
+		this.pageOffsetText = pageOffsetText;
+		return this;
+	}
+	public boolean isHideFilter() {
+		return hideFilter;
+	}
+	public AccountingReportParams setHideFilter(boolean hideFilter) {
+		this.hideFilter = hideFilter;
+		return this;
+	}
+	public String getHeaderText() {
+		return headerText;
+	}
+	public AccountingReportParams setHeaderText(String headerText) {
+		this.headerText = headerText;
+		return this;
+	}
+	public boolean isHideDateTimeOnFooter() {
+		return hideDateTimeOnFooter;
+	}
+	public AccountingReportParams setHideDateTimeOnFooter(boolean hideDateTimeOnFooter) {
+		this.hideDateTimeOnFooter = hideDateTimeOnFooter;
+		return this;
+	}
+	public String getFooterText() {
+		return footerText;
+	}
+	public AccountingReportParams setFooterText(String footerText) {
+		this.footerText = footerText;
+		return this;
+	}
+	// ***********************************************
+	public ReportMetadata getReportMetadata() {
+		return new ReportMetadata()
+				.setTitle(getTitle())
+				.setSubject(getSubject())
+				.setShowCover(isShowCover())
+				.setPageOffset(getPageOffset())
+				.setPageOffsetText(getPageOffsetText())
+				.setHideFilter(isHideFilter())
+				.setHeaderText(getHeaderText())
+				.setHideDateTimeOnFooter(isHideDateTimeOnFooter())
+				.setFooterText(getFooterText())
+				;
+	}
+	public AccountingReportParams clone() {
+		return new AccountingReportParams()
+			.setDomainName(getDomainName())
+			.setDomain(getDomain())
+			.setUser(getUser())
+			.setPeriod(getPeriod())
+			.setFromDate(getFromDate())
+			.setToDate(getToDate())
+			.setAccount(getAccount()==null?null:getAccount().clone())
+			.setLevel(getLevel())
+			.setActivity(getActivity())
+			.setSecurityLevel(getSecurityLevel())
+			.setDocumentNumber(getDocumentNumber())
+			.addAllCostCenter(getCostCenters())
+			.setPreviousPeriods(getPreviousPeriods())
+			.setLowLevelAccountVisible(isLowLevelAccountVisible())
+			.setNoActivityAccountVisible(isNoActivityAccountVisible())
+			.setPercentsEnabled(isPercentsEnabled())
+			.setByMonth(isByMonth())
+			.setOpeningEntriesExcluded(areOpeningEntriesExcluded())
+			.setOperatingEntriesExcluded(areOperatingEntriesExcluded())
+			.setClosingEntriesExcluded(areClosingEntriesExcluded())
+			.setReverseOrder(isReverseOrder())
+			.setBalanceType(getBalanceType())
+			.setSelectedPeriod(getSelectedPeriod())
+			.setSelectedActivity(getSelectedActivity())
+			.setSelectedAccount(getSelectedAccount())
+			.setTitle(getTitle())
+			.setSubject(getSubject())
+			.setShowCover(isShowCover())
+			.setPageOffset(getPageOffset())
+			.setPageOffsetText(getPageOffsetText())
+			.setHideFilter(isHideFilter())
+			.setHeaderText(getHeaderText())
+			.setHideDateTimeOnFooter(isHideDateTimeOnFooter())
+			.setFooterText(getFooterText())
+		;
+		
+		
+		
+	}
 }

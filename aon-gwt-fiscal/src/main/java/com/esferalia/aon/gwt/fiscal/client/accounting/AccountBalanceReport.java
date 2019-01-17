@@ -6,11 +6,14 @@ import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.fiscal.client.accounting.PrintReportDialog.IPrintReportDialogCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.BalancePanelReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.utilities.CustomPopup;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.AccountEntry;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.ReportMetadata;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -92,14 +95,44 @@ public class AccountBalanceReport extends MainEntryPoint {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				diskForm.setAction(GWT.getHostPageBaseURL() + ACC_BALANCE_REPORT_PDF_PRINT);
-				accountReportParamsHidden.setValue(JsonParams.convert(panel.getWidgetParams()));
-				domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
-				domainNameHidden.setValue(getCurrentDomainName());
-				userHidden.setValue(getCurrentUser());
-				diskForm.submit();
+				AccountingReportParams params = panel.getWidgetParams();
+				ReportMetadata metadata = new ReportMetadata().setTitle(params.getBalanceType().getName());
+				PrintReportDialog dialog = new PrintReportDialog(metadata
+						, new IPrintReportDialogCallback() {
+							
+							@Override
+							public void onError(String msg) {
+								Window.alert(msg);
+							}
+							
+							@Override
+							public void onCancel() {}
+							
+							@Override
+							public void onAccept(ReportMetadata metadata) {
+								params.setTitle(metadata.getTitle());
+								params.setSubject(metadata.getSubject());
+								params.setShowCover(metadata.isShowCover());
+								params.setPageOffset(metadata.getPageOffset());
+								params.setPageOffsetText(metadata.getPageOffsetText());
+								params.setHideFilter(metadata.isHideFilter());
+								params.setHeaderText(metadata.getHeaderText());
+								params.setHideDateTimeOnFooter(metadata.isHideDateTimeOnFooter());
+								params.setFooterText(metadata.getFooterText());
+
+								diskForm.setAction(GWT.getHostPageBaseURL() + ACC_BALANCE_REPORT_PDF_PRINT);
+								accountReportParamsHidden.setValue(JsonParams.convert(params));
+								domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
+								domainNameHidden.setValue(getCurrentDomainName());
+								userHidden.setValue(getCurrentUser());
+								diskForm.submit();
+							}
+						});
+				dialog.center();
+				dialog.show();
 			}
 		});
+		
 		buttonContainer.add(pdfPrint);
 
 		final Button excelPrint = new Button();

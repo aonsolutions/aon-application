@@ -54,6 +54,15 @@ public interface IRequestParamsNames {
 	String PERCENTS_ENABLED = "percentsEnabled";
 	String BY_MONTH = "byMonth";
 	String BALANCE_TYPE = "balanceType";
+	String TITLE = "title";
+	String SUBJECT = "subject";
+	String SHOW_COVER = "showCover";
+	String PAGE_OFFSET = "pageOffset";
+	String PAGE_OFFSET_TEXT = "pageOffsetText";
+	String HIDE_FILTER = "hideFilter";
+	String HEADER_TEXT = "headerText";
+	String HIDE_DATETIME_ON_FOOTER = "hideDateTimeOnFooter";
+	String FOOTER_TEXT = "footerText";
 
 	String INVOICE_TYPE_SALES = "invoiceTypeSales";
 	String INVOICE_TYPE_PURCHASES = "invoiceTypePurchases";
