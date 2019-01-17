@@ -31,6 +31,7 @@ public class AccountTrialBalanceReport extends MainEntryPoint {
 	
 	private static final String ACC_TRIAL_BALANCE_REPORT_PRINT = "/aon_gwt_fiscal/roms/AccountTrialBalanceReportExcelPrint";
 	private static final String ACC_TRIAL_BALANCE_REPORT_PDF_PRINT  = "/aon_gwt_fiscal/roms/AccountTrialBalanceReportPDFPrint";
+	private static final String ACC_LEDGER_REPORT_EXCEL_PRINT = "/aon_gwt_fiscal/roms/AccountLedgerReportExcelPrint";
 	
 	@Override
 	public void onModuleLoad() {
@@ -152,6 +153,25 @@ public class AccountTrialBalanceReport extends MainEntryPoint {
 			}
 		});
 		buttonContainer.add(print);
+
+		final Button ledger = new Button();
+		ledger.setText("Desglose (Mayor)");
+		ledger.setTitle("Desglose (Mayor)");
+		ledger.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		ledger.addStyleName(AON.AON_CSS.aonIconExcel());
+		ledger.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				diskForm.setAction(GWT.getHostPageBaseURL() + ACC_LEDGER_REPORT_EXCEL_PRINT);
+				accountReportParamsHidden.setValue(JsonParams.convert(panel.getWidgetParams()));
+				domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
+				domainNameHidden.setValue(getCurrentDomainName());
+				userHidden.setValue(getCurrentUser());
+				diskForm.submit();
+			}
+		});
+		buttonContainer.add(ledger);
 
 		toolbarPanel.add(toolbar);
 		

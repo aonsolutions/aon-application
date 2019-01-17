@@ -37,9 +37,9 @@ public class AccountLedgerReport extends MainEntryPoint {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 
-	private static final String ACC_JORNAL_REPORT_EXCEL_PRINT = "/aon_gwt_fiscal/roms/AccountLedgerReportExcelPrint";
-	private static final String ACC_JORNAL_REPORT_PDF_PRINT = "/aon_gwt_fiscal/roms/AccountLedgerReportPDFPrint";
-	private static final String ACC_JORNAL_FLAT_REPORT_PRINT = "/aon_gwt_fiscal/roms/AccountLedgerFlatReportExcelPrint";
+	private static final String ACC_LEDGER_REPORT_EXCEL_PRINT = "/aon_gwt_fiscal/roms/AccountLedgerReportExcelPrint";
+	private static final String ACC_LEDGER_REPORT_PDF_PRINT = "/aon_gwt_fiscal/roms/AccountLedgerReportPDFPrint";
+	private static final String ACC_LEDGER_FLAT_REPORT_PRINT = "/aon_gwt_fiscal/roms/AccountLedgerFlatReportExcelPrint";
 	
 	@Override
 	public void onModuleLoad() {
@@ -118,7 +118,7 @@ public class AccountLedgerReport extends MainEntryPoint {
 								params.setHideDateTimeOnFooter(metadata.isHideDateTimeOnFooter());
 								params.setFooterText(metadata.getFooterText());
 
-								diskForm.setAction(GWT.getHostPageBaseURL() + ACC_JORNAL_REPORT_PDF_PRINT);
+								diskForm.setAction(GWT.getHostPageBaseURL() + ACC_LEDGER_REPORT_PDF_PRINT);
 								accountEntryParamsHidden.setValue(JsonParams.convert(params));
 								domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
 								domainNameHidden.setValue(getCurrentDomainName());
@@ -141,7 +141,7 @@ public class AccountLedgerReport extends MainEntryPoint {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				diskForm.setAction(GWT.getHostPageBaseURL() + ACC_JORNAL_REPORT_EXCEL_PRINT);
+				diskForm.setAction(GWT.getHostPageBaseURL() + ACC_LEDGER_REPORT_EXCEL_PRINT);
 				accountEntryParamsHidden.setValue(JsonParams.convert(panel.getWidgetParams()));
 				domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
 				domainNameHidden.setValue(getCurrentDomainName());
@@ -160,7 +160,7 @@ public class AccountLedgerReport extends MainEntryPoint {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				diskForm.setAction(GWT.getHostPageBaseURL() + ACC_JORNAL_FLAT_REPORT_PRINT);
+				diskForm.setAction(GWT.getHostPageBaseURL() + ACC_LEDGER_FLAT_REPORT_PRINT);
 				accountEntryParamsHidden.setValue(JsonParams.convert(panel.getWidgetParams()));
 				domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
 				domainNameHidden.setValue(getCurrentDomainName());
