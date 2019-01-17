@@ -18,7 +18,6 @@ import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 import org.jooq.Record;
-import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -644,7 +643,7 @@ public class AccountingInvoiceDAO {
 				.setScope(invoice.getScope())
 				.setSecurityLevel(invoice.getSecurityLevel())
 				.setConcept(invoice.getDocumentNumber())
-				.setFinanceStatus(accInvoice.isFinanceRecordable()?FinanceStatus.PAID:FinanceStatus.PENDING)
+				.setFinanceStatus((accInvoice.isFinanceRecordable()?FinanceStatus.PAID:FinanceStatus.PENDING))
 				.setAmount(accInvoice.getInvoice().getTotal())
 				;
 			if ( AonMathUtils.isNotZero(finance.getAmount()) ) {
@@ -846,23 +845,22 @@ public class AccountingInvoiceDAO {
 		ai.getWithholdingData().setQuota( AonMathUtils.round(ai.getWithholdingData().getQuota() * (-1)));
 		for (Finance finance : ai.getFinances()) {
 			Integer oldId = finance.getId();
-			
-			finance.setAmount(AonMathUtils.round(finance.getAmount() * (-1)));
-			finance.setFinanceStatus(FinanceStatus.PENDING);
-			finance.setInvoice(null);
-			finance.setId( null );
-			Integer financeId = FinanceDAO.insert(ctx, finance);
-			
 			if (data.isSettleFinances() && finance.getFinanceStatus() == FinanceStatus.PENDING) {
 				FinanceDAO.settle(ctx, oldId    ,finance.getAmount());
-				FinanceDAO.settle(ctx, financeId,finance.getAmount());
-			}
-			
+			} 
+			finance.setAmount(AonMathUtils.round(finance.getAmount() * (-1)));
+			finance.setInvoice(null);
+			finance.setId( null );
 		}
-		
 		AonConfiguration config = ConfigurationDAO.getConfiguration(ctx, ai.getInvoice().getIssueDate());
 		ai = save(ctx, config, ai);
 		InvoiceDAO.rectifyInvoiceUpdate(ctx, invoiceId, ai.getInvoice().getId(), oldRectificationType);
+		for (Finance finance : ai.getFinances()) {
+			if (data.isSettleFinances() && finance.getFinanceStatus() == FinanceStatus.PENDING) {
+				FinanceDAO.settle(ctx, finance.getId() ,finance.getAmount());
+				finance.setFinanceStatus(FinanceStatus.SETTLED);
+			} 
+		}
 		return ai;
 	}
 }
