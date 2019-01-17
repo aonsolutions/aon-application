@@ -21,9 +21,12 @@
     		position: absolute;
 		}
 
+		.cursorPointer{
+			cursor: pointer;
+		}
+
 		.paddingLabels{
-			padding-left: 3px;
-    		padding-right: 15px;
+			padding: 2px 10px 0px 2px;
 		}
 
 		.borderButtonUpperMenuStyle{
@@ -46,7 +49,8 @@
 		.typeButtonUpperMenuStyle{
 			height: 15px;
 			padding-right: 5px;
-    		border-radius: 50px;
+    		border-radius: 20%;
+    		border: none;
 		}
 
 		.noWorkingColor{
@@ -133,42 +137,42 @@
 
 		.nonWorkingStyle{
 			background-color: salmon;
-			border-radius: 15px;
+			border-radius: 20%;
 			padding: 3px;
 			color: #ffffff;
 		}
 		
 		.holidayStyle {
 			background-color: #52ab3c;
-			border-radius: 15px;
+			border-radius: 20%;
 			padding: 3px;
 			color: #ffffff;
 		}
 		
 		.ereStyle {
 			background-color: #b91257;
-			border-radius: 15px;
+			border-radius: 20%;
 			padding: 3px;
 			color: #ffffff;
 		}
 
 		.inactivityStyle {
 			background-color: #71b1e8;
-			border-radius: 15px;
+			border-radius: 20%;
 			padding: 3px;
 			color: #ffffff;
 		}
 
 		.peonadasStyle {
 			background-color: #d692f9;
-			border-radius: 15px;
+			border-radius: 20%;
 			padding: 3px;
 			color: #ffffff;
 		}
 		
 		.strikeStyle {
 			background-color: #a09c13;
-			border-radius: 15px;
+			border-radius: 20%;
 			padding: 3px;
 			color: #ffffff;
 		}
@@ -383,28 +387,28 @@
 				<g:HorizontalPanel styleName="{style.upperMenuStyle}">
 					<g:Label styleName="{style.paddingLabels}">Dias seleccionables:</g:Label>
 					<g:HorizontalPanel>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.noWorkingColor}" ui:field="nonWorkingDayButton"/>
-						<g:Label styleName="{style.paddingLabels}">No Laborables</g:Label>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.holidayColor}" ui:field="holidayDayButton"/>
-						<g:Label styleName="{style.paddingLabels}">Vacaciones</g:Label>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.strikeColor}" ui:field="strikeDayButton"/>
-						<g:Label styleName="{style.paddingLabels}">Huelga</g:Label>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.noWorkingColor} {style.cursorPointer}" ui:field="nonWorkingDayButton"/>
+						<g:Label styleName="{style.paddingLabels} {style.cursorPointer}">No Laborables</g:Label>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.holidayColor} {style.cursorPointer}" ui:field="holidayDayButton"/>
+						<g:Label styleName="{style.paddingLabels} {style.cursorPointer}">Vacaciones</g:Label>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.strikeColor} {style.cursorPointer}" ui:field="strikeDayButton"/>
+						<g:Label styleName="{style.paddingLabels} {style.cursorPointer}">Huelga</g:Label>
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.ereColor}" ui:field="ereDayButton"/>
-						<g:Label styleName="{style.paddingLabels}">ERE</g:Label>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.inactivityColor}" ui:field="inactivityDayButton"/>
-						<g:Label styleName="{style.paddingLabels}">Inactividad</g:Label>
+						<g:Label styleName="{style.paddingLabels} {style.cursorPointer}">ERE</g:Label>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.inactivityColor} {style.cursorPointer}" ui:field="inactivityDayButton"/>
+						<g:Label styleName="{style.paddingLabels} {style.cursorPointer}">Inactividad</g:Label>
 						<g:HorizontalPanel ui:field="peonadasPanel" styleName="{style.hide}">
-						    <g:Button styleName="{style.typeButtonUpperMenuStyle} {style.peonadasColor}" ui:field="peonadasDayButton"/>
-							<g:Label styleName="{style.paddingLabels}">Peonadas</g:Label>
+						    <g:Button styleName="{style.typeButtonUpperMenuStyle} {style.peonadasColor} {style.cursorPointer}" ui:field="peonadasDayButton"/>
+							<g:Label styleName="{style.paddingLabels} {style.cursorPointer}">Peonadas</g:Label>
 						</g:HorizontalPanel>
-						<g:Button styleName="{style.borderButtonUpperMenuStyle} {style.imagenButtonUpperMenuStyle}" ui:field="hourButton"/>
-						<g:Button styleName="{style.borderButtonUpperMenuStyle} {style.imagenButtonUpperMenuStyle}" ui:field="extraHoursButton"/>
-						<g:Label styleName="{style.paddingLabels}" ui:field="hourLabelUpperMenu"/>
+						<g:Button styleName="{style.borderButtonUpperMenuStyle} {style.imagenButtonUpperMenuStyle} {style.cursorPointer}" ui:field="hourButton"/>
+						<g:Button styleName="{style.borderButtonUpperMenuStyle} {style.imagenButtonUpperMenuStyle} {style.cursorPointer}" ui:field="extraHoursButton"/>
+						<g:Label styleName="{style.paddingLabels} {style.cursorPointer}" ui:field="hourLabelUpperMenu"/>
 						<!--g:Label styleName="{style.paddingLabels}" ui:field="extraHoursButtonBlock">Horas extras</g:Label-->
 					</g:HorizontalPanel>
 					<g:HorizontalPanel styleName="{style.upperRightMenuStyle}" ui:field="upperRightMenu">
-						<g:Button styleName="{style.borderButtonUpperMenuStyle} {style.paddingEraseButtonUpperMenuStyle} {style.imagenButtonUpperMenuStyle}" ui:field="eraseEventButton"/>
-						<g:Label styleName="{style.paddingLabels}">Limpiar</g:Label>
+						<g:Button styleName="{style.borderButtonUpperMenuStyle} {style.paddingEraseButtonUpperMenuStyle} {style.imagenButtonUpperMenuStyle} {style.cursorPointer}" ui:field="eraseEventButton"/>
+						<g:Label styleName="{style.paddingLabels} {style.cursorPointer}">Limpiar</g:Label>
 					</g:HorizontalPanel>
 				</g:HorizontalPanel>
 				
