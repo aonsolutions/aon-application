@@ -3877,16 +3877,18 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				salary.setEnterpriseDocument(enterprise.getRegistry()
 						.getDocument());
 				salary.setEnterpriseName(enterprise.getRegistry().getFullName());
+				/*
 				RegistryAddress rAddress = enterprise.getRegistry()
 						.getDefaultAddress();
 				if (rAddress != null) {
 					salary.setEnterpriseAddress(rAddress.getFullAddress());
 					workPlace.setAddress(rAddress);
 				}
+				*/
 				workPlace.setEnterprise(enterprise);
 				person.setRegistry(enterprise.getRegistry());
 
-			} catch (ManagerBeanException e) {
+			} catch (Exception e) {
 				if (!StringUtils.isBlank(draft.getDescription()))
 					draftDescription = draft.getDescription();
 				salary.setEnterpriseName(draftDescription);
