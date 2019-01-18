@@ -110,14 +110,12 @@
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
-
     <dependency>
       <groupId>com.esferalia.aon</groupId>
       <artifactId>aon.gwt.fiscal</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
-
     <dependency>
       <groupId>com.code.aon</groupId>
       <artifactId>aon-jasperreports</artifactId>
@@ -153,6 +151,18 @@
       <artifactId>aon.ui.resources</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.code.aon</groupId>
+      <artifactId>aon.ui.finance</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
 
