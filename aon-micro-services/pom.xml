@@ -63,6 +63,13 @@
               </excludes>
               -->
             </resource>
+            <resource>
+              <!-- this is relative to the pom.xml directory -->
+              <directory>../aon-ui-finance/src/main/resources</directory>
+	      <includes>
+                <include>com/code/aon/ui/finance/pdfjs/**</include>
+	      </includes>
+            </resource>
           </webResources>          
         </configuration>
         <executions>
@@ -151,18 +158,6 @@
       <artifactId>aon.ui.resources</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.code.aon</groupId>
-      <artifactId>aon.ui.finance</artifactId>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
 
