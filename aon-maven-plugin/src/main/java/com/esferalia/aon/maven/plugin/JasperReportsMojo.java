@@ -6,9 +6,9 @@ package com.esferalia.aon.maven.plugin;
  * copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the
  * "License") you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -28,10 +28,7 @@ import java.util.Set;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JRPropertiesUtil;
-import net.sf.jasperreports.engine.design.JRCompiler;
-import net.sf.jasperreports.engine.xml.JRReportSaxParserFactory;
-import net.sf.jasperreports.engine.DefaultJasperReportsContext;
+import net.sf.jasperreports.engine.util.JRProperties;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -49,14 +46,14 @@ import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
  * Much of this was inspired by the JRAntCompileTask, while trying to make it
  * slightly cleaner and easier to use with Maven's mojo api.
  * </p>
- *
+ * 
  * @author gjoseph
  * @author Tom Schwenk
  * @goal compile-reports
  * @phase generate-sources
  * @requiresDependencyResolution compile
  * @threadSafe
- *
+ * 
  */
 public class JasperReportsMojo extends AbstractMojo {
 
@@ -69,21 +66,21 @@ public class JasperReportsMojo extends AbstractMojo {
 
 	/**
 	 * This is where the generated java sources are stored.
-	 *
+	 * 
 	 * @parameter expression="${project.build.directory}/jasperreports/java"
 	 */
 	private File javaDirectory;
 
 	/**
 	 * This is where the .jasper files are written.
-	 *
+	 * 
 	 * @parameter expression="${project.build.outputDirectory}"
 	 */
 	private File outputDirectory;
 
 	/**
 	 * This is where the xml report design files should be.
-	 *
+	 * 
 	 * @parameter default-value="src/main/jasperreports"
 	 */
 	private File sourceDirectory;
@@ -91,7 +88,7 @@ public class JasperReportsMojo extends AbstractMojo {
 	/**
 	 * The extension of the source files to look for. Finds files with a .jrxml
 	 * extension by default.
-	 *
+	 * 
 	 * @parameter default-value=".jrxml"
 	 */
 	private String sourceFileExt;
@@ -99,7 +96,7 @@ public class JasperReportsMojo extends AbstractMojo {
 	/**
 	 * The extension of the compiled report files. Creates files with a .jasper
 	 * extension by default.
-	 *
+	 * 
 	 * @parameter default-value=".jasper"
 	 */
 	private String outputFileExt;
@@ -110,7 +107,7 @@ public class JasperReportsMojo extends AbstractMojo {
 	 * source in their application. Mind that this will not work if the mojo is
 	 * bound to the compile or any other later phase. (As one might need to do
 	 * if they use classes from their project in their report design)
-	 *
+	 * 
 	 * @parameter default-value="false"
 	 * @deprecated There seems to be an issue with the compiler plugin so don't
 	 *             expect this to work yet - the dependencies will have
@@ -122,7 +119,7 @@ public class JasperReportsMojo extends AbstractMojo {
 	 * Not used for now - just a TODO - the idea being that one might want to
 	 * set this to false if they want to handle the generated java source in
 	 * their application.
-	 *
+	 * 
 	 * @parameter default-value="true"
 	 * @deprecated Not implemented
 	 */
@@ -130,7 +127,7 @@ public class JasperReportsMojo extends AbstractMojo {
 
 	/**
 	 * Wether the xml design files must be validated.
-	 *
+	 * 
 	 * @parameter default-value="true"
 	 */
 	private boolean xmlValidation;
@@ -138,8 +135,8 @@ public class JasperReportsMojo extends AbstractMojo {
 	/**
 	 * Uses the Javac compiler by default. This is different from the original
 	 * JasperReports ant task, which uses the JDT compiler by default.
-	 *
-	 * @parameter
+	 * 
+	 * @parameter 
 	 *            default-value="net.sf.jasperreports.engine.design.JRJavacCompiler"
 	 */
 	private String compiler;
@@ -150,8 +147,8 @@ public class JasperReportsMojo extends AbstractMojo {
 	private List classpathElements;
 
 	/**
-	 * Additional JRPropertiesUtil
-	 *
+	 * Additional JRProperties
+	 * 
 	 * @parameter
 	 * @since 1.0-beta-2
 	 */
@@ -161,7 +158,7 @@ public class JasperReportsMojo extends AbstractMojo {
 	 * Any additional classpath entry you might want to add to the JasperReports
 	 * compiler. Not recommended for general use, plugin dependencies should be
 	 * used instead.
-	 *
+	 * 
 	 * @parameter
 	 */
 	private String additionalClasspath;
@@ -179,13 +176,13 @@ public class JasperReportsMojo extends AbstractMojo {
 			getLog().debug("compiler = " + compiler);
 			getLog().debug("classpathElements = " + classpathElements);
 			getLog().debug("additionalClasspath = " + additionalClasspath);
-
+	
 			checkDir(javaDirectory, "Directory for generated java sources", true);
 			checkDir(sourceDirectory, "Source directory", false);
 			checkDir(outputDirectory, "Target directory", true);
-
+	
 			SourceMapping mapping = new SuffixMapping(sourceFileExt, outputFileExt);
-
+	
 			Set staleSources = scanSrcDir(mapping);
 			if (staleSources.isEmpty()) {
 				getLog().info(
@@ -193,7 +190,7 @@ public class JasperReportsMojo extends AbstractMojo {
 			} else {
 				// actual compilation
 				compile(staleSources, mapping);
-
+	
 				if (keepJava) {
 					project.addCompileSourceRoot(javaDirectory.getAbsolutePath());
 				}
@@ -208,21 +205,18 @@ public class JasperReportsMojo extends AbstractMojo {
 		getLog().debug("Set classloader");
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		Thread.currentThread().setContextClassLoader(getClassLoader(classLoader));
-
-		JRPropertiesUtil jRPropertiesUtil = JRPropertiesUtil.getInstance(DefaultJasperReportsContext.getInstance());
-
-		//jRPropertiesUtil.backupProperties();
+		JRProperties.backupProperties();
 		try {
-			jRPropertiesUtil.setProperty(JRCompiler.COMPILER_CLASSPATH, classpath);
-			jRPropertiesUtil.setProperty(JRCompiler.COMPILER_TEMP_DIR,javaDirectory.getAbsolutePath());
-			jRPropertiesUtil.setProperty(JRCompiler.COMPILER_KEEP_JAVA_FILE,Boolean.toString(keepJava));
-			jRPropertiesUtil.setProperty(JRCompiler.COMPILER_CLASS, compiler);
-			jRPropertiesUtil.setProperty(JRReportSaxParserFactory.COMPILER_XML_VALIDATION,Boolean.toString(xmlValidation));
+			JRProperties.setProperty(JRProperties.COMPILER_CLASSPATH, classpath);
+			JRProperties.setProperty(JRProperties.COMPILER_TEMP_DIR,javaDirectory.getAbsolutePath());
+			JRProperties.setProperty(JRProperties.COMPILER_KEEP_JAVA_FILE,keepJava);
+			JRProperties.setProperty(JRProperties.COMPILER_CLASS, compiler);
+			JRProperties.setProperty(JRProperties.COMPILER_XML_VALIDATION,xmlValidation);
 
 			for (Iterator i = additionalProperties.keySet().iterator(); i.hasNext();) {
 				String key = (String) i.next();
 				String value = (String) additionalProperties.get(key);
-				jRPropertiesUtil.setProperty(key, value);
+				JRProperties.setProperty(key, value);
 				getLog().debug("Added property: " + key + ":" + value);
 			}
 
@@ -259,7 +253,7 @@ public class JasperReportsMojo extends AbstractMojo {
 				}
 			}
 		} finally {
-			//jRPropertiesUtil.restoreProperties();
+			JRProperties.restoreProperties();
 			if (classLoader != null) {
 				Thread.currentThread().setContextClassLoader(classLoader);
 			}
@@ -271,7 +265,7 @@ public class JasperReportsMojo extends AbstractMojo {
 	 * Determines source files to be compiled, based on the SourceMapping. No
 	 * longer needs to be recursive, since the SourceInclusionScanner handles
 	 * that.
-	 *
+	 * 
 	 * @param mapping
 	 * @return
 	 * @throws MojoExecutionException
