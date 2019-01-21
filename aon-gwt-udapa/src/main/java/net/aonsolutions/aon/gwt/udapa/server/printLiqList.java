@@ -24,8 +24,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 
 import com.esferalia.aon.occam.api.AON;
@@ -477,10 +479,10 @@ public class printLiqList extends HttpServlet{
 		style.setWrapText(true);
 		HSSFFont font = libro.createFont();
 		font.setFontHeightInPoints((short)12);
-		font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+		font.setBold(true);
 		style.setFont(font);
-		style.setAlignment(CellStyle.ALIGN_CENTER);
-		style.setBorderBottom(CellStyle.BORDER_MEDIUM); 
+		style.setAlignment(HorizontalAlignment.CENTER);
+		style.setBorderBottom(BorderStyle.MEDIUM); 
 		return style;
 	}
 	
@@ -489,11 +491,11 @@ public class printLiqList extends HttpServlet{
      	HSSFFont font2 = libro.createFont();
      	font2.setFontHeightInPoints((short)10);
 		style3.setFont(font2);
-		style3.setAlignment(CellStyle.ALIGN_LEFT);
-		style3.setBorderBottom(CellStyle.BORDER_THIN);
-		style3.setBorderRight(CellStyle.BORDER_THIN);
-		style3.setBorderLeft(CellStyle.BORDER_THIN);
-		style3.setBorderTop(CellStyle.BORDER_THIN);	
+		style3.setAlignment(HorizontalAlignment.LEFT);
+		style3.setBorderBottom(BorderStyle.THIN);
+		style3.setBorderRight(BorderStyle.THIN);
+		style3.setBorderLeft(BorderStyle.THIN);
+		style3.setBorderTop(BorderStyle.THIN);	
 		return style3;
 	}
 

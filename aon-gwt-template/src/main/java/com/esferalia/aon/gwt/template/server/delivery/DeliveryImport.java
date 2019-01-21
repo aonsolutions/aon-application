@@ -14,6 +14,7 @@ import java.util.stream.StreamSupport;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 
 import com.esferalia.aon.gwt.template.jooq.DBProduct;
@@ -211,13 +212,13 @@ public class DeliveryImport {
 	}
 	
 	private Object getObjectValue(Cell cell){
-		if(Cell.CELL_TYPE_STRING == cell.getCellType())
+		if(CellType.STRING == cell.getCellType())
 			return cell.getStringCellValue();
-		if(Cell.CELL_TYPE_NUMERIC == cell.getCellType())
+		if(CellType.NUMERIC == cell.getCellType())
 			return cell.getNumericCellValue();
-		if(Cell.CELL_TYPE_FORMULA == cell.getCellType())
+		if(CellType.FORMULA == cell.getCellType())
 			return cell.getCellFormula();
-		if(Cell.CELL_TYPE_BOOLEAN == cell.getCellType()) {
+		if(CellType.BOOLEAN == cell.getCellType()) {
 			return cell.getBooleanCellValue() ? 1.0 : 0.0;
 		}
 		return null;

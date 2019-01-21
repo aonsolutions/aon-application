@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.jooq.tools.json.JSONObject;
@@ -125,7 +125,7 @@ public class VatReportExcelPrint extends HttpServlet {
 			cellCount = 0;
 
 			XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.clone();
-			rightHeaderCellStyle.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
+			rightHeaderCellStyle.setAlignment(HorizontalAlignment.RIGHT);
 
 			CellUtil.createCell(row, cellCount, "TIPO", headerCellStyle);
 			sheet.setColumnWidth(cellCount++, 8 * 256);

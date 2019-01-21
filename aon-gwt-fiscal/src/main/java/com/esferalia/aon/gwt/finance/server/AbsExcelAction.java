@@ -5,13 +5,17 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
 
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.util.TempFileCreationStrategy;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
@@ -61,18 +65,18 @@ public abstract class AbsExcelAction  {
 	    cellCount = 0;
 	    dateStyle = workbook.createCellStyle();
 	    dateStyle.setDataFormat(dataFormat.getFormat(DATE_PATTERN));
-	    dateStyle.setAlignment( HSSFCellStyle.ALIGN_CENTER );
+	    dateStyle.setAlignment( HorizontalAlignment.CENTER );
 	    
 	    numberStyle = workbook.createCellStyle();
 	    numberStyle.setDataFormat(dataFormat.getFormat(NUMBER_PATTERN));
-	    numberStyle.setAlignment( HSSFCellStyle.ALIGN_CENTER );
+	    numberStyle.setAlignment( HorizontalAlignment.CENTER );
 	     
 	    decimalStyle = workbook.createCellStyle();
 	    decimalStyle.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
-	    decimalStyle.setAlignment( HSSFCellStyle.ALIGN_RIGHT );
+	    decimalStyle.setAlignment( HorizontalAlignment.RIGHT );
 	    
 		centerCellStyle = workbook.createCellStyle();
-		centerCellStyle.setAlignment( HSSFCellStyle.ALIGN_CENTER );
+		centerCellStyle.setAlignment( HorizontalAlignment.CENTER );
 
 		defaulFont= workbook.createFont();
 		defaulFont.setFontHeightInPoints((short) 9);
@@ -82,26 +86,26 @@ public abstract class AbsExcelAction  {
 
 		smallBoldFont = workbook.createFont();
 		smallBoldFont.setFontHeightInPoints((short) 8);
-		smallBoldFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+		smallBoldFont.setBold(true);
 
 		smallDateStyle = workbook.createCellStyle();
 	    smallDateStyle.setDataFormat(dataFormat.getFormat(DATE_PATTERN));
-	    smallDateStyle.setAlignment( HSSFCellStyle.ALIGN_CENTER );
+	    smallDateStyle.setAlignment( HorizontalAlignment.CENTER );
 	    smallDateStyle.setFont( smallFont );
 
 	    boldFont= workbook.createFont();
 		boldFont.setFontHeightInPoints((short) 9);
-		boldFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+		boldFont.setBold(true);
 
 		Font headerFont= workbook.createFont();
-		headerFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+		headerFont.setBold(true);
 		headerFont.setColor( IndexedColors.WHITE.index );
 
 		headerCellStyle = (XSSFCellStyle) workbook.createCellStyle();
-		headerCellStyle.setAlignment( HSSFCellStyle.ALIGN_CENTER );
-		headerCellStyle.setVerticalAlignment( HSSFCellStyle.VERTICAL_CENTER);
-	    headerCellStyle.setBorderBottom(HSSFCellStyle.BORDER_MEDIUM);
-	    headerCellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+		headerCellStyle.setAlignment( HorizontalAlignment.CENTER );
+		headerCellStyle.setVerticalAlignment( VerticalAlignment.CENTER);
+	    headerCellStyle.setBorderBottom(BorderStyle.MEDIUM);
+	    headerCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 	    headerCellStyle.setFillForegroundColor(AON_BLUE);
 	    headerCellStyle.setFont(headerFont);
 	    if (printHeaders) {
@@ -117,7 +121,7 @@ public abstract class AbsExcelAction  {
 	protected Cell addCell(String value) {
 		Cell cell = row.createCell(cellCount++);
 		cell.setCellValue(AonStringUtils.trimToEmpty( value ) );
-		cell.setCellType(Cell.CELL_TYPE_STRING);
+		cell.setCellType(CellType.STRING);
 		return cell;
 	}
 
@@ -126,7 +130,7 @@ public abstract class AbsExcelAction  {
 		if ( value != null ) {
 			cell.setCellValue(value.toString());
 		}
-		cell.setCellType(Cell.CELL_TYPE_STRING);
+		cell.setCellType(CellType.STRING);
 		return cell;
 	}
 
@@ -136,7 +140,7 @@ public abstract class AbsExcelAction  {
 		if ( value != null ) {
 			cell.setCellValue(value);
 		}
-		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+		cell.setCellType(CellType.NUMERIC);
 		return cell;
 	}
 	
@@ -146,7 +150,7 @@ public abstract class AbsExcelAction  {
 		if ( value != null ) {
 			cell.setCellValue(value);
 		}
-		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+		cell.setCellType(CellType.NUMERIC);
 		return cell;
 	}
 
@@ -163,7 +167,7 @@ public abstract class AbsExcelAction  {
 		Cell cell = row.createCell(cellCount++);
 		cell.setCellStyle(decimalStyle);
 		cell.setCellValue(number!=null?number:0.0);
-		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+		cell.setCellType(CellType.NUMERIC);
 		return cell;
 	}
 
@@ -206,6 +210,16 @@ public abstract class AbsExcelAction  {
             // All done
             return newFile;
 		}
+        
+        @Override
+        public File createTempDirectory(String prefix) throws IOException {
+        	// TODO Auto-generated method stub
+            File dir = new File(System.getProperty("java.io.tmpdir"), prefix);
+            dir.mkdir();
+            if (System.getProperty("poi.keep.tmp.files") == null)
+                dir.deleteOnExit();
+            return dir;
+        }
 		
 	}
 	
