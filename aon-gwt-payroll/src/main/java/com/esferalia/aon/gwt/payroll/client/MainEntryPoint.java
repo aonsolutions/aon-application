@@ -105,10 +105,13 @@ public class MainEntryPoint implements EntryPoint {
 				.equalsIgnoreCase(Constants.MAIN_TRASH_ENTRY_POINT)) {
 			MainTrash mainTrash = new MainTrash();
 			mainTrash.onModuleLoad();
-		}else if (entryPoint
+		} else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_CRETA_ENTRY_POINT)) {
 			MainCreta mainCreta = new MainCreta();
 			mainCreta.onModuleLoad();
+		} else if (entryPoint
+				.equalsIgnoreCase(Constants.MAIN_AFI_ENTRY_POINT)) {
+			Window.alert(Constants.MAIN_AFI_ENTRY_POINT);
 		} else if (entryPoint
 				.equalsIgnoreCase(Constants.ACTIVITY_SUMMARY_ENTRY_POINT)) {
 			ActivitySummary activitySummary = new ActivitySummary();

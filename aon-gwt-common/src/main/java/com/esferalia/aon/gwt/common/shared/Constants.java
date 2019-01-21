@@ -12,6 +12,7 @@ public interface Constants {
 	public static final String ENTERPRISE_SITE_ENTRY_POINT = "EnterpriseSite";
 	public static final String ENTRY_POINT_VAR = "payrollEntryPoint";
 	public static final String MAIN_CRETA_ENTRY_POINT = "MainCreta";
+	public static final String MAIN_AFI_ENTRY_POINT = "MainAFI";
 	public static final String ACTIVITY_SUMMARY_ENTRY_POINT = "ActivitySummary";
 	
 	public static final String MODULE_ENTRY_POINT = "module";	
