@@ -166,6 +166,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 			
 		}
 
+		@Override
+		public void getEmployeeEventsByContract(String currentDomainName, Integer contractId,
+				ArrayList<String> employeeContractVariablesDB, AsyncCallback<EmployeeEventsData> callback) {
+			// TODO Auto-generated method stub
+			
+		}
+
 		
 	}
 
@@ -306,6 +313,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					public void getWorkplaceEventsVariables(String currentDomainName, Integer workplaceId,
 							Integer agreementId, Date startDate, Date endDate,
 							AsyncCallback<Map<String, String>> callback) throws IllegalArgumentException {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void getEmployeeEventsByContract(String currentDomainName, Integer contractId,
+							ArrayList<String> employeeContractVariablesDB, AsyncCallback<EmployeeEventsData> callback) {
 						// TODO Auto-generated method stub
 						
 					}

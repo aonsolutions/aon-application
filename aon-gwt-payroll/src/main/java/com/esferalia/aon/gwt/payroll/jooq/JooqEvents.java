@@ -125,7 +125,7 @@ public class JooqEvents {
 				Integer geozoneId = null;
 				String addressProvince = null;
 				
-				if(null != raddressRecords) {
+				if(null != raddressRecords && !raddressRecords.isEmpty()) {
 					if(null != raddressRecords.get(0).get(RADDRESS.GEOZONE)) {
 						Record geozoneRecord = dslContext.select()
 								.from(GEOZONE)

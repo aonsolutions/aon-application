@@ -598,6 +598,13 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		return null;
 	}
 
+	@Override
+	public EmployeeEventsData getEmployeeEventsByContract(String currentDomainName, Integer contractId,
+			ArrayList<String> employeeContractVariablesDB) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
 
 	

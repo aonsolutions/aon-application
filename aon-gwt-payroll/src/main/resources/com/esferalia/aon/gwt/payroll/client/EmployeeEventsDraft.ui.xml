@@ -162,7 +162,11 @@
 
 		.showVariablesStyle{
 			padding: 3px;
-		}		
+		}	
+		
+		.bgcWhite{
+			background-color: white;
+		}	
 
 	</ui:style>
 

@@ -4670,6 +4670,26 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 		}
 	}
+	
+	@Override
+	public EmployeeEventsData getEmployeeEventsByContract(String domain, Integer contractId,
+			ArrayList<String> employeeContractVariablesDB) {
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection(domain);
+			return JooqEmployeeEvents.getEmployeeEventsByContract(connection, contractId, employeeContractVariablesDB);
+
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if ( connection != null ) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
 
 	@Override
 	public void setEmployeeEvents(String domain, int contract, EmployeeEventsUpdate updateInfo) {

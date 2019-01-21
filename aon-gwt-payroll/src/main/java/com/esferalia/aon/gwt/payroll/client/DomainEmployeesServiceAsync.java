@@ -402,6 +402,13 @@ public class DomainEmployeesServiceAsync {
 	public void getWorkplaceEmployeesEvents(Integer workplaceId, AsyncCallback<WorkplaceEmployees> callback) {
 		employeesServiceAsync.getWorkplaceEmployeesEvents(getCurrentDomainName(), workplaceId, callback);
 	}
+	
+	public void getEmployeeEventsByContract(Integer contractId, ArrayList<String> employeeContractVariablesDB,
+			AsyncCallback<EmployeeEventsData> callback) {
+		employeesServiceAsync.getEmployeeEventsByContract(getCurrentDomainName(), contractId, employeeContractVariablesDB, callback);
+		
+	}
+	
 	// ------------------------------------------------------------------------
 	
 	public AgreementServiceAsync asAgreementServiceAsync() {

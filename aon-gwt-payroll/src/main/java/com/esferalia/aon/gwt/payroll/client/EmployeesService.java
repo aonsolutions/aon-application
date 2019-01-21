@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfoDataBase;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Events;
@@ -173,5 +175,8 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	EmployeeContractInfo createEmployeeContract(String domain, EmployeeContractInfo employeeContractData);
 
 	WorkplaceEmployees getWorkplaceEmployeesEvents(String currentDomainName, Integer workplaceId);
+
+	EmployeeEventsData getEmployeeEventsByContract(String currentDomainName, Integer contractId,
+			ArrayList<String> employeeContractVariablesDB);
 
 }

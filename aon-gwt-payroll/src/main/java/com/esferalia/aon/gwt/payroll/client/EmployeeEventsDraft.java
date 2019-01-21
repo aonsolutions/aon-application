@@ -54,6 +54,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		String onChange();
 		String setBlockVariableStyle();
 		String showVariablesStyle();
+		String bgcWhite();
 	}
 	
 	private class EventTableCell extends TextBox{
@@ -517,9 +518,17 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			
 			EmployeeEventsVariable varMonth = this.employeeEventsDraft.getEmployeeEventsVariableByMonth(var, actualMonth, actualYear);
 			
+			if (newRow % 2 == 1) {
+				eventCell.removeStyleName(style.bgcWhite());
+			}else {
+				eventCell.addStyleName(style.bgcWhite());
+			}
+			
 			if (null == varMonth){
 				eventCell.setTextBoxValue("-");
 				eventsGrid.setWidget(newRow, col, eventCell);
+				if (newRow % 2 != 1)
+					eventsGrid.getWidget(newRow, col).addStyleName(style.bgcWhite());
 				actualMonth++;
 				continue;
 			}
@@ -531,6 +540,8 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			
 			eventCell.setTextBoxValue(varMonth.getValue().toString());
 			eventsGrid.setWidget(newRow, col, eventCell);
+			if (newRow % 2 != 1)
+				eventsGrid.getWidget(newRow, col).addStyleName(style.bgcWhite());
 			actualMonth++;
 			
 //			Window.alert("Text Box Value :"+eventCell.getTextBox().getText());

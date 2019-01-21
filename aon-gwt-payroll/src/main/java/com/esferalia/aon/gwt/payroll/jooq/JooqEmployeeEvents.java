@@ -29,6 +29,12 @@ public class JooqEmployeeEvents {
 		return getEmployeeEventsInformation(DSL.using(conn, getDefaultSettings()), contract, employeeContractVariables);
 	}
 	
+	public static EmployeeEventsData getEmployeeEventsByContract(Connection conn, Integer contractId,
+			ArrayList<String> employeeContractVariables) {
+		return getEmployeeEventsByContractInformation(DSL.using(conn, getDefaultSettings()), contractId, employeeContractVariables);
+		
+	}
+
 	public static void setEmployeeEvents(Connection conn, Integer contract, EmployeeEventsUpdate updateInfo){
 		setEmployeeEventsInformation(DSL.using(conn, getDefaultSettings()), contract, updateInfo);
 	}
@@ -41,7 +47,7 @@ public class JooqEmployeeEvents {
 		return SETTINGS;
 	}
 	
-	private static EmployeeEventsData getEmployeeEventsInformation(DSLContext dslContext, Integer contract, ArrayList<String> employeeContractVariables) {
+	private static EmployeeEventsData getEmployeeEventsInformation(DSLContext dslContext, Integer person_ID, ArrayList<String> employeeContractVariables) {
 		
 		EmployeeEventsData employeeInfoVariablesEvents = new EmployeeEventsData();
 		Map<String,ArrayList<Quartet<Date, Date, String, String>>> employeeVariablesEvents = new HashMap<String,ArrayList<Quartet<Date, Date, String, String>>>(); 
@@ -53,27 +59,29 @@ public class JooqEmployeeEvents {
 			ArrayList<Quartet<Date, Date, String, String>> varibaleList = new ArrayList<Quartet<Date, Date, String, String>>();
 			
 			Result<Record> contractRecord = dslContext.select().from(CONTRACT)
-					.where(CONTRACT.ID.eq(contract))
+					.where(CONTRACT.PERSON.eq(person_ID))
 					.fetch();
 			
-			Integer contractId = contractRecord.get(0).get(CONTRACT.ID);
-			
-			Result<Record> variableEmployeeInfo = dslContext
-					  .select()
-					  .from(CONTRACT_DATA)
-					  .where(CONTRACT_DATA.CONTRACT.eq(contractId))
-					  .and(CONTRACT_DATA.NAME.eq(name))
-					  .fetch();
-			
-			for(Record r: variableEmployeeInfo){
-				Quartet<Date, Date, String, String> quarterVariableEmployeeInfo = new Quartet<Date, Date, String, String>();
+			if(!contractRecord.isEmpty()) {
+				Integer contractId = contractRecord.get(0).get(CONTRACT.ID);
 				
-				quarterVariableEmployeeInfo.setStartDate(r.get(CONTRACT_DATA.START_DATE))
-				.setEndDate(r.get(CONTRACT_DATA.END_DATE))
-				.setName(r.get(CONTRACT_DATA.NAME))
-				.setExpression(r.get(CONTRACT_DATA.EXPRESSION));
+				Result<Record> variableEmployeeInfo = dslContext
+						  .select()
+						  .from(CONTRACT_DATA)
+						  .where(CONTRACT_DATA.CONTRACT.eq(contractId))
+						  .and(CONTRACT_DATA.NAME.eq(name))
+						  .fetch();
 				
-				varibaleList.add(quarterVariableEmployeeInfo);
+				for(Record r: variableEmployeeInfo){
+					Quartet<Date, Date, String, String> quarterVariableEmployeeInfo = new Quartet<Date, Date, String, String>();
+					
+					quarterVariableEmployeeInfo.setStartDate(r.get(CONTRACT_DATA.START_DATE))
+					.setEndDate(r.get(CONTRACT_DATA.END_DATE))
+					.setName(r.get(CONTRACT_DATA.NAME))
+					.setExpression(r.get(CONTRACT_DATA.EXPRESSION));
+					
+					varibaleList.add(quarterVariableEmployeeInfo);
+				}
 			}
 			
 			employeeVariablesEvents.put(name, varibaleList);
@@ -85,6 +93,52 @@ public class JooqEmployeeEvents {
 		
 		return employeeInfoVariablesEvents;
 	
+	}
+	
+	private static EmployeeEventsData getEmployeeEventsByContractInformation(DSLContext dslContext, Integer contractId,
+			ArrayList<String> employeeContractVariables) {
+		
+		EmployeeEventsData employeeInfoVariablesEvents = new EmployeeEventsData();
+		Map<String,ArrayList<Quartet<Date, Date, String, String>>> employeeVariablesEvents = new HashMap<String,ArrayList<Quartet<Date, Date, String, String>>>(); 
+		
+		
+		// --------------------------------------------- AÑADIR VARIABLES ---------------------------------------------------------
+		
+		for(String name: employeeContractVariables){
+			ArrayList<Quartet<Date, Date, String, String>> varibaleList = new ArrayList<Quartet<Date, Date, String, String>>();
+			
+			Result<Record> contractRecord = dslContext.select().from(CONTRACT)
+					.where(CONTRACT.ID.eq(contractId))
+					.fetch();
+			
+			if(!contractRecord.isEmpty()) {
+				Result<Record> variableEmployeeInfo = dslContext
+						  .select()
+						  .from(CONTRACT_DATA)
+						  .where(CONTRACT_DATA.CONTRACT.eq(contractId))
+						  .and(CONTRACT_DATA.NAME.eq(name))
+						  .fetch();
+				
+				for(Record r: variableEmployeeInfo){
+					Quartet<Date, Date, String, String> quarterVariableEmployeeInfo = new Quartet<Date, Date, String, String>();
+					
+					quarterVariableEmployeeInfo.setStartDate(r.get(CONTRACT_DATA.START_DATE))
+					.setEndDate(r.get(CONTRACT_DATA.END_DATE))
+					.setName(r.get(CONTRACT_DATA.NAME))
+					.setExpression(r.get(CONTRACT_DATA.EXPRESSION));
+					
+					varibaleList.add(quarterVariableEmployeeInfo);
+				}
+			}
+			
+			employeeVariablesEvents.put(name, varibaleList);
+		}		
+
+		// ------------------------------------------------- SOLUCION ---------------------------------------------------------		
+		
+		employeeInfoVariablesEvents.setContractEventsList(employeeVariablesEvents);
+		
+		return employeeInfoVariablesEvents;
 	}
 	
 	private static void setEmployeeEventsInformation(DSLContext dslContext, Integer contract,
@@ -138,5 +192,7 @@ public class JooqEmployeeEvents {
 		}
 		
 	}
+
+	
 
 }

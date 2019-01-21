@@ -620,5 +620,13 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 				new AsyncCallbackWrapper<WorkplaceEmployees>(callback));
 	}
 
+	@Override
+	public void getEmployeeEventsByContract(String domain, Integer contractId,
+			ArrayList<String> employeeContractVariablesDB, AsyncCallback<EmployeeEventsData> callback) {
+		AON.start();
+		employeesServiceAsync.getEmployeeEventsByContract(domain, contractId, employeeContractVariablesDB,
+				new AsyncCallbackWrapper<EmployeeEventsData>(callback));
+	}
+
 	
 }
