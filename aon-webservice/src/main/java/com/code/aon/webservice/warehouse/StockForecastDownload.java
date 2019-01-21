@@ -15,11 +15,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 
 import com.code.aon.webservice.common.MSG;
@@ -94,10 +92,10 @@ public class StockForecastDownload extends HttpServlet {
 		CellStyle style = book.createCellStyle();
 		Font font = book.createFont();
 		font.setFontHeightInPoints((short) 12);
-		font.setBold(true);
+		font.setBoldweight(Font.BOLDWEIGHT_BOLD);
 		style.setFont(font);
-		style.setAlignment(HorizontalAlignment.CENTER);
-		style.setBorderBottom(BorderStyle.MEDIUM);
+		style.setAlignment(CellStyle.ALIGN_CENTER);
+		style.setBorderBottom(CellStyle.BORDER_MEDIUM);
 		return style;
 	}
 
@@ -106,10 +104,10 @@ public class StockForecastDownload extends HttpServlet {
 		Font font = book.createFont();
 		font.setFontHeightInPoints((short) 12);
 		style.setFont(font);
-		style.setAlignment(HorizontalAlignment.RIGHT);
-		style.setBorderBottom(BorderStyle.THIN);
-		style.setBorderRight(BorderStyle.THIN);
-		style.setBorderLeft(BorderStyle.THIN);
+		style.setAlignment(CellStyle.ALIGN_RIGHT);
+		style.setBorderBottom(CellStyle.BORDER_THIN);
+		style.setBorderRight(CellStyle.BORDER_THIN);
+		style.setBorderLeft(CellStyle.BORDER_THIN);
 		return style;
 	}
 
@@ -118,11 +116,11 @@ public class StockForecastDownload extends HttpServlet {
 		Font font = book.createFont();
 		font.setFontHeightInPoints((short) 12);
 		style.setFont(font);
-		style.setAlignment(HorizontalAlignment.LEFT);
-		style.setBorderBottom(BorderStyle.THIN);
-		style.setBorderRight(BorderStyle.THIN);
-		style.setBorderLeft(BorderStyle.THIN);
-		style.setBorderTop(BorderStyle.THIN);
+		style.setAlignment(CellStyle.ALIGN_LEFT);
+		style.setBorderBottom(CellStyle.BORDER_THIN);
+		style.setBorderRight(CellStyle.BORDER_THIN);
+		style.setBorderLeft(CellStyle.BORDER_THIN);
+		style.setBorderTop(CellStyle.BORDER_THIN);
 		return style;
 	}
 	

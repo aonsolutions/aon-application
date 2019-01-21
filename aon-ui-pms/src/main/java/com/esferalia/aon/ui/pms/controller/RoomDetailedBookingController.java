@@ -36,10 +36,7 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.CellStyle;
 
 import com.code.aon.AonVersion;
 import com.code.aon.asset.enumeration.ActivityStatus;
@@ -47,6 +44,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.customer.Customer;
+import net.aonsolutions.core.dbutils.AonSQLException;
+import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.report.ReportException;
 import com.code.aon.report.poi.ExcelReportExporter;
 import com.code.aon.report.poi.IReportExporter;
@@ -59,9 +58,6 @@ import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.enumeration.BookingStayType;
 import com.esferalia.aon.pms.sql.ISQLConstants;
 import com.esferalia.aon.pms.sql.SQLUtils;
-
-import net.aonsolutions.core.dbutils.AonSQLException;
-import net.aonsolutions.core.dbutils.DatabaseUtil;
 
 public class RoomDetailedBookingController extends DataScrollerState implements ISQLConstants {
 
@@ -386,7 +382,7 @@ public class RoomDetailedBookingController extends DataScrollerState implements 
 				report.exportColumn(metadata.getColumns().get(3), dayBooking.getRoomCheckout());
 				report.exportColumn(metadata.getColumns().get(4), dayBooking.getRoomBusy());
 				HSSFCell busyCell = (HSSFCell)report.exportColumn(metadata.getColumns().get(5), dayBooking.getRoomBusyPercent().toString() + "%");
-				alignCell(report, busyCell, HorizontalAlignment.RIGHT);
+				alignCell(report, busyCell, CellStyle.ALIGN_RIGHT);
 				report.exportColumn(metadata.getColumns().get(6), dayBooking.getRoomFree());
 				report.exportColumn(metadata.getColumns().get(7), dayBooking.getRoomBlocked());
 				report.exportColumn(metadata.getColumns().get(8), dayBooking.getRoomTotal());
@@ -397,7 +393,7 @@ public class RoomDetailedBookingController extends DataScrollerState implements 
 					report.exportColumn(metadata.getColumns().get(11), (roomTypeBooking != null) ? roomTypeBooking.getRoomBusy() : null);
 					HSSFCell cell = (HSSFCell)report.exportColumn(metadata.getColumns().get(12), (roomTypeBooking != null) ? roomTypeBooking.getRoomFree() : null);
 					if (roomTypeBooking != null && roomTypeBooking.getRoomFree() < 0) {
-						paintCell(report, cell, HSSFColorPredefined.RED.getIndex());
+						paintCell(report, cell, HSSFColor.RED.index);
 					}
 					report.exportColumn(metadata.getColumns().get(13), (roomTypeBooking != null) ? roomTypeBooking.getRoomBlocked() : null);
 					report.exportColumn(metadata.getColumns().get(14), (roomTypeBooking != null) ? roomTypeBooking.getRoomTotal() : null);
@@ -419,7 +415,7 @@ public class RoomDetailedBookingController extends DataScrollerState implements 
 	private ReportMetadata createExcelHeader(ExcelReportExporter report) {
 		HSSFCellStyle cellStyleBlack = newExcelHeaderStyle(report);
 		HSSFFont cellFont = report.createFont();
-	    cellFont.setBold(true);
+	    cellFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
 	    cellStyleBlack.setFont(cellFont);
 
 	    report.addHeaderRow();
@@ -437,13 +433,13 @@ public class RoomDetailedBookingController extends DataScrollerState implements 
 
 		HSSFCellStyle cellStyleBlue = newExcelHeaderStyle(report);
 		cellFont = report.createFont();
-	    cellFont.setBold(true);
-		cellFont.setColor(HSSFColorPredefined.BLUE.getIndex());
+	    cellFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+		cellFont.setColor(HSSFColor.BLUE.index);
 	    cellStyleBlue.setFont(cellFont);
 		HSSFCellStyle cellStyleRed = newExcelHeaderStyle(report);
 		cellFont = report.createFont();
-	    cellFont.setBold(true);
-		cellFont.setColor(HSSFColorPredefined.RED.getIndex());
+	    cellFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+		cellFont.setColor(HSSFColor.RED.index);
 	    cellStyleRed.setFont(cellFont);
 		for (int i=0, from=9, to=9; i<roomTypeList.length; i++, from=to) {
 			report.addHeaderCell(roomTypeList[i], 0, (i<hotelRoomTypesCount) ? cellStyleBlue : cellStyleRed);
@@ -479,11 +475,11 @@ public class RoomDetailedBookingController extends DataScrollerState implements 
 
 	private HSSFCellStyle newExcelHeaderStyle(ExcelReportExporter report) {
 		HSSFCellStyle cellStyle = report.createCellStyle();
-	    cellStyle.setAlignment(HorizontalAlignment.CENTER);
-	    cellStyle.setBorderBottom(BorderStyle.THIN);
-	    cellStyle.setBorderRight(BorderStyle.THICK);
-	    cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);  
-	    cellStyle.setFillForegroundColor(HSSFColorPredefined.GREY_25_PERCENT.getIndex());
+	    cellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+	    cellStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+	    cellStyle.setBorderRight(HSSFCellStyle.BORDER_THICK);
+	    cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);  
+	    cellStyle.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
 	    return cellStyle;
 	}
 
@@ -499,7 +495,7 @@ public class RoomDetailedBookingController extends DataScrollerState implements 
 	    cell.setCellStyle(cellStyle);
 	}
 
-	private void alignCell(ExcelReportExporter report, HSSFCell cell, HorizontalAlignment align) {
+	private void alignCell(ExcelReportExporter report, HSSFCell cell, short align) {
 		HSSFCellStyle cellStyle = report.createCellStyle();
 		if (cellStyle == null) {
 			cellStyle = report.createCellStyle();

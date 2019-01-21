@@ -10,16 +10,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Footer;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -218,49 +215,49 @@ public class AccountTrialBalanceReportExcelPrint extends HttpServlet {
 			decimalStyle.setFont(smallFont);
 
 			Font journalHeaderFont = workbook.createFont();
-			journalHeaderFont.setBold(true);
+			journalHeaderFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
 			journalHeaderFont.setFontHeightInPoints((short) 8);
 			
 			XSSFCellStyle headerStyle = (XSSFCellStyle) workbook.createCellStyle();
-			headerStyle.setAlignment( HorizontalAlignment.CENTER );
-			headerStyle.setVerticalAlignment( VerticalAlignment.CENTER);
+			headerStyle.setAlignment( HSSFCellStyle.ALIGN_CENTER );
+			headerStyle.setVerticalAlignment( HSSFCellStyle.VERTICAL_CENTER);
 		    headerStyle.setFont(journalHeaderFont);
 		    
 		    XSSFCellStyle columnHeaderStyle = (XSSFCellStyle) workbook.createCellStyle();
 		    columnHeaderStyle.cloneStyleFrom(headerStyle);
-		    columnHeaderStyle.setBorderTop(BorderStyle.THIN);
-		    columnHeaderStyle.setBorderBottom(BorderStyle.THIN);
-		    columnHeaderStyle.setBorderLeft(BorderStyle.THIN);
-		    columnHeaderStyle.setBorderRight(BorderStyle.THIN);
-		    columnHeaderStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		    columnHeaderStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+		    columnHeaderStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+		    columnHeaderStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+		    columnHeaderStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+		    columnHeaderStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 		    columnHeaderStyle.setFillForegroundColor(AON_LIGHT_GRAY);
 		    
 		    
 			Font titleFont= workbook.createFont();
 			titleFont.setFontHeightInPoints((short) 10);
-			titleFont.setBold(true);
+			titleFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
 
 			XSSFCellStyle titleStyle = (XSSFCellStyle) workbook.createCellStyle();
 		    titleStyle.cloneStyleFrom(headerStyle);
 		    titleStyle.setFont(titleFont);
-		    titleStyle.setBorderBottom(BorderStyle.NONE);
+		    titleStyle.setBorderBottom(HSSFCellStyle.BORDER_NONE);
 		    
 			Font subTitleFont= workbook.createFont();
 			subTitleFont.setFontHeightInPoints((short) 8);
-			subTitleFont.setBold(true);
+			subTitleFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
 			
 			XSSFCellStyle subTitleStyle = (XSSFCellStyle) workbook.createCellStyle();
 			subTitleStyle.cloneStyleFrom(headerStyle);
 			subTitleStyle.setFont(subTitleFont);
-			subTitleStyle.setBorderBottom(BorderStyle.NONE);
+			subTitleStyle.setBorderBottom(HSSFCellStyle.BORDER_NONE);
 
 			Font smallBoldFont= workbook.createFont();
 			smallBoldFont.setFontHeightInPoints((short) 8);
-			smallBoldFont.setBold(true);
+			smallBoldFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
 
 			titleCellStyle = (XSSFCellStyle) workbook.createCellStyle();
 			titleCellStyle.cloneStyleFrom(decimalStyle);
-			titleCellStyle.setAlignment(HorizontalAlignment.RIGHT);
+			titleCellStyle.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
 			titleCellStyle.setFont(smallBoldFont);
 			titleCellStyle.setWrapText(true);
 			

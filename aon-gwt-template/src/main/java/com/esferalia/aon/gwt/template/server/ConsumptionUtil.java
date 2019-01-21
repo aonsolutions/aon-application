@@ -18,13 +18,9 @@ import javax.servlet.ServletException;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
-import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 
@@ -116,11 +112,11 @@ public class ConsumptionUtil {
         	CellStyle style = libro.createCellStyle();CellStyle styleInfo = libro.createCellStyle();
         	Font font = libro.createFont();
         	font.setFontHeightInPoints((short)12);
-        	font.setBold(true);
+        	font.setBoldweight(Font.BOLDWEIGHT_BOLD);
         	style.setFont(font);styleInfo.setFont(font);
-        	style.setAlignment(HorizontalAlignment.CENTER);styleInfo.setAlignment(HorizontalAlignment.CENTER);
-        	style.setBorderBottom(BorderStyle.MEDIUM); styleInfo.setBorderBottom(BorderStyle.MEDIUM);
-        	styleInfo.setFillBackgroundColor(HSSFColorPredefined.LIGHT_YELLOW.getIndex());
+        	style.setAlignment(CellStyle.ALIGN_CENTER);styleInfo.setAlignment(CellStyle.ALIGN_CENTER);
+        	style.setBorderBottom(CellStyle.BORDER_MEDIUM); styleInfo.setBorderBottom(CellStyle.BORDER_MEDIUM);
+        	styleInfo.setFillBackgroundColor(HSSFColor.LIGHT_YELLOW.index);
 
         	Cell cellInfo = rowInfo.createCell(0);
         	cellInfo.setCellValue(info);
@@ -131,17 +127,17 @@ public class ConsumptionUtil {
        		Font font2 = libro.createFont();
         	font.setFontHeightInPoints((short)12);
 			style2.setFont(font2);
-			style2.setAlignment(HorizontalAlignment.RIGHT);
-			style2.setBorderBottom(BorderStyle.THIN);
-			style2.setBorderRight(BorderStyle.THIN);
-			style2.setBorderLeft(BorderStyle.THIN);
+			style2.setAlignment(CellStyle.ALIGN_RIGHT);
+			style2.setBorderBottom(CellStyle.BORDER_THIN);
+			style2.setBorderRight(CellStyle.BORDER_THIN);
+			style2.setBorderLeft(CellStyle.BORDER_THIN);
 		
 			CellStyle style3 = libro.createCellStyle();
 			style3.setFont(font2);
-			style3.setAlignment(HorizontalAlignment.LEFT);
-			style3.setBorderBottom(BorderStyle.THIN);
-			style3.setBorderRight(BorderStyle.THIN);
-			style3.setBorderLeft(BorderStyle.THIN);
+			style3.setAlignment(CellStyle.ALIGN_LEFT);
+			style3.setBorderBottom(CellStyle.BORDER_THIN);
+			style3.setBorderRight(CellStyle.BORDER_THIN);
+			style3.setBorderLeft(CellStyle.BORDER_THIN);
 		
 			for(Integer i = 0; i< columns; i++){
 				Cell celda = fila.createCell(i);
@@ -293,13 +289,13 @@ public class ConsumptionUtil {
                                     switch(cell.getCellType()) { //Identify CELL type
                                             //you need to add more code here based on
                                             //your requirement / transformations
-                                    case STRING:
+                                    case Cell.CELL_TYPE_STRING:
                                     	if(row.getRowNum() == 1)
                                     		table_cell=new PdfPCell(new Phrase(cell.getStringCellValue(), font1));
                                     	else table_cell=new PdfPCell(new Phrase(cell.getStringCellValue(), font2));
                                     	if(cell.getColumnIndex() != columnNum) my_table.addCell(table_cell);
                                     	break;
-                                    case BLANK:
+                                    case Cell.CELL_TYPE_BLANK:
                                     	//Push the data from Excel to PDF Cell
                                         table_cell=new PdfPCell();
                                         //feel free to move the code below to suit to your needs
@@ -307,7 +303,7 @@ public class ConsumptionUtil {
                                         if(cell.getColumnIndex() != columnNum) my_table.addCell(table_cell);
                                        break;
                                     
-                            		case BOOLEAN:
+                            		case Cell.CELL_TYPE_BOOLEAN:
                             			//Push the data from Excel to PDF Cell
                             			String text ="";
                             			if(cell.getBooleanCellValue())text = "true";
@@ -316,13 +312,13 @@ public class ConsumptionUtil {
                                 		//feel free to move the code below to suit to your needs
                                 		 if(cell.getColumnIndex() != columnNum) my_table.addCell(table_cell);
                                 		break;
-                            		case FORMULA:
+                            		case Cell.CELL_TYPE_FORMULA:
                             			//Push the data from Excel to PDF Cell
                             			table_cell=new PdfPCell(new Phrase(cell.getCellFormula(), font2));
                                 		//feel free to move the code below to suit to your needs
                             			 if(cell.getColumnIndex() != columnNum) my_table.addCell(table_cell);
                                 		break;
-                            		case NUMERIC:
+                            		case Cell.CELL_TYPE_NUMERIC:
                             			//Push the data from Excel to PDF Cell
                             			Double d = cell.getNumericCellValue();
                             			table_cell=new PdfPCell(new Phrase(d.toString(), font2));
@@ -459,11 +455,11 @@ public class ConsumptionUtil {
         	CellStyle style = libro.createCellStyle();CellStyle styleInfo = libro.createCellStyle();
         	Font font = libro.createFont();
         	font.setFontHeightInPoints((short)12);
-        	font.setBold(true);
+        	font.setBoldweight(Font.BOLDWEIGHT_BOLD);
         	style.setFont(font);styleInfo.setFont(font);
-        	style.setAlignment(HorizontalAlignment.CENTER);styleInfo.setAlignment(HorizontalAlignment.CENTER);
-        	style.setBorderBottom(BorderStyle.MEDIUM); styleInfo.setBorderBottom(BorderStyle.MEDIUM);
-        	styleInfo.setFillBackgroundColor(HSSFColorPredefined.LIGHT_YELLOW.getIndex());
+        	style.setAlignment(CellStyle.ALIGN_CENTER);styleInfo.setAlignment(CellStyle.ALIGN_CENTER);
+        	style.setBorderBottom(CellStyle.BORDER_MEDIUM); styleInfo.setBorderBottom(CellStyle.BORDER_MEDIUM);
+        	styleInfo.setFillBackgroundColor(HSSFColor.LIGHT_YELLOW.index);
 
         	Cell cellInfo = rowInfo.createCell(0);
         	cellInfo.setCellValue(info);
@@ -474,17 +470,17 @@ public class ConsumptionUtil {
        		Font font2 = libro.createFont();
         	font.setFontHeightInPoints((short)12);
 			style2.setFont(font2);
-			style2.setAlignment(HorizontalAlignment.RIGHT);
-			style2.setBorderBottom(BorderStyle.THIN);
-			style2.setBorderRight(BorderStyle.THIN);
-			style2.setBorderLeft(BorderStyle.THIN);
+			style2.setAlignment(CellStyle.ALIGN_RIGHT);
+			style2.setBorderBottom(CellStyle.BORDER_THIN);
+			style2.setBorderRight(CellStyle.BORDER_THIN);
+			style2.setBorderLeft(CellStyle.BORDER_THIN);
 		
 			CellStyle style3 = libro.createCellStyle();
 			style3.setFont(font2);
-			style3.setAlignment(HorizontalAlignment.LEFT);
-			style3.setBorderBottom(BorderStyle.THIN);
-			style3.setBorderRight(BorderStyle.THIN);
-			style3.setBorderLeft(BorderStyle.THIN);
+			style3.setAlignment(CellStyle.ALIGN_LEFT);
+			style3.setBorderBottom(CellStyle.BORDER_THIN);
+			style3.setBorderRight(CellStyle.BORDER_THIN);
+			style3.setBorderLeft(CellStyle.BORDER_THIN);
 		
 			for(Integer i = 0; i< columns; i++){
 				Cell celda = fila.createCell(i);
@@ -638,13 +634,13 @@ public class ConsumptionUtil {
                                     switch(cell.getCellType()) { //Identify CELL type
                                             //you need to add more code here based on
                                             //your requirement / transformations
-                                    case STRING:
+                                    case Cell.CELL_TYPE_STRING:
                                     	if(row.getRowNum() == 1)
                                     		table_cell=new PdfPCell(new Phrase(cell.getStringCellValue(), font1));
                                     	else table_cell=new PdfPCell(new Phrase(cell.getStringCellValue(), font2));
                                     	if(cell.getColumnIndex() != columnNum) my_table.addCell(table_cell);
                                     	break;
-                                    case BLANK:
+                                    case Cell.CELL_TYPE_BLANK:
                                     	//Push the data from Excel to PDF Cell
                                         table_cell=new PdfPCell();
                                         //feel free to move the code below to suit to your needs
@@ -652,7 +648,7 @@ public class ConsumptionUtil {
                                         if(cell.getColumnIndex() != columnNum) my_table.addCell(table_cell);
                                        break;
                                     
-                            		case BOOLEAN:
+                            		case Cell.CELL_TYPE_BOOLEAN:
                             			//Push the data from Excel to PDF Cell
                             			String text ="";
                             			if(cell.getBooleanCellValue())text = "true";
@@ -661,13 +657,13 @@ public class ConsumptionUtil {
                                 		//feel free to move the code below to suit to your needs
                                 		 if(cell.getColumnIndex() != columnNum) my_table.addCell(table_cell);
                                 		break;
-                            		case FORMULA:
+                            		case Cell.CELL_TYPE_FORMULA:
                             			//Push the data from Excel to PDF Cell
                             			table_cell=new PdfPCell(new Phrase(cell.getCellFormula(), font2));
                                 		//feel free to move the code below to suit to your needs
                             			 if(cell.getColumnIndex() != columnNum) my_table.addCell(table_cell);
                                 		break;
-                            		case NUMERIC:
+                            		case Cell.CELL_TYPE_NUMERIC:
                             			//Push the data from Excel to PDF Cell
                             			Double d = cell.getNumericCellValue();
                             			table_cell=new PdfPCell(new Phrase(d.toString(), font2));
@@ -823,11 +819,11 @@ public class ConsumptionUtil {
     	CellStyle style0 = libro.createCellStyle();CellStyle styleInfo0 = libro.createCellStyle();
     	Font font0 = libro.createFont();
     	font0.setFontHeightInPoints((short)12);
-    	font0.setBold(true);
+    	font0.setBoldweight(Font.BOLDWEIGHT_BOLD);
     	style0.setFont(font0);styleInfo0.setFont(font0);
-    	style0.setAlignment(HorizontalAlignment.CENTER);styleInfo0.setAlignment(HorizontalAlignment.CENTER);
-    	style0.setBorderBottom(BorderStyle.MEDIUM); styleInfo0.setBorderBottom(BorderStyle.MEDIUM);
-    	styleInfo0.setFillBackgroundColor(HSSFColorPredefined.LIGHT_YELLOW.getIndex());
+    	style0.setAlignment(CellStyle.ALIGN_CENTER);styleInfo0.setAlignment(CellStyle.ALIGN_CENTER);
+    	style0.setBorderBottom(CellStyle.BORDER_MEDIUM); styleInfo0.setBorderBottom(CellStyle.BORDER_MEDIUM);
+    	styleInfo0.setFillBackgroundColor(HSSFColor.LIGHT_YELLOW.index);
 
     	Cell cellInfo0 = rowInfo0.createCell(0);
     	cellInfo0.setCellValue(info0);
@@ -837,17 +833,17 @@ public class ConsumptionUtil {
    		Font font20 = libro.createFont();
     	font0.setFontHeightInPoints((short)12);
 		style20.setFont(font20);
-		style20.setAlignment(HorizontalAlignment.RIGHT);
-		style20.setBorderBottom(BorderStyle.THIN);
-		style20.setBorderRight(BorderStyle.THIN);
-		style20.setBorderLeft(BorderStyle.THIN);
+		style20.setAlignment(CellStyle.ALIGN_RIGHT);
+		style20.setBorderBottom(CellStyle.BORDER_THIN);
+		style20.setBorderRight(CellStyle.BORDER_THIN);
+		style20.setBorderLeft(CellStyle.BORDER_THIN);
 	
 		CellStyle style30 = libro.createCellStyle();
 		style30.setFont(font20);
-		style30.setAlignment(HorizontalAlignment.LEFT);
-		style30.setBorderBottom(BorderStyle.THIN);
-		style30.setBorderRight(BorderStyle.THIN);
-		style30.setBorderLeft(BorderStyle.THIN);
+		style30.setAlignment(CellStyle.ALIGN_LEFT);
+		style30.setBorderBottom(CellStyle.BORDER_THIN);
+		style30.setBorderRight(CellStyle.BORDER_THIN);
+		style30.setBorderLeft(CellStyle.BORDER_THIN);
 	
 		for(Integer i = 0; i< columns; i++){
 			Cell celda0 = fila0.createCell(i);
@@ -977,11 +973,11 @@ public class ConsumptionUtil {
     	CellStyle style0 = libro.createCellStyle();CellStyle styleInfo0 = libro.createCellStyle();
     	Font font0 = libro.createFont();
     	font0.setFontHeightInPoints((short)12);
-    	font0.setBold(true);
+    	font0.setBoldweight(Font.BOLDWEIGHT_BOLD);
     	style0.setFont(font0);styleInfo0.setFont(font0);
-    	style0.setAlignment(HorizontalAlignment.CENTER);styleInfo0.setAlignment(HorizontalAlignment.CENTER);
-    	style0.setBorderBottom(BorderStyle.MEDIUM); styleInfo0.setBorderBottom(BorderStyle.MEDIUM);
-    	styleInfo0.setFillBackgroundColor(HSSFColorPredefined.LIGHT_YELLOW.getIndex());
+    	style0.setAlignment(CellStyle.ALIGN_CENTER);styleInfo0.setAlignment(CellStyle.ALIGN_CENTER);
+    	style0.setBorderBottom(CellStyle.BORDER_MEDIUM); styleInfo0.setBorderBottom(CellStyle.BORDER_MEDIUM);
+    	styleInfo0.setFillBackgroundColor(HSSFColor.LIGHT_YELLOW.index);
 
     	Cell cellInfo0 = rowInfo0.createCell(0);
     	cellInfo0.setCellValue(info0);
@@ -991,17 +987,17 @@ public class ConsumptionUtil {
    		Font font20 = libro.createFont();
     	font0.setFontHeightInPoints((short)12);
 		style20.setFont(font20);
-		style20.setAlignment(HorizontalAlignment.RIGHT);
-		style20.setBorderBottom(BorderStyle.THIN);
-		style20.setBorderRight(BorderStyle.THIN);
-		style20.setBorderLeft(BorderStyle.THIN);
+		style20.setAlignment(CellStyle.ALIGN_RIGHT);
+		style20.setBorderBottom(CellStyle.BORDER_THIN);
+		style20.setBorderRight(CellStyle.BORDER_THIN);
+		style20.setBorderLeft(CellStyle.BORDER_THIN);
 	
 		CellStyle style30 = libro.createCellStyle();
 		style30.setFont(font20);
-		style30.setAlignment(HorizontalAlignment.LEFT);
-		style30.setBorderBottom(BorderStyle.THIN);
-		style30.setBorderRight(BorderStyle.THIN);
-		style30.setBorderLeft(BorderStyle.THIN);
+		style30.setAlignment(CellStyle.ALIGN_LEFT);
+		style30.setBorderBottom(CellStyle.BORDER_THIN);
+		style30.setBorderRight(CellStyle.BORDER_THIN);
+		style30.setBorderLeft(CellStyle.BORDER_THIN);
 	
 		for(Integer i = 0; i< columns; i++){
     	Cell celda0 = fila0.createCell(i);

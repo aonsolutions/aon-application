@@ -50,10 +50,6 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
@@ -2087,7 +2083,7 @@ public class ProjectReservationController extends BasicController implements IPm
 	private ReportMetadata createExcelHeader(ExcelReportExporter report) {
 		HSSFCellStyle cellStyleBlack = newExcelHeaderStyle(report);
 		HSSFFont cellFont = report.createFont();
-	    cellFont.setBold(true);
+	    cellFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
 	    cellStyleBlack.setFont(cellFont);
 
 	    report.addHeaderRow();
@@ -2122,11 +2118,11 @@ public class ProjectReservationController extends BasicController implements IPm
 
 	private HSSFCellStyle newExcelHeaderStyle(ExcelReportExporter report) {
 		HSSFCellStyle cellStyle = report.createCellStyle();
-	    cellStyle.setAlignment(HorizontalAlignment.CENTER);
-	    cellStyle.setBorderBottom(BorderStyle.THIN);
-	    cellStyle.setBorderRight(BorderStyle.THICK);
-	    cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);  
-	    cellStyle.setFillForegroundColor(HSSFColorPredefined.GREY_25_PERCENT.getIndex());
+	    cellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+	    cellStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+	    cellStyle.setBorderRight(HSSFCellStyle.BORDER_THICK);
+	    cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);  
+	    cellStyle.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
 	    return cellStyle;
 	}
 

@@ -5,22 +5,17 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
@@ -81,18 +76,18 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 	  dataFormat = workbook.getCreationHelper().createDataFormat();
 	  dateStyle = workbook.createCellStyle();
 	  dateStyle.setDataFormat(dataFormat.getFormat(DATE_PATTERN));
-	  dateStyle.setAlignment( HorizontalAlignment.CENTER );
+	  dateStyle.setAlignment( HSSFCellStyle.ALIGN_CENTER );
 
 	  numberStyle = workbook.createCellStyle();
 	  numberStyle.setDataFormat(dataFormat.getFormat(NUMBER_PATTERN));
-	  numberStyle.setAlignment( HorizontalAlignment.CENTER );
+	  numberStyle.setAlignment( HSSFCellStyle.ALIGN_CENTER );
 
 	  decimalStyle = workbook.createCellStyle();
 	  decimalStyle.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
-	  decimalStyle.setAlignment( HorizontalAlignment.RIGHT );
+	  decimalStyle.setAlignment( HSSFCellStyle.ALIGN_RIGHT );
 
 		centerCellStyle = workbook.createCellStyle();
-		centerCellStyle.setAlignment( HorizontalAlignment.CENTER );
+		centerCellStyle.setAlignment( HSSFCellStyle.ALIGN_CENTER );
 
 		defaulFont= workbook.createFont();
 		defaulFont.setFontHeightInPoints((short) 9);
@@ -102,7 +97,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 
 		boldFont= workbook.createFont();
 		boldFont.setFontHeightInPoints((short) 9);
-		boldFont.setBold(true);
+		boldFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
 
 		rowStyle = (XSSFCellStyle) workbook.createCellStyle();
 		rowStyle.setWrapText(true);
@@ -112,9 +107,9 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		boxFont.setColor(IndexedColors.GREY_40_PERCENT.index);
 
 		boxCellStyle = (XSSFCellStyle) workbook.createCellStyle();
-		boxCellStyle.setAlignment(HorizontalAlignment.CENTER);
-		boxCellStyle.setVerticalAlignment(VerticalAlignment.BOTTOM);
-		boxCellStyle.setBorderBottom(BorderStyle.THIN);
+		boxCellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+		boxCellStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_BOTTOM);
+		boxCellStyle.setBorderBottom(CellStyle.BORDER_THIN);
 		boxCellStyle.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 		boxCellStyle.setFont(boxFont);
 
@@ -123,20 +118,20 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		idFont.setFontHeightInPoints((short) 9);
 
 		idCellStyle = (XSSFCellStyle) workbook.createCellStyle();
-		idCellStyle.setAlignment(HorizontalAlignment.CENTER);
-		idCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		idCellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+		idCellStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
 		idCellStyle.setFont(idFont);
 
 		Font headerFont = workbook.createFont();
-		headerFont.setBold(true);
+		headerFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
 		headerFont.setColor(IndexedColors.WHITE.index);
 		headerFont.setFontHeightInPoints((short) 9);
 
 		headerCellStyle = (XSSFCellStyle) workbook.createCellStyle();
-		headerCellStyle.setAlignment(HorizontalAlignment.CENTER);
+		headerCellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
 		headerCellStyle.setWrapText(true);
-		headerCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-		headerCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		headerCellStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+		headerCellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 		headerCellStyle.setFillForegroundColor(AON_BLUE);
 		headerCellStyle.setFont(headerFont);
 		headerCellStyle.setFillForegroundColor(REGISTRADORES);
@@ -168,7 +163,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			CreationHelper helper = workbook.getCreationHelper();
 			Drawing drawing = sheet.createDrawingPatriarch();
 			ClientAnchor anchor = helper.createClientAnchor();
-			anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
+			anchor.setAnchorType(2);
 			anchor.setCol1(0);
 			anchor.setRow1(0);
 			anchor.setDx1(20);
@@ -215,7 +210,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 1));
 
 		XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.clone();
-		rightHeaderCellStyle.setAlignment(HorizontalAlignment.RIGHT);
+		rightHeaderCellStyle.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
 
 		CellUtil.createCell(row, cellCount, column2, rightHeaderCellStyle);
 		sheet.setColumnWidth(cellCount++, 6 * 256);
@@ -252,7 +247,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 						style.setFont(defaulFont );
 						cell.setCellStyle(style);
 						cell.setCellValue(rows.get(rowCount));
-						cell.setCellType(CellType.STRING);
+						cell.setCellType(Cell.CELL_TYPE_STRING);
 						sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 1));
 						row = sheet.createRow(rowCount++);cellCount=0;
 					}
@@ -276,46 +271,46 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 				CellStyle style = workbook.createCellStyle();
 				style.setWrapText(true);
 				style.setFont(defaulFont );
-				style.setBorderBottom(BorderStyle.THIN);
+				style.setBorderBottom(CellStyle.BORDER_THIN);
 				style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 				cell.setCellStyle(style);
 				cell.setCellValue(description);
-				cell.setCellType(CellType.STRING);
+				cell.setCellType(Cell.CELL_TYPE_STRING);
 				sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 1));
 
 				
 				cell = row.createCell(cellCount++);
 				cell = row.createCell(cellCount++);
 				style = workbook.createCellStyle();
-				style.setVerticalAlignment(VerticalAlignment.BOTTOM);
+				style.setVerticalAlignment(CellStyle.VERTICAL_BOTTOM);
 				style.setFont(boxFont);
-				style.setBorderBottom(BorderStyle.THIN);
+				style.setBorderBottom(CellStyle.BORDER_THIN);
 				style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 				cell.setCellStyle(style);
 				cell.setCellValue(innerKeys[0].getCode());
-				cell.setCellType(CellType.STRING);
+				cell.setCellType(Cell.CELL_TYPE_STRING);
 			
 				cell = row.createCell(cellCount++);
-				style.setAlignment(HorizontalAlignment.RIGHT);
+				style.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
 				style.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
 				cell.setCellValue(c);
-				cell.setCellType(CellType.STRING);
+				cell.setCellType(Cell.CELL_TYPE_STRING);
 			
 				cell = row.createCell(cellCount++);
 				double amount1 = Double.parseDouble(a);
-				style.setAlignment(HorizontalAlignment.RIGHT);
+				style.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
 				style.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
 				cell.setCellValue(amount1);
-				cell.setCellType(CellType.NUMERIC);
+				cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 				sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 4, 5));
 
 				cell = row.createCell(cellCount++);
 				cell = row.createCell(cellCount++);
 				double amount2 = Double.parseDouble(b);
-				style.setAlignment(HorizontalAlignment.RIGHT);
+				style.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
 				style.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
 				cell.setCellValue(amount2);
-				cell.setCellType(CellType.NUMERIC);
+				cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 				sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 6, 7));
 			}
 		}
@@ -344,7 +339,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		XSSFCellStyle style = (XSSFCellStyle) headerCellStyle.clone();
 		
 		Font headerFont = workbook.createFont();
-		headerFont.setBold(true);
+		headerFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
 		headerFont.setColor(IndexedColors.WHITE.index);
 		if(pageMaxNumber >= 6)
 			headerFont.setFontHeightInPoints((short) 8);
@@ -404,20 +399,20 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			CellStyle style = workbook.createCellStyle();
 			style.setWrapText(true);
 			style.setFont(defaulFont );
-			style.setBorderBottom(BorderStyle.THIN);
+			style.setBorderBottom(CellStyle.BORDER_THIN);
 			style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 			cell.setCellStyle(style);
 			cell.setCellValue(description);
-			cell.setCellType(CellType.STRING);
+			cell.setCellType(Cell.CELL_TYPE_STRING);
 			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, dif+1));
 			
 			for(Integer i = 0; i < dif+2; i++)
 				cell = row.createCell(cellCount++);
 			
 			style = workbook.createCellStyle();
-			style.setVerticalAlignment(VerticalAlignment.BOTTOM);
+			style.setVerticalAlignment(CellStyle.VERTICAL_BOTTOM);
 			style.setFont(boxFont);
-			style.setBorderBottom(BorderStyle.THIN);
+			style.setBorderBottom(CellStyle.BORDER_THIN);
 			style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 
 			cell.setCellStyle(style);
@@ -425,7 +420,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			if(codelength != 0)
 				code = code.substring(0, codelength);
 			cell.setCellValue(code);
-			cell.setCellType(CellType.STRING);
+			cell.setCellType(Cell.CELL_TYPE_STRING);
 			
 			if(secondPart){
 				for(Integer i = 0; i < number; i++){
@@ -433,10 +428,10 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 					String a = getD2Deposit().getMap().get(innerKeys[i+7].getCode());
 					if(a == null) a = "0.0";
 					double amount = Double.parseDouble(a);
-					style.setAlignment(HorizontalAlignment.RIGHT);
+					style.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
 					style.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
 					cell.setCellValue(amount);
-					cell.setCellType(CellType.NUMERIC);
+					cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 				}
 			} else{
 				for(Integer i = 0; i < number; i++){
@@ -444,10 +439,10 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 					String a = getD2Deposit().getMap().get(innerKeys[i].getCode());
 					if(a == null) a = "0.0";
 					double amount = Double.parseDouble(a);
-					style.setAlignment(HorizontalAlignment.RIGHT);
+					style.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
 					style.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
 					cell.setCellValue(amount);
-					cell.setCellType(CellType.NUMERIC);
+					cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 				}
 			}
 		}
@@ -508,7 +503,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 					style.setFont(defaulFont );
 					cell.setCellStyle(style);
 					cell.setCellValue(rows.get(rowCount));
-					cell.setCellType(CellType.STRING);
+					cell.setCellType(Cell.CELL_TYPE_STRING);
 					sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, dif+1));
 					row = sheet.createRow(rowCount++);cellCount=0;
 				}
@@ -527,37 +522,37 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			CellStyle style = workbook.createCellStyle();
 			style.setWrapText(true);
 			style.setFont(defaulFont );
-			style.setBorderBottom(BorderStyle.THIN);
+			style.setBorderBottom(CellStyle.BORDER_THIN);
 			style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 			cell.setCellStyle(style);
 			cell.setCellValue(description);
-			cell.setCellType(CellType.STRING);
+			cell.setCellType(Cell.CELL_TYPE_STRING);
 			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, dif+1));
 			
 			for(Integer i = 0; i < dif+2; i++)
 				cell = row.createCell(cellCount++);
 			
 			style = workbook.createCellStyle();
-			style.setVerticalAlignment(VerticalAlignment.BOTTOM);
+			style.setVerticalAlignment(CellStyle.VERTICAL_BOTTOM);
 			style.setFont(boxFont);
-			style.setBorderBottom(BorderStyle.THIN);
+			style.setBorderBottom(CellStyle.BORDER_THIN);
 			style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 			cell.setCellStyle(style);
 			String code = innerKeys[0].getCode();
 			if(codeLength != 0)
 				code = code.substring(0,codeLength);
 			cell.setCellValue(code);
-			cell.setCellType(CellType.STRING);
+			cell.setCellType(Cell.CELL_TYPE_STRING);
 			
 			for(Integer i = 0; i < number; i++){
 				cell = row.createCell(cellCount++);
 				String a = getD2Deposit().getMap().get(innerKeys[i].getCode());
 				if(a == null) a = "0.0";
 				double amount = Double.parseDouble(a);
-				style.setAlignment(HorizontalAlignment.RIGHT);
+				style.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
 				style.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
 				cell.setCellValue(amount);
-				cell.setCellType(CellType.NUMERIC);
+				cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 			}
 		}
 	}
@@ -656,9 +651,9 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		CellStyle style = workbook.createCellStyle();
 		style.setWrapText(true);
 		style.setFont(defaulFont );
-		style.setBorderBottom(BorderStyle.THIN);
+		style.setBorderBottom(CellStyle.BORDER_THIN);
 		style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
-		style.setVerticalAlignment(VerticalAlignment.TOP);
+		style.setVerticalAlignment(CellStyle.VERTICAL_TOP);
 		cell.setCellStyle(style);
 		cell.setCellValue(text);
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
@@ -717,7 +712,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			Cell cell = row.createCell(cellCount++);
 			cell.setCellStyle(style);
 			cell.setCellValue(strings[i]);
-			cell.setCellType(CellType.STRING);
+			cell.setCellType(Cell.CELL_TYPE_STRING);
 			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), i*(8/n), i*(8/n) +(8/n)-1));
 			for(Integer j = 0; j < (8/n)-1; j++){
 				row.createCell(cellCount++);
@@ -732,7 +727,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		style.setFont(defaulFont );
 		cell.setCellStyle(style);
 		cell.setCellValue(value);
-		cell.setCellType(CellType.STRING);
+		cell.setCellType(Cell.CELL_TYPE_STRING);
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), start, end));
 		for(Integer j = 0; j < end - start; j++){
 			row.createCell(cellCount++);
@@ -744,13 +739,13 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		CellStyle style = workbook.createCellStyle();
 		style.setWrapText(true);
 		style.setFont(defaulFont );
-		style.setBorderBottom(BorderStyle.THIN);
+		style.setBorderBottom(CellStyle.BORDER_THIN);
 		style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
-		style.setVerticalAlignment(VerticalAlignment.TOP);
+		style.setVerticalAlignment(CellStyle.VERTICAL_TOP);
 		cell.setCellStyle(style);
 		cell.setCellStyle(style);
 		cell.setCellValue(value);
-		cell.setCellType(CellType.STRING);
+		cell.setCellType(Cell.CELL_TYPE_STRING);
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), start, end));
 		for(Integer j = 0; j < end - start; j++){
 			row.createCell(cellCount++);
@@ -1053,10 +1048,10 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		CellStyle style = workbook.createCellStyle();
 		style.setWrapText(true);
 		style.setFont(defaulFont);
-		style.setBorderBottom(BorderStyle.THIN);
+		style.setBorderBottom(CellStyle.BORDER_THIN);
 		style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
-		style.setVerticalAlignment(VerticalAlignment.TOP);
-		style.setAlignment(HorizontalAlignment.CENTER);
+		style.setVerticalAlignment(CellStyle.VERTICAL_TOP);
+		style.setAlignment(CellStyle.ALIGN_CENTER);
 		cell.setCellStyle(style);
 		cell.setCellValue(text1);
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
@@ -1071,9 +1066,9 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		style = workbook.createCellStyle();
 		style.setWrapText(true);
 		style.setFont(defaulFont );
-		style.setBorderBottom(BorderStyle.THIN);
+		style.setBorderBottom(CellStyle.BORDER_THIN);
 		style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
-		style.setAlignment(HorizontalAlignment.CENTER );
+		style.setAlignment(CellStyle.ALIGN_CENTER );
 		cell.setCellStyle(style);
 		cell.setCellValue(a ? tic : "-");
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
@@ -1085,9 +1080,9 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		style = workbook.createCellStyle();
 		style.setWrapText(true);
 		style.setFont(defaulFont );
-		style.setBorderBottom(BorderStyle.THIN);
+		style.setBorderBottom(CellStyle.BORDER_THIN);
 		style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
-		style.setAlignment(HorizontalAlignment.CENTER);
+		style.setAlignment(CellStyle.ALIGN_CENTER);
 		cell.setCellStyle(style);
 		cell.setCellValue(text2);
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
@@ -1101,9 +1096,9 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		style = workbook.createCellStyle();
 		style.setWrapText(true);
 		style.setFont(defaulFont );
-		style.setBorderBottom(BorderStyle.THIN);
+		style.setBorderBottom(CellStyle.BORDER_THIN);
 		style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
-		style.setAlignment(HorizontalAlignment.CENTER );
+		style.setAlignment(CellStyle.ALIGN_CENTER );
 		cell.setCellStyle(style);
 		cell.setCellValue(b ? tic : "-");
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
@@ -1647,10 +1642,10 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		CellStyle style = workbook.createCellStyle();
 		style.setWrapText(true);
 		style.setFont(defaulFont);
-		style.setBorderBottom(BorderStyle.THIN);
+		style.setBorderBottom(CellStyle.BORDER_THIN);
 		style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
-		style.setVerticalAlignment(VerticalAlignment.TOP);
-		style.setAlignment(HorizontalAlignment.CENTER);
+		style.setVerticalAlignment(CellStyle.VERTICAL_TOP);
+		style.setAlignment(CellStyle.ALIGN_CENTER);
 		cell.setCellStyle(style);
 		cell.setCellValue(text);
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
@@ -2031,9 +2026,9 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		CellStyle style = workbook.createCellStyle();
 		style.setWrapText(true);
 		style.setFont(defaulFont );
-		style.setBorderBottom(BorderStyle.THIN);
+		style.setBorderBottom(CellStyle.BORDER_THIN);
 		style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
-		style.setVerticalAlignment(VerticalAlignment.TOP);
+		style.setVerticalAlignment(CellStyle.VERTICAL_TOP);
 		cell.setCellStyle(style);
 		cell.setCellValue(text);
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
@@ -2250,9 +2245,9 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			CellStyle style = workbook.createCellStyle();
 			style.setWrapText(true);
 			style.setFont(defaulFont );
-			style.setBorderBottom(BorderStyle.THIN);
+			style.setBorderBottom(CellStyle.BORDER_THIN);
 			style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
-			style.setVerticalAlignment(VerticalAlignment.TOP);
+			style.setVerticalAlignment(CellStyle.VERTICAL_TOP);
 			cell.setCellStyle(style);
 			cell.setCellValue(text != null ? text : "");
 			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));

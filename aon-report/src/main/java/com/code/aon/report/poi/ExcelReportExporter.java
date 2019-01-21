@@ -13,13 +13,9 @@ import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
-import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 
 import com.code.aon.report.ReportException;
@@ -29,7 +25,7 @@ public class ExcelReportExporter implements IReportExporter {
 	public static final String DATE_PATTERN = "dd/MM/yyyy";
 	public static final String DECIMAL_PATTERN = "#,##0.00";
 	public static final String NUMBER_PATTERN = "#,###";
-	public  static short DEFAULT_BACKGROUND = HSSFColorPredefined.AUTOMATIC.getIndex();
+	public  static short DEFAULT_BACKGROUND = new HSSFColor.AUTOMATIC().getIndex();
 
 	private HSSFWorkbook workbook;
 	private ExcelSheet sheet;
@@ -76,18 +72,18 @@ public class ExcelReportExporter implements IReportExporter {
 
 	public HSSFCellStyle createHeaderStyle() {
 		HSSFCellStyle headerCellStyle = createCellStyle();
-	    headerCellStyle.setBorderBottom(BorderStyle.MEDIUM);
-	    headerCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);  
-	    headerCellStyle.setFillForegroundColor(HSSFColorPredefined.GREY_25_PERCENT.getIndex());
+	    headerCellStyle.setBorderBottom(HSSFCellStyle.BORDER_MEDIUM);
+	    headerCellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);  
+	    headerCellStyle.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
 		return headerCellStyle;
 	}
 	
 	public HSSFCellStyle createFooterStyle() {
 		HSSFCellStyle cellStyle = createCellStyle();
 	    Font font = workbook.createFont();
-	    font.setBold(true);
+	    font.setBoldweight(Font.BOLDWEIGHT_BOLD);
 	    cellStyle.setFont(font);
-	    cellStyle.setBorderTop(BorderStyle.MEDIUM);
+	    cellStyle.setBorderTop(HSSFCellStyle.BORDER_MEDIUM);
 		return cellStyle;
 	}
 
@@ -142,7 +138,7 @@ public class ExcelReportExporter implements IReportExporter {
 	public HSSFCell addStringCell(String value) {
 		HSSFCell cell = addCell();
 		cell.setCellValue(value);
-		cell.setCellType(CellType.STRING);
+		cell.setCellType(Cell.CELL_TYPE_STRING);
 		return cell;
 	}
 
@@ -155,14 +151,14 @@ public class ExcelReportExporter implements IReportExporter {
 	public HSSFCell addNumberCell(double number) {	
 		HSSFCell cell = addCell();
 		cell.setCellValue(number);
-		cell.setCellType(CellType.NUMERIC);
+		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 		return cell;
 	}
 
 	public HSSFCell addEmptyNumberCell() {
 		HSSFCell cell = addCell();
 		cell.setCellStyle(getNumberCellStyle());
-		cell.setCellType(CellType.NUMERIC);
+		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 		return cell;
 	}
 
@@ -174,14 +170,14 @@ public class ExcelReportExporter implements IReportExporter {
 		HSSFCell cell = addCell();
 		cell.setCellValue(number);
 		cell.setCellStyle(cellStyle);
-		cell.setCellType(CellType.NUMERIC);
+		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 		return cell;
 	}
 
 	public HSSFCell addEmptyDecimalCell() {
 		HSSFCell cell = addCell();
 		cell.setCellStyle(getDecimalCellStyle());
-		cell.setCellType(CellType.NUMERIC);
+		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 		return cell;
 	}
 
@@ -203,7 +199,7 @@ public class ExcelReportExporter implements IReportExporter {
 	public HSSFCell addBooleanCell(boolean value) {
 		HSSFCell cell = addCell();
 		cell.setCellValue(value);
-		cell.setCellType(CellType.BOOLEAN);
+		cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
 		return cell;
 	}
 

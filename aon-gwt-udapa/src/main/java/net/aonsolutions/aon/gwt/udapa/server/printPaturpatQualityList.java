@@ -27,11 +27,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -821,21 +818,21 @@ public class printPaturpatQualityList extends HttpServlet{
 		
 		HSSFFont font = libro.createFont();
 		font.setFontHeightInPoints((short)10);
-		font.setBold(true);
+		font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
 		
 		style.setFont(font);
-		style.setAlignment(HorizontalAlignment.CENTER);
-		style.setBorderBottom(BorderStyle.THIN);
-		style.setBorderLeft(BorderStyle.THIN);
-		style.setBorderRight(BorderStyle.THIN);
-		style.setBorderTop(BorderStyle.THIN);
+		style.setAlignment(CellStyle.ALIGN_CENTER);
+		style.setBorderBottom(CellStyle.BORDER_THIN);
+		style.setBorderLeft(CellStyle.BORDER_THIN);
+		style.setBorderRight(CellStyle.BORDER_THIN);
+		style.setBorderTop(CellStyle.BORDER_THIN);
 		style.setBottomBorderColor(IndexedColors.DARK_GREEN.getIndex());
 		style.setLeftBorderColor(IndexedColors.DARK_GREEN.getIndex());
 		style.setRightBorderColor(IndexedColors.DARK_GREEN.getIndex());
 		style.setTopBorderColor(IndexedColors.DARK_GREEN.getIndex());
 
 		style.setFillBackgroundColor(IndexedColors.DARK_GREEN.getIndex());
-		style.setFillPattern(FillPatternType.BRICKS); 
+		style.setFillPattern(CellStyle.BRICKS); 
 		style.setWrapText(true);
 		return style;
 	}
@@ -845,10 +842,10 @@ public class printPaturpatQualityList extends HttpServlet{
 		HSSFFont font2 = libro.createFont();
 		font2.setFontHeightInPoints((short)12);
 		style2.setFont(font2);
-		style2.setAlignment(HorizontalAlignment.RIGHT);
-		style2.setBorderBottom(BorderStyle.THIN);
-		style2.setBorderRight(BorderStyle.THIN);
-		style2.setBorderLeft(BorderStyle.THIN);
+		style2.setAlignment(CellStyle.ALIGN_RIGHT);
+		style2.setBorderBottom(CellStyle.BORDER_THIN);
+		style2.setBorderRight(CellStyle.BORDER_THIN);
+		style2.setBorderLeft(CellStyle.BORDER_THIN);
 		return style2;
 	}
 	
@@ -857,11 +854,11 @@ public class printPaturpatQualityList extends HttpServlet{
      	HSSFFont font2 = libro.createFont();
      	font2.setFontHeightInPoints((short)12);
 		style3.setFont(font2);
-		style3.setAlignment(HorizontalAlignment.LEFT);
-		style3.setBorderBottom(BorderStyle.THIN);
-		style3.setBorderRight(BorderStyle.THIN);
-		style3.setBorderLeft(BorderStyle.THIN);
-		style3.setBorderTop(BorderStyle.THIN);	
+		style3.setAlignment(CellStyle.ALIGN_LEFT);
+		style3.setBorderBottom(CellStyle.BORDER_THIN);
+		style3.setBorderRight(CellStyle.BORDER_THIN);
+		style3.setBorderLeft(CellStyle.BORDER_THIN);
+		style3.setBorderTop(CellStyle.BORDER_THIN);	
 		return style3;
 	}
 	

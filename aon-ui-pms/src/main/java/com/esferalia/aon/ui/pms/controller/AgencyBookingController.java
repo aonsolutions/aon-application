@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.REAL;
 import static com.code.aon.ui.common.ICommonMessages.DATE;
 import static com.code.aon.ui.common.ICommonMessages.PMS_BLOCKED_ABBRV;
 import static com.code.aon.ui.common.ICommonMessages.PMS_CANCELLED_ABBRV;
@@ -8,15 +9,7 @@ import static com.code.aon.ui.common.ICommonMessages.PMS_FREE;
 import static com.code.aon.ui.common.ICommonMessages.PMS_HOTEL;
 import static com.code.aon.ui.common.ICommonMessages.PMS_OCCUPATION_ABBRV;
 import static com.code.aon.ui.common.ICommonMessages.PMS_TOTAL;
-import static com.code.aon.ui.common.ICommonMessages.REAL;
 
-/*String PMS_CHECKIN_ABBRV = "report_checkin_abbrv";
-String PMS_CHECKOUT_ABBRV = "report_checkout_abbrv";
-String PMS_ALLOTMENT = "pms_allotment";
-String PMS_AVAILABILITY_ABBRV = "pms_availability_abbrv";
-*/
-import java.io.IOException;
-import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -42,10 +35,7 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.CellStyle;
 
 import com.code.aon.AonVersion;
 import com.code.aon.asset.enumeration.ActivityStatus;
@@ -54,6 +44,8 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.InvoicingGroup;
+import net.aonsolutions.core.dbutils.AonSQLException;
+import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.report.ReportException;
 import com.code.aon.report.poi.ExcelReportExporter;
 import com.code.aon.report.poi.IReportExporter;
@@ -68,8 +60,13 @@ import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.sql.ISQLConstants;
 import com.esferalia.aon.pms.sql.SQLUtils;
 
-import net.aonsolutions.core.dbutils.AonSQLException;
-import net.aonsolutions.core.dbutils.DatabaseUtil;
+/*String PMS_CHECKIN_ABBRV = "report_checkin_abbrv";
+String PMS_CHECKOUT_ABBRV = "report_checkout_abbrv";
+String PMS_ALLOTMENT = "pms_allotment";
+String PMS_AVAILABILITY_ABBRV = "pms_availability_abbrv";
+*/
+import java.io.IOException;
+import java.io.Serializable;
 
 public class AgencyBookingController extends DataScrollerState implements ISQLConstants {
 
@@ -552,7 +549,7 @@ public class AgencyBookingController extends DataScrollerState implements ISQLCo
 				report.exportColumn(metadata.getColumns().get(1), dayBooking.getDate());
 				report.exportColumn(metadata.getColumns().get(2), dayBooking.getRoomBusy());
 				HSSFCell busyCell = (HSSFCell)report.exportColumn(metadata.getColumns().get(3), dayBooking.getRoomBusyPercent().toString() + "%");
-				alignCell(report, busyCell, HorizontalAlignment.RIGHT);
+				alignCell(report, busyCell, CellStyle.ALIGN_RIGHT);
 				report.exportColumn(metadata.getColumns().get(4), dayBooking.getRoomFree());
 				report.exportColumn(metadata.getColumns().get(5), dayBooking.getRoomBlocked());
 				report.exportColumn(metadata.getColumns().get(6), dayBooking.getRoomTotal());
@@ -562,7 +559,7 @@ public class AgencyBookingController extends DataScrollerState implements ISQLCo
 
 					HSSFCell cancCell = (HSSFCell)report.exportColumn(metadata.getColumns().get(8), (agencyBooking != null) ? agencyBooking.getRoomCancelled() : null);
 					if (agencyBooking != null && agencyBooking.getRoomCancelled() > 0) {
-						paintCell(report, cancCell, HSSFColorPredefined.RED.getIndex());
+						paintCell(report, cancCell, HSSFColor.RED.index);
 					}
 				}
 				report.endLine();
@@ -582,7 +579,7 @@ public class AgencyBookingController extends DataScrollerState implements ISQLCo
 	private ReportMetadata createExcelHeader(ExcelReportExporter report) {
 		HSSFCellStyle cellStyleBlack = newExcelHeaderStyle(report);
 		HSSFFont cellFont = report.createFont();
-	    cellFont.setBold(true);
+	    cellFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
 	    cellStyleBlack.setFont(cellFont);
 
 	    report.addHeaderRow();
@@ -598,8 +595,8 @@ public class AgencyBookingController extends DataScrollerState implements ISQLCo
 
 		HSSFCellStyle cellStyleBlue = newExcelHeaderStyle(report);
 		cellFont = report.createFont();
-	    cellFont.setBold(true);
-		cellFont.setColor(HSSFColorPredefined.BLUE.getIndex());
+	    cellFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+		cellFont.setColor(HSSFColor.BLUE.index);
 	    cellStyleBlue.setFont(cellFont);
 		for (int i=0, from=7, to=7; i<agencyList.length; i++, from=to) {
 			report.addHeaderCell(agencyList[i], 0, cellStyleBlue);
@@ -625,11 +622,11 @@ public class AgencyBookingController extends DataScrollerState implements ISQLCo
 
 	private HSSFCellStyle newExcelHeaderStyle(ExcelReportExporter report) {
 		HSSFCellStyle cellStyle = report.createCellStyle();
-	    cellStyle.setAlignment(HorizontalAlignment.CENTER);
-	    cellStyle.setBorderBottom(BorderStyle.THIN);
-	    cellStyle.setBorderRight(BorderStyle.THICK);
-	    cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);  
-	    cellStyle.setFillForegroundColor(HSSFColorPredefined.GREY_25_PERCENT.getIndex());
+	    cellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+	    cellStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+	    cellStyle.setBorderRight(HSSFCellStyle.BORDER_THICK);
+	    cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);  
+	    cellStyle.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
 	    return cellStyle;
 	}
 
@@ -645,7 +642,7 @@ public class AgencyBookingController extends DataScrollerState implements ISQLCo
 	    cell.setCellStyle(cellStyle);
 	}
 
-	private void alignCell(ExcelReportExporter report, HSSFCell cell, HorizontalAlignment align) {
+	private void alignCell(ExcelReportExporter report, HSSFCell cell, short align) {
 		HSSFCellStyle cellStyle = report.createCellStyle();
 		if (cellStyle == null) {
 			cellStyle = report.createCellStyle();

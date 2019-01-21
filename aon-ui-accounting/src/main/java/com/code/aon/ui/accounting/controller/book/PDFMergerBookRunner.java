@@ -10,7 +10,8 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.pdfbox.multipdf.PDFMergerUtility;
+import org.apache.pdfbox.exceptions.COSVisitorException;
+import org.apache.pdfbox.util.PDFMergerUtility;
 
 public class PDFMergerBookRunner extends AbsAccountingBookRunner {
 	
@@ -53,6 +54,8 @@ public class PDFMergerBookRunner extends AbsAccountingBookRunner {
 			IOUtils.copy(input, out);
 			out.flush();
 		} catch (IOException e) {
+			throw new AccountingBookException(e);
+		} catch (COSVisitorException e) {
 			throw new AccountingBookException(e);
 		} finally {
 			IOUtils.closeQuietly(destStream);

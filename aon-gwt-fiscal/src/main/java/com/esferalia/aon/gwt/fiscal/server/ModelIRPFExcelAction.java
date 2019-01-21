@@ -4,23 +4,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
 
-import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Footer;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -81,7 +76,7 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 	public void initialize(String name, boolean printHeaders) {
 		super.initialize(name, printHeaders);
 
-		sheet.setZoom(140);	// 140%
+		sheet.setZoom(14,10);	// 140%
 		
 		rowStyle = (XSSFCellStyle) workbook.createCellStyle();
 		rowStyle.setWrapText(true);
@@ -93,7 +88,7 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 		modBoldFont = workbook.createFont();
 		modBoldFont.setFontName(FONT_FAMILY);
 		modBoldFont.setFontHeightInPoints((short) 7);
-		modBoldFont.setBold(true);
+		modBoldFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
 
 		boxFont = workbook.createFont();
 		boxFont.setFontName(FONT_FAMILY);
@@ -101,9 +96,9 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 		boxFont.setColor(IndexedColors.GREY_40_PERCENT.index);
 
 		boxCellStyle = (XSSFCellStyle) workbook.createCellStyle();
-		boxCellStyle.setAlignment(HorizontalAlignment.CENTER);
-		boxCellStyle.setVerticalAlignment(VerticalAlignment.BOTTOM);
-		boxCellStyle.setBorderBottom(BorderStyle.THIN);
+		boxCellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+		boxCellStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_BOTTOM);
+		boxCellStyle.setBorderBottom(CellStyle.BORDER_THIN);
 		boxCellStyle.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 		boxCellStyle.setFont(boxFont);
 
@@ -112,23 +107,23 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 		idFont.setFontHeightInPoints((short) 10);
 
 		idCellStyle = (XSSFCellStyle) workbook.createCellStyle();
-		idCellStyle.setAlignment(HorizontalAlignment.CENTER);
-		idCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		idCellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+		idCellStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
 		idCellStyle.setFont(idFont);
 
 		sheet.setMargin(Sheet.LeftMargin, 0.5);
 		sheet.setMargin(Sheet.RightMargin, 0.5);
 
 		Font headerFont = workbook.createFont();
-		headerFont.setBold(true);
+		headerFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
 		headerFont.setColor(IndexedColors.WHITE.index);
 		headerFont.setFontHeightInPoints((short) 10);
 
 		headerCellStyle = (XSSFCellStyle) workbook.createCellStyle();
-		headerCellStyle.setAlignment(HorizontalAlignment.CENTER);
+		headerCellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
 		headerCellStyle.setWrapText(true);
-		headerCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-		headerCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		headerCellStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+		headerCellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 		headerCellStyle.setFillForegroundColor(AON_BLUE);
 		headerCellStyle.setFont(headerFont);
 		headerCellStyle.setFillForegroundColor(COLORS[model.getAdministration().ordinal()]);
@@ -150,7 +145,7 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 			CreationHelper helper = workbook.getCreationHelper();
 			Drawing drawing = sheet.createDrawingPatriarch();
 			ClientAnchor anchor = helper.createClientAnchor();
-			anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
+			anchor.setAnchorType(2);
 			anchor.setCol1(0);
 			anchor.setRow1(0);
 			anchor.setDx1(20);
@@ -222,11 +217,11 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 		
 		XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.clone();
 		Font modHeaderFont= workbook.createFont();
-		modHeaderFont.setBold(true);
+		modHeaderFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
 		modHeaderFont.setFontHeightInPoints((short) 8);
 		modHeaderFont.setColor( IndexedColors.WHITE.index );
 		rightHeaderCellStyle.setFont(modHeaderFont);
-		rightHeaderCellStyle.setAlignment(HorizontalAlignment.RIGHT);
+		rightHeaderCellStyle.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
 
 		CellUtil.createCell(row, cellCount, "N. Percep.", rightHeaderCellStyle);
 		sheet.setColumnWidth(cellCount++, 3 * 256);
@@ -275,11 +270,11 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 		CellStyle style = workbook.createCellStyle();
 		style.setWrapText(true);
 		style.setFont(ms.isTitle() ? modBoldFont : modFont );
-		style.setBorderBottom(BorderStyle.THIN);
+		style.setBorderBottom(CellStyle.BORDER_THIN);
 		style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 		cell.setCellStyle(style);
 		cell.setCellValue(concept);
-		cell.setCellType(CellType.STRING);
+		cell.setCellType(Cell.CELL_TYPE_STRING);
 		if (ms.getKeys() == null) {
 			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
 		} else {
@@ -311,24 +306,24 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 					Cell boxCell = addCell((key.getBox() == 0
 							?""
 							:AonStringUtils.leftPad(AonNumberUtils.toString(key.getBox()), 3, "0")));
-					boxCell.setCellType(CellType.STRING);
+					boxCell.setCellType(Cell.CELL_TYPE_STRING);
 					boxCell.setCellStyle(boxCellStyle);
 
 					cell = row.createCell(cellCount++);
 					style = workbook.createCellStyle();
-					style.setVerticalAlignment(VerticalAlignment.BOTTOM);
+					style.setVerticalAlignment(HSSFCellStyle.VERTICAL_BOTTOM);
 					style.setFont(ms.isTitle()?modBoldFont:modFont);
-					style.setBorderBottom(BorderStyle.THIN);
+					style.setBorderBottom(CellStyle.BORDER_THIN);
 					style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 					cell.setCellStyle(style);
 					if (ms.hasGraphicParticularity()) {
 						fillParticularityCell(cell,style,key);
 					} else {
 						double amount = model.ensureDetail(key).getAmount();
-						style.setAlignment(HorizontalAlignment.RIGHT);
+						style.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
 						style.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
 						cell.setCellValue(amount);
-						cell.setCellType(CellType.NUMERIC);
+						cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 					}
 				}
 			}

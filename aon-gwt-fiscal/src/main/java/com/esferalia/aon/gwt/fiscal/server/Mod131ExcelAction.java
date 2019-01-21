@@ -4,19 +4,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
 
-import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Picture;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
@@ -57,7 +53,7 @@ public class Mod131ExcelAction extends ModelIRPFExcelAction<Mod131,Mod131Key> {
 			CreationHelper helper = workbook.getCreationHelper();
 			Drawing drawing = sheet.createDrawingPatriarch();
 			ClientAnchor anchor = helper.createClientAnchor();
-			anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
+			anchor.setAnchorType(2);
 			anchor.setCol1(0);
 			anchor.setRow1(0);
 			anchor.setDx1(20);
@@ -97,7 +93,7 @@ public class Mod131ExcelAction extends ModelIRPFExcelAction<Mod131,Mod131Key> {
 	@Override
 	protected void headerRow() {
 		XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.clone();
-		rightHeaderCellStyle.setAlignment(HorizontalAlignment.RIGHT);
+		rightHeaderCellStyle.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
 		for (int i = 0; i < row.getLastCellNum(); i++) {
@@ -129,8 +125,8 @@ public class Mod131ExcelAction extends ModelIRPFExcelAction<Mod131,Mod131Key> {
 		++cellCount;
 		++cellCount;
 		CellStyle tableStyle = workbook.createCellStyle();
-		tableStyle.setVerticalAlignment(VerticalAlignment.BOTTOM);
-		tableStyle.setBorderBottom(BorderStyle.THIN);
+		tableStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_BOTTOM);
+		tableStyle.setBorderBottom(CellStyle.BORDER_THIN);
 		tableStyle.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 		tableStyle.setFont(modFont);
 		tableStyle.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
@@ -138,11 +134,11 @@ public class Mod131ExcelAction extends ModelIRPFExcelAction<Mod131,Mod131Key> {
 		CellStyle style = workbook.createCellStyle();
 		style.setWrapText(true);
 		style.setFont(ms.isTitle() ? modBoldFont : modFont );
-		style.setBorderBottom(BorderStyle.THIN);
+		style.setBorderBottom(CellStyle.BORDER_THIN);
 		style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 		cell.setCellStyle(style);
 		cell.setCellValue(concept);
-		cell.setCellType(CellType.STRING);
+		cell.setCellType(Cell.CELL_TYPE_STRING);
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
 		
 		int l = AonStringUtils.length(concept);
@@ -157,24 +153,24 @@ public class Mod131ExcelAction extends ModelIRPFExcelAction<Mod131,Mod131Key> {
 					?AonStringUtils.leftPad(AonNumberUtils.toString(key.getBox()), 3, "0")
 					:AonStringUtils.EMPTY;
 			Cell boxCell = addCell(box);
-			boxCell.setCellType(CellType.STRING);
+			boxCell.setCellType(Cell.CELL_TYPE_STRING);
 			boxCell.setCellStyle(boxCellStyle);
 
 			cell = row.createCell(cellCount++);
 			style = workbook.createCellStyle();
-			style.setVerticalAlignment(VerticalAlignment.BOTTOM);
+			style.setVerticalAlignment(HSSFCellStyle.VERTICAL_BOTTOM);
 			style.setFont(ms.isTitle()?modBoldFont:modFont);
-			style.setBorderBottom(BorderStyle.THIN);
+			style.setBorderBottom(CellStyle.BORDER_THIN);
 			style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 			cell.setCellStyle(style);
 			if (ms.hasGraphicParticularity()) {
 				fillParticularityCell(cell,style,key);
 			} else {
 				double amount = model.ensureDetail(key).getAmount();
-				style.setAlignment(HorizontalAlignment.RIGHT);
+				style.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
 				style.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
 				cell.setCellValue(amount);
-				cell.setCellType(CellType.NUMERIC);
+				cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 			}
 		}
 		if (l != 0) {
@@ -190,7 +186,7 @@ public class Mod131ExcelAction extends ModelIRPFExcelAction<Mod131,Mod131Key> {
 			
 			XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.clone();
 			Font vatHeaderFont= workbook.createFont();
-			vatHeaderFont.setBold(true);
+			vatHeaderFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
 			vatHeaderFont.setFontHeightInPoints((short) 8);
 			vatHeaderFont.setColor( IndexedColors.WHITE.index );
 			rightHeaderCellStyle.setFont(vatHeaderFont);
@@ -243,9 +239,9 @@ public class Mod131ExcelAction extends ModelIRPFExcelAction<Mod131,Mod131Key> {
 	@Override
 	protected void fillParticularityCell(Cell cell ,CellStyle style,Mod131Key key) {
 		double amount = model.ensureDetail(key).getAmount();
-		cell.setCellType(CellType.STRING);
+		cell.setCellType(Cell.CELL_TYPE_STRING);
 		if (key == Mod131Key.P2) {
-			cell.getCellStyle().setAlignment(HorizontalAlignment.RIGHT);
+			cell.getCellStyle().setAlignment(HSSFCellStyle.ALIGN_RIGHT);
 			cell.setCellValue(amount == 1?"SI":"NO");
 		}
 	}

@@ -27,7 +27,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -333,34 +332,34 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
 	}
 
 	private String getStringCellValue(Cell cell) {
-		if(cell!=null && cell.getCellType()==CellType.STRING){
+		if(cell!=null && cell.getCellType()==Cell.CELL_TYPE_STRING){
 			return cell.getStringCellValue();
-		} else if(cell!=null && cell.getCellType()==CellType.NUMERIC){
+		} else if(cell!=null && cell.getCellType()==Cell.CELL_TYPE_NUMERIC){
 			return String.valueOf(cell.getNumericCellValue());
 		}
 		return "";
 	}
 	
 	private Double getNumericCellValue(Cell cell) {
-		if(cell!=null && cell.getCellType()==CellType.STRING){
+		if(cell!=null && cell.getCellType()==Cell.CELL_TYPE_STRING){
 			if(NumberUtils.isNumber(cell.getStringCellValue())){
 				return Double.parseDouble(cell.getStringCellValue());
 			}
-		} else if(cell!=null && cell.getCellType()==CellType.NUMERIC){
+		} else if(cell!=null && cell.getCellType()==Cell.CELL_TYPE_NUMERIC){
 			return cell.getNumericCellValue();
 		}
 		return 0.0;
 	}
 	
 	private Date getDateCellValue(Cell cell) {
-		if(cell!=null && cell.getCellType()==CellType.STRING){
+		if(cell!=null && cell.getCellType()==Cell.CELL_TYPE_STRING){
 			try {
 				return excelFormat.parse(cell.getStringCellValue());
 			} catch (ParseException e) {
 				LOGGER.error(e.getMessage());
 				throw new AbortProcessingException(e.getMessage());
 			}
-		} else if(cell!=null && cell.getCellType()==CellType.NUMERIC){
+		} else if(cell!=null && cell.getCellType()==Cell.CELL_TYPE_NUMERIC){
 			return cell.getDateCellValue();
 		}
 		return null;
@@ -392,10 +391,9 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
 			
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage());
-		} 
-//		catch (InvalidFormatException e) {
-//			LOGGER.error(e.getMessage());
-//		}
+		} catch (InvalidFormatException e) {
+			LOGGER.error(e.getMessage());
+		}
         
 		return false;
 	}

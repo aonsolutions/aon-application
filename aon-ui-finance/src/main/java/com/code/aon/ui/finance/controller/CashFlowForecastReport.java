@@ -23,8 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Font;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
@@ -659,11 +658,11 @@ public class CashFlowForecastReport extends DataScrollerState {
 
 			HSSFFont boldFont = exporter.createFont();
 			boldFont.setFontHeightInPoints((short) 8);
-			boldFont.setBold(true);
+			boldFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
 
 			HSSFCellStyle headerCellStyle = exporter.createCellStyle();
-		    headerCellStyle.setBorderBottom(BorderStyle.MEDIUM);
-		    headerCellStyle.setAlignment(HorizontalAlignment.CENTER );
+		    headerCellStyle.setBorderBottom(HSSFCellStyle.BORDER_MEDIUM);
+		    headerCellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER );
 		    headerCellStyle.setFont(boldFont);
 		    
 			exporter.addHeaderCell("Fecha", exporter.getWidth(10), headerCellStyle);

@@ -4,10 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -56,9 +54,9 @@ public class PurchaseOrderExcelAction extends AbsExcelAction implements Consumer
 		orientedHeaderFont.setColor( IndexedColors.WHITE.index );
 
 		XSSFCellStyle orientedHeaderCellStyle = (XSSFCellStyle) workbook.createCellStyle();
-		orientedHeaderCellStyle.setAlignment( HorizontalAlignment.CENTER );
-		orientedHeaderCellStyle.setBorderBottom(BorderStyle.MEDIUM);
-		orientedHeaderCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);  
+		orientedHeaderCellStyle.setAlignment( HSSFCellStyle.ALIGN_CENTER );
+		orientedHeaderCellStyle.setBorderBottom(HSSFCellStyle.BORDER_MEDIUM);
+		orientedHeaderCellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);  
 		orientedHeaderCellStyle.setFillForegroundColor(AON_BLUE);
 		orientedHeaderCellStyle.setRotation( (short) 90 );
 		orientedHeaderCellStyle.setFont(orientedHeaderFont);

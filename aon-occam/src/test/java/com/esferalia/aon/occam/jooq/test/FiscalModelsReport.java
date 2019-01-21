@@ -25,17 +25,12 @@ import java.util.Properties;
 import java.util.TimeZone;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
@@ -422,23 +417,23 @@ public class FiscalModelsReport {
 
 			defaultStyle = workbook.createCellStyle();
 			defaultStyle.setFont(smallFont);
-			defaultStyle.setAlignment(HorizontalAlignment.LEFT);
+			defaultStyle.setAlignment(HSSFCellStyle.ALIGN_LEFT);
 
 			numberStyle = workbook.createCellStyle();
 			numberStyle.setDataFormat(dataFormat.getFormat(NUMBER_PATTERN));
-			numberStyle.setAlignment(HorizontalAlignment.CENTER);
+			numberStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
 			numberStyle.setFont(smallFont);
 
 			Font headerFont = workbook.createFont();
-			headerFont.setBold(true);
+			headerFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
 			headerFont.setFontHeightInPoints((short) 8);
 			headerFont.setColor(IndexedColors.WHITE.index);
 
 			headerCellStyle = (XSSFCellStyle) workbook.createCellStyle();
-			headerCellStyle.setAlignment(HorizontalAlignment.CENTER);
-			headerCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-			headerCellStyle.setBorderBottom(BorderStyle.MEDIUM);
-			headerCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+			headerCellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+			headerCellStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+			headerCellStyle.setBorderBottom(HSSFCellStyle.BORDER_MEDIUM);
+			headerCellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 			headerCellStyle.setFillForegroundColor(HEADER_COLOR);
 			headerCellStyle.setFont(headerFont);
 			if (printHeaders) {
@@ -449,7 +444,7 @@ public class FiscalModelsReport {
 		private Cell addCell(String value) {
 			Cell cell = row.createCell(cellCount++);
 			cell.setCellValue(AonStringUtils.trimToEmpty(value));
-			cell.setCellType(CellType.STRING);
+			cell.setCellType(Cell.CELL_TYPE_STRING);
 			cell.setCellStyle(defaultStyle);
 			return cell;
 		}
@@ -460,7 +455,7 @@ public class FiscalModelsReport {
 			if (value != null) {
 				cell.setCellValue(value);
 			}
-			cell.setCellType(CellType.NUMERIC);
+			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 			return cell;
 		}
 
@@ -477,9 +472,9 @@ public class FiscalModelsReport {
 			orientedHeaderFont.setColor(IndexedColors.WHITE.index);
 
 			XSSFCellStyle orientedHeaderCellStyle = (XSSFCellStyle) workbook.createCellStyle();
-			orientedHeaderCellStyle.setAlignment(HorizontalAlignment.CENTER);
-			orientedHeaderCellStyle.setBorderBottom(BorderStyle.MEDIUM);
-			orientedHeaderCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+			orientedHeaderCellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+			orientedHeaderCellStyle.setBorderBottom(HSSFCellStyle.BORDER_MEDIUM);
+			orientedHeaderCellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 			orientedHeaderCellStyle.setFillForegroundColor(HEADER_COLOR);
 			orientedHeaderCellStyle.setRotation((short) 90);
 			orientedHeaderCellStyle.setFont(orientedHeaderFont);

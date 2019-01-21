@@ -3,19 +3,16 @@ package com.esferalia.aon.gwt.fiscal.server;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Footer;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Picture;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
@@ -75,7 +72,7 @@ public class Mod347ExcelAction extends AbsExcelAction { // ModelVAExcelAction<Mo
 	protected void printModelInfo() {
 		
 		Font headerFont = workbook.createFont();
-		headerFont.setBold(true);
+		headerFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
 		headerFont.setColor(IndexedColors.WHITE.index);
 		headerFont.setFontHeightInPoints((short) 10);
 		
@@ -93,7 +90,7 @@ public class Mod347ExcelAction extends AbsExcelAction { // ModelVAExcelAction<Mo
 			CreationHelper helper = workbook.getCreationHelper();
 			Drawing drawing = sheet.createDrawingPatriarch();
 			ClientAnchor anchor = helper.createClientAnchor();
-			anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
+			anchor.setAnchorType(2);
 			anchor.setCol1(0);
 			anchor.setRow1(rowCount - 1 );
 			anchor.setDx1(10);
@@ -127,8 +124,8 @@ public class Mod347ExcelAction extends AbsExcelAction { // ModelVAExcelAction<Mo
 		idFont.setFontHeightInPoints((short) 12);
 		
 		idCellStyle = (XSSFCellStyle) workbook.createCellStyle();
-		idCellStyle.setAlignment(HorizontalAlignment.CENTER);
-		idCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		idCellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+		idCellStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
 		idCellStyle.setFont(idFont);
 
 		CellUtil.createCell(row, 0, mod347.getDocument() + " - " + name , idCellStyle);
@@ -172,7 +169,7 @@ public class Mod347ExcelAction extends AbsExcelAction { // ModelVAExcelAction<Mo
 		row = sheet.createRow(rowCount++);
 		
 		CellStyle style = workbook.createCellStyle();
-		style.setVerticalAlignment(VerticalAlignment.BOTTOM);		
+		style.setVerticalAlignment(HSSFCellStyle.VERTICAL_BOTTOM);		
 		style.setFont(defaulFont );
 		
 		centerCellStyle.setFont(defaulFont);
@@ -214,7 +211,7 @@ public class Mod347ExcelAction extends AbsExcelAction { // ModelVAExcelAction<Mo
 		
 		Cell cell = row.createCell(cellCount++);
 		cell.setCellStyle(decimalStyle);
-		cell.setCellType(CellType.NUMERIC);
+		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 		cell.setCellValue(amount);
 		
 	}

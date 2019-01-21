@@ -3,10 +3,9 @@ package com.esferalia.aon.gwt.fiscal.server;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -51,7 +50,7 @@ public class Mod202ExcelAction extends ModelIRPFExcelAction<Mod202,Mod202Key> {
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 1));
 		
 		XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.clone();
-		rightHeaderCellStyle.setAlignment(HorizontalAlignment.RIGHT);
+		rightHeaderCellStyle.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
 
 		CellUtil.createCell(row, cellCount, "", rightHeaderCellStyle);
 		sheet.setColumnWidth(cellCount++, 3 * 256);
@@ -85,8 +84,8 @@ public class Mod202ExcelAction extends ModelIRPFExcelAction<Mod202,Mod202Key> {
 	@Override
 	protected void fillParticularityCell(Cell cell ,CellStyle style,Mod202Key key) {
 		double amount = model.ensureDetail(key).getAmount();
-		style.setAlignment(HorizontalAlignment.LEFT);
-		cell.setCellType(CellType.STRING);
+		style.setAlignment(HSSFCellStyle.ALIGN_LEFT);
+		cell.setCellType(Cell.CELL_TYPE_STRING);
 		if (key == Mod202Key.P02) {
 			cell.setCellValue(model.getInitialDate() != null
 					?DATE_FORMAT.format(model.getInitialDate())

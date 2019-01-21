@@ -14,9 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -238,11 +236,11 @@ public class DailyTrackingReportController implements ICollectionProvider, Seria
 
 			HSSFFont boldFont = exporter.createFont();
 			boldFont.setFontHeightInPoints((short) 8);
-			boldFont.setBold(true);
+			boldFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
 
 			HSSFCellStyle headerCellStyle = exporter.createCellStyle();
-		    headerCellStyle.setBorderBottom(BorderStyle.MEDIUM);
-		    headerCellStyle.setAlignment(HorizontalAlignment.CENTER );
+		    headerCellStyle.setBorderBottom(HSSFCellStyle.BORDER_MEDIUM);
+		    headerCellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER );
 		    headerCellStyle.setFont(boldFont);
 			exporter.addHeaderCell("Cliente", exporter.getWidth(40), headerCellStyle);
 			exporter.addHeaderCell("Usuario", exporter.getWidth(30), headerCellStyle);
@@ -261,12 +259,12 @@ public class DailyTrackingReportController implements ICollectionProvider, Seria
 
 			HSSFCellStyle dateStyle = exporter.createCellStyle();
 			dateStyle.setDataFormat( exporter.getDataFormat().getFormat(ExcelReportExporter.DATE_PATTERN));
-			dateStyle.setAlignment(HorizontalAlignment.LEFT );
+			dateStyle.setAlignment(HSSFCellStyle.ALIGN_LEFT );
 			dateStyle.setFont(font);
 
 			HSSFCellStyle amountStyle = exporter.createCellStyle();
 			amountStyle.setFont(font);
-			amountStyle.setAlignment(HorizontalAlignment.RIGHT );
+			amountStyle.setAlignment(HSSFCellStyle.ALIGN_RIGHT );
 			amountStyle.setDataFormat( exporter.getDataFormat().getFormat(ExcelReportExporter.DECIMAL_PATTERN));
 			
 			for ( Object obj : getCollection() ) {

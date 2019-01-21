@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
@@ -153,7 +152,7 @@ public class OperationReportExcelPrint extends HttpServlet {
 		protected void headerRow() {
 			
 			Font topHeaderFont = workbook.createFont();
-			topHeaderFont.setBold(true);
+			topHeaderFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
 			topHeaderFont.setFontHeightInPoints((short) 12);
 			
 			XSSFCellStyle topHeaderCellStyle = (XSSFCellStyle) workbook.createCellStyle();			
@@ -341,7 +340,7 @@ public class OperationReportExcelPrint extends HttpServlet {
 			Cell cell = row.createCell(cellCount++);
 			cell.setCellStyle(style);
 			cell.setCellValue(AonStringUtils.trimToEmpty( value ) );
-			cell.setCellType(CellType.STRING);
+			cell.setCellType(Cell.CELL_TYPE_STRING);
 			return cell;
 		}
 		
@@ -349,7 +348,7 @@ public class OperationReportExcelPrint extends HttpServlet {
 			Cell cell = row.createCell(cellCount++);
 			cell.setCellStyle(style);
 			cell.setCellValue(number!=null?number:0.0);
-			cell.setCellType(CellType.NUMERIC);
+			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 			return cell;
 		}
 		
@@ -357,7 +356,7 @@ public class OperationReportExcelPrint extends HttpServlet {
 			
 			// Letra normal en negrita
 			Font boldFont = workbook.createFont();			
-			boldFont.setBold(true);
+			boldFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
 			
 			// Estilos para textos en negrita
 			CellStyle textBoldStyle = workbook.createCellStyle();

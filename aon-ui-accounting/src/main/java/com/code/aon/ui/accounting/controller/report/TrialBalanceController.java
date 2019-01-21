@@ -19,9 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Font;
 import org.jooq.DSLContext;
 import org.jooq.Record8;
 import org.jooq.Result;
@@ -44,7 +43,9 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
+import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.faces.component.util.DownloadUtil;
+import net.aonsolutions.core.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -57,9 +58,6 @@ import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
-
-import net.aonsolutions.core.dbutils.DatabaseUtil;
-import net.aonsolutions.core.pool.AonConnectionException;
 
 public class TrialBalanceController extends DataScrollerState implements ICollectionProvider,IAccountingBookItem{
 
@@ -347,11 +345,11 @@ public class TrialBalanceController extends DataScrollerState implements ICollec
 
 			HSSFFont boldFont = exporter.createFont();
 			boldFont.setFontHeightInPoints((short) 8);
-			boldFont.setBold(true);
+			boldFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
 
 			HSSFCellStyle headerCellStyle = exporter.createCellStyle();
-		    headerCellStyle.setBorderBottom(BorderStyle.MEDIUM);
-		    headerCellStyle.setAlignment(HorizontalAlignment.CENTER );
+		    headerCellStyle.setBorderBottom(HSSFCellStyle.BORDER_MEDIUM);
+		    headerCellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER );
 		    headerCellStyle.setFont(boldFont);
 		    
 			exporter.addHeaderCell("Cuenta", exporter.getWidth(10), headerCellStyle);
@@ -369,8 +367,8 @@ public class TrialBalanceController extends DataScrollerState implements ICollec
 			
 			HSSFFont firstAccountFont = exporter.createFont();
 			firstAccountFont.setFontHeightInPoints((short) 8);
-			firstAccountFont.setBold(true);
-			firstAccountFont.setColor(HSSFColorPredefined.BLUE.getIndex());
+			firstAccountFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+			firstAccountFont.setColor(new HSSFColor.BLUE().getIndex());
 
 			HSSFCellStyle firstAccountCellStyle = exporter.createCellStyle();
 			firstAccountCellStyle.setFont(firstAccountFont);

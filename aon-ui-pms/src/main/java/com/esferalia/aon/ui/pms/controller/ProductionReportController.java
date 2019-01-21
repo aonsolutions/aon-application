@@ -32,7 +32,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Cell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +43,9 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.util.AppParamUtil;
+import net.aonsolutions.core.dbutils.AonSQLException;
+import net.aonsolutions.core.dbutils.DatabaseUtil;
+import net.aonsolutions.core.pool.AonConnectionException;
 import com.code.aon.report.ReportException;
 import com.code.aon.report.poi.ExcelReportExporter;
 import com.code.aon.report.poi.ReportColumnMetadata;
@@ -51,10 +54,6 @@ import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.sql.SQLUtils;
-
-import net.aonsolutions.core.dbutils.AonSQLException;
-import net.aonsolutions.core.dbutils.DatabaseUtil;
-import net.aonsolutions.core.pool.AonConnectionException;
 
 public class ProductionReportController implements Serializable {
 	
@@ -1353,7 +1352,7 @@ public class ProductionReportController implements Serializable {
 	public HSSFCell addEmptyDecimalCell(ExcelReportExporter exporter, HSSFCellStyle cellStyle) {
 		HSSFCell cell = exporter.addCell();
 		cell.setCellStyle(cellStyle);
-		cell.setCellType(CellType.BLANK);
+		cell.setCellType(Cell.CELL_TYPE_BLANK);
 		return cell;
 	}
 	

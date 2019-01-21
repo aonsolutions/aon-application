@@ -11,11 +11,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellUtil;
@@ -88,7 +87,7 @@ public class StatTableExcelServlet extends HttpServlet {
 			}
 			
 			XSSFCellStyle catCellStyle = (XSSFCellStyle) workbook.createCellStyle();
-			catCellStyle.setVerticalAlignment( VerticalAlignment.CENTER);
+			catCellStyle.setVerticalAlignment( HSSFCellStyle.VERTICAL_CENTER);
 			catCellStyle.setFont(boldFont);
 			
 			for (String rowKey : rowMap.keySet()) {
@@ -109,7 +108,7 @@ public class StatTableExcelServlet extends HttpServlet {
 				cell = valueRow.createCell(colIdx);
 				cell.setCellValue(0.0);
 				cell.setCellStyle(decimalStyle);
-				cell.setCellType(CellType.NUMERIC);
+				cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 			}
 			double v = cell.getNumericCellValue() +  (value!=null?value:0.0);
 			cell.setCellValue(v);
@@ -122,7 +121,7 @@ public class StatTableExcelServlet extends HttpServlet {
 				int colIdx = colMap.get(colKey);
 				Cell cell = totalRow.createCell(colIdx);
 				cell.setCellStyle(totalCellStyle);
-				cell.setCellType(CellType.FORMULA);
+				cell.setCellType(Cell.CELL_TYPE_FORMULA);
 				CellReference ref = new CellReference(cell);
 				String[] parts = ref.getCellRefParts();  // Returns the three parts of the cell reference, the Sheet name (or null if none supplied), 
 														 // the 1 based row number, and the A based column letter. This will not include any markers 
@@ -138,7 +137,7 @@ public class StatTableExcelServlet extends HttpServlet {
 					Row curRow = sheet.getRow(i);
 					Cell percentCell = curRow.createCell(colIdx+1);
 					percentCell.setCellStyle(percentStyle);
-					percentCell.setCellType(CellType.FORMULA);
+					percentCell.setCellType(Cell.CELL_TYPE_FORMULA);
 					String percentFormula =  colId + (i+1) + "/" + totalRef;
 					percentCell.setCellFormula(percentFormula);
 					CellValue percentValue = evaluator.evaluate(percentCell);

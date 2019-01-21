@@ -5,7 +5,7 @@ import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.util.CellUtil;
+import org.apache.poi.hssf.util.HSSFCellUtil;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 public class ExcelSheet {
@@ -37,7 +37,7 @@ public class ExcelSheet {
 		if (width > 0) {
 			sheet.setColumnWidth(columnCount, width);	
 		}
-		CellUtil.createCell(headerRow, columnCount++, label, cellStyle);
+		HSSFCellUtil.createCell(headerRow, columnCount++, label, cellStyle);
 	}
 
 	public HSSFCell addCell(HSSFCellStyle cellStyle) {

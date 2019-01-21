@@ -14,12 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
-import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 
@@ -89,11 +86,11 @@ public class DownloadTemplatesServlet extends HttpServlet {
         CellStyle style = libro.createCellStyle();CellStyle styleInfo = libro.createCellStyle();
         Font font = libro.createFont();
         font.setFontHeightInPoints((short)12);
-        font.setBold(true);
+        font.setBoldweight(Font.BOLDWEIGHT_BOLD);
         style.setFont(font);styleInfo.setFont(font);
-        style.setAlignment(HorizontalAlignment.CENTER);styleInfo.setAlignment(HorizontalAlignment.CENTER);
-        style.setBorderBottom(BorderStyle.MEDIUM); styleInfo.setBorderBottom(BorderStyle.MEDIUM);
-       	styleInfo.setFillBackgroundColor(HSSFColorPredefined.LIGHT_YELLOW.getIndex());
+        style.setAlignment(CellStyle.ALIGN_CENTER);styleInfo.setAlignment(CellStyle.ALIGN_CENTER);
+        style.setBorderBottom(CellStyle.BORDER_MEDIUM); styleInfo.setBorderBottom(CellStyle.BORDER_MEDIUM);
+       	styleInfo.setFillBackgroundColor(HSSFColor.LIGHT_YELLOW.index);
 
        	Cell cellInfo = rowInfo.createCell(0);
        	cellInfo.setCellValue(info);
@@ -103,17 +100,17 @@ public class DownloadTemplatesServlet extends HttpServlet {
         Font font2 = libro.createFont();
         font.setFontHeightInPoints((short)12);
       	style2.setFont(font2);
-      	style2.setAlignment(HorizontalAlignment.CENTER);
-		style2.setBorderBottom(BorderStyle.THIN);
-		style2.setBorderRight(BorderStyle.THIN);
-		style2.setBorderLeft(BorderStyle.THIN);
+      	style2.setAlignment(CellStyle.ALIGN_CENTER);
+		style2.setBorderBottom(CellStyle.BORDER_THIN);
+		style2.setBorderRight(CellStyle.BORDER_THIN);
+		style2.setBorderLeft(CellStyle.BORDER_THIN);
       	
         CellStyle style3 = libro.createCellStyle();
       	style3.setFont(font2);
-      	style3.setAlignment(HorizontalAlignment.LEFT);
-		style3.setBorderBottom(BorderStyle.THIN);
-		style3.setBorderRight(BorderStyle.THIN);
-		style3.setBorderLeft(BorderStyle.THIN);
+      	style3.setAlignment(CellStyle.ALIGN_LEFT);
+		style3.setBorderBottom(CellStyle.BORDER_THIN);
+		style3.setBorderRight(CellStyle.BORDER_THIN);
+		style3.setBorderLeft(CellStyle.BORDER_THIN);
 
         for(Integer i = 0; i< aux.getColumns().size(); i++){
         	Cell celda = fila.createCell(i);

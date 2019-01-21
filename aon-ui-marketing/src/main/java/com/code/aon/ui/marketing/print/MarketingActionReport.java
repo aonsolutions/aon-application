@@ -27,16 +27,13 @@ import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFCellUtil;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.util.CellUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.AonVersion;
 import com.code.aon.commercial.Target;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -120,38 +117,38 @@ public class MarketingActionReport implements Serializable {
             sheet.setColumnWidth(7, 15*256);
 
             HSSFCellStyle headerCellStyle = wb.createCellStyle();
-            headerCellStyle.setBorderBottom(BorderStyle.MEDIUM);
-            headerCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);  
-            headerCellStyle.setFillForegroundColor(HSSFColorPredefined.GREY_25_PERCENT.getIndex());  
+            headerCellStyle.setBorderBottom(HSSFCellStyle.BORDER_MEDIUM);
+            headerCellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);  
+            headerCellStyle.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);  
             
             HSSFRow row = sheet.createRow(0);
-            CellUtil.createCell(row, 0, "", headerCellStyle);
-            CellUtil.createCell(row, 1, "", headerCellStyle);
-            CellUtil.createCell(row, 2, "", headerCellStyle);
-            CellUtil.createCell(row, 3, "", headerCellStyle);
-            CellUtil.createCell(row, 4, "", headerCellStyle);
-            CellUtil.createCell(row, 5, "", headerCellStyle);
-            CellUtil.createCell(row, 6, "", headerCellStyle);
-            CellUtil.createCell(row, 7, "", headerCellStyle);
+            HSSFCellUtil.createCell(row, 0, "", headerCellStyle);
+            HSSFCellUtil.createCell(row, 1, "", headerCellStyle);
+            HSSFCellUtil.createCell(row, 2, "", headerCellStyle);
+            HSSFCellUtil.createCell(row, 3, "", headerCellStyle);
+            HSSFCellUtil.createCell(row, 4, "", headerCellStyle);
+            HSSFCellUtil.createCell(row, 5, "", headerCellStyle);
+            HSSFCellUtil.createCell(row, 6, "", headerCellStyle);
+            HSSFCellUtil.createCell(row, 7, "", headerCellStyle);
             int cellIdx = 8;
             for (Question q : getSurveyQuestionList()) {
-            	CellUtil.createCell(row, cellIdx, q.getId().toString(), headerCellStyle);
+            	HSSFCellUtil.createCell(row, cellIdx, q.getId().toString(), headerCellStyle);
             	cellIdx++;
             }
             
             row = sheet.createRow(1);
-            CellUtil.createCell(row, 0, AonUtil.getMessage(ID), headerCellStyle);
-            CellUtil.createCell(row, 1, AonUtil.getMessage(ICommonMessages.COMPANY_DOCUMENT), headerCellStyle);
-            CellUtil.createCell(row, 2, AonUtil.getMessage(ICommonMessages.TARGET), headerCellStyle);
-            CellUtil.createCell(row, 3, AonUtil.getMessage(ICommonMessages.COMMENT), headerCellStyle);
-            CellUtil.createCell(row, 4, AonUtil.getMessage(ICommonMessages.LOGIN_USER), headerCellStyle);
-            CellUtil.createCell(row, 5, AonUtil.getMessage(ICommonMessages.STATUS), headerCellStyle);
-            CellUtil.createCell(row, 6, AonUtil.getMessage(ID), headerCellStyle);
-            CellUtil.createCell(row, 7, AonUtil.getMessage(ICommonMessages.SURVEY), headerCellStyle);
+            HSSFCellUtil.createCell(row, 0, AonUtil.getMessage(ID), headerCellStyle);
+            HSSFCellUtil.createCell(row, 1, AonUtil.getMessage(ICommonMessages.COMPANY_DOCUMENT), headerCellStyle);
+            HSSFCellUtil.createCell(row, 2, AonUtil.getMessage(ICommonMessages.TARGET), headerCellStyle);
+            HSSFCellUtil.createCell(row, 3, AonUtil.getMessage(ICommonMessages.COMMENT), headerCellStyle);
+            HSSFCellUtil.createCell(row, 4, AonUtil.getMessage(ICommonMessages.LOGIN_USER), headerCellStyle);
+            HSSFCellUtil.createCell(row, 5, AonUtil.getMessage(ICommonMessages.STATUS), headerCellStyle);
+            HSSFCellUtil.createCell(row, 6, AonUtil.getMessage(ID), headerCellStyle);
+            HSSFCellUtil.createCell(row, 7, AonUtil.getMessage(ICommonMessages.SURVEY), headerCellStyle);
 
 			cellIdx = 8;
 			for (Question q : getSurveyQuestionList()) {
-				CellUtil.createCell(row, cellIdx, q.getDescription(), headerCellStyle);
+				HSSFCellUtil.createCell(row, cellIdx, q.getDescription(), headerCellStyle);
 				cellIdx++;
 			}
 			
@@ -183,10 +180,10 @@ public class MarketingActionReport implements Serializable {
             sheet.setColumnWidth(2, 50*256);
             sheet.setColumnWidth(3, 200*256);
             row = sheet.createRow(0);
-            CellUtil.createCell(row, 0, AonUtil.getMessage(ID), headerCellStyle);
-            CellUtil.createCell(row, 1, AonUtil.getMessage(QUESTION), headerCellStyle);
-            CellUtil.createCell(row, 2, AonUtil.getMessage(QUESTION), headerCellStyle);
-            CellUtil.createCell(row, 3, AonUtil.getMessage(QUESTION), headerCellStyle);
+            HSSFCellUtil.createCell(row, 0, AonUtil.getMessage(ID), headerCellStyle);
+            HSSFCellUtil.createCell(row, 1, AonUtil.getMessage(QUESTION), headerCellStyle);
+            HSSFCellUtil.createCell(row, 2, AonUtil.getMessage(QUESTION), headerCellStyle);
+            HSSFCellUtil.createCell(row, 3, AonUtil.getMessage(QUESTION), headerCellStyle);
             rowIdx = 1;
 			for (Question q : getSurveyQuestionList()) {
 				row = sheet.createRow(rowIdx);

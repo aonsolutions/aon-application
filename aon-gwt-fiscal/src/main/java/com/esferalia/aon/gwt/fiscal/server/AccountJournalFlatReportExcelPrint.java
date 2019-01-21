@@ -10,15 +10,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Footer;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
@@ -86,31 +83,31 @@ public class AccountJournalFlatReportExcelPrint extends HttpServlet {
 			decimalStyle.setFont(smallFont);
 
 			Font journalHeaderFont = workbook.createFont();
-			journalHeaderFont.setBold(true);
+			journalHeaderFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
 			journalHeaderFont.setFontHeightInPoints((short) 8);
 			
 			XSSFCellStyle headerStyle = (XSSFCellStyle) workbook.createCellStyle();
-			headerStyle.setAlignment( HorizontalAlignment.CENTER );
-			headerStyle.setVerticalAlignment( VerticalAlignment.CENTER);
-		    headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+			headerStyle.setAlignment( HSSFCellStyle.ALIGN_CENTER );
+			headerStyle.setVerticalAlignment( HSSFCellStyle.VERTICAL_CENTER);
+		    headerStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 		    headerStyle.setFillForegroundColor(AON_LIGHT_GRAY);
 		    headerStyle.setFont(journalHeaderFont);
-		    headerStyle.setBorderTop(BorderStyle.THIN);
-		    headerStyle.setBorderRight(BorderStyle.THIN);
-		    headerStyle.setBorderLeft(BorderStyle.THIN);
-		    headerStyle.setBorderBottom(BorderStyle.THIN);
+		    headerStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+		    headerStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+		    headerStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+		    headerStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
 		    
 		    
 			entryHeaderStyle = (XSSFCellStyle) workbook.createCellStyle();
-			entryHeaderStyle.setAlignment( HorizontalAlignment.CENTER );
-			entryHeaderStyle.setVerticalAlignment( VerticalAlignment.CENTER);
-			entryHeaderStyle.setBorderBottom(BorderStyle.THIN);
+			entryHeaderStyle.setAlignment( HSSFCellStyle.ALIGN_CENTER );
+			entryHeaderStyle.setVerticalAlignment( HSSFCellStyle.VERTICAL_CENTER);
+			entryHeaderStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
 			entryHeaderStyle.setFont(defaulFont);
 
 			
 		    
 			XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerStyle.clone();
-			rightHeaderCellStyle.setAlignment(HorizontalAlignment.RIGHT);
+			rightHeaderCellStyle.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
 
 			row = sheet.createRow(rowCount++);
 			cellCount = 0;
