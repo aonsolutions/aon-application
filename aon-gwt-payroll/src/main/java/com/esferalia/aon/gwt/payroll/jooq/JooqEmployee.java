@@ -219,26 +219,8 @@ public class JooqEmployee {
 		
 		Integer employe_workplace_table_id = contractTable.get(CONTRACT.WORKPLACE);
 		
-		//WORKPLACE TABLE
-//		Record workplaceTable = dslContext.select().from(WORKPLACE)
-//				.where(WORKPLACE.ID.eq(employe_workplace_table_id))
-//				.fetchOne();
-		
+		//WORKPLACE TABLE		
 		contractData.setWorkplaceId(employe_workplace_table_id);
-		//contractData.setWorkplace(workplaceTable.get(WORKPLACE.DESCRIPTION));
-		
-//		Integer workplaceEnterprise = workplaceTable.get(WORKPLACE.ENTERPRISE);
-//		
-//		Result<Record> workplaceTableRecords = dslContext.select().from(WORKPLACE)
-//				.where(WORKPLACE.ENTERPRISE.eq(workplaceEnterprise))
-//				.fetch();
-		
-//		Map<Integer, String> workplaces = new HashMap<Integer, String>();
-//		
-//		for(Record r : workplaceTableRecords)
-//			workplaces.put(r.get(WORKPLACE.ID), r.get(WORKPLACE.DESCRIPTION));
-//		
-//		employee.setWorkplaces(workplaces);
 		
 		if(contractData.getSsRegimen() != 3){ //NO ES RETA
 			//ENTERPRISE ACTIVITY TABLE
@@ -458,86 +440,91 @@ public class JooqEmployee {
 		
 		Integer parentDomain = domainRecord.get(DOMAIN.PARENT);
 		
-		Result<Record> geozone = dslContext.select()
-				.from(GEOZONE)
-				.where(GEOZONE.NAME.eq(employeeData.getAddressProvinces()))
-					.and(GEOZONE.DOMAIN.eq(domain)
-							.or(GEOZONE.DOMAIN.eq(parentDomain)))
-				.fetch();
+		Integer rAddressId = null;
 		
-		Integer geozoneId = null;
+		if(null != employeeData.getAddressProvinces()) {
 		
-		if(geozone == null){
-			Result<Record1<String>> codes = dslContext.select(GEOZONE.CODE)
-				.from(GEOZONE)
-				.where(GEOZONE.NAME.like(employeeData.getAddressProvinces()+"%"))
-				.fetch();
+			Result<Record> geozone = dslContext.select()
+					.from(GEOZONE)
+					.where(GEOZONE.NAME.eq(employeeData.getAddressProvinces()))
+						.and(GEOZONE.DOMAIN.eq(domain)
+								.or(GEOZONE.DOMAIN.eq(parentDomain)))
+					.fetch();
 			
-			if(!codes.isEmpty()){
-				GeozoneRecord geozoneRecord  = dslContext.insertInto(GEOZONE)
+			Integer geozoneId = null;
+			
+			if(geozone == null){
+				Result<Record1<String>> codes = dslContext.select(GEOZONE.CODE)
+					.from(GEOZONE)
+					.where(GEOZONE.NAME.like(employeeData.getAddressProvinces()+"%"))
+					.fetch();
+				
+				if(!codes.isEmpty()){
+					GeozoneRecord geozoneRecord  = dslContext.insertInto(GEOZONE)
+							.set(GEOZONE.DOMAIN, domain)
+							.set(GEOZONE.NAME, employeeData.getAddressProvinces())
+							.set(GEOZONE.CODE, codes.get(0).value1())
+							.returning(GEOZONE.ID)
+							.fetchOne();
+						
+					geozoneId = geozoneRecord.getId();
+				}
+			}else
+				geozoneId = geozone.get(0).get(GEOZONE.ID);
+	
+			rAddressId = employeeData.getRaddressId();
+			
+			if(null == rAddressId){
+				RaddressRecord rAddressRecord = dslContext.insertInto(RADDRESS)
+						.set(RADDRESS.DOMAIN, domain)
+						.set(RADDRESS.REGISTRY, registryId)
+						.set(RADDRESS.STREET_TYPE, employeeData.getStreetType())
+						.set(RADDRESS.ADDRESS, employeeData.getAddress())
+						.set(RADDRESS.NUMBER, employeeData.getAddresNum())
+						.set(RADDRESS.ZIP, employeeData.getAddressZip())
+						.set(RADDRESS.CITY, employeeData.getAddressCity())
+						.set(RADDRESS.GEOZONE, geozoneId)
+						.returning(RADDRESS.ID, RADDRESS.GEOZONE)
+						.fetchOne();
+				
+				rAddressId = rAddressRecord.getId();
+			}else{
+				dslContext.update(RADDRESS)
+						.set(RADDRESS.STREET_TYPE, employeeData.getStreetType())
+						.set(RADDRESS.ADDRESS, employeeData.getAddress())
+						.set(RADDRESS.NUMBER, employeeData.getAddresNum())
+						.set(RADDRESS.ZIP, employeeData.getAddressZip())
+						.set(RADDRESS.CITY, employeeData.getAddressCity())
+						.set(RADDRESS.GEOZONE, geozoneId)
+						.where(RADDRESS.ID.eq(rAddressId))
+						.execute();
+			}
+			
+			if(geozone == null && null != geozoneId){
+				Integer rAddressGeozone = geozoneId;
+				
+				GeozoneRecord geozoneParentRecord  = dslContext.insertInto(GEOZONE)
 						.set(GEOZONE.DOMAIN, domain)
-						.set(GEOZONE.NAME, employeeData.getAddressProvinces())
-						.set(GEOZONE.CODE, codes.get(0).value1())
+						.set(GEOZONE.NAME, "ESPAÑA")
+						.set(GEOZONE.CODE, "ES")
+						.set(GEOZONE.SYSTEM, (byte) 1)
 						.returning(GEOZONE.ID)
 						.fetchOne();
-					
-				geozoneId = geozoneRecord.getId();
+				
+				Integer geozoneParentId = geozoneParentRecord.getId();
+				
+				dslContext.insertInto(GEOTREE)
+				.set(GEOTREE.DOMAIN, domain)
+				.set(GEOTREE.PARENT, geozoneParentId)
+				.set(GEOTREE.CHILD, rAddressGeozone)
+				.execute();
+				
+				dslContext.insertInto(GEOTREE)
+				.set(GEOTREE.DOMAIN, domain)
+				.set(GEOTREE.PARENT, (Integer) null)
+				.set(GEOTREE.CHILD, geozoneParentId)
+				.execute();
 			}
-		}else
-			geozoneId = geozone.get(0).get(GEOZONE.ID);
-
-		Integer rAddressId = employeeData.getRaddressId();
-		
-		if(null == rAddressId){
-			RaddressRecord rAddressRecord = dslContext.insertInto(RADDRESS)
-					.set(RADDRESS.DOMAIN, domain)
-					.set(RADDRESS.REGISTRY, registryId)
-					.set(RADDRESS.STREET_TYPE, employeeData.getStreetType())
-					.set(RADDRESS.ADDRESS, employeeData.getAddress())
-					.set(RADDRESS.NUMBER, employeeData.getAddresNum())
-					.set(RADDRESS.ZIP, employeeData.getAddressZip())
-					.set(RADDRESS.CITY, employeeData.getAddressCity())
-					.set(RADDRESS.GEOZONE, geozoneId)
-					.returning(RADDRESS.ID, RADDRESS.GEOZONE)
-					.fetchOne();
-			
-			rAddressId = rAddressRecord.getId();
-		}else{
-			dslContext.update(RADDRESS)
-					.set(RADDRESS.STREET_TYPE, employeeData.getStreetType())
-					.set(RADDRESS.ADDRESS, employeeData.getAddress())
-					.set(RADDRESS.NUMBER, employeeData.getAddresNum())
-					.set(RADDRESS.ZIP, employeeData.getAddressZip())
-					.set(RADDRESS.CITY, employeeData.getAddressCity())
-					.set(RADDRESS.GEOZONE, geozoneId)
-					.where(RADDRESS.ID.eq(rAddressId))
-					.execute();
-		}
-		
-		if(geozone == null && null != geozoneId){
-			Integer rAddressGeozone = geozoneId;
-			
-			GeozoneRecord geozoneParentRecord  = dslContext.insertInto(GEOZONE)
-					.set(GEOZONE.DOMAIN, domain)
-					.set(GEOZONE.NAME, "ESPAÑA")
-					.set(GEOZONE.CODE, "ES")
-					.set(GEOZONE.SYSTEM, (byte) 1)
-					.returning(GEOZONE.ID)
-					.fetchOne();
-			
-			Integer geozoneParentId = geozoneParentRecord.getId();
-			
-			dslContext.insertInto(GEOTREE)
-			.set(GEOTREE.DOMAIN, domain)
-			.set(GEOTREE.PARENT, geozoneParentId)
-			.set(GEOTREE.CHILD, rAddressGeozone)
-			.execute();
-			
-			dslContext.insertInto(GEOTREE)
-			.set(GEOTREE.DOMAIN, domain)
-			.set(GEOTREE.PARENT, (Integer) null)
-			.set(GEOTREE.CHILD, geozoneParentId)
-			.execute();
 		}
 		
 		dslContext.insertInto(RMEDIA, RMEDIA.ID, RMEDIA.DOMAIN, RMEDIA.REGISTRY, RMEDIA.MEDIA, RMEDIA.VALUE, RMEDIA.COMMENT, 
@@ -683,30 +670,30 @@ public class JooqEmployee {
 			
 			dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
 					CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-				.values(contractData.getContracttypeId(), domain, "TC2", contractData.getContractId(), contractData.getContractType(), 
+				.values(contractData.getContracttypeId(), domain, "TC2", contractData.getContractId(), "\""+ contractData.getContractType()+"\"", 
 						startDate, endDate)
 				.onDuplicateKeyUpdate()
-				.set(CONTRACT_DATA.EXPRESSION, contractData.getContractType())
+				.set(CONTRACT_DATA.EXPRESSION, "\""+ contractData.getContractType()+"\"")
 				.set(CONTRACT_DATA.START_DATE, startDate)
 				.set(CONTRACT_DATA.END_DATE, endDate)
 				.execute();
 			
 			dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
 					CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-				.values(contractData.getQuotegroupId(), domain, "GRUPO_COTIZACION", contractData.getContractId(), contractData.getQuoteGroup(), 
+				.values(contractData.getQuotegroupId(), domain, "GRUPO_COTIZACION", contractData.getContractId(), "\""+ contractData.getQuoteGroup()+"\"", 
 						startDate, endDate)
 				.onDuplicateKeyUpdate()
-				.set(CONTRACT_DATA.EXPRESSION, contractData.getQuoteGroup())
+				.set(CONTRACT_DATA.EXPRESSION, "\""+contractData.getQuoteGroup()+"\"")
 				.set(CONTRACT_DATA.START_DATE, startDate)
 				.set(CONTRACT_DATA.END_DATE, endDate)
 				.execute();
 			
 			dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
 					CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-				.values(contractData.getOcupationId(), domain, "OCUPACION", contractData.getContractId(), contractData.getOcupation(), 
+				.values(contractData.getOcupationId(), domain, "OCUPACION", contractData.getContractId(), "\""+ contractData.getOcupation()+"\"", 
 						startDate, endDate)
 				.onDuplicateKeyUpdate()
-				.set(CONTRACT_DATA.EXPRESSION, contractData.getOcupation())
+				.set(CONTRACT_DATA.EXPRESSION, "\""+ contractData.getOcupation()+"\"")
 				.set(CONTRACT_DATA.START_DATE, startDate)
 				.set(CONTRACT_DATA.END_DATE, endDate)
 				.execute();
@@ -714,10 +701,10 @@ public class JooqEmployee {
 			dslContext.insertInto(CONTRACT_INFO, CONTRACT_INFO.ID, CONTRACT_INFO.DOMAIN, CONTRACT_INFO.CONTRACT, CONTRACT_INFO.NAME, CONTRACT_INFO.EXPRESSION, 
 					CONTRACT_INFO.START_DATE, CONTRACT_INFO.END_DATE, CONTRACT_INFO.CREATION_USER, CONTRACT_INFO.CREATION_DATE, CONTRACT_INFO.MODIFICATION_USER,
 					CONTRACT_INFO.MODIFICATION_DATE)
-				.values(contractData.getContractmodelId(), domain, contractData.getContractId(), "OPCION_CONTRATO", ModelOption.values()[contractData.getContractModel()].toString(), 
+				.values(contractData.getContractmodelId(), domain, contractData.getContractId(), "OPCION_CONTRATO", "\""+ ModelOption.values()[contractData.getContractModel()].toString()+ "\"", 
 						startDate, endDate, (String) null, null, (String) null, null)
 				.onDuplicateKeyUpdate()
-				.set(CONTRACT_INFO.EXPRESSION, ModelOption.values()[contractData.getContractModel()].toString())
+				.set(CONTRACT_INFO.EXPRESSION, "\""+ ModelOption.values()[contractData.getContractModel()].toString()+"\"")
 				.set(CONTRACT_INFO.START_DATE, startDate)
 				.set(CONTRACT_INFO.END_DATE, endDate)
 				.execute();
@@ -1171,84 +1158,97 @@ public class JooqEmployee {
 				.where(PERSON.REGISTRY.eq(registryId))
 				.execute();
 			
-			Record1<Integer> geozone = dslContext.select(GEOZONE.ID)
-					.from(GEOZONE)
-					.where(GEOZONE.NAME.eq(employeeData.getAddressProvinces()))
-						.and(GEOZONE.DOMAIN.eq(domain))
+			Record domainRecord = dslContext.select().from(DOMAIN)
+					.where(DOMAIN.ID.eq(domain))
 					.fetchOne();
 			
-			Integer geozoneId = null;
+			Integer parentDomain = domainRecord.get(DOMAIN.PARENT);
 			
-			if(geozone == null){
-				Result<Record1<String>> codes = dslContext.select(GEOZONE.CODE)
-					.from(GEOZONE)
-					.where(GEOZONE.NAME.like(employeeData.getAddressProvinces()+"%"))
-					.fetch();
-				if(!codes.isEmpty()){
-					GeozoneRecord geozoneRecord  = dslContext.insertInto(GEOZONE)
-						.set(GEOZONE.DOMAIN, domain)
-						.set(GEOZONE.NAME, employeeData.getAddressProvinces())
-						.set(GEOZONE.CODE, codes.get(0).value1())
-						.returning(GEOZONE.ID)
-						.fetchOne();
+			Integer rAddressId = null;
+			
+			if(null != employeeData.getAddressProvinces()) {
+			
+				Result<Record> geozone = dslContext.select()
+						.from(GEOZONE)
+						.where(GEOZONE.NAME.eq(employeeData.getAddressProvinces()))
+							.and(GEOZONE.DOMAIN.eq(domain)
+									.or(GEOZONE.DOMAIN.eq(parentDomain)))
+						.fetch();
+				
+				Integer geozoneId = null;
+				
+				if(geozone == null){
+					Result<Record1<String>> codes = dslContext.select(GEOZONE.CODE)
+						.from(GEOZONE)
+						.where(GEOZONE.NAME.like(employeeData.getAddressProvinces()+"%"))
+						.fetch();
 					
-					geozoneId = geozoneRecord.getId();
+					if(!codes.isEmpty()){
+						GeozoneRecord geozoneRecord  = dslContext.insertInto(GEOZONE)
+							.set(GEOZONE.DOMAIN, domain)
+							.set(GEOZONE.NAME, employeeData.getAddressProvinces())
+							.set(GEOZONE.CODE, codes.get(0).value1())
+							.returning(GEOZONE.ID)
+							.fetchOne();
+						
+						geozoneId = geozoneRecord.getId();
+					}
+				}else
+					geozoneId = geozone.get(0).get(GEOZONE.ID);
+	
+				rAddressId = employeeData.getRaddressId();
+				
+				if(null == rAddressId){
+					RaddressRecord rAddressRecord = dslContext.insertInto(RADDRESS)
+							.set(RADDRESS.DOMAIN, domain)
+							.set(RADDRESS.REGISTRY, registryId)
+							.set(RADDRESS.STREET_TYPE, employeeData.getStreetType())
+							.set(RADDRESS.ADDRESS, employeeData.getAddress())
+							.set(RADDRESS.NUMBER, employeeData.getAddresNum())
+							.set(RADDRESS.ZIP, employeeData.getAddressZip())
+							.set(RADDRESS.CITY, employeeData.getAddressCity())
+							.set(RADDRESS.GEOZONE, geozoneId)
+							.returning(RADDRESS.ID, RADDRESS.GEOZONE)
+							.fetchOne();
+					
+					rAddressId = rAddressRecord.getId();
+				}else{
+					dslContext.update(RADDRESS)
+							.set(RADDRESS.STREET_TYPE, employeeData.getStreetType())
+							.set(RADDRESS.ADDRESS, employeeData.getAddress())
+							.set(RADDRESS.NUMBER, employeeData.getAddresNum())
+							.set(RADDRESS.ZIP, employeeData.getAddressZip())
+							.set(RADDRESS.CITY, employeeData.getAddressCity())
+							.set(RADDRESS.GEOZONE, geozoneId)
+							.where(RADDRESS.ID.eq(rAddressId))
+							.execute();
 				}
-			}else
-				geozoneId = geozone.value1();
-
-			Integer rAddressId = employeeData.getRaddressId();
-			
-			if(null == rAddressId){
-				RaddressRecord rAddressRecord = dslContext.insertInto(RADDRESS)
-						.set(RADDRESS.DOMAIN, domain)
-						.set(RADDRESS.REGISTRY, registryId)
-						.set(RADDRESS.STREET_TYPE, employeeData.getStreetType())
-						.set(RADDRESS.ADDRESS, employeeData.getAddress())
-						.set(RADDRESS.NUMBER, employeeData.getAddresNum())
-						.set(RADDRESS.ZIP, employeeData.getAddressZip())
-						.set(RADDRESS.CITY, employeeData.getAddressCity())
-						.set(RADDRESS.GEOZONE, geozoneId)
-						.returning(RADDRESS.ID, RADDRESS.GEOZONE)
-						.fetchOne();
 				
-				rAddressId = rAddressRecord.getId();
-			}else{
-				dslContext.update(RADDRESS)
-						.set(RADDRESS.STREET_TYPE, employeeData.getStreetType())
-						.set(RADDRESS.ADDRESS, employeeData.getAddress())
-						.set(RADDRESS.NUMBER, employeeData.getAddresNum())
-						.set(RADDRESS.ZIP, employeeData.getAddressZip())
-						.set(RADDRESS.CITY, employeeData.getAddressCity())
-						.set(RADDRESS.GEOZONE, geozoneId)
-						.where(RADDRESS.ID.eq(rAddressId))
-						.execute();
-			}
-			
-			if(geozone == null && null != geozoneId){
-				Integer rAddressGeozone = geozoneId;
-				
-				GeozoneRecord geozoneParentRecord  = dslContext.insertInto(GEOZONE)
-						.set(GEOZONE.DOMAIN, domain)
-						.set(GEOZONE.NAME, "ESPAÃ‘A")
-						.set(GEOZONE.CODE, "ES")
-						.set(GEOZONE.SYSTEM, (byte) 1)
-						.returning(GEOZONE.ID)
-						.fetchOne();
-				
-				Integer geozoneParentId = geozoneParentRecord.getId();
-				
-				dslContext.insertInto(GEOTREE)
-				.set(GEOTREE.DOMAIN, domain)
-				.set(GEOTREE.PARENT, geozoneParentId)
-				.set(GEOTREE.CHILD, rAddressGeozone)
-				.execute();
-				
-				dslContext.insertInto(GEOTREE)
-				.set(GEOTREE.DOMAIN, domain)
-				.set(GEOTREE.PARENT, (Integer) null)
-				.set(GEOTREE.CHILD, geozoneParentId)
-				.execute();
+				if(geozone == null && null != geozoneId){
+					Integer rAddressGeozone = geozoneId;
+					
+					GeozoneRecord geozoneParentRecord  = dslContext.insertInto(GEOZONE)
+							.set(GEOZONE.DOMAIN, domain)
+							.set(GEOZONE.NAME, "ESPAÑA")
+							.set(GEOZONE.CODE, "ES")
+							.set(GEOZONE.SYSTEM, (byte) 1)
+							.returning(GEOZONE.ID)
+							.fetchOne();
+					
+					Integer geozoneParentId = geozoneParentRecord.getId();
+					
+					dslContext.insertInto(GEOTREE)
+					.set(GEOTREE.DOMAIN, domain)
+					.set(GEOTREE.PARENT, geozoneParentId)
+					.set(GEOTREE.CHILD, rAddressGeozone)
+					.execute();
+					
+					dslContext.insertInto(GEOTREE)
+					.set(GEOTREE.DOMAIN, domain)
+					.set(GEOTREE.PARENT, (Integer) null)
+					.set(GEOTREE.CHILD, geozoneParentId)
+					.execute();
+				}
 			}
 			
 			dslContext.insertInto(RMEDIA, RMEDIA.ID, RMEDIA.DOMAIN, RMEDIA.REGISTRY, RMEDIA.MEDIA, RMEDIA.VALUE, RMEDIA.COMMENT, 
@@ -1413,7 +1413,7 @@ public class JooqEmployee {
 				.set(CONTRACT_DATA.DOMAIN, domain)
 				.set(CONTRACT_DATA.NAME, "GRUPO_COTIZACION")
 				.set(CONTRACT_DATA.CONTRACT, contractId)
-				.set(CONTRACT_DATA.EXPRESSION, (contractData.getQuoteGroup() == null) ? (String) null : contractData.getQuoteGroup())
+				.set(CONTRACT_DATA.EXPRESSION, (contractData.getQuoteGroup() == null) ? (String) null : "\""+ contractData.getQuoteGroup() +"\"")
 				.set(CONTRACT_DATA.START_DATE, new Date(contractData.getStartDate().getTime()))
 				.set(CONTRACT_DATA.END_DATE, (contractData.getEndDate() == null) ? null : new Date(contractData.getEndDate().getTime()))
 				.execute();
@@ -1422,7 +1422,7 @@ public class JooqEmployee {
 				.set(CONTRACT_DATA.DOMAIN, domain)
 				.set(CONTRACT_DATA.NAME, "OCUPACION")
 				.set(CONTRACT_DATA.CONTRACT, contractId)
-				.set(CONTRACT_DATA.EXPRESSION, (contractData.getOcupation() == null) ? (String) null : contractData.getOcupation())
+				.set(CONTRACT_DATA.EXPRESSION, (contractData.getOcupation() == null) ? (String) null : "\""+ contractData.getOcupation() +"\"")
 				.set(CONTRACT_DATA.START_DATE, new Date(contractData.getStartDate().getTime()))
 				.set(CONTRACT_DATA.END_DATE, (contractData.getEndDate() == null) ? null : new Date(contractData.getEndDate().getTime()))
 				.execute();	
