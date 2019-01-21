@@ -286,10 +286,10 @@
 						</tr>
 						<tr>
 							<td rowspan="2" style="background-color: #eaeaea; width: 200px;">
-								<g:Label styleName="{style.requiredColor} {style.firstColumnTextStyle}">Categoría/Nivel retributario</g:Label>
+								<g:Label styleName="{style.firstColumnTextStyle}">Categoría/Nivel retributario</g:Label>
 							</td>
 							<td>
-								<g:Label styleName="{style.requiredColor}">Convenio</g:Label>
+								<g:Label>Convenio</g:Label>
 							</td>
 							<td colspan="5">
 								<g:ListBox ui:field="agreement" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
@@ -297,7 +297,7 @@
 						</tr>
 						<tr>
 							<td>
-								<g:Label styleName="{style.requiredColor}">Nivel/Categoría</g:Label>
+								<g:Label>Nivel/Categoría</g:Label>
 							</td>
 							<td colspan="3">
 								<g:ListBox ui:field="level" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>

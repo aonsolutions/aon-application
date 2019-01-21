@@ -778,8 +778,8 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		   "" != this.employee.name.getValue() &&
 		   "" != this.employee.first_surname.getValue() &&
 		   null != this.employee.start_date.getValue() &&
-		   0 != this.employee.agreement.getSelectedIndex() &&
-		   0 != this.employee.level.getSelectedIndex() &&
+//		   0 != this.employee.agreement.getSelectedIndex() &&
+//		   0 != this.employee.level.getSelectedIndex() &&
 		   null != this.employee.birth_date.getValue()   
 		)
 			if(1 == this.employee.ssRegimeType.getSelectedIndex())
