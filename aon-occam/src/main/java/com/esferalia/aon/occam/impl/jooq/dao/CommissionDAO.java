@@ -136,6 +136,13 @@ public class CommissionDAO {
 				.findFirst().orElse(null);
 	}
 	
+	public static void deleteOfferDetailCommission(AONContext ctx, Integer id) {
+		ctx.getDslContext()
+			.delete(OFFER_DETAIL_COMMISSION)
+			.where(OFFER_DETAIL_COMMISSION.ID.eq(id))
+			.execute();
+	}
+	
 	
 	/*
 	 *		INVOICE DETAIL COMMISSION
@@ -175,6 +182,13 @@ public class CommissionDAO {
 				.where(INVOICE_DETAIL_COMMISSION.ID.eq(idc.getId()))
 				.returning().fetch().stream().map(new InvoiceDetailCommissionFiller())
 				.findFirst().orElse(null);
+	}
+	
+	public static void deleteInvoiceDetailCommission(AONContext ctx, Integer id) {
+		ctx.getDslContext()
+			.delete(INVOICE_DETAIL_COMMISSION)
+			.where(INVOICE_DETAIL_COMMISSION.ID.eq(id))
+			.execute();
 	}
 }
 

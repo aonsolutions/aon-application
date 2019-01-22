@@ -28,6 +28,7 @@ import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.Target.TARGET;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -938,6 +939,19 @@ public class RegistryDAO {
 					.from(SUPPLIER).join(SCOPE).on(SUPPLIER.SCOPE.eq(SCOPE.ID))
 					.join(REGISTRY).on(REGISTRY.ID.eq(SUPPLIER.REGISTRY))
 			,filter).fetch().stream().map(new SupplierFiller());
+	}
+	
+	
+	public static Supplier insertSupplier(AONContext ctx, Supplier supplier){
+		ctx.getDslContext().insertInto(SUPPLIER, SUPPLIER.REGISTRY, SUPPLIER.DOMAIN, SUPPLIER.TARIFF, SUPPLIER.WITHHOLDING,
+				SUPPLIER.WITHHOLDING_FARMER, SUPPLIER.VAT_ACCRUAL_PAYMENT, SUPPLIER.TRANSACTION, SUPPLIER.STATUS, 
+				SUPPLIER.SCOPE, SUPPLIER.PURCHASE_VALUATED, SUPPLIER.ACCOUNT, SUPPLIER.CREATION_USER, SUPPLIER.CREATION_DATE,
+				SUPPLIER.MODIFICATION_USER, SUPPLIER.MODIFICATION_DATE)
+			.values(supplier.getId(), supplier.getDomain(), supplier.getTariff(), supplier.getWithholding().byteValue(), supplier.getWithholdingFarmer().byteValue(),
+					supplier.getVatAccrualPayment().byteValue(),supplier.getTransaction().byteValue(), supplier.getStatus().value(), supplier.getScope(), 
+					supplier.getPurchaseValuated().byteValue(), supplier.getAccount(), ctx.getUser(), new Timestamp(new Date().getTime()), ctx.getUser(),
+					new Timestamp(new Date().getTime())).execute();
+		return supplier;
 	}
 	
 	// ------------------- TARGET

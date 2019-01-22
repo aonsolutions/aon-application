@@ -41,7 +41,6 @@ public class Commission extends Methods{
 		post(getUrl()+ "commission/" + getDomainName() + "/" + getUserName() + "/calculated/invoice", requestData);
 	}
 	
-	
 	// aon-ui-commercial
 	public void offerCommissionCalculate(String requestData){
 		post(getUrl()+ "commission_calculation/offer", requestData);
@@ -49,6 +48,14 @@ public class Commission extends Methods{
 	
 	public void invoiceCommissionCalculate(String requestData){
 		post(getUrl()+ "commission_calculation/invoice", requestData);
+	}
+	
+	public void deleteInvoiceCommission(String requestData, AsyncCallback<JSON<JsCommission>> callback) {
+		post(getUrl() + "commission/" + getDomainName() + "/" + getUserName() + "/delete/invoice", requestData, callback);
+	}
+	
+	public void deleteOfferCommission(String requestData, AsyncCallback<JSON<JsCommission>> callback) {
+		post(getUrl() + "commission/" + getDomainName() + "/" + getUserName() + "/delete/offer", requestData, callback);
 	}
 	
 }

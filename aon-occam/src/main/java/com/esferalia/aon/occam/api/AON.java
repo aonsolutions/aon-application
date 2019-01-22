@@ -1242,6 +1242,28 @@ public class AON {
 		}
 	}
 	
+	public static Invoice insertInvoice(String domainName, Integer domainId, String login, Invoice invoice){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getFinance().insertInvoice(ctx, invoice);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static InvoiceDetail insertInvoiceDetail(String domainName, Integer domainId, String login, InvoiceDetail invoiceDetail){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getFinance().insertInvoiceDetail(ctx, invoiceDetail);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static Stream<Invoice> getSiiInvoiceStream(String domainName, Integer domainId, String login, InvoiceFilter filter
 			, Boolean pending,  Boolean aceptada, Boolean aceptadaErrores, Boolean incorrecta, Boolean anulada, String sii){
 		AONContext ctx = null;
@@ -1428,6 +1450,18 @@ public class AON {
 		} finally {
 			if (ctx != null)
 				ctx.close();
+		}
+	}
+	
+	public static Finance insertFinance(String domainName, Integer domainId, String login, Finance finance) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getFinance().insertFinance(ctx, finance);
+		} finally {
+			if(ctx != null) {
+				ctx.close();
+			}
 		}
 	}
 	
@@ -3197,6 +3231,16 @@ public class AON {
 		return getSupplier(domainName, domainId, login, f -> f.getIdProperty().eq(id));
 	}
 	
+	public static Supplier insertSupplier(String domainName, Integer domainId, String login, Supplier supplier) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().insertSupplier(ctx, supplier);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 	
 	// ------------------ TARGET 
 	
@@ -5189,6 +5233,16 @@ public class AON {
 		}
 	}
 	
+	public static void deleteOfferDetailCommission(String domainName, Integer domainId, String login, Integer id) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getCommission().deleteOfferDetailCommission(ctx, id);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 	
 	/*
 	 * 		INVOICE DETAIL COMMISSION
@@ -5231,6 +5285,16 @@ public class AON {
 		}
 	}
 	
+	public static void deleteInvoiceDetailCommission(String domainName, Integer domainId, String login, Integer id) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getCommission().deleteInvoiceDetailCommission(ctx, id);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 	
 	/*
 	 * 		MAIL TEMPLATE

@@ -76,6 +76,11 @@ public class CommissionImpl implements ICommission {
 		return ctx.getDslContext().transactionResult(configuration -> CommissionDAO.updateOfferDetailCommission(ctx, odc));
 	}
 	
+	@Override
+	public void deleteOfferDetailCommission(AONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(configuration -> CommissionDAO.deleteOfferDetailCommission(ctx, id));
+	}
+	
 
 	/*
 	 *		INVOICE DETAIL COMMISSION
@@ -95,5 +100,10 @@ public class CommissionImpl implements ICommission {
 	@Override
 	public InvoiceDetailCommission updateInvoiceDetailCommission(AONContext ctx, InvoiceDetailCommission idc) {
 		return ctx.getDslContext().transactionResult(configuration -> CommissionDAO.updateInvoiceDetailCommission(ctx, idc));
+	}
+	
+	@Override
+	public void deleteInvoiceDetailCommission(AONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(configuration -> CommissionDAO.deleteInvoiceDetailCommission(ctx, id));
 	}
 }

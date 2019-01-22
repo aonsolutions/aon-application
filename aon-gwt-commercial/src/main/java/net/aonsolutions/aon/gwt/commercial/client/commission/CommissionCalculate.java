@@ -1,5 +1,8 @@
 package net.aonsolutions.aon.gwt.commercial.client.commission;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonTemplate2;
@@ -76,7 +79,9 @@ public class CommissionCalculate extends AonTemplate2{
 				} else if(isInvoice()) {
 					getAPI().getCommission().invoiceCommissionCalculate(requestData);
 				}
-				content(new CommissionCalculatePrincipal(me));				
+				HashMap<String, LinkedList<String>> filterMap = new HashMap<String, LinkedList<String>>();
+				
+				content(new CommissionCalculatePrincipal(me, filterMap));				
 			}
 		});
 

@@ -257,6 +257,12 @@ public class RegistryImpl implements IRegistry{
 		return ctx.getDslContext().transactionResult(
 				configuration -> RegistryDAO.getSupplierStream(ctx, filter));
 	}
+	
+	@Override
+	public Supplier insertSupplier(AONContext ctx, Supplier supplier) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.insertSupplier(ctx, supplier));
+	}
 
 	// -------------------- TARGET
 
@@ -325,6 +331,5 @@ public class RegistryImpl implements IRegistry{
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryDAO.deleteRPayMethod(ctx, filter));
 	}
-
 
 }

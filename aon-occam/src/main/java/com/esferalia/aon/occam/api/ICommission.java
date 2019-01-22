@@ -28,8 +28,12 @@ public interface ICommission {
 	public Stream<OfferDetailCommission> getOfferDetailCommissionStream(AONContext ctx, OfferDetailCommissionFilter filter);
 	public OfferDetailCommission insertOfferDetailCommission(AONContext ctx, OfferDetailCommission odc);
 	public OfferDetailCommission updateOfferDetailCommission(AONContext ctx, OfferDetailCommission odc);	
+	public void deleteOfferDetailCommission(AONContext ctx, Integer id);	
+	
 	
  	public Stream<InvoiceDetailCommission> getInvoiceDetailCommissionStream(AONContext ctx, InvoiceDetailCommissionFilter filter);
 	public InvoiceDetailCommission insertInvoiceDetailCommission(AONContext ctx, InvoiceDetailCommission idc);
 	public InvoiceDetailCommission updateInvoiceDetailCommission(AONContext ctx, InvoiceDetailCommission idc);	
+	public void deleteInvoiceDetailCommission(AONContext ctx, Integer id);	
+	
 }

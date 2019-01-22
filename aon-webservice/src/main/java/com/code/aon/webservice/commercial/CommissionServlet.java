@@ -86,6 +86,12 @@ public class CommissionServlet extends HttpServlet{
 		case "calculated/invoice":
 			object = updateInvoiceCalculatedCommission(domain, userName, json);
 			break;
+		case "delete/offer":
+			object = deleteOfferCalculatedCommission(domain, userName, json);
+			break;
+		case "delete/invoice":
+			object = deleteInvoiceCalculatedCommission(domain, userName, json);
+			break;
 		default:
 			break;
 		}
@@ -95,6 +101,18 @@ public class CommissionServlet extends HttpServlet{
 		os.println(object.toString());
 		os.flush();
 		os.close();
+	}
+	
+	public Object deleteOfferCalculatedCommission(Domain domain, String userName, JSONObject json) {
+		Integer id = json.getInt("id");
+		AON.deleteOfferDetailCommission(domain.getName(), domain.getId(), userName, id);
+		return new JSONObject();
+	}
+	
+	public Object deleteInvoiceCalculatedCommission(Domain domain, String userName, JSONObject json) {
+		Integer id = json.getInt("id");
+		AON.deleteInvoiceDetailCommission(domain.getName(), domain.getId(), userName, id);
+		return new JSONObject();
 	}
 	
 	private Object getOfferCalculatedCommission(Domain domain, String userName,  Map<String,String[]> filterMap){

@@ -185,4 +185,23 @@ public class FinanceImpl implements IFinance {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> FinanceDAO.getPayMethod(ctx, name));
 	}
+
+	@Override
+	public Invoice insertInvoice(AONContext ctx, Invoice invoice) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			InvoiceDAO.insert(ctx, invoice));		
+	}
+
+	@Override
+	public InvoiceDetail insertInvoiceDetail(AONContext ctx, InvoiceDetail invoiceDetail) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+		InvoiceDAO.insertInvoiceDetail(ctx, invoiceDetail));		
+	}
+
+	@Override
+	public Finance insertFinance(AONContext ctx, Finance finance) {
+			
+		return ctx.getDslContext().transactionResult(configuration -> 
+		FinanceDAO.insertFinance(ctx, finance));
+	}
 }

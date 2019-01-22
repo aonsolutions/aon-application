@@ -20,11 +20,14 @@ import com.google.gwt.cell.client.SelectionCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.cell.client.TextInputCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -410,6 +413,66 @@ public class CommissionCalculateGrid extends ResizeComposite implements Requires
 	      }
 	    });
 		dataGrid.setColumnWidth(statusColumn, 25, Unit.PCT);
+		
+		/** Delete Column **/
+		List<HasCell<JsCommission, ?>> cellsDelete = new LinkedList<HasCell<JsCommission, ?>>();
+	    
+		cellsDelete.add(new ActionHasCell("delete", new Delegate<JsCommission>() {
+	    	
+	        @Override
+	        public void execute(JsCommission object) {
+	        	deleteCommision(object);
+	        }
+	    }));
+		
+		CompositeCell<JsCommission> cellDelete = new CompositeCell<JsCommission>(cellsDelete);
+		
+		Column<JsCommission,JsCommission> deleteColumn = 	new Column<JsCommission, JsCommission>(cellDelete){
+
+			@Override
+			public JsCommission getValue(JsCommission object) {
+				return object;
+			}
+		};		
+		deleteColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+		dataGrid.addColumn(deleteColumn, "");
+		dataGrid.setColumnWidth(deleteColumn, 10, Unit.PCT);
+	}
+	
+	private void deleteCommision(JsCommission commission){
+		
+		AonDialog dialog = new AonDialog("Informaci\u00f3n Factura", new Label("Est\u00e1s seguro de eliminar la comisi\u00f3n seleccionada.")) {
+					
+			@Override 
+			protected void onCancel() {
+				hide();
+			}
+				
+			@Override 
+			protected void onAccept() {
+				JSONObject json = new JSONObject();
+				json.put("id", new JSONString(commission.getId() + ""));
+				parent.getAPI().getCommission().deleteInvoiceCommission(JsonUtils.stringify(json.getJavaScriptObject()), new AsyncCallback<JSON<JsCommission>>() {
+					
+					@Override
+					public void onSuccess(JSON<JsCommission> result) {
+						parent.gridContent();
+						hide();
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						hide();
+					}
+				});
+			}
+		};
+
+		dialog.getAccept().setVisible(true);
+		dialog.getCancel().setVisible(false);
+		dialog.setAutoHideEnabled(true);
+		dialog.getElement().getStyle().setWidth(310, Unit.PX);
+		dialog.center();
 	}
 	
 	private class ActionHasCell implements HasCell<JsCommission, JsCommission> {
@@ -423,10 +486,14 @@ public class CommissionCalculateGrid extends ResizeComposite implements Requires
 	        	@Override
 	        	public void render(com.google.gwt.cell.client.Cell.Context context,
 	        			JsCommission value, SafeHtmlBuilder sb) {
-	        
-	        		String v = value.getDescription();
-	        		sb.appendHtmlConstant(v + "<button type=\"button\" class=\"aon-editDataTable-button aon-icon-info\" tabindex=\"-1\" style=\"margin-left: 5px;position: absolute;\">");
-	        		sb.appendHtmlConstant("</button>");        		
+	        		if("info".equals(text)) {
+	        			String v = value.getDescription();
+	        			sb.appendHtmlConstant(v + "<button type=\"button\" class=\"aon-editDataTable-button aon-icon-info\" tabindex=\"-1\" style=\"margin-left: 5px;position: absolute;\">");
+	        			sb.appendHtmlConstant("</button>");        		
+	        		} else if("delete".equals(text)) {
+	        			sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-delete\" tabindex=\"-1\">");
+						sb.appendHtmlConstant("</button>");
+	        		}
 	        	}
 	        };
 	        

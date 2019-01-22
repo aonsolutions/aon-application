@@ -90,6 +90,7 @@ public interface IRegistry {
 	
 	// ------------------- SUPPLIER
 	public Stream<Supplier> getSupplierStream(AONContext ctx, SupplierFilter filter);
+	public Supplier insertSupplier(AONContext ctx, Supplier supplier);
 
 	// ------------------- TARGET
 	public Stream<Target> getTargetStream(AONContext ctx, TargetFilter filter);

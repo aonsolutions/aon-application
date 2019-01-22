@@ -91,6 +91,12 @@ public class FinanceDAO {
 				.stream()
 				.map(new FullFinanceFiller());
 	}
+	
+	public static Finance insertFinance(AONContext ctx, Finance finance) {
+		Integer id = insert(ctx, finance);
+		return finance.setId(id);
+	}
+	
 	public static Stream<Finance> getSiiFinanceStream(AONContext ctx, FinanceFilter filter){
 		ctx.checkRead();
 		return ctx.getDslContext()

@@ -29,12 +29,15 @@ public interface IFinance {
 	// 	****************************************
 	
 	Stream<Finance> getFinanceStream(AONContext ctx, FinanceFilter filter);
+	Finance insertFinance(AONContext ctx, Finance finance);
 	Stream<Finance> getSiiFinanceStream(AONContext ctx, FinanceFilter filter);
 	
 	// 	****************************************
 	// 	**************************** INVOICE ***
 	// 	****************************************
 	Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilter filter);
+	Invoice insertInvoice(AONContext ctx, Invoice invoice);
+	InvoiceDetail insertInvoiceDetail(AONContext ctx, InvoiceDetail invoiceDetail);
 	Stream<Invoice> getSiiInvoiceStream(AONContext ctx, InvoiceFilter filter, Boolean pending,  Boolean aceptada, Boolean aceptadaErrores, Boolean incorrecta, Boolean anulada, String sii);
 	Stream<InvoiceDetail> getInvoiceMovements(AONContext ctx, InvoiceFilter filter, ProductFilter pFilter,
 			ItemFilter iFilter);
