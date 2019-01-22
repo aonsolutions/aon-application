@@ -2,6 +2,8 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Date;
 
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.google.gwt.core.client.GWT;
@@ -12,6 +14,8 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Grid;
@@ -21,13 +25,11 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class AgrarianAFIDialog extends CustomDialog {
+public class AgrarianAFI extends MainEntryPoint {
 	
-	interface Callback {
-		void onAccept(AgrarianAFIDialog dialog);
-	}
+	final AgrarianAFIServiceAsync impl = GWT.create(AgrarianAFIService.class);
 	
-	interface Binder extends UiBinder<Widget, AgrarianAFIDialog> {
+	interface Binder extends UiBinder<Widget, AgrarianAFI> {
 	}
 	
 	private static final Binder binder = GWT.create(Binder.class);
@@ -42,6 +44,8 @@ public class AgrarianAFIDialog extends CustomDialog {
 		String widthDays();
 		String widthName();
 		String textCenter();
+		String widthFirstColumn();
+		String paddingText();
 	}
 	
 	@UiField
@@ -49,6 +53,9 @@ public class AgrarianAFIDialog extends CustomDialog {
 	
 	@UiField
 	Label enterprise;
+	
+	@UiField
+	ListBox cccs;
 	
 	@UiField
 	ListBox monthList;
@@ -65,15 +72,18 @@ public class AgrarianAFIDialog extends CustomDialog {
 	@UiField
 	Grid employeeTable;
 	
-	private Callback cb;
+	@Override
+	public void onModuleLoad() {
+		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
+		AON.ensureInjected();
 	
-	public AgrarianAFIDialog() {
-		setCaption("JORNADAS REALES AGRARIAS");
-		setWidget(binder.createAndBindUi(this));
+		Widget ui = binder.createAndBindUi(this);
+		RootLayoutPanel.get("rootPanel").add(ui);
 		
 		//Enterprise Name
 		enterprise.setText("REGIMEN GENERAL");
 		enterprise.addStyleName(style.bold());
+		enterprise.addStyleName(style.paddingText());
 		
 		//Add Months
 		monthList.addItem("Enero");
@@ -103,6 +113,22 @@ public class AgrarianAFIDialog extends CustomDialog {
 		
 		//Hide EmployeePanel
 		employeePanel.addStyleName(style.hide());
+		
+//		Window.alert("IMPL : " + impl);
+		
+		impl.getDomainName(new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String result) {
+//				Window.alert("DOMAIN NAME : " + result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+//				Window.alert("NO DOMAIN NAME");
+			}
+		});
+				
 	}
 
 	private HorizontalPanel createMonthPanel() {
@@ -155,16 +181,6 @@ public class AgrarianAFIDialog extends CustomDialog {
 		}
 		return hPanel;
 	}
-
-	public void show(Callback cb) {
-		this.cb = cb;
-		super.show();
-	}
-	
-	public void setPopupPositionAndShow(PositionCallback positionCallback, Callback callback) {
-		this.cb = callback;
-		super.setPopupPositionAndShow(positionCallback);
-	}
 	
 	public void setAgrarianAFIDialogObject() {
 
@@ -193,6 +209,7 @@ public class AgrarianAFIDialog extends CustomDialog {
 		Label employeeLabel = new Label("Empleado");
 		employeeLabel.addStyleName(style.bold());
 		employeeTable.setWidget(newRow, 1, employeeLabel);
+		employeeTable.getWidget(newRow, 1).addStyleName(style.widthFirstColumn());
 		HorizontalPanel month = createMonthPanel();
 		employeeTable.setWidget(newRow, 2, month);
 		
@@ -215,19 +232,8 @@ public class AgrarianAFIDialog extends CustomDialog {
 		employeeTable.setWidget(newRow3, 1, employeeName2);
 		HorizontalPanel agrarianMonth2 = createAgrarianMonthPanel2();
 		employeeTable.setWidget(newRow3, 2, agrarianMonth2);
-		
-		this.center();
 	}
 	
-	@UiHandler("cancelButton")
-	void onCancelButtonClick(ClickEvent clickEvent) {
-		hide();
-	}
-	
-	@UiHandler("acceptButton")
-	void onAcceptButtonClick(ClickEvent clickEvent) {
-		
-	}
 	
 	// ------------------------------------------------------------------------
 	//

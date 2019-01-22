@@ -111,7 +111,9 @@ public class MainEntryPoint implements EntryPoint {
 			mainCreta.onModuleLoad();
 		} else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_AFI_ENTRY_POINT)) {
-			Window.alert(Constants.MAIN_AFI_ENTRY_POINT);
+			AgrarianAFI agrarianAFI = new AgrarianAFI();
+			agrarianAFI.onModuleLoad();
+//			Window.alert(Constants.MAIN_AFI_ENTRY_POINT);
 		} else if (entryPoint
 				.equalsIgnoreCase(Constants.ACTIVITY_SUMMARY_ENTRY_POINT)) {
 			ActivitySummary activitySummary = new ActivitySummary();
