@@ -19,8 +19,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.json.JSONObject;
@@ -210,14 +212,14 @@ public class printResumeExpedient extends HttpServlet {
 		
 		HSSFFont font = libro.createFont();
 		font.setFontHeightInPoints((short)10);
-		font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+		font.setBold(true);
 		
 		style.setFont(font);
-		style.setAlignment(CellStyle.ALIGN_CENTER);
-		style.setBorderBottom(CellStyle.BORDER_MEDIUM);
-		style.setBorderLeft(CellStyle.BORDER_THIN);
-		style.setBorderRight(CellStyle.BORDER_THIN);
-		style.setBorderTop(CellStyle.BORDER_THIN);
+		style.setAlignment(HorizontalAlignment.CENTER);
+		style.setBorderBottom(BorderStyle.MEDIUM);
+		style.setBorderLeft(BorderStyle.THIN);
+		style.setBorderRight(BorderStyle.THIN);
+		style.setBorderTop(BorderStyle.THIN);
 		style.setBottomBorderColor(IndexedColors.DARK_GREEN.getIndex());
 		style.setLeftBorderColor(IndexedColors.DARK_GREEN.getIndex());
 		style.setRightBorderColor(IndexedColors.DARK_GREEN.getIndex());
@@ -232,11 +234,11 @@ public class printResumeExpedient extends HttpServlet {
      	HSSFFont font2 = libro.createFont();
      	font2.setFontHeightInPoints((short)12);
 		style3.setFont(font2);
-		style3.setAlignment(CellStyle.ALIGN_LEFT);
-		style3.setBorderBottom(CellStyle.BORDER_THIN);
-		style3.setBorderRight(CellStyle.BORDER_THIN);
-		style3.setBorderLeft(CellStyle.BORDER_THIN);
-		style3.setBorderTop(CellStyle.BORDER_THIN);	
+		style3.setAlignment(HorizontalAlignment.LEFT);
+		style3.setBorderBottom(BorderStyle.THIN);
+		style3.setBorderRight(BorderStyle.THIN);
+		style3.setBorderLeft(BorderStyle.THIN);
+		style3.setBorderTop(BorderStyle.THIN);	
 		return style3;
 	}
 }

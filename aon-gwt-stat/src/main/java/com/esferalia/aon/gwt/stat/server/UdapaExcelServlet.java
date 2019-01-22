@@ -13,13 +13,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellUtil;
@@ -154,95 +158,95 @@ public class UdapaExcelServlet extends HttpServlet {
 		    
 		    boldFont= workbook.createFont();
 			boldFont.setFontHeightInPoints((short) 9);
-			boldFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+			boldFont.setBold(true);
 
 			Font headerFont= workbook.createFont();
-			headerFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+			headerFont.setBold(true);
 			headerFont.setColor( IndexedColors.WHITE.index );
 
 			headerCellStyle = (XSSFCellStyle) workbook.createCellStyle();
-			headerCellStyle.setAlignment( HSSFCellStyle.ALIGN_CENTER );
-			headerCellStyle.setVerticalAlignment( HSSFCellStyle.VERTICAL_CENTER);
-		    headerCellStyle.setBorderBottom(HSSFCellStyle.BORDER_MEDIUM);
-		    headerCellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+			headerCellStyle.setAlignment( HorizontalAlignment.CENTER );
+			headerCellStyle.setVerticalAlignment( VerticalAlignment.CENTER);
+		    headerCellStyle.setBorderBottom(BorderStyle.MEDIUM);
+		    headerCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 		    headerCellStyle.setFillForegroundColor(AON_BLUE);
 		    headerCellStyle.setFont(headerFont);
 
 		    firstColStyle = workbook.createCellStyle();
-		    firstColStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
-		    firstColStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
-		    firstColStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
-		    firstColStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+		    firstColStyle.setBorderTop(BorderStyle.THIN);
+		    firstColStyle.setBorderLeft(BorderStyle.THIN);
+		    firstColStyle.setBorderRight(BorderStyle.THIN);
+		    firstColStyle.setBorderBottom(BorderStyle.THIN);
 		    firstColStyle.setFont(boldFont);
 		    
 		    currentDecimalStyle = workbook.createCellStyle();
 		    currentDecimalStyle.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
-		    currentDecimalStyle.setAlignment( HSSFCellStyle.ALIGN_RIGHT );
-		    currentDecimalStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
-		    currentDecimalStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
-		    currentDecimalStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
-		    currentDecimalStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-		    currentDecimalStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+		    currentDecimalStyle.setAlignment( HorizontalAlignment.RIGHT );
+		    currentDecimalStyle.setBorderTop(BorderStyle.THIN);
+		    currentDecimalStyle.setBorderLeft(BorderStyle.THIN);
+		    currentDecimalStyle.setBorderRight(BorderStyle.THIN);
+		    currentDecimalStyle.setBorderBottom(BorderStyle.THIN);
+		    currentDecimalStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 		    currentDecimalStyle.setFillForegroundColor(currentColor);
 		    
 		    previousYearDecimalStyle = workbook.createCellStyle();
 		    previousYearDecimalStyle.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
-		    previousYearDecimalStyle.setAlignment( HSSFCellStyle.ALIGN_RIGHT );
-		    previousYearDecimalStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
-		    previousYearDecimalStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
-		    previousYearDecimalStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
-		    previousYearDecimalStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-		    previousYearDecimalStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+		    previousYearDecimalStyle.setAlignment( HorizontalAlignment.RIGHT );
+		    previousYearDecimalStyle.setBorderTop(BorderStyle.THIN);
+		    previousYearDecimalStyle.setBorderLeft(BorderStyle.THIN);
+		    previousYearDecimalStyle.setBorderRight(BorderStyle.THIN);
+		    previousYearDecimalStyle.setBorderBottom(BorderStyle.THIN);
+		    previousYearDecimalStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 		    previousYearDecimalStyle.setFillForegroundColor(previousYearColor);
 		    
 		    previousMonthDecimalStyle = workbook.createCellStyle();
 		    previousMonthDecimalStyle.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
-		    previousMonthDecimalStyle.setAlignment( HSSFCellStyle.ALIGN_RIGHT );
-		    previousMonthDecimalStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
-		    previousMonthDecimalStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
-		    previousMonthDecimalStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
-		    previousMonthDecimalStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-		    previousMonthDecimalStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+		    previousMonthDecimalStyle.setAlignment( HorizontalAlignment.RIGHT );
+		    previousMonthDecimalStyle.setBorderTop(BorderStyle.THIN);
+		    previousMonthDecimalStyle.setBorderLeft(BorderStyle.THIN);
+		    previousMonthDecimalStyle.setBorderRight(BorderStyle.THIN);
+		    previousMonthDecimalStyle.setBorderBottom(BorderStyle.THIN);
+		    previousMonthDecimalStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 		    previousMonthDecimalStyle.setFillForegroundColor(previousMonthColor);
 
 		    currentPercentStyle = workbook.createCellStyle();
 		    currentPercentStyle.setDataFormat(dataFormat.getFormat(PERCENT_PATTERN));
-		    currentPercentStyle.setAlignment( HSSFCellStyle.ALIGN_RIGHT );
-		    currentPercentStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
-		    currentPercentStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
-		    currentPercentStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
-		    currentPercentStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-		    currentPercentStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+		    currentPercentStyle.setAlignment( HorizontalAlignment.RIGHT );
+		    currentPercentStyle.setBorderTop(BorderStyle.THIN);
+		    currentPercentStyle.setBorderLeft(BorderStyle.THIN);
+		    currentPercentStyle.setBorderRight(BorderStyle.THIN);
+		    currentPercentStyle.setBorderBottom(BorderStyle.THIN);
+		    currentPercentStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 		    currentPercentStyle.setFillForegroundColor(currentColor);
 
 		    previousYearPercentStyle = workbook.createCellStyle();
 		    previousYearPercentStyle.setDataFormat(dataFormat.getFormat(PERCENT_PATTERN));
-		    previousYearPercentStyle.setAlignment( HSSFCellStyle.ALIGN_RIGHT );
-		    previousYearPercentStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
-		    previousYearPercentStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
-		    previousYearPercentStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
-		    previousYearPercentStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-		    previousYearPercentStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+		    previousYearPercentStyle.setAlignment( HorizontalAlignment.RIGHT );
+		    previousYearPercentStyle.setBorderTop(BorderStyle.THIN);
+		    previousYearPercentStyle.setBorderLeft(BorderStyle.THIN);
+		    previousYearPercentStyle.setBorderRight(BorderStyle.THIN);
+		    previousYearPercentStyle.setBorderBottom(BorderStyle.THIN);
+		    previousYearPercentStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 		    previousYearPercentStyle.setFillForegroundColor(previousYearColor);
 
 		    previousMonthPercentStyle = workbook.createCellStyle();
 		    previousMonthPercentStyle.setDataFormat(dataFormat.getFormat(PERCENT_PATTERN));
-		    previousMonthPercentStyle.setAlignment( HSSFCellStyle.ALIGN_RIGHT );
-		    previousMonthPercentStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
-		    previousMonthPercentStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
-		    previousMonthPercentStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
-		    previousMonthPercentStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-		    previousMonthPercentStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+		    previousMonthPercentStyle.setAlignment( HorizontalAlignment.RIGHT );
+		    previousMonthPercentStyle.setBorderTop(BorderStyle.THIN);
+		    previousMonthPercentStyle.setBorderLeft(BorderStyle.THIN);
+		    previousMonthPercentStyle.setBorderRight(BorderStyle.THIN);
+		    previousMonthPercentStyle.setBorderBottom(BorderStyle.THIN);
+		    previousMonthPercentStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 		    previousMonthPercentStyle.setFillForegroundColor(previousMonthColor);
 
 		    totalCellStyle = (XSSFCellStyle) workbook.createCellStyle();
 			totalCellStyle.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
-		    totalCellStyle.setAlignment( HSSFCellStyle.ALIGN_RIGHT );
+		    totalCellStyle.setAlignment( HorizontalAlignment.RIGHT );
 			totalCellStyle.setFont(boldFont);
-			totalCellStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
-			totalCellStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
-			totalCellStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
-			totalCellStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+			totalCellStyle.setBorderTop(BorderStyle.THIN);
+			totalCellStyle.setBorderLeft(BorderStyle.THIN);
+			totalCellStyle.setBorderRight(BorderStyle.THIN);
+			totalCellStyle.setBorderBottom(BorderStyle.THIN);
 			
 
 			Row titleRow = sheet.createRow(0);
@@ -299,7 +303,7 @@ public class UdapaExcelServlet extends HttpServlet {
 			for ( int colIdx : colIdxs) {
 				Cell cell = totalRow.createCell(colIdx);
 				cell.setCellStyle(totalCellStyle);
-				cell.setCellType(Cell.CELL_TYPE_FORMULA);
+				cell.setCellType(CellType.FORMULA);
 				CellReference ref = new CellReference(cell);
 				String[] parts = ref.getCellRefParts(); // Returns the three parts of the cell reference, the Sheet
 															// name (or null if none supplied),
@@ -326,7 +330,7 @@ public class UdapaExcelServlet extends HttpServlet {
 					} else {
 						percentCell.setCellStyle(currentPercentStyle);
 					}
-					percentCell.setCellType(Cell.CELL_TYPE_FORMULA);
+					percentCell.setCellType(CellType.FORMULA);
 					String percentFormula = colId + (i + 1) + "/" + totalRef;
 					percentCell.setCellFormula(percentFormula);
 					CellValue percentValue = evaluator.evaluate(percentCell);
@@ -349,7 +353,7 @@ public class UdapaExcelServlet extends HttpServlet {
 				
 				Cell percentCell = curRow.createCell(7);
 				percentCell.setCellStyle(previousMonthPercentStyle);
-				percentCell.setCellType(Cell.CELL_TYPE_FORMULA);
+				percentCell.setCellType(CellType.FORMULA);
 				System.out.println(MessageFormat.format(formula, currentMonthId, lastMonthId));
 				percentCell.setCellFormula(MessageFormat.format(formula, currentMonthId, lastMonthId));
 				CellValue percentValue = evaluator.evaluate(percentCell);
@@ -357,7 +361,7 @@ public class UdapaExcelServlet extends HttpServlet {
 				
 				percentCell = curRow.createCell(8);
 				percentCell.setCellStyle(previousYearPercentStyle);
-				percentCell.setCellType(Cell.CELL_TYPE_FORMULA);
+				percentCell.setCellType(CellType.FORMULA);
 				System.out.println(MessageFormat.format(formula, currentMonthId, previousYearMonthId));
 				percentCell.setCellFormula(MessageFormat.format(formula, currentMonthId, previousYearMonthId));
 				percentValue = evaluator.evaluate(percentCell);
@@ -365,7 +369,7 @@ public class UdapaExcelServlet extends HttpServlet {
 				
 				percentCell = curRow.createCell(13);
 				percentCell.setCellStyle(currentPercentStyle);
-				percentCell.setCellType(Cell.CELL_TYPE_FORMULA);
+				percentCell.setCellType(CellType.FORMULA);
 				System.out.println(MessageFormat.format(formula2, currentYearId, previousYearId,currentMonth));
 				percentCell.setCellFormula(MessageFormat.format(formula2, currentYearId, previousYearId,currentMonth));
 				percentValue = evaluator.evaluate(percentCell);
@@ -401,7 +405,7 @@ public class UdapaExcelServlet extends HttpServlet {
 			Cell cell = row.createCell(colIdx);
 			cell.setCellStyle(style);
 			cell.setCellValue(number!=null?number:0.0);
-			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+			cell.setCellType(CellType.NUMERIC);
 			return cell;
 		}
 	}

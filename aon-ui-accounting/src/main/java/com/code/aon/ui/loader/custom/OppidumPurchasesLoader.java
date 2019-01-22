@@ -27,6 +27,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -58,16 +59,16 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactory {
-	
+
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(OppidumPurchasesLoader.class.getName());
-	
+
 	private boolean skipLoad;
-	
+
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	private SimpleDateFormat excelFormat = new SimpleDateFormat("dd/MM/yyyy");
-	
+
 	private Workbook workbook;
 	private int rowOffset;
 	private final Pattern invoiceNumberPattern = Pattern.compile("(\\d{1})\\.(\\d+)E\\.{0,1}(\\d{1,2})");
@@ -76,7 +77,7 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 	private Map<String, String> supplierAccount;
 	private Map<String, String> supplierNames;
 	private Map<String, String> supplierPaymethods;
-	
+
 	private final String SUPPLIER_DOCUMENT = "CIFEmisora";
 	private final String CONSUMER_NAME = "Nombre";
 	private final String SUPPLIER_CODE = "CodigoEmisora";
@@ -86,13 +87,13 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 	private final String INVOICE_VAT_BASE = "BaseImpIVA";
 	private final String INVOICE_VAT_AMOUNT = "ImporteIVA";
 	private final String INVOICE_TOTAL = "ImporteTotalFact";
-	
+
 	private final String INVOICE_BASE_ENERG_ACT = "ImporteTotalEnergAct";
 	private final String INVOICE_BASE_ENERG_REACT = "ImporteTotalEnergReact";
 	private final String INVOICE_BASE_TERM_POT = "ImporteTotalTermPot";
 	private final String INVOICE_BASE_EXCESOS = "ImporteTotalExcesos";
 	private final String INVOICE_BASE_ALQUILERES = "ImporteAlquileres";
-	
+
 	private final String[] SUPPORTED_COLUMNS = {
 			SUPPLIER_DOCUMENT,
 			CONSUMER_NAME,
@@ -103,14 +104,14 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 			INVOICE_VAT_BASE,
 			INVOICE_VAT_AMOUNT,
 			INVOICE_TOTAL,
-			
+
 			INVOICE_BASE_ENERG_ACT,
 			INVOICE_BASE_ENERG_REACT,
 			INVOICE_BASE_TERM_POT,
 			INVOICE_BASE_EXCESOS,
 			INVOICE_BASE_ALQUILERES
 	};
-	
+
 	@Override
 	public void load(InputStream file){
 		LogPanelController logPanel = LogPanelController.getInstance();
@@ -118,17 +119,17 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 		logPanel.info("Fichero de COMPRAS detectado.");
 		try {
 	    	Sheet sheet = workbook.getSheetAt(0);
-	        
+
 	        Iterator<Row> rowIterator = sheet.iterator();
 	        Row row = null;
-	        
+
 	        for(int i=0; i<rowOffset || i==0; i++){
 	        	row = rowIterator.next();
 	        }
-	        
+
 	        File defaultImportFile = File.createTempFile("oppidum-purchase-data", ".tmp");
 	        PrintWriter writer = new PrintWriter(defaultImportFile);
-	        
+
 	        writer.print("1;FRACTB|");
 	        writer.print("id|");
 	        writer.print("referencia|");
@@ -139,7 +140,7 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 	        writer.print("razonSocial|");
 	        writer.print("fechaFactura|");
 	        writer.print("tipo|");
-	        
+
 	        // 1
 	        writer.print("baseImponible1|");
 	        writer.print("iva1|");
@@ -155,34 +156,34 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 	        writer.print("iva3|");
 	        writer.print("cuotaIVA3|");
 	        writer.print("cuentaExplotacion3|");
-	        
+
 	        writer.print("totalFactura|");
 	        writer.print("formaPago");
 	        writer.println();
-	        
+
 	        String defaultPaymethod = getDefaultPaymethod();
 	        supplierAccount = new HashMap<>();
 	        supplierNames = new HashMap<>();
 	        supplierPaymethods = new HashMap<>();
 	    	skipLoad = false;
-	        
+
         	int lineCount=0;
         	while(rowIterator.hasNext()){
         		row = rowIterator.next();
-        		
+
         		String supplierDocument = getStringCellValue(row.getCell(headers.indexOf(SUPPLIER_DOCUMENT)));
         		if(supplierDocument!=null && StringUtils.length(supplierDocument)>9){
         			supplierDocument = supplierDocument.substring(0, 9);
         		}
         		String consumerName = getStringCellValue(row.getCell(headers.indexOf(CONSUMER_NAME)));
         		String supplierCode = getStringCellValue(row.getCell(headers.indexOf(SUPPLIER_CODE)));
-        		
+
         		String supplierName = supplierNames.get(supplierDocument);
         		if(supplierName==null || StringUtils.isBlank(supplierName)){
         			loadSupplierName(supplierDocument, consumerName);
         			supplierName = supplierNames.get(supplierDocument);
         		}
-        		
+
         		if(supplierNames.containsKey(supplierDocument)){
         			String account = supplierAccount.get(supplierDocument);
         			if(account==null || StringUtils.isBlank(account)){
@@ -191,26 +192,26 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
         				supplierAccount.put(supplierDocument, account);
         				logPanel.warn("El proveedor " + supplierName + " ("+supplierDocument+")" + " no tiene cuenta asignada. Se le asigna la cuenta " + account);
         			}
-        			
+
         			if(account!=null && StringUtils.isNotBlank(account)){
-        				
+
         				String invoiceNumber = getStringCellValue(row.getCell(headers.indexOf(INVOICE_DOCUMENT)));
         				Date invoiceDate = getDateCellValue(row.getCell(headers.indexOf(INVOICE_DATE)));
         				double vatPercent = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_VAT_PERCENT)));
         				double vatBase = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_VAT_BASE)));
         				double vatAmount = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_VAT_AMOUNT)));
         				double invoiceTotal = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_TOTAL)));
-        				
+
         				double baseTerminoPotencia = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_BASE_TERM_POT)));
         				double baseExcesos = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_BASE_EXCESOS)));
         				double baseAlquileres = getNumericCellValue(row.getCell(headers.indexOf(INVOICE_BASE_ALQUILERES)));
-        				
-        				vatBase -= (baseTerminoPotencia + baseExcesos 
+
+        				vatBase -= (baseTerminoPotencia + baseExcesos
         						+ baseAlquileres);
-        				vatAmount -= (CommonUtil.round((baseTerminoPotencia + baseExcesos) * vatPercent / 100) 
+        				vatAmount -= (CommonUtil.round((baseTerminoPotencia + baseExcesos) * vatPercent / 100)
         						+ CommonUtil.round(baseAlquileres * vatPercent / 100));
-        				
-        				
+
+
         				writer.print("FRACTB|");
         				writer.print(lineCount + "|");
         				writer.print(getFormatInvoiceNumber(invoiceNumber) + "|");
@@ -221,7 +222,7 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
         				writer.print(supplierName + "|");
         				writer.print(dateFormat.format(invoiceDate) + "|");
         				writer.print("0|");
-        				
+
         				// 1
         				writer.print(CommonUtil.round(vatBase) + "|");
         				writer.print(CommonUtil.round(vatPercent) + "|");
@@ -237,39 +238,39 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
         				writer.print(CommonUtil.round(vatPercent) + "|");
         				writer.print(CommonUtil.round(baseAlquileres * vatPercent / 100) + "|");
         				writer.print("600000003|");
-        				
+
         				writer.print(invoiceTotal + "|");
         				String supplierPaymethod = supplierPaymethods.get(supplierDocument);
         				writer.print(supplierPaymethod!=null?supplierPaymethod:defaultPaymethod);
         				writer.println();
-        				
+
         				lineCount++;
         			}
         		}
-        		
+
         	}
-        	
+
         	logPanel.info("Total facturas a procesar:" + lineCount);
-        	
+
         	writer.flush();
-        	
+
         	if(skipLoad){
         		logPanel.info("Se han detectado problemas en los valores del fichero.");
         		logPanel.info("Carga de datos abortada.");
         	} else {
         		AonLoaderController controller = (AonLoaderController) AonUtil.getRegisteredBean("aonLoader");
         		callAonLoader(IOUtils.toByteArray(new FileInputStream(defaultImportFile)), controller.getParams());
-        		
+
         		workbook.close();
         		file.close();
-        		
+
         		writer.close();
         		defaultImportFile.delete();
-        		
+
         		logPanel.info("El fichero se ha procesado completamente.");
         		logPanel.info("Carga de datos finalizada.");
         	}
-			
+
 		} catch (IOException e) {
 			String msg = "Error durante la carga de datos. ";
 			logPanel.error(msg  + e.getMessage());
@@ -277,10 +278,10 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 	    	String msg = "Error durante la carga de datos. ";
 	    	logPanel.error(msg  + e.getMessage());
 	    } finally {
-	    	
+
 	    }
 	}
-	
+
 	private String getDefaultPaymethod() throws ManagerBeanException{
 		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 		RegistryPayMethod rpm = ((Company)controller.getTo()).getPayMethod();
@@ -288,38 +289,38 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 			return rpm.getPayment().getName();
 		}
 		return "";
-		
+
 	}
-	
+
 	private String getStringCellValue(Cell cell) {
-		if(cell!=null && cell.getCellType()==Cell.CELL_TYPE_STRING){
+		if(cell!=null && cell.getCellTypeEnum()==CellType.STRING){
 			return cell.getStringCellValue();
-		} else if(cell!=null && cell.getCellType()==Cell.CELL_TYPE_NUMERIC){
+		} else if(cell!=null && cell.getCellTypeEnum()==CellType.NUMERIC){
 			return String.valueOf(cell.getNumericCellValue());
 		}
 		return "";
 	}
-	
+
 	private Double getNumericCellValue(Cell cell) {
-		if(cell!=null && cell.getCellType()==Cell.CELL_TYPE_STRING){
+		if(cell!=null && cell.getCellTypeEnum()==CellType.STRING){
 			if(NumberUtils.isNumber(cell.getStringCellValue())){
 				return Double.parseDouble(cell.getStringCellValue());
 			}
-		} else if(cell!=null && cell.getCellType()==Cell.CELL_TYPE_NUMERIC){
+		} else if(cell!=null && cell.getCellTypeEnum()==CellType.NUMERIC){
 			return cell.getNumericCellValue();
 		}
 		return 0.0;
 	}
-	
+
 	private Date getDateCellValue(Cell cell) {
-		if(cell!=null && cell.getCellType()==Cell.CELL_TYPE_STRING){
+		if(cell!=null && cell.getCellTypeEnum()==CellType.STRING){
 			try {
 				return excelFormat.parse(cell.getStringCellValue());
 			} catch (ParseException e) {
 				LOGGER.error(e.getMessage());
 				throw new AbortProcessingException(e.getMessage());
 			}
-		} else if(cell!=null && cell.getCellType()==Cell.CELL_TYPE_NUMERIC){
+		} else if(cell!=null && cell.getCellTypeEnum()==CellType.NUMERIC){
 			return cell.getDateCellValue();
 		}
 		return null;
@@ -330,11 +331,11 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 		try {
 			workbook = WorkbookFactory.create(new ByteArrayInputStream(data));
 			Sheet sheet = workbook.getSheetAt(0);
-			
+
 			Iterator<Row> rowIterator = sheet.iterator();
 			Row row = null;
 			headers = new ArrayList<>();
-			
+
 			rowOffset=0;
 			for(int i=0; i<5 && rowIterator.hasNext() && !headers.containsAll(Arrays.asList(SUPPORTED_COLUMNS)); i++){
 				row = rowIterator.next();
@@ -346,18 +347,19 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 					headers.add(StringUtils.isBlank(name)?"empty":name);
 				}
 			}
-			
+
 			return headers.containsAll(Arrays.asList(SUPPORTED_COLUMNS));
-			
+
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage());
-		} catch (InvalidFormatException e) {
+		}
+		catch (InvalidFormatException e) {
 			LOGGER.error(e.getMessage());
 		}
-        
+
 		return false;
 	}
-	
+
 	private void loadSupplierName(String supplierDocument, String name) throws ManagerBeanException {
 		supplierDocument = StringUtils.trim(supplierDocument);
 		name = StringUtils.trim(name);
@@ -375,15 +377,15 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 				if(supplier.getAccount()!=null && StringUtils.isNotBlank(supplier.getAccount().getCode())){
 					supplierAccount.put(supplierDocument, supplier.getAccount().getCode());
 				}
-				if(supplier.getRegistry().getPayMethod()!=null 
-						&& supplier.getRegistry().getPayMethod().getPayment()!=null 
+				if(supplier.getRegistry().getPayMethod()!=null
+						&& supplier.getRegistry().getPayMethod().getPayment()!=null
 						&& StringUtils.isNotBlank(supplier.getRegistry().getPayMethod().getPayment().getName())){
 					supplierPaymethods.put(supplierDocument, supplier.getRegistry().getPayMethod().getPayment().getName());
 				}
 			}
 		}
 	}
-	
+
 	private void loadSupplierAccount(String supplierDocument) throws ManagerBeanException {
 		supplierDocument = StringUtils.trim(supplierDocument);
 		if(supplierAccount==null){
@@ -398,7 +400,7 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 			}
 		}
 	}
-	
+
 	private Supplier obtainSupplier(String supplierDocument) throws ManagerBeanException {
 		if(StringUtils.isNotBlank(supplierDocument)){
 			LogPanelController logPanel = LogPanelController.getInstance();
@@ -415,7 +417,7 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 		}
 		return null;
 	}
-	
+
 	private String getFormatInvoiceNumber(String value) {
 		matcher = invoiceNumberPattern.matcher(value);
 		String match = null;
@@ -431,7 +433,7 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 		}
 		return match!=null?match:value;
 	}
-	
+
 	private void callAonLoader(byte[] data, LoaderParams params){
 		LogPanelController logger = LogPanelController.getInstance();
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
@@ -460,7 +462,7 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 				LOGGER.error("Unable to rollback transaction!", e);
 			}
 			LOGGER.error(msg, e);
-			logger.finish();			
+			logger.finish();
 		} finally {
 			HibernateUtil.closeSession(sessionName);
 			HibernateUtil.setCloseSession(mustCloseSession);
@@ -470,14 +472,14 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 			controller.setLoadPressed(false);
 		}
 	}
-	
-	
-	
-	
+
+
+
+
 
 	///////////////////////////////
 	///////////////////////////////
-	
+
 	public static void main(String[] args) {
     	try {
     		OppidumSalesLoader loader = new OppidumSalesLoader();
@@ -485,7 +487,7 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 			loader.load(file);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		}	    
+		}
 	}
-	
+
 }

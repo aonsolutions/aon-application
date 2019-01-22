@@ -16,9 +16,12 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFPrintSetup;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 
 import com.code.aon.webservice.common.MSG;
@@ -237,7 +240,7 @@ public class FeeProjectionDownload extends HttpServlet{
 	
 	private void createFormulaCell(Row row, CellStyle style, String value, Integer columnIndex){
 		Cell c = row.createCell(columnIndex);
-		c.setCellType(HSSFCell.CELL_TYPE_FORMULA);
+		c.setCellType(CellType.FORMULA);
 		c.setCellFormula(value);
 		c.setCellStyle(style);
 	}
@@ -257,10 +260,10 @@ public class FeeProjectionDownload extends HttpServlet{
 		 if(isPdf){
 			 font.setFontHeightInPoints((short)7);
 		 } else font.setFontHeightInPoints((short)9);
-		 font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+		 font.setBold(true);
 		 style.setFont(font);
-		 style.setAlignment(CellStyle.ALIGN_CENTER);
-		 style.setBorderBottom(CellStyle.BORDER_MEDIUM); 
+		 style.setAlignment(HorizontalAlignment.CENTER);
+		 style.setBorderBottom(BorderStyle.MEDIUM); 
 		 return style;
 	}
 	
@@ -271,8 +274,8 @@ public class FeeProjectionDownload extends HttpServlet{
         	font2.setFontHeightInPoints((short)7);
         } else font2.setFontHeightInPoints((short)9);
 		style3.setFont(font2);
-		style3.setAlignment(CellStyle.ALIGN_LEFT);
-		style3.setBorderBottom(CellStyle.BORDER_THIN);
+		style3.setAlignment(HorizontalAlignment.LEFT);
+		style3.setBorderBottom(BorderStyle.THIN);
 		return style3;
 	}
 	
@@ -283,8 +286,8 @@ public class FeeProjectionDownload extends HttpServlet{
         	font2.setFontHeightInPoints((short)7);
         } else font2.setFontHeightInPoints((short)9);
 		style3.setFont(font2);
-		style3.setAlignment(CellStyle.ALIGN_RIGHT);
-		style3.setBorderBottom(CellStyle.BORDER_THIN);
+		style3.setAlignment(HorizontalAlignment.RIGHT);
+		style3.setBorderBottom(BorderStyle.THIN);
 		return style3;
 	}
 }

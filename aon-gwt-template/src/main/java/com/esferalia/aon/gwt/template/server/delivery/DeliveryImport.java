@@ -14,6 +14,7 @@ import java.util.stream.StreamSupport;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 
 import com.esferalia.aon.gwt.template.jooq.DBProduct;
@@ -51,9 +52,9 @@ public class DeliveryImport {
 	public static DeliveryImport getInstance() {
 		return new DeliveryImport();
 	}
-	
+
 	public DeliveryImport() {
-	
+
 	}
 
 	Clientes cli = new Clientes();
@@ -64,7 +65,7 @@ public class DeliveryImport {
 		try {
 			ByteArrayInputStream bais = new ByteArrayInputStream(data);
 			HSSFWorkbook workbook = new HSSFWorkbook(bais);
-			
+
 			HSSFSheet customerSheet = workbook.getSheet("CLIENTES");
 			HSSFSheet deliverySheet = workbook.getSheet("ALBV");
 			HSSFSheet deliveryDetailSheet = workbook.getSheet("ALBVDET");
@@ -72,13 +73,13 @@ public class DeliveryImport {
 			di = new DeliveryInfo();
 			di.setError(new Error().setError(true).setTextError(new Vector<>()).setTextWarning(new Vector<>()));
 			// CUSTOMER
-			
+
 			LinkedList<String> titleList = new LinkedList<>();
 			LinkedList<Clientes> clientList = new LinkedList<>();
 			Iterator<Row> rowIterator = customerSheet.iterator();
 			Iterable<Row> rowIterable = () -> rowIterator;
 			Stream<Row> rowStream = StreamSupport.stream(rowIterable.spliterator(),false);
-			
+
 			rowStream.forEach(row ->{
 				Iterator<Cell> cellIterator = row.cellIterator();
 				Iterable<Cell> cellIterable = () -> cellIterator;
@@ -86,7 +87,7 @@ public class DeliveryImport {
 				cli = new Clientes();
 				cellStream.forEach(cell -> {
 					if(row.getRowNum() == 0) {
-						titleList.add(cell.getStringCellValue());	
+						titleList.add(cell.getStringCellValue());
 					} else {
 						String title = titleList.get(cell.getColumnIndex());
 						try {
@@ -107,15 +108,15 @@ public class DeliveryImport {
 					}
 				}
 			});
-			
+
 			// ALBV
-			
+
 			LinkedList<String> titleList2 = new LinkedList<>();
 			LinkedList<Albv> albvList = new LinkedList<>();
 			Iterator<Row> rowIterator2 = deliverySheet.iterator();
 			Iterable<Row> rowIterable2 = () -> rowIterator2;
 			Stream<Row> rowStream2 = StreamSupport.stream(rowIterable2.spliterator(),false);
-						
+
 			rowStream2.forEach(row ->{
 				Iterator<Cell> cellIterator = row.cellIterator();
 				Iterable<Cell> cellIterable = () -> cellIterator;
@@ -123,7 +124,7 @@ public class DeliveryImport {
 				albv = new Albv();
 				cellStream.forEach(cell -> {
 					if(row.getRowNum() == 0) {
-						titleList2.add(cell.getStringCellValue());	
+						titleList2.add(cell.getStringCellValue());
 					} else {
 						String title = titleList2.get(cell.getColumnIndex());
 						try {
@@ -146,13 +147,13 @@ public class DeliveryImport {
 			});
 
 			// ALBVDET
-			
+
 			LinkedList<String> titleList3 = new LinkedList<>();
 			LinkedList<AlbvDet> albvDetList = new LinkedList<>();
 			Iterator<Row> rowIterator3 = deliveryDetailSheet.iterator();
 			Iterable<Row> rowIterable3 = () -> rowIterator3;
 			Stream<Row> rowStream3 = StreamSupport.stream(rowIterable3.spliterator(),false);
-						
+
 			rowStream3.forEach(row ->{
 				Iterator<Cell> cellIterator = row.cellIterator();
 				Iterable<Cell> cellIterable = () -> cellIterator;
@@ -160,7 +161,7 @@ public class DeliveryImport {
 				albvDet = new AlbvDet();
 				cellStream.forEach(cell -> {
 					if(row.getRowNum() == 0) {
-						titleList3.add(cell.getStringCellValue());	
+						titleList3.add(cell.getStringCellValue());
 					} else {
 						String title = titleList3.get(cell.getColumnIndex());
 						try {
@@ -189,7 +190,7 @@ public class DeliveryImport {
 		}
 		return null;
 	}
-	
+
 	public DeliveryInfo insertDelivery(Domain domain, User user, DeliveryInfo dinfo, com.esferalia.aon.gwt.template.shared.Error error) {
 		di = dinfo;
 		try {
@@ -209,20 +210,20 @@ public class DeliveryImport {
 			&& cli.getPaisDocumento() != null && cli.getDocumento() != null
 			&& cli.getNacionalidad() != null;
 	}
-	
+
 	private Object getObjectValue(Cell cell){
-		if(Cell.CELL_TYPE_STRING == cell.getCellType())
+		if(CellType.STRING == cell.getCellTypeEnum())
 			return cell.getStringCellValue();
-		if(Cell.CELL_TYPE_NUMERIC == cell.getCellType())
+		if(CellType.NUMERIC == cell.getCellTypeEnum())
 			return cell.getNumericCellValue();
-		if(Cell.CELL_TYPE_FORMULA == cell.getCellType())
+		if(CellType.FORMULA == cell.getCellTypeEnum())
 			return cell.getCellFormula();
-		if(Cell.CELL_TYPE_BOOLEAN == cell.getCellType()) {
+		if(CellType.BOOLEAN == cell.getCellTypeEnum()) {
 			return cell.getBooleanCellValue() ? 1.0 : 0.0;
 		}
 		return null;
 	}
-	
+
 	private void checkClientes(String title, Cell cell) {
 		Object o = getObjectValue(cell);
 		if(o == null) return;
@@ -247,11 +248,11 @@ public class DeliveryImport {
 			try {
 				d = Double.parseDouble(o.toString());
 			} catch (Exception e) {
-				di.getError().getTextError().add("ERROR! CLIENTES: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				di.getError().getTextError().add("ERROR! CLIENTES: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numï¿½rico.");
 				di.getError().setError(false);
 				return;
 			}
-			
+
 			Integer val = d.intValue();
 			if(val >= 0 && val < 7) {
 				cli.setTipoDocumento(val);
@@ -300,7 +301,7 @@ public class DeliveryImport {
 			try {
 				d = Double.parseDouble(o.toString());
 			} catch (Exception e) {
-				di.getError().getTextError().add("ERROR! CLIENTES: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				di.getError().getTextError().add("ERROR! CLIENTES: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numï¿½rico.");
 				di.getError().setError(false);
 				return;
 			}
@@ -318,7 +319,7 @@ public class DeliveryImport {
 			try {
 				d = Double.parseDouble(o.toString());
 			} catch (Exception e) {
-				di.getError().getTextError().add("ERROR! CLIENTES: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				di.getError().getTextError().add("ERROR! CLIENTES: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numï¿½rico.");
 				di.getError().setError(false);
 				return;
 			}
@@ -336,7 +337,7 @@ public class DeliveryImport {
 			try {
 				d = Double.parseDouble(o.toString());
 			} catch (Exception e) {
-				di.getError().getTextError().add("ERROR! CLIENTES: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				di.getError().getTextError().add("ERROR! CLIENTES: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numï¿½rico.");
 				di.getError().setError(false);
 				return;
 			}
@@ -355,7 +356,7 @@ public class DeliveryImport {
 			try {
 				d = Double.parseDouble(o.toString());
 			} catch (Exception e) {
-				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico. - Por defecto: 1 - Si");
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numï¿½rico. - Por defecto: 1 - Si");
 				cli.setFacturarAlbaranesAgrupados(1);
 				return;
 			}
@@ -434,7 +435,7 @@ public class DeliveryImport {
 		if("nombreProvincia".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 32) {
 				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 32");
-				cli.setNombreProvincia(o.toString().substring(0, 32));		
+				cli.setNombreProvincia(o.toString().substring(0, 32));
 			} else cli.setNombreProvincia(o.toString());
 			return;
 		}
@@ -442,7 +443,7 @@ public class DeliveryImport {
 			cli.setPais(cell.getStringCellValue());
 			return;
 		}
-		
+
 		if("telefono1".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 64) {
 				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 64");
@@ -459,7 +460,7 @@ public class DeliveryImport {
 			if(o.toString().length() > 64) {
 				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " Longitud erronea > 64");
 			} else cli.setFax(o.toString());
-			return;  
+			return;
 		}
 		if("email".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 64) {
@@ -508,7 +509,7 @@ public class DeliveryImport {
 			try {
 				d = Double.parseDouble(o.toString());
 			} catch (Exception e) {
-				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numï¿½rico.");
 				return;
 			}
 			Integer val = d.intValue();
@@ -521,7 +522,7 @@ public class DeliveryImport {
 			try {
 				d = Double.parseDouble(o.toString());
 			} catch (Exception e) {
-				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numï¿½rico.");
 				return;
 			}
 			Integer val = d.intValue();
@@ -534,7 +535,7 @@ public class DeliveryImport {
 			try {
 				d = Double.parseDouble(o.toString());
 			} catch (Exception e) {
-				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				di.getError().getTextWarning().add("WARNING! CLIENTES: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numï¿½rico.");
 				return;
 			}
 			Integer val = d.intValue();
@@ -553,12 +554,12 @@ public class DeliveryImport {
 			return;
 		}
 	}
-	
+
 	private Boolean hasAlbvRequiredParameters() {
 		return albv.getId() != null && albv.getNumero() != null
 			&& albv.getDocumento() != null && albv.getFecha() != null;
 	}
-	
+
 	private void checkAlbv(String title, Cell cell) {
 		Object o = getObjectValue(cell);
 		if(o == null) return;
@@ -569,7 +570,7 @@ public class DeliveryImport {
 			try {
 				d = Double.parseDouble(o.toString());
 			} catch (Exception e) {
-				di.getError().getTextError().add("ERROR! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				di.getError().getTextError().add("ERROR! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numï¿½rico.");
 				di.getError().setError(false);
 				return;
 			}
@@ -587,7 +588,7 @@ public class DeliveryImport {
 			try {
 				d = Double.parseDouble(o.toString());
 			} catch (Exception e) {
-				di.getError().getTextError().add("ERROR! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				di.getError().getTextError().add("ERROR! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numï¿½rico.");
 				di.getError().setError(false);
 				return;
 			}
@@ -732,7 +733,7 @@ public class DeliveryImport {
 			try {
 				d = Double.parseDouble(o.toString());
 			} catch (Exception e) {
-				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numï¿½rico.");
 				return;
 			}
 			albv.setNumeroVtos(d.intValue());
@@ -744,7 +745,7 @@ public class DeliveryImport {
 			try {
 				d = Double.parseDouble(o.toString());
 			} catch (Exception e) {
-				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numï¿½rico.");
 				return;
 			}
 			albv.setDiasAlPrimerVto(d.intValue());
@@ -756,7 +757,7 @@ public class DeliveryImport {
 			try {
 				d = Double.parseDouble(o.toString());
 			} catch (Exception e) {
-				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numï¿½rico.");
 				return;
 			}
 			albv.setDiasEntreVtos(d.intValue());
@@ -773,13 +774,13 @@ public class DeliveryImport {
 			return;
 		}
 	}
-	
+
 	private Boolean hasAlbvDetRequiredParameters() {
 		return albvDet.getAlbv() != null && albvDet.getLinea() != null
 			&& albvDet.getArticulo() != null && albvDet.getConcepto() != null
 			&& albvDet.getCantidad() != null && albvDet.getPrecio() != null;
 	}
-	
+
 	private void checkAlbvDet(String title, Cell cell) {
 		Object o = getObjectValue(cell);
 		if(o == null) return;
@@ -790,7 +791,7 @@ public class DeliveryImport {
 			try {
 				d = Double.parseDouble(o.toString());
 			} catch (Exception e) {
-				di.getError().getTextError().add("ERROR! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				di.getError().getTextError().add("ERROR! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numï¿½rico.");
 				di.getError().setError(false);
 				return;
 			}
@@ -802,7 +803,7 @@ public class DeliveryImport {
 			try {
 				d = Double.parseDouble(o.toString());
 			} catch (Exception e) {
-				di.getError().getTextError().add("ERROR! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				di.getError().getTextError().add("ERROR! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numï¿½rico.");
 				di.getError().setError(false);
 				return;
 			}
@@ -845,7 +846,7 @@ public class DeliveryImport {
 			try {
 				d = Double.parseDouble(o.toString());
 			} catch (Exception e) {
-				di.getError().getTextError().add("ERROR! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				di.getError().getTextError().add("ERROR! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numï¿½rico.");
 				di.getError().setError(false);
 				return;
 			}
@@ -857,12 +858,12 @@ public class DeliveryImport {
 			try {
 				d = Double.parseDouble(o.toString());
 			} catch (Exception e) {
-				di.getError().getTextError().add("ERROR! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				di.getError().getTextError().add("ERROR! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numï¿½rico.");
 				di.getError().setError(false);
 				return;
 			}
 			if(Double.isNaN(d)){
-				
+
 			} else albvDet.setPrecio(d);
 			return;
 		}
@@ -872,7 +873,7 @@ public class DeliveryImport {
 			try {
 				d = Double.parseDouble(o.toString());
 			} catch (Exception e) {
-				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				di.getError().getTextWarning().add("WARNING! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numï¿½rico.");
 				return;
 			}
 			albvDet.setPrecioCoste(d);
@@ -889,7 +890,7 @@ public class DeliveryImport {
 			try {
 				d = Double.parseDouble(o.toString());
 			} catch (Exception e) {
-				di.getError().getTextError().add("ERROR! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numérico.");
+				di.getError().getTextError().add("ERROR! ALBV: linea " + row + " columna " + column + " - " + title + " El valor introducido no es numï¿½rico.");
 				di.getError().setError(false);
 				return;
 			}
@@ -897,7 +898,7 @@ public class DeliveryImport {
 			return;
 		}
 	}
-	
+
 	private HashMap<String, Integer> importClientes(Domain domain, User user) {
 		HashMap<String, Integer> map = new HashMap<>();
 		Integer[] scps = AON.getUserScopes(domain.getName(), domain.getId(), user.getLogin(), user.getId());
@@ -933,9 +934,9 @@ public class DeliveryImport {
 						.setDeliveryValuated((byte) 1)
 						.setProjectGrouped((byte) 1)
 						.seteInvoice((byte) 0);
-				
-				AON.insertCustomer(domain.getName(), domain.getId(), user.getLogin(), customer);				
-			
+
+				AON.insertCustomer(domain.getName(), domain.getId(), user.getLogin(), customer);
+
 				if(r.getAliasDireccion() != null) {
 					RAddress address = new RAddress()
 						.setType((byte)0)
@@ -949,10 +950,10 @@ public class DeliveryImport {
 						.setNumber(r.getNumero())
 						.setStreet_type(r.getTipoVia())
 						.setZip(r.getCp());
-					AON.insertRAddress(domain.getName(), domain.getId(), user.getLogin(), address);				
+					AON.insertRAddress(domain.getName(), domain.getId(), user.getLogin(), address);
 				}
-				
-				
+
+
 				if(r.getTelefono1() != null) {
 					RegistryMedia rm = new RegistryMedia()
 							.setDomain(domain.getId())
@@ -961,7 +962,7 @@ public class DeliveryImport {
 							.setValue(r.getTelefono1());
 					AON.insertRMedia(domain.getName(), domain.getId(), user.getLogin(), rm);
 				}
-				
+
 				if(r.getTelefono2() != null) {
 					RegistryMedia rm = new RegistryMedia()
 							.setDomain(domain.getId())
@@ -970,7 +971,7 @@ public class DeliveryImport {
 							.setValue(r.getTelefono2());
 					AON.insertRMedia(domain.getName(), domain.getId(), user.getLogin(), rm);
 				}
-				
+
 				if(r.getFax() != null) {
 					RegistryMedia rm = new RegistryMedia()
 							.setDomain(domain.getId())
@@ -979,7 +980,7 @@ public class DeliveryImport {
 							.setValue(r.getFax());
 					AON.insertRMedia(domain.getName(), domain.getId(), user.getLogin(), rm);
 				}
-				
+
 				if(r.getEmail() != null) {
 					RegistryMedia rm = new RegistryMedia()
 							.setDomain(domain.getId())
@@ -988,7 +989,7 @@ public class DeliveryImport {
 							.setValue(r.getTelefono1());
 					AON.insertRMedia(domain.getName(), domain.getId(), user.getLogin(), rm);
 				}
-				
+
 				if(r.getWeb() != null) {
 					RegistryMedia rm = new RegistryMedia()
 							.setDomain(domain.getId())
@@ -997,7 +998,7 @@ public class DeliveryImport {
 							.setValue(r.getWeb());
 					AON.insertRMedia(domain.getName(), domain.getId(), user.getLogin(), rm);
 				}
-				
+
 				if(r.getCuentaBanco() != null) {
 					RegistryBank rbank = new RegistryBank()
 							.setDomain(domain.getId())
@@ -1010,7 +1011,7 @@ public class DeliveryImport {
 							.setAccount(customer.getAccount());
 					AON.insertRBank(domain.getName(), domain.getId(), user.getLogin(), rbank);
 				}
-				
+
 				if(r.getFormaPago() != null) {
 					PayMethod pm = AON.getPayMethod(domain.getName(), domain.getId(), user.getLogin(), r.getFormaPago());
 					if(domain.isEnableHeredity() && pm.getId() == null) pm = AON.getPayMethod(domain.getName(), domain.getParentId(), user.getLogin(), r.getFormaPago());
@@ -1022,24 +1023,24 @@ public class DeliveryImport {
 								.setNumberOfPymnts(r.getNumeroVtos() != null ? r.getNumeroVtos().shortValue(): 1)
 								.setDaysToFirstPymnt(r.getDiasAlPrimerVto() != null ? r.getDiasAlPrimerVto().shortValue() : 0)
 								.setDaysBetwenPymnts(r.getDiasEntreVtos() != null ? r.getDiasEntreVtos().shortValue() : 0)
-								.setPymnt_days(r.getDiasPago() != null ? getDiasPago(r.getDiasPago())  : ""); 
+								.setPymnt_days(r.getDiasPago() != null ? getDiasPago(r.getDiasPago())  : "");
 						AON.insertRPayMethod(domain.getName(), domain.getId(), user.getLogin(), rpaymethod);
 					}
 				}
 			}
-			
+
 			map.put(r.getDocumento(), customer.getRegistry().getId());
 		});
 		return map;
 	}
-	
+
 	private HashMap<Integer, Delivery> importAlbv(Domain domain, User user, HashMap<String, Integer> clientes) {
 		HashMap<Integer, Delivery> map = new HashMap<>();
 		Integer[] scps = AON.getUserScopes(domain.getName(), domain.getId(), user.getLogin(), user.getId());
 		if(scps == null) scps =  AON.getUserScopes(domain.getName(), user.getDomain(), user.getLogin(), user.getId());
 		Integer scope = scps != null ? scps[0] : null;
 		di.getAlbvList().stream().forEach(r -> {
-			Delivery delivery = AON.getDelivery(domain.getName(), domain.getId(), user.getLogin(), f -> 
+			Delivery delivery = AON.getDelivery(domain.getName(), domain.getId(), user.getLogin(), f ->
 					f.getDomainProperty().eq(domain.getId())
 					.and(f.getNumberProperty().eq(r.getNumero()))
 					.and(f.getSeriesProperty().eq(r.getSerie())));
@@ -1063,14 +1064,14 @@ public class DeliveryImport {
 									.setNumber(r.getNumeroDir())
 									.setStreet_type(r.getTipoVia())
 									.setZip(r.getCp());
-							address = AON.insertRAddress(domain.getName(), domain.getId(), user.getLogin(), address);				
+							address = AON.insertRAddress(domain.getName(), domain.getId(), user.getLogin(), address);
 						}
 						if(address != null) raddress = address.getId();
 					}
 				}
 				Warehouse warehouse = AON.getWarehouse(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getNameProperty().eq(r.getAlmacen())));
 				if(warehouse == null) {
-					di.getError().getTextError().addElement("ERROR! ALBV: El almacén " + r.getAlmacen() + " del albarán " + r.getSerie() + "/" + r.getNumero()  + " no existe.");
+					di.getError().getTextError().addElement("ERROR! ALBV: El almacï¿½n " + r.getAlmacen() + " del albarï¿½n " + r.getSerie() + "/" + r.getNumero()  + " no existe.");
 					di.getError().setError(false);
 				} else {
 					PayMethod pm = new PayMethod();
@@ -1090,7 +1091,7 @@ public class DeliveryImport {
 							p.setId(id);
 						}
 					}
-					
+
 					delivery = new Delivery()
 							.setDomain(domain.getId())
 							.setSeries(r.getSerie())
@@ -1108,22 +1109,22 @@ public class DeliveryImport {
 							.setNumberOfPymnts(r.getNumeroVtos() != null ? r.getNumeroVtos().shortValue(): 1)
 							.setDaysToFirstPymnt(r.getDiasAlPrimerVto() != null ? r.getDiasAlPrimerVto().shortValue() : 0)
 							.setDaysBetweenPymnt(r.getDiasEntreVtos() != null ? r.getDiasEntreVtos().shortValue() : 0)
-							.setPymntDays(r.getDiasPago() != null ? getDiasPago(r.getDiasPago()) : "")					
+							.setPymntDays(r.getDiasPago() != null ? getDiasPago(r.getDiasPago()) : "")
 							.setTotalPackages(0.0)
 							.setTotalWeight(0.0)
 							.setProject(p);
 					delivery = AON.insertDelivery(domain.getName(), domain.getId(), user.getLogin(), delivery);
-			
+
 					map.put(r.getId(), new Delivery().setId(delivery.getId()).setNumber(warehouse.getId()));
 				}
 			} else {
-				di.getError().getTextError().addElement("ERROR! ALBV: El albarán de venta " + r.getSerie() + "/" + r.getNumero()  + " ya existe.");
+				di.getError().getTextError().addElement("ERROR! ALBV: El albarï¿½n de venta " + r.getSerie() + "/" + r.getNumero()  + " ya existe.");
 				di.getError().setError(false);
 			}
 		});
 		return map;
 	}
-	
+
 	private String getDiasPago(String dp){
 		try {
 			StringTokenizer strTknzr = new StringTokenizer(dp, " ");
@@ -1136,13 +1137,13 @@ public class DeliveryImport {
 			return "";
 		}
 	}
-	
-	
+
+
 	private void importAlbvDet(Domain domain, User user, HashMap<Integer, Delivery> albv) {
 		di.getAlbvDetList().stream().forEach(r -> {
 			if(albv.containsKey(r.getAlbv())) {
-				Product product =  AON.getProduct(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getCodeProperty().eq(r.getArticulo())));			
-			
+				Product product =  AON.getProduct(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getCodeProperty().eq(r.getArticulo())));
+
 				if(product.getId() == null) {
 					Tax vat = DBProduct.getIVAName(domain.getName(), domain.getId(), user.getLogin(), r.getIva() != null ? r.getIva() : 21.0);
 					product = new Product()
@@ -1159,8 +1160,8 @@ public class DeliveryImport {
 						.setStatus(ProductStatus.ACTIVE.value());
 					product = AON.insertProduct(domain.getName(), domain.getId(), user.getLogin(), product);
 				}
-				Integer productId = product.getId();			
-			
+				Integer productId = product.getId();
+
 				Item item = AON.getItem(domain.getName(), domain.getId(), user.getLogin(), f -> f.getProductProperty().eq(productId)
 					.and(r.getDetalle() != null ? f.getDetailProperty().eq(r.getDetalle()) :
 						f.getDetailProperty().eq("").or(f.getDetailProperty().isNull()))
@@ -1168,7 +1169,7 @@ public class DeliveryImport {
 						f.getDetail2Property().eq("").or(f.getDetail2Property().isNull()))
 					.and(r.getDetalle3() != null ? f.getDetail3Property().eq(r.getDetalle3()):
 						f.getDetail3Property().eq("").or(f.getDetail3Property().isNull())));
-			
+
 				if(item.getId() == null) {
 					item = new Item()
 						.setDomain(domain.getId())
@@ -1181,9 +1182,9 @@ public class DeliveryImport {
 						.setDescription(r.getConcepto())
 						.setPrice(r.getPrecio())
 						.setPurchasePrice(r.getPrecioCoste() != null ? r.getPrecioCoste() : 0.0);
-					item = AON.insertItem(domain.getName(), domain.getId(), user.getLogin(), item);	
+					item = AON.insertItem(domain.getName(), domain.getId(), user.getLogin(), item);
 				}
-			
+
 				DeliveryDetail dd = new DeliveryDetail()
 					.setDomain(domain.getId())
 					.setDelivery(albv.get(r.getAlbv()))
@@ -1198,7 +1199,7 @@ public class DeliveryImport {
 			}
 		});
 	}
-	
+
 	private String getColumn(Integer c) {
 		if(c == 0) return "A";
 		if(c == 1) return "B";

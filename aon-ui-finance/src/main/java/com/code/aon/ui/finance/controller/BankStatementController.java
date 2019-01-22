@@ -32,7 +32,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.hibernate.Session;
 import org.richfaces.event.UploadEvent;
 import org.slf4j.Logger;
@@ -1881,11 +1882,11 @@ public class BankStatementController extends BasicController implements IFinance
 
 			HSSFFont boldFont = exporter.createFont();
 			boldFont.setFontHeightInPoints((short) 8);
-			boldFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+			boldFont.setBold(true);
 
 			HSSFCellStyle headerCellStyle = exporter.createCellStyle();
-		    headerCellStyle.setBorderBottom(HSSFCellStyle.BORDER_MEDIUM);
-		    headerCellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER );
+		    headerCellStyle.setBorderBottom(BorderStyle.MEDIUM);
+		    headerCellStyle.setAlignment(HorizontalAlignment.CENTER );
 		    headerCellStyle.setFont(boldFont);
 		    
 			exporter.addHeaderCell("Banco", exporter.getWidth(60), headerCellStyle);

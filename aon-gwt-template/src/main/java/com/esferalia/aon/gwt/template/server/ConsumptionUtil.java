@@ -18,9 +18,13 @@ import javax.servlet.ServletException;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 
@@ -44,28 +48,28 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 
 public class ConsumptionUtil {
-	
+
 	private static final String PDF = "pdf";
-	
+
     public static File generateConsumption(Domain domain, Vector<Warehouse> warehouses, String fileType, Boolean onlyNegative,
     		Boolean detail, Integer size, String login, Boolean packaged, Boolean withoutInv, Integer category, Boolean dif) throws ServletException, IOException{
-    
-    	Collections.sort(warehouses, (Warehouse s1, Warehouse s2) -> s1.getName().compareTo(s2.getName()));        
-       
+
+    	Collections.sort(warehouses, (Warehouse s1, Warehouse s2) -> s1.getName().compareTo(s2.getName()));
+
         TemplateInfo aux = getTemplateInfo(detail);
-		
+
         File archivoXLS = new File("consumo" + ".xls");
         File archivoPDF = new File("consumo" + ".pdf");
         if(archivoXLS.exists()) archivoXLS.delete();
         if(archivoPDF.exists()) archivoPDF.delete();
-        archivoXLS.createNewFile();     
+        archivoXLS.createNewFile();
         archivoPDF.createNewFile();
-        
+
         Map<Integer, ConsumptionItem> cisMap = new HashMap<Integer, ConsumptionItem>();
         HSSFWorkbook libro = new HSSFWorkbook();
         FileOutputStream archivo = new FileOutputStream(archivoXLS);
         Integer columns = aux.getColumns().size();
-    	
+
         Map<String, Vector<ConsumptionItem>> allMap = new HashMap<String, Vector<ConsumptionItem>>();
         for(Warehouse w : warehouses){
         	ConsumptionItem consumptionItem = DBConsumption.getTwoLastInventory(domain, w.getId(), login);
@@ -78,21 +82,21 @@ public class ConsumptionUtil {
             consumptionItem.setInitialInventoryName(initialInventoryName);
             consumptionItem.setFinalInventoryName(finalInventoryName);
         	cisMap.put(w.getId(), consumptionItem);
-        	
-        	Map<Integer, ConsumptionItem> map = withoutInv 
+
+        	Map<Integer, ConsumptionItem> map = withoutInv
         			? DBConsumption.getConsumptionWithoutInventory(domain, login, initialId, finalId, w.getId(), consumptionItem.getWarehouseName(), category)
         			: DBConsumption.getConsumption(domain, login, initialId, finalId, w.getId(), new java.sql.Date(initialDate.getTime()), new java.sql.Date(finalDate.getTime()), consumptionItem.getWarehouseName(), category);
 
         	Vector<ConsumptionItem> v =  new Vector<ConsumptionItem>(map.values());
-        	
+
         	allMap.put(w.getName(), v);
         }
         libro2(domain.getName(), domain.getId(),login, warehouses, libro, onlyNegative, allMap, getTemplateInfoC(),0, dif);
         //libro(domain.getName(), domain.getId(), login, warehouses, libro, onlyNegative, allMap, getTemplateInfoA(), 1, packaged);
         libro(domain.getName(), domain.getId(), login, warehouses, libro, onlyNegative, allMap, getTemplateInfoB(), 2, packaged, dif);
-        
+
         for (int index = 0; index < size; index++) {
-       
+
         	ConsumptionItem consumptionItem = cisMap.get(warehouses.get(index).getId());
             String initialInventoryName = consumptionItem.getInitialInventoryName();
             String finalInventoryName = consumptionItem.getFinalInventoryName();
@@ -101,50 +105,50 @@ public class ConsumptionUtil {
             else hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()-1));
         	Row rowInfo = hoja.createRow(0);
         	Row fila = hoja.createRow(1);
-        
-        
-        
+
+
+
         	String info = "Control de Consumo ## " + warehouses.get(index).getName()+" ## "
         			+ initialInventoryName +" ## " + finalInventoryName;
-        
+
         	rowInfo.setHeightInPoints(16);
         	fila.setHeightInPoints(16);
         	CellStyle style = libro.createCellStyle();CellStyle styleInfo = libro.createCellStyle();
         	Font font = libro.createFont();
         	font.setFontHeightInPoints((short)12);
-        	font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        	font.setBold(true);
         	style.setFont(font);styleInfo.setFont(font);
-        	style.setAlignment(CellStyle.ALIGN_CENTER);styleInfo.setAlignment(CellStyle.ALIGN_CENTER);
-        	style.setBorderBottom(CellStyle.BORDER_MEDIUM); styleInfo.setBorderBottom(CellStyle.BORDER_MEDIUM);
-        	styleInfo.setFillBackgroundColor(HSSFColor.LIGHT_YELLOW.index);
+        	style.setAlignment(HorizontalAlignment.CENTER);styleInfo.setAlignment(HorizontalAlignment.CENTER);
+        	style.setBorderBottom(BorderStyle.MEDIUM); styleInfo.setBorderBottom(BorderStyle.MEDIUM);
+        	styleInfo.setFillBackgroundColor(HSSFColorPredefined.LIGHT_YELLOW.getIndex());
 
         	Cell cellInfo = rowInfo.createCell(0);
         	cellInfo.setCellValue(info);
         	cellInfo.setCellStyle(styleInfo);
-       
-        
+
+
        		CellStyle style2 = libro.createCellStyle();
        		Font font2 = libro.createFont();
         	font.setFontHeightInPoints((short)12);
 			style2.setFont(font2);
-			style2.setAlignment(CellStyle.ALIGN_RIGHT);
-			style2.setBorderBottom(CellStyle.BORDER_THIN);
-			style2.setBorderRight(CellStyle.BORDER_THIN);
-			style2.setBorderLeft(CellStyle.BORDER_THIN);
-		
+			style2.setAlignment(HorizontalAlignment.RIGHT);
+			style2.setBorderBottom(BorderStyle.THIN);
+			style2.setBorderRight(BorderStyle.THIN);
+			style2.setBorderLeft(BorderStyle.THIN);
+
 			CellStyle style3 = libro.createCellStyle();
 			style3.setFont(font2);
-			style3.setAlignment(CellStyle.ALIGN_LEFT);
-			style3.setBorderBottom(CellStyle.BORDER_THIN);
-			style3.setBorderRight(CellStyle.BORDER_THIN);
-			style3.setBorderLeft(CellStyle.BORDER_THIN);
-		
+			style3.setAlignment(HorizontalAlignment.LEFT);
+			style3.setBorderBottom(BorderStyle.THIN);
+			style3.setBorderRight(BorderStyle.THIN);
+			style3.setBorderLeft(BorderStyle.THIN);
+
 			for(Integer i = 0; i< columns; i++){
 				Cell celda = fila.createCell(i);
 				celda.setCellValue(aux.getColumns().get(i));
-				celda.setCellStyle(style);  	
+				celda.setCellStyle(style);
         	}
-       
+
         	if(packaged){
         		Cell cell1 = fila.createCell(columns);
         		cell1.setCellValue("Stock");
@@ -154,35 +158,35 @@ public class ConsumptionUtil {
         		cell2.setCellStyle(style);
         	}
          	Vector<ConsumptionItem> v =  allMap.get(warehouses.get(index).getName());
-        	
+
         	Integer num = 0;
         	for(Integer j = 0; j< v.size();j++){
         		ConsumptionItem ci = v.get(j);
         		ci.setConsumption(ci.getInitialQuantity()+ci.getPurchasesAlb()+ci.getPurchasesFac()+ci.getTransfersPlus()-ci.getSalesAlb()-ci.getSalesFac()-ci.getTransfersMinus()-ci.getFinalQuantity());
 
         		Double consumValue = ci.getConsumValue();
-            	
-        		
-        		if(!(ci.getInitialQuantity() == 0 && 
+
+
+        		if(!(ci.getInitialQuantity() == 0 &&
         			ci.getPurchasesAlb() == 0 &&
    					ci.getPurchasesFac() == 0 &&
         			ci.getSalesAlb() == 0 &&
     				ci.getSalesFac() == 0 &&
         			ci.getFinalQuantity() == 0 &&
         			(ci.getTransfersPlus()-ci.getTransfersMinus()) == 0 &&
-        			ci.getConsumption() == 0) && 
+        			ci.getConsumption() == 0) &&
         			(!onlyNegative || ci.getConsumption() < 0 ) &&
         			(!dif || ci.getConsumption() != 0 ) ){
         			Row row = hoja.createRow((j-num)+2);
         			Item item = AON.getItem(domain.getName(), domain.getId(), login, ci.getItemId());
         			for(Integer k = 0; k< columns; k++){
         	    		Cell celda = row.createCell(k);
-        	    		String type = aux.getColumns().get(k); 
-     
+        	    		String type = aux.getColumns().get(k);
+
         				switch (type) {
         				case "Producto": celda.setCellValue(ci.getProductCode());celda.setCellStyle(style3);break;
         				case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style2);break;
-        				case "Nombre": 
+        				case "Nombre":
         					String str  = ci.getProductName();
                 			/*if(item.getPackFormatTag().getName() != null)
                 				str = str + " "+item.getPackFormatTag().getName()+" "
@@ -200,12 +204,12 @@ public class ConsumptionUtil {
         				case "Final \u20AC": celda.setCellValue(round(ci.getFinalQuantity() * ci.getFinalValue(),2));celda.setCellStyle(style2);break;
         				case "Traspaso": celda.setCellValue(round(ci.getTransfersPlus()-ci.getTransfersMinus(),2));celda.setCellStyle(style2);break;
         				case "Traspaso \u20AC": celda.setCellValue(round((ci.getTransfersPlus() * ci.getPrice()) - (ci.getTransfersMinus() * ci.getPrice()),2));celda.setCellStyle(style2);break;
-        				//case "Precio": celda.setCellValue(round(ci.getPrice(),2));celda.setCellStyle(style2);break; 
+        				//case "Precio": celda.setCellValue(round(ci.getPrice(),2));celda.setCellStyle(style2);break;
         				//case "Valor Consumo": celda.setCellValue(round(ci.getPrice()*ci.getConsumption(),2));celda.setCellStyle(style2);break;
         				case "Precio": if(ci.getConsumption() != 0) celda.setCellValue(round(consumValue / ci.getConsumption(), 2));
-        							else celda.setCellValue(0);	
-        							celda.setCellStyle(style2);break; 
-        				case "Consumo \u20AC": 
+        							else celda.setCellValue(0);
+        							celda.setCellStyle(style2);break;
+        				case "Consumo \u20AC":
         					if(ci.getConsumption() == 0) celda.setCellValue(0);
         					else celda.setCellValue(round(consumValue,2));
         					celda.setCellStyle(style2);break;
@@ -216,7 +220,7 @@ public class ConsumptionUtil {
         					break;
         			}
         			}
-      
+
         			if(packaged){
                 		Cell valueCell = row.createCell(columns);
                 		Double value = ci.getConsumption() * item.getPackMeasurement() * item.getPackUnits();
@@ -231,17 +235,17 @@ public class ConsumptionUtil {
         		else{
         			num++;
         		}
-        	
+
         	}
         	for(Integer h = 0; h< columns;h++){
         		hoja.autoSizeColumn(h);
         	}
         }
-        
-        libro.write(archivo);    
-        
+
+        libro.write(archivo);
+
         if(fileType.equals(PDF)){
-        	
+
         	 Document iText_xls_2_pdf = new Document(PageSize.A4.rotate());
     		 try {
     			 PdfWriter.getInstance(iText_xls_2_pdf, new FileOutputStream(archivoPDF));
@@ -249,30 +253,30 @@ public class ConsumptionUtil {
     			 e.printStackTrace();
     		 }
     		 iText_xls_2_pdf.open();
-    		 
+
 			 com.itextpdf.text.Font fontTitle = new com.itextpdf.text.Font();
 			 fontTitle.setSize(16);
 			 fontTitle.setStyle(com.itextpdf.text.Font.BOLD);
-			 
+
 			 Paragraph title = new Paragraph("Informe Agregado de Control de Consumo",fontTitle);
 			 try {
 				iText_xls_2_pdf.add(title);
 			} catch (DocumentException e1) {
 				e1.printStackTrace();
 			}
-			 
-        	 for (Integer index = 0; index < size+2; index++){ 
+
+        	 for (Integer index = 0; index < size+2; index++){
         		 HSSFSheet my_worksheet = libro.getSheetAt(index);
-        		 Iterator<Row> rowIterator = my_worksheet.iterator();             
+        		 Iterator<Row> rowIterator = my_worksheet.iterator();
         		 Integer columnNum = getColumnNum(index, columns, packaged);
         		 PdfPTable my_table = new PdfPTable(columnNum);
         		 PdfPCell table_cell;
         		 Integer i = 0;
-        		 
+
         		 while(rowIterator.hasNext()) {
-                    Row row = rowIterator.next(); 
+                    Row row = rowIterator.next();
                     Iterator<Cell> cellIterator = row.cellIterator();
-                    		
+
                             while(cellIterator.hasNext()) {
                             		if(i == 0){
                             			cellIterator.next();
@@ -281,29 +285,29 @@ public class ConsumptionUtil {
                             		com.itextpdf.text.Font font1 = new com.itextpdf.text.Font();
                             		font1.setSize(8);
                             		font1.setStyle(com.itextpdf.text.Font.BOLD);
-                            		
+
                             		com.itextpdf.text.Font font2 = new com.itextpdf.text.Font();
                             		font2.setSize(8);
-                            		
+
                                     Cell cell = cellIterator.next(); //Fetch CELL
-                                    switch(cell.getCellType()) { //Identify CELL type
+                                    switch(cell.getCellTypeEnum()) { //Identify CELL type
                                             //you need to add more code here based on
                                             //your requirement / transformations
-                                    case Cell.CELL_TYPE_STRING:
+                                    case STRING:
                                     	if(row.getRowNum() == 1)
                                     		table_cell=new PdfPCell(new Phrase(cell.getStringCellValue(), font1));
                                     	else table_cell=new PdfPCell(new Phrase(cell.getStringCellValue(), font2));
                                     	if(cell.getColumnIndex() != columnNum) my_table.addCell(table_cell);
                                     	break;
-                                    case Cell.CELL_TYPE_BLANK:
+                                    case BLANK:
                                     	//Push the data from Excel to PDF Cell
                                         table_cell=new PdfPCell();
                                         //feel free to move the code below to suit to your needs
-                                        
+
                                         if(cell.getColumnIndex() != columnNum) my_table.addCell(table_cell);
                                        break;
-                                    
-                            		case Cell.CELL_TYPE_BOOLEAN:
+
+                            		case BOOLEAN:
                             			//Push the data from Excel to PDF Cell
                             			String text ="";
                             			if(cell.getBooleanCellValue())text = "true";
@@ -312,20 +316,20 @@ public class ConsumptionUtil {
                                 		//feel free to move the code below to suit to your needs
                                 		 if(cell.getColumnIndex() != columnNum) my_table.addCell(table_cell);
                                 		break;
-                            		case Cell.CELL_TYPE_FORMULA:
+                            		case FORMULA:
                             			//Push the data from Excel to PDF Cell
                             			table_cell=new PdfPCell(new Phrase(cell.getCellFormula(), font2));
                                 		//feel free to move the code below to suit to your needs
                             			 if(cell.getColumnIndex() != columnNum) my_table.addCell(table_cell);
                                 		break;
-                            		case Cell.CELL_TYPE_NUMERIC:
+                            		case NUMERIC:
                             			//Push the data from Excel to PDF Cell
                             			Double d = cell.getNumericCellValue();
                             			table_cell=new PdfPCell(new Phrase(d.toString(), font2));
                                 		//feel free to move the code below to suit to your needs
                             			 if(cell.getColumnIndex() != columnNum) my_table.addCell(table_cell);
                                 		break;
-                            		}	
+                            		}
                             		}
                             		i++;
                                     //next line
@@ -335,10 +339,10 @@ public class ConsumptionUtil {
         			 com.itextpdf.text.Font fontPhrase = new com.itextpdf.text.Font();
         			 fontPhrase.setSize(12);
         			 fontPhrase.setStyle(com.itextpdf.text.Font.BOLD);
-            	
+
         			 com.itextpdf.text.Font fontPhrase2 = new com.itextpdf.text.Font();
         			 fontPhrase.setSize(12);
-        			 
+
         			 if(index<2){
         				 iText_xls_2_pdf.add(new Paragraph(" "));
         				 iText_xls_2_pdf.add(new Paragraph("Resumen " + index, fontPhrase));
@@ -352,16 +356,16 @@ public class ConsumptionUtil {
         			 	iText_xls_2_pdf.add(new Paragraph(" "));
         			 }
         			 iText_xls_2_pdf.add(my_table);
-        			 
+
         			 iText_xls_2_pdf.add(new Paragraph(" "));
         		 } catch (DocumentException e) {
         			 e.printStackTrace();
-        		 }                       
+        		 }
         	 }
         	 iText_xls_2_pdf.close();
         }
         archivo.close();
-        
+
         //long length;
         //FileInputStream fis;
         if(fileType.equals(PDF)){
@@ -371,29 +375,29 @@ public class ConsumptionUtil {
         	return archivoXLS;
         }
     }
-    
-    
+
+
     public static File generateConsumption(Domain domain, Vector<Warehouse> warehouses, String fileType, Boolean onlyNegative,
     		Boolean detail, Integer size, String login, Date startDate, Date endDate, Boolean packaged, Integer category, Boolean dif) throws ServletException, IOException{
-    	Collections.sort(warehouses, (Warehouse s1, Warehouse s2) -> s1.getName().compareTo(s2.getName()));        
-        
+    	Collections.sort(warehouses, (Warehouse s1, Warehouse s2) -> s1.getName().compareTo(s2.getName()));
+
         TemplateInfo aux = getTemplateInfo(detail);
-		
+
         File archivoXLS = new File("consumo" + ".xls");
         File archivoPDF = new File("consumo" + ".pdf");
         if(archivoXLS.exists()) archivoXLS.delete();
         if(archivoPDF.exists()) archivoPDF.delete();
-        archivoXLS.createNewFile();     
+        archivoXLS.createNewFile();
         archivoPDF.createNewFile();
-        
+
         Map<Integer, ConsumptionItem> cisMap = new HashMap<Integer, ConsumptionItem>();
         HSSFWorkbook libro = new HSSFWorkbook();
         FileOutputStream archivo = new FileOutputStream(archivoXLS);
         Integer columns = aux.getColumns().size();
-    	
+
         Map<String, Vector<ConsumptionItem>> allMap = new HashMap<String, Vector<ConsumptionItem>>();
         for(Warehouse w : warehouses){
-        
+
         	Inventory initialInventory = DBConsumption.getInitialInventory(domain, login, w.getId(), AonDateUtils.toSql(startDate), AonDateUtils.toSql(endDate));
         	Inventory finalInventory = DBConsumption.getFinalInventory(domain, login, w.getId(), AonDateUtils.toSql(startDate), AonDateUtils.toSql(endDate));
         	ConsumptionItem consumptionItem = new ConsumptionItem()
@@ -403,7 +407,7 @@ public class ConsumptionUtil {
         			.setFinalId(finalInventory.getId())
         			.setFinalDate(finalInventory.getInventoryDate())
         			.setFinalInventoryName(finalInventory.getDescription());
-        
+
         	if(initialInventory.getId() != null && finalInventory.getId() != null
         			&& initialInventory.getId() != finalInventory.getId()){
         		Integer initialId = consumptionItem.getInitialId(), finalId = consumptionItem.getFinalId();
@@ -419,7 +423,7 @@ public class ConsumptionUtil {
         		Map<Integer, ConsumptionItem> map = DBConsumption.getConsumption(domain, login, initialId, finalId, w.getId(), new java.sql.Date(initialDate.getTime()), new java.sql.Date(finalDate.getTime()), consumptionItem.getWarehouseName(), category);
 
         		Vector<ConsumptionItem> v =  new Vector<ConsumptionItem>(map.values());
-        	
+
         		allMap.put(w.getName(), v);
         	} else{
         		cisMap.put(w.getId(), new ConsumptionItem());
@@ -429,63 +433,63 @@ public class ConsumptionUtil {
         libro2(domain.getName(), domain.getId(), login, warehouses, libro, onlyNegative, allMap, getTemplateInfoC(), 0, dif);
         //libro(domain.getName(), domain.getId(), login, warehouses, libro, onlyNegative, allMap, getTemplateInfoA(), 1, packaged);
         libro(domain.getName(), domain.getId(), login, warehouses, libro, onlyNegative, allMap, getTemplateInfoB(), 2, packaged, dif);
-        
+
         for (int index = 0; index < size; index++) {
-       
+
         	ConsumptionItem consumptionItem = cisMap.get(warehouses.get(index).getId());
-            String initialInventoryName = consumptionItem.getInitialInventoryName() != null 
+            String initialInventoryName = consumptionItem.getInitialInventoryName() != null
             		? consumptionItem.getInitialInventoryName() : " ";
-            String finalInventoryName = consumptionItem.getFinalInventoryName() != null 
+            String finalInventoryName = consumptionItem.getFinalInventoryName() != null
             		? consumptionItem.getFinalInventoryName() : " ";
         	HSSFSheet hoja = libro.createSheet("Plantilla "+ (index+3));
-        
+
         	if(packaged) hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()+1));
             else hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()-1));
-        	
+
         	Row rowInfo = hoja.createRow(0);
         	Row fila = hoja.createRow(1);
-        
-        
-        
+
+
+
         	String info = "Control de Consumo ## " + warehouses.get(index).getName()+" ## "
         			+ initialInventoryName +" ## " + finalInventoryName;
-        
+
         	rowInfo.setHeightInPoints(16);
         	fila.setHeightInPoints(16);
         	CellStyle style = libro.createCellStyle();CellStyle styleInfo = libro.createCellStyle();
         	Font font = libro.createFont();
         	font.setFontHeightInPoints((short)12);
-        	font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        	font.setBold(true);
         	style.setFont(font);styleInfo.setFont(font);
-        	style.setAlignment(CellStyle.ALIGN_CENTER);styleInfo.setAlignment(CellStyle.ALIGN_CENTER);
-        	style.setBorderBottom(CellStyle.BORDER_MEDIUM); styleInfo.setBorderBottom(CellStyle.BORDER_MEDIUM);
-        	styleInfo.setFillBackgroundColor(HSSFColor.LIGHT_YELLOW.index);
+        	style.setAlignment(HorizontalAlignment.CENTER);styleInfo.setAlignment(HorizontalAlignment.CENTER);
+        	style.setBorderBottom(BorderStyle.MEDIUM); styleInfo.setBorderBottom(BorderStyle.MEDIUM);
+        	styleInfo.setFillBackgroundColor(HSSFColorPredefined.LIGHT_YELLOW.getIndex());
 
         	Cell cellInfo = rowInfo.createCell(0);
         	cellInfo.setCellValue(info);
         	cellInfo.setCellStyle(styleInfo);
-       
-        
+
+
        		CellStyle style2 = libro.createCellStyle();
        		Font font2 = libro.createFont();
         	font.setFontHeightInPoints((short)12);
 			style2.setFont(font2);
-			style2.setAlignment(CellStyle.ALIGN_RIGHT);
-			style2.setBorderBottom(CellStyle.BORDER_THIN);
-			style2.setBorderRight(CellStyle.BORDER_THIN);
-			style2.setBorderLeft(CellStyle.BORDER_THIN);
-		
+			style2.setAlignment(HorizontalAlignment.RIGHT);
+			style2.setBorderBottom(BorderStyle.THIN);
+			style2.setBorderRight(BorderStyle.THIN);
+			style2.setBorderLeft(BorderStyle.THIN);
+
 			CellStyle style3 = libro.createCellStyle();
 			style3.setFont(font2);
-			style3.setAlignment(CellStyle.ALIGN_LEFT);
-			style3.setBorderBottom(CellStyle.BORDER_THIN);
-			style3.setBorderRight(CellStyle.BORDER_THIN);
-			style3.setBorderLeft(CellStyle.BORDER_THIN);
-		
+			style3.setAlignment(HorizontalAlignment.LEFT);
+			style3.setBorderBottom(BorderStyle.THIN);
+			style3.setBorderRight(BorderStyle.THIN);
+			style3.setBorderLeft(BorderStyle.THIN);
+
 			for(Integer i = 0; i< columns; i++){
 				Cell celda = fila.createCell(i);
 				celda.setCellValue(aux.getColumns().get(i));
-				celda.setCellStyle(style);  	
+				celda.setCellStyle(style);
         	}
 
         	if(packaged){
@@ -496,24 +500,24 @@ public class ConsumptionUtil {
         		cell2.setCellValue("Etiqueta");
         		cell2.setCellStyle(style);
         	}
-        	
+
          	Vector<ConsumptionItem> v =  allMap.get(warehouses.get(index).getName());
-        	
+
         	Integer num = 0;
         	for(Integer j = 0; j< v.size();j++){
         		ConsumptionItem ci = v.get(j);
         		ci.setConsumption(ci.getInitialQuantity()+ci.getPurchasesAlb()+ci.getPurchasesFac()+ci.getTransfersPlus()-ci.getSalesAlb()-ci.getSalesFac()-ci.getTransfersMinus()-ci.getFinalQuantity());
 
         		Double consumValue = ci.getConsumValue();
-        		
-        		if(!(ci.getInitialQuantity() == 0 && 
+
+        		if(!(ci.getInitialQuantity() == 0 &&
         			ci.getPurchasesAlb() == 0 &&
    					ci.getPurchasesFac() == 0 &&
         			ci.getSalesAlb() == 0 &&
     				ci.getSalesFac() == 0 &&
         			ci.getFinalQuantity() == 0 &&
         			(ci.getTransfersPlus()-ci.getTransfersMinus()) == 0 &&
-        			ci.getConsumption() == 0) && 
+        			ci.getConsumption() == 0) &&
         			(!onlyNegative || ci.getConsumption() < 0 ) &&
         			(!dif || ci.getConsumption() != 0 )){
         			Row row = hoja.createRow((j-num)+2);
@@ -521,12 +525,12 @@ public class ConsumptionUtil {
 
         			for(Integer k = 0; k< columns; k++){
         	    		Cell celda = row.createCell(k);
-        	    		String type = aux.getColumns().get(k); 
-     
+        	    		String type = aux.getColumns().get(k);
+
         				switch (type) {
         				case "Producto": celda.setCellValue(ci.getProductCode());celda.setCellStyle(style3);break;
         				case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style2);break;
-        				case "Nombre": 
+        				case "Nombre":
         					String str  = ci.getProductName();
                 			/*if(item.getPackFormatTag().getName() != null)
                 				str = str + " "+item.getPackFormatTag().getName()+" "
@@ -544,12 +548,12 @@ public class ConsumptionUtil {
         				case "Final \u20AC": celda.setCellValue(round(ci.getFinalQuantity() * ci.getFinalValue(),2));celda.setCellStyle(style2);break;
         				case "Traspaso": celda.setCellValue(round(ci.getTransfersPlus()-ci.getTransfersMinus(),2));celda.setCellStyle(style2);break;
         				case "Traspaso \u20AC": celda.setCellValue(round((ci.getTransfersPlus() * ci.getPrice()) - (ci.getTransfersMinus() * ci.getPrice()),2));celda.setCellStyle(style2);break;
-        				//case "Precio": celda.setCellValue(round(ci.getPrice(),2));celda.setCellStyle(style2);break; 
+        				//case "Precio": celda.setCellValue(round(ci.getPrice(),2));celda.setCellStyle(style2);break;
         				//case "Valor Consumo": celda.setCellValue(round(ci.getPrice()*ci.getConsumption(),2));celda.setCellStyle(style2);break;
         				case "Precio": if(ci.getConsumption() != 0) celda.setCellValue(round(consumValue / ci.getConsumption(), 2));
-        							else celda.setCellValue(0);	
-        							celda.setCellStyle(style2);break; 
-        				case "Consumo \u20AC": 
+        							else celda.setCellValue(0);
+        							celda.setCellStyle(style2);break;
+        				case "Consumo \u20AC":
         					if(ci.getConsumption() == 0) celda.setCellValue(0);
         					else celda.setCellValue(round(consumValue,2));
         					celda.setCellStyle(style2);break;
@@ -560,7 +564,7 @@ public class ConsumptionUtil {
         					break;
         			}
         			}
-        			
+
         			if(packaged){
                 		Cell valueCell = row.createCell(columns);
                 		Double value = ci.getConsumption() * item.getPackMeasurement() * item.getPackUnits();
@@ -576,17 +580,17 @@ public class ConsumptionUtil {
         		else{
         			num++;
         		}
-        	
+
         	}
         	for(Integer h = 0; h< columns;h++){
         		hoja.autoSizeColumn(h);
         	}
         }
-        
-        libro.write(archivo);    
-        
+
+        libro.write(archivo);
+
         if(fileType.equals(PDF)){
-        	
+
         	 Document iText_xls_2_pdf = new Document(PageSize.A4.rotate());
     		 try {
     			 PdfWriter.getInstance(iText_xls_2_pdf, new FileOutputStream(archivoPDF));
@@ -594,30 +598,30 @@ public class ConsumptionUtil {
     			 e.printStackTrace();
     		 }
     		 iText_xls_2_pdf.open();
-    		 
+
 			 com.itextpdf.text.Font fontTitle = new com.itextpdf.text.Font();
 			 fontTitle.setSize(16);
 			 fontTitle.setStyle(com.itextpdf.text.Font.BOLD);
-			 
+
 			 Paragraph title = new Paragraph("Control de Consumo",fontTitle);
 			 try {
 				iText_xls_2_pdf.add(title);
 			} catch (DocumentException e1) {
 				e1.printStackTrace();
 			}
-			 
-        	 for (int index = 0; index < size+2; index++){ 
+
+        	 for (int index = 0; index < size+2; index++){
         		 HSSFSheet my_worksheet = libro.getSheetAt(index);
-        		 Iterator<Row> rowIterator = my_worksheet.iterator();             
+        		 Iterator<Row> rowIterator = my_worksheet.iterator();
         		 Integer columnNum = getColumnNum(index, columns, packaged);
         		 PdfPTable my_table = new PdfPTable(columnNum);
         		 PdfPCell table_cell;
         		 Integer i = 0;
-        		 
+
         		 while(rowIterator.hasNext()) {
-                    Row row = rowIterator.next(); 
+                    Row row = rowIterator.next();
                     Iterator<Cell> cellIterator = row.cellIterator();
-                    		
+
                             while(cellIterator.hasNext()) {
                             		if(i == 0){
                             			cellIterator.next();
@@ -626,29 +630,29 @@ public class ConsumptionUtil {
                             		com.itextpdf.text.Font font1 = new com.itextpdf.text.Font();
                             		font1.setSize(8);
                             		font1.setStyle(com.itextpdf.text.Font.BOLD);
-                            		
+
                             		com.itextpdf.text.Font font2 = new com.itextpdf.text.Font();
                             		font2.setSize(8);
-                            		
+
                                     Cell cell = cellIterator.next(); //Fetch CELL
-                                    switch(cell.getCellType()) { //Identify CELL type
+                                    switch(cell.getCellTypeEnum()) { //Identify CELL type
                                             //you need to add more code here based on
                                             //your requirement / transformations
-                                    case Cell.CELL_TYPE_STRING:
+                                    case STRING:
                                     	if(row.getRowNum() == 1)
                                     		table_cell=new PdfPCell(new Phrase(cell.getStringCellValue(), font1));
                                     	else table_cell=new PdfPCell(new Phrase(cell.getStringCellValue(), font2));
                                     	if(cell.getColumnIndex() != columnNum) my_table.addCell(table_cell);
                                     	break;
-                                    case Cell.CELL_TYPE_BLANK:
+                                    case BLANK:
                                     	//Push the data from Excel to PDF Cell
                                         table_cell=new PdfPCell();
                                         //feel free to move the code below to suit to your needs
-                                        
+
                                         if(cell.getColumnIndex() != columnNum) my_table.addCell(table_cell);
                                        break;
-                                    
-                            		case Cell.CELL_TYPE_BOOLEAN:
+
+                            		case BOOLEAN:
                             			//Push the data from Excel to PDF Cell
                             			String text ="";
                             			if(cell.getBooleanCellValue())text = "true";
@@ -657,35 +661,35 @@ public class ConsumptionUtil {
                                 		//feel free to move the code below to suit to your needs
                                 		 if(cell.getColumnIndex() != columnNum) my_table.addCell(table_cell);
                                 		break;
-                            		case Cell.CELL_TYPE_FORMULA:
+                            		case FORMULA:
                             			//Push the data from Excel to PDF Cell
                             			table_cell=new PdfPCell(new Phrase(cell.getCellFormula(), font2));
                                 		//feel free to move the code below to suit to your needs
                             			 if(cell.getColumnIndex() != columnNum) my_table.addCell(table_cell);
                                 		break;
-                            		case Cell.CELL_TYPE_NUMERIC:
+                            		case NUMERIC:
                             			//Push the data from Excel to PDF Cell
                             			Double d = cell.getNumericCellValue();
                             			table_cell=new PdfPCell(new Phrase(d.toString(), font2));
                                 		//feel free to move the code below to suit to your needs
                             			 if(cell.getColumnIndex() != columnNum) my_table.addCell(table_cell);
                                 		break;
-                            		}	
+                            		}
                             		}
                             		i++;
                                     //next line
                             }
         		 }
         		 try {
-        			 
+
 
         			 com.itextpdf.text.Font fontPhrase = new com.itextpdf.text.Font();
         			 fontPhrase.setSize(12);
         			 fontPhrase.setStyle(com.itextpdf.text.Font.BOLD);
-            	
+
         			 com.itextpdf.text.Font fontPhrase2 = new com.itextpdf.text.Font();
         			 fontPhrase.setSize(12);
-        			 
+
         			 if(index<2){
         				 iText_xls_2_pdf.add(new Paragraph(" "));
         				 iText_xls_2_pdf.add(new Paragraph("Resumen " + index, fontPhrase));
@@ -699,16 +703,16 @@ public class ConsumptionUtil {
         			 	iText_xls_2_pdf.add(new Paragraph(" "));
         			 }
         			 iText_xls_2_pdf.add(my_table);
-        			 
+
         			 iText_xls_2_pdf.add(new Paragraph(" "));
         		 } catch (DocumentException e) {
         			 e.printStackTrace();
-        		 }                       
+        		 }
         	 }
         	 iText_xls_2_pdf.close();
         }
         archivo.close();
-        
+
         //long length;
         //FileInputStream fis;
         if(fileType.equals(PDF)){
@@ -718,7 +722,7 @@ public class ConsumptionUtil {
         	return archivoXLS;
         }
     }
-	
+
 	public static Double round(Double value, Integer places) {
 	    if (places < 0) throw new IllegalArgumentException();
 
@@ -727,17 +731,17 @@ public class ConsumptionUtil {
 	    Long tmp = Math.round(value);
 	    return (double) tmp / factor;
 	}
-	
+
 	private static TemplateInfo getTemplateInfoA() {
 		Vector<String> v = new Vector<String>();
 		v.add("Hotel");
 		v.add("Almac\u00e9n");
 		v.add("Producto");
-		v.add("Inicial \u20AC"); 
-		v.add("Compras \u20AC"); 
+		v.add("Inicial \u20AC");
+		v.add("Compras \u20AC");
 		v.add("Ventas \u20AC");
 		v.add("Final \u20AC");
-		v.add("Traspaso \u20AC"); 
+		v.add("Traspaso \u20AC");
 		v.add("Consumo \u20AC");
 		return new TemplateInfo().setColumns(v);
 	}
@@ -764,22 +768,22 @@ public class ConsumptionUtil {
 		v.add("Consumo \u20AC");
 		return new TemplateInfo().setColumns(v);
 	}
-	
+
 	private static TemplateInfo getTemplateInfoC() {
 		Vector<String> v = new Vector<String>();
 		v.add("Hotel");
 		v.add("Desde");
 		v.add("Hasta");
 		v.add("Almac\u00e9n");
-		v.add("Inicial \u20AC"); 
-		v.add("Compras \u20AC"); 
+		v.add("Inicial \u20AC");
+		v.add("Compras \u20AC");
 		v.add("Ventas \u20AC");
 		v.add("Final \u20AC");
-		v.add("Traspaso \u20AC"); 
+		v.add("Traspaso \u20AC");
 		v.add("Consumo \u20AC");
 		return new TemplateInfo().setColumns(v);
 	}
-	
+
 	private static TemplateInfo getTemplateInfo(Boolean detail) {
 		Vector<String> v = new Vector<String>();
 		v.add("Producto");
@@ -798,59 +802,59 @@ public class ConsumptionUtil {
 		v.add("Consumo \u20AC");
 		return new TemplateInfo().setColumns(v);
 	}
-	
+
 	private static  void libro(String domain, Integer domainId, String login, Vector<Warehouse>  warehouses, HSSFWorkbook libro,  boolean onlyNegative, Map<String, Vector<ConsumptionItem>> map, TemplateInfo special1, Integer hoja, Boolean packaged, Boolean dif){
-		
-		Integer columns = special1.getColumns().size(); 
-	
+
+		Integer columns = special1.getColumns().size();
+
     	HSSFSheet hoja0 = libro.createSheet("Plantilla "+ hoja);
-        
+
     	if(packaged)hoja0.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()+1));
     	else hoja0.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()-1));
-    	
+
     	Row rowInfo0 = hoja0.createRow(0);
     	Row fila0 = hoja0.createRow(1);
-    	
+
 
     	String info0 = "Control de Consumo ## ";
-        
+
     	rowInfo0.setHeightInPoints(16);
     	fila0.setHeightInPoints(16);
     	CellStyle style0 = libro.createCellStyle();CellStyle styleInfo0 = libro.createCellStyle();
     	Font font0 = libro.createFont();
     	font0.setFontHeightInPoints((short)12);
-    	font0.setBoldweight(Font.BOLDWEIGHT_BOLD);
+    	font0.setBold(true);
     	style0.setFont(font0);styleInfo0.setFont(font0);
-    	style0.setAlignment(CellStyle.ALIGN_CENTER);styleInfo0.setAlignment(CellStyle.ALIGN_CENTER);
-    	style0.setBorderBottom(CellStyle.BORDER_MEDIUM); styleInfo0.setBorderBottom(CellStyle.BORDER_MEDIUM);
-    	styleInfo0.setFillBackgroundColor(HSSFColor.LIGHT_YELLOW.index);
+    	style0.setAlignment(HorizontalAlignment.CENTER);styleInfo0.setAlignment(HorizontalAlignment.CENTER);
+    	style0.setBorderBottom(BorderStyle.MEDIUM); styleInfo0.setBorderBottom(BorderStyle.MEDIUM);
+    	styleInfo0.setFillBackgroundColor(HSSFColorPredefined.LIGHT_YELLOW.getIndex());
 
     	Cell cellInfo0 = rowInfo0.createCell(0);
     	cellInfo0.setCellValue(info0);
     	cellInfo0.setCellStyle(styleInfo0);
-    	
+
     	CellStyle style20 = libro.createCellStyle();
    		Font font20 = libro.createFont();
     	font0.setFontHeightInPoints((short)12);
 		style20.setFont(font20);
-		style20.setAlignment(CellStyle.ALIGN_RIGHT);
-		style20.setBorderBottom(CellStyle.BORDER_THIN);
-		style20.setBorderRight(CellStyle.BORDER_THIN);
-		style20.setBorderLeft(CellStyle.BORDER_THIN);
-	
+		style20.setAlignment(HorizontalAlignment.RIGHT);
+		style20.setBorderBottom(BorderStyle.THIN);
+		style20.setBorderRight(BorderStyle.THIN);
+		style20.setBorderLeft(BorderStyle.THIN);
+
 		CellStyle style30 = libro.createCellStyle();
 		style30.setFont(font20);
-		style30.setAlignment(CellStyle.ALIGN_LEFT);
-		style30.setBorderBottom(CellStyle.BORDER_THIN);
-		style30.setBorderRight(CellStyle.BORDER_THIN);
-		style30.setBorderLeft(CellStyle.BORDER_THIN);
-	
+		style30.setAlignment(HorizontalAlignment.LEFT);
+		style30.setBorderBottom(BorderStyle.THIN);
+		style30.setBorderRight(BorderStyle.THIN);
+		style30.setBorderLeft(BorderStyle.THIN);
+
 		for(Integer i = 0; i< columns; i++){
 			Cell celda0 = fila0.createCell(i);
 			celda0.setCellValue(special1.getColumns().get(i));
-			celda0.setCellStyle(style0);  	
+			celda0.setCellStyle(style0);
     	}
-    		
+
     	if(packaged){
     		Cell cell1 = fila0.createCell(columns);
             cell1.setCellValue("Stock");
@@ -859,7 +863,7 @@ public class ConsumptionUtil {
             cell2.setCellValue("Etiqueta");
     		cell2.setCellStyle(style0);
     	}
-    	
+
     	Integer num0 = 0;
     	Integer l = 0;
 
@@ -867,29 +871,29 @@ public class ConsumptionUtil {
 
     	for (Warehouse w : warehouses) {
         	Vector<ConsumptionItem> v2 = map.get(w.getName());
-            Collections.sort(v2, (ConsumptionItem c1, ConsumptionItem c2) -> c1.getConsumValue().compareTo(c2.getConsumValue()));        
+            Collections.sort(v2, (ConsumptionItem c1, ConsumptionItem c2) -> c1.getConsumValue().compareTo(c2.getConsumValue()));
         	for(ConsumptionItem ci : v2){
         		ci.setConsumption(ci.getInitialQuantity()+ci.getPurchasesAlb()+ci.getPurchasesFac()+ci.getTransfersPlus()-ci.getSalesAlb()-ci.getSalesFac()-ci.getTransfersMinus()-ci.getFinalQuantity());
 
         		Double consumValue = ci.getConsumValue();
-            	
-        		
-        		if(!(ci.getInitialQuantity() == 0 && 
+
+
+        		if(!(ci.getInitialQuantity() == 0 &&
         			ci.getPurchasesAlb() == 0 &&
     					ci.getPurchasesFac() == 0 &&
         			ci.getSalesAlb() == 0 &&
     				ci.getSalesFac() == 0 &&
         			ci.getFinalQuantity() == 0 &&
         			(ci.getTransfersPlus()-ci.getTransfersMinus()) == 0 &&
-        			ci.getConsumption() == 0) && 
+        			ci.getConsumption() == 0) &&
         			(!onlyNegative || ci.getConsumption() < 0 ) &&
         			(!dif || ci.getConsumption() != 0 )){
         			Row row = hoja0.createRow((l-num0)+2);
         			Item item = AON.getItem(domain, domainId, login, ci.getItemId());
         			for(Integer k = 0; k< columns; k++){
         	    		Cell celda = row.createCell(k);
-        	    		String type = special1.getColumns().get(k); 
-     
+        	    		String type = special1.getColumns().get(k);
+
         				switch (type) {
         				case "Hotel": celda.setCellValue(ci.getHotel());celda.setCellStyle(style30);break;
         				case "Desde": celda.setCellValue(ci.getInitialDate() != null ? format.format(sumarRestarDiasFecha(ci.getInitialDate(), -1)) : "-");celda.setCellStyle(style30);break;
@@ -897,7 +901,7 @@ public class ConsumptionUtil {
         				case "Almac\u00e9n": celda.setCellValue(ci.getWarehouseName());celda.setCellStyle(style30);break;
         				case "Producto": celda.setCellValue(ci.getProductCode());celda.setCellStyle(style30);break;
         				case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style20);break;
-        				case "Nombre": 
+        				case "Nombre":
         					String str  = ci.getProductName();
                 			/*if(item.getPackFormatTag().getName() != null)
                 				str = str + " "+item.getPackFormatTag().getName()+" "
@@ -915,11 +919,11 @@ public class ConsumptionUtil {
         				case "Final \u20AC": celda.setCellValue(round(ci.getFinalQuantity() * ci.getFinalValue(),2));celda.setCellStyle(style20);break;
         				case "Traspaso": celda.setCellValue(round(ci.getTransfersPlus()-ci.getTransfersMinus(),2));celda.setCellStyle(style20);break;
         				case "Traspaso \u20AC": celda.setCellValue(round((ci.getTransfersPlus() * ci.getPrice()) - (ci.getTransfersMinus() * ci.getPrice()),2));celda.setCellStyle(style20);break;
-        				//case "Precio": celda.setCellValue(round(ci.getPrice(),2));celda.setCellStyle(style2);break; 
+        				//case "Precio": celda.setCellValue(round(ci.getPrice(),2));celda.setCellStyle(style2);break;
         				//case "Valor Consumo": celda.setCellValue(round(ci.getPrice()*ci.getConsumption(),2));celda.setCellStyle(style2);break;
         				case "Precio": if(ci.getConsumption() != 0) celda.setCellValue(round(consumValue / ci.getConsumption(), 2));
-        							else celda.setCellValue(0);	
-        							celda.setCellStyle(style20);break; 
+        							else celda.setCellValue(0);
+        							celda.setCellStyle(style20);break;
         				case "Consumo \u20AC":
         					if(ci.getConsumption() == 0) celda.setCellValue(0);
         					else celda.setCellValue(round(consumValue,2));
@@ -931,7 +935,7 @@ public class ConsumptionUtil {
         					break;
         			}
         			}
-        			
+
         			if(packaged){
                 		Cell valueCell = row.createCell(columns);
                 		Double value = ci.getConsumption() * item.getPackMeasurement() * item.getPackUnits();
@@ -947,63 +951,63 @@ public class ConsumptionUtil {
         			num0++;
         		}
         		l++;
-        	}    		
+        	}
     	}
     	for(Integer h = 0; h< columns;h++){
     		hoja0.autoSizeColumn(h);
     	}
 	}
-	
+
 	private static  void libro2(String domain, Integer domainId, String login, Vector<Warehouse>  warehouses, HSSFWorkbook libro,  boolean onlyNegative, Map<String, Vector<ConsumptionItem>> map, TemplateInfo special1, Integer hoja, Boolean dif){
-		
-		Integer columns = special1.getColumns().size(); 
-	
+
+		Integer columns = special1.getColumns().size();
+
     	HSSFSheet hoja0 = libro.createSheet("Plantilla "+ hoja);
-        
+
     	hoja0.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()-1));
 
     	Row rowInfo0 = hoja0.createRow(0);
     	Row fila0 = hoja0.createRow(1);
-    	
+
 
     	String info0 = "Control de Consumo ## ";
-        
+
     	rowInfo0.setHeightInPoints(16);
     	fila0.setHeightInPoints(16);
     	CellStyle style0 = libro.createCellStyle();CellStyle styleInfo0 = libro.createCellStyle();
     	Font font0 = libro.createFont();
     	font0.setFontHeightInPoints((short)12);
-    	font0.setBoldweight(Font.BOLDWEIGHT_BOLD);
+    	font0.setBold(true);
     	style0.setFont(font0);styleInfo0.setFont(font0);
-    	style0.setAlignment(CellStyle.ALIGN_CENTER);styleInfo0.setAlignment(CellStyle.ALIGN_CENTER);
-    	style0.setBorderBottom(CellStyle.BORDER_MEDIUM); styleInfo0.setBorderBottom(CellStyle.BORDER_MEDIUM);
-    	styleInfo0.setFillBackgroundColor(HSSFColor.LIGHT_YELLOW.index);
+    	style0.setAlignment(HorizontalAlignment.CENTER);styleInfo0.setAlignment(HorizontalAlignment.CENTER);
+    	style0.setBorderBottom(BorderStyle.MEDIUM); styleInfo0.setBorderBottom(BorderStyle.MEDIUM);
+    	styleInfo0.setFillBackgroundColor(HSSFColorPredefined.LIGHT_YELLOW.getIndex());
 
     	Cell cellInfo0 = rowInfo0.createCell(0);
     	cellInfo0.setCellValue(info0);
     	cellInfo0.setCellStyle(styleInfo0);
-    	
+
     	CellStyle style20 = libro.createCellStyle();
    		Font font20 = libro.createFont();
     	font0.setFontHeightInPoints((short)12);
 		style20.setFont(font20);
-		style20.setAlignment(CellStyle.ALIGN_RIGHT);
-		style20.setBorderBottom(CellStyle.BORDER_THIN);
-		style20.setBorderRight(CellStyle.BORDER_THIN);
-		style20.setBorderLeft(CellStyle.BORDER_THIN);
-	
+		style20.setAlignment(HorizontalAlignment.RIGHT);
+		style20.setBorderBottom(BorderStyle.THIN);
+		style20.setBorderRight(BorderStyle.THIN);
+		style20.setBorderLeft(BorderStyle.THIN);
+
 		CellStyle style30 = libro.createCellStyle();
 		style30.setFont(font20);
-		style30.setAlignment(CellStyle.ALIGN_LEFT);
-		style30.setBorderBottom(CellStyle.BORDER_THIN);
-		style30.setBorderRight(CellStyle.BORDER_THIN);
-		style30.setBorderLeft(CellStyle.BORDER_THIN);
-	
+		style30.setAlignment(HorizontalAlignment.LEFT);
+		style30.setBorderBottom(BorderStyle.THIN);
+		style30.setBorderRight(BorderStyle.THIN);
+		style30.setBorderLeft(BorderStyle.THIN);
+
 		for(Integer i = 0; i< columns; i++){
     	Cell celda0 = fila0.createCell(i);
         celda0.setCellValue(special1.getColumns().get(i));
-        celda0.setCellStyle(style0);  	
-    	} 	
+        celda0.setCellStyle(style0);
+    	}
 
     	Integer l = 0;
     	for (Warehouse w : warehouses) {
@@ -1023,32 +1027,32 @@ public class ConsumptionUtil {
         		endDate = ci.getFinalDate();
         		ci.setConsumption(ci.getInitialQuantity()+ci.getPurchasesAlb()+ci.getPurchasesFac()+ci.getTransfersPlus()-ci.getSalesAlb()-ci.getSalesFac()-ci.getTransfersMinus()-ci.getFinalQuantity());
         		Double consumValue = ci.getConsumption() == 0 ? 0 : ci.getConsumValue();
-            	
+
         		if(((dif && consumValue != 0) || !dif) && ((onlyNegative && consumValue < 0) || !onlyNegative)){
-        		
+
         			if(consumValue != null) consumo = consumo + consumValue;
-        		
+
         			Double transferValue = (ci.getTransfersPlus() * ci.getPrice()) - (ci.getTransfersMinus() * ci.getPrice());
         			if(transferValue != null) traspaso = traspaso + transferValue;
-        		
+
         			Double finalValue = ci.getFinalQuantity() * ci.getFinalValue();
         			if(finalValue != null) fin = fin + finalValue;
-        		
+
         			Double salesValue = (ci.getValueSAlb())+(ci.getValueSFac());
         			if(salesValue != null) ventas = ventas +salesValue;
-        			
+
         			Double purchasesValue = (ci.getValuePAlb())+(ci.getValuePFac());
         			if(purchasesValue != null) compras = compras +purchasesValue;
-        		
+
         			Double initialValue = ci.getInitialValue() * ci.getInitialQuantity();
         			if(initialValue != null) inicial = inicial + initialValue;
-        		
+
         		}
         	}
         	Row row = hoja0.createRow(l+2);
         	for(Integer k = 0; k< columns; k++){
         	   	Cell celda = row.createCell(k);
-        	   	String type = special1.getColumns().get(k); 
+        	   	String type = special1.getColumns().get(k);
            		switch (type) {
         				case "Hotel": celda.setCellValue(hotel);celda.setCellStyle(style30);break;
            				case "Desde": celda.setCellValue(startDate != null ? format.format(startDate) : "-");celda.setCellStyle(style30);break;
@@ -1067,19 +1071,19 @@ public class ConsumptionUtil {
         	row.setHeightInPoints(20);
         	l++;
         }
-        		
+
     	for(Integer h = 0; h< columns;h++){
     		hoja0.autoSizeColumn(h);
-    	}      	
+    	}
 	}
-	
+
 	 public static Date sumarRestarDiasFecha(Date fecha, int dias){
 		 Calendar calendar = Calendar.getInstance();
 		 calendar.setTime(fecha); // Configuramos la fecha que se recibe
-		 calendar.add(Calendar.DAY_OF_YEAR, dias);  // numero de días a añadir, o restar en caso de días<0
-		 return calendar.getTime(); // Devuelve el objeto Date con los nuevos días añadidos
+		 calendar.add(Calendar.DAY_OF_YEAR, dias);  // numero de dï¿½as a aï¿½adir, o restar en caso de dï¿½as<0
+		 return calendar.getTime(); // Devuelve el objeto Date con los nuevos dï¿½as aï¿½adidos
 	 }
-	
+
 	private static Integer getColumnNum(Integer index, Integer columns, Boolean packaged) {
 		 if(index == 0)
 			 return 8;

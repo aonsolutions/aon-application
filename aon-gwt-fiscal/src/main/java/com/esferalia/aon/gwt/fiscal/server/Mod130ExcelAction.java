@@ -4,15 +4,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
 
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Picture;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -52,7 +56,7 @@ public class Mod130ExcelAction extends ModelIRPFExcelAction<Mod130,Mod130Key> {
 			CreationHelper helper = workbook.getCreationHelper();
 			Drawing drawing = sheet.createDrawingPatriarch();
 			ClientAnchor anchor = helper.createClientAnchor();
-			anchor.setAnchorType(2);
+			anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
 			anchor.setCol1(0);
 			anchor.setRow1(0);
 			anchor.setDx1(20);
@@ -93,7 +97,7 @@ public class Mod130ExcelAction extends ModelIRPFExcelAction<Mod130,Mod130Key> {
 	@Override
 	protected void headerRow() {
 		XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.clone();
-		rightHeaderCellStyle.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
+		rightHeaderCellStyle.setAlignment(HorizontalAlignment.RIGHT);
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
 		for (int i = 0; i < row.getLastCellNum(); i++) {
@@ -134,11 +138,11 @@ public class Mod130ExcelAction extends ModelIRPFExcelAction<Mod130,Mod130Key> {
 		CellStyle style = workbook.createCellStyle();
 		style.setWrapText(true);
 		style.setFont(ms.isTitle() ? modBoldFont: modFont );
-		style.setBorderBottom(CellStyle.BORDER_THIN);
+		style.setBorderBottom(BorderStyle.THIN);
 		style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 		cell.setCellStyle(style);
 		cell.setCellValue(concept);
-		cell.setCellType(Cell.CELL_TYPE_STRING);
+		cell.setCellType(CellType.STRING);
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 1));			
 		if (ms.getKeys() == null) {
 			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 3));
@@ -149,24 +153,24 @@ public class Mod130ExcelAction extends ModelIRPFExcelAction<Mod130,Mod130Key> {
 					?AonStringUtils.leftPad(AonNumberUtils.toString(key.getBox()), 3, "0")
 					:AonStringUtils.EMPTY;
 			Cell boxCell = addCell(box);
-			boxCell.setCellType(Cell.CELL_TYPE_STRING);
+			boxCell.setCellType(CellType.STRING);
 			boxCell.setCellStyle(boxCellStyle);
 
 			cell = row.createCell(cellCount++);
 			style = workbook.createCellStyle();
-			style.setVerticalAlignment(HSSFCellStyle.VERTICAL_BOTTOM);
+			style.setVerticalAlignment(VerticalAlignment.BOTTOM);
 			style.setFont(ms.isTitle()?modBoldFont:modFont);
-			style.setBorderBottom(CellStyle.BORDER_THIN);
+			style.setBorderBottom(BorderStyle.THIN);
 			style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 			cell.setCellStyle(style);
 			if (ms.hasGraphicParticularity()) {
 				fillParticularityCell(cell,style,key);
 			} else {
 				double amount = model.ensureDetail(key).getAmount();
-				style.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
+				style.setAlignment(HorizontalAlignment.RIGHT);
 				style.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
 				cell.setCellValue(amount);
-				cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+				cell.setCellType(CellType.NUMERIC);
 			}
 
 		}
@@ -191,19 +195,19 @@ public class Mod130ExcelAction extends ModelIRPFExcelAction<Mod130,Mod130Key> {
 	@Override
 	protected void fillParticularityCell(Cell cell ,CellStyle style,Mod130Key key) {
 		double amount = model.ensureDetail(key).getAmount();
-		cell.setCellType(Cell.CELL_TYPE_STRING);
+		cell.setCellType(CellType.STRING);
 		if (key == Mod130Key.P0) {
-			style.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
+			style.setAlignment(HorizontalAlignment.RIGHT);
 			cell.setCellValue(amount == 1
 					?IRPFRegime.SIMPLIFIED.getDescription()
 					:IRPFRegime.NORMAL.getDescription());
 		} else if (key == Mod130Key.P1) {
-			style.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
+			style.setAlignment(HorizontalAlignment.RIGHT);
 			style.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
 			cell.setCellValue(amount);
-			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+			cell.setCellType(CellType.NUMERIC);
 		} else if (key == Mod130Key.P2) {
-			cell.getCellStyle().setAlignment(HSSFCellStyle.ALIGN_RIGHT);
+			cell.getCellStyle().setAlignment(HorizontalAlignment.RIGHT);
 			cell.setCellValue(amount == 1?"SI":"NO");
 		}
 	}

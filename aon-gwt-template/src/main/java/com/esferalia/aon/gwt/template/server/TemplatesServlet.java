@@ -30,6 +30,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -91,8 +92,8 @@ import com.esferalia.aon.watson.server.io.AonIOUtils;
 public class TemplatesServlet extends AonRemoteServiceServlet implements ITemplate{
 
 	private static final long serialVersionUID = 6871016881549113129L;
-	
-	static final String COMMERCIAL_PRODUCT = ProductType.COMMERCIAL_PRODUCT.getName(); 
+
+	static final String COMMERCIAL_PRODUCT = ProductType.COMMERCIAL_PRODUCT.getName();
 	static final String EXTERNAL_WORK = ProductType.EXTERNAL_WORK.getName();
 	static final String EXPENSE = ProductType.EXPENSE.getName();
 	static final String INCREASE = ProductType.INCREASE.getName();
@@ -107,16 +108,16 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	static final String FOUR_MONTHLY = "Cuatrimestral";//BillingPeriod.FOUR_MONTHLY.getName();
 	static final String SIX_MONTHLY = "Semestral";///BillingPeriod.SIX_MONTHLY.getName();
 	static final String YEARLY = "Anual";//BillingPeriod.YEARLY.getName();
-	
+
 	HashMap<String, ProductInfo> map = new HashMap<String, ProductInfo>();
 	public static byte[] out;
 	static Integer size;
 	private static String mimetype;
-	
+
 	public static TemplatesServlet getInstance() {
 		return new TemplatesServlet();
 	}
-	
+
 	public static byte[] getOut() {
 		return out;
 	}
@@ -124,7 +125,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	public static void setOut(byte[] out2) {
 		out = out2;
 	}
-	
+
 	public static String getMimetype() {
 		return mimetype;
 	}
@@ -136,18 +137,18 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	public Integer getSize() {
 		return size;
 	}
-	
+
 	public static void setSize(Integer sizea) {
 		size = sizea;
 	}
-	
+
 	public User getUser(){
 		return new User()
 				.setId(getUserID())
 				.setLogin(getUserLogin())
 				.setDomain(getUserDomainID());
 	}
-	
+
 	public TemplateList getTemplates(Domain domain){
 		TemplateList tl = null;
 		tl = DBConsults.getTemplates(domain, getUser());
@@ -155,19 +156,19 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		tl.setLogin(getUser().getLogin());
 		return tl;
 	}
-	
+
 	public List<Hotel> getHotelsToConsumption(Domain domain){
 		return DBConsults.getHotels(domain, getUser());
 	}
-	
+
 	public List<Hotel> getWorkplacesToConsumption(Domain domain){
 		return DBConsults.getWorkplaces(domain, getUser());
 	}
-	
+
 	public Vector<Warehouse> getWarehousesToConsumption(Domain domain, Integer workplaceId){
 		return DBStock.getInstance().getWarehouse(domain, getUser(), workplaceId);
 	}
-	
+
 	public Vector<Warehouse> getWarehousesToConsumption(Domain domain){
 		Vector<Warehouse> v = DBStock.getInstance().getWarehouse(domain, getUser());
 		Vector<Warehouse> v2 = new Vector<Warehouse>();
@@ -178,20 +179,20 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		}
 		return v2;
 	}
-	
+
 	public Vector<Warehouse> getWarehouses(Domain domain){
 		return DBStock.getInstance().getWarehouse(domain, getUser());
 	}
-	
+
 	public TemplateInfo newTemplate(Domain domain, TemplateInfo ti ){
 		byte[] b = Utils.newXmlFile(ti);
 		Integer id = DBConsults.insertTemplate(domain, ti, b, getUser().getLogin());
 		ti.setId(id);
 		ti.setIsParent(false);
-	
+
 		return ti;
 	}
-	
+
 	public TemplateInfo editTemplate(Domain domain, TemplateInfo ti){
 		byte[] b = Utils.newXmlFile(ti);
 		DBConsults.updateTemplate(domain, ti, b, getUser().getLogin());
@@ -201,11 +202,11 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	public void deleteTemplate(Domain domain, TemplateInfo ti){
 		DBConsults.removeTemplate(domain,getUser(), ti.getId());
 	}
-	
-	//-------------------- IMPORTAR 
-	DeliveryInfo di; 
+
+	//-------------------- IMPORTAR
+	DeliveryInfo di;
 	Vector<String> verror;
-	public Integer executeExcel(Domain domain, TemplateInfo ti, ImportType importType, Boolean ignoreInactiveClient, 
+	public Integer executeExcel(Domain domain, TemplateInfo ti, ImportType importType, Boolean ignoreInactiveClient,
 		Integer inventory, String warehouse1,String warehouse2 , String series, String comments,Boolean istransfer ,Integer number){
 
 		this.ti = ti;
@@ -213,30 +214,30 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		verror = new Vector<String>();
 		error.setTextError(verror);
 		textError = "";
-		
+
 		com.esferalia.aon.gwt.template.shared.Error error = new Error();
-    	
+
 		if(getOut() == null){
 			error.setError(false);
- 			textError =  textError + "*No ha importado ningún archivo.\n";
-			verror.add("*No ha importado ningún archivo.");
+ 			textError =  textError + "*No ha importado ningï¿½n archivo.\n";
+			verror.add("*No ha importado ningï¿½n archivo.");
 			error.setTextError(verror);
 			this.error = error;
 			return -1;
 		}
-		
+
 		Iterator<Row> rowIterator;
 		try {
-			byte[] data = getOut();			
+			byte[] data = getOut();
 			ByteArrayInputStream bais = new ByteArrayInputStream(data);
-			
+
 			HSSFWorkbook workbook = new HSSFWorkbook(bais);
 			HSSFSheet sheet = workbook.getSheetAt(0);
 			FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
 
 			rowCount  = sheet.getPhysicalNumberOfRows();
 			rowIterator = sheet.iterator();
-			
+
 			if(importType.equals(ImportType.PRODUCT))
 				executeExcelProduct(domain, rowIterator, error, evaluator);
 			else if(importType.equals(ImportType.FEE))
@@ -248,7 +249,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			else if(ImportType.DELIVERY.equals(importType)) {
 				di = DeliveryImport.getInstance().importation(data);
 			}
-			
+
 			workbook.close();
 		} catch (IOException e) {
 			//El archivo no es un fichero Excel.
@@ -263,13 +264,13 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			try {
 				byte[] data = getOut();
 				ByteArrayInputStream bais = new ByteArrayInputStream(data);
-				
+
 				XSSFWorkbook workbook = new XSSFWorkbook(bais);
 				XSSFSheet sheet = workbook.getSheetAt(0);
 				FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
 				rowCount  = sheet.getPhysicalNumberOfRows();
 				rowIterator = sheet.iterator();
-				
+
 				if(importType.equals(ImportType.PRODUCT))
 					executeExcelProduct(domain, rowIterator, error, evaluator);
 				else if(importType.equals(ImportType.FEE))
@@ -293,7 +294,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		}
 		return rowCount;
 	}
-	
+
 	//-------------------- IMPORTAR FEE
 	Vector<FeeInfo> fees;
 	FeeInfo fi;
@@ -303,7 +304,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	Boolean feeBool;
 	private void executeExcelFee(final Domain domain, Iterator<Row> rowIterator, Error error, Boolean ignoreInactiveClient, FormulaEvaluator evaluator){
 		Vector<FeeInfo> fees = new Vector<FeeInfo>();
-		
+
 		sellers = DBFee.getInstance().getSellers(domain, getUser().getLogin());
 		workplaces = DBFee.getInstance().getWorkplaceList(domain, getUser());
 		invoicingGroupList = DBFee.getInstance().getInvoicingGroupList(domain, getUser());
@@ -331,12 +332,12 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 								this.error = error;
 								rowCount = -1;
 								feeBool = false;
-							}	 
+							}
 						}
 						else if(feeBool){
 							if(cell.getColumnIndex() !=0){
 								Cell beforeCell = rowAux.getCell(cell.getColumnIndex()-1);
-								if((beforeCell == null || beforeCell.getCellType() == Cell.CELL_TYPE_BLANK) && isRequiredFee(ti.getColumns().get(cell.getColumnIndex()-1))){
+								if((beforeCell == null || beforeCell.getCellTypeEnum() == CellType.BLANK) && isRequiredFee(ti.getColumns().get(cell.getColumnIndex()-1))){
 									if(beforeCell == null){
 										verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto");
 										textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto \n";
@@ -353,11 +354,11 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 								if(fi == null){
 									verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto ");
 									textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n";
-									fi = newFee();	
+									fi = newFee();
 								}
 							}
 						}
-					}  
+					}
 				});
 				if(row.getLastCellNum() != ti.getColumns().size()+1){
 					if(row.getRowNum() == 1){
@@ -366,7 +367,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 						textError= textError +"*El archivo importado no es compatible con la plantilla seleccionada.";
 						error.setTextError(verror);
 						this.error = error;
-						rowCount = -1;         		
+						rowCount = -1;
 						feeBool = false;
 					}
 					else if(feeBool){
@@ -376,23 +377,23 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 							if(ti.getColumns().get(cellnum).equals("Nombre") || ti.getColumns().get(cellnum).equals("C\u00f3digo") || ti.getColumns().get(cellnum).equals("Precio Coste") || ti.getColumns().get(cellnum).equals("Precio Venta Base")){
 								verror.add("*Fila "+(row.getRowNum()+1)+", Columna "+Utils.getColumn(row.getLastCellNum())+" : Dato Incorrecto \n");
 								textError= textError + "*Fila "+(row.getRowNum()+1)+", Columna "+Utils.getColumn(row.getLastCellNum())+" : Dato Incorrecto \n";
-							}	
+							}
 						}
 					}
 				}
-            
-				if(row.getRowNum() > 1 && fi.getProduct()!= null){ 
+
+				if(row.getRowNum() > 1 && fi.getProduct()!= null){
 					fi.setRow(row.getRowNum());
 					fees.add(fi);
 				}
 			}
 		});
-		
+
 		this.fees = fees;
 		if(rowCount != -1) rowCount = fees.size();
 		setOut(null);
 		setMimetype(null);
-	
+
 	}
 
 	public Boolean isRequiredFee(String s){
@@ -400,7 +401,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				|| s.equals("Descuento") || s.equals("Fecha Inicio") || s.equals("Fecha Facturaci\u00f3n" )
 				|| s.equals("Centro de Trabajo") ||  s.equals("Centro Trabajo") ;
 	}
-	
+
 	public Error insertFee(Domain domain) {
 		Vector<String> verror = error.getTextError();
 		Error error = new Error();
@@ -423,7 +424,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		}
 		return error;
 	}
-	
+
 	private FeeInfo newFee() {
 		FeeInfo feeInfo = new FeeInfo();
 		feeInfo.setPeriod(0);
@@ -435,16 +436,16 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		feeInfo.setDescription("");
 		return feeInfo;
 	}
-	
+
 	private FeeInfo checkFee(Domain domain, String template,FeeInfo fee, Cell cell, Boolean ignoreInactiveCliente, FormulaEvaluator evaluator) {
 		Integer row = cell.getRowIndex()+1;
 		String column = Utils.getColumn(cell.getColumnIndex());
 		String username = getUser().getLogin();
-		Integer type = cell.getCellType();
+		CellType type = cell.getCellTypeEnum();
 		Object value = getObjectValue(cell, evaluator);
 		switch (template) {
 		case "Cliente": case "Client":
-			if(type.equals(Cell.CELL_TYPE_STRING) && !cell.getStringCellValue().equals("")){
+			if(type.equals(CellType.STRING) && !cell.getStringCellValue().equals("")){
 				Customer customer = DBFee.getInstance().getCustomer(domain, username, cell.getStringCellValue(), ignoreInactiveCliente);
 				if(customer != null){
 					fee.setClient(cell.getStringCellValue());
@@ -455,7 +456,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			else return null;
 			break;
 		case "Producto": case "Product":
-			if((type.equals(Cell.CELL_TYPE_STRING) && !cell.getStringCellValue().equals("")) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+			if((type.equals(CellType.STRING) && !cell.getStringCellValue().equals("")) || type.equals(CellType.NUMERIC)){
 				fee.setProduct(toString(value));
 				if(fee.getProduct().length() > 15){
 					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TOO_LARGE.getMessage());
@@ -464,7 +465,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			}
 			break;
 		case "Cantidad": case "Quantity":
-			if(type.equals(Cell.CELL_TYPE_NUMERIC)){ 
+			if(type.equals(CellType.NUMERIC)){
 				fee.setQuantity(cell.getNumericCellValue());
 			}
 			else {
@@ -473,14 +474,14 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			}
 			break;
 		case "Precio": case "Price":
-			if(type.equals(Cell.CELL_TYPE_NUMERIC))
+			if(type.equals(CellType.NUMERIC))
 				fee.setPrice(cell.getNumericCellValue());
 			else {
 				verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.NOT_NUMERIC.getMessage());
 				textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.NOT_NUMERIC.getMessage() +"\n";
 			}			break;
 		case "Descuento": case "Discount":
-			if(type.equals(Cell.CELL_TYPE_NUMERIC))
+			if(type.equals(CellType.NUMERIC))
 				fee.setDiscount(cell.getNumericCellValue());
 			else {
 				verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.NOT_NUMERIC.getMessage());
@@ -488,39 +489,39 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			}
 			break;
 		case "Fecha Inicio": case "Start Date":
-			if(type.equals(Cell.CELL_TYPE_STRING)){
+			if(type.equals(CellType.STRING)){
 				Date d = Utils.stringToDate(cell.getStringCellValue());
-				if(d != null) fee.setStartDate(d); 
+				if(d != null) fee.setStartDate(d);
 				else return null;
 			}
-			else if(type.equals(Cell.CELL_TYPE_NUMERIC)){
+			else if(type.equals(CellType.NUMERIC)){
 				fee.setStartDate(cell.getDateCellValue());
 			}
 			else return null;
 			break;
 		case "Fecha Fin": case "End Date":
-			if(type.equals(Cell.CELL_TYPE_STRING)){
+			if(type.equals(CellType.STRING)){
 				Date d = Utils.stringToDate(cell.getStringCellValue());
-				if(d != null) fee.setEndDate(d); 
+				if(d != null) fee.setEndDate(d);
 			}
-			else if(type.equals(Cell.CELL_TYPE_NUMERIC)){
+			else if(type.equals(CellType.NUMERIC)){
 				fee.setEndDate(cell.getDateCellValue());
 			}
 			break;
 		case "Fecha Facturaci\u00f3n": case "Billing Date":
-			if(type.equals(Cell.CELL_TYPE_STRING)){
+			if(type.equals(CellType.STRING)){
 				Date d = Utils.stringToDateBilling(cell.getStringCellValue());
-				if(d != null) fee.setBillingDate(d); 
+				if(d != null) fee.setBillingDate(d);
 				else return null;
 			}
-			else if(type.equals(Cell.CELL_TYPE_NUMERIC)){
+			else if(type.equals(CellType.NUMERIC)){
 				fee.setBillingDate(cell.getDateCellValue());
 			}
 			else return null;
 			break;
 		case "Periodo": case "period": //enum
 				String t = toString(value);
-				if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+				if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
 					if (t.equalsIgnoreCase(NO_PERIOD) || t.equals("0"))
 						fee.setPeriod(BillingPeriod.NO_PERIOD.ordinal());
 					else if(t.equalsIgnoreCase(MONTHLY)  || t.equals("1"))
@@ -537,10 +538,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 						fee.setPeriod(BillingPeriod.YEARLY.ordinal());
 					else return null;
 				}
-	
+
 			break;
 		case "Comercial": case "Seller": //bd
-			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
 				Boolean b = true;
 				for(Seller s : sellers){
 					if(toString(value).equalsIgnoreCase(s.getRegistryDocument()) || toString(value).equalsIgnoreCase(s.getRegistryAlias()) || toString(value).equalsIgnoreCase(s.getRegistryName())){
@@ -549,12 +550,12 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 						b= false;
 					}
 				}
-				if(b) return null;	
+				if(b) return null;
 			}
 			else return null;
 			break;
 		case "Centro de Trabajo": case "Workplace": case "Centro Trabajo": //bd
-			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
 				Boolean b = true;
 				for(Workplace s : workplaces){
 					if(toString(value).equalsIgnoreCase(s.getDescription())){
@@ -563,12 +564,12 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 						b= false;
 					}
 				}
-				if(b) return null;	
+				if(b) return null;
 			}
 			else return null;
 			break;
-		case "Grupo Facturaci\u00f3n": 
-			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+		case "Grupo Facturaci\u00f3n":
+			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
 				Boolean b = true;
 				for(InvoicingGroup s : invoicingGroupList){
 					if(toString(value).equalsIgnoreCase(s.getDescription())){
@@ -576,14 +577,14 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 						b= false;
 					}
 				}
-				if(b) return null;	
+				if(b) return null;
 			}
 			else return null;
 			break;
 		case "Confidencial": case "Confidential":
 			Boolean bool2 = false;
 			switch (type) {
-			case Cell.CELL_TYPE_STRING:
+			case STRING:
 				String string = cell.getStringCellValue();
 				if(string.equalsIgnoreCase("si") || string.equalsIgnoreCase("yes") || string.equalsIgnoreCase("true"))
 					bool2 = true;
@@ -591,16 +592,16 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 					bool2 = false;
 				else return null;
 				break;
-			case Cell.CELL_TYPE_NUMERIC:
+			case NUMERIC:
 				Double num = cell.getNumericCellValue();
 				if(num.equals(1.0)) bool2 = true;
 				else if(num.equals(0.0)) bool2 = false;
 				else return null;
 				break;
-			case Cell.CELL_TYPE_BOOLEAN:
+			case BOOLEAN:
 				bool2 = cell.getBooleanCellValue();
 				break;
-			case Cell.CELL_TYPE_BLANK:
+			case BLANK:
 				return fee;
 			default:
 				return null;
@@ -608,36 +609,36 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			fee.setConfidential(bool2);
 			break;
 		case "Expediente": case "Record":  //BD
-			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
 				Project project = DBFee.getInstance().getProject(domain, toString(value), fee.getClientId(), getUser().getLogin());
 				if(project == null && fee.getClientId() != null){
 					project = new Project().setId(DBFee.getInstance().insertProject(domain, getUser(), toString(value), fee.getClientId()));
 				}
 				if(project != null){
-					fee.setProject(cell.getStringCellValue());		
-					fee.setProjectId(project.getId());	
+					fee.setProject(cell.getStringCellValue());
+					fee.setProjectId(project.getId());
 				}
 			}
 			else return null;
 			break;
 		case "Detalle 1": case "Detail 1":
-			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC))
+			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC))
 				fee.setDetail(toString(value));
 			break;
 		case "Detalle 2": case "Detail 2":
-			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC))
+			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC))
 				fee.setDetail2(toString(value));
 			break;
 		case "Detalle 3": case "Detail 3":
-			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC))
+			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC))
 				fee.setDetail3(toString(value));
 			break;
 		case "Descripci\u00f3n":
-			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC))
+			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC))
 				fee.setDescription(toString(value));
 			break;
 		case "L\u00EDnea": case "Line":
-			if(type.equals(Cell.CELL_TYPE_NUMERIC))
+			if(type.equals(CellType.NUMERIC))
 				fee.setLine(cell.getNumericCellValue());
 			else {
 				verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.NOT_NUMERIC.getMessage());
@@ -648,7 +649,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		}
 		return fee;
 	}
-	
+
 	//-------------------- IMPORTAR STOCK
 	Vector<StockInfo> stock;
 	TransferInfo transferInfo;
@@ -674,20 +675,20 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
 				cellStream.forEach(cell ->{
 					if(cell.getColumnIndex() != ti.getColumns().size()){
-					
+
 						Object object = null ;
-						switch (cell.getCellType()) {
-							case Cell.CELL_TYPE_BLANK:
+						switch (cell.getCellTypeEnum()) {
+							case BLANK:
 								break;
-							case Cell.CELL_TYPE_BOOLEAN: 
+							case BOOLEAN:
 								object = cell.getBooleanCellValue();break;
-							case Cell.CELL_TYPE_ERROR:
+							case ERROR:
 								object = cell.getErrorCellValue();break;
-							case Cell.CELL_TYPE_FORMULA:
-								break; 
-							case Cell.CELL_TYPE_NUMERIC:
+							case FORMULA:
+								break;
+							case NUMERIC:
 								object = cell.getNumericCellValue();break;
-							case Cell.CELL_TYPE_STRING:
+							case STRING:
 								object = cell.getStringCellValue();break;
 							default:
 								break;
@@ -702,18 +703,18 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 								this.error = error;
 								rowCount = -1;
 								proposalBool = false;
-							} 	
+							}
 						}
 						else if(proposalBool){
 							if(cell.getColumnIndex() !=0){
 								Cell beforeCell = rowAux.getCell(cell.getColumnIndex()-1);
-								if((beforeCell == null || beforeCell.getCellType() == Cell.CELL_TYPE_BLANK) && isRequiredStock(ti.getColumns().get(cell.getColumnIndex()-1))){
+								if((beforeCell == null || beforeCell.getCellTypeEnum() == CellType.BLANK) && isRequiredStock(ti.getColumns().get(cell.getColumnIndex()-1))){
 									if(beforeCell == null){
 										textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto \n";
 										verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto");
 										error.setTextError(verror);
 										this.error = error;
-									}	
+									}
 									else if(ti.getColumns().get(beforeCell.getColumnIndex()).equals("Producto") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Almac\u00e9n Destino") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Series")){
 										textError= textError + "*Fila "+(beforeCell.getRowIndex()+1)+", Columna "+Utils.getColumn(beforeCell.getColumnIndex())+" : Dato Incorrecto \n";
 										verror.add("*Fila "+(beforeCell.getRowIndex()+1)+", Columna "+Utils.getColumn(beforeCell.getColumnIndex())+" : Dato Incorrecto \n");
@@ -722,23 +723,23 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 									}
 								}
 							}
-							if(ti.getColumns().get(cell.getColumnIndex()).equals("Cantidad") || ti.getColumns().get(cell.getColumnIndex()).equals("Producto") 
-									|| ti.getColumns().get(cell.getColumnIndex()).equals("Detalle 1") || ti.getColumns().get(cell.getColumnIndex()).equals("Detalle 2") 
+							if(ti.getColumns().get(cell.getColumnIndex()).equals("Cantidad") || ti.getColumns().get(cell.getColumnIndex()).equals("Producto")
+									|| ti.getColumns().get(cell.getColumnIndex()).equals("Detalle 1") || ti.getColumns().get(cell.getColumnIndex()).equals("Detalle 2")
 									|| ti.getColumns().get(cell.getColumnIndex()).equals("Detalle 3")){
-								si = check(domain, cell.getRowIndex()+1, Utils.getColumn(cell.getColumnIndex()),ti.getColumns().get(cell.getColumnIndex()),object,si,cell.getCellType());
+								si = check(domain, cell.getRowIndex()+1, Utils.getColumn(cell.getColumnIndex()),ti.getColumns().get(cell.getColumnIndex()),object,si,cell.getCellTypeEnum());
 								if(si == null){
 									textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n";
 									verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n");
 									error.setTextError(verror);
 									this.error = error;
-									si = newStock();	
-								}	
-							}	
-						}  
+									si = newStock();
+								}
+							}
+						}
 					}
 				});
 
-				if(row.getLastCellNum() != ti.getColumns().size()+1){	
+				if(row.getLastCellNum() != ti.getColumns().size()+1){
 					if(row.getRowNum() == 1){
 						error.setError(false);
 						textError= textError + "*El archivo importado no es compatible con la plantilla seleccionada. \n ";
@@ -761,8 +762,8 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	           			}
 	           		}
 				}
-	          
-				if(row.getRowNum() > 1){ 
+
+				if(row.getRowNum() > 1){
 					if(si.getProduct() != null && si.getQuantity() != null
 							&& si.getQuantity() != 0){
 						si.setRow(row.getRowNum());
@@ -776,7 +777,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		setOut(null);setMimetype(null);
 		return rowCount;
 	}
-	
+
 	public Error insertProposal(Domain domain, Integer proposal,Integer workplace){
 		Vector<String> verror = error.getTextError();
 		Error error = new Error();
@@ -810,7 +811,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		inventoryId = inventory;
 		Vector<StockInfo> stock = new Vector<StockInfo>();
 		Map<String, StockInfo> stockMap =  new HashMap<String, StockInfo>();
-		
+
 		if((warehouse1 == null || warehouse1.equals("-")) && (warehouse2 == null || warehouse2.equals("-"))){
 			error.setError(false);
 			textError = textError + "*Error : No ha seleccionado ning\u00fan almac\u00e9n. \n";
@@ -819,14 +820,14 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
     		this.error = error;
     		return -1;
 		}
-		
+
 		Warehouse w = new Warehouse();
 		Warehouse w2 = new Warehouse();
 
 		Series s = new Series();
-	
+
 		Integer domId;
-		if (ti.getDomainId().equals(0)) domId = domain.getId(); 
+		if (ti.getDomainId().equals(0)) domId = domain.getId();
 		else domId = ti.getDomainId();
 		// DBSTOCK GET WAREHOUSE TARDA!! EL 1
 		if(warehouse1 != null && !warehouse1.equals("-")) w = DBStock.getInstance().getWarehouse(new Domain().setId(domId).setName(domain.getName()), getUser(), warehouse1);
@@ -836,12 +837,12 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
     	//Boolean b = true;
 
 		transferInfo = new TransferInfo();
-		if(!warehouse1.equals("-")) transferInfo.setTargetWarehouse(w); else transferInfo.setTargetWarehouse(null); 
+		if(!warehouse1.equals("-")) transferInfo.setTargetWarehouse(w); else transferInfo.setTargetWarehouse(null);
 		if(warehouse2 != null && !warehouse2.equals("-")) transferInfo.setSourceWarehouse(w2); else transferInfo.setSourceWarehouse(null);
 		transferInfo.setSeries(s);
 		transferInfo.setComments(comments);
 		if(istransfer) transferInfo.setNumber(number);
-		
+
 		stockBool = true;
 	 	/* LAMBDA java 1.8 */
 		Iterable<Row> rowIterable = () -> rowIterator;
@@ -855,20 +856,20 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
 				cellStream.forEach(cell ->{
 					if(cell.getColumnIndex() != ti.getColumns().size()){
-						
+
 						Object object = null ;
-						switch (cell.getCellType()) {
-							case Cell.CELL_TYPE_BLANK:
+						switch (cell.getCellTypeEnum()) {
+							case BLANK:
 								break;
-							case Cell.CELL_TYPE_BOOLEAN: 
+							case BOOLEAN:
 								object = cell.getBooleanCellValue();break;
-							case Cell.CELL_TYPE_ERROR:
+							case ERROR:
 								object = cell.getErrorCellValue();break;
-							case Cell.CELL_TYPE_FORMULA:
-								break; 
-							case Cell.CELL_TYPE_NUMERIC:
+							case FORMULA:
+								break;
+							case NUMERIC:
 								object = cell.getNumericCellValue();break;
-							case Cell.CELL_TYPE_STRING:
+							case STRING:
 								object = cell.getStringCellValue();break;
 							default:
 								break;
@@ -883,7 +884,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 								this.error = error;
 								rowCount = -1;
 								stockBool = false;
-							} 
+							}
 						}
 						else if(stockBool && ti.getColumns().size() >= cell.getColumnIndex()){
 							if(cell.getColumnIndex() !=0){
@@ -891,7 +892,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 									System.out.println("VA A FALLAR!");
 								}
 								Cell beforeCell = rowAux.getCell(cell.getColumnIndex()-1);
-								if((beforeCell == null || beforeCell.getCellType() == Cell.CELL_TYPE_BLANK) && isRequiredStock(ti.getColumns().get(cell.getColumnIndex()-1))){
+								if((beforeCell == null || beforeCell.getCellTypeEnum() == CellType.BLANK) && isRequiredStock(ti.getColumns().get(cell.getColumnIndex()-1))){
 									if(beforeCell == null){
 										if(ti.getColumns().get(cell.getColumnIndex()-1).equals("Producto") || ti.getColumns().get(cell.getColumnIndex()-1).equals("Almac\u00e9n Destino") ||  ti.getColumns().get(cell.getColumnIndex()-1).equals("Series")){
 											textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto \n";
@@ -905,21 +906,21 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 										verror.add("*Fila "+(beforeCell.getRowIndex()+1)+", Columna "+Utils.getColumn(beforeCell.getColumnIndex())+" : Dato Incorrecto \n");
 										error.setTextError(verror);
 										this.error = error;
-									}	
-       
+									}
+
 								}
 							}
 							if(!ti.getColumns().get(cell.getColumnIndex()).equals("Texto Libre") && !ti.getColumns().get(cell.getColumnIndex()).equals("Nombre")){
-								si = check(domain, cell.getRowIndex()+1, Utils.getColumn(cell.getColumnIndex()),ti.getColumns().get(cell.getColumnIndex()),object,si,cell.getCellType());
+								si = check(domain, cell.getRowIndex()+1, Utils.getColumn(cell.getColumnIndex()),ti.getColumns().get(cell.getColumnIndex()),object,si,cell.getCellTypeEnum());
 								if(si == null){
 									textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n";
 									verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n");
 									error.setTextError(verror);
 									this.error = error;
-									si = newStock();	
-								}			
+									si = newStock();
+								}
 							}
-						}  
+						}
 					}
 				});
 				if(row.getLastCellNum() != ti.getColumns().size()+1){
@@ -941,16 +942,16 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 								error.setTextError(verror);
 								this.error = error;
 								textError= textError + "*Fila "+(row.getRowNum()+1)+", Columna "+Utils.getColumn(row.getLastCellNum())+" : Dato Incorrecto \n";
-							}	
+							}
 						}
 					}
 				}
-            
-				if(row.getRowNum() > 1){ 
+
+				if(row.getRowNum() > 1){
 					si.setRow(row.getRowNum());
 					if((si.getQuantity() != null && !transfer)
 						|| (transfer && si.getQuantity() != null && si.getQuantity()!= 0)){
-						String key = si.getProduct() + si.getItem().getDetails() 
+						String key = si.getProduct() + si.getItem().getDetails()
 							+ (si.getItem().getSerialNumber() != null ? si.getItem().getSerialNumber() : "")
 							+ (si.getItem().getDetail() != null ? si.getItem().getDetail() : "")
 							+ (si.getItem().getDetail2() != null ? si.getItem().getDetail2() : "")
@@ -967,7 +968,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		this.stockMap = stockMap;
 		if(rowCount != -1) rowCount = stock.size();
 		setOut(null);setMimetype(null);
-		
+
 		return rowCount;
 	}
 	public Boolean isRequiredStock(String s){
@@ -989,10 +990,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		else{
 			error.setError(false);
  			error.setTextError(verror);
-		}	
+		}
 		return error;
 	}
-	
+
 	public Error insertTransferStock(Domain domain){
 		Vector<String> verror = error.getTextError();
 		Error error = new Error();
@@ -1004,7 +1005,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			ai.setDate(new Date());
 			ai.setUserId(getUser().getId());
 			ai.setUsername(getUser().getLogin());
-			
+
 			Vector<StockInfo> v = new Vector<StockInfo>();
 			v.addAll(stockMap.values());
 			error = DBStock.getInstance().insertTransferStock(domain,v,transferInfo,ai, getUser().getLogin());
@@ -1016,24 +1017,24 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			error.setError(false);
  			error.setTextError(verror);
 		}
-		
+
 		return error;
 	}
 
-	private StockInfo check(Domain domain, Integer row, String column, String template, Object value,StockInfo stock, Integer type) {
-		
+	private StockInfo check(Domain domain, Integer row, String column, String template, Object value,StockInfo stock, CellType type) {
+
 		switch (template) {
 		case "Producto": case "Product":
-			if((type.equals(Cell.CELL_TYPE_STRING) && !value.equals(""))){
+			if((type.equals(CellType.STRING) && !value.equals(""))){
 				stock.setProduct(value.toString());
 				if(stock.getProduct().length() > 15){
 					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TOO_LARGE.getMessage());
 					textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TOO_LARGE.getMessage() +"\n";
 				}
 			}
-			
-			else if( type.equals(Cell.CELL_TYPE_NUMERIC)){
-				
+
+			else if( type.equals(CellType.NUMERIC)){
+
 				stock.setProduct(String.format("%.0f",value ));
 				if(stock.getProduct().length() > 15){
 					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TOO_LARGE.getMessage());
@@ -1043,38 +1044,38 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			else return null;
 			break;
 		case "Cantidad": case "Quantity":
-			if(type.equals(Cell.CELL_TYPE_NUMERIC)){
+			if(type.equals(CellType.NUMERIC)){
 				Double n = (Double) value;
 				if(n < 0) return null;
 				stock.setQuantity(n);
 			}
 			break;
 		case "Detalle 1": case "Detail 1":
-			if(type.equals(Cell.CELL_TYPE_STRING))
+			if(type.equals(CellType.STRING))
 				stock.getItem().setDetail(value.toString());
-			else if(type.equals(Cell.CELL_TYPE_NUMERIC))
+			else if(type.equals(CellType.NUMERIC))
 				stock.getItem().setDetail(toString(value));
 			break;
 		case "Detalle 2": case "Detail 2":
-			if(type.equals(Cell.CELL_TYPE_STRING))
+			if(type.equals(CellType.STRING))
 				stock.getItem().setDetail2(value.toString());
-			else if(type.equals(Cell.CELL_TYPE_NUMERIC))
+			else if(type.equals(CellType.NUMERIC))
 				stock.getItem().setDetail2(toString(value));
 			break;
 		case "Detalle 3": case "Detail 3":
-			if(type.equals(Cell.CELL_TYPE_STRING))
+			if(type.equals(CellType.STRING))
 				stock.getItem().setDetail3(value.toString());
-			else if(type.equals(Cell.CELL_TYPE_NUMERIC))
+			else if(type.equals(CellType.NUMERIC))
 				stock.getItem().setDetail3(toString(value));
 			break;
 		case "N\u00FAmero Serie": case "Serial Number":
-			if(type.equals(Cell.CELL_TYPE_STRING)) 
+			if(type.equals(CellType.STRING))
 				stock.getItem().setSerialNumber(value.toString());
-			else if(type.equals(Cell.CELL_TYPE_NUMERIC))
+			else if(type.equals(CellType.NUMERIC))
 				stock.getItem().setSerialNumber(toString(value));
 			break;
 		case "Formato":
-			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
 				Tag tag = DBConsults.getTag(domain, getUser().getLogin(), toString(value), TagType.PACKING);
 				if(tag.getId() != null) stock.getItem().setPackFormatTag(tag);
 				else{
@@ -1084,15 +1085,15 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			}
 			break;
 		case "Unidades":
-			if(type.equals(Cell.CELL_TYPE_NUMERIC)){
+			if(type.equals(CellType.NUMERIC)){
 				stock.getItem().setPackUnits((Double)value);
 			}else {
 				verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.NOT_NUMERIC.getMessage());
 				textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.NOT_NUMERIC.getMessage() +"\n";
 			}
-			break; 
+			break;
 		case "Formato Unidades":
-			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
 				Tag tag = DBConsults.getTag(domain, getUser().getLogin(), toString(value), TagType.PACKING);
 				if(tag.getId() != null)stock.getItem().setPackUnitsTag(tag);
 				else{
@@ -1102,15 +1103,15 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			}
 			break;
 		case "Medida":
-			if(type.equals(Cell.CELL_TYPE_NUMERIC)){
+			if(type.equals(CellType.NUMERIC)){
 				stock.getItem().setPackMeasurement((Double)value);
 			}else {
 				verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.NOT_NUMERIC.getMessage());
 				textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.NOT_NUMERIC.getMessage() +"\n";
 			}
-			break; 
+			break;
 		case "Formato Medida":
-			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
 				Tag tag = DBConsults.getTag(domain, getUser().getLogin(), toString(value), TagType.PACKING);
 				if(tag.getId() != null) stock.getItem().setPackMeasurementTag(tag);
 				else{
@@ -1124,7 +1125,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		}
 		return stock;
 	}
-	
+
 	private StockInfo newStock(){
 		StockInfo stock = new StockInfo();
 		stock.setItem(new Item().setDetail("")
@@ -1133,7 +1134,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		stock.setQuantity(null);
 		return stock;
 	}
-	
+
 	public Vector<com.esferalia.aon.gwt.template.shared.Series> getSeries(Domain domain, String warehouse){
 		Warehouse w = DBStock.getInstance().getWarehouse(domain, getUser(),warehouse);
 		Workplace workplace = DBCatalogue.getWorkplace(domain, getUser(), w.getWorkplace());
@@ -1148,7 +1149,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		});
 		return seriesCode;
 	}
-	
+
 	public Vector<com.esferalia.aon.gwt.template.shared.Series> getSeries(Domain domain){
 		Vector<Series> series = new Vector<Series>();
 		series = DBStock.getInstance().getSeries(domain, getUser().getLogin());
@@ -1161,14 +1162,14 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		});
 		return seriesCode;
 	}
-	
+
 	//-------------------- IMPORTAR PRODUCTOS
 	Boolean productBool;
 	Vector<ProductInfo> products;
 	ProductInfo pi;
-	
+
 	private Boolean checkInventariable(Cell cell){
-		return cell.getStringCellValue().equalsIgnoreCase("inventoriable") 
+		return cell.getStringCellValue().equalsIgnoreCase("inventoriable")
 			&& ti.getColumns().get(cell.getColumnIndex()).equalsIgnoreCase("inventariable");
 	}
 	private void executeExcelProduct(Domain domain, Iterator<Row> rowIterator, com.esferalia.aon.gwt.template.shared.Error error, FormulaEvaluator evaluator) {
@@ -1178,10 +1179,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		Stream<Row> rowStream = StreamSupport.stream(rowIterable.spliterator(),false);
 		map = new HashMap<String, ProductInfo>();
 		productBool = true;
-		
+
 		LinkedList<ProductCategory> productCategoryList = AON.getProductCategoryList(domain.getName(), domain.getId(), getUserLogin(), f -> f.getDomainProperty().eq(domain.getId()));
 		LinkedList<Brand> brandList = AON.getBrandStream(domain.getName(), domain.getId(), getUserLogin(), f -> f.getDomainProperty().eq(domain.getId())).collect(Collectors.toCollection(LinkedList::new));
-		
+
 		Domain d = AON.getDomain(domain.getName(), domain.getId(), getUserLogin());
 		LinkedList<Tag> tagList = AON.getTagList(domain.getName(), domain.getId(), getUserLogin(), f -> f.getDomainProperty().eq(domain.getId()));
 		LinkedList<Tax> taxList = d.getParentId() != null ? AON.getTaxList(domain.getName(), domain.getId(), getUserLogin(), f -> f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(d.getParentId())))
@@ -1196,7 +1197,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 					if(cell.getColumnIndex() != ti.getColumns().size()){
 						Object object = getObjectValue(cell, evaluator);
 						if(cell.getRowIndex() == 1){//Primera fila del fichero Excel
-							if(ti.getColumns().size()<= cell.getColumnIndex() || ti.getColumns().get(cell.getColumnIndex()) == null || cell.getCellType() != Cell.CELL_TYPE_STRING || (!checkInventariable(cell) && !ti.getColumns().get(cell.getColumnIndex()).equalsIgnoreCase(cell.getStringCellValue()))){
+							if(ti.getColumns().size()<= cell.getColumnIndex() || ti.getColumns().get(cell.getColumnIndex()) == null || cell.getCellTypeEnum() != CellType.STRING || (!checkInventariable(cell) && !ti.getColumns().get(cell.getColumnIndex()).equalsIgnoreCase(cell.getStringCellValue()))){
 								// El archivo no es compatible con la plantilla
 								error.setError(false);
 								if(verror.isEmpty()) verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
@@ -1205,13 +1206,13 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 								this.error = error;
 								rowCount = -1;
 								productBool = false;
-							} 
+							}
 						}
 						else if(productBool){
 							if(cell.getColumnIndex() <= ti.getColumns().size()) {
 								if(cell.getColumnIndex() !=0){
 									Cell beforeCell = row.getCell(cell.getColumnIndex()-1);
-									if((beforeCell == null || beforeCell.getCellType() == Cell.CELL_TYPE_BLANK) && isRequiredProduct(ti.getColumns().get(cell.getColumnIndex()-1))){
+									if((beforeCell == null || beforeCell.getCellTypeEnum() == CellType.BLANK) && isRequiredProduct(ti.getColumns().get(cell.getColumnIndex()-1))){
 										if(beforeCell == null){
 											verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto");
 											textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto \n";
@@ -1224,16 +1225,16 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 								}
 
 								if(!ti.getColumns().get(cell.getColumnIndex()).equals("Texto Libre")){
-									pi = check(domain, cell.getRowIndex()+1, Utils.getColumn(cell.getColumnIndex()), ti.getColumns().get(cell.getColumnIndex()),object,pi,cell.getCellType()
+									pi = check(domain, cell.getRowIndex()+1, Utils.getColumn(cell.getColumnIndex()), ti.getColumns().get(cell.getColumnIndex()),object,pi,cell.getCellTypeEnum()
 										, productCategoryList, brandList, tagList, taxList);
 									if(pi == null){
 										verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto ");
 										textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n";
-										pi = newProduct(domain);	
-									}	
-								}	
+										pi = newProduct(domain);
+									}
+								}
 							}
-						}	  
+						}
 					}
 				});
 				if(row.getLastCellNum() <= ti.getColumns().size()){
@@ -1257,8 +1258,8 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
             			}
             		}
             	}
-            
-            	if(row.getRowNum() > 1 && pi.getProduct().getCode()!= null){ 
+
+            	if(row.getRowNum() > 1 && pi.getProduct().getCode()!= null){
             		pi.setRow(row.getRowNum());
             		if(pi.getItem().get(0).getPurchasePrice() == 0) pi.getItem().get(0).setProfitPercent(0);
             		else pi.getItem().get(0).setProfitPercent(((pi.getItem().get(0).getPrice()-pi.getItem().get(0).getPurchasePrice())/pi.getItem().get(0).getPurchasePrice())*100);
@@ -1281,8 +1282,8 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		this.products = products;
 		if(products == null || products.size() <0){
 			error.setError(false);
-			verror.add("*El archivo no es válido.");
-			textError= textError +"*El archivo no es válido.";
+			verror.add("*El archivo no es vï¿½lido.");
+			textError= textError +"*El archivo no es vï¿½lido.";
 			error.setTextError(verror);
 			this.error = error;
 			rowCount = -1;
@@ -1290,18 +1291,18 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		if(rowCount != -1) rowCount = products.size();
 		setOut(null);setMimetype(null);
 	}
-	
+
 	public Boolean esta(com.esferalia.aon.occam.api.model.product.ProductTag pt, Vector<com.esferalia.aon.occam.api.model.product.ProductTag> pts){
 		for (com.esferalia.aon.occam.api.model.product.ProductTag productTag : pts) {
 			if(productTag.getId().equals(pt.getId())) return true;
 		}
 		return false;
 	}
-	
+
 	public Boolean isRequiredProduct(String s) {
 		return s.equals("Nombre") || s.equals("C\u00f3digo") || s.equals("Precio Coste") || s.equals("Precio Venta Base");
 	}
-	
+
 	public Error insertProduct(Domain domain, String kind) {
 		Error error = new Error();
 		if(textError.equals("")){
@@ -1324,7 +1325,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		}
 		return error;
 	}
-	
+
 	public Error insertDelivery(Domain domain) {
 		domain = AON.getDomain(domain.getName(), domain.getId(), getUserLogin());
 		if(di.getError().getTextError().isEmpty()) {
@@ -1339,11 +1340,11 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		return di.getError();
 	}
 
-	private ProductInfo check(Domain domain, Integer row, String column, String template, Object value,ProductInfo product, Integer type
+	private ProductInfo check(Domain domain, Integer row, String column, String template, Object value,ProductInfo product, CellType type
 			, LinkedList<ProductCategory> productCategoryList, LinkedList<Brand> brandList, LinkedList<Tag> tagList, LinkedList<Tax> taxList) {
 		switch (template) {
-		case "Nombre": 
-			if((type.equals(Cell.CELL_TYPE_STRING) && !value.equals("")) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+		case "Nombre":
+			if((type.equals(CellType.STRING) && !value.equals("")) || type.equals(CellType.NUMERIC)){
 				product.getProduct().setName(toString(value));
 				if(product.getProduct().getName().length() > 64){
 					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TOO_LARGE.getMessage());
@@ -1352,8 +1353,8 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			}
 			else return null;
 			break;
-		case "C\u00f3digo" : 
-			if((type.equals(Cell.CELL_TYPE_STRING) && !value.equals("")) || type.equals(Cell.CELL_TYPE_NUMERIC)){// TODO
+		case "C\u00f3digo" :
+			if((type.equals(CellType.STRING) && !value.equals("")) || type.equals(CellType.NUMERIC)){// TODO
 				product.getProduct().setCode(toString(value, type));
 				if(product.getProduct().getCode().length() > 15){
 					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TOO_LARGE.getMessage());
@@ -1361,28 +1362,28 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				}
 			}
 			else return null;
-			break; 
-		case "Precio Coste" : 
-			if(type.equals(Cell.CELL_TYPE_NUMERIC)){
+			break;
+		case "Precio Coste" :
+			if(type.equals(CellType.NUMERIC)){
 				product.getItem().get(0).setPurchasePrice((double) value);
-			} else if(type.equals(Cell.CELL_TYPE_FORMULA)) {
+			} else if(type.equals(CellType.FORMULA)) {
 				System.out.println(value);
 				product.getItem().get(0).setPurchasePrice(Double.parseDouble(value.toString()));
 			} else {
 				verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.NOT_NUMERIC.getMessage());
 				textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.NOT_NUMERIC.getMessage() +"\n";
 			}
-			break; 
+			break;
 		case "Precio Venta Base" :
-			if(type.equals(Cell.CELL_TYPE_NUMERIC)){
+			if(type.equals(CellType.NUMERIC)){
 				product.getItem().get(0).setPrice((double) value);
 			} else {
 				verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.NOT_NUMERIC.getMessage());
 				textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.NOT_NUMERIC.getMessage() +"\n";
 			}
-			break; 
+			break;
 		case "Categor\u00eda" :
-			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
 				String strAux = toString(value);
 				if(strAux.length() > 32){
 					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TOO_LARGE.getMessage());
@@ -1401,10 +1402,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 					} else product.getProduct().setCategory(pc.getId());
 				}
 			}
-			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
-			break; 
-		case "Marca" : 
-			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+			else if(!type.equals(CellType.BLANK)) return null;
+			break;
+		case "Marca" :
+			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
 				String strAux = toString(value);
 				if(strAux.length() > 63){
 					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TOO_LARGE.getMessage());
@@ -1419,10 +1420,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 					} else product.getProduct().setBrand(brand.getId());
 				}
 			}
-			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
-			break; 
-		case "Etiqueta" : 
-			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+			else if(!type.equals(CellType.BLANK)) return null;
+			break;
+		case "Etiqueta" :
+			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
 				String str = toString(value, type);
 				String[] array = str.split(",");
 				LinkedList<Tag> pts = new LinkedList<>();
@@ -1432,7 +1433,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 						Tag tag = tagList.stream().filter(t -> t.getType() == TagType.PRODUCT.value() && t.getName().equals(s)).findFirst().orElse(new Tag());
 						if(tag.getId() == null){
 							tag = AON.insertTag(domain.getName(), domain.getId(), getUser().getLogin(),
-								new Tag().setDomain(domain.getId()).setName(s).setType(TagType.PRODUCT.value()));	
+								new Tag().setDomain(domain.getId()).setName(s).setType(TagType.PRODUCT.value()));
 							tagList.add(tag);
 						}
 						pts.add(tag);
@@ -1440,10 +1441,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				}
 				if(array.length > 0) product.setTagList(pts);
 			}
-			break; 
+			break;
 		case "Tipo":
 			String t;
-			if(type.equals(Cell.CELL_TYPE_STRING)){
+			if(type.equals(CellType.STRING)){
 				t = (String) value;
 				for(ProductType productType : ProductType.values()){
 					if (t.equalsIgnoreCase(productType.getName())){
@@ -1451,19 +1452,19 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 					}
 				}
 			}
-			break; 
-		case "IVA" : 
-			Tax vat = new Tax();			
+			break;
+		case "IVA" :
+			Tax vat = new Tax();
 			switch (type) {
-			case Cell.CELL_TYPE_STRING:
+			case STRING:
 				String s = (String) value;
 				vat = taxList.stream().filter(tax -> tax.getType().equals(TaxType.VAT) && tax.getName().equalsIgnoreCase(s)).findFirst().orElse(new Tax());
 				break;
-			case Cell.CELL_TYPE_NUMERIC:
+			case NUMERIC:
 				Double f = (Double) value;
 				vat = taxList.stream().filter(tax -> tax.getType().equals(TaxType.VAT) && f.equals(tax.getPercentage())).findFirst().orElse(new Tax());
 				break;
-			case Cell.CELL_TYPE_BLANK:
+			case BLANK:
 				return product;
 			default:
 				return null;
@@ -1473,19 +1474,19 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TAX_NOT_EXIST.getMessage() +"\n";
 			}
 			product.getProduct().setVat(vat.getId());
-			break; 
+			break;
 		case "IRPF" :
 			Tax retention = new Tax();
 			switch (type) {
-			case Cell.CELL_TYPE_STRING:
+			case STRING:
 				String s = (String) value;
 				vat = taxList.stream().filter(tax -> tax.getType().equals(TaxType.RETENTION) && tax.getName().equalsIgnoreCase(s)).findFirst().orElse(new Tax());
 				break;
-			case Cell.CELL_TYPE_NUMERIC:
+			case NUMERIC:
 				Double f = (Double) value;
 				vat = taxList.stream().filter(tax -> tax.getType().equals(TaxType.RETENTION) && f.equals(tax.getPercentage())).findFirst().orElse(new Tax());
 				break;
-			case Cell.CELL_TYPE_BLANK:
+			case BLANK:
 				return product;
 			default:
 				return null;
@@ -1495,12 +1496,12 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TAX_NOT_EXIST.getMessage() +"\n";
 			}
 			product.getProduct().setRetention(retention.getId());
-			break; 
+			break;
 		case "Inventoriable" :
 		case "Inventariable" :
 			Boolean bool = false;
 			switch (type) {
-			case Cell.CELL_TYPE_STRING:
+			case STRING:
 				String string = (String) value;
  				if(string.equalsIgnoreCase("si") || string.equalsIgnoreCase("yes") || string.equalsIgnoreCase("true"))
 					bool = true;
@@ -1508,29 +1509,29 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 					bool = false;
 				else return null;
 				break;
-			case Cell.CELL_TYPE_NUMERIC:
+			case NUMERIC:
 				Double num = (Double) value;
 				if(num.equals(1.0)) bool = true;
 				else if(num.equals(0.0)) bool = false;
 				else return null;
 				break;
-			case Cell.CELL_TYPE_BOOLEAN:
+			case BOOLEAN:
 				bool = (Boolean) value;
 				break;
-			case Cell.CELL_TYPE_BLANK:
+			case BLANK:
 				return product;
-			case Cell.CELL_TYPE_FORMULA:
+			case FORMULA:
 				bool = value.toString().equalsIgnoreCase("true");
 				break;
 			default:
 				return null;
 			}
 			product.getProduct().setInventoriable(bool);
-			break; 
-		case "Producto Compuesto" : 
+			break;
+		case "Producto Compuesto" :
 			Boolean bool2 = false;
 			switch (type) {
-			case Cell.CELL_TYPE_STRING:
+			case STRING:
 				String string = (String) value;
 				if(string.equalsIgnoreCase("si") || string.equalsIgnoreCase("yes") || string.equalsIgnoreCase("true"))
 					bool2 = true;
@@ -1538,29 +1539,29 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 					bool2 = false;
 				else return null;
 				break;
-			case Cell.CELL_TYPE_NUMERIC:
+			case NUMERIC:
 				Double num = (Double) value;
 				if(num.equals(1.0)) bool2 = true;
 				else if(num.equals(0.0)) bool2 = false;
 				else return null;
 				break;
-			case Cell.CELL_TYPE_BOOLEAN:
+			case BOOLEAN:
 				bool2 = (Boolean) value;
 				break;
-			case Cell.CELL_TYPE_BLANK:
+			case BLANK:
 				return product;
-			case Cell.CELL_TYPE_FORMULA:
+			case FORMULA:
 				bool2 = value.toString().equalsIgnoreCase("true");
 				break;
 			default:
 				return null;
 			}
 			product.getProduct().setComposition(bool2);
-			break;  
+			break;
 		case "Precio Composici\u00f3n" :
 			Boolean bool3 = false;
 			switch (type) {
-			case Cell.CELL_TYPE_STRING:
+			case STRING:
 				String string = (String) value;
 				if(string.equalsIgnoreCase("si") || string.equalsIgnoreCase("yes") || string.equalsIgnoreCase("true"))
 					bool3 = true;
@@ -1568,29 +1569,29 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 					bool3 = false;
 				else return null;
 				break;
-			case Cell.CELL_TYPE_NUMERIC:
+			case NUMERIC:
 				Double num = (Double) value;
 				if(num.equals(1.0)) bool3 = true;
 				else if(num.equals(0.0)) bool3 = false;
-				else return null; 
+				else return null;
 				break;
-			case Cell.CELL_TYPE_BOOLEAN:
+			case BOOLEAN:
 				bool3 = (Boolean) value;
 				break;
-			case Cell.CELL_TYPE_BLANK:
+			case BLANK:
 				return product;
-			case Cell.CELL_TYPE_FORMULA:
+			case FORMULA:
 				bool3 = value.toString().equalsIgnoreCase("true");
 				break;
 			default:
 				return null;
 			}
 			product.getProduct().setCompositionPrice(bool3);
-			break; 
-		case "Estado" : 
+			break;
+		case "Estado" :
 			ProductStatus status;
 			switch (type) {
-			case Cell.CELL_TYPE_STRING:
+			case STRING:
 				String str2 = (String) value;
 				if(str2.equalsIgnoreCase("active") || str2.equalsIgnoreCase("activo") || str2.equalsIgnoreCase("activado"))
 					status = ProductStatus.ACTIVE;
@@ -1598,83 +1599,83 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 					status = ProductStatus.DISCONTINUED;
 				else return null;
 				break;
-			case Cell.CELL_TYPE_NUMERIC:
+			case NUMERIC:
 				Double num = (Double) value;
 				if(num.equals(1.0))
 					status = ProductStatus.ACTIVE;
 				else status = ProductStatus.DISCONTINUED;
 				break;
-			case Cell.CELL_TYPE_BOOLEAN:
+			case BOOLEAN:
 				Boolean b = (Boolean) value;
 				if(b) status = ProductStatus.ACTIVE;
 				else status = ProductStatus.DISCONTINUED;
 				break;
-			case Cell.CELL_TYPE_FORMULA:
+			case FORMULA:
 				Boolean b1 = value.toString().equalsIgnoreCase("true");
 				if(b1) status = ProductStatus.ACTIVE;
 				else status = ProductStatus.DISCONTINUED;
 				break;
-			case Cell.CELL_TYPE_BLANK:
+			case BLANK:
 				return product;
 			default:
 				return null;
 			}
 			product.getProduct().setStatus((byte) status.ordinal());
-			break; 
-		case "C\u00f3digo de Barras" : 
-			if(type.equals(Cell.CELL_TYPE_STRING)){
+			break;
+		case "C\u00f3digo de Barras" :
+			if(type.equals(CellType.STRING)){
 				product.getItem().get(0).setBarcode((String) value);
-			} else if(type.equals(Cell.CELL_TYPE_NUMERIC)){
+			} else if(type.equals(CellType.NUMERIC)){
 				product.getItem().get(0).setBarcode(String.format("%.0f", value));
 			}
-			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
-			break; 
+			else if(!type.equals(CellType.BLANK)) return null;
+			break;
 		case "Descripci\u00f3n" :
-			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
 				product.getItem().get(0).setDescription(toString(value));
 			}
-			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
+			else if(!type.equals(CellType.BLANK)) return null;
 			break;
 		case "Detalle 1":case "Detail 1":
-			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
 				product.getItem().get(0).setDetail(toString(value));
-				if(product.getItem().get(0).getDetail().length() > 15){	
+				if(product.getItem().get(0).getDetail().length() > 15){
 					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TOO_LARGE.getMessage());
 					textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TOO_LARGE.getMessage() +"\n";
 				}
 			}
-			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
+			else if(!type.equals(CellType.BLANK)) return null;
 			break;
 		case "Detalle 2":
-			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
 				product.getItem().get(0).setDetail2(toString(value));
-				if(product.getItem().get(0).getDetail2().length() > 15){	
+				if(product.getItem().get(0).getDetail2().length() > 15){
 					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TOO_LARGE.getMessage());
 					textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TOO_LARGE.getMessage() +"\n";
 				}
 			}
-			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
+			else if(!type.equals(CellType.BLANK)) return null;
 			break;
 		case "Detalle 3":
-			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
 				product.getItem().get(0).setDetail3(toString(value));
-				if(product.getItem().get(0).getDetail3().length() > 15){	
+				if(product.getItem().get(0).getDetail3().length() > 15){
 					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TOO_LARGE.getMessage());
 					textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TOO_LARGE.getMessage() +"\n";
 				}
 			}
-			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
+			else if(!type.equals(CellType.BLANK)) return null;
 			break;
 		case "N\u00FAmero Serie":
-			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
 				product.getItem().get(0).setSerialNumber(toString(value));
 			}
-			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
+			else if(!type.equals(CellType.BLANK)) return null;
 			break;
-		case "Serializable" : 
+		case "Serializable" :
 			Boolean bool4 = false;
 			switch (type) {
-			case Cell.CELL_TYPE_STRING:
+			case STRING:
 				String string = (String) value;
 				if(string.equalsIgnoreCase("si") || string.equalsIgnoreCase("yes") || string.equalsIgnoreCase("true"))
 					bool4 = true;
@@ -1682,18 +1683,18 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 					bool4 = false;
 				else return null;
 				break;
-			case Cell.CELL_TYPE_NUMERIC:
+			case NUMERIC:
 				Double num = (Double) value;
 				if(num.equals(1.0)) bool4 = true;
 				else if(num.equals(0.0)) bool4 = false;
 				else return null;
 				break;
-			case Cell.CELL_TYPE_BOOLEAN:
+			case BOOLEAN:
 				bool4 = (Boolean) value;
 				break;
-			case Cell.CELL_TYPE_BLANK:
+			case BLANK:
 				return product;
-			case Cell.CELL_TYPE_FORMULA:
+			case FORMULA:
 				bool4 = value.toString().equalsIgnoreCase("true");
 				break;
 
@@ -1701,11 +1702,11 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				return null;
 			}
 			product.getProduct().setSerializable(bool4);
-			break;  
-		case "Loteable" : 
+			break;
+		case "Loteable" :
 			Boolean bool5 = false;
 			switch (type) {
-			case Cell.CELL_TYPE_STRING:
+			case STRING:
 				String string = (String) value;
 				if(string.equalsIgnoreCase("si") || string.equalsIgnoreCase("yes") || string.equalsIgnoreCase("true"))
 					bool5 = true;
@@ -1713,18 +1714,18 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 					bool5 = false;
 				else return null;
 				break;
-			case Cell.CELL_TYPE_NUMERIC:
+			case NUMERIC:
 				Double num = (Double) value;
 				if(num.equals(1.0)) bool5 = true;
 				else if(num.equals(0.0)) bool5 = false;
 				else return null;
 				break;
-			case Cell.CELL_TYPE_BOOLEAN:
+			case BOOLEAN:
 				bool5 = (Boolean) value;
 				break;
-			case Cell.CELL_TYPE_BLANK:
+			case BLANK:
 				return product;
-			case Cell.CELL_TYPE_FORMULA:
+			case FORMULA:
 				bool5 = value.toString().equalsIgnoreCase("true");
 				break;
 
@@ -1732,24 +1733,24 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				return null;
 			}
 			product.getProduct().setLotable(bool5);
-			break;  
-		case "Envasado" : 
+			break;
+		case "Envasado" :
 			switch (type) {
-			case Cell.CELL_TYPE_STRING:
+			case STRING:
 				String string = (String) value;
 				product.getProduct().setPackaged(string.equalsIgnoreCase("si") ||
 						string.equalsIgnoreCase("yes") || string.equalsIgnoreCase("true"));
 				break;
-			case Cell.CELL_TYPE_NUMERIC:
+			case NUMERIC:
 				Double num = (Double) value;
 				product.getProduct().setPackaged(num.equals(1.0));
 				break;
-			case Cell.CELL_TYPE_BOOLEAN:
+			case BOOLEAN:
 				product.getProduct().setPackaged((Boolean) value);
 				break;
-			case Cell.CELL_TYPE_BLANK:
+			case BLANK:
 				return product;
-			case Cell.CELL_TYPE_FORMULA:
+			case FORMULA:
 				product.getProduct().setPackaged(value.toString().equalsIgnoreCase("true"));
 				break;
 			default:
@@ -1757,7 +1758,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			}
 			break;
 		case "Formato":
-			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
 				Tag tag = tagList.stream().filter(tt -> tt.getType() == TagType.PACKING.value() && tt.getName().equals(toString(value))).findFirst().orElse(new Tag());
 				if(tag.getId() != null)product.getItem().get(0).setPackFormatTag(tag);
 				else{
@@ -1767,16 +1768,16 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			}
 			break;
 		case "Unidades":
-			if(type.equals(Cell.CELL_TYPE_NUMERIC)){
+			if(type.equals(CellType.NUMERIC)){
 				product.getItem().get(0).setPackUnits((Double)value);
 			}else {
 				verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.NOT_NUMERIC.getMessage());
 				textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.NOT_NUMERIC.getMessage() +"\n";
 			}
-			break; 
+			break;
 
 		case "Formato Unidades":
-			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
 				Tag tag = tagList.stream().filter(tt -> tt.getType() == TagType.PACKING.value() && tt.getName().equals(toString(value))).findFirst().orElse(new Tag());
 				if(tag.getId() != null)product.getItem().get(0).setPackUnitsTag(tag);
 				else{
@@ -1786,15 +1787,15 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			}
 			break;
 		case "Medida":
-			if(type.equals(Cell.CELL_TYPE_NUMERIC)){
+			if(type.equals(CellType.NUMERIC)){
 				product.getItem().get(0).setPackMeasurement((Double)value);
 			}else {
 				verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.NOT_NUMERIC.getMessage());
 				textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.NOT_NUMERIC.getMessage() +"\n";
 			}
-			break; 
+			break;
 		case "Formato Medida":
-			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
 				Tag tag = tagList.stream().filter(tt -> tt.getType() == TagType.PACKING.value() && tt.getName().equals(toString(value))).findFirst().orElse(new Tag());
 				if(tag.getId() != null) product.getItem().get(0).setPackMeasurementTag(tag);
 				else{
@@ -1806,30 +1807,30 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		default:
 			break;
 		}
-		
+
 		return product;
 	}
-	
+
 	public ProductInfo newProduct(Domain domain) {
 		ProductInfo pi = new ProductInfo();
 		com.esferalia.aon.occam.api.model.product.Product p2 = new com.esferalia.aon.occam.api.model.product.Product();
 		p2.setDomain(domain.getId());
 		com.esferalia.aon.occam.api.model.product.Item i2 = new com.esferalia.aon.occam.api.model.product.Item();
 		i2.setDomain(domain.getId());
-	
+
 		// Tipo (product)
 		p2.setType((byte)ProductType.COMMERCIAL_PRODUCT.ordinal());
-		
+
 		// IVA (product)
 		Tax vat = DBProduct.getIVAName(domain.getName(), domain.getId(),"GENERAL", getUser().getLogin());
 		p2.setVat(vat.getId());
-		
+
 		// IRPF (product)
 		Tax retention = new Tax();
 		retention.setName("IRPF");
 		retention.setType(TaxType.RETENTION);
 		p2.setRetention(retention.getId());
-		
+
 		// Inventoriable (product)
 		 p2.setInventoriable(false);
 		// producto compuesto (product)
@@ -1838,27 +1839,27 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		p2.setCompositionPrice(false);
 		// Envasado
 		p2.setPackaged(false);
-		
+
 		// estado (product)
 		p2.setStatus((byte)ProductStatus.ACTIVE.ordinal());
 
 		// detail
 		i2.setDetail("");
-		
+
 		// detail2
 		i2.setDetail2("");
-		
+
 		// detail3
 		i2.setDetail3("");
 		i2.setStatus((byte) 0);
-		Vector<com.esferalia.aon.occam.api.model.product.Item> is= new Vector<com.esferalia.aon.occam.api.model.product.Item>(); 
+		Vector<com.esferalia.aon.occam.api.model.product.Item> is= new Vector<com.esferalia.aon.occam.api.model.product.Item>();
 		is.add(0, i2);
 		pi.setProduct(p2);
 		pi.setItem(is);
 		pi.setTagList(new LinkedList<>());
 		return pi;
 	}
-	
+
 	public Vector<TemplateInfo> searchNameTemplate(String searchStr, Vector<TemplateInfo> templates){
 		Vector<TemplateInfo> vector = new Vector<TemplateInfo>();
 		for (TemplateInfo templateInfo : templates) {
@@ -1868,7 +1869,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		}
 		return vector;
 	}
-	
+
 	public Vector<TemplateInfo> searchTypeTemplate(String searchStr, Vector<TemplateInfo> templates){
 		Vector<TemplateInfo> vector = new Vector<TemplateInfo>();
 		for (TemplateInfo templateInfo : templates) {
@@ -1878,8 +1879,8 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		}
 		return vector;
 	}
-	
-	
+
+
 	public Vector<com.esferalia.aon.gwt.template.shared.WorkPlace> getWorkplaces(Domain domain){
 		return DBCatalogue.getWorkplaces(domain,getUser());
 	}
@@ -1887,7 +1888,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		Workplace w = DBCatalogue.getWorkplace(domain, getUser(), workplaceDescription);
 		return DBCatalogue.getDepartments(domain, w.getId(), getUser().getLogin());
 	}
-	
+
 	/**
 	 * <p>
 	 * Checks if CharSequence contains a search CharSequence irrespective of
@@ -1904,10 +1905,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	 * StringUtils.contains("", "") = true
 	 * StringUtils.contains("abc", "") = true
 	 * StringUtils.contains("abc", "a") = true
-	 * StringUtils.contains("ábc", "a") = true
+	 * StringUtils.contains("ï¿½bc", "a") = true
 	 * StringUtils.contains("abc", "z") = false
 	 * StringUtils.contains("abc", "A") = true
-	 * StringUtils.contains("ábc", "A") = true
+	 * StringUtils.contains("ï¿½bc", "A") = true
 	 * StringUtils.contains("abc", "Z") = false
 	 * </pre>
 	 * @param str
@@ -1923,9 +1924,9 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	    }
 	    int len = searchStr.length();
 	    int max = str.length() - len;
-	    for (int i = 0; i <= max; i++) {   	
+	    for (int i = 0; i <= max; i++) {
 	    	if (c.compare(str.substring(i, i+len), searchStr) == 0)
-	    		return true;  
+	    		return true;
 	    }
 	    return false;
 	}
@@ -1934,20 +1935,20 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	public List<com.esferalia.aon.gwt.template.shared.ProductCategory> getProductCategories(Domain domain) {
 		return DBProduct.getCategoriesShared(domain.getName(), domain.getId(), getUser().getLogin());
 	}
-	 
+
 	public Error executeExcelEcommerce(Domain domain, Ecommerce ecommerce, Seller seller, String type, Tag tag) {
 		Error error = new Error();
 		error.setError(true);
     	if(getOut() == null){
 			error.setError(false);
 			Vector<String> verror = new Vector<String>();
-			verror.add("*No ha importado ningún archivo.");
+			verror.add("*No ha importado ningï¿½n archivo.");
 			error.setTextError(verror);
 			return error;
 		}
     	byte[] data = getOut();
 		byte[] xml = null;
-		
+
     	if(getMimetype().equals(MimeType.CSV.getName()) && (ecommerce.equals(Ecommerce.EBAY) || ecommerce.equals(Ecommerce.GENERIC))){
     		xml = csvToXmlEbay(data, ecommerce.getName(), type, tag.getName(), seller.getRegistryName());
     	}
@@ -1956,13 +1957,13 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			xml = excelToXmlAmazonXXX(data, ecommerce.getName(), type, tag.getName(), seller.getRegistryName());
 		else if(xml == null && (ecommerce.equals(Ecommerce.EBAY) || ecommerce.equals(Ecommerce.GENERIC)))
 			xml = excelToXmlEbayXXX(data, ecommerce.getName(), type, tag.getName(), seller.getRegistryName());
-	
+
 		if(xml != null){
-			Attach attach = AON.getAttach(domain.getName(), domain.getId(), getUser().getLogin(), 
+			Attach attach = AON.getAttach(domain.getName(), domain.getId(), getUser().getLogin(),
 					filter -> filter.getDescriptionProperty().eq(ecommerce.getName()+"-"+type)
 					.and(filter.getTypeProperty().eq(((byte) RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.ordinal())))
 					, AttachType.REGISTRY);
-			
+
 			if(attach != null && attach.getId() != null){
 				attach.setData(xml);
 				attach.setModificationDate(Calendar.getInstance().getTime());
@@ -1977,20 +1978,20 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				attach.setConfidential(true);
 				attach.setType(RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.value());
 				attach.setDate(Calendar.getInstance().getTime());
-			
+
 				attach.setCreationDate(Calendar.getInstance().getTime());
 				attach.setCreationUser(getUser().getLogin());
-		
+
 				attach.setModificationDate(Calendar.getInstance().getTime());
 				attach.setModificationUser(getUser().getLogin());
-				
+
 				attach.setDomain(domain);
 				attach.setMimeType(MimeType.XML);
-				
+
 				if(seller.getRegistryName().equals("-"))
 					attach.setAttachModule(getCompany(domain).getId());
 				else attach.setAttachModule(seller.getId());
-		
+
 				attach.setId(AON.insert(domain.getName(), domain.getId(), getUser().getLogin(), attach));
 				AON.insertRegistryAttachTag(domain.getName(), domain.getId(), getUser().getLogin(),
 						attach.getId(), tag.getId());
@@ -2011,7 +2012,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			FileUtils.writeByteArrayToFile(aux, data);
 			FileInputStream excel = null;
 			excel = new FileInputStream(aux);
-			
+
 			HSSFWorkbook workbook= new HSSFWorkbook(excel);
 			HSSFSheet sheet = null;
 			HSSFSheet sheet2 = null;
@@ -2064,7 +2065,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			return null;
 		}
 	}
-	
+
 	public EcommerceProduct excelToXmlAmazonH(String ec, String type, String tag, String seller, HSSFSheet sheet, HSSFSheet sheet2){
 			Row row = sheet.getRow(0);
 			Cell cell1 = row.getCell(0);
@@ -2077,7 +2078,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			template.setAmazonTemplateType(cell1.getStringCellValue());
 			template.setAmazonVersion(cell2.getStringCellValue());
 			template.setSeller(seller);
-			
+
 			Row row1 = sheet.getRow(1);
 			Row row2 = sheet.getRow(2);
 
@@ -2093,7 +2094,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				ecommerce.setName(cell.getStringCellValue());
 				pd.getEcommerce().add(ecommerce);
 			});
-			
+
 			Iterable<Cell> cellIterable2 = () -> cellIterator2;
 			Stream<Cell> cellStream2 = StreamSupport.stream(cellIterable2.spliterator(),false);
 		    final AtomicInteger count = new AtomicInteger();
@@ -2107,7 +2108,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 					Cell cellx = null;
 					if(rowx != null) cellx = rowx.getCell(count.get());
 					String strx = null;
-					if(cellx != null) strx = cellx.getStringCellValue(); 
+					if(cellx != null) strx = cellx.getStringCellValue();
 					LinkedList<String> list = new LinkedList<String>();
 					while(strx != null && !strx.equals("")){
 						list.add(strx);
@@ -2116,7 +2117,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 						cellx = null;
 						if(rowx != null) cellx = rowx.getCell(count.get());
 						strx = null;
-						if(cellx != null) strx = cellx.getStringCellValue(); 
+						if(cellx != null) strx = cellx.getStringCellValue();
 					}
 					PresetValues pv = new PresetValues();
 					pv.setPresetValue(list);
@@ -2127,10 +2128,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			EcommerceProduct ep =  new EcommerceProduct();
 			ep.setProductData(pd);
 			ep.setTemplate(template);
-			
+
 			return ep;
 	}
-	
+
 	public EcommerceProduct excelToXmlAmazonX(String ec, String type, String tag, String seller, XSSFSheet sheet, XSSFSheet sheet2){
 		Row row = sheet.getRow(0);
 		Cell cell1 = row.getCell(0);
@@ -2143,7 +2144,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		template.setAmazonTemplateType(cell1.getStringCellValue());
 		template.setAmazonVersion(cell2.getStringCellValue());
 		template.setSeller(seller);
-		
+
 		Row row1 = sheet.getRow(1);
 		Row row2 = sheet.getRow(2);
 
@@ -2159,7 +2160,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			ecommerce.setName(cell.getStringCellValue());
 			pd.getEcommerce().add(ecommerce);
 		});
-		
+
 		Iterable<Cell> cellIterable2 = () -> cellIterator2;
 		Stream<Cell> cellStream2 = StreamSupport.stream(cellIterable2.spliterator(),false);
 	    final AtomicInteger count = new AtomicInteger();
@@ -2173,7 +2174,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				Cell cellx = null;
 				if(rowx != null) cellx = rowx.getCell(count.get());
 				String strx = null;
-				if(cellx != null) strx = cellx.getStringCellValue(); 
+				if(cellx != null) strx = cellx.getStringCellValue();
 				LinkedList<String> list = new LinkedList<String>();
 				while(strx != null && !strx.equals("")){
 					list.add(strx);
@@ -2182,7 +2183,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 					cellx = null;
 					if(rowx != null) cellx = rowx.getCell(count.get());
 					strx = null;
-					if(cellx != null) strx = cellx.getStringCellValue(); 
+					if(cellx != null) strx = cellx.getStringCellValue();
 				}
 				PresetValues pv = new PresetValues();
 				pv.setPresetValue(list);
@@ -2193,11 +2194,11 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		EcommerceProduct ep =  new EcommerceProduct();
 		ep.setProductData(pd);
 		ep.setTemplate(template);
-		
+
 		return ep;
 	}
-	
-	
+
+
 	public byte[] excelToXmlAmazon(byte[] data, String ec, String type, String tag, String seller){
 		try {
 			File aux = File.createTempFile("ecommerceTemplate", ".xls");
@@ -2222,7 +2223,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			template.setAmazonTemplateType(cell1.getStringCellValue());
 			template.setAmazonVersion(cell2.getStringCellValue());
 			template.setSeller(seller);
-			
+
 			Row row1 = sheet.getRow(1);
 			Row row2 = sheet.getRow(2);
 
@@ -2238,7 +2239,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				ecommerce.setName(cell.getStringCellValue());
 				pd.getEcommerce().add(ecommerce);
 			});
-			
+
 			Iterable<Cell> cellIterable2 = () -> cellIterator2;
 			Stream<Cell> cellStream2 = StreamSupport.stream(cellIterable2.spliterator(),false);
 		    final AtomicInteger count = new AtomicInteger();
@@ -2252,7 +2253,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 					Cell cellx = null;
 					if(rowx != null) cellx = rowx.getCell(count.get());
 					String strx = null;
-					if(cellx != null) strx = cellx.getStringCellValue(); 
+					if(cellx != null) strx = cellx.getStringCellValue();
 					LinkedList<String> list = new LinkedList<String>();
 					while(strx != null && !strx.equals("")){
 						list.add(strx);
@@ -2261,7 +2262,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 						cellx = null;
 						if(rowx != null) cellx = rowx.getCell(count.get());
 						strx = null;
-						if(cellx != null) strx = cellx.getStringCellValue(); 
+						if(cellx != null) strx = cellx.getStringCellValue();
 					}
 					PresetValues pv = new PresetValues();
 					pv.setPresetValue(list);
@@ -2269,19 +2270,19 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 					count.getAndIncrement();
 				}
 			});
-			
+
 			workbook.close();
 			EcommerceProduct ep =  new EcommerceProduct();
 			ep.setProductData(pd);
 			ep.setTemplate(template);
-			
+
 			return XMLUtils.writeXml(ep);
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-	
+
 	public byte[] excelToXmlEbayXXX(byte[] data, String ec, String type, String tag, String seller){
 		try {
 			File aux = File.createTempFile("ecommerceTemplate", ".xls");
@@ -2313,19 +2314,19 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				}
 				EcommerceProduct ep = excelToXmlEbayH(ec, type, tag, seller, sheet.getRow(0));
 				workbook.close();
-			
+
 				return XMLUtils.writeXml(ep);
 			} catch (JAXBException | IOException e1) {
 				e1.printStackTrace();
 				return null;
 			}
-			
+
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-	
+
 	public EcommerceProduct excelToXmlEbayH(String ec, String type, String tag, String seller, Row row){
 		Template template = new Template();
 		template.setCategory(tag);
@@ -2351,7 +2352,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		ep.setTemplate(template);
 		return ep;
 	}
-	
+
 	public byte[] excelToXmlEbay(byte[] data, String ec, String type, String tag, String seller){
 		try {
 			File aux = File.createTempFile("ecommerceTemplate", ".xls");
@@ -2366,7 +2367,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				return null;
 			}
 			Row row = sheet.getRow(0);
-			
+
 			Template template = new Template();
 			template.setCategory(tag);
 			template.setEcommerce(ec);
@@ -2399,14 +2400,14 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			return null;
 		}
 	}
-	
+
 	public byte[] csvToXmlEbay(byte[] data, String ec, String type, String tag, String seller){
 		try {
 			String csvSplitBy = ",";
 			String csvLineSplitBy = "\n";
 			String csv = new String(data, "UTF-8");
 			String[] lineArray = csv.split(csvLineSplitBy);
-			String csvFirstLine = lineArray[0]; 
+			String csvFirstLine = lineArray[0];
 			String[] array = csvFirstLine.split(csvSplitBy);
 			ProductData pd = new ProductData();
 			pd.setEcommerce(new ArrayList<EcommerceProduct.ProductData.Ecommerce>());
@@ -2433,7 +2434,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 								if(i < csvLine.length) value = csvLine[i];
 							}
 						}
-					
+
 						PresetValues pv = new PresetValues();
 						pv.setPresetValue(list);
 						pd.getEcommerce().get(i).setPresetValues(pv);
@@ -2446,7 +2447,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			template.setType(type);
 			template.setTag(tag);
 			template.setSeller(seller);
-			
+
 			EcommerceProduct ep =  new EcommerceProduct();
 			ep.setProductData(pd);
 			ep.setTemplate(template);
@@ -2456,8 +2457,8 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			return null;
 		}
 	}
-	
-	public String generateConsumptionExcel(Domain domain, Vector<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail, 
+
+	public String generateConsumptionExcel(Domain domain, Vector<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail,
 								 Integer size, Boolean packaged, Boolean withoutInv, Integer category, Boolean dif) {
 		File file = null;
 		try {
@@ -2467,7 +2468,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		}
 		return saveFile(domain, file);
 	}
-	
+
 	public String saveFile(Domain domain, File file) {
 		String key = null;
 		try {
@@ -2486,8 +2487,8 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		}
 		return key;
 	}
-	
-	public String generateConsumptionExcel(Domain domain, Vector<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail, 
+
+	public String generateConsumptionExcel(Domain domain, Vector<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail,
 			 Integer size, Date startDate, Date endDate, Boolean packaged, Integer category, Boolean dif) {
 		File file = null;
 		try {
@@ -2498,13 +2499,13 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		}
 		return saveFile(domain, file);
 	}
-	
+
 	public Integer excelRowNumber(){
 		if(getOut() != null){
 			try{
 				byte[] data = getOut();
 				ByteArrayInputStream bais = new ByteArrayInputStream(data);
-				
+
 				HSSFWorkbook workbook = new HSSFWorkbook(bais);
 				HSSFSheet sheet = workbook.getSheetAt(0);
 				Integer size = sheet.getPhysicalNumberOfRows();
@@ -2517,7 +2518,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				try {
 					byte[] data = getOut();
 					ByteArrayInputStream bais = new ByteArrayInputStream(data);
-					
+
 					XSSFWorkbook workbook = new XSSFWorkbook(bais);
 					XSSFSheet sheet = workbook.getSheetAt(0);
 					Integer size = sheet.getPhysicalNumberOfRows();
@@ -2531,15 +2532,15 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		}
 		return 1;
 	}
-	
+
 	public Company getCompany(Domain domain){
 		return AON.getCompanyForDomain(domain.getName(), domain.getId(), getUserLogin());
 	}
-	
+
 	public List<Seller> getSellerList(Domain domain){
 		return DBFee.getInstance().getSellers(domain, getUser().getLogin());
 	}
-	
+
 	public LinkedList<String> getProductRoles(Domain domain) {
 		User user = AON.getUser(domain.getName(), domain.getId(), getUser().getLogin());
 		LinkedList<String> list = new LinkedList<String>();
@@ -2551,39 +2552,39 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		}
 		return list;
 	}
-	
+
 	public LinkedList<String> getTypeList(Domain domain){
-		return AON.getAttachStream(domain.getName(), domain.getId(), getUser().getLogin(), 
+		return AON.getAttachStream(domain.getName(), domain.getId(), getUser().getLogin(),
 				filter -> filter.getDomainProperty().eq(domain.getId())
 				.and(filter.getTypeProperty().eq(RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.value())),
 				AttachType.REGISTRY, false).map(r -> r.getDescription())
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
-	
+
 	private Object getObjectValue(Cell cell, FormulaEvaluator evaluator){
-		switch (cell.getCellType()) {
-			case Cell.CELL_TYPE_BLANK:
+		switch (cell.getCellTypeEnum()) {
+			case BLANK:
 				return null;
-			case Cell.CELL_TYPE_BOOLEAN: 
+			case BOOLEAN:
 				return cell.getBooleanCellValue();
-			case Cell.CELL_TYPE_ERROR:
+			case ERROR:
 				return cell.getErrorCellValue();
-			case Cell.CELL_TYPE_FORMULA:
+			case FORMULA:
 				return evaluator.evaluate(cell).getNumberValue();
-				//return cell.getCellFormula(); 
-			case Cell.CELL_TYPE_NUMERIC:
+				//return cell.getCellFormula();
+			case NUMERIC:
 				return cell.getNumericCellValue();
-			case Cell.CELL_TYPE_STRING:
+			case STRING:
 				return cell.getStringCellValue();
 			default:
 				return null;
 		}
 	}
-	
-	public String toString(Object value, Integer type){
-		if(type.equals(Cell.CELL_TYPE_STRING) && !value.equals("")){
+
+	public String toString(Object value, CellType type){
+		if(type.equals(CellType.STRING) && !value.equals("")){
 			return value.toString();
-		} else if(type.equals(Cell.CELL_TYPE_NUMERIC)){
+		} else if(type.equals(CellType.NUMERIC)){
 			Double d = Double.parseDouble(value.toString());
 			Integer i = d.intValue();
 			if((d - i.doubleValue()) ==  0)
@@ -2592,7 +2593,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		}
 		return value.toString();
 	}
-	
+
 	public String toString(Object value){
 		try{
 			Double d = Double.parseDouble(value.toString());
@@ -2604,7 +2605,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			return value.toString();
 		}
 	}
-	
+
 	public void print(String text){
 		System.out.println(text);
 	}
