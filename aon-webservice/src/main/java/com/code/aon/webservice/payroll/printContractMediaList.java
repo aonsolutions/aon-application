@@ -131,7 +131,7 @@ public class printContractMediaList extends HttpServlet{
 
 		t.addCell(table0);
 		
-		t.addCell(getTitle(json.getString("year")));
+		t.addCell(getTitle(Integer.toString(json.getInt("year"))));
 		
 		document.add(t);
 		
@@ -194,7 +194,10 @@ public class printContractMediaList extends HttpServlet{
 			
 			table.addCell(stringCell(contract.getString("document")));
 			table.addCell(stringCell(contract.getString("name")));
-			table.addCell(stringCell(contract.getJSONObject("category").getString("name")));
+			table.addCell(stringCell(
+					contract.opt("category") != null &&
+					contract.getJSONObject("category").opt("name") != null ?
+					contract.getJSONObject("category").getString("name") : ""));
 			
 			Date sd = AonDateUtils.dateTimeParse(contract.getString("start_date"));
 			table.addCell(stringCell(AonDateUtils.simpleFormat(sd)));
