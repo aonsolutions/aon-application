@@ -663,7 +663,6 @@ public class Mod347DAO {
 
 						String document = vat.getRegistryDocument();
 						Country country = vat.getRegistryDocumentCountry();
-
 						if (country == null || country == Country.ES) {
 
 							if (AonStringUtils.length(document) > 9) {
@@ -956,7 +955,13 @@ public class Mod347DAO {
 			.limit(1)
 			.fetch()
 			.stream()
-			.mapToInt(rec -> Integer.parseInt(rec.getValue(GEOZONE.CODE) ))
+			.mapToInt(rec -> {
+				try {
+					return Integer.parseInt(rec.getValue(GEOZONE.CODE) );	
+				} catch (NumberFormatException e) {
+					return 0;
+				}
+			})
 			.findFirst()
 			.orElse(0);
 	}
