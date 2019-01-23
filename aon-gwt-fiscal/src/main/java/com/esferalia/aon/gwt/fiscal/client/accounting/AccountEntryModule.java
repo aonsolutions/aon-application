@@ -9,7 +9,6 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.ModuleCallback;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
-import com.esferalia.aon.gwt.common.client.widget.AonToast;
 import com.esferalia.aon.gwt.common.client.widget.AuditDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
@@ -63,10 +62,11 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.layout.client.Layout.AnimationCallback;
 import com.google.gwt.layout.client.Layout.Layer;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -85,6 +85,7 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -482,27 +483,37 @@ public class AccountEntryModule extends MainEntryPoint {
 
 	@UiHandler("commentsButton")
 	public void onComments(ClickEvent event) {
-		final AonToast toast = new AonToast();
-		
+		final CustomDialog toast = new CustomDialog();
+		toast.setCaption(AON.MSG.comments());
 		FlowPanel commentPanel = new FlowPanel();
 		commentPanel.setStyleName(AON.AON_CSS.aonHeightAll());
 		commentPanel.addStyleName(AON.AON_CSS.aonTextCenter());
 		TextArea comment = new TextArea();
-		comment.addValueChangeHandler(new ValueChangeHandler<String>() {
+		toast.addCloseHandler(new CloseHandler<PopupPanel>() {
+			
 			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				wizardContent.getMainEntry().setComments(event.getValue());
+			public void onClose(CloseEvent<PopupPanel> event) {
+				wizardContent.getMainEntry().setComments(comment.getValue());
 				styleCommentsButton();
 				refreshIdLabel();
-				toast.hide();
 			}
 		});
 		comment.setText(wizardContent.getMainEntry().getComments());
-		comment.setWidth("90%");
-		comment.setHeight("5em");
+		comment.setWidth("400px");
+		comment.setHeight("100px");
 		commentPanel.add(comment);
+		toast.add(commentPanel);
 
-		toast.show(AON.MSG.comments(), commentPanel);
+		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+			public void execute() {
+				comment.setFocus(true);
+			}
+		});
+		
+		
+		toast.center();
+		toast.show();
+		
 	}
 
 	public boolean isNew() {

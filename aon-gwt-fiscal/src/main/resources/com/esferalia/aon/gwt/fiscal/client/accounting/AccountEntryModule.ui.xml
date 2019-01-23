@@ -83,7 +83,7 @@
 								<td style="width: 100px;" class="{aonResources.css.aonPanelGridEven}">
 									<g:ListBox ui:field="activity" visible="false" width="120px"/>
 								</td>
-								<td style="width: 100px;" class="{aonResources.css.aonPanelGridEven}">
+								<td style="width: 100px; white-space: nowrap;" class="{aonResources.css.aonPanelGridEven}">
 									<g:CheckBox ui:field="confidential" text="{msg.confidential}"/>
 								</td>
 								<td style="width: 100px; text-align: right;" class="{aonResources.css.aonPanelGridEven}">
