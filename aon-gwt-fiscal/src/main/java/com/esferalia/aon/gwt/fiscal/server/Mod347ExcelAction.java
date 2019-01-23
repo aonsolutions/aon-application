@@ -153,7 +153,8 @@ public class Mod347ExcelAction extends AbsExcelAction { // ModelVAExcelAction<Mo
 		CellUtil.createCell(row, cellCount++, "Observaciones", headerCellStyle);
 		
 		// Definir ancho para las distintas columnas
-		sheet.autoSizeColumn(0);             // Autosize columna Clave
+//		sheet.autoSizeColumn(0);             // Autosize columna Clave
+		sheet.setColumnWidth(0, 5 * 256);             // Autosize columna Clave
 		sheet.setColumnWidth(1, 11 * 256);   // Ancho para la columna NIF
 		sheet.setColumnWidth(2, 30 * 256);   // Ancho para la columna Nombre o Razón Social
 		sheet.setColumnWidth(3, 13 * 256);   // Ancho para la columna Provincia

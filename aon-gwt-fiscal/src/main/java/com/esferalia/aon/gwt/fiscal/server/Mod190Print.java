@@ -121,7 +121,7 @@ public class Mod190Print extends HttpServlet {
 					"&RUT=" + 
 					"&PRG=" + 
 					"&FIN=" + 
-					"&EJF=2017" + 
+					"&EJF=" + mod190.getYear() +
 					"&MOD=190";
 			request = "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";
 //			request = "https://www2.agenciatributaria.gob.es/wlpl/OVCT-IPDF/ovweb/vistaprevia";		
