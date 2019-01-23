@@ -363,19 +363,19 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 			}
 		});
 		// ----------------------------------------------------------- [CONCEPT]
-		conceptSuggestBox.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<Suggestion> event) {
-				ValueChangeEvent.<String>fire(conceptBox, event.getSelectedItem().getReplacementString());
-			}
-		});
+//		conceptSuggestBox.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
+//			
+//			@Override
+//			public void onSelection(SelectionEvent<Suggestion> event) {
+//				ValueChangeEvent.<String>fire(conceptSuggestBox, event.getSelectedItem().getReplacementString());
+//			}
+//		});
 		
-		conceptBox.addValueChangeHandler(new ValueChangeHandler<String>() {
+		conceptSuggestBox.addValueChangeHandler(new ValueChangeHandler<String>() {
 			
 			@Override
 			public void onValueChange(final ValueChangeEvent<String> event) {
-				aed.setConcept(conceptBox.getValue());
+				aed.setConcept(event.getValue());
 				if (getRowCount() > 3 &&  isConfirmConceptChange()) {
 					ConfirmDialog cd = new ConfirmDialog();
 					cd.confirm(AON.MSG.changeConcept(),new ConfirmDialogCallback() {
@@ -395,17 +395,19 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 								Widget w = getWidget( i , COLS.CON.ordinal());
 								if (w instanceof SuggestBox) {
 									SuggestBox cb = (SuggestBox) w;
-									cb.getValueBox().setValue(event.getValue());
+									cb.getValueBox().setValue(conceptBox.getValue(), false);
 								}
 							}
 							for (AccountEntryDetail aed : wizardContent.getMainEntry().getDetails() ) {
-								aed.setConcept(event.getValue());
+								aed.setConcept(conceptBox.getValue());
 							}
 							debitBox.setFocus(true);
+							ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTable.this, aed);
 						}
 					});
+				} else {
+					ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTable.this, aed);
 				}
-				ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTable.this, aed);
 			}
 		});
 		// ------------------------------------------------------------- [DEBIT]
