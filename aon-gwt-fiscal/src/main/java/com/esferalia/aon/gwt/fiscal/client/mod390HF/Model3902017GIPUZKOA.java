@@ -180,6 +180,7 @@ public class Model3902017GIPUZKOA extends Model390HFBase {
 		formFlowPanel.add(mod390Hidden);
 		formFlowPanel.add(domainIdHidden);
 		formFlowPanel.add(domainNameHidden);
+		formFlowPanel.add(userHidden);
 		formContainer.add(diskForm);
 		panel.add(formContainer);
 		

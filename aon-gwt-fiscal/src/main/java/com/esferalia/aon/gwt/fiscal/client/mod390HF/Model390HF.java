@@ -139,16 +139,6 @@ public class Model390HF extends MainEntryPoint {
 		root.add(ui);
 	}
 
-	public static native String getCurrentDomainName()
-	/*-{
-		return $wnd.getCurrentDomainName();
-	}-*/;
-
-	public static native int getCurrentDomain()
-	/*-{
-		return $wnd.getCurrentDomain();
-	}-*/;
-
 	private void onSelectionChange(SelectionEvent<Mod390HF> event) {
 		Mod390HF sel = event.getSelectedItem();
 		MOD_SERVICE.getMod390HF(getCurrentDomainName(), getCurrentDomain(),

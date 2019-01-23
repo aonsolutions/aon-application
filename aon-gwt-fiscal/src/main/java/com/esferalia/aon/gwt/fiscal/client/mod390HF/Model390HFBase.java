@@ -93,7 +93,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 	};
 
 	protected static final String DOWNLOAD_FILE_ACTION = "/aon_gwt_fiscal/Model390HFFile";
-	private static final String MODEL303_PRINT = "/aon_gwt_fiscal/Model390HFPrint";
+	private static final String MODEL390HF_PRINT = "/aon_gwt_fiscal/Model390HFPrint";
 
 	protected static final boolean ENABLED = true;
 	protected static final boolean DISABLED = false;
@@ -131,6 +131,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 	protected Hidden mod390Hidden = new Hidden("mod390");
 	protected Hidden domainIdHidden = new Hidden("domainId");
 	protected Hidden domainNameHidden = new Hidden("domainName");
+	protected Hidden userHidden = new Hidden("user");
 
 	private ExpressionResolver resolver = new ExpressionResolver() {
 		@Override
@@ -321,7 +322,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 							
 							@Override
 							public void onAccept() {
-								submitForm(MODEL303_PRINT);
+								submitForm(MODEL390HF_PRINT);
 							}
 			
 							@Override
@@ -330,7 +331,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 							}
 						});
 				} else {
-					submitForm(MODEL303_PRINT);
+					submitForm(MODEL390HF_PRINT);
 				}
 			}
 		});
@@ -1160,6 +1161,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 		mod390Hidden.setValue(String.valueOf(getMod390HF().getId()));
 		domainIdHidden.setValue(String.valueOf(Model390HF.getCurrentDomain()));
 		domainNameHidden.setValue(Model390HF.getCurrentDomainName());
+		userHidden.setValue(Model390HF.getCurrentUser());
 		diskForm.submit();
 	}
 

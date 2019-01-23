@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.shared.mod390.Model390ScriptProvider;
 import com.esferalia.aon.occam.api.FISCAL;
@@ -34,7 +33,7 @@ public class Mod390HFPrint extends HttpServlet {
 			int id = Integer.parseInt(req.getParameter("mod390"));
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			String user = AonServletUtils.getLoggedUser();
+			String user = req.getParameter("user");
 			Mod390HF mod390 = FISCAL.getMod390HF(domainName, domainId, user,id);
 
 			Mod390HFExcelAction action = new Mod390HFExcelAction(mod390);
