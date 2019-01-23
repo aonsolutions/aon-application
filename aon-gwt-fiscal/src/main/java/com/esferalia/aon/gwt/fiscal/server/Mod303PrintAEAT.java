@@ -128,18 +128,18 @@ public class Mod303PrintAEAT extends ModPrintAEAT {
 				+ "&FIN=" + "F";
 	}
 	
-	private String getCheckUrlParameters(Mod303 mod303) {
-		return "HID=COIN1303"
-				+ "&NIF=" + mod303.getDocument()
-				+ "&EJF=" + mod303.getYear() 
-				+ "&PER=" + mod303.getPeriod()
-				+ "&CEL=" + ""
-				+ "&EXP=" + ""
-				+ "&NIU=" + ""
-				+ "&IDI=" + "ES"
-				+ "&VIA=" + ""
-				+ "&FIN=" + "";
-	}
+//	private String getCheckUrlParameters(Mod303 mod303) {
+//		return "HID=COIN1303"
+//				+ "&NIF=" + mod303.getDocument()
+//				+ "&EJF=" + mod303.getYear() 
+//				+ "&PER=" + mod303.getPeriod()
+//				+ "&CEL=" + ""
+//				+ "&EXP=" + ""
+//				+ "&NIU=" + ""
+//				+ "&IDI=" + "ES"
+//				+ "&VIA=" + ""
+//				+ "&FIN=" + "";
+//	}
 
 	@Override
 	protected DataResponseSource getDataResponseSource() {

@@ -9,16 +9,16 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
+import org.apache.poi.xssf.streaming.SXSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
@@ -54,7 +54,7 @@ public class Mod130ExcelAction extends ModelIRPFExcelAction<Mod130,Mod130Key> {
 			int pictureureIdx = workbook.addPicture(imageBytes, Workbook.PICTURE_TYPE_PNG);
 			inputStream.close();
 			CreationHelper helper = workbook.getCreationHelper();
-			Drawing drawing = sheet.createDrawingPatriarch();
+			SXSSFDrawing drawing = sheet.createDrawingPatriarch();
 			ClientAnchor anchor = helper.createClientAnchor();
 			anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
 			anchor.setCol1(0);
@@ -143,11 +143,10 @@ public class Mod130ExcelAction extends ModelIRPFExcelAction<Mod130,Mod130Key> {
 		cell.setCellStyle(style);
 		cell.setCellValue(concept);
 		cell.setCellType(CellType.STRING);
-		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 1));			
 		if (ms.getKeys() == null) {
 			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 3));
 		} else {
-			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 1, 1));
+			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 1));
 			Mod130Key key = ms.getKeys()[0];
 			String box = (key.getBox() != 0)
 					?AonStringUtils.leftPad(AonNumberUtils.toString(key.getBox()), 3, "0")

@@ -11,7 +11,6 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -20,6 +19,7 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
+import org.apache.poi.xssf.streaming.SXSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
@@ -55,7 +55,7 @@ public class Mod131ExcelAction extends ModelIRPFExcelAction<Mod131,Mod131Key> {
 			int pictureureIdx = workbook.addPicture(imageBytes, Workbook.PICTURE_TYPE_PNG);
 			inputStream.close();
 			CreationHelper helper = workbook.getCreationHelper();
-			Drawing drawing = sheet.createDrawingPatriarch();
+			SXSSFDrawing drawing = sheet.createDrawingPatriarch();
 			ClientAnchor anchor = helper.createClientAnchor();
 			anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
 			anchor.setCol1(0);
@@ -143,7 +143,7 @@ public class Mod131ExcelAction extends ModelIRPFExcelAction<Mod131,Mod131Key> {
 		cell.setCellStyle(style);
 		cell.setCellValue(concept);
 		cell.setCellType(CellType.STRING);
-		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
+//		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
 		
 		int l = AonStringUtils.length(concept);
 		int conceptLength = 90;
@@ -151,7 +151,7 @@ public class Mod131ExcelAction extends ModelIRPFExcelAction<Mod131,Mod131Key> {
 			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 4));
 			conceptLength += 24;
 		} else {
-			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 1, 1));
+			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
 			Mod131Key key = ms.getKeys()[0];
 			String box = (key.getBox() != 0)
 					?AonStringUtils.leftPad(AonNumberUtils.toString(key.getBox()), 3, "0")

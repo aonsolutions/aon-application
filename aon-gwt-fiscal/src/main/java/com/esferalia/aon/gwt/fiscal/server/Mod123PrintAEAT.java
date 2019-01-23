@@ -125,18 +125,18 @@ public class Mod123PrintAEAT extends ModPrintAEAT {
 				+ "&FIN=" + "F";
 	}
 	
-	private String getCheckUrlParameters(Mod123 mod123) {
-		return "HID=COINX123"
-				+ "&NIF=" + mod123.getDocument()
-				+ "&EJF=" + mod123.getYear() 
-				+ "&PER=" + mod123.getPeriod()
-				+ "&CEL=" + ""
-				+ "&EXP=" + ""
-				+ "&NIU=" + ""
-				+ "&IDI=" + "ES"
-				+ "&VIA=" + ""
-				+ "&FIN=" + "";
-	}
+//	private String getCheckUrlParameters(Mod123 mod123) {
+//		return "HID=COINX123"
+//				+ "&NIF=" + mod123.getDocument()
+//				+ "&EJF=" + mod123.getYear() 
+//				+ "&PER=" + mod123.getPeriod()
+//				+ "&CEL=" + ""
+//				+ "&EXP=" + ""
+//				+ "&NIU=" + ""
+//				+ "&IDI=" + "ES"
+//				+ "&VIA=" + ""
+//				+ "&FIN=" + "";
+//	}
 	
 	@Override
 	protected DataResponseSource getDataResponseSource() {
