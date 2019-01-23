@@ -23,6 +23,7 @@ import com.google.gwt.json.client.JSONString;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -45,6 +46,7 @@ public class CommissionCalculateContent extends Composite {
 	@UiField HorizontalPanel customerPanel;
 	@UiField HorizontalPanel confidentialPanel;
 	@UiField HorizontalPanel workplacePanel;
+	@UiField HorizontalPanel typePanel;
 	
 	CommissionCalculate parent;
 	
@@ -58,6 +60,7 @@ public class CommissionCalculateContent extends Composite {
 		buildCustomerPanel();
 		buildConfidentialPanel();
 		buildWorkplacePanel();
+		buildTypePanel();
 	}
 	
 	private void buildCommercialPanel() {
@@ -287,5 +290,32 @@ public class CommissionCalculateContent extends Composite {
 			}
 		});
 		workplacePanel.add(lb);
+	}
+	
+	private void buildTypePanel() {
+		CheckBox cb1 =new CheckBox("Presupuesto");
+		cb1.setValue(parent.isOffer());
+		
+		CheckBox cb2 =new CheckBox("Factura");
+		cb2.setValue(parent.isInvoice());
+		cb1.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				parent.setType(cb1.getValue() ? "offer" : "invoice");
+				cb2.setValue(!cb1.getValue());
+			}
+		});
+		
+		cb2.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				parent.setType(cb2.getValue() ? "invoice" : "offer");
+				cb1.setValue(!cb2.getValue());
+			}
+		});
+		typePanel.add(cb1);
+		typePanel.add(cb2);
 	}
 }

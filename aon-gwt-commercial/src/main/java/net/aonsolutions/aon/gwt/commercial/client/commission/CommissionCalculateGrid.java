@@ -452,19 +452,35 @@ public class CommissionCalculateGrid extends ResizeComposite implements Requires
 			protected void onAccept() {
 				JSONObject json = new JSONObject();
 				json.put("id", new JSONString(commission.getId() + ""));
-				parent.getAPI().getCommission().deleteInvoiceCommission(JsonUtils.stringify(json.getJavaScriptObject()), new AsyncCallback<JSON<JsCommission>>() {
+				if(parent.isOffer()) {
+					parent.getAPI().getCommission().deleteOfferCommission(JsonUtils.stringify(json.getJavaScriptObject()), new AsyncCallback<JSON<JsCommission>>() {
 					
-					@Override
-					public void onSuccess(JSON<JsCommission> result) {
-						parent.gridContent();
-						hide();
-					}
+						@Override
+						public void onSuccess(JSON<JsCommission> result) {
+							parent.gridContent();
+							hide();
+						}
 					
-					@Override
-					public void onFailure(Throwable caught) {
-						hide();
-					}
-				});
+						@Override
+						public void onFailure(Throwable caught) {
+							hide();
+						}
+					});
+				} else if(parent.isInvoice()) {
+					parent.getAPI().getCommission().deleteInvoiceCommission(JsonUtils.stringify(json.getJavaScriptObject()), new AsyncCallback<JSON<JsCommission>>() {
+						
+						@Override
+						public void onSuccess(JSON<JsCommission> result) {
+							parent.gridContent();
+							hide();
+						}
+					
+						@Override
+						public void onFailure(Throwable caught) {
+							hide();
+						}
+					});
+				}
 			}
 		};
 

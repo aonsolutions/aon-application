@@ -44,6 +44,10 @@ public class CommissionCalculatePrincipal extends Composite{
 		return parent.isInvoice();
 	}
 	
+	public void setType(String type) {
+		parent.setType(type);
+	}
+	
 	public API getAPI() {
 		return parent.getAPI();
 	}
@@ -66,6 +70,10 @@ public class CommissionCalculatePrincipal extends Composite{
 		this.filterMap = new HashMap<>();	
 		filterContent();
 		gridContent();
+	}
+	
+	public void cleanFilter(){
+		this.filterMap = new HashMap<>();
 	}
 	
 	public void filterContent(){

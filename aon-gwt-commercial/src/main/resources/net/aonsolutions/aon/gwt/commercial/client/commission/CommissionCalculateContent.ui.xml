@@ -79,6 +79,16 @@
 					</g:HorizontalPanel>
 				</td>
 			</tr>
+			<tr>
+				<td class="{aonResources.css.aonPanelGridOdd}">
+					<g:InlineLabel text="Tipo"/>
+				</td>
+				<td class="{aonResources.css.aonPanelGridEven}">
+					<g:HorizontalPanel ui:field="typePanel">
+						
+					</g:HorizontalPanel>
+				</td>
+			</tr>
 		</table>
 	</g:HTMLPanel> 
 

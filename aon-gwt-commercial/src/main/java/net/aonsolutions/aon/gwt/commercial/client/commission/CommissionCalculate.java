@@ -35,6 +35,10 @@ public class CommissionCalculate extends AonTemplate2{
 		return "offer".equalsIgnoreCase(type);
 	}
 	
+	public void setType(String type){ 
+		this.type = type;
+	}
+	
 	public Boolean isInvoice() {
 		return "invoice".equalsIgnoreCase(type);
 	}
@@ -81,6 +85,49 @@ public class CommissionCalculate extends AonTemplate2{
 				}
 				HashMap<String, LinkedList<String>> filterMap = new HashMap<String, LinkedList<String>>();
 				
+			/*
+				LinkedList<String> list = new LinkedList<>();
+				if(getCalcJson().containsKey("seller")) {
+					list.add(getCalcJson().get("seller") + "");
+					filterMap.put("seller", list);
+				}
+				
+				if(getCalcJson().containsKey("from_date")) {
+					list = new LinkedList<>();
+					list.add(getCalcJson().get("from_date") + "");
+					filterMap.put("from", list);
+				}
+				
+				if(getCalcJson().containsKey("to_date")) {
+					list = new LinkedList<>();
+					list.add(getCalcJson().get("to_date") + "");
+					filterMap.put("to", list);
+				}
+				
+				if(getCalcJson().containsKey("series")) {
+					list = new LinkedList<>();
+					list.add(getCalcJson().get("series") + "");
+					filterMap.put("series", list);
+				}
+
+				if(getCalcJson().containsKey("from_number")) {
+					list = new LinkedList<>();
+					list.add(getCalcJson().get("from_number") + "");
+					filterMap.put("number_from", list);
+				}
+			
+				if(getCalcJson().containsKey("to_number")) {
+					list = new LinkedList<>();
+					list.add(getCalcJson().get("to_number") + "");
+					filterMap.put("number_to", list);
+				}
+				
+				if(getCalcJson().containsKey("target")) {
+					list = new LinkedList<>();
+					list.add(getCalcJson().get("target") + "");
+					filterMap.put("target", list);
+				}
+			*/
 				content(new CommissionCalculatePrincipal(me, filterMap));				
 			}
 		});
@@ -128,7 +175,7 @@ public class CommissionCalculate extends AonTemplate2{
 				Toolbar toolbar = (Toolbar) getToolbar().getWidget();
 				toolbar.getButtonPanel().getWidget(0).setVisible(true);// CLEAN BUTTON
 				toolbar.getButtonPanel().getWidget(1).setVisible(true);// CALCULATE BUTTON
-				type = "invoice";
+				//type = "invoice";
 				content();
 			}
 		});
@@ -143,7 +190,7 @@ public class CommissionCalculate extends AonTemplate2{
 				Toolbar toolbar = (Toolbar) getToolbar().getWidget();
 				toolbar.getButtonPanel().getWidget(0).setVisible(false);// CLEAN BUTTON
 				toolbar.getButtonPanel().getWidget(1).setVisible(false);// CALCULATE BUTTON
-				type = "invoice";
+				//type = "invoice";
 				content(new CommissionCalculatePrincipal(me));
 			}
 		});

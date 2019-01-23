@@ -23,6 +23,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -75,9 +76,14 @@ public class CommissionCalculateFilter extends Composite {
     	issueLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
     	issueLabel.setWidth("20px");
 		datePanel.add(issueLabel);
-		
-		
+
 		final DateBoxEx issue = new DateBoxEx();
+		if(parent.getFilterMap().containsKey("from")) {
+			String issueStrValue = parent.getFilterMap().get("from").get(0);
+			if(!issueStrValue.isEmpty()) {
+				issue.setValue(new Date(Long.parseLong(issueStrValue)));
+			}
+		}
 		issue.getElement().getStyle().setBorderColor("#dedede");
 		issue.getElement().getStyle().setHeight(16, Unit.PX);;
 		issue.setWidth("70px");
@@ -97,6 +103,12 @@ public class CommissionCalculateFilter extends Composite {
 		datePanel.add(deliveryLabel);
 
 		final DateBoxEx delivery = new DateBoxEx();
+		if(parent.getFilterMap().containsKey("to")) {
+			String deliveryStrValue = parent.getFilterMap().get("to").get(0);
+			if(!deliveryStrValue.isEmpty()) {
+				delivery.setValue(new Date(Long.parseLong(deliveryStrValue)));
+			}
+		}
 		delivery.setWidth("70px");
 		delivery.getElement().getStyle().setBorderColor("#dedede");
 		delivery.getElement().getStyle().setHeight(16, Unit.PX);;
@@ -125,6 +137,9 @@ public class CommissionCalculateFilter extends Composite {
 		fpanel.add(serieLabel);
 		
 		TextBox serieTextBox = new TextBox();
+		if(parent.getFilterMap().containsKey("series")) {
+			serieTextBox.setValue(parent.getFilterMap().get("series").get(0));
+		}
 		serieTextBox.setStyleName(AON.AON_CSS.aonInputText());
 		serieTextBox.getElement().getStyle().setBorderWidth(1, Unit.PX);
 		serieTextBox.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
@@ -147,6 +162,12 @@ public class CommissionCalculateFilter extends Composite {
 		fpanel.add(serieFromLabel);
 		
 		DoubleBox serieFromDoubleBox = new DoubleBox();
+		if(parent.getFilterMap().containsKey("number_from")) {
+			String numberFromStr = parent.getFilterMap().get("number_from").get(0);
+			if(!numberFromStr.isEmpty()) {
+				serieFromDoubleBox.setValue(Double.parseDouble(numberFromStr));
+			}
+		}
 		serieFromDoubleBox.setWidth("30px");
 		serieFromDoubleBox.getElement().getStyle().setBorderWidth(1, Unit.PX);
 		serieFromDoubleBox.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
@@ -168,6 +189,12 @@ public class CommissionCalculateFilter extends Composite {
 		fpanel.add(serieToLabel);
 
 		DoubleBox serieToDoubleBox = new DoubleBox();
+		if(parent.getFilterMap().containsKey("number_to")) {
+			String numberToStr = parent.getFilterMap().get("number_to").get(0);
+			if(!numberToStr.isEmpty()) {
+				serieFromDoubleBox.setValue(Double.parseDouble(numberToStr));
+			}
+		}
 		serieToDoubleBox.setWidth("30px");
 		serieToDoubleBox.getElement().getStyle().setBorderWidth(1, Unit.PX);
 		serieToDoubleBox.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
@@ -182,6 +209,33 @@ public class CommissionCalculateFilter extends Composite {
 			}
 		});
 		fpanel.add(serieToDoubleBox);
+		
+		CheckBox cb1 =new CheckBox("Presupuesto");
+		cb1.setValue(parent.isOffer());
+		
+		CheckBox cb2 =new CheckBox("Factura");
+		cb2.setValue(parent.isInvoice());
+		cb1.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				parent.setType(cb1.getValue() ? "offer" : "invoice");
+				parent.filterContent();
+				parent.gridContent();
+			}
+		});
+		
+		cb2.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				parent.setType(cb2.getValue() ? "invoice" : "offer");
+				parent.filterContent();
+				parent.gridContent();
+			}
+		});
+		fpanel.add(cb1);
+		fpanel.add(cb2);
 		
 		hp.add(fpanel);
 		
@@ -208,6 +262,15 @@ public class CommissionCalculateFilter extends Composite {
 					sb.getElement().getStyle().setBorderWidth(1, Unit.PX);
 					sb.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
 					sb.getElement().getStyle().setBorderColor("#dedede");	
+					
+					if(parent.getFilterMap().containsKey("registry")) {
+						r.getData().stream().forEach(s -> {
+							if(parent.getFilterMap().get("registry").get(0).equals(s.getId() + "")) {
+								sb.setValue(s.getName());
+							}
+						});	
+					}
+					
 					sb.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
 						
 						@Override
@@ -248,6 +311,13 @@ public class CommissionCalculateFilter extends Composite {
 				sb.getElement().getStyle().setBorderWidth(1, Unit.PX);
 				sb.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
 				sb.getElement().getStyle().setBorderColor("#dedede");	
+				if(parent.getFilterMap().containsKey("seller")) {
+					r.getData().stream().forEach(s -> {
+						if(parent.getFilterMap().get("seller").get(0).equals(s.getId() + "")) {
+							sb.setValue(s.getName());
+						}
+					});	
+				}
 				sb.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
 					
 					@Override
@@ -288,6 +358,13 @@ public class CommissionCalculateFilter extends Composite {
 					sb.getElement().getStyle().setBorderWidth(1, Unit.PX);
 					sb.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
 					sb.getElement().getStyle().setBorderColor("#dedede");	
+					if(parent.getFilterMap().containsKey("supplier")) {
+						r.getData().stream().forEach(s -> {
+							if(parent.getFilterMap().get("supplier").get(0).equals(s.getId() + "")) {
+								sb.setValue(s.getName());
+							}
+						});	
+					}
 					sb.addValueChangeHandler(new ValueChangeHandler<String>() {
 					
 						@Override
@@ -323,6 +400,14 @@ public class CommissionCalculateFilter extends Composite {
 					sb.getElement().getStyle().setBorderWidth(1, Unit.PX);
 					sb.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
 					sb.getElement().getStyle().setBorderColor("#dedede");
+					
+					if(parent.getFilterMap().containsKey("target")) {
+						r.getData().stream().forEach(s -> {
+							if(parent.getFilterMap().get("target").get(0).equals(s.getId() + "")) {
+								sb.setValue(s.getName());
+							}
+						});	
+					}
 					sb.addValueChangeHandler(new ValueChangeHandler<String>() {
 						
 						@Override
@@ -355,6 +440,12 @@ public class CommissionCalculateFilter extends Composite {
 		typeListBox.addItem("-");
 		for(Integer i = 0 ; i < OfferType.values().length; i++) {
 			typeListBox.addItem(OfferType.values()[i].getDescription(), OfferType.values()[i].ordinal() + "");
+			if(parent.getFilterMap().containsKey("type")) {
+				String val = OfferType.values()[i].ordinal() + "";
+				if(parent.getFilterMap().get("type").get(0).equals(val)) {
+					typeListBox.setSelectedIndex(i + 1);
+				}
+			}
 		}
 		typeListBox.addChangeHandler(new ChangeHandler() {
 			
