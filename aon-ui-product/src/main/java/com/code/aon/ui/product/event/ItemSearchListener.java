@@ -32,7 +32,6 @@ public class ItemSearchListener extends RegistrySearchListener {
 	private Product product;
 	private ProductKind[] kinds;
 	private ProductCategory category;
-	private String serialNumber;
 	
 	public ProductStatus[] getItemStatuses() {
 		return itemStatuses;
@@ -89,14 +88,6 @@ public class ItemSearchListener extends RegistrySearchListener {
 		this.category = category;
 	}
 
-	public String getSerialNumber() {
-		return serialNumber;
-	}
-
-	public void setSerialNumber(String serialNumber) {
-		this.serialNumber = serialNumber;
-	}
-
 	@Override
 	protected void init() throws ManagerBeanException {
 		ProductStatus[] defaultItemStatus = {ProductStatus.ACTIVE};
@@ -112,7 +103,6 @@ public class ItemSearchListener extends RegistrySearchListener {
 		setProduct((Product) BeanManager.getManagerBean(Product.class).createNewTo());
 		setKinds(new ProductKind[0]);
 		setCategory((ProductCategory) BeanManager.getManagerBean(ProductCategory.class).createNewTo());
-		setSerialNumber("null");
 		super.init();
 	}
 	
@@ -149,11 +139,6 @@ public class ItemSearchListener extends RegistrySearchListener {
 		}
 		if (getCategory() != null && getCategory().getId() != null) {
 			criteria.addEqualExpression(getController().resolveAlias("Item_product_category<id"), getCategory().getId());
-		}
-		if ("null".equals(getSerialNumber())) {
-			criteria.addNullExpression(getController().resolveAlias(IEntityAlias.ITEM_SERIAL_NUMBER));
-		} else if (getSerialNumber() != null && StringUtils.isNotBlank(StringUtils.trim(getSerialNumber()))) {			
-			criteria.addEqualExpression(getController().resolveAlias(IEntityAlias.ITEM_SERIAL_NUMBER), getSerialNumber());
 		}
 		super.completeCriteria(criteria);
 	}

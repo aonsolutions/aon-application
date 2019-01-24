@@ -29,7 +29,7 @@
 	<aon:if test="#{aonConfiguration.bean.product.showSerializable}">
 		<aon:outputLabel for="#{controller.pojoShortName}_serialNumber" value="#{bundle.aon_serial_or_lot_number}" />
 		<aon:inputText id="#{controller.pojoShortName}_serialNumber" size="25"
-			value="#{itemSearch.serialNumber}" />
+			valueChangeListener="#{controller.addExpression}" />
 
 		<aon:outputLabel value="#{bundle.aon_serial_or_lot_date}" />
 		<aon:div>
