@@ -4,7 +4,6 @@ import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
-import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -14,7 +13,6 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -27,7 +25,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class AgrarianAFI extends MainEntryPoint {
 	
-	final AgrarianAFIServiceAsync impl = GWT.create(AgrarianAFIService.class);
+	final EnterprisesServiceAsync impl = GWT.create(EnterprisesService.class);
 	
 	interface Binder extends UiBinder<Widget, AgrarianAFI> {
 	}
@@ -116,18 +114,6 @@ public class AgrarianAFI extends MainEntryPoint {
 		
 //		Window.alert("IMPL : " + impl);
 		
-		impl.getDomainName(new AsyncCallback<String>() {
-			
-			@Override
-			public void onSuccess(String result) {
-//				Window.alert("DOMAIN NAME : " + result);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-//				Window.alert("NO DOMAIN NAME");
-			}
-		});
 				
 	}
 

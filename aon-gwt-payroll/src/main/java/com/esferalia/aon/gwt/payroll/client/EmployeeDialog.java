@@ -619,22 +619,6 @@ public class EmployeeDialog extends CustomDialog {
 				}
 			}
 		}
-
-		public String checkDocumentType(String document) {
-
-			RegExp dniPattern = RegExp.compile("\\d{8}\\-?[A-HJ-NP-TV-Z]");
-			RegExp niePattern = RegExp.compile("[A-Z]{1}\\d{7}[A-Z]{1}");
-			RegExp cifPattern = RegExp.compile("[A-Z]{1}\\d{8}");
-
-			if (dniPattern.test(document.toUpperCase()))
-				return "DNI";
-			else if (niePattern.test(document.toUpperCase()))
-				return "NIE";
-			else if (cifPattern.test(document.toUpperCase()))
-				return "CIF";
-			else
-				return "Pasaporte";
-		}
 		
 		public void showNationality(String document_type_str) {
 //			Window.alert("Show Nationality By Type : " + document_type_str);
@@ -892,7 +876,7 @@ public class EmployeeDialog extends CustomDialog {
 					dialog.show();
 				}
 			else {
-				WarningDialog dialog = new WarningDialog("Aviso", "Hay que rellenar los campos azules obligatoriamente.");
+				WarningDialog dialog = new WarningDialog("Aviso", "Hay que rellenar los campos azules correcta y obligatoriamente.");
 				dialog.center();
 				dialog.show();
 			}
@@ -967,19 +951,26 @@ public class EmployeeDialog extends CustomDialog {
 //		   0 != this.employee.agreement.getSelectedIndex() &&
 //		   0 != this.employee.level.getSelectedIndex() &&
 		   null != this.employee.birth_date.getValue()   
-		)
-			if(1 == this.employee.ssRegimeType.getSelectedIndex())
+		) {
+			String document_type = checkDocumentType(this.employee.document.getValue());
+			String ssNum = this.employee.security_social_num.getValue();
+			
+			if(1 == this.employee.ssRegimeType.getSelectedIndex() &&
+				employeeDialogObject.checkDocumentValidation(document_type, this.employee.document.getValue()) &&
+				employeeDialogObject.checkSSNumValidation(ssNum)) {
 				return true;
-			else if(
+			}else if(
 			   0 != this.employee.activityCCC.getSelectedIndex() &&
 			   0 != this.employee.contractType.getSelectedIndex() &&
 			   0 != this.employee.modality.getSelectedIndex() &&
-			   0 != this.employee.quote_group.getSelectedIndex()	
-			)	
+			   0 != this.employee.quote_group.getSelectedIndex() &&
+			   employeeDialogObject.checkDocumentValidation(document_type, this.employee.document.getValue()) &&
+			   employeeDialogObject.checkSSNumValidation(ssNum)
+			) {	
 				return true;
-			else
+			}else
 				return false;
-		else
+		}else
 			return false;
 	
 	}
@@ -991,6 +982,22 @@ public class EmployeeDialog extends CustomDialog {
 			return true;
 		else
 			return false;
+	}
+	
+	public String checkDocumentType(String document) {
+
+		RegExp dniPattern = RegExp.compile("\\d{8}\\-?[A-HJ-NP-TV-Z]");
+		RegExp niePattern = RegExp.compile("[A-Z]{1}\\d{7}[A-Z]{1}");
+		RegExp cifPattern = RegExp.compile("[A-Z]{1}\\d{8}");
+
+		if (dniPattern.test(document.toUpperCase()))
+			return "DNI";
+		else if (niePattern.test(document.toUpperCase()))
+			return "NIE";
+		else if (cifPattern.test(document.toUpperCase()))
+			return "CIF";
+		else
+			return "Pasaporte";
 	}
 	
 	// ------------------------------------------------------------------------

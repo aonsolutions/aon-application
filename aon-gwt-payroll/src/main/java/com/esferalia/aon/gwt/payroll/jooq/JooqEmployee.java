@@ -993,7 +993,7 @@ public class JooqEmployee {
 				.set(PERSON.DOMAIN, domain)
 				.set(PERSON.NAME, employeeData.getName())
 				.set(PERSON.FIRST_SURNAME, employeeData.getSurName())
-				.set(PERSON.SECOND_SURNAME, employeeData.getSecondSurName())
+				.set(PERSON.SECOND_SURNAME, null == employeeData.getSecondSurName() ? "" : employeeData.getSecondSurName())
 				.set(PERSON.GENDER, employeeData.getGender())
 				.set(PERSON.BIRTH_DATE, (employeeData.getBirthdate() == null) ? null : new Date(employeeData.getBirthdate().getTime()))
 				.set(PERSON.SOCIAL_SECURITY_NUM, employeeData.getSsNumber())

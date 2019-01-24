@@ -489,7 +489,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 				dialog.show();
 			}	
 		else{
-			WarningDialog dialog = new WarningDialog("Aviso", "Hay que rellenar los campos azules obligatoriamente.");
+			WarningDialog dialog = new WarningDialog("Aviso", "Hay que rellenar los campos azules correcta y obligatoriamente.");
 			dialog.center();
 			dialog.show();
 		}
@@ -781,19 +781,26 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 //		   0 != this.employee.agreement.getSelectedIndex() &&
 //		   0 != this.employee.level.getSelectedIndex() &&
 		   null != this.employee.birth_date.getValue()   
-		)
-			if(1 == this.employee.ssRegimeType.getSelectedIndex())
+		) {
+			String document_type = checkDocumentType(this.employee.document.getValue());
+			String ssNum = this.employee.security_social_num.getValue();
+			
+			if(1 == this.employee.ssRegimeType.getSelectedIndex() &&
+				employeeDraftObject.checkDocumentValidation(document_type, this.employee.document.getValue()) &&
+				employeeDraftObject.checkSSNumValidation(ssNum)) {
 				return true;
-			else if(
+			}else if(
 			   0 != this.employee.activityCCC.getSelectedIndex() &&
 			   0 != this.employee.contractType.getSelectedIndex() &&
 			   0 != this.employee.modality.getSelectedIndex() &&
-			   0 != this.employee.quote_group.getSelectedIndex()	
-			)	
+			   0 != this.employee.quote_group.getSelectedIndex() &&
+			   employeeDraftObject.checkDocumentValidation(document_type, this.employee.document.getValue()) &&
+			   employeeDraftObject.checkSSNumValidation(ssNum)
+			) {	
 				return true;
-			else
+			}else
 				return false;
-		else
+		}else
 			return false;
 	
 	}
