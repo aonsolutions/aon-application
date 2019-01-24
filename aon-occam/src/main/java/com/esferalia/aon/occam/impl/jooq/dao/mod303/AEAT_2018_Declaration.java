@@ -697,7 +697,7 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,0).setSop(mod.getAmount(Mod303Key.CT_S122))
 			,false)
 		// (1) Actividades en régimen simplificado. H Índice corrector de actividades de temporada
-		,CT_S123(Mod303Key.CT_S123,null,null,null,null,null
+		,CT_S123(Mod303Key.CT_S123,null,null,null,"calculateIndiceTemporada( CT_S1X1 )",null
 			,mod -> mod.putAmount(Mod303Key.CT_S123,ensureActivity(mod,0).getIct())
 			,mod -> ensureActivity(mod,0).setIct(mod.getAmount(Mod303Key.CT_S123))
 			,false)
@@ -957,7 +957,7 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,1).setSop(mod.getAmount(Mod303Key.CT_S222))
 			,false)
 		// (1) Actividades en régimen simplificado. H Índice corrector de actividades de temporada
-		,CT_S223(Mod303Key.CT_S223,null,null,null,null,null
+		,CT_S223(Mod303Key.CT_S223,null,null,null,"calculateIndiceTemporada( CT_S2X1 )",null
 			,mod -> mod.putAmount(Mod303Key.CT_S223,ensureActivity(mod,1).getIct())
 			,mod -> ensureActivity(mod,1).setIct(mod.getAmount(Mod303Key.CT_S223))
 			,false)
@@ -1217,7 +1217,7 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,2).setSop(mod.getAmount(Mod303Key.CT_S322))
 			,false)
 		// (1) Actividades en régimen simplificado. H Índice corrector de actividades de temporada
-		,CT_S323(Mod303Key.CT_S323,null,null,null,null,null
+		,CT_S323(Mod303Key.CT_S323,null,null,null,"calculateIndiceTemporada( CT_S3X1 )",null
 			,mod -> mod.putAmount(Mod303Key.CT_S323,ensureActivity(mod,2).getIct())
 			,mod -> ensureActivity(mod,2).setIct(mod.getAmount(Mod303Key.CT_S323))
 			,false)
@@ -1477,7 +1477,7 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 			,mod -> ensureActivity(mod,3).setSop(mod.getAmount(Mod303Key.CT_S422))
 			,false)
 		// (1) Actividades en régimen simplificado. H Índice corrector de actividades de temporada
-		,CT_S423(Mod303Key.CT_S423,null,null,null,null,null
+		,CT_S423(Mod303Key.CT_S423,null,null,null,"calculateIndiceTemporada( CT_S4X1 )",null
 			,mod -> mod.putAmount(Mod303Key.CT_S423,ensureActivity(mod,3).getIct())
 			,mod -> ensureActivity(mod,3).setIct(mod.getAmount(Mod303Key.CT_S423))
 			,false)
