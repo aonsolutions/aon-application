@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
+import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -203,5 +204,11 @@ public class FinanceImpl implements IFinance {
 			
 		return ctx.getDslContext().transactionResult(configuration -> 
 		FinanceDAO.insertFinance(ctx, finance));
+	}
+
+	@Override
+	public Stream<InvoiceTax> getInvoiceTaxStream(AONContext ctx, Integer invoiceId) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> InvoiceDAO.getInvoiceTaxStream(ctx, invoiceId));
 	}
 }

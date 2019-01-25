@@ -25,6 +25,7 @@ import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record14;
+import org.jooq.Record6;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
@@ -82,6 +84,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ItemPropertiesDAO;
@@ -424,6 +427,31 @@ public class InvoiceDAO {
 		return getFullInvoices(ctx, filter)
 			.stream()
 			.map(new FullInvoiceDetailFiller());
+	}
+
+	public static Stream<InvoiceTax> getInvoiceTaxStream(AONContext ctx, Integer invoiceId) {
+		return ctx.getDslContext().select(INVOICE_TAX.TAX_TYPE,  INVOICE_TAX.PERCENTAGE, DSL.sum(INVOICE_TAX.BASE),
+					DSL.sum(INVOICE_TAX.SURCHARGE), DSL.sum(INVOICE_TAX.QUOTA), DSL.sum(INVOICE_TAX.SURCHARGE_QUOTA))
+				.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+				.join(INVOICE_TAX).on(INVOICE_DETAIL.ID.eq(INVOICE_TAX.INVOICE_DETAIL))
+				.where(INVOICE.ID.eq(invoiceId))
+				.groupBy(INVOICE_TAX.TAX_TYPE, INVOICE_TAX.PERCENTAGE)
+				.fetch().stream().map(new InvoiceTaxFiller());
+	}
+
+	private static class InvoiceTaxFiller  implements Function<Record6<Byte, Double, BigDecimal, BigDecimal, BigDecimal, BigDecimal>,InvoiceTax> {
+
+		@Override
+		public InvoiceTax apply(Record6<Byte, Double, BigDecimal, BigDecimal, BigDecimal, BigDecimal> record) {
+			return new InvoiceTax()
+					.setTaxType(TaxType.values()[record.value1()])
+					.setPercentage(record.value2())
+					.setBase(record.value3().doubleValue())
+					.setSurcharge(record.value4().doubleValue())
+					.setQuota(record.value5().doubleValue())
+					.setSurchargeQuota(record.value6().doubleValue());	
+		}
+		
 	}
 	
 	public static Stream<InvoiceDetail> getBoughtProductStream(AONContext ctx, InvoiceFilter filter) {

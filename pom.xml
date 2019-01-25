@@ -212,6 +212,8 @@
 		<module>aon-common-resources</module>
 		<module>aon-db-up2date</module>
 		
+		<module>aon-tedi</module>
+		<module>tedi-api</module>
 		<!-- AWS API Gateway & Lambda -->
 		<module>aon-rest-api</module>
 		<module>aon-jasper-report</module>

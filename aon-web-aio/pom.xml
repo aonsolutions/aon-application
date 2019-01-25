@@ -440,6 +440,20 @@
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
+    
+    <dependency>
+      <groupId>net.aonsolutions</groupId>
+      <artifactId>aon.tedi</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>es.translogia</groupId>
+      <artifactId>tedi.api</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
     <!-- EXTERNAL LIBRARIES -->
     <dependency>
       <groupId>org.openid4java</groupId>
