@@ -18,6 +18,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -456,7 +457,7 @@ public class Model1842016IncomePanel extends SimpleLayoutPanel implements Focusa
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Double> event) {
-				income.setDeductionRightRent(result.getValue());
+				income.setResult(result.getValue());
 				callback.onValueChanged(income);
 			}
 		});
