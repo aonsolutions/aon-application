@@ -1378,7 +1378,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		}
 
 		employeeItem.setHTML(imageItemHTML(current ? images.employee() : images.oldemployee(), text.toString()));
-		employeeItem.setUserObject(employee);
+		EmployeeDraftObject employeeDraftObject = new EmployeeDraftObject(((Workplace) workplaceItem.getUserObject()), employee, employeesService, enterprisesService);
+		employeeItem.setUserObject(employeeDraftObject);
 		employeeItem.ensureDebugId(getId(employee));
 
 		TreeItem salariestItem = addImageItem(employeeItem, "N\u00F3minas", images.salaries());
@@ -1426,13 +1427,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 			draftObject.setEmployeeEventsDraftObject(employeeEventsDraftObject);
 			
-			//INFORMACION
-			TreeItem employeeDraftItem = addImageItem(employeeItem, "Informaci\u00F3n", images.employee());
-			EmployeeDraftObject employeeDraftObject = new EmployeeDraftObject(((Workplace) workplaceItem.getUserObject()), employee, employeesService, enterprisesService);
-			employeeDraftItem.setUserObject(employeeDraftObject);
-			employeeDraftItem.ensureDebugId(getId(employee)+"-employeedraft");
 			
-			//BONIFICACIONES
 			TreeItem ssBonusDraftItem = addImageItem(employeeItem, "Bonificaciones", images.segsocial());
 			SSBonusDraftObject ssBonusDraftObject = new SSBonusDraftObject(employee, employeesService);
 			ssBonusDraftItem.setUserObject(ssBonusDraftObject);
