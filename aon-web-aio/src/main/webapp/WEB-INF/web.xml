@@ -422,17 +422,6 @@
 		<url-pattern>/aon_gwt_aio/gwt_deposit</url-pattern>
 	</servlet-mapping>
 
-	<servlet>
-		<servlet-name>UploadFiscalFile</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.fiscal.deposit.server.normalizedMemory.UploadFileServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>UploadFiscalFile</servlet-name>
-		<url-pattern>/aon_gwt_aio/gwt_deposit_upload</url-pattern>
-	</servlet-mapping>
-	
-	
-
 	<!-- JSF STANDARD CONFIGURATION -->
 	<context-param>
 		<description>State saving method: "client" or "server" (= default) See
