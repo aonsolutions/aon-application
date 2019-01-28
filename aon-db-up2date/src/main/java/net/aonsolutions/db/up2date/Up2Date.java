@@ -1,5 +1,6 @@
 package net.aonsolutions.db.up2date;
 
+import static net.aonsolutions.db.up2date.payroll.FundUpvUpdate2019.FUNDUPV_UPDATE_2019;
 import static net.aonsolutions.db.up2date.payroll.Holidays2019Insert.HOLIDAYS2019INSERT;
 import static net.aonsolutions.db.up2date.payroll.PrestITCommonDiseaseAtLackInsert.PRESTITCOMMONDISEASEATLACKINSERT;
 import static net.aonsolutions.db.up2date.payroll.SystemOffInsert.SYSTEM_OFF_INSERT;
@@ -25,6 +26,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.payroll.FundUpvUpdate2019;
 import net.aonsolutions.db.up2date.payroll.Holidays2019Insert;
 import net.aonsolutions.db.up2date.tgss.Bases2019Update;
 import net.aonsolutions.db.up2date.tgss.Bases2019UpdateII;
@@ -60,7 +62,8 @@ public class Up2Date {
     		//SYSTEM_OFF_INSERT
     		//HOLIDAYS2019INSERT,
     		//BASES2019UPDATE
-    		BASES2019UPDATEII
+    		//BASES2019UPDATEII
+    		FUNDUPV_UPDATE_2019
 
     };
 
