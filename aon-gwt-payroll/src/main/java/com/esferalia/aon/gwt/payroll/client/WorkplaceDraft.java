@@ -179,6 +179,7 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 			disableWorkplacePanel.addStyleName(style.hide());
 		}
 		
+		//SOCPE HIDE
 		workplace.generalDataTable.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
 
 		resetElements();

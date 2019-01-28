@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.payroll.client.EmployeeDialog.Callback;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -75,6 +76,10 @@ public class WorkplaceDialog extends CustomDialog {
 		
 		setCaption("Centro de trabajo");
 		setWidget(binder.createAndBindUi(this));
+		
+		//SCOPE HIDE
+		workplace.generalDataTable.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
+				
 	}
 	
 	public void show(Callback cb) {
@@ -99,8 +104,8 @@ public class WorkplaceDialog extends CustomDialog {
 		if(canSaveWorkplace()) {
 			if(workplaceDialogObject.getWorkplaceAddresses().size() > 1)
 				onAddressChage();
-			if(workplaceDialogObject.getWorkplaceScopes().size() > 1)
-				onScopeChange();
+//			if(workplaceDialogObject.getWorkplaceScopes().size() > 1)
+//				onScopeChange();
 			
 			workplaceDialogObject.createWorkplace(
 					s -> {
@@ -137,7 +142,6 @@ public class WorkplaceDialog extends CustomDialog {
 	}
 	
 	private void initializeView() {
-		workplace.generalDataTable.getRows().getItem(4).getStyle().clearDisplay();
 		resetElements();
 		initializeListBox();
 	}
@@ -169,7 +173,7 @@ public class WorkplaceDialog extends CustomDialog {
 		workplace.workplaceEconomicConcert.addItem("Territorio Com"+ String.valueOf("\u00FA") +"n");
 		
 		//SCOPE
-		initializeScopeCell();
+//		initializeScopeCell();
 		
 		//CALENDARIO
 		initializeCalendarCell();

@@ -272,6 +272,7 @@ public class JooqWorkplace {
 				.fetchOne();
 		
 		Integer domainId = enterpriseRecord.get(ENTERPRISE.DOMAIN);
+		Integer scopeId = enterpriseRecord.get(ENTERPRISE.SCOPE);
 		
 		//WORKPALCE
 		WorkplaceRecord workplaceRecord = dslContext.insertInto(WORKPLACE)
@@ -279,8 +280,9 @@ public class JooqWorkplace {
 			.set(WORKPLACE.ENTERPRISE, enterpriseId)
 			.set(WORKPLACE.DESCRIPTION, workplaceInfo.getDescription())
 			.set(WORKPLACE.ADDRESS, workplaceInfo.getAddressId())
-			.set(WORKPLACE.SCOPE, workplaceInfo.getScopeId())
-			.set(WORKPLACE.ECONOMICAGREEMENT, workplaceInfo.getEconomicConcert())
+//			.set(WORKPLACE.SCOPE, workplaceInfo.getScopeId())
+			.set(WORKPLACE.SCOPE, scopeId)
+			.set(WORKPLACE.ECONOMICAGREEMENT, workplaceInfo.getEconomicConcert() == 0 ? null : workplaceInfo.getEconomicConcert())
 			.returning(WORKPLACE.ID)
 			.fetchOne();
 		

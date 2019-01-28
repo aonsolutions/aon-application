@@ -174,7 +174,7 @@
 										<g:ListBox ui:field="workplaceEconomicConcert" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 									</td>
 								</tr>
-								<tr>
+								<tr style="display: none;">
 									<td style="background-color: #eaeaea; width: 200px;">
 										<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Ámbito</g:Label>
 									</td>
