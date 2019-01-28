@@ -13,4 +13,15 @@ public enum DeliveryStatus implements Serializable {
     public String getName() {
 		return this.toString();
     }
+    
+	public static DeliveryStatus safeValueOf( Byte i ) {
+		if (i == null) return null;
+		return safeValueOf( i.intValue() ); 
+	}
+	
+	public static DeliveryStatus safeValueOf( Integer i ) {
+		if (i == null) return null;
+		if (i < 0 || i >= DeliveryStatus.values().length) return null;
+		return DeliveryStatus.values()[i];
+	}
 }

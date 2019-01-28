@@ -21,4 +21,14 @@ public enum OfferDetailCommissionStatus implements Serializable {
 		return name;
 	}
 
+	public static OfferDetailCommissionStatus safeValueOf( Byte i ) {
+		if (i == null) return null;
+		return safeValueOf( i.intValue() ); 
+	}
+	
+	public static OfferDetailCommissionStatus safeValueOf( Integer i ) {
+		if (i == null) return null;
+		if (i < 0 || i >= OfferDetailCommissionStatus.values().length) return null;
+		return OfferDetailCommissionStatus.values()[i];
+	}
 }

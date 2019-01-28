@@ -165,8 +165,8 @@ public class FillerDAO {
 					.setNumber(r.getValue(CARRIER_PACKING.NUMBER))
 					.setNumberPlate(r.getValue(CARRIER_PACKING.NUMBER_PLATE))
 					.setSeries(r.getValue(CARRIER_PACKING.SERIES))
-					.setStatus(CarrierPackingStatus.values()[r.getValue(CARRIER_PACKING.STATUS)])
-					.setType(CarrierPackingType.values()[r.getValue(CARRIER_PACKING.TYPE)])
+					.setStatus(CarrierPackingStatus.safeValueOf(r.getValue(CARRIER_PACKING.STATUS)))
+					.setType(CarrierPackingType.safeValueOf(r.getValue(CARRIER_PACKING.TYPE)))
 					
 					.setCarrierName(r.getValue(REGISTRY.NAME))
 					.setComments(r.getValue(CARRIER_PACKING.COMMENTS))
@@ -189,12 +189,12 @@ public class FillerDAO {
 					.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(r.getValue(REGISTRY.SECURITY_LEVEL)))
 					.setDocument(r.getValue(REGISTRY.DOCUMENT))
 					.setDocumentCountry(null) // TODO
-					.setDocumentType(DocumentType.values()[r.getValue(REGISTRY.DOCUMENT_TYPE)])
+					.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)))
 					.setDomain(r.getValue(REGISTRY.DOMAIN))
 					.setId(r.getValue(REGISTRY.ID))
 					.setName(r.getValue(REGISTRY.NAME))
 					.setNationality(null) // TODO
-					.setSecurityLevel(SecurityLevel.values()[r.getValue(REGISTRY.SECURITY_LEVEL)])
+					.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)))
 					.setType(r.getValue(REGISTRY.TYPE));			
 		}
 	}
@@ -207,12 +207,12 @@ public class FillerDAO {
 			carrier.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(r.getValue(REGISTRY.SECURITY_LEVEL)));
 			carrier.setDocument(r.getValue(REGISTRY.DOCUMENT));
 			carrier.setDocumentCountry(null); // TODO
-			carrier.setDocumentType(DocumentType.values()[r.getValue(REGISTRY.DOCUMENT_TYPE)]);
+			carrier.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)));
 			carrier.setDomain(r.getValue(REGISTRY.DOMAIN));
 			carrier.setId(r.getValue(REGISTRY.ID));
 			carrier.setName(r.getValue(REGISTRY.NAME));
 			carrier.setNationality(null); // TODO
-			carrier.setSecurityLevel(SecurityLevel.values()[r.getValue(REGISTRY.SECURITY_LEVEL)]);
+			carrier.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)));
 			carrier.setType(r.getValue(REGISTRY.TYPE));
 			return carrier.setScope(r.getValue(CARRIER.SCOPE));				
 		}
@@ -226,12 +226,12 @@ public class FillerDAO {
 			supplier.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(r.getValue(REGISTRY.SECURITY_LEVEL)));
 			supplier.setDocument(r.getValue(REGISTRY.DOCUMENT));
 			supplier.setDocumentCountry(null); // TODO
-			supplier.setDocumentType(DocumentType.values()[r.getValue(REGISTRY.DOCUMENT_TYPE)]);
+			supplier.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)));
 			supplier.setDomain(r.getValue(REGISTRY.DOMAIN));
 			supplier.setId(r.getValue(REGISTRY.ID));
 			supplier.setName(r.getValue(REGISTRY.NAME));
 			supplier.setNationality(null); // TODO
-			supplier.setSecurityLevel(SecurityLevel.values()[r.getValue(REGISTRY.SECURITY_LEVEL)]);
+			supplier.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)));
 			supplier.setType(r.getValue(REGISTRY.TYPE));
 			return supplier.setScope(r.getValue(SUPPLIER.SCOPE))
 					.setTariff(r.getValue(SUPPLIER.TARIFF))
@@ -240,7 +240,7 @@ public class FillerDAO {
 					.setWithholdingFarmer(r.getValue(SUPPLIER.WITHHOLDING_FARMER).shortValue())
 					.setVatAccrualPayment(r.getValue(SUPPLIER.VAT_ACCRUAL_PAYMENT).shortValue())
 					.setTransaction(r.getValue(SUPPLIER.TRANSACTION).shortValue())
-					.setStatus(SupplierStatus.values()[r.getValue(SUPPLIER.STATUS)])
+					.setStatus(SupplierStatus.safeValueOf(r.getValue(SUPPLIER.STATUS)))
 					.setPurchaseValuated(r.getValue(SUPPLIER.PURCHASE_VALUATED).shortValue())
 					.setCreationDate(r.getValue(SUPPLIER.CREATION_DATE))
 					.setCreationUser(r.getValue(SUPPLIER.CREATION_USER))
@@ -257,12 +257,12 @@ public class FillerDAO {
 			target.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(r.getValue(REGISTRY.SECURITY_LEVEL)));
 			target.setDocument(r.getValue(REGISTRY.DOCUMENT));
 			target.setDocumentCountry(null); // TODO
-			target.setDocumentType(DocumentType.values()[r.getValue(REGISTRY.DOCUMENT_TYPE)]);
+			target.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)));
 			target.setDomain(r.getValue(REGISTRY.DOMAIN));
 			target.setId(r.getValue(REGISTRY.ID));
 			target.setName(r.getValue(REGISTRY.NAME));
 			target.setNationality(null); // TODO
-			target.setSecurityLevel(SecurityLevel.values()[r.getValue(REGISTRY.SECURITY_LEVEL)]);
+			target.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)));
 			target.setType(r.getValue(REGISTRY.TYPE));
 			return target.setScope(r.getValue(TARGET.SCOPE))
 					.setAdvertising(r.getValue(TARGET.ADVERTISING).shortValue())
@@ -270,7 +270,7 @@ public class FillerDAO {
 					.setTariff(r.getValue(TARGET.TARIFF))
 					.setWithholding(r.getValue(TARGET.WITHHOLDING).shortValue())
 					.setTransaction(r.getValue(TARGET.TRANSACTION).shortValue())
-					.setStatus(TargetStatus.values()[r.getValue(TARGET.STATUS)])
+					.setStatus(TargetStatus.safeValueOf(r.getValue(TARGET.STATUS)))
 					.setCreationDate(r.getValue(TARGET.CREATION_DATE))
 					.setCreationUser(r.getValue(TARGET.CREATION_USER))
 					.setModificationDate(r.getValue(TARGET.MODIFICATION_DATE))
@@ -286,20 +286,20 @@ public class FillerDAO {
 			person.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(r.getValue(REGISTRY.SECURITY_LEVEL)));
 			person.setDocument(r.getValue(REGISTRY.DOCUMENT));
 			person.setDocumentCountry(null); // TODO
-			person.setDocumentType(DocumentType.values()[r.getValue(REGISTRY.DOCUMENT_TYPE)]);
+			person.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)));
 			person.setDomain(r.getValue(REGISTRY.DOMAIN));
 			person.setId(r.getValue(REGISTRY.ID));
 			person.setName(r.getValue(REGISTRY.NAME));
 			person.setNationality(null); // TODO
-			person.setSecurityLevel(SecurityLevel.values()[r.getValue(REGISTRY.SECURITY_LEVEL)]);
+			person.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)));
 			person.setType(r.getValue(REGISTRY.TYPE));
 			return person.setBirthDate(r.getValue(PERSON.BIRTH_DATE))
 					.setDomain(r.getValue(PERSON.DOMAIN))
 					.setFirstName(r.getValue(PERSON.NAME))
 					.setFirstSurname(r.getValue(PERSON.FIRST_SURNAME))
 					.setSecondSurname(r.getValue(PERSON.SECOND_SURNAME))
-					.setGender(Gender.values()[r.getValue(PERSON.GENDER)])
-					.setMaritalStatus(MaritalStatus.values()[r.getValue(PERSON.MARITAL_STATUS)])
+					.setGender(Gender.safeValueOf(r.getValue(PERSON.GENDER)))
+					.setMaritalStatus(MaritalStatus.safeValueOf(r.getValue(PERSON.MARITAL_STATUS)))
 					.setSocialSecurityNum(r.getValue(PERSON.SOCIAL_SECURITY_NUM));				
 		}
 	}
@@ -311,13 +311,13 @@ public class FillerDAO {
 			Customer customer = new Customer();
 			customer.setId(r.getValue(REGISTRY.ID));
 			customer.setDocument(r.getValue(REGISTRY.DOCUMENT));
-			customer.setDocumentType(DocumentType.values()[r.getValue(REGISTRY.DOCUMENT_TYPE)]);
+			customer.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)));
 			customer.setDocumentCountry(null); // TODO
 			customer.setName(r.getValue(REGISTRY.NAME));
 			customer.setAlias(r.getValue(REGISTRY.ALIAS));
 			customer.setType(r.getValue(REGISTRY.TYPE));
 			customer.setNationality(null); // TODO
-			customer.setSecurityLevel(SecurityLevel.values()[r.getValue(REGISTRY.SECURITY_LEVEL)]);
+			customer.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)));
 
 			return customer.setAccount(r.getValue(CUSTOMER.ACCOUNT))
 					.setCreationDate(r.getValue(CUSTOMER.CREATION_DATE))
@@ -338,7 +338,7 @@ public class FillerDAO {
 					.setTariff(r.getValue(CUSTOMER.TARIFF))
 					.setTransaction(r.getValue(CUSTOMER.TRANSACTION))
 					.setWithholding(r.getValue(CUSTOMER.WITHHOLDING))
-					.setStatus(CustomerStatus.values()[r.getValue(CUSTOMER.STATUS)]);
+					.setStatus(CustomerStatus.safeValueOf(r.getValue(CUSTOMER.STATUS)));
 		}
 	}
 	
@@ -373,7 +373,7 @@ public class FillerDAO {
 					.setDiscountExpr(r.getValue(RITEM.DISCOUNT_EXPR))
 					.setWorkplace(r.getValue(RITEM.WORKPLACE))
 					.setPriority(Priority.safeValueOf(r.getValue(RITEM.PRIORITY)))
-					.setStatus(RegistryItemStatus.values()[r.getValue(RITEM.STATUS)]);
+					.setStatus(RegistryItemStatus.safeValueOf(r.getValue(RITEM.STATUS)));
 		}
 	}
 	
@@ -392,10 +392,10 @@ public class FillerDAO {
 			detail.setPrice(r.getValue(PURCHASE_DETAIL.PRICE));
 			detail.setDiscountExpression(r.getValue(PURCHASE_DETAIL.DISCOUNT_EXPR));
 			detail.setTaxes(r.getValue(PURCHASE_DETAIL.TAXES));
-			detail.setStatus(PurchaseDetailStatus.values()[r.getValue(PURCHASE_DETAIL.STATUS)]);
+			detail.setStatus(PurchaseDetailStatus.safeValueOf(r.getValue(PURCHASE_DETAIL.STATUS)));
 			detail.setProposalDetail(r.getValue(PURCHASE_DETAIL.PROPOSAL_DETAIL));
 			if(r.getValue(PURCHASE_DETAIL.SOURCE) != null)
-				detail.setSource(PurchaseSourceType.values()[r.getValue(PURCHASE_DETAIL.SOURCE)]);
+				detail.setSource(PurchaseSourceType.safeValueOf(r.getValue(PURCHASE_DETAIL.SOURCE)));
 			detail.setSourceId(r.getValue(PURCHASE_DETAIL.SOURCE_ID));
 			detail.setDelivered(r.getValue(PURCHASE_DETAIL.DELIVERED));
 			detail.setCarrier(r.getValue(PURCHASE_DETAIL.CARRIER));
@@ -428,10 +428,10 @@ public class FillerDAO {
 			detail.setPrice(r.getValue(PURCHASE_DETAIL.PRICE));
 			detail.setDiscountExpression(r.getValue(PURCHASE_DETAIL.DISCOUNT_EXPR));
 			detail.setTaxes(r.getValue(PURCHASE_DETAIL.TAXES));
-			detail.setStatus(PurchaseDetailStatus.values()[r.getValue(PURCHASE_DETAIL.STATUS)]);
+			detail.setStatus(PurchaseDetailStatus.safeValueOf(r.getValue(PURCHASE_DETAIL.STATUS)));
 			detail.setProposalDetail(r.getValue(PURCHASE_DETAIL.PROPOSAL_DETAIL));
 			if(r.getValue(PURCHASE_DETAIL.SOURCE) != null)
-				detail.setSource(PurchaseSourceType.values()[r.getValue(PURCHASE_DETAIL.SOURCE)]);
+				detail.setSource(PurchaseSourceType.safeValueOf(r.getValue(PURCHASE_DETAIL.SOURCE)));
 			detail.setSourceId(r.getValue(PURCHASE_DETAIL.SOURCE_ID));
 			detail.setDelivered(r.getValue(PURCHASE_DETAIL.DELIVERED));
 			detail.setCarrier(r.getValue(PURCHASE_DETAIL.CARRIER));
@@ -498,7 +498,7 @@ public class FillerDAO {
 					.setCustomer(r.getValue(DELIVERY.CUSTOMER)).setAddress(r.getValue(DELIVERY.ADDRESS))
 					.setIssueTime(r.getValue(DELIVERY.ISSUE_TIME)).setPayMethod(r.getValue(DELIVERY.PAY_METHOD))
 					.setSecurityLevel(r.getValue(DELIVERY.SECURITY_LEVEL))
-					.setStatus(r.getValue(DELIVERY.STATUS)!=null?DeliveryStatus.values()[r.getValue(DELIVERY.STATUS)]:null)
+					.setStatus(DeliveryStatus.safeValueOf(r.getValue(DELIVERY.STATUS)))
 					.setComments(r.getValue(DELIVERY.COMMENTS)).setRemarks(r.getValue(DELIVERY.REMARKS))
 					.setWorkplace(r.getValue(DELIVERY.WORKPLACE)).setScope(r.getValue(DELIVERY.SCOPE))
 					.setNumberOfPymnts(r.getValue(DELIVERY.NUMBER_OF_PYMNTS))
@@ -598,9 +598,9 @@ public class FillerDAO {
 			company.setAlias(r.getValue(REGISTRY.ALIAS));
 			company.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(r.getValue(REGISTRY.SECURITY_LEVEL)));
 			company.setDocumentCountry(Country.valueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY))); // TODO
-			company.setDocumentType(DocumentType.values()[r.getValue(REGISTRY.DOCUMENT_TYPE)]);
+			company.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)));
 			company.setNationality(r.getValue(REGISTRY.NATIONALITY) != null ? Country.valueOf(r.getValue(REGISTRY.NATIONALITY)): null); // TODO
-			company.setSecurityLevel(SecurityLevel.values()[r.getValue(REGISTRY.SECURITY_LEVEL)]);
+			company.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)));
 			company.setType(r.getValue(REGISTRY.TYPE));	
 			return company
 				.setActive(r.getValue(COMPANY.ACTIVE) == 1)
@@ -643,7 +643,7 @@ public class FillerDAO {
 					.setRemarks(r.getValue(INCOME.REMARKS))
 					.setScope(r.getValue(INCOME.SCOPE))
 					.setSecurityLevel(r.getValue(INCOME.SECURITY_LEVEL) != null ? r.getValue(INCOME.SECURITY_LEVEL).intValue() : null)
-					.setStatus(r.getValue(INCOME.STATUS) != null ? IncomeStatus.values()[r.getValue(INCOME.STATUS)] : null)
+					.setStatus(IncomeStatus.safeValueOf(r.getValue(INCOME.STATUS)))
 					.setSupplier(r.getValue(INCOME.SUPPLIER))
 					.setWorkplace(r.getValue(INCOME.WORKPLACE));
 		}
@@ -677,7 +677,7 @@ public class FillerDAO {
 					.setRemarks(r.getValue(INCOME.REMARKS))
 					.setScope(r.getValue(INCOME.SCOPE))
 					.setSecurityLevel(r.getValue(INCOME.SECURITY_LEVEL) != null ? r.getValue(INCOME.SECURITY_LEVEL).intValue() : null)
-					.setStatus(r.getValue(INCOME.STATUS) != null ? IncomeStatus.values()[r.getValue(INCOME.STATUS)] : null)
+					.setStatus(IncomeStatus.safeValueOf(r.getValue(INCOME.STATUS)))
 					.setSupplier(r.getValue(INCOME.SUPPLIER))
 					.setWorkplace(r.getValue(INCOME.WORKPLACE))
 					.setSupplierName(r.getValue(REGISTRY.NAME));
@@ -764,7 +764,7 @@ public class FillerDAO {
 					.setRegistration(r.getValue(CONTRACT.REGISTRATION))
 					.setSeniorityDate(r.getValue(CONTRACT.SENIORITY_DATE))
 					.setEnterpriseActivity(r.getValue(CONTRACT.ENTERPRISE_ACTIVITY))
-					.setSsRegime(SSRegimeType.values()[r.getValue(CONTRACT.SS_REGIME)])
+					.setSsRegime(SSRegimeType.safeValueOf(r.getValue(CONTRACT.SS_REGIME)))
 					.setAgreementLevel(r.getValue(CONTRACT.AGREEMENT_LEVEL))
 				//TODO	.setModel(ContractModel.values()[r.getValue(CONTRACT.MODEL)])
 					.setCategoryDescription(r.getValue(CONTRACT.CATEGORY_DESCRIPTION));
@@ -907,13 +907,13 @@ public class FillerDAO {
 					.setOffer(o)
 					.setPrice(r.getValue(OFFER_DETAIL.PRICE))
 					.setQuantity(r.getValue(OFFER_DETAIL.QUANTITY))
-					.setStatus(OfferDetailStatus.values()[r.getValue(OFFER_DETAIL.STATUS)]);
+					.setStatus(OfferDetailStatus.safeValueOf(r.getValue(OFFER_DETAIL.STATUS)));
 			
 			return new OfferDetailCommission()
 					.setId(r.getValue(OFFER_DETAIL_COMMISSION.ID))
 					.setDomain(r.getValue(OFFER_DETAIL_COMMISSION.DOMAIN))
 					.setOfferDetail(od)
-					.setStatus(OfferDetailCommissionStatus.values()[r.getValue(OFFER_DETAIL_COMMISSION.STATUS)])
+					.setStatus(OfferDetailCommissionStatus.safeValueOf(r.getValue(OFFER_DETAIL_COMMISSION.STATUS)))
 					.setPayDate(r.getValue(OFFER_DETAIL_COMMISSION.PAY_DATE))
 					.setCommission(r.getValue(OFFER_DETAIL_COMMISSION.COMMISSION))
 					.setAmount(r.getValue(OFFER_DETAIL_COMMISSION.AMOUNT));
@@ -979,7 +979,7 @@ public class FillerDAO {
 					.setId(r.getValue(INVOICE_DETAIL_COMMISSION.ID))
 					.setDomain(r.getValue(INVOICE_DETAIL_COMMISSION.DOMAIN))
 					.setInvoiceDetail(id)
-					.setStatus(InvoiceDetailCommissionStatus.values()[r.getValue(INVOICE_DETAIL_COMMISSION.STATUS)])
+					.setStatus(InvoiceDetailCommissionStatus.safeValueOf(r.getValue(INVOICE_DETAIL_COMMISSION.STATUS)))
 					.setPayDate(r.getValue(INVOICE_DETAIL_COMMISSION.PAY_DATE))
 					.setCommission(r.getValue(INVOICE_DETAIL_COMMISSION.COMMISSION))
 					.setAmount(r.getValue(INVOICE_DETAIL_COMMISSION.AMOUNT));
@@ -1080,11 +1080,11 @@ public class FillerDAO {
 			supplier.setAlias(r.getValue(REGISTRY.ALIAS));
 			supplier.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(r.getValue(REGISTRY.SECURITY_LEVEL)));
 			supplier.setDocument(r.getValue(REGISTRY.DOCUMENT));
-			supplier.setDocumentType(DocumentType.values()[r.getValue(REGISTRY.DOCUMENT_TYPE)]);
+			supplier.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)));
 			supplier.setDomain(r.getValue(REGISTRY.DOMAIN));
 			supplier.setId(r.getValue(REGISTRY.ID));
 			supplier.setName(r.getValue(REGISTRY.NAME));
-			supplier.setSecurityLevel(SecurityLevel.values()[r.getValue(REGISTRY.SECURITY_LEVEL)]);
+			supplier.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)));
 			supplier.setType(r.getValue(REGISTRY.TYPE));
 			return new UdapaQuality()
 					.setDataResponse(new DataResponse()

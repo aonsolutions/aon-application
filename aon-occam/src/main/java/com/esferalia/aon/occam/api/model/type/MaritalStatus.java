@@ -27,5 +27,16 @@ public enum MaritalStatus {
     public String getName() {
 		return this.toString();
     }
+    
+	public static MaritalStatus safeValueOf( Byte i ) {
+		if (i == null) return null;
+		return safeValueOf( i.intValue() ); 
+	}
+	
+	public static MaritalStatus safeValueOf( Integer i ) {
+		if (i == null) return null;
+		if (i < 0 || i >= MaritalStatus.values().length) return null;
+		return MaritalStatus.values()[i];
+	}
 
 }

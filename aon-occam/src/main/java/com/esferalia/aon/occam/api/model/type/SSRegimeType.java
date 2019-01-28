@@ -114,4 +114,15 @@ public enum SSRegimeType  implements Serializable {
 	public Byte getValue() {
 		return (byte) ordinal();
 	}
+	
+	public static SSRegimeType safeValueOf( Byte i ) {
+		if (i == null) return null;
+		return safeValueOf( i.intValue() ); 
+	}
+	
+	public static SSRegimeType safeValueOf( Integer i ) {
+		if (i == null) return null;
+		if (i < 0 || i >= SSRegimeType.values().length) return null;
+		return SSRegimeType.values()[i];
+	}
 }

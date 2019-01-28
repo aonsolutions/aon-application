@@ -13,4 +13,15 @@ public enum IncomeStatus implements Serializable {
     public String getName() {
 		return this.toString();
     }
+    
+	public static IncomeStatus safeValueOf( Byte i ) {
+		if (i == null) return null;
+		return safeValueOf( i.intValue() ); 
+	}
+	
+	public static IncomeStatus safeValueOf( Integer i ) {
+		if (i == null) return null;
+		if (i < 0 || i >= IncomeStatus.values().length) return null;
+		return IncomeStatus.values()[i];
+	}
 }

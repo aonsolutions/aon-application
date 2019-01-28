@@ -26,4 +26,14 @@ public enum CarrierPackingStatus {
 	public byte value() {
 		return (byte) this.ordinal();
 	}
+	
+	public static CarrierPackingStatus safeValueOf( Byte i ) {
+		if (i == null) return null;
+		return safeValueOf( i.intValue() ); 
+	}
+	public static CarrierPackingStatus safeValueOf( Integer i ) {
+		if (i == null) return null;
+		if (i < 0 || i >= CarrierPackingStatus.values().length) return null;
+		return CarrierPackingStatus.values()[i];
+	}
 }

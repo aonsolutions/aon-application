@@ -95,13 +95,8 @@ public class printContractMediaResume extends HttpServlet {
 		Document document = new Document(PageSize.A4);
 		try {
 			PdfWriter.getInstance(document, new FileOutputStream(archivoPDF));
-
 			document.open();
-			
 			writeDocument(document, json);
-			
-			
-			
 		} catch (DocumentException | IOException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		} catch (JSONException e) {
@@ -163,7 +158,7 @@ public class printContractMediaResume extends HttpServlet {
 	}
 	
 	private static PdfPTable getSalariedStaff(JSONObject json){
-		Integer yearAct = Integer.parseInt(json.getString("year"));
+		Integer yearAct = json.getInt("year");
 		Integer yearAnt = yearAct - 1;
 		JSONArray arrayAct = json.getJSONArray("contract_act");
 		Double fixedAct = 0.0, fixedAnt = 0.0, unfixedAct = 0.0, unfixedAnt = 0.0, 
@@ -430,7 +425,7 @@ public class printContractMediaResume extends HttpServlet {
 	}
 	
 	private static PdfPTable getSalariedStaffCategory(JSONObject json){
-		Integer yearAct = Integer.parseInt(json.getString("year"));
+		Integer yearAct = json.getInt("year");
 		Integer yearAnt = yearAct - 1;
 		JSONArray array = json.getJSONArray("categories");
 
@@ -594,7 +589,7 @@ public class printContractMediaResume extends HttpServlet {
 	}
 	
 	private static PdfPTable getSalariedStaffGC(JSONObject json){
-		Integer yearAct = Integer.parseInt(json.getString("year"));
+		Integer yearAct = json.getInt("year");
 		Integer yearAnt = yearAct - 1;
 		JSONArray arrayAct = json.getJSONArray("contract_act");
 		JSONArray arrayAnt = json.getJSONArray("contract_ant");
