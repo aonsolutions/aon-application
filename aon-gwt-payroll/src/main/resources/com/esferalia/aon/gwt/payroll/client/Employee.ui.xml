@@ -149,7 +149,7 @@
         <g:VerticalPanel styleName="{style.styleBorder}"> 
 	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Datos de contrato</g:Label>
 	    	<g:HTMLPanel>
-				<table ui:field="contractDataTable"
+				<table ui:field="contractDataTable" debugId="contractDataTable"
 					style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
 					<tbody>
 					    <tr>
@@ -165,28 +165,28 @@
 							<td style="background-color: #eaeaea; width: 200px;">
 								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Documento</g:Label>
 							</td>
-							<td ui:field="documentTypeCell">
-								<g:Label styleName='{style.alignTextCenter}' ui:field="document_type"></g:Label>
+							<td ui:field="documentTypeCell" debugId="documentTypeCell">
+								<g:Label styleName='{style.alignTextCenter}' ui:field="document_type" debugId="document_type"></g:Label>
 							</td>
 							<td>
 								<g:HorizontalPanel>
-									<g:SuggestBox ui:field="document" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
-									<g:Label ui:field="documentStatus"></g:Label>
+									<g:SuggestBox ui:field="document" debugId="document" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
+									<g:Label ui:field="documentStatus" debugId="documentStatus"></g:Label>
 								</g:HorizontalPanel>
 							</td>
-							<td style="width: 10%;" ui:field="nationalityLabelCell">
-								<g:Label ui:field="nationalityLabel" styleName='{style.requiredColor} {style.alignTextCenter}'>Nacionalidad</g:Label>
+							<td style="width: 10%;" ui:field="nationalityLabelCell" debugId="nationalityLabelCell">
+								<g:Label ui:field="nationalityLabel" debugId="nationalityLabel" styleName='{style.requiredColor} {style.alignTextCenter}'>Nacionalidad</g:Label>
 							</td>
-							<td ui:field="nationalityCell">
-								<g:SuggestBox ui:field="nationality" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
+							<td ui:field="nationalityCell" debugId="nationalityCell">
+								<g:SuggestBox ui:field="nationality" debugId="nationality" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
 							</td>
 							<td style="width: 10%;">
 								<g:Label styleName='{style.requiredColor} {style.alignTextCenter}'>Nº S.S.</g:Label>
 							</td>
 							<td >
 								<g:HorizontalPanel>
-									<g:SuggestBox ui:field="security_social_num" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
-									<g:Label ui:field="ssNumberStatus"></g:Label>
+									<g:SuggestBox ui:field="security_social_num" debugId="security_social_num" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
+									<g:Label ui:field="ssNumberStatus" debugId="ssNumberStatus"></g:Label>
 								</g:HorizontalPanel>
 							</td>
 						</tr>
@@ -195,20 +195,20 @@
 								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Nombre Completo</g:Label>
 							</td>
 							<td colspan="2">
-								<g:SuggestBox ui:field="name" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
+								<g:SuggestBox ui:field="name" debugId="name" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
 							</td>
 							<td>
-								<g:Label ui:field="firstSurnameLabel"
+								<g:Label ui:field="firstSurnameLabel" debugId="firstSurnameLabel"
 									styleName='{style.alignTextCenter} {style.requiredColor}'>1er Apellido</g:Label>
 							</td>
 							<td >
-								<g:SuggestBox ui:field="first_surname" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
+								<g:SuggestBox ui:field="first_surname" debugId="first_surname" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
 							</td>
 							<td style="width: 10%;">
 								<g:Label styleName='{style.alignTextCenter}'>2º Apellido</g:Label>
 							</td>
 							<td >
-								<g:TextBox ui:field="second_surname" styleName='aon-inputText {style.maxWidthTextBox4}'></g:TextBox>
+								<g:TextBox ui:field="second_surname" debugId="second_surname" styleName='aon-inputText {style.maxWidthTextBox4}'></g:TextBox>
 							</td>
 						</tr>
 						<tr>
@@ -216,7 +216,7 @@
 								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Tipo de cotización</g:Label>
 							</td>
 							<td colspan="6">
-								<g:ListBox ui:field="ssRegimeType" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+								<g:ListBox ui:field="ssRegimeType" debugId="ssRegimeType" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
 						</tr>
 						<tr>
@@ -224,7 +224,7 @@
 								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Actividad - Cuenta de cotización</g:Label>
 							</td>
 							<td colspan="6">
-								<g:ListBox ui:field="activityCCC" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+								<g:ListBox ui:field="activityCCC" debugId="activityCCC" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
 						</tr>
 						<tr>
@@ -232,18 +232,18 @@
 								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Centro de trabajo</g:Label>
 							</td>
 							<td colspan="6">
-								<g:ListBox ui:field="workplace" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+								<g:ListBox ui:field="workplace" debugId="workplace" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
 						</tr>
 						<tr>
 							<td style="background-color: #eaeaea; width: 200px;">
 								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Tipo de contrato</g:Label>
 							</td>
-							<td colspan="6" ui:field="contractTypeNode">
-								<g:ListBox ui:field="contractType" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+							<td colspan="6" ui:field="contractTypeNode" debugId="contractTypeNode">
+								<g:ListBox ui:field="contractType" debugId="contractType" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
-							<td ui:field="contractFreelancerNode" colspan="6">
-								<g:Label ui:field="contractTypeFreelance"
+							<td ui:field="contractFreelancerNode" debugId="contractFreelancerNode" colspan="6">
+								<g:Label ui:field="contractTypeFreelance" debugId="contractTypeFreelance"
 									styleName='{style.maxWidthTextBox}'>
 									Régimen especial de trabajadores autónomos
 								</g:Label>
@@ -254,7 +254,7 @@
 								<g:Label styleName="{style.requiredColor} {style.firstColumnTextStyle}">Modalidad</g:Label>
 							</td>
 							<td colspan="6">
-								<g:ListBox ui:field="modality" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+								<g:ListBox ui:field="modality" debugId="modality" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
 						</tr>
 						<tr>
@@ -265,22 +265,22 @@
 								<g:Label styleName='{style.requiredColor}'>Fecha inicio</g:Label>
 							</td>
 							<td>
-								<a:DateBoxEx ui:field="start_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle}'></a:DateBoxEx>
+								<a:DateBoxEx ui:field="start_date" debugId="start_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle}'></a:DateBoxEx>
 							</td>
 							<td>
 								<g:Label styleName='{style.alignTextCenter}'>Fecha fin</g:Label>
 							</td>
 							<td>
-								<a:DateBoxEx ui:field="end_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle}'></a:DateBoxEx>
+								<a:DateBoxEx ui:field="end_date" debugId="end_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle}'></a:DateBoxEx>
 							</td>
 							<td style="width: 12%;">
-								<g:Label ui:field="seniority_date_label" styleName='{style.alignTextCenter}'>Fecha
+								<g:Label ui:field="seniority_date_label" debugId="seniority_date_label" styleName='{style.alignTextCenter}'>Fecha
 									antigüedad</g:Label>
 							</td>
 							<td>
 								<g:HorizontalPanel>
-									<a:DateBoxEx ui:field="seniority_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle2}'></a:DateBoxEx>
-									<g:Label ui:field="seniority_dateStatus"></g:Label>	
+									<a:DateBoxEx ui:field="seniority_date" debugId="seniority_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle2}'></a:DateBoxEx>
+									<g:Label ui:field="seniority_dateStatus" debugId="seniority_dateStatus"></g:Label>	
 								</g:HorizontalPanel>
 							</td>
 						</tr>
@@ -292,7 +292,7 @@
 								<g:Label>Convenio</g:Label>
 							</td>
 							<td colspan="5">
-								<g:ListBox ui:field="agreement" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+								<g:ListBox ui:field="agreement" debugId="agreement" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
 						</tr>
 						<tr>
@@ -300,13 +300,13 @@
 								<g:Label>Nivel/Categoría</g:Label>
 							</td>
 							<td colspan="3">
-								<g:ListBox ui:field="level" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+								<g:ListBox ui:field="level" debugId="level" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
 							<td>
 								<g:Label styleName='{style.alignTextCenter}'>Mostrar como</g:Label>
 							</td>
 							<td>
-								<g:TextBox ui:field="category" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
+								<g:TextBox ui:field="category" debugId="category" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
 							</td>
 						</tr>
 						<tr>
@@ -314,7 +314,7 @@
 								<g:Label styleName="{style.requiredColor} {style.firstColumnTextStyle}">Grupo de cotización</g:Label>
 							</td>
 							<td colspan="6">
-								<g:ListBox ui:field="quote_group" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+								<g:ListBox ui:field="quote_group" debugId="quote_group" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
 						</tr>
 						<tr>
@@ -322,7 +322,7 @@
 								<g:Label styleName="{style.firstColumnTextStyle}">Ocupación</g:Label>
 							</td>
 							<td colspan="6">
-								<g:ListBox ui:field="occupation" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+								<g:ListBox ui:field="occupation" debugId="occupation" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
 						</tr>
 						<tr>
@@ -330,7 +330,7 @@
 								<g:Label styleName="{style.requiredColor} {style.firstColumnTextStyle}">Tipo de jornada</g:Label>
 							</td>
 							<td colspan="6">
-								<g:ListBox ui:field="journeyType" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+								<g:ListBox ui:field="journeyType" debugId="journeyType" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
 						</tr>
 						<tr>
@@ -338,7 +338,7 @@
 								<g:Label styleName="{style.firstColumnTextStyle}">Duración de lo jornada</g:Label>
 							</td>
 							<td colspan="6">
-								<g:Label ui:field="journeyDuration" styleName='{style.maxWidth}'> </g:Label>
+								<g:Label ui:field="journeyDuration" debugId="journeyDuration" styleName='{style.maxWidth}'> </g:Label>
 							</td>
 						</tr>
 					</tbody>
@@ -346,9 +346,9 @@
 			</g:HTMLPanel>
 		</g:VerticalPanel>
 		<g:VerticalPanel styleName="{style.styleBorder2}"> 
-			<g:Label ui:field="labelEmployee" width="105px" styleName='aon-group-title {style.headerStyle}'>Datos personales</g:Label>
+			<g:Label ui:field="labelEmployee" debugId="labelEmployee" width="105px" styleName='aon-group-title {style.headerStyle}'>Datos personales</g:Label>
 			<g:HTMLPanel>
-				<table ui:field="employeeDataTable"
+				<table ui:field="employeeDataTable" debugId="employeeDataTable"
 					style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
 					<body>
 					    <tr>
@@ -367,16 +367,16 @@
 								<g:Label styleName="{style.requiredColor} {style.firstColumnTextStyle}">Fecha de nacimiento</g:Label>
 							</td>
 							<td colspan="2">
-								<a:DateBoxEx ui:field="birth_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle}'></a:DateBoxEx>
+								<a:DateBoxEx ui:field="birth_date" debugId="birth_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle}'></a:DateBoxEx>
 							</td>
 							<td>
 								<g:HorizontalPanel styleName="{style.maxWidth} {style.paddingLeft}">
-									<g:Label ui:field="age"></g:Label>
+									<g:Label ui:field="age" debugId="age"></g:Label>
 									<g:Label styleName='{style.alignTextCenter}'>Sexo</g:Label>
 								</g:HorizontalPanel>
 							</td>
 							<td colspan="2">
-								<g:ListBox ui:field="gender" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+								<g:ListBox ui:field="gender" debugId="gender" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
 						</tr>
 						<tr>
@@ -384,16 +384,16 @@
 								<g:Label styleName='{style.firstColumnTextStyle}'>Dirección</g:Label>
 							</td>
 							<td>
-							    <g:ListBox ui:field="street_type" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+							    <g:ListBox ui:field="street_type" debugId="street_type" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
 							<td colspan="4">
-								<g:SuggestBox ui:field="address" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
+								<g:SuggestBox ui:field="address" debugId="address" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
 							</td>
 							<td>
 								<g:Label styleName='{style.alignTextCenter}'>Número</g:Label>
 							</td>
 							<td colspan="2">
-								<g:TextBox ui:field="addressNum" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
+								<g:TextBox ui:field="addressNum" debugId="addressNum" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
 							</td>
 						</tr>
 						<tr>
@@ -401,19 +401,19 @@
 								<g:Label styleName='{style.alignTextCenter}'>C.P.</g:Label>
 							</td>
 							<td>
-								<g:TextBox ui:field="addressZip" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
+								<g:TextBox ui:field="addressZip" debugId="addressZip" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
 							</td>
 							<td style="width: 10%;">
 								<g:Label styleName='{style.alignTextCenter}'>Localidad</g:Label>
 							</td>
 							<td colspan="2">
-								<g:TextBox ui:field="addressCity" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
+								<g:TextBox ui:field="addressCity" debugId="addressCity" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
 							</td>
 							<td>
 								<g:Label styleName='{style.alignTextCenter}'>  Provincia  </g:Label>
 							</td>
 							<td colspan="2"> 
-								<g:ListBox ui:field="addressProvince" styleName='aon-inputText {style.maxWidth}'></g:ListBox>
+								<g:ListBox ui:field="addressProvince" debugId="addressProvince" styleName='aon-inputText {style.maxWidth}'></g:ListBox>
 							</td>
 						</tr>
 						<tr>
@@ -424,19 +424,19 @@
 								<g:Label styleName='{style.alignTextCenter}'>Móvil</g:Label>
 							</td>
 							<td>
-								<g:TextBox ui:field="mobile" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
+								<g:TextBox ui:field="mobile" debugId="mobile" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
 							</td>
 							<td>
 								<g:Label styleName='{style.alignTextCenter}'>Teléfono</g:Label>
 							</td>
 							<td colspan="2">
-								<g:TextBox ui:field="phone" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
+								<g:TextBox ui:field="phone" debugId="phone" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
 							</td>
 							<td>
 								<g:Label styleName='{style.alignTextCenter}'>eMail</g:Label>
 							</td>
 							<td colspan="2">
-								<g:TextBox ui:field="email" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
+								<g:TextBox ui:field="email" debugId="email" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
 							</td>
 						</tr>
 						<tr>
@@ -444,19 +444,19 @@
 								<g:Label styleName="{style.firstColumnTextStyle}">Método de pago</g:Label>
 							</td>
 							<td colspan="2">
-								<g:ListBox ui:field="payMethod" styleName='{style.maxWidth}'></g:ListBox>
+								<g:ListBox ui:field="payMethod" debugId="payMethod" styleName='{style.maxWidth}'></g:ListBox>
 							</td>
 							<td style="width: 10%;">
 								<g:Label styleName='{style.alignTextCenter}'>BIC</g:Label>
 							</td>
 							<td colspan="2">
-								<g:TextBox ui:field="bic" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
+								<g:TextBox ui:field="bic" debugId="bic" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
 							</td>
 							<td>
 								<g:Label styleName='{style.alignTextCenter}'>Cuenta</g:Label>
 							</td>
 							<td colspan="2">
-								<g:TextBox ui:field="account" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
+								<g:TextBox ui:field="account" debugId="account" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
 							</td>
 						</tr>
 					</body>
