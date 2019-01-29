@@ -311,19 +311,6 @@ public class Mod347DAO {
 		}
 	}
 	
-//	public static Mod347Detail getDetail(AONContext ctx, int id) {
-//		ctx.checkRead();
-//		return ctx.getDslContext()
-//			.select(FS_MOD347_DETAIL.fields())
-//			.from(FS_MOD347_DETAIL)
-//			.where(FS_MOD347_DETAIL.ID.equal(id))
-//			.fetch()
-//			.stream()
-//			.map(new Mod347DetailFiller())
-//			.findFirst()
-//			.orElse(null);
-//	}
-	
 	// -------------------- MOD347DECLARED --------------------
 
 	private static LinkedList<Mod347Declared> getDeclared(AONContext ctx, int mod347) {
@@ -466,7 +453,37 @@ public class Mod347DAO {
 	}
 	
 	private static void validateDeclared(AONContext ctx, Mod347Declared declared) {
+		declared.setFirstQuarterAmount( AonMathUtils.round(declared.getFirstQuarterAmount()));
+		declared.setSecondQuarterAmount( AonMathUtils.round(declared.getSecondQuarterAmount()));
+		declared.setThirdQuarterAmount( AonMathUtils.round(declared.getThirdQuarterAmount()));
+		declared.setFourthQuarterAmount( AonMathUtils.round(declared.getFourthQuarterAmount()));
+		declared.setAmount( AonMathUtils.round(declared.getAmount()));
 		
+		double quarters = (declared.getFirstQuarterAmount() + declared.getSecondQuarterAmount() + declared.getThirdQuarterAmount() + declared.getFourthQuarterAmount());
+		if (AonMathUtils.isNotZero(quarters)) {
+			if (AonMathUtils.isNotZero(declared.getAmount() - quarters)) {
+				if ( AonMathUtils.isNotZero(declared.getFourthQuarterAmount())) {
+					declared.setFourthQuarterAmount( AonMathUtils.round(declared.getAmount()
+							- declared.getFirstQuarterAmount() - declared.getSecondQuarterAmount() - declared.getThirdQuarterAmount()));			
+				} else if ( AonMathUtils.isNotZero(declared.getThirdQuarterAmount())) {
+					declared.setThirdQuarterAmount( AonMathUtils.round(declared.getAmount()
+							- declared.getFirstQuarterAmount() - declared.getSecondQuarterAmount() - declared.getFourthQuarterAmount()));			
+				} else if ( AonMathUtils.isNotZero(declared.getSecondQuarterAmount())) {
+					declared.setThirdQuarterAmount( AonMathUtils.round(declared.getAmount()
+							- declared.getFirstQuarterAmount() - declared.getThirdQuarterAmount() - declared.getFourthQuarterAmount()));			
+				} else if ( AonMathUtils.isNotZero(declared.getFirstQuarterAmount())) {
+					declared.setThirdQuarterAmount( AonMathUtils.round(declared.getAmount()
+							- declared.getSecondQuarterAmount() - declared.getThirdQuarterAmount() - declared.getFourthQuarterAmount()));			
+				}
+			}
+		}
+		 
+		quarters = (declared.getFirstQuarterAmount() + declared.getSecondQuarterAmount() + declared.getThirdQuarterAmount() + declared.getFourthQuarterAmount());
+		if (AonMathUtils.isNotZero(quarters)) {
+			if (AonMathUtils.isNotZero(declared.getAmount() - quarters)) {
+				System.out.println("ERROR");
+			}
+		}
 		// Comprobaciones que deban realizarse para las lineas declared
 		
 	}
@@ -726,19 +743,19 @@ public class Mod347DAO {
 						cal.setTime(vat.getTaxDate());
 						int quarter = (cal.get(Calendar.MONTH) / 3);
 						if (quarter == 0) {
-							declared.setFirstQuarterAmount(AonMathUtils.round(declared.getFirstQuarterAmount() + amount));
+							declared.setFirstQuarterAmount(declared.getFirstQuarterAmount() + amount);
 						} else if (quarter == 1) {
-							declared.setSecondQuarterAmount(AonMathUtils.round(declared.getSecondQuarterAmount() + amount));
+							declared.setSecondQuarterAmount(declared.getSecondQuarterAmount() + amount);
 						} else if (quarter == 2) {
-							declared.setThirdQuarterAmount(AonMathUtils.round(declared.getThirdQuarterAmount() + amount));
+							declared.setThirdQuarterAmount(declared.getThirdQuarterAmount() + amount);
 						} else if (quarter == 3) {
-							declared.setFourthQuarterAmount(AonMathUtils.round(declared.getFourthQuarterAmount() + amount));
+							declared.setFourthQuarterAmount(declared.getFourthQuarterAmount() + amount);
 						}
 						
 					}
 					
 					// Acumular el total
-					declared.setAmount(AonMathUtils.round(declared.getAmount() + amount));
+					declared.setAmount(declared.getAmount() + amount);
 					
 				});
 		
@@ -784,164 +801,6 @@ public class Mod347DAO {
 		}		
 			
 	}
-	
-//	private static void insertDetailsFromInvoice_OLD(AONContext ctx , final Mod347 mod347) {
-//		
-//		// PROCEDIMIENTO A SEGUIR:
-//		// - Se leen las facturas normales o ISP, del ejercicio actual y del anterior (para las facturas RECC)
-//		// - Se asigna a todas las compras y gastos, el tipo "0" y a las ventas el "1"
-//		// - Se ordenan por Documento + Tipo + ISP + RECC
-//		// - Se van leyendo en orden y por cada Documento + Tipo + ISP + RECC, se va creando una linea de 
-//		//   declarado (si el total de operaciones de Documento + Tipo supera el valor mínimo)
-//		// - Si la factura lleva retención, se ignora
-//		// - Si la factura es RECC se acumula el importe total de la factura, si es del ejercicio actual y 
-//		//   además se acumula tambien el importe declarado según la regla RECC del IVA
-//		
-//		// Se pone solo el ejercicio actual, porque getVatBreakdown ya lee automaticamente las facturas RECC del ejercicio anterior
-//		Date fromDate = AonDateUtils.getYearFirstDay(mod347.getYear());
-//		Date toDate = AonDateUtils.getYearLastDay(mod347.getYear());
-//		
-//		// Obtenemos el desglose de facturas del ejercicio actual y el anterior (facturas RECC), usando VATDAO
-//		// Solo facturas Nacionales o ISP y sin retencion
-//		LinkedList<VatContext> v = VATDAO.getVatBreakdown(ctx, fromDate, toDate, mod347)
-//				.filter(vat -> (!vat.hasRetention()) && (vat.getTransaction() == InvoiceTransactionType.NATIONAL || vat.getTransaction() == InvoiceTransactionType.OTHER_ISP))
-//				.peek( vat -> {
-//					// Las compras y gastos, se ponen todas como compras
-//					vat.setInvoiceType( vat.getInvoiceType() == InvoiceType.SALES ? InvoiceType.SALES : InvoiceType.PURCHASE);
-//					// Ventas ISP, se ponen como Nacionales, por que no hay que marcar ISP en las ventas en el 347, solo en las compras
-//					if (vat.getInvoiceType() == InvoiceType.SALES && vat.getTransaction() == InvoiceTransactionType.OTHER_ISP)
-//						vat.setTransaction( InvoiceTransactionType.NATIONAL);
-//				})
-//				.sorted(Comparator.comparing(VatContext::getRegistryDocument).thenComparing(VatContext::getInvoiceType).thenComparing(VatContext::getTransaction).thenComparing(VatContext::isVatAccrualRegime))
-//		        .collect(Collectors.toCollection(LinkedList::new));		
-//		
-//		String control = "";
-//		double acumulated = 0;
-//		double minAmount = 3005.06;		
-//		Calendar cal = Calendar.getInstance();		
-//		Map<String,Mod347Declared> map = new TreeMap<String, Mod347Declared>();
-//		
-//		for (VatContext vat : v) {
-//					
-//			// El importe mínimo a declarar se controla por NIF y Tipo (Ventas o Compras)
-//			String c = vat.getRegistryDocument() + ";" + vat.getInvoiceType();
-//			if (!control.equals(c)) {
-//
-//				// Añadir el bloque a la base de datos, si supera el importe minimo
-//				if (Math.abs(acumulated) > minAmount) {
-//					for (Mod347Declared declared : map.values()) {
-//						insertDeclared(ctx, declared);
-//					}
-//				}
-//
-//				control = c;
-//				acumulated = 0;
-//				map.clear();
-//			}
-//			
-//			// Añadir la factura al registro que corresponda del bloque actual
-//			// Dado que es necesario separar las operaciones normales de las ISP y de las RECC, se usa como clave esos dos datos
-//			// además del NIF y el tipo, para posteriormente crear tantos registros como sea necesario en las lineas del 347
-//			c = vat.getRegistryDocument() + ";" + vat.getInvoiceType() + ";" + vat.getTransaction() + ";" + vat.isVatAccrualRegime();						
-//			Mod347Declared declared = map.get(c);
-//			if (declared == null) {
-//
-//				declared = new Mod347Declared();
-//				declared.setMod347(mod347.getId());
-//
-//				String document = vat.getRegistryDocument();
-//				Country country = vat.getRegistryDocumentCountry();
-//
-//				if (country == null || country == Country.ES) {
-//
-//					if (AonStringUtils.length(document) > 9) {
-//						declared.setDocument(AonStringUtils.substring(document, 0, 9));
-//					} else {
-//						declared.setDocument(document);
-//					}
-//
-//					// La provincia no la tengo en VATContext, se obtiene de RADRESS de la dirección principal 
-//					declared.setProvince(Province.safeValueOf(getRegistryMainAddressProvince(ctx, vat.getInvoice())));
-//
-//				} else {
-//
-//					declared.setOperatorNif(country.getIso2() + document);
-//					declared.setCountry(country);
-//					declared.setProvince(Province.NO_RESIDENTE);
-//					
-//				}
-//
-//				String name = vat.getRegistryName();
-//				if (AonStringUtils.length(name) > 64) {
-//					name = AonStringUtils.substring(name, 0, 63);
-//				}
-//				declared.setName(name);
-//
-//				declared.setType(vat.getInvoiceType() == InvoiceType.SALES ? Mod347Key.B : Mod347Key.A);
-//
-//				declared.setVatAccrual(vat.isVatAccrualRegime());
-//				declared.setIsp(vat.getTransaction() == InvoiceTransactionType.OTHER_ISP);
-//			
-//				declared.setFirstQuarterAmount(0.0);
-//				declared.setSecondQuarterAmount(0.0);
-//				declared.setThirdQuarterAmount(0.0);
-//				declared.setFourthQuarterAmount(0.0);
-//				declared.setAmount(0.0);
-//				declared.setVatAccrualAmount(0.0);
-//				
-//				// Añadir el declarado al map
-//				map.put(c, declared);
-//			}
-//
-//			// Acumular el importe que se declara en el 347
-//			double amount = vat.getAmount347();
-//
-//			if (vat.isVatAccrualRegime()) {
-//				
-//				// Factura Criterio de Caja
-//									
-//				// Acumular el importe según RECC (La base y las cuotas tienen lo declarado según los cobros/pagos realizados)
-//				declared.setVatAccrualAmount(AonMathUtils.round(declared.getVatAccrualAmount() + vat.getBase() + vat.getQuota() + vat.getSurchargeQuota()));
-//				
-//				// Si la factura es del ejercicio anterior, no se tiene en cuenta el importe, para el minimo a declarar
-//				// ni aparece el importe en el 347				
-//				if (vat.getTaxDate().compareTo(AonDateUtils.getYearFirstDay(mod347.getYear())) < 0) {
-//					amount = 0;						
-//				}
-//				
-//			} else if (mod347.getDocument() != null && !mod347.getDocument().startsWith("H")) {
-//
-//				// No es factura RECC, ni NIF declarante empieza por "H", se acumula por trimestres
-//				cal.setTime(vat.getTaxDate());
-//				int quarter = (cal.get(Calendar.MONTH) / 3);
-//				if (quarter == 0) {
-//					declared.setFirstQuarterAmount(AonMathUtils.round(declared.getFirstQuarterAmount() + amount));
-//				} else if (quarter == 1) {
-//					declared.setSecondQuarterAmount(AonMathUtils.round(declared.getSecondQuarterAmount() + amount));
-//				} else if (quarter == 2) {
-//					declared.setThirdQuarterAmount(AonMathUtils.round(declared.getThirdQuarterAmount() + amount));
-//				} else if (quarter == 3) {
-//					declared.setFourthQuarterAmount(AonMathUtils.round(declared.getFourthQuarterAmount() + amount));
-//				}
-//				
-//			}
-//			
-//			// Acumular el total
-//			declared.setAmount(AonMathUtils.round(declared.getAmount() + amount));
-//			
-//			// Acumular el importe para ver si al final supera el minimo a declarar (por NIF + Tipo)
-//			acumulated = acumulated + amount;
-//
-//		}
-//
-//		// Añadir ultimo bloque de map, si existe
-//		if (Math.abs(acumulated) > minAmount) {
-//			for (Mod347Declared declared : map.values()) {
-//				insertDeclared(ctx, declared);
-//			}
-//		}		
-//			
-//	}
 	
 	private static Integer getRegistryMainAddressProvince(AONContext ctx, Integer registry) {
 		
