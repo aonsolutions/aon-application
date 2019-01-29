@@ -82,7 +82,7 @@ public abstract class ModPrintAEAT extends HttpServlet{
 		this.id = json.getInt("mod");
 		this.domainName = json.getString("domainName");
 		this.domainId = json.getInt("domainId");
-		this.user = json.getString("user");	
+		this.user = json.optString("user");	
 		if(json.opt("cert") != null && !"".equals(json.optString("cert")) && !"null".equals(json.optString("cert"))) {
 			try {
 				Integer c = json.getInt("cert");
