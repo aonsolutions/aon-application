@@ -1,18 +1,10 @@
 package com.esferalia.aon.occam.impl.jooq.dao.mod390HF;
 
-import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
-import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
-import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
-
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
@@ -20,7 +12,6 @@ import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod390HFDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;

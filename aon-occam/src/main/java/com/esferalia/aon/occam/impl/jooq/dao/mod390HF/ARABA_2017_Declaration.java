@@ -490,7 +490,7 @@ public class ARABA_2017_Declaration extends Mod390HFDeclaration {
 				(ctx,mod) -> {
 					add( Mod390Key.AR_C126, mod, Mod390HFDAO.getM303YearModels(ctx, mod)
 							.mapToDouble(fm -> fm.getAmount(Mod303Key.AR_C080))
-							.filter(result -> AonMathUtils.isNotZero(result))
+							.filter(result -> AonMathUtils.isGreatherThanZero(result))
 							.sum());
 				} 
 				,null

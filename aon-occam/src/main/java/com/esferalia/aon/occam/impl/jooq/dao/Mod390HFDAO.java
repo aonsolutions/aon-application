@@ -201,7 +201,7 @@ public class Mod390HFDAO extends FiscalModelDAO {
 		if (mod.getProratePercent() != 0 && mod.getProratePercent() != 100) {
 			for (Mod390Key key : dec.getProrateKeys()) {
 				FiscalModelDetail det = mod.ensureDetail(key);
-				det.setAccumulatedAmount(AonMathUtils.round(det.getAccumulatedAmount() * mod.getProratePercent() / 100));
+				det.setAmount(AonMathUtils.round(det.getAmount() * mod.getProratePercent() / 100));
 			}
 		}
 		dec.specificInitialization(ctx, mod);
