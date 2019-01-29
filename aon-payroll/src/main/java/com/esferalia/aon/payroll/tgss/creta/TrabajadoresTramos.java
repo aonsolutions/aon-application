@@ -843,6 +843,7 @@ public class TrabajadoresTramos {
 	private static Date getLastDayOf(Month mes, int anho) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.YEAR , anho);
+		calendar.set(Calendar.DAY_OF_MONTH,1);
 		calendar.set(Calendar.MONTH , mes.getValue()-1);
 		calendar.set(Calendar.DAY_OF_MONTH,calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
 		return calendar.getTime();
