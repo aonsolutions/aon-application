@@ -7,6 +7,7 @@ public class EmployeeInfo implements Serializable{
 	
 	private Integer domain;
 	private Integer contractId;
+	private Boolean isContractActive;
 	
 	private Integer employeeId; //Registry Id
 	
@@ -55,10 +56,43 @@ public class EmployeeInfo implements Serializable{
 	private String account;
 	private String bic;
 	
-	public EmployeeInfo(){
+	public EmployeeInfo() {
 		super();
+		this.domain = null;
+		this.contractId = null;
+		this.isContractActive = null;
+		this.employeeId = null;
+		this.birthdate = null;
+		this.gender = null;
+		this.ssNumber = null;
+		this.name = null;
+		this.surName = null;
+		this.secondSurName = null;
+		this.document = null;
+		this.documentType = null;
+		this.nationality = null;
+		this.raddressId = null;
+		this.streetType = null;
+		this.address = null;
+		this.addresNum = null;
+		this.addressZip = null;
+		this.addressCity = null;
+		this.geozoneId = null;
+		this.addressProvinces = null;
+		this.mobileId = null;
+		this.mobile = null;
+		this.phoneId = null;
+		this.phone = null;
+		this.emailId = null;
+		this.email = null;
+		this.rpaymethodId = null;
+		this.paymethodId = null;
+		this.payMethodType = null;
+		this.rbankId = null;
+		this.account = null;
+		this.bic = null;
 	}
-	
+
 	public EmployeeInfo(Integer employeeId, String name, String surName, String document, String ssNumber) {
 		super();
 		this.employeeId = employeeId;
@@ -88,6 +122,14 @@ public class EmployeeInfo implements Serializable{
 	
 	public void setContractId(Integer contractId) {
 		this.contractId = contractId;
+	}
+	
+	public Boolean getContractActive() {
+		return this.isContractActive;
+	}
+	
+	public void setContractActive(Boolean isActive) {
+		this.isContractActive = isActive;
 	}
 
 	public String getName() {
@@ -139,7 +181,7 @@ public class EmployeeInfo implements Serializable{
 	}
 
 	public Byte getGender() {
-		return gender;
+		return (null == gender ? (byte)2 : gender) ;
 	}
 
 	public void setGender(Byte gender) {

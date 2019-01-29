@@ -241,7 +241,10 @@ public class ContractType {
 	}
 	
 	public List<ModelRecord> getModelsContractType(int contractType){
-		return this.contractTypes.get(contractType).getContractModels();
+		if(-1 == contractType)
+			return new ArrayList<ModelRecord>();
+		else
+			return this.contractTypes.get(contractType).getContractModels();
 	}
 	
 	public Integer getContractTypeId(String contractTypeDescription){

@@ -45,6 +45,13 @@ public class EmployeeDialog extends CustomDialog {
 		// TABLA DATOS CONTRATO
 		
 		@Override
+		public void onClearEmployeeClick() {
+			employeeDialogObject.resetEmptyInfo();
+			fillExistingEmployee();
+			unblockVariablesExistingContract();
+		}
+		
+		@Override
 		public void onEmployeeDocumentSuggestionChange() {
 			String document = this.document.getValue();
 			EmployeeInfo employeeData = employeeDialogObject.getEmployeeDataByDocument(document);
@@ -53,7 +60,11 @@ public class EmployeeDialog extends CustomDialog {
 			else
 				employeeDialogObject.initializeEmployee(
 						employeeData.getContractId(),
-						r -> { fillExistingEmployee();}, 
+						r -> { fillExistingEmployee();
+							   if(employeeData.getContractActive())
+								   blockVariablesExistingContract();
+							   employee.clear_employee.removeStyleName(employee.style.hide());
+							 }, 
 						t -> {}
 				);	
 		}
@@ -91,7 +102,11 @@ public class EmployeeDialog extends CustomDialog {
 			}else
 				employeeDialogObject.initializeEmployee(
 						employeeData.getContractId(),
-						r -> { fillExistingEmployee();}, 
+						r -> { fillExistingEmployee();
+							   if(employeeData.getContractActive())
+								   blockVariablesExistingContract();
+							   employee.clear_employee.removeStyleName(employee.style.hide());
+							 }, 
 						t -> {}
 				);	
 		}
@@ -120,7 +135,11 @@ public class EmployeeDialog extends CustomDialog {
 			else
 				employeeDialogObject.initializeEmployee(
 						employeeData.getContractId(),
-						r -> { fillExistingEmployee();}, 
+						r -> { fillExistingEmployee();
+							   if(employeeData.getContractActive())
+								   blockVariablesExistingContract();
+							   employee.clear_employee.removeStyleName(employee.style.hide());
+							 }, 
 						t -> {}
 				);				
 		}
@@ -141,7 +160,11 @@ public class EmployeeDialog extends CustomDialog {
 			else
 				employeeDialogObject.initializeEmployee(
 						employeeData.getContractId(),
-						r -> { fillExistingEmployee();}, 
+						r -> { fillExistingEmployee();
+							   if(employeeData.getContractActive())
+								   blockVariablesExistingContract();
+							   employee.clear_employee.removeStyleName(employee.style.hide());
+							 }, 
 						t -> {}
 				);	
 		}
@@ -499,7 +522,7 @@ public class EmployeeDialog extends CustomDialog {
 			EmployeeInfo employeeData = employeeDialogObject.getEmployeeData();
 			ContractInfo contractData = employeeDialogObject.getContractData();
 			
-			if (contractData.getSsRegimen() == 3) { //RETA, había algo mas que determinaba si era o no RETA
+			if (null != contractData.getSsRegimen() && contractData.getSsRegimen() == 3) { //RETA, había algo mas que determinaba si era o no RETA
 				this.showElementsFreelancerTable();
 				fillContractFreelancerTable();
 			} else {
@@ -509,7 +532,7 @@ public class EmployeeDialog extends CustomDialog {
 			
 			this.document.setValue(employeeData.getDocument());
 			this.onEmployeeDocumentChange();
-			this.nationality.setValue(Country.valueOf(employeeData.getNationality()).getName());
+			this.nationality.setValue(null == employeeData.getNationality() ? "" : Country.valueOf(employeeData.getNationality()).getName());
 			this.security_social_num.setValue(employeeData.getSsNumber());
 			this.onEmployeeSSNumChange();
 			this.name.setValue(employeeData.getName());
@@ -533,17 +556,12 @@ public class EmployeeDialog extends CustomDialog {
 		}
 		
 		private void fillContractTable() {
-//			this.document.setValue(employeeDialogObject.getEmployeeDocument());
-//			showNationality(checkDocumentType(employeeDialogObject.getEmployeeDocument()));
-//			this.nationality.setValue(employeeDialogObject.getEmployeeNationality());
-//			this.security_social_num.setValue(employeeDialogObject.getEmployeeSSNumber());
-//			this.name.setValue(employeeDialogObject.getEmployeeName());
-//			this.first_surname.setValue(employeeDialogObject.getEmployeeSurname());
-//			this.second_surname.setValue(employeeDialogObject.getEmployeeSecondSurname());
 			this.ssRegimeType.setSelectedIndex(employeeDialogObject.getContractSSRegimen());
 			this.activityCCC.setSelectedIndex(employeeDialogObject.getContractActivityCCC());
 			this.workplace.setSelectedIndex(employeeDialogObject.getContractWorkplace());
+			
 			Integer contractTypeId = employeeDialogObject.getContractType();
+			
 			this.contractType.setSelectedIndex(EmployeeDialog.this.contractType.getContractTypeIndex(contractTypeId) + 1);
 			if((contractTypeId >= 200 && contractTypeId<300) || (contractTypeId >= 500 && contractTypeId<600)) {
 				this.showElementsPartialTimeContract();
@@ -561,6 +579,7 @@ public class EmployeeDialog extends CustomDialog {
 			for (ModelRecord m : contractTypeModels)
 				this.modality.addItem(m.getModelDescription());
 			
+			
 			Integer modelIndex = EmployeeDialog.this.contractType.getContractModelIndex(employeeDialogObject.getContractType(), employeeDialogObject.getContractModel());
 			if (null == modelIndex) {
 				this.modality.setSelectedIndex(0);
@@ -572,23 +591,18 @@ public class EmployeeDialog extends CustomDialog {
 			this.seniority_date.setValue(employeeDialogObject.getContractSeniorityDate());
 			this.onContractSeniorityDateChange();
 			this.end_date.setValue(employeeDialogObject.getContractEndDate());
+			
 			this.agreement.setSelectedIndex(employeeDialogObject.getContractAgreement() + 1);
 			getAgreementLevels(employeeDialogObject.getContractAgreementId());
 			this.level.setSelectedIndex(employeeDialogObject.getAgreementLevel() + 1);
 			this.category.setValue(employeeDialogObject.getContractAgreementCategory());
 			this.category.setEnabled(true);
+			
 			this.quote_group.setSelectedIndex(employeeDialogObject.getContractQuoteGroup());
 			this.occupation.setSelectedIndex(employeeDialogObject.getContractOcupation());
 		}
 
 		private void fillContractFreelancerTable() {
-//			this.document.setValue(employeeDialogObject.getEmployeeDocument());
-//			showNationality(checkDocumentType(employeeDialogObject.getEmployeeDocument()));
-//			this.nationality.setValue(employeeDialogObject.getEmployeeNationality());
-//			this.security_social_num.setValue(employeeDialogObject.getEmployeeSSNumber());
-//			this.name.setValue(employeeDialogObject.getEmployeeName());
-//			this.first_surname.setValue(employeeDialogObject.getEmployeeSurname());
-//			this.second_surname.setValue(employeeDialogObject.getEmployeeSecondSurname());
 			this.ssRegimeType.setSelectedIndex(1);
 			this.workplace.setSelectedIndex(employeeDialogObject.getContractWorkplace());
 			this.start_date.setValue(employeeDialogObject.getContractStartDate());
@@ -690,6 +704,7 @@ public class EmployeeDialog extends CustomDialog {
 		setCaption("Trabajador");
 		setWidget(binder.createAndBindUi(this));
 		
+		employee.clear_employee.addStyleName(employee.style.hide());
 	}
 
 	public void show(Callback cb) {
@@ -852,69 +867,35 @@ public class EmployeeDialog extends CustomDialog {
 	
 	@UiHandler("acceptButton")
 	void onAcceptButtonClick(ClickEvent clickEvent) {
-		if(checkNotOldEmployee())
-			if(checkIfSaveIsPossible())
-				if(checkDates())
-					if(checkPayMethod())
-						this.employeeDialogObject.createEmployeeContract(
-								r -> { 
-										hide();
-										EmployeeTree.invokeRefreshWorkplace();
-										cb.onAccept(this);
-									 }, 
-								t -> {}
-						);
-					else {
-						WarningDialog dialog = new WarningDialog("Aviso", "Si el metodo de pago es transferencia, debe rellenar obligatoriamente los campos de BIC y cuenta.");
-						dialog.center();
-						dialog.show();
-					}
-						
-				else{
-					WarningDialog dialog = new WarningDialog("Aviso", "La fecha de inicio no puede ser posterior a la fecha de fin.");
+		int ssRegime = employee.ssRegimeType.getSelectedIndex();
+		employeeDialogObject.setSSRegime(ssRegime);
+		
+		if(checkIfSaveIsPossible())
+			if(checkDates())
+				if(checkPayMethod())
+					this.employeeDialogObject.createEmployeeContract(
+							r -> { 
+									hide();
+									EmployeeTree.invokeRefreshWorkplace();
+									cb.onAccept(this);
+								 }, 
+							t -> {}
+					);
+				else {
+					WarningDialog dialog = new WarningDialog("Aviso", "Si el metodo de pago es transferencia, debe rellenar obligatoriamente los campos de BIC y cuenta.");
 					dialog.center();
 					dialog.show();
 				}
-			else {
-				WarningDialog dialog = new WarningDialog("Aviso", "Hay que rellenar los campos azules correcta y obligatoriamente.");
+					
+			else{
+				WarningDialog dialog = new WarningDialog("Aviso", "La fecha de inicio no puede ser posterior a la fecha de fin.");
 				dialog.center();
 				dialog.show();
 			}
 		else {
-			if(null != employeeDialogObject.getContractOldEndDate()){
-				EmployeeCalendarUntillDialog dialog = new EmployeeCalendarUntillDialog("AVISO", "La fecha de inicio de este contrato no puede ser previa a la fecha de fin del contrato activo actualmente. Seleccione una fecha de inicio nueva:") {
-					
-					@Override
-					protected void onAccept() {
-						employee.start_date.setValue(this.getSelectedDate());
-						employeeDialogObject.setContractStartDate(employee.start_date.getValue());
-						employee.end_date.setValue(null);
-						employeeDialogObject.setContractEndDate(employee.end_date.getValue());
-					}
-				};
-				Date oneDayAfter = new Date(employeeDialogObject.getContractOldEndDate().getTime() + (1000 * 60 * 60 * 24));
-				dialog.setDateLabel("Fecha de inicio: ");
-				dialog.setDefaultDate(oneDayAfter);
-				dialog.show();
-				dialog.center();
-			}else {
-				EmployeeCalendarUntillDialog dialog = new EmployeeCalendarUntillDialog("AVISO", "Este trabajador tiene un contrato activo (Fecha inicio : "+employeeDialogObject.getContractOldStartDate()+"), por favor seleccione una fecha de fin previa a la fecha de inicio del nuevo contrato.") {
-					
-					@Override
-					protected void onAccept() {
-//						if(null != this.getSelectedDate() && employee.start_date.getValue().after(this.getSelectedDate()))
-						if(null != this.getSelectedDate() && employeeDialogObject.getContractOldStartDate().before(this.getSelectedDate())) {
-							employeeDialogObject.setOldContractEndDate(this.getSelectedDate());
-						}
-						employee.start_date.setValue(null);
-						employeeDialogObject.setContractStartDate(employee.start_date.getValue());
-					}
-				};
-				Date oneDayBefore = new Date(new Date().getTime() - (1000 * 60 * 60 * 24));
-				dialog.setDefaultDate(oneDayBefore);
-				dialog.show();
-				dialog.center();
-			}
+			WarningDialog dialog = new WarningDialog("Aviso", "Hay que rellenar los campos azules correcta y obligatoriamente.");
+			dialog.center();
+			dialog.show();
 		}
 	}
 
@@ -942,30 +923,17 @@ public class EmployeeDialog extends CustomDialog {
 
 	private boolean checkIfSaveIsPossible() {
 		if(
-		   "" != this.employee.document.getValue() &&
-		   "" != this.employee.nationality.getValue() &&
-		   "" != this.employee.security_social_num.getValue() &&
 		   "" != this.employee.name.getValue() &&
 		   "" != this.employee.first_surname.getValue() &&
-		   null != this.employee.start_date.getValue() &&
-//		   0 != this.employee.agreement.getSelectedIndex() &&
-//		   0 != this.employee.level.getSelectedIndex() &&
-		   null != this.employee.birth_date.getValue()   
+		   null != this.employee.start_date.getValue()   
 		) {
-			String document_type = checkDocumentType(this.employee.document.getValue());
-			String ssNum = this.employee.security_social_num.getValue();
-			
-			if(1 == this.employee.ssRegimeType.getSelectedIndex() &&
-				employeeDialogObject.checkDocumentValidation(document_type, this.employee.document.getValue()) &&
-				employeeDialogObject.checkSSNumValidation(ssNum)) {
+			if(1 == this.employee.ssRegimeType.getSelectedIndex()) {
 				return true;
 			}else if(
 			   0 != this.employee.activityCCC.getSelectedIndex() &&
 			   0 != this.employee.contractType.getSelectedIndex() &&
 			   0 != this.employee.modality.getSelectedIndex() &&
-			   0 != this.employee.quote_group.getSelectedIndex() &&
-			   employeeDialogObject.checkDocumentValidation(document_type, this.employee.document.getValue()) &&
-			   employeeDialogObject.checkSSNumValidation(ssNum)
+			   0 != this.employee.quote_group.getSelectedIndex()
 			) {	
 				return true;
 			}else
@@ -985,6 +953,9 @@ public class EmployeeDialog extends CustomDialog {
 	}
 	
 	public String checkDocumentType(String document) {
+		
+		if(null == document)
+			return "Pasaporte";
 
 		RegExp dniPattern = RegExp.compile("\\d{8}\\-?[A-HJ-NP-TV-Z]");
 		RegExp niePattern = RegExp.compile("[A-Z]{1}\\d{7}[A-Z]{1}");
@@ -999,6 +970,55 @@ public class EmployeeDialog extends CustomDialog {
 		else
 			return "Pasaporte";
 	}
+	
+	public void blockVariablesExistingContract(){
+		employee.document.setEnabled(false);
+		employee.nationality.setEnabled(false);
+		employee.security_social_num.setEnabled(false);
+		employee.name.setEnabled(false);
+		employee.first_surname.setEnabled(false);
+		employee.second_surname.setEnabled(false);
+		
+		employee.birth_date.setEnabled(false);
+		employee.gender.setEnabled(false);
+		employee.street_type.setEnabled(false);
+		employee.address.setEnabled(false);
+		employee.addressNum.setEnabled(false);
+		employee.addressZip.setEnabled(false);
+		employee.addressCity.setEnabled(false);
+		employee.addressProvince.setEnabled(false);
+		employee.mobile.setEnabled(false);
+		employee.phone.setEnabled(false);
+		employee.email.setEnabled(false);
+		employee.payMethod.setEnabled(false);
+		employee.bic.setEnabled(false);
+		employee.account.setEnabled(false);
+	}
+	
+	public void unblockVariablesExistingContract(){
+		employee.document.setEnabled(true);
+		employee.nationality.setEnabled(true);
+		employee.security_social_num.setEnabled(true);
+		employee.name.setEnabled(true);
+		employee.first_surname.setEnabled(true);
+		employee.second_surname.setEnabled(true);
+		
+		employee.birth_date.setEnabled(true);
+		employee.gender.setEnabled(true);
+		employee.street_type.setEnabled(true);
+		employee.address.setEnabled(true);
+		employee.addressNum.setEnabled(true);
+		employee.addressZip.setEnabled(true);
+		employee.addressCity.setEnabled(true);
+		employee.addressProvince.setEnabled(true);
+		employee.mobile.setEnabled(true);
+		employee.phone.setEnabled(true);
+		employee.email.setEnabled(true);
+		employee.payMethod.setEnabled(true);
+		employee.bic.setEnabled(true);
+		employee.account.setEnabled(true);
+	}
+	
 	
 	// ------------------------------------------------------------------------
 	//

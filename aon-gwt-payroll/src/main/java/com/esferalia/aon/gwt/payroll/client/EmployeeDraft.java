@@ -39,6 +39,11 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 
 	private class EmployeeImplementation extends Employee{
 		ContractType contractTypeClass = new ContractType();
+		
+		@Override
+		public void onClearEmployeeClick() {
+			// TODO Auto-generated method stub	
+		}
 
 		@Override
 		public void onEmployeeDocumentSuggestionChange() {
@@ -471,12 +476,18 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		
 		// Inicializamos la vista del empleado
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		employee.clear_employee.addStyleName(employee.style.hide());
 	}
 	
 	// ------------------------------------------------------- UiHandlers --------------------------------------------------------
 	
 	@UiHandler("saveButton")
 	void onSaveButtonClick(ClickEvent event) {
+		Integer streetTypeIdx = employee.street_type.getSelectedIndex();
+		String shortCode = StreetType.values()[streetTypeIdx].getShortCode();
+		employeeDraftObject.setEmployeeStreetType(shortCode);
+		
 		if(checkIfSaveIsPossible())
 			if(checkPayMethod())
 				employeeDraftObject.updateEmployee(

@@ -505,7 +505,7 @@ public class JooqEmployee {
 				
 				GeozoneRecord geozoneParentRecord  = dslContext.insertInto(GEOZONE)
 						.set(GEOZONE.DOMAIN, domain)
-						.set(GEOZONE.NAME, "ESPAÑA")
+						.set(GEOZONE.NAME, "ESPAï¿½A")
 						.set(GEOZONE.CODE, "ES")
 						.set(GEOZONE.SYSTEM, (byte) 1)
 						.returning(GEOZONE.ID)
@@ -913,54 +913,54 @@ public class JooqEmployee {
 		System.out.println(contractData.toString());
 		System.out.println(employeeData.toString());
 		
-		if(null != contractData.getContractId()) {
-			Record oldEndDateRecord = dslContext.select().from(CONTRACT).where(CONTRACT.ID.eq(contractData.getContractId())).fetchOne();
-			Date oldEndDate = oldEndDateRecord.get(CONTRACT.END_DATE);
-			
-			if(null == oldEndDate) {
-				//ACTUALIZAR FECHA INICIO Y FIN: contract, contract_data, contract_info, contract_bonus, contract_deduction, contract_embargo,
-				// contract_leave, contract_payment
-				dslContext.update(CONTRACT)
-					.set(CONTRACT.END_DATE, new Date(contractData.getOldEndDate().getTime())) //Nueva fecha
-					.where(CONTRACT.ID.eq(contractData.getContractId()))
-					.execute();
-				
-				dslContext.update(CONTRACT_DATA)
-					.set(CONTRACT_DATA.END_DATE, new Date(contractData.getOldEndDate().getTime())) //Nueva fecha
-					.where(CONTRACT_DATA.CONTRACT.eq(contractData.getContractId()))
-					.execute();
-				
-				dslContext.update(CONTRACT_INFO)
-					.set(CONTRACT_INFO.END_DATE, new Date(contractData.getOldEndDate().getTime())) //Nueva fecha
-					.where(CONTRACT_INFO.CONTRACT.eq(contractData.getContractId()))
-					.execute();
-				
-				dslContext.update(CONTRACT_BONUS)
-					.set(CONTRACT_BONUS.END_DATE, new Date(contractData.getOldEndDate().getTime())) //Nueva fecha
-					.where(CONTRACT_BONUS.CONTRACT.eq(contractData.getContractId()))
-					.execute();
-				
-				dslContext.update(CONTRACT_DEDUCTION)
-					.set(CONTRACT_DEDUCTION.END_DATE, new Date(contractData.getOldEndDate().getTime())) //Nueva fecha
-					.where(CONTRACT_DEDUCTION.CONTRACT.eq(contractData.getContractId()))
-					.execute();
-				
-				dslContext.update(CONTRACT_EMBARGO)
-					.set(CONTRACT_EMBARGO.END_DATE, new Date(contractData.getOldEndDate().getTime())) //Nueva fecha
-					.where(CONTRACT_EMBARGO.CONTRACT.eq(contractData.getContractId()))
-					.execute();
-
-				dslContext.update(CONTRACT_LEAVE)
-					.set(CONTRACT_LEAVE.END_DATE, new Date(contractData.getOldEndDate().getTime())) //Nueva fecha
-					.where(CONTRACT_LEAVE.CONTRACT.eq(contractData.getContractId()))
-					.execute();
-				
-				dslContext.update(CONTRACT_PAYMENT)
-					.set(CONTRACT_PAYMENT.END_DATE, new Date(contractData.getOldEndDate().getTime())) //Nueva fecha
-					.where(CONTRACT_PAYMENT.CONTRACT.eq(contractData.getContractId()))
-					.execute();
-			}
-		}
+//		if(null != contractData.getContractId()) {
+//			Record oldEndDateRecord = dslContext.select().from(CONTRACT).where(CONTRACT.ID.eq(contractData.getContractId())).fetchOne();
+//			Date oldEndDate = oldEndDateRecord.get(CONTRACT.END_DATE);
+//			
+//			if(null == oldEndDate) {
+//				//ACTUALIZAR FECHA INICIO Y FIN: contract, contract_data, contract_info, contract_bonus, contract_deduction, contract_embargo,
+//				// contract_leave, contract_payment
+//				dslContext.update(CONTRACT)
+//					.set(CONTRACT.END_DATE, new Date(contractData.getOldEndDate().getTime())) //Nueva fecha
+//					.where(CONTRACT.ID.eq(contractData.getContractId()))
+//					.execute();
+//				
+//				dslContext.update(CONTRACT_DATA)
+//					.set(CONTRACT_DATA.END_DATE, new Date(contractData.getOldEndDate().getTime())) //Nueva fecha
+//					.where(CONTRACT_DATA.CONTRACT.eq(contractData.getContractId()))
+//					.execute();
+//				
+//				dslContext.update(CONTRACT_INFO)
+//					.set(CONTRACT_INFO.END_DATE, new Date(contractData.getOldEndDate().getTime())) //Nueva fecha
+//					.where(CONTRACT_INFO.CONTRACT.eq(contractData.getContractId()))
+//					.execute();
+//				
+//				dslContext.update(CONTRACT_BONUS)
+//					.set(CONTRACT_BONUS.END_DATE, new Date(contractData.getOldEndDate().getTime())) //Nueva fecha
+//					.where(CONTRACT_BONUS.CONTRACT.eq(contractData.getContractId()))
+//					.execute();
+//				
+//				dslContext.update(CONTRACT_DEDUCTION)
+//					.set(CONTRACT_DEDUCTION.END_DATE, new Date(contractData.getOldEndDate().getTime())) //Nueva fecha
+//					.where(CONTRACT_DEDUCTION.CONTRACT.eq(contractData.getContractId()))
+//					.execute();
+//				
+//				dslContext.update(CONTRACT_EMBARGO)
+//					.set(CONTRACT_EMBARGO.END_DATE, new Date(contractData.getOldEndDate().getTime())) //Nueva fecha
+//					.where(CONTRACT_EMBARGO.CONTRACT.eq(contractData.getContractId()))
+//					.execute();
+//
+//				dslContext.update(CONTRACT_LEAVE)
+//					.set(CONTRACT_LEAVE.END_DATE, new Date(contractData.getOldEndDate().getTime())) //Nueva fecha
+//					.where(CONTRACT_LEAVE.CONTRACT.eq(contractData.getContractId()))
+//					.execute();
+//				
+//				dslContext.update(CONTRACT_PAYMENT)
+//					.set(CONTRACT_PAYMENT.END_DATE, new Date(contractData.getOldEndDate().getTime())) //Nueva fecha
+//					.where(CONTRACT_PAYMENT.CONTRACT.eq(contractData.getContractId()))
+//					.execute();
+//			}
+//		}
 		
 		// ------------------------------------------------------------------------------------------------------------------------
 		// ------------------------------------------------ EMPLOYEE INFO ---------------------------------------------------------
@@ -1056,7 +1056,7 @@ public class JooqEmployee {
 					
 					GeozoneRecord geozoneParentRecord  = dslContext.insertInto(GEOZONE)
 							.set(GEOZONE.DOMAIN, domain)
-							.set(GEOZONE.NAME, "ESPAÑA")
+							.set(GEOZONE.NAME, "ESPAï¿½A")
 							.set(GEOZONE.CODE, "ES")
 							.set(GEOZONE.SYSTEM, (byte) 1)
 							.returning(GEOZONE.ID)
@@ -1229,7 +1229,7 @@ public class JooqEmployee {
 					
 					GeozoneRecord geozoneParentRecord  = dslContext.insertInto(GEOZONE)
 							.set(GEOZONE.DOMAIN, domain)
-							.set(GEOZONE.NAME, "ESPAÑA")
+							.set(GEOZONE.NAME, "ESPAï¿½A")
 							.set(GEOZONE.CODE, "ES")
 							.set(GEOZONE.SYSTEM, (byte) 1)
 							.returning(GEOZONE.ID)
@@ -1456,15 +1456,16 @@ public class JooqEmployee {
 		
 		//ACTUALIZAR DURACION JORNADA
 		TreeMap<java.util.Date, ArrayList<JourneyDuration>> contractJourneyDuration = contractData.getContractJourneyDuration().getContractJourneyDuration();
-		 for(Entry<java.util.Date, ArrayList<JourneyDuration>> entry : contractJourneyDuration.entrySet()) {
-			 for(JourneyDuration journey : entry.getValue()) {
-				 dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
-							CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-						.values(domain, journey.getName(), contractId, journey.getExpression(), 
-								new Date(journey.getStartDate().getTime()), (null == journey.getEndDate()) ? null : new Date(journey.getEndDate().getTime()))
-						.execute();
-			 }
-		 }
+		if(null != contractJourneyDuration)
+			for(Entry<java.util.Date, ArrayList<JourneyDuration>> entry : contractJourneyDuration.entrySet()) {
+				 for(JourneyDuration journey : entry.getValue()) {
+					 dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+								CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+							.values(domain, journey.getName(), contractId, journey.getExpression(), 
+									new Date(journey.getStartDate().getTime()), (null == journey.getEndDate()) ? null : new Date(journey.getEndDate().getTime()))
+							.execute();
+				 }
+			}
 		
 		return null;
 	}

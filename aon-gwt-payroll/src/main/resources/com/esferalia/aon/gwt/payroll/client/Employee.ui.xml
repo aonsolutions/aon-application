@@ -166,7 +166,10 @@
 								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Documento</g:Label>
 							</td>
 							<td ui:field="documentTypeCell" debugId="documentTypeCell">
-								<g:Label styleName='{style.alignTextCenter}' ui:field="document_type" debugId="document_type"></g:Label>
+							    <g:HorizontalPanel>
+							        <g:Button styleName="aon-lookupButton-clear" ui:field="clear_employee" debugId="clear_employee"></g:Button>
+							        <g:Label styleName='{style.alignTextCenter}' ui:field="document_type" debugId="document_type"></g:Label>
+							    </g:HorizontalPanel>
 							</td>
 							<td>
 								<g:HorizontalPanel>

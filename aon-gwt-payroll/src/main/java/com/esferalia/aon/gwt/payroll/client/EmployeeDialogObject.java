@@ -78,11 +78,12 @@ public class EmployeeDialogObject {
 	}
 	
 	public EmployeeInfo getEmployeeDataByDocument(String document){
-		for(EmployeeInfo employee : workplaceEmployees.getWorkplaceEmployees())
+		for(EmployeeInfo employee : workplaceEmployees.getWorkplaceEmployees()){
 			if(document == employee.getDocument()) {
 				employeeData = employee;
 				return employeeData;
 			}
+		}
 		return this.employeeData;
 	}
 	
@@ -96,7 +97,7 @@ public class EmployeeDialogObject {
 		}else if("" == document_string) {
 			return false;
 		}else
-			return true;
+			return false;
 	}
 	
 	public EmployeeInfo getEmployeeDataBySSNum(String ssNum){
@@ -109,6 +110,9 @@ public class EmployeeDialogObject {
 	}
 	
 	public boolean checkSSNumValidation(String ssNum_string) {
+		if(null == ssNum_string)
+			return false;
+		
 		SocialSecurity ss = new SocialSecurity(ssNum_string);
 		if(ss.checkSS())
 			return true;
@@ -251,7 +255,7 @@ public class EmployeeDialogObject {
 	}
 	
 	public Integer getContractSSRegimen() {
-		return (int)this.contractData.getSsRegimen();
+		return this.contractData.getSsRegimen() == null ? 0 : (int) this.contractData.getSsRegimen();
 	}
 	
 	public Integer getContractActivityCCC() {
@@ -306,7 +310,10 @@ public class EmployeeDialogObject {
 //		}
 		
 	public Integer getContractType() {
-		return Integer.parseInt(this.contractData.getContractType());
+		if(null == this.contractData.getContractType())
+			return -1;
+		else
+			return Integer.parseInt(this.contractData.getContractType());
 	}
 	
 	public Integer getContractModel() {
@@ -393,7 +400,7 @@ public class EmployeeDialogObject {
 	}
 	
 	public Integer getContractQuoteGroup() {
-		return Integer.parseInt(this.contractData.getQuoteGroup());
+		return Integer.parseInt(null == this.contractData.getQuoteGroup() ? "0" : this.contractData.getQuoteGroup());
 	}
 	
 	public Integer getContractOcupation() {
@@ -456,10 +463,15 @@ public class EmployeeDialogObject {
 	
 	public Integer getWorkplaceIndex(){
 		Integer index = 0;
-		String workplaceName = getWorkplaceName();
+		Integer workplaceId = null;
+		if(null == employeeData.getEmployeeId()){
+			workplaceId = this.workplace.getId();
+			contractData.setWorkplaceId(workplaceId);
+		}else
+			workplaceId = contractData.getWorkplaceId();
 		
 		for(Workplace workplace : workplaces) {
-			if(workplaceName.equals(workplace.getDescription()))
+			if(workplaceId.equals(workplace.getId()))
 				return index;
 			index++;
 		}
@@ -832,6 +844,12 @@ public class EmployeeDialogObject {
 		default:
 			return null;
 		}
+	}
+
+	public void resetEmptyInfo() {
+		this.employeeContractData = new EmployeeContractInfo();
+		this.employeeData = new EmployeeInfo();
+		this.contractData = new ContractInfo();
 	}
 
 		

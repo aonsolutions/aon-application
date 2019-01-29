@@ -21,6 +21,7 @@ import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -29,6 +30,8 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -107,6 +110,9 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 	
 	@UiField
 	TableElement contractDataTable;
+	
+	@UiField
+	Button clear_employee;
 	
 	@UiField
 	Label document_type;
@@ -275,7 +281,7 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 		initializeView();
 
 		// Init Google Maps Places API (INACTIVO)
-		// initGoogleMapsPlaces();	
+		// initGoogleMapsPlaces();
 	}
 
 	private void initGoogleMapsPlaces() {
@@ -323,6 +329,11 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 	// ------------------------------------------------------------------------
 	
 	// TABLA DATOS CONTRATO
+	
+	@UiHandler("clear_employee")
+	void onClearEmployeeClick(ClickEvent event) {
+		onClearEmployeeClick();
+	}
 	
 	@UiHandler("document")
 	void onDocumentChangeValue(SelectionEvent<Suggestion> event) {
@@ -527,6 +538,7 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 	
 	// TABLA DATOS CONTRATO
 	
+	public abstract void onClearEmployeeClick();
 	public abstract void onEmployeeDocumentSuggestionChange();
 	public abstract void onEmployeeDocumentChange();
 	public abstract void onEmployeeNationalityChange();

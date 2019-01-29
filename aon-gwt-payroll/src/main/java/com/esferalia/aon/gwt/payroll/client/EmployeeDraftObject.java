@@ -309,7 +309,7 @@ public class EmployeeDraftObject {
 			if(streetType == StreetType.values()[i].getShortCode())
 				return i;
 		}
-		return 0;
+		return 14;
 	}
 	
 	public String getEmployeeAddress() {

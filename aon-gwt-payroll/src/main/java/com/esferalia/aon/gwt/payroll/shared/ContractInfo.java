@@ -45,9 +45,36 @@ public class ContractInfo implements Serializable{
 	private Date oldStartDate;
 	private Date oldEndDate;
 	
-	public ContractInfo(){
+	
+	
+	public ContractInfo() {
 		super();
-		contractJourneyDuration = new ContractJourneyDuration();
+		this.contractId = null;
+		this.workplaceId = null;
+		this.cccId = null;
+		this.startDate = null;
+		this.endDate = null;
+		this.seniorityDate = null;
+		this.activityId = null;
+		this.ssRegimen = null;
+		this.agreementCategory = null;
+		this.agreementLevelId = null;
+		this.agreementId = null;
+		this.cccType = null;
+		this.contracttypeId = null;
+		this.contractType = null;
+		this.quotegroupId = null;
+		this.quoteGroup = null;
+		this.ocupationId = null;
+		this.ocupation = null;
+		this.journeytypeId = null;
+		this.journeyType = null;
+		this.contractmodelId = null;
+		this.contractModel = null;
+		this.retaId = null;
+		this.contractJourneyDuration = new ContractJourneyDuration();
+		this.oldStartDate = null;
+		this.oldEndDate = null;
 	}
 	
 	// ------------- GETTERS / SETTERS -------------

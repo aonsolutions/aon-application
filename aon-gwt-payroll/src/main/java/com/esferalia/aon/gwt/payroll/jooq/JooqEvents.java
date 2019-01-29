@@ -280,9 +280,15 @@ public class JooqEvents {
 				.fetch();
 			
 			Integer contractId = null;
+			Boolean isActive = false;
 			
-			if(null != contractRecords && !contractRecords.isEmpty())
+			if(null != contractRecords && !contractRecords.isEmpty()){
 				contractId = contractRecords.get(0).get(CONTRACT.ID);
+				Date endDate = contractRecords.get(0).get(CONTRACT.END_DATE);
+				Date actualDate = new Date(new java.util.Date().getTime());
+				if(null == endDate || endDate.after(actualDate))
+					isActive = true;
+			}
 			
 			Record registryRecord = dslContext.select()
 					.from(REGISTRY)
@@ -400,6 +406,7 @@ public class JooqEvents {
 			
 			//SET EMPLOYEE INFO
 			employee.setContractId(contractId);
+			employee.setContractActive(isActive);
 			
 			employee.setEmployeeId(id);
 			employee.setName(name);
