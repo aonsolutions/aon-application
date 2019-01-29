@@ -360,14 +360,14 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	public void onOpen(OpenEvent<TreeItem> event) {
 		TreeItem item = event.getTarget();
 		Object userObject = item.getUserObject();
-		if (userObject instanceof Employee) {
-			onEmployeeOpen(item);
-		}
 		if (userObject instanceof Workplace) {
 			onWorkplaceOpen(item);
 		}
 		if (userObject instanceof Enterprise) {
 			onEnterpriseOpen(item);
+		}
+		if (userObject instanceof EmployeeDraftObject) {
+			onEmployeeOpen(item);
 		}
 	}
 
@@ -385,8 +385,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			onEnterpriseSelected((Enterprise) userObject);
 		} else if (userObject instanceof Workplace) {
 			onWorkplaceSelected((Workplace) userObject);
-		} else if (userObject instanceof Employee) {
-			onEmployeeSelected((Employee) userObject);
 		} else if (userObject instanceof SalaryDraftObject) {
 			onSalaryDraftSelected((SalaryDraftObject) userObject);
 		} else if (userObject instanceof SalaryPreviewDocument) {
@@ -439,15 +437,15 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		int keyCode = event.getNativeKeyCode();
 		Object object = tree.getSelectedItem().getUserObject();
 
-		if ((event.isControlKeyDown() && keyCode == KeyCodes.KEY_C) && (object instanceof Employee)) {
-			onEmployeeCopy((Employee) object);
+		if ((event.isControlKeyDown() && keyCode == KeyCodes.KEY_C) && (object instanceof EmployeeDraftObject)) {
+			onEmployeeCopy(((EmployeeDraftObject) object).getEmployee());
 		} else if (event.getNativeEvent().getCtrlKey() && keyCode == KeyCodes.KEY_V && object instanceof Workplace) {
 			onEmployeePaste((Workplace) object);
-		} else if (event.getNativeEvent().getCtrlKey() && keyCode == KeyCodes.KEY_X && object instanceof Employee) {
-			onCtrlXPressed((Employee) object);
+		} else if (event.getNativeEvent().getCtrlKey() && keyCode == KeyCodes.KEY_X && object instanceof EmployeeDraftObject) {
+			onCtrlXPressed(((EmployeeDraftObject) object).getEmployee());
 
-		} else if (keyCode == KeyCodes.KEY_DELETE && object instanceof Employee) {
-			onSuprPressed((Employee) object);
+		} else if (keyCode == KeyCodes.KEY_DELETE && object instanceof EmployeeDraftObject) {
+			onSuprPressed(((EmployeeDraftObject) object).getEmployee());
 		}
 	}
 
@@ -491,8 +489,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			onEnterpiseContextMenu((Enterprise) userObject, event);
 		} else if (userObject instanceof Workplace) {
 			onWorkplaceContextMenu((Workplace) userObject, event);
-		} else if (userObject instanceof Employee) {
-			onEmployeeContextMenu((Employee) userObject, event);
+		} else if (userObject instanceof EmployeeDraftObject) {
+			onEmployeeContextMenu(((EmployeeDraftObject) userObject).getEmployee(), event);
 		} else if (userObject instanceof CCC) {
 			onCCCContextMenu((CCC) userObject, event);
 		} else if (userObject instanceof SalaryPreviewDocument) {
@@ -984,7 +982,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			return;
 		} // end-if: Salaries of this employee have been already loaded.
 
-		Employee employee = (Employee) employeeItem.getUserObject();
+		Employee employee = ((EmployeeDraftObject) employeeItem.getUserObject()).getEmployee();
 		employeesService.getSalaries(employee, new AsyncCallback<List<Salary>>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -1035,12 +1033,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	private void onWorkplaceSelected(Workplace workplace) {
 		for (Listener listener : listeners) {
 			listener.onWorkplaceSelected(workplace);
-		}
-	}
-
-	private void onEmployeeSelected(Employee employee) {
-		for (Listener listener : listeners) {
-			listener.onEmployeeSelected(employee);
 		}
 	}
 
@@ -1210,7 +1202,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 	private void onSalaryDocumentsSelected(final TreeItem salariesItem) {
 		TreeItem employeeItem = salariesItem.getParentItem();
-		Employee employee = (Employee) employeeItem.getUserObject();
+		Employee employee = ((EmployeeDraftObject) employeeItem.getUserObject()).getEmployee();
 		employeesService.getSalaries(employee, new AsyncCallback<List<Salary>>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -1728,7 +1720,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		for (int i = 0; i < workplaceItem.getChildCount(); i++) {
 			TreeItem childItem = workplaceItem.getChild(i);
 			Object userObject = childItem.getUserObject();
-			if (userObject instanceof Employee)
+			if (userObject instanceof EmployeeDraftObject)
 				return i;
 		}
 
@@ -1762,7 +1754,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			int employeesOffset = getEmployeesOffset(workplaceItem);
 			for (int j = employeesOffset; j < workplaceItems; j++) {
 				TreeItem employeeItem = workplaceItem.getChild(j);
-				Employee employee = (Employee) employeeItem.getUserObject();
+				Employee employee = ((EmployeeDraftObject) employeeItem.getUserObject()).getEmployee();
 
 				String fullName = employee.getFullname();
 				StringBuffer text = new StringBuffer(fullName);
@@ -1837,7 +1829,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			@Override
 			public boolean test(TreeItem t) {
 				Object object = t.getUserObject();
-				return (object instanceof Employee) && (((Employee) object).getId() == employeeId);
+				return (object instanceof EmployeeDraftObject) && (((EmployeeDraftObject) object).getEmployee().getId() == employeeId);
 			}
 		});
 	}
@@ -1944,15 +1936,15 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 		Object object = tree.getSelectedItem().getUserObject();
 
-		if (object instanceof Employee)
-			onEmployeeCopy((Employee) object);
+		if (object instanceof EmployeeDraftObject)
+			onEmployeeCopy(((EmployeeDraftObject) object).getEmployee());
 	}
 
 	@Override
 	public void onDraftButtonClick(ClickEvent event) {
 		Object object = tree.getSelectedItem().getUserObject();
-		if (object instanceof Employee)
-			onSuprPressed((Employee) object);
+		if (object instanceof EmployeeDraftObject)
+			onSuprPressed(((EmployeeDraftObject) object).getEmployee());
 	}
 
 	@Override
