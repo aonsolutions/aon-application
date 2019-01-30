@@ -33,13 +33,10 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 	
 	private class WorkplaceImplementation extends Workplace{
 		
-		
-		
-
 		@Override
 		public void onWorkplaceDescriptionChange() {
-			workplaceDraftObject.setWorkplaceDescription(workplaceDescription.getValue());
-			saving();
+//			workplaceDraftObject.setWorkplaceDescription(workplaceDescription.getValue());
+//			saving();
 		}
 
 		@Override
@@ -369,6 +366,7 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 						}
 					}
 					workplaceDraftObject.setWorkplaceCalendar(calendarId);
+					saving();
 					//save();
 					
 				}
