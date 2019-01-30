@@ -2488,7 +2488,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	
 	private EnterpriseDraft getEnterpriseDraft() {
 		if (enterpriseDraft == null)
-			enterpriseDraft = new EnterpriseDraft();
+			enterpriseDraft = new EnterpriseDraft()
+									.setOnSaved(w -> refreshEnterprise());
 		return enterpriseDraft;
 	}
 	

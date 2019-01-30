@@ -95,7 +95,7 @@
     		white-space: nowrap;
     		font-size: smaller;
     		padding-left: 30px;
-    		width: 80px;
+    		width: 200px;
 			cursor: pointer;
 		}
 
@@ -151,11 +151,11 @@
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
-							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+							<!--g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 								<g:Button ui:field='saveButton'
 									styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR"
 									enabled="true" />
-							</g:HTMLPanel>
+							</g:HTMLPanel-->
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 								<g:Button ui:field='newWorkplaceButton'
 									styleName='aon-finding-toolbar-item aon-icon-reset' text="NUEVO CENTRO TRABAJO"
@@ -165,6 +165,11 @@
 								<g:Button ui:field='newActivityButton'
 									styleName='aon-finding-toolbar-item aon-icon-reset' text="NUEVA ACTIVIDAD"
 									enabled="true" />
+							</g:HTMLPanel>
+							<g:HTMLPanel styleName="aon-finding-toolbar-item-group {style.paddingTop}">
+							    <g:HorizontalPanel ui:field='saveStatusPanel'>
+							        <g:Label ui:field='saveStatus' styleName="{style.fontEnableStyle}" visible="true"></g:Label>
+							    </g:HorizontalPanel>
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>
@@ -182,7 +187,7 @@
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
-							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" visible="false">
+							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" visible="true">
 								<g:Button debugId='undoAllButton' ui:field='undoAllButton'
 									styleName='aon-finding-toolbar-item {res.css.aonIconUndoAll}' />
 								<g:Button debugId='undoButton' ui:field='undoButton'

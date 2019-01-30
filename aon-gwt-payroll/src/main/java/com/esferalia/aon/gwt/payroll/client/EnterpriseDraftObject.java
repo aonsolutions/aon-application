@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 
+import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.common.shared.Dni;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
@@ -32,6 +33,7 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 		
 		this.enterprisesService = enterprisesService;
 		this.enterprise = enterprise;
+		this.undoManager = new UndoManager<Undoable>();
 	}
 	
 	public List<Agreement> getActiveAgreements(){
@@ -327,33 +329,60 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 	// ------------------------------------------------- SETTER METHODS -------------------------------------------------
 	
 	public void setName(String name) {
+		add(enterpriseInfo::setName, 
+				enterpriseInfo.getName(), 
+				name );
+		
 		enterpriseInfo.setName(name);
 	}
 	
 	public void setAlias(String alias) {
+		add(enterpriseInfo::setAlias, 
+				enterpriseInfo.getAlias(), 
+				alias );
+		
 		enterpriseInfo.setAlias(alias);
 	}
 	
 	public void setDocumentType(String documentType) {
+		Byte type = null;
 		if(documentType == "DNI")
-			enterpriseInfo.setDocumentType((byte) 0);
+			type = (byte) 0; 
 		else if(documentType == "CIF")
-			enterpriseInfo.setDocumentType((byte) 1);
+			type = (byte) 1;
 		else if(documentType == "Pasaporte")
-			enterpriseInfo.setDocumentType((byte) 3);
+			type = (byte) 3; 
 		else
-			enterpriseInfo.setDocumentType((byte) 0);
+			type = (byte) 0; 
+		
+		add(enterpriseInfo::setDocumentType, 
+				enterpriseInfo.getDocumentType(), 
+				type );
+		
+		enterpriseInfo.setDocumentType(type);
 	}
 	
 	public void setDocument(String document) {
+		add(enterpriseInfo::setDocument, 
+				enterpriseInfo.getDocument(), 
+				document );
+		
 		enterpriseInfo.setDocument(document);
 	}
 	
 	public void setNationality(String nationality) {
+		add(enterpriseInfo::setDocumentCountry, 
+				enterpriseInfo.getDocumentCountry(), 
+				nationality );
+		
 		enterpriseInfo.setDocumentCountry(nationality);
 	}
 	
 	public void setAddressStreetType(String streetType){
+		add(enterpriseInfo::setStreetType, 
+				enterpriseInfo.getStreetType(), 
+				getStreetType2(streetType) );
+		
 		enterpriseInfo.setStreetType(getStreetType2(streetType));
 	}
 	
@@ -366,43 +395,84 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 	}
 	
 	public void setAddress(String address) {
+		add(enterpriseInfo::setAddress, 
+				enterpriseInfo.getAddress(), 
+				address );
+		
 		enterpriseInfo.setAddress(address);
 	}
 	
 	public void setAddressNum(String addressNum) {
+		add(enterpriseInfo::setAddressNum, 
+				enterpriseInfo.getAddressNum(), 
+				addressNum );
+		
 		enterpriseInfo.setAddressNum(addressNum);
 	}
 	
 	public void setAddressZip(String addressZip) {
+		add(enterpriseInfo::setAddressZip, 
+				enterpriseInfo.getAddressZip(), 
+				addressZip );
+		
 		enterpriseInfo.setAddressZip(addressZip);
 	}
 	
 	public void setAddressCity(String addressCity) {
+		add(enterpriseInfo::setAddressCity, 
+				enterpriseInfo.getAddressCity(), 
+				addressCity );
+		
 		enterpriseInfo.setAddressCity(addressCity);
 	}
 	
 	public void setAddressProvince(String addressProvince) {
+		add(enterpriseInfo::setAddressProvince, 
+				enterpriseInfo.getAddressProvince(), 
+				addressProvince );
+		
 		enterpriseInfo.setAddressProvince(addressProvince);
 	}
 	
 	public void setMobile (String mobile) {
+		add(enterpriseInfo::setMobile, 
+				enterpriseInfo.getMobile(), 
+				mobile );
+		
 		enterpriseInfo.setMobile(mobile);
 	}
 	
 	public void setPhone(String phone) {
+		add(enterpriseInfo::setPhone, 
+				enterpriseInfo.getPhone(), 
+				phone );
+		
 		enterpriseInfo.setPhone(phone);
 	}
 	
 	public void setEmail(String email) {
+		add(enterpriseInfo::setEmail, 
+				enterpriseInfo.getEmail(), 
+				email );
+		
 		enterpriseInfo.setEmail(email);
 	}
 	
 	public void setWeb(String web) {
+		add(enterpriseInfo::setWeb, 
+				enterpriseInfo.getWeb(), 
+				web );
+		
 		enterpriseInfo.setWeb(web);
 	}
 
 	public void setScope(String scope) {
 		Integer scopeId = getScopeId(scope);
+		
+		add(enterpriseInfo::setScopeId, 
+				enterpriseInfo.getScopeId(), 
+				scopeId );
+		
 		enterpriseInfo.setScopeId(scopeId);
 	}
 	
@@ -416,32 +486,60 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 	}
 
 	public void setScopeId(Integer scopeId) {
+//		add(enterpriseInfo::setScopeId, 
+//				enterpriseInfo.getScopeId(), 
+//				scopeId );
+		
 		enterpriseInfo.setScopeId(scopeId);
 	}
 	
 	public void setPaySheetModel(int paySheetModel) {
+		add(enterpriseInfo::setPaysheetModel, 
+				enterpriseInfo.getPaysheetModel(), 
+				(byte) paySheetModel );
+		
 		enterpriseInfo.setPaysheetModel((byte) paySheetModel);
 	}
 	
 	public void setCostModel(int costModel) {
+		add(enterpriseInfo::setCostsModel, 
+				enterpriseInfo.getCostsModel(), 
+				(byte) costModel );
+		
 		enterpriseInfo.setCostsModel((byte) costModel);
 	}
 	
 	public void setPaySheetSendType(int paySheetModelTypeSend) {
+		add(enterpriseInfo::setPaysheetSendType, 
+				enterpriseInfo.getPaysheetSendType(), 
+				(byte) paySheetModelTypeSend );
+		
 		enterpriseInfo.setPaysheetSendType((byte) paySheetModelTypeSend);
 	}
 	
 	public void setPaySheetSendEmail(String email) {
+		add(enterpriseInfo::setPaysheetEmail, 
+				enterpriseInfo.getPaysheetEmail(), 
+				email );
+		
 		enterpriseInfo.setPaysheetEmail(email);
 	}
 	
 	public void setAgreement(String agreement) {
 		Integer agreementId = getAgreementId(agreement);
+		add(enterpriseInfo::setEnterpriseAgreement, 
+				enterpriseInfo.getEnterpriseAgreement(), 
+				agreementId.toString() );
+		
 		enterpriseInfo.setEnterpriseAgreement(agreementId.toString());
 	}
 	
 	public void setCalendar(String calendar) {
 		Integer calendarId = getCalendarId(calendar);
+		add(enterpriseInfo::setCalendarId, 
+				enterpriseInfo.getCalendarId(), 
+				calendarId );
+		
 		enterpriseInfo.setCalendarId(calendarId);
 	}
 	
@@ -454,6 +552,14 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 	}
 
 	public void setCalendarId(Integer calendarId) {
+//		add(enterpriseInfo::setCalendarId, 
+//				enterpriseInfo.getCalendarId(), 
+//				calendarId );
+		
 		enterpriseInfo.setCalendarId(calendarId);
+	}
+
+	public EnterpriseInfo getEnterpriseInfo() {
+		return this.enterpriseInfo;
 	}
 }
