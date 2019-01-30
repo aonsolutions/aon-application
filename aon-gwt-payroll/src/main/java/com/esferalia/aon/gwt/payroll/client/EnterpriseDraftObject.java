@@ -15,7 +15,7 @@ import com.esferalia.aon.gwt.payroll.shared.StreetType;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class EnterpriseDraftObject {
+public class EnterpriseDraftObject extends AbstractDraftObject {
 
 	private DomainEnterprisesServiceAsync enterprisesService;
 	private Enterprise enterprise;

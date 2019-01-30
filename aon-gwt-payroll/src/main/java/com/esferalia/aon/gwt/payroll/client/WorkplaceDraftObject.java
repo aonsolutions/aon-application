@@ -5,13 +5,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class WorkplaceDraftObject {
-
+public class WorkplaceDraftObject extends AbstractDraftObject {
+	
+	
+	// ------------------------------------------------------------------------
+	
 	private EmployeesServiceAsync employeesService;
 	private DomainEnterprisesServiceAsync enterprisesService;
 	
@@ -30,6 +34,8 @@ public class WorkplaceDraftObject {
 
 		this.workplace = workplace;
 		this.agreements = new ArrayList<>();
+		
+		this.undoManager = new UndoManager<Undoable>();
 		
 	}
 	
@@ -190,31 +196,51 @@ public class WorkplaceDraftObject {
 	}
 	
 	public void setWorkplaceDescription(String description) {
+		add(workplaceInfo::setDescription, 
+			workplaceInfo.getDescription(), 
+			description );
 		workplaceInfo.setDescription(description);
 	}
 
 	public void setWorkplaceAddress(Integer addressId) {
+		add(workplaceInfo::setAddressId, 
+				workplaceInfo.getAddressId(), 
+				addressId);
 		workplaceInfo.setAddressId(addressId);
 	}
 
 	public void setWorkplaceEconomicConcert(int economicCocncert) {
+		add(workplaceInfo::setEconomicConcert, 
+				workplaceInfo.getEconomicConcert(), 
+				(byte) economicCocncert);
 		workplaceInfo.setEconomicConcert((byte) economicCocncert);
 	}
 
 	public void setWorkplaceActive(Boolean active) {
-		if (active) workplaceInfo.setActive((byte) 1);
-		else workplaceInfo.setActive((byte) 0);
+		add(workplaceInfo::setActive, 
+				workplaceInfo.isActive(), 
+				active ? (byte)1 : (byte)0);
+		workplaceInfo.setActive(active ? (byte)1 : (byte)0);
 	}
 
 	public void setWorkplaceCalendar(Integer calendarId) {
+		add(workplaceInfo::setCalendarId, 
+				workplaceInfo.getCalendarId(), 
+				calendarId);
 		workplaceInfo.setCalendarId(calendarId);
 	}
 
 	public void setWorkplaceAgreement(Integer agreementId) {
+		add(workplaceInfo::setAgreementId, 
+				workplaceInfo.getAgreementId(), 
+				agreementId);
 		workplaceInfo.setAgreementId(agreementId);
 	}
 
 	public void setWorkplaceActivity(Integer activityId) {
+		add(workplaceInfo::setActivityId, 
+				workplaceInfo.getActivityId(), 
+				activityId);
 		workplaceInfo.setActivityId(activityId);
 	}
 
@@ -223,5 +249,13 @@ public class WorkplaceDraftObject {
 //		Window.alert("Has Changed? : " + changed);
 		return changed;
 	}
+	
+	
+	
+	// ------------------------------------------------------------------------
+
+	
+	// ------------------------------------------------------------------------
+
 	
 }

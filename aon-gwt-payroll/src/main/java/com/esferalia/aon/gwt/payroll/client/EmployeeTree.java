@@ -2494,7 +2494,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	
 	private WorkplaceDraft getWorkplaceDraft() {
 		if (workplaceDraft == null)
-			workplaceDraft = new WorkplaceDraft();
+			workplaceDraft = new WorkplaceDraft()
+							.setOnSaved(w -> refreshWorkplace() );
 		return workplaceDraft;
 	}
 	

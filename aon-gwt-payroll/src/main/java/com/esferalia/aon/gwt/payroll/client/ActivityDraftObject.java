@@ -9,7 +9,7 @@ import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class ActivityDraftObject {
+public class ActivityDraftObject extends AbstractDraftObject {
 	
 	private ActivityInfo activityInfo;
 	private DomainEnterprisesServiceAsync enterprisesService;

@@ -2,9 +2,12 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Display;
@@ -29,21 +32,27 @@ import com.google.gwt.user.client.ui.Widget;
 public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 	
 	private class WorkplaceImplementation extends Workplace{
+		
+		
+		
 
 		@Override
 		public void onWorkplaceDescriptionChange() {
 			workplaceDraftObject.setWorkplaceDescription(workplaceDescription.getValue());
+			saving();
 		}
 
 		@Override
 		public void onWorkplaceEconomicConcertChange() {
 			workplaceDraftObject.setWorkplaceEconomicConcert(workplaceEconomicConcert.getSelectedIndex() - 1);
+			saving();
 		}
 
 		@Override
 		public void onWorkplaceAgreementChange() {
 			Integer agreementId = workplaceDraftObject.getAgreementId(this.workpalceAgreement.getSelectedItemText());
 			workplaceDraftObject.setWorkplaceAgreement(agreementId);
+			saving();
 		}
 		
 	}
@@ -92,12 +101,23 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 	
 	@UiField (provided = true)
 	Workplace workplace;
+	
+	@UiField
+	Button redoButton;
 
+	@UiField
+	Button undoButton;
+
+	@UiField
+	Button undoAllButton;
 	// ------------------------------------------------------ VARIABLES DE LA CLASE --------------------------------------------------
 
+	private Timer saveTimer;
+	
 	private WorkplaceDraftObject workplaceDraftObject;
-	private Timer timer;
 
+	private Consumer<WorkplaceInfo> onSaved ;
+	
 	// ------------------------------------------------ CONSTRUCTOR ------------------------------------------------------
 
 	public WorkplaceDraft() {
@@ -105,6 +125,37 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 		
 		// Inicializamos la vista del empleado
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		saveStatus.setTitle("Cada cambio que hagas se guarda autom\u00E1ticamente");
+		
+		onSaved = this::onSavedNoop;
+	}
+	
+	public WorkplaceDraft setOnSaved(Consumer<WorkplaceInfo> onSaved) {
+		this.onSaved = onSaved;
+		return this;
+	}
+
+	@UiHandler("undoButton")
+	void onUndoButtonClick(ClickEvent event) {
+		workplaceDraftObject.undo();
+		initializeView();
+		saving();
+	}
+
+	@UiHandler("undoAllButton")
+	void onUndoAllButtonClick(ClickEvent event) {
+		while ( workplaceDraftObject.canUndo() )
+			workplaceDraftObject.undo();
+		initializeView();
+		saving();
+	}
+
+	@UiHandler("redoButton")
+	void onRedoButtonClick(ClickEvent event) {
+		workplaceDraftObject.redo();
+		initializeView();
+		saving();
 	}
 
 	// ------------------------------------------------- UiHandlers ------------------------------------------------------
@@ -130,9 +181,11 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 		saveStatus.setText("Guardando...");
 		workplaceDraftObject.updateWorkplace(
 				r -> { 
-					   saveStatus.setText("Guardado");
-					 }, 
-				t -> {}
+					saved();
+				}, 
+				t -> {
+					saveStatus.setText("Error, los cambios no se han guardado");
+				}
 		);
 	}
 
@@ -142,26 +195,25 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 		this.workplaceDraftObject = workplaceDraftObject;
 		this.workplaceDraftObject.initializeWorkplace(
 				s -> { initializeView();
-					   if(null != timer) timer.cancel();
+				   	   initializeUndoRedo();
 					   initializeScheduler();
 					 }
 				, f -> {}
 		);
 	}
-
+	
+	
 	private void initializeScheduler() {
-		timer = new Timer() {
+		saveStatus.setText("");
+		
+		saveTimer = new Timer() {
 
 			@Override
 			public void run() {
-				if(isAttached() && workplaceDraftObject.hasChanged()) {
-					save();
-				}else
-					saveStatus.setText("");
+				save();
 			}
 		};
 		
-		timer.scheduleRepeating(4000);
 	}
 
 	private void initializeView() {
@@ -185,6 +237,7 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 		resetElements();
 		initializeListBox();
 		fillWorkplaceInfo();
+		
 	}
 	
 	private void resetElements() {
@@ -201,6 +254,19 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 		workplace.workplaceActivityPanel.clear();
 		
 	}
+
+	private void initializeUndoRedo() {
+		undoButton.setEnabled(workplaceDraftObject.canUndo());
+		undoAllButton.setEnabled(workplaceDraftObject.canUndo());
+		redoButton.setEnabled(workplaceDraftObject.canRedo());
+
+		workplaceDraftObject.addUndoManagerListener( (undoManager) -> {
+			undoButton.setEnabled(undoManager.canUndo());
+			undoAllButton.setEnabled(undoManager.canUndo());
+			redoButton.setEnabled(undoManager.canRedo());
+		});
+	}
+	
 
 	private void initializeListBox() {
 		//DIRECCION
@@ -257,7 +323,7 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 						}
 					}
 					workplaceDraftObject.setWorkplaceAddress(addressId);
-					//save();
+					saving();
 				}
 			});
 			workplace.workplaceAddressPanel.add(workplaceAddressWidget);
@@ -348,7 +414,7 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 						}
 					}
 					workplaceDraftObject.setWorkplaceActivity(activityId);
-					//save();
+					saving();
 					
 				}
 			});
@@ -379,11 +445,38 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 		if(workplace.workpalceAgreement.getItemCount() != 0){
 			workplace.workpalceAgreement.setSelectedIndex(workplaceDraftObject.getAgreementIndex(workplaceAgreement) + 1);
 		}	
+		
+		workplace.workplaceDescription.addKeyUpHandler(e-> {
+			
+			String value = workplace.workplaceDescription.getValue();
+			String saved = workplaceDraftObject.getWorkplaceInfo().getDescription();
+			if ( AonStringUtils.equals(value, saved))
+				return;
+			
+			workplaceDraftObject.setWorkplaceDescription(workplace.workplaceDescription.getValue());
+			saving();
+		});
+		
 	}
+	
+	private void saving() {
+		saveStatus.setText("Guardando...");
+		saveTimer.schedule(2500);
+	}
+	
+	private void saved() {
+		saveStatus.setText("Todos los cambios guardados");	
+		onSaved.accept(workplaceDraftObject.getWorkplaceInfo());
+	}
+
+	protected void onSavedNoop(WorkplaceInfo workplaceInfo) {
+		
+	}
+
 
 	@Override
 	public void onContextMenu(ContextMenuEvent event) {
 		// TODO Auto-generated method stub
 	}
-
+	
 }

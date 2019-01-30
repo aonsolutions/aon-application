@@ -27,7 +27,7 @@ import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class EmployeeDraftObject {
+public class EmployeeDraftObject extends AbstractDraftObject{
 	private Workplace workplace;
 	private Employee employee;
 	
