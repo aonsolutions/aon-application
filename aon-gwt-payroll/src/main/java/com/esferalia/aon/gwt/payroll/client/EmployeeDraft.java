@@ -783,30 +783,18 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 
 	private boolean checkIfSaveIsPossible() {
 		if(
-		   "" != this.employee.document.getValue() &&
-		   "" != this.employee.nationality.getValue() &&
-		   "" != this.employee.security_social_num.getValue() &&
 		   "" != this.employee.name.getValue() &&
 		   "" != this.employee.first_surname.getValue() &&
 		   null != this.employee.start_date.getValue() &&
-//		   0 != this.employee.agreement.getSelectedIndex() &&
-//		   0 != this.employee.level.getSelectedIndex() &&
 		   null != this.employee.birth_date.getValue()   
 		) {
-			String document_type = checkDocumentType(this.employee.document.getValue());
-			String ssNum = this.employee.security_social_num.getValue();
-			
-			if(1 == this.employee.ssRegimeType.getSelectedIndex() &&
-				employeeDraftObject.checkDocumentValidation(document_type, this.employee.document.getValue()) &&
-				employeeDraftObject.checkSSNumValidation(ssNum)) {
+			if(1 == this.employee.ssRegimeType.getSelectedIndex()) {
 				return true;
 			}else if(
 			   0 != this.employee.activityCCC.getSelectedIndex() &&
 			   0 != this.employee.contractType.getSelectedIndex() &&
 			   0 != this.employee.modality.getSelectedIndex() &&
-			   0 != this.employee.quote_group.getSelectedIndex() &&
-			   employeeDraftObject.checkDocumentValidation(document_type, this.employee.document.getValue()) &&
-			   employeeDraftObject.checkSSNumValidation(ssNum)
+			   0 != this.employee.quote_group.getSelectedIndex()
 			) {	
 				return true;
 			}else
