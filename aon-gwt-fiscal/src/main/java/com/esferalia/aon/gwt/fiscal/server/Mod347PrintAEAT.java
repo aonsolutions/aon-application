@@ -42,8 +42,8 @@ public class Mod347PrintAEAT extends HttpServlet {
 		try {
 			int id = Integer.parseInt(req.getParameter("mod347"));
 			String domainName = req.getParameter("domainName");
-			String user = req.getParameter("user");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
+			String user = req.getParameter("user");
 			Mod347 mod347 = FISCAL.getMod347(domainName, domainId,user, id);
 
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -55,8 +55,7 @@ public class Mod347PrintAEAT extends HttpServlet {
 			}
 			PrintWriter writer = new PrintWriter(wr);
 			Mod347Writer.fillWriter(mod347, writer);
-			byte[] content = output.toByteArray();
-			
+
 			String s = mod347.getName();
 			StringBuilder sb = new StringBuilder();
 			if (!Character.isJavaIdentifierStart(s.charAt(0))) {
@@ -68,9 +67,11 @@ public class Mod347PrintAEAT extends HttpServlet {
 				}
 			}
 
-			String fileName = "Mod347" + "_" + mod347.getYear() + "_" + sb.toString();
+			String fileName = "Mod347" + "_" + mod347.getYear() + "_" 
+					+ sb.toString();
 
-			downloadPDF(req, resp, fileName, content, Integer.toString(mod347.getYear()));
+			downloadPDF(req, resp, fileName, output.toByteArray(), mod347);
+
 
 		} catch (Throwable e) {
 			throw new ServletException(e);
@@ -78,36 +79,36 @@ public class Mod347PrintAEAT extends HttpServlet {
 
 	}
 
-	private void downloadPDF(HttpServletRequest req, HttpServletResponse resp, 
-			String fileName, byte[] content, String year) throws IOException, KeyManagementException, NoSuchAlgorithmException {
+	private void downloadPDF(HttpServletRequest req, HttpServletResponse resp,
+			String fileName, byte[] content, Mod347 mod347) throws IOException, KeyManagementException, NoSuchAlgorithmException {
 		
-		String fileString = new String(content);
+		String fileString = new String(content, "ISO-8859-1");
 		fileString = fileString.replace("\n", "");
 		fileString = fileString.replace("\r", "");
 		String encodedFile = URLEncoder.encode(fileString, "ISO-8859-1");
 
 		// Solo a partir del 2014
 		String prg = "";
-		if (year == "2014")
+		if (mod347.getYear() == 2014)
 			prg = "PTLINK5L";
-		else if (year == "2015")
+		else if (mod347.getYear() == 2015)
 			prg = "PTLINK9V";
-		else if (year == "2016")
+		else if (mod347.getYear() == 2016)
 			prg = "PTLINKG2";
 		
 		String urlParameters = 
-				"HID=IE"+year.substring(3)+"347A" +  // Cambia para cada ejercicio
+				"HID=IE"+mod347.getYear()+"347A" +  // Cambia para cada ejercicio
 				"&IDI=ES" +
 				"&LEV=000000000000" +						
 				"&FIC="	+ encodedFile + 
 				"&RUT=" + 
 				"&PRG=" + prg +
 				"&FIN=" + 
-				"&EJF=" + year +
+				"&EJF=" + mod347.getYear() +
 				"&MOD=347";
 		
 		String request = "";
-		if (year == "2014" || year == "2015")
+		if (mod347.getYear() == 2014 || mod347.getYear() == 2015)
 			request = "https://www6.aeat.es/es13/l/zi22zilk0022";
 		else request = "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";
 		
