@@ -413,7 +413,7 @@ public class JooqEmployee {
 		// ------------------------------------------------------------------------------------------------------------------------
 		
 		dslContext.update(PERSON)
-			.set(PERSON.BIRTH_DATE, new Date(employeeData.getBirthdate().getTime()))
+			.set(PERSON.BIRTH_DATE, (null == employeeData.getBirthdate()) ? null : new Date(employeeData.getBirthdate().getTime()))
 			.set(PERSON.GENDER, employeeData.getGender())
 			.set(PERSON.SOCIAL_SECURITY_NUM, employeeData.getSsNumber())
 			.set(PERSON.NAME, employeeData.getName())

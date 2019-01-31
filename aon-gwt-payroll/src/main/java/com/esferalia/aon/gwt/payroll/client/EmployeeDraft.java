@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
@@ -16,10 +17,12 @@ import com.esferalia.aon.gwt.payroll.shared.ContractJourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.ContractType;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ModelRecord;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.StreetType;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Display;
@@ -31,8 +34,10 @@ import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class EmployeeDraft extends Composite implements ContextMenuHandler {
@@ -52,28 +57,14 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 
 		@Override
 		public void onEmployeeDocumentChange() {
-			String document = this.document.getValue();
-			String document_type = checkDocumentType(document);
-			
-			this.document_type.setText(document_type);
-			if(employeeDraftObject.checkDocumentValidation(document_type, document)) {
-				employeeDraftObject.setEmployeeDocument(this.document.getValue());
-				employeeDraftObject.setEmployeeDocumentType(document_type);
-				this.documentStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-				this.documentStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
-			}else {
-				this.documentStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
-				this.documentStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-				
-			}
-
-			showNationality(document_type);		
+			checkValidationDocument();	
 		}
 
 		@Override
 		public void onEmployeeNationalityChange() {
 			String countryIso2 = getIso2(this.nationality.getValue());
 			employeeDraftObject.setNationality(countryIso2);
+			saving();
 		}
 
 		@Override
@@ -83,15 +74,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 
 		@Override
 		public void onEmployeeSSNumChange() {
-			String ssNum = this.security_social_num.getValue();
-			if(employeeDraftObject.checkSSNumValidation(ssNum)) {
-				employeeDraftObject.setEmployeeSocialSecurityNum(ssNum);
-				this.ssNumberStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-				this.ssNumberStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
-			}else {
-				this.ssNumberStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
-				this.ssNumberStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-			}
+			checkValidationSSNumber();
 		}
 
 		@Override
@@ -101,7 +84,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 
 		@Override
 		public void onEmployeeNameChange() {
-			employeeDraftObject.setEmployeeName(this.name.getValue());	
+			// TODO Auto-generated method stub	
 		}
 
 		@Override
@@ -111,12 +94,12 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 
 		@Override
 		public void onEmployeeFirstSurnameChange() {
-			employeeDraftObject.setEmployeeFirstSurname(this.first_surname.getValue());
+			// TODO Auto-generated method stub	
 		}
 
 		@Override
 		public void onEmployeeSecondSurnameChange() {
-			employeeDraftObject.setEmployeeSecondSurname(this.second_surname.getValue());
+			// TODO Auto-generated method stub	
 		}
 
 		@Override
@@ -130,6 +113,8 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 			}
 			else
 				this.hideElementsFreelancerTable();
+			
+			saving();
 		}
 
 		@Override
@@ -159,6 +144,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 				employeeDraftObject.setContractCCCId(cccId);
 				employeeDraftObject.setContractCCCType(cccType);
 			}
+			saving();
 		}
 
 		@Override
@@ -166,6 +152,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 			String workplaceName = this.workplace.getSelectedItemText();
 			Integer workplaceId = employeeDraftObject.getWorkplaceIdByName(workplaceName);
 			employeeDraftObject.setContractWorkplaceId(workplaceId);
+			saving();
 		}
 
 		@Override
@@ -199,6 +186,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 				String contract_type_id_str = this.contractType.getSelectedItemText().split(" -")[0];
 				employeeDraftObject.setContractType(contract_type_id_str);
 			}
+			saving();
 		}
 
 		@Override
@@ -213,16 +201,25 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 				Integer contractModelEnum = contractTypeClass.getContractModelId(contractTypeId, contractModelDescription);
 				employeeDraftObject.setContractModel(contractModelEnum); // GET String of enum in JooqEmployee.java
 			}
+			saving();
 		}
 
 		@Override
 		public void onContractStartDateChange() {
-			employeeDraftObject.setContractStartDate(this.start_date.getValue());
+			if(null == this.start_date.getValue()){
+				WarningDialog warning = new WarningDialog("Error", "La fecha de inicio es obligatoria");
+				warning.center();
+				warning.show();
+			}else{
+				employeeDraftObject.setContractStartDate(this.start_date.getValue());
+				saving();
+			}
 		}
 
 		@Override
 		public void onContractEndDateChange() {
 			employeeDraftObject.setContractEndDate(this.end_date.getValue());
+			saving();
 		}
 
 		@Override
@@ -248,6 +245,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 					this.seniority_dateStatus.setTitle("La fecha de inicio no coincide con la de antig" + String.valueOf("\u00FC") + "edad.");
 				}
 			}
+			saving();
 		}
 
 		@Override
@@ -278,6 +276,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 				Integer agreementId = employeeDraftObject.getAgreementId(this.agreement.getSelectedItemText());
 				employeeDraftObject.setContractAgreementId(agreementId);
 			}
+			saving();
 		}
 
 		@Override
@@ -298,11 +297,12 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 				employeeDraftObject.setContractCategory(levelDescription);
 				this.category.setEnabled(true);
 			}
+			saving();
 		}
 
 		@Override
 		public void onContractCategoryChange() {
-			employeeDraftObject.setContractCategory(this.category.getValue());
+			// TODO Auto-generated method stub	
 		}
 
 		@Override
@@ -311,6 +311,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 				employeeDraftObject.setContractQuoteGroup(null);
 			else
 				employeeDraftObject.setContractQuoteGroup(this.quote_group.getSelectedIndex());
+			saving();
 		}
 
 		@Override
@@ -319,6 +320,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 				employeeDraftObject.setContractOccupation(null);
 			else
 				employeeDraftObject.setContractOccupation(this.occupation.getSelectedIndex());
+			saving();
 		}
 
 		@Override
@@ -329,6 +331,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 				 employee.showElementsFullTimeContract();
 			 else
 				 employee.showElementsPartialTimeContract();
+			 saving();
 		}
 		
 		@Override
@@ -361,6 +364,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 						employee.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
 					}
 					employeeDraftObject.setContractJourneyDuration(contractJourneyDuration.getContractJourneyDuration());
+					saving();
 				}				
 			};
 			dialog.center();
@@ -372,11 +376,13 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		@Override
 		public void onEmployeeBirthDateChange() {
 			employeeDraftObject.setEmployeeBirthDate(this.birth_date.getValue());
+			saving();
 		}
 
 		@Override
 		public void onEmployeeGenderChange() {
 			employeeDraftObject.setEmployeeGender(this.gender.getSelectedIndex());
+			saving();
 		}
 
 		@Override
@@ -384,46 +390,48 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 			Integer streetTypeIdx = this.street_type.getSelectedIndex();
 			String shortCode = StreetType.values()[streetTypeIdx].getShortCode();
 			employeeDraftObject.setEmployeeStreetType(shortCode);
+			saving();
 		}
 
 		@Override
 		public void onEmployeeAddressChange() {
-			employeeDraftObject.setEmployeeAddress(this.address.getValue());
+			// TODO Auto-generated method stub	
 		}
 
 		@Override
 		public void onEmployeeAddressNumChange() {
-			employeeDraftObject.setEmployeeAddressNumber(this.addressNum.getValue());
+			// TODO Auto-generated method stub	
 		}
 
 		@Override
 		public void onEmployeeAddressZipChange() {
-			employeeDraftObject.setEmployeeAddressZip(this.addressZip.getValue());
+			// TODO Auto-generated method stub	
 		}
 
 		@Override
 		public void onEmployeeAddressCityChange() {
-			employeeDraftObject.setEmployeeAddressCity(this.addressCity.getValue());
+			// TODO Auto-generated method stub	
 		}
 
 		@Override
 		public void onEmployeeAddressProvinceChange() {
 			employeeDraftObject.setEmployeeAddressProvince(this.addressProvince.getSelectedItemText());
+			saving();
 		}
 
 		@Override
 		public void onEmployeeMobileChange() {
-			employeeDraftObject.setEmployeeMobile(this.mobile.getValue());
+			// TODO Auto-generated method stub	
 		}
 
 		@Override
 		public void onEmployeePhoneChange() {
-			employeeDraftObject.setEmployeePhone(this.phone.getValue());
+			// TODO Auto-generated method stub	
 		}
 
 		@Override
 		public void onEmployeeEmailChange() {
-			employeeDraftObject.setEmployeeEmail(this.email.getValue());
+			// TODO Auto-generated method stub	
 		}
 
 		@Override
@@ -436,16 +444,17 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 				this.bic.setValue(null);
 				onEmployeeBICChange();
 			}
+			saving();
 		}
 
 		@Override
 		public void onEmployeeBICChange() {
-			employeeDraftObject.setEmployeeBIC(this.bic.getValue());
+			// TODO Auto-generated method stub	
 		}
 
 		@Override
 		public void onEmployeeAccountChange() {
-			employeeDraftObject.setEmployeeAccount(this.account.getValue());
+			// TODO Auto-generated method stub	
 		}
 		
 	}
@@ -462,12 +471,27 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	Employee employee;
 	
 	@UiField
-	Button saveButton;
+	Label saveStatus;
+	
+	@UiField
+	Button redoButton;
+
+	@UiField
+	Button undoButton;
+
+	@UiField
+	Button undoAllButton;
+	
+//	@UiField
+//	Button saveButton;
 	
 	// ------------------------------------------------------ VARIABLES DE LA CLASE -------------------------------------------------
 
 	private EmployeeDraftObject employeeDraftObject;
 	private ContractType contractType;
+	
+	private Timer saveTimer;
+	private Consumer<EmployeeContractInfo> onSaved ;
 
 	// --------------------------------------------------------- CONSTRUCTOR --------------------------------------------------------
 
@@ -477,36 +501,55 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		// Inicializamos la vista del empleado
 		initWidget(uiBinder.createAndBindUi(this));
 		
+		//Hide clean employee, only used in New Employee
 		employee.clear_employee.addStyleName(employee.style.hide());
+		
+		//Set save status
+		saveStatus.setTitle("Cada cambio que hagas se guarda autom\u00E1ticamente");	
+		onSaved = this::onSavedNoop;
+	}
+	
+	public EmployeeDraft setOnSaved(Consumer<EmployeeContractInfo> onSaved) {
+		this.onSaved = onSaved;
+		return this;
 	}
 	
 	// ------------------------------------------------------- UiHandlers --------------------------------------------------------
-	
-	@UiHandler("saveButton")
-	void onSaveButtonClick(ClickEvent event) {
-		Integer streetTypeIdx = employee.street_type.getSelectedIndex();
-		String shortCode = StreetType.values()[streetTypeIdx].getShortCode();
-		employeeDraftObject.setEmployeeStreetType(shortCode);
-		
-		if(checkIfSaveIsPossible())
-			if(checkPayMethod())
-				employeeDraftObject.updateEmployee(
-					r -> {}, 
-					t -> {}
-				);
-			else {
-				WarningDialog dialog = new WarningDialog("Aviso", "Si el metodo de pago es transferencia, debe rellenar obligatoriamente los campos de BIC y cuenta.");
-				dialog.center();
-				dialog.show();
-			}	
-		else{
-			WarningDialog dialog = new WarningDialog("Aviso", "Hay que rellenar los campos azules correcta y obligatoriamente.");
-			dialog.center();
-			dialog.show();
-		}
+
+	@UiHandler("undoButton")
+	void onUndoButtonClick(ClickEvent event) {
+		employeeDraftObject.undo();
+		initializeView();
+		saving();
 	}
 
+	@UiHandler("undoAllButton")
+	void onUndoAllButtonClick(ClickEvent event) {
+		while ( employeeDraftObject.canUndo() )
+			employeeDraftObject.undo();
+		initializeView();
+		saving();
+	}
+
+	@UiHandler("redoButton")
+	void onRedoButtonClick(ClickEvent event) {
+		employeeDraftObject.redo();
+		initializeView();
+		saving();
+	}
 	
+	private void save() {
+		saveStatus.setText("Guardando...");
+		employeeDraftObject.updateEmployee(
+				r -> { 
+					saved();
+				}, 
+				t -> {
+					saveStatus.setText("Error, los cambios no se han guardado");
+				}
+		);
+	}
+		
 	// --------------------------------------------------- METODOS DE LA CLASE ----------------------------------------------------
 
 	public void setEmployeeDraftObject(EmployeeDraftObject employeeDraftObject) {
@@ -515,9 +558,33 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		
 		this.employeeDraftObject.initializeEmployee(
 			r -> {
-				initializeView();
+					initializeView();
+					initializeUndoRedo();
+					initializeScheduler();
 			}, t -> {}
 		);
+	}
+	
+	private void initializeScheduler() {
+		saveStatus.setText("");
+		saveTimer = new Timer() {
+			@Override
+			public void run() {
+				save();
+			}
+		};	
+	}
+	
+	private void initializeUndoRedo() {
+		undoButton.setEnabled(employeeDraftObject.canUndo());
+		undoAllButton.setEnabled(employeeDraftObject.canUndo());
+		redoButton.setEnabled(employeeDraftObject.canRedo());
+
+		employeeDraftObject.addUndoManagerListener( (undoManager) -> {
+			undoButton.setEnabled(undoManager.canUndo());
+			undoAllButton.setEnabled(undoManager.canUndo());
+			redoButton.setEnabled(undoManager.canRedo());
+		});
 	}
 
 	private void initializeView() {
@@ -526,6 +593,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		initWorkplaces();
 		initContractType();
 		initAgreements();
+		initHandlers();
 		
 		if (employeeDraftObject.getContractSSRegimen() == 3) {
 			this.employee.showElementsFreelancerTable();
@@ -536,6 +604,174 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		}
 		
 		fillEmployeeTable();
+	}
+
+	private void initHandlers() {
+		employee.document.addKeyUpHandler(e-> {
+			
+			String value = employee.document.getValue();
+			String saved = employeeDraftObject.getEmployeeDocument();
+			if ( AonStringUtils.equals(value, saved))
+				return;
+			
+			employeeDraftObject.setEmployeeDocument(value);
+			saving();
+		});
+		
+		employee.security_social_num.addKeyUpHandler(e-> {
+			
+			String value = employee.security_social_num.getValue();
+			String saved = employeeDraftObject.getEmployeeSSNumber();
+			if ( AonStringUtils.equals(value, saved))
+				return;
+			
+			employeeDraftObject.setEmployeeSocialSecurityNum(value);
+			saving();
+		});
+		
+		employee.name.addKeyUpHandler(e-> {
+			
+			String value = employee.name.getValue();
+			String saved = employeeDraftObject.getEmployeeName();
+			if ( AonStringUtils.equals(value, saved))
+				return;
+			
+			employeeDraftObject.setEmployeeName(value);
+			saving();
+		});
+		
+		employee.first_surname.addKeyUpHandler(e-> {
+			
+			String value = employee.first_surname.getValue();
+			String saved = employeeDraftObject.getEmployeeSurname();
+			if ( AonStringUtils.equals(value, saved))
+				return;
+			
+			employeeDraftObject.setEmployeeFirstSurname(value);
+			saving();
+		});
+		
+		employee.second_surname.addKeyUpHandler(e-> {
+			
+			String value = employee.second_surname.getValue();
+			String saved = employeeDraftObject.getEmployeeSecondSurname();
+			if ( AonStringUtils.equals(value, saved))
+				return;
+			
+			employeeDraftObject.setEmployeeSecondSurname(value);
+			saving();
+		});
+		
+		employee.category.addKeyUpHandler(e-> {
+			
+			String value = employee.category.getValue();
+			String saved = employeeDraftObject.getContractAgreementCategory();
+			if ( AonStringUtils.equals(value, saved))
+				return;
+			
+			employeeDraftObject.setContractCategory(value);
+			saving();
+		});
+		
+		employee.address.addKeyUpHandler(e-> {
+			
+			String value = employee.address.getValue();
+			String saved = employeeDraftObject.getEmployeeAddress();
+			if ( AonStringUtils.equals(value, saved))
+				return;
+			
+			employeeDraftObject.setEmployeeAddress(value);
+			saving();
+		});
+	
+		employee.addressNum.addKeyUpHandler(e-> {
+			
+			String value = employee.addressNum.getValue();
+			String saved = employeeDraftObject.getEmployeeAddressNumber();
+			if ( AonStringUtils.equals(value, saved))
+				return;
+			
+			employeeDraftObject.setEmployeeAddressNumber(value);
+			saving();
+		});
+		
+		employee.addressZip.addKeyUpHandler(e-> {
+			
+			String value = employee.addressZip.getValue();
+			String saved = employeeDraftObject.getEmployeeAddressZip();
+			if ( AonStringUtils.equals(value, saved))
+				return;
+			
+			employeeDraftObject.setEmployeeAddressZip(value);
+			saving();
+		});
+		
+		employee.addressCity.addKeyUpHandler(e-> {
+			
+			String value = employee.addressCity.getValue();
+			String saved = employeeDraftObject.getEmployeeAddressCity();
+			if ( AonStringUtils.equals(value, saved))
+				return;
+			
+			employeeDraftObject.setEmployeeAddressCity(value);
+			saving();
+		});
+		
+		employee.mobile.addKeyUpHandler(e-> {
+			
+			String value = employee.mobile.getValue();
+			String saved = employeeDraftObject.getEmployeeMobile();
+			if ( AonStringUtils.equals(value, saved))
+				return;
+			
+			employeeDraftObject.setEmployeeMobile(value);
+			saving();
+		});
+		
+		employee.phone.addKeyUpHandler(e-> {
+			
+			String value = employee.phone.getValue();
+			String saved = employeeDraftObject.getEmployeePhone();
+			if ( AonStringUtils.equals(value, saved))
+				return;
+			
+			employeeDraftObject.setEmployeePhone(value);
+			saving();
+		});
+		
+		employee.email.addKeyUpHandler(e-> {
+			
+			String value = employee.email.getValue();
+			String saved = employeeDraftObject.getEmployeeEmail();
+			if ( AonStringUtils.equals(value, saved))
+				return;
+			
+			employeeDraftObject.setEmployeeEmail(value);
+			saving();
+		});
+		
+		employee.bic.addKeyUpHandler(e-> {
+			
+			String value = employee.bic.getValue();
+			String saved = employeeDraftObject.getEmployeeBIC();
+			if ( AonStringUtils.equals(value, saved))
+				return;
+			
+			employeeDraftObject.setEmployeeBIC(value);
+			saving();
+		});
+		
+		employee.account.addKeyUpHandler(e-> {
+			
+			String value = employee.account.getValue();
+			String saved = employeeDraftObject.getEmployeeAccount();
+			if ( AonStringUtils.equals(value, saved))
+				return;
+			
+			employeeDraftObject.setEmployeeAccount(value);
+			saving();
+		});
+		
 	}
 
 	private void resetElements() {
@@ -577,25 +813,29 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	}
 
 	private void fillContractFreelancerTable() {
+		//Documents
 		this.employee.document.setValue(employeeDraftObject.getEmployeeDocument());
-		this.employee.onEmployeeDocumentChange();
+		checkValidationDocument();
 		this.employee.nationality.setValue(employeeDraftObject.getEmployeeNationality());
 		this.employee.security_social_num.setValue(employeeDraftObject.getEmployeeSSNumber());
-		this.employee.onEmployeeSSNumChange();
+		checkValidationSSNumber();
+		//Fullname
 		this.employee.name.setValue(employeeDraftObject.getEmployeeName());
 		this.employee.first_surname.setValue(employeeDraftObject.getEmployeeSurname());
 		this.employee.second_surname.setValue(employeeDraftObject.getEmployeeSecondSurname());
+		//Contract
 		this.employee.ssRegimeType.setSelectedIndex(1);
 		this.employee.workplace.setSelectedIndex(employeeDraftObject.getContractWorkplace());
 		this.employee.start_date.setValue(employeeDraftObject.getContractStartDate());
 		this.employee.seniority_date.setValue(employeeDraftObject.getContractSeniorityDate());
-		this.employee.onContractSeniorityDateChange();
+		checkValidationSeniorityDate();
 		this.employee.end_date.setValue(employeeDraftObject.getContractEndDate());
 		this.employee.agreement.setSelectedIndex(employeeDraftObject.getContractAgreement() + 1);
 		getAgreementLevels(employeeDraftObject.getContractAgreementId());
 		this.employee.level.setSelectedIndex(employeeDraftObject.getAgreementLevel() + 1);
 		this.employee.category.setValue(employeeDraftObject.getContractAgreementCategory());
 		this.employee.journeyType.setSelectedIndex(employeeDraftObject.getContractJourneyType());
+		//Contract Partial Journey
 		if(1 == employeeDraftObject.getContractJourneyType()) {
 			this.employee.showElementsPartialTimeContract();
 			ContractJourneyDuration contractJourneyDuration = employeeDraftObject.getContractJourneyDuration();
@@ -626,17 +866,21 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	}
 
 	private void fillContractTable() {
+		//Documents
 		this.employee.document.setValue(employeeDraftObject.getEmployeeDocument());
-		this.employee.onEmployeeDocumentChange();
+		checkValidationDocument();
 		this.employee.nationality.setValue(employeeDraftObject.getEmployeeNationality());
 		this.employee.security_social_num.setValue(employeeDraftObject.getEmployeeSSNumber());
-		this.employee.onEmployeeSSNumChange();
+		checkValidationSSNumber();
+		//Fullname
 		this.employee.name.setValue(employeeDraftObject.getEmployeeName());
 		this.employee.first_surname.setValue(employeeDraftObject.getEmployeeSurname());
 		this.employee.second_surname.setValue(employeeDraftObject.getEmployeeSecondSurname());
+		//Contract
 		this.employee.ssRegimeType.setSelectedIndex(employeeDraftObject.getContractSSRegimen());
 		this.employee.activityCCC.setSelectedIndex(employeeDraftObject.getContractActivityCCC());
 		this.employee.workplace.setSelectedIndex(employeeDraftObject.getContractWorkplace());
+		//Partial Journey
 		Integer contractTypeId = employeeDraftObject.getContractType();
 		this.employee.contractType.setSelectedIndex(contractType.getContractTypeIndex(contractTypeId) + 1);
 		if((contractTypeId >= 200 && contractTypeId<300) || (contractTypeId >= 500 && contractTypeId<600)) {
@@ -681,17 +925,19 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 			this.employee.modality.setSelectedIndex(modelIndex + 1);
 		}
 		
+		
 		this.employee.start_date.setValue(employeeDraftObject.getContractStartDate());
 		this.employee.seniority_date.setValue(employeeDraftObject.getContractSeniorityDate());
-		this.employee.onContractSeniorityDateChange();
+		checkValidationSeniorityDate();
 		this.employee.end_date.setValue(employeeDraftObject.getContractEndDate());
+		
 		this.employee.agreement.setSelectedIndex(employeeDraftObject.getContractAgreement() + 1);
 		getAgreementLevels(employeeDraftObject.getContractAgreementId());
 		this.employee.level.setSelectedIndex(employeeDraftObject.getAgreementLevel() + 1);
 		this.employee.category.setValue(employeeDraftObject.getContractAgreementCategory());
+		
 		this.employee.quote_group.setSelectedIndex(employeeDraftObject.getContractQuoteGroup());
 		this.employee.occupation.setSelectedIndex(employeeDraftObject.getContractOcupation());
-
 	}
 	
 	private void getAgreementLevels(Integer agreementId) {
@@ -731,13 +977,61 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	@Override
 	public void onContextMenu(ContextMenuEvent event) {
 		// TODO Auto-generated method stub
-
 	}
 
 	// --------------------------------------------------- CHECK DOCUMENT TYPE -------------------------------------------------------
 
-	public String checkDocumentType(String document) {
+	private void checkValidationSeniorityDate() {
+		if(null == employee.start_date.getValue() || null == employee.seniority_date.getValue()) {
+			employee.seniority_dateStatus.setStyleName("aon-finding-toolbar-item aon-icon-info aon-finding-toolbar-item-no-border");
+			employee.seniority_dateStatus.removeStyleName(employee.style.hide());
+			employee.seniority_dateStatus.addStyleName(employee.style.marginTop());
+			employee.seniority_dateStatus.setTitle("La fecha de inicio no coincide con la de antig" + String.valueOf("\u00FC") + "edad.");
+		}else {
+			Date startDate = employee.start_date.getValue();
+			DateUtils.resetTime(startDate);
+			Date seniorityDate = employee.seniority_date.getValue();
+			DateUtils.resetTime(seniorityDate);
+			
+			if(startDate.equals(seniorityDate)) {
+				employee.seniority_dateStatus.addStyleName(employee.style.hide());
+			}else {
+				employee.seniority_dateStatus.setStyleName("aon-finding-toolbar-item aon-icon-info aon-finding-toolbar-item-no-border");
+				employee.seniority_dateStatus.removeStyleName(employee.style.hide());
+				employee.seniority_dateStatus.addStyleName(employee.style.marginTop());
+				employee.seniority_dateStatus.setTitle("La fecha de inicio no coincide con la de antig" + String.valueOf("\u00FC") + "edad.");
+			}
+		}
+	}
 
+	private void checkValidationSSNumber() {
+		String ssNum = employee.security_social_num.getValue();
+		if(employeeDraftObject.checkSSNumValidation(ssNum)) {
+			employee.ssNumberStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+			employee.ssNumberStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
+		}else {
+			employee.ssNumberStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
+			employee.ssNumberStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+		}
+	}
+
+	private void checkValidationDocument() {
+		String document = employee.document.getValue();
+		String document_type = checkDocumentType(document);
+		employee.document_type.setText(document_type);
+		
+		if(employeeDraftObject.checkDocumentValidation(document_type, document)) {
+			employee.documentStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+			employee.documentStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
+		}else {
+			employee.documentStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
+			employee.documentStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+		}
+
+		showNationality(document_type);		
+	}
+	
+	public String checkDocumentType(String document) {
 		RegExp dniPattern = RegExp.compile("\\d{8}\\-?[A-HJ-NP-TV-Z]");
 		RegExp niePattern = RegExp.compile("[A-Z]{1}\\d{7}[A-Z]{1}");
 		RegExp cifPattern = RegExp.compile("[A-Z]{1}\\d{8}");
@@ -770,42 +1064,23 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		}
 		return null;
 	}
-	
-	private boolean checkPayMethod() {
-		if(4 == this.employee.payMethod.getSelectedIndex()) {
-			if("" == this.employee.bic.getValue() || "" == this.employee.account.getValue())
-				return false;
-			else
-				return true;
-		}else
-			return true;
-	}
 
-	private boolean checkIfSaveIsPossible() {
-		if(
-		   "" != this.employee.name.getValue() &&
-		   "" != this.employee.first_surname.getValue() &&
-		   null != this.employee.start_date.getValue() &&
-		   null != this.employee.birth_date.getValue()   
-		) {
-			if(1 == this.employee.ssRegimeType.getSelectedIndex()) {
-				return true;
-			}else if(
-			   0 != this.employee.activityCCC.getSelectedIndex() &&
-			   0 != this.employee.contractType.getSelectedIndex() &&
-			   0 != this.employee.modality.getSelectedIndex() &&
-			   0 != this.employee.quote_group.getSelectedIndex()
-			) {	
-				return true;
-			}else
-				return false;
-		}else
-			return false;
-	
-	}
-	
 	private String formatDate(Date date) {
 		return date.getDate() + "/" + (date.getMonth()+1) + "/" + (date.getYear()+1900);
+	}
+	
+	private void saving() {
+		saveStatus.setText("Guardando...");
+		saveTimer.schedule(2500);
+	}
+	
+	private void saved() {
+		saveStatus.setText("Todos los cambios guardados");	
+		onSaved.accept(employeeDraftObject.getEmployeeContractInfo());
+	}
+
+	protected void onSavedNoop(EmployeeContractInfo employeeContractInfo) {
+		
 	}
 
 }

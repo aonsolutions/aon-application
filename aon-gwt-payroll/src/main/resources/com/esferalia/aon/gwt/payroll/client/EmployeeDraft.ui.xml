@@ -122,7 +122,7 @@
     		white-space: nowrap;
     		font-size: smaller;
     		padding-left: 30px;
-    		width: 80px;	
+    		width: 200px;	
 		}
 		
 	</ui:style>
@@ -134,7 +134,7 @@
 					<g:HorizontalPanel>
 						<g:HTMLPanel styleName="aon-finding-title">
 							<g:HTMLPanel styleName="aon-finding-title-internal">
-								<g:Label styleName="aon-outputText">Contrato :</g:Label>
+								<g:Label styleName="aon-outputText">Contrato</g:Label>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="aon-finding-subtitle">
@@ -143,11 +143,6 @@
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
-							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-								<g:Button ui:field='saveButton'
-									styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR"
-									enabled="true" />
-							</g:HTMLPanel>
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 							    <g:Label ui:field='saveStatus' styleName="{style.fontSaveStyle}"></g:Label>
 						    </g:HTMLPanel>
@@ -167,7 +162,7 @@
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
-							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" visible="false">
+							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" visible="true">
 								<g:Button debugId='undoAllButton' ui:field='undoAllButton'
 									styleName='aon-finding-toolbar-item {res.css.aonIconUndoAll}' />
 								<g:Button debugId='undoButton' ui:field='undoButton'
