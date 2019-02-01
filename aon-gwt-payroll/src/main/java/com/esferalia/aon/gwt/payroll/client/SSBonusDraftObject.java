@@ -40,7 +40,7 @@ public class SSBonusDraftObject {
 	public void newBonus(Integer id, Date startDate, Date endDate, String description, Byte type, String expression){
 //		Window.alert("ID : " + id + ", startDate : " + startDate + ", endDate : " + endDate + 
 //					", description : " + description + ", type : " + type + ", expression : " + expression);
-		SSBonusData newBonus = new SSBonusData(id, startDate, endDate, description, type, expression);
+		SSBonusData newBonus = new SSBonusData(id, false, startDate, endDate, description, type, expression);
 		this.ssBonuses.add(newBonus);
 	}
 	

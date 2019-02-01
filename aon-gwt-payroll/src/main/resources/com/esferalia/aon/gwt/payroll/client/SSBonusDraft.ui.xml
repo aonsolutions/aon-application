@@ -40,7 +40,7 @@
 		}
 
 		.paddingBlock{
-			padding-left: 35px;
+			padding-left: 15px;
     		padding-top: 5px;
 		}
 
@@ -55,7 +55,7 @@
 		}
 
 		.widthBox{
-			width: 400px;
+			width: 99.5%;
 		}
 
 		.dateBox{
@@ -95,6 +95,7 @@
     		border: 1px solid #555555;
     		margin-top: 15px;
     		margin-left: 319px;
+			margin-bottom: 10px;
 		}
 
 		.paddingTop{
@@ -103,7 +104,6 @@
 		}
 
 		.paddingHide{
-			padding-left: 35px;
     		padding-top: 25px;
 		}
 
@@ -151,6 +151,59 @@
     		position: absolute;
 		}
 
+		.styleBorder{
+			border-style: solid; 
+			width: 975px; 
+			border-width: 1px; 
+			margin-top: 20px; 
+			margin-left: 10px;
+		}
+
+		.headerStyle{
+			top: -0.5em;
+			font-size: 12px;
+			margin-left: 10px;
+		}
+
+		.styleBorder2{
+			border-style: solid; 
+			width: 975px; 
+			border-width: 1px; 
+			margin-top: 40px; 
+			margin-left: 10px;
+		}
+
+		.firstColumnTextStyle{
+			padding:5px !important;
+		}
+
+		.maxWidth{
+			width: 100%;
+		}
+
+		.formulaStyle{
+			border: none;
+			color: #4b4b4b;
+			font: 12px/ 1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
+			width: 370px;
+		}
+
+		.descriptionStyle{
+			width: 290px 
+		}
+
+		.dateStyle{
+			width: 80px;
+		}
+
+		.selected{
+			background: #fff7ca !important;
+		}
+
+		.unSelected{
+			background: white;
+		}
+
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX">
@@ -185,145 +238,185 @@
 		<g:center> 
 		    <g:ScrollPanel>
 		        <g:HTMLPanel> 
-		            <g:Label styleName="{style.title}">BONIFICACIONES</g:Label>
-		            <hr align="left" noshade="noshade" style="margin-left: 25px;width: 80%;margin-top: 5px;border-width: 0.5px;"/>
-		            <g:HTMLPanel styleName="{style.paddingBlock}">
-			            <g:HTMLPanel ui:field='idPanel'>
-			                <g:Label styleName="{style.bold}">Id Bonificación</g:Label>
-			           		<g:TextBox ui:field='idBonus' styleName="{style.widthBox}"></g:TextBox>
-			            </g:HTMLPanel>
-			            <g:Label styleName="{style.bold}">1. Periodo de bonificación</g:Label>
-			            <g:HorizontalPanel>
-			                <g:Label styleName="{style.paddingLabel} {style.bold}">Fecha incio</g:Label>
-			                <a:DateBoxEx ui:field='startDateBonus' styleName="rich-calendar-input aon-selectInputDate-inputClass {style.dateBox}"></a:DateBoxEx>
-			                <g:Label styleName="{style.paddingLabel} {style.bold}">Fecha fin</g:Label>
-			                <a:DateBoxEx ui:field='endDateBonus' styleName="rich-calendar-input aon-selectInputDate-inputClass {style.dateBox}"></a:DateBoxEx>
-			            </g:HorizontalPanel>
-			            <g:Label styleName="{style.bold}">2. Descripción de la bonificación</g:Label>
-			            <g:TextBox ui:field='descriptionBonus' styleName="aon-inputText {style.widthBox}"></g:TextBox>
-			            <g:Label styleName="{style.bold}">3. Tipo de bonificación</g:Label>
-			            <g:ListBox ui:field='typeBonus' width="405px" styleName='aon-inputText'></g:ListBox>
-			            <g:Label styleName="{style.bold}">4. Fórmula de la bonificación</g:Label>
-			            <g:TextBox ui:field='formulaBonus' styleName="aon-inputText {style.widthBox}"></g:TextBox>
-			            <g:HTMLPanel ui:field='checksPanel' styleName="{style.paddingHide}"> <!-- TABLE -->
-			                <hr align="left" noshade="noshade" style="margin-bottom: 20px;width: 80%;border-width: 0.5px;"/>
-			                <g:HorizontalPanel>
-			                	<g:Label styleName="{style.paddingTop} {style.bold}">Porcentaje: </g:Label>
-			            		<g:TextBox ui:field='percentBonus' width="300px" styleName="aon-inputText"></g:TextBox>
-			            		<g:Label styleName="{style.paddingTop} {style.bold} {style.paddingLeft}">%</g:Label>
-			            	</g:HorizontalPanel>
-			                <g:Grid>
-								<g:row>
-									<g:customCell>
-										<g:Label width="150px"></g:Label>
-									</g:customCell>
-									<g:customCell>
-										<g:Label styleName="{style.bold}">Cuota de empresa</g:Label>
-									</g:customCell>
-									<g:customCell>
-										<g:Label styleName="{style.bold}">Cuota de trabajador</g:Label>
-									</g:customCell>
-								</g:row>
-								<g:row>
-									<g:customCell>
-										<g:Label styleName="{style.bold}">Contigencias comunes</g:Label>
-									</g:customCell>
-									<g:customCell styleName="{style.alignCenter}">
-										<g:CheckBox ui:field='checkCommonC'></g:CheckBox>
-									</g:customCell>
-									<g:customCell styleName="{style.alignCenter}">
-										<g:CheckBox ui:field='checkCommonE'></g:CheckBox>
-									</g:customCell>
-								</g:row>
-								<g:row>
-									<g:customCell>
-										<g:Label styleName="{style.bold}">Accidentes de trabajo</g:Label>
-									</g:customCell>
-									<g:customCell styleName="{style.alignCenter}">
-										<g:CheckBox ui:field='checkAccidentC'></g:CheckBox>
-									</g:customCell>
-									<g:customCell styleName="{style.alignCenter}">
-										<g:CheckBox ui:field='checkAccidentE'></g:CheckBox>
-									</g:customCell>
-								</g:row>
-								<g:row>
-									<g:customCell>
-										<g:Label styleName="{style.bold}">Desempleo</g:Label>
-									</g:customCell>
-									<g:customCell styleName="{style.alignCenter}">
-										<g:CheckBox ui:field='checkUnemploymentC'></g:CheckBox>
-									</g:customCell>
-									<g:customCell styleName="{style.alignCenter}">
-										<g:CheckBox ui:field='checkUnemploymentE'></g:CheckBox>
-									</g:customCell>
-								</g:row>
-								<g:row>
-									<g:customCell>
-										<g:Label styleName="{style.bold}">FOGASA</g:Label>
-									</g:customCell>
-									<g:customCell styleName="{style.alignCenter}">
-										<g:CheckBox ui:field='checkFogasaC'></g:CheckBox>
-									</g:customCell>
-									<g:customCell styleName="{style.alignCenter}">
-										<g:CheckBox ui:field='checkFogasaE'></g:CheckBox>
-									</g:customCell>
-								</g:row>
-								<g:row>
-									<g:customCell>
-										<g:Label styleName="{style.bold}">Formación profesional</g:Label>
-									</g:customCell>
-									<g:customCell styleName="{style.alignCenter}">
-										<g:CheckBox ui:field='checkFormationC'></g:CheckBox>
-									</g:customCell>
-									<g:customCell styleName="{style.alignCenter}">
-										<g:CheckBox ui:field='checkFormationE'></g:CheckBox>
-									</g:customCell>
-								</g:row>
-							</g:Grid>
-							<g:Button ui:field='applyChecks' styleName="{style.button}">Aplicar</g:Button>
-			            </g:HTMLPanel>
-			            <g:HTMLPanel ui:field='amountPanel' styleName="{style.paddingHide}">
-			                <hr align="left" noshade="noshade" style="margin-bottom: 20px;width: 80%;border-width: 0.5px;"/>
-			                <g:HorizontalPanel>
-			                	<g:Label styleName="{style.paddingTop} {style.bold}">Cantidad: </g:Label>
-			            		<g:TextBox ui:field='amountBonus' width="300px" styleName="aon-inputText"></g:TextBox>
-			            	</g:HorizontalPanel>
-			            	<g:Button ui:field='applyAmount' styleName="{style.button}">Aplicar</g:Button>
-			            </g:HTMLPanel>
-             		</g:HTMLPanel>
+		            <g:VerticalPanel styleName="{style.styleBorder}">
+			            <g:Label styleName='aon-group-title {style.headerStyle}' width="105px">Bonificaciones</g:Label>
+			            <g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel">
+		             		<table ui:field="ssBonusDataTable" style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
+		             			<tr>
+							        <td></td>
+							        <td></td>
+							    </tr>
+							    <tr style="display: none;">
+							    	<td  style="background-color: #eaeaea; width: 200px;">
+							    		<g:Label  styleName='{style.firstColumnTextStyle}'>Id Bonificación</g:Label>
+							    	</td>
+							    	<td>
+							    		<g:TextBox ui:field='idBonus' styleName='aon-inputText {style.widthBox}'></g:TextBox>
+							    	</td>
+						    	</tr>
+						    	<tr>
+							    	<td  style="background-color: #eaeaea; width: 200px;">
+							    		<g:Label  styleName='{style.firstColumnTextStyle}'>Periodo de bonificación</g:Label>
+							    	</td>
+							    	<td>
+							    		<g:HorizontalPanel>
+							                <g:Label styleName="{style.paddingLabel} {style.bold}">Fecha incio</g:Label>
+							                <a:DateBoxEx ui:field='startDateBonus' styleName="rich-calendar-input aon-selectInputDate-inputClass {style.dateBox}"></a:DateBoxEx>
+							                <g:Label styleName="{style.paddingLabel} {style.bold}">Fecha fin</g:Label>
+							                <a:DateBoxEx ui:field='endDateBonus' styleName="rich-calendar-input aon-selectInputDate-inputClass {style.dateBox}"></a:DateBoxEx>
+							            </g:HorizontalPanel>
+							    	</td>
+						    	</tr>
+						    	<tr>
+							    	<td  style="background-color: #eaeaea; width: 200px;">
+							    		<g:Label  styleName='{style.firstColumnTextStyle}'>Descripción</g:Label>
+							    	</td>
+							    	<td>
+							    		<g:TextBox ui:field='descriptionBonus' styleName="aon-inputText {style.widthBox}"></g:TextBox>
+							    	</td>
+						    	</tr>
+						    	<tr>
+							    	<td  style="background-color: #eaeaea; width: 200px;">
+							    		<g:Label  styleName='{style.firstColumnTextStyle}'>Tipo</g:Label>
+							    	</td>
+							    	<td>
+							    		<g:ListBox ui:field='typeBonus' styleName='aon-inputText {style.maxWidth}'></g:ListBox>
+							    	</td>
+						    	</tr>
+						    	<tr>
+							    	<td  style="background-color: #eaeaea; width: 200px;">
+							    		<g:Label  styleName='{style.firstColumnTextStyle}'>Fórmula</g:Label>
+							    	</td>
+							    	<td>
+							    		<g:TextBox ui:field='formulaBonus' styleName="aon-inputText {style.widthBox}"></g:TextBox>
+							    	</td>
+						    	</tr>
+		             		</table>
+		             	</g:HTMLPanel>		
+			            
+			            <g:HTMLPanel styleName="{style.paddingBlock}">
+				         	<g:HTMLPanel ui:field='checksPanel'> <!-- TABLE -->
+				                <hr align="left" noshade="noshade" style="margin-bottom: 20px;width: 99%;height: 1px;border: none;color: #333;background-color: #333;"/>
+				                <g:HorizontalPanel>
+				                	<g:Label styleName="{style.paddingTop} {style.bold}">Porcentaje: </g:Label>
+				            		<g:TextBox ui:field='percentBonus' width="300px" styleName="aon-inputText"></g:TextBox>
+				            		<g:Label styleName="{style.paddingTop} {style.bold} {style.paddingLeft}">%</g:Label>
+				            	</g:HorizontalPanel>
+				                <g:Grid>
+									<g:row>
+										<g:customCell>
+											<g:Label width="150px"></g:Label>
+										</g:customCell>
+										<g:customCell>
+											<g:Label styleName="{style.bold}">Cuota de empresa</g:Label>
+										</g:customCell>
+										<g:customCell>
+											<g:Label styleName="{style.bold}">Cuota de trabajador</g:Label>
+										</g:customCell>
+									</g:row>
+									<g:row>
+										<g:customCell>
+											<g:Label styleName="{style.bold}">Contigencias comunes</g:Label>
+										</g:customCell>
+										<g:customCell styleName="{style.alignCenter}">
+											<g:CheckBox ui:field='checkCommonC'></g:CheckBox>
+										</g:customCell>
+										<g:customCell styleName="{style.alignCenter}">
+											<g:CheckBox ui:field='checkCommonE'></g:CheckBox>
+										</g:customCell>
+									</g:row>
+									<g:row>
+										<g:customCell>
+											<g:Label styleName="{style.bold}">Accidentes de trabajo</g:Label>
+										</g:customCell>
+										<g:customCell styleName="{style.alignCenter}">
+											<g:CheckBox ui:field='checkAccidentC'></g:CheckBox>
+										</g:customCell>
+										<g:customCell styleName="{style.alignCenter}">
+											<g:CheckBox ui:field='checkAccidentE'></g:CheckBox>
+										</g:customCell>
+									</g:row>
+									<g:row>
+										<g:customCell>
+											<g:Label styleName="{style.bold}">Desempleo</g:Label>
+										</g:customCell>
+										<g:customCell styleName="{style.alignCenter}">
+											<g:CheckBox ui:field='checkUnemploymentC'></g:CheckBox>
+										</g:customCell>
+										<g:customCell styleName="{style.alignCenter}">
+											<g:CheckBox ui:field='checkUnemploymentE'></g:CheckBox>
+										</g:customCell>
+									</g:row>
+									<g:row>
+										<g:customCell>
+											<g:Label styleName="{style.bold}">FOGASA</g:Label>
+										</g:customCell>
+										<g:customCell styleName="{style.alignCenter}">
+											<g:CheckBox ui:field='checkFogasaC'></g:CheckBox>
+										</g:customCell>
+										<g:customCell styleName="{style.alignCenter}">
+											<g:CheckBox ui:field='checkFogasaE'></g:CheckBox>
+										</g:customCell>
+									</g:row>
+									<g:row>
+										<g:customCell>
+											<g:Label styleName="{style.bold}">Formación profesional</g:Label>
+										</g:customCell>
+										<g:customCell styleName="{style.alignCenter}">
+											<g:CheckBox ui:field='checkFormationC'></g:CheckBox>
+										</g:customCell>
+										<g:customCell styleName="{style.alignCenter}">
+											<g:CheckBox ui:field='checkFormationE'></g:CheckBox>
+										</g:customCell>
+									</g:row>
+								</g:Grid>
+								<g:Button ui:field='applyChecks' styleName="{style.button}">Aplicar</g:Button>
+				            </g:HTMLPanel>
+				            <g:HTMLPanel ui:field='amountPanel'>
+				                <hr align="left" noshade="noshade" style="margin-bottom: 20px;width: 99%;height: 1px;border: none;color: #333;background-color: #333;"/>
+				                <g:HorizontalPanel>
+				                	<g:Label styleName="{style.paddingTop} {style.bold}">Cantidad: </g:Label>
+				            		<g:TextBox ui:field='amountBonus' width="300px" styleName="aon-inputText"></g:TextBox>
+				            	</g:HorizontalPanel>
+				            	<g:Button ui:field='applyAmount' styleName="{style.button}">Aplicar</g:Button>
+				            </g:HTMLPanel>
+	             		</g:HTMLPanel>
+	             	</g:VerticalPanel>
+	             	
              		<g:HTMLPanel ui:field='listBonusesPanel' styleName="{style.paddingHide}">
-             		    <g:Label styleName="{style.title2}">LISTA BONIFICACIONES</g:Label>
-             			<hr align="left" noshade="noshade" style="margin-bottom: 20px;width: 81%;border-width: 0.5px;"/>
-             			<g:ScrollPanel>
-             				<g:Grid ui:field="listBonusesTable" width="95%" styleName="{style.noselect}">
-             				    <g:row>
-             				        <g:customCell>
-										<g:Label>&nbsp;</g:Label>
-									</g:customCell>
-             				        <g:customCell>
-										<g:Label>&nbsp;</g:Label>
-									</g:customCell>
-             				        <g:customCell>
-										<g:Label>&nbsp;</g:Label>
-									</g:customCell>
-									<g:customCell>
-										<g:Label>&nbsp;</g:Label>
-									</g:customCell>
-									<g:customCell>
-										<g:Label>&nbsp;</g:Label>
-									</g:customCell>
-									<g:customCell>
-										<g:Label>&nbsp;</g:Label>
-									</g:customCell>
-									<g:customCell>
-										<g:Label>&nbsp;</g:Label>
-									</g:customCell>
-									<g:customCell>
-										<g:Label>&nbsp;</g:Label>
-									</g:customCell>
-             				    </g:row>
-             				</g:Grid>
-             			</g:ScrollPanel>
+             		    <g:VerticalPanel styleName="{style.styleBorder}">
+	             		    <g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Lista Bonificaciones</g:Label>
+	             			<g:ScrollPanel>
+	             				<g:Grid ui:field="listBonusesTable" width="95%" styleName="{style.noselect}">
+	             				    <g:row>
+	             				        <g:customCell>
+											<g:Label>&nbsp;</g:Label>
+										</g:customCell>
+	             				        <g:customCell>
+											<g:Label>&nbsp;</g:Label>
+										</g:customCell>
+	             				        <g:customCell>
+											<g:Label>&nbsp;</g:Label>
+										</g:customCell>
+										<g:customCell>
+											<g:Label>&nbsp;</g:Label>
+										</g:customCell>
+										<g:customCell>
+											<g:Label>&nbsp;</g:Label>
+										</g:customCell>
+										<g:customCell>
+											<g:Label>&nbsp;</g:Label>
+										</g:customCell>
+										<g:customCell>
+											<g:Label>&nbsp;</g:Label>
+										</g:customCell>
+										<g:customCell>
+											<g:Label>&nbsp;</g:Label>
+										</g:customCell>
+	             				    </g:row>
+	             				</g:Grid>
+	             			</g:ScrollPanel>
+             			</g:VerticalPanel>
              		</g:HTMLPanel>
 		        </g:HTMLPanel> 
 		    </g:ScrollPanel>

@@ -7,7 +7,6 @@ import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -44,6 +43,11 @@ public class SSBonusDraft extends Composite {
 		String hide();
 		String buttonTable();
 		String bold();
+		String formulaStyle();
+		String descriptionStyle();
+		String dateStyle();
+		String selected();
+		String unSelected();
 	}
 	
 	//ELEMENTOS HTML
@@ -52,9 +56,6 @@ public class SSBonusDraft extends Composite {
 	
 	@UiField
 	Button saveButton;
-	
-	@UiField
-	HTMLPanel idPanel;
 	
 	@UiField
 	TextBox idBonus;
@@ -139,10 +140,50 @@ public class SSBonusDraft extends Composite {
 	public SSBonusDraft() {
 		initWidget(uiBinder.createAndBindUi(this));
 	}
-
 	
 
 // ----------------------------------------------------------------- UiHandlers ----------------------------------------------------------
+	
+	@UiHandler("listBonusesTable")
+	public void onBonusesTableClick(ClickEvent event) {
+		event.preventDefault();
+		
+		int row = listBonusesTable.getCellForEvent(event).getRowIndex();
+//		int col = listBonusesTable.getCellForEvent(event).getCellIndex();
+//		int pos = (row * 39) + col;
+//		Window.alert("CLICK -> Row : " + row + ", Column : " + col + ", Position : " + pos);
+		
+		Label idLabel = (Label) listBonusesTable.getWidget(row, 0);
+		String idString = idLabel.getText();
+//		Window.alert("Id : " + idString);
+		Integer id = Integer.parseInt(idString);
+		
+		boolean canEdit = enableEditable(id);
+		
+		if(canEdit){
+			cleanSelected();
+			setSelected(row);
+		}else
+			cleanSelected();
+			initializePage();
+	}
+	
+	private void setSelected(int row) {
+		//Set Selected
+		this.listBonusesTable.getWidget(row, 6).addStyleName(style.selected());
+		this.listBonusesTable.getRowFormatter().addStyleName(row, style.selected());
+	}
+
+	private void cleanSelected() {
+		//Set Unselected
+		int rows = this.listBonusesTable.getRowCount();
+		for(int itRow = 0; itRow < rows; itRow++){
+			this.listBonusesTable.getWidget(itRow, 6).removeStyleName(style.selected());
+			this.listBonusesTable.getRowFormatter().removeStyleName(itRow, style.selected());
+		}
+	}
+
+
 	@UiHandler("endDateBonus")
 	void onEndDateBonusChangeValue(ValueChangeEvent<Date> event) {
 		if(startDateBonus.getValue() != null)
@@ -241,7 +282,8 @@ public class SSBonusDraft extends Composite {
 	
 	@UiHandler("listBonusesButton")
 	void onListBonusesButtonClick(ClickEvent event) {
-		showListBonuses();
+		cleanSelected();
+		initializePage();
 	}
 	
 	@UiHandler("saveButton")
@@ -252,7 +294,7 @@ public class SSBonusDraft extends Composite {
 		Byte type_bonus = (byte) typeBonus.getSelectedIndex();
 		String formula_bonus = formulaBonus.getValue();
 		
-		if(null == starDate_bonus || null == endDate_bonus || "" == description_bonus || 0 == type_bonus || "" == formula_bonus){
+		if(null == starDate_bonus || "" == description_bonus || "" == formula_bonus){
 			WarningDialog warning = new WarningDialog("Warning", "Faltan campos por rellenar");
 			warning.show();
 			warning.center();
@@ -272,7 +314,7 @@ public class SSBonusDraft extends Composite {
 			
 			this.ssBonusDraftObject.updateDBBonuses(r -> 
 			{
-				setSSBonusDraftObject(ssBonusDraftObject);
+				initializePage();
 			}, t -> {});
 		}	
 	}
@@ -283,14 +325,18 @@ public class SSBonusDraft extends Composite {
 		this.ssBonusDraftObject = ssBonusDraftObject;
 		this.ssBonusDraftObject.initializeSSBonuses(
 				r -> {
-					cleanPage();
-					initializeListBox();
-					hideAllPanels();
-					showListBonuses();
+					initializePage();
 				}, 
 				t -> {});
 	}
 	
+	private void initializePage() {
+		cleanPage();
+		initializeListBox();
+		hideAllPanels();
+		showListBonuses();
+	}
+
 	private void cleanPage() {
 		this.idBonus.setText("");
 		this.startDateBonus.setValue(null);
@@ -302,7 +348,7 @@ public class SSBonusDraft extends Composite {
 	}
 
 	private void initializeListBox() {
-		typeBonus.addItem("-");
+		typeBonus.addItem("Otros");
 		typeBonus.addItem("Cantidad fija");
 		typeBonus.addItem("Cantidad fija / mes");
 		typeBonus.addItem("Porcentaje sobre sumatorio");
@@ -321,7 +367,7 @@ public class SSBonusDraft extends Composite {
 	}
 	
 	private void hideAllPanels() {
-		this.idPanel.addStyleName(style.hide());
+//		this.idPanel.addStyleName(style.hide());
 		this.checksPanel.addStyleName(style.hide());
 		this.amountPanel.addStyleName(style.hide());
 	}
@@ -355,22 +401,47 @@ public class SSBonusDraft extends Composite {
 		this.listBonusesTable.resize(this.ssBonusDraftObject.getBonuses().size()+1, 8);
 		
 		//Cabecera
-		this.listBonusesTable.setWidget(0, 0, new Label(""));
+		this.listBonusesTable.setWidget(0, 0, new Label("Id"));
+		this.listBonusesTable.getWidget(0, 0).addStyleName(style.hide());
 		this.listBonusesTable.setWidget(0, 1, new Label(""));
-		this.listBonusesTable.setWidget(0, 2, new Label("Id"));
-		this.listBonusesTable.setWidget(0, 3, new Label("Fecha Incio"));
-		this.listBonusesTable.setWidget(0, 4, new Label("Fecha Fin"));
-		this.listBonusesTable.setWidget(0, 5, new Label("Descripci"+String.valueOf("\u00F3")+"n"));
-		this.listBonusesTable.setWidget(0, 6, new Label("Tipo"));
-		this.listBonusesTable.setWidget(0, 7, new Label("F"+String.valueOf("\u00F3")+"rmula"));
+		this.listBonusesTable.setWidget(0, 2, new Label("Fecha Incio"));
+		this.listBonusesTable.getWidget(0, 2).addStyleName(style.dateStyle());
+		this.listBonusesTable.setWidget(0, 3, new Label("Fecha Fin"));
+		this.listBonusesTable.getWidget(0, 3).addStyleName(style.dateStyle());
+		this.listBonusesTable.setWidget(0, 4, new Label("Descripci"+String.valueOf("\u00F3")+"n"));
+		this.listBonusesTable.getWidget(0, 4).addStyleName(style.descriptionStyle());
+		this.listBonusesTable.setWidget(0, 5, new Label("Tipo"));
+		this.listBonusesTable.setWidget(0, 6, new Label("F"+String.valueOf("\u00F3")+"rmula"));
+		this.listBonusesTable.setWidget(0, 7, new Label(""));
+//		this.listBonusesTable.setWidget(0, 8, new Label(""));
 		for(int i = 0; i<8; i++)
 			this.listBonusesTable.getWidget(0, i).addStyleName(style.bold());
 		
 		int row = 1;
 		
 		for(SSBonusData bonus : this.ssBonusDraftObject.getBonuses()){
+			listBonusesTable.setWidget(row, 0, new Label(bonus.getId().toString()));
+			listBonusesTable.getWidget(row, 0).addStyleName(style.hide());
+			Label system = new Label();
+			if(bonus.isSystem())
+				system.setStyleName("aon-icon-rowSelector-S aon-editDataTable-button");
+			else
+				system.setStyleName("aon-icon-rowSelector aon-editDataTable-button");
+			listBonusesTable.setWidget(row, 1, system);
+			listBonusesTable.setWidget(row, 2, new Label((null == bonus.getStartDate()) ? "" : parseDate(bonus.getStartDate())));
+			listBonusesTable.setWidget(row, 3, new Label((null == bonus.getEndDate()) ? "" : parseDate(bonus.getEndDate())));
+			listBonusesTable.setWidget(row, 4, new Label(bonus.getDescription().toString()));
+			listBonusesTable.setWidget(row, 5, new Label((null == bonus.getType()) ? "" : bonus.getType().toString()));
+			TextBox formula = new TextBox();
+			formula.setValue(bonus.getFormula().toString());
+			formula.setMaxLength(500);
+			formula.addStyleName(style.formulaStyle());
+			formula.setEnabled(false);
+			formula.addStyleName(style.unSelected());
+			listBonusesTable.setWidget(row, 6, formula);
+			
 			Image deleteImage = new Image();
-			deleteImage.setUrl("aonResource/9.23-SNAPSHOT/images/aon-icon/aon-icon-trash.png");
+			deleteImage.setStyleName("aon-editDataTable-button aon-icon-delete");
 			deleteImage.addClickHandler(new ClickHandler() {
 				
 				@Override
@@ -384,7 +455,8 @@ public class SSBonusDraft extends Composite {
 							ssBonusDraftObject.deleteBonus(bonus.getId());
 							ssBonusDraftObject.updateDBBonuses(r -> 
 								{
-									setSSBonusDraftObject(ssBonusDraftObject);
+									cleanSelected();
+									initializePage();
 								}, t -> {});
 						}
 					};
@@ -393,33 +465,55 @@ public class SSBonusDraft extends Composite {
 				}	
 			});
 			
-			listBonusesTable.setWidget(row, 0, deleteImage);
-			
-			Image editImage = new Image();
-			editImage.setUrl("aonResource/9.23-SNAPSHOT/images/aon-icon/aon-icon-edit-add.png");
-			editImage.addClickHandler(new ClickHandler() {
-				
-				@Override
-				public void onClick(ClickEvent event) {
-					idBonus.setValue(bonus.getId().toString());
-					startDateBonus.setValue(bonus.getStartDate());
-					endDateBonus.setValue(bonus.getEndDate());
-					descriptionBonus.setValue(bonus.getDescription());
-					typeBonus.setSelectedIndex(bonus.getType());
-					formulaBonus.setValue(bonus.getFormula());
-					formulaBonus.setEnabled(true);
-				}
-			});
-			listBonusesTable.setWidget(row, 1, editImage);
-			
-			listBonusesTable.setWidget(row, 2, new Label(bonus.getId().toString()));
-			listBonusesTable.setWidget(row, 3, new Label(bonus.getStartDate().toString()));
-			listBonusesTable.setWidget(row, 4, new Label(bonus.getEndDate().toString()));
-			listBonusesTable.setWidget(row, 5, new Label(bonus.getDescription().toString()));
-			listBonusesTable.setWidget(row, 6, new Label(bonus.getType().toString()));
-			listBonusesTable.setWidget(row, 7, new Label(bonus.getFormula().toString()));
+			listBonusesTable.setWidget(row, 7, deleteImage);
 			
 			row++;
+		}
+	}
+	
+	private String parseDate(Date date) {
+		String dateStr = "";
+		
+		String year = (date.getYear()+1900)+"-";
+		
+		Integer month = date.getMonth()+1;
+		String monthStr = "";
+		if(month < 10)
+			monthStr = "0"+month+"-";
+		else
+			monthStr = month+"-";
+		
+		Integer day = date.getDate();
+		String dayStr = "";
+		if(day < 10)
+			dayStr = "0"+day;
+		else
+			dayStr = day+"";
+		
+		dateStr = year+monthStr+dayStr;
+		
+		return dateStr;
+	}
+
+
+	private boolean enableEditable(Integer id){
+		SSBonusData bonus = ssBonusDraftObject.getBonus(id);
+//		Window.alert("Id : " + id + ", Bonus : " + bonus);
+		if(bonus.isSystem()){
+			cleanPage();
+			WarningDialog warning = new WarningDialog("Aviso", "No se puede modificar una boificaci" + String.valueOf("\u00F3") + "n del sistema.");
+			warning.center();
+			warning.show();
+			return false;
+		}else{
+			idBonus.setValue(bonus.getId().toString());
+			startDateBonus.setValue(bonus.getStartDate());
+			endDateBonus.setValue(bonus.getEndDate());
+			descriptionBonus.setValue(bonus.getDescription());
+			typeBonus.setSelectedIndex((null == bonus.getType()) ? 0 : bonus.getType());
+			formulaBonus.setValue(bonus.getFormula());
+			formulaBonus.setEnabled(true);
+			return true;
 		}
 	}
 

@@ -8,18 +8,21 @@ public class SSBonusData implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private Integer id;
+	private Boolean system;
 	private Date startDate;
 	private Date endDate;
 	private String description;
 	private Byte type;
 	private String formula;
+	private Integer bonusConcept;
 	
 	public SSBonusData() {
 		super();
 	}
 	
-	public SSBonusData(Integer id, Date startDate, Date endDate, String description, Byte type, String formula) {
+	public SSBonusData(Integer id, Boolean system, Date startDate, Date endDate, String description, Byte type, String formula) {
 		this.id = id;
+		this.system = system;
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.description = description;
@@ -35,6 +38,14 @@ public class SSBonusData implements Serializable {
 	
 	public void setId(Integer id){
 		this.id = id;
+	}
+	
+	public Boolean isSystem() {
+		return this.system;
+	}
+	
+	public void setSystem(boolean system) {
+		this.system = system;
 	}
 	
 	public Date getStartDate() {
@@ -54,7 +65,7 @@ public class SSBonusData implements Serializable {
 	}
 
 	public String getDescription() {
-		return description;
+		return null == description ? "" : description;
 	}
 
 	public void setDescription(String description) {
@@ -70,10 +81,18 @@ public class SSBonusData implements Serializable {
 	}
 
 	public String getFormula() {
-		return formula;
+		return null == formula ? "" : formula;
 	}
 
 	public void setFormula(String formula) {
 		this.formula = formula;
+	}
+
+	public void setBonusConceptId(Integer bonusConceptId) {
+		this.bonusConcept = bonusConceptId;
+	}
+	
+	public Integer getBonusConceptId() {
+		return this.bonusConcept;
 	}
 }
