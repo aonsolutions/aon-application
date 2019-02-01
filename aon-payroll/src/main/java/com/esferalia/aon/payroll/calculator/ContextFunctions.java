@@ -227,9 +227,9 @@ public class ContextFunctions {
 					Period varPeriod = var.getPeriod();
 					Double varValue = ((Number)var.getValue(varPeriod)).doubleValue();
 					
-					//TODO: Checks that 'varPeriod' is whole month. 
-					long varDays = Math.min(getDaysBetweenDates(varPeriod.getStart(), varPeriod.getEnd())+ 1, 
-							monthDays);
+					//TODO: Checks that 'varPeriod' is whole month.
+					boolean wholeMonth = isWholeMonth(varPeriod);
+					long varDays = wholeMonth ? monthDays : Math.min(getDaysBetweenDates(varPeriod.getStart(), varPeriod.getEnd())+ 1, monthDays);
 					
 					ITimedVariable<Object> firstVariable = new ITimedVariable<Object>() {
 						
@@ -260,7 +260,8 @@ public class ContextFunctions {
 						@Override
 						public Object getValue(Period period) {
 							long days = getDaysBetweenDates(period.getStart(), period.getEnd()) +1;
-							days = Math.min(varDays - firstDays , days);
+							long secondDays = varDays - firstDays;
+							days = wholeMonth  ? secondDays : Math.min(secondDays , days);
 							return varValue * days / varDays;
 						}
 					};
@@ -834,6 +835,11 @@ public class ContextFunctions {
 		} catch (NoSuchMethodException e) {
 		}
 
+	}
+
+	private static boolean isWholeMonth(Period period) {
+		return AonDateUtils.get(period.getStart(), Calendar.DAY_OF_MONTH) == 1 && AonDateUtils.get(period.getEnd(),
+				Calendar.DAY_OF_MONTH) == AonDateUtils.getMax(period.getEnd(), Calendar.DAY_OF_MONTH);
 	}
 
 	public static void loadFunctions(ExpressionContext context, Date startDate, Date endDate)
