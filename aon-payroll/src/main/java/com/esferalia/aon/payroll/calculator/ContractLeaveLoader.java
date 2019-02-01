@@ -345,10 +345,11 @@ public class ContractLeaveLoader {
 
 					Date varStart = Period.max(rangeStart, start);
 					//exprCtx.setVariable(name, days, varStart, rangeEnd);
-					exprCtx.putVariable(name, new ExpressionContext.TimedConstant<Object>(days, varStart, rangeEnd) {
-						public Object getValue() {
+					exprCtx.putVariable(name, new ExpressionContext.TimedConstant<Long>(days, varStart, rangeEnd) {
+						public Long getValue() {
 							exprCtx.readVariable(DIRECT_PAY_START.getName(), varStart, rangeEnd, Date.class);
-							return super.getValue();
+							Number  monthDays =  exprCtx.getVariable(MONTH_DAYS.getName(), varStart, rangeEnd, Number.class );
+							return monthDays == null ? super.getValue() : Math.min(monthDays.longValue(), super.getValue());
 						};
 					});
 					exprCtx.putVariable(QUOTE_DAYS, new QuoteDays(exprCtx, start, end));

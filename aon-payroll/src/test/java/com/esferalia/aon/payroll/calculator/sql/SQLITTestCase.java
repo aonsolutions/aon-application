@@ -4629,7 +4629,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			System.out.println(payment.getName() + " = " + payment.getAmount()
 					+ " (" + payment.getExpression() + ")");
 		}
-		Assert.assertEquals(4, salary.getSalaryPayments().size());
+		Assert.assertEquals(5, salary.getSalaryPayments().size());
 	}
 	@Test
 	public void testUnknowConstantITV() throws ExpressionException, SQLException,
@@ -4848,6 +4848,10 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				);
 		addPayment(aonContext, contract, prestIT, 
 				"DIAS_ENFERMEDAD_COMUN_CARENCIA * 0.00",
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s",  OCCUPATIONAL_DISEASE_DAYS),
 				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
 				);
 		return prestIT;
