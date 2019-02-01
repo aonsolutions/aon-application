@@ -3644,11 +3644,11 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount() );
-		int brDays = Math.min(get(getLastDayOfMonth(startIt), Calendar.DATE), 30); // BR : Monthly
+		//int brDays = Math.min(get(getLastDayOfMonth(startIt), Calendar.DATE), 30); // BR : Monthly
 		int itDays = get(getLastDayOfMonth(startDate), Calendar.DATE); 
 		//@formatter:off
 		Assert.assertEquals(
-				(1000.00/brDays * 0.75 * itDays) + 100.00 , //850.00, 
+				(1000.00* 0.75 ) + 100.00 , //850.00, 
 				salary.getTotalPayment() 
 				, DELTA);
 		//@formatter:on
