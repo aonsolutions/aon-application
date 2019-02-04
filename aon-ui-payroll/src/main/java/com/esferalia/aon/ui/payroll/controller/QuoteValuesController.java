@@ -3,6 +3,11 @@ package com.esferalia.aon.ui.payroll.controller;
 import static com.esferalia.aon.jooq.tables.SystemCost.SYSTEM_COST;
 import static com.esferalia.aon.jooq.tables.SystemData.SYSTEM_DATA;
 import static com.esferalia.aon.jooq.tables.SystemDeduction.SYSTEM_DEDUCTION;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.FULL_TIME;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_HOURS;
 
 import java.io.Serializable;
 import java.sql.Connection;
@@ -28,6 +33,8 @@ import com.code.aon.common.util.CommonUtil;
 import net.aonsolutions.core.dbutils.DatabaseUtil;
 import net.aonsolutions.core.pool.AonConnectionException;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.salary.expression.ExpressionContext;
 
 
 public class QuoteValuesController implements Serializable {
@@ -401,34 +408,26 @@ public class QuoteValuesController implements Serializable {
 		}
 		
 		protected Map<String, Double> obtainBaseCgcMin(String expression) {
+			expression = expression.replaceAll("\\s", ""); // ????
 			Map<String, Double> values = new HashMap<String, Double>();
+			
+			Map<String, Object> context = new HashMap<String, Object>();
+			context.put(MONTH_DAYS.getName(), 1.00);
+			context.put(SALARY_DAYS.getName(), 1.00);
+			context.put(SALARY_HOURS.getName(), 1.00);
 
-			String BASE_CGC_MIN_REGEX_01 = ".*\"01\"\\D*(\\d+.\\d+).*(\\d+.\\d+).*\"02\".*"; 
-			String BASE_CGC_MIN_REGEX_02 = ".*\"02\"\\D*(\\d+.\\d+).*(\\d+.\\d+).*\"03\".*"; 
-			String BASE_CGC_MIN_REGEX_03 = ".*\"03\"\\D*(\\d+.\\d+).*(\\d+.\\d+).*\"04\".*"; 
-			String BASE_CGC_MIN_REGEX_04 = ".*\"04\"\\D*(\\d+.\\d+).*(\\d+.\\d+).*\"05\".*"; 
-			String BASE_CGC_MIN_REGEX_05 = ".*\"05\"\\D*(\\d+.\\d+).*(\\d+.\\d+).*\"06\".*"; 
-			String BASE_CGC_MIN_REGEX_06 = ".*\"06\"\\D*(\\d+.\\d+).*(\\d+.\\d+).*\"07\".*"; 
-			String BASE_CGC_MIN_REGEX_07 = ".*\"07\"\\D*(\\d+.\\d+).*(\\d+.\\d+).*\"08\".*"; 
-			String BASE_CGC_MIN_REGEX_08 = ".*\"08\"\\D*(\\d+.\\d+).*(\\d+.\\d+).*\"09\".*"; 
-			String BASE_CGC_MIN_REGEX_09 = ".*\"09\"\\D*(\\d+.\\d+).*(\\d+.\\d+).*\"10\".*"; 
-			String BASE_CGC_MIN_REGEX_10 = ".*\"10\"\\D*(\\d+.\\d+).*(\\d+.\\d+).*\"11\".*"; 
-			String BASE_CGC_MIN_REGEX_11 = ".*\"11\"\\D*(\\d+.\\d+).*(\\d+.\\d+).*";
-					
-			putValue(values, expression, BASE_CGC_MIN_REGEX_01, "1_BASE_CGC_MIN", "1_BASE_CGC_MIN_PARTIAL");
-			putValue(values, expression, BASE_CGC_MIN_REGEX_02, "2_BASE_CGC_MIN", "2_BASE_CGC_MIN_PARTIAL");
-			putValue(values, expression, BASE_CGC_MIN_REGEX_03, "3_BASE_CGC_MIN", "3_BASE_CGC_MIN_PARTIAL");
-			putValue(values, expression, BASE_CGC_MIN_REGEX_04, "4_BASE_CGC_MIN", "4_BASE_CGC_MIN_PARTIAL");
-			putValue(values, expression, BASE_CGC_MIN_REGEX_05, "5_BASE_CGC_MIN", "5_BASE_CGC_MIN_PARTIAL");
-			putValue(values, expression, BASE_CGC_MIN_REGEX_06, "6_BASE_CGC_MIN", "6_BASE_CGC_MIN_PARTIAL");
-			putValue(values, expression, BASE_CGC_MIN_REGEX_07, "7_BASE_CGC_MIN", "7_BASE_CGC_MIN_PARTIAL");
-			putValue(values, expression, BASE_CGC_MIN_REGEX_08, "8_BASE_CGC_MIN", "8_BASE_CGC_MIN_PARTIAL");
-			putValue(values, expression, BASE_CGC_MIN_REGEX_09, "9_BASE_CGC_MIN", "9_BASE_CGC_MIN_PARTIAL");
-			putValue(values, expression, BASE_CGC_MIN_REGEX_10, "10_BASE_CGC_MIN", "10_BASE_CGC_MIN_PARTIAL");
-			putValue(values, expression, BASE_CGC_MIN_REGEX_11, "11_BASE_CGC_MIN", "11_BASE_CGC_MIN_PARTIAL");
+			for ( int i = 1; i <= 11; i++) {
+				context.put(QUOTE_GROUP.getName(), String.format("%02d", i));
+				context.put(FULL_TIME.getName(), true);
+				values.put(i + "_BASE_CGC_MIN", ExpressionContext.eval(expression, context, Double.class));
+				context.put(FULL_TIME.getName(), false);
+				values.put(i + "_BASE_CGC_MIN_PARTIAL", ExpressionContext.eval(expression, context, Double.class));
+			}
+			
 			return values;
 		}
 		
+
 		private Map<String, Double> obtainBaseCgcMax(String expression) {
 			Map<String, Double> values = new HashMap<String, Double>();
 			
@@ -549,54 +548,44 @@ public class QuoteValuesController implements Serializable {
 			}
 			
 			
-			Result<Record4<String, String, java.sql.Date, java.sql.Date>> enterpriseCgc = super.getEnterpriseCostValues(year, AGRICULTURAL_QUOTE_DOMAIN_ID, "CGC_E");
-			for (Record4<String, String, java.sql.Date, java.sql.Date> step : enterpriseCgc) {
-				String expression = step.value2();
-				Map<String, Double> types = obtainCgcEnterpriseLimitAmount(expression);
-				for(String key: types.keySet()){
-					putValue(getValues(), key, types.get(key).toString());
-				}
-			}
-			
-			Result<Record4<String, String, java.sql.Date, java.sql.Date>> enterpriseAtep = super.getEnterpriseCostValues(year, AGRICULTURAL_QUOTE_DOMAIN_ID, "ATEP_E");
-			for (Record4<String, String, java.sql.Date, java.sql.Date> step : enterpriseAtep) {
-				String expression = step.value2();
-				Map<String, Double> types = obtainAtepEnterprisePercent(expression);
-				for(String key: types.keySet()){
-					putValue(getValues(), key, types.get(key).toString());
-				}
-			}
+//			Result<Record4<String, String, java.sql.Date, java.sql.Date>> enterpriseCgc = super.getEnterpriseCostValues(year, AGRICULTURAL_QUOTE_DOMAIN_ID, "CGC_E");
+//			for (Record4<String, String, java.sql.Date, java.sql.Date> step : enterpriseCgc) {
+//				String expression = step.value2();
+//				Map<String, Double> types = obtainCgcEnterpriseLimitAmount(expression);
+//				for(String key: types.keySet()){
+//					putValue(getValues(), key, types.get(key).toString());
+//				}
+//			}
+//			
+//			Result<Record4<String, String, java.sql.Date, java.sql.Date>> enterpriseAtep = super.getEnterpriseCostValues(year, AGRICULTURAL_QUOTE_DOMAIN_ID, "ATEP_E");
+//			for (Record4<String, String, java.sql.Date, java.sql.Date> step : enterpriseAtep) {
+//				String expression = step.value2();
+//				Map<String, Double> types = obtainAtepEnterprisePercent(expression);
+//				for(String key: types.keySet()){
+//					putValue(getValues(), key, types.get(key).toString());
+//				}
+//			}
 				
 		}
 		
-		private Map<String, Double> obtainBaseCgcMinMes(String expression) {
+		protected Map<String, Double> obtainBaseCgcMinMes(String expression) {
+			expression = expression.replaceAll("\\s", ""); // ????
 			Map<String, Double> values = new HashMap<String, Double>();
+			
+			Map<String, Object> context = new HashMap<String, Object>();
+			context.put(FULL_TIME.getName(), true);
+			context.put(MONTH_DAYS.getName(), 1.00);
+			context.put(SALARY_DAYS.getName(), 1.00);
+			context.put(SALARY_HOURS.getName(), 1.00);
 
-			String BASE_CGC_MIN_REGEX_01 = ".*\"01\".*(\\d{4}.\\d{2}).*\"02\".*"; 
-			String BASE_CGC_MIN_REGEX_02 = ".*\"02\".*(\\d{3}.\\d{2}).*\"03\".*"; 
-			String BASE_CGC_MIN_REGEX_03 = ".*\"03\".*(\\d{3}.\\d{2}).*\"04\".*"; 
-			String BASE_CGC_MIN_REGEX_04 = ".*\"04\".*(\\d{3}.\\d{2}).*\"05\".*"; 
-			String BASE_CGC_MIN_REGEX_05 = ".*\"05\".*(\\d{3}.\\d{2}).*\"06\".*"; 
-			String BASE_CGC_MIN_REGEX_06 = ".*\"06\".*(\\d{3}.\\d{2}).*\"07\".*"; 
-			String BASE_CGC_MIN_REGEX_07 = ".*\"07\".*(\\d{3}.\\d{2}).*\"08\".*"; 
-			String BASE_CGC_MIN_REGEX_08 = ".*\"08\".*(\\d{3}.\\d{2}).*\"09\".*"; 
-			String BASE_CGC_MIN_REGEX_09 = ".*\"09\".*(\\d{3}.\\d{2}).*\"10\".*"; 
-			String BASE_CGC_MIN_REGEX_10 = ".*\"10\".*(\\d{3}.\\d{2}).*\"11\".*"; 
-			String BASE_CGC_MIN_REGEX_11 = ".*\"11\".*(\\d{3}.\\d{2}).*";
-					
-			putValue(values, expression, BASE_CGC_MIN_REGEX_01, "1_BASE_CGC_MIN_MES");
-			putValue(values, expression, BASE_CGC_MIN_REGEX_02, "2_BASE_CGC_MIN_MES");
-			putValue(values, expression, BASE_CGC_MIN_REGEX_03, "3_BASE_CGC_MIN_MES");
-			putValue(values, expression, BASE_CGC_MIN_REGEX_04, "4_BASE_CGC_MIN_MES");
-			putValue(values, expression, BASE_CGC_MIN_REGEX_05, "5_BASE_CGC_MIN_MES");
-			putValue(values, expression, BASE_CGC_MIN_REGEX_06, "6_BASE_CGC_MIN_MES");
-			putValue(values, expression, BASE_CGC_MIN_REGEX_07, "7_BASE_CGC_MIN_MES");
-			putValue(values, expression, BASE_CGC_MIN_REGEX_08, "8_BASE_CGC_MIN_MES");
-			putValue(values, expression, BASE_CGC_MIN_REGEX_09, "9_BASE_CGC_MIN_MES");
-			putValue(values, expression, BASE_CGC_MIN_REGEX_10, "10_BASE_CGC_MIN_MES");
-			putValue(values, expression, BASE_CGC_MIN_REGEX_11, "11_BASE_CGC_MIN_MES");
+			for ( int i = 1; i <= 11; i++) {
+				context.put(QUOTE_GROUP.getName(), String.format("%02d", i));
+				values.put(i + "_BASE_CGC_MIN_MES", ExpressionContext.eval(expression, context, Double.class));
+			}
+			
 			return values;
 		}
+
 		
 		private Map<String, Double> obtainBaseCgcMinDia(String expression) {
 			Map<String, Double> values = new HashMap<String, Double>();

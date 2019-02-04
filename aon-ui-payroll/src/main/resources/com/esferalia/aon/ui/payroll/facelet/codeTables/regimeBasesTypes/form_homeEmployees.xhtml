@@ -137,6 +137,7 @@
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
 			
+			<aon:if test="#{quoteValues.values['8_AMOUNT_CGC_MIN_MES'] == null }" >
 			<aon:outputText value="8" />
 			<aon:div>
 				<aon:outputText value="Desde " />
@@ -147,7 +148,49 @@
 			<aon:outputText value="#{quoteValues.values['8_BASE_CGC_MIN_MES']}" >
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
+			</aon:if>
 			
+			<aon:if test="#{quoteValues.values['8_AMOUNT_CGC_MIN_MES'] != null }" >
+			<aon:outputText value="8" />
+			<aon:div>
+				<aon:outputText value="Desde " />
+				<aon:outputText value="#{quoteValues.values['7_AMOUNT_CGC_MIN_MES']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:outputText value=" hasta " />
+				<aon:outputText value="#{quoteValues.values['8_AMOUNT_CGC_MIN_MES']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+			<aon:outputText value="#{quoteValues.values['8_BASE_CGC_MIN_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+
+			<aon:outputText value="9" />
+			<aon:div>
+				<aon:outputText value="Desde " />
+				<aon:outputText value="#{quoteValues.values['8_AMOUNT_CGC_MIN_MES']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:outputText value=" hasta " />
+				<aon:outputText value="#{quoteValues.values['9_AMOUNT_CGC_MIN_MES']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+			<aon:outputText value="#{quoteValues.values['9_BASE_CGC_MIN_MES']}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText value="10" />
+			<aon:div>
+				<aon:outputText value="Desde " />
+				<aon:outputText value="#{quoteValues.values['9_AMOUNT_CGC_MIN_MES']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+			<aon:outputText value="Retribución mensual " >
+			</aon:outputText>
+			</aon:if>
+
 		</aon:panelGrid>
 	</aon:panel>
 	
