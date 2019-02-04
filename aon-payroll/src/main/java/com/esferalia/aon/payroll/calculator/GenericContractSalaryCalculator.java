@@ -93,6 +93,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalaryCalculatorContext> implements ISalaryCalculator<T, C> {
 
+	private static final String EXPRESSION_SYNTAX_ERROR = "Error sint\u00E1ctico en la expresi\u00F3n";
 	private static final String BASE_CGC_MIN_MSG = "%s %.2f ha sido ampliada al m\u00ednimo obligatorio %.2f";
 	private static final String BASE_CGC_MAX_MSG = "%s %.2f ha sido limitada al m\u00e1ximo permitido %.2f";
 	private static final String BASE_CGP_MIN_MSG = "%s %.2f ha sido ampliada al m\u00ednimo obligatorio %.2f";
@@ -773,7 +774,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				} catch (UndefinedVariablesException e) {
 					onUndefinedData(contractDeduction, e.getMessage(), e.getVariableNames());
 				} catch (CompileException e) {
-					onCompileError(contractDeduction, e.getMessage());
+					onCompileError(contractDeduction, EXPRESSION_SYNTAX_ERROR+ " '" + contractDeduction.getExpression() +"'");
+
 				}
 
 			}
@@ -825,7 +827,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				} catch (UndefinedVariablesException e) {
 					onUndefinedData(contractEmbargo, e.getMessage(), e.getVariableNames());
 				} catch (CompileException e) {
-					onCompileError(contractEmbargo, e.getMessage());
+					onCompileError(contractEmbargo, EXPRESSION_SYNTAX_ERROR + " '" + contractEmbargo.getExpression() +"'");
 				}
 
 			}
@@ -976,7 +978,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		} catch (RemoveException | RemoveVariableError e) {
 			onRemove(contractBonus);
 		} catch (CompileException e) {
-			onCompileError(contractBonus, e.getMessage());
+			onCompileError(contractBonus, EXPRESSION_SYNTAX_ERROR + " '" + contractBonus.getExpression() +"'");
 		}
 		return bonus;
 	}
@@ -1265,7 +1267,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			// onUndefinedData(contractPayment, e.getMessage(),
 			// e.getVariableNames());
 		} catch (CompileException e) {
-			onCompileError(contractPayment, e.getMessage());
+			onCompileError(contractPayment, EXPRESSION_SYNTAX_ERROR + " '" + contractPayment.getExpression() +"'");
 			addResult(expressionContext, name, start, end, 0.00);
 		} catch ( ConversionException e ) {
 			throw new UndefinedVariablesException();
