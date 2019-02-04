@@ -90,9 +90,9 @@ public class Mod347MergeMail extends HttpServlet {
 			writer.append(CSV_DELIMITER);
 			writer.append("direccion_codigo_postal");
 			writer.append(CSV_DELIMITER);
-			writer.append("direccion_codigo_ciudad");
+			writer.append("direccion_ciudad");
 			writer.append(CSV_DELIMITER);
-			writer.append("direccion_codigo_provincia");
+			writer.append("direccion_provincia");
 			writer.append(CSV_DELIMITER);
 			
 			
@@ -195,4 +195,5 @@ public class Mod347MergeMail extends HttpServlet {
         }
     }
 }
+
 
