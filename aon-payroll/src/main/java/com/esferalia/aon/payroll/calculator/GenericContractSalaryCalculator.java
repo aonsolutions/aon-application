@@ -8,7 +8,6 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_ENT
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_ENTERPRISE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_BASE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMBARGO_PAID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMPLOYEE_QUOTA;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ENTERPRISE_QUOTA;
@@ -46,8 +45,9 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -56,8 +56,6 @@ import org.mvel2.ConversionException;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
-import com.code.aon.common.enumeration.Month;
-import com.esferalia.aon.jooq.AonMaster;
 import com.esferalia.aon.payroll.DelegateContractPayment;
 import com.esferalia.aon.payroll.calculator.TaxCalculator.NotNowException;
 import com.esferalia.aon.payroll.calculator.TaxCalculator.YesExtraException;
@@ -80,6 +78,7 @@ import com.esferalia.aon.salary.expression.ExpressionContext.RemovedExpressionVa
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.HideException;
+import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InterruptedException;
@@ -774,7 +773,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				} catch (UndefinedVariablesException e) {
 					onUndefinedData(contractDeduction, e.getMessage(), e.getVariableNames());
 				} catch (CompileException e) {
-					onCompileError(contractDeduction, EXPRESSION_SYNTAX_ERROR+ " '" + contractDeduction.getExpression() +"'");
+					onCompileError(contractDeduction, getSyntaxExpressionErrorMessage(contractDeduction));
 
 				}
 
@@ -827,7 +826,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				} catch (UndefinedVariablesException e) {
 					onUndefinedData(contractEmbargo, e.getMessage(), e.getVariableNames());
 				} catch (CompileException e) {
-					onCompileError(contractEmbargo, EXPRESSION_SYNTAX_ERROR + " '" + contractEmbargo.getExpression() +"'");
+					onCompileError(contractEmbargo, getSyntaxExpressionErrorMessage(contractEmbargo));
 				}
 
 			}
@@ -978,7 +977,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		} catch (RemoveException | RemoveVariableError e) {
 			onRemove(contractBonus);
 		} catch (CompileException e) {
-			onCompileError(contractBonus, EXPRESSION_SYNTAX_ERROR + " '" + contractBonus.getExpression() +"'");
+			onCompileError(contractBonus, getSyntaxExpressionErrorMessage(contractBonus));
 		}
 		return bonus;
 	}
@@ -1267,7 +1266,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			// onUndefinedData(contractPayment, e.getMessage(),
 			// e.getVariableNames());
 		} catch (CompileException e) {
-			onCompileError(contractPayment, EXPRESSION_SYNTAX_ERROR + " '" + contractPayment.getExpression() +"'");
+			onCompileError(contractPayment, getSyntaxExpressionErrorMessage(contractPayment));
 			addResult(expressionContext, name, start, end, 0.00);
 		} catch ( ConversionException e ) {
 			throw new UndefinedVariablesException();
@@ -1624,6 +1623,13 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		return fixed;
 	}
 	
+	private static String getSyntaxExpressionErrorMessage(IExpression expression) {
+		String str = expression.getExpression();
+		Pattern pattern = Pattern.compile("(/\\*(user|read-only)\\*/)((?:[^/]|(?:/[^\\*]))*)(/\\*\\*/)");
+		Matcher matcher = pattern.matcher(str);
+		
+		return EXPRESSION_SYNTAX_ERROR + " '" + (matcher.find() ? matcher.group(3) : str) +"'";
+	}
 	
 
 }
