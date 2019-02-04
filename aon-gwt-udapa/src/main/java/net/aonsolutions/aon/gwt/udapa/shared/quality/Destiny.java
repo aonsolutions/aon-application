@@ -26,7 +26,9 @@ public enum Destiny {
 	PATURPAT("Paturpat"),
 	ROJA("Roja"),
 	SIEMBRA("Siembra"),
-	VERDIFRESH("Verdifresh")
+	VERDIFRESH("Verdifresh"),
+	ESPECIAL_FREIR("Especial Freir"),
+	SACOS("Sacos")
 	;
 	
 	String name;
