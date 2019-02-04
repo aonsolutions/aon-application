@@ -50,6 +50,7 @@ abstract class Model347Base extends DockLayoutPanel {
 	static final String MODEL347_PRINT_AEAT = "/aon_gwt_fiscal/ms/Model347PrintAEAT";
 	static final String MODEL347_FILE = "/aon_gwt_fiscal/ms/Model347File";
 	static final String MODEL347_PRINT = "/aon_gwt_fiscal/ms/Model347Print";
+	static final String MODEL347_MERGE_MAIL = "/aon_gwt_fiscal/ms/Model347MergeMail";
 	
 	protected static class MediumLabel extends InlineLabel {
 		private MediumLabel(String label) {
@@ -155,6 +156,7 @@ abstract class Model347Base extends DockLayoutPanel {
 	protected final Button duplicateButton = new Button();
 	protected final Button auditButton = new Button();
 	protected final Button printButton = new Button();
+	protected final Button mailMergeButton = new Button();
 	
 	protected FormPanel diskForm = new FormPanel("_blank");
 	protected Hidden mod347Hidden = new Hidden("mod347");
@@ -455,6 +457,36 @@ abstract class Model347Base extends DockLayoutPanel {
 		});
 		buttonContainer.add(printButton);
 		
+		mailMergeButton.setText("CSV (Combinar corresp.)");
+		mailMergeButton.setTitle(mailMergeButton.getText());
+		mailMergeButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		mailMergeButton.addStyleName(AON.AON_CSS.aonIconInvoice());
+		mailMergeButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				if (isDirty()) {
+					new ConfirmDialog().confirm("Combinar correspondencia"
+							,"La generaci\u00F3n del archivo para combinar, se realiza a partir de los datos guardados. Aseg\u00FArese de haber guardado la declaraci\u00F3n." 
+							, new ConfirmDialogCallback() {
+							
+							@Override
+							public void onAccept() {
+								submitForm(cbk,MODEL347_MERGE_MAIL);
+							}
+			
+							@Override
+							public void onCancel() {
+								// Nothing
+							}
+						});
+				} else {
+					submitForm(cbk,MODEL347_MERGE_MAIL);
+				}
+			}
+		});
+		buttonContainer.add(mailMergeButton);
+
 		duplicateButton.setText(AON.MSG.duplicate());
 		duplicateButton.setTitle(duplicateButton.getText());
 		duplicateButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
