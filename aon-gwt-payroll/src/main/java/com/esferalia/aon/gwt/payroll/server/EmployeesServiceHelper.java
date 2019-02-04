@@ -107,6 +107,7 @@ public class EmployeesServiceHelper {
 		Collection<Payment> payments = new CompositeItems<Payment>(
 				draft.getDraftPayments(), dbPayments);
 
+		Set<Event> errors = new HashSet<Event>();
 		Set<String> variables = new HashSet<String>();
 		Set<String> paymentsNames = new HashSet<String>();
 
@@ -224,10 +225,17 @@ public class EmployeesServiceHelper {
 		for ( Variable var: allSalaryTable.getAllVariables() ) {
 			String expression = 
 			getUserScript(var.getExpression());
-			Set<String> exprVariables =
-			ExpressionContext.getVariableSet(
-					expression);				
-			variables.addAll(exprVariables);
+			try {
+				Set<String> exprVariables =
+				ExpressionContext.getVariableSet(
+						expression);
+				variables.addAll(exprVariables);
+			} catch ( Exception e ) {
+				errors.add(
+				new Event()
+				.setType(Type.ERROR)
+				.setMessage(e.getMessage()));
+			}
 		}
 
 		draft.setLevels(allLevels);
@@ -262,6 +270,7 @@ public class EmployeesServiceHelper {
 		
 		try {
 			Set<Event> allEvents = eval(agreementCtxFactory, draft.getId(), allPayments, draft.getStartDate(), draft.getEndDate());
+			allEvents.addAll(errors);
 			draft.setEvents(allEvents);
 		} catch ( Throwable t) {
 			// TODO: 
