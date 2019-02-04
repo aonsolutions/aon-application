@@ -400,20 +400,20 @@ public class QuoteValuesController implements Serializable {
 			return values;
 		}
 		
-		private Map<String, Double> obtainBaseCgcMin(String expression) {
+		protected Map<String, Double> obtainBaseCgcMin(String expression) {
 			Map<String, Double> values = new HashMap<String, Double>();
 
-			String BASE_CGC_MIN_REGEX_01 = ".*\"01\".*(\\d{4}.\\d{2}).*(\\d.\\d{2}).*\"02\".*"; 
-			String BASE_CGC_MIN_REGEX_02 = ".*\"02\".*(\\d{3}.\\d{2}).*(\\d.\\d{2}).*\"03\".*"; 
-			String BASE_CGC_MIN_REGEX_03 = ".*\"03\".*(\\d{3}.\\d{2}).*(\\d.\\d{2}).*\"04\".*"; 
-			String BASE_CGC_MIN_REGEX_04 = ".*\"04\".*(\\d{3}.\\d{2}).*(\\d.\\d{2}).*\"05\".*"; 
-			String BASE_CGC_MIN_REGEX_05 = ".*\"05\".*(\\d{3}.\\d{2}).*(\\d.\\d{2}).*\"06\".*"; 
-			String BASE_CGC_MIN_REGEX_06 = ".*\"06\".*(\\d{3}.\\d{2}).*(\\d.\\d{2}).*\"07\".*"; 
-			String BASE_CGC_MIN_REGEX_07 = ".*\"07\".*(\\d{3}.\\d{2}).*(\\d.\\d{2}).*\"08\".*"; 
-			String BASE_CGC_MIN_REGEX_08 = ".*\"08\".*(\\d{2}.\\d{2}).*(\\d.\\d{2}).*\"09\".*"; 
-			String BASE_CGC_MIN_REGEX_09 = ".*\"09\".*(\\d{2}.\\d{2}).*(\\d.\\d{2}).*\"10\".*"; 
-			String BASE_CGC_MIN_REGEX_10 = ".*\"10\".*(\\d{2}.\\d{2}).*(\\d.\\d{2}).*\"11\".*"; 
-			String BASE_CGC_MIN_REGEX_11 = ".*\"11\".*(\\d{2}.\\d{2}).*(\\d.\\d{2}).*";
+			String BASE_CGC_MIN_REGEX_01 = ".*\"01\"\\D*(\\d+.\\d+).*(\\d+.\\d+).*\"02\".*"; 
+			String BASE_CGC_MIN_REGEX_02 = ".*\"02\"\\D*(\\d+.\\d+).*(\\d+.\\d+).*\"03\".*"; 
+			String BASE_CGC_MIN_REGEX_03 = ".*\"03\"\\D*(\\d+.\\d+).*(\\d+.\\d+).*\"04\".*"; 
+			String BASE_CGC_MIN_REGEX_04 = ".*\"04\"\\D*(\\d+.\\d+).*(\\d+.\\d+).*\"05\".*"; 
+			String BASE_CGC_MIN_REGEX_05 = ".*\"05\"\\D*(\\d+.\\d+).*(\\d+.\\d+).*\"06\".*"; 
+			String BASE_CGC_MIN_REGEX_06 = ".*\"06\"\\D*(\\d+.\\d+).*(\\d+.\\d+).*\"07\".*"; 
+			String BASE_CGC_MIN_REGEX_07 = ".*\"07\"\\D*(\\d+.\\d+).*(\\d+.\\d+).*\"08\".*"; 
+			String BASE_CGC_MIN_REGEX_08 = ".*\"08\"\\D*(\\d+.\\d+).*(\\d+.\\d+).*\"09\".*"; 
+			String BASE_CGC_MIN_REGEX_09 = ".*\"09\"\\D*(\\d+.\\d+).*(\\d+.\\d+).*\"10\".*"; 
+			String BASE_CGC_MIN_REGEX_10 = ".*\"10\"\\D*(\\d+.\\d+).*(\\d+.\\d+).*\"11\".*"; 
+			String BASE_CGC_MIN_REGEX_11 = ".*\"11\"\\D*(\\d+.\\d+).*(\\d+.\\d+).*";
 					
 			putValue(values, expression, BASE_CGC_MIN_REGEX_01, "1_BASE_CGC_MIN", "1_BASE_CGC_MIN_PARTIAL");
 			putValue(values, expression, BASE_CGC_MIN_REGEX_02, "2_BASE_CGC_MIN", "2_BASE_CGC_MIN_PARTIAL");
@@ -780,39 +780,56 @@ public class QuoteValuesController implements Serializable {
 		        [Double.MAX_VALUE,794.60]
 		        ] if $[0] >= BASE_CGC )[0][1] | 2015-01-01 
 		 */
-		private Map<String, Double> obtainBaseCgcMin(String expression) {
+		protected Map<String, Double> obtainBaseCgcMin(String expression) {
 			Map<String, Double> values = new HashMap<String, Double>();
 			
 			String BASE_CGC_MIN_REGEX = "" 
-					+ ".*\\[(\\d{3}.\\d{2}).?(\\d{3}.\\d{2})\\].?" 
-					+ "\\[(\\d{3}.\\d{2}).?(\\d{3}.\\d{2})\\].?" 
-					+ "\\[(\\d{3}.\\d{2}).?(\\d{3}.\\d{2})\\].?" 
-					+ "\\[(\\d{3}.\\d{2}).?(\\d{3}.\\d{2})\\].?" 
-					+ "\\[(\\d{3}.\\d{2}).?(\\d{3}.\\d{2})\\].?" 
-					+ "\\[(\\d{3}.\\d{2}).?(\\d{3}.\\d{2})\\].?" 
-					+ "\\[(\\d{3}.\\d{2}).?(\\d{3}.\\d{2})\\].?" 
-					+ "\\[Double.MAX_VALUE.?(\\d{3}.\\d{2})\\].*"; 
+					+ "\\D*\\[(\\d+.\\d+).?(\\d+.\\d+)\\].?" 
+					+ "\\[(\\d+.\\d+).?(\\d+.\\d+)\\].?" 
+					+ "\\[(\\d+.\\d+).?(\\d+.\\d+)\\].?" 
+					+ "\\[(\\d+.\\d+).?(\\d+.\\d+)\\].?" 
+					+ "\\[(\\d+.\\d+).?(\\d+.\\d+)\\].?" 
+					+ "\\[(\\d+.\\d+).?(\\d+.\\d+)\\].?" 
+					+ "\\[(\\d+.\\d+).?(\\d+.\\d+)\\].?" 
+					+ "(?:\\[(\\d+.\\d+).?(\\d+.\\d+)\\].?)?" 
+					+ "(?:\\[(\\d+.\\d+).?(\\d+.\\d+)\\].?)?" 
+					+ "\\[Double.MAX_VALUE.?(\\d+.\\d+|BASE_CGC_BRUTA)\\].*"; 
 			
 			expression = expression.replace("\n",  "").replace("\r",  "").replace("\t",  "").replace(" ",  "");
 			if(expression.matches(BASE_CGC_MIN_REGEX)){
 				Pattern BASE_CGC_MIN_PATTERN = Pattern.compile(BASE_CGC_MIN_REGEX); 
 				Matcher m = BASE_CGC_MIN_PATTERN.matcher(expression);
+				int group = 0;
 				if(m.find()) {
-					putValue(values, "1_AMOUNT_CGC_MIN_MES"	, (m.group(1)));
-					putValue(values, "1_BASE_CGC_MIN_MES"	, (m.group(2)));
-					putValue(values, "2_AMOUNT_CGC_MIN_MES"	, (m.group(3)));
-					putValue(values, "2_BASE_CGC_MIN_MES"	, (m.group(4)));
-					putValue(values, "3_AMOUNT_CGC_MIN_MES"	, (m.group(5)));
-					putValue(values, "3_BASE_CGC_MIN_MES"	, (m.group(6)));
-					putValue(values, "4_AMOUNT_CGC_MIN_MES"	, (m.group(7)));
-					putValue(values, "4_BASE_CGC_MIN_MES"	, (m.group(8)));
-					putValue(values, "5_AMOUNT_CGC_MIN_MES"	, (m.group(9)));
-					putValue(values, "5_BASE_CGC_MIN_MES"	, (m.group(10)));
-					putValue(values, "6_AMOUNT_CGC_MIN_MES"	, (m.group(11)));
-					putValue(values, "6_BASE_CGC_MIN_MES"	, (m.group(12)));
-					putValue(values, "7_AMOUNT_CGC_MIN_MES"	, (m.group(13)));
-					putValue(values, "7_BASE_CGC_MIN_MES"	, (m.group(14)));
-					putValue(values, "8_BASE_CGC_MIN_MES"	, (m.group(15)));
+					putValue(values, ++group + "_AMOUNT_CGC_MIN_MES"	, (m.group(1)));
+					putValue(values, group + "_BASE_CGC_MIN_MES"	, (m.group(2)));
+					
+					putValue(values, ++group + "_AMOUNT_CGC_MIN_MES"	, (m.group(3)));
+					putValue(values, group + "_BASE_CGC_MIN_MES"	, (m.group(4)));
+					
+					putValue(values, ++group + "_AMOUNT_CGC_MIN_MES"	, (m.group(5)));
+					putValue(values, group + "_BASE_CGC_MIN_MES"	, (m.group(6)));
+					
+					putValue(values, ++group + "_AMOUNT_CGC_MIN_MES"	, (m.group(7)));
+					putValue(values, group + "_BASE_CGC_MIN_MES"	, (m.group(8)));
+					
+					putValue(values, ++group + "_AMOUNT_CGC_MIN_MES"	, (m.group(9)));
+					putValue(values, group + "_BASE_CGC_MIN_MES"	, (m.group(10)));
+					
+					putValue(values, ++group + "_AMOUNT_CGC_MIN_MES"	, (m.group(11)));
+					putValue(values, group + "_BASE_CGC_MIN_MES"	, (m.group(12)));
+					
+					putValue(values, ++group + "_AMOUNT_CGC_MIN_MES"	, (m.group(13)));
+					putValue(values, group + "_BASE_CGC_MIN_MES"	, (m.group(14)));
+					
+					if ( m.group(15) != null ) {
+						putValue(values, ++group + "_AMOUNT_CGC_MIN_MES"	, (m.group(15)));
+						putValue(values, group + "_BASE_CGC_MIN_MES"	, (m.group(16)));
+						putValue(values, ++group + "_AMOUNT_CGC_MIN_MES"	, (m.group(17)));
+						putValue(values, group + "_BASE_CGC_MIN_MES"	, (m.group(18)));
+					}
+					putValue(values, ++group + "_BASE_CGC_MIN_MES"	, 
+					(m.group(19)).equals("BASE_CGC_BRUTA") ? "-1" : (m.group(19)));
 				}
 			} else {
 				AonUtil.addErrorMessage("Expresion incorrecta: " + expression);
