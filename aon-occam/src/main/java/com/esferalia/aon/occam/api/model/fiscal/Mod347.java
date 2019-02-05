@@ -39,6 +39,14 @@ public class Mod347 implements IFiscalModel, HasAudit {
 	private LinkedList<Mod347Declared> declared;
 	private LinkedList<Mod347Asset> assets;
 	
+	
+	private boolean useTaxDate;
+	private boolean excludeOutputNationalZero;
+	private boolean excludeInputNationalZero;
+	private boolean excludeMod180Declared;
+	private boolean excludeMod190Declared;
+	
+	
 	@Override
 	public Integer getId() { 
 		return id;
@@ -299,5 +307,46 @@ public class Mod347 implements IFiscalModel, HasAudit {
 		this.contactMail = contactMail;
 		return this;
 	}
+	public boolean isUseTaxDate() {
+		return useTaxDate;
+	}
+	public Mod347 setUseTaxDate(boolean useTaxDate) {
+		this.useTaxDate = useTaxDate;
+		return this;
+	}
+	
+	public boolean isExcludeOutputNationalZero() {
+		return excludeOutputNationalZero;
+	}
+	public Mod347 setExcludeOutputNationalZero(boolean excludeOutputNationalZero) {
+		this.excludeOutputNationalZero = excludeOutputNationalZero;
+		return this;
+	}
+
+	public boolean isExcludeInputNationalZero() {
+		return excludeInputNationalZero;
+	}
+	public Mod347 setExcludeInputNationalZero(boolean excludeInputNationalZero) {
+		this.excludeInputNationalZero = excludeInputNationalZero;
+		return this;
+	}
+
+	public boolean isExcludeMod180Declared() {
+		return excludeMod180Declared;
+	}
+	public Mod347 setExcludeMod180Declared(boolean excludeMod180Declared) {
+		this.excludeMod180Declared = excludeMod180Declared;
+		return this;
+	}
+
+	public boolean isExcludeMod190Declared() {
+		return excludeMod190Declared;
+	}
+	public Mod347 setExcludeMod190Declared(boolean excludeMod190Declared) {
+		this.excludeMod190Declared = excludeMod190Declared;
+		return this;
+	}
+	
+	
 	
 }

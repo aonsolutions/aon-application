@@ -3,6 +3,10 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.FsMod347.FS_MOD347;
 import static com.esferalia.aon.jooq.tables.FsMod347Detail.FS_MOD347_DETAIL;
+import static com.esferalia.aon.jooq.tables.FsModel180.FS_MODEL180;
+import static com.esferalia.aon.jooq.tables.FsModel180Detail.FS_MODEL180_DETAIL;
+import static com.esferalia.aon.jooq.tables.FsModel190.FS_MODEL190;
+import static com.esferalia.aon.jooq.tables.FsModel190Detail.FS_MODEL190_DETAIL;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 
@@ -17,8 +21,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jooq.AggregateFunction;
 import org.jooq.Record;
 import org.jooq.exception.DataAccessException;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.FsMod347Record;
 import com.esferalia.aon.occam.api.AONContext;
@@ -45,8 +51,9 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod347DAO {
 	
-	private static byte ZERO_BYTE = 0;
-	private static byte ONE_BYTE = 1;
+	private static final String FLAG_SEPARATOR = "|#|";
+	private static final byte ZERO_BYTE = 0;
+	private static final byte ONE_BYTE = 1;
 	
 	// -------------------- MOD347 --------------------
 	
@@ -90,12 +97,15 @@ public class Mod347DAO {
 
 		@Override
 		public Mod347 apply(Record record) {
+			String comments = record.getValue(FS_MOD347.COMMENTS);
+			String flags = AonStringUtils.substringAfter(comments, FLAG_SEPARATOR);
+			comments = AonStringUtils.substringBefore(comments, FLAG_SEPARATOR); 
 			return new Mod347() 
 				.setId(record.getValue(FS_MOD347.ID))
 				.setDomain(record.getValue(FS_MOD347.DOMAIN))				
 				.setYear(record.getValue(FS_MOD347.YEAR))
 				.setAdministration(Administration.safeValueOf(record.getValue(FS_MOD347.ADMINISTRATION)))
-				.setComments(record.getValue(FS_MOD347.COMMENTS))				
+				.setComments(comments)				
 				.setStatus(com.esferalia.aon.watson.util.AonEnumUtils.enumValue(FiscalStatus.class,record.getValue(FS_MOD347.STATUS)))
 				.setConfidential(AonEnumUtils.getBoolean(record.getValue(FS_MOD347.SECURITY_LEVEL)))				
 				.setComplementary( record.getValue(FS_MOD347.COMPLEMENTARY)==1 )
@@ -112,9 +122,19 @@ public class Mod347DAO {
 				.setCreationDate(record.getValue(FS_MOD347.CREATION_DATE))
 				.setModificationUser(record.getValue(FS_MOD347.MODIFICATION_USER))
 				.setModificationDate(record.getValue(FS_MOD347.MODIFICATION_DATE))
+				.setExcludeInputNationalZero(ensureFlag(0,flags))
+				.setExcludeOutputNationalZero(ensureFlag(1,flags))
+				.setExcludeMod180Declared(ensureFlag(2,flags))
+				.setExcludeMod190Declared(ensureFlag(3,flags))
 				;
 		}
-		
+
+		private boolean ensureFlag(int i, String flags) {
+			if (AonStringUtils.isBlank(flags)) return false;
+			String[] tokens = AonStringUtils.split(flags, ',');
+			if (tokens.length < i) return false;
+			return Boolean.parseBoolean(tokens[i]);
+		}
 	}
 	
 	public static Mod347 initialize(AONContext ctx) {	
@@ -143,15 +163,26 @@ public class Mod347DAO {
 		mod347.setStatus(FiscalStatus.PENDING);
 		mod347.setDeclared(new LinkedList<Mod347Declared>());
 		mod347.setAssets(new LinkedList<Mod347Asset>());
+		mod347.setExcludeOutputNationalZero(false);
+		mod347.setExcludeInputNationalZero(true);
+		mod347.setExcludeMod180Declared(true);
+		mod347.setExcludeMod190Declared(true);
 		return mod347;
 	}
 	
 	public static Mod347 saveComments(AONContext ctx, Mod347 fm) {
 		try {
 			ctx.checkWrite();
+			String comments = 
+				  AonStringUtils.defaultString( fm.getComments() ) 
+				+ FLAG_SEPARATOR
+				+ fm.isExcludeInputNationalZero() + ","
+				+ fm.isExcludeOutputNationalZero() + ","
+				+ fm.isExcludeMod180Declared() + ","
+				+ fm.isExcludeMod190Declared();
 			if (fm.getId() != null) {
 				ctx.getDslContext().update(FS_MOD347)
-					.set(FS_MOD347.COMMENTS, fm.getComments())
+					.set(FS_MOD347.COMMENTS, comments)
 					.where(FS_MOD347.ID.equal(fm.getId()))
 					.execute();
 			}
@@ -204,11 +235,18 @@ public class Mod347DAO {
 	
 	private static Mod347 insert(AONContext ctx, Mod347 mod347, boolean generateDetails) {
 		validate(ctx,mod347);
+		String comments = 
+				  AonStringUtils.defaultString( mod347.getComments() ) 
+				+ FLAG_SEPARATOR
+				+ mod347.isExcludeInputNationalZero() + ","
+				+ mod347.isExcludeOutputNationalZero() + ","
+				+ mod347.isExcludeMod180Declared() + ","
+				+ mod347.isExcludeMod190Declared();
 		FsMod347Record record = ctx.getDslContext().insertInto(FS_MOD347)
 			.set(FS_MOD347.DOMAIN,mod347.getDomain())
 			.set(FS_MOD347.YEAR,mod347.getYear())
 			.set(FS_MOD347.ADMINISTRATION, mod347.getAdministration().getValue())
-			.set(FS_MOD347.COMMENTS,mod347.getComments())
+			.set(FS_MOD347.COMMENTS,comments)
 			.set(FS_MOD347.STATUS, ZERO_BYTE )
 			.set(FS_MOD347.SECURITY_LEVEL, AonEnumUtils.getByte(mod347.isConfidential()) )			
 			.set(FS_MOD347.COMPLEMENTARY, AonEnumUtils.getByte(mod347.isComplementary()))
@@ -233,10 +271,17 @@ public class Mod347DAO {
 	}
 
 	private static Mod347 update(AONContext ctx, Mod347 mod347) {
+		String comments = 
+				  AonStringUtils.defaultString( mod347.getComments() ) 
+				+ FLAG_SEPARATOR
+				+ mod347.isExcludeInputNationalZero() + ","
+				+ mod347.isExcludeOutputNationalZero() + ","
+				+ mod347.isExcludeMod180Declared() + ","
+				+ mod347.isExcludeMod190Declared();
 		ctx.getDslContext().update(FS_MOD347)			
 			.set(FS_MOD347.YEAR,mod347.getYear())
 			.set(FS_MOD347.ADMINISTRATION, mod347.getAdministration().getValue())
-			.set(FS_MOD347.COMMENTS,mod347.getComments())
+			.set(FS_MOD347.COMMENTS,comments)
 			.set(FS_MOD347.STATUS, AonEnumUtils.getByte( mod347.getStatus() ) )
 			.set(FS_MOD347.SECURITY_LEVEL,AonEnumUtils.getByte(mod347.isConfidential()) )			
 			.set(FS_MOD347.COMPLEMENTARY,AonEnumUtils.getByte(mod347.isComplementary()))
@@ -657,7 +702,11 @@ public class Mod347DAO {
 		// Obtenemos el desglose de facturas del ejercicio actual y el anterior (facturas RECC), usando VATDAO
 		// Solo facturas Nacionales o ISP y sin retencion
 		VATDAO.getVatBreakdown(ctx, fromDate, toDate, mod347)
-				.filter(vat -> (!vat.hasRetention()) && (vat.getTransaction() == InvoiceTransactionType.NATIONAL || vat.getTransaction() == InvoiceTransactionType.OTHER_ISP))
+				.filter(vat -> (vat.getTransaction() == InvoiceTransactionType.NATIONAL || vat.getTransaction() == InvoiceTransactionType.OTHER_ISP))
+				.filter(vat ->  !(mod347.isExcludeOutputNationalZero() && vat.isSales() && AonMathUtils.isZero( vat.getPercentage()))  )
+				.filter(vat ->  !(mod347.isExcludeInputNationalZero() && !vat.isSales() && AonMathUtils.isZero( vat.getPercentage()))  )
+				.filter(vat ->  Mod347DAO.excludeIfPresentInMod180(ctx,mod347,vat))
+				.filter(vat ->  Mod347DAO.excludeIfPresentInMod190(ctx,mod347,vat))
 				.peek( vat -> {					
 					// Las compras y gastos, se ponen todas como compras
 					vat.setInvoiceType( vat.getInvoiceType() == InvoiceType.SALES ? InvoiceType.SALES : InvoiceType.PURCHASE);
@@ -666,97 +715,98 @@ public class Mod347DAO {
 						vat.setTransaction( InvoiceTransactionType.NATIONAL);
 				})
 				.forEach( vat -> {
-					
-					// Añadir la factura al registro que corresponda del declarado
-					// Dado que es necesario separar las operaciones normales de las ISP y de las RECC, se usa como clave esos dos datos
-					// además del NIF y el tipo, para posteriormente crear tantos registros como sea necesario en las lineas del 347
-					String c = vat.getRegistryDocument() + ";" + vat.getInvoiceType() + ";" + vat.getTransaction() + ";" + vat.isVatAccrualRegime();						
-					Mod347Declared declared = mapResult.get(c);
-					if (declared == null) {
-						
-						declared = new Mod347Declared();
-						declared.setDomain(mod347.getDomain());
-						declared.setMod347(mod347.getId());
-
-						String document = vat.getRegistryDocument();
-						Country country = vat.getRegistryDocumentCountry();
-						if (country == null || country == Country.ES) {
-
-							if (AonStringUtils.length(document) > 9) {
-								declared.setDocument(AonStringUtils.substring(document, 0, 9));
+//					boolean exclude = vat.isSales() && AonMathUtils.isZero( vat.getPercentage()) && mod347.isExcludeOutputNationalZero();
+//					if (!exclude) {
+						// Añadir la factura al registro que corresponda del declarado
+						// Dado que es necesario separar las operaciones normales de las ISP y de las RECC, se usa como clave esos dos datos
+						// además del NIF y el tipo, para posteriormente crear tantos registros como sea necesario en las lineas del 347
+						String c = vat.getRegistryDocument() + ";" + vat.getInvoiceType() + ";" + vat.getTransaction() + ";" + vat.isVatAccrualRegime();						
+						Mod347Declared declared = mapResult.get(c);
+						if (declared == null) {
+							
+							declared = new Mod347Declared();
+							declared.setDomain(mod347.getDomain());
+							declared.setMod347(mod347.getId());
+	
+							String document = vat.getRegistryDocument();
+							Country country = vat.getRegistryDocumentCountry();
+							if (country == null || country == Country.ES) {
+	
+								if (AonStringUtils.length(document) > 9) {
+									declared.setDocument(AonStringUtils.substring(document, 0, 9));
+								} else {
+									declared.setDocument(document);
+								}
+	
+								// La provincia no la tengo en VATContext, se obtiene de RADRESS de la dirección principal 
+								declared.setProvince(Province.safeValueOf(getRegistryMainAddressProvince(ctx, vat.getRegistry())));
+	
 							} else {
-								declared.setDocument(document);
+	
+								declared.setOperatorNif(country.getIso2() + document);
+								declared.setCountry(country);
+								declared.setProvince(Province.NO_RESIDENTE);
+								
 							}
-
-							// La provincia no la tengo en VATContext, se obtiene de RADRESS de la dirección principal 
-							declared.setProvince(Province.safeValueOf(getRegistryMainAddressProvince(ctx, vat.getRegistry())));
-
-						} else {
-
-							declared.setOperatorNif(country.getIso2() + document);
-							declared.setCountry(country);
-							declared.setProvince(Province.NO_RESIDENTE);
+	
+							String name = vat.getRegistryName();
+							if (AonStringUtils.length(name) > 64) {
+								name = AonStringUtils.substring(name, 0, 63);
+							}
+							declared.setName(name);
+	
+							declared.setType(vat.getInvoiceType() == InvoiceType.SALES ? Mod347Key.B : Mod347Key.A);
+	
+							declared.setVatAccrual(vat.isVatAccrualRegime());
+							declared.setIsp(vat.getTransaction() == InvoiceTransactionType.OTHER_ISP);
+						
+							declared.setFirstQuarterAmount(0.0);
+							declared.setSecondQuarterAmount(0.0);
+							declared.setThirdQuarterAmount(0.0);
+							declared.setFourthQuarterAmount(0.0);
+							declared.setAmount(0.0);
+							declared.setVatAccrualAmount(0.0);
+							
+							// Añadir el declarado al map
+							mapResult.put(c, declared);
+						}
+	
+						// Acumular el importe que se declara en el 347
+						double amount = vat.getAmount347();
+	
+						if (vat.isVatAccrualRegime()) {
+							
+							// Factura Criterio de Caja
+												
+							// Acumular el importe según RECC (La base y las cuotas tienen lo declarado según los cobros/pagos realizados)
+							declared.setVatAccrualAmount(AonMathUtils.round(declared.getVatAccrualAmount() + vat.getBase() + vat.getQuota() + vat.getSurchargeQuota()));
+							
+							// Si la factura es del ejercicio anterior, no se tiene en cuenta el importe, para el minimo a declarar
+							// ni aparece el importe en el 347				
+							if (vat.getTaxDate().compareTo(AonDateUtils.getYearFirstDay(mod347.getYear())) < 0) {
+								amount = 0;						
+							}
+							
+						} else if (mod347.getDocument() != null && !mod347.getDocument().startsWith("H")) {
+	
+							// No es factura RECC, ni NIF declarante empieza por "H", se acumula por trimestres
+							cal.setTime(vat.getTaxDate());
+							int quarter = (cal.get(Calendar.MONTH) / 3);
+							if (quarter == 0) {
+								declared.setFirstQuarterAmount(declared.getFirstQuarterAmount() + amount);
+							} else if (quarter == 1) {
+								declared.setSecondQuarterAmount(declared.getSecondQuarterAmount() + amount);
+							} else if (quarter == 2) {
+								declared.setThirdQuarterAmount(declared.getThirdQuarterAmount() + amount);
+							} else if (quarter == 3) {
+								declared.setFourthQuarterAmount(declared.getFourthQuarterAmount() + amount);
+							}
 							
 						}
-
-						String name = vat.getRegistryName();
-						if (AonStringUtils.length(name) > 64) {
-							name = AonStringUtils.substring(name, 0, 63);
-						}
-						declared.setName(name);
-
-						declared.setType(vat.getInvoiceType() == InvoiceType.SALES ? Mod347Key.B : Mod347Key.A);
-
-						declared.setVatAccrual(vat.isVatAccrualRegime());
-						declared.setIsp(vat.getTransaction() == InvoiceTransactionType.OTHER_ISP);
-					
-						declared.setFirstQuarterAmount(0.0);
-						declared.setSecondQuarterAmount(0.0);
-						declared.setThirdQuarterAmount(0.0);
-						declared.setFourthQuarterAmount(0.0);
-						declared.setAmount(0.0);
-						declared.setVatAccrualAmount(0.0);
 						
-						// Añadir el declarado al map
-						mapResult.put(c, declared);
-					}
-
-					// Acumular el importe que se declara en el 347
-					double amount = vat.getAmount347();
-
-					if (vat.isVatAccrualRegime()) {
-						
-						// Factura Criterio de Caja
-											
-						// Acumular el importe según RECC (La base y las cuotas tienen lo declarado según los cobros/pagos realizados)
-						declared.setVatAccrualAmount(AonMathUtils.round(declared.getVatAccrualAmount() + vat.getBase() + vat.getQuota() + vat.getSurchargeQuota()));
-						
-						// Si la factura es del ejercicio anterior, no se tiene en cuenta el importe, para el minimo a declarar
-						// ni aparece el importe en el 347				
-						if (vat.getTaxDate().compareTo(AonDateUtils.getYearFirstDay(mod347.getYear())) < 0) {
-							amount = 0;						
-						}
-						
-					} else if (mod347.getDocument() != null && !mod347.getDocument().startsWith("H")) {
-
-						// No es factura RECC, ni NIF declarante empieza por "H", se acumula por trimestres
-						cal.setTime(vat.getTaxDate());
-						int quarter = (cal.get(Calendar.MONTH) / 3);
-						if (quarter == 0) {
-							declared.setFirstQuarterAmount(declared.getFirstQuarterAmount() + amount);
-						} else if (quarter == 1) {
-							declared.setSecondQuarterAmount(declared.getSecondQuarterAmount() + amount);
-						} else if (quarter == 2) {
-							declared.setThirdQuarterAmount(declared.getThirdQuarterAmount() + amount);
-						} else if (quarter == 3) {
-							declared.setFourthQuarterAmount(declared.getFourthQuarterAmount() + amount);
-						}
-						
-					}
-					
-					// Acumular el total
-					declared.setAmount(declared.getAmount() + amount);
-					
+						// Acumular el total
+						declared.setAmount(declared.getAmount() + amount);
+//					}		
 				});
 		
 		String control = "";
@@ -888,13 +938,15 @@ public class Mod347DAO {
 		Date toDate = AonDateUtils.getYearLastDay(mod347.getYear());
 		
 		return VATDAO.getVatBreakdown(ctx, fromDate, toDate, mod347)
-		    .filter( vat -> (!vat.hasRetention()) &&                                                                         // Facturas sin retención
-		    		        (vat.getTransaction() == invoiceTransaction1 || vat.getTransaction() == invoiceTransaction2) &&  // Nacional o ISP 
+			.filter(vat ->  !(mod347.isExcludeOutputNationalZero() && vat.isSales() && AonMathUtils.isZero( vat.getPercentage()))  )				
+			.filter(vat ->  !(mod347.isExcludeInputNationalZero() && !vat.isSales() && AonMathUtils.isZero( vat.getPercentage()))  )
+			.filter(vat ->  Mod347DAO.excludeIfPresentInMod180(ctx,mod347,vat))
+			.filter(vat ->  Mod347DAO.excludeIfPresentInMod190(ctx,mod347,vat))
+		    .filter( vat -> (vat.getTransaction() == invoiceTransaction1 || vat.getTransaction() == invoiceTransaction2) &&  // Nacional o ISP 
 		                    (vat.getInvoiceType() == invoiceType1 || vat.getInvoiceType() == invoiceType2) &&  				 // Tipo (Ventas o Compras/Gastos)		                    
 		                    (AonStringUtils.equals(vat.getRegistryDocument(),declared.getDocument()))  &&                    // NIF
 		                    (vat.isVatAccrualRegime() == declared.isVatAccrual())                                            // Criterio de caja		                    
-		                    );  
-		
+	                    );  
 	}
 	
 	// --------------- DUPLICAR MODELO ---------------
@@ -920,5 +972,49 @@ public class Mod347DAO {
 	
 	}
 	
+	private static boolean excludeIfPresentInMod180(AONContext ctx, Mod347 mod347,VatContext vat) {
+		if (vat.hasRetention() && mod347.isExcludeMod180Declared()) { 
+			AggregateFunction<Integer> count = DSL.count();
+			int c = ctx.getDslContext()
+				.select( count )
+				.from(FS_MODEL180)
+				.innerJoin(FS_MODEL180_DETAIL).on(FS_MODEL180.ID.eq(FS_MODEL180_DETAIL.FS_MODEL180))
+				.where(FS_MODEL180.DOMAIN.eq(mod347.getDomain()))
+				.and(FS_MODEL180.YEAR.eq(mod347.getYear()))
+				.and(FS_MODEL180_DETAIL.DOCUMENT.eq(vat.getRegistryDocument()))
+				.fetch()
+				.stream()
+				.mapToInt( rec -> rec.get(count) )
+				.findFirst()
+				.orElse( 0 )
+				;
+			return (c==0);
+		}
+		return (mod347.isExcludeMod180Declared() || mod347.isExcludeMod190Declared()) 
+				? true
+				: !vat.hasRetention();
+	}
+	private static boolean excludeIfPresentInMod190(AONContext ctx, Mod347 mod347,VatContext vat) { 
+		if (vat.hasRetention() && mod347.isExcludeMod190Declared()) { 
+			AggregateFunction<Integer> count = DSL.count();
+			int c = ctx.getDslContext()
+				.select( count )
+				.from(FS_MODEL190)
+				.innerJoin(FS_MODEL190_DETAIL).on(FS_MODEL190.ID.eq(FS_MODEL190_DETAIL.FS_MODEL190))
+				.where(FS_MODEL190.DOMAIN.eq(mod347.getDomain()))
+				.and(FS_MODEL190.YEAR.eq(mod347.getYear()))
+				.and(FS_MODEL190_DETAIL.DOCUMENT.eq(vat.getRegistryDocument()))
+				.fetch()
+				.stream()
+				.mapToInt( rec -> rec.get(count) )
+				.findFirst()
+				.orElse( 0 )
+				;
+			return (c==0);
+		}
+		return (mod347.isExcludeMod180Declared() || mod347.isExcludeMod190Declared()) 
+				? true
+				: !vat.hasRetention();
+	}
 	
 }

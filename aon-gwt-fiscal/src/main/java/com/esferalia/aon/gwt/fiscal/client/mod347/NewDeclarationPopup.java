@@ -22,17 +22,23 @@ import com.google.gwt.user.client.ui.Label;
 
 public class NewDeclarationPopup extends CustomDialog {
 	
-	protected int row = 0;
-	private AdministrationListBox admonList = new AdministrationListBox();
-	private IntegerBox yearBox = new IntegerBox();
-	private CheckBox replacement = new CheckBox();
-	private CheckBox complementary = new CheckBox();
-	
 	public NewDeclarationPopup(final Mod347 mod347 ,final Model347Callback callback) {
 		setCaption(AON.MSG.newDeclaration());
 		setGlassEnabled(true);
 		setAnimationEnabled(true);
 		
+		int row = 0;
+		AdministrationListBox admonList = new AdministrationListBox();
+		IntegerBox yearBox = new IntegerBox();
+		CheckBox replacement = new CheckBox();
+		CheckBox complementary = new CheckBox();
+		
+		CheckBox excludeOutputNationalZero = new CheckBox();
+		CheckBox excludeInputNationalZero = new CheckBox();
+		CheckBox excludeMod180Declared = new CheckBox();
+		CheckBox excludeMod190Declared = new CheckBox();
+		Label retentionLabel = new Label("Se excluyen facturas con retenci\u00F3n");
+
 		FlexTable tab = new FlexTable();
 		admonList.setSelectedIndex( mod347.getAdministration().ordinal());
 		yearBox.setValue(mod347.getYear());
@@ -47,7 +53,7 @@ public class NewDeclarationPopup extends CustomDialog {
 		cf.setWidth(0, "130px");
 		cf.addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
 		cf.addStyleName(0, AON.AON_CSS.aonPaddingRight() );
-		cf.setWidth(1, "250px");
+		cf.setWidth(1, "400px");
 		cf.addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
 		cf.addStyleName(0, AON.AON_CSS.aonPaddingRight() );
 
@@ -59,7 +65,6 @@ public class NewDeclarationPopup extends CustomDialog {
 			@Override
 			public void onChange(ChangeEvent event) {
 				mod347.setAdministration( admonList.getValue() );
-								
 				complementary.setEnabled(true);
 				replacement.setEnabled(true);
 				
@@ -120,10 +125,10 @@ public class NewDeclarationPopup extends CustomDialog {
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 		tab.setWidget(row, 0, complementary);
+		row++;
 		
 		
 		// SUSTITUTIVA
-		row++;
 		replacement.setText(AON.MSG.replacement());
 		replacement.setEnabled(mod347.getAdministration()!=Administration.GIPUZKOA);  // Sustitutiva solo si no es Gipuzkoa
 		replacement.addClickHandler(new ClickHandler() {
@@ -142,6 +147,83 @@ public class NewDeclarationPopup extends CustomDialog {
 		tab.setWidget(row, 0, replacement);
 		row++;
 		
+		// info
+		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.setWidget(row, 0, new Label("Informaci\u00F3n para el c\u00E1lculo"));
+		row++;
+
+		// excludeOutputNationalZero
+		excludeOutputNationalZero.setText("Excluir bases de facturas EMITIDAS con IVA al 0%.");
+		excludeOutputNationalZero.setValue(mod347.isExcludeOutputNationalZero());
+		excludeOutputNationalZero.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				mod347.setExcludeOutputNationalZero(excludeOutputNationalZero.getValue());
+			}
+		});
+		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+		tab.setWidget(row, 0, excludeOutputNationalZero);
+		row++;
+		
+		// excludeInputNationalZero
+		excludeInputNationalZero.setText("Excluir bases de facturas RECIBIDAS con IVA al 0%.");
+		excludeInputNationalZero.setValue(mod347.isExcludeInputNationalZero());
+		excludeInputNationalZero.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				mod347.setExcludeInputNationalZero(excludeInputNationalZero.getValue());
+			}
+		});
+		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+		tab.setWidget(row, 0, excludeInputNationalZero);
+		row++;
+		
+		// excludeMod180Declared
+		excludeMod180Declared.setText("Excluir facturas con retenci\u00F3n de perceptores declarados en el modelo 180.");
+		excludeMod180Declared.setValue(mod347.isExcludeMod180Declared());
+		excludeMod180Declared.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				mod347.setExcludeMod180Declared(excludeMod180Declared.getValue());
+				retentionLabel.setVisible(!mod347.isExcludeMod180Declared() && !mod347.isExcludeMod190Declared() );
+			}
+		});
+		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+		tab.setWidget(row, 0, excludeMod180Declared);
+		row++;
+
+		// excludeMod180Declared
+		excludeMod190Declared.setText("Excluir facturas con retenci\u00F3n de perceptores declarados en el modelo 190.");
+		excludeMod190Declared.setValue(mod347.isExcludeMod190Declared());
+		excludeMod190Declared.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				mod347.setExcludeMod190Declared(excludeMod190Declared.getValue());
+				retentionLabel.setVisible(!mod347.isExcludeMod180Declared() && !mod347.isExcludeMod190Declared() );
+			}
+		});
+		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+		tab.setWidget(row, 0, excludeMod190Declared);
+		row++;
+
+		// info
+		retentionLabel.setVisible(!mod347.isExcludeMod180Declared() && !mod347.isExcludeMod190Declared() );
+		retentionLabel.setStyleName(AON.AON_CSS.aonMarginLeft());
+		retentionLabel.addStyleName(AON.AON_CSS.aonBold());
+		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+		tab.setWidget(row, 0, retentionLabel);
+		row++;
+
 		rootPanel.add(tab);
 		
 		FlowPanel buttonsPanel = new FlowPanel();
