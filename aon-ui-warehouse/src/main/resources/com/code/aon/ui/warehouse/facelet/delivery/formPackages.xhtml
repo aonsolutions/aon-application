@@ -17,6 +17,8 @@
 	<c:set var="ediTree" value="#{delivery.packagesHandler.ediTreeNode}"/>
 
 
+	<c:set var="packagesModel" value="#{delivery.packagesHandler.packagesModel}"/>
+
 	<!-- *********************** -->
 
 
@@ -35,10 +37,175 @@
 		</aon:panel>
 	</aon:if>
 	
-	<rich:panelBar styleClass="aon-width-all" selectedPanel="packagesPanel">
+	<rich:panelBar styleClass="aon-width-all" selectedPanel="editPanel">
 	
-		<rich:panelBarItem id="editPanel" label="Jerarquia de envases">
-		    
+		<rich:panelBarItem id="editPanel" label="Jerarquia de envases" >
+		    <aon:panel id="productPanel"
+				styleClass="aon-width-all aon-margin-top">
+				<f:facet name="header">
+					<aon:outputText value="Productos y envases" />
+				</f:facet>
+				<aon:dataTable id="productData" var="to" 
+					value="#{packagesModel}" >
+					
+					<aon:column id="linesPackage-selectColumn" 
+						styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
+						<f:facet name="header">
+							<aon:outputText value="&#160;" />
+						</f:facet>
+						<aon:div rendered="#{handler.to != to}" layout="none">
+							<aon:commandLink 
+								styleClass="aon-table-row-link" value="&#160;"
+								immediate="true" ajaxSingle="true" requestDelay="100"
+								
+								actionListener="#{handler.onSelect}" />
+						</aon:div>
+						<f:facet name="footer">
+							<aon:div layout="none">
+								<aon:commandButton title="#{bundle.aon_reset}"
+									actionListener="#{handler.onReset}"
+									rendered="#{!handler.nevv}" reRender="productPanel"
+									styleClass="aon-editDataTable-button aon-icon-reset" />
+							</aon:div>
+						</f:facet>
+					</aon:column>
+		
+					<aon:column styleClass="aon-nowrap">
+						<f:facet name="header">
+							<aon:outputLabel for="packageContent" value="Contenido" />
+						</f:facet>
+						<aon:div rendered="#{handler.to!=to}">
+							<aon:outputText value="linea #{to.content.line} " />
+							<aon:outputText value=" (" />
+							<aon:outputText value="#{to.content.quantity}" >
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+							<aon:outputText value=" x #{to.content.description}) " />
+						</aon:div>
+						<aon:selectOneMenu id="packageContent" value="#{to.content}"
+							rendered="#{handler.to==to}" required="#{true}">
+							<f:selectItem itemLabel="-" value="#{null}" />
+							<f:selectItems value="#{handler.availableItems}" />
+						</aon:selectOneMenu>
+						<f:facet name="footer">
+							<aon:selectOneMenu id="packageContent-New" value="#{handler.to.content}"
+								rendered="#{handler.nevv}" required="#{true}">
+								<f:selectItem itemLabel="-" value="#{null}" />
+								<f:selectItems value="#{handler.availableItems}" />
+							</aon:selectOneMenu>
+						</f:facet>
+					</aon:column>
+					<aon:column styleClass="aon-nowrap">
+						<f:facet name="header">
+							<aon:outputLabel for="packageContinent" value="Continente" />
+						</f:facet>
+						<aon:div rendered="#{handler.to!=to}">
+							<aon:outputText value="linea #{to.continent.line} " />
+							<aon:outputText value=" (" />
+							<aon:outputText value="#{to.continent.quantity}" >
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+							<aon:outputText value=" x #{to.continent.description}) " />
+						</aon:div>
+						<aon:selectOneMenu id="packageContinent" value="#{to.continent}"
+							rendered="#{handler.to==to}" required="#{true}">
+							<f:selectItem itemLabel="-" value="#{null}" />
+							<f:selectItems value="#{handler.availablePackages}" />
+						</aon:selectOneMenu>
+						<f:facet name="footer">
+							<aon:selectOneMenu id="packageContinent-New" value="#{handler.to.continent}"
+								rendered="#{handler.nevv}" required="#{true}">
+								<f:selectItem itemLabel="-" value="#{null}" />
+								<f:selectItems value="#{handler.availablePackages}" />
+							</aon:selectOneMenu>
+						</f:facet>
+					</aon:column>
+					<aon:column styleClass="aon-editDataTable-buttonsColumn aon-vertical-align-top">
+						<f:facet name="header">
+							<aon:outputText value="&#160;" />
+						</f:facet>
+						<aon:div rendered="#{handler.to==to}" layout="none">			
+							<aon:commandButton
+								id="productData-save" title="#{bundle.aon_save}"
+								actionListener="#{handler.onAccept}"
+								reRender="productPanel"
+								styleClass="aon-editDataTable-button aon-icon-accept" />
+							<aon:commandButton
+								id="productData-cancel" title="#{bundle.aon_cancel}"
+								actionListener="#{handler.onCancel}"
+								immediate="true" reRender="#{cancelButtonReRender}"
+								styleClass="aon-editDataTable-button aon-icon-cancel" />
+							<aon:confirmButton
+								id="productData-remove" title="#{bundle.aon_remove}"
+								immediate="true" 
+								reRender="productPanel"
+								confirmTitle="#{bundle.aon_confirm_title}"
+								confirmMessage="#{bundle.aon_remove_confirm}"
+								confirmActionListener="#{handler.onRemove}"
+								styleClass="aon-editDataTable-button aon-icon-delete" />
+						</aon:div>
+						<f:facet name="footer">
+							<aon:div layout="none">
+								<aon:commandButton
+									id="productData-new-save" title="#{bundle.aon_save}"
+									actionListener="#{handler.onAccept}"
+									rendered="#{handler.nevv}"
+									reRender="productPanel"
+									styleClass="aon-editDataTable-button aon-icon-accept" />
+								<aon:confirmButton
+									id="productData-new-cancel" title="#{bundle.aon_cancel}"
+									rendered="#{handler.nevv}" reRender="#{newCancelButtonReRender}"
+									immediate="true"
+									confirmTitle="#{bundle.aon_confirm_title}"
+									confirmMessage="#{bundle.aon_cancel_confirm}"
+									confirmActionListener="#{handler.onCancel}"
+									styleClass="aon-editDataTable-button aon-icon-cancel" />
+							</aon:div>
+						</f:facet>
+					</aon:column>
+				</aon:dataTable>
+			</aon:panel>
+		
+			<!--  
+		    <aon:panel id="packagesContainerPanel"
+				styleClass="aon-width-all aon-margin-top">
+				<f:facet name="header">
+					<aon:outputText value="PALET" />
+				</f:facet>
+		
+				<aon:dataTable id="packagesContainerData" var="pair" 
+					rendered="#{containerModel.rowCount > 0}" value="#{containerModel}" >
+		
+					<aon:column styleClass="aon-nowrap">
+						<f:facet name="header">
+							<aon:outputText value="Contenido" />
+						</f:facet>
+						<aon:outputText value="linea #{pair.right.line} " />
+						<aon:outputText value=" (" />
+						<aon:outputText value="#{pair.right.quantity}" >
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+						<aon:outputText value=" x #{pair.right.description}) " />
+						<f:facet name="footer">
+							<aon:outputText value="Contenido" />
+						</f:facet>
+					</aon:column>
+					<aon:column styleClass="aon-nowrap">
+						<f:facet name="header">
+							<aon:outputText value="Continente" />
+						</f:facet>
+						<aon:outputText value="linea #{pair.left.line} " />
+						<aon:outputText value=" (" />
+						<aon:outputText value="#{pair.left.quantity}" >
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+						<aon:outputText value=" x #{pair.left.description}) " />
+					</aon:column>
+				</aon:dataTable>
+		
+			</aon:panel>
+			-->
+			
 		</rich:panelBarItem>
 	
 		<aon:if test="#{company.ediSupportEnabled}">
@@ -50,8 +217,7 @@
 		</aon:if>
 		
 		<rich:panelBarItem id="packagesPanel" label="Secuencia de envases">
-            
-			<aon:panel id="packagesContainerPanel"
+            <aon:panel id="packagesContainerPanel"
 				styleClass="aon-width-all aon-margin-top">
 				<f:facet name="header">
 					<aon:outputText value="Palets, Box, ..." />
@@ -68,18 +234,6 @@
 					<aon:column styleClass="aon-width-50">
 						<aon:inputText value="#{pair.left.line}"
 							required="true" disabled="true" size="2" />
-						<!-- TODO: implement CRUD operations -->
-						<!--  
-						<rich:inputNumberSpinner value="#{pair.left.line}"
-							required="true" disabled="true"
-							minValue="1" maxValue="#{handler.linesCount}"
-							inputStyle="width:20px" >
-							<a4j:support event="onchange"
-								actionListener="#{handler.onPackagesContainerLineChange}"
-								reRender="packagesContainerPanel"
-								ajaxSingle="true" />
-						</rich:inputNumberSpinner>
-						-->
 					</aon:column>
 					
 					<aon:column>
@@ -97,18 +251,6 @@
 					<aon:column styleClass="aon-width-50">
 						<aon:inputText value="#{pair.right.line}"
 							required="true" disabled="true" size="2" />
-						<!-- TODO: implement CRUD operations -->
-						<!--  
-						<rich:inputNumberSpinner value="#{pair.right.line}"
-							required="true" disabled="true"
-							minValue="1" maxValue="#{handler.linesCount}"
-							inputStyle="width:20px" >
-							<a4j:support event="onchange"
-								actionListener="#{handler.onPackagesContainerLineChange}"
-								reRender="packagesContainerPanel"
-								ajaxSingle="true" />
-						</rich:inputNumberSpinner>
-						-->
 					</aon:column>
 					
 					<aon:column>
@@ -138,15 +280,6 @@
 					<aon:column styleClass="aon-width-50">
 						<aon:inputText value="#{pair.left.line}"
 							required="true" disabled="true" size="2" />
-						<!-- TODO: implement CRUD operations -->
-						<!--  
-						<rich:inputNumberSpinner value="#{pair.left.line}"
-							required="true" disabled="true"
-							minValue="1" maxValue="#{handler.linesCount}"
-							inputStyle="width:20px"
-							actionListener="#{handler.onLinesPackageLineChange}"
-							reRender="linesPackagePanel" />
-						-->
 					</aon:column>
 					
 					<aon:column>
@@ -164,15 +297,6 @@
 					<aon:column styleClass="aon-width-50">
 						<aon:inputText value="#{pair.right.line}"
 							required="true" disabled="true" size="2" />
-						<!-- TODO: implement CRUD operations -->
-						<!--  
-						<rich:inputNumberSpinner value="#{pair.right.line}"
-							required="true" disabled="true"
-							minValue="1" maxValue="#{handler.linesCount}"
-							inputStyle="width:20px"
-							actionListener="#{handler.onLinesPackageLineChange}"
-							reRender="linesPackagePanel" />
-						-->
 					</aon:column>
 					
 					<aon:column>

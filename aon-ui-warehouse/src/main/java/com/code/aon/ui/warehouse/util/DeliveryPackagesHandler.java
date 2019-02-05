@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 import org.richfaces.model.TreeNode;
@@ -92,7 +93,8 @@ public class DeliveryPackagesHandler implements Serializable {
 	}
 	
 	public void setDataAttachValue(String data){
-		dataAttach.setData(data.getBytes());
+		if(dataAttach!=null)
+			dataAttach.setData(data.getBytes());
 	}
 	
 	public List<ITransferObject> getDetailList() {
@@ -135,8 +137,10 @@ public class DeliveryPackagesHandler implements Serializable {
 		linesPackageModel = null;
 		dataAttach = null;
 		ediRootNode = null;
+		
+		initGrid();
 	}
-	
+
 	public void onLoadPackages(ActionEvent event) {
 		try {
 			Delivery delivery = (Delivery) controller.getTo();
@@ -446,6 +450,130 @@ public class DeliveryPackagesHandler implements Serializable {
 	}
 	
     
+	/* ***********************
+	 * GRID METHODS
+	 * ***********************
+	 */
+	
+	private boolean nevv;
+	private boolean edit;
+	private boolean list;
+	
+	private Package to;
+	
+	private List<Package> packagesList;
+	
+//	private List<Package> linesPackageList;
+
+	private SerializableListDataModel packagesModel;
+	
+//	private SerializableListDataModel linesPackageModel;
+	
+	public boolean isNevv() {
+		return nevv;
+	}
+	
+	public void setNevv(boolean nevv) {
+		this.nevv = nevv;
+	}
+	
+	public Package getTo() {
+		return to;
+	}
+	
+	
+
+	public SerializableListDataModel getPackagesModel() {
+		if(packagesModel==null){
+			packagesList = new LinkedList<Package>();
+			packagesModel = new SerializableListDataModel(packagesList);
+		}
+		return packagesModel;
+	}
+	
+	private void initGrid() {
+		nevv = false;
+		packagesModel = null;
+		packagesList = null;
+	}
+
+
+	public void onReset(ActionEvent event) {
+		to = new Package();
+//		if(packagesList==null)
+//			packagesList = new LinkedList<Package>();
+//		packagesList.add(to);
+		nevv = true;
+	}
+	public void onSelect(ActionEvent event) {
+		if(packagesModel.isRowAvailable())
+			to = (Package) packagesModel.getRowData();
+		nevv = false;
+	}
+	public void onAccept(ActionEvent event) {
+		if(nevv)
+			packagesList.add(to);
+		
+		nevv = false;
+		to = null;
+	}
+	public void onCancel(ActionEvent event) {
+		nevv = false;
+		to = null;
+	}
+	public void onRemove(ActionEvent event) {
+		if(packagesModel.isRowAvailable())
+			packagesList.remove(packagesModel.getRowIndex());
+		nevv = false;
+		to = null;
+	}
+	
+	public List<SelectItem> getAvailableItems() {
+		List<SelectItem> list = new LinkedList<SelectItem>(); 
+		for(ITransferObject to: detailList) {
+			DeliveryDetail detail = (DeliveryDetail) to;
+			if(StringUtils.isNotBlank(detail.getItem().getSerialNumber())) {
+				StringBuilder desc = new StringBuilder();
+				desc.append("lin.").append(detail.getLine()).append(" - ");
+				desc.append(detail.getQuantity()).append(" x ").append(detail.getDescription());
+				list.add(new SelectItem(detail, desc.toString()));	
+			}
+		}
+		return list;
+	}
+	public List<SelectItem> getAvailablePackages() {
+		List<SelectItem> list = new LinkedList<SelectItem>(); 
+		for(ITransferObject to: detailList) {
+			DeliveryDetail detail = (DeliveryDetail) to;
+			if(StringUtils.isBlank(detail.getItem().getSerialNumber())) {
+				StringBuilder desc = new StringBuilder();
+				desc.append("lin.").append(detail.getLine()).append(" - ");
+				desc.append(detail.getQuantity()).append(" x ").append(detail.getDescription());
+				list.add(new SelectItem(detail, desc.toString()));	
+			}
+		}
+		return list;
+	}
+
+	
+	public class Package implements Serializable {
+		
+		private DeliveryDetail content;
+		private DeliveryDetail continent;
+		public DeliveryDetail getContent() {
+			return content;
+		}
+		public void setContent(DeliveryDetail content) {
+			this.content = content;
+		}
+		public DeliveryDetail getContinent() {
+			return continent;
+		}
+		public void setContinent(DeliveryDetail continent) {
+			this.continent = continent;
+		}
+	}
+		
 	
 	
 }
