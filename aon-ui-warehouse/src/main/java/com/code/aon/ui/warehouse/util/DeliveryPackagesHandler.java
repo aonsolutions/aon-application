@@ -61,6 +61,11 @@ public class DeliveryPackagesHandler implements Serializable {
 	private SerializableListDataModel linesPackageModel;
 	
 	private TreeNode<EdiStructureItem> ediRootNode = null;
+	
+	private GridController productGrid;
+	private GridController packageGrid;
+	
+	
 
     public TreeNode<EdiStructureItem> getEdiTreeNode() {
         if (ediRootNode == null) {
@@ -138,7 +143,10 @@ public class DeliveryPackagesHandler implements Serializable {
 		dataAttach = null;
 		ediRootNode = null;
 		
-		initGrid();
+		productGrid = null;
+		packageGrid = null;
+		getProductGrid().init();
+		getPackageGrid().init();
 	}
 
 	public void onLoadPackages(ActionEvent event) {
@@ -455,77 +463,16 @@ public class DeliveryPackagesHandler implements Serializable {
 	 * ***********************
 	 */
 	
-	private boolean nevv;
-	private boolean edit;
-	private boolean list;
-	
-	private Package to;
-	
-	private List<Package> packagesList;
-	
-//	private List<Package> linesPackageList;
-
-	private SerializableListDataModel packagesModel;
-	
-//	private SerializableListDataModel linesPackageModel;
-	
-	public boolean isNevv() {
-		return nevv;
-	}
-	
-	public void setNevv(boolean nevv) {
-		this.nevv = nevv;
-	}
-	
-	public Package getTo() {
-		return to;
-	}
-	
-	
-
-	public SerializableListDataModel getPackagesModel() {
-		if(packagesModel==null){
-			packagesList = new LinkedList<Package>();
-			packagesModel = new SerializableListDataModel(packagesList);
-		}
-		return packagesModel;
-	}
-	
-	private void initGrid() {
-		nevv = false;
-		packagesModel = null;
-		packagesList = null;
+	public GridController getProductGrid() {
+		if(productGrid==null)
+			productGrid = new GridController();
+		return productGrid;
 	}
 
-
-	public void onReset(ActionEvent event) {
-		to = new Package();
-//		if(packagesList==null)
-//			packagesList = new LinkedList<Package>();
-//		packagesList.add(to);
-		nevv = true;
-	}
-	public void onSelect(ActionEvent event) {
-		if(packagesModel.isRowAvailable())
-			to = (Package) packagesModel.getRowData();
-		nevv = false;
-	}
-	public void onAccept(ActionEvent event) {
-		if(nevv)
-			packagesList.add(to);
-		
-		nevv = false;
-		to = null;
-	}
-	public void onCancel(ActionEvent event) {
-		nevv = false;
-		to = null;
-	}
-	public void onRemove(ActionEvent event) {
-		if(packagesModel.isRowAvailable())
-			packagesList.remove(packagesModel.getRowIndex());
-		nevv = false;
-		to = null;
+	public GridController getPackageGrid() {
+		if(packageGrid==null)
+			packageGrid = new GridController();
+		return packageGrid;
 	}
 	
 	public List<SelectItem> getAvailableItems() {
@@ -541,6 +488,7 @@ public class DeliveryPackagesHandler implements Serializable {
 		}
 		return list;
 	}
+	
 	public List<SelectItem> getAvailablePackages() {
 		List<SelectItem> list = new LinkedList<SelectItem>(); 
 		for(ITransferObject to: detailList) {
@@ -554,12 +502,72 @@ public class DeliveryPackagesHandler implements Serializable {
 		}
 		return list;
 	}
+	
 
+	public class GridController {
+		
+		private boolean nevv;
+		private Package to;
+		private List<Package> list;
+		private SerializableListDataModel model;
+		
+		public boolean isNevv() {
+			return nevv;
+		}
+		
+		public void setNevv(boolean nevv) {
+			this.nevv = nevv;
+		}
+		
+		public Package getTo() {
+			return to;
+		}
+		
+		public SerializableListDataModel getModel() {
+			if(model==null){
+				list = new LinkedList<Package>();
+				model = new SerializableListDataModel(list);
+			}
+			return model;
+		}
+		
+		private void init() {
+			nevv = false;
+			model = null;
+			list = null;
+		}
+		
+		public void onReset(ActionEvent event) {
+			to = new Package();
+			nevv = true;
+		}
+		public void onSelect(ActionEvent event) {
+			if(model.isRowAvailable())
+				to = (Package) model.getRowData();
+			nevv = false;
+		}
+		public void onAccept(ActionEvent event) {
+			if(nevv) list.add(to);
+			nevv = false;
+			to = null;
+		}
+		public void onCancel(ActionEvent event) {
+			nevv = false;
+			to = null;
+		}
+		public void onRemove(ActionEvent event) {
+			if(model.isRowAvailable()) list.remove(model.getRowIndex());
+			nevv = false;
+			to = null;
+		}
+	}
+	
 	
 	public class Package implements Serializable {
 		
 		private DeliveryDetail content;
 		private DeliveryDetail continent;
+		private String sscc;
 		public DeliveryDetail getContent() {
 			return content;
 		}
@@ -571,6 +579,12 @@ public class DeliveryPackagesHandler implements Serializable {
 		}
 		public void setContinent(DeliveryDetail continent) {
 			this.continent = continent;
+		}
+		public String getSscc() {
+			return sscc;
+		}
+		public void setSscc(String sscc) {
+			this.sscc = sscc;
 		}
 	}
 		
