@@ -3,8 +3,8 @@ package com.esferalia.aon.gwt.payroll.shared;
 import java.util.ArrayList;
 import java.util.Date;
 
-import com.google.gwt.dev.json.JsonArray;
-import com.google.gwt.dev.json.JsonObject;
+import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONObject;
 
 public final class AgrarianAFIGeneration {
 	public static class ETI{
@@ -309,15 +309,15 @@ public final class AgrarianAFIGeneration {
 		String newDate;
 		String reserved14;
 		
-		public DRA(String year, String month, JsonArray days ) {
+		public DRA(String year, String month, JSONArray days ) {
 			super();
 			this.draHeader = "DRA";
 			this.year = year;
 			this.month = month;
-			char[] day = new char[days.getLength()];
-			for(int i=0; i< days.getLength(); i++) {
+			char[] day = new char[days.size()];
+			for(int i=0; i< days.size(); i++) {
 //				System.out.print(days.get(i).asString().getString());
-				day[i] = days.get(i).asString().getString().charAt(0);
+				day[i] = days.get(i).isString().stringValue().charAt(0);
 			}
 			this.days = day;
 			this.cosolidateDate = StringUtils.rightPad("", 8, '0');
@@ -511,85 +511,85 @@ public final class AgrarianAFIGeneration {
 		}	
 	}
 	
-	public static String generateAgrarianAFI (JsonObject agrarianData) {
+	public static String generateAgrarianAFI (JSONObject agrarianData) {
 		//RESULT
 		String agrarianAFI = null;
 		
 		//ETI
-		JsonObject etiJson = (JsonObject) agrarianData.get("ETI");
-		ETI eti = new ETI(
-				etiJson.get("authKey").asString().getString(), 
-				etiJson.get("payrollProvider").asString().getString(), 
-				null == etiJson.get("fileName").asString() ? null : etiJson.get("fileName").asString().getString(), 
-				etiJson.get("prorityCode").asString().getString());
-		
-		//EMP
-		JsonObject empJson = (JsonObject) agrarianData.get("EMP");
-		EMP emp = new EMP(
-				empJson.get("cccProvince").asString().getString(),
-				empJson.get("ccc").asString().getString(),
-				empJson.get("cccRegimePrincipal").asString().getString(),
-				empJson.get("cccProvincePrincipal").asString().getString(),
-				empJson.get("cccPrincipal").asString().getString());
-		
-		//RZS
-		JsonObject rzsJson = (JsonObject) agrarianData.get("RZS");
-		RZS rzs = new RZS(
-				rzsJson.get("businessmanType").asString().getString(), 
-				rzsJson.get("rzsName").asString().getString());
-		
-		//EMPLOYEES
-		JsonArray employees = (JsonArray) agrarianData.get("EMPS");
-		EMPLS empls = new EMPLS();
-		for(int i=0; i<employees.getLength(); i++) {
-			JsonObject emplJson = (JsonObject) employees.get(i);
-			
-			//TRA
-			JsonObject traJson = (JsonObject) emplJson.get("TRA");
-			TRA tra = new TRA(
-					traJson.get("numAfiliacion").asString().getString(),
-					traJson.get("documentType").asString().getString(), 
-					traJson.get("documentCountry").asString().getString(),
-					traJson.get("document").asString().getString(),
-					traJson.get("nationality").asString().getString());
-			
-			//AYN
-			JsonObject aynJson = (JsonObject) emplJson.get("AYN");
-			AYN ayn = new AYN(
-					aynJson.get("firstSurname").asString().getString(), 
-					aynJson.get("secondSurname").asString().getString(), 
-					aynJson.get("name").asString().getString());
-			
-			//FAB
-			String fab = emplJson.get("FAB").asString().getString();
-			
-			//DRA
-			JsonObject draJson = (JsonObject) emplJson.get("DRA");
-			DRA dra = new DRA(
-					draJson.get("year").asString().getString(), 
-					draJson.get("month").asString().getString(), 
-					draJson.get("days").asArray());
-			
-			//CREATE EMPL
-			EMPL empl = new EMPL(tra, ayn, fab, dra);
-			empls.add(empl);
-		}
-		
-		//CONF
-		JsonObject confJson = (JsonObject) agrarianData.get("CONF");
-		Integer staticLines = Integer.parseInt(confJson.get("staticLines").asString().getString());
-		Integer employeeLines = Integer.parseInt(confJson.get("employeeLines").asString().getString());
-		Integer numEmployees = Integer.parseInt(confJson.get("numEmployees").asString().getString());
-		Integer totalLines = numEmployees * employeeLines + staticLines;
-		
-		//ETF
-		JsonObject etfJson = (JsonObject) agrarianData.get("ETF");
-		ETF etf = new ETF(
-				etfJson.get("authKey").asString().getString(), 
-				etfJson.get("payrollProvider").asString().getString(), 
-				 null == etfJson.get("fileName").asString() ? null : etfJson.get("fileName").asString().getString(), 
-						 etfJson.get("priorityCode").asString().getString(),
-				 totalLines+"");
+				JSONObject etiJson = (JSONObject) agrarianData.get("ETI");
+				ETI eti = new ETI(
+						etiJson.get("authKey").isString().stringValue(), 
+						etiJson.get("payrollProvider").isString().stringValue(), 
+						null == etiJson.get("fileName").isNull() ? null : etiJson.get("fileName").isString().stringValue(), 
+						etiJson.get("prorityCode").isString().stringValue());
+				
+				//EMP
+				JSONObject empJson = (JSONObject) agrarianData.get("EMP");
+				EMP emp = new EMP(
+						empJson.get("cccProvince").isString().stringValue(),
+						empJson.get("ccc").isString().stringValue(),
+						empJson.get("cccRegimePrincipal").isString().stringValue(),
+						empJson.get("cccProvincePrincipal").isString().stringValue(),
+						empJson.get("cccPrincipal").isString().stringValue());
+				
+				//RZS
+				JSONObject rzsJson = (JSONObject) agrarianData.get("RZS");
+				RZS rzs = new RZS(
+						rzsJson.get("businessmanType").isString().stringValue(), 
+						rzsJson.get("rzsName").isString().stringValue());
+				
+				//EMPLOYEES
+				JSONArray employees = (JSONArray) agrarianData.get("EMPS");
+				EMPLS empls = new EMPLS();
+				for(int i=0; i<employees.size(); i++) {
+					JSONObject emplJson = (JSONObject) employees.get(i);
+					
+					//TRA
+					JSONObject traJson = (JSONObject) emplJson.get("TRA");
+					TRA tra = new TRA(
+							traJson.get("numAfiliacion").isString().stringValue(),
+							traJson.get("documentType").isString().stringValue(), 
+							traJson.get("documentCountry").isString().stringValue(),
+							traJson.get("document").isString().stringValue(),
+							traJson.get("nationality").isString().stringValue());
+					
+					//AYN
+					JSONObject aynJson = (JSONObject) emplJson.get("AYN");
+					AYN ayn = new AYN(
+							aynJson.get("firstSurname").isString().stringValue(), 
+							aynJson.get("secondSurname").isString().stringValue(), 
+							aynJson.get("name").isString().stringValue());
+					
+					//FAB
+					String fab = emplJson.get("FAB").isString().stringValue();
+					
+					//DRA
+					JSONObject draJson = (JSONObject) emplJson.get("DRA");
+					DRA dra = new DRA(
+							draJson.get("year").isString().stringValue(), 
+							draJson.get("month").isString().stringValue(), 
+							draJson.get("days").isArray());
+					
+					//CREATE EMPL
+					EMPL empl = new EMPL(tra, ayn, fab, dra);
+					empls.add(empl);
+				}
+				
+				//CONF
+				JSONObject confJson = (JSONObject) agrarianData.get("CONF");
+				Integer staticLines = Integer.parseInt(confJson.get("staticLines").isString().stringValue());
+				Integer employeeLines = Integer.parseInt(confJson.get("employeeLines").isString().stringValue());
+				Integer numEmployees = Integer.parseInt(confJson.get("numEmployees").isString().stringValue());
+				Integer totalLines = numEmployees * employeeLines + staticLines;
+				
+				//ETF
+				JSONObject etfJson = (JSONObject) agrarianData.get("ETF");
+				ETF etf = new ETF(
+						etfJson.get("authKey").isString().stringValue(), 
+						etfJson.get("payrollProvider").isString().stringValue(), 
+						 null == etfJson.get("fileName").isNull() ? null : etfJson.get("fileName").isString().stringValue(), 
+								 etfJson.get("priorityCode").isString().stringValue(),
+						 totalLines+"");
 		
 		agrarianAFI = createAgrarianAFI(eti, emp, rzs, empls, etf);
 		
