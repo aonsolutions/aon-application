@@ -514,23 +514,14 @@ public class Mod347DAO {
 					declared.setThirdQuarterAmount( AonMathUtils.round(declared.getAmount()
 							- declared.getFirstQuarterAmount() - declared.getSecondQuarterAmount() - declared.getFourthQuarterAmount()));			
 				} else if ( AonMathUtils.isNotZero(declared.getSecondQuarterAmount())) {
-					declared.setThirdQuarterAmount( AonMathUtils.round(declared.getAmount()
+					declared.setSecondQuarterAmount( AonMathUtils.round(declared.getAmount()
 							- declared.getFirstQuarterAmount() - declared.getThirdQuarterAmount() - declared.getFourthQuarterAmount()));			
 				} else if ( AonMathUtils.isNotZero(declared.getFirstQuarterAmount())) {
-					declared.setThirdQuarterAmount( AonMathUtils.round(declared.getAmount()
+					declared.setFirstQuarterAmount( AonMathUtils.round(declared.getAmount()
 							- declared.getSecondQuarterAmount() - declared.getThirdQuarterAmount() - declared.getFourthQuarterAmount()));			
 				}
 			}
 		}
-		 
-		quarters = (declared.getFirstQuarterAmount() + declared.getSecondQuarterAmount() + declared.getThirdQuarterAmount() + declared.getFourthQuarterAmount());
-		if (AonMathUtils.isNotZero(quarters)) {
-			if (AonMathUtils.isNotZero(declared.getAmount() - quarters)) {
-				System.out.println("ERROR");
-			}
-		}
-		// Comprobaciones que deban realizarse para las lineas declared
-		
 	}
 		
 	private static void deleteDeclared(AONContext ctx, Mod347Declared declared) {
@@ -811,7 +802,7 @@ public class Mod347DAO {
 		
 		String control = "";
 		double acumulated = 0;
-		double minAmount = 3005.06;		
+		double minAmount = 100.0; //3005.06;		
 		Map<String,Mod347Declared> map = new TreeMap<String, Mod347Declared>();
 		
 		for (Mod347Declared dec : mapResult.values()) {
