@@ -947,7 +947,8 @@ public class Mod347DAO {
 		Mod347 mod347 = getById(ctx, id);
 		mod347.setYear( mod347.getYear() + 1 );
 		mod347.setId(null);
-		mod347 = save(ctx, mod347);
+		// mod347 = save(ctx, mod347);
+		mod347 = insert(ctx, mod347,false);
 		Mod347 original = getById(ctx, id);
 		for (Mod347Declared declared : original.getDeclared()) {
 			declared.setId(null);
