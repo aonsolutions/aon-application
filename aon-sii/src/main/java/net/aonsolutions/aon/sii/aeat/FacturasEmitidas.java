@@ -238,7 +238,7 @@ public class FacturasEmitidas extends SIIBuilt {
 		if(vat.isVatAccrualRegime()){
 			fet.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaEmitidasType._07.getName());//TODO OPTIONAL
 		}	
-		if(vat.isIntracommunity() || vat.isExtracommunity()){
+		if(vat.isExtracommunity()){
 			fet.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaEmitidasType._02.getName());
 		}
 		
@@ -381,11 +381,9 @@ public class FacturasEmitidas extends SIIBuilt {
 				DetalleExentaType detalleExenta = new DetalleExentaType();
 				detalleExenta.setBaseImponible(Double.toString(AonMathUtils.round(exenta)));
 
-			/* TODO	si es operacion intracomunitaria	
-			 * if(vat.isIntracommunity()){
-					exenta2.setCausaExencion(CausaExencionType.E_5);
-				}else*/ 
-				if(vat.isIntracommunity() || vat.isExtracommunity()){
+				if(vat.isIntracommunity()){
+					detalleExenta.setCausaExencion(CausaExencionType.E_5);
+				}else if(vat.isExtracommunity()){
 					detalleExenta.setCausaExencion(CausaExencionType.E_2);
 				} else {
 					detalleExenta.setCausaExencion(CausaExencionType.E_6);
@@ -556,7 +554,7 @@ public class FacturasEmitidas extends SIIBuilt {
 			if(vat.isVatAccrualRegime()){
 				fet.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaEmitidasType._07.getName());//TODO OPTIONAL
 			}	
-			if(vat.isIntracommunity() || vat.isExtracommunity()){
+			if(vat.isExtracommunity()){
 				fet.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaEmitidasType._02.getName());
 			}
 			
@@ -700,11 +698,9 @@ public class FacturasEmitidas extends SIIBuilt {
 					DetalleExentaType detalleExenta = new DetalleExentaType();
 					detalleExenta.setBaseImponible(Double.toString(AonMathUtils.round(exenta)));					
 					
-				/* TODO	si es operacion intracomunitaria	
-				 * if(vat.isIntracommunity()){
-						exenta2.setCausaExencion(CausaExencionType.E_5);
-					}else*/ 
-					if(vat.isIntracommunity() || vat.isExtracommunity()){
+					if(vat.isIntracommunity()){
+						detalleExenta.setCausaExencion(CausaExencionType.E_5);
+					}else if(vat.isExtracommunity()){
 						detalleExenta.setCausaExencion(CausaExencionType.E_2);
 					} else {
 						detalleExenta.setCausaExencion(CausaExencionType.E_6);

@@ -243,7 +243,7 @@ public class FacturasEmitidas extends SIIBuilt {
 			if(vat.isVatAccrualRegime()){
 				fet.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaEmitidasType._07.getName());//TODO OPTIONAL
 			}	
-			if(vat.isIntracommunity() || vat.isExtracommunity()){
+			if(vat.isExtracommunity()){
 				fet.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaEmitidasType._02.getName());
 			}
 			
