@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 
 public class PDFMergerBookRunner extends AbsAccountingBookRunner {
@@ -31,24 +32,28 @@ public class PDFMergerBookRunner extends AbsAccountingBookRunner {
 
 	@Override
 	public void run( OutputStream out ) throws AccountingBookException {
+		LinkedList<File> files = new LinkedList<File>(); 
 		File tempFile = null;
 		FileOutputStream destStream = null;
 		File runnerTempFile = null;
 		FileInputStream input = null;
 		try {
 			tempFile = File.createTempFile("merge", ".pdf");
+			files.add(tempFile);
+			System.out.println("Main File ..: " + tempFile);
 			PDFMergerUtility document = new PDFMergerUtility();
 			destStream = new FileOutputStream(tempFile);
 			document.setDestinationStream(destStream);
 			for (IAccountingBookRunner runner : runners ) {
 				runnerTempFile = File.createTempFile("merge", ".pdf");
+				files.add(runnerTempFile);
 				OutputStream output = new FileOutputStream(runnerTempFile);
 				runner.run(output);
 				document.addSource(runnerTempFile);
 				IOUtils.closeQuietly(output);
-				FileUtils.deleteQuietly(runnerTempFile);
+				// FileUtils.deleteQuietly(runnerTempFile);
 			}
-			document.mergeDocuments();
+			document.mergeDocuments(MemoryUsageSetting.setupTempFileOnly());
 			input = new FileInputStream(tempFile); 
 			IOUtils.copy(input, out);
 			out.flush();
@@ -57,8 +62,9 @@ public class PDFMergerBookRunner extends AbsAccountingBookRunner {
 		} finally {
 			IOUtils.closeQuietly(destStream);
 			IOUtils.closeQuietly(input);
-			FileUtils.deleteQuietly(tempFile);
-			FileUtils.deleteQuietly(runnerTempFile);
+			for (File file : files ) {
+				FileUtils.deleteQuietly(file);	
+			}
 		}
 	}
 	
