@@ -55,10 +55,10 @@ public class FilterPanel extends Composite {
     
     public void setCheckVisible(Boolean bool){
     	HorizontalPanel hp =(HorizontalPanel) panel.getWidget(0);
-    	for(Integer i = 2 ; i < hp.getWidgetCount() ; i++){
+    	for(Integer i = 4 ; i < hp.getWidgetCount() ; i++){
     		CheckBox cb = (CheckBox) hp.getWidget(i);
-    		if(i == 2 || i == 5) cb.setVisible(true);
-    		else if(i == 7 || i == 8) cb.setVisible(!bool);
+    		if(i == 4 || i == 7) cb.setVisible(true);
+    		else if(i == 9 || i == 10) cb.setVisible(!bool);
     		else cb.setVisible(bool);
     	}
     }
@@ -91,6 +91,33 @@ public class FilterPanel extends Composite {
 			}
 		});
 		datePanel.add(from);
+		
+		InlineLabel toLabel = new InlineLabel("Hasta");
+		toLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+		toLabel.setWidth("20px");
+		datePanel.add(toLabel);
+		
+		final DateBoxEx to = new DateBoxEx();
+		if(parent.getFilterMap().containsKey("to")){
+			Long lon2 = Long.parseLong(parent.getFilterMap().get("to").get(0));
+			Date date2 = new Date(lon2);
+			to.setValue(date2);
+		}
+		to.getElement().getStyle().setBorderColor("#dedede");
+		to.getElement().getStyle().setHeight(16, Unit.PX);
+		to.setWidth("70px");
+		to.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				LinkedList<String> list = new LinkedList<>();
+				list.add(Long.toString(to.getValue().getTime()));
+		    	parent.getFilterMap().put("to", list);
+				parent.gridContent();
+			}
+		});
+		datePanel.add(to);
+	
 		
 		CheckBox cb = new CheckBox("Pendientes");
 		CheckBox cb2 = new CheckBox("Aceptadas");
@@ -247,7 +274,9 @@ public class FilterPanel extends Composite {
     	HorizontalPanel hp = (HorizontalPanel) panel.getWidget(0);
     	DateBoxEx d = (DateBoxEx) hp.getWidget(1);
     	d.setEnabled(enable);
-    	for(Integer i = 2; i < hp.getWidgetCount(); i++) {
+    	DateBoxEx d2 = (DateBoxEx) hp.getWidget(3);
+    	d2.setEnabled(enable);
+    	for(Integer i = 4; i < hp.getWidgetCount(); i++) {
     		CheckBox cb = (CheckBox) hp.getWidget(i);
     		cb.setEnabled(enable);
     	}

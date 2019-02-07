@@ -114,6 +114,8 @@ public class FinanceServlet extends HttpServlet{
     		Integer page =  req.getParameterMap().containsKey("page") ? Integer.parseInt(req.getParameter("page")) : 1;
     		Integer perPage = req.getParameterMap().containsKey("per_page") ? Integer.parseInt(req.getParameter("per_page")) : 40;
     		Date from =  req.getParameterMap().containsKey("from") ? new Date(Long.parseLong(req.getParameter("from"))) : AonDateUtils.getDate(2017, 07, 01);  
+    		Date to =  req.getParameterMap().containsKey("to") ? new Date(Long.parseLong(req.getParameter("to"))) : new Date();  
+
     		Boolean pending = req.getParameterMap().containsKey("pending") ? req.getParameter("pending").equalsIgnoreCase("true") : false;
     		Boolean sent = req.getParameterMap().containsKey("sent") ? req.getParameter("sent").equalsIgnoreCase("true") : false;
     		Boolean sent_error = req.getParameterMap().containsKey("sent_error") ? req.getParameter("sent_error").equalsIgnoreCase("true") : false;
@@ -130,7 +132,7 @@ public class FinanceServlet extends HttpServlet{
     	    	if(from.compareTo(AonDateUtils.getDate(2017, 0, 1)) < 0){
     	    		from = AonDateUtils.getDate(2017, 0, 1);    				
     	    	}
-    			return getInvoiceEmitidasList(domain, login, page, perPage, from, pending, sent, sent_error, error, anulada, req.getParameter("sii") );
+    			return getInvoiceEmitidasList(domain, login, page, perPage, from, to, pending, sent, sent_error, error, anulada, req.getParameter("sii") );
     		} else if("fr_recibidas".equals(req.getParameter(MSG.SII))
     			|| "fr_compras".equals(req.getParameter(MSG.SII))
     			|| "fr_gastos".equals(req.getParameter(MSG.SII))
@@ -139,7 +141,7 @@ public class FinanceServlet extends HttpServlet{
     			if(from.compareTo(AonDateUtils.getDate(2017, 0, 1)) < 0){
     	    		from = AonDateUtils.getDate(2017, 0, 1);    				
     	    	}
-    			return getInvoiceRecibidasList(domain, login, page, perPage, from, pending, sent, sent_error, error, anulada, req.getParameter(MSG.SII));
+    			return getInvoiceRecibidasList(domain, login, page, perPage, from, to, pending, sent, sent_error, error, anulada, req.getParameter(MSG.SII));
     		} else if("bienes".equals(req.getParameter(MSG.SII))){
     			return getInvoiceBienesList(domain, login, page, perPage, from, pending, sent, sent_error, error, anulada, req.getParameter(MSG.SII));
     		} else if("intracomunitarias".equals(req.getParameter(MSG.SII))){
@@ -148,7 +150,7 @@ public class FinanceServlet extends HttpServlet{
     					|| "cp_cobros".equals(req.getParameter(MSG.SII))
     					|| "cp_pagos".equals(req.getParameter(MSG.SII))
     				){
-    			return getInvoiceCobrosPagosList(domain, login, page, perPage, from, pending, error, partial, paid, req.getParameter(MSG.SII));
+    			return getInvoiceCobrosPagosList(domain, login, page, perPage, from, to, pending, error, partial, paid, req.getParameter(MSG.SII));
     		}
     	}
     	JSONArray array = new JSONArray();
@@ -158,12 +160,12 @@ public class FinanceServlet extends HttpServlet{
     	return array;
     }
    
-    private JSONArray getInvoiceEmitidasList(Domain domain, String login, Integer page, Integer perPage, Date from
+    private JSONArray getInvoiceEmitidasList(Domain domain, String login, Integer page, Integer perPage, Date from, Date to
     		,Boolean pending, Boolean sent, Boolean sent_error, Boolean error, Boolean anulada, String sii){
     	JSONArray array = new JSONArray();
  
     	AON.getSiiInvoiceStream(domain.getName(), domain.getId(), login, 	
-    			f -> iFilterEmitidas(domain, login, f, from, page, perPage, sii)   			
+    			f -> iFilterEmitidas(domain, login, f, from, to, page, perPage, sii)   			
     			,pending, sent, sent_error, error, anulada, sii)
     		.forEach(rm -> {
     			JSONObject json = ToJSON.invoiceToJSON(rm);
@@ -174,7 +176,7 @@ public class FinanceServlet extends HttpServlet{
     	return array;
     }
     
-    public static Filter iFilterEmitidas(Domain domain, String login, InvoiceProperties f, Date from, Integer page, Integer perPage, String sii) {
+    public static Filter iFilterEmitidas(Domain domain, String login, InvoiceProperties f, Date from, Date to, Integer page, Integer perPage, String sii) {
     	ApplicationParameter ap = AON.getApplicationParameter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII);
     	Boolean isRegistro = "R".equals(ap.getValue());
     	Filter filter =  f.getDomainProperty().eq(domain.getId())
@@ -182,7 +184,12 @@ public class FinanceServlet extends HttpServlet{
 		.and(isRegistro 
 				? f.getCreationDateProperty().ge(new Timestamp(from.getTime()))
 				: f.getTaxDateProperty().ge(from));
-		
+    	
+    	if(to != null) {
+    		filter = filter.and(isRegistro 
+				? f.getCreationDateProperty().le(new Timestamp(to.getTime()))
+				: f.getTaxDateProperty().le(to));
+    	}
     	if("fe_generales".equals(sii)){
 			filter = filter.and(f.getRectificationInvoiceProperty().isNull())
 					.and(f.getPosShiftroperty().isNull())
@@ -199,13 +206,18 @@ public class FinanceServlet extends HttpServlet{
 		return filter;
     }
     
-    public static Filter iFilterRecibidas(Domain domain, String login, InvoiceProperties f, Date from, Integer page, Integer perPage, String sii) {
+    public static Filter iFilterRecibidas(Domain domain, String login, InvoiceProperties f, Date from, Date to, Integer page, Integer perPage, String sii) {
     	ApplicationParameter ap = AON.getApplicationParameter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII);
     	Boolean isRegistro = "R".equals(ap.getValue());
     	Filter filter =  f.getDomainProperty().eq(domain.getId())
     			.and(isRegistro 
     				? f.getCreationDateProperty().ge(new Timestamp(from.getTime()))
     				: f.getTaxDateProperty().ge(from));
+    	if(to != null) {
+    		filter = filter.and(isRegistro 
+				? f.getCreationDateProperty().le(new Timestamp(to.getTime()))
+				: f.getTaxDateProperty().le(to));
+    	}
     	
     	if("fr_recibidas".equals(sii)){
 			filter = filter.and(f.getTypeProperty().eq(InvoiceType.PURCHASE.value()) 
@@ -228,11 +240,11 @@ public class FinanceServlet extends HttpServlet{
 		return filter;
     }
     
-    private JSONArray getInvoiceRecibidasList(Domain domain, String login, Integer page, Integer perPage, Date from
+    private JSONArray getInvoiceRecibidasList(Domain domain, String login, Integer page, Integer perPage, Date from, Date to
     		,Boolean pending, Boolean sent, Boolean sent_error, Boolean error, Boolean anulada, String sii){
     	JSONArray array = new JSONArray();
     	AON.getSiiInvoiceStream(domain.getName(), domain.getId(), login,
-    			f -> iFilterRecibidas(domain, login, f, from, page, perPage, sii)
+    			f -> iFilterRecibidas(domain, login, f, from, to, page, perPage, sii)
     			,pending, sent, sent_error, error, anulada, sii)
     		.forEach(rm ->{
     			JSONObject json = ToJSON.invoiceToJSON(rm);
@@ -284,7 +296,7 @@ public class FinanceServlet extends HttpServlet{
     	return array;
 	}
     
-	public static Filter iFilterCobrosPagos(Domain domain, String login, InvoiceProperties f, Date from, Integer page, Integer perPage, String sii) {
+	public static Filter iFilterCobrosPagos(Domain domain, String login, InvoiceProperties f, Date from, Date to, Integer page, Integer perPage, String sii) {
 		ApplicationParameter ap = AON.getApplicationParameter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII);
     	Boolean isRegistro = "R".equals(ap.getValue());	
     	Filter filter =  f.getDomainProperty().eq(domain.getId())
@@ -292,7 +304,12 @@ public class FinanceServlet extends HttpServlet{
     			.and(isRegistro 
     					? f.getCreationDateProperty().ge(new Timestamp(from.getTime()))
     					: f.getTaxDateProperty().ge(from));
-	    	
+    	if(to != null) {
+    		filter = filter.and(isRegistro 
+				? f.getCreationDateProperty().le(new Timestamp(to.getTime()))
+				: f.getTaxDateProperty().le(to));
+    	}
+    	
     	if("cp_pagos".equals(sii)){
 			filter = filter.and(f.getTypeProperty().eq(InvoiceType.PURCHASE.value()) 
 					.or(f.getTypeProperty().eq(InvoiceType.EXPENSES.value())));
@@ -303,10 +320,10 @@ public class FinanceServlet extends HttpServlet{
 		return filter;
     }
 	
-	private JSONArray getInvoiceCobrosPagosList(Domain domain, String login, Integer page, Integer perPage, Date from, Boolean pending,Boolean error, Boolean partial, Boolean paid, String sii){
+	private JSONArray getInvoiceCobrosPagosList(Domain domain, String login, Integer page, Integer perPage, Date from, Date to, Boolean pending,Boolean error, Boolean partial, Boolean paid, String sii){
 		JSONArray array = new JSONArray();
     	AON.getSiiInvoiceStream(domain.getName(), domain.getId(), login,
-    			f ->  iFilterCobrosPagos(domain, login, f, from, page, perPage, sii)
+    			f ->  iFilterCobrosPagos(domain, login, f, from, to, page, perPage, sii)
     			,pending, partial, paid, error, false, sii)
     		.forEach(rm ->{
     			JSONObject json = ToJSON.invoiceToJSON(rm);

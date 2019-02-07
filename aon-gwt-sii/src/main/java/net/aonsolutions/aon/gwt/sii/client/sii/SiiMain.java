@@ -104,6 +104,10 @@ public class SiiMain extends AonTemplate2{
 		filterMap.put("from",list);
 		
 		list = new LinkedList<>();
+		list.add(Long.toString(new Date().getTime()));
+		filterMap.put("to",list);
+		
+		list = new LinkedList<>();
 		list.add("true");
 		filterMap.put("pending", list);
 		
@@ -315,11 +319,13 @@ public class SiiMain extends AonTemplate2{
 	
 	private Boolean isSendAllCancel = false;
 	private void resultPanel(HashMap<String, LinkedList<String>> sendMap) {
+		
 		ScrollPanel sp = new ScrollPanel();
 		sp.setHeight("400px");
 		sp.setWidth("350px");
 		VerticalPanel vp = new VerticalPanel();
 		sp.add(vp);
+		isSendAllCancel = false;
 		AonDialog dialog = new AonDialog("Resultado", sp) {
 			
 			@Override
@@ -357,25 +363,31 @@ public class SiiMain extends AonTemplate2{
 				LinkedList<String> list = new LinkedList<>();
 				list.add(result.getData().get(0).getId() + "");
 				sendMap.put("id", list);
-	
+				String status = result.getData().get(0).getSiiStatus();
 				getAPI().getFinance().sendSii(sendMap, new AsyncCallback<JSON<JsObject>>() {
 					
 					@Override
 					public void onSuccess(JSON<JsObject> result2) {	
-						result2.getData().stream().forEach(r -> {
-							Label label = new Label(r.getName());
-							String str = r.getId() + "";
-							String color = "red";
-							if(str.equals("200")) color = "green";
-							else if(str.substring(0, 1).equals("2")) color = "orange";
-							label.getElement().getStyle().setColor(color);
-							vp.add(label);
-						});
+						JsObject o = result2.getData().get(0);
+						Label label = new Label(o.getName());
+						String str = o.getId() + "";
+						String color = "red";
+						if(str.equals("200")) color = "green";
+						else if(str.substring(0, 1).equals("2")) color = "orange";
+						label.getElement().getStyle().setColor(color);
+						vp.add(label);
+						
 						if(isSendAllCancel) {
 							isSendAllCancel = false;
 						} else if(result.getData().length() < 1) {
 							d.getAccept().setVisible(true);
-						} else resultPanel(map, page, vp, sendMap, d);
+						} else { 
+							if(("Correcto".equals(status) && "green".equals(color)) ||
+							   ("AceptadoConErrores".equals(status) && "orange".equals(color)) ||
+							   ("Incorrecto".equals(status) && "red".equals(color))) {
+								resultPanel(map, page + 1, vp, sendMap, d);
+							} else resultPanel(map, page, vp, sendMap, d);
+						}
 					}
 					
 					@Override
