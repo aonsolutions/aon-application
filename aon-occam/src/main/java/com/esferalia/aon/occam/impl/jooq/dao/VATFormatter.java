@@ -527,7 +527,7 @@ public class VATFormatter {
 		if (vat.isService()) out.print(",\"service\":\"true\"");
 		if (vat.getTransaction()!=null) out.printf(",\"transaction\":\"%d\"", vat.getTransaction().ordinal());
 		if (vat.isInvestment() ) out.printf(",\"investment\":\"true\"");
-		if (vat.isVatAccrualRegime()) out.printf(",\"vatAccrualRegime\":\"true");
+		if (vat.isVatAccrualRegime()) out.printf(",\"vatAccrualRegime\":\"true\"");
 		if (vat.getVatDeductionType()!=null) out.printf(",\"vatDeductionType\":\"%d\"", vat.getVatDeductionType().ordinal());
 		if (vat.isFarmerRegime()) out.printf(",\"farmerRegime\":\"true\"");
 		out.printf(",\"base\":%s", Double.toString( vat.getBase()));
