@@ -444,7 +444,7 @@
 						</tr>
 						<tr>
 							<td style="background-color: #eaeaea; width: 200px;">
-								<g:Label styleName="{style.firstColumnTextStyle}">Método de pago</g:Label>
+								<g:Label styleName="{style.firstColumnTextStyle}">Forma de pago</g:Label>
 							</td>
 							<td colspan="2">
 								<g:ListBox ui:field="payMethod" debugId="payMethod" styleName='{style.maxWidth}'></g:ListBox>

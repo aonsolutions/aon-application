@@ -50,6 +50,7 @@ import com.esferalia.aon.jooq.tables.records.PayMethodRecord;
 import com.esferalia.aon.jooq.tables.records.RaddressRecord;
 import com.esferalia.aon.jooq.tables.records.RbankRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
+import com.esferalia.aon.jooq.tables.records.RpaymethodRecord;
 
 public class JooqEmployee {
 
@@ -580,21 +581,29 @@ public class JooqEmployee {
 					 rbankTableId = rbankRecord.get(RBANK.ID); 
 				}
 				
-				dslContext.insertInto(RPAYMETHOD)
+				RpaymethodRecord rpaymethodRecord = dslContext.insertInto(RPAYMETHOD)
 					.set(RPAYMETHOD.DOMAIN, domain)
 					.set(RPAYMETHOD.REGISTRY, registryId)
 					.set(RPAYMETHOD.PAY_METHOD, payMethodTableId)
 					.set(RPAYMETHOD.RBANK, rbankTableId)
-					.execute();
+					.returning(RPAYMETHOD.ID)
+					.fetchOne();
+				
+				Integer rpayMethodTableId = rpaymethodRecord.get(RPAYMETHOD.ID);
+			
+				//ACTUALIZAR CAMPOS
+				employeeData.setPaymethodId(payMethodTableId);
+				employeeData.setRpaymethodId(rpayMethodTableId);
+				employeeData.setRbankId(rbankTableId);
 			}
 		}else{
 			if("TRANSFERENCIA".equals(employeeData.getPayMethodType())){
 				Integer rbankTableId = employeeData.getRbankId();
-				if(null == employeeData.getRbankId() && (employeeData.getAccount() != null && employeeData.getAccount() != "")){
+				if(null == employeeData.getRbankId()  /*&& (employeeData.getAccount() != null && employeeData.getAccount() != "")*/){
 					RbankRecord rbankRecord = dslContext.insertInto(RBANK)
 							.set(RBANK.DOMAIN, domain)
 							.set(RBANK.REGISTRY, registryId)
-							.set(RBANK.BANK_ACCOUNT, employeeData.getAccount())
+							.set(RBANK.BANK_ACCOUNT, null == employeeData.getAccount() ? "" : employeeData.getAccount())
 							.set(RBANK.BIC, employeeData.getBic())
 							.set(RBANK.ALIAS, "CUENTA")
 							.set(RBANK.ACTIVE, (byte) 1)
@@ -616,23 +625,53 @@ public class JooqEmployee {
 						.set(PAY_METHOD.TYPE, typePayMethod)
 						.where(PAY_METHOD.ID.eq(employeeData.getPaymethodId()))
 						.execute();
+				
+				dslContext.update(RPAYMETHOD)
+				.set(RPAYMETHOD.RBANK, rbankTableId)
+				.where(RPAYMETHOD.ID.eq(employeeData.getRpaymethodId()))
+				.execute();
+				
+				//ACTUALIZAR CAMPOS
+//				employeeData.setPaymethodId(payMethodTableId);
+//				employeeData.setRpaymethodId(rpayMethodTableId);
+				employeeData.setRbankId(rbankTableId);
+				
 			}else{
 				byte typePayMethod = getType(employeeData.getPayMethodType());
-				dslContext.update(PAY_METHOD)
-						.set(PAY_METHOD.NAME, employeeData.getPayMethodType())
-						.set(PAY_METHOD.TYPE, typePayMethod)
-						.where(PAY_METHOD.ID.eq(employeeData.getPaymethodId()))
-						.execute();
-				
-				if(null != employeeData.getRbankId()){
-					dslContext.update(RPAYMETHOD)
-						.set(RPAYMETHOD.RBANK, (Integer) null)
-						.where(RPAYMETHOD.ID.eq(employeeData.getRpaymethodId()))
-						.execute();
+				if(-1 == typePayMethod){
+					dslContext.delete(RPAYMETHOD)
+					.where(RPAYMETHOD.ID.eq(employeeData.getRpaymethodId()))
+					.execute();
 					
 					dslContext.delete(RBANK)
 						.where(RBANK.ID.eq(employeeData.getRbankId()))
 						.execute();
+					
+					dslContext.delete(PAY_METHOD)
+						.where(PAY_METHOD.ID.eq(employeeData.getPaymethodId()))
+						.execute();
+					
+					//ACTUALIZAR CAMPOS
+					employeeData.setPaymethodId(null);
+					employeeData.setRpaymethodId(null);
+					employeeData.setRbankId(null);
+				}else{
+					dslContext.update(PAY_METHOD)
+					.set(PAY_METHOD.NAME, employeeData.getPayMethodType())
+					.set(PAY_METHOD.TYPE, typePayMethod)
+					.where(PAY_METHOD.ID.eq(employeeData.getPaymethodId()))
+					.execute();
+			
+					if(null != employeeData.getRbankId()){
+						dslContext.update(RPAYMETHOD)
+							.set(RPAYMETHOD.RBANK, (Integer) null)
+							.where(RPAYMETHOD.ID.eq(employeeData.getRpaymethodId()))
+							.execute();
+						
+						dslContext.delete(RBANK)
+							.where(RBANK.ID.eq(employeeData.getRbankId()))
+							.execute();
+					}
 				}
 			}
 		}
@@ -886,6 +925,7 @@ public class JooqEmployee {
 			.and(CONTRACT_PAYMENT.END_DATE.eq(oldEndDate))
 			.execute();
 				
+		employeeContractInfo.setEmployeeInfo(employeeData);
 		return employeeContractInfo;
 	}
 
