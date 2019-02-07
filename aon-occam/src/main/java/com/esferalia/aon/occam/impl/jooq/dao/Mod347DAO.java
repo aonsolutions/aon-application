@@ -802,7 +802,7 @@ public class Mod347DAO {
 		
 		String control = "";
 		double acumulated = 0;
-		double minAmount = 100.0; //3005.06;		
+		double minAmount = 3005.06;		
 		Map<String,Mod347Declared> map = new TreeMap<String, Mod347Declared>();
 		
 		for (Mod347Declared dec : mapResult.values()) {
