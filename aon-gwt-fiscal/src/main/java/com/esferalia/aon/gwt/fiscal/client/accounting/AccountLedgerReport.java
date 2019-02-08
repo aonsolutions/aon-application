@@ -94,7 +94,7 @@ public class AccountLedgerReport extends MainEntryPoint {
 			@Override
 			public void onClick(ClickEvent event) {
 				AccountingReportParams params = panel.getWidgetParams();
-				ReportMetadata metadata = new ReportMetadata().setTitle(params.getBalanceType().getName());
+				ReportMetadata metadata = new ReportMetadata().setTitle("Mayor de cuentas");
 				PrintReportDialog dialog = new PrintReportDialog(metadata
 						, new IPrintReportDialogCallback() {
 							
