@@ -46,11 +46,12 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.junit.Test;
 import org.junit.Ignore;
+import org.junit.Test;
 
 import com.esferalia.aon.jooq.tables.records.CalendarRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
@@ -342,6 +343,225 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 			hours += Double.parseDouble(data.getExpression());
 
 		Assert.assertEquals(WORKED_HOURS.getName(), 22.00, hours);
+	}
+
+	@Test
+	public void testPartialTimeWorkHoursVI()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>() {
+					{
+						put(ContextVariable.TC2.getName(), format("\"%s\"",
+								random(PARTIAL_TIME).getValue()));
+						put(MONDAY_HOURS.getName(), format("%d", 0));
+						put(TUESDAY_HOURS.getName(), format("%d", 0));
+						put(WEDNESDAY_HOURS.getName(), format("%d", 4));
+						put(THURSDAY_HOURS.getName(), format("%d", 4));
+						put(FRIDAY_HOURS.getName(), format("%d", 8));
+						put(SATURDAY_HOURS.getName(), format("%d", 8));
+						put(SUNDAY_HOURS.getName(), format("%d", 0));
+					}
+				},
+				new String[] { 
+						"3000.00 * DIAS_TRABAJADOS / DIAS_MES"},
+				new String[] {
+						
+				},
+				null);
+		
+		
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		Date issueDate = endDate;
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, issueDate, contract);
+
+		JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder(connection);
+		new ContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
+		jooqSalaryBuilder.execute();
+
+		com.esferalia.aon.occam.api.model.Salary salary = AON
+				.getSalaries(aonContext,
+						props -> props.getContractProperty()
+								.eq(contract.getId()))
+				.findFirst().get();
+		;
+		
+		Map<Integer,Double> weekHours = new HashMap<Integer,Double>();
+		weekHours.put(Calendar.MONDAY, 0.00);
+		weekHours.put(Calendar.TUESDAY, 0.00);
+		weekHours.put(Calendar.WEDNESDAY,4.00);
+		weekHours.put(Calendar.THURSDAY, 4.00);
+		weekHours.put(Calendar.FRIDAY, 8.00);
+		weekHours.put(Calendar.SATURDAY, 8.00);
+		weekHours.put(Calendar.SUNDAY, 0.00);
+		
+		double expectedHours = 0.00;
+		Calendar calendar = Calendar.getInstance();
+		for ( calendar.setTime(startDate); calendar.getTime().compareTo(endDate) <= 0  ; calendar.add(Calendar.DAY_OF_MONTH, 1))
+			expectedHours += weekHours.get(calendar.get(Calendar.DAY_OF_WEEK));
+		
+		List<ContextData> workedHours = 
+				salary.getContextData().get(ContextVariable.WORKED_HOURS.getName());
+		double actualHours = 0.00;
+		for ( ContextData workedHour: workedHours) {
+			actualHours += Double.parseDouble(workedHour.getExpression());
+		}
+		
+		org.junit.Assert.assertEquals(expectedHours, actualHours, 0.00);
+		org.junit.Assert.assertEquals(3000.00 * 24.00/40.00, salary.getTotalPayment(), 0.00);
+	}
+
+	@Test
+	public void testPartialTimeWorkHoursVII()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>() {
+					{
+						put(ContextVariable.TC2.getName(), format("\"%s\"",
+								random(PARTIAL_TIME).getValue()));
+						put(MONDAY_HOURS.getName(), format("%d", 0));
+						put(TUESDAY_HOURS.getName(), format("%d", 0));
+						put(WEDNESDAY_HOURS.getName(), format("%d", 4));
+						put(THURSDAY_HOURS.getName(), format("%d", 4));
+						put(FRIDAY_HOURS.getName(), format("%d", 8));
+						put(SATURDAY_HOURS.getName(), format("%d", 8));
+						put(SUNDAY_HOURS.getName(), format("%d", 0));
+						
+						put(PARTIAL_FACTOR.getName(), format("%f",0.60));
+					}
+				},
+				new String[] { 
+						"3000.00 * DIAS_TRABAJADOS / DIAS_MES"},
+				new String[] {
+						
+				},
+				null);
+		
+		
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		Date issueDate = endDate;
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, issueDate, contract);
+
+		JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder(connection);
+		new ContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
+		jooqSalaryBuilder.execute();
+
+		com.esferalia.aon.occam.api.model.Salary salary = AON
+				.getSalaries(aonContext,
+						props -> props.getContractProperty()
+								.eq(contract.getId()))
+				.findFirst().get();
+		;
+		
+		Map<Integer,Double> weekHours = new HashMap<Integer,Double>();
+		weekHours.put(Calendar.MONDAY, 0.00);
+		weekHours.put(Calendar.TUESDAY, 0.00);
+		weekHours.put(Calendar.WEDNESDAY,4.00);
+		weekHours.put(Calendar.THURSDAY, 4.00);
+		weekHours.put(Calendar.FRIDAY, 8.00);
+		weekHours.put(Calendar.SATURDAY, 8.00);
+		weekHours.put(Calendar.SUNDAY, 0.00);
+		
+		double expectedHours = 0.00;
+		Calendar calendar = Calendar.getInstance();
+		for ( calendar.setTime(startDate); calendar.getTime().compareTo(endDate) <= 0  ; calendar.add(Calendar.DAY_OF_MONTH, 1))
+			expectedHours += weekHours.get(calendar.get(Calendar.DAY_OF_WEEK));
+		
+		List<ContextData> workedHours = 
+				salary.getContextData().get(ContextVariable.WORKED_HOURS.getName());
+		double actualHours = 0.00;
+		for ( ContextData workedHour: workedHours) {
+			actualHours += Double.parseDouble(workedHour.getExpression());
+		}
+		
+		org.junit.Assert.assertEquals(expectedHours, actualHours, 0.00);
+		org.junit.Assert.assertEquals(3000.00 * 24.00/40.00, salary.getTotalPayment(), 0.00);
+	}
+
+	@Test
+	public void testPartialTimeWorkHoursVIII()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>() {
+					{
+						put(ContextVariable.TC2.getName(), format("\"%s\"",
+								random(PARTIAL_TIME).getValue()));
+						
+						put(PARTIAL_FACTOR.getName(), format("%f",0.60));
+					}
+				},
+				new String[] { 
+						"3000.00 * DIAS_TRABAJADOS / DIAS_MES"},
+				new String[] {
+						
+				},
+				null);
+		
+		
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		Date issueDate = endDate;
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, issueDate, contract);
+
+		JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder(connection);
+		new ContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
+		jooqSalaryBuilder.execute();
+
+		com.esferalia.aon.occam.api.model.Salary salary = AON
+				.getSalaries(aonContext,
+						props -> props.getContractProperty()
+								.eq(contract.getId()))
+				.findFirst().get();
+		;
+		
+		Map<Integer,Double> weekHours = new HashMap<Integer,Double>();
+		weekHours.put(Calendar.MONDAY, 0.00);
+		weekHours.put(Calendar.TUESDAY, 0.00);
+		weekHours.put(Calendar.WEDNESDAY,4.00);
+		weekHours.put(Calendar.THURSDAY, 4.00);
+		weekHours.put(Calendar.FRIDAY, 8.00);
+		weekHours.put(Calendar.SATURDAY, 8.00);
+		weekHours.put(Calendar.SUNDAY, 0.00);
+		
+		double expectedHours = 0.00;
+		Calendar calendar = Calendar.getInstance();
+		for ( calendar.setTime(startDate); calendar.getTime().compareTo(endDate) <= 0  ; calendar.add(Calendar.DAY_OF_MONTH, 1))
+			expectedHours += weekHours.get(calendar.get(Calendar.DAY_OF_WEEK));
+		
+		List<ContextData> workedHours = 
+				salary.getContextData().get(ContextVariable.WORKED_HOURS.getName());
+		double actualHours = 0.00;
+		for ( ContextData workedHour: workedHours) {
+			actualHours += Double.parseDouble(workedHour.getExpression());
+		}
+		
+		org.junit.Assert.assertEquals(expectedHours, actualHours, 0.00);
+		org.junit.Assert.assertEquals(3000.00 * 24.00/40.00, salary.getTotalPayment(), 0.00);
 	}
 
 	@Test
