@@ -633,10 +633,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 					Calendar leaveCalendar = Calendar.getInstance();
 					leaveCalendar.setTime(leaveStart);
-					leaveCalendar.add(Calendar.DATE, start - (int) parentDays);
+					leaveCalendar.add(Calendar.DATE, start /*- (int) parentDays*/);
 					Date guarenteeStart = leaveCalendar.getTime();
 					leaveCalendar.add(Calendar.DATE, end - start);
 					Date guarenteeEnd = Period.min(leaveEnd, leaveCalendar.getTime());
+					
+					if ( startDate.after(guarenteeEnd ))
+						return;
 
 					lastLeaveEnd = Period.max(leaveEnd, lastLeaveEnd);
 
@@ -655,6 +658,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 					List<Period> leavePeriods = leavePeriod.sub(guarenteePeriod);
 					for (Period p : leavePeriods) {
+						if ( startDate.after(p.getEnd() ))
+							continue;
 						long leaveParentDays = CommonUtil.getDaysBetweenDates(leaveStart, p.getStart());
 						super.loadContractLeave(id, p.getStart(), p.getEnd(), parentDays + leaveParentDays, type,
 								dailyRegBase, exprCtx);

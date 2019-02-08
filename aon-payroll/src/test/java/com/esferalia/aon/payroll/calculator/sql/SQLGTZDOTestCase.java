@@ -3653,6 +3653,89 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				, DELTA);
 		//@formatter:on
 	}
+
+	@Test
+	public void testGtzdosPeriodsI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
+
+		// @formatter:off
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+				{
+					put(MONTH_DAYS.getName(), "30");
+				}
+				}
+
+				, new String[] { 
+						"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"GTZDO(TODO,1,3)" ,
+						"GTZDO(TODO,4,20)"
+						}
+				, new String[] {
+				}, 
+				null);
+		//@formatter:on
+		addPrestIts(aonContext, contract);
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+		
+		Date start = add( contract.getStartDate(), Calendar.MONTH, 3 );
+		Date startIt = add(start, Calendar.DATE, 15);
+		Date endIt = null;
+		
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startIt,
+				endIt, 
+				null);
+
+
+		Date startDate = getFirstDayOfMonth(startIt);
+		Date endDate = getLastDayOfMonth(startDate);
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+//		for ( SalaryPayment p: salary.getSalaryPayments())
+//			System.out.println(p.getExpression() + " = " + p.getAmount());
+				
+		//@formatter:off
+		Assert.assertEquals(
+				1000.00,
+				salary.getTotalPayment() 
+				, DELTA);
+		//@formatter:on
+		
+		startDate = add(startDate, Calendar.MONTH,1);
+		endDate = getLastDayOfMonth(startDate);
+		ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+		
+		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		for ( SalaryPayment p: salary.getSalaryPayments())
+			System.out.println(p.getExpression() + " = " + p.getAmount());
+				
+		//@formatter:off
+		Assert.assertEquals(
+				1000.00 / 30.00 * 1.00 * 5 
+				+ 1000.00 / 30.00 * 0.75 * 26, 
+				salary.getTotalPayment() 
+				, DELTA);
+		//@formatter:on
+		
+		
+	}
 	// ----------------------------------------------------------------------------------
 
 
