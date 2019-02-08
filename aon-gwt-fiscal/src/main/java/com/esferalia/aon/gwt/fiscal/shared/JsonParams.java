@@ -112,6 +112,9 @@ public class JsonParams extends JSONObject {
 		json.put(IRequestParamsNames.PREVIOUS_PERIODS,new JSONNumber( params.getPreviousPeriods()));
 		json.put(IRequestParamsNames.LOW_LEVEL_ACCOUNT_VISIBLE,new JSONNumber( params.isLowLevelAccountVisible()?1:0));
 		json.put(IRequestParamsNames.NO_ACTIVITY_ACCOUNT_VISIBLE,new JSONNumber( params.isNoActivityAccountVisible()?1:0));
+		json.put(IRequestParamsNames.OPERATING_ENTRIES_EXCLUDED,new JSONNumber( params.areOperatingEntriesExcluded()?1:0));
+		json.put(IRequestParamsNames.CLOSING_ENTRIES_EXCLUDED,new JSONNumber( params.areClosingEntriesExcluded()?1:0));
+		
 		json.put(IRequestParamsNames.PERCENTS_ENABLED,new JSONNumber( params.isPercentsEnabled()?1:0));
 		json.put(IRequestParamsNames.BY_MONTH,new JSONNumber( params.isByMonth()?1:0));
 		json.put(IRequestParamsNames.BALANCE_TYPE,params.getBalanceType()==null?JSON_NULL:new JSONNumber( params.getBalanceType().ordinal()));

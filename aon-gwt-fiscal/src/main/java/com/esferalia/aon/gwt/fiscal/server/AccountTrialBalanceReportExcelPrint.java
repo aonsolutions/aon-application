@@ -157,6 +157,17 @@ public class AccountTrialBalanceReportExcelPrint extends HttpServlet {
 		if (noActivityAccountVisible != null) {
 			params.setNoActivityAccountVisible(noActivityAccountVisible.intValue() == 1);	
 		}
+		// ******************* OPERATING_ENTRIES_EXCLUDED ******************* 
+		Long operatingEntriesExcluded = (Long) jsonParams.get(IRequestParamsNames.OPERATING_ENTRIES_EXCLUDED);
+		if (operatingEntriesExcluded != null) {
+			params.setOperatingEntriesExcluded(operatingEntriesExcluded.intValue() == 1);	
+		}
+		// ******************* NOACTIVITYACCOUNTVISIBLE ******************* 
+		Long closingEntriesExcluded = (Long) jsonParams.get(IRequestParamsNames.CLOSING_ENTRIES_EXCLUDED);
+		if (closingEntriesExcluded != null) {
+			params.setClosingEntriesExcluded(closingEntriesExcluded.intValue() == 1);	
+		}
+
 		// ******************* percentsEnabled ******************* 
 		Long percentsEnabled = (Long) jsonParams.get(IRequestParamsNames.PERCENTS_ENABLED);
 		if (percentsEnabled != null) {
