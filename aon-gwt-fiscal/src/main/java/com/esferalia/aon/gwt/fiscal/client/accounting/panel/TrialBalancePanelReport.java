@@ -83,7 +83,7 @@ public class TrialBalancePanelReport extends DockLayoutPanel implements HasAccou
 			addStyleName(AON.AON_CSS.aonScrollArea());
 			addStyleName(AON.AON_CSS.aonMarginBottom());
 			SimpleLayoutPanel northPanel = new SimpleLayoutPanel();
-			addNorth(northPanel, 118);
+			addNorth(northPanel, 136);
 			centerPanel = new SimpleLayoutPanel();
 			centerPanel.setStyleName(AON.AON_CSS.aonSelector());
 			tabPanel = new TabLayoutPanel(30, Unit.PX);

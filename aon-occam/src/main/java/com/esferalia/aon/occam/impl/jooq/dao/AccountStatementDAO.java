@@ -936,6 +936,14 @@ public class AccountStatementDAO {
 				condition = condition.and(accountCondition);
 			}
 		}
+		if (params.getPeriod() != null ) {
+			if (params.areOperatingEntriesExcluded()) {
+				condition = condition.and(ACCOUNT_ENTRY.ENTRY_TYPE.ne( AccountEntryType.OPERATING.getValue()));
+			}
+			if (params.areClosingEntriesExcluded()) {
+				condition = condition.and(ACCOUNT_ENTRY.ENTRY_TYPE.ne( AccountEntryType.CLOSING.getValue()));
+			}
+		}
 		condition = appendCostCenterCondition(condition,params);
 		return condition;
 	}

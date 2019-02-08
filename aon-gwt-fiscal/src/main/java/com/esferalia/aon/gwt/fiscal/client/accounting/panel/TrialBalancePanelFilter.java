@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
+import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -40,6 +41,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasValueChangeHandlers<AccountingReportParams>{
@@ -60,6 +62,8 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 	private CheckBox lowLevelAccountVisible;
 	private CheckBox noActivityAccountVisible;
 	
+	private CheckBox operatingEntriesExcluded;
+	private CheckBox closingEntriesExcluded;
 	
 	public TrialBalancePanelFilter(String domainName,String user, int domainId, AonConfiguration config, AccountingReportParams params) {
 		this.domainName = domainName;
@@ -224,6 +228,7 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 		period.setWidth("100px");
 		fromDate = new DateBoxEx();
 		toDate = new DateBoxEx();
+		operatingEntriesExcluded = new CheckBox();
 		
 		account = new TextBox();
 		confidential = new ListBox();
@@ -231,6 +236,9 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 		level = new ListBox();
 		lowLevelAccountVisible = new CheckBox("Mostrar acumulados inferiores");
 		noActivityAccountVisible = new CheckBox("Mostrar cuentas sin movimientos en el periodo");
+		
+		operatingEntriesExcluded = new CheckBox("Excluir asientos de explotaci\u00F3n"); 
+		closingEntriesExcluded = new CheckBox("Excluir asientos de cierre");
 
 		dateTab.getColumnFormatter().setWidth(0, "50px");
 		dateTab.getColumnFormatter().setWidth(1, "80px");
@@ -362,8 +370,8 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 			} else {
 				confidential.setSelectedIndex(2);
 			}
-			tab.setWidget(1, 0, new Label(AON.MSG.show()));
-			tab.getCellFormatter().setStyleName(1,0, AON.AON_CSS.aonPanelGridOdd());
+			tab.setWidget(1, 2, new Label(AON.MSG.show()));
+			tab.getCellFormatter().setStyleName(1,2, AON.AON_CSS.aonPanelGridOdd());
 			tab.setWidget(1, 3, confidential);
 		}
 		
@@ -392,6 +400,8 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 				account.setValue(null,false);
 				lowLevelAccountVisible.setValue(false, false);
 				noActivityAccountVisible.setValue(false, false);
+				operatingEntriesExcluded.setValue(false, false);
+				closingEntriesExcluded.setValue(false, false);
 				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
 			}
 		});
@@ -410,12 +420,18 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 		tab.getCellFormatter().setStyleName(2,1, AON.AON_CSS.aonPanelGridEven());
 		
 		// ************************************************************  LOW LEVEL VISIBLE
-		tab.setWidget(2, 2, lowLevelAccountVisible);
+		VerticalPanel checks1 = new VerticalPanel();
+		checks1.add(lowLevelAccountVisible);
+		checks1.add(noActivityAccountVisible);
+		tab.setWidget(2, 2, checks1);
 		tab.getCellFormatter().setStyleName(2,2, AON.AON_CSS.aonPanelGridEven());
 		tab.getFlexCellFormatter().setColSpan(2, 2, 2);
 		
 		// ************************************************************  NO ACTIVITY ACCOUNT
-		tab.setWidget(2, 3, noActivityAccountVisible);
+		VerticalPanel checks2 = new VerticalPanel();
+		checks2.add(operatingEntriesExcluded);
+		checks2.add(closingEntriesExcluded);
+		tab.setWidget(2, 3, checks2);
 		tab.getCellFormatter().setStyleName(2,3, AON.AON_CSS.aonPanelGridEven());
 		tab.getCellFormatter().setStyleName(2,3, AON.AON_CSS.aonNowrap());
 		tab.getFlexCellFormatter().setColSpan(2, 3, 2);
@@ -428,6 +444,16 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 			public void onChange(ChangeEvent event) {
 				ListBox periodBox = getPeriodBox(config.getPeriods(),period.getSelectedValue());
 				dateTab.setWidget(0, 1, periodBox);
+				if (periodBox.getSelectedIndex() > 0) {
+					operatingEntriesExcluded.setEnabled(true);
+					closingEntriesExcluded.setEnabled(true);
+				} else {
+					AccountPeriod p = period.getSelectedPeriod();
+					operatingEntriesExcluded.setEnabled( p.getStatus() == AccountPeriodStatus.OPERATING || p.getStatus() == AccountPeriodStatus.CLOSED);
+					closingEntriesExcluded.setEnabled(p.getStatus() == AccountPeriodStatus.CLOSED);
+					operatingEntriesExcluded.setValue(operatingEntriesExcluded.isEnabled(),false);
+					closingEntriesExcluded.setValue(closingEntriesExcluded.isEnabled(),false);
+				}
 				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
 			}
 		});
@@ -491,6 +517,18 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 			}
 		});
 		
+		operatingEntriesExcluded.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
+			}
+		});
+		closingEntriesExcluded.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
+			}
+		});
 		return tab;
 	}
 	
@@ -510,6 +548,8 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 			.setLevel(AonNumberUtils.toInteger( level.getSelectedValue()))
 			.setLowLevelAccountVisible(lowLevelAccountVisible.getValue() )
 			.setNoActivityAccountVisible(noActivityAccountVisible.getValue())
+			.setOperatingEntriesExcluded(operatingEntriesExcluded.getValue())
+			.setClosingEntriesExcluded(closingEntriesExcluded.getValue())
 			.setAccount(new Account().setCode(account.getValue()))
 			.setSecurityLevel(SecurityLevel.safeValueOf(confidential.getSelectedIndex()))
 			;
