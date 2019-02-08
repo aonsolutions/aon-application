@@ -692,12 +692,8 @@ public class Mod347DAO {
 		
 		// Obtenemos el desglose de facturas del ejercicio actual y el anterior (facturas RECC), usando VATDAO
 		// Solo facturas Nacionales o ISP y sin retencion
-		VATDAO.getVatBreakdown(ctx, fromDate, toDate, mod347)
+		getInvoiceBreakdown(ctx, fromDate, toDate, mod347)
 				.filter(vat -> (vat.getTransaction() == InvoiceTransactionType.NATIONAL || vat.getTransaction() == InvoiceTransactionType.OTHER_ISP))
-				.filter(vat ->  !(mod347.isExcludeOutputNationalZero() && vat.isSales() && AonMathUtils.isZero( vat.getPercentage()))  )
-				.filter(vat ->  !(mod347.isExcludeInputNationalZero() && !vat.isSales() && AonMathUtils.isZero( vat.getPercentage()))  )
-				.filter(vat ->  Mod347DAO.excludeIfPresentInMod180(ctx,mod347,vat))
-				.filter(vat ->  Mod347DAO.excludeIfPresentInMod190(ctx,mod347,vat))
 				.peek( vat -> {					
 					// Las compras y gastos, se ponen todas como compras
 					vat.setInvoiceType( vat.getInvoiceType() == InvoiceType.SALES ? InvoiceType.SALES : InvoiceType.PURCHASE);
@@ -770,7 +766,9 @@ public class Mod347DAO {
 							// Factura Criterio de Caja
 												
 							// Acumular el importe según RECC (La base y las cuotas tienen lo declarado según los cobros/pagos realizados)
-							declared.setVatAccrualAmount(AonMathUtils.round(declared.getVatAccrualAmount() + vat.getBase() + vat.getQuota() + vat.getSurchargeQuota()));
+							if (!vat.isFinancePending()) {
+								declared.setVatAccrualAmount(AonMathUtils.round(declared.getVatAccrualAmount() + vat.getBase() + vat.getQuota() + vat.getSurchargeQuota()));
+							}
 							
 							// Si la factura es del ejercicio anterior, no se tiene en cuenta el importe, para el minimo a declarar
 							// ni aparece el importe en el 347				
@@ -928,16 +926,23 @@ public class Mod347DAO {
 		Date fromDate = AonDateUtils.getYearFirstDay(mod347.getYear());
 		Date toDate = AonDateUtils.getYearLastDay(mod347.getYear());
 		
-		return VATDAO.getVatBreakdown(ctx, fromDate, toDate, mod347)
-			.filter(vat ->  !(mod347.isExcludeOutputNationalZero() && vat.isSales() && AonMathUtils.isZero( vat.getPercentage()))  )				
-			.filter(vat ->  !(mod347.isExcludeInputNationalZero() && !vat.isSales() && AonMathUtils.isZero( vat.getPercentage()))  )
-			.filter(vat ->  Mod347DAO.excludeIfPresentInMod180(ctx,mod347,vat))
-			.filter(vat ->  Mod347DAO.excludeIfPresentInMod190(ctx,mod347,vat))
+		return getInvoiceBreakdown(ctx, fromDate, toDate, mod347)
 		    .filter( vat -> (vat.getTransaction() == invoiceTransaction1 || vat.getTransaction() == invoiceTransaction2) &&  // Nacional o ISP 
 		                    (vat.getInvoiceType() == invoiceType1 || vat.getInvoiceType() == invoiceType2) &&  				 // Tipo (Ventas o Compras/Gastos)		                    
 		                    (AonStringUtils.equals(vat.getRegistryDocument(),declared.getDocument()))  &&                    // NIF
 		                    (vat.isVatAccrualRegime() == declared.isVatAccrual())                                            // Criterio de caja		                    
 	                    );  
+	}
+	
+	private static Stream<VatContext> getInvoiceBreakdown(AONContext ctx, Date fromDate, Date toDate,Mod347 mod347) {
+		return Stream.concat(
+				 VATDAO.getVatBreakdown(ctx, fromDate, toDate, mod347)
+				,VATDAO.getPeriodPendingAccrualVatBreakdown(ctx, fromDate, toDate, null)
+			)
+			.filter(vat ->  !(mod347.isExcludeOutputNationalZero() && vat.isSales() && AonMathUtils.isZero( vat.getPercentage()))  )				
+			.filter(vat ->  !(mod347.isExcludeInputNationalZero() && !vat.isSales() && AonMathUtils.isZero( vat.getPercentage()))  )
+			.filter(vat ->  Mod347DAO.excludeIfPresentInMod180(ctx,mod347,vat))
+			.filter(vat ->  Mod347DAO.excludeIfPresentInMod190(ctx,mod347,vat));		
 	}
 	
 	// --------------- DUPLICAR MODELO ---------------

@@ -66,8 +66,8 @@ public class VatContext implements Serializable {
 	private Double amortizationPercentage;
 	private Date amortizationInitialDate;
 	
+	private boolean financePending;  // En cirterio de cja, el vencimiento no está pagado/cobrado (se utiliza al generar el 347) 
 	private double amount347; // Importe que se declara en el modelo 347
-	
 	private boolean hasRetention;  // Indicará si la factura lleva retención (se utiliza al generar el 347) 
 	
 	public String getSiiStatus() {
@@ -446,6 +446,13 @@ public class VatContext implements Serializable {
 	}
 	public VatContext setRegContableDate(Date regContableDate) {
 		this.regContableDate = regContableDate;
+		return this;
+	}
+	public boolean isFinancePending() {
+		return financePending;
+	}
+	public VatContext setFinancePending(boolean financePending) {
+		this.financePending = financePending;
 		return this;
 	}
 	public double getAmount347() {

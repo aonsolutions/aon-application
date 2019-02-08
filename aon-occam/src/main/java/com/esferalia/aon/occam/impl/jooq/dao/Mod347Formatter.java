@@ -10,28 +10,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod347Formatter extends VATFormatter {
 	
-//	private static final String HEADER = AonStringUtils.repeat(" ", 2)
-//			+ AonStringUtils.rightPad("TIPO",6)
-//			+ AonStringUtils.rightPad("TRAN.",6)
-//			+ "S I A R C "
-//			+ AonStringUtils.rightPad("EPIGR.",8)
-//			+ AonStringUtils.rightPad("N\u00BA DOCUMENTO",15)
-//			+ AonStringUtils.rightPad("TITULAR FACTURA",45)
-//			+ AonStringUtils.rightPad("FECHA FAC.",10)
-//			+ AonStringUtils.SPACE
-//			+ AonStringUtils.rightPad("FECHA IMP.",10)
-//			+ AonStringUtils.rightPad("TIPO IVA.",10)		
-//			+ AonStringUtils.leftPad("BASE IMP.",17)		
-//			+ AonStringUtils.leftPad("% IVA",8)
-//			+ AonStringUtils.leftPad("CUOTA",15)
-//			+ AonStringUtils.leftPad("% RE",8)
-//			+ AonStringUtils.leftPad("CUOTA RE",15)			
-//			+ AonStringUtils.leftPad("TOTAL FAC.",15)
-//			+ AonStringUtils.SPACE
-//			+ AonStringUtils.SPACE
-//			+ AonStringUtils.rightPad("N\u00BA REFERENCIA.",25)
-//			+ AonStringUtils.repeat(" ", 2);
-
 	public static String formatInvoices347(String title, String subtitle, Collection<VatContext> list, int year, boolean isVatAccrual) {
 		
 		String header = AonStringUtils.repeat(" ", 2)
@@ -51,6 +29,8 @@ public class Mod347Formatter extends VATFormatter {
 				+ AonStringUtils.leftPad("% RE",8)
 				+ AonStringUtils.leftPad("CUOTA REQ.",15)				
 				+ AonStringUtils.leftPad(isVatAccrual ? "TOTAL RECC" : "TOTAL FAC.",15)				
+				+ AonStringUtils.SPACE
+				+ (isVatAccrual ?AonStringUtils.rightPad("ESTADO",10):AonStringUtils.SPACE)
 				+ (isVatAccrual ? AonStringUtils.leftPad("IMPORTE 347",15) : "")					
 				+ AonStringUtils.SPACE
 				+ AonStringUtils.SPACE
@@ -95,12 +75,16 @@ public class Mod347Formatter extends VATFormatter {
 		double sum347 = 0;
 		for (VatContext vat : list) {
 			buf.append(mapToHtml347(vat,year));
-			sumBase = sumBase + vat.getBase();
-			sumQuota = sumQuota + vat.getQuota();
-			sumReQuota = sumReQuota + vat.getSurchargeQuota();
-			if (!vat.isSales() && vat.getTransaction() == InvoiceTransactionType.OTHER_ISP)
-				sumTotal = sumTotal + vat.getBase();
-			else sumTotal = sumTotal + vat.getBase() + vat.getQuota() + vat.getSurchargeQuota();
+			if (!vat.isFinancePending()) {
+				sumBase = sumBase + vat.getBase();
+				sumQuota = sumQuota + vat.getQuota();
+				sumReQuota = sumReQuota + vat.getSurchargeQuota();
+				if (!vat.isSales() && vat.getTransaction() == InvoiceTransactionType.OTHER_ISP) {
+					sumTotal = sumTotal + vat.getBase();
+				} else {
+					sumTotal = sumTotal + vat.getBase() + vat.getQuota() + vat.getSurchargeQuota();
+				}
+			}
 			if (vat.getTaxDate().compareTo(AonDateUtils.getYearFirstDay(year)) >= 0) {
 				sum347 = sum347 + vat.getAmount347();
 			}
@@ -127,6 +111,8 @@ public class Mod347Formatter extends VATFormatter {
 				+ AonStringUtils.leftPad(" ",8)
 				+ AonStringUtils.leftPad(DEC.format(sumReQuota),15)				
 				+ AonStringUtils.leftPad(DEC.format(sumTotal),15)
+				+ AonStringUtils.SPACE
+				+ (isVatAccrual ? AonStringUtils.rightPad( AonStringUtils.SPACE,10):AonStringUtils.SPACE)
 				+ (isVatAccrual ? AonStringUtils.leftPad(DEC.format(sum347),15) : "")
 				+ AonStringUtils.SPACE
 				+ AonStringUtils.SPACE
@@ -175,8 +161,12 @@ public class Mod347Formatter extends VATFormatter {
 				+ AonStringUtils.leftPad(DEC.format(vat.getQuota()),15)
 				+ AonStringUtils.leftPad(DEC.format(vat.getSurchargePercent()) + AonStringUtils.PERCENT,8)
 				+ AonStringUtils.leftPad(DEC.format(vat.getSurchargeQuota()),15)
-				+ AonStringUtils.leftPad(DEC.format(!vat.isSales() && vat.getTransaction() == InvoiceTransactionType.OTHER_ISP ? vat.getBase() : vat.getBase()+vat.getQuota()+vat.getSurchargeQuota()),15)
-				
+				+ AonStringUtils.leftPad(DEC.format(
+						vat.isFinancePending()?0.0
+						:(!vat.isSales() && vat.getTransaction() == InvoiceTransactionType.OTHER_ISP ? vat.getBase() : vat.getBase()+vat.getQuota()+vat.getSurchargeQuota()))
+						,15)
+				+ AonStringUtils.SPACE
+				+ (vat.isVatAccrualRegime() ? AonStringUtils.rightPad( vat.isFinancePending()?"PENDIENTE":"PAG./COB.",10):AonStringUtils.SPACE)
 				+ (vat.isVatAccrualRegime() ? AonStringUtils.leftPad(DEC.format( (vat.getTaxDate().compareTo(AonDateUtils.getYearFirstDay(year)) >= 0) ? vat.getAmount347() : 0.0),15) : "")
 				
 				+ AonStringUtils.SPACE

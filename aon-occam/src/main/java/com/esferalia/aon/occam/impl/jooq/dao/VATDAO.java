@@ -428,6 +428,73 @@ public class VATDAO  {
 		;
 	}
 
+	// ** **
+	public static Stream<VatContext> getPeriodPendingAccrualVatBreakdown(AONContext ctx, Date fromDate, Date toDate, VATFilter filter) {
+		java.sql.Date firstDay = AonDateUtils.toSql( fromDate );
+		java.sql.Date lastDay = AonDateUtils.toSql( toDate );
+		return ctx.getDslContext().select(
+			 INVOICE.ID
+			,INVOICE.SERIES
+			,INVOICE.NUMBER
+			,INVOICE.REFERENCE_CODE
+			,INVOICE.RDOCUMENT
+			,INVOICE.RDOCUMENT_TYPE
+			,INVOICE.RDOCUMENT_COUNTRY
+			,INVOICE.RNAME
+			,INVOICE.ISSUE_DATE
+			,INVOICE.TAX_DATE
+			,INVOICE.TYPE
+			,INVOICE.RECTIFICATION_TYPE
+			,INVOICE.SERVICE
+			,INVOICE.TRANSACTION
+			,INVOICE.INVESTMENT
+			,INVOICE.WITHHOLDING_FARMER
+			,INVOICE.VAT_ACCRUAL_PAYMENT
+			
+			,ENTERPRISE_ACTIVITY.ID
+			,ENTERPRISE_ACTIVITY.DESCRIPTION
+			,ENTERPRISE_ACTIVITY.VAT_REGIME
+			,ENTERPRISE_ACTIVITY.SURCHARGE
+			
+			,IAE.EPIGRAPH
+			
+			,INVOICE_DETAIL.TAXABLE_BASE
+			,INVOICE_DETAIL.INVEST_ASSET
+			,INVOICE_TAX.BASE
+			,INVOICE_TAX.PERCENTAGE
+			,INVOICE_TAX.QUOTA
+			,INVOICE_TAX.SURCHARGE
+			,INVOICE_TAX.SURCHARGE_QUOTA
+			,INVOICE_TAX.DEDUCTIBLE_PERCENT
+			,INVOICE_TAX.DEDUCTIBLE_QUOTA
+			,INVOICE_TAX.VAT_DEDUCTION_TYPE
+			
+			,INVOICE.TOTAL
+			,FINANCE.AMOUNT
+			
+			,INVOICE.RETENTION_QUOTA
+			,INVOICE.REGISTRY
+			)
+			.from(FINANCE)
+			.join(INVOICE).on(INVOICE.ID.equal(FINANCE.INVOICE))
+			.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(INVOICE.ACTIVITY))
+			.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
+			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
+			.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
+			.where(VAT_PROPERTIES.getConditions(filter))
+			.and(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
+			.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
+			.and(FINANCE.STATUS.eq(FinanceStatus.PENDING.value()))
+			.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))
+			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 1))	// Criterio de Caja.
+			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
+			.fetch()
+			.stream()
+			.map(new VatContextLastPeriodAccrualRegimeFiller())
+			.peek(vat -> vat.setFinancePending(true))
+		;
+	}
+
 	public static Stream<VatContext> getSiiVatContext(AONContext ctx, VATFilter filter, String sii) {
 		String status = "status";
 		if("intracomunitarias".equals(sii)) status = "status_intra";
