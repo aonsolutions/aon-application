@@ -622,6 +622,11 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 			
 			@Override
 			public void onSuccess(EmployeeContractInfo result) {
+				employeeContractData = result;
+				employeeData = result.getEmployeeInfo();
+				contractData = result.getContractInfo();
+				employeeContractData.setEmployeeInfo(employeeData);
+				employeeContractData.setContractInfo(contractData);
 				success.accept(result);
 			}
 

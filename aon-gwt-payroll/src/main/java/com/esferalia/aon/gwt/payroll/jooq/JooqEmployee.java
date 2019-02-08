@@ -558,43 +558,45 @@ public class JooqEmployee {
 		if(null == employeeData.getRpaymethodId()){
 			if(employeeData.getPayMethodType() != null && employeeData.getPayMethodType() != ""){
 				byte typePayMethod = getType(employeeData.getPayMethodType());
-				PayMethodRecord payMethodRecord = dslContext.insertInto(PAY_METHOD)
-						.set(PAY_METHOD.DOMAIN, domain)
-						.set(PAY_METHOD.NAME, employeeData.getPayMethodType())
-						.set(PAY_METHOD.TYPE, typePayMethod)
-						.returning(PAY_METHOD.ID)
-						.fetchOne();
-				
-				Integer payMethodTableId = payMethodRecord.get(PAY_METHOD.ID);
-				Integer rbankTableId = null;
-				if(employeeData.getAccount() != null && employeeData.getAccount() != ""){
-					RbankRecord rbankRecord = dslContext.insertInto(RBANK)
-							.set(RBANK.DOMAIN, domain)
-							.set(RBANK.REGISTRY, registryId)
-							.set(RBANK.BANK_ACCOUNT, employeeData.getAccount())
-							.set(RBANK.BIC, employeeData.getBic())
-							.set(RBANK.ALIAS, "CUENTA")
-							.set(RBANK.ACTIVE, (byte) 1)
-							.returning(RBANK.ID)
+				if(-1 != typePayMethod){
+					PayMethodRecord payMethodRecord = dslContext.insertInto(PAY_METHOD)
+							.set(PAY_METHOD.DOMAIN, domain)
+							.set(PAY_METHOD.NAME, employeeData.getPayMethodType())
+							.set(PAY_METHOD.TYPE, typePayMethod)
+							.returning(PAY_METHOD.ID)
 							.fetchOne();
-					 
-					 rbankTableId = rbankRecord.get(RBANK.ID); 
+					
+					Integer payMethodTableId = payMethodRecord.get(PAY_METHOD.ID);
+					Integer rbankTableId = null;
+					if(employeeData.getAccount() != null && employeeData.getAccount() != ""){
+						RbankRecord rbankRecord = dslContext.insertInto(RBANK)
+								.set(RBANK.DOMAIN, domain)
+								.set(RBANK.REGISTRY, registryId)
+								.set(RBANK.BANK_ACCOUNT, null == employeeData.getAccount() ? "" : employeeData.getAccount())
+								.set(RBANK.BIC, employeeData.getBic())
+								.set(RBANK.ALIAS, "CUENTA")
+								.set(RBANK.ACTIVE, (byte) 1)
+								.returning(RBANK.ID)
+								.fetchOne();
+						 
+						 rbankTableId = rbankRecord.get(RBANK.ID); 
+					}
+					
+					RpaymethodRecord rpaymethodRecord = dslContext.insertInto(RPAYMETHOD)
+						.set(RPAYMETHOD.DOMAIN, domain)
+						.set(RPAYMETHOD.REGISTRY, registryId)
+						.set(RPAYMETHOD.PAY_METHOD, payMethodTableId)
+						.set(RPAYMETHOD.RBANK, rbankTableId)
+						.returning(RPAYMETHOD.ID)
+						.fetchOne();
+					
+					Integer rpayMethodTableId = rpaymethodRecord.get(RPAYMETHOD.ID);
+				
+					//ACTUALIZAR CAMPOS
+					employeeData.setPaymethodId(payMethodTableId);
+					employeeData.setRpaymethodId(rpayMethodTableId);
+					employeeData.setRbankId(rbankTableId);
 				}
-				
-				RpaymethodRecord rpaymethodRecord = dslContext.insertInto(RPAYMETHOD)
-					.set(RPAYMETHOD.DOMAIN, domain)
-					.set(RPAYMETHOD.REGISTRY, registryId)
-					.set(RPAYMETHOD.PAY_METHOD, payMethodTableId)
-					.set(RPAYMETHOD.RBANK, rbankTableId)
-					.returning(RPAYMETHOD.ID)
-					.fetchOne();
-				
-				Integer rpayMethodTableId = rpaymethodRecord.get(RPAYMETHOD.ID);
-			
-				//ACTUALIZAR CAMPOS
-				employeeData.setPaymethodId(payMethodTableId);
-				employeeData.setRpaymethodId(rpayMethodTableId);
-				employeeData.setRbankId(rbankTableId);
 			}
 		}else{
 			if("TRANSFERENCIA".equals(employeeData.getPayMethodType())){
@@ -613,7 +615,7 @@ public class JooqEmployee {
 					 rbankTableId = rbankRecord.get(RBANK.ID); 
 				}else{
 					dslContext.update(RBANK)
-							.set(RBANK.BANK_ACCOUNT, employeeData.getAccount())
+							.set(RBANK.BANK_ACCOUNT, null == employeeData.getAccount() ? "" : employeeData.getAccount())
 							.set(RBANK.BIC, employeeData.getBic())
 							.where(RBANK.ID.eq(rbankTableId))
 							.execute();
@@ -657,10 +659,10 @@ public class JooqEmployee {
 					employeeData.setRbankId(null);
 				}else{
 					dslContext.update(PAY_METHOD)
-					.set(PAY_METHOD.NAME, employeeData.getPayMethodType())
-					.set(PAY_METHOD.TYPE, typePayMethod)
-					.where(PAY_METHOD.ID.eq(employeeData.getPaymethodId()))
-					.execute();
+						.set(PAY_METHOD.NAME, employeeData.getPayMethodType())
+						.set(PAY_METHOD.TYPE, typePayMethod)
+						.where(PAY_METHOD.ID.eq(employeeData.getPaymethodId()))
+						.execute();
 			
 					if(null != employeeData.getRbankId()){
 						dslContext.update(RPAYMETHOD)
@@ -671,6 +673,9 @@ public class JooqEmployee {
 						dslContext.delete(RBANK)
 							.where(RBANK.ID.eq(employeeData.getRbankId()))
 							.execute();
+						
+						//ACTUALIZAR CAMPOS
+						employeeData.setRbankId(null);
 					}
 				}
 			}
@@ -809,20 +814,23 @@ public class JooqEmployee {
 				.execute();
 		}
 		
-		//ACTUALIZAR DURACION JORNADA
-		dslContext.delete(CONTRACT_DATA)
-			.where(CONTRACT_DATA.NAME.like("HORAS%"))
-			.and(CONTRACT_DATA.CONTRACT.eq(contractData.getContractId()))
-			.execute();
-		
-		 TreeMap<java.util.Date, ArrayList<JourneyDuration>> contractJourneyDuration = contractData.getContractJourneyDuration().getContractJourneyDuration();
-		 for(Entry<java.util.Date, ArrayList<JourneyDuration>> entry : contractJourneyDuration.entrySet()) {
-			 for(JourneyDuration journey : entry.getValue()) {
-				 dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
-							CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-						.values(domain, journey.getName(), contractData.getContractId(), journey.getExpression(), 
-								new Date(journey.getStartDate().getTime()), (null == journey.getEndDate()) ? null : new Date(journey.getEndDate().getTime()))
-						.execute();
+		TreeMap<java.util.Date, ArrayList<JourneyDuration>> contractJourneyDuration = contractData.getContractJourneyDuration().getContractJourneyDuration();
+		 if(!contractJourneyDuration.isEmpty()){
+		 
+			//ACTUALIZAR DURACION JORNADA
+			dslContext.delete(CONTRACT_DATA)
+				.where(CONTRACT_DATA.NAME.like("HORAS%"))
+				.and(CONTRACT_DATA.CONTRACT.eq(contractData.getContractId()))
+				.execute();
+			 
+			 for(Entry<java.util.Date, ArrayList<JourneyDuration>> entry : contractJourneyDuration.entrySet()) {
+				 for(JourneyDuration journey : entry.getValue()) {
+					 dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+								CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+							.values(domain, journey.getName(), contractData.getContractId(), journey.getExpression(), 
+									new Date(journey.getStartDate().getTime()), (null == journey.getEndDate()) ? null : new Date(journey.getEndDate().getTime()))
+							.execute();
+				 }
 			 }
 		 }
 
@@ -1144,183 +1152,7 @@ public class JooqEmployee {
 			
 			if(employeeData.getPayMethodType() != null && employeeData.getPayMethodType() != ""){
 				byte typePayMethod = getType(employeeData.getPayMethodType());
-				PayMethodRecord payMethodRecord = dslContext.insertInto(PAY_METHOD)
-						.set(PAY_METHOD.DOMAIN, domain)
-						.set(PAY_METHOD.NAME, employeeData.getPayMethodType())
-						.set(PAY_METHOD.TYPE, typePayMethod)
-						.returning(PAY_METHOD.ID)
-						.fetchOne();
-				
-				Integer payMethodTableId = payMethodRecord.get(PAY_METHOD.ID);
-				Integer rbankTableId = null;
-				if(employeeData.getAccount() != null && employeeData.getAccount() != ""){
-					RbankRecord rbankRecord = dslContext.insertInto(RBANK)
-							.set(RBANK.DOMAIN, domain)
-							.set(RBANK.REGISTRY, registryId)
-							.set(RBANK.BANK_ACCOUNT, employeeData.getAccount())
-							.set(RBANK.BIC, employeeData.getBic())
-							.set(RBANK.ALIAS, "CUENTA")
-							.set(RBANK.ACTIVE, (byte) 1)
-							.returning(RBANK.ID)
-							.fetchOne();
-					 
-					 rbankTableId = rbankRecord.get(RBANK.ID); 
-				}
-				
-				dslContext.insertInto(RPAYMETHOD)
-					.set(RPAYMETHOD.DOMAIN, domain)
-					.set(RPAYMETHOD.REGISTRY, registryId)
-					.set(RPAYMETHOD.PAY_METHOD, payMethodTableId)
-					.set(RPAYMETHOD.RBANK, rbankTableId)
-					.execute();
-			}
-			
-		}else{ //EMPLEADO YA EXISTENTE Y NUEVO CONTRATO
-			
-			registryId = employeeData.getEmployeeId();
-			
-			dslContext.update(REGISTRY)
-				.set(REGISTRY.DOCUMENT, employeeData.getDocument())
-				.set(REGISTRY.DOCUMENT_TYPE, employeeData.getDocumentType())
-				.set(REGISTRY.DOCUMENT_COUNTRY, employeeData.getNationality())
-				.set(REGISTRY.NATIONALITY, employeeData.getNationality())
-				.set(REGISTRY.NAME, employeeData.getSurName() + " " + employeeData.getSecondSurName() + ", " + employeeData.getName())
-				.where(REGISTRY.ID.eq(registryId))
-				.execute();
-			
-			dslContext.update(PERSON)
-				.set(PERSON.NAME, employeeData.getName())
-				.set(PERSON.FIRST_SURNAME, employeeData.getSurName())
-				.set(PERSON.SECOND_SURNAME, employeeData.getSecondSurName())
-				.set(PERSON.GENDER, employeeData.getGender())
-				.set(PERSON.BIRTH_DATE, (employeeData.getBirthdate() == null) ? null : new Date(employeeData.getBirthdate().getTime()))
-				.set(PERSON.SOCIAL_SECURITY_NUM, employeeData.getSsNumber())
-				.where(PERSON.REGISTRY.eq(registryId))
-				.execute();
-			
-			Record domainRecord = dslContext.select().from(DOMAIN)
-					.where(DOMAIN.ID.eq(domain))
-					.fetchOne();
-			
-			Integer parentDomain = domainRecord.get(DOMAIN.PARENT);
-			
-			Integer rAddressId = null;
-			
-			if(null != employeeData.getAddressProvinces()) {
-			
-				Result<Record> geozone = dslContext.select()
-						.from(GEOZONE)
-						.where(GEOZONE.NAME.eq(employeeData.getAddressProvinces()))
-							.and(GEOZONE.DOMAIN.eq(domain)
-									.or(GEOZONE.DOMAIN.eq(parentDomain)))
-						.fetch();
-				
-				Integer geozoneId = null;
-				
-				if(geozone == null){
-					Result<Record1<String>> codes = dslContext.select(GEOZONE.CODE)
-						.from(GEOZONE)
-						.where(GEOZONE.NAME.like(employeeData.getAddressProvinces()+"%"))
-						.fetch();
-					
-					if(!codes.isEmpty()){
-						GeozoneRecord geozoneRecord  = dslContext.insertInto(GEOZONE)
-							.set(GEOZONE.DOMAIN, domain)
-							.set(GEOZONE.NAME, employeeData.getAddressProvinces())
-							.set(GEOZONE.CODE, codes.get(0).value1())
-							.returning(GEOZONE.ID)
-							.fetchOne();
-						
-						geozoneId = geozoneRecord.getId();
-					}
-				}else
-					geozoneId = geozone.get(0).get(GEOZONE.ID);
-	
-				rAddressId = employeeData.getRaddressId();
-				
-				if(null == rAddressId){
-					RaddressRecord rAddressRecord = dslContext.insertInto(RADDRESS)
-							.set(RADDRESS.DOMAIN, domain)
-							.set(RADDRESS.REGISTRY, registryId)
-							.set(RADDRESS.STREET_TYPE, employeeData.getStreetType())
-							.set(RADDRESS.ADDRESS, employeeData.getAddress())
-							.set(RADDRESS.NUMBER, employeeData.getAddresNum())
-							.set(RADDRESS.ZIP, employeeData.getAddressZip())
-							.set(RADDRESS.CITY, employeeData.getAddressCity())
-							.set(RADDRESS.GEOZONE, geozoneId)
-							.returning(RADDRESS.ID, RADDRESS.GEOZONE)
-							.fetchOne();
-					
-					rAddressId = rAddressRecord.getId();
-				}else{
-					dslContext.update(RADDRESS)
-							.set(RADDRESS.STREET_TYPE, employeeData.getStreetType())
-							.set(RADDRESS.ADDRESS, employeeData.getAddress())
-							.set(RADDRESS.NUMBER, employeeData.getAddresNum())
-							.set(RADDRESS.ZIP, employeeData.getAddressZip())
-							.set(RADDRESS.CITY, employeeData.getAddressCity())
-							.set(RADDRESS.GEOZONE, geozoneId)
-							.where(RADDRESS.ID.eq(rAddressId))
-							.execute();
-				}
-				
-				if(geozone == null && null != geozoneId){
-					Integer rAddressGeozone = geozoneId;
-					
-					GeozoneRecord geozoneParentRecord  = dslContext.insertInto(GEOZONE)
-							.set(GEOZONE.DOMAIN, domain)
-							.set(GEOZONE.NAME, "ESPA�A")
-							.set(GEOZONE.CODE, "ES")
-							.set(GEOZONE.SYSTEM, (byte) 1)
-							.returning(GEOZONE.ID)
-							.fetchOne();
-					
-					Integer geozoneParentId = geozoneParentRecord.getId();
-					
-					dslContext.insertInto(GEOTREE)
-					.set(GEOTREE.DOMAIN, domain)
-					.set(GEOTREE.PARENT, geozoneParentId)
-					.set(GEOTREE.CHILD, rAddressGeozone)
-					.execute();
-					
-					dslContext.insertInto(GEOTREE)
-					.set(GEOTREE.DOMAIN, domain)
-					.set(GEOTREE.PARENT, (Integer) null)
-					.set(GEOTREE.CHILD, geozoneParentId)
-					.execute();
-				}
-			}
-			
-			dslContext.insertInto(RMEDIA, RMEDIA.ID, RMEDIA.DOMAIN, RMEDIA.REGISTRY, RMEDIA.MEDIA, RMEDIA.VALUE, RMEDIA.COMMENT, 
-							  RMEDIA.ADMINISTRATIVE, RMEDIA.COMMERCIAL, RMEDIA.TECHNICAL, RMEDIA.RADDRESS)
-			 	.values(employeeData.getPhoneId(), domain, registryId, (byte) 1, employeeData.getPhone(), (String) null, 
-			 			(byte) 1, (byte) 1, (byte) 1, rAddressId)
-			 	.onDuplicateKeyUpdate()
-			 	.set(RMEDIA.VALUE, employeeData.getPhone())
-				.set(RMEDIA.RADDRESS, rAddressId)
-				.execute();
-			
-			dslContext.insertInto(RMEDIA, RMEDIA.ID, RMEDIA.DOMAIN, RMEDIA.REGISTRY, RMEDIA.MEDIA, RMEDIA.VALUE, RMEDIA.COMMENT, 
-					  RMEDIA.ADMINISTRATIVE, RMEDIA.COMMERCIAL, RMEDIA.TECHNICAL, RMEDIA.RADDRESS)
-			 	.values(employeeData.getMobileId(), domain, registryId, (byte) 2, employeeData.getMobile(), (String) null, 
-			 			(byte) 1, (byte) 1, (byte) 1, rAddressId)
-			 	.onDuplicateKeyUpdate()
-			 	.set(RMEDIA.VALUE, employeeData.getMobile())
-				.set(RMEDIA.RADDRESS, rAddressId)
-				.execute();
-			
-			dslContext.insertInto(RMEDIA, RMEDIA.ID, RMEDIA.DOMAIN, RMEDIA.REGISTRY, RMEDIA.MEDIA, RMEDIA.VALUE, RMEDIA.COMMENT, 
-					  RMEDIA.ADMINISTRATIVE, RMEDIA.COMMERCIAL, RMEDIA.TECHNICAL, RMEDIA.RADDRESS)
-			 	.values(employeeData.getEmailId(), domain, registryId, (byte) 4, employeeData.getEmail(), (String) null, 
-			 			(byte) 1, (byte) 1, (byte) 1, rAddressId)
-			 	.onDuplicateKeyUpdate()
-			 	.set(RMEDIA.VALUE, employeeData.getEmail())
-				.set(RMEDIA.RADDRESS, rAddressId)
-				.execute();		
-			
-			if(null == employeeData.getRpaymethodId()){
-				if(employeeData.getPayMethodType() != null && employeeData.getPayMethodType() != ""){
-					byte typePayMethod = getType(employeeData.getPayMethodType());
+				if(-1 != typePayMethod){
 					PayMethodRecord payMethodRecord = dslContext.insertInto(PAY_METHOD)
 							.set(PAY_METHOD.DOMAIN, domain)
 							.set(PAY_METHOD.NAME, employeeData.getPayMethodType())
@@ -1351,55 +1183,233 @@ public class JooqEmployee {
 						.set(RPAYMETHOD.RBANK, rbankTableId)
 						.execute();
 				}
-			}else{
-				if("TRANSFERENCIA".equals(employeeData.getPayMethodType())){
-					Integer rbankTableId = employeeData.getRbankId();
-					if(null == employeeData.getRbankId() && (employeeData.getAccount() != null && employeeData.getAccount() != "")){
-						RbankRecord rbankRecord = dslContext.insertInto(RBANK)
-								.set(RBANK.DOMAIN, domain)
-								.set(RBANK.REGISTRY, registryId)
-								.set(RBANK.BANK_ACCOUNT, employeeData.getAccount())
-								.set(RBANK.BIC, employeeData.getBic())
-								.set(RBANK.ALIAS, "CUENTA")
-								.set(RBANK.ACTIVE, (byte) 1)
-								.returning(RBANK.ID)
-								.fetchOne();
-						 
-						 rbankTableId = rbankRecord.get(RBANK.ID); 
-					}else{
-						dslContext.update(RBANK)
-								.set(RBANK.BANK_ACCOUNT, employeeData.getAccount())
-								.set(RBANK.BIC, employeeData.getBic())
-								.where(RBANK.ID.eq(rbankTableId))
-								.execute();
-					}
-					
-					byte typePayMethod = getType(employeeData.getPayMethodType());
-					dslContext.update(PAY_METHOD)
-							.set(PAY_METHOD.NAME, employeeData.getPayMethodType())
-							.set(PAY_METHOD.TYPE, typePayMethod)
-							.where(PAY_METHOD.ID.eq(employeeData.getPaymethodId()))
-							.execute();
-				}else{
-					byte typePayMethod = getType(employeeData.getPayMethodType());
-					dslContext.update(PAY_METHOD)
-							.set(PAY_METHOD.NAME, employeeData.getPayMethodType())
-							.set(PAY_METHOD.TYPE, typePayMethod)
-							.where(PAY_METHOD.ID.eq(employeeData.getPaymethodId()))
-							.execute();
-					
-					if(null != employeeData.getRbankId()){
-						dslContext.update(RPAYMETHOD)
-							.set(RPAYMETHOD.RBANK, (Integer) null)
-							.where(RPAYMETHOD.ID.eq(employeeData.getRpaymethodId()))
-							.execute();
-						
-						dslContext.delete(RBANK)
-							.where(RBANK.ID.eq(employeeData.getRbankId()))
-							.execute();
-					}
-				}
 			}
+			
+		}else{ //EMPLEADO YA EXISTENTE Y NUEVO CONTRATO
+			
+			registryId = employeeData.getEmployeeId();
+			
+//			dslContext.update(REGISTRY)
+//				.set(REGISTRY.DOCUMENT, employeeData.getDocument())
+//				.set(REGISTRY.DOCUMENT_TYPE, employeeData.getDocumentType())
+//				.set(REGISTRY.DOCUMENT_COUNTRY, employeeData.getNationality())
+//				.set(REGISTRY.NATIONALITY, employeeData.getNationality())
+//				.set(REGISTRY.NAME, employeeData.getSurName() + " " + employeeData.getSecondSurName() + ", " + employeeData.getName())
+//				.where(REGISTRY.ID.eq(registryId))
+//				.execute();
+			
+//			dslContext.update(PERSON)
+//				.set(PERSON.NAME, employeeData.getName())
+//				.set(PERSON.FIRST_SURNAME, employeeData.getSurName())
+//				.set(PERSON.SECOND_SURNAME, employeeData.getSecondSurName())
+//				.set(PERSON.GENDER, employeeData.getGender())
+//				.set(PERSON.BIRTH_DATE, (employeeData.getBirthdate() == null) ? null : new Date(employeeData.getBirthdate().getTime()))
+//				.set(PERSON.SOCIAL_SECURITY_NUM, employeeData.getSsNumber())
+//				.where(PERSON.REGISTRY.eq(registryId))
+//				.execute();
+			
+			Record domainRecord = dslContext.select().from(DOMAIN)
+					.where(DOMAIN.ID.eq(domain))
+					.fetchOne();
+			
+			Integer parentDomain = domainRecord.get(DOMAIN.PARENT);
+			
+//			Integer rAddressId = null;
+//			
+//			if(null != employeeData.getAddressProvinces()) {
+//			
+//				Result<Record> geozone = dslContext.select()
+//						.from(GEOZONE)
+//						.where(GEOZONE.NAME.eq(employeeData.getAddressProvinces()))
+//							.and(GEOZONE.DOMAIN.eq(domain)
+//									.or(GEOZONE.DOMAIN.eq(parentDomain)))
+//						.fetch();
+//				
+//				Integer geozoneId = null;
+//				
+//				if(geozone == null){
+//					Result<Record1<String>> codes = dslContext.select(GEOZONE.CODE)
+//						.from(GEOZONE)
+//						.where(GEOZONE.NAME.like(employeeData.getAddressProvinces()+"%"))
+//						.fetch();
+//					
+//					if(!codes.isEmpty()){
+//						GeozoneRecord geozoneRecord  = dslContext.insertInto(GEOZONE)
+//							.set(GEOZONE.DOMAIN, domain)
+//							.set(GEOZONE.NAME, employeeData.getAddressProvinces())
+//							.set(GEOZONE.CODE, codes.get(0).value1())
+//							.returning(GEOZONE.ID)
+//							.fetchOne();
+//						
+//						geozoneId = geozoneRecord.getId();
+//					}
+//				}else
+//					geozoneId = geozone.get(0).get(GEOZONE.ID);
+//	
+//				rAddressId = employeeData.getRaddressId();
+//				
+//				if(null == rAddressId){
+//					RaddressRecord rAddressRecord = dslContext.insertInto(RADDRESS)
+//							.set(RADDRESS.DOMAIN, domain)
+//							.set(RADDRESS.REGISTRY, registryId)
+//							.set(RADDRESS.STREET_TYPE, employeeData.getStreetType())
+//							.set(RADDRESS.ADDRESS, employeeData.getAddress())
+//							.set(RADDRESS.NUMBER, employeeData.getAddresNum())
+//							.set(RADDRESS.ZIP, employeeData.getAddressZip())
+//							.set(RADDRESS.CITY, employeeData.getAddressCity())
+//							.set(RADDRESS.GEOZONE, geozoneId)
+//							.returning(RADDRESS.ID, RADDRESS.GEOZONE)
+//							.fetchOne();
+//					
+//					rAddressId = rAddressRecord.getId();
+//				}else{
+//					dslContext.update(RADDRESS)
+//							.set(RADDRESS.STREET_TYPE, employeeData.getStreetType())
+//							.set(RADDRESS.ADDRESS, employeeData.getAddress())
+//							.set(RADDRESS.NUMBER, employeeData.getAddresNum())
+//							.set(RADDRESS.ZIP, employeeData.getAddressZip())
+//							.set(RADDRESS.CITY, employeeData.getAddressCity())
+//							.set(RADDRESS.GEOZONE, geozoneId)
+//							.where(RADDRESS.ID.eq(rAddressId))
+//							.execute();
+//				}
+//				
+//				if(geozone == null && null != geozoneId){
+//					Integer rAddressGeozone = geozoneId;
+//					
+//					GeozoneRecord geozoneParentRecord  = dslContext.insertInto(GEOZONE)
+//							.set(GEOZONE.DOMAIN, domain)
+//							.set(GEOZONE.NAME, "ESPA�A")
+//							.set(GEOZONE.CODE, "ES")
+//							.set(GEOZONE.SYSTEM, (byte) 1)
+//							.returning(GEOZONE.ID)
+//							.fetchOne();
+//					
+//					Integer geozoneParentId = geozoneParentRecord.getId();
+//					
+//					dslContext.insertInto(GEOTREE)
+//					.set(GEOTREE.DOMAIN, domain)
+//					.set(GEOTREE.PARENT, geozoneParentId)
+//					.set(GEOTREE.CHILD, rAddressGeozone)
+//					.execute();
+//					
+//					dslContext.insertInto(GEOTREE)
+//					.set(GEOTREE.DOMAIN, domain)
+//					.set(GEOTREE.PARENT, (Integer) null)
+//					.set(GEOTREE.CHILD, geozoneParentId)
+//					.execute();
+//				}
+//			}
+			
+//			dslContext.insertInto(RMEDIA, RMEDIA.ID, RMEDIA.DOMAIN, RMEDIA.REGISTRY, RMEDIA.MEDIA, RMEDIA.VALUE, RMEDIA.COMMENT, 
+//							  RMEDIA.ADMINISTRATIVE, RMEDIA.COMMERCIAL, RMEDIA.TECHNICAL, RMEDIA.RADDRESS)
+//			 	.values(employeeData.getPhoneId(), domain, registryId, (byte) 1, employeeData.getPhone(), (String) null, 
+//			 			(byte) 1, (byte) 1, (byte) 1, rAddressId)
+//			 	.onDuplicateKeyUpdate()
+//			 	.set(RMEDIA.VALUE, employeeData.getPhone())
+//				.set(RMEDIA.RADDRESS, rAddressId)
+//				.execute();
+//			
+//			dslContext.insertInto(RMEDIA, RMEDIA.ID, RMEDIA.DOMAIN, RMEDIA.REGISTRY, RMEDIA.MEDIA, RMEDIA.VALUE, RMEDIA.COMMENT, 
+//					  RMEDIA.ADMINISTRATIVE, RMEDIA.COMMERCIAL, RMEDIA.TECHNICAL, RMEDIA.RADDRESS)
+//			 	.values(employeeData.getMobileId(), domain, registryId, (byte) 2, employeeData.getMobile(), (String) null, 
+//			 			(byte) 1, (byte) 1, (byte) 1, rAddressId)
+//			 	.onDuplicateKeyUpdate()
+//			 	.set(RMEDIA.VALUE, employeeData.getMobile())
+//				.set(RMEDIA.RADDRESS, rAddressId)
+//				.execute();
+//			
+//			dslContext.insertInto(RMEDIA, RMEDIA.ID, RMEDIA.DOMAIN, RMEDIA.REGISTRY, RMEDIA.MEDIA, RMEDIA.VALUE, RMEDIA.COMMENT, 
+//					  RMEDIA.ADMINISTRATIVE, RMEDIA.COMMERCIAL, RMEDIA.TECHNICAL, RMEDIA.RADDRESS)
+//			 	.values(employeeData.getEmailId(), domain, registryId, (byte) 4, employeeData.getEmail(), (String) null, 
+//			 			(byte) 1, (byte) 1, (byte) 1, rAddressId)
+//			 	.onDuplicateKeyUpdate()
+//			 	.set(RMEDIA.VALUE, employeeData.getEmail())
+//				.set(RMEDIA.RADDRESS, rAddressId)
+//				.execute();		
+			
+//			if(null == employeeData.getRpaymethodId()){
+//				if(employeeData.getPayMethodType() != null && employeeData.getPayMethodType() != ""){
+//					byte typePayMethod = getType(employeeData.getPayMethodType());
+//					PayMethodRecord payMethodRecord = dslContext.insertInto(PAY_METHOD)
+//							.set(PAY_METHOD.DOMAIN, domain)
+//							.set(PAY_METHOD.NAME, employeeData.getPayMethodType())
+//							.set(PAY_METHOD.TYPE, typePayMethod)
+//							.returning(PAY_METHOD.ID)
+//							.fetchOne();
+//					
+//					Integer payMethodTableId = payMethodRecord.get(PAY_METHOD.ID);
+//					Integer rbankTableId = null;
+//					if(employeeData.getAccount() != null && employeeData.getAccount() != ""){
+//						RbankRecord rbankRecord = dslContext.insertInto(RBANK)
+//								.set(RBANK.DOMAIN, domain)
+//								.set(RBANK.REGISTRY, registryId)
+//								.set(RBANK.BANK_ACCOUNT, employeeData.getAccount())
+//								.set(RBANK.BIC, employeeData.getBic())
+//								.set(RBANK.ALIAS, "CUENTA")
+//								.set(RBANK.ACTIVE, (byte) 1)
+//								.returning(RBANK.ID)
+//								.fetchOne();
+//						 
+//						 rbankTableId = rbankRecord.get(RBANK.ID); 
+//					}
+//					
+//					dslContext.insertInto(RPAYMETHOD)
+//						.set(RPAYMETHOD.DOMAIN, domain)
+//						.set(RPAYMETHOD.REGISTRY, registryId)
+//						.set(RPAYMETHOD.PAY_METHOD, payMethodTableId)
+//						.set(RPAYMETHOD.RBANK, rbankTableId)
+//						.execute();
+//				}
+//			}else{
+//				if("TRANSFERENCIA".equals(employeeData.getPayMethodType())){
+//					Integer rbankTableId = employeeData.getRbankId();
+//					if(null == employeeData.getRbankId() && (employeeData.getAccount() != null && employeeData.getAccount() != "")){
+//						RbankRecord rbankRecord = dslContext.insertInto(RBANK)
+//								.set(RBANK.DOMAIN, domain)
+//								.set(RBANK.REGISTRY, registryId)
+//								.set(RBANK.BANK_ACCOUNT, employeeData.getAccount())
+//								.set(RBANK.BIC, employeeData.getBic())
+//								.set(RBANK.ALIAS, "CUENTA")
+//								.set(RBANK.ACTIVE, (byte) 1)
+//								.returning(RBANK.ID)
+//								.fetchOne();
+//						 
+//						 rbankTableId = rbankRecord.get(RBANK.ID); 
+//					}else{
+//						dslContext.update(RBANK)
+//								.set(RBANK.BANK_ACCOUNT, employeeData.getAccount())
+//								.set(RBANK.BIC, employeeData.getBic())
+//								.where(RBANK.ID.eq(rbankTableId))
+//								.execute();
+//					}
+//					
+//					byte typePayMethod = getType(employeeData.getPayMethodType());
+//					dslContext.update(PAY_METHOD)
+//							.set(PAY_METHOD.NAME, employeeData.getPayMethodType())
+//							.set(PAY_METHOD.TYPE, typePayMethod)
+//							.where(PAY_METHOD.ID.eq(employeeData.getPaymethodId()))
+//							.execute();
+//				}else{
+//					byte typePayMethod = getType(employeeData.getPayMethodType());
+//					dslContext.update(PAY_METHOD)
+//							.set(PAY_METHOD.NAME, employeeData.getPayMethodType())
+//							.set(PAY_METHOD.TYPE, typePayMethod)
+//							.where(PAY_METHOD.ID.eq(employeeData.getPaymethodId()))
+//							.execute();
+//					
+//					if(null != employeeData.getRbankId()){
+//						dslContext.update(RPAYMETHOD)
+//							.set(RPAYMETHOD.RBANK, (Integer) null)
+//							.where(RPAYMETHOD.ID.eq(employeeData.getRpaymethodId()))
+//							.execute();
+//						
+//						dslContext.delete(RBANK)
+//							.where(RBANK.ID.eq(employeeData.getRbankId()))
+//							.execute();
+//					}
+//				}
+//			}
 				
 		}
 		
@@ -1488,6 +1498,8 @@ public class JooqEmployee {
 			.execute();
 			
 			dslContext.update(CONTRACT)
+				.set(CONTRACT.ENTERPRISE_CCC, (Integer) null)
+				.set(CONTRACT.ENTERPRISE_ACTIVITY, (Integer) null)
 				.set(CONTRACT.SS_REGIME, (byte) 3)
 				.where(CONTRACT.ID.eq(contractId))
 				.execute();
