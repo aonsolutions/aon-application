@@ -506,7 +506,7 @@
 				<textFieldExpression><![CDATA[($F{rectifier}) ?  $R{finance_rectifier_invoice}.toUpperCase() : ($F{rectified}) ? $R{finance_rectified_invoice}.toUpperCase() : ""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-56" x="203" y="48" width="123" height="12" uuid="17f246d7-b5a6-44ae-b3ff-95b05f5ec272">
+				<reportElement key="textField-56" x="274" y="48" width="244" height="12" uuid="17f246d7-b5a6-44ae-b3ff-95b05f5ec272">
 					<printWhenExpression><![CDATA[$P{printHeader} && $P{printInternetData}.name().equals( "HEADER" )]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -521,7 +521,7 @@
 				<textFieldExpression><![CDATA[$P{company}.getWeb().getValue()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-56" x="203" y="60" width="123" height="12" uuid="4a23339d-31b5-401b-86a3-9797093d9cde">
+				<reportElement key="textField-56" x="274" y="60" width="244" height="12" uuid="4a23339d-31b5-401b-86a3-9797093d9cde">
 					<printWhenExpression><![CDATA[$P{printHeader} && $P{printInternetData}.name().equals( "HEADER" )]]></printWhenExpression>
 				</reportElement>
 				<box>
