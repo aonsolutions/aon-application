@@ -247,25 +247,25 @@
 				</graphicElement>
 			</rectangle>
 			<rectangle>
-				<reportElement mode="Transparent" x="60" y="638" width="80" height="45" uuid="93b7bf8f-f541-4215-a38d-a823214fa123"/>
+				<reportElement mode="Transparent" x="0" y="638" width="80" height="45" uuid="93b7bf8f-f541-4215-a38d-a823214fa123"/>
 				<graphicElement>
 					<pen lineWidth="0.5"/>
 				</graphicElement>
 			</rectangle>
 			<rectangle>
-				<reportElement mode="Transparent" x="140" y="638" width="50" height="45" uuid="40c6468a-6506-4027-91f7-41cd0c6dbadc"/>
+				<reportElement mode="Transparent" x="80" y="638" width="50" height="45" uuid="40c6468a-6506-4027-91f7-41cd0c6dbadc"/>
 				<graphicElement>
 					<pen lineWidth="0.5"/>
 				</graphicElement>
 			</rectangle>
 			<rectangle>
-				<reportElement mode="Transparent" x="190" y="638" width="60" height="45" uuid="b0f782f7-7329-43b9-bf6b-06c11bad7937"/>
+				<reportElement mode="Transparent" x="130" y="638" width="60" height="45" uuid="b0f782f7-7329-43b9-bf6b-06c11bad7937"/>
 				<graphicElement>
 					<pen lineWidth="0.5"/>
 				</graphicElement>
 			</rectangle>
 			<rectangle>
-				<reportElement mode="Transparent" x="250" y="638" width="65" height="45" uuid="c7579fd7-daac-4b8f-a14b-c5daca14f732"/>
+				<reportElement mode="Transparent" x="190" y="638" width="125" height="45" uuid="c7579fd7-daac-4b8f-a14b-c5daca14f732"/>
 				<graphicElement>
 					<pen lineWidth="0.5"/>
 				</graphicElement>
@@ -1303,7 +1303,7 @@ $P{company}.getWeb().getValue() + " - " + $P{company}.getEmail().getValue()
 				<textFieldExpression><![CDATA[$R{aon_total_to_pay}]]></textFieldExpression>
 			</textField>
 			<componentElement>
-				<reportElement key="tax" positionType="Float" x="60" y="7" width="255" height="60" uuid="b367a1cc-c1d6-4c69-9a79-8d0066d449b1"/>
+				<reportElement key="tax" positionType="Float" x="0" y="7" width="315" height="60" uuid="b367a1cc-c1d6-4c69-9a79-8d0066d449b1"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="tax" uuid="a994d696-d00c-444e-96d9-e7437b36dbb5">
 						<datasetParameter name="REPORT_MAX_COUNT">
@@ -1433,10 +1433,10 @@ new Boolean($F{taxQuota}.doubleValue()!=0)]]></printWhenExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="65" uuid="a33cd5dc-eda4-4a13-9f59-169d46e7aed5">
+					<jr:column width="125" uuid="a33cd5dc-eda4-4a13-9f59-169d46e7aed5">
 						<jr:columnHeader height="15" rowSpan="1">
 							<textField isBlankWhenNull="true">
-								<reportElement key="textField-20" mode="Opaque" x="0" y="0" width="65" height="15" forecolor="#FFFFFF" backcolor="#999999" uuid="da12a9e6-ea72-4046-b1dc-2a184272643d"/>
+								<reportElement key="textField-20" mode="Opaque" x="0" y="0" width="125" height="15" forecolor="#FFFFFF" backcolor="#999999" uuid="da12a9e6-ea72-4046-b1dc-2a184272643d"/>
 								<box rightPadding="5">
 									<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
@@ -1457,7 +1457,7 @@ new Boolean($F{taxQuota}.doubleValue()!=0)]]></printWhenExpression>
 								<rightPen lineWidth="0.0"/>
 							</box>
 							<textField pattern="#,##0.00" isBlankWhenNull="true">
-								<reportElement key="textField-16" mode="Transparent" x="0" y="0" width="65" height="15" backcolor="#FFFFFF" uuid="9d1bc2b0-eb17-4a6e-a68f-0f367bc2549b"/>
+								<reportElement key="textField-16" mode="Transparent" x="0" y="0" width="125" height="15" backcolor="#FFFFFF" uuid="9d1bc2b0-eb17-4a6e-a68f-0f367bc2549b"/>
 								<box rightPadding="5">
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
