@@ -19,7 +19,9 @@ public class AgrarianAFIServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		
-		JSONObject agrarianJSON = null;
+		//Este JSON lo deberia obtener del Request cuando me llaman al Servlet
+		JSONObject agrarianJSON = null; 
+		
 		String agrarianAFI = AgrarianAFIGeneration.generateAgrarianAFI(agrarianJSON);
 		
 		OutputStream os = resp.getOutputStream();

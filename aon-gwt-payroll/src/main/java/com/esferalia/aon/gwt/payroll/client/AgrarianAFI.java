@@ -1,14 +1,18 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
+import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.TableElement;
@@ -18,6 +22,8 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Grid;
@@ -28,6 +34,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AgrarianAFI extends MainEntryPoint {
+	
+	final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
 	
 	interface Binder extends UiBinder<Widget, AgrarianAFI> {
 	}
@@ -72,7 +80,14 @@ public class AgrarianAFI extends MainEntryPoint {
 	@UiField
 	Grid employeeTable;
 	
-	private AgrarianAFIObject agrarianAFIObject;
+	private Enterprise enterpriseInfo = new Enterprise();
+	private String enterpriseName = "";
+	private Map<String, CCC> agrarianCCCs = new HashMap<>();
+	private Integer cccId = 0;
+	private Map<Integer, List<AgrarianJourney>> agrarianJourney = new HashMap<>();
+	
+	private Date startDate = null;
+	private Date endDate = null;
 	
 	@Override
 	public void onModuleLoad() {
@@ -110,6 +125,32 @@ public class AgrarianAFI extends MainEntryPoint {
 		
 		//Hide EmployeePanel
 		employeePanel.addStyleName(style.hide());
+		
+		impl.getEnterprises(0, Integer.MAX_VALUE, new AsyncCallback<List<Enterprise>>() {
+			
+			@Override
+			public void onSuccess(List<Enterprise> enterprises) {
+//				Window.alert("Getting Enterprises -> Num Enterprises = " + enterprises.size());
+				
+				if(enterprises.size() == 1){
+					enterpriseName = enterprises.get(0).getName();
+					enterpriseInfo = enterprises.get(0);
+				}
+				
+				for (Enterprise enterprise: enterprises)
+					for(Activity activity : enterprise.getActivities())
+						for(CCC ccc : activity.getCccs())
+							if(ccc.getRegime() == "0163")
+								agrarianCCCs.put(activity.getDescription(), ccc);
+				
+				initializeView();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+			}
+		});
 				
 	}
 
@@ -129,9 +170,18 @@ public class AgrarianAFI extends MainEntryPoint {
 	
 	private Label createTotalDays(Integer contractId) {
 		Label newLabel = new Label();
-		Integer totalDays = agrarianAFIObject.getTotalDaysByContract(contractId);
+		Integer totalDays = getTotalDaysByContract(contractId);
 		newLabel.setText(totalDays+"");
 		return newLabel;
+	}
+	
+	private Integer getTotalDaysByContract(Integer contractId) {
+		Integer totalDays = 0;
+		List<AgrarianJourney> journiesList = this.agrarianJourney.get(contractId);
+		for(AgrarianJourney journey : journiesList){
+			totalDays += journey.getTotalDays();
+		}
+		return totalDays;
 	}
 	
 	private HorizontalPanel createAgrarianMonthPanel(Integer contractId) {
@@ -139,7 +189,7 @@ public class AgrarianAFI extends MainEntryPoint {
 		Integer maxDays = DateUtils.getLastDayOfMonth(new Date(Integer.parseInt(yearList.getSelectedItemText())-1900, monthList.getSelectedIndex(), 1)).getDate();
 		for(int i = 0; i < maxDays; i++) {
 			Label day = new Label();
-			if(agrarianAFIObject.checkDateAgraria(contractId, new Date(Integer.parseInt(yearList.getSelectedItemText())-1900, monthList.getSelectedIndex(), i+1)))
+			if(checkDateAgraria(contractId, new Date(Integer.parseInt(yearList.getSelectedItemText())-1900, monthList.getSelectedIndex(), i+1)))
 				day.setText("S");
 			else
 				day.setText("-");
@@ -150,6 +200,16 @@ public class AgrarianAFI extends MainEntryPoint {
 			hPanel.add(day);
 		}
 		return hPanel;
+	}
+	
+	private boolean checkDateAgraria(Integer contractId, Date date) {
+		List<AgrarianJourney> journiesList = this.agrarianJourney.get(contractId);
+		for(AgrarianJourney journey : journiesList){
+			if((journey.getStartDate().before(date) || journey.getStartDate().equals(date)) &&
+			   (journey.getEndDate().after(date) || journey.getEndDate().equals(date)))
+			   return true;
+		}
+		return false;
 	}
 	
 	public void setAgrarianAFIDialogObject() {
@@ -181,10 +241,18 @@ public class AgrarianAFI extends MainEntryPoint {
 			setFindingCCC(selectedCCC);
 			
 			//Get Journies
-			agrarianAFIObject.getAgrarianJourney(
-					s -> {
-						initializeTableJourney();
-					}, f->{});
+			impl.getEmployeeAgrarianJourney(this.startDate, this.endDate, this.cccId, new AsyncCallback<Map<Integer, List<AgrarianJourney>>>() {
+				
+				@Override
+				public void onSuccess(Map<Integer, List<AgrarianJourney>> result) {
+					agrarianJourney = result;
+					initializeTableJourney();
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+				}
+			});
 			
 		}else{
 			WarningDialog warning = new WarningDialog("Error", "No se puede generar el fichero AFI para el mismo mes o posteriores.");
@@ -194,13 +262,13 @@ public class AgrarianAFI extends MainEntryPoint {
 	}
 	
 	private void initializeTableJourney() {
-		if(agrarianAFIObject.getAgrarianJourney().entrySet().size() == 0){
+		if(this.agrarianJourney.entrySet().size() == 0){
 			WarningDialog warning = new WarningDialog("Aviso", "No hay contratos con peonadas para estas fechas.");
 			warning.center();
 			warning.show();
 		}else{
 			initializeHeader();
-			for(Entry<Integer, List<AgrarianJourney>> entry : agrarianAFIObject.getAgrarianJourney().entrySet()){
+			for(Entry<Integer, List<AgrarianJourney>> entry :this.agrarianJourney.entrySet()){
 				//Fill Practice Row
 				Integer newRow = employeeTable.insertRow(employeeTable.getRowCount());
 				CheckBox select = new CheckBox();
@@ -257,46 +325,40 @@ public class AgrarianAFI extends MainEntryPoint {
 	}
 
 	private void setFindingCCC(String selectedCCC) {
-		agrarianAFIObject.setFindingCCC(selectedCCC);
+		for(Activity activity : enterpriseInfo.getActivities())
+			for(CCC ccc : activity.getCccs())
+				if(ccc.getCode().equals(selectedCCC))
+					this.cccId = ccc.getId();
 	}
 
 	private void setFindingDates(Date selectedDate) {
-		Date startDate = selectedDate;
-		Date endDate = DateUtils.getLastDayOfMonth(selectedDate);
-		
-		agrarianAFIObject.setFindingDates(startDate, endDate);
+		this.startDate = selectedDate;
+		this.endDate = DateUtils.getLastDayOfMonth(selectedDate);
 	}
 
 	// ------------------------------------------------------------------------
 	//
 	// ------------------------------------------------------------------------
 	
-	public void setAgrariaAFIObject(AgrarianAFIObject agrarianAFIObject) {
-		this.agrarianAFIObject = agrarianAFIObject;
+	private void initializeView(){
+		//Enterprise Name
+		enterprise.setText(this.enterpriseName);
+		enterprise.addStyleName(style.bold());
+		enterprise.addStyleName(style.paddingText());
 		
-		this.agrarianAFIObject.getEnterprises(
-				s -> {
-					//Enterprise Name
-					enterprise.setText(this.agrarianAFIObject.getEnterpriseName());
-					enterprise.addStyleName(style.bold());
-					enterprise.addStyleName(style.paddingText());
-					
-					if(this.agrarianAFIObject.getAgrarianCCCs().isEmpty()){
-						this.cccs.setEnabled(false);
-						this.monthList.setEnabled(false);
-						this.yearList.setEnabled(false);
-						this.searchAgrarian.setEnabled(false);
-						WarningDialog warning = new WarningDialog("Aviso", "No existe ninguna cuenta de cotizaci"+String.valueOf("\u00F3")+"n de tipo agrario.");
-						warning.center();
-						warning.show();
-					}else{
-						for(Entry<String, CCC> entry : this.agrarianAFIObject.getAgrarianCCCs().entrySet()){
-							this.cccs.addItem(entry.getKey() + " - " + entry.getValue().getCode());
-						}
-					}
-				}, 
-				f -> {}
-		);	
+		if(this.agrarianCCCs.isEmpty()){
+			this.cccs.setEnabled(false);
+			this.monthList.setEnabled(false);
+			this.yearList.setEnabled(false);
+			this.searchAgrarian.setEnabled(false);
+			WarningDialog warning = new WarningDialog("Aviso", "No existe ninguna cuenta de cotizaci"+String.valueOf("\u00F3")+"n de tipo agrario.");
+			warning.center();
+			warning.show();
+		}else{
+			for(Entry<String, CCC> entry : this.agrarianCCCs.entrySet()){
+				this.cccs.addItem(entry.getKey() + " - " + entry.getValue().getCode());
+			}
+		}
 	}
 	
 	private boolean checkDate() {
