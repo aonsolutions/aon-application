@@ -520,6 +520,9 @@ public abstract class QuoteCalculator {
 
 				@Override
 				public Object visitSalary(SalaryType salaryType) {
+					if ( payment.getType() == PaymentType.CRA_0004 
+						&& payment.getMonth() != null 	)
+						GeneralQuote.this.proExtBase += quote;
 					return null;
 				}
 
