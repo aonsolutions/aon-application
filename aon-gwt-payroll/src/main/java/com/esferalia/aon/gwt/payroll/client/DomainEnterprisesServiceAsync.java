@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
+import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
@@ -183,6 +184,10 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void updateEnterprise(EnterpriseInfo enterpriseInfo, AsyncCallback<EnterpriseInfo> asyncCallback) {
 		enterprisesServiceAsync.updateEnterprise(enterpriseInfo, getCurrentDomainName(), asyncCallback);
+	}
+	
+	public void getEmployeeAgrarianJourney(Date startDate, Date endDate, Integer enterprise_ccc, AsyncCallback<Map<Integer, List<AgrarianJourney>>> asyncCallback) {
+		enterprisesServiceAsync.getAgrarianJourney(startDate, endDate, enterprise_ccc, getCurrentDomainName(), asyncCallback);
 	}
 	
 	// ----------------------------------------------------------------- static

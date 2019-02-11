@@ -113,6 +113,8 @@ public class MainEntryPoint implements EntryPoint {
 				.equalsIgnoreCase(Constants.MAIN_AFI_ENTRY_POINT)) {
 			AgrarianAFI agrarianAFI = new AgrarianAFI();
 			agrarianAFI.onModuleLoad();
+			AgrarianAFIObject agrarianAFIObject = new AgrarianAFIObject(DomainEnterprisesServiceAsync.newInstance());
+			agrarianAFI.setAgrariaAFIObject(agrarianAFIObject);
 //			Window.alert(Constants.MAIN_AFI_ENTRY_POINT);
 		} else if (entryPoint
 				.equalsIgnoreCase(Constants.ACTIVITY_SUMMARY_ENTRY_POINT)) {

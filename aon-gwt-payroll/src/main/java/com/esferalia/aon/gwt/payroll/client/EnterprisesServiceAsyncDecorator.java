@@ -10,6 +10,7 @@ import java.util.Map;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
+import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
@@ -309,6 +310,14 @@ public class EnterprisesServiceAsyncDecorator implements
 			AsyncCallback<List<Employee>> callback) {
 		AON.start();
 		enterprisesServiceAsync.getCCCEmployees(domain, month, cccIds, new AsyncCallbackWrapper<List<Employee>>(callback));
+		
+	}
+
+	@Override
+	public void getAgrarianJourney(Date startDate, Date endDate, Integer enterprise_ccc, String domain,
+			AsyncCallback<Map<Integer, List<AgrarianJourney>>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getAgrarianJourney(startDate, endDate, enterprise_ccc, domain, new AsyncCallbackWrapper<Map<Integer, List<AgrarianJourney>>>(callback));
 		
 	}
 }
