@@ -137,7 +137,7 @@ public class Mod347MergeMail extends HttpServlet {
 				writer.append(CSV_DELIMITER);
 				write(writer,tipo);
 				writer.append(CSV_DELIMITER);
-				write(writer,declared.getDocument());
+				write(writer,AonStringUtils.defaultString(declared.getDocument()));
 				writer.append(CSV_DELIMITER);
 				write(writer,declared.getName());
 				writer.append(CSV_DELIMITER);

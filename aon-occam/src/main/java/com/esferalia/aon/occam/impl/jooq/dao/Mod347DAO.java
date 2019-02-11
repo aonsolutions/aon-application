@@ -707,7 +707,8 @@ public class Mod347DAO {
 						// Añadir la factura al registro que corresponda del declarado
 						// Dado que es necesario separar las operaciones normales de las ISP y de las RECC, se usa como clave esos dos datos
 						// además del NIF y el tipo, para posteriormente crear tantos registros como sea necesario en las lineas del 347
-						String c = vat.getRegistryDocument() + ";" + vat.getInvoiceType() + ";" + vat.getTransaction() + ";" + vat.isVatAccrualRegime();						
+						String document = AonStringUtils.substring(vat.getRegistryDocument(), 0, 15);
+						String c = document + ";" + vat.getInvoiceType() + ";" + vat.getTransaction() + ";" + vat.isVatAccrualRegime();						
 						Mod347Declared declared = mapResult.get(c);
 						if (declared == null) {
 							
@@ -715,7 +716,6 @@ public class Mod347DAO {
 							declared.setDomain(mod347.getDomain());
 							declared.setMod347(mod347.getId());
 	
-							String document = vat.getRegistryDocument();
 							Country country = vat.getRegistryDocumentCountry();
 							if (country == null || country == Country.ES) {
 	
@@ -730,7 +730,7 @@ public class Mod347DAO {
 	
 							} else {
 	
-								declared.setOperatorNif(country.getIso2() + document);
+								declared.setOperatorNif(AonStringUtils.substring((country.getIso2() + document), 0, 17));
 								declared.setCountry(country);
 								declared.setProvince(Province.NO_RESIDENTE);
 								
@@ -804,9 +804,9 @@ public class Mod347DAO {
 		Map<String,Mod347Declared> map = new TreeMap<String, Mod347Declared>();
 		
 		for (Mod347Declared dec : mapResult.values()) {
-					
 			// El importe mínimo a declarar se controla por NIF y Tipo (Ventas o Compras)
-			String c = dec.getDocument() + ";" + dec.getType();
+			String document = AonStringUtils.isNotBlank(dec.getOperatorNif())?dec.getOperatorNif():dec.getDocument(); 
+			String c = document + ";" + dec.getType();
 			if (!control.equals(c)) {
 
 				// Añadir el bloque a la base de datos, si supera el importe minimo
@@ -824,7 +824,7 @@ public class Mod347DAO {
 			// Añadir la factura al registro que corresponda del bloque actual
 			// Dado que es necesario separar las operaciones normales de las ISP y de las RECC, se usa como clave esos dos datos
 			// además del NIF y el tipo, para posteriormente crear tantos registros como sea necesario en las lineas del 347
-			c = dec.getDocument() + ";" + dec.getType() + ";" + dec.isIsp() + ";" + dec.isVatAccrual();			
+			c = document + ";" + dec.getType() + ";" + dec.isIsp() + ";" + dec.isVatAccrual();			
 			map.put(c, dec);
 									
 			// Acumular el importe para ver si al final supera el minimo a declarar (por NIF + Tipo)
@@ -925,11 +925,13 @@ public class Mod347DAO {
 		
 		Date fromDate = AonDateUtils.getYearFirstDay(mod347.getYear());
 		Date toDate = AonDateUtils.getYearLastDay(mod347.getYear());
-		
+		String registryDocument = AonStringUtils.isBlank(declared.getOperatorNif())
+			? declared.getDocument()
+			: AonStringUtils.substring(declared.getOperatorNif(),2); 
 		return getInvoiceBreakdown(ctx, fromDate, toDate, mod347)
+			.filter( vat -> AonStringUtils.equals(vat.getRegistryDocument(),registryDocument))
 		    .filter( vat -> (vat.getTransaction() == invoiceTransaction1 || vat.getTransaction() == invoiceTransaction2) &&  // Nacional o ISP 
 		                    (vat.getInvoiceType() == invoiceType1 || vat.getInvoiceType() == invoiceType2) &&  				 // Tipo (Ventas o Compras/Gastos)		                    
-		                    (AonStringUtils.equals(vat.getRegistryDocument(),declared.getDocument()))  &&                    // NIF
 		                    (vat.isVatAccrualRegime() == declared.isVatAccrual())                                            // Criterio de caja		                    
 	                    );  
 	}
