@@ -36,7 +36,6 @@ public class JooqEmployeeCalendar {
 	private static Settings SETTINGS = null;
 
 	public static EmployeeCalendarData getEmployeeHour(Connection conn, Integer contract) throws IllegalArgumentException {
-
 		return getEmployeeInformation(DSL.using(conn, getDefaultSettings()), contract);
 	}
 	
@@ -681,8 +680,78 @@ public class JooqEmployeeCalendar {
 			DateUtils.addDays2Date(dateType, 1);
 		}
 		
+		creteRealJourneyDB(dslContext, contract);
+		
 	}
 	
+
+	private static void creteRealJourneyDB(DSLContext dslContext, Integer contract) {
+		
+		Result<Record> peonadasRecords = dslContext.select().from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(contract))
+				.and(CONTRACT_DATA.NAME.eq("PEONADAS"))
+				.fetch();
+		
+		ArrayList<Date> months = new ArrayList<>();
+		
+		if(!peonadasRecords.isEmpty()) {
+			Integer domain = peonadasRecords.get(0).get(CONTRACT_DATA.DOMAIN);
+			
+			for(Record r : peonadasRecords) {
+				addDateToList(r.get(CONTRACT_DATA.START_DATE), months);
+			}
+			
+			if(!months.isEmpty()) {
+				dslContext.delete(CONTRACT_DATA)
+					.where(CONTRACT_DATA.CONTRACT.eq(contract))
+					.and(CONTRACT_DATA.NAME.eq("JORNADAS_REALES"))
+					.execute();
+				
+				for(Date date: months) {
+					java.util.Date startDate = DateUtils.getFirstDayOfMonth(new Date(date.getYear(), date.getMonth(), date.getDate()));
+					java.util.Date endDate = DateUtils.getLastDayOfMonth(new Date(date.getYear(), date.getMonth(), date.getDate()));
+					
+					Date sqlStartDate = new Date(startDate.getTime());
+					Date sqlEndDate = new Date(endDate.getTime());
+					
+					Result<Record> peonadasMonthRecords = dslContext.select().from(CONTRACT_DATA)
+							.where(CONTRACT_DATA.CONTRACT.eq(contract))
+							.and(CONTRACT_DATA.NAME.eq("PEONADAS"))
+							.and(CONTRACT_DATA.START_DATE.ge(sqlStartDate))
+							.and(CONTRACT_DATA.END_DATE.le(sqlEndDate))
+							.fetch();
+					
+					if(!peonadasMonthRecords.isEmpty()) {
+						Integer totalJourney = 0;
+						
+						for(Record rMonth : peonadasMonthRecords) {
+							totalJourney += Integer.parseInt(rMonth.get(CONTRACT_DATA.EXPRESSION));
+						}
+						
+						dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+								CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+								CONTRACT_DATA.END_DATE)
+								.values(domain, "JORNADAS_REALES", contract, totalJourney.toString(), 
+										sqlStartDate, sqlEndDate).execute();
+					}
+				}
+			}
+		}	
+	}
+
+	private static void addDateToList(Date date, ArrayList<Date> months) {
+		Boolean add = true;
+		for(Date d : months) {
+			if(d.getMonth() == date.getMonth()) {
+				add = false;
+				break;
+			}
+		}
+		
+		if(add)
+			months.add(date);
+	}
+
 	private static void createAndUpdateStrech(DSLContext dslContext, Integer domain, String dayType, Integer contract,
 			Date sqlStartDateType, Date sqlEndDateType) {
 		
