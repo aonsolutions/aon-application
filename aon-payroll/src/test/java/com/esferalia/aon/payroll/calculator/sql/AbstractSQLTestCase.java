@@ -115,6 +115,7 @@ public abstract class AbstractSQLTestCase {
 		public String start;
 		public String end;
 		public String issue;
+		public Integer concept;
 		public String expression;
 		public String quoteExpression = UNSET;
 	}
@@ -538,9 +539,11 @@ public abstract class AbstractSQLTestCase {
 			AgreementPaymentRecord payment = aonContext.getDslContext().insertInto(AGREEMENT_PAYMENT)
 					.set(AGREEMENT_PAYMENT.DOMAIN, agreement.getDomain())
 					.set(AGREEMENT_PAYMENT.AGREEMENT, agreement.getId())
+					.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, extra.concept)
 					.set(AGREEMENT_PAYMENT.MONTH, (byte) extra.month.ordinal())
 					.set(AGREEMENT_PAYMENT.TYPE, (byte) PaymentType.CRA_0004.ordinal())
-					.set(AGREEMENT_PAYMENT.START_DATE, startDate).set(AGREEMENT_PAYMENT.EXPRESSION, extra.expression)
+					.set(AGREEMENT_PAYMENT.START_DATE, startDate)
+					.set(AGREEMENT_PAYMENT.EXPRESSION, extra.expression)
 					.set(AGREEMENT_PAYMENT.DESCRIPTION, extra.expression)
 					.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, PAYMENT.getName())
 					.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) EXTRA.ordinal())
@@ -1123,7 +1126,7 @@ public abstract class AbstractSQLTestCase {
 				.set(CONTRACT_PAYMENT.EXPRESSION, expression)
 				.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
 				.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, irpfExpression)
-				.set(CONTRACT_PAYMENT.TYPE, (byte) type.ordinal())
+				.set(CONTRACT_PAYMENT.TYPE, type != null ? (byte) type.ordinal(): null)
 				.set(CONTRACT_PAYMENT.SALARY_TYPE, (byte) SalaryType.SALARY.ordinal())
 				.set(CONTRACT_PAYMENT.MONTH, month )
 				.execute();
