@@ -1,13 +1,9 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
-import static com.esferalia.aon.jooq.tables.Cnae2009.CNAE2009;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
-import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
-import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
-import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -15,18 +11,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
+import org.jooq.tools.json.JSONArray;
+import org.jooq.tools.json.JSONObject;
 
-import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
-import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
-import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
+import com.esferalia.aon.occam.api.AONContext;
 
 public class JooqAgrarian {
 
@@ -112,6 +108,168 @@ public class JooqAgrarian {
 			listJournies.add(journey);
 			agrarianJourneyMap.put(contractId, listJournies);
 		}
+	}
+	
+	// ********************************************************************************************************************************************
+	//													GENERATE JSON AGRARIAN
+	// ********************************************************************************************************************************************
+
+	@SuppressWarnings({ "unchecked", "null" })
+	public static JSONObject getAgrarianInfo(String _domainId, String domainName, String _enterpriseId, String enterpriseName,
+			String _ccc, String _startDate, String _endDate, ArrayList<Integer> _selectedContracts) {
+		
+		java.util.Date startDate = new java.util.Date(Long.parseLong(_startDate));
+		java.util.Date endDate = new java.util.Date(Long.parseLong(_endDate));
+		
+		AONContext dslContext = null;
+		JSONObject agrarianJSON = new JSONObject();
+		try {
+			dslContext = AONContext.getAONContext(domainName, Integer.parseInt(_domainId),
+					AonServletUtils.getLoggedUser());
+			
+			//ETI
+			JSONObject eti = new JSONObject();
+			eti.put("authkey", "46054");
+			eti.put("payrollProvider", "498");
+			eti.put("fileName", null);
+			eti.put("prorityCode", "N");
+			agrarianJSON.put("ETI", eti);
+			
+			//EMP
+			JSONObject emp = new JSONObject();
+			emp.put("cccProvince", _ccc.substring(0, 1));
+			emp.put("ccc", _ccc.substring(2, _ccc.length()));
+			emp.put("cccRegimePrincipal", "0163");
+			emp.put("cccProvincePrincipal", _ccc.substring(0, 1));
+			emp.put("cccPrincipal", _ccc.substring(2, _ccc.length()));
+			agrarianJSON.put("EMP", emp);
+			
+			//RZS
+			JSONObject rzsData = new JSONObject();
+			rzsData.put("businessmanType", "2");
+			rzsData.put("rzsName", enterpriseName);
+			agrarianJSON.put("RZS", rzsData);
+			
+			//ETF
+			JSONObject etf = new JSONObject();
+			etf.put("authkey", "46054");
+			etf.put("payrollProvider", "498");
+			etf.put("fileName", null);
+			etf.put("prorityCode", "N");
+			agrarianJSON.put("ETF", etf);
+			
+			//EMPLOYEES
+			JSONArray emps = new JSONArray();
+			Map<Integer, List<AgrarianJourney>> contractsJourney = getAgrarianJourneyoDB(startDate, endDate, domainName, Integer.parseInt(_enterpriseId), dslContext.getDslContext());
+			for(Integer contractId : _selectedContracts) {
+				JSONObject empl = new JSONObject();
+				JSONObject tra = getTRA(contractId, dslContext.getDslContext());
+				empl.put("TRA", tra);
+				JSONObject ayn = getAYN(contractId, dslContext.getDslContext());
+				empl.put("AYN", ayn);
+				//Para el caso de las jornadas agrarias esto es constante
+				final String fab = "FABMJR000000000000 00000  000000 0000000000000000 0000   N 00000000   ";
+				empl.put("FAB", fab);
+				List<AgrarianJourney> journeis = contractsJourney.get(contractId);
+				JSONObject dra = getDRA(startDate, endDate, journeis);
+				empl.put("DRA", dra);
+				emps.add(empl);
+			}
+			
+			
+			//CONFIG
+			JSONObject conf = new JSONObject();
+			conf.put("staticLines", "4");
+			conf.put("employeeLines", "4");
+			conf.put("numEmployees", _selectedContracts.size()+"");
+			agrarianJSON.put("CONF", conf);
+			
+		
+		} finally {
+			if (dslContext != null)
+				dslContext.close();
+		}
+
+		
+		return agrarianJSON;
+	}
+
+	@SuppressWarnings("unchecked")
+	private static JSONObject getTRA(Integer contractId, DSLContext dslContext) {
+		JSONObject json = new JSONObject();
+		
+		Record personRecord = dslContext.select().from(PERSON)
+				.where(PERSON.REGISTRY.eq(
+						dslContext.select(CONTRACT.PERSON).from(CONTRACT)
+							.where(CONTRACT.ID.eq(contractId))
+							.fetchOne(CONTRACT.PERSON)
+				))
+				.fetchOne();
+			
+		json.put("numAfiliacion", personRecord.get(PERSON.SOCIAL_SECURITY_NUM));
+		
+		Record registryRecord = dslContext.select().from(REGISTRY)
+				.where(REGISTRY.ID.eq(
+						dslContext.select(CONTRACT.PERSON).from(CONTRACT)
+							.where(CONTRACT.ID.eq(contractId))
+							.fetchOne(CONTRACT.PERSON)
+				))
+				.fetchOne();
+		
+		json.put("documentType", registryRecord.get(REGISTRY.DOCUMENT_TYPE) == 0 ? 1 : 0);
+		json.put("documentCountry", /*registryRecord.get(REGISTRY.DOCUMENT_COUNTRY)*/ "724");
+		json.put("document", registryRecord.get(REGISTRY.DOCUMENT));
+		json.put("nationality", /*registryRecord.get(REGISTRY.NATIONALITY)*/ "724");
+		
+		return json;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static JSONObject getAYN(Integer contractId, DSLContext dslContext) {
+		JSONObject json = new JSONObject();
+		
+		Record personRecord = dslContext.select().from(PERSON)
+			.where(PERSON.REGISTRY.eq(
+					dslContext.select(CONTRACT.PERSON).from(CONTRACT)
+						.where(CONTRACT.ID.eq(contractId))
+						.fetchOne(CONTRACT.PERSON)
+			))
+			.fetchOne();
+		
+		json.put("firstSurname", personRecord.get(PERSON.FIRST_SURNAME));
+		json.put("secondSurname", personRecord.get(PERSON.SECOND_SURNAME));
+		json.put("name", personRecord.get(PERSON.NAME));
+		
+		return json;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static JSONObject getDRA(java.util.Date startDate, java.util.Date endDate, List<AgrarianJourney> journeis) {
+		JSONObject json = new JSONObject();
+		
+		json.put("year", (startDate.getYear()+1900)+"");
+		json.put("month", (startDate.getMonth()+1)+"");
+		
+		Integer numDays = endDate.getDate();
+		JSONArray days = new JSONArray();
+		
+		for(int i = 0; i < numDays; i++) {
+			java.util.Date date = new java.util.Date(startDate.getYear(), startDate.getMonth(), i+1);
+			if(checkDateAgraria(journeis, new Date(date.getTime())))
+				days.add(i, "S");
+			else
+				days.add(i, " ");
+		}
+		return json;
+	}
+	
+	private static boolean checkDateAgraria(List<AgrarianJourney> journiesList, Date date) {
+		for(AgrarianJourney journey : journiesList){
+			if((journey.getStartDate().before(date) || journey.getStartDate().equals(date)) &&
+			   (journey.getEndDate().after(date) || journey.getEndDate().equals(date)))
+			   return true;
+		}
+		return false;
 	}
 
 }

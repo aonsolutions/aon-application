@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +36,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class AgrarianAFI extends MainEntryPoint {
 	
+	//Starting Service
 	final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
 	
 	interface Binder extends UiBinder<Widget, AgrarianAFI> {
@@ -55,6 +57,9 @@ public class AgrarianAFI extends MainEntryPoint {
 		String widthFirstColumn();
 		String paddingText();
 	}
+	
+	@UiField
+	Button exportButton;
 	
 	@UiField
 	TableElement dataTable;
@@ -84,7 +89,9 @@ public class AgrarianAFI extends MainEntryPoint {
 	private String enterpriseName = "";
 	private Map<String, CCC> agrarianCCCs = new HashMap<>();
 	private Integer cccId = 0;
+	private String ccc = "";
 	private Map<Integer, List<AgrarianJourney>> agrarianJourney = new HashMap<>();
+	private ArrayList<Integer> selectedEmployees = new ArrayList<>();
 	
 	private Date startDate = null;
 	private Date endDate = null;
@@ -130,8 +137,6 @@ public class AgrarianAFI extends MainEntryPoint {
 			
 			@Override
 			public void onSuccess(List<Enterprise> enterprises) {
-//				Window.alert("Getting Enterprises -> Num Enterprises = " + enterprises.size());
-				
 				if(enterprises.size() == 1){
 					enterpriseName = enterprises.get(0).getName();
 					enterpriseInfo = enterprises.get(0);
@@ -211,10 +216,6 @@ public class AgrarianAFI extends MainEntryPoint {
 		}
 		return false;
 	}
-	
-	public void setAgrarianAFIDialogObject() {
-
-	}
 
 	// ------------------------------------------------------------------------
 	//						Initialize Logic Window
@@ -225,6 +226,27 @@ public class AgrarianAFI extends MainEntryPoint {
 	// ------------------------------------------------------------------------
 	//							UiHandler Accept/Cancel
 	// ------------------------------------------------------------------------
+	
+	@UiHandler("exportButton")
+	void exportButton(ClickEvent event){
+		String fileDownloadURL = GWT.getModuleBaseURL()+ "/agrarian_afi/"
+            + "?domainId=" + enterpriseInfo.getDomain()
+            + "&enterpriseId=" + enterpriseInfo.getId()
+            + "&enterpriseName=" + enterpriseName
+	        + "&startDate=" + startDate.getTime()
+	        + "&endDate=" + endDate.getTime()
+	        + "&ccc=" + ccc
+	        + "&selectedEmployees=" + selectedEmployees.size()
+	        ;
+		
+		for(int i=0; i<selectedEmployees.size(); i++) {
+			fileDownloadURL += "&employee"+i+"Id=" + selectedEmployees.get(i);
+		}
+		
+		Window.alert(fileDownloadURL);
+		
+		Window.open(fileDownloadURL, "_blank", null);
+	}
 	
 	@UiHandler("searchAgrarian")
 	void onSearchAgrariantButtonClick(ClickEvent clickEvent) {
@@ -239,6 +261,7 @@ public class AgrarianAFI extends MainEntryPoint {
 			//Set CCC to find
 			String selectedCCC = this.cccs.getSelectedItemText().split("- ")[1];
 			setFindingCCC(selectedCCC);
+			this.ccc = selectedCCC;
 			
 			//Get Journies
 			impl.getEmployeeAgrarianJourney(this.startDate, this.endDate, this.cccId, new AsyncCallback<Map<Integer, List<AgrarianJourney>>>() {
@@ -272,6 +295,17 @@ public class AgrarianAFI extends MainEntryPoint {
 				//Fill Practice Row
 				Integer newRow = employeeTable.insertRow(employeeTable.getRowCount());
 				CheckBox select = new CheckBox();
+				select.addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						if(select.isChecked()){
+							selectedEmployees.add(entry.getKey());
+						}else {
+							selectedEmployees.remove(entry.getKey());
+						}
+					}
+				});
 				employeeTable.setWidget(newRow, 0, select);
 				Label employeeName = new Label(entry.getValue().get(0).getSurname() + ", " + entry.getValue().get(0).getName());
 				employeeName.addStyleName(style.widthName());
@@ -303,12 +337,16 @@ public class AgrarianAFI extends MainEntryPoint {
 						CheckBox checkBox = (CheckBox) employeeTable.getWidget(i, 0);
 						checkBox.setChecked(true);
 					}
+					for(Integer contractId : agrarianJourney.keySet())
+						selectedEmployees.add(contractId);
+					
 				}else{
 					Integer rows = employeeTable.getRowCount();
 					for(int i=1; i<rows; i++){
 						CheckBox checkBox = (CheckBox) employeeTable.getWidget(i, 0);
 						checkBox.setChecked(false);
 					}
+					selectedEmployees.clear();
 				}
 			}
 		});
