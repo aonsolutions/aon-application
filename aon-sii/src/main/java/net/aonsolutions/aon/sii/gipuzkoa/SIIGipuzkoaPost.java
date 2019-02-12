@@ -76,13 +76,15 @@ public class SIIGipuzkoaPost extends SIIPost2{
 		
    		byte[] requestXml = null;
 		byte[] responseXml = null;
-		
+		System.out.println("SII - Factura Emitida con Id. " + invoiceId);
 		SuministroLRFacturasEmitidas suministro = FacturasEmitidas.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceId, list, type.isModificacion(), terceros);
     	JAXBElement<Object> response = (JAXBElement<Object>) post(uri, suministro);
     		
     	RespuestaLRFEmitidasType respuesta = (RespuestaLRFEmitidasType) response.getValue();
     	for (RespuestaExpedidaType r : respuesta.getRespuestaLinea()) {
     		Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
+    		if(correcto) System.out.println("SII Response - Factura Emitida con Id. " + invoiceId + " se ha enviado correctamente");
+			else System.out.println("ERROR SII Response - Factura Emitida con Id. " + invoiceId + " " + r.getDescripcionErrorRegistro());
     		array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
     				correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
     				r.getIDFactura().getNumSerieFacturaEmisor()));
