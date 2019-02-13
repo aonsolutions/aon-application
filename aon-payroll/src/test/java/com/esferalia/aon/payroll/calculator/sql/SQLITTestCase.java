@@ -5,6 +5,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MAX;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MIN;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_MIN;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS;
@@ -61,6 +62,7 @@ import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryPayment;
+import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator4Dummies;
 //import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
@@ -2561,7 +2563,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				null, 
 				new HashMap<String, String>() {
 					{
-						put("BASE_CGC_MIN","1000.00");						
+						put("BASE_CGC_MIN","1000.00 * DIAS_NOMINA / DIAS_MES");						
 					}
 				});
 
@@ -2608,14 +2610,16 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
-		Assert.assertEquals( 1001.00, salary.getCommonBase(), DELTA );
+		int monthDays = get(endDate, DAY_OF_MONTH);
+		
+		Assert.assertEquals( 1000.00, salary.getCommonBase(), DELTA );
 		
 		for ( com.esferalia.aon.payroll.SalaryData d: salary.getSalaryDatas()) {
 			if ( d.getName().startsWith("BASE_CGC") ) {
 				if ( d.getStartDate().equals(startIt) ) 
-					Assert.assertEquals(1.00, Double.parseDouble(d.getExpression()), DELTA);
+					Assert.assertEquals(1000.00 / monthDays, Double.parseDouble(d.getExpression()), DELTA);
 				else if ( d.getStartDate().equals(startDate) ) 
-					Assert.assertEquals(1000.00, Double.parseDouble(d.getExpression()), DELTA); // TODO : DELTA????
+					Assert.assertEquals(1000.00 / monthDays * ( monthDays -1 ), Double.parseDouble(d.getExpression()), DELTA); // TODO : DELTA????
 				else 
 					Assert.fail("Unexpected BASE_CGC");
 			}
@@ -2638,7 +2642,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				null, 
 				new HashMap<String, String>() {
 					{
-						put("BASE_CGC_MIN","1000.00");						
+						put("BASE_CGC_MIN","1000.00 * DIAS_NOMINA / DIAS_MES");						
 					}
 				});
 
@@ -2687,14 +2691,14 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
-		Assert.assertEquals( 1001.00, salary.getCommonBase(), DELTA );
+		Assert.assertEquals( 1000.00, salary.getCommonBase(), DELTA );
 		
 		for ( com.esferalia.aon.payroll.SalaryData d: salary.getSalaryDatas()) {
 			if ( d.getName().startsWith("BASE_CGC") ) {
 				if ( d.getStartDate().equals(startIt) ) 
-					Assert.assertEquals(1.00, Double.parseDouble(d.getExpression()), DELTA);
+					Assert.assertEquals(1000.00/30.00, Double.parseDouble(d.getExpression()), DELTA);
 				else if ( d.getStartDate().equals(startDate) ) 
-					Assert.assertEquals(1000.00, Double.parseDouble(d.getExpression()), DELTA); // TODO : DELTA????
+					Assert.assertEquals(1000.00 * get(d.getEndDate(),  DAY_OF_MONTH) / 30.00, Double.parseDouble(d.getExpression()), DELTA); // TODO : DELTA????
 				else 
 					Assert.fail("Unexpected BASE_CGC");
 			}
@@ -2717,7 +2721,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				null, 
 				new HashMap<String, String>() {
 					{
-						put("BASE_CGC_MIN","1000.00");						
+						put("BASE_CGC_MIN","1000.00 * DIAS_NOMINA/DIAS_MES");						
 					}
 				});
 
@@ -2796,7 +2800,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				null, 
 				new HashMap<String, String>() {
 					{
-						put("BASE_CGC_MIN","1000.00");						
+						put("BASE_CGC_MIN","1000.00 * DIAS_NOMINA / DIAS_MES");						
 					}
 				});
 
@@ -2843,14 +2847,16 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
-		Assert.assertEquals( 1002.00, salary.getCommonBase(), DELTA );
+		int monthDays = get(endDate, DAY_OF_MONTH);
+		
+		Assert.assertEquals( 1000.00, salary.getCommonBase(), DELTA );
 		
 		for ( com.esferalia.aon.payroll.SalaryData d: salary.getSalaryDatas()) {
 			if ( d.getName().startsWith("BASE_CGC") ) {
 				if ( d.getStartDate().equals(startIt) ) 
-					Assert.assertEquals(2.00, Double.parseDouble(d.getExpression()), DELTA);
+					Assert.assertEquals(1000.00 / monthDays * 2.00, Double.parseDouble(d.getExpression()), DELTA);
 				else if ( d.getStartDate().equals(startDate) ) 
-					Assert.assertEquals(1000.00, Double.parseDouble(d.getExpression()), DELTA); // TODO : DELTA????
+					Assert.assertEquals(1000.00 / monthDays * ( monthDays - 2.00), Double.parseDouble(d.getExpression()), DELTA); // TODO : DELTA????
 				else 
 					Assert.fail("Unexpected BASE_CGC");
 			}
@@ -2873,7 +2879,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				null, 
 				new HashMap<String, String>() {
 					{
-						put("BASE_CGC_MIN","1000.00");						
+						put("BASE_CGC_MIN","1000.00 * DIAS_NOMINA / DIAS_MES");						
 					}
 				});
 
@@ -2923,14 +2929,16 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
-		Assert.assertEquals( 1002.00, salary.getCommonBase(), DELTA );
+		int monthDays = get(endDate, DAY_OF_MONTH);
+		
+		Assert.assertEquals( 1000.00, salary.getCommonBase(), DELTA );
 		
 		for ( com.esferalia.aon.payroll.SalaryData d: salary.getSalaryDatas()) {
 			if ( d.getName().startsWith("BASE_CGC") ) {
 				if ( d.getStartDate().equals(startIt) ) 
-					Assert.assertEquals(2.00, Double.parseDouble(d.getExpression()), DELTA);
+					Assert.assertEquals(1000.00 / monthDays* 2.00, Double.parseDouble(d.getExpression()), DELTA);
 				else if ( d.getStartDate().equals(startDate) ) 
-					Assert.assertEquals(1000.00, Double.parseDouble(d.getExpression()), DELTA); // TODO : DELTA????
+					Assert.assertEquals(1000.00 / monthDays * ( monthDays -2 ), Double.parseDouble(d.getExpression()), DELTA); // TODO : DELTA????
 				else 
 					Assert.fail("Unexpected BASE_CGC");
 			}
@@ -4817,6 +4825,179 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 	}
 
 
+	@Test
+	public void testBasesMinITI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+
+		Date firstDayofYear = getFirstDayOfYear(getToday());
+		Date firstDayOfPrevYear = add(firstDayofYear, Calendar.YEAR, -1);
+		
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+		firstDayOfPrevYear,
+		new String[] {
+		"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+		"250.00 * DIAS_TRABAJADOS / DIAS_MES"
+		}, 
+		new String[] {
+		}, null);
+		//@formatter:on
+
+		addPrestITs(aonContext, contract);
+		
+		addSystemData(
+		aonContext, 
+		firstDayofYear, 
+		null, 
+		new HashMap<String,String>(){
+		{
+			put(CGC_BASE_MIN.getName(), "1500.00 * DIAS_NOMINA / DIAS_MES");
+		}
+		});
+		
+		Date startDate = getFirstDayOfMonth(getLastDayOfYear(firstDayOfPrevYear));
+		Date endDate = getLastDayOfMonth(startDate);
+		Date issueDate = endDate;
+		
+		ISQLContractSalaryCalculatorContext ctx = 
+		getContractSalaryCalculatorContext(
+		connection, 
+		startDate, 
+		endDate, 
+		issueDate, 
+		contract);
+		
+		JooqSalaryBuilder<Salary> jooqSalaryBuilder = 
+		new JooqSalaryBuilder<Salary>(connection);
+		new SmartContractSalaryCalculator<Salary>(jooqSalaryBuilder).calculate(ctx);
+		jooqSalaryBuilder.execute();
+		
+		
+
+		Date startITDate = add(firstDayofYear, DAY_OF_MONTH,5);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				null, null);
+
+		startDate = getFirstDayOfMonth(startITDate);
+		endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(
+		connection, 
+		startDate, 
+		endDate, 
+		endDate, 
+		contract);
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+		}
+		
+		salary.getSalaryDatas()
+		.stream()
+		.filter(d -> d.getName().equals(CGC_BASE.getName()))
+		.forEach(d -> {
+			System.out.println(d.getName() + " = "+ d.getExpression() + "[" + d.getStartDate() + ".." + d.getEndDate() + "]");
+		});
+
+		Assert.assertEquals(1500.00, salary.getCommonBase());
+
+	}
+
+	@Test
+	public void testBasesMinITII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+
+		Date firstDayofYear = getFirstDayOfYear(getToday());
+		Date firstDayOfPrevYear = add(firstDayofYear, Calendar.YEAR, -1);
+		
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+		firstDayOfPrevYear,
+		new String[] {
+		"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+		"250.00 * DIAS_TRABAJADOS / DIAS_MES"
+		}, 
+		new String[] {
+		}, null);
+		//@formatter:on
+
+		addPrestITs(aonContext, contract);
+		
+		addSystemData(
+		aonContext, 
+		firstDayofYear, 
+		null, 
+		new HashMap<String,String>(){
+		{
+			put(CGC_BASE_MIN.getName(), "1500.00 * DIAS_NOMINA / DIAS_MES");
+			put(CGP_BASE_MIN.getName(), "1250.00 * DIAS_NOMINA / DIAS_MES");
+		}
+		});
+		
+		Date startDate = getFirstDayOfMonth(getLastDayOfYear(firstDayOfPrevYear));
+		Date endDate = getLastDayOfMonth(startDate);
+		Date issueDate = endDate;
+		
+		ISQLContractSalaryCalculatorContext ctx = 
+		getContractSalaryCalculatorContext(
+		connection, 
+		startDate, 
+		endDate, 
+		issueDate, 
+		contract);
+		
+		JooqSalaryBuilder<Salary> jooqSalaryBuilder = 
+		new JooqSalaryBuilder<Salary>(connection);
+		new SmartContractSalaryCalculator<Salary>(jooqSalaryBuilder).calculate(ctx);
+		jooqSalaryBuilder.execute();
+		
+		
+
+		Date startITDate = add(firstDayofYear, DAY_OF_MONTH,5);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				null, null);
+
+		startDate = getFirstDayOfMonth(startITDate);
+		endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(
+		connection, 
+		startDate, 
+		endDate, 
+		endDate, 
+		contract);
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+		}
+		
+		salary.getSalaryDatas()
+		.stream()
+		.filter(d -> d.getName().equals(CGC_BASE.getName()))
+		.forEach(d -> {
+			System.out.println(d.getName() + " = "+ d.getExpression() + "[" + d.getStartDate() + ".." + d.getEndDate() + "]");
+		});
+
+		Assert.assertEquals(1500.00, salary.getCommonBase());
+		Assert.assertEquals(1250.00, salary.getProfessionalBase());
+
+	}
 	// ------------------------------------------------------------------------
 	
 

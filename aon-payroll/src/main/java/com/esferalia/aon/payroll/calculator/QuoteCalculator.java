@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -438,14 +439,47 @@ public abstract class QuoteCalculator {
 			if (AonStringUtils.equals(PREST_IT, name)) {
 				
 				GeneralQuote.this.rawCgcBase += quote;
-				set(CGC_BASE.getName(), quote, context, start, end);
+
 				set(CGC_BASE_RAW.getName(), quote, context, start, end);
-				
-				set(CGP_BASE.getName(), quote, context, start, end);
 				set(CGP_BASE_RAW.getName(), quote, context, start, end);
 				
-				add(String.format("BASE_%s", name), quote, context, start, end);
-				quotesImpl.add(new TimedResult<Double>(quote, new Period(start,end), Collections.emptyMap()));
+				double cgcBaseMin  = 0;
+				try {
+					cgcBaseMin = getLimit(
+					CGC_BASE_MIN,
+					context, 
+					start, 
+					end)
+					.stream()
+					.collect(Collectors.summingDouble(r->r.getValue()));
+					
+				} catch (ExpressionException e) {
+				}
+				
+				double cgcBase = Math.max(quote, cgcBaseMin);
+				
+
+				set(CGC_BASE.getName(), cgcBase, context, start, end);
+				
+				double cgpBaseMin  = 0;
+				try {
+					cgpBaseMin = getLimit(
+					CGP_BASE_MIN,
+					context, 
+					start, 
+					end)
+					.stream()
+					.collect(Collectors.summingDouble(r->r.getValue()));
+					
+				} catch (ExpressionException e) {
+				}
+
+				double cgpBase = Math.max(quote, cgpBaseMin);
+
+				set(CGP_BASE.getName(), cgpBase, context, start, end);
+				
+				add(String.format("BASE_%s", name), cgcBase, context, start, end);
+				quotesImpl.add(new TimedResult<Double>(cgcBase, new Period(start,end), Collections.emptyMap()));
 				return quotesImpl;
 			}
 			
