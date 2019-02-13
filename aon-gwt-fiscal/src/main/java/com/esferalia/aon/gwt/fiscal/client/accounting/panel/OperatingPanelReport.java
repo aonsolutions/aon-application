@@ -200,20 +200,17 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 		});
 		
 		level = new ListBox();
-		level.addItem( "Cuentas a 2 d\u00EDgitos","2");
 		level.addItem( "Cuentas a 3 d\u00EDgitos","3");
 		level.addItem( "Cuentas a 4 d\u00EDgitos","4");
 		level.addItem( "Cuentas a 9 d\u00EDgitos","9");
-		level.setSelectedIndex(2);
+		level.setSelectedIndex(1);
 		if (params != null ) {
 			if (params.getLevel() == 9) { 
-				level.setSelectedIndex(3);
+				level.setSelectedIndex(2);
 			} else if (params.getLevel() == 3) {
-				level.setSelectedIndex(1);
-			} else if (params.getLevel() == 2) {
 				level.setSelectedIndex(0);
 			} else {
-				level.setSelectedIndex(3);		
+				level.setSelectedIndex(1);		
 			}
 		}
 		level.addChangeHandler(new ChangeHandler() {
@@ -454,7 +451,7 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 					toDate.setValue(null,false);
 				}
 				confidential.setSelectedIndex(2);
-				level.setSelectedIndex(2);
+				level.setSelectedIndex(1);
 				if (activitiesListBoxEnabled) {
 					activity.setSelectedIndex(0);
 				}
@@ -758,7 +755,7 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 			.setFromDate(fromDate.getValue())
 			.setToDate(toDate.getValue())
 			.setActivity(activityId)
-			.setLevel(l==0?2:l==1?3:l==2?4:l==3?9:3)
+			.setLevel(l==0?3:l==1?4:9)
 			.setPreviousPeriods( previousPeriods.getSelectedIndex() )
 			.setPercentsEnabled(showPercents.getValue())
 			.setCostCenters(costCentersSet)
