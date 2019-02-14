@@ -75,7 +75,7 @@ public class Agreements extends ResizeComposite implements
 		
 		agreementsTree.addListener(this);
 		toolbar.addListener(this);
-
+		
 		agreementsTree.getEnterpriseService().getDomain(
 				new AsyncCallback<Integer>() {
 
@@ -211,7 +211,7 @@ public class Agreements extends ResizeComposite implements
 
 	@Override
 	public boolean evaluateId(Agreement agreement) {
-		return agreement.getId() > 0;
+		return agreement.getId() >= 0;
 	}
 	
 	@Override
@@ -236,7 +236,7 @@ public class Agreements extends ResizeComposite implements
 		if(object instanceof Agreement) {
 			Agreement agreement = (Agreement) object;
 			
-			if(agreement.getId() > 0) {
+			if(agreement.getId() >= 0) {
 				for(Toolbar toolbar : toolbars)
 					toolbar.onAgreementCtrlC((Agreement) object);
 			}
@@ -254,7 +254,7 @@ public class Agreements extends ResizeComposite implements
 
 	@Override
 	public void onAgreementCtrlC(Agreement agreement) {
-		if(agreement.getId() > 0) {
+		if(agreement.getId() >= 0) {
 			for(Toolbar toolbar : toolbars)
 				toolbar.onAgreementCtrlC(agreement);
 		}

@@ -369,6 +369,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 						.where(APP_PARAM.DOMAIN.equal(0))
 						.and(APP_PARAM.NAME.eq("PAY_SYSTEM_AGREEMENT"))
 				))
+				.or(AGREEMENT.ID.eq(0))
 				
 				.orderBy(AGREEMENT.DESCRIPTION).fetchInto(AGREEMENT);
 		// @formatter:on
