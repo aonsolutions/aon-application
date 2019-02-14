@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.jooq;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
+import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
@@ -129,25 +130,25 @@ public class JooqAgrarian {
 			
 			//ETI
 			JSONObject eti = new JSONObject();
-			eti.put("authkey", "46054");
-			eti.put("payrollProvider", "498");
+			eti.put("authkey", "46054");			//Esta es la clave de autorizacion que tiene asignada cada cliente
+			eti.put("payrollProvider", "498");		//Averiguar cual es el provedor de nominas
 			eti.put("fileName", null);
 			eti.put("prorityCode", "N");
 			agrarianJSON.put("ETI", eti);
 			
 			//EMP
 			JSONObject emp = new JSONObject();
-			emp.put("cccProvince", _ccc.substring(0, 1));
+			emp.put("cccProvince", _ccc.substring(0, 2));
 			emp.put("ccc", _ccc.substring(2, _ccc.length()));
-			emp.put("cccRegimePrincipal", "0163");
-			emp.put("cccProvincePrincipal", _ccc.substring(0, 1));
-			emp.put("cccPrincipal", _ccc.substring(2, _ccc.length()));
+			emp.put("cccRegimePrincipal", "");
+			emp.put("cccProvincePrincipal", "00"/*_ccc.substring(0, 2)*/);
+			emp.put("cccPrincipal", "0000000000000" /* _ccc.substring(2, _ccc.length())*/);
 			agrarianJSON.put("EMP", emp);
 			
 			//RZS
 			JSONObject rzsData = new JSONObject();
 			rzsData.put("businessmanType", "2");
-			rzsData.put("rzsName", enterpriseName);
+			rzsData.put("rzsName", removeAccents(enterpriseName));
 			agrarianJSON.put("RZS", rzsData);
 			
 			//ETF
@@ -155,12 +156,15 @@ public class JooqAgrarian {
 			etf.put("authkey", "46054");
 			etf.put("payrollProvider", "498");
 			etf.put("fileName", null);
-			etf.put("prorityCode", "N");
+			etf.put("priorityCode", "N");
 			agrarianJSON.put("ETF", etf);
+			
+			Result<Record> enterpriseCCCRecord = dslContext.getDslContext().select().from(ENTERPRISE_CCC).where(ENTERPRISE_CCC.CCC.eq(_ccc)).fetch();
+			Integer enterpriseCCCId = enterpriseCCCRecord.get(0).get(ENTERPRISE_CCC.ID);
 			
 			//EMPLOYEES
 			JSONArray emps = new JSONArray();
-			Map<Integer, List<AgrarianJourney>> contractsJourney = getAgrarianJourneyoDB(startDate, endDate, domainName, Integer.parseInt(_enterpriseId), dslContext.getDslContext());
+			Map<Integer, List<AgrarianJourney>> contractsJourney = getAgrarianJourneyoDB(startDate, endDate, domainName, enterpriseCCCId, dslContext.getDslContext());
 			for(Integer contractId : _selectedContracts) {
 				JSONObject empl = new JSONObject();
 				JSONObject tra = getTRA(contractId, dslContext.getDslContext());
@@ -176,6 +180,7 @@ public class JooqAgrarian {
 				emps.add(empl);
 			}
 			
+			agrarianJSON.put("EMPS", emps);
 			
 			//CONFIG
 			JSONObject conf = new JSONObject();
@@ -217,9 +222,9 @@ public class JooqAgrarian {
 				.fetchOne();
 		
 		json.put("documentType", registryRecord.get(REGISTRY.DOCUMENT_TYPE) == 0 ? 1 : 0);
-		json.put("documentCountry", /*registryRecord.get(REGISTRY.DOCUMENT_COUNTRY)*/ "724");
+		json.put("documentCountry", /*registryRecord.get(REGISTRY.DOCUMENT_COUNTRY)*/ "");		//¿Es opcional?
 		json.put("document", registryRecord.get(REGISTRY.DOCUMENT));
-		json.put("nationality", /*registryRecord.get(REGISTRY.NATIONALITY)*/ "724");
+		json.put("nationality", /*registryRecord.get(REGISTRY.NATIONALITY)*/ "724");			//¿Es opcional?
 		
 		return json;
 	}
@@ -260,6 +265,9 @@ public class JooqAgrarian {
 			else
 				days.add(i, " ");
 		}
+		
+		json.put("days", days);
+		
 		return json;
 	}
 	
@@ -270,6 +278,19 @@ public class JooqAgrarian {
 			   return true;
 		}
 		return false;
+	}
+	
+	private static String removeAccents(String cadena) {
+	    return cadena.replace("Á", "A")
+	            .replace("É", "E")
+	            .replace("Í", "I")
+	            .replace("Ó", "O")
+	            .replace("Ú", "U")
+	            .replace("á", "a")
+	            .replace("é", "e")
+	            .replace("í", "i")
+	            .replace("ó", "o")
+	            .replace("ú", "u");
 	}
 
 }

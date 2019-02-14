@@ -62,7 +62,6 @@ public class AgrarianAFIServlet extends HttpServlet {
 			if(0 == numEmployee)
 				output.write("Fallo al crear el archivo -> No hay empleados seleccionados".getBytes());
 			else {
-//				output.write("Generando archivo AFI".getBytes());
 				agrarianJSON = JooqAgrarian.getAgrarianInfo(_domainId, domainName, _enterpriseId, _enterpriseName, _ccc, _startDate, _endDate, _selectedContracts);
 				String agrarianAFI = AgrarianAFIGeneration.generateAgrarianAFI(agrarianJSON);
 				output.write(agrarianAFI.getBytes());

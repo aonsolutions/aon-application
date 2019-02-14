@@ -120,7 +120,7 @@ public final class AgrarianAFIGeneration {
 				String cccPrincipal) {
 			super();
 			this.empHeader = "EMP";
-			this.cccRegime = "0613";
+			this.cccRegime = "0163";
 			this.cccProvince = cccProvince;
 			this.ccc = ccc;
 			this.businessmanCode = StringUtils.leftPad("", 20, ' ');
@@ -314,7 +314,7 @@ public final class AgrarianAFIGeneration {
 			super();
 			this.draHeader = "DRA";
 			this.year = year;
-			this.month = month;
+			this.month = StringUtils.leftPad(month, 2, '0');
 			char[] day = new char[days.size()];
 			for(int i=0; i< days.size(); i++) {
 //				System.out.print(days.get(i).asString().getString());
@@ -335,8 +335,16 @@ public final class AgrarianAFIGeneration {
 		public String getMonth() {
 			return month;
 		}
-		public char[] getDays() {
-			return days;
+		public String getDays() {
+			String daysStr = "";
+			for(int i=0; i<this.days.length; i++) {
+				if (this.days[i] == ' ')
+					daysStr+= " ";
+				else
+					daysStr += "S";
+			}
+				
+			return daysStr;
 		}
 		public String getCosolidateDate() {
 			return cosolidateDate;
@@ -519,7 +527,7 @@ public final class AgrarianAFIGeneration {
 		//ETI
 				JSONObject etiJson = (JSONObject) agrarianData.get("ETI");
 				ETI eti = new ETI(
-						etiJson.get("authKey").toString(), 
+						etiJson.get("authkey").toString(), 
 						etiJson.get("payrollProvider").toString(), 
 						null == etiJson.get("fileName") ? null : etiJson.get("fileName").toString(), 
 						etiJson.get("prorityCode").toString());
@@ -586,7 +594,7 @@ public final class AgrarianAFIGeneration {
 				//ETF
 				JSONObject etfJson = (JSONObject) agrarianData.get("ETF");
 				ETF etf = new ETF(
-						etfJson.get("authKey").toString(), 
+						etfJson.get("authkey").toString(), 
 						etfJson.get("payrollProvider").toString(), 
 						 null == etfJson.get("fileName") ? null : etfJson.get("fileName").toString(), 
 								 etfJson.get("priorityCode").toString(),

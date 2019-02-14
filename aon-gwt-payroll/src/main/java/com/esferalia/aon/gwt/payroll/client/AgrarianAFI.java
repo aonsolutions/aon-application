@@ -243,7 +243,7 @@ public class AgrarianAFI extends MainEntryPoint {
 			fileDownloadURL += "&employee"+i+"Id=" + selectedEmployees.get(i);
 		}
 		
-		Window.alert(fileDownloadURL);
+//		Window.alert(fileDownloadURL);
 		
 		Window.open(fileDownloadURL, "_blank", null);
 	}
