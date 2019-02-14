@@ -4998,6 +4998,187 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(1250.00, salary.getProfessionalBase());
 
 	}
+
+	@Test
+	public void testBasesMinITIII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+
+		Date firstDayofYear = getFirstDayOfYear(getToday());
+		Date firstDayOfPrevYear = add(firstDayofYear, Calendar.YEAR, -1);
+		
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+		firstDayOfPrevYear,
+		new HashMap<String,String>(){
+		{
+			put(MONTH_DAYS.getName(), "30");
+		}
+		},
+		new String[] {
+		"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+		"250.00 * DIAS_TRABAJADOS / DIAS_MES"
+		}, 
+		new String[] {
+		}, null);
+		//@formatter:on
+
+		addPrestITs(aonContext, contract);
+		
+		addSystemData(
+		aonContext, 
+		firstDayofYear, 
+		null, 
+		new HashMap<String,String>(){
+		{
+			put(CGC_BASE_MIN.getName(), "1500.00 * DIAS_NOMINA / DIAS_MES");
+			put(CGP_BASE_MIN.getName(), "1250.00 * DIAS_NOMINA / DIAS_MES");
+		}
+		});
+		
+		Date startDate = getFirstDayOfMonth(getLastDayOfYear(firstDayOfPrevYear));
+		Date endDate = getLastDayOfMonth(startDate);
+		Date issueDate = endDate;
+		
+		ISQLContractSalaryCalculatorContext ctx = 
+		getContractSalaryCalculatorContext(
+		connection, 
+		startDate, 
+		endDate, 
+		issueDate, 
+		contract);
+		
+		JooqSalaryBuilder<Salary> jooqSalaryBuilder = 
+		new JooqSalaryBuilder<Salary>(connection);
+		new SmartContractSalaryCalculator<Salary>(jooqSalaryBuilder).calculate(ctx);
+		jooqSalaryBuilder.execute();
+		
+		
+
+		Date startITDate = add(firstDayofYear, DAY_OF_MONTH,5);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				null, null);
+
+		startDate = getFirstDayOfMonth(startITDate);
+		endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(
+		connection, 
+		startDate, 
+		endDate, 
+		endDate, 
+		contract);
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+//		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+//				.getSalaryPayments()) {
+//			System.out.println(payment.getName() + " = " + payment.getAmount()
+//					+ " (" + payment.getExpression() + ")");
+//		}
+		
+		salary.getSalaryDatas()
+		.stream()
+		.filter(d -> d.getName().equals(CGC_BASE.getName()))
+		.forEach(d -> {
+			System.out.println(d.getName() + " = "+ d.getExpression() + "[" + d.getStartDate() + ".." + d.getEndDate() + "]");
+		});
+
+		Assert.assertEquals(1500.00, salary.getCommonBase());
+		Assert.assertEquals(1250.00, salary.getProfessionalBase());
+
+	}
+
+	@Test
+	public void testBasesMinITIV() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+
+		Date firstDayofYear = getFirstDayOfYear(getToday());
+		Date firstDayOfPrevYear = add(firstDayofYear, Calendar.YEAR, -1);
+		
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+		firstDayOfPrevYear,
+		new HashMap<String,String>(){
+		{
+			put(MONTH_DAYS.getName(), "30");
+		}
+		},
+		new String[] {
+		"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+		"250.00 * DIAS_TRABAJADOS / DIAS_MES"
+		}, 
+		new String[] {
+		}, null);
+		//@formatter:on
+
+		addPrestITs(aonContext, contract);
+		
+		addSystemData(
+		aonContext, 
+		firstDayofYear, 
+		null, 
+		new HashMap<String,String>(){
+		{
+			put(CGC_BASE_MIN.getName(), "1500.00 * DIAS_NOMINA / DIAS_MES");
+			put(CGP_BASE_MIN.getName(), "1250.00 * DIAS_NOMINA / DIAS_MES");
+		}
+		});
+		
+		Date startDate = getFirstDayOfMonth(getLastDayOfYear(firstDayOfPrevYear));
+		Date endDate = getLastDayOfMonth(startDate);
+		Date issueDate = endDate;
+		
+		ISQLContractSalaryCalculatorContext ctx = 
+		getContractSalaryCalculatorContext(
+		connection, 
+		startDate, 
+		endDate, 
+		issueDate, 
+		contract);
+		
+		JooqSalaryBuilder<Salary> jooqSalaryBuilder = 
+		new JooqSalaryBuilder<Salary>(connection);
+		new SmartContractSalaryCalculator<Salary>(jooqSalaryBuilder).calculate(ctx);
+		jooqSalaryBuilder.execute();
+		
+		
+
+		Date startITDate = add(firstDayofYear, DAY_OF_MONTH,5);
+		addIT(aonContext, contract, LeaveType.OCCUPATIONAL_DISEASE, startITDate,
+				null, null);
+
+		startDate = getFirstDayOfMonth(startITDate);
+		endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(
+		connection, 
+		startDate, 
+		endDate, 
+		endDate, 
+		contract);
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		
+		salary.getSalaryDatas()
+		.stream()
+		.filter(d -> d.getName().equals(CGC_BASE.getName()))
+		.forEach(d -> {
+			System.out.println(d.getName() + " = "+ d.getExpression() + "[" + d.getStartDate() + ".." + d.getEndDate() + "]");
+		});
+
+		Assert.assertEquals(1500.00, salary.getCommonBase());
+		Assert.assertEquals(1250.00, salary.getProfessionalBase());
+
+	}
 	// ------------------------------------------------------------------------
 	
 

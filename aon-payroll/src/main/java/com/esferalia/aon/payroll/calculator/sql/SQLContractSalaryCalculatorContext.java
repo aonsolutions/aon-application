@@ -1765,6 +1765,15 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				.map(v->v.getPeriod()).toArray(Period[]::new);
 	}
 
+	public List<Period> getPeriods(ContextVariable var) {
+		 return this.contractExpressionContext
+			.getVariables(var.getName())
+			.stream()
+			.map(v->v.getPeriod())
+			.collect(Collectors.toList())
+			;
+	}
+
 	public static java.sql.Date toSqlDate(Date date) {
 		return new java.sql.Date(date.getTime());
 	}
@@ -3761,12 +3770,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				ctx.putVariable(PARTIAL_FACTOR, partial_factor);
 
 			}
-
-			if (!containsVariable(SALARY_DAYS, period)) {
+			
+			for ( Period salaryp : Period.sub(period, getPeriods(SALARY_DAYS)) ) {
 				ITimedVariable<Double> salaryDays = new ITimedVariable<Double>() {
 					@Override
 					public Period getPeriod() {
-						return period;
+						return salaryp;
 					}
 
 					@Override
@@ -3777,6 +3786,22 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				};
 				ctx.putVariable(SALARY_DAYS, salaryDays);
 			}
+			
+//			if (!containsVariable(SALARY_DAYS, period)) {
+//				ITimedVariable<Double> salaryDays = new ITimedVariable<Double>() {
+//					@Override
+//					public Period getPeriod() {
+//						return period;
+//					}
+//
+//					@Override
+//					public Double getValue(Period p) {
+//						return getQuoteDays(ctx, p, 1.00);
+//					}
+//
+//				};
+//				ctx.putVariable(SALARY_DAYS, salaryDays);
+//			}
 			if (!containsVariable(SALARY_HOURS, period)) {
 				ITimedVariable<Double> salaryHours = new ITimedVariable<Double>() {
 					@Override

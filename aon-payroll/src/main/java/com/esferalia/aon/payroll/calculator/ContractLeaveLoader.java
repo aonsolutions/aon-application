@@ -7,6 +7,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_FA
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PATERNITY_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_DAYS;
 import static com.esferalia.aon.watson.server.AonDateUtils.getDaysBetweenDates;
 import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
 import static java.util.Calendar.DAY_OF_MONTH;
@@ -304,6 +305,7 @@ public class ContractLeaveLoader {
 						};
 					});
 					exprCtx.putVariable(QUOTE_DAYS, new QuoteDays(exprCtx, start, end));
+					exprCtx.putVariable(SALARY_DAYS, new QuoteDays(exprCtx, start, end));
 				}
 				// exprCtx.addVariable(ContextVariable.REGULATORY_BASE,
 				// regBase, start, end );
@@ -353,6 +355,7 @@ public class ContractLeaveLoader {
 						};
 					});
 					exprCtx.putVariable(QUOTE_DAYS, new QuoteDays(exprCtx, start, end));
+					exprCtx.putVariable(SALARY_DAYS, new QuoteDays(exprCtx, start, end));
 				}
 
 				// long days = parentDays == 0 ? leaveDays - 1 : leaveDays;
