@@ -95,6 +95,7 @@ public class MainAgreementTest {
 	}
 
 	@Test
+	@Ignore("Wait")
 	public void TestEstatutoDeLosTrabajadores() throws Exception {
 
 		wait4Id("estatuto_de_los_trabajadores");
