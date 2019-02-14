@@ -1,0 +1,159 @@
+X|X|IT|IMS|T
+01|Agricultura, ganadería, caza y servicios relacionados con las mismas|1.50|1.10|2.60
+0113|Cultivo de hortalizas, raíces y tubérculos|1.00|1.00|2.00
+0119|Otros cultivos no perennes|1.00|1.00|2.00
+0129|Otros cultivos perennes|2.25|2.90|5.15
+0130|Propagación de plantas|1.15|1.10|2.25
+014|Producción ganadera|1.80|1.50|3.30
+0147|Avicultura|1.25|1.15|2.40
+015|Producción agrícola combinada con la producción ganadera|1.60|1.20|2.80
+016|Actividades de apoyo a la agricultura, a la ganadería y de preparación posterior a la cosecha|1.60|1.20|2.80
+0164|Tratamiento de semillas para reproducción|1.15|1.10|2.25
+017|Caza, captura de animales y servicios relacionados con las mismas|1.80|1.50|3.30
+02|Silvicultura y explotación forestal|2.25|2.90|5.15
+03|Pesca y acuicultura|3.05|3.35|6.40
+v|Grupo segundo de cotización del Régimen especial del Mar|2.10|2.00|4.10
+w|Grupo tercero de cotización del Régimen especial del Mar|1.65|1.70|3.35
+0322|Acuicultura en agua dulce|3.05|3.20|6.25
+05|Extracción de antracita, hulla y lignito|2.30|2.90|5.20
+y|Trabajos habituales en interior de minas|3.45|3.70|7.15
+06|Extracción de crudo de petróleo y gas natural|2.30|2.90|5.20
+07|Extracción de minerales metálicos|2.30|2.90|5.20
+08|Otras industrias extractivas|2.30|2.90|5.20
+0811|Extracción de piedra ornamental y para la construcción, piedra caliza, yeso, creta y pizarra|3.45|3.70|7.15
+09|Actividades de apoyo a las industrias extractivas|2.30|2.90|5.20
+10|Industria de la alimentación|1.60|1.60|3.20
+101|Procesado y conservación de carne y elaboración de productos cárnicos|2.00|1.90|3.90
+102|Procesado y conservación de pescados, crustáceos y moluscos|1.80|1.50|3.30
+106|Fabricación de productos de molinería, almidones y productos amiláceos|1.70|1.60|3.30
+107|Fabricación de productos de panadería y pastas alimenticias|1.05|0.90|1.95
+108|Fabricación de otros productos alimenticios|1.05|0.90|1.95
+11|Fabricación de bebidas|1.60|1.60|3.20
+12|Industria del tabaco|1.00|0.80|1.80
+13|Industria textil|1.00|0.85|1.85
+1391|Fabricación de tejidos de punto|0.80|0.70|1.50
+14|Confección de prendas de vestir|0.80|0.70|1.50
+1411|Confección de prendas de vestir de cuero|1.50|1.10|2.60
+1420|Fabricación de artículos de peletería|1.50|1.10|2.60
+143|Confección de prendas de vestir de punto|0.80|0.70|1.50
+15|Industria del cuero y del calzado|1.50|1.10|2.60
+16|Industria de la madera y del corcho, excepto muebles; cestería y espartería|2.25|2.90|5.15
+1624|Fabricación de envases y embalajes de madera|2.10|2.00|4.10
+1629|Fabricación de otros productos de madera; artículos de corcho, cestería y espartería|2.10|2.00|4.10
+17|Industria del papel|1.00|1.05|2.05
+171|Fabricación de pasta papelera, papel y cartón|2.00|1.50|3.50
+18|Artes gráficas y reproducción de soportes grabados|1.00|1.00|2.00
+19|Coquerías y refino de petróleo|1.45|1.90|3.35
+20|Industria química|1.60|1.40|3.00
+204|Fabricación de jabones, detergentes y otros artículos de limpieza y abrillantamiento; fabricación de perfumes y cosméticos|1.50|1.20|2.70
+206|Fabricación de fibras artificiales y sintéticas|1.50|1.20|2.70
+21|Fabricación de productos farmacéuticos|1.30|1.10|2.40
+22|Fabricación de productos de caucho y plástico|1.75|1.25|3.00
+23|Fabricación de otros productos minerales no metálicos|2.10|2.00|4.10
+231|Fabricación de vidrio y productos de vidrio|1.60|1.50|3.10
+232|Fabricación de productos cerámicos refractarios|1.60|1.50|3.10
+2331|Fabricación de azulejos y baldosas de cerámica|1.60|1.50|3.10
+234|Fabricación de otros productos cerámicos|1.60|1.50|3.10
+237|Corte, tallado y acabado de la piedra|2.75|3.35|6.10
+24|Metalurgia; fabricación de productos de hierro, acero y ferroaleaciones|2.00|1.85|3.85
+25|Fabricación de productos metálicos, excepto maquinaria y equipo|2.00|1.85|3.85
+26|Fabricación de productos informáticos, electrónicos y ópticos|1.50|1.10|2.60
+27|Fabricación de material y equipo eléctrico|1.60|1.20|2.80
+28|Fabricación de maquinaria y equipo n.c.o.p|2.00|1.85|3.85
+29|Fabricación de vehículos de motor, remolques y semirremolques |1.60|1.20|2.80
+30|Fabricación de otro material de transporte|2.00|1.85|3.85
+3091|Fabricación de motocicletas|1.60|1.20|2.80
+3092|Fabricación de bicicletas y de vehículos para personas con discapacidad|1.60|1.20|2.80
+31|Fabricación de muebles|2.00|1.85|3.85
+32|Otra industria manufacturera|1.60|1.20|2.80
+321|Fabricación de artículos de joyería y artículos similares|1.00|0.85|1.85
+322|Fabricación de instrumentos musicales|1.00|0.85|1.85
+33|Reparación e instalación de maquinaria y equipo|2.00|1.85|3.85
+3313|Reparación de equipos electrónicos y ópticos|1.50|1.10|2.60
+3314|Reparación de equipos eléctricos|1.60|1.20|2.80
+35|Suministro de energía eléctrica, gas, vapor y aire acondicionado|1.80|1.50|3.30
+36|Captación, depuración y distribución de agua|2.10|1.60|3.70
+37|Recogida y tratamiento de aguas residuales|2.10|1.60|3.70
+38|Recogida, tratamiento y eliminación de residuos; valorización |2.10|1.60|3.70
+39|Actividades de descontaminación y otros servicios de gestión de residuos|2.10|1.60|3.70
+41|Construcción de edificios|3.35|3.35|6.70
+411|Promoción inmobiliaria|0.85|0.80|1.65
+42|Ingeniería civil|3.35|3.35|6.70
+43|Actividades de construcción especializada|3.35|3.35|6.70
+45|Venta y reparación de vehículos de motor y motocicletas|1.00|1.05|2.05
+452|Mantenimiento y reparación de vehículos de motor|2.45|2.00|4.45
+454|Venta, mantenimiento y reparación de motocicletas y de sus repuestos y accesorios|1.70|1.20|2.90
+46|Comercio al por mayor e intermediarios del comercio, excepto de vehículos de motor y motocicletas.|1.40|1.20|2.60
+4623|Comercio al por mayor de animales vivos|1.80|1.50|3.30
+4624|Comercio al por mayor de cueros y pieles|1.80|1.50|3.30
+4632|Comercio al por mayor de carne y productos cárnicos|1.80|1.50|3.30
+4638|Comercio al por mayor de pescados, mariscos y otros productos alimenticios|1.60|1.40|3.00
+4672|Comercio al por mayor de metales y minerales metálicos|1.80|1.50|3.30
+4673|Comercio al por mayor de madera, materiales de construcción y aparatos sanitarios|1.80|1.50|3.30
+4674|Comercio al por mayor de ferretería, fontanería y calefacción|1.80|1.55|3.35
+4677|Comercio al por mayor de chatarra y productos de desecho|1.80|1.55|3.35
+4690|Comercio al por mayor no especializado|1.80|1.55|3.35
+47|Comercio al por menor, excepto de vehículos de motor y motocicletas|0.95|0.70|1.65
+473|Comercio al por menor de combustible para la automoción en establecimientos especializados|1.00|0.85|1.85
+49|Transporte terrestre y por tubería|1.80|1.50|3.30
+494|Transporte de mercancías por carretera y servicios de mudanza|2.00|1.70|3.70
+50|Transporte marítimo y por vías navegables interiores |2.00|1.85|3.85
+51|Transporte aéreo|1.90|1.70|3.60
+52|Almacenamiento y actividades anexas al transporte|1.80|1.50|3.30
+x|Carga y descarga; estiba y desestiba|3.35|3.35|6.70
+5221|Actividades anexas al transporte terrestre|1.00|1.10|2.10
+53|Actividades postales y de correos|1.00|0.75|1.75
+55|Servicios de alojamiento|0.80|0.70|1.50
+56|Servicios de comidas y bebidas|0.80|0.70|1.50
+58|Edición|0.65|1.00|1.65
+59|Actividades cinematográficas, de vídeo y de programas de televisión, grabación de sonido y edición musical|0.80|0.70|1.50
+60|Actividades de programación y emisión de radio y televisión|0.80|0.70|1.50
+61|Telecomunicaciones|0.80|0.70|1.50
+62|Programación, consultoría y otras actividades relacionadas con la informática|0.80|0.70|1.50
+63|Servicios de información|0.65|1.00|1.65
+6391|Actividades de las agencias de noticias|0.80|0.70|1.50
+64|Servicios financieros, excepto seguros y fondos de pensiones|0.80|0.70|1.50
+65|Seguros, reaseguros y fondos de pensiones, excepto Seguridad Social obligatoria|0.80|0.70|1.50
+66|Actividades auxiliares a los servicios financieros y a los seguros|0.80|0.70|1.50
+68|Actividades inmobiliarias|0.65|1.00|1.65
+69|Actividades jurídicas y de contabilidad|0.80|0.70|1.50
+70|Actividades de las sedes centrales; actividades de consultoría de gestión empresarial|0.80|0.70|1.50
+71|Servicios técnicos de arquitectura e ingeniería; ensayos y análisis técnicos|0.65|1.00|1.65
+72|Investigación y desarrollo|0.80|0.70|1.50
+73|Publicidad y estudios de mercado|0.90|0.80|1.70
+74|Otras actividades profesionales, científicas y técnicas|0.90|0.85|1.75
+742|Actividades de fotografía|0.80|0.70|1.50
+75|Actividades veterinarias|1.50|1.10|2.60
+77|Actividades de alquiler|1.00|1.00|2.00
+78|Actividades relacionadas con el empleo|1.55|1.20|2.75
+X|Carga y descarga: estiba y desestiba|3.35|3.35|6.70
+781|Actividades de las agencias de colocación|0.95|1.00|1.95
+79|Actividades de las agencias de viajes, operadores turísticos, servicios de reservas y actividades relacionadas con los mismos|0.80|0.70|1.50
+80|Actividades de seguridad e investigación|1.40|2.20|3.60
+81|Servicios a edificios y actividades de jardinería|2.10|1.50|3.60
+811|Servicios integrales a edificios e instalaciones|1.00|0.85|1.85
+82|Actividades administrativas de oficina y otras actividades auxiliares a las empresas|1.00|1.05|2.05
+8220|Actividades de los centros de llamadas|0.80|0.70|1.50
+8292|Actividades de envasado y empaquetado|1.80|1.50|3.30
+84|Administración Pública y defensa; Seguridad Social obligatoria|0.65|1.00|1.65
+842|Prestación de servicios a la comunidad en general|1.40|2.20|3.60
+85|Educación|0.80|0.70|1.50
+86|Actividades sanitarias|0.80|0.70|1.50
+869|Otras actividades sanitarias|0.95|0.80|1.75
+87|Asistencia en establecimientos residenciales|0.80|0.70|1.50
+88|Actividades de servicios sociales sin alojamiento|0.80|0.70|1.50
+90|Actividades de creación, artísticas y espectáculos|0.80|0.70|1.50
+91|Actividades de bibliotecas, archivos, museos y otras actividades culturales|0.80|0.70|1.50
+9104|Actividades de los jardines botánicos, parques zoológicos y reservas naturales|1.75|1.20|2.95
+92|Actividades de juegos de azar y apuestas|0.80|0.70|1.50
+93|Actividades deportivas, recreativas y de entretenimiento|1.70|1.30|3.00
+u|Espectáculos taurinos|2.85|3.35|6.20
+94|Actividades asociativas|0.65|1.00|1.65
+95|Reparación de ordenadores, efectos personales y artículos de uso doméstico|1.50|1.10|2.60
+9524|Reparación de muebles y artículos de menaje|2.00|1.85|3.85
+96|Otros servicios personales|0.85|0.70|1.55
+9602|Peluquería y otros tratamientos de belleza|0.80|0.70|1.50
+9603|Pompas fúnebres y actividades relacionadas|1.80|1.50|3.30
+9609|Otros servicios personales n.c.o.p|1.50|1.10|2.60
+97|Actividades de los hogares como empleadores de personal doméstico|0.80|0.70|1.50
+99|Actividades de organizaciones y organismos extraterritoriales|1.20|1.15|2.35
