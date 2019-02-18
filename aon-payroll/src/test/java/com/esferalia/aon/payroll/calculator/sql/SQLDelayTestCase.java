@@ -1668,6 +1668,84 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(0.00, delay.getIrpfBase());
 	}
 
+	@Test
+	public void testDelaysAtDirectPay() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		PaymentConceptRecord directPay =addConcept(aonContext, "PAGO_DIRECTO");
+		
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				}, 
+				new String[] {
+				}, null);
+		//@formatter:on
+		
+		addData(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				null, 
+				"IMPORTE", 
+				"1000.00");
+		addPayment(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				null, 
+				directPay, 
+				"PAGO DIRECTO", 
+				"IMPORTE * DIAS_TRABAJADOS/DIAS_MES", 
+				"_P", 
+				"_P", 
+				PaymentType.CRA_0001);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		for ( int i = 0 ; i < 10 ; i++ ) {
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+			SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
+			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+			calculator.setSalaryBuilder(jooqSalaryBuilder);
+			calculator.calculate(ctx);
+			jooqSalaryBuilder.execute();
+			startDate = add(endDate, DAY_OF_MONTH, 1);
+			endDate = getLastDayOfMonth(startDate);
+		}
+		
+		setData(aonContext, 
+				contract, 
+				"IMPORTE", 
+				"1010.00");
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
+				getFirstDayOfMonth(getToday()), 
+				add(startDate, DAY_OF_MONTH, -1), 
+				endDate, 
+				criteria);
+		delayCtx.next();
+		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
+		delayCalculator.setSalaryBuilder(new SalaryBuilder());
+		Salary delay = delayCalculator.calculate(delayCtx);
+		
+		for (com.esferalia.aon.payroll.SalaryPayment payment : delay
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " [ " + payment.getDescription() + "] :" + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+		}
+		
+		Assert.assertEquals(100.00, delay.getTotalPayment());
+		Assert.assertEquals(100.00, delay.getCommonBase());
+		Assert.assertEquals(100.00, delay.getRawCommonBase());
+		Assert.assertEquals(100.00, delay.getProfessionalBase());
+		Assert.assertEquals(100.00, delay.getIrpfBase());
+	}
+
 	protected ISQLContractSalaryCalculatorContext getSmartSQLContractSettleContext(Connection connection, Date contractStart,
 			Date endDate, ContractRecord contract) throws SQLException, ExpressionException {
 		Criteria criteria = new Criteria();

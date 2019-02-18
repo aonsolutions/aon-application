@@ -1,6 +1,7 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT_LEAVE;
@@ -428,7 +429,8 @@ public class SQLContractDelayCalculatorContext extends
 				+" AND " + SALARY + "." + SalaryColumns.TYPE + " = 0 " 
 				+" AND " + SALARY + "." + SalaryColumns.START_DATE + " >= ? " 
 				+" AND " + SALARY + "." + SalaryColumns.END_DATE + " <= ? "
-				+" AND " + SALARY_DATA + "." + SalaryDataColumns.NAME + " = '" + CGC_BASE.getName() + "'"
+				+" AND " + SALARY_DATA + "." + SalaryDataColumns.NAME 
+				+ " IN( '" + CGC_BASE.getName() + "', '" + DIRECT_BASE.getName() + "')"
 				+" GROUP BY 1, 2"
 				); 
 			stmt.setInt(1, contract);
@@ -702,7 +704,7 @@ public class SQLContractDelayCalculatorContext extends
 				+ " AND " + SALARY + "." + SalaryColumns.TYPE + "  = ? " 
 				+ " AND " + SALARY_DATA + "." + SalaryDataColumns.START_DATE + "  = ? " 
 				+ " AND " + SALARY_DATA + "." + SalaryDataColumns.END_DATE + " = ? "
-				+ " AND " + SALARY_DATA + "." + SalaryDataColumns.NAME + "  = '" + CGC_BASE.getName() + "'" 
+				+ " AND " + SALARY_DATA + "." + SalaryDataColumns.NAME + "  IN ('" + CGC_BASE.getName() + "', '" + DIRECT_BASE.getName() +"')" 
 				;
 
 		protected static final class DelayContractPayment extends ContractPayment {
