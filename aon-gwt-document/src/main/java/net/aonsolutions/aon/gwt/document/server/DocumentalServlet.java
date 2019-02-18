@@ -44,8 +44,10 @@ public class DocumentalServlet  extends AonRemoteServiceServlet implements IDocu
 					attach.setDparentId(fl.getFiles().get(0).getSize().toString());
 					AON.updateAttach(domain.getName(), domain.getId(), "", attach);
 				}
+				AonDrive.getInstace().setPermission(drive, fl.getFiles().get(0).getId());
 				return fl.getFiles().get(0).getWebViewLink();
 			} else {
+				AonDrive.getInstace().setPermission(drive, attach.getDriveId());
 				File file = DriveUtils.getFile(drive, attach.getDriveId(), "*");
 				return file.getWebViewLink();
 			}

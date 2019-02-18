@@ -192,9 +192,22 @@ public class DriveUtils {
 	}
 	
 	public Boolean setPermission(Drive drive, String fileId, String email){
-		Permission permission =new Permission()
+		Permission permission = new Permission()
 				.setEmailAddress(email)
 				.setType(Utils.isGmail(email) ? "user" : "anyone")//user || group || domain || anyone
+				.setRole("reader");//owner || reader || writer || commenter		  		
+		try {
+			drive.permissions().create(fileId, permission).execute();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	public Boolean setPermission(Drive drive, String fileId){
+		Permission permission = new Permission()
+				.setType("anyone")//user || group || domain || anyone
 				.setRole("reader");//owner || reader || writer || commenter		  		
 		try {
 			drive.permissions().create(fileId, permission).execute();
