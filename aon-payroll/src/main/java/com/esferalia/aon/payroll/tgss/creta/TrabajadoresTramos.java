@@ -270,6 +270,11 @@ public class TrabajadoresTramos {
 					List<Period> periods = merge(salary, cgcBasePeriods);//cgcBasePeriods;
 					for ( Period p: periods ) {
 						
+						if ( p.getStart().after(endDate) )
+							continue;
+						if ( p.getEnd().before(startDate) )
+							continue;
+						
 						TramoBuilder tramoBuilder  = new TramoBuilder();
 
 						Calendar start = Calendar.getInstance();
@@ -291,24 +296,11 @@ public class TrabajadoresTramos {
 										p.getStart(), 
 										p.getEnd(),
 										Collectors.summingDouble(Double::parseDouble) );
-						tramoBuilder.setDiasCotizados(diasCotizados.intValue());
+						tramoBuilder.setDiasCotizados( diasCotizados !=null ?diasCotizados.intValue() : 0);
 						
 						DatoSolicitadoBuilder dataSolicitadoBuilder  = new DatoSolicitadoBuilder();
 						
-						visit(tipo, new TypeVisitor() {
-
-							@Override
-							public void visitL03() {
-								// La causa que da lugar a la obligación de cotizar.
-								dataSolicitadoBuilder.setTipo("I");
-								dataSolicitadoBuilder.setCodigo("54");
-								dataSolicitadoBuilder.setObligatorio(true);
-								tramoBuilder.addDato(dataSolicitadoBuilder.create());
-							}
-							
-						});
-
-						visit(salary, p.getStart(), p.getEnd(), new SalaryVisitor() {
+						class DefaultSalaryVisitor implements SalaryVisitor {
 							
 							@Override
 							public void visitTiempoCompletoNormal() {
@@ -522,9 +514,58 @@ public class TrabajadoresTramos {
 							}
 							
 							
-						});
+						}
 						
-						tramoBuilder.setTipoDeContrato(getContextData(TC2.getName(), salary, p.getStart(), p.getEnd()));
+						
+						
+						SalaryVisitor salaryVisitor = 
+						visit(tipo, new TypeVisitor<SalaryVisitor>() {
+
+							@Override
+							public SalaryVisitor visitL03() {
+								// La causa que da lugar a la obligación de cotizar.
+								dataSolicitadoBuilder.setTipo("I");
+								dataSolicitadoBuilder.setCodigo("54");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								return new DefaultSalaryVisitor();
+							}
+
+							@Override
+							public SalaryVisitor visitL00() {
+								return new DefaultSalaryVisitor();
+							}
+
+							@Override
+							public SalaryVisitor visitL02() {
+								return new DefaultSalaryVisitor();
+							}
+
+							@Override
+							public SalaryVisitor visitL13() {
+								return new DefaultSalaryVisitor() {
+									public void visitTiempoParcialNormal(){
+										visitTiempoCompletoNormal();
+									}
+								};
+							}
+
+							@Override
+							public SalaryVisitor visitL91() {
+								return new DefaultSalaryVisitor();
+							}
+
+							@Override
+							public SalaryVisitor visitL90() {
+								return new DefaultSalaryVisitor();
+							}
+							
+						});
+
+
+						visit(salary, p.getStart(), p.getEnd(), salaryVisitor );
+						
+						tramoBuilder.setTipoDeContrato(getContextData(TC2.getName(), salary, p.getStart(), p.getEnd(), "-"));
 						try {
 							tramoBuilder.setGrupoCotizacion(getContextData(QUOTE_GROUP.getName(), salary, p.getStart(), p.getEnd()));
 						} catch (Exception e ) {
@@ -875,7 +916,7 @@ public class TrabajadoresTramos {
 	}
 	
 	private static void visit(Salary salary, Date startDate, Date endDate, SalaryVisitor visitor) {
-		String tc2 = getContextData(TC2.getName(),salary, startDate, endDate);
+		String tc2 = getContextData(TC2.getName(),salary, startDate, endDate, "-");
 		boolean fullTime = getContextData(FULL_TIME.getName(), salary, startDate, endDate,  true);
 		
 		
@@ -945,13 +986,29 @@ public class TrabajadoresTramos {
 			visitor.visitGrupoCotizacionDiario();
 	}
 
-	private static interface TypeVisitor {
-		void visitL03();
+	private static interface TypeVisitor<T> {
+		T visitL00();
+		T visitL02();
+		T visitL13();
+		T visitL03();
+		T visitL91();
+		T visitL90();
 	}
 
-	private static void visit(String tipo, TypeVisitor visitor) {
+	private static <T> T visit(String tipo, TypeVisitor<T> visitor) {
+		if ( "L00".equalsIgnoreCase(tipo)) 
+			return visitor.visitL00();
+		if ( "L02".equalsIgnoreCase(tipo)) 
+			return visitor.visitL02();
+		if ( "L13".equalsIgnoreCase(tipo)) 
+			return visitor.visitL13();
 		if ( "L03".equalsIgnoreCase(tipo)) 
-			visitor.visitL03();
+			return visitor.visitL03();
+		if ( "L91".equalsIgnoreCase(tipo)) 
+			return visitor.visitL91();
+		if ( "L90".equalsIgnoreCase(tipo)) 
+			return visitor.visitL90();
+		return null;
 	}
 
 	private static String getContextData(String name, Salary salary, Date startDate, Date endDate) {
