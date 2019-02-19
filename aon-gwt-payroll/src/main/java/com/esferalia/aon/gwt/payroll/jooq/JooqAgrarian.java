@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -129,21 +130,34 @@ public class JooqAgrarian {
 			dslContext = AONContext.getAONContext(domainName, Integer.parseInt(_domainId),
 					AonServletUtils.getLoggedUser());
 			
+			Record domainRecord = dslContext.getDslContext().select().from(DOMAIN)
+					.where(DOMAIN.ID.eq(Integer.parseInt(_domainId)))
+					.fetchOne();
+			
+			Integer parentDomainId = domainRecord.get(DOMAIN.PARENT);
+			
 			Record appParamRecord = dslContext.getDslContext().select().from(APP_PARAM)
 					.where(APP_PARAM.NAME.eq("PAY_authorization_key_PAY"))
 						.and(APP_PARAM.DOMAIN.eq(Integer.parseInt(_domainId)))
 					.fetchOne();
 			
 			String authKey = "";
-			if(null == appParamRecord || null == appParamRecord.get(APP_PARAM.VALUE))
-				authKey = "00000";
-			else
+			if(null == appParamRecord || null == appParamRecord.get(APP_PARAM.VALUE)) {
+				appParamRecord = dslContext.getDslContext().select().from(APP_PARAM)
+						.where(APP_PARAM.NAME.eq("PAY_authorization_key_PAY"))
+							.and(APP_PARAM.DOMAIN.eq(parentDomainId))
+						.fetchOne();
+				if(null == appParamRecord || null == appParamRecord.get(APP_PARAM.VALUE)) 
+					authKey = "00000";
+				else
+					authKey = appParamRecord.get(APP_PARAM.VALUE);
+			} else
 				authKey = appParamRecord.get(APP_PARAM.VALUE);
 			
 			//ETI
 			JSONObject eti = new JSONObject();
-			eti.put("authkey", authKey);			//Esta es la clave de autorizacion que tiene asignada cada cliente
-			eti.put("payrollProvider", "99R");		//Averiguar cual es el provedor de nominas
+			eti.put("authkey", authKey);			
+			eti.put("payrollProvider", "498");		//Proveedor de nominas ESFERALIA NETWORKS, S.A.
 			eti.put("fileName", null);
 			eti.put("prorityCode", "N");
 			agrarianJSON.put("ETI", eti);
@@ -166,7 +180,7 @@ public class JooqAgrarian {
 			//ETF
 			JSONObject etf = new JSONObject();
 			etf.put("authkey", authKey);
-			etf.put("payrollProvider", "99R");
+			etf.put("payrollProvider", "498");
 			etf.put("fileName", null);
 			etf.put("priorityCode", "N");
 			agrarianJSON.put("ETF", etf);

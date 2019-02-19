@@ -249,7 +249,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	}
 	
 	public Integer getContractQuoteGroup() {
-		return Integer.parseInt(this.contractData.getQuoteGroup());
+		return null == this.contractData.getQuoteGroup() ? 0 : Integer.parseInt(this.contractData.getQuoteGroup());
 	}
 	
 	public Integer getContractOcupation() {

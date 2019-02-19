@@ -899,18 +899,6 @@ public class EmployeeDialog extends CustomDialog {
 		}
 	}
 
-	private boolean checkNotOldEmployee() {
-		EmployeeInfo employeeData = employeeDialogObject.getEmployeeDataByDocument(this.employee.document.getValue());
-		if(null == employeeData.getEmployeeId())
-			return true;
-		else
-			if(null == employeeDialogObject.getContractOldEndDate() || employeeDialogObject.getContractOldEndDate().after(this.employee.start_date.getValue()) || 
-					employeeDialogObject.getContractOldEndDate().equals(this.employee.start_date.getValue()))
-				return false;
-			else
-				return true;
-	}
-
 	private boolean checkPayMethod() {
 		if(4 == this.employee.payMethod.getSelectedIndex()) {
 			if("" == this.employee.bic.getValue() || "" == this.employee.account.getValue())
@@ -922,24 +910,23 @@ public class EmployeeDialog extends CustomDialog {
 	}
 
 	private boolean checkIfSaveIsPossible() {
-		if(
-		   "" != this.employee.name.getValue() &&
-		   "" != this.employee.first_surname.getValue() &&
-		   null != this.employee.start_date.getValue()   
-		) {
-			if(1 == this.employee.ssRegimeType.getSelectedIndex()) {
-				return true;
-			}else if(
-			   0 != this.employee.activityCCC.getSelectedIndex() &&
-			   0 != this.employee.contractType.getSelectedIndex() &&
-			   0 != this.employee.modality.getSelectedIndex() &&
-			   0 != this.employee.quote_group.getSelectedIndex()
-			) {	
-				return true;
-			}else
-				return false;
-		}else
+		//Check name, birthDate and contract startDate
+		if( "" == this.employee.name.getValue() || null == this.employee.start_date.getValue() || null == this.employee.birth_date.getValue())
 			return false;
+		
+		//Check SSRegime RETA
+		if(1 == this.employee.ssRegimeType.getSelectedIndex())
+			return true;
+		
+		//Check Contract type
+		if(0 == this.employee.contractType.getSelectedIndex())
+			return false;
+		
+		//Check Activity if SSRegime not RETA
+		if( 0 == this.employee.activityCCC.getSelectedIndex())
+			return false;
+		else
+			return true;
 	
 	}
 	
