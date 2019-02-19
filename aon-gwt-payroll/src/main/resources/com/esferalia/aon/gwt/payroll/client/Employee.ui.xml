@@ -163,7 +163,7 @@
 					    </tr>
 					    <tr>
 							<td style="background-color: #eaeaea; width: 200px;">
-								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Documento</g:Label>
+								<g:Label styleName='{style.firstColumnTextStyle}'>Documento</g:Label>
 							</td>
 							<td ui:field="documentTypeCell" debugId="documentTypeCell">
 							    <g:HorizontalPanel>
@@ -178,13 +178,13 @@
 								</g:HorizontalPanel>
 							</td>
 							<td style="width: 10%;" ui:field="nationalityLabelCell" debugId="nationalityLabelCell">
-								<g:Label ui:field="nationalityLabel" debugId="nationalityLabel" styleName='{style.requiredColor} {style.alignTextCenter}'>Nacionalidad</g:Label>
+								<g:Label ui:field="nationalityLabel" debugId="nationalityLabel" styleName='{style.alignTextCenter}'>Nacionalidad</g:Label>
 							</td>
 							<td ui:field="nationalityCell" debugId="nationalityCell">
 								<g:SuggestBox ui:field="nationality" debugId="nationality" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
 							</td>
 							<td style="width: 10%;">
-								<g:Label styleName='{style.requiredColor} {style.alignTextCenter}'>Nº S.S.</g:Label>
+								<g:Label styleName='{style.alignTextCenter}'>Nº S.S.</g:Label>
 							</td>
 							<td >
 								<g:HorizontalPanel>
@@ -195,14 +195,14 @@
 						</tr>
 					    <tr>
 							<td style="background-color: #eaeaea; width: 200px;">
-								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Nombre Completo</g:Label>
+								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Nombre</g:Label>
 							</td>
 							<td colspan="2">
 								<g:SuggestBox ui:field="name" debugId="name" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
 							</td>
 							<td>
 								<g:Label ui:field="firstSurnameLabel" debugId="firstSurnameLabel"
-									styleName='{style.alignTextCenter} {style.requiredColor}'>1er Apellido</g:Label>
+									styleName='{style.alignTextCenter}'>1er Apellido</g:Label>
 							</td>
 							<td >
 								<g:SuggestBox ui:field="first_surname" debugId="first_surname" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
@@ -254,7 +254,7 @@
 						</tr>
 						<tr>
 							<td style="background-color: #eaeaea; width: 200px;">
-								<g:Label styleName="{style.requiredColor} {style.firstColumnTextStyle}">Modalidad</g:Label>
+								<g:Label styleName="{style.firstColumnTextStyle}">Modalidad</g:Label>
 							</td>
 							<td colspan="6">
 								<g:ListBox ui:field="modality" debugId="modality" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
@@ -314,7 +314,7 @@
 						</tr>
 						<tr>
 							<td style="background-color: #eaeaea; width: 200px;">
-								<g:Label styleName="{style.requiredColor} {style.firstColumnTextStyle}">Grupo de cotización</g:Label>
+								<g:Label styleName="{style.firstColumnTextStyle}">Grupo de cotización</g:Label>
 							</td>
 							<td colspan="6">
 								<g:ListBox ui:field="quote_group" debugId="quote_group" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
