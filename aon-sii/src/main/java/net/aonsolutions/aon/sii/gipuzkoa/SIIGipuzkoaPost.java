@@ -85,9 +85,13 @@ public class SIIGipuzkoaPost extends SIIPost2{
     		Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
     		if(correcto) System.out.println("SII Response - Factura Emitida con Id. " + invoiceId + " se ha enviado correctamente");
 			else System.out.println("ERROR SII Response - Factura Emitida con Id. " + invoiceId + " " + r.getDescripcionErrorRegistro());
-    		array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
+    		if(!correcto && r.getCodigoErrorRegistro().intValue() == 3000) {
+    			return suministroFacturasEmitidas(domain, login, company, invoiceId, contextList, terceros, uri, list, SendType.MOD_EMITIDAS);
+    		} else {
+    			array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
     				correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
     				r.getIDFactura().getNumSerieFacturaEmisor()));
+    		}
         }
     			
     	requestXml = FacturasEmitidas.getInstance().getSuministroFacturasEmitidas((SuministroLRFacturasEmitidas) suministro);
@@ -168,9 +172,13 @@ public class SIIGipuzkoaPost extends SIIPost2{
     	RespuestaLRFRecibidasType respuesta = (RespuestaLRFRecibidasType) response.getValue();
     	for (RespuestaRecibidaType r : respuesta.getRespuestaLinea()) {
     		Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
-    		array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
+    		if(!correcto && r.getCodigoErrorRegistro().intValue() == 3000) {
+    			return suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, list, SendType.MOD_RECIBIDAS);
+    		} else {
+    			array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
     				correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
     				r.getIDFactura().getNumSerieFacturaEmisor()));
+    		}
         }
     			
     	requestXml = FacturasRecibidas.getInstance().getSuministroFacturasRecibidas((SuministroLRFacturasRecibidas) suministro);

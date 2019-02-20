@@ -230,8 +230,14 @@ public class FacturasRecibidas extends SIIBuilt {
 				AppParam.FS_MODEL_CFG_SII);
 		Boolean isRegistro = "R".equals(ap.getValue());
 		Date opDate = isRegistro ? vat.getCreationDate() : vat.getTaxDate();
-		if (opDate.compareTo(AonDateUtils.getDate(2017, 6, 1)) < 0) {
-			// frt.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaRecibidasType._14.getName());
+		
+		ApplicationParameter ap2 = AON.getApplicationParameter(domain.getName(), domain.getId(), login,
+				AppParam.SII_INCLUDE_DATE);
+		
+		Date siiDate = ap2 != null && ap2.getId() != null ? AonDateUtils.parse(ap2.getValue(), "yyyy-MM-dd") : AonDateUtils.getDate(2018, 0, 1);
+		
+		if (opDate.compareTo(siiDate) < 0) {
+			frt.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaRecibidasType._14.getName());
 		}
 
 		// BASE IMPONIBLE A COSTE (OPTIONAL)

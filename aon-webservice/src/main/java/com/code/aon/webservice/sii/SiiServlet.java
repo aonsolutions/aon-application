@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 
@@ -154,14 +155,28 @@ public class SiiServlet extends HttpServlet{
     	options.put(option2);
     	
     	json.put("operation_date_option", options);
-    	
+
+    	ApplicationParameter ap2 = AON.getApplicationParameter(domain.getName(), domain.getId(), login, AppParam.SII_INCLUDE_DATE.getValue());
+    	if(ap2 != null && ap2.getId() != null) {
+    		json.put("sii_date", ap2.getValue());
+    	} else {
+    		ApplicationParameter param= AON.getApplicationParameter(domain.getName(), domain.getId(), login, AppParam.FS_DEFAULT_ADMINISTRATION);
+    		Administration administration = param.getValue() != null ? Administration.values()[Integer.parseInt(param.getValue())] : Administration.COMMON_TERRITORY;
+    		String defaultDate = administration.equals(Administration.COMMON_TERRITORY) ? "2017-07-01" : "2018-01-01";
+    		AON.insertApplicationParameter(domain.getName(), domain.getId(), login, AppParam.SII_INCLUDE_DATE, defaultDate);
+    		json.put("sii_date", defaultDate);
+    	}
     	array.put(json);
     	return array;
     }
     
     private void setSiiConfiguration(Domain domain, String login, JSONObject json){
+    	json.getString("sii_date");
     	if(json.opt("operation_date") != null) {
     		AON.insertApplicationParameter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII, "Fecha Registro".equals(json.getString("operation_date")) ? "R" : "I");
+    	}
+    	if(json.opt("sii_date") != null) {
+    		AON.insertApplicationParameter(domain.getName(), domain.getId(), login, AppParam.SII_INCLUDE_DATE, json.getString("sii_date"));
     	}
     }
 }

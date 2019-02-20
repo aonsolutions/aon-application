@@ -4,6 +4,7 @@ import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.sii.JsSiiConfiguration;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -24,6 +25,9 @@ import com.vaadin.polymer.iron.widget.event.IronSelectEvent;
 import com.vaadin.polymer.iron.widget.event.IronSelectEventHandler;
 import com.vaadin.polymer.paper.widget.PaperItem;
 import com.vaadin.polymer.paper.widget.PaperTabs;
+import com.vaadin.polymer.vaadin.widget.VaadinDatePicker;
+import com.vaadin.polymer.vaadin.widget.event.ValueChangedEvent;
+import com.vaadin.polymer.vaadin.widget.event.ValueChangedEventHandler;
 
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
@@ -216,6 +220,45 @@ public class ConfigurationPanel extends Composite {
 		});
     	
     	vp.add(acb);
+    	
+ 
+    	VaadinDatePicker dateBox = new VaadinDatePicker();
+    	dateBox.setStyle("padding-left:20px;padding-right:20px;padding-bottom: 20px; width:250px;");
+    	dateBox.setLabel("Fecha Inclusi\u00f3n SII");
+    	dateBox.setValue(configuration.getSiiDate());
+    	dateBox.addValueChangedHandler(new ValueChangedEventHandler() {
+			
+			@Override
+			public void onValueChanged(ValueChangedEvent event) {
+				String requestData= "{\"sii_date\":\""+ dateBox.getValue() +"\"}";
+				parent.getAPI().getSii().setSiiConfiguration(requestData);
+			}
+		});
+    	dateBox.setI18n(getI18n());
+   
+    	vp.add(dateBox);
     	return vp;
 	}
+    
+	public final native JavaScriptObject getI18n() /*-{
+		return {
+			monthNames: [
+     			'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo',
+     			'Junio', 'Julio', 'Agosto', 'Septiembre',
+     			'Octubre', 'Noviembre', 'Diciembre'
+   			],
+ 			weekdaysShort: [
+     			'Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'
+   			],
+ 			firstDayOfWeek: 1,
+ 			today: 'Hoy',
+ 			cancel: 'Cancelar',
+ 			formatDate: function(d) {
+    			return [d.getDate(), d.getMonth() + 1, d.getFullYear()].join('/');
+    		},
+   			formatTitle: function(monthName, fullYear) {
+     			return monthName + ' ' + fullYear;
+   			}
+ 		};
+	}-*/;
 }

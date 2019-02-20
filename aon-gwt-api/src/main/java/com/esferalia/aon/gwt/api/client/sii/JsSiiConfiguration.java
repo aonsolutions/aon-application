@@ -12,6 +12,10 @@ public class JsSiiConfiguration extends JavaScriptObject {
 		return this.operation_date;
 	}-*/;
 	
+	public final native String getSiiDate() /*-{
+		return this.sii_date;
+	}-*/;
+	
 	public final native AonJsArray<JsObject> getOperationDateOption() /*-{
 		return this.operation_date_option;
 	}-*/;
