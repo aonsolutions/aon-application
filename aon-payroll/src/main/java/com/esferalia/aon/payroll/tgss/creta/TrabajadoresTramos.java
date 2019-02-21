@@ -878,6 +878,12 @@ public class TrabajadoresTramos {
 		calendar.set(Calendar.YEAR , anho);
 		calendar.set(Calendar.MONTH , mes.getValue()-1);
 		calendar.set(Calendar.DAY_OF_MONTH,1);
+		// Set time fields to zero
+		calendar.set(Calendar.HOUR_OF_DAY , 0);
+		calendar.set(Calendar.MINUTE , 0);
+		calendar.set(Calendar.SECOND , 0);
+		calendar.set(Calendar.MILLISECOND , 0);
+
 		return calendar.getTime();
 	}
 	
@@ -887,6 +893,12 @@ public class TrabajadoresTramos {
 		calendar.set(Calendar.DAY_OF_MONTH,1);
 		calendar.set(Calendar.MONTH , mes.getValue()-1);
 		calendar.set(Calendar.DAY_OF_MONTH,calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+		// Set time fields to zero
+		calendar.set(Calendar.HOUR_OF_DAY , 0);
+		calendar.set(Calendar.MINUTE , 0);
+		calendar.set(Calendar.SECOND , 0);
+		calendar.set(Calendar.MILLISECOND , 0);
+
 		return calendar.getTime();
 	}
 	

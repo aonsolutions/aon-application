@@ -37,10 +37,8 @@ import static java.util.Calendar.YEAR;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -2505,6 +2503,83 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	}
 
+	@Test
+	public void testCretaOneDayPeriod()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C200, "08");
+		
+		Date firstDayOfMonth = getFirstDayOfMonth(getToday());
+		Date secondDayOfMonth = add(firstDayOfMonth, DAY_OF_MONTH,1);
+		
+		addData(aonContext, 
+				contract, 
+				firstDayOfMonth, 
+				firstDayOfMonth,
+				ContextVariable.PARTIAL_FACTOR,
+				"0.675"
+				);
+		
+		addData(aonContext, 
+				contract, 
+				secondDayOfMonth, 
+				null,
+				ContextVariable.PARTIAL_FACTOR,
+				"0.750"
+				);
+
+		Date startDate = firstDayOfMonth;
+		Date endDate = getLastDayOfMonth(startDate);
+		
+
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramosBases = 
+		getBases(connection, contract, startDate, endDate, ccc);
+		
+		AON.getSalaryData(aonContext,
+				props -> props.getContractProperty().eq(contract.getId()))
+				.forEach(salary -> {
+
+					// 500 Base de contingencias comunes.
+					List<ContextData> datas = salary.getContextData()
+							.get(CGC_BASE.getName());
+					Assert.assertEquals(2, datas.size());
+					Assert.assertEquals(firstDayOfMonth, datas.get(0).getStartDate());
+					Assert.assertEquals(firstDayOfMonth, datas.get(0).getEndDate());
+					Assert.assertEquals(secondDayOfMonth, datas.get(1).getStartDate());
+					Assert.assertEquals(endDate, datas.get(1).getEndDate());
+					
+				});
+		;
+
+		Assert.assertEquals(2,tramosBases.size());
+		org.junit.Assert.assertEquals("01", tramosBases.get(0).getFechaDesde().getDia());
+		org.junit.Assert.assertEquals("01", tramosBases.get(0).getFechaHasta().getDia());
+		
+		org.junit.Assert.assertEquals("02", tramosBases.get(1).getFechaDesde().getDia());
+	}
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	protected ContractRecord newContract(AONContext aonContext, String ccc) {
 		return newContract(aonContext, ccc, ContractCode.C100, "03", CCCType.PRINCIPAL);
 	}
