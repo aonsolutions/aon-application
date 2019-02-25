@@ -119,6 +119,11 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 
 		@Override
 		public void onContractActiviesCCCChange() {
+			if(0 == this.activityCCC.getSelectedIndex()) {
+				cantSaveWithOutIt();
+				return;
+			}
+			
 			String activityCCC = this.activityCCC.getSelectedItemText();
 			if(activityCCC.equals("-")){
 				employeeDraftObject.setContractActivityId(null);
@@ -157,6 +162,14 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 
 		@Override
 		public void onContractTypeChange() {
+			if(0 == this.contractType.getSelectedIndex()) {
+				Integer contractTypeId = employeeDraftObject.getContractType();
+				Integer idx = getContractTypeIdx(contractTypeId);
+				this.contractType.setSelectedIndex(1 + idx);
+				cantSaveWithOutIt();
+				return;
+			}
+			
 			this.modality.clear();
 			this.modality.addItem("-");
 			Integer contractTypeId = -1;
@@ -207,6 +220,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		@Override
 		public void onContractStartDateChange() {
 			if(null == this.start_date.getValue()){
+				this.start_date.setValue(employeeDraftObject.getContractStartDate());
 				WarningDialog warning = new WarningDialog("Error", "La fecha de inicio es obligatoria");
 				warning.center();
 				warning.show();
@@ -488,7 +502,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	// ------------------------------------------------------ VARIABLES DE LA CLASE -------------------------------------------------
 
 	private EmployeeDraftObject employeeDraftObject;
-	private ContractType contractType;
+	public ContractType contractType;
 	
 	private Timer saveTimer;
 	private Consumer<EmployeeContractInfo> onSaved ;
@@ -635,6 +649,11 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 			String saved = employeeDraftObject.getEmployeeName();
 			if ( AonStringUtils.equals(value, saved))
 				return;
+			
+			if(value.length() == 0) {
+				cantSaveWithOutIt();
+				return;
+			}
 			
 			employeeDraftObject.setEmployeeName(value);
 			saving();
@@ -1081,6 +1100,16 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 
 	protected void onSavedNoop(EmployeeContractInfo employeeContractInfo) {
 		
+	}
+	
+	private void cantSaveWithOutIt() {
+		WarningDialog warning = new WarningDialog("AVISO", "No se puede dejar este campo sin valor.");
+		warning.center();
+		warning.show();
+	}
+	
+	public Integer getContractTypeIdx(Integer contractTypeId) {
+		return contractType.getContractTypeIndex(contractTypeId);
 	}
 
 }

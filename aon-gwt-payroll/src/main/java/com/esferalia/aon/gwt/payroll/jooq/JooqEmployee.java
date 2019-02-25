@@ -432,7 +432,9 @@ public class JooqEmployee {
 			.set(REGISTRY.DOCUMENT_TYPE, employeeData.getDocumentType())
 			.set(REGISTRY.DOCUMENT_COUNTRY, employeeData.getNationality())
 			.set(REGISTRY.NATIONALITY, employeeData.getNationality())
-			.set(REGISTRY.NAME, employeeData.getSurName() + " " + employeeData.getSecondSurName() + ", " + employeeData.getName())
+			.set(REGISTRY.NAME, (null == employeeData.getSurName() ? "" :  employeeData.getSurName() + " ") + 
+					(null == employeeData.getSecondSurName() ? "" : employeeData.getSecondSurName() + ", ") + 
+					employeeData.getName())
 			.where(REGISTRY.ID.eq(employeeData.getEmployeeId()))
 			.execute();
 		

@@ -367,7 +367,7 @@
 					    </tr>
 						<tr>
 							<td style="background-color: #eaeaea; width: 200px;">
-								<g:Label styleName="{style.requiredColor} {style.firstColumnTextStyle}">Fecha de nacimiento</g:Label>
+								<g:Label styleName="{style.firstColumnTextStyle}">Fecha de nacimiento</g:Label>
 							</td>
 							<td colspan="2">
 								<a:DateBoxEx ui:field="birth_date" debugId="birth_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle}'></a:DateBoxEx>

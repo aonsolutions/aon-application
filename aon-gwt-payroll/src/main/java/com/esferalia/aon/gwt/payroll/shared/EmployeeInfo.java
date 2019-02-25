@@ -153,7 +153,10 @@ public class EmployeeInfo implements Serializable{
 	}
 
 	public void setNationality(String nationality) {
-		this.nationality = nationality;
+		if(null == nationality)
+			this.nationality = "ES";
+		else
+			this.nationality = nationality;
 	}
 
 	public Byte getDocumentType() {
