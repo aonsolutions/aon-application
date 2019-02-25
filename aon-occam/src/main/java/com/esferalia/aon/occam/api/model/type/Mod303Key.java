@@ -520,7 +520,8 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,AR_C034("303-AR034",true ,"34","IVA deducible en adquisiciones intracomunitarias de bienes y servicios corrientes")
 	,AR_C035("303-AR035",true ,"35","IVA deducible en adquisiciones intracomunitarias de bienes de inversi\u00F3n")
 	,AR_C036("303-AR036",true ,"36","Compensaciones R\u00E9gimen Especial A.G. y P .")
-	,AR_C037("303-AR037",true ,"37","Regularizaci\u00F3n Inversiones")
+	,AR_C037("303-AR037",true ,"37","Regularizaci\u00F3n inversiones")
+	,AR_C046("303-AR046",true ,"46","Rectificaci\u00F3n de deducciones")
 	,AR_C038("303-AR038",false,"38","Total a deducir")
 	
 	,AR_C039("303-AR039",false,"39","Diferencia")

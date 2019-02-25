@@ -35,7 +35,8 @@ public class Mod303Writer {
 		,AEAT_2017		(mod303 -> (mod303.isAEAT() && mod303.getYear() == 2017) 	, Mod303WriterAEAT2017::new)
 		,AEAT_2016		(mod303 -> (mod303.isAEAT() && mod303.getYear() <= 2016) 	, Mod303WriterAEAT2016::new)
 		,BIZKAIA_2017	(mod303 -> (mod303.isBizkaia() && mod303.getYear() > 2016) 	, Mod303WriterBIZKAIA2017::new)
-		,ARABA_2017		(mod303 -> (mod303.isAraba() && mod303.getYear() >= 2016)	, Mod303WriterARABA2017::new)
+		,ARABA_2017		(mod303 -> (mod303.isAraba() && mod303.getYear() >= 2016 && mod303.getYear() < 2019)	, Mod303WriterARABA2017::new)
+		,ARABA_2019		(mod303 -> (mod303.isAraba() && mod303.getYear() >= 2019)	, Mod303WriterARABA2019::new)
 		,GIPUZKOA_2017	(mod303 -> (mod303.isGipuzkoa() && mod303.getYear() >= 2015), Mod303WriterGIPUZKOA2017::new)
 		;
 		private IModelAccepter accepter;

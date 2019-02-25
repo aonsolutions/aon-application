@@ -236,10 +236,10 @@ public class Model303 extends MainEntryPoint {
 				declarationContainer.setWidget( new Model3032017BIZKAIA(selected,new Model303Callback(), getAonData()));
 			}
 		} else if (selected.isAraba()) {
-			if (selected.getYear() < 2017) {
+			if (selected.getYear() < 2019) {
 				declarationContainer.setWidget( new Model3032017ARABA(selected,new Model303Callback(), getAonData()));	
 			} else {
-				declarationContainer.setWidget( new Model3032017ARABA(selected,new Model303Callback(), getAonData()));
+				declarationContainer.setWidget( new Model3032019ARABA(selected,new Model303Callback(), getAonData()));
 			}
 		} else if (selected.isGipuzkoa()) {
 			if (selected.getYear() < 2017) {

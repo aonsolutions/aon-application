@@ -14,6 +14,7 @@ public abstract class Mod303Declaration {
 		if (AEAT_2017_Declaration.accept(mod)) 		return new AEAT_2017_Declaration();
 		if (BIZKAIA_2018_Declaration.accept(mod)) 	return new BIZKAIA_2018_Declaration();
 		if (BIZKAIA_2017_Declaration.accept(mod)) 	return new BIZKAIA_2017_Declaration();
+		if (ARABA_2019_Declaration.accept(mod)) 	return new ARABA_2019_Declaration();
 		if (ARABA_2017_Declaration.accept(mod)) 	return new ARABA_2017_Declaration();
 		if (GIPUZKOA_2017_Declaration.accept(mod)) 	return new GIPUZKOA_2017_Declaration();
 		
