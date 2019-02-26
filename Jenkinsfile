@@ -95,7 +95,7 @@ node {
 
         stage 'Docker Publish'
 
-        sh "docker login -u rtrepiana -p aon945121010"
+        sh "docker login -u rtrepiana -p Rtr3p14n4"
 
         sh "docker push aonsolutions/aon-db-up2date:${rolling_version}-jre-alpine"
         sh "docker push aonsolutions/aon-application:${rolling_version}-tomcat9-jre8"
