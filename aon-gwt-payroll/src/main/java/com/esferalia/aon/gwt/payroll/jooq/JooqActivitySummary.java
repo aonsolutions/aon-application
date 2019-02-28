@@ -8,6 +8,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,13 +23,6 @@ import org.jooq.Record6;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
-import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.Domain;
-import com.code.aon.ql.Criteria;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryObject;
 import com.esferalia.aon.occam.api.AONContext;
@@ -56,7 +50,7 @@ public class JooqActivitySummary {
 				Map<Integer, ActivitySummaryObject> itMap = null;
 				if (parentDomain) {
 					try {
-						Integer[] childDomains = getChildDomainIDs(domainId);
+						Integer[] childDomains = getChildDomainIDs(ctx, domainId);
 						summaryMap = getSummaryEnterprise(childDomains,
 								domainId, domainName, startDate, endDate,
 								starts, ends);
@@ -67,7 +61,7 @@ public class JooqActivitySummary {
 								domainName, startDate, endDate,
 								itCommonDisease, itOccupationalDisease,
 								itMaternity, itOther);
-					} catch (ManagerBeanException e) {
+					} catch (SQLException e) {
 						throw new RuntimeException(e.getMessage());
 					}
 				} else {
@@ -96,26 +90,15 @@ public class JooqActivitySummary {
 		return new ArrayList<>();
 	}
 
-	private static Integer[] getChildDomainIDs(Integer domainId)
-			throws ManagerBeanException {
-		IManagerBean beanManager = BeanManager.getManagerBean(Domain.class);
-
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(
-				beanManager.getFieldName(IEntityAlias.DOMAIN_PARENT_ID),
-				domainId);
-
-		List<ITransferObject> tos = beanManager.getList(criteria);
-
-		if (tos == null || tos.isEmpty())
-			return new Integer[] {};
-
-		Integer[] ids = new Integer[tos.size()];
-		for (int i = 0; i < ids.length; i++)
-			ids[i] = ((Domain) tos.get(i)).getId();
-
-		return ids;
+	public static Integer[] getChildDomainIDs(AONContext aonContext, Integer domain) throws SQLException {
+		return  aonContext.getDslContext()
+		.select()
+		.from(DOMAIN)
+		.where(DOMAIN.PARENT.eq(domain))
+		.fetchArray(DOMAIN.ID);
 	}
+
+
 
 	private static void fillMapData(
 			Map<Integer, ActivitySummaryObject> summaryMap,
