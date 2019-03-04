@@ -3499,7 +3499,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Salary salary = calculator.calculate(ctx);
 
 		Assert.assertEquals(66.66 * 30.00, salary.getCommonBase(), DELTA);
-		Assert.assertEquals(0.75 * 66.66 * /*30.00*/ get(endDate, DAY_OF_MONTH) , salary.getTotalPayment(), DELTA);
+		Assert.assertEquals(0.75 * 66.66 * 30.00 /*get(endDate, DAY_OF_MONTH)*/ , salary.getTotalPayment(), DELTA);
 	}
 
 	@Test
@@ -3565,7 +3565,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
 		double br = 1750.00 / 30.00;
-		Assert.assertEquals(0.75 * br * /*30.00*/ get(endDate, DAY_OF_MONTH) , salary.getTotalPayment(), DELTA);
+		Assert.assertEquals(0.75 * br * 30.00 /*get(endDate, DAY_OF_MONTH)*/ , salary.getTotalPayment(), DELTA);
 		Assert.assertEquals(br * 30.00, salary.getCommonBase(), DELTA);
 	}
 
@@ -3667,7 +3667,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(0.75 * 1750.00/30.00 * /*30.00*/ get(endDate, DAY_OF_MONTH) , salary.getTotalPayment(), DELTA);
+		Assert.assertEquals(0.75 * 1750.00/30.00 * 30.00 /* get(endDate, DAY_OF_MONTH)*/ , salary.getTotalPayment(), DELTA);
 		Assert.assertEquals(1750.00/30.00 * 30.00, salary.getCommonBase(), DELTA);
 	}
 	
