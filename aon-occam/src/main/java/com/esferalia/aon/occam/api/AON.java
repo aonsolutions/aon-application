@@ -422,6 +422,18 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static Domain getCompanyDomain(String domainName, Integer domainId,
+			String user, String document) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getCommon().getCompanyDomain(ctx, document);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
 	public static LinkedList<Domain> getDriveDomainList(String domainName,
 			Integer domainId, String login) {

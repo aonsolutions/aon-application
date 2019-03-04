@@ -6,9 +6,11 @@ public class TediPGC {
 	public TediPGC() {}
 	
 	public TediPGC(JSONObject json) {
-		this.account = json.getString("account");
-		this.name = json.getString("name");
-		this.description = json.getString("description");
+		if(json != null) {
+			this.account = json.getString("account");
+			this.name = json.getString("name");
+			this.description = json.getString("description");
+		}
 	}
 	
 	private String account;

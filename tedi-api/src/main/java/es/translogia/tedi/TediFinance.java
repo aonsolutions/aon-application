@@ -8,9 +8,13 @@ public class TediFinance {
 	public TediFinance() {}
 
 	public TediFinance(JSONObject json) {
-		this.bankAccount = json.getString("bank_account");
-		this.amount = json.getDouble("amount");
-		this.dueDate = TediDateUtils.parse(json.getString("due_date"), "dd/MM/yyyy");
+		if(json != null) {
+			this.bankAccount = json.optString("bank_account");
+			this.amount = json.optDouble("amount");
+			this.dueDate = json.opt("due_date") != null ? TediDateUtils.parse(json.getString("due_date"), "dd/MM/yyyy") : null;
+			this.status = json.optString("status");
+			this.paymethod = json.optString("paymethod");
+		} 
 	}
 	
 	private String bankAccount;

@@ -369,8 +369,8 @@ public class ProductDAO {
 				PRODUCT.MODIFICATION_DATE, PRODUCT.KIND, PRODUCT.PACKAGED)
 		.values(p.getDomain(), p.getName(), p.getCode(), p.getBrand(), p.getCategory(), p.getInventoriable(), p.getSerializable(),
 				p.getLotable(), p.getStatus(), p.getVat(), p.getRetention(), p.getType(), p.getManufactured(),p.getComposition(),
-				p.getCompositionPrice(), p.getSalesAccount(), p.getPurchaseAccount(), p.getCreationUser(), now,
-				p.getModificationUser(), now, p.getKind() != null ? p.getKind() : 0, p.getPackagedValue())
+				p.getCompositionPrice(), p.getSalesAccount(), p.getPurchaseAccount(), ctx.getUser(), now,
+				ctx.getUser(), now, p.getKind() != null ? p.getKind() : 0, p.getPackaged() != null ? p.getPackagedValue() : 0)
 		.returning().fetch().stream().map(new FullProductFiller()).findFirst().orElse(new Product());
 	}
 	
@@ -954,7 +954,7 @@ public class ProductDAO {
 					.setCompositionPrice(r.getCompositionPrice())
 					.setCreationDate(r.getCreationDate())
 					.setCreationUser(r.getCreationUser())
-					.setInventoriable(r.getInventoriable() == 1)
+					.setInventoriable(r.getInventoriable() != null && r.getInventoriable() == 1)
 					.setInventoriable(r.getInventoriable())
 					.setKind(r.getKind())
 					.setLotable(r.getLotable() == 1)

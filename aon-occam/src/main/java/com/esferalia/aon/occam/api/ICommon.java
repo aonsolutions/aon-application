@@ -85,6 +85,7 @@ public interface ICommon {
 	public LinkedList<Domain> getDriveDomainList(AONContext ctx);
 	
 	public Domain getDomain(AONContext ctx, Integer domainId);
+	public Domain getCompanyDomain(AONContext ctx, String document);
 	public Domain getDomain(AONContext ctx, DomainFilter filter);
 	public LinkedList<Domain> getDomainList(AONContext ctx, DomainFilter filter);
 	

@@ -89,6 +89,16 @@ public class DomainDAO {
 				;
 	}
 	
+	public static Domain getCompanyDomain(AONContext ctx, String document){
+		return ctx.getDslContext().select()
+				.from(DOMAIN)
+				.join(REGISTRY).on(DOMAIN.ID.eq(REGISTRY.DOMAIN))
+				.join(COMPANY).on(REGISTRY.ID.eq(COMPANY.REGISTRY))
+				.where(DOMAIN.ID.eq(ctx.getDomainId()).or(DOMAIN.PARENT.eq(ctx.getDomainId())))
+				.and(REGISTRY.DOCUMENT.eq(document))
+			.fetchInto(DOMAIN).stream().map(new FullDomainFiller()).findFirst().orElse(new Domain());
+	}
+	
 	public static Domain getDomain(AONContext ctx, DomainFilter filter){
 		return ctx.getDslContext().select().from(DOMAIN).where(DOMAIN_PROPERTIES.getConditions(filter))
 			.fetchInto(DOMAIN).stream().map(new FullDomainFiller()).findFirst().orElse(new Domain());

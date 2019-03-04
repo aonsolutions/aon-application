@@ -20,26 +20,25 @@ public class TediInvoice {
 		this.number = json.getInt("number");
 		if(json.opt("info") != null) {
 			JSONObject info = json.getJSONObject("info");
-			this.reference = info.getString("reference");
-			this.code = json.getJSONObject("info").getString("code");
-			this.type = TediInvoiceType.getTediInvoiceType(json.getJSONObject("info").getJSONObject("type").getString("type"));
-			this.sender = new TediRegistry(json.getJSONObject("info").getJSONObject("sender"));
-			this.receiver = new TediRegistry(json.getJSONObject("info").getJSONObject("receiver"));
-			this.total = json.getJSONObject("info").getDouble("total");
-			this.taxableBase = json.getJSONObject("info").getDouble("taxable_base");
-			this.comments = json.getJSONObject("info").getString("comments");
-			this.remarks = json.getJSONObject("info").getString("remarks");
-			this.taxes = StreamSupport.stream(json.getJSONObject("info").getJSONArray("taxes").spliterator(), false).map(r -> new TediTax((JSONObject) r))
-			.collect(Collectors.toCollection(LinkedList::new));
-			this.details = StreamSupport.stream(json.getJSONObject("info").getJSONArray("details").spliterator(), false).map(r -> new TediDetail((JSONObject) r))
-			.collect(Collectors.toCollection(LinkedList::new));
-			this.finances = StreamSupport.stream(json.getJSONObject("info").getJSONArray("finances").spliterator(), false).map(r -> new TediFinance((JSONObject) r))
-			.collect(Collectors.toCollection(LinkedList::new));
-			this.date = TediDateUtils.parse(json.getJSONObject("info").getString("date"), "dd/MM/yyyy");
-			this.pgc = new TediPGC(json.getJSONObject("info").getJSONObject("type").getJSONObject("pgc"));
+			this.reference = info.optString("reference");
+			this.code = info.optString("code");
+			this.type = TediInvoiceType.getTediInvoiceType(info.optJSONObject("type").getString("type"));
+			this.sender = new TediRegistry(info.optJSONObject("sender"));
+			this.receiver = new TediRegistry(info.optJSONObject("receiver"));
+			this.total = info.getDouble("total");
+			this.taxableBase = info.optDouble("taxable_base");
+			this.comments = info.optString("comments");
+			this.remarks = info.optString("remarks");
+			this.taxes = info.opt("taxes") != null ? StreamSupport.stream(info.optJSONArray("taxes").spliterator(), false).map(r -> new TediTax((JSONObject) r))
+			.collect(Collectors.toCollection(LinkedList::new)): null;
+			this.details = info.opt("details") != null ? StreamSupport.stream(info.optJSONArray("details").spliterator(), false).map(r -> new TediDetail((JSONObject) r))
+			.collect(Collectors.toCollection(LinkedList::new)) : null;
+			this.finances = info.opt("finances") != null ? StreamSupport.stream(info.optJSONArray("finances").spliterator(), false).map(r -> new TediFinance((JSONObject) r))
+			.collect(Collectors.toCollection(LinkedList::new)) : null;
+			this.date = info.opt("date") != null ? TediDateUtils.parse(info.optString("date"), "dd/MM/yyyy") : null;
+			this.pgc = new TediPGC(info.optJSONObject("type").optJSONObject("pgc"));
 		}
 	}
-	
 	
 	private JSONObject json;
 	

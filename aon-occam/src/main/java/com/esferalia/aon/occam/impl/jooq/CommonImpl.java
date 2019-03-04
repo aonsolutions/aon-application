@@ -169,6 +169,11 @@ public class CommonImpl implements ICommon {
 	}
 	
 	@Override
+	public Domain getCompanyDomain(AONContext ctx, String document) {
+		return DomainDAO.getCompanyDomain(ctx, document);
+	}
+	
+	@Override
 	public Domain getDomain(AONContext ctx, DomainFilter filter) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> DomainDAO.getDomain(ctx, filter));

@@ -936,21 +936,22 @@ public class InvoiceDAO {
 	
 	public static InvoiceDetail insertInvoiceDetail(AONContext ctx, InvoiceDetail invoiceDetail) {
 		Integer id = ctx.getDslContext().insertInto(INVOICE_DETAIL)
+		.set(INVOICE_DETAIL.QUANTITY, invoiceDetail.getQuantity())
 		.set(INVOICE_DETAIL.DESCRIPTION, invoiceDetail.getDescription())
 		.set(INVOICE_DETAIL.DOMAIN, invoiceDetail.getDomain())
 		.set(INVOICE_DETAIL.DISCOUNT_EXPR, invoiceDetail.getDiscountExpression())
 		.set(INVOICE_DETAIL.INVOICE, invoiceDetail.getInvoice().getId())
 		.set(INVOICE_DETAIL.INVEST_ASSET, invoiceDetail.getInvestAsset())
-		.set(INVOICE_DETAIL.ITEM, invoiceDetail.getItem().getId())
+		.set(INVOICE_DETAIL.ITEM, invoiceDetail.getItem() != null ? invoiceDetail.getItem().getId() : null)
 		.set(INVOICE_DETAIL.LINE, invoiceDetail.getLine())
 		.set(INVOICE_DETAIL.PRICE, invoiceDetail.getPrice())
 		.set(INVOICE_DETAIL.PROJECT, invoiceDetail.getProject())
-		.set(INVOICE_DETAIL.SOURCE, invoiceDetail.getSource().value())
+		.set(INVOICE_DETAIL.SOURCE, invoiceDetail.getSource() != null ? invoiceDetail.getSource().value(): null)
 		.set(INVOICE_DETAIL.SOURCE_ID, invoiceDetail.getSourceId())
 		.set(INVOICE_DETAIL.TAXABLE_BASE, invoiceDetail.getTaxableBase())
 		.set(INVOICE_DETAIL.TAXES, invoiceDetail.getTaxes())
 		.set(INVOICE_DETAIL.PREPAYMENT, (byte)1)
-		.set(INVOICE_DETAIL.SELLER, invoiceDetail.getSeller().getId())
+		.set(INVOICE_DETAIL.SELLER, invoiceDetail.getSeller() != null ? invoiceDetail.getSeller().getId(): null)
 		.set(INVOICE_DETAIL.WORKPLACE, invoiceDetail.getWorkPlace())
 		.set(INVOICE_DETAIL.WAREHOUSE,  invoiceDetail.getWarehouse())
 		.set(INVOICE_DETAIL.CREATION_DATE, new Timestamp(new Date().getTime()))
@@ -1015,8 +1016,10 @@ public class InvoiceDAO {
 	}
 	
 	private static void insertDetails(AONContext ctx, AonConfiguration config, Invoice invoice) {
-		for (InvoiceDetail detail : invoice.getDetails()) {
-			insertDetail(ctx, config, invoice, detail);
+		if(invoice.getDetails() != null) {
+			for (InvoiceDetail detail : invoice.getDetails()) {
+				insertDetail(ctx, config, invoice, detail);
+			}
 		}
 	}
 	private static void insertDetail(AONContext ctx, AonConfiguration config, Invoice invoice,InvoiceDetail detail) {

@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
 
+import es.translogia.tedi.TediAddress;
 import es.translogia.tedi.TediDetail;
 import es.translogia.tedi.TediFinance;
 import es.translogia.tedi.TediInvoice;
@@ -88,7 +89,11 @@ public class AON2TEDI extends HttpServlet{
 		TediRegistry tr = new TediRegistry();
 		tr.setDocument(registry.getDocument());
 		tr.setName(registry.getName());
-		tr.setAddress(raddress.getFullAddress());
+		tr.setAddress(new TediAddress()
+				.setAddress(raddress.getAddress())
+				.setCity(raddress.getCity())
+				.setPostalCode(raddress.getZip())
+				.setFullAddress(raddress.getFullAddress()));
 		
 		// sender
 		if(InvoiceType.SALES.equals(invoice.getType()))

@@ -6,14 +6,16 @@ public class TediRegistry {
 	public TediRegistry() {}
 	
 	public TediRegistry(JSONObject json) {
-		this.name = json.getString("name");
-		this.document = json.getString("document");
-		this.address = json.getString("address");
+		if(json != null) {
+			this.name = json.optString("name");
+			this.document = json.optJSONObject("document").getString("document");
+			this.address = new TediAddress(json.optJSONObject("address"));
+		}
 	}
 
 	private String name;
 	private String document;
-	private String address;
+	private TediAddress address;
 	
 	public String getName() {
 		return name;
@@ -28,10 +30,10 @@ public class TediRegistry {
 	public void setDocument(String document) {
 		this.document = document;
 	}
-	public String getAddress() {
+	public TediAddress getAddress() {
 		return address;
 	}
-	public void setAddress(String address) {
+	public void setAddress(TediAddress address) {
 		this.address = address;
 	}
 }

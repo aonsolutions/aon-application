@@ -6,7 +6,14 @@ public class TediTax {
 	public TediTax() {}
 	
 	public TediTax(JSONObject json) {
-		
+		if(json != null) {
+			this.percentage = json.optDouble("percentage");
+			this.quota = json.optDouble("quota");
+			this.base = json.optDouble("base");
+			this.taxType = json.optString("tax_type");
+			this.surcharge = json.optDouble("surcharge");
+			this.surchargeQuota = json.optDouble("surcharge_quota");
+		}
 	}
 	
 	private String taxType;
