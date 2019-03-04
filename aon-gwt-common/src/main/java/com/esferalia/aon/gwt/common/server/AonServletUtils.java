@@ -3,6 +3,8 @@ package com.esferalia.aon.gwt.common.server;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.faces.FactoryFinder;
 import javax.faces.component.UIViewRoot;
@@ -116,6 +118,22 @@ public class AonServletUtils {
 		} catch (Exception e) {
 			throw new SQLException(e.getMessage(), e);
 		} finally {
+		}
+	}
+
+	public static String getDomainName(String domain) throws SQLException {
+		return getDomainName(Integer.parseInt(domain));
+	}
+
+	public static String getDomainName(Integer domain) throws SQLException {
+		try {
+			Map<String, Integer> map = ConnectionInfo.getDefaultConnectionInfo().getDomainMap();
+			for ( Entry<String, Integer> entry: map.entrySet() )
+				if ( entry.getValue().equals(domain) ) 
+					return entry.getKey();
+			throw new SQLException();
+		} catch (AonConnectionException e) {
+			throw new SQLException(e.getMessage(), e);
 		}
 	}
 

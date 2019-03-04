@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.server;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.sql.SQLException;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.enumeration.MimeType;
-import net.aonsolutions.core.pool.AonConnectionException;
 import com.code.aon.report.ReportException;
 import com.code.aon.report.poi.ExcelReportExporter;
 import com.code.aon.report.poi.ReportColumnMetadata;
@@ -28,6 +28,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.jooq.JooqActivitySummary;
 import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryObject;
+
+import net.aonsolutions.core.pool.AonConnectionException;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "ActivitySummaryExporter", urlPatterns = { "/aon_gwt_payroll/download_activitySummary/*" })
@@ -67,20 +69,23 @@ public class ActivitySummaryExporterServlet extends HttpServlet {
 			endDate = new Date(Long.parseLong(_endDate));
 		}
 
-		String domainName = AonServletUtils.getRequestDomainName(request);
-		boolean isParentDomain = !NumberUtils.isNumber(_parentDomainId);
-
-		List<ActivitySummaryObject> list = JooqActivitySummary
-				.getActivitySummary(domainName, isParentDomain, NumberUtils
-						.toInt(_domainId), startDate, endDate, new Boolean(
-						_starts), new Boolean(_ends), new Boolean(_salary),
-						new Boolean(_salaryExtra), new Boolean(_salarySettle),
-						new Boolean(_salaryOther),
-						new Boolean(_itCommonDisease), new Boolean(
-								_itOccupationalDisease), new Boolean(
-								_itMaternity), new Boolean(_itOther));
+		
 
 		try {
+			String domainName = AonServletUtils.getDomainName(_domainId);
+			
+			boolean isParentDomain = !NumberUtils.isNumber(_parentDomainId);
+
+			List<ActivitySummaryObject> list = JooqActivitySummary
+					.getActivitySummary(domainName, isParentDomain, NumberUtils
+							.toInt(_domainId), startDate, endDate, new Boolean(
+							_starts), new Boolean(_ends), new Boolean(_salary),
+							new Boolean(_salaryExtra), new Boolean(_salarySettle),
+							new Boolean(_salaryOther),
+							new Boolean(_itCommonDisease), new Boolean(
+									_itOccupationalDisease), new Boolean(
+									_itMaternity), new Boolean(_itOther));
+
 			String fileName = "resumen_actividad";
 			dateFormatter.applyPattern("yyyy/MM/dd");
 			response.setContentType(MimeType.MIME_MS_EXCEL_2007.getName());
@@ -93,6 +98,8 @@ public class ActivitySummaryExporterServlet extends HttpServlet {
 			}
 
 			response.flushBuffer();
+		} catch (SQLException e) {
+			throw new AbortProcessingException(e.getMessage(), e);
 		} catch (ReportException e) {
 			throw new AbortProcessingException(e.getMessage(), e);
 		} catch (IOException e) {
