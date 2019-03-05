@@ -284,8 +284,16 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("totalPaymentsLabel", 1666.00);
 		
 		wait4Id("description-box-new-payment");
-		setValue("description-box-new-payment", "[2] PLU3");
-		setValue("amount-box-new-payment", "100.00 * DIAS_TRABAJADOS / DIAS_MES");
+		HtmlInput input = getElementById("description-box-new-payment");
+		input.focus();
+		input.setValueAttribute("[2] PLU3");
+		input.blur();
+		//setValue("description-box-new-payment", "[2] PLU3");
+		input = getElementById("amount-box-new-payment");
+		input.focus();
+		input.setValueAttribute("100.00 * DIAS_TRABAJADOS / DIAS_MES");
+		input.blur();
+		//setValue("amount-box-new-payment", "100.00 * DIAS_TRABAJADOS / DIAS_MES");
 		wait4Id("description-box-2");
 		assertValue("cgcBaseLabel", 1666.00 + 100.00);
 		assertValue("totalPaymentsLabel", 1666.00 + 100.00);
