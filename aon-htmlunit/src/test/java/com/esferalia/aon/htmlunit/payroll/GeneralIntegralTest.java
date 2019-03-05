@@ -1,7 +1,9 @@
 package com.esferalia.aon.htmlunit.payroll;
 
+import static com.esferalia.aon.htmlunit.HtmlUnitIT.GWT_DEBUG_ID_PREFIX;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_PASSWORD;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_USER;
+import static com.esferalia.aon.htmlunit.HtmlUnitIT.LOGGER;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -284,6 +286,10 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("totalPaymentsLabel", 1666.00);
 		
 		wait4Id("description-box-new-payment");
+		
+		DomElement el = getElementById(GWT_DEBUG_ID_PREFIX +"description-box-new-payment");
+		LOGGER.warning( "description-box-new-payment : " + el  +", " + el.asText()); 
+		
 		HtmlInput input = getElementById("description-box-new-payment");
 		input.focus();
 		input.setValueAttribute("[2] PLU3");
