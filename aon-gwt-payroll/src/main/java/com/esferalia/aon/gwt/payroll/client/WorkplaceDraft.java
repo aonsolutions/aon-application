@@ -422,7 +422,7 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 					if(null == workplaceDraftObject.getWorkplaceInfo().getActivityId()) {
 //						Window.alert("IS NULL");
 						((ListBox) workplaceActivityWidget).setSelectedIndex(1);
-						DomEvent.fireNativeEvent(Document.get().createChangeEvent(), workplaceActivityWidget);
+//						DomEvent.fireNativeEvent(Document.get().createChangeEvent(), workplaceActivityWidget);
 					}else
 						((ListBox) workplaceActivityWidget).setSelectedIndex(workplaceDraftObject.getWorkplaceActivityIndex()+1);
 				}else

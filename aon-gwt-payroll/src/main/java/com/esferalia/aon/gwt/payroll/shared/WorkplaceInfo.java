@@ -7,6 +7,7 @@ import java.util.Map;
 public class WorkplaceInfo implements Serializable {
 
 	//General Data
+	private Integer domain;
 	private String description;
 	private Map<Integer, String> addresses;
 	private Integer addressId;
@@ -32,6 +33,7 @@ public class WorkplaceInfo implements Serializable {
 	}
 	
 	public WorkplaceInfo(WorkplaceInfo workplaceInfo){
+		this.domain = workplaceInfo.getDomain();
 		this.description = workplaceInfo.getDescription();
 		this.addressId = workplaceInfo.getAddressId();
 		this.economicConcert = workplaceInfo.getEconomicConcert();
@@ -82,6 +84,14 @@ public class WorkplaceInfo implements Serializable {
 		if (!this.payrollWorkplaceId.equals(workplaceInfo_old.getPayrollWorkplaceId())) return true;
 		
 		return false; // Si no ha cambiado nada
+	}
+	
+	public Integer getDomain() {
+		return this.domain;
+	}
+	
+	public void setDomain (Integer domain) {
+		this.domain = domain;
 	}
 	
 	public String getDescription() {

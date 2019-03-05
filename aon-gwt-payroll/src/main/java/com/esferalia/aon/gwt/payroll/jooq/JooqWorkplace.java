@@ -88,10 +88,10 @@ public class JooqWorkplace {
 			if(null == r.get(RADDRESS.ADDRESS))
 				continue;
 			if(!r.get(RADDRESS.ADDRESS).isEmpty())
-				addressStr += r.get(RADDRESS.ADDRESS) + " ";
+				addressStr += r.get(RADDRESS.ADDRESS) + ", ";
 			if(null !=r.get(RADDRESS.NUMBER))
 				if(!r.get(RADDRESS.NUMBER).isEmpty())
-					addressStr += r.get(RADDRESS.NUMBER) + " ";
+					addressStr += r.get(RADDRESS.NUMBER) + ", ";
 			
 			if(null != geozoneName)
 				addressStr += geozoneName.get(0);
@@ -104,10 +104,17 @@ public class JooqWorkplace {
 				.where(PAYROLL_WORKPLACE.WORKPLACE.eq(workplaceId))
 				.fetchOne();
 		
-		Integer payrollWorkplaceId = payrollWorkplaceRecord.get(PAYROLL_WORKPLACE.ID);
-		Integer workplaceCalendar = payrollWorkplaceRecord.get(PAYROLL_WORKPLACE.CALENDAR);
-		Integer workplaceAgreement = payrollWorkplaceRecord.get(PAYROLL_WORKPLACE.AGREEMENT);
-		Integer workplaceActivity = payrollWorkplaceRecord.get(PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY);
+		Integer payrollWorkplaceId = null;
+		Integer workplaceCalendar = null;
+		Integer workplaceAgreement = null;
+		Integer workplaceActivity = null;
+		
+		if(null != payrollWorkplaceRecord) {
+			payrollWorkplaceId = payrollWorkplaceRecord.get(PAYROLL_WORKPLACE.ID);
+			workplaceCalendar = payrollWorkplaceRecord.get(PAYROLL_WORKPLACE.CALENDAR);
+			workplaceAgreement = payrollWorkplaceRecord.get(PAYROLL_WORKPLACE.AGREEMENT);
+			workplaceActivity = payrollWorkplaceRecord.get(PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY);
+		}
 		
 		Record domainRecord = dslContext.select().from(DOMAIN)
 				.where(DOMAIN.ID.eq(workplaceDomain))
@@ -152,6 +159,7 @@ public class JooqWorkplace {
 		String agreementDescription = (null == agreementRecord) ? null : agreementRecord.get(AGREEMENT.DESCRIPTION);
 		
 		//SET General Data
+		workplaceInfo.setDomain(workplaceDomain);
 		workplaceInfo.setDescription(workplaceDescription);
 		workplaceInfo.setAddresses(addresses);
 		workplaceInfo.setAddressId(workplaceAddress);
@@ -177,12 +185,22 @@ public class JooqWorkplace {
 	
 	private static WorkplaceInfo setWorkplaceInfoDB(DSLContext dslContext, WorkplaceInfo workplaceInfo) {
 		
-		dslContext.update(PAYROLL_WORKPLACE)
-			.set(PAYROLL_WORKPLACE.AGREEMENT, (null == workplaceInfo.getAgreementId() || workplaceInfo.getAgreementId() == -1) ? null : workplaceInfo.getAgreementId())
-			.set(PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY, (null == workplaceInfo.getActivityId() || workplaceInfo.getActivityId() == -1) ? null : workplaceInfo.getActivityId())
-			.set(PAYROLL_WORKPLACE.CALENDAR, (null == workplaceInfo.getCalendarId()) ? null : workplaceInfo.getCalendarId())
-			.where(PAYROLL_WORKPLACE.ID.eq(workplaceInfo.getPayrollWorkplaceId()))
-			.execute();
+		if(null == workplaceInfo.getPayrollWorkplaceId())
+			dslContext.insertInto(PAYROLL_WORKPLACE)
+				.set(PAYROLL_WORKPLACE.DOMAIN, workplaceInfo.getDomain())
+				.set(PAYROLL_WORKPLACE.WORKPLACE, workplaceInfo.getWorkplaceId())
+				.set(PAYROLL_WORKPLACE.AGREEMENT, (null == workplaceInfo.getAgreementId() || workplaceInfo.getAgreementId() == -1) ? null : workplaceInfo.getAgreementId())
+				.set(PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY, (null == workplaceInfo.getActivityId() || workplaceInfo.getActivityId() == -1) ? null : workplaceInfo.getActivityId())
+				.set(PAYROLL_WORKPLACE.CALENDAR, (null == workplaceInfo.getCalendarId()) ? null : workplaceInfo.getCalendarId())
+				.execute();
+				
+		else
+			dslContext.update(PAYROLL_WORKPLACE)
+				.set(PAYROLL_WORKPLACE.AGREEMENT, (null == workplaceInfo.getAgreementId() || workplaceInfo.getAgreementId() == -1) ? null : workplaceInfo.getAgreementId())
+				.set(PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY, (null == workplaceInfo.getActivityId() || workplaceInfo.getActivityId() == -1) ? null : workplaceInfo.getActivityId())
+				.set(PAYROLL_WORKPLACE.CALENDAR, (null == workplaceInfo.getCalendarId()) ? null : workplaceInfo.getCalendarId())
+				.where(PAYROLL_WORKPLACE.ID.eq(workplaceInfo.getPayrollWorkplaceId()))
+				.execute();
 		
 		dslContext.update(WORKPLACE)
 			.set(WORKPLACE.DESCRIPTION, workplaceInfo.getDescription())
