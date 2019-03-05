@@ -119,6 +119,7 @@ public class EmployeeDialog extends CustomDialog {
 				this.ssNumberStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
 				this.ssNumberStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
 			}else {
+				employeeDialogObject.setEmployeeSocialSecurityNum(ssNum);
 				this.ssNumberStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
 				this.ssNumberStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
 			}
@@ -911,7 +912,7 @@ public class EmployeeDialog extends CustomDialog {
 
 	private boolean checkIfSaveIsPossible() {
 		//Check name, birthDate and contract startDate
-		if( "" == this.employee.name.getValue() || null == this.employee.start_date.getValue() || null == this.employee.birth_date.getValue())
+		if( "" == this.employee.name.getValue() || null == this.employee.start_date.getValue())
 			return false;
 		
 		//Check SSRegime RETA
