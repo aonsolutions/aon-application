@@ -39,7 +39,7 @@ public final class AgrarianAFIGeneration {
 			this.month = StringUtils.leftPad(actualDate.getMonth()+1+"", 2, '0');
 			this.day = StringUtils.leftPad(actualDate.getDate()+"", 2, '0');
 			this.hour = StringUtils.leftPad(actualDate.getHours()+"", 2, '0');
-			this.minute = actualDate.getMinutes()+"";
+			this.minute = StringUtils.leftPad(actualDate.getMinutes()+"", 2, '0');
 			this.fileName = (null == fileName) ? this.day + this.month + this.hour + this.minute : fileName;
 			this.sufixAFI = "AFI";
 			this.priorityCode = priorityCode;
@@ -389,7 +389,7 @@ public final class AgrarianAFIGeneration {
 			this.month = StringUtils.leftPad(actualDate.getMonth()+1+"", 2, '0');
 			this.day = StringUtils.leftPad(actualDate.getDate()+"", 2, '0');
 			this.hour = StringUtils.leftPad(actualDate.getHours()+"", 2, '0');
-			this.minute = actualDate.getMinutes()+"";
+			this.minute = StringUtils.leftPad(actualDate.getMinutes()+"", 2, '0');
 			this.fileName = (null == fileName) ? this.day + this.month + this.hour + this.minute : fileName;
 			this.sufixAFI = "AFI";
 			this.priorityCode = priorityCode;
@@ -627,7 +627,7 @@ public final class AgrarianAFIGeneration {
 				eti.getRegistryIdent() +
 				eti.getReservedTGSS() +
 				eti.getReserved1() +
-				"\n";
+				"\r\n";
 		
 		agrarianAFI +=
 				emp.getEmpHeader() +
@@ -641,7 +641,7 @@ public final class AgrarianAFIGeneration {
 				emp.getReservedCollection() +
 				emp.getAction() +
 				emp.getReserved1() +
-				"\n";
+				"\r\n";
 		
 		agrarianAFI +=
 				rzs.getRzsHeader() +
@@ -650,7 +650,7 @@ public final class AgrarianAFIGeneration {
 				rzs.getRzsName() +
 				rzs.getAuthKey() +
 				rzs.getReserved2() +
-				"\n";
+				"\r\n";
 		
 		for(EMPL empl : empls.getEmpls()) {
 			TRA tra = empl.getTra();
@@ -669,7 +669,7 @@ public final class AgrarianAFIGeneration {
 					tra.getNationality() +
 					tra.getEmployeeIndic() +
 					tra.getReserved5() +
-					"\n";
+					"\r\n";
 			
 			agrarianAFI +=
 					ayn.getAynHeader() +
@@ -677,11 +677,11 @@ public final class AgrarianAFIGeneration {
 					ayn.getSecondSurname() +
 					ayn.getName() +
 					ayn.getReserved12() +
-					"\n";
+					"\r\n";
 			
 			agrarianAFI +=
 					fab +
-					"\n";
+					"\r\n";
 			
 			agrarianAFI +=
 					dra.getDraHeader() +
@@ -694,7 +694,7 @@ public final class AgrarianAFIGeneration {
 					dra.cosolidateDate +
 					dra.newDate +
 					dra.reserved14 +
-					"\n";
+					"\r\n";
 		}
 		
 		agrarianAFI +=
@@ -714,7 +714,8 @@ public final class AgrarianAFIGeneration {
 				etf.getTest() +
 				etf.getCountEmp() +
 				etf.countLines +
-				etf.getReserved3();
+				etf.getReserved3() +
+				"\r\n";
 		
 		return agrarianAFI;
 	}

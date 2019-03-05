@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.server;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.faces.event.AbortProcessingException;
 import javax.servlet.ServletException;
@@ -52,11 +53,16 @@ public class AgrarianAFIServlet extends HttpServlet {
 		String domainName = AonServletUtils.getRequestDomainName(request);
 		
 		try {
-			String fileName = "agrarianAFI";
+			Date currentDate = new Date();
+			String day = currentDate.getDate() < 10 ? "0"+currentDate.getDate() : currentDate.getDate()+"";
+			String month = (currentDate.getMonth()+1) < 10 ? "0"+(currentDate.getMonth()+1) : (currentDate.getMonth()+1)+"";
+			String hour = currentDate.getHours() < 10 ? "0"+currentDate.getHours() : currentDate.getHours()+"";
+			String minutes = currentDate.getMinutes() < 10 ? "0"+currentDate.getMinutes() : currentDate.getMinutes()+"";
+			String fileName = day + month + hour + minutes;
 			dateFormatter.applyPattern("yyyy/MM/dd");
-			response.setContentType(MimeType.MIME_RTF.getName());
+			response.setContentType("text/html;charset=utf-8"/*MimeType.MIME_RTF.getName()*/);
 			response.setHeader("Content-disposition", "attachment; filename=\""
-					+ fileName + ".afi\"");
+					+ fileName + ".AFI\"");
 			ServletOutputStream output = response.getOutputStream();
 			
 			if(0 == numEmployee)

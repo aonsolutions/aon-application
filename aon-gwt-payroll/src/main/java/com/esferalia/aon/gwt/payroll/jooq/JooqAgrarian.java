@@ -281,7 +281,7 @@ public class JooqAgrarian {
 		json.put("year", (startDate.getYear()+1900)+"");
 		json.put("month", (startDate.getMonth()+1)+"");
 		
-		Integer numDays = endDate.getDate();
+		Integer numDays = 31;
 		JSONArray days = new JSONArray();
 		
 		for(int i = 0; i < numDays; i++) {
