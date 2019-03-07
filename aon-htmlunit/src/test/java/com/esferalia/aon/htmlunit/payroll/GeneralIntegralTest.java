@@ -278,7 +278,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Id("draft_completo,_vacio");
 
 		draft("DRAFT COMPLETO, VACIO");
-		calculate(Calendar.DECEMBER);
+		calculate(Calendar.APRIL);
 		setValue("description-box-new-payment", "[1] S4L4R10 B4S3");
 		setValue("amount-box-new-payment", "1666.00 * DIAS_TRABAJADOS / DIAS_MES");
 		wait4Id("description-box-1");
@@ -287,7 +287,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 		wait4Id("description-box-new-payment");
 		
-		DomElement el = getElementById(GWT_DEBUG_ID_PREFIX +"description-box-new-payment");
+		DomElement el = getElementById("description-box-new-payment");
 		LOGGER.warning( "description-box-new-payment : " + el  +", " + el.asText()); 
 		
 		HtmlInput input = getElementById("description-box-new-payment");
