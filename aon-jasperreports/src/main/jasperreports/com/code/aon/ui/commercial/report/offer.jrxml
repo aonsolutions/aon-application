@@ -930,7 +930,7 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 									<bottomPen lineWidth="0.0" lineColor="#CCCCCC"/>
 								</box>
 								<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-									<reportElement key="textField-5" x="0" y="0" width="321" height="12" uuid="6147cfc8-764f-489a-9904-be764995c8dc"/>
+									<reportElement key="textField-5" x="0" y="0" width="321" height="12" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" uuid="6147cfc8-764f-489a-9904-be764995c8dc"/>
 									<box leftPadding="5">
 										<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 										<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
