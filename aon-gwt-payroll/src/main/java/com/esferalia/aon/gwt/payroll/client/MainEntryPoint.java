@@ -113,7 +113,12 @@ public class MainEntryPoint implements EntryPoint {
 				.equalsIgnoreCase(Constants.MAIN_AFI_ENTRY_POINT)) {
 			AgrarianAFI agrarianAFI = new AgrarianAFI();
 			agrarianAFI.onModuleLoad();
-		} else if (entryPoint
+		} 
+//		else if (entryPoint
+//				.equalsIgnoreCase(Constants.MAIN_CRA_ENTRY_POINT)) {
+//			Window.alert(Constants.MAIN_CRA_ENTRY_POINT);
+//		} 
+		else if (entryPoint
 				.equalsIgnoreCase(Constants.ACTIVITY_SUMMARY_ENTRY_POINT)) {
 			ActivitySummary activitySummary = new ActivitySummary();
 			activitySummary.onModuleLoad();

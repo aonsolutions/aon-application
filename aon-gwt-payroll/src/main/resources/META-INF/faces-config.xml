@@ -100,6 +100,16 @@
 			<to-view-id>/com/esferalia/aon/gwt/payroll/facelet/main/afi.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	
+	<!-- ====================== Main CRA  ============================= -->
+	<!--
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_main_cra</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/payroll/facelet/main/cra.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	-->
 
 </faces-config>
 		
