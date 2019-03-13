@@ -153,32 +153,30 @@
 							</aon:div>
 						</aon:panelGrid>
 
-						<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
-							<aon:panelGrid id="group_fixed_assets" styleClass="aon-width-all"
-								columnClasses="aon-padding"
-								headerClass="aon-icon-fixed-asset aon-direct-access-panel">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.menu_fixed_assets}" />
-								</f:facet>
-								<aon:div styleClass="aon-direct-access-list">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="amortization" action="amortization_list"
-											value="#{bundle.accounting_amortization_form_module}" />
-									</aon:div>
-									<aon:if test="#{aonRole.config}">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="amortizationType"
-												action="amortizationType_list"
-												value="#{bundle.accounting_amortization_type_module}" />
-										</aon:div>
-									</aon:if>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="investAsset" action="investAsset_search"
-											value="#{bundle.accounting_invest_asset_form_module}" />
-									</aon:div>
+						<aon:panelGrid id="group_fixed_assets" styleClass="aon-width-all"
+							columnClasses="aon-padding"
+							headerClass="aon-icon-fixed-asset aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.menu_fixed_assets}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="amortization" action="amortization_list"
+										value="#{bundle.accounting_amortization_form_module}" />
 								</aon:div>
-							</aon:panelGrid>
-						</aon:if>
+								<aon:if test="#{aonRole.config}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="amortizationType"
+											action="amortizationType_list"
+											value="#{bundle.accounting_amortization_type_module}" />
+									</aon:div>
+								</aon:if>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="investAsset" action="investAsset_search"
+										value="#{bundle.accounting_invest_asset_form_module}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
 
 						<aon:panelGrid id="group_accounting_statements"
 							styleClass="aon-width-all" columnClasses="aon-padding"
@@ -323,6 +321,24 @@
 								</aon:if>
 							</aon:div>
 						</aon:panelGrid>
+						
+						<aon:panelGrid id="group_fiscal_mercantile_registry-parent"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-registradores aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.fiscal_mercantile_registry}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_deposit_text_mode"
+										action="gwt_deposit_text_mode"
+										title="#{bundle.accounting_annual_financial_statements_module}">												
+										<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.accounting_annual_financial_statements_module}" />
+									</aon:commandLink>
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+						
 					</aon:if>
 				</h:panelGrid>
 
@@ -637,3 +653,7 @@
 		</aon:form>
 	</ui:define>
 </ui:composition>
+
+
+
+
