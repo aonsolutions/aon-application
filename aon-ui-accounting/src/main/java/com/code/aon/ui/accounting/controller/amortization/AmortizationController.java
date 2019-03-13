@@ -1,15 +1,22 @@
 package com.code.aon.ui.accounting.controller.amortization;
 
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.SelectItem;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
@@ -19,18 +26,26 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.AonVersion;
 import com.code.aon.account.Account;
 import com.code.aon.accounting.Amortization;
+import com.code.aon.accounting.AmortizationDetail;
 import com.code.aon.accounting.AmortizationInvoice;
 import com.code.aon.accounting.amortization.AmortizationManager;
+import com.code.aon.accounting.enumeration.AmortizationPeriod;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.report.ReportException;
+import com.code.aon.report.poi.ExcelReportExporter;
+import com.code.aon.report.poi.IReportExporter;
+import com.code.aon.report.poi.ReportColumnMetadata;
+import com.code.aon.report.poi.ReportMetadata;
 import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
@@ -476,4 +491,129 @@ public class AmortizationController extends BasicController {
 		return isNevv()?companyCollections.getActiveCompanyInvestAssets():companyCollections.getCompanyInvestAssets();
 	}
 	
+	public String onExcelReport() {
+		try {
+			FacesContext context = FacesContext.getCurrentInstance();
+			Locale locale = AonUtil.getCurrentLocale();
+			HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+			String fileName = "Fichas";
+			response.setContentType(MimeType.MIME_MS_EXCEL_2007.getName());
+			response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".xls\";");
+			ServletOutputStream out = response.getOutputStream();
+			IManagerBean detailBean = BeanManager.getManagerBean(AmortizationDetail.class);
+
+			ExcelReportExporter exporter = new ExcelReportExporter();
+			exporter.startExport(IReportExporter.DEFAULT_NAME);
+			ReportMetadata metadata = getMetadata();
+			exporter.exportHeader(metadata);
+
+			List<ITransferObject> list = getManagerBean().getList(getCriteria());
+			for (ITransferObject to : list) {
+				Amortization am = (Amortization) to;
+				exporter.startLine();
+				int i = 0;
+				exporter.exportColumn(metadata.getColumns().get((i++)), am.getId() );
+				exporter.exportColumn(metadata.getColumns().get((i++)), am.getDescription() );
+				exporter.exportColumn(metadata.getColumns().get((i++)), am.isConfidential()?"SI":"NO");
+				exporter.exportColumn(metadata.getColumns().get((i++)), am.getInitialDate());
+				exporter.exportColumn(metadata.getColumns().get((i++)), am.getAmount());
+				exporter.exportColumn(metadata.getColumns().get((i++)), am.getDeadline());
+				exporter.exportColumn(metadata.getColumns().get((i++)), am.getSaleAmount());
+				exporter.exportColumn(metadata.getColumns().get((i++)), am.getFeePeriod().getName(locale));
+				exporter.exportColumn(metadata.getColumns().get((i++)), am.getPercentage());
+				exporter.exportColumn(metadata.getColumns().get((i++)), am.getFixedAssetAccount().getFullDescription());
+				exporter.exportColumn(metadata.getColumns().get((i++)), am.getAccumulatedAccount().getFullDescription());
+				exporter.exportColumn(metadata.getColumns().get((i++)), am.getAllocationAccount().getFullDescription());
+				
+				Criteria detailCriteria = new Criteria();
+				detailCriteria.addEqualExpression(detailBean.getFieldName(IEntityAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID), am.getId());
+				List<ITransferObject> details = detailBean.getList(detailCriteria);
+				boolean first = true;
+				for (ITransferObject td : details) {
+					AmortizationDetail det = (AmortizationDetail) td;
+					int x = i;
+					if (!first) {
+						exporter.startLine();
+						exporter.addCell();
+						exporter.addCell();
+						exporter.addCell();
+						exporter.addCell();
+						exporter.addCell();
+						exporter.addCell();
+						exporter.addCell();
+						exporter.addCell();
+						exporter.addCell();
+						exporter.addCell();
+						exporter.addCell();
+						exporter.addCell();
+						
+					}
+					first = false;
+					exporter.exportColumn(metadata.getColumns().get((x++)), det.getFromDate());
+					exporter.exportColumn(metadata.getColumns().get((x++)), det.getToDate());
+					exporter.exportColumn(metadata.getColumns().get((x++)), det.getCoefficient());
+					exporter.exportColumn(metadata.getColumns().get((x++)), det.getAllocation());
+					exporter.exportColumn(metadata.getColumns().get((x++)), det.getAccumulated());
+					exporter.exportColumn(metadata.getColumns().get((x++)), det.getPending());
+					exporter.exportColumn(metadata.getColumns().get((x++)), det.getFiscalAllocation());
+					exporter.exportColumn(metadata.getColumns().get((x++)), det.getFiscalAccumulated());
+					exporter.exportColumn(metadata.getColumns().get((x++)), det.getFiscalPending());
+					exporter.exportColumn(metadata.getColumns().get((x++)), det.getStatus().getName(locale));
+					exporter.endLine();
+				}
+			}
+			exporter.endExport(out);
+			out.flush();
+			response.flushBuffer();
+			context.responseComplete();
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage(), e);
+			e.printStackTrace();
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+			e.printStackTrace();
+		} catch (ReportException e) {
+			LOGGER.error(e.getMessage(), e);
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	private static final ReportColumnMetadata[] COLUMN_LABELS = new ReportColumnMetadata[] {
+			new ReportColumnMetadata("ID", Types.INTEGER, "Id", 10),
+			new ReportColumnMetadata("NAME", Types.VARCHAR, "Descripción.", 50),
+			new ReportColumnMetadata("CONFIDENTIAL", Types.VARCHAR, "Confidencial.", 5),
+			new ReportColumnMetadata("INITIAL_DATE", Types.DATE, "Fec. Inicial.", 12),
+			new ReportColumnMetadata("AMOUNT", Types.DOUBLE, "Importe", 12),
+			new ReportColumnMetadata("DEADLINE", Types.DATE, "Fec. Venta.", 12),
+			new ReportColumnMetadata("SALE_AMOUNT", Types.DOUBLE, "Importe Venta", 12),
+			new ReportColumnMetadata("PERIOD", Types.VARCHAR, "Periodo.", 10),
+			new ReportColumnMetadata("PERCENTAGE", Types.DOUBLE, "Porcent.", 10),
+			new ReportColumnMetadata("FIXED_ASSET_ACCCOUNT", Types.VARCHAR, "Cuenta Inmovilizado.", 50),
+			new ReportColumnMetadata("ACCOUMULATED_ACCCOUNT", Types.VARCHAR, "Cuenta Acumulado.", 50),
+			new ReportColumnMetadata("ALLOCATION_ACCCOUNT", Types.VARCHAR, "Cuenta Dotación.", 50),
+			
+			new ReportColumnMetadata("FROM_DATE", Types.DATE, "Desde Fec.", 12),
+			new ReportColumnMetadata("TO_DATE", Types.DATE, "Hasta Fec.", 12),
+			new ReportColumnMetadata("COEFFICIENT", Types.DOUBLE, "Coefici.", 10),
+			
+			new ReportColumnMetadata("ALLOCATION", Types.DOUBLE, "Dotación", 12),
+			new ReportColumnMetadata("ACCUMULATED", Types.DOUBLE, "Acumulado", 12),
+			new ReportColumnMetadata("PENDING", Types.DOUBLE, "Pendiente", 12),
+			
+			new ReportColumnMetadata("FISCAL_ALLOCATION", Types.DOUBLE, "Dotación Fiscal.", 12),
+			new ReportColumnMetadata("FISCAL_ACCUMULATED", Types.DOUBLE, "Acumulado Fiscal", 12),
+			new ReportColumnMetadata("FISCAL_PENDING", Types.DOUBLE, "Pendiente Fiscal", 12),
+			new ReportColumnMetadata("STATUS", Types.VARCHAR, "Estado.", 12),
+	};
+	
+	private ReportMetadata getMetadata() throws ReportException {
+
+		ReportMetadata metadata = new ReportMetadata();
+		for (ReportColumnMetadata rcm : COLUMN_LABELS) {
+			metadata.getColumns().add(rcm);
+		}
+		return metadata;
+	}
+
 }
