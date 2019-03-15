@@ -37,6 +37,8 @@ import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.jooq.tables.Rattach;
+import com.esferalia.aon.jooq.tables.RdirStaff;
+import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.jooq.tables.User;
 import com.esferalia.aon.jooq.tables.records.RattachRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -392,20 +394,62 @@ public class ReportUtils {
 	public static List<RegistryDirStaff> getRepresentativesLabor(Integer registryId) 
 	
 			throws ManagerBeanException {
-		IManagerBean beanManager = BeanManager
-				.getManagerBean(RegistryDirStaff.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(beanManager
-				.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_REGISTRY_ID),
-				registryId);
-		criteria.addEqualExpression(
-				beanManager
-						.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_REPRESENTATIVE_LABOR),
-				Boolean.TRUE);
-		List<?> list = beanManager.getList(criteria);
+		Connection conn = null;
+		try {
+			conn = AonDataSource.getInstance().getConnection(domain.get());
+			AONContext aonContext = new AONContext(conn);
+			DSLContext dslContext = aonContext.getDslContext();
+			
+			List<RegistryDirStaff> registryDirStaffs = 
+			dslContext
+			.select()
+			.from(RdirStaff.RDIR_STAFF)
+			.innerJoin(Registry.REGISTRY)
+			.onKey()
+			.where(RdirStaff.RDIR_STAFF.REGISTRY.eq(registryId))
+			.and(RdirStaff.RDIR_STAFF.REPRESENTATIVE_LABOR.eq((byte)1))
+			.fetch(( record ) -> {
+				RegistryDirStaff registryDirStaff = new RegistryDirStaff();
 
-		return (List<RegistryDirStaff>) list ;
+				registryDirStaff.setId(record.get(RdirStaff.RDIR_STAFF.ID));
+				registryDirStaff.setDomain(record.get(RdirStaff.RDIR_STAFF.DOMAIN));
+				registryDirStaff.setName(record.get(RdirStaff.RDIR_STAFF.NAME));
+				registryDirStaff.setDocument(record.get(RdirStaff.RDIR_STAFF.DOCUMENT));
+				registryDirStaff.setDirector(record.get(RdirStaff.RDIR_STAFF.DIRECTOR) == (byte)1);
+				registryDirStaff.setChargeDescription(record.get(RdirStaff.RDIR_STAFF.CHARGE_DESCRIPTION));
+				registryDirStaff.setDueDate(record.get(RdirStaff.RDIR_STAFF.DUE_DATE));
+				registryDirStaff.setNominalValue(record.get(RdirStaff.RDIR_STAFF.NOMINAL_VALUE));
+				registryDirStaff.setPercentShare(record.get(RdirStaff.RDIR_STAFF.PERCENT_SHARE));
+				registryDirStaff.setRepresentative(record.get(RdirStaff.RDIR_STAFF.REPRESENTATIVE) == (byte)1);
+				registryDirStaff.setRepresentativeLabor(record.get(RdirStaff.RDIR_STAFF.REPRESENTATIVE_LABOR) == (byte)1);
+				registryDirStaff.setShareNumber(record.get(RdirStaff.RDIR_STAFF.SHARE_NUMBER));
+				registryDirStaff.setShareHolder(record.get(RdirStaff.RDIR_STAFF.SHAREHOLDER) == (byte)1);
+				
+				com.code.aon.registry.Registry registry = new com.code.aon.registry.Registry();
+				registry.setId(record.get(Registry.REGISTRY.ID));
+				registry.setDomain(record.get(Registry.REGISTRY.DOMAIN));
+				registry.setName(record.get(Registry.REGISTRY.NAME));
+				registry.setDocument(record.get(Registry.REGISTRY.DOCUMENT));
+				//registry.setDocumentCountry(record.get(Registry.REGISTRY.DOCUMENT_COUNTRY));
+				registryDirStaff.setRegistry(registry);
 
+				return registryDirStaff;
+			})
+			;
+			
+			return registryDirStaffs;
+			
+		} catch (AonConnectionException e) {
+			throw new ManagerBeanException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+		}
+		
 	}
 
 	
