@@ -9,6 +9,10 @@ import static net.aonsolutions.db.up2date.tgss.Bases2019Update.BASES2019UPDATE;
 import static net.aonsolutions.db.up2date.tgss.Bases2019UpdateII.BASES2019UPDATEII;
 import static net.aonsolutions.db.up2date.tgss.CRA0035Update.CRA0035UPDATE;
 import static net.aonsolutions.db.up2date.tgss.ITIMS2019Insert.ITIMS2019INSERT;
+import static net.aonsolutions.db.up2date.tgss.NoticeDaysUpdate.NOTICEDAYSUPDATE;
+import static net.aonsolutions.db.up2date.tgss.HomePercentage2019Update.HOMEPERCENTAGE2019UPDATE;
+import static net.aonsolutions.db.up2date.tgss.FellowsBases2019Update.FELLOWSBASES2019UPDATE;
+import static net.aonsolutions.db.up2date.tgss.TrainningBases2019Update.TRAINNINGBASES2019UPDATE;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -70,11 +74,13 @@ public class Up2Date {
     		//BASES2019UPDATE
     		//BASES2019UPDATEII,
     		//FUNDUPV_UPDATE_2019
-    		DEFAULTAGREEMENTINSERT,
-    		CRA0035UPDATE,
-    		ITIMS2019INSERT
-    		
-
+    		//DEFAULTAGREEMENTINSERT,
+    		//CRA0035UPDATE,
+    		//ITIMS2019INSERT,
+        NOTICEDAYSUPDATE,
+        HOMEPERCENTAGE2019UPDATE,
+        FELLOWSBASES2019UPDATE,
+        TRAINNINGBASES2019UPDATE
     };
 
 
