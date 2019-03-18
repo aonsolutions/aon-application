@@ -15,7 +15,7 @@ public class Mod111WriterAEAT2019 implements IMod111Writer{
 
 	private static enum Mod111File {
 		
-		AEAT_2016 ( mod111 -> true ,new IPropertyFiller[] { 
+		AEAT_2019 ( mod111 -> true ,new IPropertyFiller[] { 
 				(wr, mod) -> wr.append("<T")
 			   ,(wr, mod) -> wr.append("111")
 			   ,(wr, mod) -> wr.append("0")
