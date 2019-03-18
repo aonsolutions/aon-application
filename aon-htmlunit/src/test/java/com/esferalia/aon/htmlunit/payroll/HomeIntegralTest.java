@@ -99,13 +99,13 @@ public class HomeIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.JANUARY, 2019);
 		assertValue("cgpBaseLabel", 206.00);
 		assertValue("cgcBaseLabel", 206.00);
-		assertText("common_contingency", 206.00*4.55/100.00);
+		assertText("common_contingency", 206.00*4.70/100.00);
 
 		draft("TRAMO, 2");
 		calculate(Calendar.JANUARY, 2019);
 		assertValue("cgpBaseLabel", 340.00);
 		assertValue("cgcBaseLabel", 340.00);
-		assertText("common_contingency", 340.00*4.55/100.00);
+		assertText("common_contingency", 340.00*4.70/100.00);
 
 		draft("TRAMO, 3");
 		calculate(Calendar.JANUARY, 2019);
@@ -116,7 +116,7 @@ public class HomeIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.JANUARY, 2019);
 		assertValue("cgpBaseLabel", 474.00);
 		assertValue("cgcBaseLabel", 474.00);
-		assertText("common_contingency", 474.00*4.55/100.00);
+		assertText("common_contingency", 474.00*4.70/100.00);
 
 		draft("TRAMO, 4");
 		calculate(Calendar.JANUARY, 2019);
