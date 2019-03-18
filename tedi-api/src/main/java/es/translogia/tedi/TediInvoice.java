@@ -17,32 +17,38 @@ public class TediInvoice {
 	public TediInvoice(JSONObject json) {
 		this.json = json;
 		this.company = json.getString("company");
+		this.id = json.getInt("id");
+		
+		this.series = json.getString("series");
 		this.number = json.getInt("number");
-		if(json.opt("info") != null) {
-			JSONObject info = json.getJSONObject("info");
-			this.reference = info.optString("reference");
-			this.code = info.optString("code");
-			this.type = TediInvoiceType.getTediInvoiceType(info.optJSONObject("type").getString("type"));
-			this.sender = new TediRegistry(info.optJSONObject("sender"));
-			this.receiver = new TediRegistry(info.optJSONObject("receiver"));
-			this.total = info.getDouble("total");
-			this.taxableBase = info.optDouble("taxable_base");
-			this.comments = info.optString("comments");
-			this.remarks = info.optString("remarks");
-			this.taxes = info.opt("taxes") != null ? StreamSupport.stream(info.optJSONArray("taxes").spliterator(), false).map(r -> new TediTax((JSONObject) r))
-			.collect(Collectors.toCollection(LinkedList::new)): null;
-			this.details = info.opt("details") != null ? StreamSupport.stream(info.optJSONArray("details").spliterator(), false).map(r -> new TediDetail((JSONObject) r))
-			.collect(Collectors.toCollection(LinkedList::new)) : null;
-			this.finances = info.opt("finances") != null ? StreamSupport.stream(info.optJSONArray("finances").spliterator(), false).map(r -> new TediFinance((JSONObject) r))
-			.collect(Collectors.toCollection(LinkedList::new)) : null;
-			this.date = info.opt("date") != null ? TediDateUtils.parse(info.optString("date"), "dd/MM/yyyy") : null;
-			this.pgc = new TediPGC(info.optJSONObject("type").optJSONObject("pgc"));
-		}
+		
+		this.reference = json.optString("reference");
+		this.code = json.optString("code");
+		this.type = TediInvoiceType.getTediInvoiceType(json.getString("type"));
+		this.sender = new TediRegistry(json.optJSONObject("sender"));
+		this.receiver = new TediRegistry(json.optJSONObject("receiver"));
+		this.source = json.optString("source");
+		this.status = json.optString("status");
+		this.total = json.getDouble("total");
+		this.comments = json.optString("comments");
+		this.taxes = json.opt("taxes") != null ? StreamSupport.stream(json.optJSONArray("taxes").spliterator(), false).map(r -> new TediTax((JSONObject) r))
+				.collect(Collectors.toCollection(LinkedList::new)): null;
+		this.details = json.opt("details") != null ? StreamSupport.stream(json.optJSONArray("details").spliterator(), false).map(r -> new TediDetail((JSONObject) r))
+				.collect(Collectors.toCollection(LinkedList::new)) : null;
+		this.finances = json.opt("finances") != null ? StreamSupport.stream(json.optJSONArray("finances").spliterator(), false).map(r -> new TediFinance((JSONObject) r))
+		.collect(Collectors.toCollection(LinkedList::new)) : null;
+		this.date = json.opt("date") != null ? TediDateUtils.parse(json.optString("date"), "dd/MM/yyyy") : null;
+		this.category = json.optString("category");
+		this.transaction = TediTransaction.getTediInvoiceType(json.getString("transaction"));
+		this.investment = json.optBoolean("investment");
 	}
 	
 	private JSONObject json;
 	
 	private String company;
+	private Integer id;
+	
+	private String series;
 	private Integer number;
 	
 	private TediRegistry sender;
@@ -53,23 +59,19 @@ public class TediInvoice {
 	private String status;
 	private String source;
 	private Date date;
-	private Double taxableBase;
 	private Double total;
 	private TediInvoiceType type;
 	private LinkedList<TediTax> taxes;
 	private LinkedList<TediDetail> details;
 	private LinkedList<TediFinance> finances;
 	private String comments;
-	private String remarks;
-	private TediPGC pgc;
+	private String category;
+	private TediFile file;
 	
 	private HashMap<String, Object> properties;
 	
-	private String transaction;
+	private TediTransaction transaction;
 	private Boolean investment;
-	private Boolean service;
-	private Boolean surcharge;
-	private Boolean vatAccrualRegime;
     
 	public String getCompany() {
 		return company;
@@ -78,6 +80,23 @@ public class TediInvoice {
 	public TediInvoice setCompany(String company) {
 		this.company = company;
 		return this;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public TediInvoice setId(Integer id) {
+		this.id = id;
+		return this;
+	}
+	
+	public String getSeries() {
+		return series;
+	}
+
+	public void setSeries(String series) {
+		this.series = series;
 	}
 
 	public Integer getNumber() {
@@ -134,15 +153,6 @@ public class TediInvoice {
 		return this;
 	}
 
-	public Double getTaxableBase() {
-		return taxableBase;
-	}
-
-	public TediInvoice setTaxableBase(Double taxableBase) {
-		this.taxableBase = taxableBase;
-		return this;
-	}
-
 	public Double getTotal() {
 		return total;
 	}
@@ -188,15 +198,6 @@ public class TediInvoice {
 		return this;
 	}
 
-	public String getRemarks() {
-		return remarks;
-	}
-
-	public TediInvoice setRemarks(String remarks) {
-		this.remarks = remarks;
-		return this;
-	}
-
 	public LinkedList<TediFinance> getFinances() {
 		return finances;
 	}
@@ -207,20 +208,20 @@ public class TediInvoice {
 	}
 
 	
-	public TediPGC getPgc() {
-		return pgc;
+	public String getCategory() {
+		return category;
 	}
 
-	public TediInvoice setPgc(TediPGC pgc) {
-		this.pgc = pgc;
+	public TediInvoice setCategory(String category) {
+		this.category = category;
 		return this;
 	}
 	
-	public String getTransaction() {
+	public TediTransaction getTransaction() {
 		return transaction;
 	}
 
-	public TediInvoice setTransaction(String transaction) {
+	public TediInvoice setTransaction(TediTransaction transaction) {
 		this.transaction = transaction;
 		return this;
 	}
@@ -252,33 +253,14 @@ public class TediInvoice {
 		return this;
 	}
 
-	public Boolean getService() {
-		return service;
+	public TediFile getFile() {
+		return file;
 	}
 
-	public TediInvoice setService(Boolean service) {
-		this.service = service;
-		return this;
+	public void setFile(TediFile file) {
+		this.file = file;
 	}
-
-	public Boolean getSurcharge() {
-		return surcharge;
-	}
-
-	public TediInvoice setSurcharge(Boolean surcharge) {
-		this.surcharge = surcharge;
-		return this;
-	}
-
-	public Boolean getVatAccrualRegime() {
-		return vatAccrualRegime;
-	}
-
-	public TediInvoice setVatAccrualRegime(Boolean vatAccrualRegime) {
-		this.vatAccrualRegime = vatAccrualRegime;
-		return this;
-	}
-
+	
 	public HashMap<String, Object> getProperties() {
 		if(properties == null) properties = new HashMap<>();
 		return properties;

@@ -7,27 +7,27 @@ public class TediTax {
 	
 	public TediTax(JSONObject json) {
 		if(json != null) {
+			this.tax = json.optString("tax");
 			this.percentage = json.optDouble("percentage");
 			this.quota = json.optDouble("quota");
-			this.base = json.optDouble("base");
-			this.taxType = json.optString("tax_type");
+			this.base = json.optDouble("base");	
 			this.surcharge = json.optDouble("surcharge");
 			this.surchargeQuota = json.optDouble("surcharge_quota");
 		}
 	}
 	
-	private String taxType;
+	private String tax;
 	private Double base;
 	private Double percentage;
 	private Double quota;
 	private Double surcharge;
 	private Double surchargeQuota;
 	
-	public String getTaxType() {
-		return taxType;
+	public String getTax() {
+		return tax;
 	}
-	public TediTax setTaxType(String taxType) {
-		this.taxType = taxType;
+	public TediTax setTaxType(String tax) {
+		this.tax = tax;
 		return this;
 	}
 	public Double getBase() {

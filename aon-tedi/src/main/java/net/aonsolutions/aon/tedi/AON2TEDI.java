@@ -35,6 +35,7 @@ import es.translogia.tedi.TediFinance;
 import es.translogia.tedi.TediInvoice;
 import es.translogia.tedi.TediRegistry;
 import es.translogia.tedi.TediTax;
+import es.translogia.tedi.TediTransaction;
 import es.translogia.tedi.TediUtils;
 
 @SuppressWarnings("serial")
@@ -75,14 +76,9 @@ public class AON2TEDI extends HttpServlet{
 				.setSource("aon")
 				.setDate(invoice.getIssueDate())
 				.setComments(invoice.getComments())
-				.setRemarks(invoice.getRemarks())
-				.setTransaction(invoice.getTransaction().toString())
-				.setTaxableBase(invoice.getTaxableBase())
+				.setTransaction(TediTransaction.values()[invoice.getTransaction().value()])
 				.setTotal(invoice.getTotal())
-				.setInvestment(invoice.isInvestment())
-				.setService(invoice.isService())
-				.setSurcharge(invoice.isSurcharge())
-				.setVatAccrualRegime(invoice.isVatAccrualPayment());
+				.setInvestment(invoice.isInvestment());
 		
 		Registry registry = AON.getRegistry(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(invoice.getRegistry()));
 		RAddress raddress = AON.getRAddres(domain.getName(), domain.getId(), login, registry.getId());
@@ -92,8 +88,7 @@ public class AON2TEDI extends HttpServlet{
 		tr.setAddress(new TediAddress()
 				.setAddress(raddress.getAddress())
 				.setCity(raddress.getCity())
-				.setPostalCode(raddress.getZip())
-				.setFullAddress(raddress.getFullAddress()));
+				.setPostalCode(raddress.getZip()));
 		
 		// sender
 		if(InvoiceType.SALES.equals(invoice.getType()))
@@ -106,7 +101,7 @@ public class AON2TEDI extends HttpServlet{
 			TediDetail d = new TediDetail()
 					.setDescription(detail.getDescription())
 					.setPrice(detail.getPrice())
-					.setPurchasePrice(detail.getItem().getPurchasePrice())
+				//	.setPurchasePrice(detail.getItem().getPurchasePrice())
 					.setQuantity(detail.getQuantity());
 					//.setDiscount(detail.getDiscountExpression());
 			details.add(d);
@@ -118,9 +113,9 @@ public class AON2TEDI extends HttpServlet{
 		financeStream.forEach(finance -> {
 			TediFinance f = new TediFinance()
 					.setAmount(finance.getAmount())
-					.setBankAccount(finance.getBankAccount().getIban())
+					.setIban(finance.getBankAccount().getIban())
 					.setDueDate(finance.getDueDate())
-					.setPaymethod(getPaymethod(finance.getPayMethod()))
+					.setPayMethod(getPaymethod(finance.getPayMethod()))
 					.setStatus(finance.isPayment() ? "pagado" : "pendiente");
 			finances.add(f);
 		});

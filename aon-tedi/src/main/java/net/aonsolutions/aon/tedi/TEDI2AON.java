@@ -85,7 +85,7 @@ public class TEDI2AON extends HttpServlet{
 	
 	private void tedi2aon(Domain domain, String login, JSONObject json) {
 		TediInvoice ti = new TediInvoice(json);
-
+		TediPGC pgc = TediPGC.getValue(ti.getCategory());
 		JSONObject aon = ti.getProperty("aon");
 		Invoice invoice = new Invoice();
 		
@@ -177,7 +177,7 @@ public class TEDI2AON extends HttpServlet{
 		invoice.setStatus((byte) 0);
 		invoice.setScope(scope);
 		invoice.setComments(ti.getComments());
-		invoice.setRemarks(ti.getRemarks());
+	//	invoice.setRemarks(ti.getRemarks());
 
 		invoice.setSurcharge(false);
 		invoice.setWithholding(false);
@@ -193,7 +193,7 @@ public class TEDI2AON extends HttpServlet{
 		// invoice.setPosShift(0);
 		// invoice.setSeller(1)
 
-		invoice.setTaxableBase(ti.getTaxableBase());
+	//	invoice.setTaxableBase(ti.getTaxableBase());
 		invoice.setTotal(ti.getTotal());
 		invoice = AON.insertInvoice(domain.getName(), domain.getId(), login, invoice);
 
@@ -207,15 +207,15 @@ public class TEDI2AON extends HttpServlet{
 			id.setDomain(domain.getId());
 			id.setInvoice(new Invoice().setId(invoiceId));
 			// id.setLine(null);
-			id.setItem(getItem(domain, login, ti.getPgc(), detail.getVat()));
+			id.setItem(getItem(domain, login, pgc, detail.getVat()));
 			// id.setTaxes(1);
 			id.setWorkPlace(workPlace.getId());
 			// id.setWarehouse(warehouse);
 			id.setDescription(detail.getDescription());
 			id.setDiscountExpression(detail.getDiscount().toString());
 			id.setQuantity(detail.getQuantity());
-			id.setPrice(detail.getPurchasePrice());
-			id.setTaxableBase(detail.getPurchasePrice() * detail.getQuantity());
+			id.setPrice(detail.getPrice());
+			id.setTaxableBase(detail.getPrice() * detail.getQuantity());
 			/*
 			Double percentage = detail.getVat();
 			Double base = detail.getPrice() * detail.getQuantity();
@@ -228,18 +228,17 @@ public class TEDI2AON extends HttpServlet{
 
 			AON.insertInvoiceDetail(domain.getName(), domain.getId(), login, id);
 		});
-
 		if(ti.getDetails().size() <= 0) {
 			ti.getTaxes().stream().forEach(tax -> {
 				InvoiceDetail id = new InvoiceDetail()
 					.setDomain(domain.getId())
 					.setInvoice(new Invoice().setId(invoiceId))
-					.setItem(getItem(domain, login, ti.getPgc(), tax.getPercentage()))
+					.setItem(getItem(domain, login, pgc, tax.getPercentage()))
 					.setWorkPlace(workPlace.getId())
 					.setQuantity(1)
 					.setDiscountExpression("0.0")
 					.setPrice(tax.getBase())
-					.setDescription(ti.getPgc().getDescription())
+					.setDescription(pgc.getDescription())
 					.setTaxableBase(tax.getBase());
 				
 				AON.insertInvoiceDetail(domain.getName(), domain.getId(), login, id);
@@ -254,7 +253,7 @@ public class TEDI2AON extends HttpServlet{
 					.setDueDate(finance.getDueDate())
 					.setAmount(finance.getAmount())        
 					.setFinanceStatus(finance.getStatus().equals("pagado") ? FinanceStatus.PAID : FinanceStatus.PENDING)
-					.setBankAccount(new BankAccount(finance.getBankAccount()));
+					.setBankAccount(new BankAccount(finance.getIban()));
 			AON.insertFinance(domain.getName(), domain.getId(), login, f);
 		});
 
@@ -264,18 +263,18 @@ public class TEDI2AON extends HttpServlet{
 	private Item getItem(Domain domain, String login, TediPGC pgc, Double vat) {
 		if(pgc != null) {
 			Item item = AON.getItem(domain.getName(), domain.getId(), login, f -> 
-				f.getBarcodeProperty().eq(pgc.getAccount() + "_" + vat)
+				f.getBarcodeProperty().eq(pgc.getCategory() + "_" + vat)
 				.and(f.getDetailProperty().eq(vat.toString())));
 			if(item.getId() == null) {
 				Tax tax = AON.getTax(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()).and(f.getPercentageProperty().eq(vat)));
 				Product p = AON.getProduct(domain.getName(), domain.getId(), login, f -> 
 					f.getDomainProperty().eq(domain.getId())
-					.and(f.getCodeProperty().eq(pgc.getAccount() + "_" + tax.getPercentage())));
+					.and(f.getCodeProperty().eq(pgc.getCategory() + "_" + tax.getPercentage())));
 				if(p.getId() == null) {
 					p = new Product()
 						.setDomain(domain.getId())
 						.setName(pgc.getName())
-						.setCode(pgc.getAccount() + "_" + tax.getPercentage())
+						.setCode(pgc.getCategory() + "_" + tax.getPercentage())
 						.setKind(ProductKind.SALE_PURCHASE.value())
 						.setVat(tax.getId())
 						.setInventoriable(false)
@@ -286,7 +285,7 @@ public class TEDI2AON extends HttpServlet{
 						.setDomain(domain.getId())
 						.setProduct(p)
 						.setProductId(p.getId())
-						.setBarcode(pgc.getAccount() + "_" + vat)
+						.setBarcode(pgc.getCategory() + "_" + vat)
 						.setDescription(pgc.getDescription())
 						.setDetail(vat.toString());
 				item = AON.insertItem(domain.getName(), domain.getId(), login, item);

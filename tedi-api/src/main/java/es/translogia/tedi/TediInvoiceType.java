@@ -1,9 +1,9 @@
 package es.translogia.tedi;
 
 public enum TediInvoiceType {
-	ISSUED("emitidas"),
-	RECEIVED("recibidas"),
-	TICKET("ticket");
+	ISSUED("EMITIDA"),
+	RECEIVED("RECIBIDA"),
+	TICKET("TICKET");
 	
 	String type;
 	

@@ -9,7 +9,6 @@ public class TediAddress {
 	private String country;
 	private String province;
 	private String postalCode;
-	private String fullAddress;
 
 	public TediAddress() {
 		
@@ -22,7 +21,6 @@ public class TediAddress {
 			this.country = json.optString("country");
 			this.province = json.optString("province");
 			this.postalCode = json.optString("postal_code");
-			this.fullAddress = json.optString("full_address");
 		}
 	}
 
@@ -72,12 +70,7 @@ public class TediAddress {
 	}
 
 	public String getFullAddress() {
-		return fullAddress;
+		return getAddress() + ", " + getPostalCode() + " " + getCity() 
+			+ ", " + getProvince() + ", " + getCountry();
 	}
-
-	public TediAddress setFullAddress(String fullAddress) {
-		this.fullAddress = fullAddress;
-		return this;
-	}
-
 }

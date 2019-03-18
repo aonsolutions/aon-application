@@ -8,14 +8,14 @@ public class TediCompany {
 	
 	private String name;
 	private String document;
-	private String address;
+	private TediAddress address;
 	
 	public TediCompany() {}
 	
 	public TediCompany(JSONObject json) {
 		this.name = json.getString("name");
 		this.document = json.getString("document");
-		this.address = json.optString("address");
+		this.address = new TediAddress(json.optJSONObject("address"));
 	}
 	
 	public String getName() {
@@ -32,10 +32,10 @@ public class TediCompany {
 		this.document = document;
 		return this;
 	}
-	public String getAddress() {
+	public TediAddress getAddress() {
 		return address;
 	}
-	public TediCompany setAddress(String address) {
+	public TediCompany setAddress(TediAddress address) {
 		this.address = address;
 		return this;
 	}

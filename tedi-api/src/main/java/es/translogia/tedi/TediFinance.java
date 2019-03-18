@@ -9,25 +9,27 @@ public class TediFinance {
 
 	public TediFinance(JSONObject json) {
 		if(json != null) {
-			this.bankAccount = json.optString("bank_account");
+			this.iban = json.optString("iban");
 			this.amount = json.optDouble("amount");
 			this.dueDate = json.opt("due_date") != null ? TediDateUtils.parse(json.getString("due_date"), "dd/MM/yyyy") : null;
 			this.status = json.optString("status");
-			this.paymethod = json.optString("paymethod");
+			this.payMethod = json.optString("pay_method");
+			this.pending = json.optBoolean("pending");
 		} 
 	}
 	
-	private String bankAccount;
+	private String iban;
 	private String status;
-	private String paymethod;
+	private String payMethod;
 	private Double amount;
 	private Date dueDate;
+	private Boolean pending;
 	
-	public String getBankAccount() {
-		return bankAccount;
+	public String getIban() {
+		return iban;
 	}
-	public TediFinance setBankAccount(String bankAccount) {
-		this.bankAccount = bankAccount;
+	public TediFinance setIban(String iban) {
+		this.iban = iban;
 		return this;
 	}
 	public Double getAmount() {
@@ -54,12 +56,21 @@ public class TediFinance {
 		return this;
 	}
 
-	public String getPaymethod() {
-		return paymethod;
+	public String getPayMethod() {
+		return payMethod;
 	}
 
-	public TediFinance setPaymethod(String paymethod) {
-		this.paymethod = paymethod;
+	public TediFinance setPayMethod(String payMethod) {
+		this.payMethod = payMethod;
+		return this;
+	}
+
+	public Boolean getPending() {
+		return pending;
+	}
+
+	public TediFinance setPending(Boolean pending) {
+		this.pending = pending;
 		return this;
 	}
 		

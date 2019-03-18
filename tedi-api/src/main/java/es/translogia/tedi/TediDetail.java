@@ -9,19 +9,19 @@ public class TediDetail {
 		if(json != null) {
 			this.description = json.optString("description");
 			this.price = json.optDouble("price");
-			this.purchasePrice = json.optDouble("purchase_price");
 			this.discount = json.optDouble("discount");
 			this.quantity = json.optDouble("quantity");
 			this.vat = json.optDouble("vat");
+			this.surcharge = json.optDouble("surcharge");
 		}
 	}
 
 	private String description;
 	private Double quantity;
 	private Double price;
-	private Double purchasePrice;
 	private Double discount;
 	private Double vat;
+	private Double surcharge;
 	
 	public String getDescription() {
 		return description;
@@ -44,13 +44,14 @@ public class TediDetail {
 		this.price = price;
 		return this;
 	}
-	public Double getPurchasePrice() {
-		return purchasePrice;
+	public Double getSurcharge() {
+		return surcharge;
 	}
-	public TediDetail setPurchasePrice(Double purchasePrice) {
-		this.purchasePrice = purchasePrice;
+	public TediDetail setSurcharge(Double surcharge) {
+		this.surcharge = surcharge;
 		return this;
 	}
+	
 	public Double getDiscount() {
 		return discount;
 	}
