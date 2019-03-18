@@ -4,565 +4,57 @@ import java.io.IOException;
 import java.io.Writer;
 
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
-import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 public class Mod202Writer {
 
 	@FunctionalInterface
-	private interface IModelAccepter {
+	protected interface IModelAccepter {
 		public boolean accept(Mod202 mod202);
 	}
 	@FunctionalInterface
-	private interface IPropertyFiller {
-		public void propertyFill(Writer wr, Mod202 mod202) throws IOException;
+	protected interface IPropertyFiller {
+		public void propertyFill(Writer writer, Mod202 mod202) throws IOException;
 	}
-	
-	private enum Mod202File {
-		AEAT_2015_1 ( mod202 -> (mod202.isAEAT() && mod202.getYear() < 2016) ,new IPropertyFiller[] { 
-			 (wr,mod) -> wr.append("<T")
-			,(wr,mod) -> wr.append("202")
-			,(wr,mod) -> wr.append("01")
-			,(wr,mod) -> wr.append(">")
-			,(wr,mod) -> wr.append( AonStringUtils.SPACE )
-			,(wr,mod) -> wr.append( mod.getAeatDeclarationType() )
-			,(wr,mod) -> wr.append( AonFiscalFileUtils.document(mod.getDocument()))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.fullName(mod.getName(),mod.getSurname(),60))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.spaces(20))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.year(mod.getYear()))
-			,(wr,mod) -> {
-				if (mod.getPeriod() == Period.T1) {
-					wr.append("1P"); 
-				} else if (mod.getPeriod() == Period.T2) {
-					wr.append("2P");
-				} else if (mod.getPeriod() == Period.T3) {
-					wr.append("3P");
-				} else {
-					wr.append("  ");
-				}
-						 }
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.text(mod.getDescription(Mod202Key.P02),8))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.P01),4))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.mark(mod.getAmount(Mod202Key.X01)))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.mark(mod.getAmount(Mod202Key.X02)))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.mark(mod.getAmount(Mod202Key.X03)))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.mark(mod.getAmount(Mod202Key.X04)))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.mark(mod.getAmount(Mod202Key.X05)))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.mark(mod.getAmount(Mod202Key.X06)))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.X07),1,0))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.text(mod.getDescription(Mod202Key.X08),5))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.X09),1 ,0))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.mark(mod.getAmount(Mod202Key.X10)))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C01),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C02),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C03),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod202Key.C04),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C05),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C06),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C36),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C37),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C07),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C08),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C38),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C39),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C09),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C43),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod202Key.C13),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C44),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C14),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C45),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C46),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C16),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C17),5))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod202Key.C47),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C40),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C48),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C49),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C18),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.spaces(130))
-			,(wr,mod) -> wr.append("</T20201>")
-		})
-		,AEAT_2015_2 ( mod202 -> (mod202.isAEAT() && mod202.getYear() < 2016) ,new IPropertyFiller[] { 
-			 (writer,mod202) -> writer.append("<T")
-			,(writer,mod202) -> writer.append("202")
-			,(writer,mod202) -> writer.append("02")
-			,(writer,mod202) -> writer.append(">")
-			,(writer,mod202) -> writer.append( AonStringUtils.SPACE )
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C19),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.signedZero(mod202.getAmount(Mod202Key.C20),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C21),5))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.signedZero(mod202.getAmount(Mod202Key.C22),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.signedZero(mod202.getAmount(Mod202Key.C23),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C24),5))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.signedZero(mod202.getAmount(Mod202Key.C25),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.signedZero(mod202.getAmount(Mod202Key.C50),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C42),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C51),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C52),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C26),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C27),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C28),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C29),5))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C30),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C31),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C32),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C33),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C34),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.mark(mod202.getAmount(Mod202Key.A01)))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.text(mod202.getDescription(Mod202Key.A02),22))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.A03),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.A04),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.mark(mod202.isReplacement()))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.text(mod202.getReplacedNumber(),13))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.text(mod202.getIban(),34))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.spaces(160))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.spaces(13))
-			,(writer,mod202) -> writer.append("</T20202>")
-		})
-		,AEAT_2016_1_1 ( mod202 -> (mod202.isAEAT() && mod202.getYear() == 2016 && mod202.getPeriod() == Period.T1) ,new IPropertyFiller[] { 
-			 (writer,mod202) -> writer.append("<T")
-			,(writer,mod202) -> writer.append("202")
-			,(writer,mod202) -> writer.append("01")
-			,(writer,mod202) -> writer.append(">")
-			,(writer,mod202) -> writer.append( AonStringUtils.SPACE )
-			,(writer,mod202) -> writer.append( mod202.getAeatDeclarationType() )
-			,(writer,mod202) -> writer.append( AonFiscalFileUtils.document(mod202.getDocument()))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.fullName(mod202.getName(),mod202.getSurname(),60))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.spaces(20))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.year(mod202.getYear()))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.getMod202Period(mod202)) 
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.text(mod202.getDescription(Mod202Key.P02),8))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.P01),4))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.mark(mod202.getAmount(Mod202Key.X01)))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.mark(mod202.getAmount(Mod202Key.X02)))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.mark(mod202.getAmount(Mod202Key.X03)))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.mark(mod202.getAmount(Mod202Key.X04)))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.mark(mod202.getAmount(Mod202Key.X05)))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.mark(mod202.getAmount(Mod202Key.X06)))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.X07),1,0))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.text(mod202.getDescription(Mod202Key.X08),5))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.X09),1 ,0))
-			,(writer,mod202) -> writer.append(" ")
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C01),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C02),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C03),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.signedZero(mod202.getAmount(Mod202Key.C04),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C05),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C06),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C36),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C37),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C07),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C08),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C38),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C39),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.spaces(17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.spaces(17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.signedZero(mod202.getAmount(Mod202Key.C13),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C44),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C14),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C45),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C46),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C16),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C17),5))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.signedZero(mod202.getAmount(Mod202Key.C47),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C40),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C48),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C49),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C18),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.spaces(130))
-			,(writer,mod202) -> writer.append("</T20201>")
-		})
-		,AEAT_2016_1_2 ( mod202 -> (mod202.isAEAT() && mod202.getYear() == 2016 && mod202.getPeriod() == Period.T1) ,new IPropertyFiller[] { 
-			 (writer,mod202) -> writer.append("<T")
-			,(writer,mod202) -> writer.append("202")
-			,(writer,mod202) -> writer.append("02")
-			,(writer,mod202) -> writer.append(">")
-			,(writer,mod202) -> writer.append( AonStringUtils.SPACE )
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C19),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.signedZero(mod202.getAmount(Mod202Key.C20),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C21),5))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.signedZero(mod202.getAmount(Mod202Key.C22),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.signedZero(mod202.getAmount(Mod202Key.C23),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C24),5))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.signedZero(mod202.getAmount(Mod202Key.C25),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.signedZero(mod202.getAmount(Mod202Key.C50),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C42),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C51),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C52),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C26),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C27),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C28),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C29),5))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C30),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C31),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C32),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.spaces(17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C34),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.mark(mod202.getAmount(Mod202Key.A01)))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.text(mod202.getDescription(Mod202Key.A02),22))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.A03),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.A04),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.mark(mod202.isReplacement()))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.text(mod202.getReplacedNumber(),13))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.text(mod202.getIban(),34))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.spaces(160))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.spaces(13))
-			,(writer,mod202) -> writer.append("</T20202>")
-		})
-		,AEAT_2016_2_1 ( mod202 -> (mod202.isAEAT() && mod202.getYear() == 2016 && mod202.getPeriod() != Period.T1) ,new IPropertyFiller[] { 
-			 (writer,mod202) -> writer.append("<T")
-			,(writer,mod202) -> writer.append("202")
-			,(writer,mod202) -> writer.append("01")
-			,(writer,mod202) -> writer.append(">")
-			,(writer,mod202) -> writer.append( AonStringUtils.SPACE )
-			,(writer,mod202) -> writer.append( mod202.getAeatDeclarationType() )
-			,(writer,mod202) -> writer.append( AonFiscalFileUtils.document(mod202.getDocument()))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.fullName(mod202.getName(),mod202.getSurname(),60))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.spaces(20))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.year(mod202.getYear()))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.getMod202Period(mod202)) 
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.text(mod202.getDescription(Mod202Key.P02),8))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.text(AonStringUtils.remove(mod202.getCnae().getCode(), "."),4))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.mark(mod202.getAmount(Mod202Key.X01)))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.mark(mod202.getAmount(Mod202Key.X02)))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.mark(mod202.getAmount(Mod202Key.X03)))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.mark(mod202.getAmount(Mod202Key.X04)))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.mark(mod202.getAmount(Mod202Key.X05)))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.mark(mod202.getAmount(Mod202Key.X06)))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.X07),1,0))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.text(mod202.getDescription(Mod202Key.X08),5))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.X09),1 ,0))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.X10),1 ,0))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C01),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C02),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C03),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.signedZero(mod202.getAmount(Mod202Key.C04),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C05),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C06),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C36),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C37),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C07),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C08),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C38),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C39),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.spaces(17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.spaces(17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.signedZero(mod202.getAmount(Mod202Key.C13),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C44),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C14),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C45),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C46),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C16),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C17),5))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.signedZero(mod202.getAmount(Mod202Key.C47),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C40),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C48),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C49),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C18),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.spaces(130))
-			,(writer,mod202) -> writer.append("</T20201>")
-		})
-		,AEAT_2016_2_2 ( mod202 -> (mod202.isAEAT() && mod202.getYear() == 2016 && mod202.getPeriod() != Period.T1) ,new IPropertyFiller[] { 
-			 (writer,mod202) -> writer.append("<T")
-			,(writer,mod202) -> writer.append("202")
-			,(writer,mod202) -> writer.append("02")
-			,(writer,mod202) -> writer.append(">")
-			,(writer,mod202) -> writer.append( AonStringUtils.SPACE )
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C19),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.signedZero(mod202.getAmount(Mod202Key.C20),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C21),5))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.signedZero(mod202.getAmount(Mod202Key.C22),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.signedZero(mod202.getAmount(Mod202Key.C23),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C24),5))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.signedZero(mod202.getAmount(Mod202Key.C25),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.signedZero(mod202.getAmount(Mod202Key.C50),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C42),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C51),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C52),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C26),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C27),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C28),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C29),5))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C30),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C31),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C32),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C33),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.C34),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.mark(mod202.getAmount(Mod202Key.A01)))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.text(mod202.getDescription(Mod202Key.A02),22))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.A03),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.A04),17))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.mark(mod202.isReplacement()))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.text(mod202.getReplacedNumber(),13))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.text(mod202.getIban(),34))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.spaces(160))
-			,(writer,mod202) -> writer.append(AonFiscalFileUtils.spaces(13))
-			,(writer,mod202) -> writer.append("</T20202>")
-		})
-		,AEAT_2017_1 ( mod202 -> (mod202.isAEAT() && ( mod202.getYear() == 2017 || (mod202.getYear() == 2018 && mod202.getPeriod().ordinal() < Period.T2.ordinal()) )) ,new IPropertyFiller[] { 
-			 (wr,mod) -> wr.append("<T")
-			,(wr,mod) -> wr.append("202")
-			,(wr,mod) -> wr.append("0")
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.year(mod.getYear()))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.getMod202Period(mod))
-			,(wr,mod) -> wr.append("0000>")
-			,(wr,mod) -> wr.append("<AUX>")
-			,(wr,mod) -> wr.append(AonStringUtils.repeat(' ', 70))
-			,(wr,mod) -> wr.append(AonStringUtils.repeat(' ', 4))
-			,(wr,mod) -> wr.append(AonStringUtils.repeat(' ', 4))
-			,(wr,mod) -> wr.append(AonStringUtils.repeat(' ', 9))
-			,(wr,mod) -> wr.append(AonStringUtils.repeat(' ', 213))
-			,(wr,mod) -> wr.append("</AUX>")
-			
-			,(wr,mod) -> wr.append("<T20201000>")
-			,(wr,mod) -> wr.append( AonStringUtils.SPACE )
-			,(wr,mod) -> wr.append( mod.getAeatDeclarationType() )
-			,(wr,mod) -> wr.append( AonFiscalFileUtils.document(mod.getDocument()))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.fullName(mod.getName(),mod.getSurname(),60))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.spaces(20))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.year(mod.getYear()))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.getMod202Period(mod)) 
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.text(mod.getDescription(Mod202Key.P02),8))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.text(mod.getCnae()==null?"0000":AonStringUtils.remove(mod.getCnae().getCode(), "."),4))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.mark(mod.getAmount(Mod202Key.X01)))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.mark(mod.getAmount(Mod202Key.X02)))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.mark(mod.getAmount(Mod202Key.X04)))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.mark(mod.getAmount(Mod202Key.X12)))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.mark(mod.getAmount(Mod202Key.X06)))
-			,(wr,mod) -> wr.append(Mod202Writer.getAEAT20171X13X14(mod) )
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.text(mod.getDescription(Mod202Key.X08),5))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.X09),1 ,0))
-			,(wr,mod) -> wr.append(mod.getAmount(Mod202Key.X11) > 0?'X':' ')
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C01),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C02),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C03),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod202Key.C04),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C05),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C06),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C37),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C07),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C08),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C38),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C39),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod202Key.C13),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C44),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C14),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C45),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C46),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C16),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C17),5))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod202Key.C47),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C40),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C48),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C49),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C18),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.spaces(176))
-			,(wr,mod) -> wr.append("</T20201000>")
-			
-			,(wr,mod) -> wr.append("<T20202000>")
-			,(wr,mod) -> wr.append( AonStringUtils.SPACE )
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C19),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod202Key.C20),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C21),5))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod202Key.C22),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod202Key.C23),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C24),5))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod202Key.C25),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C50),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C42),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C51),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C52),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C26),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C27),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C28),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C29),5))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C30),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C31),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C32),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C33),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C34),17))
-			
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.mark(mod.getAmount(Mod202Key.A01)))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.text(mod.getDescription(Mod202Key.A02),22))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.A03),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.A04),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.A05),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.A06),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.A07),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.A08),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.A09),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.A10),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.A11),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.A12),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.A13),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.mark(mod.isReplacement()))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.text(mod.getReplacedNumber(),13))
-		    ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getFinanceIban(),34)) 
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.spaces(101))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.spaces(13))
-			,(wr, mod) -> wr.append("</T20202000>")			
-			
-			,(wr, mod) -> wr.append("</T")
-			,(wr, mod) -> wr.append("202")
-			,(wr, mod) -> wr.append("0")
-			,(wr, mod) -> wr.append(AonFiscalFileUtils.year(mod.getYear()))
-			,(wr, mod) -> wr.append(AonFiscalFileUtils.getMod202Period(mod))
-			,(wr, mod) -> wr.append("0000>")
-			,(wr, mod) -> wr.append(AonStringUtils.CR_LF)
-			})
-		,AEAT_2017_2 ( mod202 -> (mod202.isAEAT() && ( mod202.getYear() > 2018 || (mod202.getYear() == 2018 && mod202.getPeriod().ordinal() >= Period.T2.ordinal()) )) ,new IPropertyFiller[] { 
-			 (wr,mod) -> wr.append("<T")
-			,(wr,mod) -> wr.append("202")
-			,(wr,mod) -> wr.append("0")
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.year(mod.getYear()))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.getMod202Period(mod))
-			,(wr,mod) -> wr.append("0000>")
-			,(wr,mod) -> wr.append("<AUX>")
-			,(wr,mod) -> wr.append(AonStringUtils.repeat(' ', 70))
-			,(wr,mod) -> wr.append(AonStringUtils.repeat(' ', 4))
-			,(wr,mod) -> wr.append(AonStringUtils.repeat(' ', 4))
-			,(wr,mod) -> wr.append(AonStringUtils.repeat(' ', 9))
-			,(wr,mod) -> wr.append(AonStringUtils.repeat(' ', 213))
-			,(wr,mod) -> wr.append("</AUX>")
-			
-			,(wr,mod) -> wr.append("<T20201000>")
-			,(wr,mod) -> wr.append( AonStringUtils.SPACE )
-			,(wr,mod) -> wr.append( mod.getAeatDeclarationType() )
-			,(wr,mod) -> wr.append( AonFiscalFileUtils.document(mod.getDocument()))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.fullName(mod.getName(),mod.getSurname(),60))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.spaces(20))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.year(mod.getYear()))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.getMod202Period(mod)) 
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.text(mod.getDescription(Mod202Key.P02),8))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.text(mod.getCnae()==null?"0000":AonStringUtils.remove(mod.getCnae().getCode(), "."),4))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.mark(mod.getAmount(Mod202Key.X01)))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.mark(mod.getAmount(Mod202Key.X02)))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.mark(mod.getAmount(Mod202Key.X04)))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.mark(mod.getAmount(Mod202Key.X12)))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.mark(mod.getAmount(Mod202Key.X06)))
-			,(wr,mod) -> wr.append(Mod202Writer.getAEAT20171X13X14(mod) )
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.text(mod.getDescription(Mod202Key.X08),5))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.X09),1 ,0))
-			,(wr,mod) -> wr.append(mod.getAmount(Mod202Key.X11) > 0?'X':' ')
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C01),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C02),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C03),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod202Key.C04),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C05),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C06),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C37),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C07),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C08),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C38),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C39),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod202Key.C13),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C44),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C14),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C45),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C46),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C16),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C17),5))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod202Key.C47),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C40),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C48),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C49),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C18),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.spaces(1))
-			,(wr,mod) -> {
-				if (mod.getAmount(Mod202Key.X15) == 1) {
-					wr.append('1');		
-				} else if (mod.getAmount(Mod202Key.X16) == 1) {
-					wr.append('2');
-				} else if (mod.getAmount(Mod202Key.X17) == 1) {
-					wr.append('3');
-				} else if (mod.getAmount(Mod202Key.X18) == 1) {
-					wr.append('4');
-				} else {
-					wr.append(' ');
-				}
-			}
-			,(wr,mod) -> wr.append( AonFiscalFileUtils.mark(mod.getAmount(Mod202Key.X19) == 1))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.spaces(173))
-			,(wr,mod) -> wr.append("</T20201000>")
-			
-			,(wr,mod) -> wr.append("<T20202000>")
-			,(wr,mod) -> wr.append( AonStringUtils.SPACE )
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C19),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod202Key.C20),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C21),5))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod202Key.C22),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod202Key.C23),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C24),5))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod202Key.C25),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C50),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C42),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C51),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C52),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C26),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C27),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C28),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C29),5))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C30),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C31),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C32),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C33),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C34),17))
-			
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.mark(mod.getAmount(Mod202Key.A01)))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.text(mod.getDescription(Mod202Key.A02),22))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.A03),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.A04),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.A05),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.A06),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.A07),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.A08),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.A09),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.A10),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.A11),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.A12),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.A13),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.mark(mod.isReplacement()))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.text(mod.getReplacedNumber(),13))
-		    ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getFinanceIban(),34)) 
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.spaces(101))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.spaces(13))
-			,(wr, mod) -> wr.append("</T20202000>")			
-			
-			,(wr, mod) -> wr.append("</T")
-			,(wr, mod) -> wr.append("202")
-			,(wr, mod) -> wr.append("0")
-			,(wr, mod) -> wr.append(AonFiscalFileUtils.year(mod.getYear()))
-			,(wr, mod) -> wr.append(AonFiscalFileUtils.getMod202Period(mod))
-			,(wr, mod) -> wr.append("0000>")
-			,(wr, mod) -> wr.append(AonStringUtils.CR_LF)
-			})
-		;
-		
-		private IModelAccepter accepter;
-		private IPropertyFiller[] propertyFillers;
+	protected interface IMod202Writer {
+		public void fillWriter(Mod202 mod202, Writer wr) throws IOException;	
+	}
+	@FunctionalInterface
+	protected interface IWriterInstance {
+		public IMod202Writer getInstance();
+	}
 
-		private Mod202File(IModelAccepter accepter,IPropertyFiller[] pf) {
-			this.accepter = accepter; 
-			this.propertyFillers = pf;
+	
+	private enum Writers {
+		 AEAT_2019		(mod202 -> (mod202.isAEAT() && (mod202.getYear() >= 2019))	, Mod202WriterAEAT2019::new)
+		,AEAT_2017_1	(mod202 -> (mod202.isAEAT() && (mod202.getYear() == 2018 && mod202.getPeriod().ordinal() >= Period.T2.ordinal()))	, Mod202WriterAEAT20172::new)
+		,AEAT_2017_2	(mod202 -> (mod202.isAEAT() && (mod202.getYear() == 2017 || (mod202.getYear() == 2018 && mod202.getPeriod().ordinal() < Period.T2.ordinal()) ))	, Mod202WriterAEAT20171::new)
+		,AEAT_2016_2	(mod202 -> (mod202.isAEAT() && mod202.getYear() == 2016 && mod202.getPeriod() != Period.T1)	, Mod202WriterAEAT20162::new)
+		,AEAT_2016_1	(mod202 -> (mod202.isAEAT() && mod202.getYear() == 2016 && mod202.getPeriod() == Period.T1)	, Mod202WriterAEAT20161::new)
+		,AEAT_2015		(mod202 -> (mod202.isAEAT() && mod202.getYear() < 2016) 									, Mod202WriterAEAT2015::new)
+		;
+		private IModelAccepter accepter;
+		private IWriterInstance instancer;
+		private Writers(IModelAccepter accepter, IWriterInstance instancer) {
+			this.accepter = accepter;
+			this.instancer = instancer; 
 		}
 		public boolean accept(Mod202 mod202) {
-			return accepter.accept(mod202); 
+			return accepter.accept(mod202);
 		}
-		private void fillPage(Mod202 mod202, Writer wr) throws IOException {
-			for (IPropertyFiller propertyFiller : this.propertyFillers) {
-				propertyFiller.propertyFill(wr, mod202);
-			}
+		public IMod202Writer getInstance() {
+			return instancer.getInstance();
 		}
 	}
+
 	
 	public static void fillWriter(Mod202 mod202, Writer wr) throws IOException {
 		boolean filled = false;
-		for (Mod202File format : Mod202File.values()) {
-			if (format.accept(mod202)) {
-				format.fillPage(mod202, wr);
+		for (Writers writer : Writers.values()) {
+			if (writer.accept(mod202)) {
+				writer.getInstance().fillWriter(mod202, wr);
 				filled = true;
 			}
 		}
@@ -571,14 +63,4 @@ public class Mod202Writer {
 			throw new AonCoreException("La generaci\u00F3n de el modelo no est\u00E1 soportada.");
 		}
 	}
-
-	public static char getAEAT20171X13X14(Mod202 mod) {
-		boolean x13 = mod.getAmount(Mod202Key.X13) == 1;
-		boolean x14 = mod.getAmount(Mod202Key.X14) == 1;
-		if (x13 && x14) return '2';
-		if (x13) return '1';
-		if (x14) return '2';
-		return '0';
-	}	
-
 }
