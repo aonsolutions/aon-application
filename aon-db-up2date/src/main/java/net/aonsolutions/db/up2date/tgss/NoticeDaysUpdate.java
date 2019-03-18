@@ -61,6 +61,7 @@ public class NoticeDaysUpdate implements Update {
 		.update(PAYMENT_CONCEPT)
 		.set(PAYMENT_CONCEPT.TYPE, (byte)54)
 		.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, DSL.castNull(String.class))
+		.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, DSL.castNull(String.class))
 		.where(PAYMENT_CONCEPT.DOMAIN.eq(0))
 		.and(PAYMENT_CONCEPT.CODE.eq(NOTICE))
 		;
