@@ -15,7 +15,7 @@ public class Mod115WriterAEAT2016 implements IMod115Writer{
 
 	private static enum Mod115File {
 		
-		AEAT_2016 ( mod115 -> (mod115.isAEAT() && mod115.getYear() > 2015) ,new IPropertyFiller[] { 
+		AEAT_2016 ( mod115 -> true ,new IPropertyFiller[] { 
 				(wr, mod) -> wr.append("<T")
 			   ,(wr, mod) -> wr.append("115")
 			   ,(wr, mod) -> wr.append("0")

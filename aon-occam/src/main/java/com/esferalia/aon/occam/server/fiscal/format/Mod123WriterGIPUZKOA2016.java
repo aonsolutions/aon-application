@@ -15,7 +15,7 @@ public class Mod123WriterGIPUZKOA2016 implements IMod123Writer{
 
 	private static enum Mod123File {
 		
-		GIPUZKOA_2016 ( mod123 -> (mod123.isGipuzkoa() && mod123.getYear() > 2015) ,new IPropertyFiller[] {
+		GIPUZKOA_2016 ( mod123 -> true ,new IPropertyFiller[] {
 			(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDocument(),9))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDocument(),9))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getYear(), 4,0))

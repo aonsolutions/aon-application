@@ -32,7 +32,7 @@ public class Mod123WriterARABA2016 implements IMod123Writer{
 
 	private static enum Mod123File {
 		
-		ARABA_2016 ( mod123 -> (mod123.isAraba() && mod123.getYear() > 2015) ,new IPropertyFiller[] {
+		ARABA_2016 ( mod123 -> true ,new IPropertyFiller[] {
 			(wr, mod) -> new Mod123Araba2016().propertyFill(wr, mod)
 		})
 		;

@@ -17,7 +17,7 @@ public class Mod115WriterBIZKAIA2016 implements IMod115Writer{
 
 	private static enum Mod115File {
 		
-		 BIZKAIA_R01_2016 ( mod115 -> (mod115.isBizkaia() && mod115.getYear() > 2015) ,new IPropertyFiller[] {
+		 BIZKAIA_R01_2016 ( mod115 -> true ,new IPropertyFiller[] {
 			(wr, mod) -> wr.append("R01")
 		   ,(wr, mod) -> wr.append("115")
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getYear(), 4,0))
@@ -30,7 +30,7 @@ public class Mod115WriterBIZKAIA2016 implements IMod115Writer{
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(AonDateUtils.getYear(new Date()),4))
 		   ,(wr, mod) -> wr.append(AonStringUtils.CR_LF)
 		})
-		,BIZKAIA_R02_2016 ( mod115 -> (mod115.isBizkaia() && mod115.getYear() > 2015) ,new IPropertyFiller[] {
+		,BIZKAIA_R02_2016 ( mod115 -> true ,new IPropertyFiller[] {
 			(wr, mod) -> wr.append("R02")
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.isComplementary()?"X":" ",1))
 		   ,(wr, mod) -> wr.append(" ")
@@ -38,13 +38,13 @@ public class Mod115WriterBIZKAIA2016 implements IMod115Writer{
 		   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 14))
 		   ,(wr, mod) -> wr.append(AonStringUtils.CR_LF)
 		})
-		,BIZKAIA_RA3_2016 ( mod115 -> (mod115.isBizkaia() && mod115.getYear() > 2015) ,new IPropertyFiller[] {
+		,BIZKAIA_RA3_2016 ( mod115 -> true ,new IPropertyFiller[] {
 			(wr, mod) -> wr.append("RA3")
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getFinanceBankAlias(),25))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getFinanceIban(),24))
 		   ,(wr, mod) -> wr.append(AonStringUtils.CR_LF)
 		})
-		,BIZKAIA_R05_2016 ( mod115 -> (mod115.isBizkaia() && mod115.getYear() > 2015) ,new IPropertyFiller[] {
+		,BIZKAIA_R05_2016 ( mod115 -> true ,new IPropertyFiller[] {
 				(wr, mod) -> wr.append("R05")
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDocument(),9))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getName()
@@ -68,7 +68,7 @@ public class Mod115WriterBIZKAIA2016 implements IMod115Writer{
 			   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 15))
 			   ,(wr, mod) -> wr.append(AonStringUtils.CR_LF)
 			})
-		,BIZKAIA_P00_2016 ( mod115 -> (mod115.isBizkaia() && mod115.getYear() > 2015) ,new IPropertyFiller[] {
+		,BIZKAIA_P00_2016 ( mod115 -> true ,new IPropertyFiller[] {
 			    (wr, mod) -> wr.append("P00N00001")
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedSpace(mod.getAmount(Mod115Key.BZ_C01),15,0))
 			   ,(wr, mod) -> wr.append(AonStringUtils.CR_LF)

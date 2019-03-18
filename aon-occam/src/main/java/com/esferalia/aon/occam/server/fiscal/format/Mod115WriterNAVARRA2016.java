@@ -16,7 +16,7 @@ public class Mod115WriterNAVARRA2016 implements IMod115Writer{
 
 	private static enum Mod115File {
 		
-		NAVARRA_1_2016 ( mod115 -> (mod115.isNavarra() && mod115.getYear() > 2015) ,new IPropertyFiller[] {
+		NAVARRA_1_2016 ( mod115 -> true ,new IPropertyFiller[] {
 			 (wr, mod) -> wr.append("1")
 			,(wr, mod) -> wr.append(mod.getPeriod().isMonthPeriod()?"759":"760")
 			,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getYear(), 4,0))
@@ -43,7 +43,7 @@ public class Mod115WriterNAVARRA2016 implements IMod115Writer{
 			,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 13))
 			,(wr, mod) -> wr.append(AonStringUtils.CR_LF)
 		})
-		,NAVARRA_2_2016 ( mod115 -> (mod115.isNavarra() && mod115.getYear() > 2015) ,new IPropertyFiller[] {
+		,NAVARRA_2_2016 ( mod115 -> true ,new IPropertyFiller[] {
 			 (wr, mod) -> wr.append("2")
 			,(wr, mod) -> wr.append(mod.getPeriod().isMonthPeriod()?"715":"745")
 			,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getYear(), 4,0))
@@ -57,7 +57,7 @@ public class Mod115WriterNAVARRA2016 implements IMod115Writer{
 			,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 24))
 			,(wr, mod) -> wr.append(AonStringUtils.CR_LF)
 		})
-		,NAVARRA_3_2016 ( mod115 -> (mod115.isNavarra() && mod115.getYear() > 2015) ,new IPropertyFiller[] {
+		,NAVARRA_3_2016 ( mod115 -> true ,new IPropertyFiller[] {
 			 (wr, mod) -> wr.append("3")
 			,(wr, mod) -> wr.append(mod.getPeriod().isMonthPeriod()?"715":"745")
 			,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getYear(), 4,0))

@@ -31,7 +31,7 @@ public class Mod111Writer {
 		,BIZKAIA_2016	(mod111 -> (mod111.isBizkaia() && mod111.getYear() >= 2016) , Mod111WriterBIZKAIA2016::new)
 		,ARABA_2016		(mod111 -> (mod111.isAraba() && mod111.getYear() >= 2016 )	, Mod111WriterARABA2016::new)
 		,GIPUZKOA_2016	(mod111 -> (mod111.isGipuzkoa() && mod111.getYear() >= 2016), Mod111WriterGIPUZKOA2016::new)
-		,NAVARRA_2016	(mod111 -> (mod111.isNavarra() && mod111.getYear() >= 2016), Mod111WriterGIPUZKOA2016::new)
+		,NAVARRA_2016	(mod111 -> (mod111.isNavarra() && mod111.getYear() >= 2016), Mod111WriterNAVARRA2016::new)
 		;
 		private IModelAccepter accepter;
 		private IWriterInstance instancer;

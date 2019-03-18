@@ -15,7 +15,7 @@ public class Mod123WriterAEAT2019 implements IMod123Writer{
 
 	private static enum Mod123File {
 		
-		AEAT_2019 ( mod123 -> (mod123.isAEAT() && mod123.getYear() > 2015) ,new IPropertyFiller[] { 
+		AEAT_2019 ( mod123 -> true ,new IPropertyFiller[] { 
 				(wr, mod) -> wr.append("<T")
 			   ,(wr, mod) -> wr.append("123")
 			   ,(wr, mod) -> wr.append("0")

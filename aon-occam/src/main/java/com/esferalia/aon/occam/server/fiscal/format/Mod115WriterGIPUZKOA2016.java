@@ -15,7 +15,7 @@ public class Mod115WriterGIPUZKOA2016 implements IMod115Writer{
 
 	private static enum Mod115File {
 		
-		GIPUZKOA_2016 ( mod115 -> (mod115.isGipuzkoa() && mod115.getYear() > 2015) ,new IPropertyFiller[] {
+		GIPUZKOA_2016 ( mod115 -> true ,new IPropertyFiller[] {
 			(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDocument(),9))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDocument(),9))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getYear(), 4,0))
