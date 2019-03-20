@@ -117,6 +117,8 @@ public class MainEntryPoint implements EntryPoint {
 		else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_CRA_ENTRY_POINT)) {
 			Window.alert(Constants.MAIN_CRA_ENTRY_POINT);
+			MainCRA mainCRA = new MainCRA();
+			mainCRA.onModuleLoad();
 		} 
 		else if (entryPoint
 				.equalsIgnoreCase(Constants.ACTIVITY_SUMMARY_ENTRY_POINT)) {
