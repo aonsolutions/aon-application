@@ -845,11 +845,11 @@ public abstract class QuoteCalculator {
 		
 		
 		
-		List<ITimedVariable<Number>> vars = expressionContext.getVariables(ctxVar, start, end);
+		List<ITimedVariable<Double>> vars = expressionContext.getRatedVariables(ctxVar, start, end);
 		if ( vars.isEmpty() )
 			throw new UndefinedContextVariablesException(ctxVar);
 		
-		for ( ITimedVariable<Number> var: vars ) {
+		for ( ITimedVariable<Double> var: vars ) {
 			try {
 				Number value = var.getValue(var.getPeriod());
 				limits.add(

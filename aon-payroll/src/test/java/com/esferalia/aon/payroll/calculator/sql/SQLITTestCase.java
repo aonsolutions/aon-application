@@ -2948,6 +2948,89 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testBaseMinITVI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		PaymentConceptRecord pay = addConcept(aonContext, "PAGA");
+		PaymentConceptRecord salarioBase = addConcept(aonContext, "SALARIO_BASE");
+		PaymentConceptRecord antiguedad = addConcept(aonContext, "ANTIGUEDAD");
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { 
+				},
+				new Payment [] {
+						new Payment() {
+							{
+								this.concept = salarioBase.getId();
+								this.expression = "1000.00 * DIAS_TRABAJADOS / DIAS_MES";
+							}
+						},
+						new Payment() {
+							{
+								this.concept = antiguedad.getId();
+								this.expression = "SALARIO_BASE * 0.10";
+							}
+						},
+						new Payment() {
+							{
+								this.concept = pay.getId();
+								this.expression = "SALARIO_BASE / 12 ";
+							}
+						},
+						new Payment() {
+							{
+								this.concept = pay.getId();
+								this.expression = "SALARIO_BASE / 12 ";
+							}
+						}
+				});
+
+
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>() {
+					{
+						put("DIAS_MES","30.00");						
+						put("BASE_CGC_MIN","1000.00 * DIAS_NOMINA / DIAS_MES");						
+					}
+				},
+				new String[] {
+				}, 
+				new String[] {
+				}, category);
+		
+		addPrestITs(aonContext, contract);
+
+		//@formatter:on
+		
+		//addPrestITs(aonContext, contract);
+		
+		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,28);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				null, null );
+
+		Date startDate = add(getFirstDayOfMonth(getToday()), Calendar.MONTH, 1 );
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+		}
+
+		
+		org.junit.Assert.assertEquals(1100.00 + ( 1000.00/6), salary.getCommonBase(), DELTA);
+	}
+
+	@Test
 	public void testWarningQuoteIT() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
