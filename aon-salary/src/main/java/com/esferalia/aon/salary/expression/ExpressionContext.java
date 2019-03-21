@@ -440,6 +440,10 @@ public class ExpressionContext {
 		return variables.getVariables(name.toString(), new Period(start, end));
 	}
 
+	public List<ITimedVariable<Double>> getRatedVariables(Object name, Date start, Date end) {
+		return variables.getRatedVariables(name.toString(), new Period(start, end));
+	}
+
 	public <T> T getVariable(Object name, Date start, Date end, Class<T> toType) {
 		return (T) variables.get(name.toString(), new Period(start, end));
 	}
@@ -757,7 +761,7 @@ public class ExpressionContext {
 			return Collections.emptySet();
 
 		ParserContext ctx = new ParserContext();
-
+		
 		MVEL.analysisCompile(script, ctx);
 
 		Set<String> variables = new HashSet<String>();
