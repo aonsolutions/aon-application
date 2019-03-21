@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +17,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -175,7 +175,7 @@ public class MainCRA extends MainEntryPoint {
 						+ entry.getValue().getCode() + " - (" + ProvinceContract.getName(entry.getValue().getGeozone()) +")");
 			}
 			
-			setFindingCCC( this.cccs.getSelectedItemText().split("- ")[2] );
+			setFindingCCC( this.cccs.getSelectedItemText().split("- ")[2].split(" ")[0] );
 		}
 		
 		//Set current date
@@ -196,23 +196,20 @@ public class MainCRA extends MainEntryPoint {
 			Window.alert("INFORMACION AFI => CCC Id : " + this.cccId + ", CCC : " + this.ccc + 
 					", CCC Start Date : " + this.startDate + ", CCC End Date : " +this.endDate);
 			
-//			String fileDownloadURL = GWT.getModuleBaseURL()+ "/agrarian_afi/"
-//		            + "?domainId=" + enterpriseInfo.getDomain()
-//		            + "&enterpriseId=" + enterpriseInfo.getId()
-//		            + "&enterpriseName=" + enterpriseName
-//			        + "&startDate=" + startDate.getTime()
-//			        + "&endDate=" + endDate.getTime()
-//			        + "&ccc=" + ccc
-//			        + "&selectedEmployees=" + selectedEmployees.size()
-//			        ;
-//				
-//			for(int i=0; i<selectedEmployees.size(); i++) {
-//				fileDownloadURL += "&employee"+i+"Id=" + selectedEmployees.get(i);
-//			}
-//			
-////			Window.alert(fileDownloadURL);
-//			
-//			Window.open(fileDownloadURL, "_blank", null);
+			String fileDownloadURL = GWT.getModuleBaseURL()+ "/main_cra/"
+		            + "?domainId=" + enterpriseInfo.getDomain()
+		            + "&enterpriseId=" + enterpriseInfo.getId()
+		            + "&enterpriseName=" + enterpriseName
+			        + "&startDate=" + startDate.getTime()
+			        + "&endDate=" + endDate.getTime()
+			        + "&ccc=" + ccc
+			        + "&cccId=" + cccId
+			        ;
+			
+//			Window.alert(fileDownloadURL);
+			
+			Window.open(fileDownloadURL, "_blank", null);
+		
 		}else{
 			WarningDialog warning = new WarningDialog("Aviso", "No se puede generar el CRA para un mes posterior o igual al actual.");
 			warning.center();
@@ -223,7 +220,7 @@ public class MainCRA extends MainEntryPoint {
 	
 	@UiHandler("cccs")
 	void changeCCCList(ChangeEvent event){
-		setFindingCCC( this.cccs.getSelectedItemText().split("- ")[2] );
+		setFindingCCC( this.cccs.getSelectedItemText().split("- ")[2].split(" ")[0] );
 	}
 	
 	@UiHandler("monthList")
@@ -281,6 +278,8 @@ public class MainCRA extends MainEntryPoint {
 			for(CCC ccc : activity.getCccs())
 				if(ccc.getCode().equals(selectedCCC))
 					this.cccId = ccc.getId();
+		
+		this.ccc = selectedCCC;
 	}
 
 	private void setFindingDates(Date selectedDate) {

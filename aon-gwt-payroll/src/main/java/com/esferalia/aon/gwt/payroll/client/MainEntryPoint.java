@@ -116,7 +116,7 @@ public class MainEntryPoint implements EntryPoint {
 		} 
 		else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_CRA_ENTRY_POINT)) {
-			Window.alert(Constants.MAIN_CRA_ENTRY_POINT);
+			Window.alert("OPENED -> " + Constants.MAIN_CRA_ENTRY_POINT);
 			MainCRA mainCRA = new MainCRA();
 			mainCRA.onModuleLoad();
 		} 
