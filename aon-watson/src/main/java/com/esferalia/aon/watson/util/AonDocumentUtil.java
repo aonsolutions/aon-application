@@ -127,13 +127,6 @@ public class AonDocumentUtil {
     	return (doc.matches("^(A|B|C|D|E|F|G|H|J|P|Q|R|S|U|V|N|W).{8}"));
     }
 
-    public static boolean isCulturalAssociation(String doc) {
-		if (doc == null || doc.length() != 9) {
-			return false;
-		}
-    	return (doc.matches("^(G).{8}"));
-    }
-    
 	public static boolean isValidComunitaryCountry(String country){
 		return ("AT".equals(country) || "BE".equals(country) 
 			 || "BG".equals(country) || "CY".equals(country) 
@@ -219,4 +212,50 @@ public class AonDocumentUtil {
 			) return true;
 		return false;
 	}
+	
+	/*
+	LINK --> https://www.agenciatributaria.es/AEAT.internet/Inicio/La_Agencia_Tributaria/Campanas/Censos__NIF_y_domicilio_fiscal/Empresas_y_profesionales__Declaracion_censal__Modelos_036_y_037/Informacion/NIF_de_personas_juridicas_y_entidades.shtml
+	Claves sobre la forma jurídica de entidades españolas
+	Para las entidades españolas, el número de identificación fiscal comenzará con una letra, que 
+	incluirá información sobre su forma jurídica de acuerdo con las siguientes claves:
+
+	A. Sociedades anónimas
+	B. Sociedades de responsabilidad limitada
+	C. Sociedades colectivas
+	D. Sociedades comanditarias
+	E. Comunidades de bienes, herencias yacentes y demás entidades carentes de personalidad jurídica no incluidas expresamente en otras claves
+	F. Sociedades cooperativas
+	G. Asociaciones
+	H. Comunidades de propietarios en régimen de propiedad horizontal
+	J. Sociedades civiles
+	P. Corporaciones Locales
+	Q. Organismos públicos
+	R. Congregaciones e instituciones religiosas
+	S. Órganos de la Administración del Estado y de las Comunidades Autónomas
+	U. Uniones Temporales de Empresas
+	V. Otros tipos no definidos en el resto de claves
+
+	Clave de entidades extranjeras
+	N. Entidades extranjeras
+	
+	Clave de establecimiento permanente de entidad no residente
+	W. Establecimientos permanentes de entidades no residentes en territorio español.
+	*/	
+
+    public static boolean isCulturalAssociation(String doc) {
+		if (doc == null || doc.length() != 9) {
+			return false;
+		}
+    	return (doc.matches("^(G).{8}"));
+    }
+
+    public static boolean isCooperative(String doc) {
+		if (doc == null || doc.length() != 9) {
+			return false;
+		}
+    	return (doc.matches("^(F).{8}"));
+    }
 }
+
+
+

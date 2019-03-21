@@ -16,8 +16,10 @@ import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
+import com.esferalia.aon.occam.api.model.accounting.BalanceType.IBalanceTypeVisitor;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
@@ -346,13 +348,38 @@ public class BalancePanelFilter extends SimpleLayoutPanel implements HasValueCha
 		// ************************************************************************  TIPO BALANCE
 		balanceType = new ListBox();
 		balanceType.setWidth("200px");
-		balanceType.addItem( "Balance de situaci\u00F3n (Normal)");
-		balanceType.addItem( "Balance de situaci\u00F3n (Abreviado)");
+		IBalanceTypeVisitor visitor = new IBalanceTypeVisitor() {
+			
+			private static final long serialVersionUID = -7265627120635758519L;
+			
+			@Override 
+			public void visitBalanceNormal() {balanceType.addItem( "Balance de situaci\u00F3n (Normal)");}
+			@Override public void visitBalanceAbbreviate() {
+				balanceType.addItem( "Balance de situaci\u00F3n (Abreviado)");
+				if (config != null && config.getCompany() != null && !AonDocumentUtil.isCooperative(config.getCompany().getDocument())) {
+					balanceType.setSelectedIndex( balanceType.getItemCount() - 1);				
+				}
+			}
+			@Override public void visitBalancePymes() 			{balanceType.addItem( "Balance de situaci\u00F3n (PYMES)");}
+			@Override public void visitPygNormal() 				{balanceType.addItem( "Cuenta de Explotaci\u00F3n (Normal)"); }
+			@Override public void visitPygAbbreviate() 			{balanceType.addItem( "Cuenta de Explotaci\u00F3n (Abreviada)");}
+			@Override public void visitPygPymes() 				{balanceType.addItem( "Cuenta de Explotaci\u00F3n (PYMES)");}
+			@Override
+			public void visitBalanceCoopNormal() {
+				balanceType.addItem( "Balance de situaci\u00F3n COOPERATIVAS (Normal)");
+				if (config != null && config.getCompany() != null && AonDocumentUtil.isCooperative(config.getCompany().getDocument())) {
+					balanceType.setSelectedIndex( balanceType.getItemCount() - 1);
+				}
+			}
+			@Override public void visitPygCoopNormal() 			{balanceType.addItem( "Cuenta de Explotaci\u00F3n COOPERATIVAS (Normal)");}
+			@Override public void visitBalanceCoopAbbreviate() 	{/*balanceType.addItem( "Cuenta de Explotaci\u00F3n COOPERATIVAS (Abreviado)");*/}
+			@Override public void visitPygCoopAbbreviate() 		{/*balanceType.addItem( "Balance de situaci\u00F3n COOPERATIVAS (Abreviado)");*/}
+			
+		};
 		
-		balanceType.addItem( "Balance de situaci\u00F3n (PYMES)");
-		balanceType.addItem( "Cuenta de Explotaci\u00F3n (Normal)");
-		balanceType.addItem( "Cuenta de Explotaci\u00F3n (Abreviada)");
-		balanceType.setSelectedIndex(0);
+		for (BalanceType bt : BalanceType.values()) {
+			bt.visit(visitor);
+		}
 		if (params != null ) {
 			balanceType.setSelectedIndex(params.getBalanceType().ordinal());
 		}

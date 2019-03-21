@@ -37,6 +37,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountBalanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO.AccountEntryOrder;
@@ -307,7 +308,7 @@ public class AccountingImpl implements IAccounting {
 	
 	@Override
 	public AccountBalanceReport getBalanceReport(AONContext ctx, AccountingReportParams params) throws AonCoreException {
-		return AccountStatementDAO.balanceReport(ctx, params);
+		return AccountBalanceDAO.balanceReport(ctx, params);
 	}
 
 	@Override
