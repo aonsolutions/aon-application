@@ -43,6 +43,9 @@ import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.DeferredExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ExpressionVariable;
+import com.esferalia.aon.salary.expression.IExpression;
+import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
@@ -844,19 +847,30 @@ public abstract class QuoteCalculator {
 		List<ITimedResult<Double>> limits = new ArrayList<ITimedResult<Double>>(); 
 		
 		
-		
-		List<ITimedVariable<Double>> vars = expressionContext.getRatedVariables(ctxVar, start, end);
+		List<ITimedVariable<Double>> vars = expressionContext.getVariables(ctxVar, start, end);
 		if ( vars.isEmpty() )
 			throw new UndefinedContextVariablesException(ctxVar);
 		
 		for ( ITimedVariable<Double> var: vars ) {
 			try {
+				
+				Period period = var.getPeriod();
+				ITimedVariable<?> variable = 
+				expressionContext.getVariable(ctxVar, 
+						period.getStart(), 
+						period.getEnd());
+				if (variable instanceof IExpressionVariable<?>)
+					throw new DeferredExpressionException(((IExpressionVariable) variable).getExpression(), period );
+				
+				
 				Number value = var.getValue(var.getPeriod());
+				
 				limits.add(
 						new TimedResult<Double>(
 						value.doubleValue(), 
 						var.getPeriod(), 
 						Collections.emptyMap()));
+				
 			} catch ( ExpressionExceptionWrapper e){
 				try {
 					throw e.getExpressionException();
@@ -865,6 +879,8 @@ public abstract class QuoteCalculator {
 				} catch ( Throwable t ){
 					limits.addAll(expressionContext.eval(ctxVar.getName(), var.getPeriod().getStart(), var.getPeriod().getEnd(), Double.class));
 				}
+			} catch ( DeferredExpressionException de){
+				limits.addAll(expressionContext.eval(de.getExpression().getExpression(), var.getPeriod().getStart(), var.getPeriod().getEnd(), Double.class));
 			} catch ( Throwable t ){
 				limits.addAll(expressionContext.eval(ctxVar.getName(), var.getPeriod().getStart(), var.getPeriod().getEnd(), Double.class));
 			}

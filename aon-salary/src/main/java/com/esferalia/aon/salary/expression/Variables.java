@@ -542,25 +542,6 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 
 	}
 
-	public List<ITimedVariable<Double>> getRatedVariables(String name, Period p) {
-		
-		List<ITimedVariable<?>> values = get(name);
-		if (values == null)
-			return Collections.emptyList();
-
-		List<ITimedVariable<Double>> ret = new ArrayList<ITimedVariable<Double>>();
-
-		for (ITimedVariable<?> var : values) {
-			Period intersect = var.getPeriod().intersect(p);
-			if (intersect == null)
-				continue;
-
-			ret.add(new RatedTimedVariable(intersect, var));
-		}
-
-		return ret;
-
-	}
 
 	protected Variables getSnapshot(Set<String> variables) {
 
@@ -681,40 +662,6 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 
 	}
 
-	private static class RatedTimedVariable implements ITimedVariable<Double> {
-
-		private Period period;
-		private ITimedVariable<?> timedVariable;
-
-		public RatedTimedVariable(Period period,
-				ITimedVariable<?> timedVariable) {
-			this.period = period;
-			this.timedVariable = timedVariable;
-		}
-
-		public RatedTimedVariable(Date start, Date end,
-				ITimedVariable<?> timedVariable) {
-			this(new Period(start, end), timedVariable);
-		}
-
-		@Override
-		public Period getPeriod() {
-			return period;
-		}
-
-		@Override
-		public Double getValue(Period period) {
-			Period varPeriod = timedVariable.getPeriod();
-			long varDays = varPeriod.daysStream().count();
-			long valueDays = period.daysStream().count(); 
-			Object value = timedVariable.getValue(varPeriod);
-			return value instanceof Number ? 
-					((Number)value).doubleValue() / varDays * valueDays:
-					null
-					;
-		}
-
-	}
 	private static class WrapTimedConstant<T> extends WrapTimedVariable<T> implements IConstantVariable {
 
 		public WrapTimedConstant(Date start, Date end,
