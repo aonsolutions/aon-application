@@ -3582,7 +3582,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Salary salary = calculator.calculate(ctx);
 
 		Assert.assertEquals(66.66 * 30.00, salary.getCommonBase(), DELTA);
-		Assert.assertEquals(0.75 * 66.66 * 30.00 /*get(endDate, DAY_OF_MONTH)*/ , salary.getTotalPayment(), DELTA);
+		Assert.assertEquals(0.75 * 66.66 * get(endDate, DAY_OF_MONTH) , salary.getTotalPayment(), DELTA);
 	}
 
 	@Test
@@ -3648,7 +3648,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
 		double br = 1750.00 / 30.00;
-		Assert.assertEquals(0.75 * br * 30.00 /*get(endDate, DAY_OF_MONTH)*/ , salary.getTotalPayment(), DELTA);
+		Assert.assertEquals(0.75 * br * get(endDate, DAY_OF_MONTH) , salary.getTotalPayment(), DELTA);
 		Assert.assertEquals(br * 30.00, salary.getCommonBase(), DELTA);
 	}
 
@@ -3750,7 +3750,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(0.75 * 1750.00/30.00 * 30.00 /* get(endDate, DAY_OF_MONTH)*/ , salary.getTotalPayment(), DELTA);
+		Assert.assertEquals(0.75 * 1750.00/30.00 * get(endDate, DAY_OF_MONTH) , salary.getTotalPayment(), DELTA);
 		Assert.assertEquals(1750.00/30.00 * 30.00, salary.getCommonBase(), DELTA);
 	}
 	
@@ -4854,7 +4854,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		}
 
 		
-		Assert.assertEquals( (1750.00 ) , salary.getTotalPayment(), 0.01);
+		Assert.assertEquals( (1750.00/30.00 ) * get(endDate, DAY_OF_MONTH) , salary.getTotalPayment(), 0.05);
 	}
 
 	@Test
@@ -4904,7 +4904,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		}
 
 		
-		Assert.assertEquals( (1750.00 ) , salary.getTotalPayment(), 0.01);
+		Assert.assertEquals( (1750.00 / 30.00 ) * get(endDate, Calendar.DAY_OF_MONTH) , salary.getTotalPayment(), 0.05);
 	}
 
 
@@ -5262,6 +5262,97 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(1250.00, salary.getProfessionalBase());
 
 	}
+
+	@Test
+	public void testPaymentITI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+				{
+					put(MONTH_DAYS.getName(), "30");
+				}
+				},
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+		
+		addPrestITs(aonContext, contract);
+		//@formatter:on
+		
+		Date startITDate = add(getFirstDayOfMonth(getToday()), Calendar.MONTH, 1);
+		addIT(aonContext, contract, LeaveType.OCCUPATIONAL_DISEASE, startITDate,
+				null , null);
+
+		Date startDate = add(getFirstDayOfMonth(getToday()), Calendar.MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+		for ( int i = 0; i < 11 ; i++ ) {
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+			SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+			calculator.setSalaryBuilder(new SalaryBuilder());
+			Salary salary = calculator.calculate(ctx);
+			int days = get(endDate, Calendar.DAY_OF_MONTH);
+			org.junit.Assert.assertEquals( days * 1750.00/30.00 , salary.getTotalPayment(), DELTA );
+			System.out.println(startDate + "..." + endDate + "... OK ");
+			startDate = add(startDate, Calendar.MONTH, 1);
+			endDate = getLastDayOfMonth(startDate);
+		}
+
+	}
+	
+	@Test
+	public void testPaymentITII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+				{
+					put(MONTH_DAYS.getName(), "30");
+				}
+				},
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+		
+		addPrestITs(aonContext, contract);
+		//@formatter:on
+		
+		Date startITDate = add(getFirstDayOfMonth(getToday()), Calendar.MONTH, 1);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				null , null);
+
+		Date startDate = add(getFirstDayOfMonth(getToday()), Calendar.MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+		for ( int i = 0; i < 11 ; i++ ) {
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+			SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+			calculator.setSalaryBuilder(new SalaryBuilder());
+			Salary salary = calculator.calculate(ctx);
+			int days = get(endDate, Calendar.DAY_OF_MONTH);
+			org.junit.Assert.assertEquals( days * 1750.00/30.00 , salary.getTotalPayment(), DELTA );
+			System.out.println(startDate + "..." + endDate + "... OK ");
+			startDate = add(startDate, Calendar.MONTH, 1);
+			endDate = getLastDayOfMonth(startDate);
+		}
+
+	}
+
 	// ------------------------------------------------------------------------
 	
 
