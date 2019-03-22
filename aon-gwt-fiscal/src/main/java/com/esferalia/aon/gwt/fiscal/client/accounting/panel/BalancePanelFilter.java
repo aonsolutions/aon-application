@@ -364,6 +364,14 @@ public class BalancePanelFilter extends SimpleLayoutPanel implements HasValueCha
 			@Override public void visitPygNormal() 				{balanceType.addItem( "Cuenta de Explotaci\u00F3n (Normal)"); }
 			@Override public void visitPygAbbreviate() 			{balanceType.addItem( "Cuenta de Explotaci\u00F3n (Abreviada)");}
 			@Override public void visitPygPymes() 				{balanceType.addItem( "Cuenta de Explotaci\u00F3n (PYMES)");}
+
+			@Override public void visitBalanceCoopAbbreviate() 	{
+				balanceType.addItem( "Balance de situaci\u00F3n COOPERATIVAS (Abreviado)");
+				balanceType.getElement()
+					.getElementsByTagName("option")
+					.getItem( balanceType.getItemCount() - 1 )
+					.setAttribute("disabled", "disabled");
+			}
 			@Override
 			public void visitBalanceCoopNormal() {
 				balanceType.addItem( "Balance de situaci\u00F3n COOPERATIVAS (Normal)");
@@ -372,8 +380,7 @@ public class BalancePanelFilter extends SimpleLayoutPanel implements HasValueCha
 				}
 			}
 			@Override public void visitPygCoopNormal() 			{balanceType.addItem( "Cuenta de Explotaci\u00F3n COOPERATIVAS (Normal)");}
-			@Override public void visitBalanceCoopAbbreviate() 	{/*balanceType.addItem( "Cuenta de Explotaci\u00F3n COOPERATIVAS (Abreviado)");*/}
-			@Override public void visitPygCoopAbbreviate() 		{/*balanceType.addItem( "Balance de situaci\u00F3n COOPERATIVAS (Abreviado)");*/}
+			@Override public void visitPygCoopAbbreviate() 		{balanceType.addItem( "Cuenta de Explotaci\u00F3n COOPERATIVAS (Abreviado)");}
 			
 		};
 		

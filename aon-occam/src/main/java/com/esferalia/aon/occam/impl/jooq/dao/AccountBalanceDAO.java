@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.server.accounting.BOEBalanceCoopNormalScript;
 import com.esferalia.aon.occam.server.accounting.BOEBalanceNormalScript;
 import com.esferalia.aon.occam.server.accounting.BOEBalancePYMESScript;
 import com.esferalia.aon.occam.server.accounting.BOEPyGAbbreviateScript;
+import com.esferalia.aon.occam.server.accounting.BOEPyGCoopAbbreviateScript;
 import com.esferalia.aon.occam.server.accounting.BOEPyGCoopNormalScript;
 import com.esferalia.aon.occam.server.accounting.BOEPyGNormalScript;
 import com.esferalia.aon.occam.server.accounting.BOEPyGPYMESScript;
@@ -59,9 +60,8 @@ public class AccountBalanceDAO {
 		@Override public void visitPygAbbreviate() 		{ this.script = new BOEPyGAbbreviateScript(); }
 		@Override public void visitPygPymes() 			{ this.script = new BOEPyGPYMESScript(); }
 
-
-		@Override public void visitBalanceCoopAbbreviate() {}
-		@Override public void visitPygCoopAbbreviate() {}
+		@Override public void visitPygCoopAbbreviate() 	{ this.script = new BOEPyGCoopAbbreviateScript(); }
+		@Override public void visitBalanceCoopAbbreviate() { }
 
 	}
 
