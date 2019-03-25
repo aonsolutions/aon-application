@@ -44,6 +44,7 @@ public class BOEBalanceCoopNormalScript extends BalanceScript {
 			 	,ANCV4(2,true,"4","Derivados","sdb({255})",null)
 			 	,ANCV5(2,true,"5","Otros activos financieros","sdb({257,258,26})",null)
 		 	,ANCVI(1,false,"VI","Activos por impuesto diferido","sdb({474})",null)
+		 	
 	 	,AC(0,false,"B","ACTIVO CORRIENTE",null,"ACI+ACII+ACIII+ACIV+ACV+ACVI+ACVII")
 		 	,ACI (1,false,"I","Activos no corrientes mantenidos para la venta","sdb({580,581,582,583,584}) - sab({599})",null)
 	 		,ACII(1,false,"I1","Existencias",null,"ACII1+ACII2+ACII3+ACII4+ACII5+ACII6")
@@ -91,7 +92,7 @@ public class BOEBalanceCoopNormalScript extends BalanceScript {
 		 	,PNA1(1,false,"A-1)","Fondos propios",null,"PNA1I+PNA1II+PNA1III+PNA1IV+PNA1V+PNA1VI+PNA1VII+PNA1VIII")
 			 	,PNA1I(2,false,"I","Capital",null,"PNA1I1+PNA1I2")	
 				 	,PNA1I1(3,true,"1","Capital cooperativo suscrito","sab({100})",null)
-				 	,PNA1I2(3,true,"2","(Capital cooperativo no exigido)","sdb({1030,1040})",null)
+				 	,PNA1I2(3,true,"2","(Capital cooperativo no exigido)","sab({1030,1040})",null)
 				 ,PNA1II(2,false,"II","Reservas",null,"PNA1II1+PNA1II2+PNA1II3+PNA1II4+PNA1II5")
 			 		,PNA1II1(3,true,"1","Fondo de Reserva Obligatorio","sab({112})",null)
 			 		,PNA1II2(3,true,"2","Fondo de Reembolso o Actualización","sab({11450,11451})",null)
@@ -136,7 +137,7 @@ public class BOEBalanceCoopNormalScript extends BalanceScript {
 			 	,PNCVI(1,false,"VI","Pasivos por impuesto diferido","sab({479})",null)
 			 	,PNCVII(1,false,"VII","Periodificaciones a largo plazo","sab({181})",null)
 	
-		 	,PC(0,false,"C)","PASIVO CORRIENTE",null,"PCI+PCII+PCIII+PCIV+PCV+PCVI")
+		 	,PC(0,false,"C)","PASIVO CORRIENTE",null,"PCI+PCII+PCIII+PCIV+PCV+PCVI+PCVII+PCVIII")
 				,PCI(1,false,"I","Fondo de Educación, Formación y Promoción a corto plazo","sab({5298})",null)
 	 			,PCII(1,false,"II","Deudas con características especiales a corto plazo",null,"PCII1+PCII2+PCII3")
 					,PCII1(2,true,"1","\"Capital\" reembolsable exigible","sab({5020})",null)
@@ -164,7 +165,7 @@ public class BOEBalanceCoopNormalScript extends BalanceScript {
 					,PCVII5(2,true,"5","Pasivos por impuesto corriente","sab({4752})",null)
 					,PCVII6(2,true,"6","Otras deudas con las Administraciones p\u00FAblicas","sab({4750,4751,4758,476,477})",null)
 					,PCVII7(2,true,"7","Anticipos de clientes","sab({438})",null)
-				,PCVIII(1,false,"VI","Periodificaciones a corto plazo","sab({485,568})",null)
+				,PCVIII(1,false,"VIII","Periodificaciones a corto plazo","sab({485,568})",null)
 			,TOTAL(0,false,"(A+B+C)","TOTAL PATRIMONIO NETO Y PASIVO",null,"PN+PNC+PC"
 	)
 	 	;
