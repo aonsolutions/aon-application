@@ -322,6 +322,28 @@
 							</aon:div>
 						</aon:panelGrid>
 						
+						<aon:if test="#{domainSwitcher.udapa || domainSwitcher.paturpat}">
+							<aon:panelGrid id="group_accounting_reports_parent"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-account-reports aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.menu_reports}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_accountConsolidatedBalance"
+											action="gwt_accountConsolidatedBalance-acc"
+											title="Balances consolidados">
+											<aon:outputText
+												styleClass="aon-fiscal-link-label aon-icon-beta-text"
+												style="margin-left: 5px; padding-left: 20px;"
+												value="Balances consolidados" />
+										</aon:commandLink>
+									</aon:div>
+								</aon:div>
+							</aon:panelGrid>
+						</aon:if>
+						
 						<aon:panelGrid id="group_fiscal_mercantile_registry-parent"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-registradores aon-direct-access-panel">
@@ -454,52 +476,6 @@
 									</aon:div>
 								</aon:panelGrid>
 							</aon:if>
-<!-- 
-
-							<aon:if test="#{domainSwitcher.domainManagementAvailable}">
-								<aon:panelGrid id="group_parent_accounting"
-									styleClass="aon-width-all" columnClasses="aon-padding"
-									headerClass="aon-icon-account-entry aon-direct-access-panel">
-									<f:facet name="header">
-										<aon:outputText value="#{bundle.aon_module_accounting}" />
-									</f:facet>
-									<aon:div styleClass="aon-direct-access-list">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="account-parent"
-												action="account_list-parent"
-												value="#{bundle.account_module}" />
-										</aon:div>
-										<aon:if test="#{aonRole.config}">
-											<aon:div styleClass="aon-direct-access-list-element">
-												<aon:commandLink id="autConcept-parent"
-													action="autConcept-parent"
-													value="#{bundle.accounting_aut_concept_module}" />
-											</aon:div>
-											<aon:div styleClass="aon-direct-access-list-element">
-												<aon:commandLink id="accounting_balance-parent"
-													action="balance_list-parent"
-													value="#{bundle.accounting_balance_menu2}" />
-											</aon:div>
-											<aon:div styleClass="aon-direct-access-list-element">
-												<aon:commandLink id="amortizationType-parent"
-													action="amortizationType_list-parent"
-													value="#{bundle.accounting_amortization_type_module}" />
-											</aon:div>
-											<aon:div styleClass="aon-direct-access-list-element">
-												<aon:commandLink id="gwt_accountingUtilities-parent"
-													action="gwt_accountingUtilities-parent"
-													title="Utilidades y chequeos contables">
-													<aon:outputText
-														styleClass="aon-fiscal-link-label aon-icon-beta-text"
-														style="margin-left: 5px; padding-left: 20px;"
-														value="Utilidades y chequeos contables" />
-												</aon:commandLink>
-											</aon:div>
-										</aon:if>
-									</aon:div>
-								</aon:panelGrid>
-							</aon:if>
- -->
 						</aon:panelGroup>
 
 						<aon:panelGroup>

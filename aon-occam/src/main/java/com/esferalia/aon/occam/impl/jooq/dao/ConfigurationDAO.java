@@ -86,6 +86,7 @@ public class ConfigurationDAO {
 				.setSalaryDedAdvPayment(getAccount(ctx, AppParam.ACC_SALARY_DED_ADV_PAYMENT_ACC))
 				.setSalaryOtherDeductions(getAccount(ctx, AppParam.ACC_SALARY_DED_OTHER_ACC))
 				.setSalaryDedSeize(getAccount(ctx, AppParam.ACC_SALARY_DED_SEIZE_ACC))
+				.setChildDomains(DomainDAO.getActiveChildDomains(ctx))
 		;
 		SeriesDAO
 			.getSeries(ctx,

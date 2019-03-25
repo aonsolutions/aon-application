@@ -9,6 +9,7 @@ public class AccMiningParameters implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private int domain;
+	private Integer[] domains;
 	private int year;
 	private int periodId;
 	private Date startDate;
@@ -22,7 +23,14 @@ public class AccMiningParameters implements Serializable {
 	public void setDomain(int domain) {
 		this.domain = domain;
 	}
-
+	
+	public Integer[] getDomains() {
+		return domains;
+	}
+	public void setDomains(Integer[] domains) {
+		this.domains = domains;
+	}
+	
 	public int getYear() {
 		return year;
 	}

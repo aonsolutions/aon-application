@@ -471,12 +471,20 @@ public class AccountEntryDAO {
 						.and(ACCOUNT.CODE.like("6%").or(ACCOUNT.CODE.like("7%")) )
 				:DSL.trueCondition()
 		;
+		Condition domainCondition = ACCOUNT_ENTRY.DOMAIN.equal(params.getDomain());
+		if ( params.getDomains() != null && params.getDomains().length > 0) {
+			LinkedList<Integer> domains = new LinkedList<Integer>(); 
+			for (int dom : params.getDomains()) {
+				domains.add(dom);
+			}
+			domainCondition = ACCOUNT_ENTRY.DOMAIN.in(domains);	
+		}
 		ctx.getDslContext()
 			.select(ACCOUNT_ENTRY.ENTRY_TYPE, accountField, sumDebit, sumCredit)
 			.from( ACCOUNT_ENTRY )
 			.join(ACCOUNT_ENTRY_DETAIL).on(ACCOUNT_ENTRY.ID.equal(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
 			.join(ACCOUNT).on(ACCOUNT_ENTRY_DETAIL.ACCOUNT.equal(ACCOUNT.ID))
-			.where(ACCOUNT_ENTRY.DOMAIN.equal(params.getDomain()))
+			.where(domainCondition)
 			.and(ACCOUNT_ENTRY.ENTRY_DATE.between(start,end))
 			.and(ACCOUNT_ENTRY.ENTRY_TYPE.ne(AccountEntryType.CLOSING.getValue()) )
 			.and(pygCondition)

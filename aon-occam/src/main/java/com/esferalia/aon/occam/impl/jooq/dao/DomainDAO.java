@@ -20,6 +20,7 @@ import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Record10;
 import org.jooq.Result;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.DomainGserviceaccountRecord;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
@@ -33,6 +34,7 @@ import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.DomainGserviceaccountProperties;
 import com.esferalia.aon.occam.api.model.Properties.DomainProperties;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 
@@ -109,7 +111,27 @@ public class DomainDAO {
 			.fetchInto(DOMAIN).stream().map(new FullDomainFiller()).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	
+	public static LinkedList<Domain> getActiveChildDomains(AONContext ctx) {
+		Condition scopeCondition = DSL.trueCondition(); 
+		LinkedList<Scope> scopes = SecurityDAO.getAvailableScopes(ctx);
+		if (scopes != null && scopes.size() > 0) {
+			LinkedList<Integer> ids = new LinkedList<Integer>();
+			for (Scope scope : scopes) {
+				ids.add(scope.getId());
+			}
+			scopeCondition = DOMAIN.SCOPE.in(ids); 
+		}
+		return ctx.getDslContext().select()
+				.from(DOMAIN)
+				.where(DOMAIN.PARENT.eq(ctx.getDomainId()))
+				.and(DOMAIN.ACTIVE.eq( (byte) 1))
+				.and(scopeCondition)
+				.orderBy(DOMAIN.DESCRIPTION)
+				.fetchInto(DOMAIN)
+				.stream()
+				.map(new FullDomainFiller())
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
 
 	public static LinkedList<Domain> getDriveDomainList(AONContext ctx){
 		return ctx.getDslContext().select().from(DOMAIN)

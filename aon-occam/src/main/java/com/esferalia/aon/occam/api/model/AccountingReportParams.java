@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
@@ -42,6 +43,10 @@ public class AccountingReportParams implements IAccountParams, Cloneable {
 	private AccountPeriod selectedPeriod;
 	private EnterpriseActivity selectedActivity;
 	private Account selectedAccount;
+
+	// Consolidation
+	private LinkedList<Domain> domains;
+	private boolean consolidation;
 	
 	// Report Metadata
 	private String title;
@@ -306,6 +311,20 @@ public class AccountingReportParams implements IAccountParams, Cloneable {
 		return this;
 	}
 	
+	public LinkedList<Domain> getDomains() {
+		return domains;
+	}
+	public AccountingReportParams setDomains(LinkedList<Domain> domains) {
+		this.domains = domains;
+		return this;
+	}
+	public boolean isConsolidation() {
+		return consolidation;
+	}
+	public AccountingReportParams setConsolidation(boolean consolidation) {
+		this.consolidation = consolidation;
+		return this;
+	}
 	// ***********************************************
 	public String getTitle() {
 		return title;
@@ -411,6 +430,8 @@ public class AccountingReportParams implements IAccountParams, Cloneable {
 			.setSelectedPeriod(getSelectedPeriod())
 			.setSelectedActivity(getSelectedActivity())
 			.setSelectedAccount(getSelectedAccount())
+			.setDomains(getDomains())
+			.setConsolidation(isConsolidation())
 			.setTitle(getTitle())
 			.setSubject(getSubject())
 			.setShowCover(isShowCover())

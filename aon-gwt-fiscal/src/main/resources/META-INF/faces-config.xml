@@ -144,6 +144,10 @@
 			<from-outcome>gwt_accountBalance</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/accounting/accountBalance.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>gwt_accountConsolidatedBalance</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/accounting/accountConsolidatedBalance.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 	
 </faces-config>

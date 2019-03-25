@@ -55,6 +55,8 @@ public class AonConfiguration implements Serializable {
 	
 	private Date	operationsDeadline;
 
+	private LinkedList<Domain> childDomains;
+	
 	public Company getCompany() {
 		return company;
 	}
@@ -306,6 +308,14 @@ public class AonConfiguration implements Serializable {
 		return this;
 	}
 
+	public LinkedList<Domain> getChildDomains() {
+		return childDomains;
+	}
+	public AonConfiguration setChildDomains(LinkedList<Domain> childDomains) {
+		this.childDomains = childDomains;
+		return this;
+	}
+	
 	public Account getDefaultSalary() {
 		return defaultSalary;
 	}

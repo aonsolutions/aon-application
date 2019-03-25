@@ -136,6 +136,13 @@ public class AccountBalanceDAO {
 		mParams.setDomain(ctx.getDomainId());
 		mParams.setStartDate(params.getFromDate());
 		mParams.setEndDate(params.getToDate());
+		if (params.isConsolidation()) {
+			Integer[] domains = new Integer[params.getDomains().size()];
+			for (int i = 0; i < params.getDomains().size();i++) {
+				domains[i] = params.getDomains().get(i).getId();
+			}
+			mParams.setDomains(domains);
+		}
 		Map<String, AccountBalance> accounts = ACCOUNTING.getAccountBalances(ctx, mParams,
 				params.getBalanceType() == BalanceType.PYG_NORMAL
 			 || params.getBalanceType() == BalanceType.PYG_ABBREVIATE

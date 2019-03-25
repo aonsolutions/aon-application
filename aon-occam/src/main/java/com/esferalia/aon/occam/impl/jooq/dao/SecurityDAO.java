@@ -597,6 +597,6 @@ public class SecurityDAO {
 				? new Integer[]{domain}
 				: new Integer[]{domain,parentDomain};
 	}
-	
+
 }
 
