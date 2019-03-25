@@ -17,7 +17,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -192,9 +191,9 @@ public class MainCRA extends MainEntryPoint {
 	@UiHandler("exportButton")
 	void exportButton(ClickEvent event){
 		if(checkDate()){
-			Window.alert("GENERANDO FICHERO AFI");
-			Window.alert("INFORMACION AFI => CCC Id : " + this.cccId + ", CCC : " + this.ccc + 
-					", CCC Start Date : " + this.startDate + ", CCC End Date : " +this.endDate);
+//			Window.alert("GENERANDO FICHERO AFI");
+//			Window.alert("INFORMACION AFI => ENTERPRISE: " + enterpriseName + ", CCC Id : " + this.cccId + ", CCC : " + this.ccc + 
+//					", CCC Start Date : " + this.startDate + ", CCC End Date : " +this.endDate);
 			
 			String fileDownloadURL = GWT.getModuleBaseURL()+ "/main_cra/"
 		            + "?domainId=" + enterpriseInfo.getDomain()

@@ -8,13 +8,9 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BodyElement;
 import com.google.gwt.dom.client.Document;
-import com.google.gwt.junit.DoNotRunWith;
-import com.google.gwt.junit.Platform;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.CssResource.NotStrict;
-import com.google.gwt.storage.client.Storage;
-import com.google.gwt.user.client.Window;
 import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronIconsElement;
 import com.vaadin.polymer.iron.IronLabelElement;
@@ -116,7 +112,6 @@ public class MainEntryPoint implements EntryPoint {
 		} 
 		else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_CRA_ENTRY_POINT)) {
-			Window.alert("OPENED -> " + Constants.MAIN_CRA_ENTRY_POINT);
 			MainCRA mainCRA = new MainCRA();
 			mainCRA.onModuleLoad();
 		} 

@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.jooq.tools.json.JSONObject;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
+import com.esferalia.aon.gwt.payroll.jooq.JooqCRA;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Main-CRA", urlPatterns = { "/aon_gwt_payroll/main_cra/*" })
@@ -35,7 +36,7 @@ public class MainCRAServlet extends HttpServlet {
 		String _ccc = request.getParameter("ccc");
 		
 		//Este JSON lo deberia obtener del Request cuando me llaman al Servlet
-		JSONObject agrarianJSON = null; 
+		JSONObject mainCRAJSON = null; 
 		
 		//Get domain Name
 		String domainName = AonServletUtils.getRequestDomainName(request);
@@ -53,12 +54,11 @@ public class MainCRAServlet extends HttpServlet {
 					+ fileName + ".CRA\"");
 			ServletOutputStream output = response.getOutputStream();
 			
-			output.write("Fallo al crear el archivo -> No hay empleados seleccionados".getBytes());
+//			output.write("Fallo al crear el archivo -> No hay empleados seleccionados".getBytes());
 			
-//			agrarianJSON = JooqAgrarian.getAgrarianInfo(_domainId, domainName, _enterpriseId, _enterpriseName, _ccc, _startDate, _endDate, _selectedContracts);
-//			String agrarianAFI = AgrarianAFIGeneration.generateAgrarianAFI(agrarianJSON);
-//			output.write(agrarianAFI.getBytes());
-			
+			mainCRAJSON = JooqCRA.getMainCRA(_domainId, domainName, _enterpriseId, _enterpriseName, _ccc, _startDate, _endDate);
+			String agrarianAFI = MainCRAGeneration.generateMainCRA(mainCRAJSON);
+			output.write(agrarianAFI.getBytes());
 			
 			response.flushBuffer();
 		
