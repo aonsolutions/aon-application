@@ -8,7 +8,7 @@ public class TediRegistry {
 	public TediRegistry(JSONObject json) {
 		if(json != null) {
 			this.name = json.optString("name");
-			this.document = json.optJSONObject("document").getString("document");
+			this.document = json.optString("document");
 			this.address = new TediAddress(json.optJSONObject("address"));
 		}
 	}
