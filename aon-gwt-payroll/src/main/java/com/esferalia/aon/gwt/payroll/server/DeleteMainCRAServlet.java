@@ -18,8 +18,8 @@ import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCRA;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Main-CRA", urlPatterns = { "/aon_gwt_payroll/main_cra/*" })
-public class MainCRAServlet extends HttpServlet {
+@WebServlet(name = "Download-Main-CRA", urlPatterns = { "/aon_gwt_payroll/delete_main_cra/*" })
+public class DeleteMainCRAServlet extends HttpServlet {
 	
 	private SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 	
@@ -29,15 +29,7 @@ public class MainCRAServlet extends HttpServlet {
 		
 		//Get Request Parametrers
 		String _domainId = request.getParameter("domainId");
-		String _enterpriseId = request.getParameter("enterpriseId");
-		String _enterpriseName = request.getParameter("enterpriseName");
-		String _startDate = request.getParameter("startDate");
-		String _endDate = request.getParameter("endDate");
-		String _ccc = request.getParameter("ccc");
-		String _cccId = request.getParameter("cccId");
-		
-		//Este JSON lo deberia obtener del Request cuando me llaman al Servlet
-		JSONObject mainCRAJSON = null; 
+		String _craBatchId = request.getParameter("craBatchId");
 		
 		//Get domain Name
 		String domainName = AonServletUtils.getRequestDomainName(request);
@@ -50,24 +42,18 @@ public class MainCRAServlet extends HttpServlet {
 			String minutes = currentDate.getMinutes() < 10 ? "0"+currentDate.getMinutes() : currentDate.getMinutes()+"";
 			String fileName = day + month + hour + minutes;
 			dateFormatter.applyPattern("yyyy/MM/dd");
-			response.setContentType("text/html;charset=utf-8");
-			response.setHeader("Content-disposition", "attachment; filename=\""
-					+ fileName + ".CRA\"");
-			ServletOutputStream output = response.getOutputStream();
+//			response.setContentType("text/html;charset=utf-8");
+//			response.setHeader("Content-disposition", "attachment; filename=\""
+//					+ fileName + ".CRA\"");
+//			ServletOutputStream output = response.getOutputStream();
 			
-//			output.write("Fallo al crear el archivo -> No hay empleados seleccionados".getBytes());
-			
-			mainCRAJSON = JooqCRA.getMainCRA(_domainId, domainName, _enterpriseId, _enterpriseName, _ccc, _startDate, _endDate);
-			String agrarianAFI = MainCRAGeneration.generateMainCRA(mainCRAJSON);
-			
-			JooqCRA.setMainCra(_domainId, domainName, _cccId, agrarianAFI, _startDate);
-			
-			output.write(agrarianAFI.getBytes());
-			
-			response.flushBuffer();
+			JooqCRA.deleteMainCRA(_domainId, domainName, _craBatchId);
+//			output.write(data);
+//			
+//			response.flushBuffer();
 		
-		}catch (IOException e) {
-			throw new AbortProcessingException(e.getMessage(), e);
+		}finally {
+			
 		}
 		
 	}

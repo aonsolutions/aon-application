@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
+import com.esferalia.aon.gwt.payroll.shared.CRA;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
@@ -62,5 +63,6 @@ public interface EnterprisesServiceAsync {
 	void getEnterpriseInfo(Integer enterpriseId, String domain, AsyncCallback<EnterpriseInfo> asyncCallback);
 	void updateEnterprise(EnterpriseInfo enterpriseInfo, String domain, AsyncCallback<EnterpriseInfo> asyncCallback);
 	void getAgrarianJourney(Date startDate, Date endDate, Integer enterprise_ccc, String domain, AsyncCallback<Map<Integer, List<AgrarianJourney>>> asyncCallback);
+	void getCRAs(String domain, AsyncCallback<List<CRA>> asyncCallback);
 
 }

@@ -12,14 +12,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jooq.tools.json.JSONObject;
-
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCRA;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Main-CRA", urlPatterns = { "/aon_gwt_payroll/main_cra/*" })
-public class MainCRAServlet extends HttpServlet {
+@WebServlet(name = "Download-CRA", urlPatterns = { "/aon_gwt_payroll/download_cra/*" })
+public class DownloadMainCRAServlet extends HttpServlet {
 	
 	private SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 	
@@ -29,15 +27,7 @@ public class MainCRAServlet extends HttpServlet {
 		
 		//Get Request Parametrers
 		String _domainId = request.getParameter("domainId");
-		String _enterpriseId = request.getParameter("enterpriseId");
-		String _enterpriseName = request.getParameter("enterpriseName");
-		String _startDate = request.getParameter("startDate");
-		String _endDate = request.getParameter("endDate");
-		String _ccc = request.getParameter("ccc");
-		String _cccId = request.getParameter("cccId");
-		
-		//Este JSON lo deberia obtener del Request cuando me llaman al Servlet
-		JSONObject mainCRAJSON = null; 
+		String _craBatchId = request.getParameter("craBatchId");
 		
 		//Get domain Name
 		String domainName = AonServletUtils.getRequestDomainName(request);
@@ -55,14 +45,8 @@ public class MainCRAServlet extends HttpServlet {
 					+ fileName + ".CRA\"");
 			ServletOutputStream output = response.getOutputStream();
 			
-//			output.write("Fallo al crear el archivo -> No hay empleados seleccionados".getBytes());
-			
-			mainCRAJSON = JooqCRA.getMainCRA(_domainId, domainName, _enterpriseId, _enterpriseName, _ccc, _startDate, _endDate);
-			String agrarianAFI = MainCRAGeneration.generateMainCRA(mainCRAJSON);
-			
-			JooqCRA.setMainCra(_domainId, domainName, _cccId, agrarianAFI, _startDate);
-			
-			output.write(agrarianAFI.getBytes());
+			byte[] data = JooqCRA.getDownloadMainCRA(_domainId, domainName, _craBatchId);
+			output.write(data);
 			
 			response.flushBuffer();
 		

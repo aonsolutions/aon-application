@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
+import com.esferalia.aon.gwt.payroll.shared.CRA;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
@@ -107,5 +108,7 @@ public interface EnterprisesService extends RemoteService {
 
 	Map<Integer, List<AgrarianJourney>> getAgrarianJourney(Date startDate, Date endDate, Integer enterprise_ccc,
 			String domain);
+
+	List<CRA> getCRAs(String domain);
 	
 }

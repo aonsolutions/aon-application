@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
+import com.esferalia.aon.gwt.payroll.shared.CRA;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
@@ -319,5 +320,11 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.getAgrarianJourney(startDate, endDate, enterprise_ccc, domain, new AsyncCallbackWrapper<Map<Integer, List<AgrarianJourney>>>(callback));
 		
+	}
+
+	@Override
+	public void getCRAs(String domain, AsyncCallback<List<CRA>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getCRAs(domain, new AsyncCallbackWrapper<List<CRA>>(callback));
 	}
 }

@@ -39,8 +39,16 @@
 			padding: 2px;
 		}
 		
-		.widthDays{
-			width: 18px;
+		.width50{
+			width: 50px;
+		}
+		
+		.width100{
+			width: 100px;
+		}
+		
+		.width150{
+			width: 150px;
 		}
 		
 		.textCenter{
@@ -81,6 +89,7 @@
 					<g:HorizontalPanel  styleName="aon-finding-toolbar">
 						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 							<g:Label styleName="aon-outputText" text="" />
+							<g:Button ui:field="refreshTableButton" visible="true" styleName='aon-finding-toolbar-item aon-icon-refresh'>REFRESCAR HISTORIAL CRAs</g:Button>
 							<g:Button ui:field="exportButton" visible="true" styleName='aon-finding-toolbar-item aon-icon-accept'>GENERAR CRA</g:Button>
 						</g:HTMLPanel>
 					</g:HorizontalPanel>
@@ -143,9 +152,9 @@
 						<table class="aon-width-all">
 							<tr>
 								<td>
-									<g:VerticalPanel ui:field="activityCCCPanel" styleName="{style.styleBorder}">
-										<g:Label styleName="aon-group-title {style.headerStyle}">Empleados</g:Label>
-										<g:Grid ui:field="activityCCCTable"></g:Grid>
+									<g:VerticalPanel ui:field="mainCRAsPanel" styleName="{style.styleBorder}">
+										<g:Label styleName="aon-group-title {style.headerStyle}">Historial de CRAs</g:Label>
+										<g:Grid ui:field="mainCRAsTable"></g:Grid>
 									</g:VerticalPanel>
 								</td>
 							</tr>
