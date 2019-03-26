@@ -2375,6 +2375,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("N\u00BA de factura")
 	String invoiceNumber();
 
+	@DefaultMessage("N\u00BA fact.")
+	String invoiceNumberAbbr();
+
 	@DefaultMessage("Total factura")
 	String invoiceTotal();
 

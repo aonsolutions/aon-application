@@ -65,7 +65,10 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 	
 	private FlowPanel container;
 	private FlexTable tab;
-	private FlowPanel datePanel; 
+	private FlowPanel datePanel;
+	private FlowPanel amountPanel; 
+	private FlowPanel paymentPanel; 
+	
 	private DateBoxEx fromDate;
 	private DateBoxEx toDate;
 	
@@ -133,8 +136,8 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 	}
 	public void setUser(User user) {
 		this.user = user;
-		if (datePanel != null && user != null && user.hasConfidentialityRole()) {
-			datePanel.add(confidential);
+		if (paymentPanel != null && user != null && user.hasConfidentialityRole()) {
+			paymentPanel.add(confidential);
 		}
 	}
 	public boolean isSearchEnabled() {
@@ -159,7 +162,7 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 
 	private void fillNorthPanel(int tabIndex) {
 		amount = new DoubleBox();
-		amount.setVisibleLength(8);
+		amount.setVisibleLength(6);
 		amount.setValue(null,false);
 		amount.setTabIndex(++tabIndex);
 		amount.addValueChangeHandler(new ValueChangeHandler<Double>() {
@@ -212,7 +215,8 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 			}
 		});
 		
-		confidential = new CheckBox(AON.MSG.confidential());
+		confidential = new CheckBox( AON.MSG.confidential());
+		confidential.addStyleName(AON.AON_CSS.aonMarginLeft());
 		confidential.setTabIndex(++tabIndex);
 		confidential.addClickHandler(new ClickHandler() {
 			
@@ -279,7 +283,7 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 		
 		tab.setWidget(0, 0, new Label(AON.MSG.amount()));
 		tab.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonBold());
-		FlowPanel amountPanel = new FlowPanel();
+		amountPanel = new FlowPanel();
 		amountPanel.setStyleName(AON.AON_CSS.aonNowrap());
 		amountPanel.add(amount);
 		amountPanel.add(nearbyNumbers);
@@ -304,7 +308,7 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 		datePanel.add(toDate);
 		tab.setWidget(1, 1, datePanel);
 
-		tab.setWidget(1, 2, new Label(AON.MSG.invoiceNumber()));
+		tab.setWidget(1, 2, new Label(AON.MSG.invoiceNumberAbbr()));
 		tab.getCellFormatter().setStyleName(1,2, AON.AON_CSS.aonBold());
 		tab.setWidget(1, 3, referenceCode);
 
@@ -312,9 +316,11 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 		tab.getCellFormatter().setStyleName(2,0, AON.AON_CSS.aonBold());
 		tab.setWidget(2, 1, registryBox);
 		
+		paymentPanel = new FlowPanel();
+		paymentPanel.add(payment);
 		tab.setWidget(2, 2, new Label(AON.MSG.type()));
 		tab.getCellFormatter().setStyleName(2,2, AON.AON_CSS.aonBold());
-		tab.setWidget(2, 3, payment);
+		tab.setWidget(2, 3, paymentPanel);
 
 		flowNorthPanel.add(tab);
 		northPanel.setWidget(flowNorthPanel);
