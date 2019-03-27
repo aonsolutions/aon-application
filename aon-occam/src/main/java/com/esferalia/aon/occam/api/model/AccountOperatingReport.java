@@ -175,7 +175,7 @@ public class AccountOperatingReport implements Serializable {
 		,EBITDA (true,"EBITDA") {
 			@Override
 			public AccountOperatingStatementType modifies() {
-				return RESULT;
+				return CASHFLOW;
 			}
 		}
 		
@@ -201,7 +201,7 @@ public class AccountOperatingReport implements Serializable {
 		,EXTRA_INCOME_EXPENSES_TOTAL (true, "Total INGRESOS Y GASTOS EXCEPCIONALES"){
 			@Override
 			public AccountOperatingStatementType modifies() {
-				return RESULT;
+				return CASHFLOW;
 			}
 		}
 //		+/- INGRESOS Y GASTOS FINANCIEROS
@@ -231,7 +231,7 @@ public class AccountOperatingReport implements Serializable {
 		,FINANCIAL_INCOME_EXPENSES_TOTAL (true, "Total INGRESOS Y GASTOS FINANCIEROS"){
 			@Override
 			public AccountOperatingStatementType modifies() {
-				return RESULT;
+				return CASHFLOW;
 			}
 		}
 //		- IMPUESTOS
@@ -242,9 +242,7 @@ public class AccountOperatingReport implements Serializable {
 			public boolean accept(String code) {
 				return AonStringUtils.startsWith(code, "633")
 					|| AonStringUtils.startsWith(code, "638")
-					|| AonStringUtils.startsWith(code, "6300")
-					|| AonStringUtils.startsWith(code, "6301")
-					|| AonStringUtils.startsWith(code, "6311")
+					|| AonStringUtils.startsWith(code, "630")
 					|| AonStringUtils.startsWith(code, "631")
 					|| AonStringUtils.startsWith(code, "634")
 					|| AonStringUtils.startsWith(code, "636")
@@ -259,9 +257,45 @@ public class AccountOperatingReport implements Serializable {
 		,TAXES_TOTAL (true, "Total IMPUESTOS"){
 			@Override
 			public AccountOperatingStatementType modifies() {
+				return CASHFLOW;
+			}
+		}
+		,OTHER (false,"OTROS CONCEPTOS") {
+			@Override
+			public boolean accept(String code) {
+				return !SALES.accept(code) 
+					&& !STOCK.accept(code)
+					&& !WORK.accept(code)
+					&& !PURCHASES.accept(code)
+					&& !OTHER_INCOMES.accept(code)
+					&& !SALARIES.accept(code)
+					&& !OPERATING_EXPENSES.accept(code)
+					&& !EXTRA_INCOME_EXPENSES.accept(code)
+					&& !FINANCIAL_INCOME_EXPENSES.accept(code)
+					&& !TAXES.accept(code)
+					&& !PROVISION.accept(code)
+					&& !AMORTIZATION.accept(code)
+					&& AonStringUtils.isNumeric(code)
+				;
+			}
+			@Override
+			public AccountOperatingStatementType modifies() {
+				return OTHER_TOTAL;
+			}
+		}
+		,OTHER_TOTAL (true,"Total OTROS CONCEPTOS") {
+			@Override
+			public AccountOperatingStatementType modifies() {
+				return CASHFLOW;
+			}
+		}
+		,CASHFLOW (true, "CASH FLOW"){
+			@Override
+			public AccountOperatingStatementType modifies() {
 				return RESULT;
 			}
 		}
+		
 //		- AMORTIZACIÓN
 //		68
 		,AMORTIZATION (false,"AMORTIZACI\u00D3N") {
@@ -290,48 +324,18 @@ public class AccountOperatingReport implements Serializable {
 		,PROVISION (false,"PROVISIONES") {
 			@Override
 			public boolean accept(String code) {
-				return AonStringUtils.startsWith(code, "7950")
-					|| AonStringUtils.startsWith(code, "7957")
-					|| AonStringUtils.startsWith(code, "6930")
-					|| AonStringUtils.startsWith(code, "7930")
-					|| AonStringUtils.startsWith(code, "6931")
-					|| AonStringUtils.startsWith(code, "6932")
-					|| AonStringUtils.startsWith(code, "6933")
-					|| AonStringUtils.startsWith(code, "7931")
-					|| AonStringUtils.startsWith(code, "7932")
-					|| AonStringUtils.startsWith(code, "7933")
-					|| AonStringUtils.startsWith(code, "694")
-					|| AonStringUtils.startsWith(code, "695")
-					|| AonStringUtils.startsWith(code, "794")
-					|| AonStringUtils.startsWith(code, "7954")
-					|| AonStringUtils.startsWith(code, "7951")
-					|| AonStringUtils.startsWith(code, "7952")
-					|| AonStringUtils.startsWith(code, "7955")
-					|| AonStringUtils.startsWith(code, "7956")
-					|| AonStringUtils.startsWith(code, "690")
-					|| AonStringUtils.startsWith(code, "691")
-					|| AonStringUtils.startsWith(code, "692")
-					|| AonStringUtils.startsWith(code, "790")
-					|| AonStringUtils.startsWith(code, "791")
-					|| AonStringUtils.startsWith(code, "792")
-					|| AonStringUtils.startsWith(code, "663")
-					|| AonStringUtils.startsWith(code, "763")
+				return AonStringUtils.startsWith(code, "663")
 					|| AonStringUtils.startsWith(code, "666")
 					|| AonStringUtils.startsWith(code, "667")
 					|| AonStringUtils.startsWith(code, "673")
 					|| AonStringUtils.startsWith(code, "675")
-					|| AonStringUtils.startsWith(code, "696")
-					|| AonStringUtils.startsWith(code, "697")
-					|| AonStringUtils.startsWith(code, "698")
-					|| AonStringUtils.startsWith(code, "699")
+					|| AonStringUtils.startsWith(code, "69")
+ 					|| AonStringUtils.startsWith(code, "763")
 					|| AonStringUtils.startsWith(code, "766")
 					|| AonStringUtils.startsWith(code, "773")
 					|| AonStringUtils.startsWith(code, "775")
-					|| AonStringUtils.startsWith(code, "796")
-					|| AonStringUtils.startsWith(code, "797")
-					|| AonStringUtils.startsWith(code, "798")
-					|| AonStringUtils.startsWith(code, "799")
-					;
+					|| AonStringUtils.startsWith(code, "79")
+				;
 			}
 			@Override
 			public AccountOperatingStatementType modifies() {
@@ -339,35 +343,6 @@ public class AccountOperatingReport implements Serializable {
 			}
 		}
 		,PROVISION_TOTAL (true, "Total PROVISIONES"){
-			@Override
-			public AccountOperatingStatementType modifies() {
-				return RESULT;
-			}
-		}
-		
-		,OTHER (false,"OTROS CONCEPTOS") {
-			@Override
-			public boolean accept(String code) {
-				return !SALES.accept(code) 
-					&& !STOCK.accept(code)
-					&& !WORK.accept(code)
-					&& !PURCHASES.accept(code)
-					&& !OTHER_INCOMES.accept(code)
-					&& !SALARIES.accept(code)
-					&& !OPERATING_EXPENSES.accept(code)
-					&& !EXTRA_INCOME_EXPENSES.accept(code)
-					&& !FINANCIAL_INCOME_EXPENSES.accept(code)
-					&& !TAXES.accept(code)
-					&& !PROVISION.accept(code)
-					&& AonStringUtils.isNumeric(code)
-				;
-			}
-			@Override
-			public AccountOperatingStatementType modifies() {
-				return OTHER_TOTAL;
-			}
-		}
-		,OTHER_TOTAL (true,"Total OTROS CONCEPTOS") {
 			@Override
 			public AccountOperatingStatementType modifies() {
 				return RESULT;
