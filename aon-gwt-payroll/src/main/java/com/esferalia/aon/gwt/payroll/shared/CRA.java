@@ -15,6 +15,8 @@ public class CRA implements Serializable{
 	private String cccProvince;
 	private String activityName;
 	
+	private String type;
+	
 	public CRA() {
 		super();
 	}
@@ -73,6 +75,14 @@ public class CRA implements Serializable{
 
 	public void setActivityName(String activityName) {
 		this.activityName = activityName;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 	
 	

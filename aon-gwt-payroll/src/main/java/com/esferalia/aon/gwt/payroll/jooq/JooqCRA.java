@@ -40,10 +40,10 @@ public class JooqCRA {
 
 	@SuppressWarnings({ "unchecked", "null" })
 	public static JSONObject getMainCRA(String _domainId, String domainName, String _enterpriseId, String _enterpriseName, 
-			String _ccc, String _startDate, String _endDate) {
+			String _ccc, long _startDate, long _endDate) {
 		
-		java.util.Date startDate = new java.util.Date(Long.parseLong(_startDate));
-		java.util.Date endDate = new java.util.Date(Long.parseLong(_endDate));
+		java.util.Date startDate = new java.util.Date(_startDate);
+		java.util.Date endDate = new java.util.Date(_endDate);
 		
 		Date startDateSQL = new Date(startDate.getTime());
 		Date endDateSQL = new Date(endDate.getTime());
@@ -231,6 +231,7 @@ public class JooqCRA {
 			cra.setCode(craBatch.get(CRA_BATCH.ID));
 			cra.setStatus(craBatch.get(CRA_BATCH.STATUS));
 			cra.setCreationDate(craBatch.get(CRA_BATCH.OUTCOME_FILE_DATE));
+			cra.setType(craBatch.get(CRA_BATCH.COMMUNICATION_ID));
 			
 			Record craBatchDetailRecord = dslContext.select().from(CRA_BATCH_DETAIL)
 					.where(CRA_BATCH_DETAIL.CRA_BATCH.eq(craBatch.get(CRA_BATCH.ID)))
@@ -304,7 +305,7 @@ public class JooqCRA {
 		}
 	}
 
-	public static void deleteMainCRA(String _domainId, String domainName, String _craBatchId) {
+	public static String deleteMainCRA(String _domainId, String domainName, String _craBatchId) {
 		AONContext context = null;
 		
 		try {
@@ -323,12 +324,14 @@ public class JooqCRA {
 			if (context != null)
 				context.close();
 		}
+		
+		return null;
 	}
 
-	public static void setMainCra(String _domainId, String domainName, String _cccId, String agrarianAFI, String _startDate) {
+	public static String setMainCra(String _domainId, String domainName, String _cccId, String agrarianAFI, long _startDate, String type) {
 		AONContext context = null;
 		
-		java.util.Date startDate = new java.util.Date(Long.parseLong(_startDate));
+		java.util.Date startDate = new java.util.Date(_startDate);
 		
 		try {
 			DSLContext dslContext = AONContext.getAONContext(domainName, Integer.parseInt(_domainId),
@@ -338,6 +341,7 @@ public class JooqCRA {
 				.set(CRA_BATCH.DOMAIN, Integer.parseInt(_domainId))
 				.set(CRA_BATCH.DATE, new Timestamp(startDate.getTime()))
 				.set(CRA_BATCH.STATUS, (byte)1)
+				.set(CRA_BATCH.COMMUNICATION_ID, type)
 				.set(CRA_BATCH.INCOME_FILE, (byte[])null)
 				.set(CRA_BATCH.OUTCOME_FILE, agrarianAFI.getBytes())
 				.set(CRA_BATCH.OUTCOME_FILE_DATE, new Timestamp(startDate.getTime()))
@@ -356,6 +360,8 @@ public class JooqCRA {
 			if (context != null)
 				context.close();
 		}
+		
+		return null;
 		
 	}
 }

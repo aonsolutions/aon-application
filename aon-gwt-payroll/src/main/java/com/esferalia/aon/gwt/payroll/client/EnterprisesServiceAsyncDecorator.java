@@ -327,4 +327,18 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.getCRAs(domain, new AsyncCallbackWrapper<List<CRA>>(callback));
 	}
+
+	@Override
+	public void createNewCRA(Integer domain, String domainName, Integer enterpriseId, String enterpriseName,
+			long startDate, long endDate, String ccc, Integer cccId, String type, AsyncCallback<String> callback) {
+		AON.start();
+		enterprisesServiceAsync.createNewCRA(domain, domainName, enterpriseId, enterpriseName, startDate, endDate, ccc, cccId, type, new AsyncCallbackWrapper<String>(callback));
+	}
+
+	@Override
+	public void deleteCRA(Integer domainId, String domainName, Integer code,
+			AsyncCallback<String> callback) {
+		AON.start();
+		enterprisesServiceAsync.deleteCRA(domainId, domainName, code, new AsyncCallbackWrapper<String>(callback));
+	}
 }

@@ -74,6 +74,15 @@
 		.labelPaddingLeft{
 			padding-left: 5px;
 		}
+		
+		.exportBtnPadding{
+			margin-top: 5px;
+			margin-left: 50px;
+		}
+		
+		.exportBtnBorder{
+			border-right: none !important;
+		}
 	
 	</ui:Style>
 
@@ -89,17 +98,15 @@
 					<g:HorizontalPanel  styleName="aon-finding-toolbar">
 						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 							<g:Label styleName="aon-outputText" text="" />
-							<g:Button ui:field="refreshTableButton" visible="true" styleName='aon-finding-toolbar-item aon-icon-refresh'>REFRESCAR HISTORIAL CRAs</g:Button>
-							<g:Button ui:field="exportButton" visible="true" styleName='aon-finding-toolbar-item aon-icon-accept'>GENERAR CRA</g:Button>
 						</g:HTMLPanel>
 					</g:HorizontalPanel>
 				</g:HorizontalPanel>
 			</g:FlowPanel>
 		</g:north>
 		<g:center>
-			<g:DockLayoutPanel unit="EM" styleName="aondockLayoutPanel-template">
-				<g:north size="12">
-					<g:HTMLPanel styleName="aon-width-all aon-height-all {style.paddingTable}"> 
+			<g:DockLayoutPanel ui:field="dockLayout" unit="EM" styleName="aondockLayoutPanel-template">
+				<g:north size="14">
+					<g:HTMLPanel ui:field="newCRAPanel" styleName="aon-width-all aon-height-all {style.paddingTable}"> 
 						<table class="aon-width-all aon-height-all">
 							<tr>
 								<td>
@@ -138,6 +145,18 @@
 															</g:HorizontalPanel>
 														</td>
 													</tr>
+													<tr>
+														<td style="background-color: #eaeaea; width: 100px;  height: 22px;">
+															<g:Label styleName="{style.labelPaddingLeft}">Acciones</g:Label>
+														</td>
+														<td>
+															<g:HorizontalPanel>
+																<!-- <g:Label styleName="{style.paddingText2}">Rectificativo :</g:Label>
+																<g:CheckBox ui:field="rectificativo"></g:CheckBox> -->
+																<g:Button ui:field="exportButton" visible="true" styleName='aon-finding-toolbar-item aon-icon-accept {style.exportBtnBorder}'>GENERAR CRA</g:Button>
+															</g:HorizontalPanel>
+														</td>
+													</tr>
 												</table>
 											</g:HTMLPanel>
 										</g:VerticalPanel>
@@ -148,17 +167,31 @@
 					</g:HTMLPanel>
 				</g:north>
 				<g:center>
-					<g:HTMLPanel styleName="aon-width-all {style.paddingTable}"> 
-						<table class="aon-width-all">
-							<tr>
-								<td>
-									<g:VerticalPanel ui:field="mainCRAsPanel" styleName="{style.styleBorder}">
-										<g:Label styleName="aon-group-title {style.headerStyle}">Historial de CRAs</g:Label>
-										<g:Grid ui:field="mainCRAsTable"></g:Grid>
-									</g:VerticalPanel>
-								</td>
-							</tr>
-						</table>
+					<g:HTMLPanel styleName="aon-width-all"> 
+						<g:HTMLPanel styleName="aon-width-all {style.paddingTable}"> 
+							<table class="aon-width-all">
+								<tr>
+									<td>
+										<g:VerticalPanel ui:field="mainCRAsPanel" styleName="{style.styleBorder}">
+											<g:Label styleName="aon-group-title {style.headerStyle}">Historial de CRAs</g:Label>
+											<g:Grid ui:field="mainCRAsTable"></g:Grid>
+										</g:VerticalPanel>
+									</td>
+								</tr>
+							</table>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="aon-width-all {style.paddingTable}"> 
+							<table class="aon-width-all">
+								<tr>
+									<td>
+										<g:VerticalPanel ui:field="mainRectificativoCRAsPanel" styleName="{style.styleBorder}">
+											<g:Label styleName="aon-group-title {style.headerStyle}">Historial de CRAs Rectificativos</g:Label>
+											<g:Grid ui:field="mainRectificativoCRAsTable"></g:Grid>
+										</g:VerticalPanel>
+									</td>
+								</tr>
+							</table>
+						</g:HTMLPanel>
 					</g:HTMLPanel>
 				</g:center>
 			</g:DockLayoutPanel>

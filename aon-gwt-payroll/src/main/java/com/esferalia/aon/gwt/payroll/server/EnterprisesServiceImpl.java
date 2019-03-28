@@ -18,6 +18,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.jooq.tools.json.JSONObject;
+
 import com.esferalia.aon.google.sql.SQLConstants.PersonColumns;
 import com.esferalia.aon.google.sql.SQLConstants.UserScopeColumns;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
@@ -1717,6 +1719,49 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			connection = AonServletUtils.getConnection(domain);
 			return JooqCRA.getDomainCRAs(domain, connection);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+		}
+	}
+
+	@Override
+	public String createNewCRA(Integer domain, String domainName, Integer enterpriseId, String enterpriseName,
+			long startDate, long endDate, String ccc, Integer cccId, String type) {
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection(domainName);
+			
+			JSONObject mainCRAJSON = JooqCRA.getMainCRA(domain.toString(), domainName, enterpriseId.toString(), enterpriseName, ccc, startDate, endDate);
+			String agrarianAFI = MainCRAGeneration.generateMainCRA(mainCRAJSON);
+			return JooqCRA.setMainCra(domain.toString(), domainName, cccId.toString(), agrarianAFI, startDate, type);
+			
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+		}
+	}
+
+	@Override
+	public String deleteCRA(Integer domainId, String domainName, Integer craBatchId) {
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection(domainName);
+			
+			return JooqCRA.deleteMainCRA(domainId.toString(), domainName, craBatchId.toString());
+			
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		} finally {
