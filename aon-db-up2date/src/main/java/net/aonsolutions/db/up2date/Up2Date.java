@@ -1,18 +1,7 @@
 package net.aonsolutions.db.up2date;
 
-import static net.aonsolutions.db.up2date.payroll.DefaultAgreementInsert.DEFAULTAGREEMENTINSERT;
-import static net.aonsolutions.db.up2date.payroll.FundUpvUpdate2019.FUNDUPV_UPDATE_2019;
-import static net.aonsolutions.db.up2date.payroll.Holidays2019Insert.HOLIDAYS2019INSERT;
-import static net.aonsolutions.db.up2date.payroll.PrestITCommonDiseaseAtLackInsert.PRESTITCOMMONDISEASEATLACKINSERT;
-import static net.aonsolutions.db.up2date.payroll.SystemOffInsert.SYSTEM_OFF_INSERT;
-import static net.aonsolutions.db.up2date.tgss.Bases2019Update.BASES2019UPDATE;
-import static net.aonsolutions.db.up2date.tgss.Bases2019UpdateII.BASES2019UPDATEII;
-import static net.aonsolutions.db.up2date.tgss.CRA0035Update.CRA0035UPDATE;
-import static net.aonsolutions.db.up2date.tgss.ITIMS2019Insert.ITIMS2019INSERT;
-import static net.aonsolutions.db.up2date.tgss.NoticeDaysUpdate.NOTICEDAYSUPDATE;
-import static net.aonsolutions.db.up2date.tgss.HomePercentage2019Update.HOMEPERCENTAGE2019UPDATE;
-import static net.aonsolutions.db.up2date.tgss.FellowsBases2019Update.FELLOWSBASES2019UPDATE;
-import static net.aonsolutions.db.up2date.tgss.TrainningBases2019Update.TRAINNINGBASES2019UPDATE;
+import static net.aonsolutions.db.up2date.tgss.FellowsBases2019Fix.FELLOWSBASES2019FIX;
+import static net.aonsolutions.db.up2date.tgss.TrainningBases2019Fix.TRAINNINGBASES2019FIX;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -32,14 +21,6 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-
-import net.aonsolutions.db.up2date.payroll.DefaultAgreementInsert;
-import net.aonsolutions.db.up2date.payroll.FundUpvUpdate2019;
-import net.aonsolutions.db.up2date.payroll.Holidays2019Insert;
-import net.aonsolutions.db.up2date.tgss.Bases2019Update;
-import net.aonsolutions.db.up2date.tgss.Bases2019UpdateII;
-import net.aonsolutions.db.up2date.tgss.CRA0035Update;
-import net.aonsolutions.db.up2date.tgss.ITIMS2019Insert;
 
 public class Up2Date {
 
@@ -77,10 +58,12 @@ public class Up2Date {
     		//DEFAULTAGREEMENTINSERT,
     		//CRA0035UPDATE,
     		//ITIMS2019INSERT,
-        NOTICEDAYSUPDATE,
-        HOMEPERCENTAGE2019UPDATE,
-        FELLOWSBASES2019UPDATE,
-        TRAINNINGBASES2019UPDATE
+    		//NOTICEDAYSUPDATE,
+    		//HOMEPERCENTAGE2019UPDATE,
+    		//FELLOWSBASES2019UPDATE,
+    		//TRAINNINGBASES2019UPDATE
+    		FELLOWSBASES2019FIX,
+    		TRAINNINGBASES2019FIX
     };
 
 
