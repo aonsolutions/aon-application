@@ -161,6 +161,155 @@ public class JooqCRA {
 		
 		return mainCRAJSON;
 	}
+	
+	@SuppressWarnings({ "unchecked", "null" })
+	public static JSONObject getMainCRAByCRA(String _domainId, String domainName, String _enterpriseId, String _enterpriseName, 
+			String _ccc, long _startDate, long _endDate) {
+		
+		java.util.Date startDate = new java.util.Date(_startDate);
+		java.util.Date endDate = new java.util.Date(_endDate);
+		
+		Date startDateSQL = new Date(startDate.getTime());
+		Date endDateSQL = new Date(endDate.getTime());
+		
+		AONContext context = null;
+		JSONObject mainCRAJSON = new JSONObject();
+		
+		try {
+			DSLContext dslContext = AONContext.getAONContext(domainName, Integer.parseInt(_domainId),
+					AonServletUtils.getLoggedUser()).getDslContext();
+			
+			//GET AuthKey from DB
+			Record domainRecord = dslContext.select().from(DOMAIN)
+					.where(DOMAIN.ID.eq(Integer.parseInt(_domainId)))
+					.fetchOne();
+			
+			Integer parentDomainId = domainRecord.get(DOMAIN.PARENT);
+			
+			Record appParamRecord = dslContext.select().from(APP_PARAM)
+					.where(APP_PARAM.NAME.eq("PAY_authorization_key_PAY"))
+						.and(APP_PARAM.DOMAIN.eq(Integer.parseInt(_domainId)))
+					.fetchOne();
+			
+			String authKey = "";
+			if(null == appParamRecord || null == appParamRecord.get(APP_PARAM.VALUE)) {
+				appParamRecord = dslContext.select().from(APP_PARAM)
+						.where(APP_PARAM.NAME.eq("PAY_authorization_key_PAY"))
+							.and(APP_PARAM.DOMAIN.eq(parentDomainId))
+						.fetchOne();
+				if(null == appParamRecord || null == appParamRecord.get(APP_PARAM.VALUE)) 
+					authKey = "00000";
+				else
+					authKey = appParamRecord.get(APP_PARAM.VALUE);
+			} else
+				authKey = appParamRecord.get(APP_PARAM.VALUE);
+			
+			
+			//ETI
+			JSONObject eti = new JSONObject();
+			eti.put("authkey", authKey);
+			eti.put("fileName", null);
+			eti.put("prorityCode", "N");
+			
+			mainCRAJSON.put("ETI", eti);
+			
+			
+			//GET Salaries from DB (employees)
+			Result<Record> salaryRecords = dslContext.select().from(SALARY)
+					.where(SALARY.START_DATE.ge(startDateSQL))
+						.and(SALARY.END_DATE.le(endDateSQL))
+						.and(SALARY.ENTERPRISE_NAME.equalIgnoreCase(_enterpriseName))
+						.and(SALARY.CCC.eq(_ccc))
+					.fetch();
+			
+			//DDE
+			JSONObject dde = new JSONObject();
+			dde.put("cccRegime", parseSS_Regime(salaryRecords.get(0).get(SALARY.SS_REGIME)));
+			dde.put("ccc", salaryRecords.get(0).get(SALARY.CCC));
+			
+			JSONArray trbs = new JSONArray();
+			
+			for(Record salary: salaryRecords) {
+				JSONObject trb = new JSONObject();
+				
+				trb.put("numAfilicion", salary.get(SALARY.SOCIAL_SECURITY_NUMBER));
+				
+				JSONArray cres = new JSONArray();
+				
+				//GET Salaries from DB (employees)
+				Result<Record> salaryPaymentRecords = dslContext.select().from(SALARY_PAYMENT)
+						.where(SALARY_PAYMENT.SALARY.eq(salary.get(SALARY.ID)))
+						.fetch();
+				
+				Type typeCRA = (salaryPaymentRecords.size() == 0) ? null : Payment.Type.values()[salaryPaymentRecords.get(0).get(SALARY_PAYMENT.TYPE)];;
+				Double craAmount = 0.00;
+				JSONObject cre = new JSONObject();
+				
+				for (int i=0; i<salaryPaymentRecords.size(); i++) {
+					
+					Type craType = Payment.Type.values()[salaryPaymentRecords.get(i).get(SALARY_PAYMENT.TYPE)];
+					
+					if(typeCRA == craType) {
+						craAmount += salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT);
+						
+						//Es la ultima iteracion
+						if(i+1 == salaryPaymentRecords.size()) {
+							String craAmountStr = String.format( "%.2f", craAmount );
+							String amount = craAmountStr.split("[.]")[0] + craAmountStr.split("[.]")[1];
+							cre.put("concept", craType.getDescription().split(" ")[0]);
+							cre.put("include_exclude", craType.isBBCCIncluded() ? "I" : "E");
+							cre.put("amount", amount);
+							cre.put("action", " ");
+							cres.add(cre);
+						}
+						
+						continue;
+					}else {
+						String craAmountStr = String.format( "%.2f", craAmount );
+						String amount = craAmountStr.split("[.]")[0] + craAmountStr.split("[.]")[1];
+						cre.put("concept", typeCRA.getDescription().split(" ")[0]);
+						cre.put("include_exclude", typeCRA.isBBCCIncluded() ? "I" : "E");
+						cre.put("amount", amount);
+						cre.put("action", " ");
+						cres.add(cre);
+						
+						typeCRA = craType;
+						cre = new JSONObject();
+						craAmount = salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT);
+						
+						//Es la ultima iteracion
+						if(i+1 == salaryPaymentRecords.size()) {
+							craAmountStr = String.format( "%.2f", craAmount );
+							amount = craAmountStr.split("[.]")[0] + craAmountStr.split("[.]")[1];
+							cre.put("concept", craType.getDescription().split(" ")[0]);
+							cre.put("include_exclude", craType.isBBCCIncluded() ? "I" : "E");
+							cre.put("amount", amount);
+							cre.put("action", " ");
+							cres.add(cre);
+						}
+					}
+					
+				}
+				
+				trb.put("CRES", cres);
+				
+				trbs.add(trb);
+			}
+			
+			dde.put("TRBS", trbs);
+			
+			mainCRAJSON.put("DDE", dde);
+			
+			System.out.println(mainCRAJSON);
+			
+		} finally {
+			if (context != null)
+				context.close();
+		}
+		
+		
+		return mainCRAJSON;
+	}
 
 	private static String parseSS_Regime(Byte ss_regime) {
 		switch (ss_regime) {
@@ -328,7 +477,7 @@ public class JooqCRA {
 		return null;
 	}
 
-	public static String setMainCra(String _domainId, String domainName, String _cccId, String agrarianAFI, long _startDate, String type) {
+	public static String setMainCra(String _domainId, String domainName, String _cccId, String agrarianAFI, long _startDate, String craDocumentType) {
 		AONContext context = null;
 		
 		java.util.Date startDate = new java.util.Date(_startDate);
@@ -337,11 +486,70 @@ public class JooqCRA {
 			DSLContext dslContext = AONContext.getAONContext(domainName, Integer.parseInt(_domainId),
 					AonServletUtils.getLoggedUser()).getDslContext();
 			
+			// RECTIFICATIVO
+			if (craDocumentType.equals("R")) {
+				Record craBatchRecord = dslContext.select().from(CRA_BATCH)
+						.where(CRA_BATCH.ID.in(
+								dslContext.select(CRA_BATCH_DETAIL.CRA_BATCH).from(CRA_BATCH_DETAIL)
+									.where(CRA_BATCH_DETAIL.ENTERPRISE_CCC.eq(Integer.parseInt(_cccId)))
+						)).and(CRA_BATCH.DOMAIN.eq(Integer.parseInt(_domainId)))
+						.and(CRA_BATCH.DATE.eq(new Timestamp(startDate.getTime())))
+						.fetchOne();
+				
+				Integer oldCraBatchId = craBatchRecord.get(CRA_BATCH.ID);
+				byte[] data = craBatchRecord.get(CRA_BATCH.OUTCOME_FILE);
+				
+				String dataStr = new String(data);
+				System.out.println();
+				System.out.println("Lenght DataStr : " + dataStr.length());
+				System.out.println(dataStr);
+				System.out.println();
+				
+				String resultStr = "";
+				String subStringAnalize = "";
+				for(int i=0; i<dataStr.length(); i+=72) {
+					subStringAnalize = dataStr.substring(i, i + 72);
+					if(subStringAnalize.contains("CRE")) {
+						String subStringAnalize1 = subStringAnalize.substring(0, 17);
+						String deleteString = "B";
+						String subStringAnalize2 = subStringAnalize.substring(18, 72);
+						
+						subStringAnalize = subStringAnalize1 + deleteString + subStringAnalize2;
+					}
+					resultStr += subStringAnalize;
+				}
+				System.out.println("Lenght ResultStr : " + resultStr.length());
+				System.out.println(resultStr);
+				
+				CraBatchRecord rectificativeCRABatchRecord = dslContext.insertInto(CRA_BATCH)
+						.set(CRA_BATCH.DOMAIN, Integer.parseInt(_domainId))
+						.set(CRA_BATCH.DATE, new Timestamp(startDate.getTime()))
+						.set(CRA_BATCH.STATUS, (byte)1)
+						.set(CRA_BATCH.COMMUNICATION_ID, craDocumentType)
+						.set(CRA_BATCH.INCOME_FILE, (byte[])null)
+						.set(CRA_BATCH.OUTCOME_FILE, resultStr.getBytes())
+						.set(CRA_BATCH.OUTCOME_FILE_DATE, new Timestamp(startDate.getTime()))
+						.returning(CRA_BATCH.ID)
+						.fetchOne();
+					
+				Integer craBatchId = rectificativeCRABatchRecord.getId();
+				
+				dslContext.insertInto(CRA_BATCH_DETAIL)
+					.set(CRA_BATCH_DETAIL.DOMAIN, Integer.parseInt(_domainId))
+					.set(CRA_BATCH_DETAIL.CRA_BATCH, craBatchId)
+					.set(CRA_BATCH_DETAIL.ENTERPRISE_CCC, Integer.parseInt(_cccId))
+					.execute();
+				
+				// DELETE OLD CRA
+				dslContext.delete(CRA_BATCH_DETAIL).where(CRA_BATCH_DETAIL.CRA_BATCH.eq(oldCraBatchId)).execute();
+				dslContext.delete(CRA_BATCH).where(CRA_BATCH.ID.eq(oldCraBatchId)).execute();
+			}
+			
 			CraBatchRecord craBatchRecord = dslContext.insertInto(CRA_BATCH)
 				.set(CRA_BATCH.DOMAIN, Integer.parseInt(_domainId))
 				.set(CRA_BATCH.DATE, new Timestamp(startDate.getTime()))
 				.set(CRA_BATCH.STATUS, (byte)1)
-				.set(CRA_BATCH.COMMUNICATION_ID, type)
+				.set(CRA_BATCH.COMMUNICATION_ID, "N")
 				.set(CRA_BATCH.INCOME_FILE, (byte[])null)
 				.set(CRA_BATCH.OUTCOME_FILE, agrarianAFI.getBytes())
 				.set(CRA_BATCH.OUTCOME_FILE_DATE, new Timestamp(startDate.getTime()))

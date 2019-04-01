@@ -46,6 +46,7 @@ public class DownloadMainCRAServlet extends HttpServlet {
 			ServletOutputStream output = response.getOutputStream();
 			
 			byte[] data = JooqCRA.getDownloadMainCRA(_domainId, domainName, _craBatchId);
+			
 			output.write(data);
 			
 			response.flushBuffer();

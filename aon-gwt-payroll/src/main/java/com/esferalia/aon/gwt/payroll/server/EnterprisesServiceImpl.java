@@ -1733,14 +1733,19 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 	@Override
 	public String createNewCRA(Integer domain, String domainName, Integer enterpriseId, String enterpriseName,
-			long startDate, long endDate, String ccc, Integer cccId, String type) {
+			long startDate, long endDate, String ccc, Integer cccId, String craType) {
 		Connection connection = null;
 		try {
 			connection = AonServletUtils.getConnection(domainName);
 			
-			JSONObject mainCRAJSON = JooqCRA.getMainCRA(domain.toString(), domainName, enterpriseId.toString(), enterpriseName, ccc, startDate, endDate);
+			JSONObject mainCRAJSON = JooqCRA.getMainCRAByCRA(domain.toString(), domainName, enterpriseId.toString(), enterpriseName, ccc, startDate, endDate);
 			String agrarianAFI = MainCRAGeneration.generateMainCRA(mainCRAJSON);
-			return JooqCRA.setMainCra(domain.toString(), domainName, cccId.toString(), agrarianAFI, startDate, type);
+			
+//			String dataStr = new String(data);
+//			System.out.println("Lenght DataStr : " + agrarianAFI.length());
+//			System.out.println(agrarianAFI);
+			
+			return JooqCRA.setMainCra(domain.toString(), domainName, cccId.toString(), agrarianAFI, startDate, craType);
 			
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
