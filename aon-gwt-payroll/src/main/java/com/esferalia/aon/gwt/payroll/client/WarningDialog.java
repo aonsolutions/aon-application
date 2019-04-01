@@ -8,6 +8,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -30,7 +31,7 @@ public class WarningDialog extends CustomDialog {
 	Button cancelButton;
 	
 	@UiField
-	Label label;
+	HTML label;
 
 	public WarningDialog() {
 		setCaption("Aviso");
@@ -52,7 +53,8 @@ public class WarningDialog extends CustomDialog {
 		
 		setWidget(binder.createAndBindUi(this));
 		
-		label.setText(message);
+		label.setHTML(message);
+//		label.setText(message);
 		
 		cancelButton.addClickHandler(new ClickHandler() {
 			@Override

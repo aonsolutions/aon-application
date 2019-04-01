@@ -40,7 +40,7 @@
 		<table class="aon-width-all aon-height-all" >
 			<tr>
 				<td>
-					<g:Label ui:field="label" styleName="{style.paddingLabels} {style.width}"></g:Label> 
+					<g:HTML ui:field="label" styleName="{style.paddingLabels} {style.width}"></g:HTML> 
 				</td>
 			</tr>
 			<tr>
