@@ -298,12 +298,12 @@ public class Mod131Aeat2016Calculator  {
 				if (AonMathUtils.round(act.getVeh()) <= 1.0) {
 					if (!act.isCap()) {
 						ic2 = 0.7; 
-						if (AonMathUtils.round(act.getMun()) == 2.0) {
+						if (AonMathUtils.round(act.getMun()) == 1.0) {
 							ic2 = 0.75;
-						} else if (AonMathUtils.round(act.getMun()) >= 3.0) {
+						} else if (AonMathUtils.round(act.getMun()) >= 2.0) {
 							ic2 = 0.80;
 						}
-						if (act.getEmp() > 0.0 && act.getEmp() <= 2.0) {
+						if (act.getEmp() > 0.0 && act.getEmp() <= 1.0) {
 							ic2 = 0.90;
 						}
 						if (act.getEmp() > 2) {
