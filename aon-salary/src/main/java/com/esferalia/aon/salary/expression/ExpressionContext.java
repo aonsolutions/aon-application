@@ -324,6 +324,20 @@ public class ExpressionContext {
 		return null;
 	}
 
+	private static String getUnresolvableProperty(PropertyAccessException e) 
+			throws UnknownUndefVarException {
+		e.setCursor(0);
+		String message = e.getMessage();
+		
+		Matcher matcher = 
+		Pattern.compile("unresolvable\\s*property\\s*or\\s*identifier\\s*:\\s*([_a-zA-Z]+)")
+		.matcher(message);
+	
+		if( !matcher.find() )
+			throw new UnknownUndefVarException();
+		return matcher.group(1);
+	}
+
 	public static String getUndefinedProperty(PropertyAccessException e, PeriodMap bindings)
 			throws UnknownUndefVarException {
 
@@ -354,8 +368,11 @@ public class ExpressionContext {
 
 		char expr[] = e.getExpr();
 		int start = e.getCursor();
+		
 		if (start >= expr.length)
 			throw new UnknownUndefVarException();
+		if (start < 0)
+			return getUnresolvableProperty(e);
 
 		if (!Character.isJavaIdentifierStart(expr[start]))
 			throw new UnknownUndefVarException();
