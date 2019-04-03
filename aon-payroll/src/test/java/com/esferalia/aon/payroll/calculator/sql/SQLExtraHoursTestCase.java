@@ -101,19 +101,19 @@ public class SQLExtraHoursTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(getSalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
 		
-		Assert.assertEquals(1000.00, salary.getCommonBase());
-		Assert.assertEquals(1100.00, salary.getProfessionalBase());
+		Assert.assertEquals(1000.00, salary.getCommonBase(), DELTA);
+		Assert.assertEquals(1100.00, salary.getProfessionalBase(), DELTA);
 		
 		String cgcBase = salary.getSalaryData(ContextVariable.CGC_BASE.getName());
-		Assert.assertEquals(1000.00, Double.parseDouble(cgcBase));
+		Assert.assertEquals(1000.00, Double.parseDouble(cgcBase), DELTA);
 		String cgpBase = salary.getSalaryData(ContextVariable.CGP_BASE.getName());
-		Assert.assertEquals(1100.00, Double.parseDouble(cgpBase));
+		Assert.assertEquals(1100.00, Double.parseDouble(cgpBase), DELTA);
 		
 		
 		String cgcBaseEnterprise = salary.getSalaryData(ContextVariable.CGC_BASE_ENTERPRISE.getName());
-		Assert.assertEquals(1000.00, Double.parseDouble(cgcBaseEnterprise));
+		Assert.assertEquals(1000.00, Double.parseDouble(cgcBaseEnterprise), DELTA);
 		String cgpBaseEnterprise = salary.getSalaryData(ContextVariable.CGP_BASE_ENTERPRISE.getName());
-		Assert.assertEquals(1100.00, Double.parseDouble(cgpBaseEnterprise));
+		Assert.assertEquals(1100.00, Double.parseDouble(cgpBaseEnterprise), DELTA);
 
 	}
 	

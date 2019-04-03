@@ -2885,7 +2885,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount() );
 		
 		double br = 1000.00 / 30.00;
-		double prestIt = br * 0.75 * 30; //get(endDate, Calendar.DAY_OF_MONTH );
+		double prestIt = br * 0.75 * get(endDate, Calendar.DAY_OF_MONTH );
 		//@formatter:off
 		Assert.assertEquals(
 				Math.max(prestIt, 500.00) , 
@@ -3648,7 +3648,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		int itDays = get(getLastDayOfMonth(startDate), Calendar.DATE); 
 		//@formatter:off
 		Assert.assertEquals(
-				(1000.00* 0.75 ) + 100.00 , //850.00, 
+				(1000.00 / 30.00 * 0.75 * itDays ) + 100.00 , //850.00, 
 				salary.getTotalPayment() 
 				, DELTA);
 		//@formatter:on
