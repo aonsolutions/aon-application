@@ -441,8 +441,7 @@ public class MainCRA extends MainEntryPoint {
 							@Override
 							public void onSuccess(String result) {
 								WarningDialog warning = new WarningDialog("INTRUCCIONES", "Para poder llevar a cabo la rectificaci"+String.valueOf("\u00F3")+"n del fichero "
-										+ "CRA, deber"+String.valueOf("\u00E1")+" seguir las siguientes instrucciones : <br><br> 1- Enviar el CRA Rectificativo. <br>"
-										+"2- Enviar el nuevo CRA.");
+										+ "CRA, deber"+String.valueOf("\u00E1")+" seguir las siguientes instrucciones : <br><br> 1- Enviar el CRA Rectificativo que se ha generado en el historial de CRAs rectificativos. ");
 								warning.center();
 								warning.show();
 								

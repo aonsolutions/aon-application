@@ -488,16 +488,26 @@ public class JooqCRA {
 			
 			// RECTIFICATIVO
 			if (craDocumentType.equals("R")) {
-				Record craBatchRecord = dslContext.select().from(CRA_BATCH)
+				Result<Record> craBatchRecords = dslContext.select().from(CRA_BATCH)
 						.where(CRA_BATCH.ID.in(
 								dslContext.select(CRA_BATCH_DETAIL.CRA_BATCH).from(CRA_BATCH_DETAIL)
 									.where(CRA_BATCH_DETAIL.ENTERPRISE_CCC.eq(Integer.parseInt(_cccId)))
 						)).and(CRA_BATCH.DOMAIN.eq(Integer.parseInt(_domainId)))
 						.and(CRA_BATCH.DATE.eq(new Timestamp(startDate.getTime())))
-						.fetchOne();
+						.fetch();
 				
-				Integer oldCraBatchId = craBatchRecord.get(CRA_BATCH.ID);
-				byte[] data = craBatchRecord.get(CRA_BATCH.OUTCOME_FILE);
+				byte[] data = null;
+				ArrayList<Integer> oldCraBatchIds = new ArrayList<Integer>();
+				for(Record r: craBatchRecords) {
+					if(r.get(CRA_BATCH.COMMUNICATION_ID).equals("N")) {
+						data = r.get(CRA_BATCH.OUTCOME_FILE);
+						oldCraBatchIds.add(r.get(CRA_BATCH.ID));
+					}else
+						oldCraBatchIds.add(r.get(CRA_BATCH.ID));
+				}
+				
+//				Integer oldCraBatchId = craBatchRecord.get(CRA_BATCH.ID);
+//				byte[] data = craBatchRecord.get(CRA_BATCH.OUTCOME_FILE);
 				
 				String dataStr = new String(data);
 				System.out.println();
@@ -520,6 +530,11 @@ public class JooqCRA {
 				}
 				System.out.println("Lenght ResultStr : " + resultStr.length());
 				System.out.println(resultStr);
+				String newETI = agrarianAFI.substring(0, 72);
+				resultStr += parseCRAToRectificative(agrarianAFI);
+				String newCRA = newETI + resultStr.substring(72, resultStr.length());
+				System.out.println("RESULTADO FINAL");
+				System.out.println(newCRA);
 				
 				CraBatchRecord rectificativeCRABatchRecord = dslContext.insertInto(CRA_BATCH)
 						.set(CRA_BATCH.DOMAIN, Integer.parseInt(_domainId))
@@ -527,7 +542,7 @@ public class JooqCRA {
 						.set(CRA_BATCH.STATUS, (byte)1)
 						.set(CRA_BATCH.COMMUNICATION_ID, craDocumentType)
 						.set(CRA_BATCH.INCOME_FILE, (byte[])null)
-						.set(CRA_BATCH.OUTCOME_FILE, resultStr.getBytes())
+						.set(CRA_BATCH.OUTCOME_FILE, newCRA.getBytes())
 						.set(CRA_BATCH.OUTCOME_FILE_DATE, new Timestamp(startDate.getTime()))
 						.returning(CRA_BATCH.ID)
 						.fetchOne();
@@ -541,8 +556,8 @@ public class JooqCRA {
 					.execute();
 				
 				// DELETE OLD CRA
-				dslContext.delete(CRA_BATCH_DETAIL).where(CRA_BATCH_DETAIL.CRA_BATCH.eq(oldCraBatchId)).execute();
-				dslContext.delete(CRA_BATCH).where(CRA_BATCH.ID.eq(oldCraBatchId)).execute();
+				dslContext.delete(CRA_BATCH_DETAIL).where(CRA_BATCH_DETAIL.CRA_BATCH.in(oldCraBatchIds)).execute();
+				dslContext.delete(CRA_BATCH).where(CRA_BATCH.ID.in(oldCraBatchIds)).execute();
 			}
 			
 			CraBatchRecord craBatchRecord = dslContext.insertInto(CRA_BATCH)
@@ -572,4 +587,113 @@ public class JooqCRA {
 		return null;
 		
 	}
+
+	private static String parseCRAToRectificative(String cra) {
+		String resultStr = "";
+		String subStringAnalize = "";
+		for(int i=0; i<cra.length(); i+=72) {
+			subStringAnalize = cra.substring(i, i + 72);
+			if(subStringAnalize.contains("ETI"))
+				continue;
+			else
+				resultStr += subStringAnalize;
+		}
+		return resultStr;
+	}
+	
+//	public static String setMainCra(String _domainId, String domainName, String _cccId, String agrarianAFI, long _startDate, String craDocumentType) {
+//		AONContext context = null;
+//		
+//		java.util.Date startDate = new java.util.Date(_startDate);
+//		
+//		try {
+//			DSLContext dslContext = AONContext.getAONContext(domainName, Integer.parseInt(_domainId),
+//					AonServletUtils.getLoggedUser()).getDslContext();
+//			
+//			// RECTIFICATIVO
+//			if (craDocumentType.equals("R")) {
+//				Record craBatchRecord = dslContext.select().from(CRA_BATCH)
+//						.where(CRA_BATCH.ID.in(
+//								dslContext.select(CRA_BATCH_DETAIL.CRA_BATCH).from(CRA_BATCH_DETAIL)
+//									.where(CRA_BATCH_DETAIL.ENTERPRISE_CCC.eq(Integer.parseInt(_cccId)))
+//						)).and(CRA_BATCH.DOMAIN.eq(Integer.parseInt(_domainId)))
+//						.and(CRA_BATCH.DATE.eq(new Timestamp(startDate.getTime())))
+//						.fetchOne();
+//				
+//				Integer oldCraBatchId = craBatchRecord.get(CRA_BATCH.ID);
+//				byte[] data = craBatchRecord.get(CRA_BATCH.OUTCOME_FILE);
+//				
+//				String dataStr = new String(data);
+//				System.out.println();
+//				System.out.println("Lenght DataStr : " + dataStr.length());
+//				System.out.println(dataStr);
+//				System.out.println();
+//				
+//				String resultStr = "";
+//				String subStringAnalize = "";
+//				for(int i=0; i<dataStr.length(); i+=72) {
+//					subStringAnalize = dataStr.substring(i, i + 72);
+//					if(subStringAnalize.contains("CRE")) {
+//						String subStringAnalize1 = subStringAnalize.substring(0, 17);
+//						String deleteString = "B";
+//						String subStringAnalize2 = subStringAnalize.substring(18, 72);
+//						
+//						subStringAnalize = subStringAnalize1 + deleteString + subStringAnalize2;
+//					}
+//					resultStr += subStringAnalize;
+//				}
+//				System.out.println("Lenght ResultStr : " + resultStr.length());
+//				System.out.println(resultStr);
+//				
+//				CraBatchRecord rectificativeCRABatchRecord = dslContext.insertInto(CRA_BATCH)
+//						.set(CRA_BATCH.DOMAIN, Integer.parseInt(_domainId))
+//						.set(CRA_BATCH.DATE, new Timestamp(startDate.getTime()))
+//						.set(CRA_BATCH.STATUS, (byte)1)
+//						.set(CRA_BATCH.COMMUNICATION_ID, craDocumentType)
+//						.set(CRA_BATCH.INCOME_FILE, (byte[])null)
+//						.set(CRA_BATCH.OUTCOME_FILE, resultStr.getBytes())
+//						.set(CRA_BATCH.OUTCOME_FILE_DATE, new Timestamp(startDate.getTime()))
+//						.returning(CRA_BATCH.ID)
+//						.fetchOne();
+//					
+//				Integer craBatchId = rectificativeCRABatchRecord.getId();
+//				
+//				dslContext.insertInto(CRA_BATCH_DETAIL)
+//					.set(CRA_BATCH_DETAIL.DOMAIN, Integer.parseInt(_domainId))
+//					.set(CRA_BATCH_DETAIL.CRA_BATCH, craBatchId)
+//					.set(CRA_BATCH_DETAIL.ENTERPRISE_CCC, Integer.parseInt(_cccId))
+//					.execute();
+//				
+//				// DELETE OLD CRA
+//				dslContext.delete(CRA_BATCH_DETAIL).where(CRA_BATCH_DETAIL.CRA_BATCH.eq(oldCraBatchId)).execute();
+//				dslContext.delete(CRA_BATCH).where(CRA_BATCH.ID.eq(oldCraBatchId)).execute();
+//			}
+//			
+//			CraBatchRecord craBatchRecord = dslContext.insertInto(CRA_BATCH)
+//				.set(CRA_BATCH.DOMAIN, Integer.parseInt(_domainId))
+//				.set(CRA_BATCH.DATE, new Timestamp(startDate.getTime()))
+//				.set(CRA_BATCH.STATUS, (byte)1)
+//				.set(CRA_BATCH.COMMUNICATION_ID, "N")
+//				.set(CRA_BATCH.INCOME_FILE, (byte[])null)
+//				.set(CRA_BATCH.OUTCOME_FILE, agrarianAFI.getBytes())
+//				.set(CRA_BATCH.OUTCOME_FILE_DATE, new Timestamp(startDate.getTime()))
+//				.returning(CRA_BATCH.ID)
+//				.fetchOne();
+//			
+//			Integer craBatchId = craBatchRecord.getId();
+//			
+//			dslContext.insertInto(CRA_BATCH_DETAIL)
+//				.set(CRA_BATCH_DETAIL.DOMAIN, Integer.parseInt(_domainId))
+//				.set(CRA_BATCH_DETAIL.CRA_BATCH, craBatchId)
+//				.set(CRA_BATCH_DETAIL.ENTERPRISE_CCC, Integer.parseInt(_cccId))
+//				.execute();
+//			
+//		}finally {
+//			if (context != null)
+//				context.close();
+//		}
+//		
+//		return null;
+//		
+//	}
 }
