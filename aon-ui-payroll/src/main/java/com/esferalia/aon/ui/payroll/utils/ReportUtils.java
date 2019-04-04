@@ -35,7 +35,9 @@ import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryDirStaff;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.jooq.tables.Contract;
 import com.esferalia.aon.jooq.tables.Domain;
+import com.esferalia.aon.jooq.tables.EnterpriseCcc;
 import com.esferalia.aon.jooq.tables.Rattach;
 import com.esferalia.aon.jooq.tables.RdirStaff;
 import com.esferalia.aon.jooq.tables.Registry;
@@ -44,6 +46,7 @@ import com.esferalia.aon.jooq.tables.records.RattachRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryPayment;
+import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.ISalaryItem;
 import com.esferalia.aon.salary.enumeration.PaymentType;
@@ -56,6 +59,16 @@ import net.sf.jasperreports.engine.JRImageRenderer;
 import net.sf.jasperreports.engine.JRRenderable;
 
 public class ReportUtils {
+	
+	private static Map<CCCType, SSRegimeType> SS_REGIMES = new HashMap<CCCType, SSRegimeType>(){
+		{
+			put(CCCType.AGRICULTURAL, SSRegimeType.AGRICULTURAL);
+			put(CCCType.HOME_EMPLOYEES, SSRegimeType.DOMESTIC_EMPLOYEES);
+		}
+	};
+	
+	
+
 	
 	public static final ThreadLocal<String> domain = new ThreadLocal<String>();
 	
@@ -486,6 +499,40 @@ public class ReportUtils {
 	
 	// ------------------------------------------------------------------------
 
+	public static CCCType getCCCType(Salary salary) 
+			{
+		Connection conn = null;
+		try {
+			conn = AonDataSource.getInstance().getConnection(domain.get());
+			AONContext aonContext = new AONContext(conn);
+			DSLContext dslContext = aonContext.getDslContext();
+			
+			Byte cccType =
+			dslContext
+			.select()
+			.from(Contract.CONTRACT)
+			.innerJoin(EnterpriseCcc.ENTERPRISE_CCC).onKey()
+			.where(Contract.CONTRACT.ID.eq(salary.getContract().getId()))
+			.fetchOne(EnterpriseCcc.ENTERPRISE_CCC.TYPE)
+			;
+			
+			return CCCType.values()[cccType];
+			
+		} catch (Exception e) {
+			return CCCType.PRINCIPAL;
+			
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+		}
+		
+	}
+	
+
 	private static boolean contains(Object values[], Object value) {
 		for (int i = 0; i < values.length; i++) {
 			if (values[i] == value)
@@ -521,14 +568,7 @@ public class ReportUtils {
 	}
 	
 	public static String getFullQuoteRegime(Salary salary ) {
-		SSRegimeType ssRegime = SSRegimeType.GENERAL;
-		Byte ordinal =  salary.getSsRegime();
-		if ( ordinal != null && 
-				ordinal >= 0 && 
-				ordinal < SSRegimeType.values().length )
-			ssRegime = SSRegimeType.values()[ordinal];
-		
-		return ssRegime.getCode() + (salary.getCcc() != null ? salary.getCcc() : "" );
+		return SS_REGIMES.getOrDefault(getCCCType(salary), SSRegimeType.GENERAL).getCode() + (salary.getCcc() != null ? salary.getCcc() : "" );
 	}
 	
 	private static class ChainedComparator<T> implements Comparator<T> {

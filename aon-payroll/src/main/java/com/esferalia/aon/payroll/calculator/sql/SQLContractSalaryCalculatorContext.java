@@ -236,17 +236,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	private static DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd");
 
-	//private static final SSRegimeType SS_REGIMES[] = SSRegimeType.class.getEnumConstants();
-	
-	private static Map<CCCType, SSRegimeType> SS_REGIMES = new HashMap<CCCType, SSRegimeType>(){
-		{
-			put(CCCType.AGRICULTURAL, SSRegimeType.AGRICULTURAL);
-			put(CCCType.HOME_EMPLOYEES, SSRegimeType.DOMESTIC_EMPLOYEES);
-		}
-	};
-	
-	
-
 	// @formatter:off
 	private static final String MAIN_SQL = "SELECT * " + " FROM contract"
 			+ " LEFT JOIN enterprise_ccc ON (contract.enterprise_ccc = enterprise_ccc.id)"
@@ -1319,9 +1308,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	@Override
 	public String getCcc() {
-		SSRegimeType ssRegimeType = SS_REGIMES.getOrDefault(getCCCType(), SSRegimeType.GENERAL);
-		String enterpriseCCC = getString(SQLConstants.ENTERPRISE_CCC, EnterpriseCccColumns.CCC);
-		return ssRegimeType.getCode() +  ( enterpriseCCC == null ? "" : enterpriseCCC ) ;
+		return getString(SQLConstants.ENTERPRISE_CCC, EnterpriseCccColumns.CCC);
 	}
 
 	@Override
