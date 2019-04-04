@@ -1,5 +1,6 @@
 package net.aonsolutions.db.up2date;
 
+import static net.aonsolutions.db.up2date.payroll.AlterSalaryCCC.ALTER_SALARY_CCC;
 import static net.aonsolutions.db.up2date.tgss.FellowsBases2019Fix.FELLOWSBASES2019FIX;
 import static net.aonsolutions.db.up2date.tgss.FellowsBases2019Update.FELLOWSBASES2019UPDATE;
 import static net.aonsolutions.db.up2date.tgss.HomePercentage2019Update.HOMEPERCENTAGE2019UPDATE;
@@ -26,6 +27,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.payroll.AlterSalaryCCC;
 import net.aonsolutions.db.up2date.tgss.FellowsBases2019Fix;
 import net.aonsolutions.db.up2date.tgss.FellowsBases2019Update;
 import net.aonsolutions.db.up2date.tgss.HomePercentage2019Update;
@@ -69,12 +71,13 @@ public class Up2Date {
     		//DEFAULTAGREEMENTINSERT,
     		//CRA0035UPDATE,
     		//ITIMS2019INSERT,
-    		NOTICEDAYSUPDATE,
-    		HOMEPERCENTAGE2019UPDATE,
-    		FELLOWSBASES2019UPDATE,
-    		TRAINNINGBASES2019UPDATE,
-    		FELLOWSBASES2019FIX,
-    		TRAINNINGBASES2019FIX
+    		//NOTICEDAYSUPDATE,
+    		//HOMEPERCENTAGE2019UPDATE,
+    		//FELLOWSBASES2019UPDATE,
+    		//TRAINNINGBASES2019UPDATE,
+    		//FELLOWSBASES2019FIX,
+    		//TRAINNINGBASES2019FIX
+    		ALTER_SALARY_CCC
     };
 
 
