@@ -345,7 +345,10 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 					
 					@Override
 					public void onFailure(Throwable caught) {
+						JSONObject js = new JSONObject();
 						resultFocus(i, "red");
+						js.put("E0",  new JSONString(caught.getMessage()));
+						errors.put(model.getId(), js);
 						send(i+1, cert, pass);
 					}			
 				});
