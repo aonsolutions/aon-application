@@ -95,7 +95,9 @@ public abstract class ModPrintAEAT extends HttpServlet{
 					attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
 				}
 				this.cert = attach.getData();
-				this.pass = URLDecoder.decode(json.getString("pass"),  "UTF-8");
+				String pass = json.opt("pass").toString();
+				System.out.println(pass);
+				this.pass = URLDecoder.decode(pass,  "UTF-8");
 				this.name = URLDecoder.decode(json.getString("name"),  "UTF-8");
 				this.document = json.getString("document");
 				this.nrc = json.opt("nrc") != null ? json.getString("nrc") : null;
@@ -219,17 +221,21 @@ public abstract class ModPrintAEAT extends HttpServlet{
 			DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
 			wr.writeBytes(urlParameters);
 			wr.flush();
-			wr.close();
-		
+			wr.close();	
 			if(isPrint()) {
 				if(isCert()) {
 					String html = readFullyAsString(connection.getInputStream(), "ISO-8859-1");
+					System.out.println("<!-- MODEL SEND HTML RESPONSE -->");
+					System.out.println(html);
 					JSONObject json = parseHTML(html);
 					json.put("nrc", getNrc());
 					saveHistory(json);
 					ByteArrayInputStream input = new ByteArrayInputStream(html.getBytes());
 					AonIOUtils.copy(input, resp.getOutputStream());	
 				} else {
+					String html = readFullyAsString(connection.getInputStream(), "ISO-8859-1");
+					System.out.println("<!-- MODEL SEND HTML RESPONSE -->");
+					System.out.println(html);
 					DataInputStream input = new DataInputStream(connection.getInputStream());
 					AonIOUtils.copy(input, resp.getOutputStream());
 				} 	

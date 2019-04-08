@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
@@ -102,7 +103,7 @@ public class ModelMatrix extends MainEntryPoint {
 			for (int i = 2012; i < 2025; i++) {
 				String y = AonNumberUtils.toString(i);
 				year.addItem(y, y);
-				if (i == 2018) {
+				if (i == AonDateUtils.getCurrentYear()) {
 					year.setSelectedIndex(year.getItemCount() - 1);	
 				}
 			}

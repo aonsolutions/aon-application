@@ -39,11 +39,15 @@ public class DownloadAttachmentServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException{
 		System.out.println("GET METHOD");
 		
-		String[] pathInfo = req.getPathInfo().split("/");
-		String domainName = pathInfo[1]; 
-		String userName = pathInfo[2];
 		
-		HashMap<String, String> parameters = SecurityUtils.getInstance().getParameters(pathInfo[3]);
+		String[] pathInfo = req.getPathInfo().split("/");
+			
+		Boolean bool = pathInfo.length <= 2;
+		
+		String domainName = bool ? req.getServerName() : pathInfo[1]; 
+		String userName = pathInfo.length > 2 ? pathInfo[2] : "";
+		
+		HashMap<String, String> parameters = SecurityUtils.getInstance().getParameters(pathInfo[bool ? 1 : 3]);
 		Integer domainId = Integer.parseInt(parameters.get("domain"));
 		Integer id = Integer.parseInt(parameters.get("id"));
 		String attachType = parameters.get("attach_type");
