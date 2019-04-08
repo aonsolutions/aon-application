@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.jooq;
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
+import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.jooq.tables.CraBatch.CRA_BATCH;
 import static com.esferalia.aon.jooq.tables.CraBatchDetail.CRA_BATCH_DETAIL;
@@ -255,7 +256,12 @@ public class JooqCRA {
 						//Es la ultima iteracion
 						if(i+1 == salaryPaymentRecords.size()) {
 							String craAmountStr = String.format( "%.2f", craAmount );
-							String amount = craAmountStr.split("[.]")[0] + craAmountStr.split("[.]")[1];
+							String amount = "";
+							if(craAmountStr.contains(","))
+								amount = craAmountStr.split(",")[0] + craAmountStr.split(",")[1];
+							else
+								amount = craAmountStr.split("[.]")[0] + craAmountStr.split("[.]")[1];
+							// String amount = craAmountStr.split("[.]")[0] + craAmountStr.split("[.]")[1];
 							cre.put("concept", craType.getDescription().split(" ")[0]);
 							cre.put("include_exclude", craType.isBBCCIncluded() ? "I" : "E");
 							cre.put("amount", amount);
@@ -266,7 +272,11 @@ public class JooqCRA {
 						continue;
 					}else {
 						String craAmountStr = String.format( "%.2f", craAmount );
-						String amount = craAmountStr.split("[.]")[0] + craAmountStr.split("[.]")[1];
+						String amount = "";
+						if(craAmountStr.contains(","))
+							amount = craAmountStr.split(",")[0] + craAmountStr.split(",")[1];
+						else
+							amount = craAmountStr.split("[.]")[0] + craAmountStr.split("[.]")[1];
 						cre.put("concept", typeCRA.getDescription().split(" ")[0]);
 						cre.put("include_exclude", typeCRA.isBBCCIncluded() ? "I" : "E");
 						cre.put("amount", amount);
@@ -280,7 +290,11 @@ public class JooqCRA {
 						//Es la ultima iteracion
 						if(i+1 == salaryPaymentRecords.size()) {
 							craAmountStr = String.format( "%.2f", craAmount );
-							amount = craAmountStr.split("[.]")[0] + craAmountStr.split("[.]")[1];
+							if(craAmountStr.contains(","))
+								amount = craAmountStr.split(",")[0] + craAmountStr.split(",")[1];
+							else
+								amount = craAmountStr.split("[.]")[0] + craAmountStr.split("[.]")[1];
+							// amount = craAmountStr.split("[.]")[0] + craAmountStr.split("[.]")[1];
 							cre.put("concept", craType.getDescription().split(" ")[0]);
 							cre.put("include_exclude", craType.isBBCCIncluded() ? "I" : "E");
 							cre.put("amount", amount);
@@ -300,6 +314,71 @@ public class JooqCRA {
 			
 			mainCRAJSON.put("DDE", dde);
 			
+			// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+			// 											NOMINA ATRASOS
+			// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+			
+			//GET Atrasos SALARY from DB (employees)
+			salaryRecords = dslContext.select().from(SALARY)
+					.where(SALARY.ENTERPRISE_NAME.equalIgnoreCase(_enterpriseName))
+						.and(SALARY.CCC.eq(_ccc))
+						.and(SALARY.TYPE.eq((byte)3))
+					.fetch();
+			
+			//DDEAS
+			JSONArray ddeas = new JSONArray();
+			
+			for(Record salary: salaryRecords) {
+				Integer salaryId = salary.get(SALARY.ID);
+				
+				Result<Record> salaryDatas = dslContext.select().from(SALARY_DATA)
+						.where(SALARY_DATA.SALARY.eq(salaryId))
+						.and(SALARY_DATA.NAME.eq("BASE_CGC"))
+						.fetch();
+				
+				for(Record salatyData: salaryDatas){
+					
+					if(salatyData.get(SALARY_DATA.START_DATE).before(endDateSQL)){		
+						JSONObject ddea = new JSONObject();
+						ddea.put("cccRegime", parseSS_Regime(salary.get(SALARY.SS_REGIME)));
+						ddea.put("ccc", salary.get(SALARY.CCC));
+						ddea.put("year", salatyData.get(SALARY_DATA.START_DATE).getYear() + 1900);
+						ddea.put("month", salatyData.get(SALARY_DATA.START_DATE).getMonth() + 1);
+					
+						JSONArray trbsa = new JSONArray();
+						JSONObject trba = new JSONObject();
+					
+						trba.put("numAfilicion", salary.get(SALARY.SOCIAL_SECURITY_NUMBER));
+					
+						JSONArray cres = new JSONArray();
+						
+						Type typeCRA = Payment.Type.values()[8];;
+						Double craAmount = Double.parseDouble(salatyData.get(SALARY_DATA.EXPRESSION));
+						JSONObject cre = new JSONObject();
+						
+						String craAmountStr = String.format( "%.2f", craAmount );
+						String amount = "";
+						if(craAmountStr.contains(","))
+							amount = craAmountStr.split(",")[0] + craAmountStr.split(",")[1];
+						else
+							amount = craAmountStr.split("[.]")[0] + craAmountStr.split("[.]")[1];
+						
+						cre.put("concept", typeCRA.getDescription().split(" ")[0]);
+						cre.put("include_exclude", typeCRA.isBBCCIncluded() ? "I" : "E");
+						cre.put("amount", amount);
+						cre.put("action", " ");
+						cres.add(cre);
+						
+						trba.put("CRES", cres);
+						trbsa.add(trba);
+						ddea.put("TRBS", trbsa);
+						ddeas.add(ddea);
+					}
+				}
+				
+			}
+			mainCRAJSON.put("DDEAS", parseDDEAS(ddeas));
+			
 			System.out.println(mainCRAJSON);
 			
 		} finally {
@@ -309,6 +388,51 @@ public class JooqCRA {
 		
 		
 		return mainCRAJSON;
+	}
+
+	private static JSONArray parseDDEAS(JSONArray ddeas) {
+		JSONArray result = new JSONArray();
+		
+		ArrayList<Date> visitedDates = new ArrayList<>();
+		
+		JSONObject ddea = new JSONObject();
+		for(int i = 0; i<ddeas.size(); i++){
+			JSONObject ddeaFirst = (JSONObject) ddeas.get(i); 
+			String month = ddeaFirst.get("month").toString();
+			String year = ddeaFirst.get("year").toString();
+			
+			Date date = new Date(Integer.parseInt(year) - 1900, Integer.parseInt(month) - 1, 1);
+			
+			if(!visitedDates.contains(date)){
+				ddea.put("cccRegime", ddeaFirst.get("cccRegime"));
+				ddea.put("ccc", ddeaFirst.get("ccc"));
+				ddea.put("month", ddeaFirst.get("month"));
+				ddea.put("year", ddeaFirst.get("year"));
+				
+				JSONArray trbs = new JSONArray();
+				JSONObject trb = (JSONObject) ((JSONArray) ddeaFirst.get("TRBS")).get(0);
+				
+				String ssNum = trb.get("numAfilicion").toString();
+				trbs.add(trb);
+				
+				for(int j = 1; j<ddeas.size(); j++){
+					JSONObject ddeaAux = (JSONObject) ddeas.get(j); 
+					if(month.equals(ddeaAux.get("month").toString()) && year.equals(ddeaAux.get("year").toString()) 
+							&& !visitedDates.contains(date)){
+						JSONObject trbAux = (JSONObject) ((JSONArray) ddeaAux.get("TRBS")).get(0);
+						if(!ssNum.equals(trbAux.get("numAfilicion").toString()))
+							trbs.add(trbAux);
+					}
+				}
+				ddea.put("TRBS", trbs);
+				visitedDates.add(date);
+				result.add(ddea);
+				ddea = new JSONObject();
+			}
+			
+		}
+		
+		return result;
 	}
 
 	private static String parseSS_Regime(Byte ss_regime) {

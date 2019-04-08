@@ -224,9 +224,80 @@ public final class MainCRAGeneration {
 		public String getReserved52() {
 			return reserved52;
 		}
+			
+	}
+	
+	public static class DDEA{
+		String empHeader;
+		String cccRegime;
+		String ccc;
+		String year;
+		String month;
+		String reserved46;
+		ArrayList<TRB> trbs;
 		
+		public DDEA(String cccRegime, String ccc, String year, String month) {
+			super();
+			this.empHeader = "DDE";
+			this.cccRegime = cccRegime;
+			this.ccc = ccc;
+			this.year = year;
+			this.month = StringUtils.leftPad(month, 2, '0');
+			this.reserved46 = StringUtils.leftPad("", 46, ' ');
+			this.trbs = new ArrayList<TRB>();
+		}
+		
+		public String getEmpHeader() {
+			return empHeader;
+		}
+		public String getCccRegime() {
+			return cccRegime;
+		}
+		public String getCcc() {
+			return ccc;
+		}
+		public String getReserved46() {
+			return reserved46;
+		}
+		public ArrayList<TRB> getTrbs() {
+			return trbs;
+		}
+		public void setTrbs(ArrayList<TRB> trbs) {
+			this.trbs = trbs;
+		}
+		public void addTRB(TRB trb) {
+			this.trbs.add(trb);
+		}
+		public String getYear() {
+			return year;
+		}
+		public String getMonth() {
+			return month;
+		}
 		
 	}
+	
+	public static class DDEAS{
+		ArrayList<DDEA> ddeas;
+		
+		public DDEAS() {
+			super();
+			this.ddeas = new ArrayList<DDEA>();
+		}
+		
+		public ArrayList<DDEA> getDdeas() {
+			return ddeas;
+		}
+		public void setTrbs(ArrayList<DDEA> ddeas) {
+			this.ddeas = ddeas;
+		}
+		public void addDDEA(DDEA ddea) {
+			this.ddeas.add(ddea);
+		}
+		
+	}
+	
+	
 		
 	public static String generateMainCRA (JSONObject mainCRAData) {
 		//RESULT
@@ -272,13 +343,53 @@ public final class MainCRAGeneration {
 			dde.addTRB(trb);
 		}
 		
-		mainCRA = createMainCRA(eti, dde);
+		//DDEA
+		DDEAS ddeas = new DDEAS();
+		JSONArray ddeaArray = (JSONArray) mainCRAData.get("DDEAS");
+		for(int i=0; i<ddeaArray.size(); i++){
+			JSONObject ddeaJson = (JSONObject) ddeaArray.get(i);
+			DDEA ddea = new DDEA(
+					ddeaJson.get("cccRegime").toString(), 
+					ddeaJson.get("ccc").toString(),
+					ddeaJson.get("year").toString(),
+					ddeaJson.get("month").toString());
+			
+			//TRBs
+			JSONArray employeesAtrasos = (JSONArray) ddeaJson.get("TRBS");
+			for(int j=0; j<employeesAtrasos.size(); j++) {
+				JSONObject emplJson = (JSONObject) employeesAtrasos.get(j);
+				
+				//TRB
+				TRB trb = new TRB(
+						emplJson.get("numAfilicion").toString());
+				
+				//CREs
+				JSONArray cres = (JSONArray) emplJson.get("CRES");
+				for(int k=0; k<cres.size(); k++) {
+					JSONObject creJson = (JSONObject) cres.get(k);
+					
+					//CRE
+					CRE cre = new CRE(
+							creJson.get("concept").toString(), 
+							creJson.get("include_exclude").toString(), 
+							creJson.get("amount").toString(), 
+							creJson.get("action").toString());
+					
+					trb.addCRE(cre);
+				}
+						
+				ddea.addTRB(trb);
+			}
+			ddeas.addDDEA(ddea);
+		}
+		
+		mainCRA = createMainCRA(eti, dde, ddeas);
 		
 		return mainCRA;
 		
 	}
 
-	private static String createMainCRA(ETI eti, DDE dde) {
+	private static String createMainCRA(ETI eti, DDE dde, DDEAS ddeas) {
 		
 		String mainCRA = "";
 		
@@ -326,6 +437,36 @@ public final class MainCRAGeneration {
 						cre.getAction() +
 						cre.getReserved52() +
 						"\r\n";
+			}
+		}
+		
+		for(DDEA ddea: ddeas.getDdeas()){
+			mainCRA +=
+					ddea.getEmpHeader() +
+					ddea.getCccRegime() +
+					ddea.getCcc() +
+					ddea.getYear() +
+					ddea.getMonth() +
+					ddea.getReserved46() +
+					"\r\n";
+			
+			for(TRB trb : ddea.getTrbs()) {
+				mainCRA +=
+						trb.getTrbHeader() +
+						trb.getNumAfilicion() +
+						trb.getReserved55() +
+						"\r\n";
+				
+				for( CRE cre : trb.getCres()) {
+					mainCRA +=
+							cre.getCreHeader() +
+							cre.getConcept() +
+							cre.getInclude_exclude() +
+							cre.getAmount() +
+							cre.getAction() +
+							cre.getReserved52() +
+							"\r\n";
+				}
 			}
 		}
 		
