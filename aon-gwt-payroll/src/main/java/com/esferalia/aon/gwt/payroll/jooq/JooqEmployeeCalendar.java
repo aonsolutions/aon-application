@@ -4,10 +4,10 @@ import static com.esferalia.aon.jooq.tables.Calendar.CALENDAR;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
+import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Holiday.HOLIDAY;
 import static com.esferalia.aon.jooq.tables.HolidayDetail.HOLIDAY_DETAIL;
 import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
-import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -208,6 +208,7 @@ public class JooqEmployeeCalendar {
 							ContextVariable.ERE_DAYS.getName()
 							,ContextVariable.STRIKE_DAYS.getName()
 							,ContextVariable.HOLIDAYS.getName()
+							,"NO_LABORABLE"
 							,"DIAS_INACTIVIDAD"
 							,"PEONADAS"))
 					.fetch();
@@ -587,6 +588,7 @@ public class JooqEmployeeCalendar {
 				  ,ContextVariable.ERE_FACTOR.getName()
 				  ,ContextVariable.STRIKE_FACTOR.getName()
 				  ,"DIAS_INACTIVIDAD"
+				  ,"NO_LABORABLE"
 				  ,"CAUSA_INACTIVIDAD"
 				  ,"PEONADAS"))
 		   .execute();
@@ -866,7 +868,7 @@ public class JooqEmployeeCalendar {
 	// ---------- CLASS AUX METHODS ----------
 	
 	private static boolean validDayType(String dayType) {
-		return dayType.equals("DIAS_ERE") || dayType.equals("DIAS_HUELGA") 
+		return dayType.equals("DIAS_ERE") || dayType.equals("DIAS_HUELGA") || dayType.equals("NO_LABORABLE") 
 				|| dayType.equals("DIAS_VACACIONES") || dayType.equals("DIAS_INACTIVIDAD") || dayType.equals("PEONADAS");
 	}
 
@@ -887,6 +889,9 @@ public class JooqEmployeeCalendar {
 			break;
 		case PEONADAS:
 			result = "PEONADAS";
+			break;
+		case NOWORKINGDAY:
+			result = "NO_LABORABLE";
 			break;
 		case FREEDAY:
 			result = "";

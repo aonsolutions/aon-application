@@ -80,6 +80,7 @@ public class EmployeeCalendarDraftObjectData {
 			put("DIAS_ERE", DayType.EREDAY);
 			put("DIAS_INACTIVIDAD", DayType.INACTIVITY);
 			put("PEONADAS", DayType.PEONADAS);
+			put("NO_LABORABLE", DayType.NOWORKINGDAY);
 		}
 	};
 	
@@ -1393,13 +1394,17 @@ public class EmployeeCalendarDraftObjectData {
 			updateTypesMap.put(e.getKey(), e.getValue());
 		}
 		
-		Date date = new Date();
-		DateUtils.resetTime(date);
-		//Window.alert(date +" = "+draftMapDaysType.get(date));
+//		Window.alert("ANTES DE METER FECHAS : " + updateTypesMap.size());
+		
+//		Date date = new Date();
+//		DateUtils.resetTime(date);
 		
 		for (Entry<Date,DayType> e : draftMapDaysType.entrySet()){
+//			Window.alert(e.getValue() +" => "+ e.getKey());
 			updateTypesMap.put(e.getKey(), e.getValue());
 		}
+		
+//		Window.alert("DESPUES DE METER FECHAS : " + updateTypesMap.size());
 		
 		return updateTypesMap;
 	}
