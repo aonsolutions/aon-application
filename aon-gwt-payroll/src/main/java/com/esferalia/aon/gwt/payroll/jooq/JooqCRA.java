@@ -1,15 +1,15 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
+import static com.esferalia.aon.jooq.tables.CraBatch.CRA_BATCH;
+import static com.esferalia.aon.jooq.tables.CraBatchDetail.CRA_BATCH_DETAIL;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
+import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
+import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
-import static com.esferalia.aon.jooq.tables.CraBatch.CRA_BATCH;
-import static com.esferalia.aon.jooq.tables.CraBatchDetail.CRA_BATCH_DETAIL;
-import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
-import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
-import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jooq.DSLContext;
-import org.jooq.InsertResultStep;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.conf.Settings;
@@ -378,6 +377,68 @@ public class JooqCRA {
 				
 			}
 			mainCRAJSON.put("DDEAS", parseDDEAS(ddeas));
+			
+			// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+			// 											FINIQUITOS
+			// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+			
+			//GET Finiquitos SALARY from DB (employees)
+			salaryRecords = dslContext.select().from(SALARY)
+					.where(SALARY.ENTERPRISE_NAME.equalIgnoreCase(_enterpriseName))
+						.and(SALARY.CCC.eq(_ccc))
+						.and(SALARY.ISSUE_DATE.le(endDateSQL))
+						.and(SALARY.TYPE.eq((byte)2))
+					.fetch();
+			
+			if(!salaryRecords.isEmpty()){
+				//Finiq
+				JSONObject finiq = new JSONObject();
+				finiq.put("cccRegime", parseSS_Regime(salaryRecords.get(0).get(SALARY.SS_REGIME)));
+				finiq.put("ccc", salaryRecords.get(0).get(SALARY.CCC));
+				JSONArray trbsf = new JSONArray();
+				for(Record salary: salaryRecords) {
+					Integer salaryId = salary.get(SALARY.ID);
+					Date finiqEndDate = salary.get(SALARY.END_DATE);
+					
+					Result<Record> salaryDatas = dslContext.select().from(SALARY_DATA)
+							.where(SALARY_DATA.SALARY.eq(salaryId))
+							.and(SALARY_DATA.NAME.eq("BASE_CGC"))
+							.and(SALARY_DATA.END_DATE.eq(finiqEndDate))
+							.fetch();
+					
+					for(Record salatyData: salaryDatas){
+						JSONObject trbf = new JSONObject();
+					
+						trbf.put("numAfilicion", salary.get(SALARY.SOCIAL_SECURITY_NUMBER));
+					
+						JSONArray cres = new JSONArray();
+						
+						Type typeCRA = Payment.Type.values()[6];;
+						Double craAmount = Double.parseDouble(salatyData.get(SALARY_DATA.EXPRESSION));
+						JSONObject cre = new JSONObject();
+						
+						String craAmountStr = String.format( "%.2f", craAmount );
+						String amount = "";
+						if(craAmountStr.contains(","))
+							amount = craAmountStr.split(",")[0] + craAmountStr.split(",")[1];
+						else
+							amount = craAmountStr.split("[.]")[0] + craAmountStr.split("[.]")[1];
+						
+						cre.put("concept", typeCRA.getDescription().split(" ")[0]);
+						cre.put("include_exclude", typeCRA.isBBCCIncluded() ? "I" : "E");
+						cre.put("amount", amount);
+						cre.put("action", " ");
+						cres.add(cre);
+						
+						trbf.put("CRES", cres);
+						trbsf.add(trbf);
+						
+					}
+					finiq.put("TRBS", trbsf);
+					
+				}
+				mainCRAJSON.put("FINIQ", finiq);
+			}
 			
 			System.out.println(mainCRAJSON);
 			

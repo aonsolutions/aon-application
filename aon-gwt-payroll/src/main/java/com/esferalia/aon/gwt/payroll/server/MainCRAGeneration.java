@@ -297,7 +297,56 @@ public final class MainCRAGeneration {
 		
 	}
 	
-	
+	public static class FINIQ{
+		String empHeader;
+		String cccRegime;
+		String ccc;
+		String year;
+		String month;
+		String reserved46;
+		ArrayList<TRB> trbs;
+		
+		public FINIQ(String cccRegime, String ccc) {
+			super();
+			this.empHeader = "DDE";
+			this.cccRegime = cccRegime;
+			this.ccc = ccc;
+			Date actualDate = new Date();
+			this.year = actualDate.getYear() + 1900 + "";
+			this.month = StringUtils.leftPad(actualDate.getMonth()+1+"", 2, '0');
+			this.reserved46 = StringUtils.leftPad("", 46, ' ');
+			this.trbs = new ArrayList<TRB>();
+		}
+		
+		public String getEmpHeader() {
+			return empHeader;
+		}
+		public String getCccRegime() {
+			return cccRegime;
+		}
+		public String getCcc() {
+			return ccc;
+		}
+		public String getReserved46() {
+			return reserved46;
+		}
+		public ArrayList<TRB> getTrbs() {
+			return trbs;
+		}
+		public void setTrbs(ArrayList<TRB> trbs) {
+			this.trbs = trbs;
+		}
+		public void addTRB(TRB trb) {
+			this.trbs.add(trb);
+		}
+		public String getYear() {
+			return year;
+		}
+		public String getMonth() {
+			return month;
+		}
+		
+	}
 		
 	public static String generateMainCRA (JSONObject mainCRAData) {
 		//RESULT
@@ -383,13 +432,46 @@ public final class MainCRAGeneration {
 			ddeas.addDDEA(ddea);
 		}
 		
-		mainCRA = createMainCRA(eti, dde, ddeas);
+		//FINIQ
+		JSONObject finiqJson = (JSONObject) mainCRAData.get("FINIQ");
+		FINIQ finiq = new FINIQ(
+				finiqJson.get("cccRegime").toString(), 
+				finiqJson.get("ccc").toString());
+		
+		//TRBs
+		JSONArray employeesFiniq = (JSONArray) finiqJson.get("TRBS");
+		for(int i=0; i<employeesFiniq.size(); i++) {
+			JSONObject emplJson = (JSONObject) employeesFiniq.get(i);
+			
+			//TRB
+			TRB trb = new TRB(
+					emplJson.get("numAfilicion").toString());
+			
+			//CREs
+			JSONArray cres = (JSONArray) emplJson.get("CRES");
+			for(int j=0; j<cres.size(); j++) {
+				JSONObject creJson = (JSONObject) cres.get(j);
+				
+				//CRE
+				CRE cre = new CRE(
+						creJson.get("concept").toString(), 
+						creJson.get("include_exclude").toString(), 
+						creJson.get("amount").toString(), 
+						creJson.get("action").toString());
+				
+				trb.addCRE(cre);
+			}
+			
+			finiq.addTRB(trb);
+		}
+		
+		mainCRA = createMainCRA(eti, dde, ddeas, finiq);
 		
 		return mainCRA;
 		
 	}
 
-	private static String createMainCRA(ETI eti, DDE dde, DDEAS ddeas) {
+	private static String createMainCRA(ETI eti, DDE dde, DDEAS ddeas, FINIQ finiq) {
 		
 		String mainCRA = "";
 		
@@ -422,6 +504,34 @@ public final class MainCRAGeneration {
 				"\r\n";
 		
 		for(TRB trb : dde.getTrbs()) {
+			mainCRA +=
+					trb.getTrbHeader() +
+					trb.getNumAfilicion() +
+					trb.getReserved55() +
+					"\r\n";
+			
+			for( CRE cre : trb.getCres()) {
+				mainCRA +=
+						cre.getCreHeader() +
+						cre.getConcept() +
+						cre.getInclude_exclude() +
+						cre.getAmount() +
+						cre.getAction() +
+						cre.getReserved52() +
+						"\r\n";
+			}
+		}
+		
+		mainCRA +=
+				finiq.getEmpHeader() +
+				finiq.getCccRegime() +
+				finiq.getCcc() +
+				finiq.getYear() +
+				finiq.getMonth() +
+				finiq.getReserved46() +
+				"\r\n";
+		
+		for(TRB trb : finiq.getTrbs()) {
 			mainCRA +=
 					trb.getTrbHeader() +
 					trb.getNumAfilicion() +
