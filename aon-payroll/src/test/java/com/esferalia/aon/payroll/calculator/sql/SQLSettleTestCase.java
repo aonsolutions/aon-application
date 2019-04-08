@@ -28,6 +28,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +52,7 @@ import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryData;
+import com.esferalia.aon.payroll.SalaryDeduction;
 import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
@@ -400,6 +402,65 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testSettleVacationsII() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		
+		Date contractStart = add(getToday(), Calendar.MONTH, -2);
+		ContractRecord contract = newContract(aonContext, 
+				contractStart,
+				getToday(),
+				new HashMap<String, String>() {
+					{
+						put(TC2.getName(), "\"402\"");
+						put(QUOTE_GROUP.getName(), "\"08\"");
+						put(MONTH_DAYS.getName(), format("%d", 30));
+						put(COMPENSATION_CAUSE.getName(), OBJECTIVE.getName());
+					}
+				}, 
+				new String[] { 
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				//"BASE_CGP*(isdef PORCENTAJE_DESMPL?PORCENTAJE_DESMPL:PORCENTAJE_DESMPL=(INDEFINIDO?1.55:1.60))/100"
+				"BASE_CGP*(INDEFINIDO?1.55:1.60)/100"
+				}, 
+				null);
+		//@formatter:off
+		
+		addSSRegimeStuff(aonContext);
+
+		setData(aonContext, contract, 
+				add(getToday(), Calendar.DAY_OF_MONTH,1)
+				, null
+				, new HashMap<String, String>() {
+			{
+				put("DIAS_VACACIONES_NO_DISFRUTADOS", format("%d", 4));
+			}
+		});
+		
+		ISQLContractSalaryCalculatorContext ctx = 
+				getSmartSQLContractSettleContext(connection, contractStart, contract);
+		
+		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		
+		double br = (1750.00) * 12 / 365; 
+		
+//		settle.getSalaryDatas().stream().forEach(d->System.out.println(d.getName() + " = "  + d.getExpression() ));
+//		settle.getSalaryPayments().stream().forEach(p->System.out.println(p.getExpression() + " = "  + p.getAmount() ));
+
+		Assert.assertEquals( br * 4 , settle.getCommonBase());
+		Assert.assertEquals( 20 * (2/12.00) * br + ( br * 4 ), settle.getTotalPayment());
+		Assert.assertEquals( settle.getCommonBase() * 1.60 / 100 , settle.getTotalDeduction());
+	
+		
+	}
+
+	@Test
 	public void testSettleVacations2Month() throws ExpressionException, SQLException, SalaryException {
 
 		Connection connection = getConnection();
@@ -695,6 +756,74 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 	}
 	
 	
+	@Test
+	public void testSettleVacationsIRPF() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		cleanSystemDeductions(aonContext);
+		cleanSystemPayments(aonContext);
+
+		// @formatter:on
+		Date contractStart = getFirstDayOfYear(getToday());
+		Date endContract = add(add(contractStart, Calendar.MONTH, 10), Calendar.DAY_OF_MONTH, 5 );
+		ContractRecord contract = newContract(aonContext, 
+				contractStart,
+				new HashMap<String, String>() {
+					{
+						put(MONTH_DAYS.getName(), format("%d", 30));
+						put(COMPENSATION_CAUSE.getName(), OBJECTIVE.getName());
+					}
+				}, 
+				new String[] {"2000.00 * DIAS_TRABAJADOS / DIAS_MES"}, 
+				new String[] {"BASE_IRPF * PORCENTAJE_IRPF / 100.00 "}, 
+				null);
+		//@formatter:off
+		
+		addSSRegimeStuff(aonContext);
+		
+		Date startDate = contractStart;
+		while ( endContract.after(startDate)) {
+			Date endDate = getLastDayOfMonth(startDate);
+			ISQLContractSalaryCalculatorContext ctx  =  
+			getContractSalaryCalculatorContext(connection, startDate, endDate , endDate, contract);
+			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+			new SmartContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
+			jooqSalaryBuilder.execute();
+			startDate = add(startDate, Calendar.MONTH,1);
+		}
+		
+		
+		Date startNoHolidays = add(endContract, Calendar.DAY_OF_MONTH,1);
+		Date endNoHolidays = add(endContract, Calendar.DAY_OF_MONTH,11);
+		
+		
+		setData(aonContext, contract, 
+				startNoHolidays
+				, endNoHolidays
+				, new HashMap<String, String>() {
+			{
+				put("DIAS_VACACIONES_NO_DISFRUTADOS", format("%d", 30));
+			}
+		});
+		
+		
+		ISQLContractSalaryCalculatorContext ctx = 
+				getSQLContractSettleContext(connection, contractStart, contract);
+		
+		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		
+		Assert.assertEquals(( 2000.00 * 12 / 365 * 30.00 ) , settle.getIrpfBase());
+		
+		Collection<SalaryDeduction> deductions = settle.getSalaryDeductions();
+		org.junit.Assert.assertEquals(1, deductions.size());
+		for ( SalaryDeduction d: deductions )
+			System.out.println(d.getDescription() + " = " + d.getAmount());
+		
+	}
+
 	@Test
 	public void testSettleIRPF() throws ExpressionException, SQLException, SalaryException {
 

@@ -4193,6 +4193,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				expr.setScope(ExpressionScope.CONTRACT);
 				Date dataStart = rs.getDate(ContractDataColumns.START_DATE);
 				Date dataEnd = rs.getDate(ContractDataColumns.END_DATE);
+				dataEnd = ( dataEnd != null && dataEnd.equals(getContractEndDate()))? null: dataEnd; 
 				Date start = Period.max(dataStart, startDate);
 				Date end = Period.min(dataEnd, endDate);
 
