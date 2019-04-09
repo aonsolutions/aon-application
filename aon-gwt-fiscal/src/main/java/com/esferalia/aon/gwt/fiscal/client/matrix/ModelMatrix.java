@@ -90,7 +90,7 @@ public class ModelMatrix extends MainEntryPoint {
 		private CheckBox showMadeModels;
 		private CheckBox testMode;
 		
-		private FilterPanel() {
+		private FilterPanel(AonData aonData) {
 			setStyleName(AON.AON_CSS.aonSimpleBorder());
 			addStyleName(AON.AON_CSS.aonWidth98Percent());
 			addStyleName(AON.AON_CSS.aonBlockCenter());
@@ -180,7 +180,7 @@ public class ModelMatrix extends MainEntryPoint {
 			});
 			add(showMadeModels);
 			
-			if(getAonData().isBetaEnabled()) {
+			if(aonData.isBetaEnabled()) {
 				testMode = new CheckBox();
 				testMode.setValue(false);
 				testMode.setStyleName(AON.AON_CSS.aonMarginRight());
@@ -274,7 +274,7 @@ public class ModelMatrix extends MainEntryPoint {
 		SERVICE = new FiscalModelServiceAsyncDecorator(serviceRaw);
 
 		DockLayoutPanel dockLayout = new DockLayoutPanel(Unit.PX);
-		FilterPanel filterPanel = new FilterPanel();
+		FilterPanel filterPanel = new FilterPanel(aonData);
 		dockLayout.addNorth(filterPanel, 50);
 		SplitLayoutPanel splitLayout = new SplitLayoutPanel();
 
@@ -300,6 +300,9 @@ public class ModelMatrix extends MainEntryPoint {
 				filterPanel.fireValueChangeEvent();				
 			}
 		};
+		
+		Window.alert("4444");
+
 		splitLayout.addSouth(neo, 30);
 
 		ScrollPanel scrollPanel = new ScrollPanel();
