@@ -391,7 +391,7 @@ public class JooqEmployee {
 					journeyList.add(journey);
 				}
 			}
-			journies.put(iterableDate, journeyList);
+			journies.put(iterableDate, orderByWeekDay(journeyList));
 		}
 		
 		contractData.setContractJourneyDuration(journies);
@@ -405,6 +405,34 @@ public class JooqEmployee {
 		return employeeContractInfo;
 	}
 	
+	private static ArrayList<JourneyDuration> orderByWeekDay(ArrayList<JourneyDuration> journeyList) {
+		ArrayList<JourneyDuration> result = new ArrayList<>();
+		
+		for(JourneyDuration journey : journeyList)
+			if(journey.getName().equals("HORAS_LUNES"))
+				result.add(journey);
+		for(JourneyDuration journey : journeyList)
+			if(journey.getName().equals("HORAS_MARTES"))
+				result.add(journey);
+		for(JourneyDuration journey : journeyList)
+			if(journey.getName().equals("HORAS_MIERCOLES"))
+				result.add(journey);
+		for(JourneyDuration journey : journeyList)
+			if(journey.getName().equals("HORAS_JUEVES"))
+				result.add(journey);
+		for(JourneyDuration journey : journeyList)
+			if(journey.getName().equals("HORAS_VIERNES"))
+				result.add(journey);
+		for(JourneyDuration journey : journeyList)
+			if(journey.getName().equals("HORAS_SABADO"))
+				result.add(journey);
+		for(JourneyDuration journey : journeyList)
+			if(journey.getName().equals("HORAS_DOMINGO"))
+				result.add(journey);
+		
+		return result;
+	}
+
 	private static EmployeeContractInfo setEmployeeInfoDB(DSLContext dslContext, EmployeeContractInfo employeeContractInfo) {
 		
 		ContractInfo contractData = employeeContractInfo.getContractInfo();
@@ -993,6 +1021,12 @@ public class JooqEmployee {
 							.execute();
 				 }
 			 }
+		 }else{
+			//ACTUALIZAR DURACION JORNADA
+			dslContext.delete(CONTRACT_DATA)
+				.where(CONTRACT_DATA.NAME.like("HORAS%"))
+				.and(CONTRACT_DATA.CONTRACT.eq(contractData.getContractId()))
+				.execute();
 		 }
 
 		//ACTUALIZAR FECHA INICIO Y FIN: contract, contract_data, contract_info, contract_bonus, contract_deduction, contract_embargo,

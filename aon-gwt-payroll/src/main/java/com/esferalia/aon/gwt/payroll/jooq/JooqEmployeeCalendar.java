@@ -526,7 +526,7 @@ public class JooqEmployeeCalendar {
 					
 					
 //					Date sqlstartDateHour =  new Date(auxstartDateHour.getTime());
-					Date sqlstartDateHour = parseStartDateForStrech(auxstartDateHour);
+					Date sqlstartDateHour = parseStartDateForStrechWithOutStreecht(auxstartDateHour);
 					Date sqlendDateHour;
 					
 					if(realEndDate == null)
@@ -685,7 +685,6 @@ public class JooqEmployeeCalendar {
 		creteRealJourneyDB(dslContext, contract);
 		
 	}
-	
 
 	private static void creteRealJourneyDB(DSLContext dslContext, Integer contract) {
 		
@@ -846,6 +845,19 @@ public class JooqEmployeeCalendar {
 			return new Date(date.getTime());
 		}else{
 			while(!(date.getDate() == 1 || date.getDay() == 1)){
+				DateUtils.addDays2Date(date, -1);
+			}
+			return new Date(date.getTime());
+		}
+	}
+	
+	private static Date parseStartDateForStrechWithOutStreecht(java.util.Date dateAux) {
+		java.util.Date date = DateUtils.copyDateOnly(dateAux);
+		
+		if(date.getDate() == 1){
+			return new Date(date.getTime());
+		}else{
+			while(!(date.getDate() == 1)){
 				DateUtils.addDays2Date(date, -1);
 			}
 			return new Date(date.getTime());
