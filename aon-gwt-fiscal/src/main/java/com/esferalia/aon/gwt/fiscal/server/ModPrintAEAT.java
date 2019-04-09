@@ -70,7 +70,7 @@ public abstract class ModPrintAEAT extends HttpServlet{
 	String name;
 	String document;
 	String nrc;
-	
+	Boolean test;
 	Boolean print;
 	
 	public ModPrintAEAT() {
@@ -79,6 +79,7 @@ public abstract class ModPrintAEAT extends HttpServlet{
 	
 	protected void init(JSONObject json) throws JSONException, UnsupportedEncodingException {
 		this.print = json.opt("print") != null;
+		this.test = json.opt("test") != null && json.getNumber("test").intValue() == 1;
 		this.id = json.getInt("mod");
 		this.domainName = json.getString("domainName");
 		this.domainId = json.getInt("domainId");
@@ -174,6 +175,10 @@ public abstract class ModPrintAEAT extends HttpServlet{
 	
 	public Boolean isPrint() {
 		return print;
+	}
+	
+	public Boolean isTest() {
+		return test;
 	}
 	
 	protected String getEncodedFile(byte[] content) throws UnsupportedEncodingException {

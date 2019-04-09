@@ -10,6 +10,8 @@ public class AonData implements IsSerializable{
 	Integer userOperator;
 	String md5;
 	Domain domain;
+	Boolean betaEnabled;
+	Boolean alphaEnabled;
 	
 	public User getUser() {
 		return user;
@@ -39,5 +41,20 @@ public class AonData implements IsSerializable{
 		this.userOperator = userOperator;
 		return this;
 	}
+	public Boolean isBetaEnabled() {
+		return betaEnabled;
+	}
+	public AonData setBetaEnabled(Boolean betaEnabled) {
+		this.betaEnabled = betaEnabled;
+		return this;
+	}
+	public Boolean isAlphaEnabled() {
+		return alphaEnabled;
+	}
+	public AonData setAlphaEnabled(Boolean alphaEnabled) {
+		this.alphaEnabled = alphaEnabled;
+		return this;
+	}
+	
 	
 }

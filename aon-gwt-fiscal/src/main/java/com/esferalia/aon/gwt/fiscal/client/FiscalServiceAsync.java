@@ -119,7 +119,7 @@ public interface FiscalServiceAsync {
 	
 	// --------------------------------------------------------------- GWT API INFO
 
-	void getAonData(String domainName, Integer domainId, AsyncCallback<AonData> callback);
+	void getAonData(String domainName, Integer domainId, String user, AsyncCallback<AonData> callback);
 	void presentationFile(String domainName, Integer domainId, String user, FiscalModelType type, Integer id, AsyncCallback<Integer> callback);
 	void markAsFinished(String domainName, Integer domainId, String user, IFiscalModel model, AsyncCallback<Void> callback) throws AonCoreException;
 

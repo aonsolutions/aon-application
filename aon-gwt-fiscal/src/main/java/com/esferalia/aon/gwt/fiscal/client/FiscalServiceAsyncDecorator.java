@@ -302,7 +302,7 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 	// --------------------------------------------------------------- GWT API INFO
 	
 	@Override
-	public void getAonData(String domainName, Integer domainId, AsyncCallback<AonData> callback) {
+	public void getAonData(String domainName, Integer domainId, String user, AsyncCallback<AonData> callback) {
 		
 	}
 

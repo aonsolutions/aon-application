@@ -91,7 +91,7 @@ public interface FiscalService extends RemoteService {
 	
 	// --------------------------------------------------------------- GWT API INFO
 
-	AonData getAonData(String domainName, Integer domainId);
+	AonData getAonData(String domainName, Integer domainId, String user);
 
 	Integer presentationFile(String domainName, Integer domainId, String user, FiscalModelType type, Integer id);
 

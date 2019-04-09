@@ -63,17 +63,25 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 	
 	private Domain domain;
 	private String user;
-	
+	private Boolean test = false; 
 	private HashMap<Integer, IFiscalModel> getModelMap() {
 		return modelMap;
 	}
-	
+
 	private Boolean isMinimize() {
 		return minimize;
 	}
 	
 	private API getAPI() {
 		return API;
+	}
+	
+	public Boolean getTest() {
+		return test;
+	}
+
+	public void setTest(Boolean test) {
+		this.test = test;
 	}
 
 	public NeoMatrix(AonData aonData) {
@@ -324,6 +332,7 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 				json.put("mod", new JSONNumber(model.getId()));
 				json.put("domainId", new JSONNumber(domain.getId()));
 				json.put("domainName", new JSONString(domain.getName()));
+				json.put("test", new JSONNumber(getTest() ? 1 : 0));
 				json.put("user", new JSONString(user));
 				json.put("cert", new JSONNumber(Integer.parseInt(cert)));
 				json.put("pass", new JSONString(pass));

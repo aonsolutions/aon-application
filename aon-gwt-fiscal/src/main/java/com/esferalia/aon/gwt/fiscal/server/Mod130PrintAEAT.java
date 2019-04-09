@@ -67,10 +67,12 @@ public class Mod130PrintAEAT extends ModPrintAEAT {
 			? getCertUrlParameters(mod130, getEncodedFile(content), getName(), getDocument())
 			: getUrlParameters(mod130, getEncodedFile(content));
 	
+		String certUrl = isTest() 
+			? "https://www7.aeat.es/wlpl/PFTW-PICW/PresBasica" 
+			: "https://www1.agenciatributaria.gob.es/wlpl/PFTW-PICW/PresBasica";
+	
 		String request = isCert() 
-			? // PRUEBAS "https://www7.aeat.es/wlpl/PFTW-PICW/PresBasica"
-			  // REAL 
-			  "https://www1.agenciatributaria.gob.es/wlpl/PFTW-PICW/PresBasica"
+			? certUrl
 			: "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";	
 	
 		send(req, resp, request, urlParameters, isI);

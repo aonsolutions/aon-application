@@ -76,9 +76,9 @@ public class Mod3902018PrintAEAT extends ModPrintAEAT {
 	
 	public String getUrl(Integer year) {
 		if(isCert()) 
-			return // PRUEBAS "https://www7.aeat.es/wlpl/PFTW-PICW/PresBasica";
-				   // REAL
-					"https://www1.agenciatributaria.gob.es/wlpl/PFTW-PICW/PresBasica";
+			return isTest() 
+				? "https://www7.aeat.es/wlpl/PFTW-PICW/PresBasica" 
+				: "https://www1.agenciatributaria.gob.es/wlpl/PFTW-PICW/PresBasica";
 		else if(year >= 2017)
 			return "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";
 		return "";

@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import javax.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.server.util.AONMVELUtils;
@@ -27,6 +26,7 @@ import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.FinanceParams;
@@ -65,6 +65,7 @@ import com.esferalia.aon.occam.api.model.type.Activities.Type3Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type4Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type7Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.TypeActivity;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.watson.error.AonCoreException;
 
@@ -306,20 +307,21 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	
 	// --------------------------------------------------------------- GWT API INFO
 	
-	@Deprecated
-	public String getLoggedUser() {
-		return AonServletUtils.getLoggedUser();
-	}
-	@Deprecated
-	public AonData getAonData(String domainName, Integer domainId){
-		Domain domain = AON.getDomain(domainName, domainId, getLoggedUser());
-		User user = AON.getUser(domain.getName(), domain.getId(), getLoggedUser());
-		Integer operator = AON.getTaskHolder(domain.getName(), domainId, getLoggedUser(), 
+	public AonData getAonData(String domainName, Integer domainId, String login){
+		Domain domain = AON.getDomain(domainName, domainId, login);
+		User user = AON.getUser(domain.getName(), domain.getId(), login);
+		Integer operator = AON.getTaskHolder(domain.getName(), domainId, login, 
 				f -> f.getDomainProperty().eq(domainId).and(f.getUserIdProperty().eq(user.getId()))).getId();
+		ApplicationParameter beta = AON.getApplicationParameter(domainName, domainId, login, AppParam.AON_BETA_ENABLED);
+		ApplicationParameter alpha = AON.getApplicationParameter(domainName, domainId, login, AppParam.AON_ALPHA_ENABLED);
+
 		return new AonData().setUser(user)
 				.setMd5(getMd5(user.getLogin()+domain.getName()))
 				.setDomain(domain)
-				.setUserOperator(operator);
+				.setUserOperator(operator)
+				.setBetaEnabled((beta!=null && new Boolean(beta.getValue())))
+				.setAlphaEnabled((alpha!=null && new Boolean(alpha.getValue())));
+				
 	}
 	
 	public String getMd5(String str){

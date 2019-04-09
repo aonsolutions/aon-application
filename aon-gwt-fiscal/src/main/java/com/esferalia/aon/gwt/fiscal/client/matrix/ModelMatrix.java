@@ -88,6 +88,7 @@ public class ModelMatrix extends MainEntryPoint {
 		private ListBox admon;
 		private CheckBox showConfigurated;
 		private CheckBox showMadeModels;
+		private CheckBox testMode;
 		
 		private FilterPanel() {
 			setStyleName(AON.AON_CSS.aonSimpleBorder());
@@ -178,6 +179,22 @@ public class ModelMatrix extends MainEntryPoint {
 				}
 			});
 			add(showMadeModels);
+			
+			if(getAonData().isBetaEnabled()) {
+				testMode = new CheckBox();
+				testMode.setValue(false);
+				testMode.setStyleName(AON.AON_CSS.aonMarginRight());
+				testMode.setText("Modo Pruebas");
+				testMode.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+					
+					@Override
+					public void onValueChange(ValueChangeEvent<Boolean> event) {
+						getNeo().setTest(event.getValue());
+					}
+				});
+				
+				add(testMode);
+			}
 
 		}
 
@@ -227,14 +244,19 @@ public class ModelMatrix extends MainEntryPoint {
 	final FiscalServiceAsync impl = GWT.create(FiscalService.class);
 
 	private NeoMatrix neo;
+	private AonData aonData;
 	
 	private NeoMatrix getNeo() {
 		return neo;
 	}
+	
+	private AonData getAonData() {
+		return aonData;
+	}
 
 	@Override
 	public void onModuleLoad() {
-		impl.getAonData(getCurrentDomainName(), getCurrentDomain(), new AsyncCallback<AonData>() {
+		impl.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
 
 			@Override public void onFailure(Throwable caught) {}
 
