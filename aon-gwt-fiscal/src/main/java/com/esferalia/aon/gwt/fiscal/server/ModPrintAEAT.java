@@ -230,17 +230,12 @@ public abstract class ModPrintAEAT extends HttpServlet{
 			if(isPrint()) {
 				if(isCert()) {
 					String html = readFullyAsString(connection.getInputStream(), "ISO-8859-1");
-					System.out.println("<!-- MODEL SEND HTML RESPONSE -->");
-					System.out.println(html);
 					JSONObject json = parseHTML(html);
 					json.put("nrc", getNrc());
 					saveHistory(json);
 					ByteArrayInputStream input = new ByteArrayInputStream(html.getBytes());
 					AonIOUtils.copy(input, resp.getOutputStream());	
 				} else {
-					String html = readFullyAsString(connection.getInputStream(), "ISO-8859-1");
-					System.out.println("<!-- MODEL SEND HTML RESPONSE -->");
-					System.out.println(html);
 					DataInputStream input = new DataInputStream(connection.getInputStream());
 					AonIOUtils.copy(input, resp.getOutputStream());
 				} 	
