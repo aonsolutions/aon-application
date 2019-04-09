@@ -10,7 +10,6 @@ import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
-
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -222,11 +221,16 @@ public class JooqCRA {
 						.and(SALARY.END_DATE.le(endDateSQL))
 						.and(SALARY.ENTERPRISE_NAME.equalIgnoreCase(_enterpriseName))
 						.and(SALARY.CCC.eq(_ccc))
+						.and(SALARY.SS_REGIME.notEqual((byte)3))
 					.fetch();
 			
 			//DDE
 			JSONObject dde = new JSONObject();
-			dde.put("cccRegime", parseSS_Regime(salaryRecords.get(0).get(SALARY.SS_REGIME)));
+			Result<Record> enterpriseCCCRecords = dslContext.select().from(ENTERPRISE_CCC)
+					.where(ENTERPRISE_CCC.CCC.eq(salaryRecords.get(0).get(SALARY.CCC)))
+					.fetch();
+			
+			dde.put("cccRegime", parseSS_Regime(enterpriseCCCRecords.get(0).get(ENTERPRISE_CCC.TYPE)));
 			dde.put("ccc", salaryRecords.get(0).get(SALARY.CCC));
 			dde.put("year", startDateSQL.getYear());
 			dde.put("month", startDateSQL.getMonth());
@@ -335,6 +339,7 @@ public class JooqCRA {
 					.where(SALARY.ENTERPRISE_NAME.equalIgnoreCase(_enterpriseName))
 						.and(SALARY.CCC.eq(_ccc))
 						.and(SALARY.TYPE.eq((byte)3))
+						.and(SALARY.SS_REGIME.notEqual((byte)3))
 					.fetch();
 			
 			//DDEAS
@@ -354,7 +359,11 @@ public class JooqCRA {
 					if(craAmount > 0){
 						if(salatyData.get(SALARY_DATA.START_DATE).before(endDateSQL)){		
 							JSONObject ddea = new JSONObject();
-							ddea.put("cccRegime", parseSS_Regime(salary.get(SALARY.SS_REGIME)));
+							enterpriseCCCRecords = dslContext.select().from(ENTERPRISE_CCC)
+									.where(ENTERPRISE_CCC.CCC.eq(salary.get(SALARY.CCC)))
+									.fetch();
+							
+							ddea.put("cccRegime", parseSS_Regime(enterpriseCCCRecords.get(0).get(ENTERPRISE_CCC.TYPE)));
 							ddea.put("ccc", salary.get(SALARY.CCC));
 							ddea.put("year", salatyData.get(SALARY_DATA.START_DATE).getYear() + 1900);
 							ddea.put("month", salatyData.get(SALARY_DATA.START_DATE).getMonth() + 1);
@@ -405,12 +414,17 @@ public class JooqCRA {
 						.and(SALARY.ISSUE_DATE.between(startDateSQL, endDateSQL)
 								.or(SALARY.END_DATE.between(startDateSQL, endDateSQL)))
 						.and(SALARY.TYPE.eq((byte)2))
+						.and(SALARY.SS_REGIME.notEqual((byte)3))
 					.fetch();
 			
 			if(!salaryRecords.isEmpty()){
+				enterpriseCCCRecords = dslContext.select().from(ENTERPRISE_CCC)
+						.where(ENTERPRISE_CCC.CCC.eq(salaryRecords.get(0).get(SALARY.CCC)))
+						.fetch();
+				
 				//Finiq
 				JSONObject finiq = new JSONObject();
-				finiq.put("cccRegime", parseSS_Regime(salaryRecords.get(0).get(SALARY.SS_REGIME)));
+				finiq.put("cccRegime", parseSS_Regime(enterpriseCCCRecords.get(0).get(ENTERPRISE_CCC.TYPE)));
 				finiq.put("ccc", salaryRecords.get(0).get(SALARY.CCC));
 				finiq.put("year", startDateSQL.getYear());
 				finiq.put("month", startDateSQL.getMonth());
