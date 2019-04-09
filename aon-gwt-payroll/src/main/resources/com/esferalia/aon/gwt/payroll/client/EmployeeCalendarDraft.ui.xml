@@ -178,7 +178,7 @@
 		}
 		
 		.sundayStyle{
-			background-color: rgba(114, 194, 250, 1);
+			background-color: rgb(68, 90, 105);
 			padding: 3px;
 			color: #ffffff;
 		}		
