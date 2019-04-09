@@ -102,6 +102,8 @@ public class JooqCRA {
 			JSONObject dde = new JSONObject();
 			dde.put("cccRegime", parseSS_Regime(salaryRecords.get(0).get(SALARY.SS_REGIME)));
 			dde.put("ccc", salaryRecords.get(0).get(SALARY.CCC));
+			dde.put("year", startDateSQL.getYear());
+			dde.put("month", startDateSQL.getMonth());
 			
 			JSONArray trbs = new JSONArray();
 			
@@ -226,6 +228,8 @@ public class JooqCRA {
 			JSONObject dde = new JSONObject();
 			dde.put("cccRegime", parseSS_Regime(salaryRecords.get(0).get(SALARY.SS_REGIME)));
 			dde.put("ccc", salaryRecords.get(0).get(SALARY.CCC));
+			dde.put("year", startDateSQL.getYear());
+			dde.put("month", startDateSQL.getMonth());
 			
 			JSONArray trbs = new JSONArray();
 			
@@ -250,7 +254,7 @@ public class JooqCRA {
 					Type craType = Payment.Type.values()[salaryPaymentRecords.get(i).get(SALARY_PAYMENT.TYPE)];
 					
 					if(typeCRA == craType) {
-						craAmount += salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT);
+						craAmount += salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE);
 						
 						//Es la ultima iteracion
 						if(i+1 == salaryPaymentRecords.size()) {
@@ -261,11 +265,14 @@ public class JooqCRA {
 							else
 								amount = craAmountStr.split("[.]")[0] + craAmountStr.split("[.]")[1];
 							// String amount = craAmountStr.split("[.]")[0] + craAmountStr.split("[.]")[1];
-							cre.put("concept", craType.getDescription().split(" ")[0]);
-							cre.put("include_exclude", craType.isBBCCIncluded() ? "I" : "E");
-							cre.put("amount", amount);
-							cre.put("action", " ");
-							cres.add(cre);
+							
+							if(craAmount > 0){
+								cre.put("concept", craType.getDescription().split(" ")[0]);
+								cre.put("include_exclude", craType.isBBCCIncluded() ? "I" : "E");
+								cre.put("amount", amount);
+								cre.put("action", " ");
+								cres.add(cre);
+							}
 						}
 						
 						continue;
@@ -276,15 +283,18 @@ public class JooqCRA {
 							amount = craAmountStr.split(",")[0] + craAmountStr.split(",")[1];
 						else
 							amount = craAmountStr.split("[.]")[0] + craAmountStr.split("[.]")[1];
-						cre.put("concept", typeCRA.getDescription().split(" ")[0]);
-						cre.put("include_exclude", typeCRA.isBBCCIncluded() ? "I" : "E");
-						cre.put("amount", amount);
-						cre.put("action", " ");
-						cres.add(cre);
+						
+						if(craAmount > 0){
+							cre.put("concept", typeCRA.getDescription().split(" ")[0]);
+							cre.put("include_exclude", typeCRA.isBBCCIncluded() ? "I" : "E");
+							cre.put("amount", amount);
+							cre.put("action", " ");
+							cres.add(cre);
+						}
 						
 						typeCRA = craType;
 						cre = new JSONObject();
-						craAmount = salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT);
+						craAmount = salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE);
 						
 						//Es la ultima iteracion
 						if(i+1 == salaryPaymentRecords.size()) {
@@ -294,11 +304,14 @@ public class JooqCRA {
 							else
 								amount = craAmountStr.split("[.]")[0] + craAmountStr.split("[.]")[1];
 							// amount = craAmountStr.split("[.]")[0] + craAmountStr.split("[.]")[1];
-							cre.put("concept", craType.getDescription().split(" ")[0]);
-							cre.put("include_exclude", craType.isBBCCIncluded() ? "I" : "E");
-							cre.put("amount", amount);
-							cre.put("action", " ");
-							cres.add(cre);
+							
+							if(craAmount > 0){
+								cre.put("concept", craType.getDescription().split(" ")[0]);
+								cre.put("include_exclude", craType.isBBCCIncluded() ? "I" : "E");
+								cre.put("amount", amount);
+								cre.put("action", " ");
+								cres.add(cre);
+							}
 						}
 					}
 					
@@ -336,42 +349,45 @@ public class JooqCRA {
 						.fetch();
 				
 				for(Record salatyData: salaryDatas){
+					Double craAmount = Double.parseDouble(salatyData.get(SALARY_DATA.EXPRESSION));
 					
-					if(salatyData.get(SALARY_DATA.START_DATE).before(endDateSQL)){		
-						JSONObject ddea = new JSONObject();
-						ddea.put("cccRegime", parseSS_Regime(salary.get(SALARY.SS_REGIME)));
-						ddea.put("ccc", salary.get(SALARY.CCC));
-						ddea.put("year", salatyData.get(SALARY_DATA.START_DATE).getYear() + 1900);
-						ddea.put("month", salatyData.get(SALARY_DATA.START_DATE).getMonth() + 1);
-					
-						JSONArray trbsa = new JSONArray();
-						JSONObject trba = new JSONObject();
-					
-						trba.put("numAfilicion", salary.get(SALARY.SOCIAL_SECURITY_NUMBER));
-					
-						JSONArray cres = new JSONArray();
+					if(craAmount > 0){
+						if(salatyData.get(SALARY_DATA.START_DATE).before(endDateSQL)){		
+							JSONObject ddea = new JSONObject();
+							ddea.put("cccRegime", parseSS_Regime(salary.get(SALARY.SS_REGIME)));
+							ddea.put("ccc", salary.get(SALARY.CCC));
+							ddea.put("year", salatyData.get(SALARY_DATA.START_DATE).getYear() + 1900);
+							ddea.put("month", salatyData.get(SALARY_DATA.START_DATE).getMonth() + 1);
 						
-						Type typeCRA = Payment.Type.values()[8];;
-						Double craAmount = Double.parseDouble(salatyData.get(SALARY_DATA.EXPRESSION));
-						JSONObject cre = new JSONObject();
+							JSONArray trbsa = new JSONArray();
+							JSONObject trba = new JSONObject();
 						
-						String craAmountStr = String.format( "%.2f", craAmount );
-						String amount = "";
-						if(craAmountStr.contains(","))
-							amount = craAmountStr.split(",")[0] + craAmountStr.split(",")[1];
-						else
-							amount = craAmountStr.split("[.]")[0] + craAmountStr.split("[.]")[1];
+							trba.put("numAfilicion", salary.get(SALARY.SOCIAL_SECURITY_NUMBER));
 						
-						cre.put("concept", typeCRA.getDescription().split(" ")[0]);
-						cre.put("include_exclude", typeCRA.isBBCCIncluded() ? "I" : "E");
-						cre.put("amount", amount);
-						cre.put("action", " ");
-						cres.add(cre);
-						
-						trba.put("CRES", cres);
-						trbsa.add(trba);
-						ddea.put("TRBS", trbsa);
-						ddeas.add(ddea);
+							JSONArray cres = new JSONArray();
+							
+							Type typeCRA = Payment.Type.values()[8];;
+//							Double craAmount = Double.parseDouble(salatyData.get(SALARY_DATA.EXPRESSION));
+							JSONObject cre = new JSONObject();
+							
+							String craAmountStr = String.format( "%.2f", craAmount );
+							String amount = "";
+							if(craAmountStr.contains(","))
+								amount = craAmountStr.split(",")[0] + craAmountStr.split(",")[1];
+							else
+								amount = craAmountStr.split("[.]")[0] + craAmountStr.split("[.]")[1];
+							
+							cre.put("concept", typeCRA.getDescription().split(" ")[0]);
+							cre.put("include_exclude", typeCRA.isBBCCIncluded() ? "I" : "E");
+							cre.put("amount", amount);
+							cre.put("action", " ");
+							cres.add(cre);
+							
+							trba.put("CRES", cres);
+							trbsa.add(trba);
+							ddea.put("TRBS", trbsa);
+							ddeas.add(ddea);
+						}
 					}
 				}
 				
@@ -382,11 +398,12 @@ public class JooqCRA {
 			// 											FINIQUITOS
 			// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 			
-			//GET Finiquitos SALARY from DB (employees)
+			//GET Finiquitos SALARY from DB (employees) se usa ISSUE_DATE por que el finiquito puede tener un startDate de hace mil..
 			salaryRecords = dslContext.select().from(SALARY)
 					.where(SALARY.ENTERPRISE_NAME.equalIgnoreCase(_enterpriseName))
 						.and(SALARY.CCC.eq(_ccc))
-						.and(SALARY.ISSUE_DATE.le(endDateSQL))
+						.and(SALARY.ISSUE_DATE.between(startDateSQL, endDateSQL)
+								.or(SALARY.END_DATE.between(startDateSQL, endDateSQL)))
 						.and(SALARY.TYPE.eq((byte)2))
 					.fetch();
 			
@@ -395,44 +412,49 @@ public class JooqCRA {
 				JSONObject finiq = new JSONObject();
 				finiq.put("cccRegime", parseSS_Regime(salaryRecords.get(0).get(SALARY.SS_REGIME)));
 				finiq.put("ccc", salaryRecords.get(0).get(SALARY.CCC));
+				finiq.put("year", startDateSQL.getYear());
+				finiq.put("month", startDateSQL.getMonth());
 				JSONArray trbsf = new JSONArray();
 				for(Record salary: salaryRecords) {
 					Integer salaryId = salary.get(SALARY.ID);
-					Date finiqEndDate = salary.get(SALARY.END_DATE);
+					//Date finiqEndDate = salary.get(SALARY.END_DATE);
 					
 					Result<Record> salaryDatas = dslContext.select().from(SALARY_DATA)
 							.where(SALARY_DATA.SALARY.eq(salaryId))
 							.and(SALARY_DATA.NAME.eq("BASE_CGC"))
-							.and(SALARY_DATA.END_DATE.eq(finiqEndDate))
+							.and(SALARY_DATA.START_DATE.between(startDateSQL, endDateSQL))
 							.fetch();
 					
 					for(Record salatyData: salaryDatas){
-						JSONObject trbf = new JSONObject();
-					
-						trbf.put("numAfilicion", salary.get(SALARY.SOCIAL_SECURITY_NUMBER));
-					
-						JSONArray cres = new JSONArray();
-						
-						Type typeCRA = Payment.Type.values()[6];;
 						Double craAmount = Double.parseDouble(salatyData.get(SALARY_DATA.EXPRESSION));
-						JSONObject cre = new JSONObject();
 						
-						String craAmountStr = String.format( "%.2f", craAmount );
-						String amount = "";
-						if(craAmountStr.contains(","))
-							amount = craAmountStr.split(",")[0] + craAmountStr.split(",")[1];
-						else
-							amount = craAmountStr.split("[.]")[0] + craAmountStr.split("[.]")[1];
+						if(craAmount > 0){
+							JSONObject trbf = new JSONObject();
+							
+							trbf.put("numAfilicion", salary.get(SALARY.SOCIAL_SECURITY_NUMBER));
 						
-						cre.put("concept", typeCRA.getDescription().split(" ")[0]);
-						cre.put("include_exclude", typeCRA.isBBCCIncluded() ? "I" : "E");
-						cre.put("amount", amount);
-						cre.put("action", " ");
-						cres.add(cre);
-						
-						trbf.put("CRES", cres);
-						trbsf.add(trbf);
-						
+							JSONArray cres = new JSONArray();
+							
+							Type typeCRA = Payment.Type.values()[6];;
+//							Double craAmount = Double.parseDouble(salatyData.get(SALARY_DATA.EXPRESSION));
+							JSONObject cre = new JSONObject();
+							
+							String craAmountStr = String.format( "%.2f", craAmount );
+							String amount = "";
+							if(craAmountStr.contains(","))
+								amount = craAmountStr.split(",")[0] + craAmountStr.split(",")[1];
+							else
+								amount = craAmountStr.split("[.]")[0] + craAmountStr.split("[.]")[1];
+							
+							cre.put("concept", typeCRA.getDescription().split(" ")[0]);
+							cre.put("include_exclude", typeCRA.isBBCCIncluded() ? "I" : "E");
+							cre.put("amount", amount);
+							cre.put("action", " ");
+							cres.add(cre);
+							
+							trbf.put("CRES", cres);
+							trbsf.add(trbf);
+						}
 					}
 					finiq.put("TRBS", trbsf);
 					
@@ -571,26 +593,30 @@ public class JooqCRA {
 					.where(CRA_BATCH_DETAIL.CRA_BATCH.eq(craBatch.get(CRA_BATCH.ID)))
 					.fetchOne();
 			
-			Record enterpriseCCCRecord = dslContext.select().from(ENTERPRISE_CCC)
-					.where(ENTERPRISE_CCC.ID.eq(craBatchDetailRecord.get(CRA_BATCH_DETAIL.ENTERPRISE_CCC)))
-					.fetchOne();
+			if(null != craBatchDetailRecord){
 			
-			cra.setCcc(getCCCType(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE)) + enterpriseCCCRecord.get(ENTERPRISE_CCC.CCC));
-			cra.setCccType(getCCCTypeName(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE)));
-			
-			String geozone = dslContext.select(GEOZONE.NAME).from(GEOZONE)
-					.where(GEOZONE.ID.eq(enterpriseCCCRecord.get(ENTERPRISE_CCC.GEOZONE)))
-					.fetchOne(GEOZONE.NAME);
-			
-			cra.setCccProvince(geozone);
-			
-			Record enterpriseActivityRecord = dslContext.select().from(ENTERPRISE_ACTIVITY)
-					.where(ENTERPRISE_ACTIVITY.ID.eq(enterpriseCCCRecord.get(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY)))
-					.fetchOne();
-			
-			cra.setActivityName(enterpriseActivityRecord.get(ENTERPRISE_ACTIVITY.DESCRIPTION));
-			
-			cras.add(cra);
+				Record enterpriseCCCRecord = dslContext.select().from(ENTERPRISE_CCC)
+						.where(ENTERPRISE_CCC.ID.eq(craBatchDetailRecord.get(CRA_BATCH_DETAIL.ENTERPRISE_CCC)))
+						.fetchOne();
+				
+				cra.setCcc(getCCCType(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE)) + enterpriseCCCRecord.get(ENTERPRISE_CCC.CCC));
+				cra.setCccType(getCCCTypeName(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE)));
+				
+				String geozone = dslContext.select(GEOZONE.NAME).from(GEOZONE)
+						.where(GEOZONE.ID.eq(enterpriseCCCRecord.get(ENTERPRISE_CCC.GEOZONE)))
+						.fetchOne(GEOZONE.NAME);
+				
+				cra.setCccProvince(geozone);
+				
+				Record enterpriseActivityRecord = dslContext.select().from(ENTERPRISE_ACTIVITY)
+						.where(ENTERPRISE_ACTIVITY.ID.eq(enterpriseCCCRecord.get(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY)))
+						.fetchOne();
+				
+				cra.setActivityName(enterpriseActivityRecord.get(ENTERPRISE_ACTIVITY.DESCRIPTION));
+				
+				cras.add(cra);
+				
+			}
 		}
 		
 		

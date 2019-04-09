@@ -109,14 +109,14 @@ public final class MainCRAGeneration {
 		String reserved46;
 		ArrayList<TRB> trbs;
 		
-		public DDE(String cccRegime, String ccc) {
+		public DDE(String cccRegime, String ccc, String year, String month) {
 			super();
 			this.empHeader = "DDE";
 			this.cccRegime = cccRegime;
 			this.ccc = ccc;
-			Date actualDate = new Date();
-			this.year = actualDate.getYear() + 1900 + "";
-			this.month = StringUtils.leftPad(actualDate.getMonth()+1+"", 2, '0');
+//			Date actualDate = new Date();
+			this.year = (Integer.parseInt(year) + 1900) + "";
+			this.month = StringUtils.leftPad((Integer.parseInt(month)+1)+"", 2, '0');
 			this.reserved46 = StringUtils.leftPad("", 46, ' ');
 			this.trbs = new ArrayList<TRB>();
 		}
@@ -306,14 +306,14 @@ public final class MainCRAGeneration {
 		String reserved46;
 		ArrayList<TRB> trbs;
 		
-		public FINIQ(String cccRegime, String ccc) {
+		public FINIQ(String cccRegime, String ccc, String year, String month) {
 			super();
 			this.empHeader = "DDE";
 			this.cccRegime = cccRegime;
 			this.ccc = ccc;
 			Date actualDate = new Date();
-			this.year = actualDate.getYear() + 1900 + "";
-			this.month = StringUtils.leftPad(actualDate.getMonth()+1+"", 2, '0');
+			this.year = (Integer.parseInt(year) + 1900) + "";
+			this.month = StringUtils.leftPad((Integer.parseInt(month)+1)+"", 2, '0');
 			this.reserved46 = StringUtils.leftPad("", 46, ' ');
 			this.trbs = new ArrayList<TRB>();
 		}
@@ -363,7 +363,9 @@ public final class MainCRAGeneration {
 		JSONObject ddeJson = (JSONObject) mainCRAData.get("DDE");
 		DDE dde = new DDE(
 				ddeJson.get("cccRegime").toString(), 
-				ddeJson.get("ccc").toString());
+				ddeJson.get("ccc").toString(),
+				ddeJson.get("year").toString(),
+				ddeJson.get("month").toString());
 		
 		//TRBs
 		JSONArray employees = (JSONArray) ddeJson.get("TRBS");
@@ -436,7 +438,9 @@ public final class MainCRAGeneration {
 		JSONObject finiqJson = (JSONObject) mainCRAData.get("FINIQ");
 		FINIQ finiq = new FINIQ(
 				finiqJson.get("cccRegime").toString(), 
-				finiqJson.get("ccc").toString());
+				finiqJson.get("ccc").toString(),
+				finiqJson.get("year").toString(),
+				finiqJson.get("month").toString());
 		
 		//TRBs
 		JSONArray employeesFiniq = (JSONArray) finiqJson.get("TRBS");
