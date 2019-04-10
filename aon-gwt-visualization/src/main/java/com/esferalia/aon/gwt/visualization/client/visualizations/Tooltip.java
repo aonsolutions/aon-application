@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.HasAllFocusHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -14,7 +15,10 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
+import com.google.gwt.user.client.ui.Focusable;
+import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -28,7 +32,7 @@ public class Tooltip extends DecoratedPopupPanel {
 	public static final DateTimeFormat DATE_FORMAT = DateTimeFormat
 			.getFormat("dd/MM/yyyy");
 
-	interface Listener {
+	public interface Listener {
 
 		void onStartDateChangeEvent(ValueChangeEvent<Date> event);
 
@@ -56,6 +60,7 @@ public class Tooltip extends DecoratedPopupPanel {
 	protected SimplePanel titlePanel;
 
 	private List<Listener> listeners;
+	private HasValue<String> hasValue;
 
 
 	public Tooltip() {
@@ -94,13 +99,25 @@ public class Tooltip extends DecoratedPopupPanel {
 		nameLabel.setText(pFullName);
 	}
 	
+	public String getName() {
+		return nameLabel.getText();
+	}
+	
 	public void setTitle(Widget widget) {
 		titlePanel.setWidget(widget);
 	}
 	
+	public String getValue(){
+		return hasValue.getValue();
+	}
 	
-	public void setValueEditor(Widget valueEditor) {
+	public <T extends IsWidget & HasValue<String> & HasAllFocusHandlers & Focusable> void setValueEditor(T valueEditor) {
+		hasValue = valueEditor;
 		valuePanel.setWidget(valueEditor);
+	}
+	
+	public void setVisibleAcceptButton(boolean visible){
+		this.acceptButton.setVisible(visible);
 	}
 
 	public void showToolTip(final int clientX, final int clientY) {

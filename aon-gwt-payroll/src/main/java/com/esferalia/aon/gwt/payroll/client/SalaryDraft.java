@@ -49,6 +49,7 @@ import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
+import com.esferalia.aon.gwt.payroll.shared.StringTimeLineVariable;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedDeductionVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
@@ -60,7 +61,6 @@ import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.O
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options.Timeline;
 import com.esferalia.aon.gwt.visualization.client.visualizations.Tooltip;
 import com.esferalia.aon.js.payroll.client.Reports;
-import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -2139,6 +2139,9 @@ public class SalaryDraft extends ResizeComposite
 
 		@ClassName("db-section-odd-ok")
 		String dbSectionOddOk();
+		
+		@ClassName("margin-top30")
+		String marginTop30();
 	}
 
 	interface Binder extends UiBinder<Widget, SalaryDraft> {
@@ -2724,6 +2727,7 @@ public class SalaryDraft extends ResizeComposite
 
 	private void showContextTable() {
 		contextDeckPanel.showWidget(contextDeckPanel.getWidgetIndex(contextTable));
+		contextDeckPanel.addStyleName(style.marginTop30());
 		contextTableButton.addStyleName(style.contextTabButtonSelected());
 		contextTimeLineButton.removeStyleName(style.contextTabButtonSelected());
 	}
@@ -2753,12 +2757,69 @@ public class SalaryDraft extends ResizeComposite
 					private int clientY = -1;
 					private Tooltip tooltip = new Tooltip(){
 						Tooltip setup(){
+							this.addListener(new Listener() {
+								
+								@Override
+								public void onStartDateChangeEvent(ValueChangeEvent<Date> event) {
+									// TODO Auto-generated method stub
+									
+								}
+								
+								@Override
+								public void onEndDateChangeEvent(ValueChangeEvent<Date> event) {
+									// TODO Auto-generated method stub
+									
+								}
+								
+								@Override
+								public void onAcceptButtonClickEvent(ClickEvent event) {
+
+									StringTimeLineVariable var = SalaryDraft.this.newStringTimeLineVariable(tooltip.getName());
+									
+									var.setStartDate(tooltip.getStartDate());
+									var.setEndDate(tooltip.getEndDate());
+									var.setName(tooltip.getName());
+									var.setValue(tooltip.getValue());
+									var.setExpression(tooltip.getValue());
+									
+//									Window.alert("StartDate : " + tooltip.getStartDate());
+//									Window.alert("EndDate : " + tooltip.getEndDate());
+//									Window.alert("Name : " + tooltip.getName());
+//									Window.alert("Value : " + tooltip.getValue());
+//									Window.alert("Expression : " + tooltip.getValue());
+									
+									salaryDraftObject.addDraftVariable(var);
+									salaryDraftObject.calculate(new CalculateCallback() {
+										
+										@Override
+										public void onCalculateSucces(SalaryDraftObject object) {
+											tooltip.hide();
+											SalaryDraft.this.onCalculateSucces(object);
+											showContextTable();
+											contextTableButton.setEnabled(false);
+											contextTimeLineButton.setEnabled(true);
+										}
+										
+										@Override
+										public void onCalculateFailure(Throwable throwable) {
+											// TODO Auto-generated method stub	
+										}
+										
+										@Override
+										public Calculate getCalculate() {
+											// TODO Auto-generated method stub
+											return null;
+										}
+									});
+								}
+								
+							});
 							
 							titlePanel.setVisible(false);
 							return this;
 						}
 					}.setup(); 
-
+					
 					@Override
 					public void onFailure(Throwable caught) {
 						// TODO Auto-generated method stub
@@ -2831,6 +2892,7 @@ public class SalaryDraft extends ResizeComposite
 
 								final TimeLineChart timeLineChart = new TimeLineChart(data, options);
 								contextTimeLinePanel.setWidget(timeLineChart);
+								contextTimeLinePanel.addStyleName(style.marginTop30());
 								timeLineChart.addOnMouseOverHandler(new OnMouseOverHandler() {
 									@Override
 									public void onMouseOverEvent(OnMouseOverEvent event) {
@@ -2839,9 +2901,11 @@ public class SalaryDraft extends ResizeComposite
 										tooltip.setStartDate(variable.getStartDate());
 										tooltip.setEndDate(variable.getEndDate());
 
-										IsWidget isWidget = newVariableEditor(variable);
-										tooltip.setValueEditor(isWidget.asWidget());
-
+										tooltip.setValueEditor(newVariableEditor(variable));
+										
+										tooltip.setVisibleAcceptButton(variable.getName().equals("COEFICIENTE_PARCIALIDAD") ||
+												   variable.getName().equals("GRUPO_COTIZACION"));
+										
 										tooltip.showToolTip(clientX, clientY);
 
 									}
@@ -2896,9 +2960,9 @@ public class SalaryDraft extends ResizeComposite
 						editor.asWidget().getElement().getStyle().setWidth(width, Unit.PX);
 						editor.setValue(getValueAsString(variable));
 
-						VariableChangeHandler<T> variableChangeHandler = new VariableChangeHandler<T>(variable);
+//						VariableChangeHandler<T> variableChangeHandler = new VariableChangeHandler<T>(variable);
 
-						variableChangeHandler.setEditor(editor);
+//						variableChangeHandler.setEditor(editor);
 
 						return editor;
 					}
@@ -3217,12 +3281,17 @@ public class SalaryDraft extends ResizeComposite
 	@UiHandler("contextTableButton")
 	void onContextTableButtonClick(ClickEvent event) {
 		showContextTable();
+		contextTableButton.setEnabled(false);
+		contextTimeLineButton.setEnabled(true);
 	}
 
 	@UiHandler("contextTimeLineButton")
 	void onContextTimeLineButtonClick(ClickEvent event) {
 		showContextTimeLine();
+		contextTimeLineButton.setEnabled(false);
+		contextTableButton.setEnabled(true);
 	}
+	
 	@UiHandler("tgssCheck")
 	void onTgssCheckChanged(ValueChangeEvent<Boolean> event) {
 		showTimeRulePanel();
@@ -4905,6 +4974,16 @@ public class SalaryDraft extends ResizeComposite
 
 	private StringVariable newStringVariable(String name) {
 		StringVariable var = new StringVariable();
+		var.setName(name);
+		var.setImplicit(false);
+		var.setScope(Scope.SALARY); // DRAFT
+		var.setEndDate(salaryDraftObject.getEndDate());
+		var.setStartDate(salaryDraftObject.getStartDate());
+		return var;
+	}
+	
+	private StringTimeLineVariable newStringTimeLineVariable(String name) {
+		StringTimeLineVariable var = new StringTimeLineVariable();
 		var.setName(name);
 		var.setImplicit(false);
 		var.setScope(Scope.SALARY); // DRAFT

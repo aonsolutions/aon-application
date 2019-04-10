@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.common.shared.HasStartAndEndDate;
@@ -22,20 +23,18 @@ import com.esferalia.aon.gwt.payroll.shared.Event;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
-import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
+import com.esferalia.aon.gwt.payroll.shared.StringTimeLineVariable;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.js.payroll.client.Reports.Payroll;
-import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
@@ -1181,7 +1180,7 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 	private static void setDraftPeriod(Date draftStartDate, Date draftEndDate,
 			SalaryDraft draft) {
 		setStartAndEndDates(draftStartDate, draftEndDate,
-				draft.getDraftContext());
+				filterWithOutTimeLineVars(draft.getDraftContext()));
 		setStartAndEndDates(draftStartDate, draftEndDate,
 				draft.getDraftPayments());
 		setStartAndEndDates(draftStartDate, draftEndDate,
@@ -1191,6 +1190,14 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 		setStartAndEndDates(draftStartDate, draftEndDate,
 				draft.getDraftBonuses());
 	}
+	
+	private static List<Variable> filterWithOutTimeLineVars(List<Variable> draftContext) {
+		List<Variable> vars = (List<Variable>) draftContext.stream()
+				.filter(v -> !(v instanceof StringTimeLineVariable))
+				.collect(Collectors.toList());
+		return vars;
+	}
+	
 	
 	private void addCalendarDraft(ArrayList<StringVariable> variablesList) {
 		for (StringVariable stringVariable : variablesList){

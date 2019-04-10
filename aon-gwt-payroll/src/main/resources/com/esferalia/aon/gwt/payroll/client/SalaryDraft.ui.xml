@@ -33,6 +33,10 @@
 			width: 5px;
 		}
 
+		.margin-top30{
+			margin-top: 30px;
+		}
+
 		.document {
 			margin-top: 5px;
 			margin-left: auto;
