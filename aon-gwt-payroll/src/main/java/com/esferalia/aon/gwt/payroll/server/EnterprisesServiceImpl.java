@@ -1734,9 +1734,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public String createNewCRA(Integer domain, String domainName, Integer enterpriseId, String enterpriseName,
 			long startDate, long endDate, String ccc, Integer cccId, String craType) {
-		Connection connection = null;
+//		Connection connection = null;
 		try {
-			connection = AonServletUtils.getConnection(domainName);
+//			connection = AonServletUtils.getConnection(domainName);
 			
 			JSONObject mainCRAJSON = JooqCRA.getMainCRAByCRA(domain.toString(), domainName, enterpriseId.toString(), enterpriseName, ccc, startDate, endDate);
 			String agrarianAFI = MainCRAGeneration.generateMainCRA(mainCRAJSON);
@@ -1747,15 +1747,13 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			return JooqCRA.setMainCra(domain.toString(), domainName, cccId.toString(), agrarianAFI, startDate, craType);
 			
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
 		} finally {
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (SQLException logOrIgnrore) {
-				}
-			}
+//			if (connection != null) {
+//				try {
+//					connection.close();
+//				} catch (SQLException logOrIgnrore) {
+//				}
+//			}
 		}
 	}
 
