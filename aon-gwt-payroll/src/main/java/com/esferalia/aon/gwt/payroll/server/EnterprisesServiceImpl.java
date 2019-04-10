@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.payroll.server;
 
-import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.ENTERPRISE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
@@ -1734,26 +1733,25 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public String createNewCRA(Integer domain, String domainName, Integer enterpriseId, String enterpriseName,
 			long startDate, long endDate, String ccc, Integer cccId, String craType) {
-//		Connection connection = null;
+		Connection connection = null;
 		try {
-//			connection = AonServletUtils.getConnection(domainName);
+			connection = AonServletUtils.getConnection(domainName);
 			
-			JSONObject mainCRAJSON = JooqCRA.getMainCRAByCRA(domain.toString(), domainName, enterpriseId.toString(), enterpriseName, ccc, startDate, endDate);
+			JSONObject mainCRAJSON = JooqCRA.getMainCRAByCRA(domain.toString(), domainName, enterpriseId.toString(), enterpriseName, ccc, startDate, endDate, connection);
 			String agrarianAFI = MainCRAGeneration.generateMainCRA(mainCRAJSON);
 			
-//			String dataStr = new String(data);
-//			System.out.println("Lenght DataStr : " + agrarianAFI.length());
-//			System.out.println(agrarianAFI);
+			return JooqCRA.setMainCra(domain.toString(), domainName, cccId.toString(), agrarianAFI, startDate, craType, connection);
 			
-			return JooqCRA.setMainCra(domain.toString(), domainName, cccId.toString(), agrarianAFI, startDate, craType);
-			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			throw new RuntimeException(e);
 		} finally {
-//			if (connection != null) {
-//				try {
-//					connection.close();
-//				} catch (SQLException logOrIgnrore) {
-//				}
-//			}
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
 		}
 	}
 
@@ -1763,7 +1761,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			connection = AonServletUtils.getConnection(domainName);
 			
-			return JooqCRA.deleteMainCRA(domainId.toString(), domainName, craBatchId.toString());
+			return JooqCRA.deleteMainCRA(domainId.toString(), domainName, craBatchId.toString(), connection);
 			
 		} catch (SQLException e) {
 			throw new RuntimeException(e);

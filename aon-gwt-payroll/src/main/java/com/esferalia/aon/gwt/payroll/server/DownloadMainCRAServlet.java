@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCRA;
 
 @SuppressWarnings("serial")
@@ -30,7 +29,7 @@ public class DownloadMainCRAServlet extends HttpServlet {
 		String _craBatchId = request.getParameter("craBatchId");
 		
 		//Get domain Name
-		String domainName = AonServletUtils.getRequestDomainName(request);
+		String domainName = request.getServerName();
 		
 		try {
 			Date currentDate = new Date();
