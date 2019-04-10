@@ -300,8 +300,6 @@ public class ModelMatrix extends MainEntryPoint {
 				filterPanel.fireValueChangeEvent();				
 			}
 		};
-		
-		Window.alert("4444");
 
 		splitLayout.addSouth(neo, 30);
 
