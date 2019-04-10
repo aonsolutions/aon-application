@@ -46,6 +46,10 @@
 			<param id="targetPayMethod" value="#{offer.getTargetPayMethod}" />
 			<param id="defaultPayMethod" value="#{offer.getDefaultPayMethod}" />			
 		</params>
+		<nested-report report="offerDetail"/>
+	</report>
+	<report id="offerDetail" description="Offer Detail">
+		<template path="/com/code/aon/ui/commercial/report/offerDetail.jasper"/>
 	</report>
 
 	<report id="offerGta" description="Offers's Report">
