@@ -44,6 +44,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -265,6 +266,8 @@ public class Model3032018AEAT extends Model303Base {
 		aeatFormFlowPanel.add(documentAeatHidden);
 		aeatFormFlowPanel.add(certAeatHidden);
 		aeatFormFlowPanel.add(passAeatHidden);
+		aeatFormFlowPanel.add(nrcAeatHidden);
+		aeatFormFlowPanel.add(testHidden);
 			
 		formContainer.add(diskForm);
 		formContainer.add(aeatForm);
@@ -390,7 +393,7 @@ public class Model3032018AEAT extends Model303Base {
 						if(getMod303().isSent()) {
 							getCallback().showBreakdownPanel("La presentaci\u00F3n del modelo ya se ha realizado con anterioridad.");
 						} else if (getMod303().isFinished() || getMod303().isSent()) {
-							submitAEAT(VALIDATE_PRINT_ACTION, getCert(), getPass(), getName(), getDocument(), showNRC ? getNRC() : null);
+							submitAEAT(VALIDATE_PRINT_ACTION, getCert(), getPass(), getDocument(), getName(), showNRC ? getNRC() : null);
 							getCallback().showVisorAEAT();
 						} else {
 							getCallback().showBreakdownPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
@@ -401,6 +404,22 @@ public class Model3032018AEAT extends Model303Base {
 			}
 		});
 		p3.add(button3);
+		
+		if(getAonData().isBetaEnabled()) {
+			CheckBox testMode = new CheckBox();
+			testMode.setValue(false);
+			testMode.setStyleName(AON.AON_CSS.aonMarginRight());
+			testMode.setText("Modo Pruebas");
+			testMode.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+				
+				@Override
+				public void onValueChange(ValueChangeEvent<Boolean> event) {
+					setTest(event.getValue());
+				}
+			});
+			p3.add(testMode);
+		}
+		
 		tab.setWidget(row, 1, p3 );
 		tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 

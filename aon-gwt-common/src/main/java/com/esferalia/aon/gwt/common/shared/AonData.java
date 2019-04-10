@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.common.shared;
 
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.user.client.rpc.IsSerializable;
@@ -10,6 +11,7 @@ public class AonData implements IsSerializable{
 	Integer userOperator;
 	String md5;
 	Domain domain;
+	Company company;
 	Boolean betaEnabled;
 	Boolean alphaEnabled;
 	
@@ -55,6 +57,11 @@ public class AonData implements IsSerializable{
 		this.alphaEnabled = alphaEnabled;
 		return this;
 	}
-	
-	
+	public Company getCompany() {
+		return company;
+	}
+	public AonData setCompany(Company company) {
+		this.company = company;
+		return this;
+	}
 }

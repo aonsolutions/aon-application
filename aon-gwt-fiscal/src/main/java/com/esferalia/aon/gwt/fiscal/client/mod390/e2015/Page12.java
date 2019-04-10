@@ -48,10 +48,13 @@ public class Page12 extends FlowPanel implements IMod3902015Page {
 	protected Hidden passAeatHidden = new Hidden("pass");
 	protected Hidden nameAeatHidden = new Hidden("name");
 	protected Hidden documentAeatHidden = new Hidden("document");
-	
+	protected Hidden testHidden = new Hidden("test");
+
 	private Mod3902015 model;
 	private API API;
-
+	private AonData aonData;
+	private Boolean test = false;
+	
 	public Page12(Mod3902015 m390, AonData aonData,IMod3902015CallBack callback) {
 		super();
 		setCallback(callback);
@@ -83,6 +86,7 @@ public class Page12 extends FlowPanel implements IMod3902015Page {
 		aeatFormFlowPanel.add(documentAeatHidden);
 		aeatFormFlowPanel.add(certAeatHidden);
 		aeatFormFlowPanel.add(passAeatHidden);
+		aeatFormFlowPanel.add(testHidden);
 
 		formContainer.add(diskForm);
 		formContainer.add(aeatForm);
@@ -208,7 +212,7 @@ public class Page12 extends FlowPanel implements IMod3902015Page {
 						if(getModel().isSent()) {
 							getCallback().showInfoPanel("La presentaci\u00F3n del modelo ya se ha realizado con anterioridad.");
 						} else if (getModel().isFinished()) {
-							submitAEAT(MODEL390_PRINT_AEAT, getCert(), getPass(), getName(), getDocument());
+							submitAEAT(MODEL390_PRINT_AEAT, getCert(), getPass(), getDocument(), getName());
 							getCallback().showVisorAEAT();
 						} else {
 							getCallback().showInfoPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
@@ -329,6 +333,7 @@ public class Page12 extends FlowPanel implements IMod3902015Page {
 		passAeatHidden.setValue(pass);
 		nameAeatHidden.setValue(name);
 		documentAeatHidden.setValue(document);
+		testHidden.setValue(getTest() ? "1" : "0");
 		aeatForm.submit();
 	}
 	
@@ -354,6 +359,20 @@ public class Page12 extends FlowPanel implements IMod3902015Page {
 	public API getAPI() {
 		return API;
 	}
+	
+	public AonData getAonData() {
+		return aonData;
+	}
+	
+	public Boolean getTest() {
+		return test;
+	}
+
+
+	public void setTest(Boolean test) {
+		this.test = test;
+	}
+
 	@Override
 	public void populate(Mod3902015 m390) {
 		

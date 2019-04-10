@@ -95,8 +95,8 @@ public class Mod131PrintAEAT extends ModPrintAEAT {
 	
 	private String getCertUrlParameters(Mod131 mod131, String encodedFile, String name, String document) {
 		return "HID=IE51310A"
-				+ "&FIRNIF=" + name
-				+ "&FIRNOMBRE=" + document
+				+ "&FIRNIF=" + document
+				+ "&FIRNOMBRE=" + name
 				+ "&TIA=" + mod131.getDeclarationType().getValue()
 				+ "&NDC=" + mod131.getDocument()
 				+ "&NRC=" + ("I".equals(mod131.getDeclarationType().getValue()) ? getNrc() : "") // TODO Número de Referencia Completo (NRC) para el tipo I, en resto de tipos vacío. 

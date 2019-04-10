@@ -54,6 +54,8 @@ public abstract class Model130Base extends SimplePanel implements IMod130Declara
 	
 	private Mod130 model;
 	private API API;
+	private AonData aonData;
+	private Boolean test = false;
 	private FlexTable table;
 	IFiscalModelCallback<Mod130> callback;
 	private EnumMap<Mod130Key,DoubleBox> fieldsMap;
@@ -75,6 +77,7 @@ public abstract class Model130Base extends SimplePanel implements IMod130Declara
 	protected Hidden nameAeatHidden = new Hidden("name");
 	protected Hidden documentAeatHidden = new Hidden("document");
 	protected Hidden nrcAeatHidden = new Hidden("nrc");
+	protected Hidden testHidden = new Hidden("test");
 	
 	private ExpressionResolver resolver = new ExpressionResolver() {
 		@Override
@@ -85,6 +88,7 @@ public abstract class Model130Base extends SimplePanel implements IMod130Declara
 
 	public Model130Base(final IFiscalModelCallback<Mod130> callback, AonData aonData) {
 		this.callback = callback;
+		this.aonData = aonData;
 		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
 				aonData.getDomain().getName(), aonData.getDomain().getId(),
 				aonData.getUser().getLogin());
@@ -114,7 +118,18 @@ public abstract class Model130Base extends SimplePanel implements IMod130Declara
 		return API;
 	}
 	
+	public AonData getAonData() {
+		return aonData;
+	}
 	
+	public Boolean getTest() {
+		return test;
+	}
+
+	public void setTest(Boolean test) {
+		this.test = test;
+	}
+
 	protected void paintDeclaration() {
 		if (getTable().getRowCount() > 0) {
 			getTable().removeAllRows();
@@ -372,6 +387,7 @@ public abstract class Model130Base extends SimplePanel implements IMod130Declara
 		nameAeatHidden.setValue(name);
 		documentAeatHidden.setValue(document);
 		nrcAeatHidden.setValue(nrc != null ? nrc : "null");	
+		testHidden.setValue(getTest() ? "1" : "0");
 		aeatForm.submit();
 	}
 	

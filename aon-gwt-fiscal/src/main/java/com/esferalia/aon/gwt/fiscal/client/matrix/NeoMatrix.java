@@ -51,6 +51,7 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 	final FiscalServiceAsync impl = GWT.create(FiscalService.class);
 	
 	private API API;
+	private AonData aonData;
 	private HashMap<Integer, IFiscalModel> modelMap = new HashMap<>();
 	private HashMap<Integer, JSONObject> errors = new HashMap<>();
 	private Integer eastSelected = 0;
@@ -76,6 +77,10 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 		return API;
 	}
 	
+	private AonData getAonData() {
+		return aonData;
+	}
+	
 	public Boolean getTest() {
 		return test;
 	}
@@ -86,6 +91,7 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 
 	public NeoMatrix(AonData aonData) {
 		super(Unit.PX);
+		this.aonData = aonData;
 		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
 				aonData.getDomain().getName(), aonData.getDomain().getId(),
 				aonData.getUser().getLogin());
@@ -336,8 +342,8 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 				json.put("user", new JSONString(user));
 				json.put("cert", new JSONNumber(Integer.parseInt(cert)));
 				json.put("pass", new JSONString(pass));
-				json.put("name", new JSONString(model.getFullName()));
-				json.put("document", new JSONString(model.getDocument()));
+				json.put("name", new JSONString(getAonData().getCompany().getName()));
+				json.put("document", new JSONString(getAonData().getCompany().getDocument()));
 				String requestData = JsonUtils.stringify(json.getJavaScriptObject());
 				getAPI().getFiscal().send2AEAT(GWT.getHostPageBaseURL() + getSendPath(model), 
 					requestData, new AsyncCallback<JavaScriptObject>() {

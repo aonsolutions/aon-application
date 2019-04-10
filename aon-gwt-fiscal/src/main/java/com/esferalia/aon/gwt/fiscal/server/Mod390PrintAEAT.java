@@ -79,9 +79,7 @@ public class Mod390PrintAEAT extends ModPrintAEAT {
 			return isTest() 
 				? "https://www7.aeat.es/wlpl/PFTW-PICW/PresBasica" 
 				: "https://www1.agenciatributaria.gob.es/wlpl/PFTW-PICW/PresBasica";
-		else if(year == 2015)
-			return "https://www6.aeat.es/es13/l/zi21zilk0021";
-		else if(year == 2016)
+		else if(year == 2015 || year == 2016)
 			return "https://www6.aeat.es/es13/l/zi21zilk0021";
 		else if(year >= 2017)
 			return "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";
@@ -126,8 +124,8 @@ public class Mod390PrintAEAT extends ModPrintAEAT {
 	public String getCertUrlParameters(Mod3902015 mod390, String encodedFile, String name, String document){
 		
 		return "HID=INF7390A"
-				+ "&FIRNIF=" + name
-				+ "&FIRNOMBRE=" + document
+				+ "&FIRNIF=" + document
+				+ "&FIRNOMBRE=" + name
 				+ "&SOP=" + "" // TODO Vacío o código de entidad de la EEFF (4 caracteres). Nota: este código es el que se utiliza en las estadísticas, por lo que es importante que sea correcto.
 				+ "&NAV=" + ""
 				+ "&NDC=" + mod390.getDocument()

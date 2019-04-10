@@ -136,6 +136,8 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	private Mod303 mod303;
 	private Model303BaseCallback callback;
 	private API API;
+	private AonData aonData;
+	private Boolean test = false;
 	private EnumMap<Mod303Key,DoubleBox> fieldsMap;
 	private boolean dirty;
 	
@@ -175,7 +177,9 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected Hidden nameAeatHidden = new Hidden("name");
 	protected Hidden documentAeatHidden = new Hidden("document");
 	protected Hidden nrcAeatHidden = new Hidden("nrc");
+	protected Hidden testHidden = new Hidden("test");
 
+	
 	private ExpressionResolver resolver = new ExpressionResolver() {
 		@Override
 		public void resolve(String expression, AsyncCallback<Double> callback) {
@@ -226,6 +230,18 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		return API;
 	}
 	
+	public AonData getAonData() {
+		return aonData;
+	}
+	
+	public Boolean getTest() {
+		return test;
+	}
+
+	public void setTest(Boolean test) {
+		this.test = test;
+	}
+
 	private Widget getToolbarPanel() {
 		FlowPanel toolbarPanel = new FlowPanel();
 		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
@@ -1267,6 +1283,8 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		nameAeatHidden.setValue(name);
 		documentAeatHidden.setValue(document);
 		nrcAeatHidden.setValue(nrc != null ? nrc : "null");
+		testHidden.setValue(getTest() ? "1" : "0");
+
 		aeatForm.submit();
 	}
 	

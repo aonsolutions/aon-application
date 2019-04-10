@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.FinanceParams;
@@ -314,13 +315,14 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 				f -> f.getDomainProperty().eq(domainId).and(f.getUserIdProperty().eq(user.getId()))).getId();
 		ApplicationParameter beta = AON.getApplicationParameter(domainName, domainId, login, AppParam.AON_BETA_ENABLED);
 		ApplicationParameter alpha = AON.getApplicationParameter(domainName, domainId, login, AppParam.AON_ALPHA_ENABLED);
-
+		Company company = AON.getCompany(domainName, domainId, login, f -> f.getDomainProperty().eq(domainId));
 		return new AonData().setUser(user)
 				.setMd5(getMd5(user.getLogin()+domain.getName()))
 				.setDomain(domain)
 				.setUserOperator(operator)
 				.setBetaEnabled((beta!=null && new Boolean(beta.getValue())))
-				.setAlphaEnabled((alpha!=null && new Boolean(alpha.getValue())));
+				.setAlphaEnabled((alpha!=null && new Boolean(alpha.getValue())))
+				.setCompany(company);
 				
 	}
 	

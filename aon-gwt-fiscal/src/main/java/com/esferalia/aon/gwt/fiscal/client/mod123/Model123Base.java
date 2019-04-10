@@ -54,6 +54,8 @@ public abstract class Model123Base extends SimplePanel implements IMod123Declara
 	
 	private Mod123 model;
 	private API API;
+	private AonData aonData;
+	private Boolean test = false;
 	private FlexTable table;
 	IFiscalModelCallback<Mod123> callback;
 	private EnumMap<Mod123Key,DoubleBox> fieldsMap;
@@ -75,6 +77,7 @@ public abstract class Model123Base extends SimplePanel implements IMod123Declara
 	protected Hidden nameAeatHidden = new Hidden("name");
 	protected Hidden documentAeatHidden = new Hidden("document");
 	protected Hidden nrcAeatHidden = new Hidden("nrc");
+	protected Hidden testHidden = new Hidden("test");
 	
 	private ExpressionResolver resolver = new ExpressionResolver() {
 		@Override
@@ -114,6 +117,18 @@ public abstract class Model123Base extends SimplePanel implements IMod123Declara
 		return API;
 	}
 	
+	public AonData getAonData() {
+		return aonData;
+	}
+	
+	public Boolean getTest() {
+		return test;
+	}
+
+	public void setTest(Boolean test) {
+		this.test = test;
+	}
+
 	protected void paintDeclaration() {
 		if (getTable().getRowCount() > 0) {
 			getTable().removeAllRows();
@@ -403,6 +418,8 @@ public abstract class Model123Base extends SimplePanel implements IMod123Declara
 		nameAeatHidden.setValue(name);
 		documentAeatHidden.setValue(document);
 		nrcAeatHidden.setValue(nrc != null ? nrc : "null");
+		testHidden.setValue(getTest() ? "1" : "0");
+
 		aeatForm.submit();
 	}
 	

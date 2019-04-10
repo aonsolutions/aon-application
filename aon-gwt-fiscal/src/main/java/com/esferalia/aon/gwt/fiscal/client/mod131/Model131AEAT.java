@@ -14,8 +14,11 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -54,6 +57,8 @@ public class Model131AEAT extends Model131Base {
 		aeatFormFlowPanel.add(documentAeatHidden);
 		aeatFormFlowPanel.add(certAeatHidden);
 		aeatFormFlowPanel.add(passAeatHidden);
+		aeatFormFlowPanel.add(nrcAeatHidden);
+		aeatFormFlowPanel.add(testHidden);
 		
 		formContainer.add(diskForm);
 		formContainer.add(aeatForm);
@@ -176,7 +181,7 @@ public class Model131AEAT extends Model131Base {
 						if(getModel().isSent()) {
 							getCallback().showInfoPanel("La presentaci\u00F3n del modelo ya se ha realizado con anterioridad.");
 						} else if (getModel().isFinished()) {
-							submitAEAT(MODEL131_PRINT_AEAT, getCert(), getPass(), getName(), getDocument(), showNRC ? getNRC() : null);
+							submitAEAT(MODEL131_PRINT_AEAT, getCert(), getPass(), getDocument(), getName(), showNRC ? getNRC() : null);
 							getCallback().showVisorAEAT();
 						} else {
 							getCallback().showInfoPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
@@ -187,6 +192,22 @@ public class Model131AEAT extends Model131Base {
 			}
 		});
 		p3.add(button3);
+		
+		if(getAonData().isBetaEnabled()) {
+			CheckBox testMode = new CheckBox();
+			testMode.setValue(false);
+			testMode.setStyleName(AON.AON_CSS.aonMarginRight());
+			testMode.setText("Modo Pruebas");
+			testMode.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+				
+				@Override
+				public void onValueChange(ValueChangeEvent<Boolean> event) {
+					setTest(event.getValue());
+				}
+			});
+			p3.add(testMode);
+		}
+		
 		tab.setWidget(row, 1, p3 );
 		tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 
