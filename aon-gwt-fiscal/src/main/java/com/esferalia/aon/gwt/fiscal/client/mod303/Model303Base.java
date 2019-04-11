@@ -207,7 +207,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		SimplePanel declarationHeaderPanel = new SimplePanel();
 		paintDeclarationHeaderTable(declarationHeaderPanel);
 		addNorth(declarationHeaderPanel , 45);
-		
+		this.aonData = aonData;
 		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
 				aonData.getDomain().getName(), aonData.getDomain().getId(),
 				aonData.getUser().getLogin());

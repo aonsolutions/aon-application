@@ -88,6 +88,7 @@ public abstract class Model123Base extends SimplePanel implements IMod123Declara
 
 	public Model123Base(final IFiscalModelCallback<Mod123> callback, AonData aonData) {
 		this.callback = callback;
+		this.aonData = aonData;
 		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
 				aonData.getDomain().getName(), aonData.getDomain().getId(),
 				aonData.getUser().getLogin());
