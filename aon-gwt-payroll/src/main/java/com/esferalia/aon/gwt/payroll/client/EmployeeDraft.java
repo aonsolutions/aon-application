@@ -617,6 +617,22 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 			fillContractTable();
 		}
 		
+		if(employeeDraftObject.hasPayroll()){
+			this.employee.ssRegimeType.setEnabled(false);
+			this.employee.activityCCC.setEnabled(false);
+			this.employee.workplace.setEnabled(false);
+			this.employee.contractType.setEnabled(false);
+			this.employee.modality.setEnabled(false);
+			this.employee.start_date.setEnabled(false);
+		}else{
+			this.employee.ssRegimeType.setEnabled(true);
+			this.employee.activityCCC.setEnabled(true);
+			this.employee.workplace.setEnabled(true);
+			this.employee.contractType.setEnabled(true);
+			this.employee.modality.setEnabled(true);
+			this.employee.start_date.setEnabled(true);
+		}
+		
 		fillEmployeeTable();
 	}
 

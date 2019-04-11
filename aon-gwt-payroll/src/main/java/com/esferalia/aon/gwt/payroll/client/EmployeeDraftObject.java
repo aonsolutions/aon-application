@@ -74,6 +74,10 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	
 	//CONTRACT TABLE
 	
+	public Boolean hasPayroll(){
+		return this.contractData.hasPayroll();
+	}
+	
 	public String getEmployeeDocument(){
 		return this.employeeData.getDocument();
 	}

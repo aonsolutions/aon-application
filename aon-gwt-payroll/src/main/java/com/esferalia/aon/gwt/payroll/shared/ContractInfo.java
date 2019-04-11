@@ -45,7 +45,9 @@ public class ContractInfo implements Serializable{
 	private Date oldStartDate;
 	private Date oldEndDate;
 	
-	
+	//Has Payroll
+	private Boolean hasPayroll;
+	private Date payrollDate;
 	
 	public ContractInfo() {
 		super();
@@ -75,6 +77,8 @@ public class ContractInfo implements Serializable{
 		this.contractJourneyDuration = new ContractJourneyDuration();
 		this.oldStartDate = null;
 		this.oldEndDate = null;
+		this.hasPayroll = false;
+		this.payrollDate = null;
 	}
 	
 	// ------------- GETTERS / SETTERS -------------
@@ -294,6 +298,22 @@ public class ContractInfo implements Serializable{
 
 	public void setOldEndDate(Date oldEndDate) {
 		this.oldEndDate = oldEndDate;
+	}
+
+	public Boolean hasPayroll() {
+		return hasPayroll;
+	}
+
+	public void setHasPayroll(Boolean hasPayroll) {
+		this.hasPayroll = hasPayroll;
+	}
+
+	public Date getPayrollDate() {
+		return payrollDate;
+	}
+
+	public void setPayrollDate(Date payrollDate) {
+		this.payrollDate = payrollDate;
 	}
 
 	public String toString(){
