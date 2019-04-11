@@ -106,7 +106,9 @@ public final class MainCRAGeneration {
 		String ccc;
 		String year;
 		String month;
-		String reserved46;
+		String cccRegimeConcert;
+		String cccConcert;
+		String reserved31;
 		ArrayList<TRB> trbs;
 		
 		public DDE(String cccRegime, String ccc, String year, String month) {
@@ -117,7 +119,9 @@ public final class MainCRAGeneration {
 //			Date actualDate = new Date();
 			this.year = (Integer.parseInt(year) + 1900) + "";
 			this.month = StringUtils.leftPad((Integer.parseInt(month)+1)+"", 2, '0');
-			this.reserved46 = StringUtils.leftPad("", 46, ' ');
+			this.cccRegimeConcert = StringUtils.leftPad("", 4, '0');
+			this.cccConcert = StringUtils.leftPad("", 11, '0');
+			this.reserved31 = StringUtils.leftPad("", 31, ' ');
 			this.trbs = new ArrayList<TRB>();
 		}
 		
@@ -130,8 +134,8 @@ public final class MainCRAGeneration {
 		public String getCcc() {
 			return ccc;
 		}
-		public String getReserved46() {
-			return reserved46;
+		public String getReserved31() {
+			return reserved31;
 		}
 		public ArrayList<TRB> getTrbs() {
 			return trbs;
@@ -147,6 +151,12 @@ public final class MainCRAGeneration {
 		}
 		public String getMonth() {
 			return month;
+		}
+		public String getCccRegimeConcert() {
+			return cccRegimeConcert;
+		}
+		public String getCccConcert() {
+			return cccConcert;
 		}
 		
 	}
@@ -233,7 +243,9 @@ public final class MainCRAGeneration {
 		String ccc;
 		String year;
 		String month;
-		String reserved46;
+		String cccRegimeConcert;
+		String cccConcert;
+		String reserved31;
 		ArrayList<TRB> trbs;
 		
 		public DDEA(String cccRegime, String ccc, String year, String month) {
@@ -243,7 +255,9 @@ public final class MainCRAGeneration {
 			this.ccc = ccc;
 			this.year = year;
 			this.month = StringUtils.leftPad(month, 2, '0');
-			this.reserved46 = StringUtils.leftPad("", 46, ' ');
+			this.cccRegimeConcert = StringUtils.leftPad("", 4, '0');
+			this.cccConcert = StringUtils.leftPad("", 11, '0');
+			this.reserved31 = StringUtils.leftPad("", 31, ' ');
 			this.trbs = new ArrayList<TRB>();
 		}
 		
@@ -256,8 +270,8 @@ public final class MainCRAGeneration {
 		public String getCcc() {
 			return ccc;
 		}
-		public String getReserved46() {
-			return reserved46;
+		public String getReserved31() {
+			return reserved31;
 		}
 		public ArrayList<TRB> getTrbs() {
 			return trbs;
@@ -273,6 +287,12 @@ public final class MainCRAGeneration {
 		}
 		public String getMonth() {
 			return month;
+		}
+		public String getCccRegimeConcert() {
+			return cccRegimeConcert;
+		}
+		public String getCccConcert() {
+			return cccConcert;
 		}
 		
 	}
@@ -303,7 +323,9 @@ public final class MainCRAGeneration {
 		String ccc;
 		String year;
 		String month;
-		String reserved46;
+		String cccRegimeConcert;
+		String cccConcert;
+		String reserved31;
 		ArrayList<TRB> trbs;
 		
 		public FINIQ(String cccRegime, String ccc, String year, String month) {
@@ -314,7 +336,9 @@ public final class MainCRAGeneration {
 			Date actualDate = new Date();
 			this.year = (Integer.parseInt(year) + 1900) + "";
 			this.month = StringUtils.leftPad((Integer.parseInt(month)+1)+"", 2, '0');
-			this.reserved46 = StringUtils.leftPad("", 46, ' ');
+			this.cccRegimeConcert = StringUtils.leftPad("", 4, '0');
+			this.cccConcert = StringUtils.leftPad("", 11, '0');
+			this.reserved31 = StringUtils.leftPad("", 31, ' ');
 			this.trbs = new ArrayList<TRB>();
 		}
 		
@@ -327,8 +351,8 @@ public final class MainCRAGeneration {
 		public String getCcc() {
 			return ccc;
 		}
-		public String getReserved46() {
-			return reserved46;
+		public String getReserved31() {
+			return reserved31;
 		}
 		public ArrayList<TRB> getTrbs() {
 			return trbs;
@@ -344,6 +368,12 @@ public final class MainCRAGeneration {
 		}
 		public String getMonth() {
 			return month;
+		}
+		public String getCccRegimeConcert() {
+			return cccRegimeConcert;
+		}
+		public String getCccConcert() {
+			return cccConcert;
 		}
 		
 	}
@@ -507,7 +537,9 @@ public final class MainCRAGeneration {
 				dde.getCcc() +
 				dde.getYear() +
 				dde.getMonth() +
-				dde.getReserved46() +
+				dde.getCccRegimeConcert() +
+				dde.getCccConcert() +
+				dde.getReserved31() +
 				"\r\n";
 		
 		for(TRB trb : dde.getTrbs()) {
@@ -536,7 +568,9 @@ public final class MainCRAGeneration {
 					finiq.getCcc() +
 					finiq.getYear() +
 					finiq.getMonth() +
-					finiq.getReserved46() +
+					finiq.getCccRegimeConcert() +
+					finiq.getCccConcert() +
+					finiq.getReserved31() +
 					"\r\n";
 			
 			for(TRB trb : finiq.getTrbs()) {
@@ -566,7 +600,9 @@ public final class MainCRAGeneration {
 					ddea.getCcc() +
 					ddea.getYear() +
 					ddea.getMonth() +
-					ddea.getReserved46() +
+					ddea.getCccRegimeConcert() +
+					ddea.getCccConcert() +
+					ddea.getReserved31() +
 					"\r\n";
 			
 			for(TRB trb : ddea.getTrbs()) {

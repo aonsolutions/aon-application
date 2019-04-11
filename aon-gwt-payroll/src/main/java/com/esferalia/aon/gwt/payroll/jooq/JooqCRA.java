@@ -347,6 +347,7 @@ public class JooqCRA {
 				.where(SALARY.ENTERPRISE_NAME.equalIgnoreCase(_enterpriseName))
 					.and(SALARY.CCC.eq(_ccc))
 					.and(SALARY.TYPE.eq((byte)3))
+					.and(SALARY.END_DATE.eq(endDateSQL))
 					.and(SALARY.SS_REGIME.notEqual((byte)3))
 				.fetch();
 		
