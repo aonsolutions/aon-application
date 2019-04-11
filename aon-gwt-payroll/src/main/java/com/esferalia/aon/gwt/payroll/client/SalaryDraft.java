@@ -2960,9 +2960,23 @@ public class SalaryDraft extends ResizeComposite
 						editor.asWidget().getElement().getStyle().setWidth(width, Unit.PX);
 						editor.setValue(getValueAsString(variable));
 
-//						VariableChangeHandler<T> variableChangeHandler = new VariableChangeHandler<T>(variable);
-
-//						variableChangeHandler.setEditor(editor);
+						VariableChangeHandler<T> variableChangeHandler = new VariableChangeHandler<T>(variable){
+							@Override
+							public void onValueChange(ValueChangeEvent<String> event) {
+								
+							}
+							@Override
+							public void onFocus(FocusEvent event) {
+								// TODO Auto-generated method stub
+								super.onFocus(event);
+							}
+							@Override
+							public void onBlur(BlurEvent event) {
+								fxButton.setEnabled(false);
+							}
+						};
+						
+						variableChangeHandler.setEditor(editor);
 
 						return editor;
 					}
