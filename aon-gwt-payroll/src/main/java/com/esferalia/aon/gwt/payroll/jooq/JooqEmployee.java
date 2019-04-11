@@ -1156,11 +1156,12 @@ public class JooqEmployee {
 			 
 			 for(Entry<java.util.Date, ArrayList<JourneyDuration>> entry : contractJourneyDuration.entrySet()) {
 				 for(JourneyDuration journey : entry.getValue()) {
-					 dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
-								CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-							.values(domain, journey.getName(), contractData.getContractId(), journey.getExpression(), 
-									new Date(journey.getStartDate().getTime()), (null == journey.getEndDate()) ? null : new Date(journey.getEndDate().getTime()))
-							.execute();
+					 if(null != journey.getExpression())
+						 dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+									CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+								.values(domain, journey.getName(), contractData.getContractId(), journey.getExpression(), 
+										new Date(journey.getStartDate().getTime()), (null == journey.getEndDate()) ? null : new Date(journey.getEndDate().getTime()))
+								.execute();
 				 }
 			 }
 		 }else{
