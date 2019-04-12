@@ -421,7 +421,7 @@ public abstract class Model115Base extends SimplePanel implements IMod115Declara
 		nameAeatHidden.setValue(name);
 		documentAeatHidden.setValue(document);
 		nrcAeatHidden.setValue(nrc != null ? nrc : "null");
-		nrcAeatHidden.setValue(getTest() ? "1" : "0");
+		testHidden.setValue(getTest() ? "1" : "0");
 		aeatForm.submit();
 	}
 	
