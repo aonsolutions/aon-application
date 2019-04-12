@@ -5,11 +5,13 @@ import static com.esferalia.aon.gwt.payroll.server.PayrollServletUtils.getSalary
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -20,7 +22,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.code.aon.common.BeanManager;
+import org.jooq.Condition;
+import org.jooq.impl.DSL;
+
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -50,12 +54,10 @@ public class ShareServlet extends HttpServlet implements ShareService {
 
 	static class SalaryProvider implements ICollectionProvider {
 
-		private int salaryId;
-		private IManagerBean managerBean;
+		private Salary salary;
 
-		public SalaryProvider(int salaryId, IManagerBean managerBean) {
-			this.salaryId = salaryId;
-			this.managerBean = managerBean;
+		public SalaryProvider(Salary salary) {
+			this.salary = salary;
 		}
 
 		@Override
@@ -71,10 +73,7 @@ public class ShareServlet extends HttpServlet implements ShareService {
 		@Override
 		public Collection getCollection(boolean forceRefresh)
 				throws ManagerBeanException {
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(
-					managerBean.getFieldName(IEntityAlias.SALARY_ID), salaryId);
-			return getSalaries(managerBean, criteria);
+			return Collections.singletonList(salary);
 		}
 
 	};
@@ -88,17 +87,20 @@ public class ShareServlet extends HttpServlet implements ShareService {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-	
-		initFacesContext(req, resp);
+		
+		Connection connection;
 
 		try {
+			
+			connection = AonServletUtils.getConnection(req.getServerName());
+			
 			ReportManager reportManager = new StatelessReportManager();
 			reportManager.setOutputFormat(OutputFormat.PDF);
 
-			IManagerBean beanManager = BeanManager
-				.getManagerBean(com.esferalia.aon.payroll.Salary.class);
-			Criteria criteria = getCriteria(beanManager, req);
-			List<Salary> salaries = getSalaries(beanManager, criteria);
+			//Criteria criteria = getCriteria(beanManager, req);
+			//List<Salary> salaries = getSalaries(beanManager, criteria);
+			Condition where = getCondition(req);
+			Collection<Salary> salaries = PayrollServletUtils.getSalary(connection, where/*, sortFields*/);
 
 			PrintStream os = new PrintStream(resp.getOutputStream(), false,"UTF-8");
 
@@ -116,8 +118,7 @@ public class ShareServlet extends HttpServlet implements ShareService {
 				
 				DomainGserviceaccount domainGserviceaccount = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), "");
 				
-				reportManager.setCollectionProvider(new SalaryProvider(salary
-					.getId(), beanManager));
+				reportManager.setCollectionProvider(new SalaryProvider(salary));
 				byte data[] = generate(domain.getName(), reportManager, salary);
 
 				Attach attach = new Attach()
@@ -143,20 +144,11 @@ public class ShareServlet extends HttpServlet implements ShareService {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			releaseFacesContext();
 		}
 	}
 
 	// -------------------------------------------------------- private methods
 
-	private void releaseFacesContext() {
-		AonServletUtils.releaseFacesContext();
-	}
-
-	private void initFacesContext(HttpServletRequest req,
-			HttpServletResponse resp) {
-		AonServletUtils.initFacesContext(getServletContext(), req, resp);
-	}
 
 	private void doJson(Salary salary, int size, String description,
 			String error, PrintStream os) {
@@ -190,32 +182,22 @@ public class ShareServlet extends HttpServlet implements ShareService {
 
 	// ------------------------------------------------------------------------
 
-	private static List<Salary> getSalaries(IManagerBean beanManager,
-			Criteria criteria) throws ManagerBeanException {
-		List<?> list = beanManager.getList(criteria);
-		return (List<Salary>) list;
-	}
+	private static Condition getCondition(HttpServletRequest req) throws ManagerBeanException {
+		
+		Condition employeesCondition = getEmployeesCondition(req);
+		Condition workplacesCondition = getWorkplacesCondition(req);
+		Condition enterprisesCondition = getEnperprisesCondition(req);
+		Condition salariesCondition = getSalariesCondition(req);
 
-	private static Criteria getCriteria(IManagerBean beanManager,
-			HttpServletRequest req) throws ManagerBeanException {
-		RelationalExpression employeesExpr = getEmployeesExpression(
-				beanManager, req);
-		RelationalExpression workPlacesExpr = getWorkPlacesExpression(
-				beanManager, req);
-		RelationalExpression enterprisesExpr = getEnperprisesExpression(
-				beanManager, req);
-		RelationalExpression salariesExpr = getSalariesExpression(beanManager,
-				req);
-
-		Criteria criteria = new Criteria();
-		if (salariesExpr != null)
-			criteria.addExpression(salariesExpr);
-		if (employeesExpr != null)
-			criteria.addExpression(employeesExpr);
-		if (workPlacesExpr != null)
-			criteria.addExpression(workPlacesExpr);
-		if (enterprisesExpr != null)
-			criteria.addExpression(enterprisesExpr);
+		Condition condition = null;
+		if (salariesCondition != null)
+			condition = DSL.and(salariesCondition);
+		if (employeesCondition != null)
+			condition = DSL.and(employeesCondition);
+		if (workplacesCondition != null)
+			condition = DSL.and(workplacesCondition);
+		if (enterprisesCondition != null)
+			condition = DSL.and(enterprisesCondition);
 
 		String month = req.getParameter(MONTH);
 		String year = req.getParameter(YEAR);
@@ -237,19 +219,13 @@ public class ShareServlet extends HttpServlet implements ShareService {
 					calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
 			Date endDate = new Date(calendar.getTimeInMillis());
 
-			criteria.addBetweenExpression(
-					beanManager.getFieldName(IEntityAlias.SALARY_CHARGE_DATE),
-					startDate, endDate);
+			condition.and(com.esferalia.aon.jooq.tables.Salary.SALARY.CHARGE_DATE.between(startDate, endDate));
 		}
 
-		criteria.addOrder(beanManager
-				.getFieldName(IEntityAlias.SALARY_CONTRACT_PERSON_ID));
-
-		return criteria;
+		return condition;
 	}
-
-	private static RelationalExpression getSalariesExpression(
-			IManagerBean beanManager, HttpServletRequest request)
+	
+	private static Condition getSalariesCondition(HttpServletRequest request)
 			throws ManagerBeanException {
 		String salaries[] = request.getParameterValues(SALARY);
 		if (salaries == null || salaries.length == 0)
@@ -259,12 +235,10 @@ public class ShareServlet extends HttpServlet implements ShareService {
 		for (String salary : salaries)
 			salariesList.add(Integer.valueOf(salary));
 
-		return ExpressionUtilities.getInExpression(
-				beanManager.getFieldName(IEntityAlias.SALARY_ID), salariesList);
+		return com.esferalia.aon.jooq.tables.Salary.SALARY.ID.in(salariesList);
 	}
-
-	private static RelationalExpression getEnperprisesExpression(
-			IManagerBean beanManager, HttpServletRequest request)
+	
+	private static Condition getEnperprisesCondition(HttpServletRequest request)
 			throws ManagerBeanException {
 		String enterprises[] = request.getParameterValues(ENTERPRISE);
 		if (enterprises == null || enterprises.length == 0)
@@ -275,16 +249,12 @@ public class ShareServlet extends HttpServlet implements ShareService {
 		for (String enterprise : enterprises)
 			enterprisesList.add(Integer.valueOf(enterprise));
 
-		return ExpressionUtilities
-				.getInExpression(
-						beanManager
-								.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID),
-						enterprisesList);
+		return com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE.REGISTRY.in(enterprisesList);
 	}
 
-	private static RelationalExpression getWorkPlacesExpression(
-			IManagerBean beanManager, HttpServletRequest request)
+	private static Condition getWorkplacesCondition(HttpServletRequest request)
 			throws ManagerBeanException {
+		
 		String workplaces[] = request.getParameterValues(WORKPLACE);
 		if (workplaces == null || workplaces.length == 0)
 			return null;
@@ -293,13 +263,10 @@ public class ShareServlet extends HttpServlet implements ShareService {
 		for (String workplace : workplaces)
 			workplacesList.add(Integer.valueOf(workplace));
 
-		return ExpressionUtilities.getInExpression(beanManager
-				.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID),
-				workplacesList);
+		return com.esferalia.aon.jooq.tables.Workplace.WORKPLACE.ID.in(workplacesList);
 	}
 
-	private static RelationalExpression getEmployeesExpression(
-			IManagerBean beanManager, HttpServletRequest request)
+	private static Condition getEmployeesCondition(HttpServletRequest request)
 			throws ManagerBeanException {
 		String employees[] = request.getParameterValues(EMPLOYEE);
 		if (employees == null || employees.length == 0)
@@ -307,13 +274,12 @@ public class ShareServlet extends HttpServlet implements ShareService {
 
 		List<Integer> employeesList = new ArrayList<Integer>(employees.length);
 		for (String employee : employees)
-			employeesList.add(Integer.valueOf(employee));
-
-		return ExpressionUtilities.getInExpression(
-				beanManager.getFieldName(IEntityAlias.SALARY_CONTRACT_ID),
-				employeesList);
+	 		employeesList.add(Integer.valueOf(employee));
+		
+		return com.esferalia.aon.jooq.tables.Salary.SALARY.CONTRACT.in(employeesList);
 	}
 
+	
 	private static String getDescrition(final Salary salary) {
 		if (salary.getEndDate().getYear() == salary.getStartDate().getYear())
 			if (salary.getEndDate().getMonth() == salary.getStartDate()

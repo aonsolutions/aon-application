@@ -31,6 +31,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
@@ -910,6 +911,10 @@ public class PayrollServletUtils extends AonServletUtils {
 			contract.setDomain(contractRecord.getDomain());
 			contract.setCategoryDescription(contractRecord.getCategoryDescription());
 			salary.setContract(contract);
+			
+			Person person = new Person();
+			person.setId(contractRecord.getPerson());
+			contract.setPerson(person);
 			
 			WorkPlace workPlace = new WorkPlace();
 			workPlace.setId(workplaceRecord.getId());
