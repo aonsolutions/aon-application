@@ -303,7 +303,7 @@ public class Mod131Aeat2016Calculator  {
 						} else if (AonMathUtils.round(act.getMun()) >= 2.0) {
 							ic2 = 0.80;
 						}
-						if (act.getEmp() > 0.0 && act.getEmp() <= 1.0) {
+						if (act.getEmp() > 0.0 && act.getEmp() <= 2.0) {
 							ic2 = 0.90;
 						}
 						if (act.getEmp() > 2) {
