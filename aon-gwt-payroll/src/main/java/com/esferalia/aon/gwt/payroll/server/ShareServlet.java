@@ -218,8 +218,8 @@ public class ShareServlet extends HttpServlet implements ShareService {
 			calendar.set(Calendar.DAY_OF_MONTH,
 					calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
 			Date endDate = new Date(calendar.getTimeInMillis());
-
-			condition.and(com.esferalia.aon.jooq.tables.Salary.SALARY.CHARGE_DATE.between(startDate, endDate));
+			
+			condition = condition.and(com.esferalia.aon.jooq.tables.Salary.SALARY.CHARGE_DATE.between(startDate, endDate));
 		}
 
 		return condition;
