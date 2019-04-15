@@ -1,5 +1,7 @@
 package es.translogia.tedi;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -10,20 +12,20 @@ import org.json.JSONObject;
 
 public class TediInvoice {
 
-	public static final String SRC = "https://api.tedi.center/invoice";
+	public static final String SRC = "https://europe-west1-tedicenter.cloudfunctions.net";
+	public static final String SRC_SNAPSHOT = "https://europe-west1-tedi-snapshot.cloudfunctions.net";
 
 	public TediInvoice() {}
 
 	public TediInvoice(JSONObject json) {
 		this.json = json;
 		this.company = json.getString("company");
-		this.id = json.getInt("id");
-		
-		this.series = json.getString("series");
-		this.number = json.getInt("number");
-		
+		this.uuid = json.getString("uuid");
+
+		this.series = json.optString("series");
+		this.number = json.optInt("number");
+		this.date = dateTimeParse(json.getString("date"));
 		this.reference = json.optString("reference");
-		this.code = json.optString("code");
 		this.type = TediInvoiceType.getTediInvoiceType(json.getString("type"));
 		this.sender = new TediRegistry(json.optJSONObject("sender"));
 		this.receiver = new TediRegistry(json.optJSONObject("receiver"));
@@ -46,7 +48,7 @@ public class TediInvoice {
 	private JSONObject json;
 	
 	private String company;
-	private Integer id;
+	private String uuid;
 	
 	private String series;
 	private Integer number;
@@ -55,7 +57,6 @@ public class TediInvoice {
 	private TediRegistry receiver;
 		
 	private String reference;
-	private String code;
 	private String status;
 	private String source;
 	private Date date;
@@ -82,12 +83,12 @@ public class TediInvoice {
 		return this;
 	}
 
-	public Integer getId() {
-		return id;
+	public String getUuid() {
+		return uuid;
 	}
 
-	public TediInvoice setId(Integer id) {
-		this.id = id;
+	public TediInvoice setUuid(String uuid) {
+		this.uuid = uuid;
 		return this;
 	}
 	
@@ -132,15 +133,6 @@ public class TediInvoice {
 
 	public TediInvoice setReference(String reference) {
 		this.reference = reference;
-		return this;
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public TediInvoice setCode(String code) {
-		this.code = code;
 		return this;
 	}
 
@@ -293,7 +285,19 @@ public class TediInvoice {
 		System.out.println(json);
 		return json;
 	}
+
+	private final static SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 	
+	private String dateTimeFormat(Date date) {
+		return date == null ? null : DATE_TIME_FORMAT.format(date);
+	}
+	private Date dateTimeParse(String date) {
+		try {
+			return date == null ? null : DATE_TIME_FORMAT.parse(date);
+		} catch (ParseException e) {
+			return null;
+		}
+	}
 }
 
 

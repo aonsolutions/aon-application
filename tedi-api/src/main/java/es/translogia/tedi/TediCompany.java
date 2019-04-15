@@ -4,11 +4,13 @@ import org.json.JSONObject;
 
 public class TediCompany {
 
-	public static final String SRC = "https://api.tedi.center/company";
+	public static final String SRC = "https://europe-west1-tedicenter.cloudfunctions.net/company";
+	public static final String SRC_SNAPSHOT = "https://europe-west1-tedi-snapshot.cloudfunctions.net/company";
 	
 	private String name;
 	private String document;
 	private TediAddress address;
+	private String iban;
 	
 	public TediCompany() {}
 	
@@ -16,6 +18,7 @@ public class TediCompany {
 		this.name = json.getString("name");
 		this.document = json.getString("document");
 		this.address = new TediAddress(json.optJSONObject("address"));
+		this.iban = json.getString("iban");
 	}
 	
 	public String getName() {
@@ -40,11 +43,21 @@ public class TediCompany {
 		return this;
 	}
 	
+	public String getIban() {
+		return iban;
+	}
+
+	public TediCompany setIban(String iban) {
+		this.iban = iban;
+		return this;
+	}
+
 	public JSONObject getJSON(){
 		return new JSONObject()
 				.put("name", getName())
 				.put("document", getDocument())
-				.put("address", getAddress());
+				.put("address", getAddress())
+				.put("iban", getIban());
 	}
 
 }

@@ -3,6 +3,7 @@ package net.aonsolutions.aon.tedi;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
@@ -94,12 +95,13 @@ public class TEDI2AON extends HttpServlet{
 					f -> f.getIdProperty().eq(aon.getInt("invoice")));
 		} else {
 			invoice.setDomain(domain.getId());
-			invoice.setSeries("TEDI");
+			invoice.setSeries(ti.getSeries() != null ? ti.getSeries() : "TEDI");
 			invoice.setNumber(ti.getNumber());
 		}
 		
 		LinkedList<Scope> scopeList = AON
-				.getScopeStream(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()))
+				.getScopeStream(domain.getName(), domain.getId(), login
+						, f -> f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
 				.collect(Collectors.toCollection(LinkedList::new));
 		Scope scope = invoice.getScope() != null ? invoice.getScope() :  scopeList.get(0);
 		
@@ -171,8 +173,8 @@ public class TEDI2AON extends HttpServlet{
 		}
 
 		invoice.setReferenceCode(ti.getReference());
-		invoice.setIssueDate(ti.getDate());
-		invoice.setTaxDate(ti.getDate());
+		invoice.setIssueDate(ti.getDate() != null ? ti.getDate() : new Date());
+		invoice.setTaxDate(ti.getDate() != null ? ti.getDate() : new Date());
 		invoice.setSecurityLevel(SecurityLevel.OFFICIAL);
 		invoice.setStatus((byte) 0);
 		invoice.setScope(scope);
