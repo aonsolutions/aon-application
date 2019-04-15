@@ -580,13 +580,13 @@ public class DriveUtils implements IBlobManager {
 		if (blobObject instanceof IAttachment) {
 			IAttachment ia = (IAttachment) blobObject;
 			Domain domain = AON.getDomain(AonUtil.getDomainName(), ia.getDomain(), "");
-			attach = AON.getAttach(domain.getName(), domain.getId(), "", f-> f.getIdProperty().eq(blobObject.getId()), AttachType.valueOf(ia.getAonType()));
+			attach = AON.getAttach(domain.getName(), domain.getId(), "", f-> f.getIdProperty().eq(blobObject.getId()), AttachType.getAttachType(ia.getAonType()));
 			if(attach.getId() == null) attach.setId(ia.getId());
 			attach.setDescription(ia.getDescription());
 			attach.setDriveId(ia.getDriveId());
 			attach.setMimeType(com.esferalia.aon.occam.api.model.type.MimeType.values()[ia.getMimeType().ordinal()]);
 			attach.setDomain(AON.getDomain(AonUtil.getDomainName(), ia.getDomain(), ""));
-			attach.setAttachType(AttachType.valueOf(ia.getAonType()));
+			attach.setAttachType(AttachType.getAttachType(ia.getAonType()));
 		}
 		return attach;
 	}
