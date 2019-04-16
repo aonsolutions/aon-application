@@ -235,7 +235,7 @@ public class Documental implements EntryPoint {
 	public void activeMultiselectionFunctions(Integer size) {
 		AonToolbar t = (AonToolbar) toolbar.getWidget(0);
 		t.setVisibleSendButton(size> 0);
-		t.setVisibleDownloadButton(size == 1);
+		t.setVisibleDownloadButton(size > 0);
 		if(getAonData().getUser().hasDocumentManagerRole()) {
 			t.setVisibleEditButton(size == 1);
 			t.setVisibleDeleteButton(size > 0);
