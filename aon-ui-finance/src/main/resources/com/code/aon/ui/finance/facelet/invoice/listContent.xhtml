@@ -25,6 +25,14 @@
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="#{reportName}" />
 					</aon:htmlCommandLink>
+					
+					<aon:htmlCommandLink id="invoiceListExcel-report"
+						value="Listado Excel"
+						action="#{controller.onExcel}" 
+						styleClass="aon-finding-toolbar-item aon-icon-beta-text"
+						style="padding-left: 25px;"
+						accesskey="#{bundle.aon_key_print}">
+					</aon:htmlCommandLink>
 				</ui:define>
 
 			</ui:decorate>

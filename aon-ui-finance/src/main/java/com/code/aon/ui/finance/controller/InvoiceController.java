@@ -1910,5 +1910,15 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		}
 	}
 	
-	
+	public String onExcel() {
+		try {
+			InvoiceExcelReport report = new InvoiceExcelReport();
+			report.run(getCriteria());
+		} catch (ManagerBeanException th) {
+			LOGGER.error(th.getMessage(), th);
+			AonUtil.addErrorMessage(th.getMessage());
+		}
+		return null;
+	}
+
 }
