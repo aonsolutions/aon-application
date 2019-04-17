@@ -192,6 +192,9 @@ public class DriveUtils {
 	}
 	
 	public Boolean setPermission(Drive drive, String fileId, String email){
+		if(!Utils.isGmail(email)) {
+			setPermission(drive, fileId);
+		}
 		Permission permission = new Permission()
 				.setEmailAddress(email)
 				.setType("user")//user || group || domain || anyone
