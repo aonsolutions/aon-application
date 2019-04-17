@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.AccountBalanceLineStyle;
 import com.esferalia.aon.occam.api.model.AccountBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountBalanceReport.BalanceLine;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
@@ -25,8 +26,10 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 public class AccountBalanceReportPDF {
 
+	private static final BaseColor SUPER_LIGHT_GRAY = new BaseColor(220, 220, 220);
 	private static final DecimalFormat FMT = new DecimalFormat("#,##0.00;(#,##0.00)");
 	private static SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
+	private static Font SEPARATOR_FONT = new Font(Font.FontFamily.HELVETICA, 5);
 	private static Font BODY_FONT = new Font(Font.FontFamily.HELVETICA, 8);
 	private static Font BODY_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD);
 
@@ -65,6 +68,12 @@ public class AccountBalanceReportPDF {
 		table.setTotalWidth(widths);
 		table.setLockedWidth(true);
 		
+		Paragraph separatorParagrph = new Paragraph(0," ",SEPARATOR_FONT);
+		PdfPCell separatorCell = new PdfPCell(separatorParagrph);
+		// PdfPCell separatorCell = new PdfPCell();
+		separatorCell.setBorder(0);
+		
+
 		PdfPCell emptyCell = new PdfPCell();
 		emptyCell.setBorder(0);
 		table.addCell(emptyCell);
@@ -81,24 +90,34 @@ public class AccountBalanceReportPDF {
 	    table.setHeaderRows(1);
 		for (BalanceLine line : report.getBalances().values() ) {
 			String c = line.getPrefix() + " " + line.getDescription();
-			Paragraph concept = new Paragraph(8,c,line.isLeaf()?BODY_FONT:BODY_FONT_BOLD);
+			if (line.getType() == AccountBalanceLineStyle.HEADER0) {
+				table.addCell(separatorCell);
+				for (String period : report.getPeriods()) {
+					table.addCell(separatorCell);
+				}
+			}
+			boolean leaf = (line.getType() != AccountBalanceLineStyle.HEADER0 && line.getType() != AccountBalanceLineStyle.TOTAL0);
+			Paragraph concept = new Paragraph(8,c,leaf?BODY_FONT:BODY_FONT_BOLD);
 			concept.setIndentationLeft(line.getLevel() * 10);
 			PdfPCell conceptCell = new PdfPCell();
 			conceptCell.addElement(concept);
 			conceptCell.setBorder(0);
 			conceptCell.setBorderWidthBottom(1);
-			conceptCell.setBorderColor(BaseColor.LIGHT_GRAY);
+			conceptCell.setBorderColor(SUPER_LIGHT_GRAY);
 			table.addCell(conceptCell);
 			for (String period : report.getPeriods()) {
 				Double a = line.getAmounts().get(period);
 				String amount = a==null?"":FMT.format(a);
-				Paragraph amountP = new Paragraph(8,amount,line.isLeaf()?BODY_FONT:BODY_FONT_BOLD);
-				amountP .setAlignment( Element.ALIGN_RIGHT );
+				Paragraph amountP = new Paragraph(8,amount,leaf?BODY_FONT:BODY_FONT_BOLD);
+				amountP.setAlignment( Element.ALIGN_RIGHT );
+				if (line.getLevel() > 1) {
+					amountP.setIndentationRight(line.getLevel() * 6);
+				}
 				PdfPCell amountCell = new PdfPCell( );
 				amountCell.addElement(amountP);
 				amountCell.setBorder(0);
-				amountCell.setBorderWidthBottom(1);
-				amountCell.setBorderColor(BaseColor.LIGHT_GRAY);
+				amountCell.setBorderWidthBottom((float) 0.5);
+				amountCell.setBorderColor(SUPER_LIGHT_GRAY);
 				table.addCell(amountCell);
 			}
 		}

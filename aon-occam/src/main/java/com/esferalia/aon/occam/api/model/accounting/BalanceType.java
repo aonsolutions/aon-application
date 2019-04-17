@@ -4,39 +4,45 @@ import java.io.Serializable;
 
 public enum BalanceType implements Serializable {
 	
-	 BALANCE_NORMAL		("Balance de Situaci\u00F3n (Normal)") 
+	 BALANCE_NORMAL		(false,"Balance de Situaci\u00F3n (Normal)") 
 	 	{ @Override public void visit(IBalanceTypeVisitor visitor) { visitor.visitBalanceNormal(); }}
-	,BALANCE_ABBREVIATE	("Balance de Situaci\u00F3n (Abreviado)")
+	,BALANCE_ABBREVIATE	(false,"Balance de Situaci\u00F3n (Abreviado)")
 	 	{ @Override public void visit(IBalanceTypeVisitor visitor) { visitor.visitBalanceAbbreviate();}}
-	,BALANCE_PYMES		("Balance de Situaci\u00F3n (PYMES)")
+	,BALANCE_PYMES		(false,"Balance de Situaci\u00F3n (PYMES)")
 	 	{ @Override public void visit(IBalanceTypeVisitor visitor) { visitor.visitBalancePymes(); }}
-	,PYG_NORMAL			("Cuenta de explotaci\u00F3n (Normal)")
+	,PYG_NORMAL			(true ,"Cuenta de explotaci\u00F3n (Normal)")
 	 	{ @Override public void visit(IBalanceTypeVisitor visitor) { visitor.visitPygNormal(); }}
-	,PYG_ABBREVIATE		("Cuenta de explotaci\u00F3n (Abreviado)")
+	,PYG_ABBREVIATE		(true,"Cuenta de explotaci\u00F3n (Abreviado)")
 	 	{ @Override public void visit(IBalanceTypeVisitor visitor) { visitor.visitPygAbbreviate(); }}
-	,PYG_PYMES			("Cuenta de explotaci\u00F3n (PYMES)")
+	,PYG_PYMES			(true ,"Cuenta de explotaci\u00F3n (PYMES)")
  		{ @Override public void visit(IBalanceTypeVisitor visitor) { visitor.visitPygPymes(); }}
 	
-	,BALANCE_COOP_NORMAL("Balance de Situaci\u00F3n (COOPERATIVAS Normal)")
+	,BALANCE_COOP_NORMAL(false,"Balance de Situaci\u00F3n (COOPERATIVAS Normal)")
  		{ @Override public void visit(IBalanceTypeVisitor visitor) { visitor.visitBalanceCoopNormal(); }}
-	,BALANCE_COOP_ABBREV("Balance de Situaci\u00F3n (COOPERATIVAS Abreviado)")
+	,BALANCE_COOP_ABBREV(false,"Balance de Situaci\u00F3n (COOPERATIVAS Abreviado)")
 		{ @Override public void visit(IBalanceTypeVisitor visitor) { visitor.visitBalanceCoopAbbreviate(); }}
-	,PYG_COOP_NORMAL	("Cuenta de explotaci\u00F3n (COOPERATIVAS Normal)")
+	,PYG_COOP_NORMAL	(true ,"Cuenta de explotaci\u00F3n (COOPERATIVAS Normal)")
 		{ @Override public void visit(IBalanceTypeVisitor visitor) { visitor.visitPygCoopNormal(); }}
-	,PYG_COOP_ABBREV	("Cuenta de explotaci\u00F3n (COOPERATIVAS Abreviado)")
+	,PYG_COOP_ABBREV	(true ,"Cuenta de explotaci\u00F3n (COOPERATIVAS Abreviado)")
 		{ @Override public void visit(IBalanceTypeVisitor visitor) { visitor.visitPygCoopAbbreviate(); }}
 	;
 	
 	private String name;
+	private boolean pyg;
 	
-	private BalanceType(String name) {
+	private BalanceType(boolean pyg,String name) {
 		this.name = name;
+		this.pyg = pyg;
 	}
 	
 	public String getName() {
 		return name;
 	}
 	
+	public boolean isPyG() {
+		return this.pyg;
+	}
+
 	public abstract void visit(IBalanceTypeVisitor visitor);
 	
 	public static BalanceType safeValueOf( Byte i ) {

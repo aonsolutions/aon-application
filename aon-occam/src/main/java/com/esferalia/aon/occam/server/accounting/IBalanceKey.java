@@ -1,9 +1,11 @@
 package com.esferalia.aon.occam.server.accounting;
 
+import com.esferalia.aon.occam.api.model.AccountBalanceLineStyle;
+
 public interface IBalanceKey {
 
 	int getLevel();
-	boolean isLeaf();
+	AccountBalanceLineStyle getType();
 	String getCode();
 	String getPrefix();
 	String getName();

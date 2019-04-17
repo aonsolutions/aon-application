@@ -19,7 +19,7 @@ public class AccountBalanceReport implements Serializable{
 		
 		private Integer id;
 		private int level;
-		private boolean leaf;
+		private AccountBalanceLineStyle type;
 		private String code;
 		private String prefix;
 		private String description;
@@ -42,12 +42,16 @@ public class AccountBalanceReport implements Serializable{
 			return this;
 		}
 		
-		public boolean isLeaf() {
-			return leaf;
+		
+		public AccountBalanceLineStyle getType() {
+			return type;
 		}
-		public BalanceLine setLeaf(boolean leaf) {
-			this.leaf = leaf;
+		public BalanceLine setType(AccountBalanceLineStyle type) {
+			this.type = type;
 			return this;
+		}
+		public boolean isLeaf() {
+			return (this.type == AccountBalanceLineStyle.LEAF);
 		}
 		
 		public String getCode() {

@@ -18,7 +18,6 @@ import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.DateInterval;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
-import com.esferalia.aon.occam.api.model.accounting.BalanceType;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType.IBalanceTypeVisitor;
 import com.esferalia.aon.occam.server.accounting.AccMiningMVELContext;
 import com.esferalia.aon.occam.server.accounting.BOEBalanceAbbreviateScript;
@@ -143,21 +142,18 @@ public class AccountBalanceDAO {
 			}
 			mParams.setDomains(domains);
 		}
-		Map<String, AccountBalance> accounts = ACCOUNTING.getAccountBalances(ctx, mParams,
-				params.getBalanceType() == BalanceType.PYG_NORMAL
-			 || params.getBalanceType() == BalanceType.PYG_ABBREVIATE
-			 || params.getBalanceType() == BalanceType.PYG_PYMES
-			 || params.getBalanceType() == BalanceType.PYG_COOP_ABBREV
-			 || params.getBalanceType() == BalanceType.PYG_COOP_NORMAL
-			 );
+		
+		Map<String, AccountBalance> accounts = ACCOUNTING.getAccountBalances(ctx, mParams, params.getBalanceType().isPyG());
 		mvelCtx.setAccounts(accounts);
-
 		for (IBalanceKey key : script.getKeyList() ) {
 			if (!report.getBalances().containsKey(key.getCode())) {
 				report.getBalances().put(key.getCode(),
-						new BalanceLine().setLevel(key.getLevel()).setPrefix(key.getPrefix()).setCode(key.getCode())
-								.setDescription(key.getName()).setLeaf(key.isLeaf())
-								.setAccounts(parseExpression(key.getInitialExpression())));
+						new BalanceLine().setLevel(key.getLevel())
+							.setPrefix(key.getPrefix())
+							.setCode(key.getCode())
+							.setDescription(key.getName())
+							.setType(key.getType())
+							.setAccounts(parseExpression(key.getInitialExpression())));
 				mvelCtx.put(key.getCode(), 0.0);
 			}
 			String exp = key.getInitialExpression();

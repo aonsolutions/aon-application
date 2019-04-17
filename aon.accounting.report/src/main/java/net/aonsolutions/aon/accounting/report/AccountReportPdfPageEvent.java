@@ -65,7 +65,7 @@ public class AccountReportPdfPageEvent extends PdfPageEventHelper {
 			
 			Rectangle rect = new Rectangle((w / 2), pageHeight - 10, w + document.leftMargin(), pageHeight - 30);
 			canvas.rectangle(rect);
-			String headerText = metadata.isHideDateTimeOnFooter()
+			String headerText = metadata.isHideFilter()
 					?metadata.getHeaderText()
 					:this.metadata.getFilterDescription();
 			Paragraph p = new Paragraph(headerText, HEADER_FONT_2);
