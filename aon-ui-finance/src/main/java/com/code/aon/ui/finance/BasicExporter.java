@@ -784,7 +784,9 @@ public abstract class BasicExporter implements Serializable {
 		if ( length > 5 ) {
 			subCuenta = StringUtils.substring(subCuenta, length-5, length);	
 		}
-		subCuenta = StringUtils.leftPad(subCuenta, getConfiguration().getAccountSize()-4, '0');
+		if(getConfiguration() != null && getConfiguration().getAccountSize() != null){
+			subCuenta = StringUtils.leftPad(subCuenta, getConfiguration().getAccountSize()-4, '0');
+		}
 		return cuenta + subCuenta;
 	}	
 	
