@@ -232,7 +232,8 @@ public class TrabajadoresTramos {
 		liquidacionMesBuilder.setAnho(anho);
 		
 		Date startDate = getFirstDayOf(mes, anho);
-		Date endDate = getLastDayOf(mes, anho);
+		Date endDate = AonStringUtils.equalsIgnoreCase("L13", tipo) ? 
+				getLastDayOf(mes, anho + 2) : getLastDayOf(mes, anho);
 		
 
 		AON.getSalaryData(aonContext, 
