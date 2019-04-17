@@ -71,6 +71,7 @@ public class InvoiceExcelReport {
 		}
 		private static IdentExpression transform(IdentExpression expression) {
 			String name = expression.getName();
+			name = AonStringUtils.replace(name , "<", ".");
 			if (AonStringUtils.countMatches(name, ".") > 2) {
 				throw new IllegalArgumentException("[" + name + "] not accepted.");
 			}
