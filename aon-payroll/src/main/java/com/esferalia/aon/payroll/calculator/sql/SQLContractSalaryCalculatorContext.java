@@ -41,6 +41,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MORE_THAN_65;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.NATURAL_MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATION;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OFF_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
@@ -3718,7 +3719,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 								if (isWholeMonth(p) /* && false */ ) {
 									return wholeFactor;
-								}else if (isAllMonth()  ) {
+								} else if (isAllMonth()  ) {
+									return wholeFactor;
+								} else if (isMonthly()  ) {
 									return wholeFactor;
 								} else {
 									
@@ -4385,12 +4388,56 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 	}
 	
+	private boolean isMonthly() {
+		int lastDayOfMonth = AonDateUtils.get(contractEndDate, Calendar.DAY_OF_MONTH);
+		
+		ITimedVariable<?> monthDaysVar = null; 
+		try {
+			monthDaysVar  = getExpressionContext().getVariable(MONTH_DAYS, contractStartDate, contractEndDate);
+		} catch (Exception e) {
+			try {
+				getExpressionContext().eval(MONTH_DAYS.getName(), contractStartDate, contractEndDate);
+				monthDaysVar  = getExpressionContext().getVariable(MONTH_DAYS, contractStartDate, contractEndDate);
+			} catch (Exception e1) {
+				return false;
+			}
+		}
+		if ( monthDaysVar == null )
+			return false;
+		
+		Number monthDays = (Number) monthDaysVar.getValue(monthDaysVar.getPeriod());
+		
+		if ( monthDays == null )
+			return false;
+		
+		if ( monthDays.doubleValue() != 30.00)
+			return false;
+		
+		if ( lastDayOfMonth != 30 )
+			return true;
+		
+		if (!( monthDaysVar instanceof IExpressionVariable<?> ))
+			return false; // we can't assure 
+		
+		String expression = ((IExpressionVariable<?>) monthDaysVar).getExpression().getExpression();
+	
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put(QUOTE_GROUP.getName(), getQuoteGroup());
+		map.put(NATURAL_MONTH_DAYS.getName(), 22);
+		try {
+			monthDays = ExpressionContext.eval(expression, map, Number.class);
+			return monthDays.doubleValue() == 30.00;
+		} catch ( Exception e ) {
+			return false;
+		}
+	
+	}
+
 	private boolean isAllMonth() {
 		return AonDateUtils.get(contractStartDate, Calendar.DATE ) == 1 
 				&& AonDateUtils.get(contractEndDate, Calendar.DATE ) == AonDateUtils.get(AonDateUtils.getLastDayOfMonth(contractEndDate), Calendar.DATE)
 				&& isConstantVariable(WEEK_HOURS);
 	}
-
 
 	private DayType getDayType ( Calendar day ) {
 		ICalendar calendar = getCalendar();
