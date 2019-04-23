@@ -77,6 +77,10 @@ public class CostDocuments extends AbstractSpinnable<IDocument> implements
 	public List<Cost> getCosts() {
 		return costs;
 	}
+	
+	public Cost geCurrentCost() {
+		return costs.get(getCurrentIndex());
+	}
 
 	public void addType(Salary.Type type) {
 		types.add(type);

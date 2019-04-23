@@ -15,6 +15,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -171,8 +172,15 @@ public class Cost extends ResizeComposite {
 		excelButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
-				IDocument document = costDocuments.current();
-				document.download("xls");
+//				IDocument document = costDocuments.current();
+//				document.download("xls");
+//				Window.alert(costDocuments.geCurrentCost().toString());
+				String printURL = GWT.getModuleBaseURL()+ "/cost_excel/"
+						+ "?month=" + costDocuments.geCurrentCost().getMonth()
+			            + "&year=" + costDocuments.geCurrentCost().getYear()
+			            + "&enterpriseId=" + costDocuments.geCurrentCost().getEnterpriseId()
+			            + "&workplaceId=" + costDocuments.geCurrentCost().getWorkplaceId();
+				Window.open(printURL, "_blank", null);
 			}
 		});
 
