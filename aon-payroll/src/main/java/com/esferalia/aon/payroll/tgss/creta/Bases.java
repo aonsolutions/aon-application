@@ -2074,6 +2074,12 @@ public class Bases {
 			for (BasesCallback cb : cbs)
 				cb.ambigousVariable(salary, variable, p,
 						Integer.toString(rigthValue), e.getValues());
+		} 
+		catch ( IllegalArgumentException e) {
+			// ??? 
+		}
+		catch ( Exception e) {
+			// ??? 
 		}
 	}
 
