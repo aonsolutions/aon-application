@@ -3,6 +3,7 @@ package com.esferalia.aon.payroll.tgss.creta;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FULL_TIME;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.NO_HOLIDAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
@@ -255,8 +256,43 @@ public class TrabajadoresTramos {
 					
 					List<Period> cgcBasePeriods = new LinkedList<Period>();
 					
-					for ( ContextData cgcData: salary.getContextData().getOrDefault(CGC_BASE.getName(), Collections.emptyList()) )
+					ContextVariable contextVariable = visit(tipo, new TypeVisitor<ContextVariable>() {
+
+						@Override
+						public ContextVariable visitL03() {
+							return CGC_BASE;
+						}
+
+						@Override
+						public ContextVariable visitL00() {
+							return CGC_BASE;
+						}
+
+						@Override
+						public ContextVariable visitL02() {
+							return CGC_BASE;
+						}
+
+						@Override
+						public ContextVariable visitL13() {
+							return NO_HOLIDAYS;
+						}
+
+						@Override
+						public ContextVariable visitL91() {
+							return CGC_BASE;
+						}
+
+						@Override
+						public ContextVariable visitL90() {
+							return CGC_BASE;
+						}
+						
+					});
+
+					for ( ContextData cgcData: salary.getContextData().getOrDefault(contextVariable.getName(), Collections.emptyList()) ) {
 						cgcBasePeriods.add( new Period(cgcData.getStartDate(), cgcData.getEndDate()));
+					}
 
 					Collections.sort(cgcBasePeriods); // sort & sort & sort again .
 					
@@ -303,6 +339,43 @@ public class TrabajadoresTramos {
 						
 						class DefaultSalaryVisitor implements SalaryVisitor {
 							
+							@Override
+							public void visitFormacionNormal() {
+								// 3.1 Contratos para la formación (TRL 087)  
+								// 3.1.1 Tramo en situación de activo "normal"  
+
+								// N horas formación teórica presencial 
+								dataSolicitadoBuilder.setTipo("H");
+								dataSolicitadoBuilder.setCodigo("03");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// N horas formación teórica a distancia 
+								dataSolicitadoBuilder.setTipo("H");
+								dataSolicitadoBuilder.setCodigo("04");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// N horas tutoría 
+								dataSolicitadoBuilder.setTipo("H");
+								dataSolicitadoBuilder.setCodigo("06");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Bonificación tutoría
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("737");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Base de Horas Extras Fuerza Mayor
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("501");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Base Otras Horas Extras
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("502");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+							}
+
 							@Override
 							public void visitTiempoCompletoNormal() {
 								// 2.1 Situación de activo "normal" 
@@ -594,6 +667,12 @@ public class TrabajadoresTramos {
 		class Visitor implements  SalaryVisitor {
 			
 			SalaryVisitor standard = new SalaryVisitor(){
+				
+				@Override
+				public void visitFormacionNormal() {
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+				}
+				
 				@Override
 				public void visitTiempoParcialNormal() {
 					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
@@ -649,6 +728,11 @@ public class TrabajadoresTramos {
 				}
 				
 				@Override
+				public void visitFormacionNormal() {
+					visitOthers();
+				}
+				
+				@Override
 				public void visitTiempoParcialNormal() {
 					visitOthers();
 				}
@@ -701,6 +785,11 @@ public class TrabajadoresTramos {
 				private void visitOthers(){
 					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
 					state = standard;
+				}
+				
+				@Override
+				public void visitFormacionNormal() {
+					visitOthers();
 				}
 				
 				@Override
@@ -760,6 +849,11 @@ public class TrabajadoresTramos {
 				}
 				
 				@Override
+				public void visitFormacionNormal() {
+					visitOthers();
+				}
+				
+				@Override
 				public void visitTiempoParcialNormal() {
 					visitOthers();
 				}
@@ -815,7 +909,12 @@ public class TrabajadoresTramos {
 			public void setPeriod(Period period) {
 				this.period = period;
 			}
-
+			
+			@Override
+			public void visitFormacionNormal() {
+				state.visitFormacionNormal();
+			}
+			
 			@Override
 			public void visitTiempoParcialNormal() {
 				state.visitTiempoParcialNormal();
@@ -916,6 +1015,7 @@ public class TrabajadoresTramos {
 	}
 	
 	private static interface SalaryVisitor {
+		void visitFormacionNormal();
 		void visitTiempoParcialNormal();
 		void visitTiempoCompletoNormal();
 		void visitGrupoCotizacionDiario();
@@ -971,8 +1071,13 @@ public class TrabajadoresTramos {
 		) > 0.00;
 
 		boolean tiempoCompleto = fullTime && ("14".indexOf(tc2.charAt(0)) != -1);
-
-		if ( iT15primerosDias )
+		
+		
+		boolean formacionNormal = "421".equals(tc2) ;
+		
+		if ( formacionNormal )
+			visitor.visitFormacionNormal();
+		else if ( iT15primerosDias )
 			visitor.visitIncapacidadTemporal15PrimerosDias();
 		else if ( iTPagoDelegado )
 			visitor.visitIncapacidadTemporalPagoDelegado();
