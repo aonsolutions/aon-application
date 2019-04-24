@@ -719,9 +719,11 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			cell.setCellStyle(style);
 			cell.setCellValue(strings[i]);
 			cell.setCellType(CellType.STRING);
-			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), i*(8/n), i*(8/n) +(8/n)-1));
-			for(Integer j = 0; j < (8/n)-1; j++){
-				row.createCell(cellCount++);
+			if(((i*(8/n) +(8/n)-1) - (i*(8/n))) > 0){
+				sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), i*(8/n), i*(8/n) +(8/n)-1));
+				for(Integer j = 0; j < (8/n)-1; j++){
+					row.createCell(cellCount++);
+				}
 			}
 		}
 	}
