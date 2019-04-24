@@ -82,6 +82,7 @@ import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.Salary;
@@ -135,6 +136,8 @@ public class SalaryPrintController extends BasicController implements ICollectio
 	private Date fromDate;
 	
 	private Date toDate;
+	
+	private Contract contract;
 
 	private Set<Integer> checks = new HashSet<Integer>();
 
@@ -255,6 +258,14 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		this.types = types;
 	}
 	
+	public Contract getContract() {
+		return contract;
+	}
+
+	public void setContract(Contract contract) {
+		this.contract = contract;
+	}
+	
 	
 	
 	public void onInit( ActionEvent event ) throws ManagerBeanException {
@@ -355,6 +366,9 @@ public class SalaryPrintController extends BasicController implements ICollectio
 			String alias = "Salary.contract.enterpriseCCC.id";
 			criteria.addEqualExpression(alias, getEnterpriseCCC().getId());
 		}
+		if ((getContract() != null) && (getContract().getId() != null)) {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.SALARY_CONTRACT_ID), getContract().getId());			
+		}
 		criteria.setSkipDomainFilter(true);
 		criteria.addEqualExpression(this.getFieldName(IEntityAlias.SALARY_DOMAIN), getEnterprise().getDomain());
 		this.initializeModel();
@@ -373,7 +387,9 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		clearChecked();
 	}
 
-	private void clearFilters() {
+	private void clearFilters()  throws ManagerBeanException {
+		IManagerBean contractBean = BeanManager.getManagerBean(Contract.class);
+		setContract((Contract) contractBean.createNewTo());
 		this.fromDate = new Date();
 		this.toDate = new Date();
 		this.enterprise = null;

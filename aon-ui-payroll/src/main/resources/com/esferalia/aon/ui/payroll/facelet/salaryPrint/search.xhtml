@@ -125,6 +125,15 @@
 						<!-- add more and minus buttons -->	
 					</aon:if>
 					
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{salaryPrint.contract}" />
+						<!--  
+						<ui:param name="lookupControllerListener" value="#{contractLeave.contractFilter}" />
+						-->
+						<ui:param name="skipGoToButton" value="#{true}" />
+						<ui:param name="skipSearchButton" value="#{false}" />
+					</ui:include>
+					
 					<aon:outputText value="" />
 					<aon:div >
 						<aon:commandButton id="salaryPrint-searchButton"
@@ -142,6 +151,8 @@
 		</aon:form>
 		
 		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+		<aon:lookupButtonPopup lookup="#{contractLookup}" />
+		<aon:lookupButtonPopup lookup="#{personLookup}" />
 		
 	</ui:define>
 </ui:composition>
