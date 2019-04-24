@@ -25,6 +25,7 @@ public class AccountBalanceReport implements Serializable{
 		private String description;
 		private String accounts;
 		private HashMap<String,Double> amounts = new HashMap<String,Double>();
+		private AccountBalance breakdown;
 		
 		public Integer getId() {
 			return id;
@@ -52,6 +53,9 @@ public class AccountBalanceReport implements Serializable{
 		}
 		public boolean isLeaf() {
 			return (this.type == AccountBalanceLineStyle.LEAF);
+		}
+		public boolean isBreakdown() {
+			return (this.type == AccountBalanceLineStyle.BREAKDOWN);
 		}
 		
 		public String getCode() {
@@ -85,9 +89,15 @@ public class AccountBalanceReport implements Serializable{
 			this.accounts = accounts;
 			return this;
 		}
-
 		public Map<String,Double> getAmounts() {
 			return amounts;
+		}
+		public AccountBalance getBreakdown() {
+			return breakdown;
+		}
+		public BalanceLine setBreakdown(AccountBalance breakdown) {
+			this.breakdown = breakdown;
+			return this;
 		}
 	}
 	private ReportMetadata metadata;	
@@ -151,4 +161,6 @@ public class AccountBalanceReport implements Serializable{
 	public Map<String, LinkedList<AccountBalance>> getUnreadAccounts() {
 		return unreadAccounts;
 	}
+	
+	
 }

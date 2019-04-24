@@ -114,6 +114,7 @@ public class JsonParams extends JSONObject {
 		json.put(IRequestParamsNames.NO_ACTIVITY_ACCOUNT_VISIBLE,new JSONNumber( params.isNoActivityAccountVisible()?1:0));
 		json.put(IRequestParamsNames.OPERATING_ENTRIES_EXCLUDED,new JSONNumber( params.areOperatingEntriesExcluded()?1:0));
 		json.put(IRequestParamsNames.CLOSING_ENTRIES_EXCLUDED,new JSONNumber( params.areClosingEntriesExcluded()?1:0));
+		json.put(IRequestParamsNames.BREAKDOWN_ENABLED,new JSONNumber( params.isBreakdownEnabled()?1:0));
 		
 		json.put(IRequestParamsNames.PERCENTS_ENABLED,new JSONNumber( params.isPercentsEnabled()?1:0));
 		json.put(IRequestParamsNames.BY_MONTH,new JSONNumber( params.isByMonth()?1:0));

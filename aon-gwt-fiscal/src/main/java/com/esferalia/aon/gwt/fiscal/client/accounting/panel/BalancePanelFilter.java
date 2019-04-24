@@ -34,6 +34,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -55,6 +56,7 @@ public class BalancePanelFilter extends SimpleLayoutPanel implements HasValueCha
 	private ListBox confidential;
 	private ListBox previousPeriods;
 	private ListBox balanceType;
+	private CheckBox breakdownEnabled;
 	
 	public BalancePanelFilter(String domainName,String user, int domainId, AonConfiguration config, AccountingReportParams params) {
 		this.domainName = domainName;
@@ -222,6 +224,7 @@ public class BalancePanelFilter extends SimpleLayoutPanel implements HasValueCha
 		confidential = new ListBox();
 		previousPeriods = new ListBox();
 		balanceType = new ListBox();
+		breakdownEnabled = new CheckBox("Desglose de cuentas a 4 d\u00EDgitos");
 
 		dateTab.getColumnFormatter().setWidth(0, "50px");
 		dateTab.getColumnFormatter().setWidth(1, "80px");
@@ -275,6 +278,12 @@ public class BalancePanelFilter extends SimpleLayoutPanel implements HasValueCha
 			
 			@Override
 			public void onChange(ChangeEvent event) {
+				if ( previousPeriods.getSelectedIndex() > 0) {
+					breakdownEnabled.setValue(false);
+					breakdownEnabled.setEnabled(false);
+				} else {
+					breakdownEnabled.setEnabled(true);
+				}
 				ValueChangeEvent.<AccountingReportParams>fire(BalancePanelFilter.this, getWidgetParams());
 			}
 		});
@@ -403,6 +412,18 @@ public class BalancePanelFilter extends SimpleLayoutPanel implements HasValueCha
 		tab.setWidget(1, 5, balanceType);
 		tab.getCellFormatter().setStyleName(1,5, AON.AON_CSS.aonPanelGridEven());
 		
+		// ************************************************************************  DESGLOSE
+		tab.setWidget(2, 1, breakdownEnabled);
+		tab.getFlexCellFormatter().setColSpan(2, 1, 3);
+		tab.getCellFormatter().setStyleName(1,5, AON.AON_CSS.aonPanelGridEven());
+		breakdownEnabled.addClickHandler( new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				ValueChangeEvent.<AccountingReportParams>fire(BalancePanelFilter.this, getWidgetParams());
+			}
+		});
+		
 		// ************************************************************************  CLEAN
 		Button cleanButton = new Button("Limpiar");
 		cleanButton.setStyleName(AON.AON_CSS.aonIconDelete());
@@ -479,6 +500,7 @@ public class BalancePanelFilter extends SimpleLayoutPanel implements HasValueCha
 			.setSecurityLevel(SecurityLevel.safeValueOf(confidential.getSelectedIndex()))
 			.setPreviousPeriods( previousPeriods.getSelectedIndex() )
 			.setBalanceType(BalanceType.values()[balanceType.getSelectedIndex()])
+			.setBreakdownEnabled(breakdownEnabled.getValue())
 			;
 	}
 	

@@ -83,18 +83,22 @@ public class AccountDAO {
 			.selectFrom(ACCOUNT)
 			.where(condition)
 			.and(ACCOUNT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
-//			.and(ACCOUNT.DOMAIN.eq(ctx.getDomainId())
-//				.or(ACCOUNT.DOMAIN.eq(ctx.getDslContext()
-//					.select(DOMAIN.PARENT)
-//					.from(DOMAIN)
-//					.where(DOMAIN.ID.eq(ctx.getDomainId()))
-//					.and(DOMAIN.ENABLEHEREDITY.eq((byte)1)))))
-//			.orderBy(ACCOUNT.CODE)
 			.fetch()
 			.stream()
 			.map(new FullAccountFiller())
 			.findFirst()
 			.orElse(null);
+	}
+	public static Stream<Account> getAccounts(AONContext ctx, Condition condition) {
+		ctx.checkRead();
+		return ctx.getDslContext() 
+			.selectFrom(ACCOUNT)
+			.where(condition)
+			.and(ACCOUNT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+			.orderBy(ACCOUNT.CODE)
+			.fetch()
+			.stream()
+			.map(new FullAccountFiller());
 	}
 	public static Account save(AONContext ctx, Account account) {
 		if (account.getId() == null) {

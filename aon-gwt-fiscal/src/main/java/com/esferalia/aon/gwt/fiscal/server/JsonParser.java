@@ -244,6 +244,11 @@ public class JsonParser {
 		if (closingEntriesExcluded != null) {
 			params.setClosingEntriesExcluded(closingEntriesExcluded.intValue() == 1);	
 		}
+		// ******************* BREAKDOWN_ENABLED ******************* 
+		Long breakdownEnabled = (Long) jsonParams.get(IRequestParamsNames.BREAKDOWN_ENABLED);
+		if (breakdownEnabled != null) {
+			params.setBreakdownEnabled(breakdownEnabled.intValue() == 1);	
+		}
 
 		// ******************* TITLE ******************* 
 		String title = (String) jsonParams.get(IRequestParamsNames.TITLE);

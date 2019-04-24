@@ -33,6 +33,7 @@ import com.esferalia.aon.occam.api.model.AccountBalanceReport.BalanceLine;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -80,6 +81,7 @@ public class AccountBalanceReportExcelPrint extends HttpServlet {
 		private XSSFCellStyle titleCellStyle;
 		private CellStyle wrappedCellStyle;
 		private CellStyle wrappedBoldCellStyle;
+		private CellStyle wrappedItalicCellStyle;
 		
 		private AccountBalanceReport report;
 		private String companyName; 
@@ -92,7 +94,7 @@ public class AccountBalanceReportExcelPrint extends HttpServlet {
 
 		@Override
 		protected void headerRow() {
-			int columns = 1 + report.getPeriods().size();
+			int columns = 1 + report.getPeriods().size() + (report.getParams().isBreakdownEnabled()?2:0);
 			
 			sheet.setDisplayZeros(false);
 			
@@ -118,6 +120,11 @@ public class AccountBalanceReportExcelPrint extends HttpServlet {
 			wrappedBoldCellStyle = workbook.createCellStyle();
 			wrappedBoldCellStyle.cloneStyleFrom(defaultBodlStyle);
 			wrappedBoldCellStyle.setWrapText(true);
+
+			wrappedItalicCellStyle = workbook.createCellStyle();
+			wrappedItalicCellStyle.cloneStyleFrom(defaultBodlStyle);
+			wrappedItalicCellStyle.setFont(italicSmallFont);
+			wrappedItalicCellStyle.setWrapText(true);
 
 			decimalStyle.setFont(smallFont);
 
@@ -218,10 +225,18 @@ public class AccountBalanceReportExcelPrint extends HttpServlet {
 			
 			// ----------------------------------------------- ROW 6 - Intervals
 			row = sheet.createRow(rowCount);
-			sheet.setColumnWidth(0, 50 * 256);
+			sheet.setColumnWidth(0, (report.getParams().isBreakdownEnabled()?40:50) * 256);
 			CellUtil.createCell(row, cellCount, "", headerStyle);
 			cellCount = 1;
-			
+			if (report.getParams().isBreakdownEnabled()) {
+				CellUtil.createCell(row, cellCount, "S.Deudor", columnHeaderStyle);
+				sheet.setColumnWidth(cellCount, 12 * 256);
+				++cellCount;
+				
+				CellUtil.createCell(row, cellCount, "S.Acreedor", columnHeaderStyle);
+				sheet.setColumnWidth(cellCount, 12 * 256);
+				++cellCount;
+			}
 			for (String period : report.getPeriods()) {
 				CellUtil.createCell(row, cellCount, period, columnHeaderStyle);
 				sheet.setColumnWidth(cellCount, 12 * 256);
@@ -246,8 +261,22 @@ public class AccountBalanceReportExcelPrint extends HttpServlet {
 			cellCount = 0;
 			
 			Cell cell = addCell(bal.getPrefix() + ".- " + bal.getDescription());
-			cell.setCellStyle((bal.isLeaf())?wrappedBoldCellStyle:wrappedCellStyle);
 			
+			if (bal.isLeaf()) {
+				cell.setCellStyle(wrappedBoldCellStyle);
+			} else if (bal.isBreakdown()) {
+				cell.setCellStyle(wrappedItalicCellStyle);
+			}else {
+				cell.setCellStyle(wrappedCellStyle);
+			}
+			
+			if (report.getParams().isBreakdownEnabled()) {
+				AccountBalance b = bal.getBreakdown();
+				cell = addCell(b!=null?b.getDebitBalance():0);
+				cell.setCellStyle(wrappedItalicCellStyle);
+				cell = addCell(b!=null?b.getCreditBalance():0);
+				cell.setCellStyle(wrappedItalicCellStyle);
+			}
 			for (String period : report.getPeriods()) {
 				addCell(bal.getAmounts().get(period));
 			}

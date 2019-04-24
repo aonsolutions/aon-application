@@ -44,6 +44,8 @@ public class AccountingReportParams implements IAccountParams, Cloneable {
 	private EnterpriseActivity selectedActivity;
 	private Account selectedAccount;
 
+	private boolean breakdownEnabled;
+	
 	// Consolidation
 	private LinkedList<Domain> domains;
 	private boolean consolidation;
@@ -202,6 +204,14 @@ public class AccountingReportParams implements IAccountParams, Cloneable {
 	}
 	public AccountingReportParams setSelectedAccount(Account selectedAccount) {
 		this.selectedAccount = selectedAccount;
+		return this;
+	}
+	
+	public boolean isBreakdownEnabled() {
+		return breakdownEnabled;
+	}
+	public AccountingReportParams setBreakdownEnabled(boolean breakdownEnabled) {
+		this.breakdownEnabled = breakdownEnabled;
 		return this;
 	}
 	

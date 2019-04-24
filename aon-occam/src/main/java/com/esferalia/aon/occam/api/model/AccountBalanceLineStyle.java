@@ -12,5 +12,5 @@ public enum AccountBalanceLineStyle {
 	TOTAL2,
 	TOTAL1,
 	TOTAL0,
-	PAGE_BREAK_BEFORE
+	BREAKDOWN
 }

@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -86,18 +87,24 @@ public class BalancePanel extends ScrollPanel implements HasSelectionHandlers<Ac
 					tab.addStyleName(AON.AON_CSS.aonReportTableBold());	
 					tab.addStyleName(AON.AON_CSS.aonTextCenter());
 				} else {
-					tab.getColumnFormatter().setWidth( col++, "10px");
 					tab.getColumnFormatter().setWidth( col++, "auto");
-					
+
 					col = 0;
-					tab.setWidget(row,col, new Label());
-					tab.getCellFormatter().setStyleName(row,col, AON.AON_CSS.aonReportTableHeader());
-					col++;
-					
 					tab.setWidget(row,col, new Label());
 					tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonReportTableHeader());
 					col++;
 					
+					if (report.getParams().isBreakdownEnabled() ) {
+						tab.getColumnFormatter().setWidth( col, "120px");
+						tab.setWidget(row,col, new Label("S.Deudor"));
+						tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonReportTableHeader());
+						col++;
+
+						tab.getColumnFormatter().setWidth( col, "120px");
+						tab.setWidget(row,col, new Label("S.Acreedor"));
+						tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonReportTableHeader());
+						col++;
+					}
 					LinkedHashMap<String, Integer> columns = new LinkedHashMap<String, Integer>(); 
 					for (String period : report.getPeriods() ) {
 						tab.getColumnFormatter().setWidth( col, "120px");
@@ -166,30 +173,27 @@ public class BalancePanel extends ScrollPanel implements HasSelectionHandlers<Ac
 			private void paintRow(AccountBalanceReport report, LinkedHashMap<String, Integer> columns, FlexTable tab, int row, BalanceLine line) {
 				tab.getRowFormatter().setStyleName(row, AON.AON_CSS.aonReportTableRowBckHover());
 				int col = 0;
-				// boolean inBold = !line.isLeaf();
 				boolean inBold = line.getType() == AccountBalanceLineStyle.HEADER0 
-						|| line.getType() == AccountBalanceLineStyle.TOTAL0;
+							  || line.getType() == AccountBalanceLineStyle.TOTAL0;
+				boolean breakdown = line.getType() == AccountBalanceLineStyle.BREAKDOWN;
 				double fontSize = 1.3;
-//				if (!line.isLeaf()) {
-//					if (line.getLevel() == 0) fontSize = 1.4;
-//					if (line.getLevel() == 1) fontSize = 1.3;
-//					if (line.getLevel() == 2) fontSize = 1.2;
-//					if (line.getLevel() == 3) fontSize = 1.1;
-//				}
-				
-				Label prefixLabel = new Label();
-				tab.setWidget(row, col, prefixLabel);
-				if (inBold) tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonReportTableBold());
-				col++;
+
 				String p = AonStringUtils.repeat(' ', line.getLevel() * 2);
+				FlowPanel descriptionPanel = new FlowPanel();
 				Label descriptionLabel = new Label( AonStringUtils.rightPad(p + line.getPrefix(), 8) + " " + line.getDescription() );
 				if (line.getType() == AccountBalanceLineStyle.HEADER0) {
 					descriptionLabel.addStyleName(AON.AON_CSS.aonMarginTop());	
 				}
 				descriptionLabel.addStyleName(AON.AON_CSS.aonPre());
-				descriptionLabel.getElement().getStyle().setFontSize(fontSize, Unit.EM);
-//				descriptionLabel.getElement().getStyle().setMarginLeft( (line.getLevel() * 12.0) , Unit.PX);
-				tab.setWidget(row, col, descriptionLabel);
+				if (breakdown) {
+					descriptionPanel .getElement().getStyle().setFontSize(fontSize - 0.1, Unit.EM);
+					descriptionLabel.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
+					tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBackgroundDisabled());	
+				} else {
+					descriptionPanel.getElement().getStyle().setFontSize(fontSize, Unit.EM);
+				}
+				descriptionPanel.add(descriptionLabel);
+				tab.setWidget(row, col, descriptionPanel);
 				if (inBold) tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonReportTableBold());
 				col++;
 				
@@ -205,11 +209,44 @@ public class BalancePanel extends ScrollPanel implements HasSelectionHandlers<Ac
 						}
 					});
 				}
-				
-				for ( ;col < (2 + report.getPeriods().size());  col++) {
+
+				if (report.getParams().isBreakdownEnabled() && breakdown) {
+					AccountBalance bal =  line.getBreakdown();
+					if (bal !=null) {
+						Label debitLabel = new Label(
+								AonMathUtils.isGreatherThanZero(bal.getDebitBalance())
+								?AON.ACCOUNT_FMT.format( bal.getDebitBalance() )
+								:""
+								);
+						debitLabel.getElement().getStyle().setFontSize(fontSize - 0.1, Unit.EM);
+						debitLabel.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
+						tab.setWidget(row, col, debitLabel);
+						tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextRight());
+						tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonPaddingRight());
+						tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBackgroundDisabled());
+						col++;
+						
+						Label creditLabel = new Label(
+								AonMathUtils.isGreatherThanZero(bal.getCreditBalance())
+								?AON.ACCOUNT_FMT.format( bal.getCreditBalance() )
+								:""
+								);
+						creditLabel.getElement().getStyle().setFontSize(fontSize - 0.1, Unit.EM);
+						creditLabel.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
+						tab.setWidget(row, col, creditLabel);
+						tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextRight());
+						tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonPaddingRight());
+						tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBackgroundDisabled());
+						col++;
+					}
+				}
+
+				int offset = 1 + ((report.getParams().isBreakdownEnabled())?2:0);
+				for ( ;col < ( offset + report.getPeriods().size());  col++) {
 					tab.setWidget(row,col, new Label());
 					tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextRight());
 					if (inBold) tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonReportTableBold());
+					if (breakdown) tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBackgroundDisabled());
 				}
 				
 				for ( String period : line.getAmounts().keySet() ) {

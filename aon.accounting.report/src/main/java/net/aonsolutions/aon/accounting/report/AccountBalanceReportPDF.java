@@ -12,7 +12,9 @@ import com.esferalia.aon.occam.api.model.AccountBalanceReport.BalanceLine;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -31,6 +33,7 @@ public class AccountBalanceReportPDF {
 	private static SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
 	private static Font SEPARATOR_FONT = new Font(Font.FontFamily.HELVETICA, 5);
 	private static Font BODY_FONT = new Font(Font.FontFamily.HELVETICA, 8);
+	private static Font ITALIC_FONT = new Font(Font.FontFamily.HELVETICA, 8, Font.ITALIC);
 	private static Font BODY_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD);
 
 	public void printBalanceReport(OutputStream outputStream, AccountingReportParams params) throws DocumentException {
@@ -55,15 +58,21 @@ public class AccountBalanceReportPDF {
 		writer.setPageEvent(new AccountReportPdfPageEvent(report.getMetadata()));
 		document.open();
 		
-		int columns = 1 + report.getPeriods().size(); 
+		int columns = 1 + report.getPeriods().size() + (report.getParams().isBreakdownEnabled()?2:0); 
 		PdfPTable table = new PdfPTable(columns);
 		
 		float amountCellWidth = 70;
-		float conceptCellWidth = w - (amountCellWidth * report.getPeriods().size());
-		float[] widths = new float[report.getPeriods().size() + 1 ];
+		float conceptCellWidth = w - (amountCellWidth * (columns - 1));
+		float[] widths = new float[columns];
 		widths[0] = conceptCellWidth;
+		int offset = 1;
+		if (report.getParams().isBreakdownEnabled()) {
+			widths[1] = amountCellWidth;
+			widths[2] = amountCellWidth;
+			offset = 3;
+		}
 		for (int i = 0 ; i < report.getPeriods().size(); i++) {
-			widths[i+1] = amountCellWidth;
+			widths[i+offset] = amountCellWidth;
 		}
 		table.setTotalWidth(widths);
 		table.setLockedWidth(true);
@@ -77,6 +86,24 @@ public class AccountBalanceReportPDF {
 		PdfPCell emptyCell = new PdfPCell();
 		emptyCell.setBorder(0);
 		table.addCell(emptyCell);
+		
+		if (report.getParams().isBreakdownEnabled()) {
+			Paragraph debitParagrph = new Paragraph(8,"S, Deudor",BODY_FONT_BOLD);
+			debitParagrph.setAlignment( Element.ALIGN_RIGHT );
+			PdfPCell debitCell = new PdfPCell();
+			debitCell.setBorder(0);
+			debitCell.setBorderWidthBottom(1);
+			debitCell.addElement(debitParagrph);
+			table.addCell( debitCell );
+
+			Paragraph creditParagrph = new Paragraph(8,"S.Acreed.",BODY_FONT_BOLD);
+			creditParagrph.setAlignment( Element.ALIGN_RIGHT );
+			PdfPCell creditCell = new PdfPCell();
+			creditCell.setBorder(0);
+			creditCell.setBorderWidthBottom(1);
+			creditCell.addElement(creditParagrph);
+			table.addCell( creditCell );
+		}
 		
 		for (String period : report.getPeriods()) {
 			Paragraph periodParagrph = new Paragraph(8,period,BODY_FONT_BOLD);
@@ -92,12 +119,14 @@ public class AccountBalanceReportPDF {
 			String c = line.getPrefix() + " " + line.getDescription();
 			if (line.getType() == AccountBalanceLineStyle.HEADER0) {
 				table.addCell(separatorCell);
-				for (String period : report.getPeriods()) {
+				for (int i = 0; i < (columns-1); i++) {
 					table.addCell(separatorCell);
 				}
 			}
-			boolean leaf = (line.getType() != AccountBalanceLineStyle.HEADER0 && line.getType() != AccountBalanceLineStyle.TOTAL0);
-			Paragraph concept = new Paragraph(8,c,leaf?BODY_FONT:BODY_FONT_BOLD);
+			boolean leaf = (line.getType() != AccountBalanceLineStyle.HEADER0 
+					&& line.getType() != AccountBalanceLineStyle.TOTAL0 
+					&& line.getType() != AccountBalanceLineStyle.BREAKDOWN);
+			Paragraph concept = new Paragraph(8,c,leaf?BODY_FONT: line.isBreakdown()?ITALIC_FONT:BODY_FONT_BOLD);
 			concept.setIndentationLeft(line.getLevel() * 10);
 			PdfPCell conceptCell = new PdfPCell();
 			conceptCell.addElement(concept);
@@ -105,6 +134,33 @@ public class AccountBalanceReportPDF {
 			conceptCell.setBorderWidthBottom(1);
 			conceptCell.setBorderColor(SUPER_LIGHT_GRAY);
 			table.addCell(conceptCell);
+			
+			if (report.getParams().isBreakdownEnabled()) {
+				AccountBalance bal = line.getBreakdown();
+				Double a = bal!=null && AonMathUtils.isGreatherThanZero(bal.getDebitBalance())?bal.getDebitBalance():null;
+				String debit = a==null?"":FMT.format(a);
+				Paragraph debitP = new Paragraph(8,debit,ITALIC_FONT);
+				debitP.setAlignment( Element.ALIGN_RIGHT );
+				PdfPCell debitCell = new PdfPCell( );
+				debitCell.addElement(debitP);
+				debitCell.setBorder(0);
+				debitCell.setBorderWidthBottom((float) 0.5);
+				debitCell.setBorderColor(SUPER_LIGHT_GRAY);
+				table.addCell(debitCell);
+
+				a = bal!=null && AonMathUtils.isGreatherThanZero(bal.getCreditBalance())?bal.getCreditBalance():null;
+				String credit = a==null?"":FMT.format(a);
+				Paragraph creditP = new Paragraph(8,credit,ITALIC_FONT);
+				creditP.setAlignment( Element.ALIGN_RIGHT );
+				PdfPCell creditCell = new PdfPCell( );
+				creditCell.addElement(creditP);
+				creditCell.setBorder(0);
+				creditCell.setBorderWidthBottom((float) 0.5);
+				creditCell.setBorderColor(SUPER_LIGHT_GRAY);
+				table.addCell(creditCell);
+			}
+				
+			
 			for (String period : report.getPeriods()) {
 				Double a = line.getAmounts().get(period);
 				String amount = a==null?"":FMT.format(a);
@@ -118,6 +174,9 @@ public class AccountBalanceReportPDF {
 				amountCell.setBorder(0);
 				amountCell.setBorderWidthBottom((float) 0.5);
 				amountCell.setBorderColor(SUPER_LIGHT_GRAY);
+				if (report.getParams().isBreakdownEnabled()) {
+					amountCell.setBackgroundColor(SUPER_LIGHT_GRAY);
+				}
 				table.addCell(amountCell);
 			}
 		}

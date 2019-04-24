@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
+
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -8,9 +10,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.jooq.Condition;
+import org.jooq.impl.DSL;
+
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AccountBalanceLineStyle;
 import com.esferalia.aon.occam.api.model.AccountBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountBalanceReport.BalanceLine;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
@@ -147,13 +153,43 @@ public class AccountBalanceDAO {
 		mvelCtx.setAccounts(accounts);
 		for (IBalanceKey key : script.getKeyList() ) {
 			if (!report.getBalances().containsKey(key.getCode())) {
+				String expressionParsed = parseExpression(key.getInitialExpression());
 				report.getBalances().put(key.getCode(),
-						new BalanceLine().setLevel(key.getLevel())
+						new BalanceLine()
+							.setLevel(key.getLevel())
 							.setPrefix(key.getPrefix())
 							.setCode(key.getCode())
 							.setDescription(key.getName())
 							.setType(key.getType())
-							.setAccounts(parseExpression(key.getInitialExpression())));
+							.setAccounts(expressionParsed))
+				;
+				if (params.isBreakdownEnabled() && AonStringUtils.isNotBlank( expressionParsed )) {
+					String[] tokens = AonStringUtils.split(expressionParsed,'|');
+					if (tokens != null && tokens.length > 0) {
+						Condition c = null;
+						for (String token : tokens ) {
+							Condition c1 = ACCOUNT.CODE.like(token + "%");
+							c = c==null?c1:c.or(c1);
+						}
+						c = c.and(DSL.length(ACCOUNT.CODE).eq(4));
+						AccountDAO.getAccounts(ctx, c)
+							.forEach(account -> {
+								AccountBalance b = accounts.get(account.getCode());
+								if (b != null) {
+									report.getBalances().put( ("*"+account.getCode()) ,
+											new BalanceLine().setLevel(5)
+											.setPrefix(account.getCode())
+											.setCode(account.getCode())
+											.setDescription(account.getDescription())
+											.setType(AccountBalanceLineStyle.BREAKDOWN)
+											.setAccounts(account.getCode())
+											.setBreakdown( b )
+											)
+									;
+								}
+							});
+					}
+				}
 				mvelCtx.put(key.getCode(), 0.0);
 			}
 			String exp = key.getInitialExpression();
@@ -164,6 +200,7 @@ public class AccountBalanceDAO {
 			if (AonStringUtils.isNotBlank(computeExp)) {
 				computeMap.put(key.getCode(), computeExp);
 			}
+			
 		}
 		mvelCtx.setExpressionMap(initialMap);
 		for (String keyCode : mvelCtx.getExpressionMap().keySet()) {

@@ -53,6 +53,7 @@ public interface IRequestParamsNames {
 	String NO_ACTIVITY_ACCOUNT_VISIBLE = "noActivityAccountVisible";
 	String OPERATING_ENTRIES_EXCLUDED = "operatingEntriesExcluded";
 	String CLOSING_ENTRIES_EXCLUDED = "closingEntriesExcluded";
+	String BREAKDOWN_ENABLED = "breakdownEnabled";
 	String PERCENTS_ENABLED = "percentsEnabled";
 	String BY_MONTH = "byMonth";
 	String BALANCE_TYPE = "balanceType";

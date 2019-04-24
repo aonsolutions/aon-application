@@ -50,6 +50,7 @@ public abstract class AbsExcelAction  {
 	protected Font defaulFont;	
 	protected Font smallFont;
 	protected Font smallBoldFont;
+	protected Font italicSmallFont;
 	
 	public void initialize(String name) {
 		initialize(name, true);
@@ -88,6 +89,10 @@ public abstract class AbsExcelAction  {
 		smallBoldFont.setFontHeightInPoints((short) 8);
 		smallBoldFont.setBold(true);
 
+		italicSmallFont = workbook.createFont();
+		italicSmallFont.setFontHeightInPoints((short) 8);
+		italicSmallFont.setItalic(true);
+		
 		smallDateStyle = workbook.createCellStyle();
 	    smallDateStyle.setDataFormat(dataFormat.getFormat(DATE_PATTERN));
 	    smallDateStyle.setAlignment( HorizontalAlignment.CENTER );
