@@ -994,7 +994,7 @@ public class SalaryDraft extends ResizeComposite
 				salaryDraftObject.addDraftVariable(noHolidaysVar);
 
 				noHolidays -= days;
-				prevDays = (int) Math.ceil(days);
+				prevDays += (int) Math.ceil(days);
 				DateUtils.addDays2Date(startDate, prevDays);
 
 			}
