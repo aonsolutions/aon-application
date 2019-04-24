@@ -318,6 +318,14 @@
 											title="Utilidades y chequeos contables"
 											value="Utilidades y chequeos contables" />
 									</aon:div>
+									<aon:if test="#{domainSwitcher.udapa || domainSwitcher.paturpat}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="accPeriod-parent"
+												action="accPeriod-parent"
+												actionListener="#{accPeriod.onSearch}"
+												value="#{bundle.accounting_period_module}" />
+										</aon:div>
+									</aon:if>
 								</aon:if>
 							</aon:div>
 						</aon:panelGrid>
