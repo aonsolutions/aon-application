@@ -701,7 +701,8 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 				CellUtil.createCell(row, cellCount, strings[i/(8/number)], headerStyle);	
 				for(Integer j = 0; j< (8/number); j++)
 					sheet.setColumnWidth(cellCount++, 11 * 256);
-				sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), i, i+(8/number)-1));
+				if(((i+(8/number)-1) - i) > 0)
+					sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), i, i+(8/number)-1));
 			}
 		}
 	}
@@ -733,9 +734,11 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		cell.setCellStyle(style);
 		cell.setCellValue(value);
 		cell.setCellType(CellType.STRING);
-		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), start, end));
-		for(Integer j = 0; j < end - start; j++){
-			row.createCell(cellCount++);
+		if((end - start) > 0) {
+			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), start, end));
+			for(Integer j = 0; j < end - start; j++){
+				row.createCell(cellCount++);
+			}
 		}
 	}
 	
@@ -751,9 +754,11 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		cell.setCellStyle(style);
 		cell.setCellValue(value);
 		cell.setCellType(CellType.STRING);
-		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), start, end));
-		for(Integer j = 0; j < end - start; j++){
-			row.createCell(cellCount++);
+		if((end - start) > 0) {
+			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), start, end));
+			for(Integer j = 0; j < end - start; j++){
+				row.createCell(cellCount++);
+			}
 		}
 	}
 
