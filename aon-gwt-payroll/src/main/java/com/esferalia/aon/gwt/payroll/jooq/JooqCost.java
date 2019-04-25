@@ -40,7 +40,7 @@ public class JooqCost {
 	//													GENERATE SALARY LIST
 	// ********************************************************************************************************************************************
 	
-	public static Stream<MainCost> getSalaries(String _domainName, String _enterpriseId, String _workplaceId, String _month, String _year) {
+	public static Stream<MainCost> getSalaries(String _domainName, String _enterpriseId, String _workplaceId, String _month, String _year, List<Byte> _types) {
 		//Connecction initialize
 		Connection connection = null;
 		
@@ -76,6 +76,7 @@ public class JooqCost {
 				
 				salaryRecords = dslContext.select().from(SALARY)
 						.where(SALARY.CONTRACT.in(enterpriseContractRecords))
+						.and(SALARY.TYPE.in(_types))
 						.and(SALARY.CHARGE_DATE.between(startDate, endDate))
 						.and(SALARY.TOTAL_LIQUID.ne(0.00))
 						.fetch();
@@ -84,6 +85,7 @@ public class JooqCost {
 						.where(SALARY.CONTRACT.in(
 							dslContext.select(CONTRACT.ID).from(CONTRACT).where(CONTRACT.WORKPLACE.eq(workplaceId)).fetch()
 						))
+						.and(SALARY.TYPE.in(_types))
 						.and(SALARY.CHARGE_DATE.between(startDate, endDate))
 						.and(SALARY.TOTAL_LIQUID.ne(0.00))
 						.orderBy(SALARY.EMPLOYEE_NAME)

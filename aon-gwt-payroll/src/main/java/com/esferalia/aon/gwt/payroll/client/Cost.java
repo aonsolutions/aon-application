@@ -175,11 +175,18 @@ public class Cost extends ResizeComposite {
 //				IDocument document = costDocuments.current();
 //				document.download("xls");
 //				Window.alert(costDocuments.geCurrentCost().toString());
+				
 				String printURL = GWT.getModuleBaseURL()+ "/cost_excel/"
 						+ "?month=" + costDocuments.geCurrentCost().getMonth()
 			            + "&year=" + costDocuments.geCurrentCost().getYear()
 			            + "&enterpriseId=" + costDocuments.geCurrentCost().getEnterpriseId()
 			            + "&workplaceId=" + costDocuments.geCurrentCost().getWorkplaceId();
+				
+				printURL += salaryCheckBox.isChecked() ? "&salary=1" : "&salary=0";
+				printURL += extraCheckBox.isChecked() ? "&extra=1" : "&extra=0";
+				printURL += settleCheckBox.isChecked() ? "&settle=1" : "&settle=0";
+				printURL += delayCheckBox.isChecked() ? "&delay=1" : "&delay=0";
+				
 				Window.open(printURL, "_blank", null);
 			}
 		});

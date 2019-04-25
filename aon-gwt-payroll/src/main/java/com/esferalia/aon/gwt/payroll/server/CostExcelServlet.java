@@ -1,9 +1,10 @@
 package com.esferalia.aon.gwt.payroll.server;
 
-import java.awt.Color;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -27,8 +28,6 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSide;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCost;
@@ -51,6 +50,10 @@ public class CostExcelServlet extends HttpServlet {
 		String _year = request.getParameter("year");
 		String _enterpriseId = request.getParameter("enterpriseId");
 		String _workplaceId = request.getParameter("workplaceId");
+		String _salary = request.getParameter("salary");
+		String _extra = request.getParameter("extra");
+		String _settle = request.getParameter("settle");
+		String _delay = request.getParameter("delay");
 		
 		System.out.println(
 				"DomainName : " + _domainName + "\n" +
@@ -68,14 +71,26 @@ public class CostExcelServlet extends HttpServlet {
 		Date endDate = DateUtils.getLastDayOfMonth(startDate);
 		
 		try {
+			// Print salary types
+			List<Byte> _types = new ArrayList<Byte>();
+			_types.add((_salary.equals("1")) ? (byte) 0 : (byte) -1);
+			//_types.add((_extra.equals("1")) ? (byte) 1 : (byte) -1);
+			_types.add((_settle.equals("1")) ? (byte) 2 : (byte) -1);
+			_types.add((_delay.equals("1")) ? (byte) 3 : (byte) -1);
+			
+			
 			ExcelAction action = new ExcelAction(startDate, endDate);
 			action.initialize("Listado de costes");
-			action.paintRows(JooqCost.getSalaries(_domainName, _enterpriseId, _workplaceId, _month, _year));
-//			JooqCost.getSalaries(_domainName, _enterpriseId, _workplaceId, _month, _year).forEach(action);
+			action.paintRows(JooqCost.getSalaries(_domainName, _enterpriseId, _workplaceId, _month, _year, _types));
+			
+			// Otra forma de hacerlo con el evento 'accept' haciendo un foreach
+			// JooqCost.getSalaries(_domainName, _enterpriseId, _workplaceId, _month, _year, _types).forEach(action);
+			
 			response.setContentType(MimeType.MS_EXCEL.getName());
 			response.setHeader("Content-disposition", "attachment; filename=\"Costes."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
 			action.finalize(response.getOutputStream());
 			response.flushBuffer();
+		
 		} catch (Throwable e) {
 			throw new ServletException(e);
 		}
@@ -279,27 +294,16 @@ public class CostExcelServlet extends HttpServlet {
 				cellCount = 0;
 
 				cell = addCell(costsArr[i].getEmployeeName());
-//				cell.setCellStyle(entryHeaderStyle);
 				cell = addCell(costsArr[i].getWorkplaceName());
-//				cell.setCellStyle(entryHeaderStyle);
 				cell = addCell(costsArr[i].getSalaryType());
-//				cell.setCellStyle(entryHeaderStyle);
 				cell = addCell(costsArr[i].getTotalPayment());
-//				cell.setCellStyle(entryHeaderStyle);
 				cell = addCell(costsArr[i].getEmployeeSS());
-//				cell.setCellStyle(entryHeaderStyle);
 				cell = addCell(costsArr[i].getTotalIRPF());
-//				cell.setCellStyle(entryHeaderStyle);
 				cell = addCell(costsArr[i].getTotalDeductions());
-//				cell.setCellStyle(entryHeaderStyle);
 				cell = addCell(costsArr[i].getTotalLiquid());
-//				cell.setCellStyle(entryHeaderStyle);
 				cell = addCell(costsArr[i].getEnterpriseSS());
-//				cell.setCellStyle(entryHeaderStyle);
 				cell = addCell(costsArr[i].getTotalCost());
-//				cell.setCellStyle(entryHeaderStyle);
 				cell = addCell(costsArr[i].getTotalSS());
-//				cell.setCellStyle(entryHeaderStyle);
 				
 				try {
 					if (rowCount % 100 == 0) sheet.flushRows();
