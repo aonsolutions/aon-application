@@ -2890,12 +2890,18 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		Integer contract = salaryDraft.getEmployee().getId();
 		java.sql.Date sqlStartDate = new java.sql.Date(salaryDraft.getStartDate().getTime());  
 		java.sql.Date sqlEndDate = new java.sql.Date(salaryDraft.getEndDate().getTime());  
+		java.sql.Date sqlIssueDate = new java.sql.Date(salaryDraft.getIssueDate().getTime());  
 		
 		Condition condition = 
 		com.esferalia.aon.jooq.tables.Salary.SALARY.CONTRACT.eq(contract)
 		.and(com.esferalia.aon.jooq.tables.Salary.SALARY.TYPE.eq(type))
 		.and(com.esferalia.aon.jooq.tables.Salary.SALARY.START_DATE.eq(sqlStartDate))
 		.and(com.esferalia.aon.jooq.tables.Salary.SALARY.END_DATE.eq(sqlEndDate));
+		
+		// This approach is very conservative, now only checks issue date for extras.
+		if (  salaryDraft.getType() == Salary.Type.EXTRA )
+			condition = condition
+			.and(com.esferalia.aon.jooq.tables.Salary.SALARY.ISSUE_DATE.eq(sqlIssueDate));
 		
 		for ( ISalary salary : PayrollServletUtils.getSalary(connection, condition) )
 			return salary;
