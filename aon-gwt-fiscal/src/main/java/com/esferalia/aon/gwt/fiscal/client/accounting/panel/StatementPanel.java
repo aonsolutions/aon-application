@@ -371,6 +371,7 @@ public class StatementPanel extends ScrollPanel implements HasAccountEntrySelect
 						Label balancingAccountLabel = new Label( AonStringUtils.defaultString(as.getBalancingAccountCode()) 
 								+ " " + AonStringUtils.defaultString(AonStringUtils.abbreviate(as.getBalancingAccountDescription(),11)));
 						balancingAccountLabel.setStyleName(AON.AON_CSS.aonNowrap());
+						balancingAccountLabel.setTitle(  as.getBalancingAccountDescription() ) ;
 						tab.setWidget(row, 8, balancingAccountLabel);
 						
 
