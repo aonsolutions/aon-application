@@ -5613,7 +5613,7 @@ public class SalaryDraft extends ResizeComposite
 	}
 
 	public static String format(Double amount) {
-		return NumberUtils.isNotValid(amount) ? null : AON.CURRENCY_FORMAT.format(AON.round(amount));
+		return NumberUtils.isNotValid(amount) ? AON.CURRENCY_FORMAT.format(AON.round(0.00)) : AON.CURRENCY_FORMAT.format(AON.round(amount));
 	}
 
 	protected static String getSuggestionString( Item item) {
