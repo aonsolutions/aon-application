@@ -289,4 +289,16 @@
 		</params>
 	</report>
 	
+	<!--  LISTADO DE CONTRTOS -->
+	<report id="contractList" description="Contract List report ">
+		<template path="/com/esferalia/aon/ui/payroll/report/contractList.jasper" />
+		<bean key="com.esferalia.aon.payroll.Contract" />
+		<criteria provider="#{contract}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
+	
 </report-config>
