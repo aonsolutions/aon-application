@@ -199,6 +199,10 @@
 		.selected{
 			background: #fff7ca !important;
 		}
+		
+		.selectedBG{
+			background: #fff7ca !important;
+		}
 
 		.unSelected{
 			background: white;

@@ -47,6 +47,7 @@ public class SSBonusDraft extends Composite {
 		String descriptionStyle();
 		String dateStyle();
 		String selected();
+		String selectedBG();
 		String unSelected();
 	}
 	
@@ -163,14 +164,15 @@ public class SSBonusDraft extends Composite {
 		if(canEdit){
 			cleanSelected();
 			setSelected(row);
-		}else
+		}else {
 			cleanSelected();
 			initializePage();
+		}
 	}
 	
 	private void setSelected(int row) {
 		//Set Selected
-		this.listBonusesTable.getWidget(row, 6).addStyleName(style.selected());
+		this.listBonusesTable.getWidget(row, 6).addStyleName(style.selectedBG());
 		this.listBonusesTable.getRowFormatter().addStyleName(row, style.selected());
 	}
 
@@ -178,7 +180,7 @@ public class SSBonusDraft extends Composite {
 		//Set Unselected
 		int rows = this.listBonusesTable.getRowCount();
 		for(int itRow = 0; itRow < rows; itRow++){
-			this.listBonusesTable.getWidget(itRow, 6).removeStyleName(style.selected());
+			this.listBonusesTable.getWidget(itRow, 6).removeStyleName(style.selectedBG());
 			this.listBonusesTable.getRowFormatter().removeStyleName(itRow, style.selected());
 		}
 	}
@@ -238,9 +240,9 @@ public class SSBonusDraft extends Composite {
 			if(checkCommonE.getValue() == true)
 				listCheckTrue.add("CGC");
 			if(checkAccidentC.getValue() == true)
-				listCheckTrue.add("ACC_TRAB_EMPRESA");
+				listCheckTrue.add("(IT_E + IMS_E)");
 			if(checkAccidentE.getValue() == true)
-				listCheckTrue.add("ACC_TRAB_TRABAJADOR");
+				listCheckTrue.add("(IT + IMS)");
 			if(checkUnemploymentC.getValue() == true)
 				listCheckTrue.add("DESMPL_E");
 			if(checkUnemploymentE.getValue() == true)
@@ -469,6 +471,7 @@ public class SSBonusDraft extends Composite {
 			
 			row++;
 		}
+		cleanSelected();
 	}
 	
 	private String parseDate(Date date) {
@@ -498,7 +501,7 @@ public class SSBonusDraft extends Composite {
 
 	private boolean enableEditable(Integer id){
 		SSBonusData bonus = ssBonusDraftObject.getBonus(id);
-//		Window.alert("Id : " + id + ", Bonus : " + bonus);
+//		Window.alert("Id : " + id + ", Bonus : " + bonus.isSystem());
 		if(bonus.isSystem()){
 			cleanPage();
 			WarningDialog warning = new WarningDialog("Aviso", "No se puede modificar una boificaci" + String.valueOf("\u00F3") + "n del sistema.");
@@ -506,6 +509,7 @@ public class SSBonusDraft extends Composite {
 			warning.show();
 			return false;
 		}else{
+//			Window.alert("Id : " + id + ", startDate : " + bonus.getStartDate() + ", endDate : " + bonus.getEndDate() + ", description : " + bonus.getDescription());
 			idBonus.setValue(bonus.getId().toString());
 			startDateBonus.setValue(bonus.getStartDate());
 			endDateBonus.setValue(bonus.getEndDate());
