@@ -4848,6 +4848,24 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 	
+	@Override
+	public List<SSBonusData> getBonusConcepts(String domain) {
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection(domain);
+			return JooqSSBonus.getExistingSSBonus(connection);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if ( connection != null ) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
+	
 	private static boolean notAtEnterpriseSite(){
 		return false;
 	}
@@ -4855,6 +4873,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	private static double getOrZero(Double value) {
 		return value != null ? value : 0.00;
 	}
+
+	
 	
 
 }

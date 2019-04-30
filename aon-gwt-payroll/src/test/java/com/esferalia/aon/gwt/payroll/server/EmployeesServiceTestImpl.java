@@ -605,6 +605,12 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		return null;
 	}
 
+	@Override
+	public List<SSBonusData> getBonusConcepts(String currentDomainName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
 
 	

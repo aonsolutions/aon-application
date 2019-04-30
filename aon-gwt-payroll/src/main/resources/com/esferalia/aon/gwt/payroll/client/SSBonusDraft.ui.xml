@@ -276,7 +276,7 @@
 							    		<g:Label  styleName='{style.firstColumnTextStyle}'>Descripción</g:Label>
 							    	</td>
 							    	<td>
-							    		<g:TextBox ui:field='descriptionBonus' styleName="aon-inputText {style.widthBox}"></g:TextBox>
+							    		<g:SuggestBox ui:field='descriptionBonus' styleName="aon-inputText {style.widthBox}"></g:SuggestBox>
 							    	</td>
 						    	</tr>
 						    	<tr>

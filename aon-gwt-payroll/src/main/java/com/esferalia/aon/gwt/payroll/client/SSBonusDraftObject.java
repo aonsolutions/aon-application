@@ -14,6 +14,7 @@ public class SSBonusDraftObject {
 	Integer contractId = null;
 	DomainEmployeesServiceAsync employeesService = null;
 	List<SSBonusData> ssBonuses;
+	List<SSBonusData> bonusConcepts;
 
 // ------------------------------------------------------ VARIABLES ------------------------------------------------------	
 
@@ -23,6 +24,7 @@ public class SSBonusDraftObject {
 		this.contractId = employee.getId();
 		this.employeesService = employeesService;
 		this.ssBonuses = new ArrayList<SSBonusData>();
+		this.bonusConcepts = new ArrayList<SSBonusData>();
 	}
 	
 	public List<SSBonusData> getBonuses(){
@@ -97,6 +99,16 @@ public class SSBonusDraftObject {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	public List<String> getBonusConceptsDescription(){
+		List<String> bonusConceptsDescription = new ArrayList<String>();
+		
+		for(SSBonusData bonusConcept : this.bonusConcepts) {
+			bonusConceptsDescription.add(bonusConcept.getDescription());
+		}
+	
+		return bonusConceptsDescription;
+	}
 
 	// ---------------------------------------------- DATABASE METHODS SYNC  ---------------------------------------------
 	
@@ -106,7 +118,21 @@ public class SSBonusDraftObject {
 			@Override
 			public void onSuccess(List<SSBonusData> result) {
 				ssBonuses = result;
-				success.accept(result);
+				employeesService.getBonusConcepts(new AsyncCallback<List<SSBonusData>>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void onSuccess(List<SSBonusData> result) {
+						bonusConcepts = result;
+						success.accept(result);
+					}
+					
+				});
 			}
 
 			@Override

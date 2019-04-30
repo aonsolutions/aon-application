@@ -179,4 +179,6 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	EmployeeEventsData getEmployeeEventsByContract(String currentDomainName, Integer contractId,
 			ArrayList<String> employeeContractVariablesDB);
 
+	List<SSBonusData> getBonusConcepts(String currentDomainName);
+
 }

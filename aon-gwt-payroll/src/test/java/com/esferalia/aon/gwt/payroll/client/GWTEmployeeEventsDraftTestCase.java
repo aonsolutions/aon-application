@@ -183,6 +183,14 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 				
 			}
 
+
+
+			@Override
+			public void getBonusConcepts(String currentDomainName, AsyncCallback<List<SSBonusData>> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
 			
 		};
 

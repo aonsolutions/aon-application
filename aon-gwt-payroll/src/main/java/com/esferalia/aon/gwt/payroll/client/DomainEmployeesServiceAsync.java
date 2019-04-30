@@ -408,6 +408,9 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.getEmployeeEventsByContract(getCurrentDomainName(), contractId, employeeContractVariablesDB, callback);
 		
 	}
+	public void getBonusConcepts(AsyncCallback<List<SSBonusData>> callback) {
+		employeesServiceAsync.getBonusConcepts(getCurrentDomainName(), callback);
+	}
 	
 	// ------------------------------------------------------------------------
 	
@@ -425,5 +428,7 @@ public class DomainEmployeesServiceAsync {
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
 	}
+
+	
 
 }

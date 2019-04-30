@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
@@ -22,6 +23,8 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
+import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -68,7 +71,7 @@ public class SSBonusDraft extends Composite {
 	DateBoxEx endDateBonus;
 	
 	@UiField
-	TextBox descriptionBonus;
+	SuggestBox descriptionBonus;
 	
 	@UiField
 	ListBox typeBonus;
@@ -139,7 +142,9 @@ public class SSBonusDraft extends Composite {
 	
 	
 	public SSBonusDraft() {
+		
 		initWidget(uiBinder.createAndBindUi(this));
+		
 	}
 	
 
@@ -334,6 +339,16 @@ public class SSBonusDraft extends Composite {
 	
 	private void initializePage() {
 		cleanPage();
+		
+		//DOCUMENT
+		List<String> ssBonusConcepts = this.ssBonusDraftObject.getBonusConceptsDescription();
+		List<String> ssBonusConceptsSuggest = new ArrayList<String>();
+		for(String ssBonusConcept : ssBonusConcepts)
+			ssBonusConceptsSuggest.add(ssBonusConcept+"");
+		MultiWordSuggestOracle oracleBonusConcepts = (MultiWordSuggestOracle) this.descriptionBonus.getSuggestOracle();
+		oracleBonusConcepts.addAll(ssBonusConceptsSuggest);
+		this.descriptionBonus.setAutoSelectEnabled(true);	
+		
 		initializeListBox();
 		hideAllPanels();
 		showListBonuses();

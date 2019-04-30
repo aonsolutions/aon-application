@@ -628,5 +628,11 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 				new AsyncCallbackWrapper<EmployeeEventsData>(callback));
 	}
 
+	@Override
+	public void getBonusConcepts(String domain, AsyncCallback<List<SSBonusData>> callback) {
+		AON.start();
+		employeesServiceAsync.getBonusConcepts(domain, new AsyncCallbackWrapper<List<SSBonusData>>(callback));
+	}
+
 	
 }

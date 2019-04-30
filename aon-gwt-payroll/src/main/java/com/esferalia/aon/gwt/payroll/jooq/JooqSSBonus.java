@@ -29,6 +29,10 @@ public class JooqSSBonus {
 	public static List<SSBonusData> setSSBonus(Connection conn, Integer contract, List<SSBonusData> updateInfo){
 		return setSSBonusInformation(DSL.using(conn, getDefaultSettings()), contract, updateInfo);
 	}
+	
+	public static List<SSBonusData> getExistingSSBonus(Connection conn) throws IllegalArgumentException {
+		return getExistingSSBonusInformation(DSL.using(conn, getDefaultSettings()));
+	}
 
 	protected static Settings getDefaultSettings() {
 		if (SETTINGS == null) {
@@ -98,24 +102,36 @@ public class JooqSSBonus {
 			.execute();
 		
 		//DELETE all contract bonus from a contract
-		for(Record bonus : contractBonusRecords){
-			//DELETE all bonus concept from a contract
-			dslContext.delete(BONUS_CONCEPT)
-				.where(BONUS_CONCEPT.ID.eq(bonus.get(CONTRACT_BONUS.BONUS_CONCEPT)))
-				.and(BONUS_CONCEPT.DOMAIN.notEqual(0))
-				.execute();
-		}
+//		for(Record bonus : contractBonusRecords){
+//			//DELETE all bonus concept from a contract
+//			dslContext.delete(BONUS_CONCEPT)
+//				.where(BONUS_CONCEPT.ID.eq(bonus.get(CONTRACT_BONUS.BONUS_CONCEPT)))
+//				.and(BONUS_CONCEPT.DOMAIN.notEqual(0))
+//				.execute();
+//		}
 		
 		for(SSBonusData bonus : updateInfo){
 			if(!bonus.isSystem()){
-				BonusConceptRecord bonusConceptRecord = dslContext.insertInto(BONUS_CONCEPT)
-						.set(BONUS_CONCEPT.DOMAIN, domain)
-						.set(BONUS_CONCEPT.EXPRESSION, bonus.getFormula())
-						.set(BONUS_CONCEPT.DESCRIPTION, bonus.getDescription())
-						.set(BONUS_CONCEPT.TYPE, bonus.getType())
-						.returning(BONUS_CONCEPT.ID).fetchOne();
+				int bonusConceptId = 0;
+				
+				Result<Record> existingBonusConcepts = dslContext.select().from(BONUS_CONCEPT)
+						.where(BONUS_CONCEPT.DESCRIPTION.eq(bonus.getDescription()))
+						.fetch();
+				
+				if(existingBonusConcepts.isEmpty()) {
+					BonusConceptRecord bonusConceptRecord = dslContext.insertInto(BONUS_CONCEPT)
+							.set(BONUS_CONCEPT.DOMAIN, domain)
+							.set(BONUS_CONCEPT.EXPRESSION, bonus.getFormula())
+							.set(BONUS_CONCEPT.DESCRIPTION, bonus.getDescription())
+							.set(BONUS_CONCEPT.TYPE, bonus.getType())
+							.returning(BONUS_CONCEPT.ID).fetchOne();
 
-				int bonusConceptId = bonusConceptRecord.getId();
+					bonusConceptId = bonusConceptRecord.getId();
+				}else {
+					bonusConceptId = existingBonusConcepts.get(0).get(BONUS_CONCEPT.ID);
+				}
+				
+				
 				Date startDate = (null == bonus.getStartDate()) ? null : new Date(bonus.getStartDate().getTime());
 				Date endDate = (null == bonus.getEndDate()) ? null : new Date(bonus.getEndDate().getTime());
 				
@@ -145,6 +161,32 @@ public class JooqSSBonus {
 		}
 		
 		return updateInfo;
+	}
+	
+	private static List<SSBonusData> getExistingSSBonusInformation(DSLContext dslContext) {
+		List<SSBonusData> result = new ArrayList<SSBonusData>();
+		
+		Result<Record> bonusConcepts = dslContext.select()
+					.from(BONUS_CONCEPT)
+					.fetch();
+		
+		for(Record bonusConcept : bonusConcepts){
+			SSBonusData bonusData = new SSBonusData();
+			bonusData.setId(bonusConcept.get(BONUS_CONCEPT.ID));
+			bonusData.setSystem((0 == bonusConcept.get(BONUS_CONCEPT.DOMAIN) ? true : false));
+			bonusData.setStartDate(null);
+			bonusData.setEndDate(null);
+			bonusData.setDescription(bonusConcept.get(CONTRACT_BONUS.DESCRIPTION));
+			bonusData.setType(bonusConcept == null ? null : bonusConcept.get(BONUS_CONCEPT.TYPE));
+			bonusData.setFormula(null == bonusConcept.get(BONUS_CONCEPT.EXPRESSION) ? "" : bonusConcept.get(BONUS_CONCEPT.EXPRESSION));
+			
+			//Set Bonus Concept if is sytem
+			bonusData.setBonusConceptId(bonusData.isSystem() ? bonusConcept.get(BONUS_CONCEPT.ID) : null);
+			
+			result.add(bonusData);
+		}
+		
+		return result;
 	}
 
 }

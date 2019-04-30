@@ -202,5 +202,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void getEmployeeEventsByContract(String currentDomainName, Integer contractId,
 			ArrayList<String> employeeContractVariablesDB, AsyncCallback<EmployeeEventsData> callback);
 
+	void getBonusConcepts(String currentDomainName, AsyncCallback<List<SSBonusData>> callback);
+
 	
 }
