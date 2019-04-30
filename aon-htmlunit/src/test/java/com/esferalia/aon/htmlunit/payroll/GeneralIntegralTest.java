@@ -820,8 +820,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calendar.set(2016, Calendar.DECEMBER, 31);
 		Date endDate = calendar.getTime();
 		extra(issueDate, endDate);
-		assertValue("cgcBaseLabel", "");
-		assertValue("cgpBaseLabel", "");
+		assertValue("cgcBaseLabel", "0,00");
+		assertValue("cgpBaseLabel", "0,00");
 		assertValue("totalPaymentsLabel", 1067.40);
 		
 		calendar.set(2016, Calendar.JULY, 15);
@@ -829,8 +829,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calendar.set(2016, Calendar.JUNE, 30);
 		endDate = calendar.getTime();
 		extra(issueDate, endDate);
-		assertValue("cgcBaseLabel", "");
-		assertValue("cgpBaseLabel", "");
+		assertValue("cgcBaseLabel", "0,00");
+		assertValue("cgpBaseLabel", "0,00");
 		assertValue("totalPaymentsLabel", 1067.40/6 + (1067.40*29/30)/6);
 
 		draft("EXTRA, REDEFINIDAS");
@@ -861,8 +861,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calendar.set(2019, Calendar.MAY, 8);
 		endDate = calendar.getTime();
 		extra(issueDate, endDate);
-		assertValue("cgcBaseLabel", "");
-		assertValue("cgpBaseLabel", "");
+		assertValue("cgcBaseLabel", "0,00");
+		assertValue("cgpBaseLabel", "0,00");
 		assertValue("totalPaymentsLabel", prorationBase);
 		
 		
