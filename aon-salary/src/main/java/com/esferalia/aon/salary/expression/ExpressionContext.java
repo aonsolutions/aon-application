@@ -96,7 +96,7 @@ public class ExpressionContext {
 
 	}
 
-	private static class ExpressionResult<V> implements IExpressionVariable<V> {
+	private static class ExpressionResult<V> implements ITimedResult<V>, IExpressionVariable<V> {
 		
 		IExpression expression;
 		ITimedResult<V> result;
@@ -119,6 +119,11 @@ public class ExpressionContext {
 		@Override
 		public Period getPeriod() {
 			return result.getPeriod();
+		}
+		
+		@Override
+		public V getValue() {
+			return getValue(getPeriod());
 		}
 
 		@Override
