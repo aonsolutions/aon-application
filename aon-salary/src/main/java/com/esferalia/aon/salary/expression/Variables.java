@@ -534,8 +534,9 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 			Period intersect = var.getPeriod().intersect(p);
 			if (intersect == null)
 				continue;
-
-			ret.add(new WrapTimedVariable<T>(intersect, (ITimedVariable<T>) var));
+			
+			ret.add(wrapVariable(intersect, (ITimedVariable<T>) var));
+			//ret.add(new WrapTimedVariable<T>(intersect, (ITimedVariable<T>) var));
 		}
 
 		return ret;
@@ -610,11 +611,11 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		return calendar.getTime();
 	}
 	
-	private static ITimedVariable wrapVariable(Period period,
-			ITimedVariable<?> timedVariable) {
+	private static <T> ITimedVariable<T> wrapVariable(Period period,
+			ITimedVariable<T> timedVariable) {
 		return timedVariable instanceof IExpressionVariable<?> ?
-				new WrapExpressionVariable<>(period, (IExpressionVariable<?>)timedVariable):
-				new WrapTimedVariable<>(period, timedVariable);
+				new WrapExpressionVariable<T>(period, (IExpressionVariable<T>)timedVariable):
+				new WrapTimedVariable<T>(period, timedVariable);
 	}
 	
 	private static <T> ITimedVariable<T> wrapVariable(Period period,
@@ -629,8 +630,10 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 				new TimedObject<T>(value, period);
 	}
 
-	private static <T> WrapTimedVariable<T> newWrapTimedVariable(Date start, Date end, ITimedVariable<T> var){
-		return ( var instanceof IConstantVariable ) ? new WrapTimedConstant<T>(start, end, var): new WrapTimedVariable<T>(start, end, var);
+	private static <T> ITimedVariable<T> newWrapTimedVariable(Date start, Date end, ITimedVariable<T> var){
+		return ( var instanceof IExpressionVariable<?> ) ? 
+				new WrapExpressionVariable(start, end, (IExpressionVariable<T>) var) 
+				: (( var instanceof IConstantVariable ) ? new WrapTimedConstant<T>(start, end, var): new WrapTimedVariable<T>(start, end, var));
 	}
 	
 	

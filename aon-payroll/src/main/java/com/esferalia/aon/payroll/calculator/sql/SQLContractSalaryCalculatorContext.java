@@ -4389,7 +4389,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 	
 	private boolean isMonthly() {
-		int lastDayOfMonth = AonDateUtils.get(contractEndDate, Calendar.DAY_OF_MONTH);
+		int lastDayOfMonth = AonDateUtils.get(AonDateUtils.getLastDayOfMonth(contractEndDate), Calendar.DAY_OF_MONTH);
 		
 		ITimedVariable<?> monthDaysVar = null; 
 		try {
@@ -4405,7 +4405,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		if ( monthDaysVar == null )
 			return false;
 		
-		Number monthDays = (Number) monthDaysVar.getValue(monthDaysVar.getPeriod());
+		Number monthDays = 30.00;
+		
+		try {
+			monthDays = (Number) monthDaysVar.getValue(monthDaysVar.getPeriod());
+		}catch ( Exception e ) {
+			
+		}
 		
 		if ( monthDays == null )
 			return false;

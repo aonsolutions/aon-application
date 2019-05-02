@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -97,6 +96,38 @@ public class ExpressionContext {
 
 	}
 
+	private static class ExpressionResult<V> implements IExpressionVariable<V> {
+		
+		IExpression expression;
+		ITimedResult<V> result;
+		
+		public ExpressionResult(ITimedResult<V> result, IExpression expression) {
+			this.result = result;
+			this.expression = expression;
+		}
+
+		@Override
+		public IExpression getExpression() {
+			return expression;
+		}
+
+		@Override
+		public Map<String, ITimedVariable<?>> getContext() {
+			return result.getContext();
+		}
+
+		@Override
+		public Period getPeriod() {
+			return result.getPeriod();
+		}
+
+		@Override
+		public V getValue(Period period) {
+			return result.getValue(period);
+		}
+		
+	}
+
 	public static class RemoveVariableError extends Error {
 
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
@@ -139,8 +170,9 @@ public class ExpressionContext {
 
 			List<ITimedResult<T>> results = context.eval(expression.getExpression(), start, end, toType);
 
+
 			for (ITimedResult<T> result : results)
-				context.putVariable(expression.getName(), result);
+				context.putVariable(expression.getName(), new ExpressionResult<T>(result, expression));
 
 			return results;
 		}
