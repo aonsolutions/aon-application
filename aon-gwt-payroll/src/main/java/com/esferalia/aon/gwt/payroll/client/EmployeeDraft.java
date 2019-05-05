@@ -35,6 +35,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
@@ -488,6 +489,9 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	Label saveStatus;
 	
 	@UiField
+	Button afiButton;
+	
+	@UiField
 	Button redoButton;
 
 	@UiField
@@ -530,6 +534,20 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	
 	// ------------------------------------------------------- UiHandlers --------------------------------------------------------
 
+	@UiHandler("afiButton")
+	void onAFIButtonClick(ClickEvent event) {
+//		Window.alert("Abriendo modal...");
+//		EmployeeAFIDialog dialog = new EmployeeAFIDialog(){
+//
+//			@Override
+//			protected void onAccept() {
+//				Window.alert("Generando fichero AFI...");
+//			}};
+//		dialog.center();
+//		dialog.show();
+		
+	}
+	
 	@UiHandler("undoButton")
 	void onUndoButtonClick(ClickEvent event) {
 		employeeDraftObject.undo();
