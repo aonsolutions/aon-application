@@ -115,6 +115,7 @@ public class TEDI2AON extends HttpServlet{
 					registry = new Registry();
 					registry.setDocument(ti.getReceiver().getDocument());
 					registry.setName(ti.getReceiver().getName());
+					registry.setDomain(domain.getId());
 					registry = AON.insertRegistry(domain.getName(), domain.getId(), login, registry);
 				}
 				customer = new Customer();
@@ -249,7 +250,8 @@ public class TEDI2AON extends HttpServlet{
 		// INVOICE FINANCE
 
 		ti.getFinances().stream().forEach(finance -> {
-			Finance f = new Finance().setDomain(domain.getId())
+			Finance f = new Finance()
+					.setDomain(domain.getId())
 					.setPayment(TediInvoiceType.RECEIVED.equals(ti.getType()) ? true : false)
 					.setInvoice(new Invoice().setId(invoiceId)).setScope(scope)
 					.setDueDate(finance.getDueDate())
@@ -327,6 +329,5 @@ public class TEDI2AON extends HttpServlet{
 		JSONObject aon = ti.getProperty("aon");
 	
 		System.out.println(aon.length() > 0);
-	
 	}
 }
