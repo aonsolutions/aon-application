@@ -159,12 +159,12 @@ public class JooqActivity {
 		
 		//ENTERPRISE_ACTIVITY
 		
-			//Check if this activity is principal
-			if(activityInfo.getActive())
-				dslContext.update(ENTERPRISE_ACTIVITY)
-					.set(ENTERPRISE_ACTIVITY.PRINCIPAL, (byte)0)
-					.where(ENTERPRISE_ACTIVITY.ENTERPRISE.eq(activityInfo.getEnterprise()))
-					.execute();
+		//Check if this activity is principal
+		if(activityInfo.getActive())
+			dslContext.update(ENTERPRISE_ACTIVITY)
+				.set(ENTERPRISE_ACTIVITY.PRINCIPAL, (byte)0)
+				.where(ENTERPRISE_ACTIVITY.ENTERPRISE.eq(activityInfo.getEnterprise()))
+				.execute();
 		
 		
 		dslContext.update(ENTERPRISE_ACTIVITY)
@@ -182,6 +182,7 @@ public class JooqActivity {
 				.fetchOne();
 		
 		Integer parentDomain = domainRecord.get(DOMAIN.PARENT);
+		Boolean hasHerefity = domainRecord.get(DOMAIN.ENABLEHEREDITY) == (byte)0 ? false : true;
 		
 		//ENTERPRISE_CCC
 		for(Integer cccId : activityInfo.getDeleteCccs().keySet())
@@ -194,24 +195,35 @@ public class JooqActivity {
 			CCCInfo cccInfo = entry.getValue();
 			
 			Result<Record> geozoneRecords = null;
-			if(null == parentDomain) {
+			
+			if(hasHerefity) {
+				geozoneRecords = dslContext.select().from(GEOZONE)
+						.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
+						.and(GEOZONE.DOMAIN.eq(parentDomain))
+						.fetch();
+			}else {
 				geozoneRecords = dslContext.select().from(GEOZONE)
 						.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
 						.and(GEOZONE.DOMAIN.eq(activityInfo.getDomain()))
 						.fetch();
-			}else {
-				geozoneRecords = dslContext.select().from(GEOZONE)
-						.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
-						.and(GEOZONE.DOMAIN.eq(activityInfo.getDomain()).or(GEOZONE.DOMAIN.eq(parentDomain)))
-						.fetch();
 			}
-			
 			
 			Integer geozoneId = 0;
 			if(null == geozoneRecords || geozoneRecords.isEmpty()) {
 				//TODO: No existe este geozone
+				Result<Record> gezoneRecordsInfo = dslContext.select().from(GEOZONE)
+						.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
+						.fetch();
+				
+				geozoneId = dslContext.insertInto(GEOZONE)
+						.set(GEOZONE.DOMAIN, activityInfo.getDomain())
+						.set(GEOZONE.NAME, gezoneRecordsInfo.get(0).get(GEOZONE.NAME))
+						.set(GEOZONE.CODE, gezoneRecordsInfo.get(0).get(GEOZONE.CODE))
+						.returning(GEOZONE.ID)
+						.fetchOne().get(GEOZONE.ID);
 			}else {
 				geozoneId = geozoneRecords.get(0).get(GEOZONE.ID);
+				
 			}
 			
 			if(cccId >= 0) {
@@ -272,27 +284,39 @@ public class JooqActivity {
 				.fetchOne();
 		
 		Integer parentDomain = domainRecord.get(DOMAIN.PARENT);
+		Boolean hasHerefity = domainRecord.get(DOMAIN.ENABLEHEREDITY) == (byte)0 ? false : true;
 		
 		//ENTERPRISE_CCC
 		for(Entry<Integer, CCCInfo> entry : activityInfo.getCccs().entrySet()) {
 			CCCInfo cccInfo = entry.getValue();
 			
 			Result<Record> geozoneRecords = null;
-			if(null == parentDomain) {
+			
+			if(hasHerefity) {
 				geozoneRecords = dslContext.select().from(GEOZONE)
 						.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
-						.and(GEOZONE.DOMAIN.eq(activityInfo.getDomain()))
+						.and(GEOZONE.DOMAIN.eq(parentDomain))
 						.fetch();
 			}else {
 				geozoneRecords = dslContext.select().from(GEOZONE)
 						.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
-						.and(GEOZONE.DOMAIN.eq(activityInfo.getDomain()).or(GEOZONE.DOMAIN.eq(parentDomain)))
+						.and(GEOZONE.DOMAIN.eq(activityInfo.getDomain()))
 						.fetch();
 			}
 			
 			Integer geozoneId = 0;
 			if(null == geozoneRecords || geozoneRecords.isEmpty()) {
 				//TODO: No existe este geozone
+				Result<Record> gezoneRecordsInfo = dslContext.select().from(GEOZONE)
+						.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
+						.fetch();
+				
+				geozoneId = dslContext.insertInto(GEOZONE)
+						.set(GEOZONE.DOMAIN, activityInfo.getDomain())
+						.set(GEOZONE.NAME, gezoneRecordsInfo.get(0).get(GEOZONE.NAME))
+						.set(GEOZONE.CODE, gezoneRecordsInfo.get(0).get(GEOZONE.CODE))
+						.returning(GEOZONE.ID)
+						.fetchOne().get(GEOZONE.ID);
 			}else {
 				geozoneId = geozoneRecords.get(0).get(GEOZONE.ID);
 			}
