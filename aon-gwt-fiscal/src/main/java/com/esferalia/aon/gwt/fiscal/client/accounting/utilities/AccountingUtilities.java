@@ -168,6 +168,15 @@ public class AccountingUtilities extends MainEntryPoint{
 				}
 			});
 			
+			InputVatRegenerator inputVatRegenerator = new InputVatRegenerator(getDomainName(),getUser(),domain);
+			utilitiesPanel.add(inputVatRegenerator.getSidebarWidget());
+			inputVatRegenerator.addSelectionHandler( new SelectionHandler<AccountingUtilities.IOption>() {
+				@Override
+				public void onSelection(SelectionEvent<IOption> event) {
+					content.setWidget( inputVatRegenerator );
+					inputVatRegenerator.run();
+				}
+			});
 		}
 		
 		if (domain.isParent()) {

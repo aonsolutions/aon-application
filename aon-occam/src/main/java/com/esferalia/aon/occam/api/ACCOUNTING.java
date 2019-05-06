@@ -658,6 +658,28 @@ public class ACCOUNTING {
 		}
 	}
 
+	public static AccUtilitiesResult getInputVatRegenerationInfo(String domainName, String user, Integer domain) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getAccounting().getInputVatRegenerationInfo(ctx);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static AccUtilitiesResult regenerateInputVat(String domainName, String user, Integer domain, Integer year) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getAccounting().regenerateInputVat(ctx,year);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	public static AccountOperatingReport getAccountOperatingReport(String domainName, String user, int domain,
 			AccountingReportParams params) {
 		AONContext ctx = null;

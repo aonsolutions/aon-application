@@ -71,18 +71,26 @@ public class VatManager {
 		Criteria criteria = getCriteria(params);
 		List<ITransferObject> list = bean.getList(criteria); 
 	    int i = params.getFirstNumber() + params.getCount() - 1;
+	    int idx = 0;
+	    System.out.print( "Invoice renumeration ---> ");
 	    for (ITransferObject to : list ) {
 	    	Invoice invoice = (Invoice) to;
 	    	String oldDoument = invoice.getDocumentNumber();
 	    	invoice.setSeries(params.getSeries().getCode());
 	    	invoice.setNumber(i);
+	    	invoice.setUpdateEnabled(!invoice.isRecorded());
 	    	invoice = (Invoice) bean.update(invoice);
 	    	String newDocument = invoice.getDocumentNumber();
 	    	if (invoice.getStatus() == InvoiceStatus.SCORED) {
 	    		updateAccountEntryDetail(oldDoument, newDocument);
 	    	}
 			i--;
+			idx++;
+			if (idx %50 == 0) {
+				System.out.print( ".");
+			}
 	    }
+		System.out.println( "Done!");
 	}
 
 	private void updateAccountEntryDetail(String oldDoument, String newDocument) throws ManagerBeanException {

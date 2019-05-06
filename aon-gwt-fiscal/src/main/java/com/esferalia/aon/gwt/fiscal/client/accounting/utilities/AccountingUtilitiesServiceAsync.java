@@ -39,5 +39,8 @@ public interface AccountingUtilitiesServiceAsync {
 	void getJournalRegenerationInfo(String domainName, String user, Integer domain, AsyncCallback<AccUtilitiesResult> callback);
 	void regenerateJournal(String domainName, String user, Integer domain, Integer accuountPeriod, AsyncCallback<AccUtilitiesResult> callback);
 
+	// Regeneracion del numero de diario
+	void getInputVatRegenerationInfo(String domainName, String user, Integer domain, AsyncCallback<AccUtilitiesResult> callback);
+	void regenerateInputVat(String domainName, String user, Integer domain, Integer year, AsyncCallback<AccUtilitiesResult> callback);
 	
 }

@@ -113,6 +113,18 @@ public class AccountingUtilitiesServiceAsyncDecorator implements AccountingUtili
 		fsa.regenerateJournal(domainName, user, domain,accuountPeriod, new AsyncCallbackWrapper<AccUtilitiesResult>(callback));
 	}
 
+	// Regeneracion del numero de diario
+	@Override
+	public void getInputVatRegenerationInfo(String domainName, String user, Integer domain, AsyncCallback<AccUtilitiesResult> callback) {
+		AON.start();
+		fsa.getInputVatRegenerationInfo(domainName, user, domain, new AsyncCallbackWrapper<AccUtilitiesResult>(callback));
+	}
+
+	@Override
+	public void regenerateInputVat(String domainName, String user, Integer domain, Integer year, AsyncCallback<AccUtilitiesResult> callback) {
+		AON.start();
+		fsa.regenerateInputVat(domainName, user, domain,year, new AsyncCallbackWrapper<AccUtilitiesResult>(callback));
+	}
 
 
 

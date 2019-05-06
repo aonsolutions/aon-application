@@ -93,5 +93,14 @@ public class AccountingUtilitiesServiceImpl extends AonRemoteServiceServlet impl
 		return ACCOUNTING.regenerateJournal(domainName,user,domain,accuountPeriod);
 	}
 
+	@Override
+	public AccUtilitiesResult getInputVatRegenerationInfo(String domainName, String user, Integer domain) throws AonCoreException {
+		return ACCOUNTING.getInputVatRegenerationInfo(domainName,user,domain);
+	}
+
+	@Override
+	public AccUtilitiesResult regenerateInputVat(String domainName, String user, Integer domain, Integer year) throws AonCoreException {
+		return ACCOUNTING.regenerateInputVat(domainName,user,domain,year);
+	}
 
 }

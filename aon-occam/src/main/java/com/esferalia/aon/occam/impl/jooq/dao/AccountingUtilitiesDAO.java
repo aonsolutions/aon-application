@@ -9,6 +9,8 @@ import static com.esferalia.aon.jooq.tables.Amortization.AMORTIZATION;
 import static com.esferalia.aon.jooq.tables.BankConcept.BANK_CONCEPT;
 import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
+import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
+import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.InvoiceTaxAccount.INVOICE_TAX_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Loan.LOAN;
@@ -20,6 +22,8 @@ import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.Tax.TAX;
 
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
@@ -28,6 +32,7 @@ import java.util.function.Predicate;
 import org.jooq.AggregateFunction;
 import org.jooq.Condition;
 import org.jooq.Field;
+import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -40,11 +45,14 @@ import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesErrorI
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesInfoItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesNoLowLevelAccountItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesRegenerateInputVatItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesRegenerateJournalItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesUnbalancedEntryItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccountLinkerItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.IAccUtilitiesItem.AccUtilitiesItemType;
+import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
+import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
@@ -52,11 +60,15 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.CreditorStatus;
 import com.esferalia.aon.occam.api.model.type.CustomerStatus;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SupplierStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountValidation;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableInt;
+import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -849,4 +861,150 @@ public class AccountingUtilitiesDAO {
 		return result;
 	}
 	
+	private static Field<Integer> INVOICE_COUNT_FIELD = DSL.count(INVOICE.ID);
+	private static Field<Integer> INVOICE_YEAR_FIELD = DSL.year(INVOICE.ISSUE_DATE);
+	private static Field<Integer> INVOICE_MAX_NUMBER = DSL.max(INVOICE.NUMBER);
+	
+	public static AccUtilitiesResult getInputVatRegenerationInfo(AONContext ctx) {
+		AccUtilitiesResult result = new AccUtilitiesResult();
+		ctx.getDslContext()
+			.select( INVOICE_COUNT_FIELD, INVOICE_YEAR_FIELD , INVOICE_MAX_NUMBER)
+			.from(INVOICE)
+			.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
+			.and(INVOICE.TYPE.in( InvoiceType.PURCHASE.value(),InvoiceType.EXPENSES.value()))
+			.groupBy(INVOICE_YEAR_FIELD)
+			.orderBy(INVOICE_YEAR_FIELD)
+			.fetch()
+			.stream()
+			.forEach( rec -> {
+				Date from = AonDateUtils.getYearFirstDay( rec.get(INVOICE_YEAR_FIELD) );
+				Date to = AonDateUtils.getYearLastDay( rec.get(INVOICE_YEAR_FIELD) );
+				LinkedList<InvoiceSeries> series = InvoiceDAO.getInvoiceSeries(ctx, from, to, false);
+				StringBuffer msg = new StringBuffer();
+				boolean regenerable = false;
+				for (InvoiceSeries invoiceSeries : series) {
+					if (!invoiceSeries.isSales() && invoiceSeries.isSeriesInfo()) {
+						msg.append(invoiceSeries.getDescription());
+						msg.append("|");
+						msg.append(invoiceSeries.getCount());
+						msg.append("|");
+						msg.append(invoiceSeries.getFromNumber());
+						msg.append("|");
+						msg.append(invoiceSeries.getToNumber());
+						msg.append("#");
+						regenerable = regenerable || !AonNumberUtils.equals(invoiceSeries.getCount(),invoiceSeries.getToNumber());					
+					}
+				}
+				int count = rec.get(INVOICE_COUNT_FIELD);
+				int max = rec.get(INVOICE_MAX_NUMBER);
+				result.add( new  AccUtilitiesRegenerateInputVatItem()
+						.setDomain(ctx.getDomainId())
+						.setYear(rec.get(INVOICE_YEAR_FIELD)) 
+						.setMessage(msg.toString())
+						.setRegenerable( regenerable )
+						);
+			});
+		;
+		return result;
+	}
+	
+	public static AccUtilitiesResult regenerateInputVat(AONContext ctx, Integer year) {
+		try {
+			java.sql.Date first = AonDateUtils.toSql( AonDateUtils.getYearFirstDay(year));
+			java.sql.Date last = AonDateUtils.toSql( AonDateUtils.getYearLastDay(year));
+
+			MutableInt rectificativeInvoices = new MutableInt(0);
+			MutableInt invoices = new MutableInt(0);
+			MutableInt entries = new MutableInt(0);
+			MutableInt finances = new MutableInt(0);
+			
+			MutableInt rectificativeNumber = new MutableInt(1);
+			MutableInt commonNumber = new MutableInt(1);
+			
+			HashMap<String,String> documents = new HashMap<String,String>(); 
+			ctx.getDslContext()
+				.select( INVOICE.ID, INVOICE.TYPE, INVOICE.SERIES,INVOICE.NUMBER,INVOICE.RECTIFICATION_TYPE)
+				.from(INVOICE)
+				.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
+				.and(INVOICE.ISSUE_DATE.between(first, last))
+				.and(INVOICE.TYPE.in( InvoiceType.PURCHASE.value(),InvoiceType.EXPENSES.value()))
+				.orderBy(INVOICE.ISSUE_DATE, INVOICE.ID)
+				.fetch()
+				.stream()
+				.forEach( rec -> {
+					InvoiceType type = AonEnumUtils.enumValue(InvoiceType.class,rec.getValue(INVOICE.TYPE));
+					RectificationType rectificationType = AonEnumUtils.enumValue(RectificationType.class,rec.getValue(INVOICE.RECTIFICATION_TYPE));
+					boolean rect = (rectificationType == RectificationType.NORMAL_RECTIFIER || rectificationType == RectificationType.SPECIAL_RECTIFIER); 
+					String series = rec.getValue(INVOICE.SERIES);
+					String newSeries = (rect?"R":"") + AonNumberUtils.toString(year);
+					String fakeSeries = (rect?"RWORK":"WORK");
+					Integer oldNumber = rec.getValue(INVOICE.NUMBER);
+					Integer newNumber = rect?rectificativeNumber.intValue():commonNumber.intValue();
+					String oldDocument = FinanceUtil.getDocumentNumber(type, series, oldNumber);
+					String newDocument = FinanceUtil.getDocumentNumber(type, newSeries, newNumber);
+					documents.put(oldDocument, newDocument);
+					int modified = ctx.getDslContext()
+							.update(FINANCE)
+							.set(FINANCE.CONCEPT, newDocument)
+							.where(FINANCE.INVOICE.eq(rec.getValue(INVOICE.ID)))
+							.and(FINANCE.DOMAIN.eq(ctx.getDomainId()))
+							.and(FINANCE.CONCEPT.eq(oldDocument))
+							.execute();
+					finances.add(modified);
+					modified = ctx.getDslContext()
+						.update(INVOICE)
+						.set(INVOICE.SERIES, fakeSeries)
+						.set(INVOICE.NUMBER, newNumber)
+						.where(INVOICE.ID.eq(rec.getValue(INVOICE.ID)))
+						.execute();
+					(rect?rectificativeNumber:commonNumber).increment();
+					(rect?rectificativeInvoices:invoices).add(modified);
+				});
+			if (documents.size() > 0 ) {
+				ctx.getDslContext()
+					.select( ACCOUNT_ENTRY_DETAIL.ID,ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER)
+					.from(ACCOUNT_ENTRY_DETAIL)
+					.where(ACCOUNT_ENTRY_DETAIL.DOMAIN.eq(ctx.getDomainId()))
+					.fetch()
+					.stream()
+					.forEach( rec -> {
+						String entryDocument = rec.get(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER);
+						if (documents.containsKey(entryDocument)) {
+							Integer entryID = rec.get(ACCOUNT_ENTRY_DETAIL.ID);	
+							int modified = ctx.getDslContext()
+								.update(ACCOUNT_ENTRY_DETAIL)
+								.set(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER,documents.get(entryDocument))
+								.where(ACCOUNT_ENTRY_DETAIL.ID.eq(entryID))
+								.execute();
+							entries.add(modified);
+						}
+					});
+			}
+			int modified = ctx.getDslContext()
+					.update(INVOICE)
+					.set(INVOICE.SERIES, AonNumberUtils.toString(year))
+					.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
+					.and(INVOICE.ISSUE_DATE.between(first, last))
+					.and(INVOICE.TYPE.in( InvoiceType.PURCHASE.value(),InvoiceType.EXPENSES.value()))
+					.and(INVOICE.SERIES.eq("WORK"))
+					.execute();
+			modified = ctx.getDslContext()
+					.update(INVOICE)
+					.set(INVOICE.SERIES, "R"+AonNumberUtils.toString(year))
+					.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
+					.and(INVOICE.ISSUE_DATE.between(first, last))
+					.and(INVOICE.TYPE.in( InvoiceType.PURCHASE.value(),InvoiceType.EXPENSES.value()))
+					.and(INVOICE.SERIES.eq("RWORK"))
+					.execute();
+			AccUtilitiesResult result = new AccUtilitiesResult();
+			result.addInfoMessage("Se han modificado " + (invoices.intValue() + rectificativeInvoices.intValue()) + " facturas "
+			+ (rectificativeInvoices.intValue() > 0?" (" + rectificativeInvoices.intValue() + " rectificativas)":"")
+			+ (finances.intValue() > 0?" ," + (finances.intValue() + " vencimientos"):"")
+			+ " y " + entries.intValue() + " l\u00EDneas de apuntes contables.");
+			return result;
+		} catch (DataAccessException dae) {
+			throw new AonCoreException(dae.getMessage(),dae); 
+		}
+		
+	}
 } 

@@ -108,6 +108,8 @@ public interface IAccounting {
 	public Account createAndLinkAccount(AONContext ctx, AccountingRegistryType registryType, Integer registryId);
 	public AccUtilitiesResult getJournalRegenerationInfo(AONContext ctx);
 	public AccUtilitiesResult regenerateJournal(AONContext ctx, Integer accuountPeriod);
+	public AccUtilitiesResult getInputVatRegenerationInfo(AONContext ctx);
+	public AccUtilitiesResult regenerateInputVat(AONContext ctx, Integer year);
 	
 	
 }

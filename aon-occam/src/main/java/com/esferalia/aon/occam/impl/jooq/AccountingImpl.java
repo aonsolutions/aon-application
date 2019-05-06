@@ -406,4 +406,16 @@ public class AccountingImpl implements IAccounting {
 			 );		
 	}
 		
+	@Override
+	public AccUtilitiesResult getInputVatRegenerationInfo(AONContext ctx) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> AccountingUtilitiesDAO.getInputVatRegenerationInfo(ctx)
+			 );		
+	}
+	@Override
+	public AccUtilitiesResult regenerateInputVat(AONContext ctx, Integer year) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> AccountingUtilitiesDAO.regenerateInputVat(ctx,year)
+			 );		
+	}
 }

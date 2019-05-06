@@ -43,4 +43,7 @@ public interface AccountingUtilitiesService extends RemoteService {
 	AccUtilitiesResult getJournalRegenerationInfo(String domainName, String user, Integer domain) throws AonCoreException;
 	AccUtilitiesResult regenerateJournal(String domainName, String user, Integer domain, Integer accuountPeriod) throws AonCoreException;
 	
+	// Regeneracion del IVA soportado
+	AccUtilitiesResult getInputVatRegenerationInfo(String domainName, String user, Integer domain) throws AonCoreException;
+	AccUtilitiesResult regenerateInputVat(String domainName, String user, Integer domain, Integer year) throws AonCoreException;
 }
