@@ -30,6 +30,21 @@ public abstract class EmployeeAFIDialog extends CustomDialog {
 	}
 	
 	@UiField
+	CheckBox startContractCkBox;
+	
+	@UiField
+	CheckBox endContractCkBox;
+	
+	@UiField
+	CheckBox changeContractCkBox;
+	
+	@UiField
+	CheckBox quoteContractCkBox;
+	
+	@UiField
+	CheckBox ocupationContractCkBox;
+	
+	@UiField
 	Button acceptButton;
 	
 	@UiField
@@ -61,5 +76,25 @@ public abstract class EmployeeAFIDialog extends CustomDialog {
 	}
 
 	protected abstract void onAccept();
+	
+	public boolean isStartContract() {
+		return startContractCkBox.getValue();
+	}
+	
+	public boolean isEndContract() {
+		return endContractCkBox.getValue();
+	}
+	
+	public boolean isChangeContract() {
+		return changeContractCkBox.getValue();
+	}
+	
+	public boolean isQuoteContract() {
+		return quoteContractCkBox.getValue();
+	}
+	
+	public boolean isOcupationContract() {
+		return ocupationContractCkBox.getValue();
+	}
 
 }

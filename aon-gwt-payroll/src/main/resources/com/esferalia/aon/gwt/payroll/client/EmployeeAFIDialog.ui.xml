@@ -74,7 +74,7 @@
 	                    <g:Label>Alta contrato</g:Label>
 	                </td>
 	                <td>
-	                    <g:CheckBox></g:CheckBox>
+	                    <g:CheckBox ui:field="startContractCkBox"></g:CheckBox>
 	                </td>
 	            </tr>
 	            <tr>
@@ -82,7 +82,7 @@
 	                    <g:Label>Baja contrato</g:Label>
 	                </td>
 	                <td>
-	                    <g:CheckBox></g:CheckBox>
+	                    <g:CheckBox ui:field="endContractCkBox"></g:CheckBox>
 	                </td>
 	            </tr>
 	            <tr>
@@ -90,7 +90,7 @@
 	                    <g:Label>Tipo contrato</g:Label>
 	                </td>
 	                <td>
-	                    <g:CheckBox></g:CheckBox>
+	                    <g:CheckBox ui:field="changeContractCkBox"></g:CheckBox>
 	                </td>
 	            </tr>
 	            <tr>
@@ -98,7 +98,7 @@
 	                    <g:Label>Grupo cotización</g:Label>
 	                </td>
 	                <td>
-	                    <g:CheckBox></g:CheckBox>
+	                    <g:CheckBox ui:field="quoteContractCkBox"></g:CheckBox>
 	                </td>
 	            </tr>
 	            <tr>
@@ -106,7 +106,7 @@
 	                    <g:Label>Ocupación</g:Label>
 	                </td>
 	                <td>
-	                    <g:CheckBox></g:CheckBox>
+	                    <g:CheckBox ui:field="ocupationContractCkBox"></g:CheckBox>
 	                </td>
 	            </tr>
 	        </tbody>

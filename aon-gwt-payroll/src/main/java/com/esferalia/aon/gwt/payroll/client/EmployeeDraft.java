@@ -536,15 +536,32 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 
 	@UiHandler("afiButton")
 	void onAFIButtonClick(ClickEvent event) {
-//		Window.alert("Abriendo modal...");
-//		EmployeeAFIDialog dialog = new EmployeeAFIDialog(){
-//
-//			@Override
-//			protected void onAccept() {
+		EmployeeAFIDialog dialog = new EmployeeAFIDialog(){
+
+			@Override
+			protected void onAccept() {
 //				Window.alert("Generando fichero AFI...");
-//			}};
-//		dialog.center();
-//		dialog.show();
+//				
+//				String fileDownloadURL = GWT.getModuleBaseURL()+ "/employee_afi/"
+//						+ "?domainId=" + employeeDraftObject.getDomainId()
+//						+ "&contractId=" + employeeDraftObject.getContractId()
+//			            + "&workplaceId=" + employeeDraftObject.getContractWorkplace()
+//			            + "&ccc=" + employeeDraftObject.getContractWorkplace()
+//			            + "&isStartContract= " + (isStartContract() ? 1 : 0)
+//			            + "&isEndContract= " + (isEndContract() ? 1 : 0)
+//			            + "&isChangeContract= " + (isChangeContract() ? 1 : 0)
+//			            + "&isQuoteContract= " + (isQuoteContract() ? 1 : 0)
+//			            + "&isOcupationContract= " + (isOcupationContract() ? 1 : 0)
+//				        ;
+//				
+////				Window.alert(fileDownloadURL);
+//				
+//				Window.open(fileDownloadURL, "_blank", null);
+			}
+		};
+			
+		dialog.center();
+		dialog.show();
 		
 	}
 	

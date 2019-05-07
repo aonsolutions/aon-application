@@ -74,6 +74,14 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	
 	//CONTRACT TABLE
 	
+	public Integer getContractId(){
+		return this.contractData.getContractId();
+	}
+	
+	public Integer getDomainId(){
+		return this.employeeData.getDomain();
+	}
+	
 	public Boolean hasPayroll(){
 		return this.contractData.hasPayroll();
 	}
