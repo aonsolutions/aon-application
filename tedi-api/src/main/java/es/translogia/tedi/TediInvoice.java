@@ -12,8 +12,7 @@ import org.json.JSONObject;
 
 public class TediInvoice {
 
-	public static final String SRC = "https://europe-west1-tedicenter.cloudfunctions.net";
-	public static final String SRC_SNAPSHOT = "https://europe-west1-tedi-snapshot.cloudfunctions.net";
+	public static final String SRC = "/invoice";
 
 	public TediInvoice() {}
 
@@ -24,22 +23,21 @@ public class TediInvoice {
 
 		this.series = json.optString("series");
 		this.number = json.optInt("number");
-		this.date = dateTimeParse(json.getString("date"));
+		this.date = dateTimeParse(json.optString("date"));
 		this.reference = json.optString("reference");
-		this.type = TediInvoiceType.getTediInvoiceType(json.getString("type"));
+		this.type = TediInvoiceType.getTediInvoiceType(json.optString("type"));
 		this.sender = new TediRegistry(json.optJSONObject("sender"));
 		this.receiver = new TediRegistry(json.optJSONObject("receiver"));
 		this.source = json.optString("source");
 		this.status = json.optString("status");
-		this.total = json.getDouble("total");
+		this.total = json.optDouble("total");
 		this.comments = json.optString("comments");
 		this.taxes = json.opt("taxes") != null ? StreamSupport.stream(json.optJSONArray("taxes").spliterator(), false).map(r -> new TediTax((JSONObject) r))
 				.collect(Collectors.toCollection(LinkedList::new)): null;
 		this.details = json.opt("details") != null ? StreamSupport.stream(json.optJSONArray("details").spliterator(), false).map(r -> new TediDetail((JSONObject) r))
 				.collect(Collectors.toCollection(LinkedList::new)) : null;
 		this.finances = json.opt("finances") != null ? StreamSupport.stream(json.optJSONArray("finances").spliterator(), false).map(r -> new TediFinance((JSONObject) r))
-		.collect(Collectors.toCollection(LinkedList::new)) : null;
-		this.date = json.opt("date") != null ? TediDateUtils.parse(json.optString("date"), "dd/MM/yyyy") : null;
+		.collect(Collectors.toCollection(LinkedList::new)) : null;		
 		this.category = json.optString("category");
 		this.transaction = TediTransaction.getTediInvoiceType(json.getString("transaction"));
 		this.investment = json.optBoolean("investment");
@@ -273,11 +271,7 @@ public class TediInvoice {
 	}
 	
 	public JSONObject getJSON() {
-		JSONObject info = new JSONObject();
-		JSONObject json =  new JSONObject()
-				.put("company", getCompany())
-				.put("number", getNumber())
-				.put("info", info);
+		JSONObject json =  new JSONObject();
 		
 		getProperties().keySet().stream().forEach(key -> {
 			json.put(key, getProperties().get(key));

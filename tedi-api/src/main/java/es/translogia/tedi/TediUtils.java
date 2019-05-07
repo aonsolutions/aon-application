@@ -8,8 +8,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class TediUtils extends TediRequest{
-	public static final String AUTH = "https://api.tedi.center/auth";
+	
+	public static final String AUTH = TEDI + "/auth";
 
+	
 	private String token; 
 	
 	public static TediUtils getInstance(String email, String password) {
@@ -40,76 +42,77 @@ public class TediUtils extends TediRequest{
 	// INVOICE
 
 	public LinkedList<TediInvoice> getInvoices(String company){
-		JSONArray array = getArray(TediInvoice.SRC + "/" + company, getToken());
+		// TODO TEDI - AÑADIR FILTRO
+		JSONArray array = getArray(TEDI + TediInvoice.SRC, getToken());
 		return StreamSupport.stream(array.spliterator(), false).map(r -> new TediInvoice((JSONObject) r))
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	public TediInvoice getInvoice(String company, Integer number) {
-		JSONObject json = getObject(TediUser.SRC + "/" + company + "/" + number, getToken());
+	public TediInvoice getInvoice(String uuid) {
+		JSONObject json = getObject(TEDI + TediInvoice.SRC + "/" + uuid, getToken());
 		return new TediInvoice(json);
 	}
 	
 	public TediInvoice createInvoice(TediInvoice invoice) {
-		return new TediInvoice(postObject(TediInvoice.SRC, getToken(), invoice.getJSON().toString()));
+		return new TediInvoice(postObject(TEDI + TediInvoice.SRC, getToken(), invoice.getJSON().toString()));
 	}
 	
 	public TediInvoice updateInvoice(TediInvoice invoice) {
-		return createInvoice(invoice);
+		return new TediInvoice(postObject(TEDI + TediInvoice.SRC + "/" + invoice.getUuid(), getToken(), invoice.getJSON().toString()));
 	}
 	
-	public TediInvoice deleteInvoice(String company, Integer number) {
-		return new TediInvoice(delete(TediInvoice.SRC + "/" + company + "/" + number , getToken()));
+	public TediInvoice deleteInvoice(String uuid) {
+		return new TediInvoice(delete(TEDI + TediInvoice.SRC + "/" + uuid, getToken()));
 	}
 	
 	// USER
 	
 	public LinkedList<TediUser> getUsers() {
-		JSONArray array = getArray(TediUser.SRC, getToken());
+		JSONArray array = getArray(TEDI + TediUser.SRC, getToken());
 		return StreamSupport.stream(array.spliterator(), false).map(r -> new TediUser((JSONObject) r))
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	public TediUser getUser(String email) {
-		JSONObject json = getObject(TediUser.SRC, getToken());
+		JSONObject json = getObject(TEDI + TediUser.SRC + "/" + email, getToken());
 		return new TediUser(json);
 	}
 
 	public TediUser createUser(TediUser user) {
-		return new TediUser(postObject(TediUser.SRC, getToken(), user.getJSON().toString()));
+		return new TediUser(postObject(TEDI + TediUser.SRC, getToken(), user.getJSON().toString()));
 	}
 	
 	public TediUser updateUser(TediUser user) {
-		return new TediUser(put(TediUser.SRC + "/" + user.getEmail(), getToken(), user.getJSON().toString()));
+		return new TediUser(put(TEDI + TediUser.SRC + "/" + user.getEmail(), getToken(), user.getJSON().toString()));
 	}
 	
 	public TediUser removeUser(String email) {
-		return new TediUser(delete(TediUser.SRC + "/" + email , getToken()));
+		return new TediUser(delete(TEDI + TediUser.SRC + "/" + email , getToken()));
 	}
 	
 	// COMPANY
 	
 	public LinkedList<TediCompany> getCompanies() {
-		JSONArray array = getArray(TediCompany.SRC, getToken());
+		JSONArray array = getArray(TEDI + TediCompany.SRC, getToken());
 		return StreamSupport.stream(array.spliterator(), false).map(r -> new TediCompany((JSONObject) r))
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	public TediCompany getCompany(String document) {
-		JSONObject json = getObject(TediCompany.SRC, getToken());
+		JSONObject json = getObject(TEDI + TediCompany.SRC + "/" + document, getToken());
 		return new TediCompany(json);
 	}
 	
 	public TediCompany createCompany(TediCompany company) {
-		return new TediCompany(postObject(TediCompany.SRC, getToken(), company.getJSON().toString()));
+		return new TediCompany(postObject(TEDI + TediCompany.SRC, getToken(), company.getJSON().toString()));
 	}
 	
 	public TediCompany updateCompany(TediCompany company) {
-		return new TediCompany(put(TediCompany.SRC + "/" + company.getDocument(), getToken(), company.getJSON().toString()));
+		return new TediCompany(put(TEDI + TediCompany.SRC + "/" + company.getDocument(), getToken(), company.getJSON().toString()));
 	}
 	
 	public TediCompany removeCompany(String document) {
-		return new TediCompany(delete(TediCompany.SRC + "/" + document , getToken()));
+		return new TediCompany(delete(TEDI + TediCompany.SRC + "/" + document , getToken()));
 	}
 	
 	

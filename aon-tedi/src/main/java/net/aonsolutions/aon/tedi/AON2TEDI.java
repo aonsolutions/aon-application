@@ -134,14 +134,7 @@ public class AON2TEDI extends HttpServlet{
 		});
 		ti.setTaxes(taxes);
 		
-		
-		JSONObject aon = new JSONObject()
-				.put("domain_name", domain.getName())
-				.put("domain_id", domain.getId())
-				.put("login", login)
-				.put("invoice", invoice.getId());
-		
-		ti.addProperties("aon", aon);
+		ti.addProperties("aon", invoice.getId());
 
 		TediUtils tedi = TediUtils.getInstance("jgarcia@aonsolutions.es", "jg130365");
 
@@ -157,26 +150,13 @@ public class AON2TEDI extends HttpServlet{
 				tedi.updateInvoice(ti);
 			}
 		} else {
+			ti = tedi.createInvoice(ti);
 			DataResponse dr2 = new DataResponse()
 					.setDomain(invoice.getDomain())
 					.setSource(DataResponseSource.TEDI_INVOICE)
-					.setSourceId(invoice.getId());
+					.setSourceId(invoice.getId())
+					.setCode(ti.getUuid());
 			dr2 = AON.insertDataResponse(domain.getName(), domain.getId(), login, dr2);
-			
-			ti = tedi.createInvoice(ti);
-			
-			DataResponseDetail drd1 = new DataResponseDetail()
-					.setDomain(invoice.getDomain())
-					.setDataVariable("tedi_company")
-					.setDataValue(ti.getCompany());
-			
-			DataResponseDetail drd2 = new DataResponseDetail()
-					.setDomain(invoice.getDomain())
-					.setDataVariable("tedi_number")
-					.setDataValue(ti.getNumber().toString());
-
-			AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd1);
-			AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd2);
 		}
 	}
 	

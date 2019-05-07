@@ -185,6 +185,11 @@ public enum AppParam {
 	
 	,AON_BETA_ENABLED
 	,AON_ALPHA_ENABLED
+	
+	// TEDI CENTER
+	, TEDI_TOKEN
+	, TEDI_ACTIVE
+	, TEDI_EMAIL
 	;
 	
 	public String getValue() {

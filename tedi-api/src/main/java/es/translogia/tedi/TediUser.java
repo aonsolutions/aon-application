@@ -9,7 +9,7 @@ import org.json.JSONObject;
 
 public class TediUser {
 
-	public static final String SRC = "https://api.tedi.center/user";
+	public static final String SRC = "/user";
 
 	private String email;
 	private String name;

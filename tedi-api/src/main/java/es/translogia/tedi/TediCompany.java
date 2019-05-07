@@ -4,8 +4,7 @@ import org.json.JSONObject;
 
 public class TediCompany {
 
-	public static final String SRC = "https://europe-west1-tedicenter.cloudfunctions.net/company";
-	public static final String SRC_SNAPSHOT = "https://europe-west1-tedi-snapshot.cloudfunctions.net/company";
+	public static final String SRC = "/company";
 	
 	private String name;
 	private String document;

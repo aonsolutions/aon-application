@@ -17,6 +17,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
@@ -31,6 +32,7 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.CustomerStatus;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
@@ -41,6 +43,7 @@ import com.esferalia.aon.occam.api.model.type.SupplierStatus;
 import es.translogia.tedi.TediInvoice;
 import es.translogia.tedi.TediInvoiceType;
 import es.translogia.tedi.TediPGC;
+import es.translogia.tedi.TediUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Tedi2AonServlet", urlPatterns = { "/tedi2aon/*"})
@@ -62,12 +65,12 @@ public class TEDI2AON extends HttpServlet{
 		JSONObject json = getRequestJSON(req);
 		String domainName = req.getServerName();
 		Integer domainId = 1;
-
+		String token = req.getHeader("session_id");
 		String cp = json.getString("company");
 		String login = json.opt("login") != null ? json.getString("login") : "";
 		Domain requestDomain = AON.getDomain(domainName, domainId, login, f -> f.getNameProperty().eq(domainName));
 		Domain domain = AON.getCompanyDomain(requestDomain.getName(), requestDomain.getId(), login, cp);
-		tedi2aon(domain, login, json);	
+		tedi2aon(domain, login, json, token);	
 		
 		resp.setContentType("application/json;charset=UTF-8");
 		addCorsHeader(resp);
@@ -80,17 +83,18 @@ public class TEDI2AON extends HttpServlet{
 	public static void addCorsHeader(HttpServletResponse response){
 		response.addHeader("Access-Control-Allow-Origin", "*");
 	    response.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
-	    response.addHeader("Access-Control-Allow-Headers", "X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept");
+	    response.addHeader("Access-Control-Allow-Headers", "X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept, session_id");
 	    response.addHeader("Access-Control-Max-Age", "1728000");
 	}
 	
-	private void tedi2aon(Domain domain, String login, JSONObject json) {
+	private void tedi2aon(Domain domain, String login, JSONObject json, String token) {
 		TediInvoice ti = new TediInvoice(json);
 		TediPGC pgc = TediPGC.getValue(ti.getCategory());
 		JSONObject aon = ti.getProperty("aon");
 		Invoice invoice = new Invoice();
 		
-		if (aon.length() > 0) {
+		Boolean isUpdate = aon.length() > 0;
+		if (isUpdate) {
 			invoice = AON.getInvoice(aon.getString("domain_name"), aon.getInt("domain_id"), aon.getString("login"),
 					f -> f.getIdProperty().eq(aon.getInt("invoice")));
 		} else {
@@ -260,7 +264,30 @@ public class TEDI2AON extends HttpServlet{
 					.setBankAccount(new BankAccount(finance.getIban()));
 			AON.insertFinance(domain.getName(), domain.getId(), login, f);
 		});
+		
+		if(!isUpdate) {
+			// Crear conexion con tedi en Data Response.
 
+			DataResponse dr = new DataResponse()
+				.setDomain(domain.getId())
+				.setSource(DataResponseSource.TEDI_INVOICE)
+				.setSourceId(invoice.getId())
+				.setCode(ti.getUuid())
+				.setResponseDate(new Date());
+		
+			AON.insertDataResponse(domain.getName(), domain.getId(), login, dr);
+		
+			// Crear conexion con tedi en TEDI.
+		
+			TediUtils tedi = TediUtils.getInstance(token);
+
+			TediInvoice uti = new TediInvoice().setUuid(ti.getUuid());
+			uti.addProperties("aon", invoice.getId());
+			uti.addProperties("company", ti.getCompany());
+			uti.addProperties("uuid", ti.getUuid());
+			
+			tedi.updateInvoice(uti);
+		}
 	}
 	
 	

@@ -13,6 +13,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class TediRequest {
+//	public static final String TEDI = "https://europe-west1-tedi-snapshot.cloudfunctions.net";
+	public static final String TEDI_SNAPSHOT = "https://europe-west1-tedi-snapshot.cloudfunctions.net";
+	public static final String TEDI = "https://europe-west1-tedicenter.cloudfunctions.net";
 	
 	protected JSONObject getObject(String tediUrl, String token) {
 		String response = get(tediUrl, token);

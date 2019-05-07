@@ -308,9 +308,25 @@
 									value="#{bundle.admin_global_portal_access}" >
 								</aon:commandLink>						
 							</aon:div>
-						</aon:if>													
+						</aon:if>	
+						<aon:div styleClass="aon-direct-access-list-element">
+							<aon:commandLink 
+								id="tedi-center-configuration"
+								action="tediConfiguration_form" 
+								actionListener="#{tediConfiguration.onInit}"
+								value="Tedi Center"
+							/>
+						<!-- 
+							<aon:commandLink 
+								id="tedi-center-configuration"
+								action="gwt_tedi_configuration" 
+								value="Tedi Center"
+							/>
+						 -->
+						</aon:div>
+																		
 					</rich:panelBarItem>
-		
+					
 					<aon:if test="#{serviceAccount.console}">
 					<rich:panelBarItem id="service_account"
 						label="#{bundle.admin_global_panel_service_accounts}">

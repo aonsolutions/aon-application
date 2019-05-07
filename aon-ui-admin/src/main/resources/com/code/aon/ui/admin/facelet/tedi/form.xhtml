@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/com/code/aon/ui/admin/facelet/globalConfig/configLayout.xhtml">
+
+	<ui:define name="configContent">
+
+		<aon:form id="tediConfigurationForm">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="Tedi Center" />
+
+				<ui:define name="toolbarContent">
+		
+					<aon:commandButton id="tediConfiguration-connect"
+						rendered="#{!tediConfiguration.hasToken()}"
+						value="Conectar"
+						actionListener="#{tediConfiguration.connect}"
+						styleClass="aon-finding-toolbar-item aon-icon-contact" />
+						
+					<aon:commandButton id="tediConfiguration-disconnect"
+						rendered="#{tediConfiguration.hasToken()}"
+						value="Desconectar"
+						actionListener="#{tediConfiguration.disconnect}"
+						styleClass="aon-finding-toolbar-item aon-icon-user-change-password" />
+		
+				</ui:define>				
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area" style="padding-bottom: 0;">
+			
+				<aon:panelGrid id="portalAccessGrid" columns="2">
+
+					<aon:outputLabel for="Tedi_active"
+						value="#{bundle.aon_active}" />
+					<aon:selectBooleanCheckbox id="Tedi_active"
+						value="#{tediConfiguration.active}"
+						actionListener="#{tediConfiguration.update}" />
+						
+					<aon:outputLabel for="Tedi_status"
+						value="#{bundle.aon_status}" />
+					<aon:outputLabel id="Tedi_status"
+						styleClass="#{(tediConfiguration.hasToken()) ? ('aon-icon-point-green aon-icon') : ('aon-icon-point-gray aon-icon')} "  
+						
+						value="#{tediConfiguration.status}" />
+
+					<aon:outputLabel for="Tedi_email"
+						rendered="#{!tediConfiguration.hasToken()}"
+						value="Email" />	
+					<aon:inputText id="tediConfiguration_email"
+						rendered="#{!tediConfiguration.hasToken()}"
+						value="#{tediConfiguration.email}" />
+						
+					<aon:outputLabel for="Tedi_password"
+						rendered="#{!tediConfiguration.hasToken()}"
+						value="Contraseña" />	
+					<aon:inputSecret id="tediConfiguration_password"
+						rendered="#{!tediConfiguration.hasToken()}"
+						value="#{tediConfiguration.password}" />	
+
+				</aon:panelGrid>
+			</aon:div>
+
+		</aon:form>
+	</ui:define>
+</ui:composition>
