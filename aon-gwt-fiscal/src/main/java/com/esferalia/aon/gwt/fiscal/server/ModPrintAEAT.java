@@ -101,7 +101,7 @@ public abstract class ModPrintAEAT extends HttpServlet{
 				this.pass = URLDecoder.decode(pass,  "UTF-8");
 				this.name = URLDecoder.decode(json.getString("name"),  "UTF-8");
 				this.document = json.getString("document");
-				this.nrc = json.opt("nrc") != null ? json.getString("nrc") : null;
+				this.nrc = json.opt("nrc") != null ? json.optString("nrc") : null;
 			} catch (Exception e) {
 				System.out.println(e);
 				System.out.println("ERROR!!!! ");
