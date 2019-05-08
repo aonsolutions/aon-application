@@ -78,6 +78,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Category;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
+import com.code.aon.registry.RegistryAddInfo;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryMedia;
@@ -359,6 +360,8 @@ public class RegistryController extends BasicController {
 				+" LEFT OUTER JOIN seller sl ON rsl.seller = sl.registry";
 		String personJoin = " LEFT OUTER JOIN person p ON c.registry = p.registry";
 		String rnoteJoin = " LEFT OUTER JOIN rnote rn ON c.registry = rn.registry AND rn.note_type = "+NoteType.OBSERVATION.ordinal();
+		//String addInnfoJoin =  " LEFT OUTER JOIN raddinfo ai ON c.addInfos = ai.id";
+		String addInnfoJoin =  " LEFT OUTER JOIN raddinfo ai ON c.registry = ai.registry";
 		return " FROM " + masterTable +" c"
 			+" INNER JOIN registry r ON r.id = c.registry"
 			+ (!"com.code.aon.seller.Seller".equals(getPojo())?scopeJoin:"")
@@ -375,6 +378,7 @@ public class RegistryController extends BasicController {
 			+(!"com.code.aon.seller.Seller".equals(getPojo())?sellerJoin:"")
 			+ ("com.code.aon.customer.Customer".equals(getPojo())?personJoin:"")
 			+ ("com.code.aon.customer.Customer".equals(getPojo())?rnoteJoin:"")
+			+ ("com.code.aon.customer.Customer".equals(getPojo())?addInnfoJoin:"")
 			+" LEFT OUTER JOIN category cdc ON cd.category = cdc.id";
 	}
 
@@ -450,6 +454,8 @@ public class RegistryController extends BasicController {
 		if("com.code.aon.customer.Customer".equals(getPojo())){
 			tableMapping.put(mappingPrefix + ".person", "p");
 			tableMapping.put(mappingPrefix + ".rnote", "rnp");
+			tableMapping.put(mappingPrefix + ".addInfos", "ai");
+			tableMapping.put(mappingPrefix + ".addInfos.attribute", "aia");
 		}
 		tableMapping.put("Project", "project");
 		tableMapping.put("ProjectActivity", "project_activity");
@@ -480,6 +486,8 @@ public class RegistryController extends BasicController {
 		if("com.code.aon.customer.Customer".equals(getPojo())){
 			pojoMapping.put(mappingPrefix + ".person", Person.class);
 			pojoMapping.put(mappingPrefix + ".rnote", RegistryNote.class);
+			pojoMapping.put(mappingPrefix + ".addInfos", RegistryAddInfo.class);
+			pojoMapping.put(mappingPrefix + ".addInfos.attribute", String.class);
 		}
 		pojoMapping.put("Project", Project.class);
 		pojoMapping.put("ProjectActivity", ProjectActivity.class);

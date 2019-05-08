@@ -69,6 +69,14 @@
 		<aon:outputText value="#{to.purchaseReference}"
 			styleClass="#{(itemReturnInRed and to.itemReturn) ? ('aon-label-error') : ('')}" />
 	</aon:column>
+	
+	<aon:column alias="Sales.scope&lt;description"
+		styleClass="aon-editDataTable-textColumn aon-width-130">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_scope}" />
+		</f:facet>
+		<aon:outputText value="#{to.scope.description}" />
+	</aon:column>
 
 	<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 		<f:facet name="header">
