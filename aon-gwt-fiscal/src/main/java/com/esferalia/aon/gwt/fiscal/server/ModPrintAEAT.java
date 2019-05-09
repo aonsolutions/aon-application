@@ -97,11 +97,11 @@ public abstract class ModPrintAEAT extends HttpServlet{
 				}
 				this.cert = attach.getData();
 				String pass = json.opt("pass").toString();
-				System.out.println(pass);
 				this.pass = URLDecoder.decode(pass,  "UTF-8");
 				this.name = URLDecoder.decode(json.getString("name"),  "UTF-8");
 				this.document = json.getString("document");
 				this.nrc = json.opt("nrc") != null ? json.optString("nrc") : null;
+				System.out.println("/init");
 			} catch (Exception e) {
 				System.out.println(e);
 				System.out.println("ERROR!!!! ");
@@ -192,12 +192,14 @@ public abstract class ModPrintAEAT extends HttpServlet{
 	
 	protected void send(HttpServletRequest req, HttpServletResponse resp, String request, String urlParameters, Boolean isI) throws NoSuchAlgorithmException, KeyManagementException, UnrecoverableKeyException, KeyStoreException, CertificateException, IOException, JSONException, ScriptException {
 		if(isI && !isPrint()) {
+			System.out.println("4.---> MODELO 303 ERROR E00 - La declaración del modelo es de tipo ingreso (I). Realice la operación desde la pantalla del modelo.");
 			JSONObject json = new JSONObject();
 			json.put("E00", "La declaración del modelo es de tipo ingreso (I). Realice la operación desde la pantalla del modelo.");	
 			giveBack(req, resp, json, new JSONObject());
 		} else {
 			URL url = new URL(request);
-   		
+			System.out.println("4.---> MODELO 303 CONECTANDO CON LA AGENCIA TRIBUTARIA ...");
+
 			SSLContext ctx = SSLContext.getInstance("TLS");
 			ctx.init(isCert() ? getKeyManagers(cert, pass) : new KeyManager[0],
 				new TrustManager[] { new DefaultTrustManager() },
@@ -229,11 +231,16 @@ public abstract class ModPrintAEAT extends HttpServlet{
 			wr.close();	
 			if(isPrint()) {
 				if(isCert()) {
+					System.out.println("5.---> MODELO 303 RECIBIENDO INFORMACIÓN DE LA AGENCIA TRIBUTARIA ...");
+
 					String html = readFullyAsString(connection.getInputStream(), "ISO-8859-1");
+					System.out.println((html != null && !"".equals(html)) ? "6.---> MODELO 303 LA RESPUESTA PARECE CORRECTA" :  "6.---> MODELO 303 RESPUESTA NULA O VACÍA");
 					JSONObject json = parseHTML(html);
+					System.out.println("7.---> MODELO 303 JSON DE RESPUESTA - " + json.toString());
 					json.put("nrc", getNrc());
 					saveHistory(json);
 					ByteArrayInputStream input = new ByteArrayInputStream(html.getBytes());
+					System.out.println("8.---> MODELO 303 DEVOLVIENDO RESPUESTA A GWT!!!");
 					AonIOUtils.copy(input, resp.getOutputStream());	
 				} else {
 					DataInputStream input = new DataInputStream(connection.getInputStream());

@@ -43,7 +43,8 @@ public class Mod303PrintAEAT extends ModPrintAEAT {
 		try {
 			JSONObject json = getRequestJSON(req);
 			init(json);
-			
+			System.out.println(isTest() ? "1.---> MODELO 303 MODO PRUEBAS" : "1.---> MODELO 303 EN REAL");
+			System.out.println(isCert() ? "2.---> MODELO 303 PRESENTACIÓN TELEMÁTICA" : "1.---> MODELO 303 VALIDACIÓN");
 			Mod303 mod303 = FISCAL.getMod303(getDomainName(), getDomainId(), getUser(), getId());
 			Boolean isI = FiscalModelDeclarationType.DEPOSIT.equals(mod303.getDeclarationType());
 
@@ -54,9 +55,11 @@ public class Mod303PrintAEAT extends ModPrintAEAT {
 			} catch (UnsupportedEncodingException e) {
 				wr = new OutputStreamWriter(output);
 			}
+
+			
 			PrintWriter writer = new PrintWriter(wr);
 			Mod303Writer.fillWriter(mod303, writer);
-						
+			System.out.println("3.---> MODELO 303 ENVÍO A LA AGENCIA TRIBUTARIA");
 			send(req, resp, mod303, output.toByteArray(), isI);
 		} catch (Throwable e) {
 			if(!isPrint()) {
@@ -75,10 +78,11 @@ public class Mod303PrintAEAT extends ModPrintAEAT {
 			? "https://www7.aeat.es/wlpl/PFTW-PICW/PresBasica" 
 			: "https://www1.agenciatributaria.gob.es/wlpl/PFTW-PICW/PresBasica";
 		
+		System.out.println("Test -> " + isTest());
 		String request = isCert() 
 			? certUrl
 			: "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";	
-		
+		System.out.println("BEFORE SEND");
 		send(req, resp, request, urlParameters, isI);
 	}
 	
