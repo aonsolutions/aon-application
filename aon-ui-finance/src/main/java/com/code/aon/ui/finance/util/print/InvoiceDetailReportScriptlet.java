@@ -124,14 +124,19 @@ public class InvoiceDetailReportScriptlet extends ReportProductLinesScriptlet {
 	
 	private String obtainReferenceCode(InvoiceDetail invoiceDetail) throws JRScriptletException{
 		StringBuilder builder = new StringBuilder();
-		Sales sales = obtainSales(invoiceDetail.getId());
-		if(sales!=null){
-			builder.append("N. pedido: ");
-			builder.append(sales.getReferenceCode());
-			if(StringUtils.isNotBlank(sales.getPurchaseReference())){
-				builder.append(" / Su referencia: ");
-				builder.append(sales.getPurchaseReference());
+		try {
+			Sales sales = obtainSales(invoiceDetail.getId());
+			if(sales!=null){
+				builder.append("N. pedido: ");
+				builder.append(sales.getReferenceCode());
+				if(StringUtils.isNotBlank(sales.getPurchaseReference())){
+					builder.append(" / Su referencia: ");
+					builder.append(sales.getPurchaseReference());
+				}
 			}
+		} catch (Exception e) {
+			String msg = "Se ha producido un error, vuelva a intentarlo pasados unos segundos";
+			LOGGER.error(msg,e);
 		}
 		return builder.toString();
 	}
