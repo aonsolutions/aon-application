@@ -181,4 +181,8 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	List<SSBonusData> getBonusConcepts(String currentDomainName);
 
+	String setEmployeeAFIChanges(String currentDomainName, Integer contractId, boolean isStartContract, Date startDate,
+			boolean isEndContract, Date endDate, Date newDate, boolean isChangeContract, String tc2,
+			boolean isQuoteContract, Integer quoteGroup, boolean isOcupationContract, String ocupation);
+
 }

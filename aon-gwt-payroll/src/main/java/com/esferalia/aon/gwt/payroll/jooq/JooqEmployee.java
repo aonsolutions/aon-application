@@ -57,6 +57,7 @@ import com.esferalia.aon.jooq.tables.records.RbankRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.RmediaRecord;
 import com.esferalia.aon.jooq.tables.records.RpaymethodRecord;
+import com.google.gwt.uibinder.elementparsers.IsEmptyParser;
 
 public class JooqEmployee {
 
@@ -72,6 +73,15 @@ public class JooqEmployee {
 	
 	public static EmployeeContractInfo createEmployeeContract(Connection conn, EmployeeContractInfo employeeContractData) {
 		return createEmployeeContractDB(DSL.using(conn, getDefaultSettings()), employeeContractData);
+	}
+	
+	public static String setEmployeeAFIChanges(Connection conn, Integer contractId, boolean isStartContract,
+			java.util.Date startDate, boolean isEndContract, java.util.Date endDate, java.util.Date newDate,
+			boolean isChangeContract, String tc2, boolean isQuoteContract, Integer quoteGroup,
+			boolean isOcupationContract, String ocupation) {
+		
+		return setEmployeeAFIChangesDB(DSL.using(conn, getDefaultSettings()), contractId, isStartContract, startDate, isEndContract, endDate, newDate, isChangeContract, tc2,
+				isQuoteContract, quoteGroup, isOcupationContract, ocupation);
 	}
 
 	protected static Settings getDefaultSettings() {
@@ -315,10 +325,29 @@ public class JooqEmployee {
 		contractData.setJourneyType(null);
 		
 		//CONTRACT DATA TABLE
-		Result<Record> contractDataTable = dslContext.select().from(CONTRACT_DATA)
-			.where(CONTRACT_DATA.CONTRACT.eq(contract))
-			.orderBy(CONTRACT_DATA.START_DATE)
-			.fetch();
+		Date currentDate = new Date(new java.util.Date().getTime());
+		Result<Record> contractDataTable = null;
+		
+		if(null != contractData.getEndDate()) { //Para contratos finalizados
+			if(currentDate.after( contractData.getEndDate())) {
+				contractDataTable = dslContext.select().from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(contract))
+				.orderBy(CONTRACT_DATA.START_DATE)
+				.fetch();
+			}else {
+				contractDataTable = dslContext.select().from(CONTRACT_DATA)
+						.where(CONTRACT_DATA.CONTRACT.eq(contract))
+						.and(CONTRACT_DATA.START_DATE.le(currentDate))
+						.and(CONTRACT_DATA.END_DATE.ge(currentDate).or(CONTRACT_DATA.END_DATE.isNull()))
+						.fetch();
+			}
+		}else {
+			contractDataTable = dslContext.select().from(CONTRACT_DATA)
+					.where(CONTRACT_DATA.CONTRACT.eq(contract))
+					.and(CONTRACT_DATA.START_DATE.le(currentDate))
+					.and(CONTRACT_DATA.END_DATE.ge(currentDate).or(CONTRACT_DATA.END_DATE.isNull()))
+					.fetch();
+		}
 		
 		Map<String, String> contractDataMap = new HashMap<>();
 		
@@ -1618,6 +1647,79 @@ public class JooqEmployee {
 			}
 		
 		return null;
+	}
+
+	// ---------------------------------------------------------------------------------------------------------------------------
+	// -----------------------------------------------------    AFI CHANGES   ----------------------------------------------------
+	// ---------------------------------------------------------------------------------------------------------------------------	
+	
+	private static String setEmployeeAFIChangesDB(DSLContext dslContext, Integer contractId, boolean isStartContract,
+			java.util.Date startDate, boolean isEndContract, java.util.Date endDate, java.util.Date newDate,
+			boolean isChangeContract, String tc2, boolean isQuoteContract, Integer quoteGroup,
+			boolean isOcupationContract, String ocupation) {
+		
+		if(isStartContract)
+			dslContext.update(CONTRACT).set(CONTRACT.START_DATE, new Date(startDate.getTime())).where(CONTRACT.ID.eq(contractId)).execute();
+		
+		if(isEndContract)
+			dslContext.update(CONTRACT).set(CONTRACT.END_DATE, new Date(endDate.getTime())).where(CONTRACT.ID.eq(contractId)).execute();
+		
+		Record contractRecord = dslContext.select().from(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne();
+		Integer domain = contractRecord.get(CONTRACT.DOMAIN);
+		Date newEndDate = contractRecord.get(CONTRACT.END_DATE);
+		
+		
+		if(null != newDate) {
+			java.util.Date previusDate = DateUtils.copyDateOnly(newDate);
+			previusDate = DateUtils.addDays2Date(previusDate, -1);
+			
+			if(isChangeContract) {
+				Result<Record> tc2Records = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("TC2")).orderBy(CONTRACT_DATA.ID.desc()).fetch();
+				if(!tc2Records.isEmpty()) {
+					dslContext.update(CONTRACT_DATA).set(CONTRACT_DATA.END_DATE, new Date(previusDate.getTime())).where(CONTRACT_DATA.ID.eq(tc2Records.get(0).get(CONTRACT_DATA.ID))).execute();
+				}
+				dslContext.insertInto(CONTRACT_DATA)
+					.set(CONTRACT_DATA.DOMAIN, domain)
+					.set(CONTRACT_DATA.NAME, "TC2")
+					.set(CONTRACT_DATA.CONTRACT, contractId)
+					.set(CONTRACT_DATA.EXPRESSION, tc2)
+					.set(CONTRACT_DATA.START_DATE, new Date(newDate.getTime()))
+					.set(CONTRACT_DATA.END_DATE, newEndDate)
+					.execute();
+			}
+			
+			if(isQuoteContract) {
+				Result<Record> quoteRecords = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("GRUPO_COTIZACION")).orderBy(CONTRACT_DATA.ID.desc()).fetch();
+				if(!quoteRecords.isEmpty()) {
+					dslContext.update(CONTRACT_DATA).set(CONTRACT_DATA.END_DATE, new Date(previusDate.getTime())).where(CONTRACT_DATA.ID.eq(quoteRecords.get(0).get(CONTRACT_DATA.ID))).execute();
+				}
+				dslContext.insertInto(CONTRACT_DATA)
+					.set(CONTRACT_DATA.DOMAIN, domain)
+					.set(CONTRACT_DATA.NAME, "GRUPO_COTIZACION")
+					.set(CONTRACT_DATA.CONTRACT, contractId)
+					.set(CONTRACT_DATA.EXPRESSION, quoteGroup.toString())
+					.set(CONTRACT_DATA.START_DATE, new Date(newDate.getTime()))
+					.set(CONTRACT_DATA.END_DATE, newEndDate)
+					.execute();
+			}
+			
+			if(isOcupationContract) {
+				Result<Record> ocupationRecords = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("OCUPACION")).orderBy(CONTRACT_DATA.ID.desc()).fetch();
+				if(!ocupationRecords.isEmpty()) {
+					dslContext.update(CONTRACT_DATA).set(CONTRACT_DATA.END_DATE, new Date(previusDate.getTime())).where(CONTRACT_DATA.ID.eq(ocupationRecords.get(0).get(CONTRACT_DATA.ID))).execute();
+				}
+				dslContext.insertInto(CONTRACT_DATA)
+					.set(CONTRACT_DATA.DOMAIN, domain)
+					.set(CONTRACT_DATA.NAME, "OCUPACION")
+					.set(CONTRACT_DATA.CONTRACT, contractId)
+					.set(CONTRACT_DATA.EXPRESSION, ocupation)
+					.set(CONTRACT_DATA.START_DATE, new Date(newDate.getTime()))
+					.set(CONTRACT_DATA.END_DATE, newEndDate)
+					.execute();
+			}
+		}
+		
+		return "";
 	}
 
 }

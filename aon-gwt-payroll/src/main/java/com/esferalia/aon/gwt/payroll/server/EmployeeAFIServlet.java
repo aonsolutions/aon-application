@@ -30,11 +30,11 @@ public class EmployeeAFIServlet extends HttpServlet {
 		String _domainId = request.getParameter("domainId");
 		String _contractId = request.getParameter("contractId");
 		String _workplaceId = request.getParameter("workplaceId");
-		Boolean _isStartContract = request.getParameter("isStartContract") == "1" ? true : false;
-		Boolean _isEndContract = request.getParameter("isEndContract") == "1" ? true : false;
-		Boolean _isChangeContract = request.getParameter("isChangeContract") == "1" ? true : false;
-		Boolean _isQuoteContract = request.getParameter("isQuoteContract") == "1" ? true : false;
-		Boolean _isOcupationContract = request.getParameter("isOcupationContract") == "1" ? true : false;
+		Boolean _isStartContract = request.getParameter("isStartContract").equals("1") ? true : false;
+		Boolean _isEndContract = request.getParameter("isEndContract").equals("1") ? true : false;
+		Boolean _isChangeContract = request.getParameter("isChangeContract").equals("1") ? true : false;
+		Boolean _isQuoteContract = request.getParameter("isQuoteContract").equals("1") ? true : false;
+		Boolean _isOcupationContract = request.getParameter("isOcupationContract").equals("1") ? true : false;
 		
 		//Get domain Name
 		String _domainName = request.getServerName();

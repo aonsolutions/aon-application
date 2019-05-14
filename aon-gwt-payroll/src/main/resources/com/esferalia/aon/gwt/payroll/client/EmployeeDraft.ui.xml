@@ -145,7 +145,7 @@
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
 						    <g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 								<g:Button ui:field='afiButton'
-									styleName='aon-finding-toolbar-item aon-icon-segsocial-small' text="Generar AFI"
+									styleName='aon-finding-toolbar-item aon-icon-segsocial-small' text="Cambios AFI"
 									enabled="true" />
 							</g:HTMLPanel>
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">

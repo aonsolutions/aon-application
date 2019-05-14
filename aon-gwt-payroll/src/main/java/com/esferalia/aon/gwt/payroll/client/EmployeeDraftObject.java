@@ -173,6 +173,10 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		return index;
 	}
 	
+	public Integer getWorkplaceId(){
+		return this.contractData.getWorkplaceId();
+	}
+	
 	public Integer getContractType() {
 		return Integer.parseInt(this.contractData.getContractType());
 	}
@@ -268,7 +272,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		return getCharIndex(this.contractData.getOcupation());
 	}
 	
-	private int getCharIndex(String ocupation) {
+	public int getCharIndex(String ocupation) {
 		switch (ocupation) {
 		case "a":
 			return 1;
@@ -518,7 +522,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		}
 	}
 	
-	private String getOcupationByIndex(Integer index) {
+	public String getOcupationByIndex(Integer index) {
 		if(null == index)
 			return null;
 		
@@ -647,6 +651,27 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 				failure.accept(caught);
 			}
 		});
+	}
+	
+	public void saveAFIChanges(boolean isStartContract, Date startDate, boolean isEndContract, Date endDate, Date newDate,
+			boolean isChangeContract, String tc2, boolean isQuoteContract, Integer quoteGroup, boolean isOcupationContract,
+			String ocupation, Consumer<String> success, Consumer<Throwable> failure) {
+		
+			employeesService.setEmployeeAFIChanges(getContractId(), isStartContract, startDate, isEndContract, endDate, 
+					newDate, isChangeContract, tc2, isQuoteContract, quoteGroup, isOcupationContract, ocupation,
+					new AsyncCallback<String>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							failure.accept(caught);
+						}
+
+						@Override
+						public void onSuccess(String result) {
+							success.accept(result);
+						}
+				
+			});
 	}
 	
 	// -----------------------------------------------------------------------------------------------------------------------------------------
@@ -991,6 +1016,10 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 
 	public EmployeeContractInfo getEmployeeContractInfo() {
 		return this.employeeContractData;
+	}
+
+	public Date getPayrollDate() {
+		return this.contractData.getPayrollDate();
 	}
 
 }

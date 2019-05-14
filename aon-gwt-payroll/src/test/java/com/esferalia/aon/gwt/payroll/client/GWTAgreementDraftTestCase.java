@@ -179,6 +179,15 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 			
 		}
 
+		@Override
+		public void setEmployeeAFIChanges(String currentDomainName, Integer contractId, boolean isStartContract,
+				Date startDate, boolean isEndContract, Date endDate, Date newDate, boolean isChangeContract, String tc2,
+				boolean isQuoteContract, Integer quoteGroup, boolean isOcupationContract, String ocupation,
+				AsyncCallback<String> callback) {
+			// TODO Auto-generated method stub
+			
+		}
+
 		
 	}
 
@@ -332,6 +341,15 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 
 					@Override
 					public void getBonusConcepts(String currentDomainName, AsyncCallback<List<SSBonusData>> callback) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void setEmployeeAFIChanges(String currentDomainName, Integer contractId,
+							boolean isStartContract, Date startDate, boolean isEndContract, Date endDate, Date newDate,
+							boolean isChangeContract, String tc2, boolean isQuoteContract, Integer quoteGroup,
+							boolean isOcupationContract, String ocupation, AsyncCallback<String> callback) {
 						// TODO Auto-generated method stub
 						
 					}

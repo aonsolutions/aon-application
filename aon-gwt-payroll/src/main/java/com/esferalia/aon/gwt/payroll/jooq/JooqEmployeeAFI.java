@@ -113,13 +113,13 @@ public class JooqEmployeeAFI {
 			JSONObject emp = new JSONObject();
 			emp.put("cccRegime", getCCCRegimeCode(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE)));
 			emp.put("cccProvince", geozoneCCC.get(GEOZONE.CODE));
-			emp.put("ccc", enterpriseCCCRecord.get(ENTERPRISE_CCC.CCC));
+			emp.put("ccc", parseCCC(enterpriseCCCRecord.get(ENTERPRISE_CCC.CCC)));
 			emp.put("identType", getIndetType(enterpriseRegistryRecord.get(REGISTRY.DOCUMENT_TYPE)));
 			emp.put("country", "011");
 			emp.put("ident", enterpriseRegistryRecord.get(REGISTRY.DOCUMENT));
 			emp.put("cccRegimePrincipal", "0111");
-			emp.put("cccProvincePrincipal", geozoneCCCPrincipal);
-			emp.put("cccPrincipal", enterpriseCCCPrincipalRecords.get(0).get(ENTERPRISE_CCC.CCC));
+			emp.put("cccProvincePrincipal", geozoneCCCPrincipal.get(GEOZONE.CODE));
+			emp.put("cccPrincipal", parseCCC(enterpriseCCCPrincipalRecords.get(0).get(ENTERPRISE_CCC.CCC)));
 			employeeAFIJSON.put("EMP", emp);
 			
 			//RZS
@@ -138,16 +138,20 @@ public class JooqEmployeeAFI {
 			if(_isStartContract) {
 				contSeg++;
 				employeeAFIJSON.put("SDC", getSDC(Integer.parseInt(_contractId), dslContext));
-			}else if(_isEndContract) {
+			}
+			if(_isEndContract) {
 				contSeg++;
 				employeeAFIJSON.put("EDC", getEDC(Integer.parseInt(_contractId), dslContext));
-			}else if(_isChangeContract) {
+			}
+			if(_isChangeContract) {
 				contSeg++;
 				employeeAFIJSON.put("CHC", getCHC(Integer.parseInt(_contractId), dslContext));
-			}else if(_isQuoteContract) {
+			}
+			if(_isQuoteContract) {
 				contSeg++;
 				employeeAFIJSON.put("QGC", getQGC(Integer.parseInt(_contractId), dslContext));
-			}else if(_isOcupationContract) {
+			}
+			if(_isOcupationContract) {
 				contSeg++;
 				employeeAFIJSON.put("OCC", getOCC(Integer.parseInt(_contractId), dslContext));
 			}
@@ -181,10 +185,9 @@ public class JooqEmployeeAFI {
 				}
 		}
 
-		
+		System.out.println(employeeAFIJSON);
 		return employeeAFIJSON;
 	}
-
 
 	@SuppressWarnings("unchecked")
 	private static JSONObject getTRA(Integer contractId, DSLContext dslContext) {
@@ -242,8 +245,8 @@ public class JooqEmployeeAFI {
 		JSONObject otd = new JSONObject();
 		
 		Record contractRecord = dslContext.select().from(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne();
-		Record contractDataQuoteRecord = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("GRUPO_COTIZACION")).fetchOne();
-		Record contractDataTC2Record = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("TC2")).fetchOne();
+		Result<Record> contractDataQuoteRecord = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("GRUPO_COTIZACION")).orderBy(CONTRACT_DATA.ID.desc()).fetch();
+		Result<Record> contractDataTC2Record = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("TC2")).orderBy(CONTRACT_DATA.ID.desc()).fetch();
 		Byte gender = dslContext.select(PERSON.GENDER).from(PERSON).where(PERSON.REGISTRY.in(
 				dslContext.select(CONTRACT.PERSON).from(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne().get(CONTRACT.PERSON)
 				)).fetchOne().get(PERSON.GENDER);
@@ -254,9 +257,9 @@ public class JooqEmployeeAFI {
 		fab.put("day", contractRecord.get(CONTRACT.START_DATE).getDate());
 		fab.put("month", (contractRecord.get(CONTRACT.START_DATE).getMonth()+1));
 		fab.put("year", (contractRecord.get(CONTRACT.START_DATE).getYear()+1900));
-		fab.put("quoteGroup", contractDataQuoteRecord.get(CONTRACT_DATA.EXPRESSION));
-		fab.put("tc2", contractDataTC2Record.get(CONTRACT_DATA.EXPRESSION));
-		fab.put("gender", gender);
+		fab.put("quoteGroup", parseContractData(contractDataQuoteRecord.get(0).get(CONTRACT_DATA.EXPRESSION)));
+		fab.put("tc2", parseContractData(contractDataTC2Record.get(0).get(CONTRACT_DATA.EXPRESSION)));
+		fab.put("gender", gender+1);
 		
 		//OTD
 		//TODO: Falta el codigo del convenio colectivo
@@ -275,8 +278,8 @@ public class JooqEmployeeAFI {
 		JSONObject dam = new JSONObject();
 		
 		Record contractRecord = dslContext.select().from(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne();
-		Record contractDataQuoteRecord = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("GRUPO_COTIZACION")).fetchOne();
-		Record contractDataTC2Record = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("TC2")).fetchOne();
+		Result<Record> contractDataQuoteRecord = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("GRUPO_COTIZACION")).orderBy(CONTRACT_DATA.ID.desc()).fetch();
+		Result<Record> contractDataTC2Record = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("TC2")).orderBy(CONTRACT_DATA.ID.desc()).fetch();
 		Byte gender = dslContext.select(PERSON.GENDER).from(PERSON).where(PERSON.REGISTRY.in(
 				dslContext.select(CONTRACT.PERSON).from(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne().get(CONTRACT.PERSON)
 				)).fetchOne().get(PERSON.GENDER);
@@ -290,12 +293,12 @@ public class JooqEmployeeAFI {
 		//FAB
 		fab.put("action", "MB");
 		//AvERIGUAR A TRAVES DEL FINIQUITO
-		fab.put("situation", getCausaDespido(salaryDataRecords.get(0).get(SALARY_DATA.EXPRESSION)));
+		fab.put("situation", getCausaDespido(salaryDataRecords));
 		fab.put("day", contractRecord.get(CONTRACT.END_DATE).getDate());
 		fab.put("month", (contractRecord.get(CONTRACT.END_DATE).getMonth()+1));
 		fab.put("year", (contractRecord.get(CONTRACT.END_DATE).getYear()+1900));
-		fab.put("quoteGroup", contractDataQuoteRecord.get(CONTRACT_DATA.EXPRESSION));
-		fab.put("tc2", contractDataTC2Record.get(CONTRACT_DATA.EXPRESSION));
+		fab.put("quoteGroup", parseContractData(contractDataQuoteRecord.get(0).get(CONTRACT_DATA.EXPRESSION)));
+		fab.put("tc2", parseContractData(contractDataTC2Record.get(0).get(CONTRACT_DATA.EXPRESSION)));
 		fab.put("gender", gender);
 		
 		//DAM
@@ -314,8 +317,8 @@ public class JooqEmployeeAFI {
 		JSONObject dam = new JSONObject();
 		
 		Record contractRecord = dslContext.select().from(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne();
-		Record contractDataQuoteRecord = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("GRUPO_COTIZACION")).fetchOne();
-		Record contractDataTC2Record = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("TC2")).fetchOne();
+		Result<Record> contractDataQuoteRecord = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("GRUPO_COTIZACION")).orderBy(CONTRACT_DATA.ID.desc()).fetch();
+		Result<Record> contractDataTC2Record = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("TC2")).orderBy(CONTRACT_DATA.ID.desc()).fetch();
 		Byte gender = dslContext.select(PERSON.GENDER).from(PERSON).where(PERSON.REGISTRY.in(
 				dslContext.select(CONTRACT.PERSON).from(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne().get(CONTRACT.PERSON)
 				)).fetchOne().get(PERSON.GENDER);
@@ -323,11 +326,11 @@ public class JooqEmployeeAFI {
 		//FAB
 		fab.put("action", "MC");
 		fab.put("situation", "");
-		fab.put("day", contractDataTC2Record.get(CONTRACT_DATA.START_DATE).getDate());
-		fab.put("month", (contractDataTC2Record.get(CONTRACT_DATA.START_DATE).getMonth()+1));
-		fab.put("year", (contractDataTC2Record.get(CONTRACT_DATA.START_DATE).getYear()+1900));
-		fab.put("quoteGroup", contractDataQuoteRecord.get(CONTRACT_DATA.EXPRESSION));
-		fab.put("tc2", contractDataTC2Record.get(CONTRACT_DATA.EXPRESSION));
+		fab.put("day", contractDataTC2Record.get(0).get(CONTRACT_DATA.START_DATE).getDate());
+		fab.put("month", (contractDataTC2Record.get(0).get(CONTRACT_DATA.START_DATE).getMonth()+1));
+		fab.put("year", (contractDataTC2Record.get(0).get(CONTRACT_DATA.START_DATE).getYear()+1900));
+		fab.put("quoteGroup", parseContractData(contractDataQuoteRecord.get(0).get(CONTRACT_DATA.EXPRESSION)));
+		fab.put("tc2", parseContractData(contractDataTC2Record.get(0).get(CONTRACT_DATA.EXPRESSION)));
 		fab.put("gender", gender);
 		
 		//OTD
@@ -346,8 +349,8 @@ public class JooqEmployeeAFI {
 		JSONObject dam = new JSONObject();
 		
 		Record contractRecord = dslContext.select().from(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne();
-		Record contractDataQuoteRecord = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("GRUPO_COTIZACION")).fetchOne();
-		Record contractDataTC2Record = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("TC2")).fetchOne();
+		Result<Record> contractDataQuoteRecord = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("GRUPO_COTIZACION")).orderBy(CONTRACT_DATA.ID.desc()).fetch();
+		Result<Record> contractDataTC2Record = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("TC2")).orderBy(CONTRACT_DATA.ID.desc()).fetch();
 		Byte gender = dslContext.select(PERSON.GENDER).from(PERSON).where(PERSON.REGISTRY.in(
 				dslContext.select(CONTRACT.PERSON).from(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne().get(CONTRACT.PERSON)
 				)).fetchOne().get(PERSON.GENDER);
@@ -355,11 +358,11 @@ public class JooqEmployeeAFI {
 		//FAB
 		fab.put("action", "MG");
 		fab.put("situation", "");
-		fab.put("day", contractDataQuoteRecord.get(CONTRACT_DATA.START_DATE).getDate());
-		fab.put("month", (contractDataQuoteRecord.get(CONTRACT_DATA.START_DATE).getMonth()+1));
-		fab.put("year", (contractDataQuoteRecord.get(CONTRACT_DATA.START_DATE).getYear()+1900));
-		fab.put("quoteGroup", contractDataQuoteRecord.get(CONTRACT_DATA.EXPRESSION));
-		fab.put("tc2", contractDataTC2Record.get(CONTRACT_DATA.EXPRESSION));
+		fab.put("day", contractDataQuoteRecord.get(0).get(CONTRACT_DATA.START_DATE).getDate());
+		fab.put("month", (contractDataQuoteRecord.get(0).get(CONTRACT_DATA.START_DATE).getMonth()+1));
+		fab.put("year", (contractDataQuoteRecord.get(0).get(CONTRACT_DATA.START_DATE).getYear()+1900));
+		fab.put("quoteGroup", parseContractData(contractDataQuoteRecord.get(0).get(CONTRACT_DATA.EXPRESSION)));
+		fab.put("tc2", parseContractData(contractDataTC2Record.get(0).get(CONTRACT_DATA.EXPRESSION)));
 		fab.put("gender", gender);
 		
 		//OTD
@@ -378,9 +381,9 @@ public class JooqEmployeeAFI {
 		JSONObject dam = new JSONObject();
 		
 		Record contractRecord = dslContext.select().from(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne();
-		Record contractDataQuoteRecord = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("GRUPO_COTIZACION")).fetchOne();
-		Record contractDataOcupationRecord = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("OCUPACION")).fetchOne();
-		Record contractDataTC2Record = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("TC2")).fetchOne();
+		Result<Record> contractDataQuoteRecord = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("GRUPO_COTIZACION")).orderBy(CONTRACT_DATA.ID.desc()).fetch();
+		Result<Record> contractDataOcupationRecord = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("OCUPACION")).orderBy(CONTRACT_DATA.ID.desc()).fetch();
+		Result<Record> contractDataTC2Record = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("TC2")).orderBy(CONTRACT_DATA.ID.desc()).fetch();
 		Byte gender = dslContext.select(PERSON.GENDER).from(PERSON).where(PERSON.REGISTRY.in(
 				dslContext.select(CONTRACT.PERSON).from(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne().get(CONTRACT.PERSON)
 				)).fetchOne().get(PERSON.GENDER);
@@ -391,12 +394,12 @@ public class JooqEmployeeAFI {
 		fab.put("day", contractRecord.get(CONTRACT.START_DATE).getDate());
 		fab.put("month", (contractRecord.get(CONTRACT.START_DATE).getMonth()+1));
 		fab.put("year", (contractRecord.get(CONTRACT.START_DATE).getYear()+1900));
-		fab.put("quoteGroup", contractDataQuoteRecord.get(CONTRACT_DATA.EXPRESSION));
-		fab.put("tc2", contractDataTC2Record.get(CONTRACT_DATA.EXPRESSION));
+		fab.put("quoteGroup", parseContractData(contractDataQuoteRecord.get(0).get(CONTRACT_DATA.EXPRESSION)));
+		fab.put("tc2", parseContractData(contractDataTC2Record.get(0).get(CONTRACT_DATA.EXPRESSION)));
 		fab.put("gender", gender);
 		
 		//DAM
-		dam.put("ocupation", contractDataOcupationRecord.get(CONTRACT_DATA.EXPRESSION));
+		dam.put("ocupation", parseContractData(contractDataOcupationRecord.get(0).get(CONTRACT_DATA.EXPRESSION)));
 		
 		json.put("FAB", fab);
 		json.put("DAM", dam);
@@ -453,9 +456,12 @@ public class JooqEmployeeAFI {
 		}
 	}
 
-	private static String getCausaDespido(String causaDespido) {
+	private static String getCausaDespido(Result<Record> records) {
 
-		switch (causaDespido) {
+		if(records.isEmpty())
+			return "99";
+		
+		switch (records.get(0).get(SALARY_DATA.EXPRESSION)) {
 		case "UNFAIR":
 			return "93";
 		case "TEMP_END":
@@ -469,6 +475,21 @@ public class JooqEmployeeAFI {
 		default: //"CONDITIONS_CHANGE":
 			return "99";
 		}
+	}
+	
+	private static String parseContractData( String data ) {
+		if(null != data && data.contains("\""))
+			return data.split("\"")[1];
+		else
+			return data;
+	}
+	
+	private static String parseCCC(String ccc) {
+		if(ccc.length() == 11) {
+			return ccc.substring(2);
+		}else
+			return ccc;
+		
 	}
 
 }

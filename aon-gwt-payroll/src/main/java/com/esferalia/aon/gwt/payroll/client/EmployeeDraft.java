@@ -536,27 +536,52 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 
 	@UiHandler("afiButton")
 	void onAFIButtonClick(ClickEvent event) {
-		EmployeeAFIDialog dialog = new EmployeeAFIDialog(){
+		
+		EmployeeAFIDialog dialog = new EmployeeAFIDialog(
+				this.employee.start_date.getValue(),
+				this.employee.end_date.getValue(),
+				this.employee.contractType.getSelectedIndex(),
+				this.employee.quote_group.getSelectedIndex(),
+				this.employee.occupation.getSelectedIndex(),
+				this.employeeDraftObject.getPayrollDate()
+				){
 
 			@Override
 			protected void onAccept() {
-//				Window.alert("Generando fichero AFI...");
-//				
-//				String fileDownloadURL = GWT.getModuleBaseURL()+ "/employee_afi/"
-//						+ "?domainId=" + employeeDraftObject.getDomainId()
-//						+ "&contractId=" + employeeDraftObject.getContractId()
-//			            + "&workplaceId=" + employeeDraftObject.getContractWorkplace()
-//			            + "&ccc=" + employeeDraftObject.getContractWorkplace()
-//			            + "&isStartContract= " + (isStartContract() ? 1 : 0)
-//			            + "&isEndContract= " + (isEndContract() ? 1 : 0)
-//			            + "&isChangeContract= " + (isChangeContract() ? 1 : 0)
-//			            + "&isQuoteContract= " + (isQuoteContract() ? 1 : 0)
-//			            + "&isOcupationContract= " + (isOcupationContract() ? 1 : 0)
-//				        ;
-//				
-////				Window.alert(fileDownloadURL);
-//				
-//				Window.open(fileDownloadURL, "_blank", null);
+				employeeDraftObject.saveAFIChanges(
+						isStartContract(), getStartDate(),
+						isEndContract(), getEndDate(),
+						getNewDate(),
+						isChangeContract(), isChangeContract() ? employee.contractType.getValue(getTC2Idx()).split(" -")[0] : null,
+						isQuoteContract(), isQuoteContract() ? getQuoteGroupdx() : null,
+						isOcupationContract(), isOcupationContract() ? employeeDraftObject.getOcupationByIndex(getOcupationIdx()) : null,
+						s -> {
+							
+							if(isGenerationAFI()) {
+//								Window.alert("Generando fichero AFI...");
+								
+								String fileDownloadURL = GWT.getModuleBaseURL()+ "/employee_afi/"
+										+ "?domainId=" + employeeDraftObject.getDomainId()
+										+ "&contractId=" + employeeDraftObject.getContractId()
+							            + "&workplaceId=" + employeeDraftObject.getWorkplaceId()
+							            + "&isStartContract=" + (isStartContract() ? 1 : 0)
+							            + "&isEndContract=" + (isEndContract() ? 1 : 0)
+							            + "&isChangeContract=" + (isChangeContract() ? 1 : 0)
+							            + "&isQuoteContract=" + (isQuoteContract() ? 1 : 0)
+							            + "&isOcupationContract=" + (isOcupationContract() ? 1 : 0)
+								        ;
+								
+//								Window.alert(fileDownloadURL);
+								
+								Window.open(fileDownloadURL, "_blank", null);
+								
+							}
+							
+							setEmployeeDraftObject(employeeDraftObject);
+							
+						},
+						f -> {}
+				);
 			}
 		};
 			

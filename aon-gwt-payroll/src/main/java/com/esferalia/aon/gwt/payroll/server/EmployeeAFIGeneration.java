@@ -471,7 +471,7 @@ public final class EmployeeAFIGeneration {
 			super();
 			this.fabHeader = "FAB";
 			this.action = StringUtils.rightPad(action, 3, ' ');
-			this.situation = StringUtils.leftPad(situation, 2, ' ');
+			this.situation = StringUtils.leftPad(situation, 2, '0');
 			this.day = StringUtils.leftPad(day, 2, '0');
 			this.month = StringUtils.leftPad(month, 2, '0');
 			this.year = StringUtils.leftPad(year, 2, '0');
@@ -587,7 +587,7 @@ public final class EmployeeAFIGeneration {
 		public OTD( String convCollective ) {
 			this.otdHeader = "OTD";
 			this.convCollective = convCollective;
-			this.reserved13 = StringUtils.rightPad("", 31, '0');
+			this.reserved31 = StringUtils.rightPad("", 31, '0');
 			this.reAdmited = " ";
 			this.reserved8 = StringUtils.rightPad("", 8, '0');
 			this.reserved13 = StringUtils.rightPad("", 13, ' ');
@@ -1043,7 +1043,7 @@ public final class EmployeeAFIGeneration {
 					sdc.getFab().getDay() +
 					sdc.getFab().getQuoteGroup() +
 					sdc.getFab().getDaylyQG() +
-					sdc.getFab().getReserved2() +
+					sdc.getFab().getDisability() +
 					sdc.getFab().getTc2() +
 					sdc.getFab().getReserved1() +
 					sdc.getFab().getSubWomen() +
@@ -1058,6 +1058,7 @@ public final class EmployeeAFIGeneration {
 					sdc.getFab().getActualYear() +
 					sdc.getFab().getActualMonth() +
 					sdc.getFab().getActualDay() +
+					sdc.getFab().getReserved1() +
 					sdc.getFab().getReserved2N() +
 					"\r\n";
 			
@@ -1102,7 +1103,7 @@ public final class EmployeeAFIGeneration {
 					edc.getFab().getDay() +
 					edc.getFab().getQuoteGroup() +
 					edc.getFab().getDaylyQG() +
-					edc.getFab().getReserved2() +
+					edc.getFab().getDisability() +
 					edc.getFab().getTc2() +
 					edc.getFab().getReserved1() +
 					edc.getFab().getSubWomen() +
@@ -1117,6 +1118,7 @@ public final class EmployeeAFIGeneration {
 					edc.getFab().getActualYear() +
 					edc.getFab().getActualMonth() +
 					edc.getFab().getActualDay() +
+					edc.getFab().getReserved1() +
 					edc.getFab().getReserved2N() +
 					"\r\n";
 			
@@ -1170,7 +1172,7 @@ public final class EmployeeAFIGeneration {
 					chc.getFab().getDay() +
 					chc.getFab().getQuoteGroup() +
 					chc.getFab().getDaylyQG() +
-					chc.getFab().getReserved2() +
+					chc.getFab().getDisability() +
 					chc.getFab().getTc2() +
 					chc.getFab().getReserved1() +
 					chc.getFab().getSubWomen() +
@@ -1185,6 +1187,7 @@ public final class EmployeeAFIGeneration {
 					chc.getFab().getActualYear() +
 					chc.getFab().getActualMonth() +
 					chc.getFab().getActualDay() +
+					chc.getFab().getReserved1() +
 					chc.getFab().getReserved2N() +
 					"\r\n";
 			
@@ -1238,7 +1241,7 @@ public final class EmployeeAFIGeneration {
 					qgc.getFab().getDay() +
 					qgc.getFab().getQuoteGroup() +
 					qgc.getFab().getDaylyQG() +
-					qgc.getFab().getReserved2() +
+					qgc.getFab().getDisability() +
 					qgc.getFab().getTc2() +
 					qgc.getFab().getReserved1() +
 					qgc.getFab().getSubWomen() +
@@ -1253,6 +1256,7 @@ public final class EmployeeAFIGeneration {
 					qgc.getFab().getActualYear() +
 					qgc.getFab().getActualMonth() +
 					qgc.getFab().getActualDay() +
+					qgc.getFab().getReserved1() +
 					qgc.getFab().getReserved2N() +
 					"\r\n";
 			
@@ -1306,7 +1310,7 @@ public final class EmployeeAFIGeneration {
 					occ.getFab().getDay() +
 					occ.getFab().getQuoteGroup() +
 					occ.getFab().getDaylyQG() +
-					occ.getFab().getReserved2() +
+					occ.getFab().getDisability() +
 					occ.getFab().getTc2() +
 					occ.getFab().getReserved1() +
 					occ.getFab().getSubWomen() +
@@ -1321,6 +1325,7 @@ public final class EmployeeAFIGeneration {
 					occ.getFab().getActualYear() +
 					occ.getFab().getActualMonth() +
 					occ.getFab().getActualDay() +
+					occ.getFab().getReserved1() +
 					occ.getFab().getReserved2N() +
 					"\r\n";
 			

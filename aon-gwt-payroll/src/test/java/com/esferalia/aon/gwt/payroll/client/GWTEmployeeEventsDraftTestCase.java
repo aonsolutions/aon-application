@@ -191,6 +191,17 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 				
 			}
 
+
+
+			@Override
+			public void setEmployeeAFIChanges(String currentDomainName, Integer contractId, boolean isStartContract,
+					Date startDate, boolean isEndContract, Date endDate, Date newDate, boolean isChangeContract,
+					String tc2, boolean isQuoteContract, Integer quoteGroup, boolean isOcupationContract,
+					String ocupation, AsyncCallback<String> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
 			
 		};
 

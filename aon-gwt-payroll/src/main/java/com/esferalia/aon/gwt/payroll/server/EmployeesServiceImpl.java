@@ -4874,6 +4874,28 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		return value != null ? value : 0.00;
 	}
 
+	@Override
+	public String setEmployeeAFIChanges(String domain, Integer contractId, boolean isStartContract,
+			Date startDate, boolean isEndContract, Date endDate, Date newDate, boolean isChangeContract, String tc2,
+			boolean isQuoteContract, Integer quoteGroup, boolean isOcupationContract, String ocupation) {
+		
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection(domain);
+			return JooqEmployee.setEmployeeAFIChanges(connection, contractId, isStartContract, startDate, isEndContract, endDate, newDate, isChangeContract, tc2,
+					isQuoteContract, quoteGroup, isOcupationContract, ocupation);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if ( connection != null ) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
+
 	
 	
 

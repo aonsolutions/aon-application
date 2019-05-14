@@ -634,5 +634,16 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		employeesServiceAsync.getBonusConcepts(domain, new AsyncCallbackWrapper<List<SSBonusData>>(callback));
 	}
 
+	@Override
+	public void setEmployeeAFIChanges(String currentDomainName, Integer contractId, boolean isStartContract,
+			Date startDate, boolean isEndContract, Date endDate, Date newDate, boolean isChangeContract, String tc2,
+			boolean isQuoteContract, Integer quoteGroup, boolean isOcupationContract, String ocupation,
+			AsyncCallback<String> callback) {
+		
+		AON.start();
+		employeesServiceAsync.setEmployeeAFIChanges(currentDomainName, contractId, isStartContract, startDate, isEndContract, endDate, 
+				newDate, isChangeContract, tc2, isQuoteContract, quoteGroup, isOcupationContract, ocupation, new AsyncCallbackWrapper<String>(callback));
+	}
+
 	
 }
