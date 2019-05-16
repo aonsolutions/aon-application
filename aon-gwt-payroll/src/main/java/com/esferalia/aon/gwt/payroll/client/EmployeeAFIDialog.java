@@ -5,9 +5,12 @@ import java.util.Map.Entry;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContractType;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -41,31 +44,16 @@ public abstract class EmployeeAFIDialog extends CustomDialog {
 	CheckBox startContractCkBox;
 	
 	@UiField
-	DateBoxEx startDate;
-	
-	@UiField
 	CheckBox endContractCkBox;
-	
-	@UiField
-	DateBoxEx endDate;
 	
 	@UiField
 	DateBoxEx newDate;
 	
 	@UiField
-	CheckBox changeContractCkBox;
-	
-	@UiField
 	ListBox tc2;
 	
 	@UiField
-	CheckBox quoteContractCkBox;
-	
-	@UiField
 	ListBox quoteGroup;
-	
-	@UiField
-	CheckBox ocupationContractCkBox;
 	
 	@UiField
 	ListBox ocupation;
@@ -81,9 +69,19 @@ public abstract class EmployeeAFIDialog extends CustomDialog {
 	
 	private ContractType contractType;
 	private Date payrollDate;
+	
+	private Date currentDate;
+	private Date currentDateP3;
+	private Date currentStartDateM60;
+	private Date currentEndDateM60;
+	private Date currentEndDateP3;
+	
+	private Integer tc2IdxOriginal;
+	private Integer quoteGroupIdxOriginal;
+	private Integer ocupationIdxOriginal;
 
 	public EmployeeAFIDialog() {
-		setCaption("Generador fichero AFI");
+		setCaption("Datos AFI");
 		
 		setWidget(binder.createAndBindUi(this));
 		
@@ -108,7 +106,7 @@ public abstract class EmployeeAFIDialog extends CustomDialog {
 	}
 
 	public EmployeeAFIDialog(Date startDate, Date endDate, int tc2Idx, int quoteGroupIdx, int ocupationIdx, Date payrollDate) {
-		setCaption("Generador fichero AFI");
+		setCaption("Datos AFI");
 		
 		setWidget(binder.createAndBindUi(this));
 		
@@ -116,10 +114,39 @@ public abstract class EmployeeAFIDialog extends CustomDialog {
 		
 		initListBox();
 		
-		this.startDate.setValue(startDate);
-		this.startDate.setEnabled(false);
-		this.endDate.setValue(endDate);
-		this.endDate.setEnabled(false);
+		tc2IdxOriginal = tc2Idx;
+		quoteGroupIdxOriginal = quoteGroupIdx;
+		ocupationIdxOriginal = ocupationIdx;
+		
+		currentDate = new Date();
+		DateUtils.resetTime(currentDate);
+		currentDateP3 = DateUtils.copyDateOnly(currentDate);
+		currentDateP3 = DateUtils.addDays2Date(currentDateP3, 3);
+		currentStartDateM60 = DateUtils.copyDateOnly(startDate);
+		currentStartDateM60 = DateUtils.addDays2Date(currentStartDateM60, -60);
+		currentEndDateM60 = DateUtils.copyDateOnly(endDate);
+		currentEndDateM60 = DateUtils.addDays2Date(currentEndDateM60, -60);
+		currentEndDateP3 = DateUtils.copyDateOnly(endDate);
+		currentEndDateP3 = DateUtils.addDays2Date(currentEndDateP3, 3);
+		
+		if( (currentDate.before(startDate) || currentDate.equals(startDate)) &&
+			(currentDate.after(currentStartDateM60) || currentDate.equals(currentStartDateM60)) ) {
+			
+			this.startContractCkBox.setEnabled(true);
+			
+		}else {
+			this.startContractCkBox.setEnabled(false);
+		}
+		
+		if( (currentDate.before(currentEndDateP3) || currentDate.equals(currentEndDateP3)) &&
+			(currentDate.after(currentEndDateM60) || currentDate.equals(currentEndDateM60)) ) {
+			
+			this.endContractCkBox.setEnabled(true);
+			
+		}else {
+			this.endContractCkBox.setEnabled(false);
+		}
+		
 		this.tc2.setSelectedIndex(tc2Idx);
 		this.tc2.setEnabled(false);
 		this.quoteGroup.setSelectedIndex(quoteGroupIdx);
@@ -132,8 +159,10 @@ public abstract class EmployeeAFIDialog extends CustomDialog {
 		acceptButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				hide();
-				onAccept();
+				if(hasChange()) {
+					hide();
+					onAccept();
+				}	
 			}
 		});		
 		
@@ -145,44 +174,114 @@ public abstract class EmployeeAFIDialog extends CustomDialog {
 			}
 		});
 		
+		this.acceptButton.setEnabled(false);
+		this.generationAFICkBox.setEnabled(false);
+		
 		//EnsureDebugID para TEST
 		this.acceptButton.ensureDebugId("input_accept");
 	}
 	
 	@UiHandler("startContractCkBox")
-	void onStartDateValueChange(ValueChangeEvent<Boolean> event) {
-		this.startDate.setEnabled(event.getValue());
+	void onStartDateClick(ValueChangeEvent<Boolean> event) {
+		if(hasChange()) {
+			acceptButton.setEnabled(true);
+			generationAFICkBox.setEnabled(true);
+		}else {
+			acceptButton.setEnabled(false);
+			generationAFICkBox.setEnabled(false);
+			generationAFICkBox.setChecked(false);
+		}
 	}
 	
 	@UiHandler("endContractCkBox")
-	void onEntDateValueChange(ValueChangeEvent<Boolean> event) {
-		this.endDate.setEnabled(event.getValue());
+	void onEndDateClick(ValueChangeEvent<Boolean> event) {
+		if(hasChange()) {
+			acceptButton.setEnabled(true);
+			generationAFICkBox.setEnabled(true);
+		}else {
+			acceptButton.setEnabled(false);
+			generationAFICkBox.setEnabled(false);
+			generationAFICkBox.setChecked(false);
+		}
 	}
 	
 	@UiHandler("newDate")
 	void onNewDateValueChange(ValueChangeEvent<Date> event) {
+		Date eventDate = event.getValue();
+		
+		if(null != eventDate)
+			DateUtils.resetTime(eventDate);
+		
 		if(null != payrollDate) {
-			if(payrollDate.after(event.getValue())) {
+			if(payrollDate.after(eventDate) || currentDate.after(eventDate)) {
 				this.newDate.setValue(null);
+				this.tc2.setEnabled(false);
+				this.quoteGroup.setEnabled(false);
+				this.ocupation.setEnabled(false);
+			}else {
+				this.tc2.setEnabled(true);
+				this.quoteGroup.setEnabled(true);
+				this.ocupation.setEnabled(true);
 			}
+		}else {
+			this.tc2.setEnabled(true);
+			this.quoteGroup.setEnabled(true);
+			this.ocupation.setEnabled(true);
+		}
+		
+		if(null == eventDate) {
+			generationAFICkBox.setEnabled(false);
+			generationAFICkBox.setChecked(false);
+			this.tc2.setEnabled(false);
+			this.quoteGroup.setEnabled(false);
+			this.ocupation.setEnabled(false);
+		}else if( (currentDate.before(eventDate) || currentDate.equals(eventDate)) &&
+			(currentDateP3.after(eventDate) || currentDateP3.equals(eventDate)) ) {
+
+			generationAFICkBox.setEnabled(true);
+		
+		}else {
+			generationAFICkBox.setEnabled(false);
+		}
+		
+	}
+	
+	@UiHandler("tc2")
+	void onTC2Change(ChangeEvent event) {
+		if(hasChange()) {
+			this.acceptButton.setEnabled(true);
+			this.generationAFICkBox.setEnabled(true);
+		}else {
+			this.acceptButton.setEnabled(false);
+			this.generationAFICkBox.setEnabled(false);
+			generationAFICkBox.setChecked(false);
 		}
 	}
 	
-	@UiHandler("changeContractCkBox")
-	void onTc2ValueChange(ValueChangeEvent<Boolean> event) {
-		this.tc2.setEnabled(event.getValue());
+	@UiHandler("quoteGroup")
+	void onQuoteGroupChange(ChangeEvent event) {
+		if(hasChange()) {
+			this.acceptButton.setEnabled(true);
+			this.generationAFICkBox.setEnabled(true);
+		}else {
+			this.acceptButton.setEnabled(false);
+			this.generationAFICkBox.setEnabled(false);
+			generationAFICkBox.setChecked(false);
+		}
 	}
 	
-	@UiHandler("quoteContractCkBox")
-	void onQuoteGroupValueChange(ValueChangeEvent<Boolean> event) {
-		this.quoteGroup.setEnabled(event.getValue());
+	@UiHandler("ocupation")
+	void onOcupationChange(ChangeEvent event) {
+		if(hasChange()) {
+			this.acceptButton.setEnabled(true);
+			this.generationAFICkBox.setEnabled(true);
+		}else {
+			this.acceptButton.setEnabled(false);
+			this.generationAFICkBox.setEnabled(false);
+			generationAFICkBox.setChecked(false);
+		}
 	}
 	
-	@UiHandler("ocupationContractCkBox")
-	void onOcupationValueChange(ValueChangeEvent<Boolean> event) {
-		this.ocupation.setEnabled(event.getValue());
-	}
-
 	private void initListBox() {
 		// TC2
 		this.tc2.addItem("-");
@@ -216,35 +315,36 @@ public abstract class EmployeeAFIDialog extends CustomDialog {
 	protected abstract void onAccept();
 	
 	public boolean isStartContract() {
-		return startContractCkBox.isChecked();
+		return (null == startContractCkBox) ? false : startContractCkBox.isChecked();
 	}
 	
 	public boolean isEndContract() {
-		return endContractCkBox.isChecked();
+		return (null == endContractCkBox) ? false : endContractCkBox.isChecked();
 	}
 	
 	public boolean isChangeContract() {
-		return changeContractCkBox.isChecked();
+		if(tc2.getSelectedIndex() != tc2IdxOriginal)
+			return true;
+		else
+			return false;
 	}
 	
 	public boolean isQuoteContract() {
-		return quoteContractCkBox.isChecked();
+		if(quoteGroup.getSelectedIndex() != quoteGroupIdxOriginal)
+			return true;
+		else
+			return false;
 	}
 	
 	public boolean isOcupationContract() {
-		return ocupationContractCkBox.isChecked();
+		if(ocupation.getSelectedIndex() != ocupationIdxOriginal)
+			return true;
+		else 
+			return false;
 	}
 	
 	public boolean isGenerationAFI() {
 		return generationAFICkBox.isChecked();
-	}
-	
-	public Date getStartDate() {
-		return this.startDate.getValue();
-	}
-	
-	public Date getEndDate() {
-		return this.endDate.getValue();
 	}
 	
 	public Date getNewDate() {
@@ -261,6 +361,25 @@ public abstract class EmployeeAFIDialog extends CustomDialog {
 	
 	public Integer getOcupationIdx() {
 		return this.ocupation.getSelectedIndex();
+	}
+	
+	public boolean hasChange() {
+		if(isStartContract())
+			return true;
+		
+		if(isEndContract())
+			return true;
+		
+		if(tc2.getSelectedIndex() != tc2IdxOriginal)
+			return true;
+		
+		if(quoteGroup.getSelectedIndex() != quoteGroupIdxOriginal)
+			return true;
+		
+		if(ocupation.getSelectedIndex() != ocupationIdxOriginal)
+			return true;
+		
+		return false;
 	}
 
 }

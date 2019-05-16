@@ -653,13 +653,11 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		});
 	}
 	
-	public void saveAFIChanges(boolean isStartContract, Date startDate, boolean isEndContract, Date endDate, Date newDate,
-			boolean isChangeContract, String tc2, boolean isQuoteContract, Integer quoteGroup, boolean isOcupationContract,
-			String ocupation, Consumer<String> success, Consumer<Throwable> failure) {
+	public void saveAFIChanges(Date newDate, boolean isChangeContract, String tc2, boolean isQuoteContract, Integer quoteGroup, 
+			boolean isOcupationContract, String ocupation, Consumer<String> success, Consumer<Throwable> failure) {
 		
-			employeesService.setEmployeeAFIChanges(getContractId(), isStartContract, startDate, isEndContract, endDate, 
-					newDate, isChangeContract, tc2, isQuoteContract, quoteGroup, isOcupationContract, ocupation,
-					new AsyncCallback<String>() {
+			employeesService.setEmployeeAFIChanges(getContractId(),	newDate, isChangeContract, tc2, isQuoteContract, 
+					quoteGroup, isOcupationContract, ocupation, new AsyncCallback<String>() {
 
 						@Override
 						public void onFailure(Throwable caught) {

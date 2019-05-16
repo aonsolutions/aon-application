@@ -612,8 +612,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String setEmployeeAFIChanges(String currentDomainName, Integer contractId, boolean isStartContract,
-			Date startDate, boolean isEndContract, Date endDate, Date newDate, boolean isChangeContract, String tc2,
+	public String setEmployeeAFIChanges(String currentDomainName, Integer contractId, Date newDate, boolean isChangeContract, String tc2,
 			boolean isQuoteContract, Integer quoteGroup, boolean isOcupationContract, String ocupation) {
 		// TODO Auto-generated method stub
 		return null;

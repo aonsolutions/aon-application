@@ -4875,14 +4875,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public String setEmployeeAFIChanges(String domain, Integer contractId, boolean isStartContract,
-			Date startDate, boolean isEndContract, Date endDate, Date newDate, boolean isChangeContract, String tc2,
+	public String setEmployeeAFIChanges(String domain, Integer contractId, Date newDate, boolean isChangeContract, String tc2,
 			boolean isQuoteContract, Integer quoteGroup, boolean isOcupationContract, String ocupation) {
 		
 		Connection connection = null;
 		try {
 			connection = AonServletUtils.getConnection(domain);
-			return JooqEmployee.setEmployeeAFIChanges(connection, contractId, isStartContract, startDate, isEndContract, endDate, newDate, isChangeContract, tc2,
+			return JooqEmployee.setEmployeeAFIChanges(connection, contractId, newDate, isChangeContract, tc2,
 					isQuoteContract, quoteGroup, isOcupationContract, ocupation);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);

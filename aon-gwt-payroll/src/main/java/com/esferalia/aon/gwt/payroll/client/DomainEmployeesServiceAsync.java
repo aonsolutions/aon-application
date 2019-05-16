@@ -412,11 +412,10 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.getBonusConcepts(getCurrentDomainName(), callback);
 	}
 	
-	public void setEmployeeAFIChanges(Integer contractId, boolean isStartContract, Date startDate, boolean isEndContract, Date endDate,
-			Date newDate, boolean isChangeContract, String tc2, boolean isQuoteContract, Integer quoteGroup,
+	public void setEmployeeAFIChanges(Integer contractId, Date newDate, boolean isChangeContract, String tc2, boolean isQuoteContract, Integer quoteGroup,
 			boolean isOcupationContract, String ocupation, AsyncCallback<String> callback) {
 		
-		employeesServiceAsync.setEmployeeAFIChanges(getCurrentDomainName(), contractId, isStartContract, startDate, isEndContract, endDate,
+		employeesServiceAsync.setEmployeeAFIChanges(getCurrentDomainName(), contractId,
 				newDate, isChangeContract, tc2, isQuoteContract, quoteGroup, isOcupationContract, ocupation, callback);
 		
 	}

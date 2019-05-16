@@ -204,8 +204,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void getBonusConcepts(String currentDomainName, AsyncCallback<List<SSBonusData>> callback);
 
-	void setEmployeeAFIChanges(String currentDomainName, Integer contractId, boolean isStartContract, Date startDate,
-			boolean isEndContract, Date endDate, Date newDate, boolean isChangeContract, String tc2,
+	void setEmployeeAFIChanges(String currentDomainName, Integer contractId, Date newDate, boolean isChangeContract, String tc2,
 			boolean isQuoteContract, Integer quoteGroup, boolean isOcupationContract, String ocupation,
 			AsyncCallback<String> callback);
 

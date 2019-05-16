@@ -75,12 +75,11 @@ public class JooqEmployee {
 		return createEmployeeContractDB(DSL.using(conn, getDefaultSettings()), employeeContractData);
 	}
 	
-	public static String setEmployeeAFIChanges(Connection conn, Integer contractId, boolean isStartContract,
-			java.util.Date startDate, boolean isEndContract, java.util.Date endDate, java.util.Date newDate,
+	public static String setEmployeeAFIChanges(Connection conn, Integer contractId, java.util.Date newDate,
 			boolean isChangeContract, String tc2, boolean isQuoteContract, Integer quoteGroup,
 			boolean isOcupationContract, String ocupation) {
 		
-		return setEmployeeAFIChangesDB(DSL.using(conn, getDefaultSettings()), contractId, isStartContract, startDate, isEndContract, endDate, newDate, isChangeContract, tc2,
+		return setEmployeeAFIChangesDB(DSL.using(conn, getDefaultSettings()), contractId, newDate, isChangeContract, tc2,
 				isQuoteContract, quoteGroup, isOcupationContract, ocupation);
 	}
 
@@ -340,6 +339,12 @@ public class JooqEmployee {
 						.and(CONTRACT_DATA.START_DATE.le(currentDate))
 						.and(CONTRACT_DATA.END_DATE.ge(currentDate).or(CONTRACT_DATA.END_DATE.isNull()))
 						.fetch();
+				
+				if(contractDataTable.isEmpty())
+					contractDataTable = dslContext.select().from(CONTRACT_DATA)
+					.where(CONTRACT_DATA.CONTRACT.eq(contract))
+					.orderBy(CONTRACT_DATA.ID)
+					.fetch();
 			}
 		}else {
 			contractDataTable = dslContext.select().from(CONTRACT_DATA)
@@ -347,8 +352,14 @@ public class JooqEmployee {
 					.and(CONTRACT_DATA.START_DATE.le(currentDate))
 					.and(CONTRACT_DATA.END_DATE.ge(currentDate).or(CONTRACT_DATA.END_DATE.isNull()))
 					.fetch();
+			
+			if(contractDataTable.isEmpty())
+				contractDataTable = dslContext.select().from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(contract))
+				.orderBy(CONTRACT_DATA.ID)
+				.fetch();
 		}
-		
+			
 		Map<String, String> contractDataMap = new HashMap<>();
 		
 		for(Record r : contractDataTable){
@@ -1653,16 +1664,9 @@ public class JooqEmployee {
 	// -----------------------------------------------------    AFI CHANGES   ----------------------------------------------------
 	// ---------------------------------------------------------------------------------------------------------------------------	
 	
-	private static String setEmployeeAFIChangesDB(DSLContext dslContext, Integer contractId, boolean isStartContract,
-			java.util.Date startDate, boolean isEndContract, java.util.Date endDate, java.util.Date newDate,
+	private static String setEmployeeAFIChangesDB(DSLContext dslContext, Integer contractId, java.util.Date newDate,
 			boolean isChangeContract, String tc2, boolean isQuoteContract, Integer quoteGroup,
 			boolean isOcupationContract, String ocupation) {
-		
-		if(isStartContract)
-			dslContext.update(CONTRACT).set(CONTRACT.START_DATE, new Date(startDate.getTime())).where(CONTRACT.ID.eq(contractId)).execute();
-		
-		if(isEndContract)
-			dslContext.update(CONTRACT).set(CONTRACT.END_DATE, new Date(endDate.getTime())).where(CONTRACT.ID.eq(contractId)).execute();
 		
 		Record contractRecord = dslContext.select().from(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne();
 		Integer domain = contractRecord.get(CONTRACT.DOMAIN);

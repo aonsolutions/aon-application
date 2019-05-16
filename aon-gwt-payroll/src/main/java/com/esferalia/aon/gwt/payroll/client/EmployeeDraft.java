@@ -549,8 +549,6 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 			@Override
 			protected void onAccept() {
 				employeeDraftObject.saveAFIChanges(
-						isStartContract(), getStartDate(),
-						isEndContract(), getEndDate(),
 						getNewDate(),
 						isChangeContract(), isChangeContract() ? employee.contractType.getValue(getTC2Idx()).split(" -")[0] : null,
 						isQuoteContract(), isQuoteContract() ? getQuoteGroupdx() : null,
@@ -684,6 +682,8 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 			this.employee.contractType.setEnabled(false);
 			this.employee.modality.setEnabled(false);
 			this.employee.start_date.setEnabled(false);
+			this.employee.quote_group.setEnabled(false);
+			this.employee.occupation.setEnabled(false);
 		}else{
 			this.employee.ssRegimeType.setEnabled(true);
 			this.employee.activityCCC.setEnabled(true);
@@ -691,6 +691,8 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 			this.employee.contractType.setEnabled(true);
 			this.employee.modality.setEnabled(true);
 			this.employee.start_date.setEnabled(true);
+			this.employee.quote_group.setEnabled(true);
+			this.employee.occupation.setEnabled(true);
 		}
 		
 		fillEmployeeTable();
@@ -1019,7 +1021,6 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		} else {
 			this.employee.modality.setSelectedIndex(modelIndex + 1);
 		}
-		
 		
 		this.employee.start_date.setValue(employeeDraftObject.getContractStartDate());
 		this.employee.seniority_date.setValue(employeeDraftObject.getContractSeniorityDate());
