@@ -10,18 +10,16 @@ import com.esferalia.aon.gwt.payroll.shared.ContractType;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -37,11 +35,17 @@ public abstract class EmployeeAFIDialog extends CustomDialog {
 	MyStyle style;
 
 	interface MyStyle extends CssResource {
-		
+		String hidden();
 	}
 	
 	@UiField
+	Label startContractLabel;
+	
+	@UiField
 	CheckBox startContractCkBox;
+	
+	@UiField
+	Label endContractLabel;
 	
 	@UiField
 	CheckBox endContractCkBox;
@@ -122,29 +126,46 @@ public abstract class EmployeeAFIDialog extends CustomDialog {
 		DateUtils.resetTime(currentDate);
 		currentDateP3 = DateUtils.copyDateOnly(currentDate);
 		currentDateP3 = DateUtils.addDays2Date(currentDateP3, 3);
-		currentStartDateM60 = DateUtils.copyDateOnly(startDate);
-		currentStartDateM60 = DateUtils.addDays2Date(currentStartDateM60, -60);
-		currentEndDateM60 = DateUtils.copyDateOnly(endDate);
-		currentEndDateM60 = DateUtils.addDays2Date(currentEndDateM60, -60);
-		currentEndDateP3 = DateUtils.copyDateOnly(endDate);
-		currentEndDateP3 = DateUtils.addDays2Date(currentEndDateP3, 3);
 		
-		if( (currentDate.before(startDate) || currentDate.equals(startDate)) &&
-			(currentDate.after(currentStartDateM60) || currentDate.equals(currentStartDateM60)) ) {
-			
-			this.startContractCkBox.setEnabled(true);
-			
-		}else {
-			this.startContractCkBox.setEnabled(false);
+		if(null != startDate) {
+			currentStartDateM60 = DateUtils.copyDateOnly(startDate);
+			currentStartDateM60 = DateUtils.addDays2Date(currentStartDateM60, -60);
 		}
 		
-		if( (currentDate.before(currentEndDateP3) || currentDate.equals(currentEndDateP3)) &&
-			(currentDate.after(currentEndDateM60) || currentDate.equals(currentEndDateM60)) ) {
+		if(null != endDate) {
+			currentEndDateM60 = DateUtils.copyDateOnly(endDate);
+			currentEndDateM60 = DateUtils.addDays2Date(currentEndDateM60, -60);
+			currentEndDateP3 = DateUtils.copyDateOnly(endDate);
+			currentEndDateP3 = DateUtils.addDays2Date(currentEndDateP3, 3);
+		}
+		
+		if(null == startDate) {
+			this.startContractCkBox.addStyleName(style.hidden());
+			this.startContractLabel.addStyleName(style.hidden());
+		}else if( (currentDate.before(startDate) || currentDate.equals(startDate)) &&
+			(currentDate.after(currentStartDateM60) || currentDate.equals(currentStartDateM60)) ) {
 			
-			this.endContractCkBox.setEnabled(true);
+			this.startContractCkBox.removeStyleName(style.hidden());
+			this.startContractLabel.removeStyleName(style.hidden());
 			
 		}else {
-			this.endContractCkBox.setEnabled(false);
+			this.startContractCkBox.addStyleName(style.hidden());
+			this.startContractLabel.addStyleName(style.hidden());
+		}
+		
+		
+		if(null == endDate) {
+			this.endContractCkBox.addStyleName(style.hidden());
+			this.endContractLabel.addStyleName(style.hidden());
+		} else if( (currentDate.before(currentEndDateP3) || currentDate.equals(currentEndDateP3)) &&
+			(currentDate.after(currentEndDateM60) || currentDate.equals(currentEndDateM60)) ) {
+			
+			this.endContractCkBox.removeStyleName(style.hidden());
+			this.endContractLabel.removeStyleName(style.hidden());
+			
+		}else {
+			this.endContractCkBox.addStyleName(style.hidden());
+			this.endContractLabel.addStyleName(style.hidden());
 		}
 		
 		this.tc2.setSelectedIndex(tc2Idx);
@@ -170,7 +191,6 @@ public abstract class EmployeeAFIDialog extends CustomDialog {
 			@Override
 			public void onClick(ClickEvent event) {
 				hide();
-				
 			}
 		});
 		
