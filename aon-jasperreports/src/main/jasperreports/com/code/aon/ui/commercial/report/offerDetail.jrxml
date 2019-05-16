@@ -119,7 +119,7 @@
 				<textElement verticalAlignment="Middle" markup="none">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{lineDescription}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00##" isBlankWhenNull="true">
 				<reportElement key="textField-5" x="461" y="0" width="74" height="12" uuid="ccdb6563-acf9-40b2-9f56-faab75a80153">
