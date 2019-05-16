@@ -207,13 +207,18 @@
 		.unSelected{
 			background: white;
 		}
+		
+		.peculiaridades{
+			font-size: 10px;
+			margin-top: 2px;
+		}
 
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX">
-		<g:north size="25">
-			<g:FlowPanel styleName="aon-finding-title-toolbar">
-				<g:HorizontalPanel>
+		<g:north size="53">
+			<g:FlowPanel>
+				<g:FlowPanel styleName="aon-finding-title-toolbar">
 					<g:HorizontalPanel>
 						<g:HTMLPanel styleName="aon-finding-title">
 							<g:HTMLPanel styleName="aon-finding-title-internal">
@@ -236,7 +241,26 @@
 								enabled="true" />
 						</g:HTMLPanel>
 					</g:HorizontalPanel>
-				</g:HorizontalPanel>
+				</g:FlowPanel>
+				<g:FlowPanel styleName="aon-finding-title-toolbar">
+					<g:HorizontalPanel>
+						<g:HTMLPanel styleName="aon-finding-title">
+							<g:HTMLPanel styleName="aon-finding-title-internal">
+								<g:Label styleName="aon-outputText">Peculiaridades </g:Label>
+							</g:HTMLPanel>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="aon-finding-subtitle">
+							<g:HTMLPanel styleName="aon-finding-subtitle-internal">
+								<g:Label styleName="aon-outputText"></g:Label>
+							</g:HTMLPanel>
+						</g:HTMLPanel>
+						<g:HorizontalPanel styleName="aon-finding-toolbar">
+							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" visible="true">
+								<g:ListBox ui:field="peculiaridades" styleName="{style.peculiaridades}"></g:ListBox>
+							</g:HTMLPanel>
+						</g:HorizontalPanel>
+					</g:HorizontalPanel>
+				</g:FlowPanel>
 			</g:FlowPanel>
 		</g:north>
 		<g:center> 
