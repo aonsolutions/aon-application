@@ -1900,7 +1900,7 @@ public class Bases {
 
 			try {
 				checkTramo(tramo, salary, cbs);
-			} catch (UnsupportedOperationException e) {
+			} catch (Throwable t) {
 
 			}
 			
