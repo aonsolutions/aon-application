@@ -35,6 +35,7 @@ import com.code.aon.product.ProductCategory;
 import com.code.aon.registry.Category;
 import com.code.aon.registry.Question;
 import com.code.aon.registry.Registry;
+import com.code.aon.registry.RegistryAddInfo;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryItem;
@@ -123,7 +124,8 @@ public class TargetController extends RegistryController implements ICommonMessa
 			+",'"+AonUtil.getMessage(ACTIVE)+"'"
 			+",'"+AonUtil.getMessage(INACTIVE)+"'"
 			+",'"+AonUtil.getMessage(BLOCKED)+"'"
-				+") `" + AonUtil.getMessage(STATUS) + "`"
+			+") `" + AonUtil.getMessage(STATUS) + "`"
+			+",(select IF(r.id > '0', 'SI', '-') from customer c where r.id = c.registry LIMIT 1) `" + AonUtil.getMessage(CUSTOMER) + "`"
 				+",ELT(c.advertising+1"
 				+",'"+Advertising.ALLOWED.getName(locale)+"'"
 				+",'"+Advertising.AUTO_EXCLUSION.getName(locale)+"'"
@@ -146,7 +148,8 @@ public class TargetController extends RegistryController implements ICommonMessa
 			 	+")" 
 			+",r.document_country,r.document) AS CHAR) `" + AonUtil.getMessage(DOCUMENT) + "`"
 		 	+",r.name `" + AonUtil.getMessage(COMPANY_NAME) + "`"
-			+",r.alias `" + AonUtil.getMessage(ALIAS) + "`"
+		 	+",r.alias `" + AonUtil.getMessage(ALIAS) + "`"
+		 	+",scp.description `" + AonUtil.getMessage("aon_scope") + "`"
 			+",r.nationality `" + AonUtil.getMessage(REGISTRY_NATIONALITY) + "`"
 			+",CAST( CONCAT_WS(' ',ra.street_type,ra.address,ra.number,ra.address2,ra.address3) AS CHAR) `" + AonUtil.getMessage(ADDRESS) + "`"
 			+",ra.city `" + AonUtil.getMessage(REGISTRY_CITY) + "`"
@@ -178,6 +181,8 @@ public class TargetController extends RegistryController implements ICommonMessa
 			+" LEFT OUTER JOIN registry sllr ON sllr.id = sll.registry"
 			+" LEFT OUTER JOIN rprofile ps ON ps.registry = r.id"
 			+" LEFT OUTER JOIN question q ON ps.question = q.id"
+			+" LEFT OUTER JOIN raddinfo ai ON c.registry = ai.registry"
+			+" LEFT OUTER JOIN customer ct ON r.id = ct.registry"
 			;
 
 			Map<String,String> tableMapping = new HashMap<String, String>();
@@ -200,6 +205,8 @@ public class TargetController extends RegistryController implements ICommonMessa
 			tableMapping.put(mappingPrefix + ".sellers.seller.registry", "sllr");
 			tableMapping.put(mappingPrefix + ".profiles", "ps");
 			tableMapping.put(mappingPrefix + ".profiles.question", "q");
+			tableMapping.put(mappingPrefix + ".addInfos", "ai");
+			tableMapping.put(mappingPrefix + ".addInfos.attribute", "aia");
 			
 			Map<String,Class<?>> pojoMapping = new HashMap<String, Class<?>>();
 			pojoMapping.put(mappingPrefix, Target.class);
@@ -221,6 +228,8 @@ public class TargetController extends RegistryController implements ICommonMessa
 			pojoMapping.put(mappingPrefix + ".sellers.seller.registry", Registry.class);
 			pojoMapping.put(mappingPrefix + ".profiles", RegistryProfile.class);
 			pojoMapping.put(mappingPrefix + ".profiles.question", Question.class);
+			pojoMapping.put(mappingPrefix + ".addInfos", RegistryAddInfo.class);
+			pojoMapping.put(mappingPrefix + ".addInfos.attribute", String.class);
 
 			String where = CriteriaUtilities.toSQLString(getCriteria(), true, pojoMapping, tableMapping);
 			select = select + " " + where;
