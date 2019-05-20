@@ -361,7 +361,8 @@
 											<g:CheckBox ui:field='checkAccidentC'></g:CheckBox>
 										</g:customCell>
 										<g:customCell styleName="{style.alignCenter}">
-											<g:CheckBox ui:field='checkAccidentE'></g:CheckBox>
+											<g:Label></g:Label>
+											<!-- <g:CheckBox ui:field='checkAccidentE'></g:CheckBox> -->
 										</g:customCell>
 									</g:row>
 									<g:row>
@@ -383,7 +384,8 @@
 											<g:CheckBox ui:field='checkFogasaC'></g:CheckBox>
 										</g:customCell>
 										<g:customCell styleName="{style.alignCenter}">
-											<g:CheckBox ui:field='checkFogasaE'></g:CheckBox>
+											<g:Label></g:Label>
+											<!-- <g:CheckBox ui:field='checkFogasaE'></g:CheckBox> -->
 										</g:customCell>
 									</g:row>
 									<g:row>
@@ -403,7 +405,7 @@
 				            <g:HTMLPanel ui:field='amountPanel'>
 				                <hr align="left" noshade="noshade" style="margin-bottom: 20px;width: 99%;height: 1px;border: none;color: #333;background-color: #333;"/>
 				                <g:HorizontalPanel>
-				                	<g:Label styleName="{style.paddingTop} {style.bold}">Cantidad: </g:Label>
+				                	<g:Label styleName="{style.paddingTop} {style.bold}">Importe: </g:Label>
 				            		<g:TextBox ui:field='amountBonus' width="300px" styleName="aon-inputText"></g:TextBox>
 				            	</g:HorizontalPanel>
 				            	<g:Button ui:field='applyAmount' styleName="{style.button}">Aplicar</g:Button>

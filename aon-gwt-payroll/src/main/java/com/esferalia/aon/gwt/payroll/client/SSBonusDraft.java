@@ -98,8 +98,8 @@ public class SSBonusDraft extends Composite {
 	@UiField
 	CheckBox checkAccidentC;
 	
-	@UiField
-	CheckBox checkAccidentE;
+//	@UiField
+//	CheckBox checkAccidentE;
 	
 	@UiField
 	CheckBox checkUnemploymentC;
@@ -110,8 +110,8 @@ public class SSBonusDraft extends Composite {
 	@UiField
 	CheckBox checkFogasaC;
 	
-	@UiField
-	CheckBox checkFogasaE;
+//	@UiField
+//	CheckBox checkFogasaE;
 	
 	@UiField
 	CheckBox checkFormationC;
@@ -250,16 +250,16 @@ public class SSBonusDraft extends Composite {
 				listCheckTrue.add("CGC");
 			if(checkAccidentC.getValue() == true)
 				listCheckTrue.add("(IT_E + IMS_E)");
-			if(checkAccidentE.getValue() == true)
-				listCheckTrue.add("(IT + IMS)");
+//			if(checkAccidentE.getValue() == true)
+//				listCheckTrue.add("(IT + IMS)");
 			if(checkUnemploymentC.getValue() == true)
 				listCheckTrue.add("DESMPL_E");
 			if(checkUnemploymentE.getValue() == true)
 				listCheckTrue.add("DESMPL");
 			if(checkFogasaC.getValue() == true)
 				listCheckTrue.add("FOGASA_E");
-			if(checkFogasaE.getValue() == true)
-				listCheckTrue.add("FOGASA");
+//			if(checkFogasaE.getValue() == true)
+//				listCheckTrue.add("FOGASA");
 			if(checkFormationC.getValue() == true)
 				listCheckTrue.add("FP_E");
 			if(checkFormationE.getValue() == true)
@@ -284,7 +284,7 @@ public class SSBonusDraft extends Composite {
 			if(type == 1){
 				this.formulaBonus.setValue(amountBonus.getValue());
 			}else if(type == 2){
-				this.formulaBonus.setValue("("+amountBonus.getValue()+" / 30) * DIAS_ALTA");
+				this.formulaBonus.setValue("("+amountBonus.getValue()+" / DIAS_MES) * DIAS_NOMINA");
 			}
 		}
 		this.formulaBonus.setEnabled(true);
@@ -374,9 +374,9 @@ public class SSBonusDraft extends Composite {
 
 	private void initializeListBox() {
 		typeBonus.addItem("Otros");
-		typeBonus.addItem("Cantidad fija");
-		typeBonus.addItem("Cantidad fija / mes");
-		typeBonus.addItem("Porcentaje sobre sumatorio");
+		typeBonus.addItem("Importe fijo");
+		typeBonus.addItem("Importe / d" + String.valueOf("\u00ED") + "as n" + String.valueOf("\u00F3") + "mina");
+		typeBonus.addItem("Porcentaje sobre cuotas");
 		
 		peculiaridades.addItem("CONTRATO TEMPORAL");
 		peculiaridades.addItem("JUBILACION ACTIVA");
@@ -415,11 +415,11 @@ public class SSBonusDraft extends Composite {
 		checkCommonC.setValue(false);
 		checkCommonE.setValue(false);
 		checkAccidentC.setValue(false);
-		checkAccidentE.setValue(false);
+//		checkAccidentE.setValue(false);
 		checkUnemploymentC.setValue(false);
 		checkUnemploymentE.setValue(false);
 		checkFogasaC.setValue(false);
-		checkFogasaE.setValue(false);
+//		checkFogasaE.setValue(false);
 		checkFormationC.setValue(false);
 		checkFormationE.setValue(false);
 		
