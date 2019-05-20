@@ -263,7 +263,8 @@ public class JooqEmployeeAFI {
 		
 		//OTD
 		//TODO: Falta el codigo del convenio colectivo
-		otd.put("convCollective", "XXXXXXXXXXXXXX");
+//		otd.put("convCollective", "XXXXXXXXXXXXXX");
+		otd.put("convCollective", "00000000000000");
 		
 		json.put("FAB", fab);
 		json.put("OTD", otd);

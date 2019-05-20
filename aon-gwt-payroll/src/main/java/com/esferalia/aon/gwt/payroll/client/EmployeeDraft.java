@@ -9,6 +9,7 @@ import java.util.TreeMap;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.client.SSBonusDraft.MyStyle;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
@@ -31,6 +32,7 @@ import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.regexp.shared.RegExp;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -482,6 +484,13 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	
 	private static EmployeeDraftUiBinder uiBinder = GWT.create(EmployeeDraftUiBinder.class);
 
+	@UiField
+	MyStyle style;
+
+	interface MyStyle extends CssResource {
+		String hide();
+	}
+	
 	@UiField (provided = true)
 	Employee employee;
 	
@@ -668,9 +677,11 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		initHandlers();
 		
 		if (employeeDraftObject.getContractSSRegimen() == 3) {
+			afiButton.addStyleName(style.hide());
 			this.employee.showElementsFreelancerTable();
 			fillContractFreelancerTable();
 		} else {
+			afiButton.removeStyleName(style.hide());
 			this.employee.hideElementsFreelancerTable();
 			fillContractTable();
 		}

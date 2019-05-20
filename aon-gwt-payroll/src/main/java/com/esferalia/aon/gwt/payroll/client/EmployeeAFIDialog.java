@@ -9,10 +9,13 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContractType;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -72,6 +75,8 @@ public abstract class EmployeeAFIDialog extends CustomDialog {
 	Button cancelButton;
 	
 	private ContractType contractType;
+	
+	private Date contractStartDate;
 	private Date payrollDate;
 	
 	private Date currentDate;
@@ -121,6 +126,10 @@ public abstract class EmployeeAFIDialog extends CustomDialog {
 		tc2IdxOriginal = tc2Idx;
 		quoteGroupIdxOriginal = quoteGroupIdx;
 		ocupationIdxOriginal = ocupationIdx;
+		
+		contractStartDate = new Date();
+		contractStartDate = DateUtils.copyDateOnly(startDate);
+		DateUtils.resetTime(contractStartDate);
 		
 		currentDate = new Date();
 		DateUtils.resetTime(currentDate);
@@ -206,10 +215,13 @@ public abstract class EmployeeAFIDialog extends CustomDialog {
 		if(hasChange()) {
 			acceptButton.setEnabled(true);
 			generationAFICkBox.setEnabled(true);
+			generationAFICkBox.setChecked(true);
+			this.newDate.setValue(contractStartDate, true);
 		}else {
 			acceptButton.setEnabled(false);
 			generationAFICkBox.setEnabled(false);
 			generationAFICkBox.setChecked(false);
+			this.newDate.setValue(null, true);
 		}
 	}
 	
@@ -218,6 +230,7 @@ public abstract class EmployeeAFIDialog extends CustomDialog {
 		if(hasChange()) {
 			acceptButton.setEnabled(true);
 			generationAFICkBox.setEnabled(true);
+			generationAFICkBox.setChecked(true);
 		}else {
 			acceptButton.setEnabled(false);
 			generationAFICkBox.setEnabled(false);

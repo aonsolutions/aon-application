@@ -7,7 +7,7 @@
 	<ui:with field='res'
 		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
 
-	<ui:style>
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeeDraft.MyStyle">
 		
 		.noselect {
 			-webkit-touch-callout: none; /* iOS Safari */
