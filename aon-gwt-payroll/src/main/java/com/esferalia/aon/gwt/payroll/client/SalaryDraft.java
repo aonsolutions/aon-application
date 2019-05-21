@@ -223,6 +223,7 @@ public class SalaryDraft extends ResizeComposite
 			put("IT_E", "Accidentes de Trabajo y Enfermedades Profesionales IT");
 			put("IMS_E", "Accidentes de Trabajo y Enfermedades Profesionales IMS");
 			put("FOGASA_E", "Fondo de Garant\u00eda Salarial ( FOGASA )");
+			put("CGC_E_TEMP", "Contingencias Comunes Contratos de Corta Duraci\u00f3n");
 
 		}
 	};

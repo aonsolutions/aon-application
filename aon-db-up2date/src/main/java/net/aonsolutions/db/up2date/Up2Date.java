@@ -1,12 +1,6 @@
 package net.aonsolutions.db.up2date;
 
-import static net.aonsolutions.db.up2date.payroll.AlterSalaryCCC.ALTER_SALARY_CCC;
-import static net.aonsolutions.db.up2date.tgss.FellowsBases2019Fix.FELLOWSBASES2019FIX;
-import static net.aonsolutions.db.up2date.tgss.FellowsBases2019Update.FELLOWSBASES2019UPDATE;
-import static net.aonsolutions.db.up2date.tgss.HomePercentage2019Update.HOMEPERCENTAGE2019UPDATE;
-import static net.aonsolutions.db.up2date.tgss.NoticeDaysUpdate.NOTICEDAYSUPDATE;
-import static net.aonsolutions.db.up2date.tgss.TrainningBases2019Fix.TRAINNINGBASES2019FIX;
-import static net.aonsolutions.db.up2date.tgss.TrainningBases2019Update.TRAINNINGBASES2019UPDATE;
+import static net.aonsolutions.db.up2date.tgss.CGC2019Fix.CGC2019FIX;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -27,13 +21,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.payroll.AlterSalaryCCC;
-import net.aonsolutions.db.up2date.tgss.FellowsBases2019Fix;
-import net.aonsolutions.db.up2date.tgss.FellowsBases2019Update;
-import net.aonsolutions.db.up2date.tgss.HomePercentage2019Update;
-import net.aonsolutions.db.up2date.tgss.NoticeDaysUpdate;
-import net.aonsolutions.db.up2date.tgss.TrainningBases2019Fix;
-import net.aonsolutions.db.up2date.tgss.TrainningBases2019Update;
+import net.aonsolutions.db.up2date.tgss.CGC2019Fix;
 
 public class Up2Date {
 
@@ -77,7 +65,8 @@ public class Up2Date {
     		//TRAINNINGBASES2019UPDATE,
     		//FELLOWSBASES2019FIX,
     		//TRAINNINGBASES2019FIX
-    		ALTER_SALARY_CCC
+    		//ALTER_SALARY_CCC
+    		CGC2019FIX
     };
 
 

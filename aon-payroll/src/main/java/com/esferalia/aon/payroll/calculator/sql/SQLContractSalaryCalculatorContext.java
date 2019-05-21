@@ -3293,7 +3293,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 		Date startDate = getContractStartate();
 		long naturalDays = CommonUtil.getDaysBetweenDates(startDate, endDate) + 1;
-		if (naturalDays < 7) {
+		if (naturalDays < 6) {
 			return true;
 		}
 		return false;
