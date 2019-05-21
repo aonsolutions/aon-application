@@ -1515,6 +1515,7 @@ public class JooqEmployee {
 						.set(RPAYMETHOD.REGISTRY, registryId)
 						.set(RPAYMETHOD.PAY_METHOD, payMethodTableId)
 						.set(RPAYMETHOD.RBANK, rbankTableId)
+						.set(RPAYMETHOD.PYMNT_DAYS, "")
 						.execute();
 				}
 			}
