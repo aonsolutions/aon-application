@@ -15,9 +15,6 @@ public interface ICustomerConstants {
 	String INVOICING_GROUP_CONTROLLER_NAME = "invoicingGroup";
 	String INVOICING_GROUP_DETAIL_CONTROLLER_NAME = "invoicingGroupDetail";
 	String INVOICING_GROUP_FEE_CONTROLLER_NAME = "invoicingGroupFee";
-	
-	String TARGET_CONTROLLER_NAME = "target";
-
 
 	// ************************************************************
 	// NAVIGATION

@@ -14,12 +14,9 @@
 	<aon:if test="#{!skipId or !skipRegistryType}">
 		<aon:if test="#{!skipId}">
 			<aon:outputLabel for="#{pojoName}_id" value="#{bundle.aon_id}" />
-			<aon:div>
-				<aon:inputText id="#{pojoName}_id" value="#{controller.to.id}"
-					rendered="#{!controller.nevv}" size="15" disabled="true" />
-				<aon:outputText value="--------" rendered="#{controller.nevv}" />
-				<ui:insert name="afterIdContent" />
-			</aon:div>
+			<aon:inputText id="#{pojoName}_id" value="#{controller.to.id}"
+				rendered="#{!controller.nevv}" size="15" disabled="true" />
+			<aon:outputText value="--------" rendered="#{controller.nevv}" />
 		</aon:if>		
 		<aon:if test="#{skipId}">
 			<aon:outputText value="&#160;" />

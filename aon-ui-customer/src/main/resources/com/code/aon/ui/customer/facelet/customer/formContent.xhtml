@@ -6,23 +6,12 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<ui:decorate template="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml" >
+	<ui:include src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml" >
 		<aon:if test="#{aonConfiguration.bean.customer.showPerson}">
 			<ui:param name="registryTypeReRender" value="personInfoDiv" />
 		</aon:if>
 		<ui:param name="includeRegistryScope" value="#{true}"/>
-		<ui:define name="afterIdContent">
-			<aon:div id="CustomerTargetDiv" rendered="#{controller.target}" style="display: inline;">
-				<aon:outputText value="#{bundle.aon_target}" />
-				<aon:commandLink id="target_link" immediate="true"
-					styleClass="aon-button-goto aon-margin-left" style="padding-right: 20px;"
-					value="&#160;" title="#{bundle.aon_go}"
-					rendered="#{controller.target}"
-					actionListener="#{controller.onLoadTarget}"
-					action="target_form" />
-			</aon:div>
-		</ui:define>
-	</ui:decorate>
+	</ui:include>
 
 	<aon:outputLabel for="Customer_status" value="#{bundle.aon_status}" />
 	<aon:selectOneRadio id="Customer_status" value="#{controller.to.status}">
