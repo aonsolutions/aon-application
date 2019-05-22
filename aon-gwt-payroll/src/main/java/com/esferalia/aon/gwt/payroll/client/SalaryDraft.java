@@ -1428,6 +1428,10 @@ public class SalaryDraft extends ResizeComposite
 			//item.setDescription(dialog.getDescription());
 			item.setExpression(dialog.getDeductionExpression());
 			item.setDescriptionTemplate(dialog.getDescription());
+			
+			Item<Deduction.Type> concept = dialog.getConcept();
+			item.setConceptId(concept != null ? concept.getId() : null);
+			item.setName(concept != null ? concept.getName() : null);
 
 			if (item.getType() == Deduction.Type.EMBARGO)
 				salaryDraftObject.addDraftEmbargo(item);
@@ -1443,6 +1447,7 @@ public class SalaryDraft extends ResizeComposite
 			DeductionDialog deductionDialog = new DeductionDialog();
 			deductionDialog.setType(item.getType());
 			deductionDialog.setContextProvider(salaryDraftObject);
+			deductionDialog.setConcept(getConcept());
 			// TODO: description template ?
 			deductionDialog.setDescription(item.getDescription());
 			deductionDialog.setDeductionExpression(item.getExpression());
@@ -1506,6 +1511,15 @@ public class SalaryDraft extends ResizeComposite
 
 		private int getRowIndex(ClickEvent event) {
 			return paymentsTable.getCellForEvent(event).getRowIndex();
+		}
+
+		private Deduction getConcept() {
+			if (item.getName() == null)
+				return null;
+			for (Deduction deduction: availableDeductions)
+				if (StringUtils.equals(deduction.getName(), item.getName()))
+					return deduction;
+			return null;
 		}
 	}
 
@@ -1736,6 +1750,8 @@ public class SalaryDraft extends ResizeComposite
 			if (item != null) {
 				deduction.setType(item.getType());
 				deduction.setName(item.getName());
+				deduction.setConceptId(item.getId());
+				
 			} else {
 				deduction.setType(Deduction.Type.OTHER);
 			}
