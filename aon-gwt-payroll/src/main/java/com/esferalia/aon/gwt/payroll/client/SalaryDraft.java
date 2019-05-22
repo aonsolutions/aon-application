@@ -251,6 +251,7 @@ public class SalaryDraft extends ResizeComposite
 
 	private static final String PORCENTAJE_IRPF = "PORCENTAJE_IRPF";
 	private static final String PORCENTAJE_DESMPL = "PORCENTAJE_DESMPL";
+	private static final String PORCENTAJE_SHORT = "PORCENTAJE_CORTA_DURACION";
 
 	// @formatter:off
 	private static String[] SKIP_VARIABLES = { 
@@ -5584,6 +5585,19 @@ public class SalaryDraft extends ResizeComposite
 	}
 
 	private static Double getPercent(Deduction deduction, SalaryDraftObject draftObject) {
+		
+		try {
+			if ("CGC_E_TEMP".equalsIgnoreCase(deduction.getName())) {
+				Object value =  getContextValue(PORCENTAJE_SHORT, draftObject);
+				if ( value instanceof Number )
+					return ((Number) value ).doubleValue();
+				else
+					return Double.parseDouble(value.toString());
+			}
+		} catch ( Exception e ) {
+			
+		}
+
 		return getPercent(deduction.getType(), deduction.getAmount(), draftObject.getIrpfBase(),
 				draftObject.getCgcBase(), draftObject.getCgpBase(), draftObject.gethExtraBase(),
 				draftObject.getNonHExtraBase());
@@ -5611,6 +5625,19 @@ public class SalaryDraft extends ResizeComposite
 		default:
 			return NumberUtils.isValid(cgcBase) ? amount / cgcBase * 100 : null;
 		}
+	}
+
+
+	private static Object getContextValue(String name, SalaryDraftObject draftObject) {
+		for (Variable var : draftObject.getDrafContext())
+			if (StringUtils.equals(var.getName(), name))
+				return var.getValue();
+
+		for (Variable var : draftObject.getContext())
+			if (StringUtils.equals(var.getName(), name))
+				return var.getValue();
+
+		return null;
 	}
 
 	public static String format(Double amount) {
