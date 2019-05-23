@@ -728,6 +728,8 @@ public class JooqEmployee {
 						.set(RPAYMETHOD.REGISTRY, registryId)
 						.set(RPAYMETHOD.PAY_METHOD, payMethodTableId)
 						.set(RPAYMETHOD.RBANK, rbankTableId)
+						.set(RPAYMETHOD.NUMBER_OF_PYMNTS, (short) 1)
+						.set(RPAYMETHOD.PYMNT_DAYS, "")
 						.returning(RPAYMETHOD.ID)
 						.fetchOne();
 					
@@ -1515,6 +1517,7 @@ public class JooqEmployee {
 						.set(RPAYMETHOD.REGISTRY, registryId)
 						.set(RPAYMETHOD.PAY_METHOD, payMethodTableId)
 						.set(RPAYMETHOD.RBANK, rbankTableId)
+						.set(RPAYMETHOD.NUMBER_OF_PYMNTS, (short) 1)
 						.set(RPAYMETHOD.PYMNT_DAYS, "")
 						.execute();
 				}
