@@ -417,7 +417,7 @@
 								<g:Label styleName='{style.alignTextCenter}'>Localidad</g:Label>
 							</td>
 							<td colspan="2"> 
-								<g:TextBox ui:field="addressCity" debugId="addressCity" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
+								<g:ListBox ui:field="addressCity" debugId="addressCity" styleName='aon-inputText {style.maxWidthTextBox3}'></g:ListBox>
 							</td>
 						</tr>
 						<tr>

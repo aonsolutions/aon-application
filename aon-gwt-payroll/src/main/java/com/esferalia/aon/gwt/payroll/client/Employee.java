@@ -21,7 +21,6 @@ import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -31,7 +30,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -234,7 +232,7 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 	TextBox addressZip;
 
 	@UiField
-	TextBox addressCity;
+	ListBox addressCity;
 
 	@UiField
 	ListBox addressProvince;
@@ -625,7 +623,7 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 		this.address.setValue("");
 		this.addressNum.setValue("");
 		this.addressZip.setValue("");
-		this.addressCity.setValue("");
+		this.addressCity.clear();
 		this.addressProvince.clear();
 		this.mobile.setValue("");
 		this.phone.setValue("");

@@ -9,7 +9,6 @@ import java.util.TreeMap;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.esferalia.aon.gwt.payroll.client.SSBonusDraft.MyStyle;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
@@ -20,6 +19,8 @@ import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ModelRecord;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
+import com.esferalia.aon.gwt.payroll.shared.Municipalities;
+import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.esferalia.aon.gwt.payroll.shared.StreetType;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -427,12 +428,16 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 
 		@Override
 		public void onEmployeeAddressCityChange() {
-			// TODO Auto-generated method stub	
+			// TODO Auto-generated method stub
+			employeeDraftObject.setEmployeeAddressCity(municipalities.getZipByMunicipalityName(this.addressCity.getSelectedItemText()).toString());
+			saving();
 		}
 
 		@Override
 		public void onEmployeeAddressProvinceChange() {
 			employeeDraftObject.setEmployeeAddressProvince(this.addressProvince.getSelectedItemText());
+			updateMunicipalities();
+			employeeDraftObject.setEmployeeAddressCity("-1");
 			saving();
 		}
 
@@ -516,6 +521,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 
 	private EmployeeDraftObject employeeDraftObject;
 	public ContractType contractType;
+	private Municipalities municipalities;
 	
 	private Timer saveTimer;
 	private Consumer<EmployeeContractInfo> onSaved ;
@@ -636,6 +642,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	public void setEmployeeDraftObject(EmployeeDraftObject employeeDraftObject) {
 		this.employeeDraftObject = employeeDraftObject;
 		this.contractType = new ContractType();
+		this.municipalities = new Municipalities();
 		
 		this.employeeDraftObject.initializeEmployee(
 			r -> {
@@ -814,16 +821,16 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 			saving();
 		});
 		
-		employee.addressCity.addKeyUpHandler(e-> {
-			
-			String value = employee.addressCity.getValue();
-			String saved = employeeDraftObject.getEmployeeAddressCity();
-			if ( AonStringUtils.equals(value, saved))
-				return;
-			
-			employeeDraftObject.setEmployeeAddressCity(value);
-			saving();
-		});
+//		employee.addressCity.addKeyUpHandler(e-> {
+//			
+//			String value = employee.addressCity.getValue();
+//			String saved = employeeDraftObject.getEmployeeAddressCity();
+//			if ( AonStringUtils.equals(value, saved))
+//				return;
+//			
+//			employeeDraftObject.setEmployeeAddressCity(value);
+//			saving();
+//		});
 		
 		employee.mobile.addKeyUpHandler(e-> {
 			
@@ -1071,8 +1078,10 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		this.employee.address.setValue(employeeDraftObject.getEmployeeAddress());
 		this.employee.addressNum.setValue(employeeDraftObject.getEmployeeAddressNumber());
 		this.employee.addressZip.setValue(employeeDraftObject.getEmployeeAddressZip());
-		this.employee.addressCity.setValue(employeeDraftObject.getEmployeeAddressCity());
-		this.employee.addressProvince.setSelectedIndex(employeeDraftObject.getEmployeeAddressProvince());
+		//		this.employee.addressCity.setValue(employeeDraftObject.getEmployeeAddressCity());
+		this.employee.addressProvince.setSelectedIndex( ProvinceContract.getProvinceIndex(employeeDraftObject.getEmployeeAddressProvince()));
+		updateMunicipalities();
+		this.employee.addressCity.setSelectedIndex(municipalities.getMunicipalityIndex(ProvinceContract.getProvinceCode(employeeDraftObject.getEmployeeAddressProvince()), employeeDraftObject.getEmployeeAddressCity())+1);
 		this.employee.mobile.setValue(employeeDraftObject.getEmployeeMobile());
 		this.employee.phone.setValue(employeeDraftObject.getEmployeePhone());
 		this.employee.email.setValue(employeeDraftObject.getEmployeeEmail());
@@ -1198,6 +1207,14 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	
 	public Integer getContractTypeIdx(Integer contractTypeId) {
 		return contractType.getContractTypeIndex(contractTypeId);
+	}
+	
+	public void updateMunicipalities() {
+		String provinceCode = ProvinceContract.getProvinceCode(employee.addressProvince.getSelectedItemText());
+		employee.addressCity.clear();
+		employee.addressCity.addItem("-");;
+		ArrayList<String> municipalitiesOfProvince = municipalities.getMunicipalitiesByProvinceCode(provinceCode);
+		municipalitiesOfProvince.forEach(m -> {employee.addressCity.addItem(m);});
 	}
 
 }

@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.shared;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.google.gwt.user.client.Window;
 
@@ -85,5 +86,13 @@ public class ProvinceContract {
 	public static Map<String, String> getProvinces() {
 		return PROVINCES;
 	} 
+	
+	public static String getProvinceCode( String provinceName ) {
+		for(Entry<String, String> e : PROVINCES.entrySet()) {
+			if(e.getValue().equals(provinceName))
+				return e.getKey();
+		}
+		return "";
+	}
 
 }

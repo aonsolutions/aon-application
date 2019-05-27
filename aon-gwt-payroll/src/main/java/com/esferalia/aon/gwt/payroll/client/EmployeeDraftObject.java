@@ -339,8 +339,8 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		return this.employeeData.getAddressCity();
 	}
 	
-	public Integer getEmployeeAddressProvince() {
-		return ProvinceContract.getProvinceIndex(this.employeeData.getAddressProvinces());
+	public String getEmployeeAddressProvince() {
+		return this.employeeData.getAddressProvinces();
 	}
 	
 	public String getEmployeeMobile() {

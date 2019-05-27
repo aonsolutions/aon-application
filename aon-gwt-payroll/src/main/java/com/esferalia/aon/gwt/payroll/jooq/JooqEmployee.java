@@ -47,6 +47,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
+import com.esferalia.aon.gwt.payroll.shared.Municipalities;
 import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
 import com.esferalia.aon.jooq.tables.records.ContractInfoRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
@@ -139,7 +140,8 @@ public class JooqEmployee {
 			employeeData.setAddress(raddressTable.get(RADDRESS.ADDRESS));
 			employeeData.setAddresNum(raddressTable.get(RADDRESS.NUMBER));
 			employeeData.setAddressZip(raddressTable.get(RADDRESS.ZIP));
-			employeeData.setAddressCity(raddressTable.get(RADDRESS.CITY));
+//			employeeData.setAddressCity(raddressTable.get(RADDRESS.CITY));
+			employeeData.setAddressCity(raddressTable.get(RADDRESS.MUNICIPALITY_CODE));
 			
 			Integer raddress_geozone = raddressTable.get(RADDRESS.GEOZONE);
 			if(null == raddress_geozone) {
@@ -495,6 +497,7 @@ public class JooqEmployee {
 		
 		ContractInfo contractData = employeeContractInfo.getContractInfo();
 		EmployeeInfo employeeData = employeeContractInfo.getEmployeeInfo();
+		Municipalities municipalities = new Municipalities();
 		
 		System.out.println(contractData.toString());
 		System.out.println(employeeData.toString());
@@ -575,7 +578,8 @@ public class JooqEmployee {
 						.set(RADDRESS.ADDRESS, employeeData.getAddress())
 						.set(RADDRESS.NUMBER, employeeData.getAddresNum())
 						.set(RADDRESS.ZIP, employeeData.getAddressZip())
-						.set(RADDRESS.CITY, employeeData.getAddressCity())
+						.set(RADDRESS.CITY, municipalities.getMunicipalityByZip(employeeData.getAddressCity()))
+						.set(RADDRESS.MUNICIPALITY_CODE, employeeData.getAddressCity())
 						.set(RADDRESS.GEOZONE, geozoneId)
 						.returning(RADDRESS.ID, RADDRESS.GEOZONE)
 						.fetchOne();
@@ -588,7 +592,8 @@ public class JooqEmployee {
 						.set(RADDRESS.ADDRESS, employeeData.getAddress())
 						.set(RADDRESS.NUMBER, employeeData.getAddresNum())
 						.set(RADDRESS.ZIP, employeeData.getAddressZip())
-						.set(RADDRESS.CITY, employeeData.getAddressCity())
+						.set(RADDRESS.CITY, municipalities.getMunicipalityByZip(employeeData.getAddressCity()))
+						.set(RADDRESS.MUNICIPALITY_CODE, employeeData.getAddressCity())
 						.set(RADDRESS.GEOZONE, geozoneId)
 						.where(RADDRESS.ID.eq(rAddressId))
 						.execute();
@@ -1337,6 +1342,7 @@ public class JooqEmployee {
 		
 		ContractInfo contractData = employeeContractData.getContractInfo();
 		EmployeeInfo employeeData = employeeContractData.getEmployeeInfo();
+		Municipalities municipalities = new Municipalities();
 		
 //		System.out.println(contractData.toString());
 //		System.out.println(employeeData.toString());
@@ -1425,7 +1431,8 @@ public class JooqEmployee {
 					.set(RADDRESS.ADDRESS, employeeData.getAddress())
 					.set(RADDRESS.NUMBER, employeeData.getAddresNum())
 					.set(RADDRESS.ZIP, employeeData.getAddressZip())
-					.set(RADDRESS.CITY, employeeData.getAddressCity())
+					.set(RADDRESS.CITY, municipalities.getMunicipalityByZip(employeeData.getAddressCity()))
+					.set(RADDRESS.MUNICIPALITY_CODE, employeeData.getAddressCity())
 					.set(RADDRESS.GEOZONE, geozoneId)
 					.returning(RADDRESS.ID, RADDRESS.GEOZONE)
 					.fetchOne();
@@ -1498,7 +1505,7 @@ public class JooqEmployee {
 					
 					Integer payMethodTableId = payMethodRecord.get(PAY_METHOD.ID);
 					Integer rbankTableId = null;
-					if(employeeData.getAccount() != null && employeeData.getAccount() != ""){
+					if(employeeData.getAccount() != null && !employeeData.getAccount().equals("")){
 						RbankRecord rbankRecord = dslContext.insertInto(RBANK)
 								.set(RBANK.DOMAIN, domain)
 								.set(RBANK.REGISTRY, registryId)

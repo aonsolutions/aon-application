@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ModelRecord;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
+import com.esferalia.aon.gwt.payroll.shared.Municipalities;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.esferalia.aon.gwt.payroll.shared.StreetType;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -470,12 +471,14 @@ public class EmployeeDialog extends CustomDialog {
 
 		@Override
 		public void onEmployeeAddressCityChange() {
-			employeeDialogObject.setEmployeeAddressCity(this.addressCity.getValue());
+			employeeDialogObject.setEmployeeAddressCity(municipalities.getZipByMunicipalityName(this.addressCity.getSelectedItemText()).toString());
 		}
 
 		@Override
 		public void onEmployeeAddressProvinceChange() {
 			employeeDialogObject.setEmployeeAddressProvince(this.addressProvince.getSelectedItemText());
+			employeeDialogObject.setEmployeeAddressCity("-1");
+			updateMunicipalities();
 		}
 		
 		@Override
@@ -545,7 +548,7 @@ public class EmployeeDialog extends CustomDialog {
 			this.address.setValue(employeeData.getAddress());
 			this.addressNum.setValue(employeeData.getAddresNum());
 			this.addressZip.setValue(employeeData.getAddressZip());
-			this.addressCity.setValue(employeeData.getAddressCity());
+			this.addressCity.setSelectedIndex(municipalities.getMunicipalityIndex(ProvinceContract.getProvinceCode(employeeData.getAddressProvinces()), employeeData.getAddressCity())+1);
 			Integer provinceIndex = ProvinceContract.getProvinceIndex(employeeData.getAddressProvinces());
 			this.addressProvince.setSelectedIndex(provinceIndex);
 			this.mobile.setValue(employeeData.getMobile());
@@ -698,6 +701,7 @@ public class EmployeeDialog extends CustomDialog {
 	private Callback cb;
 	private EmployeeDialogObject employeeDialogObject;
 	private ContractType contractType;
+	private Municipalities municipalities;
 	
 	public EmployeeDialog() {
 		employee = new EmployeeImplementation();
@@ -721,6 +725,7 @@ public class EmployeeDialog extends CustomDialog {
 	public void setEmployeeDialogObject(EmployeeDialogObject employeeDialogObject) {
 		this.employeeDialogObject = employeeDialogObject;
 		this.contractType = new ContractType();
+		this.municipalities = new Municipalities();
 		
 		this.employeeDialogObject.getWorkplaceEmployees(
 				r -> { initLogicWindow();}, 
@@ -1005,6 +1010,14 @@ public class EmployeeDialog extends CustomDialog {
 		employee.payMethod.setEnabled(true);
 		employee.bic.setEnabled(true);
 		employee.account.setEnabled(true);
+	}
+	
+	public void updateMunicipalities() {
+		String provinceCode = ProvinceContract.getProvinceCode(employee.addressProvince.getSelectedItemText());
+		employee.addressCity.clear();
+		employee.addressCity.addItem("-");;
+		ArrayList<String> municipalitiesOfProvince = municipalities.getMunicipalitiesByProvinceCode(provinceCode);
+		municipalitiesOfProvince.forEach(m -> {employee.addressCity.addItem(m);});
 	}
 	
 	

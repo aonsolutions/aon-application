@@ -8131,6 +8131,14 @@ public class Municipalities {
 		municipalities.put("43078","MASDENVERGE"); 
 		municipalities.put("43079","MASLLORENÇ"); 
 	}
+	
+	public String getMunicipalityByZip(String zip){
+		for(Entry<String, String> e: this.municipalities.entrySet()) {
+			if(zip.equals(e.getKey()))
+				return e.getValue();
+		}
+		return "";
+	}
 
 	public ArrayList<String> getMunicipalitiesByZip(String zip){
 		ArrayList<String> zipMunicipalities = new ArrayList<String>();
@@ -8155,6 +8163,22 @@ public class Municipalities {
 			if(municipality.equals(e.getValue()))
 				return Integer.parseInt(e.getKey());
 		
+		return -1;
+	}
+	
+	public Integer getMunicipalityIndex(String provinceCode, String municipalityCode){
+		ArrayList<String> provinceMunicipalities = new ArrayList<String>();
+		for(Entry<String, String> e: this.municipalities.entrySet()) {
+			if(provinceCode.equals(e.getKey().substring(0, 2)))
+				provinceMunicipalities.add(e.getKey());
+		}
+		
+		Integer idx = 0;
+		for(String key: provinceMunicipalities) {
+			if(key.equals(municipalityCode))
+				return idx;
+			idx++;
+		}
 		return -1;
 	}
 }
