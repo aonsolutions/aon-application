@@ -50,14 +50,10 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		ContractType contractTypeClass = new ContractType();
 		
 		@Override
-		public void onClearEmployeeClick() {
-			// TODO Auto-generated method stub	
-		}
+		public void onClearEmployeeClick() {}
 
 		@Override
-		public void onEmployeeDocumentSuggestionChange() {
-			// TODO Auto-generated method stub
-		}
+		public void onEmployeeDocumentSuggestionChange() {}
 
 		@Override
 		public void onEmployeeDocumentChange() {
@@ -72,9 +68,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		}
 
 		@Override
-		public void onEmployeeSSNumSuggestionChange() {
-			// TODO Auto-generated method stub
-		}
+		public void onEmployeeSSNumSuggestionChange() {}
 
 		@Override
 		public void onEmployeeSSNumChange() {
@@ -82,29 +76,19 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		}
 
 		@Override
-		public void onEmployeeNameSuggestionChange() {
-			// TODO Auto-generated method stub
-		}
+		public void onEmployeeNameSuggestionChange() {}
 
 		@Override
-		public void onEmployeeNameChange() {
-			// TODO Auto-generated method stub	
-		}
+		public void onEmployeeNameChange() {}
 
 		@Override
-		public void onEmployeeFirstSurnameSuggestionChange() {
-			// TODO Auto-generated method stub
-		}
+		public void onEmployeeFirstSurnameSuggestionChange() {}
 
 		@Override
-		public void onEmployeeFirstSurnameChange() {
-			// TODO Auto-generated method stub	
-		}
+		public void onEmployeeFirstSurnameChange() {}
 
 		@Override
-		public void onEmployeeSecondSurnameChange() {
-			// TODO Auto-generated method stub	
-		}
+		public void onEmployeeSecondSurnameChange() {}
 
 		@Override
 		public void onContractSSRegimenChange() {
@@ -319,9 +303,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		}
 
 		@Override
-		public void onContractCategoryChange() {
-			// TODO Auto-generated method stub	
-		}
+		public void onContractCategoryChange() {}
 
 		@Override
 		public void onContractQuoteGroupChange() {
@@ -412,24 +394,17 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		}
 
 		@Override
-		public void onEmployeeAddressChange() {
-			// TODO Auto-generated method stub	
-		}
+		public void onEmployeeAddressChange() {}
 
 		@Override
-		public void onEmployeeAddressNumChange() {
-			// TODO Auto-generated method stub	
-		}
+		public void onEmployeeAddressNumChange() {}
 
 		@Override
-		public void onEmployeeAddressZipChange() {
-			// TODO Auto-generated method stub	
-		}
+		public void onEmployeeAddressZipChange() {}
 
 		@Override
-		public void onEmployeeAddressCityChange() {
-			// TODO Auto-generated method stub
-			employeeDraftObject.setEmployeeAddressCity(municipalities.getZipByMunicipalityName(this.addressCity.getSelectedItemText()).toString());
+		public void onEmployeeAddressMunicipalityChange() {
+			employeeDraftObject.setEmployeeAddressCity(municipalities.getZipByMunicipalityName(this.addressMunicipality.getSelectedItemText()).toString());
 			saving();
 		}
 
@@ -442,19 +417,13 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		}
 
 		@Override
-		public void onEmployeeMobileChange() {
-			// TODO Auto-generated method stub	
-		}
+		public void onEmployeeMobileChange() {}
 
 		@Override
-		public void onEmployeePhoneChange() {
-			// TODO Auto-generated method stub	
-		}
+		public void onEmployeePhoneChange() {}
 
 		@Override
-		public void onEmployeeEmailChange() {
-			// TODO Auto-generated method stub	
-		}
+		public void onEmployeeEmailChange() {}
 
 		@Override
 		public void onEmployeePayMethodChange() {
@@ -470,14 +439,10 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		}
 
 		@Override
-		public void onEmployeeBICChange() {
-			// TODO Auto-generated method stub	
-		}
+		public void onEmployeeBICChange() {}
 
 		@Override
-		public void onEmployeeAccountChange() {
-			// TODO Auto-generated method stub	
-		}
+		public void onEmployeeAccountChange() {}
 		
 	}
 	
@@ -513,9 +478,6 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 
 	@UiField
 	Button undoAllButton;
-	
-//	@UiField
-//	Button saveButton;
 	
 	// ------------------------------------------------------ VARIABLES DE LA CLASE -------------------------------------------------
 
@@ -571,8 +533,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 						s -> {
 							
 							if(isGenerationAFI()) {
-//								Window.alert("Generando fichero AFI...");
-								
+
 								String fileDownloadURL = GWT.getModuleBaseURL()+ "/employee_afi/"
 										+ "?domainId=" + employeeDraftObject.getDomainId()
 										+ "&contractId=" + employeeDraftObject.getContractId()
@@ -583,8 +544,6 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 							            + "&isQuoteContract=" + (isQuoteContract() ? 1 : 0)
 							            + "&isOcupationContract=" + (isOcupationContract() ? 1 : 0)
 								        ;
-								
-//								Window.alert(fileDownloadURL);
 								
 								Window.open(fileDownloadURL, "_blank", null);
 								
@@ -820,17 +779,6 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 			employeeDraftObject.setEmployeeAddressZip(value);
 			saving();
 		});
-		
-//		employee.addressCity.addKeyUpHandler(e-> {
-//			
-//			String value = employee.addressCity.getValue();
-//			String saved = employeeDraftObject.getEmployeeAddressCity();
-//			if ( AonStringUtils.equals(value, saved))
-//				return;
-//			
-//			employeeDraftObject.setEmployeeAddressCity(value);
-//			saving();
-//		});
 		
 		employee.mobile.addKeyUpHandler(e-> {
 			
@@ -1081,7 +1029,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		//		this.employee.addressCity.setValue(employeeDraftObject.getEmployeeAddressCity());
 		this.employee.addressProvince.setSelectedIndex( ProvinceContract.getProvinceIndex(employeeDraftObject.getEmployeeAddressProvince()));
 		updateMunicipalities();
-		this.employee.addressCity.setSelectedIndex(municipalities.getMunicipalityIndex(ProvinceContract.getProvinceCode(employeeDraftObject.getEmployeeAddressProvince()), employeeDraftObject.getEmployeeAddressCity())+1);
+		this.employee.addressMunicipality.setSelectedIndex(municipalities.getMunicipalityIndex(ProvinceContract.getProvinceCode(employeeDraftObject.getEmployeeAddressProvince()), employeeDraftObject.getEmployeeAddressCity())+1);
 		this.employee.mobile.setValue(employeeDraftObject.getEmployeeMobile());
 		this.employee.phone.setValue(employeeDraftObject.getEmployeePhone());
 		this.employee.email.setValue(employeeDraftObject.getEmployeeEmail());
@@ -1211,10 +1159,10 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	
 	public void updateMunicipalities() {
 		String provinceCode = ProvinceContract.getProvinceCode(employee.addressProvince.getSelectedItemText());
-		employee.addressCity.clear();
-		employee.addressCity.addItem("-");;
+		employee.addressMunicipality.clear();
+		employee.addressMunicipality.addItem("-");;
 		ArrayList<String> municipalitiesOfProvince = municipalities.getMunicipalitiesByProvinceCode(provinceCode);
-		municipalitiesOfProvince.forEach(m -> {employee.addressCity.addItem(m);});
+		municipalitiesOfProvince.forEach(m -> {employee.addressMunicipality.addItem(m);});
 	}
 
 }

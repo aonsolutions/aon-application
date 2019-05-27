@@ -202,7 +202,6 @@ public class EmployeeDialog extends CustomDialog {
 				employeeDialogObject.setContractCCCId(null);
 				employeeDialogObject.setContractCCCType((Byte)null);
 			}else{
-//				Window.alert(activityCCC);
 				String activityStr = activityCCC.split(" -")[0];
 				String cccStr = activityCCC.split("\\[")[1].split("\\]")[0];
 				String cccTypeStr = activityCCC.split("- ")[1].split("\\[")[0];
@@ -264,7 +263,6 @@ public class EmployeeDialog extends CustomDialog {
 		
 		@Override
 		public void onContractModalityChange() {
-			//TODO: MIRAR SETCONTRACTMODEL CON EL GUARDAR DEL JOOQEMPLOYEE
 			if (this.contractType.getSelectedIndex() == 0 || this.modality.getSelectedIndex() == 0) {
 				employeeDialogObject.setContractModel(null);
 			} else {
@@ -470,8 +468,8 @@ public class EmployeeDialog extends CustomDialog {
 		}
 
 		@Override
-		public void onEmployeeAddressCityChange() {
-			employeeDialogObject.setEmployeeAddressCity(municipalities.getZipByMunicipalityName(this.addressCity.getSelectedItemText()).toString());
+		public void onEmployeeAddressMunicipalityChange() {
+			employeeDialogObject.setEmployeeAddressCity(municipalities.getZipByMunicipalityName(this.addressMunicipality.getSelectedItemText()).toString());
 		}
 
 		@Override
@@ -548,7 +546,7 @@ public class EmployeeDialog extends CustomDialog {
 			this.address.setValue(employeeData.getAddress());
 			this.addressNum.setValue(employeeData.getAddresNum());
 			this.addressZip.setValue(employeeData.getAddressZip());
-			this.addressCity.setSelectedIndex(municipalities.getMunicipalityIndex(ProvinceContract.getProvinceCode(employeeData.getAddressProvinces()), employeeData.getAddressCity())+1);
+			this.addressMunicipality.setSelectedIndex(municipalities.getMunicipalityIndex(ProvinceContract.getProvinceCode(employeeData.getAddressProvinces()), employeeData.getAddressCity())+1);
 			Integer provinceIndex = ProvinceContract.getProvinceIndex(employeeData.getAddressProvinces());
 			this.addressProvince.setSelectedIndex(provinceIndex);
 			this.mobile.setValue(employeeData.getMobile());
@@ -639,7 +637,6 @@ public class EmployeeDialog extends CustomDialog {
 		}
 		
 		public void showNationality(String document_type_str) {
-//			Window.alert("Show Nationality By Type : " + document_type_str);
 			if (document_type_str == "CIF" || document_type_str == "Pasaporte" || document_type_str == "NIE") {
 				this.nationalityLabelCell.getStyle().clearDisplay();
 				this.nationalityCell.getStyle().clearDisplay();
@@ -648,7 +645,6 @@ public class EmployeeDialog extends CustomDialog {
 				this.nationalityCell.getStyle().setDisplay(Display.NONE);
 				this.nationality.setValue("ESPA\u00D1A");
 				onEmployeeNationalityChange();
-				//DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.nationality);
 			}
 		}
 		
@@ -758,7 +754,6 @@ public class EmployeeDialog extends CustomDialog {
 		MultiWordSuggestOracle orclDocuments = (MultiWordSuggestOracle) this.employee.document.getSuggestOracle();
 		orclDocuments.addAll(employeesDocumentsSuggest);
 		this.employee.document.setAutoSelectEnabled(false);
-//		orclDocuments.setDefaultSuggestionsFromText(employeesDocumentsSuggest);
 		
 		//SS_NUMBER
 		List<String> employeesSSNumbers = workplaceEmployees.getWorkplaceEmployeesSSNumber();
@@ -768,7 +763,6 @@ public class EmployeeDialog extends CustomDialog {
 		MultiWordSuggestOracle orclSSNumbers = (MultiWordSuggestOracle) this.employee.security_social_num.getSuggestOracle();
 		orclSSNumbers.addAll(employeesSSNumbersSuggest);
 		this.employee.security_social_num.setAutoSelectEnabled(false);
-//		orclSSNumbers.setDefaultSuggestionsFromText(employeesSSNumbersSuggest);
 		
 		//NAMES
 		List<String> employeesNames = workplaceEmployees.getWorkplaceEmployeesName();
@@ -778,7 +772,6 @@ public class EmployeeDialog extends CustomDialog {
 		MultiWordSuggestOracle orclNames = (MultiWordSuggestOracle) this.employee.name.getSuggestOracle();
 		orclNames.addAll(employeesNamesSuggest);
 		this.employee.name.setAutoSelectEnabled(false);
-//		orclNames.setDefaultSuggestionsFromText(employeesNamesSuggest);
 		
 		//SURNAME
 		List<String> employeesSurNames = workplaceEmployees.getWorkplaceEmployeesSurName();
@@ -788,7 +781,6 @@ public class EmployeeDialog extends CustomDialog {
 		MultiWordSuggestOracle orclSurNames = (MultiWordSuggestOracle) this.employee.first_surname.getSuggestOracle();
 		orclSurNames.addAll(employeesSurNamesSuggest);
 		this.employee.first_surname.setAutoSelectEnabled(false);
-//		orclSurNames.setDefaultSuggestionsFromText(employeesSurNamesSuggest);
 	}
 
 	private void initActivitiesCCC() {
@@ -835,7 +827,6 @@ public class EmployeeDialog extends CustomDialog {
 		
 		//WORKPLACE
 		Integer workplaceIndex = this.employeeDialogObject.getWorkplaceIndex();
-//		Window.alert("Wrokplace Index : " + workplaceIndex);
 		this.employee.workplace.setSelectedIndex(workplaceIndex);
 		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.employee.workplace);
 		
@@ -978,7 +969,7 @@ public class EmployeeDialog extends CustomDialog {
 		employee.address.setEnabled(false);
 		employee.addressNum.setEnabled(false);
 		employee.addressZip.setEnabled(false);
-		employee.addressCity.setEnabled(false);
+		employee.addressMunicipality.setEnabled(false);
 		employee.addressProvince.setEnabled(false);
 		employee.mobile.setEnabled(false);
 		employee.phone.setEnabled(false);
@@ -1002,7 +993,7 @@ public class EmployeeDialog extends CustomDialog {
 		employee.address.setEnabled(true);
 		employee.addressNum.setEnabled(true);
 		employee.addressZip.setEnabled(true);
-		employee.addressCity.setEnabled(true);
+		employee.addressMunicipality.setEnabled(true);
 		employee.addressProvince.setEnabled(true);
 		employee.mobile.setEnabled(true);
 		employee.phone.setEnabled(true);
@@ -1014,10 +1005,10 @@ public class EmployeeDialog extends CustomDialog {
 	
 	public void updateMunicipalities() {
 		String provinceCode = ProvinceContract.getProvinceCode(employee.addressProvince.getSelectedItemText());
-		employee.addressCity.clear();
-		employee.addressCity.addItem("-");;
+		employee.addressMunicipality.clear();
+		employee.addressMunicipality.addItem("-");;
 		ArrayList<String> municipalitiesOfProvince = municipalities.getMunicipalitiesByProvinceCode(provinceCode);
-		municipalitiesOfProvince.forEach(m -> {employee.addressCity.addItem(m);});
+		municipalitiesOfProvince.forEach(m -> {employee.addressMunicipality.addItem(m);});
 	}
 	
 	
