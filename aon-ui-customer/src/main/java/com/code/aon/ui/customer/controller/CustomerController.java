@@ -2,6 +2,8 @@ package com.code.aon.ui.customer.controller;
 
 import static com.code.aon.ui.common.ICommonMessages.CUSTOMER_REPORT;
 
+import java.util.List;
+
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -13,12 +15,16 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.AonVersion;
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
+import com.code.aon.commercial.Target;
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.enumeration.CustomerStatus;
+import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryNote;
 import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.config.util.UserUtils;
@@ -26,6 +32,7 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.registry.controller.RegistryObservationController;
 import com.code.aon.ui.stat.controller.RegistryStatEngineController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class CustomerController extends CustomerListController implements ICustomerConstants, IAuditableController {
 
@@ -206,6 +213,27 @@ public class CustomerController extends CustomerListController implements ICusto
 	@Override
 	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
 		this.showAuditInfoWindow = showAuditInfoWindow;
+	}
+	
+	public boolean isTarget() throws ManagerBeanException {
+		return obtainTargetId() > 0;
+	}
+	
+	public void onLoadTarget(ActionEvent event) throws ManagerBeanException {
+		Integer targetId = obtainTargetId();
+		BasicController targetController = (BasicController)AonUtil.getRegisteredBean(TARGET_CONTROLLER_NAME);
+		targetController.onLoad(event, targetId, CUSTOMER_FORM_NAME, CUSTOMER_CONTROLLER_NAME + ".refresh");	
+	}
+	
+	private int obtainTargetId() throws ManagerBeanException {
+		Integer customerId = ((Customer)getTo()).getId();
+		IManagerBean targetBean = BeanManager.getManagerBean(Target.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(targetBean.getFieldName(IEntityAlias.TARGET_REGISTRY_ID), customerId);
+		List<ITransferObject> list = targetBean.getList(criteria);
+		if(list.size()>0)
+			return ((Target)list.get(0)).getId();
+		return -1;
 	}
 	
 }
