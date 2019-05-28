@@ -22,8 +22,8 @@ import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Rpaymethod.RPAYMETHOD;
-import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
+import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Record1;
@@ -58,7 +59,6 @@ import com.esferalia.aon.jooq.tables.records.RbankRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.RmediaRecord;
 import com.esferalia.aon.jooq.tables.records.RpaymethodRecord;
-import com.google.gwt.uibinder.elementparsers.IsEmptyParser;
 
 public class JooqEmployee {
 
@@ -593,7 +593,7 @@ public class JooqEmployee {
 						.set(RADDRESS.NUMBER, employeeData.getAddresNum())
 						.set(RADDRESS.ZIP, employeeData.getAddressZip())
 						.set(RADDRESS.CITY, municipalities.getMunicipalityByZip(employeeData.getAddressCity()))
-						.set(RADDRESS.MUNICIPALITY_CODE, employeeData.getAddressCity())
+						.set(RADDRESS.MUNICIPALITY_CODE, StringUtils.leftPad(employeeData.getAddressCity(), 5, '0'))
 						.set(RADDRESS.GEOZONE, geozoneId)
 						.where(RADDRESS.ID.eq(rAddressId))
 						.execute();
@@ -747,7 +747,7 @@ public class JooqEmployee {
 				}
 			}
 		}else{
-			if("TRANSFERENCIA".equals(employeeData.getPayMethodType())){
+			if("TRANSFERENCIA".equals(employeeData.getPayMethodType()) || "GIRO".equals(employeeData.getPayMethodType())){
 				Integer rbankTableId = employeeData.getRbankId();
 				if(null == employeeData.getRbankId()  /*&& (employeeData.getAccount() != null && employeeData.getAccount() != "")*/){
 					RbankRecord rbankRecord = dslContext.insertInto(RBANK)
@@ -1432,7 +1432,7 @@ public class JooqEmployee {
 					.set(RADDRESS.NUMBER, employeeData.getAddresNum())
 					.set(RADDRESS.ZIP, employeeData.getAddressZip())
 					.set(RADDRESS.CITY, municipalities.getMunicipalityByZip(employeeData.getAddressCity()))
-					.set(RADDRESS.MUNICIPALITY_CODE, employeeData.getAddressCity())
+					.set(RADDRESS.MUNICIPALITY_CODE, StringUtils.leftPad(employeeData.getAddressCity(), 5, '0'))
 					.set(RADDRESS.GEOZONE, geozoneId)
 					.returning(RADDRESS.ID, RADDRESS.GEOZONE)
 					.fetchOne();

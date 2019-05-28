@@ -207,11 +207,6 @@
 		.unSelected{
 			background: white;
 		}
-		
-		.peculiaridades{
-			font-size: 10px;
-			margin-top: 2px;
-		}
 
 	</ui:style>
 
@@ -242,7 +237,7 @@
 						</g:HTMLPanel>
 					</g:HorizontalPanel>
 				</g:FlowPanel>
-				<g:FlowPanel styleName="aon-finding-title-toolbar">
+				<!-- <g:FlowPanel styleName="aon-finding-title-toolbar">
 					<g:HorizontalPanel>
 						<g:HTMLPanel styleName="aon-finding-title">
 							<g:HTMLPanel styleName="aon-finding-title-internal">
@@ -260,7 +255,7 @@
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>
-				</g:FlowPanel>
+				</g:FlowPanel> -->
 			</g:FlowPanel>
 		</g:north>
 		<g:center> 

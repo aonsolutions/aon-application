@@ -26,7 +26,6 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.TextBoxBase;
 import com.google.gwt.user.client.ui.Widget;
 
 public class SSBonusDraft extends Composite {
@@ -56,8 +55,6 @@ public class SSBonusDraft extends Composite {
 	}
 	
 	//ELEMENTOS HTML
-	@UiField
-	ListBox peculiaridades;
 	
 	@UiField
 	Button listBonusesButton;
@@ -369,7 +366,6 @@ public class SSBonusDraft extends Composite {
 		this.typeBonus.clear();
 		this.formulaBonus.setText("");
 		this.formulaBonus.setEnabled(false);
-		this.peculiaridades.clear();
 	}
 
 	private void initializeListBox() {
@@ -377,16 +373,6 @@ public class SSBonusDraft extends Composite {
 		typeBonus.addItem("Importe fijo");
 		typeBonus.addItem("Importe / d" + String.valueOf("\u00ED") + "as n" + String.valueOf("\u00F3") + "mina");
 		typeBonus.addItem("Porcentaje sobre cuotas");
-		
-		peculiaridades.addItem("CONTRATO TEMPORAL");
-		peculiaridades.addItem("JUBILACION ACTIVA");
-		peculiaridades.addItem("COOPERATIVAS");
-		peculiaridades.addItem("BECARIOS");
-		peculiaridades.addItem("REGIMEN GENERAL ASIMILADOS");
-		peculiaridades.addItem("MAYOR 65 A" + String.valueOf("\u00D1") + "OS > 38 A" + String.valueOf("\u00D1") + "OS COTIZADOS");
-		peculiaridades.addItem("MATERNIDAD/PATERNIDAD/R.EMBARAZO");
-		peculiaridades.addItem("COBRO DIRECTO IT");
-		peculiaridades.addItem("CONTRATOS < 6 DIAS");
 	}
 	
 	private void hideChecksPanel() {

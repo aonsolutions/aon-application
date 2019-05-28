@@ -471,6 +471,9 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	Button afiButton;
 	
 	@UiField
+	Button peculiaritiesButton;
+	
+	@UiField
 	Button redoButton;
 
 	@UiField
@@ -560,6 +563,19 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		dialog.center();
 		dialog.show();
 		
+	}
+	
+	@UiHandler("peculiaritiesButton")
+	void onPeculiaritiesButtonClick(ClickEvent event) {
+		EmployeePeculiaritiesDialog dialog = new EmployeePeculiaritiesDialog() {
+			@Override
+			protected void onAccept() {
+				// TODO: Save peculiarities
+			}
+		};
+		
+		dialog.center();
+		dialog.show();
 	}
 	
 	@UiHandler("undoButton")

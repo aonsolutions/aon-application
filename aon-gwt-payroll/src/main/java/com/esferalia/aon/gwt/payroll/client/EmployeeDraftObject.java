@@ -363,12 +363,12 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		switch (payMethodType) {
 		case "EFECTIVO":
 			return 1;
-		case "GIRO":
-			return 2;
+//		case "GIRO":
+//			return 2;
 		case "CHEQUE":
-			return 3;
+			return 2;
 		case "TRANSFERENCIA":
-			return 4;
+			return 3;
 		default:
 			return 0;
 		}

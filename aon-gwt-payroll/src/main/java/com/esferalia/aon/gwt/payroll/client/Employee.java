@@ -695,7 +695,7 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 		// TIPO DE PAGO
 		this.payMethod.addItem("-");
 		this.payMethod.addItem("EFECTIVO");
-		this.payMethod.addItem("GIRO");
+//		this.payMethod.addItem("GIRO");
 		this.payMethod.addItem("CHEQUE");
 		this.payMethod.addItem("TRANSFERENCIA");	
 	}
