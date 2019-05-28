@@ -69,6 +69,7 @@ public class JooqEmployeeCalendar {
 		Boolean fullTimeJourney = false;
 		Integer contractType = 0;
 		String typeInactivityDays = null;
+		ArrayList<Date> festiveWorkingDays = new ArrayList<Date>();
 		
 		// ------------------------------------------------------ JORNADA COMPLETA -------------------------------------------------------
 		
@@ -368,11 +369,23 @@ public class JooqEmployeeCalendar {
 			contractInactivityDaysList.add(quarterInactivityTypeEmployee);
 		}
 		
+		// -------------------------------------------- DIAS FESTIVOS LABORABLES --------------------------------------------------
+		Result<Record> festiveWorkingRecords = dslContext
+				.select()
+				.from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(contract))
+				.and(CONTRACT_DATA.NAME.eq("FESTIVE_WORKING"))
+				.fetch();
+		
+		for(Record r: festiveWorkingRecords) {
+			festiveWorkingDays.add(r.get(CONTRACT_DATA.START_DATE));
+		}
+		
 		// ------------------------------------------------ RESULTADO -------------------------------------------------------------
 		
 		employeeInfoCalendar = new EmployeeCalendarData(contractHoursList, contractExtraHoursList, contractDayTypesList, contractITDayTypeList, 
 				contractFestiveDaysList, contractNonWorkingDaysList, fullTimeJourney, contractCoefficientEREDayTypeList, contractCoefficientStrikeDayTypeList,
-				contractInactivityDaysList, contractType);
+				contractInactivityDaysList, contractType, festiveWorkingDays);
 		
 		return employeeInfoCalendar;
 	}
@@ -590,7 +603,8 @@ public class JooqEmployeeCalendar {
 				  ,"DIAS_INACTIVIDAD"
 				  ,"NO_LABORABLE"
 				  ,"CAUSA_INACTIVIDAD"
-				  ,"PEONADAS"))
+				  ,"PEONADAS"
+				  ,"FESTIVE_WORKING"))
 		   .execute();
 		
 		HashMap<java.util.Date, DayType> updateDaysTypeMap = updateInfo.getDaysTypeMap();
@@ -683,6 +697,16 @@ public class JooqEmployeeCalendar {
 		}
 		
 		creteRealJourneyDB(dslContext, contract);
+		
+		// ------------------------------------------- ACTUALIZACION FESTIVOS LABORABLES --------------------------------------------------
+		ArrayList<java.util.Date> festiveWorkingDays = updateInfo.getFestiveWorkingDays();
+		for(java.util.Date date: festiveWorkingDays) {
+			dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+					CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+					CONTRACT_DATA.END_DATE)
+					.values(domain, "FESTIVE_WORKING", contract, "WORK", 
+							new Date(date.getTime()), new Date(date.getTime())).execute();
+		}
 		
 	}
 

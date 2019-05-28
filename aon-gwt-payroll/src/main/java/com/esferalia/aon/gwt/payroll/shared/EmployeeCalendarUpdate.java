@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ public class EmployeeCalendarUpdate implements Serializable {
 	private Map<java.util.Date, String> mapInactivityDays;
 	private Double ereCoefficient;
 	private Boolean fullTimeEmployee;
+	private ArrayList<java.util.Date> festiveWorkingDays;
 	
 	public EmployeeCalendarUpdate() {
 		super();
@@ -28,7 +30,7 @@ public class EmployeeCalendarUpdate implements Serializable {
 
 	public EmployeeCalendarUpdate(HashMap<java.util.Date, DayType> daysTypesMap, HashMap<java.util.Date, Double> daysHoursMap,
 			List<Quartet<Date, Date, String, String>> monthExtraHoursList, Double ereCoefficient, Boolean fullTimeEmployee,
-			Map<java.util.Date, String> mapInactivityDays) {
+			Map<java.util.Date, String> mapInactivityDays, ArrayList<java.util.Date> festiveWorkingDays) {
 		super();
 		this.daysTypesMap = daysTypesMap;
 		this.daysHoursMap = daysHoursMap;
@@ -36,6 +38,7 @@ public class EmployeeCalendarUpdate implements Serializable {
 		this.ereCoefficient = ereCoefficient;
 		this.fullTimeEmployee = fullTimeEmployee;
 		this.mapInactivityDays = mapInactivityDays;
+		this.festiveWorkingDays = festiveWorkingDays;
 		
 	}
 
@@ -110,6 +113,14 @@ public class EmployeeCalendarUpdate implements Serializable {
 
 	public void setMapInactivityDays(Map<java.util.Date, String> mapInactivityDays) {
 		this.mapInactivityDays = mapInactivityDays;
+	}
+
+	public ArrayList<java.util.Date> getFestiveWorkingDays() {
+		return festiveWorkingDays;
+	}
+
+	public void setFestiveWorkingDays(ArrayList<java.util.Date> festiveWorkingDays) {
+		this.festiveWorkingDays = festiveWorkingDays;
 	}
 	
 	

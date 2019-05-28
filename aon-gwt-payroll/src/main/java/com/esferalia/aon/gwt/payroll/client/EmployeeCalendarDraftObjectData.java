@@ -32,6 +32,7 @@ public class EmployeeCalendarDraftObjectData {
 	private Map<Date, Double> mapExtraHours;
 	private Map<Date, Double> mapDaysCoefficientEre;
 	private Map<Date, Double> mapDaysCoefficientStrike;
+	private ArrayList<Date> festiveWorkingDays;
 	
 	private Map<Date,Double> draftMapDaysHour;
 	private Map<Date, DayType> draftMapDaysType;
@@ -39,6 +40,7 @@ public class EmployeeCalendarDraftObjectData {
 	private Map<Date, Double> draftMapDaysCoefficientStrike;
 	private Map<Date, Double> draftMapExtraHours;
 	private Map<Date, String> draftMapInactivityDays;
+	private ArrayList<Date> draftFestiveWorkingDays;
 	
 	private Date startContract;
 	private Date endContract;
@@ -366,7 +368,6 @@ public class EmployeeCalendarDraftObjectData {
 		}
 		
 	}
-	
 		
 	// ------------------------------------------------- CLASS METHODS -------------------------------------------------	
 	
@@ -382,6 +383,7 @@ public class EmployeeCalendarDraftObjectData {
 		this.mapDaysCoefficientEre = new HashMap<Date,Double>();
 		this.mapDaysCoefficientStrike = new HashMap<Date,Double>();
 		this.mapInactivityDays = new HashMap<Date,String>();
+		this.festiveWorkingDays = new ArrayList<>();
 		
 		this.draftMapDaysHour = new HashMap<Date,Double>();
 		this.draftMapDaysType = new HashMap<Date,DayType>();
@@ -389,6 +391,7 @@ public class EmployeeCalendarDraftObjectData {
 		this.draftMapDaysCoefficientStrike = new HashMap<Date,Double>();
 		this.draftMapExtraHours = new HashMap<Date,Double>();
 		this.draftMapInactivityDays = new HashMap<Date,String>();
+		this.draftFestiveWorkingDays = new ArrayList<>();
 		
 		this.startContract = startContract;
 		this.endContract = endContract;
@@ -996,11 +999,13 @@ public class EmployeeCalendarDraftObjectData {
 				List<Quartet<java.sql.Date, java.sql.Date, String, String>> inactivityTypeList = result.getTypeInactivityList();
 				ArrayList<Byte> nonWorkingList = result.getContractNonWorkingDaysList();
 				HashMap<java.util.Date, String> festivesList = result.getContractFestiveDaysList();
+				ArrayList<java.sql.Date> festiveWorkingList = result.getContractFestiveWorkingDays();
 				initializeNonWorkingsDaysTypeMap(nonWorkingList);
 				initializeHoursMap(hoursList);
 				initializeExtraHoursMap(extraHoursList);
 				initializeTypesMap(typesList);
 				initializeFestivesDaysTypeMap(festivesList);
+				initializeFestivesWorkingDaysTypeMap(festiveWorkingList);
 				initializeITDaysTypeMap(ITDaysList);
 				initializeMapDaysCoefficientEre(daysCoefficientEreList);
 				initializeMapDaysCoefficientStrike(daysCoefficientStrikeList);
@@ -1166,6 +1171,12 @@ public class EmployeeCalendarDraftObjectData {
 				}
 			}
 			
+			private void initializeFestivesWorkingDaysTypeMap(ArrayList<java.sql.Date> festivesWorkingList) {
+				for(java.sql.Date date : festivesWorkingList){
+					mapDaysType.put(date, DayType.NOTYPEDAY);
+				}
+			}
+			
 			private void initializeMapInactivityDays(
 					List<Quartet<java.sql.Date, java.sql.Date, String, String>> inactivityTypeList) {
 				for(Quartet<java.sql.Date, java.sql.Date, String, String> entry : inactivityTypeList){
@@ -1241,6 +1252,7 @@ public class EmployeeCalendarDraftObjectData {
 		updateInfo.setStrikeDaysValues(createUpdateDaysCoefficientStrike());
 		updateInfo.setEreDaysValues(createUpdateDaysCoefficientEre());
 		updateInfo.setMapInactivityDays(createUpdateInactivity());
+		updateInfo.setFestiveWorkingDays(festiveWorkingDays);
 		
 		employeesService.setEmployeeCalendar(employeeId, updateInfo, new AsyncCallback<EmployeeCalendarUpdate>(){
 
@@ -1461,6 +1473,12 @@ public class EmployeeCalendarDraftObjectData {
 				
 		}
 		
+	}
+
+	public void setFestiveWorking(Date date) {
+		if(!this.festiveWorkingDays.contains(date)) {
+			this.festiveWorkingDays.add(date);
+		}
 	}
 
 	

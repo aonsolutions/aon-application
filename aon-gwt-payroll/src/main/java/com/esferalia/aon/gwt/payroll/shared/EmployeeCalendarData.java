@@ -23,6 +23,9 @@ public class EmployeeCalendarData implements Serializable {
 	ArrayList<Quartet<Date, Date, String, String>> typeInactivityList;
 	private Integer contractType;
 	
+	//Festivos -> Laborables
+	private ArrayList<Date> contractFestiveWorkingDays;
+	
 	
 	public EmployeeCalendarData() {
 		super();
@@ -38,7 +41,8 @@ public class EmployeeCalendarData implements Serializable {
 			ArrayList<Quartet<Date, Date, String, String>> contractCoefficientEREDayTypeList,
 			ArrayList<Quartet<Date, Date, String, String>> contractCoefficientStrikeDayTypeList,
 			ArrayList<Quartet<Date, Date, String, String>> typeInactivityList,
-			Integer contractType) {
+			Integer contractType,
+			ArrayList<Date> contractFestiveWorkingDays) {
 		super();
 		this.contractHoursList = contractHoursList;
 		this.contractExtraHoursList = contractExtraHoursList;
@@ -51,6 +55,7 @@ public class EmployeeCalendarData implements Serializable {
 		this.contractCoefficientStrikeDayTypeList = contractCoefficientStrikeDayTypeList;
 		this.typeInactivityList = typeInactivityList;
 		this.contractType = contractType;
+		this.contractFestiveWorkingDays = contractFestiveWorkingDays;
 	}
 	
 	// ------------- GETTERS / SETTERS -------------
@@ -137,4 +142,14 @@ public class EmployeeCalendarData implements Serializable {
 	public Integer getContractType(){
 		return this.contractType;
 	}
+
+	public ArrayList<Date> getContractFestiveWorkingDays() {
+		return contractFestiveWorkingDays;
+	}
+
+	public void setContractFestiveWorkingDays(ArrayList<Date> contractFestiveWorkingDays) {
+		this.contractFestiveWorkingDays = contractFestiveWorkingDays;
+	}
+	
+	
 }

@@ -22,7 +22,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
@@ -769,13 +768,13 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			return;
 		
 		//TODO: poner este codigo para bloquear no laborables -> || cellsType[row][col].getType().equals(DayType.NOWORKINGDAY))
-		if (cellsType[row][col].getType().equals(DayType.BAJAIT) || cellsType[row][col].getType().equals(DayType.FREEDAY))
+		if (cellsType[row][col].getType().equals(DayType.BAJAIT) /*|| cellsType[row][col].getType().equals(DayType.FREEDAY)*/)
 			return;
 	
 		//Pulsacion celda con CTRL
 		if (event.isControlKeyDown()) { 
 			//TODO: poner este codigo para bloquear no laborables -> || cellsType[row][col].getType().equals(DayType.NOWORKINGDAY))
-			if (!(cellsType[row][col].getType().equals(DayType.BAJAIT) || cellsType[row][col].getType().equals(DayType.FREEDAY)))
+			if (!(cellsType[row][col].getType().equals(DayType.BAJAIT) /*|| cellsType[row][col].getType().equals(DayType.FREEDAY)*/))
 				cells[row][col].select(row, col);
 		
 		//Pulsacion celda con SHIFT
@@ -793,7 +792,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				while (initialPosition != endPosition){
 					//TODO: poner este codigo para bloquear no laborables -> || cellsType[calcularFila(posicionIncial+1)][calcularColumna(posicionIncial+1)].getType().equals(DayType.NOWORKINGDAY))
 					if (!(cellsType[calculatePositionRow(initialPosition+1)][calculatePositionCol(initialPosition+1)].getType().equals(DayType.BAJAIT)
-							|| cellsType[calculatePositionRow(initialPosition+1)][calculatePositionCol(initialPosition+1)].getType().equals(DayType.FREEDAY))){
+							/* || cellsType[calculatePositionRow(initialPosition+1)][calculatePositionCol(initialPosition+1)].getType().equals(DayType.FREEDAY)*/)){
 						cells[calculatePositionRow(initialPosition+1)][calculatePositionCol(initialPosition+1)]
 								.select(calculatePositionRow(initialPosition+1), calculatePositionCol(initialPosition+1));
 					}
@@ -811,11 +810,11 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			if (isMonth(row, col)){
 				for(int i = 1; i<38; i++)
 					//TODO: poner este codigo para bloquear no laborables -> || cellsType[row][i].getType().equals(DayType.NOWORKINGDAY))
-					if (!(cellsType[row][i].getType().equals(DayType.BAJAIT) || cellsType[row][i].getType().equals(DayType.FREEDAY)))
+					if (!(cellsType[row][i].getType().equals(DayType.BAJAIT) /*|| cellsType[row][i].getType().equals(DayType.FREEDAY)*/))
 						cells[row][i].select(row, i);
 			}else
 				//TODO: poner este codigo para bloquear no laborables -> || cellsType[row][col].getType().equals(DayType.NOWORKINGDAY))
-				if (!(cellsType[row][col].getType().equals(DayType.BAJAIT) || cellsType[row][col].getType().equals(DayType.FREEDAY)))
+				if (!(cellsType[row][col].getType().equals(DayType.BAJAIT) /*|| cellsType[row][col].getType().equals(DayType.FREEDAY)*/))
 					cells[row][col].select(row, col);
 			
 			oldHourSelected = pos;
@@ -2032,6 +2031,9 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				calendarGrid.getWidget(row, col).removeStyleName(style.strikeStyle());
 				calendarGrid.getWidget(row, col).removeStyleName(style.ereStyle());
 				calendarGrid.getWidget(row, col).removeStyleName(style.nonWorkingStyle());
+				if(cellsType[row][col].getType().equals(DayType.FREEDAY)) {
+					calendarEmployeeInfo.setFestiveWorking(date);
+				}
 				cellsType[row][col].setAsType(DayType.NOTYPEDAY, row, col);
 				Double hour = calendarEmployeeInfo.getHourByDay(date);
 				//if (-1 == hour)
