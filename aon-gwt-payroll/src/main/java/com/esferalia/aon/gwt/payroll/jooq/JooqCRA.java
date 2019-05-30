@@ -266,7 +266,7 @@ public class JooqCRA {
 				Type craType = Payment.Type.values()[salaryPaymentRecords.get(i).get(SALARY_PAYMENT.TYPE)];
 				
 				if(typeCRA == craType) {
-					craAmount += salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE);
+					craAmount += (salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT) > 0) ? salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT) : salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE);
 					
 					//Es la ultima iteracion
 					if(i+1 == salaryPaymentRecords.size()) {
@@ -306,7 +306,7 @@ public class JooqCRA {
 					
 					typeCRA = craType;
 					cre = new JSONObject();
-					craAmount = salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE);
+					craAmount = (salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT) > 0) ? salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT) : salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE);
 					
 					//Es la ultima iteracion
 					if(i+1 == salaryPaymentRecords.size()) {
