@@ -11,22 +11,120 @@
     
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeePeculiaritiesDialog.MyStyle">
 
+		@external .gwt-ToggleButton-down;
+		@external .gwt-ToggleButton-up;
+		@external .gwt-ToggleButton-down-hovering;
+		@external .gwt-ToggleButton-up-hovering;
+
 		.form {
 			padding: 10px;
 		}
 		
+		.marginTab{
+			margin-right: 5px;
+		}
+		
+		.tabSelected{
+			border: 1px solid #e2e2e2;
+			border-bottom: none;
+		}
+		
+		.tabIconSelected{
+			background-color: white !important;
+		}
+		
 		.marginBottom{
 			margin-bottom: 15px;
+			margin-left: 10px;
+			width: 100%;
+		}
+		
+		.gwt-ToggleButton-down{
+			border: none !important;
+			color: black !important;
+			font-weight: bold !important;
+			padding-bottom: 3px !important;
+			background: white !important;
+		}
+
+		.gwt-ToggleButton-up{
+			border: none !important;
+			border-bottom: none !important;
+			color: #ababab !important;
+			background: #e2e2e2 !important;
+		}
+
+		.gwt-ToggleButton-down-hovering{
+			border: none !important;
+			color: black !important;
+			font-weight: bold !important;
+			padding-bottom: 3px !important;
+			background: white !important;
+		}
+
+		.gwt-ToggleButton-up-hovering{
+			border: none !important;
+			border-bottom: none !important;
+			color: #ababab !important;
+			background: #e2e2e2 !important;
+		}
+
+		.selectButtonSalaryToggleButton{
+			border-top: 1px solid #ababab !important;
+			border-left: 1px solid #ababab !important;
+			border-right: 1px solid #ababab !important;
+	
+		}
+		
+		.deleteButtonUp{
+			border: none !important;
+    		width: 18px !important;
+    		height: 22px !important;
+    		background-color: #e2e2e2;
+		}
+
+		.deleteButtonDown{
+			border: none !important;
+ 		   	border-bottom: none !important;
+ 		   	color: black !important;
+ 		   	font-weight: bold !important;
+    		width: 25px !important;
+    		height: 22px !important;
+    		background: white !important;
+			padding-top: 2px !important;
 		}
 		
 		.peculiarities{
-			font-size: 10px;
+			font-size: 12px;
 			margin-top: 2px;
 		}
 		
 		.dateBox{
-			font-size: 10px;
+			font-size: 12px;
 			text-align: center !important;
+			width: 86% !important;
+		}
+		
+		.tabsPanel{
+			margin-left: 10px;
+		}
+		
+		.tabSelectedStyle{
+			background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQMAAAAZCAYAAAA160uCAAAAkklEQVR42u3USXKCABQFwH//A8YxxBEJFJQRI+5eFrlGL/oKXavVRwBqvVkHQAbAfwbbzTYAtdvtAlD7/WcAqmmaANTh8BWAOh2PAajT+RyAulwvAai2bQNQt1sXgPruugBU3/cBqGEYAlDjOAagpmkKQN3v9wDUz+MRgJrnOQD1+3wGoF6vVwBqWZYA1PJ+B+APWHe3SG7bckEAAAAASUVORK5CYII=") -0px -0px no-repeat;
+			width: auto;
+			height: auto;
+			padding: 5px;
+			border-radius: 4%;
+			cursor: pointer;
+		}
+		
+		.tabStyle{
+			border: 1px solid #c5c5c5;
+			border-radius: 4%;
+			padding: 5px;
+			border-bottom: none;
+			padding-bottom: 0px;
+			cursor: pointer;
 		}
 		
 		.bold{
@@ -43,7 +141,7 @@
 		}
 		
 		.textBoxWidth{
-			width: 40px;
+			width: 50px;
 			padding: 2px;
 			font-size: 1em;
 			border: 1px solid #ccc;
@@ -60,6 +158,10 @@
 
 		.hidden{
 			display: none;
+		}
+		
+		.paddingTables{
+			padding: 10px;
 		}
 		
 	</ui:style>
@@ -84,404 +186,202 @@
 	                </td>
 	            </tr>
 	            <tr>
+	            	<td colspan="2"  style="border-bottom: 1px solid #e2e2e2;">
+	            		<g:HorizontalPanel ui:field="tabsPanel" styleName="{style.tabsPanel}"></g:HorizontalPanel>
+	            	</td>
+	            </tr>
+	            <tr>
 	            	<td colspan="2">
-	                    <g:TabLayoutPanel ui:field="tabPanel" barUnit='EM' barHeight='3'>
-							<g:tab>
-						    	<g:customHeader size='15'>
-						    		<g:HorizontalPanel>
-							    		<g:Label styleName="{style.paddingStyle} {style.bold}">28/05/2019</g:Label>
-							      		<g:Button styleName="aon-editDataTable-button aon-icon-draft"></g:Button>
-						    		</g:HorizontalPanel>
-					    		</g:customHeader>
-						    	<g:HorizontalPanel>
-						    		<g:HTMLPanel>
-							    		<table  style="margin-top: 10px;margin-right: 20px;">
-							    			<tbody>
-							    				<tr style="background-color: #dbdbdb;">
-							    					<td style="width: 250px;">
-							    						<g:Label styleName="{style.centerText} {style.bold}">TRABAJADOR</g:Label>
-							    					</td>
-							    					<td>
-							    						<g:Label styleName="{style.centerText} {style.bold}">FECHA</g:Label>
-							    					</td>
-							    					<td>
-							    						<g:Label styleName="{style.centerText} {style.bold}">VALOR</g:Label>
-							    					</td>
-							    				</tr>
-							    				<tr>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:CheckBox></g:CheckBox>
-							    							<g:Label styleName="{style.paddingStyle}">Contigencias comunes</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    					<td>
-							    						<g:Label>28/05/2019</g:Label>
-							    					</td>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:TextBox styleName="{style.textBoxWidth}"></g:TextBox>
-							    							<g:Label styleName="{style.paddingStyle}">%</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    				</tr>
-							    				<tr>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:CheckBox></g:CheckBox>
-							    							<g:Label styleName="{style.paddingStyle}">Desempleo</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    					<td>
-							    						<g:Label>28/05/2019</g:Label>
-							    					</td>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:TextBox styleName="{style.textBoxWidth}"></g:TextBox>
-							    							<g:Label styleName="{style.paddingStyle}">%</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    				</tr>
-							    				<tr>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:CheckBox></g:CheckBox>
-							    							<g:Label styleName="{style.paddingStyle}">Formación profesional</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    					<td>
-							    						<g:Label>28/05/2019</g:Label>
-							    					</td>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:TextBox styleName="{style.textBoxWidth}"></g:TextBox>
-							    							<g:Label styleName="{style.paddingStyle}">%</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    				</tr>
-							    			</tbody>
-							    		</table>
-							    	</g:HTMLPanel>
-							    	<g:HTMLPanel>
-							    		<table  style="margin-top: 10px;">
-							    			<tbody>
-							    				<tr style="background-color: #dbdbdb;">
-							    					<td style="width: 250px;">
-							    						<g:Label styleName="{style.centerText} {style.bold}">EMPRESA</g:Label>
-							    					</td>
-							    					<td>
-							    						<g:Label styleName="{style.centerText} {style.bold}">FECHA</g:Label>
-							    					</td>
-							    					<td>
-							    						<g:Label styleName="{style.centerText} {style.bold}">VALOR</g:Label>
-							    					</td>
-							    				</tr>
-							    				<tr>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:CheckBox></g:CheckBox>
-							    							<g:Label styleName="{style.paddingStyle}">Contigencias comunes</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    					<td>
-							    						<g:Label>28/05/2019</g:Label>
-							    					</td>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:TextBox styleName="{style.textBoxWidth}"></g:TextBox>
-							    							<g:Label styleName="{style.paddingStyle}">%</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    				</tr>
-							    				<tr>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:CheckBox></g:CheckBox>
-							    							<g:Label styleName="{style.paddingStyle}">AT/EP + IT</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    					<td>
-							    						<g:Label>28/05/2019</g:Label>
-							    					</td>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:TextBox styleName="{style.textBoxWidth}"></g:TextBox>
-							    							<g:Label styleName="{style.paddingStyle}">%</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    				</tr>
-							    				<tr>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:CheckBox></g:CheckBox>
-							    							<g:Label styleName="{style.paddingStyle}">AT/EP + IMS</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    					<td>
-							    						<g:Label>28/05/2019</g:Label>
-							    					</td>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:TextBox styleName="{style.textBoxWidth}"></g:TextBox>
-							    							<g:Label styleName="{style.paddingStyle}">%</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    				</tr>
-							    				<tr>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:CheckBox></g:CheckBox>
-							    							<g:Label styleName="{style.paddingStyle}">FOGASA</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    					<td>
-							    						<g:Label>28/05/2019</g:Label>
-							    					</td>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:TextBox styleName="{style.textBoxWidth}"></g:TextBox>
-							    							<g:Label styleName="{style.paddingStyle}">%</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    				</tr>
-							    				<tr>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:CheckBox></g:CheckBox>
-							    							<g:Label styleName="{style.paddingStyle}">Formación profesional</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    					<td>
-							    						<g:Label>28/05/2019</g:Label>
-							    					</td>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:TextBox styleName="{style.textBoxWidth}"></g:TextBox>
-							    							<g:Label styleName="{style.paddingStyle}">%</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    				</tr>
-							    				<tr>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:CheckBox></g:CheckBox>
-							    							<g:Label styleName="{style.paddingStyle}">Desempleo</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    					<td>
-							    						<g:Label>28/05/2019</g:Label>
-							    					</td>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:TextBox styleName="{style.textBoxWidth}"></g:TextBox>
-							    							<g:Label styleName="{style.paddingStyle}">%</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    				</tr>
-							    			</tbody>
-							    		</table>
-							    	</g:HTMLPanel>
-						    	</g:HorizontalPanel>
-						  	</g:tab>
-						  	<g:tab>
-						    	<g:customHeader size='15'>
-						    		<g:HorizontalPanel>
-							    		<g:Label styleName="{style.paddingStyle} {style.bold}">13/08/2019</g:Label>
-							      		<g:Button styleName="aon-editDataTable-button aon-icon-draft"></g:Button>
-						    		</g:HorizontalPanel>
-					    		</g:customHeader>
-						    	<g:HorizontalPanel>
-						    		<g:HTMLPanel>
-							    		<table  style="margin-top: 10px;margin-right: 20px;">
-							    			<tbody>
-							    				<tr style="background-color: #dbdbdb;">
-							    					<td style="width: 250px;">
-							    						<g:Label styleName="{style.centerText} {style.bold}">TRABAJADOR</g:Label>
-							    					</td>
-							    					<td>
-							    						<g:Label styleName="{style.centerText} {style.bold}">FECHA</g:Label>
-							    					</td>
-							    					<td>
-							    						<g:Label styleName="{style.centerText} {style.bold}">VALOR</g:Label>
-							    					</td>
-							    				</tr>
-							    				<tr>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:CheckBox></g:CheckBox>
-							    							<g:Label styleName="{style.paddingStyle}">Contigencias comunes</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    					<td>
-							    						<g:Label>28/05/2019</g:Label>
-							    					</td>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:TextBox styleName="{style.textBoxWidth}"></g:TextBox>
-							    							<g:Label styleName="{style.paddingStyle}">%</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    				</tr>
-							    				<tr>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:CheckBox></g:CheckBox>
-							    							<g:Label styleName="{style.paddingStyle}">Desempleo</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    					<td>
-							    						<g:Label>28/05/2019</g:Label>
-							    					</td>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:TextBox styleName="{style.textBoxWidth}"></g:TextBox>
-							    							<g:Label styleName="{style.paddingStyle}">%</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    				</tr>
-							    				<tr>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:CheckBox></g:CheckBox>
-							    							<g:Label styleName="{style.paddingStyle}">Formación profesional</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    					<td>
-							    						<g:Label>28/05/2019</g:Label>
-							    					</td>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:TextBox styleName="{style.textBoxWidth}"></g:TextBox>
-							    							<g:Label styleName="{style.paddingStyle}">%</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    				</tr>
-							    			</tbody>
-							    		</table>
-							    	</g:HTMLPanel>
-							    	<g:HTMLPanel>
-							    		<table  style="margin-top: 10px;">
-							    			<tbody>
-							    				<tr style="background-color: #dbdbdb;">
-							    					<td style="width: 250px;">
-							    						<g:Label styleName="{style.centerText} {style.bold}">EMPRESA</g:Label>
-							    					</td>
-							    					<td>
-							    						<g:Label styleName="{style.centerText} {style.bold}">FECHA</g:Label>
-							    					</td>
-							    					<td>
-							    						<g:Label styleName="{style.centerText} {style.bold}">VALOR</g:Label>
-							    					</td>
-							    				</tr>
-							    				<tr>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:CheckBox></g:CheckBox>
-							    							<g:Label styleName="{style.paddingStyle}">Contigencias comunes</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    					<td>
-							    						<g:Label>28/05/2019</g:Label>
-							    					</td>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:TextBox styleName="{style.textBoxWidth}"></g:TextBox>
-							    							<g:Label styleName="{style.paddingStyle}">%</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    				</tr>
-							    				<tr>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:CheckBox></g:CheckBox>
-							    							<g:Label styleName="{style.paddingStyle}">AT/EP + IT</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    					<td>
-							    						<g:Label>28/05/2019</g:Label>
-							    					</td>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:TextBox styleName="{style.textBoxWidth}"></g:TextBox>
-							    							<g:Label styleName="{style.paddingStyle}">%</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    				</tr>
-							    				<tr>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:CheckBox></g:CheckBox>
-							    							<g:Label styleName="{style.paddingStyle}">AT/EP + IMS</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    					<td>
-							    						<g:Label>28/05/2019</g:Label>
-							    					</td>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:TextBox styleName="{style.textBoxWidth}"></g:TextBox>
-							    							<g:Label styleName="{style.paddingStyle}">%</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    				</tr>
-							    				<tr>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:CheckBox></g:CheckBox>
-							    							<g:Label styleName="{style.paddingStyle}">FOGASA</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    					<td>
-							    						<g:Label>28/05/2019</g:Label>
-							    					</td>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:TextBox styleName="{style.textBoxWidth}"></g:TextBox>
-							    							<g:Label styleName="{style.paddingStyle}">%</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    				</tr>
-							    				<tr>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:CheckBox></g:CheckBox>
-							    							<g:Label styleName="{style.paddingStyle}">Formación profesional</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    					<td>
-							    						<g:Label>28/05/2019</g:Label>
-							    					</td>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:TextBox styleName="{style.textBoxWidth}"></g:TextBox>
-							    							<g:Label styleName="{style.paddingStyle}">%</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    				</tr>
-							    				<tr>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:CheckBox></g:CheckBox>
-							    							<g:Label styleName="{style.paddingStyle}">Desempleooo</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    					<td>
-							    						<g:Label>28/05/2019</g:Label>
-							    					</td>
-							    					<td>
-							    						<g:HorizontalPanel>
-							    							<g:TextBox styleName="{style.textBoxWidth}"></g:TextBox>
-							    							<g:Label styleName="{style.paddingStyle}">%</g:Label>
-							    						</g:HorizontalPanel>
-							    					</td>
-							    				</tr>
-							    			</tbody>
-							    		</table>
-							    	</g:HTMLPanel>
-						    	</g:HorizontalPanel>
-						  	</g:tab>
-						 </g:TabLayoutPanel>
-	                </td>
+	            		<g:HorizontalPanel styleName="{style.paddingTables}">
+				    		<g:HTMLPanel>
+					    		<table  style="margin-top: 10px;margin-right: 20px;">
+					    			<tbody>
+					    				<tr style="background-color: #dbdbdb;">
+					    					<td style="width: 250px;">
+					    						<g:Label styleName="{style.centerText} {style.bold}">TRABAJADOR</g:Label>
+					    					</td>
+					    					<td>
+					    						<g:Label styleName="{style.centerText} {style.bold}">FECHA</g:Label>
+					    					</td>
+					    					<td>
+					    						<g:Label styleName="{style.centerText} {style.bold}">VALOR</g:Label>
+					    					</td>
+					    				</tr>
+					    				<tr>
+					    					<td>
+					    						<g:HorizontalPanel>
+					    							<g:CheckBox ui:field="cgcCheck"></g:CheckBox>
+					    							<g:Label styleName="{style.paddingStyle}">Contigencias comunes</g:Label>
+					    						</g:HorizontalPanel>
+					    					</td>
+					    					<td>
+					    						<g:Label ui:field="cgcDate"></g:Label>
+					    					</td>
+					    					<td>
+					    						<g:HorizontalPanel>
+					    							<g:TextBox styleName="{style.textBoxWidth}" ui:field="cgcValue"></g:TextBox>
+					    							<g:Label styleName="{style.paddingStyle}">%</g:Label>
+					    						</g:HorizontalPanel>
+					    					</td>
+					    				</tr>
+					    				<tr>
+					    					<td>
+					    						<g:HorizontalPanel>
+					    							<g:CheckBox ui:field="desmplCheck"></g:CheckBox>
+					    							<g:Label styleName="{style.paddingStyle}">Desempleo</g:Label>
+					    						</g:HorizontalPanel>
+					    					</td>
+					    					<td>
+					    						<g:Label ui:field="desmplDate"></g:Label>
+					    					</td>
+					    					<td>
+					    						<g:HorizontalPanel>
+					    							<g:TextBox styleName="{style.textBoxWidth}" ui:field="desmplValue"></g:TextBox>
+					    							<g:Label styleName="{style.paddingStyle}">%</g:Label>
+					    						</g:HorizontalPanel>
+					    					</td>
+					    				</tr>
+					    				<tr>
+					    					<td>
+					    						<g:HorizontalPanel>
+					    							<g:CheckBox ui:field="fpCheck"></g:CheckBox>
+					    							<g:Label styleName="{style.paddingStyle}">Formación profesional</g:Label>
+					    						</g:HorizontalPanel>
+					    					</td>
+					    					<td>
+					    						<g:Label ui:field="fpDate"></g:Label>
+					    					</td>
+					    					<td>
+					    						<g:HorizontalPanel>
+					    							<g:TextBox styleName="{style.textBoxWidth}" ui:field="fpValue"></g:TextBox>
+					    							<g:Label styleName="{style.paddingStyle}">%</g:Label>
+					    						</g:HorizontalPanel>
+					    					</td>
+					    				</tr>
+					    			</tbody>
+					    		</table>
+					    	</g:HTMLPanel>
+					    	<g:HTMLPanel>
+					    		<table  style="margin-top: 10px;">
+					    			<tbody>
+					    				<tr style="background-color: #dbdbdb;">
+					    					<td style="width: 250px;">
+					    						<g:Label styleName="{style.centerText} {style.bold}">EMPRESA</g:Label>
+					    					</td>
+					    					<td>
+					    						<g:Label styleName="{style.centerText} {style.bold}">FECHA</g:Label>
+					    					</td>
+					    					<td>
+					    						<g:Label styleName="{style.centerText} {style.bold}">VALOR</g:Label>
+					    					</td>
+					    				</tr>
+					    				<tr>
+					    					<td>
+					    						<g:HorizontalPanel>
+					    							<g:CheckBox ui:field="cgc_eCheck"></g:CheckBox>
+					    							<g:Label styleName="{style.paddingStyle}">Contigencias comunes</g:Label>
+					    						</g:HorizontalPanel>
+					    					</td>
+					    					<td>
+					    						<g:Label ui:field="cgc_eDate"></g:Label>
+					    					</td>
+					    					<td>
+					    						<g:HorizontalPanel>
+					    							<g:TextBox styleName="{style.textBoxWidth}" ui:field="cgc_eValue"></g:TextBox>
+					    							<g:Label styleName="{style.paddingStyle}">%</g:Label>
+					    						</g:HorizontalPanel>
+					    					</td>
+					    				</tr>
+					    				<tr>
+					    					<td>
+					    						<g:HorizontalPanel>
+					    							<g:CheckBox ui:field="it_Check"></g:CheckBox>
+					    							<g:Label styleName="{style.paddingStyle}">AT/EP + IT</g:Label>
+					    						</g:HorizontalPanel>
+					    					</td>
+					    					<td>
+					    						<g:Label ui:field="it_Date"></g:Label>
+					    					</td>
+					    					<td>
+					    						<g:HorizontalPanel>
+					    							<g:TextBox styleName="{style.textBoxWidth}" ui:field="it_Value"></g:TextBox>
+					    							<g:Label styleName="{style.paddingStyle}">%</g:Label>
+					    						</g:HorizontalPanel>
+					    					</td>
+					    				</tr>
+					    				<tr>
+					    					<td>
+					    						<g:HorizontalPanel>
+					    							<g:CheckBox ui:field="ims_Check"></g:CheckBox>
+					    							<g:Label styleName="{style.paddingStyle}">AT/EP + IMS</g:Label>
+					    						</g:HorizontalPanel>
+					    					</td>
+					    					<td>
+					    						<g:Label ui:field="ims_Date"></g:Label>
+					    					</td>
+					    					<td>
+					    						<g:HorizontalPanel>
+					    							<g:TextBox styleName="{style.textBoxWidth}" ui:field="ims_Value"></g:TextBox>
+					    							<g:Label styleName="{style.paddingStyle}">%</g:Label>
+					    						</g:HorizontalPanel>
+					    					</td>
+					    				</tr>
+					    				<tr>
+					    					<td>
+					    						<g:HorizontalPanel>
+					    							<g:CheckBox ui:field="fogasa_Check"></g:CheckBox>
+					    							<g:Label styleName="{style.paddingStyle}">FOGASA</g:Label>
+					    						</g:HorizontalPanel>
+					    					</td>
+					    					<td>
+					    						<g:Label ui:field="fogasa_Date"></g:Label>
+					    					</td>
+					    					<td>
+					    						<g:HorizontalPanel>
+					    							<g:TextBox styleName="{style.textBoxWidth}" ui:field="fogasa_Value"></g:TextBox>
+					    							<g:Label styleName="{style.paddingStyle}">%</g:Label>
+					    						</g:HorizontalPanel>
+					    					</td>
+					    				</tr>
+					    				<tr>
+					    					<td>
+					    						<g:HorizontalPanel>
+					    							<g:CheckBox ui:field="fp_eCheck"></g:CheckBox>
+					    							<g:Label styleName="{style.paddingStyle}">Formación profesional</g:Label>
+					    						</g:HorizontalPanel>
+					    					</td>
+					    					<td>
+					    						<g:Label ui:field="fp_eDate"></g:Label>
+					    					</td>
+					    					<td>
+					    						<g:HorizontalPanel>
+					    							<g:TextBox styleName="{style.textBoxWidth}" ui:field="fp_eValue"></g:TextBox>
+					    							<g:Label styleName="{style.paddingStyle}">%</g:Label>
+					    						</g:HorizontalPanel>
+					    					</td>
+					    				</tr>
+					    				<tr>
+					    					<td>
+					    						<g:HorizontalPanel>
+					    							<g:CheckBox ui:field="desmpl_eCheck"></g:CheckBox>
+					    							<g:Label styleName="{style.paddingStyle}">Desempleo</g:Label>
+					    						</g:HorizontalPanel>
+					    					</td>
+					    					<td>
+					    						<g:Label ui:field="desmpl_eDate"></g:Label>
+					    					</td>
+					    					<td>
+					    						<g:HorizontalPanel>
+					    							<g:TextBox styleName="{style.textBoxWidth}" ui:field="desmpl_eValue"></g:TextBox>
+					    							<g:Label styleName="{style.paddingStyle}">%</g:Label>
+					    						</g:HorizontalPanel>
+					    					</td>
+					    				</tr>
+					    			</tbody>
+					    		</table>
+					    	</g:HTMLPanel>
+				    	</g:HorizontalPanel>
+	            	</td>
 	            </tr>
 	        </tbody>
 	    </table>
