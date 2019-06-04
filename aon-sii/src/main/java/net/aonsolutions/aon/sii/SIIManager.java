@@ -157,6 +157,7 @@ public class SIIManager {
 	 // -------------------- FACTURAS RECIBIDAS
 	
 	protected JSONArray suministroFacturasRecibidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) {
+		System.out.println("SII SUMINISTRO FACTURAS RECIBIDAS - ID => " + invoiceId);
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_RECIBIDAS, getAdministration()) : SIIUri.getInstance().getURI(SIIType.FACTURAS_RECIBIDAS, getAdministration());
     	
     	LinkedList<VatContext> modList = contextList.stream().filter(v-> v.getSiiStatus().equals("Correcto")
@@ -166,7 +167,9 @@ public class SIIManager {
     	LinkedList<VatContext> newList = contextList.stream().filter(v-> v.getSiiStatus().equals("Pendiente")
     			|| v.getSiiStatus().equals("Incorrecto")).collect(Collectors.toCollection(LinkedList::new));   	
 
-    	if(isAeat() || isNavarra()) {
+    	if(isAeat() || isNavarra())
+    	{
+    		System.out.println("SII SUMINISTRO FR - AEAT");
 			if(newList.size() > 0){
 				return SIIAeatPost.getInstance(getCert(), getPass()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, newList, SendType.ALTA_RECIBIDAS);
 			}

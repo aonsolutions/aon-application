@@ -163,9 +163,10 @@ public class SIIAeatPost extends SIIPost2{
 		
    		byte[] requestXml = null;
 		byte[] responseXml = null;
-		
+		System.out.println("SII SUMINISTRO FR - GENERANDO XML");
 		SuministroLRFacturasRecibidas suministro = FacturasRecibidas.getInstance().suministroFacturasRecibidas(domain, login, company, invoiceId, list, type.isModificacion(), terceros);
-    	JAXBElement<Object> response = (JAXBElement<Object>) post(uri, suministro);
+		System.out.println("SII SUMINISTRO FR - XML GENERADO");
+		JAXBElement<Object> response = (JAXBElement<Object>) post(uri, suministro);
     		
     	RespuestaLRFRecibidasType respuesta = (RespuestaLRFRecibidasType) response.getValue();
     	for (RespuestaRecibidaType r : respuesta.getRespuestaLinea()) {

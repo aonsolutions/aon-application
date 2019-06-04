@@ -38,6 +38,10 @@ public class SIIPost2 extends WebServiceGatewaySupport{
 	
 			KeyStore keyStore = KeyStore.getInstance("PKCS12");
 
+			if(cert == null) {
+				System.out.println("SII CERT LOG - NULLPOINTER cert value");
+			}
+			System.out.println("SII CERT LOG -/" + pass + "/-" + key);
 			keyStore.load(key, pass.toCharArray());
     	
     		KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());

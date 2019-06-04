@@ -146,9 +146,11 @@ public class FacturasRecibidas extends SIIBuilt {
 		SuministroLRFacturasRecibidas suministro = new SuministroLRFacturasRecibidas();
 
 		// CABECERA
+		System.out.println("SII FR GENERANDO XML - CABECERA");
 		suministro.setCabecera(cabecera(company, mod, terceros));
 
 		// BODY
+		System.out.println("SII FR GENERANDO XML - BODY");
 		VatContext vat = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId)).findFirst().orElse(new VatContext());
 
 		LinkedList<VatData> noExenta = new LinkedList<>();
@@ -172,6 +174,7 @@ public class FacturasRecibidas extends SIIBuilt {
 							.setSurchargeQuota(f.getSurchargeQuota()))
 					.collect(Collectors.toCollection(LinkedList::new));
 		}
+		System.out.println("SII FR GENERANDO XML - TYPE");
 
 		LRFacturasRecibidasType factura = new LRFacturasRecibidasType();
 
@@ -182,7 +185,7 @@ public class FacturasRecibidas extends SIIBuilt {
 		IDFacturaRecibidaType f = new IDFacturaRecibidaType();
 		
 		IDEmisorFactura emisor = new IDEmisorFactura();
-		
+		System.out.println("SII FR GENERANDO XML - DOCUMENT");
 		if (vat.getRegistryDocumentCountry().equals(Country.ES)) {
 			emisor.setNIF(vat.getRegistryDocument());
 		} else if(vat.isIntracommunity()){
@@ -202,21 +205,25 @@ public class FacturasRecibidas extends SIIBuilt {
 			otro.setIDType(IDType.valueOf(vat.getRegistryDocumentType()).getName());
 			emisor.setIDOtro(otro);
 		}
+		
+		System.out.println("SII FR GENERANDO XML - EMISOR");
 		f.setIDEmisorFactura(emisor);
 
 		f.setNumSerieFacturaEmisor(vat.getReferenceCode());// nº serie + nº factura
 		// (optional) f.setNumSerieFacturaEmisorResumenFin("");
 		f.setFechaExpedicionFacturaEmisor(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));
-
+		System.out.println("SII FR GENERANDO XML - FACTURA");
 		factura.setIDFactura(f);
 
 		FacturaRecibidaType frt = new FacturaRecibidaType();
 		// CONTRAPARTE
+		System.out.println("SII FR GENERANDO XML - CONTRAPARTE");
 		if(vat.isIntracommunity()) {
 			frt.setContraparte(contraparteIntracomunitario(vat));
 		} else frt.setContraparte(contraparte(vat));
 		
 		// CLAVE REGIMEN IVA || TRANSCENDENCIA
+		System.out.println("SII FR GENERANDO XML - REGIMEN");
 		frt.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaRecibidasType._01.getName()); // TODO
 
 		if (vat.isVatAccrualRegime()) {
@@ -234,7 +241,7 @@ public class FacturasRecibidas extends SIIBuilt {
 				AppParam.SII_INCLUDE_DATE);
 		
 		Date siiDate = ap2 != null && ap2.getId() != null ? AonDateUtils.parse(ap2.getValue(), "yyyy-MM-dd") : AonDateUtils.getDate(2017, 6, 1);
-		
+		System.out.println("SII FR GENERANDO XML - DATES");
 		if (opDate.compareTo(siiDate) < 0) {
 			frt.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaRecibidasType._14.getName());
 		}
@@ -249,7 +256,7 @@ public class FacturasRecibidas extends SIIBuilt {
 					+ pasivoList.stream().mapToDouble(h -> h.getBase()).sum();
 			frt.setBaseImponibleACoste(Double.toString(AonMathUtils.round(base)));
 		}
-
+		System.out.println("SII FR GENERANDO XML - CUOTA");
 		// CUOTA DEDUCIBLE
 		frt.setCuotaDeducible(AonMathUtils.round(contextList.stream().filter(a -> a.getInvoice().equals(invoiceId))
 				.mapToDouble(a -> a.getDeductibleQuota()).sum()) + ""); // TODO
@@ -265,6 +272,7 @@ public class FacturasRecibidas extends SIIBuilt {
 				}
 			}
 		}
+		System.out.println("SII FR GENERANDO XML - DESCRIPTION");
 		frt.setDescripcionOperacion(str + vat.getDetailDescription());
 
 		// FECHA OPERACION
@@ -275,6 +283,7 @@ public class FacturasRecibidas extends SIIBuilt {
 		// "dd-MM-yyyy"));
 		frt.setFechaRegContable(AonDateUtils.format(opDate, "dd-MM-yyyy"));
 
+		System.out.println("SII FR GENERANDO XML - AMOUNT");
 		// IMPORTE TOTAL
 		Double total = noExenta.stream().mapToDouble(h -> h.getBase() + h.getQuota()).sum()
 				+ pasivoList.stream().mapToDouble(h -> h.getBase() + h.getQuota()).sum();
@@ -329,7 +338,7 @@ public class FacturasRecibidas extends SIIBuilt {
 			fa.getIDFacturaAgrupada().add(a);
 			frt.setFacturasAgrupadas(fa);
 		}
-
+		System.out.println("SII FR GENERANDO XML - TYPE FACTURA");
 		DesgloseFacturaRecibidasType dfrt = new DesgloseFacturaRecibidasType();
 		if (!noExenta.isEmpty()) {
 			HashMap<Double, VatData> noExentaMap = new HashMap<>();
@@ -394,6 +403,7 @@ public class FacturasRecibidas extends SIIBuilt {
 		factura.setFacturaRecibida(frt);
 
 		suministro.getRegistroLRFacturasRecibidas().add(factura);
+		System.out.println("SII FR GENERANDO XML - RETURN SUMINISTRO");
 		return suministro;
 	}
 
