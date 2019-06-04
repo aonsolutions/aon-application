@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -67,5 +68,8 @@ public interface EnterprisesServiceAsync {
 	void createNewCRA(Integer domain, String domainName, Integer enterpriseId, String enterpriseName, long startDate, long endDate,
 			String ccc, Integer cccId, String type, AsyncCallback<String> asyncCallback);
 	void deleteCRA(Integer domainId, String currentDomainName, Integer code, AsyncCallback<String> asyncCallback);
+	void getEmployeePeculiarities(String currentDomainName, Integer contractId, AsyncCallback<Peculiarities> asyncCallback);
+	void setEmployeePeculiarities(String currentDomainName, Integer contractId, Peculiarities peculiarities,
+			AsyncCallback<String> asyncCallback);
 
 }

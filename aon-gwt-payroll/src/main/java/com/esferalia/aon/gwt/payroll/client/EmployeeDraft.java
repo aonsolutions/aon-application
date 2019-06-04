@@ -567,13 +567,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	
 	@UiHandler("peculiaritiesButton")
 	void onPeculiaritiesButtonClick(ClickEvent event) {
-		EmployeePeculiaritiesDialog dialog = new EmployeePeculiaritiesDialog() {
-			@Override
-			protected void onAccept() {
-				// TODO: Save peculiarities
-			}
-		};
-		
+		EmployeePeculiaritiesDialog dialog = new EmployeePeculiaritiesDialog(this.employeeDraftObject.getContractId(), this.employeeDraftObject.getContractStartDate());
 		dialog.center();
 		dialog.show();
 	}

@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.google.gwt.core.client.GWT;
@@ -204,6 +205,14 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.deleteCRA(domainId, getCurrentDomainName(), code, asyncCallback);
 	}
 	
+	public void getEmployeePeculiarities(Integer contractId, AsyncCallback<Peculiarities> asyncCallback) {
+		enterprisesServiceAsync.getEmployeePeculiarities(getCurrentDomainName(), contractId, asyncCallback);
+	}
+	
+	public void setEmployeePeculiarities(Integer contractId, Peculiarities peculiarities, AsyncCallback<String> asyncCallback) {
+		enterprisesServiceAsync.setEmployeePeculiarities(getCurrentDomainName(), contractId, peculiarities, asyncCallback);
+	}
+	
 	// ----------------------------------------------------------------- static
 	
 	private static String getCurrentUser() {
@@ -213,11 +222,5 @@ public class DomainEnterprisesServiceAsync {
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
 	}
-
-	
-
-	
-
-	
 
 }

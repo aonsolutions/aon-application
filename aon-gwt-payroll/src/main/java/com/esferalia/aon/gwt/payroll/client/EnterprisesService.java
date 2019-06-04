@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -115,5 +116,9 @@ public interface EnterprisesService extends RemoteService {
 			long endDate, String ccc, Integer cccId, String type);
 
 	String deleteCRA(Integer domainId, String currentDomainName, Integer code);
+
+	Peculiarities getEmployeePeculiarities(String currentDomainName, Integer contractId);
+
+	String setEmployeePeculiarities(String currentDomainName, Integer contractId, Peculiarities peculiarities);
 	
 }

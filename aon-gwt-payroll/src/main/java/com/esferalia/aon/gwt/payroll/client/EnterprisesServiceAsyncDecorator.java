@@ -22,6 +22,7 @@ import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -340,5 +341,19 @@ public class EnterprisesServiceAsyncDecorator implements
 			AsyncCallback<String> callback) {
 		AON.start();
 		enterprisesServiceAsync.deleteCRA(domainId, domainName, code, new AsyncCallbackWrapper<String>(callback));
+	}
+
+	@Override
+	public void getEmployeePeculiarities(String domain, Integer contractId,
+			AsyncCallback<Peculiarities> callback) {
+		AON.start();
+		enterprisesServiceAsync.getEmployeePeculiarities(domain, contractId, new AsyncCallbackWrapper<Peculiarities>(callback));
+	}
+
+	@Override
+	public void setEmployeePeculiarities(String domain, Integer contractId, Peculiarities peculiarities,
+			AsyncCallback<String> callback) {
+		AON.start();
+		enterprisesServiceAsync.setEmployeePeculiarities(domain, contractId, peculiarities, new AsyncCallbackWrapper<String>(callback));
 	}
 }

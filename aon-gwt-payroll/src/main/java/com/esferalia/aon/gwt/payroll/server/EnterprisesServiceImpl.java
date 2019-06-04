@@ -29,6 +29,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqActivity;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgrarian;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCRA;
+import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeePeculiarities;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEnterprise;
 import com.esferalia.aon.gwt.payroll.jooq.JooqPayments;
 import com.esferalia.aon.gwt.payroll.jooq.JooqWorkplace;
@@ -49,6 +50,7 @@ import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -1763,6 +1765,42 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			return JooqCRA.deleteMainCRA(domainId.toString(), domainName, craBatchId.toString(), connection);
 			
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+		}
+	}
+
+	@Override
+	public Peculiarities getEmployeePeculiarities(String domain, Integer contractId) {
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection(domain);
+			return JooqEmployeePeculiarities.getPeculiarities(domain, contractId, connection);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+		}
+	}
+
+	@Override
+	public String setEmployeePeculiarities(String domain, Integer contractId, Peculiarities peculiarities) {
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection(domain);
+			return JooqEmployeePeculiarities.setPeculiarities(domain, contractId, peculiarities, connection);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		} finally {

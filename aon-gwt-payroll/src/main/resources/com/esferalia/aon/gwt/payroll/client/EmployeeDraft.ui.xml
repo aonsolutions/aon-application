@@ -151,7 +151,7 @@
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 								<g:Button ui:field='peculiaritiesButton'
 									styleName='aon-finding-toolbar-item aon-icon-segsocial-small' text="Peculiaridades de cotización"
-									enabled="true" visible="false" />
+									enabled="true" />
 							</g:HTMLPanel>
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 							    <g:Label ui:field='saveStatus' styleName="{style.fontSaveStyle}"></g:Label>
