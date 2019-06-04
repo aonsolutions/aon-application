@@ -174,7 +174,7 @@ public class JooqCRA {
 //		return mainCRAJSON;
 //	}
 	
-	@SuppressWarnings({ "unchecked", "null" })
+	@SuppressWarnings({ "unchecked", "deprecation" })
 	public static JSONObject getMainCRAByCRA(String _domainId, String domainName, String _enterpriseId, String _enterpriseName, 
 			String _ccc, long _startDate, long _endDate, Connection connection) {
 		
@@ -266,7 +266,7 @@ public class JooqCRA {
 				Type craType = Payment.Type.values()[salaryPaymentRecords.get(i).get(SALARY_PAYMENT.TYPE)];
 				
 				if(typeCRA == craType) {
-					craAmount += (salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT) > 0) ? salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT) : salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE);
+					craAmount += (salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE) > 0) ? salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE) : salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT);
 					
 					//Es la ultima iteracion
 					if(i+1 == salaryPaymentRecords.size()) {
@@ -306,7 +306,7 @@ public class JooqCRA {
 					
 					typeCRA = craType;
 					cre = new JSONObject();
-					craAmount = (salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT) > 0) ? salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT) : salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE);
+					craAmount = (salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE) > 0) ? salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE) : salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT);
 					
 					//Es la ultima iteracion
 					if(i+1 == salaryPaymentRecords.size()) {
@@ -329,9 +329,14 @@ public class JooqCRA {
 				
 			}
 			
-			trb.put("CRES", cres);
+			if(cres.size() > 0) {
+				
+				trb.put("CRES", cres);
+				trbs.add(trb);
 			
-			trbs.add(trb);
+			}
+			
+			
 		}
 		
 		dde.put("TRBS", trbs);
@@ -490,6 +495,7 @@ public class JooqCRA {
 		return mainCRAJSON;
 	}
 
+	@SuppressWarnings({ "unchecked", "deprecation" })
 	private static JSONArray parseDDEAS(JSONArray ddeas) {
 		JSONArray result = new JSONArray();
 		
