@@ -839,9 +839,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.MAY);
 		assertText("prorationBaseLabel", ( 1027.65 / 6 ) / 12.00 * 2.00 );
 		
-//		click("viewButton");
-//		wait4Id("formerMenuItem");
-//		click("formerMenuItem");
+		click("viewButton");
+		wait4Id("formerMenuItem");
+		click("formerMenuItem");
 		
 		wait4Id("extra,_fin_de_contrato");
 		draft("EXTRA, FIN DE CONTRATO");
