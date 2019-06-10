@@ -564,16 +564,16 @@ public class JooqCRA {
 	//													GET DOMAIN CRAs FOR LIST
 	// ********************************************************************************************************************************************
 	
-	public static List<CRA> getDomainCRAs(String domain, Connection conn) {
+	public static List<CRA> getDomainCRAs(Integer domain, Connection conn) {
 		return getDomainCRAsDB(domain, DSL.using(conn, getDefaultSettings()));
 	}
 	
-	private static List<CRA> getDomainCRAsDB(String domain, DSLContext dslContext) {
+	private static List<CRA> getDomainCRAsDB(Integer domainId, DSLContext dslContext) {
 		List<CRA> cras = new ArrayList<CRA>();
 		
-		Integer domainId = dslContext.select(DOMAIN.ID).from(DOMAIN)
-				.where(DOMAIN.NAME.eq(domain))
-				.fetchOne(DOMAIN.ID);
+//		Integer domainId = dslContext.select(DOMAIN.ID).from(DOMAIN)
+//				.where(DOMAIN.NAME.eq(domain))
+//				.fetchOne(DOMAIN.ID);
 		
 		Result<Record> craBatchRecords = dslContext.select().from(CRA_BATCH)
 				.where(CRA_BATCH.DOMAIN.eq(domainId))

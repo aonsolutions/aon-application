@@ -103,11 +103,13 @@ public class MainCRA extends MainEntryPoint {
 	private Map<String, CCC> enterpriseCCCs = new HashMap<>();
 	private Integer cccId = 0;
 	private String ccc = "";
+	private Integer domainId = 0;
 	
 	private Date startDate = null;
 	private Date endDate = null;
 	
 	private List<CRA> cras;
+	private List<Enterprise> enterprisesList;
 	
 	// ------------------------------------------------------------------------
 	//						On Module Load
@@ -162,6 +164,22 @@ public class MainCRA extends MainEntryPoint {
 			
 			@Override
 			public void onSuccess(List<Enterprise> enterprises) {
+				enterprisesList = enterprises;
+				
+				impl.getDomain(new AsyncCallback<Integer>() {
+					
+					@Override
+					public void onSuccess(Integer result) {
+						domainId = result;
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+						
+					}
+				});
+				
 				impl.getCRAs(new AsyncCallback<List<CRA>>() {
 
 					@Override
@@ -365,7 +383,7 @@ public class MainCRA extends MainEntryPoint {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				impl.deleteCRA(enterpriseInfo.getDomain(), cra.getCode(), new AsyncCallback<String>() {
+				impl.deleteCRA(/*enterpriseInfo.getDomain()*/ domainId, cra.getCode(), new AsyncCallback<String>() {
 					@Override
 					public void onFailure(Throwable caught) {
 						// TODO Auto-generated method stub
@@ -395,7 +413,7 @@ public class MainCRA extends MainEntryPoint {
 			@Override
 			public void onClick(ClickEvent event) {
 				String fileDownloadURL = GWT.getModuleBaseURL()+ "/download_cra/"
-			            + "?domainId=" + enterpriseInfo.getDomain()
+			            + "?domainId=" + /*enterpriseInfo.getDomain()*/ domainId
 			            + "&craBatchId=" + cra.getCode()
 				        ;
 				
@@ -415,7 +433,7 @@ public class MainCRA extends MainEntryPoint {
 	void exportButton(ClickEvent event){
 		if(checkDate()){
 			if(checkRectificavo()) {
-				impl.createNewCRA(enterpriseInfo.getDomain(), enterpriseInfo.getId(), enterpriseName, startDate.getTime(), endDate.getTime(), ccc, cccId, "N", new AsyncCallback<String>() {
+				impl.createNewCRA(/*enterpriseInfo.getDomain()*/ domainId, enterpriseInfo.getId(), enterpriseName, startDate.getTime(), endDate.getTime(), ccc, cccId, "N", new AsyncCallback<String>() {
 					@Override
 					public void onFailure(Throwable caught) {
 						// TODO Auto-generated method stub	
@@ -518,11 +536,27 @@ public class MainCRA extends MainEntryPoint {
 	}
 	
 	private void setFindingCCC(String selectedCCC) {
-		for(Activity activity : enterpriseInfo.getActivities())
-			for(CCC ccc : activity.getCccs())
-				if(ccc.getCode().equals(selectedCCC))
-					this.cccId = ccc.getId();
 		
+		for (Enterprise enterprise: enterprisesList)
+			for(Activity activity : enterprise.getActivities())
+				for(CCC ccc : activity.getCccs())
+					if(ccc.getCode().equals(selectedCCC)) {
+						this.cccId = ccc.getId();
+						enterpriseInfo = enterprise;
+						break;
+					}
+		
+//		for(CCC ccc : enterpriseCCCs.values()) {
+//			Window.alert(ccc.getCode() + " == " + selectedCCC);
+//			if(ccc.getCode().equals(selectedCCC)) {
+//				Window.alert("CCC Id : " + ccc.getId());
+//				this.cccId = ccc.getId();
+//				break;
+//			}
+//		}
+		
+		this.enterpriseName = this.enterpriseInfo.getName();
+		this.enterprise.setText(this.enterpriseInfo.getName());
 		this.ccc = selectedCCC;
 	}
 

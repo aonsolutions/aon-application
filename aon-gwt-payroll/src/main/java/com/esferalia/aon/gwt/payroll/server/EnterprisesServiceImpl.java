@@ -1715,11 +1715,11 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<CRA> getCRAs(String domain) {
+	public List<CRA> getCRAs(String domainStr) {
 		Connection connection = null;
 		try {
-			connection = AonServletUtils.getConnection(domain);
-			return JooqCRA.getDomainCRAs(domain, connection);
+			connection = AonServletUtils.getConnection(domainStr);
+			return JooqCRA.getDomainCRAs(getDomain(domainStr), connection);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		} finally {
@@ -1739,7 +1739,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			connection = AonServletUtils.getConnection(domainName);
 			
-			JSONObject mainCRAJSON = JooqCRA.getMainCRAByCRA(domain.toString(), domainName, enterpriseId.toString(), enterpriseName, ccc, startDate, endDate, connection);
+			JSONObject mainCRAJSON = JooqCRA.getMainCRAByCRA(domain == null ? null : domain.toString(), domainName, enterpriseId.toString(), enterpriseName, ccc, startDate, endDate, connection);
 			String agrarianAFI = MainCRAGeneration.generateMainCRA(mainCRAJSON);
 			
 			return JooqCRA.setMainCra(domain.toString(), domainName, cccId.toString(), agrarianAFI, startDate, craType, connection);
