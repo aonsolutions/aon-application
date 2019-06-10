@@ -217,7 +217,9 @@ public class EmployeePeculiaritiesDialog extends CustomDialog {
 			initView();
 			break;
 		case 3: //BECARIOS
-			
+			peculiaritiesMap.addPeculiarityBec(this.start_date_peculiarity.getValue());
+			tabsPanel.clear();
+			initView();
 			break;
 		case 4: //REGIMEN GENERAL ASIMILADOS
 			peculiaritiesMap.addPeculiarityRegGen(this.start_date_peculiarity.getValue());
@@ -595,15 +597,15 @@ public class EmployeePeculiaritiesDialog extends CustomDialog {
 
 	private void initListBox() {
 		peculiarities.clear();
-		peculiarities.addItem("MANUAL");
+		peculiarities.addItem("PERSONALIZADO");
 		peculiarities.addItem("JUBILACION ACTIVA");
-		peculiarities.addItem("COOPERATIVAS");
-		peculiarities.addItem("BECARIOS");
+		peculiarities.addItem("SOCIOS COOPERATIVISTAS");
+		peculiarities.addItem("BECARIOS CURRICULARES");
 		peculiarities.addItem("REGIMEN GENERAL ASIMILADOS");
 		peculiarities.addItem("MAYOR 65 A" + String.valueOf("\u00D1") + "OS > 38 A" + String.valueOf("\u00D1") + "OS COTIZADOS");
 		peculiarities.addItem("MINISTRO DE CULTO");
 		
-		peculiarities.getElement().getElementsByTagName("option").getItem(3).setAttribute("disabled", "disabled");
+//		peculiarities.getElement().getElementsByTagName("option").getItem(3).setAttribute("disabled", "disabled");
 	}
 	
 	@SuppressWarnings("deprecation")

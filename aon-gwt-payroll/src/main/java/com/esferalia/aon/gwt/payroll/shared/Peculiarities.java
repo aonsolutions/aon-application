@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.payroll.shared;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -229,6 +228,34 @@ public class Peculiarities implements Serializable {
 		
 		this.peculiarties.put(date, peculiaritiesList);
 	}
+	
+	public void addPeculiarityBec(Date date) {
+		Peculiarity p1 = new Peculiarity("PORCENTAJE_CGC", "0", true, 3);
+		Peculiarity p2 = new Peculiarity("PORCENTAJE_DESMPL", "0", true, 3);
+		Peculiarity p3 = new Peculiarity("PORCENTAJE_FP", "0", true, 3);
+		
+		Peculiarity p1_e = new Peculiarity("PORCENTAJE_CGC_E", "0", true, 3);
+		Peculiarity p2_e = new Peculiarity("PORCENTAJE_IT", "0", true, 3);
+		Peculiarity p3_e = new Peculiarity("PORCENTAJE_IMS", "0", true, 3);
+		Peculiarity p4_e = new Peculiarity("PORCENTAJE_FOGASA", "0", true, 3);
+		Peculiarity p5_e = new Peculiarity("PORCENTAJE_FP_E", "0", true, 3);
+		Peculiarity p6_e = new Peculiarity("PORCENTAJE_DESMPL_E", "0", true, 3);
+		
+		ArrayList<Peculiarity> peculiaritiesList = new ArrayList<>();
+		peculiaritiesList.add(p1);
+		peculiaritiesList.add(p2);
+		peculiaritiesList.add(p3);
+		peculiaritiesList.add(p1_e);
+		peculiaritiesList.add(p2_e);
+		peculiaritiesList.add(p3_e);
+		peculiaritiesList.add(p4_e);
+		peculiaritiesList.add(p5_e);
+		peculiaritiesList.add(p6_e);
+		
+		DateUtils.resetTime(date);
+		
+		this.peculiarties.put(date, peculiaritiesList);
+	}
 
 	public void addPeculiarityRegGen(Date date) {
 		Peculiarity p1 = new Peculiarity("PORCENTAJE_CGC", "Sistema", false, 4);
@@ -313,8 +340,6 @@ public class Peculiarities implements Serializable {
 		
 		this.peculiarties.put(date, peculiaritiesList);
 	}
-	
-	
 
 		
 }
