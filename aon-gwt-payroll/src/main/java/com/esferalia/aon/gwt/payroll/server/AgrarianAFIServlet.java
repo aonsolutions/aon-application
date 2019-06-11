@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jooq.tools.json.JSONObject;
 
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgrarian;
 
 @SuppressWarnings("serial")
@@ -50,7 +49,9 @@ public class AgrarianAFIServlet extends HttpServlet {
 		JSONObject agrarianJSON = null; 
 		
 		//Get domain Name
-		String domainName = AonServletUtils.getRequestDomainName(request);
+		//Get domain Name
+		String domainName = request.getServerName();
+//		String _domainName = AonServletUtils.getRequestDomainName(request);
 		
 		try {
 			Date currentDate = new Date();
