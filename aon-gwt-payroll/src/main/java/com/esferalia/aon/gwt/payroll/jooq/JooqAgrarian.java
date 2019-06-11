@@ -117,7 +117,7 @@ public class JooqAgrarian {
 	//													GENERATE JSON AGRARIAN
 	// ********************************************************************************************************************************************
 
-	@SuppressWarnings({ "unchecked", "null" })
+	@SuppressWarnings({ "unchecked", "deprecation" })
 	public static JSONObject getAgrarianInfo(String _domainId, String domainName, String _enterpriseId, String enterpriseName,
 			String _ccc, String _startDate, String _endDate, ArrayList<Integer> _selectedContracts) {
 		
@@ -274,7 +274,7 @@ public class JooqAgrarian {
 		return json;
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "deprecation" })
 	private static JSONObject getDRA(java.util.Date startDate, java.util.Date endDate, List<AgrarianJourney> journeis) {
 		JSONObject json = new JSONObject();
 		

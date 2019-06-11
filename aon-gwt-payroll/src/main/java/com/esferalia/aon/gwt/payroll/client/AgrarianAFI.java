@@ -14,9 +14,11 @@ import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.TableElement;
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
@@ -96,6 +98,9 @@ public class AgrarianAFI extends MainEntryPoint {
 	private Date startDate = null;
 	private Date endDate = null;
 	
+	private List<Enterprise> enterprisesList = new ArrayList<>();
+	
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onModuleLoad() {
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
@@ -142,6 +147,8 @@ public class AgrarianAFI extends MainEntryPoint {
 					enterpriseInfo = enterprises.get(0);
 				}
 				
+				enterprisesList = enterprises;
+				
 				for (Enterprise enterprise: enterprises)
 					for(Activity activity : enterprise.getActivities())
 						for(CCC ccc : activity.getCccs())
@@ -159,6 +166,7 @@ public class AgrarianAFI extends MainEntryPoint {
 				
 	}
 
+	@SuppressWarnings("deprecation")
 	private HorizontalPanel createMonthPanel() {
 		HorizontalPanel hPanel = new HorizontalPanel();
 		Integer maxDays = DateUtils.getLastDayOfMonth(new Date(Integer.parseInt(yearList.getSelectedItemText())-1900, monthList.getSelectedIndex(), 1)).getDate();
@@ -189,6 +197,7 @@ public class AgrarianAFI extends MainEntryPoint {
 		return totalDays;
 	}
 	
+	@SuppressWarnings("deprecation")
 	private HorizontalPanel createAgrarianMonthPanel(Integer contractId) {
 		HorizontalPanel hPanel = new HorizontalPanel();
 		Integer maxDays = DateUtils.getLastDayOfMonth(new Date(Integer.parseInt(yearList.getSelectedItemText())-1900, monthList.getSelectedIndex(), 1)).getDate();
@@ -248,6 +257,7 @@ public class AgrarianAFI extends MainEntryPoint {
 		Window.open(fileDownloadURL, "_blank", null);
 	}
 	
+	@SuppressWarnings("deprecation")
 	@UiHandler("searchAgrarian")
 	void onSearchAgrariantButtonClick(ClickEvent clickEvent) {
 		//CheckDate for searching
@@ -259,7 +269,7 @@ public class AgrarianAFI extends MainEntryPoint {
 			setFindingDates(selectedDate);
 			
 			//Set CCC to find
-			String selectedCCC = this.cccs.getSelectedItemText().split("- ")[1];
+			String selectedCCC =  this.cccs.getSelectedItemText().split("- ")[2].split(" ")[0] ; //this.cccs.getSelectedItemText().split("- ")[1];
 			setFindingCCC(selectedCCC);
 			this.ccc = selectedCCC;
 			
@@ -299,7 +309,7 @@ public class AgrarianAFI extends MainEntryPoint {
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						if(select.isChecked()){
+						if(select.getValue()){
 							selectedEmployees.add(entry.getKey());
 						}else {
 							selectedEmployees.remove(entry.getKey());
@@ -331,11 +341,11 @@ public class AgrarianAFI extends MainEntryPoint {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				if(selectAll.isChecked()){
+				if(selectAll.getValue()){
 					Integer rows = employeeTable.getRowCount();
 					for(int i=1; i<rows; i++){
 						CheckBox checkBox = (CheckBox) employeeTable.getWidget(i, 0);
-						checkBox.setChecked(true);
+						checkBox.setValue(true);
 					}
 					for(Integer contractId : agrarianJourney.keySet())
 						selectedEmployees.add(contractId);
@@ -344,12 +354,13 @@ public class AgrarianAFI extends MainEntryPoint {
 					Integer rows = employeeTable.getRowCount();
 					for(int i=1; i<rows; i++){
 						CheckBox checkBox = (CheckBox) employeeTable.getWidget(i, 0);
-						checkBox.setChecked(false);
+						checkBox.setValue(false);
 					}
 					selectedEmployees.clear();
 				}
 			}
 		});
+		
 		employeeTable.setWidget(newRow, 0, selectAll);
 		Label employeeLabel = new Label("Empleado");
 		employeeLabel.addStyleName(style.bold());
@@ -361,12 +372,25 @@ public class AgrarianAFI extends MainEntryPoint {
 		HorizontalPanel month = createMonthPanel();
 		employeeTable.setWidget(newRow, 3, month);
 	}
+	
+	@UiHandler("cccs")
+	void changeCCCList(ChangeEvent event){
+		setFindingCCC( this.cccs.getSelectedItemText().split("- ")[2].split(" ")[0] );
+	}
 
 	private void setFindingCCC(String selectedCCC) {
-		for(Activity activity : enterpriseInfo.getActivities())
-			for(CCC ccc : activity.getCccs())
-				if(ccc.getCode().equals(selectedCCC))
-					this.cccId = ccc.getId();
+		for (Enterprise enterprise: this.enterprisesList)
+			for(Activity activity : enterprise.getActivities())
+				for(CCC ccc : activity.getCccs())
+					if(ccc.getCode().equals(selectedCCC)) {
+						this.cccId = ccc.getId();
+						enterpriseInfo = enterprise;
+						break;
+					}
+
+		this.enterpriseName = this.enterpriseInfo.getName();
+		this.enterprise.setText(this.enterpriseInfo.getName());
+		this.ccc = selectedCCC;
 	}
 
 	private void setFindingDates(Date selectedDate) {
@@ -394,11 +418,15 @@ public class AgrarianAFI extends MainEntryPoint {
 			warning.show();
 		}else{
 			for(Entry<String, CCC> entry : this.agrarianCCCs.entrySet()){
-				this.cccs.addItem(entry.getKey() + " - " + entry.getValue().getCode());
+				this.cccs.addItem(entry.getKey() + " - " + getRegimeName(entry.getValue().getRegime()) + " - " 
+						+ entry.getValue().getCode() + " - (" + ProvinceContract.getName(entry.getValue().getGeozone()) +")");
 			}
+			String selectedCCC =  this.cccs.getSelectedItemText().split("- ")[2].split(" ")[0] ;
+			setFindingCCC(selectedCCC);
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	private boolean checkDate() {
 		Date currentDate = new Date(new Date().getYear(), new Date().getMonth(), 1);
 		
@@ -410,6 +438,19 @@ public class AgrarianAFI extends MainEntryPoint {
 			return true;
 		else
 			return false;
+	}
+	
+	private String getRegimeName( String regimeCode ){
+		switch (regimeCode) {
+		case "0163":
+			return "Trabajadores cuenta ajena agrarios";
+		case "0138":
+			return "Emplead@s de hogar";
+		case "0111":
+			return "Principal";
+		default:
+			return "Desconocido";
+		}
 	}
 
 }

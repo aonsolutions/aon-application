@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jooq.tools.json.JSONObject;
 
-import com.code.aon.common.enumeration.MimeType;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgrarian;
 
@@ -25,6 +24,7 @@ public class AgrarianAFIServlet extends HttpServlet {
 	
 	private SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
