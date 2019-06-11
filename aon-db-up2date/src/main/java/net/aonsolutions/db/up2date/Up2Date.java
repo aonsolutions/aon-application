@@ -1,6 +1,7 @@
 package net.aonsolutions.db.up2date;
 
 import static net.aonsolutions.db.up2date.fiscal.AlterFsMod200Registry2018.ALTER_FS_MODEL_200_2018;
+import static net.aonsolutions.db.up2date.payroll.PrestITDescriptionsUpdate.PRESTITDESCRIPTIONSUPDATE;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -20,8 +21,6 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-
-import net.aonsolutions.db.up2date.tgss.CGC2019Fix;
 
 public class Up2Date {
 
@@ -67,7 +66,10 @@ public class Up2Date {
     		//TRAINNINGBASES2019FIX
     		//ALTER_SALARY_CCC
     		//CGC2019FIX
-    		ALTER_FS_MODEL_200_2018
+    		ALTER_FS_MODEL_200_2018,
+    		PRESTITDESCRIPTIONSUPDATE
+//    		EMBARGODESCRIPTIONSUPDATE,
+//    		SALARIOBASEDESCRIPTIONSUPDATE
     };
 
 
