@@ -175,7 +175,7 @@ public class JooqCRA {
 //	}
 	
 	@SuppressWarnings({ "unchecked", "deprecation" })
-	public static JSONObject getMainCRAByCRA(String _domainId, String domainName, String _enterpriseId, String _enterpriseName, 
+	public static JSONObject getMainCRAByCRA(String domainName, String _enterpriseId, String _enterpriseName, 
 			String _ccc, long _startDate, long _endDate, Connection connection) {
 		
 		java.util.Date startDate = new java.util.Date(_startDate);
@@ -190,14 +190,15 @@ public class JooqCRA {
 			
 		//GET AuthKey from DB
 		Record domainRecord = dslContext.select().from(DOMAIN)
-				.where(DOMAIN.ID.eq(Integer.parseInt(_domainId)))
+				.where(DOMAIN.NAME.eq(domainName))
 				.fetchOne();
 		
 		Integer parentDomainId = domainRecord.get(DOMAIN.PARENT);
+		Integer _domainId = domainRecord.get(DOMAIN.ID);
 		
 		Record appParamRecord = dslContext.select().from(APP_PARAM)
 				.where(APP_PARAM.NAME.eq("PAY_authorization_key_PAY"))
-					.and(APP_PARAM.DOMAIN.eq(Integer.parseInt(_domainId)))
+					.and(APP_PARAM.DOMAIN.eq(_domainId))
 				.fetchOne();
 		
 		String authKey = "";
@@ -643,7 +644,7 @@ public class JooqCRA {
 	//													GENERATE JSON CRA
 	// ********************************************************************************************************************************************
 	
-	public static byte[] getDownloadMainCRA(String _domainId, String domainName, String _craBatchId) {
+	public static byte[] getDownloadMainCRA(String domainName, String _craBatchId) {
 		Connection connection = null;
 		
 		try {
@@ -662,25 +663,31 @@ public class JooqCRA {
 		} 
 	}
 
-	public static String deleteMainCRA(String _domainId, String domainName, String _craBatchId, Connection connection) {
+	public static String deleteMainCRA(Integer _craBatchId, Connection connection) {
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 
 		dslContext.delete(CRA_BATCH_DETAIL)
-			.where(CRA_BATCH_DETAIL.CRA_BATCH.eq(Integer.parseInt(_craBatchId)))
+			.where(CRA_BATCH_DETAIL.CRA_BATCH.eq(_craBatchId))
 			.execute();
 		
-		dslContext.deleteFrom(CRA_BATCH)
-			.where(CRA_BATCH.ID.eq(Integer.parseInt(_craBatchId)))
+		dslContext.delete(CRA_BATCH)
+			.where(CRA_BATCH.ID.eq(_craBatchId))
 			.execute();
 		
 		return null;
 	}
 
-	public static String setMainCra(String _domainId, String domainName, String _cccId, String agrarianAFI, long _startDate, String craDocumentType, Connection connection) {
+	public static String setMainCra(String domainName, String _cccId, String agrarianAFI, long _startDate, String craDocumentType, Connection connection) {
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 		
 		java.util.Date startDate = new java.util.Date(_startDate);
 		
+		//GET AuthKey from DB
+		Record domainRecord = dslContext.select().from(DOMAIN)
+				.where(DOMAIN.NAME.eq(domainName))
+				.fetchOne();
+		
+		Integer _domainId = domainRecord.get(DOMAIN.ID);
 		
 		// RECTIFICATIVO
 		if (craDocumentType.equals("R")) {
@@ -688,7 +695,7 @@ public class JooqCRA {
 					.where(CRA_BATCH.ID.in(
 							dslContext.select(CRA_BATCH_DETAIL.CRA_BATCH).from(CRA_BATCH_DETAIL)
 								.where(CRA_BATCH_DETAIL.ENTERPRISE_CCC.eq(Integer.parseInt(_cccId)))
-					)).and(CRA_BATCH.DOMAIN.eq(Integer.parseInt(_domainId)))
+					)).and(CRA_BATCH.DOMAIN.eq(_domainId))
 					.and(CRA_BATCH.DATE.eq(new Timestamp(startDate.getTime())))
 					.fetch();
 			
@@ -733,7 +740,7 @@ public class JooqCRA {
 			System.out.println(newCRA);
 			
 			CraBatchRecord rectificativeCRABatchRecord = dslContext.insertInto(CRA_BATCH)
-					.set(CRA_BATCH.DOMAIN, Integer.parseInt(_domainId))
+					.set(CRA_BATCH.DOMAIN, _domainId)
 					.set(CRA_BATCH.DATE, new Timestamp(startDate.getTime()))
 					.set(CRA_BATCH.STATUS, (byte)1)
 					.set(CRA_BATCH.COMMUNICATION_ID, craDocumentType)
@@ -746,7 +753,7 @@ public class JooqCRA {
 			Integer craBatchId = rectificativeCRABatchRecord.getId();
 			
 			dslContext.insertInto(CRA_BATCH_DETAIL)
-				.set(CRA_BATCH_DETAIL.DOMAIN, Integer.parseInt(_domainId))
+				.set(CRA_BATCH_DETAIL.DOMAIN, _domainId)
 				.set(CRA_BATCH_DETAIL.CRA_BATCH, craBatchId)
 				.set(CRA_BATCH_DETAIL.ENTERPRISE_CCC, Integer.parseInt(_cccId))
 				.execute();
@@ -757,7 +764,7 @@ public class JooqCRA {
 		}
 		
 		CraBatchRecord craBatchRecord = dslContext.insertInto(CRA_BATCH)
-			.set(CRA_BATCH.DOMAIN, Integer.parseInt(_domainId))
+			.set(CRA_BATCH.DOMAIN, _domainId)
 			.set(CRA_BATCH.DATE, new Timestamp(startDate.getTime()))
 			.set(CRA_BATCH.STATUS, (byte)1)
 			.set(CRA_BATCH.COMMUNICATION_ID, "N")
@@ -770,7 +777,7 @@ public class JooqCRA {
 		Integer craBatchId = craBatchRecord.getId();
 		
 		dslContext.insertInto(CRA_BATCH_DETAIL)
-			.set(CRA_BATCH_DETAIL.DOMAIN, Integer.parseInt(_domainId))
+			.set(CRA_BATCH_DETAIL.DOMAIN, _domainId)
 			.set(CRA_BATCH_DETAIL.CRA_BATCH, craBatchId)
 			.set(CRA_BATCH_DETAIL.ENTERPRISE_CCC, Integer.parseInt(_cccId))
 			.execute();

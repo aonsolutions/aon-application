@@ -1733,16 +1733,16 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public String createNewCRA(Integer domain, String domainName, Integer enterpriseId, String enterpriseName,
+	public String createNewCRA(String domainName, Integer enterpriseId, String enterpriseName,
 			long startDate, long endDate, String ccc, Integer cccId, String craType) {
 		Connection connection = null;
 		try {
 			connection = AonServletUtils.getConnection(domainName);
 			
-			JSONObject mainCRAJSON = JooqCRA.getMainCRAByCRA(domain == null ? null : domain.toString(), domainName, enterpriseId.toString(), enterpriseName, ccc, startDate, endDate, connection);
+			JSONObject mainCRAJSON = JooqCRA.getMainCRAByCRA(domainName, enterpriseId.toString(), enterpriseName, ccc, startDate, endDate, connection);
 			String agrarianAFI = MainCRAGeneration.generateMainCRA(mainCRAJSON);
 			
-			return JooqCRA.setMainCra(domain.toString(), domainName, cccId.toString(), agrarianAFI, startDate, craType, connection);
+			return JooqCRA.setMainCra(domainName, cccId.toString(), agrarianAFI, startDate, craType, connection);
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -1758,12 +1758,11 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public String deleteCRA(Integer domainId, String domainName, Integer craBatchId) {
+	public String deleteCRA(String domainName, Integer craBatchId) {
 		Connection connection = null;
 		try {
 			connection = AonServletUtils.getConnection(domainName);
-			
-			return JooqCRA.deleteMainCRA(domainId.toString(), domainName, craBatchId.toString(), connection);
+			return JooqCRA.deleteMainCRA(craBatchId, connection);
 			
 		} catch (SQLException e) {
 			throw new RuntimeException(e);

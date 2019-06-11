@@ -22,7 +22,6 @@ import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class DomainEnterprisesServiceAsync {
@@ -196,13 +195,13 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getCRAs(getCurrentDomainName(), asyncCallback);
 	}
 	
-	public void createNewCRA(Integer domainId, Integer enterpriseId, String enterpriseName, long startDate, long endDate, String ccc,
+	public void createNewCRA(Integer enterpriseId, String enterpriseName, long startDate, long endDate, String ccc,
 			Integer cccId, String type, AsyncCallback<String> asyncCallback) {
-		enterprisesServiceAsync.createNewCRA(domainId, getCurrentDomainName(), enterpriseId, enterpriseName, startDate, endDate, ccc, cccId, type, asyncCallback);
+		enterprisesServiceAsync.createNewCRA(getCurrentDomainName(), enterpriseId, enterpriseName, startDate, endDate, ccc, cccId, type, asyncCallback);
 	}
 	
-	public void deleteCRA(Integer domainId, Integer code, AsyncCallback<String> asyncCallback) {
-		enterprisesServiceAsync.deleteCRA(domainId, getCurrentDomainName(), code, asyncCallback);
+	public void deleteCRA(Integer code, AsyncCallback<String> asyncCallback) {
+		enterprisesServiceAsync.deleteCRA(getCurrentDomainName(), code, asyncCallback);
 	}
 	
 	public void getEmployeePeculiarities(Integer contractId, AsyncCallback<Peculiarities> asyncCallback) {

@@ -103,7 +103,6 @@ public class MainCRA extends MainEntryPoint {
 	private Map<String, CCC> enterpriseCCCs = new HashMap<>();
 	private Integer cccId = 0;
 	private String ccc = "";
-	private Integer domainId = 0;
 	
 	private Date startDate = null;
 	private Date endDate = null;
@@ -115,6 +114,7 @@ public class MainCRA extends MainEntryPoint {
 	//						On Module Load
 	// ------------------------------------------------------------------------
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onModuleLoad() {
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
@@ -166,26 +166,11 @@ public class MainCRA extends MainEntryPoint {
 			public void onSuccess(List<Enterprise> enterprises) {
 				enterprisesList = enterprises;
 				
-				impl.getDomain(new AsyncCallback<Integer>() {
-					
-					@Override
-					public void onSuccess(Integer result) {
-						domainId = result;
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub
-						
-					}
-				});
-				
 				impl.getCRAs(new AsyncCallback<List<CRA>>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
 						// TODO Auto-generated method stub
-						
 					}
 
 					@Override
@@ -200,7 +185,6 @@ public class MainCRA extends MainEntryPoint {
 								for(CCC ccc : activity.getCccs())
 									enterpriseCCCs.put(activity.getDescription(), ccc);
 						
-//						Window.alert(result.size()+"");
 						cras = result;
 						
 						initializeView();
@@ -216,6 +200,7 @@ public class MainCRA extends MainEntryPoint {
 		});
 	}
 
+	@SuppressWarnings("deprecation")
 	private void initializeView(){
 		//Enterprise Name
 		enterprise.setText(this.enterpriseName);
@@ -243,7 +228,6 @@ public class MainCRA extends MainEntryPoint {
 		//Set current date
 		Date currentDate = new Date();
 		this.monthList.setSelectedIndex(currentDate.getMonth());
-		
 		
 		//TABLE
 		initializeHeader();
@@ -344,6 +328,7 @@ public class MainCRA extends MainEntryPoint {
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void insertRow(CRA cra, Grid mainTable) {
 		//Fill Practice Row
 		Integer newRow = mainTable.insertRow(mainTable.getRowCount());
@@ -383,7 +368,7 @@ public class MainCRA extends MainEntryPoint {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				impl.deleteCRA(/*enterpriseInfo.getDomain()*/ domainId, cra.getCode(), new AsyncCallback<String>() {
+				impl.deleteCRA(cra.getCode(), new AsyncCallback<String>() {
 					@Override
 					public void onFailure(Throwable caught) {
 						// TODO Auto-generated method stub
@@ -413,8 +398,7 @@ public class MainCRA extends MainEntryPoint {
 			@Override
 			public void onClick(ClickEvent event) {
 				String fileDownloadURL = GWT.getModuleBaseURL()+ "/download_cra/"
-			            + "?domainId=" + /*enterpriseInfo.getDomain()*/ domainId
-			            + "&craBatchId=" + cra.getCode()
+			            + "?craBatchId=" + cra.getCode()
 				        ;
 				
 //				Window.alert(fileDownloadURL);
@@ -433,7 +417,7 @@ public class MainCRA extends MainEntryPoint {
 	void exportButton(ClickEvent event){
 		if(checkDate()){
 			if(checkRectificavo()) {
-				impl.createNewCRA(/*enterpriseInfo.getDomain()*/ domainId, enterpriseInfo.getId(), enterpriseName, startDate.getTime(), endDate.getTime(), ccc, cccId, "N", new AsyncCallback<String>() {
+				impl.createNewCRA(enterpriseInfo.getId(), enterpriseName, startDate.getTime(), endDate.getTime(), ccc, cccId, "N", new AsyncCallback<String>() {
 					@Override
 					public void onFailure(Throwable caught) {
 						// TODO Auto-generated method stub	
@@ -450,7 +434,7 @@ public class MainCRA extends MainEntryPoint {
 					
 					@Override
 					protected void onAccept() {
-						impl.createNewCRA(enterpriseInfo.getDomain(), enterpriseInfo.getId(), enterpriseName, startDate.getTime(), endDate.getTime(), ccc, cccId, "R", new AsyncCallback<String>() {
+						impl.createNewCRA(enterpriseInfo.getId(), enterpriseName, startDate.getTime(), endDate.getTime(), ccc, cccId, "R", new AsyncCallback<String>() {
 							@Override
 							public void onFailure(Throwable caught) {
 								// TODO Auto-generated method stub	
@@ -485,6 +469,7 @@ public class MainCRA extends MainEntryPoint {
 		setFindingCCC( this.cccs.getSelectedItemText().split("- ")[2].split(" ")[0] );
 	}
 	
+	@SuppressWarnings("deprecation")
 	@UiHandler("monthList")
 	void changeMonthList(ChangeEvent event){
 		Date date = new Date(
@@ -495,6 +480,7 @@ public class MainCRA extends MainEntryPoint {
 		setFindingDates(date);
 	}
 	
+	@SuppressWarnings("deprecation")
 	@UiHandler("yearList")
 	void changeYearList(ChangeEvent event){
 		Date date = new Date(
@@ -509,6 +495,7 @@ public class MainCRA extends MainEntryPoint {
 	//							AUX Methods
 	// ------------------------------------------------------------------------
 	
+	@SuppressWarnings("deprecation")
 	private boolean checkDate() {
 		Date currentDate = new Date(new Date().getYear(), new Date().getMonth(), 1);
 		

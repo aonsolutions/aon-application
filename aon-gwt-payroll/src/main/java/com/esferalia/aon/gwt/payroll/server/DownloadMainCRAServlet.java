@@ -20,12 +20,12 @@ public class DownloadMainCRAServlet extends HttpServlet {
 	
 	private SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
 		//Get Request Parametrers
-		String _domainId = request.getParameter("domainId");
 		String _craBatchId = request.getParameter("craBatchId");
 		
 		//Get domain Name
@@ -44,7 +44,7 @@ public class DownloadMainCRAServlet extends HttpServlet {
 					+ fileName + ".CRA\"");
 			ServletOutputStream output = response.getOutputStream();
 			
-			byte[] data = JooqCRA.getDownloadMainCRA(_domainId, domainName, _craBatchId);
+			byte[] data = JooqCRA.getDownloadMainCRA(domainName, _craBatchId);
 			
 			output.write(data);
 			

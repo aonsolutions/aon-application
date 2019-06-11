@@ -65,9 +65,9 @@ public interface EnterprisesServiceAsync {
 	void updateEnterprise(EnterpriseInfo enterpriseInfo, String domain, AsyncCallback<EnterpriseInfo> asyncCallback);
 	void getAgrarianJourney(Date startDate, Date endDate, Integer enterprise_ccc, String domain, AsyncCallback<Map<Integer, List<AgrarianJourney>>> asyncCallback);
 	void getCRAs(String domain, AsyncCallback<List<CRA>> asyncCallback);
-	void createNewCRA(Integer domain, String domainName, Integer enterpriseId, String enterpriseName, long startDate, long endDate,
+	void createNewCRA(String domainName, Integer enterpriseId, String enterpriseName, long startDate, long endDate,
 			String ccc, Integer cccId, String type, AsyncCallback<String> asyncCallback);
-	void deleteCRA(Integer domainId, String currentDomainName, Integer code, AsyncCallback<String> asyncCallback);
+	void deleteCRA(String currentDomainName, Integer code, AsyncCallback<String> asyncCallback);
 	void getEmployeePeculiarities(String currentDomainName, Integer contractId, AsyncCallback<Peculiarities> asyncCallback);
 	void setEmployeePeculiarities(String currentDomainName, Integer contractId, Peculiarities peculiarities,
 			AsyncCallback<String> asyncCallback);
