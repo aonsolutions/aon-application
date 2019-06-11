@@ -1,6 +1,6 @@
 package net.aonsolutions.db.up2date;
 
-import static net.aonsolutions.db.up2date.tgss.CGC2019Fix.CGC2019FIX;
+import static net.aonsolutions.db.up2date.fiscal.AlterFsMod200Registry2018.ALTER_FS_MODEL_200_2018;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -66,7 +66,8 @@ public class Up2Date {
     		//FELLOWSBASES2019FIX,
     		//TRAINNINGBASES2019FIX
     		//ALTER_SALARY_CCC
-    		CGC2019FIX
+    		//CGC2019FIX
+    		ALTER_FS_MODEL_200_2018
     };
 
 
