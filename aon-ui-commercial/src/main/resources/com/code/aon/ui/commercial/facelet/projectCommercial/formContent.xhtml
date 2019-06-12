@@ -19,11 +19,20 @@
 	
 	<aon:outputLabel for="ProjectCommercial_source"
 		value="#{bundle.aon_source}" />
-	<aon:selectOneMenu id="ProjectCommercial_source"
-		value="#{controller.to.source}" required="true">
-		<f:selectItem itemLabel="-" value="#{null}"/>
-		<f:selectItems value="#{commercialCollections.projectSources}" />
-	</aon:selectOneMenu>
+	<aon:div>
+		<aon:selectOneMenu id="ProjectCommercial_source"
+			value="#{controller.to.source}" required="true">
+			<f:selectItem itemLabel="-" value="#{null}"/>
+			<f:selectItems value="#{commercialCollections.projectSources}" />
+		</aon:selectOneMenu>
+		<aon:outputLabel for="ProjectCommercial_projectType"  styleClass="aon-margin-left" 
+			value="#{bundle.project_project_type}"/>
+		<aon:selectOneMenu id="ProjectCommercial_projectType"
+			value="#{controller.to.project.projectType}">
+			<f:selectItem itemLabel="-" value="#{null}"/>
+			<f:selectItems value="#{projectCollections.projectTypes}" />
+		</aon:selectOneMenu>
+	</aon:div>
 						
 	<aon:outputLabel for="ProjectCommercial_project_date"
 		value="#{bundle.aon_date}" />
