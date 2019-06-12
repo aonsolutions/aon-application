@@ -74,6 +74,7 @@
 	<field name="referenceCode" class="java.lang.String"/>
 	<field name="issueDate" class="java.util.Date"/>
 	<field name="target" class="com.code.aon.commercial.Target"/>
+	<field name="supplier" class="com.code.aon.supplier.Supplier"/>
 	<field name="address" class="com.code.aon.registry.IAddress"/>
 	<field name="payMethod" class="com.code.aon.config.PayMethod"/>
 	<field name="numberOfPayments" class="java.lang.Integer"/>

@@ -7,6 +7,7 @@ import javax.faces.model.SelectItem;
 import com.code.aon.AonVersion;
 import com.code.aon.commercial.CommercialTerm;
 import com.code.aon.commercial.Offer;
+import com.code.aon.commercial.OfferAttachment;
 import com.code.aon.commercial.OfferTerm;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.commercial.enumeration.OfferType;
@@ -17,6 +18,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
 import com.code.aon.ui.commercial.controller.OfferController;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
@@ -32,6 +35,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class OfferControllerListener extends ControllerAdapter implements ICommercialConstants {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
+	private final String ATTACH_VARIABLE_NAME = "PPTO_ADJUNTO";
 
 	@Override
 	public void afterModelInitialized(ControllerEvent event) throws ControllerListenerException {
@@ -98,6 +103,23 @@ public class OfferControllerListener extends ControllerAdapter implements IComme
 				offerTerm.setGeneral(commercialTerm.isGeneral());
 				offerTermBean.insert(offerTerm);
 			}
+			
+			if(OfferType.DEALERSHIP == offer.getType()) {
+				Supplier supplier = offer.getSupplier();
+				List<ITransferObject> list = obtainAttachList(supplier);
+				if(list!=null && !list.isEmpty()) {
+					IManagerBean offerAttach = BeanManager.getManagerBean(OfferAttachment.class);
+					for(int i=0; i<list.size(); i++) {
+						RegistryAttachment ra = (RegistryAttachment) list.get(i);
+						OfferAttachment oa = (OfferAttachment) offerAttach.createNewTo(); 
+						oa.setOffer(offer);
+						oa.setMimeType(ra.getMimeType());
+						oa.setDescription("Adjunto proveedor " + (i+1));
+						oa.setData(ra.getData());
+						offerAttach.insert(oa);
+					}
+				}
+			}
 
 			IController offerDetailController = FormUtil.getController(OFFER_DETAIL_CONTROLLER_NAME);
 			offerDetailController.onReset(null);
@@ -112,4 +134,12 @@ public class OfferControllerListener extends ControllerAdapter implements IComme
 		controller.setListTotal(null);
 	}
 
+	private List<ITransferObject> obtainAttachList( Supplier supplier ) throws ManagerBeanException {
+		IManagerBean attach = BeanManager.getManagerBean(RegistryAttachment.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(attach.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), supplier.getId());
+		criteria.addEqualExpression(attach.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_DESCRIPTION), ATTACH_VARIABLE_NAME);
+		return attach.getList(criteria);
+	}
+	
 }
