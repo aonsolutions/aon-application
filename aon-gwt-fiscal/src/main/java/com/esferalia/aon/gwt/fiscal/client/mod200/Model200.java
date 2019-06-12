@@ -8,7 +8,6 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.ContextMenu;
-import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
@@ -23,15 +22,12 @@ import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Mod2002016Object;
 import com.esferalia.aon.gwt.fiscal.client.mod200.e2016.Model2002016;
 import com.esferalia.aon.gwt.fiscal.client.mod200.e2017.Mod2002017Object;
 import com.esferalia.aon.gwt.fiscal.client.mod200.e2017.Model2002017;
-import com.esferalia.aon.gwt.fiscal.client.mod200.e2018.Mod2002018Object;
-import com.esferalia.aon.gwt.fiscal.client.mod200.e2018.Model2002018;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2017.Mod2002017;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -62,16 +58,12 @@ public class Model200 extends MainEntryPoint {
 	static Mod2002015ServiceAsync mod2002015Service;
 	static Mod2002016ServiceAsync mod2002016Service;
 	static Mod2002017ServiceAsync mod2002017Service;
-	static Mod2002018ServiceAsync mod2002018Service;
 	static FiscalServiceAsync fiscalService;
 	static CommonServiceAsync commonService;
-	final FiscalServiceAsync impl = GWT.create(FiscalService.class);
 	
 	Model200Table table;
 	DeckLayoutPanel deckPanel;
 	SimpleLayoutPanel container;
-	
-	private AonData aonData;
 	
 	public static FiscalServiceAsync getFiscalService() {
 		if (fiscalService == null) {
@@ -87,14 +79,6 @@ public class Model200 extends MainEntryPoint {
 			commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
 		}
 		return commonService;
-	}
-	
-	public static Mod2002018ServiceAsync getMod2002018Service() {
-		if (mod2002018Service == null) {
-			Mod2002018ServiceAsync mod2002018ServiceRaw = GWT.create(Mod2002018Service.class);
-			mod2002018Service = new Mod2002018ServiceAsyncDecorator(mod2002018ServiceRaw);
-		}
-		return mod2002018Service;
 	}
 
 	public static Mod2002017ServiceAsync getMod2002017Service() {
@@ -146,26 +130,11 @@ public class Model200 extends MainEntryPoint {
 			table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
 		}
 	}
-	
-	@Override
-	public void onModuleLoad() {		
-		impl.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
-			
-			@Override
-			public void onSuccess(AonData aonData) {				
-				onModuleLoad(aonData);
-			}
-			
-			@Override public void onFailure(Throwable caught) {				
-			}
-		});
-	}
 
-	public void onModuleLoad(AonData aonData) {
-		
-		this.aonData = aonData;
-		
+	@Override
+	public void onModuleLoad() {
 		AON.ensureInjected();
+
 
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		deckPanel = new DeckLayoutPanel();
@@ -175,6 +144,7 @@ public class Model200 extends MainEntryPoint {
 		
 		ScrollPanel tablePanel = new ScrollPanel();
 		tablePanel.addStyleName(AON.AON_CSS.aonScrollArea());
+		
 		
 		ProvidesKey<Mod200> providesKey = new ProvidesKey<Mod200>() {
 			@Override
@@ -259,30 +229,13 @@ public class Model200 extends MainEntryPoint {
 		toolbar.setWidget(0, 2, buttonContainer);
 		toolbar.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonFindingToolbar());
 		
-		// Botón Nuevo 2018 - Solo BETA
-		// TODO - Quitar cuando se ponga en producción
-		final Button new2018 = new Button();
-		new2018.setText(AON.MSG.newSomething("2018"));
-		new2018.setTitle(new2018.getText());
-		new2018.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		new2018.setVisible(aonData.isBetaEnabled());
-		new2018.addStyleName("aon-icon-beta-text");		
-		new2018.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				new2018();
-			}
-		});
-		buttonContainer.add(new2018);
-		
-		// TODO - Sustituir por 2018 cuando se ponga en producción
-		// Botón Nuevo 2017
 		final Button new2017 = new Button();
 		new2017.setText(AON.MSG.newSomething("2017"));
 		new2017.setTitle(new2017.getText());
 		new2017.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
 		new2017.addStyleName(AON.AON_CSS.aonIconReset());
 		new2017.addClickHandler(new ClickHandler() {
+			
 			@Override
 			public void onClick(ClickEvent event) {
 				new2017();
@@ -342,15 +295,6 @@ public class Model200 extends MainEntryPoint {
 					new2016();
 				}
 			});
-			// TODO - Añadir 2017 cuando se ponga en producción el botón de 2018
-//			super.addItem("200", AON.MSG.newSomething("2017"), new ScheduledCommand() {
-//				
-//				@Override
-//				public void execute() {
-//					new2017();
-//				}
-//			});
-			
 			addStyleName(AON.AON_CSS.aonSelector());
 		}
 	}
@@ -427,22 +371,7 @@ public class Model200 extends MainEntryPoint {
 						public void onFailure(Throwable caught) {
 						}
 					});
-		} else if (mod.getYear() == 2018) {
-			getMod2002018Service().getMod2002018ById(Model200.getCurrentDomainName()
-					, getCurrentDomain(), mod.getId()
-					, new AsyncCallback<Mod2002018>() {
-
-						@Override
-						public void onSuccess(Mod2002018 mod200) {
-							changeView2018(mod200);
-						}
-
-						@Override
-						public void onFailure(Throwable caught) {
-						}
-					});
-		}		
-		else {
+		} else {
 			Window.alert(AON.MSG.unableToShowData( AON.MSG.noModuleForYear()));
 		}
 	}
@@ -488,15 +417,6 @@ public class Model200 extends MainEntryPoint {
 		Model2002017 model2002017 = new Model2002017( new Model200Callback() );
 		model2002017.startModel( mod200Obj );
 		container.setWidget(model2002017);
-		int i = deckPanel.getWidgetIndex(container);
-		deckPanel.showWidget(i);
-	}
-	
-	private void changeView2018(Mod2002018 mod200) {
-		Mod2002018Object mod200Obj = new Mod2002018Object(getCurrentDomainName(), mod200);
-		Model2002018 model2002018 = new Model2002018( new Model200Callback() );
-		model2002018.startModel( mod200Obj );
-		container.setWidget(model2002018);
 		int i = deckPanel.getWidgetIndex(container);
 		deckPanel.showWidget(i);
 	}
@@ -569,21 +489,6 @@ public class Model200 extends MainEntryPoint {
 			@Override
 			public void onSuccess(Mod2002017 mod200) {
 				changeView2017(mod200);
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-			}
-		});
-	}
-	protected void new2018() {
-		getMod2002018Service().createMod2002018(Model200.getCurrentDomainName()
-		, getCurrentDomain(), 2018
-		, new AsyncCallback<Mod2002018>() {
-
-			@Override
-			public void onSuccess(Mod2002018 mod200) {				
-				changeView2018(mod200);
 			}
 
 			@Override

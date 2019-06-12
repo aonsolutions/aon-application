@@ -1567,9 +1567,6 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Participaciones de importe igual o superior al 5% del capital o al 1% si se trata de valores que coticen en un mercado secundario organizado.")
 	String partMsg1();
-	
-	@DefaultMessage("Participaciones de importe a fin de periodo igual o superior al 5% del capital o al 1% si se trata de valores que coticen en un mercado secundario organizado.")
-	String partMsg1_2018();
 
 	@DefaultMessage("Datos de la participada")
 	String partMsg2();
@@ -1592,7 +1589,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Correcciones valorativas por deterioro y cambios en el valor razonable")
 	String partMsg8();
 
-	@DefaultMessage("a) Correcci\u00F3n de valor incluida en p\u00E9rdidas y ganancias del periodo")
+	@DefaultMessage("a) Correcci\u00F3n de valor incluida en p\u00E9rdidas y ganancias del ejercicio")
 	String partMsg9();
 
 	@DefaultMessage("b) Reversi\u00F3n de p\u00E9rdidas por deterioro de valores (D.T. 41a LIS)")
@@ -1615,18 +1612,6 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("e) Saldo de correcciones fiscales (art. 12.3 RDL 4/2004) pendientes a fin de ejercicio")
 	String partMsg122();
-	
-	@DefaultMessage("d) Eliminaci\u00F3n del deterioro de valores repr. de partic. en el capital o fondos propios (art.15 k) LIS)")
-	String partMsg123();
-	
-	@DefaultMessage("e) Ajuste por la disminuci\u00F3n de valor originada por criterio de valor razonable (art. 15 l) LIS)")
-	String partMsg124();
-	
-	@DefaultMessage("f) Efecto de la correcci\u00F3n valorativa en la BI del ejercicio")
-	String partMsg125();
-	
-	@DefaultMessage("g) Saldo de correcciones fiscales (art. 12.3 RDL 4/2004) pendientes a fin de ejercicio")
-	String partMsg126();
 
 	@DefaultMessage("Datos adicionales de la participada:")
 	String partMsg13();
@@ -1797,7 +1782,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Correcciones al resultado de la cuenta de p\u00E9rdidas y ganancias")
 	String corrections();
 	
-	@DefaultMessage("Correcciones del ejercicio")
+	@DefaultMessage("Correcciones del ejericicio")
 	String yearCorrections();
 
 	@DefaultMessage("Saldo pendiente a fin de ejercicio")
