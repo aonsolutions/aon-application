@@ -14,16 +14,19 @@ public class CompanyParticipation implements Serializable {
 	private int province;
 	private String country;
 	private boolean representative;
-	private String fjo; // F/J/O
+	private String fjo;      // F/J/O
 	private double percent;
 	private double nominalValue;
 	private double bookValue;
 	private double incomes;
-	private double aValue;
-	private double bValue;
-	private double cValue;
-	private double ccValue;
-	private double dValue;
+	private double aValue;   // Corrección de valor ... (Totaliza en 1504)
+	private double bValue;   // Reversión de pérdidas ... (Totaliza en 1505)
+	private double cValue;   // Efecto de la corrección valorativa ... (En 2018 pasa al apartado f), Totaliza en 1507)
+	private double ccValue;  // Eliminación del deterioro contable ... (Totaliza en 1506)
+	private double dValue;   // Saldo de correcciones fiscales ... (En 2018 pasa al apartado g), Totaliza en 1508)
+	private double ddValue;  // Eliminación del deterioro de valores ... (Nuevo 2018 en apartado d), totaliza en 1809)
+	private double eValue;   // Ajuste por la disminucion de valor ... (Nuevo 2018 en apartado e), totaliza en 1810)
+	
 	private double capital;
 	private double reserve;
 	private double otherAmounts;
@@ -212,6 +215,24 @@ public class CompanyParticipation implements Serializable {
 	}
 	public String getRepresenStr() {
 		return isRepresentative()?"1":"0"; 
+	}
+
+	public double getddValue() {
+		return ddValue;
+	}
+
+	public CompanyParticipation setddValue(double ddValue) {
+		this.ddValue = ddValue;
+		return this;
+	}
+
+	public double geteValue() {
+		return eValue;
+	}
+
+	public CompanyParticipation seteValue(double eValue) {
+		this.eValue = eValue;
+		return this;
 	}
 	
 }
