@@ -1,5 +1,6 @@
 package net.aonsolutions.db.up2date;
 
+import static net.aonsolutions.db.up2date.payroll.PlusSalarialInsert.PLUSSALARIALINSERT;
 import static net.aonsolutions.db.up2date.payroll.SalarioBaseDescriptionsUpdate.SALARIOBASEDESCRIPTIONSUPDATE;
 
 import java.sql.Connection;
@@ -68,7 +69,8 @@ public class Up2Date {
     		//ALTER_FS_MODEL_200_2018,
     		//PRESTITDESCRIPTIONSUPDATE
     		//EMBARGODESCRIPTIONSUPDATE,
-    		SALARIOBASEDESCRIPTIONSUPDATE
+    		SALARIOBASEDESCRIPTIONSUPDATE,
+    		PLUSSALARIALINSERT
     };
 
 
