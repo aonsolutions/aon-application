@@ -1,7 +1,6 @@
 package net.aonsolutions.db.up2date;
 
-import static net.aonsolutions.db.up2date.fiscal.AlterFsMod200Registry2018.ALTER_FS_MODEL_200_2018;
-import static net.aonsolutions.db.up2date.payroll.PrestITDescriptionsUpdate.PRESTITDESCRIPTIONSUPDATE;
+import static net.aonsolutions.db.up2date.payroll.SalarioBaseDescriptionsUpdate.SALARIOBASEDESCRIPTIONSUPDATE;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -66,10 +65,10 @@ public class Up2Date {
     		//TRAINNINGBASES2019FIX
     		//ALTER_SALARY_CCC
     		//CGC2019FIX
-    		ALTER_FS_MODEL_200_2018,
-    		PRESTITDESCRIPTIONSUPDATE
-//    		EMBARGODESCRIPTIONSUPDATE,
-//    		SALARIOBASEDESCRIPTIONSUPDATE
+    		//ALTER_FS_MODEL_200_2018,
+    		//PRESTITDESCRIPTIONSUPDATE
+    		//EMBARGODESCRIPTIONSUPDATE,
+    		SALARIOBASEDESCRIPTIONSUPDATE
     };
 
 
