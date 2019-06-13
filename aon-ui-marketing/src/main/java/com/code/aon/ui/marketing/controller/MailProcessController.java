@@ -120,18 +120,19 @@ public class MailProcessController extends DataScrollerState {
 		@Override
 		public MailProcess apply(ApplicationParameter r) {
 			String[] ids = StringUtils.split(r.getValue());
-			
+
 			com.esferalia.aon.occam.api.model.MailAccount mailAccount = AON.getMailAccount(AonUtil.getDomainName(), getCompany().getDomain(), "", f -> f.getIdProperty().eq(Integer.parseInt(ids[0])));
 			MailTemplate mailTemplate = AON.getMailTemplate(AonUtil.getDomainName(), getCompany().getDomain(), "", f -> f.getIdProperty().eq(Integer.parseInt(ids[1])));
-		
+			
 			Integer pos = r.getName().lastIndexOf("_");
-		
+			String[] names = r.getName().split("_");
+			
 			return new MailProcess()
 					.setId(r.getId())
 					.setMailAccount(mailAccount)
 					.setPriority(Integer.parseInt(r.getName().substring(pos+1)))
 					.setTemplate(mailTemplate)
-					.setType(MailProcessType.values()[Integer.parseInt(r.getName().substring(pos-1,pos))]);
+					.setType(MailProcessType.values()[Integer.parseInt(names[3])]);
 		}
 	}
 	
@@ -229,14 +230,18 @@ public class MailProcessController extends DataScrollerState {
 
 	public void onAccept(ActionEvent event) {
 		if(getTo().getPriority().equals(1)) {
-			String n = "AON_MAIL_PROCESS_" + getType().value() + "%";
+			String n = "AON_MAIL_PROCESS_" + getType().value() + "%1";
 			AON.getApplicationParameterStream(AonUtil.getDomainName(), getCompany().getDomain(), AonUtil.getRemoteUser(), f -> 
 					f.getDomainProperty().eq(getCompany().getDomain()).and(f.getNameProperty().like(n))).forEach(ap -> {
-				ap.setName("AON_MAIL_PROCESS_" + getTo().getType().value() + "_0");
+				String[] ids = StringUtils.split(ap.getValue());
+				ap.setName(ap.getName().substring(0, ap.getName().length() - 1) + ids[1] + "_0");
 				AON.updateApplicationParameter(AonUtil.getDomainName(), getCompany().getDomain(), AonUtil.getRemoteUser(), ap, f-> f.getIdProperty().eq(ap.getId()));
 			});
 		}
-		String name = "AON_MAIL_PROCESS_" + getTo().getType().value() + "_" + getTo().getPriority();
+		
+		String name = getTo().getPriority().equals(1) 
+			? "AON_MAIL_PROCESS_" + getTo().getType().value() + "_" + getTo().getPriority() 
+			: "AON_MAIL_PROCESS_" + getTo().getType().value() + "_" + getTo().getTemplate().getId() + "_" + getTo().getPriority();
 		String value = getTo().getMailAccount().getId() + " " + getTo().getTemplate().getId();
 		ApplicationParameter applicationParameter = new ApplicationParameter()
 				.setDomain(getCompany().getDomain())
