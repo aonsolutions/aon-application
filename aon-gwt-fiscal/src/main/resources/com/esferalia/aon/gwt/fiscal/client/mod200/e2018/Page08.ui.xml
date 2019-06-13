@@ -1,0 +1,31 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+
+	<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
+		<g:HTMLPanel styleName="{aonResources.css.aonFiscalContainer}">
+			<g:SimplePanel ui:field="headerPanel"/>
+			<g:HTMLPanel ui:field="basePanel" styleName="{aonResources.css.aonFiscalContainer}">
+				<div class="{aonResources.css.aonGroup}">
+					<div class="{aonResources.css.aonGroupTitle}">
+						<g:InlineLabel text="{msg.liquidacionI}" />
+					</div>
+					<div class="{aonResources.css.aonGroupBody}">
+						<g:FlexTable ui:field="table" width="100%" styleName="{aonResources.css.aonMarginTop}" />
+					</div>
+				</div>				
+				<div class="{aonResources.css.aonGroup}">
+					<div class="{aonResources.css.aonGroupTitle}">
+						<g:InlineLabel text="{msg.liquidation1Label2}" />
+					</div>
+					<div class="{aonResources.css.aonGroupBody}">
+						<g:FlexTable ui:field="table1" width="100%" styleName="{aonResources.css.aonMarginTop}" />
+					</div>
+				</div>				
+			</g:HTMLPanel>
+		</g:HTMLPanel>
+	</g:ScrollPanel>
+</ui:UiBinder>
