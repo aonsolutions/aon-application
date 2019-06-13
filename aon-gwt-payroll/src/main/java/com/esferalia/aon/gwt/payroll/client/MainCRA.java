@@ -402,6 +402,7 @@ public class MainCRA extends MainEntryPoint {
 				        ;
 				
 //				Window.alert(fileDownloadURL);
+				
 				Window.open(fileDownloadURL, "_blank", null);
 			}
 		});
@@ -420,9 +421,9 @@ public class MainCRA extends MainEntryPoint {
 				impl.createNewCRA(enterpriseInfo.getId(), enterpriseName, startDate.getTime(), endDate.getTime(), ccc, cccId, "N", new AsyncCallback<String>() {
 					@Override
 					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub	
+//						Window.alert(caught.toString());	
 					}
-	
+
 					@Override
 					public void onSuccess(String result) {
 						resetTables();

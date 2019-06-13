@@ -1719,7 +1719,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		Connection connection = null;
 		try {
 			connection = AonServletUtils.getConnection(domainStr);
-			return JooqCRA.getDomainCRAs(getDomain(domainStr), connection);
+			return JooqCRA.getDomainCRAs(domainStr, connection);
+//			return JooqCRA.getDomainCRAs(getDomain(domainStr), connection);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		} finally {
@@ -1745,7 +1746,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			return JooqCRA.setMainCra(domainName, cccId.toString(), agrarianAFI, startDate, craType, connection);
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			throw new RuntimeException(e);
 		} finally {
 			if (connection != null) {

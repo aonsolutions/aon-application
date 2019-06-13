@@ -1,15 +1,16 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
+import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
-import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +26,6 @@ import org.jooq.tools.json.JSONObject;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
-import com.esferalia.aon.occam.api.AONContext;
 
 public class JooqAgrarian {
 
@@ -117,33 +117,37 @@ public class JooqAgrarian {
 	//													GENERATE JSON AGRARIAN
 	// ********************************************************************************************************************************************
 
-	@SuppressWarnings({ "unchecked", "deprecation" })
+	@SuppressWarnings({ "unchecked" })
 	public static JSONObject getAgrarianInfo(String _domainId, String domainName, String _enterpriseId, String enterpriseName,
 			String _ccc, String _startDate, String _endDate, ArrayList<Integer> _selectedContracts) {
 		
 		java.util.Date startDate = new java.util.Date(Long.parseLong(_startDate));
 		java.util.Date endDate = new java.util.Date(Long.parseLong(_endDate));
 		
-		AONContext dslContext = null;
 		JSONObject agrarianJSON = new JSONObject();
+		
+		DSLContext dslContext = null;
+		Connection connection = null;
+		
 		try {
-			dslContext = AONContext.getAONContext(domainName, Integer.parseInt(_domainId),
-					AonServletUtils.getLoggedUser());
 			
-			Record domainRecord = dslContext.getDslContext().select().from(DOMAIN)
+			connection = AonServletUtils.getConnection(domainName);
+			dslContext = DSL.using(connection, getDefaultSettings());
+			
+			Record domainRecord = dslContext.select().from(DOMAIN)
 					.where(DOMAIN.ID.eq(Integer.parseInt(_domainId)))
 					.fetchOne();
 			
 			Integer parentDomainId = domainRecord.get(DOMAIN.PARENT);
 			
-			Record appParamRecord = dslContext.getDslContext().select().from(APP_PARAM)
+			Record appParamRecord = dslContext.select().from(APP_PARAM)
 					.where(APP_PARAM.NAME.eq("PAY_authorization_key_PAY"))
 						.and(APP_PARAM.DOMAIN.eq(Integer.parseInt(_domainId)))
 					.fetchOne();
 			
 			String authKey = "";
 			if(null == appParamRecord || null == appParamRecord.get(APP_PARAM.VALUE)) {
-				appParamRecord = dslContext.getDslContext().select().from(APP_PARAM)
+				appParamRecord = dslContext.select().from(APP_PARAM)
 						.where(APP_PARAM.NAME.eq("PAY_authorization_key_PAY"))
 							.and(APP_PARAM.DOMAIN.eq(parentDomainId))
 						.fetchOne();
@@ -185,17 +189,17 @@ public class JooqAgrarian {
 			etf.put("priorityCode", "N");
 			agrarianJSON.put("ETF", etf);
 			
-			Result<Record> enterpriseCCCRecord = dslContext.getDslContext().select().from(ENTERPRISE_CCC).where(ENTERPRISE_CCC.CCC.eq(_ccc)).fetch();
+			Result<Record> enterpriseCCCRecord = dslContext.select().from(ENTERPRISE_CCC).where(ENTERPRISE_CCC.CCC.eq(_ccc)).fetch();
 			Integer enterpriseCCCId = enterpriseCCCRecord.get(0).get(ENTERPRISE_CCC.ID);
 			
 			//EMPLOYEES
 			JSONArray emps = new JSONArray();
-			Map<Integer, List<AgrarianJourney>> contractsJourney = getAgrarianJourneyoDB(startDate, endDate, domainName, enterpriseCCCId, dslContext.getDslContext());
+			Map<Integer, List<AgrarianJourney>> contractsJourney = getAgrarianJourneyoDB(startDate, endDate, domainName, enterpriseCCCId, dslContext);
 			for(Integer contractId : _selectedContracts) {
 				JSONObject empl = new JSONObject();
-				JSONObject tra = getTRA(contractId, dslContext.getDslContext());
+				JSONObject tra = getTRA(contractId, dslContext);
 				empl.put("TRA", tra);
-				JSONObject ayn = getAYN(contractId, dslContext.getDslContext());
+				JSONObject ayn = getAYN(contractId, dslContext);
 				empl.put("AYN", ayn);
 				//Para el caso de las jornadas agrarias esto es constante
 				final String fab = "FABMJR000000000000 00000  000000 0000000000000000 0000   N 00000000   ";
@@ -216,6 +220,8 @@ public class JooqAgrarian {
 			agrarianJSON.put("CONF", conf);
 			
 		
+		} catch (SQLException e) {
+			e.printStackTrace();
 		} finally {
 			if (dslContext != null)
 				dslContext.close();

@@ -28,6 +28,7 @@ public final class MainCRAGeneration {
 		String reservedTGSS;
 		String reserved1;
 		
+		@SuppressWarnings("deprecation")
 		public ETI(String authKey, String fileName, String priorityCode) {
 			super();
 			this.etiHeader = "ETI";
