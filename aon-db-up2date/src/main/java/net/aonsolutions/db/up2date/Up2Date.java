@@ -1,7 +1,7 @@
 package net.aonsolutions.db.up2date;
 
-import static net.aonsolutions.db.up2date.payroll.PlusSalarialInsert.PLUSSALARIALINSERT;
-import static net.aonsolutions.db.up2date.payroll.SalarioBaseDescriptionsUpdate.SALARIOBASEDESCRIPTIONSUPDATE;
+import static net.aonsolutions.db.up2date.tgss.FellowsPercentages2019Update.FELLOWSPERCENTAGES2019UPDATE;
+import static net.aonsolutions.db.up2date.tgss.TrainningPercentages2019Update.TRAINNINGPERCENTAGES2019UPDATE;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -69,8 +69,10 @@ public class Up2Date {
     		//ALTER_FS_MODEL_200_2018,
     		//PRESTITDESCRIPTIONSUPDATE
     		//EMBARGODESCRIPTIONSUPDATE,
-    		SALARIOBASEDESCRIPTIONSUPDATE,
-    		PLUSSALARIALINSERT
+    		//SALARIOBASEDESCRIPTIONSUPDATE,
+    		//PLUSSALARIALINSERT
+    		TRAINNINGPERCENTAGES2019UPDATE,
+    		FELLOWSPERCENTAGES2019UPDATE
     };
 
 
