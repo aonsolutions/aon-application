@@ -49,6 +49,8 @@ public class TrainningPercentages2019Update implements Update {
 
 		Date _2019StartDate = new Date(calendar.getTimeInMillis());
 
+		calendar.add(Calendar.YEAR, -1);
+		Date _2018StartDate = new Date(calendar.getTimeInMillis());
 
 
 		boolean	upgraded =
@@ -101,7 +103,7 @@ public class TrainningPercentages2019Update implements Update {
 			.set(SYSTEM_DATA.DOMAIN, -101)
 			.set(SYSTEM_DATA.NAME, "PORCENTAJE_FP")
 			.set(SYSTEM_DATA.EXPRESSION, "0.17 * 100 / BASE_CGP")
-			.set(SYSTEM_DATA.START_DATE, _2019StartDate )
+			.set(SYSTEM_DATA.START_DATE, _2018StartDate )
 			.execute()
 			;
 			
