@@ -36,6 +36,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.hibernate.tool.hbm2x.pojo.SkipBackRefPropertyIterator;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -328,14 +329,88 @@ public class TrabajadoresTramos {
 						tramoBuilder.setAnhoHasta(end.get(Calendar.YEAR));
 						
 
-						Double diasCotizados = getContextData(salary, 
-										QUOTE_DAYS, 
-										p.getStart(), 
-										p.getEnd(),
-										Collectors.summingDouble(Double::parseDouble) );
-						tramoBuilder.setDiasCotizados( diasCotizados !=null ?diasCotizados.intValue() : 0);
+						int diasCotizados = getQuoteDays(salary, p);
+						
+						class SalaryFilter implements SalaryVisitor {
+							
+							boolean grupoCotizacionDiario = false;
+							boolean incapacidadTemporalPagoDelegado = false;
+							
+
+							public boolean isGrupoCotizacionDiario() {
+								return grupoCotizacionDiario;
+							}
+
+							public boolean isIncapacidadTemporalPagoDelegado() {
+								return incapacidadTemporalPagoDelegado;
+							}
+							
+
+							@Override
+							public void visitFormacionNormal() {
+							}
+
+							@Override
+							public void visitTiempoParcialNormal() {
+							}
+
+							@Override
+							public void visitTiempoCompletoNormal() {
+							}
+
+							@Override
+							public void visitGrupoCotizacionDiario() {
+								grupoCotizacionDiario = true;
+							}
+
+							@Override
+							public void visitGrupoCotizacionMensual() {
+							}
+
+							@Override
+							public void visitIncapacidadTemporal15PrimerosDias() {
+							}
+
+							@Override
+							public void visitIncapacidadTemporalPagoDelegado() {
+								incapacidadTemporalPagoDelegado = true;
+							}
+
+							@Override
+							public void visitIncapacidadTemporalPagoDirecto() {
+							}
+
+							@Override
+							public void visitIncapacidadTemporalATEPPagoDelegado() {
+							}
+
+							@Override
+							public void visitMaternidadPaternidadTiempoCompleto() {
+							}
+
+							@Override
+							public void visitMaternidadPaternidadTiempoParcial() {
+							}
+							
+						};
+						
+						SalaryFilter filter = new SalaryFilter();
+						visit(salary, p.getStart(), p.getEnd(), filter );
+
+						// No deben de enviarse tramos con cero "días cotizados"
+						// con las siguientes excepciones: 
+						// - Grupos de cotización diario con indicador mensual. 
+						// - Situaciones de IT de pago delegado .
+						//
+						if ( diasCotizados == 0 
+								&& !filter.isGrupoCotizacionDiario() 
+								&& !filter.isIncapacidadTemporalPagoDelegado()  )
+							continue;
+						
+						tramoBuilder.setDiasCotizados( diasCotizados );
 						
 						DatoSolicitadoBuilder dataSolicitadoBuilder  = new DatoSolicitadoBuilder();
+						
 						
 						class DefaultSalaryVisitor implements SalaryVisitor {
 							
@@ -434,6 +509,10 @@ public class TrabajadoresTramos {
 								tramoBuilder.addDato(dataSolicitadoBuilder.create());
 							}
 							
+							@Override
+							public void visitGrupoCotizacionMensual() {
+							}
+
 							@Override
 							public void visitIncapacidadTemporal15PrimerosDias() {
 								// 2.2 Situaciones de Incapacidad Temporal  
@@ -635,8 +714,9 @@ public class TrabajadoresTramos {
 							}
 							
 						});
-
-
+						
+						
+						
 						visit(salary, p.getStart(), p.getEnd(), salaryVisitor );
 						
 						tramoBuilder.setTipoDeContrato(getContextData(TC2.getName(), salary, p.getStart(), p.getEnd(), "-"));
@@ -646,8 +726,6 @@ public class TrabajadoresTramos {
 							//TODO: Log this please
 						}
 						
-						
-
 						trabajadorBuilder.addTramo(tramoBuilder.create());
 						
 					}
@@ -686,6 +764,10 @@ public class TrabajadoresTramos {
 				@Override
 				public void visitGrupoCotizacionDiario() {
 					//cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+				}
+
+				@Override
+				public void visitGrupoCotizacionMensual() {
 				}
 
 				@Override
@@ -748,6 +830,10 @@ public class TrabajadoresTramos {
 				}
 
 				@Override
+				public void visitGrupoCotizacionMensual() {
+				}
+
+				@Override
 				public void visitIncapacidadTemporal15PrimerosDias() {
 					Period last = cretaPeriods.removeLast();
 					cretaPeriods.add(new Period(last.getStart(), period.getEnd()));
@@ -805,6 +891,10 @@ public class TrabajadoresTramos {
 				@Override
 				public void visitGrupoCotizacionDiario() {
 					// noop
+				}
+
+				@Override
+				public void visitGrupoCotizacionMensual() {
 				}
 
 				@Override
@@ -869,6 +959,10 @@ public class TrabajadoresTramos {
 				}
 
 				@Override
+				public void visitGrupoCotizacionMensual() {
+				}
+
+				@Override
 				public void visitIncapacidadTemporal15PrimerosDias() {
 					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
 					state = it15PrimerosDias;
@@ -928,6 +1022,11 @@ public class TrabajadoresTramos {
 			@Override
 			public void visitGrupoCotizacionDiario() {
 				state.visitGrupoCotizacionDiario();
+			}
+
+			@Override
+			public void visitGrupoCotizacionMensual() {
+				state.visitGrupoCotizacionMensual();
 			}
 
 			@Override
@@ -1002,23 +1101,30 @@ public class TrabajadoresTramos {
 		return calendar.getTime();
 	}
 	
-	private static <A, R> R getContextData(Salary salary, ContextVariable var, 
-			Date startDate, Date endDate, Collector<? super String, A, R> collector) {
-		List<ContextData> datas = salary.getContextData().get(var.getName());
-		if (datas == null)
-			return null;
-		R r = datas.stream()
-				.filter(d->d.getStartDate().compareTo(startDate) >= 0)
-				.filter(d->d.getEndDate().compareTo(endDate) <= 0)
-				.map(d -> d.getExpression()).collect(collector);
-		return r;
-	}
 	
+	private static int getQuoteDays(Salary salary,Period period) {
+		int quoteDays = 0;
+		long days = period.daysStream().count();
+		List<ContextData> datas = salary.getContextData().get(QUOTE_DAYS.getName());
+		 
+		for ( ContextData data: datas  ) {
+			Period dataPeriod = new Period(data.getStartDate(), data.getEndDate());
+			Period intersectPeriod = period.intersect(dataPeriod);
+			if ( intersectPeriod == null )
+				continue;
+			long dataDays = dataPeriod.daysStream().count();
+			long intersectDays = intersectPeriod.daysStream().count();
+			quoteDays += Double.parseDouble(data.getExpression()) / dataDays * intersectDays; 
+		}
+		return quoteDays;
+	}
+
 	private static interface SalaryVisitor {
 		void visitFormacionNormal();
 		void visitTiempoParcialNormal();
 		void visitTiempoCompletoNormal();
 		void visitGrupoCotizacionDiario();
+		void visitGrupoCotizacionMensual();
 		void visitIncapacidadTemporal15PrimerosDias();
 		void visitIncapacidadTemporalPagoDelegado();
 		void visitIncapacidadTemporalPagoDirecto();
@@ -1102,6 +1208,8 @@ public class TrabajadoresTramos {
 		String quoteGroup = getContextData(QUOTE_GROUP.getName(), salary, startDate, endDate,  "01");
 		if ( Integer.parseInt(quoteGroup ) >= 8 )
 			visitor.visitGrupoCotizacionDiario();
+		else
+			visitor.visitGrupoCotizacionMensual();
 	}
 
 	private static interface TypeVisitor<T> {

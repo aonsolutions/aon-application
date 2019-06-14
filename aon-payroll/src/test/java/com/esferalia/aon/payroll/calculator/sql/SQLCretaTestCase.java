@@ -2325,7 +2325,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
-	public void testCretaITAdjust1Day()
+	public void testCretaITAdjust1DayDaily()
 			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
@@ -2454,6 +2454,127 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals("31", tramo2.getFechaHasta().getDia());
 		Assert.assertEquals("07", tramo2.getFechaHasta().getMes());
 		assertDato(tramo2.getDatosTramo().getDato(), "I", "51", "M");
+		
+
+	}
+
+	@Test
+	public void testCretaITAdjust1DayMonthly()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+		
+		
+		String ccc = UUID.randomUUID().toString().substring(0, 11);
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C100, "06");
+		
+		Date startIt = getLastDayOfMonth(add(getToday(), MONTH, Calendar.JULY - get(getToday(), MONTH)));
+		
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIt, null, null);
+		
+		
+		Date startDate = getFirstDayOfMonth(startIt);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		int salaries = calculateAndSave(connection, ctx);
+
+		// Only one salary saved to DB.
+		//Assert.assertEquals(1, salaries);
+
+		AON.getSalaryData(aonContext,
+				props -> props.getContractProperty().eq(contract.getId()).and(props.getCCCProperty().eq(ccc)))
+				.forEach(salary -> {
+					
+					Date endActive = add(startIt, DATE, -1);
+					
+					for ( Entry<String, List<ContextData>> entry : salary.getContextData().entrySet() ) {
+						System.out.print(entry.getKey() + ": " );
+						for ( ContextData data: entry.getValue())
+							System.out.print(data.getExpression() + "(" + data.getStartDate() + ".." + data.getEndDate()  + "),") ;
+						System.out.println();
+					}
+					
+					// 500 Base de contingencias comunes.
+					List<ContextData> datas = salary.getContextData()
+							.get(CGC_BASE.getName());
+					
+					Assert.assertEquals(2, datas.size());
+					Assert.assertEquals(startDate, datas.get(0).getStartDate());
+					Assert.assertEquals(endActive, datas.get(0).getEndDate());
+					Assert.assertEquals(1750.00,
+							Double.parseDouble(datas.get(0).getExpression()));
+					Assert.assertEquals(endDate, datas.get(1).getStartDate());
+					Assert.assertEquals(endDate, datas.get(1).getEndDate());
+					Assert.assertEquals(0.00,
+							Double.parseDouble(datas.get(1).getExpression()));
+
+					// 601 o 611 Base de Accidentes de Trabajo.
+					datas = salary.getContextData().get(CGP_BASE.getName());
+					Assert.assertEquals(2, datas.size());
+					Assert.assertEquals(startDate, datas.get(0).getStartDate());
+					Assert.assertEquals(endActive, datas.get(0).getEndDate());
+					Assert.assertEquals(1750.00,
+							Double.parseDouble(datas.get(0).getExpression()));
+					Assert.assertEquals(endDate, datas.get(1).getStartDate());
+					Assert.assertEquals(endDate, datas.get(1).getEndDate());
+					Assert.assertEquals(0.00,
+							Double.parseDouble(datas.get(1).getExpression()));
+
+					// 501 Base de Horas Extras Fuerza Mayor
+					datas = salary.getContextData()
+							.get(STRUCTURAL_OVERTIME_BASE.getName());
+					Assert.assertEquals(1, datas.size());
+					Assert.assertEquals(startDate, datas.get(0).getStartDate());
+					Assert.assertEquals(endDate, datas.get(0).getEndDate());
+					Assert.assertEquals(0.00,
+							Double.parseDouble(datas.get(0).getExpression()));
+
+					// 502 Base de Horas Extras
+					datas = salary.getContextData()
+							.get(NON_STRUCTURAL_OVERTIME_BASE.getName());
+					Assert.assertEquals(1, datas.size());
+					Assert.assertEquals(startDate, datas.get(0).getStartDate());
+					Assert.assertEquals(endDate, datas.get(0).getEndDate());
+					Assert.assertEquals(0.00,
+							Double.parseDouble(datas.get(0).getExpression()));
+
+
+
+				});
+		;
+		
+		cleanSalaries(aonContext);
+		
+		List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
+		Assert.assertEquals(1, tramos.size());
+		
+		Assert.assertEquals("01", tramos.get(0).getFechaDesde().getDia());
+		Assert.assertEquals("07", tramos.get(0).getFechaDesde().getMes());
+		Assert.assertEquals("30", tramos.get(0).getFechaHasta().getDia());
+		Assert.assertEquals("07", tramos.get(0).getFechaHasta().getMes());
+		Assert.assertEquals("30", tramos.get(0).getDiasCotizados());
+		assertTramoActivoNormalTiempoCompleto( tramos.get(0) );
+		
+		
+		cleanSalaries(aonContext);
+		
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, contract, startDate, endDate, ccc);
+		Assert.assertEquals(1, bases.size());
+		
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo1 = bases.get(0);
+		Assert.assertEquals("01", tramo1.getFechaDesde().getDia());
+		Assert.assertEquals("07", tramo1.getFechaDesde().getMes());
+		Assert.assertEquals("30", tramo1.getFechaHasta().getDia());
+		Assert.assertEquals("07", tramo1.getFechaHasta().getMes());
+		assertDato(tramo1.getDatosTramo().getDato(), "C", "500", "175000");
+		assertDato(tramo1.getDatosTramo().getDato(), "C", "601", "175000");
+		
 		
 
 	}
