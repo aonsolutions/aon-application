@@ -380,8 +380,15 @@ public final class MainCRAGeneration {
 	}
 		
 	public static String generateMainCRA (JSONObject mainCRAData) {
+		
 		//RESULT
 		String mainCRA = null;
+		
+		//ERROR
+		if(null != mainCRAData.get("ERR")){
+			mainCRA = mainCRAData.get("ERR").toString();
+			return mainCRA;
+		}
 		
 		//ETI
 		JSONObject etiJson = (JSONObject) mainCRAData.get("ETI");

@@ -555,6 +555,8 @@ public class MainCRA extends MainEntryPoint {
 	
 	private boolean checkRectificavo() {
 		for(CRA cra : cras) {
+			if(null == cra.getCreationDate())
+				continue;
 			if(new Date(cra.getCreationDate().getTime()).equals(new Date(this.startDate.getTime()))) {
 				if(cra.getCcc().substring(4) == this.ccc) {
 					return false;

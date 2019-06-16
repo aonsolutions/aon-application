@@ -233,6 +233,12 @@ public class JooqCRA {
 					.and(SALARY.SS_REGIME.notEqual((byte)3))
 				.fetch();
 		
+		//TODO: COMPROBAR ERROR DEL SALARY RECORDS EMPTY
+		if(salaryRecords.isEmpty()){
+			mainCRAJSON.put("ERR", "No hay ninguna nómina emitida para este periodo.");
+			return mainCRAJSON;
+		}
+		
 		//DDE
 		JSONObject dde = new JSONObject();
 		Result<Record> enterpriseCCCRecords = dslContext.select().from(ENTERPRISE_CCC)
@@ -588,14 +594,14 @@ public class JooqCRA {
 			cra.setCreationDate(craBatch.get(CRA_BATCH.OUTCOME_FILE_DATE));
 			cra.setType(craBatch.get(CRA_BATCH.COMMUNICATION_ID));
 			
-			Record craBatchDetailRecord = dslContext.select().from(CRA_BATCH_DETAIL)
+			 Result<Record> craBatchDetailRecord = dslContext.select().from(CRA_BATCH_DETAIL)
 					.where(CRA_BATCH_DETAIL.CRA_BATCH.eq(craBatch.get(CRA_BATCH.ID)))
-					.fetchOne();
+					.fetch();
 			
-			if(null != craBatchDetailRecord){
+			if(null != craBatchDetailRecord && !craBatchDetailRecord.isEmpty()){
 			
 				Record enterpriseCCCRecord = dslContext.select().from(ENTERPRISE_CCC)
-						.where(ENTERPRISE_CCC.ID.eq(craBatchDetailRecord.get(CRA_BATCH_DETAIL.ENTERPRISE_CCC)))
+						.where(ENTERPRISE_CCC.ID.eq(craBatchDetailRecord.get(0).get(CRA_BATCH_DETAIL.ENTERPRISE_CCC)))
 						.fetchOne();
 				
 				cra.setCcc(getCCCType(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE)) + enterpriseCCCRecord.get(ENTERPRISE_CCC.CCC));
