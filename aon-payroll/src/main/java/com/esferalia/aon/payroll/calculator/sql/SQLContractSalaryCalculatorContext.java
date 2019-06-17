@@ -3253,7 +3253,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		if ( agreementHours == null  || agreementHours.doubleValue() == 0.00  ) 
 			return 0.00;
 		
-		return agreementHours.doubleValue()  * workedDays.doubleValue() / 7.00 ; 
+		return agreementHours.doubleValue()  * workedDays.doubleValue() / 5.00 ; 
 				
 	}
 
@@ -3996,7 +3996,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					if ( agreementHours == null  || agreementHours.doubleValue() == 0.00  ) 
 						return 0.00;
 					
-					return agreementHours.doubleValue()  * workedDays.doubleValue() / 7.00 ; 
+					return agreementHours.doubleValue()  * workedDays.doubleValue() / 5.00 ; 
 				}
 
 			};
