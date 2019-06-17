@@ -712,7 +712,17 @@ public class Salary implements Serializable {
 		contextData.endDate = endDate;
 		contextData.startDate = startDate;
 		contextData.expression = value;
-		datas.add(contextData);
+		int index = Collections.binarySearch(datas, contextData, 
+				(d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
+		if ( index >= 0 ) {
+			datas.set(index, contextData);
+		} else {
+			// index = -(insertion_point) - 1
+			// index + insertion_point = -1
+			// insertion_point = -index -1 
+			int insertionPoint = -index -1;
+			datas.add(insertionPoint, contextData);
+		}
 		return this;
 	}
 	
