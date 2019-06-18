@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.AonVersion;
 import com.code.aon.commercial.CommercialTerm;
 import com.code.aon.commercial.Offer;
@@ -18,6 +20,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
@@ -111,10 +114,12 @@ public class OfferControllerListener extends ControllerAdapter implements IComme
 					IManagerBean offerAttach = BeanManager.getManagerBean(OfferAttachment.class);
 					for(int i=0; i<list.size(); i++) {
 						RegistryAttachment ra = (RegistryAttachment) list.get(i);
+						String description = ra.getDescription().replaceFirst(ATTACH_VARIABLE_NAME,  "").trim();
+						description = StringUtils.isNotBlank(description) ? description : "Adjunto proveedor " + (i+1); 
 						OfferAttachment oa = (OfferAttachment) offerAttach.createNewTo(); 
 						oa.setOffer(offer);
 						oa.setMimeType(ra.getMimeType());
-						oa.setDescription("Adjunto proveedor " + (i+1));
+						oa.setDescription(description);
 						oa.setData(ra.getData());
 						offerAttach.insert(oa);
 					}
@@ -138,7 +143,9 @@ public class OfferControllerListener extends ControllerAdapter implements IComme
 		IManagerBean attach = BeanManager.getManagerBean(RegistryAttachment.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(attach.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), supplier.getId());
-		criteria.addEqualExpression(attach.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_DESCRIPTION), ATTACH_VARIABLE_NAME);
+		criteria.addExpression(ExpressionUtilities.getLikeExpression(
+				attach.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_DESCRIPTION),
+				ATTACH_VARIABLE_NAME+"%"));
 		return attach.getList(criteria);
 	}
 	
