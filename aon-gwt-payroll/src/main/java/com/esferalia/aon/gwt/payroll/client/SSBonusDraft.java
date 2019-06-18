@@ -89,8 +89,8 @@ public class SSBonusDraft extends Composite {
 	@UiField
 	CheckBox checkCommonC;
 	
-	@UiField
-	CheckBox checkCommonE;
+//	@UiField
+//	CheckBox checkCommonE;
 	
 	@UiField
 	CheckBox checkAccidentC;
@@ -101,8 +101,8 @@ public class SSBonusDraft extends Composite {
 	@UiField
 	CheckBox checkUnemploymentC;
 	
-	@UiField
-	CheckBox checkUnemploymentE;
+//	@UiField
+//	CheckBox checkUnemploymentE;
 	
 	@UiField
 	CheckBox checkFogasaC;
@@ -113,8 +113,8 @@ public class SSBonusDraft extends Composite {
 	@UiField
 	CheckBox checkFormationC;
 	
-	@UiField
-	CheckBox checkFormationE;
+//	@UiField
+//	CheckBox checkFormationE;
 	
 	@UiField
 	Button applyChecks;
@@ -243,24 +243,24 @@ public class SSBonusDraft extends Composite {
 			
 			if(checkCommonC.getValue() == true)
 				listCheckTrue.add("CGC_E");
-			if(checkCommonE.getValue() == true)
-				listCheckTrue.add("CGC");
+//			if(checkCommonE.getValue() == true)
+//				listCheckTrue.add("CGC");
 			if(checkAccidentC.getValue() == true)
 				listCheckTrue.add("(IT_E + IMS_E)");
 //			if(checkAccidentE.getValue() == true)
 //				listCheckTrue.add("(IT + IMS)");
 			if(checkUnemploymentC.getValue() == true)
 				listCheckTrue.add("DESMPL_E");
-			if(checkUnemploymentE.getValue() == true)
-				listCheckTrue.add("DESMPL");
+//			if(checkUnemploymentE.getValue() == true)
+//				listCheckTrue.add("DESMPL");
 			if(checkFogasaC.getValue() == true)
 				listCheckTrue.add("FOGASA_E");
 //			if(checkFogasaE.getValue() == true)
 //				listCheckTrue.add("FOGASA");
 			if(checkFormationC.getValue() == true)
 				listCheckTrue.add("FP_E");
-			if(checkFormationE.getValue() == true)
-				listCheckTrue.add("FP");
+//			if(checkFormationE.getValue() == true)
+//				listCheckTrue.add("FP");
 			
 			if(!listCheckTrue.isEmpty()){
 				String result = "(";
@@ -399,15 +399,15 @@ public class SSBonusDraft extends Composite {
 	
 	private void clearSelectedChecks() {
 		checkCommonC.setValue(false);
-		checkCommonE.setValue(false);
+//		checkCommonE.setValue(false);
 		checkAccidentC.setValue(false);
 //		checkAccidentE.setValue(false);
 		checkUnemploymentC.setValue(false);
-		checkUnemploymentE.setValue(false);
+//		checkUnemploymentE.setValue(false);
 		checkFogasaC.setValue(false);
 //		checkFogasaE.setValue(false);
 		checkFormationC.setValue(false);
-		checkFormationE.setValue(false);
+//		checkFormationE.setValue(false);
 		
 		this.percentBonus.setValue("");
 	}

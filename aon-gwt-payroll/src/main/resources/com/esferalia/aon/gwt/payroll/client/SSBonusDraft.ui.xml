@@ -333,9 +333,9 @@
 										<g:customCell>
 											<g:Label styleName="{style.bold}">Cuota de empresa</g:Label>
 										</g:customCell>
-										<g:customCell>
+										<!-- <g:customCell>
 											<g:Label styleName="{style.bold}">Cuota de trabajador</g:Label>
-										</g:customCell>
+										</g:customCell> -->
 									</g:row>
 									<g:row>
 										<g:customCell>
@@ -344,9 +344,9 @@
 										<g:customCell styleName="{style.alignCenter}">
 											<g:CheckBox ui:field='checkCommonC'></g:CheckBox>
 										</g:customCell>
-										<g:customCell styleName="{style.alignCenter}">
+										<!-- <g:customCell styleName="{style.alignCenter}">
 											<g:CheckBox ui:field='checkCommonE'></g:CheckBox>
-										</g:customCell>
+										</g:customCell> -->
 									</g:row>
 									<g:row>
 										<g:customCell>
@@ -355,10 +355,10 @@
 										<g:customCell styleName="{style.alignCenter}">
 											<g:CheckBox ui:field='checkAccidentC'></g:CheckBox>
 										</g:customCell>
-										<g:customCell styleName="{style.alignCenter}">
+										<!-- <g:customCell styleName="{style.alignCenter}">
 											<g:Label></g:Label>
-											<!-- <g:CheckBox ui:field='checkAccidentE'></g:CheckBox> -->
-										</g:customCell>
+											<g:CheckBox ui:field='checkAccidentE'></g:CheckBox>
+										</g:customCell> -->
 									</g:row>
 									<g:row>
 										<g:customCell>
@@ -367,9 +367,9 @@
 										<g:customCell styleName="{style.alignCenter}">
 											<g:CheckBox ui:field='checkUnemploymentC'></g:CheckBox>
 										</g:customCell>
-										<g:customCell styleName="{style.alignCenter}">
+										<!-- <g:customCell styleName="{style.alignCenter}">
 											<g:CheckBox ui:field='checkUnemploymentE'></g:CheckBox>
-										</g:customCell>
+										</g:customCell> -->
 									</g:row>
 									<g:row>
 										<g:customCell>
@@ -378,10 +378,10 @@
 										<g:customCell styleName="{style.alignCenter}">
 											<g:CheckBox ui:field='checkFogasaC'></g:CheckBox>
 										</g:customCell>
-										<g:customCell styleName="{style.alignCenter}">
+										<!-- <g:customCell styleName="{style.alignCenter}">
 											<g:Label></g:Label>
-											<!-- <g:CheckBox ui:field='checkFogasaE'></g:CheckBox> -->
-										</g:customCell>
+											<g:CheckBox ui:field='checkFogasaE'></g:CheckBox>
+										</g:customCell> -->
 									</g:row>
 									<g:row>
 										<g:customCell>
@@ -390,9 +390,9 @@
 										<g:customCell styleName="{style.alignCenter}">
 											<g:CheckBox ui:field='checkFormationC'></g:CheckBox>
 										</g:customCell>
-										<g:customCell styleName="{style.alignCenter}">
+										<!-- <g:customCell styleName="{style.alignCenter}">
 											<g:CheckBox ui:field='checkFormationE'></g:CheckBox>
-										</g:customCell>
+										</g:customCell> -->
 									</g:row>
 								</g:Grid>
 								<g:Button ui:field='applyChecks' styleName="{style.button}">Aplicar</g:Button>
