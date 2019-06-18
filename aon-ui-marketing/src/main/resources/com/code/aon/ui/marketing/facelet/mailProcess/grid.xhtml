@@ -53,13 +53,13 @@
 							</f:facet>
 							<aon:outputText value="#{to.mailAccount.displayName}" rendered="#{formList}" />
 							<aon:selectOneMenu id="MailProcess_mailAccount" rendered="#{formEdit}"
-								required="true" value="#{controller.mailAccount}">
+								value="#{controller.mailAccount}">
 								<f:selectItem itemLabel="-" value="#{null}"/>
 								<f:selectItems value="#{mailProcess.mailAccounts}" />
 							</aon:selectOneMenu>
 							<f:facet name="footer">
 								<aon:selectOneMenu id="MailProcess_mailAccount-New" rendered="#{formNew}"
-									required="true" value="#{controller.mailAccount}">
+									value="#{controller.mailAccount}">
 									<f:selectItem itemLabel="-" value="#{null}"/>
 									<f:selectItems value="#{mailProcess.mailAccounts}" />
 								</aon:selectOneMenu>

@@ -600,7 +600,7 @@ public class MessageController implements IWebMailConstants, Serializable {
 			.and(f.getNameProperty().like("AON_MAIL_PROCESS_" + getMailProccessType().ordinal() + "%")))
 		.forEach(ap -> {
 				String[] ids = StringUtils.split(ap.getValue());
-				if(mailAccount.getId().equals(Integer.parseInt(ids[0]))) {
+				if(mailAccount.getId().equals(Integer.parseInt(ids[0])) || "-1".equals(ids[0])) {
 					MailTemplate mt = AON.getMailTemplate(AonUtil.getDomainName(), ap.getDomain(), "", f-> 
 						f.getIdProperty().eq(Integer.parseInt(ids[1])));
 					if(getTemplate()== null) {

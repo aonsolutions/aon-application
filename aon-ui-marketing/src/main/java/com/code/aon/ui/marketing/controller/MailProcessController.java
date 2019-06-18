@@ -121,7 +121,9 @@ public class MailProcessController extends DataScrollerState {
 		public MailProcess apply(ApplicationParameter r) {
 			String[] ids = StringUtils.split(r.getValue());
 
-			com.esferalia.aon.occam.api.model.MailAccount mailAccount = AON.getMailAccount(AonUtil.getDomainName(), getCompany().getDomain(), "", f -> f.getIdProperty().eq(Integer.parseInt(ids[0])));
+			com.esferalia.aon.occam.api.model.MailAccount mailAccount = (ids[0] != "-1") 
+					? AON.getMailAccount(AonUtil.getDomainName(), getCompany().getDomain(), "", f -> f.getIdProperty().eq(Integer.parseInt(ids[0])))
+					: null;
 			MailTemplate mailTemplate = AON.getMailTemplate(AonUtil.getDomainName(), getCompany().getDomain(), "", f -> f.getIdProperty().eq(Integer.parseInt(ids[1])));
 			
 			Integer pos = r.getName().lastIndexOf("_");
@@ -242,7 +244,9 @@ public class MailProcessController extends DataScrollerState {
 		String name = getTo().getPriority().equals(1) 
 			? "AON_MAIL_PROCESS_" + getTo().getType().value() + "_" + getTo().getPriority() 
 			: "AON_MAIL_PROCESS_" + getTo().getType().value() + "_" + getTo().getTemplate().getId() + "_" + getTo().getPriority();
-		String value = getTo().getMailAccount().getId() + " " + getTo().getTemplate().getId();
+		Integer maId = (getTo().getMailAccount() != null && getTo().getMailAccount().getId() != null)
+					? getTo().getMailAccount().getId() : -1;
+		String value = maId + " " + getTo().getTemplate().getId();
 		ApplicationParameter applicationParameter = new ApplicationParameter()
 				.setDomain(getCompany().getDomain())
 				.setName(name)
@@ -299,7 +303,10 @@ public class MailProcessController extends DataScrollerState {
 	}
 
 	public void setMailAccount(com.code.aon.webmail.db.MailAccount mailAccount) {	
-		to.setMailAccount(AON.getMailAccount(AonUtil.getDomainName(), mailAccount.getDomain(), "", f -> f.getIdProperty().eq(mailAccount.getId())));
+		to.setMailAccount(mailAccount != null
+				? AON.getMailAccount(AonUtil.getDomainName(), mailAccount.getDomain(), "", f -> f.getIdProperty().eq(mailAccount.getId()))
+				: null);
+		 
 		this.mailAccount = mailAccount;
 	}
 	
@@ -325,7 +332,7 @@ public class MailProcessController extends DataScrollerState {
 		com.code.aon.webmail.db.MailAccount ma = new com.code.aon.webmail.db.MailAccount();
 		for (SelectItem si : mailAccounts) {
 			com.code.aon.webmail.db.MailAccount m = (com.code.aon.webmail.db.MailAccount)si.getValue();
-			if(getTo().getMailAccount().getId().equals(m.getId())) {
+			if(getTo().getMailAccount() != null && m.getId().equals(getTo().getMailAccount().getId())) {
 				ma = m;
 			}
 		}
