@@ -2,22 +2,15 @@ package com.code.aon.ui.warehouse.util;
 
 import static com.code.aon.ui.common.ICommonMessages.WAREHOUSE_DELIVERY_EMAIL_BODY;
 import static com.code.aon.ui.common.ICommonMessages.WAREHOUSE_DELIVERY_EMAIL_SUBJECT;
-
 import static com.code.aon.ui.common.ICommonMessages.WAREHOUSE_INCOME_EMAIL_BODY;
 import static com.code.aon.ui.common.ICommonMessages.WAREHOUSE_INCOME_EMAIL_SUBJECT;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
-
-import javax.faces.model.SelectItem;
-
-import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.marketing.enumeration.MailProcessType;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.company.util.CompanyEmailUtil;
 import com.code.aon.ui.util.AonUtil;
@@ -26,7 +19,7 @@ import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.Income;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.MailTemplate;
+import com.esferalia.aon.occam.api.model.type.MailProcessType;
 
 public class WarehouseEmailUtil extends CompanyEmailUtil {
 	
@@ -38,7 +31,7 @@ public class WarehouseEmailUtil extends CompanyEmailUtil {
 		String[] emails = getAdministrativeEmails(delivery.getCustomer().getRegistry());
 		initMessageController(messageController, emails);
 		messageController.setGenericMessage(false);
-		messageController.setTemplates(getTemplates(MailProcessType.DELIVERY));
+		messageController.setMailProccessType(MailProcessType.DELIVERY);
 		if(!messageController.initMessageController(getDomain(delivery.getDomain()), "", getMap(delivery), "AON_MAIL_PROCESS_"+ MailProcessType.DELIVERY.ordinal() + "_1")) {
 			initMessageController(messageController, emails, getEmailBody(delivery));
 		}
@@ -46,20 +39,6 @@ public class WarehouseEmailUtil extends CompanyEmailUtil {
 			messageController.setSubject(getEmailSubject(delivery));
 		}
 		messageController.addAttachment(getReport(delivery, reportKey));
-	}
-	
-	private LinkedList<SelectItem> getTemplates(MailProcessType type) {
-		LinkedList<SelectItem> templates = new LinkedList<>();
-		AON.getApplicationParameterStream(AonUtil.getDomainName(), getCompany().getDomain(), "", f -> 
-			f.getDomainProperty().eq(getCompany().getDomain())
-			.and(f.getNameProperty().like("AON_MAIL_PROCESS_" + type.ordinal() + "%"))).forEach(ap -> {
-				String[] ids = StringUtils.split(ap.getValue());
-				MailTemplate mt = AON.getMailTemplate(AonUtil.getDomainName(), ap.getDomain(), "", f-> 
-					f.getIdProperty().eq(Integer.parseInt(ids[1])));
-				templates.add(new SelectItem(mt.getId(), mt.getName()));
-			});
-		
-		return templates;
 	}
 	
 	private Map<String,String> getMap(Delivery delivery) {
@@ -105,7 +84,7 @@ public class WarehouseEmailUtil extends CompanyEmailUtil {
 		String[] emails = getAdministrativeEmails(income.getSupplier().getRegistry() );
 		initMessageController(messageController, emails);
 		messageController.setGenericMessage(false);
-		messageController.setTemplates(getTemplates(MailProcessType.DELIVERY));
+		messageController.setMailProccessType(MailProcessType.DELIVERY);
 		if(!messageController.initMessageController(getDomain(income.getDomain()), "", getMap(income), "AON_MAIL_PROCESS_" + MailProcessType.DELIVERY.ordinal() + "_1")) {
 			initMessageController(messageController, emails, getEmailBody(income));
 		}

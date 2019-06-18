@@ -66,7 +66,7 @@
 							value="#{bundle.aon_of}" />
 					</aon:div>							
 					<aon:selectOneMenu id="NewMail_From#{messageSuffix}"
-						reRender="messageContent#{messageSuffix},NewMail_optionsGrid#{messageSuffix}"
+						reRender="messageContent#{messageSuffix},NewMail_optionsGrid#{messageSuffix}, NewMail_GenericTemplate#{messageSuffix}"
 						rendered="#{mailConfig.mailAccountCount &gt; 1}"
 						converter="#{mailConfig.mailAccountConverter}"
 						valueChangeListener="#{webmailMessage.onMailAccountChanged}"

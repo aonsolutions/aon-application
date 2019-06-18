@@ -7,16 +7,10 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
-
-import javax.faces.model.SelectItem;
-
-import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.marketing.enumeration.MailProcessType;
 import com.code.aon.report.ReportException;
 import com.code.aon.sales.Sales;
 import com.code.aon.ui.company.util.CompanyEmailUtil;
@@ -25,7 +19,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.MailTemplate;
+import com.esferalia.aon.occam.api.model.type.MailProcessType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class SalesEmailUtil extends CompanyEmailUtil implements ISalesMessages {
@@ -38,7 +32,7 @@ public class SalesEmailUtil extends CompanyEmailUtil implements ISalesMessages {
 		String[] emails = getAdministrativeEmails( sales.getCustomer().getRegistry() );
 		initMessageController(messageController, emails);
 		messageController.setGenericMessage(false);
-		messageController.setTemplates(getTemplates(MailProcessType.ORDER));
+		messageController.setMailProccessType(MailProcessType.ORDER);
 		if(!messageController.initMessageController(getDomain(sales.getDomain()), "", getMap(sales), "AON_MAIL_PROCESS_"+ MailProcessType.ORDER.ordinal() + "_1")) {
 			initMessageController(messageController, emails, getEmailBody(sales));
 		}
@@ -47,20 +41,6 @@ public class SalesEmailUtil extends CompanyEmailUtil implements ISalesMessages {
 		}		
 		
 		messageController.addAttachment( getReport(sales, REPORT_KEY) );
-	}
-	
-	private LinkedList<SelectItem> getTemplates(MailProcessType type) {
-		LinkedList<SelectItem> templates = new LinkedList<>();
-		AON.getApplicationParameterStream(AonUtil.getDomainName(), getCompany().getDomain(), "", f -> 
-			f.getDomainProperty().eq(getCompany().getDomain())
-			.and(f.getNameProperty().like("AON_MAIL_PROCESS_" + type.ordinal() + "%"))).forEach(ap -> {
-				String[] ids = StringUtils.split(ap.getValue());
-				MailTemplate mt = AON.getMailTemplate(AonUtil.getDomainName(), ap.getDomain(), "", f-> 
-					f.getIdProperty().eq(Integer.parseInt(ids[1])));
-				templates.add(new SelectItem(mt.getId(), mt.getName()));
-			});
-		
-		return templates;
 	}
 	
 	private Map<String,String> getMap(Sales sales) {

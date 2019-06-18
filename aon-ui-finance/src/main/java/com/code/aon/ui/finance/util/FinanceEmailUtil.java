@@ -1,13 +1,13 @@
 package com.code.aon.ui.finance.util;
 
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_EINVOICE_EMAIL_SUBJECT;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_EMAIL_BODY;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_EMAIL_SUBJECT;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_EMAIL_BODY;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_EMAIL_SUBJECT;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_SEND_EMAIL;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_SEND_EMAIL_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_WITHOUT_EMAIL;
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_EMAIL_BODY;
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_EMAIL_SUBJECT;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -20,11 +20,9 @@ import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 
 import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
 import javax.mail.Address;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -44,7 +42,6 @@ import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.facturae.FACeUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
-import com.code.aon.marketing.enumeration.MailProcessType;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.company.util.CompanyEmailUtil;
 import com.code.aon.ui.finance.SddMandateObject;
@@ -58,7 +55,7 @@ import com.code.aon.webmail.bean.AonMessage;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
-import com.esferalia.aon.occam.api.model.MailTemplate;
+import com.esferalia.aon.occam.api.model.type.MailProcessType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
@@ -88,7 +85,7 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 		String[] emails = getAdministrativeEmails(finance.getRegistry());
 		initMessageController(messageController, emails);
 		messageController.setGenericMessage(false);
-		messageController.setTemplates(getTemplates(MailProcessType.FINANCE));
+		messageController.setMailProccessType(MailProcessType.FINANCE);
 		if(!messageController.initMessageController(getDomain(finance.getDomain()), "", getMap(finance), "AON_MAIL_PROCESS_" + MailProcessType.FINANCE.ordinal() + "_1")) {
 			initMessageController(messageController, emails, getEmailBody(finance));
 		}
@@ -146,7 +143,7 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 		String[] emails = getAdministrativeEmails(invoice.getRegistry());
 		initMessageController(messageController, emails);
 		messageController.setGenericMessage(false);
-		messageController.setTemplates(getTemplates(MailProcessType.INVOICE));
+		messageController.setMailProccessType(MailProcessType.INVOICE);
 		if(!messageController.initMessageController(getDomain(invoice.getDomain()), "", getMap(invoice), "AON_MAIL_PROCESS_" + MailProcessType.INVOICE.ordinal() + "_1")) {
 			if(attach!=null){
 				initMessageController(messageController, emails, getEmailBody(invoice));
@@ -172,20 +169,6 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 			}	
 		}
 	}	
-	
-	private LinkedList<SelectItem> getTemplates(MailProcessType type) {
-		LinkedList<SelectItem> templates = new LinkedList<>();
-		AON.getApplicationParameterStream(AonUtil.getDomainName(), getCompany().getDomain(), "", f -> 
-			f.getDomainProperty().eq(getCompany().getDomain())
-			.and(f.getNameProperty().like("AON_MAIL_PROCESS_" + type.ordinal() + "%"))).forEach(ap -> {
-				String[] ids = StringUtils.split(ap.getValue());
-				MailTemplate mt = AON.getMailTemplate(AonUtil.getDomainName(), ap.getDomain(), "", f-> 
-					f.getIdProperty().eq(Integer.parseInt(ids[1])));
-				templates.add(new SelectItem(mt.getId(), mt.getName()));
-			});
-		
-		return templates;
-	}
 	
 	private Domain getDomain(Integer domainId) {
 		return AON.getDomain(AonUtil.getDomainName(), domainId, "");

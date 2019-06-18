@@ -16,7 +16,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.faces.model.SelectItem;
 import javax.mail.Address;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -33,7 +32,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.faces.controller.LogPanelController;
-import com.code.aon.marketing.enumeration.MailProcessType;
 import com.code.aon.purchase.Purchase;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.company.util.CompanyEmailUtil;
@@ -45,7 +43,7 @@ import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonMessage;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.MailTemplate;
+import com.esferalia.aon.occam.api.model.type.MailProcessType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseConstants {
@@ -64,7 +62,7 @@ public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseCons
 		String[] emails = getEmails( purchase, moreRecipients );
 		initMessageController(messageController, emails);
 		messageController.setGenericMessage(false);
-		messageController.setTemplates(getTemplates(MailProcessType.ORDER));
+		messageController.setMailProccessType(MailProcessType.ORDER);
 		if(!messageController.initMessageController(getDomain(purchase.getDomain()), "", getMap(purchase), "AON_MAIL_PROCESS_" + MailProcessType.ORDER.ordinal()+ "_1")) {
 			messageController.updateMessageBody( getEmailContent(getEmailBody(purchase), AonUtil.getMessage(PURCHASE_EMAIL_BODY_HEADER)) );
 		}
@@ -75,20 +73,6 @@ public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseCons
 		PurchaseReportManager purchaseReportManager = (PurchaseReportManager) AonUtil.getRegisteredBean(PURCHASE_REPORT_CONTROLLER_NAME);
 		purchaseReportManager.setValued(purchase.getSupplier().isPurchaseValuated());
 		messageController.addAttachment( getReport(purchase, REPORT_KEY) );
-	}
-	
-	private LinkedList<SelectItem> getTemplates(MailProcessType type) {
-		LinkedList<SelectItem> templates = new LinkedList<>();
-		AON.getApplicationParameterStream(AonUtil.getDomainName(), getCompany().getDomain(), "", f -> 
-			f.getDomainProperty().eq(getCompany().getDomain())
-			.and(f.getNameProperty().like("AON_MAIL_PROCESS_" + type.ordinal() + "%"))).forEach(ap -> {
-				String[] ids = StringUtils.split(ap.getValue());
-				MailTemplate mt = AON.getMailTemplate(AonUtil.getDomainName(), ap.getDomain(), "", f-> 
-					f.getIdProperty().eq(Integer.parseInt(ids[1])));
-				templates.add(new SelectItem(mt.getId(), mt.getName()));
-			});
-		
-		return templates;
 	}
 	
 	private Map<String,String> getMap(Purchase purchase) {

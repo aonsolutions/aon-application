@@ -64,6 +64,7 @@ import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MailTemplate;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.type.MailProcessType;
 import com.google.api.services.drive.Drive;
 
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
@@ -113,6 +114,8 @@ public class MessageController implements IWebMailConstants, Serializable {
     private Map<String, String> variableMap;
     
     Boolean genericMessage;
+    
+	private MailProcessType mailProccessType;
     
 	private MailConfigController getMailConfig() {
 		return (MailConfigController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MAIL_CONFIG);
@@ -567,6 +570,7 @@ public class MessageController implements IWebMailConstants, Serializable {
 		if(event.getNewValue() != null) {
 			updateContent( (IMailAccount) event.getNewValue() );
 		}
+		
 	}	
 	
 	public void onAppendSignatureChanged(ActionEvent event) throws ManagerBeanException {
@@ -582,9 +586,35 @@ public class MessageController implements IWebMailConstants, Serializable {
 			content = velocity(StringUtils.defaultString(messageBody) + mailAccount.getISignature().getSignature());
 		} else {
 			content = velocity(StringUtils.defaultString(messageBody));	
-		}		
+		}	
+		if(getMailProccessType() != null) {
+			setTemplates(getMailTemplates((com.code.aon.webmail.db.MailAccount)mailAccount));
+		}
 	}
     
+	private LinkedList<SelectItem> getMailTemplates(com.code.aon.webmail.db.MailAccount mailAccount) {
+		LinkedList<SelectItem> templates = new LinkedList<>();
+		setTemplate(null);
+		AON.getApplicationParameterStream(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "", f -> 
+			f.getDomainProperty().eq(DomainManager.getCurrentDomain())
+			.and(f.getNameProperty().like("AON_MAIL_PROCESS_" + getMailProccessType().ordinal() + "%")))
+		.forEach(ap -> {
+				String[] ids = StringUtils.split(ap.getValue());
+				if(mailAccount.getId().equals(Integer.parseInt(ids[0]))) {
+					MailTemplate mt = AON.getMailTemplate(AonUtil.getDomainName(), ap.getDomain(), "", f-> 
+						f.getIdProperty().eq(Integer.parseInt(ids[1])));
+					if(getTemplate()== null) {
+						setTemplate(mt.getId());
+					} else if("1".equals(ap.getName().substring(ap.getName().length()-1))) {
+						setTemplate(mt.getId());
+					}
+					templates.add(new SelectItem(mt.getId(), mt.getName()));
+				}
+			});
+
+		return templates;
+	}
+	
 	public List<IContact> suggestionEmails( Object value ) {
 		if ( value != null ) {
 			String text = value.toString();
@@ -718,4 +748,12 @@ public class MessageController implements IWebMailConstants, Serializable {
 		this.genericMessage = genericMessage;
 	}
 		
+	public MailProcessType getMailProccessType() {
+		return mailProccessType;
+	}
+	
+	public void setMailProccessType(MailProcessType mailProccessType) {
+		this.mailProccessType = mailProccessType;
+	}
+	
 }
