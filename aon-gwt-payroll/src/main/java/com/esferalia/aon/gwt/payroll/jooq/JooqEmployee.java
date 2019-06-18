@@ -1697,7 +1697,7 @@ public class JooqEmployee {
 					.set(CONTRACT_DATA.DOMAIN, domain)
 					.set(CONTRACT_DATA.NAME, "TC2")
 					.set(CONTRACT_DATA.CONTRACT, contractId)
-					.set(CONTRACT_DATA.EXPRESSION, tc2)
+					.set(CONTRACT_DATA.EXPRESSION, (tc2 == null) ? (String) null : "\""+tc2+"\"")
 					.set(CONTRACT_DATA.START_DATE, new Date(newDate.getTime()))
 					.set(CONTRACT_DATA.END_DATE, newEndDate)
 					.execute();
@@ -1712,7 +1712,7 @@ public class JooqEmployee {
 					.set(CONTRACT_DATA.DOMAIN, domain)
 					.set(CONTRACT_DATA.NAME, "GRUPO_COTIZACION")
 					.set(CONTRACT_DATA.CONTRACT, contractId)
-					.set(CONTRACT_DATA.EXPRESSION, quoteGroup.toString())
+					.set(CONTRACT_DATA.EXPRESSION, (quoteGroup == null) ? (String) null : "\""+quoteGroup.toString()+"\"")
 					.set(CONTRACT_DATA.START_DATE, new Date(newDate.getTime()))
 					.set(CONTRACT_DATA.END_DATE, newEndDate)
 					.execute();
