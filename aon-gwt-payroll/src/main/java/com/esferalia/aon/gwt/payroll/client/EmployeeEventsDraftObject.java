@@ -354,6 +354,7 @@ public class EmployeeEventsDraftObject {
 				employeeContractVariables.add("DIAS_ERE");
 				employeeContractVariables.add("HORAS_EXTRAS");
 				employeeContractVariables.add("HORAS_COMPLEMENTARIAS");
+				employeeContractVariables.add("KMS");
 				employeeContractVariablesDB.add("DIAS_VACACIONES");
 				employeeContractVariablesDB.add("DIAS_AUSENCIA");
 				employeeContractVariablesDB.add("DIAS_HUELGA");
@@ -361,6 +362,7 @@ public class EmployeeEventsDraftObject {
 				employeeContractVariablesDB.add("HORAS_EXTRAS");
 				employeeContractVariablesDB.add("HORAS_COMPLEMENTARIAS");
 				employeeContractVariablesDB.add("IMPORTE_HORA_EXTRA");
+				employeeContractVariablesDB.add("KMS");
 
 				for (String varName : context.getVariables()){
 					ArrayList<EmployeeEventsVariable> varList = new ArrayList<EmployeeEventsVariable>();

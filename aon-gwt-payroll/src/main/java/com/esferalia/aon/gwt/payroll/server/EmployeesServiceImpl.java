@@ -1033,7 +1033,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			ContextDescriptor contextResult = new ContextDescriptor();
 
 			for (String key : contextDescriptorPayments.getVariables()){
-				if(contextDescriptorPayments.getList(key).isEmpty()){
+				if(!contextDescriptorPayments.getList(key).isEmpty()){
 					contextResult.add(key, contextDescriptorPayments.getList(key));
 					continue;
 				}
@@ -3237,6 +3237,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			eraseAgreements.add("INICIO_NOMINA");
 			eraseAgreements.add("SALARIO_MENSUAL");
 			eraseAgreements.add("TRIENIO");
+			//TODO: Esto es una prueba
+			eraseAgreements.add("KMS");
 
 			// Filter Agreement Variables
 			for (String varName : eraseAgreements)

@@ -179,6 +179,9 @@ public class JooqEmployeeEvents {
 		varNotToUpdate.add("DIAS_ERE");
 		varNotToUpdate.add("DIAS_HUELGA");
 		varNotToUpdate.add("DIAS_VACACIONES");
+		varNotToUpdate.add("PAGAS");
+		varNotToUpdate.add("DIAS_TRABAJADOS");
+		varNotToUpdate.add("SALARIO_ANUAL");
 		
 		for (Quartet<Date, Date, String, String> quartet : updateList){
 			
