@@ -157,7 +157,7 @@
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="10" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{aon_number} + ":"]]></textFieldExpression>
@@ -170,7 +170,7 @@
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="10" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{aon_date} + ":"]]></textFieldExpression>
@@ -207,32 +207,33 @@
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="379" splitType="Stretch">
+		<band height="404" splitType="Stretch">
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-91" mode="Opaque" x="0" y="0" width="537" height="15" forecolor="#FFFFFF" backcolor="#999999" uuid="63bfb2ef-46df-48b2-afb8-67e466ee746a"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				<box padding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="5.0" lineColor="#BFBFBF"/>
+					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
+					<font fontName="SansSerif" size="8" isBold="true" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA["DATOS DEL CLIENTE"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[" DATOS DEL CLIENTE"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-93" positionType="Float" mode="Opaque" x="0" y="126" width="537" height="15" forecolor="#FFFFFF" backcolor="#999999" uuid="812e240b-59e3-4bb6-bf3b-8f762356691e"/>
+				<reportElement key="textField-93" positionType="Float" mode="Opaque" x="0" y="150" width="537" height="15" forecolor="#FFFFFF" backcolor="#999999" uuid="812e240b-59e3-4bb6-bf3b-8f762356691e"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<bottomPen lineWidth="5.0" lineColor="#BFBFBF"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
+					<font fontName="SansSerif" size="8" isBold="true" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA["DESCRIPCION DEL PRODUCTO O SERVICIO A CONTRATAR"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[" DESCRIPCION DEL PRODUCTO O SERVICIO A CONTRATAR"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-112" x="2" y="16" width="63" height="23" uuid="d2c10aef-0483-455b-ab5c-b01d7b0b7281"/>
@@ -302,7 +303,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{target}.getRegistry().getDocumentType().getName( $P{REPORT_LOCALE} ) + ": "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{offer_customer_nif}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-119" x="381" y="16" width="155" height="23" uuid="2db7f727-2cd0-43c8-9fa1-6d711e4867be"/>
@@ -366,10 +367,10 @@
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{offer_customer_telephone}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_contact}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-125" x="65" y="85" width="110" height="23" uuid="7f80c122-cbf9-433a-94e9-3b4a1f9ccf58"/>
+				<reportElement key="textField-125" x="65" y="85" width="78" height="23" uuid="7f80c122-cbf9-433a-94e9-3b4a1f9ccf58"/>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
@@ -380,16 +381,13 @@
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{target}.getRegistry().getPhone()!=null?$F{target}.getRegistry().getPhone().getValue():"") +
-(($F{target}.getRegistry().getPhone()!=null && $F{target}.getRegistry().getCellular()!=null)?" / ":"") +
-($F{target}.getRegistry().getCellular()!=null?$F{target}.getRegistry().getCellular().getValue():"")]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-126" x="175" y="85" width="31" height="23" uuid="ba116b66-964a-4faa-b0e8-2135bf077257"/>
+				<reportElement key="textField-126" x="143" y="85" width="63" height="23" uuid="ba116b66-964a-4faa-b0e8-2135bf077257"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{offer_customer_fax}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{offer_customer_email}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-127" x="206" y="85" width="125" height="23" uuid="24a06248-375d-4a7d-936e-cb1b507316e8"/>
@@ -403,14 +401,14 @@
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{target}.getRegistry().getFax().getValue()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{target}.getRegistry().getEmail().getValue()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-128" x="331" y="85" width="49" height="23" uuid="7a760245-8186-4696-a8c8-14b3009b3aa4"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{offer_customer_email}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{offer_customer_cellular}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-129" x="380" y="85" width="156" height="23" uuid="1d1ed7c8-e389-4f3b-9c87-af1b33fd6cbc"/>
@@ -424,10 +422,10 @@
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{target}.getRegistry().getEmail().getValue()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{target}.getRegistry().getCellular().getValue()]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-11" positionType="Float" mode="Transparent" x="363" y="219" width="100" height="14" forecolor="#999999" backcolor="#FFFFFF" uuid="6bbe5faa-7c2a-4abd-a736-83c66646f34f">
+				<reportElement key="textField-11" positionType="Float" mode="Transparent" x="363" y="253" width="100" height="14" forecolor="#999999" backcolor="#FFFFFF" uuid="6bbe5faa-7c2a-4abd-a736-83c66646f34f">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box>
@@ -443,7 +441,7 @@
 				<textFieldExpression><![CDATA["Importe total:"]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
-				<reportElement key="textField-12" positionType="Float" isPrintRepeatedValues="false" x="463" y="219" width="74" height="14" isPrintInFirstWholeBand="true" uuid="83be93f0-e45c-44dc-8a27-38aa7523deda">
+				<reportElement key="textField-12" positionType="Float" isPrintRepeatedValues="false" x="463" y="253" width="74" height="14" isPrintInFirstWholeBand="true" uuid="83be93f0-e45c-44dc-8a27-38aa7523deda">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box rightPadding="2">
@@ -458,28 +456,24 @@
 				<textFieldExpression><![CDATA[new Double($P{PriceStrategy}.getTotalPrice($V{currentOffer},$V{currentOffer}.getTarget()))+" €"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-112" positionType="Float" x="1" y="190" width="63" height="15" isRemoveLineWhenBlank="true" forecolor="#999999" uuid="8d2b98af-1ee3-4024-990c-1d0dab980b3c">
-					<printWhenExpression><![CDATA[!$F{comments}.isEmpty()]]></printWhenExpression>
+				<reportElement key="textField-96" positionType="Float" mode="Opaque" x="0" y="284" width="537" height="15" forecolor="#FFFFFF" backcolor="#999999" uuid="74f7595b-5a40-4a55-8dd7-13844de0ce53">
+					<printWhenExpression><![CDATA[$F{payMethod} != null]]></printWhenExpression>
 				</reportElement>
-				<box topPadding="2" bottomPadding="0"/>
-				<textElement textAlignment="Left" verticalAlignment="Top">
-					<font size="8" isBold="true"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="5.0" lineColor="#BFBFBF"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_comment}+":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[" CONDICIONES ECONOMICAS"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-113" positionType="Float" x="64" y="190" width="280" height="43" isRemoveLineWhenBlank="true" uuid="84fe0e1f-76e4-48d8-86fe-2ab810bc14b8">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<printWhenExpression><![CDATA[!$F{comments}.isEmpty()]]></printWhenExpression>
+				<reportElement key="textField-132" positionType="Float" x="0" y="301" width="537" height="15" uuid="554db358-569f-44b9-878f-dd5bcc4d3a85">
+					<printWhenExpression><![CDATA[$F{payMethod} != null]]></printWhenExpression>
 				</reportElement>
-				<box topPadding="2" bottomPadding="0"/>
-				<textElement textAlignment="Left" verticalAlignment="Top">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{comments}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement key="textField-96" positionType="Float" mode="Opaque" x="0" y="250" width="537" height="15" forecolor="#FFFFFF" backcolor="#999999" uuid="74f7595b-5a40-4a55-8dd7-13844de0ce53"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -487,399 +481,29 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
+					<font fontName="SansSerif" size="9" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA["CONDICIONES ECONOMICAS"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["El cliente abonará los importes indicados mediante "
++ $F{payMethod}.getName()
++ " en el siguiente nº de cuenta:"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-132" positionType="Float" x="0" y="267" width="537" height="15" uuid="554db358-569f-44b9-878f-dd5bcc4d3a85"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$R{offer_text_financial1}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" x="0" y="282" width="537" height="15" uuid="4fd1b17b-f80b-4180-b630-6f83d021421d"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $P{defaultPayMethod}.booleanValue() ) ?
-( $R{offer_text_financial2}+" "+$P{targetPayMethod}.getPayment().getName()+" "
-+ $R{offer_text_financial3}+" "+$P{targetPayMethod}.getNumberOfPayments()+" "
-+ $R{offer_text_financial4}+" " )
-: ( $R{offer_text_financial2}+" "+$F{payMethod}.getName()+" "
-+ $R{offer_text_financial3}+" "+ $F{numberOfPayments}+" "
-+ $R{offer_text_financial4}+" " )]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" x="0" y="297" width="115" height="15" uuid="fa53e94c-d4df-462c-b8ec-e72872fd6148"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $P{defaultPayMethod}.booleanValue() ) ?
-( $P{targetPayMethod}.getBankAlias() )
-: ( $F{bankAlias} )]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" x="115" y="297" width="36" height="15" uuid="67f5d6ed-5dcd-4765-8d62-58f44fcd6f6d"/>
+				<reportElement key="textField-133" positionType="Float" x="2" y="324" width="535" height="15" uuid="67f5d6ed-5dcd-4765-8d62-58f44fcd6f6d">
+					<printWhenExpression><![CDATA[$F{payMethod} != null]]></printWhenExpression>
+				</reportElement>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="9" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_iban}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" x="151" y="297" width="15" height="15" uuid="5a181816-27e5-46c8-ba05-80e308ebb2b3"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $P{defaultPayMethod}.booleanValue() ) ?
-( $P{targetPayMethod}.getBankAccount().getIban().charAt( 0 ) )
-: ( $F{bankAccount}.getIban().charAt( 0 ) )]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" x="166" y="297" width="15" height="15" uuid="37a920a9-bf8b-4e73-9120-829d4cd15de7"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $P{defaultPayMethod}.booleanValue() ) ?
-( $P{targetPayMethod}.getBankAccount().getIban().charAt( 1 ) )
-: ( $F{bankAccount}.getIban().charAt( 1 ) )]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" x="181" y="297" width="15" height="15" uuid="74e7a8a2-7bbc-46b0-b603-f04c14614776"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $P{defaultPayMethod}.booleanValue() ) ?
-( $P{targetPayMethod}.getBankAccount().getIban().charAt( 2 ) )
-: ( $F{bankAccount}.getIban().charAt( 2 ) )]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" x="196" y="297" width="15" height="15" uuid="1b775f45-4534-4c60-a5b0-4e700d807e9a"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $P{defaultPayMethod}.booleanValue() ) ?
-( $P{targetPayMethod}.getBankAccount().getIban().charAt( 3 ) )
-: ( $F{bankAccount}.getIban().charAt( 3 ) )]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" x="216" y="297" width="15" height="15" uuid="0af85ca9-a372-4b66-b36a-08296f241aee"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $P{defaultPayMethod}.booleanValue() ) ?
-( $P{targetPayMethod}.getBankAccount().getIban().charAt( 4 ) )
-: ( $F{bankAccount}.getIban().charAt( 4 ) )]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" x="231" y="297" width="15" height="15" uuid="2b336cef-6439-483b-aab0-75b5ad850760"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $P{defaultPayMethod}.booleanValue() ) ?
-( $P{targetPayMethod}.getBankAccount().getIban().charAt( 5 ) )
-: ( $F{bankAccount}.getIban().charAt( 5 ) )]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" x="261" y="297" width="15" height="15" uuid="7b9d89b6-f5b8-4bab-828a-5dff4308726e"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $P{defaultPayMethod}.booleanValue() ) ?
-( $P{targetPayMethod}.getBankAccount().getIban().charAt( 7 ) )
-: ( $F{bankAccount}.getIban().charAt( 7 ) )]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" x="246" y="297" width="15" height="15" uuid="1e0f052d-0e77-4350-b1a8-6ddeaedb20bf"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $P{defaultPayMethod}.booleanValue() ) ?
-( $P{targetPayMethod}.getBankAccount().getIban().charAt( 6 ) )
-: ( $F{bankAccount}.getIban().charAt( 6 ) )]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" x="296" y="297" width="15" height="15" uuid="ca560c5d-27ce-4c25-a09a-07d6ad0d0dca"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $P{defaultPayMethod}.booleanValue() ) ?
-( $P{targetPayMethod}.getBankAccount().getIban().charAt( 9 ) )
-: ( $F{bankAccount}.getIban().charAt( 9 ) )]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" x="281" y="297" width="15" height="15" uuid="8ea4c522-a39a-4b3a-b396-fe5113ff0c12"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $P{defaultPayMethod}.booleanValue() ) ?
-( $P{targetPayMethod}.getBankAccount().getIban().charAt( 8 ) )
-: ( $F{bankAccount}.getIban().charAt( 8 ) )]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" x="311" y="297" width="15" height="15" uuid="67793e9a-c4ca-4a03-8d14-e2ddc4a08dd2"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $P{defaultPayMethod}.booleanValue() ) ?
-( $P{targetPayMethod}.getBankAccount().getIban().charAt( 10 ) )
-: ( $F{bankAccount}.getIban().charAt( 10 ) )]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" x="326" y="297" width="15" height="15" uuid="77d90108-e3aa-4a94-abbf-194da1019f60"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $P{defaultPayMethod}.booleanValue() ) ?
-( $P{targetPayMethod}.getBankAccount().getIban().charAt( 11 ) )
-: ( $F{bankAccount}.getIban().charAt( 11 ) )]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" x="361" y="297" width="15" height="15" uuid="8f910d24-c3dd-4d0c-b2df-480f91a07a23"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $P{defaultPayMethod}.booleanValue() ) ?
-( $P{targetPayMethod}.getBankAccount().getIban().charAt( 13 ) )
-: ( $F{bankAccount}.getIban().charAt( 13 ) )]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" x="346" y="297" width="15" height="15" uuid="59742248-5e26-4eef-b168-5f6ab15ce2b2"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $P{defaultPayMethod}.booleanValue() ) ?
-( $P{targetPayMethod}.getBankAccount().getIban().charAt( 12 ) )
-: ( $F{bankAccount}.getIban().charAt( 12 ) )]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" x="376" y="297" width="15" height="15" uuid="1b37c5c0-e293-4081-ba1a-1e8914437aed"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $P{defaultPayMethod}.booleanValue() ) ?
-( $P{targetPayMethod}.getBankAccount().getIban().charAt( 14 ) )
-: ( $F{bankAccount}.getIban().charAt( 14 ) )]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" x="391" y="297" width="15" height="15" uuid="1b97a620-8e29-4906-884b-2490b066e18f"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $P{defaultPayMethod}.booleanValue() ) ?
-( $P{targetPayMethod}.getBankAccount().getIban().charAt( 15 ) )
-: ( $F{bankAccount}.getIban().charAt( 15 ) )]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" x="411" y="297" width="15" height="15" uuid="ce3da825-2819-4eaf-982b-7a3538c32b32"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $P{defaultPayMethod}.booleanValue() ) ?
-( $P{targetPayMethod}.getBankAccount().getIban().charAt( 16 ) )
-: ( $F{bankAccount}.getIban().charAt( 16 ) )]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" x="426" y="297" width="15" height="15" uuid="f9ef308d-47e4-430c-b866-959aa9c08a09"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $P{defaultPayMethod}.booleanValue() ) ?
-( $P{targetPayMethod}.getBankAccount().getIban().charAt( 17 ) )
-: ( $F{bankAccount}.getIban().charAt( 17 ) )]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" x="441" y="297" width="15" height="15" uuid="53759968-4608-4491-b648-a0d0844e983d"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $P{defaultPayMethod}.booleanValue() ) ?
-( $P{targetPayMethod}.getBankAccount().getIban().charAt( 18 ) )
-: ( $F{bankAccount}.getIban().charAt( 18 ) )]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" x="456" y="297" width="15" height="15" uuid="5946d016-0bb1-41b6-9e8c-6eb3e2d1f19a"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $P{defaultPayMethod}.booleanValue() ) ?
-( $P{targetPayMethod}.getBankAccount().getIban().charAt( 19 ) )
-: ( $F{bankAccount}.getIban().charAt( 19 ) )]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" mode="Transparent" x="276" y="297" width="5" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="f23b6a9e-b2dc-4c3a-875e-5626fe0a500a"/>
-				<box leftPadding="2" rightPadding="2">
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA["."]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" x="211" y="297" width="5" height="15" uuid="67e25fc5-aac5-4500-9152-8f80c73a9308"/>
-				<box leftPadding="2" rightPadding="2">
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<textFieldExpression><![CDATA["."]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_iban} + ": " + $F{bankAccount}.toString()]]></textFieldExpression>
 			</textField>
 			<componentElement>
-				<reportElement key="finances" positionType="Float" x="363" y="190" width="174" height="29" uuid="30a8f946-e670-4afe-b523-07a52deec5ee">
+				<reportElement key="finances" positionType="Float" x="363" y="224" width="174" height="29" uuid="30a8f946-e670-4afe-b523-07a52deec5ee">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
@@ -924,15 +548,17 @@
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font fontName="SansSerif" size="8"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{base} + "\n"
-+ new Double($F{taxQuota}.doubleValue() + $F{surchargeQuota}.doubleValue())]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$F{base} + " € \n"
++ new Double($F{taxQuota}.doubleValue() + $F{surchargeQuota}.doubleValue()) + " €"]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
 				</jr:table>
 			</componentElement>
 			<componentElement>
-				<reportElement key="detail" positionType="Float" x="1" y="145" width="535" height="31" uuid="675d4e32-570c-440f-96af-c85bb4eff519"/>
+				<reportElement key="detail" positionType="Float" x="1" y="169" width="535" height="41" uuid="675d4e32-570c-440f-96af-c85bb4eff519">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="detail" uuid="8e353b2d-527a-47fd-a88b-7b4b889fbc92">
 						<datasetParameter name="PriceStrategy">
@@ -960,20 +586,20 @@
 								<textFieldExpression><![CDATA["Producto / Servicio"]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
-						<jr:detailCell height="12" rowSpan="1">
+						<jr:detailCell height="21" rowSpan="1">
 							<box>
 								<bottomPen lineWidth="0.25" lineColor="#CCCCCC"/>
 							</box>
 							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-								<reportElement key="textField-5" x="0" y="0" width="460" height="12" isRemoveLineWhenBlank="true" uuid="b4a79e0d-a24d-40bc-8598-a886b07c376b"/>
+								<reportElement key="textField-5" x="0" y="0" width="460" height="21" isRemoveLineWhenBlank="true" uuid="b4a79e0d-a24d-40bc-8598-a886b07c376b"/>
 								<box>
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
-								<textElement verticalAlignment="Middle">
-									<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+								<textElement verticalAlignment="Bottom">
+									<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
 							</textField>
@@ -999,32 +625,32 @@
 								<textFieldExpression><![CDATA[$R{aon_amount}]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
-						<jr:detailCell height="12" rowSpan="1">
+						<jr:detailCell height="21" rowSpan="1">
 							<box>
 								<bottomPen lineWidth="0.25" lineColor="#CCCCCC"/>
 							</box>
 							<textField pattern="#,##0.00##" isBlankWhenNull="true">
-								<reportElement key="textField-13" x="0" y="0" width="74" height="12" uuid="8403c6b2-367a-4b71-9b16-c31ff2dbcbac">
+								<reportElement key="textField-13" x="0" y="0" width="74" height="21" uuid="8403c6b2-367a-4b71-9b16-c31ff2dbcbac">
 									<printWhenExpression><![CDATA[new Boolean($F{quantity}.doubleValue()>0.0 || $F{price}.doubleValue()>0.0)]]></printWhenExpression>
 								</reportElement>
-								<box rightPadding="2">
+								<box rightPadding="0">
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
-								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font size="8" isItalic="true"/>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font size="9" isItalic="true"/>
 								</textElement>
-								<textFieldExpression><![CDATA[new Double($P{PriceStrategy}.getBasePrice((com.code.aon.product.strategy.ICalculable)((com.code.aon.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean()))]]></textFieldExpression>
+								<textFieldExpression><![CDATA[new Double($P{PriceStrategy}.getBasePrice((com.code.aon.product.strategy.ICalculable)((com.code.aon.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean())) + " €"]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
 				</jr:table>
 			</componentElement>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-132" positionType="Float" x="0" y="312" width="537" height="15" isRemoveLineWhenBlank="true" uuid="2969808f-0baa-4d8d-9049-0dc4d1b802a1">
-					<printWhenExpression><![CDATA[$F{payMethod}.getType()==com.code.aon.config.enumeration.PayMethodType.NEGOTIABLE_DOCUMENT]]></printWhenExpression>
+				<reportElement key="textField-132" positionType="Float" x="-1" y="369" width="537" height="15" uuid="a4353adb-00ff-4070-a87f-dc692c124208">
+					<printWhenExpression><![CDATA[!$F{comments}.isEmpty()]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1033,110 +659,68 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
+					<font fontName="SansSerif" size="9" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[java.text.MessageFormat.format($R{offer_authorization}, $P{company}.getFullName())]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{comments}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" mode="Transparent" x="341" y="297" width="5" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="47292e4c-bdad-4164-9d61-c530a424cd19"/>
-				<box leftPadding="2" rightPadding="2">
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-96" positionType="Float" mode="Opaque" x="-1" y="352" width="537" height="15" forecolor="#FFFFFF" backcolor="#999999" uuid="364d9421-6f5e-4449-aaaa-56cd01569f96">
+					<printWhenExpression><![CDATA[!$F{comments}.isEmpty()]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<bottomPen lineWidth="5.0" lineColor="#BFBFBF"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA["."]]></textFieldExpression>
+				<textFieldExpression><![CDATA[" OBSERVACIONES"]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" mode="Transparent" x="406" y="297" width="5" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="7cf27f9b-0094-4030-8010-20c523c96b45"/>
-				<box leftPadding="2" rightPadding="2">
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single"/>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-124" x="2" y="108" width="63" height="23" uuid="4b96c3e5-1a4b-4585-8a9e-de1d28cec1ab"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["."]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{offer_customer_telephone}
+]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" x="471" y="297" width="5" height="15" uuid="15f189e3-be87-448e-86ea-05b47b7329ae"/>
-				<box leftPadding="2" rightPadding="2">
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-125" x="65" y="108" width="78" height="23" uuid="42b10269-3221-4ed8-9f9a-0bd171cea1ad"/>
+				<box leftPadding="3" bottomPadding="2">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA["."]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{target}.getRegistry().getPhone()!=null?$F{target}.getRegistry().getPhone().getValue():"") +
+(($F{target}.getRegistry().getPhone()!=null && $F{target}.getRegistry().getCellular()!=null)?" / ":"") +
+($F{target}.getRegistry().getCellular()!=null?$F{target}.getRegistry().getCellular().getValue():"")]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" x="476" y="297" width="15" height="15" uuid="3a837de6-59e5-480c-afc8-fb66430c7385"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-126" x="143" y="108" width="63" height="23" uuid="76c82dd2-a593-43b3-a3b4-c4dc7f870c09"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[( $P{defaultPayMethod}.booleanValue() ) ?
-( $P{targetPayMethod}.getBankAccount().getIban().charAt( 20 ) )
-: ( $F{bankAccount}.getIban().charAt( 20 ) )]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Email RTD:"]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" x="491" y="297" width="15" height="15" uuid="00643b6f-7e4a-4288-9789-a91f88b3b844"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-127" x="206" y="108" width="330" height="23" uuid="45da3919-9afc-4df5-920c-bd67f14397f2"/>
+				<box leftPadding="3" bottomPadding="2">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[( $P{defaultPayMethod}.booleanValue() ) ?
-( $P{targetPayMethod}.getBankAccount().getIban().charAt( 21 ) )
-: ( $F{bankAccount}.getIban().charAt( 21 ) )]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" x="506" y="297" width="15" height="15" uuid="2eed0357-7e16-474a-8860-8a30668142a7"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $P{defaultPayMethod}.booleanValue() ) ?
-( $P{targetPayMethod}.getBankAccount().getIban().charAt( 22 ) )
-: ( $F{bankAccount}.getIban().charAt( 22 ) )]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-133" positionType="Float" x="521" y="297" width="15" height="15" uuid="52d5840b-835c-4f1d-95ca-083dce9b3697"/>
-				<box leftPadding="2">
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.5" lineColor="#000000"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $P{defaultPayMethod}.booleanValue() ) ?
-( $P{targetPayMethod}.getBankAccount().getIban().charAt( 23 ) )
-: ( $F{bankAccount}.getIban().charAt( 23 ) )]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
