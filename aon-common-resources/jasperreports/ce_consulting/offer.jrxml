@@ -30,6 +30,12 @@
 			<variableExpression><![CDATA[($F{taxType}.ordinal() == 2?new Double($F{taxQuota}.doubleValue()*(-1)):$F{taxQuota})]]></variableExpression>
 			<initialValueExpression><![CDATA[new Double(0)]]></initialValueExpression>
 		</variable>
+		<variable name="DoubleFormatter" class="java.text.DecimalFormat">
+			<variableExpression><![CDATA[new DecimalFormat( "#,###,###,##0.00" )]]></variableExpression>
+		</variable>
+		<variable name="DoubleFormatter_1" class="java.text.DecimalFormat">
+			<variableExpression><![CDATA[new DecimalFormat( "#,###,###,##0.00" )]]></variableExpression>
+		</variable>
 	</subDataset>
 	<subDataset name="detail" uuid="099df21a-6035-4e8d-825d-7d79b6c61a8a">
 		<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
@@ -38,6 +44,9 @@
 		<field name="quantity" class="java.lang.Double"/>
 		<field name="price" class="java.lang.Double"/>
 		<field name="discountExpression" class="com.code.aon.product.util.DiscountExpression"/>
+		<variable name="DoubleFormatter" class="java.text.DecimalFormat">
+			<variableExpression><![CDATA[new DecimalFormat( "#,###,###,##0.00" )]]></variableExpression>
+		</variable>
 	</subDataset>
 	<subDataset name="particularTerms" uuid="131f7bae-60e4-4d9a-91af-110f5e6417f2">
 		<field name="name" class="java.lang.String"/>
@@ -85,11 +94,31 @@
 	<field name="terms" class="java.util.Set"/>
 	<field name="seller" class="com.code.aon.seller.Seller"/>
 	<field name="comments" class="java.lang.String"/>
+	<field name="proforma" class="java.lang.Boolean"/>
 	<variable name="currentOffer" class="com.code.aon.commercial.Offer" resetType="Group" resetGroup="offerGroup">
 		<variableExpression><![CDATA[((com.code.aon.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean()]]></variableExpression>
 	</variable>
 	<variable name="ct" class="com.code.aon.commercial.OfferTerm">
 		<variableExpression><![CDATA[((com.code.aon.report.jr.ICurrentBeanProvider)(new com.code.aon.report.jr.JRBeanCollectionDataSource($F{terms}))).getCurrentBean()]]></variableExpression>
+	</variable>
+	<variable name="DoubleFormatter" class="java.text.DecimalFormat">
+		<variableExpression><![CDATA[new DecimalFormat( "#,###,###,##0.00" )]]></variableExpression>
+	</variable>
+	<variable name="adminCellular" class="com.code.aon.registry.RegistryMedia">
+		<variableExpression><![CDATA[$P{reportScriptlet_SCRIPTLET}.getAdministrativeCellular()]]></variableExpression>
+		<initialValueExpression><![CDATA[$P{reportScriptlet_SCRIPTLET}.getAdministrativeCellular()]]></initialValueExpression>
+	</variable>
+	<variable name="adminEmail" class="com.code.aon.registry.RegistryMedia">
+		<variableExpression><![CDATA[$P{reportScriptlet_SCRIPTLET}.getAdministrativeEmail()]]></variableExpression>
+		<initialValueExpression><![CDATA[$P{reportScriptlet_SCRIPTLET}.getAdministrativeEmail()]]></initialValueExpression>
+	</variable>
+	<variable name="technicalCellular" class="com.code.aon.registry.RegistryMedia">
+		<variableExpression><![CDATA[$P{reportScriptlet_SCRIPTLET}.getTechnicalCellular()]]></variableExpression>
+		<initialValueExpression><![CDATA[$P{reportScriptlet_SCRIPTLET}.getTechnicalCellular()]]></initialValueExpression>
+	</variable>
+	<variable name="technicalEmail" class="com.code.aon.registry.RegistryMedia">
+		<variableExpression><![CDATA[$P{reportScriptlet_SCRIPTLET}.getTechnicalEmail()]]></variableExpression>
+		<initialValueExpression><![CDATA[$P{reportScriptlet_SCRIPTLET}.getTechnicalEmail()]]></initialValueExpression>
 	</variable>
 	<group name="offerGroup">
 		<groupExpression><![CDATA[$F{id}]]></groupExpression>
@@ -150,7 +179,7 @@
 	<pageHeader>
 		<band height="139" splitType="Stretch">
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-73" x="400" y="100" width="48" height="13" uuid="01e7d571-282f-494a-a69e-44c674d25f93"/>
+				<reportElement key="textField-73" x="330" y="100" width="118" height="13" uuid="01e7d571-282f-494a-a69e-44c674d25f93"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -160,10 +189,11 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="10" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_number} + ":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[(!$F{proforma} ? $R{aon_invoice_offer} : $R{finance_invoice})
++ " " + $R{aon_number_abr} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-74" x="400" y="113" width="48" height="13" uuid="e14e0227-b200-4d3e-b76e-f6a49e03a88e"/>
+				<reportElement key="textField-74" x="331" y="113" width="117" height="13" uuid="e14e0227-b200-4d3e-b76e-f6a49e03a88e"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -242,7 +272,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$R{offer_customer_social}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
+			<textField isBlankWhenNull="true">
 				<reportElement key="textField-113" x="65" y="16" width="286" height="23" uuid="b37b559f-1446-406e-9202-7f53bfff9d62"/>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
@@ -263,8 +293,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$R{offer_address}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement key="textField-115" x="65" y="39" width="471" height="23" uuid="70c3e295-b14c-477f-a726-27093d068103"/>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-115" x="65" y="39" width="266" height="23" uuid="70c3e295-b14c-477f-a726-27093d068103"/>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
@@ -284,7 +314,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$R{offer_customer_cp}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
+			<textField isBlankWhenNull="true">
 				<reportElement key="textField-117" x="65" y="62" width="78" height="23" uuid="37ea93ad-237a-4878-9b5a-e76405fbd15d"/>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
@@ -305,7 +335,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$R{offer_customer_nif}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
+			<textField isBlankWhenNull="true">
 				<reportElement key="textField-119" x="381" y="16" width="155" height="23" uuid="2db7f727-2cd0-43c8-9fa1-6d711e4867be"/>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
@@ -321,14 +351,16 @@
 + $F{target}.getRegistry().getDocument()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-120" x="143" y="62" width="63" height="23" uuid="c67e9ccf-d7f1-49ee-b0ba-fc829eea915d"/>
+				<reportElement key="textField-120" x="331" y="39" width="50" height="23" uuid="c67e9ccf-d7f1-49ee-b0ba-fc829eea915d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{offer_customer_city}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement key="textField-121" x="206" y="62" width="125" height="23" uuid="ada147fe-e8af-4035-b789-cbd1ccb18d5d"/>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-121" x="381" y="39" width="155" height="23" uuid="ada147fe-e8af-4035-b789-cbd1ccb18d5d"/>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
@@ -342,14 +374,14 @@
 				<textFieldExpression><![CDATA[($F{address}.getCity()==null?"":$F{address}.getCity())]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-122" x="331" y="62" width="50" height="23" uuid="a5ecea1f-211c-418a-b126-0476aafbc2e6"/>
+				<reportElement key="textField-122" x="143" y="62" width="63" height="23" uuid="a5ecea1f-211c-418a-b126-0476aafbc2e6"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{offer_customer_prov}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement key="textField-123" x="381" y="62" width="155" height="23" uuid="80b3792c-cc55-4bb5-a95a-5a4738bc6ed6"/>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-123" x="206" y="62" width="125" height="23" uuid="80b3792c-cc55-4bb5-a95a-5a4738bc6ed6"/>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
@@ -363,14 +395,18 @@
 				<textFieldExpression><![CDATA[$F{address}.getGeozone().getName()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-124" x="2" y="85" width="63" height="23" uuid="9fb08fcd-ff40-4afa-a17c-9f8a9620b212"/>
-				<textElement textAlignment="Left" verticalAlignment="Bottom">
+				<reportElement key="textField-124" x="331" y="85" width="50" height="23" uuid="9fb08fcd-ff40-4afa-a17c-9f8a9620b212">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_contact}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_contact}+":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-125" x="65" y="85" width="78" height="23" uuid="7f80c122-cbf9-433a-94e9-3b4a1f9ccf58"/>
+				<reportElement key="textField-125" x="381" y="85" width="155" height="23" uuid="7f80c122-cbf9-433a-94e9-3b4a1f9ccf58">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
@@ -381,6 +417,8 @@
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font size="8"/>
 				</textElement>
+				<textFieldExpression><![CDATA[$V{adminCellular}.getComment()
++ " " + $V{adminEmail}.getComment()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-126" x="143" y="85" width="63" height="23" uuid="ba116b66-964a-4faa-b0e8-2135bf077257"/>
@@ -401,17 +439,21 @@
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{target}.getRegistry().getEmail().getValue()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{adminEmail}.getValue()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-128" x="331" y="85" width="49" height="23" uuid="7a760245-8186-4696-a8c8-14b3009b3aa4"/>
-				<textElement textAlignment="Right" verticalAlignment="Bottom">
+				<reportElement key="textField-128" x="2" y="85" width="63" height="23" uuid="7a760245-8186-4696-a8c8-14b3009b3aa4">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{offer_customer_cellular}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_cellular}+":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-129" x="380" y="85" width="156" height="23" uuid="1d1ed7c8-e389-4f3b-9c87-af1b33fd6cbc"/>
+				<reportElement key="textField-129" x="65" y="85" width="78" height="23" uuid="1d1ed7c8-e389-4f3b-9c87-af1b33fd6cbc">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
@@ -422,10 +464,10 @@
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{target}.getRegistry().getCellular().getValue()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{adminCellular}.getValue()]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-11" positionType="Float" mode="Transparent" x="363" y="253" width="100" height="14" forecolor="#999999" backcolor="#FFFFFF" uuid="6bbe5faa-7c2a-4abd-a736-83c66646f34f">
+				<reportElement key="textField-11" positionType="Float" mode="Transparent" x="362" y="253" width="100" height="14" forecolor="#999999" backcolor="#FFFFFF" uuid="6bbe5faa-7c2a-4abd-a736-83c66646f34f">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box>
@@ -435,29 +477,30 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None">
-					<font size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
+					<font size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Importe total:"]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
-				<reportElement key="textField-12" positionType="Float" isPrintRepeatedValues="false" x="463" y="253" width="74" height="14" isPrintInFirstWholeBand="true" uuid="83be93f0-e45c-44dc-8a27-38aa7523deda">
+				<reportElement key="textField-12" positionType="Float" isPrintRepeatedValues="false" x="462" y="253" width="74" height="14" isPrintInFirstWholeBand="true" uuid="83be93f0-e45c-44dc-8a27-38aa7523deda">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
-				<box rightPadding="2">
+				<box rightPadding="0">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
+					<font size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[new Double($P{PriceStrategy}.getTotalPrice($V{currentOffer},$V{currentOffer}.getTarget()))+" €"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{DoubleFormatter}.format($P{PriceStrategy}.getTotalPrice($V{currentOffer},$V{currentOffer}.getTarget())) + " €"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-96" positionType="Float" mode="Opaque" x="0" y="284" width="537" height="15" forecolor="#FFFFFF" backcolor="#999999" uuid="74f7595b-5a40-4a55-8dd7-13844de0ce53">
-					<printWhenExpression><![CDATA[$F{payMethod} != null]]></printWhenExpression>
+					<printWhenExpression><![CDATA[($P{defaultPayMethod}.booleanValue() && $P{targetPayMethod} != null)
+|| $F{payMethod} != null]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -472,7 +515,8 @@
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-132" positionType="Float" x="0" y="301" width="537" height="15" uuid="554db358-569f-44b9-878f-dd5bcc4d3a85">
-					<printWhenExpression><![CDATA[$F{payMethod} != null]]></printWhenExpression>
+					<printWhenExpression><![CDATA[($P{defaultPayMethod}.booleanValue() && $P{targetPayMethod} != null)
+|| $F{payMethod} != null]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -484,12 +528,17 @@
 					<font fontName="SansSerif" size="9" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression><![CDATA["El cliente abonará los importes indicados mediante "
-+ $F{payMethod}.getName()
++ ( $P{defaultPayMethod}.booleanValue()  ?
+( $R{offer_text_financial2}+" "+$P{targetPayMethod}.getPayment().getName()+" "
+	+ $R{offer_text_financial3}+" "+$P{targetPayMethod}.getNumberOfPayments()+" " )
+: ( $R{offer_text_financial2}+" "+$F{payMethod}.getName()+" "
+	+ $R{offer_text_financial3}+" "+ $F{numberOfPayments}+" " ))
 + " en el siguiente nº de cuenta:"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-133" positionType="Float" x="2" y="324" width="535" height="15" uuid="67f5d6ed-5dcd-4765-8d62-58f44fcd6f6d">
-					<printWhenExpression><![CDATA[$F{payMethod} != null]]></printWhenExpression>
+					<printWhenExpression><![CDATA[($P{defaultPayMethod}.booleanValue() && $P{targetPayMethod} != null)
+|| $F{payMethod} != null]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -500,10 +549,13 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="9" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_iban} + ": " + $F{bankAccount}.toString()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_iban} + ": " 
++ ( $P{defaultPayMethod}.booleanValue()
+? ( $P{targetPayMethod}.getBankAccount().toString() )
+: ( $F{bankAccount}.toString() ) )]]></textFieldExpression>
 			</textField>
 			<componentElement>
-				<reportElement key="finances" positionType="Float" x="363" y="224" width="174" height="29" uuid="30a8f946-e670-4afe-b523-07a52deec5ee">
+				<reportElement key="finances" positionType="Float" x="362" y="224" width="174" height="29" uuid="30a8f946-e670-4afe-b523-07a52deec5ee">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
@@ -524,7 +576,7 @@
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font fontName="SansSerif" size="8"/>
+									<font fontName="SansSerif" size="9"/>
 								</textElement>
 								<textFieldExpression><![CDATA["Base imponible:\n"
 + $F{taxPercent} + " %" + $F{taxType}.getName($P{REPORT_LOCALE}) 
@@ -546,10 +598,10 @@
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font fontName="SansSerif" size="8"/>
+									<font fontName="SansSerif" size="9"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{base} + " € \n"
-+ new Double($F{taxQuota}.doubleValue() + $F{surchargeQuota}.doubleValue()) + " €"]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$V{DoubleFormatter}.format($F{base}) + " € \n"
++ $V{DoubleFormatter}.format($F{taxQuota}.doubleValue() + $F{surchargeQuota}.doubleValue()) + " €"]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -642,7 +694,7 @@
 								<textElement textAlignment="Right" verticalAlignment="Bottom">
 									<font size="9" isItalic="true"/>
 								</textElement>
-								<textFieldExpression><![CDATA[new Double($P{PriceStrategy}.getBasePrice((com.code.aon.product.strategy.ICalculable)((com.code.aon.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean())) + " €"]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$V{DoubleFormatter}.format($P{PriceStrategy}.getBasePrice((com.code.aon.product.strategy.ICalculable)((com.code.aon.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean())) + " €"]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -679,38 +731,14 @@
 				<textFieldExpression><![CDATA[" OBSERVACIONES"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-124" x="2" y="108" width="63" height="23" uuid="4b96c3e5-1a4b-4585-8a9e-de1d28cec1ab"/>
-				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$R{offer_customer_telephone}
-]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement key="textField-125" x="65" y="108" width="78" height="23" uuid="42b10269-3221-4ed8-9f9a-0bd171cea1ad"/>
-				<box leftPadding="3" bottomPadding="2">
-					<pen lineWidth="0.5" lineStyle="Solid"/>
-					<topPen lineWidth="0.0" lineStyle="Solid"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[($F{target}.getRegistry().getPhone()!=null?$F{target}.getRegistry().getPhone().getValue():"") +
-(($F{target}.getRegistry().getPhone()!=null && $F{target}.getRegistry().getCellular()!=null)?" / ":"") +
-($F{target}.getRegistry().getCellular()!=null?$F{target}.getRegistry().getCellular().getValue():"")]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement key="textField-126" x="143" y="108" width="63" height="23" uuid="76c82dd2-a593-43b3-a3b4-c4dc7f870c09"/>
+				<reportElement key="textField-124" x="331" y="62" width="50" height="23" uuid="4b96c3e5-1a4b-4585-8a9e-de1d28cec1ab"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Email RTD:"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{offer_customer_telephone}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-127" x="206" y="108" width="330" height="23" uuid="45da3919-9afc-4df5-920c-bd67f14397f2"/>
+				<reportElement key="textField-125" x="381" y="62" width="155" height="23" uuid="42b10269-3221-4ed8-9f9a-0bd171cea1ad"/>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
@@ -721,6 +749,70 @@
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font size="8"/>
 				</textElement>
+				<textFieldExpression><![CDATA[($F{target}.getRegistry().getPhone()!=null?$F{target}.getRegistry().getPhone().getValue():"")]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-126" x="143" y="108" width="63" height="23" uuid="76c82dd2-a593-43b3-a3b4-c4dc7f870c09">
+					<printWhenExpression><![CDATA[$V{technicalEmail}!=null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{offer_customer_email}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-127" x="206" y="108" width="124" height="23" uuid="45da3919-9afc-4df5-920c-bd67f14397f2">
+					<printWhenExpression><![CDATA[$V{technicalEmail}!=null]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="3" bottomPadding="2">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{technicalEmail}.getValue()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-126" x="2" y="108" width="141" height="23" uuid="4937eb22-ba2a-4a65-9414-6eba23ac30ec">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<printWhenExpression><![CDATA[$V{technicalEmail}!=null]]></printWhenExpression>
+				</reportElement>
+				<box rightPadding="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Datos RTD"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-124" x="330" y="108" width="50" height="23" uuid="1bc5ea7e-5b50-46fb-ae33-7ebd889850e0">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$V{technicalEmail}!=null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{aon_contact}+":"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-125" x="381" y="108" width="155" height="23" uuid="ae2b5bd9-89e1-4540-9c29-fca57138d194">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$V{technicalEmail}!=null]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="3" bottomPadding="2">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{technicalEmail}.getComment()]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
