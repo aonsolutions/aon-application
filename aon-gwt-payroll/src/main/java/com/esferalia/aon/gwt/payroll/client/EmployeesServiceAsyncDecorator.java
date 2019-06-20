@@ -22,7 +22,6 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeInfoDataBase;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
@@ -31,9 +30,7 @@ import com.esferalia.aon.gwt.payroll.shared.ITData;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Period;
-import com.esferalia.aon.gwt.payroll.shared.ReportData;
 import com.esferalia.aon.gwt.payroll.shared.Result;
-import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
@@ -588,23 +585,6 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 
 	@Override
-	public void getEmployeeSSBonuses(String domain, Integer contractId, AsyncCallback<List<SSBonusData>> callback) {
-		AON.start();
-		employeesServiceAsync.getEmployeeSSBonuses(domain, contractId, 
-				new AsyncCallbackWrapper<List<SSBonusData>>(callback));
-		
-	}
-
-	@Override
-	public void setEmployeeSSBonuses(String domain, Integer contractId, List<SSBonusData> ssBonuses,
-			AsyncCallback<List<SSBonusData>> callback) {
-		AON.start();
-		employeesServiceAsync.setEmployeeSSBonuses(domain, contractId, ssBonuses,
-				new AsyncCallbackWrapper<List<SSBonusData>>(callback));
-		
-	}
-
-	@Override
 	public void createEmployeeContract(String domain, EmployeeContractInfo employeeContractData,
 			AsyncCallback<EmployeeContractInfo> callback) {
 		AON.start();
@@ -626,12 +606,6 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		AON.start();
 		employeesServiceAsync.getEmployeeEventsByContract(domain, contractId, employeeContractVariablesDB,
 				new AsyncCallbackWrapper<EmployeeEventsData>(callback));
-	}
-
-	@Override
-	public void getBonusConcepts(String domain, AsyncCallback<List<SSBonusData>> callback) {
-		AON.start();
-		employeesServiceAsync.getBonusConcepts(domain, new AsyncCallbackWrapper<List<SSBonusData>>(callback));
 	}
 
 	@Override

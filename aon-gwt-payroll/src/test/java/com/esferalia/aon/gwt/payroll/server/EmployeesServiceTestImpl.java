@@ -22,7 +22,6 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeInfoDataBase;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
@@ -33,7 +32,6 @@ import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
-import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
@@ -568,18 +566,6 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<SSBonusData> getEmployeeSSBonuses(String domain, Integer contractId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<SSBonusData> setEmployeeSSBonuses(String domain, Integer contractId, List<SSBonusData> ssBonuses) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public EmployeeContractInfo createEmployeeContract(String domain, EmployeeContractInfo newEmployeeInfo) {
 		// TODO Auto-generated method stub
 		return null;
@@ -601,12 +587,6 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	@Override
 	public EmployeeEventsData getEmployeeEventsByContract(String currentDomainName, Integer contractId,
 			ArrayList<String> employeeContractVariablesDB) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<SSBonusData> getBonusConcepts(String currentDomainName) {
 		// TODO Auto-generated method stub
 		return null;
 	}

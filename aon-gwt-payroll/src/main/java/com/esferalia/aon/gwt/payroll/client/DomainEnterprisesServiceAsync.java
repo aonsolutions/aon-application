@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
+import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.google.gwt.core.client.GWT;
@@ -212,6 +213,19 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.setEmployeePeculiarities(getCurrentDomainName(), contractId, peculiarities, asyncCallback);
 	}
 	
+	// SS_BONUS DIALOG
+	public void getEmployeeSSBonuses(Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) {
+		enterprisesServiceAsync.getEmployeeSSBonuses(getCurrentDomainName(), contractId, asyncCallback);
+	}
+	
+	public void getBonusConcepts(AsyncCallback<List<SSBonusData>> asyncCallback) {
+		enterprisesServiceAsync.getBonusConcepts(getCurrentDomainName(), asyncCallback);
+	}
+	
+	public void setEmployeeSSBonuses(Integer contractId, List<SSBonusData> ssBonuses, AsyncCallback<List<SSBonusData>> asyncCallback) {
+		enterprisesServiceAsync.setEmployeeSSBonuses(getCurrentDomainName(),  contractId, ssBonuses, asyncCallback);
+	}
+	
 	// ----------------------------------------------------------------- static
 	
 	private static String getCurrentUser() {
@@ -221,5 +235,6 @@ public class DomainEnterprisesServiceAsync {
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
 	}
+
 
 }

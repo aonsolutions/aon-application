@@ -154,6 +154,11 @@
 									enabled="true" />
 							</g:HTMLPanel>
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+								<g:Button ui:field='bonificationsButton'
+									styleName='aon-finding-toolbar-item aon-icon-segsocial-small' text="Bonificaciones"
+									enabled="true" />
+							</g:HTMLPanel>
+							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 							    <g:Label ui:field='saveStatus' styleName="{style.fontSaveStyle}"></g:Label>
 						    </g:HTMLPanel>
 						</g:HorizontalPanel>

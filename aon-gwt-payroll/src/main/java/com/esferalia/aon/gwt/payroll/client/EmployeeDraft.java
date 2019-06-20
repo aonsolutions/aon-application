@@ -474,6 +474,9 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	Button peculiaritiesButton;
 	
 	@UiField
+	Button bonificationsButton;
+	
+	@UiField
 	Button redoButton;
 
 	@UiField
@@ -568,6 +571,13 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	@UiHandler("peculiaritiesButton")
 	void onPeculiaritiesButtonClick(ClickEvent event) {
 		EmployeePeculiaritiesDialog dialog = new EmployeePeculiaritiesDialog(this.employeeDraftObject.getContractId(), this.employeeDraftObject.getContractStartDate());
+		dialog.center();
+		dialog.show();
+	}
+	
+	@UiHandler("bonificationsButton")
+	void onBonificationsButtonClick(ClickEvent event) {
+		SSBonusDraft dialog = new SSBonusDraft(this.employeeDraftObject.getContractId());
 		dialog.center();
 		dialog.show();
 	}

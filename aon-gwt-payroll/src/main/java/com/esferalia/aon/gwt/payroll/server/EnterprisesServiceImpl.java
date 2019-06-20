@@ -32,6 +32,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqCRA;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeePeculiarities;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEnterprise;
 import com.esferalia.aon.gwt.payroll.jooq.JooqPayments;
+import com.esferalia.aon.gwt.payroll.jooq.JooqSSBonus;
 import com.esferalia.aon.gwt.payroll.jooq.JooqWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
@@ -51,6 +52,7 @@ import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
+import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -1807,6 +1809,60 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				try {
 					connection.close();
 				} catch (SQLException logOrIgnrore) {
+				}
+			}
+		}
+	}
+
+	@Override
+	public List<SSBonusData> getEmployeeSSBonuses(String currentDomainName, Integer contractId) {
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection(currentDomainName);
+			return JooqSSBonus.getSSBonus(connection, contractId);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if ( connection != null ) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
+
+	@Override
+	public List<SSBonusData> getBonusConcepts(String currentDomainName) {
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection(currentDomainName);
+			return JooqSSBonus.getExistingSSBonus(connection);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if ( connection != null ) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
+
+	@Override
+	public List<SSBonusData> setEmployeeSSBonuses(String currentDomainName, Integer contractId, List<SSBonusData> ssBonuses) {
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection(currentDomainName);
+			return JooqSSBonus.setSSBonus(connection, contractId, ssBonuses);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if ( connection != null ) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
 				}
 			}
 		}

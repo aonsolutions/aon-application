@@ -13,7 +13,6 @@ import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeInfoDataBase;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
@@ -21,7 +20,6 @@ import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
-import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
@@ -168,18 +166,12 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	EmployeeContractInfo setEmployeeInfoDataBase(String domain, EmployeeContractInfo new_employeeContractData);
 
-	List<SSBonusData> getEmployeeSSBonuses(String domain, Integer contractId);
-
-	List<SSBonusData> setEmployeeSSBonuses(String domain, Integer contractId, List<SSBonusData> ssBonuses);
-
 	EmployeeContractInfo createEmployeeContract(String domain, EmployeeContractInfo employeeContractData);
 
 	WorkplaceEmployees getWorkplaceEmployeesEvents(String currentDomainName, Integer workplaceId);
 
 	EmployeeEventsData getEmployeeEventsByContract(String currentDomainName, Integer contractId,
 			ArrayList<String> employeeContractVariablesDB);
-
-	List<SSBonusData> getBonusConcepts(String currentDomainName);
 
 	String setEmployeeAFIChanges(String currentDomainName, Integer contractId, Date newDate, boolean isChangeContract,
 			String tc2, boolean isQuoteContract, Integer quoteGroup, boolean isOcupationContract, String ocupation);

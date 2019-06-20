@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
+import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -71,5 +72,10 @@ public interface EnterprisesServiceAsync {
 	void getEmployeePeculiarities(String currentDomainName, Integer contractId, AsyncCallback<Peculiarities> asyncCallback);
 	void setEmployeePeculiarities(String currentDomainName, Integer contractId, Peculiarities peculiarities,
 			AsyncCallback<String> asyncCallback);
+	void getEmployeeSSBonuses(String currentDomainName, Integer contractId,
+			AsyncCallback<List<SSBonusData>> asyncCallback);
+	void getBonusConcepts(String currentDomainName, AsyncCallback<List<SSBonusData>> asyncCallback);
+	void setEmployeeSSBonuses(String currentDomainName, Integer contractId, List<SSBonusData> ssBonuses,
+			AsyncCallback<List<SSBonusData>> asyncCallback);
 
 }

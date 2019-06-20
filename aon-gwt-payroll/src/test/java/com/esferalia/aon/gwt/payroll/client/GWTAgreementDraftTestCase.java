@@ -19,11 +19,9 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeInfoDataBase;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
-import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.google.gwt.core.client.GWT;
@@ -132,19 +130,6 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		}
 
 		@Override
-		public void getEmployeeSSBonuses(String domain, Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void setEmployeeSSBonuses(String domain, Integer contractId, List<SSBonusData> ssBonuses,
-				AsyncCallback<List<SSBonusData>> asyncCallback) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
 		public void createEmployeeContract(String domain, EmployeeContractInfo newEmployeeInfo,
 				AsyncCallback<EmployeeContractInfo> asyncCallback) {
 			// TODO Auto-generated method stub
@@ -169,12 +154,6 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		@Override
 		public void getEmployeeEventsByContract(String currentDomainName, Integer contractId,
 				ArrayList<String> employeeContractVariablesDB, AsyncCallback<EmployeeEventsData> callback) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void getBonusConcepts(String currentDomainName, AsyncCallback<List<SSBonusData>> callback) {
 			// TODO Auto-generated method stub
 			
 		}
@@ -296,20 +275,6 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					}
 
 					@Override
-					public void getEmployeeSSBonuses(String domain, Integer contractId,
-							AsyncCallback<List<SSBonusData>> asyncCallback) {
-						// TODO Auto-generated method stub
-						
-					}
-
-					@Override
-					public void setEmployeeSSBonuses(String domain, Integer contractId, List<SSBonusData> ssBonuses,
-							AsyncCallback<List<SSBonusData>> asyncCallback) {
-						// TODO Auto-generated method stub
-						
-					}
-
-					@Override
 					public void createEmployeeContract(String domain, EmployeeContractInfo newEmployeeInfo,
 							AsyncCallback<EmployeeContractInfo> asyncCallback) {
 						// TODO Auto-generated method stub
@@ -334,12 +299,6 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					@Override
 					public void getEmployeeEventsByContract(String currentDomainName, Integer contractId,
 							ArrayList<String> employeeContractVariablesDB, AsyncCallback<EmployeeEventsData> callback) {
-						// TODO Auto-generated method stub
-						
-					}
-
-					@Override
-					public void getBonusConcepts(String currentDomainName, AsyncCallback<List<SSBonusData>> callback) {
 						// TODO Auto-generated method stub
 						
 					}

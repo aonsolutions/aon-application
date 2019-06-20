@@ -134,8 +134,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		void onEnterpriseContextMenu(Enterprise enterprise, ContextMenuEvent event);
 
 		void onEmployeeCalendarSelected(EmployeeCalendarDraftObjectData calendar);
-		
-		void onSSBonusDraftSelected(SSBonusDraftObject ssBonus);
 
 		void onEmployeeCopy(Employee employee);
 
@@ -427,8 +425,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			onEmployeeDraftSelected((EmployeeDraftObject) userObject);
 		} else if (userObject instanceof EmployeeNewDraftObject) {
 			onEmployeeNewDraftSelected((EmployeeNewDraftObject) userObject);
-		} else if (userObject instanceof SSBonusDraftObject) {
-			onSSBonusDraftSelected((SSBonusDraftObject) userObject);
 		} 
 	}
 
@@ -1317,12 +1313,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			listener.onEmployeeNewDraftSelected(employeeNewDraftObject);
 		}	
 	}
-	
-	private void onSSBonusDraftSelected(SSBonusDraftObject ssBonusDraftObject) {
-		for (Listener listener : listeners) {
-			listener.onSSBonusDraftSelected(ssBonusDraftObject);
-		}	
-	}
 
 	public void addEmployee(TreeItem workplaceItem, Employees employee, int limit) {
 
@@ -1418,13 +1408,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			employeeEventsItem.ensureDebugId(getId(employee)+"-events");
 
 			draftObject.setEmployeeEventsDraftObject(employeeEventsDraftObject);
-			
-			
-			TreeItem ssBonusDraftItem = addImageItem(employeeItem, "Bonificaciones", images.segsocial());
-			SSBonusDraftObject ssBonusDraftObject = new SSBonusDraftObject(employee, employeesService);
-			ssBonusDraftItem.setUserObject(ssBonusDraftObject);
-			ssBonusDraftItem.ensureDebugId(getId(employee)+"-ssBonusDraft");
-
+						
 			// A.E.T
 			// addImageItem(employeeItem, "Regularizaciones", images.aet());
 

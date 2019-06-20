@@ -23,6 +23,7 @@ import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
+import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -355,5 +356,24 @@ public class EnterprisesServiceAsyncDecorator implements
 			AsyncCallback<String> callback) {
 		AON.start();
 		enterprisesServiceAsync.setEmployeePeculiarities(domain, contractId, peculiarities, new AsyncCallbackWrapper<String>(callback));
+	}
+
+	@Override
+	public void getEmployeeSSBonuses(String domain, Integer contractId, AsyncCallback<List<SSBonusData>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getEmployeeSSBonuses(domain, contractId, new AsyncCallbackWrapper<List<SSBonusData>>(callback));
+	}
+
+	@Override
+	public void getBonusConcepts(String domain, AsyncCallback<List<SSBonusData>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getBonusConcepts(domain, new AsyncCallbackWrapper<List<SSBonusData>>(callback));
+	}
+
+	@Override
+	public void setEmployeeSSBonuses(String domain, Integer contractId, List<SSBonusData> ssBonuses,
+			AsyncCallback<List<SSBonusData>> callback) {
+		AON.start();
+		enterprisesServiceAsync.setEmployeeSSBonuses(domain, contractId, ssBonuses, new AsyncCallbackWrapper<List<SSBonusData>>(callback));	
 	}
 }

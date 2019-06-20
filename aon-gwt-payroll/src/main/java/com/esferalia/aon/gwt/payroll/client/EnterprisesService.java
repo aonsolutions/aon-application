@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
+import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -120,5 +121,11 @@ public interface EnterprisesService extends RemoteService {
 	Peculiarities getEmployeePeculiarities(String currentDomainName, Integer contractId);
 
 	String setEmployeePeculiarities(String currentDomainName, Integer contractId, Peculiarities peculiarities);
+
+	List<SSBonusData> getEmployeeSSBonuses(String currentDomainName, Integer contractId);
+
+	List<SSBonusData> getBonusConcepts(String currentDomainName);
+
+	List<SSBonusData> setEmployeeSSBonuses(String currentDomainName, Integer contractId, List<SSBonusData> ssBonuses);
 	
 }

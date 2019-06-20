@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import static com.esferalia.aon.gwt.payroll.shared.CalculateService.WORKPLACES;
-import static com.esferalia.aon.watson.util.AonStringUtils.isBlank;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -82,7 +81,6 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.MenuItemSeparator;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -1915,7 +1913,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private EmployeeEventsDraft employeeEventsDraft;
 	private EmployeeDraft employeeDraft;
 	private EmployeeNewDraft employeeNewDraft;
-	private SSBonusDraft ssBonusDraft;
 	private EmployeeCalendarDraft employeeCalendarDraft;
 	private CategoryDraft categoryDraft;
 	private AgreementDraft agreementDraft;
@@ -2310,13 +2307,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		employeeDetail.setWidget(getEmployeeNewDraft());
 		getEmployeeNewDraft().setEmployeeNewDraftObject(employeeNewDraftObject);
 	}
-	
-	@Override
-	public void onSSBonusDraftSelected(SSBonusDraftObject ssBonusDraftObject) {
-		employeeDetail.setWidget(getSSBonusDraft());
-		getSSBonusDraft().setSSBonusDraftObject(ssBonusDraftObject);
-		
-	}
 
 	@Override
 	public void onEmployeeCopy(Employee employee) {
@@ -2542,12 +2532,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		if (employeeNewDraft == null)
 			employeeNewDraft = new EmployeeNewDraft();
 		return employeeNewDraft;
-	}
-	
-	private SSBonusDraft getSSBonusDraft() {
-		if (ssBonusDraft == null)
-			ssBonusDraft = new SSBonusDraft();
-		return ssBonusDraft;
 	}
 
 	private CategoryDraft getCategoryDraft() {

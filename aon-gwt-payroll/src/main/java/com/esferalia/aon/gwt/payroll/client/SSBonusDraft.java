@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.google.gwt.core.client.GWT;
@@ -15,9 +16,9 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -28,14 +29,16 @@ import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SSBonusDraft extends Composite {
+public class SSBonusDraft extends CustomDialog {
 	
 	// -------------------------------------------------- UiBinder --------------------------------------------------
 
-	private static SSBonusDraftUiBinder uiBinder = GWT.create(SSBonusDraftUiBinder.class);
+	//Starting Service
+	final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
+	
+	interface Binder extends UiBinder<Widget, SSBonusDraft> {}
 
-	interface SSBonusDraftUiBinder extends UiBinder<Widget, SSBonusDraft> {
-	}
+	private static final Binder binder = GWT.create(Binder.class);
 	
 	// -------------------------------------------------- UiFields --------------------------------------------------
 			
@@ -59,8 +62,8 @@ public class SSBonusDraft extends Composite {
 	@UiField
 	Button listBonusesButton;
 	
-	@UiField
-	Button saveButton;
+//	@UiField
+//	Button saveButton;
 	
 	@UiField
 	TextBox idBonus;
@@ -89,32 +92,17 @@ public class SSBonusDraft extends Composite {
 	@UiField
 	CheckBox checkCommonC;
 	
-//	@UiField
-//	CheckBox checkCommonE;
-	
 	@UiField
 	CheckBox checkAccidentC;
-	
-//	@UiField
-//	CheckBox checkAccidentE;
 	
 	@UiField
 	CheckBox checkUnemploymentC;
 	
-//	@UiField
-//	CheckBox checkUnemploymentE;
-	
 	@UiField
 	CheckBox checkFogasaC;
 	
-//	@UiField
-//	CheckBox checkFogasaE;
-	
 	@UiField
 	CheckBox checkFormationC;
-	
-//	@UiField
-//	CheckBox checkFormationE;
 	
 	@UiField
 	Button applyChecks;
@@ -134,18 +122,115 @@ public class SSBonusDraft extends Composite {
 	@UiField
 	Grid listBonusesTable;
 	
+	//BUTTONS ACCEPT AND CANCEL
+	
+	@UiField
+	Button acceptButton;
+	
+	@UiField
+	Button cancelButton;
 	
 // ------------------------------------------------------------ VARIABLES DE LA CLASE ----------------------------------------------------
 		
-	private SSBonusDraftObject ssBonusDraftObject;
+//	private SSBonusDraftObject ssBonusDraftObject;
+	private Integer contractId;
+	private List<SSBonusData> ssBonuses;
+	private List<SSBonusData> bonusConcepts;
+	
 	
 // ---------------------------------------------------------------- CONSTRUCTOR ----------------------------------------------------------
 	
+	public SSBonusDraft(Integer contractId) {
+		
+		setCaption("Bonificaciones");
+		
+		setWidget(binder.createAndBindUi(this));
+		
+		acceptButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				hide();
+				onAccept();
+			}
+		});		
+		
+		cancelButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				hide();
+			}
+		});
+		
+		this.ssBonuses = new ArrayList<>();
+		this.bonusConcepts = new ArrayList<>();
+		this.contractId = contractId;
+		
+		impl.getEmployeeSSBonuses(this.contractId, new AsyncCallback<List<SSBonusData>>() {
+			
+			@Override
+			public void onSuccess(List<SSBonusData> result) {
+				ssBonuses = result;
+				impl.getBonusConcepts(new AsyncCallback<List<SSBonusData>>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub	
+					}
+
+					@Override
+					public void onSuccess(List<SSBonusData> result) {
+						bonusConcepts = result;
+						initializePage();
+					}
+					
+				});
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				
+			}
+		});
+
+	}
 	
-	public SSBonusDraft() {
+	private void onAccept() {
+		Date starDate_bonus = startDateBonus.getValue();
+		Date endDate_bonus = endDateBonus.getValue();
+		String description_bonus = descriptionBonus.getValue();
+		Byte type_bonus = (byte) typeBonus.getSelectedIndex();
+		String formula_bonus = formulaBonus.getValue();
 		
-		initWidget(uiBinder.createAndBindUi(this));
-		
+		if(null == starDate_bonus || "" == description_bonus || "" == formula_bonus){
+			WarningDialog warning = new WarningDialog("Warning", "Faltan campos por rellenar");
+			warning.show();
+			warning.center();
+		}else{
+			if(idBonus.getText() != ""){
+				Integer id_bonus = Integer.parseInt(idBonus.getText());
+				modifyBonus(id_bonus, starDate_bonus, endDate_bonus, description_bonus, type_bonus, formula_bonus);
+			}else{
+				Integer nextId = getLastBonusesId() + 1;
+				newBonus(nextId, starDate_bonus, endDate_bonus, description_bonus, type_bonus, formula_bonus);
+			}
+			
+			// UPDATE SSBONUS
+			impl.setEmployeeSSBonuses(contractId, ssBonuses, new AsyncCallback<List<SSBonusData>>() {
+				
+				@Override
+				public void onSuccess(List<SSBonusData> result) {
+					ssBonuses = result;
+//					initializePage();
+					hide();
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					
+				}
+			});
+
+		}
 	}
 	
 
@@ -156,13 +241,9 @@ public class SSBonusDraft extends Composite {
 		event.preventDefault();
 		
 		int row = listBonusesTable.getCellForEvent(event).getRowIndex();
-//		int col = listBonusesTable.getCellForEvent(event).getCellIndex();
-//		int pos = (row * 39) + col;
-//		Window.alert("CLICK -> Row : " + row + ", Column : " + col + ", Position : " + pos);
 		
 		Label idLabel = (Label) listBonusesTable.getWidget(row, 0);
 		String idString = idLabel.getText();
-//		Window.alert("Id : " + idString);
 		Integer id = Integer.parseInt(idString);
 		
 		boolean canEdit = enableEditable(id);
@@ -243,24 +324,14 @@ public class SSBonusDraft extends Composite {
 			
 			if(checkCommonC.getValue() == true)
 				listCheckTrue.add("CGC_E");
-//			if(checkCommonE.getValue() == true)
-//				listCheckTrue.add("CGC");
 			if(checkAccidentC.getValue() == true)
 				listCheckTrue.add("(IT_E + IMS_E)");
-//			if(checkAccidentE.getValue() == true)
-//				listCheckTrue.add("(IT + IMS)");
 			if(checkUnemploymentC.getValue() == true)
 				listCheckTrue.add("DESMPL_E");
-//			if(checkUnemploymentE.getValue() == true)
-//				listCheckTrue.add("DESMPL");
 			if(checkFogasaC.getValue() == true)
 				listCheckTrue.add("FOGASA_E");
-//			if(checkFogasaE.getValue() == true)
-//				listCheckTrue.add("FOGASA");
 			if(checkFormationC.getValue() == true)
 				listCheckTrue.add("FP_E");
-//			if(checkFormationE.getValue() == true)
-//				listCheckTrue.add("FP");
 			
 			if(!listCheckTrue.isEmpty()){
 				String result = "(";
@@ -294,55 +365,51 @@ public class SSBonusDraft extends Composite {
 		initializePage();
 	}
 	
-	@UiHandler("saveButton")
-	void onSaveButtonClick(ClickEvent event) {
-		Date starDate_bonus = startDateBonus.getValue();
-		Date endDate_bonus = endDateBonus.getValue();
-		String description_bonus = descriptionBonus.getValue();
-		Byte type_bonus = (byte) typeBonus.getSelectedIndex();
-		String formula_bonus = formulaBonus.getValue();
-		
-		if(null == starDate_bonus || "" == description_bonus || "" == formula_bonus){
-			WarningDialog warning = new WarningDialog("Warning", "Faltan campos por rellenar");
-			warning.show();
-			warning.center();
-		}else{
-			//Window.alert("Modificar Bonus ID : " + idBonus.getText());
-			if(idBonus.getText() != ""){
-				//Window.alert("Modificar Bonus");
-				Integer id_bonus = Integer.parseInt(idBonus.getText());
-				//Window.alert("Modificar Bonus ID 2 : " + id_bonus);
-				this.ssBonusDraftObject.modifyBonus(id_bonus, starDate_bonus, endDate_bonus, description_bonus, type_bonus, formula_bonus);
-			}else{
-				//Window.alert("Nuevo Bonus");
-				Integer nextId = this.ssBonusDraftObject.getLastBonusesId() + 1;
-				//Window.alert("Nuevo Bonus ID : " + nextId);
-				this.ssBonusDraftObject.newBonus(nextId, starDate_bonus, endDate_bonus, description_bonus, type_bonus, formula_bonus);
-			}
-			
-			this.ssBonusDraftObject.updateDBBonuses(r -> 
-			{
-				initializePage();
-			}, t -> {});
-		}	
-	}
-
-
-// -------------------------------------------------------------- METODOS DE LA CLASE ----------------------------------------------------
-	public void setSSBonusDraftObject(SSBonusDraftObject ssBonusDraftObject) {
-		this.ssBonusDraftObject = ssBonusDraftObject;
-		this.ssBonusDraftObject.initializeSSBonuses(
-				r -> {
-					initializePage();
-				}, 
-				t -> {});
-	}
+//	@UiHandler("saveButton")
+//	void onSaveButtonClick(ClickEvent event) {
+//		Date starDate_bonus = startDateBonus.getValue();
+//		Date endDate_bonus = endDateBonus.getValue();
+//		String description_bonus = descriptionBonus.getValue();
+//		Byte type_bonus = (byte) typeBonus.getSelectedIndex();
+//		String formula_bonus = formulaBonus.getValue();
+//		
+//		if(null == starDate_bonus || "" == description_bonus || "" == formula_bonus){
+//			WarningDialog warning = new WarningDialog("Warning", "Faltan campos por rellenar");
+//			warning.show();
+//			warning.center();
+//		}else{
+//			if(idBonus.getText() != ""){
+//				Integer id_bonus = Integer.parseInt(idBonus.getText());
+//				modifyBonus(id_bonus, starDate_bonus, endDate_bonus, description_bonus, type_bonus, formula_bonus);
+//			}else{
+//				Integer nextId = getLastBonusesId() + 1;
+//				newBonus(nextId, starDate_bonus, endDate_bonus, description_bonus, type_bonus, formula_bonus);
+//			}
+//			
+//			// UPDATE SSBONUS
+//			impl.setEmployeeSSBonuses(contractId, ssBonuses, new AsyncCallback<List<SSBonusData>>() {
+//				
+//				@Override
+//				public void onSuccess(List<SSBonusData> result) {
+//					ssBonuses = result;
+//					initializePage();
+//				}
+//
+//				@Override
+//				public void onFailure(Throwable caught) {
+//					
+//				}
+//			});
+//
+//		}	
+//	}
 	
+	@SuppressWarnings("deprecation")
 	private void initializePage() {
 		cleanPage();
 		
 		//DOCUMENT
-		List<String> ssBonusConcepts = this.ssBonusDraftObject.getBonusConceptsDescription();
+		List<String> ssBonusConcepts = getBonusConceptsDescription();
 		List<String> ssBonusConceptsSuggest = new ArrayList<String>();
 		for(String ssBonusConcept : ssBonusConcepts)
 			ssBonusConceptsSuggest.add(ssBonusConcept+"");
@@ -388,7 +455,6 @@ public class SSBonusDraft extends Composite {
 	}
 	
 	private void hideAllPanels() {
-//		this.idPanel.addStyleName(style.hide());
 		this.checksPanel.addStyleName(style.hide());
 		this.amountPanel.addStyleName(style.hide());
 	}
@@ -399,15 +465,10 @@ public class SSBonusDraft extends Composite {
 	
 	private void clearSelectedChecks() {
 		checkCommonC.setValue(false);
-//		checkCommonE.setValue(false);
 		checkAccidentC.setValue(false);
-//		checkAccidentE.setValue(false);
 		checkUnemploymentC.setValue(false);
-//		checkUnemploymentE.setValue(false);
 		checkFogasaC.setValue(false);
-//		checkFogasaE.setValue(false);
 		checkFormationC.setValue(false);
-//		checkFormationE.setValue(false);
 		
 		this.percentBonus.setValue("");
 	}
@@ -419,7 +480,7 @@ public class SSBonusDraft extends Composite {
 			this.typeBonus.setSelectedIndex(0);
 		this.listBonusesPanel.removeStyleName(style.hide());
 		
-		this.listBonusesTable.resize(this.ssBonusDraftObject.getBonuses().size()+1, 8);
+		this.listBonusesTable.resize(getBonuses().size()+1, 8);
 		
 		//Cabecera
 		this.listBonusesTable.setWidget(0, 0, new Label("Id"));
@@ -434,13 +495,13 @@ public class SSBonusDraft extends Composite {
 		this.listBonusesTable.setWidget(0, 5, new Label("Tipo"));
 		this.listBonusesTable.setWidget(0, 6, new Label("F"+String.valueOf("\u00F3")+"rmula"));
 		this.listBonusesTable.setWidget(0, 7, new Label(""));
-//		this.listBonusesTable.setWidget(0, 8, new Label(""));
+		
 		for(int i = 0; i<8; i++)
 			this.listBonusesTable.getWidget(0, i).addStyleName(style.bold());
 		
 		int row = 1;
 		
-		for(SSBonusData bonus : this.ssBonusDraftObject.getBonuses()){
+		for(SSBonusData bonus : getBonuses()){
 			listBonusesTable.setWidget(row, 0, new Label(bonus.getId().toString()));
 			listBonusesTable.getWidget(row, 0).addStyleName(style.hide());
 			Label system = new Label();
@@ -473,12 +534,24 @@ public class SSBonusDraft extends Composite {
 						@Override
 						protected void onAccept() {
 							cleanPage();
-							ssBonusDraftObject.deleteBonus(bonus.getId());
-							ssBonusDraftObject.updateDBBonuses(r -> 
-								{
+							deleteBonus(bonus.getId());
+							
+							// UPDATE SSBONUS
+							impl.setEmployeeSSBonuses(contractId, ssBonuses, new AsyncCallback<List<SSBonusData>>() {
+								
+								@Override
+								public void onSuccess(List<SSBonusData> result) {
+									ssBonuses = result;
 									cleanSelected();
 									initializePage();
-								}, t -> {});
+								}
+
+								@Override
+								public void onFailure(Throwable caught) {
+									
+								}
+							});
+							
 						}
 					};
 					dialog.show();
@@ -493,6 +566,7 @@ public class SSBonusDraft extends Composite {
 		cleanSelected();
 	}
 	
+	@SuppressWarnings("deprecation")
 	private String parseDate(Date date) {
 		String dateStr = "";
 		
@@ -519,7 +593,7 @@ public class SSBonusDraft extends Composite {
 
 
 	private boolean enableEditable(Integer id){
-		SSBonusData bonus = ssBonusDraftObject.getBonus(id);
+		SSBonusData bonus = getBonus(id);
 //		Window.alert("Id : " + id + ", Bonus : " + bonus.isSystem());
 		if(bonus.isSystem()){
 			cleanPage();
@@ -538,6 +612,68 @@ public class SSBonusDraft extends Composite {
 			formulaBonus.setEnabled(true);
 			return true;
 		}
+	}
+	
+	// ---------------------------------------------------------------------------------------------------------------------------------------------
+	// 														PRIVATE METHODS
+	// ---------------------------------------------------------------------------------------------------------------------------------------------
+	
+	public List<SSBonusData> getBonuses(){
+		return this.ssBonuses;
+	}
+	
+	public SSBonusData getBonus(Integer id){
+		for(SSBonusData bonus : this.ssBonuses){
+			if(bonus.getId() == id)
+				return bonus;
+		}
+		return null;
+	}
+	
+	public void newBonus(Integer id, Date startDate, Date endDate, String description, Byte type, String expression){
+//		Window.alert("ID : " + id + ", startDate : " + startDate + ", endDate : " + endDate + 
+//					", description : " + description + ", type : " + type + ", expression : " + expression);
+		SSBonusData newBonus = new SSBonusData(id, false, startDate, endDate, description, type, expression);
+		this.ssBonuses.add(newBonus);
+	}
+	
+	public void modifyBonus(Integer id, Date startDate, Date endDate, String description, Byte type, String expression) {
+//		Window.alert("ID : " + id + ", startDate : " + startDate + ", endDate : " + endDate + 
+//				", description : " + description + ", type : " + type + ", expression : " + expression);
+		for(SSBonusData bonus : ssBonuses){
+			if(id == bonus.getId()){
+				bonus.setStartDate(startDate);
+				bonus.setEndDate(endDate);
+				bonus.setDescription(description);
+				bonus.setType(type);
+				bonus.setFormula(expression);
+			}
+		}
+	}
+	
+	public void deleteBonus(Integer id_bonus) {
+		SSBonusData bonus = getBonus(id_bonus);
+		if(null != bonus)
+			ssBonuses.remove(bonus);
+	}
+
+	public int getLastBonusesId() {
+		int index = -1;
+		for(SSBonusData bonus : ssBonuses){
+			if(index < bonus.getId())
+				index = bonus.getId();
+		}
+		return index;
+	}
+	
+	public List<String> getBonusConceptsDescription(){
+		List<String> bonusConceptsDescription = new ArrayList<String>();
+		
+		for(SSBonusData bonusConcept : this.bonusConcepts) {
+			bonusConceptsDescription.add(bonusConcept.getDescription());
+		}
+	
+		return bonusConceptsDescription;
 	}
 
 	

@@ -22,7 +22,6 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeInfoDataBase;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
@@ -32,9 +31,7 @@ import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
-import com.esferalia.aon.gwt.payroll.shared.ReportData;
 import com.esferalia.aon.gwt.payroll.shared.Result;
-import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
@@ -380,15 +377,6 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.setEmployeeInfoDataBase(getCurrentDomainName(),  new_employeeContractData, asyncCallback);
 	}
 
-	public void getEmployeeSSBonuses(Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) {
-		employeesServiceAsync.getEmployeeSSBonuses(getCurrentDomainName(),  contractId, asyncCallback);
-	}
-
-	public void setEmployeeSSBonuses(Integer contractId, List<SSBonusData> ssBonuses,
-			AsyncCallback<List<SSBonusData>> asyncCallback) {
-		employeesServiceAsync.setEmployeeSSBonuses(getCurrentDomainName(),  contractId, ssBonuses, asyncCallback);
-	}
-
 	public void createEmployeeContract(EmployeeContractInfo employeeContractData,
 			AsyncCallback<EmployeeContractInfo> asyncCallback) {
 		employeesServiceAsync.createEmployeeContract(getCurrentDomainName(),  employeeContractData, asyncCallback);
@@ -407,9 +395,6 @@ public class DomainEmployeesServiceAsync {
 			AsyncCallback<EmployeeEventsData> callback) {
 		employeesServiceAsync.getEmployeeEventsByContract(getCurrentDomainName(), contractId, employeeContractVariablesDB, callback);
 		
-	}
-	public void getBonusConcepts(AsyncCallback<List<SSBonusData>> callback) {
-		employeesServiceAsync.getBonusConcepts(getCurrentDomainName(), callback);
 	}
 	
 	public void setEmployeeAFIChanges(Integer contractId, Date newDate, boolean isChangeContract, String tc2, boolean isQuoteContract, Integer quoteGroup,
@@ -437,8 +422,5 @@ public class DomainEmployeesServiceAsync {
 		return Wnd.getCurrentDomainNameURL();
 	}
 
-	
-
-	
 
 }

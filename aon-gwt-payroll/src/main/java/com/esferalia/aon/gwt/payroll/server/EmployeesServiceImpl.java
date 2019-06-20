@@ -4813,60 +4813,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 		}
 	}
-
-	@Override
-	public List<SSBonusData> getEmployeeSSBonuses(String domain, Integer contractId) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(domain);
-			return JooqSSBonus.getSSBonus(connection, contractId);
-		} catch (SQLException e) {
-			throw new IllegalArgumentException(e);
-		} finally {
-			if ( connection != null ) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-				}
-			}
-		}
-	}
-
-	@Override
-	public List<SSBonusData> setEmployeeSSBonuses(String domain, Integer contractId, List<SSBonusData> ssBonuses) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(domain);
-			return JooqSSBonus.setSSBonus(connection, contractId, ssBonuses);
-		} catch (SQLException e) {
-			throw new IllegalArgumentException(e);
-		} finally {
-			if ( connection != null ) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-				}
-			}
-		}
-	}
-	
-	@Override
-	public List<SSBonusData> getBonusConcepts(String domain) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(domain);
-			return JooqSSBonus.getExistingSSBonus(connection);
-		} catch (SQLException e) {
-			throw new IllegalArgumentException(e);
-		} finally {
-			if ( connection != null ) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-				}
-			}
-		}
-	}
 	
 	private static boolean notAtEnterpriseSite(){
 		return false;
