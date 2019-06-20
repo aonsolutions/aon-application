@@ -346,6 +346,9 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	
 	@UiField
 	Button saveButton;
+	
+	@UiField
+	Button resetButton;
 
 	@UiField
 	Label yearLabel;
@@ -1049,6 +1052,24 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			setEmployeeCalendarDraftObject(calendarEmployeeInfo);
 			calendarEmployeeInfo.undoManager.discardAll();
 		}, t -> {});
+	}
+	
+	@UiHandler("resetButton")
+	void onResetButtonClick(ClickEvent event) {
+		AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", String.valueOf("\u00BF")+"Realmente desea resetear el calendario?", "", "") {
+			
+			@Override
+			protected void onAccept() {
+				calendarEmployeeInfo.resetCalendar(r -> 
+				{
+					setEmployeeCalendarDraftObject(calendarEmployeeInfo);
+					calendarEmployeeInfo.undoManager.discardAll();
+				}, t -> {});
+			}
+		};
+		
+		dialog.center();
+		dialog.show();
 	}
 	
 // -------------------------------------------------------------- METODOS DE LA CLASE ----------------------------------------------------

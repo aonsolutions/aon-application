@@ -618,5 +618,11 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 				newDate, isChangeContract, tc2, isQuoteContract, quoteGroup, isOcupationContract, ocupation, new AsyncCallbackWrapper<String>(callback));
 	}
 
+	@Override
+	public void resetCalendar(String currentDomainName, Integer employeeId, AsyncCallback<String> callback) {
+		AON.start();
+		employeesServiceAsync.resetCalendar(currentDomainName, employeeId, new AsyncCallbackWrapper<String>(callback));
+	}
+
 	
 }

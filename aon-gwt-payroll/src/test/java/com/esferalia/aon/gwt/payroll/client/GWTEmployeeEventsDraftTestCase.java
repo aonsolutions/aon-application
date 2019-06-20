@@ -173,6 +173,14 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 				
 			}
 
+
+
+			@Override
+			public void resetCalendar(String currentDomainName, Integer employeeId, AsyncCallback<String> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
 			
 		};
 

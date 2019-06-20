@@ -69,7 +69,6 @@ import com.code.aon.company.WorkPlace;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.registry.RegistryAddress;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.report.controller.ReportManager;
@@ -94,7 +93,6 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeEvents;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployees;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEvents;
 import com.esferalia.aon.gwt.payroll.jooq.JooqPayments;
-import com.esferalia.aon.gwt.payroll.jooq.JooqSSBonus;
 import com.esferalia.aon.gwt.payroll.report.StatelessReportManager;
 import com.esferalia.aon.gwt.payroll.server.PayrollServletUtils.SalaryFilter;
 import com.esferalia.aon.gwt.payroll.server.PayrollServletUtils.SiteFilter;
@@ -130,7 +128,6 @@ import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
-import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
@@ -4843,7 +4840,23 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-	
+	@Override
+	public String resetCalendar(String domain, Integer employeeId) {
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection(domain);
+			return JooqEmployeeCalendar.resetCalendar(connection, employeeId);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if ( connection != null ) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
 	
 
 }

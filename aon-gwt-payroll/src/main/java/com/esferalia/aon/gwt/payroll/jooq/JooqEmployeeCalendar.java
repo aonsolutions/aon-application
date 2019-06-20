@@ -42,6 +42,10 @@ public class JooqEmployeeCalendar {
 	public static void setEmployeeHour(Connection conn, Integer contract, EmployeeCalendarUpdate updateInfo){
 		setEmployeeInformation(DSL.using(conn, getDefaultSettings()), contract, updateInfo);
 	}
+	
+	public static String resetCalendar(Connection conn, Integer employeeId) {
+		return resetCalendarInformation(DSL.using(conn, getDefaultSettings()), employeeId);
+	}
 
 	protected static Settings getDefaultSettings() {
 		if (SETTINGS == null) {
@@ -49,6 +53,46 @@ public class JooqEmployeeCalendar {
 			SETTINGS.setRenderSchema(false);
 		}
 		return SETTINGS;
+	}
+	
+	private static String resetCalendarInformation(DSLContext dslContext, Integer contractId) {
+		
+		ArrayList<String> varNames = new ArrayList<String>();
+		// HOURS
+		varNames.add(ContextVariable.MONDAY_HOURS.getName());
+		varNames.add(ContextVariable.TUESDAY_HOURS.getName());
+		varNames.add(ContextVariable.WEDNESDAY_HOURS.getName());
+		varNames.add(ContextVariable.THURSDAY_HOURS.getName());
+		varNames.add(ContextVariable.FRIDAY_HOURS.getName());
+		varNames.add(ContextVariable.SATURDAY_HOURS.getName());
+		varNames.add(ContextVariable.SUNDAY_HOURS.getName());
+		// EXTRA HOURS
+		varNames.add(ContextVariable.EXTRA_HOURS.getName());
+		// DAY TYPES
+		varNames.add(ContextVariable.STRIKE_DAYS.getName());
+		varNames.add(ContextVariable.ERE_DAYS.getName());
+		varNames.add(ContextVariable.HOLIDAYS.getName());
+		varNames.add(ContextVariable.ERE_FACTOR.getName());
+		varNames.add(ContextVariable.STRIKE_FACTOR.getName());
+		varNames.add("DIAS_INACTIVIDAD");
+		varNames.add("NO_LABORABLE");
+		varNames.add("CAUSA_INACTIVIDAD");
+		varNames.add("PEONADAS");
+		varNames.add("FESTIVE_WORKING");
+		// FESTIVE WORKING DAYS
+		varNames.add("FESTIVE_WORKING");
+		// PEONADAS
+		varNames.add("PEONADAS");
+		varNames.add("JORNADAS_REALES");
+		// CAUSA INACTIVITY
+		varNames.add("CAUSA_INACTIVIDAD");
+		
+		dslContext.delete(CONTRACT_DATA)
+			.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+			.and(CONTRACT_DATA.NAME.in(varNames))
+			.execute();
+		
+		return "";
 	}
 
 	private static EmployeeCalendarData getEmployeeInformation(DSLContext dslContext, Integer contract) throws IllegalArgumentException {

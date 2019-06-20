@@ -75,6 +75,10 @@ public class DomainEmployeesServiceAsync {
 			AsyncCallback<EmployeeEventsUpdate> callback) {
 		employeesServiceAsync.setEmployeeEvents(getCurrentDomainName(), contract, updateInfo, callback);
 	}
+	
+	public void resetCalendar(Integer employeeId, AsyncCallback<String> callback) {
+		employeesServiceAsync.resetCalendar(getCurrentDomainName(), employeeId, callback);
+	}
 
 	public void setEmployeeCalendar(int contract, EmployeeCalendarUpdate updateInfo,
 			AsyncCallback<EmployeeCalendarUpdate> callback) {

@@ -176,4 +176,6 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	String setEmployeeAFIChanges(String currentDomainName, Integer contractId, Date newDate, boolean isChangeContract,
 			String tc2, boolean isQuoteContract, Integer quoteGroup, boolean isOcupationContract, String ocupation);
 
+	String resetCalendar(String currentDomainName, Integer employeeId);
+
 }

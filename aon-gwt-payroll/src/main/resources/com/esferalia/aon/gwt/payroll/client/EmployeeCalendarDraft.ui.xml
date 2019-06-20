@@ -362,10 +362,15 @@
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
 						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+							<g:Button ui:field='resetButton'
+								styleName='aon-finding-toolbar-item aon-icon-cancel' text="RESETEAR" />
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 							<g:Button ui:field='saveButton'
 								styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR"
 								enabled="false" />
 						</g:HTMLPanel>
+						
 					</g:HorizontalPanel>
 				</g:FlowPanel>
 

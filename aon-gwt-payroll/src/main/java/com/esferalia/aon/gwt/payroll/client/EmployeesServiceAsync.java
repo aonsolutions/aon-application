@@ -199,5 +199,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 			boolean isQuoteContract, Integer quoteGroup, boolean isOcupationContract, String ocupation,
 			AsyncCallback<String> callback);
 
+	void resetCalendar(String currentDomainName, Integer employeeId, AsyncCallback<String> callback);
+
 	
 }

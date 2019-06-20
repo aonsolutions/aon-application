@@ -1274,6 +1274,28 @@ public class EmployeeCalendarDraftObjectData {
 			
 		});
 	}
+	
+	public void resetCalendar(Consumer<String> success, Consumer<Throwable> failure) {
+		employeesService.resetCalendar(employeeId, new AsyncCallback<String>(){
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(String result) {
+				draftMapDaysHour.clear();
+				draftMapDaysType.clear();
+				draftMapDaysCoefficientEre.clear();;
+				draftMapDaysCoefficientStrike.clear();
+				draftMapExtraHours.clear();
+				
+				success.accept(result);
+			}
+		});
+	}
 
 	// -------- AUX METHODS DATABASE SYNC --------
 

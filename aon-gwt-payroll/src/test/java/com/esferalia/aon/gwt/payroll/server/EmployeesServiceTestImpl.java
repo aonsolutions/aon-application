@@ -598,6 +598,12 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		return null;
 	}
 
+	@Override
+	public String resetCalendar(String currentDomainName, Integer employeeId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
 
 	
