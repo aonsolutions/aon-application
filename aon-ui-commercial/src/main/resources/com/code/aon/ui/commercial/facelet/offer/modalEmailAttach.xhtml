@@ -10,7 +10,8 @@
 
 	<aon:panelGroup id="showEmailOptionWindow">
 		<aon:if test="#{offer.showEmailOptionWindow}">
-			<rich:modalPanel id="emailOptionModalPanel" minHeight="#{offer.includeEmailSddMandateReport?'400':'200'}"
+			<rich:modalPanel id="emailOptionModalPanel" 
+				minHeight="#{offer.includeEmailSddMandateReport?'450':'200'}"
 				minWidth="#{offer.includeEmailSddMandateReport?'500':'250'}"
 				rendered="#{offer.showEmailOptionWindow}"
 				showWhenRendered="true" zindex="90">
@@ -75,6 +76,13 @@
 											</aon:selectBooleanCheckbox>
 											<aon:outputLabel for="includeEmailSddMandateReport"
 												value="#{bundle.commercial_offer_email_include_sddMandate}" />
+									    </aon:div>
+									    	
+									    <aon:div rendered="#{not empty offer.documentOnlineSignParam}">
+					                        <aon:selectBooleanCheckbox id="documentOnlineSign" title="#{offer.documentOnlineSignParam.value} en desarrollo..."
+												value="#{offer.documentOnlineSign}" disabled="true"/>
+											<aon:outputLabel for="documentOnlineSign" title="#{offer.documentOnlineSignParam.value} en desarrollo..."
+												value="Solicitar firma online [#{offer.documentOnlineSignParam.value}]" />
 									    </aon:div>
 								    </aon:panelGrid>
 									    
