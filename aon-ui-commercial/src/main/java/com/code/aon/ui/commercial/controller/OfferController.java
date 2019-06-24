@@ -33,6 +33,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.util.AppParamUtil;
@@ -122,6 +123,7 @@ public class OfferController extends HeaderObjectController implements ISignatur
 	private boolean includeEmailOfferAttach;
 	private boolean includeEmailOfferReport;
 	private boolean includeEmailSddMandateReport;
+	private boolean documentOnlineSign;
 	private SddMandateObject sddMandate;
 	private BankAccountHelper accountHelper;
 	
@@ -365,6 +367,14 @@ public class OfferController extends HeaderObjectController implements ISignatur
 		this.includeEmailSddMandateReport = includeEmailSddMandateReport;
 	}
 
+	public boolean isDocumentOnlineSign() {
+		return documentOnlineSign;
+	}
+
+	public void setDocumentOnlineSign(boolean documentOnlineSign) {
+		this.documentOnlineSign = documentOnlineSign;
+	}
+
 	public SddMandateObject getSddMandate() {
 		return sddMandate;
 	}
@@ -428,6 +438,11 @@ public class OfferController extends HeaderObjectController implements ISignatur
 		criteria.addNotNullExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_ITEM_ID));
 		criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_STATUS), OfferDetailStatus.ON_SALE);
 		return offerDetailBean.getCount(criteria) > 0;
+	}
+	
+	public ApplicationParameter getDocumentOnlineSignParam() throws ManagerBeanException {
+		ApplicationParameter appParam = AppParamUtil.getParameter("DOCUMENT_ONLINE_SIGN");
+		return appParam;
 	}
 
 	public void targetData(LookupChangeEvent event) throws ManagerBeanException {

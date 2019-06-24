@@ -407,7 +407,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($V{adminCellular}.getComment()!=null && $V{adminCellular}.getComment().trim()!="")
+				<textFieldExpression><![CDATA[($V{adminCellular}.getComment()!=null && !$V{adminCellular}.getComment().trim().equals(""))
 ? $V{adminCellular}.getComment()
 : $V{adminEmail}.getComment()]]></textFieldExpression>
 			</textField>
@@ -750,10 +750,10 @@
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{offer_customer_email} + " RTD"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_email_abrv} + " RTD:"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-127" x="65" y="108" width="140" height="23" uuid="45da3919-9afc-4df5-920c-bd67f14397f2">
+				<reportElement key="textField-127" x="65" y="108" width="194" height="23" uuid="45da3919-9afc-4df5-920c-bd67f14397f2">
 					<printWhenExpression><![CDATA[$V{technicalEmail}!=null]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="3" bottomPadding="2">
@@ -769,7 +769,7 @@
 				<textFieldExpression><![CDATA[$V{technicalEmail}.getValue()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-124" x="206" y="108" width="124" height="23" uuid="1bc5ea7e-5b50-46fb-ae33-7ebd889850e0">
+				<reportElement key="textField-124" x="260" y="108" width="70" height="23" uuid="1bc5ea7e-5b50-46fb-ae33-7ebd889850e0">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<printWhenExpression><![CDATA[$V{technicalEmail}!=null]]></printWhenExpression>
 				</reportElement>
