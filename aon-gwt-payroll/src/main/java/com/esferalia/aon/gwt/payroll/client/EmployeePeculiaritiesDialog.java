@@ -257,7 +257,7 @@ public class EmployeePeculiaritiesDialog extends CustomDialog {
 			}else {
 				this.peculiarities.setEnabled(false);
 				this.peculiarities.setSelectedIndex(0);
-				this.start_date_peculiarity.setValue(null);
+				this.start_date_peculiarity.setValue(this.contractStartDate, true);
 			}
 		}else {
 			this.peculiarities.setEnabled(false);
