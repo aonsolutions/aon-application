@@ -104,13 +104,13 @@
 	<variable name="DoubleFormatter" class="java.text.DecimalFormat">
 		<variableExpression><![CDATA[new DecimalFormat( "#,###,###,##0.00" )]]></variableExpression>
 	</variable>
-	<variable name="adminCellular" class="com.code.aon.registry.RegistryMedia">
-		<variableExpression><![CDATA[$P{reportScriptlet_SCRIPTLET}.getAdministrativeCellular()]]></variableExpression>
-		<initialValueExpression><![CDATA[$P{reportScriptlet_SCRIPTLET}.getAdministrativeCellular()]]></initialValueExpression>
+	<variable name="commercialCellular" class="com.code.aon.registry.RegistryMedia">
+		<variableExpression><![CDATA[$P{reportScriptlet_SCRIPTLET}.getCommercialCellular()]]></variableExpression>
+		<initialValueExpression><![CDATA[$P{reportScriptlet_SCRIPTLET}.getCommercialCellular()]]></initialValueExpression>
 	</variable>
-	<variable name="adminEmail" class="com.code.aon.registry.RegistryMedia">
-		<variableExpression><![CDATA[$P{reportScriptlet_SCRIPTLET}.getAdministrativeEmail()]]></variableExpression>
-		<initialValueExpression><![CDATA[$P{reportScriptlet_SCRIPTLET}.getAdministrativeEmail()]]></initialValueExpression>
+	<variable name="commercialEmail" class="com.code.aon.registry.RegistryMedia">
+		<variableExpression><![CDATA[$P{reportScriptlet_SCRIPTLET}.getCommercialEmail()]]></variableExpression>
+		<initialValueExpression><![CDATA[$P{reportScriptlet_SCRIPTLET}.getCommercialEmail()]]></initialValueExpression>
 	</variable>
 	<variable name="technicalCellular" class="com.code.aon.registry.RegistryMedia">
 		<variableExpression><![CDATA[$P{reportScriptlet_SCRIPTLET}.getTechnicalCellular()]]></variableExpression>
@@ -407,9 +407,9 @@
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($V{adminCellular}.getComment()!=null && !$V{adminCellular}.getComment().trim().equals(""))
-? $V{adminCellular}.getComment()
-: $V{adminEmail}.getComment()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($V{commercialCellular}.getComment()!=null && !$V{commercialCellular}.getComment().trim().equals(""))
+? $V{commercialCellular}.getComment()
+: $V{commercialEmail}.getComment()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-126" x="143" y="85" width="63" height="23" uuid="ba116b66-964a-4faa-b0e8-2135bf077257"/>
@@ -430,7 +430,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{adminEmail}.getValue()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{commercialEmail}.getValue()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-128" x="2" y="85" width="63" height="23" uuid="7a760245-8186-4696-a8c8-14b3009b3aa4">
@@ -455,7 +455,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{adminCellular}.getValue()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{commercialCellular}.getValue()]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField-11" positionType="Float" mode="Transparent" x="361" y="253" width="100" height="14" forecolor="#999999" backcolor="#FFFFFF" uuid="6bbe5faa-7c2a-4abd-a736-83c66646f34f">

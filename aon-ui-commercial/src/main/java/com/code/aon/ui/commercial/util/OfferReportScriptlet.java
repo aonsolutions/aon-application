@@ -80,7 +80,7 @@ public class OfferReportScriptlet extends ReportScriptlet implements Serializabl
 		List<ITransferObject> list = getRMediaList(MediaType.EMAIL, true, false, false);
 		return list!=null && list.size()>0 ? ((RegistryMedia)list.get(0)): null;
 	}
-	
+
 	public RegistryMedia getTechnicalCellular() throws ManagerBeanException, JRScriptletException {
 		List<ITransferObject> list = getRMediaList(MediaType.CELLULAR, false, true, false);
 		return list!=null && list.size()>0 ? ((RegistryMedia)list.get(0)): null;
@@ -88,6 +88,16 @@ public class OfferReportScriptlet extends ReportScriptlet implements Serializabl
 	
 	public RegistryMedia getTechnicalEmail() throws ManagerBeanException, JRScriptletException {
 		List<ITransferObject> list = getRMediaList(MediaType.EMAIL, false, true, false);
+		return list!=null && list.size()>0 ? ((RegistryMedia)list.get(0)): null;
+	}
+
+	public RegistryMedia getCommercialCellular() throws ManagerBeanException, JRScriptletException {
+		List<ITransferObject> list = getRMediaList(MediaType.CELLULAR, false, false, true);
+		return list!=null && list.size()>0 ? ((RegistryMedia)list.get(0)): null;
+	}
+	
+	public RegistryMedia getCommercialEmail() throws ManagerBeanException, JRScriptletException {
+		List<ITransferObject> list = getRMediaList(MediaType.EMAIL, false, false, true);
 		return list!=null && list.size()>0 ? ((RegistryMedia)list.get(0)): null;
 	}
 	
@@ -99,10 +109,14 @@ public class OfferReportScriptlet extends ReportScriptlet implements Serializabl
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_REGISTRY_ID), target.getId());
 		criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_MEDIA_TYPE), type);
-		criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_ADMINISTRATIVE),
+		if (administrative)
+			criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_ADMINISTRATIVE),
 				administrative);
-		criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_COMMERCIAL), commercial);
-		criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_TECHNICAL), technical);
+		if (commercial)
+			criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_COMMERCIAL), commercial);
+		
+		if (technical)
+			criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_TECHNICAL), technical);
 		criteria.setSkipDomainFilter(true);
 		return rMediaBean.getList(criteria);
 	}
