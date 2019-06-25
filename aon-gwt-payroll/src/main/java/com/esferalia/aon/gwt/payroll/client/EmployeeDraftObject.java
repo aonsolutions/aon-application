@@ -331,6 +331,10 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		return this.employeeData.getAddresNum();
 	}
 	
+	public String getEmployeeAddressInfo() {
+		return this.employeeData.getAddressInfo();
+	}
+	
 	public String getEmployeeAddressZip() {
 		return this.employeeData.getAddressZip();
 	}
@@ -939,6 +943,14 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		
 		employeeData.setAddresNum(address_number);
 	}
+	
+	public void setEmployeeAddressInfo(String addressInfo) {
+		add(employeeData::setAddressInfo, 
+				employeeData.getAddressInfo(), 
+				addressInfo );
+		
+		employeeData.setAddressInfo(addressInfo);
+	}
 
 	public void setEmployeeAddressZip(String zip_code) {
 		add(employeeData::setAddressZip, 
@@ -1019,5 +1031,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	public Date getPayrollDate() {
 		return this.contractData.getPayrollDate();
 	}
+
+	
 
 }

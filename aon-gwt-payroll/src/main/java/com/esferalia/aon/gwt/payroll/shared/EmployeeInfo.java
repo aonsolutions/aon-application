@@ -29,6 +29,7 @@ public class EmployeeInfo implements Serializable{
 	private String streetType;
 	private String address;
 	private String addresNum;
+	private String addressInfo;
 	private String addressZip;
 	private String addressCity;
 	
@@ -76,6 +77,7 @@ public class EmployeeInfo implements Serializable{
 		this.address = null;
 		this.addresNum = null;
 		this.addressZip = null;
+		this.addressInfo = null;
 		this.addressCity = null;
 		this.geozoneId = null;
 		this.addressProvinces = null;
@@ -221,6 +223,14 @@ public class EmployeeInfo implements Serializable{
 
 	public void setAddressZip(String addressZip) {
 		this.addressZip = addressZip;
+	}
+
+	public String getAddressInfo() {
+		return addressInfo;
+	}
+
+	public void setAddressInfo(String addressInfo) {
+		this.addressInfo = addressInfo;
 	}
 
 	public String getAddressCity() {

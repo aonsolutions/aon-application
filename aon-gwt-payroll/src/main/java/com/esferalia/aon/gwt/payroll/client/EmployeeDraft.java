@@ -32,6 +32,10 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.dom.client.DomEvent;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -398,6 +402,9 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 
 		@Override
 		public void onEmployeeAddressNumChange() {}
+		
+		@Override
+		public void onEmployeeAddressInfoChange() {}
 
 		@Override
 		public void onEmployeeAddressZipChange() {}
@@ -789,6 +796,17 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 			saving();
 		});
 		
+		employee.addressInfo.addKeyUpHandler(e-> {
+			
+			String value = employee.addressInfo.getValue();
+			String saved = employeeDraftObject.getEmployeeAddressInfo();
+			if ( AonStringUtils.equals(value, saved))
+				return;
+			
+			employeeDraftObject.setEmployeeAddressInfo(value);
+			saving();
+		});
+		
 		employee.addressZip.addKeyUpHandler(e-> {
 			
 			String value = employee.addressZip.getValue();
@@ -798,6 +816,18 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 			
 			employeeDraftObject.setEmployeeAddressZip(value);
 			saving();
+		});
+		
+		employee.addressZip.addValueChangeHandler(new ValueChangeHandler<String>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				if(employee.addressZip.getValue().length() >= 2) {
+					String zip = employee.addressZip.getValue().substring(0, 2);
+					employee.addressProvince.setSelectedIndex( ProvinceContract.getProvinceIndex(ProvinceContract.getName(zip)));
+					employee.onEmployeeAddressProvinceChange();
+				}
+			}
 		});
 		
 		employee.mobile.addKeyUpHandler(e-> {
@@ -1041,10 +1071,26 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 
 	private void fillEmployeeTable() {
 		this.employee.birth_date.setValue(employeeDraftObject.getEmployeeBirthDate());
+		if(null != employeeDraftObject.getEmployeeBirthDate()) {
+			Integer year = employeeDraftObject.getEmployeeBirthDate().getYear();
+			Integer month = employeeDraftObject.getEmployeeBirthDate().getMonth();
+			Integer currentYear = new Date().getYear();
+			Integer currentMonth = new Date().getMonth();
+			
+			Integer age = currentYear - year;
+			
+			if(month > currentMonth)
+				age--;
+			
+			this.employee.age.setText("( " + (age) + " a" + String.valueOf("\u00F1") + "os )");
+		}else 
+			this.employee.age.setText("");
+		
 		this.employee.gender.setSelectedIndex(employeeDraftObject.getEmployeeGender());
 		this.employee.street_type.setSelectedIndex(employeeDraftObject.getEmployeeAddressStreetTypeIndex());
 		this.employee.address.setValue(employeeDraftObject.getEmployeeAddress());
 		this.employee.addressNum.setValue(employeeDraftObject.getEmployeeAddressNumber());
+		this.employee.addressInfo.setValue(employeeDraftObject.getEmployeeAddressInfo());
 		this.employee.addressZip.setValue(employeeDraftObject.getEmployeeAddressZip());
 		//		this.employee.addressCity.setValue(employeeDraftObject.getEmployeeAddressCity());
 		this.employee.addressProvince.setSelectedIndex( ProvinceContract.getProvinceIndex(employeeDraftObject.getEmployeeAddressProvince()));

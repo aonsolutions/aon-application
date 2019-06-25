@@ -138,6 +138,7 @@ public class JooqEmployee {
 			employeeData.setRaddressId(raddressTable.get(RADDRESS.ID));
 			employeeData.setStreetType(raddressTable.get(RADDRESS.STREET_TYPE));
 			employeeData.setAddress(raddressTable.get(RADDRESS.ADDRESS));
+			employeeData.setAddressInfo(raddressTable.get(RADDRESS.ADDRESS2));
 			employeeData.setAddresNum(raddressTable.get(RADDRESS.NUMBER));
 			employeeData.setAddressZip(raddressTable.get(RADDRESS.ZIP));
 //			employeeData.setAddressCity(raddressTable.get(RADDRESS.CITY));
@@ -576,6 +577,7 @@ public class JooqEmployee {
 						.set(RADDRESS.REGISTRY, registryId)
 						.set(RADDRESS.STREET_TYPE, employeeData.getStreetType())
 						.set(RADDRESS.ADDRESS, employeeData.getAddress())
+						.set(RADDRESS.ADDRESS2, employeeData.getAddressInfo())
 						.set(RADDRESS.NUMBER, employeeData.getAddresNum())
 						.set(RADDRESS.ZIP, employeeData.getAddressZip())
 						.set(RADDRESS.CITY, municipalities.getMunicipalityByZip(employeeData.getAddressCity()))
@@ -590,6 +592,7 @@ public class JooqEmployee {
 				dslContext.update(RADDRESS)
 						.set(RADDRESS.STREET_TYPE, employeeData.getStreetType())
 						.set(RADDRESS.ADDRESS, employeeData.getAddress())
+						.set(RADDRESS.ADDRESS2, employeeData.getAddressInfo())
 						.set(RADDRESS.NUMBER, employeeData.getAddresNum())
 						.set(RADDRESS.ZIP, employeeData.getAddressZip())
 						.set(RADDRESS.CITY, municipalities.getMunicipalityByZip(employeeData.getAddressCity()))
@@ -1429,6 +1432,7 @@ public class JooqEmployee {
 					.set(RADDRESS.REGISTRY, registryId)
 					.set(RADDRESS.STREET_TYPE, employeeData.getStreetType())
 					.set(RADDRESS.ADDRESS, employeeData.getAddress())
+					.set(RADDRESS.ADDRESS2, employeeData.getAddressInfo())
 					.set(RADDRESS.NUMBER, employeeData.getAddresNum())
 					.set(RADDRESS.ZIP, employeeData.getAddressZip())
 					.set(RADDRESS.CITY, municipalities.getMunicipalityByZip(employeeData.getAddressCity()))

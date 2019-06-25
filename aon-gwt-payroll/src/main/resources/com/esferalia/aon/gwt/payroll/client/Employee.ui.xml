@@ -143,6 +143,20 @@
 			margin-top: 3px;
 		}
 		
+		.addressPadding{
+			padding-top: 2px;
+			padding-right: 10px;
+			padding-left: 5px;
+		}
+		
+		.labelsWidth{
+			width: 100px;
+		}
+		
+		.mr-10{
+			margin-right: 10px;
+		}
+		
 	</ui:style>
 
    	<g:HTMLPanel> 
@@ -372,8 +386,8 @@
 							<td colspan="2">
 								<a:DateBoxEx ui:field="birth_date" debugId="birth_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle}'></a:DateBoxEx>
 							</td>
-							<td>
-								<g:HorizontalPanel styleName="{style.maxWidth} {style.paddingLeft}">
+							<td style="width: 100px;">
+								<g:HorizontalPanel styleName="{style.paddingLeft} {style.labelsWidth}">
 									<g:Label ui:field="age" debugId="age"></g:Label>
 									<g:Label styleName='{style.alignTextCenter}'>Sexo</g:Label>
 								</g:HorizontalPanel>
@@ -389,14 +403,18 @@
 							<td>
 							    <g:ListBox ui:field="street_type" debugId="street_type" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
-							<td colspan="4">
+							<td colspan="3">
 								<g:SuggestBox ui:field="address" debugId="address" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
 							</td>
 							<td>
-								<g:Label styleName='{style.alignTextCenter}'>Número</g:Label>
+								<g:HorizontalPanel>
+									<g:Label styleName='{style.alignTextCenter} {style.addressPadding}'>Nº</g:Label>
+									<g:TextBox ui:field="addressNum" debugId="addressNum" styleName='aon-inputText {style.maxWidth}'></g:TextBox>
+									<g:Label styleName='{style.alignTextCenter} {style.addressPadding} {style.mr-10} {style.maxWidth}'>Rest. Dir.</g:Label>
+								</g:HorizontalPanel>
 							</td>
-							<td colspan="2">
-								<g:TextBox ui:field="addressNum" debugId="addressNum" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
+							<td colspan="3">
+								<g:TextBox ui:field="addressInfo" debugId="addressInfo" styleName='aon-inputText {style.maxWidthTextBox}'></g:TextBox>
 							</td>
 						</tr>
 						<tr>
@@ -417,7 +435,7 @@
 								<g:Label styleName='{style.alignTextCenter}'>Municipio</g:Label>
 							</td>
 							<td colspan="2"> 
-								<g:ListBox ui:field="addressMunicipality" debugId="addressMunicipality" styleName='aon-inputText {style.maxWidthTextBox3}'></g:ListBox>
+								<g:ListBox ui:field="addressMunicipality" debugId="addressMunicipality" styleName='aon-inputText {style.maxWidthTextBox}'></g:ListBox>
 							</td>
 						</tr>
 						<tr>

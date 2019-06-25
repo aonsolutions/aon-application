@@ -749,6 +749,10 @@ public class EmployeeDialogObject {
 	public void setEmployeeAddressNumber(String address_number) {
 		employeeData.setAddresNum(address_number);
 	}
+	
+	public void setEmployeeAddressInfo(String adressInfo) {
+		employeeData.setAddressInfo(adressInfo);
+	}
 
 	public void setEmployeeAddressZip(String zip_code) {
 		employeeData.setAddressZip(zip_code);

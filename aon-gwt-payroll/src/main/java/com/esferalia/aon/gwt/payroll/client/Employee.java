@@ -227,6 +227,9 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 
 	@UiField
 	TextBox addressNum;
+	
+	@UiField
+	TextBox addressInfo;
 
 	@UiField
 	TextBox addressZip;
@@ -484,6 +487,11 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 	void onAddressNumChangeValue(ChangeEvent event) {
 		onEmployeeAddressNumChange();
 	}
+	
+	@UiHandler("addressInfo")
+	void onAddressInfoChangeValue(ChangeEvent event) {
+		onEmployeeAddressInfoChange();
+	}
 
 	@UiHandler("addressZip")
 	void onAddressZipChangeValue(ChangeEvent event) {
@@ -570,6 +578,7 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 	public abstract void onEmployeeStreetTypeChange();
 	public abstract void onEmployeeAddressChange();
 	public abstract void onEmployeeAddressNumChange();
+	public abstract void onEmployeeAddressInfoChange();
 	public abstract void onEmployeeAddressZipChange();
 	public abstract void onEmployeeAddressProvinceChange();
 	public abstract void onEmployeeAddressMunicipalityChange();
@@ -622,6 +631,7 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 		this.street_type.clear();
 		this.address.setValue("");
 		this.addressNum.setValue("");
+		this.addressInfo.setValue("");
 		this.addressZip.setValue("");
 		this.addressMunicipality.clear();
 		this.addressProvince.clear();

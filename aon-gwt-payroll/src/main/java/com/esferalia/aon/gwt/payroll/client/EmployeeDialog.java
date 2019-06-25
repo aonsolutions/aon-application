@@ -435,9 +435,24 @@ public class EmployeeDialog extends CustomDialog {
 		
 		// TABLA DATOS EMPLEADO
 
+		@SuppressWarnings("deprecation")
 		@Override
 		public void onEmployeeBirthDateChange() {
 			employeeDialogObject.setEmployeeBirthDate(this.birth_date.getValue());
+			if(null != this.birth_date.getValue()) {
+				Integer year = this.birth_date.getValue().getYear();
+				Integer actualYear = new Date().getYear();
+				Integer month = this.birth_date.getValue().getMonth();
+				Integer actualMonth = new Date().getMonth();
+				
+				Integer age = actualYear - year;
+				if(month > actualMonth)
+					age--;
+				
+				this.age.setText("( " + (age) + " a" + String.valueOf("\u00F1") + "os )");
+			}else
+				this.age.setText("");
+			
 		}
 
 		@Override
@@ -461,10 +476,20 @@ public class EmployeeDialog extends CustomDialog {
 		public void onEmployeeAddressNumChange() {
 			employeeDialogObject.setEmployeeAddressNumber(this.addressNum.getValue());
 		}
+		
+		@Override
+		public void onEmployeeAddressInfoChange() {
+			employeeDialogObject.setEmployeeAddressInfo(this.addressInfo.getValue());
+		}
 
 		@Override
 		public void onEmployeeAddressZipChange() {
 			employeeDialogObject.setEmployeeAddressZip(this.addressZip.getValue());
+			if(this.addressZip.getValue().length() >= 2) {
+				String zip = this.addressZip.getValue().substring(0, 2);
+				this.addressProvince.setSelectedIndex( ProvinceContract.getProvinceIndex(ProvinceContract.getName(zip)));
+				onEmployeeAddressProvinceChange();
+			}
 		}
 
 		@Override
