@@ -25,9 +25,9 @@
 			<f:selectItem itemLabel="-" value="#{null}"/>
 			<f:selectItems value="#{commercialCollections.projectSources}" />
 		</aon:selectOneMenu>
-		<aon:outputLabel for="ProjectCommercial_projectType"  styleClass="aon-margin-left" 
+		<aon:outputLabel for="ProjectCommercial_projectType" styleClass="aon-margin-left" 
 			value="#{bundle.project_project_type}"/>
-		<aon:selectOneMenu id="ProjectCommercial_projectType"
+		<aon:selectOneMenu id="ProjectCommercial_projectType" styleClass="aon-margin-left"
 			value="#{controller.to.project.projectType}">
 			<f:selectItem itemLabel="-" value="#{null}"/>
 			<f:selectItems value="#{projectCollections.projectTypes}" />

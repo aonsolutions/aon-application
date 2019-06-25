@@ -15,7 +15,6 @@ public class ProjectCommercialBeanVetoListener extends ManagerBeanVetoListenerAd
     public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
     	ProjectCommercial to = (ProjectCommercial)evt.getTo();
     	to.getProject().setRegistry(to.getTarget().getRegistry());
-    	to.getProject().setProjectType(null);
     	to.getProject().setCommercial(true);
     	to.getProject().setActive(to.getStatus() == ProjectStatus.PENDING || to.getStatus() == ProjectStatus.APPROVED);
     }
