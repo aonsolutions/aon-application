@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
@@ -224,6 +225,14 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void setEmployeeSSBonuses(Integer contractId, List<SSBonusData> ssBonuses, AsyncCallback<List<SSBonusData>> asyncCallback) {
 		enterprisesServiceAsync.setEmployeeSSBonuses(getCurrentDomainName(),  contractId, ssBonuses, asyncCallback);
+	}
+	
+	public void setEmployeeAFIChanges(Integer contractId, AFIChanges afiChangesMap, AsyncCallback<String> asyncCallback) {
+		enterprisesServiceAsync.setEmployeeAFIChanges(getCurrentDomainName(), contractId, afiChangesMap, asyncCallback);
+	}
+	
+	public void getEmployeeAFIChanges(Integer contractId, AsyncCallback<AFIChanges> asyncCallback) {
+		enterprisesServiceAsync.getEmployeeAFIChanges(getCurrentDomainName(), contractId, asyncCallback);
 	}
 	
 	// ----------------------------------------------------------------- static

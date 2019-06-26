@@ -13,7 +13,10 @@ import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Map.Entry;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -23,6 +26,9 @@ import org.jooq.impl.DSL;
 import org.jooq.tools.json.JSONObject;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
+import com.esferalia.aon.gwt.payroll.shared.AFIChanges.AFIChange;
 
 public class JooqEmployeeAFI {
 
@@ -36,11 +42,19 @@ public class JooqEmployeeAFI {
 		return SETTINGS;
 	}
 	
+	public static String setEmployeeAFI(Connection connection, Integer contractId, AFIChanges afiChangesMap) {
+		return setEmployeeAFIDB(DSL.using(connection, getDefaultSettings()), contractId, afiChangesMap);
+	}
+	
+	public static AFIChanges getEmployeeAFI(Connection connection, Integer contractId) {
+		return getEmployeeAFIDB(DSL.using(connection, getDefaultSettings()), contractId);
+	}
+
 	// ********************************************************************************************************************************************
 	//													GENERATE JSON EMPLOYE AFI
 	// ********************************************************************************************************************************************
 
-	@SuppressWarnings({ "unchecked", "null" })
+	@SuppressWarnings({ "unchecked"})
 	public static JSONObject getEmployeeAFIInfo(String _domainId, String _domainName, String _contractId, String _workplaceId, Boolean _isStartContract,
 			Boolean _isEndContract, Boolean _isChangeContract, Boolean _isQuoteContract, Boolean _isOcupationContract) {
 		
@@ -491,6 +505,246 @@ public class JooqEmployeeAFI {
 		}else
 			return ccc;
 		
+	}
+	
+	// ***************************************************************************************************************************************
+	// ***************************************************************************************************************************************
+	// ***************************************************************************************************************************************
+	
+	private static String setEmployeeAFIDB(DSLContext dslContext, Integer contractId, AFIChanges afiChangesMap) {
+		
+		//Delete existing info
+		ArrayList<String> contractDataVars = new ArrayList<String>();
+		contractDataVars.add("TC2");
+		contractDataVars.add("GRUPO_COTIZACION");
+		contractDataVars.add("OCUPACION");
+		
+		dslContext.delete(CONTRACT_DATA)
+			.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+			.and(CONTRACT_DATA.NAME.in(contractDataVars))
+			.execute();
+		
+		//Get contract startDate and endDate
+		Record contractRecord = dslContext.select().from(CONTRACT)
+					.where(CONTRACT.ID.eq(contractId))
+					.fetchOne();
+		
+		Date contractEndDate = contractRecord.get(CONTRACT.END_DATE);
+		Integer domainId = contractRecord.get(CONTRACT.DOMAIN);
+		
+		ArrayList<java.util.Date> dateList = new ArrayList<java.util.Date>();
+		dateList.addAll(afiChangesMap.getAFIChanges().keySet());
+		
+		//Insert info : OPCION 1
+		Integer cont = 1;
+		
+		for(Entry<java.util.Date, ArrayList<AFIChange>> entry : afiChangesMap.getAFIChanges().entrySet()) {
+			Date startDate = new Date(entry.getKey().getTime());
+			Date endDate;
+			if(cont < dateList.size()) {
+				endDate = new Date(DateUtils.copyDateOnly(dateList.get(cont)).getTime());
+				DateUtils.addDays2Date(endDate, -1);
+			}else
+				endDate = contractEndDate;
+			
+			for(AFIChange afiChange: afiChangesMap.getAFIChanges().get(entry.getKey())) {
+				if(null != afiChange.getValue())
+					dslContext.insertInto(CONTRACT_DATA)
+						.set(CONTRACT_DATA.DOMAIN, domainId)
+						.set(CONTRACT_DATA.CONTRACT, contractId)
+						.set(CONTRACT_DATA.NAME, afiChange.getName())
+						.set(CONTRACT_DATA.EXPRESSION, afiChange.getValue().contains("\"") ? afiChange.getValue() : "\"" + afiChange.getValue() + "\"")
+						.set(CONTRACT_DATA.START_DATE, startDate)
+						.set(CONTRACT_DATA.END_DATE, endDate)
+						.execute();
+			}
+			
+			cont++;
+		}
+		
+		//Insert info : OPCION 2
+//		AFIChanges afiChangesTC2 = parseAFIChanges(afiChangesMap, "TC2");
+//		AFIChanges afiChangesQuoteGroup = parseAFIChanges(afiChangesMap, "GRUPO_COTIZACION");
+//		AFIChanges afiChangesOcupation = parseAFIChanges(afiChangesMap, "OCUPACION");
+//		
+//		Integer cont = 1;
+//		
+//		dateList.clear();
+//		dateList.addAll(afiChangesTC2.getAFIChanges().keySet());
+//		for(Entry<java.util.Date, ArrayList<AFIChange>> entry : afiChangesTC2.getAFIChanges().entrySet()) {
+//			Date startDate = new Date(entry.getKey().getTime());
+//			Date endDate;
+//			if(cont < dateList.size()) {
+//				endDate = new Date(DateUtils.copyDateOnly(dateList.get(cont)).getTime());
+//				DateUtils.addDays2Date(endDate, -1);
+//			}else
+//				endDate = contractEndDate;
+//			
+//			for(AFIChange afiChange: afiChangesTC2.getAFIChanges().get(entry.getKey())) {
+//				if(null != afiChange.getValue())
+//					dslContext.insertInto(CONTRACT_DATA)
+//						.set(CONTRACT_DATA.DOMAIN, domainId)
+//						.set(CONTRACT_DATA.CONTRACT, contractId)
+//						.set(CONTRACT_DATA.NAME, afiChange.getName())
+//						.set(CONTRACT_DATA.EXPRESSION, afiChange.getValue().contains("\"") ? afiChange.getValue() : "\"" + afiChange.getValue() + "\"")
+//						.set(CONTRACT_DATA.START_DATE, startDate)
+//						.set(CONTRACT_DATA.END_DATE, endDate)
+//						.execute();
+//			}
+//			
+//			cont++;
+//		}
+//		
+//		cont = 1;
+//		
+//		dateList.clear();
+//		dateList.addAll(afiChangesQuoteGroup.getAFIChanges().keySet());
+//		for(Entry<java.util.Date, ArrayList<AFIChange>> entry : afiChangesQuoteGroup.getAFIChanges().entrySet()) {
+//			Date startDate = new Date(entry.getKey().getTime());
+//			Date endDate;
+//			if(cont < dateList.size()) {
+//				endDate = new Date(DateUtils.copyDateOnly(dateList.get(cont)).getTime());
+//				DateUtils.addDays2Date(endDate, -1);
+//			}else
+//				endDate = contractEndDate;
+//			
+//			for(AFIChange afiChange: afiChangesQuoteGroup.getAFIChanges().get(entry.getKey())) {
+//				if(null != afiChange.getValue())
+//					dslContext.insertInto(CONTRACT_DATA)
+//						.set(CONTRACT_DATA.DOMAIN, domainId)
+//						.set(CONTRACT_DATA.CONTRACT, contractId)
+//						.set(CONTRACT_DATA.NAME, afiChange.getName())
+//						.set(CONTRACT_DATA.EXPRESSION, afiChange.getValue().contains("\"") ? afiChange.getValue() : "\"" + afiChange.getValue() + "\"")
+//						.set(CONTRACT_DATA.START_DATE, startDate)
+//						.set(CONTRACT_DATA.END_DATE, endDate)
+//						.execute();
+//			}
+//			
+//			cont++;
+//		}
+//		
+//		cont = 1;
+//		
+//		dateList.clear();
+//		dateList.addAll(afiChangesOcupation.getAFIChanges().keySet());
+//		for(Entry<java.util.Date, ArrayList<AFIChange>> entry : afiChangesOcupation.getAFIChanges().entrySet()) {
+//			Date startDate = new Date(entry.getKey().getTime());
+//			Date endDate;
+//			if(cont < dateList.size()) {
+//				endDate = new Date(DateUtils.copyDateOnly(dateList.get(cont)).getTime());
+//				DateUtils.addDays2Date(endDate, -1);
+//			}else
+//				endDate = contractEndDate;
+//			
+//			for(AFIChange afiChange: afiChangesOcupation.getAFIChanges().get(entry.getKey())) {
+//				if(null != afiChange.getValue())
+//					dslContext.insertInto(CONTRACT_DATA)
+//						.set(CONTRACT_DATA.DOMAIN, domainId)
+//						.set(CONTRACT_DATA.CONTRACT, contractId)
+//						.set(CONTRACT_DATA.NAME, afiChange.getName())
+//						.set(CONTRACT_DATA.EXPRESSION, afiChange.getValue().contains("\"") ? afiChange.getValue() : "\"" + afiChange.getValue() + "\"")
+//						.set(CONTRACT_DATA.START_DATE, startDate)
+//						.set(CONTRACT_DATA.END_DATE, endDate)
+//						.execute();
+//			}
+//			
+//			cont++;
+//		}
+		
+		return null;
+	}
+
+	private static AFIChanges parseAFIChanges(AFIChanges afiChangesMap, String name) {
+		AFIChanges afiChangesAux = new AFIChanges();
+		
+		ArrayList<java.util.Date> dateList = new ArrayList<java.util.Date>();
+		dateList.addAll(afiChangesMap.getAFIChanges().keySet());
+		
+		Date dateAux = new Date(dateList.get(0).getTime());
+		String value = "";
+		for( AFIChange afiChange : afiChangesMap.getAFIChanges().get(dateAux)){
+			if(afiChange.getName().equals(name)) {
+				value = afiChange.getValue();
+				continue;
+			}
+		}
+		
+		Integer cont = 0;
+		for(Entry<java.util.Date, ArrayList<AFIChange>> entry : afiChangesMap.getAFIChanges().entrySet()) {
+			for(AFIChange afiChange: entry.getValue()) {
+				if(afiChange.getName().equals(name)) {
+					if(value.equals(afiChange.getValue())){
+						cont++;
+						if(cont == afiChangesMap.getAFIChanges().size()){
+							if(null != value) {
+								ArrayList<AFIChange> listAux = new ArrayList<>();
+								listAux.add(new AFIChange(name, value));
+								afiChangesAux.getAFIChanges().put(dateAux, listAux);
+							}
+						}
+						continue;
+					}else {
+						cont++;
+						ArrayList<AFIChange> listAux = new ArrayList<>();
+						listAux.add(new AFIChange(name, value));
+						afiChangesAux.getAFIChanges().put(dateAux, listAux);
+						
+						dateAux = new Date(entry.getKey().getTime());
+						value = afiChange.getValue();
+						
+						if(cont == afiChangesMap.getAFIChanges().size()){
+							if(null != value) {
+								ArrayList<AFIChange> listAux2 = new ArrayList<>();
+								listAux2.add(new AFIChange(name, value));
+								afiChangesAux.getAFIChanges().put(dateAux, listAux2);
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		return afiChangesAux;
+	}
+
+	private static AFIChanges getEmployeeAFIDB(DSLContext dslContext, Integer contractId) {
+		AFIChanges afiChanges = new AFIChanges();
+		
+		ArrayList<String> contractDataVars = new ArrayList<String>();
+		contractDataVars.add("TC2");
+		contractDataVars.add("GRUPO_COTIZACION");
+		contractDataVars.add("OCUPACION");
+		
+		Result<Record> contractDataRecords = dslContext.select().from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+				.and(CONTRACT_DATA.NAME.in(contractDataVars))
+				.orderBy(CONTRACT_DATA.START_DATE.asc())
+				.fetch();
+		
+		if(!contractDataRecords.isEmpty()) {
+			ArrayList<AFIChange> afiChangeList = new ArrayList<>();
+			Date dateAux = contractDataRecords.get(0).get(CONTRACT_DATA.START_DATE);
+			
+			for(Record r : contractDataRecords) {
+				if(r.get(CONTRACT_DATA.START_DATE).equals(dateAux)) {
+					afiChangeList.add(new AFIChange(r.get(CONTRACT_DATA.NAME), r.get(CONTRACT_DATA.EXPRESSION)));
+				}else {
+					java.util.Date javaDate = new Date(dateAux.getTime());
+					afiChanges.getAFIChanges().put(javaDate, afiChangeList);
+					dateAux = r.get(CONTRACT_DATA.START_DATE);
+					afiChangeList = new ArrayList<>();
+					afiChangeList.add(new AFIChange(r.get(CONTRACT_DATA.NAME), r.get(CONTRACT_DATA.EXPRESSION)));
+				}
+			}
+			
+			if(!afiChangeList.isEmpty()) {
+				java.util.Date javaDate = new Date(dateAux.getTime());
+				afiChanges.getAFIChanges().put(javaDate, afiChangeList);
+			}
+			
+		}
+		
+		return afiChanges;
 	}
 
 }

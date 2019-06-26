@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
@@ -77,5 +78,8 @@ public interface EnterprisesServiceAsync {
 	void getBonusConcepts(String currentDomainName, AsyncCallback<List<SSBonusData>> asyncCallback);
 	void setEmployeeSSBonuses(String currentDomainName, Integer contractId, List<SSBonusData> ssBonuses,
 			AsyncCallback<List<SSBonusData>> asyncCallback);
+	void setEmployeeAFIChanges(String currentDomainName, Integer contractId, AFIChanges afiChangesMap,
+			AsyncCallback<String> asyncCallback);
+	void getEmployeeAFIChanges(String currentDomainName, Integer contractId, AsyncCallback<AFIChanges> asyncCallback);
 
 }

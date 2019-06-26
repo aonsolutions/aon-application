@@ -29,11 +29,13 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqActivity;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgrarian;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCRA;
+import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeAFI;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeePeculiarities;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEnterprise;
 import com.esferalia.aon.gwt.payroll.jooq.JooqPayments;
 import com.esferalia.aon.gwt.payroll.jooq.JooqSSBonus;
 import com.esferalia.aon.gwt.payroll.jooq.JooqWorkplace;
+import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
@@ -1856,6 +1858,42 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			connection = AonServletUtils.getConnection(currentDomainName);
 			return JooqSSBonus.setSSBonus(connection, contractId, ssBonuses);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if ( connection != null ) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
+
+	@Override
+	public String setEmployeeAFIChanges(String currentDomainName, Integer contractId, AFIChanges afiChangesMap) {
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection(currentDomainName);
+			return JooqEmployeeAFI.setEmployeeAFI(connection, contractId, afiChangesMap);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if ( connection != null ) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
+
+	@Override
+	public AFIChanges getEmployeeAFIChanges(String currentDomainName, Integer contractId) {
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection(currentDomainName);
+			return JooqEmployeeAFI.getEmployeeAFI(connection, contractId);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {

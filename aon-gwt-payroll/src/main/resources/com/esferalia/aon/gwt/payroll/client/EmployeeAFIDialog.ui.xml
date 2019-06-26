@@ -10,10 +10,84 @@
     
     
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeeAFIDialog.MyStyle">
+	
+		@external .gwt-ToggleButton-down;
+		@external .gwt-ToggleButton-up;
+		@external .gwt-ToggleButton-down-hovering;
+		@external .gwt-ToggleButton-up-hovering;
 
 		.form {
 			padding: 10px;
 		}
+		
+		.tabSelected{
+			border: 1px solid #e2e2e2;
+			border-bottom: none;
+		}
+		
+		.tabIconSelected{
+			background-color: white !important;
+		}
+		
+		.gwt-ToggleButton-down{
+			border: none !important;
+			color: black !important;
+			font-weight: bold !important;
+			padding-bottom: 3px !important;
+			background: white !important;
+		}
+
+		.gwt-ToggleButton-up{
+			border: none !important;
+			border-bottom: none !important;
+			color: #ababab !important;
+			background: #e2e2e2 !important;
+		}
+
+		.gwt-ToggleButton-down-hovering{
+			border: none !important;
+			color: black !important;
+			font-weight: bold !important;
+			padding-bottom: 3px !important;
+			background: white !important;
+		}
+
+		.gwt-ToggleButton-up-hovering{
+			border: none !important;
+			border-bottom: none !important;
+			color: #ababab !important;
+			background: #e2e2e2 !important;
+		}
+
+		.selectButtonSalaryToggleButton{
+			border-top: 1px solid #ababab !important;
+			border-left: 1px solid #ababab !important;
+			border-right: 1px solid #ababab !important;
+	
+		}
+		
+		.deleteButtonUp{
+			border: none !important;
+    		width: 18px !important;
+    		height: 22px !important;
+    		background-color: #e2e2e2;
+		}
+
+		.deleteButtonDown{
+			border: none !important;
+ 		   	border-bottom: none !important;
+ 		   	color: black !important;
+ 		   	font-weight: bold !important;
+    		width: 25px !important;
+    		height: 22px !important;
+    		background: white !important;
+			padding-top: 2px !important;
+		}
+		
+		.marginTab{
+			margin-right: 5px;
+		}
+		
 
 		.label {
 			margin-top:10x;
@@ -94,11 +168,37 @@
 			display: none;
 		}
 		
+		.tabsPanel{
+			margin-left: 10px;
+		}
+		
+		.tabSelectedStyle{
+			background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQMAAAAZCAYAAAA160uCAAAAkklEQVR42u3USXKCABQFwH//A8YxxBEJFJQRI+5eFrlGL/oKXavVRwBqvVkHQAbAfwbbzTYAtdvtAlD7/WcAqmmaANTh8BWAOh2PAajT+RyAulwvAai2bQNQt1sXgPruugBU3/cBqGEYAlDjOAagpmkKQN3v9wDUz+MRgJrnOQD1+3wGoF6vVwBqWZYA1PJ+B+APWHe3SG7bckEAAAAASUVORK5CYII=") -0px -0px no-repeat;
+			width: auto;
+			height: auto;
+			padding: 5px;
+			border-radius: 4%;
+			cursor: pointer;
+		}
+		
+		.tabStyle{
+			border: 1px solid #c5c5c5;
+			border-radius: 4%;
+			padding: 5px;
+			border-bottom: none;
+			padding-bottom: 0px;
+			cursor: pointer;
+		}
+		
+		.pb-15{
+			padding-bottom: 15px;
+		}
+		
 	</ui:style>
 
 	<g:HTMLPanel styleName="{style.form}">
 
-	    <table>
+	    <table ui:field="datesTable">
 	        <tbody>
 	            <tr>
 	            	<td style="width: 30px;">
@@ -128,6 +228,16 @@
 	                <td>
 	                    <a:DateBoxEx ui:field="newDate" styleName="{style.dateStyle} {style.marginLft5}"></a:DateBoxEx>
 	                </td>
+	            </tr>
+	            <tr>
+	            	<td colspan="2" style="border: none;">
+	                    <g:Label styleName="{style.marginLft5} {style.pb-15}">*Debera rellanar los tres campos para cada tramo. </g:Label>
+	                </td>
+	            </tr>
+	            <tr>
+	            	<td colspan="2"  style="border-bottom: 1px solid #e2e2e2;">
+	            		<g:HorizontalPanel ui:field="tabsPanel" styleName="{style.tabsPanel}"></g:HorizontalPanel>
+	            	</td>
 	            </tr>
 	            <tr>
 	                <td colspan="2">

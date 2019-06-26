@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
@@ -375,5 +376,17 @@ public class EnterprisesServiceAsyncDecorator implements
 			AsyncCallback<List<SSBonusData>> callback) {
 		AON.start();
 		enterprisesServiceAsync.setEmployeeSSBonuses(domain, contractId, ssBonuses, new AsyncCallbackWrapper<List<SSBonusData>>(callback));	
+	}
+
+	@Override
+	public void setEmployeeAFIChanges(String domain, Integer contractId, AFIChanges afiChangesMap, AsyncCallback<String> callback) {
+		AON.start();
+		enterprisesServiceAsync.setEmployeeAFIChanges(domain, contractId, afiChangesMap, new AsyncCallbackWrapper<String>(callback));
+	}
+
+	@Override
+	public void getEmployeeAFIChanges(String domain, Integer contractId, AsyncCallback<AFIChanges> callback) {
+		AON.start();
+		enterprisesServiceAsync.getEmployeeAFIChanges(domain, contractId, new AsyncCallbackWrapper<AFIChanges>(callback));
 	}
 }

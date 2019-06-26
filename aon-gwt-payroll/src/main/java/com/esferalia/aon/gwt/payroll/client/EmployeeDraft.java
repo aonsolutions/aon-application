@@ -32,8 +32,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.dom.client.DomEvent;
-import com.google.gwt.event.dom.client.FocusEvent;
-import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.regexp.shared.RegExp;
@@ -42,7 +40,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
@@ -533,41 +530,44 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 				this.employee.contractType.getSelectedIndex(),
 				this.employee.quote_group.getSelectedIndex(),
 				this.employee.occupation.getSelectedIndex(),
-				this.employeeDraftObject.getPayrollDate()
+				this.employeeDraftObject.getPayrollDate(),
+				this.employeeDraftObject.getContractId(),
+				this.employeeDraftObject.getDomainId(),
+				this.employeeDraftObject.getWorkplaceId()
 				){
 
-			@Override
-			protected void onAccept() {
-				employeeDraftObject.saveAFIChanges(
-						getNewDate(),
-						isChangeContract(), isChangeContract() ? employee.contractType.getValue(getTC2Idx()).split(" -")[0] : null,
-						isQuoteContract(), isQuoteContract() ? getQuoteGroupdx() : null,
-						isOcupationContract(), isOcupationContract() ? employeeDraftObject.getOcupationByIndex(getOcupationIdx()) : null,
-						s -> {
-							
-							if(isGenerationAFI()) {
-
-								String fileDownloadURL = GWT.getModuleBaseURL()+ "/employee_afi/"
-										+ "?domainId=" + employeeDraftObject.getDomainId()
-										+ "&contractId=" + employeeDraftObject.getContractId()
-							            + "&workplaceId=" + employeeDraftObject.getWorkplaceId()
-							            + "&isStartContract=" + (isStartContract() ? 1 : 0)
-							            + "&isEndContract=" + (isEndContract() ? 1 : 0)
-							            + "&isChangeContract=" + (isChangeContract() ? 1 : 0)
-							            + "&isQuoteContract=" + (isQuoteContract() ? 1 : 0)
-							            + "&isOcupationContract=" + (isOcupationContract() ? 1 : 0)
-								        ;
-								
-								Window.open(fileDownloadURL, "_blank", null);
-								
-							}
-							
-							setEmployeeDraftObject(employeeDraftObject);
-							
-						},
-						f -> {}
-				);
-			}
+//			@Override
+//			protected void onAccept() {
+//				employeeDraftObject.saveAFIChanges(
+//						getNewDate(),
+//						isChangeContract(), isChangeContract() ? employee.contractType.getValue(getTC2Idx()).split(" -")[0] : null,
+//						isQuoteContract(), isQuoteContract() ? getQuoteGroupdx() : null,
+//						isOcupationContract(), isOcupationContract() ? employeeDraftObject.getOcupationByIndex(getOcupationIdx()) : null,
+//						s -> {
+//							
+//							if(isGenerationAFI()) {
+//
+//								String fileDownloadURL = GWT.getModuleBaseURL()+ "/employee_afi/"
+//										+ "?domainId=" + employeeDraftObject.getDomainId()
+//										+ "&contractId=" + employeeDraftObject.getContractId()
+//							            + "&workplaceId=" + employeeDraftObject.getWorkplaceId()
+//							            + "&isStartContract=" + (isStartContract() ? 1 : 0)
+//							            + "&isEndContract=" + (isEndContract() ? 1 : 0)
+//							            + "&isChangeContract=" + (isChangeContract() ? 1 : 0)
+//							            + "&isQuoteContract=" + (isQuoteContract() ? 1 : 0)
+//							            + "&isOcupationContract=" + (isOcupationContract() ? 1 : 0)
+//								        ;
+//								
+//								Window.open(fileDownloadURL, "_blank", null);
+//								
+//							}
+//							
+//							setEmployeeDraftObject(employeeDraftObject);
+//							
+//						},
+//						f -> {}
+//				);
+//			}
 		};
 			
 		dialog.center();
