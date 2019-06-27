@@ -91,8 +91,8 @@ public class Mod2002018Print extends HttpServlet {
 							  //+"&SINVL=" // Indica que no se desea validación
 							  ;
 		
-		String request = "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali"; // Pruebas de Externos
-		//String request = "https://www2.agenciatributaria.gob.es/wlpl/PFTW-PICW/ServVali"; // Producción 		
+		//String request = "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali"; // Pruebas de Externos
+		String request = "https://www2.agenciatributaria.gob.es/wlpl/PFTW-PICW/ServVali"; // Producción 		
 
 		URL url = new URL(request);
 

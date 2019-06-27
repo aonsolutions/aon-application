@@ -538,7 +538,8 @@ public class Mod2002018Writer {
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(50))
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(13))
 				,(line, mod200, label) -> line.append(mod200.getDoubleValue(Mod2002018Key.C0015)==1?(mod200.getDoubleValue(Mod2002018Key.C0015G)==1?"1":"2"):" ")   // Entidad ZEC - Pertenencia a grupo fiscal (valores blanco-1-2)
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(199)) // Reservado para la AEAT
+				,(line, mod200, label) -> line.append(" ") // Modelo de estados contables que se va a cumplimentar (No se usa, es solo para estados contables entidades de credito, entidades aseguradoras, sociedades de garantía reciproca e IIC)
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(198)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) 
 			})
 

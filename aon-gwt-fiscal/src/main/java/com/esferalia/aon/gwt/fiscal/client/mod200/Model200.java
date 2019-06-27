@@ -259,14 +259,14 @@ public class Model200 extends MainEntryPoint {
 		toolbar.setWidget(0, 2, buttonContainer);
 		toolbar.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonFindingToolbar());
 		
-		// Botón Nuevo 2018 - Solo BETA
-		// TODO - Quitar cuando se ponga en producción
+		// Botón Nuevo 2018
 		final Button new2018 = new Button();
 		new2018.setText(AON.MSG.newSomething("2018"));
 		new2018.setTitle(new2018.getText());
 		new2018.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		new2018.setVisible(aonData.isBetaEnabled());
-		new2018.addStyleName("aon-icon-beta-text");		
+		new2018.addStyleName(AON.AON_CSS.aonIconReset());
+//		new2018.addStyleName("aon-icon-beta-text");
+//		new2018.setVisible(aonData.isBetaEnabled());
 		new2018.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -274,21 +274,6 @@ public class Model200 extends MainEntryPoint {
 			}
 		});
 		buttonContainer.add(new2018);
-		
-		// TODO - Sustituir por 2018 cuando se ponga en producción
-		// Botón Nuevo 2017
-		final Button new2017 = new Button();
-		new2017.setText(AON.MSG.newSomething("2017"));
-		new2017.setTitle(new2017.getText());
-		new2017.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		new2017.addStyleName(AON.AON_CSS.aonIconReset());
-		new2017.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				new2017();
-			}
-		});
-		buttonContainer.add(new2017);
 		
 		final NewContextMenu newContextMenu = new NewContextMenu();
 		final Button newButton = new Button();
@@ -342,14 +327,13 @@ public class Model200 extends MainEntryPoint {
 					new2016();
 				}
 			});
-			// TODO - Añadir 2017 cuando se ponga en producción el botón de 2018
-//			super.addItem("200", AON.MSG.newSomething("2017"), new ScheduledCommand() {
-//				
-//				@Override
-//				public void execute() {
-//					new2017();
-//				}
-//			});
+			super.addItem("200", AON.MSG.newSomething("2017"), new ScheduledCommand() {
+				
+				@Override
+				public void execute() {
+					new2017();
+				}
+			});
 			
 			addStyleName(AON.AON_CSS.aonSelector());
 		}
