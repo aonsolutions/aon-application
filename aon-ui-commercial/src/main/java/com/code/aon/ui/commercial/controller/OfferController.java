@@ -915,6 +915,7 @@ public class OfferController extends HeaderObjectController implements ISignatur
 		setIncludeEmailOfferReport(true);
 		setIncludeEmailOfferAttach(true);
 		setIncludeEmailSddMandateReport(false);
+		setDocumentOnlineSign(false);
 		Offer offer = (Offer) this.getTo();
 		setSddMandate(new SddMandateObject());
 		getSddMandate().setSignDate(offer.getDate());
@@ -928,7 +929,11 @@ public class OfferController extends HeaderObjectController implements ISignatur
 		if ( controller.isShowNewMessageWindow() ) {	
 			try {
 				controller.onNewMessage(event);
-				emailUtil.initMessageController(controller, getOffer(), getSddMandate(), isIncludeEmailOfferReport(), isIncludeEmailOfferAttach(), isIncludeEmailSddMandateReport() );
+				emailUtil.initMessageController(controller, getOffer(), getSddMandate(), 
+						isIncludeEmailOfferReport(), isIncludeEmailOfferAttach(), isIncludeEmailSddMandateReport(), isDocumentOnlineSign() );
+				if(isDocumentOnlineSign()) {
+					AonUtil.addInfoMessage("Firma online digital en proceso.");
+				}
 			} catch (Throwable th) {
 				LOGGER.error(th.getMessage(), th);
 				AonUtil.addErrorMessage(th.getMessage());
