@@ -17,6 +17,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.registry.RegistryDirStaff;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.supplier.Supplier;
@@ -73,34 +74,34 @@ public class OfferReportScriptlet extends ReportScriptlet implements Serializabl
 	
 	public RegistryMedia getAdministrativeCellular() throws ManagerBeanException, JRScriptletException {
 		List<ITransferObject> list = getRMediaList(MediaType.CELLULAR, true, false, false);
-		return list!=null && list.size()>0 ? ((RegistryMedia)list.get(0)): null;
+		return list!=null && list.size()>0 ? ((RegistryMedia)list.get(0)): new RegistryMedia();
 	}
 	
 	public RegistryMedia getAdministrativeEmail() throws ManagerBeanException, JRScriptletException {
 		List<ITransferObject> list = getRMediaList(MediaType.EMAIL, true, false, false);
-		return list!=null && list.size()>0 ? ((RegistryMedia)list.get(0)): null;
+		return list!=null && list.size()>0 ? ((RegistryMedia)list.get(0)): new RegistryMedia();
 	}
 
 	public RegistryMedia getTechnicalCellular() throws ManagerBeanException, JRScriptletException {
 		List<ITransferObject> list = getRMediaList(MediaType.CELLULAR, false, true, false);
-		return list!=null && list.size()>0 ? ((RegistryMedia)list.get(0)): null;
+		return list!=null && list.size()>0 ? ((RegistryMedia)list.get(0)): new RegistryMedia();
 	}
 	
 	public RegistryMedia getTechnicalEmail() throws ManagerBeanException, JRScriptletException {
 		List<ITransferObject> list = getRMediaList(MediaType.EMAIL, false, true, false);
-		return list!=null && list.size()>0 ? ((RegistryMedia)list.get(0)): null;
+		return list!=null && list.size()>0 ? ((RegistryMedia)list.get(0)): new RegistryMedia();
 	}
 
 	public RegistryMedia getCommercialCellular() throws ManagerBeanException, JRScriptletException {
 		List<ITransferObject> list = getRMediaList(MediaType.CELLULAR, false, false, true);
-		return list!=null && list.size()>0 ? ((RegistryMedia)list.get(0)): null;
+		return list!=null && list.size()>0 ? ((RegistryMedia)list.get(0)): new RegistryMedia();
 	}
 	
 	public RegistryMedia getCommercialEmail() throws ManagerBeanException, JRScriptletException {
 		List<ITransferObject> list = getRMediaList(MediaType.EMAIL, false, false, true);
-		return list!=null && list.size()>0 ? ((RegistryMedia)list.get(0)): null;
+		return list!=null && list.size()>0 ? ((RegistryMedia)list.get(0)): new RegistryMedia();
 	}
-	
+
 	private List<ITransferObject> getRMediaList(MediaType type, boolean administrative, boolean technical,
 			boolean commercial) throws ManagerBeanException, JRScriptletException {
 		Target target = (Target) super.getFieldValue(FIELD_TARGET);
@@ -119,6 +120,19 @@ public class OfferReportScriptlet extends ReportScriptlet implements Serializabl
 			criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_TECHNICAL), technical);
 		criteria.setSkipDomainFilter(true);
 		return rMediaBean.getList(criteria);
+	}
+	
+	public RegistryDirStaff getRDirStaff() throws ManagerBeanException, JRScriptletException {
+		Target target = (Target) super.getFieldValue(FIELD_TARGET);
+
+		IManagerBean bean = BeanManager.getManagerBean(RegistryDirStaff.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_REGISTRY_ID), target.getId());
+		criteria.setSkipDomainFilter(true);
+		List<ITransferObject> list = bean.getList(criteria);
+		if(list!=null && list.size()>0)
+			return (RegistryDirStaff) list.get(0);
+		return null;
 	}
 	
 	
