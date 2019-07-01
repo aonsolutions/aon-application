@@ -137,77 +137,81 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 			AgreementExtraRecord extra = extras.get(i);
 			
 			Date extraStartDate  = AgreementExtra.parseAgreementDate(extra.getStartDate(), year);
-			if ( extraStartDate.after(settleEndDate))  
-				continue;  // Nothing to calculate
-
-			Date extraIssueDate  = AgreementExtra.parseAgreementDate(extra.getIssueDate(), year);
-
-			if ( extraIssueDate.before(settleEndDate)
-				 && extraIssueDate.after(contractStartDate) ) {
-				extraStartDate  = AgreementExtra.parseAgreementDate(extra.getStartDate(), ++year);
-				if ( extraStartDate.after(settleEndDate))  
-					continue;  // Nothing to calculate
-			}
 			
+//			if ( extraStartDate.after(settleEndDate))  
+//				continue;  // Nothing to calculate
+			while ( !extraStartDate.after(settleEndDate )) {
 			
-			// TODO: Extract to method ?
-			SQLExtraSalaryCalculatorContext extraCtx = 
-					new SQLExtraSalaryCalculatorContext(getConnection(), extra.getId(), year, settleEndDate, getChargeDate(), criteria) ;
-			if ( !extraCtx.next() )
-				continue;
-			
-			List<IContractPayment> extraPayments = new ArrayList<IContractPayment>(extras.size());
-			
-			Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder() {
-				@Override
-				public void addPayment(Double amount, Double quote, Double tax, String description, Date startDate,
-						Date endDate, IPayment payment, Map<String, ITimedVariable<?>> context) {
-					SystemPayment extraPayment = new SystemPayment();
-					
-					if ( payment instanceof IContractPayment )
-						extraPayment.setId(((IContractPayment)payment).getId());
-					
-					extraPayment.setType(PaymentType.CRA_0000);
-					extraPayment.setSalaryType(SalaryType.SETTLE);
-					extraPayment.setStartDate(startDate);
-					extraPayment.setEndDate(endDate);
-					extraPayment.setPaymentConcept(autoGenratedConcept);
-
-					extraPayment.setDescription(description);
-					extraPayment.setExpression(String.format(Locale.US, "%f", amount));
-					extraPayment.setIrpfExpression(String.format(Locale.US, "%f", tax));
-					extraPayment.setQuoteExpression(String.format(Locale.US, "%f", quote));
-					
-					extraPayments.add( extraPayment );
-					super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+				Date extraIssueDate  = AgreementExtra.parseAgreementDate(extra.getIssueDate(), year);
+	
+				if ( extraIssueDate.before(settleEndDate)
+					 && extraIssueDate.after(contractStartDate) ) {
+					extraStartDate  = AgreementExtra.parseAgreementDate(extra.getStartDate(), ++year);
+					if ( extraStartDate.after(settleEndDate))  
+						continue;  // Nothing to calculate
 				}
-			}).calculate(extraCtx);
-			
-			if ( extraPayments.isEmpty()  )
-				continue;
-			
-			
-			SalaryRecord record = 
-			dslCtx
-			.select()
-			.from(SALARY)
-			.innerJoin(SALARY_PAYMENT).on(SALARY.ID.eq(SALARY_PAYMENT.SALARY))
-			.where(SALARY.CONTRACT.eq(getId()))
-			.and(SALARY.ID.notIn(calculatedExtras))
-			.and(SALARY.TYPE.eq((byte)salary.getType().ordinal()))
-			.and(SALARY.END_DATE.eq(new java.sql.Date(salary.getEndDate().getTime())))
-			.and(SALARY.START_DATE.eq(new java.sql.Date(salary.getStartDate().getTime())))
-			.and(SALARY_PAYMENT.DESCRIPTION.eq(extraPayments.get(0).getDescription()))
-			.fetchAnyInto(SALARY)
-			;
-			
-			if ( record == null ) {
-				extrasPayments.addAll(extraPayments);
-				extrasPayments.add(newExtraMsgPayment(extraPayments.get(0).getDescription()));
-			} else { 
-				calculatedExtras.add(record.getId());
+				
+				
+				// TODO: Extract to method ?
+				SQLExtraSalaryCalculatorContext extraCtx = 
+						new SQLExtraSalaryCalculatorContext(getConnection(), extra.getId(), year, settleEndDate, getChargeDate(), criteria) ;
+				if ( !extraCtx.next() )
+					continue;
+				
+				List<IContractPayment> extraPayments = new ArrayList<IContractPayment>(extras.size());
+				
+				Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder() {
+					@Override
+					public void addPayment(Double amount, Double quote, Double tax, String description, Date startDate,
+							Date endDate, IPayment payment, Map<String, ITimedVariable<?>> context) {
+						SystemPayment extraPayment = new SystemPayment();
+						
+						if ( payment instanceof IContractPayment )
+							extraPayment.setId(((IContractPayment)payment).getId());
+						
+						extraPayment.setType(PaymentType.CRA_0000);
+						extraPayment.setSalaryType(SalaryType.SETTLE);
+						extraPayment.setStartDate(startDate);
+						extraPayment.setEndDate(endDate);
+						extraPayment.setPaymentConcept(autoGenratedConcept);
+	
+						extraPayment.setDescription(description);
+						extraPayment.setExpression(String.format(Locale.US, "%f", amount));
+						extraPayment.setIrpfExpression(String.format(Locale.US, "%f", tax));
+						extraPayment.setQuoteExpression(String.format(Locale.US, "%f", quote));
+						
+						extraPayments.add( extraPayment );
+						super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+					}
+				}).calculate(extraCtx);
+				
+				if ( extraPayments.isEmpty()  )
+					continue;
+				
+				
+				SalaryRecord record = 
+				dslCtx
+				.select()
+				.from(SALARY)
+				.innerJoin(SALARY_PAYMENT).on(SALARY.ID.eq(SALARY_PAYMENT.SALARY))
+				.where(SALARY.CONTRACT.eq(getId()))
+				.and(SALARY.ID.notIn(calculatedExtras))
+				.and(SALARY.TYPE.eq((byte)salary.getType().ordinal()))
+				.and(SALARY.END_DATE.eq(new java.sql.Date(salary.getEndDate().getTime())))
+				.and(SALARY.START_DATE.eq(new java.sql.Date(salary.getStartDate().getTime())))
+				.and(SALARY_PAYMENT.DESCRIPTION.eq(extraPayments.get(0).getDescription()))
+				.fetchAnyInto(SALARY)
+				;
+				
+				if ( record == null ) {
+					extrasPayments.addAll(extraPayments);
+					extrasPayments.add(newExtraMsgPayment(extraPayments.get(0).getDescription()));
+				} else { 
+					calculatedExtras.add(record.getId());
+				}
+				
+				extraStartDate  = AgreementExtra.parseAgreementDate(extra.getStartDate(), ++year);
 			}
-			
 		}
 		
 		return extrasPayments;
