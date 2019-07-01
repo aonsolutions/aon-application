@@ -100,17 +100,17 @@ public class DocumentManager implements Serializable {
 
 	private static Long getUsedSpace( Integer domain ) {
 		Long usedSpace = 0L;
-    	String sessionFactoryName = HibernateUtil.getSessionFactoryName();
-		try {
-	        Session session = HibernateUtil.getSession(sessionFactoryName);
-	        Query query = session.createQuery("select sum(length(data)) from RegistryAttachment ra WHERE ra.domain = ?");
-	        query.setInteger(0, domain );
-	        usedSpace = (Long) query.uniqueResult();
-		} catch ( Throwable th ) {
-			LOGGER.error( "Error calculating free space", th);
-		} finally {
-			HibernateUtil.closeSession(sessionFactoryName, false);
-		}
+//    	String sessionFactoryName = HibernateUtil.getSessionFactoryName();
+//		try {
+//	        Session session = HibernateUtil.getSession(sessionFactoryName);
+//	        Query query = session.createQuery("select sum(length(data)) from RegistryAttachment ra WHERE ra.domain = ?");
+//	        query.setInteger(0, domain );
+//	        usedSpace = (Long) query.uniqueResult();
+//		} catch ( Throwable th ) {
+//			LOGGER.error( "Error calculating free space", th);
+//		} finally {
+//			HibernateUtil.closeSession(sessionFactoryName, false);
+//		}
         return (usedSpace != null) ? usedSpace : 0L;
 	}
 	
