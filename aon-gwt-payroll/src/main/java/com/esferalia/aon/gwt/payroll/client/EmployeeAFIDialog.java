@@ -380,7 +380,7 @@ public class EmployeeAFIDialog extends CustomDialog {
 	}
 	
 	private void initPeculiaritiesTable(Date date) {
-		if(date.before(payrollDate)) {
+		if(null != payrollDate && date.before(payrollDate)) {
 			blockListbox();
 		}else {
 			unblockListbox();
@@ -397,15 +397,15 @@ public class EmployeeAFIDialog extends CustomDialog {
 				switch (afiChange.getName()) {
 				case "TC2":
 					tc2.setSelectedIndex(getContractTC2Idx(afiChange.getValue()));
-					break;
+					continue;
 				case "GRUPO_COTIZACION":
 					quoteGroup.setSelectedIndex(getContractQuoteGroupIdx(afiChange.getValue()));
-					break;
+					continue;
 				case "OCUPACION":
 					ocupation.setSelectedIndex(getContractOcupationIdx(afiChange.getValue()));
-					break;
+					continue;
 				default:
-					break;
+					continue;
 				}
 			}
 		}
