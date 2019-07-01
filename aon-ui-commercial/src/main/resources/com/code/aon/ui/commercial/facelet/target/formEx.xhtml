@@ -111,6 +111,15 @@
 							</aon:panelTab>
 						</aon:if>
  
+						<aon:if test="#{aonConfiguration.bean.target.showDirStaff and targetDirStaff.model.rowCount > 0}">
+							<aon:panelTab id="dirStaff" label="#{bundle.registry_dir_staff}">
+								<ui:include	src="/com/code/aon/ui/registry/facelet/rdirstaff/tab_grid.xhtml">
+									<ui:param name="controller" value="#{targetDirStaff}" />
+									<ui:param name="removeButtonReRender" value="targetTab" />
+								</ui:include>
+							</aon:panelTab>
+						</aon:if>
+						
 						<aon:if test="#{aonConfiguration.bean.target.showAddInfo and targetAddInfo.model.rowCount > 0}">
 							<aon:panelTab id="addInfo" label="#{bundle.aon_addInfo}">
 								<ui:include	src="/com/code/aon/ui/registry/facelet/raddinfo/tab_grid.xhtml">
@@ -214,6 +223,13 @@
 				<ui:include src="/com/code/aon/ui/registry/facelet/raddinfo/newAddInfoModal.xhtml">
 					<ui:param name="controller" value="#{target}" />
 					<ui:param name="addInfoController" value="#{targetAddInfo}" />
+					<ui:param name="modalReRender" value="targetTab" />
+				</ui:include>
+			</aon:if>
+			<aon:if test="#{aonConfiguration.bean.target.showDirStaff}">
+				<ui:include src="/com/code/aon/ui/registry/facelet/rdirstaff/newDirStaffModal.xhtml">
+					<ui:param name="controller" value="#{target}" />
+					<ui:param name="dirStaffController" value="#{targetDirStaff}" />
 					<ui:param name="modalReRender" value="targetTab" />
 				</ui:include>
 			</aon:if>

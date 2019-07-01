@@ -27,6 +27,7 @@
 			<xs:attribute name="showProduct" type="xs:boolean" use="required"/>
 			<xs:attribute name="showSeller" type="xs:boolean" use="required"/>
 			<xs:attribute name="showAddInfo" type="xs:boolean" use="required"/>
+			<xs:attribute name="showDirStaff" type="xs:boolean" use="required"/>
 			<xs:attribute name="showSupplier" type="xs:boolean" use="required"/>
 			<xs:attribute name="showTariff" type="xs:boolean" use="required"/>
 			<xs:attribute name="showFinanceData" type="xs:boolean" use="required"/>

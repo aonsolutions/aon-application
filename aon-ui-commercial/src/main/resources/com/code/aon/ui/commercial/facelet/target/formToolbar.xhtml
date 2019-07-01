@@ -20,6 +20,7 @@
 				<ui:param name="showProductButton" value="#{aonConfiguration.bean.target.showProduct}" />
 				<ui:param name="showProjectButton" value="#{aonConfiguration.bean.target.showProject}" />
 				<ui:param name="showProfileButton" value="#{aonConfiguration.bean.target.showProfile}" />
+				<ui:param name="showDirStaffButton" value="#{aonConfiguration.bean.target.showDirStaff}" />				
 				<ui:param name="showRegistrySellerButton" value="#{aonConfiguration.bean.target.showSeller}" />
 				<ui:param name="showRegistrySupplierButton" value="#{aonConfiguration.bean.target.showSupplier}" />
 				
@@ -36,6 +37,7 @@
 				<ui:param name="registrySellerController" value="#{targetSeller}" />
 				<ui:param name="registrySupplierController" value="#{targetSupplier}" />
 				<ui:param name="rAttachController" value="#{targetRAttach}" />
+				<ui:param name="dirStaffController" value="#{targetDirStaff}" />				
 			</ui:include>
 			<ui:include src="/com/code/aon/ui/common/facelet/auditable/menuContent.xhtml" />
 		</ui:define>

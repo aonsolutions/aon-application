@@ -33,6 +33,7 @@
 			showTariff="true"
 			showFinanceData="true"
 			showNote="true"
+			showDirStaff="true"
 		/>
 	</commercial:config>
 
