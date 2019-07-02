@@ -126,6 +126,7 @@
 							style="width: 98%; min-height: 200px; border:solid #BBB 1px; text-align: center; margin-left: 5px;padding-top: 5px;">
 							<aon:div styleClass="aon-bold">
 								<aon:outputText value="Apuntes por Meses del Ejercicio"/>
+<!-- 								
 								<aon:selectOneMenu id="Dashboard_accountPeriod"
 									style="border: none;"
 									value="#{dashboard.accountingPeriod}">
@@ -136,8 +137,11 @@
 									<f:selectItem itemLabel="-" itemValue="" />
 									<f:selectItems value="#{accountingCollections.allAccountPeriods}" />
 								</aon:selectOneMenu>
+ -->								
 							</aon:div>
+							<aon:outputText value="Informacion temporalmente desactivada"/>
 							<aon:div id="bar_chart_div" style="width: 100%; min-height: 180px;"/>
+<!-- 							
 							<script type="text/javascript"> 
 								google.load("visualization", "1", {'callback' : 'drawCharts' ,'packages':["corechart"], 'language': 'en'});
 								function drawCharts(){
@@ -157,11 +161,13 @@
 									chart.draw(data, options);
 								}
 						   </script>
+ -->
 						</aon:div>
 						
 						<aon:div id="messageList" style="width: 99%; margin-left: 5px; border:solid #BBB 1px; text-align: center; margin-top: 10px;padding-bottom: 10px;padding-top: 5px;">
 							<aon:div styleClass="aon-bold">
 								<aon:outputText value="Datos relativos al ejercicio Contable "/>
+<!-- 						
 								<aon:selectOneMenu id="Dashboard_accountPeriod2"
 									style="border: none;"
 									value="#{dashboard.accountingPeriod}">
@@ -172,9 +178,12 @@
 									<f:selectItem itemLabel="-" itemValue="" />
 									<f:selectItems value="#{accountingCollections.allAccountPeriods}" />
 								</aon:selectOneMenu>
+-->
 							</aon:div>
 							<ul class="aon-width-all aon-text-left" 
-								style="margin-left: 10px; margin-top: 10px; list-style-type:none;">
+								style="margin-left: 10px; margin-top: 10px; list-style-type:none;text-align: center;">
+								<aon:outputText value="Informacion temporalmente desactivada"/>
+<!-- 						
 								<c:forEach var="msg" items="#{dashboard.messages}">
 									<li style="margin-left: 5px;">
 										<aon:outputText value="#{msg.category}" 
@@ -183,6 +192,7 @@
 										<aon:outputText value="#{msg.message}" styleClass="aon-padding-left" />
 									</li>
 								</c:forEach>
+-->
 							</ul>
 						</aon:div>
 					</aon:panelGrid>
