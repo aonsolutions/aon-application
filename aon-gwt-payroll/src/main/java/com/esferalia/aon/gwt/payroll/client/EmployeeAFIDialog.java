@@ -426,7 +426,13 @@ public class EmployeeAFIDialog extends CustomDialog {
 	@UiHandler("newDate")
 	void onDateChange(ValueChangeEvent<Date> event) {
 		if(null != event.getValue()) {
-			if((event.getValue().after(contractStartDate) || event.getValue().equals(contractStartDate)) && event.getValue().after(payrollDate)) {
+			Date payroll = null;
+			if(null == payrollDate)
+				payroll = DateUtils.copyDateOnly(contractStartDate);
+			else
+				payroll = DateUtils.copyDateOnly(payrollDate);
+			
+			if((event.getValue().after(contractStartDate) || event.getValue().equals(contractStartDate)) && event.getValue().after(payroll)) {
 				if(!dateList.contains(event.getValue())) {
 					dateList.add(event.getValue());
 					afiChangesMap.addAFIChange(event.getValue());
