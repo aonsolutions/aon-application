@@ -350,11 +350,19 @@ public class JooqEmployee {
 					.fetch();
 			}
 		}else {
-			contractDataTable = dslContext.select().from(CONTRACT_DATA)
-					.where(CONTRACT_DATA.CONTRACT.eq(contract))
-					.and(CONTRACT_DATA.START_DATE.le(currentDate))
-					.and(CONTRACT_DATA.END_DATE.ge(currentDate).or(CONTRACT_DATA.END_DATE.isNull()))
-					.fetch();
+			
+			if(contractData.getStartDate().after(currentDate)) {
+				contractDataTable = dslContext.select().from(CONTRACT_DATA)
+						.where(CONTRACT_DATA.CONTRACT.eq(contract))
+						.and(CONTRACT_DATA.START_DATE.le(new Date(contractData.getStartDate().getTime())))
+						.and(CONTRACT_DATA.END_DATE.ge(new Date(contractData.getStartDate().getTime())).or(CONTRACT_DATA.END_DATE.isNull()))
+						.fetch();
+			}else
+				contractDataTable = dslContext.select().from(CONTRACT_DATA)
+						.where(CONTRACT_DATA.CONTRACT.eq(contract))
+						.and(CONTRACT_DATA.START_DATE.le(currentDate))
+						.and(CONTRACT_DATA.END_DATE.ge(currentDate).or(CONTRACT_DATA.END_DATE.isNull()))
+						.fetch();
 			
 			if(contractDataTable.isEmpty())
 				contractDataTable = dslContext.select().from(CONTRACT_DATA)
@@ -536,17 +544,27 @@ public class JooqEmployee {
 				.fetchOne();
 		
 		Integer parentDomain = domainRecord.get(DOMAIN.PARENT);
+		Byte hasHeredity = domainRecord.get(DOMAIN.ENABLEHEREDITY);
 		
 		Integer rAddressId = null;
 		
 		if(null != employeeData.getAddressProvinces()) {
-		
-			Result<Record> geozone = dslContext.select()
-					.from(GEOZONE)
-					.where(GEOZONE.NAME.eq(employeeData.getAddressProvinces()))
-						.and(GEOZONE.DOMAIN.eq(domain)
-								.or(GEOZONE.DOMAIN.eq(parentDomain)))
-					.fetch();
+			
+			Result<Record> geozone = null;
+			
+			if(hasHeredity == (byte)0)
+				geozone = dslContext.select()
+						.from(GEOZONE)
+						.where(GEOZONE.NAME.eq(employeeData.getAddressProvinces()))
+						.and(GEOZONE.DOMAIN.eq(domain))
+						.fetch();
+			else
+				geozone = dslContext.select()
+				.from(GEOZONE)
+				.where(GEOZONE.NAME.eq(employeeData.getAddressProvinces()))
+					.and(GEOZONE.DOMAIN.eq(domain)
+							.or(GEOZONE.DOMAIN.eq(parentDomain)))
+				.fetch();
 			
 			Integer geozoneId = null;
 			
