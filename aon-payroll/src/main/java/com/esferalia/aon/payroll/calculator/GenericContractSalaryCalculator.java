@@ -643,9 +643,9 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			Double maternityBase = quoteCalculator.getMaternityBase();
 			if (maternityBase != null)
 				cgcBase += maternityBase;
-			Double directPayBase = quoteCalculator.getDirectPayBase();
-			if (directPayBase != null)
-				cgcBase += directPayBase;
+//			Double directPayBase = quoteCalculator.getDirectPayBase();
+//			if (directPayBase != null)
+//				cgcBase += directPayBase;
 			salaryBuilder.setCgcBase(cgcBase);
 
 			copyResults(expressionContext, CGC_BASE_ENTERPRISE, ERE_BASE, MATERNITY_BASE, DIRECT_BASE, CGC_BASE);
@@ -673,8 +673,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				cgpBase += ereBase;
 			if (maternityBase != null)
 				cgpBase += maternityBase;
-			if (directPayBase != null)
-				cgpBase += directPayBase;
+//			if (directPayBase != null)
+//				cgpBase += directPayBase;
 			salaryBuilder.setCgpBase(cgpBase);
 
 			copyResults(expressionContext, CGP_BASE_ENTERPRISE, ERE_BASE, MATERNITY_BASE, DIRECT_BASE, CGC_BASE);

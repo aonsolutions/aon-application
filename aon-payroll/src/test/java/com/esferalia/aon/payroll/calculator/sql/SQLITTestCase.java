@@ -2254,7 +2254,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
-	public void testProfessionalDiseaseIT365() throws ExpressionException, SQLException,
+	public void testProfessionalDiseaseIT365I() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
@@ -2336,6 +2336,72 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 	}
 	
+	@Test
+	public void testProfessionalDiseaseIT365II() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemCosts(aonContext);
+		
+		
+		//@formatter:offhttp://www.marca.com/motor/formula1/2016/01/08/5690143c268e3e041d8b457d.html?cid=GEN35403
+		ContractRecord contract = newContract(aonContext,
+				add( getFirstDayOfYear(getToday()), Calendar.YEAR, -2 ),
+				new HashMap<String, String>(){
+					{
+						put(ContextVariable.MONTH_DAYS.getName(), "30");
+						put(ContextVariable.TC2.getName(), format("\"%s\"",
+								ContractCode.C100.getValue()));
+					}
+				},
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+		//@formatter:on
+		
+		//@formatter:off
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.75 * %s",  OCCUPATIONAL_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		PaymentConceptRecord directPay = addConcept(aonContext, DIRECT_PAY.getName());
+		addPayment(aonContext, contract, directPay, 
+				String.format("BASE_REGULADORA * 0.00 * %s_366",  OCCUPATIONAL_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		//@formatter:on
+
+		Date startITDate = add(getFirstDayOfMonth(getToday()), Calendar.MONTH , -9);
+		
+		addIT(aonContext, contract, LeaveType.OCCUPATIONAL_DISEASE, startITDate, null, 100.00);
+		
+		Date _366Date = add(getFirstDayOfMonth(getToday()), Calendar.DAY_OF_MONTH , 9);
+		Date startDate = getFirstDayOfMonth(_366Date);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		addData(aonContext, contract, startITDate, null, ContextVariable.DIRECT_PAY_START, 
+				String.format("%s(%d,%d,%d)",ContextVariable.DATE,get(_366Date, YEAR), get(_366Date, MONTH)+1, get(_366Date, DAY_OF_MONTH) ));
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		cleanSystemCosts(aonContext);
+		Date _365Date = add(_366Date, Calendar.DAY_OF_MONTH , -1);
+		Assert.assertEquals(get(_365Date, DAY_OF_MONTH)* 100.00 * 0.75,salary.getTotalPayment() );
+		Assert.assertEquals(get(_365Date, DAY_OF_MONTH)* 100.00 , salary.getCommonBase() );
+		
+
+	}
+
 	@Test
 	public void testProfessionalDiseaseIT365Redefined() throws ExpressionException, SQLException,
 			SalaryException {
