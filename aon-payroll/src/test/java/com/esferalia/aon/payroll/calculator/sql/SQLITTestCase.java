@@ -2127,7 +2127,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		cleanSystemCosts(aonContext);
 
 		Assert.assertEquals(get(_365Date, DAY_OF_MONTH)* 100.00 * 0.75,salary.getTotalPayment() );
-		Assert.assertEquals(30.00 * 100.00 , salary.getCommonBase() );
+		Assert.assertEquals(get(_365Date, DAY_OF_MONTH) * 100.00 , salary.getCommonBase() );
 		
 		Assert.assertEquals( get(_365Date, DAY_OF_MONTH)* 100.00 * 1.65 / 100.00 , 
 				salary.getSocialSecurityContributions(), DELTA);
@@ -2219,7 +2219,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Salary salary = calculator.calculate(ctx);
 
 		Assert.assertEquals(get(_365Date, DAY_OF_MONTH)* 100.00 * 0.75,salary.getTotalPayment() );
-		Assert.assertEquals(30.00 * 100.00 , salary.getCommonBase() );
+		Assert.assertEquals(get(_365Date, DAY_OF_MONTH) * 100.00 , salary.getCommonBase() );
 		
 		Assert.assertEquals( get(_365Date, DAY_OF_MONTH)* 100.00 * 1.65 / 100.00 , 
 				salary.getSocialSecurityContributions(), DELTA);
@@ -2243,7 +2243,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		cleanSystemCosts(aonContext);
 
 		Assert.assertEquals(0.00,salary.getTotalPayment() );
-		Assert.assertEquals(30.00 * 100.00 , salary.getCommonBase() );
+		Assert.assertEquals(0.00 , salary.getCommonBase() );
 		Assert.assertEquals((30.00 * 100.00* 23.60 / 100.00)
 				, salary.getTotalEnterprise()
 				, DELTA );
@@ -2327,7 +2327,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		cleanSystemCosts(aonContext);
 
 		Assert.assertEquals(get(_365Date, DAY_OF_MONTH)* 100.00 * 0.75,salary.getTotalPayment() );
-		Assert.assertEquals(30.00* 100.00 , salary.getCommonBase() );
+		Assert.assertEquals(get(_365Date, DAY_OF_MONTH)* 100.00 , salary.getCommonBase() );
 		
 		Assert.assertEquals( get(_365Date, DAY_OF_MONTH)* 100.00 * 1.65 / 100.00 , 
 				salary.getSocialSecurityContributions(), DELTA);
@@ -2482,8 +2482,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 		cleanSystemCosts(aonContext);
 
-		Assert.assertEquals(get(_365Date, DAY_OF_MONTH)* 100.00 * 0.75,salary.getTotalPayment() );
-		Assert.assertEquals(30.00*100.00 , salary.getCommonBase() );
+		Assert.assertEquals(get(_365Date, DAY_OF_MONTH) * 100.00 * 0.75,salary.getTotalPayment() );
+		Assert.assertEquals(get(_365Date, DAY_OF_MONTH) *100.00 , salary.getCommonBase() );
 		
 		Assert.assertEquals( get(_365Date, DAY_OF_MONTH)* 100.00 * 1.65 / 100.00 , 
 				salary.getSocialSecurityContributions(), DELTA);
