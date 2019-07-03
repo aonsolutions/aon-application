@@ -55,6 +55,7 @@ public class Mod2002018Description {
 		DESCRIPTION_MAP.put(Mod2002018Key.C0038,"Entidad dedicada al arrend. de viviendas");
 		DESCRIPTION_MAP.put(Mod2002018Key.C0046,"Entidad en r\u00E9g. de atribuci\u00F3n de rentas constitu\u00EDda en el extranjero con presencia en territorio espa\u00F1ol");
 		DESCRIPTION_MAP.put(Mod2002018Key.C0012,"SOCIMI");
+		DESCRIPTION_MAP.put(Mod2002018Key.C0012R,"SOCIMIS: R\u00E9gimen fiscal de entrada-salida. Renta derivada de la transmisi\u00F3n de inmuebles pose\u00EDdos con anterioridad a la aplicaci\u00F3n de este r\u00E9gimen y otras transmisiones de participaciones y activos a las que se aplica un tipo impositivo distinto del general (Art. 12.1 c, Art. 12.1 y Art 12.2)");
 		DESCRIPTION_MAP.put(Mod2002018Key.C0064,"R\u00E9gimen fiscal entrada SOCIMI");
 		DESCRIPTION_MAP.put(Mod2002018Key.C0057,"R\u00E9gimen fiscal salida SOCIMI");
 		DESCRIPTION_MAP.put(Mod2002018Key.C0020,"Otros reg\u00EDmenes especiales");
@@ -480,6 +481,8 @@ public class Mod2002018Description {
 		DESCRIPTION_MAP.put(Mod2002018Key.BN588, "Deducciones con l\u00EDmite del Cap\u00EDtulo IV T\u00EDtulo VI RDL 4/2004 y LIS");
 		DESCRIPTION_MAP.put(Mod2002018Key.BN1039,"Deducciones por producciones cinematogr\u00E1ficas extranjeras (art. 36.2 LIS)");
 		DESCRIPTION_MAP.put(Mod2002018Key.BN565, "Deducci\u00F3n donaciones a entidades sin fines de lucro (Ley 49/2002)");
+		DESCRIPTION_MAP.put(Mod2002018Key.BN565A, "Indique si entre las deducciones que se van a aplicar hay actividades prioritarias de mecenazgo");
+		DESCRIPTION_MAP.put(Mod2002018Key.BN565B, "Indique si en los dos per\u00EDodos impositivos inmediatos anteriores hubieran realizado donaciones o aportaciones con derecho a deducci\u00F3n a favor de una misma entidad por importe igual o superior en cada uno de ellos, al del per\u00EDodo impositivo anterior");
 		DESCRIPTION_MAP.put(Mod2002018Key.BN590, "Deducciones Inversi\u00F3n Canarias");
 		DESCRIPTION_MAP.put(Mod2002018Key.BN399, "Deducciones espec\u00EDficas de las entidades sometidas a normativa foral");
 		DESCRIPTION_MAP.put(Mod2002018Key.BN1040,"Deducci\u00F3n por reversi\u00F3n de medidas temporales DT 37\u00AA.1 LIS");

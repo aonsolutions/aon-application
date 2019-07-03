@@ -74,7 +74,7 @@ public class Page00 extends PageAbs {
 		,Mod2002018Key.C0028,Mod2002018Key.C0047,Mod2002018Key.C0035
 		,Mod2002018Key.C0049,Mod2002018Key.C0029,Mod2002018Key.C0033
 		,Mod2002018Key.C0034,Mod2002018Key.C0038,Mod2002018Key.C0046
-		,Mod2002018Key.C0012,Mod2002018Key.C0064,Mod2002018Key.C0057
+		,Mod2002018Key.C0012,Mod2002018Key.C0064,Mod2002018Key.C0057,Mod2002018Key.C0012R
 		,Mod2002018Key.C0020,Mod2002018Key.C0062
 	};
 	
@@ -335,7 +335,7 @@ public class Page00 extends PageAbs {
 				:callback.getMod200Object().getAdministration();
 		for (final Mod2002018Key key : declarationCharatersBlock ) {
 			
-			if (key != Mod2002018Key.C0015G) {
+			if (key != Mod2002018Key.C0015G && key != Mod2002018Key.C0012R) {
 			   BoxLabel l = new BoxLabel( key.getCode( adm ) , Model2002018.BOX_LENGTH );
 			   table.setWidget(row, 0, l);
 			}

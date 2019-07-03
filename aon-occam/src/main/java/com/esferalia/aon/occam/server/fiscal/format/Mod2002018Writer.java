@@ -539,7 +539,12 @@ public class Mod2002018Writer {
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(13))
 				,(line, mod200, label) -> line.append(mod200.getDoubleValue(Mod2002018Key.C0015)==1?(mod200.getDoubleValue(Mod2002018Key.C0015G)==1?"1":"2"):" ")   // Entidad ZEC - Pertenencia a grupo fiscal (valores blanco-1-2)
 				,(line, mod200, label) -> line.append(" ") // Modelo de estados contables que se va a cumplimentar (No se usa, es solo para estados contables entidades de credito, entidades aseguradoras, sociedades de garantía reciproca e IIC)
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(198)) // Reservado para la AEAT
+				,(line, mod200, label) -> {  // SOCIMIS: Régimen fiscal de entrada-salida. Renta derivada de la transmisión de inmuebles poseídos con anterioridad a la aplicación de este régimen y otras transmisiones de participaciones y activos a las que se aplica un tipo impositivo distinto del general (Art. 12.1 c, Art. 12.1 y Art 12.2) (Sólo si están marcados caracteres 57 o 64)
+					if (mod200.getDoubleValue(Mod2002018Key.C0057)==1 || mod200.getDoubleValue(Mod2002018Key.C0064)==1) 
+						addUnSignedKey(line, mod200, Mod2002018Key.C0012R, 1, 0);
+					else line.append(" "); 
+				 }
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(197)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) 
 			})
 
@@ -1413,7 +1418,18 @@ public class Mod2002018Writer {
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002018BN1041Key.values())
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002018LQ1033_1Key.values())
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002018LQ1033_2Key.values())
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
+				,(line, mod200, label) -> {
+					// Si la casilla 565 tiene contenido, se ponen los checks que se indican, si no, se dejan en blanco
+					if (mod200.getDoubleValue(Mod2002018Key.BN565) > 0 ) {
+						addUnSignedKey(line, mod200, Mod2002018Key.BN565A, 1, 0); // Deducción donativos entidades sin fines de lucro. Ley 49/2002. Indique si entre las deducciones que se van a aplicar hay actividades prioritarias de mecenazgo 
+						addUnSignedKey(line, mod200, Mod2002018Key.BN565B, 1, 0); // Deducción donativos entidades sin fines de lucro. Ley 49/2002. Indique si en los dos períodos impositivos inmediatos anteriores hubieran realizado donaciones o aportaciones con derecho a deducción a favor de una misma entidad por importe igual o superior en cada uno de ellos, al del período impositivo anterior
+					}
+					else {
+						line.append(" ");
+						line.append(" ");
+					}
+				 }
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(198)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) 
 			})
 

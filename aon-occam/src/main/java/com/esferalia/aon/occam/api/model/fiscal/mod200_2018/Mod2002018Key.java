@@ -47,6 +47,7 @@ public enum Mod2002018Key implements IMod200Key {
 	,C0038
 	,C0046
 	,C0012
+	,C0012R
 	,C0064
 	,C0057
 	,C0062
@@ -2068,6 +2069,8 @@ public enum Mod2002018Key implements IMod200Key {
 		,BN598
 		,BN895
 		,BN974
+		,BN565A
+		,BN565B
 	,BN590 // Deducciones Inversión Canarias
 		,BN854
 		,BN855

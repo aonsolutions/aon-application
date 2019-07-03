@@ -29,6 +29,7 @@ import com.google.gwt.text.shared.SafeHtmlRenderer;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -287,6 +288,16 @@ public abstract class PageAbs extends ResizeComposite {
 			}
 			++r;
 		}
+		
+		// Desglose casilla 565, lleva al final 2 checks más
+		if (breakdownKey == Mod2002018Key.BN565) {
+			
+			addCheckBox(Mod2002018Key.BN565A, tableDetail, r);
+			++r;
+			addCheckBox(Mod2002018Key.BN565B, tableDetail, r);
+			
+		}
+		
 		tab.setWidget(row, 0, container);
 		tab.getFlexCellFormatter().setColSpan(row, 0, tab.getCellCount(boxRow)); 
 		
@@ -306,6 +317,32 @@ public abstract class PageAbs extends ResizeComposite {
 		});
 		
 		return ++row;
+	}
+	
+	protected void addCheckBox(Mod2002018Key key, FlexTable tab, int row) {
+		
+		final CheckBox cb = new CheckBox();
+		cb.setText(key.getDescription());
+		
+		DoubleVariable2018 dv = callback.getMod200Object().getMod200().getKeysMap().get(key);			
+		if (dv != null) {				 
+		   cb.setValue(dv.getValue()==1.0);
+		}
+
+		cb.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				DoubleVariable2018 bv = new DoubleVariable2018(key);
+				bv.setValue( cb.getValue()?1.0:0.0 );
+				callback.getMod200Object().getMod200().addVariable(bv);					
+			}
+			
+		});
+		
+		tab.setWidget(row, 0, cb);
+		tab.getFlexCellFormatter().setColSpan(row, 0, 3);
+		
+		
 	}
 	
 
