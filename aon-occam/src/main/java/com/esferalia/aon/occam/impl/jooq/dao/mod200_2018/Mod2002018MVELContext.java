@@ -33,6 +33,7 @@ import static com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018Key
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018Key.C0064;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018Key.C0066;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018Key.C0071;
+import static com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018Key.C0072;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018Key.LQ210;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018Key.LQ480;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018Key.LQ520;
@@ -505,12 +506,17 @@ public class Mod2002018MVELContext implements Map<String, Object> { // extends A
 		double lm1256 = roundKey(Mod2002018Key.LM1256);
 		double lm1258 = roundKey(Mod2002018Key.LM1258);
 		double lm1259 = roundKey(Mod2002018Key.LM1259);
-		double lm1249_1 = round( (lm1250 - lm1251 - lm1252 - lm1253 + lm1254) * 0.30);
+		double lm1249_1 = round((lm1250 - lm1251 - lm1252 - lm1253 + lm1254) * 0.30);
 		double lm1249_2 = round(lm1256+lm1258+lm1259);
-		if ( lm1249_2 >= getLimit(LIM_2)) {
-		 return lm1249_1>getLimit(LIM_2)?lm1249_1:getLimit(LIM_2);
+		if (isChecked(C0072)) {
+			return lm1249_2;
 		}
-		return lm1249_1>lm1249_2?lm1249_1:lm1249_2;
+		else {
+			if (lm1249_2 >= getLimit(LIM_2)) {
+			 return lm1249_1>getLimit(LIM_2)?lm1249_1:getLimit(LIM_2);
+			}
+			return lm1249_1>lm1249_2?lm1249_1:lm1249_2;
+		}
 	}
 	
 	public double computeLQ560() throws AonCoreException {
