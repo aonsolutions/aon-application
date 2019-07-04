@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractType;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ModelRecord;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.Iban;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Municipalities;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
@@ -35,6 +36,7 @@ import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -538,6 +540,16 @@ public class EmployeeDialog extends CustomDialog {
 		
 		@Override
 		public void onEmployeeAccountChange() {
+			if(this.account.getValue().length() > 0) {
+				if(Iban.validateIBAN(this.account.getValue())) {
+					this.accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+					this.accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
+				}else {
+					this.accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+					this.accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
+				}
+			}
+			
 			employeeDialogObject.setEmployeeAccount(this.account.getValue());
 		}
 		
@@ -723,6 +735,7 @@ public class EmployeeDialog extends CustomDialog {
 	private EmployeeDialogObject employeeDialogObject;
 	private ContractType contractType;
 	private Municipalities municipalities;
+	private Iban ibanValidator;
 	
 	public EmployeeDialog() {
 		employee = new EmployeeImplementation();
@@ -747,6 +760,7 @@ public class EmployeeDialog extends CustomDialog {
 		this.employeeDialogObject = employeeDialogObject;
 		this.contractType = new ContractType();
 		this.municipalities = new Municipalities();
+		this.ibanValidator = new Iban();
 		
 		this.employeeDialogObject.getWorkplaceEmployees(
 				r -> { initLogicWindow();}, 
@@ -1038,7 +1052,8 @@ public class EmployeeDialog extends CustomDialog {
 	
 	
 	// ------------------------------------------------------------------------
-	//
+	//							CHECK IBAN
 	// ------------------------------------------------------------------------
+	
 	
 }

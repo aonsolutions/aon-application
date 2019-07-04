@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractType;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ModelRecord;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
+import com.esferalia.aon.gwt.payroll.shared.Iban;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Municipalities;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
@@ -881,6 +882,16 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 			if ( AonStringUtils.equals(value, saved))
 				return;
 			
+			if(value.length() > 0) {
+				if(Iban.validateIBAN(value)) {
+					employee.accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+					employee.accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
+				}else {
+					employee.accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+					employee.accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
+				}
+			}
+			
 			employeeDraftObject.setEmployeeAccount(value);
 			saving();
 		});
@@ -1102,6 +1113,17 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		this.employee.payMethod.setSelectedIndex(employeeDraftObject.getEmployeePayMethod());
 		this.employee.bic.setValue(employeeDraftObject.getEmployeeBIC());
 		this.employee.account.setValue(employeeDraftObject.getEmployeeAccount());
+		if(null != employeeDraftObject.getEmployeeAccount()) {
+			if(employeeDraftObject.getEmployeeAccount().length() > 0) {
+				if(Iban.validateIBAN(employeeDraftObject.getEmployeeAccount())) {
+					employee.accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+					employee.accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
+				}else {
+					employee.accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+					employee.accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
+				}
+			}
+		}
 	}
 
 	@Override

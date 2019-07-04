@@ -472,7 +472,10 @@
 								<g:Label styleName='{style.alignTextCenter}'>IBAN</g:Label>
 							</td>
 							<td colspan="3">
-								<g:TextBox ui:field="account" debugId="account" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
+								<g:HorizontalPanel styleName="{style.maxWidth}">
+									<g:TextBox ui:field="account" debugId="account" styleName='aon-inputText {style.maxWidthTextBox}'></g:TextBox>
+									<g:Label ui:field="accountStatus" debugId="ssNumberStatus"></g:Label>
+								</g:HorizontalPanel>
 							</td>
 							<td>
 								<g:Label styleName='{style.alignTextCenter}'>BIC</g:Label>

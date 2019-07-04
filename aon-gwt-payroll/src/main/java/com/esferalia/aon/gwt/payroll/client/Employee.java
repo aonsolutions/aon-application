@@ -259,6 +259,9 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 	TextBox account;
 	
 	@UiField
+	Label accountStatus;
+	
+	@UiField
 	Label journeyDuration;
 
 	// ------------------------------------------------------ VARIABLES DE LA CLASE -------------------------------------------------
