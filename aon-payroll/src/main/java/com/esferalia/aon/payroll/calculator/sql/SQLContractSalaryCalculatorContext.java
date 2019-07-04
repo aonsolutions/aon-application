@@ -141,6 +141,7 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.calendar.enumeration.DayType;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.payroll.DelegateContractPayment;
 import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.Salary;
@@ -151,6 +152,7 @@ import com.esferalia.aon.payroll.calculator.CompositePayments;
 import com.esferalia.aon.payroll.calculator.ContextFunctions;
 import com.esferalia.aon.payroll.calculator.ContractLeaveLoader.Leave;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.DelegateSystemPayment;
 import com.esferalia.aon.payroll.calculator.DomainPayments;
 import com.esferalia.aon.payroll.calculator.HierarchyDeductions;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
@@ -214,6 +216,7 @@ import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.TimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
+import com.esferalia.aon.salary.expression.Variables;
 import com.esferalia.aon.salary.expression.Variables.NotFoundHandler;
 import com.esferalia.aon.salary.expression.Variables.PeriodMap;
 import com.esferalia.aon.salary.payment.IPayment;
@@ -1467,7 +1470,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			ResultSet rs = paymentStmt.executeQuery();
 			this.sqlContractPayment.setResultSet(rs);
 
-			return new CompositePayments(this.sqlContractPayment, getAgreementPayments(), getSSRegimePayments()) {
+			return new CompositePayments(this.sqlContractPayment, getAgreementPayments(), getCCCPayments(), getSSRegimePayments()) {
 				@Override
 				public Iterator<IContractPayment> iterator() {
 					Iterator<IContractPayment> iterator = super.iterator();
@@ -2060,7 +2063,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		CCCType cccType = getCCCType();
 		for (ISystemPayment systemPayment : systemPayments) {
 			if (filter(systemPayment, cccType)) {
-				payments.add(systemPayment);
+				payments.add(new DelegateSystemPayment(systemPayment) {
+					@Override
+					public ExpressionScope getScope() {
+						return ExpressionScope.APPLICATION;
+					}
+				});
 			}
 		}
 		return payments;
