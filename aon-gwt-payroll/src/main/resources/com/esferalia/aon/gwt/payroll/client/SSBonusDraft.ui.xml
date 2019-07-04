@@ -220,35 +220,22 @@
 		<g:FlowPanel>
 			<g:FlowPanel styleName="aon-finding-title-toolbar">
 				<g:HorizontalPanel>
-					<!-- <g:HTMLPanel styleName="aon-finding-title">
-						<g:HTMLPanel styleName="aon-finding-title-internal">
-							<g:Label styleName="aon-outputText">Bonificaciones </g:Label>
-						</g:HTMLPanel>
-					</g:HTMLPanel> -->
 					<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-					    <g:Button ui:field='listBonusesButton'
-							styleName='aon-finding-toolbar-item aon-icon-white-list' text="LISTAR BONIFICACIONES"
+					    <g:Button ui:field='addBonusesButton'
+							styleName='aon-finding-toolbar-item aon-icon-reset' text="AÑADIR BONIFICACIÓN"
 							enabled="true" />
-						<!-- <g:Button ui:field='saveButton'
-							styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR"
-							enabled="true" /> -->
 					</g:HTMLPanel>
 					<g:HTMLPanel>
 					</g:HTMLPanel>
-					<!-- <g:HTMLPanel styleName="{style.upperRightMenuStyle} aon-finding-toolbar-item-group">
-					    <g:Button ui:field='helpButton'
-							styleName='{style.help} aon-icon-help' text=""
-							enabled="true" />
-					</g:HTMLPanel> -->
 				</g:HorizontalPanel>
 			</g:FlowPanel>
 		</g:FlowPanel>
 		<g:ScrollPanel>
 	        <g:HTMLPanel> 
-	            <g:VerticalPanel styleName="{style.styleBorder}">
+	            <g:VerticalPanel ui:field="ssBonusDataTable" styleName="{style.styleBorder}">
 		            <g:Label styleName='aon-group-title {style.headerStyle}' width="105px">Bonificaciones</g:Label>
 		            <g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel">
-	             		<table ui:field="ssBonusDataTable" style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
+	             		<table style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
 	             			<tr>
 						        <td></td>
 						        <td></td>
@@ -392,7 +379,7 @@
              		</g:HTMLPanel>
              	</g:VerticalPanel>
              	
-            		<g:HTMLPanel ui:field='listBonusesPanel' styleName="{style.paddingHide}">
+            		<g:HTMLPanel ui:field='listBonusesPanel'>
             		    <g:VerticalPanel styleName="{style.styleBorder}">
              		    <g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Lista Bonificaciones</g:Label>
              			<g:ScrollPanel>

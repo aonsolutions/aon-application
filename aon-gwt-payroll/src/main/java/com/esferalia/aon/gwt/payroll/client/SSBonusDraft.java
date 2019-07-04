@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
@@ -27,6 +28,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class SSBonusDraft extends CustomDialog {
@@ -60,7 +62,7 @@ public class SSBonusDraft extends CustomDialog {
 	//ELEMENTOS HTML
 	
 	@UiField
-	Button listBonusesButton;
+	Button addBonusesButton;
 	
 //	@UiField
 //	Button saveButton;
@@ -122,6 +124,9 @@ public class SSBonusDraft extends CustomDialog {
 	@UiField
 	Grid listBonusesTable;
 	
+	@UiField
+	VerticalPanel ssBonusDataTable;
+	
 	//BUTTONS ACCEPT AND CANCEL
 	
 	@UiField
@@ -149,15 +154,20 @@ public class SSBonusDraft extends CustomDialog {
 		acceptButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				hide();
-				onAccept();
+				onAccept(
+						s -> {
+							showTable();
+						},
+						f -> {}
+						);
+				
 			}
 		});		
 		
 		cancelButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				hide();
+				showTable();
 			}
 		});
 		
@@ -180,7 +190,7 @@ public class SSBonusDraft extends CustomDialog {
 					@Override
 					public void onSuccess(List<SSBonusData> result) {
 						bonusConcepts = result;
-						initializePage();
+						showTable();
 					}
 					
 				});
@@ -194,7 +204,21 @@ public class SSBonusDraft extends CustomDialog {
 
 	}
 	
-	private void onAccept() {
+	private void showTable() {
+		cleanSelected();
+		initializePage();
+		listBonusesPanel.removeStyleName(style.hide());
+		ssBonusDataTable.addStyleName(style.hide());
+	}
+	
+	private void hideTable() {
+		cleanSelected();
+		initializePage();
+		listBonusesPanel.addStyleName(style.hide());
+		ssBonusDataTable.removeStyleName(style.hide());
+	}
+	
+	private void onAccept(Consumer<List<SSBonusData>> success, Consumer<Throwable> failure) {
 		Date starDate_bonus = startDateBonus.getValue();
 		Date endDate_bonus = endDateBonus.getValue();
 		String description_bonus = descriptionBonus.getValue();
@@ -220,8 +244,9 @@ public class SSBonusDraft extends CustomDialog {
 				@Override
 				public void onSuccess(List<SSBonusData> result) {
 					ssBonuses = result;
+					success.accept(result);
 //					initializePage();
-					hide();
+//					hide();
 				}
 
 				@Override
@@ -251,6 +276,8 @@ public class SSBonusDraft extends CustomDialog {
 		if(canEdit){
 			cleanSelected();
 			setSelected(row);
+			listBonusesPanel.addStyleName(style.hide());
+			ssBonusDataTable.removeStyleName(style.hide());
 		}else {
 			cleanSelected();
 			initializePage();
@@ -359,10 +386,9 @@ public class SSBonusDraft extends CustomDialog {
 		this.amountBonus.setValue("");
 	}
 	
-	@UiHandler("listBonusesButton")
+	@UiHandler("addBonusesButton")
 	void onListBonusesButtonClick(ClickEvent event) {
-		cleanSelected();
-		initializePage();
+		hideTable();
 	}
 	
 //	@UiHandler("saveButton")
@@ -542,8 +568,7 @@ public class SSBonusDraft extends CustomDialog {
 								@Override
 								public void onSuccess(List<SSBonusData> result) {
 									ssBonuses = result;
-									cleanSelected();
-									initializePage();
+									showTable();
 								}
 
 								@Override
