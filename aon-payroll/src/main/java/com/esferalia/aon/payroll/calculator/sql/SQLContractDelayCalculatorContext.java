@@ -2,6 +2,7 @@ package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT_LEAVE;
@@ -747,6 +748,8 @@ public class SQLContractDelayCalculatorContext extends
 		private Date startDate;
 		private Date endDate;
 		private Integer contract;
+		
+		private double directBase ;
 
 		private Set<Integer> prestIts;
 
@@ -762,6 +765,12 @@ public class SQLContractDelayCalculatorContext extends
 			this.values = new HashMap<String, Double>();
 			this.stmt = initStatement(connection);
 			this.prestIts = new HashSet<Integer>();
+		}
+		
+		@Override
+		public void createNewSalary() {
+			super.createNewSalary();
+			this.directBase = 0.00;
 		}
 
 		@Override
@@ -786,7 +795,7 @@ public class SQLContractDelayCalculatorContext extends
 
 		@Override
 		public void setCgcBase(Double cgcBase) {
-			values.put(SalaryColumns.CGC_BASE, cgcBase);
+			values.put(SalaryColumns.CGC_BASE, cgcBase + directBase);
 		}
 
 		@Override
@@ -799,6 +808,7 @@ public class SQLContractDelayCalculatorContext extends
 			values.put(SalaryColumns.IRPF_BASE, irpfBase);
 		}
 		
+		
 		@Override
 		public void addZeroPayment(Double quote, Double tax, Date startDate, Date endDate, IPayment payment,
 				Map<String, ITimedVariable<?>> context) {
@@ -809,6 +819,9 @@ public class SQLContractDelayCalculatorContext extends
 		public void addPayment(Double amount, Double quote, Double tax, String description, Date startDate,
 				Date endDate, IPayment payment, Map<String, ITimedVariable<?>> context) {
 			super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+			
+			if ( DIRECT_PAY.getName().equals(payment.getName() ))
+				directBase += quote;
 		}
 
 		public Collection<IContractPayment> getContractPayments()
