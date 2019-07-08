@@ -169,6 +169,7 @@ import com.esferalia.aon.payroll.calculator.LRUCache;
 import com.esferalia.aon.payroll.calculator.OnlyPaymentContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.SalaryExpressionException;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.TaxCalculator;
 import com.esferalia.aon.payroll.calculator.UndefinedContextVariablesException;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -2362,7 +2363,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					IContractSalaryCalculatorContext ctx = getLiquidCalculatorContext(connection, start, end, issueDate,
 							contractCriteria, solve, liquid);
 					//ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
-					SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+					SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>() {
+						protected TaxCalculator getTaxCalculator(IContractSalaryCalculatorContext ctx) {
+							return TaxCalculator.getTaxCalculator(ctx);
+						};
+					};
 					calculator.setSalaryBuilder(new SalaryBuilder());
 
 					// TODO: Warning a bit tricky.

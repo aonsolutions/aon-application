@@ -212,9 +212,6 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 	private void addSalaryPayment(ExpressionContext expressionContext, IContractPayment payment, Date paymentStart,
 			Date paymentEnd) throws ExpressionException, UndefinedVariablesException {
 		
-		//FIX: Infinity loop. We can do better but not yet, not yet.  
-		expressionContext.removeVariable(ContextVariable.LIQUID);
-		
 		List<ITimedResult<Double>> results = expressionContext.eval(payment.getExpression(), paymentStart, paymentEnd,
 				Double.class);
 		
