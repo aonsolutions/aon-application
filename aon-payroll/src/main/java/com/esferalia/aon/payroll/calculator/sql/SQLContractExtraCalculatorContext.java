@@ -27,6 +27,9 @@ import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.SimpleContractPayment;
 import com.esferalia.aon.payroll.calculator.UndefinedContextVariablesException;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory.IExtraPayment;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
+import com.esferalia.aon.payroll.irpf.IrpfCalculator;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
@@ -208,6 +211,10 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 
 	private void addSalaryPayment(ExpressionContext expressionContext, IContractPayment payment, Date paymentStart,
 			Date paymentEnd) throws ExpressionException, UndefinedVariablesException {
+		
+		//FIX: Infinity loop. We can do better but not yet, not yet.  
+		expressionContext.removeVariable(ContextVariable.LIQUID);
+		
 		List<ITimedResult<Double>> results = expressionContext.eval(payment.getExpression(), paymentStart, paymentEnd,
 				Double.class);
 		
