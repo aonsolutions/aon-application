@@ -26,6 +26,7 @@ import org.jooq.tools.json.JSONObject;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
+import com.google.gwt.regexp.shared.RegExp;
 
 public class JooqAgrarian {
 
@@ -253,7 +254,11 @@ public class JooqAgrarian {
 				))
 				.fetchOne();
 		
-		json.put("documentType", registryRecord.get(REGISTRY.DOCUMENT_TYPE) == 0 ? 1 : 0);
+		RegExp dniPattern = RegExp.compile("\\d{8}\\-?[A-HJ-NP-TV-Z]");
+		String document = registryRecord.get(REGISTRY.DOCUMENT);
+		
+		json.put("documentType", dniPattern.test(document.toUpperCase()) ? 1 : 6);
+//		json.put("documentType", registryRecord.get(REGISTRY.DOCUMENT_TYPE) == 0 ? 1 : 6);
 		json.put("documentCountry", /*registryRecord.get(REGISTRY.DOCUMENT_COUNTRY)*/ "");		//¿Es opcional?
 		json.put("document", registryRecord.get(REGISTRY.DOCUMENT));
 		json.put("nationality", /*registryRecord.get(REGISTRY.NATIONALITY)*/ "724");			//¿Es opcional?
