@@ -84,6 +84,8 @@ public class EmployeeDialog extends CustomDialog {
 				this.documentStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
 				this.documentStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
 			}else {
+				employeeDialogObject.setEmployeeDocument(this.document.getValue());
+				employeeDialogObject.setEmployeeDocumentType(document_type);
 				this.documentStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
 				this.documentStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
 			}
