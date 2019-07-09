@@ -1908,7 +1908,9 @@ public class Mod131DAO extends FiscalModelDAO {
 			key.initialize(ctx, mod);
 		}
 		for (Mod131Activity activity : mod.getActivities()) {
-			calculateMod131Activity(ctx, activity);
+			// Solo se recalculan los datos de la actividad, si hay epígrafe
+			if (activity.getEpigraph() != null)
+				calculateMod131Activity(ctx, activity);
 		}
 		return calculateMod131(ctx, mod);
 	}
