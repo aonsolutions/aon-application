@@ -54,19 +54,26 @@ public class Bases2019UpdateIII implements Update {
 		Date _2019StartDate = new Date(calendar.getTimeInMillis());
 
 
-		boolean upgraded =
-		dslContext.fetchCount(
-		dslContext.select()
-		.from(SYSTEM_DATA)
+//		boolean upgraded =
+//		dslContext.fetchCount(
+//		dslContext.select()
+//		.from(SYSTEM_DATA)
+//		.where(SYSTEM_DATA.DOMAIN.eq(0))
+//		.and(SYSTEM_DATA.NAME.eq("POR_HORAS"))
+//		.and(SYSTEM_DATA.START_DATE.eq(_2019StartDate))) == 1;
+//		
+//
+//
+//		if ( upgraded ) 
+//			return;
+		
+		dslContext
+		.delete(SYSTEM_DATA)
 		.where(SYSTEM_DATA.DOMAIN.eq(0))
 		.and(SYSTEM_DATA.NAME.eq("POR_HORAS"))
-		.and(SYSTEM_DATA.START_DATE.eq(_2019StartDate))) == 1;
-		
-
-
-		if ( upgraded ) 
-			return;
-
+		.and(SYSTEM_DATA.START_DATE.eq(_2019StartDate))
+		.execute()
+		;
 		
 		InsertSetMoreStep<SystemDataRecord> insertByHours = dslContext
 		.insertInto(SYSTEM_DATA)
@@ -74,7 +81,7 @@ public class Bases2019UpdateIII implements Update {
 		.set(SYSTEM_DATA.NAME, "POR_HORAS")
 		.set(SYSTEM_DATA.START_DATE, _2019StartDate)
 		.set(SYSTEM_DATA.END_DATE, (Date) null)
-		.set(SYSTEM_DATA.EXPRESSION, "def () { UTILIZADA('HORAS_TRABAJADAS') }")
+		.set(SYSTEM_DATA.EXPRESSION, "def () { isdef CONTEXT ? UTILIZADA('HORAS_TRABAJADAS') : FALSO() }")
 		.set(SYSTEM_DATA.READ_ONLY, (byte) 1)
 		.set(SYSTEM_DATA.COMMENTS, (String) null)
 		;

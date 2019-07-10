@@ -295,7 +295,10 @@ public class SalaryDraft extends ResizeComposite
 			"HORAS_NOMINA", 
 			"HORAS_TRABAJADAS", 
 
-			"OCUPACION_IT", "OCUPACION_IMS", "PREST_IT" };
+			"OCUPACION_IT", "OCUPACION_IMS", "PREST_IT",
+			
+			"POR_HORAS", "CONTEXT", "UTILIZADA", "IS_READ"
+	};
 
 	private static String[] SUMMING_CONSTANTS = {
 			"DIAS_TRABAJADOS",
