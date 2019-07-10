@@ -1925,7 +1925,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			reportManager.setCollectionProvider(getSalariesProvider(
 					domain,
 					cost,
-					salaryTypes));
+					salaryTypes,
+					false ));
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			// TODO: SalaryType???????
@@ -2126,6 +2127,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			SalaryType types[]) throws ManagerBeanException {
 		boolean asEnterpriseSite = notAtEnterpriseSite();
 		boolean calc = !notAtEnterpriseSite();
+		SalaryFilter filter = asEnterpriseSite ? new SiteFilter() : null;
+		return getSalariesProvider(domain, cost, types, filter, calc);
+	}
+
+	private ICollectionProvider getSalariesProvider(String domain, Cost cost,
+			SalaryType types[], boolean calc) throws ManagerBeanException {
+		boolean asEnterpriseSite = notAtEnterpriseSite();
 		SalaryFilter filter = asEnterpriseSite ? new SiteFilter() : null;
 		return getSalariesProvider(domain, cost, types, filter, calc);
 	}
