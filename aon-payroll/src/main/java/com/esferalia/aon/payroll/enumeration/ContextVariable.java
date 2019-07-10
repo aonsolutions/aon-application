@@ -300,11 +300,13 @@ public enum ContextVariable implements IResourceable{
 	public static final String SECTION = "TRAMO";
 	public static final String WARNING = "AVISO";
 	public static final String ISDEF = "DEFINIDA";
+	public static final String ISREAD = "UTILIZADA";
 	public static final String CHECK_VAR = "CHECK_VAR";
 	public static final String REDEFINE = "REDEFINE";
 	public static final String PRORATION = "PRORRATEAR";
 	public static final String FRACTIONATE = "FRACCIONAR";
-	
+	public static final String IS_MONTHLY_DAILY = "MENSUAL_DIARIO";
+
 	public static final String GEROA = "GEROA";
 	public static final String OLDD = "ANTIGUEDAD";
 	public static final String PREST_IT = "PREST_IT";

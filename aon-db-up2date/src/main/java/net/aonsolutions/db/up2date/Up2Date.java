@@ -1,6 +1,7 @@
 package net.aonsolutions.db.up2date;
 
 import static net.aonsolutions.db.up2date.tgss.AgriculturalITInsert.AGRICULTURALITINSERT;
+import static net.aonsolutions.db.up2date.tgss.Bases2019UpdateIII.BASES2019UPDATEIII;
 import static net.aonsolutions.db.up2date.tgss.FellowsPercentages2019Update.FELLOWSPERCENTAGES2019UPDATE;
 import static net.aonsolutions.db.up2date.tgss.TrainningPercentages2019Update.TRAINNINGPERCENTAGES2019UPDATE;
 
@@ -24,6 +25,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.tgss.AgriculturalITInsert;
+import net.aonsolutions.db.up2date.tgss.Bases2019UpdateIII;
 
 public class Up2Date {
 
@@ -76,7 +78,8 @@ public class Up2Date {
     		//PLUSSALARIALINSERT
     		//TRAINNINGPERCENTAGES2019UPDATE,
     		//FELLOWSPERCENTAGES2019UPDATE
-    		AGRICULTURALITINSERT
+    		//AGRICULTURALITINSERT
+    		BASES2019UPDATEIII
     };
 
 

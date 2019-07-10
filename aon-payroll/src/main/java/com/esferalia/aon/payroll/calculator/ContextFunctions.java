@@ -120,6 +120,10 @@ public class ContextFunctions {
 		}
 	}
 
+	public static boolean isRead(String name, ExpressionContext context) throws CheckException {
+		return context.isRead(name);
+	}
+
 	public static void section(Date date) throws MacroException {
 		throw new MacroException() {
 			@Override
@@ -759,6 +763,25 @@ public class ContextFunctions {
 		} catch (NoSuchMethodException e) {
 		}
 	}
+	
+	private static void loadIsReadFunction(ExpressionContext context, Date startDate, Date endDate)
+			throws ExpressionException {
+
+		try {
+			Method isRead = ContextFunctions.class.getMethod("isRead", String.class,
+					ExpressionContext.class);
+
+			MethodStub isReadStub = new MethodStub(isRead);
+			context.setVariable("ISREAD", isReadStub, startDate, endDate);
+			String functionScript = String.format("%s = def(variable) { ISREAD(variable, %s) };",
+					ContextVariable.ISREAD, ContextVariable.CONTEXT);
+
+			context.eval(functionScript, startDate, endDate);
+		} catch (SecurityException e) {
+		} catch (NoSuchMethodException e) {
+		}
+	}
+	
 
 	private static void loadExcessFunction(ExpressionContext context, Date startDate, Date endDate)
 			throws ExpressionException {
@@ -850,6 +873,7 @@ public class ContextFunctions {
 		loadWarnFunction(context, startDate, endDate);
 		loadMonthsFunction(context, startDate, endDate);
 		loadIsDefFunction(context, startDate, endDate);
+		loadIsReadFunction(context, startDate, endDate);
 		loadHideFunction(context, startDate, endDate);
 		loadRemoveFunction(context, startDate, endDate);
 		loadExcessFunction(context, startDate, endDate);

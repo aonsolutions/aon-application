@@ -3628,6 +3628,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 						}
 					});
 
+		this.implicitExpressionContext.putVariable(ContextVariable.MONTHLY_SALARY, new LazyTimedConstant<Boolean>() {
+			@Override
+			public Boolean create() {
+				return isMonthly();
+			}
+		});
 		/*
 		 * this.implicitExpressionContext.addVariable(COMPENSATION_DAYS, new
 		 * LazyTimedVariable<Double>() {

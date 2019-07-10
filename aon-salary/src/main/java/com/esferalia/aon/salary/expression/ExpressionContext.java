@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -421,6 +422,7 @@ public class ExpressionContext {
 		return new String(expr, start, end - start);
 	}
 
+	private Set<String> read;
 	private Variables variables;
 
 	public ExpressionContext() {
@@ -430,6 +432,7 @@ public class ExpressionContext {
 	public ExpressionContext(Variables variables) {
 		this.variables = variables;
 		initImplicitVariables();
+		this.read = new HashSet<String>();
 	}
 
 	public ExpressionContext(NotFoundHandler notFoundHandler) {
@@ -497,8 +500,17 @@ public class ExpressionContext {
 	public <T> T getVariable(Object name, Date start, Date end, Class<T> toType) {
 		return (T) variables.get(name.toString(), new Period(start, end));
 	}
+	
+	public boolean isRead(Object ...names) {
+		for (Object name : names)
+			if ( read.contains(name))
+				return true;
+		
+		return false;
+	}
 
 	public <T> T readVariable(Object name, Date start, Date end, Class<T> toType) {
+		read.add(name.toString());
 		return (T) getCurrentBindings().get(name);
 	}
 
@@ -724,7 +736,7 @@ public class ExpressionContext {
 				}
 			}
 		}
-
+		read(values);
 		return values;
 	}
 
@@ -789,6 +801,10 @@ public class ExpressionContext {
 		}
 	}
 
+	private  <T> void read(List<ITimedResult<T>> results) {
+		results.forEach(result -> read.addAll(result.getContext().keySet()));
+	}
+	
 	// ------------------------------------------------------------------------
 	//
 	// ------------------------------------------------------------------------
