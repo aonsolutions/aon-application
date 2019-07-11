@@ -49,6 +49,7 @@ import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.ISystemPayment;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementContextFactory;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext;
@@ -330,6 +331,17 @@ public class EmployeesServiceHelper {
 			defined[Scope.SYSTEM.ordinal()] = true;
 			definedMap.put(name, defined);
 		}
+
+		for (ISystemPayment p : ctx.getSystemPayments()) {
+			if (StringUtils.isBlank(p.getName()))
+				continue;
+
+			boolean defined[] = new boolean[Scope.NUM_VALUES];
+			defined[Scope.SYSTEM.ordinal()] = true;
+			definedMap.put(p.getName(), defined);
+
+		}
+
 		// Agreement
 		ExpressionContext agreementCtx = ctx.getAgreementExpressionContext();
 		for (String name : agreementCtx.variablesSet()) {
