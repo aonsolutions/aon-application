@@ -42,6 +42,31 @@ public class Salary implements Serializable {
 			return compare(max(startDate,this.startDate),min(endDate,this.endDate)) <= 0;
 		}
 	}
+	public static class Payment {
+		Double amount;
+		String expression;
+		String description;
+
+		public Payment(Double amount, String expression, String description) {
+			super();
+			this.amount = amount;
+			this.description = description;
+			this.expression = expression;
+		}
+
+		public Double getAmount() {
+			return amount;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+		
+		public String getExpression() {
+			return expression;
+		}
+
+	}
 
 	public static class Deduction {
 		Double amount;
@@ -321,12 +346,14 @@ public class Salary implements Serializable {
 
 	private List<Cost> costs;
 	private List<Bonus> bonuses;
+	private List<Payment> payments;
 	private List<Deduction> deductions;
 	private Map<String, List<ContextData>> contextdata;
 
 	public Salary() {
 		costs = new ArrayList<Cost>();
 		bonuses = new ArrayList<Bonus>();
+		payments = new ArrayList<Payment>();
 		deductions = new ArrayList<Deduction>();
 		contextdata = new HashMap<String, List<ContextData>>();
 	}
@@ -586,6 +613,17 @@ public class Salary implements Serializable {
 		bonuses.add(new Bonus(amount, description));
 	}
 	
+	public List<Payment> getPayments() {
+		return Collections.unmodifiableList(payments);
+	}
+
+	public void addPayment(String expression, String description,
+			Double amount) {
+		
+		Payment payment = new Payment(amount, expression, description);
+		
+		payments.add(payment);
+	}
 
 	public List<Cost> getCosts() {
 		return Collections.unmodifiableList(costs);
@@ -648,7 +686,8 @@ public class Salary implements Serializable {
 	public List<Deduction> getDeductions() {
 		return Collections.unmodifiableList(deductions);
 	}
-
+	
+	
 	public void addDeduction(Byte type, String description,
 			Double amount) {
 		Deduction deduction = null ;

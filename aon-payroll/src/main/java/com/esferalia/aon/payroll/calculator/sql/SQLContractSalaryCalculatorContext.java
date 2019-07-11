@@ -2358,8 +2358,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		final Criteria contractCriteria = new Criteria();
 		contractCriteria.addExpression(criteria.getExpression());
 		contractCriteria.addEqualExpression(SQLConstants.CONTRACT + "." + ContractColumns.ID, getId());
-
-		result = solver.solve(Byte.MAX_VALUE, new UnivariateFunction() {
+		
+		UnivariateFunction univariateFunction = new UnivariateFunction() {
 
 			@Override
 			public double value(double solve) {
@@ -2395,7 +2395,19 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				}
 			}
 
-		}, -2.00 * liquid, 2.00 * liquid, liquid);
+		};
+		
+		try {
+			result = getLiquidStartValue(start, liquid);
+			if ( Math.abs(univariateFunction.value(result)) <=  0.001 ) {
+				System.out.println("Wonderfull NETO calculated in one step!!!. " );
+				return result;
+			}
+		} catch ( Exception e ) {
+			
+		}
+		
+		result = solver.solve(Byte.MAX_VALUE, univariateFunction, -2.00 * liquid, 2.00 * liquid, liquid);
 
 		SQLContractSalaryCalculatorContext.this.liquids.put(liquid, result);
 
@@ -4659,6 +4671,32 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 	
 	
+	private Double getLiquidStartValue(Date date, double liquid) {
+		PaymentVariable paymentVar = getVariable(ContextVariable.PAYMENT_VARIABLE, PaymentVariable.class);
+		IContractPayment payment = paymentVar.getPayment();
+		String expression = payment.getExpression();
+		String description = payment.getDescription();
+		
+		int contractId = getId();
+		Date prevEndMonth = getLastDayOfMonth(add(date, Calendar.MONTH, -1));
+		Date prevStartMonth = getFirstDayOfMonth(prevEndMonth);
+
+		return 
+		AON.getSalaries(new AONContext(connection),
+		p -> p.getIsSalaryProperty().eq(true)
+		.and(p.getContractProperty().eq(contractId))
+		.and(p.getStartDateProperty().le(prevEndMonth))
+		.and(p.getEndDateProperty().ge(prevStartMonth)))
+		.filter(salary -> salary.getTotalLiquid().equals(liquid) )
+		.findAny()
+		.orElseThrow( IllegalStateException::new )
+		.getPayments().stream()
+		.filter( p -> AonStringUtils.equals(p.getExpression(),expression) || AonStringUtils.equals(p.getDescription(),description) )
+		.findAny()
+		.orElseThrow( IllegalStateException::new )
+		.getAmount()
+		;
+	}
 	
 	// ------------------------------------------------------------------------
 

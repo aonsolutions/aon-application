@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.Keys.FK_SALARY_BONUS_SALARY;
 import static com.esferalia.aon.jooq.Keys.FK_SALARY_COST_SALARY;
 import static com.esferalia.aon.jooq.Keys.FK_SALARY_DATA_SALARY;
 import static com.esferalia.aon.jooq.Keys.FK_SALARY_DEDUCTION_SALARY;
+import static com.esferalia.aon.jooq.Keys.FK_SALARY_PAYMENT_SALARY;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryBonus.SALARY_BONUS;
@@ -30,6 +31,7 @@ import org.jooq.Record;
 import org.jooq.TableField;
 import org.jooq.lambda.Seq;
 
+import com.esferalia.aon.jooq.Keys;
 import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -198,6 +200,18 @@ public class SalaryDAO {
 		//@formatter:on
 
 		//@formatter:off
+		Cursor<Record> paymentCursor = 
+		ctx.getDslContext()
+		.select()
+		.from(SALARY)
+		.join(SALARY_PAYMENT)
+		.onKey(FK_SALARY_PAYMENT_SALARY)
+		.where(conditions)
+		.orderBy(SALARY_PAYMENT.SALARY)
+		.fetchLazy();
+		//@formatter:on
+
+		//@formatter:off
 		Cursor<Record> costCursor = 
 		ctx.getDslContext()
 		.select()
@@ -221,6 +235,7 @@ public class SalaryDAO {
 		.fetchLazy();
 		//@formatter:on
 
+		BackIterator<Record> paymentIter = new BackIterator<>(paymentCursor.iterator());
 		BackIterator<Record> dataIter = new BackIterator<>(dataCursor.iterator());
 		BackIterator<Record> costIter = new BackIterator<>(costCursor.iterator());
 		BackIterator<Record> deductionIter = new BackIterator<>(deductionCursor.iterator());
@@ -269,6 +284,19 @@ public class SalaryDAO {
 				
 				dataIter.back();
 				
+				Seq.limitWhile(
+				Seq.skipUntil(Seq.seq(paymentIter), 
+				r -> r.getValue(SALARY_PAYMENT.SALARY) >= salaryId ),
+				r -> r.getValue(SALARY_PAYMENT.SALARY) == salaryId )
+				.forEachOrdered(paymentRecord->{
+					salary.addPayment(
+							paymentRecord.getValue(SALARY_PAYMENT.EXPRESSION), 
+							paymentRecord.getValue(SALARY_PAYMENT.DESCRIPTION), 
+							paymentRecord.getValue(SALARY_PAYMENT.AMOUNT));
+				}
+				);
+				paymentIter.back();
+
 				Seq.limitWhile(
 				Seq.skipUntil(Seq.seq(deductionIter), 
 				r -> r.getValue(SALARY_DEDUCTION.SALARY) >= salaryId ),
