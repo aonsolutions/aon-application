@@ -1,10 +1,5 @@
 package net.aonsolutions.db.up2date;
 
-import static net.aonsolutions.db.up2date.tgss.AgriculturalITInsert.AGRICULTURALITINSERT;
-import static net.aonsolutions.db.up2date.tgss.Bases2019UpdateIII.BASES2019UPDATEIII;
-import static net.aonsolutions.db.up2date.tgss.FellowsPercentages2019Update.FELLOWSPERCENTAGES2019UPDATE;
-import static net.aonsolutions.db.up2date.tgss.TrainningPercentages2019Update.TRAINNINGPERCENTAGES2019UPDATE;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -24,8 +19,13 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.payroll.SalarioBaseReadOnlyUpdate;
+import net.aonsolutions.db.up2date.payroll.PlusSalarialInsert;
+import net.aonsolutions.db.up2date.payroll.SystemPaymentReadOnlyUpdate;
 import net.aonsolutions.db.up2date.tgss.AgriculturalITInsert;
 import net.aonsolutions.db.up2date.tgss.Bases2019UpdateIII;
+import net.aonsolutions.db.up2date.tgss.FellowsPercentages2019Update;
+import net.aonsolutions.db.up2date.tgss.TrainningPercentages2019Update;
 
 public class Up2Date {
 
@@ -75,11 +75,12 @@ public class Up2Date {
     		//PRESTITDESCRIPTIONSUPDATE
     		//EMBARGODESCRIPTIONSUPDATE,
     		//SALARIOBASEDESCRIPTIONSUPDATE,
-    		//PLUSSALARIALINSERT
-    		//TRAINNINGPERCENTAGES2019UPDATE,
-    		//FELLOWSPERCENTAGES2019UPDATE
-    		//AGRICULTURALITINSERT
-    		BASES2019UPDATEIII
+    		//PlusSalarialInsert.PLUSSALARIALINSERT,
+    		//TrainningPercentages2019Update.TRAINNINGPERCENTAGES2019UPDATE,
+    		//FellowsPercentages2019Update.FELLOWSPERCENTAGES2019UPDATE,
+    		//AgriculturalITInsert.AGRICULTURALITINSERT,
+    		//Bases2019UpdateIII.BASES2019UPDATEIII,
+    		SalarioBaseReadOnlyUpdate.SALARIOBASEREADONLYUPDATE
     };
 
 

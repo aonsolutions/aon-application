@@ -222,6 +222,11 @@ public class ContractSalaryCalculatorContext extends
 	public Date getSeniorityDate() {
 		return ctx.getSeniorityDate();
 	}
+	
+	@Override
+	public Collection<ISystemPayment> getSystemPayments() {
+		return ctx.getSystemPayments();
+	}
 
 	@Override
 	public Collection<IContractPayment> getAgreementPayments() {

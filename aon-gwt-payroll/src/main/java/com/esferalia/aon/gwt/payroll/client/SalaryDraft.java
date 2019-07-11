@@ -3977,7 +3977,7 @@ public class SalaryDraft extends ResizeComposite
 		deleteButton.setStyleName(AON.AON_ICON_DELETE);
 		deleteButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 		buttonsPanel.add(deleteButton);
-		enable(deleteButton, !isReadOnly(item) && !isRemove(item) && isEditable);
+		enable(deleteButton, !isSystem(item) && !isRemove(item) && isEditable);
 		deleteButton.ensureDebugId("delete-button-" + row );
 
 		handler.setDeleteButton(deleteButton);
@@ -5866,6 +5866,9 @@ public class SalaryDraft extends ResizeComposite
 		return expression != null && expression.contains("read-only");
 	}
 
+	private static <T extends Item<?>> boolean isSystem(T item) {
+		return Scope.SYSTEM == item.getScope() || item.isDefinedAt(Scope.SYSTEM);
+	}
 
 	private static <T extends Item<?>> boolean isRemove(T item) {
 		return StringUtils.equalsIgnoreCase("REMOVE()", item.getExpression());

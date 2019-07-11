@@ -324,13 +324,14 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Id("fxExpressionCodeArea");
 		Assert.assertEquals(((HtmlTextArea) getElementById("fxExpressionCodeArea")).getText(),"DIAS_TRABAJADOS / DIAS_MES * /*user*/PLUS_SALARIAL/**/" );
 		click("fxCancelButton");
-		
-		getElementById("db-amount-label-2").focus();
-		wait4Value("db-amount-label-2", "SALARIO_MENSUAL");
-		click("fxButton");
-		wait4Id("fxExpressionCodeArea");
-		Assert.assertEquals(((HtmlTextArea) getElementById("fxExpressionCodeArea")).getText(),"/*user*/SALARIO_MENSUAL/**/ * DIAS_TRABAJADOS / DIAS_MES " );
-		click("fxCancelButton");
+
+//  Now SALARIO_BASE is read-only.		
+//		getElementById("db-amount-label-2").focus();
+//		wait4Value("db-amount-label-2", "SALARIO_MENSUAL");
+//		click("fxButton");
+//		wait4Id("fxExpressionCodeArea");
+//		Assert.assertEquals(((HtmlTextArea) getElementById("fxExpressionCodeArea")).getText(),"/*user*/SALARIO_MENSUAL/**/ * DIAS_TRABAJADOS / DIAS_MES " );
+//		click("fxCancelButton");
 		 
 		
 		getElementById("db-amount-label-3").focus();
@@ -1226,11 +1227,13 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertDisabled("delete-button-2", true);
 		assertInputDisabled( "db-amount-label-3" , true); // PREST. POR ENFERMEDAD COMÚN A CARGO DEL INSS		
 		assertDisabled("delete-button-3", true);
-		assertInputDisabled( "db-amount-label-4" , false); // SALARIO BASE MENSUAL
+		assertInputDisabled( "db-amount-label-4" , false); // PLUS SALARIAL MENSUAL
 		assertDisabled("delete-button-4", false);
+		assertInputDisabled( "db-amount-label-5" , true); // SALARIO BASE MENSUAL
+		assertDisabled("delete-button-5", false);
 		
 		
-		setValue("description-box-1", "PRESTACIÓN POR ENFERMEDAD COMÚN");
+		setValue("description-box-1", "P. POR ENFERMEDAD COMÚN");
 		
 		wait4Class("payment-row-1", "aon-dataTable-row-highlight");
 		wait4Class("payment-row-2", "aon-dataTable-row-highlight");
@@ -1241,8 +1244,10 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertDisabled("delete-button-2", true);
 		assertInputDisabled( "db-amount-label-3" , true); // PREST. POR ENFERMEDAD COMÚN A CARGO DEL INSS		
 		assertDisabled("delete-button-3", true);
-		assertInputDisabled( "db-amount-label-4" , false); // SALARIO BASE MENSUAL
+		assertInputDisabled( "db-amount-label-4" , false); // PLUS SALARIAL MENSUAL
 		assertDisabled("delete-button-4", false);
+		assertInputDisabled( "db-amount-label-5" , true); // SALARIO BASE MENSUAL
+		assertDisabled("delete-button-5", false);
 		
 		click("edit-button-1");
 		wait4Id("paymetDialogHTMLPanel");
@@ -1261,8 +1266,10 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertDisabled("delete-button-2", true);
 		assertInputDisabled( "db-amount-label-3" , true); // PREST. POR ENFERMEDAD COMÚN A CARGO DEL INSS		
 		assertDisabled("delete-button-3", true);
-		assertInputDisabled( "db-amount-label-4" , false); // SALARIO BASE MENSUAL
+		assertInputDisabled( "db-amount-label-4" , false); // PLUS SALARIAL MENSUAL
 		assertDisabled("delete-button-4", false);
+		assertInputDisabled( "db-amount-label-5" , true); // SALARIO BASE MENSUAL
+		assertDisabled("delete-button-5", false);
 		
 		
 		// PREST, ENFERMEDAD PROFESIONAL
@@ -1272,24 +1279,30 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 		assertInputDisabled( "db-amount-label-1" , true); // PREST. POR ACCIDENTE DE TRABAJO Y/O ENFERMEDAD PROFESIONAL
 		assertDisabled("delete-button-1", true);
-		assertInputDisabled( "db-amount-label-2" , false); // SALARIO BASE MENSUAL
+		assertInputDisabled( "db-amount-label-2" , false); // PLUS SALARIAL MENSUAL
 		assertDisabled("delete-button-2", false);
+		assertInputDisabled( "db-amount-label-3" , true); // SALARIO BASE MENSUAL
+		assertDisabled("delete-button-3", false);
 		
-		setValue("description-box-1", "PRESTACIÓN POR ACCIDENTE DE TRABAJO Y/O ENFERMEDAD PROFESIONAL");
+		setValue("description-box-1", "P. POR ACCIDENTE DE TRABAJO Y/O ENFERMEDAD PROFESIONAL");
 		
 		wait4Class("payment-row-1", "aon-dataTable-row-highlight");
-		assertInputDisabled( "db-amount-label-1" , true); // PRESTACIÓN POR ACCIDENTE DE TRABAJO Y/O ENFERMEDAD PROFESIONAL
+		assertInputDisabled( "db-amount-label-1" , true); // P. POR ACCIDENTE DE TRABAJO Y/O ENFERMEDAD PROFESIONAL
 		assertDisabled("delete-button-1", true);
-		assertInputDisabled( "db-amount-label-2" , false); // SALARIO BASE MENSUAL
+		assertInputDisabled( "db-amount-label-2" , false); // PLUS SALARIAL MENSUAL
 		assertDisabled("delete-button-2", false);
+		assertInputDisabled( "db-amount-label-3" , true); // SALARIO BASE MENSUAL
+		assertDisabled("delete-button-3", false);
 		
 		click("acceptButton");
 		wait4Disabled("acceptButton", true);
 		wait4NoClass("payment-row-1", "aon-dataTable-row-highlight");
 		assertInputDisabled( "db-amount-label-1" , true); // PRESTACIÓN POR ENFERMEDAD COMÚN
 		assertDisabled("delete-button-1", true);
-		assertInputDisabled( "db-amount-label-2" , false); // SALARIO BASE MENSUAL
+		assertInputDisabled( "db-amount-label-2" , false); // PLUS SALARIAL MENSUAL
 		assertDisabled("delete-button-2", false);
+		assertInputDisabled( "db-amount-label-3" , true); // SALARIO BASE MENSUAL
+		assertDisabled("delete-button-3", false);
 
 		// PREST, MATERNIDAD
 		draft("PREST, MATERNIDAD");
@@ -1297,21 +1310,27 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.JUNE, 2018);
 		
 		assertInputDisabled( "db-amount-label-1" , true); // PREST. POR MATERNIDAD Y/O RIESGO DURANTE EL EMBARAZO
-		assertInputDisabled( "db-amount-label-2" , false); // SALARIO BASE MENSUAL
+		assertInputDisabled( "db-amount-label-2" , false); // PLUS SALARIAL MENSUAL
+		assertInputDisabled( "db-amount-label-3" , true); // SALARIO BASE MENSUAL
+		assertDisabled("delete-button-3", false);
 		
-		setValue("description-box-1", "PRESTACIÓN POR MATERNIDAD Y/O RIESGO DURANTE EL EMBARAZO");
+		setValue("description-box-1", "P.POR MATERNIDAD Y/O RIESGO DURANTE EL EMBARAZO");
 		
 		wait4Class("payment-row-1", "aon-dataTable-row-highlight");
-		assertInputDisabled( "db-amount-label-1" , true); // PRESTACIÓN POR MATERNIDAD Y/O RIESGO DURANTE EL EMBARAZO
+		assertInputDisabled( "db-amount-label-1" , true); // P. POR MATERNIDAD Y/O RIESGO DURANTE EL EMBARAZO
 		assertDisabled("delete-button-1", true);
-		assertInputDisabled( "db-amount-label-2" , false); // SALARIO BASE MENSUAL
+		assertInputDisabled( "db-amount-label-2" , false); // PLUS SALARIAL MENSUAL
+		assertInputDisabled( "db-amount-label-3" , true); // SALARIO BASE MENSUAL
+		assertDisabled("delete-button-3", false);
 		
 		click("acceptButton");
 		wait4Disabled("acceptButton", true);
 		wait4NoClass("payment-row-1", "aon-dataTable-row-highlight");
-		assertInputDisabled( "db-amount-label-1" , true); // PRESTACIÓN POR MATERNIDAD Y/O RIESGO DURANTE EL EMBARAZO
+		assertInputDisabled( "db-amount-label-1" , true); // P. POR MATERNIDAD Y/O RIESGO DURANTE EL EMBARAZO
 		assertDisabled("delete-button-1", true);
-		assertInputDisabled( "db-amount-label-2" , false); // SALARIO BASE MENSUAL
+		assertInputDisabled( "db-amount-label-2" , false); // PLUS SALARIAL MENSUAL
+		assertInputDisabled( "db-amount-label-3" , true); // SALARIO BASE MENSUAL
+		assertDisabled("delete-button-3", false);
 		
 		// PREST, PATERNIDAD
 		draft("PREST, PATERNIDAD");
@@ -1320,24 +1339,30 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 		assertInputDisabled( "db-amount-label-1" , true); // PREST. POR PATERNIDAD
 		assertInputDisabled( "db-amount-label-1" , true); // PRESTACIÓN POR PATERNIDAD
-		assertInputDisabled( "db-amount-label-2" , false); // SALARIO BASE MENSUAL
+		assertInputDisabled( "db-amount-label-2" , false); // PLUS SALARIAL MENSUAL
 		assertDisabled("delete-button-2", false);
+		assertInputDisabled( "db-amount-label-3" , true); // SALARIO BASE MENSUAL
+		assertDisabled("delete-button-3", false);
 		
-		setValue("description-box-1", "PRESTACIÓN POR PATERNIDAD");
+		setValue("description-box-1", "P. POR PATERNIDAD");
 		
 		wait4Class("payment-row-1", "aon-dataTable-row-highlight");
-		assertInputDisabled( "db-amount-label-1" , true); // PRESTACIÓN POR PATERNIDAD
+		assertInputDisabled( "db-amount-label-1" , true); // P. POR PATERNIDAD
 		assertDisabled("delete-button-1", true);
-		assertInputDisabled( "db-amount-label-2" , false); // SALARIO BASE MENSUAL
+		assertInputDisabled( "db-amount-label-2" , false); // PLUS SALARIAL MENSUAL
 		assertDisabled("delete-button-2", false);
+		assertInputDisabled( "db-amount-label-3" , true); // SALARIO BASE MENSUAL
+		assertDisabled("delete-button-3", false);
 		
 		click("acceptButton");
 		wait4Disabled("acceptButton", true);
 		wait4NoClass("payment-row-1", "aon-dataTable-row-highlight");
-		assertInputDisabled( "db-amount-label-1" , true); // PRESTACIÓN POR PATERNIDAD
+		assertInputDisabled( "db-amount-label-1" , true); // P. POR PATERNIDAD
 		assertDisabled("delete-button-1", true);
-		assertInputDisabled( "db-amount-label-2" , false); // SALARIO BASE MENSUAL
+		assertInputDisabled( "db-amount-label-2" , false); // PLUS SALARIAL MENSUAL
 		assertDisabled("delete-button-2", false);
+		assertInputDisabled( "db-amount-label-3" , true); // SALARIO BASE MENSUAL
+		assertDisabled("delete-button-3", false);
 
 		//VACACIONES, NO DISFRUTADAS
 		draft("VACACIONES, NO DISFRUTADAS");

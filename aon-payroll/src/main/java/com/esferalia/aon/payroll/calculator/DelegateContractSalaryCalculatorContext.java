@@ -118,6 +118,11 @@ public class DelegateContractSalaryCalculatorContext<T extends IContractSalaryCa
 	}
 	
 	@Override
+	public Collection<ISystemPayment> getSystemPayments() {
+		return ctx.getSystemPayments();
+	}
+
+	@Override
 	public Collection<IContractPayment> getAgreementPayments() {
 		return ctx.getAgreementPayments();
 	}

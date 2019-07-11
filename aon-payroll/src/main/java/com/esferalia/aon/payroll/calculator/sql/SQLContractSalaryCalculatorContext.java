@@ -1448,6 +1448,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	@Override
+	public Collection<ISystemPayment> getSystemPayments() {
+		return systemPayments;
+	}
+	
+	@Override
 	public Collection<IContractPayment> getAgreementPayments() {
 		AgreementKey agreementKey = getAgreementKey();
 		Collection<ISystemPayment> payments = agreementPayments.get(agreementKey);

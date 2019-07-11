@@ -78,6 +78,8 @@ public interface IContractSalaryCalculatorContext extends
 
 	public ExpressionContext getAgreementExpressionContext();
 
+	public Collection<ISystemPayment> getSystemPayments();
+
 	public Collection<IContractPayment> getAgreementPayments();
 
 	public Collection<IContractPayment> getContractPayments()
