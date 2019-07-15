@@ -18,6 +18,15 @@ public class D2PDepositConstants {
 		//UNIDADES ---> MICROEMPRESAS
 	};
 	
+	public static D2DepositHeaderKey[][] SRP_KEYS = new D2DepositHeaderKey[][]{
+		new D2DepositHeaderKey[]{D2DepositHeaderKey.SRP831010, D2DepositHeaderKey.SRP8310109, D2DepositHeaderKey.SRP831011}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.SRP831020, D2DepositHeaderKey.SRP8310209, D2DepositHeaderKey.SRP831021}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.SRP831030, D2DepositHeaderKey.SRP8310309, D2DepositHeaderKey.SRP831031}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.SRP831040, D2DepositHeaderKey.SRP8310409, D2DepositHeaderKey.SRP831041}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.SRP831050, D2DepositHeaderKey.SRP8310509, D2DepositHeaderKey.SRP831051}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.SRP831060, D2DepositHeaderKey.SRP8310609, D2DepositHeaderKey.SRP831061}
+	};
+	
 	public static D2DepositHeaderKey[][] BALANCE_ACTIVE_PYMES_KEYS = new D2DepositHeaderKey[][]{
 		 new D2DepositHeaderKey[]{D2DepositHeaderKey.BA111000,D2DepositHeaderKey.BA1110009,D2DepositHeaderKey.BA11100098}
 		,new D2DepositHeaderKey[]{D2DepositHeaderKey.BA111100,D2DepositHeaderKey.BA1111009,D2DepositHeaderKey.BA11110098}

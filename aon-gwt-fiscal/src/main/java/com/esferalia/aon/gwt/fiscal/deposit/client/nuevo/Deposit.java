@@ -35,6 +35,7 @@ import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.normalizedMemory.PageH2
 import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.normalizedMemory.PageH3;
 import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.normalizedMemory.PageH4;
 import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.normalizedMemory.PageH5;
+import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.normalizedMemory.PageH6;
 import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.normalizedMemory.PageITR;
 import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.normalizedMemory.PageM10;
 import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.normalizedMemory.PageM11_2;
@@ -65,6 +66,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronIconsElement;
 import com.vaadin.polymer.paper.PaperIconButtonElement;
+import com.vaadin.polymer.paper.widget.PaperItem;
 import com.vaadin.polymer.vaadin.VaadinUploadElement;
 
 import net.aonsolutions.polymer.aon.AonComboBoxElement;
@@ -235,6 +237,7 @@ public class Deposit extends AonTemplate2 {
 		setDepositMenu(depositMenu);
 		if(DepositMenu.HIS.equals(depositMenu)) getPage().setWidget(new PageH1(thiz));
 		if(DepositMenu.ITR.equals(depositMenu)) getPage().setWidget(new PageITR(thiz));
+		if(DepositMenu.SRA.equals(depositMenu)) getPage().setWidget(new PageH6(thiz));
 		if(DepositMenu.AR.equals(depositMenu)) getPage().setWidget(new PageM3_2(thiz));
 		if(DepositMenu.BS.equals(depositMenu)) getPage().setWidget(new PageH2(thiz));
 		if(DepositMenu.CPG.equals(depositMenu)) getPage().setWidget(new PageH3(thiz));
@@ -284,6 +287,8 @@ public class Deposit extends AonTemplate2 {
 	}
 	
 	private static final String IDA = "Hoja Identificativa de la sociedad";
+	private static final String ITR = "Identificador del titular real";
+	private static final String SRA = "Documento sobre servicios a terceros";
 	private static final String AR = "Aplicaci\u00f3n de resultados";
 	private static final String BS = "Balance de situaci\u00f3n";
 	private static final String PYG = "Cuenta de perdidas y ganancias";
@@ -302,13 +307,29 @@ public class Deposit extends AonTemplate2 {
 		flex_table.setWidget(index, 1, cbIDA);
 		index++;
 		
-		if(year >= 2016){
+		if(year >= 2016 && year < 2018){
 			flex_table.setWidget(index, 0, new Label(AR));
 			CheckBox cbAR = new CheckBox();cbAR.setValue(true);
 			flex_table.setWidget(index, 1, cbAR);
 			index++;
 		}
 		
+    	if(year >= 2017) {
+    		flex_table.setWidget(index, 0, new Label(ITR));
+			CheckBox cbITR = new CheckBox();cbITR.setValue(false);
+			cbITR.setEnabled(false);
+			flex_table.setWidget(index, 1, cbITR);
+			index++;
+    	}
+    	
+    	if(year >= 2018) {
+    		flex_table.setWidget(index, 0, new Label(SRA));
+			CheckBox cbSRA = new CheckBox();cbSRA.setValue(false);
+			cbSRA.setEnabled(false);
+			flex_table.setWidget(index, 1, cbSRA);
+			index++;
+    	}
+
 		flex_table.setWidget(index, 0, new Label(BS));
 		CheckBox cbBS = new CheckBox();cbBS.setValue(true);
 		flex_table.setWidget(index, 1, cbBS);

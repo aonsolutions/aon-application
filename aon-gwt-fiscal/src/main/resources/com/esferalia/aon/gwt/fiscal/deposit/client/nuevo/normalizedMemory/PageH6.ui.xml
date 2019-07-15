@@ -1,0 +1,128 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:d="urn:import:com.google.gwt.user.datepicker.client"
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:cell='urn:import:com.google.gwt.user.cellview.client'>
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages"
+		field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
+		field="aonResources"></ui:with>
+
+
+	<g:ScrollPanel styleName="{aonResources.css.aonScrollArea}">
+		<g:HTMLPanel styleName="{aonResources.css.aonFiscalContainer}">
+			<g:HTMLPanel ui:field="basePanel" styleName="aon-width-all">
+				<table class="{aonResources.css.aonWidthAll}">
+					<tr>
+						<td>
+							<div class="{aonResources.css.aonGroup}">
+								<div class="{aonResources.css.aonGroupTitle}">
+									<g:InlineLabel text="Documento sobre servicios a terceros" />
+								</div>
+								<div class="{aonResources.css.aonGroupBody}">
+									<table class="{aonResources.css.aonWidthAll}">
+										<tr>
+											<td>
+												<g:Label text="Sociedad" styleName="{aonResources.css.aonInnerLabel}" />
+												<g:TextBox ui:field="IDA01020" styleName="{aonResources.css.aonInputText}"/>
+											</td>
+											<td>
+												<g:Label text="NIF" styleName="{aonResources.css.aonInnerLabel}" />
+												<g:TextBox ui:field="IDA01010" visibleLength="9" maxLength="9" styleName="{aonResources.css.aonInputText}" />
+											</td>
+										</tr>
+										<tr> 
+											<td>
+												<g:Label text="Domicilio Social" styleName="{aonResources.css.aonInnerLabel}" />
+												<g:TextBox ui:field="IDA01022" styleName="{aonResources.css.aonInputText}" />
+											</td>
+										</tr>
+										
+										<tr> 
+											<td>
+												<g:Label text="Municipio" styleName="{aonResources.css.aonInnerLabel}" />
+												<g:TextBox ui:field="IDA01023"
+													styleName="{aonResources.css.aonInputText}" />
+											</td>
+											<td>
+												<g:Label text="Provincia" styleName="{aonResources.css.aonInnerLabel}" />
+												<g:ListBox ui:field="IDA01025"
+													styleName="{aonResources.css.aonInputText}" />
+											</td>
+											<td>
+												<g:Label text="Ejercicio" styleName="{aonResources.css.aonInnerLabel}" />
+												<g:TextBox ui:field="year"
+													styleName="{aonResources.css.aonInputText}" />
+											</td>
+										</tr>
+									</table>
+									
+									<table style="margin-top: 10px;" class="{aonResources.css.aonWidthAll}">
+										<tr> 
+											<td>
+												<g:CheckBox ui:field="SRP8080831" 
+													text="Esta hoja SÓLO debe rellenarse si la sociedad ha realizado, durante el presente ejercicio, alguna operación de prestación de servicios a terceros de los contemplados en el articulo 2.1 o) de la Ley 10/2010, de 28 de abril, de prevención del blanqueo de capitales y de la financiación del terrorismo. ¿Rellenar hoja?"
+													value="false" />
+											</td>
+										</tr>
+									</table>
+									<table style="margin-top: 10px;" class="{aonResources.css.aonWidthAll}">
+										<tr> 
+											<td>
+												<g:Label text="Ambito territorial de operaciones:" styleName="{aonResources.css.aonInnerLabel}" />
+											</td>
+											<td> 
+												<g:TextBox ui:field="SRP831001" styleName="{aonResources.css.aonInputText}" />
+											</td>
+										</tr>
+										
+										<tr> 
+											<td>
+												<g:Label text="Municipios donde realiza operaciones:" styleName="{aonResources.css.aonInnerLabel}" />
+											</td>
+											<td> 
+												<g:TextArea ui:field="SRP831002" styleName="{aonResources.css.aonInputText}" />
+											</td>
+										</tr>
+										
+										<tr> 
+											<td>
+												<g:Label text="Provincias donde realiza operaciones:" styleName="{aonResources.css.aonInnerLabel}" />
+											</td>
+											<td> 
+												<g:TextArea ui:field="SRP831003" styleName="{aonResources.css.aonInputText}" />
+											</td>
+										</tr>
+										
+										<tr> 
+											<td>
+												<g:Label text="¿Ha prestado servicios a no residentes?" styleName="{aonResources.css.aonInnerLabel}" />
+											</td>
+											<td> 
+												<g:CheckBox ui:field="SRP831004" />
+											</td>
+										</tr>
+									</table>
+									
+									<div class="{aonResources.css.aonGroup}">
+										<div class="{aonResources.css.aonGroupTitle}">
+											<g:InlineLabel text="Servicios por cuenta de terceros" />
+										</div>
+										<div class="{aonResources.css.aonGroupBody}">
+											<g:FlexTable ui:field="table" styleName="{aonResources.css.aonWidthAll} {aonResources.css.aonMarginTop}" />
+										</div>
+									</div>
+								</div>
+							</div>
+						</td>
+					</tr>
+				</table>
+
+			</g:HTMLPanel>
+		</g:HTMLPanel>
+	</g:ScrollPanel>
+
+
+</ui:UiBinder>

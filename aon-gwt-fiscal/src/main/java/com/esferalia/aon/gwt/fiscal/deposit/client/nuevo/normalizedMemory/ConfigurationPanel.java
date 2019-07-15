@@ -129,7 +129,7 @@ public class ConfigurationPanel extends Composite {
     	his.addClickHandler(menuClickHandler(DepositMenu.HIS, year));
     	vp.add(his);
     	
-    	if(year >= 2016) {
+    	if(year >= 2016 && year < 2018) {
     		PaperItem ar = buildItem(DepositMenu.AR.getDescription(), null, false);
     		ar.addClickHandler(menuClickHandler(DepositMenu.AR, year));
     		vp.add(ar);
@@ -138,6 +138,12 @@ public class ConfigurationPanel extends Composite {
     	if(year >= 2017) {
     		PaperItem itr = buildItem(DepositMenu.ITR.getDescription(), null, false);
     		itr.addClickHandler(menuClickHandler(DepositMenu.ITR, year));
+    		vp.add(itr);
+    	}
+    	
+    	if(year >= 2018) {
+    		PaperItem itr = buildItem(DepositMenu.SRA.getDescription(), null, false);
+    		itr.addClickHandler(menuClickHandler(DepositMenu.SRA, year));
     		vp.add(itr);
     	}
     	

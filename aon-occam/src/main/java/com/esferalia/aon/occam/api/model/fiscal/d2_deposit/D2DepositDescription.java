@@ -509,6 +509,16 @@ public class D2DepositDescription {
 	
 	static { 
 
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.SRP831010 ,"Constituci\u00F3n de sociedades u otras personas jur\u00EDdicas");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.SRP831020 ,"Direcci\u00F3n, secretar\u00EDa y/o asesor\u00EDa externa de una sociedad");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.SRP831030 ,"Socio de una asocici\u00F3n o similar");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.SRP831040 ,"Facilitar direcci\u00F3n postal, fiscal, social o similar a una persona jur\u00EDdica");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.SRP831050 ,"Funciones fiduciarias en un fideicomiso");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.SRP831060 ,"Funciones de accionistas por cuenta ajena");
+	}
+	
+	static { 
+
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA111000 ,"A) ACTIVO NO CORRIENTE");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA111100,"I. Inmovilizado Intangible");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA111200,"II. Inmovilizado material");

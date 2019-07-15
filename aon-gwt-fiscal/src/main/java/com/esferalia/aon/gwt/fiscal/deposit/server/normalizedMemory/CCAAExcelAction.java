@@ -916,6 +916,14 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		}
 	}
 	
+	public void ITR() {
+		
+	}
+	
+	public void SRA() {
+		
+	}
+	
 	public void BA(){
 		BA1();
 		BA2();
