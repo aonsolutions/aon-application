@@ -25,11 +25,10 @@
 					<aon:inputText id="Registry_Lookup_document-New" size="16"
 						rendered="#{formNew}" required="true"
 						value="#{controller.to.document}"> 
-					<a4j:support event="onchange" ajaxSingle="true"
-						reRender="Registry_full_name-New" focus="Registry_full_name-New"
-						actionListener="#{controller.onDocumentChange}"/>
-				</aon:inputText>
- 
+						<a4j:support event="onchange" ajaxSingle="true"
+							reRender="Registry_full_name-New" focus="Registry_full_name-New"
+							actionListener="#{controller.onDocumentChange}"/>
+					</aon:inputText>
 				</f:facet>
 			</aon:column>
 
@@ -46,6 +45,53 @@
 				</f:facet>
 			</aon:column>
 
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_email}" />
+				</f:facet>
+				<aon:outputText value="#{to.chargeDescription}" rendered="#{formList}" />
+				<aon:inputText rendered="#{formEdit}"
+					size="40" value="#{controller.to.chargeDescription}" />
+				<f:facet name="footer">
+					<aon:inputText rendered="#{formNew}"
+						size="40" value="#{controller.to.chargeDescription}" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText
+						value="#{bundle.registry_dir_staff_is_representative}" />
+				</f:facet>
+				<aon:div rendered="#{formList}"
+					styleClass="#{to.representative?'aon-text-center aon-icon-checked':'aon-text-center aon-icon-check'}">
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<aon:selectBooleanCheckbox id="RegistryDirStaff_representative-Edit"
+					rendered="#{formEdit}" value="#{controller.to.representative}" />
+				<f:facet name="footer">
+					<aon:selectBooleanCheckbox id="RegistryDirStaff_representative-New"
+						rendered="#{formNew}" value="#{controller.to.representative}" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText
+						value="#{bundle.registry_dir_staff_is_representative_labor}" />
+				</f:facet>
+				<aon:div rendered="#{formList}"
+					styleClass="#{to.representativeLabor?'aon-text-center aon-icon-checked':'aon-text-center aon-icon-check'}">
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<aon:selectBooleanCheckbox id="RegistryDirStaff_representativeLabor-Edit"
+					rendered="#{formEdit}" value="#{controller.to.representativeLabor}" />
+				<f:facet name="footer">
+					<aon:selectBooleanCheckbox id="RegistryDirStaff_representativeLabor-New"
+						rendered="#{formNew}" value="#{controller.to.representativeLabor}" />
+				</f:facet>
+			</aon:column>
+			
 			<aon:column>
 				<f:facet name="header">
 					<aon:outputText
@@ -70,23 +116,6 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText
-						value="#{bundle.registry_dir_staff_is_representative}" />
-				</f:facet>
-				<aon:div rendered="#{formList}"
-					styleClass="#{to.representative?'aon-text-center aon-icon-checked':'aon-text-center aon-icon-check'}">
-					<aon:outputText value="&#160;" />
-				</aon:div>
-				<aon:selectBooleanCheckbox id="RegistryDirStaff_representative-Edit"
-					rendered="#{formEdit}" value="#{controller.to.representative}" />
-				<f:facet name="footer">
-					<aon:selectBooleanCheckbox id="RegistryDirStaff_representative-New"
-						rendered="#{formNew}" value="#{controller.to.representative}" />
-				</f:facet>
-			</aon:column>
-
-			<aon:column>
-				<f:facet name="header">
 					<aon:outputText	value="#{bundle.registry_dir_staff_is_director}" />
 				</f:facet>
 				<aon:div rendered="#{formList}"
@@ -100,23 +129,6 @@
 					<aon:selectBooleanCheckbox id="RegistryDirStaff_director-New"
 						reRender="RegistryDirStaff_dueDate-New" ajaxSingle="true"
 						rendered="#{formNew}" value="#{controller.to.director}" />
-				</f:facet>
-			</aon:column>
-
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText
-						value="#{bundle.registry_dir_staff_is_representative_labor}" />
-				</f:facet>
-				<aon:div rendered="#{formList}"
-					styleClass="#{to.representativeLabor?'aon-text-center aon-icon-checked':'aon-text-center aon-icon-check'}">
-					<aon:outputText value="&#160;" />
-				</aon:div>
-				<aon:selectBooleanCheckbox id="RegistryDirStaff_representativeLabor-Edit"
-					rendered="#{formEdit}" value="#{controller.to.representativeLabor}" />
-				<f:facet name="footer">
-					<aon:selectBooleanCheckbox id="RegistryDirStaff_representativeLabor-New"
-						rendered="#{formNew}" value="#{controller.to.representativeLabor}" />
 				</f:facet>
 			</aon:column>
 
