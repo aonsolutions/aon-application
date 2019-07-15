@@ -2335,8 +2335,7 @@ public class SalaryDraft extends ResizeComposite
 
 	private HasValue<String> fxhasValue;
 
-	private Payment totalPayments = null;
-	private Payment totalLiquidPayment = null;
+	private Payment totalsPayment = null;
 	private Deduction cgcBaseDeduction = null;
 	private Deduction cgpBaseDeduction = null;
 
@@ -2456,32 +2455,31 @@ public class SalaryDraft extends ResizeComposite
 
 		String expression = totalLiquidLabel.getValue();
 
-		// draftPayment.setName("NETO");
-		draftPayment.setExpression("NETO(" + (StringUtils.isBlank(expression) ? "0.00" : expression) + ")");
+		draftPayment.setExpression("/*read-only*/NETO(" + (StringUtils.isBlank(expression) ? "0.00" : expression) + ")/**/");
 		draftPayment.setScope(Scope.SALARY);
 		draftPayment.setIrpfExpression("_P");
 		draftPayment.setQuoteExpression("_P");
 		draftPayment.setType(Payment.Type.DEFAULT);
-		if (totalLiquidPayment != null) {
-			draftPayment.setId(totalLiquidPayment.getId());
-			//draftPayment.setDescription(totalLiquidPayment.getDescription());
-			draftPayment.setDescriptionTemplate(totalLiquidPayment.getDescription());
+		
+		//totalLiquidPayment = salaryDraftObject.getPayments().stream().filter(p -> isNeto(p)).findFirst().orElseGet(null);
+		
+		if (totalsPayment != null) {
+			draftPayment.setId(totalsPayment.getId());
+			draftPayment.setDescriptionTemplate(totalsPayment.getDescriptionTemplate());
 
 		} else {
-			//draftPayment.setDescription("Suplemento Neto");
-			draftPayment.setDescriptionTemplate("Suplemento Neto");
+			draftPayment.setDescriptionTemplate("SUPLEMENTO NETO");
 		}
 
 		draftPayment.setEndDate(salaryDraftObject.getEndDate());
 		draftPayment.setStartDate(salaryDraftObject.getStartDate());
 		draftPayment.setSalaryType(salaryDraftObject.getType());
-		// draftPayment.setMonth(deduction.getMonth());
 
 		salaryDraftObject.addDraftPayment(draftPayment);
 
 		salaryDraftObject.calculate(this);
 
-		totalLiquidPayment = draftPayment;
+		totalsPayment = draftPayment;
 
 	}
 
@@ -2587,32 +2585,29 @@ public class SalaryDraft extends ResizeComposite
 
 		String expression = totalPaymentsLabel.getValue();
 
-		draftPayment.setExpression("BRUTO(" + (StringUtils.isBlank(expression) ? "0.00" : expression) + ")");
-		// draftPayment.setName("BRUTO");
+		draftPayment.setExpression("/*read-only*/BRUTO(" + (StringUtils.isBlank(expression) ? "0.00" : expression) + ")/**/");
 		draftPayment.setScope(Scope.SALARY);
 		draftPayment.setIrpfExpression("_P");
 		draftPayment.setQuoteExpression("_P");
 		draftPayment.setType(Payment.Type.DEFAULT);
-		if (totalPayments != null) {
-			draftPayment.setId(totalPayments.getId());
-			//draftPayment.setDescription(totalPayments.getDescription());
-			draftPayment.setDescriptionTemplate(totalPayments.getDescription());
+		
+		if (totalsPayment != null) {
+			draftPayment.setId(totalsPayment.getId());
+			draftPayment.setDescriptionTemplate(totalsPayment.getDescription());
 
 		} else {
-			//draftPayment.setDescription("Suplemento Bruto");
-			draftPayment.setDescriptionTemplate("Suplemento Bruto");
+			draftPayment.setDescriptionTemplate("SUPLEMENTO BRUTO");
 		}
 
 		draftPayment.setEndDate(salaryDraftObject.getEndDate());
 		draftPayment.setStartDate(salaryDraftObject.getStartDate());
 		draftPayment.setSalaryType(salaryDraftObject.getType());
-		// draftPayment.setMonth(deduction.getMonth());
 
 		salaryDraftObject.addDraftPayment(draftPayment);
 
 		salaryDraftObject.calculate(this);
 
-		totalPayments = draftPayment;
+		totalsPayment = draftPayment;
 
 	}
 
@@ -3844,6 +3839,18 @@ public class SalaryDraft extends ResizeComposite
 			labelWidget.addStyleName(AON.AON_ICON_BONUS_SMALL);
 			labelWidget.getElement().getStyle().setPaddingRight(16, Unit.PX);
 			labelWidget.getElement().getStyle().setProperty("backgroundPosition", "center right");
+		}
+		
+		if ( isNeto(payment)) {
+			totalsPayment = payment;
+			labelWidget = newPercentLabel("NETO");
+			((Label)labelWidget).addClickHandler((e) -> totalLiquidLabel.setFocus(true));
+		}
+
+		if ( isBruto(payment)) {
+			totalsPayment = payment;
+			labelWidget = newPercentLabel("BRUTO");
+			((Label)labelWidget).addClickHandler((e) -> totalPaymentsLabel.setFocus(true));
 		}
 
 		Button expandButton = null;
@@ -5859,6 +5866,14 @@ public class SalaryDraft extends ResizeComposite
 //		CellFormatter fomatter = table.getCellFormatter();
 //		for (int col = 0; col < table.getCellCount(row); col++)
 //			fomatter.addStyleName(row, col, style);
+	}
+	
+	private static <T extends Item<?>> boolean isNeto(T item) {
+		return AonStringUtils.startsWith(item.getExpression(), "/*read-only*/NETO" );
+	}
+	
+	private static <T extends Item<?>> boolean isBruto(T item) {
+		return AonStringUtils.startsWith(item.getExpression(), "/*read-only*/BRUTO" );
 	}
 
 	private static <T extends Item<?>> boolean isReadOnly(T item) {

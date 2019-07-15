@@ -20,6 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.SalarioBaseReadOnlyUpdate;
+import net.aonsolutions.db.up2date.payroll.NetoAndBrutoReadOnlyUpdate;
 import net.aonsolutions.db.up2date.payroll.PlusSalarialInsert;
 import net.aonsolutions.db.up2date.payroll.SystemPaymentReadOnlyUpdate;
 import net.aonsolutions.db.up2date.tgss.AgriculturalITInsert;
@@ -80,7 +81,9 @@ public class Up2Date {
     		//FellowsPercentages2019Update.FELLOWSPERCENTAGES2019UPDATE,
     		//AgriculturalITInsert.AGRICULTURALITINSERT,
     		//Bases2019UpdateIII.BASES2019UPDATEIII,
-    		SalarioBaseReadOnlyUpdate.SALARIOBASEREADONLYUPDATE
+    		//SalarioBaseReadOnlyUpdate.SALARIOBASEREADONLYUPDATE,
+    		NetoAndBrutoReadOnlyUpdate.NETOBRUTOREADONLYUPDATE
+    		
     };
 
 
