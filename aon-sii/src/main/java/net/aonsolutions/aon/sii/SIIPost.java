@@ -124,13 +124,14 @@ public class SIIPost {
 
 		InputStream is = new ByteArrayInputStream(document.getBytes());
 		SOAPMessage soapMessage = MessageFactory.newInstance().createMessage(null, is);
+		soapMessage.setProperty("Content-Type", "text/xml");
+
 		is.close();
 		secure(uri);
-		
         // Create SOAP Connection
         SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
         SOAPConnection soapConnection = soapConnectionFactory.createConnection();
-
+         System.out.println("URI => " + uri);
         // Send SOAP Message to SOAP Server
         SOAPMessage soapResponse = soapConnection.call(soapMessage, uri);
         soapConnection.close();
