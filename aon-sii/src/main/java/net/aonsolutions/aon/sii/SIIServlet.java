@@ -2,8 +2,6 @@ package net.aonsolutions.aon.sii;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -36,8 +34,6 @@ import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatParams;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
-import com.esferalia.aon.occam.api.model.type.InvoiceType;
-import com.esferalia.aon.watson.server.AonDateUtils;
 import com.google.api.services.drive.Drive;
 
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
@@ -100,109 +96,59 @@ public class SIIServlet extends HttpServlet{
 			
 			ApplicationParameter param= AON.getApplicationParameter(domain.getName(), domain.getId(), login, AppParam.FS_DEFAULT_ADMINISTRATION);
 			Administration administration = param.getValue() != null ? Administration.values()[Integer.parseInt(param.getValue())] : Administration.COMMON_TERRITORY;
-
 			try{
-				Date currentDate = new Date();
-				Object object = new Object();
-				if(option.equals("cp_cobros_pagos")){
-					Integer[] int1 = AON.getInvoiceStream(domain.getName(), domain.getId(), login,f -> f.getIdProperty().in(ids).and(f.getTypeProperty().eq(InvoiceType.SALES.value())))
-						.map(a -> a.getId()).toArray(Integer[]::new);
-					Integer[] int2 = AON.getInvoiceStream(domain.getName(), domain.getId(), login,f -> f.getIdProperty().in(ids).and(f.getTypeProperty().eq(InvoiceType.EXPENSES.value()).or(f.getTypeProperty().eq(InvoiceType.PURCHASE.value()))))
-							.map(a -> a.getId()).toArray(Integer[]::new);
+				SIIManager manager = SIIManager.getInstance(attach.getData(), pass, administration);
 
-					JSONArray array = new JSONArray();
-					if(int1.length > 0){
-						LinkedList<Finance> financeList = AON.getSiiFinanceList(domain.getName(), domain.getId(), login,f -> f.getInvoiceProperty().in(int1));	
-						array = SIIPost.getInstance(attach.getData(), pass, administration).suministroFacturasEmitidasCobros(domain, login, company, financeList,  new LinkedList<>(Arrays.asList(int1)), terceros, administration);
-					} 
-					if(int2.length > 0){
-						LinkedList<Finance> financeList = AON.getSiiFinanceList(domain.getName(), domain.getId(), login,f -> f.getInvoiceProperty().in(int2));
-						JSONArray a = SIIPost.getInstance(attach.getData(), pass, administration).suministroFacturasRecibidasPagos(domain, login, company, financeList, new LinkedList<>(Arrays.asList(int2)), terceros, administration);
-						for(Integer i = 0; i < a.length(); i++){
-							array.put(a.get(i));
-						}
-					}
-					object = array;
-				} else if(option.equals("cp_cobros")){
+				Object object = new Object();
+				
+				if(option.equals("cp_cobros")){
 					LinkedList<Finance> financeList = AON.getSiiFinanceList(domain.getName(), domain.getId(), login,f -> f.getInvoiceProperty().in(ids));	
-					if(currentDate.after(AonDateUtils.getDate(2018, 6, 1))){	
-						object = SIIManager.getInstance(attach.getData(), pass, administration).suministroFacturasEmitidasCobros(domain, login, company, financeList, ids[0]);
-					} else object = SIIPost.getInstance(attach.getData(), pass, administration).suministroFacturasEmitidasCobros(domain, login, company, financeList, new LinkedList<>(Arrays.asList(ids)), terceros, administration);
+					object = manager.suministroFacturasEmitidasCobros(domain, login, company, financeList, ids[0]);
 				} else if(option.equals("cp_pagos")){
 					LinkedList<Finance> financeList = AON.getSiiFinanceList(domain.getName(), domain.getId(), login,f -> f.getInvoiceProperty().in(ids));	
-					if(currentDate.after(AonDateUtils.getDate(2018, 6, 1))){	
-						object = SIIManager.getInstance(attach.getData(), pass, administration).suministroFacturasRecibidasPagos(domain, login, company, financeList, ids[0]);
-					} else object = SIIPost.getInstance(attach.getData(), pass, administration).suministroFacturasRecibidasPagos(domain, login, company, financeList, new LinkedList<>(Arrays.asList(ids)), terceros, administration);
+					object = manager.suministroFacturasRecibidasPagos(domain, login, company, financeList, ids[0]);
 				} else if(option.equals("intracomunitarias")){
 					String tipoOp = parameters.get("tipo_operacion");
 					if(action.equals("suministro")){
-						if(currentDate.after(AonDateUtils.getDate(2018, 6, 1))){	
-							object = SIIManager.getInstance(attach.getData(), pass, administration).suministroOperacionesIntracomunitarias(domain, login, company, ids[0], contextList, tipoOp, terceros);
-						} else object = SIIPost.getInstance(attach.getData(), pass, administration).suministroOperacionesIntracomunitarias(domain, login,company, new LinkedList<>(Arrays.asList(ids)), contextList, tipoOp, terceros, administration);
+						object = manager.suministroOperacionesIntracomunitarias(domain, login, company, ids[0], contextList, tipoOp, terceros);
 					}else if(action.equals("baja")){
-						if(currentDate.after(AonDateUtils.getDate(2018, 6, 1))){	
-							object = SIIManager.getInstance(attach.getData(), pass, administration).bajaOperacionesIntracomunitarias(domain, login, company, ids[0], contextList, terceros);
-						} else object = SIIPost.getInstance(attach.getData(), pass, administration).bajaOperacionesIntracomunitarias(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, administration);
+						object = manager.bajaOperacionesIntracomunitarias(domain, login, company, ids[0], contextList, terceros);
 					}
 				} else if(option.contains("fe_")){
 					if(action.equals("suministro")){
-						if(currentDate.after(AonDateUtils.getDate(2018, 6, 1))){	
-							object = SIIManager.getInstance(attach.getData(), pass, administration).suministroFacturasEmitidas(domain, login, company, ids[0], contextList, terceros);
-						} else object = SIIPost.getInstance(attach.getData(), pass, administration).suministroFacturasEmitidas(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, administration);
+						object = manager.suministroFacturasEmitidas(domain, login, company, ids[0], contextList, terceros);
 					} else if(action.equals("baja")){
-						if(currentDate.after(AonDateUtils.getDate(2018, 6, 1))){
-							object = SIIManager.getInstance(attach.getData(), pass, administration).bajaFacturasEmitidas(domain, login, company, ids[0], contextList, terceros);
-						} else object = SIIPost.getInstance(attach.getData(), pass, administration).bajaFacturasEmitidas(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, administration);
+						object = manager.bajaFacturasEmitidas(domain, login, company, ids[0], contextList, terceros);
 					}
 				} else if(option.contains("fr_")){
 					if(action.equals("suministro")){
-						if(currentDate.after(AonDateUtils.getDate(2018, 6, 1))){
-							object = SIIManager.getInstance(attach.getData(), pass, administration).suministroFacturasRecibidas(domain, login, company, ids[0], contextList, terceros);
-						} else object = SIIPost.getInstance(attach.getData(), pass, administration).suministroFacturasRecibidas(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, administration);
+						object = manager.suministroFacturasRecibidas(domain, login, company, ids[0], contextList, terceros);
 					} else if(action.equals("baja")){
-						if(currentDate.after(AonDateUtils.getDate(2018, 6, 1))){
-							object = SIIManager.getInstance(attach.getData(), pass, administration).bajaFacturasRecibidas(domain, login, company, ids[0], contextList, terceros);
-						} else object = SIIPost.getInstance(attach.getData(), pass, administration).bajaFacturasRecibidas(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, administration);
+						object = manager.bajaFacturasRecibidas(domain, login, company, ids[0], contextList, terceros);
 					}
 				} else if("bienes".equalsIgnoreCase(option)){
 					if(action.equals("suministro")){
-						if(currentDate.after(AonDateUtils.getDate(2018, 6, 1))){
-							object = SIIManager.getInstance(attach.getData(), pass, administration).suministroBienesInversion(domain, login, company, ids[0], contextList, terceros);
-						} else object = SIIPost.getInstance(attach.getData(), pass, administration).suministroBienesInversion(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, administration);	
+						object = manager.suministroBienesInversion(domain, login, company, ids[0], contextList, terceros);
 					} else if(action.equals("baja")){
-						if(currentDate.after(AonDateUtils.getDate(2018, 6, 1))){
-							object = SIIManager.getInstance(attach.getData(), pass, administration).bajaBienesInversion(domain, login, company, ids[0], contextList, terceros);
-						} else object = SIIPost.getInstance(attach.getData(), pass, administration).bajaBienesInversion(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, administration);
+						object = manager.bajaBienesInversion(domain, login, company, ids[0], contextList, terceros);
 					}
 				} else if("metalico".equalsIgnoreCase(option)){
 					if(action.equals("suministro")){
-						if(currentDate.after(AonDateUtils.getDate(2018, 6, 1))){
-							object = SIIManager.getInstance(attach.getData(), pass, administration).suministroCobrosMetalico(domain, login, company, ids[0], contextList, terceros);
-						} else object = SIIPost.getInstance(attach.getData(), pass, administration).suministroCobrosMetalico(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, administration);
+						object = manager.suministroCobrosMetalico(domain, login, company, ids[0], contextList, terceros);
 					} else if(action.equals("baja")){
-						if(currentDate.after(AonDateUtils.getDate(2018, 6, 1))){
-							object = SIIManager.getInstance(attach.getData(), pass, administration).bajaCobrosMetalico(domain, login, company, ids[0], contextList, terceros);
-						} else object = SIIPost.getInstance(attach.getData(), pass, administration).bajaCobrosMetalico(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros);
+						object = manager.bajaCobrosMetalico(domain, login, company, ids[0], contextList, terceros);
 					}
 				} else if("seguros".equalsIgnoreCase(option)){
 					if(action.equals("suministro")){
-						if(currentDate.after(AonDateUtils.getDate(2018, 6, 1))){
-							object = SIIManager.getInstance(attach.getData(), pass, administration).suministroOperacionesSeguros(domain, login, company, ids[0], contextList, terceros);
-						} else object = SIIPost.getInstance(attach.getData(), pass, administration).suministroOperacionesSeguros(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, administration);
+						object = manager.suministroOperacionesSeguros(domain, login, company, ids[0], contextList, terceros);
 					} else if(action.equals("baja")){
-						if(currentDate.after(AonDateUtils.getDate(2018, 6, 1))){
-							object = SIIManager.getInstance(attach.getData(), pass, administration).bajaOperacionesSeguros(domain, login, company, ids[0], contextList, terceros);
-						} else object = SIIPost.getInstance(attach.getData(), pass, administration).bajaOperacionesSeguros(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros);
+						object = manager.bajaOperacionesSeguros(domain, login, company, ids[0], contextList, terceros);
 					}
 				} else if("agencias".equalsIgnoreCase(option)){
 					if(action.equals("suministro")){
-						if(currentDate.after(AonDateUtils.getDate(2018, 6, 1))){
-							object = SIIManager.getInstance(attach.getData(), pass, administration).suministroAgenciasViajes(domain, login, company, ids[0], contextList, terceros);
-						} else object = SIIPost.getInstance(attach.getData(), pass, administration).suministroAgenciasViajes(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros, administration);
+						object = manager.suministroAgenciasViajes(domain, login, company, ids[0], contextList, terceros);
 					} else if(action.equals("baja")){
-						if(currentDate.after(AonDateUtils.getDate(2018, 6, 1))){
-							object = SIIManager.getInstance(attach.getData(), pass, administration).bajaAgenciasViajes(domain, login, company, ids[0], contextList, terceros);
-						} else object = SIIPost.getInstance(attach.getData(), pass, administration).bajaAgenciasViajes(domain, login, company, new LinkedList<>(Arrays.asList(ids)), contextList, terceros);
+						object = manager.bajaAgenciasViajes(domain, login, company, ids[0], contextList, terceros);
 					}
 				}				
 				giveBack(req, resp, object, new JSONObject());

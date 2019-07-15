@@ -1,7 +1,12 @@
 package net.aonsolutions.aon.sii;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
+
+import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.soap.SOAPException;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -78,7 +83,7 @@ public class SIIManager {
  	}
 	
 	 // -------------------- FACTURAS EMITIDAS
-	protected JSONArray suministroFacturasEmitidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) {
+	protected JSONArray suministroFacturasEmitidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
 		String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_EMITIDAS, administration) : SIIUri.getInstance().getURI(SIIType.FACTURAS_EMITIDAS, administration);
     	
     	LinkedList<VatContext> modList = contextList.stream().filter(v->  "Correcto".equals(v.getSiiStatus())
@@ -124,7 +129,7 @@ public class SIIManager {
 		return new JSONArray();
 	}
 	
-	protected JSONArray bajaFacturasEmitidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) {
+	protected JSONArray bajaFacturasEmitidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
 		String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_EMITIDAS, administration) : SIIUri.getInstance().getURI(SIIType.FACTURAS_EMITIDAS, administration);
 		
 		if(isAeat() || isNavarra()) {
@@ -139,7 +144,7 @@ public class SIIManager {
 		return new JSONArray();
 	}
 	
-	protected JSONArray suministroFacturasEmitidasCobros(Domain domain, String login, Company company, LinkedList<Finance> financeList, Integer invoiceId) {
+	protected JSONArray suministroFacturasEmitidasCobros(Domain domain, String login, Company company, LinkedList<Finance> financeList, Integer invoiceId) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_EMITIDAS_COBROS, getAdministration()) : SIIUri.getInstance().getURI(SIIType.FACTURAS_EMITIDAS_COBROS, getAdministration());
     	
 		if(isAeat() || isNavarra()) {
@@ -156,7 +161,7 @@ public class SIIManager {
 	
 	 // -------------------- FACTURAS RECIBIDAS
 	
-	protected JSONArray suministroFacturasRecibidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) {
+	protected JSONArray suministroFacturasRecibidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
 		System.out.println("SII SUMINISTRO FACTURAS RECIBIDAS - ID => " + invoiceId);
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_RECIBIDAS, getAdministration()) : SIIUri.getInstance().getURI(SIIType.FACTURAS_RECIBIDAS, getAdministration());
     	
@@ -205,7 +210,7 @@ public class SIIManager {
     	return new JSONArray();
     }
 	
-	protected JSONArray bajaFacturasRecibidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) {
+	protected JSONArray bajaFacturasRecibidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
 		String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_EMITIDAS, administration) : SIIUri.getInstance().getURI(SIIType.FACTURAS_EMITIDAS, administration);
 		
 		if(isAeat() || isNavarra()) {
@@ -220,7 +225,7 @@ public class SIIManager {
 		return new JSONArray();
 	}
 	
-	protected JSONArray suministroFacturasRecibidasPagos(Domain domain, String login, Company company, LinkedList<Finance> financeList, Integer invoiceId) {
+	protected JSONArray suministroFacturasRecibidasPagos(Domain domain, String login, Company company, LinkedList<Finance> financeList, Integer invoiceId) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_EMITIDAS_COBROS, getAdministration()) : SIIUri.getInstance().getURI(SIIType.FACTURAS_EMITIDAS_COBROS, getAdministration());
     	
 		if(isAeat() || isNavarra()) {
@@ -237,7 +242,7 @@ public class SIIManager {
 	
 	 // -------------------- BIENES DE INVERSIÓN 
 	
-	protected JSONArray suministroBienesInversion(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) {
+	protected JSONArray suministroBienesInversion(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
 		String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.BIENES_INVERSION, administration) : SIIUri.getInstance().getURI(SIIType.BIENES_INVERSION, administration);
 	    	
 		LinkedList<VatContext> modList = contextList.stream().filter(v->  "Correcto".equals(v.getSiiStatus())
@@ -284,7 +289,7 @@ public class SIIManager {
 		return new JSONArray();
 	}
 
-	protected JSONArray bajaBienesInversion(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) {
+	protected JSONArray bajaBienesInversion(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
 		String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.BIENES_INVERSION, administration) : SIIUri.getInstance().getURI(SIIType.BIENES_INVERSION, administration);
 		
 		if(isAeat() || isNavarra()) {
@@ -301,7 +306,7 @@ public class SIIManager {
 	
 	 // -------------------- OPERACIONES INTRACOMUNITARIAS
 	
-	protected JSONArray suministroOperacionesIntracomunitarias(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String tipoOp, String terceros) {
+	protected JSONArray suministroOperacionesIntracomunitarias(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String tipoOp, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
 		String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.OPERACIONES_INTRACOMUNITARIAS, administration) : SIIUri.getInstance().getURI(SIIType.OPERACIONES_INTRACOMUNITARIAS, administration);
 	    	
 		LinkedList<VatContext> modList = contextList.stream().filter(v->  "Correcto".equals(v.getSiiStatus())
@@ -347,7 +352,7 @@ public class SIIManager {
 		return new JSONArray();
 	}
 		
-	protected JSONArray bajaOperacionesIntracomunitarias(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) {
+	protected JSONArray bajaOperacionesIntracomunitarias(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
 		String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.OPERACIONES_INTRACOMUNITARIAS, administration) : SIIUri.getInstance().getURI(SIIType.OPERACIONES_INTRACOMUNITARIAS, administration);
 		
 		if(isAeat() || isNavarra()) {
@@ -364,7 +369,7 @@ public class SIIManager {
 	
  // -------------------- COBROS METALICO
 	
-    protected JSONObject suministroCobrosMetalico(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) {
+    protected JSONObject suministroCobrosMetalico(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.COBROS_METALICO, getAdministration()) : SIIUri.getInstance().getURI(SIIType.COBROS_METALICO, getAdministration());
     	
     	if(isAeat() || isNavarra()) {
@@ -396,7 +401,7 @@ public class SIIManager {
     
     // -------------------- OPERACIONES SEGUROS
 	
-    protected JSONObject suministroOperacionesSeguros(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) {
+    protected JSONObject suministroOperacionesSeguros(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.OPERACIONES_SEGUROS, getAdministration()) : SIIUri.getInstance().getURI(SIIType.OPERACIONES_SEGUROS, getAdministration());
     		
     	if(isAeat() || isNavarra()) {
@@ -427,7 +432,7 @@ public class SIIManager {
     
     // -------------------- AGENCIAS VIAJES
 	
-    protected JSONObject suministroAgenciasViajes(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) {
+    protected JSONObject suministroAgenciasViajes(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.AGENCIAS_VIAJES, getAdministration()) : SIIUri.getInstance().getURI(SIIType.AGENCIAS_VIAJES, getAdministration());
     	if(isAeat() || isNavarra()) {
 			return SIIAeatPost.getInstance(getCert(), getPass()).suministroAgenciasViajes(domain, login, company, invoiceId, contextList, terceros, uri);

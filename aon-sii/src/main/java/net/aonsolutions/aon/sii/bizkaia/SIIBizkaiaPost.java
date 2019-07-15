@@ -1,8 +1,11 @@
 package net.aonsolutions.aon.sii.bizkaia;
 
+import java.io.IOException;
 import java.util.LinkedList;
 
-import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.soap.SOAPException;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -50,13 +53,10 @@ import eus.bizkaia.ogasuna.sii.documentos.suministrolr.SuministroLRFacturasRecib
 import eus.bizkaia.ogasuna.sii.documentos.suministrolr.SuministroLROperacionesSeguros;
 import eus.bizkaia.ogasuna.sii.documentos.suministrolr.SuministroLRPagosRecibidas;
 import net.aonsolutions.aon.sii.SIIDB;
-import net.aonsolutions.aon.sii.SIIPost2;
+import net.aonsolutions.aon.sii.SIIPost;
 import net.aonsolutions.aon.sii.SendType;
 
-public class SIIBizkaiaPost extends SIIPost2{
-	
-	private static final String REQUEST_CONTEXT_PATH = "eus.bizkaia.ogasuna.sii.documentos.suministrolr";
-	private static final String RESPONSE_CONTEXT_PATH = "eus.bizkaia.ogasuna.sii.documentos.respuestasuministro";
+public class SIIBizkaiaPost extends SIIPost{
 
 	public static SIIBizkaiaPost getInstance(byte[] cert, String pass) {
 		return new SIIBizkaiaPost(cert, pass);
@@ -64,23 +64,22 @@ public class SIIBizkaiaPost extends SIIPost2{
 	
 
 	public SIIBizkaiaPost(byte[] cert, String pass) {
-		super(cert, pass, REQUEST_CONTEXT_PATH, RESPONSE_CONTEXT_PATH);
+		super(cert, pass);
 	}
 	
 	// -------------------- FACTURAS EMITIDAS
 	
-    @SuppressWarnings("unchecked")
 	public JSONArray suministroFacturasEmitidas(Domain domain, String login, Company company, Integer invoiceId,
-    		LinkedList<VatContext> contextList, String terceros, String uri, LinkedList<VatContext> list, SendType type) {
+    		LinkedList<VatContext> contextList, String terceros, String uri, LinkedList<VatContext> list, SendType type) throws ParserConfigurationException, JAXBException, SOAPException, IOException {
 		JSONArray array = new JSONArray();
 		
    		byte[] requestXml = null;
 		byte[] responseXml = null;
 		
 		SuministroLRFacturasEmitidas suministro = FacturasEmitidas.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceId, list, type.isModificacion(), terceros);
-    	JAXBElement<Object> response = (JAXBElement<Object>) post(uri, suministro);
-    		
-    	RespuestaLRFEmitidasType respuesta = (RespuestaLRFEmitidasType) response.getValue();
+		String sumStr = marshal(SuministroLRFacturasEmitidas.class, suministro); 
+		String response = post(uri, sumStr);	
+    	RespuestaLRFEmitidasType respuesta = (RespuestaLRFEmitidasType) unmarshal(RespuestaLRFEmitidasType.class, response);
     	for (RespuestaExpedidaType r : respuesta.getRespuestaLinea()) {
     		Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
     		if(!correcto && r.getCodigoErrorRegistro().intValue() == 3000) {
@@ -102,16 +101,16 @@ public class SIIBizkaiaPost extends SIIPost2{
     	return array;
 	}
     
-    @SuppressWarnings("unchecked")
-	public JSONArray bajaFacturasEmitidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros, String uri) {
+	public JSONArray bajaFacturasEmitidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros, String uri) throws ParserConfigurationException, JAXBException, SOAPException, IOException {
     	JSONArray array = new JSONArray();
     	
     	byte[] requestXml = null;
     	byte[] responseXml = null;
     	
     	BajaLRFacturasEmitidas suministro = FacturasEmitidas.getInstance().bajaFacturasEmitidas(company, invoiceId, contextList, terceros);     	
-        JAXBElement<Object> response = (JAXBElement<Object>) post(uri, suministro);
-        RespuestaLRBajaFEmitidasType respuesta = (RespuestaLRBajaFEmitidasType) response.getValue();
+    	String sumStr = marshal(BajaLRFacturasEmitidas.class, suministro); 
+		String response = post(uri, sumStr);
+		RespuestaLRBajaFEmitidasType respuesta = (RespuestaLRBajaFEmitidasType) unmarshal(RespuestaLRBajaFEmitidasType.class, response);
         for(RespuestaExpedidaBajaType rect : respuesta.getRespuestaLinea()){
            	Boolean correcto = rect.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
         	array.put(json(correcto ? 200 : rect.getCodigoErrorRegistro().intValue(), 
@@ -127,16 +126,16 @@ public class SIIBizkaiaPost extends SIIPost2{
     	return array;
 	}
     
-    @SuppressWarnings("unchecked")
-    public JSONArray suministroFacturasEmitidasCobros(Domain domain, String login, Company company, LinkedList<Finance> financeList, Integer invoiceId, String uri) {    	
+    public JSONArray suministroFacturasEmitidasCobros(Domain domain, String login, Company company, LinkedList<Finance> financeList, Integer invoiceId, String uri) throws ParserConfigurationException, JAXBException, SOAPException, IOException {    	
     	JSONArray array = new JSONArray();
 
     	byte[] requestXml = null;
     	byte[] responseXml = null;
     	
     	SuministroLRCobrosEmitidas suministro = FacturasEmitidas.getInstance().suministroFacturasEmitidasCobros(domain, login, company, financeList, invoiceId);     	
-    	JAXBElement<RespuestaLRCobrosEmitidasType> response = (JAXBElement<RespuestaLRCobrosEmitidasType>) post(uri, suministro);
-    	RespuestaLRCobrosEmitidasType respuesta = response.getValue();
+    	String sumStr = marshal(SuministroLRCobrosEmitidas.class, suministro); 
+		String response = post(uri, sumStr);
+    	RespuestaLRCobrosEmitidasType respuesta = (RespuestaLRCobrosEmitidasType) unmarshal(RespuestaLRCobrosEmitidasType.class, response);
     	
     	for(RespuestaExpedidaCobroType rect : respuesta.getRespuestaLinea()){
     		Boolean correcto = rect.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
@@ -157,18 +156,17 @@ public class SIIBizkaiaPost extends SIIPost2{
     
 	// -------------------- FACTURAS RECIBIDAS
     
-    @SuppressWarnings("unchecked")
 	public JSONArray suministroFacturasRecibidas(Domain domain, String login, Company company, Integer invoiceId,
-    		LinkedList<VatContext> contextList, String terceros, String uri, LinkedList<VatContext> list, SendType type) {
+    		LinkedList<VatContext> contextList, String terceros, String uri, LinkedList<VatContext> list, SendType type) throws ParserConfigurationException, JAXBException, SOAPException, IOException {
 		JSONArray array = new JSONArray();
 		
    		byte[] requestXml = null;
 		byte[] responseXml = null;
 		
 		SuministroLRFacturasRecibidas suministro = FacturasRecibidas.getInstance().suministroFacturasRecibidas(domain, login, company, invoiceId, list, type.isModificacion(), terceros);
-    	JAXBElement<Object> response = (JAXBElement<Object>) post(uri, suministro);
-    		
-    	RespuestaLRFRecibidasType respuesta = (RespuestaLRFRecibidasType) response.getValue();
+		String sumStr = marshal(SuministroLRFacturasRecibidas.class, suministro); 
+		String response = post(uri, sumStr);	
+    	RespuestaLRFRecibidasType respuesta = (RespuestaLRFRecibidasType) unmarshal(RespuestaLRFRecibidasType.class, response);
     	for (RespuestaRecibidaType r : respuesta.getRespuestaLinea()) {
     		Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
     		if(!correcto && r.getCodigoErrorRegistro().intValue() == 3000) {
@@ -189,20 +187,17 @@ public class SIIBizkaiaPost extends SIIPost2{
     	return array;
 	}
 
-	@SuppressWarnings("unchecked")
 	public JSONArray bajaFacturasRecibidas(Domain domain, String login, Company company, Integer invoiceId,
-			LinkedList<VatContext> contextList, String terceros, String uri) {
+			LinkedList<VatContext> contextList, String terceros, String uri) throws ParserConfigurationException, JAXBException, SOAPException, IOException {
 		JSONArray array = new JSONArray();
 
 		byte[] requestXml = null;
 		byte[] responseXml = null;
 
-		BajaLRFacturasRecibidas suministro = FacturasRecibidas.getInstance().bajaFacturasRecibidas(company, invoiceId,
-				contextList, terceros);
-
-		JAXBElement<RespuestaLRBajaFRecibidasType> response = (JAXBElement<RespuestaLRBajaFRecibidasType>) post(uri,
-				suministro);
-		RespuestaLRBajaFRecibidasType respuesta = response.getValue();
+		BajaLRFacturasRecibidas suministro = FacturasRecibidas.getInstance().bajaFacturasRecibidas(company, invoiceId, contextList, terceros);
+		String sumStr = marshal(BajaLRFacturasRecibidas.class, suministro); 
+		String response = post(uri, sumStr);	
+		RespuestaLRBajaFRecibidasType respuesta = (RespuestaLRBajaFRecibidasType) unmarshal(RespuestaLRBajaFRecibidasType.class, response);
 
 		for (RespuestaRecibidaBajaType rect : respuesta.getRespuestaLinea()) {
 			Boolean correcto = rect.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
@@ -221,16 +216,15 @@ public class SIIBizkaiaPost extends SIIPost2{
 		return array;
 	}
     	
-    @SuppressWarnings("unchecked")
-    public JSONArray suministroFacturasRecibidasPagos(Domain domain, String login, Company company, LinkedList<Finance> financeList, Integer invoiceId, String uri) {    	
+    public JSONArray suministroFacturasRecibidasPagos(Domain domain, String login, Company company, LinkedList<Finance> financeList, Integer invoiceId, String uri) throws ParserConfigurationException, JAXBException, SOAPException, IOException {    	
     	JSONArray array = new JSONArray();
     	byte[] requestXml = null;
     	byte[] responseXml = null;
     	
    		SuministroLRPagosRecibidas suministro = FacturasRecibidas.getInstance().suministroFacturasRecibidasPagos(domain, login, company, financeList, invoiceId);     	
-    
-   		JAXBElement<RespuestaLRPagosRecibidasType> response = (JAXBElement<RespuestaLRPagosRecibidasType>) post(uri, suministro);
-   		RespuestaLRPagosRecibidasType respuesta = response.getValue();
+   		String sumStr = marshal(SuministroLRPagosRecibidas.class, suministro); 
+		String response = post(uri, sumStr);	
+   		RespuestaLRPagosRecibidasType respuesta = (RespuestaLRPagosRecibidasType) unmarshal(RespuestaLRPagosRecibidasType.class, response);
     	
    		for(RespuestaRecibidaPagoType rrpt : respuesta.getRespuestaLinea()){
    			Boolean correcto = rrpt.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
@@ -250,16 +244,16 @@ public class SIIBizkaiaPost extends SIIPost2{
     
     // -------------------- BIENES INVERSION
 	
-    @SuppressWarnings("unchecked")
-    public JSONArray suministroBienesInversion(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros, String uri, SendType type) {
+    public JSONArray suministroBienesInversion(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros, String uri, SendType type) throws ParserConfigurationException, JAXBException, SOAPException, IOException {
     	JSONArray array = new JSONArray();
 
     	byte[] requestXml = null;
     	byte[] responseXml = null;
     	
     	SuministroLRBienesInversion suministro = BienesInversion.getInstance().suministroBienesInversion(domain, login, company, invoiceId, contextList, type.isModificacion(), terceros);     	
-    	JAXBElement<RespuestaLRBienesInversionType> response = (JAXBElement<RespuestaLRBienesInversionType>) post(uri, suministro);
-    	RespuestaLRBienesInversionType respuesta = response.getValue();
+    	String sumStr = marshal(SuministroLRBienesInversion.class, suministro); 
+		String response = post(uri, sumStr);	
+    	RespuestaLRBienesInversionType respuesta = (RespuestaLRBienesInversionType) unmarshal(RespuestaLRBienesInversionType.class, response);
     	
     	requestXml = BienesInversion.getInstance().getSuministroBienesInversion(suministro);
     	responseXml = BienesInversion.getInstance().getRespuestaSuministroBienesInversion(respuesta);
@@ -275,16 +269,15 @@ public class SIIBizkaiaPost extends SIIPost2{
     	return array;
     }
     
-    @SuppressWarnings("unchecked")
-    public JSONArray bajaBienesInversion(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros, String uri) {
+    public JSONArray bajaBienesInversion(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros, String uri) throws ParserConfigurationException, JAXBException, SOAPException, IOException {
     	JSONArray array = new JSONArray();
     	byte[] requestXml = null;
     	byte[] responseXml = null;
     	
     	BajaLRBienesInversion suministro = BienesInversion.getInstance().bajaBienesInversion(company, invoiceId, contextList, terceros);     	
-
-    	JAXBElement<RespuestaLRBajaBienesInversionType> response = (JAXBElement<RespuestaLRBajaBienesInversionType>) post(uri, suministro);
-    	RespuestaLRBajaBienesInversionType respuesta = response.getValue();
+    	String sumStr = marshal(BajaLRBienesInversion.class, suministro); 
+		String response = post(uri, sumStr);	
+    	RespuestaLRBajaBienesInversionType respuesta = (RespuestaLRBajaBienesInversionType) unmarshal(RespuestaLRBajaBienesInversionType.class, response);
     		
 	    for(RespuestaBienBajaType rect : respuesta.getRespuestaLinea()){
 	    	Boolean correcto = rect.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
@@ -303,16 +296,15 @@ public class SIIBizkaiaPost extends SIIPost2{
     
   // -------------------- OPERACIONES INTRACOMUNITARIAS
 	
-    @SuppressWarnings("unchecked")
-    public JSONArray suministroOperacionesIntracomunitarias(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String tipoOp, String terceros, String uri, SendType type) {
+    public JSONArray suministroOperacionesIntracomunitarias(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String tipoOp, String terceros, String uri, SendType type) throws ParserConfigurationException, JAXBException, SOAPException, IOException {
 
 		JSONArray array = new JSONArray();
 		byte[] requestXml = null;
     	byte[] responseXml = null;
     	SuministroLRDetOperacionIntracomunitaria suministro = OperacionesIntracomunitarias.getInstance().suministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, type.isModificacion(), terceros);     	
-    	
-    	JAXBElement<RespuestaLROComunitariasType> response = (JAXBElement<RespuestaLROComunitariasType>) post(uri, suministro);
-    	RespuestaLROComunitariasType respuesta = response.getValue();
+    	String sumStr = marshal(SuministroLRDetOperacionIntracomunitaria.class, suministro); 
+		String response = post(uri, sumStr);	
+    	RespuestaLROComunitariasType respuesta = (RespuestaLROComunitariasType) unmarshal(RespuestaLROComunitariasType.class, response);
     		
     	requestXml = OperacionesIntracomunitarias.getInstance().getSuministroOperacionesIntracomunitarias(suministro);
     	responseXml = OperacionesIntracomunitarias.getInstance().getRespuestaSuministroOperacionesIntracomunitarias(respuesta);
@@ -329,17 +321,16 @@ public class SIIBizkaiaPost extends SIIPost2{
     	return array;
     }
     
-    @SuppressWarnings("unchecked")
-    public JSONArray bajaOperacionesIntracomunitarias(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros, String uri) {    	
+    public JSONArray bajaOperacionesIntracomunitarias(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros, String uri) throws ParserConfigurationException, JAXBException, SOAPException, IOException {    	
 		JSONArray array = new JSONArray();
 
 		byte[] requestXml = null;
     	byte[] responseXml = null;
     	
     	BajaLRDetOperacionIntracomunitaria suministro = OperacionesIntracomunitarias.getInstance().bajaOperacionesIntracomunitarias(company, invoiceId, contextList, terceros);     	
-    	
-    	JAXBElement<RespuestaLRBajaOComunitariasType> response = (JAXBElement<RespuestaLRBajaOComunitariasType>) post(uri, suministro);
-    	RespuestaLRBajaOComunitariasType respuesta = response.getValue();
+    	String sumStr = marshal(BajaLRDetOperacionIntracomunitaria.class, suministro); 
+		String response = post(uri, sumStr);	
+    	RespuestaLRBajaOComunitariasType respuesta = (RespuestaLRBajaOComunitariasType) unmarshal(RespuestaLRBajaOComunitariasType.class, response);
     	
     	for(RespuestaComunitariaBajaType rect : respuesta.getRespuestaLinea()){
     		Boolean correcto = rect.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
@@ -361,12 +352,11 @@ public class SIIBizkaiaPost extends SIIPost2{
     
     // -------------------- COBROS METALICO
 	
-    @SuppressWarnings("unchecked")
-    public JSONObject suministroCobrosMetalico(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros, String uri) {
+    public JSONObject suministroCobrosMetalico(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros, String uri) throws ParserConfigurationException, JAXBException, SOAPException, IOException {
     	SuministroLRCobrosMetalico suministro = OperacionesTrascendenciaTributaria.getInstance().suministroCobrosMetalico(domain, login, company, invoiceId, contextList);     	
-    	
-   		JAXBElement<RespuestaLRIMetalicoType> response = (JAXBElement<RespuestaLRIMetalicoType>) post(uri, suministro);
-   		RespuestaLRIMetalicoType respuesta = response.getValue();
+    	String sumStr = marshal(SuministroLRCobrosMetalico.class, suministro); 
+		String response = post(uri, sumStr);		
+   		RespuestaLRIMetalicoType respuesta = (RespuestaLRIMetalicoType) unmarshal(RespuestaLRIMetalicoType.class, response);
    		Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
     		
    		//	byte[] requestXml = SIIBuilt.getInstance().getSuministroCobrosMetalico(suministro);
@@ -384,12 +374,11 @@ public class SIIBizkaiaPost extends SIIPost2{
     
     // -------------------- OPERACIONES SEGUROS
 	
-    @SuppressWarnings("unchecked")
-    public JSONObject suministroOperacionesSeguros(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros, String uri) {
+    public JSONObject suministroOperacionesSeguros(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros, String uri) throws ParserConfigurationException, JAXBException, SOAPException, IOException {
     	SuministroLROperacionesSeguros suministro = OperacionesTrascendenciaTributaria.getInstance().suministroOperacionesSeguros(domain, login, company, invoiceId, contextList);     	
-    	
-    	JAXBElement<RespuestaLROperacionesSegurosType> response = (JAXBElement<RespuestaLROperacionesSegurosType>) post(uri, suministro);
-    	RespuestaLROperacionesSegurosType respuesta = response.getValue();
+    	String sumStr = marshal(SuministroLROperacionesSeguros.class, suministro); 
+		String response = post(uri, sumStr);
+    	RespuestaLROperacionesSegurosType respuesta = (RespuestaLROperacionesSegurosType) unmarshal(RespuestaLROperacionesSegurosType.class, response);
     	Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
     	
     	//	byte[] requestXml = SIIBuilt.getInstance().getSuministroOperacionesSeguros(suministro);
@@ -407,11 +396,11 @@ public class SIIBizkaiaPost extends SIIPost2{
     
     // -------------------- AGENCIAS VIAJES
 	
-    @SuppressWarnings("unchecked")
-    public JSONObject suministroAgenciasViajes(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros, String uri) {
+    public JSONObject suministroAgenciasViajes(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros, String uri) throws ParserConfigurationException, JAXBException, SOAPException, IOException {
    		SuministroLRAgenciasViajes suministro = OperacionesTrascendenciaTributaria.getInstance().suministroAgenciasViajes(domain, login, company, invoiceId, contextList);     	
-   		JAXBElement<RespuestaLRAgenciasViajesType> response = (JAXBElement<RespuestaLRAgenciasViajesType>) post(uri, suministro);
-   		RespuestaLRAgenciasViajesType respuesta = response.getValue();
+   		String sumStr = marshal(SuministroLRAgenciasViajes.class, suministro); 
+		String response = post(uri, sumStr);
+		RespuestaLRAgenciasViajesType respuesta = (RespuestaLRAgenciasViajesType) unmarshal(RespuestaLRAgenciasViajesType.class, response);
    		Boolean correcto = respuesta.getRespuestaLinea().get(0).getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
 
    		// 	byte[] requestXml = SIIBuilt.getInstance().getSuministroAgenciasViajes(suministro);
