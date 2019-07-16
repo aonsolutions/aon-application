@@ -32,6 +32,7 @@ import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
+import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
@@ -126,13 +127,13 @@ public class SIIPost {
 		InputStream is = new ByteArrayInputStream(document.getBytes());
 
 		MimeHeaders headers = new MimeHeaders();
-		headers.addHeader("Content-Type", "text/xml");
-	
-		SOAPMessage soapMessage = MessageFactory.newInstance().createMessage(headers, is);
+		headers.addHeader("Content-Type", SOAPConstants.SOAP_1_1_CONTENT_TYPE);
+
+		SOAPMessage soapMessage = MessageFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL).createMessage(headers, is);
 		is.close();
 		secure(uri);
         // Create SOAP Connection
-        SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
+		SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
         SOAPConnection soapConnection = soapConnectionFactory.createConnection();
         System.out.println("URI => " + uri);
         // Send SOAP Message to SOAP Server
