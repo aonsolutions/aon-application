@@ -551,7 +551,7 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 			.setOperatingEntriesExcluded(operatingEntriesExcluded.getValue())
 			.setClosingEntriesExcluded(closingEntriesExcluded.getValue())
 			.setAccount(new Account().setCode(account.getValue()))
-			.setSecurityLevel(SecurityLevel.safeValueOf(confidential.getSelectedIndex()))
+			.setSecurityLevel(confidential!=null?SecurityLevel.safeValueOf(confidential.getSelectedIndex()):SecurityLevel.OFFICIAL)
 			;
 	}
 	

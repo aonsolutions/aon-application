@@ -184,7 +184,7 @@ public class SecurityDAO {
 		ctx.checkRead();
 		User user = getUser(ctx, userLogin);
 		if (user == null) {
-			throw new IllegalAccessError("Usario no encontrado.");
+			throw new IllegalAccessError("Usuario no encontrado.");
 		}
 		if (user.hasConfidentialityRole()) {
 			// Tiene el rol de confidencialidad por lo no hay que filtrar.
@@ -218,7 +218,7 @@ public class SecurityDAO {
 		ctx.checkRead();
 		User user = getUser(ctx, userLogin);
 		if (user == null) {
-			throw new IllegalAccessError("Usario no encontrado.");
+			throw new IllegalAccessError("Usuario no encontrado.");
 		}
 		return getUserScopes(ctx, user.getId());
 	}
@@ -227,7 +227,7 @@ public class SecurityDAO {
 		ctx.checkRead();
 		User user = getUser(ctx, userId);
 		if (user == null) {
-			throw new IllegalAccessError("Usario no encontrado.");
+			throw new IllegalAccessError("Usuario no encontrado.");
 		}
 		// Es un usuario del dominio, por lo que hay que consultar los scopes del dominio
 		int dom = user.getDomain();
@@ -261,7 +261,7 @@ public class SecurityDAO {
 		// NO DEBE PASAR. 
 		// Es un usuario que no pertenece al dominio en curso ni al dominio padre. 
 		// Si ha llegado aqui es un error.
-		throw new IllegalAccessError("Usario sin permisos.");
+		throw new IllegalAccessError("Usuario sin permisos.");
 	}
 	public static LinkedList<Scope> getAvailableScopes (AONContext ctx) {
 		return ctx.getDslContext()

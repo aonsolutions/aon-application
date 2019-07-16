@@ -492,7 +492,7 @@ public class LedgerPanelReport extends DockLayoutPanel implements Focusable, Has
 			.setToDate(toDate.getValue())
 			.setActivity(activityId)
 			.setAccount(new Account().setCode(account.getValue()))
-			.setSecurityLevel(SecurityLevel.safeValueOf(confidential.getSelectedIndex()))
+			.setSecurityLevel(confidential!=null?SecurityLevel.safeValueOf(confidential.getSelectedIndex()):SecurityLevel.OFFICIAL)
 			;
 	}
 	

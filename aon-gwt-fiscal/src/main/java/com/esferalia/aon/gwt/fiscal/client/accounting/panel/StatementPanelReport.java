@@ -551,7 +551,9 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 					.setId(account.getId())
 					.setCode(account.getValue())
 					.setDescription(account.getDescription()))
-			.setSecurityLevel(SecurityLevel.safeValueOf(confidential.getSelectedIndex()))
+			.setSecurityLevel(confidential != null
+					?SecurityLevel.safeValueOf(confidential.getSelectedIndex())
+					:SecurityLevel.OFFICIAL)
 			.setReverseOrder(reverseOrder.getValue())
 			;
 	}

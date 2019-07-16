@@ -487,7 +487,7 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 			.setConcept(concept.getValue())
 			.setDocument(document.getValue())
 			.setComments(comments.getValue())
-			.setSecurityLevel(SecurityLevel.safeValueOf(confidential.getSelectedIndex()))
+			.setSecurityLevel(confidential!=null?SecurityLevel.safeValueOf(confidential.getSelectedIndex()):SecurityLevel.OFFICIAL)
 			.setOrder(order.getSelectedIndex());
 	}
 	

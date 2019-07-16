@@ -759,7 +759,7 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 			.setPreviousPeriods( previousPeriods.getSelectedIndex() )
 			.setPercentsEnabled(showPercents.getValue())
 			.setCostCenters(costCentersSet)
-			.setSecurityLevel(SecurityLevel.safeValueOf(confidential.getSelectedIndex()))
+			.setSecurityLevel(confidential!=null?SecurityLevel.safeValueOf(confidential.getSelectedIndex()):SecurityLevel.OFFICIAL)
 			.setByMonth(byMonth.getValue())
 			;
 		

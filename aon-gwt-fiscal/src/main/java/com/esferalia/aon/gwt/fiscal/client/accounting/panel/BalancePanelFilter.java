@@ -497,7 +497,7 @@ public class BalancePanelFilter extends SimpleLayoutPanel implements HasValueCha
 			.setFromDate(fromDate.getValue())
 			.setToDate(toDate.getValue())
 			.setActivity(activityId)
-			.setSecurityLevel(SecurityLevel.safeValueOf(confidential.getSelectedIndex()))
+			.setSecurityLevel(confidential!=null?SecurityLevel.safeValueOf(confidential.getSelectedIndex()):SecurityLevel.OFFICIAL)
 			.setPreviousPeriods( previousPeriods.getSelectedIndex() )
 			.setBalanceType(BalanceType.values()[balanceType.getSelectedIndex()])
 			.setBreakdownEnabled(breakdownEnabled.getValue())
