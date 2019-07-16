@@ -146,10 +146,21 @@ public class SIIPost {
         String result = baos.toString();
         System.out.println("********************* RESPONSE *******************");
         System.out.println(result);
-        result = result.split("<env:Body Id=\"Body\">")[1];
-        result = result.split("</env:Body>")[0];
-        System.out.println(result);
-        return result;
+        if(result.contains("<faultstring>")) {
+            result = result.split("<faultstring>")[1];	
+            result = result.split("</faultstring>")[0];
+			throw new IllegalStateException(result);
+        } else {
+        	Boolean isBodyId = result.contains("<env:Body Id=\"Body\">");
+        	result = isBodyId
+        		? result.split("<env:Body Id=\"Body\">")[1]
+        		: result.split("<soap:Body>")[1];	
+        	result = isBodyId
+        		? result.split("</env:Body>")[0]
+        		: result.split("</soap:Body>")[0];
+        		System.out.println(result);
+        	return result;
+        }
 	}
 	
 	protected String marshal(Class clazz,Object suministro) throws JAXBException {
