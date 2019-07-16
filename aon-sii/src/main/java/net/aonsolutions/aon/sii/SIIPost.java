@@ -29,6 +29,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.soap.MessageFactory;
+import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPException;
@@ -123,23 +124,27 @@ public class SIIPost {
         System.out.println(document);
 
 		InputStream is = new ByteArrayInputStream(document.getBytes());
-		SOAPMessage soapMessage = MessageFactory.newInstance().createMessage(null, is);
-		soapMessage.setProperty("Content-Type", "text/xml");
 
+		MimeHeaders headers = new MimeHeaders();
+		headers.addHeader("Content-Type", "text/xml");
+	
+		SOAPMessage soapMessage = MessageFactory.newInstance().createMessage(headers, is);
 		is.close();
 		secure(uri);
         // Create SOAP Connection
         SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
         SOAPConnection soapConnection = soapConnectionFactory.createConnection();
-         System.out.println("URI => " + uri);
+        System.out.println("URI => " + uri);
         // Send SOAP Message to SOAP Server
         SOAPMessage soapResponse = soapConnection.call(soapMessage, uri);
+		System.out.println(soapResponse.getMimeHeaders().getHeader("Content-Type")[0]);
         soapConnection.close();
         
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         soapResponse.writeTo(baos);
         String result = baos.toString();
         System.out.println("********************* RESPONSE *******************");
+        System.out.println(result);
         result = result.split("<env:Body Id=\"Body\">")[1];
         result = result.split("</env:Body>")[0];
         System.out.println(result);
