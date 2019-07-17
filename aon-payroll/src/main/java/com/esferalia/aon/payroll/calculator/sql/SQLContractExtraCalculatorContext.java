@@ -33,6 +33,7 @@ import com.esferalia.aon.payroll.irpf.IrpfCalculator;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
@@ -218,6 +219,10 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		if ( results.isEmpty() )
 			expressionContext.setVariable(payment.getName(), 0.00, paymentStart, paymentEnd);
 		
+		if ( results.size() == 1 )
+			results = expressionContext.eval(String.format("%s(%s)", ContextVariable.FRACTIONATE, payment.getExpression()), paymentStart, paymentEnd,
+					Double.class);
+		
 		for (ITimedResult<Double> result : results) {
 
 			Date resultStart = result.getPeriod().getStart();
@@ -252,8 +257,12 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 				Number prevValue = prev.getValue(prev.getPeriod());
 				if (valueStart.compareTo(prevStart) < 0)
 					expressionContext.setVariable(payment.getName(), resultValue, valueStart, prev(prevStart));
-
-				expressionContext.setVariable(payment.getName(), resultValue + prevValue.doubleValue(), prevStart,
+				
+				double value = resultValue ; 
+				if (isResultVariabl(prev))
+					value += prevValue.doubleValue();
+				
+				expressionContext.setVariable(payment.getName(), value, prevStart,
 						prevEnd);
 				
 				
@@ -341,6 +350,10 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		}
 		
 		
+	}
+	
+	private static boolean isResultVariabl(ITimedVariable<?> var) {
+		return !( var instanceof IExpressionVariable<?>);
 	}
 
 }
