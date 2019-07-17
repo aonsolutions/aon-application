@@ -45,6 +45,7 @@ import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.calculator.sql.FilterCollection;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.NextHook;
@@ -536,7 +537,7 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 	public Collection<IContractPayment> getContractPayments()
 			throws AonException {
 		return new DraftCompositePayments(getDraftPayments(),
-				super.getContractPayments());
+				getSuperContractPayments());
 	}
 
 	@Override
@@ -577,6 +578,13 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 	}
 	
 	// ---------------------------------------------------------------- Private
+
+	private Collection<IContractPayment> getSuperContractPayments()
+			throws AonException {
+		return new FilterCollection<IContractPayment>(
+				p -> !hasDraftPayments()  || !isDefault(p), 
+				super.getContractPayments());
+	}
 
 	private Collection<IContractDeduction> getDraftDeductions() {
 		Collection<IContractDeduction> deductions = new LinkedList<IContractDeduction>();
@@ -740,6 +748,10 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 	}
 	
 	
+	private boolean hasDraftPayments() {
+		return draft.getDraftPayments().size() > 0;
+	}
+
 
 	// ------------------------------------------------------------------------
 
@@ -852,5 +864,9 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 
 	private static boolean isSystem(String name, String expr) {
 		return AonStringUtils.isNotEmpty(expr) && expr.matches("\\s*SISTEMA\\s*\\(\\s*['\"]"+ name +"['\"]\\s*\\)\\s*;*\\s*");
+	}
+	
+	private static boolean isDefault(IContractPayment payment) {
+		return AonStringUtils.startsWith(payment.getExpression(), "/*default*/" );
 	}
 }

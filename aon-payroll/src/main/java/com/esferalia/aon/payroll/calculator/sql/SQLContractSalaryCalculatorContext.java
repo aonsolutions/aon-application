@@ -141,7 +141,9 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.calendar.enumeration.DayType;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.payroll.DelegateCollection;
 import com.esferalia.aon.payroll.DelegateContractPayment;
+import com.esferalia.aon.payroll.DelegateIterator;
 import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.Salary;
@@ -1475,8 +1477,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			paymentStmt.setInt(1, id);
 			ResultSet rs = paymentStmt.executeQuery();
 			this.sqlContractPayment.setResultSet(rs);
-
-			return new CompositePayments(this.sqlContractPayment, getAgreementPayments(), getCCCPayments(), getSSRegimePayments()) {
+			
+			Collection<IContractPayment> contractAgreementPayments = getAgreementPayments();
+			
+			return new CompositePayments(this.sqlContractPayment, contractAgreementPayments, getDefaultAgreementPayments(), getCCCPayments(), getSSRegimePayments()) {
 				@Override
 				public Iterator<IContractPayment> iterator() {
 					Iterator<IContractPayment> iterator = super.iterator();
@@ -1844,6 +1848,29 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			periods.add(l);
 		return periods;
 	}
+	
+	protected Collection<ISystemPayment> getDefaultAgreementPayments() {
+		
+		
+		if ( getAgreementKey() != null ) 
+			return Collections.emptyList();
+		
+		return new DelegateCollection<ISystemPayment>(agreementPayments.get(getDefaultAgreementKey())) {
+			@Override
+			public Iterator<ISystemPayment> iterator() {
+				return new DelegateIterator<ISystemPayment>(super.iterator()) {
+					@Override
+					public boolean hasNext() {
+						try {
+							return !SQLContractSalaryCalculatorContext.this.sqlContractPayment.getResultSet().isAfterLast() && super.hasNext();
+						} catch (SQLException e) {
+							return false;
+						}
+					}
+				};
+			}
+		};
+	}
 
 	protected ISalaryCalculatorContext getLiquidCalculatorContext(final double solve, final double liquid) {
 
@@ -1897,6 +1924,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		Object id = getObject(SQLConstants.AGREEMENT, AgreementColumns.ID);
 		Object domain = getObject(SQLConstants.AGREEMENT, AgreementColumns.DOMAIN);
 		return id == null ? null : new AgreementKey((Integer) id, (Integer) domain);
+	}
+
+	protected AgreementKey getDefaultAgreementKey() {
+		return new AgreementKey(0, 0);
 	}
 
 	protected double getActiveDays(Period p) {
