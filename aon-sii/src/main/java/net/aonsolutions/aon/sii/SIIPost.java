@@ -14,6 +14,7 @@ import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Date;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManagerFactory;
@@ -44,7 +45,6 @@ public class SIIPost {
 	byte[] cert;
 	String pass;
 
-	SSLContext sslContext;
 	public SIIPost(byte[] cert, String pass) {
 		this.cert = cert;
 		this.pass = pass;
@@ -61,10 +61,17 @@ public class SIIPost {
 	
 			KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
 			kmf.init(keyStore, pass.toCharArray());
-	        
-			TrustManager[] trustAll = new TrustManager[] {new TrustAllCertificates()};
 
-			sslContext = SSLContext.getInstance("SSLv3");
+			String alias = (String) keyStore.aliases().nextElement();
+            Date certExpiryDate = ((X509Certificate) keyStore.getCertificate(alias)).getNotAfter();
+        
+            if(certExpiryDate.compareTo(new Date())<= 0) {
+    			throw new IllegalStateException("El certificado ha expirado.");
+            }
+
+	        TrustManager[] trustAll = new TrustManager[] {new TrustAllCertificates()};
+
+			SSLContext sslContext = SSLContext.getInstance("SSLv3");
 			sslContext.init(kmf.getKeyManagers(), trustAll, new SecureRandom());
 			// Set trust all certificates context to HttpsURLConnection
         
@@ -86,7 +93,9 @@ public class SIIPost {
 			throw new IllegalStateException(e.getMessage());
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new IllegalStateException(e.getMessage());
+			String msg = ("keystore password was incorrect".equals(e.getMessage())) 
+					? "La contraseña es incorrecta." : e.getMessage();
+			throw new IllegalStateException(msg);
 		}
 	}
 	
@@ -105,6 +114,7 @@ public class SIIPost {
 	
 	protected String post(String uri, String document) throws SOAPException, IOException {
         System.out.println("********************* REQUEST *******************");
+        System.out.println(uri);
         System.out.println(document);
 
 		InputStream is = new ByteArrayInputStream(document.getBytes());
@@ -115,20 +125,16 @@ public class SIIPost {
 		SOAPMessage soapMessage = MessageFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL).createMessage(headers, is);
 		is.close();
 
-		// Create SOAP Connection
-		SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
-		
-        SOAPConnection soapConnection = soapConnectionFactory.createConnection();
-        System.out.println("URI => " + uri);
-        // Send SOAP Message to SOAP Server
+        SOAPConnection soapConnection =  SOAPConnectionFactory.newInstance().createConnection();
         SOAPMessage soapResponse = soapConnection.call(soapMessage, uri);
-		System.out.println(soapResponse.getMimeHeaders().getHeader("Content-Type")[0]);
+		
         soapConnection.close();
-        
+
+        System.out.println("********************* RESPONSE *******************");
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         soapResponse.writeTo(baos);
         String result = baos.toString();
-        System.out.println("********************* RESPONSE *******************");
         System.out.println(result);
         if(result.contains("<faultstring>")) {
             result = result.split("<faultstring>")[1];	
