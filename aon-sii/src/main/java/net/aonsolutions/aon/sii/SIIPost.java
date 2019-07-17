@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -16,11 +15,9 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.xml.bind.JAXBContext;
@@ -46,17 +43,14 @@ public class SIIPost {
 	
 	byte[] cert;
 	String pass;
-	Marshaller marshaller;
-	Unmarshaller unmarshaller;
+
+	SSLContext sslContext;
 	public SIIPost(byte[] cert, String pass) {
 		this.cert = cert;
 		this.pass = pass;
-	}
-	
-	private void secure(String uri) {
 		try {
 			ByteArrayInputStream key = new ByteArrayInputStream(cert);
-	
+		
 			KeyStore keyStore = KeyStore.getInstance("PKCS12");
 
 			if(cert == null) {
@@ -64,24 +58,17 @@ public class SIIPost {
 			}
 			System.out.println("SII CERT LOG -/" + pass + "/-" + key);
 			keyStore.load(key, pass.toCharArray());
-    	
-    		KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-   			kmf.init(keyStore, pass.toCharArray());
-   	        
-            TrustManager[] trustAll = new TrustManager[] {new TrustAllCertificates()};
+	
+			KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+			kmf.init(keyStore, pass.toCharArray());
+	        
+			TrustManager[] trustAll = new TrustManager[] {new TrustAllCertificates()};
 
-            SSLContext sslContext = SSLContext.getInstance("SSLv3");
-            sslContext.init(kmf.getKeyManagers(), trustAll, new SecureRandom());
-            // Set trust all certificates context to HttpsURLConnection
-            
-            HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
-            // Open HTTPS connection
-            URL url = new URL(uri);
-            HttpsURLConnection httpsConnection = (HttpsURLConnection) url.openConnection();
-            // Trust all hosts
-            httpsConnection.setHostnameVerifier(new TrustAllHosts());
-            // Connect
-            httpsConnection.connect();
+			sslContext = SSLContext.getInstance("SSLv3");
+			sslContext.init(kmf.getKeyManagers(), trustAll, new SecureRandom());
+			// Set trust all certificates context to HttpsURLConnection
+        
+			HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
 		} catch (KeyStoreException e) {
 			e.printStackTrace();
 			throw new IllegalStateException(e.getMessage());
@@ -91,16 +78,18 @@ public class SIIPost {
 		} catch (CertificateException e) {
 			e.printStackTrace();
 			throw new IllegalStateException(e.getMessage());
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new IllegalStateException(e.getMessage());
 		} catch (UnrecoverableKeyException e) {
 			e.printStackTrace();
 			throw new IllegalStateException(e.getMessage());
 		} catch (KeyManagementException e) {
 			e.printStackTrace();
+			throw new IllegalStateException(e.getMessage());
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new IllegalStateException(e.getMessage());
 		}
 	}
+	
 	
 	private static class TrustAllCertificates implements X509TrustManager {
 	    public void checkClientTrusted(X509Certificate[] certs, String authType) {
@@ -111,12 +100,6 @@ public class SIIPost {
 	 
 	    public X509Certificate[] getAcceptedIssuers() {
 	        return null;
-	    }
-	}
-	
-	private static class TrustAllHosts implements HostnameVerifier {
-	    public boolean verify(String hostname, SSLSession session) {
-	        return true;
 	    }
 	}
 	
@@ -131,9 +114,10 @@ public class SIIPost {
 
 		SOAPMessage soapMessage = MessageFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL).createMessage(headers, is);
 		is.close();
-		secure(uri);
-        // Create SOAP Connection
+
+		// Create SOAP Connection
 		SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
+		
         SOAPConnection soapConnection = soapConnectionFactory.createConnection();
         System.out.println("URI => " + uri);
         // Send SOAP Message to SOAP Server
