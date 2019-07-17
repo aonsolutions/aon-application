@@ -1237,7 +1237,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 						}
 					}
 				});
-				if(row.getLastCellNum() <= ti.getColumns().size()){
+				if(row.getLastCellNum() < ti.getColumns().size()){
 					if(row.getRowNum() == 1){
 						error.setError(false);
             			if(verror.isEmpty()) verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
@@ -1250,7 +1250,6 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
             		else if(productBool){
             			if(row.getLastCellNum() != -1){
             				Short cellnum = row.getLastCellNum();
-            				if(row.getLastCellNum() == ti.getColumns().size())cellnum--;
             				if(ti.getColumns().get(cellnum).equals("Nombre") || ti.getColumns().get(cellnum).equals("C\u00f3digo") || ti.getColumns().get(cellnum).equals("Precio Coste") || ti.getColumns().get(cellnum).equals("Precio Venta Base")){
           						verror.add("*Fila "+(row.getRowNum()+1)+", Columna "+Utils.getColumn(row.getLastCellNum())+" : Dato Incorrecto \n");
           						textError= textError + "*Fila "+(row.getRowNum()+1)+", Columna "+Utils.getColumn(row.getLastCellNum())+" : Dato Incorrecto \n";
