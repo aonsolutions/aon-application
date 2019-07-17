@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -773,7 +774,7 @@ public class Payment extends ResizeComposite {
 			public String getValue(com.esferalia.aon.gwt.payroll.shared.Payment payment) {
 				if (AonStringUtils.isBlank(payment.getName()))
 					return payment.getDescription();
-				return payment.getDescription() + " (" + payment.getName() + ")";
+				return null == payment.getDescription() ? " (" + payment.getName() + ")" : payment.getDescription() + " (" + payment.getName() + ")";
 			}
 		};
 		paymentsDataGrid.addColumn(nameColumn);
@@ -962,9 +963,37 @@ public class Payment extends ResizeComposite {
 	private void filterAvailablePayments() {
 		List<com.esferalia.aon.gwt.payroll.shared.Payment> availablePayments = 
 				payments.stream().filter(p -> p.getType() != getType()).collect(Collectors.toList());
+		
+		//Filter availablePayments only one entry for each type
+		availablePayments = filterAvailablePayments(availablePayments);
+		
 		new ListDataProvider<com.esferalia.aon.gwt.payroll.shared.Payment>(availablePayments).addDataDisplay(paymentsDataGrid);
 	}
 
+	private List<com.esferalia.aon.gwt.payroll.shared.Payment> filterAvailablePayments(
+			List<com.esferalia.aon.gwt.payroll.shared.Payment> availablePayments) {
+		
+
+		List<com.esferalia.aon.gwt.payroll.shared.Payment> availablePaymentsResult = new ArrayList<>();
+		
+		for(com.esferalia.aon.gwt.payroll.shared.Payment payment : availablePayments){
+			if(availablePaymentsResult.isEmpty() || !availablePaymentsContainsType(payment.getName(), availablePaymentsResult))
+				availablePaymentsResult.add(payment);
+		}
+		
+		return availablePaymentsResult;
+	}
+
+	private boolean availablePaymentsContainsType(String searchName,
+			List<com.esferalia.aon.gwt.payroll.shared.Payment> availablePaymentsResult) {
+		
+		for(com.esferalia.aon.gwt.payroll.shared.Payment payment : availablePaymentsResult){
+			if(payment.getName() == searchName)
+				return true;
+		}
+		
+		return false;
+	}
 
 	private boolean taxAndQuoteFull() {
 		com.esferalia.aon.gwt.payroll.shared.Payment.Type type = getType();
