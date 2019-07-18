@@ -13,7 +13,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
@@ -24,14 +24,16 @@ import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.OrderByList;
+import com.esferalia.aon.jooq.tables.SalaryPayment;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.payroll.DelegateContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.SimpleContractPayment;
 import com.esferalia.aon.payroll.calculator.UndefinedContextVariablesException;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory.IExtraPayment;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
-import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
-import com.esferalia.aon.payroll.irpf.IrpfCalculator;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
@@ -75,6 +77,10 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 
 	@Override
 	public Collection<IContractPayment> getContractPayments() throws AonException {
+		
+		Collection<IContractPayment> monthlyQuotedPayments= getMonthlyQuotedPayments();
+		if ( monthlyQuotedPayments.size() == getMonths() ) 
+			return monthlyQuotedPayments;
 
 		addSalaryContractPayments();
 
@@ -129,6 +135,74 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 	// -------------------------------------------------------------------------
 
 
+	private Collection<IContractPayment> getMonthlyQuotedPayments() throws AonException {
+
+		Collection<IContractPayment> extraPayments = new ArrayList<IContractPayment>();
+		FilterCollection.Filter<IContractPayment> filter = getExtraPaymentFilter();
+		for ( IContractPayment p : super.getContractPayments() )
+			if ( filter.accept(p)) extraPayments.add(p);
+		
+		List<IContractPayment> monthlyQuotedPayments = new ArrayList<IContractPayment>();
+		
+		int contractId = getId();
+		
+		AON.getSalaries(new AONContext(connection),
+		p -> p.getIsSalaryProperty().eq(true)
+			.and(p.getContractProperty().eq(contractId))
+			.and(p.getStartDateProperty().le(getEnd()))
+			.and(p.getEndDateProperty().ge(getStart())))
+		.forEach(salary -> salary.getPayments().forEach( salaryPayment -> 
+		getSalaryPaymentOf(salaryPayment, extraPayments)
+		.ifPresent( p -> monthlyQuotedPayments.add(salary2ContractPayment(salary,salaryPayment, p)))
+		));
+		
+		
+		return monthlyQuotedPayments;
+	}
+	
+	private IContractPayment salary2ContractPayment(
+			com.esferalia.aon.occam.api.model.Salary salary, 
+			com.esferalia.aon.occam.api.model.Salary.Payment salaryPayment, 
+			IContractPayment contractPayment) {
+		DelegateContractPayment payment = new DelegateContractPayment(contractPayment) {
+			
+			@Override
+			public Integer getId() {
+				return Integer.MIN_VALUE ; //super.getId() * (-1);
+			}
+			
+			@Override
+			public Date getEndDate() {
+				return salary.getEndDate();
+			}
+
+			@Override
+			public Date getStartDate() {
+				return salary.getStartDate();
+			}
+			
+			@Override
+			public String getExpression() {
+				return Double.toString(salaryPayment.getQuote());
+			}
+		};
+		
+		;
+		
+		return payment;
+	}
+	
+	private Optional<IContractPayment> getSalaryPaymentOf(com.esferalia.aon.occam.api.model.Salary.Payment salaryPayment, Collection<IContractPayment> contractPayments ) {
+		for (IContractPayment contractPayment : contractPayments) {
+			if ( AonStringUtils.equals(contractPayment.getDescription(), salaryPayment.getDescription()) ) {
+				return Optional.of(contractPayment);
+			}
+		}
+		
+		return Optional.empty();
+	}
+
+	
 	private void addSalaryContractPayments() throws ExpressionException, AonException {
 		ExpressionContext expressionContext = super.getExpressionContext();
 		
@@ -309,6 +383,10 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			// month.getStart(), month.getEnd());
 		}
 
+	}
+	
+	private int getMonths() {
+		return getExpressionContext().getTimedVariables(NATURAL_MONTH_DAYS.getName()).size();
 	}
 
 	// -------------------------------------------
