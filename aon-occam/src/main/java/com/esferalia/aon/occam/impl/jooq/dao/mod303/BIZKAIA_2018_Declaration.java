@@ -718,7 +718,7 @@ public class BIZKAIA_2018_Declaration extends Mod303Declaration {
 					);
 	}
 	private static boolean adqIntracomunitariasDevFilter(VatContext vat) {
-		return !vat.isRectification() && adqIntracomunitariasFilter(vat);
+		return adqIntracomunitariasFilter(vat);
 	}
 	private static boolean operacionesISPFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
@@ -732,11 +732,14 @@ public class BIZKAIA_2018_Declaration extends Mod303Declaration {
 					|| (vat.isCanCeuMelPurchase() && vat.isService()));
 	}
 	private static boolean operacionesISPDevFilter(VatContext vat) {
-		return !vat.isRectification() && operacionesISPFilter(vat);
+		return operacionesISPFilter(vat);
 	}
 	private static boolean modificacionBasesYCuotasFilter(VatContext vat) {
-		return vat.isRectification() && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
-			&& (vat.isNationalSales() || adqIntracomunitariasFilter(vat) || operacionesISPFilter(vat));		
+		return vat.isRectification() 
+			&& vat.isVatGeneralRegime(VATRegime.GENERAL) 
+			&& !vat.isVatSurchargeRegime()
+			&& (vat.isNationalSales());
+//			&& (vat.isNationalSales() || adqIntracomunitariasFilter(vat) || operacionesISPFilter(vat));		
 	}
 	private static boolean operacionesInterioresFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
