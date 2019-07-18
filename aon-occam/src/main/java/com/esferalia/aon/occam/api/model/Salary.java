@@ -43,17 +43,24 @@ public class Salary implements Serializable {
 		}
 	}
 	public static class Payment {
+		Double irpf;
+		Double quote;
 		Double amount;
 		String expression;
 		String description;
 
-		public Payment(Double amount, String expression, String description) {
+		public Payment(Double amount, Double quote, String expression, String description) {
 			super();
+			this.quote = quote;
 			this.amount = amount;
 			this.description = description;
 			this.expression = expression;
 		}
 
+		public Double getQuote() {
+			return quote;
+		}
+		
 		public Double getAmount() {
 			return amount;
 		}
@@ -618,9 +625,8 @@ public class Salary implements Serializable {
 	}
 
 	public void addPayment(String expression, String description,
-			Double amount) {
-		
-		Payment payment = new Payment(amount, expression, description);
+			Double amount, Double quote) {
+		Payment payment = new Payment(amount, quote, expression, description);
 		
 		payments.add(payment);
 	}
