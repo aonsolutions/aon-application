@@ -390,6 +390,9 @@ public class ConsolidatedBalancePanelFilter extends SimpleLayoutPanel implements
 			@Override public void visitPygCoopNormal() 			{balanceType.addItem( "Cuenta de Explotaci\u00F3n COOPERATIVAS (Normal)");}
 			@Override public void visitPygCoopAbbreviate() 		{balanceType.addItem( "Cuenta de Explotaci\u00F3n COOPERATIVAS (Abreviado)");}
 			
+			@Override public void visitBalanceAsocAbbreviate()  {balanceType.addItem( "Balance de situaci\u00F3n ASOC.SIN LUCRO (Abreviado)");}
+			@Override public void visitPygAsocAbbreviate() 		{balanceType.addItem( "Cuenta de Explotaci\u00F3n ASOC.SIN LUCRO (Abreviado)");}
+
 		};
 		
 		for (BalanceType bt : BalanceType.values()) {

@@ -107,6 +107,7 @@ public class AccountBalanceReport implements Serializable{
 	private Map<String, BalanceLine> balances = new LinkedHashMap<String, BalanceLine>();
 	private LinkedHashSet<String> periods = new LinkedHashSet<String>();
 	private Map<String, LinkedList<AccountBalance>> unreadAccounts = new LinkedHashMap<String, LinkedList<AccountBalance>>();
+	private String helpLink;
 	
 	
 	public ReportMetadata getMetadata() {
@@ -162,5 +163,11 @@ public class AccountBalanceReport implements Serializable{
 		return unreadAccounts;
 	}
 	
-	
+	public String getHelpLink() {
+		return helpLink;
+	}
+	public AccountBalanceReport setHelpLink(String helpLink) {
+		this.helpLink = helpLink;
+		return this;
+	}
 }

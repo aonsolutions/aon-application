@@ -27,10 +27,12 @@ import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType.IBalanceTypeVisitor;
 import com.esferalia.aon.occam.server.accounting.AccMiningMVELContext;
 import com.esferalia.aon.occam.server.accounting.BOEBalanceAbbreviateScript;
+import com.esferalia.aon.occam.server.accounting.BOEBalanceAsocAbbreviateScript;
 import com.esferalia.aon.occam.server.accounting.BOEBalanceCoopNormalScript;
 import com.esferalia.aon.occam.server.accounting.BOEBalanceNormalScript;
 import com.esferalia.aon.occam.server.accounting.BOEBalancePYMESScript;
 import com.esferalia.aon.occam.server.accounting.BOEPyGAbbreviateScript;
+import com.esferalia.aon.occam.server.accounting.BOEPyGAsocAbbreviateScript;
 import com.esferalia.aon.occam.server.accounting.BOEPyGCoopAbbreviateScript;
 import com.esferalia.aon.occam.server.accounting.BOEPyGCoopNormalScript;
 import com.esferalia.aon.occam.server.accounting.BOEPyGNormalScript;
@@ -57,16 +59,16 @@ public class AccountBalanceDAO {
 		@Override public void visitBalanceNormal() 		{ this.script = new BOEBalanceNormalScript();}
 		@Override public void visitBalanceAbbreviate() 	{ this.script = new BOEBalanceAbbreviateScript();}
 		@Override public void visitBalancePymes() 		{ this.script = new BOEBalancePYMESScript(); }
-		
 		@Override public void visitBalanceCoopNormal() 	{ this.script = new BOEBalanceCoopNormalScript(); }
-		@Override public void visitPygCoopNormal() 		{ this.script = new BOEPyGCoopNormalScript(); }
-
+		@Override public void visitBalanceCoopAbbreviate() { }
+		@Override public void visitBalanceAsocAbbreviate(){ this.script = new BOEBalanceAsocAbbreviateScript(); }
+		
 		@Override public void visitPygNormal()			{ this.script = new BOEPyGNormalScript(); }
 		@Override public void visitPygAbbreviate() 		{ this.script = new BOEPyGAbbreviateScript(); }
 		@Override public void visitPygPymes() 			{ this.script = new BOEPyGPYMESScript(); }
-
+		@Override public void visitPygCoopNormal() 		{ this.script = new BOEPyGCoopNormalScript(); }
 		@Override public void visitPygCoopAbbreviate() 	{ this.script = new BOEPyGCoopAbbreviateScript(); }
-		@Override public void visitBalanceCoopAbbreviate() { }
+		@Override public void visitPygAsocAbbreviate() 	{ this.script = new BOEPyGAsocAbbreviateScript(); }
 
 	}
 
@@ -231,6 +233,7 @@ public class AccountBalanceDAO {
 			}
 		}
 		report.getUnreadAccounts().put(bal, unreadBalances);
+		report.setHelpLink(params.getBalanceType().getHelpLink());
 		/// [fin chequeo]
 
 		mvelCtx.getExpressionMap().clear();

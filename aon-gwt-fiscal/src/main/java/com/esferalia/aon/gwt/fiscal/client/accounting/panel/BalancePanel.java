@@ -157,17 +157,16 @@ public class BalancePanel extends ScrollPanel implements HasSelectionHandlers<Ac
 					}
 					 
 				}
-				if (something) {
+				if (something && AonStringUtils.isNotBlank(report.getHelpLink())) {
 					FlowPanel helpPanel = new FlowPanel();
 					helpPanel.setStyleName(AON.AON_CSS.aonTextRight());
-					Anchor anchor = new Anchor("[AYUDA]", "https://www.boe.es/buscar/act.php?id=BOE-A-2007-19884&tn=6&p=20161217");
+					Anchor anchor = new Anchor("[AYUDA]", report.getHelpLink());
 					anchor.setStyleName(AON.AON_CSS.aonMarginTop());
 					anchor.setTarget("_blank");
 					helpPanel.add(anchor);
 					panel.add( helpPanel );
-					return panel;
 				}
-				return null;
+				return something?panel:null;
 			}
 
 			private void paintRow(AccountBalanceReport report, LinkedHashMap<String, Integer> columns, FlexTable tab, int row, BalanceLine line) {
