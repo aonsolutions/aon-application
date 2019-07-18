@@ -292,7 +292,9 @@ public class SalaryDAO {
 					salary.addPayment(
 							paymentRecord.getValue(SALARY_PAYMENT.EXPRESSION), 
 							paymentRecord.getValue(SALARY_PAYMENT.DESCRIPTION), 
-							paymentRecord.getValue(SALARY_PAYMENT.AMOUNT));
+							paymentRecord.getValue(SALARY_PAYMENT.AMOUNT),
+							paymentRecord.getValue(SALARY_PAYMENT.QUOTE)
+							);
 				}
 				);
 				paymentIter.back();
