@@ -1224,11 +1224,17 @@ public class JooqEmployee {
 			 
 			 for(Entry<java.util.Date, ArrayList<JourneyDuration>> entry : contractJourneyDuration.entrySet()) {
 				 for(JourneyDuration journey : entry.getValue()) {
+					 java.util.Date endDateAux = null;
+					 if(null == journey.getEndDate() && null != contractData.getEndDate())
+						 endDateAux = DateUtils.copyDateOnly(contractData.getEndDate());
+					 else
+						 endDateAux = DateUtils.copyDateOnly(journey.getEndDate());
+					 
 					 if(null != journey.getExpression())
 						 dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
 									CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
 								.values(domain, journey.getName(), contractData.getContractId(), journey.getExpression(), 
-										new Date(journey.getStartDate().getTime()), (null == journey.getEndDate()) ? null : new Date(journey.getEndDate().getTime()))
+										new Date(journey.getStartDate().getTime()), (null == endDateAux) ? null : new Date(endDateAux.getTime()))
 								.execute();
 				 }
 			 }
@@ -1682,10 +1688,17 @@ public class JooqEmployee {
 		if(null != contractJourneyDuration)
 			for(Entry<java.util.Date, ArrayList<JourneyDuration>> entry : contractJourneyDuration.entrySet()) {
 				 for(JourneyDuration journey : entry.getValue()) {
+					 
+					 java.util.Date endDateAux = null;
+					 if(null == journey.getEndDate() && null != contractData.getEndDate())
+						 endDateAux = DateUtils.copyDateOnly(contractData.getEndDate());
+					 else
+						 endDateAux = DateUtils.copyDateOnly(journey.getEndDate());
+					 
 					 dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
 								CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
 							.values(domain, journey.getName(), contractId, journey.getExpression(), 
-									new Date(journey.getStartDate().getTime()), (null == journey.getEndDate()) ? null : new Date(journey.getEndDate().getTime()))
+									new Date(journey.getStartDate().getTime()), (null == endDateAux) ? null : new Date(endDateAux.getTime()))
 							.execute();
 				 }
 			}

@@ -180,7 +180,7 @@
 								<g:Label styleName='{style.firstColumnTextStyle}'>Documento</g:Label>
 							</td>
 							<td ui:field="documentTypeCell" debugId="documentTypeCell">
-							    <g:HorizontalPanel>
+							    <g:HorizontalPanel ui:field="horizontalPanel">
 							        <g:Button styleName="aon-lookupButton-clear" ui:field="clear_employee" debugId="clear_employee"></g:Button>
 							        <g:Label styleName='{style.alignTextCenter}' ui:field="document_type" debugId="document_type"></g:Label>
 							    </g:HorizontalPanel>

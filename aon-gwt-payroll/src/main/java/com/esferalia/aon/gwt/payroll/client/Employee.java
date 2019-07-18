@@ -30,6 +30,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -105,6 +106,8 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 	}
 
 	// TABLA DATOS CONTRATO
+	@UiField
+	HorizontalPanel horizontalPanel;
 	
 	@UiField
 	TableElement contractDataTable;

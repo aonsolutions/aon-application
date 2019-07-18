@@ -30,14 +30,16 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class EmployeeDialog extends CustomDialog {
@@ -542,8 +544,10 @@ public class EmployeeDialog extends CustomDialog {
 		
 		@Override
 		public void onEmployeeAccountChange() {
-			if(this.account.getValue().length() > 0) {
-				if(Iban.validateIBAN(this.account.getValue())) {
+			String account = this.account.getValue();
+			account = account.replaceAll("\\W+", "");
+			if(account.length() > 0) {
+				if(Iban.validateIBAN(account)) {
 					this.accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
 					this.accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
 				}else {
@@ -552,7 +556,7 @@ public class EmployeeDialog extends CustomDialog {
 				}
 			}
 			
-			employeeDialogObject.setEmployeeAccount(this.account.getValue());
+			employeeDialogObject.setEmployeeAccount(account);
 		}
 		
 		// ------------------------------------------------------------------------
@@ -746,6 +750,23 @@ public class EmployeeDialog extends CustomDialog {
 		setWidget(binder.createAndBindUi(this));
 		
 		employee.clear_employee.addStyleName(employee.style.hide());
+		employee.account.addBlurHandler(new BlurHandler() {
+			
+			@Override
+			public void onBlur(BlurEvent event) {
+				reformatPhone(employee.account);
+			}
+		});
+		
+	}
+	
+	private void reformatPhone(TextBox accountField) {
+	    String accountText = accountField.getText();
+	    accountText = accountText.replaceAll("\\W+", "");
+	    if (accountText.length() >= 24) {
+	    	accountField.setText(accountText.substring(0, 4) + "  " + accountText.substring(4, 8) + "  " + accountText.substring(8, 12) + "  " + accountText.substring(12, 16)
+	    	+ "  " + accountText.substring(16, 20) + "  " + accountText.substring(20, 24));
+	    }
 	}
 
 	public void show(Callback cb) {

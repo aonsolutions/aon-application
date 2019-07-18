@@ -287,6 +287,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		String setOutOfContractStyle();
 		String pointer();
 		String hide();
+		String blockStyle();
 	}
 
 	
@@ -1513,6 +1514,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		calendarGrid.getWidget(row, col).removeStyleName(style.reductionStyle());
 		calendarGrid.getWidget(row, col).removeStyleName(style.suspensionStyle());
 		calendarGrid.getWidget(row, col).removeStyleName(style.itStyle());
+		calendarGrid.getWidget(row, col).setStyleName(style.blockStyle());
 		cellsType[row][col].setAsType(DayType.NOTYPEDAY, row, col);
 	}
 	

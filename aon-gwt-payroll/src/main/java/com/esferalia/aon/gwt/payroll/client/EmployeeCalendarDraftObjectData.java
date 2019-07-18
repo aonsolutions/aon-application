@@ -1246,6 +1246,7 @@ public class EmployeeCalendarDraftObjectData {
 		EmployeeCalendarUpdate updateInfo = new EmployeeCalendarUpdate();
 		
 		updateInfo.setDaysHourMap(createUpdateHoursMap(mapDaysHour, draftMapDaysHour));
+		if(draftMapDaysHour.size() == 0) updateInfo.setHasChangeHours(false); else updateInfo.setHasChangeHours(true);
 		updateInfo.setMonthExtraHoursList(createUpdateExtraHoursList(mapExtraHours, draftMapExtraHours));
 		updateInfo.setDaysTypeMap(createUpdateTypesMap(mapDaysType, draftMapDaysType));
 		updateInfo.setFullTimeEmployee(this.fullTimeEmployee);

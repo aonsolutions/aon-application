@@ -23,6 +23,7 @@ public class EmployeeCalendarUpdate implements Serializable {
 	private Double ereCoefficient;
 	private Boolean fullTimeEmployee;
 	private ArrayList<java.util.Date> festiveWorkingDays;
+	private boolean hasChangeHours;
 	
 	public EmployeeCalendarUpdate() {
 		super();
@@ -121,6 +122,14 @@ public class EmployeeCalendarUpdate implements Serializable {
 
 	public void setFestiveWorkingDays(ArrayList<java.util.Date> festiveWorkingDays) {
 		this.festiveWorkingDays = festiveWorkingDays;
+	}
+
+	public boolean isHasChangeHours() {
+		return hasChangeHours;
+	}
+
+	public void setHasChangeHours(boolean hasChangeHours) {
+		this.hasChangeHours = hasChangeHours;
 	}
 	
 	

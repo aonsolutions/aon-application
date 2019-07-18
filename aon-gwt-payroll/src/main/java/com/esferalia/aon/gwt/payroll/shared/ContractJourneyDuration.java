@@ -87,5 +87,52 @@ public class ContractJourneyDuration implements Serializable {
 		return this.contractJourneyDuration.entrySet().size();
 	}
 
+	public String getJourneyText() {
+		String result = "";
+		Double hours = 0.0;
+		Date fromDate = null;
+		ArrayList<String> visitedDays = new ArrayList<>();
+		for(Entry<Date, ArrayList<JourneyDuration>> jouneryEntry : contractJourneyDuration.descendingMap().entrySet()) {
+			if(visitedDays.size() != 7) {
+				fromDate = DateUtils.copyDateOnly(jouneryEntry.getKey());
+				for(JourneyDuration journey : jouneryEntry.getValue()) {
+					if(!visitedDays.contains(journey.getName()) && journey.getExpression() != "0") {
+						visitedDays.add(journey.getName());
+						hours += Double.parseDouble(((null == journey.getExpression() || "" == journey.getExpression()) ? "0" : journey.getExpression()));
+						if("HORAS_LUNES" == journey.getName()) result += " L : " + ((null == journey.getExpression() || "" == journey.getExpression()) ? "0" : journey.getExpression()) + " ";
+						if("HORAS_MARTES" == journey.getName()) result += ", M : " + ((null == journey.getExpression() || "" == journey.getExpression()) ? "0" : journey.getExpression()) + " ";
+						if("HORAS_MIERCOLES" == journey.getName()) result += ", X : " + ((null == journey.getExpression() || "" == journey.getExpression()) ? "0" : journey.getExpression()) + " ";
+						if("HORAS_JUEVES" == journey.getName()) result += ", J : " + ((null == journey.getExpression() || "" == journey.getExpression()) ? "0" : journey.getExpression()) + " ";
+						if("HORAS_VIERNES" == journey.getName()) result += ", V : " + ((null == journey.getExpression() || "" == journey.getExpression()) ? "0" : journey.getExpression()) + " ";
+						if("HORAS_SABADO" == journey.getName()) result += ", S : " + ((null == journey.getExpression() || "" == journey.getExpression()) ? "0" : journey.getExpression()) + " ";
+						if("HORAS_DOMINGO" == journey.getName()) result += ", D : " + ((null == journey.getExpression() || "" == journey.getExpression()) ? "0" : journey.getExpression());
+						
+					}
+				}
+			}
+		}
+		
+		
+//		for(JourneyDuration journeyDuration : contractJourneyDuration.descendingMap().entrySet().iterator().next().getValue()) {
+//			hours += Double.parseDouble(((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()));
+//			if("HORAS_LUNES" == journeyDuration.getName()) result += formatDate(journeyDuration.getStartDate()) + " L : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
+//			if("HORAS_MARTES" == journeyDuration.getName()) result += ", M : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
+//			if("HORAS_MIERCOLES" == journeyDuration.getName()) result += ", X : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
+//			if("HORAS_JUEVES" == journeyDuration.getName()) result += ", J : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
+//			if("HORAS_VIERNES" == journeyDuration.getName()) result += ", V : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
+//			if("HORAS_SABADO" == journeyDuration.getName()) result += ", S : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
+//			if("HORAS_DOMINGO" == journeyDuration.getName()) result += ", D : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression());
+//			if(hours > 0.0) result += " ( " + hours + " horas semanales )";
+//		}
+		
+		String resultText = "Desde " + formatDate(fromDate) + " " + result + ((hours > 0.0) ? " ("+hours+" horas semanales)" : "");
+		
+		return resultText;
+	}
+	
+	private String formatDate(Date date) {
+		return date.getDate() + "/" + (date.getMonth()+1) + "/" + (date.getYear()+1900);
+	}
+
 }
 

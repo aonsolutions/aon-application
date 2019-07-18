@@ -9,6 +9,11 @@
 	<ui:style
 		type="com.esferalia.aon.gwt.payroll.client.EmployeeCalendarDraft.MyStyle">
 		
+		.blockStyle{
+			background-color: transparent;
+			color: #aaa;
+		}
+		
 		.upperMenuStyle{
 			padding-left: 15px;
     		padding-bottom: 3px;
