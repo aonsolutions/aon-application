@@ -390,18 +390,20 @@ public class Mod2002018MVELContext implements Map<String, Object> { // extends A
 		
 		double lq558 = roundKey(LQ558);
 		double lq1330 = roundKey(Mod2002018Key.LQ1330);
-		
-		if (isChecked(C0017) || isChecked(C0018) || isChecked(C0019)) {
-			double lq560 = roundKey(LQ560);
-			double lq210 = roundKey(LQ210);
-			double lq480 = roundKey(LQ480);
-			double lq561 = roundKey(LQ561);
-			double lq408 = roundKey(Mod2002018Key.LQ408);
-			double lq1037= roundKey(Mod2002018Key.LQ1037);
-			double lq562 = round(lq560+lq210-lq480+lq408-lq1037-lq561);
-			if (lq562 < 0) lq562 = 0;
-			return lq562; 
-		}
+
+		// Cooperativas - No se utiliza se hace directamente en Compute pues 
+		// en el caso de las cooperativas coincide con la clave 1331
+//		if (isChecked(C0017) || isChecked(C0018) || isChecked(C0019)) {
+//			double lq560 = roundKey(LQ560);
+//			double lq210 = roundKey(LQ210);
+//			double lq480 = roundKey(LQ480);
+//			double lq561 = roundKey(LQ561);
+//			double lq408 = roundKey(Mod2002018Key.LQ408);
+//			double lq1037= roundKey(Mod2002018Key.LQ1037);
+//			double lq562 = round(lq560+lq210-lq480+lq408-lq1037-lq561);
+//			if (lq562 < 0) lq562 = 0;
+//			return lq562; 
+//		}
 		
 		if (lq1330 <= 0) return 0;
 		
