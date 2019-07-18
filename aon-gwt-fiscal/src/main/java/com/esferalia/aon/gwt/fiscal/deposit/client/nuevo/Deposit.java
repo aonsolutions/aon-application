@@ -316,16 +316,14 @@ public class Deposit extends AonTemplate2 {
 		
     	if(year >= 2017) {
     		flex_table.setWidget(index, 0, new Label(ITR));
-			CheckBox cbITR = new CheckBox();cbITR.setValue(false);
-			cbITR.setEnabled(false);
+			CheckBox cbITR = new CheckBox();cbITR.setValue(true);
 			flex_table.setWidget(index, 1, cbITR);
 			index++;
     	}
     	
     	if(year >= 2018) {
     		flex_table.setWidget(index, 0, new Label(SRA));
-			CheckBox cbSRA = new CheckBox();cbSRA.setValue(false);
-			cbSRA.setEnabled(false);
+			CheckBox cbSRA = new CheckBox();cbSRA.setValue(true);
 			flex_table.setWidget(index, 1, cbSRA);
 			index++;
     	}
