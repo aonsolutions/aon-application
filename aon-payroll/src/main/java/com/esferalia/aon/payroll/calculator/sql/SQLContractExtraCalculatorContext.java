@@ -8,10 +8,12 @@ import static java.util.Calendar.DAY_OF_MONTH;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
@@ -38,6 +40,8 @@ import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
+import com.esferalia.aon.salary.payment.IPayment;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculatorContext {
 
@@ -219,7 +223,7 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		if ( results.isEmpty() )
 			expressionContext.setVariable(payment.getName(), 0.00, paymentStart, paymentEnd);
 		
-		if ( results.size() == 1 )
+		if ( results.size() == 1 && isConstant(payment, results))
 			results = expressionContext.eval(String.format("%s(%s)", ContextVariable.FRACTIONATE, payment.getExpression()), paymentStart, paymentEnd,
 					Double.class);
 		
@@ -354,6 +358,20 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 	
 	private static boolean isResultVariabl(ITimedVariable<?> var) {
 		return !( var instanceof IExpressionVariable<?>);
+	}
+	
+	private static boolean isConstant(IPayment payment, List<ITimedResult<Double>> results) {
+		
+		if ( Arrays.asList(new String []{ ContextVariable.PREST_IT, ContextVariable.GUARENTEED }).contains(payment.getName()) )
+			return false;
+		
+		List<String> VARS = Arrays.asList(new String []{ ContextVariable.GUARANTEE, ContextVariable.REGULATORY_BASE.getName()});
+		
+		for (ITimedResult<Double> result : results)
+			if ( result.getContext().keySet().stream().anyMatch(key -> VARS.contains(key) ))
+				return false;
+		
+		return true;
 	}
 
 }
