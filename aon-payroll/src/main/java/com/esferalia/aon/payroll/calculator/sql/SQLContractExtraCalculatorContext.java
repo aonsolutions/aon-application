@@ -11,9 +11,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
@@ -24,25 +26,28 @@ import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.OrderByList;
-import com.esferalia.aon.jooq.tables.SalaryPayment;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.DelegateContractPayment;
+import com.esferalia.aon.payroll.calculator.CompositePayments;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.SimpleContractPayment;
 import com.esferalia.aon.payroll.calculator.UndefinedContextVariablesException;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory.IExtraPayment;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.IPayment;
+import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculatorContext {
@@ -81,11 +86,14 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		Collection<IContractPayment> monthlyQuotedPayments= getMonthlyQuotedPayments();
 		if ( monthlyQuotedPayments.size() == getMonths() ) 
 			return monthlyQuotedPayments;
-
+		
+		
 		addSalaryContractPayments();
 
-		Collection<IContractPayment> extraPayments = new FilterCollection<IContractPayment>(
-				getExtraPaymentFilter(), super.getContractPayments());
+		Collection<IContractPayment> extraPayments = 
+				new FilterCollection<IContractPayment>(
+				getExtraPaymentFilter(), 
+				new CompositePayments<IContractPayment>(super.getContractPayments(),getWarnPayment(monthlyQuotedPayments)));
 		return extraPayments;
 	}
 
@@ -133,6 +141,33 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 	}
 
 	// -------------------------------------------------------------------------
+	
+	private Collection<IContractPayment> getWarnPayment(Collection<IContractPayment> payments) {
+		
+		SimpleContractPayment warnPayment = new SimpleContractPayment();
+		
+		warnPayment.setStartDate(getStart());
+		warnPayment.setEndDate(getEnd());
+		warnPayment.setDescription("AVISO");
+		warnPayment.setExpression("HIDE(\""
+		+"<div>Atenci&oacute;n, el prorrateo de la paga est&aacute; incompleto."
+		+"No se han emitido las n&oacute;minas de "+ getMissed(payments) + "."
+		+"<div>Por favor revise las n&oacute;minas y paga extra.</div>"
+		+"<div>&nbsp;</div><div class='aon-text-right'>Disculpe las molestias, <span class='aon-icon aon-icon-logo' />aon Solutions</div>\");"
+		);
+		warnPayment.setType(PaymentType.CRA_0000);
+		warnPayment.setSalaryType(getSalaryType());
+		int month = CommonUtil.getMonth(getIssueDate());
+		warnPayment.setMonth(Month.getMonthByValue(month));
+		warnPayment.setExpressionScope(ExpressionScope.SYSTEM);
+		
+//		warnPayment.setName("AVISO");
+//		warnPayment.setIrpfExpression("_P");
+//		warnPayment.setQuoteExpression("_P");
+		warnPayment.setId(Integer.MAX_VALUE);
+		
+		return Collections.singleton(warnPayment);
+	}
 
 
 	private Collection<IContractPayment> getMonthlyQuotedPayments() throws AonException {
@@ -140,7 +175,7 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		Collection<IContractPayment> extraPayments = new ArrayList<IContractPayment>();
 		FilterCollection.Filter<IContractPayment> filter = getExtraPaymentFilter();
 		for ( IContractPayment p : super.getContractPayments() )
-			if ( filter.accept(p)) extraPayments.add(p);
+			if ( filter.accept(p)) extraPayments.add(new SimpleContractPayment(p));
 		
 		List<IContractPayment> monthlyQuotedPayments = new ArrayList<IContractPayment>();
 		
@@ -388,7 +423,41 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 	private int getMonths() {
 		return getExpressionContext().getTimedVariables(NATURAL_MONTH_DAYS.getName()).size();
 	}
+	
+	private String getMissed( Collection<IContractPayment> payments) {
+		
+		Integer salaryMonths [] = payments.stream().map(s -> AonDateUtils.get(s.getStartDate(), Calendar.MONTH ))
+		.toArray(Integer[]::new);
+		Arrays.sort(salaryMonths);
+		
+		String meses [] = 
+			{"Enero", 
+			"Febrero", 
+			"Marzo", 
+			"Abril", 
+			"Mayo", 
+			"Junio", 
+			"Julio", 
+			"Agosto", 
+			"Septiembre", 
+			"Octubre",
+			"Noviembre", 
+			"Diciembre"};
 
+		return
+		getExpressionContext()
+		.getTimedVariables(NATURAL_MONTH_DAYS.getName())
+		.stream().map(v -> AonDateUtils.get(v.getPeriod().getStart(), Calendar.MONTH))
+		.filter(month -> Arrays.binarySearch(salaryMonths, month) < 0 )
+		.map(month -> meses[month])
+		.collect(Collectors.joining(", "))
+		.replaceFirst("(^.+),([^,]+$)", "$1 y $2" )
+		;
+		
+		
+	}
+	
+	
 	// -------------------------------------------
 	//
 	// -------------------------------------------

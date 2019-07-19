@@ -845,13 +845,46 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		wait4Id("extra,_devengo_fuera");
 
-		draft("EXTRA, DEVENGO FUERA");
+		draft("EXTRA, CALCULADAS");
 		
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(2016, Calendar.DECEMBER, 15);
+		calendar.set(2019, Calendar.JULY, 15);
 		Date issueDate = calendar.getTime();
-		calendar.set(2016, Calendar.DECEMBER, 31);
+		calendar.set(2019, Calendar.JUNE, 30);
 		Date endDate = calendar.getTime();
+		extra(issueDate, endDate);
+		assertValue("cgcBaseLabel", "0,00");
+		assertValue("cgpBaseLabel", "0,00");
+		assertValue("totalPaymentsLabel", 25.42 * 6 );
+
+		calendar.set(2019, Calendar.DECEMBER, 15);
+		issueDate = calendar.getTime();
+		calendar.set(2019, Calendar.DECEMBER, 31);
+		endDate = calendar.getTime();
+		extra(issueDate, endDate);
+		assertValue("cgcBaseLabel", "0,00");
+		assertValue("cgpBaseLabel", "0,00");
+		assertValue("totalPaymentsLabel", 25.42 * 6 );
+
+		calendar = Calendar.getInstance();
+		calendar.set(2020, Calendar.JULY, 15);
+		issueDate = calendar.getTime();
+		calendar.set(2020, Calendar.JUNE, 30);
+		endDate = calendar.getTime();
+		extra(issueDate, endDate);
+		assertValue("cgcBaseLabel", "0,00");
+		assertValue("cgpBaseLabel", "0,00");
+		assertValue("totalPaymentsLabel", 29.38 * 6 );
+		HtmlTable eventsTable = getElementById("eventsTable");
+		Assert.assertEquals(1, eventsTable.getRowCount());
+
+		draft("EXTRA, DEVENGO FUERA");
+		
+		calendar = Calendar.getInstance();
+		calendar.set(2016, Calendar.DECEMBER, 15);
+		issueDate = calendar.getTime();
+		calendar.set(2016, Calendar.DECEMBER, 31);
+		endDate = calendar.getTime();
 		extra(issueDate, endDate);
 		assertValue("cgcBaseLabel", "0,00");
 		assertValue("cgpBaseLabel", "0,00");
