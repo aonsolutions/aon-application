@@ -77,7 +77,7 @@
 	<!-- ** AON COMMERCIAL **************************************************** -->
 	<bean class="com.code.aon.commercial.Offer" sqlName="offer">
 		<alias names="address_id,bankAccount,bankAlias,bic,comments,daysBetweenPayments,daysToFirstPayment,discountExpression,domain,externalReference,id,issueDate,number,numberOfPayments,payMethod_id,paymentDays,project_id,remarks,scope_id,securityLevel,seller_id,series,signed,status,supplier_id,target_id,type,version,workPlace_id"/>
-		<hibernate names="address.id,bankAccount,bankAlias,bic,comments,daysBetweenPayments,daysToFirstPayment,discountExpression,domain,externalReference,id,issueDate,number,numberOfPayments,payMethod.id,paymentDays,project.id,remarks,scope&lt;id,securityLevel,seller.id,series,signed,status,supplier_id,target.id,type,version,workPlace.id"/>
+		<hibernate names="address.id,bankAccount,bankAlias,bic,comments,daysBetweenPayments,daysToFirstPayment,discountExpression,domain,externalReference,id,issueDate,number,numberOfPayments,payMethod.id,paymentDays,project.id,remarks,scope&lt;id,securityLevel,seller.id,series,signed,status,supplier.id,target.id,type,version,workPlace.id"/>
 	</bean>
 	<bean class="com.code.aon.commercial.OfferDetail" sqlName="offer_detail">
 		<alias names="id,offer,offer_id,offer_target_id,offer_issueDate,offer_address_geozone_id,offer_series,offer_number,offer_seller_id,offer_securityLevel,offer_status,offer_workPlace_id,line,item_id,item_product_product_category_id,item_product_type,item_product_serializable,item_serialNumber,description,quantity,price,discountExpression,status"/>
