@@ -220,10 +220,10 @@ public class InvoiceDAO {
 			FilterDAO d = (FilterDAO) filter.filter(INVOICE_PROPERTIES);			
 			return ctx.getDslContext().select()
 				.from(INVOICE)
-				.leftOuterJoin(DATA_RESPONSE).on(INVOICE.ID.eq(DATA_RESPONSE.SOURCE_ID))
+				.leftOuterJoin(DATA_RESPONSE).on(INVOICE.ID.eq(DATA_RESPONSE.SOURCE_ID)
+						.and(DATA_RESPONSE.SOURCE.eq(DataResponseSource.SII_INVOICE.value())))
 				.where(INVOICE_PROPERTIES.getConditions(filter))
 				.and(DATA_RESPONSE.SOURCE_ID.isNull())
-				.and(DATA_RESPONSE.SOURCE.eq(DataResponseSource.SII_INVOICE.value()))
 				.limit(d.getPerPage())
 				.offset(d.getPerPage() * (d.getPage() -1))
 				.fetch().stream().map(new SiiInvoiceFiller(true));
