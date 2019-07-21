@@ -64,6 +64,7 @@ import com.code.aon.supplier.Supplier;
 import com.code.aon.tas.ProjectTas;
 import com.code.aon.tas.TasItem;
 import com.code.aon.ui.commercial.util.CommercialEmailUtil;
+import com.code.aon.ui.commercial.util.DocumentOnlineSigner;
 import com.code.aon.ui.commercial.util.OfferImportManager;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.common.controller.IAuditableController;
@@ -126,11 +127,11 @@ public class OfferController extends HeaderObjectController implements ISignatur
 	private boolean documentOnlineSign;
 	private SddMandateObject sddMandate;
 	private BankAccountHelper accountHelper;
+	private DocumentOnlineSigner documentOnlineSigner;
 	
 	public OfferController() {
 		this.emailUtil = new CommercialEmailUtil();
 		this.accountHelper = new BankAccountHelper(this);
-		
 	}
 	
 	public List<SelectItem> getAddresses() {
@@ -575,6 +576,13 @@ public class OfferController extends HeaderObjectController implements ISignatur
 	public BankAccountHelper getAccountHelper() {
 		return accountHelper;
 	}
+	
+	public DocumentOnlineSigner getDocumentOnlineSigner() {
+		return documentOnlineSigner;
+	}
+	public void setDocumentOnlineSigner(DocumentOnlineSigner documentOnlineSigner) {
+		this.documentOnlineSigner = documentOnlineSigner;
+	}
 
 	public void supplierData(LookupChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
@@ -921,24 +929,33 @@ public class OfferController extends HeaderObjectController implements ISignatur
 		getSddMandate().setSignDate(offer.getDate());
 		getSddMandate().setRegistry(offer.getTarget().getRegistry());
 		getSddMandate().setReference("PPTO. "+offer.getReferenceCode());
+		setDocumentOnlineSigner(new DocumentOnlineSigner());
+		getDocumentOnlineSigner().loadTestUrl();
 	}
-	
+
 	public void onSendEmail(ActionEvent event) {
-		MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
-		controller.onPrepareEmailWindow(event);
-		if ( controller.isShowNewMessageWindow() ) {	
+		if(isDocumentOnlineSign()) {
 			try {
-				controller.onNewMessage(event);
-				emailUtil.initMessageController(controller, getOffer(), getSddMandate(), 
-						isIncludeEmailOfferReport(), isIncludeEmailOfferAttach(), isIncludeEmailSddMandateReport(), isDocumentOnlineSign() );
-				if(isDocumentOnlineSign()) {
-					AonUtil.addInfoMessage("Firma online digital en proceso.");
-				}
-			} catch (Throwable th) {
-				LOGGER.error(th.getMessage(), th);
-				AonUtil.addErrorMessage(th.getMessage());
-				throw new AbortProcessingException(th.getMessage(), th);
-			}				
+				getDocumentOnlineSigner().sendData(getOffer(), isIncludeEmailOfferReport(), isIncludeEmailOfferAttach());
+			} catch (Exception e) {
+				String msg = "Se ha producido un error al solicitar la firma digital online.";
+				LOGGER.error(msg, e);
+				AonUtil.addErrorMessage(msg + "["+e+"]");
+			}
+		} else {
+			MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
+			controller.onPrepareEmailWindow(event);
+			if ( controller.isShowNewMessageWindow() ) {	
+				try {
+					controller.onNewMessage(event);
+					emailUtil.initMessageController(controller, getOffer(), getSddMandate(), 
+							isIncludeEmailOfferReport(), isIncludeEmailOfferAttach(), isIncludeEmailSddMandateReport() );
+				} catch (Throwable th) {
+					LOGGER.error(th.getMessage(), th);
+					AonUtil.addErrorMessage(th.getMessage());
+					throw new AbortProcessingException(th.getMessage(), th);
+				}				
+			}
 		}
 	}
 

@@ -11,8 +11,8 @@
 	<aon:panelGroup id="showEmailOptionWindow">
 		<aon:if test="#{offer.showEmailOptionWindow}">
 			<rich:modalPanel id="emailOptionModalPanel" 
-				minHeight="#{offer.includeEmailSddMandateReport?'450':'200'}"
-				minWidth="#{offer.includeEmailSddMandateReport?'500':'250'}"
+				minHeight="#{(offer.includeEmailSddMandateReport or offer.documentOnlineSign)?'450':'200'}"
+				minWidth="#{(offer.includeEmailSddMandateReport or offer.documentOnlineSign)?'500':'250'}"
 				rendered="#{offer.showEmailOptionWindow}"
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
@@ -80,7 +80,10 @@
 									    	
 									    <aon:div rendered="#{not empty offer.documentOnlineSignParam}">
 					                        <aon:selectBooleanCheckbox id="documentOnlineSign" title="#{offer.documentOnlineSignParam.value} en desarrollo..."
-												value="#{offer.documentOnlineSign}" />
+												value="#{offer.documentOnlineSign}" >
+												<a4j:support event="onclick" ajaxSingle="true"
+													reRender="emailOptionModalPanel" />
+											</aon:selectBooleanCheckbox>
 											<aon:outputLabel for="documentOnlineSign" title="#{offer.documentOnlineSignParam.value} en desarrollo..."
 												value="Solicitar firma online [#{offer.documentOnlineSignParam.value}]" />
 									    </aon:div>
@@ -119,6 +122,30 @@
 												<f:selectItem itemValue="#{false}" 
 													itemLabel="#{bundle.finance_sddMandate_oneOff}" />
 											</aon:selectOneMenu>
+									     </aon:panelGrid>
+									</aon:panel>
+									
+									<aon:panel rendered="#{offer.documentOnlineSign}">
+										<f:facet name="header">
+											<aon:panelGroup>
+												<aon:outputText value="#{offer.documentOnlineSignParam.value}" />
+											</aon:panelGroup>
+										</f:facet>
+									    <aon:panelGrid columns="2" style="width: 100%;">
+											<aon:outputLabel for="documentOnlineSign_username"
+												value="#{bundle.aon_login_user}" />
+											<aon:inputText id="documentOnlineSign_username"
+												value="#{offer.documentOnlineSigner.username}" />
+												
+											<aon:outputLabel for="documentOnlineSign_password"
+												value="#{bundle.aon_login_passwd}" />
+											<aon:inputText id="documentOnlineSign_password"
+												value="#{offer.documentOnlineSigner.password}" />
+											
+											<aon:outputLabel for="documentOnlineSign_url"
+												value="URL" />
+											<aon:inputText id="documentOnlineSign_url" size="45"
+												value="#{offer.documentOnlineSigner.url}" />
 									     </aon:panelGrid>
 									</aon:panel>
 									
