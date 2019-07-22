@@ -1304,6 +1304,18 @@ public class Mod2002018Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002018Key.BN1040)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002018Key.BN1041)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002018Key.BN592)
+				
+				// 19/07/2019 - Añaden los campos 58 y 59 con las casillas [C] y [D] ID e IT 
+				// para Regimen Canarias (caracter 29)
+				// Por las pruebas que he hecho, si por ahora no ponemos esos campos, aunque 
+				// se pase el fichero con espacios en esos campos la validación no da error
+				// Si se añaden esos campos [C] y [D] igual tambien habría que añadir los 
+				// campos [A] y [B], aunque según el documento Sociedades WEB si indicamos importe
+				// en [A] y [B] se trasladan automaticamente a las casillas [798] y [096] de la 
+				// página 17, respectivamente
+				// Los campos [A], [B], [C] y [D] se utilizan principalmente para controlar limites
+				// de determinadas casillas
+				
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) 
 			})

@@ -34,8 +34,6 @@ import static com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018Key
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018Key.C0066;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018Key.C0071;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018Key.C0072;
-import static com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018Key.LQ210;
-import static com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018Key.LQ480;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018Key.LQ520;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018Key.LQ521;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018Key.LQ552;
@@ -44,7 +42,6 @@ import static com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018Key
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018Key.LQ558;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018Key.LQ559;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018Key.LQ560;
-import static com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018Key.LQ561;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018Key.LQ562;
 
 import java.util.Collection;
@@ -528,6 +525,9 @@ public class Mod2002018MVELContext implements Map<String, Object> { // extends A
 		double lq554 = roundKey(LQ554);
 		double lq558 = roundKey(LQ558);
 		if (isChecked(C0017) || isChecked(C0018)) {
+			if (isChecked(C0071)) {
+				return round(lq552*15/100);
+			}
 			if (isChecked(C0057) && !isChecked(C0063)) {
 				return round( (lq553 * lq558 / 100) + (lq554 * 25 / 100) + (lq521 * 0));		
 			}
@@ -542,6 +542,9 @@ public class Mod2002018MVELContext implements Map<String, Object> { // extends A
 				return round( (lq553 * lq558 / 100) + (lq554 * 25 / 100));
 			}
 		} else if (isChecked(C0019) ) {
+			if (isChecked(C0071)) {
+				return round(lq552*15/100);
+			}
 			if (isChecked(C0030) || isChecked(C0047)) {
 				return roundKey(LQ560);
 			}
