@@ -308,6 +308,7 @@ public class CommercialTrackingController extends BasicController {
 			IController controller = event.getController();
 			CommercialTracking ct = (CommercialTracking) FormUtil.getController(COMMERCIAL_TRACKING_CONTROLLER_NAME).getTo();
 			try {					
+				controller.clearCriteria();
 				if ( ct.getSeller().getId() != null ) {
 					String alias = controller.getFieldName(IEntityAlias.OFFER_SELLER_ID);
 					controller.getCriteria().addEqualExpression(alias, ct.getSeller().getId());
