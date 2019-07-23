@@ -1145,41 +1145,41 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			}
 			
 			if ( irpfCtx.isFullStandard() ) {
-				nextIrpfBase += salary.getIrpfBase() * size;
-				nextSocialSecurityContributons += salary
+				nextIrpfBase = (salary.getIrpfBase() + salary.getExtraPayProration()) * size;
+				nextSocialSecurityContributons = salary
 						.getSocialSecurityContributions() * size;
 				
 				break;
 			}
 			
-//			nextIrpfBase += salary.getIrpfBase();
-//			nextSocialSecurityContributons += salary
-//					.getSocialSecurityContributions();
-//
+			nextIrpfBase += salary.getIrpfBase();
+			nextSocialSecurityContributons += salary
+					.getSocialSecurityContributions();
+
 //			size--;
 
 		}
 
-		for (ISQLContractSalaryCalculatorContext extraCtx : getExtraContexts()) {
-			extraCtx.next();
-
-			ISalary salary = calculator.calculate(extraCtx);
-
-			Double irpf = extraCtx
-					.getExpressionContext()
-					.getVariable(IRPF_PERCENT, extraCtx.getStartDate(),
-							extraCtx.getEndDate(), Number.class).doubleValue();
-
-			if (irpf != null && irpf > 0.00) {
-				SALARIES.set(salaries);
-				salaries.add(salary);
-				// TODO : Safe cast , generic in SalaryBuilder.
-				((Salary) salary).setTotalIrpf(irpf / 100
-						* salary.getIrpfBase());
-			}
-
-			nextIrpfBase += salary.getIrpfBase();
-		}
+//		for (ISQLContractSalaryCalculatorContext extraCtx : getExtraContexts()) {
+//			extraCtx.next();
+//
+//			ISalary salary = calculator.calculate(extraCtx);
+//
+//			Double irpf = extraCtx
+//					.getExpressionContext()
+//					.getVariable(IRPF_PERCENT, extraCtx.getStartDate(),
+//							extraCtx.getEndDate(), Number.class).doubleValue();
+//
+//			if (irpf != null && irpf > 0.00) {
+//				SALARIES.set(salaries);
+//				salaries.add(salary);
+//				// TODO : Safe cast , generic in SalaryBuilder.
+//				((Salary) salary).setTotalIrpf(irpf / 100
+//						* salary.getIrpfBase());
+//			}
+//
+//			nextIrpfBase += salary.getIrpfBase();
+//		}
 
 		salaries.clear();
 	}
