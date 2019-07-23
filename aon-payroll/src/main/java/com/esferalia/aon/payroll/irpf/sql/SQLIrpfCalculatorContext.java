@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Stack;
+import java.util.TreeSet;
 
 import org.jooq.Result;
 import org.jooq.impl.DSL;
@@ -59,12 +60,10 @@ import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.WorkplaceColumns;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
-import com.esferalia.aon.salary.expression.CheckException;
-import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
-import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.InterruptedException;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
@@ -336,7 +335,8 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 				ctx.getExpressionContext().eval(ContextVariable.LEAVE_DAYS.getName(), period.getStart(), period.getEnd());
 				return false;
 			} catch ( ExpressionException e ) {
-				return true;
+				
+				return AonDateUtils.getDay(getStartDate()) == 1 ;
 			}
 		}
 		
@@ -393,6 +393,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 		private static IrpfContractSalaryCalculatorContext getContext(
 				ISQLContractSalaryCalculatorContext ctx, Period p) {
+
 			return new IrpfContractSalaryCalculatorContext(ctx, p);
 		}
 
@@ -540,6 +541,8 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 	private PreparedStatement descendantsStmt;
 
 	private Connection connection;
+	
+	private Collection<Date> issuedSalaries;
 
 	private ISQLContractSalaryCalculatorContext ctx;
 
@@ -598,7 +601,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			boolean next = ctx.next();
 
 			int contractId = ctx.getId();
-			nextSalaryRs(contractId);
+			issuedSalaries = nextSalaryRs(contractId);
 			nextThreadSalary();
 			nextIrpfDataRs(contractId);
 			nextIrpfRegRs(contractId);
@@ -1022,7 +1025,8 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 	// --------------------------------------------------------- Private methods
 
-	private void nextSalaryRs(int contractId) throws SQLException {
+	private Collection<Date> nextSalaryRs(int contractId) throws SQLException {
+		TreeSet<Date> dates = new TreeSet<Date>();
 		irpfBase = 0.00;
 		totalIrpf = 0.00;
 		socialSecurityContributons = 0.00;
@@ -1035,11 +1039,13 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 				totalIrpf += salaryRs.getDouble(SalaryColumns.TOTAL_IRPF);
 				socialSecurityContributons += salaryRs
 						.getDouble(SalaryColumns.SOCIAL_SECURITY_CONTRIBUTIONS);
+				dates.add(salaryRs.getDate(SalaryColumns.START_DATE));
 			}
 		} finally {
 			if (salaryRs != null)
 				salaryRs.close();
 		}
+		return dates;
 	}
 
 	private void nextThreadSalary() {
@@ -1104,10 +1110,20 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		SalaryBuilder builder = new SalaryBuilder();
 		calculator.setSalaryBuilder(builder);
 
+
 		Collection<IrpfContractSalaryCalculatorContext> contexts = IrpfContractSalaryCalculatorContext
 				.getContexts(ctx);
+		int size ;
 		
-		int size = contexts.size();
+		if ( (issuedSalaries.size() + contexts.size())  == 12) {
+			size = contexts.size();
+		} else {
+			size = 12;
+			irpfBase = 0.00;
+			totalIrpf = 0.00;
+			socialSecurityContributons = 0.00;
+		}
+		
 		
 		for (IrpfContractSalaryCalculatorContext irpfCtx : contexts) {
 			irpfCtx.getExpressionContext().setVariable(ContextVariable.START,
@@ -1132,14 +1148,15 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 				nextIrpfBase += salary.getIrpfBase() * size;
 				nextSocialSecurityContributons += salary
 						.getSocialSecurityContributions() * size;
+				
 				break;
 			}
 			
-			nextIrpfBase += salary.getIrpfBase();
-			nextSocialSecurityContributons += salary
-					.getSocialSecurityContributions();
-
-			size--;
+//			nextIrpfBase += salary.getIrpfBase();
+//			nextSocialSecurityContributons += salary
+//					.getSocialSecurityContributions();
+//
+//			size--;
 
 		}
 
