@@ -36,6 +36,13 @@
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>es.translogia</groupId>
+			<artifactId>tedi.api</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
 
 		<!-- EXTERNAL DEPENDENCIES -->
 		

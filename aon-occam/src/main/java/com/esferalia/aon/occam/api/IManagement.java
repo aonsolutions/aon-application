@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.Filter.PurchaseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
 import com.esferalia.aon.occam.api.model.Filter.SalesDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.SalesFilter;
+import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferFilter;
 import com.esferalia.aon.occam.api.model.management.Purchase;
@@ -25,6 +26,8 @@ public interface IManagement {
 	// 	***********************************************
 	// 	************************************* OFFER ***
 	// 	***********************************************
+	Offer getOffer(AONContext ctx, OfferFilter filter);
+	Stream<Offer> getOfferStream(AONContext ctx, OfferFilter filter);
 	Stream<OfferDetail> getOfferDetails(AONContext ctx, OfferFilter filter);
 
 	// -------------------- SALES 

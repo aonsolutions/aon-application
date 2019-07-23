@@ -963,6 +963,16 @@ public class RegistryDAO {
 			,filter).fetch().stream().map(new TargetFiller());
 	}
 	
+	public static Target insertTarget(AONContext ctx, Target target){
+		ctx.getDslContext().insertInto(TARGET, TARGET.ADVERTISING, TARGET.DOMAIN, TARGET.REGISTRY, TARGET.SCOPE,
+				TARGET.STATUS, TARGET.SURCHARGE, TARGET.TARIFF, TARGET.TRANSACTION, TARGET.WITHHOLDING,
+				TARGET.CREATION_DATE, TARGET.CREATION_USER, TARGET.MODIFICATION_DATE, TARGET.MODIFICATION_USER)
+			.values(target.getAdvertising().byteValue(), target.getDomain(), target.getId(), target.getScope(), target.getStatus().value(),
+					target.getSurcharge().byteValue(), target.getTariff(),target.getTransaction().byteValue(), target.getWithholding().byteValue(),
+					new Timestamp(new Date().getTime()), ctx.getUser(), new Timestamp(new Date().getTime()), ctx.getUser()).execute();
+		return target;
+	}
+	
 	// ------------------- PERSON
 
 	public static Stream<Person> getPersonStream(AONContext ctx, PersonFilter filter){

@@ -21,6 +21,7 @@ public class Registry implements Serializable{
 	private Country nationality;
 	private SecurityLevel securityLevel;
 	private Byte type;
+	private RAddress address;
 	
 	public String getAlias() {
 		return alias;
@@ -97,6 +98,14 @@ public class Registry implements Serializable{
 	}
 	public Registry setType(Byte type) {
 		this.type = type;
+		return this;
+	}
+	
+	public RAddress getAddress() {
+		return address;
+	}
+	public Registry setAddress(RAddress address) {
+		this.address = address;
 		return this;
 	}
 	

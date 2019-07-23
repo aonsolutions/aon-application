@@ -135,6 +135,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferFilter;
 import com.esferalia.aon.occam.api.model.management.Purchase;
@@ -1516,6 +1517,28 @@ public class AON {
 	// ********************************************
 	// ****************************** MANAGEMENT **
 	// ********************************************
+	public static Offer getOffer(String domainName, Integer domainId, String login, OfferFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getManagement().getOffer(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Stream<Offer> getOfferStream(String domainName, Integer domainId, String login, OfferFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getManagement().getOfferStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static Stream<OfferDetail> getOfferDetails(String domainName,
 			Integer domainId, String login, OfferFilter filter) {
 		AONContext ctx = null;
@@ -3291,6 +3314,17 @@ public class AON {
 	
 	public static Optional<Target> getTarget(String domainName, Integer domainId, String login, Integer id) {
 		return getTarget(domainName, domainId, login, f -> f.getIdProperty().eq(id));
+	}
+	
+	public static Target insertTarget(String domainName, Integer domainId, String login, Target target) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().insertTarget(ctx, target);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
 	}
 	
 	

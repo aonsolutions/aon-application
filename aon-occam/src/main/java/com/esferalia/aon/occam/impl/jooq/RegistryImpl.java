@@ -272,6 +272,12 @@ public class RegistryImpl implements IRegistry{
 				configuration -> RegistryDAO.getTargetStream(ctx, filter));
 	}
 	
+	@Override
+	public Target insertTarget(AONContext ctx, Target target) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.insertTarget(ctx, target));
+	}
+	
 	// -------------------- PERSON
 	
 	@Override

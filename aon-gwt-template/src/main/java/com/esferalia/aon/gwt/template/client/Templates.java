@@ -121,6 +121,7 @@ public class Templates extends Composite implements EntryPoint {
 						exportIncomex(me);
 						exportDeliveryx(me);
 						exportDelivery(me);
+						exportOfferx(me);
 						exportFullExpedient(me);
 						exportResumeExpedient(me);
 					}
@@ -1499,9 +1500,6 @@ public class Templates extends Composite implements EntryPoint {
 		}
 	}-*/;
 	
-	
-
-	
 	public void inventoryx(String closed, String inventoryId){
 		exportInventory(closed, inventoryId);
 	}
@@ -1559,6 +1557,27 @@ public class Templates extends Composite implements EntryPoint {
 	public static native void exportEcommercex(Templates thiz) /*-{
 		$wnd.ecommercex = function() {
 			thiz.@com.esferalia.aon.gwt.template.client.Templates::ecommercex(*)();
+		}
+	}-*/;
+	
+	public void offerx(String statuses, String target, String seller, String supplier, String project){
+		Window.alert(statuses);
+		String fileDownloadURL = GWT.getModuleBaseURL()+ "download_offer_excel/"
+				+ "?domain=" + getDomain().getName()
+				+ "&domain_id=" + getDomain().getId()
+            	+ "&username="+ template_list.getLogin()
+            	+ "&statuses=" + statuses
+            	+ "&target=" + target
+            	+ "&seller=" + seller
+            	+ "&supplier=" + supplier
+            	+ "&project=" + project;
+		
+		Window.open( fileDownloadURL, "_blank",null);
+	}
+		
+	public static native void exportOfferx(Templates thiz) /*-{
+		$wnd.offerx = function(statuses, target, seller, supplier, project) {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::offerx(*)(statuses, target, seller, supplier, project);
 		}
 	}-*/;
 	

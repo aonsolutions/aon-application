@@ -1426,6 +1426,11 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>offerExport</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.commercial.controller.OfferExportGwtController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 
 	<managed-bean>
 		<managed-bean-name>offerScopeListener</managed-bean-name>

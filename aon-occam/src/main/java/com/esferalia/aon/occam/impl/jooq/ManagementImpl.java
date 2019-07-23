@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.Filter.PurchaseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
 import com.esferalia.aon.occam.api.model.Filter.SalesDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.SalesFilter;
+import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferFilter;
 import com.esferalia.aon.occam.api.model.management.Purchase;
@@ -28,6 +29,19 @@ import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
 
 public class ManagementImpl implements IManagement {
 
+	// ------------------ OFFER
+	
+	@Override
+	public Offer getOffer(AONContext ctx, OfferFilter filter) {
+		return OfferDAO.getOffer(ctx, filter);
+	}
+	
+	@Override
+	public Stream<Offer> getOfferStream(AONContext ctx, OfferFilter filter) {
+		return OfferDAO.getOfferStream(ctx, filter);
+	}
+
+	
 	@Override
 	public Stream<OfferDetail> getOfferDetails(AONContext ctx, OfferFilter filter) {
 		return OfferDAO.getOfferDetails(ctx, filter);

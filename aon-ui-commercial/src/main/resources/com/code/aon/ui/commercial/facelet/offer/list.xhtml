@@ -10,10 +10,18 @@
 	<ui:define name="content">
 		<aon:form id="offerList">
 
-			<ui:include	src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.commercial_offer_module}" />
 				<ui:param name="controller" value="#{offer}" />
-			</ui:include>
+				<ui:define name="additionalToolbarContent">
+					<ui:include src="/net/aonsolutions/aon/gwt/aio/facelet/templates/silent.xhtml" />
+					<aon:commandLink id="offer-export"  value="&#160;" 
+							onclick="offerx('#{offerExport.statusesStr}', '#{offerExport.target}', '#{offerExport.seller}', '#{offerExport.supplier}', '#{offerExport.project}')"
+							styleClass="aon-finding-toolbar-item aon-icon-excel">
+					</aon:commandLink>
+				</ui:define>
+			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
 

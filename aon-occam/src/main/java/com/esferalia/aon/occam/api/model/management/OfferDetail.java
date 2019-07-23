@@ -10,13 +10,13 @@ public class OfferDetail implements Serializable {
 	private static final long serialVersionUID = 7597157186868662372L;
 	
 	private Integer id;
-	private int domain;
+	private Integer domain;
 	private Offer offer;
 	private Item item;
-	private short line;
+	private Short line;
 	private String description;
-	private double quantity;
-	private double price;
+	private Double quantity;
+	private Double price;
 	private String discountExpression;
 	private OfferDetailStatus status;
 	
@@ -51,7 +51,7 @@ public class OfferDetail implements Serializable {
 	public short getLine() {
 		return line;
 	}
-	public OfferDetail setLine(short line) {
+	public OfferDetail setLine(Short line) {
 		this.line = line;
 		return this;
 	}
@@ -65,14 +65,14 @@ public class OfferDetail implements Serializable {
 	public double getQuantity() {
 		return quantity;
 	}
-	public OfferDetail setQuantity(double quantity) {
+	public OfferDetail setQuantity(Double quantity) {
 		this.quantity = quantity;
 		return this;
 	}
 	public double getPrice() {
 		return price;
 	}
-	public OfferDetail setPrice(double price) {
+	public OfferDetail setPrice(Double price) {
 		this.price = price;
 		return this;
 	}

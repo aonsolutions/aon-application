@@ -143,14 +143,14 @@ public class OfferExcelAction extends AbsExcelAction implements Consumer<OfferDe
 		addCell( detail.getOffer().getIssueDate() );
 		addCell( detail.getOffer().getReferenceCode() );
 		addCell( detail.getLine() );
-		alignCenter( addCell( detail.getOffer().getRegistryDocumentType()==null?null:
-			detail.getOffer().getRegistryDocumentType().getDescription()));
-		alignCenter( addCell( detail.getOffer().getRegistryDocumentCountry() ));
-		addCell( detail.getOffer().getRegistryDocument() );
-		addCell( detail.getOffer().getRegistryName() );
-		addCell( detail.getOffer().getRegistryTown() );
-		addCell( detail.getOffer().getRegistryZIP() );
-		addCell( detail.getOffer().getRegistryProvince() );
+		alignCenter( addCell( detail.getOffer().getTarget().getDocumentType()==null?null:
+			detail.getOffer().getTarget().getDocumentType().getDescription()));
+		alignCenter( addCell( detail.getOffer().getTarget().getDocumentCountry() ));
+		addCell( detail.getOffer().getTarget().getDocument() );
+		addCell( detail.getOffer().getTarget().getName() );
+		addCell( detail.getOffer().getTarget().getAddress().getCity() );
+		addCell( detail.getOffer().getTarget().getAddress().getZip() );
+		addCell( detail.getOffer().getTarget().getAddress().getGeozoneName() );
 		 
 		addCell( detail.getItem()!= null ? detail.getItem().getCode() : null );
 		addCell( detail.getItem()!= null ? detail.getItem().getCategory()  : null );
@@ -159,7 +159,7 @@ public class OfferExcelAction extends AbsExcelAction implements Consumer<OfferDe
 		addCell( detail.getPrice() );
 		addCell( detail.getDiscountExpression() );
 		addCell( detail.getOffer().getScope());
-		addCell( detail.getOffer().getWorkPlace() );
+//		addCell( detail.getOffer().getWorkPlace() );
 		addCell( detail.getOffer().getProject() );
 		addCell( detail.getOffer().getSeller()!=null?detail.getOffer().getSeller().getRegistryName():null );
 

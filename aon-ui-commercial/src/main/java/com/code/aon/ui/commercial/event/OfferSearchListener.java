@@ -14,6 +14,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.seller.Seller;
 import com.code.aon.supplier.Supplier;
+import com.code.aon.ui.commercial.controller.OfferExportGwtController;
 import com.code.aon.ui.registry.controller.event.RegistrySearchListener;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -39,6 +40,7 @@ public class OfferSearchListener extends RegistrySearchListener {
 		return target;
 	}
 	public void setTarget(Target target) {
+		OfferExportGwtController.setTarget(target.getId());
 		this.target = target;
 	}
 
@@ -46,6 +48,7 @@ public class OfferSearchListener extends RegistrySearchListener {
 		return seller;
 	}
 	public void setSeller(Seller seller) {
+		OfferExportGwtController.setSeller(seller.getId());
 		this.seller = seller;
 	}
 
@@ -53,6 +56,7 @@ public class OfferSearchListener extends RegistrySearchListener {
 		return project;
 	}
 	public void setProject(Project project) {
+		OfferExportGwtController.setProject(project.getId());
 		this.project = project;
 	}
 
@@ -60,6 +64,7 @@ public class OfferSearchListener extends RegistrySearchListener {
 		return supplier;
 	}
 	public void setSupplier(Supplier supplier) {
+		OfferExportGwtController.setSupplier(supplier.getId());
 		this.supplier = supplier;
 	}
 
@@ -67,6 +72,7 @@ public class OfferSearchListener extends RegistrySearchListener {
 		return offerType;
 	}
 	public void setOfferType(OfferType offerType) {
+		OfferExportGwtController.setType(offerType != null ? offerType.ordinal() : null);
 		this.offerType = offerType;
 	}
 
@@ -74,6 +80,7 @@ public class OfferSearchListener extends RegistrySearchListener {
 		return offerStatuses;
 	}
 	public void setOfferStatuses(OfferStatus[] offerStatuses) {
+		OfferExportGwtController.setStatuses(offerStatuses);
 		this.offerStatuses = offerStatuses;
 	}
 
@@ -112,7 +119,7 @@ public class OfferSearchListener extends RegistrySearchListener {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.OFFER_PROJECT_ID), getProject().getId());			
 		}
 		if (getSupplier() != null && getSupplier().getId() != null) {
-			criteria.addEqualExpression(getFieldName(IEntityAlias.OFFER_SUPPLIER_ID), getSupplier().getId());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.OFFER_SUPPLIER_ID), getSupplier().getId());
 		}
 		if (getOfferType() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.OFFER_TYPE), getOfferType());			

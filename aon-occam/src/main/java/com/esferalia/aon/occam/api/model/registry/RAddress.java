@@ -25,6 +25,7 @@ public class RAddress implements Serializable {
 	private String zip;	
 	private String city;
 	private Integer geozone;
+	private String geozoneCode;
 	private String geozoneName;
 	private String alias;	
 	private String municipality_code;
@@ -177,6 +178,15 @@ public class RAddress implements Serializable {
 		return this;
 	}
 
+	public String getGeozoneCode() {
+		return geozoneCode;
+	}
+
+	public RAddress setGeozoneCode(String geozoneCode) {
+		this.geozoneCode = geozoneCode;
+		return this;
+	}
+	
 	public String getGeozoneName() {
 		return geozoneName;
 	}

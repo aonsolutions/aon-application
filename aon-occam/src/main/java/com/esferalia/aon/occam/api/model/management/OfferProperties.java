@@ -21,6 +21,8 @@ public interface OfferProperties {
 	Property<Byte> getConfidentialProperty();
 
 	Property<Integer> getSellerProperty();
+	Property<Integer> getSupplierProperty();
+	Property<Integer> getProjectProperty();
 	
 	Property<Integer> getWorkplaceProperty();
 	
