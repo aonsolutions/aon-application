@@ -1551,6 +1551,17 @@ public class AON {
 		}
 	}
 	
+	public static Offer updateOffer(String domainName, Integer domainId, String login, Offer offer) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getManagement().updateOffer(ctx, offer);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	// ------------------ SALES
 	public static Stream<Sales> getSalesStream(String domainName,
 			Integer domainId, String login, SalesFilter filter) {

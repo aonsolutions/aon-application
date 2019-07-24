@@ -46,6 +46,12 @@ public class ManagementImpl implements IManagement {
 	public Stream<OfferDetail> getOfferDetails(AONContext ctx, OfferFilter filter) {
 		return OfferDAO.getOfferDetails(ctx, filter);
 	}
+	
+	@Override
+	public Offer updateOffer(AONContext ctx, Offer offer) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> OfferDAO.updateOffer(ctx, offer));
+	}
 
 	// ------------------ SALES
 	@Override

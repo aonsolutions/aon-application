@@ -1561,7 +1561,6 @@ public class Templates extends Composite implements EntryPoint {
 	}-*/;
 	
 	public void offerx(String statuses, String target, String seller, String supplier, String project){
-		Window.alert(statuses);
 		String fileDownloadURL = GWT.getModuleBaseURL()+ "download_offer_excel/"
 				+ "?domain=" + getDomain().getName()
 				+ "&domain_id=" + getDomain().getId()

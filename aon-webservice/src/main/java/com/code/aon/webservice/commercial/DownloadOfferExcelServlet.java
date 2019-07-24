@@ -35,7 +35,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
-@WebServlet(name = "DownloadTaskStatExcel", urlPatterns = {"/aon_gwt_aio/download_offer_excel/*"})
+@WebServlet(name = "DownloadOfferExcel", urlPatterns = {"/aon_gwt_aio/download_offer_excel/*"})
 public class DownloadOfferExcelServlet extends HttpServlet {
 
 

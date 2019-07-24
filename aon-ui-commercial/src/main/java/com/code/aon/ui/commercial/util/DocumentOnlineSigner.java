@@ -1,16 +1,26 @@
 package com.code.aon.ui.commercial.util;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.net.ssl.HttpsURLConnection;
+
 import org.apache.commons.io.FileUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +40,8 @@ import com.code.aon.ui.commercial.controller.ICommercialConstants;
 import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfCopyFields;
 import com.lowagie.text.pdf.PdfReader;
@@ -40,7 +52,8 @@ public class DocumentOnlineSigner implements Serializable {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(DocumentOnlineSigner.class.getName());
 	
-	static final String URL_ECERTIA = "https://app.ecertia.com/api/json/reply/";
+	static final String URL_ECERTIA = "https://app.ecertia.com/api/json/reply/EviSignSubmit";
+//	static final String URL_EVICERTIA = "https://app.evicertia.com/api/json/reply/EviSignSubmit";
 	
 	private String username;
 	private String password;
@@ -67,10 +80,11 @@ public class DocumentOnlineSigner implements Serializable {
 	
 	public void loadTestUrl() {
 		setUrl(URL_ECERTIA);
+//		setUrl(URL_EVICERTIA);
 	}
 	
 	
-	public void sendData(Offer offer, boolean includeOffer, boolean includeOfferAttach) throws IOException, DocumentException, ReportException, ManagerBeanException {
+	public void sendData(Offer offer, boolean includeOffer, boolean includeOfferAttach) throws Exception {
 		
 		List<byte[]> list = new LinkedList<>();
 		if(includeOffer){
@@ -81,24 +95,37 @@ public class DocumentOnlineSigner implements Serializable {
 				list.add(aonFile.getData());
 			}
 		}
-		
+		RegistryMedia rmedia = AON.getRMedia(AonUtil.getDomainName(), offer.getDomain(), "", f -> 
+				f.getDomainProperty().eq(offer.getDomain())
+				.and(f.getRegistryProperty().eq(offer.getTarget().getId()))
+				.and(f.getMediaProperty().eq((byte) 4))
+				.and(f.getCommercialProperty().eq((byte) 1)));
+		String email = rmedia.getValue();
+		if(email == null || "".equals(email)) {
+			throw new Exception("El Cliente Potencial no tiene cuenta de correo electrónico comercial.");
+		}
+	
 		byte[] data = mergePdf(list);
+		byte[] encoded = Base64.getEncoder().encode(data);
+	
+		JSONObject json = new JSONObject();
+		json.put("lookupKey", "Evisign");
+		json.put("subject", "FIRMA");
+		json.put("document", new String(encoded));
+		JSONObject sp = new JSONObject();
+		sp.put("name", offer.getTarget().getRegistry().getName());
+		sp.put("address", email);
+		sp.put("signingMethod", "EmailPin");
+		json.put("signingParties", sp);
+		json.put("options", new JSONObject());
 		
-//		try {
-//		    File file = new File("/tmp/test.pdf"); 
-//            OutputStream os = new FileOutputStream(file); 
-//            os.write(data); 
-//            System.out.println("Successfully byte inserted in " + file.getAbsolutePath());
-//            os.close(); 
-//        } catch (Exception e) { 
-//            System.out.println("Exception: " + e); 
-//        } 
-		
-//		AonFile aonFile = new AonFile();
-//		aonFile.setData(mergePdf(list));
-//		aonFile.setFileName( "presupuesto_"+offer.getReferenceCode()+".pdf" );
-//		aonFile.setMimeType(MimeType.MIME_PDF);
-//		messageController.addAttachment(aonFile);
+		JSONObject responseJson = postObject(json.toString());
+		if(responseJson.opt("uniqueId") != null) {
+			com.esferalia.aon.occam.api.model.management.Offer of = AON.getOffer(AonUtil.getDomainName(), offer.getDomain(), "", f -> f.getIdProperty().eq(offer.getId()));
+			of.setExternalReference( responseJson.getString("uniqueId"));
+//			of.setExternalReference( responseJson.getString("uniqueId"));
+			AON.updateOffer(AonUtil.getDomainName(), of.getDomain(), "", of);
+		}
 	}
 	
 	public AonFile getOfferFile( Offer offer ) throws IOException, ReportException, ManagerBeanException {
@@ -191,6 +218,43 @@ public class DocumentOnlineSigner implements Serializable {
 		}
 		return pageNOs;
 	}
+
+	protected JSONObject postObject(String requestData) {
+		String response = post(requestData);
+		return response != null ? new JSONObject(response) : new JSONObject();
+	}
 	
+	protected String post(String requestData) {
+		try {
+			URL url = new URL(getUrl());
+			HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+			conn.setDoOutput(true);
+			conn.setRequestMethod("POST");
+			conn.setRequestProperty("Accept", "application/json");
+			conn.setRequestProperty("Content-Type", "application/json");
+			String encoding = new String(Base64.getEncoder().encode((getUsername() + ":" + getPassword()).getBytes())); 
+			conn.setRequestProperty("Authorization", "Basic " + encoding);
+			
+			OutputStream os = conn.getOutputStream();
+			os.write(requestData.getBytes());
+			os.flush();
+			
+			BufferedReader br = new BufferedReader(new InputStreamReader(
+				(conn.getInputStream())));
+			
+			String output;	
+			String response = "";
+			while ((output = br.readLine()) != null) {
+				response = output;	
+			}
+			conn.disconnect();
+			return response;
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 	
 }

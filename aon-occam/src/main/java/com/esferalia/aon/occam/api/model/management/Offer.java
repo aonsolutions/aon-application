@@ -29,6 +29,8 @@ public class Offer implements Serializable {
 	private Workplace workPlace;
 	private OfferStatus status;
 	private OfferType type;
+	private String externalReference;
+	private Boolean signed;
 	
 	public Integer getId() {
 		return id;
@@ -129,7 +131,23 @@ public class Offer implements Serializable {
 		return this;
 	}
 	
-    public String getReferenceCode() {
+    public String getExternalReference() {
+		return externalReference;
+	}
+	public void setExternalReference(String externalReference) {
+		this.externalReference = externalReference;
+	}
+	
+	public Boolean getSigned() {
+		return signed;
+	}
+	public Boolean isSigned() {
+		return signed;
+	}
+	public void setSigned(Boolean signed) {
+		this.signed = signed;
+	}
+	public String getReferenceCode() {
     	String referenceCode = AonStringUtils.leftPad(Integer.toString(getNumber()), 6, '0');
     	referenceCode += '/' + getVersion();
 		if (!AonStringUtils .isEmpty(getSeries())) {

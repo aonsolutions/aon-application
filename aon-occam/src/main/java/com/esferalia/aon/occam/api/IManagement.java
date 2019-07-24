@@ -29,6 +29,7 @@ public interface IManagement {
 	Offer getOffer(AONContext ctx, OfferFilter filter);
 	Stream<Offer> getOfferStream(AONContext ctx, OfferFilter filter);
 	Stream<OfferDetail> getOfferDetails(AONContext ctx, OfferFilter filter);
+	Offer updateOffer(AONContext ctx, Offer offer);
 
 	// -------------------- SALES 
 	Stream<Sales> getSalesStream(AONContext ctx, SalesFilter filter);

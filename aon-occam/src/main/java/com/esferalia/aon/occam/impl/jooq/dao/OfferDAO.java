@@ -11,9 +11,10 @@ import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Target.TARGET;
-import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.jooq.tables.Tax.TAX;
+import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -24,8 +25,8 @@ import org.jooq.Result;
 
 import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferFilter;
@@ -172,6 +173,23 @@ public class OfferDAO {
 		return getFullOffers(ctx, filter)
 			.stream()
 			.map(new FullOfferDetailFiller());
+	}
+	
+	public static Offer updateOffer(AONContext ctx, Offer offer) {
+		ctx.checkWrite();
+		Timestamp modificationDate = null;
+		modificationDate = new java.sql.Timestamp(new java.util.Date().getTime());
+		
+		ctx.getDslContext()
+				.update(OFFER)
+				.set(OFFER.DOMAIN, offer.getDomain())	
+				.set(OFFER.EXTERNAL_REFERENCE, offer.getExternalReference())
+				.set(OFFER.MODIFICATION_DATE, modificationDate)
+				.set(OFFER.MODIFICATION_USER, ctx.getUser())
+				.where(OFFER.ID.eq(offer.getId()))
+				.execute();
+		
+		return offer;
 	}
 		
 	private static class FullOfferDetailFiller  implements Function<Record,OfferDetail> {
