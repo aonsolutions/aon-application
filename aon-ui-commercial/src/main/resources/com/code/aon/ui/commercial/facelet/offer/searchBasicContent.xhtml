@@ -39,6 +39,7 @@
 		<aon:outputLabel for="Offer_issueDate-From" styleClass="aon-form-date-label"
 			value="#{bundle.aon_date_from}:" />
 		<aon:selectInputDate id="Offer_issueDate-From"
+			value="#{offerExport.fromDate}"
 			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
@@ -46,6 +47,7 @@
 		<aon:outputLabel for="Offer_issueDate-To" styleClass="aon-form-date-label"
 			value="#{bundle.aon_date_to}:" />
 		<aon:selectInputDate id="Offer_issueDate-To"
+			value="#{offerExport.toDate}"
 			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
@@ -93,6 +95,7 @@
 		<aon:outputLabel for="Offer_securityLevel"
 			value="#{bundle.aon_confidential}" />
 		<aon:selectOneRadio id="Offer_securityLevel"
+			value="#{offerExport.confidential}"
 			valueChangeListener="#{controller.addExpression}">
 			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="1" />
 			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="0" />
@@ -102,6 +105,7 @@
 	<aon:if test="#{company.EInvoice}">
 		<aon:outputLabel for="Offer_signed" value="#{bundle.registry_corporateIdentity_signature}" />
 		<aon:selectOneRadio id="Offer_signed"
+			value="#{offerExport.signed}"
 			valueChangeListener="#{controller.addExpression}">
 			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
 			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />

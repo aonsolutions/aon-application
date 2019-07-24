@@ -7,18 +7,16 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 public interface OfferProperties {
 	
 	Property<Integer> getIdProperty();
-	
 	Property<Integer> getDomainProperty();
-	
 	Property<Byte> getStatusProperty();
-
+	Property<Date> getIssueDateProperty();
 	Property<Date> getStartIssueDateProperty();
-
 	Property<Date> getEndIssueDateProperty();
-	
+	Property<Byte> getTypeProperty();
 	Property<Integer> getScopeProperty();
 
 	Property<Byte> getConfidentialProperty();
+	Property<Byte> getSignedProperty();
 
 	Property<Integer> getSellerProperty();
 	Property<Integer> getSupplierProperty();

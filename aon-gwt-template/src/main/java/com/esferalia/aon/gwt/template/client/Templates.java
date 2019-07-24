@@ -1560,7 +1560,9 @@ public class Templates extends Composite implements EntryPoint {
 		}
 	}-*/;
 	
-	public void offerx(String statuses, String target, String seller, String supplier, String project){
+	public void offerx(String statuses, String target, String seller, String supplier, String project,
+			String type, String series, String fromNumber, String toNumber, String fromDate, String toDate,
+			String workplace, String scope, String confidential, String signed){
 		String fileDownloadURL = GWT.getModuleBaseURL()+ "download_offer_excel/"
 				+ "?domain=" + getDomain().getName()
 				+ "&domain_id=" + getDomain().getId()
@@ -1569,14 +1571,24 @@ public class Templates extends Composite implements EntryPoint {
             	+ "&target=" + target
             	+ "&seller=" + seller
             	+ "&supplier=" + supplier
-            	+ "&project=" + project;
+            	+ "&project=" + project
+            	+ "&type=" + type
+            	+ "&series=" + series
+            	+ "&from_number=" + fromNumber
+				+ "&to_number=" + toNumber
+            	+ "&from_date=" + fromDate
+				+ "&to_date=" + toDate
+				+ "&workplace=" + workplace
+				+ "&scope=" + scope
+				+ "&confidential=" + confidential
+				+ "&signed=" + signed;
 		
 		Window.open( fileDownloadURL, "_blank",null);
 	}
-		
+
 	public static native void exportOfferx(Templates thiz) /*-{
-		$wnd.offerx = function(statuses, target, seller, supplier, project) {
-			thiz.@com.esferalia.aon.gwt.template.client.Templates::offerx(*)(statuses, target, seller, supplier, project);
+		$wnd.offerx = function(statuses, target, seller, supplier, project, type, series, fromNumber, toNumber, fromDate, toDate, workplace, scope, confidential, signed) {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::offerx(*)(statuses, target, seller, supplier, project, type, series, fromNumber, toNumber, fromDate, toDate, workplace, scope, confidential, signed);
 		}
 	}-*/;
 	

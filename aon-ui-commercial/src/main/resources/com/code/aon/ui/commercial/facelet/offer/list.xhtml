@@ -17,7 +17,9 @@
 				<ui:define name="additionalToolbarContent">
 					<ui:include src="/net/aonsolutions/aon/gwt/aio/facelet/templates/silent.xhtml" />
 					<aon:commandLink id="offer-export"  value="&#160;" 
-							onclick="offerx('#{offerExport.statusesStr}', '#{offerExport.target}', '#{offerExport.seller}', '#{offerExport.supplier}', '#{offerExport.project}')"
+							onclick="offerx('#{offerExport.statusesStr}', '#{offerExport.target}', '#{offerExport.seller}', '#{offerExport.supplier}', '#{offerExport.project}'
+									, '#{offerExport.type}','#{offerExport.serie}','#{offerExport.fromNumber}', '#{offerExport.toNumber}', '#{offerExport.fromDateStr}', '#{offerExport.toDateStr}'
+									, '#{companyCollections.workPlace}', '#{configCollections.scope}', '#{offerExport.confidential}', '#{offerExport.signed}')"
 							styleClass="aon-finding-toolbar-item aon-icon-excel">
 					</aon:commandLink>
 				</ui:define>

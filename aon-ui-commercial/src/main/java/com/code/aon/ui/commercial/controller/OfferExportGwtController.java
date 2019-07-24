@@ -5,7 +5,7 @@ import java.util.Date;
 import com.code.aon.AonVersion;
 import com.code.aon.ui.common.controller.AuditableSearchController;
 import com.esferalia.aon.occam.api.model.type.OfferStatus;
-import com.esferalia.aon.occam.api.model.type.OfferType;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class OfferExportGwtController extends AuditableSearchController {
 
@@ -22,18 +22,24 @@ public class OfferExportGwtController extends AuditableSearchController {
 	
 	private static Date fromDate;
 	private static Date toDate;
+	private static String fromDateStr; 
+	private static String toDateStr;
 	
 	private static Integer fromNumber;
 	private static Integer toNumber;
 	
-	private static OfferType type;
+	private static Integer type;
 	private static Integer workplace;
 	private static Integer scope;
 	
-	private Boolean sign;
+	private Boolean signed;
 	private Boolean confidential;
 	
 	private static String  statusesStr;
+	
+	public static OfferExportGwtController getInstance() { 
+		return new OfferExportGwtController();
+	}
 	
 	public String getInitialize(){
 		return "";
@@ -60,7 +66,7 @@ public class OfferExportGwtController extends AuditableSearchController {
 		return serie;
 	}
 
-	public static void setSerie(String serie) {
+	public void setSerie(String serie) {
 		OfferExportGwtController.serie = serie;
 	}
 
@@ -68,7 +74,7 @@ public class OfferExportGwtController extends AuditableSearchController {
 		return target;
 	}
 
-	public static void setTarget(Integer target) {
+	public static  void setTarget(Integer target) {
 		OfferExportGwtController.target = target;
 	}
 
@@ -76,55 +82,55 @@ public class OfferExportGwtController extends AuditableSearchController {
 		return seller;
 	}
 
-	public static void setSeller(Integer seller) {
+	public static  void setSeller(Integer seller) {
 		OfferExportGwtController.seller = seller;
 	}
 
-	public static Date getFromDate() {
+	public Date getFromDate() {
 		return fromDate;
 	}
 
-	public static void setFromDate(Date fromDate) {
-		OfferExportGwtController.fromDate = fromDate;
+	public void setFromDate(Date fromDate) {
+		setFromDateStr(AonDateUtils.simpleFormat(fromDate));
 	}
 
-	public static Date getToDate() {
+	public Date getToDate() {
 		return toDate;
 	}
 
-	public static void setToDate(Date toDate) {
-		OfferExportGwtController.toDate = toDate;
+	public void setToDate(Date toDate) {
+		setToDateStr(AonDateUtils.simpleFormat(toDate));
 	}
 
 	public Integer getFromNumber() {
 		return fromNumber;
 	}
 
-	public static void setFromNumber(Integer fromNumber) {
+	public void setFromNumber(Integer fromNumber) {
 		OfferExportGwtController.fromNumber = fromNumber;
 	}
 
-	public static Integer getToNumber() {
+	public Integer getToNumber() {
 		return toNumber;
 	}
 
-	public static void setToNumber(Integer toNumber) {
+	public void setToNumber(Integer toNumber) {
 		OfferExportGwtController.toNumber = toNumber;
 	}
 
-	public static OfferType getType() {
+	public Integer getType() {
 		return type;
 	}
 
-	public static void setType(Integer type) {
-		OfferExportGwtController.type = type != null ? OfferType.values()[type] : null;
+	public static  void setType(Integer type) {
+		OfferExportGwtController.type = type;
 	}
 
-	public static Integer getWorkplace() {
+	public Integer getWorkplace() {
 		return workplace;
 	}
 
-	public static void setWorkplace(Integer workplace) {
+	public void setWorkplace(Integer workplace) {
 		OfferExportGwtController.workplace = workplace;
 	}
 
@@ -132,16 +138,16 @@ public class OfferExportGwtController extends AuditableSearchController {
 		return scope;
 	}
 
-	public static void setScope(Integer scope) {
+	public void setScope(Integer scope) {
 		OfferExportGwtController.scope = scope;
 	}
 
-	public Boolean getSign() {
-		return sign;
+	public Boolean getSigned() {
+		return signed;
 	}
 
-	public void setSign(Boolean sign) {
-		this.sign = sign;
+	public void setSigned(Boolean signed) {
+		this.signed = signed;
 	}
 
 	public Boolean getConfidential() {
@@ -164,7 +170,7 @@ public class OfferExportGwtController extends AuditableSearchController {
 		return project;
 	}
 
-	public static void setProject(Integer project) {
+	public static  void setProject(Integer project) {
 		OfferExportGwtController.project = project;
 	}
 
@@ -172,9 +178,24 @@ public class OfferExportGwtController extends AuditableSearchController {
 		return supplier;
 	}
 
-	public static void setSupplier(Integer supplier) {
+	public static  void setSupplier(Integer supplier) {
 		OfferExportGwtController.supplier = supplier;
 	}
 
+	public String getFromDateStr() {
+		return fromDateStr;
+	}
+
+	public void setFromDateStr(String fromDateStr) {
+		OfferExportGwtController.fromDateStr = fromDateStr;
+	}
+
+	public String getToDateStr() {
+		return toDateStr;
+	}
+
+	public void setToDateStr(String toDateStr) {
+		OfferExportGwtController.toDateStr = toDateStr;
+	}
 	
 }

@@ -51,6 +51,17 @@ public class DownloadOfferExcelServlet extends HttpServlet {
 		String seller = req.getParameter("seller");
 		String supplier = req.getParameter("supplier");
 		String project = req.getParameter("project");
+		String type = req.getParameter("type");
+		String series = req.getParameter("series");
+		String fromNumber = req.getParameter("from_number");
+		String toNumber = req.getParameter("to_number");
+		String fromDate = req.getParameter("from_date");
+		String toDate = req.getParameter("to_date");
+		String workplace = req.getParameter("workplace");
+		String scope = req.getParameter("scope");
+		String confidential = req.getParameter("confidential");
+		String signed = req.getParameter("signed");
+				
 		Filter filter = f.getDomainProperty().eq(domainId);
 		if(statuses != null && !"null".equals(statuses) && !"".equals(statuses)) {
 			String[] a = statuses.substring(1).split("-");
@@ -75,6 +86,43 @@ public class DownloadOfferExcelServlet extends HttpServlet {
 		}
 		if(project != null && !"null".equals(project) && !"".equals(project)) {
 			filter = filter.and(f.getProjectProperty().eq(Integer.parseInt(project)));
+		}
+		if(type != null && !"null".equals(type) && !"".equals(type)) {
+			Integer t = Integer.parseInt(type);
+			filter = filter.and(f.getTypeProperty().eq(t.byteValue()));
+		}
+		if(series != null && !"null".equals(series) && !"".equals(series)) {
+			filter = filter.and(f.getSeriesProperty().eq(series));
+		}
+		
+		if(fromNumber != null && !"null".equals(fromNumber) && !"".equals(fromNumber)) {
+			filter = filter.and(f.getNumberProperty().ge(Integer.parseInt(fromNumber)));
+		}
+		
+		if(toNumber != null && !"null".equals(toNumber) && !"".equals(toNumber)) {
+			filter = filter.and(f.getNumberProperty().le(Integer.parseInt(toNumber)));
+		}
+		
+		if(fromDate != null && !"null".equals(fromDate) && !"".equals(fromDate)) {
+			filter = filter.and(f.getIssueDateProperty().ge(AonDateUtils.simpleParse(fromDate)));
+		}
+		
+		if(toDate != null && !"null".equals(toDate) && !"".equals(toDate)) {
+			filter = filter.and(f.getIssueDateProperty().le(AonDateUtils.simpleParse(toDate)));
+		}
+		if(workplace != null && !"null".equals(workplace) && !"".equals(workplace)) {
+			filter = filter.and(f.getWorkplaceProperty().eq(Integer.parseInt(workplace)));
+		}
+		if(scope != null && !"null".equals(scope) && !"".equals(scope)) {
+			filter = filter.and(f.getScopeProperty().eq(Integer.parseInt(scope)));
+		}
+		if(confidential != null && !"null".equals(confidential) && !"".equals(confidential)) {
+			Boolean c = Boolean.parseBoolean(confidential);
+			filter = filter.and(f.getConfidentialProperty().eq((byte) (c ? 1 : 0)));
+		}
+		if(signed != null && !"null".equals(signed) && !"".equals(signed)) {
+			Boolean s = Boolean.parseBoolean(signed);
+			filter = filter.and(f.getSignedProperty().eq((byte) (s ? 1 : 0)));
 		}
 		
 		return filter;

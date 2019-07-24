@@ -73,6 +73,11 @@ public class OfferDAO {
 
 		@Override public Property<Integer> getSupplierProperty() {return new FilterDAO.PropertyDAO<>(OFFER.SUPPLIER);}
 		@Override public Property<Integer> getProjectProperty() {return new FilterDAO.PropertyDAO<>(OFFER.PROJECT);}
+
+		@Override public Property<Date> getIssueDateProperty() {return new FilterDAO.DatePropertyDAO(OFFER.ISSUE_DATE);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(OFFER.TYPE);}
+
+		@Override public Property<Byte> getSignedProperty() {return new FilterDAO.PropertyDAO<>(OFFER.SIGNED);}
 	}
 
 	private static final Registry SELLER_ALIAS = REGISTRY.as("seller");
