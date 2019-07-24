@@ -38,7 +38,7 @@ public class BOEBalanceAsocAbbreviateScript extends BalanceScript {
 		
 		,AC(0,HEADER0,"B)","ACTIVO CORRIENTE",null,"ACI+ACII+ACIII+ACIV+ACV+ACVI+ACVII")
 			,ACI(1,LEAF,"I","Existencias","sdb({30,31,32,33,34,35,36,407})-sab({(39)})",null)
-			,ACII(1,LEAF,"II","Usuarios y otros deudores de la actividad propia","sdb({447,447}) - sab({495})",null)
+			,ACII(1,LEAF,"II","Usuarios y otros deudores de la actividad propia","sdb({447,448}) - sab({495})",null)
 			,ACIII(1,HEADER1,"III","Deudores comerciales y otras cuentas a cobrar","sdb({430,431,432,433,434,435,436})-sab({437,490,493,440,441,446,449,460,464,470,471,472,558,544})",null)
 			,ACIV(1,LEAF,"IV","Inversiones en empresas del grupo y asociadas a corto plazo","sdb({5303,5304,5313,5314, 5323, 5324,5333, 5334, 5343,5344, 5353, 5354})+sdbPositivo({5523,5524})-sab({5393,5394,593,5943,5944,5953,5954})",null)
 			
