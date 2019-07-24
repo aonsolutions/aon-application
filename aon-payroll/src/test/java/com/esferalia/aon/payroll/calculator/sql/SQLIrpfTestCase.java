@@ -709,7 +709,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		;
 		
 		for ( int i =0; i< 12; i++ ) {
-			org.junit.Assert.assertEquals((Double) irpfs[i], (Double) (( 2750.00 ) * irpfResults.get(i)[0] / 100.00 ), 0.009 ); 
+			assertIrpf((Double) irpfs[i], 2750.00, irpfResults.get(i)[0], 0.009 ); 
 					
 		}
 		
@@ -781,7 +781,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		;
 		
 		for ( int i =0; i< 12; i++ ) {
-			org.junit.Assert.assertEquals((Double) irpfs[i], (Double) (( 2750.00 ) * irpfResults.get(i)[0] / 100.00 ), 0.009 ); 
+			assertIrpf((Double) irpfs[i], 2750.00 ,  irpfResults.get(i)[0], 0.009 ); 
 					
 		}
 		
@@ -979,6 +979,10 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 	protected void assertDeduccibleExpenses(double expected,
 			double deduccibleExpenses) {
 		assertEquals(expected, deduccibleExpenses);
+	}
+	protected void assertIrpf(double expected,
+			double base, double percent, double delta) {
+		assertEquals(expected, base * percent / 100.00, delta);
 	}
 
 	protected ISQLContractSalaryCalculatorContext getContractSettleCalculatorContext(

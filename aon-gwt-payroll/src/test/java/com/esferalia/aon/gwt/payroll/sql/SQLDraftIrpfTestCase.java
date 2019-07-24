@@ -40,7 +40,7 @@ public class SQLDraftIrpfTestCase extends SQLIrpfTestCase {
 		Employee employee = new Employee();
 		employee.setId(contract.getId());
 		
-		int months  = 12 - get(startDate,Calendar.MONTH);
+		int months  = 12 /*- get(startDate,Calendar.MONTH)*/;
 
 		SalaryDraft draft = new SalaryDraft();
 		draft.setEmployee(employee);
@@ -129,6 +129,11 @@ public class SQLDraftIrpfTestCase extends SQLIrpfTestCase {
 		draftCtx.next();
 		return draftCtx;
 	}
+	
+	@Override
+	protected void assertIrpf(double expected, double base, double percent, double delta) {
+		super.assertIrpf(expected, base + ( 66666.00 / 12 ), percent, delta);
+	}
 
 	@Override
 	protected void assertAnnualRemuneration(double expected,
@@ -145,7 +150,7 @@ public class SQLDraftIrpfTestCase extends SQLIrpfTestCase {
 	@Override
 	protected void assertAnnualRemuneration(double expected,
 			double annualRemuneration, int months, double delta) {
-		super.assertAnnualRemuneration(expected + (66666.00 / (6.00 *12) * months), annualRemuneration, delta);
+		super.assertAnnualRemuneration(expected /*+ (66666.00 / (6.00 * 12 ) * 12)*/, annualRemuneration, delta);
 	}
 
 	@Override
