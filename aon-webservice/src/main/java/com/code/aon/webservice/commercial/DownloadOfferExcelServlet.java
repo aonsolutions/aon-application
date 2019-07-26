@@ -4,7 +4,6 @@ package com.code.aon.webservice.commercial;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Optional;
-import java.util.function.Function;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -22,15 +21,12 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 
 import com.code.aon.webservice.common.Utils;
-import com.code.aon.webservice.issues.Label;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferProperties;
-import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
-import com.esferalia.aon.occam.api.model.type.AonUrlApi;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -146,7 +142,7 @@ public class DownloadOfferExcelServlet extends HttpServlet {
 		
         HSSFWorkbook libro = new HSSFWorkbook();
         ByteArrayOutputStream archivo = new ByteArrayOutputStream();
-        HSSFSheet hoja = libro.createSheet("Tareas");
+        HSSFSheet hoja = libro.createSheet("Presupuestos");
      
         Row fila = hoja.createRow(0);
         
@@ -195,28 +191,32 @@ public class DownloadOfferExcelServlet extends HttpServlet {
     	Cell c4 = fila.createCell(4);
     	c4.setCellValue("Comercial");
     	c4.setCellStyle(style);
+    	
+    	Cell c5 = fila.createCell(5);
+    	c5.setCellValue("Ámbito");
+    	c5.setCellStyle(style);
 
-    	Cell c6 = fila.createCell(5);
+    	Cell c6 = fila.createCell(6);
     	c6.setCellValue("Base");
     	c6.setCellStyle(style);
     	
-    	Cell c7 = fila.createCell(6);
-    	c7.setCellValue("Quota");
+    	Cell c7 = fila.createCell(7);
+    	c7.setCellValue("Cuota");
     	c7.setCellStyle(style);
     	
-    	Cell c8 = fila.createCell(7);
+    	Cell c8 = fila.createCell(8);
     	c8.setCellValue("Total");
     	c8.setCellStyle(style);
     	
-    	Cell c9 = fila.createCell(8);
+    	Cell c9 = fila.createCell(9);
     	c9.setCellValue("Estado");
     	c9.setCellStyle(style);
     
-    	Cell c10 = fila.createCell(9);
+    	Cell c10 = fila.createCell(10);
     	c10.setCellValue("Tipo");
     	c10.setCellStyle(style);
     	
-    	Cell c11 = fila.createCell(10);
+    	Cell c11 = fila.createCell(11);
     	c11.setCellValue("Representado");
     	c11.setCellStyle(style);
     	
@@ -234,15 +234,15 @@ public class DownloadOfferExcelServlet extends HttpServlet {
     		if(!rid.equals(offer.getId())) {
     			rid = offer.getId();
     			if(row != null) {
-    				Cell ct6 = row.createCell(5);
+    				Cell ct6 = row.createCell(6);
     				ct6.setCellValue(AonMathUtils.round(base));	
     				ct6.setCellStyle(style3);
  	    	
-    				Cell ct7 = row.createCell(6);
+    				Cell ct7 = row.createCell(7);
     				ct7.setCellValue(AonMathUtils.round(quota));	
     				ct7.setCellStyle(style3);
     				
-    				Cell ct8 = row.createCell(7);
+    				Cell ct8 = row.createCell(8);
     				ct8.setCellValue(AonMathUtils.round(base + quota));	
     				ct8.setCellStyle(style3);
     				base = 0.0;
@@ -269,16 +269,20 @@ public class DownloadOfferExcelServlet extends HttpServlet {
     			Cell ct4 = row.createCell(4);
     			ct4.setCellValue(offer.getSeller() != null ? offer.getSeller().getRegistryName() : "");	
     			ct4.setCellStyle(style3);
+    			
+    			Cell ct5 = row.createCell(5);
+    			ct5.setCellValue(offer.getScope() != null ? offer.getScope() : "");	
+    			ct5.setCellStyle(style3);
  	    	
-    			Cell ct9 = row.createCell(8);
+    			Cell ct9 = row.createCell(9);
     			ct9.setCellValue(offer.getStatus().getDescription());	
     			ct9.setCellStyle(style3);	    	
  	    	
-    			Cell ct10 = row.createCell(9);
+    			Cell ct10 = row.createCell(10);
     			ct10.setCellValue(offer.getType().getDescription());	
     			ct10.setCellStyle(style3);
     			
-    			Cell ct11 = row.createCell(10);
+    			Cell ct11 = row.createCell(11);
     			ct11.setCellValue(sup!= null ?sup.get().getName() : ""); 	
     			ct11.setCellStyle(style3);
     		} 
@@ -292,15 +296,15 @@ public class DownloadOfferExcelServlet extends HttpServlet {
     		
     	});
     	if(row != null) {
-			Cell ct6 = row.createCell(5);
+			Cell ct6 = row.createCell(6);
 			ct6.setCellValue(AonMathUtils.round(base));	
 			ct6.setCellStyle(style3);
  	
-			Cell ct7 = row.createCell(6);
+			Cell ct7 = row.createCell(7);
 			ct7.setCellValue(AonMathUtils.round(quota));	
 			ct7.setCellStyle(style3);
 			
-			Cell ct8 = row.createCell(7);
+			Cell ct8 = row.createCell(8);
 			ct8.setCellValue(AonMathUtils.round(base + quota));	
 			ct8.setCellStyle(style3);
 			base = 0.0;
@@ -318,7 +322,7 @@ public class DownloadOfferExcelServlet extends HttpServlet {
         archivo.close();
         libro.close();
 
-        Utils.giveBackData(resp, data , "tareas.xls");
+        Utils.giveBackData(resp, data , "presupuestos.xls");
     }
 	
 	public static Double round(Double value, Integer places) {
@@ -330,23 +334,4 @@ public class DownloadOfferExcelServlet extends HttpServlet {
 	    return (double) tmp / factor;
 	}
 
-	
-	
-	private static class TagToLabelFiller implements Function<Tag, Label> {
-		private Domain domain;
-		private String userName;
-		
-		public TagToLabelFiller(Domain domain, String userName) {
-			this.domain = domain;
-			this.userName = userName;
-		}
-		
-		@Override
-		public Label apply(Tag r) {
-			return new Label().setId(r.getId())
-					.setName(r.getName())
-					.setColor(r.getColor())
-					.setUrl(AonUrlApi.AONTEST.getUrl() + "repos/" + userName + "/" + domain.getName() + "/labels/" + r.getName());  
-		}
-	}
 }
