@@ -56,10 +56,9 @@ public class PageF1 extends PageAbs {
 				@Override
 				public void onValueChange(ValueChangeEvent<Boolean> event) {
 					String value = event.getValue()?"1":"0";
-					getMap().put(key2, value);					
-								
+					onEdit(key2, value, false);								
 					if(key2.equals("8009050") ){
-					// TODO	
+						onEdit("8080809", value, false);
 					}
 				}
 			});
