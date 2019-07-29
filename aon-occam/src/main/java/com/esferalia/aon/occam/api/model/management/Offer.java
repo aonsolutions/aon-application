@@ -4,9 +4,11 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.Target;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.OfferStatus;
 import com.esferalia.aon.occam.api.model.type.OfferType;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -21,11 +23,11 @@ public class Offer implements Serializable {
 	private int number;
 	private int version;
 	private Date issueDate;
-	private String scope;
+	private Scope scope;
 	private Target target;
 	private Seller seller;
 	private Supplier supplier;
-	private String project;
+	private Project project;
 	private Workplace workPlace;
 	private OfferStatus status;
 	private OfferType type;
@@ -39,7 +41,7 @@ public class Offer implements Serializable {
 		this.id = id;
 		return this;
 	}
-	public int getDomain() {
+	public Integer getDomain() {
 		return domain;
 	}
 	public Offer setDomain(int domain) {
@@ -53,14 +55,14 @@ public class Offer implements Serializable {
 		this.series = series;
 		return this;
 	}
-	public int getNumber() {
+	public Integer getNumber() {
 		return number;
 	}
 	public Offer setNumber(int number) {
 		this.number = number;
 		return this;
 	}
-	public int getVersion() {
+	public Integer getVersion() {
 		return version;
 	}
 	public Offer setVersion(int version) {
@@ -74,10 +76,10 @@ public class Offer implements Serializable {
 		this.issueDate = issueDate;
 		return this;
 	}
-	public String getScope() {
+	public Scope getScope() {
 		return scope;
 	}
-	public Offer setScope(String scope) {
+	public Offer setScope(Scope scope) {
 		this.scope = scope;
 		return this;
 	}
@@ -102,10 +104,10 @@ public class Offer implements Serializable {
 		this.supplier = supplier;
 		return this;
 	}
-	public String getProject() {
+	public Project getProject() {
 		return project;
 	}
-	public Offer setProject(String project) {
+	public Offer setProject(Project project) {
 		this.project = project;
 		return this;
 	}

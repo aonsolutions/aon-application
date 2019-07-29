@@ -18,5 +18,8 @@ public enum OfferDetailStatus implements Serializable {
 		if (i < 0 || i >= OfferDetailStatus.values().length) return null;
 		return OfferDetailStatus.values()[i];
 	}
-
+	
+	public Byte value() {
+		return (byte) ordinal();
+	}
 }

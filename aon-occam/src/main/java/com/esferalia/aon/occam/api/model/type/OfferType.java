@@ -19,5 +19,9 @@ public enum OfferType implements Serializable {
 	public String getDescription() {
 		return description;
 	}
+	
+	public Byte value() {
+		return (byte) ordinal();
+	}
 
 }

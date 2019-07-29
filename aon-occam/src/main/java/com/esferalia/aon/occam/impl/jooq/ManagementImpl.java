@@ -52,6 +52,18 @@ public class ManagementImpl implements IManagement {
 		return ctx.getDslContext().transactionResult(
 				configuration -> OfferDAO.updateOffer(ctx, offer));
 	}
+	
+	@Override
+	public Offer insertOffer(AONContext ctx, Offer offer) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> OfferDAO.insertOffer(ctx, offer));
+	}
+
+	@Override
+	public OfferDetail insertOfferDetail(AONContext ctx, OfferDetail offerDetail) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> OfferDAO.insertOfferDetail(ctx, offerDetail));
+	}
 
 	// ------------------ SALES
 	@Override

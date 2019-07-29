@@ -271,7 +271,7 @@ public class DownloadOfferExcelServlet extends HttpServlet {
     			ct4.setCellStyle(style3);
     			
     			Cell ct5 = row.createCell(5);
-    			ct5.setCellValue(offer.getScope() != null ? offer.getScope() : "");	
+    			ct5.setCellValue(offer.getScope() != null ? offer.getScope().getDescription() : "");	
     			ct5.setCellStyle(style3);
  	    	
     			Cell ct9 = row.createCell(9);

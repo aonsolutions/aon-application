@@ -34,10 +34,12 @@ import com.esferalia.aon.occam.api.model.management.OfferProperties;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.Tax;
+import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.Target;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.OfferStatus;
@@ -196,6 +198,42 @@ public class OfferDAO {
 		
 		return offer;
 	}
+	
+	public static Offer insertOffer(AONContext ctx, Offer offer) {
+		ctx.checkWrite();
+		Timestamp modificationDate = null;
+		modificationDate = new java.sql.Timestamp(new java.util.Date().getTime());
+		Byte signed = (byte)(offer.getSigned() != null && offer.getSigned() ? 1 : 0);
+		java.sql.Date issueDate = new java.sql.Date(offer.getIssueDate().getTime());
+		Integer id = ctx.getDslContext()
+				.insertInto(OFFER, OFFER.DOMAIN, OFFER.EXTERNAL_REFERENCE, OFFER.ISSUE_DATE, OFFER.NUMBER, 
+						OFFER.PROJECT, OFFER.SCOPE, OFFER.SELLER, OFFER.SERIES, OFFER.SIGNED, OFFER.STATUS,
+						OFFER.SUPPLIER, OFFER.TARGET, OFFER.TYPE, OFFER.VERSION, OFFER.WORKPLACE,
+						OFFER.CREATION_DATE, OFFER.CREATION_USER, OFFER.MODIFICATION_DATE, OFFER.MODIFICATION_USER)
+				.values(offer.getDomain(), offer.getExternalReference(), issueDate, offer.getNumber(), offer.getProject() != null ? offer.getProject().getId() : null, offer.getScope().getId(),
+						offer.getSeller() != null ? offer.getSeller().getId(): null, offer.getSeries(),signed , offer.getStatus().value(), 
+						offer.getSupplier() != null ? offer.getSupplier().getId(): null, offer.getTarget().getId(), offer.getType().value(), (Short) offer.getVersion().shortValue(), 
+						offer.getWorkPlace() != null ? offer.getWorkPlace().getId(): null, 
+						modificationDate, ctx.getUser(),modificationDate, ctx.getUser())
+				.execute();
+		offer.setId(id);
+		return offer;
+	}
+	
+	public static OfferDetail insertOfferDetail(AONContext ctx, OfferDetail offerDetail) {
+		ctx.checkWrite();
+		Timestamp modificationDate = null;
+		modificationDate = new java.sql.Timestamp(new java.util.Date().getTime());
+		Integer id = ctx.getDslContext().insertInto(OFFER_DETAIL, OFFER_DETAIL.DESCRIPTION, OFFER_DETAIL.DISCOUNT_EXPR, OFFER_DETAIL.DOMAIN,
+				OFFER_DETAIL.ITEM, OFFER_DETAIL.LINE, OFFER_DETAIL.OFFER, OFFER_DETAIL.PRICE, OFFER_DETAIL.QUANTITY, OFFER_DETAIL.STATUS,
+				OFFER_DETAIL.CREATION_DATE, OFFER_DETAIL.CREATION_USER, OFFER_DETAIL.MODIFICATION_DATE, OFFER_DETAIL.MODIFICATION_USER)
+		.values(offerDetail.getDescription(), offerDetail.getDiscountExpression(), offerDetail.getDomain(), offerDetail.getItem().getId(),
+				offerDetail.getLine(), offerDetail.getOffer().getId(), offerDetail.getPrice(), offerDetail.getQuantity(), offerDetail.getStatus().value(), 
+				modificationDate, ctx.getUser(),modificationDate, ctx.getUser())
+		.execute();
+		offerDetail.setId(id);
+		return offerDetail;
+	}
 		
 	private static class FullOfferDetailFiller  implements Function<Record,OfferDetail> {
 
@@ -234,8 +272,10 @@ public class OfferDAO {
 									.setZip(record.getValue(RADDRESS.ZIP))
 							)
 					)
-					.setScope(record.getValue(SCOPE.DESCRIPTION))						
-					.setProject( record.getValue( PROJECT.NAME ))
+					.setScope(new Scope().setDescription(record.getValue(SCOPE.DESCRIPTION))
+							.setId(record.getValue(OFFER.SCOPE)))						
+					.setProject(new Project().setName(record.getValue( PROJECT.NAME))
+							.setId(record.getValue(OFFER.PROJECT)))
 					.setSupplier((Supplier) new Supplier().setId(record.getValue(OFFER.SUPPLIER)))
 					.setSeller((record.getValue(OFFER.SELLER) == null)
 							? null

@@ -158,9 +158,9 @@ public class OfferExcelAction extends AbsExcelAction implements Consumer<OfferDe
 		addCell( detail.getQuantity() );
 		addCell( detail.getPrice() );
 		addCell( detail.getDiscountExpression() );
-		addCell( detail.getOffer().getScope());
+		addCell( detail.getOffer().getScope().getDescription());
 //		addCell( detail.getOffer().getWorkPlace() );
-		addCell( detail.getOffer().getProject() );
+		addCell( detail.getOffer().getProject().getName() );
 		addCell( detail.getOffer().getSeller()!=null?detail.getOffer().getSeller().getRegistryName():null );
 
 		Integer productId = detail.getItem()!= null 

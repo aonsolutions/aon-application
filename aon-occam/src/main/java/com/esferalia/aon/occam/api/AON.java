@@ -1551,11 +1551,33 @@ public class AON {
 		}
 	}
 	
+	public static Offer insertOffer(String domainName, Integer domainId, String login, Offer offer) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getManagement().insertOffer(ctx, offer);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static Offer updateOffer(String domainName, Integer domainId, String login, Offer offer) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getManagement().updateOffer(ctx, offer);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static OfferDetail insertOfferDetail(String domainName, Integer domainId, String login, OfferDetail offerDetail) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getManagement().insertOfferDetail(ctx, offerDetail);
 		} finally {
 			if (ctx != null)
 				ctx.close();
