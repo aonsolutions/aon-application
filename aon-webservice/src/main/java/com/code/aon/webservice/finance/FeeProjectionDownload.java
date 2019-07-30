@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFPrintSetup;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -59,8 +58,8 @@ public class FeeProjectionDownload extends HttpServlet{
 		String type = parameters.get(MSG.TYPE);
 		
 		Date date = new Date();
-		if(parameters.get(MSG.DATE) != null && !MSG.EMPTY.equals(parameters.get(MSG.DATE)))
-			date = new Date(Long.parseLong(parameters.get(MSG.DATE)));
+		if(parameters.get("from") != null && !MSG.EMPTY.equals(parameters.get("from")))
+			date = new Date(Long.parseLong(parameters.get("from")));
 		
 		Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
 		
