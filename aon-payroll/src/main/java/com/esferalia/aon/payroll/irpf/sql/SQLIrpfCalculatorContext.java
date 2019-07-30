@@ -1145,16 +1145,17 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			}
 			
 			if ( irpfCtx.isFullStandard() ) {
-				nextIrpfBase = (salary.getIrpfBase() + salary.getExtraPayProration()) * size;
-				nextSocialSecurityContributons = salary
-						.getSocialSecurityContributions() * size;
+				nextIrpfBase = (
+						( salary.getIrpfBase() != null ? salary.getIrpfBase() : 0.00)
+						+ ( salary.getExtraPayProration() != null ? salary.getExtraPayProration() : 0.00 ) 
+						) * size;
+				nextSocialSecurityContributons = ( salary.getSocialSecurityContributions() != null ? salary.getSocialSecurityContributions() : 0.00 )  * size;
 				
 				break;
 			}
 			
-			nextIrpfBase += salary.getIrpfBase();
-			nextSocialSecurityContributons += salary
-					.getSocialSecurityContributions();
+			nextIrpfBase += ( salary.getIrpfBase() != null ? salary.getIrpfBase() : 0.00);
+			nextSocialSecurityContributons += ( salary.getSocialSecurityContributions() != null ? salary.getSocialSecurityContributions() : 0.00 );
 
 //			size--;
 
