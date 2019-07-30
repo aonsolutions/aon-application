@@ -751,7 +751,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			reportManager.setCollectionProvider(getSalariesProvider(
 					domain,
 					cost,
-					salaryTypes));
+					salaryTypes,
+					false));
 
 			Map<Object, Object> parameters = new HashMap<Object, Object>(
 					JR_HTML_EXPORTER_PARAMS);
