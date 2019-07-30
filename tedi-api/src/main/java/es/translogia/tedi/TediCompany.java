@@ -10,6 +10,8 @@ public class TediCompany {
 	private String document;
 	private TediAddress address;
 	private String iban;
+	private String plan;
+	private String bic;
 	
 	public TediCompany() {}
 	
@@ -18,6 +20,8 @@ public class TediCompany {
 		this.document = json.getString("document");
 		this.address = new TediAddress(json.optJSONObject("address"));
 		this.iban = json.getString("iban");
+		this.plan = json.getString("plan");
+		this.bic = json.getString("bic");
 	}
 	
 	public String getName() {
@@ -50,13 +54,33 @@ public class TediCompany {
 		this.iban = iban;
 		return this;
 	}
+	
+	public String getPlan() {
+		return plan;
+	}
+
+	public TediCompany setPlan(String plan) {
+		this.plan = plan;
+		return this;
+	}
+	
+	public String getBic() {
+		return bic;
+	}
+
+	public TediCompany setBic(String bic) {
+		this.bic = bic;
+		return this;
+	}
 
 	public JSONObject getJSON(){
 		return new JSONObject()
 				.put("name", getName())
 				.put("document", getDocument())
 				.put("address", getAddress())
-				.put("iban", getIban());
+				.put("iban", getIban())
+				.put("plan", getPlan())
+				.put("bic", getBic());
 	}
 
 }

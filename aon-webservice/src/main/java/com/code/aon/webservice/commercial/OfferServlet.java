@@ -18,9 +18,12 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.management.Offer;
+import com.esferalia.aon.occam.api.model.management.OfferDetail;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.type.OfferDetailStatus;
 import com.esferalia.aon.occam.api.model.type.OfferStatus;
 import com.esferalia.aon.occam.api.model.type.OfferType;
 import com.esferalia.aon.occam.api.model.type.TargetStatus;
@@ -52,74 +55,97 @@ public class OfferServlet extends HttpServlet{
 		
 		JSONObject json = Utils.getRequestJSON(req);
 		
-		System.out.println(req.getServerName());
-		
 		Domain domain = AON.getDomain(req.getServerName(), 1, "", f -> f.getNameProperty().eq(req.getServerName()));
 		
 		JSONObject object = new JSONObject();
-	
-		TediCompany tc = new TediCompany(json.getJSONObject("company"));
-		Optional<Target> tOpt = AON.getTarget(domain.getName(), domain.getId(), "", f ->
-			f.getDomainProperty().eq(domain.getId())
-			.and(f.getDocumentProperty().eq(tc.getDocument())));
-		Target target = null;
-		Scope scope = AON.getScopeStream(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId())).findFirst().get();;
-
-		if(!tOpt.isPresent()) {
-			Registry registry = AON.getRegistry(domain.getName(), domain.getId(), "", f -> 
+		
+		if(json.opt("evicertia") != null) {
+			Offer offer = AON.getOffer(domain.getName(), domain.getId(), "", f -> 
+					f.getDomainProperty().eq(domain.getId())
+					.and(f.getSeriesProperty().eq("TEDI"))
+					.and(f.getNumberProperty().eq(json.getInt("number"))));
+			offer.setExternalReference(json.getJSONObject("evicertia").getString("uniqueId"));
+			AON.updateOffer(domain.getName(), domain.getId(), "", offer);
+		} else {
+			TediCompany tc = new TediCompany(json.getJSONObject("company"));
+			Optional<Target> tOpt = AON.getTarget(domain.getName(), domain.getId(), "", f ->
 				f.getDomainProperty().eq(domain.getId())
 				.and(f.getDocumentProperty().eq(tc.getDocument())));
-			
-			if(registry.getId() == null) {
-				registry = new Registry()
-						.setDomain(domain.getId())
-						.setName(tc.getName())
-						.setDocument(tc.getDocument());
-				registry = AON.insertRegistry(domain.getName(), domain.getId(), "", registry);
+			Target target = null;
+			Scope scope = AON.getScopeStream(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId())).findFirst().get();;
+
+			if(!tOpt.isPresent()) {
+				Registry registry = AON.getRegistry(domain.getName(), domain.getId(), "", f -> 
+					f.getDomainProperty().eq(domain.getId())
+					.and(f.getDocumentProperty().eq(tc.getDocument())));
+				
+				if(registry.getId() == null) {
+					registry = new Registry()
+							.setDomain(domain.getId())
+							.setName(tc.getName())
+							.setDocument(tc.getDocument());
+					registry = AON.insertRegistry(domain.getName(), domain.getId(), "", registry);
+				}
+				
+				Target tar = new Target();
+				tar.setDomain(domain.getId());
+				tar.setAdvertising((short) 0);
+				tar.setWithholding((short) 0);
+				tar.setTransaction((short) 0);
+				tar.setSurcharge((short) 0);	
+				tar.setScope(scope.getId());
+				tar.setStatus(TargetStatus.ACTIVE);
+				tar.setId(registry.getId());
+					
+				target = AON.insertTarget(domain.getName(), domain.getId(), "", tar);
+			} else {
+				target = tOpt.get();
 			}
 			
-			Target tar = new Target();
-			tar.setDomain(domain.getId());
-			tar.setAdvertising((short) 0);
-			tar.setWithholding((short) 0);
-			tar.setTransaction((short) 0);
-			tar.setSurcharge((short) 0);	
-			tar.setScope(scope.getId());
-			tar.setStatus(TargetStatus.ACTIVE);
-			tar.setId(registry.getId());
-				
-			target = AON.insertTarget(domain.getName(), domain.getId(), "", tar);
-		} else {
-			target = tOpt.get();
-		}
-		
-		Offer o = AON.getOfferStream(domain.getName(), domain.getId(), "", f -> 
-			f.getDomainProperty().eq(domain.getId())
-			.and(f.getSeriesProperty().eq("TEDI")))
-			.max((i, j) -> i.getNumber().compareTo(j.getNumber())).orElse(new Offer().setNumber(0));
-		
-		Workplace wp = AON.getWorkplace(domain.getName(), domain.getId(), "", f-> f.getDomainProperty().eq(domain.getId()));
-		Offer offer = new Offer()
-				.setDomain(domain.getId())
-				.setIssueDate(new Date())
-				.setTarget(target)
-				.setType(OfferType.NORMAL)
-				.setSeries("TEDI")
-				.setStatus(OfferStatus.PENDING)
-				.setScope(scope)
-				.setNumber(o.getNumber() + 1)
-				.setVersion(1)
-				.setWorkPlace(wp);
-		
-		offer = AON.insertOffer(domain.getName(), domain.getId(), "", offer);
-//		OfferDetail offerDetail = new OfferDetail()
-//				.setOffer(offer)
-//				.setDescription("");
-//		
-//		offerDetail = AON.insertOfferDetail(domain.getName(), domain.getId(), "", offerDetail);
+			Offer o = AON.getOfferStream(domain.getName(), domain.getId(), "", f -> 
+				f.getDomainProperty().eq(domain.getId())
+				.and(f.getSeriesProperty().eq("TEDI")))
+				.max((i, j) -> i.getNumber().compareTo(j.getNumber())).orElse(new Offer().setNumber(0));
+			
+			Workplace wp = AON.getWorkplace(domain.getName(), domain.getId(), "", f-> f.getDomainProperty().eq(domain.getId()));
+			Offer offer = new Offer()
+					.setDomain(domain.getId())
+					.setIssueDate(new Date())
+					.setTarget(target)
+					.setType(OfferType.NORMAL)
+					.setSeries("TEDI")
+					.setStatus(OfferStatus.PENDING)
+					.setScope(scope)
+					.setNumber(o.getNumber() + 1)
+					.setVersion(1)
+					.setWorkPlace(wp)
+					.setBankAccount(tc.getIban())
+					.setBic(tc.getBic());
+			
+			offer = AON.insertOffer(domain.getName(), domain.getId(), "", offer);
 
-		object.put("number", offer.getNumber());
-		
+			Boolean isAnual = tc.getPlan().contains("A");
+			String plan = tc.getPlan().substring(0, tc.getPlan().length() - 1);
+			Item item = AON.getItem(domain.getName(), domain.getId(), "", f -> 
+				f.getDomainProperty().eq(domain.getId())
+				.and(f.getDetailProperty().eq("Plan " + plan))
+				.and(f.getDetail2Property().eq(isAnual ? "Anual" : "Mensual")));
+			
+			OfferDetail offerDetail = new OfferDetail()
+					.setOffer(offer)
+					.setItem(item)
+					.setDiscountExpression("0.0")
+					.setDomain(domain.getId())
+					.setLine((short) 1)
+					.setPrice(item.getPrice())
+					.setQuantity(1.0)
+					.setStatus(OfferDetailStatus.PENDING);
+
+			offerDetail = AON.insertOfferDetail(domain.getName(), domain.getId(), "", offerDetail);
+			
+			object.put("number", offer.getNumber());
+		}
+
 		resp.setContentType("application/json;charset=UTF-8");
 		Utils.addCorsHeader(resp);
 		PrintStream os = new PrintStream(resp.getOutputStream(), false, "UTF-8");
@@ -127,4 +153,5 @@ public class OfferServlet extends HttpServlet{
 		os.flush();
 		os.close();
 	}
+
 }

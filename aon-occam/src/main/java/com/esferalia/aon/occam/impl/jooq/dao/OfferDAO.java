@@ -209,13 +209,14 @@ public class OfferDAO {
 				.insertInto(OFFER, OFFER.DOMAIN, OFFER.EXTERNAL_REFERENCE, OFFER.ISSUE_DATE, OFFER.NUMBER, 
 						OFFER.PROJECT, OFFER.SCOPE, OFFER.SELLER, OFFER.SERIES, OFFER.SIGNED, OFFER.STATUS,
 						OFFER.SUPPLIER, OFFER.TARGET, OFFER.TYPE, OFFER.VERSION, OFFER.WORKPLACE,
+						OFFER.BANK_ACCOUNT, OFFER.BIC,
 						OFFER.CREATION_DATE, OFFER.CREATION_USER, OFFER.MODIFICATION_DATE, OFFER.MODIFICATION_USER)
 				.values(offer.getDomain(), offer.getExternalReference(), issueDate, offer.getNumber(), offer.getProject() != null ? offer.getProject().getId() : null, offer.getScope().getId(),
 						offer.getSeller() != null ? offer.getSeller().getId(): null, offer.getSeries(),signed , offer.getStatus().value(), 
 						offer.getSupplier() != null ? offer.getSupplier().getId(): null, offer.getTarget().getId(), offer.getType().value(), (Short) offer.getVersion().shortValue(), 
-						offer.getWorkPlace() != null ? offer.getWorkPlace().getId(): null, 
+						offer.getWorkPlace() != null ? offer.getWorkPlace().getId(): null, offer.getBankAccount(), offer.getBic(),
 						modificationDate, ctx.getUser(),modificationDate, ctx.getUser())
-				.execute();
+				.returning(OFFER.ID).fetchOne().getId();;
 		offer.setId(id);
 		return offer;
 	}
@@ -230,7 +231,7 @@ public class OfferDAO {
 		.values(offerDetail.getDescription(), offerDetail.getDiscountExpression(), offerDetail.getDomain(), offerDetail.getItem().getId(),
 				offerDetail.getLine(), offerDetail.getOffer().getId(), offerDetail.getPrice(), offerDetail.getQuantity(), offerDetail.getStatus().value(), 
 				modificationDate, ctx.getUser(),modificationDate, ctx.getUser())
-		.execute();
+		.returning(OFFER_DETAIL.ID).fetchOne().getId();
 		offerDetail.setId(id);
 		return offerDetail;
 	}

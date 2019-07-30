@@ -34,6 +34,9 @@ public class Offer implements Serializable {
 	private String externalReference;
 	private Boolean signed;
 	
+	private String bankAccount;
+	private String bic;
+
 	public Integer getId() {
 		return id;
 	}
@@ -136,8 +139,9 @@ public class Offer implements Serializable {
     public String getExternalReference() {
 		return externalReference;
 	}
-	public void setExternalReference(String externalReference) {
+	public Offer setExternalReference(String externalReference) {
 		this.externalReference = externalReference;
+		return this;
 	}
 	
 	public Boolean getSigned() {
@@ -146,9 +150,27 @@ public class Offer implements Serializable {
 	public Boolean isSigned() {
 		return signed;
 	}
-	public void setSigned(Boolean signed) {
+	public Offer setSigned(Boolean signed) {
 		this.signed = signed;
+		return this;
 	}
+	
+	public String getBankAccount() {
+		return bankAccount;
+	}
+	public Offer setBankAccount(String bankAccount) {
+		this.bankAccount = bankAccount;
+		return this;
+	}
+	
+	public String getBic() {
+		return bic;
+	}
+	public Offer setBic(String bic) {
+		this.bic = bic;
+		return this;
+	}
+	
 	public String getReferenceCode() {
     	String referenceCode = AonStringUtils.leftPad(Integer.toString(getNumber()), 6, '0');
     	referenceCode += '/' + getVersion();
