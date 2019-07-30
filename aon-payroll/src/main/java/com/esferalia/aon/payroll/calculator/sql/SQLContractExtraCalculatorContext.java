@@ -36,6 +36,7 @@ import com.esferalia.aon.payroll.calculator.SimpleContractPayment;
 import com.esferalia.aon.payroll.calculator.UndefinedContextVariablesException;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory.IExtraPayment;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
@@ -82,6 +83,18 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 
 	@Override
 	public Collection<IContractPayment> getContractPayments() throws AonException {
+		
+		SSRegimeType ssRegime = getSSRegime();
+		
+		if ( ssRegime == SSRegimeType.SELF_EMPLOYED ) {
+			addSalaryContractPayments();
+
+			Collection<IContractPayment> extraPayments = 
+					new FilterCollection<IContractPayment>(
+					getExtraPaymentFilter(), 
+					super.getContractPayments());
+			return extraPayments;
+		} // TODO: This should not be necessary!!!
 		
 		Collection<IContractPayment> monthlyQuotedPayments= getMonthlyQuotedPayments();
 		if ( monthlyQuotedPayments.size() == getMonths() ) 
