@@ -10,7 +10,7 @@ public class TediCompany {
 	private String document;
 	private TediAddress address;
 	private String iban;
-	private String plan;
+	private TediPlan plan;
 	private String bic;
 	
 	public TediCompany() {}
@@ -20,7 +20,7 @@ public class TediCompany {
 		this.document = json.getString("document");
 		this.address = new TediAddress(json.optJSONObject("address"));
 		this.iban = json.getString("iban");
-		this.plan = json.getString("plan");
+		this.plan = new TediPlan(json.getJSONObject("plan"));
 		this.bic = json.getString("bic");
 	}
 	
@@ -55,11 +55,11 @@ public class TediCompany {
 		return this;
 	}
 	
-	public String getPlan() {
+	public TediPlan getPlan() {
 		return plan;
 	}
 
-	public TediCompany setPlan(String plan) {
+	public TediCompany setPlan(TediPlan plan) {
 		this.plan = plan;
 		return this;
 	}

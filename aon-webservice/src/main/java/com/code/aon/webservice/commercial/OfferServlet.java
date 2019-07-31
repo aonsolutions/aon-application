@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -124,14 +125,15 @@ public class OfferServlet extends HttpServlet{
 			
 			offer = AON.insertOffer(domain.getName(), domain.getId(), "", offer);
 
-			Boolean isAnual = tc.getPlan().contains("A");
-			String plan = tc.getPlan().substring(0, tc.getPlan().length() - 1);
+			Boolean isAnual = tc.getPlan().getPeriod().equals("A");
+			String plan = tc.getPlan().getPlan();
 			Item item = AON.getItem(domain.getName(), domain.getId(), "", f -> 
 				f.getDomainProperty().eq(domain.getId())
 				.and(f.getDetailProperty().eq("Plan " + plan))
 				.and(f.getDetail2Property().eq(isAnual ? "Anual" : "Mensual")));
-			
+			Product p = AON.getProduct(domain.getName(), domain.getId(), "", f-> f.getIdProperty().eq(item.getProductId()));
 			OfferDetail offerDetail = new OfferDetail()
+					.setDescription(p.getName() + "[" + item.getDetail() + " " + item.getDetail2() + "]")
 					.setOffer(offer)
 					.setItem(item)
 					.setDiscountExpression("0.0")
