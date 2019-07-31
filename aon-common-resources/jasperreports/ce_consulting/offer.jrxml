@@ -751,7 +751,7 @@
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-126" x="2" y="108" width="63" height="23" uuid="76c82dd2-a593-43b3-a3b4-c4dc7f870c09">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					<printWhenExpression><![CDATA[$V{technicalEmail}!=null]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{technicalEmail}.getValue()!=null]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
@@ -760,7 +760,7 @@
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-127" x="65" y="108" width="194" height="23" uuid="45da3919-9afc-4df5-920c-bd67f14397f2">
-					<printWhenExpression><![CDATA[$V{technicalEmail}!=null]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{technicalEmail}.getValue()!=null]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
@@ -777,7 +777,7 @@
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-124" x="260" y="108" width="70" height="23" uuid="1bc5ea7e-5b50-46fb-ae33-7ebd889850e0">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<printWhenExpression><![CDATA[$V{technicalEmail}!=null]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{technicalEmail}.getValue()!=null]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
@@ -787,7 +787,7 @@
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-125" x="331" y="108" width="205" height="23" uuid="ae2b5bd9-89e1-4540-9c29-fca57138d194">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<printWhenExpression><![CDATA[$V{technicalEmail}!=null]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{technicalEmail}.getValue()!=null]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
