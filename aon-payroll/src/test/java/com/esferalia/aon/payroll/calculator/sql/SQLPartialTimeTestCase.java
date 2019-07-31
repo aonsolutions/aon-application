@@ -336,7 +336,7 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 		Date endDate = contract.getEndDate();
 		Date issueDate = endDate;
 		
-		int workedDays = get(endDate, Calendar.DAY_OF_MONTH);
+		int workedDays = Math.min(30,get(endDate, Calendar.DAY_OF_MONTH));
 		
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, issueDate, contract);
