@@ -192,7 +192,10 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 				connection, start, end, end, criteria);
 		ctx.next();
 		assertEquals(ctx, (double) ((get(end, DAY_OF_MONTH)
-				- contractStartDayOfMonth + 1 - 1)), add(contractStart, DAY_OF_MONTH,1), end, null);
+				- contractStartDayOfMonth + 1 - 1)), 
+				contractStart.compareTo(end) < 0 ? add(contractStart, DAY_OF_MONTH,1): contractStart, 
+				end, 
+				null);
 
 	}
 
@@ -1095,8 +1098,14 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 	protected void assertEquals(SQLContractSalaryCalculatorContext ctx,
 			Double value, Date start, Date end, Double monthDays)
 			throws UndefinedVariablesException, ExpressionException {
-		List<ITimedResult<Double>> workedDays = ctx.getExpressionContext()
-				.eval(format("%s", WORKED_DAYS), start, end, Double.class);
+		List<ITimedResult<Double>> workedDays = null;
+		try {
+			workedDays = ctx.getExpressionContext()
+					.eval(format("%s", WORKED_DAYS), start, end, Double.class);
+		} catch ( UndefinedVariablesException e) {
+			Assert.assertEquals(0.00, value);
+			return;
+		}
 
 		int months = 0;
 		for (Date date = getFirstDayOfMonth(start); date.compareTo(end) <= 0; date = add(

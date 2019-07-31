@@ -543,22 +543,29 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		.get()
 		;
 		
+		Date finBonif = add(contract.getStartDate(), YEAR, 2);
+		Date endDate = getLastDayOfMonth(add(getToday(), YEAR, 2));
+		
 		List<ContextData> cgcBases = datas.get(ContextVariable.CGC_BASE.getName());
-		Assert.assertEquals(2, cgcBases.size());
+		Assert.assertEquals(finBonif.before(endDate) ? 2: 1, cgcBases.size());
 		
 		Collections.sort(cgcBases, (d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
 		Assert.assertEquals(cgcBases.get(0).getStartDate(), getFirstDayOfMonth(add(getToday(), YEAR, 2)));
 		Assert.assertEquals(cgcBases.get(0).getEndDate(), add(getToday(), YEAR, 2));
-		Assert.assertEquals(cgcBases.get(1).getStartDate(), add(add(getToday(), YEAR, 2), DAY_OF_MONTH ,1));
-		Assert.assertEquals(cgcBases.get(1).getEndDate(), getLastDayOfMonth(add(getToday(), YEAR, 2)));
+		if ( cgcBases.size() > 1 ) {
+			Assert.assertEquals(cgcBases.get(1).getStartDate(), add(add(getToday(), YEAR, 2), DAY_OF_MONTH ,1));
+			Assert.assertEquals(cgcBases.get(1).getEndDate(), getLastDayOfMonth(add(getToday(), YEAR, 2)));
+		}
 		
 		List<ContextData> cgpBases = datas.get(ContextVariable.CGP_BASE.getName());
-		Assert.assertEquals(2, cgpBases.size());
+		Assert.assertEquals(finBonif.before(endDate) ? 2: 1, cgpBases.size());
 		Collections.sort(cgpBases, (d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
 		Assert.assertEquals(cgpBases.get(0).getStartDate(), getFirstDayOfMonth(add(getToday(), YEAR, 2)));
 		Assert.assertEquals(cgpBases.get(0).getEndDate(), add(getToday(), YEAR, 2));
-		Assert.assertEquals(cgpBases.get(1).getStartDate(), add(add(getToday(), YEAR, 2), DAY_OF_MONTH ,1));
-		Assert.assertEquals(cgpBases.get(1).getEndDate(), getLastDayOfMonth(add(getToday(), YEAR, 2)));
+		if ( cgcBases.size() > 1 ) {
+			Assert.assertEquals(cgpBases.get(1).getStartDate(), add(add(getToday(), YEAR, 2), DAY_OF_MONTH ,1));
+			Assert.assertEquals(cgpBases.get(1).getEndDate(), getLastDayOfMonth(add(getToday(), YEAR, 2)));
+		}
 		
 //		List<ContextData> structuralBases = datas.get(ContextVariable.STRUCTURAL_OVERTIME_BASE.getName());
 //		Assert.assertEquals(1, structuralBases.size());
