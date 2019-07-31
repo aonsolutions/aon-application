@@ -185,8 +185,9 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 					}
 				}).calculate(extraCtx);
 				
-				if ( extraPayments.isEmpty()  )
-					continue;
+				if ( extraPayments.isEmpty()  ) {
+					break;
+				}
 				
 				
 				SalaryRecord record = 
