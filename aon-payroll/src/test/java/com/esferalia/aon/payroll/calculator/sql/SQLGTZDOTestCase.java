@@ -37,6 +37,7 @@ import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
@@ -2638,6 +2639,9 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		// Month partial IT
 		startDate = getFirstDayOfMonth(add(getToday(), Calendar.MONTH, 1));
 		endDate = getLastDayOfMonth(startDate);
+
+		addData(aonContext, contract, startDate, endDate, "GARANTIZADO", "0.00");
+		
 		ctx = new SQLContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
@@ -2649,6 +2653,10 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				super.addPayment(0.00, quote, tax, "EXTRA", startDate, endDate, payment, context);
 			}
 		}).calculate(ctx);
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments())
+			System.out.println("-->" + payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
+					+ " (" + payment.getExpression() + ")");
 		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
 		Assert.assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
 		
@@ -2657,6 +2665,8 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 
 		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, get(getToday(),Calendar.YEAR), getLastDayOfYear(getToday()));
 		ExpressionContext expressionContext = ctx.getExpressionContext();
+		// TODO: Fix this
+		expressionContext.setVariable("GARANTIZADO", 0.00, ctx.getStartDate(), ctx.getEndDate());
 		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder(){
 			@Override
 			public void addPayment(Double amount, Double quote, Double tax, String description,
@@ -2788,6 +2798,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		// Month partial IT
 		startDate = getFirstDayOfMonth(add(getToday(), Calendar.MONTH, 1));
 		endDate = getLastDayOfMonth(startDate);
+		addData(aonContext, contract, startDate, endDate, "GARANTIZADO", "0.00");
 		ctx = new SQLContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
@@ -2813,6 +2824,9 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 
 		extra = getExtra(aonContext, agreement.getId(), "15/12");
 		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, get(getToday(), Calendar.YEAR), getLastDayOfYear(getToday()));
+		ExpressionContext expressionContext = ctx.getExpressionContext();
+		// TODO: Fix this
+		expressionContext.setVariable("GARANTIZADO", 0.00, ctx.getStartDate(), ctx.getEndDate());
 		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder(){
 			@Override
 			public void addPayment(Double amount, Double quote, Double tax, String description,
