@@ -141,6 +141,24 @@
 												value="#{bundle.aon_login_passwd}" />
 											<aon:inputText id="documentOnlineSign_password"
 												value="#{offer.documentOnlineSigner.password}" />
+												
+											<aon:outputLabel for="documentOnlineSign_signingType"
+												value="Tipo de firma" />
+											<aon:selectOneMenu id="documentOnlineSign_signType" layout="pageDirection"
+												value="#{offer.documentOnlineSigner.signingType}">
+												<f:selectItem itemValue="#{0}" 
+													itemLabel="Challenge" />
+												<f:selectItem itemValue="#{1}" 
+													itemLabel="EmailPin" />
+												<f:selectItem itemValue="#{2}" 
+													itemLabel="Handwriting" />
+												<f:selectItem itemValue="#{3}" 
+													itemLabel="MobilePin" />
+												<f:selectItem itemValue="#{4}" 
+													itemLabel="Password" />
+												<f:selectItem itemValue="#{5}" 
+													itemLabel="WebClick" />
+											</aon:selectOneMenu>
 <!-- 											
 											<aon:outputLabel for="documentOnlineSign_url"
 												value="URL" />

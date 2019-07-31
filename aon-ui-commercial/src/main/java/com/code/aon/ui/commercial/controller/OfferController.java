@@ -930,13 +930,13 @@ public class OfferController extends HeaderObjectController implements ISignatur
 		getSddMandate().setRegistry(offer.getTarget().getRegistry());
 		getSddMandate().setReference("PPTO. "+offer.getReferenceCode());
 		setDocumentOnlineSigner(new DocumentOnlineSigner());
-		getDocumentOnlineSigner().loadTestUrl();
+		getDocumentOnlineSigner().init();
 	}
 
 	public void onSendEmail(ActionEvent event) {
 		if(isDocumentOnlineSign()) {
 			try {
-				getDocumentOnlineSigner().sendData(getOffer(), isIncludeEmailOfferReport(), isIncludeEmailOfferAttach());
+				getDocumentOnlineSigner().sendData(getOffer(), isIncludeEmailOfferReport(), isIncludeEmailOfferAttach(), isIncludeEmailSddMandateReport());
 			} catch (Exception e) {
 				String msg = "Se ha producido un error al solicitar la firma digital online.";
 				LOGGER.error(msg, e);

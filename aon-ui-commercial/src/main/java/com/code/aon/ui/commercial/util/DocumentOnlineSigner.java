@@ -1,8 +1,10 @@
 package com.code.aon.ui.commercial.util;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -16,10 +18,12 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.event.AbortProcessingException;
 import javax.net.ssl.HttpsURLConnection;
 
 import org.apache.commons.io.FileUtils;
-import org.json.JSONArray;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,9 +38,13 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
+import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
+import com.code.aon.ui.finance.SddMandateObject;
+import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -52,11 +60,15 @@ public class DocumentOnlineSigner implements Serializable {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(DocumentOnlineSigner.class.getName());
 	
+	static final String REPORT_TEMPLATE_SDD_MANDATE = "sddMandate";
+
+	
 	static final String URL_ECERTIA = "https://app.ecertia.com/api/json/reply/EviSignSubmit";
 //	static final String URL_EVICERTIA = "https://app.evicertia.com/api/json/reply/EviSignSubmit";
 	
 	private String username;
 	private String password;
+	private Integer signingType;
 	private String url;
 	
 	public String getUsername() {
@@ -77,54 +89,110 @@ public class DocumentOnlineSigner implements Serializable {
 	public void setUrl(String url) {
 		this.url = url;
 	}
-	
-	public void loadTestUrl() {
-		setUrl(URL_ECERTIA);
-//		setUrl(URL_EVICERTIA);
+	public Integer getSigningType() {
+		return signingType;
+	}
+	public void setSigningType(Integer signingType) {
+		this.signingType = signingType;
 	}
 	
-	
-	public void sendData(Offer offer, boolean includeOffer, boolean includeOfferAttach) throws Exception {
-		
-		List<byte[]> list = new LinkedList<>();
-		if(includeOffer){
-			list.add(getOfferFile(offer).getData());
+	private String signingType() {
+		if(getSigningType()==0) {
+			return "Challenge";
+		} else if(getSigningType()==1) {
+			return "EmailPin";
+		} else if(getSigningType()==2) {
+			return "Handwriting";
+		} else if(getSigningType()==3) {
+			return "MobilePin";
+		} else if(getSigningType()==4) {
+			return "Password";
+		} else if(getSigningType()==5) {
+			return "WebClick";
 		}
-		if(includeOfferAttach){
-			for( AonFile aonFile : getOfferAttachemnts(offer) ) {
-				list.add(aonFile.getData());
+		return null;
+	}
+	
+	public void init() {
+		// Test Url
+		setUrl(URL_ECERTIA);
+		loadParams();
+	}
+	
+	private void loadParams() {
+		ApplicationParameter ap_username = AppParamUtil.getParameter("DOCUMENT_ONLINE_SIGN_username");
+		ApplicationParameter ap_password = AppParamUtil.getParameter("DOCUMENT_ONLINE_SIGN_password");
+		ApplicationParameter ap_signingType = AppParamUtil.getParameter("DOCUMENT_ONLINE_SIGN_signingType");
+		
+		if(ap_username!=null && ap_username.getValue().trim().length()>0
+				&& ap_password!=null && ap_password.getValue().trim().length()>0
+				&& ap_signingType!=null && ap_signingType.getValue().trim().length()>0
+				&& NumberUtils.isNumber(ap_signingType.getValue().trim())) {
+			setUsername(ap_username.getValue().trim());
+			setPassword(ap_password.getValue().trim());
+			setSigningType(Integer.parseInt(ap_signingType.getValue().trim()));
+		} else {
+			setUsername(null);
+			setPassword(null);
+			setSigningType(1);
+		}
+	}
+	
+	private void saveParams() {
+		AppParamUtil.insertParameter("DOCUMENT_ONLINE_SIGN_username", getUsername());
+		AppParamUtil.insertParameter("DOCUMENT_ONLINE_SIGN_password", getPassword());
+		AppParamUtil.insertParameter("DOCUMENT_ONLINE_SIGN_signingType", String.valueOf(getSigningType()));
+	}
+		
+	public void sendData(Offer offer, boolean includeOffer, boolean includeOfferAttach, boolean includeSddMandate) throws Exception {
+		if(StringUtils.isBlank(getUsername()) || StringUtils.isBlank(getPassword())) {
+			throw new AbortProcessingException("Las credenciales son necesarias.");
+		} else {
+			saveParams();
+			
+			List<byte[]> list = new LinkedList<>();
+			if(includeOffer){
+				list.add(getOfferFile(offer).getData());
 			}
-		}
-		RegistryMedia rmedia = AON.getRMedia(AonUtil.getDomainName(), offer.getDomain(), "", f -> 
-				f.getDomainProperty().eq(offer.getDomain())
-				.and(f.getRegistryProperty().eq(offer.getTarget().getId()))
-				.and(f.getMediaProperty().eq((byte) 4))
-				.and(f.getCommercialProperty().eq((byte) 1)));
-		String email = rmedia.getValue();
-		if(email == null || "".equals(email)) {
-			throw new Exception("El Cliente Potencial no tiene cuenta de correo electrónico comercial.");
-		}
-	
-		byte[] data = mergePdf(list);
-		byte[] encoded = Base64.getEncoder().encode(data);
-	
-		JSONObject json = new JSONObject();
-		json.put("lookupKey", "Evisign");
-		json.put("subject", "FIRMA");
-		json.put("document", new String(encoded));
-		JSONObject sp = new JSONObject();
-		sp.put("name", offer.getTarget().getRegistry().getName());
-		sp.put("address", email);
-		sp.put("signingMethod", "EmailPin");
-		json.put("signingParties", sp);
-		json.put("options", new JSONObject());
-		
-		JSONObject responseJson = postObject(json.toString());
-		if(responseJson.opt("uniqueId") != null) {
-			com.esferalia.aon.occam.api.model.management.Offer of = AON.getOffer(AonUtil.getDomainName(), offer.getDomain(), "", f -> f.getIdProperty().eq(offer.getId()));
-			of.setExternalReference( responseJson.getString("uniqueId"));
-//			of.setExternalReference( responseJson.getString("uniqueId"));
-			AON.updateOffer(AonUtil.getDomainName(), of.getDomain(), "", of);
+			if(includeOfferAttach){
+				for( AonFile aonFile : getOfferAttachemnts(offer) ) {
+					list.add(aonFile.getData());
+				}
+			}
+			if(includeSddMandate){
+				list.add(getSddMandate(offer).getData());
+			}
+			
+			RegistryMedia rmedia = AON.getRMedia(AonUtil.getDomainName(), offer.getDomain(), "", f -> 
+			f.getDomainProperty().eq(offer.getDomain())
+			.and(f.getRegistryProperty().eq(offer.getTarget().getId()))
+			.and(f.getMediaProperty().eq((byte) 4))
+			.and(f.getCommercialProperty().eq((byte) 1)));
+			String email = rmedia.getValue();
+			if(email == null || "".equals(email)) {
+				throw new Exception("El Cliente Potencial no tiene cuenta de correo electrónico comercial.");
+			}
+			
+			byte[] data = mergePdf(list);
+			byte[] encoded = Base64.getEncoder().encode(data);
+			
+			JSONObject json = new JSONObject();
+			json.put("lookupKey", "Evisign");
+			json.put("subject", "FIRMA");
+			json.put("document", new String(encoded));
+			JSONObject sp = new JSONObject();
+			sp.put("name", offer.getTarget().getRegistry().getName());
+			sp.put("address", email);
+			sp.put("signingMethod", signingType());
+			json.put("signingParties", sp);
+			json.put("options", new JSONObject());
+			
+			JSONObject responseJson = postObject(json.toString());
+			if(responseJson.opt("uniqueId") != null) {
+				com.esferalia.aon.occam.api.model.management.Offer of = AON.getOffer(AonUtil.getDomainName(), offer.getDomain(), "", f -> f.getIdProperty().eq(offer.getId()));
+				of.setExternalReference( responseJson.getString("uniqueId"));
+				AON.updateOffer(AonUtil.getDomainName(), of.getDomain(), "", of);
+			}
 		}
 	}
 	
@@ -167,6 +235,27 @@ public class DocumentOnlineSigner implements Serializable {
 			return files;
 		}
 		return Collections.emptyList();
+	}
+	
+	public AonFile getSddMandate(Offer offer) throws IOException, ReportException {
+		SddMandateObject sddMandateObject = new SddMandateObject();
+		sddMandateObject.setSignDate(offer.getDate());
+		sddMandateObject.setRegistry(offer.getTarget().getRegistry());
+		sddMandateObject.setReference("PPTO. "+offer.getReferenceCode());
+		
+		
+		AonFile aonFile = new AonFile();
+		File file = File.createTempFile( "ssdMandate-temp", "." + MimeType.MIME_PDF.getExtension() );
+		aonFile.setFile( file );
+		aonFile.setFileName( "Domiciliacion-Bancaria-SEPA" + "." + MimeType.MIME_PDF.getExtension() );
+		aonFile.setMimeType(MimeType.MIME_PDF);
+
+		ReportManager reportManager = new ReportManager();
+		reportManager.setCollectionProvider( sddMandateObject );
+		OutputStream out = new BufferedOutputStream( new FileOutputStream(file) );
+		reportManager.execute( out, REPORT_TEMPLATE_SDD_MANDATE );
+		out.close();
+		return aonFile;
 	}
 	
 	public static byte[] mergePdf(List<byte[]> attachList) throws IOException, DocumentException {
