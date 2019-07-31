@@ -1100,7 +1100,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		
 		int months = get(getToday(), Calendar.MONTH );
-		int days = get(getToday(), Calendar.DAY_OF_MONTH );
+		int days = Math.min(30, get(getToday(), Calendar.DAY_OF_MONTH ));
 		double decemberExtra = ( 1750.00 * 1.10 ) * ((months * 30) + days ) / 360;
 		int julyExtraMonths = (months >= 6 ? months -6 : months );
 		// Settle at 01/07, so we have two extras for July .
@@ -1178,7 +1178,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		
 		int months = get(getToday(), Calendar.MONTH );
-		int days = get(getToday(), Calendar.DAY_OF_MONTH );
+		int days = Math.min(30,get(getToday(), Calendar.DAY_OF_MONTH ));
 				
 		
 		
@@ -1268,7 +1268,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(settleCtx);
 		
 		int months = get(getToday(), Calendar.MONTH );
-		int days = get(getToday(), Calendar.DAY_OF_MONTH );
+		int days = Math.min(30, get(getToday(), Calendar.DAY_OF_MONTH ));
 		
 		double decemberExtra = ( 1750.00 * 1.10 ) * ((months * 30) + days ) / 360;
 
@@ -1507,7 +1507,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		
 		int months = get(getToday(), Calendar.MONTH );
-		int days = get(getToday(), Calendar.DAY_OF_MONTH );
+		int days = Math.min(30,get(getToday(), Calendar.DAY_OF_MONTH ));
 				
 		
 		
@@ -1755,7 +1755,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		double manualPayment = -100.00;
 		int months = get(getToday(), Calendar.MONTH );
-		int days = get(getToday(), Calendar.DAY_OF_MONTH );
+		int days = Math.min(30,get(getToday(), Calendar.DAY_OF_MONTH ));
 		double decemberExtra = ( 1750.00 * 1.10 ) * ((months * 30) + days ) / 360;
 		int julyExtraMonths = (months >= 6 ? months -6 : months );
 		// Settle at 01/07, so we have two extras for July .
