@@ -92,14 +92,19 @@ public class FeeProjectionDownload extends HttpServlet{
         HSSFSheet sheet = workbook.createSheet("Proyección de Cuotas");
 		sheet.getPrintSetup().setLandscape(true);
 		sheet.getPrintSetup().setPaperSize(HSSFPrintSetup.A4_PAPERSIZE); 
-        
-        rowIndex = printTitle(workbook, sheet, from, isPdf);
+		
+		CellStyle valueStyle = getValueStyle(workbook, isPdf);
+		CellStyle titleStyle = getTitleStyle(workbook, isPdf);
+		CellStyle doubleStyle = getDoubleStyle(workbook, isPdf);
+
+		rowIndex = printTitle(workbook, sheet, from, isPdf);
 		AON.getFeeStream(domain.getName(), domain.getId(), login, 
 				f -> StatDAO.getFeeFilter(from, to, domain.getId(), filterMap, f))
 		.sorted((c1,c2) -> c1.getCustomerName().compareTo(c2.getCustomerName()))
-		.forEach(fee -> rowIndex = printValues(workbook, sheet, domain, fee, from, rowIndex, isPdf));			
-		
-		printTotal(workbook, sheet, rowIndex, isPdf);
+		.forEach(fee -> rowIndex = printValues(workbook, sheet, domain, fee, from, rowIndex, isPdf, valueStyle, doubleStyle));			
+
+ 
+		printTotal(workbook, sheet, rowIndex, isPdf, titleStyle, doubleStyle);
     	for(Integer i = 0; i < 14; i++)
     		sheet.autoSizeColumn(i);
     	
@@ -138,10 +143,8 @@ public class FeeProjectionDownload extends HttpServlet{
 		return (month % period) == (bMonth % period);		
 	}
 	
-	private Integer printValues(HSSFWorkbook workbook, HSSFSheet sheet, Domain domain, Fee fee, Date from, Integer rowIndex, Boolean isPdf){
+	private Integer printValues(HSSFWorkbook workbook, HSSFSheet sheet, Domain domain, Fee fee, Date from, Integer rowIndex, Boolean isPdf,CellStyle style, CellStyle doubleStyle ){
 		Row row = sheet.createRow(rowIndex);
-		CellStyle style = getValueStyle(workbook, isPdf);      
-		CellStyle doubleStyle = getDoubleStyle(workbook, isPdf);
 		createCell(row, style, fee.getCustomerName(), 0);
 		createCell(row, style, fee.getDescription(), 1);
 		createCell(row, style, fee.getProductCode(), 2);
@@ -197,10 +200,10 @@ public class FeeProjectionDownload extends HttpServlet{
 		return d1.doubleValue()/d2.doubleValue();
 	}
 	
-	private Integer printTotal(HSSFWorkbook workbook, HSSFSheet sheet, Integer rowIndex, Boolean isPdf){
+	private Integer printTotal(HSSFWorkbook workbook, HSSFSheet sheet, Integer rowIndex, Boolean isPdf, CellStyle titleStyle, CellStyle doubleStyle){
 		Row row = sheet.createRow(rowIndex);		
-		CellStyle doubleStyle = getDoubleStyle(workbook, isPdf);      
-		CellStyle titleStyle = getTitleStyle(workbook, isPdf);
+      
+
 		createCell(row, titleStyle, "TOTAL", 0);
 		createCell(row, titleStyle, "", 1);
 		createCell(row, titleStyle, "", 2);
