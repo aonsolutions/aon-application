@@ -208,6 +208,14 @@ public class DBStock {
 				.and(INVENTORY_DETAIL.ITEM.in(idList.toArray(new Integer[idList.size()]))).execute();
 				insert.execute();
 			}
+			ctx.getDslContext()
+				.update(ITEM)
+				.set(ITEM.STATUS, (byte) 0)
+				.where(ITEM.DOMAIN.eq(domainId)
+					.and(ITEM.ID.in(ctx.getDslContext()
+						.select(STOCK.ITEM)
+						.from(STOCK)
+						.where(STOCK.DOMAIN.eq(domainId).and(STOCK.QUANTITY.gt(0.0))))));
 			return error;
 		}finally {
 			if (ctx != null) ctx.close();

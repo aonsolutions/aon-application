@@ -1048,6 +1048,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				Double n = (Double) value;
 				if(n < 0) return null;
 				stock.setQuantity(n);
+			} else if(type.equals(CellType.STRING) && !value.equals("")) {
+				Double n = Double.parseDouble(value.toString());
+				if(n < 0) return null;
+				stock.setQuantity(n);
 			}
 			break;
 		case "Detalle 1": case "Detail 1":
