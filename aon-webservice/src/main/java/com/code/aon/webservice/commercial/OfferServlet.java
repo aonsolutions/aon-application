@@ -67,7 +67,7 @@ public class OfferServlet extends HttpServlet{
 					.and(f.getNumberProperty().eq(json.getInt("number"))));
 			offer.setExternalReference(json.getJSONObject("evicertia").getString("uniqueId"));
 			AON.updateOffer(domain.getName(), domain.getId(), "", offer);
-		} else {
+		} else if(json.opt("company") != null) {
 			TediCompany tc = new TediCompany(json.getJSONObject("company"));
 			Optional<Target> tOpt = AON.getTarget(domain.getName(), domain.getId(), "", f ->
 				f.getDomainProperty().eq(domain.getId())
@@ -146,6 +146,9 @@ public class OfferServlet extends HttpServlet{
 			offerDetail = AON.insertOfferDetail(domain.getName(), domain.getId(), "", offerDetail);
 			
 			object.put("number", offer.getNumber());
+		} else {
+			System.out.println("¡¡EVICERTIA!!");
+			System.out.println(json.toString());
 		}
 
 		resp.setContentType("application/json;charset=UTF-8");
