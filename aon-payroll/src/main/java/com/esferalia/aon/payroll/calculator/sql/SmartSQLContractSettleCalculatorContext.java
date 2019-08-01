@@ -148,7 +148,7 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 					 && extraIssueDate.after(contractStartDate) ) {
 					extraStartDate  = AgreementExtra.parseAgreementDate(extra.getStartDate(), ++year);
 					if ( extraStartDate.after(settleEndDate))  
-						continue;  // Nothing to calculate
+						break;  // Nothing to calculate
 				}
 				
 				
@@ -156,7 +156,7 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 				SQLExtraSalaryCalculatorContext extraCtx = 
 						new SQLExtraSalaryCalculatorContext(getConnection(), extra.getId(), year, settleEndDate, getChargeDate(), criteria) ;
 				if ( !extraCtx.next() )
-					continue;
+					break;
 				
 				List<IContractPayment> extraPayments = new ArrayList<IContractPayment>(extras.size());
 				
@@ -185,9 +185,9 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 					}
 				}).calculate(extraCtx);
 				
-				if ( extraPayments.isEmpty()  ) {
+				if ( extraPayments.isEmpty()  )
 					break;
-				}
+				
 				
 				
 				SalaryRecord record = 
