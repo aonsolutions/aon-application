@@ -58,7 +58,7 @@ public class OfferServlet extends HttpServlet{
 		JSONObject json = Utils.getRequestJSON(req);
 		
 		Domain domain = AON.getDomain(req.getServerName(), 1, "", f -> f.getNameProperty().eq(req.getServerName()));
-		
+
 		JSONObject object = new JSONObject();
 		
 		if(json.opt("evicertia") != null) {
@@ -150,6 +150,15 @@ public class OfferServlet extends HttpServlet{
 		} else {
 			System.out.println("¡¡EVICERTIA!!");
 			System.out.println(json.toString());
+			if("EviSignSigned".equals(json.getString("EventType"))) {
+				Offer offer = AON.getOffer(domain.getName(), domain.getId(), "", f -> 
+					f.getDomainProperty().eq(domain.getId())
+					.and(f.getSeriesProperty().eq("TEDI"))
+					.and(f.getExternalReferenceProperty().eq(json.getString("EvidenceId"))));
+				
+				offer.setSigned(true);
+				AON.updateOffer(domain.getName(), domain.getId(), "", offer);
+			}			
 		}
 
 		resp.setContentType("application/json;charset=UTF-8");

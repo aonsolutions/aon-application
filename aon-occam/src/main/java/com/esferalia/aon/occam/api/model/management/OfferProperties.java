@@ -27,4 +27,6 @@ public interface OfferProperties {
 	Property<String> getSeriesProperty();
 	Property<Integer> getNumberProperty();
 	Property<Integer> getTargetProperty();
+	
+	Property<String> getExternalReferenceProperty();
 }

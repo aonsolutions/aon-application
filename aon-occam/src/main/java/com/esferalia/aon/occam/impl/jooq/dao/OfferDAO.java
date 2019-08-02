@@ -80,6 +80,8 @@ public class OfferDAO {
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(OFFER.TYPE);}
 
 		@Override public Property<Byte> getSignedProperty() {return new FilterDAO.PropertyDAO<>(OFFER.SIGNED);}
+
+		@Override public Property<String> getExternalReferenceProperty() {return new FilterDAO.PropertyDAO<>(OFFER.EXTERNAL_REFERENCE);}
 	}
 
 	private static final Registry SELLER_ALIAS = REGISTRY.as("seller");
