@@ -193,8 +193,6 @@ public class TediParser {
 		SERIES	( (ctx, aonCtx,result) -> {
 			if (result.getTedi().isEmitida()) {
 				result.getInvoice().setSeries(result.getTedi().getSeries());
-				System.out.println("(1) SERIES ...: " + result.getTedi().getUuid() + result.getInvoice().getSeries()+ "/" + result.getInvoice().getNumber()
-						+ " (" + result.getTedi().getSeries()  + "/" + result.getTedi().getNumber() + ")");
 			}
 		}), 
 		NUMBER	( (ctx, aonCtx,result) -> {
@@ -286,12 +284,7 @@ public class TediParser {
 		ai.setWorkplace(aonCtx.getWorkplaces().get(0).getId());
 		// ----
 		TediResult result = new TediResult(tedi, ai);
-		if (tedi.isEmitida()) {
-			System.out.println("EMITIDA");
-		}
 		TediInvoiceTransfer.toAon(ctx, aonCtx,result);
-		System.out.println("(2) SERIES ...: " + result.getTedi().getUuid() + " " + result.getInvoice().getSeries()+ "/" + result.getInvoice().getNumber()
-				+ " (" + result.getTedi().getSeries()  + "/" + result.getTedi().getNumber() + ")");
 		fillVats(ctx, aonCtx, result);
 		ai.setAccountEntry(getEntryBase(ctx,aonCtx,ai));
 		TediValidator.validateInvoice(result);
