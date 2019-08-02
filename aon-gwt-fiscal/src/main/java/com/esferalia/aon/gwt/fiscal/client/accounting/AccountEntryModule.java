@@ -270,8 +270,17 @@ public class AccountEntryModule extends MainEntryPoint {
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		this.onModuleLoad(root,getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), null, null);
 	}
-	
 	public void onModuleLoad(HasWidgets parentWidget, String domainName,String user, int domain, Integer accountEntryId, ModuleCallback<AccountEntry> externalCallback ) {
+		this.onModuleLoad(parentWidget,domainName,user, domain, accountEntryId, null, null ,externalCallback );
+	}
+	
+	public void onModuleLoad(HasWidgets parentWidget, String domainName,String user, int domain, AonConfiguration aonCtx,AccountingInvoice ai, ModuleCallback<AccountEntry> externalCallback ) {
+		this.onModuleLoad(parentWidget,domainName,user, domain, null,aonCtx,ai,externalCallback );
+	}
+	
+	private void onModuleLoad(HasWidgets parentWidget, String domainName,String user, int domain, Integer accountEntryId,
+			AonConfiguration aonCtx,AccountingInvoice ai,
+			ModuleCallback<AccountEntry> externalCallback ) {
 		this.currentDomainName = domainName;
 		this.currentDomainId = domain;
 		this.currentUser = user;
@@ -338,62 +347,92 @@ public class AccountEntryModule extends MainEntryPoint {
 			}
 			
 		});
-		
-		commonService.getAonConfiguration(getDomainName(), getDomainId(),
-				new AsyncCallback<AonConfiguration>() {
-					@Override
-					public void onSuccess(AonConfiguration result) {
-						configuration = result;
-						
-						if (configuration.getPeriods() != null && !configuration.getPeriods().isEmpty()) {
-							period.fill(configuration.getPeriods());
-						} else {
-							if (accountEntryId == null) {
-								invalidateModule(AON.MSG.noActiveAccountPeriod());
-							}
-						}
-
-						if (configuration.hasActivities() && activity.getItemCount() == 0) {
-							activity.setVisible(true);
-							activity.addItem("-- Todas --", "");
-							activity.setSelectedIndex(0);
-							int i = 1;
-							for (EnterpriseActivity ea : configuration.getActivities()) {
-								activity.addItem(ea.getDescription(), AonNumberUtils.toString( ea.getId()));
-								if (ea.isPrincipal()) {
-									activity.setSelectedIndex(i);
-									activity.setItemText(i, ea.getDescription() + AonStringUtils.ASTERISK);
-								}
-								i++;
-							}
-						} else {
-							activity.setVisible(false);
-						}
-						confidential.setVisible(configuration.getUser().hasConfidentialityRole());
-						
-						journalPanel = new JournalPanelReport(getDomainName(), getUser(), getDomainId(), JOURNAL_PANEL_TAB_OFFSET, result);
-						journalPanel.addSelectionHandler(new AccountEntrySelectionHandler() {
-							@Override
-							public void onSelection(AccountEntrySelectionEvent event) {
-								final AccountEntry entry = event.getSelectedItem();
-								selectEntry(entry.getId());
-							}
-						});
-						journalPanelContainer.setWidget(journalPanel);
-						if (accountEntryId != null) {
-							selectEntry(accountEntryId);
-						} else {
-							reset();
-						}
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						invalidateModule(AON.MSG.noActiveAccountPeriod() + "[Interno: " + caught.getMessage()+ "]");
-					}
-				});
+		if (aonCtx != null) {
+			loadModule(aonCtx,accountEntryId,ai);
+		} else {
+			commonService.getAonConfiguration(getDomainName(), getDomainId(),
+					new AsyncCallback<AonConfiguration>() {
+				@Override
+				public void onSuccess(AonConfiguration result) {
+					loadModule(result, accountEntryId,ai);
+				}
+				@Override
+				public void onFailure(Throwable caught) {
+					invalidateModule(AON.MSG.noActiveAccountPeriod() + "[Interno: " + caught.getMessage()+ "]");
+				}
+			});
+			
+		}
 	}
 
+	private void loadModule(AonConfiguration aonCtx, Integer accountEntryId, AccountingInvoice ai) {
+		loadModule(aonCtx, (accountEntryId != null) || (ai !=null) );
+		if (accountEntryId != null) {
+			selectEntry(accountEntryId);
+		} else if (ai  != null) {
+			final IContentAttachCallback wizardCbk = new IContentAttachCallback() {
+				@Override
+				public void onAttach() {
+					AccountEntryModule.this.wizardContent.select(null,ai,new ISelectionCallback() {
+						
+						@Override
+						public void onSuccess() {
+							syncCurrent();
+						}
+						
+						@Override
+						public void onFailure() {
+							invalidateModule("");
+						}
+					});
+				}
+			};
+			selectWizardContent(null, ai);
+			// createAndAttachInvoicePanel( wizardCbk );
+		} else {
+			reset();
+		}
+	}
+	private void loadModule(AonConfiguration result, boolean editing) {
+		configuration = result;
+		
+		if (configuration.getPeriods() != null && !configuration.getPeriods().isEmpty()) {
+			period.fill(configuration.getPeriods());
+		} else {
+			if (!editing) {
+				invalidateModule(AON.MSG.noActiveAccountPeriod());
+			}
+		}
+
+		if (configuration.hasActivities() && activity.getItemCount() == 0) {
+			activity.setVisible(true);
+			activity.addItem("-- Todas --", "");
+			activity.setSelectedIndex(0);
+			int i = 1;
+			for (EnterpriseActivity ea : configuration.getActivities()) {
+				activity.addItem(ea.getDescription(), AonNumberUtils.toString( ea.getId()));
+				if (ea.isPrincipal()) {
+					activity.setSelectedIndex(i);
+					activity.setItemText(i, ea.getDescription() + AonStringUtils.ASTERISK);
+				}
+				i++;
+			}
+		} else {
+			activity.setVisible(false);
+		}
+		confidential.setVisible(configuration.getUser().hasConfidentialityRole());
+		
+		journalPanel = new JournalPanelReport(getDomainName(), getUser(), getDomainId(), JOURNAL_PANEL_TAB_OFFSET, result);
+		journalPanel.addSelectionHandler(new AccountEntrySelectionHandler() {
+			@Override
+			public void onSelection(AccountEntrySelectionEvent event) {
+				final AccountEntry entry = event.getSelectedItem();
+				selectEntry(entry.getId());
+			}
+		});
+		journalPanelContainer.setWidget(journalPanel);
+	}
+	
 	protected void invalidateModule(String msg) {
 		errors = new ErrorPanel();
 		showError(msg);

@@ -448,7 +448,7 @@ public class AccountingInvoiceDAO {
 		return vat;
 	}
 
-	private static LinkedList<Account> getSuggestedAccounts(final AONContext ctx, Integer registry) {
+	public static LinkedList<Account> getSuggestedAccounts(final AONContext ctx, Integer registry) {
 		return ctx.getDslContext()
 			.selectDistinct( )	
 			.from(				
@@ -475,12 +475,12 @@ public class AccountingInvoiceDAO {
 	}
 	
 
-	private static class InvoiceRegistryInitializer implements IAccountingRegistryTypeVisitor {
+	public static class InvoiceRegistryInitializer implements IAccountingRegistryTypeVisitor {
 		private AONContext ctx;
 		private Invoice invoice;
 		private AonConfiguration config;
 		
-		private InvoiceRegistryInitializer(AONContext ctx,Invoice invoice,AonConfiguration config) {
+		public InvoiceRegistryInitializer(AONContext ctx,Invoice invoice,AonConfiguration config) {
 			this.ctx = ctx;
 			this.invoice = invoice;
 			this.config = config;

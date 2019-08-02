@@ -93,11 +93,8 @@
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_accountLedger"
 										action="gwt_accountLedger-acc"
-										title="#{bundle.accounting_ledger_module}">
-										<aon:outputText
-											styleClass="aon-fiscal-link-label aon-icon-beta-text"
-											style="margin-left: 5px; padding-left: 20px;"
-											value="#{bundle.accounting_ledger_module}" />
+										title="#{bundle.accounting_ledger_module}"
+										value="#{bundle.accounting_ledger_module}" >
 									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
@@ -238,6 +235,14 @@
 										actionListener="#{invoiceIntegrity.onStart}"
 										value="#{bundle.finance_invoice_integrity_module}" />
 								</aon:div>
+<!-- 
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_tediImport-child"
+										action="gwt_tediImport-child"
+										title="tEDI center"
+										value="tEDI center" />
+								</aon:div>
+ -->
 							</aon:div>
 						</aon:panelGrid>
 

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module rename-to='Occam'>
+	
 	<inherits name="com.esferalia.aon.watson.Watson" />
+	<inherits name="es.translogia.tedi.Tedi" />
+	
 	<source path='model' />
 </module>

@@ -114,12 +114,13 @@ public class InvoiceValidation {
 					.from(INVOICE)
 					.where(INVOICE.DOMAIN.eq(inv.getDomain()))
 					.and(AonStringUtils.isBlank(inv.getSeries())
-							?INVOICE.SERIES.isNull().or(DSL.trim(INVOICE.SERIES).eq(""))
-							:INVOICE.SERIES.eq(inv.getSeries()))
+						?INVOICE.SERIES.isNull().or(DSL.trim(INVOICE.SERIES).eq(""))
+						:INVOICE.SERIES.eq(inv.getSeries()))
 					.and(INVOICE.NUMBER.eq(inv.getNumber()))
 					.and(inv.getId() == null ? DSL.trueCondition() : INVOICE.ID.ne(inv.getId()))
 					.and(INVOICE.TYPE.eq(inv.getType().value())))) {
-			throw new AonCoreException(AonError.INVOICE_DUPLICATED_SERIES_NUMBER.getMessage());
+			throw new AonCoreException(AonError.INVOICE_DUPLICATED_SERIES_NUMBER.getMessage() 
+				+ "["+ (AonStringUtils.isBlank(inv.getSeries())? "" : (inv.getSeries() + "/") + inv.getNumber()) +"]");
 		}
 	};
 

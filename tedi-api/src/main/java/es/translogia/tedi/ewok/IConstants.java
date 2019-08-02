@@ -1,0 +1,65 @@
+package es.translogia.tedi.ewok;
+
+public interface IConstants {
+
+	String AMOUNT = "amount";
+	String ACTIVE = "active";
+	String ADDRESS = "address";
+	String ALIAS = "alias";
+	String BASE = "base";
+	String BIC = "bic";
+	String CATEGORY = "category";
+	String CITY = "city";
+	String CODE = "code";
+	String COMPANY = "company";
+	String CONTENT_TYPE = "content_type";
+	String COUNTRY = "country";
+	String DATE = "date";
+	String DESCRIPTION = "description";
+	String DETAILS = "details";
+	String DISCOUNT = "discount";
+	String DOCUMENT = "document";
+	String DOCUMENT_COUNTRY = "document_country";
+	String DUE_DATE = "due_date";
+	String EMAIL = "email";
+	String FILE = "file";
+	String FILE_NAME = "fileName";
+	String FINANCES = "finances";
+	String FROM = "from";
+	String IBAN = "iban";
+	String ID = "id";
+	String INVESTMENT = "investment";
+	String NAME = "name";
+	String NUMBER = "number";
+	String OLD_STATUS = "oldStatus";
+	String PAY_METHOD = "pay_method";
+	String PENDING = "pending";
+	String PERCENTAGE = "percentage";
+	String PERIOD = "period";
+	String PLAN = "plan";
+	String POSTAL_CODE = "postal_code";
+	String PRICE = "price";
+	String PROVINCE = "province";
+	String QUANTITY = "quantity";
+	String QUOTA = "quota";
+	String RDOCUMENT = "rdocument";
+	String RNAME = "rname";
+	String RECEIVER = "receiver";
+	String REFERENCE = "reference";
+	String SENDER = "sender";
+	String SERIES = "series";
+	String SOURCE = "source";
+	String SURCHARGE = "surcharge";
+	String SURCHARGE_QUOTA = "surcharge_quota";
+	String STATUS = "status";
+	String TAX = "tax";
+	String TAXES = "taxes";
+	String TOTAL = "total";
+	String THUMB_URL = "thumbUrl";
+	String TRANSACTION = "transaction";
+	String TYPE = "type";
+	String URL = "url";
+	String UUID = "uuid";
+	String VAT = "vat";
+	
+}

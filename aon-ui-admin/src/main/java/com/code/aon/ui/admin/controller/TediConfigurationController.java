@@ -15,7 +15,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 
-import es.translogia.tedi.TediUtils;
+import es.translogia.tedi.baloo.Tedi;
 
 public class TediConfigurationController implements IAdminConstants, Serializable {
 	
@@ -68,7 +68,8 @@ public class TediConfigurationController implements IAdminConstants, Serializabl
 	
 	public void connect(ActionEvent event){
 		Domain domain = AON.getDomain(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "");
-		TediUtils tedi = TediUtils.getInstance(email, password);
+//		TediUtils tedi = TediUtils.getInstance(email, password);
+		Tedi tedi = Tedi.login(email, password);
 		setToken(tedi.getToken());
 		
 		DataResponse dr = new DataResponse()

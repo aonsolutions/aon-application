@@ -693,6 +693,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			if (wrp != null) {
 				AccountingInvoice ai = (AccountingInvoice) wrp;
 				if (ai.getInvoice() != null) {
+					setWrapper(ai);
 					select(getWrapper(),cbk);
 				} else {
 					setWrapper(ai);

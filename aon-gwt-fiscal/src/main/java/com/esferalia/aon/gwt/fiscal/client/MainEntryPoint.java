@@ -32,6 +32,7 @@ import com.esferalia.aon.gwt.fiscal.client.mod347.Model347;
 import com.esferalia.aon.gwt.fiscal.client.mod349.Model349;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
 import com.esferalia.aon.gwt.fiscal.client.mod390HF.Model390HF;
+import com.esferalia.aon.gwt.fiscal.client.tedi.TediCenter;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
@@ -84,6 +85,10 @@ public class MainEntryPoint implements EntryPoint {
 	private static final String ACC_ACCOUNTING_UTILITIES_ENTRY_POINT = "AccountingUtilities";
 	private static final String ACC_ACCOUNTING_BALANCE_REPORT_ENTRY_POINT = "AccountBalanceReport";
 	private static final String ACC_ACCOUNTING_CONSOLIDATED_BALANCE_REPORT_ENTRY_POINT = "AccountConsolidatedBalanceReport";
+	//
+	//    ================================================================== TEDI
+	//
+	private static final String TEDI_CENTER_POINT = "TediCenter";
 	
 	@Override
 	public void onModuleLoad() {
@@ -553,7 +558,7 @@ public class MainEntryPoint implements EntryPoint {
 				
 			});
 		} else if ( entryPoint.equalsIgnoreCase(ACC_OPERATION_ENTRY_POINT)) {
-			GWT.runAsync(OperationReport.class, new RunAsyncCallback() {
+			GWT.runAsync(TediCenter.class, new RunAsyncCallback() {
 
 				@Override
 				public void onFailure(Throwable reason) {
@@ -564,6 +569,21 @@ public class MainEntryPoint implements EntryPoint {
 				public void onSuccess() {
 					OperationReport accountOperationReport = new OperationReport(getCurrentDomainName(),getCurrentDomain(),getCurrentUser());
 					accountOperationReport.onModuleLoad();
+				}
+				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(TEDI_CENTER_POINT)) {
+			GWT.runAsync(TediCenter.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					TediCenter tediCenter = new TediCenter(getCurrentDomainName(),getCurrentDomain(),getCurrentUser());
+					tediCenter.onModuleLoad();
 				}
 				
 			});

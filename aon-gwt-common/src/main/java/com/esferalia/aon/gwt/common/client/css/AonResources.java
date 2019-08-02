@@ -144,6 +144,9 @@ public interface AonResources extends ClientBundle, Images {
 	@Source("images/aon-timer.gif")
 	ImageResource aonTimer();
 	
+	@Source("images/logo-tedi.png")
+	ImageResource aonTediTimer();
+	
 	@Source("images/aon-aeat-header-image.png")
 	ImageResource aonAeatHeaderImage();
 	@Source("images/aon-aeat.png")

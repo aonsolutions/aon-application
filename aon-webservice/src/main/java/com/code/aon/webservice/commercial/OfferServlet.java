@@ -29,7 +29,8 @@ import com.esferalia.aon.occam.api.model.type.OfferStatus;
 import com.esferalia.aon.occam.api.model.type.OfferType;
 import com.esferalia.aon.occam.api.model.type.TargetStatus;
 
-import es.translogia.tedi.TediCompany;
+import es.translogia.tedi.ewok.TediCompany;
+import es.translogia.tedi.json.TediCompanyJSON;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "OfferServlet", urlPatterns = {"/offer/*",
@@ -68,7 +69,7 @@ public class OfferServlet extends HttpServlet{
 			offer.setExternalReference(json.getJSONObject("evicertia").getString("uniqueId"));
 			AON.updateOffer(domain.getName(), domain.getId(), "", offer);
 		} else if(json.opt("company") != null) {
-			TediCompany tc = new TediCompany(json.getJSONObject("company"));
+			TediCompany tc = TediCompanyJSON.fromJSON(json.getJSONObject("company"));
 			Optional<Target> tOpt = AON.getTarget(domain.getName(), domain.getId(), "", f ->
 				f.getDomainProperty().eq(domain.getId())
 				.and(f.getDocumentProperty().eq(tc.getDocument())));

@@ -36,18 +36,17 @@
 			<aon:div styleClass="aon-scroll-area" style="padding-bottom: 0;">
 			
 				<aon:panelGrid id="portalAccessGrid" columns="2">
-
+<!-- 
 					<aon:outputLabel for="Tedi_active"
 						value="#{bundle.aon_active}" />
 					<aon:selectBooleanCheckbox id="Tedi_active"
 						value="#{tediConfiguration.active}"
 						actionListener="#{tediConfiguration.update}" />
-						
+ -->
 					<aon:outputLabel for="Tedi_status"
 						value="#{bundle.aon_status}" />
 					<aon:outputLabel id="Tedi_status"
 						styleClass="#{(tediConfiguration.hasToken()) ? ('aon-icon-point-green aon-icon') : ('aon-icon-point-gray aon-icon')} "  
-						
 						value="#{tediConfiguration.status}" />
 
 					<aon:outputLabel for="Tedi_email"
@@ -65,6 +64,14 @@
 						value="#{tediConfiguration.password}" />	
 
 				</aon:panelGrid>
+				<aon:div rendered="#{tediConfiguration.hasToken()}"
+					style="margin-top: 20px; margin-left: 10px;">
+					<aon:commandButton id="gwt_tediImport-child"
+						style="padding: 10px 10px 10px 10px !important; "
+						action="gwt_tediImport-child"
+						title="Acceso a tEDI center"
+						value="Acceso a tEDI center" />
+				</aon:div>
 			</aon:div>
 
 		</aon:form>

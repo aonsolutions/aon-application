@@ -513,6 +513,10 @@ input[type="checkbox"]:focus + label {
 	border: none;
 }
 
+.aon-border-none-important {
+	border: none !important;
+}
+
 .aon-background-disabled {
 	background-color: #EEE;
 }
@@ -891,6 +895,39 @@ input[type="checkbox"]:focus + label {
 	vertical-align: middle;
 	color: #003399;
 	border: solid #003399 1px;
+}
+
+@sprite .aon-tedi-timer {
+	gwt-image: "aonTediTimer";
+	background-color: transparent;
+	background-repeat: no-repeat;
+	background-position: 10px center;
+	background-attachment: scroll;
+	height: 150px;
+	width: 250px;
+	padding-left: 160px;
+	padding-top: 20px;
+	font-weight: bold;
+	vertical-align: middle;
+	color: #003399;
+	border: solid #003399 1px;
+}
+
+@sprite .aon-tedi-no-data {
+	gwt-image: "aonTediTimer";
+	background-color: transparent;
+	background-repeat: no-repeat;
+	background-position: 10px center;
+	background-attachment: scroll;
+	width: 250px;
+	padding-left: 160px;
+	padding-top: 20px;
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+	font-weight: bold;
+	vertical-align: middle;
+	color: #003399;
 }
 
 @sprite .aon-changed {

@@ -4,6 +4,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
@@ -70,7 +71,7 @@ public class AccountEntryPrinter {
 		buf.append(AON.MSG.journal());
 		buf.append(AonStringUtils.COLON);
 		buf.append(AonStringUtils.SPACE);
-		buf.append(AonStringUtils.rightPad(("" + entry.getJournal()),10));
+		buf.append(AonStringUtils.rightPad(entry.getJournal()==null?"????":AonNumberUtils.toString( entry.getJournal() ),10));
 		buf.append(AonStringUtils.SPACE);
 		if (AonStringUtils.isNotBlank(entry.getComments())) {
 			buf.append("[");

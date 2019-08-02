@@ -3179,6 +3179,9 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Asientos contables")
 	String accountEntries();
  	
+ 	@DefaultMessage("Previsualizar asiento")
+	String previewAccountEntry();
+ 	
  	@DefaultMessage("Cuenta contable")
  	String account();
  	
@@ -3668,5 +3671,6 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("M\u00E1s recientes primero")
 	String newersFirst();
+
 }
 

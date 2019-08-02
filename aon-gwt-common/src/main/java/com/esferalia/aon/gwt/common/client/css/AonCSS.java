@@ -447,7 +447,10 @@ public interface AonCSS extends CssResource {
 
 	@ClassName("aon-border-none")
 	String aonBorderNone();
-
+	
+	@ClassName("aon-border-none-important")
+	String aonBorderNoneImportant();
+	
 	@ClassName("aon-noborder-top")
 	String aonNoborderTop();
 	
@@ -530,6 +533,12 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-timer")
 	String aonTimer();
 
+	@ClassName("aon-tedi-timer")
+	String aonTediTimer();
+	
+	@ClassName("aon-tedi-no-data")
+	String aonTediNoData();
+	
 	@ClassName("aon-icon-aeat")
 	String aonIconAeat();
 	
