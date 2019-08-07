@@ -434,15 +434,18 @@ public class TediCenter extends MainEntryPoint {
 		PopupPanel popup = showPopupPanel();
 		onRefresh(popup);
 	}
-
 	protected void onAcceptAll() {
-		PopupPanel popup = showPopupPanel();
 		LinkedList<TediResult> accepted = new LinkedList<TediResult>(); 
 		for ( TediResult result : resultList) {
 			if (result.isChecked()){
 				accepted.add(result);
 			}
 		}
+		onAcceptAll(accepted);
+	}
+	
+	private void onAcceptAll(LinkedList<TediResult> accepted) {
+		PopupPanel popup = showPopupPanel();
 		SERVICE.putInvoices(getDomainName(), getUser(), getDomain(), accepted, new AsyncCallback<LinkedList<TediResult>>() {
 
 			@Override
@@ -623,7 +626,7 @@ public class TediCenter extends MainEntryPoint {
 						
 						@Override
 						public void onClick(ClickEvent event) {
-							showEntry(entry.getDomain(), result.getAccountingInvoice(), null);
+							showEntry(entry.getDomain(), result);
 						}
 					});
 					entriesPanel.add(entryPanel );
@@ -681,7 +684,7 @@ public class TediCenter extends MainEntryPoint {
 		}
 	}
 
-	private void showEntry(int domain,AccountingInvoice ai, ModuleCallback<AccountEntry> callback) {
+	private void showEntry(int domain,TediResult result) {
 		CustomPopup entryDialog = new CustomPopup();
 		entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
 		entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
@@ -690,18 +693,17 @@ public class TediCenter extends MainEntryPoint {
 		entryDialog.setModal(true);
 		entryDialog.setCaption(AON.MSG.accountEntries());
 		AccountEntryModule module = new AccountEntryModule();
+		AccountingInvoice ai = result.getAccountingInvoice();
 		module.onModuleLoad(entryDialog, getCurrentDomainName(), getCurrentUser(), domain, configuration, ai, new ModuleCallback<AccountEntry>() {
 			
 			@Override
 			public void onRemove(AccountEntry removed) {
 				entryDialog.hide();
-				if (callback != null) {
-					callback.onRemove(removed);
-				}
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {}
+			public void onFailure(Throwable caught) {
+			}
 			
 			@Override
 			public void onExit() {
@@ -710,10 +712,11 @@ public class TediCenter extends MainEntryPoint {
 			
 			@Override
 			public void onChange(AccountEntry changed) {
+				result.setAon(null);
+				LinkedList<TediResult> accepted = new LinkedList<TediResult>(); 
+				accepted.add(result);
+				onAcceptAll(accepted);
 				entryDialog.hide();
-				if (callback != null) {
-					callback.onRemove(changed);
-				}
 			}
 		});
 		entryDialog.center();

@@ -1477,7 +1477,7 @@ public class TediUdapaFaker {
 						.getType());
 
 		JSONArray details = new JSONArray();
-		int x = faker.random().nextInt(0, 10);
+		int x = faker.random().nextInt(1, 10);
 		for (int i = 0; i < x; i++) {
 			details.put(TediUdapaFaker.getTediInvoiceDetail());
 		}

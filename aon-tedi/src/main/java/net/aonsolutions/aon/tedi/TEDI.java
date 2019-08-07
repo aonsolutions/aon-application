@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.DataResponse;
@@ -153,16 +152,17 @@ public class TEDI {
 				}
 				inv.setOldStatus( inv.getStatus() );
 				inv.setStatus( TediInvoiceStatus.accepted );
-				AccountingInvoice ai = result.getAccountingInvoice();
-				Invoice aonInvoice = ai.getInvoice();
-				LOGGER.info("[TEDI] Attempt to put invoice [" + aonInvoice.getType() 
-					+ "," + aonInvoice.getSeries()
-					+ "," + aonInvoice.getNumber()
-					+ "," + aonInvoice.getReferenceCode()
-					+ "," + aonInvoice.getRegistryDocument()
-					+ "," + aonInvoice.getRegistryName()
-					+ "]");
-				AccountingInvoiceDAO.save(ctx, aonCtx, result.getAccountingInvoice());
+				if ( result.getAccountingInvoice() != null) {
+					Invoice aonInvoice = result.getAccountingInvoice().getInvoice();
+					LOGGER.info("[TEDI] Attempt to put invoice [" + aonInvoice.getType() 
+						+ "," + aonInvoice.getSeries()
+						+ "," + aonInvoice.getNumber()
+						+ "," + aonInvoice.getReferenceCode()
+						+ "," + aonInvoice.getRegistryDocument()
+						+ "," + aonInvoice.getRegistryName()
+						+ "]");
+					AccountingInvoiceDAO.save(ctx, aonCtx, result.getAccountingInvoice());
+				}
 				tedi.putInvoice(inv);
 				returned.add(result);
 			}
