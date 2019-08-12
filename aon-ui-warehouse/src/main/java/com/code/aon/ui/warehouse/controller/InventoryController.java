@@ -1,6 +1,7 @@
 package com.code.aon.ui.warehouse.controller;
 
 import static com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL;
+import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Stock.STOCK;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 
@@ -450,6 +451,16 @@ public class InventoryController extends BasicController implements IAuditableCo
 					.where(STOCK.WAREHOUSE.eq(wtId))
 					.and(STOCK.DOMAIN.eq(domainId))
 					.and(STOCK.ID.in(idList.toArray(new Integer[idList.size()])))
+					.execute();
+					
+					ctx.getDslContext()
+					.update(ITEM)
+					.set(ITEM.STATUS, (byte) 0)
+					.where(ITEM.DOMAIN.eq(domainId)
+						.and(ITEM.ID.in(ctx.getDslContext()
+							.select(STOCK.ITEM)
+							.from(STOCK)
+							.where(STOCK.DOMAIN.eq(domainId).and(STOCK.QUANTITY.gt(0.0))))))
 					.execute();
 				}
 				insert.execute();
