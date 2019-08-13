@@ -1,5 +1,8 @@
 package com.code.aon.webservice.warehouse;
 
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -11,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
+import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -40,9 +44,11 @@ import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
+import com.itextpdf.text.pdf.BarcodeQRCode;
 
 @WebServlet(name = "PackingListNotification", urlPatterns = { "/packing_list_notification/*",
 															  "/aon_gwt_aio/packing_list_notification/*"})
@@ -292,6 +298,20 @@ public class PackingListMailServlet extends HttpServlet{
 				+"</tr>";
 	}
 	
+	private byte[] createQRImage(Integer cpId) {
+		BarcodeQRCode qrcode2 = new BarcodeQRCode("https://udapa.aonsolutions.net/udapa/qr?cp=" + cpId, 100, 100, null);
+		java.awt.Image im = qrcode2.createAwtImage(Color.BLACK, Color.WHITE);
+
+		BufferedImage buffImg = new BufferedImage(im.getWidth(null), im.getWidth(null), BufferedImage.TYPE_4BYTE_ABGR);
+		buffImg.getGraphics().drawImage(im, 0, 0, null);
+		buffImg.getGraphics().dispose();
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		try {
+			ImageIO.write(buffImg, "png", outputStream);
+		} catch (Exception e) { e.printStackTrace();}
+		return outputStream.toByteArray();	
+	}
+	
 	private void printDetail(String product, String quantity){
 		msg = msg  
 				+"<tr>"
@@ -328,7 +348,9 @@ public class PackingListMailServlet extends HttpServlet{
 				.put("login", login)
 				.put("domainName", domain.getName())
 				.put("domainId", domain.getId())
-				.put("md5", "")
+				.put("md5", Base64.getEncoder().encodeToString(createQRImage(carrierPacking.getId())))
+				.put("attachName", "QR.png")
+				.put("mimetype", MimeType.PNG.ordinal())
 				.put("bcc", bcc);
 			
 			sendPostHttpClient(domain, login, json, scheme, carrierPacking, type);			

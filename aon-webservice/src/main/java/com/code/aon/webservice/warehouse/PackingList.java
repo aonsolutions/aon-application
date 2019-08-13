@@ -32,6 +32,7 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.BarcodeQRCode;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -102,7 +103,19 @@ public class PackingList extends PdfUtils{
 				document.add(new Paragraph(" "));
 				document.add(new Paragraph(" "));
 			}
-			document.add(new Paragraph(new Phrase("Firma Transportista", getFont1())));					
+			Integer cpId = json.getJSONObject(MSG.CARRIER_PACKING).getInt(MSG.ID);
+			BarcodeQRCode qrcode = new BarcodeQRCode("https://udapa.aonsolutions.net/udapa/qr?cp=" + cpId, 100, 100, null);
+			PdfPTable table = new PdfPTable(2);
+			PdfPCell firma = new PdfPCell(new Phrase("Firma Transportista", getFont1()));
+			firma.setBorder(PdfPCell.NO_BORDER);
+			table.addCell(firma);
+			
+			PdfPCell qr = new PdfPCell(qrcode.getImage());
+			qr.setBorder(PdfPCell.NO_BORDER);
+			table.addCell(qr);
+			table.setWidthPercentage(100);
+			document.add(table);
+			//document.add(new Paragraph(new Phrase("Firma Transportista", getFont1())));					
 		} catch (DocumentException | IOException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
@@ -130,23 +143,26 @@ public class PackingList extends PdfUtils{
 	}
 	
 	private static PdfPCell getHeaderLogo(byte [] image) throws BadElementException, MalformedURLException, IOException{
-		Image i1 = Image.getInstance(image);
+		if(image != null) {
+			Image i1 = Image.getInstance(image);
 		
-		float percentage = 0;
-		if(i1.getWidth() > i1.getHeight()){
-			percentage = 100 / i1.getWidth();
-		} else percentage = 100 / i1.getHeight();
+			float percentage = 0;
+			if(i1.getWidth() > i1.getHeight()){
+				percentage = 100 / i1.getWidth();
+			} else percentage = 100 / i1.getHeight();
 		
-		Float width = i1.getWidth() * percentage;
-		Float height = i1.getHeight() * percentage;
+			Float width = i1.getWidth() * percentage;
+			Float height = i1.getHeight() * percentage;
 		
-		BufferedImage img = ImageIO.read(new ByteArrayInputStream(image));
+			BufferedImage img = ImageIO.read(new ByteArrayInputStream(image));
 		
-		Image logo = Image.getInstance(img, null);
-		logo.scaleAbsolute(width, height);
-		PdfPCell headerLogo = new PdfPCell(logo, false);
-		headerLogo.setBorder(PdfPCell.NO_BORDER);
-		return headerLogo;
+			Image logo = Image.getInstance(img, null);
+			logo.scaleAbsolute(width, height);
+			
+			PdfPCell headerLogo = new PdfPCell(logo, false);
+			headerLogo.setBorder(PdfPCell.NO_BORDER);
+			return headerLogo;
+		} else return new PdfPCell();
 	}
 	
 	private static PdfPTable getHeaderCompany(JSONObject json){
