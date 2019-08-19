@@ -12,34 +12,34 @@ public class OfferExportGwtController extends AuditableSearchController {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	//-------------------- OFFER FILTER
-	private static OfferStatus[] statuses;
-	private static String serie;
+	private OfferStatus[] statuses;
+	private String serie;
 	
-	private static Integer target;
-	private static Integer seller;
-	private static Integer supplier;
-	private static Integer project;
+	private Integer target;
+	private Integer seller;
+	private Integer supplier;
+	private Integer project;
 	
-	private static Date fromDate;
-	private static Date toDate;
-	private static String fromDateStr; 
-	private static String toDateStr;
+	private Date fromDate;
+	private Date toDate;
+	private String fromDateStr; 
+	private String toDateStr;
 	
-	private static Integer fromNumber;
-	private static Integer toNumber;
+	private Integer fromNumber;
+	private Integer toNumber;
 	
-	private static Integer type;
-	private static Integer workplace;
-	private static Integer scope;
+	private Integer type;
+	private Integer workplace;
+	private Integer scope;
 	
 	private Boolean signed;
 	private Boolean confidential;
 	
-	private static String  statusesStr;
+	private String  statusesStr;
 	
-	public static OfferExportGwtController getInstance() { 
-		return new OfferExportGwtController();
-	}
+//	public static OfferExportGwtController getInstance() { 
+//		return new OfferExportGwtController();
+//	}
 	
 	public String getInitialize(){
 		return "";
@@ -51,15 +51,15 @@ public class OfferExportGwtController extends AuditableSearchController {
 	public OfferStatus[] getStatuses() {
 		return statuses;
 	}
-	public static void setStatuses(com.code.aon.commercial.enumeration.OfferStatus[] statuses) {
+	public void setStatuses(com.code.aon.commercial.enumeration.OfferStatus[] statuses) {
 		
-		OfferExportGwtController.statuses = new OfferStatus[statuses.length];
+		this.statuses = new OfferStatus[statuses.length];
 		String s = "";
 		for (Integer i=0; i<statuses.length; i++){
 			s = s+"-"+statuses[i].ordinal();
-			OfferExportGwtController.statuses[i] = OfferStatus.values()[statuses[i].ordinal()];
+			this.statuses[i] = OfferStatus.values()[statuses[i].ordinal()];
 		}
-		OfferExportGwtController.statusesStr= s;
+		this.statusesStr= s;
 	}
 
 	public String getSerie() {
@@ -67,23 +67,23 @@ public class OfferExportGwtController extends AuditableSearchController {
 	}
 
 	public void setSerie(String serie) {
-		OfferExportGwtController.serie = serie;
+		this.serie = serie;
 	}
 
 	public Integer getTarget() {
 		return target;
 	}
 
-	public static  void setTarget(Integer target) {
-		OfferExportGwtController.target = target;
+	public void setTarget(Integer target) {
+		this.target = target;
 	}
 
 	public Integer getSeller() {
 		return seller;
 	}
 
-	public static  void setSeller(Integer seller) {
-		OfferExportGwtController.seller = seller;
+	public void setSeller(Integer seller) {
+		this.seller = seller;
 	}
 
 	public Date getFromDate() {
@@ -107,7 +107,7 @@ public class OfferExportGwtController extends AuditableSearchController {
 	}
 
 	public void setFromNumber(Integer fromNumber) {
-		OfferExportGwtController.fromNumber = fromNumber;
+		this.fromNumber = fromNumber;
 	}
 
 	public Integer getToNumber() {
@@ -115,15 +115,15 @@ public class OfferExportGwtController extends AuditableSearchController {
 	}
 
 	public void setToNumber(Integer toNumber) {
-		OfferExportGwtController.toNumber = toNumber;
+		this.toNumber = toNumber;
 	}
 
 	public Integer getType() {
 		return type;
 	}
 
-	public static  void setType(Integer type) {
-		OfferExportGwtController.type = type;
+	public void setType(Integer type) {
+		this.type = type;
 	}
 
 	public Integer getWorkplace() {
@@ -131,7 +131,7 @@ public class OfferExportGwtController extends AuditableSearchController {
 	}
 
 	public void setWorkplace(Integer workplace) {
-		OfferExportGwtController.workplace = workplace;
+		this.workplace = workplace;
 	}
 
 	public Integer getScope() {
@@ -139,7 +139,7 @@ public class OfferExportGwtController extends AuditableSearchController {
 	}
 
 	public void setScope(Integer scope) {
-		OfferExportGwtController.scope = scope;
+		this.scope = scope;
 	}
 
 	public Boolean getSigned() {
@@ -163,23 +163,23 @@ public class OfferExportGwtController extends AuditableSearchController {
 	}
 
 	public void setStatusesStr(String statusesStr) {
-		OfferExportGwtController.statusesStr = statusesStr;
+		this.statusesStr = statusesStr;
 	}
 
 	public Integer getProject() {
 		return project;
 	}
 
-	public static  void setProject(Integer project) {
-		OfferExportGwtController.project = project;
+	public void setProject(Integer project) {
+		this.project = project;
 	}
 
 	public Integer getSupplier() {
 		return supplier;
 	}
 
-	public static  void setSupplier(Integer supplier) {
-		OfferExportGwtController.supplier = supplier;
+	public void setSupplier(Integer supplier) {
+		this.supplier = supplier;
 	}
 
 	public String getFromDateStr() {
@@ -187,7 +187,7 @@ public class OfferExportGwtController extends AuditableSearchController {
 	}
 
 	public void setFromDateStr(String fromDateStr) {
-		OfferExportGwtController.fromDateStr = fromDateStr;
+		this.fromDateStr = fromDateStr;
 	}
 
 	public String getToDateStr() {
@@ -195,7 +195,7 @@ public class OfferExportGwtController extends AuditableSearchController {
 	}
 
 	public void setToDateStr(String toDateStr) {
-		OfferExportGwtController.toDateStr = toDateStr;
+		this.toDateStr = toDateStr;
 	}
 	
 }

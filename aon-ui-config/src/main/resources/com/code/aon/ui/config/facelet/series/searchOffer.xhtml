@@ -14,6 +14,7 @@
 		<aon:inputText id="#{aliasPreffix}_series"
 			onblur="toUpperCase(this);"
 			valueChangeListener="#{controller.addExpression}"
+			value="#{offerExport.serie}"
 			size="5" maxlength="5">
 		</aon:inputText>
 		<aon:outputLabel for="#{aliasPreffix}_number-From"
@@ -21,13 +22,15 @@
 			value="#{bundle.aon_date_from} #{bundle.aon_number}:" />
 		<aon:inputText id="#{aliasPreffix}_number-From"
 			converter="javax.faces.Integer" size="7"
-			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}" />							
+			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}" 
+			value="#{offerExport.fromNumber}"/>							
 		<aon:outputLabel for="#{aliasPreffix}_number-To"
 			styleClass="aon-form-date-label aon-padding-right"
 			value="#{bundle.aon_date_to} #{bundle.aon_number}:" />							
 		<aon:inputText id="#{aliasPreffix}_number-To"
 			converter="javax.faces.Integer" size="7"
-			valueChangeListener="#{controller.addLessThanOrEqualExpression}" />
+			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+			value="#{offerExport.toNumber}" />
 	</aon:div>
 	
 </ui:composition>

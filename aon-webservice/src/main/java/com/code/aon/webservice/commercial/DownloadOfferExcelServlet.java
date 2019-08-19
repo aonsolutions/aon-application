@@ -132,7 +132,6 @@ public class DownloadOfferExcelServlet extends HttpServlet {
 
 	@Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException{
-		System.out.println("GET METHOD");
 		String domainName = req.getParameter("domain");
 		Integer domainId = Integer.parseInt(req.getParameter("domain_id"));
 		String userName = req.getParameter("username");
@@ -164,13 +163,13 @@ public class DownloadOfferExcelServlet extends HttpServlet {
 		style2.setBorderRight(BorderStyle.THIN);
 		style2.setBorderLeft(BorderStyle.THIN);
 		
-        CellStyle style3 = libro.createCellStyle();
-		style3.setFont(font2);
-		style3.setAlignment(HorizontalAlignment.LEFT);
-		style3.setBorderBottom(BorderStyle.THIN);
-		style3.setBorderRight(BorderStyle.THIN);
-		style3.setBorderLeft(BorderStyle.THIN);
-		style3.setBorderTop(BorderStyle.THIN);
+//		CellStyle style3 = libro.createCellStyle();
+//		style3.setFont(font2);
+//		style3.setAlignment(HorizontalAlignment.LEFT);
+//		style3.setBorderBottom(BorderStyle.THIN);
+//		style3.setBorderRight(BorderStyle.THIN);
+//		style3.setBorderLeft(BorderStyle.THIN);
+//		style3.setBorderTop(BorderStyle.THIN);
 		
 		Cell c0 = fila.createCell(0);
     	c0.setCellValue("Fecha");
@@ -236,15 +235,15 @@ public class DownloadOfferExcelServlet extends HttpServlet {
     			if(row != null) {
     				Cell ct6 = row.createCell(6);
     				ct6.setCellValue(AonMathUtils.round(base));	
-    				ct6.setCellStyle(style3);
+//    				ct6.setCellStyle(style3);
  	    	
     				Cell ct7 = row.createCell(7);
     				ct7.setCellValue(AonMathUtils.round(quota));	
-    				ct7.setCellStyle(style3);
+//    				ct7.setCellStyle(style3);
     				
     				Cell ct8 = row.createCell(8);
     				ct8.setCellValue(AonMathUtils.round(base + quota));	
-    				ct8.setCellStyle(style3);
+//    				ct8.setCellStyle(style3);
     				base = 0.0;
     				quota = 0.0;
     			}
@@ -252,45 +251,48 @@ public class DownloadOfferExcelServlet extends HttpServlet {
     		
     			Cell ct0 = row.createCell(0);
     			ct0.setCellValue(AonDateUtils.simpleFormat(offer.getIssueDate())); 
-    			ct0.setCellStyle(style3);
+//    			ct0.setCellStyle(style3);
  	    	
     			Cell ct1 = row.createCell(1);
-    			ct1.setCellValue(offer.getReferenceCode());
-    			ct1.setCellStyle(style3);
+    			ct1.setCellValue(offer.getReferenceCode() + "(" + offer.getSeries() + "/" + offer.getNumber() +")");
+//    			ct1.setCellStyle(style3);
  	    	
     			Cell ct2 = row.createCell(2);
     			ct2.setCellValue(offer.getTarget().getName());
-    			ct2.setCellStyle(style3);
+//    			ct2.setCellStyle(style3);
  	    	
     			Cell ct3 = row.createCell(3);
     			ct3.setCellValue(offer.getTarget().getDocument());
-    			ct3.setCellStyle(style3);
+//    			ct3.setCellStyle(style3);
  	    	
     			Cell ct4 = row.createCell(4);
     			ct4.setCellValue(offer.getSeller() != null ? offer.getSeller().getRegistryName() : "");	
-    			ct4.setCellStyle(style3);
+//    			ct4.setCellStyle(style3);
     			
     			Cell ct5 = row.createCell(5);
     			ct5.setCellValue(offer.getScope() != null ? offer.getScope().getDescription() : "");	
-    			ct5.setCellStyle(style3);
+//    			ct5.setCellStyle(style3);
  	    	
     			Cell ct9 = row.createCell(9);
     			ct9.setCellValue(offer.getStatus().getDescription());	
-    			ct9.setCellStyle(style3);	    	
+//    			ct9.setCellStyle(style3);	    	
  	    	
     			Cell ct10 = row.createCell(10);
     			ct10.setCellValue(offer.getType().getDescription());	
-    			ct10.setCellStyle(style3);
+//    			ct10.setCellStyle(style3);
     			
     			Cell ct11 = row.createCell(11);
     			ct11.setCellValue(sup!= null ?sup.get().getName() : ""); 	
-    			ct11.setCellStyle(style3);
+//    			ct11.setCellStyle(style3);
     		} 
     		Double b = result.getPrice() * result.getQuantity();
     		Double discount = AonNumberUtils.toDouble(result.getDiscountExpression());
     		b = b - (b * (discount / 100));
     		
-    		Double vat = result.getItem().getVat().getPercentage();
+    		Double vat = 0.0;
+    		if (result!=null &&  result.getItem() != null &&  result.getItem().getVat() != null) {
+    			vat = result.getItem().getVat().getPercentage();
+    		}
     		quota = quota + (b * (vat/100));
     		base = base + b;
     		
@@ -298,15 +300,15 @@ public class DownloadOfferExcelServlet extends HttpServlet {
     	if(row != null) {
 			Cell ct6 = row.createCell(6);
 			ct6.setCellValue(AonMathUtils.round(base));	
-			ct6.setCellStyle(style3);
+//			ct6.setCellStyle(style3);
  	
 			Cell ct7 = row.createCell(7);
 			ct7.setCellValue(AonMathUtils.round(quota));	
-			ct7.setCellStyle(style3);
+//			ct7.setCellStyle(style3);
 			
 			Cell ct8 = row.createCell(8);
 			ct8.setCellValue(AonMathUtils.round(base + quota));	
-			ct8.setCellStyle(style3);
+//			ct8.setCellStyle(style3);
 			base = 0.0;
 			quota = 0.0;
 			rid = -1;
