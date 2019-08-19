@@ -170,6 +170,11 @@ public class ExcelFunctions {
 		return (int) Math.ceil(number);
 	}
 
+	@Variable(ContextVariable.FLOOR)
+	public static final Integer floor(double number) {
+		return (int) Math.floor(number);
+	}
+
 	@Variable(ContextVariable.POW)
 	public static final Double pow(double number, double exp) {
 		return Math.pow(number, exp);
