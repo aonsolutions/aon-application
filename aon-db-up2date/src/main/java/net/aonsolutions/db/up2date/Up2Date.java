@@ -27,6 +27,7 @@ import net.aonsolutions.db.up2date.payroll.SystemPaymentReadOnlyUpdate;
 import net.aonsolutions.db.up2date.tgss.AgriculturalITInsert;
 import net.aonsolutions.db.up2date.tgss.Bases2019UpdateIII;
 import net.aonsolutions.db.up2date.tgss.FellowsPercentages2019Update;
+import net.aonsolutions.db.up2date.tgss.SalaryHours2019Insert;
 import net.aonsolutions.db.up2date.tgss.TrainningPercentages2019Update;
 
 public class Up2Date {
@@ -83,8 +84,9 @@ public class Up2Date {
     		//AgriculturalITInsert.AGRICULTURALITINSERT,
     		//Bases2019UpdateIII.BASES2019UPDATEIII,
     		//SalarioBaseReadOnlyUpdate.SALARIOBASEREADONLYUPDATE,
-    		NetoAndBrutoReadOnlyUpdate.NETOBRUTOREADONLYUPDATE,
-    		DefaultAgreementUpdate.DEFAULTAGREEMENTUPDATE
+    		//NetoAndBrutoReadOnlyUpdate.NETOBRUTOREADONLYUPDATE,
+    		//DefaultAgreementUpdate.DEFAULTAGREEMENTUPDATE,
+    		SalaryHours2019Insert.SALARYHOURS2019INSERT
     		
     };
 
