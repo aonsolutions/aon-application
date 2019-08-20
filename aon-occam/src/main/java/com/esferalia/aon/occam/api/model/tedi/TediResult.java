@@ -15,7 +15,7 @@ public class TediResult implements Serializable {
 	private boolean checked;
 	private TediInvoice tedi;
 	private AccountingInvoice ai;
-	private LinkedList<TediParserError> messages = new LinkedList<TediParserError>();
+	private LinkedList<TediError> messages = new LinkedList<TediError>();
 
 	public TediResult() {
 
@@ -55,18 +55,18 @@ public class TediResult implements Serializable {
 	}
 
 
-	public LinkedList<TediParserError> getMessages() {
+	public LinkedList<TediError> getMessages() {
 		return messages;
 	}
 
-	public void add(TediParserError error) {
+	public void add(TediError error) {
 		messages.add(error);
 	}
 
 	public TediLevel getMoreSeriousLevel() {
 		TediLevel level  = null;
 		if (getMessages() != null) {
-			for (TediParserError error : getMessages()) {
+			for (TediError error : getMessages()) {
 				if (level == null || error.getLevel().ordinal() >  level.ordinal()) {
 					level = error.getLevel();
 				}
@@ -77,7 +77,7 @@ public class TediResult implements Serializable {
 	
 	public boolean isImportable() {
 		TediLevel level = getMoreSeriousLevel();;
-		return ( level == null || level.ordinal() < TediLevel.WRN.ordinal() );
+		return ( level == null || level.ordinal() < TediLevel.ERR.ordinal() );
 	}
 	
 }

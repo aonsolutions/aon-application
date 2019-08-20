@@ -13,21 +13,96 @@ public enum TediContextKey implements Serializable {
 	// º --> \u00BA ª --> \u00AA 
 	// ¿ --> \u00BF
 	
-	DOMAIN("Dominio"),
-	TYPE("Tipo de factura"), 
-	SERIES("Serie"),
-	NUMBER("N\u00FAmero"),
-	REFERENCE_CODE("N\u00BA factura"),
-	TRANSACTION("Tipo de transacci\u00F3n"),
-	ISSUE_DATE ("Fecha de factura"),
-	TAX_DATE ("Fecha de IVA"),
-	SCOPE("\u00C1mbito"),
-	REGISTRY ("Titular de la factura"),
-	RDOCUMENT ("N\u00BA documento del titular"),
-	RDOCUMENT_COUNTRY("Pa\u00CDs del documento del titular"),
-	RNAME("Raz\u00F3n social del titular"),
-	ADDRESS("Direcci\u00F3n del titular"),
-	DETAIL_DESCRIPTION("Descripci\u00F3n de la l\u00EDnea")
+	DOMAIN("Dominio") {
+		@Override
+		public void visit(TediResult result,ITediContextVisitor visitor) {
+			visitor.visitDomain(result);
+		}
+	},
+	TYPE("Tipo de factura") {
+		@Override
+		public void visit(TediResult result,ITediContextVisitor visitor) {
+			visitor.visitType(result);
+		}
+	}, 
+	SERIES("Serie") {
+		@Override
+		public void visit(TediResult result,ITediContextVisitor visitor) {
+			visitor.visitSeries(result);
+		}
+	},
+	NUMBER("N\u00FAmero") {
+		@Override
+		public void visit(TediResult result,ITediContextVisitor visitor) {
+			visitor.visitNumber(result);
+		}
+	},
+	REFERENCE_CODE("N\u00BA factura") {
+		@Override
+		public void visit(TediResult result,ITediContextVisitor visitor) {
+			visitor.visitReferenceCode(result);
+		}
+	},
+	TRANSACTION("Tipo de transacci\u00F3n") {
+		@Override
+		public void visit(TediResult result,ITediContextVisitor visitor) {
+			visitor.visitTransaction(result);
+		}
+	},
+	ISSUE_DATE ("Fecha de factura") {
+		@Override
+		public void visit(TediResult result,ITediContextVisitor visitor) {
+			visitor.visitIssueDate(result);
+		}
+	},
+	TAX_DATE ("Fecha de IVA") {
+		@Override
+		public void visit(TediResult result,ITediContextVisitor visitor) {
+			visitor.visitTaxDate(result);
+		}
+	},
+	SCOPE("\u00C1mbito") {
+		@Override
+		public void visit(TediResult result,ITediContextVisitor visitor) {
+			visitor.visitScope(result);
+		}
+	},
+	REGISTRY ("Titular de la factura") {
+		@Override
+		public void visit(TediResult result,ITediContextVisitor visitor) {
+			visitor.visitRegistry(result);
+		}
+	},
+	RDOCUMENT ("N\u00BA documento del titular") {
+		@Override
+		public void visit(TediResult result,ITediContextVisitor visitor) {
+			visitor.visitRdocument(result);
+		}
+	},
+	RDOCUMENT_COUNTRY("Pa\u00CDs del documento del titular") {
+		@Override
+		public void visit(TediResult result,ITediContextVisitor visitor) {
+			visitor.visitRdocumentCountry(result);
+		}
+	},
+	RNAME("Raz\u00F3n social del titular") {
+		@Override
+		public void visit(TediResult result,ITediContextVisitor visitor) {
+			visitor.visitRname(result);
+		}
+	},
+	ADDRESS("Direcci\u00F3n del titular") {
+		@Override
+		public void visit(TediResult result,ITediContextVisitor visitor) {
+			visitor.visitAddress(result);
+		}
+	},
+	DETAIL_DESCRIPTION("Descripci\u00F3n de la l\u00EDnea") {
+		@Override
+		public void visit(TediResult result,ITediContextVisitor visitor) {
+			visitor.visitDetailDescription(result);
+		}
+	}
 	
 	;
 
@@ -43,4 +118,5 @@ public enum TediContextKey implements Serializable {
 	public String getDescription() {
 		return description;
 	}
+	public abstract void visit(TediResult result , ITediContextVisitor visitor);
 }

@@ -6,7 +6,7 @@ import java.text.MessageFormat;
 import com.esferalia.aon.occam.api.model.tedi.TediContext;
 import com.esferalia.aon.occam.api.model.tedi.TediContextKey;
 import com.esferalia.aon.occam.api.model.tedi.TediLevel;
-import com.esferalia.aon.occam.api.model.tedi.TediParserError;
+import com.esferalia.aon.occam.api.model.tedi.TediError;
 
 public enum TediErrorMessages implements Serializable {
 	// Á --> \u00C1 á --> \u00E1 
@@ -42,41 +42,41 @@ public enum TediErrorMessages implements Serializable {
 		return MessageFormat.format(getMessage(), args);
 	}
 	
-	public TediParserError err(TediContextKey key) {
+	public TediError err(TediContextKey key) {
 		return err(key, key.getDescription());
 	}
-	public TediParserError err(TediContextKey key, Object ... args) {
+	public TediError err(TediContextKey key, Object ... args) {
 		return err( new TediContext(key), format(args));
 	}
-	public TediParserError err(TediContext context, Object ... args) {
+	public TediError err(TediContext context, Object ... args) {
 		return err( context, format(args));
 	}
-	public TediParserError err(TediContext context, String message) {
+	public TediError err(TediContext context, String message) {
 		return add(context, TediLevel.ERR, message);
 	}
 	
-	public TediParserError wrn(TediContextKey key) {
+	public TediError wrn(TediContextKey key) {
 		return wrn(key, key.getDescription());
 	}
-	public TediParserError wrn(TediContextKey key, Object ... args) {
+	public TediError wrn(TediContextKey key, Object ... args) {
 		return wrn( new TediContext(key), format(args));
 	}
-	public TediParserError wrn(TediContext context, String message) {
+	public TediError wrn(TediContext context, String message) {
 		return add(context, TediLevel.WRN, message);
 	}
 
-	public TediParserError inf(TediContextKey key) {
+	public TediError inf(TediContextKey key) {
 		return inf(key, key.getDescription());
 	}
-	public TediParserError inf(TediContextKey key, Object ... args) {
+	public TediError inf(TediContextKey key, Object ... args) {
 		return inf( new TediContext(key), format(args));
 	}
-	public TediParserError inf(TediContext context, String message) {
+	public TediError inf(TediContext context, String message) {
 		return add(context, TediLevel.INF, message);
 	}
 	
-	public TediParserError add(TediContext context,TediLevel level,String message) {
-		return new TediParserError(context,level,this.toString(), message);
+	public TediError add(TediContext context,TediLevel level,String message) {
+		return new TediError(context,level,this.toString(), message);
 	}	
 	
 }

@@ -2,7 +2,7 @@ package com.esferalia.aon.occam.api.model.tedi;
 
 import java.io.Serializable;
 
-public class TediParserError implements Serializable {
+public class TediError implements Serializable {
 	
 	private static final long serialVersionUID = 1588476271729340025L;
 	
@@ -11,10 +11,10 @@ public class TediParserError implements Serializable {
 	private TediContext context;
 	private String message;
 
-	public TediParserError() {
+	public TediError() {
 		
 	}
-	public TediParserError(TediContext context,TediLevel level,String code,String message) {
+	public TediError(TediContext context,TediLevel level,String code,String message) {
 		this.context = context; 
 		this.code = code;
 		this.level = level;
@@ -23,7 +23,7 @@ public class TediParserError implements Serializable {
 	public TediContext getContext() {
 		return context;
 	}
-	public TediParserError setContext(TediContext context) {
+	public TediError setContext(TediContext context) {
 		this.context = context;
 		return this;
 	}
@@ -31,7 +31,7 @@ public class TediParserError implements Serializable {
 	public String getCode() {
 		return code;
 	}
-	public TediParserError setCode(String code) {
+	public TediError setCode(String code) {
 		this.code = code;
 		return this;
 	}
@@ -39,7 +39,7 @@ public class TediParserError implements Serializable {
 	public TediLevel getLevel() {
 		return level;
 	}
-	public TediParserError setLevel(TediLevel level) {
+	public TediError setLevel(TediLevel level) {
 		this.level = level;
 		return this;
 	}
@@ -47,9 +47,13 @@ public class TediParserError implements Serializable {
 	public String getMessage() {
 		return message;
 	}
-	public TediParserError setMessage(String message) {
+	public TediError setMessage(String message) {
 		this.message = message;
 		return this;
 	}
-
+	
+	public boolean canBeFixed() {
+		return this.level != null && (this.level == TediLevel.ERR || this.level == TediLevel.WRN);
+	}
+	
 }

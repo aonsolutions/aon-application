@@ -21,7 +21,8 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRecorder;
 import com.esferalia.aon.occam.api.model.tedi.TediLevel;
-import com.esferalia.aon.occam.api.model.tedi.TediParserError;
+import com.esferalia.aon.occam.api.model.tedi.ITediContextVisitor;
+import com.esferalia.aon.occam.api.model.tedi.TediError;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -502,21 +503,11 @@ public class TediCenter extends MainEntryPoint {
 		tab.setStyleName(AON.AON_CSS.aonWidthAll());
 		invoiceContainer.add(tab);
 
-		TediLevel curLevel  = result.getMoreSeriousLevel();  
-		String color = null;
-		if (curLevel == null) {
-			color = "#e6ffe6";
-		} else if (curLevel == TediLevel.INF) {
-			color = "#e7f5fe";
-		} else if (curLevel == TediLevel.WRN) {
-			color = "#ffbf80";
-		} else if (curLevel == TediLevel.ERR) {
-			color = "#ffc2b3";
-		}
+		String color = getBackgroundColor(result);
 		tab.getElement().getStyle().setBackgroundColor(color);
 
 		InlineLabel checkLabel = new InlineLabel(AonStringUtils.SPACE);
-		checkLabel.setVisible(  curLevel != TediLevel.ERR);
+		checkLabel.setVisible(  result.isImportable() );
 		checkLabel.setStyleName(AON.AON_CSS.aonIconCheck());
 		checkLabel.addStyleName(AON.AON_CSS.aonPaddingLeft());
 		checkLabel.addClickHandler(new ClickHandler() {
@@ -602,6 +593,21 @@ public class TediCenter extends MainEntryPoint {
 		return invoiceContainer;
 	}
 
+	private String getBackgroundColor(TediResult result) {
+		TediLevel curLevel  = result.getMoreSeriousLevel();  
+		String color = null;
+		if (curLevel == null) {
+			color = "#e6ffe6";
+		} else if (curLevel == TediLevel.INF) {
+			color = "#e7f5fe";
+		} else if (curLevel == TediLevel.WRN) {
+			color = "#ffbf80";
+		} else if (curLevel == TediLevel.ERR) {
+			color = "#ffc2b3";
+		}
+		return color;
+	}
+
 	private void showInvoice(TediResult result) {
 //		if (mainSplitLayoutPanel.getWidgetSize(invoiceContent) <= 50) {
 //			mainSplitLayoutPanel.setWidgetSize(invoiceContent, Window.getClientWidth() / 1.5);
@@ -646,42 +652,92 @@ public class TediCenter extends MainEntryPoint {
 				contentSplitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
 				contentSplitLayoutPanel.animate(500);
 			}
-			if (result.getMessages() == null) {
-				Label okLabel = new Label("No se han encontrado errores.");
+			ScrollPanel scrollPanel = new ScrollPanel();
+			scrollPanel.setStyleName(AON.AON_CSS.aonScrollArea());
+
+			FlowPanel panel = new FlowPanel();
+			panel.setStyleName(AON.AON_CSS.aonMarginTop5());
+			panel.addStyleName(AON.AON_CSS.aonMarginLeft());
+			panel.addStyleName(AON.AON_CSS.aonSimpleBorder());
+			panel.addStyleName(AON.AON_CSS.aonFixedFont());				
+
+			if (result.getMessages() == null || result.getMessages().size() == 0 ) {
+				InlineLabel colorLabel = new InlineLabel("");
+				colorLabel.setStyleName(AON.AON_CSS.aonPaddingLeft());
+				colorLabel.addStyleName(AON.AON_CSS.aonPaddingRight());
+				colorLabel.getElement().getStyle().setBackgroundColor(getBackgroundColor(result));
+				panel.add( colorLabel );
+
+				InlineLabel okLabel = new InlineLabel("No se han encontrado errores.");
 				okLabel.setStyleName(AON.AON_CSS.aonBold());
-				okLabel.addStyleName(AON.AON_CSS.aonIconPointLightGreen());
 				okLabel.addStyleName(AON.AON_CSS.aonPaddingLeft());
-				problemsContent.setWidget(okLabel);
+				panel.add(okLabel);
+				
 			} else {
-
-				ScrollPanel scrollPanel = new ScrollPanel();
-				scrollPanel.setStyleName(AON.AON_CSS.aonScrollArea());
-
-				FlexTable tab = new FlexTable();
-				tab.addStyleName(AON.AON_CSS.aonReportTable());
-				tab.addStyleName(AON.AON_CSS.aonReportTableFontMedium());
-
-				FlowPanel panel = new FlowPanel();
-				panel.setStyleName(AON.AON_CSS.aonMarginLeft());
-				panel.setStyleName(AON.AON_CSS.aonPaddingLeft());
-				for (TediParserError error : result.getMessages()) {
-					Label errLabel = new Label(error.getLevel().toString() + " " + error.getMessage());
-					errLabel.setStyleName(AON.AON_CSS.aonMarginTop5());
-					errLabel.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
-					errLabel.addStyleName(AON.AON_CSS.aonClickableLabel());
-					if (error.getLevel() == TediLevel.ERR) {
-						errLabel.addStyleName(AON.AON_CSS.aonIconPointRed());		
-					} else if (error.getLevel() == TediLevel.WRN) {
-						errLabel.addStyleName(AON.AON_CSS.aonIconPointOrange());
-					} else {
-						errLabel.addStyleName(AON.AON_CSS.aonIconPointYellow());
+				
+				
+				for (TediError error : result.getMessages()) {
+					FocusPanel focuspanel = new FocusPanel();
+					focuspanel.addStyleName(AON.AON_CSS.aonClickableLabel());
+					FlowPanel flowPanel = new FlowPanel();
+					focuspanel.setWidget(flowPanel);
+					
+					InlineLabel colorLabel = new InlineLabel("");
+					colorLabel.setStyleName(AON.AON_CSS.aonPaddingLeft());
+					colorLabel.addStyleName(AON.AON_CSS.aonPaddingRight());
+					colorLabel.getElement().getStyle().setBackgroundColor(getBackgroundColor(result));
+					flowPanel.add( colorLabel );
+					
+					InlineLabel errLabel = new InlineLabel(error.getLevel().getLabel());
+					errLabel.setStyleName(AON.AON_CSS.aonClickableLabel());
+					errLabel.addStyleName(AON.AON_CSS.aonPaddingLeft());
+					errLabel.addStyleName(AON.AON_CSS.aonPaddingRight());
+					errLabel.addStyleName(AON.AON_CSS.aonBold());
+					flowPanel.add( errLabel );
+					
+					InlineLabel msgLabel = new InlineLabel(error.getMessage());
+					msgLabel.setStyleName(AON.AON_CSS.aonMarginLeft());
+					if (error.canBeFixed()) {
+						focuspanel.addClickHandler(new ClickHandler() {
+							
+							@Override
+							public void onClick(ClickEvent event) {
+								tryToFix( result, error);
+							}
+						});
 					}
-					panel.add( errLabel );
+					flowPanel.add( msgLabel );
+					panel.add(focuspanel );
 				}
-				scrollPanel.setWidget(panel);
-				problemsContent.setWidget(scrollPanel);
 			}
+			scrollPanel.setWidget(panel);
+			problemsContent.setWidget(scrollPanel);
 		}
+	}
+
+	private void tryToFix(TediResult result, TediError error) {
+		
+		error.getContext().getKey().visit(result, new ITediContextVisitor() {
+			private void noVisit(TediResult result) {
+				MessageDialog.show("No hay ninguna utilidad para corregir el aviso/error.");				
+			}
+			
+			@Override public void visitType(TediResult result) {noVisit(result);}
+			@Override public void visitTransaction(TediResult result) {noVisit(result);}
+			@Override public void visitTaxDate(TediResult result) {noVisit(result);}
+			@Override public void visitSeries(TediResult result) {noVisit(result);}
+			@Override public void visitScope(TediResult result) {noVisit(result);}
+			@Override public void visitRname(TediResult result) {noVisit(result);}
+			@Override public void visitRegistry(TediResult result) {noVisit(result);}
+			@Override public void visitReferenceCode(TediResult result) {noVisit(result);}
+			@Override public void visitRdocumentCountry(TediResult result) {noVisit(result);}
+			@Override public void visitRdocument(TediResult result) {noVisit(result);}
+			@Override public void visitNumber(TediResult result) {noVisit(result);}
+			@Override public void visitIssueDate(TediResult result) {noVisit(result);}
+			@Override public void visitDomain(TediResult result) {noVisit(result);}
+			@Override public void visitDetailDescription(TediResult result) {noVisit(result);}
+			@Override public void visitAddress(TediResult result) {noVisit(result);}
+		});
 	}
 
 	private void showEntry(int domain,TediResult result) {

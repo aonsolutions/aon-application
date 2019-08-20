@@ -20,7 +20,7 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 import com.esferalia.aon.occam.api.model.tedi.TediContextKey;
-import com.esferalia.aon.occam.api.model.tedi.TediParserError;
+import com.esferalia.aon.occam.api.model.tedi.TediError;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -276,7 +276,7 @@ public class TediValidationTest {
 		 )))));
 	}
 
-	private void printMessages(LinkedList<TediParserError> messages) {
+	private void printMessages(LinkedList<TediError> messages) {
 		if (messages != null && messages.size()>0) {
 			System.out.println();
 			System.out.println("\t\t"
@@ -300,7 +300,7 @@ public class TediValidationTest {
 					+"|" + AonStringUtils.repeat("-", 80)
 					+"|"
 					);
-			for (TediParserError e : messages) {
+			for (TediError e : messages) {
 				System.out.println("\t\t"
 						+"|" + AonStringUtils.rightPad(e.getLevel() == null ? "" : e.getLevel().toString(), 4)
 						+"|" + AonStringUtils.rightPad(AonStringUtils.defaultString(e.getCode()), 5)
