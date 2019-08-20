@@ -371,7 +371,7 @@ public class SalaryDAO {
 		ctx.getDslContext()
 		.select()
 		.from(SALARY)
-		.join(SALARY_DATA)
+		.leftJoin(SALARY_DATA)
 		.onKey(FK_SALARY_DATA_SALARY)
 		.where(conditions)
 		.orderBy(SALARY.EMPLOYEE_DOCUMENT)
@@ -383,7 +383,7 @@ public class SalaryDAO {
 		ctx.getDslContext()
 		.select()
 		.from(SALARY)
-		.join(CONTRACT_DATA)
+		.leftJoin(CONTRACT_DATA)
 		.on(
 			SALARY.CONTRACT.eq(CONTRACT_DATA.CONTRACT)
 			.and(CONTRACT_DATA.START_DATE.le(SALARY.END_DATE))
