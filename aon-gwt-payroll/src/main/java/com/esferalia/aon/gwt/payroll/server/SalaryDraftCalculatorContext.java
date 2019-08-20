@@ -415,7 +415,9 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 			Date varEndDate = resetTime(variable.getEndDate());
 
 			Date startDate = Period.max(ctxStartDate, varStartDate);
-			Date endDate = Period.min(ctxEndDate, varEndDate);
+			Date endDate = 
+					name.equals(ContextVariable.NO_HOLIDAYS.getName()) ? 
+					varEndDate : Period.min(ctxEndDate, varEndDate);
 
 			ITimedVariable<?> prev = exprCtx.getVariable(name, startDate, endDate);
 
