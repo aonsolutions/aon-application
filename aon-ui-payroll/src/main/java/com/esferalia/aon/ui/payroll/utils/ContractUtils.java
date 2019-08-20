@@ -1082,28 +1082,28 @@ public class ContractUtils implements Serializable {
 		}
 		// PART-TIME 
 		if(map.get(ContextVariable.MONDAY_HOURS.getName())!=null){
-			params.getWeekDayHours()[0] = (Double.parseDouble(map.get(ContextVariable.MONDAY_HOURS.getName())));
+			params.getWeekDayHours()[0] = (parseDouble(map.get(ContextVariable.MONDAY_HOURS.getName())));
 		}
 		if(map.get(ContextVariable.TUESDAY_HOURS.getName())!=null){
-			params.getWeekDayHours()[1] = (Double.parseDouble(map.get(ContextVariable.TUESDAY_HOURS.getName())));
+			params.getWeekDayHours()[1] = (parseDouble(map.get(ContextVariable.TUESDAY_HOURS.getName())));
 		}
 		if(map.get(ContextVariable.WEDNESDAY_HOURS.getName())!=null){
-			params.getWeekDayHours()[2] = (Double.parseDouble(map.get(ContextVariable.WEDNESDAY_HOURS.getName())));
+			params.getWeekDayHours()[2] = (parseDouble(map.get(ContextVariable.WEDNESDAY_HOURS.getName())));
 		}
 		if(map.get(ContextVariable.THURSDAY_HOURS.getName())!=null){
-			params.getWeekDayHours()[3] = (Double.parseDouble(map.get(ContextVariable.THURSDAY_HOURS.getName())));
+			params.getWeekDayHours()[3] = (parseDouble(map.get(ContextVariable.THURSDAY_HOURS.getName())));
 		}
 		if(map.get(ContextVariable.FRIDAY_HOURS.getName())!=null){
-			params.getWeekDayHours()[4] = (Double.parseDouble(map.get(ContextVariable.FRIDAY_HOURS.getName())));
+			params.getWeekDayHours()[4] = (parseDouble(map.get(ContextVariable.FRIDAY_HOURS.getName())));
 		}
 		if(map.get(ContextVariable.SATURDAY_HOURS.getName())!=null){
-			params.getWeekDayHours()[5] = (Double.parseDouble(map.get(ContextVariable.SATURDAY_HOURS.getName())));
+			params.getWeekDayHours()[5] = (parseDouble(map.get(ContextVariable.SATURDAY_HOURS.getName())));
 		}
 		if(map.get(ContextVariable.SUNDAY_HOURS.getName())!=null){
-			params.getWeekDayHours()[6] = (Double.parseDouble(map.get(ContextVariable.SUNDAY_HOURS.getName())));
+			params.getWeekDayHours()[6] = (parseDouble(map.get(ContextVariable.SUNDAY_HOURS.getName())));
 		}
 		if(map.get(ContextVariable.WEEK_HOURS.getName())!=null){
-			params.setWeekHours( Double.parseDouble(map.get(ContextVariable.WEEK_HOURS.getName())) );
+			params.setWeekHours( parseDouble(map.get(ContextVariable.WEEK_HOURS.getName())) );
 			if( params.getWeekDayHours()[0]==null && params.getWeekDayHours()[1]==null && params.getWeekDayHours()[2]==null && params.getWeekDayHours()[3]==null
 					&& params.getWeekDayHours()[4]==null && params.getWeekDayHours()[5]==null && params.getWeekDayHours()[6]==null ){
 				params.getWeekDayHours()[0] = CommonUtil.round(params.getWeekHours()/5);
@@ -1499,6 +1499,16 @@ public class ContractUtils implements Serializable {
 	private static boolean isContractEffectiveDate(Contract contract, Date date){
 		return (date.after(contract.getStartDate()) || date.equals(contract.getStartDate())) 
 				&& (contract.getEndDate()==null || date.before(contract.getEndDate()) || date.equals(contract.getEndDate())) ;
+	}
+	
+	private static double parseDouble ( String s ) {
+		try {
+			return Double.parseDouble(s);
+		} catch ( NullPointerException e ) {
+			return 0.0;
+		} catch ( NumberFormatException e ) {
+			return 0.0;
+		}
 	}
 
 	public static class MonthHours {
