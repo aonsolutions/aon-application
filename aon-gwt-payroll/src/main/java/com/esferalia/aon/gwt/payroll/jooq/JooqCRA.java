@@ -228,7 +228,7 @@ public class JooqCRA {
 		Result<Record> salaryRecords = dslContext.select().from(SALARY)
 				.where(SALARY.START_DATE.ge(startDateSQL))
 					.and(SALARY.END_DATE.le(endDateSQL))
-					.and(SALARY.ENTERPRISE_NAME.equalIgnoreCase(_enterpriseName))
+//					.and(SALARY.ENTERPRISE_NAME.equalIgnoreCase(_enterpriseName))
 					.and(SALARY.CCC.eq(_ccc))
 					.and(SALARY.SS_REGIME.notEqual((byte)3))
 				.fetch();
