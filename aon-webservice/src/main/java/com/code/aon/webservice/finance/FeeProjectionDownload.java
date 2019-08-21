@@ -132,7 +132,7 @@ public class FeeProjectionDownload extends HttpServlet{
     		createCell(row, titleStyle, monthName + " " + year, i+3);
     	}
     	
-    	createCell(row, titleStyle, "TOTAL", 14);    	
+    	createCell(row, titleStyle, "TOTAL", 15);
     	return 1;
 	}
 	
