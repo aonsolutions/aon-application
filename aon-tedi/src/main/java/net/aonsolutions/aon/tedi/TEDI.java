@@ -134,6 +134,14 @@ public class TEDI {
 		}
 	}
 
+	public static TediResult validateInvoice(String domainName, int domain, String user, TediResult result) {
+		result.clearMessages();
+		TediValidator.validateInvoice(result);
+		return result;
+	}
+	
+
+	
 	public static LinkedList<TediResult> putInvoices(String domainName, int domain, String user,
 			LinkedList<TediResult> invoices) throws TediException {
 		if (invoices == null) {

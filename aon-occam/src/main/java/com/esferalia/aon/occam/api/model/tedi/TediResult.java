@@ -79,5 +79,9 @@ public class TediResult implements Serializable {
 		TediLevel level = getMoreSeriousLevel();;
 		return ( level == null || level.ordinal() < TediLevel.ERR.ordinal() );
 	}
+
+	public void clearMessages() {
+		this.messages = new LinkedList<TediError>();		
+	}
 	
 }

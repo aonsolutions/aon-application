@@ -294,8 +294,11 @@ public class TediParser {
 	private static AccountEntry getEntryBase(AONContext ctx, AonConfiguration aonCtx,AccountingInvoice ai) {
 		EnterpriseActivity ea = aonCtx.getMainActivity();
 		Integer activity = (ea==null?null:ea.getId());
-		AccountPeriod period = AccountPeriodDAO.getPeriod(ctx, ai.getInvoice().getIssueDate());
-		Integer periodId = (period == null? null : period.getId());
+		Integer periodId = null;
+		if (ai.getInvoice().getIssueDate() != null) {
+			AccountPeriod period = AccountPeriodDAO.getPeriod(ctx, ai.getInvoice().getIssueDate());
+			periodId = (period == null? null : period.getId());
+		}
 		AccountEntry accountEntry = new AccountEntry()
 				.setPeriod(periodId)
 				.setDomain(ai.getInvoice().getDomain())

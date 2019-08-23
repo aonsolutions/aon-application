@@ -3164,6 +3164,9 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Introduzca los par\u00E1metros de b\u00FAsqueda:")
 	String search2Templates();
  	
+ 	@DefaultMessage("Introduzca el dato requerido")
+	String inputData();
+
  	@DefaultMessage("Almac\u00E9n")
 	String warehouseTemplates();
  	

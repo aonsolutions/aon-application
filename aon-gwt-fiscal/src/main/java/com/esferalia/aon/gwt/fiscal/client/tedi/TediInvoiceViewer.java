@@ -79,7 +79,7 @@ public class TediInvoiceViewer extends SimpleLayoutPanel {
 		tab.setWidget(row, 2, new Label(AON.MSG.issueDate()));
 		
 		tab.getCellFormatter().setStyleName(row, 3, AON.AON_CSS.aonPanelGridEven());
-		tab.setWidget(row, 3, new Label(DateTimeFormat.getFormat(DATE_PATTERN).format(invoice.getIssueDate())));
+		tab.setWidget(row, 3, new Label(invoice.getIssueDate()==null?"SIN FECHA":DateTimeFormat.getFormat(DATE_PATTERN).format(invoice.getIssueDate())));
 		row++;
 
 		

@@ -145,7 +145,13 @@ public class TediValidator {
 	 */
 	public static Consumer<TediResult> INVALID_REGISTRY_DOCUMENT = (ctx) -> {
 		if (AonStringUtils.isNotBlank(ctx.getInvoice().getRegistryDocument())) {
-			if (!AonDocumentUtil.isValid(ctx.getInvoice().getRegistryDocument())) {
+			String country = ctx.getInvoice().getRegistryDocumentCountry() == null ? null : 
+				ctx.getInvoice().getRegistryDocumentCountry().getIso2();
+			if ("ES".equals( country )) {
+				if (!AonDocumentUtil.isValid(ctx.getInvoice().getRegistryDocument())) {
+					ctx.add( TediErrorMessages.C004.wrn(TediContextKey.RDOCUMENT) );
+				}
+			} else if (!AonDocumentUtil.isValidComunitaryCode(country,ctx.getInvoice().getRegistryDocument())) {
 				ctx.add( TediErrorMessages.C004.wrn(TediContextKey.RDOCUMENT) );
 			}
 		}

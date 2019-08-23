@@ -493,6 +493,7 @@ public class AccountingInvoiceDAO {
 			invoice.setRegistryDocument(reg.getDocument());
 			invoice.setRegistryName(reg.getName());
 			invoice.setVatAccrualPayment(invoice.isNational()
+					&& invoice.getIssueDate() != null
 					&& !invoice.getIssueDate().before(InvoiceDAO.VAT_ACCRUAL_START_DATE)
 					&& ( config.getCompany().isVatAccrualPayment() || reg.isVatAccrualPayment()));
 		}

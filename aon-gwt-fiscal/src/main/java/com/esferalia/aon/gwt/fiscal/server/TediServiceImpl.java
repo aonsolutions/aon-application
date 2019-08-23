@@ -60,4 +60,9 @@ public class TediServiceImpl extends AonStatelessRemoteServiceServlet implements
 			throw new AonCoreException(t);
 		}
 	}
+
+	@Override
+	public TediResult validateInvoice(String domainName, String user, int domain, TediResult result ) throws AonCoreException {
+		return TEDI.validateInvoice(domainName, domain, user, result);
+	}
 }
