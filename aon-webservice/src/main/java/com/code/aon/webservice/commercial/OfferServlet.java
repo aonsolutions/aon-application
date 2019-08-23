@@ -145,7 +145,7 @@ public class OfferServlet extends HttpServlet{
 					.setStatus(OfferDetailStatus.PENDING);
 
 			offerDetail = AON.insertOfferDetail(domain.getName(), domain.getId(), "", offerDetail);
-			
+			object.put("registry", offer.getTarget().getId());
 			object.put("number", offer.getNumber());
 		} else {
 			System.out.println("¡¡EVICERTIA!!");
