@@ -16,4 +16,5 @@ public interface TediServiceAsync {
 	void putInvoice(String domainName, String user, int domain, TediInvoice invoice, AsyncCallback<TediResult> callback);
 	void putInvoices(String domainName, String user, int domain, LinkedList<TediResult> results, AsyncCallback<LinkedList<TediResult>> callback);
 	void validateInvoice(String domainName, String user, int domain, TediResult result, AsyncCallback<TediResult> callback);
+	void getInvoiceAttachURL(String domainName, String user, int domain, String uuid, AsyncCallback<String> callback);
 }

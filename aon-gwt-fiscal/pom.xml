@@ -124,16 +124,23 @@
       <scope>provided</scope>
       <classifier>sources</classifier>
     </dependency>
-<!-- 
 	<dependency>
-		<groupId>com.esferalia.aon</groupId>
-		<artifactId>aon.js.payroll</artifactId>
+		<groupId>net.aonsolutions</groupId>
+		<artifactId>aon.gwt.pdfjs</artifactId>
 		<version>${project.version}</version>
 		<scope>compile</scope>
 	</dependency>
 	<dependency>
 		<groupId>net.aonsolutions</groupId>
 		<artifactId>aon.gwt.pdfjs</artifactId>
+		<version>${project.version}</version>
+      <scope>provided</scope>
+      <classifier>sources</classifier>
+	</dependency>
+<!-- 
+	<dependency>
+		<groupId>com.esferalia.aon</groupId>
+		<artifactId>aon.js.payroll</artifactId>
 		<version>${project.version}</version>
 		<scope>compile</scope>
 	</dependency>

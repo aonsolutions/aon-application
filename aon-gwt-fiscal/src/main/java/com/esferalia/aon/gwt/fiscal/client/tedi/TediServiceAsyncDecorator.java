@@ -59,4 +59,10 @@ public class TediServiceAsyncDecorator implements TediServiceAsync {
 		AON.start();
 		fsa.validateInvoice(domainName, user, domain, result, new AsyncCallbackWrapper<TediResult>(callback));
 	}
+	
+	@Override
+	public void getInvoiceAttachURL(String domainName, String user, int domain, String uuid, AsyncCallback<String> callback) {
+		AON.start();
+		fsa.getInvoiceAttachURL(domainName, user, domain, uuid, new AsyncCallbackWrapper<String>(callback));
+	}
 }

@@ -100,7 +100,7 @@ public class Viewer extends ResizeComposite {
 	
 	// ---------------------------------------------------------------- Private
 	
-	private void clear () {
+	public void clear () {
 		verticalPanel.clear();
 	}
 

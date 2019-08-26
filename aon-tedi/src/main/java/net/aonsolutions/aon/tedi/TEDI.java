@@ -110,6 +110,34 @@ public class TEDI {
 		}
 	}
 
+	public static String getInvoiceAttach(String domainName, int domain, String user, String uuid) throws TediException {
+		if (AonStringUtils.isEmpty(uuid)) {
+			throw new TediException("No se ha indicado un identificador de factura que recuperar");
+		}
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			Company company = CompanyDAO.getCompany(ctx, domain);
+			if (company == null) {
+				throw new TediException("No se ha encontrado una compa\u00F1ia v\u00E1lida para el dominio " + domain);
+			}
+			if (AonStringUtils.isEmpty(company.getDocument())) {
+				throw new TediException(
+						"No se ha indicado un NIF/CIF/DNI v\u00E1lido para la compa\u00F1ia (Configuraci\u00F3n global)");
+			}
+			Tedi tedi = getTedi(ctx);
+			LOGGER.info("[TEDI] Attempt to recover invoice [" + company.getDocument() + "," + uuid + "]");
+			String url = tedi.getInvoiceAttach(company.getDocument(), uuid);
+			if (url != null) {
+				return url;
+			}
+			return null;
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	public static TediResult putInvoice(String domainName, int domain, String user, TediInvoice invoice)
 			throws TediException {
 		if (invoice == null) {
