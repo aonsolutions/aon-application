@@ -3251,7 +3251,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		ContractRecord contract = newContract(aonContext, 
 				new String[] {
 				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
-				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"}, 
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+				"HORAS_TRABAJADAS * 0.00"}, 
 				new String[] {						
 				"BASE_CGC * 0.10", 
 				"BASE_CGP * 0.05",
