@@ -7,6 +7,8 @@ import static com.esferalia.aon.htmlunit.HtmlUnitIT.login;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.wait4;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.NumberFormat;
@@ -57,6 +59,7 @@ public abstract class BaseIntegralTestCase {
 	// ------------------------------------------------------------------------
 		
 	protected static  void setup(String url, String user, String password) throws Exception {
+		shutUp();
 		LOGGER.setLevel(Level.WARNING);
 		webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
 		webClient.setAjaxController(new NicelyResynchronizingAjaxController());
@@ -114,6 +117,17 @@ public abstract class BaseIntegralTestCase {
 		
 	}
 	
+	private static void shutUp() {
+		PrintStream devnull = new PrintStream(new OutputStream() {
+			@Override
+			public void write(int b) throws IOException {
+				// TODO Auto-generated method stub
+			}
+		});
+		System.setOut(devnull);
+		System.setErr(devnull);
+	}
+
 	// ------------------------------------------------------------------------
 
 	protected static void draft(String employeeName) throws IndexOutOfBoundsException, IOException, InterruptedException {

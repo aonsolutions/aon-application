@@ -40,6 +40,9 @@ import static java.util.Calendar.DAY_OF_YEAR;
 import static java.util.Calendar.MONTH;
 import static java.util.Calendar.YEAR;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
@@ -136,6 +139,7 @@ public abstract class AbstractSQLTestCase {
 	@Before
 	public void setUp() throws ClassNotFoundException, SQLException,
 			AonSQLException {
+		shutUp();
 		connection = connect();
 		AONContext context = new AONContext(connection);
 		cleanSystemData(context);
@@ -1274,6 +1278,18 @@ public abstract class AbstractSQLTestCase {
 
 		new SmartContractSalaryCalculator<ISalary>(roundSalaryBuilder).calculate(ctx);
 		return jooqSalaryBuilder.execute();
+	}
+	
+	
+	private static void shutUp() {
+		PrintStream devnull = new PrintStream(new OutputStream() {
+			@Override
+			public void write(int b) throws IOException {
+				// TODO Auto-generated method stub
+			}
+		});
+		System.setOut(devnull);
+		System.setErr(devnull);
 	}
 
 
