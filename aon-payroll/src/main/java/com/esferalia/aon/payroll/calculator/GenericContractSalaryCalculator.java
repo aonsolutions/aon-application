@@ -20,6 +20,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SATURDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
@@ -1414,7 +1415,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				ADDITIONAL_BASE.getName(), 
 				STRUCTURAL_OVERTIME_BASE.getName(),
 				NON_STRUCTURAL_OVERTIME_BASE.getName(), 
-				WORKED_HOURS.getName(),
+				SALARY_HOURS.getName(),
+				//WORKED_HOURS.getName(),
 				ADDITIONAL_HOURS.getName(),
 
 				MONDAY_HOURS.getName(),

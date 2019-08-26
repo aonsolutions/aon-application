@@ -311,7 +311,7 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 								ContextVariable.FRIDAY_HOURS,
 								ContextVariable.SATURDAY_HOURS,
 								ContextVariable.SUNDAY_HOURS,
-								ContextVariable.WORKED_HOURS,
+//								ContextVariable.WORKED_HOURS,
 								ContextVariable.SALARY_HOURS, }) {
 							Assert.assertEquals(var.getName(), true, salary.getContextData()
 									.containsKey(var.getName()));

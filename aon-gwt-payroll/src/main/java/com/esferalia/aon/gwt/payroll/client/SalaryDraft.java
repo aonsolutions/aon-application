@@ -300,10 +300,7 @@ public class SalaryDraft extends ResizeComposite
 			"POR_HORAS", "CONTEXT", "UTILIZADA", "IS_READ"
 	};
 
-	private static String[] SUMMING_CONSTANTS = {
-			"DIAS_TRABAJADOS",
-			"HORAS_TRABAJADAS"
-	};
+
 	// @formatter:on
 
 	static class VisibilityImpl implements HasVisibility {
@@ -5363,28 +5360,62 @@ public class SalaryDraft extends ResizeComposite
 	}
 	
 	private List<Variable> getConstants(List<Variable> context) {
-		List<Variable> summingConstants = 
-				context.stream()
-				.filter(v->isSummingConstant(v))
-				.filter(v-> v.getValue() != null )
-				.collect(Collectors.groupingBy(
-						Variable::getName,
-						Collectors.summingDouble(v->Double.parseDouble(String.valueOf(v.getValue())))
-				))
-				.entrySet().stream()
-				.filter(e -> e.getValue() > 0.00 )
-				.map(e -> {
-					NumberVariable v = new NumberVariable();
-					v.setName(e.getKey());
-					v.setValue(e.getValue());
-					v.setScope(Scope.CONTRACT);
-					v.setEndDate(salaryDraftObject.getEndDate());
-					v.setStartDate(salaryDraftObject.getStartDate());
-					return  v;
-					})
-				.collect(Collectors.toList());
+		List<Variable> summingConstants = new ArrayList<Variable>();
+
+		try {
+			summingConstants.add(newNumberVariable(context, "DIAS_TRABAJADOS"));
+		} catch ( Exception e ) {
+		}
+
+		try {
+			summingConstants.add(newNumberVariable(context, "HORAS_TRABAJADAS"));
+			return summingConstants;
+		} catch ( Exception e ) {
+		}
 		
+		Object partialFactor = getContextValue("COEFICIENTE_PARCIALIDAD", salaryDraftObject );
+		
+		if ( partialFactor == null )
+			return summingConstants;
+		
+		if ( Double.parseDouble(String.valueOf(partialFactor)) == 1.00 )
+			return summingConstants;
+		
+		try {
+			summingConstants.add(newNumberVariable(context, "HORAS_NOMINA"));
+		} catch ( Exception e ) {
+		}
+
 		return summingConstants; 
+	}
+	
+	private NumberVariable newNumberVariable(List<Variable> context, String name) {
+		Double value = 
+			context.stream()
+				.filter(v->v.getName().equals(name))
+				.filter(v-> v.getValue() != null )
+				.collect(Collectors.summingDouble(v->Double.parseDouble(String.valueOf(v.getValue()))));
+		
+		if  ( value == 0.00 )
+			throw new NullPointerException();
+		
+		NumberVariable workedHoursVariable = new NumberVariable();
+		workedHoursVariable.setName(name);
+		workedHoursVariable.setValue(value);
+		workedHoursVariable.setScope(Scope.CONTRACT);
+		workedHoursVariable.setEndDate(salaryDraftObject.getEndDate());
+		workedHoursVariable.setStartDate(salaryDraftObject.getStartDate());
+		return workedHoursVariable;
+	}
+
+	private NumberVariable newNumberVariable(String name, Double value ) {
+		NumberVariable workedHoursVariable = new NumberVariable();
+		workedHoursVariable.setName(name);
+		workedHoursVariable.setValue(value);
+		workedHoursVariable.setScope(Scope.CONTRACT);
+		workedHoursVariable.setEndDate(salaryDraftObject.getEndDate());
+		workedHoursVariable.setStartDate(salaryDraftObject.getStartDate());
+		return workedHoursVariable;
 	}
 
 	public void addDraftVariable(String name , String expression ) { 
