@@ -41,6 +41,7 @@ import com.code.aon.common.util.AonFile;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryDirStaff;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
 import com.code.aon.ui.finance.SddMandateObject;
@@ -163,15 +164,12 @@ public class DocumentOnlineSigner implements Serializable {
 				list.add(getSddMandate(offer).getData());
 			}
 			
-			RegistryMedia rmedia = AON.getRMedia(AonUtil.getDomainName(), offer.getDomain(), "", f -> 
-			f.getDomainProperty().eq(offer.getDomain())
-			.and(f.getRegistryProperty().eq(offer.getTarget().getId()))
-			.and(f.getMediaProperty().eq((byte) 4))
-			.and(f.getCommercialProperty().eq((byte) 1)));
-			String email = rmedia.getValue();
-			if(email == null || "".equals(email)) {
+			String targetCommercialEmail = getTargetCommercialEmail(offer);
+			if(targetCommercialEmail == null || "".equals(targetCommercialEmail)) {
 				throw new Exception("El Cliente Potencial no tiene cuenta de correo electrónico comercial.");
 			}
+			String rDirStaffEmail = getRDirStaffEmail(offer);
+			String sellerEmail = getSellerEmail(offer);
 			
 			byte[] data = mergePdf(list);
 			byte[] encoded = Base64.getEncoder().encode(data);
@@ -180,11 +178,25 @@ public class DocumentOnlineSigner implements Serializable {
 			json.put("lookupKey", "Evisign");
 			json.put("subject", "FIRMA");
 			json.put("document", new String(encoded));
+			
+			// signingParties
 			JSONObject sp = new JSONObject();
 			sp.put("name", offer.getTarget().getRegistry().getName());
-			sp.put("address", email);
+			sp.put("address", targetCommercialEmail);
 			sp.put("signingMethod", signingType());
+			if(signingType()=="EmailPin")
+				sp.put("EmailAddress", targetCommercialEmail);
+			JSONObject role = new JSONObject();
+			role.put("signer", rDirStaffEmail);
+			role.put("reviewer", targetCommercialEmail);
+			sp.put("role", role);
 			json.put("signingParties", sp);
+			
+			// interestedParties
+			JSONObject ip = new JSONObject();
+			ip.put("address", sellerEmail);
+			json.put("interestedParties", ip);
+			
 			json.put("options", new JSONObject());
 			
 			JSONObject responseJson = postObject(json.toString());
@@ -194,6 +206,31 @@ public class DocumentOnlineSigner implements Serializable {
 				AON.updateOffer(AonUtil.getDomainName(), of.getDomain(), "", of);
 			}
 		}
+	}
+	
+	private String getTargetCommercialEmail(Offer offer) {
+		RegistryMedia rmedia = AON.getRMedia(AonUtil.getDomainName(), offer.getDomain(), "", f -> 
+		f.getDomainProperty().eq(offer.getDomain())
+		.and(f.getRegistryProperty().eq(offer.getTarget().getId()))
+		.and(f.getMediaProperty().eq((byte) 4))
+		.and(f.getCommercialProperty().eq((byte) 1)));
+		return rmedia==null?"":rmedia.getValue();
+	}
+	private String getRDirStaffEmail(Offer offer) throws ManagerBeanException {
+		IManagerBean dirStaff = BeanManager.getManagerBean(RegistryDirStaff.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(dirStaff.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_REGISTRY_ID), offer.getTarget().getId());
+		List<ITransferObject> list = dirStaff.getList(criteria);
+		if (! list.isEmpty() )
+			return ((RegistryDirStaff)list.get(0)).getChargeDescription();
+		return "";
+	}
+	private String getSellerEmail(Offer offer) {
+		RegistryMedia rmedia = AON.getRMedia(AonUtil.getDomainName(), offer.getDomain(), "", f -> 
+			f.getDomainProperty().eq(offer.getDomain())
+				.and(f.getRegistryProperty().eq(offer.getSeller().getId()))
+				.and(f.getMediaProperty().eq((byte) 4)));
+		return rmedia==null?"":rmedia.getValue();
 	}
 	
 	public AonFile getOfferFile( Offer offer ) throws IOException, ReportException, ManagerBeanException {
