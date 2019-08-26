@@ -5607,15 +5607,6 @@ public class SalaryDraft extends ResizeComposite
 		return false;
 	}
 
-	static boolean isSummingConstant(Variable variable) {
-		String name = variable.getName();
-		for (String constant : SUMMING_CONSTANTS)
-			if (constant.equals(name))
-				return true;
-		
-		return false;
-	}
-
 	static <T extends IsWidget & HasValue<String> & HasAllFocusHandlers & Focusable & HasEnabled> T createEditor(
 			Variable variable) {
 		for (VariableEditorFactory<T> factory : VARIABLE_EDITOR_FACTORIES) {
