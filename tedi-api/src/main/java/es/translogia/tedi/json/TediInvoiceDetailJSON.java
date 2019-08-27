@@ -25,9 +25,9 @@ public enum TediInvoiceDetailJSON {
 		(detail, json) -> detail.setDiscount(TediJSONUtils.optDouble(json, IConstants.DISCOUNT)),
 		(detail, json) -> json.put(IConstants.DISCOUNT, detail.getDiscount())
 	),
-	BASE(
-		(detail, json) -> detail.setBase(TediJSONUtils.optDouble(json, IConstants.BASE)),
-		(detail, json) -> json.put(IConstants.BASE, detail.getBase())
+	AMOUNT(
+		(detail, json) -> detail.setAmount(TediJSONUtils.optDouble(json, IConstants.AMOUNT)),
+		(detail, json) -> json.put(IConstants.AMOUNT, detail.getAmount())
 	),
 	VAT(
 		(detail, json) -> detail.setVat(TediJSONUtils.optDouble(json, IConstants.VAT)),

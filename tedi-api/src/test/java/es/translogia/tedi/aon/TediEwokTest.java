@@ -243,7 +243,7 @@ public class TediEwokTest {
 			assertEquals(invoiceDetail.getQuantity(), json.optDouble(IConstants.QUANTITY));
 			assertEquals(invoiceDetail.getPrice(), json.optDouble(IConstants.PRICE));
 			assertEquals(invoiceDetail.getDiscount(), json.optDouble(IConstants.DISCOUNT));
-			assertEquals(invoiceDetail.getBase(), json.optDouble(IConstants.BASE));
+			assertEquals(invoiceDetail.getAmount(), json.optDouble(IConstants.AMOUNT));
 			assertEquals(invoiceDetail.getVat(), json.optDouble(IConstants.VAT));
 			assertEquals(invoiceDetail.getSurcharge(), json.optDouble(IConstants.SURCHARGE));
 		} catch (Throwable e) {

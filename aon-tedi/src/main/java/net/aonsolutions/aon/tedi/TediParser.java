@@ -60,10 +60,10 @@ public class TediParser {
 		QUANTITY( (result,tedi,aon) -> aon.setQuantity( AonNumberUtils.zeroIfNull(tedi.getQuantity()))),
 		PRICE( (result,tedi,aon) -> aon.setPrice( AonNumberUtils.zeroIfNull(tedi.getPrice()))),
 		DISCOUNT( (result,tedi,aon) -> aon.setDiscountExpression( AonNumberUtils.toString(tedi.getDiscount()))),
-		BASE( (result,tedi,aon) -> aon.setTaxableBase( AonNumberUtils.zeroIfNull(tedi.getBase()))),
+		AMOUNT( (result,tedi,aon) -> aon.setTaxableBase( AonNumberUtils.zeroIfNull(tedi.getAmount()))),
 		VAT( (result,tedi,aon) -> {
 			if (tedi.getVat() != null) {
-				double base = AonNumberUtils.zeroIfNull(tedi.getBase());
+				double base = AonNumberUtils.zeroIfNull(tedi.getAmount());
 				double percent = AonNumberUtils.zeroIfNull(tedi.getVat());
 				double surcharge = AonNumberUtils.zeroIfNull(tedi.getSurcharge());
 				double quota = AonMathUtils.round( base * percent / 100 );

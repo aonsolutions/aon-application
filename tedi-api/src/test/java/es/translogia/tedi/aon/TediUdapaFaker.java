@@ -1424,8 +1424,8 @@ public class TediUdapaFaker {
 			dsc = faker.number().randomDouble(2, 0, 100);
 			json.put(IConstants.DISCOUNT, dsc);
 		}
-		double base = (qty * prc) - (qty * prc * dsc / 100);
-		json.put(IConstants.BASE, (Math.round(base * 100) / 100));
+		double amount = (qty * prc) - (qty * prc * dsc / 100);
+		json.put(IConstants.AMOUNT, (Math.round(amount * 100) / 100));
 		boolean surcharge = (p < 2);
 		if (p < 1) {
 			// Exento
@@ -1493,8 +1493,8 @@ public class TediUdapaFaker {
 			JSONObject detail = details.getJSONObject(i);
 			double base = 0;
 			double vat = 0;
-			if (detail.has(IConstants.BASE)) {
-				base = detail.getDouble(IConstants.BASE);
+			if (detail.has(IConstants.AMOUNT)) {
+				base = detail.getDouble(IConstants.AMOUNT);
 				total = total + base;
 			}
 			if (detail.has(IConstants.VAT)) {

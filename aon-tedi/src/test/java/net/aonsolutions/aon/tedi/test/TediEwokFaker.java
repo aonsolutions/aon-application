@@ -101,7 +101,7 @@ public class TediEwokFaker {
 		optPut(90,json,IConstants.QUANTITY, faker.commerce().price(0, 100));
 		optPut(90,json,IConstants.PRICE, faker.commerce().price());
 		optPut(5,json,IConstants.DISCOUNT, faker.commerce().price(0, 100));
-		optPut(90,json,IConstants.BASE, faker.commerce().price(0, 100));
+		optPut(90,json,IConstants.AMOUNT, faker.commerce().price(0, 100));
 		optPut(90,json,IConstants.VAT, faker.commerce().price(0, 100));
 		optPut(5,json,IConstants.SURCHARGE, faker.commerce().price(0, 100));
 		return json;
