@@ -6,8 +6,13 @@ public final class StringUtils {
 		Integer size = outputSize;
 		String outputStr = input;
 		
-		while (outputStr.length() < size)
-			outputStr = leftPadChar + outputStr;
+		if(outputStr.length() < size){
+			while (outputStr.length() < size)
+				outputStr = leftPadChar + outputStr;
+		} else {
+			outputStr = input.substring((input.length() - outputSize), input.length());
+		}
+		
 		
 		return outputStr;
 	}
@@ -16,8 +21,12 @@ public final class StringUtils {
 		Integer size = outputSize;
 		String outputStr = input;
 		
-		while (outputStr.length() < size)
-			outputStr = outputStr + rightPadChar;
+		if(outputStr.length() < size){
+			while (outputStr.length() < size)
+				outputStr = outputStr + rightPadChar;
+		} else {
+			outputStr = input.substring(0, outputSize);
+		}
 		
 		return outputStr;
 	}
