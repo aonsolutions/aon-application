@@ -53,7 +53,6 @@ import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -405,7 +404,7 @@ public class TediCenter extends MainEntryPoint {
 					}
 
 				});
-		refreshProblems(null);
+		refreshProblems(null,null);
 	}
 
 	private void paintList(PopupPanel popup) {
@@ -419,9 +418,11 @@ public class TediCenter extends MainEntryPoint {
 			boolean first = true;
 			for (TediResult result : resultList) {
 				if (applyFilter(result)) {
-					invoiceContainer.add(paintInvoice(result));
+					FocusPanel item = new FocusPanel();
+					paintInvoice(item,result);
+					invoiceContainer.add(item);
 					if (first) {
-						showInvoice(result);
+						showInvoice(item,result);
 						first = false;
 					}
 				}
@@ -488,7 +489,7 @@ public class TediCenter extends MainEntryPoint {
 					}
 
 				});
-		refreshProblems(null);
+		refreshProblems(null,null);
 	}
 
 	protected void onAccept(TediResult result) {
@@ -510,12 +511,11 @@ public class TediCenter extends MainEntryPoint {
 			}
 
 		});
-		refreshProblems(null);
+		refreshProblems(null,null);
 	}
 
-	private Panel paintInvoice(TediResult result) {
+	private FocusPanel paintInvoice(FocusPanel invoiceContainer,TediResult result) {
 		Invoice invoice = result.getInvoice();
-		FocusPanel invoiceContainer = new FocusPanel();
 		invoiceContainer.setStyleName(AON.AON_CSS.aonClickableBlock());
 		invoiceContainer.addStyleName(AON.AON_CSS.aonSimpleBorder());
 		invoiceContainer.addStyleName(AON.AON_CSS.aonMargin());
@@ -611,7 +611,7 @@ public class TediCenter extends MainEntryPoint {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				showInvoice(result);
+				showInvoice(invoiceContainer,result);
 			}
 		});
 
@@ -637,7 +637,7 @@ public class TediCenter extends MainEntryPoint {
 		return color;
 	}
 
-	private void showInvoice(TediResult result) {
+	private void showInvoice(FocusPanel container,TediResult result) {
 //		if (mainSplitLayoutPanel.getWidgetSize(invoiceContent) <= 50) {
 //			mainSplitLayoutPanel.setWidgetSize(invoiceContent, Window.getClientWidth() / 1.5);
 //			mainSplitLayoutPanel.animate(500);
@@ -670,10 +670,10 @@ public class TediCenter extends MainEntryPoint {
 						template.tab(AON.MSG.previewAccountEntry(), AON.AON_CSS.aonIconCompany()));
 			}
 		}
-		refreshProblems(result);
+		refreshProblems(container, result);
 	};
 
-	private void refreshProblems(TediResult result) {
+	private void refreshProblems(FocusPanel container, TediResult result) {
 		problemsContent.clear();
 		viewer.clear();
 		if (result == null) {
@@ -764,7 +764,9 @@ public class TediCenter extends MainEntryPoint {
 
 													@Override
 													public void onSuccess(TediResult result) {
-														showInvoice(result);
+														showInvoice(container, result);
+														container.clear();
+														paintInvoice(container,result);
 													}
 
 													@Override
@@ -908,7 +910,7 @@ public class TediCenter extends MainEntryPoint {
 
 		@Override
 		public void visitRdocument(TediResult result, ICallback callback) {
-			showDocumentDialog(AON.MSG.issueDate(), result.getInvoice().getRegistryDocument(),
+			showDocumentDialog(AON.MSG.document(), result.getInvoice().getRegistryDocument(),
 					new ITediCallback<String>() {
 
 						@Override
