@@ -977,6 +977,16 @@ input[type="checkbox"]:focus + label {
 	padding-right: 10px;
 }
 
+@url imageUrl aonCurlyGT;
+.aon-curly-gt {
+	border-style: solid;
+	border-width: 1px 15px 1px 0px;
+	border-image: imageUrl 0 250 0 0;
+	padding-right: 10px;
+	display: flex;
+	padding-right: 10px;
+}
+
 @sprite .aon-icon-aeat {
 	gwt-image: "aonAeat";
 	width: auto;

@@ -199,6 +199,9 @@ public interface AonResources extends ClientBundle, Images {
 	@Source("images/curly-lt.png")
 	ImageResource aonCurlyLT();
 
+	@Source("images/curly-gt.png")
+	ImageResource aonCurlyGT();
+
 	@Source("images/family.png")
 	ImageResource aonIconActivities();
 	

@@ -51,6 +51,7 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
+import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -498,9 +499,9 @@ public class TediCenter extends MainEntryPoint {
 
 		FlexTable tab = new FlexTable();
 		tab.getColumnFormatter().setWidth(0, "20px");
-		tab.getColumnFormatter().setWidth(1, "40px");
+		tab.getColumnFormatter().setWidth(1, "30px");
 		tab.getColumnFormatter().setWidth(2, "80px");
-		tab.getColumnFormatter().setWidth(3, "60px");
+		tab.getColumnFormatter().setWidth(3, "55px");
 		tab.getColumnFormatter().setWidth(4, "auto");
 		tab.setStyleName(AON.AON_CSS.aonWidthAll());
 		invoiceContainer.add(tab);
@@ -510,7 +511,11 @@ public class TediCenter extends MainEntryPoint {
 
 		InlineLabel checkLabel = new InlineLabel(AonStringUtils.SPACE);
 		checkLabel.setVisible(result.isImportable());
-		checkLabel.setStyleName(AON.AON_CSS.aonIconCheck());
+		if (result.isChecked()) {
+			checkLabel.setStyleName(AON.AON_CSS.aonIconChecked());
+		} else {
+			checkLabel.setStyleName(AON.AON_CSS.aonIconCheck());
+		}
 		checkLabel.addStyleName(AON.AON_CSS.aonPaddingLeft());
 		checkLabel.addClickHandler(new ClickHandler() {
 
@@ -545,7 +550,7 @@ public class TediCenter extends MainEntryPoint {
 
 		InlineLabel totalValueLabel = new InlineLabel(AON.FMT.format(invoice.getTotal()));
 		totalValueLabel.setStyleName(AON.AON_CSS.aonBold());
-		totalValueLabel.addStyleName(AON.AON_CSS.aonFontBig());
+		//totalValueLabel.addStyleName(AON.AON_CSS.aonFontBig());
 		tab.setWidget(0, 3, totalValueLabel);
 
 		InlineLabel dateLabel = new InlineLabel(AON.MSG.date());
@@ -560,9 +565,15 @@ public class TediCenter extends MainEntryPoint {
 
 		InlineLabel invoiceNumberLabel = new InlineLabel(AON.MSG.invoiceNumberAbbr());
 		invoiceNumberLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+		invoiceNumberLabel.addStyleName(AON.AON_CSS.aonNowrap());
 		tab.setWidget(1, 2, invoiceNumberLabel);
 
-		InlineLabel invoiceNumberValueLabel = new InlineLabel(invoice.getReferenceCode());
+		
+		String referenceCode = invoice.getReferenceCode();
+		if (AonStringUtils.length(referenceCode) > 15) {
+			referenceCode = AonStringUtils.abbreviate(referenceCode, 15);
+		}
+		InlineLabel invoiceNumberValueLabel = new InlineLabel(referenceCode);
 		invoiceNumberValueLabel.setStyleName(AON.AON_CSS.aonBold());
 		invoiceNumberValueLabel.addStyleName(AON.AON_CSS.aonNowrap());
 		tab.setWidget(1, 3, invoiceNumberValueLabel);
@@ -573,9 +584,9 @@ public class TediCenter extends MainEntryPoint {
 		tab.setWidget(2, 0, titularLabel);
 
 		String titular = invoice.getRegistryDocument() + " - " + invoice.getRegistryName();
-		if (AonStringUtils.length(titular) > 35) {
+		if (AonStringUtils.length(titular) > 30) {
 			invoiceContainer.setTitle(titular);
-			titular = AonStringUtils.abbreviate(titular, 35);
+			titular = AonStringUtils.abbreviate(titular, 30);
 		}
 		InlineLabel titularValueLabel = new InlineLabel(titular);
 		titularValueLabel.setStyleName(AON.AON_CSS.aonBold());
@@ -618,6 +629,7 @@ public class TediCenter extends MainEntryPoint {
 //			mainSplitLayoutPanel.setWidgetSize(invoiceContent, Window.getClientWidth() / 1.5);
 //			mainSplitLayoutPanel.animate(500);
 //		}
+		stylesForselection(container);
 		invoiceContent.clear();
 		TediInvoiceViewer tediInvoiceViewer = new TediInvoiceViewer(result.getInvoice());
 		ScrollPanel invoicePanel = new ScrollPanel();
@@ -648,6 +660,15 @@ public class TediCenter extends MainEntryPoint {
 		}
 		refreshProblems(container, result);
 	};
+
+	private void stylesForselection(FocusPanel container) {
+		if (container.getParent() instanceof HasWidgets) {
+			HasWidgets parent = (HasWidgets) container.getParent();
+			parent.forEach( (w) -> w.removeStyleName(AON.AON_CSS.aonCurlyGT()));
+			
+		}
+		container.addStyleName(AON.AON_CSS.aonCurlyGT());
+	}
 
 	private void refreshProblems(FocusPanel container, TediResult result) {
 		problemsContent.clear();

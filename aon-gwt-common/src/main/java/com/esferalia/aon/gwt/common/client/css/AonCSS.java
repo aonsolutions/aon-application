@@ -430,6 +430,9 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-curly-lt")
 	String aonCurlyLT();
 
+	@ClassName("aon-curly-gt")
+	String aonCurlyGT();
+
 	@ClassName("aon-nopadding")
 	String aonNopadding();
 
