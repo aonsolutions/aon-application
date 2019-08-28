@@ -369,39 +369,41 @@ public class TediParser {
 				}
 			}
 		}
-		for (InvoiceDetail detail : invoice.getDetails()) {
-			InvoiceTax tax = (detail.getInvoiceTaxes() != null && detail.getInvoiceTaxes().size() > 0)
-					?detail.getInvoiceTaxes().get(0)
-					:new InvoiceTax();
-			InvoiceVAT vat = new InvoiceVAT()			
-					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
-					.setBase(detail.getTaxableBase())
-					.setPercentage(tax.getPercentage())
-					.setQuota(tax.getQuota())
-					.setSurcharge(tax.getSurcharge())
-					.setSurchargeQuota(tax.getSurchargeQuota())
-					.setInvestAsset(tax.getInvestAsset())
-					.setDeductiblePercent(tax.getDeductiblePercent())
-					.setDeductibleQuota(tax.getDeductibleQuota())
-					.setWithholding(withholding)
-					
-					.setOutputAccountId( outputAccount == null ? null : outputAccount.getId() )
-					.setOutputAccountCode( outputAccount == null ? null : outputAccount.getCode() )
-					.setOutputAccountDescription( outputAccount == null ? null : outputAccount.getDescription() )
-			
-					.setInputAccountId( inputAccount == null ? null : inputAccount.getId() )
-					.setInputAccountCode( inputAccount == null ? null : inputAccount.getCode() )
-					.setInputAccountDescription( inputAccount == null ? null : inputAccount.getDescription() )
-			
-					.setAdjAccountId( adjAccount == null ? null : adjAccount.getId() )
-					.setAdjAccountCode( adjAccount == null ? null : adjAccount.getCode() )
-					.setAdjAccountDescription( adjAccount == null ? null : adjAccount.getDescription() )
-			
-					.setExpAccountId( expAccount == null ? null : expAccount.getId() )
-					.setExpAccountCode( expAccount == null ? null : expAccount.getCode() )
-					.setExpAccountDescription( expAccount == null ? null : expAccount.getDescription() )
-					;
-			ai.addVat(vat);
+		if (invoice.getDetails() != null) {
+			for (InvoiceDetail detail : invoice.getDetails()) {
+				InvoiceTax tax = (detail.getInvoiceTaxes() != null && detail.getInvoiceTaxes().size() > 0)
+						?detail.getInvoiceTaxes().get(0)
+								:new InvoiceTax();
+						InvoiceVAT vat = new InvoiceVAT()			
+								.setVatDeductionType(VatDeductionType.WITH_RIGHT)
+								.setBase(detail.getTaxableBase())
+								.setPercentage(tax.getPercentage())
+								.setQuota(tax.getQuota())
+								.setSurcharge(tax.getSurcharge())
+								.setSurchargeQuota(tax.getSurchargeQuota())
+								.setInvestAsset(tax.getInvestAsset())
+								.setDeductiblePercent(tax.getDeductiblePercent())
+								.setDeductibleQuota(tax.getDeductibleQuota())
+								.setWithholding(withholding)
+								
+								.setOutputAccountId( outputAccount == null ? null : outputAccount.getId() )
+								.setOutputAccountCode( outputAccount == null ? null : outputAccount.getCode() )
+								.setOutputAccountDescription( outputAccount == null ? null : outputAccount.getDescription() )
+								
+								.setInputAccountId( inputAccount == null ? null : inputAccount.getId() )
+								.setInputAccountCode( inputAccount == null ? null : inputAccount.getCode() )
+								.setInputAccountDescription( inputAccount == null ? null : inputAccount.getDescription() )
+								
+								.setAdjAccountId( adjAccount == null ? null : adjAccount.getId() )
+								.setAdjAccountCode( adjAccount == null ? null : adjAccount.getCode() )
+								.setAdjAccountDescription( adjAccount == null ? null : adjAccount.getDescription() )
+								
+								.setExpAccountId( expAccount == null ? null : expAccount.getId() )
+								.setExpAccountCode( expAccount == null ? null : expAccount.getCode() )
+								.setExpAccountDescription( expAccount == null ? null : expAccount.getDescription() )
+								;
+						ai.addVat(vat);
+			}
 		}
 	}
 }

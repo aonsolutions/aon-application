@@ -46,10 +46,12 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
@@ -88,10 +90,15 @@ public class TediCenter extends MainEntryPoint {
 
 	private MinimizePanel footPanel;
 	private TabLayoutPanel tabLayout;
-	private Viewer viewer = new Viewer();
-	private ScrollPanel viewerContent;
+	private DeckLayoutPanel deckViewer = new DeckLayoutPanel(); 
+	private Viewer pdfViewer = new Viewer();
+	private ScrollPanel imageViewerContent;
+	
 	private SimpleLayoutPanel problemsContent;
 	private LinkedList<TediResult> resultList;
+	
+	private static int PDF_PANEL = 0;
+	private static int IMAGE_PANEL = 1;
 
 	// FILTER
 	private CheckBox noErrors = new CheckBox("Sin errores");
@@ -173,11 +180,20 @@ public class TediCenter extends MainEntryPoint {
 				tabLayout.setWidth("100%");
 				problemsContent = new SimpleLayoutPanel();
 				tabLayout.add(problemsContent, template.tab(AON.MSG.problems(), AON.AON_CSS.aonIconError()));
-				viewerContent = new ScrollPanel();
+				 
+				// PDF VIEWER
+				ScrollPanel pdfViewerContent = new ScrollPanel();
 				VerticalPanel verticalPanel = new VerticalPanel();
-				verticalPanel.add(viewer);
-				viewerContent.setWidget(verticalPanel);
-				tabLayout.add(viewerContent, template.tab(AON.MSG.preview(), AON.AON_CSS.aonIconInvoice()));
+				verticalPanel.add(pdfViewer);
+				pdfViewerContent.setWidget(verticalPanel);
+				deckViewer.add(pdfViewerContent);
+				
+				// IMAGE VIEWER
+				imageViewerContent = new ScrollPanel();
+				deckViewer.add(imageViewerContent);
+				
+				
+				tabLayout.add(deckViewer, template.tab(AON.MSG.preview(), AON.AON_CSS.aonIconInvoice()));
 				footPanel.add(tabLayout);
 				contentSplitLayoutPanel.addSouth(footPanel, 26);
 
@@ -268,46 +284,6 @@ public class TediCenter extends MainEntryPoint {
 		acceptAll.setVisible(count > 0);
 		acceptAll.setText("Aceptar (" + count + ")");
 	}
-
-//	private Widget getInvoiceToolbarPanel(TediResult result) {
-//		FlowPanel toolbarPanel = new FlowPanel();
-//		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
-//		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
-//		FlexTable toolbar = new FlexTable();
-//		toolbar.setCellPadding(0);
-//		toolbar.setCellSpacing(0);
-//		toolbar.setStyleName(AON.AON_CSS.aonWidthAll());
-//		FlowPanel titlePanel = new FlowPanel();
-//		titlePanel.setStyleName(AON.AON_CSS.aonFindingTitleInternal());
-//		toolbar.setWidget(0, 0, titlePanel);
-//		toolbar.setWidget(0, 0, new Label("tEDI center"));
-//		toolbar.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonFindingTitle());
-//		toolbar.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonBold());
-//		toolbar.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonNowrap());
-//		toolbar.setWidget(0, 1, new Label());
-//		toolbar.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonFindingSubtitleIternal());
-//		FlowPanel buttonContainer = new FlowPanel();
-//		buttonContainer.setStyleName(AON.AON_CSS.aonFindingToolbarItemGroup());
-//		toolbar.setWidget(0, 2, buttonContainer);
-//		toolbar.getCellFormatter().setStyleName(0, 2, AON.AON_CSS.aonFindingToolbar());
-//
-//		final Button accept = new Button();
-//		accept.setText(AON.MSG.accept());
-//		accept.setTitle(AON.MSG.accept());
-//		accept.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-//		accept.addStyleName(AON.AON_CSS.aonIconSave());
-//		accept.addClickHandler(new ClickHandler() {
-//
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				onAccept(result);
-//			}
-//		});
-//		buttonContainer.add(accept);
-//
-//		toolbarPanel.add(toolbar);
-//		return toolbarPanel;
-//	}
 
 	private Widget getHeaderPanel() {
 		FlexTable tab = new FlexTable();
@@ -675,7 +651,8 @@ public class TediCenter extends MainEntryPoint {
 
 	private void refreshProblems(FocusPanel container, TediResult result) {
 		problemsContent.clear();
-		viewer.clear();
+		pdfViewer.clear();
+		imageViewerContent.clear();
 		if (result == null) {
 			problemsContent.setWidget(new Label(""));
 		} else {
@@ -684,22 +661,39 @@ public class TediCenter extends MainEntryPoint {
 				contentSplitLayoutPanel.animate(500);
 			}
 
-			if (result.getTedi().getFile() != null
-					&& AonStringUtils.equals(result.getTedi().getFile().getContentType(), MimeType.PDF.getName())) {
-				SERVICE.getInvoiceAttachURL(getCurrentDomainName(), getUser(), getCurrentDomain(),
-						result.getTedi().getUuid(), new AsyncCallback<String>() {
-
-							@Override
-							public void onSuccess(String result) {
-								viewer.setDocument(result, 1.0);
-							}
-
-							@Override
-							public void onFailure(Throwable caught) {
-							}
-						});
+			if (result.getTedi().getFile() != null) {
+				if (AonStringUtils.equals(result.getTedi().getFile().getContentType(), MimeType.PDF.getName())) {
+					SERVICE.getInvoiceAttachURL(getCurrentDomainName(), getUser(), getCurrentDomain(),
+							result.getTedi().getUuid(), new AsyncCallback<String>() {
+						
+						@Override
+						public void onSuccess(String result) {
+							deckViewer.showWidget(PDF_PANEL);
+							pdfViewer.setDocument(result, 1.0);
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+						}
+					});
+				}
+				if (AonStringUtils.equals(result.getTedi().getFile().getContentType(), MimeType.JPEG.getName())) {
+					SERVICE.getInvoiceAttachURL(getCurrentDomainName(), getUser(), getCurrentDomain(),
+							result.getTedi().getUuid(), new AsyncCallback<String>() {
+						
+						@Override
+						public void onSuccess(String result) {
+							deckViewer.showWidget(IMAGE_PANEL);
+							Image image = new Image(result);
+							imageViewerContent.setWidget(image);
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+						}
+					});
+				}
 			}
-			
 
 			ScrollPanel scrollPanel = new ScrollPanel();
 			scrollPanel.setStyleName(AON.AON_CSS.aonScrollArea());
