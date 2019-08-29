@@ -35,7 +35,8 @@ public class TediValidator {
 	 * El ámbito de la factura es un dato obligatorio.
 	 */
 	public static Consumer<TediResult> EMPTY_INVOICE_SCOPE = (ctx) -> {
-		if (ctx.getInvoice().getScope() == null || ctx.getInvoice().getScope().getId() == null) {
+		if (ctx.getInvoice().getRegistry() != null &&
+			(ctx.getInvoice().getScope() == null || ctx.getInvoice().getScope().getId() == null)) {
 			ctx.add( TediErrorMessages.C001.err(TediContextKey.SCOPE));
 		}
 	};
@@ -82,7 +83,7 @@ public class TediValidator {
 	 * Si la factura no es de ventas, el codigo de referencia debe tener valor.
 	 */
 	public static Consumer<TediResult> EMPTY_TRANSACTION = (ctx) -> {
-		if (ctx.getInvoice().getTransaction() == null) {
+		if (ctx.getInvoice().getRegistry() != null && (ctx.getInvoice().getTransaction() == null)) {
 			ctx.add( TediErrorMessages.C001.err(TediContextKey.TRANSACTION) );
 		}
 	};
@@ -117,7 +118,13 @@ public class TediValidator {
 	 */
 	public static Consumer<TediResult> EMPTY_REGISTRY = (ctx) -> {
 		if (ctx.getInvoice().getRegistry() == null) {
-			ctx.add( TediErrorMessages.C001.err(TediContextKey.REGISTRY) );
+			if (AonStringUtils.isEmpty(ctx.getInvoice().getRegistryDocument())) {
+				ctx.add( TediErrorMessages.C001.err(TediContextKey.REGISTRY) );
+			} else {
+				ctx.add( TediErrorMessages.C009.err(TediContextKey.REGISTRY,
+						(ctx.getInvoice().isSales()?"cliente":"acreedor/proveedor")
+						,(ctx.getInvoice().getRegistryDocument() + " " + ctx.getInvoice().getRegistryName())) );
+			}
 		}
 	};
 
@@ -125,7 +132,7 @@ public class TediValidator {
 	 * El document del titular de la factura es un dato obligatorio.
 	 */
 	public static Consumer<TediResult> EMPTY_REGISTRY_DOCUMENT = (ctx) -> {
-		if (AonStringUtils.isBlank(ctx.getInvoice().getRegistryDocument())) {
+		if (ctx.getInvoice().getRegistry() != null && AonStringUtils.isBlank(ctx.getInvoice().getRegistryDocument())) {
 			ctx.add( TediErrorMessages.C001.wrn(TediContextKey.RDOCUMENT) );
 		}
 	};
@@ -160,7 +167,7 @@ public class TediValidator {
 	 * La razon social del titular de la factura es un dato obligatorio.
 	 */
 	public static Consumer<TediResult> EMPTY_REGISTRY_NAME = (ctx) -> {
-		if (AonStringUtils.isBlank(ctx.getInvoice().getRegistryName())) {
+		if (ctx.getInvoice().getRegistry() != null &&  AonStringUtils.isBlank(ctx.getInvoice().getRegistryName())) {
 			ctx.add( TediErrorMessages.C001.wrn(TediContextKey.RNAME) );
 		}
 	};
@@ -268,7 +275,13 @@ public class TediValidator {
 		}
 	};
 
-	/**
+	public static Consumer<TediResult> CHECK_LINES = (ctx) -> {
+		if (ctx.getInvoice().getDetails() == null || ctx.getInvoice().getDetails().size() == 0) {
+			ctx.add( TediErrorMessages.C010.err(TediContextKey.DETAILS) );
+		}
+	};
+
+		/**
 	 * Si se ha indicado una fecha de l?mte de operaciones en los par?metros de la
 	 * empresa, debe ser anterior a la fecha de factura.
 	 * 
@@ -310,6 +323,7 @@ public class TediValidator {
 			.andThen(OVERFLOW_ADDRESS)
 			.andThen(DETAILS_VALIDATION)
 			.andThen(CHECK_FIVE_YEARS)
+			.andThen(CHECK_LINES)
 		.accept(ctx);
 		
 //		.andThen(EMPTY_TRANSACTION)

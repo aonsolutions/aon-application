@@ -46,7 +46,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -84,22 +83,15 @@ public class TediCenter extends MainEntryPoint {
 	private SimpleLayoutPanel sidebarContent;
 
 	private SplitLayoutPanel contentSplitLayoutPanel;
-	private TabLayoutPanel invoiceContent;
+	private TabLayoutPanel tabContent;
 
 	private FlowPanel toolbarPanel;
 	private Button acceptAll;
 
 	private MinimizePanel footPanel;
-	private TabLayoutPanel tabLayout;
-	private DeckLayoutPanel deckViewer = new DeckLayoutPanel(); 
+	private TabLayoutPanel footTabLayout;
 	private Viewer pdfViewer = new Viewer();
-	private ScrollPanel imageViewerContent;
-	
-	private SimpleLayoutPanel problemsContent;
 	private LinkedList<TediResult> resultList;
-	
-	private static int PDF_PANEL = 0;
-	private static int IMAGE_PANEL = 1;
 
 	// FILTER
 	private CheckBox noErrors = new CheckBox("Sin errores");
@@ -177,29 +169,14 @@ public class TediCenter extends MainEntryPoint {
 				});
 
 				footPanel.setStyleName(AON.AON_CSS.aonSelector());
-				tabLayout = new TabLayoutPanel(26, Unit.PX);
-				tabLayout.setWidth("100%");
-				problemsContent = new SimpleLayoutPanel();
-				tabLayout.add(problemsContent, template.tab(AON.MSG.problems(), AON.AON_CSS.aonIconError()));
-				 
-				// PDF VIEWER
-				ScrollPanel pdfViewerContent = new ScrollPanel();
-				VerticalPanel verticalPanel = new VerticalPanel();
-				verticalPanel.add(pdfViewer);
-				pdfViewerContent.setWidget(verticalPanel);
-				deckViewer.add(pdfViewerContent);
+				footTabLayout= new TabLayoutPanel(26, Unit.PX);
+				footTabLayout.setWidth("100%");
+				footPanel.add(footTabLayout);
 				
-				// IMAGE VIEWER
-				imageViewerContent = new ScrollPanel();
-				deckViewer.add(imageViewerContent);
-				
-				
-				tabLayout.add(deckViewer, template.tab(AON.MSG.preview(), AON.AON_CSS.aonIconInvoice()));
-				footPanel.add(tabLayout);
 				contentSplitLayoutPanel.addSouth(footPanel, 26);
 
-				invoiceContent = new TabLayoutPanel(26, Unit.PX);
-				contentSplitLayoutPanel.add(invoiceContent);
+				tabContent = new TabLayoutPanel(26, Unit.PX);
+				contentSplitLayoutPanel.add(tabContent);
 
 				dockLayoutPanel.add(mainSplitLayoutPanel);
 
@@ -381,7 +358,7 @@ public class TediCenter extends MainEntryPoint {
 					}
 
 				});
-		refreshProblems(null,null);
+		paintFooter(null,null);
 	}
 
 	private void paintList(PopupPanel popup) {
@@ -396,10 +373,10 @@ public class TediCenter extends MainEntryPoint {
 			for (TediResult result : resultList) {
 				if (applyFilter(result)) {
 					FocusPanel item = new FocusPanel();
-					paintInvoice(item,result);
+					paintInvoiceMenuItem(item,result);
 					invoiceContainer.add(item);
 					if (first) {
-						showInvoice(item,result);
+						paintInvoice(item,result);
 						first = false;
 					}
 				}
@@ -466,7 +443,7 @@ public class TediCenter extends MainEntryPoint {
 					}
 
 				});
-		refreshProblems(null,null);
+		paintFooter(null,null);
 	}
 
 	protected void onAccept(TediResult result) {
@@ -488,10 +465,10 @@ public class TediCenter extends MainEntryPoint {
 			}
 
 		});
-		refreshProblems(null,null);
+		paintFooter(null,null);
 	}
 
-	private FocusPanel paintInvoice(FocusPanel invoiceContainer,TediResult result) {
+	private FocusPanel paintInvoiceMenuItem(FocusPanel invoiceContainer,TediResult result) {
 		Invoice invoice = result.getInvoice();
 		invoiceContainer.setStyleName(AON.AON_CSS.aonClickableBlock());
 		invoiceContainer.addStyleName(AON.AON_CSS.aonSimpleBorder());
@@ -598,7 +575,7 @@ public class TediCenter extends MainEntryPoint {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				showInvoice(invoiceContainer,result);
+				paintInvoice(invoiceContainer,result);
 			}
 		});
 
@@ -624,19 +601,172 @@ public class TediCenter extends MainEntryPoint {
 		return color;
 	}
 
-	private void showInvoice(FocusPanel container,TediResult result) {
-//		if (mainSplitLayoutPanel.getWidgetSize(invoiceContent) <= 50) {
-//			mainSplitLayoutPanel.setWidgetSize(invoiceContent, Window.getClientWidth() / 1.5);
-//			mainSplitLayoutPanel.animate(500);
-//		}
+	private void paintInvoice(FocusPanel container,TediResult result) {
 		stylesForselection(container);
-		invoiceContent.clear();
+		tabContent.clear();
+		paintAttach( result);
+		paintInvoiceViewer( result);
+		paintFooter(container, result);
+	};
+
+	private void paintInvoiceViewer(TediResult result) {
 		TediInvoiceViewer tediInvoiceViewer = new TediInvoiceViewer(result.getInvoice());
 		ScrollPanel invoicePanel = new ScrollPanel();
 		invoicePanel.setStyleName(AON.AON_CSS.aonScrollArea());
 		invoicePanel.setWidget(tediInvoiceViewer);
-		invoiceContent.add(tediInvoiceViewer, template.tab(AON.MSG.invoice(), AON.AON_CSS.aonIconInvoice()));
+		tabContent.add(tediInvoiceViewer, template.tab(AON.MSG.invoice(), AON.AON_CSS.aonIconInvoice()));
+	}
 
+	private void paintAttach(TediResult result) {
+		pdfViewer.clear();
+		if (result != null && result.getTedi() != null && result.getTedi().getFile() != null) {
+			if (AonStringUtils.equals(result.getTedi().getFile().getContentType(), MimeType.PDF.getName())) {
+				SimpleLayoutPanel pdfViewerContent = new SimpleLayoutPanel();
+				ScrollPanel scrollPanel = new ScrollPanel();
+				pdfViewerContent.setWidget(scrollPanel);
+				VerticalPanel verticalPanel = new VerticalPanel();
+				verticalPanel.add(pdfViewer);
+				scrollPanel.setWidget(verticalPanel);
+				tabContent.add(pdfViewerContent, template.tab(AON.MSG.preview(), AON.AON_CSS.aonIconPdf()));
+				
+				SERVICE.getInvoiceAttachURL(getCurrentDomainName(), getUser(), getCurrentDomain(),
+						result.getTedi().getUuid(), new AsyncCallback<String>() {
+					
+					@Override
+					public void onSuccess(String result) {
+						pdfViewer.setDocument(result, 1.0);
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+					}
+				});
+			}
+			if (AonStringUtils.equals(result.getTedi().getFile().getContentType(), MimeType.JPEG.getName())) {
+				Image image = new Image();
+				SimpleLayoutPanel imageViewerContent = new SimpleLayoutPanel();
+				ScrollPanel scrollPanel = new ScrollPanel();
+				imageViewerContent.setWidget(scrollPanel);
+				scrollPanel.setWidget(image);
+				tabContent.add(imageViewerContent, template.tab(AON.MSG.preview(), AON.AON_CSS.aonIconInvoice()));
+				SERVICE.getInvoiceAttachURL(getCurrentDomainName(), getUser(), getCurrentDomain(),
+						result.getTedi().getUuid(), new AsyncCallback<String>() {
+					
+					@Override
+					public void onSuccess(String result) {
+						image.setUrl(result);
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+					}
+				});
+			}
+		}
+	}
+
+	private void stylesForselection(FocusPanel container) {
+		if (container.getParent() instanceof HasWidgets) {
+			HasWidgets parent = (HasWidgets) container.getParent();
+			parent.forEach( (w) -> w.removeStyleName(AON.AON_CSS.aonCurlyGT()));
+			
+		}
+		container.addStyleName(AON.AON_CSS.aonCurlyGT());
+	}
+
+	private void paintFooter(FocusPanel container, TediResult result) {
+		footTabLayout.clear();
+		paintAccountEntry( result );
+		paintProblems( container, result );
+		if (footTabLayout.getWidgetCount() > 0) {
+			if (contentSplitLayoutPanel.getWidgetSize(footPanel) <= 50) {
+				contentSplitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
+				contentSplitLayoutPanel.animate(500);
+			}
+		} else {
+			contentSplitLayoutPanel.setWidgetSize(footPanel, 26);
+			contentSplitLayoutPanel.animate(500);
+		}
+	}
+
+	private void paintProblems(FocusPanel container, TediResult result) {
+		if (result.getMessages() != null && result.getMessages().size() > 0) {
+			ScrollPanel scrollPanel = new ScrollPanel();
+			scrollPanel.setStyleName(AON.AON_CSS.aonScrollArea());
+			
+			FlowPanel panel = new FlowPanel();
+			panel.setStyleName(AON.AON_CSS.aonMarginTop5());
+			panel.addStyleName(AON.AON_CSS.aonMarginLeft());
+			panel.addStyleName(AON.AON_CSS.aonSimpleBorder());
+			panel.addStyleName(AON.AON_CSS.aonFixedFont());
+			for (TediError error : result.getMessages()) {
+				FocusPanel focuspanel = new FocusPanel();
+				focuspanel.addStyleName(AON.AON_CSS.aonClickableLabel());
+				FlowPanel flowPanel = new FlowPanel();
+				focuspanel.setWidget(flowPanel);
+
+				InlineLabel colorLabel = new InlineLabel("");
+				colorLabel.setStyleName(AON.AON_CSS.aonPaddingLeft());
+				colorLabel.addStyleName(AON.AON_CSS.aonPaddingRight());
+				colorLabel.getElement().getStyle().setBackgroundColor(getBackgroundColor(error.getLevel()));
+				flowPanel.add(colorLabel);
+
+				InlineLabel errLabel = new InlineLabel(error.getLevel().getLabel());
+				errLabel.setStyleName(AON.AON_CSS.aonClickableLabel());
+				errLabel.addStyleName(AON.AON_CSS.aonPaddingLeft());
+				errLabel.addStyleName(AON.AON_CSS.aonPaddingRight());
+				errLabel.addStyleName(AON.AON_CSS.aonBold());
+				flowPanel.add(errLabel);
+
+				InlineLabel msgLabel = new InlineLabel(error.getMessage());
+				msgLabel.setStyleName(AON.AON_CSS.aonMarginLeft());
+				if (error.canBeFixed()) {
+					focuspanel.addClickHandler(new ClickHandler() {
+
+						@Override
+						public void onClick(ClickEvent event) {
+							error.getContext().getKey().visit(result, tediContextVisitor, new ICallback() {
+
+								@Override
+								public void onCancel() {
+
+								}
+
+								@Override
+								public void onAccept(TediResult result) {
+									SERVICE.validateInvoice(getDomainName(), getUser(), getDomain(), result,
+											new AsyncCallback<TediResult>() {
+
+												@Override
+												public void onSuccess(TediResult result) {
+													paintInvoice(container, result);
+													container.clear();
+													paintInvoiceMenuItem(container,result);
+												}
+
+												@Override
+												public void onFailure(Throwable caught) {
+													showMessage(AON.MSG.error() + " [Interno: "
+															+ caught.getMessage() + "]");
+												}
+											});
+								}
+							});
+						}
+					});
+				}
+				flowPanel.add(msgLabel);
+				panel.add(focuspanel);
+			}
+			scrollPanel.setWidget(panel);
+			
+			SimpleLayoutPanel problemsContent = new SimpleLayoutPanel();
+			problemsContent.setWidget(scrollPanel);
+			footTabLayout.add(problemsContent, template.tab(AON.MSG.problems(), AON.AON_CSS.aonIconError()));
+		}
+	}
+
+	private void paintAccountEntry(TediResult result) {
 		if (result.isImportable()) {
 			AccountEntry[] entries = InvoiceRecorder.recordInvoice(result.getAccountingInvoice());
 			if (entries != null) {
@@ -654,153 +784,8 @@ public class TediCenter extends MainEntryPoint {
 					});
 					entriesPanel.add(entryPanel);
 				}
-				invoiceContent.add(entriesScrollPanel,
-						template.tab(AON.MSG.previewAccountEntry(), AON.AON_CSS.aonIconCompany()));
+				footTabLayout.add(entriesScrollPanel,template.tab(AON.MSG.accountEntry(), AON.AON_CSS.aonIconCompany()));
 			}
-		}
-		refreshProblems(container, result);
-	};
-
-	private void stylesForselection(FocusPanel container) {
-		if (container.getParent() instanceof HasWidgets) {
-			HasWidgets parent = (HasWidgets) container.getParent();
-			parent.forEach( (w) -> w.removeStyleName(AON.AON_CSS.aonCurlyGT()));
-			
-		}
-		container.addStyleName(AON.AON_CSS.aonCurlyGT());
-	}
-
-	private void refreshProblems(FocusPanel container, TediResult result) {
-		problemsContent.clear();
-		pdfViewer.clear();
-		imageViewerContent.clear();
-		if (result == null) {
-			problemsContent.setWidget(new Label(""));
-		} else {
-			if (contentSplitLayoutPanel.getWidgetSize(footPanel) <= 50) {
-				contentSplitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
-				contentSplitLayoutPanel.animate(500);
-			}
-
-			if (result.getTedi().getFile() != null) {
-				if (AonStringUtils.equals(result.getTedi().getFile().getContentType(), MimeType.PDF.getName())) {
-					SERVICE.getInvoiceAttachURL(getCurrentDomainName(), getUser(), getCurrentDomain(),
-							result.getTedi().getUuid(), new AsyncCallback<String>() {
-						
-						@Override
-						public void onSuccess(String result) {
-							deckViewer.showWidget(PDF_PANEL);
-							pdfViewer.setDocument(result, 1.0);
-						}
-						
-						@Override
-						public void onFailure(Throwable caught) {
-						}
-					});
-				}
-				if (AonStringUtils.equals(result.getTedi().getFile().getContentType(), MimeType.JPEG.getName())) {
-					SERVICE.getInvoiceAttachURL(getCurrentDomainName(), getUser(), getCurrentDomain(),
-							result.getTedi().getUuid(), new AsyncCallback<String>() {
-						
-						@Override
-						public void onSuccess(String result) {
-							deckViewer.showWidget(IMAGE_PANEL);
-							Image image = new Image(result);
-							imageViewerContent.setWidget(image);
-						}
-						
-						@Override
-						public void onFailure(Throwable caught) {
-						}
-					});
-				}
-			}
-
-			ScrollPanel scrollPanel = new ScrollPanel();
-			scrollPanel.setStyleName(AON.AON_CSS.aonScrollArea());
-
-			FlowPanel panel = new FlowPanel();
-			panel.setStyleName(AON.AON_CSS.aonMarginTop5());
-			panel.addStyleName(AON.AON_CSS.aonMarginLeft());
-			panel.addStyleName(AON.AON_CSS.aonSimpleBorder());
-			panel.addStyleName(AON.AON_CSS.aonFixedFont());
-
-			if (result.getMessages() == null || result.getMessages().size() == 0) {
-				InlineLabel colorLabel = new InlineLabel("");
-				colorLabel.setStyleName(AON.AON_CSS.aonPaddingLeft());
-				colorLabel.addStyleName(AON.AON_CSS.aonPaddingRight());
-				colorLabel.getElement().getStyle().setBackgroundColor(getBackgroundColor(result));
-				panel.add(colorLabel);
-
-				InlineLabel okLabel = new InlineLabel("No se han encontrado errores.");
-				okLabel.setStyleName(AON.AON_CSS.aonBold());
-				okLabel.addStyleName(AON.AON_CSS.aonPaddingLeft());
-				panel.add(okLabel);
-
-			} else {
-
-				for (TediError error : result.getMessages()) {
-					FocusPanel focuspanel = new FocusPanel();
-					focuspanel.addStyleName(AON.AON_CSS.aonClickableLabel());
-					FlowPanel flowPanel = new FlowPanel();
-					focuspanel.setWidget(flowPanel);
-
-					InlineLabel colorLabel = new InlineLabel("");
-					colorLabel.setStyleName(AON.AON_CSS.aonPaddingLeft());
-					colorLabel.addStyleName(AON.AON_CSS.aonPaddingRight());
-					colorLabel.getElement().getStyle().setBackgroundColor(getBackgroundColor(error.getLevel()));
-					flowPanel.add(colorLabel);
-
-					InlineLabel errLabel = new InlineLabel(error.getLevel().getLabel());
-					errLabel.setStyleName(AON.AON_CSS.aonClickableLabel());
-					errLabel.addStyleName(AON.AON_CSS.aonPaddingLeft());
-					errLabel.addStyleName(AON.AON_CSS.aonPaddingRight());
-					errLabel.addStyleName(AON.AON_CSS.aonBold());
-					flowPanel.add(errLabel);
-
-					InlineLabel msgLabel = new InlineLabel(error.getMessage());
-					msgLabel.setStyleName(AON.AON_CSS.aonMarginLeft());
-					if (error.canBeFixed()) {
-						focuspanel.addClickHandler(new ClickHandler() {
-
-							@Override
-							public void onClick(ClickEvent event) {
-								error.getContext().getKey().visit(result, tediContextVisitor, new ICallback() {
-
-									@Override
-									public void onCancel() {
-
-									}
-
-									@Override
-									public void onAccept(TediResult result) {
-										SERVICE.validateInvoice(getDomainName(), getUser(), getDomain(), result,
-												new AsyncCallback<TediResult>() {
-
-													@Override
-													public void onSuccess(TediResult result) {
-														showInvoice(container, result);
-														container.clear();
-														paintInvoice(container,result);
-													}
-
-													@Override
-													public void onFailure(Throwable caught) {
-														showMessage(AON.MSG.error() + " [Interno: "
-																+ caught.getMessage() + "]");
-													}
-												});
-									}
-								});
-							}
-						});
-					}
-					flowPanel.add(msgLabel);
-					panel.add(focuspanel);
-				}
-			}
-			scrollPanel.setWidget(panel);
-			problemsContent.setWidget(scrollPanel);
 		}
 	}
 
@@ -915,7 +900,20 @@ public class TediCenter extends MainEntryPoint {
 
 		@Override
 		public void visitReferenceCode(TediResult result, ICallback callback) {
-			noVisit(result);
+			showReferenceCodeDialog(AON.MSG.invoiceNumber(), result.getInvoice().getReferenceCode(),
+					new ITediCallback<String>() {
+
+						@Override
+						public void onAccept(String referenceCode) {
+							result.getInvoice().setReferenceCode(referenceCode);
+							callback.onAccept(result);
+						}
+
+						@Override
+						public void onCancel() {
+							callback.onCancel();
+						}
+					});
 		}
 
 		@Override
@@ -957,6 +955,11 @@ public class TediCenter extends MainEntryPoint {
 		}
 
 		@Override
+		public void visitDetails(TediResult result, ICallback callback) {
+			noVisit(result);
+		}
+
+		@Override
 		public void visitAddress(TediResult result, ICallback callback) {
 			noVisit(result);
 		}
@@ -982,6 +985,22 @@ public class TediCenter extends MainEntryPoint {
 		final TextBox documentBox = new TextBox();
 		documentBox.setStyleName(AON.AON_CSS.aonInputText());
 		documentBox.setValue(document);
+		BasicDialog<String> dialog = new BasicDialog<String>(callback) {
+
+			@Override
+			protected String getValue() {
+				return documentBox.getValue();
+			}
+
+		};
+		dialog.setContent(label, documentBox);
+		dialog.centerShow();
+	}
+
+	public static void showReferenceCodeDialog(String label, String referenceCode, ITediCallback<String> callback) {
+		final TextBox documentBox = new TextBox();
+		documentBox.setStyleName(AON.AON_CSS.aonInputText());
+		documentBox.setValue(referenceCode);
 		BasicDialog<String> dialog = new BasicDialog<String>(callback) {
 
 			@Override

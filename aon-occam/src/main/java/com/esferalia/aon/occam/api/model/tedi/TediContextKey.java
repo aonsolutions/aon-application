@@ -102,8 +102,13 @@ public enum TediContextKey  implements Serializable {
 		public void visit(TediResult result,ITediContextVisitor visitor,ICallback callback) {
 			visitor.visitDetailDescription(result, callback);
 		}
+	}, 
+	DETAILS ("Detalles de la factura") {
+		@Override
+		public void visit(TediResult result,ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitDetails(result, callback);
+		}
 	}
-	
 	;
 
 	private String description;

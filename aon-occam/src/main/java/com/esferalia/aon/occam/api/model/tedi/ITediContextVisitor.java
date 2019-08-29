@@ -18,4 +18,5 @@ public interface ITediContextVisitor {
 	void visitRname( TediResult result , ICallback callback );
 	void visitAddress( TediResult result , ICallback callback );
 	void visitDetailDescription( TediResult result , ICallback callback );
+	void visitDetails( TediResult result , ICallback callback );
 }

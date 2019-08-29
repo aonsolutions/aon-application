@@ -27,6 +27,8 @@ public enum TediErrorMessages implements Serializable {
 	C006("Ya existe una factura del titular con ese N\u00FAmero de referencia."),
 	C007("La fecha de la factura rebasa la fecha l\u00EDmite de operaciones indicada en la configuraci\u00F3n de empresa. "),
 	C008("El a\u00F1o de la factura no es v\u00E1lido, es anterior cinco a\u00F1os al actual"),
+	C009("No se ha encontrado un {0} v\u00E1lido para el titular \"{1}\""),
+	C010("La factura no tiene l\u00EDneas de detalle"),
 	C500("Error desconocido");
 	;
 	private String message;
