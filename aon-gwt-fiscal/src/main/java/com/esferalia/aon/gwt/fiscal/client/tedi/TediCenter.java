@@ -10,14 +10,8 @@ import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeHandler;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeHandler;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryPrinter;
-import com.esferalia.aon.gwt.fiscal.client.accounting.utilities.CustomPopup;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -82,14 +76,11 @@ public class TediCenter extends MainEntryPoint {
 	private SplitLayoutPanel mainSplitLayoutPanel;
 	private SimpleLayoutPanel sidebarContent;
 
-	private SplitLayoutPanel contentSplitLayoutPanel;
 	private TabLayoutPanel tabContent;
 
 	private FlowPanel toolbarPanel;
 	private Button acceptAll;
 
-	private MinimizePanel footPanel;
-	private TabLayoutPanel footTabLayout;
 	private Viewer pdfViewer = new Viewer();
 	private LinkedList<TediResult> resultList;
 
@@ -146,10 +137,8 @@ public class TediCenter extends MainEntryPoint {
 
 				sidebarContent = new SimpleLayoutPanel();
 				mainSplitLayoutPanel.addWest(sidebarContent, 400);
-				contentSplitLayoutPanel = new SplitLayoutPanel();
-				contentSplitLayoutPanel.setStyleName(AON.AON_CSS.aonSelector());
-				mainSplitLayoutPanel.add(contentSplitLayoutPanel);
 
+/*
 				footPanel = new MinimizePanel();
 				footPanel.addMinimizeHandler(new MinimizeHandler() {
 
@@ -172,11 +161,16 @@ public class TediCenter extends MainEntryPoint {
 				footTabLayout= new TabLayoutPanel(26, Unit.PX);
 				footTabLayout.setWidth("100%");
 				footPanel.add(footTabLayout);
-				
 				contentSplitLayoutPanel.addSouth(footPanel, 26);
+	*/			
 
 				tabContent = new TabLayoutPanel(26, Unit.PX);
-				contentSplitLayoutPanel.add(tabContent);
+				
+//				contentSplitLayoutPanel.add(tabContent);
+				SimpleLayoutPanel tabContentcontainer = new SimpleLayoutPanel();
+				tabContentcontainer.setStyleName(AON.AON_CSS.aonSelector());
+				tabContentcontainer.add(tabContent);
+				mainSplitLayoutPanel.add(tabContentcontainer);
 
 				dockLayoutPanel.add(mainSplitLayoutPanel);
 
@@ -335,11 +329,6 @@ public class TediCenter extends MainEntryPoint {
 		return popup;
 	}
 
-	private void closeFootPanel() {
-		contentSplitLayoutPanel.setWidgetSize(footPanel, 30);
-		contentSplitLayoutPanel.animate(500);
-	}
-
 	private void onRefresh(PopupPanel popup) {
 		SERVICE.getVerifiedInvoices(getDomainName(), getUser(), getDomain(),
 				new AsyncCallback<LinkedList<TediResult>>() {
@@ -358,7 +347,6 @@ public class TediCenter extends MainEntryPoint {
 					}
 
 				});
-		paintFooter(null,null);
 	}
 
 	private void paintList(PopupPanel popup) {
@@ -443,7 +431,6 @@ public class TediCenter extends MainEntryPoint {
 					}
 
 				});
-		paintFooter(null,null);
 	}
 
 	protected void onAccept(TediResult result) {
@@ -465,7 +452,6 @@ public class TediCenter extends MainEntryPoint {
 			}
 
 		});
-		paintFooter(null,null);
 	}
 
 	private FocusPanel paintInvoiceMenuItem(FocusPanel invoiceContainer,TediResult result) {
@@ -604,17 +590,82 @@ public class TediCenter extends MainEntryPoint {
 	private void paintInvoice(FocusPanel container,TediResult result) {
 		stylesForselection(container);
 		tabContent.clear();
-		paintAttach( result);
-		paintInvoiceViewer( result);
-		paintFooter(container, result);
-	};
+		if (result.isImportable()) {
+			paintAccountEntryModule( result );
+			paintAttach( result);
+		} else {
+			paintAttach( result);
+			SplitLayoutPanel contentSplitLayoutPanel = new SplitLayoutPanel();
+			contentSplitLayoutPanel.setStyleName(AON.AON_CSS.aonSelector());
 
-	private void paintInvoiceViewer(TediResult result) {
+			paintInvoiceViewer(contentSplitLayoutPanel, result );
+			tabContent.add(contentSplitLayoutPanel, template.tab(AON.MSG.invoice(), AON.AON_CSS.aonIconInvoice()));
+			
+			
+			MinimizePanel footPanel = new MinimizePanel();
+			footPanel.setStyleName(AON.AON_CSS.aonSelector());
+			TabLayoutPanel footTabLayout= new TabLayoutPanel(26, Unit.PX);
+			footTabLayout.setWidth("100%");
+			footPanel.add(footTabLayout);
+			contentSplitLayoutPanel.addSouth(footPanel, 26);
+			paintFooter(container, result , footTabLayout);
+			
+			
+			if (footTabLayout.getWidgetCount() > 0) {
+				if (contentSplitLayoutPanel.getWidgetSize(footPanel) <= 50) {
+					contentSplitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
+					contentSplitLayoutPanel.animate(500);
+				}
+			} else {
+				contentSplitLayoutPanel.setWidgetSize(footPanel, 26);
+				contentSplitLayoutPanel.animate(500);
+			}
+		}
+	};
+	
+	
+	private void paintAccountEntryModule(TediResult result) {
+		AccountEntry[] entries = InvoiceRecorder.recordInvoice(result.getAccountingInvoice());
+		if (entries != null) {
+			SimpleLayoutPanel accountEntryModuleContainer = new SimpleLayoutPanel();
+			tabContent.add(accountEntryModuleContainer, template.tab(AON.MSG.accountEntry(), AON.AON_CSS.aonIconInvoice()));		
+			AccountEntryModule module = new AccountEntryModule();
+			AccountingInvoice ai = result.getAccountingInvoice();
+			module.onModuleLoad(accountEntryModuleContainer, getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), configuration, ai,
+					new ModuleCallback<AccountEntry>() {
+
+						@Override
+						public void onRemove(AccountEntry removed) {
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {
+						}
+
+						@Override
+						public void onExit() {
+						}
+
+						@Override
+						public void onChange(AccountEntry changed) {
+							result.setAon(null);
+							LinkedList<TediResult> accepted = new LinkedList<TediResult>();
+							accepted.add(result);
+							onAcceptAll(accepted);
+							onRefreshSplash();
+						}
+					});
+		}
+	}
+	
+	
+
+	private void paintInvoiceViewer(SplitLayoutPanel contentSplitLayoutPanel, TediResult result) {
 		TediInvoiceViewer tediInvoiceViewer = new TediInvoiceViewer(result.getInvoice());
 		ScrollPanel invoicePanel = new ScrollPanel();
 		invoicePanel.setStyleName(AON.AON_CSS.aonScrollArea());
 		invoicePanel.setWidget(tediInvoiceViewer);
-		tabContent.add(tediInvoiceViewer, template.tab(AON.MSG.invoice(), AON.AON_CSS.aonIconInvoice()));
+		contentSplitLayoutPanel.add(tediInvoiceViewer);
 	}
 
 	private void paintAttach(TediResult result) {
@@ -674,22 +725,11 @@ public class TediCenter extends MainEntryPoint {
 		container.addStyleName(AON.AON_CSS.aonCurlyGT());
 	}
 
-	private void paintFooter(FocusPanel container, TediResult result) {
-		footTabLayout.clear();
-		paintAccountEntry( result );
-		paintProblems( container, result );
-		if (footTabLayout.getWidgetCount() > 0) {
-			if (contentSplitLayoutPanel.getWidgetSize(footPanel) <= 50) {
-				contentSplitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
-				contentSplitLayoutPanel.animate(500);
-			}
-		} else {
-			contentSplitLayoutPanel.setWidgetSize(footPanel, 26);
-			contentSplitLayoutPanel.animate(500);
-		}
+	private void paintFooter(FocusPanel container, TediResult result, TabLayoutPanel footTabLayout) {
+		paintProblems( container, result,footTabLayout);
 	}
 
-	private void paintProblems(FocusPanel container, TediResult result) {
+	private void paintProblems(FocusPanel container, TediResult result, TabLayoutPanel tab) {
 		if (result.getMessages() != null && result.getMessages().size() > 0) {
 			ScrollPanel scrollPanel = new ScrollPanel();
 			scrollPanel.setStyleName(AON.AON_CSS.aonScrollArea());
@@ -762,72 +802,72 @@ public class TediCenter extends MainEntryPoint {
 			
 			SimpleLayoutPanel problemsContent = new SimpleLayoutPanel();
 			problemsContent.setWidget(scrollPanel);
-			footTabLayout.add(problemsContent, template.tab(AON.MSG.problems(), AON.AON_CSS.aonIconError()));
+			tab.add(problemsContent, template.tab(AON.MSG.problems(), AON.AON_CSS.aonIconError()));
 		}
 	}
 
-	private void paintAccountEntry(TediResult result) {
-		if (result.isImportable()) {
-			AccountEntry[] entries = InvoiceRecorder.recordInvoice(result.getAccountingInvoice());
-			if (entries != null) {
-				ScrollPanel entriesScrollPanel = new ScrollPanel();
-				FlowPanel entriesPanel = new FlowPanel();
-				entriesScrollPanel.setWidget(entriesPanel);
-				for (AccountEntry entry : entries) {
-					FocusPanel entryPanel = AccountEntryPrinter.print(entry);
-					entryPanel.addClickHandler(new ClickHandler() {
+//	private void paintAccountEntry(TediResult result) {
+//		if (result.isImportable()) {
+//			AccountEntry[] entries = InvoiceRecorder.recordInvoice(result.getAccountingInvoice());
+//			if (entries != null) {
+//				ScrollPanel entriesScrollPanel = new ScrollPanel();
+//				FlowPanel entriesPanel = new FlowPanel();
+//				entriesScrollPanel.setWidget(entriesPanel);
+//				for (AccountEntry entry : entries) {
+//					FocusPanel entryPanel = AccountEntryPrinter.print(entry,true);
+//					entryPanel.addClickHandler(new ClickHandler() {
+//
+//						@Override
+//						public void onClick(ClickEvent event) {
+//							showEntry(entry.getDomain(), result);
+//						}
+//					});
+//					entriesPanel.add(entryPanel);
+//				}
+//				footTabLayout.add(entriesScrollPanel,template.tab(AON.MSG.accountEntry(), AON.AON_CSS.aonIconCompany()));
+//			}
+//		}
+//	}
 
-						@Override
-						public void onClick(ClickEvent event) {
-							showEntry(entry.getDomain(), result);
-						}
-					});
-					entriesPanel.add(entryPanel);
-				}
-				footTabLayout.add(entriesScrollPanel,template.tab(AON.MSG.accountEntry(), AON.AON_CSS.aonIconCompany()));
-			}
-		}
-	}
-
-	private void showEntry(int domain, TediResult result) {
-		CustomPopup entryDialog = new CustomPopup();
-		entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
-		entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
-		entryDialog.setAnimationEnabled(true);
-		entryDialog.setGlassEnabled(true);
-		entryDialog.setModal(true);
-		entryDialog.setCaption(AON.MSG.accountEntries());
-		AccountEntryModule module = new AccountEntryModule();
-		AccountingInvoice ai = result.getAccountingInvoice();
-		module.onModuleLoad(entryDialog, getCurrentDomainName(), getCurrentUser(), domain, configuration, ai,
-				new ModuleCallback<AccountEntry>() {
-
-					@Override
-					public void onRemove(AccountEntry removed) {
-						entryDialog.hide();
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-					}
-
-					@Override
-					public void onExit() {
-						entryDialog.hide();
-					}
-
-					@Override
-					public void onChange(AccountEntry changed) {
-						result.setAon(null);
-						LinkedList<TediResult> accepted = new LinkedList<TediResult>();
-						accepted.add(result);
-						onAcceptAll(accepted);
-						entryDialog.hide();
-					}
-				});
-		entryDialog.center();
-		entryDialog.show();
-	}
+//	private void showEntry(int domain, TediResult result) {
+//		CustomPopup entryDialog = new CustomPopup();
+//		entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
+//		entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
+//		entryDialog.setAnimationEnabled(true);
+//		entryDialog.setGlassEnabled(true);
+//		entryDialog.setModal(true);
+//		entryDialog.setCaption(AON.MSG.accountEntries());
+//		AccountEntryModule module = new AccountEntryModule();
+//		AccountingInvoice ai = result.getAccountingInvoice();
+//		module.onModuleLoad(entryDialog, getCurrentDomainName(), getCurrentUser(), domain, configuration, ai,
+//				new ModuleCallback<AccountEntry>() {
+//
+//					@Override
+//					public void onRemove(AccountEntry removed) {
+//						entryDialog.hide();
+//					}
+//
+//					@Override
+//					public void onFailure(Throwable caught) {
+//					}
+//
+//					@Override
+//					public void onExit() {
+//						entryDialog.hide();
+//					}
+//
+//					@Override
+//					public void onChange(AccountEntry changed) {
+//						result.setAon(null);
+//						LinkedList<TediResult> accepted = new LinkedList<TediResult>();
+//						accepted.add(result);
+//						onAcceptAll(accepted);
+//						entryDialog.hide();
+//					}
+//				});
+//		entryDialog.center();
+//		entryDialog.show();
+//	}
 
 	private static class TediContextVisitor implements ITediContextVisitor {
 		private void noVisit(TediResult result) {

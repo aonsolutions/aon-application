@@ -172,7 +172,7 @@ public class SessionLog extends ScrollPanel
 	}
 
 	private String toString(String ac,String ad,String c,double deb,double cre,String bc,String dn) {
-		return AccountEntryPrinter.toString(ac, ad, c, deb, cre, bc, dn);
+		return AccountEntryPrinter.toString(ac, ad, c, deb, cre, bc, dn, false);
 	}
 
 	@Override
