@@ -1318,12 +1318,42 @@ public class CretaServlet extends HttpServlet
 		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(new Date());
 		Date from = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -1);
 		
-		return
-		findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_TRABAJADORES_Y_TRAMOS, from)
-		.map(attach-> unmarshall(net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class, attach.getData()))
-		.filter(optional -> optional.isPresent())
-		.map(optional -> optional.get())
+		return distinct(
+			findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_TRABAJADORES_Y_TRAMOS, from)
+			.map(attach-> unmarshall(net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class, attach.getData()))
+			.filter(optional -> optional.isPresent())
+			.map(optional -> optional.get())
+		)
 		;
+	}
+	
+	private static Stream<net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos> distinct(Stream<net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos> ts){
+		return ts.collect(Collectors.groupingBy(
+		t -> 
+			t.getLiquidacion().getTipo()
+			+ t.getLiquidacion().getCcc().getRegimen()
+			+ t.getLiquidacion().getCcc().getProvincia()
+			+ t.getLiquidacion().getCcc().getNumero()
+			+ t.getLiquidacion().getPeriodoDesde().getAnho()
+			+ t.getLiquidacion().getPeriodoDesde().getMes()
+			+ t.getLiquidacion().getPeriodoHasta().getAnho()
+			+ t.getLiquidacion().getPeriodoHasta().getMes()
+			))
+		.values().stream()
+		.peek(l -> Collections.sort(l, (t1,t2)-> 
+			(
+			t1.getLiquidacion().getFechaHoraRecaudacion().getFechaRecaudacion().getAnho()
+			+ t1.getLiquidacion().getFechaHoraRecaudacion().getFechaRecaudacion().getMes()
+			+ t1.getLiquidacion().getFechaHoraRecaudacion().getFechaRecaudacion().getDia()
+			+ t1.getLiquidacion().getFechaHoraRecaudacion().getHoraRecaudacion())
+			.compareTo(
+			t2.getLiquidacion().getFechaHoraRecaudacion().getFechaRecaudacion().getAnho()
+			+ t2.getLiquidacion().getFechaHoraRecaudacion().getFechaRecaudacion().getMes()
+			+ t2.getLiquidacion().getFechaHoraRecaudacion().getFechaRecaudacion().getDia()
+			+ t2.getLiquidacion().getFechaHoraRecaudacion().getHoraRecaudacion()
+			)
+		))
+		.map(l -> l.get(0));
 	}
 	
 	private static void saveRespuesta(HttpServletRequest req,
