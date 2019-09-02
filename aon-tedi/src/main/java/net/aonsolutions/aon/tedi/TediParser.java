@@ -60,6 +60,11 @@ public class TediParser {
 		PRICE( (result,tedi,aon) -> aon.setPrice( AonNumberUtils.zeroIfNull(tedi.getPrice()))),
 		DISCOUNT( (result,tedi,aon) -> aon.setDiscountExpression( AonNumberUtils.toString(tedi.getDiscount()))),
 		AMOUNT( (result,tedi,aon) -> aon.setTaxableBase( AonNumberUtils.zeroIfNull(tedi.getAmount()))),
+		BASE( (result,tedi,aon) -> {
+			if (AonMathUtils.isZero(aon.getTaxableBase())) {
+				aon.setTaxableBase( AonNumberUtils.zeroIfNull(tedi.getBase()));	
+			}
+		}),
 		VAT( (result,tedi,aon) -> {
 			if (tedi.getVat() != null) {
 				double base = AonNumberUtils.zeroIfNull(tedi.getAmount());
@@ -223,19 +228,22 @@ public class TediParser {
 			if ( result.getTedi().getDetails() != null) {
 				for ( int i = 0; i < result.getTedi().getDetails().size(); i++) {
 					TediInvoiceDetail tid = result.getTedi().getDetails().get(i);
-					InvoiceDetail id = new InvoiceDetail()
-						.setSource(InvoiceSource.ACCOUNT)
-						.setLine( (short) (1 + i));
-					if (result.getInvoice().getDetails() == null) {
-						result.getInvoice().setDetails( new LinkedList<InvoiceDetail>());
+					if (tid.getVat() != null) {
+						InvoiceDetail id = new InvoiceDetail()
+								.setSource(InvoiceSource.ACCOUNT)
+								.setLine( (short) (1 + i));
+						if (result.getInvoice().getDetails() == null) {
+							result.getInvoice().setDetails( new LinkedList<InvoiceDetail>());
+						}
+						result.getInvoice().getDetails().add(id);
+						TediInvoiceDetailTransfer.toAon(result,tid,id);
 					}
-					result.getInvoice().getDetails().add(id);
-					TediInvoiceDetailTransfer.toAon(result,tid,id);
+					
 				}
 			}
 		}),
 		TAXES( (ctx, aonCtx,result) -> {
-			boolean hasDetails = (result.getTedi().getDetails() != null && result.getTedi().getDetails().size() > 0);
+			boolean hasDetails = (result.getInvoice().getDetails() != null && result.getInvoice().getDetails().size() > 0);
 			if ( result.getTedi().getTaxes() != null) {
 				for ( int i = 0; i < result.getTedi().getTaxes().size(); i++) {
 					TediInvoiceTax tit = result.getTedi().getTaxes().get(i);

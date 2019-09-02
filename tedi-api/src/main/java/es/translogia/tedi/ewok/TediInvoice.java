@@ -258,4 +258,5 @@ public class TediInvoice implements Serializable{
 	public boolean isEmitida() {
 		return (getType() == TediInvoiceType.EMITIDA);
 	}
+
 }

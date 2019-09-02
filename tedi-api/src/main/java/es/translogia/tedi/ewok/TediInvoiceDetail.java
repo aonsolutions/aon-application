@@ -11,6 +11,7 @@ public class TediInvoiceDetail implements Serializable{
 	private Double price;
 	private Double discount;
 	private Double amount;
+	private Double base;
 	private Double vat;
 	private Double surcharge;
 
@@ -58,6 +59,15 @@ public class TediInvoiceDetail implements Serializable{
 		this.amount = amount;
 		return this;
 	}
+	
+	public Double getBase() {
+		return base;
+	}
+	public TediInvoiceDetail setBase(Double base) {
+		this.base = base;
+		return this;
+	}
+	
 
 	public Double getVat() {
 		return vat;

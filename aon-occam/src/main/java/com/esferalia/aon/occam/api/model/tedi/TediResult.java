@@ -5,6 +5,8 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import es.translogia.tedi.ewok.TediInvoice;
 
@@ -79,7 +81,16 @@ public class TediResult implements Serializable {
 		TediLevel level = getMoreSeriousLevel();;
 		return ( level == null || level.ordinal() < TediLevel.ERR.ordinal() );
 	}
-
+	public boolean hasAttach() {
+		return (getTedi() != null && getTedi().getFile() != null);
+	}
+	public boolean hasPDFAttach() {
+		return hasAttach() && (AonStringUtils.equals(getTedi().getFile().getContentType(), MimeType.PDF.getName())); 
+	}
+	public boolean hasJPEGAttach() {
+		return hasAttach() && (AonStringUtils.equals(getTedi().getFile().getContentType(), MimeType.JPEG.getName())); 
+	}
+	
 	public void clearMessages() {
 		this.messages = new LinkedList<TediError>();		
 	}
