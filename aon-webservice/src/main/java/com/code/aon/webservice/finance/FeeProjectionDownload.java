@@ -105,7 +105,7 @@ public class FeeProjectionDownload extends HttpServlet{
 
  
 		printTotal(workbook, sheet, rowIndex, isPdf, titleStyle, doubleStyle);
-    	for(Integer i = 0; i < 14; i++)
+    	for(Integer i = 0; i < 15; i++)
     		sheet.autoSizeColumn(i);
     	
 		return workbook;
@@ -166,7 +166,7 @@ public class FeeProjectionDownload extends HttpServlet{
 				createCell(row, doubleStyle, price, i+3);
 			}
 		}
-		createFormulaCell(row, doubleStyle, "SUM(C" + (rowIndex+1) + ":N" + (rowIndex+1) + ")", 14);
+		createFormulaCell(row, doubleStyle, "SUM(C" + (rowIndex+1) + ":O" + (rowIndex+1) + ")", 15);
 		return rowIndex+1;
 	}
 	
@@ -208,19 +208,19 @@ public class FeeProjectionDownload extends HttpServlet{
 		createCell(row, titleStyle, "", 1);
 		createCell(row, titleStyle, "", 2);
 		
-		createFormulaCell(row, doubleStyle, "SUM(C2:C"+(rowIndex)+")", 3);
-		createFormulaCell(row, doubleStyle, "SUM(D2:D"+(rowIndex)+")", 4);
-		createFormulaCell(row, doubleStyle, "SUM(E2:E"+(rowIndex)+")", 5);
-		createFormulaCell(row, doubleStyle, "SUM(F2:F"+(rowIndex)+")", 6);
-		createFormulaCell(row, doubleStyle, "SUM(G2:G"+(rowIndex)+")", 7);
-		createFormulaCell(row, doubleStyle, "SUM(H2:H"+(rowIndex)+")", 8);
-		createFormulaCell(row, doubleStyle, "SUM(I2:I"+(rowIndex)+")", 9);
-		createFormulaCell(row, doubleStyle, "SUM(J2:J"+(rowIndex)+")", 10);
-		createFormulaCell(row, doubleStyle, "SUM(K2:K"+(rowIndex)+")", 11);
-		createFormulaCell(row, doubleStyle, "SUM(L2:L"+(rowIndex)+")", 12);
-		createFormulaCell(row, doubleStyle, "SUM(M2:M"+(rowIndex)+")", 13);
-		createFormulaCell(row, doubleStyle, "SUM(N2:N"+(rowIndex)+")", 14);
-		createFormulaCell(row, doubleStyle, "SUM(O2:O"+(rowIndex)+")", 15);
+		createFormulaCell(row, doubleStyle, "SUM(D2:D"+(rowIndex)+")", 3);
+		createFormulaCell(row, doubleStyle, "SUM(E2:E"+(rowIndex)+")", 4);
+		createFormulaCell(row, doubleStyle, "SUM(F2:F"+(rowIndex)+")", 5);
+		createFormulaCell(row, doubleStyle, "SUM(G2:G"+(rowIndex)+")", 6);
+		createFormulaCell(row, doubleStyle, "SUM(H2:H"+(rowIndex)+")", 7);
+		createFormulaCell(row, doubleStyle, "SUM(I2:I"+(rowIndex)+")", 8);
+		createFormulaCell(row, doubleStyle, "SUM(J2:J"+(rowIndex)+")", 9);
+		createFormulaCell(row, doubleStyle, "SUM(K2:K"+(rowIndex)+")", 10);
+		createFormulaCell(row, doubleStyle, "SUM(L2:L"+(rowIndex)+")", 11);
+		createFormulaCell(row, doubleStyle, "SUM(M2:M"+(rowIndex)+")", 12);
+		createFormulaCell(row, doubleStyle, "SUM(N2:N"+(rowIndex)+")", 13);
+		createFormulaCell(row, doubleStyle, "SUM(O2:O"+(rowIndex)+")", 14);
+		createFormulaCell(row, doubleStyle, "SUM(P2:P"+(rowIndex)+")", 15);
 	
 		return rowIndex+1;
 	}
