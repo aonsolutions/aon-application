@@ -24,6 +24,7 @@ import javax.net.ssl.HttpsURLConnection;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -168,7 +169,7 @@ public class DocumentOnlineSigner implements Serializable {
 			if(targetCommercialEmail == null || "".equals(targetCommercialEmail)) {
 				throw new Exception("El Cliente Potencial no tiene cuenta de correo electrónico comercial.");
 			}
-			String rDirStaffEmail = getRDirStaffEmail(offer);
+//			String rDirStaffEmail = getRDirStaffEmail(offer);
 			String sellerEmail = getSellerEmail(offer);
 			
 			byte[] data = mergePdf(list);
@@ -184,19 +185,18 @@ public class DocumentOnlineSigner implements Serializable {
 			sp.put("name", offer.getTarget().getRegistry().getName());
 			sp.put("address", targetCommercialEmail);
 			sp.put("signingMethod", signingType());
-			if(signingType()=="EmailPin")
-				sp.put("EmailAddress", targetCommercialEmail);
-			JSONObject role = new JSONObject();
-			role.put("signer", rDirStaffEmail);
-			role.put("reviewer", targetCommercialEmail);
-			sp.put("role", role);
+
+			sp.put("role", "Signer");
 			json.put("signingParties", sp);
 			
 			// interestedParties
-			JSONObject ip = new JSONObject();
-			ip.put("address", sellerEmail);
-			json.put("interestedParties", ip);
-			
+			if(sellerEmail != null && !sellerEmail.equals("")) {
+				JSONArray ips = new JSONArray();
+				JSONObject ip = new JSONObject();
+				ip.put("address", sellerEmail);
+				ips.put(ip);
+				json.put("interestedParties", ips);
+			}
 			json.put("options", new JSONObject());
 			
 			JSONObject responseJson = postObject(json.toString());
