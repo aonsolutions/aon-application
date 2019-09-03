@@ -478,8 +478,8 @@ public class AccountEntryModule extends MainEntryPoint {
 	}
 	
 	private void openFootPanel() {
-		int effectiveHeigth = isEmbedded?splitLayoutPanel.getOffsetHeight():Window.getClientHeight();
-		splitLayoutPanel.setWidgetSize(footPanel, effectiveHeigth / 3);
+		int effectiveHeigth = isEmbedded?5:3;
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / effectiveHeigth);
 		splitLayoutPanel.animate(500);
 	}
 
@@ -700,8 +700,8 @@ public class AccountEntryModule extends MainEntryPoint {
 	@UiHandler("search")
 	public void onSearch(ClickEvent event) {
 		if (splitLayoutPanel.getWidgetSize(footPanel) <= 30) {
-			splitLayoutPanel.setWidgetSize(footPanel,
-					Window.getClientHeight() / 2);
+			int effectiveHeigth = isEmbedded?5:3;
+			splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / effectiveHeigth);
 			splitLayoutPanel.animate(500, new AnimationCallback() {
 
 				@Override
@@ -1115,10 +1115,13 @@ public class AccountEntryModule extends MainEntryPoint {
 	}
 
 	private void showError(String msg) {
+		if (AonStringUtils.isBlank(msg)) {
+			msg = "Se ha producido un error no codificado.";
+		}
 		errors.showError(msg);
 		if (splitLayoutPanel.getWidgetSize(footPanel) <= 30) {
-			splitLayoutPanel.setWidgetSize(footPanel,
-					Window.getClientHeight() / 2);
+			int effectiveHeigth = isEmbedded?5:3;
+			splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / effectiveHeigth);
 			splitLayoutPanel.animate(500, new AnimationCallback() {
 
 				@Override

@@ -30,7 +30,6 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -71,6 +70,7 @@ public class TediCenter extends MainEntryPoint {
 	private Button acceptAll;
 
 	private Viewer pdfViewer = new Viewer();
+	private Viewer pdfCombinedViewer = new Viewer();
 	private LinkedList<TediResult> resultList;
 	private TediInvoiceTable table = new TediInvoiceTable(new TediResultProvidesKey());
 //	private PopupPanel popup;
@@ -348,17 +348,21 @@ public class TediCenter extends MainEntryPoint {
 
 	private void paintInvoice(TediResult result) {
 		tabContent.clear();
+		boolean mustPaintEntry = false;
+		boolean mustPaintAttach = false;
 		if (result.isImportable()) {
+			mustPaintEntry = true;
 			paintAccountEntryModule( result );
 		}
-		
 		if (!result.isImportable()) {
 			if (result.getInvoice().getRegistry() == null 
 			&& (result.getInvoice().getDetails() == null || result.getInvoice().getDetails().size() == 0)) {
+				mustPaintEntry = true;
 				paintAccountEntryModule( result );
 			}
 			if (result.getInvoice().getRegistry() != null) {
 				// TODO !!!! Aquí puede pasar cualquier cosa!!
+				mustPaintEntry = true;
 				paintAccountEntryModule( result );
 			}
 			SimpleLayoutPanel problemsPanel = new SimpleLayoutPanel();
@@ -366,6 +370,22 @@ public class TediCenter extends MainEntryPoint {
 			tabContent.add(problemsPanel, template.tab(AON.MSG.notifications(), AON.AON_CSS.aonIconError()));
 		}
 		
+		if (result.hasPDFAttach() || result.hasJPEGAttach()) {
+			mustPaintAttach = true;
+			SimpleLayoutPanel attachContainer = new SimpleLayoutPanel();
+			paintAttach( result , attachContainer);
+			tabContent.add(attachContainer, template.tab(AON.MSG.preview(), AON.AON_CSS.aonIconAttach()));
+		}
+		if (mustPaintEntry && mustPaintAttach) {
+			SplitLayoutPanel entrySplit = new SplitLayoutPanel();
+			SimpleLayoutPanel attachContainer = new SimpleLayoutPanel();
+			paintAttach(result, attachContainer, pdfCombinedViewer);
+			entrySplit.addEast(attachContainer, 450);
+			SimpleLayoutPanel accountEntryModuleContainer = new SimpleLayoutPanel();
+			entrySplit.add(accountEntryModuleContainer);
+			paintAccountEntryModule(result, accountEntryModuleContainer);	
+			tabContent.add(entrySplit, template.tab("Vista Combinada", AON.AON_CSS.aonIconAttach()));
+		}
 		SimpleLayoutPanel InvoiceViewerContainerPanel = new SimpleLayoutPanel();
 		paintInvoiceViewer(InvoiceViewerContainerPanel, result );
 		tabContent.add(InvoiceViewerContainerPanel, template.tab(AON.MSG.invoice(), AON.AON_CSS.aonIconInvoice()));
@@ -375,16 +395,10 @@ public class TediCenter extends MainEntryPoint {
 	
 	private void paintAccountEntryModule(TediResult result) {
 		SimpleLayoutPanel accountEntryModuleContainer = new SimpleLayoutPanel();
-		if (result.hasPDFAttach() || result.hasJPEGAttach()) {
-			SplitLayoutPanel entrySplit = new SplitLayoutPanel();
-			SimpleLayoutPanel attachContainer = new SimpleLayoutPanel();
-			paintAttach( result , attachContainer);
-			entrySplit.addEast(attachContainer, 450);
-			entrySplit.add(accountEntryModuleContainer);
-			tabContent.add(entrySplit, template.tab(AON.MSG.preview(), AON.AON_CSS.aonIconAttach()));
-		} else {
-			tabContent.add(accountEntryModuleContainer, template.tab(AON.MSG.accountEntry(), AON.AON_CSS.aonIconInvoice()));		
-		}
+		paintAccountEntryModule(result, accountEntryModuleContainer);
+		tabContent.add(accountEntryModuleContainer, template.tab(AON.MSG.accountEntry(), AON.AON_CSS.aonIconInvoice()));
+	}
+	private void paintAccountEntryModule(TediResult result, SimpleLayoutPanel accountEntryModuleContainer) {	
 		AccountEntryModule module = new AccountEntryModule();
 		AccountingInvoice ai = result.getAccountingInvoice();
 		module.onModuleLoad(accountEntryModuleContainer, getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), configuration, ai,
@@ -420,15 +434,18 @@ public class TediCenter extends MainEntryPoint {
 		invoicePanel.setWidget(tediInvoiceViewer);
 		contentSplitLayoutPanel.add(tediInvoiceViewer);
 	}
-
 	private void paintAttach(TediResult result, SimpleLayoutPanel container) {
-		pdfViewer.clear();
+		paintAttach(result, container, pdfViewer);
+	}
+	
+	private void paintAttach(TediResult result, SimpleLayoutPanel container,Viewer viewer) {
+		viewer.clear();
 		if (result.hasAttach()) {
 			if (result.hasPDFAttach()) {
 				ScrollPanel scrollPanel = new ScrollPanel();
 				container.setWidget(scrollPanel);
 				VerticalPanel verticalPanel = new VerticalPanel();
-				verticalPanel.add(pdfViewer);
+				verticalPanel.add(viewer);
 				scrollPanel.setWidget(verticalPanel);
 //				tabContent.add(container, template.tab(AON.MSG.preview(), AON.AON_CSS.aonIconAttach()));
 				
@@ -437,7 +454,7 @@ public class TediCenter extends MainEntryPoint {
 					
 					@Override
 					public void onSuccess(String result) {
-						pdfViewer.setDocument(result, 1.0);
+						viewer.setDocument(result, 1.0);
 					}
 					
 					@Override

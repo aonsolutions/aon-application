@@ -1,6 +1,5 @@
 package net.aonsolutions.aon.tedi;
 
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
@@ -329,7 +328,7 @@ public class TediParser {
 				.setPeriod(periodId)
 				.setDomain(ai.getInvoice().getDomain())
 				.setConfidential(false)
-				.setEntryDate(new Date())
+				.setEntryDate(ai.getInvoice().getIssueDate())
 				.setActivity(activity)
 				.setDirty(false);
 		ai.getInvoice().getType().visit(ai.getInvoice(),  new IInvoiceTypeVisitor() {
