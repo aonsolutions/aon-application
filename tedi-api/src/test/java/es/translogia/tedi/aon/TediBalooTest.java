@@ -39,7 +39,7 @@ public class TediBalooTest {
 		for (int i = 0; i < times ; i ++) {
 			JSONObject inv = TediUdapaFaker.getTediInvoice();
 			TediInvoice invoice = TediInvoiceJSON.fromJSON(inv);
-			invoice.setStatus(TediInvoiceStatus.verified);
+			invoice.setStatus(TediInvoiceStatus.inbox);
 			invoice = TEDI.putInvoice(invoice);
 			Assert.assertNotNull(invoice);
 			System.out.print( ".");
