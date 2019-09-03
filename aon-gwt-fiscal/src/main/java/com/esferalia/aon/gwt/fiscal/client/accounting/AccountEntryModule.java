@@ -250,7 +250,8 @@ public class AccountEntryModule extends MainEntryPoint {
 	ErrorPanel errors;
 
 	boolean minimizedByUser;
-	
+	private boolean isEmbedded; 
+	private int constructorNumber;
 	
 	private boolean periodErrorShown;
 	private IWizardContent wizardContent;
@@ -268,19 +269,24 @@ public class AccountEntryModule extends MainEntryPoint {
 	@Override
 	public void onModuleLoad() {
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		constructorNumber = 10;
 		this.onModuleLoad(root,getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), null, null);
 	}
 	public void onModuleLoad(HasWidgets parentWidget, String domainName,String user, int domain, Integer accountEntryId, ModuleCallback<AccountEntry> externalCallback ) {
+		constructorNumber = constructorNumber<9?9:constructorNumber; 
 		this.onModuleLoad(parentWidget,domainName,user, domain, accountEntryId, null, null ,externalCallback );
 	}
 	
 	public void onModuleLoad(HasWidgets parentWidget, String domainName,String user, int domain, AonConfiguration aonCtx,AccountingInvoice ai, ModuleCallback<AccountEntry> externalCallback ) {
+		constructorNumber = constructorNumber<8?8:constructorNumber;
 		this.onModuleLoad(parentWidget,domainName,user, domain, null,aonCtx,ai,externalCallback );
 	}
 	
 	private void onModuleLoad(HasWidgets parentWidget, String domainName,String user, int domain, Integer accountEntryId,
 			AonConfiguration aonCtx,AccountingInvoice ai,
 			ModuleCallback<AccountEntry> externalCallback ) {
+		constructorNumber = constructorNumber<7?7:constructorNumber;
+		isEmbedded = (constructorNumber<10);
 		this.currentDomainName = domainName;
 		this.currentDomainId = domain;
 		this.currentUser = user;
@@ -472,7 +478,8 @@ public class AccountEntryModule extends MainEntryPoint {
 	}
 	
 	private void openFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 3);
+		int effectiveHeigth = isEmbedded?splitLayoutPanel.getOffsetHeight():Window.getClientHeight();
+		splitLayoutPanel.setWidgetSize(footPanel, effectiveHeigth / 3);
 		splitLayoutPanel.animate(500);
 	}
 
