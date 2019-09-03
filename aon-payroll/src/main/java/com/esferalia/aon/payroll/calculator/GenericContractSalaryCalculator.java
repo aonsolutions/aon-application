@@ -1439,9 +1439,11 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					try {
 						salaryBuilder.addData(name, data);
 					} catch (Throwable t) {
+						t.printStackTrace();
 					}
 				}
 			} catch (Throwable t) {
+				t.printStackTrace();
 			}
 		}
 	}
