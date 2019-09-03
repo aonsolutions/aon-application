@@ -3,6 +3,8 @@ package com.code.aon.account.util;
 import java.io.Serializable;
 import java.util.Iterator;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.account.Account;
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
@@ -27,7 +29,11 @@ public class AccountUtil implements Serializable {
 		Iterator<ITransferObject> iter = accountBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			Account account = (Account)iter.next();
-			return new Long(Long.parseLong(account.getCode()) + 1).toString();
+			String next = new Long(Long.parseLong(account.getCode()) + 1).toString();
+			if ( StringUtils.equals(prefix , "4300") && !StringUtils.startsWith(next, prefix)) {
+				next = obtainNextAccountId("430");
+			}
+			return next;
 		}
 		return zerofill(prefix); 
 	}
