@@ -35,7 +35,6 @@ import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.js.payroll.client.Reports.Payroll;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 

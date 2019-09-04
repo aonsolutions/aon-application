@@ -26,14 +26,10 @@ import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
-import com.esferalia.aon.gwt.payroll.shared.NoHolidaysVariable;
-import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
-import com.esferalia.aon.gwt.payroll.sql.SQLSettleDraftCalculatorContext;
-import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.payroll.ContractBonus;
 import com.esferalia.aon.payroll.ContractDeduction;
 import com.esferalia.aon.payroll.ContractEmbargo;
@@ -387,7 +383,6 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 			public void beforeLoadDaysContextVariables(ExpressionContext ctx) throws ExpressionException {
 				loadDraftContext(ctx);
 				loadDraftLeaves(ctx);
-//				loadDraftImplicit(ctx);
 			}
 		});
 	}

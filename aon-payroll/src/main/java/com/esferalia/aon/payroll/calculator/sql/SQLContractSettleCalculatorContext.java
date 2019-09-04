@@ -1,6 +1,5 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NO_HOLIDAYS;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT_DATA;
 import static com.esferalia.aon.payroll.sql.SQLConstants.ContractDataColumns.CONTRACT;
@@ -9,60 +8,35 @@ import static com.esferalia.aon.payroll.sql.SQLConstants.ContractDataColumns.EXP
 import static com.esferalia.aon.payroll.sql.SQLConstants.ContractDataColumns.NAME;
 import static com.esferalia.aon.payroll.sql.SQLConstants.ContractDataColumns.START_DATE;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
-import static com.esferalia.aon.jooq.tables.Salary.SALARY;
-import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Locale;
-import java.util.stream.Collectors;
 
-import org.jooq.DSLContext;
-import org.jooq.Record;
-import org.jooq.Result;
-import org.jooq.conf.Settings;
-import org.jooq.impl.DSL;
-
-import com.code.aon.common.AonException;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
-import com.esferalia.aon.payroll.SystemPayment;
-import com.esferalia.aon.payroll.calculator.CompositePayments;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
-import com.esferalia.aon.payroll.calculator.IContractBonus;
-import com.esferalia.aon.payroll.calculator.IContractCost;
-import com.esferalia.aon.payroll.calculator.IContractDeduction;
-import com.esferalia.aon.payroll.calculator.IContractEmbargo;
-import com.esferalia.aon.payroll.calculator.IContractPayment;
-import com.esferalia.aon.payroll.calculator.UndefinedContextVariablesException;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
-import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
 import com.esferalia.aon.payroll.irpf.IrpfCalculator;
 import com.esferalia.aon.payroll.irpf.sql.SQLIrpfCalculatorContext;
 import com.esferalia.aon.payroll.sql.SQLConstants;
-import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.ContractDataColumns;
 import com.esferalia.aon.salary.SalaryException;
-import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
-import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
+import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.salary.expression.ExpressionException;
-import com.esferalia.aon.salary.expression.ITimedVariable;
+import com.esferalia.aon.salary.expression.ExpressionImpl;
+import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
-import com.esferalia.aon.watson.util.AonDateUtils;
 
 public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalculatorContext {
 
@@ -76,33 +50,26 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 	
 	private Date noHolidaysEndDate = null;
 	private PreparedStatement noHolidaysStmt;
-	private Date settleEndDate;
-	private SystemPayment salaryDayPayment;
-	private Settings SETTINGS = null;
 
 	public SQLContractSettleCalculatorContext(Connection connection, Date startDate, Date endDate, Date issueDate)
 			throws SQLException, ExpressionException {
 		this(connection, startDate, endDate, issueDate, null);
-		this.settleEndDate = issueDate;
 	}
 
 	public SQLContractSettleCalculatorContext(Connection connection, Date startDate, Date endDate, Date issueDate,
 			Criteria criteria) throws SQLException, ExpressionException {
 		this(connection, startDate, endDate, issueDate, criteria, getPaymentsCriteria(SalaryType.SETTLE));
-		this.settleEndDate = issueDate;
 	}
 
 	public SQLContractSettleCalculatorContext(Connection connection, Date startDate, Date endDate, Date issueDate,
 			Criteria criteria, Criteria paymentsCriteria) throws SQLException, ExpressionException {
 		this(connection, startDate, endDate, issueDate, issueDate, criteria, paymentsCriteria);
-		this.settleEndDate = issueDate;
 	}
 
 	public SQLContractSettleCalculatorContext(Connection connection, Date startDate, Date endDate, Date issueDate,
 			Date chargeDate, Criteria criteria) throws SQLException, ExpressionException {
 		super(connection, startDate, endDate, issueDate, chargeDate, criteria, getPaymentsCriteria(SalaryType.SETTLE));
 		initNoHolidaysStmt();
-		this.settleEndDate = issueDate;
 	}
 
 	public SQLContractSettleCalculatorContext(Connection connection, Date startDate, Date endDate, Date issueDate,
@@ -110,7 +77,6 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 		super(connection, startDate, endDate, issueDate, chargeDate, criteria, paymentsCriteria);
 		
 		initNoHolidaysStmt();
-		this.settleEndDate = issueDate;
 	}
 
 	@Override
@@ -228,10 +194,6 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 		return this.noHolidaysEndDate != null ? this.noHolidaysEndDate : super.getEndDate();
 	}
 	
-	@Override
-	protected Date getContractEndDate() {
-		return null;
-	}
 	
 	@Override
 	public void close() throws SQLException {
@@ -297,184 +259,5 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 	private void initNoHolidaysStmt() throws SQLException {
 		this.noHolidaysStmt = getConnection().prepareStatement(NO_HOLIDAY_SQL);
 	}
-	
-	@Override
-	protected double getDaySalary() throws ExpressionException, SQLException, SalaryException {
-		double salaryDay = getDaySalaryDB();
-		return salaryDay != 0.00 ? salaryDay : calculateDaySalary();
-	}
-	
-	private double calculateDaySalary() throws ExpressionException, SQLException, SalaryException {
 
-		salaryDayPayment.setExpression(String.format(Locale.US, "HIDE(\""
-				+ "<div>No existe nomina emitida para este perido, por favor recuerde emitirla.</div>"
-				+"<div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo' />aon Solutions</div>\");"
-				+ "\")"));
-
-		Calendar contractEnd = Calendar.getInstance();
-		contractEnd.setTime(this.settleEndDate);
-		contractEnd.set(Calendar.DATE, 1);
-		Date monthStart = contractEnd.getTime();
-		contractEnd.set(Calendar.DATE, contractEnd.getActualMaximum(Calendar.DATE));
-		Date monthEnd = contractEnd.getTime();
-
-		Criteria contractCriteria = new Criteria();
-		//contractCriteria.addExpression(criteria.getExpression());
-		contractCriteria.addExpression(super.getCriteria().getExpression());
-		contractCriteria.addEqualExpression(SQLConstants.CONTRACT + "." + ContractColumns.ID, getId());
-
-		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(connection, monthStart,
-				monthEnd, monthEnd, contractCriteria) {
-			@Override
-			public double getIrpf() {
-				return 0.00;
-				// TODO: sure
-			}
-
-			@Override
-			protected double getDaySalary() throws ExpressionException, SQLException, SalaryException {
-				throw new CheckException(
-						"Imposible calcular el salario regulador de la indemnizaci\u00F3n por despido");
-			}
-			
-			@Override
-			protected void loadContractLeave(ExpressionContext ctx) throws SQLException, ExpressionException {
-			}
-
-			@Override
-			public Collection<IContractBonus> getContractBonus() throws AonException {
-				return Collections.emptyList();
-			}
-
-			@Override
-			public Collection<IContractCost> getContractCosts() throws AonException {
-				return Collections.emptyList();
-			}
-
-			@Override
-			public Collection<IContractEmbargo> getContractEmbargos() throws AonException {
-				return Collections.emptyList();
-			}
-
-			@Override
-			public Collection<IContractDeduction> getContractDeductions() throws AonException {
-				return Collections.emptyList();
-			}
-
-			@Override
-			public void loadContractLeave(Integer id, Date leaveStart, Date leaveEnd, long parentDays, LeaveType type,
-					Double dailyRegBase, ExpressionContext exprCtx) throws ExpressionException {
-			}
-
-			@Override
-			public void loadContractLeave(Integer id, Date leaveStart, Date leaveEnd, long parentDays, LeaveType type,
-					String dailyRegBase, ExpressionContext exprCtx) throws ExpressionException {
-			}
-			
-
-			};
-
-		ctx.next();
-
-		SalaryBuilder salaryBuilder = new SalaryBuilder();
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
-		calculator.setSalaryBuilder(salaryBuilder);
-		Salary salary = calculator.calculate(ctx);
-
-		double quoteDys = 
-				getContexVariable(ctx.getExpressionContext(), new Period(ctx.getStartDate(), ctx.getEndDate()), ContextVariable.QUOTE_DAYS);
-		
-		double monthDays = 0;
-		monthDays = getContexVariable(ctx.getExpressionContext(), new Period(ctx.getStartDate(), ctx.getEndDate()), MONTH_DAYS);
-		
-		double commonBase = salary.getCommonBase();
-		return  commonBase * monthDays / quoteDys * 12 / 365;
-	}
-
-	private double getDaySalaryDB() {
-		DSLContext dslContext = DSL.using(super.getConnection(), getDefaultSettings());
-		
-		Result<Record> salary = dslContext.select().from(SALARY)
-			.where(SALARY.CONTRACT.eq(getId()))
-			.and(SALARY.TYPE.eq((byte)0))
-			.and(SALARY.START_DATE.le(new java.sql.Date(this.settleEndDate.getTime())))
-			.and(SALARY.END_DATE.ge(new java.sql.Date(this.settleEndDate.getTime())))
-			.fetch();
-		
-		if(salary.isEmpty()){
-			return 0;
-		}else{
-			Record salaryDataCommonBase = dslContext.select().from(SALARY_DATA)
-					.where(SALARY_DATA.SALARY.eq(salary.get(0).get(SALARY.ID)))
-					.and(SALARY_DATA.NAME.eq("BASE_CGC"))
-					.fetchOne();
-			
-			double commonBase = 0.00;
-			commonBase = Double.parseDouble(salaryDataCommonBase.get(SALARY_DATA.EXPRESSION));
-			
-			Record salaryDataQuoteDays = dslContext.select().from(SALARY_DATA)
-					.where(SALARY_DATA.SALARY.eq(salary.get(0).get(SALARY.ID)))
-					.and(SALARY_DATA.NAME.eq("DIAS_COTIZADOS"))
-					.fetchOne();
-			
-			double quoteDys = 0.00;
-			quoteDys = Double.parseDouble(salaryDataQuoteDays.get(SALARY_DATA.EXPRESSION));
-			
-			Record salaryDataMonthDays = dslContext.select().from(SALARY_DATA)
-					.where(SALARY_DATA.SALARY.eq(salary.get(0).get(SALARY.ID)))
-					.and(SALARY_DATA.NAME.eq("DIAS_MES"))
-					.fetchOne();
-			
-			double monthDays = 0.00;
-			monthDays = Double.parseDouble(salaryDataMonthDays.get(SALARY_DATA.EXPRESSION));
-			
-			return commonBase * monthDays / quoteDys * 12 / 365;
-		}
-		
-		
-	}
-
-	private double getContexVariable(ExpressionContext ctx, Period p, ContextVariable var) {
-		ITimedVariable<?> timedVariable = ctx.getVariable(var, p.getStart(), p.getEnd());
-		if (timedVariable == null)
-			throw new ExpressionExceptionWrapper(new UndefinedContextVariablesException(var));
-		try {
-			return ((Number) timedVariable.getValue(p)).doubleValue();
-		} catch (ExpressionExceptionWrapper e) {
-		}
-
-		try {
-			return ctx.eval(var.getName(), p.getStart(), p.getEnd(), Double.class).stream()
-					.collect(Collectors.summingDouble(r -> r.getValue()));
-		} catch (ExpressionException e) {
-			throw new ExpressionExceptionWrapper(e);
-		}
-	}
-	
-	@Override
-	public Collection<IContractPayment> getContractPayments() throws AonException {
-		salaryDayPayment = salaryDayPayment();
-		return new CompositePayments<IContractPayment>(super.getContractPayments(), Collections.singleton(salaryDayPayment));
-	}
-	
-	private SystemPayment salaryDayPayment() {
-		SystemPayment salaryDayPayment = new SystemPayment();
-		
-		salaryDayPayment.setType(PaymentType.CRA_0000);
-		salaryDayPayment.setSalaryType(SalaryType.SETTLE);
-		salaryDayPayment.setStartDate(getStart());
-		salaryDayPayment.setEndDate(getEnd());
-		salaryDayPayment.setExpression("HIDE()");
-		
-		return salaryDayPayment;
-	}
-	
-	protected Settings getDefaultSettings() {
-		if (SETTINGS == null) {
-			SETTINGS = new Settings();
-			SETTINGS.setRenderSchema(false);
-		}
-		return SETTINGS;
-	}
-	
 }

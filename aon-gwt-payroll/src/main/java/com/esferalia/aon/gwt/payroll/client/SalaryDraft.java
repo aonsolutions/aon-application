@@ -2382,7 +2382,6 @@ public class SalaryDraft extends ResizeComposite
 
 	@Override
 	public void onChange(SalarySelect salarySelect) {
-		acceptButton.setVisible(!isSettle());
 		salaryButton.setVisible(!isSettle());
 		settleButton.setVisible(isSettle());
 		salaryDraftObject.calculate(this);
@@ -5443,7 +5442,6 @@ public class SalaryDraft extends ResizeComposite
 
 //		acceptButton.setEnabled(!readOnly);
 		acceptButton.setVisible(!automatic);
-		salaryButton.setVisible(!automatic);
 		
 		totalPaymentsLabel.setReadOnly(automatic);
 		totalLiquidLabel.setReadOnly(automatic);
