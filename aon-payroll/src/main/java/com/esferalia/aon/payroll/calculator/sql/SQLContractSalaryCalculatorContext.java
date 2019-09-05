@@ -4251,7 +4251,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		ResultSet rs = null;
 		try {
 			List<ITimedObject<IExpression>> failed = new LinkedList<ITimedObject<IExpression>>();
-
+			
+			Date dbContractEndDate = getDate(SQLConstants.CONTRACT, ContractColumns.END_DATE);
+			
 			ceventStmt.setInt(1, getId());
 			ceventStmt.setDate(2, toSqlDate(endDate));
 			ceventStmt.setDate(3, toSqlDate(startDate));
@@ -4263,7 +4265,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				expr.setScope(ExpressionScope.CONTRACT);
 				Date dataStart = rs.getDate(ContractDataColumns.START_DATE);
 				Date dataEnd = rs.getDate(ContractDataColumns.END_DATE);
-				dataEnd = ( dataEnd != null && dataEnd.equals(getContractEndDate()))? null: dataEnd; 
+				dataEnd = ( dataEnd != null && dataEnd.equals(dbContractEndDate))? null: dataEnd; 
 				Date start = Period.max(dataStart, startDate);
 				Date end = Period.min(dataEnd, endDate);
 
