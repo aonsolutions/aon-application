@@ -5,7 +5,6 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Map;
 
-import org.apache.commons.math3.util.Precision;
 import org.junit.After;
 import org.junit.Before;
 
@@ -100,37 +99,6 @@ public class SQLSettleDraftTestCase extends
 		draft.setType(Salary.Type.SETTLE);
 		
 		return EmployeesServiceHelper.getSettleCalculatorContextImpl(connection, draft, null);
-	}
-	
-	@Override
-	protected ISQLContractSalaryCalculatorContext getSmartSQLContractSettleContext(Connection connection,
-			Date contractStart, Date endDate, ContractRecord contract) throws SQLException, ExpressionException {
-		
-		Employee employee = new Employee();
-		employee.setId(contract.getId());
-
-		draft.setEmployee(employee);
-		draft.setStartDate(contractStart);
-		draft.setEndDate(endDate);
-		draft.setIssueDate(endDate);
-		draft.setType(Salary.Type.SETTLE);
-		
-		return EmployeesServiceHelper.getSettleCalculatorContextImpl(connection, draft, null);
-	}
-	
-	@Override
-	protected double getHolidays(Date contractStart) {
-		Date today = getToday();
-		double activeDays = (today.getTime() - contractStart.getTime()) / (1000*60*60*24);
-		double generatedHolidays = activeDays * 30 / 365;
-		return Precision.round(generatedHolidays, 2); //super.getHolidays(contractStart);
-	}
-	
-	@Override
-	protected double getHolidays(Date contractStart, Date endDate) {
-		double activeDays = (endDate.getTime() - contractStart.getTime()) / (1000*60*60*24);
-		double generatedHolidays = activeDays * 30 / 365;
-		return Precision.round(generatedHolidays, 2); //super.getHolidays(contractStart);
 	}
 	
 
