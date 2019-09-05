@@ -488,9 +488,9 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 //		settle.getSalaryDatas().stream().forEach(d->System.out.println(d.getName() + " = "  + d.getExpression() ));
 //		settle.getSalaryPayments().stream().forEach(p->System.out.println(p.getExpression() + " = "  + p.getAmount() ));
 
-		Assert.assertEquals( br * 4 , settle.getCommonBase());
-		Assert.assertEquals( 20 * (2/12.00) * br + ( br * 4 ), settle.getTotalPayment());
-		Assert.assertEquals( settle.getCommonBase() * 1.60 / 100 , settle.getTotalDeduction());
+		Assert.assertEquals( br * 4 , settle.getCommonBase(), DELTA);
+		Assert.assertEquals( 20 * (2/12.00) * br + ( br * 4 ), settle.getTotalPayment(), DELTA);
+		Assert.assertEquals( settle.getCommonBase() * 1.60 / 100 , settle.getTotalDeduction(), DELTA);
 	
 		
 	}
