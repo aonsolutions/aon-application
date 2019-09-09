@@ -36,6 +36,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
+import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.math3.util.Precision;
 import org.junit.Test;
 
 import com.code.aon.common.enumeration.Month;
@@ -146,10 +148,10 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 
 		Salary settle = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
-		
+		double noHolidyas = getNoHolidays(contractStart, getToday());
 
-		Assert.assertEquals( 12 * (2.00 + 2/12.00) * br, settle.getTotalPayment());
-		Assert.assertEquals( 12 * ( 2 + 2/12.00) * br, settle.getTotalLiquid());
+		Assert.assertEquals( 12 * (2.00 + 2/12.00) * br + noHolidyas * br , settle.getTotalPayment());
+		Assert.assertEquals( 12 * ( 2 + 2/12.00) * br + noHolidyas * br * 0.85, settle.getTotalLiquid());
 	}
 
 	@Test
@@ -239,9 +241,19 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		double br = (1750.00 * 1.10) * (1 + 1.00 / 12 + 1.00 / 12) * 12 / 365; //AonDateUtils.getMax(getToday(), DAY_OF_YEAR);
 		
+		double noHolidays = getNoHolidays(contractStart, getToday());
 
-		Assert.assertEquals( 12 * (2/12.00) * br, settle.getTotalPayment(), DELTA);
-		Assert.assertEquals( 12 * (2/12.00) * br , settle.getTotalLiquid(), DELTA);
+		Assert.assertEquals( 12 * (2/12.00) * br + noHolidays * br, settle.getTotalPayment(), DELTA);
+		Assert.assertEquals( 12 * (2/12.00) * br + noHolidays * br * 0.85 , settle.getTotalLiquid(), DELTA);
+	}
+
+	private double getNoHolidays(Date startDate, Date endDate) {
+		// TODO Auto-generated method stub
+		int days = AonDateUtils.get(endDate, Calendar.DAY_OF_YEAR) - AonDateUtils.get(startDate, Calendar.DAY_OF_YEAR) + 1;
+		if(days < 0)
+			days = AonDateUtils.get(endDate, Calendar.DAY_OF_YEAR);
+		
+		return  Precision.round(days * 30.00 / 365, 2);
 	}
 
 	@Test
@@ -284,8 +296,9 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 						"250.00 * DIAS_TRABAJADOS / DIAS_MES" }, 
 						new String[] {
 						"BASE_CGC * 0.10", 
-						"BASE_CGP * 0.05",
-						"BASE_IRPF * PORCENTAJE_IRPF/100" }, category);
+						"BASE_CGP * 0.05"
+//						,"BASE_IRPF * PORCENTAJE_IRPF/100" 
+						}, category);
 		//@formatter:off
 		
 		addSSRegimeStuff(aonContext);
@@ -326,12 +339,13 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		Salary settle = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
 		double br = (1750.00 * 1.10) * (1 + 1.00 / 12 + 1.00 / 12) * 12 / 365; //AonDateUtils.getMax(getToday(), DAY_OF_YEAR);
+		double noHolidays = getNoHolidays(contractStart, getToday());
 
-		Assert.assertEquals( 20 * (2/12.00) * br, settle.getTotalPayment());
+		Assert.assertEquals( 20 * (2/12.00) * br + noHolidays * br, settle.getTotalPayment());
 		
 		System.out.println( (20 * (2/12.00) * br ) + " = " + settle.getTotalPayment() );
 		
-		Assert.assertEquals( 20 * (2/12.00) * br, settle.getTotalLiquid());
+		Assert.assertEquals( 20 * (2/12.00) * br + noHolidays * br * 0.85, settle.getTotalLiquid());
 	}
 
 
@@ -793,23 +807,31 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		Date endNoHolidays = add(endContract, Calendar.DAY_OF_MONTH,11);
 		
 		
-		setData(aonContext, contract, 
-				startNoHolidays
-				, endNoHolidays
-				, new HashMap<String, String>() {
-			{
-				put("DIAS_VACACIONES_NO_DISFRUTADOS", format("%d", 10));
-			}
-		});
+//		setData(aonContext, contract, 
+//				startNoHolidays
+//				, endNoHolidays
+//				, new HashMap<String, String>() {
+//			{
+//				put("DIAS_VACACIONES_NO_DISFRUTADOS", format("%d", 10));
+//			}
+//		});
 		
+		
+//		ISQLContractSalaryCalculatorContext ctx = 
+//				getSQLContractSettleContext(connection, contractStart, contract);
 		
 		ISQLContractSalaryCalculatorContext ctx = 
-				getSQLContractSettleContext(connection, contractStart, contract);
+				getSQLContractSettleContext(connection, contractStart, endContract, contract);
 		
 		Salary settle = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
-		Assert.assertEquals(( 1000.00 * 12 / 365 * 10.00 ) , settle.getCommonBase());
-		Assert.assertEquals(( 1000.00 * 12 / 365 * 10.00 ) * (4.70/100.00), settle.getTotalDeduction());
+		double noHolidays = getNoHolidays(contractStart, endContract);
+		
+		Assert.assertEquals(( 1000.00 * 12 / 365 * noHolidays ) , settle.getCommonBase());
+		Assert.assertEquals(( 1000.00 * 12 / 365 * noHolidays ) * (4.70/100.00), settle.getTotalDeduction(), DELTA);
+		
+//		Assert.assertEquals(( 1000.00 * 12 / 365 * 10.00 ) , settle.getCommonBase());
+//		Assert.assertEquals(( 1000.00 * 12 / 365 * 10.00 ) * (4.70/100.00), settle.getTotalDeduction());
 		
 		
 	}
@@ -859,22 +881,28 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		Date endNoHolidays = add(endContract, Calendar.DAY_OF_MONTH,11);
 		
 		
-		setData(aonContext, contract, 
-				startNoHolidays
-				, endNoHolidays
-				, new HashMap<String, String>() {
-			{
-				put("DIAS_VACACIONES_NO_DISFRUTADOS", format("%d", 30));
-			}
-		});
+//		setData(aonContext, contract, 
+//				startNoHolidays
+//				, endNoHolidays
+//				, new HashMap<String, String>() {
+//			{
+//				put("DIAS_VACACIONES_NO_DISFRUTADOS", format("%d", 30));
+//			}
+//		});
 		
+		
+//		ISQLContractSalaryCalculatorContext ctx = 
+//				getSQLContractSettleContext(connection, contractStart, contract);
 		
 		ISQLContractSalaryCalculatorContext ctx = 
-				getSQLContractSettleContext(connection, contractStart, contract);
+				getSQLContractSettleContext(connection, contractStart, endContract, contract);
 		
 		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
-		Assert.assertEquals(( 2000.00 * 12 / 365 * 30.00 ) , settle.getIrpfBase());
+		double noHolidays = getNoHolidays(contractStart, endContract);
+		
+		Assert.assertEquals(( 2000.00 * 12 / 365 * noHolidays ) , settle.getIrpfBase());
+//		Assert.assertEquals(( 2000.00 * 12 / 365 * 30.00 ), settle.getIrpfBase());
 		
 		Collection<SalaryDeduction> deductions = settle.getSalaryDeductions();
 		org.junit.Assert.assertEquals(1, deductions.size());
@@ -1060,6 +1088,136 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 
 	}
 	
+	@Test
+	public void testSettleQuoteDays() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
+
+		Date contractStart = add(getToday(), Calendar.MONTH, -2);
+		Date contractEnd = add(getToday(), Calendar.MONTH, 1);
+		ContractRecord contract = newContract(aonContext, 
+				contractStart, 
+				contractEnd, 
+				new HashMap<String, String>() {
+					{}
+				}, 
+				new String[] { "( P_1 + P_2 ) * 0.10 ",
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES"
+						}, 
+				new String[] {
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						"BASE_IRPF * PORCENTAJE_IRPF/100" }, 
+				null);
+
+		addSSRegimeStuff(aonContext);
+
+		ISQLContractSalaryCalculatorContext ctx = 
+				getSmartSQLContractSettleContext(connection, contractStart, contractEnd, contract);
+
+		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+
+		double br = (1750.00 * 1.10) * 12 / 365; 
+		double noHolidays = getNoHolidays(contractStart, contractEnd);
+		
+		Assert.assertEquals(  br * noHolidays, settle.getTotalPayment(), DELTA);
+		Assert.assertEquals( br * noHolidays , settle.getCommonBase(), DELTA);
+
+		SalaryData salaryQuoteDatas [] = settle.getSalaryDatas()
+				.stream()
+				.filter(s->s.getName().equals(ContextVariable.QUOTE_DAYS.getName()))
+				.sorted((s1,s2)-> s1.getStartDate().compareTo(s2.getStartDate()) )
+				.toArray(l-> new SalaryData[l]);
+
+		SalaryData salaryBCGCDatas [] = settle.getSalaryDatas()
+				.stream()
+				.filter(s->s.getName().equals(ContextVariable.CGC_BASE.getName()))
+				.sorted((s1,s2)-> s1.getStartDate().compareTo(s2.getStartDate()) )
+				.toArray(l-> new SalaryData[l]);
+
+//		System.out.println("CONTRACT PERIOD -> StartDate : " + contractStart + ", EndDate : " + contractEnd + ", salaryQuoteDatas lenght : " + salaryQuoteDatas.length);
+//		for(SalaryData salaryQuoteData : salaryQuoteDatas){
+//			System.out.println(salaryQuoteData.getName() + " : " + salaryQuoteData.getExpression() + ", Start : " + salaryQuoteData.getStartDate() + ", endDate : " + salaryQuoteData.getEndDate());
+//		}
+//
+//		System.out.println("BASE CGC CONTRACT PERIOD-> StartDate : " + contractStart + ", EndDate : " + contractEnd + ", salaryBCGCDatas lenght : " + salaryBCGCDatas.length);
+//		for(SalaryData salaryBCGCData : salaryBCGCDatas){
+//			System.out.println(salaryBCGCData.getName() + " : " + salaryBCGCData.getExpression() + ", Start : " + salaryBCGCData.getStartDate() + ", endDate : " + salaryBCGCData.getEndDate());
+//		}
+
+		Assert.assertEquals(addDays(contractEnd,1), salaryBCGCDatas[salaryBCGCDatas.length-1].getStartDate());
+		Assert.assertEquals(addDays(contractEnd, (int)Math.ceil(noHolidays)), salaryQuoteDatas[salaryQuoteDatas.length-1].getEndDate());
+
+	}
+	
+	@Test
+	public void testSettleQuoteDaysII() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		Date contractStart = add(getToday(), Calendar.MONTH, -2);
+		Date contractEnd = getToday();
+		ContractRecord contract = newContract(aonContext, 
+				contractStart, 
+				contractEnd, 
+				new HashMap<String, String>() {
+					{}
+				}, 
+				new String[] { "( P_1 + P_2 ) * 0.10 ",
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES"
+						}, 
+				new String[] {
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						"BASE_IRPF * PORCENTAJE_IRPF/100" }, 
+				null);
+
+		addSSRegimeStuff(aonContext);
+
+		ISQLContractSalaryCalculatorContext ctx = 
+				getSmartSQLContractSettleContext(connection, contractStart, contractEnd, contract);
+
+		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+
+		double br = (1750.00 * 1.10) * 12 / 365; 
+		double noHolidays = getNoHolidays(contractStart, contractEnd);
+
+		Assert.assertEquals(  br * noHolidays, settle.getTotalPayment(), DELTA);
+		Assert.assertEquals( br * noHolidays , settle.getCommonBase(), DELTA);
+
+		SalaryData salaryQuoteDatas [] = settle.getSalaryDatas()
+				.stream()
+				.filter(s->s.getName().equals(ContextVariable.QUOTE_DAYS.getName()))
+				.sorted((s1,s2)-> s1.getStartDate().compareTo(s2.getStartDate()) )
+				.toArray(l-> new SalaryData[l]);
+
+		SalaryData salaryBCGCDatas [] = settle.getSalaryDatas()
+				.stream()
+				.filter(s->s.getName().equals(ContextVariable.CGC_BASE.getName()))
+				.sorted((s1,s2)-> s1.getStartDate().compareTo(s2.getStartDate()) )
+				.toArray(l-> new SalaryData[l]);
+
+		System.out.println("CONTRACT PERIOD -> StartDate : " + contractStart + ", EndDate : " + contractEnd);
+		for(SalaryData salaryQuoteData : salaryQuoteDatas){
+			System.out.println(salaryQuoteData.getName() + " : " + salaryQuoteData.getExpression() + ", Start : " + salaryQuoteData.getStartDate() + ", endDate : " + salaryQuoteData.getEndDate());
+		}
+
+		System.out.println("BASE CGC CONTRACT PERIOD-> StartDate : " + contractStart + ", EndDate : " + contractEnd + ", salaryBCGCDatas lenght : " + salaryBCGCDatas.length);
+		for(SalaryData salaryBCGCData : salaryBCGCDatas){
+			System.out.println(salaryBCGCData.getName() + " : " + salaryBCGCData.getExpression() + ", Start : " + salaryBCGCData.getStartDate() + ", endDate : " + salaryBCGCData.getEndDate());
+		}
+
+		Assert.assertEquals(addDays(contractEnd, 1), salaryBCGCDatas[salaryBCGCDatas.length-1].getStartDate());
+		Assert.assertEquals(addDays(getToday(), (int)Math.ceil(noHolidays)), salaryQuoteDatas[salaryQuoteDatas.length-1].getEndDate());
+
+	}
 
 	@Test
 	public void testSettleWithExtrasI() throws ExpressionException, SQLException, SalaryException {
@@ -1143,8 +1301,11 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		if ( months == Calendar.DECEMBER && days > 15 )
 			decemberExtra = 0.00; 
 		// 'December Extra...' have been already emitted. 
+		
+		double noHolidyas = getNoHolidays(contractStart, getToday());
+		double daySalary = (1750 * 1.10 + 1750 * 1.10 / 6) * 12 / 365;
 
-		Assert.assertEquals( decemberExtra + julyExtra, settle.getTotalPayment(), DELTA);
+		Assert.assertEquals( decemberExtra + julyExtra + noHolidyas * daySalary, settle.getTotalPayment(), DELTA);
 
 	}
 
@@ -1221,8 +1382,12 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		if ( months == Calendar.DECEMBER && days > 15 )
 			decemberExtra = 0.00; 
-		// 'December Extra...' have been already emitted. 
-		Assert.assertEquals( decemberExtra + julyExtra, settle.getTotalPayment(), DELTA);
+		// 'December Extra...' have been already emitted.
+		
+		double noHolidays = getNoHolidays(contractStart, getToday());
+		double daySalary = (1750 * 1.10 + 1750 * 1.10 / 6) * 12 / 365;
+		
+		Assert.assertEquals( decemberExtra + julyExtra + noHolidays * daySalary, settle.getTotalPayment(), DELTA);
 
 	}
 
@@ -1306,7 +1471,10 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 			decemberExtra = 0.00; 
 		// 'December Extra...' have been already emitted. 
 		
-		Assert.assertEquals( decemberExtra , settle.getTotalPayment(), DELTA);
+		double noHolidyas = getNoHolidays(contractStart, getToday());
+		double salaryDay = (1750 * 1.10 + 1750 * 1.10 / 6) * 12 / 365;
+		
+		Assert.assertEquals( decemberExtra + noHolidyas * salaryDay , settle.getTotalPayment(), DELTA);
 	}
 		
 	@Test
@@ -1388,9 +1556,10 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(settleCtx);
 		
+		double noHolidays = getNoHolidays(contractStart, getToday());
+		double daySalary = (1750 * 1.10 + 1750 * 1.10 / 6) * 12 / 365;
 		
-		
-		Assert.assertEquals( 0.00 , settle.getTotalPayment(), DELTA);
+		Assert.assertEquals( 0.00 + noHolidays * daySalary , settle.getTotalPayment(), DELTA);
 	}
 
 	@Test
@@ -1463,7 +1632,10 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment p : settle.getSalaryPayments() ) 
 			System.out.println(p.getDescription() + "= " + p.getAmount() );
 		
-		Assert.assertEquals( 1750.00 *1.10 / 6 * 2.5 , settle.getTotalPayment(), DELTA);
+		double noHolidyas = getNoHolidays(contractStart, endDate);
+		double daySalary = (1750 * 1.10 + 1750 * 1.10 / 6) * 12 / 365;
+		
+		Assert.assertEquals( 1750.00 *1.10 / 6 * 2.5 + noHolidyas * daySalary , settle.getTotalPayment(), DELTA);
 	}
 
 	// ------------------------------------------------------------------------
@@ -1552,8 +1724,11 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		if ( months == Calendar.DECEMBER && days > 15 )
 			decemberExtra = 0.00; 
 		// 'December Extra...' have been already emitted. 
+		
+		double noHolidays = getNoHolidays(contractStart, getToday());
+		double daySalary = (1750 * 1.10 + 1750 * 1.10 / 4) * 12 / 365;
 
-		Assert.assertEquals( decemberExtra + julyExtra + bonusExtra, settle.getTotalPayment(), DELTA);
+		Assert.assertEquals( decemberExtra + julyExtra + bonusExtra + noHolidays * daySalary, settle.getTotalPayment(), DELTA);
 
 	}
 
@@ -1627,7 +1802,10 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment p : settle.getSalaryPayments() ) 
 			System.out.println(p.getDescription() + "= " + p.getAmount() );
 		
-		Assert.assertEquals( 1750.00 *1.10 / 6 * 2.5 , settle.getTotalPayment(), DELTA);
+		double noHolidyas = getNoHolidays(contractStart, endDate);
+		double daySalary = (1750.00 * 1.10 + 1750.00 * 1.10 / 6) * 12 / 365;
+		
+		Assert.assertEquals( 1750.00 *1.10 / 6 * 2.5 + noHolidyas * daySalary , settle.getTotalPayment(), DELTA);
 	}
 
 	@Test
@@ -1704,7 +1882,11 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		for ( SalaryPayment p : settle.getSalaryPayments() ) 
 			System.out.println(p.getDescription() + "= " + p.getAmount() );
 		
-		Assert.assertEquals( 1750.00 *1.10 / 12 * 4.50 , settle.getTotalPayment(), DELTA);
+		double noHolidays = getNoHolidays(contractStart, endDate);
+		double daySalary = (1750.00 * 1.10 + 1750.00 * 1.10 / 6) * 12 / 365;
+		
+		
+		Assert.assertEquals( 1750.00 *1.10 / 12 * 4.50 + noHolidays * daySalary, settle.getTotalPayment(), DELTA);
 	}
 	// ------------------------------------------------------------------------
 
@@ -1795,9 +1977,12 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		if ( months == Calendar.DECEMBER && days > 15 )
 			decemberExtra = 0.00; 
-		// 'December Extra...' have been already emitted. 
+		// 'December Extra...' have been already emitted.
+		
+		double noHolidays = getNoHolidays(contractStart, getToday());
+		double daySalary = (1750 * 1.10 + 1750 * 1.10 / 6) * 12 / 365;
 
-		Assert.assertEquals( decemberExtra + julyExtra + manualPayment, settle.getTotalPayment(), DELTA);
+		Assert.assertEquals( decemberExtra + julyExtra + manualPayment + noHolidays * daySalary, settle.getTotalPayment(), DELTA);
 
 	}
 	// ------------------------------------------------------------------------
