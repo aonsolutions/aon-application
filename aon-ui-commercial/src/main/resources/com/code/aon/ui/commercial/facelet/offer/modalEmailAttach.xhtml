@@ -12,7 +12,7 @@
 		<aon:if test="#{offer.showEmailOptionWindow}">
 			<rich:modalPanel id="emailOptionModalPanel" 
 				minHeight="#{(offer.includeEmailSddMandateReport or offer.documentOnlineSign)?'450':'200'}"
-				minWidth="#{(offer.includeEmailSddMandateReport or offer.documentOnlineSign)?'500':'250'}"
+				minWidth="#{(offer.includeEmailSddMandateReport or offer.documentOnlineSign)?'550':'250'}"
 				rendered="#{offer.showEmailOptionWindow}"
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
@@ -174,7 +174,15 @@
 												<f:selectItem itemValue="#{5}" 
 													itemLabel="WebClick" />
 											</aon:selectOneMenu>
- 											
+											
+											<aon:outputLabel for="documentOnlineSign_test" title="Entorno de pruebas o produccion"
+												value="Test" />
+ 											<aon:selectBooleanCheckbox id="documentOnlineSign_test" title="Entorno de pruebas o produccion"
+												value="#{offer.documentOnlineSigner.testing}" >
+												<a4j:support event="onclick" reRender="documentOnlineSign_url"
+													actionListener="#{offer.documentOnlineSigner.onUpdateUrl}" />
+											</aon:selectBooleanCheckbox>
+												
 											<aon:outputLabel for="documentOnlineSign_url"
 												value="URL" />
 											<aon:inputText id="documentOnlineSign_url" size="45" disabled="true"

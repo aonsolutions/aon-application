@@ -67,13 +67,15 @@ public class DocumentOnlineSigner implements Serializable {
 
 	
 	static final String URL_ECERTIA = "https://app.ecertia.com/api/json/reply/EviSignSubmit";
-//	static final String URL_EVICERTIA = "https://app.evicertia.com/api/json/reply/EviSignSubmit";
+	static final String URL_EVICERTIA = "https://app.evicertia.com/api/json/reply/EviSignSubmit";
 	
 	private String username;
 	private String password;
 	private Integer signingType;
 	private String url;
-	private boolean isCollapsed;
+	private boolean collapsed;
+	private boolean testing;
+	private boolean notifyCommercial;
 	
 	public String getUsername() {
 		return username;
@@ -94,10 +96,22 @@ public class DocumentOnlineSigner implements Serializable {
 		this.url = url;
 	}
 	public boolean isCollapsed() {
-		return isCollapsed;
+		return collapsed;
 	}
-	public void setCollapsed(boolean isCollapsed) {
-		this.isCollapsed = isCollapsed;
+	public void setCollapsed(boolean collapsed) {
+		this.collapsed = collapsed;
+	}
+	public boolean isTesting() {
+		return testing;
+	}
+	public void setTesting(boolean testing) {
+		this.testing = testing;
+	}
+	public boolean isNotifyCommercial() {
+		return notifyCommercial;
+	}
+	public void setNotifyCommercial(boolean notifyCommercial) {
+		this.notifyCommercial = notifyCommercial;
 	}
 	public Integer getSigningType() {
 		return signingType;
@@ -130,9 +144,15 @@ public class DocumentOnlineSigner implements Serializable {
 		setCollapsed(true);
 	}
 	
+	public void onUpdateUrl(ActionEvent event) {
+		setUrl(testing?URL_ECERTIA:URL_EVICERTIA);
+	}
+	
 	public void init() {
-		// Test Url
+		// Test Url by default
+		setTesting(true);
 		setUrl(URL_ECERTIA);
+		setNotifyCommercial(true);
 		loadParams();
 	}
 	
