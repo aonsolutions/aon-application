@@ -26,6 +26,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -206,7 +207,7 @@ public class DocumentOnlineSigner implements Serializable {
 			if(targetCommercialEmail == null || "".equals(targetCommercialEmail)) {
 				throw new Exception("El Cliente Potencial no tiene cuenta de correo electrónico comercial.");
 			}
-//			String rDirStaffEmail = getRDirStaffEmail(offer);
+			String rDirStaffEmail = getRDirStaffEmail(offer);
 			String sellerEmail = getSellerEmail(offer);
 			
 			byte[] data = mergePdf(list);
@@ -218,22 +219,42 @@ public class DocumentOnlineSigner implements Serializable {
 			json.put("document", new String(encoded));
 			
 			// signingParties
-			JSONObject sp = new JSONObject();
-			sp.put("name", offer.getTarget().getRegistry().getName());
-			sp.put("address", targetCommercialEmail);
-			sp.put("signingMethod", signingType());
-
-			sp.put("role", "Signer");
-			json.put("signingParties", sp);
+			JSONObject spDirStaff = new JSONObject();
+			spDirStaff.put("name", offer.getTarget().getRegistry().getName());
+			spDirStaff.put("address", rDirStaffEmail);
+			spDirStaff.put("signingMethod", signingType());
+			spDirStaff.put("role", "Signer");
+			json.put("signingParties", spDirStaff);
 			
 			// interestedParties
 			if(sellerEmail != null && !sellerEmail.equals("")) {
-				JSONArray ips = new JSONArray();
+				JSONArray ips = null;
+				try {
+					ips = json.getJSONArray("interestedParties");
+				} catch (JSONException e) {
+					ips = new JSONArray();
+				}
+				if(ips==null) ips = new JSONArray();
+				//JSONArray ips = new JSONArray();
 				JSONObject ip = new JSONObject();
 				ip.put("address", sellerEmail);
 				ips.put(ip);
 				json.put("interestedParties", ips);
 			}
+			if(notifyCommercial && targetCommercialEmail != null && !targetCommercialEmail.equals("")) {
+				JSONArray ips = null;
+				try {
+					ips = json.getJSONArray("interestedParties");
+				} catch (JSONException e) {
+					ips = new JSONArray();
+				}
+				if(ips==null) ips = new JSONArray();
+				JSONObject ip = new JSONObject();
+				ip.put("address", targetCommercialEmail);
+				ips.put(ip);
+				json.put("interestedParties", ips);
+			}
+			
 			json.put("options", new JSONObject());
 			
 			JSONObject responseJson = postObject(json.toString());
