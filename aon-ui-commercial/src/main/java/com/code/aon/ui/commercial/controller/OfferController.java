@@ -928,7 +928,7 @@ public class OfferController extends HeaderObjectController implements ISignatur
 		setSddMandate(new SddMandateObject());
 		getSddMandate().setSignDate(offer.getDate());
 		getSddMandate().setRegistry(offer.getTarget().getRegistry());
-		getSddMandate().setReference("PPTO. "+offer.getReferenceCode());
+		getSddMandate().setReference(String.valueOf(offer.getTarget().getRegistry().getId()));
 		setDocumentOnlineSigner(new DocumentOnlineSigner());
 		getDocumentOnlineSigner().init();
 	}
