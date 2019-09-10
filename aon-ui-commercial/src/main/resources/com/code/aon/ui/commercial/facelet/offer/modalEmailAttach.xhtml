@@ -79,13 +79,28 @@
 									    </aon:div>
 									    	
 									    <aon:div rendered="#{not empty offer.documentOnlineSignParam}">
-					                        <aon:selectBooleanCheckbox id="documentOnlineSign" title="#{offer.documentOnlineSignParam.value} en desarrollo..."
+					                        <aon:selectBooleanCheckbox id="documentOnlineSign" title="#{offer.documentOnlineSignParam.value}"
 												value="#{offer.documentOnlineSign}" >
-												<a4j:support event="onclick" ajaxSingle="true"
-													reRender="emailOptionModalPanel" />
+												<a4j:support event="onclick" reRender="emailOptionModalPanel" />
 											</aon:selectBooleanCheckbox>
-											<aon:outputLabel for="documentOnlineSign" title="#{offer.documentOnlineSignParam.value} en desarrollo..."
+											<aon:outputLabel for="documentOnlineSign" title="#{offer.documentOnlineSignParam.value}"
 												value="Solicitar firma online [#{offer.documentOnlineSignParam.value}]" />
+											<aon:commandButton id="documentOnlineSigner-showSettings"
+												value="&#160;" 
+												title="Mostrar opciones de configuracion"
+												rendered="#{offer.documentOnlineSign and offer.documentOnlineSigner.collapsed}"
+												actionListener="#{offer.documentOnlineSigner.onCollapse}"
+												reRender="emailOptionModalPanel"
+												styleClass="aon-finding-toolbar-item aon-noborder aon-icon-config">
+											</aon:commandButton>
+											<aon:commandButton id="documentOnlineSigner-hideSettings"
+												value="&#160;" 
+												title="Ocultar opciones de configuracion"
+												rendered="#{offer.documentOnlineSign and not offer.documentOnlineSigner.collapsed}"
+												actionListener="#{offer.documentOnlineSigner.onUncollapse}"
+												reRender="emailOptionModalPanel"
+												styleClass="aon-finding-toolbar-item aon-noborder aon-icon-config">
+											</aon:commandButton>
 									    </aon:div>
 								    </aon:panelGrid>
 									    
@@ -125,7 +140,7 @@
 									     </aon:panelGrid>
 									</aon:panel>
 									
-									<aon:panel rendered="#{offer.documentOnlineSign}">
+									<aon:panel rendered="#{offer.documentOnlineSign and not offer.documentOnlineSigner.collapsed}">
 										<f:facet name="header">
 											<aon:panelGroup>
 												<aon:outputText value="#{offer.documentOnlineSignParam.value}" />

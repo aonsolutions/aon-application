@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ActionEvent;
 import javax.net.ssl.HttpsURLConnection;
 
 import org.apache.commons.io.FileUtils;
@@ -72,6 +73,7 @@ public class DocumentOnlineSigner implements Serializable {
 	private String password;
 	private Integer signingType;
 	private String url;
+	private boolean isCollapsed;
 	
 	public String getUsername() {
 		return username;
@@ -90,6 +92,12 @@ public class DocumentOnlineSigner implements Serializable {
 	}
 	public void setUrl(String url) {
 		this.url = url;
+	}
+	public boolean isCollapsed() {
+		return isCollapsed;
+	}
+	public void setCollapsed(boolean isCollapsed) {
+		this.isCollapsed = isCollapsed;
 	}
 	public Integer getSigningType() {
 		return signingType;
@@ -115,6 +123,13 @@ public class DocumentOnlineSigner implements Serializable {
 		return null;
 	}
 	
+	public void onCollapse(ActionEvent event) {
+		setCollapsed(false);
+	}
+	public void onUncollapse(ActionEvent event) {
+		setCollapsed(true);
+	}
+	
 	public void init() {
 		// Test Url
 		setUrl(URL_ECERTIA);
@@ -133,10 +148,12 @@ public class DocumentOnlineSigner implements Serializable {
 			setUsername(ap_username.getValue().trim());
 			setPassword(ap_password.getValue().trim());
 			setSigningType(Integer.parseInt(ap_signingType.getValue().trim()));
+			setCollapsed(true);
 		} else {
 			setUsername(null);
 			setPassword(null);
 			setSigningType(1);
+			setCollapsed(false);
 		}
 	}
 	
