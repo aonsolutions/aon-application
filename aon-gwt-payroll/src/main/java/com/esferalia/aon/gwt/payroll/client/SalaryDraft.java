@@ -2385,6 +2385,7 @@ public class SalaryDraft extends ResizeComposite
 		acceptButton.setVisible(!isSettle());
 		salaryButton.setVisible(!isSettle());
 		settleButton.setVisible(isSettle());
+		settleButton.setVisible(isAutomatic());
 		salaryDraftObject.calculate(this);
 		
 	}
@@ -2421,8 +2422,11 @@ public class SalaryDraft extends ResizeComposite
 
 		loadContentAssistManager();
 		
-		setAutomatic(  Arrays.asList(Type.EXTRA, Type.DELAY, Type.SETTLE).contains(salaryDraftObject.getType()));
-		setReadOnly(  Arrays.asList(Type.EXTRA, Type.DELAY).contains(salaryDraftObject.getType()));
+		setAutomatic(  isAutomatic());
+		setReadOnly(  isReadOnly());
+		
+		salaryButton.setVisible(!isSettle());
+		settleButton.setVisible(isSettle());
 		
 		showTimeRulePanel();
 		showDbTimeRulePanel();
@@ -2670,13 +2674,15 @@ public class SalaryDraft extends ResizeComposite
 		undoAllButton.setVisible(true);
 		costsCheck.setVisible(true);
 		salarySelect.setVisible(true);
-		acceptButton.setVisible(true);
-		salaryButton.setVisible(true);
+		salaryButton.setVisible(!isSettle());
+		settleButton.setVisible(isSettle());
+		acceptButton.setVisible(!isAutomatic());
 		irpfPreviewButton.setVisible(true);
 		printPreviewButton.setVisible(true);
 		tgssCheck.setVisible(isSalary());
 		dbSalaryCheck.setVisible(hasDbSalary());
 		eventsCheck.setVisible(hasEvents());
+		
 	}
 
 
@@ -2747,8 +2753,17 @@ public class SalaryDraft extends ResizeComposite
 	}
 
 	protected boolean isSettle() {
-		return salaryDraftObject.getType() == Type.SETTLE;
+		return salaryDraftObject == null ? false : salaryDraftObject.getType() == Type.SETTLE;
 	}
+
+	private boolean isReadOnly() {
+		return salaryDraftObject == null ? false : Arrays.asList(Type.EXTRA, Type.DELAY).contains(salaryDraftObject.getType());
+	}
+
+	private boolean isAutomatic() {
+		return salaryDraftObject == null ? false : Arrays.asList(Type.EXTRA, Type.DELAY, Type.SETTLE).contains(salaryDraftObject.getType());
+	}
+
 
 	private void showContextTimeLine() {
 
@@ -5443,7 +5458,6 @@ public class SalaryDraft extends ResizeComposite
 
 //		acceptButton.setEnabled(!readOnly);
 		acceptButton.setVisible(!automatic);
-		salaryButton.setVisible(!automatic);
 		
 		totalPaymentsLabel.setReadOnly(automatic);
 		totalLiquidLabel.setReadOnly(automatic);
