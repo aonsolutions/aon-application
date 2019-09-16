@@ -303,7 +303,12 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 	
 	@Override
 	protected double getDaySalary() throws ExpressionException, SQLException, SalaryException {
-		double salaryDay = getDaySalaryDB();
+		double salaryDay = 0.00;
+		try {
+			salaryDay = getDaySalaryDB();
+		} catch ( Exception e ) {
+			
+		}
 		return salaryDay != 0.00 ? salaryDay : calculateDaySalary();
 	}
 
