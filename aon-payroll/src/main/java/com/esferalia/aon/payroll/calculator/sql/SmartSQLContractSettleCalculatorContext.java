@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.jooq.DSLContext;
 import org.jooq.Result;
+import org.jooq.impl.DSL;
 
 import com.code.aon.common.AonException;
 import com.code.aon.ql.Criteria;
@@ -204,9 +205,26 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 				.fetchAnyInto(SALARY)
 				;
 				
+				
 				if ( record == null ) {
-					extrasPayments.addAll(extraPayments);
-					extrasPayments.add(newExtraMsgPayment(extraPayments.get(0).getDescription()));
+					record = 
+						dslCtx
+						.select()
+						.from(SALARY)
+						.innerJoin(SALARY_PAYMENT).on(SALARY.ID.eq(SALARY_PAYMENT.SALARY))
+						.where(SALARY.CONTRACT.eq(getId()))
+						.and(SALARY.ID.notIn(calculatedExtras))
+						.and(SALARY.TYPE.eq((byte)SalaryType.SALARY.ordinal()))
+						.and(SALARY_PAYMENT.AMOUNT.gt(0.00))
+						.and(SALARY_PAYMENT.DESCRIPTION.eq(extraPayments.get(0).getDescription()))
+						.and(DSL.year(SALARY.ISSUE_DATE).eq(DSL.year(new java.sql.Date(extraIssueDate.getTime()))))
+						.and(DSL.month(SALARY.ISSUE_DATE).eq(DSL.month(new java.sql.Date(extraIssueDate.getTime()))))
+						.fetchAnyInto(SALARY)
+							;
+					if ( record == null ) {
+						extrasPayments.addAll(extraPayments);
+						extrasPayments.add(newExtraMsgPayment(extraPayments.get(0).getDescription()));
+					}
 				} else { 
 					calculatedExtras.add(record.getId());
 				}
