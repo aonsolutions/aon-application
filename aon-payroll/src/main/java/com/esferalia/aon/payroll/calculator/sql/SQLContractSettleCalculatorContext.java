@@ -21,6 +21,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.time.DateUtils;
@@ -35,11 +36,13 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
+import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractCost;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
+import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.UndefinedContextVariablesException;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.DismissalType;
@@ -54,6 +57,7 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
+import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
@@ -333,7 +337,11 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 	
 	@Override
 	protected double getDaySalary() throws ExpressionException, SQLException, SalaryException {
-		double salaryDay = getDaySalaryDB();
+		double salaryDay = 0.00;
+		try {
+			salaryDay = getDaySalaryDB();
+		} catch ( Throwable t ) {
+		}
 		return salaryDay != 0.00 ? salaryDay : calculateDaySalary();
 	}
 
@@ -352,6 +360,8 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 
 		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(connection, monthStart,
 				monthEnd, monthEnd, contractCriteria) {
+			
+			
 			@Override
 			public double getIrpf() {
 				return 0.00;
@@ -364,10 +374,6 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 						"Imposible calcular el salario regulador de la indemnizaci\u00F3n por despido");
 			}
 			
-			@Override
-			protected void loadContractLeave(ExpressionContext ctx) throws SQLException, ExpressionException {
-			}
-
 			@Override
 			public Collection<IContractBonus> getContractBonus() throws AonException {
 				return Collections.emptyList();
@@ -398,16 +404,23 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 					String dailyRegBase, ExpressionContext exprCtx) throws ExpressionException {
 			}
 			
+			@Override
+			protected void loadContractLeave(ExpressionContext ctx) throws SQLException, ExpressionException {
+			}
+			
+			
+			
 
 			};
 
 		ctx.next();
 
 		SalaryBuilder salaryBuilder = new SalaryBuilder();
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = 
+		new SmartContractSalaryCalculator<Salary>();
 		calculator.setSalaryBuilder(salaryBuilder);
 		Salary salary = calculator.calculate(ctx);
-
+		
 		double quoteDys = 
 				getContexVariable(ctx.getExpressionContext(), new Period(ctx.getStartDate(), ctx.getEndDate()), ContextVariable.QUOTE_DAYS);
 		
@@ -432,29 +445,51 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 		if(salary.isEmpty()){
 			return 0;
 		}else{
-			Record salaryDataCommonBase = dslContext.select().from(SALARY_DATA)
-					.where(SALARY_DATA.SALARY.eq(salary.get(0).get(SALARY.ID)))
-					.and(SALARY_DATA.NAME.eq("BASE_CGC"))
-					.fetchOne();
+			double commonBase =
+			dslContext.select().from(SALARY_DATA)
+			.where(SALARY_DATA.SALARY.eq(salary.get(0).get(SALARY.ID)))
+			.and(SALARY_DATA.NAME.eq("BASE_CGC"))
+			.stream()
+			.collect(Collectors.summingDouble(r -> {
+				try {
+					return Double.parseDouble(r.get(SALARY_DATA.EXPRESSION));
+				} catch ( Exception e ) {
+					return 0.00; 
+				}
+			}))
+			;
 			
-			double commonBase = 0.00;
-			commonBase = Double.parseDouble(salaryDataCommonBase.get(SALARY_DATA.EXPRESSION));
 			
-			Record salaryDataQuoteDays = dslContext.select().from(SALARY_DATA)
+			double quoteDys = 
+			dslContext.select().from(SALARY_DATA)
 					.where(SALARY_DATA.SALARY.eq(salary.get(0).get(SALARY.ID)))
 					.and(SALARY_DATA.NAME.eq("DIAS_COTIZADOS"))
-					.fetchOne();
+					.stream()
+					.collect(Collectors.summingDouble(r -> {
+						try {
+							return Double.parseDouble(r.get(SALARY_DATA.EXPRESSION));
+						} catch ( Exception e ) {
+							return 0.00; 
+						}
+					}));
 			
-			double quoteDys = 0.00;
-			quoteDys = Double.parseDouble(salaryDataQuoteDays.get(SALARY_DATA.EXPRESSION));
 			
-			Record salaryDataMonthDays = dslContext.select().from(SALARY_DATA)
+			double monthDays = dslContext.select().from(SALARY_DATA)
 					.where(SALARY_DATA.SALARY.eq(salary.get(0).get(SALARY.ID)))
 					.and(SALARY_DATA.NAME.eq("DIAS_MES"))
-					.fetchOne();
+					.stream()
+					.map(r -> {
+						try {
+							return Double.parseDouble(r.get(SALARY_DATA.EXPRESSION));
+						} catch ( Exception e ) {
+							return 0.00; 
+						}
+					}
+					)
+					.findAny()
+					.orElseGet(() -> 30.00 )
+					;
 			
-			double monthDays = 0.00;
-			monthDays = Double.parseDouble(salaryDataMonthDays.get(SALARY_DATA.EXPRESSION));
 			
 			return commonBase * monthDays / quoteDys * 12 / 365;
 		}
