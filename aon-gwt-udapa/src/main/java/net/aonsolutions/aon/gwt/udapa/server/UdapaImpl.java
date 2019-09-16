@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.gwt.udapa.server;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Optional;
@@ -31,6 +32,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import net.aonsolutions.aon.gwt.udapa.client.IUdapa;
+import net.aonsolutions.aon.gwt.udapa.client.Utils;
 import net.aonsolutions.aon.gwt.udapa.shared.quality.Destiny;
 import net.aonsolutions.aon.gwt.udapa.shared.quality.QualitySheetCode;
 
@@ -201,9 +203,27 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 			AON.updateDataResponseDetail(domainName, domainId, login, drd, f -> f.getIdProperty().eq(opt.get().getId()));
 		} else AON.insertDataResponseDetail(domainName, domainId, login, drd);
 		map.put(code, value);
-
 		if(QualitySheetCode.UFQC2.getName().equals(code)) {
 			AON.insertApplicationParameter(domainName, domainId, login, AppParam.QUALITY_PFONDO, value);
+			String transportDate =  map.get("transport_delivery_date");
+			
+			if(transportDate != null && !"".equals(transportDate) && !"-".equals(transportDate)){
+				Date issueDate = Utils.parseDateTime(transportDate);
+				AON.getDataResponseStream(domainName, domainId, "", DataResponseSource.QUALITY, f -> 
+					f.getIssueDateProperty().ge(new java.sql.Date(issueDate != null ? issueDate.getTime() : new Date().getTime()))
+				).forEach(dr -> {
+					drd.setDataResponse(dr.getId());
+					
+					Optional<DataResponseDetail> opt2 = AON.getDataResponseDetail(domainName, domainId, login, f ->
+						f.getDomainProperty().eq(domainId).and(f.getDataVariableProperty().eq(code))
+						.and(f.getDataResponseProperty().eq(dr.getId())));
+					if(opt2.isPresent()){			
+						AON.updateDataResponseDetail(domainName, domainId, login, drd, f -> f.getIdProperty().eq(opt2.get().getId()));
+					} 
+				});;
+			}
+
+
 		}
 		return compute(map);
 	}

@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.gwt.udapa.client.quality;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -49,6 +50,7 @@ import com.vaadin.polymer.vaadin.widget.VaadinUpload;
 import com.vaadin.polymer.vaadin.widget.event.UploadSuccessEvent;
 import com.vaadin.polymer.vaadin.widget.event.UploadSuccessEventHandler;
 
+import net.aonsolutions.aon.gwt.udapa.client.Utils;
 import net.aonsolutions.aon.gwt.udapa.shared.quality.Destiny;
 import net.aonsolutions.aon.gwt.udapa.shared.quality.QualitySheetCode;
 
@@ -236,7 +238,7 @@ public class FootPanel extends Composite {
 			dbPFondo.setValue(pfondo);
 			dbPFondo.setWidth("35px");
 			tInfo.setWidget(0, 3, dbPFondo);
-
+			
 			String col = parent.getMap().containsKey(QualitySheetCode.UFQAC8.getName()) ?  parent.getMap().get(QualitySheetCode.UFQAC8.getName()) : "0.0";
 			Double color = "1".equals(col) || "1.0".equals(col) ? 0.003 : 0.0; 
 		
@@ -398,7 +400,6 @@ public class FootPanel extends Composite {
 			Double totalEuros2 =  AonMathUtils.round(kgNet) * AonMathUtils.round(eurosKgNeto2, 4);
 			table1.setWidget(2, 1, new Label(Double.toString(AonMathUtils.round(totalEuros2))));
 			
-			
 			VerticalPanel vp = new VerticalPanel();
 			vp.setWidth("100%");
 			vp.add(tInfo);
@@ -425,13 +426,32 @@ public class FootPanel extends Composite {
 						price = price * 0.88;
 					}
 					
-					Double primaGor = temp < 17.0 ? price * 1.03 : price;
+					String transportDate =  parent.getMap().get("transport_delivery_date");
+					Date issueDate = new Date();
+					if(transportDate != null && !"".equals(transportDate)
+							&& !"-".equals(transportDate)){
+						issueDate = Utils.parseDateTime(transportDate);
+					}
+					Date start = Utils.parseDate("01/09/2019");
+					Date end = Utils.parseDate("01/09/2021");
+
+					Boolean a = temp >= 8.0 && temp <= 16.0 && issueDate.compareTo(start) >= 0;
+					Boolean b = temp >= 22.0 && temp <= 24.0 && issueDate.compareTo(start) >= 0;
+					Boolean c = temp > 24.0 && issueDate.compareTo(start) >= 0;
+					Boolean d = temp < 17.0 && issueDate.compareTo(start) < 0;
+					
+					Double tempVar = 1.0;
+					if(a || d) tempVar = 1.03;
+					else if(b) tempVar = 0.95;
+					else if(c) tempVar = 0.85;
+					
+					Double primaGor = price * tempVar;
 					table.setWidget(2, 3, new Label(Double.toString(AonMathUtils.round(primaGor, 3))));
 					Double eurosGor = 0.7 * kgGor * primaGor;
 					table.setWidget(2, 4, new Label(Double.toString(AonMathUtils.round(eurosGor))));		
 					
 					
-					Double primaNet = temp < 17.0 ?  price * 1.03 : price;
+					Double primaNet = price *  tempVar;
 					table.setWidget(5, 3, new Label(Double.toString(AonMathUtils.round(primaNet, 3))));
 					Double eurosNet = kgNet * (primaNet + color);
 					table.setWidget(5, 4, new Label(Double.toString(AonMathUtils.round(eurosNet))));

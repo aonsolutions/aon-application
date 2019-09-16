@@ -46,6 +46,7 @@ import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
+import net.aonsolutions.aon.gwt.udapa.client.Utils;
 import net.aonsolutions.aon.gwt.udapa.shared.quality.Destiny;
 import net.aonsolutions.aon.gwt.udapa.shared.quality.QualitySheetCode;
 
@@ -374,8 +375,25 @@ public class printLiqList extends HttpServlet{
 							Double temp = Double.parseDouble(tempStr);
 							cell(libro, row, style3, 28, temp);
 				
+							String transportDate =  map.get("transport_delivery_date");
+							Date issueDate = new Date();
+							if(transportDate != null && !"".equals(transportDate)
+									&& !"-".equals(transportDate)){
+								issueDate = Utils.parseDateTime(transportDate);
+							}
+							Date start = Utils.parseDate("01/09/2019");
+
+							Boolean a = temp >= 8.0 && temp <= 16.0 && issueDate.compareTo(start) >= 0;
+							Boolean b = temp >= 22.0 && temp <= 24.0 && issueDate.compareTo(start) >= 0;
+							Boolean c = temp > 24.0 && issueDate.compareTo(start) >= 0;
+							Boolean d = temp < 17.0 && issueDate.compareTo(start) < 0;
+							
+							Double tempVar = 1.0;
+							if(a || d) tempVar = 1.03;
+							else if(b) tempVar = 0.95;
+							else if(c) tempVar = 0.85;
 							// PRIMA
-							Double prima = temp < 17.0 ?  price * 1.03 : price;
+							Double prima = price * tempVar;
 							cell(libro, row, style3, 29, AonMathUtils.round(prima,3));
 							
 							// COLOR
