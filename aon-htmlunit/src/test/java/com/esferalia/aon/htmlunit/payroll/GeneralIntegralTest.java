@@ -80,8 +80,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		// [4] PAGA EXTRAORDINARIA DE DICIEMBRE
 		draft("DRAFT COMPLETO, CONVENIO");
 
-		// TODO: FIX Date, not agreement apply
-		calculate(Calendar.DECEMBER, 2018);
+		calculate(Calendar.DECEMBER);
 		
 		expand("expand-button-agreement");
 		expand("expand-button-system");
@@ -355,26 +354,14 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calendar.set(2016, Calendar.JUNE, 25);
 		settle(calendar.getTime());
 		
-		
-		// TODO: set NO_HOLIDAYS = 0.00
-		expand("expand-button-system");
-		wait4Id("editor-dias_vacaciones_no_disfrutados");
-		setValue("editor-dias_vacaciones_no_disfrutados", "0.000001");
-		wait4Id("cgcBaseLabel");
-		
 		assertValue("cgcBaseLabel", 0.00);
 		assertValue("cgpBaseLabel", 0.00);
 		assertValue("totalPaymentsLabel", 0.00);
 		assertValue("totalLiquidLabel", 0.00);
 
+
 		draft("COTIZACIÓN, MÁX");
 		settle(calendar.getTime());
-		
-		// TODO: set NO_HOLIDAYS = 0.00
-		expand("expand-button-system");
-		wait4Id("editor-dias_vacaciones_no_disfrutados");
-		setValue("editor-dias_vacaciones_no_disfrutados", "0.000001");
-		wait4Id("cgcBaseLabel");
 		
 		assertValue("cgcBaseLabel", 666000.00);
 		assertValue("cgpBaseLabel", 666000.00);
@@ -384,12 +371,12 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 	
 		draft("FINIQUITO, REDEFINIDO");
 		settle(calendar.getTime());
-		
 		assertValue("cgcBaseLabel", 200.00);
 		assertValue("cgpBaseLabel", 200.00);
 		assertValue("totalPaymentsLabel", 300.00);
 		assertValue("totalLiquidLabel", 300.00 - (200.00 * (4.70 + 1.55 + 0.10) / 100.00));
 		
+
 	}
 
 	@Test
