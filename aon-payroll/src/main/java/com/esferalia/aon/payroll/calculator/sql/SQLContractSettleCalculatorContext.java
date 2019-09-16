@@ -23,8 +23,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.time.DateUtils;
-import org.apache.commons.math3.util.Precision;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
@@ -240,7 +238,7 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 	
 	@Override
 	protected void initContractExpressionCtx(NextHook hook) throws SQLException, ExpressionException {
-		initNoHolidays();
+		initNoHolidays(getExpressionContext());
 		super.initContractExpressionCtx(hook);
 		
 	}
@@ -251,12 +249,6 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 		fixContractCompleteVariable(ctx);
 		
 		super.loadContractData(ctx, Period.min(getStart(), startDate)  , noHolidaysEndDate == null ? endDate: Period.max(endDate, noHolidaysEndDate) );
-		
-		if( ctx.getVariables(ContextVariable.NO_HOLIDAYS).isEmpty() && noHolidaysEndDate != null) {
-			Date noHolidaysStartDate = DateUtils.add(issueEndDate, Calendar.DAY_OF_MONTH, 1);
-			double generatedHolidayDays = getGeneratedHolidays(getContractStartate(), issueEndDate);
-			getExpressionContext().setVariable(ContextVariable.NO_HOLIDAYS, generatedHolidayDays, noHolidaysStartDate, noHolidaysEndDate);
-		}
 	}
 	
 	
@@ -274,7 +266,7 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 	
 	
 	// ------------------------------------------------------------------------
-	private void initNoHolidays() throws UndefinedVariablesException, ExpressionException, SQLException {
+	private void initNoHolidays(ExpressionContext ctx) throws UndefinedVariablesException, ExpressionException, SQLException {
 		ResultSet rs = null;
 		try {
 			this.noHolidaysEndDate = null;
@@ -293,32 +285,10 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 					}
 				}
 			}
-			
-			if(noHolidaysEndDate != null)
-				return;
-			
-			double generatedHolidayDays = getGeneratedHolidays(getContractStartate(), issueEndDate);
-			noHolidaysEndDate = DateUtils.add(issueEndDate, Calendar.DAY_OF_MONTH, (int)Math.ceil(generatedHolidayDays));
-			
 		} finally {
 			if (rs != null)
 				rs.close();
 		}
-	}
-	
-	private double getGeneratedHolidays(Date startDate, Date endDate) {
-		Double generatedHolidays = 0.00;
-		
-		Date firstDayOfYear = new Date(endDate.getYear(), 0, 1);
-		
-		startDate = startDate.before(firstDayOfYear) ? firstDayOfYear : startDate;
-		
-		double activeDays = AonDateUtils.get(endDate, Calendar.DAY_OF_YEAR) - AonDateUtils.get(startDate, Calendar.DAY_OF_YEAR) + 1;
-		generatedHolidays = activeDays * 30 / 365;
-		
-		generatedHolidays = Precision.round(generatedHolidays, 2);
-		
-		return generatedHolidays;
 	}
 
 
