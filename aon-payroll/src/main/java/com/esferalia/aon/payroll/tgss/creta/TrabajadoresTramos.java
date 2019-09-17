@@ -1106,6 +1106,9 @@ public class TrabajadoresTramos {
 		int quoteDays = 0;
 		long days = period.daysStream().count();
 		List<ContextData> datas = salary.getContextData().get(QUOTE_DAYS.getName());
+		
+		if ( datas == null || datas.isEmpty() )
+			return (int) period.daysStream().count();
 		 
 		for ( ContextData data: datas  ) {
 			Period dataPeriod = new Period(data.getStartDate(), data.getEndDate());
