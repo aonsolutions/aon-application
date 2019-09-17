@@ -150,13 +150,22 @@ public class OfferServlet extends HttpServlet{
 		} else {
 			System.out.println("¡¡EVICERTIA!!");
 			System.out.println(json.toString());
-			if("EviSignSigned".equals(json.getString("EventType"))) {
+			if("EviSignSigned".equals(json.getString("EventType")) || "EviSignFullySigned".equals(json.getString("EventType"))) {
 				Offer offer = AON.getOffer(domain.getName(), domain.getId(), "", f -> 
 					f.getDomainProperty().eq(domain.getId())
 					.and(f.getSeriesProperty().eq("TEDI"))
 					.and(f.getExternalReferenceProperty().eq(json.getString("EvidenceId"))));
 				
 				offer.setSigned(true);
+				offer.setStatus(OfferStatus.APPROVED);
+				AON.updateOffer(domain.getName(), domain.getId(), "", offer);
+			} else if("EviSignRejected".equals(json.getString("EventType"))) {
+				Offer offer = AON.getOffer(domain.getName(), domain.getId(), "", f -> 
+				f.getDomainProperty().eq(domain.getId())
+					.and(f.getSeriesProperty().eq("TEDI"))
+					.and(f.getExternalReferenceProperty().eq(json.getString("EvidenceId"))));
+				
+				offer.setStatus(OfferStatus.REFUSED);
 				AON.updateOffer(domain.getName(), domain.getId(), "", offer);
 			}			
 		}
