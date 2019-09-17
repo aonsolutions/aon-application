@@ -34,6 +34,10 @@ public class ProductServlet extends HttpServlet{
 		
 	String h = "http://";
 	
+	public static ProductServlet getInstance(){
+		return new ProductServlet();
+	}
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		System.out.println("GET METHOD");
@@ -269,7 +273,7 @@ public class ProductServlet extends HttpServlet{
 	}
     
     
-    private JSONObject insertItem(Domain domain, String login, JSONObject json) {
+    public JSONObject insertItem(Domain domain, String login, JSONObject json) {
     	Integer itemId = json.getInt("item_id");
     	Item item = AON.getItem(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(itemId));
     	item.setSerialNumber(json.getString("lote"));

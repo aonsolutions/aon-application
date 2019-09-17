@@ -1,6 +1,7 @@
 package com.code.aon.webservice.warehouse;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Optional;
 
 import javax.servlet.ServletException;
@@ -13,8 +14,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.code.aon.webservice.common.Utils;
+import com.code.aon.webservice.product.ProductServlet;
 import com.code.aon.webservice.util.ToJSON;
 import com.code.aon.webservice.warehouse.jooq.DBIncome;
+import com.code.aon.webservice.warehouse.jooq.DBPurchase;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -23,6 +26,7 @@ import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
+import com.esferalia.aon.occam.api.model.warehouse.Income;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "QRServlet", urlPatterns = {"/udapa/qr/*",
@@ -196,6 +200,97 @@ public class QRServlet extends HttpServlet{
 		json.put("orders", array);
 		// --------------- //
 		Utils.giveBack(req, resp, json, new JSONObject());
+	}
+	
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+/*		
+		{
+			  carrier_packing: {
+			    id: carrier_packing.id,
+			    domain: carrier_packing.domain,
+			    tare: 123 ,
+			    additional_tare: 123,
+			    net: 123,
+			    gross: 123,
+			  },
+			  incomes:[
+			    {
+			      reference_code: 'XXXXXXX',
+			      supplier: orders[x].registry.id,
+			      address: orders[x].address,
+			      carrier_packing: carrier_packing.id,
+			      details: [
+			        {
+			          item: orders[x].details[y].item,
+			          lotable: orders[x].details[y].lotable,
+			          lote: 'XXXXXXX',
+			          purchase_detail: orders[x].details[y].id,
+			          saldar: true,
+			          quantity: 123,
+			          description: orders[x].details[y].description
+			        }
+			      ]
+			    }
+			  ]
+			}
+*/		
+		
+		JSONObject json = Utils.getRequestJSON(req);
+	
+		JSONObject carrierPacking = json.getJSONObject("carrier_packing");
+		
+		String domainName = req.getServerName();
+		Domain domain = AON.getDomain(domainName, carrierPacking.getInt("domain"), "");
+		String login = "";
+		
+		
+		CarrierPacking cp = AON.getCarrierPacking(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(carrierPacking.getInt("id")));
+		cp.setAdditionalTare(carrierPacking.getDouble("additional_tare"));
+		cp.setTare(carrierPacking.getDouble("tare"));
+		cp.setNet(carrierPacking.getDouble("net"));
+		cp.setGross(carrierPacking.getDouble("gross"));
+		
+		AON.updateCarrierPacking(domain.getName(), domain.getId(), login, cp);
+		
+		JSONArray incomes = json.getJSONArray("incomes");
+		Integer workplaceId = AON.getWarehouseStream(domain.getName(), domain.getId(), login,f -> f.getDomainProperty().eq(domain.getId())).findFirst().get().getWorkplace();
+		for (int i = 0; i < incomes.length(); i++) {
+			JSONObject income = incomes.getJSONObject(i);
+			income.put("workplace", workplaceId);
+			Optional<Income> opt = AON.getIncome(domain.getName(), domain.getId(), login, f -> f.getReferenceCodeProperty().eq(income.getString("number")));
+			
+			Integer incomeId = opt.isPresent() ? opt.get().getId() : DBIncome.insertIncome(domain, login, income).getInt("id");
+			JSONArray details = income.getJSONArray("details");
+			for (int j = 0; j < details.length(); j++) {
+				JSONObject detail = details.getJSONObject(j);
+				Integer itemId = detail.getInt("item");
+				if(detail.getBoolean("lotable")) {
+					JSONObject item = new JSONObject();
+					item.put("item_id", detail.getInt("item"));
+					item.put("lote", detail.getString("lote"));
+					itemId = ProductServlet.getInstance().insertItem(domain, login, item).getInt("id");
+				}
+				detail.put("item", itemId);
+				detail.put("workplace", workplaceId);
+				detail.put("income", incomeId);
+				DBIncome.insertIncomeDetail(domain, login, detail);
+				
+				JSONObject pd = new JSONObject();
+				pd.put("delivered", detail.getDouble("quantity"));
+				pd.put("id", detail.getInt("purchase_detail"));
+				pd.put("saldar", detail.getBoolean("saldar"));
+				DBPurchase.updatePurchaseDetail(domain, login, json);		
+			}	
+		}		
+		JSONObject object = new JSONObject();
+		
+		resp.setContentType("application/json;charset=UTF-8");
+		Utils.addCorsHeader(resp);
+		PrintStream os = new PrintStream(resp.getOutputStream(), false, "UTF-8");
+		os.println(object.toString());
+		os.flush();
+		os.close();
 	}
 
 	private Optional<Item> getItem(Domain domain, String login, Integer itemId, Integer productId) {
