@@ -194,7 +194,7 @@ public class OfferDAO {
 		ctx.getDslContext()
 				.update(OFFER)
 				.set(OFFER.DOMAIN, offer.getDomain())
-				.set(OFFER.SIGNED, offer.getSigned() ? (byte) 1 : 0)
+				.set(OFFER.SIGNED, offer.getSigned() != null && offer.getSigned() ? (byte) 1 : (byte) 0)
 				.set(OFFER.STATUS, offer.getStatus().value())
 				.set(OFFER.EXTERNAL_REFERENCE, offer.getExternalReference())
 				.set(OFFER.MODIFICATION_DATE, modificationDate)
