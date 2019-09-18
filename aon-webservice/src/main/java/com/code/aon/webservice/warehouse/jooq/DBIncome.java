@@ -119,6 +119,30 @@ public class DBIncome {
 		Optional<Income> result = AON.insertIncome(domain.getName(), domain.getId(), login, income);
 		return  incomeToJSON(result);
 	}
+	
+	public static JSONObject insertIncome2(Domain domain, String login, JSONObject json) {
+		Optional<Supplier> supplier = AON.getSupplier(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(json.getJSONObject("registry").getInt("supplier")));
+		Date date = AonDateUtils.dateTimeParse(json.getString("issue_time"));
+		Income income = new Income()
+				.setCarrierPacking(json.getInt("carrier_packing"))
+				.setDomain(domain.getId())
+				.setIssueDate(date != null ? date : new Date())
+				.setReferenceCode(json.getString("reference_code"))
+				.setScope(supplier.get().getScope())
+				.setSupplier(json.getJSONObject("registry").getInt("id"))
+				.setWorkplace(json.getInt("workplace"))
+				.setAddress(json.getJSONObject("registry").optInt("address") != 0 ? json.getJSONObject("registry").optInt("address") : null)
+				// Por Defecto ¿?
+				.setStatus(IncomeStatus.PENDING)
+				.setSecurityLevel(SecurityLevel.OFFICIAL.ordinal())
+				.setNumberOfPymnts(1)
+				.setDaysToFirstPymnt(0)
+				.setDaysBetweenPymnt(0)
+				.setPymntDays("");
+		
+		Optional<Income> result = AON.insertIncome(domain.getName(), domain.getId(), login, income);
+		return  incomeToJSON(result);
+	}
     
 	public static Filter incomeFilter(Domain domain, Map<String, String[]> filterMap, IncomeProperties f) {
 		Filter filter = f.getDomainProperty().eq(domain.getId());

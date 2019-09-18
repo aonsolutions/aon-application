@@ -13,20 +13,23 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.code.aon.webservice.common.MSG;
 import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.product.ProductServlet;
 import com.code.aon.webservice.util.ToJSON;
 import com.code.aon.webservice.warehouse.jooq.DBIncome;
 import com.code.aon.webservice.warehouse.jooq.DBPurchase;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
+import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "QRServlet", urlPatterns = {"/udapa/qr/*",
@@ -50,12 +53,7 @@ public class QRServlet extends HttpServlet{
 		cpJSON.put("document", AON.getCarrier(domain.getName(), domain.getId(), login, carrierPacking.getCarrier()).getDocument() != null ?
 				AON.getCarrier(domain.getName(), domain.getId(), login, carrierPacking.getCarrier()).getDocument() : "");
 		json.put("carrier_packing", cpJSON);
-		Company company = AON.getCompanyForDomain(domain.getName(), domain.getId(), login);
-		JSONObject addressJSON = ToJSON.raddressToJSON(
-			AON.getRAddres(domain.getName(), domain.getId(), login, company.getId()));
-		addressJSON.put("document", company.getDocument() != null ? 
-				company.getDocument() : "");
-		json.put("address", addressJSON);
+
 		JSONArray array = new JSONArray();
 		if(CarrierPackingType.SHIPMENT_REQUEST.equals(carrierPacking.getType())
 			&& !CarrierPackingStatus.FINISHED.equals(carrierPacking.getStatus())){
@@ -64,7 +62,7 @@ public class QRServlet extends HttpServlet{
 					f -> f.getCarrierPackingProperty().eq(carrierPackingId)
 					.and(f.getDomainProperty().eq(domain.getId())))
 			.forEach(purchase ->{
-				JSONObject purchaseJSON = ToJSON.purchaseToJSON(purchase);
+				JSONObject purchaseJSON = purchaseToJSON(purchase);
 				boolean shippingAlternativeAddressDefined = purchase
 						.getShippingAlternativeAddress() != null
 						|| purchase.getShippingAlternativeAddress2() != null
@@ -73,22 +71,26 @@ public class QRServlet extends HttpServlet{
 						|| purchase.getShippingAlternativePhone() != null
 						|| purchase.getShippingAlternativeRecipient() != null;	
 
-				JSONObject addressJSON2 = new JSONObject();
+				JSONObject registryJSON2 = new JSONObject();
 				RAddress ra = AON.getRAddress(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(purchase.getAddress()));
 
+				registryJSON2 = new JSONObject()
+						.put("id", purchase.getSupplier())
+						.put("name", purchase.getSupplierName())
+						.put("document", AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument() != null ? 
+						AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument() : "");
+						
 				if(shippingAlternativeAddressDefined) {
-					addressJSON2 = new JSONObject()
-					.put("name", purchase.getShippingAlternativeRecipient())
-					.put("address", purchase.getShippingAlternativeAddress() + " " +purchase.getShippingAlternativeAddress2())
+					JSONObject addressJSON2 = new JSONObject();
+					addressJSON2.put("address", purchase.getShippingAlternativeAddress() + " " +purchase.getShippingAlternativeAddress2())
 					.put("zip", purchase.getShippingAlternativeZip())
 					.put("city", purchase.getShippingAlternativeCity())
 					.put("province", " ")
 					.put("country", " ");
-				} else addressJSON2 = ToJSON.raddressToJSON(ra);
-				
-				addressJSON2.put("document", AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument() != null ? 
-						AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument() : "");
-				purchaseJSON.put("address",addressJSON2);
+					registryJSON2.put("address", addressJSON2);
+				} else registryJSON2.put("address", raddressToJSON(ra));
+				purchaseJSON.put("registry", registryJSON2);
+	
 				JSONArray details = new JSONArray();
 				AON.getPurchaseDetailStream(domain.getName(), domain.getId(), login,
 						f -> f.getPurchaseProperty().eq(purchase.getId())
@@ -126,21 +128,23 @@ public class QRServlet extends HttpServlet{
 						|| delivery.getShippingAlternativeRecipient() != null;	
 				
 				RAddress ra = AON.getRAddress(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(delivery.getAddress()));
-				JSONObject addressJSON3= ToJSON.raddressToJSON(ra);
-
+				JSONObject registryJSON3 = new JSONObject();
+				registryJSON3
+					.put("id", delivery.getCustomer())
+					.put("name", delivery.getCustomerName())
+					.put("document", AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument() != null ?
+						AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument() : "");
+				
 				if(shippingAlternativeAddressDefined) {
-					addressJSON3 = new JSONObject()
-					.put("name", delivery.getShippingAlternativeRecipient())
+					JSONObject addressJSON3 = new JSONObject()
 					.put("address", delivery.getShippingAlternativeAddress() + " " +delivery.getShippingAlternativeAddress2())
 					.put("zip", delivery.getShippingAlternativeZip())
 					.put("city", delivery.getShippingAlternativeCity())
 					.put("province", " ")
 					.put("country", " ");
-				} else addressJSON3 = ToJSON.raddressToJSON(ra);
+					registryJSON3.put("address", addressJSON3);
+				} else registryJSON3.put("address", raddressToJSON(ra));
 				
-				addressJSON3.put("document", AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument() != null ?
-						AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument() : "");
-				deliveryJSON.put("address", addressJSON3);
 			
 				JSONArray details = new JSONArray();
 				AON.getDeliveryDetailStream(domain.getName(), domain.getId(), login, f -> f.getDelivery().eq(delivery.getId()))
@@ -205,35 +209,36 @@ public class QRServlet extends HttpServlet{
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 /*		
-		{
-			  carrier_packing: {
-			    id: carrier_packing.id,
-			    domain: carrier_packing.domain,
-			    tare: 123 ,
-			    additional_tare: 123,
-			    net: 123,
-			    gross: 123,
-			  },
-			  incomes:[
-			    {
-			      reference_code: 'XXXXXXX',
-			      supplier: orders[x].registry.id,
-			      address: orders[x].address,
-			      carrier_packing: carrier_packing.id,
-			      details: [
-			        {
-			          item: orders[x].details[y].item,
-			          lotable: orders[x].details[y].lotable,
-			          lote: 'XXXXXXX',
-			          purchase_detail: orders[x].details[y].id,
-			          saldar: true,
-			          quantity: 123,
-			          description: orders[x].details[y].description
-			        }
-			      ]
-			    }
-			  ]
-			}
+{
+  "carrier_packing": {
+    "id": 11457, // DEL JSON RECIBIDO -> carrier_packing.id,
+    "domain": 3048, // DEL JSON RECIBIDO -> carrier_packing.domain,
+    "tare": 123 , // PESO DE LA TARA - A RELLENAR
+    "additional_tare": 123, // PESO DE LA TARA ADICIONAL - A RELLENAR
+    "net": 123, // PESO NETO - A RELLENAR
+    "gross": 123, // PESO BRUTO - A RELLENAR
+  },
+  "incomes": // LISTADO DE ALBARANES
+  [
+    {
+      "reference_code": "XXXXXXX", // REFERENCIA DEL ALBARÁN - A RELLENAR
+      "registry": { ... }, // DEL JSON RECIBIDO -> orders[x].registry
+      "carrier_packing": 11457, // DEL JSON RECIBIDO -> carrier_packing.id,
+      "details": // LISTADO DE DETALLES DEL ALBARÁN
+      [
+        {
+          "item": 2218879, // DEL JSON RECIBIDO -> orders[x].details[y].item
+          "serializable": true, // DEL JSON RECIBIDO -> orders[x].details[y].serializable
+          "lotable": true, // DEL JSON RECIBIDO -> orders[x].details[y].lotable
+          "lote": "XXXXXXX", // NÚMERO DE LOTE SII ES LOTABLE - A RELLENAR
+          "saldar": true, // SI LA CANTIDAD SE SALDA O NO - A RELLENAR
+          "quantity": 123, // CANTIDAD DEL DETALLE DE ALBARÁN - A RELLENAR
+          "description": // DEL JSON RECIBIDO -> orders[x].details[y].description
+        }
+      ]
+    }
+  ]
+}
 */		
 		
 		JSONObject json = Utils.getRequestJSON(req);
@@ -260,7 +265,7 @@ public class QRServlet extends HttpServlet{
 			income.put("workplace", workplaceId);
 			Optional<Income> opt = AON.getIncome(domain.getName(), domain.getId(), login, f -> f.getReferenceCodeProperty().eq(income.getString("number")));
 			
-			Integer incomeId = opt.isPresent() ? opt.get().getId() : DBIncome.insertIncome(domain, login, income).getInt("id");
+			Integer incomeId = opt.isPresent() ? opt.get().getId() : DBIncome.insertIncome2(domain, login, income).getInt("id");
 			JSONArray details = income.getJSONArray("details");
 			for (int j = 0; j < details.length(); j++) {
 				JSONObject detail = details.getJSONObject(j);
@@ -306,5 +311,78 @@ public class QRServlet extends HttpServlet{
 			.and(f.getPackMeasurementTagProperty().isNotNull())
 			.and(f.getPackMeasurementProperty().isNotNull())
 			.and(f.getPackUnitsProperty().isNotNull()));
+	}
+	
+	public JSONObject carrierPackingToJSON(Domain domain, String login, CarrierPacking carrierPacking) {
+		RAddress addr = AON.getRAddres(domain.getName(), domain.getId(), login, carrierPacking.getCarrier());
+		
+		String seriesNumber = (carrierPacking.getSeries() != null ? carrierPacking.getSeries() + "/" : "") + carrierPacking.getNumber();
+		return new JSONObject()
+			.put(MSG.ID, carrierPacking.getId())
+			.put(MSG.DOMAIN, carrierPacking.getDomain())
+			.put(MSG.SERIES_NUMBER, seriesNumber)
+			.put(MSG.SERIES, carrierPacking.getSeries())
+			.put(MSG.NUMBER, carrierPacking.getNumber())
+			.put(MSG.TYPE, carrierPacking.getType() != null ? carrierPacking.getType().getName() : "")
+			.put(MSG.STATUS, new JSONObject()
+				.put(MSG.ID, carrierPacking.getStatus() != null ? carrierPacking.getStatus().value() : "")
+				.put(MSG.NAME, carrierPacking.getStatus() != null ? carrierPacking.getStatus().getName(): "")) 
+			.put(MSG.ISSUE_DATE, carrierPacking.getIssueDate() != null ? AonDateUtils.dateTimeFormat(carrierPacking.getIssueDate()) : "")
+			.put(MSG.CARRIER, new JSONObject()
+				.put(MSG.ID, carrierPacking.getCarrier())
+				.put(MSG.NAME, carrierPacking.getCarrierName())
+				.put("document", AON.getCarrier(domain.getName(), domain.getId(), login, carrierPacking.getCarrier()).getDocument() != null ?
+						AON.getCarrier(domain.getName(), domain.getId(), login, carrierPacking.getCarrier()).getDocument() : "")
+				.put("address", raddressToJSON(addr)))
+			.put(MSG.DELIVERY_DATE, carrierPacking.getDeliveryDate() != null ? AonDateUtils.dateTimeFormat(carrierPacking.getDeliveryDate()) : "")
+			.put(MSG.CARRIER_REFERENCE, carrierPacking.getCarrierReference() != null ? carrierPacking.getCarrierReference() : "")
+			.put(MSG.NUMBER_PLATE, carrierPacking.getNumberPlate())
+			.put(MSG.DRIVER_NAME, carrierPacking.getDriverName())
+			.put(MSG.DRIVER_DOCUMENT, carrierPacking.getDriverDocument())
+			.put(MSG.OBSERVATION, carrierPacking.getObservation())
+			.put(MSG.GROSS, carrierPacking.getGross())
+			.put(MSG.TARE, carrierPacking.getTare())
+			.put(MSG.ADDITIONAL_TARE, carrierPacking.getAdditionalTare())
+			.put(MSG.NET, carrierPacking.getNet())
+			.put(MSG.RECEPTION_START_DATE, carrierPacking.getReceptionStartDate() != null ? AonDateUtils.dateTimeFormat(carrierPacking.getReceptionStartDate()) : null)
+			.put(MSG.RECEPTION_END_DATE, carrierPacking.getReceptionEndDate() != null ? AonDateUtils.dateTimeFormat(carrierPacking.getReceptionEndDate()) : null);
+	}
+	
+	public JSONObject raddressToJSON(RAddress address){	
+		return new JSONObject()
+			.put("address",address.getFullAddress())
+			.put("zip", address.getZip() != null ? address.getZip() : " ")
+			.put("city", address.getCity() != null ? address.getCity() : " ")
+			.put("province", " ")
+			.put("country", address.getGeozoneName() != null ? address.getGeozoneName() : " ");
+	}
+	
+	public JSONObject purchaseToJSON(Purchase purchase) {
+		String seriesNumber = (purchase.getSeries() != null ? purchase.getSeries() + "/" : "") + purchase.getNumber();
+		return new JSONObject()
+			.put("order_type", "purchase")
+			.put(MSG.ID, purchase.getId())
+			.put(MSG.DOMAIN, purchase.getDomain())
+			.put("series_number", seriesNumber)
+			.put(MSG.SERIES, purchase.getSeries())
+			.put(MSG.NUMBER, purchase.getNumber())
+			.put(MSG.ISSUE_DATE, purchase.getIssueDate() != null ? AonDateUtils.dateTimeFormat(purchase.getIssueDate()) : "")
+			.put("reference", purchase.getPurchaseReference() != null ? purchase.getPurchaseReference() : " ");
+
+	}
+	
+	public static JSONObject deliveryToJSON(Delivery delivery) {		
+		String seriesNumber = (delivery.getSeries() != null ? delivery.getSeries() + "/" : "") + delivery.getNumber();
+		return new JSONObject()
+			.put("order_type", "delivery")
+			.put(MSG.ID, delivery.getId())
+			.put(MSG.DOMAIN, delivery.getDomain())
+			.put("series_number", seriesNumber)
+			.put(MSG.SERIES, delivery.getSeries())
+			.put(MSG.NUMBER, delivery.getNumber())			
+			.put(MSG.ISSUE_DATE, delivery.getIssueTime() != null ? AonDateUtils.dateTimeFormat(delivery.getIssueTime()) : "")
+			.put("reference", delivery.getTrackingNumber() != null ? delivery.getTrackingNumber() : " ")
+			.put("total_packages", delivery.getTotalPackages())
+			.put("total_weight", delivery.getTotalWeight());
 	}
 }
