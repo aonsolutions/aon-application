@@ -22,6 +22,19 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jaxb2-maven-plugin</artifactId>
+
+				<dependencies>
+					<!--
+					 Migrating From Java 8 To Java 11.
+					 Instead of using the deprecated JAF (java.activation) module, use the following artifacts.
+					 -->
+					<dependency>
+					    <groupId>com.sun.activation</groupId>
+					    <artifactId>javax.activation</artifactId>
+					    <version>1.2.0</version>
+					</dependency>
+				</dependencies>
+
 				<executions>
 					<execution>
 						<id>xjc-request-dba</id>
@@ -34,7 +47,7 @@
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
-					<execution>
+					<!--execution>
 						<id>xjc-request-draft</id>
 						<goals>
 							<goal>xjc</goal>
@@ -44,7 +57,7 @@
 							<packageName>net.aonsolutions.core.tgss.creta.jaxb.solicitud.borrador</packageName>
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
-					</execution>
+					</execution-->
 					<execution>
 						<id>xjc-response-calc</id>
 						<goals>
@@ -115,6 +128,7 @@
 										<include>Bases.xsd</include>
                 		<include>Respuesta.xsd</include>
                 		<include>TrabajadoresTramos.xsd</include>
+                		<include>SolicitudBorrador.xsd</include>
                 		<include>SolicitudCalculos.xsd</include>
                 		<include>SolicitudConfirmacion.xsd</include>
                 		<include>SolicitudTrabajadoresTramos.xsd</include>
@@ -201,5 +215,26 @@
 			<version>1.0.0</version>
 			<scope>test</scope>
 		</dependency>
+
+		<!--
+		 Migrating From Java 8 To Java 11.
+		 Instead of using the deprecated JAXB (java.xml.bind) module, use the following artifacts.
+		 -->
+		 <dependency>
+			 <groupId>javax.xml.bind</groupId>
+			 <artifactId>jaxb-api</artifactId>
+			 <version>2.3.1</version>
+		 </dependency>
+		 <dependency>
+		     <groupId>com.sun.xml.bind</groupId>
+		     <artifactId>jaxb-core</artifactId>
+		     <version>2.3.0.1</version>
+		 </dependency>
+		 <dependency>
+			 <groupId>com.sun.xml.bind</groupId>
+			 <artifactId>jaxb-impl</artifactId>
+			 <version>2.3.2</version>
+		 </dependency>
+
 	</dependencies>
 </project>

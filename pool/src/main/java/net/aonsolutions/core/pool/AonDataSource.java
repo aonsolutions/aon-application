@@ -58,8 +58,14 @@ public class AonDataSource {
 		try {
 			ConnectionInfo ci = ConnectionInfo.getDefaultConnectionInfo();
 			Class.forName(ci.getDriverClass());
+
+                        Properties properties = new Properties();
+                        properties.setProperty("user", ci.getUser());
+                        properties.setProperty("password", ci.getPassword());
+                        properties.setProperty("serverTimezone", ci.getTimeZone());
+		
 			DataSource  ds_unpooled = DataSources.unpooledDataSource(
-					ci.getSchemaUrl(schema),ci.getUser(),ci.getPassword());
+					ci.getSchemaUrl(schema),properties);
 			return ds_unpooled;
 		} catch (SQLException e) {
 			throw new AonConnectionException(e.getMessage(),e);

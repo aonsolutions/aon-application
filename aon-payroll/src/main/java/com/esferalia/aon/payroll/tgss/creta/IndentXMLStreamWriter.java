@@ -230,7 +230,7 @@ public class IndentXMLStreamWriter implements XMLStreamWriter {
 
 	private void indent() throws XMLStreamException {
 		line++;
-		xmlStreamWriter.writeCharacters("\r\n");
+		xmlStreamWriter.writeCharacters("\n");
 		xmlStreamWriter.writeCharacters(StringUtils.repeat(indent, depth));
 	}
 

@@ -28,11 +28,13 @@ if [ "$1" = 'catalina.sh' -a -z "$wantHelp" ]; then
 	: ${DB_HOST:=localhost}
 	: ${DB_USER:=aonsolutions}
 	: ${DB_PASSWD:=40ns0lut10ns}
+	: ${DB_TIMEZONE:=Europe/Madrid}
 	cat << EOF > $AON_AIO_CONF/connection
-driverClass=org.gjt.mm.mysql.Driver
+driverClass=com.mysql.cj.jdbc.Driver
 jdbcUrl=jdbc:mysql://$DB_HOST:$DB_PORT
 user=$DB_USER
 password=$DB_PASSWD
+timezone=$DB_TIMEZONE
 EOF
 
 	CLASSPATH=`find $TOMCAT_LIBDIR -name 'mysql-connector-java-*.jar'`
@@ -43,7 +45,7 @@ EOF
 	CLASSPATH=$CLASSPATH:`find $TOMCAT_LIBDIR -name 'commons-lang-*.jar'`
 	CLASSPATH=$CLASSPATH:`find $TOMCAT_LIBDIR -name 'commons-dbutils-*.jar'`
 	java -classpath $CLASSPATH com.code.aon.master.Up2DateDB \
-	jdbc:mysql://$DB_HOST:$DB_PORT $DB_USER $DB_PASSWD org.gjt.mm.mysql.Driver \
+	jdbc:mysql://$DB_HOST:$DB_PORT $DB_USER $DB_PASSWD com.mysql.cj.jdbc.Driver \
 	|| echo -e "Can't up2date all databases";
 
 	[[ -n $DYNAMODB_MANAGER_REGION_ID ]] && \
@@ -62,6 +64,7 @@ EOF
 	echo -e "Using DB_PORT:\t\t$DB_PORT"
 	echo -e "Using DB_USER:\t\t$DB_USER" 
 	echo -e "Using DB_PASSWD:\t$DB_PASSWD"
+	echo -e "Using DB_TIMEZONE:\t$DB_TIMEZONE"
 	[[ -n $MEMCACHED_NODES ]] && echo -e "Using MEMCACHED_NODES:\t$MEMCACHED_NODES" 
 	echo
 	echo 'AON init process complete; ready for start up.'

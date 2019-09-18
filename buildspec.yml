@@ -7,43 +7,103 @@ version: 0.2
   #parameter-store:
      # key: "value"
      # key: "value"
+  #git-credential-helper: yes
 
 phases:
   install:
+    #Si utiliza la imagen estándar de Ubuntu 2.0 o posterior, debe especificar las versiones del tiempo de ejecución.
+    #Si especifica las versiones del tiempo de ejecución y utiliza una imagen que no sea la estándar de Ubuntu 2.0, se produce un error en la compilación.
+    #runtime-versions:
+      # name: version
+      # name: version
     commands:
-      - apt-get update
-      - echo Install MariaDB on `date`
-      - echo 'mariadb-server mysql-server/root_password password pass' | debconf-set-selections
-      - echo 'mariadb-server mysql-server/root_password_again password pass' | debconf-set-selections
-      - DEBIAN_FRONTEND=noninteractive apt-get install -y mariadb-client mariadb-server
-      - sed -i -r -e 's/bind-address.*$/bind-address = 0.0.0.0/' $(grep -l -R bind-address /etc/mysql/*)
-      - service mysql start
-      - echo MariaDB started on `date`
-      - echo "GRANT ALL ON *.* TO 'dbuser'@'%' IDENTIFIED BY 'serubd2000'" | mysql -u root --password=pass
+      - echo Entered the install phase...
+      - /usr/local/bin/docker-entrypoint.sh
+      # - command
   pre_build:
     commands:
-      - export LC_ALL="en_US.UTF-8"
-      - locale-gen en_US en_US.UTF-8
-      - dpkg-reconfigure locales
-      # - echo Logging in to Amazon ECR...
-      - aws --version
-      # - $(aws ecr get-login --region ${AWS_DEFAULT_REGION:=eu-west-1} --no-include-email)
-      # - IMAGE_TAG=$(date +%Y.%m.%d-%H.%M.%S)
+      - echo Entered the pre_build phase...
+      - echo Logging in to Amazon ECR... $AWS_ACCOUNT_ID
+      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+      - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/aonsolutions
+      # - command
+      # - command
   build:
     commands:
+      - echo Entered the build phase...
+      - echo Building TEST version...
       - echo Build started on `date`
-      - mvn --fail-at-end  -T 1C -DbuildNumber=666 -Drpm.release=false -Dgwt.working=true -Dgwt.skip=true -DSNAPSHOT -am -pl aon-rest-api install
-      - echo Build completed on `date`
-      - aws cloudformation package --template aon-rest-api/serverless.template --s3-bucket aon-rest-api --output-template-file serverless-template.json
+      - mvn -B --fail-at-end --offline -pl '!aon-micro-services' -DbuildNumber=666 -Dgwt.working=true clean install
+      - echo Building TEST Docker images... 
+      - docker build --no-cache -t aonsolutions/aon-application:test .
+      - docker build --no-cache -t aonsolutions/aon-db-up2date:test ./aon-db-up2date
+      # - docker build --no-cache -t aonsolutions/aon-micro-services:test -f ./aon-micro-services/Dockerfile .
+      - mysql < aon-htmlunit/src/test/resources/com/esferalia/aon/htmlunit/payroll/test-aonsolutions-org.sql
+      - |
+        docker run \
+        -e DB_USER=dbuser \
+        -e DB_PASSWD=serubd2000 \
+        -e DB_HOST=$(ip addr show docker0 | grep -oP 'inet \K[0-9\.]+') \
+        aonsolutions/aon-db-up2date:test
+      - |
+        docker run \
+        -d -p 8080:8080 \
+        -e DB_USER=dbuser \
+        -e DB_PASSWD=serubd2000 \
+        -e DB_HOST=$(ip addr show docker0 | grep -oP 'inet \K[0-9\.]+') \
+        aonsolutions/aon-application:test
+      - |
+        mvn -B \
+        --fail-at-end \
+        -Dintegration.test.user=admin \
+        -Dintegration.test.password=org \
+        -Dintegration.test.payroll.url=http://payroll-test.aonsolutions.org:8080/ \
+        -Dintegration.test.general.payroll.url=http://general-payroll-test.aonsolutions.org:8080/ \
+        -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/ \
+        -Dintegration.test.home.payroll.url=http://home-payroll-test.aonsolutions.org:8080/  \
+        -f aon-htmlunit/pom.xml integration-test
+      # - docker tag aonsolutions/aon-db-up2date:test $REPOSITORY_URI/aon-db-up2date:test
+      # - docker tag aonsolutions/aon-application:test $REPOSITORY_URI/aon-application:test
+      # - docker tag aonsolutions/aon-micro-services:test $REPOSITORY_URI/aon-micro-services:test
+      - echo Building PRODUCTION version...
+      - mvn -B --resume-from aon-js-payroll -DbuildNumber=666 -Drpm.release=false -DskipTests=true clean install
+      # - echo Building PRODUCTION Docker images... 
+      - docker build --no-cache -t aonsolutions/aon-application:latest .
+      # - docker build --no-cache -t aonsolutions/aon-db-up2date:latest ./aon-db-up2date
+      - docker build --no-cache -t aonsolutions/aon-micro-services:latest -f ./aon-micro-services/Dockerfile .
+      - docker tag aonsolutions/aon-db-up2date:test $REPOSITORY_URI/aon-db-up2date:latest
+      - docker tag aonsolutions/aon-application:latest $REPOSITORY_URI/aon-application:latest
+      - docker tag aonsolutions/aon-micro-services:latest $REPOSITORY_URI/aon-micro-services:latest
+      # - command
   post_build:
     commands:
-
+      - echo Entered the post_build phase...
+      - echo Build completed on `date`
+      - echo Pushing the Docker images...
+      # - docker push $REPOSITORY_URI/aon-db-up2date:test
+      # - docker push $REPOSITORY_URI/aon-application:test
+      # - docker push $REPOSITORY_URI/aon-micro-services:test
+      - docker push $REPOSITORY_URI/aon-db-up2date:latest
+      - docker push $REPOSITORY_URI/aon-application:latest
+      - docker push $REPOSITORY_URI/aon-micro-services:latest
+      - |
+        printf '[
+        {"name":"SNAPSH0T","imageUri":"%s/aon-application:latest"}
+        ]' $REPOSITORY_URI $REPOSITORY_URI > snapshotimgdef.json
+      - cat snapshotimgdef.json
+      - |
+        printf '[
+        {"name":"SNAPSH0T-SERVICES","imageUri":"%s/aon-micro-services:latest"}
+        ]' $REPOSITORY_URI $REPOSITORY_URI > snapshotservicesimgdef.json
+      - cat snapshotservicesimgdef.json
+      # - command
+      # - command
 artifacts:
-  type: zip
   files:
-    - serverless-template.json
-    - aon-rest-api/target/aon-rest-api-9.23-SNAPSHOT.jar
+    - snapshotimgdef.json
+    - snapshotservicesimgdef.json
     # - location
+  #name: $(date +%Y-%m-%d)
   #discard-paths: yes
   #base-directory: location
 #cache:

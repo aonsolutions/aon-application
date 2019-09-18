@@ -15,7 +15,7 @@
 
 	<properties>
 		<compileSource>1.8</compileSource>
-		<compileTarget>1.8</compileTarget>
+		<compileTarget>11</compileTarget>
 		<svnkitVersion>1.7.4-v1</svnkitVersion>
 		<aonCoreLibsVersion>8.112</aonCoreLibsVersion>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
@@ -110,14 +110,11 @@
 		<module>aon-warehouse</module>
 		<module>aon-warehouse-bridge</module>
 		<module>aon-asset</module>
-		<module>aon-infoweb</module>
-		<module>aon-infoweb-templates</module>
 		<module>aon-marketing</module>
 		<module>aon-purchase-bridge</module>
 		<module>aon-tas</module>
 		<module>aon-pms</module>
 		<module>aon-academy</module>
-		<module>aon-dex</module>
 
 		<!-- UI MODULES -->
 		<module>aon-ui-academy</module>
@@ -142,7 +139,6 @@
 		<module>aon-ui-stat</module>
 		<module>aon-ui-supplier</module>
 		<module>aon-ui-asset</module>
-		<module>aon-ui-infoweb</module>
 		<module>aon-ui-mailing</module>
 		<module>aon-ui-marketing</module>
 		<module>aon-ui-project</module>
@@ -150,8 +146,14 @@
 		<module>aon-ui-purchase</module>
 		<module>aon-ui-warehouse</module>
 		<module>aon-ui-tas</module>
-		<module>aon-ui-pms</module>
 		<module>aon-ui-sepe</module>
+
+		<!-- OTHER -->
+		<module>aon-jasperreports</module>
+		<module>aon-common-resources</module>
+		<module>aon-db-up2date</module>
+		
+		<module>aon-jasper-report</module>
 
 		<!-- JS MODULES -->
 		<module>aon-js-payroll</module>
@@ -182,7 +184,6 @@
 
 		<!-- GENERATED -->
 		<module>aon-pms-api</module>
-		<module>aon-dex-api</module>
 		<module>aon-sepe-api</module>
 		<module>aon-ingenet-api</module>
 
@@ -191,7 +192,6 @@
 		<module>aon-file-bank</module>
 		<module>aon-file-tax</module>
 		<module>aon-file-payroll</module>
-		<module>aon-file-pms</module>
 		<module>aon-file-seres</module>
 		<module>aon-facturae</module>
 		<module>aon-stat</module>
@@ -200,23 +200,12 @@
 		<module>aon-web-aio</module>
 		<module>aon-micro-services</module>
 
-		<!-- WS MODULES -->
-		<module>aon-ws-gps</module>
-	    	<module>aon-ws-dex</module>
 
-		<!-- OTHER -->
-		<module>aon.python</module>
-		<module>aon-jasperreports</module>
-		<module>aon-msm</module>
-		<module>aon-solutions-release</module>
-		<module>aon-common-resources</module>
-		<module>aon-db-up2date</module>
-		
 		<module>aon-tedi</module>
 		<module>tedi-api</module>
-		<!-- AWS API Gateway & Lambda -->
+		<!-- AWS API Gateway & Lambda 
 		<module>aon-rest-api</module>
-		<module>aon-jasper-report</module>
+		-->
 
 		<module>aon.accounting.report</module>
 	</modules>

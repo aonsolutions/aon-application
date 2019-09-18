@@ -1,0 +1,111 @@
+steps:
+- name: 'aonsolutions/aon-build:9.23.0-maven-3-jdk-11'
+  args: [ 'mvn', 
+	'-B',
+	'-Dgwt.working=true',
+	'clean',
+	'install']
+
+# Run the aio and database server in the background using docker-compose.
+# Warning: this won't be cleaned up, which might be an issue if we run it
+# with the local builder.
+- name: 'docker/compose:1.15.0'
+  args: ['up', '-d']
+
+# Run the integration tests against the running docker-compose stack.
+- name: 'aonsolutions/aon-build:9.23.0-maven-3-jdk-11'
+  args: [ 'mvn', 
+	'-B',
+	'-DskipTests=true',
+	'-Dintegration.test.user=admin',
+	'-Dintegration.test.password=org',
+	'-Dintegration.test.payroll.url=http://payroll-test.aonsolutions.org:8080/',
+	'-Dintegration.test.home.payroll.url=http://home-payroll-test.aonsolutions.org:8080/',
+	'-Dintegration.test.general.payroll.url=http://general-payroll-test.aonsolutions.org:8080/',
+	'-Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/',
+	'-f',
+	'aon-htmlunit/pom.xml',
+	'integration-test']
+
+# Build the new docker images.
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', 
+	'-t', 
+	'eu.gcr.io/${PROJECT_ID}/aon-aio:${_VERSION}-tomcat9-jre11', 
+	'.']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 
+	'eu.gcr.io/${PROJECT_ID}/aon-aio:${_VERSION}-tomcat9-jre11']
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', 
+	'-t', 
+	'eu.gcr.io/${PROJECT_ID}/aon-db-up2date:${_VERSION}-11-jre-slim', 
+	'./aon-db-up2date']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 
+	'eu.gcr.io/${PROJECT_ID}/aon-db-up2date:${_VERSION}-11-jre-slim']
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', 
+	'-t', 
+	'eu.gcr.io/${PROJECT_ID}/aon-micro-services:${_VERSION}-tomcat9-jre11', 
+	'-f',
+	'./aon-micro-services/Dockerfile',
+	'.']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 
+	'eu.gcr.io/${PROJECT_ID}/aon-micro-services:${_VERSION}-tomcat9-jre11']
+
+# Upgrade a deployment's aon-aio container image
+- name: 'gcr.io/cloud-builders/kubectl'
+  args:
+  - set
+  - image
+  - deployment/aon-aio
+  - 'aon-aio=eu.gcr.io/${PROJECT_ID}/aon-aio:${_VERSION}-tomcat9-jre11'
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=europe-west4-b'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=snapshot-cluster'
+
+# Upgrade a deployment's aon-micro-services container image
+- name: 'gcr.io/cloud-builders/kubectl'
+  args:
+  - set
+  - image
+  - deployment/aon-micro-services
+  - 'aon-micro-services=eu.gcr.io/${PROJECT_ID}/aon-micro-services:${_VERSION}-tomcat9-jre11'
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=europe-west4-b'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=snapshot-cluster'
+
+- name: 'gcr.io/cloud-builders/kubectl'
+  args:
+  - delete
+  - 'job/aon-db-up2date'
+  - '--ignore-not-found'
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=europe-west4-b'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=snapshot-cluster'
+
+- name: 'gcr.io/cloud-builders/kubectl'
+  args:
+  - apply
+  - '-f'
+  - 'aon-db-up2date.yaml'
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=europe-west4-b'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=snapshot-cluster'
+
+substitutions:
+    _VERSION: 9.23.7
+
+# Push the new image to the registry.
+images: [
+	'eu.gcr.io/${PROJECT_ID}/aon-aio:${_VERSION}-tomcat9-jre11',
+	'eu.gcr.io/${PROJECT_ID}/aon-db-up2date:${_VERSION}-11-jre-slim',
+	'eu.gcr.io/${PROJECT_ID}/aon-micro-services:${_VERSION}-tomcat9-jre11'
+]
+options:
+    machineType: 'N1_HIGHCPU_8'
+timeout: 7200s

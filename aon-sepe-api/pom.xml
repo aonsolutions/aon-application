@@ -28,7 +28,38 @@
 			<version>2.6</version>
 			<scope>compile</scope>
 		</dependency>
-		
+
+		<!--
+		 Migrating From Java 8 To Java 11.
+		 Instead of using the deprecated JAXB (java.xml.bind) module, use the following artifacts.
+		 -->
+		 <dependency>
+			 <groupId>javax.xml.bind</groupId>
+			 <artifactId>jaxb-api</artifactId>
+			 <version>2.3.1</version>
+		 </dependency>
+		 <dependency>
+		     <groupId>com.sun.xml.bind</groupId>
+		     <artifactId>jaxb-core</artifactId>
+		     <version>2.3.0.1</version>
+		 </dependency>
+		 <dependency>
+			 <groupId>com.sun.xml.bind</groupId>
+			 <artifactId>jaxb-impl</artifactId>
+			 <version>2.3.2</version>
+		 </dependency>
+
+		 <!--
+		 Migrating From Java 8 To Java 11.
+		 Instead of using the deprecated JAX-WS (java.xml.ws) module, use the following artifacts.
+		 -->
+		 <dependency>
+			 <groupId>com.sun.xml.ws</groupId>
+			 <artifactId>jaxws-ri</artifactId>
+			 <version>2.3.1</version>
+			 <type>pom</type>
+		 </dependency>
+
 	</dependencies>
 	<build>
 		<plugins>
@@ -105,7 +136,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			
+
 			<!-- ***************************************************** -->
 			<!-- SEPE UPDATE ***, ESFERALIA UPDATE 22/05/2013 -->
 			<!-- ***************************************************** -->
@@ -197,7 +228,7 @@
 					</dependency>
 				</dependencies>
 			</plugin>
-			
+
 			<!-- ***************************************************** -->
 			<!-- SEPE UPDATE 17/04/2013, ESFERALIA UPDATE 22/05/2013 -->
 			<!-- ***************************************************** -->
@@ -219,20 +250,20 @@
 							<generatePackage>com.esferalia.aon.sepe.api.contrata.contratos</generatePackage>
 							<schemaDirectory>${project.basedir}/src/main/resources/META-INF/schemas/contrata</schemaDirectory>
 							<schemaIncludes>
-<!--  
+<!--
 								<include>EsquemaContratos50.xsd</include>
 -->
 								<include>EsquemaRespuestaContratos50.xsd</include>
 							</schemaIncludes>
-<!--  
+<!--
 							<bindingIncludes>
 	                            <include>../binding.xjb</include>
 	                        </bindingIncludes>
--->  
+-->
 							<forceRegenerate>false</forceRegenerate>
-							<!-- whether old output should be removed, this field should generally be set to "true" -->  
-							<removeOldOutput>true</removeOldOutput>  
-							<!-- generate lots of output -->  
+							<!-- whether old output should be removed, this field should generally be set to "true" -->
+							<removeOldOutput>true</removeOldOutput>
+							<!-- generate lots of output -->
 							<verbose>true</verbose>
 							<extension>true</extension>
 							<args>
@@ -335,11 +366,11 @@
 							</plugins>
 						</configuration>
 					</execution>
-					
+
 					<!-- ================================= -->
 					<!-- Esquemas de ficheros de respuesta -->
 					<!-- ================================= -->
-<!--  
+<!--
 					<execution>
 						<id>generate-respuestaContratos</id>
 						<goals>
@@ -369,7 +400,7 @@
 						</configuration>
 					</execution>
 -->
-					
+
 					<execution>
 						<id>generate-certificadoEmpresa</id>
 						<goals>
@@ -402,7 +433,7 @@
 							</plugins>
 						</configuration>
 					</execution>
-				</executions>  
+				</executions>
 			</plugin>
 			<plugin>
 				<inherited>true</inherited>
@@ -413,6 +444,5 @@
 				</configuration>
 			</plugin>
 		</plugins>
-	</build> 
+	</build>
 </project>
- 

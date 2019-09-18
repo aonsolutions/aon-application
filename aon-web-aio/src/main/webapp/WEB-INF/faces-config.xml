@@ -153,10 +153,6 @@
 			<to-view-id>/facelet/menu/hotel.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>menu_infoweb</from-outcome>
-			<to-view-id>/facelet/menu/infoweb.xhtml</to-view-id> 
-		</navigation-case>
-		<navigation-case>
 			<from-outcome>menu_pos</from-outcome>
 			<to-view-id>/facelet/menu/pos.xhtml</to-view-id> 
 		</navigation-case>

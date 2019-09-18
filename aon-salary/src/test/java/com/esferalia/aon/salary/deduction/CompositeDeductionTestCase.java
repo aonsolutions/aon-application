@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 import junit.framework.Assert;
 
 import org.junit.Test;
-import org.omg.CORBA.OMGVMCID;
 
 import com.esferalia.aon.salary.enumeration.DeductionType;
 

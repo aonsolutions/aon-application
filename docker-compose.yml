@@ -1,0 +1,37 @@
+version: '3.1'
+services:
+  db:
+    image: "mariadb"
+    ports:
+      - "3306:3306"
+    restart: "always"
+    environment:
+      MYSQL_USER: dbuser
+      MYSQL_PASSWORD: serubd2000
+      MYSQL_ROOT_PASSWORD: password
+    volumes:
+      - ./aon-htmlunit/src/test/resources/com/esferalia/aon/htmlunit/payroll:/docker-entrypoint-initdb.d
+  aon:
+    build: .
+    container_name: general-payroll-test.aonsolutions.org
+    networks: 
+      default:
+        aliases:
+          - payroll-test.aonsolutions.org
+          - home-payroll-test.aonsolutions.org
+          - general-payroll-test.aonsolutions.org
+          - trainning-payroll-test.aonsolutions.org
+    ports: 
+      - "8080:8080"
+    depends_on:
+      - db 
+    environment:
+      DB_HOST: db
+      DB_USER: root
+      DB_PASSWD: password
+
+networks:
+  default:
+    external:
+      name: cloudbuild
+

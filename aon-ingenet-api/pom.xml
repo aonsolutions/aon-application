@@ -29,6 +29,22 @@
 			<version>2.6</version>
 			<scope>compile</scope>
 		</dependency>
+
+                <!--
+                Migrating From Java 8 To Java 11.
+                Instead of using the deprecated JAXB (java.xml.bind) module, use the following artifacts.
+                -->
+                <dependency>
+                        <groupId>javax.xml.bind</groupId>
+                        <artifactId>jaxb-api</artifactId>
+                        <version>2.3.1</version>
+                </dependency>
+                <dependency>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-impl</artifactId>
+                        <version>2.3.2</version>
+                </dependency>
+
 	</dependencies>
 	
 	<build>

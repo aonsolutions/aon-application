@@ -250,14 +250,6 @@
 		<servlet-name>BOE Import Servlet</servlet-name>
 		<url-pattern>/aon_gwt_connect/boeimport</url-pattern>
 	</servlet-mapping>
-	<servlet>
-		<servlet-name>TemplatePreview</servlet-name>
-		<servlet-class>com.code.aon.ui.infoweb.servlet.TemplateImageServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>TemplatePreview</servlet-name>
-		<url-pattern>*.template</url-pattern>
-	</servlet-mapping>
 	
 	<!-- Payroll Activity Summary -->
 

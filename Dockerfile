@@ -1,4 +1,4 @@
-FROM tomcat:9.0-jre8
+FROM tomcat:9.0-jre11
 
 ARG AON_VERSION=9.23-SNAPSHOT
 
@@ -17,12 +17,17 @@ COPY aon-jaas/target/aon.jaas-${AON_VERSION}.jar aon-jaas.jar
 COPY pool/target/pool-${AON_VERSION}.jar pool.jar 
 
 
-ENV SLF4J_API_URL=http://central.maven.org/maven2/org/slf4j/slf4j-api/1.5.11/slf4j-api-1.5.11.jar
-ENV SLF4J_JDK14_URL=http://central.maven.org/maven2/org/slf4j/slf4j-jdk14/1.5.11/slf4j-jdk14-1.5.11.jar
+#ENV SLF4J_API_URL=http://central.maven.org/maven2/org/slf4j/slf4j-api/1.5.11/slf4j-api-1.5.11.jar
+#ENV SLF4J_JDK14_URL=http://central.maven.org/maven2/org/slf4j/slf4j-jdk14/1.5.11/slf4j-jdk14-1.5.11.jar
+ENV SLF4J_API_URL=http://central.maven.org/maven2/org/slf4j/slf4j-api/1.8.0-beta2/slf4j-api-1.8.0-beta2.jar
+ENV SLF4J_JDK14_URL=http://central.maven.org/maven2/org/slf4j/slf4j-jcl/1.7.25/slf4j-jcl-1.7.25.jar
 ENV C3P0_JDBC_URL=http://central.maven.org/maven2/com/mchange/c3p0/0.9.2/c3p0-0.9.2.jar
-ENV MYSQL_JDBC_URL=http://central.maven.org/maven2/mysql/mysql-connector-java/5.1.10/mysql-connector-java-5.1.10.jar
+#ENV MYSQL_JDBC_URL=http://central.maven.org/maven2/mysql/mysql-connector-java/5.1.10/mysql-connector-java-5.1.10.jar
 ENV COMMONS_LANG_URL=http://central.maven.org/maven2/commons-lang/commons-lang/2.5/commons-lang-2.5.jar
 ENV COMMONS_DBUTILS_URL=http://central.maven.org/maven2/commons-dbutils/commons-dbutils/1.5/commons-dbutils-1.5.jar
+ENV MYSQL_JDBC_URL=http://central.maven.org/maven2/mysql/mysql-connector-java/8.0.13/mysql-connector-java-8.0.13.jar
+#ENV COMMONS_LANG_URL=http://central.maven.org/maven2/commons-lang/commons-lang/2.6/commons-lang-2.6.jar
+#ENV COMMONS_DBUTILS_URL=http://central.maven.org/maven2/commons-dbutils/commons-dbutils/1.7/commons-dbutils-1.7.jar
 ENV MCHANGE_COMMONS_URL=http://central.maven.org/maven2/com/mchange/mchange-commons-java/0.2.3.3/mchange-commons-java-0.2.3.3.jar
 ENV COMMONS_LOGGING_URL=http://central.maven.org/maven2/commons-logging/commons-logging-api/1.1/commons-logging-api-1.1.jar
 ENV COMMONS_COLLECTIONS_URL=http://central.maven.org/maven2/commons-collections/commons-collections/3.1/commons-collections-3.1.jar

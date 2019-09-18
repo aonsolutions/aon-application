@@ -2,7 +2,7 @@
 
 # exit immediately if a pipeline returns a non-zero status.
 # return value of a pipeline is the value of the last
-# (rightmost) command to exit with a non-zero status, 
+# (rightmost) command to exit with a non-zero status,
 # or zero if all commands in the pipeline exit successfully.
 set -eo pipefail
 
@@ -54,11 +54,36 @@ EOF
 	echo
 	echo -e "Using DB_HOST:\t\t$DB_HOST"
 	echo -e "Using DB_PORT:\t\t$DB_PORT"
-	echo -e "Using DB_USER:\t\t$DB_USER" 
+	echo -e "Using DB_USER:\t\t$DB_USER"
 	echo -e "Using DB_PASSWD:\t$DB_PASSWD"
 	echo
 	echo 'AON init process complete; ready for start up.'
 	echo
+
+	if [ -z "$TOMCAT_HTTP_PORT" ]
+	then
+	  echo "Tomcat HTTP port not changed"
+	else
+	  echo "Tomcat HTTP port set to $TOMCAT_HTTP_PORT"
+	  sed -i "s/port=\"[0-9]\+\" protocol=\"HTTP\/1.1\"/port=\"$TOMCAT_HTTP_PORT\" protocol=\"HTTP\/1.1\"/" $CATALINA_HOME/conf/server.xml
+	fi
+
+	if [ -z "$TOMCAT_AJP_PORT" ]
+	then
+	  echo "Tomcat AJP port not changed"
+	else
+	  echo "Tomcat AJP port set to $TOMCAT_AJP_PORT"
+	  sed -i "s/port=\"[0-9]\+\" protocol=\"AJP\/1.3\"/port=\"$TOMCAT_AJP_PORT\" protocol=\"AJP\/1.3\"/" $CATALINA_HOME/conf/server.xml
+	fi
+
+	if [ -z "$TOMCAT_SHD_PORT" ]
+	then
+	  echo "Tomcat shutdown port not changed"
+	else
+	  echo "Tomcat shutdown port set to $TOMCAT_SHD_PORT"
+	  sed -i "s/port=\"[0-9]\+\" shutdown=\"SHUTDOWN\"/port=\"$TOMCAT_SHD_PORT\" shutdown=\"SHUTDOWN\"/" $CATALINA_HOME/conf/server.xml
+	fi
+
 fi
 
 

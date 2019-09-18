@@ -23,17 +23,17 @@ import net.aonsolutions.aon.sii.bizkaia.SIIBizkaiaPost;
 import net.aonsolutions.aon.sii.gipuzkoa.SIIGipuzkoaPost;
 
 public class SIIManager {
-	private Boolean pruebas = false;
+	private Boolean pruebas = true;
 	private Administration administration;
 	private byte[] cert;
 	private String pass;
-	
+
 	public SIIManager(byte[] cert, String pass, Administration administration) {
 		this.cert = cert;
 		this.pass = pass;
-		this.administration = administration;		
+		this.administration = administration;
 	}
-	
+
 	public static SIIManager getInstance(byte[] cert, String pass, Administration administration) {
 		return new SIIManager(cert, pass, administration);
 	}
@@ -45,11 +45,11 @@ public class SIIManager {
 	public void setAdministration(Administration administration) {
 		this.administration = administration;
 	}
-	
+
 	public byte[] getCert() {
 		return cert;
 	}
-	
+
 	public void setCert(byte[] cert) {
 		this.cert = cert;
 	}
@@ -57,47 +57,47 @@ public class SIIManager {
 	public String getPass() {
 		return pass;
 	}
-	
+
 	public void setPass(String pass) {
 		this.pass = pass;
 	}
-	
+
 	private Boolean isAeat() {
 		return Administration.COMMON_TERRITORY.equals(administration) || Administration.UNKNOWN.equals(administration);
  	}
-	
+
 	private Boolean isAraba() {
 		return Administration.ALAVA.equals(administration);
  	}
-	
+
 	private Boolean isGipuzkoa() {
 		return Administration.GIPUZKOA.equals(administration);
  	}
-	
+
 	private Boolean isBizkaia() {
 		return Administration.BIZKAIA.equals(administration);
  	}
-	
+
 	private Boolean isNavarra() {
 		return Administration.NAVARRA.equals(administration);
  	}
-	
+
 	 // -------------------- FACTURAS EMITIDAS
 	protected JSONArray suministroFacturasEmitidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
 		String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_EMITIDAS, administration) : SIIUri.getInstance().getURI(SIIType.FACTURAS_EMITIDAS, administration);
-    	
+
     	LinkedList<VatContext> modList = contextList.stream().filter(v->  "Correcto".equals(v.getSiiStatus())
     			|| "AceptadoConErrores".equals(v.getSiiStatus())
     			|| "Anulada".equals(v.getSiiStatus())).collect(Collectors.toCollection(LinkedList::new));
-    	
+
     	LinkedList<VatContext> newList = contextList.stream().filter(v-> "Pendiente".equals(v.getSiiStatus())
     			|| "Incorrecto".equals(v.getSiiStatus())).collect(Collectors.toCollection(LinkedList::new));
-    	
+
 		if(isAeat() || isNavarra()) {
 			if(newList.size() > 0){
 				return SIIAeatPost.getInstance(getCert(), getPass()).suministroFacturasEmitidas(domain, login, company, invoiceId, contextList, terceros, uri, newList, SendType.ALTA_EMITIDAS);
 			}
-			
+
 			if(modList.size() > 0){
 				return SIIAeatPost.getInstance(getCert(), getPass()).suministroFacturasEmitidas(domain, login, company, invoiceId, contextList, terceros, uri, modList, SendType.MOD_EMITIDAS);
 			}
@@ -105,7 +105,7 @@ public class SIIManager {
 			if(newList.size() > 0){
 				return SIIArabaPost.getInstance(getCert(), getPass()).suministroFacturasEmitidas(domain, login, company, invoiceId, contextList, terceros, uri, newList, SendType.ALTA_EMITIDAS);
 			}
-			
+
 			if(modList.size() > 0){
 				return SIIArabaPost.getInstance(getCert(), getPass()).suministroFacturasEmitidas(domain, login, company, invoiceId, contextList, terceros, uri, modList, SendType.MOD_EMITIDAS);
 			}
@@ -113,7 +113,7 @@ public class SIIManager {
 			if(newList.size() > 0){
 				return SIIGipuzkoaPost.getInstance(getCert(), getPass()).suministroFacturasEmitidas(domain, login, company, invoiceId, contextList, terceros, uri, newList, SendType.ALTA_EMITIDAS);
 			}
-			
+
 			if(modList.size() > 0){
 				return SIIGipuzkoaPost.getInstance(getCert(), getPass()).suministroFacturasEmitidas(domain, login, company, invoiceId, contextList, terceros, uri, modList, SendType.MOD_EMITIDAS);
 			}
@@ -121,7 +121,7 @@ public class SIIManager {
 			if(newList.size() > 0){
 				return SIIBizkaiaPost.getInstance(getCert(), getPass()).suministroFacturasEmitidas(domain, login, company, invoiceId, contextList, terceros, uri, newList, SendType.ALTA_EMITIDAS);
 			}
-			
+
 			if(modList.size() > 0){
 				return SIIBizkaiaPost.getInstance(getCert(), getPass()).suministroFacturasEmitidas(domain, login, company, invoiceId, contextList, terceros, uri, modList, SendType.MOD_EMITIDAS);
 			}
@@ -131,7 +131,7 @@ public class SIIManager {
 	
 	protected JSONArray bajaFacturasEmitidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
 		String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_EMITIDAS, administration) : SIIUri.getInstance().getURI(SIIType.FACTURAS_EMITIDAS, administration);
-		
+
 		if(isAeat() || isNavarra()) {
 			return SIIAeatPost.getInstance(getCert(), getPass()).bajaFacturasEmitidas(domain, login, company, invoiceId, contextList, terceros, uri);
     	} else if(isAraba()) {
@@ -146,7 +146,7 @@ public class SIIManager {
 	
 	protected JSONArray suministroFacturasEmitidasCobros(Domain domain, String login, Company company, LinkedList<Finance> financeList, Integer invoiceId) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_EMITIDAS_COBROS, getAdministration()) : SIIUri.getInstance().getURI(SIIType.FACTURAS_EMITIDAS_COBROS, getAdministration());
-    	
+
 		if(isAeat() || isNavarra()) {
 			return SIIAeatPost.getInstance(getCert(), getPass()).suministroFacturasEmitidasCobros(domain, login, company, financeList, invoiceId, uri);
     	} else if(isAraba()) {
@@ -158,19 +158,19 @@ public class SIIManager {
     	}
 		return new JSONArray();
     }
-	
+
 	 // -------------------- FACTURAS RECIBIDAS
 	
 	protected JSONArray suministroFacturasRecibidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
 		System.out.println("SII SUMINISTRO FACTURAS RECIBIDAS - ID => " + invoiceId);
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_RECIBIDAS, getAdministration()) : SIIUri.getInstance().getURI(SIIType.FACTURAS_RECIBIDAS, getAdministration());
-    	
+
     	LinkedList<VatContext> modList = contextList.stream().filter(v-> v.getSiiStatus().equals("Correcto")
     			|| v.getSiiStatus().equals("AceptadoConErrores")
     			|| v.getSiiStatus().equals("Anulada")).collect(Collectors.toCollection(LinkedList::new));
-    	
+
     	LinkedList<VatContext> newList = contextList.stream().filter(v-> v.getSiiStatus().equals("Pendiente")
-    			|| v.getSiiStatus().equals("Incorrecto")).collect(Collectors.toCollection(LinkedList::new));   	
+    			|| v.getSiiStatus().equals("Incorrecto")).collect(Collectors.toCollection(LinkedList::new));
 
     	if(isAeat() || isNavarra())
     	{
@@ -178,7 +178,7 @@ public class SIIManager {
 			if(newList.size() > 0){
 				return SIIAeatPost.getInstance(getCert(), getPass()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, newList, SendType.ALTA_RECIBIDAS);
 			}
-			
+
 			if(modList.size() > 0){
 				return SIIAeatPost.getInstance(getCert(), getPass()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, modList, SendType.MOD_RECIBIDAS);
 			}
@@ -186,7 +186,7 @@ public class SIIManager {
 			if(newList.size() > 0){
 				return SIIArabaPost.getInstance(getCert(), getPass()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, newList, SendType.ALTA_RECIBIDAS);
 			}
-			
+
 			if(modList.size() > 0){
 				return SIIArabaPost.getInstance(getCert(), getPass()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, modList, SendType.MOD_RECIBIDAS);
 			}
@@ -194,7 +194,7 @@ public class SIIManager {
 			if(newList.size() > 0){
 				return SIIGipuzkoaPost.getInstance(getCert(), getPass()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, newList, SendType.ALTA_RECIBIDAS);
 			}
-			
+
 			if(modList.size() > 0){
 				return SIIGipuzkoaPost.getInstance(getCert(), getPass()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, modList, SendType.MOD_RECIBIDAS);
 			}
@@ -202,7 +202,7 @@ public class SIIManager {
 			if(newList.size() > 0){
 				return SIIBizkaiaPost.getInstance(getCert(), getPass()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, newList, SendType.ALTA_RECIBIDAS);
 			}
-			
+
 			if(modList.size() > 0){
 				return SIIBizkaiaPost.getInstance(getCert(), getPass()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, modList, SendType.MOD_RECIBIDAS);
 			}
@@ -212,7 +212,7 @@ public class SIIManager {
 	
 	protected JSONArray bajaFacturasRecibidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
 		String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_EMITIDAS, administration) : SIIUri.getInstance().getURI(SIIType.FACTURAS_EMITIDAS, administration);
-		
+
 		if(isAeat() || isNavarra()) {
 			return SIIAeatPost.getInstance(getCert(), getPass()).bajaFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri);
     	} else if(isAraba()) {
@@ -227,7 +227,7 @@ public class SIIManager {
 	
 	protected JSONArray suministroFacturasRecibidasPagos(Domain domain, String login, Company company, LinkedList<Finance> financeList, Integer invoiceId) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_EMITIDAS_COBROS, getAdministration()) : SIIUri.getInstance().getURI(SIIType.FACTURAS_EMITIDAS_COBROS, getAdministration());
-    	
+
 		if(isAeat() || isNavarra()) {
 			return SIIAeatPost.getInstance(getCert(), getPass()).suministroFacturasRecibidasPagos(domain, login, company, financeList, invoiceId, uri);
     	} else if(isAraba()) {
@@ -244,20 +244,20 @@ public class SIIManager {
 	
 	protected JSONArray suministroBienesInversion(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
 		String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.BIENES_INVERSION, administration) : SIIUri.getInstance().getURI(SIIType.BIENES_INVERSION, administration);
-	    	
+
 		LinkedList<VatContext> modList = contextList.stream().filter(v->  "Correcto".equals(v.getSiiStatus())
 				|| "AceptadoConErrores".equals(v.getSiiStatus())
 				|| "Anulada".equals(v.getSiiStatus())).collect(Collectors.toCollection(LinkedList::new));
-	    	
+
 		LinkedList<VatContext> newList = contextList.stream().filter(v-> "Pendiente".equals(v.getSiiStatus())
 				|| "Incorrecto".equals(v.getSiiStatus())).collect(Collectors.toCollection(LinkedList::new));
-	    	
-	    	
+
+
 		if(isAeat() || isNavarra()) {
 			if(newList.size() > 0){
 				return SIIAeatPost.getInstance(getCert(), getPass()).suministroBienesInversion(domain, login, company, invoiceId, contextList, terceros, uri, SendType.ALTA_INVERSION);
 			}
-				
+
 			if(modList.size() > 0){
 				return SIIAeatPost.getInstance(getCert(), getPass()).suministroBienesInversion(domain, login, company, invoiceId, contextList, terceros, uri, SendType.MOD_INVERSION);
 			}
@@ -265,7 +265,7 @@ public class SIIManager {
 			if(newList.size() > 0){
 				return SIIArabaPost.getInstance(getCert(), getPass()).suministroBienesInversion(domain, login, company, invoiceId, contextList, terceros, uri, SendType.ALTA_INVERSION);
 			}
-				
+
 			if(modList.size() > 0){
 				return SIIArabaPost.getInstance(getCert(), getPass()).suministroBienesInversion(domain, login, company, invoiceId, contextList, terceros, uri, SendType.MOD_INVERSION);
 			}
@@ -273,7 +273,7 @@ public class SIIManager {
 			if(newList.size() > 0){
 				return SIIGipuzkoaPost.getInstance(getCert(), getPass()).suministroBienesInversion(domain, login, company, invoiceId, contextList, terceros, uri, SendType.ALTA_INVERSION);
 			}
-				
+
 			if(modList.size() > 0){
 				return SIIGipuzkoaPost.getInstance(getCert(), getPass()).suministroBienesInversion(domain, login, company, invoiceId, contextList, terceros, uri, SendType.MOD_INVERSION);
 			}
@@ -281,7 +281,7 @@ public class SIIManager {
 			if(newList.size() > 0){
 				return SIIBizkaiaPost.getInstance(getCert(), getPass()).suministroBienesInversion(domain, login, company, invoiceId, contextList, terceros, uri, SendType.ALTA_INVERSION);
 			}
-				
+
 			if(modList.size() > 0){
 				return SIIBizkaiaPost.getInstance(getCert(), getPass()).suministroBienesInversion(domain, login, company, invoiceId, contextList, terceros, uri, SendType.MOD_INVERSION);
 			}
@@ -291,7 +291,7 @@ public class SIIManager {
 
 	protected JSONArray bajaBienesInversion(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
 		String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.BIENES_INVERSION, administration) : SIIUri.getInstance().getURI(SIIType.BIENES_INVERSION, administration);
-		
+
 		if(isAeat() || isNavarra()) {
 			return SIIAeatPost.getInstance(getCert(), getPass()).bajaBienesInversion(domain, login, company, invoiceId, contextList, terceros, uri);
     	} else if(isAraba()) {
@@ -303,24 +303,24 @@ public class SIIManager {
     	}
 		return new JSONArray();
 	}
-	
+
 	 // -------------------- OPERACIONES INTRACOMUNITARIAS
 	
 	protected JSONArray suministroOperacionesIntracomunitarias(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String tipoOp, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
 		String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.OPERACIONES_INTRACOMUNITARIAS, administration) : SIIUri.getInstance().getURI(SIIType.OPERACIONES_INTRACOMUNITARIAS, administration);
-	    	
+
 		LinkedList<VatContext> modList = contextList.stream().filter(v->  "Correcto".equals(v.getSiiStatus())
 				|| "AceptadoConErrores".equals(v.getSiiStatus())
 				|| "Anulada".equals(v.getSiiStatus())).collect(Collectors.toCollection(LinkedList::new));
-	    		
+
 		LinkedList<VatContext> newList = contextList.stream().filter(v-> "Pendiente".equals(v.getSiiStatus())
 				|| "Incorrecto".equals(v.getSiiStatus())).collect(Collectors.toCollection(LinkedList::new));
-		
+
 		if(isAeat() || isNavarra()) {
 			if(newList.size() > 0){
 				return SIIAeatPost.getInstance(getCert(), getPass()).suministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, terceros, uri, SendType.ALTA_INTRACOMUNITARIAS);
 			}
-				
+
 			if(modList.size() > 0){
 				return SIIAeatPost.getInstance(getCert(), getPass()).suministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, terceros, uri, SendType.MOD_INTRACOMUNITARIAS);
 			}
@@ -328,7 +328,7 @@ public class SIIManager {
 			if(newList.size() > 0){
 				return SIIArabaPost.getInstance(getCert(), getPass()).suministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, terceros, uri, SendType.ALTA_INTRACOMUNITARIAS);
 			}
-				
+
 			if(modList.size() > 0){
 				return SIIArabaPost.getInstance(getCert(), getPass()).suministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, terceros, uri, SendType.MOD_INTRACOMUNITARIAS);
 			}
@@ -336,7 +336,7 @@ public class SIIManager {
 			if(newList.size() > 0){
 				return SIIGipuzkoaPost.getInstance(getCert(), getPass()).suministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, terceros, uri, SendType.ALTA_INTRACOMUNITARIAS);
 			}
-				
+
 			if(modList.size() > 0){
 				return SIIGipuzkoaPost.getInstance(getCert(), getPass()).suministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, terceros, uri, SendType.MOD_INTRACOMUNITARIAS);
 			}
@@ -344,7 +344,7 @@ public class SIIManager {
 			if(newList.size() > 0){
 				return SIIBizkaiaPost.getInstance(getCert(), getPass()).suministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, terceros, uri, SendType.ALTA_INTRACOMUNITARIAS);
 			}
-				
+
 			if(modList.size() > 0){
 				return SIIBizkaiaPost.getInstance(getCert(), getPass()).suministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, terceros, uri, SendType.MOD_INTRACOMUNITARIAS);
 			}
@@ -354,7 +354,7 @@ public class SIIManager {
 		
 	protected JSONArray bajaOperacionesIntracomunitarias(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
 		String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.OPERACIONES_INTRACOMUNITARIAS, administration) : SIIUri.getInstance().getURI(SIIType.OPERACIONES_INTRACOMUNITARIAS, administration);
-		
+
 		if(isAeat() || isNavarra()) {
 			return SIIAeatPost.getInstance(getCert(), getPass()).bajaOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, terceros, uri);
     	} else if(isAraba()) {
@@ -366,12 +366,12 @@ public class SIIManager {
     	}
 		return new JSONArray();
 	}
-	
+
  // -------------------- COBROS METALICO
 	
     protected JSONObject suministroCobrosMetalico(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.COBROS_METALICO, getAdministration()) : SIIUri.getInstance().getURI(SIIType.COBROS_METALICO, getAdministration());
-    	
+
     	if(isAeat() || isNavarra()) {
 			return SIIAeatPost.getInstance(getCert(), getPass()).suministroCobrosMetalico(domain, login, company, invoiceId, contextList, terceros, uri);
     	} else if(isAraba()) {
@@ -380,10 +380,10 @@ public class SIIManager {
 			return SIIGipuzkoaPost.getInstance(getCert(), getPass()).suministroCobrosMetalico(domain, login, company, invoiceId, contextList, terceros, uri);
     	} else if(isBizkaia()) {
 			return SIIBizkaiaPost.getInstance(getCert(), getPass()).suministroCobrosMetalico(domain, login, company, invoiceId, contextList, terceros, uri);
-    	} 
+    	}
     	return new JSONObject();
     }
-    
+
     protected JSONObject bajaCobrosMetalico(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.COBROS_METALICO, getAdministration()) : SIIUri.getInstance().getURI(SIIType.COBROS_METALICO, getAdministration());
 
@@ -395,15 +395,15 @@ public class SIIManager {
 			return SIIGipuzkoaPost.getInstance(getCert(), getPass()).bajaCobrosMetalico(domain, login, company, invoiceId, contextList, terceros, uri);
     	} else if(isBizkaia()) {
 			return SIIBizkaiaPost.getInstance(getCert(), getPass()).bajaCobrosMetalico(domain, login, company, invoiceId, contextList, terceros, uri);
-    	} 
+    	}
     	return new JSONObject();
     }
-    
+
     // -------------------- OPERACIONES SEGUROS
 	
     protected JSONObject suministroOperacionesSeguros(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.OPERACIONES_SEGUROS, getAdministration()) : SIIUri.getInstance().getURI(SIIType.OPERACIONES_SEGUROS, getAdministration());
-    		
+
     	if(isAeat() || isNavarra()) {
 			return SIIAeatPost.getInstance(getCert(), getPass()).suministroOperacionesSeguros(domain, login, company, invoiceId, contextList, terceros, uri);
     	} else if(isAraba()) {
@@ -412,10 +412,10 @@ public class SIIManager {
 			return SIIGipuzkoaPost.getInstance(getCert(), getPass()).suministroOperacionesSeguros(domain, login, company, invoiceId, contextList, terceros, uri);
     	} else if(isBizkaia()) {
 			return SIIBizkaiaPost.getInstance(getCert(), getPass()).suministroOperacionesSeguros(domain, login, company, invoiceId, contextList, terceros, uri);
-    	} 
+    	}
     	return new JSONObject();
     }
-    
+
     protected JSONObject bajaOperacionesSeguros(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.OPERACIONES_SEGUROS, getAdministration()) : SIIUri.getInstance().getURI(SIIType.OPERACIONES_SEGUROS, getAdministration());
     	if(isAeat() || isNavarra()) {
@@ -426,10 +426,10 @@ public class SIIManager {
 			return SIIGipuzkoaPost.getInstance(getCert(), getPass()).bajaOperacionesSeguros(domain, login, company, invoiceId, contextList, terceros, uri);
     	} else if(isBizkaia()) {
 			return SIIBizkaiaPost.getInstance(getCert(), getPass()).bajaOperacionesSeguros(domain, login, company, invoiceId, contextList, terceros, uri);
-    	} 
+    	}
     	return new JSONObject();
     }
-    
+
     // -------------------- AGENCIAS VIAJES
 	
     protected JSONObject suministroAgenciasViajes(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
@@ -442,10 +442,10 @@ public class SIIManager {
 			return SIIGipuzkoaPost.getInstance(getCert(), getPass()).suministroAgenciasViajes(domain, login, company, invoiceId, contextList, terceros, uri);
     	} else if(isBizkaia()) {
 			return SIIBizkaiaPost.getInstance(getCert(), getPass()).suministroAgenciasViajes(domain, login, company, invoiceId, contextList, terceros, uri);
-    	} 
+    	}
     	return new JSONObject();
     }
-    
+
     protected JSONObject bajaAgenciasViajes(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) {
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.AGENCIAS_VIAJES, getAdministration()) : SIIUri.getInstance().getURI(SIIType.AGENCIAS_VIAJES, getAdministration());
     	if(isAeat() || isNavarra()) {
@@ -456,8 +456,8 @@ public class SIIManager {
 			return SIIGipuzkoaPost.getInstance(getCert(), getPass()).bajaAgenciasViajes(domain, login, company, invoiceId, contextList, terceros, uri);
     	} else if(isBizkaia()) {
 			return SIIBizkaiaPost.getInstance(getCert(), getPass()).bajaAgenciasViajes(domain, login, company, invoiceId, contextList, terceros, uri);
-    	} 
+    	}
     	return new JSONObject();
     }
-	
+
 }

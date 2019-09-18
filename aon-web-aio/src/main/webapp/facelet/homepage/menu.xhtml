@@ -43,11 +43,6 @@
 					styleClass="aon-top-menu-item" />
 			</aon:if>
 
-			<aon:commandLink id="menu_infoweb"
-				value="#{bundle.aon_module_infoweb}"
-				action="menu_infoweb" immediate="true"
-				styleClass="aon-top-menu-item" />
-			
 			<aon:if test="#{aonRole.saleOperator or aonRole.purchaseOperator or aonRole.financeOperator}">
 				<aon:commandLink id="menu_management"
 					value="#{bundle.aon_erp}" 

@@ -1,4 +1,4 @@
-FROM java:jre-alpine
+FROM openjdk:11-jre-slim
 
 ARG AON_VERSION=9.23-SNAPSHOT
 

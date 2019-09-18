@@ -11,13 +11,6 @@
 	<description>AON SII</description>
 
 	<dependencies>
-
-		<dependency>
-    		<groupId>javax.xml.soap</groupId>
-    		<artifactId>javax.xml.soap-api</artifactId>
-    		<version>1.4.0</version>
-		</dependency>
-			
 		<dependency>
     		<groupId>javax.xml.ws</groupId>
     		<artifactId>jaxws-api</artifactId>
@@ -59,7 +52,39 @@
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
-		
+
+               <!--
+                Migrating From Java 8 To Java 11.
+                Instead of using the deprecated JAXB (java.xml.bind) module, use the following artifacts.
+                -->
+                <dependency>
+                        <groupId>javax.xml.bind</groupId>
+                        <artifactId>jaxb-api</artifactId>
+                        <version>2.3.1</version>
+                </dependency>
+								<dependency>
+					 		  				<groupId>com.sun.xml.bind</groupId>
+					 		     			<artifactId>jaxb-core</artifactId>
+					 		     			<version>2.3.0.1</version>
+					 		  </dependency>
+                <dependency>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-impl</artifactId>
+                        <version>2.3.2</version>
+                </dependency>
+
+								<!--
+								Migrating From Java 8 To Java 11.
+								Instead of using the deprecated JAX-WS (java.xml.ws) module, use the following artifacts.
+								-->
+								<dependency>
+											  <groupId>com.sun.xml.ws</groupId>
+											  <artifactId>jaxws-ri</artifactId>
+											  <version>2.3.1</version>
+											  <type>pom</type>
+								</dependency>
+
+
     </dependencies>
 
     <build>
@@ -75,7 +100,7 @@
             			<goals>
               				<goal>wsimport</goal>
             			</goals>
-            			<configuration>										
+            			<configuration>
 							<wsdlUrls>
 
 								<!-- AEAT WSDL URLS VERSION 1.1 -->
@@ -89,7 +114,7 @@
 								<wsdlUrl>https://www.agenciatributaria.es/static_files/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Modelos_y_formularios/Suministro_inmediato_informacion/FicherosSuministros/V_1_1/SuministroPagosRecibidas.wsdl</wsdlUrl>
 								<wsdlUrl>https://www.agenciatributaria.es/static_files/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Modelos_y_formularios/Suministro_inmediato_informacion/FicherosSuministros/V_1_1/SuministroInmueblesAdicionales.wsdl</wsdlUrl>
 
-								<!-- ALAVA/ARABA WSDL URLS VERSION 1.1 -->	
+								<!-- ALAVA/ARABA WSDL URLS VERSION 1.1 -->
 
 								<wsdlUrl>https://sii.araba.eus/documentos/SuministroFactEmitidas.wsdl</wsdlUrl>
 								<wsdlUrl>https://sii.araba.eus/documentos/SuministroFactRecibidas.wsdl</wsdlUrl>
@@ -110,9 +135,9 @@
 								<wsdlUrl>https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/v1.1/SuministroOpTrascendTribu.wsdl</wsdlUrl>
 								<wsdlUrl>https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/v1.1/SuministroPagosRecibidas.wsdl</wsdlUrl>
 								<wsdlUrl>https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/v1.1/SuministroInmueblesAdicionales.wsdl</wsdlUrl>
-	
-								<!-- VIZCAYA/BIZKAIA WSDL URLS VERSION 1.1 -->						
-								
+
+								<!-- VIZCAYA/BIZKAIA WSDL URLS VERSION 1.1 -->
+
 								<wsdlUrl>http://www.bizkaia.eus/ogasuna/sii/documentos/SuministroFactEmitidas.wsdl</wsdlUrl>
 								<wsdlUrl>http://www.bizkaia.eus/ogasuna/sii/documentos/SuministroFactRecibidas.wsdl</wsdlUrl>
 								<wsdlUrl>http://www.bizkaia.eus/ogasuna/sii/documentos/SuministroBienesInversion.wsdl</wsdlUrl>
@@ -121,7 +146,7 @@
 								<wsdlUrl>http://www.bizkaia.eus/ogasuna/sii/documentos/SuministroOpTrascendTribu.wsdl</wsdlUrl>
 								<wsdlUrl>http://www.bizkaia.eus/ogasuna/sii/documentos/SuministroPagosRecibidas.wsdl</wsdlUrl>
 								<wsdlUrl>http://www.bizkaia.eus/ogasuna/sii/documentos/SuministroInmueblesAdicionales.wsdl</wsdlUrl>
-										
+
 							</wsdlUrls>
 							<sourceDestDir>src/main/generated-sources</sourceDestDir>
 						</configuration>

@@ -114,6 +114,25 @@
       </jaxb:bindings>
     </jaxb:bindings>
 
+    <jaxb:bindings schemaLocation="../xsd/SolicitudBorrador.xsd" node="/xs:schema">
+       <jaxb:schemaBindings>
+       	<jaxb:package name="net.aonsolutions.core.tgss.creta.jaxb.solicitud.borrador"/>
+       </jaxb:schemaBindings>
+      <jaxb:bindings node="//xs:complexType[@name='CtaCot']">
+        <inheritance:implements>net.aonsolutions.core.tgss.creta.jaxb.CtaCot</inheritance:implements>
+      </jaxb:bindings>
+      <jaxb:bindings node="//xs:complexType[@name='Periodo']">
+        <inheritance:implements>net.aonsolutions.core.tgss.creta.jaxb.Periodo</inheritance:implements>
+      </jaxb:bindings>
+      <jaxb:bindings node="//xs:element[@name='Liquidacion']">
+      	 <jaxb:class/>
+        <inheritance:implements><![CDATA[net.aonsolutions.core.tgss.creta.jaxb.Liquidacion<net.aonsolutions.core.tgss.creta.jaxb.LiquidacionMes,CtaCot,Periodo,net.aonsolutions.core.tgss.creta.jaxb.DatosLiquidacion,net.aonsolutions.core.tgss.creta.jaxb.FechaHoraRecaudacion>]]></inheritance:implements>
+      </jaxb:bindings>
+      <jaxb:bindings node="//xs:element[@name='Anho']">
+      	<jaxb:javaType name="java.lang.String" />
+      </jaxb:bindings>
+    </jaxb:bindings>
+
     <jaxb:bindings schemaLocation="../xsd/SolicitudCalculos.xsd" node="/xs:schema">
        <jaxb:schemaBindings>
        	<jaxb:package name="net.aonsolutions.core.tgss.creta.jaxb.solicitud.calculos"/>

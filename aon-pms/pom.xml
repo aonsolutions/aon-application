@@ -73,5 +73,17 @@
       <version>1.3</version>
       <scope>provided</scope>
     </dependency>
+
+    <!--
+    Migrating From Java 8 To Java 11.
+    Instead of using the deprecated JAX-WS (java.xml.ws) module, use the following artifacts.
+    -->
+    <dependency>
+      <groupId>com.sun.xml.ws</groupId>
+      <artifactId>jaxws-ri</artifactId>
+      <version>2.3.1</version>
+      <type>pom</type>
+    </dependency>
+
   </dependencies>
 </project>

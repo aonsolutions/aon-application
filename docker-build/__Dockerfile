@@ -1,0 +1,62 @@
+FROM aonsolutions/aon-build:maven-3-jdk-11
+ADD file:feb9fd29475961253e3449db036bbf56bf6f4d02f2df1202209e393a9e7e95f5 in /
+CMD ["bash"]
+RUN /bin/sh -c apt-get update \
+    && apt-get install -y --no-install-recommends 		ca-certificates 		curl 		netbase 		wget 	\
+    && rm -rf /var/lib/apt/lists/*
+RUN /bin/sh -c set -ex; 	if ! command -v gpg > /dev/null; then 		apt-get update; 		apt-get install -y --no-install-recommends 			gnupg 			dirmngr 		; 		rm -rf /var/lib/apt/lists/*; 	fi
+RUN /bin/sh -c apt-get update \
+    && apt-get install -y --no-install-recommends 		bzr 		git 		mercurial 		openssh-client 		subversion 				procps 	\
+    && rm -rf /var/lib/apt/lists/*
+RUN /bin/sh -c apt-get update \
+    && apt-get install -y --no-install-recommends 		bzip2 		unzip 		xz-utils 	\
+    && rm -rf /var/lib/apt/lists/*
+RUN /bin/sh -c echo 'deb http://deb.debian.org/debian stretch-backports main' > /etc/apt/sources.list.d/stretch-backports.list
+ENV LANG=C.UTF-8
+RUN /bin/sh -c { 		echo '#!/bin/sh'; 		echo 'set -e'; 		echo; 		echo 'dirname "$(dirname "$(readlink -f "$(which javac || which java)")")"'; 	} > /usr/local/bin/docker-java-home 	\
+    && chmod +x /usr/local/bin/docker-java-home
+RUN /bin/sh -c ln -svT "/usr/lib/jvm/java-11-openjdk-$(dpkg --print-architecture)" /docker-java-home
+ENV JAVA_HOME=/docker-java-home
+ENV JAVA_VERSION=11.0.1
+ENV JAVA_DEBIAN_VERSION=11.0.1+13-2~bpo9+1
+RUN /bin/sh -c set -ex; 		if [ ! -d /usr/share/man/man1 ]; then 		mkdir -p /usr/share/man/man1; 	fi; 		ln -svT /docker-java-home/bin/java /usr/local/bin/java; 		apt-get update; 	apt-get install -y --no-install-recommends 		openjdk-11-jdk="$JAVA_DEBIAN_VERSION" 	; 	rm -rf /var/lib/apt/lists/*; 		rm -v /usr/local/bin/java; 		keytool -importkeystore -srckeystore /etc/ssl/certs/java/cacerts -destkeystore /etc/ssl/certs/java/cacerts.jks -deststoretype JKS -srcstorepass changeit -deststorepass changeit -noprompt; 	mv /etc/ssl/certs/java/cacerts.jks /etc/ssl/certs/java/cacerts; 	/var/lib/dpkg/info/ca-certificates-java.postinst configure; 		[ "$(readlink -f "$JAVA_HOME")" = "$(docker-java-home)" ]; 		update-alternatives --get-selections | awk -v home="$(readlink -f "$JAVA_HOME")" 'index($3, home) == 1 { $2 = "manual"; print | "update-alternatives --set-selections" }'; 	update-alternatives --query java | grep -q 'Status: manual'
+CMD ["jshell"]
+ARG MAVEN_VERSION=3.6.0
+ARG USER_HOME_DIR=/root
+ARG SHA=fae9c12b570c3ba18116a4e26ea524b29f7279c17cbaadc3326ca72927368924d9131d11b9e851b8dc9162228b6fdea955446be41207a5cfc61283dd8a561d2f
+ARG BASE_URL=https://apache.osuosl.org/maven/maven-3/3.6.0/binaries
+RUN |4 BASE_URL=https://apache.osuosl.org/maven/maven-3/3.6.0/binaries MAVEN_VERSION=3.6.0 SHA=fae9c12b570c3ba18116a4e26ea524b29f7279c17cbaadc3326ca72927368924d9131d11b9e851b8dc9162228b6fdea955446be41207a5cfc61283dd8a561d2f USER_HOME_DIR=/root /bin/sh -c ln -s /etc/java-11-openjdk /usr/lib/jvm/java-11-openjdk-$(dpkg --print-architecture)/conf
+RUN |4 BASE_URL=https://apache.osuosl.org/maven/maven-3/3.6.0/binaries MAVEN_VERSION=3.6.0 SHA=fae9c12b570c3ba18116a4e26ea524b29f7279c17cbaadc3326ca72927368924d9131d11b9e851b8dc9162228b6fdea955446be41207a5cfc61283dd8a561d2f USER_HOME_DIR=/root /bin/sh -c mkdir -p /usr/share/maven /usr/share/maven/ref   \
+    && curl -fsSL -o /tmp/apache-maven.tar.gz ${BASE_URL}/apache-maven-${MAVEN_VERSION}-bin.tar.gz   \
+    && echo "${SHA}  /tmp/apache-maven.tar.gz" | sha512sum -c -   \
+    && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1   \
+    && rm -f /tmp/apache-maven.tar.gz   \
+    && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
+ENV MAVEN_HOME=/usr/share/maven
+ENV MAVEN_CONFIG=/root/.m2
+COPY file:c8a560656e1905748cb426c612f1ff0b0b6de63f6244ffc4007ce2596a16de58 in /usr/local/bin/mvn-entrypoint.sh
+COPY file:2bbb488dd73c55d658b91943cfdf9c26975a320ceafc45dda94c95b03e518ad3 in /usr/share/maven/ref/
+ENTRYPOINT ["/usr/local/bin/mvn-entrypoint.sh"]
+CMD ["mvn"]
+ENV AON_TMP=/tmp/aon-application
+RUN /bin/sh -c apt-get update \
+    && apt-get install -y --no-install-recommends mariadb-server
+RUN /bin/sh -c mysql_install_db
+WORKDIR /root/.m2
+COPY file:70f1ba5071565b7c200764847498a1e77a473fc90f4a2199271c58a589002557 in repository.zip
+RUN /bin/sh -c set -x                 \
+    && unzip repository.zip         \
+    && rm repository.zip
+RUN /bin/sh -c mkdir -p $AON_TMP
+WORKDIR /tmp/aon-application
+COPY file:50f2f2931096758fe13ed6432da4e9f01d79d7e0923c9d02324779512b1f111b in pom.xml
+RUN /bin/sh -c set -x 	\
+    && mvn -N clean 	\
+    && mvn -N install 	\
+    && mvn -N dependency:go-offline         \
+    && rm -rf $AON_TMP
+COPY file:a929247c599af24dda6660068d6e657a11a3c4de02fa30a41db10bd21ef33d70 in /usr/local/bin/
+RUN /bin/sh -c ln -s usr/local/bin/docker-entrypoint.sh / # backwards compat
+RUN /bin/sh -c chmod +x /usr/local/bin/docker-entrypoint.sh
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["mvn"]

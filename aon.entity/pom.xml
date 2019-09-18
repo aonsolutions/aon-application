@@ -25,7 +25,8 @@
 						<include>com/code/aon/project/I**</include>
 						<include>com/code/aon/asset/I**</include>
 						<include>com/esferalia/aon/google/sql/**</include>
-						<include>com/esferalia/aon/payroll/sql/**</include>
+						<include>com/esferalia/aon/payroll/sql/**</include>						
+						<include>com/code/aon/infoweb/**</include>						
 					</includes>
 										
 					<archive>

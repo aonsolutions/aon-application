@@ -64,14 +64,14 @@
 						<scope>compile</scope>
 					</dependency>
 					<dependency>
-						<groupId>com.esferalia.aon</groupId>
-						<artifactId>aon.ui.pms</artifactId>
+						<groupId>com.code.aon</groupId>
+						<artifactId>aon.ui.fiscal</artifactId>
 						<version>${project.version}</version>
 						<scope>compile</scope>
 					</dependency>
 					<dependency>
 						<groupId>com.code.aon</groupId>
-						<artifactId>aon.ui.fiscal</artifactId>
+						<artifactId>aon.ui.commercial</artifactId>
 						<version>${project.version}</version>
 						<scope>compile</scope>
 					</dependency>

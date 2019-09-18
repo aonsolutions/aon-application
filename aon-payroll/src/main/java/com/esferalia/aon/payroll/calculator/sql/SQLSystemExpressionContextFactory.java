@@ -25,7 +25,6 @@ import java.sql.Types;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.xml.ws.handler.MessageContext.Scope;
 
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.OrderByList;

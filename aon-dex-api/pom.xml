@@ -33,9 +33,9 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
+				<groupId>com.helger.maven</groupId>
 				<artifactId>jaxws-maven-plugin</artifactId>
-				<version>2.5</version>
+				<version>2.6</version>
 				<executions>
 					<execution>
 						<id>facturas-exec</id>
@@ -85,7 +85,7 @@
 				</executions>
 			</plugin>
 		</plugins>
-	</build> 
+	</build>
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.xmlbeans</groupId>
@@ -93,6 +93,35 @@
 			<version>3.0.2</version>
 			<scope>compile</scope>
 		</dependency>
+		<!--
+		 Migrating From Java 8 To Java 11.
+		 Instead of using the deprecated JAXB (java.xml.bind) module, use the following artifacts.
+		 -->
+		 <dependency>
+			 <groupId>javax.xml.bind</groupId>
+			 <artifactId>jaxb-api</artifactId>
+			 <version>2.3.1</version>
+		 </dependency>
+		 <dependency>
+		     <groupId>com.sun.xml.bind</groupId>
+		     <artifactId>jaxb-core</artifactId>
+		     <version>2.3.0.1</version>
+		 </dependency>
+		 <dependency>
+			 <groupId>com.sun.xml.bind</groupId>
+			 <artifactId>jaxb-impl</artifactId>
+			 <version>2.3.2</version>
+		 </dependency>
+
+		 <!--
+		 Migrating From Java 8 To Java 11.
+		 Instead of using the deprecated JAX-WS (java.xml.ws) module, use the following artifacts.
+		 -->
+		 <dependency>
+			 <groupId>com.sun.xml.ws</groupId>
+			 <artifactId>jaxws-ri</artifactId>
+			 <version>2.3.1</version>
+			 <type>pom</type>
+		 </dependency>
 	</dependencies>
 </project>
- 
