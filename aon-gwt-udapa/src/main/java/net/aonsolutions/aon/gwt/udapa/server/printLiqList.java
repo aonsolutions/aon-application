@@ -381,7 +381,7 @@ public class printLiqList extends HttpServlet{
 									&& !"-".equals(transportDate)){
 								issueDate = Utils.parseDateTime(transportDate);
 							}
-							Date start = Utils.parseDate("01/09/2019");
+							Date start = new Date((2019-1900), 8, 1);
 
 							Boolean a = temp >= 8.0 && temp <= 16.0 && issueDate.compareTo(start) >= 0;
 							Boolean b = temp >= 22.0 && temp <= 24.0 && issueDate.compareTo(start) >= 0;
