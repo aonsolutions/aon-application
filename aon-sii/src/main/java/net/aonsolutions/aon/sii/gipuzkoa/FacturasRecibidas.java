@@ -352,6 +352,9 @@ public class FacturasRecibidas extends SIIBuilt {
 				diet.setBaseImponible(Double.toString(AonMathUtils.round(noExentaMap.get(key).getBase()))); // TODO
 				diet.setCuotaSoportada(Double.toString(AonMathUtils.round(noExentaMap.get(key).getQuota())));
 				diet.setTipoImpositivo(Double.toString(AonMathUtils.round(noExentaMap.get(key).getPercentage())));
+				if("12.0".equals(diet.getTipoImpositivo())) {
+					frt.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaRecibidasType._02.getName());
+				}
 				if (noExentaMap.get(key).getSurchargePercent() > 0.0
 						&& noExentaMap.get(key).getSurchargeQuota() > 0.0) {
 					diet.setCuotaRecargoEquivalencia(
