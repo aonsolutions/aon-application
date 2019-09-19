@@ -1,44 +1,29 @@
 package com.esferalia.aon.gwt.fiscal.client.tedi;
 
-import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.ModuleCallback;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
-import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryBox;
-import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
-import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.client.widget.CloseTab;
 import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
-import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
-import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.tedi.ICallback;
-import com.esferalia.aon.occam.api.model.tedi.ITediCallback;
-import com.esferalia.aon.occam.api.model.tedi.ITediContextVisitor;
 import com.esferalia.aon.occam.api.model.tedi.TediError;
 import com.esferalia.aon.occam.api.model.tedi.TediLevel;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -48,15 +33,12 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ProvidesKey;
@@ -76,37 +58,25 @@ public class TediCenter extends MainEntryPoint {
 	}
 
 	private static TediServiceAsync SERVICE;
-	private static FiscalServiceAsync FISCAL_SERVICE;
-	private TediContextVisitor tediContextVisitor = new TediContextVisitor();
+	private TediContextVisitor tediContextVisitor;
 	
 	private String currentDomainName;
 	private int currentDomain;
 	private String currentUser;
+	private HashMap<String,Widget> tabs = new HashMap<String,Widget>();
 
 	private AonConfiguration configuration;
-	private DockLayoutPanel dockLayoutPanel;
 
-	private SplitLayoutPanel mainSplitLayoutPanel;
-	private SimpleLayoutPanel sidebarContent;
-
-	private TabLayoutPanel tabContent;
+	// private SplitLayoutPanel mainSplitLayoutPanel;
+	private TabLayoutPanel mainTabLayoutPanel;
 
 	private FlowPanel toolbarPanel;
 	private Button acceptAll;
-
-	private Viewer pdfViewer = new Viewer();
-	private Viewer pdfCombinedViewer = new Viewer();
+	private	Viewer pdfViewer = new Viewer();	
+	
 	private LinkedList<TediResult> resultList;
 	private TediInvoiceTable table = new TediInvoiceTable(new TediResultProvidesKey());
-//	private PopupPanel popup;
 	
-	interface SafeTemplate extends SafeHtmlTemplates {
-		@Template("<span class=\"gwt-InlineLabel .aon-padding-right aon-padding-left-20 {1}\">{0}</span>")
-		SafeHtml tab(String title, String icon);
-	}
-
-	private static final SafeTemplate template = GWT.create(SafeTemplate.class);
-
 	public TediCenter(String domainName, int domain, String user) {
 		currentDomainName = domainName;
 		currentDomain = domain;
@@ -133,31 +103,26 @@ public class TediCenter extends MainEntryPoint {
 		TediServiceAsync serviceRaw = GWT.create(TediService.class);
 		SERVICE = new TediServiceAsyncDecorator(serviceRaw);
 
-		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
-		FISCAL_SERVICE = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
-
-		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
-		dockLayoutPanel.addNorth(getToolbarPanel(), 25);
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
-		root.add(dockLayoutPanel);
+		
+		SimpleLayoutPanel mainPanel = new SimpleLayoutPanel();
+		mainPanel.setStyleName(AON.AON_CSS.aonSelector());
+		mainTabLayoutPanel = new TabLayoutPanel(30,Unit.PX);
+		mainPanel.add(mainTabLayoutPanel);
+		root.add(mainPanel);
 
 		SERVICE.getAonConfiguration(getDomainName(), getUser(), getDomain(), new AsyncCallback<AonConfiguration>() {
 			@Override
 			public void onSuccess(AonConfiguration result) {
 				configuration = result;
-				mainSplitLayoutPanel = new SplitLayoutPanel();
-
-				sidebarContent = new SimpleLayoutPanel();
-				mainSplitLayoutPanel.addNorth(sidebarContent, 150);
-				tabContent = new TabLayoutPanel(26, Unit.PX);
-
-				SimpleLayoutPanel tabContentcontainer = new SimpleLayoutPanel();
-				tabContentcontainer.setStyleName(AON.AON_CSS.aonSelector());
-				tabContentcontainer.add(tabContent);
-				mainSplitLayoutPanel.add(tabContentcontainer);
-
-				dockLayoutPanel.add(mainSplitLayoutPanel);
-
+				tediContextVisitor = new TediContextVisitor(getDomainName(), getDomain(), configuration);
+				
+				DockLayoutPanel dockLayoutPanel = new DockLayoutPanel(Unit.PX);
+				dockLayoutPanel.addStyleName(AON.AON_CSS.aonMarginTop());
+				dockLayoutPanel.addNorth(getToolbarPanel(), 25);
+				SimpleLayoutPanel sidebarContent = new SimpleLayoutPanel();
+				dockLayoutPanel.add(sidebarContent);
+				mainTabLayoutPanel.add(dockLayoutPanel,new CloseTab(AON.MSG.invoiceList(), false));
 				ScrollPanel tableScrollPanel = new ScrollPanel();
 				tableScrollPanel.setStyleName(AON.AON_CSS.aonScrollArea());
 				sidebarContent.add(tableScrollPanel);
@@ -165,19 +130,14 @@ public class TediCenter extends MainEntryPoint {
 				
 				table.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 					public void onSelectionChange(SelectionChangeEvent event) {
-						paintInvoice(table.getSelected());
+						TediResult inv = table.getSelected();
+						onSelect( inv );
 					}
 				});
 				table.addRangeChangeHandler( new RangeChangeEvent.Handler() {
 					
 					@Override
 					public void onRangeChange(RangeChangeEvent event) {
-//						boolean cp = false;
-//						if (popup == null) {
-//							popup = showPopupPanel();
-//							cp = true;
-//						}
-//						final boolean closePopup = cp;
 						SERVICE.getVerifiedInvoices(getDomainName(), getUser(), getDomain(),
 								new AsyncCallback<LinkedList<TediResult>>() {
 
@@ -188,21 +148,10 @@ public class TediCenter extends MainEntryPoint {
 											resultList  = new LinkedList<TediResult>();
 										}
 										table.setRowData(resultList);
-										if (resultList.size() > 0 ) {
-											paintInvoice(resultList.get(0));
-										}
-//										if (closePopup && popup != null) {
-//											popup.hide();
-//											popup = null;
-//										}
 									}
 
 									@Override
 									public void onFailure(Throwable caught) {
-//										if (closePopup && popup != null) {
-//											popup.hide();
-//											popup = null;
-//										}
 										showMessage(AON.MSG.error() + " [Interno: " + caught.getMessage() + "]");
 									}
 
@@ -219,7 +168,57 @@ public class TediCenter extends MainEntryPoint {
 		});
 
 	}
-
+	private void onSelect(TediResult result) {
+		onSelect(result,false);
+	}
+	private void onSelect(TediResult result, boolean forceRefresh) {
+		SplitLayoutPanel tabPanel;
+		boolean paint = false;
+		if (tabs.containsKey(result.getTedi().getUuid())) {
+			tabPanel = (SplitLayoutPanel) tabs.get( result.getTedi().getUuid() );
+			if (forceRefresh) {
+				tabPanel.clear();
+				paint = true;
+			}
+			mainTabLayoutPanel.selectTab( tabPanel );	
+		} else {
+			paint = true;
+			tabPanel = new SplitLayoutPanel();
+			String tabLabel = AonStringUtils. trim(AonStringUtils.abbreviate(
+					(result.getInvoice().getType() != null ? result.getInvoice().getType().getDescription() : " ")
+					+ " " + AonStringUtils.defaultString(result.getTedi().getRname()) , 25));
+			CloseTab closeTab = new CloseTab(tabLabel, true);
+			closeTab.addCloseHandler(new CloseHandler<Integer>() {
+				@Override
+				public void onClose(CloseEvent<Integer> event) {
+					mainTabLayoutPanel.remove(tabPanel);
+					tabs.remove( result.getTedi().getUuid());
+				}
+			});
+			mainTabLayoutPanel.add(tabPanel,closeTab);
+			tabs.put( result.getTedi().getUuid(),tabPanel);
+			mainTabLayoutPanel.selectTab(mainTabLayoutPanel.getWidgetCount() - 1);
+		}
+		if (paint) {
+			if (result.hasPDFAttach() || result.hasJPEGAttach()) {
+				SimpleLayoutPanel attachContainer = new SimpleLayoutPanel();
+				tabPanel.addEast(attachContainer, 350);				
+				paintAttach( result , attachContainer);
+			}
+			SimpleLayoutPanel contentPanel = new SimpleLayoutPanel();
+			tabPanel.add(contentPanel);
+			if (result.isImportable()) {
+				paintInvoice(contentPanel,result);
+			} else if (result.isEmpty()) {
+				paintInvoice(contentPanel,result);
+			} else if (result.getInvoice().getRegistry() != null) {
+				paintInvoice(contentPanel,result);
+			} else {
+				contentPanel.setWidget( getProblemsWidget( result ) );
+			}
+		}
+	}
+	
 	protected void showMessage(String msg) {
 		MessageDialog.error(msg);
 	}
@@ -255,7 +254,7 @@ public class TediCenter extends MainEntryPoint {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				onRefresh( true );
+				onRefresh( );
 			}
 		});
 		buttonContainer.add(clean);
@@ -279,21 +278,7 @@ public class TediCenter extends MainEntryPoint {
 		return toolbarPanel;
 	}
 
-//	private PopupPanel showPopupPanel() {
-//		popup = new PopupPanel(false, true);
-//		Label label = new Label(AON.MSG.processing());
-//		label.addStyleName(AON.AON_CSS.aonTediTimer());
-//		popup.add(label);
-//		popup.setGlassEnabled(true);
-//		popup.setAnimationEnabled(true);
-//		popup.center();
-//		return popup;
-//	}
-
-	private void onRefresh(boolean popup ) {
-//		if (popup) {
-//			showPopupPanel();
-//		}
+	private void onRefresh() {
 		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
 	}
 	
@@ -308,25 +293,21 @@ public class TediCenter extends MainEntryPoint {
 	}
 
 	private void onAcceptAll(LinkedList<TediResult> accepted) {
-//		showPopupPanel();
 		SERVICE.putInvoices(getDomainName(), getUser(), getDomain(), accepted,
 				new AsyncCallback<LinkedList<TediResult>>() {
 
 					@Override
 					public void onSuccess(LinkedList<TediResult> i) {
-						onRefresh(false);
-//						if (popup != null) {
-//							popup.hide();
-//							popup = null;
-//						}
+						for (TediResult result : i ) {
+							SimpleLayoutPanel tabPanel = (SimpleLayoutPanel) tabs.get(result.getTedi().getUuid() );
+							tabs.remove( result.getTedi().getUuid());
+							mainTabLayoutPanel.remove(tabPanel);
+						}
+						onRefresh();
 					}
 
 					@Override
 					public void onFailure(Throwable caught) {
-//						if (popup != null){
-//							popup.hide();
-//							popup = null;
-//						}
 						showMessage(AON.MSG.error() + " [Interno: " + caught.getMessage() + "]");
 					}
 
@@ -334,26 +315,20 @@ public class TediCenter extends MainEntryPoint {
 	}
 
 	protected void onAccept(TediResult result) {
-//		showPopupPanel();
 		result.getTedi().setOldStatus(result.getTedi().getStatus());
 		result.getTedi().setStatus(TediInvoiceStatus.accepted);
 		SERVICE.putInvoice(getDomainName(), getUser(), getDomain(), result.getTedi(), new AsyncCallback<TediResult>() {
 
 			@Override
-			public void onSuccess(TediResult results) {
-				onRefresh( false );
-//				if (popup != null) {
-//					popup.hide();
-//					popup = null;
-//				}
+			public void onSuccess(TediResult result) {
+				SimpleLayoutPanel tabPanel = (SimpleLayoutPanel) tabs.get(result.getTedi().getUuid() );
+				tabs.remove( result.getTedi().getUuid());
+				mainTabLayoutPanel.remove(tabPanel);
+				onRefresh( );
 			}
 
 			@Override
 			public void onFailure(Throwable caught) {
-//				if (popup != null) {
-//					popup.hide();
-//					popup = null;
-//				}
 				showMessage(AON.MSG.error() + " [Interno: " + caught.getMessage() + "]");
 			}
 
@@ -374,62 +349,27 @@ public class TediCenter extends MainEntryPoint {
 		return color;
 	}
 
-	private void paintInvoice(TediResult result) {
-		tabContent.clear();
-		boolean mustPaintEntry = false;
-		boolean mustPaintAttach = false;
+	private void paintInvoice(SimplePanel container, TediResult result) {
 		if (result.isImportable()) {
-			mustPaintEntry = true;
-			paintAccountEntryModule( result );
+			paintAccountEntryModule(container, result );
 		}
+		
 		if (!result.isImportable()) {
 			if (result.getInvoice().getRegistry() == null 
 			&& (result.getInvoice().getDetails() == null || result.getInvoice().getDetails().size() == 0)) {
-				mustPaintEntry = true;
-				paintAccountEntryModule( result );
+				paintAccountEntryModule(container, result );
 			}
 			if (result.getInvoice().getRegistry() != null) {
 				// TODO !!!! Aquí puede pasar cualquier cosa!!
-				mustPaintEntry = true;
-				paintAccountEntryModule( result );
+				paintAccountEntryModule(container, result );
 			}
-			SimpleLayoutPanel problemsPanel = new SimpleLayoutPanel();
-			paintProblems(result , problemsPanel);
-			tabContent.add(problemsPanel, template.tab(AON.MSG.notifications(), AON.AON_CSS.aonIconError()));
 		}
-		
-		if (result.hasPDFAttach() || result.hasJPEGAttach()) {
-			mustPaintAttach = true;
-			SimpleLayoutPanel attachContainer = new SimpleLayoutPanel();
-			paintAttach( result , attachContainer);
-			tabContent.add(attachContainer, template.tab(AON.MSG.preview(), AON.AON_CSS.aonIconAttach()));
-		}
-		if (mustPaintEntry && mustPaintAttach) {
-			SplitLayoutPanel entrySplit = new SplitLayoutPanel();
-			SimpleLayoutPanel attachContainer = new SimpleLayoutPanel();
-			paintAttach(result, attachContainer, pdfCombinedViewer);
-			entrySplit.addEast(attachContainer, 450);
-			SimpleLayoutPanel accountEntryModuleContainer = new SimpleLayoutPanel();
-			entrySplit.add(accountEntryModuleContainer);
-			paintAccountEntryModule(result, accountEntryModuleContainer);	
-			tabContent.add(entrySplit, template.tab("Vista Combinada", AON.AON_CSS.aonIconAttach()));
-		}
-		SimpleLayoutPanel InvoiceViewerContainerPanel = new SimpleLayoutPanel();
-		paintInvoiceViewer(InvoiceViewerContainerPanel, result );
-		tabContent.add(InvoiceViewerContainerPanel, template.tab(AON.MSG.invoice(), AON.AON_CSS.aonIconInvoice()));
-		
 	};
 	
-	
-	private void paintAccountEntryModule(TediResult result) {
-		SimpleLayoutPanel accountEntryModuleContainer = new SimpleLayoutPanel();
-		paintAccountEntryModule(result, accountEntryModuleContainer);
-		tabContent.add(accountEntryModuleContainer, template.tab(AON.MSG.accountEntry(), AON.AON_CSS.aonIconInvoice()));
-	}
-	private void paintAccountEntryModule(TediResult result, SimpleLayoutPanel accountEntryModuleContainer) {	
+	private void paintAccountEntryModule(SimplePanel container, TediResult result) {	
 		AccountEntryModule module = new AccountEntryModule();
 		AccountingInvoice ai = result.getAccountingInvoice();
-		module.onModuleLoad(accountEntryModuleContainer, getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), configuration, ai,
+		module.onModuleLoad(container, getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), configuration, ai,
 				new ModuleCallback<AccountEntry>() {
 
 					@Override
@@ -450,73 +390,59 @@ public class TediCenter extends MainEntryPoint {
 						LinkedList<TediResult> accepted = new LinkedList<TediResult>();
 						accepted.add(result);
 						onAcceptAll(accepted);
-						onRefresh( true );
+						onRefresh( );
 					}
 				});
 	}
 	
-	private void paintInvoiceViewer(Panel contentSplitLayoutPanel, TediResult result) {
-		TediInvoiceViewer tediInvoiceViewer = new TediInvoiceViewer(result.getInvoice());
-		ScrollPanel invoicePanel = new ScrollPanel();
-		invoicePanel.setStyleName(AON.AON_CSS.aonScrollArea());
-		invoicePanel.setWidget(tediInvoiceViewer);
-		contentSplitLayoutPanel.add(tediInvoiceViewer);
-	}
 	private void paintAttach(TediResult result, SimpleLayoutPanel container) {
-		paintAttach(result, container, pdfViewer);
-	}
-	
-	private void paintAttach(TediResult result, SimpleLayoutPanel container,Viewer viewer) {
-		viewer.clear();
-		if (result.hasAttach()) {
-			if (result.hasPDFAttach()) {
-				ScrollPanel scrollPanel = new ScrollPanel();
-				container.setWidget(scrollPanel);
-				VerticalPanel verticalPanel = new VerticalPanel();
-				verticalPanel.add(viewer);
-				scrollPanel.setWidget(verticalPanel);
-//				tabContent.add(container, template.tab(AON.MSG.preview(), AON.AON_CSS.aonIconAttach()));
+		if (result.hasPDFAttach()) {
+			ScrollPanel scrollPanel = new ScrollPanel();
+			container.setWidget(scrollPanel);
+			VerticalPanel verticalPanel = new VerticalPanel();
+			verticalPanel.add(pdfViewer);
+			scrollPanel.setWidget(verticalPanel);
+			SERVICE.getInvoiceAttachURL(getCurrentDomainName(), getUser(), getCurrentDomain(),
+					result.getTedi().getUuid(), new AsyncCallback<String>() {
 				
-				SERVICE.getInvoiceAttachURL(getCurrentDomainName(), getUser(), getCurrentDomain(),
-						result.getTedi().getUuid(), new AsyncCallback<String>() {
-					
-					@Override
-					public void onSuccess(String result) {
-						viewer.setDocument(result, 1.0);
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-					}
-				});
-			}
-			if (result.hasJPEGAttach()) {
-				Image image = new Image();
-				ScrollPanel scrollPanel = new ScrollPanel();
-				container.setWidget(scrollPanel);
-				scrollPanel.setWidget(image);
-				SERVICE.getInvoiceAttachURL(getCurrentDomainName(), getUser(), getCurrentDomain(),
-						result.getTedi().getUuid(), new AsyncCallback<String>() {
-					
-					@Override
-					public void onSuccess(String result) {
-						image.setUrl(result);
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-					}
-				});
-			}
+				@Override
+				public void onSuccess(String result) {
+					pdfViewer.setDocument(result, 1.0);
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					showMessage(AON.MSG.error() + " [Interno: " + caught.getMessage() + "]");
+				}
+			});
+		}
+		if (result.hasJPEGAttach()) {
+			Image image = new Image();
+			ScrollPanel scrollPanel = new ScrollPanel();
+			container.setWidget(scrollPanel);
+			scrollPanel.setWidget(image);
+			SERVICE.getInvoiceAttachURL(getCurrentDomainName(), getUser(), getCurrentDomain(),
+					result.getTedi().getUuid(), new AsyncCallback<String>() {
+				
+				@Override
+				public void onSuccess(String result) {
+					image.setUrl(result);
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					showMessage(AON.MSG.error() + " [Interno: " + caught.getMessage() + "]");
+				}
+			});
 		}
 	}
 
-	private void paintProblems(TediResult result, Panel problemsContainer) {
+	private Widget getProblemsWidget(TediResult result) {
+		ScrollPanel scrollPanel = new ScrollPanel();
+		scrollPanel.setStyleName(AON.AON_CSS.aonScrollArea());
+		FlowPanel panel = new FlowPanel();
+		scrollPanel.setWidget(panel);
 		if (result.getMessages() != null && result.getMessages().size() > 0) {
-			ScrollPanel scrollPanel = new ScrollPanel();
-			scrollPanel.setStyleName(AON.AON_CSS.aonScrollArea());
-			
-			FlowPanel panel = new FlowPanel();
 			panel.setStyleName(AON.AON_CSS.aonMarginTop5());
 			panel.addStyleName(AON.AON_CSS.aonMarginLeft());
 			panel.addStyleName(AON.AON_CSS.aonSimpleBorder());
@@ -526,50 +452,47 @@ public class TediCenter extends MainEntryPoint {
 				focuspanel.addStyleName(AON.AON_CSS.aonClickableLabel());
 				FlowPanel flowPanel = new FlowPanel();
 				focuspanel.setWidget(flowPanel);
-
+	
 				InlineLabel colorLabel = new InlineLabel("");
 				colorLabel.setStyleName(AON.AON_CSS.aonPaddingLeft());
 				colorLabel.addStyleName(AON.AON_CSS.aonPaddingRight());
 				colorLabel.getElement().getStyle().setBackgroundColor(getBackgroundColor(error.getLevel()));
 				flowPanel.add(colorLabel);
-
+	
 				InlineLabel errLabel = new InlineLabel(error.getLevel().getLabel());
 				errLabel.setStyleName(AON.AON_CSS.aonClickableLabel());
 				errLabel.addStyleName(AON.AON_CSS.aonPaddingLeft());
 				errLabel.addStyleName(AON.AON_CSS.aonPaddingRight());
 				errLabel.addStyleName(AON.AON_CSS.aonBold());
 				flowPanel.add(errLabel);
-
+	
 				InlineLabel msgLabel = new InlineLabel(error.getMessage());
 				msgLabel.setStyleName(AON.AON_CSS.aonMarginLeft());
 				if (error.canBeFixed()) {
 					focuspanel.addClickHandler(new ClickHandler() {
-
+	
 						@Override
 						public void onClick(ClickEvent event) {
 							error.getContext().getKey().visit(result, tediContextVisitor, new ICallback() {
-
+	
 								@Override
 								public void onCancel() {
-
+	
 								}
-
+	
 								@Override
 								public void onAccept(TediResult result) {
 									SERVICE.validateInvoice(getDomainName(), getUser(), getDomain(), result,
 											new AsyncCallback<TediResult>() {
-
+	
 												@Override
 												public void onSuccess(TediResult result) {
-													paintInvoice(result);
-													// container.clear();
-													// paintInvoiceMenuItem(container,result);
+													onSelect(result, true);
 												}
-
+	
 												@Override
 												public void onFailure(Throwable caught) {
-													showMessage(AON.MSG.error() + " [Interno: "
-															+ caught.getMessage() + "]");
+													showMessage(AON.MSG.error() + " [Interno: " + caught.getMessage() + "]");
 												}
 											});
 								}
@@ -580,364 +503,8 @@ public class TediCenter extends MainEntryPoint {
 				flowPanel.add(msgLabel);
 				panel.add(focuspanel);
 			}
-			scrollPanel.setWidget(panel);
-			problemsContainer.add(scrollPanel);
 		}
+		return scrollPanel;
 	}
 
-	private class TediContextVisitor implements ITediContextVisitor {
-		private void noVisit(TediResult result) {
-			MessageDialog.show("No hay ninguna utilidad para corregir el aviso/error.");
-		}
-
-		@Override
-		public void visitIssueDate(TediResult result, ICallback callback) {
-			showDateDialog(AON.MSG.issueDate(), result.getInvoice().getIssueDate(), new ITediCallback<Date>() {
-
-				@Override
-				public void onAccept(Date date) {
-					result.getInvoice().setIssueDate(date);
-					callback.onAccept(result);
-				}
-
-				@Override
-				public void onCancel() {
-					callback.onCancel();
-				}
-			});
-		}
-
-		@Override
-		public void visitTaxDate(TediResult result, ICallback callback) {
-			showDateDialog(AON.MSG.issueDate(), result.getInvoice().getTaxDate(), new ITediCallback<Date>() {
-
-				@Override
-				public void onAccept(Date date) {
-					result.getInvoice().setTaxDate(date);
-					callback.onAccept(result);
-				}
-
-				@Override
-				public void onCancel() {
-					callback.onCancel();
-				}
-			});
-		}
-
-		@Override
-		public void visitType(TediResult result, ICallback callback) {
-			noVisit(result);
-		}
-
-		@Override
-		public void visitTransaction(TediResult result, ICallback callback) {
-			noVisit(result);
-		}
-
-		@Override
-		public void visitSeries(TediResult result, ICallback callback) {
-			noVisit(result);
-		}
-
-		@Override
-		public void visitScope(TediResult result, ICallback callback) {
-			noVisit(result);
-		}
-
-		@Override
-		public void visitRname(TediResult result, ICallback callback) {
-			noVisit(result);
-		}
-
-		@Override
-		public void visitRegistry(TediResult result, ICallback callback) {
-			TediCenter.this.showRegistryDialog(AON.MSG.titular(), 
-					new ITediCallback<AccountingRegistry>() {
-
-						@Override
-						public void onAccept(AccountingRegistry registry) {
-							
-							final AccountingRegistry ar = registry;
-								FISCAL_SERVICE.initializeInvoice(
-											getCurrentDomainName()
-											,getCurrentDomain()
-											,ar
-											,null
-											,result.getTedi().getDate()
-											,new AsyncCallback<AccountingInvoice>() {
-												
-												@Override
-												public void onSuccess(AccountingInvoice ai) {
-													result.getAccountingInvoice().setRegistry(ai.getRegistry());
-													result.getInvoice().setRegistry(ai.getRegistry().getId());
-													result.getInvoice().setRegistryDocumentType(ai.getRegistry().getDocumentType());
-													result.getInvoice().setRegistryDocumentCountry(ai.getRegistry().getDocumentCountry());
-													result.getInvoice().setRegistryDocument(ai.getRegistry().getDocument());
-													result.getInvoice().setRegistryName(ai.getRegistry().getName());
-													result.getInvoice().setScope(new Scope().setId(ai.getRegistry().getScope()));
-													callback.onAccept(result);
-												}
-												
-												@Override
-												public void onFailure(Throwable caught) {
-													Window.alert(caught.getMessage());
-												}
-											});
-						}
-
-						@Override
-						public void onCancel() {
-							callback.onCancel();
-						}
-					});
-		}
-
-		@Override
-		public void visitReferenceCode(TediResult result, ICallback callback) {
-			showReferenceCodeDialog(AON.MSG.invoiceNumber(), result.getInvoice().getReferenceCode(),
-					new ITediCallback<String>() {
-
-						@Override
-						public void onAccept(String referenceCode) {
-							result.getInvoice().setReferenceCode(referenceCode);
-							callback.onAccept(result);
-						}
-
-						@Override
-						public void onCancel() {
-							callback.onCancel();
-						}
-					});
-		}
-
-		@Override
-		public void visitRdocumentCountry(TediResult result, ICallback callback) {
-			noVisit(result);
-		}
-
-		@Override
-		public void visitRdocument(TediResult result, ICallback callback) {
-			showDocumentDialog(AON.MSG.document(), result.getInvoice().getRegistryDocument(),
-					new ITediCallback<String>() {
-
-						@Override
-						public void onAccept(String document) {
-							result.getInvoice().setRegistryDocument(document);
-							callback.onAccept(result);
-						}
-
-						@Override
-						public void onCancel() {
-							callback.onCancel();
-						}
-					});
-		}
-
-		@Override
-		public void visitNumber(TediResult result, ICallback callback) {
-			noVisit(result);
-		}
-
-		@Override
-		public void visitDomain(TediResult result, ICallback callback) {
-			noVisit(result);
-		}
-
-		@Override
-		public void visitDetailDescription(TediResult result, ICallback callback) {
-			noVisit(result);
-		}
-
-		@Override
-		public void visitDetails(TediResult result, ICallback callback) {
-			noVisit(result);
-		}
-
-		@Override
-		public void visitAddress(TediResult result, ICallback callback) {
-			noVisit(result);
-		}
-
-	}
-
-	public void showDateDialog(String label, Date date, ITediCallback<Date> callback) {
-		final DateBoxEx dateBox = new DateBoxEx();
-		dateBox.setValue(date);
-		BasicDialog<Date> dialog = new BasicDialog<Date>(callback) {
-
-			@Override
-			protected Date getValue() {
-				return dateBox.getValue();
-			}
-
-		};
-		dialog.setContent(label, dateBox);
-		dialog.centerShow();
-	}
-
-	public void showDocumentDialog(String label, String document, ITediCallback<String> callback) {
-		final TextBox documentBox = new TextBox();
-		documentBox.setStyleName(AON.AON_CSS.aonInputText());
-		documentBox.setValue(document);
-		BasicDialog<String> dialog = new BasicDialog<String>(callback) {
-
-			@Override
-			protected String getValue() {
-				return documentBox.getValue();
-			}
-
-		};
-		dialog.setContent(label, documentBox);
-		dialog.centerShow();
-	}
-
-	public void showRegistryDialog(String label, ITediCallback<AccountingRegistry> callback) {
-		final AccountingRegistryBox registryBox = new AccountingRegistryBox(getCurrentDomainName(),getCurrentDomain(),configuration,false);
-		BasicDialog<AccountingRegistry> dialog = new BasicDialog<AccountingRegistry>(callback) {
-			private AccountingRegistry ar;
-
-			@Override
-			protected void afterConstruct() {
-				registryBox.addSelectionHandler( new SelectionHandler<AccountingRegistry>() {
-					
-					@Override
-					public void onSelection(SelectionEvent<AccountingRegistry> event) {
-						ar = event.getSelectedItem();
-					}
-				});
-			}
-
-			@Override
-			protected AccountingRegistry getValue() {
-				return ar;
-			}
-
-		};
-		dialog.setContent(label, registryBox);
-		dialog.centerShow();
-	}
-
-	public void showReferenceCodeDialog(String label, String referenceCode, ITediCallback<String> callback) {
-		final TextBox documentBox = new TextBox();
-		documentBox.setStyleName(AON.AON_CSS.aonInputText());
-		documentBox.setValue(referenceCode);
-		BasicDialog<String> dialog = new BasicDialog<String>(callback) {
-
-			@Override
-			protected String getValue() {
-				return documentBox.getValue();
-			}
-
-		};
-		dialog.setContent(label, documentBox);
-		dialog.centerShow();
-	}
-
-	private static abstract class BasicDialog<T> extends CustomDialog {
-		private FlexTable container = new FlexTable();
-
-		public BasicDialog(ITediCallback<T> callback) {
-
-			setAnimationEnabled(true);
-			setGlassEnabled(true);
-			setModal(true);
-			setCaption(AON.MSG.inputData());
-			setWidth("500px");
-			setHeight("120px");
-
-			container.setStyleName(AON.AON_CSS.aonBlockCenter());
-			container.addStyleName(AON.AON_CSS.aonPanelGrid());
-			container.addStyleName(AON.AON_CSS.aonWidth90Percent());
-			container.getColumnFormatter().setWidth(0, "100px");
-			container.getColumnFormatter().setWidth(1, "auto");
-
-			ScrollPanel scrollPanel = new ScrollPanel();
-			scrollPanel.setStyleName(AON.AON_CSS.aonScrollArea());
-
-			FlowPanel panel = new FlowPanel();
-
-			panel.add(container);
-
-			FlowPanel buttons = new FlowPanel();
-			buttons.setStyleName(AON.AON_CSS.aonTextCenter());
-			buttons.addStyleName(AON.AON_CSS.aonMarginTop());
-
-			final Button okButton = new Button();
-			okButton.setStyleName(AON.AON_CSS.aonConfirmDialogOkButton());
-			okButton.setText(AON.MSG.accept());
-			okButton.addKeyUpHandler(new KeyUpHandler() {
-				@Override
-				public void onKeyUp(KeyUpEvent event) {
-					if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
-						hide();
-						callback.onCancel();
-					}
-				}
-			});
-			okButton.addClickHandler(new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					okButton.setEnabled(false);
-					hide();
-					callback.onAccept(getValue());
-				}
-			});
-			buttons.add(okButton);
-
-			final Button cancelButton = new Button();
-			cancelButton.setStyleName(AON.AON_CSS.aonConfirmDialogCancelButton());
-			cancelButton.addStyleName(AON.AON_CSS.aonMarginLeft());
-			cancelButton.setText(AON.MSG.cancelAction());
-			cancelButton.addClickHandler(new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					cancelButton.setEnabled(false);
-					hide();
-					callback.onCancel();
-				}
-			});
-			cancelButton.addKeyUpHandler(new KeyUpHandler() {
-				@Override
-				public void onKeyUp(KeyUpEvent event) {
-					if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
-						hide();
-						callback.onCancel();
-					}
-				}
-			});
-			addCloseHandler(new CloseHandler<PopupPanel>() {
-				@Override
-				public void onClose(CloseEvent<PopupPanel> event) {
-					callback.onCancel();
-				}
-			});
-			buttons.add(cancelButton);
-			panel.add(buttons);
-			scrollPanel.setWidget(panel);
-			setWidget(scrollPanel);
-			afterConstruct();
-		}
-
-		protected void afterConstruct() {
-		}
-
-		public void setContent(String label, IsWidget child) {
-			int row = container.getRowCount();
-			container.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
-			container.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextLeft());
-			container.setWidget(row, 0, new Label(label));
-
-			container.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-			container.setWidget(row, 1, child);
-		}
-
-		public void centerShow() {
-			center();
-			show();
-		}
-
-		protected abstract T getValue();
-	}
 }

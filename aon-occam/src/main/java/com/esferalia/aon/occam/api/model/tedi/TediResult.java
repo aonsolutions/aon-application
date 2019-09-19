@@ -81,6 +81,9 @@ public class TediResult implements Serializable {
 		TediLevel level = getMoreSeriousLevel();;
 		return ( level == null || level.ordinal() < TediLevel.ERR.ordinal() );
 	}
+	public boolean isEmpty() {
+		return (getInvoice().getRegistry() == null && (getInvoice().getDetails() == null || getInvoice().getDetails().size() == 0));
+	}
 	public boolean hasAttach() {
 		return (getTedi() != null && getTedi().getFile() != null);
 	}

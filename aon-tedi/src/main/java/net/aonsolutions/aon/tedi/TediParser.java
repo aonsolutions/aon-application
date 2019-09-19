@@ -248,8 +248,8 @@ public class TediParser {
 					TediInvoiceTax tit = result.getTedi().getTaxes().get(i);
 					InvoiceBreakdown ib = new InvoiceBreakdown()
 							.setTaxType(tit.getTaxType() == TediTaxType.IVA? TaxType.VAT : TaxType.RETENTION )
-							.setBase( tit.getBase() )
-							.setPercentage( tit.getPercentage() )
+							.setBase( AonNumberUtils.zeroIfNull(tit.getBase()) )
+							.setPercentage( AonNumberUtils.zeroIfNull(tit.getPercentage()) )
 							.setQuota( AonNumberUtils.todouble(tit.getQuota()) )
 							.setSurcharge( AonNumberUtils.todouble( tit.getSurcharge()) )
 							.setSurchargeQuota( AonNumberUtils.todouble( tit.getSurchargeQuota()))

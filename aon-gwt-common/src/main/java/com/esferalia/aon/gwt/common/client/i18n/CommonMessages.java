@@ -3678,5 +3678,8 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("M\u00E1s recientes primero")
 	String newersFirst();
 
+	@DefaultMessage("Lista de facturas")
+	String invoiceList();
+
 }
 

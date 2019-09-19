@@ -28,6 +28,7 @@ public class TediInvoiceTable extends CellTable<TediResult> {
 		
 		addStatusColumn();
 		addInvoiceTypeColumn();
+		addAttachColumn();
 		addIssueDateColumn();
 		addTotalColumn();
 		addNumberColumn();
@@ -70,9 +71,21 @@ public class TediInvoiceTable extends CellTable<TediResult> {
 			}
 		};
 		this.addColumn(invoiceTypeColumn, AON.MSG.type() );
-		this.setColumnWidth(invoiceTypeColumn, 40, Unit.PX);
+		this.setColumnWidth(invoiceTypeColumn, 80, Unit.PX);
 	}
 	
+	private void addAttachColumn() {
+		final Column<TediResult, ImageResource> attachColumn = new Column<TediResult, ImageResource>(
+				new ImageResourceCell()) {
+			@Override
+			public ImageResource getValue(TediResult result) {
+				return result.hasAttach()?AON.AON_RESOURCES.aonIconAttach():null;
+			}
+		};
+		this.addColumn(attachColumn);
+		this.setColumnWidth(attachColumn, 20, Unit.PX);
+	}
+
 	private void addIssueDateColumn() {
 		final TextColumn<TediResult> issueDateColumn = new TextColumn<TediResult>() {
 			@Override
