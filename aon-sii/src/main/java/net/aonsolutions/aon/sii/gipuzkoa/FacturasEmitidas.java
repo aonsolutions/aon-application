@@ -420,10 +420,13 @@ public class FacturasEmitidas extends SIIBuilt {
 				tipoDesglose.setDesgloseTipoOperacion(tcdt);
 			} else {
 				TipoSinDesgloseType tsdt = new TipoSinDesgloseType();
-				NoSujetaType nst = new NoSujetaType();
-				nst.setImportePorArticulos714Otros(Double.toString(AonMathUtils.round(noSujeta))); // TODO
-			//	nst.setImporteTAIReglasLocalizacion(""); // TODO
-				tsdt.setNoSujeta(nst);
+				if(!noSujeta.equals(0.0)) {
+					NoSujetaType nst = new NoSujetaType();
+					nst.setImportePorArticulos714Otros(Double.toString(AonMathUtils.round(noSujeta))); // TODO
+					//	nst.setImporteTAIReglasLocalizacion(""); // TODO
+					tsdt.setNoSujeta(nst);
+				}
+				
 				SujetaType st = new SujetaType();
 			
 				https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.SujetaType.Exenta exenta1 = new https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.SujetaType.Exenta();
