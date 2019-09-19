@@ -139,8 +139,18 @@ public class SIIPost {
         soapResponse.writeTo(baos);
         String result = baos.toString();
         System.out.println("********************* RESPONSE *******************");
-        result = result.split("<env:Body Id=\"Body\">")[1];
-        result = result.split("</env:Body>")[0];
+        System.out.println(result);
+        
+        String body = "<env:Body>";
+        String endBody = "</env:Body>";
+        if(result.contains("<env:Body Id=\"Body\">")) {
+        	body = "<env:Body Id=\"Body\">";
+        } else if(result.contains("<soap:Body>")) {
+        	body = "<soap:Body>";
+        	endBody = "</soap:Body>";
+        }
+        result = result.split(body )[1];
+        result = result.split(endBody)[0];
         System.out.println(result);
         return result;
 	}
