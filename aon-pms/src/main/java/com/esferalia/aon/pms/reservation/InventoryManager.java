@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.xml.messaging.Endpoint;
-import javax.xml.messaging.URLEndpoint;
+//import javax.xml.messaging.Endpoint;
+//import javax.xml.messaging.URLEndpoint;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.soap.MessageFactory;
@@ -172,6 +172,7 @@ public class InventoryManager implements IReservationConstants, ISQLConstants {
 	}
 
 	private void sendInventoryQuery(String inventoryUrl, String message) {
+		/*
 		try {
 			if (message != null) {
 				Endpoint endpoint = new URLEndpoint(new URL(inventoryUrl).toString());
@@ -188,6 +189,7 @@ public class InventoryManager implements IReservationConstants, ISQLConstants {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+		*/
 	}
 
 	private Document obtainMessageDocument(String message) throws Exception {

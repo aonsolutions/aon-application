@@ -8,8 +8,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.xml.messaging.Endpoint;
-import javax.xml.messaging.URLEndpoint;
+//import javax.xml.messaging.Endpoint;
+//import javax.xml.messaging.URLEndpoint;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.soap.MessageFactory;
@@ -261,6 +261,7 @@ public class ReservationRequestManager implements IReservationConstants {
 	}
 
 	private String sendAvailabilityQuery(String message, List<AvailableRoomStay> availableRoomStayList) {
+		/*
 		try {
 			Endpoint endpoint = new URLEndpoint(new URL(getReservationUtils().obtainUrl(CRS_SIMPLE_AVAILABILITY_URL)).toString());
 			SOAPMessage soapRequest = MessageFactory.newInstance().createMessage();
@@ -278,7 +279,7 @@ public class ReservationRequestManager implements IReservationConstants {
 			availableRoomStay.setErrorMessage(ex.getMessage());
 			availableRoomStayList.add(availableRoomStay);
 			ex.printStackTrace();
-		}
+		}*/
 		return null;
 	}
 
@@ -512,7 +513,7 @@ System.out.println(message.toString());
 	}
 
 	private AvailableRoomStay sendBookingQuery(String message, AvailableRoomStay availableRoomStay) {
-		try {
+		/*try {
 			Endpoint endpoint = new URLEndpoint(new URL(getReservationUtils().obtainUrl(CRS_BOOKING_URL)).toString());
 			SOAPMessage soapRequest = MessageFactory.newInstance().createMessage();
 			soapRequest.getMimeHeaders().addHeader("Content-Type", "text/xml;charset=UTF-8");
@@ -527,7 +528,10 @@ System.out.println(message.toString());
 			availableRoomStay.setError(true);
 			availableRoomStay.setErrorMessage(ex.getMessage());
 			return availableRoomStay;
-		}
+		}*/
+			availableRoomStay.setError(true);
+			availableRoomStay.setErrorMessage(":-(");
+			return availableRoomStay;
 	}
 
 	private AvailableRoomStay obtainReservationId(HITISMessage message, AvailableRoomStay availableRoomStay) {
@@ -592,6 +596,7 @@ System.out.println(message.toString());
 	}
 
 	private boolean sendBookingCancelQuery(String message) {
+		/*
 		try {
 			Endpoint endpoint = new URLEndpoint(new URL(getReservationUtils().obtainUrl(CRS_BOOKING_URL)).toString());
 			SOAPMessage soapRequest = MessageFactory.newInstance().createMessage();
@@ -605,7 +610,8 @@ System.out.println(message.toString());
 			return obtainCancellationResult(hitisDocument.getHITISMessage());
 		} catch (Exception ex) {
 			return false;
-		}
+		}*/
+		return false;
 	}
 
 	private boolean obtainCancellationResult(HITISMessage message) {
