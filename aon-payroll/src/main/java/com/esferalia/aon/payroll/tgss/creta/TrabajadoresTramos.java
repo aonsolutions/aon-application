@@ -1105,10 +1105,10 @@ public class TrabajadoresTramos {
 	private static int getQuoteDays(Salary salary,Period period) {
 		int quoteDays = 0;
 		long days = period.daysStream().count();
-		List<ContextData> datas = salary.getContextData().get(QUOTE_DAYS.getName());
+		List<ContextData> datas = salary.getContextData(QUOTE_DAYS.getName(), period.getStart(), period.getEnd());
 		
 		if ( datas == null || datas.isEmpty() )
-			return (int) period.daysStream().count();
+			return (int) days;
 		 
 		for ( ContextData data: datas  ) {
 			Period dataPeriod = new Period(data.getStartDate(), data.getEndDate());
