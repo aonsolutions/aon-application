@@ -392,6 +392,9 @@ public class SalaryDAO {
 				)
 		)
 		.where(conditions)
+		.and(CONTRACT_DATA.END_DATE.isNull()
+			.or(CONTRACT_DATA.END_DATE.ge(CONTRACT_DATA.START_DATE))
+		)
 		.orderBy(SALARY.EMPLOYEE_DOCUMENT)
 		.fetchLazy();
 		//@formatter:on
