@@ -27,12 +27,12 @@ import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.server.accounting.AccMiningMVELContext;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import net.aonsolutions.aon.gwt.udapa.client.IUdapa;
-import net.aonsolutions.aon.gwt.udapa.client.Utils;
 import net.aonsolutions.aon.gwt.udapa.shared.quality.Destiny;
 import net.aonsolutions.aon.gwt.udapa.shared.quality.QualitySheetCode;
 
@@ -208,7 +208,7 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 			String transportDate =  map.get("transport_delivery_date");
 			
 			if(transportDate != null && !"".equals(transportDate) && !"-".equals(transportDate)){
-				Date issueDate = Utils.parseDateTime(transportDate);
+				Date issueDate = AonDateUtils.dateTimeParse(transportDate);
 				AON.getDataResponseStream(domainName, domainId, "", DataResponseSource.QUALITY, f -> 
 					f.getIssueDateProperty().ge(new java.sql.Date(issueDate != null ? issueDate.getTime() : new Date().getTime()))
 				).forEach(dr -> {
