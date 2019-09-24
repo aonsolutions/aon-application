@@ -134,6 +134,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		void onEnterpriseContextMenu(Enterprise enterprise, ContextMenuEvent event);
 
 		void onEmployeeCalendarSelected(EmployeeCalendarDraftObjectData calendar);
+		
+		void onEmployeeSalarySelected(EmployeeSalaryObject employeeSalary);
 
 		void onEmployeeCopy(Employee employee);
 
@@ -421,6 +423,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			onAgreementDraftSelected((AgreementDraftObject) userObject);
 		} else if (userObject instanceof EmployeeCalendarDraftObjectData) {
 			onEmployeeCalendarDraftSelected((EmployeeCalendarDraftObjectData) userObject);
+		} else if (userObject instanceof EmployeeSalaryObject) {
+			onEmployeeSalarySelected((EmployeeSalaryObject) userObject);
 		} else if (userObject instanceof EmployeeDraftObject) {
 			onEmployeeDraftSelected((EmployeeDraftObject) userObject);
 		} else if (userObject instanceof EmployeeNewDraftObject) {
@@ -1302,6 +1306,12 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		}
 	}
 	
+	private void onEmployeeSalarySelected(EmployeeSalaryObject employeeSalaryObject) {
+		for (Listener listener : listeners) {
+			listener.onEmployeeSalarySelected(employeeSalaryObject);
+		}
+	}
+	
 	private void onEmployeeDraftSelected(EmployeeDraftObject employeeDraftObject) {
 		for (Listener listener : listeners) {
 			listener.onEmployeeDraftSelected(employeeDraftObject);
@@ -1366,6 +1376,13 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 		TreeItem salariestItem = addImageItem(employeeItem, "N\u00F3minas", images.salaries());
 		salariestItem.ensureDebugId(getId(employee)+"-salaries");
+		
+		TreeItem salarytItem = addImageItem(employeeItem, "N\u00F3minas (Beta)", images.salaries());
+		EmployeeSalaryObject employeeSalaryObject = new EmployeeSalaryObject(
+				employee, 
+				employeesService);
+		salarytItem.setUserObject(employeeSalaryObject);
+		salarytItem.ensureDebugId(getId(employee)+"-employeesalary");
 
 		TreeItem calendarDraftItem = addImageItem(employeeItem, "Calendario", images.laboralCalendar());
 		EmployeeCalendarDraftObjectData employeeCalendarDraftobjectData = new EmployeeCalendarDraftObjectData(employee.getId(), 

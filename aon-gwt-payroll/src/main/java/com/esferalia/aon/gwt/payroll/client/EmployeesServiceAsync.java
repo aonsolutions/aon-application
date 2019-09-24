@@ -22,6 +22,7 @@ import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
@@ -200,6 +201,10 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 			AsyncCallback<String> callback);
 
 	void resetCalendar(String currentDomainName, Integer employeeId, AsyncCallback<String> callback);
+
+	void getEmployeeSalaries(String currentDomainName, Integer employeeId, AsyncCallback<List<SalaryInfo>> callback);
+
+	void deleteSalariesDB(String currentDomainName, ArrayList<Integer> ids, AsyncCallback<String> callback);
 
 	
 }

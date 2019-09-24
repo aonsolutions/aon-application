@@ -35,6 +35,7 @@ import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
 import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
@@ -409,6 +410,15 @@ public class DomainEmployeesServiceAsync {
 		
 	}
 	
+	public void getEmployeeSalaries(Integer employeeId, AsyncCallback<List<SalaryInfo>> callback) {
+		employeesServiceAsync.getEmployeeSalaries(getCurrentDomainName(), employeeId, callback);
+	}
+	
+	public void deleteSalariesDB(ArrayList<Integer> ids, AsyncCallback<String> callback) {
+		employeesServiceAsync.deleteSalariesDB(getCurrentDomainName(), ids, callback);
+	}
+
+	
 	// ------------------------------------------------------------------------
 	
 	public AgreementServiceAsync asAgreementServiceAsync() {
@@ -425,6 +435,9 @@ public class DomainEmployeesServiceAsync {
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
 	}
+
+	
+	
 
 
 }

@@ -1914,6 +1914,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private EmployeeDraft employeeDraft;
 	private EmployeeNewDraft employeeNewDraft;
 	private EmployeeCalendarDraft employeeCalendarDraft;
+	private EmployeeSalary employeeSalary;
 	private CategoryDraft categoryDraft;
 	private AgreementDraft agreementDraft;
 	private BonusEditor bonusEditor;
@@ -2200,6 +2201,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	public void onEmployeeCalendarSelected(EmployeeCalendarDraftObjectData calendar) {
 		employeeDetail.setWidget(getEmployeeCalendarDraft());
 		getEmployeeCalendarDraft().setEmployeeCalendarDraftObject(calendar);
+	}
+	
+	@Override
+	public void onEmployeeSalarySelected(EmployeeSalaryObject employeeSalary) {
+		employeeDetail.setWidget(getEmployeeSalary());
+		getEmployeeSalary().setEmployeeSalaryObject(employeeSalary);
 	}
 	
 	@Override
@@ -2550,6 +2557,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		if (employeeCalendarDraft == null)
 			employeeCalendarDraft = new EmployeeCalendarDraft();
 		return employeeCalendarDraft;
+	}
+	
+	private EmployeeSalary getEmployeeSalary() {
+		if (employeeSalary == null)
+			employeeSalary = new EmployeeSalary();
+		return employeeSalary;
 	}
 
 	private EmployeeContextMenu getEmployeeContextMenu() {
@@ -3153,6 +3166,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	/*-{
 		return eval(javascript);
 	}-*/;
+
+	
 
 	
 

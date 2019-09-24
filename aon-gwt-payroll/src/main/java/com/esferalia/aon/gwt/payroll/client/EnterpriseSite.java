@@ -178,6 +178,11 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	public void onEmployeeCalendarSelected(EmployeeCalendarDraftObjectData calendar) {
 		detailPanel.setWidget(calendarDraft);				
 	}
+	
+	@Override
+	public void onEmployeeSalarySelected(EmployeeSalaryObject employeeSalary) {
+
+	}
 
 	
 	@Override
@@ -309,4 +314,6 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		// TODO Auto-generated method stub
 		
 	}
+
+	
 }

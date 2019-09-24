@@ -1,0 +1,73 @@
+package com.esferalia.aon.gwt.payroll.client;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Consumer;
+
+import com.esferalia.aon.gwt.payroll.shared.Employee;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
+public class EmployeeSalaryObject {
+	
+	private DomainEmployeesServiceAsync employeesService;
+	private Employee employee;
+	private List<SalaryInfo> employeeSalaries;
+	
+	public EmployeeSalaryObject() {
+		super();
+	}
+
+	public EmployeeSalaryObject(Employee employee, DomainEmployeesServiceAsync employeesService) {
+		this.employee = employee;
+		this.employeesService = employeesService;
+	}
+	
+	public void getEmployeeSalariesDB(Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){
+		
+		employeesService.getEmployeeSalaries(employee.getId(), new AsyncCallback<List<SalaryInfo>>(){
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(List<SalaryInfo> result) {
+				employeeSalaries = result;
+				success.accept(result);
+			}
+			
+		});
+	}
+	
+	public void delete(Set<SalaryInfo> salaries, Consumer<String> success, Consumer<Throwable> failure) {
+		Window.alert("Salary Set Size : " + salaries.size());
+		ArrayList<Integer> ids = new ArrayList<Integer>();
+		for(SalaryInfo salary : salaries) {
+			ids.add(salary.getId());
+		}
+		
+		employeesService.deleteSalariesDB(ids, new AsyncCallback<String>(){
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(String result) {
+				success.accept(result);
+			}
+			
+		});
+	}
+	
+	public List<SalaryInfo> getEmployeeSalaries() {
+		return this.employeeSalaries;
+	}
+
+		
+}

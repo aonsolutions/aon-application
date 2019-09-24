@@ -23,6 +23,7 @@ import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.junit.client.GWTTestCase;
@@ -168,6 +169,19 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 
 		@Override
 		public void resetCalendar(String currentDomainName, Integer employeeId, AsyncCallback<String> callback) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getEmployeeSalaries(String currentDomainName, Integer employeeId,
+				AsyncCallback<List<SalaryInfo>> callback) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void deleteSalariesDB(String currentDomainName, ArrayList<Integer> ids, AsyncCallback<String> callback) {
 			// TODO Auto-generated method stub
 			
 		}
@@ -320,6 +334,20 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 
 					@Override
 					public void resetCalendar(String currentDomainName, Integer employeeId,
+							AsyncCallback<String> callback) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void getEmployeeSalaries(String currentDomainName, Integer employeeId,
+							AsyncCallback<List<SalaryInfo>> callback) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void deleteSalariesDB(String currentDomainName, ArrayList<Integer> ids,
 							AsyncCallback<String> callback) {
 						// TODO Auto-generated method stub
 						

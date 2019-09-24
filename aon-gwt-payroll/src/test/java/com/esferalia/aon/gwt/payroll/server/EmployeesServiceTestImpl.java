@@ -35,6 +35,7 @@ import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
 import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
@@ -600,6 +601,18 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 
 	@Override
 	public String resetCalendar(String currentDomainName, Integer employeeId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<SalaryInfo> getEmployeeSalaries(String currentDomainName, Integer employeeId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String deleteSalariesDB(String currentDomainName, ArrayList<Integer> ids) {
 		// TODO Auto-generated method stub
 		return null;
 	}

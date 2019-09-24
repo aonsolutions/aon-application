@@ -22,6 +22,7 @@ import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
@@ -177,5 +178,9 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 			String tc2, boolean isQuoteContract, Integer quoteGroup, boolean isOcupationContract, String ocupation);
 
 	String resetCalendar(String currentDomainName, Integer employeeId);
+
+	List<SalaryInfo> getEmployeeSalaries(String currentDomainName, Integer employeeId);
+
+	String deleteSalariesDB(String currentDomainName, ArrayList<Integer> ids);
 
 }
