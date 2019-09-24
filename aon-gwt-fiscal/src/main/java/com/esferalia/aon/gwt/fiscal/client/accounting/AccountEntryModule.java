@@ -1072,7 +1072,6 @@ public class AccountEntryModule extends MainEntryPoint {
 		wrp.getAccountEntry().getEntryType().visit(wrp.getAccountEntry(), new  AccountEntryTypeVisitorAdapter() {
 			@Override
 			public void visitExpenseInvoice(AccountEntry entry) {
-				Window.alert("Undeductible ..: " + entry.isUndeductible());
 				if (entry.isUndeductible()) {
 					entryType.setSelectedIndex(EntryType.TICKET.ordinal());
 					createAndAttachTicketPanel(wizardCbk);
