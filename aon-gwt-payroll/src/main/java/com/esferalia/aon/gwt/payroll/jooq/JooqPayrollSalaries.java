@@ -96,7 +96,6 @@ public class JooqPayrollSalaries {
 	private static String deleteSalariesDB(DSLContext dslContext, ArrayList<Integer> ids) {
 		// Delete SalaryData, SalaryBonus, SalaryCost, SalaryPayment, SalaryDeduction, SalaryEmbargo, Salary
 		for(Integer id : ids) {
-			System.out.println(id);
 			
 			dslContext.delete(SALARY_DATA).where(SALARY_DATA.SALARY.eq(id)).execute();
 			dslContext.delete(SALARY_BONUS).where(SALARY_BONUS.SALARY.eq(id)).execute();

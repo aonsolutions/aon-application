@@ -7,7 +7,6 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeSalaryObject {
@@ -44,7 +43,6 @@ public class EmployeeSalaryObject {
 	}
 	
 	public void delete(Set<SalaryInfo> salaries, Consumer<String> success, Consumer<Throwable> failure) {
-		Window.alert("Salary Set Size : " + salaries.size());
 		ArrayList<Integer> ids = new ArrayList<Integer>();
 		for(SalaryInfo salary : salaries) {
 			ids.add(salary.getId());

@@ -73,7 +73,6 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				Window.alert("Items selected : " + selectionModel.getSelectedSet().size());
 				employeeSalaryObject.delete(
 						selectionModel.getSelectedSet(), 
 						s -> {
@@ -336,7 +335,6 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 
 			@Override
 			public void execute(SalaryInfo salary) {
-				Window.alert("Salary ID : " + salary.getId());
 				String printURL = URL.encode(GWT.getModuleBaseURL() + "salary/"
 						+ salary.getId() + ".pdf?" + salary.getType().name() );
 				
