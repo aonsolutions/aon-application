@@ -12,7 +12,6 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
-import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.InvoicePanel.IInvoicePanelCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.InvoiceRectificationDataPanel.InvoiceRectificationDataPanelCallback;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.InvoiceCalculator;
@@ -386,7 +385,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		service.setTabIndex(++tabindex);
 		service.setStyleName(AON.AON_CSS.aonInline());
 		service.addStyleName(AON.AON_CSS.aonWidth150());
-		service.setEnabled(!callback.getInvoice().isExpenses()); // Si es un gasto, true.
+		service.setEnabled(!callback.getInvoice().isExpenses() && !callback.getInvoice().isUndeductible());
 		service.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			
 			@Override
@@ -412,6 +411,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		investment.setTabIndex(++tabindex);
 		investment.setStyleName(AON.AON_CSS.aonInline());
 		investment.addStyleName(AON.AON_CSS.aonWidthAuto());
+		investment.setEnabled(!callback.getInvoice().isUndeductible());
 		investment.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			
 			@Override
@@ -442,6 +442,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		surcharge.setTabIndex(++tabindex);
 		surcharge.setStyleName(AON.AON_CSS.aonInline());
 		surcharge.addStyleName(AON.AON_CSS.aonWidth150());
+		surcharge.setEnabled(!callback.getInvoice().isUndeductible());
 		surcharge.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			
 			@Override
@@ -467,6 +468,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		vatAccrualPayment.setTabIndex(++tabindex);
 		vatAccrualPayment.setStyleName(AON.AON_CSS.aonInline());
 		vatAccrualPayment.addStyleName(AON.AON_CSS.aonWidthAuto());
+		vatAccrualPayment.setEnabled(!callback.getInvoice().isUndeductible());
 		vatAccrualPayment.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			
 			@Override
@@ -496,6 +498,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		withholding.setTabIndex(++tabindex);
 		withholding.setStyleName(AON.AON_CSS.aonInline());
 		withholding.addStyleName(AON.AON_CSS.aonWidth150());
+		withholding.setEnabled(!callback.getInvoice().isUndeductible());
 		withholding.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			
 			@Override
@@ -521,6 +524,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		withholdingFarmer.setTabIndex(++tabindex);
 		withholdingFarmer.setStyleName(AON.AON_CSS.aonInline());
 		withholdingFarmer.addStyleName(AON.AON_CSS.aonWidthAuto());
+		withholdingFarmer.setEnabled(!callback.getInvoice().isUndeductible());
 		withholdingFarmer.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			
 			@Override
@@ -546,7 +550,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 	}
 	
 	private void paintButtons(final IInvoicePanelCallback callback) {
-		if (!callback.getInvoice().getInvoice().isRectifier()) {
+		if (!callback.getInvoice().getInvoice().isRectifier() && !callback.getInvoice().isUndeductible()) {
 			FlowPanel panel = new  FlowPanel();
 			panel.setStyleName(AON.AON_CSS.aonInvoicePanelInner());
 			panel.addStyleName(AON.AON_CSS.aonMarginTop());
@@ -635,7 +639,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 			flexContainer.clear();
 		} else {
 			Invoice inv = invoice.getInvoice();
-			invoiceTypeLabel.setText( getInvoiceLabel(ar.getType().getInvoiceType(),invoice.getInvoice().getRectificationType()));
+			invoiceTypeLabel.setText( getInvoiceLabel(inv.getType(),invoice.getInvoice().getRectificationType()));
 			eastPanelInner.setVisible(true);
 			//workplace
 			fullDocument.setValue(inv.getRegistryDocumentType(),inv.getRegistryDocumentCountry(),inv.getRegistryDocument());
@@ -676,6 +680,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		if (invoiceType == InvoiceType.SALES   ) l = "Factura "+x+"de Ventas";
 		if (invoiceType == InvoiceType.EXPENSES) l = "Factura "+x+"de Gastos";
 		if (invoiceType == InvoiceType.PURCHASE) l = "Factura "+x+"de Compra";
+		if (invoiceType == InvoiceType.UNDEDUCTIBLE) l = "Ticket/Gasto no Ded.";
 		return l;
 	}
 
@@ -692,7 +697,10 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		public void visitCreditor(AccountingRegistry reg) {
 			investment.setVisible(true);
 		}
-
+		@Override
+		public void visitUndedCreditor(AccountingRegistry reg) {
+			investment.setVisible(false);
+		}
 		@Override
 		public void visitSupplier(AccountingRegistry reg) {
 			investment.setVisible(true);

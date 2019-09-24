@@ -34,6 +34,7 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.IWizardContent;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.InvoicePanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.Manual;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.SalaryEntryPanel;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.TicketPanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.WizardContentBase.ISelectionCallback;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -135,6 +136,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		void visitInvoice();
 		void visitSalary();
 		void visitFinance();
+		void visitTicket();
 	}
 	public interface IEntryTypeVisitorWalker {
 		void visit( IEntryTypeVisitor visitor);
@@ -144,6 +146,8 @@ public class AccountEntryModule extends MainEntryPoint {
 			@Override public void visit(IEntryTypeVisitor visitor) {visitor.visitManual();}})
 		,INVOICE( AON.MSG.invoice(), new  IEntryTypeVisitorWalker() {
 			@Override public void visit(IEntryTypeVisitor visitor) {visitor.visitInvoice();}})
+		,TICKET( "Ticket/Gasto no Ded.", new  IEntryTypeVisitorWalker() {
+			@Override public void visit(IEntryTypeVisitor visitor) {visitor.visitTicket();}})
 		,SALARY( AON.MSG.salary(), new  IEntryTypeVisitorWalker() {
 			@Override public void visit(IEntryTypeVisitor visitor) {visitor.visitSalary();}})
 		,FINANCE( AON.MSG.treasury(), new  IEntryTypeVisitorWalker() {
@@ -376,25 +380,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		if (accountEntryId != null) {
 			selectEntry(accountEntryId);
 		} else if (ai  != null) {
-			final IContentAttachCallback wizardCbk = new IContentAttachCallback() {
-				@Override
-				public void onAttach() {
-					AccountEntryModule.this.wizardContent.select(null,ai,new ISelectionCallback() {
-						
-						@Override
-						public void onSuccess() {
-							syncCurrent();
-						}
-						
-						@Override
-						public void onFailure() {
-							invalidateModule("");
-						}
-					});
-				}
-			};
 			selectWizardContent(null, ai);
-			// createAndAttachInvoicePanel( wizardCbk );
 		} else {
 			reset();
 		}
@@ -822,6 +808,27 @@ public class AccountEntryModule extends MainEntryPoint {
 			}
 		});
 	}
+
+	private void addSelectionEvent(final TicketPanel panel) {
+		panel.addSelectionHandler(new SelectionHandler<AccountingInvoice>() {
+			
+			@Override
+			public void onSelection(SelectionEvent<AccountingInvoice> event) {
+				panel.select(event.getSelectedItem(), new ISelectionCallback() {
+					@Override
+					public void onSuccess() {
+						syncCurrent();
+					}
+					
+					@Override
+					public void onFailure() {
+						invalidateModule("");
+					}
+				});
+			}
+		});
+	}
+
 	private void selectEntry(final Integer id) {
 		if (id != null) {
 			fiscalService.getAccountEntry(getDomainName(),
@@ -925,6 +932,10 @@ public class AccountEntryModule extends MainEntryPoint {
 				createAndAttachInvoicePanel(cbk);
 			}
 			@Override
+			public void visitTicket() {
+				createAndAttachTicketPanel(cbk);
+			}
+			@Override
 			public void visitSalary() {
 				SalaryEntryPanel panel = new SalaryEntryPanel(moduleCallback);
 				panel.attach(cbk);
@@ -976,6 +987,12 @@ public class AccountEntryModule extends MainEntryPoint {
 	
 	private void createAndAttachInvoicePanel(IContentAttachCallback wizardCbk) {
 		InvoicePanel panel = new InvoicePanel(moduleCallback);
+		addSelectionEvent(panel);
+		panel.attach(wizardCbk);
+	}
+
+	private void createAndAttachTicketPanel(IContentAttachCallback wizardCbk) {
+		TicketPanel panel = new TicketPanel(moduleCallback);
 		addSelectionEvent(panel);
 		panel.attach(wizardCbk);
 	}
@@ -1052,11 +1069,17 @@ public class AccountEntryModule extends MainEntryPoint {
 			}
 		};
 		
-		wrp.getAccountEntry().getEntryType().visit(null, new  AccountEntryTypeVisitorAdapter() {
+		wrp.getAccountEntry().getEntryType().visit(wrp.getAccountEntry(), new  AccountEntryTypeVisitorAdapter() {
 			@Override
 			public void visitExpenseInvoice(AccountEntry entry) {
-				entryType.setSelectedIndex(EntryType.INVOICE.ordinal());
-				createAndAttachInvoicePanel(wizardCbk);
+				Window.alert("Undeductible ..: " + entry.isUndeductible());
+				if (entry.isUndeductible()) {
+					entryType.setSelectedIndex(EntryType.TICKET.ordinal());
+					createAndAttachTicketPanel(wizardCbk);
+				} else {
+					entryType.setSelectedIndex(EntryType.INVOICE.ordinal());
+					createAndAttachInvoicePanel(wizardCbk);
+				}
 			}
 
 			@Override
@@ -1378,4 +1401,5 @@ public class AccountEntryModule extends MainEntryPoint {
 	    });		
 		
 	}
+
 }

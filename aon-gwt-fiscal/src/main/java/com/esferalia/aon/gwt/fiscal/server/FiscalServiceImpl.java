@@ -157,15 +157,7 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	@Override
 	public AccountEntry getAccountEntry(String domainName, int domain, int id)
 			throws AonCoreException {
-		LinkedList<AccountEntry> list = ACCOUNTING.getAccountEntries(
-				domainName, domain, this.getUserLogin(), 
-				p -> p.getIdProperty().eq(id)
-				, 0, 1)
-				;
-		if (list == null || list.isEmpty()) {
-			return null;
-		}
-		return list.getFirst();
+		return ACCOUNTING.getAccountEntry(domainName, domain, this.getUserLogin(), id);
 	}
 
 	@Override

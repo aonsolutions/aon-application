@@ -34,6 +34,8 @@ public class AccountEntry implements Serializable, HasAudit {
 	
 	private boolean dirty = true;
 	
+	private boolean undeductible; 
+	
 	private LinkedList<AccountEntryDetail> details;
 	
 	public Integer getId() {
@@ -153,6 +155,14 @@ public class AccountEntry implements Serializable, HasAudit {
 		return this;
 	}
 	
+	public boolean isUndeductible() {
+		return undeductible;
+	}
+	public AccountEntry setUndeductible(boolean undeductible) {
+		this.undeductible = undeductible;
+		return this;
+	}
+	
 	public LinkedList<AccountEntryDetail> getDetails() {
 		if (this.details == null) {
 			this.details = new LinkedList<AccountEntryDetail>();
@@ -259,6 +269,7 @@ public class AccountEntry implements Serializable, HasAudit {
 			.setActivityDescription(ori.getActivityDescription())
 			.setJournal(ori.journal)
 			.setSecurityLevel(ori.securityLevel)
+			.setUndeductible(ori.isUndeductible())
 			.setComments(ori.comments)
 			.setCreationUser(ori.creationUser)
 			.setCreationDate(ori.creationDate)

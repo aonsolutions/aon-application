@@ -39,6 +39,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -162,7 +163,11 @@ public class AccountingInvoiceDAO {
 						.fetch()
 						.stream()
 						.forEach( accDet -> {
-							fillInvoiceTax(ctx, invoideDetailId, accDet, det, ai, config);
+							if (ai.isUndeductible()) {
+								fillUndeductibleInvoiceTax(ctx, accDet, det, ai, config);
+							} else {
+								fillInvoiceTax(ctx, invoideDetailId, accDet, det, ai, config);
+							}
 						}
 					);
 				});
@@ -280,6 +285,23 @@ public class AccountingInvoiceDAO {
 		}
 	}
 
+	private static void fillUndeductibleInvoiceTax(AONContext ctx, Record accDet, Record det, AccountingInvoice ai, AonConfiguration config) {
+		final LinkedList<InvoiceVAT> vats = new LinkedList<InvoiceVAT>();
+		final InvoiceVAT vat = new InvoiceVAT();
+		vats.add(vat);
+		double base = det.get( INVOICE_DETAIL.TAXABLE_BASE );		
+		vat.setBase(base)
+			.setExpAccountId(accDet.getValue(EXP_ACCOUNT.ID))
+			.setExpAccountCode(accDet.getValue(EXP_ACCOUNT.CODE))
+			.setExpAccountDescription(accDet.getValue(EXP_ACCOUNT.DESCRIPTION));
+		vat.setQuotaEdited( false );
+		vat.setSurchargeQuotaEdited( false  );
+		vat.setDeductibleQuotaEdited( false  );
+		if (!vats.isEmpty()) {
+			ai.addVat(vats.get(0));
+		}
+	}
+
 	private static void fillBreakdown(AONContext ctx, Invoice invoice) {
 		if (invoice.getBreakdown() == null) {
 			invoice.setBreakdown(new LinkedList<InvoiceBreakdown>());
@@ -341,6 +363,9 @@ public class AccountingInvoiceDAO {
 				.orElse(null);
 		if (reg == null) {
 			throw new AonCoreException("No se pudo encontrar al titular de factura \"" + registry + "\"");
+		}
+		if (type == InvoiceType.UNDEDUCTIBLE && reg.getType() == AccountingRegistryType.CREDITOR) {
+			reg.setType(AccountingRegistryType.UNDED_CREDITOR);	
 		}
 		if (reg.getType().getInvoiceType() != type) {
 			throw new AonCoreException("No se puede inicializar una factura de " 
@@ -523,6 +548,13 @@ public class AccountingInvoiceDAO {
 			invoice.setWithholdingFarmer(reg.isWithholdingFarmer());
 			visitCommon(reg);
 		}
+		public void visitUndedCreditor(AccountingRegistry reg) {
+			visitCommon(reg);
+			invoice.setSurcharge(false);
+			invoice.setWithholding(false);
+			invoice.setWithholdingFarmer(false);
+			invoice.setVatAccrualPayment(false);
+		};
 	}
 
 	private static class InvoiceDuplicator implements IAccountingRegistryTypeVisitor {
@@ -563,6 +595,11 @@ public class AccountingInvoiceDAO {
 			invoice.setNumber(0);
 			invoice.setReferenceCode(null);
 			visitCommon(reg);
+		}
+		
+		@Override
+		public void visitUndedCreditor(AccountingRegistry reg) {
+			visitCreditor(reg);
 		}
 	}
 
@@ -708,6 +745,12 @@ public class AccountingInvoiceDAO {
 				
 				@Override
 				public void visitCreditor(AccountingRegistry reg) {
+					Account account = createAccountAndFill(reg);
+					RegistryDAO.updateCreditorAccount(ctx,reg.getId(),account.getId());
+				}
+				
+				@Override
+				public void visitUndedCreditor(AccountingRegistry reg) {
 					Account account = createAccountAndFill(reg);
 					RegistryDAO.updateCreditorAccount(ctx,reg.getId(),account.getId());
 				}
@@ -863,6 +906,20 @@ public class AccountingInvoiceDAO {
 			} 
 		}
 		return ai;
+	}
+
+	public static boolean isUndeductibleInvoice(AONContext ctx, Integer id) {
+		return InvoiceType.UNDEDUCTIBLE == ctx.getDslContext()
+			.select( INVOICE.TYPE )
+			.from( ACCOUNT_ENTRY_INVOICE )
+			.innerJoin(INVOICE).on(ACCOUNT_ENTRY_INVOICE.INVOICE.eq(INVOICE.ID))
+			.where(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY.eq(id))
+			.and(ACCOUNT_ENTRY_INVOICE.DOMAIN.eq(ctx.getDomainId()))
+			.fetch()
+			.stream()
+			.map(rec -> AonEnumUtils.enumValue(InvoiceType.class,rec.getValue(INVOICE.TYPE)))
+			.findFirst()
+			.orElse( InvoiceType.EXPENSES );
 	}
 }
 

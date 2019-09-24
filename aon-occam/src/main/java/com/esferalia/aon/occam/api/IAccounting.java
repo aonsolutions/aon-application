@@ -110,6 +110,7 @@ public interface IAccounting {
 	public AccUtilitiesResult regenerateJournal(AONContext ctx, Integer accuountPeriod);
 	public AccUtilitiesResult getInputVatRegenerationInfo(AONContext ctx);
 	public AccUtilitiesResult regenerateInputVat(AONContext ctx, Integer year);
+	public boolean isUndeductibleInvoice(AONContext ctx, Integer id);
 	
 	
 }

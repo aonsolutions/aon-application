@@ -205,6 +205,10 @@ public class AccountingImpl implements IAccounting {
 	public AccountingInvoice getRegistryLastAccountingInvoice(AONContext ctx, Integer registryId) {
 		return AccountingInvoiceDAO.duplicateLastAccountingInvoice(ctx, registryId);
 	}
+	@Override
+	public boolean isUndeductibleInvoice(AONContext ctx, Integer id) {
+		return AccountingInvoiceDAO.isUndeductibleInvoice(ctx, id);
+	}
 
 	@Override
 	public AccountingInvoice initializeInvoice(AONContext ctx, AccountingRegistry registry, Integer activity, Date issueDate) {

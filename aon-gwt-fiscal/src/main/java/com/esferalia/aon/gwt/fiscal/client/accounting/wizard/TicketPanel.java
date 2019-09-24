@@ -26,8 +26,8 @@ import com.esferalia.aon.occam.api.model.finance.IAccountingInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRecorder;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
-import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
@@ -65,9 +65,9 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 
-public class InvoicePanel extends WizardContentBase<AccountingInvoice> implements HasSelectionHandlers<AccountingInvoice> {
+public class TicketPanel extends WizardContentBase<AccountingInvoice> implements HasSelectionHandlers<AccountingInvoice> {
 	
-	private static final Logger LOGGER = Logger.getLogger(InvoicePanel.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(TicketPanel.class.getName());
 	static {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
@@ -90,8 +90,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			
 	private FlexTable regTable;
 	private FlexTable flexTable;
-	private InvoiceVATPanel vatPanel;
-	private InvoiceWithholdingPanel withholdingPanel;
+	private TicketDetailPanel vatPanel;
 	
 	private FlexTable payTable;
 	private InvoiceExtraPanel extraPanel;
@@ -123,7 +122,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	private AccountingInvoice invoice;
 	private InvoicePanelRegistryVisitor invoicePanelRegistryVisitor;
 	
-	public InvoicePanel(final IAccountEntryModuleCallback callback) {
+	public TicketPanel(final IAccountEntryModuleCallback callback) {
 		setCallback(callback);
 		
 		FinanceServiceAsync financeServiceRaw = GWT.create(FinanceService.class);
@@ -142,7 +141,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		centerPanel.setStyleName(AON.AON_CSS.aonFlexContainer());
 		centerPanel.addStyleName(AON.AON_CSS.aonPadding2Top());
 		centerPanel.setStyleName(AON.AON_CSS.aonInvoicePanel());
-		centerPanel.getElement().getStyle().setBackgroundColor(InvoicePanel.BACKGROUND_COLOR);
+		centerPanel.getElement().getStyle().setBackgroundColor(TicketPanel.BACKGROUND_COLOR);
 
 		//  -------------------------- EXTRA PANEL ------------------------------
 		extraPanel = new InvoiceExtraPanel(  );
@@ -155,8 +154,6 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 					}
 				}
 				vatPanel.extraInfoChanged();
-				withholdingPanel.setVisible(getWrapper().getInvoice().isWithholding());
-				withholdingPanel.setValue(getWrapper().getWithholdingData());
 				invoiceTotal.setValue(getWrapper().getInvoice().getTotal(),false);
 				_paintEntry();
 				getWrapper().getAccountEntry().setDirty(true);
@@ -167,7 +164,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			
 			@Override
 			public void onSelection(SelectionEvent<AccountingInvoice> event) {
-				SelectionEvent.<AccountingInvoice>fire( InvoicePanel.this, event.getSelectedItem());
+				SelectionEvent.<AccountingInvoice>fire( TicketPanel.this, event.getSelectedItem());
 			}
 		});
 		editablePanel.addEast(extraPanel, 380);
@@ -183,12 +180,11 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		tablesPanel.add(flexTable);
 		centerContainer.add(tablesPanel);
 		
-		vatPanel = new InvoiceVATPanel( invoiceCallback );
+		vatPanel = new TicketDetailPanel( invoiceCallback );
 		vatPanel.addValueChangeHandler(new ValueChangeHandler<InvoiceVAT>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<InvoiceVAT> event) {
 				InvoiceCalculator.calculate(getWrapper());
-				withholdingPanel.setValue(getWrapper().getWithholdingData());
 				invoiceTotal.setValue(getWrapper().getInvoice().getTotal(),false);
 				_paintEntry();
 				getWrapper().getAccountEntry().setDirty(true);
@@ -205,31 +201,6 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			}
 		});
 		centerContainer.add(vatPanel);
-		
-		// WITHHOLDING PANEL
-		withholdingPanel = new InvoiceWithholdingPanel( invoiceCallback );
-		withholdingPanel.setStyleName(AON.AON_CSS.aonMarginTop());
-		withholdingPanel.addValueChangeHandler(new ValueChangeHandler<InvoiceWithholding>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<InvoiceWithholding> event) {
-				InvoiceCalculator.calculate(getWrapper());
-				withholdingPanel.setValue(getWrapper().getWithholdingData());
-				invoiceTotal.setValue(getWrapper().getInvoice().getTotal(),false);
-				_paintEntry();
-				getWrapper().getAccountEntry().setDirty(true);
-				getCallback().getModule().refreshIdLabel();
-			}
-		});
-		withholdingPanel.addSelectionHandler(new SelectionHandler<Account>() {
-			@Override
-			public void onSelection(SelectionEvent<Account> event) {
-				getCallback().getModule().onBalance(event.getSelectedItem());
-				_paintEntry();
-				getWrapper().getAccountEntry().setDirty(true);
-				getCallback().getModule().refreshIdLabel();
-			}
-		});
-		centerContainer.add( withholdingPanel );
 		
 		// PAY TABLE
 		createPayTable();
@@ -292,6 +263,9 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			@Override
 			public void onSelection(SelectionEvent<AccountingRegistry> event) {
 				final AccountingRegistry ar = event.getSelectedItem();
+				if (ar.getType() == AccountingRegistryType.CREDITOR) {
+					ar.setType( AccountingRegistryType.UNDED_CREDITOR);
+				}
 				getFiscalService().initializeInvoice(
 						getCallback().getCurrentDomainName()
 						,getCallback().getCurrentDomainId()
@@ -448,7 +422,6 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 				if (getWrapper().getVats() != null &&  getWrapper().getVats().size() == 1) {
 					InvoiceCalculator.reverseCalculate(getWrapper(),invoiceTotal.getValue());
 					vatPanel.populateFirstVat();
-					withholdingPanel.setValue( getWrapper().getWithholdingData() );
 				}
 				_paintEntry();
 				getWrapper().getAccountEntry().setDirty(true);
@@ -690,7 +663,6 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 					registryBox.setEnabled(true);
 					flexTable.setVisible(false);
 					payTable.setVisible(false);
-					withholdingPanel.setVisible(false);
 					vatPanel.setVisible(false);
 					extraPanel.invoiceChanged(getWrapper());
 					if (cbk != null) cbk.onSuccess();
@@ -727,7 +699,6 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 				fillSalesSeries();
 				extraPanel.paint(invoiceCallback);
 				vatPanel.paint();
-				withholdingPanel.paint();
 				_paintEntry();
 				registryBox.setValue(getWrapper().getRegistry());
 				registryBox.setEnabled(getCallback().getModule().isNew());
@@ -763,66 +734,27 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 
 		@Override
 		public void visitPurchase(AccountingInvoice invoice) {
-			populatePurchaseInvoice(invoice);
+			getCallback().getModule().onError("No se pueden hacer facturas de Compras con el tipo \"Ticket\" seleccionado");
 		}
 
 		@Override
 		public void visitSales(AccountingInvoice invoice) {
-			populateSalesInvoice(invoice);
+			getCallback().getModule().onError("No se pueden hacer facturas de Ventas con el tipo \"Ticket\" seleccionado");
 		}
 
 		@Override
 		public void visitExpenses(AccountingInvoice invoice) {
-			populateExpensesInvoice(invoice);
+			getCallback().getModule().onError("No se pueden hacer facturas de Gastos con el tipo \"Ticket\" seleccionado");
 		}
 
 		@Override
 		public void visitUndeductible(AccountingInvoice invoice) {
-			populateExpensesInvoice(invoice);
+			populateUndedExpensesInvoice(invoice);
 		}
 		
 	}
 
-	private void populateSalesInvoice(AccountingInvoice invoice) {
-		invoice.getAccountEntry().setEntryType(AccountEntryType.SALES_INVOICE);
-		for (int i = 0; i < series.getItemCount(); i++) {
-			if (AonStringUtils.isBlank(invoice.getInvoice().getSeries()) && AonStringUtils.isBlank(series.getValue(i)) 
-				||  (AonStringUtils.equals(invoice.getInvoice().getSeries(), series.getValue(i)))) {
-				series.setSelectedIndex(i);
-				break;
-			}
-		}
-		number.setValue(invoice.getInvoice().getNumber());
-		flexTable.setVisible(true);
-		payTable.setVisible(true);
-		series.setVisible(true);
-		number.setVisible(true);
-		referenceCode.setVisible(false);
-		series.setFocus(true);
-		invoiceTotal.setValue(invoice.getInvoice().getTotal());
-		withholdingPanel.setVisible(invoice.isWithholding());
-		withholdingPanel.setValue( invoice.getWithholdingData() );
-		getCallback().getModule().refreshIdLabel();
-		manualConcept.setValue(getWrapper().getManualConcept());
-		populatePayment(invoice);
-	}
-	private void populatePurchaseInvoice(AccountingInvoice invoice) {
-		invoice.getAccountEntry().setEntryType(AccountEntryType.PURCHASE_INVOICE);
-		flexTable.setVisible(true);
-		payTable.setVisible(true);
-		series.setVisible(false);
-		number.setVisible(false);
-		referenceCode.setValue(invoice.getInvoice().getReferenceCode());
-		referenceCode.setVisible(true);
-		referenceCode.setFocus(true);
-		invoiceTotal.setValue(invoice.getTotalInvoice());
-		withholdingPanel.setVisible(invoice.isWithholding());
-		withholdingPanel.setValue( invoice.getWithholdingData() );
-		getCallback().getModule().refreshIdLabel();
-		manualConcept.setValue(getWrapper().getManualConcept());
-		populatePayment(invoice);
-	}
-	private void populateExpensesInvoice(AccountingInvoice invoice) {
+	private void populateUndedExpensesInvoice(AccountingInvoice invoice) {
 		invoice.getAccountEntry().setEntryType(AccountEntryType.EXPENSE_INVOICE);
 		flexTable.setVisible(true);
 		payTable.setVisible(true);
@@ -832,8 +764,6 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		referenceCode.setVisible(true);
 		referenceCode.setFocus(true);
 		invoiceTotal.setValue(invoice.getTotalInvoice());
-		withholdingPanel.setVisible(invoice.isWithholding());		
-		withholdingPanel.setValue( invoice.getWithholdingData() );
 		getCallback().getModule().refreshIdLabel();
 		manualConcept.setValue(getWrapper().getManualConcept());
 		populatePayment(invoice);
@@ -886,27 +816,24 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 
 		@Override
 		public void visitCustomer(AccountingRegistry reg) {
-			populateSalesInvoice(getWrapper());
-			fastSave.setEnabled(false);
+			getCallback().getModule().onError("No se pueden hacer facturas de Ventas con el tipo \"Ticket\" seleccionado");
 		}
 
 		@Override
 		public void visitCreditor(AccountingRegistry reg) {
-			populateExpensesInvoice(getWrapper());
-			fastSave.setEnabled(false);
+			getCallback().getModule().onError("No se pueden hacer facturas de Gastos con el tipo \"Ticket\" seleccionado");
+		}
+
+		@Override
+		public void visitSupplier(AccountingRegistry reg) {
+			getCallback().getModule().onError("No se pueden hacer facturas de Compras con el tipo \"Ticket\" seleccionado");
 		}
 		
 		@Override
 		public void visitUndedCreditor(AccountingRegistry reg) {
-			getCallback().getModule().onError("No se pueden hacer facturas de gastos no deducbles con el tipo \"Factura\" seleccionado");
-		}
-		
-		@Override
-		public void visitSupplier(AccountingRegistry reg) {
-			populatePurchaseInvoice(getWrapper());
+			populateUndedExpensesInvoice(getWrapper());
 			fastSave.setEnabled(false);
 		}
-		
 	}
 	
 	private void _paintEntry() {
@@ -1040,10 +967,9 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			payDate.getTextBox().selectAll();
 			payDate.setFocus(true);
 		}
+		
 		@Override
-		public void setFocusOnWithholding() {
-			withholdingPanel.setFocus(true);
-		}
+		public void setFocusOnWithholding() {}
 		
 		
 		@Override

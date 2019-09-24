@@ -1452,8 +1452,7 @@ public class TediUdapaFaker {
 	public static JSONObject getTediInvoice() {
 		JSONObject json = new JSONObject();
 		json.put(IConstants.COMPANY, "F01131978");
-		json.put(IConstants.STATUS,
-				TediInvoiceStatus.values()[(faker.random().nextInt(TediInvoiceStatus.values().length - 1))].toString());
+		json.put(IConstants.STATUS,TediInvoiceStatus.inbox.toString());
 		json.put(IConstants.DATE, TediJSONUtils.formatDate(faker.date().future(10, TimeUnit.DAYS)));
 
 		TediInvoiceType tediInvoiceType = TediInvoiceType

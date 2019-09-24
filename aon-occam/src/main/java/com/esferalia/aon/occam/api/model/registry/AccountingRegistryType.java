@@ -28,6 +28,13 @@ public enum AccountingRegistryType implements Serializable {
 				visitor.visitCustomer(reg);
 			}
 		})
+	,UNDED_CREDITOR ("Acreedor",InvoiceType.UNDEDUCTIBLE, AccountEntryType.EXPENSE_INVOICE, "4100"
+		, new IAccountingRegistryTypeVisitorWalker() {
+			@Override
+			public void visit(AccountingRegistry reg,IAccountingRegistryTypeVisitor visitor) {
+				visitor.visitUndedCreditor(reg);
+			}
+		})
 	;
 	
 	public interface IAccountingRegistryTypeVisitorWalker {

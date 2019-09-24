@@ -75,7 +75,8 @@ public class InvoiceRecorder {
 			public void visit(AccountingInvoice invoice, Finance finance,LinkedHashMap<Integer,AccountEntryDetail> map) {
 				double amount = invoice.getTotalInvoice();
 				if ( (invoice.getRegistry().getType() == AccountingRegistryType.SUPPLIER 
-					||invoice.getRegistry().getType() == AccountingRegistryType.CREDITOR)) {
+					||invoice.getRegistry().getType() == AccountingRegistryType.CREDITOR
+					||invoice.getRegistry().getType() == AccountingRegistryType.UNDED_CREDITOR)) {
 					
 					Integer registryAccount = invoice.getRegistry().getAccountId();
 					String registryAccountCode = invoice.getRegistry().getAccountCode();
@@ -150,17 +151,19 @@ public class InvoiceRecorder {
 		Integer account = null;
 		String code = null;
 		String description = null;
-		for (InvoiceVAT vat : invoice.getVats()) {
-			if (account == null) {
-				account = vat.getExpAccountId();
-				code = vat.getExpAccountCode();
-				description = vat.getExpAccountDescription();
-			}
-			if (!AonNumberUtils.equals(account,vat.getExpAccountId())) {
-				account = null;
-				code = null;
-				description = null;
-				break;
+		if (invoice.getVats() != null) {
+			for (InvoiceVAT vat : invoice.getVats()) {
+				if (account == null) {
+					account = vat.getExpAccountId();
+					code = vat.getExpAccountCode();
+					description = vat.getExpAccountDescription();
+				}
+				if (!AonNumberUtils.equals(account,vat.getExpAccountId())) {
+					account = null;
+					code = null;
+					description = null;
+					break;
+				}
 			}
 		}
 		detail.setBalancingAccount(account)
@@ -196,7 +199,8 @@ public class InvoiceRecorder {
 			public void visit(AccountingInvoice invoice, LinkedHashMap<Integer,AccountEntryDetail> map) {
 				double amount = invoice.getTotalInvoice();
 				if ((invoice.getRegistry().getType() == AccountingRegistryType.SUPPLIER 
-					||invoice.getRegistry().getType() == AccountingRegistryType.CREDITOR)) {
+					||invoice.getRegistry().getType() == AccountingRegistryType.CREDITOR
+					||invoice.getRegistry().getType() == AccountingRegistryType.UNDED_CREDITOR)) {
 					AccountEntryDetail detail = map.get(invoice.getRegistry().getAccountId());
 					if (detail == null) {
 						Integer account = obtainRegistryAccount(invoice);

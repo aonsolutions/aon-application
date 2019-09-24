@@ -148,6 +148,9 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	public boolean isExpenses() {
 		return invoice != null && invoice.isExpenses(); 
 	}
+	public boolean isUndeductible() {
+		return invoice != null && invoice.isUndeductible(); 
+	}
 
 	public boolean isSurcharge() {
 		return invoice != null && invoice.isSurcharge();

@@ -543,13 +543,15 @@ public class Invoice implements Serializable, HasAudit {
 	}
 	
 	public boolean isOutputVatEnabled() {
-		return (isSales() && isNational())		// Venta Nacional
-			|| mustApplyISP();					// Aplicar la inversión de sujeto pasivo.	
+		return !isUndeductible() && (
+			(isSales() && isNational())		// Venta Nacional
+			|| mustApplyISP());					// Aplicar la inversión de sujeto pasivo.	
 	}
 	public boolean isInputVatEnabled() {
-		return (isPurchase() && isNational())	// Compra nacional 
+		return !isUndeductible() && (
+			  (isPurchase() && isNational())	// Compra nacional 
 			|| (isExpenses() && isNational())	// Gasto nacional
-			|| mustApplyISP();					// Aplicar la inversión de sujeto pasivo.	
+			|| mustApplyISP());					// Aplicar la inversión de sujeto pasivo.	
 	}
 	public String getSiiStatus() {
 		return siiStatus;

@@ -245,6 +245,28 @@ public class ACCOUNTING {
 				ctx.close();
 		}
 	}
+	
+	public static AccountEntry getAccountEntry(String domainName, int domain,String user, Integer id) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			LinkedList<AccountEntry> list = getAccountEntries(ctx, p -> p.getIdProperty().eq(id), 0, 1)
+					.collect(Collectors.toCollection(LinkedList::new));
+			if (list == null || list.isEmpty()) {
+				return null;
+			}
+			AccountEntry ae = list.getFirst();
+			ae.setUndeductible( 
+				ae.getEntryType() == AccountEntryType.EXPENSE_INVOICE 
+				&& getAccounting().isUndeductibleInvoice(ctx , id ) 
+			);
+			return ae;
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+			
 
 	public static LinkedList<AccountEntry> getAccountEntries(String domainName,
 			int domain, String user, AccountEntryFilter filter, int offset,

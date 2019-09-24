@@ -935,8 +935,8 @@ public class InvoiceDAO {
 	}
 	public static Invoice insert(AONContext ctx, AonConfiguration config, Invoice invoice) {
 		ctx.checkWrite();
-		InvoiceValidation.validateInvoice(ctx, config, invoice);
 		InvoiceAutoComplete.completeInvoice(ctx, config, invoice);
+		InvoiceValidation.validateInvoice(ctx, config, invoice);
 		InvoiceRecord record = ctx.getDslContext()
 			.insertInto(INVOICE)
 			.set(INVOICE.DOMAIN, invoice.getDomain() )
@@ -1334,7 +1334,11 @@ public class InvoiceDAO {
 		
 	}
 	private static void afterInsertDetail(AONContext ctx, AonConfiguration config, Invoice invoice, InvoiceDetail detail) {
-		insertInvoiceTaxes(ctx,detail);
+		if (detail.getInvoice().getType() != InvoiceType.UNDEDUCTIBLE) {
+			insertInvoiceTaxes(ctx,detail);
+		} else {
+			ctx.log().info("\t\tSKIPPING INVOICE TAX CREATION (UNDEDUCTIBLE INVOICE)");
+		}
 		detail.getSource().visit(detail, new IInvoiceSourceVisitor() {
 			
 			private static final long serialVersionUID = -9008741708561768671L;
@@ -1357,16 +1361,20 @@ public class InvoiceDAO {
 					.set(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL, detail.getId())
 					.set(INVOICE_DETAIL_ACCOUNT.ACCOUNT, detail.getAccount())
 					.execute();
-				ctx.log().info("INSERT INVOICE_DETAIL_ACCOUNT");
-				for (InvoiceTax tax : detail.getInvoiceTaxes() ) {
+				if (detail.getInvoice().getType() != InvoiceType.UNDEDUCTIBLE) {
+					ctx.log().info("\tINSERT INVOICE_DETAIL_ACCOUNT");
+					for (InvoiceTax tax : detail.getInvoiceTaxes() ) {
 //					if (tax.getAccount() == null) 
 //						throw new AonCoreException(AonError.ACCOUNT_ENTRY_NO_TAX_ACCOUNT.getMessage());
-					ctx.getDslContext().insertInto(INVOICE_TAX_ACCOUNT)
+						ctx.getDslContext().insertInto(INVOICE_TAX_ACCOUNT)
 						.set(INVOICE_TAX_ACCOUNT.DOMAIN,detail.getDomain())
 						.set(INVOICE_TAX_ACCOUNT.INVOICE_TAX, tax.getId())
 						.set(INVOICE_TAX_ACCOUNT.ACCOUNT, tax.getAccount()!=null?tax.getAccount():detail.getAccount())
 						.execute();
-					ctx.log().info("INSERT INVOICE_TAX_ACCOUNT");
+						ctx.log().info("\t\tINSERT INVOICE_TAX_ACCOUNT");
+					}
+				} else {
+					ctx.log().info("\t\tSKIPPING INVOICE TAX ACCOUNT CREATION (UNDEDUCTIBLE INVOICE)");
 				}
 			}
 		});

@@ -770,6 +770,12 @@ public class AccountingUtilitiesDAO {
 			RegistryDAO.updateCreditorAccount(ctx,registry.getId(),account.getId());
 		}
 		
+		@Override
+		public void visitUndedCreditor(AccountingRegistry nullReg) {
+			account = createAccount(registry);
+			RegistryDAO.updateCreditorAccount(ctx,registry.getId(),account.getId());
+		}
+		
 		private Account createAccount(Registry reg) {
 			String code = AccountDAO.getNextAccountCode(ctx, registryType.getAccountPrefix());
 			return AccountDAO.insert(ctx, 

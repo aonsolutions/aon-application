@@ -75,7 +75,7 @@ public class InvoiceAutoComplete {
 	 * Se rellena las serie y numero para las facturas de compras y gastos.
 	 */
 	public static BiConsumer<Invoice,AonConfigurationContext> COMPLETE_UNDEDUCTIBLE_SERIES = (inv,ctx) -> {
-		if (inv.isPurchase() || inv.isExpenses()) {
+		if (inv.isUndeductible()) {
 			inv.setSeries(Integer.toString(AonDateUtils.getYear(inv.getIssueDate())));
 			if (inv.getNumber() == 0) {
 				Byte[] types = new Byte[]{InvoiceType.UNDEDUCTIBLE.value()};

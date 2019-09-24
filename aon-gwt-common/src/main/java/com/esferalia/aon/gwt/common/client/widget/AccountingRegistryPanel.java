@@ -198,6 +198,16 @@ public class AccountingRegistryPanel extends SimpleLayoutPanel implements Focusa
 						withholding.setVisible(true);
 						okButton.setEnabled(reg.isDirty());
 					}
+					
+					@Override
+					public void visitUndedCreditor(AccountingRegistry reg) {
+						reg.setType(AccountingRegistryType.UNDED_CREDITOR);
+						surcharge.setVisible(false);
+						vatAccualPayment.setVisible(false);
+						withholdingFarmer.setVisible(false);
+						withholding.setVisible(false);
+						okButton.setEnabled(reg.isDirty());
+					}
 				});	
 			}
 		});

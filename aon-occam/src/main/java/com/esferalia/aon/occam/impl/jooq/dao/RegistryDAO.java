@@ -597,6 +597,11 @@ public class RegistryDAO {
 				.set(CREDITOR.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
 				.execute();
 			}
+			
+			@Override
+			public void visitUndedCreditor(AccountingRegistry reg) {
+				visitCreditor(reg);
+			}
 		}); 
 		return reg;
 	}
