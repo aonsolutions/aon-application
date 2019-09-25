@@ -12,6 +12,8 @@ public interface IConstants {
 	String CITY = "city";
 	String CODE = "code";
 	String COMPANY = "company";
+	String COMMENT = "comment";
+	String COMMENTS = "comments";
 	String CONTENT_TYPE = "content_type";
 	String COUNTRY = "country";
 	String DATE = "date";
@@ -59,6 +61,7 @@ public interface IConstants {
 	String TRANSACTION = "transaction";
 	String TYPE = "type";
 	String URL = "url";
+	String USER = "user";
 	String UUID = "uuid";
 	String VAT = "vat";
 	

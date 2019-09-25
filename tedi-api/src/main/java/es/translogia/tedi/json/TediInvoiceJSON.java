@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import es.translogia.tedi.ewok.IConstants;
+import es.translogia.tedi.ewok.TediComments;
 import es.translogia.tedi.ewok.TediFinance;
 import es.translogia.tedi.ewok.TediInvoice;
 import es.translogia.tedi.ewok.TediInvoiceCategory;
@@ -163,6 +164,25 @@ public enum TediInvoiceJSON {
 		(invoice, json) -> invoice.setSource(json.optString(IConstants.SOURCE)),
 		(invoice, json) -> json.put(IConstants.SOURCE, invoice.getSource())
 	),
+	COMMENTS(
+		(invoice, json) -> {
+			JSONArray jsonComments = json.optJSONArray(IConstants.COMMENTS);
+			if (jsonComments != null) {
+				invoice.setComments(new LinkedList<TediComments>());
+				for (Object jsonComment : jsonComments) {
+					TediComments comment = TediCommentsJSON.fromJSON((JSONObject) jsonComment);
+					invoice.getComments().add(comment);
+				}
+			}  
+			return invoice;
+		}, 
+		(invoice, json) -> invoice.getComments() == null ? json
+				: json.put(IConstants.COMMENTS, (Collection<JSONObject>) 
+						invoice.getComments()
+						.stream()
+						.map(t -> TediCommentsJSON.toJSON(t))
+						.collect(Collectors.toCollection(LinkedList::new)))
+		),
 	EMAIL(
 		(invoice, json) -> {
 			JSONObject jsonEmail = json.optJSONObject(IConstants.EMAIL);

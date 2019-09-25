@@ -34,8 +34,10 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO.InvoiceRegistr
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import es.translogia.tedi.ewok.TediInvoice;
+import es.translogia.tedi.ewok.TediComments;
 import es.translogia.tedi.ewok.TediInvoiceDetail;
 import es.translogia.tedi.ewok.TediInvoiceTax;
 import es.translogia.tedi.ewok.TediTaxType;
@@ -209,6 +211,25 @@ public class TediParser {
 			}
 		}), 
 		REFERENCE_CODE( (ctx, aonCtx,result) -> result.getInvoice().setReferenceCode(result.getTedi().getReference())), 
+		COMMENTS( (ctx, aonCtx,result) -> {
+				if (result.getTedi().getComments() != null) {
+					StringBuilder builder = new StringBuilder();
+					boolean counter = result.getTedi().getComments().size() > 1;
+					int c = 1;
+					for (TediComments comment : result.getTedi().getComments()) {
+						if (AonStringUtils.isNotBlank(builder.toString())){
+							builder.append(AonStringUtils.CR_LF);
+						}
+						if (counter) {
+							builder.append(c + " - ");
+						}
+						builder.append(comment.getComment());
+						c++;
+					}
+					result.getInvoice().setComments(builder.toString());	
+				}
+			}
+		),
 		ADDRESS( (ctx, aonCtx,result) -> {
 			if (result.getTedi().getRegistry() != null && result.getTedi().getRegistry().getAddress() != null) {
 				result.getInvoice().setAddress(result.getTedi().getRegistry().getAddress().getAddress());
@@ -330,6 +351,7 @@ public class TediParser {
 				.setConfidential(false)
 				.setEntryDate(ai.getInvoice().getIssueDate())
 				.setActivity(activity)
+				.setComments(ai.getInvoice().getComments())
 				.setDirty(false);
 		ai.getInvoice().getType().visit(ai.getInvoice(),  new IInvoiceTypeVisitor() {
 			@Override public void visitUndeductible(Invoice invoice) {accountEntry.setEntryType(AccountEntryType.EXPENSE_INVOICE);}
@@ -344,7 +366,7 @@ public class TediParser {
 	private static void fillVats(AONContext ctx, AonConfiguration aonCtx, TediResult result) {
 		AccountingInvoice ai = result.getAccountingInvoice();
 		Invoice invoice = result.getInvoice();
-		
+				
 		if (ai.getVats() == null) {
 			ai.setVats( new LinkedList<InvoiceVAT>());
 		}

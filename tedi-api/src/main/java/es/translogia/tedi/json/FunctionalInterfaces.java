@@ -3,6 +3,7 @@ package es.translogia.tedi.json;
 import org.json.JSONObject;
 
 import es.translogia.tedi.ewok.TediAddress;
+import es.translogia.tedi.ewok.TediComments;
 import es.translogia.tedi.ewok.TediCompany;
 import es.translogia.tedi.ewok.TediEmailInfo;
 import es.translogia.tedi.ewok.TediFinance;
@@ -115,4 +116,13 @@ public class FunctionalInterfaces {
 		JSONObject to(TediEmailInfo t, JSONObject json);
 	}
 
+	@FunctionalInterface
+	public static interface ITediCommentsFromJSON {
+		TediComments from(TediComments t, JSONObject json);
+	}
+
+	@FunctionalInterface
+	public static interface ITediCommentsToJSON {
+		JSONObject to(TediComments t, JSONObject json);
+	}
 }

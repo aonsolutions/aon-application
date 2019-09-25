@@ -30,6 +30,7 @@ public class TediInvoice implements Serializable{
 	private TediInvoiceStatus status;
 	private TediInvoiceStatus oldStatus;
 	private String source;
+	private LinkedList<TediComments> comments;
 	private TediEmailInfo email;
 
 	public String getUuid() {
@@ -230,6 +231,14 @@ public class TediInvoice implements Serializable{
 		return this;
 	}
 
+	public LinkedList<TediComments> getComments() {
+		return comments;
+	}
+	public TediInvoice setComments(LinkedList<TediComments> comments) {
+		this.comments = comments;
+		return this;
+	}
+	
 	public TediEmailInfo getEmail() {
 		return email;
 	}
