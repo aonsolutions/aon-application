@@ -24,8 +24,8 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -172,18 +172,18 @@ public class TediCenter extends MainEntryPoint {
 		onSelect(result,false);
 	}
 	private void onSelect(TediResult result, boolean forceRefresh) {
-		SplitLayoutPanel tabPanel;
+		SplitLayoutPanel tediSplitPanel;
 		boolean paint = false;
 		if (tabs.containsKey(result.getTedi().getUuid())) {
-			tabPanel = (SplitLayoutPanel) tabs.get( result.getTedi().getUuid() );
+			tediSplitPanel = (SplitLayoutPanel) tabs.get( result.getTedi().getUuid() );
 			if (forceRefresh) {
-				tabPanel.clear();
+				tediSplitPanel.clear();
 				paint = true;
 			}
-			mainTabLayoutPanel.selectTab( tabPanel );	
+			mainTabLayoutPanel.selectTab( tediSplitPanel );	
 		} else {
 			paint = true;
-			tabPanel = new SplitLayoutPanel();
+			tediSplitPanel = new SplitLayoutPanel(10);
 			String tabLabel = AonStringUtils. trim(AonStringUtils.abbreviate(
 					(result.getInvoice().getType() != null ? result.getInvoice().getType().getDescription() : " ")
 					+ " " + AonStringUtils.defaultString(result.getTedi().getRname()) , 25));
@@ -191,22 +191,23 @@ public class TediCenter extends MainEntryPoint {
 			closeTab.addCloseHandler(new CloseHandler<Integer>() {
 				@Override
 				public void onClose(CloseEvent<Integer> event) {
-					mainTabLayoutPanel.remove(tabPanel);
+					mainTabLayoutPanel.remove(tediSplitPanel);
 					tabs.remove( result.getTedi().getUuid());
 				}
 			});
-			mainTabLayoutPanel.add(tabPanel,closeTab);
-			tabs.put( result.getTedi().getUuid(),tabPanel);
+			mainTabLayoutPanel.add(tediSplitPanel,closeTab);
+			tabs.put( result.getTedi().getUuid(),tediSplitPanel);
 			mainTabLayoutPanel.selectTab(mainTabLayoutPanel.getWidgetCount() - 1);
 		}
 		if (paint) {
 			if (result.hasPDFAttach() || result.hasJPEGAttach()) {
 				SimpleLayoutPanel attachContainer = new SimpleLayoutPanel();
-				tabPanel.addEast(attachContainer, 350);				
+				tediSplitPanel.addEast(attachContainer, 350);
+				tediSplitPanel.setWidgetToggleDisplayAllowed(attachContainer, true);
 				paintAttach( result , attachContainer);
 			}
 			SimpleLayoutPanel contentPanel = new SimpleLayoutPanel();
-			tabPanel.add(contentPanel);
+			tediSplitPanel.add(contentPanel);
 			if (result.isImportable()) {
 				paintInvoice(contentPanel,result);
 			} else if (result.isEmpty()) {
@@ -274,6 +275,36 @@ public class TediCenter extends MainEntryPoint {
 		});
 		buttonContainer.add(acceptAll);
 
+		toolbarPanel.add(toolbar);
+		return toolbarPanel;
+	}
+
+	private Widget getAttachToolbarPanel(final String url) {
+		toolbarPanel = new FlowPanel();
+		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
+		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
+		FlexTable toolbar = new FlexTable();
+		toolbar.setCellPadding(0);
+		toolbar.setCellSpacing(0);
+		toolbar.setStyleName(AON.AON_CSS.aonWidthAll());
+		FlowPanel titlePanel = new FlowPanel();
+		titlePanel.setStyleName(AON.AON_CSS.aonFindingTitleInternal());
+		toolbar.setWidget(0, 0, titlePanel);
+		toolbar.setWidget(0, 0, new Label(AON.MSG.attach()));
+		toolbar.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonFindingTitle());
+		toolbar.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonBold());
+		toolbar.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonNowrap());
+		toolbar.setWidget(0, 1, new Label());
+		toolbar.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonFindingSubtitleIternal());
+		FlowPanel buttonContainer = new FlowPanel();
+		buttonContainer.setStyleName(AON.AON_CSS.aonFindingToolbarItemGroup());
+		toolbar.setWidget(0, 2, buttonContainer);
+		toolbar.getCellFormatter().setStyleName(0, 2, AON.AON_CSS.aonFindingToolbar());
+		Anchor download = new Anchor(AON.MSG.download(),url,"_blank");
+		download.setTitle(AON.MSG.download());
+		download.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		download.addStyleName(AON.AON_CSS.aonIconAttach());
+		buttonContainer.add(download);
 		toolbarPanel.add(toolbar);
 		return toolbarPanel;
 	}
@@ -397,16 +428,22 @@ public class TediCenter extends MainEntryPoint {
 	
 	private void paintAttach(TediResult result, SimpleLayoutPanel container) {
 		if (result.hasPDFAttach()) {
+			SplitLayoutPanel attachSplit = new SplitLayoutPanel();
+			container.setWidget(attachSplit);
 			ScrollPanel scrollPanel = new ScrollPanel();
-			container.setWidget(scrollPanel);
+			attachSplit.add(scrollPanel);
+			
 			VerticalPanel verticalPanel = new VerticalPanel();
 			verticalPanel.add(pdfViewer);
 			scrollPanel.setWidget(verticalPanel);
+			pdfViewer.addStyleName(AON.AON_CSS.aonWidthAll());
+			pdfViewer.addStyleName(AON.AON_CSS.aonHeightAll());
 			SERVICE.getInvoiceAttachURL(getCurrentDomainName(), getUser(), getCurrentDomain(),
 					result.getTedi().getUuid(), new AsyncCallback<String>() {
 				
 				@Override
 				public void onSuccess(String result) {
+					attachSplit.addNorth(getAttachToolbarPanel(result), 25);
 					pdfViewer.setDocument(result, 1.0);
 				}
 				
@@ -417,15 +454,20 @@ public class TediCenter extends MainEntryPoint {
 			});
 		}
 		if (result.hasJPEGAttach()) {
-			Image image = new Image();
+			SplitLayoutPanel attachSplit = new SplitLayoutPanel();
+			container.setWidget(attachSplit);
 			ScrollPanel scrollPanel = new ScrollPanel();
-			container.setWidget(scrollPanel);
+			attachSplit.add(scrollPanel);
+			Image image = new Image();
+			image.setStyleName(AON.AON_CSS.aonWidthAll());
+			image.addStyleName(AON.AON_CSS.aonHeightAll());
 			scrollPanel.setWidget(image);
 			SERVICE.getInvoiceAttachURL(getCurrentDomainName(), getUser(), getCurrentDomain(),
 					result.getTedi().getUuid(), new AsyncCallback<String>() {
 				
 				@Override
 				public void onSuccess(String result) {
+					attachSplit.addNorth(getAttachToolbarPanel(result), 25);
 					image.setUrl(result);
 				}
 				

@@ -3681,5 +3681,8 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Lista de facturas")
 	String invoiceList();
 
+	@DefaultMessage("Adjunto")
+	String attach();
+
 }
 
