@@ -26,43 +26,43 @@ public class TediServiceAsyncDecorator implements TediServiceAsync {
 	}
 	
 	@Override
-	public void getVerifiedInvoices(String domainName, String user, int domain,
+	public void getVerifiedInvoices(String domainName, String user, int domain, boolean snapshot,
 			AsyncCallback<LinkedList<TediResult>> callback) {
 		AON.start();
-		fsa.getVerifiedInvoices(domainName, user, domain, new AsyncCallbackWrapper<LinkedList<TediResult>>(callback));
+		fsa.getVerifiedInvoices(domainName, user, domain,snapshot, new AsyncCallbackWrapper<LinkedList<TediResult>>(callback));
 	}
 
 	@Override
-	public void getInvoice(String domainName, String user, int domain, String uuid,
+	public void getInvoice(String domainName, String user, int domain, boolean snapshot, String uuid,
 			AsyncCallback<TediResult> callback) {
 		AON.start();
-		fsa.getInvoice(domainName, user, domain, uuid, new AsyncCallbackWrapper<TediResult>(callback));
+		fsa.getInvoice(domainName, user, domain, snapshot,uuid, new AsyncCallbackWrapper<TediResult>(callback));
 	}
 
 	@Override
-	public void putInvoice(String domainName, String user, int domain, TediInvoice invoice,
+	public void putInvoice(String domainName, String user, int domain, boolean snapshot, TediInvoice invoice,
 			AsyncCallback<TediResult> callback) {
 		AON.start();
-		fsa.putInvoice(domainName, user, domain, invoice, new AsyncCallbackWrapper<TediResult>(callback));
+		fsa.putInvoice(domainName, user, domain, snapshot,invoice, new AsyncCallbackWrapper<TediResult>(callback));
 	}
 
 	@Override
-	public void putInvoices(String domainName, String user, int domain, LinkedList<TediResult> results,
+	public void putInvoices(String domainName, String user, int domain, boolean snapshot, LinkedList<TediResult> results,
 			AsyncCallback<LinkedList<TediResult>> callback) {
 		AON.start();
-		fsa.putInvoices(domainName, user, domain, results, new AsyncCallbackWrapper<LinkedList<TediResult>>(callback));
+		fsa.putInvoices(domainName, user, domain, snapshot,results, new AsyncCallbackWrapper<LinkedList<TediResult>>(callback));
 	}
 	
 	@Override
-	public void validateInvoice(String domainName, String user, int domain, TediResult result,
+	public void validateInvoice(String domainName, String user, int domain, boolean snapshot, TediResult result,
 			AsyncCallback<TediResult> callback) {
 		AON.start();
-		fsa.validateInvoice(domainName, user, domain, result, new AsyncCallbackWrapper<TediResult>(callback));
+		fsa.validateInvoice(domainName, user, domain, snapshot,result, new AsyncCallbackWrapper<TediResult>(callback));
 	}
 	
 	@Override
-	public void getInvoiceAttachURL(String domainName, String user, int domain, String uuid, AsyncCallback<String> callback) {
+	public void getInvoiceAttachURL(String domainName, String user, int domain, boolean snapshot, String uuid, AsyncCallback<String> callback) {
 		AON.start();
-		fsa.getInvoiceAttachURL(domainName, user, domain, uuid, new AsyncCallbackWrapper<String>(callback));
+		fsa.getInvoiceAttachURL(domainName, user, domain,snapshot, uuid, new AsyncCallbackWrapper<String>(callback));
 	}
 }

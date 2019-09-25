@@ -13,36 +13,48 @@ import es.translogia.tedi.ewok.TediInvoiceStatus;
 import es.translogia.tedi.json.TediInvoiceJSON;
 
 public class Tedi extends TediRequest {
-
-	public static final String AUTH = TEDI_URL + "/auth";
-	public static final String INVOICE_BASE = TEDI_URL + "/invoice";
-	public static final String PUT_INVOICE = INVOICE_BASE;
-	public static final String DOWNLOAD_INVOICE = INVOICE_BASE + "/d/{0}"; // uuid
-	public static final String GET_INVOICE_BY_UUID = INVOICE_BASE + "/{0}/{1}";
-	public static final String GET_VERIFIED_INVOICES = INVOICE_BASE + "?company={0}&status=" + TediInvoiceStatus.verified;
+	String TEDI_URL;
+	String AUTH;
+	String INVOICE_BASE;
+	String PUT_INVOICE;
+	String DOWNLOAD_INVOICE;
+	String GET_INVOICE_BY_UUID;
+	String GET_VERIFIED_INVOICES;
 
 	private String token;
-
 	public static Tedi login(String token) {
-		// return Tedi.login("aibanez@aonsolutions.es", "test");
-		//return Tedi.login("jgarcia@aonsolutions.es", "test");
-		return new Tedi(token);
+		return Tedi.login(token,false);
 	}
-
+	
+	public static Tedi login(String token, boolean snapshot) {
+		Tedi tedi = new Tedi(token,snapshot);
+		return tedi;
+	}
 	public static Tedi login(String email, String password) {
-		Tedi tedi = new Tedi();
+		return Tedi.login(email,password,false);
+	}
+	public static Tedi login(String email, String password, boolean snapshot) {
+		Tedi tedi = new Tedi(snapshot);
 		String requestData = "{\"email\":\"" + email + "\",\"password\":\"" + password + "\"}";
-		TediResponse response = tedi.post(AUTH, "", requestData);
+		TediResponse response = tedi.post(tedi.AUTH, "", requestData);
 		if (response.ok()) {
 			tedi.setToken(response.getJSONObject().getString("session_id"));
 		}
 		return tedi;
 	}
 
-	private Tedi() {
+	private Tedi(boolean snapshot) {
+		TEDI_URL = TediRequest.getTediURL(snapshot);
+		AUTH = TEDI_URL + "/auth";
+		INVOICE_BASE = TEDI_URL + "/invoice";
+		PUT_INVOICE = INVOICE_BASE;
+		DOWNLOAD_INVOICE = INVOICE_BASE + "/d/{0}"; // uuid
+		GET_INVOICE_BY_UUID = INVOICE_BASE + "/{0}/{1}";
+		GET_VERIFIED_INVOICES = INVOICE_BASE + "?company={0}&status=" + TediInvoiceStatus.verified;
 	}
 
-	private Tedi(String token) {
+	private Tedi(String token,boolean snapshot) {
+		this(snapshot);
 		this.token = token;
 	}
 

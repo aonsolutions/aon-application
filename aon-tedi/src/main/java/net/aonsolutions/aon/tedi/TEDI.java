@@ -31,7 +31,7 @@ public class TEDI {
 	private TEDI() {
 	}
 
-	public static Tedi getTedi(AONContext ctx) throws TediException {
+	public static Tedi getTedi(AONContext ctx, boolean snapshot) throws TediException {
 		Domain domain = AON.getDomain(ctx.getDomainName(), ctx.getDomainId(),ctx.getUser());
 		DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), "", DataResponseSource.TEDI_INVOICE,
 				f -> f.getCodeProperty().eq(AppParam.TEDI_TOKEN.getValue())
@@ -42,25 +42,25 @@ public class TEDI {
 					.and(f.getDataVariableProperty().eq(AppParam.TEDI_TOKEN.getValue())))
 				.orElse(new DataResponseDetail());
 		
-			return Tedi.login(drd.getDataValue());
+			return Tedi.login(drd.getDataValue(),snapshot);
 		}
 		throw new TediException(
 				"No se han definido parámetros válidos para conectarse a tEDI Center");
 	}
 	
-	public static LinkedList<TediResult> getVerifiedInvoices(String domainName, int domain, String user)
+	public static LinkedList<TediResult> getVerifiedInvoices(String domainName, int domain, boolean snapshot, String user)
 			throws TediException {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, user);
-			return getVerifiedInvoices(ctx);
+			return getVerifiedInvoices(ctx , snapshot);
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
 
-	public static LinkedList<TediResult> getVerifiedInvoices(AONContext ctx) throws TediException {
+	public static LinkedList<TediResult> getVerifiedInvoices(AONContext ctx, boolean snapshot) throws TediException {
 		Company company = CompanyDAO.getCompany(ctx, ctx.getDomainId());
 		if (company == null) {
 			throw new TediException(
@@ -70,7 +70,7 @@ public class TEDI {
 			throw new TediException(
 					"No se ha indicado un NIF/CIF/DNI v\u00E1lido para la compa\u00F1ia (Configuraci\u00F3n global)");
 		}
-		Tedi tedi = getTedi(ctx);
+		Tedi tedi = getTedi(ctx, snapshot);
 		LOGGER.info("[TEDI] Attempt to recover verified invoices for [" + company.getDocument() + "]");
 		LinkedList<TediInvoice> invoices = tedi.getVerifiedInvoices(company.getDocument());
 		if (invoices != null && invoices.size() > 0) {
@@ -81,7 +81,7 @@ public class TEDI {
 		return null;
 	}
 
-	public static TediResult getInvoice(String domainName, int domain, String user, String uuid) throws TediException {
+	public static TediResult getInvoice(String domainName, int domain, boolean snapshot, String user, String uuid) throws TediException {
 		if (AonStringUtils.isEmpty(uuid)) {
 			throw new TediException("No se ha indicado un identificador de factura que recuperar");
 		}
@@ -96,7 +96,7 @@ public class TEDI {
 				throw new TediException(
 						"No se ha indicado un NIF/CIF/DNI v\u00E1lido para la compa\u00F1ia (Configuraci\u00F3n global)");
 			}
-			Tedi tedi = getTedi(ctx);
+			Tedi tedi = getTedi(ctx, snapshot);
 			LOGGER.info("[TEDI] Attempt to recover invoice [" + company.getDocument() + "," + uuid + "]");
 			TediInvoice invoice = tedi.getInvoice(company.getDocument(), uuid);
 			if (invoice != null) {
@@ -110,7 +110,7 @@ public class TEDI {
 		}
 	}
 
-	public static String getInvoiceAttach(String domainName, int domain, String user, String uuid) throws TediException {
+	public static String getInvoiceAttach(String domainName, int domain, boolean snapshot, String user, String uuid) throws TediException {
 		if (AonStringUtils.isEmpty(uuid)) {
 			throw new TediException("No se ha indicado un identificador de factura que recuperar");
 		}
@@ -125,7 +125,7 @@ public class TEDI {
 				throw new TediException(
 						"No se ha indicado un NIF/CIF/DNI v\u00E1lido para la compa\u00F1ia (Configuraci\u00F3n global)");
 			}
-			Tedi tedi = getTedi(ctx);
+			Tedi tedi = getTedi(ctx, snapshot);
 			LOGGER.info("[TEDI] Attempt to recover invoice [" + company.getDocument() + "," + uuid + "]");
 			String url = tedi.getInvoiceAttach(company.getDocument(), uuid);
 			if (url != null) {
@@ -138,7 +138,7 @@ public class TEDI {
 		}
 	}
 
-	public static TediResult putInvoice(String domainName, int domain, String user, TediInvoice invoice)
+	public static TediResult putInvoice(String domainName, int domain, boolean snapshot, String user, TediInvoice invoice)
 			throws TediException {
 		if (invoice == null) {
 			throw new TediException("No se ha indicado una factura");
@@ -150,7 +150,7 @@ public class TEDI {
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			final AonConfiguration aonCtx = ConfigurationDAO.getConfiguration(ctx);
-			Tedi tedi = getTedi(ctx);
+			Tedi tedi = getTedi(ctx, snapshot);
 			invoice.setOldStatus( invoice.getStatus() );
 			invoice.setStatus( TediInvoiceStatus.accepted );
 			
@@ -170,7 +170,7 @@ public class TEDI {
 	
 
 	
-	public static LinkedList<TediResult> putInvoices(String domainName, int domain, String user,
+	public static LinkedList<TediResult> putInvoices(String domainName, int domain, boolean snapshot, String user,
 			LinkedList<TediResult> invoices) throws TediException {
 		if (invoices == null) {
 			throw new TediException("No se han indicado una facturas");
@@ -179,7 +179,7 @@ public class TEDI {
 		LinkedList<TediResult> returned = new LinkedList<TediResult>();	
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, user);
-			Tedi tedi = getTedi(ctx);
+			Tedi tedi = getTedi(ctx,snapshot);
 			final AonConfiguration aonCtx = ConfigurationDAO.getConfiguration(ctx);
 			for (TediResult result : invoices) {
 				TediInvoice inv = result.getTedi();

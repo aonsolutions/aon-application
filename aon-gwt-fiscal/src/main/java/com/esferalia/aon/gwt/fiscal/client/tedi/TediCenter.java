@@ -50,7 +50,12 @@ import net.aonsolutions.gwt.pdfjs.client.Viewer;
 
 public class TediCenter extends MainEntryPoint {
 
-	private static class TediResultProvidesKey implements ProvidesKey<TediResult> {
+	public static native boolean isTediSnapshot()
+	/*-{
+		return $wnd.isTediSnapshot();
+	}-*/;
+    
+    private static class TediResultProvidesKey implements ProvidesKey<TediResult> {
 		@Override
 		public Object getKey(TediResult result) {
 			return (result != null && result.getTedi() != null) ? result.getTedi().getUuid() : null;
@@ -138,7 +143,7 @@ public class TediCenter extends MainEntryPoint {
 					
 					@Override
 					public void onRangeChange(RangeChangeEvent event) {
-						SERVICE.getVerifiedInvoices(getDomainName(), getUser(), getDomain(),
+						SERVICE.getVerifiedInvoices(getDomainName(), getUser(), getDomain(), isTediSnapshot(),
 								new AsyncCallback<LinkedList<TediResult>>() {
 
 									@Override
@@ -324,7 +329,7 @@ public class TediCenter extends MainEntryPoint {
 	}
 
 	private void onAcceptAll(LinkedList<TediResult> accepted) {
-		SERVICE.putInvoices(getDomainName(), getUser(), getDomain(), accepted,
+		SERVICE.putInvoices(getDomainName(), getUser(), getDomain(),isTediSnapshot(), accepted,
 				new AsyncCallback<LinkedList<TediResult>>() {
 
 					@Override
@@ -348,7 +353,7 @@ public class TediCenter extends MainEntryPoint {
 	protected void onAccept(TediResult result) {
 		result.getTedi().setOldStatus(result.getTedi().getStatus());
 		result.getTedi().setStatus(TediInvoiceStatus.accepted);
-		SERVICE.putInvoice(getDomainName(), getUser(), getDomain(), result.getTedi(), new AsyncCallback<TediResult>() {
+		SERVICE.putInvoice(getDomainName(), getUser(), getDomain(), isTediSnapshot(),result.getTedi(), new AsyncCallback<TediResult>() {
 
 			@Override
 			public void onSuccess(TediResult result) {
@@ -438,7 +443,7 @@ public class TediCenter extends MainEntryPoint {
 			scrollPanel.setWidget(verticalPanel);
 			pdfViewer.addStyleName(AON.AON_CSS.aonWidthAll());
 			pdfViewer.addStyleName(AON.AON_CSS.aonHeightAll());
-			SERVICE.getInvoiceAttachURL(getCurrentDomainName(), getUser(), getCurrentDomain(),
+			SERVICE.getInvoiceAttachURL(getCurrentDomainName(), getUser(), getCurrentDomain(), isTediSnapshot(),
 					result.getTedi().getUuid(), new AsyncCallback<String>() {
 				
 				@Override
@@ -462,7 +467,7 @@ public class TediCenter extends MainEntryPoint {
 			image.setStyleName(AON.AON_CSS.aonWidthAll());
 			image.addStyleName(AON.AON_CSS.aonHeightAll());
 			scrollPanel.setWidget(image);
-			SERVICE.getInvoiceAttachURL(getCurrentDomainName(), getUser(), getCurrentDomain(),
+			SERVICE.getInvoiceAttachURL(getCurrentDomainName(), getUser(), getCurrentDomain(),isTediSnapshot(),
 					result.getTedi().getUuid(), new AsyncCallback<String>() {
 				
 				@Override
@@ -524,7 +529,7 @@ public class TediCenter extends MainEntryPoint {
 	
 								@Override
 								public void onAccept(TediResult result) {
-									SERVICE.validateInvoice(getDomainName(), getUser(), getDomain(), result,
+									SERVICE.validateInvoice(getDomainName(), getUser(), getDomain(), isTediSnapshot(), result,
 											new AsyncCallback<TediResult>() {
 	
 												@Override

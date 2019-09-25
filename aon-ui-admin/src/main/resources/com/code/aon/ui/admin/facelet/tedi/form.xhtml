@@ -66,11 +66,19 @@
 				</aon:panelGrid>
 				<aon:div rendered="#{tediConfiguration.hasToken()}"
 					style="margin-top: 20px; margin-left: 10px;">
-					<aon:commandButton id="gwt_tediImport-child"
+					<aon:commandButton id="gwt_tediLink-child"
 						style="padding: 10px 10px 10px 10px !important; "
-						action="gwt_tediImport-child"
+						action="gwt_tediCenter-child"
 						title="Acceso a tEDI center"
 						value="Acceso a tEDI center" />
+						
+					<aon:commandButton id="gwt_tediLinkBeta-child"
+						style="padding: 10px 10px 10px 10px !important; margin-left: 20px; color: red; border-color:red;"
+						rendered="#{domainSwitcher.betaUser}"
+						action="gwt_tediCenter_beta-child"
+						title="Acceso a tEDI center (BETA)"
+						value="Acceso a tEDI center (BETA)" />
+						
 				</aon:div>
 			</aon:div>
 

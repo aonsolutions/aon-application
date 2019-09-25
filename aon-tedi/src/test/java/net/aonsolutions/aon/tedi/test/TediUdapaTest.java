@@ -52,7 +52,7 @@ public class TediUdapaTest {
 	@Test
 	public void test004GetVerifiedInvoices() throws Exception {
 		System.out.println( "\t-test Tedi get Udapa verified invoices");
-		LinkedList<TediResult> results = TEDI.getVerifiedInvoices(ctx);
+		LinkedList<TediResult> results = TEDI.getVerifiedInvoices(ctx, true);
 		Assert.assertNotNull(results);
 		for (TediResult result : results) {
 			if ( result.isImportable() ) {

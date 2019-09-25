@@ -49,7 +49,7 @@ public class TediUdapaAttachTest {
 	@Test
 	public void test004GetInvoiceAttach() throws Exception {
 		System.out.println( "\t-test Tedi get Udapa verified invoices");
-		Object result = TEDI.getInvoiceAttach(DOMAIN_NAME, DOMAIN_ID, USER, UUID);
+		Object result = TEDI.getInvoiceAttach(DOMAIN_NAME, DOMAIN_ID, true, USER, UUID);
 		Assert.assertNotNull(result);
 		System.out.print( " [OK]");
 	}

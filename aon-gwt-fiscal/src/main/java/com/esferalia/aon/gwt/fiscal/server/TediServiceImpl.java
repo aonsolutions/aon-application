@@ -26,50 +26,50 @@ public class TediServiceImpl extends AonStatelessRemoteServiceServlet implements
 	}
 
 	@Override
-	public LinkedList<TediResult> getVerifiedInvoices(String domainName, String user, int domain) throws AonCoreException {
+	public LinkedList<TediResult> getVerifiedInvoices(String domainName, String user, int domain, boolean snapshot) throws AonCoreException {
 		try {
-			return TEDI.getVerifiedInvoices(domainName, domain, user);
+			return TEDI.getVerifiedInvoices(domainName, domain, snapshot, user);
 		} catch ( TediException t) {
 			throw new AonCoreException(t);
 		}
 	}
 	
 	@Override
-	public TediResult getInvoice(String domainName, String user, int domain, String uuid) throws AonCoreException {
+	public TediResult getInvoice(String domainName, String user, int domain, boolean snapshot, String uuid) throws AonCoreException {
 		try {
-			return TEDI.getInvoice(domainName, domain, user, uuid);
+			return TEDI.getInvoice(domainName, domain, snapshot, user, uuid);
 		} catch ( TediException t) {
 			throw new AonCoreException(t);
 		}
 	}
 
 	@Override
-	public TediResult putInvoice(String domainName, String user, int domain, TediInvoice invoice) throws AonCoreException {
+	public TediResult putInvoice(String domainName, String user, int domain, boolean snapshot, TediInvoice invoice) throws AonCoreException {
 		try {
-			return TEDI.putInvoice(domainName, domain, user, invoice);
+			return TEDI.putInvoice(domainName, domain, snapshot, user, invoice);
 		} catch ( TediException t) {
 			throw new AonCoreException(t);
 		}
 	}
 
 	@Override
-	public LinkedList<TediResult> putInvoices(String domainName, String user, int domain, LinkedList<TediResult> results) throws AonCoreException {
+	public LinkedList<TediResult> putInvoices(String domainName, String user, int domain, boolean snapshot, LinkedList<TediResult> results) throws AonCoreException {
 		try {
-			return TEDI.putInvoices(domainName, domain, user, results);
+			return TEDI.putInvoices(domainName, domain, snapshot, user, results);
 		} catch ( TediException t) {
 			throw new AonCoreException(t);
 		}
 	}
 
 	@Override
-	public TediResult validateInvoice(String domainName, String user, int domain, TediResult result ) throws AonCoreException {
+	public TediResult validateInvoice(String domainName, String user, int domain, boolean snapshot, TediResult result ) throws AonCoreException {
 		return TEDI.validateInvoice(domainName, domain, user, result);
 	}
 	
 	@Override
-	public String getInvoiceAttachURL(String domainName, String user, int domain, String uuid) throws AonCoreException {
+	public String getInvoiceAttachURL(String domainName, String user, int domain, boolean snapshot, String uuid) throws AonCoreException {
 		try {
-			return TEDI.getInvoiceAttach(domainName, domain, user, uuid);
+			return TEDI.getInvoiceAttach(domainName, domain, snapshot, user, uuid);
 		} catch ( TediException t) {
 			throw new AonCoreException(t);
 		}

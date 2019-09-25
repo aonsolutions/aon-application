@@ -9,19 +9,11 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class TediRequest {
 	private static final String TEDI_SNAPSHOT = "https://europe-west1-tedi-snapshot.cloudfunctions.net";
-	@SuppressWarnings("unused")
 	private static final String TEDI = "https://europe-west1-tedicenter.cloudfunctions.net";
-	public static final String TEDI_URL = TEDI_SNAPSHOT;
 	
-//	protected JSONObject getObject(String tediUrl, String token) {
-//		TediResponse tediResponse = get(tediUrl, token);
-//		return response != null ? new JSONObject(response) : new JSONObject();
-//	}
-	
-//	protected JSONArray getArray(String tediUrl, String token) {
-//		String response = get(tediUrl, token);
-//		return response != null ? new JSONArray(response) : new JSONArray();
-//	}
+	public static String getTediURL(boolean snapshot) {
+		return snapshot?TEDI_SNAPSHOT:TEDI; 
+	}
 	
 	protected TediResponse get(String tediUrl, String token) {
 		HttpsURLConnection conn = null;

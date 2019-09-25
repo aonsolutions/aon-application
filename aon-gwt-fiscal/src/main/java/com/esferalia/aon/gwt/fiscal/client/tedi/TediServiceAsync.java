@@ -11,10 +11,10 @@ import es.translogia.tedi.ewok.TediInvoice;
 public interface TediServiceAsync {
 
 	void getAonConfiguration(String domainName, String user, int domain, AsyncCallback<AonConfiguration> callback);
-	void getVerifiedInvoices(String domainName, String user, int domain, AsyncCallback<LinkedList<TediResult>> callback);
-	void getInvoice(String domainName, String user, int domain, String uuid, AsyncCallback<TediResult> callback);
-	void putInvoice(String domainName, String user, int domain, TediInvoice invoice, AsyncCallback<TediResult> callback);
-	void putInvoices(String domainName, String user, int domain, LinkedList<TediResult> results, AsyncCallback<LinkedList<TediResult>> callback);
-	void validateInvoice(String domainName, String user, int domain, TediResult result, AsyncCallback<TediResult> callback);
-	void getInvoiceAttachURL(String domainName, String user, int domain, String uuid, AsyncCallback<String> callback);
+	void getVerifiedInvoices(String domainName, String user, int domain, boolean snapshot, AsyncCallback<LinkedList<TediResult>> callback);
+	void getInvoice(String domainName, String user, int domain, boolean snapshot, String uuid, AsyncCallback<TediResult> callback);
+	void putInvoice(String domainName, String user, int domain, boolean snapshot, TediInvoice invoice, AsyncCallback<TediResult> callback);
+	void putInvoices(String domainName, String user, int domain, boolean snapshot, LinkedList<TediResult> results, AsyncCallback<LinkedList<TediResult>> callback);
+	void validateInvoice(String domainName, String user, int domain, boolean snapshot, TediResult result, AsyncCallback<TediResult> callback);
+	void getInvoiceAttachURL(String domainName, String user, int domain, boolean snapshot, String uuid, AsyncCallback<String> callback);
 }
