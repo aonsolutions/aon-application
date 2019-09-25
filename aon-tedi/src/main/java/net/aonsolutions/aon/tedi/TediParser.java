@@ -162,7 +162,7 @@ public class TediParser {
 							ai.setRegistry(ar);
 							ai.setSuggestedAccounts(AccountingInvoiceDAO.getSuggestedAccounts(ctx,ar.getId()));
 							invoice.setRegistry(ar.getId())
-								.setType(ar.getType().getInvoiceType())
+//								.setType(ar.getType().getInvoiceType())
 								.setTransaction(ar.getTransaction());
 							ar.getType().visit(ar, new  InvoiceRegistryInitializer(ctx, ai.getInvoice(), aonCtx));
 						}
