@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.tedi.ICallback;
 import com.esferalia.aon.occam.api.model.tedi.ITediCallback;
 import com.esferalia.aon.occam.api.model.tedi.ITediContextVisitor;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -38,6 +39,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
+
+import es.translogia.tedi.ewok.TediInvoiceType;
 
 public class TediContextVisitor implements ITediContextVisitor {
 	
@@ -148,6 +151,9 @@ public class TediContextVisitor implements ITediContextVisitor {
 												result.getInvoice().setRegistryDocument(ai.getRegistry().getDocument());
 												result.getInvoice().setRegistryName(ai.getRegistry().getName());
 												result.getInvoice().setScope(new Scope().setId(ai.getRegistry().getScope()));
+												if (result.getTedi().getType() == TediInvoiceType.TICKET) {
+													result.getInvoice().setType( InvoiceType.UNDEDUCTIBLE );	
+												}
 												callback.onAccept(result);
 											}
 											

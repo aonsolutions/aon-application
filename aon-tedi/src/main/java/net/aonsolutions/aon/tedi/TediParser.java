@@ -354,10 +354,16 @@ public class TediParser {
 				.setComments(ai.getInvoice().getComments())
 				.setDirty(false);
 		ai.getInvoice().getType().visit(ai.getInvoice(),  new IInvoiceTypeVisitor() {
-			@Override public void visitUndeductible(Invoice invoice) {accountEntry.setEntryType(AccountEntryType.EXPENSE_INVOICE);}
+			@Override public void visitUndeductible(Invoice invoice) {
+				accountEntry.setEntryType(AccountEntryType.EXPENSE_INVOICE);
+				accountEntry.setUndeductible(true);
+			}
 			@Override public void visitSales(Invoice invoice) {accountEntry.setEntryType(AccountEntryType.SALES_INVOICE);}
 			@Override public void visitPurchase(Invoice invoice) {accountEntry.setEntryType(AccountEntryType.PURCHASE_INVOICE);}
-			@Override public void visitExpenses(Invoice invoice) {accountEntry.setEntryType(AccountEntryType.EXPENSE_INVOICE);}
+			@Override public void visitExpenses(Invoice invoice) {
+				accountEntry.setEntryType(AccountEntryType.EXPENSE_INVOICE);
+				accountEntry.setUndeductible(false);
+			}
 		});
 		return accountEntry;
 	}
