@@ -1175,6 +1175,9 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-icon-attach")
 	String aonIconAttach();
 
+	@ClassName("aon-icon-new-window")
+	String aonIconNewWindow();
+
 	@ClassName("aon-icon-diff")
 	String aonIconDiff();
 

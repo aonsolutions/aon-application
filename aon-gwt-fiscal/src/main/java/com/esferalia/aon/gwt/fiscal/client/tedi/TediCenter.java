@@ -303,7 +303,7 @@ public class TediCenter extends MainEntryPoint {
 		Anchor download = new Anchor(AON.MSG.download(),url,"_blank");
 		download.setTitle(AON.MSG.download());
 		download.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		download.addStyleName(AON.AON_CSS.aonIconAttach());
+		download.addStyleName(AON.AON_CSS.aonIconNewWindow());
 		buttonContainer.add(download);
 		toolbarPanel.add(toolbar);
 		return toolbarPanel;
