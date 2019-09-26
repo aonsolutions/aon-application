@@ -17,6 +17,7 @@ public class SalaryInfo implements Serializable {
 	private Date endDate;
 	private Type type;
 	private String enterpriseName;
+	private Integer enterpriseId;
 	private String workplaceName;
 	private String employeeName;
 	private Double totalPayment;
@@ -78,6 +79,12 @@ public class SalaryInfo implements Serializable {
 	}
 	public void setEnterpriseName(String enterpriseName) {
 		this.enterpriseName = enterpriseName;
+	}
+	public Integer getEnterpriseId() {
+		return enterpriseId;
+	}
+	public void setEnterpriseId(Integer enterpriseId) {
+		this.enterpriseId = enterpriseId;
 	}
 	public String getWorkplaceName() {
 		return workplaceName;

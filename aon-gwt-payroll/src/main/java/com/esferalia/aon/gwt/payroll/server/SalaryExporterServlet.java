@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -59,11 +60,20 @@ public class SalaryExporterServlet extends HttpServlet {
 		String extension = AonServletUtils.getExtn(requestURI);
 		String salaryRequestStr = AonServletUtils.getFileName(requestURI);
 		
+		String _selectedSalaries = req.getParameter("selectedSalaries");
+		
 		try {
 			
-			Condition condition =  getCondition(salaryRequestStr);
+			Condition condition = null;
+			
+			if(null != _selectedSalaries) {
+				condition = getConditionSalaryIds(req, _selectedSalaries);
+				extension = "pdf";
+			}else {
+				condition =  getCondition(salaryRequestStr);
+			}
+			
 			DSL.orderBy(Workplace.WORKPLACE.ID, Salary.SALARY.EMPLOYEE_NAME);
-
 			
 			ReportManager reportManager = new StatelessReportManager();
 			OutputFormat outputFormat = getOutputFormat(extension);
@@ -86,7 +96,12 @@ public class SalaryExporterServlet extends HttpServlet {
 			
 			// TODO : SalaryType????
 			SalaryType salaryType = getSalaryType(req);
-			Integer enterpriseID = getEnterpriseID(domain, salaryRequestStr);
+			Integer enterpriseID;
+			if(null != _selectedSalaries) {
+				enterpriseID = Integer.parseInt(req.getParameter("enterprise"));
+			}else {
+				enterpriseID = getEnterpriseID(domain, salaryRequestStr);
+			}
 			String salaryReport = getReportKey(domain, enterpriseID, salaryType); 
 			
 			// TODO: Bufff !!!!!!!!!!!!!!!
@@ -104,7 +119,7 @@ public class SalaryExporterServlet extends HttpServlet {
 			throw new ServletException(e);
 		} 
 	}
-	
+
 	// ------------------------------------------------------------------------
 	
 	protected String getReportKey(String domain, final Integer enterpriseID,
@@ -174,6 +189,26 @@ public class SalaryExporterServlet extends HttpServlet {
 				conn.close();
 			}
 		}
+	}
+	
+	private Condition getConditionSalaryIds(HttpServletRequest req, String selectedSalaries) {
+		ArrayList<Integer> _selectedSalaries = new ArrayList<>();
+
+		Integer numSalaries = Integer.parseInt(selectedSalaries);
+		if(0 != numSalaries) {
+			for(int i=0; i<numSalaries; i++) {
+				String idString = req.getParameter("salary"+i+"Id");
+				if(idString.contains("."))
+					idString = idString.split("\\.")[0];
+				
+				_selectedSalaries.add(Integer.parseInt(idString));
+			}
+		}
+		
+		Condition condition ;
+		condition = Salary.SALARY.ID.in(_selectedSalaries);
+		
+		return condition;
 	}
 
 	private static Condition getCondition(String request) throws ManagerBeanException {

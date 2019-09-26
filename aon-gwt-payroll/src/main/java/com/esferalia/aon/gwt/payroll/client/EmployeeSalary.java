@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
@@ -10,7 +11,6 @@ import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.http.client.URL;
@@ -18,6 +18,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
@@ -41,6 +42,11 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	private static EmployeeSalaryUiBinder uiBinder = GWT.create(EmployeeSalaryUiBinder.class);
 
 	interface EmployeeSalaryUiBinder extends UiBinder<Widget, EmployeeSalary> {
+	}
+	
+	//Listener to Publish Salaries
+	static interface Listener {
+		void onPublishSalaries(SalaryInfo salary);
 	}
 	
 	@UiField
@@ -67,26 +73,15 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	public EmployeeSalary() {
 				
 		//Inicializamos la vista del calendario
-		initWidget(uiBinder.createAndBindUi(this));
+		initWidget(uiBinder.createAndBindUi(this)); 
 		
-		deleteButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				employeeSalaryObject.delete(
-						selectionModel.getSelectedSet(), 
-						s -> {
-							setEmployeeSalaryObject(employeeSalaryObject);
-						}, 
-						f -> {}
-				);
-			}
-		});
+		listeners = new LinkedList<Listener>();
 		
 	}
 
 	private EmployeeSalaryObject employeeSalaryObject;
 	private MultiSelectionModel<SalaryInfo> selectionModel;
+	private List<Listener> listeners;
 	
 	public void setEmployeeSalaryObject(EmployeeSalaryObject employeeSalaryObject) {
 		this.employeeSalaryObject = employeeSalaryObject;
@@ -101,21 +96,26 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 
 	private void resetPage() {
 		mainContainer.clear();
-		this.saveButton.setVisible(false);
-		this.publishButton.setVisible(false);
 	}
 
 	private void initSalariesTable() {
 		if(this.employeeSalaryObject.getEmployeeSalaries().isEmpty()) {
+			//Hide buttons
 			this.deleteButton.setVisible(false);
+			this.saveButton.setVisible(false);
+			this.publishButton.setVisible(false);
+			
+			// Show warning dialog
 			WarningDialog warningDialog = new WarningDialog("Aviso", "No existen nominas para este empleado.");
 			warningDialog.center();
 			warningDialog.show();
 			return;
 		}
 		
-		deleteButton.setVisible(true);
+		//Disable buttons till any salary selected
 		deleteButton.setEnabled(false);
+		saveButton.setEnabled(false);
+		publishButton.setEnabled(false);
 		
 		// Create a CellTable.
 	    CellTable<SalaryInfo> table = new CellTable<SalaryInfo>(SalaryInfo.KEY_PROVIDER);
@@ -172,8 +172,12 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	        public void onSelectionChange(SelectionChangeEvent event) {
 	            if(selectionModel.getSelectedSet().size() > 0) {
 	            	deleteButton.setEnabled(true);
+	            	saveButton.setEnabled(true);
+	            	publishButton.setEnabled(true);
 	            }else {
 	            	deleteButton.setEnabled(false);
+	            	saveButton.setEnabled(false);
+	            	publishButton.setEnabled(false);
 	            }
 	            
 	        }
@@ -204,8 +208,7 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	      }
 	    };
 	    
-	    selectAllHeader.setUpdater(new ValueUpdater<Boolean>()
-	    {
+	    selectAllHeader.setUpdater(new ValueUpdater<Boolean>(){
 	      @Override
 	      public void update(Boolean value)
 	      {
@@ -305,31 +308,6 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	        return salaryInfo.getTotalLiquid()+"";
 	      }
 	    };
-	    
-//	    ActionCell<SalaryInfo> previewCell = new ActionCell<SalaryInfo>("Preview", new ActionCell.Delegate<SalaryInfo>() {
-//
-//			@Override
-//			public void execute(SalaryInfo salary) {
-//				Window.alert("Salary ID : " + salary.getId());
-//				new SalaryPreviewDialog(salary, "pdf");
-//			}
-//			
-//		});
-//	    
-//	    Column<SalaryInfo, SalaryInfo> previewColumn = new Column<SalaryInfo, SalaryInfo>(previewCell) {
-//
-//			@Override
-//			public SalaryInfo getValue(SalaryInfo object) {
-//				return object;
-//			}
-//			
-//			@Override
-//			public void render(Context context, SalaryInfo object, SafeHtmlBuilder sb) {
-//				if(null != object) {
-//					sb.appendHtmlConstant("<button type=\"button\" class=\"aon-finding-toolbar-item aon-icon-page\" style=\"border: none !important;\"></button>");
-//				}
-//			}
-//		};
 		
 		ActionCell<SalaryInfo> downloadCell = new ActionCell<SalaryInfo>("Download", new ActionCell.Delegate<SalaryInfo>() {
 
@@ -371,7 +349,6 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	    table.addColumn(totalDeductionColumn, "Deduccion Total");
 	    table.addColumn(totalLiquidColumn, "Liquido Total");
 	    
-//	    table.addColumn(previewColumn, "Previsualizar");
 	    table.addColumn(downloadColumn, "Descargar / Previsualizar");
 	      
 	    
@@ -383,7 +360,6 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	              return 0;
 	            }
 
-	            // Compare the name columns.
 	            if (o1 != null) {
 	              return (o2 != null) ? o1.getEmployeeName().compareTo(o2.getEmployeeName()) : 1;
 	            }
@@ -397,7 +373,6 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	              return 0;
 	            }
 
-	            // Compare the name columns.
 	            if (o1 != null) {
 	              return (o2 != null) ? o1.getWorkplaceName().compareTo(o2.getWorkplaceName()) : 1;
 	            }
@@ -411,7 +386,6 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	              return 0;
 	            }
 
-	            // Compare the name columns.
 	            if (o1 != null) {
 	              return (o2 != null) ? o1.getStartDate().compareTo(o2.getStartDate()) : 1;
 	            }
@@ -425,7 +399,6 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	              return 0;
 	            }
 
-	            // Compare the name columns.
 	            if (o1 != null) {
 	              return (o2 != null) ? o1.getEndDate().compareTo(o2.getEndDate()) : 1;
 	            }
@@ -439,7 +412,59 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	    table.getColumnSortList().push(employeeNameColumn);
 	}
 	
+	// --------------------------------------------------
+	//					UiHandlers
+	// --------------------------------------------------
+	
+	@UiHandler("deleteButton")
+	public void onDeleteSalary(ClickEvent event) {
+		employeeSalaryObject.delete(
+				selectionModel.getSelectedSet(), 
+				s -> {
+					setEmployeeSalaryObject(employeeSalaryObject);
+				}, 
+				f -> {}
+		);
+	}
+	
+	@UiHandler("saveButton")
+	public void onPrintSalary(ClickEvent event) {
+		String fileDownloadURL = GWT.getModuleBaseURL()+ "salary/"
+	            + "?selectedSalaries=" + selectionModel.getSelectedSet().size()
+	            + "&enterprise=" + ((SalaryInfo)selectionModel.getSelectedSet().toArray()[0]).getEnterpriseId()
+		        ;
+			
+		for(int i=0; i<selectionModel.getSelectedSet().size(); i++) {
+			fileDownloadURL += "&salary"+i+"Id=" + ((SalaryInfo)selectionModel.getSelectedSet().toArray()[i]).getId();
+		}
+		
+		fileDownloadURL += "&name=salaries.pdf";
+		
+//		Window.alert(fileDownloadURL);
+		
+		Window.open(fileDownloadURL, "_blank", null);
+	}
+	
+	@UiHandler("publishButton")
+	public void onPublichalary(ClickEvent event) {
+		onPublish();
+	}
+	
+	// --------------------------------------------------
+	//					Aux Methods
+	// --------------------------------------------------
+	
 	@Override
 	public void onContextMenu(ContextMenuEvent event) {
+	}
+
+	public void addListener(Listener listener) {
+		listeners.add(listener);
+	}
+	
+	void onPublish() {
+		for (Listener listener : listeners)
+			for(SalaryInfo salary : selectionModel.getSelectedSet())
+			listener.onPublishSalaries(salary);
 	}
 }

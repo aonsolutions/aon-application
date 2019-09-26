@@ -27,6 +27,7 @@ import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.IndeterminateTas
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasId;
+import com.esferalia.aon.gwt.payroll.client.EmployeeSalary.Listener;
 import com.esferalia.aon.gwt.payroll.client.MainCreta.AbstractBaseCretaDetail;
 import com.esferalia.aon.gwt.payroll.client.MainCreta.AbstractCCCCretaRequestCommand;
 import com.esferalia.aon.gwt.payroll.client.MainCreta.SyncCallback;
@@ -50,6 +51,7 @@ import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Province;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.ShareService;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -98,7 +100,7 @@ import net.aonsolutions.gwt.pdfjs.client.Viewer;
  */
 
 public class EmployeeTree implements EntryPoint, Employees.Listener,
-		MetaData.Listener, Cost.Listener, Salary.Listener {
+		MetaData.Listener, Cost.Listener, Salary.Listener, EmployeeSalary.Listener {
 
 	public static String SHARE_URL = URL.encode(GWT.getModuleBaseURL() + "share");
 	static class EmployeeCalcDialog extends CalcDialog<Employee> {
@@ -2048,7 +2050,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	// ------------------------------------------------- Salary.Listener methods
 
 	@Override
-	public void onPublis(SalaryDocuments documents) {
+	public void onPublishSalaries(SalaryInfo salary) {
 		class Callback implements AsyncCallback<JsShareResult> {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -2064,13 +2066,38 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		shareResultsProvider.getList().clear();
 		resultsPanel.setWidget(shareResultsGrid);
-
-		com.esferalia.aon.gwt.payroll.shared.Salary salary = documents
-				.getSalaries().get(documents.getCurrentIndex());
-		share(salary, new Callback());
+		
+		shareSalary(salary, new Callback());
 		showResultsPanel();
 
 	}
+	
+	// ------------------------------------------------- Salary.Listener methods
+
+		@Override
+		public void onPublis(SalaryDocuments documents) {
+			class Callback implements AsyncCallback<JsShareResult> {
+				@Override
+				public void onFailure(Throwable caught) {
+					// TODO Auto-generated method stub
+
+				}
+
+				@Override
+				public void onSuccess(JsShareResult result) {
+					shareResultsProvider.getList().add(result);
+				}
+			}
+
+			shareResultsProvider.getList().clear();
+			resultsPanel.setWidget(shareResultsGrid);
+
+			com.esferalia.aon.gwt.payroll.shared.Salary salary = documents
+					.getSalaries().get(documents.getCurrentIndex());
+			share(salary, new Callback());
+			showResultsPanel();
+
+		}
 
 	// ---------------------------------------------- Employees.Listener methods
 
@@ -2561,7 +2588,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	
 	private EmployeeSalary getEmployeeSalary() {
 		if (employeeSalary == null)
-			employeeSalary = new EmployeeSalary();
+			(employeeSalary = new EmployeeSalary()).addListener((Listener) this);
 		return employeeSalary;
 	}
 
@@ -2856,6 +2883,20 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	private static <T extends HasId<?>> void share(
 			com.esferalia.aon.gwt.payroll.shared.Salary salary,
+			final AsyncCallback<JsShareResult> callback) {
+
+		StringBuffer requestDataBuffer = new StringBuffer();
+
+		requestDataBuffer
+				.append("&" + ShareService.SALARY + "=" + salary.getId());
+
+		// Send request to server and catch any errors.
+		share(requestDataBuffer.toString(), callback);
+
+	}
+	
+	private static <T extends HasId<?>> void shareSalary(
+			SalaryInfo salary,
 			final AsyncCallback<JsShareResult> callback) {
 
 		StringBuffer requestDataBuffer = new StringBuffer();
@@ -3166,6 +3207,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	/*-{
 		return eval(javascript);
 	}-*/;
+
+	
 
 	
 

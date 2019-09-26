@@ -9,6 +9,7 @@ import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -79,6 +80,14 @@ public class JooqPayrollSalaries {
 					.get(WORKPLACE.DESCRIPTION);
 			
 			salaryInfo.setWorkplaceName(workplaceName);
+			
+			Integer enterpriseId = dslContext.select(REGISTRY.ID)
+					.from(REGISTRY)
+					.where(REGISTRY.NAME.eq(salaryRecord.get(SALARY.ENTERPRISE_NAME)))
+					.fetchOne()
+					.get(REGISTRY.ID);
+			
+			salaryInfo.setEnterpriseId(enterpriseId);
 			
 			// Add to salaries list
 			salaries.add(salaryInfo);
