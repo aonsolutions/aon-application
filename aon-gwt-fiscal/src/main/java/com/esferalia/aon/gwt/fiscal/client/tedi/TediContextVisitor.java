@@ -20,6 +20,8 @@ import com.esferalia.aon.occam.api.model.tedi.ITediContextVisitor;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -52,6 +54,7 @@ public class TediContextVisitor implements ITediContextVisitor {
 	public TediContextVisitor(String domainName, int domain,AonConfiguration configuration) {
 		this.currentDomainName = domainName;
 		this.currentDomain = domain;
+		this.configuration = configuration;
 		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
 		FISCAL_SERVICE = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
 	}
@@ -292,6 +295,11 @@ private void showRegistryDialog(String label, ITediCallback<AccountingRegistry> 
 	};
 	dialog.setContent(label, registryBox);
 	dialog.centerShow();
+	Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+		public void execute() {
+			registryBox.setFocus(true);
+		}
+	});
 }
 
 private void showReferenceCodeDialog(String label, String referenceCode, ITediCallback<String> callback) {

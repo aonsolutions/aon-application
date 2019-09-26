@@ -208,10 +208,14 @@ public class AccountingRegistryBox extends ResizeComposite implements HasValue<S
 	}
 	
 	private boolean isControlF3(KeyUpEvent event) {
-		return (event.isControlKeyDown() && event.getNativeKeyCode() == KeyCodes.KEY_F3);
+		return (
+			(event.isControlKeyDown() || event.isControlKeyDown())
+			&& event.getNativeKeyCode() == KeyCodes.KEY_F3);
 	}
 	private boolean isPlusKeyAlone(KeyUpEvent event) {
-		return event.getNativeKeyCode() == KeyCodes.KEY_NUM_PLUS && AonStringUtils.PLUS.equals(accountingRegistryTextBox.getValue());
+		return (event.getNativeKeyCode() == KeyCodes.KEY_NUM_PLUS 
+			|| event.getNativeKeyCode() == KeyCodes.KEY_NUM_PLUS)
+				&& AonStringUtils.PLUS.equals(accountingRegistryTextBox.getValue());
 	}
 	
 	public void set(AccountingRegistry accountingRegistry) {
