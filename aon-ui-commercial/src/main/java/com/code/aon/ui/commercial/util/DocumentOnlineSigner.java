@@ -208,6 +208,7 @@ public class DocumentOnlineSigner implements Serializable {
 				throw new Exception("El Cliente Potencial no tiene cuenta de correo electrónico comercial.");
 			}
 			String rDirStaffEmail = getRDirStaffEmail(offer);
+			String rDirStaffName = getRDirStaffName(offer);
 			String sellerEmail = getSellerEmail(offer);
 			
 			byte[] data = mergePdf(list);
@@ -220,11 +221,18 @@ public class DocumentOnlineSigner implements Serializable {
 			
 			// signingParties
 			JSONObject spDirStaff = new JSONObject();
-			spDirStaff.put("name", offer.getTarget().getRegistry().getName());
+			spDirStaff.put("name", rDirStaffName);
 			spDirStaff.put("address", rDirStaffEmail);
 			spDirStaff.put("signingMethod", signingType());
 			spDirStaff.put("role", "Signer");
 			json.put("signingParties", spDirStaff);
+			
+			JSONObject spTargetCommercial = new JSONObject();
+			spTargetCommercial.put("name", offer.getTarget().getRegistry().getName());
+			spTargetCommercial.put("address", targetCommercialEmail);
+			spTargetCommercial.put("signingMethod", signingType());
+			spTargetCommercial.put("role", "Reviewer");
+			json.put("signingParties", spTargetCommercial);
 			
 			// interestedParties
 			if(sellerEmail != null && !sellerEmail.equals("")) {
@@ -241,21 +249,9 @@ public class DocumentOnlineSigner implements Serializable {
 				ips.put(ip);
 				json.put("interestedParties", ips);
 			}
-			if(notifyCommercial && targetCommercialEmail != null && !targetCommercialEmail.equals("")) {
-				JSONArray ips = null;
-				try {
-					ips = json.getJSONArray("interestedParties");
-				} catch (JSONException e) {
-					ips = new JSONArray();
-				}
-				if(ips==null) ips = new JSONArray();
-				JSONObject ip = new JSONObject();
-				ip.put("address", targetCommercialEmail);
-				ips.put(ip);
-				json.put("interestedParties", ips);
-			}
 			
 			json.put("options", new JSONObject());
+			json.put("pushNotificationUrl", AonUtil.getServerName()+(AonUtil.getServerName().endsWith("/")?"":"/")+"@AON/offer");
 			
 			JSONObject responseJson = postObject(json.toString());
 			if(responseJson.opt("uniqueId") != null) {
@@ -281,6 +277,15 @@ public class DocumentOnlineSigner implements Serializable {
 		List<ITransferObject> list = dirStaff.getList(criteria);
 		if (! list.isEmpty() )
 			return ((RegistryDirStaff)list.get(0)).getChargeDescription();
+		return "";
+	}
+	private String getRDirStaffName(Offer offer) throws ManagerBeanException {
+		IManagerBean dirStaff = BeanManager.getManagerBean(RegistryDirStaff.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(dirStaff.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_REGISTRY_ID), offer.getTarget().getId());
+		List<ITransferObject> list = dirStaff.getList(criteria);
+		if (! list.isEmpty() )
+			return ((RegistryDirStaff)list.get(0)).getName();
 		return "";
 	}
 	private String getSellerEmail(Offer offer) {
