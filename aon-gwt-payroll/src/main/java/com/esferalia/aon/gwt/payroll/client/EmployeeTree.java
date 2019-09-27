@@ -100,7 +100,7 @@ import net.aonsolutions.gwt.pdfjs.client.Viewer;
  */
 
 public class EmployeeTree implements EntryPoint, Employees.Listener,
-		MetaData.Listener, Cost.Listener, Salary.Listener, EmployeeSalary.Listener, WorkplaceSalary.Listener {
+		MetaData.Listener, Cost.Listener, Salary.Listener, EmployeeSalary.Listener, WorkplaceSalary.Listener, EnterpriseSalary.Listener {
 
 	public static String SHARE_URL = URL.encode(GWT.getModuleBaseURL() + "share");
 	static class EmployeeCalcDialog extends CalcDialog<Employee> {
@@ -1904,6 +1904,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private Irpf irpf;
 	private Salary salary;
 	private Statistics stats;
+	private EnterpriseSalary enterpriseSalary;
 	private ITEditor it;
 	private WorkplaceSalary workplaceSalary;
 	private CalendarDraft calendarDraft;
@@ -2210,6 +2211,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		employeeDetail.setWidget(getStats());
 		getStats().setStatistics(statistics);
 	}
+	
+	@Override
+	public void onEnterpriseSalariesSelected(EnterpriseSalaryObject enterpriseSalaryObject) {
+		employeeDetail.setWidget(getEnterpriseSalary());
+		getEnterpriseSalary().setEnterpriseSalaryObject(enterpriseSalaryObject);
+	}
 
 	@Override
 	public void onITDataSelected(ITDataObject dataObject) {
@@ -2446,7 +2453,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	
 	private WorkplaceSalary getWorkplceSalary() {
 		if (workplaceSalary == null)
-			(workplaceSalary = new WorkplaceSalary()).addListener(this);;
+			(workplaceSalary = new WorkplaceSalary()).addListener(this);
 		return workplaceSalary;
 	}
 
@@ -2467,6 +2474,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		if (stats == null)
 			stats = new Statistics();
 		return stats;
+	}
+	
+	private EnterpriseSalary getEnterpriseSalary() {
+		if (enterpriseSalary == null)
+			(enterpriseSalary = new EnterpriseSalary()).addListener(this);
+		return enterpriseSalary;
 	}
 
 	public Salary getSalary() {

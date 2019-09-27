@@ -100,6 +100,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		void onIrpfsSelected(IrpfDocuments docs);
 
 		void onStatisticsSelected(Statistics stats);
+		
+		void onEnterpriseSalariesSelected(EnterpriseSalaryObject enterpiseSalary);
 
 		void onITDataSelected(ITDataObject dataObject);
 		
@@ -311,6 +313,10 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		addImageItem(enterpriseItem, "Costes", images.costs());
 		addImageItem(enterpriseItem, "N\u00F3minas", images.salaries());
 		addImageItem(enterpriseItem, "Estad\u00EDsticas", images.statistics());
+		
+		// Nominas Beta Empresa
+//		addImageItem(enterpriseItem, "N\u00F3minas (Beta)", images.salaries())
+//			.setUserObject(new EnterpriseSalaryObject(enterprise.getId(), employeesService));
 
 		if (extended) {
 			List<Activity> activities = enterprise.getActivities();
@@ -403,10 +409,12 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			// onSalariesSelected((SalariesDocuments) userObject);
 			onSalariesDocumentsSelected(item);
 		} else if (userObject instanceof CostDocuments) {
-			// onCostsSelected((CostDocuments) userObject);
+			// onCostsSelected((CostDocuments) userObject); 
 			onCostsDocumentsSelected(item);
 		} else if (userObject instanceof Statistics) {
 			onStatisticsSelected((Statistics) userObject);
+		} else if (userObject instanceof EnterpriseSalaryObject) {
+			onEnterpriseSalariesSelected((EnterpriseSalaryObject) userObject);
 		} else if (userObject instanceof ITDataObject) {
 			onITDataSelected((ITDataObject) userObject);
 		} else if (userObject instanceof WorkplaceSalaryObject) {
@@ -1064,6 +1072,12 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	private void onStatisticsSelected(Statistics stats) {
 		for (Listener listener : listeners) {
 			listener.onStatisticsSelected(stats);
+		}
+	}
+	
+	private void onEnterpriseSalariesSelected(EnterpriseSalaryObject enterpriseSalaryObject) {
+		for (Listener listener : listeners) {
+			listener.onEnterpriseSalariesSelected(enterpriseSalaryObject);
 		}
 	}
 
