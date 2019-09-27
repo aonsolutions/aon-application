@@ -65,6 +65,7 @@ public class JooqPayrollSalaries {
 		
 		Result<Record> salaryRecords = dslContext.select().from(SALARY)
 				.where(SALARY.CONTRACT.eq(employeeId))
+				.orderBy(SALARY.END_DATE.desc())
 				.fetch();
 		
 		for(Record salaryRecord : salaryRecords) {
@@ -141,7 +142,9 @@ public class JooqPayrollSalaries {
 						dslContext.select(CONTRACT.ID).from(CONTRACT)
 							.where(CONTRACT.ID.ge(0))
 							.and(CONTRACT.WORKPLACE.eq(workplaceId))
-				)).fetch();
+				))
+				.orderBy(SALARY.END_DATE.desc())
+				.fetch();
 		
 		for(Record salaryRecord : salaryRecords) {
 			
