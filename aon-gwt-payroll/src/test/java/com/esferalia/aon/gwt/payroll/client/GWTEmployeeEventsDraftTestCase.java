@@ -201,6 +201,15 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 				
 			}
 
+
+
+			@Override
+			public void getWorkplaceSalaries(String currentDomainName, Integer workplaceId,
+					AsyncCallback<List<SalaryInfo>> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
 			
 		};
 

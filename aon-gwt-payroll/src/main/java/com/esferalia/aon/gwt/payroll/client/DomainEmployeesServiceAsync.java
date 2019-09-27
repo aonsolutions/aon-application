@@ -417,6 +417,10 @@ public class DomainEmployeesServiceAsync {
 	public void deleteSalariesDB(ArrayList<Integer> ids, AsyncCallback<String> callback) {
 		employeesServiceAsync.deleteSalariesDB(getCurrentDomainName(), ids, callback);
 	}
+	
+	public void getWorkplaceSalaries(Integer workplaceId, AsyncCallback<List<SalaryInfo>> callback) {
+		employeesServiceAsync.getWorkplaceSalaries(getCurrentDomainName(), workplaceId, callback);
+	}
 
 	
 	// ------------------------------------------------------------------------
@@ -435,6 +439,8 @@ public class DomainEmployeesServiceAsync {
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
 	}
+
+	
 
 	
 	

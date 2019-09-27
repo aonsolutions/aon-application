@@ -43,6 +43,10 @@ public class JooqPayrollSalaries {
 	public static String deleteSalaries(Connection connection, ArrayList<Integer> ids) {
 		return deleteSalariesDB(DSL.using(connection, getDefaultSettings()), ids);
 	}
+	
+	public static List<SalaryInfo> getWorkplaceSalaries(Connection connection, Integer workplaceId) {
+		return getWorkplaceSalariesDB(DSL.using(connection, getDefaultSettings()), workplaceId);
+	}
 
 	/**
 	 * @param dslContext
@@ -118,6 +122,64 @@ public class JooqPayrollSalaries {
 		}
 		return "";
 	}
+	
+	/**
+	 * @param dslContext
+	 * @param workplaceId
+	 * @return List of workplace salaries
+	 */
+	private static List<SalaryInfo> getWorkplaceSalariesDB(DSLContext dslContext, Integer workplaceId) {
+		List<SalaryInfo> salaries = new ArrayList<SalaryInfo>();
+		
+		Integer enterpriseId =  dslContext.select(WORKPLACE.ENTERPRISE).from(WORKPLACE)
+				.where(WORKPLACE.ID.eq(workplaceId))
+				.fetchOne()
+				.get(WORKPLACE.ENTERPRISE);
+		
+		Result<Record> salaryRecords = dslContext.select().from(SALARY)
+				.where(SALARY.CONTRACT.in(
+						dslContext.select(CONTRACT.ID).from(CONTRACT)
+							.where(CONTRACT.ID.ge(0))
+							.and(CONTRACT.WORKPLACE.eq(workplaceId))
+				)).fetch();
+		
+		for(Record salaryRecord : salaryRecords) {
+			
+			SalaryInfo salaryInfo = new SalaryInfo();
+			salaryInfo.setId(salaryRecord.get(SALARY.ID));
+			salaryInfo.setDomain(salaryRecord.get(SALARY.DOMAIN));
+			salaryInfo.setContract(salaryRecord.get(SALARY.CONTRACT));
+			salaryInfo.setStartDate(salaryRecord.get(SALARY.START_DATE));
+			salaryInfo.setEndDate(salaryRecord.get(SALARY.END_DATE));
+			salaryInfo.setType(Salary.Type.values()[salaryRecord.get(SALARY.TYPE)]);
+			salaryInfo.setEnterpriseName(salaryRecord.get(SALARY.ENTERPRISE_NAME));
+			salaryInfo.setEmployeeName(salaryRecord.get(SALARY.EMPLOYEE_NAME));
+			salaryInfo.setTotalPayment(salaryRecord.get(SALARY.TOTAL_PAYMENT));
+			salaryInfo.setTotalDeduction(salaryRecord.get(SALARY.TOTAL_DEDUCTION));
+			salaryInfo.setTotalLiquid(salaryRecord.get(SALARY.TOTAL_LIQUID));
+			
+			String workplaceName = dslContext.select(WORKPLACE.DESCRIPTION)
+					.from(WORKPLACE)
+					.where(WORKPLACE.ID.eq(
+							dslContext.select(CONTRACT.WORKPLACE).from(CONTRACT)
+							.where(CONTRACT.ID.eq(salaryRecord.get(SALARY.CONTRACT)))))
+					.fetchOne()
+					.get(WORKPLACE.DESCRIPTION);
+			
+			salaryInfo.setWorkplaceName(workplaceName);
+			
+			// Enterprise ID
+			salaryInfo.setEnterpriseId(enterpriseId);
+			
+			// Add to salaries list
+			salaries.add(salaryInfo);
+
+		}
+		
+		return salaries;
+	}
+
+	
 
 	
 

@@ -51,6 +51,7 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	private Salary salary;
 	private Statistics stats;
 	private ITEditor it;
+	private WorkplaceSalary workplaceSalary;
 	private CalendarDraft calendarDraft;
 	private Documents documents;
 	
@@ -313,6 +314,12 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	public void onEmployeeNewDraftSelected(EmployeeNewDraftObject employeeNewDraft) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void onWorkplaceSalarySelected(WorkplaceSalaryObject workplaceSalaryObject) {
+		detailPanel.setWidget(workplaceSalary);
+		workplaceSalary.setWorkplaceSalaryObject(workplaceSalaryObject);
 	}
 
 	

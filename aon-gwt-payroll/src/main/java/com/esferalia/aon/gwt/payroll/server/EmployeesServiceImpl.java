@@ -4904,6 +4904,24 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 		}
 	}
+
+	@Override
+	public List<SalaryInfo> getWorkplaceSalaries(String currentDomainName, Integer workplaceId) {
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection(currentDomainName);
+			return JooqPayrollSalaries.getWorkplaceSalaries(connection, workplaceId);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if ( connection != null ) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
 	
 
 }

@@ -206,5 +206,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void deleteSalariesDB(String currentDomainName, ArrayList<Integer> ids, AsyncCallback<String> callback);
 
+	void getWorkplaceSalaries(String currentDomainName, Integer workplaceId, AsyncCallback<List<SalaryInfo>> callback);
+
 	
 }

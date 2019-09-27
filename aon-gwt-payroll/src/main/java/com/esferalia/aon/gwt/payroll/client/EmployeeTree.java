@@ -100,7 +100,7 @@ import net.aonsolutions.gwt.pdfjs.client.Viewer;
  */
 
 public class EmployeeTree implements EntryPoint, Employees.Listener,
-		MetaData.Listener, Cost.Listener, Salary.Listener, EmployeeSalary.Listener {
+		MetaData.Listener, Cost.Listener, Salary.Listener, EmployeeSalary.Listener, WorkplaceSalary.Listener {
 
 	public static String SHARE_URL = URL.encode(GWT.getModuleBaseURL() + "share");
 	static class EmployeeCalcDialog extends CalcDialog<Employee> {
@@ -1905,6 +1905,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private Salary salary;
 	private Statistics stats;
 	private ITEditor it;
+	private WorkplaceSalary workplaceSalary;
 	private CalendarDraft calendarDraft;
 	private SalaryDraft salaryDraft;
 	private SalaryPreview salaryPreview;
@@ -2215,6 +2216,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		employeeDetail.setWidget(getIt());
 		getIt().setITEditor(dataObject);
 	}
+	
+	@Override
+	public void onWorkplaceSalarySelected(WorkplaceSalaryObject dataObject) {
+		employeeDetail.setWidget(getWorkplceSalary());
+		getWorkplceSalary().setWorkplaceSalaryObject(dataObject);
+	}
 
 	@Override
 	public void onCalendarSelected(
@@ -2435,6 +2442,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		if (it == null)
 			it = new ITEditor();
 		return it;
+	}
+	
+	private WorkplaceSalary getWorkplceSalary() {
+		if (workplaceSalary == null)
+			(workplaceSalary = new WorkplaceSalary()).addListener(this);;
+		return workplaceSalary;
 	}
 
 	private Cost getCost() {

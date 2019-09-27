@@ -183,4 +183,6 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	String deleteSalariesDB(String currentDomainName, ArrayList<Integer> ids);
 
+	List<SalaryInfo> getWorkplaceSalaries(String currentDomainName, Integer workplaceId);
+
 }

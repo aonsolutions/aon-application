@@ -186,6 +186,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 			
 		}
 
+		@Override
+		public void getWorkplaceSalaries(String currentDomainName, Integer workplaceId,
+				AsyncCallback<List<SalaryInfo>> callback) {
+			// TODO Auto-generated method stub
+			
+		}
+
 		
 	}
 
@@ -349,6 +356,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					@Override
 					public void deleteSalariesDB(String currentDomainName, ArrayList<Integer> ids,
 							AsyncCallback<String> callback) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void getWorkplaceSalaries(String currentDomainName, Integer workplaceId,
+							AsyncCallback<List<SalaryInfo>> callback) {
 						// TODO Auto-generated method stub
 						
 					}

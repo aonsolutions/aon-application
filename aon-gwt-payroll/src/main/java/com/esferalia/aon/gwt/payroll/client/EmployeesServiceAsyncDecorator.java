@@ -639,5 +639,11 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		employeesServiceAsync.deleteSalariesDB(currentDomainName, ids, new AsyncCallbackWrapper<String>(callback));
 	}
 
+	@Override
+	public void getWorkplaceSalaries(String currentDomainName, Integer workplaceId, AsyncCallback<List<SalaryInfo>> callback) {
+		AON.start();
+		employeesServiceAsync.getWorkplaceSalaries(currentDomainName, workplaceId, new AsyncCallbackWrapper<List<SalaryInfo>>(callback));
+	}
+
 	
 }
