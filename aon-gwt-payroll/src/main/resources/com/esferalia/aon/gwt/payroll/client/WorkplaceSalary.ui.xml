@@ -29,6 +29,13 @@
 		.widthAll{
 			width: 100%
 		}
+		
+		.title{
+			width: 100%;
+			background-color: #e8e4e4;
+			padding: 5px;
+			margin-bottom: 5px;
+		}
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX">
