@@ -2588,7 +2588,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	
 	private EmployeeSalary getEmployeeSalary() {
 		if (employeeSalary == null)
-			(employeeSalary = new EmployeeSalary()).addListener((Listener) this);
+			(employeeSalary = new EmployeeSalary()).addListener(this);
 		return employeeSalary;
 	}
 

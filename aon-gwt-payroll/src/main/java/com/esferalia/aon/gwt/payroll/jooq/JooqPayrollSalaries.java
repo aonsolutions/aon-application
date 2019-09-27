@@ -52,6 +52,13 @@ public class JooqPayrollSalaries {
 	private static List<SalaryInfo> getEmployeeSalariesDB(DSLContext dslContext, Integer employeeId) {
 		List<SalaryInfo> salaries = new ArrayList<SalaryInfo>();
 		
+		Integer enterpriseId =  dslContext.select(WORKPLACE.ENTERPRISE).from(WORKPLACE)
+				.where(WORKPLACE.ID.eq(
+						dslContext.select(CONTRACT.WORKPLACE).from(CONTRACT)
+							.where(CONTRACT.ID.eq(employeeId))
+				)).fetchOne()
+				.get(WORKPLACE.ENTERPRISE);
+		
 		Result<Record> salaryRecords = dslContext.select().from(SALARY)
 				.where(SALARY.CONTRACT.eq(employeeId))
 				.fetch();
@@ -81,12 +88,7 @@ public class JooqPayrollSalaries {
 			
 			salaryInfo.setWorkplaceName(workplaceName);
 			
-			Integer enterpriseId = dslContext.select(REGISTRY.ID)
-					.from(REGISTRY)
-					.where(REGISTRY.NAME.eq(salaryRecord.get(SALARY.ENTERPRISE_NAME)))
-					.fetchOne()
-					.get(REGISTRY.ID);
-			
+			// Enterprise ID
 			salaryInfo.setEnterpriseId(enterpriseId);
 			
 			// Add to salaries list
