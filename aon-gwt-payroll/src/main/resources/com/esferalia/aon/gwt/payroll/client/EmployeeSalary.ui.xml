@@ -29,6 +29,17 @@
 		.widthAll{
 			width: 100%
 		}
+		
+		.rightAlign{
+    		text-align: right;
+		}
+		
+		.title{
+			width: 100%;
+			background-color: #e8e4e4;
+			padding: 5px;
+			margin-bottom: 5px;
+		}
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX">
@@ -50,7 +61,7 @@
 						<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
 							<g:Button ui:field='deleteButton' styleName='aon-finding-toolbar-item aon-icon-delete' text="BORRAR"/>
 							<!--  g:Button ui:field='printButton' styleName='aon-finding-toolbar-item aon-icon-pdf' text="IMPRIMIR" /-->
-							<g:Button debugId='saveButton' ui:field='saveButton' styleName='aon-finding-toolbar-item aon-icon-mail-save' text="DESCARGAR" />
+							<g:Button debugId='saveButton' ui:field='saveButton' styleName='aon-finding-toolbar-item aon-icon-pdf' text="PDF" />
 							<g:Button ui:field='publishButton' styleName='aon-finding-toolbar-item aon-icon-google-drive' text="PUBLICAR" />
 						</g:HTMLPanel>
 					</g:HorizontalPanel>

@@ -1,21 +1,19 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Comparator;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
-import com.google.gwt.cell.client.ActionCell;
-import com.google.gwt.cell.client.Cell.Context;
+import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
-import com.google.gwt.http.client.URL;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -29,6 +27,9 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
@@ -55,6 +56,8 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	interface MyStyle extends CssResource {
 		String tableStyle();
 		String mAuto();
+		String rightAlign();
+		String title();
 	}
 	
 	@UiField
@@ -150,15 +153,24 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	    pager.setDisplay(table);
 	    
 	    // Add the pager and list to the page.
+	    ScrollPanel scrollPanel = new ScrollPanel();
+	    scrollPanel.setHeight("100%");
+	    
+	    Label employeeName = new Label();
+	    employeeName.setText(this.employeeSalaryObject.getEmployeeSalaries().get(0).getEmployeeName());
+	    
 	    VerticalPanel vPanel = new VerticalPanel();
+	    vPanel.add(employeeName);
 	    vPanel.add(table);
 	    vPanel.add(pager);
 	    
 	    // Add Styles
 	    vPanel.addStyleName(style.tableStyle());
 	    pager.addStyleName(style.mAuto());
+	    employeeName.addStyleName(style.title());
 		
-		mainContainer.add(vPanel);
+	    scrollPanel.add(vPanel);
+		mainContainer.add(scrollPanel);
 	}
 
 	private void addSelectionModel(CellTable<SalaryInfo> table) {
@@ -225,41 +237,45 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	}
 	
 	private void addColumns(CellTable<SalaryInfo> table, List<SalaryInfo> salaryList) {
-		// Create employee name column.
-	    TextColumn<SalaryInfo> employeeNameColumn = new TextColumn<SalaryInfo>() {
-	      @Override
-	      public String getValue(SalaryInfo salaryInfo) {
-	        return salaryInfo.getEmployeeName();
-	      }
-	    };
-
-	    // Make the employee name column sortable.
-	    employeeNameColumn.setSortable(true);
-	    
-	    // Create workplace name column.
-	    TextColumn<SalaryInfo> workplaceNameColumn = new TextColumn<SalaryInfo>() {
-	      @Override
-	      public String getValue(SalaryInfo salaryInfo) {
-	        return salaryInfo.getWorkplaceName();
-	      }
-	    };
-
-	    // Make the workplace name column sortable.
-	    workplaceNameColumn.setSortable(true);
-	    
-	    // Create enterprise name column.
-	    TextColumn<SalaryInfo> enterpriseNameColumn = new TextColumn<SalaryInfo>() {
-	      @Override
-	      public String getValue(SalaryInfo salaryInfo) {
-	        return salaryInfo.getEnterpriseName();
-	      }
-	    };
+//		// Create employee name column.
+//	    TextColumn<SalaryInfo> employeeNameColumn = new TextColumn<SalaryInfo>() {
+//	      @Override
+//	      public String getValue(SalaryInfo salaryInfo) {
+//	        return salaryInfo.getEmployeeName();
+//	      }
+//	    };
+//
+//	    // Make the employee name column sortable.
+//	    employeeNameColumn.setSortable(true);
+//	    
+//	    // Create workplace name column.
+//	    TextColumn<SalaryInfo> workplaceNameColumn = new TextColumn<SalaryInfo>() {
+//	      @Override
+//	      public String getValue(SalaryInfo salaryInfo) {
+//	        return salaryInfo.getWorkplaceName();
+//	      }
+//	    };
+//
+//	    // Make the workplace name column sortable.
+//	    workplaceNameColumn.setSortable(true);
+//	    
+//	    // Create enterprise name column.
+//	    TextColumn<SalaryInfo> enterpriseNameColumn = new TextColumn<SalaryInfo>() {
+//	      @Override
+//	      public String getValue(SalaryInfo salaryInfo) {
+//	        return salaryInfo.getEnterpriseName();
+//	      }
+//	    };
 	    
 	    // Create start date column.
 	    TextColumn<SalaryInfo> startDateColumn = new TextColumn<SalaryInfo>() {
 	      @Override
 	      public String getValue(SalaryInfo salaryInfo) {
-	        return salaryInfo.getStartDate()+"";
+	    	  Date endDate = salaryInfo.getStartDate();
+	    	  String year = (endDate.getYear() + 1900) + "";
+	    	  String month = StringUtils.leftPad((endDate.getMonth() + 1) + "", 2, '0');
+	    	  String date = StringUtils.leftPad((endDate.getDate()) + "", 2, '0');
+	    	  return date+"/"+month+"/"+year;
 	      }
 	    };
 
@@ -270,7 +286,11 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	    TextColumn<SalaryInfo> endtDateColumn = new TextColumn<SalaryInfo>() {
 	      @Override
 	      public String getValue(SalaryInfo salaryInfo) {
-	        return salaryInfo.getEndDate()+"";
+	    	  Date endDate = salaryInfo.getEndDate();
+	    	  String year = (endDate.getYear() + 1900) + "";
+	    	  String month = StringUtils.leftPad((endDate.getMonth() + 1) + "", 2, '0');
+	    	  String date = StringUtils.leftPad((endDate.getDate()) + "", 2, '0');
+	    	  return date+"/"+month+"/"+year;
 	      }
 	    };
 
@@ -285,96 +305,119 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	      }
 	    };
 	    
+	    // Make the type column sortable.
+	    typeColumn.setSortable(true);
+	    
 	    // Create total payment column.
 	    TextColumn<SalaryInfo> totalPaymentColumn = new TextColumn<SalaryInfo>() {
 	      @Override
 	      public String getValue(SalaryInfo salaryInfo) {
-	        return salaryInfo.getTotalPayment()+"";
+	        return (Math.round(salaryInfo.getTotalPayment() * 100d) / 100d)+"";
 	      }
 	    };
+	    
+	    totalPaymentColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 	    
 	    // Create total deduction column.
 	    TextColumn<SalaryInfo> totalDeductionColumn = new TextColumn<SalaryInfo>() {
 	      @Override
 	      public String getValue(SalaryInfo salaryInfo) {
-	        return salaryInfo.getTotalDecuction()+"";
+	        return (Math.round(salaryInfo.getTotalDecuction() * 100d) / 100d)+"";
 	      }
 	    };
+	    
+	    totalDeductionColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 	    
 	    // Create total liquid column.
 	    TextColumn<SalaryInfo> totalLiquidColumn = new TextColumn<SalaryInfo>() {
 	      @Override
 	      public String getValue(SalaryInfo salaryInfo) {
-	        return salaryInfo.getTotalLiquid()+"";
+	    	  return (Math.round(salaryInfo.getTotalLiquid() * 100d) / 100d)+" "+String.valueOf("\u20AC");
 	      }
 	    };
-		
-		ActionCell<SalaryInfo> downloadCell = new ActionCell<SalaryInfo>("Download", new ActionCell.Delegate<SalaryInfo>() {
-
-			@Override
-			public void execute(SalaryInfo salary) {
-				String printURL = URL.encode(GWT.getModuleBaseURL() + "salary/"
-						+ salary.getId() + ".pdf?" + salary.getType().name() );
-				
-				Window.open(printURL, "_blank", null);
-			}
-			
-		});
 	    
-	    Column<SalaryInfo, SalaryInfo> downloadColumn = new Column<SalaryInfo, SalaryInfo>(downloadCell) {
-
-			@Override
-			public SalaryInfo getValue(SalaryInfo object) {
-				return object;
-			}
-			
-			@Override
-			public void render(Context context, SalaryInfo object, SafeHtmlBuilder sb) {
-				if(null != object) {
-					sb.appendHtmlConstant("<button type=\"button\" class=\"aon-finding-toolbar-item aon-icon-mail-save\" style=\"border: none !important;\"></button>");
-				}
-			}
-		};
+	    totalLiquidColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		
+//		ActionCell<SalaryInfo> downloadCell = new ActionCell<SalaryInfo>("Download", new ActionCell.Delegate<SalaryInfo>() {
+//
+//			@Override
+//			public void execute(SalaryInfo salary) {
+//				String printURL = URL.encode(GWT.getModuleBaseURL() + "salary/"
+//						+ salary.getId() + ".pdf?" + salary.getType().name() );
+//				
+//				Window.open(printURL, "_blank", null);
+//			}
+//			
+//		});
+//	    
+//	    Column<SalaryInfo, SalaryInfo> downloadColumn = new Column<SalaryInfo, SalaryInfo>(downloadCell) {
+//
+//			@Override
+//			public SalaryInfo getValue(SalaryInfo object) {
+//				return object;
+//			}
+//			
+//			@Override
+//			public void render(Context context, SalaryInfo object, SafeHtmlBuilder sb) {
+//				if(null != object) {
+//					sb.appendHtmlConstant("<button type=\"button\" class=\"aon-finding-toolbar-item aon-icon-mail-save\" style=\"border: none !important;\"></button>");
+//				}
+//			}
+//		};
 
 	    // Add the columns.
-	    table.addColumn(employeeNameColumn, "Empleado");
-	    table.addColumn(enterpriseNameColumn, "Empresa");
-	    table.addColumn(workplaceNameColumn, "C. Trabajo");
+//	    table.addColumn(employeeNameColumn, "Empleado");
+//	    table.addColumn(enterpriseNameColumn, "Empresa");
+//	    table.addColumn(workplaceNameColumn, "C. Trabajo");
+	    
+	    table.addColumn(typeColumn, "Tipo");
 	    
 	    table.addColumn(startDateColumn, "F. Inicio");
 	    table.addColumn(endtDateColumn, "F. Fin");
 	    
-	    table.addColumn(typeColumn, "Tipo");
-	    table.addColumn(totalPaymentColumn, "Pago Total");
-	    table.addColumn(totalDeductionColumn, "Deduccion Total");
-	    table.addColumn(totalLiquidColumn, "Liquido Total");
+	    table.addColumn(totalPaymentColumn, "Bruto");
+	    table.addColumn(totalDeductionColumn, "Deducciones");
+	    table.addColumn(totalLiquidColumn, "L"+String.valueOf("\u00ED")+"quido");
 	    
-	    table.addColumn(downloadColumn, "Descargar / Previsualizar");
+//	    table.addColumn(downloadColumn, "Descargar / Previsualizar");
 	      
 	    
 	    // Add a ColumnSortEvent.ListHandler to connect sorting to the java.util.List.
 	    ListHandler<SalaryInfo> columnSortHandler = new ListHandler<SalaryInfo>(salaryList);
-	    columnSortHandler.setComparator(employeeNameColumn, new Comparator<SalaryInfo>() {
-	          public int compare(SalaryInfo o1, SalaryInfo o2) {
-	            if (o1 == o2) {
-	              return 0;
-	            }
-
-	            if (o1 != null) {
-	              return (o2 != null) ? o1.getEmployeeName().compareTo(o2.getEmployeeName()) : 1;
-	            }
-	            return -1;
-	          }
-	        });
+//	    columnSortHandler.setComparator(employeeNameColumn, new Comparator<SalaryInfo>() {
+//	          public int compare(SalaryInfo o1, SalaryInfo o2) {
+//	            if (o1 == o2) {
+//	              return 0;
+//	            }
+//
+//	            if (o1 != null) {
+//	              return (o2 != null) ? o1.getEmployeeName().compareTo(o2.getEmployeeName()) : 1;
+//	            }
+//	            return -1;
+//	          }
+//	        });
+//	    
+//	    columnSortHandler.setComparator(workplaceNameColumn, new Comparator<SalaryInfo>() {
+//	          public int compare(SalaryInfo o1, SalaryInfo o2) {
+//	            if (o1 == o2) {
+//	              return 0;
+//	            }
+//
+//	            if (o1 != null) {
+//	              return (o2 != null) ? o1.getWorkplaceName().compareTo(o2.getWorkplaceName()) : 1;
+//	            }
+//	            return -1;
+//	          }
+//	        });
 	    
-	    columnSortHandler.setComparator(workplaceNameColumn, new Comparator<SalaryInfo>() {
+	    columnSortHandler.setComparator(typeColumn, new Comparator<SalaryInfo>() {
 	          public int compare(SalaryInfo o1, SalaryInfo o2) {
 	            if (o1 == o2) {
 	              return 0;
 	            }
 
 	            if (o1 != null) {
-	              return (o2 != null) ? o1.getWorkplaceName().compareTo(o2.getWorkplaceName()) : 1;
+	              return (o2 != null) ? o1.getType().getDescription().compareTo(o2.getType().getDescription()) : 1;
 	            }
 	            return -1;
 	          }
@@ -409,7 +452,8 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	    table.addColumnSortHandler(columnSortHandler);
 
 	    // We know that the data is sorted alphabetically by default.
-	    table.getColumnSortList().push(employeeNameColumn);
+	    endtDateColumn.setDefaultSortAscending(false);
+	    table.getColumnSortList().push(endtDateColumn);
 	}
 	
 	// --------------------------------------------------
