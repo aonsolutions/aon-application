@@ -103,65 +103,66 @@ public class SIIServlet extends HttpServlet{
 
 				Object object = new Object();
 				
-				if(option.equals("cp_cobros")){
+				if("cp_cobros".equals(option)){
 					LinkedList<Finance> financeList = AON.getSiiFinanceList(domain.getName(), domain.getId(), login,f -> f.getInvoiceProperty().in(ids));	
 					object = manager.suministroFacturasEmitidasCobros(domain, login, company, financeList, ids[0]);
-				} else if(option.equals("cp_pagos")){
+				} else if("cp_pagos".equals(option)){
 					LinkedList<Finance> financeList = AON.getSiiFinanceList(domain.getName(), domain.getId(), login,f -> f.getInvoiceProperty().in(ids));	
 					object = manager.suministroFacturasRecibidasPagos(domain, login, company, financeList, ids[0]);
-				} else if(option.equals("intracomunitarias")){
+				} else if("intracomunitarias".equals(option)){
 					String tipoOp = parameters.get("tipo_operacion");
-					if(action.equals("suministro")){
+					if(isSuministro(action)){
 						object = manager.suministroOperacionesIntracomunitarias(domain, login, company, ids[0], contextList, tipoOp, terceros);
-					}else if(action.equals("baja")){
+					}else if(isBaja(action)){
 						object = manager.bajaOperacionesIntracomunitarias(domain, login, company, ids[0], contextList, terceros);
 					}
 				} else if(option.contains("fe_")){
-					if(action.equals("suministro")){
+					if(isSuministro(action)){
 						object = manager.suministroFacturasEmitidas(domain, login, company, ids[0], contextList, terceros);
-					} else if(action.equals("baja")){
+					} else if(isBaja(action)){
 						object = manager.bajaFacturasEmitidas(domain, login, company, ids[0], contextList, terceros);
 					}
 				} else if(option.contains("fr_")){
-					if(action.equals("suministro")){
+					if(isSuministro(action)){
 						object = manager.suministroFacturasRecibidas(domain, login, company, ids[0], contextList, terceros);
-					} else if(action.equals("baja")){
+					} else if(isBaja(action)){
 						object = manager.bajaFacturasRecibidas(domain, login, company, ids[0], contextList, terceros);
 					}
 				} else if("bienes".equalsIgnoreCase(option)){
-					if(action.equals("suministro")){
+					if(isSuministro(action)){
 						object = manager.suministroBienesInversion(domain, login, company, ids[0], contextList, terceros);
-					} else if(action.equals("baja")){
+					} else if(isBaja(action)){
 						object = manager.bajaBienesInversion(domain, login, company, ids[0], contextList, terceros);
 					}
 				} else if("metalico".equalsIgnoreCase(option)){
-					if(action.equals("suministro")){
+					if(isSuministro(action)){
 						object = manager.suministroCobrosMetalico(domain, login, company, ids[0], contextList, terceros);
-					} else if(action.equals("baja")){
+					} else if(isBaja(action)){
 						object = manager.bajaCobrosMetalico(domain, login, company, ids[0], contextList, terceros);
 					}
 				} else if("seguros".equalsIgnoreCase(option)){
-					if(action.equals("suministro")){
+					if(isSuministro(action)){
 						object = manager.suministroOperacionesSeguros(domain, login, company, ids[0], contextList, terceros);
-					} else if(action.equals("baja")){
+					} else if(isBaja(action)){
 						object = manager.bajaOperacionesSeguros(domain, login, company, ids[0], contextList, terceros);
 					}
 				} else if("agencias".equalsIgnoreCase(option)){
-					if(action.equals("suministro")){
+					if(isSuministro(action)){
 						object = manager.suministroAgenciasViajes(domain, login, company, ids[0], contextList, terceros);
-					} else if(action.equals("baja")){
+					} else if(isBaja(action)){
 						object = manager.bajaAgenciasViajes(domain, login, company, ids[0], contextList, terceros);
 					}
 				}				
 				giveBack(req, resp, object, new JSONObject());
 			} catch (Exception e) {
+				LOGGER.info(e.getMessage());
+				e.printStackTrace();
 				JSONArray array = new JSONArray();
 				JSONObject json = new JSONObject();
 				json.put("id", 1);
 				json.put("name", e.getLocalizedMessage());
 				array.put(json);
 				giveBack(req, resp, array, new JSONObject());
-				e.printStackTrace();
 			}
 		}
 	}
@@ -200,4 +201,12 @@ public class SIIServlet extends HttpServlet{
 		
 		return filter;
     }
+    
+    private Boolean isSuministro(String value) {
+    	return "suministro".equals(value);
+	}
+    
+    private Boolean isBaja(String value) {
+    	return "baja".equals(value);
+	}
 }
