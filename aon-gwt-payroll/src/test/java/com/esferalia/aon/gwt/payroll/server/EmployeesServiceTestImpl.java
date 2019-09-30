@@ -36,6 +36,7 @@ import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
 import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
@@ -619,6 +620,12 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 
 	@Override
 	public List<SalaryInfo> getWorkplaceSalaries(String currentDomainName, Integer workplaceId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<SalaryInfo> getFilterEmployeeSalaries(String currentDomainName, Integer id, SalaryInfoFilter filter) {
 		// TODO Auto-generated method stub
 		return null;
 	}

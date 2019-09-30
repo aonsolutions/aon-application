@@ -23,6 +23,7 @@ import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
@@ -207,6 +208,8 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void deleteSalariesDB(String currentDomainName, ArrayList<Integer> ids, AsyncCallback<String> callback);
 
 	void getWorkplaceSalaries(String currentDomainName, Integer workplaceId, AsyncCallback<List<SalaryInfo>> callback);
+
+	void getFilterEmployeeSalaries(String currentDomainName, Integer id, SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback);
 
 	
 }

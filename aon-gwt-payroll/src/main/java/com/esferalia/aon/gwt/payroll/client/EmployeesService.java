@@ -23,6 +23,7 @@ import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
@@ -184,5 +185,7 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	String deleteSalariesDB(String currentDomainName, ArrayList<Integer> ids);
 
 	List<SalaryInfo> getWorkplaceSalaries(String currentDomainName, Integer workplaceId);
+
+	List<SalaryInfo> getFilterEmployeeSalaries(String currentDomainName, Integer id, SalaryInfoFilter filter);
 
 }

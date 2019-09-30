@@ -24,6 +24,7 @@ import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.google.gwt.junit.client.GWTTestCase;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -211,6 +212,15 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 			@Override
 			public void getWorkplaceSalaries(String currentDomainName, Integer workplaceId,
+					AsyncCallback<List<SalaryInfo>> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void getFilterEmployeeSalaries(String currentDomainName, Integer id, SalaryInfoFilter filter,
 					AsyncCallback<List<SalaryInfo>> callback) {
 				// TODO Auto-generated method stub
 				

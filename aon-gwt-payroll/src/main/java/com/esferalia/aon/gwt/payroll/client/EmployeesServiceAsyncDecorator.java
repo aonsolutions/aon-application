@@ -34,6 +34,7 @@ import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
 import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
@@ -643,6 +644,12 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	public void getWorkplaceSalaries(String currentDomainName, Integer workplaceId, AsyncCallback<List<SalaryInfo>> callback) {
 		AON.start();
 		employeesServiceAsync.getWorkplaceSalaries(currentDomainName, workplaceId, new AsyncCallbackWrapper<List<SalaryInfo>>(callback));
+	}
+
+	@Override
+	public void getFilterEmployeeSalaries(String currentDomainName, Integer id, SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback) {
+		AON.start();
+		employeesServiceAsync.getFilterEmployeeSalaries(currentDomainName, id, filter, new AsyncCallbackWrapper<List<SalaryInfo>>(callback));
 	}
 
 	

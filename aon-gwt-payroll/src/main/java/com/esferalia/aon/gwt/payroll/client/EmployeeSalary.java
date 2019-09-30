@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.ValueUpdater;
@@ -13,6 +14,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -26,9 +28,12 @@ import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -58,10 +63,13 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 		String mAuto();
 		String rightAlign();
 		String title();
+		String filterLabel();
+		String filterBorder();
+		String hide();
 	}
 	
 	@UiField
-	HTMLPanel mainContainer;
+	ScrollPanel scrollPanel;
 	
 	@UiField
 	Button deleteButton;
@@ -71,15 +79,81 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	
 	@UiField
 	Button publishButton;
+	
+	@UiField
+	HTMLPanel mainContainer;
+	
+	@UiField
+	Label employeeNameLabel;
+
+	@UiField
+	DisclosurePanel collapsePanel;
+	
+	@UiField
+	RadioButton noDateRB;
+	
+	@UiField
+	RadioButton dateMYRB;
+	
+	@UiField
+	ListBox monthMY;
+	
+	@UiField
+	ListBox yearMY;
+	
+	@UiField
+	RadioButton dateTTRB;
+	
+	@UiField
+	ListBox monthTillT;
+	
+	@UiField
+	ListBox yearTillT;
+	
+	@UiField
+	ListBox monthTTo;
+	
+	@UiField
+	ListBox yearTTo;
+	
+	@UiField
+	Button filterButton;
 
 	
 	public EmployeeSalary() {
 				
 		//Inicializamos la vista del calendario
-		initWidget(uiBinder.createAndBindUi(this)); 
+		initWidget(uiBinder.createAndBindUi(this));
 		
 		listeners = new LinkedList<Listener>();
+	}
+
+	private void initListBox() {
+		// Clear listboxies
+		monthMY.clear();
+		yearMY.clear();
+		monthTillT.clear();
+		yearTillT.clear();
+		monthTTo.clear();
+		yearTTo.clear();
 		
+		// Add months to listboxes
+		String[] monthList = new String[] {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+		for(String month : monthList) {
+			monthMY.addItem(month);
+			monthTillT.addItem(month);
+			monthTTo.addItem(month);
+		}
+		
+		// Add year to listboxes
+		Integer actualYear = new Date().getYear() + 1900;
+		Integer firstPayroll = this.employeeSalaryObject.getEmployeeSalaries().get(this.employeeSalaryObject.getEmployeeSalaries().size()-1).getStartDate().getYear() + 1900;
+		Integer diffYears = actualYear - firstPayroll;
+		for(int i = 0; i <= diffYears; i++) {
+			yearMY.addItem((actualYear - i)+"");
+			yearTillT.addItem((actualYear - i)+"");
+			yearTTo.addItem((actualYear - i)+"");
+		}
 	}
 
 	private EmployeeSalaryObject employeeSalaryObject;
@@ -91,14 +165,36 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 		this.employeeSalaryObject.getEmployeeSalariesDB(
 				s -> {
 					resetPage();
-					initSalariesTable();
+					if(!this.employeeSalaryObject.getEmployeeSalaries().isEmpty()) {
+						initListBox();
+						this.noDateRB.setValue(true, true);
+						initSalariesTable();
+					} else {
+						// Hide everything
+						mainContainer.addStyleName(style.hide());
+						
+						//Hide buttons
+						this.deleteButton.setVisible(false);
+						this.saveButton.setVisible(false);
+						this.publishButton.setVisible(false);
+						
+						// Show warning dialog
+						WarningDialog warningDialog = new WarningDialog("Aviso", "No existen nominas para este empleado.");
+						warningDialog.center();
+						warningDialog.show();
+						return;
+					}
+					
 				}, 
 				f -> {}
 		);
 	}
 
 	private void resetPage() {
-		mainContainer.clear();
+		if(!this.employeeSalaryObject.getEmployeeSalaries().isEmpty()) {
+			this.collapsePanel.setOpen(false);
+			scrollPanel.clear();
+		}
 	}
 
 	private void initSalariesTable() {
@@ -109,11 +205,19 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 			this.publishButton.setVisible(false);
 			
 			// Show warning dialog
-			WarningDialog warningDialog = new WarningDialog("Aviso", "No existen nominas para este empleado.");
+			WarningDialog warningDialog = new WarningDialog("Aviso", "No existen nominas para este empleado. Si ha filtrado la informacion por favor revise los parametros.");
 			warningDialog.center();
 			warningDialog.show();
 			return;
 		}
+		
+		// Show everything
+		mainContainer.removeStyleName(style.hide());
+		
+		//Show buttons
+		this.deleteButton.setVisible(true);
+		this.saveButton.setVisible(true);
+		this.publishButton.setVisible(true);
 		
 		//Disable buttons till any salary selected
 		deleteButton.setEnabled(false);
@@ -152,25 +256,19 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	    // Set the cellList as the display.
 	    pager.setDisplay(table);
 	    
+	    // Set employee name
+	    employeeNameLabel.setText(this.employeeSalaryObject.getEmployeeSalaries().get(0).getEmployeeName());
+	    
 	    // Add the pager and list to the page.
-	    ScrollPanel scrollPanel = new ScrollPanel();
-	    scrollPanel.setHeight("100%");
-	    
-	    Label employeeName = new Label();
-	    employeeName.setText(this.employeeSalaryObject.getEmployeeSalaries().get(0).getEmployeeName());
-	    
 	    VerticalPanel vPanel = new VerticalPanel();
-	    vPanel.add(employeeName);
 	    vPanel.add(table);
 	    vPanel.add(pager);
 	    
 	    // Add Styles
 	    vPanel.addStyleName(style.tableStyle());
 	    pager.addStyleName(style.mAuto());
-	    employeeName.addStyleName(style.title());
 		
 	    scrollPanel.add(vPanel);
-		mainContainer.add(scrollPanel);
 	}
 
 	private void addSelectionModel(CellTable<SalaryInfo> table) {
@@ -483,15 +581,82 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 		}
 		
 		fileDownloadURL += "&name=salaries.pdf";
-		
-//		Window.alert(fileDownloadURL);
-		
 		Window.open(fileDownloadURL, "_blank", null);
 	}
 	
 	@UiHandler("publishButton")
 	public void onPublichalary(ClickEvent event) {
 		onPublish();
+	}
+	
+	@UiHandler("noDateRB")
+	public void onNoDateRBCahnge(ValueChangeEvent<Boolean> event) {
+		if(event.getValue()) {
+			monthMY.setEnabled(false);
+			yearMY.setEnabled(false);
+			monthTillT.setEnabled(false);
+			yearTillT.setEnabled(false);
+			monthTTo.setEnabled(false);
+			yearTTo.setEnabled(false);
+		}
+	}
+	
+	@UiHandler("dateMYRB")
+	public void onDateMYRBCahnge(ValueChangeEvent<Boolean> event) {
+		if(event.getValue()) {
+			monthMY.setEnabled(true);
+			yearMY.setEnabled(true);
+			monthTillT.setEnabled(false);
+			yearTillT.setEnabled(false);
+			monthTTo.setEnabled(false);
+			yearTTo.setEnabled(false);
+		}
+	}
+	
+	@UiHandler("dateTTRB")
+	public void onDateTTRBCahnge(ValueChangeEvent<Boolean> event) {
+		if(event.getValue()) {
+			monthMY.setEnabled(false);
+			yearMY.setEnabled(false);
+			monthTillT.setEnabled(true);
+			yearTillT.setEnabled(true);
+			monthTTo.setEnabled(true);
+			yearTTo.setEnabled(true);
+		}
+	}
+	
+	@UiHandler("filterButton")
+	public void onFilterButtonClick(ClickEvent event) {
+		SalaryInfoFilter filter = this.employeeSalaryObject.getFilter();
+		if(noDateRB.getValue()) {
+			filter.setNoDateFilter(true);
+			filter.setDateMYFilter(false);
+			filter.setDateTTFilter(false);
+		} else if(dateMYRB.getValue()) {
+			filter.setNoDateFilter(false);
+			filter.setDateMYFilter(true);
+			Integer year = Integer.parseInt(yearMY.getSelectedValue()) - 1900;
+			Integer month = monthMY.getSelectedIndex();
+			filter.setDateMY(new Date(year, month, 1));
+			filter.setDateTTFilter(false);
+		} else if(dateTTRB.getValue()) {
+			filter.setNoDateFilter(false);
+			filter.setDateMYFilter(false);
+			filter.setDateTTFilter(true);
+			Integer yearTillTValue = Integer.parseInt(yearTillT.getSelectedValue()) - 1900;
+			Integer monthTillTValue = monthTillT.getSelectedIndex();
+			filter.setDateTillT(new Date(yearTillTValue, monthTillTValue, 1));
+			Integer yearTToValue = Integer.parseInt(yearTTo.getSelectedValue()) - 1900;
+			Integer monthTToValue = monthTTo.getSelectedIndex();
+			filter.setDateTTo(new Date(yearTToValue, monthTToValue, 1));
+		}
+		
+		this.employeeSalaryObject.getFilterEmployeeSalariesDB(
+				s -> {
+					resetPage();
+					initSalariesTable();
+				}, f -> { }
+		);
 	}
 	
 	// --------------------------------------------------

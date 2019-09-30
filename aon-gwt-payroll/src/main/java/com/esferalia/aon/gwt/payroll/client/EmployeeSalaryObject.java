@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeSalaryObject {
@@ -14,6 +15,7 @@ public class EmployeeSalaryObject {
 	private DomainEmployeesServiceAsync employeesService;
 	private Employee employee;
 	private List<SalaryInfo> employeeSalaries;
+	private SalaryInfoFilter filter;
 	
 	public EmployeeSalaryObject() {
 		super();
@@ -22,11 +24,29 @@ public class EmployeeSalaryObject {
 	public EmployeeSalaryObject(Employee employee, DomainEmployeesServiceAsync employeesService) {
 		this.employee = employee;
 		this.employeesService = employeesService;
+		this.filter = new SalaryInfoFilter();
 	}
 	
 	public void getEmployeeSalariesDB(Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){
 		
 		employeesService.getEmployeeSalaries(employee.getId(), new AsyncCallback<List<SalaryInfo>>(){
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(List<SalaryInfo> result) {
+				employeeSalaries = result;
+				success.accept(result);
+			}
+			
+		});
+	}
+	
+	public void getFilterEmployeeSalariesDB(Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){		
+		employeesService.getFilterEmployeeSalaries(employee.getId(), filter, new AsyncCallback<List<SalaryInfo>>(){
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -65,6 +85,10 @@ public class EmployeeSalaryObject {
 	
 	public List<SalaryInfo> getEmployeeSalaries() {
 		return this.employeeSalaries;
+	}
+	
+	public SalaryInfoFilter getFilter() {
+		return this.filter;
 	}
 
 		

@@ -133,6 +133,7 @@ import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
 import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
@@ -4911,6 +4912,24 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			connection = AonServletUtils.getConnection(currentDomainName);
 			return JooqPayrollSalaries.getWorkplaceSalaries(connection, workplaceId);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if ( connection != null ) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
+
+	@Override
+	public List<SalaryInfo> getFilterEmployeeSalaries(String currentDomainName, Integer id, SalaryInfoFilter filter) {
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection(currentDomainName);
+			return JooqPayrollSalaries.getFilterEmployeeSalaries(connection, id, filter);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
