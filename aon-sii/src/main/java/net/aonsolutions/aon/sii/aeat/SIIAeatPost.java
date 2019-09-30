@@ -71,6 +71,7 @@ public class SIIAeatPost extends SIIPost{
 	
 	public JSONArray suministroFacturasEmitidas(Domain domain, String login, Company company, Integer invoiceId, 
 			LinkedList<VatContext> contextList, String terceros, String uri, LinkedList<VatContext> list, SendType type) throws ParserConfigurationException, JAXBException, SOAPException, IOException {
+		System.out.println("SII. suministroFacturasEmitidas");
 		JSONArray array = new JSONArray();
 			
 	   	byte[] requestXml = null;
@@ -78,6 +79,7 @@ public class SIIAeatPost extends SIIPost{
 		
 		SuministroLRFacturasEmitidas suministro = FacturasEmitidas.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceId, list, type.isModificacion(), terceros);
 		String sumStr = marshal(SuministroLRFacturasEmitidas.class, suministro); 
+		System.out.println("SII. before POST!");
 		String response = post(uri, sumStr);	    	
 		RespuestaLRFEmitidasType respuesta = (RespuestaLRFEmitidasType) unmarshal(RespuestaLRFEmitidasType.class, response);
 	    for (RespuestaExpedidaType r : respuesta.getRespuestaLinea()) {

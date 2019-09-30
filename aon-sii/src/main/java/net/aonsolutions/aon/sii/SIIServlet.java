@@ -79,15 +79,17 @@ public class SIIServlet extends HttpServlet{
 			VatParams params = new VatParams();
 			params.setDomain(domain.getId());
 			params.setInvoices(ids);
+			LOGGER.info("GET SII VAT CONTEXT");
 			LinkedList<VatContext> contextList = FISCAL.getSiiVatContext(domain.getName(), domain.getId(), login, params, option)
 					.collect(Collectors.toCollection(LinkedList::new));
-		
-			
+			LOGGER.info("AFTER GET SII VAT CONTEXT");		
+			LOGGER.info("SII. TAMAÑO VAT CONTEXT: " + contextList.size());
 			// TODO dividir invoiceList en las demas listas.
 			Integer cert = Integer.parseInt(parameters.get("cert"));
 			String pass = parameters.get("pass");
 			Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(cert)
 					.and(f.getTypeProperty().eq(RegistryAttachmentType.DIGITAL_CERTIFICATE.value())), AttachType.REGISTRY, true);
+			LOGGER.info("SII. data is not null?? -> " + (attach.getData() != null));
 			if(attach.getData() == null){
 				DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), login);
 				Drive drive = AonDrive.getInstace().serviceInitialize(g);
