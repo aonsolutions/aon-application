@@ -147,8 +147,8 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		
 
-		Assert.assertEquals( 12 * (2.00 + 2/12.00) * br, settle.getTotalPayment());
-		Assert.assertEquals( 12 * ( 2 + 2/12.00) * br, settle.getTotalLiquid());
+		Assert.assertEquals( 12 * (2.00 + 2/12.00) * br, settle.getTotalPayment(), DELTA);
+		Assert.assertEquals( 12 * ( 2 + 2/12.00) * br, settle.getTotalLiquid(), DELTA);
 	}
 
 	@Test
@@ -326,11 +326,11 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		double br = (1750.00 * 1.10) * (1 + 1.00 / 12 + 1.00 / 12) * 12 / 365; //AonDateUtils.getMax(getToday(), DAY_OF_YEAR);
 
-		Assert.assertEquals( 20 * (2/12.00) * br, settle.getTotalPayment());
+		Assert.assertEquals( 20 * (2/12.00) * br, settle.getTotalPayment(), DELTA);
 		
 		System.out.println( (20 * (2/12.00) * br ) + " = " + settle.getTotalPayment() );
 		
-		Assert.assertEquals( 20 * (2/12.00) * br, settle.getTotalLiquid());
+		Assert.assertEquals( 20 * (2/12.00) * br, settle.getTotalLiquid(), DELTA);
 	}
 
 
@@ -429,9 +429,9 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 //		settle.getSalaryDatas().stream().forEach(d->System.out.println(d.getName() + " = "  + d.getExpression() ));
 //		settle.getSalaryPayments().stream().forEach(p->System.out.println(p.getExpression() + " = "  + p.getAmount() ));
 
-		Assert.assertEquals( 20 * (2/12.00) * br + ( br * 4 ), settle.getTotalPayment());
+		Assert.assertEquals( 20 * (2/12.00) * br + ( br * 4 ), settle.getTotalPayment(), DELTA);
 		
-		Assert.assertEquals( br * 4 , settle.getCommonBase());
+		Assert.assertEquals( br * 4 , settle.getCommonBase(), DELTA);
 		
 	}
 
@@ -755,7 +755,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 
 		Assert.assertEquals(AonDateUtils.add(endNoHolidays, DAY_OF_MONTH, 1), cgcBases.get(1).getStartDate());
 		Assert.assertEquals(AonDateUtils.add(endNoHolidays, DAY_OF_MONTH, 10), cgcBases.get(1).getEndDate());
-		Assert.assertEquals(br*10.00, Double.parseDouble(cgcBases.get(1).getExpression()));
+		Assert.assertEquals(br*10.00, Double.parseDouble(cgcBases.get(1).getExpression()), DELTA);
 		
 	}
 
