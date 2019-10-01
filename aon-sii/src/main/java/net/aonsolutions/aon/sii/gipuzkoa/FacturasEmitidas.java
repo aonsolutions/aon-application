@@ -339,13 +339,13 @@ public class FacturasEmitidas extends SIIBuilt {
 				
 				if(vat.isService() && !vat.isIntracommunity()){
 					TipoSinDesglosePrestacionType prestacion = new TipoSinDesglosePrestacionType();
-					NoSujetaType nst3 = new NoSujetaType();
-					
-					nst3.setImportePorArticulos714Otros(Double.toString(AonMathUtils.round(noSujeta))); 
-				//	nst3.setImporteTAIReglasLocalizacion(""); // TODO
-					prestacion.setNoSujeta(nst3);
+					if(!noSujeta.equals(0.0)) {
+						NoSujetaType nst3 = new NoSujetaType();
+						nst3.setImportePorArticulos714Otros(Double.toString(AonMathUtils.round(noSujeta))); 
+						//	nst3.setImporteTAIReglasLocalizacion(""); // TODO
+						prestacion.setNoSujeta(nst3);
+					}
 					SujetaPrestacionType st3 = new SujetaPrestacionType();
-					
 					
 					Exenta exenta3 = new Exenta();
 					DetalleExentaType detalleExenta = new DetalleExentaType();
@@ -374,12 +374,14 @@ public class FacturasEmitidas extends SIIBuilt {
 					tcdt.setPrestacionServicios(prestacion);
 				} else {
 					TipoSinDesgloseType entrega = new TipoSinDesgloseType();
-					NoSujetaType nst2 = new NoSujetaType();
-					if(vat.isIntracommunity() && vat.isOtherISP()){
-						nst2.setImporteTAIReglasLocalizacion(Double.toString(AonMathUtils.round(noSujeta)));
-					} else nst2.setImportePorArticulos714Otros(Double.toString(AonMathUtils.round(noSujeta))); // TODO
-					// // TODO
-					entrega.setNoSujeta(nst2);
+					if(!noSujeta.equals(0.0)) {
+						NoSujetaType nst2 = new NoSujetaType();
+						if(vat.isIntracommunity() && vat.isOtherISP()){
+							nst2.setImporteTAIReglasLocalizacion(Double.toString(AonMathUtils.round(noSujeta)));
+						} else nst2.setImportePorArticulos714Otros(Double.toString(AonMathUtils.round(noSujeta))); // TODO
+						// // TODO
+						entrega.setNoSujeta(nst2);
+					}
 					SujetaType st2 = new SujetaType();
 					
 					https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.SujetaType.Exenta exenta2 = new https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.SujetaType.Exenta();

@@ -334,11 +334,12 @@ public class FacturasEmitidas extends SIIBuilt {
 			
 			if(vat.isService() && !vat.isIntracommunity()){
 				TipoSinDesglosePrestacionType prestacion = new TipoSinDesglosePrestacionType();
-				NoSujetaType nst3 = new NoSujetaType();
-				
-				nst3.setImportePorArticulos714Otros(Double.toString(AonMathUtils.round(noSujeta))); 
-			//	nst3.setImporteTAIReglasLocalizacion(""); // TODO
-				prestacion.setNoSujeta(nst3);
+				if(!noSujeta.equals(0.0)) {
+					NoSujetaType nst3 = new NoSujetaType();
+					nst3.setImportePorArticulos714Otros(Double.toString(AonMathUtils.round(noSujeta))); 
+					//	nst3.setImporteTAIReglasLocalizacion(""); // TODO
+					prestacion.setNoSujeta(nst3);
+				}
 				SujetaPrestacionType st3 = new SujetaPrestacionType();
 				
 				Exenta exenta3 = new Exenta();
@@ -369,12 +370,14 @@ public class FacturasEmitidas extends SIIBuilt {
 				tcdt.setPrestacionServicios(prestacion);
 			} else {
 				TipoSinDesgloseType entrega = new TipoSinDesgloseType();
-				NoSujetaType nst2 = new NoSujetaType();
-				if(vat.isIntracommunity() && vat.isOtherISP()){
-					nst2.setImporteTAIReglasLocalizacion(Double.toString(AonMathUtils.round(noSujeta)));
-				} else nst2.setImportePorArticulos714Otros(Double.toString(AonMathUtils.round(noSujeta))); // TODO
-				// // TODO
-				entrega.setNoSujeta(nst2);
+				if(!noSujeta.equals(0.0)) {
+					NoSujetaType nst2 = new NoSujetaType();
+					if(vat.isIntracommunity() && vat.isOtherISP()){
+						nst2.setImporteTAIReglasLocalizacion(Double.toString(AonMathUtils.round(noSujeta)));
+					} else nst2.setImportePorArticulos714Otros(Double.toString(AonMathUtils.round(noSujeta))); // TODO
+					// // TODO
+					entrega.setNoSujeta(nst2);
+				}
 				SujetaType st2 = new SujetaType();
 					
 				https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.Exenta exenta2 = new https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.Exenta();
@@ -652,11 +655,12 @@ public class FacturasEmitidas extends SIIBuilt {
 				
 				if(vat.isService() && !vat.isIntracommunity()){
 					TipoSinDesglosePrestacionType prestacion = new TipoSinDesglosePrestacionType();
-					NoSujetaType nst3 = new NoSujetaType();
-					
-					nst3.setImportePorArticulos714Otros(Double.toString(AonMathUtils.round(noSujeta))); 
-				//	nst3.setImporteTAIReglasLocalizacion(""); // TODO
-					prestacion.setNoSujeta(nst3);
+					if(!noSujeta.equals(0.0)) {
+						NoSujetaType nst3 = new NoSujetaType();
+						nst3.setImportePorArticulos714Otros(Double.toString(AonMathUtils.round(noSujeta))); 
+						//	nst3.setImporteTAIReglasLocalizacion(""); // TODO
+						prestacion.setNoSujeta(nst3);
+					}
 					SujetaPrestacionType st3 = new SujetaPrestacionType();
 					
 					
@@ -688,12 +692,14 @@ public class FacturasEmitidas extends SIIBuilt {
 					tcdt.setPrestacionServicios(prestacion);
 				} else {
 					TipoSinDesgloseType entrega = new TipoSinDesgloseType();
-					NoSujetaType nst2 = new NoSujetaType();
-					if(vat.isIntracommunity() && vat.isOtherISP()){
-						nst2.setImporteTAIReglasLocalizacion(Double.toString(AonMathUtils.round(noSujeta)));
-					} else nst2.setImportePorArticulos714Otros(Double.toString(AonMathUtils.round(noSujeta))); // TODO
-					// // TODO
-					entrega.setNoSujeta(nst2);
+					if(!noSujeta.equals(0.0)) {
+						NoSujetaType nst2 = new NoSujetaType();
+						if(vat.isIntracommunity() && vat.isOtherISP()){
+							nst2.setImporteTAIReglasLocalizacion(Double.toString(AonMathUtils.round(noSujeta)));
+						} else nst2.setImportePorArticulos714Otros(Double.toString(AonMathUtils.round(noSujeta))); // TODO
+						// // TODO
+						entrega.setNoSujeta(nst2);
+					}
 					SujetaType st2 = new SujetaType();
 					
 					https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.Exenta exenta2 = new https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.Exenta();
@@ -734,10 +740,12 @@ public class FacturasEmitidas extends SIIBuilt {
 				tipoDesglose.setDesgloseTipoOperacion(tcdt);
 			} else {
 				TipoSinDesgloseType tsdt = new TipoSinDesgloseType();
-				NoSujetaType nst = new NoSujetaType();
-				nst.setImportePorArticulos714Otros(Double.toString(AonMathUtils.round(noSujeta))); // TODO
-			//	nst.setImporteTAIReglasLocalizacion(""); // TODO
-				tsdt.setNoSujeta(nst);
+				if(!noSujeta.equals(0.0)) {
+					NoSujetaType nst = new NoSujetaType();
+					nst.setImportePorArticulos714Otros(Double.toString(AonMathUtils.round(noSujeta))); // TODO
+					//	nst.setImporteTAIReglasLocalizacion(""); // TODO
+					tsdt.setNoSujeta(nst);
+				}
 				SujetaType st = new SujetaType();
 			
 				https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.Exenta exenta1 = new https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.SujetaType.Exenta();
