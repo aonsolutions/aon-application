@@ -17,7 +17,9 @@ import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.ErrorPanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeHandler;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeHandler;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
@@ -55,6 +57,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -70,6 +73,8 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.layout.client.Layout.AnimationCallback;
 import com.google.gwt.layout.client.Layout.Layer;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -97,6 +102,12 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AccountEntryModule extends MainEntryPoint {
+	interface TabLayoutFolderSafeTemplate extends SafeHtmlTemplates {
+		@Template ("<span class=\"gwt-InlineLabel .aon-padding-right aon-padding-left-20 {1}\">{0}</span>")
+		SafeHtml tab(String title, String icon);
+	}
+	private static final TabLayoutFolderSafeTemplate TABLAYOUT_FOLDER_TEMPLATE = GWT.create(TabLayoutFolderSafeTemplate.class);
+
 	final static int ERROR_LOG_TAB = 0;
 	final static int SESSION_LOG_TAB = 1;
 	final static int BALANCES_TAB = 2;
@@ -232,26 +243,20 @@ public class AccountEntryModule extends MainEntryPoint {
 	@UiField
 	Button commentsButton;
 	@UiField
-	InlineLabel statusMsg;	
-	@UiField
-	MinimizePanel footPanel;
-	@UiField
-	TabLayoutPanel tabLayout;
-	@UiField
-	SessionLog sessionLog;
-	JournalPanelReport journalPanel;
-	@UiField
-	SimpleLayoutPanel journalPanelContainer;
-	@UiField
-	AccountBalancePanel balancePanel;
-	@UiField
-	SimpleLayoutPanel statementPanelContainer;
-	@UiField
-	ScrollPanel extraInfoContainer;
+	InlineLabel statusMsg;
 	
-	@UiField
-	SimplePanel errorsContainer;
-	ErrorPanel errors;
+	
+	MinimizePanel footPanel;
+	
+	private TabLayoutPanel tabLayout;
+	private SimplePanel errorsContainer;
+	private SessionLog sessionLog;
+	private JournalPanelReport journalPanel;
+	private SimpleLayoutPanel journalPanelContainer;
+	private AccountBalancePanel balancePanel;
+	private SimpleLayoutPanel statementPanelContainer;
+	private ScrollPanel extraInfoContainer;
+	private ErrorPanel errors;
 
 	boolean minimizedByUser;
 	private boolean isEmbedded; 
@@ -313,6 +318,7 @@ public class AccountEntryModule extends MainEntryPoint {
 //		});
 		        
 		Widget ui = BINDER.createAndBindUi(this);
+		fillFootPanel();
 		activity.setTabIndex(-1);
 		confidential.setTabIndex(-1);
 		commentsButton.setTabIndex(-1);
@@ -441,16 +447,16 @@ public class AccountEntryModule extends MainEntryPoint {
 
 	// -------------------------------------------------------------- UiHandler
 
-	@UiHandler("footPanel")
-	void onFootMinimize(MinimizeEvent event) {
-		minimizedByUser = true;
-		closeFootPanel();
-	}
+//	@UiHandler("footPanel")
+//	void onFootMinimize(MinimizeEvent event) {
+//		minimizedByUser = true;
+//		closeFootPanel();
+//	}
 
-	@UiHandler("footPanel")
-	void onFootMaximize(MaximizeEvent event) {
-		openFootPanel();
-	}
+//	@UiHandler("footPanel")
+//	void onFootMaximize(MaximizeEvent event) {
+//		openFootPanel();
+//	}
 
 	private void closeFootPanel() {
 		splitLayoutPanel.setWidgetSize(footPanel, 30);
@@ -783,12 +789,6 @@ public class AccountEntryModule extends MainEntryPoint {
 		dialog.show(wizardContent.getMainEntry());
 	}
 
-	@UiHandler("sessionLog")
-	public void onSelectJournal(SelectionEvent<IAccountEntryWrapper> event) {
-		final AccountEntry entry = event.getSelectedItem().getAccountEntry();
-		selectEntry(entry.getId(),event.getSelectedItem());
-	}
-
 	private void addSelectionEvent(final InvoicePanel panel) {
 		panel.addSelectionHandler(new SelectionHandler<AccountingInvoice>() {
 			
@@ -896,10 +896,10 @@ public class AccountEntryModule extends MainEntryPoint {
 		}
 	}
 
-	@UiHandler("balancePanel")
-	public void onSelectBalance(SelectionEvent<Integer> event) {
-		showFullStatement(event.getSelectedItem());
-	}
+//	@UiHandler("balancePanel")
+//	public void onSelectBalance(SelectionEvent<Integer> event) {
+//		showFullStatement(event.getSelectedItem());
+//	}
 	
 	@UiHandler("entryType")
 	public void onTypeChanged(ChangeEvent event) {
@@ -1040,8 +1040,7 @@ public class AccountEntryModule extends MainEntryPoint {
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
+				showError(caught.getMessage());
 			}
 		});
 	}
@@ -1400,5 +1399,110 @@ public class AccountEntryModule extends MainEntryPoint {
 	    });		
 		
 	}
-
+	
+	private void fillFootPanel() {
+		footPanel = new MinimizePanel();
+		footPanel.addMinimizeHandler(new MinimizeHandler() {
+			
+			@Override
+			public void onMinimize(MinimizeEvent event) {
+				minimizedByUser = true;
+				closeFootPanel();
+			}
+		});
+		footPanel.addMaximizeHandler(new MaximizeHandler() {
+			
+			@Override
+			public void onMaximize(MaximizeEvent event) {
+				openFootPanel();
+			}
+		});
+		footPanel.setStyleName(AON.AON_CSS.aonSelector());
+		tabLayout = new TabLayoutPanel(26, Unit.PX);
+		tabLayout.setWidth("100%");
+		footPanel.add(tabLayout);
+		splitLayoutPanel.addSouth(footPanel, 30);
+		
+		errorsContainer = new SimplePanel();
+		tabLayout.add(errorsContainer, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.notifications(), AON.AON_CSS.aonIconError()));
+		
+		sessionLog = new SessionLog();
+		sessionLog.addSelectionHandler( new SelectionHandler<IAccountEntryWrapper>() {
+			
+			@Override
+			public void onSelection(SelectionEvent<IAccountEntryWrapper> event) {
+				final AccountEntry entry = event.getSelectedItem().getAccountEntry();
+				selectEntry(entry.getId(),event.getSelectedItem());
+			}
+		});
+		
+		tabLayout.add(sessionLog, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.sessionLog(), AON.AON_CSS.aonIconJournalLog()));
+		
+		balancePanel = new AccountBalancePanel();
+		balancePanel.addSelectionHandler(new SelectionHandler<Integer>() {
+			
+			@Override
+			public void onSelection(SelectionEvent<Integer> event) {
+				showFullStatement(event.getSelectedItem());
+			}
+		});
+		tabLayout.add(balancePanel, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.accountBalances(), AON.AON_CSS.aonIconEuro()));
+		
+		statementPanelContainer = new SimpleLayoutPanel();
+		tabLayout.add(statementPanelContainer, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.accountStatetement(), AON.AON_CSS.aonIconStatement()));
+		
+		journalPanelContainer = new SimpleLayoutPanel();
+		tabLayout.add(journalPanelContainer, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.journalBook(), AON.AON_CSS.aonIconJournal()));
+		
+		extraInfoContainer = new ScrollPanel();
+		tabLayout.add(extraInfoContainer, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.additionalData(), AON.AON_CSS.aonIconInfo()));
+	}
+/*
+	public static class AccountEntryModuleOptions {
+		
+		boolean errorLogTabVisible = true;
+		boolean sessionLogTabVisible = true;
+		boolean balancesTabVisible = true;
+		boolean statementTabVisible = true;
+		boolean journalTabVisible = true;
+		boolean extraInfoTabVisible = true;
+		
+		public boolean isErrorLogTabVisible() {
+			return errorLogTabVisible;
+		}
+		public void setErrorLogTabVisible(boolean errorLogTabVisible) {
+			this.errorLogTabVisible = errorLogTabVisible;
+		}
+		public boolean isSessionLogTabVisible() {
+			return sessionLogTabVisible;
+		}
+		public void setSessionLogTabVisible(boolean sessionLogTabVisible) {
+			this.sessionLogTabVisible = sessionLogTabVisible;
+		}
+		public boolean isBalancesTabVisible() {
+			return balancesTabVisible;
+		}
+		public void setBalancesTabVisible(boolean balancesTabVisible) {
+			this.balancesTabVisible = balancesTabVisible;
+		}
+		public boolean isStatementTabVisible() {
+			return statementTabVisible;
+		}
+		public void setStatementTabVisible(boolean statementTabVisible) {
+			this.statementTabVisible = statementTabVisible;
+		}
+		public boolean isJournalTabVisible() {
+			return journalTabVisible;
+		}
+		public void setJournalTabVisible(boolean journalTabVisible) {
+			this.journalTabVisible = journalTabVisible;
+		}
+		public boolean isExtraInfoTabVisible() {
+			return extraInfoTabVisible;
+		}
+		public void setExtraInfoTabVisible(boolean extraInfoTabVisible) {
+			this.extraInfoTabVisible = extraInfoTabVisible;
+		}
+	}
+*/	
 }

@@ -104,60 +104,6 @@
 						<g:center>
 							<g:SimpleLayoutPanel ui:field="wizardPanel" />
 						</g:center>
-						<g:south size="30">
-							<aon:MinimizePanel ui:field="footPanel" styleName="{aonResources.css.aonSelector}">
-								<g:TabLayoutPanel ui:field="tabLayout" barHeight="26" barUnit="PX" width="100%">
-									<g:tab>
-										<g:customHeader>
-											<g:Label
-												styleName="{aonResources.css.aonIconError} {aonResources.css.aonPaddingRight}"  
-												text="{msg.notifications}" />
-										</g:customHeader>
-										<g:SimplePanel ui:field="errorsContainer"/>										
-									</g:tab>
-									<g:tab>
-										<g:customHeader>
-											<g:Label
-												styleName="{aonResources.css.aonIconJournalLog} {aonResources.css.aonPaddingRight}"  
-												text="{msg.sessionLog}" />
-										</g:customHeader>
-										<accPanel:SessionLog ui:field="sessionLog"/>
-									</g:tab>
-									<g:tab>
-										<g:customHeader>
-											<g:Label
-												styleName="{aonResources.css.aonIconEuro} {aonResources.css.aonPaddingRight}" 
-												text="{msg.accountBalances}" />
-										</g:customHeader>
-										<accPanel:AccountBalancePanel ui:field="balancePanel"/>
-									</g:tab>
-									<g:tab>
-										<g:customHeader>
-											<g:Label
-												styleName="{aonResources.css.aonIconStatement} {aonResources.css.aonPaddingRight}"  
-												text="{msg.accountStatetement}" />
-										</g:customHeader>
-										<g:SimpleLayoutPanel ui:field="statementPanelContainer"/>
-									</g:tab>
-									<g:tab>
-										<g:customHeader>
-											<g:Label
-												styleName="{aonResources.css.aonIconJournal} {aonResources.css.aonPaddingRight}"  
-												text="{msg.journalBook}" />
-										</g:customHeader>
-										<g:SimpleLayoutPanel ui:field="journalPanelContainer"/>
-									</g:tab>
-									<g:tab>
-										<g:customHeader>
-											<g:Label
-												styleName="{aonResources.css.aonIconInfo} {aonResources.css.aonPaddingRight} {aonResources.css.aonPaddingLeft20}"  
-												text="{msg.additionalData}" />
-										</g:customHeader>
-										<g:ScrollPanel ui:field="extraInfoContainer"/>
-									</g:tab>
-								</g:TabLayoutPanel>
-							</aon:MinimizePanel>
-						</g:south>
 					</g:SplitLayoutPanel>
 				</g:center>
 			</g:DockLayoutPanel>
