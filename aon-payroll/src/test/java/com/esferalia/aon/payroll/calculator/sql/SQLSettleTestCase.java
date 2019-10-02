@@ -751,7 +751,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 
 		Assert.assertEquals(startNoHolidays, cgcBases.get(0).getStartDate());
 		Assert.assertEquals(endNoHolidays, cgcBases.get(0).getEndDate());
-		Assert.assertEquals(br*noHolidays, Double.parseDouble(cgcBases.get(0).getExpression()));
+		Assert.assertEquals(br*noHolidays, Double.parseDouble(cgcBases.get(0).getExpression()), DELTA);
 
 		Assert.assertEquals(AonDateUtils.add(endNoHolidays, DAY_OF_MONTH, 1), cgcBases.get(1).getStartDate());
 		Assert.assertEquals(AonDateUtils.add(endNoHolidays, DAY_OF_MONTH, 10), cgcBases.get(1).getEndDate());
