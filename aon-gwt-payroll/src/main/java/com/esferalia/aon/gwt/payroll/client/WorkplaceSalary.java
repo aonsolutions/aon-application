@@ -10,14 +10,17 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
+import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.ValueUpdater;
+import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -450,33 +453,34 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 	    
 	    totalLiquidColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		
-//		ActionCell<SalaryInfo> downloadCell = new ActionCell<SalaryInfo>("Download", new ActionCell.Delegate<SalaryInfo>() {
-//
-//			@Override
-//			public void execute(SalaryInfo salary) {
-//				String printURL = URL.encode(GWT.getModuleBaseURL() + "salary/"
-//						+ salary.getId() + ".pdf?" + salary.getType().name() );
-//				
-//				Window.open(printURL, "_blank", null);
-//			}
-//			
-//		});
-//	    
-//	    Column<SalaryInfo, SalaryInfo> downloadColumn = new Column<SalaryInfo, SalaryInfo>(downloadCell) {
-//
-//			@Override
-//			public SalaryInfo getValue(SalaryInfo object) {
-//				return object;
-//			}
-//			
-//			@Override
-//			public void render(Context context, SalaryInfo object, SafeHtmlBuilder sb) {
-//				if(null != object) {
-//					sb.appendHtmlConstant("<button type=\"button\" class=\"aon-finding-toolbar-item aon-icon-mail-save\" style=\"border: none !important;\"></button>");
-//				}
-//			}
-//		};
+	    ActionCell<SalaryInfo> draftActionCell = new ActionCell<SalaryInfo>("Borrador", new ActionCell.Delegate<SalaryInfo>() {
 
+			@Override
+			public void execute(SalaryInfo salary) {
+				EmployeeTree.showSalaryDraft(salary.getContract(),
+						salary.getWorkplaceId(), salary.getStartDate(),
+						salary.getEndDate());
+			}
+			
+		});
+	    
+	    Column<SalaryInfo, SalaryInfo> draftColumn = new Column<SalaryInfo, SalaryInfo>(draftActionCell) {
+
+			@Override
+			public SalaryInfo getValue(SalaryInfo object) {
+				return object;
+			}
+			
+			@Override
+			public void render(Context context, SalaryInfo object, SafeHtmlBuilder sb) {
+				if(null != object) {
+					sb.appendHtmlConstant("<button type=\"button\" class=\"aon-finding-toolbar-item aon-icon-edit\" style=\"border: none !important;\"></button>");
+				}
+			}
+		};
+		
+		draftColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+	    
 	    // Add the columns.
 	    table.addColumn(employeeNameColumn, "Empleado");
 //	    table.addColumn(enterpriseNameColumn, "Empresa");
@@ -491,7 +495,7 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 	    table.addColumn(totalDeductionColumn, "Deducciones");
 	    table.addColumn(totalLiquidColumn, "L"+String.valueOf("\u00ED")+"quido");
 	    
-//	    table.addColumn(downloadColumn, "Descargar / Previsualizar");
+	    table.addColumn(draftColumn, "Borrador");
 	      
 	    // Add a ColumnSortEvent.ListHandler to connect sorting to the java.util.List.
 	    ListHandler<SalaryInfo> columnSortHandler = new ListHandler<SalaryInfo>(salaryList);

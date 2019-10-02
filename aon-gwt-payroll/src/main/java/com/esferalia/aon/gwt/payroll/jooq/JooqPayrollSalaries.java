@@ -102,15 +102,15 @@ public class JooqPayrollSalaries {
 			salaryInfo.setTotalDeduction(salaryRecord.get(SALARY.TOTAL_DEDUCTION));
 			salaryInfo.setTotalLiquid(salaryRecord.get(SALARY.TOTAL_LIQUID));
 			
-			String workplaceName = dslContext.select(WORKPLACE.DESCRIPTION)
+			Record workplaceRecord = dslContext.select()
 					.from(WORKPLACE)
 					.where(WORKPLACE.ID.eq(
 							dslContext.select(CONTRACT.WORKPLACE).from(CONTRACT)
 							.where(CONTRACT.ID.eq(salaryRecord.get(SALARY.CONTRACT)))))
-					.fetchOne()
-					.get(WORKPLACE.DESCRIPTION);
+					.fetchOne();
 			
-			salaryInfo.setWorkplaceName(workplaceName);
+			salaryInfo.setWorkplaceName(workplaceRecord.get(WORKPLACE.DESCRIPTION));
+			salaryInfo.setWorkplaceId(workplaceRecord.get(WORKPLACE.ID));
 			
 			// Enterprise ID
 			salaryInfo.setEnterpriseId(enterpriseId);
@@ -223,6 +223,7 @@ public class JooqPayrollSalaries {
 					.get(WORKPLACE.DESCRIPTION);
 			
 			salaryInfo.setWorkplaceName(workplaceName);
+			salaryInfo.setWorkplaceId(workplaceId);
 			
 			// Enterprise ID
 			salaryInfo.setEnterpriseId(enterpriseId);
