@@ -250,14 +250,18 @@ public class DocumentOnlineSigner implements Serializable {
 				json.put("interestedParties", ips);
 			}
 			
-			json.put("options", new JSONObject());
-			json.put("pushNotificationUrl", AonUtil.getServerName()+(AonUtil.getServerName().endsWith("/")?"":"/")+"@AON/offer");
+			JSONObject opt = new JSONObject();
+			opt.put("pushNotificationUrl", AonUtil.getServerName()+(AonUtil.getServerName().endsWith("/")?"":"/")+"offer");
+			json.put("options", opt);
 			
 			JSONObject responseJson = postObject(json.toString());
 			if(responseJson.opt("uniqueId") != null) {
 				com.esferalia.aon.occam.api.model.management.Offer of = AON.getOffer(AonUtil.getDomainName(), offer.getDomain(), "", f -> f.getIdProperty().eq(offer.getId()));
 				of.setExternalReference( responseJson.getString("uniqueId"));
 				AON.updateOffer(AonUtil.getDomainName(), of.getDomain(), "", of);
+				AonUtil.addInfoMessage("Response ID: "+responseJson.getString("uniqueId"));
+			} else {
+				AonUtil.addInfoMessage("No response obtained...");
 			}
 		}
 	}
@@ -438,12 +442,13 @@ public class DocumentOnlineSigner implements Serializable {
 			}
 			conn.disconnect();
 			return response;
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+//		} catch (MalformedURLException e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+		} catch (Exception e) {
+			throw new AbortProcessingException(e.getMessage());
 		}
-		return null;
 	}
 	
 }
