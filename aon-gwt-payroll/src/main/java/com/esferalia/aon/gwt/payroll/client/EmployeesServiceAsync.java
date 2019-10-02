@@ -211,5 +211,11 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void getFilterEmployeeSalaries(String currentDomainName, Integer id, SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback);
 
+	void getFilterWorkplaceSalaries(String currentDomainName, Integer workplaceId, SalaryInfoFilter filter,
+			AsyncCallback<List<SalaryInfo>> callback);
+
+	void getWorkplaceActiveEmployees(String currentDomainName, Integer workplaceId,
+			AsyncCallback<WorkplaceEmployees> callback);
+
 	
 }

@@ -9,6 +9,8 @@ import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+import static com.esferalia.aon.jooq.tables.Person.PERSON;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -25,6 +27,7 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
+import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 
 public class JooqPayrollSalaries {
 
@@ -42,6 +45,10 @@ public class JooqPayrollSalaries {
 		return getEmployeeSalariesDB(DSL.using(connection, getDefaultSettings()), employeeId);
 	}
 	
+	public static WorkplaceEmployees getWorkplaceActiveEmployees(Connection connection, Integer workplaceId) {
+		return getWorkplaceActiveEmployeesDB(DSL.using(connection, getDefaultSettings()), workplaceId);
+	}
+
 	public static List<SalaryInfo> getFilterEmployeeSalaries(Connection connection, Integer employeeId,
 			SalaryInfoFilter filter) {
 		return getFilterEmployeeSalariesDB(DSL.using(connection, getDefaultSettings()), employeeId, filter);
@@ -53,6 +60,11 @@ public class JooqPayrollSalaries {
 	
 	public static List<SalaryInfo> getWorkplaceSalaries(Connection connection, Integer workplaceId) {
 		return getWorkplaceSalariesDB(DSL.using(connection, getDefaultSettings()), workplaceId);
+	}
+	
+	public static List<SalaryInfo> getFilterWorkplaceSalaries(Connection connection, Integer workplaceId,
+			SalaryInfoFilter filter) {
+		return getFilterWorkplaceSalariesDB(DSL.using(connection, getDefaultSettings()), workplaceId, filter);
 	}
 
 	/**
@@ -109,6 +121,40 @@ public class JooqPayrollSalaries {
 		}
 		
 		return salaries;
+	}
+	
+	/**
+	 * 
+	 * @param dslContext
+	 * @param workplaceId
+	 * @return WorkplaceEmployees
+	 */
+	private static WorkplaceEmployees getWorkplaceActiveEmployeesDB(DSLContext dslContext, Integer workplaceId) {
+		WorkplaceEmployees workplaceEmployees = new WorkplaceEmployees();
+		
+		Result<Record> contractRecords = dslContext.select().from(CONTRACT)
+				.where(CONTRACT.ID.gt(0))
+				.and(CONTRACT.WORKPLACE.eq(workplaceId))
+				.fetch();
+		
+		for(Record contractRecord : contractRecords){
+			Record personRecord = dslContext.select().from(PERSON)
+					.where(PERSON.REGISTRY.eq(contractRecord.get(CONTRACT.PERSON)))
+					.fetchOne();
+			
+			Record registryRecord = dslContext.select().from(REGISTRY)
+					.where(REGISTRY.ID.eq(contractRecord.get(CONTRACT.PERSON)))
+					.fetchOne();
+			
+			workplaceEmployees.addEmployee(
+					contractRecord.get(CONTRACT.ID), 
+					personRecord.get(PERSON.NAME), 
+					personRecord.get(PERSON.FIRST_SURNAME) + " " + personRecord.get(PERSON.SECOND_SURNAME), 
+					registryRecord.get(REGISTRY.DOCUMENT), 
+					personRecord.get(PERSON.SOCIAL_SECURITY_NUM));
+		}
+		
+		return workplaceEmployees;
 	}
 	
 	/**
@@ -265,6 +311,94 @@ public class JooqPayrollSalaries {
 		
 		return salaries;
 	}
+
+	private static List<SalaryInfo> getFilterWorkplaceSalariesDB(DSLContext dslContext, Integer workplaceId,
+			SalaryInfoFilter filter) {
+		List<SalaryInfo> salaries = new ArrayList<SalaryInfo>();
+		
+		Integer enterpriseId =  dslContext.select(WORKPLACE.ENTERPRISE).from(WORKPLACE)
+				.where(WORKPLACE.ID.eq(workplaceId))
+				.fetchOne()
+				.get(WORKPLACE.ENTERPRISE);
+		
+		Result<Record> salaryRecords = null;
+		
+		if(filter.isNoDateFilter()) {
+			salaryRecords = dslContext.select().from(SALARY)
+					.where(SALARY.CONTRACT.in(
+							dslContext.select(CONTRACT.ID).from(CONTRACT)
+								.where(CONTRACT.ID.ge(0))
+								.and(CONTRACT.WORKPLACE.eq(workplaceId))
+					))
+					.orderBy(SALARY.END_DATE.desc())
+					.fetch();
+		} else if(filter.isDateMYFilter()) {
+			Date startDate = new Date(filter.getDateMY().getYear(), filter.getDateMY().getMonth(), filter.getDateMY().getDate()+1);
+			java.util.Date lastDayOfMonth = DateUtils.addDays2Date(DateUtils.getLastDayOfMonth(filter.getDateMY()), 1);
+			Date endDate = new Date(lastDayOfMonth.getYear(), lastDayOfMonth.getMonth(), lastDayOfMonth.getDate());
+			
+			salaryRecords = dslContext.select().from(SALARY)
+					.where(SALARY.CONTRACT.in(
+							dslContext.select(CONTRACT.ID).from(CONTRACT)
+								.where(CONTRACT.ID.ge(0))
+								.and(CONTRACT.WORKPLACE.eq(workplaceId))
+					))
+					.and(SALARY.END_DATE.between(startDate, endDate))
+					.orderBy(SALARY.END_DATE.desc())
+					.fetch();
+		} else if(filter.isDateTTFilter()) {
+			// TODO: PORQUE NO ME BUSCA BIEN LAS FECHAS
+			Date startDate = new Date(filter.getDateTillT().getYear(), filter.getDateTillT().getMonth(), filter.getDateTillT().getDate()+1);
+			java.util.Date lastDayOfMonth = DateUtils.addDays2Date(DateUtils.getLastDayOfMonth(filter.getDateTTo()), 1);
+			Date endDate = new Date(lastDayOfMonth.getYear(), lastDayOfMonth.getMonth(), lastDayOfMonth.getDate());
+						
+			salaryRecords = dslContext.select().from(SALARY)
+					.where(SALARY.CONTRACT.in(
+							dslContext.select(CONTRACT.ID).from(CONTRACT)
+								.where(CONTRACT.ID.ge(0))
+								.and(CONTRACT.WORKPLACE.eq(workplaceId))
+					))
+					.and(SALARY.END_DATE.between(startDate, endDate))
+					.orderBy(SALARY.END_DATE.desc())
+					.fetch();			
+		}
+		
+		for(Record salaryRecord : salaryRecords) {
+			
+			SalaryInfo salaryInfo = new SalaryInfo();
+			salaryInfo.setId(salaryRecord.get(SALARY.ID));
+			salaryInfo.setDomain(salaryRecord.get(SALARY.DOMAIN));
+			salaryInfo.setContract(salaryRecord.get(SALARY.CONTRACT));
+			salaryInfo.setStartDate(salaryRecord.get(SALARY.START_DATE));
+			salaryInfo.setEndDate(salaryRecord.get(SALARY.END_DATE));
+			salaryInfo.setType(Salary.Type.values()[salaryRecord.get(SALARY.TYPE)]);
+			salaryInfo.setEnterpriseName(salaryRecord.get(SALARY.ENTERPRISE_NAME));
+			salaryInfo.setEmployeeName(salaryRecord.get(SALARY.EMPLOYEE_NAME));
+			salaryInfo.setTotalPayment(salaryRecord.get(SALARY.TOTAL_PAYMENT));
+			salaryInfo.setTotalDeduction(salaryRecord.get(SALARY.TOTAL_DEDUCTION));
+			salaryInfo.setTotalLiquid(salaryRecord.get(SALARY.TOTAL_LIQUID));
+			
+			String workplaceName = dslContext.select(WORKPLACE.DESCRIPTION)
+					.from(WORKPLACE)
+					.where(WORKPLACE.ID.eq(
+							dslContext.select(CONTRACT.WORKPLACE).from(CONTRACT)
+							.where(CONTRACT.ID.eq(salaryRecord.get(SALARY.CONTRACT)))))
+					.fetchOne()
+					.get(WORKPLACE.DESCRIPTION);
+			
+			salaryInfo.setWorkplaceName(workplaceName);
+			
+			// Enterprise ID
+			salaryInfo.setEnterpriseId(enterpriseId);
+			
+			// Add to salaries list
+			salaries.add(salaryInfo);
+
+		}
+		
+		return salaries;
+	}
+	
 	
 
 }

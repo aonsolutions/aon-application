@@ -1,11 +1,14 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.ValueUpdater;
@@ -13,6 +16,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -26,10 +30,14 @@ import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
+import com.google.gwt.user.client.ui.RadioButton;
+import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
@@ -56,11 +64,11 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 	interface MyStyle extends CssResource {
 		String tableStyle();
 		String mAuto();
-		String title();
+		String hide();
 	}
 	
 	@UiField
-	HTMLPanel mainContainer;
+	HTMLPanel mainTablePanel;
 	
 	@UiField
 	Button deleteButton;
@@ -70,6 +78,48 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 	
 	@UiField
 	Button publishButton;
+	
+	@UiField
+	HTMLPanel mainContainer;
+	
+	@UiField
+	Label workplaceNameLabel;
+
+	@UiField
+	DisclosurePanel collapsePanel;
+	
+	@UiField
+	SuggestBox employeeSB;
+	
+	@UiField
+	RadioButton noDateRB;
+	
+	@UiField
+	RadioButton dateMYRB;
+	
+	@UiField
+	ListBox monthMY;
+	
+	@UiField
+	ListBox yearMY;
+	
+	@UiField
+	RadioButton dateTTRB;
+	
+	@UiField
+	ListBox monthTillT;
+	
+	@UiField
+	ListBox yearTillT;
+	
+	@UiField
+	ListBox monthTTo;
+	
+	@UiField
+	ListBox yearTTo;
+	
+	@UiField
+	Button filterButton;
 
 	
 	public WorkplaceSalary() {
@@ -79,6 +129,34 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 		
 		listeners = new LinkedList<Listener>();
 		
+	}
+	
+	private void initListBox() {
+		// Clear listboxies
+		monthMY.clear();
+		yearMY.clear();
+		monthTillT.clear();
+		yearTillT.clear();
+		monthTTo.clear();
+		yearTTo.clear();
+		
+		// Add months to listboxes
+		String[] monthList = new String[] {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+		for(String month : monthList) {
+			monthMY.addItem(month);
+			monthTillT.addItem(month);
+			monthTTo.addItem(month);
+		}
+		
+		// Add year to listboxes
+		Integer actualYear = new Date().getYear() + 1900;
+		Integer firstPayroll = this.workplaceSalaryObject.getWorkplaceSalaries().get(this.workplaceSalaryObject.getWorkplaceSalaries().size()-1).getStartDate().getYear() + 1900;
+		Integer diffYears = actualYear - firstPayroll;
+		for(int i = 0; i <= diffYears; i++) {
+			yearMY.addItem((actualYear - i)+"");
+			yearTillT.addItem((actualYear - i)+"");
+			yearTTo.addItem((actualYear - i)+"");
+		}
 	}
 
 	private WorkplaceSalaryObject workplaceSalaryObject;
@@ -90,14 +168,47 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 		this.workplaceSalaryObject.getWorkplaceSalariesDB(
 				s -> {
 					resetPage();
-					initSalariesTable();
+					if(!this.workplaceSalaryObject.getWorkplaceSalaries().isEmpty()) {
+						initListBox();
+						initSuggestBox();
+						this.noDateRB.setValue(true, true);
+						initSalariesTable();
+					} else {
+						// Hide everything
+						mainContainer.addStyleName(style.hide());
+						
+						//Hide buttons
+						this.deleteButton.setVisible(false);
+						this.saveButton.setVisible(false);
+						this.publishButton.setVisible(false);
+						
+						// Show warning dialog
+						WarningDialog warningDialog = new WarningDialog("Aviso", "No existen nominas para este empleado.");
+						warningDialog.center();
+						warningDialog.show();
+						return;
+					}
 				}, 
 				f -> {}
 		);
 	}
 
+	private void initSuggestBox() {
+		//NAMES
+		List<String> employeesNames = this.workplaceSalaryObject.getWorkplaceEmployees().getWorkplaceEmployeesName();
+		List<String> employeesNamesSuggest = new ArrayList<String>();
+		for(String name : employeesNames)
+			employeesNamesSuggest.add(name+"");
+		MultiWordSuggestOracle orclNames = (MultiWordSuggestOracle) this.employeeSB.getSuggestOracle();
+		orclNames.addAll(employeesNamesSuggest);
+		this.employeeSB.setAutoSelectEnabled(false);
+	}
+
 	private void resetPage() {
-		mainContainer.clear();
+		if(!this.workplaceSalaryObject.getWorkplaceSalaries().isEmpty()) {
+			this.collapsePanel.setOpen(false);
+			mainTablePanel.clear();
+		}
 	}
 
 	private void initSalariesTable() {
@@ -108,11 +219,19 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 			this.publishButton.setVisible(false);
 			
 			// Show warning dialog
-			WarningDialog warningDialog = new WarningDialog("Aviso", "No existen nominas para este empleado.");
+			WarningDialog warningDialog = new WarningDialog("Aviso", "No existen nominas para este empleado. Si ha filtrado la informacion por favor revise los parametros.");
 			warningDialog.center();
 			warningDialog.show();
 			return;
 		}
+		
+		// Show everything
+		mainContainer.removeStyleName(style.hide());
+		
+		//Show buttons
+		this.deleteButton.setVisible(true);
+		this.saveButton.setVisible(true);
+		this.publishButton.setVisible(true);
 		
 		//Disable buttons till any salary selected
 		deleteButton.setEnabled(false);
@@ -152,25 +271,18 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 	    pager.setDisplay(table);
 	    
 	    //Workplace Name Title
-	    Label workplaceName = new Label(this.workplaceSalaryObject.getWorkplaceSalaries().get(0).getWorkplaceName());
+	    workplaceNameLabel.setText(this.workplaceSalaryObject.getWorkplaceSalaries().get(0).getWorkplaceName());
 	    
 	    // Add the pager and list to the page.
-	    ScrollPanel scrollPanel = new ScrollPanel();
-	    scrollPanel.setHeight("100%");
-	    
 	    VerticalPanel vPanel = new VerticalPanel();
-	    vPanel.add(workplaceName);
 	    vPanel.add(table);
 	    vPanel.add(pager);
 	    
 	    // Add Styles
 	    vPanel.addStyleName(style.tableStyle());
 	    pager.addStyleName(style.mAuto());
-	    workplaceName.addStyleName(style.title());
 		
-	    scrollPanel.add(vPanel);
-	    
-		mainContainer.add(scrollPanel);
+	    mainTablePanel.add(vPanel);
 	}
 
 	private void addSelectionModel(CellTable<SalaryInfo> table) {
@@ -332,7 +444,7 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 	    TextColumn<SalaryInfo> totalLiquidColumn = new TextColumn<SalaryInfo>() {
 	      @Override
 	      public String getValue(SalaryInfo salaryInfo) {
-	        return (Math.round(salaryInfo.getTotalLiquid() * 100d) / 100d)+"";
+	        return (Math.round(salaryInfo.getTotalLiquid() * 100d) / 100d)+" "+String.valueOf("\u20AC");
 	      }
 	    };
 	    
@@ -491,6 +603,95 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 	@UiHandler("publishButton")
 	public void onPublichalary(ClickEvent event) {
 		onPublish();
+	}
+	
+	@UiHandler("noDateRB")
+	public void onNoDateRBCahnge(ValueChangeEvent<Boolean> event) {
+		if(event.getValue()) {
+			monthMY.setEnabled(false);
+			yearMY.setEnabled(false);
+			monthTillT.setEnabled(false);
+			yearTillT.setEnabled(false);
+			monthTTo.setEnabled(false);
+			yearTTo.setEnabled(false);
+		}
+	}
+	
+	@UiHandler("dateMYRB")
+	public void onDateMYRBCahnge(ValueChangeEvent<Boolean> event) {
+		if(event.getValue()) {
+			monthMY.setEnabled(true);
+			yearMY.setEnabled(true);
+			monthTillT.setEnabled(false);
+			yearTillT.setEnabled(false);
+			monthTTo.setEnabled(false);
+			yearTTo.setEnabled(false);
+		}
+	}
+	
+	@UiHandler("dateTTRB")
+	public void onDateTTRBCahnge(ValueChangeEvent<Boolean> event) {
+		if(event.getValue()) {
+			monthMY.setEnabled(false);
+			yearMY.setEnabled(false);
+			monthTillT.setEnabled(true);
+			yearTillT.setEnabled(true);
+			monthTTo.setEnabled(true);
+			yearTTo.setEnabled(true);
+		}
+	}
+	
+	@UiHandler("filterButton")
+	public void onFilterButtonClick(ClickEvent event) {
+		SalaryInfoFilter filter = this.workplaceSalaryObject.getFilter();
+		if(noDateRB.getValue()) {
+			filter.setNoDateFilter(true);
+			filter.setDateMYFilter(false);
+			filter.setDateTTFilter(false);
+		} else if(dateMYRB.getValue()) {
+			filter.setNoDateFilter(false);
+			filter.setDateMYFilter(true);
+			Integer year = Integer.parseInt(yearMY.getSelectedValue()) - 1900;
+			Integer month = monthMY.getSelectedIndex();
+			filter.setDateMY(new Date(year, month, 1));
+			filter.setDateTTFilter(false);
+		} else if(dateTTRB.getValue()) {
+			filter.setNoDateFilter(false);
+			filter.setDateMYFilter(false);
+			filter.setDateTTFilter(true);
+			Integer yearTillTValue = Integer.parseInt(yearTillT.getSelectedValue()) - 1900;
+			Integer monthTillTValue = monthTillT.getSelectedIndex();
+			filter.setDateTillT(new Date(yearTillTValue, monthTillTValue, 1));
+			Integer yearTToValue = Integer.parseInt(yearTTo.getSelectedValue()) - 1900;
+			Integer monthTToValue = monthTTo.getSelectedIndex();
+			filter.setDateTTo(new Date(yearTToValue, monthTToValue, 1));
+		}
+		
+		//Check if exist employee filter
+		String nameSurname = this.employeeSB.getValue();
+		String name = nameSurname.split(", ")[0];
+		String surname = nameSurname.split(", ")[1];
+		EmployeeInfo employeeInfo = null;
+		if(nameSurname.length() > 0)
+			employeeInfo = this.workplaceSalaryObject.getEmployeeDataByNameSurname(name, surname);
+		
+		// Choose method filter
+		if(null == employeeInfo){
+			this.workplaceSalaryObject.getFilterWorkplaceSalariesDB(
+					s -> {
+						resetPage();
+						initSalariesTable();
+					}, f -> { }
+			);
+		} else{
+			this.workplaceSalaryObject.getFilterWorkplaceEmployeeSalariesDB(
+					employeeInfo.getEmployeeId(), // ContractId in this case
+					s -> {
+						resetPage();
+						initSalariesTable();
+					}, f -> { }
+			);
+		}
 	}
 	
 	// --------------------------------------------------

@@ -188,4 +188,8 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	List<SalaryInfo> getFilterEmployeeSalaries(String currentDomainName, Integer id, SalaryInfoFilter filter);
 
+	List<SalaryInfo> getFilterWorkplaceSalaries(String currentDomainName, Integer workplaceId, SalaryInfoFilter filter);
+
+	WorkplaceEmployees getWorkplaceActiveEmployees(String currentDomainName, Integer workplaceId);
+
 }

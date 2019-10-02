@@ -426,7 +426,14 @@ public class DomainEmployeesServiceAsync {
 	public void getFilterEmployeeSalaries(Integer id, SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback) {
 		employeesServiceAsync.getFilterEmployeeSalaries(getCurrentDomainName(), id, filter, callback);
 	}
+	
+	public void getFilterWorkplaceSalaries(Integer workplaceId, SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback) {
+		employeesServiceAsync.getFilterWorkplaceSalaries(getCurrentDomainName(), workplaceId, filter, callback);
+	}
 
+	public void getWorkplaceActiveEmployees(Integer workplaceId, AsyncCallback<WorkplaceEmployees> callback) {
+		employeesServiceAsync.getWorkplaceActiveEmployees(getCurrentDomainName(), workplaceId, callback);
+	}
 	
 	// ------------------------------------------------------------------------
 	
@@ -444,13 +451,4 @@ public class DomainEmployeesServiceAsync {
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
 	}
-
-	
-
-	
-
-	
-	
-
-
 }

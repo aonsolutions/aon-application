@@ -5,8 +5,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import com.esferalia.aon.gwt.payroll.shared.Employee;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
+import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class WorkplaceSalaryObject {
@@ -14,6 +16,8 @@ public class WorkplaceSalaryObject {
 	private DomainEmployeesServiceAsync employeesService;
 	private Integer workplaceId;
 	private List<SalaryInfo> workplaceSalaries;
+	private SalaryInfoFilter filter;
+	private WorkplaceEmployees workplaceEmployees;
 	
 	public WorkplaceSalaryObject() {
 		super();
@@ -22,6 +26,8 @@ public class WorkplaceSalaryObject {
 	public WorkplaceSalaryObject(Integer workplaceId, DomainEmployeesServiceAsync employeesService) {
 		this.workplaceId = workplaceId;
 		this.employeesService = employeesService;
+		this.filter = new SalaryInfoFilter();
+		this.workplaceEmployees = new WorkplaceEmployees();
 	}
 
 	public void getWorkplaceSalariesDB(Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){
@@ -36,10 +42,68 @@ public class WorkplaceSalaryObject {
 			@Override
 			public void onSuccess(List<SalaryInfo> result) {
 				workplaceSalaries = result;
+				//success.accept(result);
+				getWorkplaceEmployeesDB(
+						s -> {
+							success.accept(result);
+						}, f -> {}
+				);
+			}
+			
+		});
+	}
+	
+	public void getWorkplaceEmployeesDB(Consumer<WorkplaceEmployees> success, Consumer<Throwable> failure){
+		employeesService.getWorkplaceActiveEmployees(workplaceId, new AsyncCallback<WorkplaceEmployees>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(WorkplaceEmployees result) {
+				workplaceEmployees = result;
+				success.accept(result);
+			}
+		});
+	}
+	
+	public void getFilterWorkplaceSalariesDB(Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){		
+		employeesService.getFilterWorkplaceSalaries(workplaceId, filter, new AsyncCallback<List<SalaryInfo>>(){
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(List<SalaryInfo> result) {
+				workplaceSalaries = result;
 				success.accept(result);
 			}
 			
 		});
+		
+	}
+	
+	public void getFilterWorkplaceEmployeeSalariesDB(Integer contractId, Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){		
+		employeesService.getFilterEmployeeSalaries(contractId, filter, new AsyncCallback<List<SalaryInfo>>(){
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(List<SalaryInfo> result) {
+				workplaceSalaries = result;
+				success.accept(result);
+			}
+			
+		});
+		
 	}
 	
 	public void delete(Set<SalaryInfo> salaries, Consumer<String> success, Consumer<Throwable> failure) {
@@ -65,6 +129,23 @@ public class WorkplaceSalaryObject {
 	
 	public List<SalaryInfo> getWorkplaceSalaries() {
 		return this.workplaceSalaries;
+	}
+	
+	public SalaryInfoFilter getFilter() {
+		return this.filter;
+	}
+	
+	public WorkplaceEmployees getWorkplaceEmployees(){
+		return this.workplaceEmployees;
+	}
+	
+	public EmployeeInfo getEmployeeDataByNameSurname(String name, String surname){
+		EmployeeInfo employeeInfo = null;
+		for(EmployeeInfo employee : workplaceEmployees.getWorkplaceEmployees())
+			if(name == employee.getName() && surname == employee.getSurName()) {
+				employeeInfo = employee;
+			}
+		return employeeInfo;
 	}
 
 		

@@ -652,5 +652,17 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		employeesServiceAsync.getFilterEmployeeSalaries(currentDomainName, id, filter, new AsyncCallbackWrapper<List<SalaryInfo>>(callback));
 	}
 
+	@Override
+	public void getFilterWorkplaceSalaries(String currentDomainName, Integer workplaceId, SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback) {
+		AON.start();
+		employeesServiceAsync.getFilterWorkplaceSalaries(currentDomainName, workplaceId, filter, new AsyncCallbackWrapper<List<SalaryInfo>>(callback));
+	}
+
+	@Override
+	public void getWorkplaceActiveEmployees(String currentDomainName, Integer workplaceId, AsyncCallback<WorkplaceEmployees> callback) {
+		AON.start();
+		employeesServiceAsync.getWorkplaceActiveEmployees(currentDomainName, workplaceId, new AsyncCallbackWrapper<WorkplaceEmployees>(callback));
+	}
+
 	
 }

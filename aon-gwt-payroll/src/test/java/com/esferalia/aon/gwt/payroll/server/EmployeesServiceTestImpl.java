@@ -630,6 +630,19 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		return null;
 	}
 
+	@Override
+	public List<SalaryInfo> getFilterWorkplaceSalaries(String currentDomainName, Integer workplaceId,
+			SalaryInfoFilter filter) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public WorkplaceEmployees getWorkplaceActiveEmployees(String currentDomainName, Integer workplaceId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
 
 	
