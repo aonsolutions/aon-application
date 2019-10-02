@@ -2897,7 +2897,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 //		singlenton.employees.refresh(singlenton.enterprise);
 	}
 	
-	private static void showSalaryDraft(int employeeId, int workplaceId,
+	protected static void showSalaryDraft(int employeeId, int workplaceId,
 			Date startDate, Date endDate) {
 		EmployeeTree employeeTree = getEmployeeTree();
 		employeeTree.employees.selectSalaryDraft(employeeId, workplaceId, true);
