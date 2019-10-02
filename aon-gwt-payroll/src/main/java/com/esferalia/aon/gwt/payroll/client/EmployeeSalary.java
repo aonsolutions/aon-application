@@ -34,7 +34,6 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RadioButton;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
@@ -61,15 +60,11 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	interface MyStyle extends CssResource {
 		String tableStyle();
 		String mAuto();
-		String rightAlign();
-		String title();
-		String filterLabel();
-		String filterBorder();
 		String hide();
 	}
 	
 	@UiField
-	ScrollPanel scrollPanel;
+	HTMLPanel mainTablePanel;
 	
 	@UiField
 	Button deleteButton;
@@ -193,7 +188,7 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	private void resetPage() {
 		if(!this.employeeSalaryObject.getEmployeeSalaries().isEmpty()) {
 			this.collapsePanel.setOpen(false);
-			scrollPanel.clear();
+			mainTablePanel.clear();
 		}
 	}
 
@@ -268,7 +263,7 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	    vPanel.addStyleName(style.tableStyle());
 	    pager.addStyleName(style.mAuto());
 		
-	    scrollPanel.add(vPanel);
+	    mainTablePanel.add(vPanel);
 	}
 
 	private void addSelectionModel(CellTable<SalaryInfo> table) {
