@@ -20,6 +20,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -457,7 +458,7 @@ public class EnterpriseSalary extends Composite implements ContextMenuHandler {
 	    TextColumn<SalaryInfo> totalPaymentColumn = new TextColumn<SalaryInfo>() {
 	      @Override
 	      public String getValue(SalaryInfo salaryInfo) {
-	        return (Math.round(salaryInfo.getTotalPayment() * 100d) / 100d)+"";
+	    	  return NumberFormat.getFormat("#.00").format(salaryInfo.getTotalPayment());
 	      }
 	    };
 	    
@@ -467,7 +468,7 @@ public class EnterpriseSalary extends Composite implements ContextMenuHandler {
 	    TextColumn<SalaryInfo> totalDeductionColumn = new TextColumn<SalaryInfo>() {
 	      @Override
 	      public String getValue(SalaryInfo salaryInfo) {
-	        return (Math.round(salaryInfo.getTotalDecuction() * 100d) / 100d)+"";
+	    	  return NumberFormat.getFormat("#.00").format(salaryInfo.getTotalDecuction());
 	      }
 	    };
 	    
@@ -477,7 +478,7 @@ public class EnterpriseSalary extends Composite implements ContextMenuHandler {
 	    TextColumn<SalaryInfo> totalLiquidColumn = new TextColumn<SalaryInfo>() {
 	      @Override
 	      public String getValue(SalaryInfo salaryInfo) {
-	        return (Math.round(salaryInfo.getTotalLiquid() * 100d) / 100d)+" "+String.valueOf("\u20AC");
+	        return NumberFormat.getFormat("#.00").format(salaryInfo.getTotalLiquid())+" "+String.valueOf("\u20AC");
 	      }
 	    };
 	    
