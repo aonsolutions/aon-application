@@ -315,8 +315,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		addImageItem(enterpriseItem, "Estad\u00EDsticas", images.statistics());
 		
 		// Nominas Beta Empresa
-//		addImageItem(enterpriseItem, "N\u00F3minas (Beta)", images.salaries())
-//			.setUserObject(new EnterpriseSalaryObject(enterprise.getId(), employeesService));
+		addImageItem(enterpriseItem, "N\u00F3minas (Beta)", images.salaries())
+			.setUserObject(new EnterpriseSalaryObject(enterprise, employeesService));
 
 		if (extended) {
 			List<Activity> activities = enterprise.getActivities();

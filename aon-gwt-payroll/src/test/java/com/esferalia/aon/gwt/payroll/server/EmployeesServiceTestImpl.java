@@ -22,6 +22,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
@@ -639,6 +640,25 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 
 	@Override
 	public WorkplaceEmployees getWorkplaceActiveEmployees(String currentDomainName, Integer workplaceId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<SalaryInfo> getEnterpriseSalaries(String currentDomainName, Integer enterpriseId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<EmployeeInfo> getEnterpriseActiveEmployees(String currentDomainName, Integer enterpriseId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<SalaryInfo> getFilterEnterpriseSalaries(String currentDomainName, Integer enterpriseId,
+			SalaryInfoFilter filter) {
 		// TODO Auto-generated method stub
 		return null;
 	}

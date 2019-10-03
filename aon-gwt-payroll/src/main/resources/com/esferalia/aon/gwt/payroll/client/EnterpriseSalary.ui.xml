@@ -29,6 +29,44 @@
 		.widthAll{
 			width: 100%
 		}
+		
+		.title{
+			width: 100%;
+			background-color: #e8e4e4;
+			padding: 5px;
+			margin-bottom: 5px;
+		}
+		
+		.m3 {
+			margin: 3px;
+		}
+		
+		.tillTo{
+			margin-left: 43px !important;
+		}
+		
+		.monthYear{
+			margin-left: 67px !important;
+		}
+		
+		.filterButton{
+			border: 2px solid #e8e4e4;
+			background: none;
+			background-color: #e8e4e4 !important;
+			border-radius: 6%;
+			font-weight: bold;
+			padding-top: 2px;
+			padding-bottom: 2px;
+		}
+		
+		.hide{
+			display: none;
+		}
+		
+		.suggestBox{
+			width: 90%;
+			margin-left: 5px;
+		}
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX">
@@ -50,7 +88,7 @@
 						<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
 							<g:Button ui:field='deleteButton' styleName='aon-finding-toolbar-item aon-icon-delete' text="BORRAR"/>
 							<!--  g:Button ui:field='printButton' styleName='aon-finding-toolbar-item aon-icon-pdf' text="IMPRIMIR" /-->
-							<g:Button debugId='saveButton' ui:field='saveButton' styleName='aon-finding-toolbar-item aon-icon-mail-save' text="DESCARGAR" />
+							<g:Button debugId='saveButton' ui:field='saveButton' styleName='aon-finding-toolbar-item aon-icon-pdf' text="PDF" />
 							<g:Button ui:field='publishButton' styleName='aon-finding-toolbar-item aon-icon-google-drive' text="PUBLICAR" />
 						</g:HTMLPanel>
 					</g:HorizontalPanel>
@@ -60,7 +98,72 @@
 		<!-- END HEADER MENU -->
 		<g:center>
 			<g:HTMLPanel ui:field="mainContainer" styleName="{style.widthAll}">
-			    
+				<g:ScrollPanel height="100%">
+					<g:VerticalPanel styleName="{style.tableStyle}">
+						<g:Label ui:field="workplaceNameLabel" styleName="{style.title}"></g:Label>
+						<g:DisclosurePanel ui:field="collapsePanel">
+						   <g:header>FILTRAR BUSQUEDA</g:header>
+						   <g:HTMLPanel>
+							   	<table>
+							   		<tbody>
+							   			<tr>
+							   				<td colspan="2">
+							   					<g:HorizontalPanel styleName="{style.widthAll}">
+							   						<g:RadioButton name="employeeWorkplaceFilter" ui:field="workplaceRB">C. Trabajo</g:RadioButton>
+							   						<g:SuggestBox ui:field="workplaceSB"></g:SuggestBox>
+							   					</g:HorizontalPanel>
+							   				</td>
+							   			</tr>
+							   			<tr>
+							   				<td colspan="2">
+							   					<g:HorizontalPanel styleName="{style.widthAll}">
+							   						<g:RadioButton name="employeeWorkplaceFilter" ui:field="employeeRB">Empleado</g:RadioButton>
+							   						<g:SuggestBox ui:field="employeeSB"></g:SuggestBox>
+							   					</g:HorizontalPanel>
+							   				</td>
+							   			</tr>
+				  						<tr>
+				    						<td>
+					      						<div>Periodo</div>
+					    					</td>
+					    					<td>
+					      						<g:VerticalPanel>
+					      							<g:HorizontalPanel>
+					      								<g:RadioButton name="dateFilter" ui:field="noDateRB">Cualquier fecha</g:RadioButton>
+					      							</g:HorizontalPanel>
+					      							<g:HorizontalPanel>
+					      								<g:RadioButton name="dateFilter" ui:field="dateMYRB">Mes/Año</g:RadioButton>
+					      								<g:ListBox styleName="{style.m3} {style.monthYear}" ui:field="monthMY"></g:ListBox>
+					      								<g:ListBox styleName="{style.m3}" ui:field="yearMY"></g:ListBox>
+					      							</g:HorizontalPanel>
+					      							<g:HorizontalPanel>
+					      								<g:RadioButton name="dateFilter" ui:field="dateTTRB">Desde/Hasta</g:RadioButton>
+					      								<g:VerticalPanel>
+					      									<g:HorizontalPanel>
+					      										<g:ListBox styleName="{style.m3} {style.tillTo}" ui:field="monthTillT"></g:ListBox>
+					      										<g:ListBox styleName="{style.m3}" ui:field="yearTillT"></g:ListBox>
+					      									</g:HorizontalPanel>
+					      									<g:HorizontalPanel>
+					      										<g:ListBox styleName="{style.m3} {style.tillTo}" ui:field="monthTTo"></g:ListBox>
+					      										<g:ListBox styleName="{style.m3}" ui:field="yearTTo"></g:ListBox>
+					      									</g:HorizontalPanel>
+					      								</g:VerticalPanel>
+					      							</g:HorizontalPanel>
+					      						</g:VerticalPanel>
+					    					</td>
+				  						</tr>
+				  						<tr>
+				  							<td colspan="2" align="right">
+				  								<g:Button ui:field="filterButton" styleName="{style.filterButton}">Filtrar</g:Button>
+				  							</td>
+				  						</tr>
+			  						</tbody>
+							   </table>
+						   </g:HTMLPanel>
+					 	</g:DisclosurePanel>
+					 	<g:HTMLPanel ui:field="mainTablePanel"></g:HTMLPanel>
+					</g:VerticalPanel> 
+				</g:ScrollPanel>
 			</g:HTMLPanel>
 		</g:center>
 	</g:DockLayoutPanel>

@@ -21,6 +21,7 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
@@ -234,6 +235,33 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 			@Override
 			public void getWorkplaceActiveEmployees(String currentDomainName, Integer workplaceId,
 					AsyncCallback<WorkplaceEmployees> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void getEnterpriseSalaries(String currentDomainName, Integer enterpriseId,
+					AsyncCallback<List<SalaryInfo>> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void getEnterpriseActiveEmployees(String currentDomainName, Integer enterpriseId,
+					AsyncCallback<List<EmployeeInfo>> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void getFilterEnterpriseSalaries(String currentDomainName, Integer enterpriseId,
+					SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback) {
 				// TODO Auto-generated method stub
 				
 			}
