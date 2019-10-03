@@ -29,6 +29,14 @@ public abstract class Mod303Declaration {
 		}
 	}
 	
+	protected static void set(Mod303Key key,Mod303 mod,double amount) {
+		if (key.isDiffEnabled()) {
+			mod.ensureDetail(key).setAccumulatedAmount(amount);	
+		} else {
+			mod.ensureDetail(key).setAmount(amount);
+		}
+	}
+
 	public IMod303KeyDAO getKey(Mod303Key key) {
 		for (IMod303KeyDAO keyDAO : getKeys()) {
 			if (keyDAO.getKey() == key) {
