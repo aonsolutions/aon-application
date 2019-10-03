@@ -68,6 +68,7 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 		String tableStyle();
 		String mAuto();
 		String hide();
+		String suggestBox();
 	}
 	
 	@UiField
@@ -205,6 +206,8 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 		MultiWordSuggestOracle orclNames = (MultiWordSuggestOracle) this.employeeSB.getSuggestOracle();
 		orclNames.addAll(employeesNamesSuggest);
 		this.employeeSB.setAutoSelectEnabled(false);
+		this.employeeSB.addStyleName(style.suggestBox());
+		this.employeeSB.setValue("");
 	}
 
 	private void resetPage() {

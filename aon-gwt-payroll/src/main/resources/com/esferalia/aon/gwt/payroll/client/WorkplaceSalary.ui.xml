@@ -62,6 +62,11 @@
 		.hide{
 			display: none;
 		}
+		
+		.suggestBox{
+			width: 90%;
+			margin-left: 5px;
+		}
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX">
