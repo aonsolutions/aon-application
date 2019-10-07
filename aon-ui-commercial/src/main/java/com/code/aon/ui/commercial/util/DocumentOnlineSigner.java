@@ -220,19 +220,22 @@ public class DocumentOnlineSigner implements Serializable {
 			json.put("document", new String(encoded));
 			
 			// signingParties
+			JSONArray sp = new JSONArray();
+			json.put("signingParties", sp);
+			
 			JSONObject spDirStaff = new JSONObject();
 			spDirStaff.put("name", rDirStaffName);
 			spDirStaff.put("address", rDirStaffEmail);
 			spDirStaff.put("signingMethod", signingType());
 			spDirStaff.put("role", "Signer");
-			json.put("signingParties", spDirStaff);
+			sp.put(spDirStaff);
 			
 			JSONObject spTargetCommercial = new JSONObject();
 			spTargetCommercial.put("name", offer.getTarget().getRegistry().getName());
 			spTargetCommercial.put("address", targetCommercialEmail);
-			spTargetCommercial.put("signingMethod", signingType());
+			spTargetCommercial.put("signingMethod", "WebClick");
 			spTargetCommercial.put("role", "Reviewer");
-			json.put("signingParties", spTargetCommercial);
+			sp.put(spTargetCommercial);
 			
 			// interestedParties
 			if(sellerEmail != null && !sellerEmail.equals("")) {
@@ -250,8 +253,17 @@ public class DocumentOnlineSigner implements Serializable {
 				json.put("interestedParties", ips);
 			}
 			
+			// options
+			JSONArray filter = new JSONArray();
+			filter.put("EviSignSigned");
+			filter.put("EviSignRejected");
+			
 			JSONObject opt = new JSONObject();
-			opt.put("pushNotificationUrl", AonUtil.getServerName()+(AonUtil.getServerName().endsWith("/")?"":"/")+"offer");
+			String pnUrl = AonUtil.getServerName();
+			pnUrl = pnUrl + (pnUrl.endsWith("/")?"":"/") + "offer";
+			pnUrl = (pnUrl.startsWith("http://")?"":"http://") + pnUrl;
+			opt.put("pushNotificationUrl", pnUrl);
+			opt.put("pushNotificationFilter", filter);
 			json.put("options", opt);
 			
 			JSONObject responseJson = postObject(json.toString());
