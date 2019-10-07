@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -249,14 +250,8 @@ public class DocumentOnlineSigner implements Serializable {
 				json.put("interestedParties", ips);
 			}
 			
-			
-			JSONArray filter = new JSONArray();
-			filter.put("EviSignSigned");
-			filter.put("EviSignRejected");
-			
 			JSONObject opt = new JSONObject();
 			opt.put("pushNotificationUrl", AonUtil.getServerName()+(AonUtil.getServerName().endsWith("/")?"":"/")+"offer");
-			opt.put("pushNotificationFilter", filter);
 			json.put("options", opt);
 			
 			JSONObject responseJson = postObject(json.toString());
