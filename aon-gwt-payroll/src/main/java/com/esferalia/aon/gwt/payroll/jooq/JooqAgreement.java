@@ -1108,13 +1108,44 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		if (agreementPaymentRecord != null) {
 
 			for (AgreementPaymentRecord record : agreementPaymentRecord) {
+				
+				//If payment_concept negative must be copy to like a new one
+				Integer paymentConceptId = record.get(AGREEMENT_PAYMENT.PAYMENT_CONCEPT);
+				if(paymentConceptId < 0) {
+					//Get smallestId
+					Record1<Integer> smallestIdR = dslContext.select(DSL.min(PAYMENT_CONCEPT.ID)).from(PAYMENT_CONCEPT)
+							.fetchOne();
+					
+					//New smallestId
+					Integer smallestId = smallestIdR.value1() - 1;
+					
+					Record paymentConceptRecord = dslContext.select().from(PAYMENT_CONCEPT)
+							.where(PAYMENT_CONCEPT.ID.eq(paymentConceptId))
+							.fetchOne();
+					
+					dslContext.insertInto(PAYMENT_CONCEPT)
+						.set(PAYMENT_CONCEPT.ID, smallestId)
+						.set(PAYMENT_CONCEPT.DOMAIN, paymentConceptRecord.get(PAYMENT_CONCEPT.DOMAIN))
+						.set(PAYMENT_CONCEPT.CODE, paymentConceptRecord.get(PAYMENT_CONCEPT.CODE))
+						.set(PAYMENT_CONCEPT.DESCRIPTION, paymentConceptRecord.get(PAYMENT_CONCEPT.DESCRIPTION))
+						.set(PAYMENT_CONCEPT.TYPE, paymentConceptRecord.get(PAYMENT_CONCEPT.TYPE))
+						.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, paymentConceptRecord.get(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE))
+						.set(PAYMENT_CONCEPT.EXPRESSION, paymentConceptRecord.get(PAYMENT_CONCEPT.EXPRESSION))
+						.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, paymentConceptRecord.get(PAYMENT_CONCEPT.IRPF_EXPRESSION))
+						.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, paymentConceptRecord.get(PAYMENT_CONCEPT.QUOTE_EXPRESSION))
+						.execute();
+					
+					//Set new id
+					paymentConceptId = smallestId;
+				}
 
 				insertPayment = dslContext
 						.insertInto(AGREEMENT_PAYMENT)
 						.set(AGREEMENT_PAYMENT.DOMAIN, domain)
 						.set(AGREEMENT_PAYMENT.AGREEMENT, newAgreementId)
-						.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT,
-								record.getValue(AGREEMENT_PAYMENT.PAYMENT_CONCEPT))
+						.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
+//						.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT,
+//								record.getValue(AGREEMENT_PAYMENT.PAYMENT_CONCEPT))
 						.set(AGREEMENT_PAYMENT.TYPE,
 								record.getValue(AGREEMENT_PAYMENT.TYPE))
 						.set(AGREEMENT_PAYMENT.EXPRESSION,
