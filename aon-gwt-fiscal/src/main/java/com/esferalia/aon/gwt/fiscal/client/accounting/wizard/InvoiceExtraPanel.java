@@ -110,7 +110,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 
 	private void paintWorkplace(final IInvoicePanelCallback callback) {
 		
-		final LinkedList<Workplace> list = callback.getModule().getConfiguration().getWorkplaces();
+		final LinkedList<Workplace> list = callback.getConfiguration().getWorkplaces();
 		if (list != null && list.size() > 1) {
 			FlowPanel panel = new  FlowPanel();
 			panel.setStyleName(AON.AON_CSS.aonInvoicePanelInner());
@@ -574,7 +574,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 					final InvoiceRectificationDataPanel rectPanel = new InvoiceRectificationDataPanel();
 					rectPanel.show(callback.getCurrentDomainName()
 						,callback.getCurrentDomainId()
-						,callback.getModule().getConfiguration()
+						,callback.getConfiguration()
 						,data
 						, new InvoiceRectificationDataPanelCallback() {
 							

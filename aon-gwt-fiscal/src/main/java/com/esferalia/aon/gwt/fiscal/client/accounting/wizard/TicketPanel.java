@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccoun
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -243,7 +244,7 @@ public class TicketPanel extends WizardContentBase<AccountingInvoice> implements
 		registryBox = new AccountingRegistryBox(
 				 getCallback().getCurrentDomainName()
 				,getCallback().getCurrentDomainId()
-				,getCallback().getModule().getConfiguration()
+				,getCallback().getConfiguration()
 				,true);
 		registryBox.setTabIndex(++tabindex);
 		registryBox.addKeyUpHandler( new KeyUpHandler() {
@@ -540,8 +541,8 @@ public class TicketPanel extends WizardContentBase<AccountingInvoice> implements
 		payTable.setWidget(row, col, payStatusLabel);
 		col++;
 
-		if (getCallback().getModule().getConfiguration().getPayMethods() != null 
-			&& !getCallback().getModule().getConfiguration().getPayMethods().isEmpty()) {
+		if (getCallback().getConfiguration().getPayMethods() != null 
+			&& !getCallback().getConfiguration().getPayMethods().isEmpty()) {
 			InlineLabel payMethodLabel = new InlineLabel(AON.MSG.payMethod());
 			payTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonNowrap());
 			payTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBold());
@@ -552,7 +553,7 @@ public class TicketPanel extends WizardContentBase<AccountingInvoice> implements
 			
 			payMethodList = new PayMethodListBox();
 			payMethodList.setTabIndex(++tabindex);
-			payMethodList.fill(getCallback().getModule().getConfiguration().getPayMethods());
+			payMethodList.fill(getCallback().getConfiguration().getPayMethods());
 			payMethodList.addChangeHandler(new ChangeHandler() {
 				@Override
 				public void onChange(ChangeEvent event) {
@@ -717,10 +718,10 @@ public class TicketPanel extends WizardContentBase<AccountingInvoice> implements
 	private void fillSalesSeries() {
 		series.clear();
 		series.addItem(" --- ","");
-		if (getCallback().getModule().getConfiguration().getInvoiceSalesSeries() != null 
-			&& getCallback().getModule().getConfiguration().getInvoiceSalesSeries().size() > 0) {
-			LinkedList<String> rectificationSeries = getCallback().getModule().getConfiguration().getInvoiceRectificationSalesSeries();
-			for (String ser : getCallback().getModule().getConfiguration().getInvoiceSalesSeries()) {
+		if (getCallback().getConfiguration().getInvoiceSalesSeries() != null 
+			&& getCallback().getConfiguration().getInvoiceSalesSeries().size() > 0) {
+			LinkedList<String> rectificationSeries = getCallback().getConfiguration().getInvoiceRectificationSalesSeries();
+			for (String ser : getCallback().getConfiguration().getInvoiceSalesSeries()) {
 				boolean rectifierSerie = (rectificationSeries != null && rectificationSeries.contains(ser));
 				if (!rectifierSerie || (rectifierSerie && getWrapper().getInvoice().isRectifier())) {
 					series.addItem(ser);
@@ -930,6 +931,10 @@ public class TicketPanel extends WizardContentBase<AccountingInvoice> implements
 			return getCallback().getModule();
 		}
 		@Override
+		public AonConfiguration getConfiguration() {
+			return getCallback().getConfiguration();
+		}
+		@Override
 		public String getCurrentDomainName() {
 			return getCallback().getCurrentDomainName();
 		}
@@ -951,7 +956,7 @@ public class TicketPanel extends WizardContentBase<AccountingInvoice> implements
 			return !getWrapper().isSales() 
 				&& !getWrapper().isSurcharge()
 				&& getWrapper().isOutputVatEnabled() != getWrapper().isInputVatEnabled()
-				&& getCallback().getModule().getConfiguration().isInvestAssetsAvailable();
+				&& getCallback().getConfiguration().isInvestAssetsAvailable();
 			
 		}
 		@Override

@@ -64,8 +64,8 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		private InvestAssetListBox() {
 			setWidth("90px");
 			addItem("------",(String) null);
-			if (callback.getModule().getConfiguration().isInvestAssetsAvailable()) {
-				for (InvestAsset asset : callback.getModule().getConfiguration().getInvestAssets()) {
+			if (callback.getConfiguration().isInvestAssetsAvailable()) {
+				for (InvestAsset asset : callback.getConfiguration().getInvestAssets()) {
 					addItem(asset.getDescription(),AonNumberUtils.toString(asset.getId()));
 				}
 			}
@@ -73,13 +73,13 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		
 		private InvestAsset getValue() {
 			if (getSelectedIndex() == 0) return null;
-			return callback.getModule().getConfiguration().getInvestAssets().get(getSelectedIndex() -1 );
+			return callback.getConfiguration().getInvestAssets().get(getSelectedIndex() -1 );
 		}
 
 		public void setValue(Integer investAsset) {
 			if (investAsset == null) setSelectedIndex(0);
 			int i = 1;
-			for (InvestAsset asset : callback.getModule().getConfiguration().getInvestAssets()) {
+			for (InvestAsset asset : callback.getConfiguration().getInvestAssets()) {
 				if (AonNumberUtils.equals(asset.getId(),investAsset)) {
 					setSelectedIndex(i);		
 				}

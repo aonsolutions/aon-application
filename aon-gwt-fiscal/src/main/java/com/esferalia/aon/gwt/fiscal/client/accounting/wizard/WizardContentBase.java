@@ -33,7 +33,7 @@ public abstract class WizardContentBase<T extends IAccountEntryWrapper> extends 
 	}
 	
 	public AonConfiguration getConfiguration() {
-		return getCallback().getModule().getConfiguration();
+		return getCallback().getConfiguration();
 	}
 	public IAccountEntryModuleCallback getCallback() {
 		return callback;

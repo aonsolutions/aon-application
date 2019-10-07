@@ -84,21 +84,21 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 		withholdingTable.setWidget(row, col, lbl0);
 		col++;
 		
-		if (getCallback().getModule().getConfiguration().getWithholdingTaxes() != null 
-			&& getCallback().getModule().getConfiguration().getWithholdingTaxes().size() > 0) {
+		if (getCallback().getConfiguration().getWithholdingTaxes() != null 
+			&& getCallback().getConfiguration().getWithholdingTaxes().size() > 0) {
 			withholdingTaxs = new ListBox();
 			withholdingTaxs.setTabIndex(++tabindex);
 			withholdingTaxs.addStyleName(AON.AON_CSS.aonMarginLeft5());
 			withholdingTaxs.setWidth("100px");
 			withholdingTaxs.addItem("--------","-1");
-			for (Tax tax : getCallback().getModule().getConfiguration().getWithholdingTaxes()) {
+			for (Tax tax : getCallback().getConfiguration().getWithholdingTaxes()) {
 				withholdingTaxs.addItem(tax.getName(),AonNumberUtils.toString( tax.getId()));
 			}
 			withholdingTaxs.addChangeHandler(new ChangeHandler() {
 				
 				@Override
 				public void onChange(ChangeEvent event) {
-					for (Tax tax : getCallback().getModule().getConfiguration().getWithholdingTaxes()) {
+					for (Tax tax : getCallback().getConfiguration().getWithholdingTaxes()) {
 						if ( AonNumberUtils.equals( AonNumberUtils.toInteger( withholdingTaxs.getSelectedValue()),tax.getId())  ) {
 							
 							Account taxAccount = getWrapper().isSales()
@@ -106,8 +106,8 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 									:tax.getPurchaseAccount();
 							if (taxAccount == null) {
 								taxAccount = getWrapper().isSales()
-									?getCallback().getModule().getConfiguration().getDefaultPaidRetAccount()
-									:getCallback().getModule().getConfiguration().getDefaultChargedRetAccount();
+									?getCallback().getConfiguration().getDefaultPaidRetAccount()
+									:getCallback().getConfiguration().getDefaultChargedRetAccount();
 							}
 							getWrapper().getWithholdingData().setPercentage(tax.getPercentage());
 							getWrapper().getWithholdingData().setWithholdingType(tax.getWithholdingType());

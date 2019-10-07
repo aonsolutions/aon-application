@@ -228,31 +228,38 @@ public class AccountJournalReport extends MainEntryPoint {
 		entryDialog.setModal(true);
 		entryDialog.setCaption(AON.MSG.accountEntries());
 		AccountEntryModule module = new AccountEntryModule();
-		module.onModuleLoad(entryDialog, getCurrentDomainName(), getCurrentUser(), domain, entryId, new ModuleCallback<AccountEntry>() {
-			
-			@Override
-			public void onRemove(AccountEntry removed) {
-				entryDialog.hide();
-				moduleCallback.onRemove(removed);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				moduleCallback.onFailure(caught);
-			}
-			
-			@Override
-			public void onExit() {
-				entryDialog.hide();
-				moduleCallback.onExit();
-			}
-			
-			@Override
-			public void onChange(AccountEntry changed) {
-				entryDialog.hide();
-				moduleCallback.onChange(changed);
-			}
-		});
+		module.onModuleLoad(
+			new AccountEntryModuleOptions()
+			.setParentWidget(entryDialog)
+			.setDomainName(getCurrentDomainName())
+			.setUser(getCurrentUser())
+			.setDomain(domain)
+			.setAccountEntryId(entryId)
+			.setExternalCallback(new ModuleCallback<AccountEntry>() {
+				@Override
+				public void onRemove(AccountEntry removed) {
+					entryDialog.hide();
+					moduleCallback.onRemove(removed);
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					moduleCallback.onFailure(caught);
+				}
+				
+				@Override
+				public void onExit() {
+					entryDialog.hide();
+					moduleCallback.onExit();
+				}
+				
+				@Override
+				public void onChange(AccountEntry changed) {
+					entryDialog.hide();
+					moduleCallback.onChange(changed);
+				}
+			})
+		);
 		entryDialog.center();
 		entryDialog.show();
 	}

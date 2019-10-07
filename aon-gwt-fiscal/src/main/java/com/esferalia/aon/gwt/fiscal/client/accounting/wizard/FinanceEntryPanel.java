@@ -87,7 +87,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 			}
 			
 			,SEARCH_PANEL_TAB_OFFSET);
-		financeSearchPanel.setUser( getCallback().getModule().getConfiguration().getUser() );
+		financeSearchPanel.setUser( getCallback().getConfiguration().getUser() );
 		financeSearchPanel.setStyleName(AON.AON_CSS.aonInvoicePanelEast());
 		financeSearchPanel.addSelectionHandler( new SelectionHandler<Finance>() {
 			

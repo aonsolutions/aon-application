@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.widget.CloseTab;
 import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -405,8 +406,14 @@ public class TediCenter extends MainEntryPoint {
 	private void paintAccountEntryModule(SimplePanel container, TediResult result) {	
 		AccountEntryModule module = new AccountEntryModule();
 		AccountingInvoice ai = result.getAccountingInvoice();
-		module.onModuleLoad(container, getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), configuration, ai,
-				new ModuleCallback<AccountEntry>() {
+		module.onModuleLoad( new AccountEntryModuleOptions()
+			.setParentWidget(container)
+			.setDomainName( getCurrentDomainName() )
+			.setUser(getCurrentUser())
+			.setDomain( getCurrentDomain())
+			.setConfiguration( configuration)
+			.setAi( ai)
+			.setExternalCallback(new ModuleCallback<AccountEntry>() {
 
 					@Override
 					public void onRemove(AccountEntry removed) {
@@ -428,7 +435,8 @@ public class TediCenter extends MainEntryPoint {
 						onAcceptAll(accepted);
 						onRefresh( );
 					}
-				});
+				})
+			);
 	}
 	
 	private void paintAttach(TediResult result, SimpleLayoutPanel container) {
