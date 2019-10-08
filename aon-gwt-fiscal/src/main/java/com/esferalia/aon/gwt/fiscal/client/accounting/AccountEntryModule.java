@@ -105,13 +105,13 @@ public class AccountEntryModule extends MainEntryPoint {
 	}
 	private static final TabLayoutFolderSafeTemplate TABLAYOUT_FOLDER_TEMPLATE = GWT.create(TabLayoutFolderSafeTemplate.class);
 
-	final static int ERROR_LOG_TAB = 0;
-	final static int SESSION_LOG_TAB = 1;
-	final static int BALANCES_TAB = 2;
-	final static int STATEMENT_TAB = 3;
-	final static int JOURNAL_TAB = 4;
-	final static int EXTRA_INFO_TAB = 5;
-
+	private int errorLogTabIndex;
+	private int sessionLogTabIndex;
+	private int balancesTabIndex;
+	private int statementTabIndex;
+	private int journalTabIndex;
+	private int extraInfoTabIndex;
+	
 	public final static int JOURNAL_PANEL_TAB_OFFSET = 1000000;
 
 	static FiscalServiceAsync fiscalService;
@@ -195,7 +195,6 @@ public class AccountEntryModule extends MainEntryPoint {
 	private SimplePanel errorsContainer;
 	private SessionLog sessionLog;
 	private JournalPanelReport journalPanel;
-	private SimpleLayoutPanel journalPanelContainer;
 	private AccountBalancePanel balancePanel;
 	private SimpleLayoutPanel statementPanelContainer;
 	private ScrollPanel extraInfoContainer;
@@ -272,8 +271,6 @@ public class AccountEntryModule extends MainEntryPoint {
 		
 		getOptions().getParentWidget().add(dockLayoutPanel);
 		
-//		tabLayout.selectTab(BALANCES_TAB);
-		
 		activity.setTabIndex(-1);
 		confidential.setTabIndex(-1);
 		commentsButton.setTabIndex(-1);
@@ -328,7 +325,7 @@ public class AccountEntryModule extends MainEntryPoint {
 	}
 
 	private void loadModule() {
-		boolean editing = (getOptions().getAccountEntryId() != null) || (getOptions().getAi() !=null);
+		boolean editing = (getOptions().getAccountEntryId() != null) || (getOptions().getAccountingInvoice() !=null);
 		if (getOptions().getConfiguration().getPeriods() != null && !getOptions().getConfiguration().getPeriods().isEmpty()) {
 			period.fill(getOptions().getConfiguration().getPeriods());
 		} else {
@@ -355,38 +352,50 @@ public class AccountEntryModule extends MainEntryPoint {
 		}
 		confidential.setVisible(getOptions().getConfiguration().getUser().hasConfidentialityRole());
 		
-		journalPanel = new JournalPanelReport(getOptions().getDomainName(), getOptions().getUser()
-				, getOptions().getDomain(), JOURNAL_PANEL_TAB_OFFSET, getOptions().getConfiguration());
-		journalPanel.addSelectionHandler(new AccountEntrySelectionHandler() {
-			@Override
-			public void onSelection(AccountEntrySelectionEvent event) {
-				final AccountEntry entry = event.getSelectedItem();
-				selectEntry(entry.getId());
-			}
-		});
-		journalPanelContainer.setWidget(journalPanel);
-		
 		if (getOptions().getAccountEntryId() != null) {
 			selectEntry(getOptions().getAccountEntryId());
-		} else if (getOptions().getAi() != null) {
-			selectWizardContent(null, getOptions().getAi());
+		} else if (getOptions().getAccountingInvoice() != null) {
+			selectWizardContent(null, getOptions().getAccountingInvoice());
 		} else {
 			reset();
 		}
 	}
 	
+	private int getErrorLogTabIndex(){
+		return errorLogTabIndex;
+	}
+	private int getSessionLogTabIndex(){
+		return sessionLogTabIndex;
+	}
+	private int getBalancesTabIndex(){
+		return balancesTabIndex;
+	}
+	private int getStatementTabIndex(){
+		return statementTabIndex;
+	}
+	private int getJournalTabIndex(){
+		return journalTabIndex;
+	}
+	private int getExtraInfoTabIndex(){
+		return extraInfoTabIndex;
+	}
+
 	protected void invalidateModule(String msg) {
 		errors = new ErrorPanel();
 		showError(msg);
 		errorsContainer.setWidget(errors);
 		entryHeader.setVisible(false);
-		search.setVisible(false);
+		if (getOptions().isJournalTabVisible()) {
+			search.setVisible(false);
+		}
 		reset.setVisible(false);
 		accept.setVisible(false);
 		remove.setVisible(false);
 		audit.setVisible(false);
 		duplicate.setVisible(false);
-		back.setVisible(false);
+		if (getOptions().isBackButtonVisible()) {
+			back.setVisible(false);
+		}
 	}
 
 	// -------------------------------------------------------------- UiHandler
@@ -538,7 +547,9 @@ public class AccountEntryModule extends MainEntryPoint {
 
 		// Enable/Disable header values
 		reset.setVisible(!getOptions().hasExternalCallback());
-		search.setVisible(!getOptions().hasExternalCallback());
+		if (getOptions().isJournalTabVisible()) {
+			search.setVisible(!getOptions().hasExternalCallback());
+		}
 		duplicate.setVisible(!getOptions().hasExternalCallback() && !isNew());
 		
 		period.setEnabled(canEdit);
@@ -547,7 +558,9 @@ public class AccountEntryModule extends MainEntryPoint {
 		entryType.setEnabled(canEdit);
 		accept.setEnabled(canEdit);
 		remove.setEnabled(canRemove);
-		back.setVisible(getOptions().hasExternalCallback());
+		if (getOptions().isBackButtonVisible()) {
+			back.setVisible(getOptions().hasExternalCallback());
+		}
 		
 		styleCommentsButton();
 		errors = new ErrorPanel();
@@ -586,13 +599,17 @@ public class AccountEntryModule extends MainEntryPoint {
 			@Override
 			public void onSuccess(AccountEntry[] result) {
 				base = result[0];
-				sessionLog.addSaved(AccountEntryModule.getWrapperArray(result));
+				if (getOptions().isSessionLogTabVisible()) {
+					sessionLog.addSaved(AccountEntryModule.getWrapperArray(result));
+				}
 				reset();
 				
-				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-					public void execute() {
-						tabLayout.selectTab(SESSION_LOG_TAB);					}
-				});
+				if (getOptions().isSessionLogTabVisible()) {
+					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+						public void execute() {
+							tabLayout.selectTab( getSessionLogTabIndex() );					}
+					});
+				}
 
 				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 					public void execute() {
@@ -629,7 +646,7 @@ public class AccountEntryModule extends MainEntryPoint {
 				public void onAnimationComplete() {
 					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 						public void execute() {
-							tabLayout.selectTab(JOURNAL_TAB);
+							tabLayout.selectTab( AccountEntryModule.this.getJournalTabIndex() );
 							journalPanel.setFocus(true);
 						}
 					});
@@ -638,7 +655,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		} else {
 			Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 				public void execute() {
-					tabLayout.selectTab(JOURNAL_TAB);
+					tabLayout.selectTab(AccountEntryModule.this.getJournalTabIndex());
 					journalPanel.setFocus(true);
 				}
 			});
@@ -684,9 +701,9 @@ public class AccountEntryModule extends MainEntryPoint {
 					@Override
 					public void onSuccess(Void result) {
 						AccountEntry removed = wizardContent.getMainEntry();
-						if (wizardContent.getMainEntry().getId() != null) {
-							wizardContent.getMainEntry().setId(
-									wizardContent.getMainEntry().getId() * -1);
+						if (getOptions().isSessionLogTabVisible() &&
+							wizardContent.getMainEntry().getId() != null) {
+							wizardContent.getMainEntry().setId(wizardContent.getMainEntry().getId() * -1);
 							sessionLog.addDeleted(wizardContent.getEntryWrapper());
 						}
 						remove.setEnabled(true);
@@ -786,10 +803,12 @@ public class AccountEntryModule extends MainEntryPoint {
 					&& wrp.getAccountEntry().getDetails().get(0).getCredit() == 0)				
 							);
 		}
-		if (isDirty() && !newAndEmpty) { 
+		if (isDirty() && !newAndEmpty && getOptions().isSessionLogTabVisible()) { 
 			sessionLog.addSuspended(wizardContent.getEntryWrapper());
 		}
-		balancePanel.clearBalances();
+		if (getOptions().isBalancesTabVisible()) {
+			balancePanel.clearBalances();
+		}
 		selectWizardContent(id,wrp); 
 	}
 	
@@ -870,7 +889,9 @@ public class AccountEntryModule extends MainEntryPoint {
 	
 	// ---------------------------------------------------------------- ACTION
 	private void reset() {
-		balancePanel.clearBalances();
+		if (getOptions().isBalancesTabVisible()) {
+			balancePanel.clearBalances();
+		}
 		final MutableInt first = new MutableInt(0);
 		ISelectionCallback selectionCallback = new ISelectionCallback() {
 			
@@ -935,7 +956,7 @@ public class AccountEntryModule extends MainEntryPoint {
 	}
 
 	private void showFullStatement(Integer selectedItem) {
-		tabLayout.selectTab(STATEMENT_TAB);
+		tabLayout.selectTab(getStatementTabIndex());
 		commonService.getAccount(getOptions().getDomainName()
 				, getOptions().getDomain()
 				, selectedItem
@@ -1068,7 +1089,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		if (splitLayoutPanel.getWidgetSize(footPanel) <= 30) {
 			int effectiveHeigth = getOptions().isEmbedded()?5:3;
 			splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / effectiveHeigth);
-			splitLayoutPanel.animate(500, new AnimationCallback() {
+			splitLayoutPanel.animate(300, new AnimationCallback() {
 
 				@Override
 				public void onLayout(Layer layer, double progress) {
@@ -1078,7 +1099,7 @@ public class AccountEntryModule extends MainEntryPoint {
 				public void onAnimationComplete() {
 					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 						public void execute() {
-							tabLayout.selectTab(ERROR_LOG_TAB);
+							tabLayout.selectTab(AccountEntryModule.this.getErrorLogTabIndex());
 						}
 					});
 				}
@@ -1086,7 +1107,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		} else {
 			Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 				public void execute() {
-					tabLayout.selectTab(ERROR_LOG_TAB);
+					tabLayout.selectTab(AccountEntryModule.this.getErrorLogTabIndex());
 				}
 			});
 		}
@@ -1102,56 +1123,65 @@ public class AccountEntryModule extends MainEntryPoint {
 	
 	private void ensureBalanceTab() {
 		openFootPanelIfNeeded();
-		tabLayout.selectTab(BALANCES_TAB);
+		tabLayout.selectTab(getBalancesTabIndex());
 	}
 
 	public void onBalance(Account account) {
-		if (account != null && account.getId() != null) {
-			ensureBalanceTab();
-			Date from = DateUtils.getFirstDayOfYear(entryDate.getValue());
-			balancePanel.add(account, from, entryDate.getValue());
+		if (getOptions().isBalancesTabVisible()) {
+			if (account != null && account.getId() != null) {
+				ensureBalanceTab();
+				Date from = DateUtils.getFirstDayOfYear(entryDate.getValue());
+				balancePanel.add(account, from, entryDate.getValue());
+			}
 		}
 	}
 
 	public void onBalance(AccountEntry entry) {
-		if (entry.getDetails() != null 
-			&& !entry.getDetails().isEmpty() 
-			&& entry.getDetails().get(0).getAccount() != null) {
-			ensureBalanceTab();
-			balancePanel.add(entry);
+		if (getOptions().isBalancesTabVisible()) {
+			if (entry.getDetails() != null 
+				&& !entry.getDetails().isEmpty() 
+				&& entry.getDetails().get(0).getAccount() != null) {
+				ensureBalanceTab();
+				balancePanel.add(entry);
+			}
 		}
 	}
 	public void onBalance(IAccountEntryWrapper wrp) {
-		onBalance(wrp.getAccountEntry());
+		if (getOptions().isBalancesTabVisible()) {
+			onBalance(wrp.getAccountEntry());
+		}
 	}
 	
 	public void onPreview(IAccountEntryWrapper wrp) {
-		if (wrp.getAccountEntry() != null 
-			&& wrp.getAccountEntry().getDetails() != null 
-			&& !wrp.getAccountEntry().getDetails().isEmpty() 
-			&& wrp.getAccountEntry().getDetails().get(0).getAccount() != null) {
-			ensureBalanceTab();
-			balancePanel.preview( wrp );
+		if (getOptions().isBalancesTabVisible()) {
+			if (wrp.getAccountEntry() != null 
+					&& wrp.getAccountEntry().getDetails() != null 
+					&& !wrp.getAccountEntry().getDetails().isEmpty() 
+					&& wrp.getAccountEntry().getDetails().get(0).getAccount() != null) {
+				ensureBalanceTab();
+				balancePanel.preview( wrp );
+			}
 		}
 	}
 	public void onPreview(IAccountEntryWrapper[] wrapperArray) {
-		if (wrapperArray != null 
-			&& wrapperArray.length > 0
-			&& wrapperArray[0].getAccountEntry() != null 
-			&& wrapperArray[0].getAccountEntry().getDetails() != null 
-			&& !wrapperArray[0].getAccountEntry().getDetails().isEmpty() 
-			&& wrapperArray[0].getAccountEntry().getDetails().get(0).getAccount() != null) {
-			ensureBalanceTab();
-			balancePanel.preview( wrapperArray );
+		if (getOptions().isBalancesTabVisible()) {
+			if (wrapperArray != null 
+					&& wrapperArray.length > 0
+					&& wrapperArray[0].getAccountEntry() != null 
+					&& wrapperArray[0].getAccountEntry().getDetails() != null 
+					&& !wrapperArray[0].getAccountEntry().getDetails().isEmpty() 
+					&& wrapperArray[0].getAccountEntry().getDetails().get(0).getAccount() != null) {
+				ensureBalanceTab();
+				balancePanel.preview( wrapperArray );
+			}
 		}
 	}
 	public void onClearSessionLog() {
-		balancePanel.clearBalances();
+		if (getOptions().isBalancesTabVisible()) {
+			balancePanel.clearBalances();
+		}
 	}
 	
-	public void onStatement(Integer accountId) {
-		showFullStatement(accountId);
-	};
 	public void onError(String msg) {
 		showError(msg);
 	}
@@ -1167,11 +1197,13 @@ public class AccountEntryModule extends MainEntryPoint {
 	}
 
 	public void addExtraInfo( String htmlText) {
-		openFootPanelIfNeeded();
-		tabLayout.selectTab(EXTRA_INFO_TAB);
-		HTMLPanel panel = new HTMLPanel(htmlText);
-		extraInfoContainer.setWidget(panel);
-		extraInfoContainer.scrollToTop();
+		if (getOptions().isExtraInfoTabVisible()) {
+			openFootPanelIfNeeded();
+			tabLayout.selectTab(getExtraInfoTabIndex());
+			HTMLPanel panel = new HTMLPanel(htmlText);
+			extraInfoContainer.setWidget(panel);
+			extraInfoContainer.scrollToTop();
+		}
 	}
 	
 	public void onBack(ClickEvent event) {
@@ -1342,40 +1374,75 @@ public class AccountEntryModule extends MainEntryPoint {
 		tabLayout.setWidth("100%");
 		
 		footPanel.add(tabLayout);
+		int tabIndex = 0;
 		
 		errorsContainer = new SimplePanel();
 		tabLayout.add(errorsContainer, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.notifications(), AON.AON_CSS.aonIconError()));
+		errorLogTabIndex = tabIndex;
+		tabIndex++;
 		
-		sessionLog = new SessionLog();
-		sessionLog.addSelectionHandler( new SelectionHandler<IAccountEntryWrapper>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<IAccountEntryWrapper> event) {
-				final AccountEntry entry = event.getSelectedItem().getAccountEntry();
-				selectEntry(entry.getId(),event.getSelectedItem());
+		if (getOptions().isSessionLogTabVisible()) {
+			sessionLog = new SessionLog();
+			sessionLog.addSelectionHandler( new SelectionHandler<IAccountEntryWrapper>() {
+				
+				@Override
+				public void onSelection(SelectionEvent<IAccountEntryWrapper> event) {
+					final AccountEntry entry = event.getSelectedItem().getAccountEntry();
+					selectEntry(entry.getId(),event.getSelectedItem());
+				}
+			});
+			tabLayout.add(sessionLog, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.sessionLog(), AON.AON_CSS.aonIconJournalLog()));
+			sessionLogTabIndex = tabIndex;
+			tabIndex++;
+		}
+
+		
+		if (getOptions().isBalancesTabVisible()) {
+			balancePanel = new AccountBalancePanel( getOptions().isPreviewSectionVisible(), getOptions().isBalancesSectionVisible());
+			if (getOptions().isStatementTabVisible()) {
+				balancePanel.addSelectionHandler(new SelectionHandler<Integer>() {
+					
+					@Override
+					public void onSelection(SelectionEvent<Integer> event) {
+						showFullStatement(event.getSelectedItem());
+					}
+				});
 			}
-		});
+			tabLayout.add(balancePanel, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.accountBalances(), AON.AON_CSS.aonIconEuro()));
+			balancesTabIndex = tabIndex;
+			tabIndex++;
+		}
 		
-		tabLayout.add(sessionLog, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.sessionLog(), AON.AON_CSS.aonIconJournalLog()));
+		if (getOptions().isStatementTabVisible()) {
+			statementPanelContainer = new SimpleLayoutPanel();
+			tabLayout.add(statementPanelContainer, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.accountStatetement(), AON.AON_CSS.aonIconStatement()));
+			statementTabIndex = tabIndex;
+			tabIndex++;
+		}
 		
-		balancePanel = new AccountBalancePanel();
-		balancePanel.addSelectionHandler(new SelectionHandler<Integer>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<Integer> event) {
-				showFullStatement(event.getSelectedItem());
-			}
-		});
-		tabLayout.add(balancePanel, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.accountBalances(), AON.AON_CSS.aonIconEuro()));
+		if (getOptions().isJournalTabVisible()) {
+			SimpleLayoutPanel journalPanelContainer = new SimpleLayoutPanel();
+			journalPanel = new JournalPanelReport(getOptions().getDomainName(), getOptions().getUser()
+					, getOptions().getDomain(), JOURNAL_PANEL_TAB_OFFSET, getOptions().getConfiguration());
+			journalPanel.addSelectionHandler(new AccountEntrySelectionHandler() {
+				@Override
+				public void onSelection(AccountEntrySelectionEvent event) {
+					final AccountEntry entry = event.getSelectedItem();
+					AccountEntryModule.this.selectEntry(entry.getId());
+				}
+			});
+			journalPanelContainer.setWidget(journalPanel);
+			tabLayout.add(journalPanelContainer, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.journalBook(), AON.AON_CSS.aonIconJournal()));
+			journalTabIndex = tabIndex;
+			tabIndex++;
+		}
 		
-		statementPanelContainer = new SimpleLayoutPanel();
-		tabLayout.add(statementPanelContainer, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.accountStatetement(), AON.AON_CSS.aonIconStatement()));
-		
-		journalPanelContainer = new SimpleLayoutPanel();
-		tabLayout.add(journalPanelContainer, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.journalBook(), AON.AON_CSS.aonIconJournal()));
-		
-		extraInfoContainer = new ScrollPanel();
-		tabLayout.add(extraInfoContainer, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.additionalData(), AON.AON_CSS.aonIconInfo()));
+		if (getOptions().isExtraInfoTabVisible()) {
+			extraInfoContainer = new ScrollPanel();
+			tabLayout.add(extraInfoContainer, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.additionalData(), AON.AON_CSS.aonIconInfo()));
+			extraInfoTabIndex = tabIndex;
+			tabIndex++;
+		}
 
 		tabLayout.setAnimationDuration(300);
 		tabLayout.addSelectionHandler(new SelectionHandler<Integer>() {
@@ -1413,18 +1480,20 @@ public class AccountEntryModule extends MainEntryPoint {
 		toolbar.setWidget(0, 2, buttonContainer);
 		toolbar.getCellFormatter().setStyleName(0, 2, AON.AON_CSS.aonFindingToolbar());
 		
-		search = new Button();
-		search.setText(AON.MSG.searchAction());
-		search.setTitle(AON.MSG.searchAction());
-		search.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		search.addStyleName(AON.AON_CSS.aonIconSearch());
-		search.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onSearch(event);
-			}
-		});
-		buttonContainer.add(search);
+		if (getOptions().isJournalTabVisible()) {
+			search = new Button();
+			search.setText(AON.MSG.searchAction());
+			search.setTitle(AON.MSG.searchAction());
+			search.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+			search.addStyleName(AON.AON_CSS.aonIconSearch());
+			search.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					onSearch(event);
+				}
+			});
+			buttonContainer.add(search);
+		}
 
 		reset = new Button();
 		reset.setText(AON.MSG.newAction());
@@ -1467,19 +1536,21 @@ public class AccountEntryModule extends MainEntryPoint {
 			}
 		});
 		buttonContainer.add(remove);
-
-		back = new Button();
-		back.setText(AON.MSG.backAction());
-		back.setTitle(AON.MSG.backAction());
-		back.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		back.addStyleName(AON.AON_CSS.aonIconCancel());
-		back.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onBack(event);
-			}
-		});
-		buttonContainer.add(back);
+		
+		if (getOptions().isBackButtonVisible()) {
+			back = new Button();
+			back.setText(AON.MSG.backAction());
+			back.setTitle(AON.MSG.backAction());
+			back.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+			back.addStyleName(AON.AON_CSS.aonIconCancel());
+			back.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					onBack(event);
+				}
+			});
+			buttonContainer.add(back);
+		}
 
 		duplicate = new Button();
 		duplicate.setText(AON.MSG.duplicate());

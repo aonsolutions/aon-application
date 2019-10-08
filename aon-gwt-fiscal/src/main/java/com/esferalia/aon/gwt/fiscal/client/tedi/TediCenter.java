@@ -412,7 +412,14 @@ public class TediCenter extends MainEntryPoint {
 			.setUser(getCurrentUser())
 			.setDomain( getCurrentDomain())
 			.setConfiguration( configuration)
-			.setAi( ai)
+			.setAccountingInvoice( ai)
+			.setBackButtonVisible(false)
+			.setSessionLogTabVisible(false)
+			.setPreviewSectionVisible(true)
+			.setBalancesSectionVisible(false)
+			.setStatementTabVisible(false)
+			.setJournalTabVisible(false)
+			.setExtraInfoTabVisible(false)
 			.setExternalCallback(new ModuleCallback<AccountEntry>() {
 
 					@Override

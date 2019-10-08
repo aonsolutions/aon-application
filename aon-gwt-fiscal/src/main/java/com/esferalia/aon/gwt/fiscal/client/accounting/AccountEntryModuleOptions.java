@@ -23,9 +23,11 @@ public class AccountEntryModuleOptions implements Serializable {
 	private ModuleCallback<AccountEntry> externalCallback;
 
 	private boolean embedded = false;
+	private boolean backButtonVisible = true;
 	private boolean errorLogTabVisible = true;
 	private boolean sessionLogTabVisible = true;
-	private boolean balancesTabVisible = true;
+	private boolean previewSectionVisible = true;
+	private boolean balancesSectionVisible = true;
 	private boolean statementTabVisible = true;
 	private boolean journalTabVisible = true;
 	private boolean extraInfoTabVisible = true;
@@ -84,11 +86,11 @@ public class AccountEntryModuleOptions implements Serializable {
 		return this;
 	}
 
-	public AccountingInvoice getAi() {
+	public AccountingInvoice getAccountingInvoice() {
 		return accountingInvoice;
 	}
 
-	public AccountEntryModuleOptions setAi(AccountingInvoice ai) {
+	public AccountEntryModuleOptions setAccountingInvoice(AccountingInvoice ai) {
 		this.accountingInvoice = ai;
 		return this;
 	}
@@ -114,6 +116,14 @@ public class AccountEntryModuleOptions implements Serializable {
 		this.embedded = embedded;
 		return this;
 	}
+	
+	public boolean isBackButtonVisible() {
+		return backButtonVisible;
+	}
+	public AccountEntryModuleOptions setBackButtonVisible(boolean backButtonVisible) {
+		this.backButtonVisible = backButtonVisible;
+		return this;
+	}
 
 	public boolean isErrorLogTabVisible() {
 		return errorLogTabVisible;
@@ -134,11 +144,24 @@ public class AccountEntryModuleOptions implements Serializable {
 	}
 
 	public boolean isBalancesTabVisible() {
-		return balancesTabVisible;
+		return isPreviewSectionVisible() || isBalancesSectionVisible();
 	}
 
-	public AccountEntryModuleOptions setBalancesTabVisible(boolean balancesTabVisible) {
-		this.balancesTabVisible = balancesTabVisible;
+	public boolean isPreviewSectionVisible() {
+		return previewSectionVisible;
+	}
+
+	public AccountEntryModuleOptions setPreviewSectionVisible(boolean previewSectionVisible) {
+		this.previewSectionVisible = previewSectionVisible;
+		return this;
+	}
+
+	public boolean isBalancesSectionVisible() {
+		return balancesSectionVisible;
+	}
+
+	public AccountEntryModuleOptions setBalancesSectionVisible(boolean balancesSectionVisible) {
+		this.balancesSectionVisible = balancesSectionVisible;
 		return this;
 	}
 
