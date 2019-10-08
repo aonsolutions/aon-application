@@ -22,7 +22,6 @@ public class DocumentOnlineSignerTest {
 	
 	private String username;
 	private String password;
-	private Integer signingType;
 	private String url;
 	
 	public void init() {
@@ -34,7 +33,6 @@ public class DocumentOnlineSignerTest {
 	private void loadParams() {
 		username = "jgarcia@aonsolutions.es";
 		password = "945121010";
-		signingType = (1);
 	}
 	
 	public void sendData() throws Exception {
@@ -58,13 +56,9 @@ public class DocumentOnlineSignerTest {
 		
 		JSONObject responseJson = postObject(json.toString());
 		if(responseJson.opt("uniqueId") != null) {
-			//com.esferalia.aon.occam.api.model.management.Offer of = AON.getOffer(AonUtil.getDomainName(), offer.getDomain(), "", f -> f.getIdProperty().eq(offer.getId()));
-//			of.setExternalReference( responseJson.getString("uniqueId"));
-//			AON.updateOffer(AonUtil.getDomainName(), of.getDomain(), "", of);
-//			AonUtil.addInfoMessage("Response ID: "+responseJson.getString("uniqueId"));
 			System.out.println("Response ID: "+responseJson.getString("uniqueId"));
 		} else {
-//			AonUtil.addInfoMessage("No response obtained...");
+			System.out.println("No response obtained...");
 		}
 	}
 	

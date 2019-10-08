@@ -11,8 +11,8 @@
 	<aon:panelGroup id="showEmailOptionWindow">
 		<aon:if test="#{offer.showEmailOptionWindow}">
 			<rich:modalPanel id="emailOptionModalPanel" 
-				minHeight="#{(offer.includeEmailSddMandateReport or offer.documentOnlineSign)?'450':'200'}"
-				minWidth="#{(offer.includeEmailSddMandateReport or offer.documentOnlineSign)?'550':'250'}"
+				minHeight="#{(offer.includeEmailSddMandateReport or (offer.documentOnlineSign and not offer.documentOnlineSigner.collapsed))?'450':'200'}"
+				minWidth="#{(offer.includeEmailSddMandateReport or (offer.documentOnlineSign and not offer.documentOnlineSigner.collapsed))?'550':'320'}"
 				rendered="#{offer.showEmailOptionWindow}"
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">

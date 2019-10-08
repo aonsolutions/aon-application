@@ -188,6 +188,15 @@
 									immediate="true" rendered="#{offer.blocked}"
 									styleClass="aon-icon-commandButton aon-icon-unlock aon-margin-left">
 								</aon:commandButton>
+								
+								<aon:if test="#{not empty offer.documentOnlineSignParam}">
+									<aon:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;"
+										rendered="#{!offer.nevv and offer.to.externalReference != null}"
+										title="#{offer.documentOnlineSignParam.value}"
+										style="padding-left: 45px;"
+										styleClass="aon-evicertia aon-margin-left" />
+								</aon:if>
+								
 							</aon:div>
 						</h:panelGrid>
  					</aon:div>
