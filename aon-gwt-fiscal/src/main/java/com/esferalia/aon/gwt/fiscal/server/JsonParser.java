@@ -315,6 +315,25 @@ public class JsonParser {
 				params.setFooterText(footerText);			
 			}			
 		}
+		
+		// ******************* LEDGER ACCOUNT *******************
+		Integer la = (Integer) jsonParams.get(IRequestParamsNames.LEDGER_ACCOUNT);
+		if (la != null) {
+			params.setLedgerAccount(la.intValue());
+		}
+		
+		// ******************* LEDGER DEBIT BALANCE *******************
+		Double ldb = (Double) jsonParams.get(IRequestParamsNames.LEDGER_DEBIT_BALANCE);
+		if (ldb != null) {
+			params.setLedgerDebitBalance(ldb.doubleValue());
+		}
+		
+		// ******************* LEDGER UNPAID BALANCE ******************* 
+		Double lub = (Double) jsonParams.get(IRequestParamsNames.LEDGER_UNPAID_BALANCE);
+		if (lub!= null) {
+			params.setLedgerUnpaidBalance(lub.doubleValue());
+		}
+
 		return params;
 	}
 }

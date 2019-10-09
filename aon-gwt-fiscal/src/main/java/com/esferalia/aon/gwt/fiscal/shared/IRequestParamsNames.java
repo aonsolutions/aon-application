@@ -92,5 +92,9 @@ public interface IRequestParamsNames {
 	String BRAND_IDS = "brandIds";
 	String WORKPLACE_IDS = "workplaceIds";
 	String SELLER_IDS = "sellerIds";
+	
+	String LEDGER_ACCOUNT = "ledgerAccount";
+	String LEDGER_DEBIT_BALANCE = "ledgerDebitBalance";
+	String LEDGER_UNPAID_BALANCE = "ledgerUnpaidBalance";
 
 }

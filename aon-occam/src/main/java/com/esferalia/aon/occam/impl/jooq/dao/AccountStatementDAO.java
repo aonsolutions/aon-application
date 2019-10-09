@@ -69,6 +69,11 @@ public class AccountStatementDAO {
 		MutableInt oldAccountId = new MutableInt(-1);
 		MutableDouble debitBalance = new MutableDouble(0);
 		MutableDouble unpaidBalance = new MutableDouble(0);
+		if (params.getLedgerAccount() != null ) {
+			debitBalance.setValue(params.getLedgerDebitBalance());
+			unpaidBalance.setValue(params.getLedgerUnpaidBalance());
+			oldAccountId.setValue(params.getLedgerAccount());	
+		}
 		return ctx.getDslContext()
 			.select(ACCOUNT_ENTRY.ID,ACCOUNT_ENTRY.DOMAIN,ACCOUNT_ENTRY.ACCOUNT_PERIOD
 					,ACCOUNT_PERIOD.NAME,ACCOUNT_ENTRY.ENTRY_DATE,ACCOUNT_ENTRY.ENTRY_TYPE

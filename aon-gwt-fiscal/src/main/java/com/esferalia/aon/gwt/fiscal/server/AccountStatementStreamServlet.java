@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.FlatAccountEntryDetail;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.mutable.MutableBoolean;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 @WebServlet(name = "Account Statement Stream Servlet", urlPatterns = { "/aon_gwt_fiscal/roms/AccountStatementStreamServlet" })
 public class AccountStatementStreamServlet extends HttpServlet {
@@ -36,7 +37,15 @@ public class AccountStatementStreamServlet extends HttpServlet {
 			int offset = Integer.parseInt(req.getParameter(IRequestParamsNames.OFFSET));
 			int limit = Integer.parseInt(req.getParameter(IRequestParamsNames.LIMIT));
 			
+			Integer ledgerAccount = AonNumberUtils.toInteger( req.getParameter(IRequestParamsNames.LEDGER_ACCOUNT));
+			double ledgerDebitBalance = AonNumberUtils.todouble(req.getParameter(IRequestParamsNames.LEDGER_DEBIT_BALANCE));
+			double ledgerUnpaidBalance = AonNumberUtils.todouble(req.getParameter(IRequestParamsNames.LEDGER_UNPAID_BALANCE));
+			
 			AccountingReportParams params = JsonParser.parseAccountingParams(accountEntryParams);
+			params.setLedgerAccount(ledgerAccount);
+			params.setLedgerDebitBalance(ledgerDebitBalance);
+			params.setLedgerUnpaidBalance(ledgerUnpaidBalance);
+			
 			resp.setContentType(MimeType.JSON.getName());
 			PrintWriter out = resp.getWriter();
 			out.write('[');

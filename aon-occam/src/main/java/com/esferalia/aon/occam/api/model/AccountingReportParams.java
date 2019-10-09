@@ -46,6 +46,11 @@ public class AccountingReportParams implements IAccountParams, Cloneable {
 
 	private boolean breakdownEnabled;
 	
+	// Ledger
+	private Integer ledgerAccount;
+	private double ledgerDebitBalance;
+	private double ledgerUnpaidBalance;
+
 	// Consolidation
 	private LinkedList<Domain> domains;
 	private boolean consolidation;
@@ -318,6 +323,28 @@ public class AccountingReportParams implements IAccountParams, Cloneable {
 		if (costCenters.contains(costCenter)) {
 			costCenters.remove(costCenter);
 		}
+		return this;
+	}
+	
+	public Integer getLedgerAccount() {
+		return this.ledgerAccount;
+	}
+	public AccountingReportParams setLedgerAccount(Integer ledgerAccount) {
+		this.ledgerAccount = ledgerAccount;
+		return this;
+	}
+	public double getLedgerDebitBalance() {
+		return ledgerDebitBalance;
+	}
+	public AccountingReportParams setLedgerDebitBalance(double ledgerDebitBalance) {
+		this.ledgerDebitBalance = ledgerDebitBalance;
+		return this;
+	}
+	public double getLedgerUnpaidBalance() {
+		return ledgerUnpaidBalance;
+	}
+	public AccountingReportParams setLedgerUnpaidBalance(double ledgerUnpaidBalance) {
+		this.ledgerUnpaidBalance = ledgerUnpaidBalance;
 		return this;
 	}
 	

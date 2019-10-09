@@ -248,7 +248,7 @@ public class LedgerPanel extends ScrollPanel implements HasAccountEntrySelection
 											int scrollPosition = LedgerPanel.this.getVerticalScrollPosition();
 											container.clear();
 											oldId = -1;
-											search(params,0,offset.getValue(), new Integer( scrollPosition) );
+											search(params,0,offset.getValue(), Integer.valueOf( scrollPosition) );
 										}
 										
 										@Override
@@ -265,12 +265,14 @@ public class LedgerPanel extends ScrollPanel implements HasAccountEntrySelection
 											container.clear();
 											oldId = -1;
 											enableMoreData();
-											search(params,0,offset.getValue() > limit ? offset.getValue() : limit, new Integer( scrollPosition) );
+											search(params,0,offset.getValue() > limit ? offset.getValue() : limit, Integer.valueOf( scrollPosition) );
 										}
 									} );
 								}
 							});
-							
+							params.setLedgerAccount(flatEntry.getAccount());
+							params.setLedgerDebitBalance(flatEntry.getDebitBalance());
+							params.setLedgerUnpaidBalance(flatEntry.getUnpaidBalance());
 							
 							something = true;
 							count++;
@@ -309,6 +311,9 @@ public class LedgerPanel extends ScrollPanel implements HasAccountEntrySelection
 		requestData.append("&"+IRequestParamsNames.ACCOUNT_ENTRY_PARAMS +"=" + JsonParams.convert( params ));
 		requestData.append("&"+IRequestParamsNames.OFFSET 				+"=" + ofs );
 		requestData.append("&"+IRequestParamsNames.LIMIT				+"=" + limit );
+		requestData.append("&"+IRequestParamsNames.LEDGER_ACCOUNT		+"=" + (params.getLedgerAccount() != null ? params.getLedgerAccount() : "" ));
+		requestData.append("&"+IRequestParamsNames.LEDGER_DEBIT_BALANCE +"=" + params.getLedgerDebitBalance() );
+		requestData.append("&"+IRequestParamsNames.LEDGER_UNPAID_BALANCE+"=" + params.getLedgerUnpaidBalance() );
 		xhr.send(requestData.toString());
 	}
 	
