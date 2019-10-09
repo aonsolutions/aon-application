@@ -56,6 +56,7 @@ public class AonDumpTestCase {
 	private static String dbName;
 	private static String dbUser;
 	private static String dbPasswd;
+	private static String dbUseSSL;
 	private static String dbTimezone;
 
 	private DSLContext dslContext;
@@ -68,11 +69,13 @@ public class AonDumpTestCase {
 		dbName = System.getProperty("dbName", "aon-reveng");
 		dbUser = System.getProperty("dbUser", "dbuser");
 		dbPasswd = System.getProperty("dbPasswd", "serubd2000");
+		dbUseSSL = System.getProperty("dbUseSSL", "false");
 		dbTimezone = System.getProperty("dbTimeZone", TimeZone.getDefault().getID());
 
 		Properties properties = new Properties();
 		properties.setProperty("user", dbUser);
 		properties.setProperty("password", dbPasswd);
+		properties.setProperty("useSSL", dbUseSSL);
 		properties.setProperty("serverTimezone", dbTimezone);
 		String url = String.format("jdbc:mysql://%s:%s", dbHost, dbPort);
 		Connection connection = DriverManager.getConnection(url, properties);

@@ -18,6 +18,7 @@ public class Up2DateDB {
 		private String user;
 		private String password;
 		private String driver;
+		private String useSSL;
 		private String timeZone;
 
 
@@ -37,6 +38,7 @@ public class Up2DateDB {
 		Properties properties = new Properties();
 		properties.setProperty("user", arguments.user);
 		properties.setProperty("password", arguments.password);
+		properties.setProperty("useSSL", arguments.useSSL);
 		properties.setProperty("serverTimezone", arguments.timeZone);
 		try {
 			Class.forName(arguments.driver);
@@ -110,6 +112,7 @@ public class Up2DateDB {
 		arguments.user = args[1];
 		arguments.password = args[2];
 		arguments.driver = args[3];
+		arguments.useSSL = "false";
 		arguments.timeZone = TimeZone.getDefault().getID();
 
 		return arguments;

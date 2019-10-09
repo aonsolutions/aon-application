@@ -15,6 +15,8 @@ import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,13 +29,12 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.PosixParser;
 import org.apache.commons.codec.binary.Base64;
 
-import net.aonsolutions.core.dbutils.AonSQLException;
-
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.master.VersionManager;
 import com.code.aon.registry.enumeration.DocumentType;
+
+import net.aonsolutions.core.dbutils.AonSQLException;
 
 /********************************************************************
  * Copyright (c) 2010, esferalia NETWORKS S.A
@@ -72,6 +73,7 @@ public class Ctsql2Mysql {
 	private String mysqlUser;
 	private String mysqlPasswd;
 	private String mysqlTimeZone;
+	private String mysqlUseSSL;
 	private boolean dryRun;
 	private boolean merge;
 	private boolean disabled;
@@ -174,6 +176,13 @@ public class Ctsql2Mysql {
 
 		OptionBuilder.isRequired(false);
 		OptionBuilder.hasArg(true);
+		OptionBuilder.withArgName("ssl");
+		OptionBuilder.withType(String.class);
+		OptionBuilder.withDescription("Establishing SSL connection");
+		Option mysqlUseSSLOption = OptionBuilder.create("mysqlusessl");
+
+		OptionBuilder.isRequired(false);
+		OptionBuilder.hasArg(true);
 		OptionBuilder.withArgName("date");
 		OptionBuilder.withType(String.class);
 		OptionBuilder
@@ -264,6 +273,7 @@ public class Ctsql2Mysql {
 		options.addOption(mysqlUserOption);
 		options.addOption(ctsqlPasswdOption);
 		options.addOption(mysqlPasswdOption);
+		options.addOption(mysqlUseSSLOption);
 		options.addOption(mysqlTimeZoneOption);
 		options.addOption(fromDateOption);
 		options.addOption(passwdOption);
@@ -303,6 +313,7 @@ public class Ctsql2Mysql {
 					"serubd2000");
 			mysqlTimeZone = line.getOptionValue(mysqlTimeZoneOption.getOpt(),
 					TimeZone.getDefault().getID());
+			mysqlUseSSL = line.getOptionValue(mysqlUseSSLOption.getOpt(),"false");
 
 			dryRun = line.hasOption(dryRunOption.getOpt());
 
@@ -415,6 +426,7 @@ public class Ctsql2Mysql {
 		Properties mysqlProperties = new Properties();
 		mysqlProperties.setProperty("user", mysqlUser);
 		mysqlProperties.setProperty("password", mysqlPasswd);
+		mysqlProperties.setProperty("useSSL", mysqlUseSSL);
 		mysqlProperties.setProperty("serverTimezone", mysqlTimeZone);
 		return DriverManager.getConnection(mysqlURL, mysqlProperties);
 	}
@@ -433,6 +445,7 @@ public class Ctsql2Mysql {
 			Properties mysqlProperties = new Properties();
 			mysqlProperties.setProperty("user", mysqlUser);
 			mysqlProperties.setProperty("password", mysqlPasswd);
+			mysqlProperties.setProperty("useSSL", mysqlUseSSL);
 			mysqlProperties.setProperty("serverTimezone", mysqlTimeZone);
 			connection = DriverManager.getConnection(mysqlServerURL, mysqlProperties);
 			stmt = connection.createStatement();
@@ -465,6 +478,7 @@ public class Ctsql2Mysql {
 			Properties mysqlProperties = new Properties();
 			mysqlProperties.setProperty("user", mysqlUser);
 			mysqlProperties.setProperty("password", mysqlPasswd);
+			mysqlProperties.setProperty("useSSL", mysqlUseSSL);
 			mysqlProperties.setProperty("serverTimezone", mysqlTimeZone);
 			Connection connection = DriverManager.getConnection(mysqlServerURL, mysqlProperties);
 

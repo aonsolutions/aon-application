@@ -62,6 +62,7 @@ public class AonDataSource {
                         Properties properties = new Properties();
                         properties.setProperty("user", ci.getUser());
                         properties.setProperty("password", ci.getPassword());
+                        properties.setProperty("useSSL", ci.getUseSSL());
                         properties.setProperty("serverTimezone", ci.getTimeZone());
 		
 			DataSource  ds_unpooled = DataSources.unpooledDataSource(

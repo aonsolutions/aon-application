@@ -137,6 +137,13 @@ public class DBCreate extends AbstractMojo {
      */
     private String dbTimeZone ;
 
+		/**
+     *  Establishing SSL connection.
+     *
+     * @parameter default-value="false"
+     */
+    private String dbUseSSL ;
+
     @Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		synchronized( LOCK) {
@@ -213,6 +220,7 @@ public class DBCreate extends AbstractMojo {
 			Properties properties = new Properties();
 			properties.setProperty("user", dbUser);
 			properties.setProperty("password", dbPasswd);
+			properties.setProperty("useSSL", dbUseSSL);
 			properties.setProperty("serverTimezone", dbTimeZone);
 			Connection c = DriverManager.getConnection(url, properties);
 	    	getLog().info("Connected!");

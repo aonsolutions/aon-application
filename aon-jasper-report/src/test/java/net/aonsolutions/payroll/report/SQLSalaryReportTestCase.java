@@ -48,6 +48,10 @@ public class SQLSalaryReportTestCase {
 		return System.getProperty("dbPasswd", "serubd2000");
 	}
 
+	public static String getDbUseSSL() {
+		return System.getProperty("dbUSeSSL", "false");
+	}
+
 	public static String getDbTimeZone() {
 		return System.getProperty("dbTimeZone", TimeZone.getDefault().getID());
 	}
@@ -61,11 +65,13 @@ public class SQLSalaryReportTestCase {
 		String dbName = getDbName();
 		String dbUser = getDbUser();
 		String dbPasswd = getDbPasswd();
+		String dbUseSSL = getDbUseSSL();
 		String dbTimeZone = getDbTimeZone();
 
 		Properties properties = new Properties();
 		properties.setProperty("user", dbUser);
 		properties.setProperty("password", dbPasswd);
+		properties.setProperty("useSSL", dbUseSSL);
 		properties.setProperty("serverTimezone", dbTimeZone);
 		String url = String.format("jdbc:mysql://%s:%s/%s", dbHost, dbPort, dbName);
 		Connection connection = DriverManager.getConnection(url, properties);

@@ -133,6 +133,7 @@ public class AonSQLScript {
 		String url = "jdbc:mysql://volga:3306/mysql";
 		String user = "dbuser";
 		String password = "serubd2000";
+		String useSSL = "false";
 		String timezone = TimeZone.getDefault().getID();
 
 		Connection connection  = null ;
@@ -140,6 +141,7 @@ public class AonSQLScript {
 			Properties properties = new Properties();
 			properties.setProperty("user", user);
 			properties.setProperty("password", password);
+			properties.setProperty("useSSL", useSSL);
 			properties.setProperty("serverTimezone", timezone);
 			connection = DriverManager.getConnection(url, properties);
 			File file = new File("/tmp/t4/aimar-esferalia-com.sql");

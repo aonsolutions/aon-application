@@ -725,6 +725,7 @@ public class AonDomainMerger {
 		String targetUser = args.length > 1 ? args[1] : "dbuser";
 		String targetPassword = args.length > 2 ? args[2] : "serubd2000";
 		String targetTimeZone = args.length > 3 ? args[3] : TimeZone.getDefault().getID();
+		String targetUseSSL = args.length > 4 ? args[4] : "false";
 
 		Connection target  = null ;
 		Connection source = null;
@@ -732,6 +733,7 @@ public class AonDomainMerger {
 			Properties targetProperties = new Properties();
 			targetProperties.setProperty("user", targetUser);
 			targetProperties.setProperty("password", targetPassword);
+			targetProperties.setProperty("useSSL", targetUseSSL);
 			targetProperties.setProperty("serverTimezone", targetTimeZone);
 			target = DriverManager.getConnection(targetURL,targetProperties);
 			int databases = 0;
@@ -747,12 +749,14 @@ public class AonDomainMerger {
 					String sorceUser = words.length > 2 ? words[1] : "dbuser";
 					String sourcePassword = words.length > 3 ? words[2] : "serubd2000";
 					String sourceTimeZone = words.length > 4 ? words[3] : TimeZone.getDefault().getID();
+					String sourceUseSSL = words.length > 5 ? words[4] : "false";
 
 					System.out.printf("Merging %s...", domainName);
 
 					Properties sourceProperties = new Properties();
 					sourceProperties.setProperty("user", sorceUser);
 					sourceProperties.setProperty("password", sourcePassword);
+					sourceProperties.setProperty("useSSL", sourceUseSSL);
 					sourceProperties.setProperty("serverTimezone", sourceTimeZone);
 					source = DriverManager.getConnection(sourceURL,sourceProperties);
 					AonDomainMerger merger = new AonDomainMerger(source, target, domainName);

@@ -809,6 +809,7 @@ public class AonDomainDatabaseSwitcher {
 		String targetUser = args.length > 1 ? args[1] : "dbuser";
 		String targetPassword = args.length > 2 ? args[2] : "serubd2000";
 		String targetTimeZone = args.length > 3 ? args[3] : TimeZone.getDefault().getID();
+		String targetUseSSL = args.length > 4 ? args[4] :"false";
 
 		Connection target  = null ;
 		Connection source = null;
@@ -816,6 +817,7 @@ public class AonDomainDatabaseSwitcher {
 			Properties targetProperties = new Properties();
 			targetProperties.setProperty("user", targetUser);
 			targetProperties.setProperty("password", targetPassword);
+			targetProperties.setProperty("useSSL", targetUseSSL);
 			targetProperties.setProperty("serverTimezone", targetTimeZone);
 			target = DriverManager.getConnection(targetURL, targetProperties);
 			int databases = 0;
@@ -851,7 +853,12 @@ public class AonDomainDatabaseSwitcher {
 
 					String sourceTimeZone = TimeZone.getDefault().getID();
 					if (words.length > 5) {
-						parentDomain = words[5];
+						sourceTimeZone = words[5];
+					}
+
+					String sourceUseSSL = "false";
+					if (words.length > 6) {
+						sourceUseSSL = words[6];
 					}
 
 					System.out.printf("Merging %s...", domainName);
@@ -859,6 +866,7 @@ public class AonDomainDatabaseSwitcher {
 					Properties sourceProperties = new Properties();
 					sourceProperties.setProperty("user", sorceUser);
 					sourceProperties.setProperty("password", sourcePassword);
+					sourceProperties.setProperty("useSSL", sourceUseSSL);
 					sourceProperties.setProperty("serverTimezone", sourceTimeZone);
 					source = DriverManager.getConnection(sourceURL,sourceProperties);
 					AonDomainDatabaseSwitcher merger = new AonDomainDatabaseSwitcher(source, target, domainName,parentDomain,domainName);

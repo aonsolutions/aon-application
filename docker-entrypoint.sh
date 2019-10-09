@@ -35,6 +35,7 @@ jdbcUrl=jdbc:mysql://$DB_HOST:$DB_PORT
 user=$DB_USER
 password=$DB_PASSWD
 timezone=$DB_TIMEZONE
+useSSL=false
 EOF
 
 	CLASSPATH=`find $TOMCAT_LIBDIR -name 'mysql-connector-java-*.jar'`

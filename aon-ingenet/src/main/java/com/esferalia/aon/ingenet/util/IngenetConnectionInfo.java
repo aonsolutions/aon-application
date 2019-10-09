@@ -38,10 +38,12 @@ public class IngenetConnectionInfo {
 	private String user;
 	private String password;
 	private String timeZone;
+	private String useSSL;
 
 	private static IngenetConnectionInfo DEFAULT_CONNNECTION;
 
 	public IngenetConnectionInfo()  {
+		this.useSSL = "false";
 		this.timeZone = TimeZone.getDefault().getID();
 	}
 
@@ -82,6 +84,14 @@ public class IngenetConnectionInfo {
 
 	public String getPassword() {
 		return password;
+	}
+
+	public String getUseSSL() {
+		return useSSL;
+	}
+
+	public void setUseSSL(String useSSL) {
+		this.useSSL = useSSL;
 	}
 
 	public String getTimeZone() {
@@ -158,6 +168,7 @@ public class IngenetConnectionInfo {
 			Properties properties = new Properties();
 			properties.setProperty("user", getUser());
 			properties.setProperty("password", getPassword());
+			properties.setProperty("useSSL", getUseSSL());
 			properties.setProperty("serverTimezone", getTimeZone());
 			return DriverManager.getConnection(getSchemaUrl(schema), properties);
 		} catch (ClassNotFoundException e) {

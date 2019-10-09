@@ -25,6 +25,7 @@ public class ConnectionInfo {
 	private static final String PASSWORD_PROPERTY = "password";
 	private static final String TIMEZONE_PROPERTY = "timezone";
 	private static final String JDBC_URL_PROPERTY = "jdbcUrl";
+	private static final String USESSL_PROPERTY = "useSSL";
 
 	private static final String MYSQL_SCHEMA = "mysql";
 
@@ -34,6 +35,7 @@ public class ConnectionInfo {
 	private String url;
 	private String user;
 	private String password;
+	private String useSSL;
 	private String timeZone;
 
 	private static ConnectionInfo DEFAULT_CONNNECTION;
@@ -84,6 +86,14 @@ public class ConnectionInfo {
 		this.password = password;
 	}
 
+	public String getUseSSL() {
+		return useSSL;
+	}
+
+	public void setUseSSL(String useSSL) {
+		this.useSSL = useSSL;
+	}
+
 	public String getTimeZone() {
 		return timeZone;
 	}
@@ -99,6 +109,7 @@ public class ConnectionInfo {
 		setUser(props.getProperty(USER_PROPERTY));
 		setPassword(props.getProperty(PASSWORD_PROPERTY));
 		setUrl(props.getProperty(JDBC_URL_PROPERTY));
+		setUseSSL(props.getProperty(USESSL_PROPERTY, "false"));
 		setTimeZone(props.getProperty(TIMEZONE_PROPERTY, TimeZone.getDefault().getID()));
 	}
 
@@ -138,6 +149,7 @@ public class ConnectionInfo {
 			Properties properties = new Properties();
 			properties.setProperty("user", getUser());
 			properties.setProperty("password", getPassword());
+			properties.setProperty("useSSL", getUseSSL());
 			properties.setProperty("serverTimezone", getTimeZone());
 			return DriverManager.getConnection(getSchemaUrl(schema), properties);
 		} catch (ClassNotFoundException e) {

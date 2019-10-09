@@ -147,6 +147,13 @@ public class DBMojo extends AbstractMojo {
      */
     private String dbTimeZone ;
 
+		/**
+     *  Establishing SSL connection.
+     *
+     * @parameter default-value="false"
+     */
+    private String dbUseSSL ;
+
     /**
      * Comma separated list of database tables to generate files for. <br/>
      *
@@ -347,6 +354,7 @@ public class DBMojo extends AbstractMojo {
 		Properties properties = new Properties();
 		properties.setProperty("user", dbUser);
 		properties.setProperty("password", dbPasswd);
+		properties.setProperty("useSSL", dbUseSSL);
 		properties.setProperty("serverTimezone", dbTimeZone);
 		return DriverManager.getConnection(url, properties);
 

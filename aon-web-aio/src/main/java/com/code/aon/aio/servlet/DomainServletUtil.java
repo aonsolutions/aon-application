@@ -38,6 +38,7 @@ public class DomainServletUtil implements IDomainServletConstants{
 	private String dbHost;
 	private String dbUser;
 	private String dbPassword;
+	private String dbUseSSL;
 	private String dbTimeZone;
 	private String dbName;
 	private String user;
@@ -55,11 +56,13 @@ public class DomainServletUtil implements IDomainServletConstants{
 
 	private DomainServletUtil() {
 		// Para el main y pruebas
+		dbUseSSL = "false";
 		dbTimeZone = TimeZone.getDefault().getID();
 	}
 
 	public DomainServletUtil(HttpServletRequest request) throws AonException {
 		try {
+			dbUseSSL = "false";
 			dbTimeZone = TimeZone.getDefault().getID();
 			initializeConnectionProperties();
 			parseParameters(request);
@@ -104,6 +107,13 @@ public class DomainServletUtil implements IDomainServletConstants{
 	}
 	public void setDbPassword(String dbPassword) {
 		this.dbPassword = dbPassword;
+	}
+
+	public String getDbUseSSL() {
+		return dbUseSSL;
+	}
+	public void setDbUseSSL(String dbUseSSL) {
+		this.dbUseSSL = dbUseSSL;
 	}
 
 	public String getDbTimeZone() {
@@ -220,6 +230,9 @@ public class DomainServletUtil implements IDomainServletConstants{
 			if (DEPLOYED_TIMEZONE_PROPERTY.equals(attr.getNodeValue())){
 				setDbTimeZone( map.getNamedItem(DEPLOYED_VALUE_ATTR).getNodeValue() );
 			}
+			if (DEPLOYED_USESSL_PROPERTY.equals(attr.getNodeValue())){
+				setDbUseSSL( map.getNamedItem(DEPLOYED_VALUE_ATTR).getNodeValue() );
+			}
 		}
 	}
 
@@ -243,6 +256,7 @@ public class DomainServletUtil implements IDomainServletConstants{
 			Properties properties = new Properties();
 			properties.setProperty("user", getDbUser());
 			properties.setProperty("password", getDbPassword());
+			properties.setProperty("useSSL", getDbUseSSL());
 			properties.setProperty("serverTimezone", getDbTimeZone());
 
 			c = DriverManager.getConnection(getDbURL(),properties);
@@ -406,6 +420,7 @@ public class DomainServletUtil implements IDomainServletConstants{
 		commandLine.add(SP_DB + getDbName());
 		commandLine.add(SP_DOMAIN_NAME + getDomainName());
 		commandLine.add(SP_DOMAIN_OWNER + getDomainOwner());
+		commandLine.add(SP_USESSL + getDbUseSSL());
 		commandLine.add(SP_TIMEZONE + getDbTimeZone());
 
 		if (StringUtils.isNotBlank(getDomainDescription())) {

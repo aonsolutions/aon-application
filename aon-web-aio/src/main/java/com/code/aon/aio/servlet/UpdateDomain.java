@@ -69,6 +69,7 @@ public class UpdateDomain extends HttpServlet {
 	private static final String DEPLOYED_URL_PROPERTY = "hibernate.connection.url";
 	private static final String DEPLOYED_USER_PROPERTY = "hibernate.connection.username";
 	private static final String DEPLOYED_PASSWORD_PROPERTY = "hibernate.connection.password";
+	private static final String DEPLOYED_USESSL_PROPERTY = "hibernate.connection.usessl";
 	private static final String DEPLOYED_TIMEZONE_PROPERTY = "hibernate.connection.timezone";
 
 	public UpdateDomain() {
@@ -92,6 +93,7 @@ public class UpdateDomain extends HttpServlet {
 			String dbhost = getHost(dburl);
 			String dbuser = props.getProperty(DEPLOYED_USER_PROPERTY);
 			String dbpassword = props.getProperty(DEPLOYED_PASSWORD_PROPERTY);
+			String dbusessl = props.getProperty(DEPLOYED_USESSL_PROPERTY, "false");
 			String dbtimezone = props.getProperty(DEPLOYED_TIMEZONE_PROPERTY, TimeZone.getDefault().getID());
 
 			String user = request.getParameter(USER_PARAM);
@@ -109,7 +111,7 @@ public class UpdateDomain extends HttpServlet {
 			user = tok[0];
 			String password = request.getParameter(PASSWORD_PARAM);
 
-			String[] databaseInfo = getDatabaseInfo(dburl,dbuser,dbpassword, dbtimezone, domain, user, password );
+			String[] databaseInfo = getDatabaseInfo(dburl,dbuser,dbpassword, dbusessl, dbtimezone, domain, user, password );
 			String database = databaseInfo[0];
 			String suffix = databaseInfo[1];
 			String domainName = request.getParameter(DOMAIN_NAME_PARAM);
@@ -230,7 +232,7 @@ public class UpdateDomain extends HttpServlet {
 		return host;
 	}
 
-	private String[] getDatabaseInfo(String dburl, String dbuser, String dbpassword, String dbtimezone, String domain, String user, String password) throws ClassNotFoundException, SQLException, AonException {
+	private String[] getDatabaseInfo(String dburl, String dbuser, String dbpassword, String dbusessl, String dbtimezone, String domain, String user, String password) throws ClassNotFoundException, SQLException, AonException {
 		Class.forName("com.mysql.jdbc.Driver");
 		Connection c = null;
 		PreparedStatement stmt = null;
@@ -243,6 +245,7 @@ public class UpdateDomain extends HttpServlet {
 			Properties properties = new Properties();
 			properties.setProperty("user", dbuser);
 			properties.setProperty("password", dbpassword);
+			properties.setProperty("useSSL", dbusessl);
 			properties.setProperty("serverTimezone", dbtimezone);
 			c = DriverManager.getConnection(dburl,properties);
 

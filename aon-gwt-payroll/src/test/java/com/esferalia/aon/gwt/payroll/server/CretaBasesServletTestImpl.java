@@ -45,11 +45,13 @@ public class CretaBasesServletTestImpl extends CretaServlet {
 		String dbName = "sig-grupo-esferalia";
 		String dbUser = "aonsolutions";
 		String dbPasswd = "40ns0lut10ns";
+		String dbUseSSL = "false";
 		String dbTimezone = TimeZone.getDefault().getID();
 
 		Properties properties = new Properties();
 		properties.setProperty("user", dbUser);
 		properties.setProperty("password", dbPasswd);
+		properties.setProperty("useSSL", dbUseSSL);
 		properties.setProperty("serverTimezone", dbTimezone);
 		String url = String
 				.format("jdbc:mysql://%s:%s/%s", dbHost, dbPort, dbName);

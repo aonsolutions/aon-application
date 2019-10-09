@@ -67,6 +67,7 @@ public class FiscalModelsReport {
 	private static String USER = "root";
 	private static String PASSWORD = "password";
 	private static String TIMEZONE = "Europe/Madrid";
+	private static String USESSL = "false";
 	private static DSLContext CTX;
 
 	@BeforeClass
@@ -76,6 +77,7 @@ public class FiscalModelsReport {
 		Properties properties = new Properties();
 		properties.setProperty("user", USER);
 		properties.setProperty("password", PASSWORD);
+		properties.setProperty("useSSL", USESSL);
 		properties.setProperty("serverTimezone", TIMEZONE);
 		Connection conn = DriverManager.getConnection(URL, properties);
 		Settings settings = new Settings();

@@ -156,6 +156,7 @@ public class Up2Date {
 			Properties properties = new Properties();
 			properties.setProperty("user", user);
 			properties.setProperty("password", password);
+			properties.setProperty("useSSL", "false");
 			properties.setProperty("serverTimezone", TimeZone.getDefault().getID());
 			String url = String.format("jdbc:mysql://%s:%s/information_schema", host, port);
 			connection = DriverManager.getConnection(url, properties);

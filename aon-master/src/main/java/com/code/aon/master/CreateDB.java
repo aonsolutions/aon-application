@@ -28,6 +28,7 @@ public class CreateDB {
 		private String password;
 		private String driver;
 		private String dbName;
+		private String useSSL;
 		private String timeZone;
 
 
@@ -52,6 +53,7 @@ public class CreateDB {
 			Properties properties = new Properties();
 			properties.setProperty("user", arguments.user);
 			properties.setProperty("password", arguments.password);
+			properties.setProperty("useSSL", arguments.useSSL );
 			properties.setProperty("serverTimezone", arguments.timeZone);
 			connection = DriverManager.getConnection(arguments.url, properties);
 
@@ -91,6 +93,7 @@ public class CreateDB {
 		arguments.password = args[2];
 		arguments.driver = args[3];
 		arguments.dbName = args[4];
+		arguments.useSSL = "false";
 		arguments.timeZone = TimeZone.getDefault().getID();
 
 		return arguments;
