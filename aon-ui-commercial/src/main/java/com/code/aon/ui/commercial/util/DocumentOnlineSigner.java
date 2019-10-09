@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Serializable;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -227,16 +226,18 @@ public class DocumentOnlineSigner implements Serializable {
 			spDirStaff.put("name", rDirStaffName);
 			spDirStaff.put("address", rDirStaffEmail);
 			spDirStaff.put("signingMethod", signingType());
+			spDirStaff.put("signingOrder", 2);
 			spDirStaff.put("role", "Signer");
 			sp.put(spDirStaff);
-			
-			JSONObject spTargetCommercial = new JSONObject();
-			spTargetCommercial.put("name", offer.getTarget().getRegistry().getName());
-			spTargetCommercial.put("address", targetCommercialEmail);
-			spTargetCommercial.put("signingMethod", "WebClick");
-			spTargetCommercial.put("role", "Reviewer");
-			sp.put(spTargetCommercial);
-			
+			if(!rDirStaffEmail.equals(targetCommercialEmail)) {
+				JSONObject spTargetCommercial = new JSONObject();
+				spTargetCommercial.put("name", offer.getTarget().getRegistry().getName());
+				spTargetCommercial.put("address", targetCommercialEmail);
+				spTargetCommercial.put("signingMethod", "WebClick");
+				spDirStaff.put("signingOrder", 1);
+				spTargetCommercial.put("role", "Reviewer");
+				sp.put(spTargetCommercial);
+			}
 			// interestedParties
 			if(sellerEmail != null && !sellerEmail.equals("")) {
 				JSONArray ips = null;
@@ -246,7 +247,6 @@ public class DocumentOnlineSigner implements Serializable {
 					ips = new JSONArray();
 				}
 				if(ips==null) ips = new JSONArray();
-				//JSONArray ips = new JSONArray();
 				JSONObject ip = new JSONObject();
 				ip.put("address", sellerEmail);
 				ips.put(ip);
