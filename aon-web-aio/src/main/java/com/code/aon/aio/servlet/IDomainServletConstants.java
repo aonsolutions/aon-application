@@ -10,6 +10,7 @@ public interface IDomainServletConstants {
 	String DEPLOYED_URL_PROPERTY = "hibernate.connection.url";
 	String DEPLOYED_USER_PROPERTY = "hibernate.connection.username";
 	String DEPLOYED_PASSWORD_PROPERTY = "hibernate.connection.password";
+	String DEPLOYED_USESSL_PROPERTY = "hibernate.connection.usessl";
 	String DEPLOYED_TIMEZONE_PROPERTY = "hibernate.connection.timezone";
 
 	// DATABASE CONSTANTS
@@ -44,6 +45,7 @@ public interface IDomainServletConstants {
 	String SP_USER = "--user=";
 	String SP_PASSWD = "--passwd=";
 	String SP_TIMEZONE = "--tz=";
+	String SP_USESSL = "--ssl=";
 	String SP_DB = "--db=";
 	String SP_DOMAIN_NAME = "--domain-name=";
 	String SP_DOMAIN_DESCRIPTION = "--domain-description=";
