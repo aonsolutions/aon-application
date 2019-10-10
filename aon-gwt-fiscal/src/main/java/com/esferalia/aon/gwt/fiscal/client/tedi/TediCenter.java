@@ -302,15 +302,18 @@ public class TediCenter extends MainEntryPoint {
 		toolbar.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonNowrap());
 		toolbar.setWidget(0, 1, new Label());
 		toolbar.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonFindingSubtitleIternal());
+		
 		FlowPanel buttonContainer = new FlowPanel();
 		buttonContainer.setStyleName(AON.AON_CSS.aonFindingToolbarItemGroup());
 		toolbar.setWidget(0, 2, buttonContainer);
 		toolbar.getCellFormatter().setStyleName(0, 2, AON.AON_CSS.aonFindingToolbar());
+		
 		Anchor download = new Anchor(AON.MSG.download(),url,"_blank");
 		download.setTitle(AON.MSG.download());
 		download.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
 		download.addStyleName(AON.AON_CSS.aonIconNewWindow());
 		buttonContainer.add(download);
+
 		toolbarPanel.add(toolbar);
 		return toolbarPanel;
 	}
@@ -448,7 +451,7 @@ public class TediCenter extends MainEntryPoint {
 	
 	private void paintAttach(TediResult result, SimpleLayoutPanel container) {
 		if (result.hasPDFAttach()) {
-			SplitLayoutPanel attachSplit = new SplitLayoutPanel();
+			DockLayoutPanel attachSplit = new DockLayoutPanel( Unit.PX );
 			container.setWidget(attachSplit);
 			ScrollPanel scrollPanel = new ScrollPanel();
 			attachSplit.add(scrollPanel);
@@ -474,7 +477,7 @@ public class TediCenter extends MainEntryPoint {
 			});
 		}
 		if (result.hasJPEGAttach()) {
-			SplitLayoutPanel attachSplit = new SplitLayoutPanel();
+			DockLayoutPanel attachSplit = new DockLayoutPanel( Unit.PX );
 			container.setWidget(attachSplit);
 			ScrollPanel scrollPanel = new ScrollPanel();
 			attachSplit.add(scrollPanel);

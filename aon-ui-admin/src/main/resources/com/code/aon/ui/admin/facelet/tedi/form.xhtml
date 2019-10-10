@@ -8,80 +8,126 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
 	template="/com/code/aon/ui/admin/facelet/globalConfig/configLayout.xhtml">
-
-	<ui:define name="configContent">
-
-		<aon:form id="tediConfigurationForm">
-
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="Tedi Center" />
-
-				<ui:define name="toolbarContent">
-		
-					<aon:commandButton id="tediConfiguration-connect"
-						rendered="#{!tediConfiguration.hasToken()}"
-						value="Conectar"
-						actionListener="#{tediConfiguration.connect}"
-						styleClass="aon-finding-toolbar-item aon-icon-contact" />
+		<ui:define name="configContent">
+			<table style="width: 100%">
+				<tr>
+					<td style="width: auto; vertical-align: top;">
+							<aon:form id="tediConfigurationForm">
+								<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+									<ui:param name="toolbarTitle" value="Tedi Center" />
+									<ui:define name="toolbarContent">
+										<aon:commandButton id="tediConfiguration-connect"
+											rendered="#{!tediConfiguration.hasToken()}"
+											value="Conectar"
+											actionListener="#{tediConfiguration.connect}"
+											styleClass="aon-finding-toolbar-item aon-icon-contact" />
+											
+										<aon:commandButton id="tediConfiguration-disconnect"
+											rendered="#{tediConfiguration.hasToken()}"
+											value="Desconectar"
+											actionListener="#{tediConfiguration.disconnect}"
+											styleClass="aon-finding-toolbar-item aon-icon-user-change-password" />
+							
+									</ui:define>				
+								</ui:decorate>
+					
+								<aon:div styleClass="aon-scroll-area" style="padding-bottom: 0;text-align: center;">
+									<aon:panelGrid id="portalAccessGrid" columns="2" style="margin-left :auto; margin-right :auto;">
+										<aon:outputLabel for="Tedi_status"
+											value="#{bundle.aon_status}" />
+										<aon:outputLabel id="Tedi_status"
+											styleClass="#{(tediConfiguration.hasToken()) ? ('aon-icon-point-green aon-icon') : ('aon-icon-point-gray aon-icon')} "  
+											value="#{tediConfiguration.status}" />
+					
+										<aon:outputLabel for="Tedi_email"
+											rendered="#{!tediConfiguration.hasToken()}"
+											value="Email" />	
+										<aon:inputText id="Tedi_email"
+											rendered="#{!tediConfiguration.hasToken()}"
+											value="#{tediConfiguration.email}" />
+											
+										<aon:outputLabel for="Tedi_password"
+											rendered="#{!tediConfiguration.hasToken()}"
+											value="Contraseña" />	
+										<aon:inputSecret id="Tedi_password"
+											rendered="#{!tediConfiguration.hasToken()}"
+											value="#{tediConfiguration.password}" />	
+					
+									</aon:panelGrid>
+									<aon:div rendered="#{tediConfiguration.hasToken()}"
+										style="margin-top: 20px; margin-left: 10px;">
+										<aon:commandButton id="gwt_tediLink-child"
+											style="padding: 10px 10px 10px 10px !important; "
+											action="gwt_tediCenter-child"
+											title="Acceso a tEDI center"
+											value="Acceso a tEDI center" />
+									</aon:div>
+								</aon:div>
+					
+							</aon:form>
+					</td>
+					<aon:if test="#{domainSwitcher.betaUser}">
+						<td style="width: 4%">
+						</td>
+						<td style="width: 43%; vertical-align: top; border: solid red 1px;">
+								<aon:form id="tediSnapshotConfigurationForm">
+									<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+										<ui:param name="toolbarTitle" value="Tedi Center (BETA)" />
+										<ui:define name="toolbarContent">
+											<aon:commandButton id="tediSnapshotConfiguration-connect"
+												rendered="#{!tediConfiguration.hasSnapshotToken()}"
+												value="Conectar"
+												actionListener="#{tediConfiguration.snapshotConnect}"
+												styleClass="aon-finding-toolbar-item aon-icon-contact" />
+												
+											<aon:commandButton id="tediSnapshotConfiguration-disconnect"
+												rendered="#{tediConfiguration.hasSnapshotToken()}"
+												value="Desconectar"
+												actionListener="#{tediConfiguration.snapshotDisconnect}"
+												styleClass="aon-finding-toolbar-item aon-icon-user-change-password" />
+								
+										</ui:define>				
+									</ui:decorate>
 						
-					<aon:commandButton id="tediConfiguration-disconnect"
-						rendered="#{tediConfiguration.hasToken()}"
-						value="Desconectar"
-						actionListener="#{tediConfiguration.disconnect}"
-						styleClass="aon-finding-toolbar-item aon-icon-user-change-password" />
-		
-				</ui:define>				
-			</ui:decorate>
-
-			<aon:div styleClass="aon-scroll-area" style="padding-bottom: 0;">
-			
-				<aon:panelGrid id="portalAccessGrid" columns="2">
-<!-- 
-					<aon:outputLabel for="Tedi_active"
-						value="#{bundle.aon_active}" />
-					<aon:selectBooleanCheckbox id="Tedi_active"
-						value="#{tediConfiguration.active}"
-						actionListener="#{tediConfiguration.update}" />
- -->
-					<aon:outputLabel for="Tedi_status"
-						value="#{bundle.aon_status}" />
-					<aon:outputLabel id="Tedi_status"
-						styleClass="#{(tediConfiguration.hasToken()) ? ('aon-icon-point-green aon-icon') : ('aon-icon-point-gray aon-icon')} "  
-						value="#{tediConfiguration.status}" />
-
-					<aon:outputLabel for="Tedi_email"
-						rendered="#{!tediConfiguration.hasToken()}"
-						value="Email" />	
-					<aon:inputText id="tediConfiguration_email"
-						rendered="#{!tediConfiguration.hasToken()}"
-						value="#{tediConfiguration.email}" />
+									<aon:div styleClass="aon-scroll-area" style="padding-bottom: 10px; text-align: center;">
+										<aon:panelGrid id="portalAccessSnapshotGrid" columns="2" style="margin-left :auto; margin-right :auto;">
+											<aon:outputLabel for="Tedi_Snapshot_status"
+												value="#{bundle.aon_status}" />
+											<aon:outputLabel id="Tedi_Snapshot_status"
+												styleClass="#{(tediConfiguration.hasSnapshotToken()) ? ('aon-icon-point-green aon-icon') : ('aon-icon-point-gray aon-icon')} "  
+												value="#{tediConfiguration.snapshotStatus}" />
 						
-					<aon:outputLabel for="Tedi_password"
-						rendered="#{!tediConfiguration.hasToken()}"
-						value="Contraseña" />	
-					<aon:inputSecret id="tediConfiguration_password"
-						rendered="#{!tediConfiguration.hasToken()}"
-						value="#{tediConfiguration.password}" />	
-
-				</aon:panelGrid>
-				<aon:div rendered="#{tediConfiguration.hasToken()}"
-					style="margin-top: 20px; margin-left: 10px;">
-					<aon:commandButton id="gwt_tediLink-child"
-						style="padding: 10px 10px 10px 10px !important; "
-						action="gwt_tediCenter-child"
-						title="Acceso a tEDI center"
-						value="Acceso a tEDI center" />
+											<aon:outputLabel for="Tedi_Snapshot_email"
+												rendered="#{!tediConfiguration.hasSnapshotToken()}"
+												value="Email" />	
+											<aon:inputText id="Tedi_Snapshot_email"
+												rendered="#{!tediConfiguration.hasSnapshotToken()}"
+												value="#{tediConfiguration.snapshotEmail}" />
+												
+											<aon:outputLabel for="Tedi_Snapshot_password"
+												rendered="#{!tediConfiguration.hasSnapshotToken()}"
+												value="Contraseña" />	
+											<aon:inputSecret id="Tedi_Snapshot_password"
+												rendered="#{!tediConfiguration.hasSnapshotToken()}"
+												value="#{tediConfiguration.snapshotPassword}" />	
 						
-					<aon:commandButton id="gwt_tediLinkBeta-child"
-						style="padding: 10px 10px 10px 10px !important; margin-left: 20px; color: red; border-color:red;"
-						rendered="#{domainSwitcher.betaUser}"
-						action="gwt_tediCenter_beta-child"
-						title="Acceso a tEDI center (BETA)"
-						value="Acceso a tEDI center (BETA)" />
+										</aon:panelGrid>
+										<aon:div rendered="#{tediConfiguration.hasSnapshotToken()}"
+											style="margin-top: 20px; margin-left: 10px;">
+											<aon:commandButton id="gwt_tediLinkSnapshot-child"
+												style="padding: 10px 10px 10px 10px !important; margin-left: 20px; color: red; border-color:red;"
+												rendered="#{domainSwitcher.betaUser}"
+												action="gwt_tediCenter_beta-child"
+												title="Acceso a tEDI center (BETA)"
+												value="Acceso a tEDI center (BETA)" />
+												
+										</aon:div>
+									</aon:div>
 						
-				</aon:div>
-			</aon:div>
-
-		</aon:form>
-	</ui:define>
+								</aon:form>
+						</td>
+					</aon:if>
+				</tr>
+			</table>
+		</ui:define>					
 </ui:composition>

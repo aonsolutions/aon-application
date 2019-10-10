@@ -190,6 +190,11 @@ public enum AppParam {
 	, TEDI_TOKEN
 	, TEDI_ACTIVE
 	, TEDI_EMAIL
+	
+	// TEDI SNAPSHOT_CENTER
+	, TEDI_SNAPSHOT_TOKEN
+	, TEDI_SNAPSHOT_ACTIVE
+	, TEDI_SNAPSHOT_EMAIL
 	;
 	
 	public String getValue() {
