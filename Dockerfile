@@ -97,6 +97,7 @@ RUN mkdir -p "$AON_AIO_CONF"
 
 COPY aon-web-aio/src/main/scripts/login.config $TOMCAT_CONFDIR
 COPY aon-web-aio/src/main/scripts/default.pool-properties $AON_AIO_CONF
+COPY aon-web-aio/src/main/scripts/pro-aonsolutions-net.pool-properties $AON_AIO_CONF
 
 
 COPY docker-entrypoint.sh /usr/local/bin/
