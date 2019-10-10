@@ -224,12 +224,12 @@ public class DocumentOnlineSigner implements Serializable {
 			
 			JSONObject spDirStaff = new JSONObject();
 			spDirStaff.put("name", rDirStaffName);
-			spDirStaff.put("address", rDirStaffEmail);
+			spDirStaff.put("address", rDirStaffEmail != null ? rDirStaffEmail : targetCommercialEmail);
 			spDirStaff.put("signingMethod", signingType());
 			spDirStaff.put("signingOrder", 2);
 			spDirStaff.put("role", "Signer");
 			sp.put(spDirStaff);
-			if(!rDirStaffEmail.equals(targetCommercialEmail)) {
+			if(rDirStaffEmail != null && !rDirStaffEmail.equals(targetCommercialEmail)) {
 				JSONObject spTargetCommercial = new JSONObject();
 				spTargetCommercial.put("name", offer.getTarget().getRegistry().getName());
 				spTargetCommercial.put("address", targetCommercialEmail);
@@ -240,13 +240,7 @@ public class DocumentOnlineSigner implements Serializable {
 			}
 			// interestedParties
 			if(sellerEmail != null && !sellerEmail.equals("")) {
-				JSONArray ips = null;
-				try {
-					ips = json.getJSONArray("interestedParties");
-				} catch (JSONException e) {
-					ips = new JSONArray();
-				}
-				if(ips==null) ips = new JSONArray();
+				JSONArray ips = new JSONArray();
 				JSONObject ip = new JSONObject();
 				ip.put("address", sellerEmail);
 				ips.put(ip);
