@@ -32,14 +32,15 @@ public class TEDI {
 	}
 
 	public static Tedi getTedi(AONContext ctx, boolean snapshot) throws TediException {
+		String tediTokenParam = snapshot?AppParam.TEDI_SNAPSHOT_TOKEN.getValue():AppParam.TEDI_TOKEN.getValue();
 		Domain domain = AON.getDomain(ctx.getDomainName(), ctx.getDomainId(),ctx.getUser());
 		DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), "", DataResponseSource.TEDI_INVOICE,
-				f -> f.getCodeProperty().eq(AppParam.TEDI_TOKEN.getValue())
+				f -> f.getCodeProperty().eq(tediTokenParam)
 				.and(f.getDomainProperty().eq(domain.getId())));
 		if(dr != null && dr.getId() != null) {
 			DataResponseDetail drd = AON.getDataResponseDetail(domain.getName(), domain.getId(), "", 
 				f -> f.getDataResponseProperty().eq(dr.getId())
-					.and(f.getDataVariableProperty().eq(AppParam.TEDI_TOKEN.getValue())))
+					.and(f.getDataVariableProperty().eq(tediTokenParam)))
 				.orElse(new DataResponseDetail());
 		
 			return Tedi.login(drd.getDataValue(),snapshot);

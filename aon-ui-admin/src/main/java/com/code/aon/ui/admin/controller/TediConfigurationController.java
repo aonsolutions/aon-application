@@ -76,16 +76,16 @@ public class TediConfigurationController implements IAdminConstants, Serializabl
 						.and(f.getDataVariableProperty().eq(AppParam.TEDI_SNAPSHOT_TOKEN.getValue())))
 					.orElse(new DataResponseDetail());
 			
-				setToken(drd.getDataValue());
+				setSnapshotToken(drd.getDataValue());
 			}
 			ApplicationParameter apSnapshotActive = AON.getApplicationParameter(domain.getName(), domain.getId(), "", AppParam.TEDI_SNAPSHOT_ACTIVE.getValue());
 			ApplicationParameter apSnapshotEmail = AON.getApplicationParameter(domain.getName(), domain.getId(), "", AppParam.TEDI_SNAPSHOT_EMAIL.getValue());
 			snapshotActive = apSnapshotActive.getValue() != null && "1".equals(apSnapshotActive.getValue());
-			if(hasToken()) {
-				setStatus(CONNECTED + " - " + apSnapshotEmail.getValue());
+			if(hasSnapshotToken()) {
+				setSnapshotStatus(CONNECTED + " - " + apSnapshotEmail.getValue());
 			}
 			if(apSnapshotEmail.getValue() != null) {
-				setEmail(apSnapshotEmail.getValue());
+				setSnapshotEmail(apSnapshotEmail.getValue());
 			}
 		}
 	}	
@@ -134,6 +134,7 @@ public class TediConfigurationController implements IAdminConstants, Serializabl
 		setStatus(DISCONNECTED);
 		setToken(null);
 		setPassword("");
+		onInit( event );
 	}
 
 	public Boolean hasToken(){
@@ -263,6 +264,7 @@ public class TediConfigurationController implements IAdminConstants, Serializabl
 		setSnapshotStatus(DISCONNECTED);
 		setSnapshotToken(null);
 		setSnapshotPassword("");
+		onInit( event );
 	}
 	
 }
