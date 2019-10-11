@@ -144,19 +144,7 @@ public class ConnectionInfo {
 	}
 
 	private Connection getConnection(String schema) throws AonConnectionException {
-		try {
-			Class.forName(getDriverClass());
-			Properties properties = new Properties();
-			properties.setProperty("user", getUser());
-			properties.setProperty("password", getPassword());
-			properties.setProperty("useSSL", getUseSSL());
-			properties.setProperty("serverTimezone", getTimeZone());
-			return DriverManager.getConnection(getSchemaUrl(schema), properties);
-		} catch (ClassNotFoundException e) {
-			throw new AonConnectionException(e.getMessage(),e);
-		} catch (SQLException e) {
-			throw new AonConnectionException(e.getMessage(),e);		}
-
+		return AonDataSource.getInstance().getDatabaseConnection(schema);
 	}
 
 	public String getSchemaUrl(String schema) {

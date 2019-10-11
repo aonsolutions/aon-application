@@ -129,6 +129,20 @@ public class AonDataSource {
 		
 	}
 	
+	protected Connection getDatabaseConnection(String database) throws AonConnectionException {
+		try {
+			synchronized (INIT_POOL_MONITOR) {
+				if ( !poolsMap.containsKey(database) ) {
+					initPool(database);
+				}
+			}
+			DataSource ds = poolsMap.get(database);
+			return ds.getConnection();
+		} catch (SQLException e) {
+			throw new AonConnectionException(e.getMessage(),e);
+		}
+	}
+
 	public void closePools() {
 		if ( poolsMap != null && poolsMap.size() > 0) {
 			Collection<DataSource> c = poolsMap.values();
