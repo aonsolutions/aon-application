@@ -781,20 +781,8 @@ public class TicketPanel extends WizardContentBase<AccountingInvoice> implements
 			if (invoice.getFinances().size() == 1) {
 				Finance finance = invoice.getFinances().get(0);
 				payDate.setValue(finance.getDueDate());
-				getWrapper().setFinanceRecordable(false);
+				getWrapper().setFinanceRecordable(finance.getPayAccountId() != null);
 				if (finance.getId() == null) { // NUEVO
-//					finance.setPayMethod(payMethodList.getValue());
-//					if (payAccount.getId() != null) {
-//						getWrapper().setFinanceRecordable(true);
-//						finance.setPayAccountId(payAccount.getId());
-//						finance.setPayAccountCode(payAccount.getValue());
-//						finance.setPayAccountDescription(payAccount.getDescription());
-//					} else {
-//						getWrapper().setFinanceRecordable(false);
-//						finance.setPayAccountId(null);
-//						finance.setPayAccountCode(null);
-//						finance.setPayAccountDescription(null);
-//					}
 					payAccount.setValue(finance.getPayAccountId(), finance.getPayAccountCode()
 							, finance.getPayAccountDescription(), false);
 					payMethodList.setValue(finance.getPayMethod());
