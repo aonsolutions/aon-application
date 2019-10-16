@@ -10,36 +10,44 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
+import com.esferalia.aon.occam.api.model.finance.BankAccount;
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
+import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.tedi.TediContextKey;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO.InvoiceRegistryInitializer;
+import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import es.translogia.tedi.ewok.TediInvoice;
 import es.translogia.tedi.ewok.TediComments;
+import es.translogia.tedi.ewok.TediFinance;
+import es.translogia.tedi.ewok.TediInvoice;
 import es.translogia.tedi.ewok.TediInvoiceDetail;
 import es.translogia.tedi.ewok.TediInvoiceTax;
+import es.translogia.tedi.ewok.TediPayMethod;
 import es.translogia.tedi.ewok.TediTaxType;
 import net.aonsolutions.aon.tedi.visitors.InvoiceTypeVisitor;
 
@@ -55,6 +63,78 @@ public class TediParser {
 		void to(TediResult result,TediInvoiceDetail tediDetail,InvoiceDetail aonDetail);
 	}
 	
+	@FunctionalInterface
+	private static interface ITediFinanceToAonFinance {
+		void to(AonConfiguration aonCtx,TediResult result,TediFinance tediFinance,Finance finance);
+	}
+	
+	private enum TediFinanceTransfer {
+		DUE_DATE( (aonCtx,result,tedi,aon) -> aon.setDueDate( tedi.getDueDate())),
+		AMOUNT( (aonCtx,result,tedi,aon) -> aon.setAmount( tedi.getAmount())),
+		IBAN( (aonCtx,result,tedi,aon) -> aon.setBankAccount( new BankAccount(tedi.getIban()))),
+		PAYMETHOD( (aonCtx,result,tedi,aon) -> {
+			if ( tedi.getPayMethod() != null) {
+				PayMethodType temp = null;
+				if (tedi.getPayMethod() == TediPayMethod.CASH) {
+					temp = PayMethodType.CASH_BASIS;	
+				} else if (tedi.getPayMethod() == TediPayMethod.CARD) {
+					temp = PayMethodType.CREDIT_CARD;
+				} else if (tedi.getPayMethod() == TediPayMethod.TRANSFER) {
+					temp = PayMethodType.BANK_TRANSFER;
+				} else if (tedi.getPayMethod() == TediPayMethod.BANK) {
+					temp = PayMethodType.NEGOTIABLE_DOCUMENT;
+				} else if (tedi.getPayMethod() == TediPayMethod.DRAFT) {
+					temp = PayMethodType.CHEQUE;
+				} else if (tedi.getPayMethod() == TediPayMethod.OTHER) {
+					temp = PayMethodType.OTHER;
+				}
+				if (temp != null) {
+					boolean hasPaymethods = aonCtx.getPayMethods() != null && aonCtx.getPayMethods().size() > 0;
+					if (hasPaymethods) {
+						for ( PayMethod paymethod : aonCtx.getPayMethods() ) {
+							if ( temp == paymethod.getType() ) {
+								aon.setPayMethod(paymethod.getId());								
+								aon.setPayMethodName(paymethod.getName());
+								if ( temp == PayMethodType.CASH_BASIS ) {
+									Account cashAccount = aonCtx.getDefaultCashAccount();
+									if (cashAccount != null) {
+										aon.setPayAccountId(cashAccount.getId());	
+										aon.setPayAccountCode(cashAccount.getCode());
+										aon.setPayAccountDescription(cashAccount.getDescription());
+										result.getAccountingInvoice().setFinanceRecordable(true);
+									}
+								}
+								break;
+							}
+						}
+					}
+					aon.setPayMethodType(temp);
+				}
+			}
+		}),
+		PENDING( (aonCtx,result,tedi,aon) -> aon.setFinanceStatus(FinanceStatus.PENDING ))
+		;
+		
+		private ITediFinanceToAonFinance toAon;
+
+		private TediFinanceTransfer(ITediFinanceToAonFinance toAon) {
+			this.toAon = toAon;
+		}
+
+
+		private TediResult to(AonConfiguration aonCtx,TediResult result,TediFinance tediFinance,Finance finance) {
+			toAon.to(aonCtx,result,tediFinance,finance);
+			return result;
+		}
+
+		private static TediResult toAon(AonConfiguration aonCtx,TediResult result,TediFinance tediFinance,Finance finance) {
+			for (TediFinanceTransfer token : TediFinanceTransfer.values()) {
+				token.to(aonCtx,result,tediFinance,finance);
+			}
+			return result;
+		}
+	}
+
 	private enum TediInvoiceDetailTransfer {
 		DESCRIPTION( (result,tedi,aon) -> aon.setDescription( tedi.getDescription())),
 		QUANTITY( (result,tedi,aon) -> aon.setQuantity( AonNumberUtils.zeroIfNull(tedi.getQuantity()))),
@@ -320,6 +400,17 @@ public class TediParser {
 					}
 				}
 			}
+		}),
+		FINANCE( (ctx, aonCtx,result) -> {
+			boolean hasFinances = (result.getTedi().getFinances() != null && result.getTedi().getFinances().size() > 0);
+			if (hasFinances) {
+				for ( int i = 0; i < result.getTedi().getFinances().size(); i++) {
+					TediFinance tfin = result.getTedi().getFinances().get(i);
+					Finance fin = new Finance();
+					result.getAccountingInvoice().getFinances().add(fin);
+					TediFinanceTransfer.toAon(aonCtx,result,tfin,fin);
+				}
+			}
 		})
 		;
 		private ITediInvoiceToAonInvoice toAon;
@@ -346,10 +437,12 @@ public class TediParser {
 		AccountingInvoice ai = new AccountingInvoice();
 		ai.setInvoice(new Invoice());
 		
+		
 		// TODO
 		ai.setWorkplace(aonCtx.getWorkplaces().get(0).getId());
 		// ----
 		TediResult result = new TediResult(tedi, ai);
+		aonCtx.setPayMethods(FinanceDAO.getPayMethodsById(ctx));
 		TediInvoiceTransfer.toAon(ctx, aonCtx,result);
 		fillVats(ctx, aonCtx, result);
 		ai.setAccountEntry(getEntryBase(ctx,aonCtx,ai));
@@ -460,5 +553,6 @@ public class TediParser {
 						ai.addVat(vat);
 			}
 		}
+		
 	}
 }

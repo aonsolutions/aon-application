@@ -68,6 +68,18 @@ public class FinanceDAO {
 				;
 	}
 	
+	public static LinkedList<PayMethod>  getPayMethodsById(AONContext ctx) {
+		return ctx.getDslContext()
+				.selectFrom(PAY_METHOD)
+				.where(PAY_METHOD.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+				.orderBy(PAY_METHOD.ID)
+				.fetch()
+				.stream()
+				.map( new FullPayMethodFiller())
+				.collect(Collectors.toCollection(LinkedList::new))
+				;
+	}
+
 	public static PayMethod  getPayMethod(AONContext ctx, String name) {
 		return ctx.getDslContext()
 				.selectFrom(PAY_METHOD)

@@ -851,7 +851,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			if (invoice.getFinances().size() == 1) {
 				Finance finance = invoice.getFinances().get(0);
 				payDate.setValue(finance.getDueDate());
-				getWrapper().setFinanceRecordable(false);
+				getWrapper().setFinanceRecordable(finance.getPayAccountId() != null);
 				if (finance.getId() == null) { // NUEVO
 //					finance.setPayMethod(payMethodList.getValue());
 //					if (payAccount.getId() != null) {

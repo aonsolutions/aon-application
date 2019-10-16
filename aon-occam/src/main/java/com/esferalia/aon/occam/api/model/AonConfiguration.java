@@ -37,6 +37,7 @@ public class AonConfiguration implements Serializable {
 	private Account defaultPaidVatAccount;
 	private Account defaultChargedRetAccount;
 	private Account defaultPaidRetAccount;
+	private Account defaultCashAccount;
 	private Account vatNegativeAdjustAccount;
 	
 	private Account defaultSalary;
@@ -284,6 +285,15 @@ public class AonConfiguration implements Serializable {
 
 	public AonConfiguration setDefaultPaidRetAccount(Account defaultPaidRetAccount) {
 		this.defaultPaidRetAccount = defaultPaidRetAccount;
+		return this;
+	}
+
+	public Account getDefaultCashAccount() {
+		return  this.defaultCashAccount;
+	}
+
+	public AonConfiguration setDefaultCashAccount(Account defaultCashAccount) {
+		this.defaultCashAccount = defaultCashAccount;
 		return this;
 	}
 
