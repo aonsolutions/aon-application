@@ -815,7 +815,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="9" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA["D. "+$V{rDirStaff}.getName()+" con DNI "+$V{rDirStaff}.getDocument()+" en nombre y representación del cliente descrito en el punto 'DATOS DEL CLIENTE', asegura la vigencia y suficiencia de sus facultades para la aceptación del presente presupuesto y en prueba de conformidad lo firma, así como el contrato adjunto."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["D. "+$V{rDirStaff}.getName()+" con DNI "+$V{rDirStaff}.getDocument()+" en nombre y representación del cliente descrito en el punto 'DATOS DEL CLIENTE', asegura la vigencia y suficiencia de sus facultades para la aceptación del presente presupuesto y en prueba de conformidad lo firma, así como el contrato y/o anexos adjuntos si los hubiere."]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-96" positionType="Float" mode="Opaque" x="-1" y="408" width="537" height="15" isRemoveLineWhenBlank="true" forecolor="#FFFFFF" backcolor="#999999" uuid="3cb0098c-a400-4752-92a8-894a37464bd3">
