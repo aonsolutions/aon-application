@@ -302,13 +302,13 @@ public class TediParser {
 			}
 		}), 
 		NUMBER	( (ctx, aonCtx,result) -> {
-			if (result.getTedi().getNumber() != null) {
-				result.getInvoice().setNumber(result.getTedi().getNumber());
-			} else {
-				if (result.getTedi().isEmitida()) {
+			if (result.getTedi().isEmitida()) {
+				if (result.getTedi().getNumber() != null) {
+					result.getInvoice().setNumber(result.getTedi().getNumber());
+				} else {
 					result.add( TediErrorMessages.C003.inf(TediContextKey.NUMBER, TediContextKey.NUMBER.getDescription(), 0) );
+					result.getInvoice().setNumber(0);
 				}
-				result.getInvoice().setNumber(0);
 			}
 		}), 
 		REFERENCE_CODE( (ctx, aonCtx,result) -> result.getInvoice().setReferenceCode(result.getTedi().getReference())), 
