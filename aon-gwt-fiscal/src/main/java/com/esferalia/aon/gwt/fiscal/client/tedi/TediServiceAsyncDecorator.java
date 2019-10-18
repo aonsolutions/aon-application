@@ -33,10 +33,10 @@ public class TediServiceAsyncDecorator implements TediServiceAsync {
 	}
 
 	@Override
-	public void getInvoice(String domainName, String user, int domain, boolean snapshot, String uuid,
-			AsyncCallback<TediResult> callback) {
+	public void getInvoice(String domainName, String user, int domain, boolean snapshot, String uuid
+			, String tediStatus, AsyncCallback<TediResult> callback) {
 		AON.start();
-		fsa.getInvoice(domainName, user, domain, snapshot,uuid, new AsyncCallbackWrapper<TediResult>(callback));
+		fsa.getInvoice(domainName, user, domain, snapshot,uuid,tediStatus, new AsyncCallbackWrapper<TediResult>(callback));
 	}
 
 	@Override

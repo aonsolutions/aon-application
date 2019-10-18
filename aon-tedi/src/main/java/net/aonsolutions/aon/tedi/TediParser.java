@@ -85,8 +85,6 @@ public class TediParser {
 					temp = PayMethodType.NEGOTIABLE_DOCUMENT;
 				} else if (tedi.getPayMethod() == TediPayMethod.DRAFT) {
 					temp = PayMethodType.CHEQUE;
-				} else if (tedi.getPayMethod() == TediPayMethod.OTHER) {
-					temp = PayMethodType.OTHER;
 				}
 				if (temp != null) {
 					boolean hasPaymethods = aonCtx.getPayMethods() != null && aonCtx.getPayMethods().size() > 0;

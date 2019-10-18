@@ -46,7 +46,6 @@ public class AonParser {
 				.setType(getInvoiceType(invoice.getType()))// TODO
 				.setDate(invoice.getIssueDate())
 				.setTransaction(getTransaction(invoice.getTransaction()))
-				.setInvestment(invoice.isInvestment())
 //				.setCategory()
 				.setTotal(invoice.getTotal())
 				.setRdocument(invoice.getRegistryDocument())

@@ -49,7 +49,7 @@ public class Tedi extends TediRequest {
 		INVOICE_BASE = TEDI_URL + "/invoice";
 		PUT_INVOICE = INVOICE_BASE;
 		DOWNLOAD_INVOICE = INVOICE_BASE + "/d/{0}"; // uuid
-		GET_INVOICE_BY_UUID = INVOICE_BASE + "/{0}/{1}";
+		GET_INVOICE_BY_UUID = INVOICE_BASE + "/{0}/{1}/{2}";
 		GET_VERIFIED_INVOICES = INVOICE_BASE + "?company={0}&status=" + TediInvoiceStatus.verified;
 	}
 
@@ -79,8 +79,8 @@ public class Tedi extends TediRequest {
 				"getVerifiedInvoices: " + tediResponse.getResponseCode() + " - " + tediResponse.getResponseMessage());
 	}
 
-	public TediInvoice getInvoice(String company, String uuid) throws TediException {
-		String url = MessageFormat.format(GET_INVOICE_BY_UUID,company,uuid);
+	public TediInvoice getInvoice(String status,String company, String uuid) throws TediException {
+		String url = MessageFormat.format(GET_INVOICE_BY_UUID,status.toString(),company,uuid);
 		TediResponse tediResponse = get(url, getToken());
 		if (tediResponse.ok()) {
 			return TediInvoiceJSON.fromJSON(tediResponse.getJSONObject());

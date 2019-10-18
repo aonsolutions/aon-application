@@ -82,13 +82,16 @@ public class TEDI {
 		return null;
 	}
 
-	public static TediResult getInvoice(String domainName, int domain, boolean snapshot, String user, String uuid) throws TediException {
+	public static TediResult getInvoice(String domainName, int domain, boolean snapshot, String user, String uuid, String status) throws TediException {
 		if (AonStringUtils.isEmpty(uuid)) {
 			throw new TediException("No se ha indicado un identificador de factura que recuperar");
 		}
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, user);
+			if (status == null) {
+				throw new TediException("No se ha indicado el Status de la factura");
+			}
 			Company company = CompanyDAO.getCompany(ctx, domain);
 			if (company == null) {
 				throw new TediException("No se ha encontrado una compa\u00F1ia v\u00E1lida para el dominio " + domain);
@@ -99,7 +102,7 @@ public class TEDI {
 			}
 			Tedi tedi = getTedi(ctx, snapshot);
 			LOGGER.info("[TEDI] Attempt to recover invoice [" + company.getDocument() + "," + uuid + "]");
-			TediInvoice invoice = tedi.getInvoice(company.getDocument(), uuid);
+			TediInvoice invoice = tedi.getInvoice(status,company.getDocument(), uuid);
 			if (invoice != null) {
 				final AonConfiguration aonCtx = ConfigurationDAO.getConfiguration(ctx);
 				return TediParser.toFullInvoice(ctx, aonCtx, invoice);

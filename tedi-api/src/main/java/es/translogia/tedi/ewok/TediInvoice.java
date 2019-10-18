@@ -16,7 +16,6 @@ public class TediInvoice implements Serializable{
 	private String reference;
 	private Date date;
 	private TediInvoiceTransaction transaction;
-	private Boolean investment;
 	private TediInvoiceCategory category;
 	private Double total;
 	private String rdocument;
@@ -102,15 +101,6 @@ public class TediInvoice implements Serializable{
 
 	public TediInvoice setTransaction(TediInvoiceTransaction transaction) {
 		this.transaction = transaction;
-		return this;
-	}
-
-	public Boolean getInvestment() {
-		return investment;
-	}
-
-	public TediInvoice setInvestment(Boolean investment) {
-		this.investment = investment;
 		return this;
 	}
 

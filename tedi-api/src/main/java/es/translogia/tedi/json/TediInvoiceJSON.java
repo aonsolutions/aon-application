@@ -54,10 +54,6 @@ public enum TediInvoiceJSON {
 		(invoice, json) -> invoice.setTransaction(json.optEnum(TediInvoiceTransaction.class, IConstants.TRANSACTION)),
 		(invoice, json) -> json.put(IConstants.TRANSACTION, invoice.getTransaction())
 	),
-	INVESTMENT(
-		(finance, json) -> finance.setInvestment(json.optBoolean(IConstants.INVESTMENT)),
-		(finance, json) -> json.put(IConstants.INVESTMENT, finance.getInvestment())
-	),
 	CATEGORY(
 		(invoice, json) -> invoice.setCategory(json.optEnum(TediInvoiceCategory.class, IConstants.CATEGORY)),
 		(invoice, json) -> json.put(IConstants.CATEGORY, invoice.getCategory())

@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public enum TediPayMethod implements Serializable {
 
-	CASH, CARD, TRANSFER, BANK, DRAFT, OTHER;
+	CASH, CARD, TRANSFER, BANK, DRAFT;
 
 	private TediPayMethod() {
 	}

@@ -23,6 +23,20 @@ import es.translogia.tedi.json.TediJSONUtils;
 
 public class TediUdapaFaker {
 	
+	private static LinkedList<JSONObject> UNKNOWN = new LinkedList<JSONObject>();
+	static {
+		UNKNOWN.add(getAonRegistry("ES","84231481F","Ryan Alcroft"));
+		UNKNOWN.add(getAonRegistry("ES","06293390S","Judith Rainford"));
+		UNKNOWN.add(getAonRegistry("ES","X1041898K","Abdul Lambert"));
+		UNKNOWN.add(getAonRegistry("ES","Q6346337F","Daniel Wren"));
+		UNKNOWN.add(getAonRegistry("ES","70926723J","Maxwell Rowan"));
+		UNKNOWN.add(getAonRegistry("ES","Y3340911Z","Ryan Shields"));
+		UNKNOWN.add(getAonRegistry("ES","N8388273H","Carina Dwyer"));
+		UNKNOWN.add(getAonRegistry("ES","J7248413B","Hank Hudson"));
+		UNKNOWN.add(getAonRegistry("ES","Y1133594F","Danielle Lyon"));
+		UNKNOWN.add(getAonRegistry("ES","52409760M","Benny Reading"));
+	}
+	
 	private static LinkedList<JSONObject> CRED = new LinkedList<JSONObject>();
 	static {
 		CRED.add(getAonRegistry("FR", "54379416290", "AGRI-BEAUCE", "CL 1 CHEMIN DES ROCHES   ", "BONNEVAL", "FR",
@@ -1357,10 +1371,6 @@ public class TediUdapaFaker {
 		return (faker.random().nextBoolean()) ? json.put(key, value) : json;
 	}
 
-	private static JSONObject optPut(JSONObject json, String key, Boolean value) {
-		return (faker.random().nextBoolean()) ? json.put(key, value) : json;
-	}
-
 	public static JSONObject getUdapa() {
 		JSONObject json = new JSONObject().put(IConstants.DOCUMENT, "F01131978").put(IConstants.DOCUMENT_COUNTRY, "ES")
 				.put(IConstants.NAME, "UDAPA S. Coop.").put(IConstants.ALIAS, "UDAPA");
@@ -1374,14 +1384,16 @@ public class TediUdapaFaker {
 		return json;
 	}
 
-	public static JSONObject getTediFinance() {
+	public static JSONObject getTediFinance( double amount) {
 		JSONObject json = new JSONObject();
 		optPut(json, IConstants.DUE_DATE, TediJSONUtils.formatDate(faker.date().future(10, TimeUnit.DAYS)));
-		optPut(json, IConstants.AMOUNT, faker.commerce().price());
-		optPut(json, IConstants.IBAN, faker.finance().iban());
-		optPut(json, IConstants.PAY_METHOD,
-				TediPayMethod.values()[(faker.random().nextInt(TediPayMethod.values().length))].toString());
-		optPut(json, IConstants.PENDING, faker.random().nextBoolean());
+		json.put(IConstants.AMOUNT, amount);
+		TediPayMethod payMethod = TediPayMethod.values()[(faker.random().nextInt(TediPayMethod.values().length))];
+		optPut(json, IConstants.PAY_METHOD, payMethod.toString());
+		if ( payMethod == TediPayMethod.BANK || payMethod == TediPayMethod.TRANSFER) {
+			optPut(json, IConstants.IBAN, faker.finance().iban());
+		}
+		json.put(IConstants.PENDING, true );
 		return json;
 	}
 
@@ -1411,6 +1423,14 @@ public class TediUdapaFaker {
 		return json;
 	}
 
+	public static JSONObject getAonRegistry(String documentCountry, String document, String name) {
+		JSONObject json = new JSONObject();
+		json.put(IConstants.DOCUMENT, document);
+		json.put(IConstants.NAME, name);
+		json.put(IConstants.DOCUMENT_COUNTRY, documentCountry);
+		return json;
+	}
+
 	public static JSONObject getTediInvoiceDetail() {
 		JSONObject json = new JSONObject();
 		int p = faker.random().nextInt(100);
@@ -1425,7 +1445,7 @@ public class TediUdapaFaker {
 			json.put(IConstants.DISCOUNT, dsc);
 		}
 		double amount = (qty * prc) - (qty * prc * dsc / 100);
-		json.put(IConstants.AMOUNT, (Math.round(amount * 100) / 100));
+		json.put(IConstants.AMOUNT, round(amount));
 		boolean surcharge = (p < 2);
 		if (p < 1) {
 			// Exento
@@ -1456,7 +1476,7 @@ public class TediUdapaFaker {
 		json.put(IConstants.DATE, TediJSONUtils.formatDate(faker.date().future(10, TimeUnit.DAYS)));
 
 		TediInvoiceType tediInvoiceType = TediInvoiceType
-				.values()[(faker.random().nextInt(TediInvoiceType.values().length - 1))];
+				.values()[(faker.random().nextInt(0,TediInvoiceType.values().length-1))];
 		json.put(IConstants.TYPE, tediInvoiceType.toString());
 		JSONObject registry = null;
 		if (tediInvoiceType == TediInvoiceType.EMITIDA) {
@@ -1466,7 +1486,7 @@ public class TediUdapaFaker {
 			json.put(IConstants.RECEIVER, getTediRegistry(registry));
 			json.put(IConstants.SENDER, getUdapa());
 		} else {
-			json.put(IConstants.REFERENCE, faker.lorem().characters(0, 20));
+			json.put(IConstants.REFERENCE, faker.lorem().characters(0, 18));
 			registry = CRED.get(faker.random().nextInt(CRED.size() - 1));
 			json.put(IConstants.SENDER, getTediRegistry(registry));
 			json.put(IConstants.RECEIVER, getUdapa());
@@ -1474,18 +1494,27 @@ public class TediUdapaFaker {
 		json.put(IConstants.CATEGORY,
 				TediInvoiceCategory.values()[(faker.random().nextInt(TediInvoiceCategory.values().length - 1))]
 						.getType());
-
-		JSONArray details = new JSONArray();
-		int x = faker.random().nextInt(1, 10);
-		for (int i = 0; i < x; i++) {
-			details.put(TediUdapaFaker.getTediInvoiceDetail());
+		double total = 0;
+		if (tediInvoiceType != TediInvoiceType.TICKET) {
+			JSONArray details = new JSONArray();
+			int x = faker.random().nextInt(1, 10);
+			for (int i = 0; i < x; i++) {
+				details.put(TediUdapaFaker.getTediInvoiceDetail());
+			}
+			json.put(IConstants.DETAILS, details);
+			total = calculate(json);
+		} else {
+			total = faker.number().randomDouble(2, 0, 500);
+			json.put(IConstants.TOTAL, round(total));	
 		}
-		json.put(IConstants.DETAILS, details);
-
-		return calculate(json);
+		
+		JSONArray finances = new JSONArray();
+		finances.put(getTediFinance(total));
+		json.put(IConstants.FINANCES , finances);
+		return json; 
 	}
 
-	private static JSONObject calculate(JSONObject invoice) {
+	private static double calculate(JSONObject invoice) {
 		JSONArray details = invoice.getJSONArray(IConstants.DETAILS);
 		double total = 0;
 		for (int i = 0; i < details.length(); i++) {
@@ -1528,7 +1557,7 @@ public class TediUdapaFaker {
 			}
 		}
 		invoice.put(IConstants.TOTAL, round(total));
-		return invoice;
+		return round(total);
 	}
 
 	private static double round(double value) {

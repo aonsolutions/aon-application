@@ -23,7 +23,7 @@ public class TediBalooTest {
 	@BeforeClass
 	public static void beforeClass() {
 		// TEDI = Tedi.login("aibanez@aonsolutions.es", "test");
-		TEDI = Tedi.login("jgarcia@aonsolutions.es", "test");
+		TEDI = Tedi.login("jgarcia@aonsolutions.es", "test",true);
 	}
 	
 	@After
@@ -34,7 +34,7 @@ public class TediBalooTest {
 	
 	@Test
 	public void test001PutInvoices() throws Exception {
-		int times = 20;
+		int times = 50;
 		System.out.print( "\t-test Tedi put UDAPA " + times + " invoices");
 		for (int i = 0; i < times ; i ++) {
 			JSONObject inv = TediUdapaFaker.getTediInvoice();
@@ -53,7 +53,8 @@ public class TediBalooTest {
 		JSONObject inv = TediUdapaFaker.getTediInvoice();
 		TediInvoice put = TediInvoiceJSON.fromJSON(inv);
 		put = TEDI.putInvoice(put);
-		TediInvoice get = TEDI.getInvoice(put.getCompany(), put.getUuid());
+		System.out.print( "\t\t-Getting " + put.getCompany() + ", " +  put.getUuid() + " invoice");
+		TediInvoice get = TEDI.getInvoice(put.getStatus().toString(),put.getCompany(), put.getUuid());
 		Assert.assertEquals(put.getUuid(), get.getUuid());
 		System.out.print( " [OK]");
 	}

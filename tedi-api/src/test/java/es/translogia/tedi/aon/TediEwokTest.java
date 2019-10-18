@@ -318,7 +318,6 @@ public class TediEwokTest {
 		assertEquals(invoice.getReference(), json.optString(IConstants.REFERENCE));
 		assertEquals(invoice.getDate(), TediJSONUtils.parseDate( json.optString(IConstants.DATE)));
 		assertEquals(invoice.getTransaction(), json.optEnum(TediInvoiceTransaction.class, IConstants.TRANSACTION));
-		assertEquals(invoice.getInvestment(), json.optBoolean(IConstants.INVESTMENT));
 		assertEquals(invoice.getCategory(), json.optEnum(TediInvoiceCategory.class, IConstants.CATEGORY));
 		assertEquals(invoice.getTotal(), json.optDouble(IConstants.TOTAL));
 		assertEquals(invoice.getRdocument(), json.optString(IConstants.RDOCUMENT));
