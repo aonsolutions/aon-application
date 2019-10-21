@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showTediCenterWindow">
+		<aon:if test="#{controller.showTediCenterWindow}">
+			<rich:modalPanel id="tediCenterModalPanel" minHeight="260" minWidth="580" 
+				rendered="#{controller.showTediCenterWindow}"
+				showWhenRendered="true" zindex="90" style="overflow-y:auto">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{bundle.admin_tedicenter}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							actionListener="#{controller.onClose}"
+							reRender="showTediCenterWindow,aonContent" immediate="true">
+							<aon:actionHotKey key="esc" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="tediCenterForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div id="tediCenterModalToolbar" styleClass="aon-toolbar">
+									<aon:commandButton id="tediConfiguration-connect"
+										rendered="#{!tediConfiguration.hasToken()}"
+										value="Conectar"
+										actionListener="#{tediConfiguration.connect}"
+										styleClass="aon-finding-toolbar-item aon-icon-contact">
+										<rich:componentControl for="tediCenterModalPanel"
+											event="onclick" operation="hide"/>		
+										<f:setPropertyActionListener
+											target="#{controller.showTediCenterWindow}"
+											value="#{false}" />		
+									</aon:commandButton>	
+									<aon:commandButton id="tediConfiguration-disconnect"
+										rendered="#{tediConfiguration.hasToken()}"
+										value="Desconectar"
+										actionListener="#{tediConfiguration.disconnect}"
+										styleClass="aon-finding-toolbar-item aon-icon-user-change-password">
+										<rich:componentControl for="tediCenterModalPanel"
+											event="onclick" operation="hide"/>		
+										<f:setPropertyActionListener
+											target="#{controller.showTediCenterWindow}"
+											value="#{false}" />		
+									</aon:commandButton>
+									<aon:commandButton id="tediCenter-cancel" immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel"
+										value="#{bundle.aon_back}"
+										actionListener="#{controller.onClose}"
+										reRender="showTediCenterWindow,aonContent">
+										<rich:componentControl for="tediCenterModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{controller.showTediCenterWindow}"
+											value="#{false}" />		
+									</aon:commandButton>
+								</aon:div>
+								
+								<aon:div id="tediCenterModalContent" styleClass="aon-scroll-area" style="margin-top: 1em;">
+									<aon:panelGrid id="menuGrid" columns="2" dir="true" styleClass="aon-width-all"
+										columnClasses="aon-panelGrid-odd aon-width-100,aon-panelGrid-even aon-width-auto">
+								
+										<aon:outputLabel for="Tedi_status"
+											value="#{bundle.aon_status}" />
+										<aon:outputLabel id="Tedi_status"
+											styleClass="#{(tediConfiguration.hasToken()) ? ('aon-icon-point-green aon-icon') : ('aon-icon-point-gray aon-icon')} "  
+											value="#{tediConfiguration.status}" />
+					
+										<aon:outputLabel for="Tedi_email"
+											rendered="#{!tediConfiguration.hasToken()}"
+											value="Email" />	
+										<aon:inputText id="Tedi_email"
+											rendered="#{!tediConfiguration.hasToken()}"
+											value="#{tediConfiguration.email}" />
+											
+										<aon:outputLabel for="Tedi_password"
+											rendered="#{!tediConfiguration.hasToken()}"
+											value="Contraseña" />	
+										<aon:inputSecret id="Tedi_password"
+											rendered="#{!tediConfiguration.hasToken()}"
+											value="#{tediConfiguration.password}" />	
+
+									</aon:panelGrid>
+								</aon:div>
+								
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</aon:if>
+	</aon:panelGroup>
+
+	<aon:panelGroup id="showTediCenterSnapshotWindow">
+		<aon:if test="#{controller.showTediCenterSnapshotWindow}">
+			<rich:modalPanel id="tediCenterSnapshotModalPanel" minHeight="260" minWidth="580" 
+				rendered="#{controller.showTediCenterSnapshotWindow}"
+				showWhenRendered="true" zindex="90" style="overflow-y:auto">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{bundle.admin_tedicenter_snapshot}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							actionListener="#{controller.onSnapshotClose}"
+							reRender="showTediCenterSnapshotWindow,aonContent" immediate="true">
+							<aon:actionHotKey key="esc" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="tediCenterSnapshotForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div id="tediCenterSnapshotModalToolbar" styleClass="aon-toolbar">
+									<aon:commandButton id="tediSnapshotConfiguration-connect"
+										rendered="#{!tediConfiguration.hasSnapshotToken()}"
+										value="Conectar"
+										actionListener="#{tediConfiguration.snapshotConnect}"
+										styleClass="aon-finding-toolbar-item aon-icon-contact">
+										<rich:componentControl for="tediCenterSnapshotModalPanel"
+											event="onclick" operation="hide"/>		
+										<f:setPropertyActionListener
+											target="#{controller.showTediCenterSnapshotWindow}"
+											value="#{false}" />		
+									</aon:commandButton>	
+									<aon:commandButton id="tediSnapshotConfiguration-disconnect"
+										rendered="#{tediConfiguration.hasSnapshotToken()}"
+										value="Desconectar"
+										actionListener="#{tediConfiguration.snapshotDisconnect}"
+										styleClass="aon-finding-toolbar-item aon-icon-user-change-password">
+										<rich:componentControl for="tediCenterSnapshotModalPanel"
+											event="onclick" operation="hide"/>		
+										<f:setPropertyActionListener
+											target="#{controller.showTediCenterSnapshotWindow}"
+											value="#{false}" />		
+									</aon:commandButton>
+									<aon:commandButton id="tediCenterSnapshot-cancel" immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel"
+										value="#{bundle.aon_back}"
+										actionListener="#{controller.onSnapshotClose}"
+										reRender="showTediCenterSnapshotWindow,aonContent">
+										<rich:componentControl for="tediCenterSnapshotModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{controller.showTediCenterSnapshotWindow}"
+											value="#{false}" />		
+									</aon:commandButton>
+								</aon:div>
+								
+								<aon:div id="tediCenterSnapshotModalContent" styleClass="aon-scroll-area" style="margin-top: 1em;">
+									<aon:panelGrid id="menuGrid" columns="2" dir="true" styleClass="aon-width-all"
+										columnClasses="aon-panelGrid-odd aon-width-100,aon-panelGrid-even aon-width-auto">
+									
+										<aon:outputLabel for="Tedi_Snapshot_status"
+											value="#{bundle.aon_status}" />
+										<aon:outputLabel id="Tedi_Snapshot_status"
+											styleClass="#{(tediConfiguration.hasSnapshotToken()) ? ('aon-icon-point-green aon-icon') : ('aon-icon-point-gray aon-icon')} "
+											value="#{tediConfiguration.snapshotStatus}" />
+
+										<aon:outputLabel for="Tedi_Snapshot_email"
+											rendered="#{!tediConfiguration.hasSnapshotToken()}"
+											value="Email" />
+										<aon:inputText id="Tedi_Snapshot_email"
+											rendered="#{!tediConfiguration.hasSnapshotToken()}"
+											value="#{tediConfiguration.snapshotEmail}" />
+
+										<aon:outputLabel for="Tedi_Snapshot_password"
+											rendered="#{!tediConfiguration.hasSnapshotToken()}"
+											value="Contraseña" />
+										<aon:inputSecret id="Tedi_Snapshot_password"
+											rendered="#{!tediConfiguration.hasSnapshotToken()}"
+											value="#{tediConfiguration.snapshotPassword}" />
+									</aon:panelGrid>
+								</aon:div>
+								
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</aon:if>
+	</aon:panelGroup>
+</ui:composition>

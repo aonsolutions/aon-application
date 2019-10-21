@@ -542,16 +542,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 
-	
-	<!-- ************* CONEXFLOW ***************** -->
-	<managed-bean>
-		<managed-bean-name>conexflow</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.admin.controller.ConexFlowController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>	
-
 	<!-- =================== Main ================= -->
 	<navigation-rule>
 		<navigation-case>

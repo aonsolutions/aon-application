@@ -26,19 +26,41 @@ public class TediConfigurationController implements IAdminConstants, Serializabl
 	private static final String DISCONNECTED = "Desconectado";
 	private static final String CONNECTED = "Conectado";
 	
-	public boolean active = false;
+	boolean showTediCenterWindow;
+	boolean showTediCenterSnapshotWindow;
+	
+	public boolean active;
 	public String status = DISCONNECTED;
 	private String token;
 	public String email;
 	public String password;
-	
-	public boolean snapshotActive = false;
+
+	public boolean snapshotActive;
 	public String snapshotStatus = DISCONNECTED;
 	private String snapshotToken;
 	public String snapshotEmail;
 	public String snapshotPassword;
 	
+
+	public boolean isShowTediCenterWindow() {
+		return showTediCenterWindow;
+	}
+	public void setShowTediCenterWindow(boolean showTediCenterWindow) {
+		this.showTediCenterWindow = showTediCenterWindow;
+	}
+	
+	public boolean isShowTediCenterSnapshotWindow() {
+		return showTediCenterSnapshotWindow;
+	}
+	public void setShowTediCenterSnapshotWindow(boolean showTediCenterSnapshotWindow) {
+		this.showTediCenterSnapshotWindow = showTediCenterSnapshotWindow;
+	}
+	
 	public void onInit( ActionEvent event ) {
+		init();
+	}	
+	
+	private void init() {
 		Domain domain = AON.getDomain(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "");
 		
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
@@ -56,11 +78,10 @@ public class TediConfigurationController implements IAdminConstants, Serializabl
 		
 			setToken(drd.getDataValue());
 		}
-		ApplicationParameter apActive = AON.getApplicationParameter(domain.getName(), domain.getId(), "", AppParam.TEDI_ACTIVE.getValue());
 		ApplicationParameter apEmail = AON.getApplicationParameter(domain.getName(), domain.getId(), "", AppParam.TEDI_EMAIL.getValue());
-		active = apActive.getValue() != null && "1".equals(apActive.getValue());
 		if(hasToken()) {
 			setStatus(CONNECTED + " - " + apEmail.getValue());
+			setActive(true);
 		}
 		if(apEmail.getValue() != null) {
 			setEmail(apEmail.getValue());
@@ -78,17 +99,16 @@ public class TediConfigurationController implements IAdminConstants, Serializabl
 			
 				setSnapshotToken(drd.getDataValue());
 			}
-			ApplicationParameter apSnapshotActive = AON.getApplicationParameter(domain.getName(), domain.getId(), "", AppParam.TEDI_SNAPSHOT_ACTIVE.getValue());
 			ApplicationParameter apSnapshotEmail = AON.getApplicationParameter(domain.getName(), domain.getId(), "", AppParam.TEDI_SNAPSHOT_EMAIL.getValue());
-			snapshotActive = apSnapshotActive.getValue() != null && "1".equals(apSnapshotActive.getValue());
 			if(hasSnapshotToken()) {
 				setSnapshotStatus(CONNECTED + " - " + apSnapshotEmail.getValue());
+				setSnapshotActive(true);
 			}
 			if(apSnapshotEmail.getValue() != null) {
 				setSnapshotEmail(apSnapshotEmail.getValue());
 			}
 		}
-	}	
+	}
 	
 	public void update(ActionEvent event) {
 	}
@@ -118,6 +138,7 @@ public class TediConfigurationController implements IAdminConstants, Serializabl
 				f -> f.getDomainProperty().eq(domain.getId())
 				.and(f.getNameProperty().eq(AppParam.TEDI_EMAIL.getValue())));
 		AON.insertApplicationParameter(domain.getName(), domain.getId(), "", apEmail);		
+		
 		setStatus(CONNECTED + " - " + apEmail.getValue());
 	}
 
@@ -132,6 +153,7 @@ public class TediConfigurationController implements IAdminConstants, Serializabl
 			AON.deleteDataResponse(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(dr.getId()));
 		}
 		setStatus(DISCONNECTED);
+		setActive(false);
 		setToken(null);
 		setPassword("");
 		onInit( event );
@@ -142,7 +164,11 @@ public class TediConfigurationController implements IAdminConstants, Serializabl
 	}
 	
 	public Boolean getActive() {
-		return this.active;
+		return active;
+	}
+	
+	public Boolean isActive() {
+		return active;
 	}
 	
 	public void setActive(Boolean active) {
@@ -185,7 +211,11 @@ public class TediConfigurationController implements IAdminConstants, Serializabl
 	}
 	
 	public Boolean getSnapshotActive() {
-		return this.snapshotActive;
+		return snapshotActive;
+	}
+	
+	public Boolean isSnapshotActive() {
+		return snapshotActive;
 	}
 	
 	public void setSnapshotActive(Boolean snapshotActive) {
@@ -247,7 +277,8 @@ public class TediConfigurationController implements IAdminConstants, Serializabl
 		AON.deleteApplicationParameter(domain.getName(), domain.getId(), "", 
 				f -> f.getDomainProperty().eq(domain.getId())
 				.and(f.getNameProperty().eq(AppParam.TEDI_SNAPSHOT_EMAIL.getValue())));
-		AON.insertApplicationParameter(domain.getName(), domain.getId(), "", apEmail);		
+		AON.insertApplicationParameter(domain.getName(), domain.getId(), "", apEmail);	
+	
 		setSnapshotStatus(CONNECTED + " - " + apEmail.getValue());
 	}
 
@@ -261,10 +292,44 @@ public class TediConfigurationController implements IAdminConstants, Serializabl
 			AON.deleteDataResponseDetail(domain.getName(), domain.getId(), "", f -> f.getDataResponseProperty().eq(dr.getId()));
 			AON.deleteDataResponse(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(dr.getId()));
 		}
+		
 		setSnapshotStatus(DISCONNECTED);
+		setSnapshotActive(false);
 		setSnapshotToken(null);
 		setSnapshotPassword("");
 		onInit( event );
+	}
+	
+	public void onChangeTediCenterStatus(ActionEvent event) {
+		if (isActive()) {
+			setShowTediCenterWindow(true);
+		}
+		else{
+			setActive(!DISCONNECTED.equals(snapshotStatus));
+			//Borrar datos - Desconectar!!
+		}	
+	}
+	
+	public void onChangeTediCenterSnapshotStatus(ActionEvent event) {
+		if (isSnapshotActive()) {
+			setShowTediCenterSnapshotWindow(true);
+		}
+		else{
+			setSnapshotActive(!DISCONNECTED.equals(snapshotStatus));
+			//Borrar datos - Desconectar!!
+		}	
+	}
+	
+	public void onClose(ActionEvent event){
+		System.out.println(status);
+		setActive(!DISCONNECTED.equals(status));
+		setShowTediCenterWindow(false);
+	}
+
+	public void onSnapshotClose(ActionEvent event){
+		System.out.println(snapshotStatus);
+		setSnapshotActive(!DISCONNECTED.equals(snapshotStatus));
+		setShowTediCenterSnapshotWindow(false);
 	}
 	
 }

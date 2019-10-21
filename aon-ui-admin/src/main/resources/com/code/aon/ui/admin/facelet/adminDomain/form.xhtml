@@ -318,31 +318,49 @@
 						</aon:panelGroup>
 					</aon:if>
 
-					<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
-						<aon:if test="#{conexflow.showConexflow}" >
-							<aon:outputLabel for="Domain_externalApplications"
-								value="#{bundle.aon_external_applications}" />
-							<aon:div id="Domain_externalApplications">
-								<aon:selectBooleanCheckbox id="ExternalApplication_ConexFlow"
-									value="#{conexflow.conexFlow}" reRender="aonContent"
-									onclick="this.blur();">
-									<a4j:support event="onchange" reRender="Domain_externalApplications,showConexFlowWindow"
-										actionListener="#{conexflow.onChangeConexFlowStatus}"
-										ajaxSingle="true" />
-								</aon:selectBooleanCheckbox>
-								<aon:outputLabel for="ExternalApplication_ConexFlow"
-									value="#{bundle.aon_external_conexFlow}" />	
-								<aon:commandLink id="conexFlow-link" immediate="true"
-									value="&#160;" title="#{bundle.aon_edit}"
-									styleClass="aon-icon-edit-add-simple" 
-									style="margin-left: 5px; padding-right: 12px;"
-									rendered="#{conexflow.conexFlow}"
-									actionListener="#{conexflow.onChangeConexFlowStatus}"
-									reRender="showConexFlowWindow" />
-							</aon:div>
-						</aon:if>	
-					</aon:if>
-					
+
+					<aon:outputLabel for="Domain_externalApplications"
+						value="#{bundle.aon_external_applications}" />
+					<aon:div id="Domain_externalApplications">
+						
+						<!-- TEDI CENTER -->
+						<aon:selectBooleanCheckbox id="ExternalApplication_TediCenter"
+							value="#{tediConfiguration.active}" disabled="#{tediConfiguration.active}" 
+							reRender="aonContent" onclick="this.blur();">
+							<a4j:support event="onchange" reRender="Domain_externalApplications,showTediCenterWindow"
+								actionListener="#{tediConfiguration.onChangeTediCenterStatus}"
+								ajaxSingle="true" />
+						</aon:selectBooleanCheckbox>
+						<aon:outputLabel for="ExternalApplication_TediCenter"
+							value="#{bundle.aon_external_tediCenter}" />		
+						<aon:commandLink id="tediCenter-link" immediate="true"
+							value="&#160;" title="#{bundle.aon_edit}"
+							styleClass="aon-icon-edit-add-simple" 
+							style="margin-left: 5px; padding-right: 12px;"
+							rendered="#{tediConfiguration.active}"
+							actionListener="#{tediConfiguration.onChangeTediCenterStatus}"
+							reRender="showTediCenterWindow" />
+						
+						<!-- TEDI CENTER SNAPSHOT-->
+						<aon:if test="#{domainSwitcher.betaUser}">
+							<aon:selectBooleanCheckbox id="ExternalApplication_TediCenterSnapshot"
+								value="#{tediConfiguration.snapshotActive}" disabled="#{tediConfiguration.snapshotActive}" 
+								reRender="aonContent" onclick="this.blur();">
+								<a4j:support event="onchange" reRender="Domain_externalApplications,showTediCenterSnapshotWindow"
+									actionListener="#{tediConfiguration.onChangeTediCenterSnapshotStatus}"
+									ajaxSingle="true" />
+							</aon:selectBooleanCheckbox>
+							<aon:outputLabel for="ExternalApplication_TediCenterSnapshot"
+								value="#{bundle.aon_external_tediCenterSnapshot}" />		
+							<aon:commandLink id="tediCenterSnapshot-link" immediate="true"
+								value="&#160;" title="#{bundle.aon_edit}"
+								styleClass="aon-icon-edit-add-simple" 
+								style="margin-left: 5px; padding-right: 12px;"
+								rendered="#{tediConfiguration.snapshotActive}"
+								actionListener="#{tediConfiguration.onChangeTediCenterSnapshotStatus}"
+								reRender="showTediCenterSnapshotWindow" />
+						</aon:if>					
+					</aon:div>			
 				</aon:panelGrid>								
 
 				<aon:if test="#{!aonRole.sysAdmin}" >
@@ -365,8 +383,13 @@
 		<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
 			<ui:param name="auditableController" value="#{adminDomain}" />
 		</ui:include>		
+		
 		<ui:include src="/com/code/aon/ui/admin/facelet/adminDomain/conexflow.xhtml">
 			<ui:param name="controller" value="#{conexflow}" />
+		</ui:include>
+		
+		<ui:include src="/com/code/aon/ui/admin/facelet/adminDomain/tedicenter.xhtml">
+			<ui:param name="controller" value="#{tediConfiguration}" />
 		</ui:include>
 	</ui:define>
 </ui:composition>

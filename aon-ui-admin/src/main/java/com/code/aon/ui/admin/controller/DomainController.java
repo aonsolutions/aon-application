@@ -188,6 +188,8 @@ public class DomainController extends BasicController {
 				this.currentDomainInfo.setAutoUpdate(true);
 				saveHistory(this.currentDomainInfo, getCompany());
 			}
+			TediConfigurationController tedi = (TediConfigurationController) AonUtil.getRegisteredBean("tediConfiguration");
+			tedi.onInit(event);
 		} catch (ManagerBeanException e) {
 			LOGGER.error( e.getMessage(), e );
 		}				
