@@ -27,6 +27,7 @@ import org.jooq.tools.json.JSONArray;
 import org.jooq.tools.json.JSONObject;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Payment.Type;
@@ -180,6 +181,9 @@ public class JooqCRA {
 		
 		java.util.Date startDate = new java.util.Date(_startDate);
 		java.util.Date endDate = new java.util.Date(_endDate);
+		
+		//TODO: fix date new dates when payroll emit
+		DateUtils.addDays2Date(endDate, 1);
 		
 		Date startDateSQL = new Date(startDate.getTime());
 		Date endDateSQL = new Date(endDate.getTime());
@@ -353,6 +357,10 @@ public class JooqCRA {
 		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		// 											NOMINA ATRASOS
 		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		
+		//TODO: fix date new dates when payroll emit, needed?
+//		DateUtils.deleteDays2Date(endDate, 1);
+//		endDateSQL = new Date(endDate.getTime());
 		
 		//GET Atrasos SALARY from DB (employees)
 		salaryRecords = dslContext.select().from(SALARY)
