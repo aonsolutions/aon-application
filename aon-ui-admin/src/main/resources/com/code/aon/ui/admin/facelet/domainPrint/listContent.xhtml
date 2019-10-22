@@ -160,17 +160,7 @@
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.admin_modules}" />
 		</f:facet>							
-		<aon:outputText value="#{controller.currentDomainModuleList}" />
-		<aon:div styleClass="aon-margin-left" layout="inline"
-			rendered="#{controller.currentTirant}">
-			<h:graphicImage title="#{bundle.aon_external_tirant}"
-				url="#{aonResource.resolve['/images/icon-tirant-asesores.png']}" />
-		</aon:div>
-		<aon:div styleClass="aon-margin-left" layout="inline"
-			rendered="#{controller.currentDehOnline}">				
-			<h:graphicImage title="#{bundle.aon_external_dehOnline}"
-				url="#{aonResource.resolve['/images/icon-deh-online.png']}" />						
-		</aon:div>																								
+		<aon:outputText value="#{controller.currentDomainModuleList}" />																					
 	</aon:column>
 
 	<aon:column styleClass="aon-editDataTable-numberColumn">

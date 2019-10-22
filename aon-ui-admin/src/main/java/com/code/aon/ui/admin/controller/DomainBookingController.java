@@ -32,7 +32,6 @@ import com.code.aon.config.Domain;
 import com.code.aon.ui.admin.BookingInfo;
 import com.code.aon.ui.admin.DomainModuleInfo;
 import com.code.aon.ui.admin.PortalInfo;
-import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.config.DomainBookingData;
 import com.code.aon.ui.config.DomainData;
@@ -50,8 +49,6 @@ public class DomainBookingController extends DataScrollerState {
 	private int totalOneUsers;
 	private int totalAiOUsers;
 	private int totalPortals;
-	private int totalDEHOnlines;
-	private int totalTirants;
 	
 	private DataScrollerState parentState;
 	
@@ -129,17 +126,7 @@ public class DomainBookingController extends DataScrollerState {
 			int value = NumberUtils.toInt(portalValue);
 			data.setPortal(PortalInfo.isPortalActive(value));
 		}
-		String externalApplicationsValue = getAppParamenter(ctx, data, AppParam.AON_EXTERNAL_APPLICATIONS);
-		if (!StringUtils.isEmpty(externalApplicationsValue)) {
-			int value = NumberUtils.toInt(externalApplicationsValue);
-			data.setTirant( (value & ICommonConstants.TIRANT_EXTERNAL_APP) != 0 );
-			data.setDehOnline( (value & ICommonConstants.DEH_ONLINE_EXTERNAL_APP) != 0 );
-			String dehUser = getAppParamenter(ctx, data, AppParam.AON_DEH_ONLINE_USER);
-			if (!StringUtils.isEmpty(dehUser)) {
-				String dehPassword = getAppParamenter(ctx, data, AppParam.AON_DEH_ONLINE_PASSWORD);
-				data.setDehOnlineConfigured(!StringUtils.isEmpty(dehPassword));
-			}
-		}
+
 		int activeUsers = ctx
 				.getDslContext()
 				.selectCount()
@@ -180,10 +167,8 @@ public class DomainBookingController extends DataScrollerState {
 		this.totalAiOUsers = 0;
 		this.totalOneUsers = 0;
 		this.totalPortals = 0;
-		this.totalDEHOnlines = 0;
-		this.totalTirants = 0;
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-		AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId());
+		AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 		Condition condition = ds.getDomainCondition(domain.getId(), isShowInactive(), isShowExpired());
 		domains = getDomainBookingDatas(ctx, condition);
 		for (DomainBookingData data : domains) {
@@ -197,12 +182,6 @@ public class DomainBookingController extends DataScrollerState {
 			}
 			if ( data.isPortal() ) {
 				this.totalPortals++;
-			}
-			if ( data.isTirant() ) {
-				this.totalTirants++;
-			}
-			if ( data.isDehOnline() ) {
-				this.totalDEHOnlines++;
 			}
 		}
 		ctx.finalize();
@@ -220,15 +199,7 @@ public class DomainBookingController extends DataScrollerState {
 	public int getTotalPortals() {
 		return totalPortals;
 	}
-
-	public int getTotalDEHOnlines() {
-		return totalDEHOnlines;
-	}
-
-	public int getTotalTirants() {
-		return totalTirants;
-	}
-
+	
 	public Domain getDomain() {
 		return domain;
 	}

@@ -106,22 +106,6 @@ public class DomainPrintController extends BasicController {
 		return null;				
 	}
 	
-	public boolean isCurrentTirant() throws ManagerBeanException {
-		DomainPrintInfo info = getCurrentInfo();
-		if ( info != null ) {
-			return info.isTirant();
-		}
-		return false;
-	}
-
-	public boolean isCurrentDehOnline() throws ManagerBeanException {
-		DomainPrintInfo info = getCurrentInfo();
-		if ( info != null ) {
-			return info.isDehOnline();
-		}
-		return false;
-	}	
-	
 	public int getCurrentDomainUsedSpaceInMB() throws ManagerBeanException {
 		DomainPrintInfo info = getCurrentInfo();
 		if ( info != null ) {

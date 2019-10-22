@@ -249,8 +249,6 @@ public interface ICommonMessages {
 	String ADMIN_ADVANCED_MODE = "admin_advanced_mode";
 	String ADMIN_GLOBAL_PORTAL = "admin_global_portal";
 	String ADMIN_GLOBAL_PORTAL_ACCESS = "admin_global_portal_access";
-	String EXTERNAL_TIRANT = "aon_external_tirant";
-	String EXTERNAL_DEH_ONLINE = "aon_external_dehOnline";
 	String REMOVE_DOMAIN_ERROR = "admin_remove_domain_error";
 	String AON_AIO = "admin_domain_myAON";
 	String AON_ONE = "admin_domain_aonSMB";

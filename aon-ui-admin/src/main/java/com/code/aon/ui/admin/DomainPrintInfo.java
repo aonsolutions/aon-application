@@ -57,11 +57,7 @@ public class DomainPrintInfo implements Serializable {
 	private String modifications;
 	
 	private boolean domainOne;
-	
-	private boolean tirant;
-	
-	private boolean dehOnline;
-	
+		
 	private int domainUsedSpaceInMB;
 	
 	private String domainURL;
@@ -82,8 +78,6 @@ public class DomainPrintInfo implements Serializable {
 		this.payer = calculatePayer();
 		this.modifications = calculateModifications();
 		this.domainOne = calculateDomainOne();
-		this.tirant = calculateTirant();
-		this.dehOnline = calculateDehOnline();
 		this.domainURL = calculateDomainURL();
 		this.domainUsedSpaceInMB = calculateDomainUsedSpaceInMB();
 	}
@@ -153,21 +147,6 @@ public class DomainPrintInfo implements Serializable {
 			Integer appId = AonUtil.getAuthPrincipal().getApplicationId();
 			return AuditManager.hasModule(domain.getId(), appId, Module.AON_ONE);
 		}
-		return false;
-	}
-	
-	private boolean calculateTirant() throws ManagerBeanException {
-		Integer value = AppParamUtil.getValueAsInteger(AppParam.AON_EXTERNAL_APPLICATIONS, domain.getId());
-		value = (value != null) ? value : 0;
-		return (value & ICommonConstants.TIRANT_EXTERNAL_APP) != 0;
-	}
-
-	private boolean calculateDehOnline() throws ManagerBeanException {
-		if (! domain.isDomainManagement() ) {
-			Integer value = AppParamUtil.getValueAsInteger(AppParam.AON_EXTERNAL_APPLICATIONS, domain.getId());
-			value = (value != null) ? value : 0;
-			return (value & ICommonConstants.DEH_ONLINE_EXTERNAL_APP) != 0;
-		}		
 		return false;
 	}
 	
@@ -260,14 +239,6 @@ public class DomainPrintInfo implements Serializable {
 
 	public boolean isDomainOne() {
 		return domainOne;
-	}
-
-	public boolean isTirant() {
-		return tirant;
-	}
-
-	public boolean isDehOnline() {
-		return dehOnline;
 	}
 
 	public int getDomainUsedSpaceInMB() {

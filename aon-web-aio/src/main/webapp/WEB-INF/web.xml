@@ -82,16 +82,6 @@
 	</servlet-mapping>
 
 
-	<!-- ACCESO TIRANT ASESORES -->
-	<servlet>
-		<servlet-name>TirantConnectionServlet</servlet-name>
-		<servlet-class>com.code.aon.aio.servlet.TirantConnectionServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>TirantConnectionServlet</servlet-name>
-		<url-pattern>/TirantConnectionServlet/*</url-pattern>
-	</servlet-mapping>
-
 	<!-- RSS Servlet -->
 	<servlet>
 		<servlet-name>RSSServlet</servlet-name>

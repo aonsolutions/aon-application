@@ -27,7 +27,6 @@ import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.ui.admin.controller.DomainController;
 import com.code.aon.ui.audit.AuditManager;
-import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.registry.controller.DocumentManager;
 import com.code.aon.ui.util.AonUtil;
@@ -52,8 +51,6 @@ public class BookingInfo implements Serializable {
 	private List<DomainModuleInfo> displayModules;
 	
 	private DomainModuleInfo documental;
-	
-	private int externalApplications;
 	
 	private Domain payerDomain;
 	
@@ -81,7 +78,6 @@ public class BookingInfo implements Serializable {
 	}
 
 	public boolean init() throws ManagerBeanException {
-		initExternalApplications();
 		initPayerDomain();
 		this.aioInfo = DomainApplicationInfo.getApplicationInfos(getDomain(), AON_AIO_APPLICATION);
 		this.bookingModules = calculateBookingModules();
@@ -91,15 +87,7 @@ public class BookingInfo implements Serializable {
 		this.aioInfo.sortApplicationModules(this.displayModules);
 		return retValue;
 	}
-	
-	private void initExternalApplications() {
-		externalApplications = AppParamUtil.getValueAsInt(AppParam.AON_EXTERNAL_APPLICATIONS, getDomain().getId());
-		boolean tirant = isTirant();
-		boolean dehOnline = !getDomain().isDomainManagement() && isDehOnline();
-		externalApplications = 0;
-		setTirant(tirant);
-		setDehOnline(dehOnline);
-	}	
+
 	
 	private void initPayerDomain() throws ManagerBeanException {
 		this.payerDomain = null;
@@ -138,7 +126,6 @@ public class BookingInfo implements Serializable {
 		if (aioInfo.getModuleInfo(Module.FINANCE_PORTAL).isChecked() && !aioInfo.getModuleInfo(Module.PAYROLL_PORTAL).isChecked()) {
 			aioInfo.getModuleInfo(Module.PAYROLL_PORTAL).setChecked(true);
 		}
-		saveExternalApplications();
 		savePayerDomain();
 		if ( isAonOne() ) {
 			updateAonOneModules();
@@ -160,18 +147,6 @@ public class BookingInfo implements Serializable {
 			AppParamUtil.insertParameter(AppParam.AON_DOMAIN_PAYER, id );			
 		} else {
 			AppParamUtil.removeParameter(AppParam.AON_DOMAIN_PAYER);
-		}
-	}	
-		
-	private void saveExternalApplications() {
-		if ( externalApplications != 0 ) {
-			AppParamUtil.insertParameter(AppParam.AON_EXTERNAL_APPLICATIONS, externalApplications);	
-		} else {
-			AppParamUtil.removeParameter(AppParam.AON_EXTERNAL_APPLICATIONS);
-		}
-		if (! isDehOnline() ) {
-			AppParamUtil.removeParameter(AppParam.AON_DEH_ONLINE_USER);
-			AppParamUtil.removeParameter(AppParam.AON_DEH_ONLINE_PASSWORD);			
 		}
 	}		
 	
@@ -371,34 +346,6 @@ public class BookingInfo implements Serializable {
 		this.aioInfo.sortApplicationModules(list);
 		return list;
 	}
-	
-	private boolean getExternalApplicationsValue(int bitwise) {
-		return (externalApplications & bitwise) != 0;
-	}
-
-	private void setExternalApplicationsValue(int bitwise, boolean value) {
-		if ( value ) {
-			this.externalApplications |= bitwise;	
-		} else {
-			this.externalApplications &= (~bitwise);
-		}
-	}
-	
-	public boolean isDehOnline() {
-		return getExternalApplicationsValue(ICommonConstants.DEH_ONLINE_EXTERNAL_APP);
-	}
-
-	public void setDehOnline(boolean value) {
-		setExternalApplicationsValue(ICommonConstants.DEH_ONLINE_EXTERNAL_APP, value);
-	}
-
-	public boolean isTirant() {
-		return getExternalApplicationsValue(ICommonConstants.TIRANT_EXTERNAL_APP);
-	}
-
-	public void setTirant(boolean value) {
-		setExternalApplicationsValue(ICommonConstants.TIRANT_EXTERNAL_APP, value);
-	}		
 
 	public Domain getPayerDomain() {
 		return payerDomain;

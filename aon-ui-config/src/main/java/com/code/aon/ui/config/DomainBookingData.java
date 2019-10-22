@@ -19,12 +19,6 @@ public class DomainBookingData extends DomainData {
 	
 	private boolean portal;
 	
-	private boolean dehOnline;
-	
-	private boolean tirant;
-	
-	private boolean dehOnlineConfigured;
-	
 	private DomainType type;
 	
 	private long maxTotalDocumentSize;
@@ -73,30 +67,6 @@ public class DomainBookingData extends DomainData {
 
 	public void setPortal(boolean portal) {
 		this.portal = portal;
-	}
-
-	public boolean isTirant() {
-		return tirant;
-	}
-
-	public void setTirant(boolean tirant) {
-		this.tirant = tirant;
-	}
-
-	public boolean isDehOnline() {
-		return dehOnline;
-	}
-
-	public void setDehOnline(boolean dehOnline) {
-		this.dehOnline = dehOnline;
-	}
-	
-	public boolean isDehOnlineConfigured() {
-		return dehOnlineConfigured;
-	}
-
-	public void setDehOnlineConfigured(boolean dehOnlineConfigured) {
-		this.dehOnlineConfigured = dehOnlineConfigured;
 	}
 
 	public int getMaxDefinedUsers() {

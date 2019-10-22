@@ -88,12 +88,6 @@
 
 		</aon:div>
 	</aon:form>
-	<aon:if test="#{desktop.state.showDehOnline}">	
-		<form id="dehonlineForm" action="https://panel.dehonline.es/login" method="post" target="_blank">
-			<input type="hidden" name="identity" value="#{dehOnline.storedUser}"/>
-			<input type="hidden" name="password" value="#{dehOnline.storedPassword}"/>
-		</form>
-	</aon:if>
 	
 </ui:composition>
 

@@ -30,7 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
-import com.code.aon.aio.servlet.TirantConnectionServlet;
 import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -53,8 +52,6 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import net.aonsolutions.core.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.PortalInfo;
-import com.code.aon.ui.admin.controller.DEHOnlineController;
-import com.code.aon.ui.admin.controller.IAdminConstants;
 import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.BasicOption;
@@ -105,9 +102,7 @@ public class DesktopState implements Serializable {
     private PortalInfo portalInfo;
     private boolean userWithPortalView;
     private boolean showFavorites;
-    private boolean showTirant;
-    private boolean showDehOnline;
-	private boolean portalUser;
+    private boolean portalUser;
 	private boolean adminRole;
     
     public DesktopState() {
@@ -126,7 +121,6 @@ public class DesktopState implements Serializable {
 		initPortal(user, ds);
 		initUser(user);
 		initSupport();
-		initExternalApplications(user, ds);
 		checkSerialization();
 		updateLastAccess(user, ds);
 	}
@@ -618,66 +612,12 @@ public class DesktopState implements Serializable {
 			return true;
 		}
 		return false;
-	}
-
-	private void initExternalApplications( User user, DomainSwitcher ds ) {
-		int domainValue = AppParamUtil.getValueAsInt(AppParam.AON_EXTERNAL_APPLICATIONS);
-		if (! ds.isDomainManagementAvailable() ) {
-			this.showDehOnline = (domainValue & ICommonConstants.DEH_ONLINE_EXTERNAL_APP) != 0;
-		}
-		this.showTirant = (domainValue & ICommonConstants.TIRANT_EXTERNAL_APP) != 0;
-		if ( ! this.showTirant && ds.isParentDomainUserInChildDomain() ) {
-			int userValue = AppParamUtil.getValueAsInt(AppParam.AON_EXTERNAL_APPLICATIONS, user.getDomain());
-			this.showTirant = (userValue & ICommonConstants.TIRANT_EXTERNAL_APP) != 0;
-		}
 	}	
-	
+
 	public boolean isShowExternalApplications() {
-		return !this.portalUser && (isShowDehOnline() || isShowServiconvenios() || isShowTirant());
-	}
-
-	public boolean isShowDehOnline() {
-		if ( this.showDehOnline ) {
-			DEHOnlineController controller = (DEHOnlineController) AonUtil.getRegisteredBean(IAdminConstants.DEH_ONLINE_CONTROLLER_NAME);
-			return controller.isConfigured(); 
-		}
-		return false;
+		return !this.portalUser;
 	}
 	
-	public boolean isShowServiconvenios() {
-		return isPayrollEnabled();
-	}
-
-	public boolean isShowTirant() {
-		return this.showTirant || isFiscalEnabled() || isPayrollEnabled();
-	}
-	
-	private int getTirantType() {
-		if ( this.showTirant) {
-			return TirantConnectionServlet.TIRANT_FULL;
-		} else if ( isFiscalEnabled() && isPayrollEnabled() ) {
-			return TirantConnectionServlet.TIRANT_FISCAL_PAYROLL;
-		} else if ( isFiscalEnabled()  ) {
-			return TirantConnectionServlet.TIRANT_FISCAL;
-		} else if ( isPayrollEnabled() ) {
-			return TirantConnectionServlet.TIRANT_PAYROLL;
-		}
-		return 0;
-	}
-	
-	public String getTirantExternalUrl() {
-		String url = AonUtil.getMessage("aon_external_tirant_url");
-		String contextPath = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath(); 
-		if (StringUtils.isNotBlank( contextPath)  ) {
-			url = contextPath + url;
-		}
-		int type = getTirantType();
-		if ( type != 0 ) {
-			url += type;
-		}
-		return url;		
-	}
-
 	public boolean isShowFavorites() {
 		return showFavorites;
 	}
@@ -689,7 +629,7 @@ public class DesktopState implements Serializable {
 	private void updateLastAccess( User user, DomainSwitcher ds ) {
 		boolean adminDomainUser = DomainSwitcher.getDomainType(user.getDomain()) == DomainType.ADMIN;
 		if ( this.adminDomain || !adminDomainUser ) {
-			AONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), ds.getDomainId());
+			AONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), ds.getDomainId(), user.getLogin());
 			Timestamp now = new java.sql.Timestamp(new Date().getTime());
 			try {
 				ctx.getDslContext().update(DOMAIN)

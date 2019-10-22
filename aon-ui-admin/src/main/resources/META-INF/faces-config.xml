@@ -533,15 +533,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>			
 
-	<!-- ************* DEH ONLINE ***************** -->
-	<managed-bean>
-		<managed-bean-name>dehOnline</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.admin.controller.DEHOnlineController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>	
-
 	<!-- =================== Main ================= -->
 	<navigation-rule>
 		<navigation-case>

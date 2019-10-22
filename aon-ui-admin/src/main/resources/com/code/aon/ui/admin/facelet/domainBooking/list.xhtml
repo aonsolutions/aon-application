@@ -113,18 +113,7 @@
 										</f:facet>							
 										<aon:outputText value="#{domainBooking.maxTotalDocumentSize}" />
 									</aon:column>
-																
-									<aon:column styleClass="aon-editDataTable-iconColumn aon-text-center">
-										<f:facet name="header">
-											<aon:outputText value="Tirant" />
-										</f:facet>						
-										<aon:outputText rendered="#{!domainBooking.bookingInfo.tirant}" value="-" />
-										<aon:outputText value="&#160;"
-											rendered="#{domainBooking.bookingInfo.tirant}"
-											styleClass="aon-icon-check-black"
-											style="padding-left:12px" />	 
-									</aon:column>
-								
+
 								</ui:define>
 							</ui:decorate>						
 						</aon:div>				
@@ -227,44 +216,6 @@
 								</aon:div>
 							</f:facet>									
 						</aon:column>
-						<aon:column styleClass="aon-editDataTable-iconColumn aon-text-center">
-							<f:facet name="header">
-								<aon:outputText value="DEH" />
-							</f:facet>						
-							<aon:outputText rendered="#{!to.dehOnline}" value="-" />
-							<aon:outputText value="&#160;"
-								rendered="#{to.dehOnline}"
-								styleClass="aon-icon-check-black"
-								style="padding-left:12px" />	
-							<aon:div rendered="#{to.dehOnline and !to.dehOnlineConfigured}"
-								styleClass="aon-margin-left aon-margin-right" layout="inline" >
-								<aon:outputText value="&#160;" styleClass="aon-icon-warning"
-									style="padding-left:12px" />
-								<rich:toolTip value="#{bundle.admin_domain_dehOnline_warning}" />
-							</aon:div>												
-							<f:facet name="footer">
-								<aon:div style="float:right">
-									<aon:outputText	styleClass="aon-italic"
-										value="#{controller.totalDEHOnlines}" />
-								</aon:div>
-							</f:facet>
-						</aon:column>
-						<aon:column styleClass="aon-editDataTable-iconColumn aon-text-center">
-							<f:facet name="header">
-								<aon:outputText value="Tirant" />
-							</f:facet>						
-							<aon:outputText rendered="#{!to.tirant}" value="-" />
-							<aon:outputText value="&#160;"
-								rendered="#{to.tirant}" styleClass="aon-icon-check-black"
-								style="padding-left:12px" />	 
-							<f:facet name="footer">
-								<aon:div style="float:right">
-									<aon:outputText	styleClass="aon-italic"
-										value="#{controller.totalTirants}" />
-								</aon:div>
-							</f:facet>
-						</aon:column>
-
 					</ui:define>
 				</ui:decorate>
 			</aon:div>

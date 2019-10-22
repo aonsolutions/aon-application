@@ -9,43 +9,18 @@
 
 	<aon:if test="#{domainSwitcher.parentDomain and desktop.state.showExternalApplications}">
 		<aon:div styleClass="aon-margin-top">	
-			<!-- TIRANT ASESORES 				  
-			<aon:if test="#{desktop.state.showTirant}">
-				<aon:div styleClass="aon-text-center aon-margin-bottom aon-margin-top aon-support">
-					<h:outputLink id="tirantWeb" target="_blank" value="#{desktop.state.tirantExternalUrl}" >
-						<h:graphicImage title="#{bundle.aon_external_tirant}"
-							url="#{aonResource.resolve['/images/logo-tirant-asesores.png']}" />
+			
+			<!-- TEDI CENTER -->
+			<!-- <aon:div styleClass="aon-portlet aon-margin-bottom">
+				<aon:div >								
+					<h:outputLink id="tediWeb" target="_blank"
+						value="https://tedi.center" >
+						<h:graphicImage style="max-width: 201px;"
+							url="https://tedi-snapshot.firebaseapp.com/assets/logo.png" />
 					</h:outputLink>
 				</aon:div>
-			</aon:if>							
-			-->
-			
-			<!-- SERVICONVENIOS
-			<aon:if test="#{desktop.state.showServiconvenios}">
-				<aon:div styleClass="aon-text-center aon-margin-bottom aon-support">
-					<aon:commandLink id="serviconvenios" styleClass="none" 
-						action="gwt_documents"
-						actionListener="#{serviconvenios.onServiconvenios}"
-						>		
-						
-						 
-						<h:graphicImage title="#{bundle.aon_external_serviconvenios}"
-							url="#{aonResource.resolve['/images/logo-serviconvenios.png']}" />
-					</aon:commandLink>
-				</aon:div>
-			</aon:if>
-			-->
-			
-			<!-- DEH Online 
-			<aon:if test="#{desktop.state.showDehOnline}">							
-				<aon:div styleClass="aon-text-center aon-margin-bottom aon-support">
-					<h:graphicImage title="#{bundle.aon_external_dehOnline}"
-						url="#{aonResource.resolve['/images/logo-deh-online.png']}"
-						style="cursor: pointer;" 
-						onclick="document.getElementById('dehonlineForm').submit()"/>
-				</aon:div>
-			</aon:if>
-			-->
+			</aon:div> -->
+	
 		</aon:div>		
 	</aon:if>
 					

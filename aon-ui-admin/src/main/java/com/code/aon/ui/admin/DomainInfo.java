@@ -56,10 +56,6 @@ public class DomainInfo implements Serializable {
 	
 	private static final String USER = "user";
 	
-	private static final String TIRANT = "tirant";
-	
-	private static final String DEH_ONLINE = "dehOnline";
-	
 	private static final String NAME = "name";
 	
 	private static final String PARENT = "parent";
@@ -93,10 +89,6 @@ public class DomainInfo implements Serializable {
 	private List<Module> displayModules;
 	
 	private Date date;
-	
-	private boolean tirant;
-	
-	private boolean dehOnline;
 	
 	private boolean autoUpdate;
 	
@@ -161,14 +153,7 @@ public class DomainInfo implements Serializable {
 				this.displayModules.add(value.equalsIgnoreCase(COMMERCIAL) ? Module.CRM : Module.valueOf(value));
 			}
 		}
-		String tirantValue = properties.getProperty(TIRANT);
-		if ( BooleanUtils.toBoolean(tirantValue) ) {
-			this.tirant = true;
-		}		
-		String dehOnlineValue = properties.getProperty(DEH_ONLINE);
-		if ( BooleanUtils.toBoolean(dehOnlineValue) ) {
-			this.dehOnline = true;
-		}		
+
 		String autoUpdateValue = properties.getProperty(AUTO_UPDATE);
 		if ( BooleanUtils.toBoolean(autoUpdateValue) ) {
 			this.autoUpdate = true;
@@ -275,22 +260,6 @@ public class DomainInfo implements Serializable {
 		this.user = user;
 	}
 	
-	public boolean isTirant() {
-		return tirant;
-	}
-
-	public void setTirant(boolean tirant) {
-		this.tirant = tirant;
-	}
-
-	public boolean isDehOnline() {
-		return dehOnline;
-	}
-
-	public void setDehOnline(boolean dehOnline) {
-		this.dehOnline = dehOnline;
-	}
-	
 	public String getName() {
 		return name;
 	}
@@ -330,10 +299,6 @@ public class DomainInfo implements Serializable {
 	public void setPayer(String payer) {
 		this.payer = payer;
 	}
-
-	private void diff( StringBuffer sb, String message, boolean newValue ) {
-		diff( sb, message, newValue ? "+" : "-" );
-	}	
 
 	private void diff( StringBuffer sb, String message, Object oldValue, Object newValue ) {
 		diff( sb, message, oldValue + " -> "+ newValue );
@@ -384,12 +349,6 @@ public class DomainInfo implements Serializable {
 		if (! Arrays.equals(getModuleArray(), di.getModuleArray()) ) {
 			diffList( sb, ICommonMessages.DOMAIN_MODULES, getBookingModules(), di.getBookingModules() );
 		}
-		if ( isTirant() != di.isTirant() ) {
-			diff( sb, ICommonMessages.EXTERNAL_TIRANT, di.isTirant() );
-		}
-		if ( isDehOnline() != di.isDehOnline() ) {
-			diff( sb, ICommonMessages.EXTERNAL_DEH_ONLINE, di.isDehOnline() );
-		}
 		if (! StringUtils.equals(getPayer(), di.getPayer()) ) {
 			diff( sb, ICommonMessages.PAYER_DOMAIN, (di.getPayer()!=null?di.getPayer():"-") );
 		}
@@ -427,12 +386,6 @@ public class DomainInfo implements Serializable {
 		if (! displayModules.isEmpty() ) {
 			String modulesValue = StringUtils.join(displayModules, " ");
 			properties.setProperty(DISPLAY_MODULES, modulesValue);			
-		}
-		if ( tirant ) {
-			properties.setProperty(TIRANT, Boolean.TRUE.toString());
-		}
-		if ( dehOnline ) {
-			properties.setProperty(DEH_ONLINE, Boolean.TRUE.toString());
 		}
 		if ( autoUpdate ) {
 			properties.setProperty(AUTO_UPDATE, Boolean.TRUE.toString());
@@ -488,8 +441,6 @@ public class DomainInfo implements Serializable {
 		di.setDomainManagement(domain.isDomainManagement());
 		di.setBookingModules(bookingInfo.getBookingModules());
 		di.setDisplayModules(bookingInfo.getDisplayModules());
-		di.setTirant(bookingInfo.isTirant());
-		di.setDehOnline(bookingInfo.isDehOnline());
 		return di;
 	}
 	

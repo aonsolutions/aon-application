@@ -9,55 +9,18 @@
 
 	<aon:if test="#{domainSwitcher.childDomain and desktop.state.showExternalApplications}">
 		<aon:div styleClass="aon-margin-top">
-			<!-- TIRANT ASESORES 
-			<aon:if test="#{desktop.state.showTirant}">
-				<aon:div styleClass="aon-portlet aon-margin-bottom">
-					<aon:div styleClass="aon-portlet-title">								
-						<h:outputLink id="tirantWeb" target="_blank"
-							value="#{desktop.state.tirantExternalUrl}" >
-							<h:graphicImage
-								url="#{aonResource.resolve['/images/icon-tirant-asesores.png']}" />
-							<aon:outputText value="#{bundle.aon_external_tirant}"
-								styleClass="aon-portlet-title-text"/>
-						</h:outputLink>
-					</aon:div>
+
+			<!-- TEDI CENTER -->
+			<!-- <aon:div styleClass="aon-portlet aon-margin-bottom">
+				<aon:div >								
+					<h:outputLink id="tediWeb" target="_blank"
+						value="https://tedi.center" >
+						<h:graphicImage style="max-width: 201px;"
+							url="https://tedi-snapshot.firebaseapp.com/assets/logo.png" />
+					</h:outputLink>
 				</aon:div>
-			</aon:if>
-			-->
-			
-			<!-- SERVICONVENIOS
-			<aon:if test="#{desktop.state.showServiconvenios}">
-				<aon:div styleClass="aon-portlet aon-margin-bottom">
-					<aon:div styleClass="aon-portlet-title">	
-						<aon:commandLink id="serviconveniosWeb" styleClass="none" 
-							action="gwt_documents"
-							actionListener="#{serviconvenios.onServiconvenios}">				
-							<h:graphicImage
-								url="#{aonResource.resolve['/images/icon-serviconvenios.png']}" />
-							<aon:outputText value="#{bundle.aon_external_serviconvenios}"
-								styleClass="aon-portlet-title-text"/>
-						</aon:commandLink>
-					</aon:div>
-				</aon:div>
-			</aon:if>
-			 -->
-			 
-			<!-- DEH Online 
-			<aon:if test="#{desktop.state.showDehOnline}">
-				<aon:div styleClass="aon-portlet aon-margin-bottom">
-					<aon:div
-						style="cursor: pointer;"
-						onclick="document.getElementById('dehonlineForm').submit()" 
-						styleClass="aon-portlet-title">								
-						<h:graphicImage
-							url="#{aonResource.resolve['/images/icon-deh-online.png']}"/>
-						<aon:outputText value="#{bundle.aon_external_dehOnline}"
-							style="color:black"
-							styleClass="aon-portlet-title-text"/>
-					</aon:div>
-				</aon:div>
-			</aon:if>
-			-->
+			</aon:div> -->
+
 		</aon:div>
 	</aon:if>
 					
