@@ -216,10 +216,25 @@
 								</aon:div>
 							</f:facet>									
 						</aon:column>
+						
+						<aon:column styleClass="aon-editDataTable-iconColumn aon-text-center">
+							<f:facet name="header">
+								<aon:outputText value="Tedi Center" />
+							</f:facet>
+							<aon:outputText rendered="#{!to.tediCenter}" value="-" />
+							<aon:outputText value="&#160;"
+								rendered="#{to.tediCenter}" styleClass="aon-icon-check-black"
+								style="padding-left:12px" />	
+							<f:facet name="footer">
+								<aon:div style="float:right">
+									<aon:outputText	styleClass="aon-italic"
+										value="#{controller.totalTedis}" />
+								</aon:div>
+							</f:facet>									
+						</aon:column>
 					</ui:define>
 				</ui:decorate>
 			</aon:div>
-
 		</aon:form>
 	</ui:define>
 </ui:composition>

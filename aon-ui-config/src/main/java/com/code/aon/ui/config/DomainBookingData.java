@@ -6,6 +6,11 @@ import org.apache.commons.io.FileUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.config.enumeration.DomainType;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.DataResponse;
+import com.esferalia.aon.occam.api.model.DataResponseDetail;
+import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 
 public class DomainBookingData extends DomainData {
 	
@@ -67,6 +72,21 @@ public class DomainBookingData extends DomainData {
 
 	public void setPortal(boolean portal) {
 		this.portal = portal;
+	}
+	
+	public boolean isTediCenter() {
+		DataResponse dr = AON.getDataResponse(getName(), getId(), "", DataResponseSource.TEDI_INVOICE,
+				f -> f.getCodeProperty().eq(AppParam.TEDI_TOKEN.getValue())
+				.and(f.getDomainProperty().eq(getId())));
+		
+		if(dr != null && dr.getId() != null) {
+			AON.getDataResponseDetail(getName(), getId(), "", 
+				f -> f.getDataResponseProperty().eq(dr.getId())
+					.and(f.getDataVariableProperty().eq(AppParam.TEDI_TOKEN.getValue())))
+				.orElse(new DataResponseDetail());
+			return true; 
+		}
+		return false;
 	}
 
 	public int getMaxDefinedUsers() {

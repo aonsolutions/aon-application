@@ -49,6 +49,7 @@ public class DomainBookingController extends DataScrollerState {
 	private int totalOneUsers;
 	private int totalAiOUsers;
 	private int totalPortals;
+	private int totalTedis;
 	
 	private DataScrollerState parentState;
 	
@@ -167,6 +168,7 @@ public class DomainBookingController extends DataScrollerState {
 		this.totalAiOUsers = 0;
 		this.totalOneUsers = 0;
 		this.totalPortals = 0;
+		this.setTotalTedis(0);
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 		Condition condition = ds.getDomainCondition(domain.getId(), isShowInactive(), isShowExpired());
@@ -182,6 +184,9 @@ public class DomainBookingController extends DataScrollerState {
 			}
 			if ( data.isPortal() ) {
 				this.totalPortals++;
+			}
+			if(data.isTediCenter()) {
+				this.totalTedis++;
 			}
 		}
 		ctx.finalize();
@@ -241,6 +246,14 @@ public class DomainBookingController extends DataScrollerState {
 	
 	public boolean isShowBackButton() {
 		return ! StringUtils.isEmpty(backAction);
+	}
+
+	public int getTotalTedis() {
+		return totalTedis;
+	}
+
+	public void setTotalTedis(int totalTedis) {
+		this.totalTedis = totalTedis;
 	}	
 
 }
