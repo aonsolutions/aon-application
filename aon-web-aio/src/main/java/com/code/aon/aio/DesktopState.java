@@ -211,12 +211,12 @@ public class DesktopState implements Serializable {
 	
 	public boolean isTediCenter() {
 		TediConfigurationController tedi = (TediConfigurationController) AonUtil.getRegisteredBean("tediConfiguration");
-		return tedi.isActive();
+		return tedi.isAccepted();
 	}
 	
 	public boolean isTediCenterSnapshot() {
 		TediConfigurationController tedi = (TediConfigurationController) AonUtil.getRegisteredBean("tediConfiguration");
-		return tedi.isSnapshotActive();
+		return tedi.isSnapshotAccepted();
 	}
 
 	private boolean calculateAdminRole() {

@@ -690,15 +690,6 @@
 			<from-outcome>portalAccess_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/admin/facelet/portalAccess/form.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	
-	<!-- =================== Tedi Center ================= -->
-	
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>tediConfiguration_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/admin/facelet/tedi/form.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
+	</navigation-rule>	
 	
 </faces-config>

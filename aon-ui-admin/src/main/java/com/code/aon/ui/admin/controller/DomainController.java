@@ -147,6 +147,14 @@ public class DomainController extends BasicController {
 	
 	private IControllerListener payerDomainFilter;
 
+	@Override
+	protected void accept() {
+		TediConfigurationController tedi = (TediConfigurationController) AonUtil.getRegisteredBean("tediConfiguration");
+		tedi.save();
+		tedi.snapshotSave();
+		super.accept();
+	}
+	
 	private AdminMainController getAdmin() {
 		return (AdminMainController) AonUtil.getRegisteredBean(IAdminConstants.ADMIN_CONTROLLER_NAME);
 	}

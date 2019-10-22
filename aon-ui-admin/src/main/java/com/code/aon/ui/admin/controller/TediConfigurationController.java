@@ -28,13 +28,15 @@ public class TediConfigurationController implements IAdminConstants, Serializabl
 	
 	boolean showTediCenterWindow;
 	boolean showTediCenterSnapshotWindow;
-	
+
+	public boolean accepted;
 	public boolean active;
 	public String status = DISCONNECTED;
 	private String token;
 	public String email;
 	public String password;
 
+	public boolean snapshotAccepted;
 	public boolean snapshotActive;
 	public String snapshotStatus = DISCONNECTED;
 	private String snapshotToken;
@@ -82,6 +84,7 @@ public class TediConfigurationController implements IAdminConstants, Serializabl
 		if(hasToken()) {
 			setStatus(CONNECTED + " - " + apEmail.getValue());
 			setActive(true);
+			setAccepted(true);
 		}
 		if(apEmail.getValue() != null) {
 			setEmail(apEmail.getValue());
@@ -103,6 +106,7 @@ public class TediConfigurationController implements IAdminConstants, Serializabl
 			if(hasSnapshotToken()) {
 				setSnapshotStatus(CONNECTED + " - " + apSnapshotEmail.getValue());
 				setSnapshotActive(true);
+				setSnapshotAccepted(true);
 			}
 			if(apSnapshotEmail.getValue() != null) {
 				setSnapshotEmail(apSnapshotEmail.getValue());
@@ -111,52 +115,59 @@ public class TediConfigurationController implements IAdminConstants, Serializabl
 	}
 	
 	public void update(ActionEvent event) {
+		
 	}
 	
 	public void connect(ActionEvent event){
-		Domain domain = AON.getDomain(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "");
 		Tedi tedi = Tedi.login(getEmail(), getPassword());
 		setToken(tedi.getToken());
-		DataResponse dr = new DataResponse()
+		setStatus(CONNECTED + " - " + getEmail());
+	}
+	
+	public void disconnect(ActionEvent event){
+		setStatus(DISCONNECTED);
+		setActive(false);
+		setToken(null);
+		setPassword("");
+	}
+	
+	public void save() {
+		if(hasToken()) {
+			Domain domain = AON.getDomain(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "");
+			DataResponse dr = new DataResponse()
 				.setCode(AppParam.TEDI_TOKEN.getValue())
 				.setDomain(domain.getId())
 				.setSource(DataResponseSource.TEDI_INVOICE)
 				.setSourceId(0);
 
-		dr = AON.insertDataResponse(domain.getName(), domain.getId(), "", dr);
-		DataResponseDetail dtd = new DataResponseDetail()
-			.setDomain(domain.getId())
-			.setDataVariable(AppParam.TEDI_TOKEN.getValue())
-			.setDataValue(tedi.getToken())
-			.setDataResponse(dr.getId());
-		dtd = AON.insertDataResponseDetail(domain.getName(), domain.getId(), "",dtd);
-		ApplicationParameter apEmail = new ApplicationParameter()
+			dr = AON.insertDataResponse(domain.getName(), domain.getId(), "", dr);
+			DataResponseDetail dtd = new DataResponseDetail()
+				.setDomain(domain.getId())
+				.setDataVariable(AppParam.TEDI_TOKEN.getValue())
+				.setDataValue(getToken())
+				.setDataResponse(dr.getId());
+			dtd = AON.insertDataResponseDetail(domain.getName(), domain.getId(), "",dtd);
+			ApplicationParameter apEmail = new ApplicationParameter()
 				.setDomain(domain.getId())
 				.setName(AppParam.TEDI_EMAIL.getValue())
 				.setValue(getEmail());
-		AON.deleteApplicationParameter(domain.getName(), domain.getId(), "", 
+			AON.deleteApplicationParameter(domain.getName(), domain.getId(), "", 
 				f -> f.getDomainProperty().eq(domain.getId())
 				.and(f.getNameProperty().eq(AppParam.TEDI_EMAIL.getValue())));
-		AON.insertApplicationParameter(domain.getName(), domain.getId(), "", apEmail);		
-		
-		setStatus(CONNECTED + " - " + apEmail.getValue());
-	}
-
-	public void disconnect(ActionEvent event){
-		Domain domain = AON.getDomain(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "");
-		
-		DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), "", DataResponseSource.TEDI_INVOICE,
-				f -> f.getCodeProperty().eq(AppParam.TEDI_TOKEN.getValue())
-				.and(f.getDomainProperty().eq(domain.getId())));
-		if(dr != null && dr.getId() != null) {
-			AON.deleteDataResponseDetail(domain.getName(), domain.getId(), "", f -> f.getDataResponseProperty().eq(dr.getId()));
-			AON.deleteDataResponse(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(dr.getId()));
+			AON.insertApplicationParameter(domain.getName(), domain.getId(), "", apEmail);
+			setAccepted(true);
+		} else {
+			Domain domain = AON.getDomain(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "");
+			
+			DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), "", DataResponseSource.TEDI_INVOICE,
+					f -> f.getCodeProperty().eq(AppParam.TEDI_TOKEN.getValue())
+					.and(f.getDomainProperty().eq(domain.getId())));
+			if(dr != null && dr.getId() != null) {
+				AON.deleteDataResponseDetail(domain.getName(), domain.getId(), "", f -> f.getDataResponseProperty().eq(dr.getId()));
+				AON.deleteDataResponse(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(dr.getId()));
+			}
+			setAccepted(false);
 		}
-		setStatus(DISCONNECTED);
-		setActive(false);
-		setToken(null);
-		setPassword("");
-		onInit( event );
 	}
 
 	public Boolean hasToken(){
@@ -173,6 +184,18 @@ public class TediConfigurationController implements IAdminConstants, Serializabl
 	
 	public void setActive(Boolean active) {
 		this.active = active;
+	}
+	
+	public Boolean getAccepted() {
+		return accepted;
+	}
+	
+	public Boolean isAccepted() {
+		return accepted;
+	}
+	
+	public void setAccepted(Boolean accepted) {
+		this.accepted = accepted;
 	}
 	
 	public String getToken() {
@@ -222,6 +245,18 @@ public class TediConfigurationController implements IAdminConstants, Serializabl
 		this.snapshotActive = snapshotActive;
 	}
 	
+	public Boolean getSnapshotAccepted() {
+		return snapshotAccepted;
+	}
+	
+	public Boolean isSnapshotAccepted() {
+		return snapshotAccepted;
+	}
+	
+	public void setSnapshotAccepted(Boolean snapshotAccepted) {
+		this.snapshotAccepted = snapshotAccepted;
+	}
+	
 	public String getSnapshotToken() {
 		return this.snapshotToken;
 	}
@@ -252,52 +287,58 @@ public class TediConfigurationController implements IAdminConstants, Serializabl
 	public void setSnapshotPassword(String password) {
 		this.snapshotPassword = password;
 	}
-
+	
 	public void snapshotConnect(ActionEvent event){
-		Domain domain = AON.getDomain(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "");
 		Tedi tedi = Tedi.login(getSnapshotEmail(), getSnapshotPassword(),true);
 		setSnapshotToken(tedi.getToken());
-		DataResponse dr = new DataResponse()
+		setStatus(CONNECTED + " - " + getSnapshotEmail());
+	}
+
+	public void snapshotDisconnect(ActionEvent event){
+		setSnapshotStatus(DISCONNECTED);
+		setSnapshotActive(false);
+		setSnapshotToken(null);
+		setSnapshotPassword("");
+	}
+	
+	public void snapshotSave() {
+		if(hasSnapshotToken()) {
+			Domain domain = AON.getDomain(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "");
+		
+			DataResponse dr = new DataResponse()
 				.setCode(AppParam.TEDI_SNAPSHOT_TOKEN.getValue())
 				.setDomain(domain.getId())
 				.setSource(DataResponseSource.TEDI_INVOICE)
 				.setSourceId(0);
 
-		dr = AON.insertDataResponse(domain.getName(), domain.getId(), "", dr);
-		DataResponseDetail dtd = new DataResponseDetail()
-			.setDomain(domain.getId())
-			.setDataVariable(AppParam.TEDI_SNAPSHOT_TOKEN.getValue())
-			.setDataValue(tedi.getToken())
-			.setDataResponse(dr.getId());
-		dtd = AON.insertDataResponseDetail(domain.getName(), domain.getId(), "",dtd);
-		ApplicationParameter apEmail = new ApplicationParameter()
+			dr = AON.insertDataResponse(domain.getName(), domain.getId(), "", dr);
+			DataResponseDetail dtd = new DataResponseDetail()
+				.setDomain(domain.getId())
+				.setDataVariable(AppParam.TEDI_SNAPSHOT_TOKEN.getValue())
+				.setDataValue(getSnapshotToken())
+				.setDataResponse(dr.getId());
+			dtd = AON.insertDataResponseDetail(domain.getName(), domain.getId(), "",dtd);
+			ApplicationParameter apEmail = new ApplicationParameter()
 				.setDomain(domain.getId())
 				.setName(AppParam.TEDI_SNAPSHOT_EMAIL.getValue())
 				.setValue(getSnapshotEmail());
-		AON.deleteApplicationParameter(domain.getName(), domain.getId(), "", 
+			AON.deleteApplicationParameter(domain.getName(), domain.getId(), "", 
 				f -> f.getDomainProperty().eq(domain.getId())
 				.and(f.getNameProperty().eq(AppParam.TEDI_SNAPSHOT_EMAIL.getValue())));
-		AON.insertApplicationParameter(domain.getName(), domain.getId(), "", apEmail);	
-	
-		setSnapshotStatus(CONNECTED + " - " + apEmail.getValue());
-	}
-
-	public void snapshotDisconnect(ActionEvent event){
-		Domain domain = AON.getDomain(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "");
-		
-		DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), "", DataResponseSource.TEDI_INVOICE,
-				f -> f.getCodeProperty().eq(AppParam.TEDI_SNAPSHOT_TOKEN.getValue())
-				.and(f.getDomainProperty().eq(domain.getId())));
-		if(dr != null && dr.getId() != null) {
-			AON.deleteDataResponseDetail(domain.getName(), domain.getId(), "", f -> f.getDataResponseProperty().eq(dr.getId()));
-			AON.deleteDataResponse(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(dr.getId()));
+			AON.insertApplicationParameter(domain.getName(), domain.getId(), "", apEmail);	
+			setSnapshotAccepted(true);
+		} else {
+			Domain domain = AON.getDomain(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "");
+			
+			DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), "", DataResponseSource.TEDI_INVOICE,
+					f -> f.getCodeProperty().eq(AppParam.TEDI_SNAPSHOT_TOKEN.getValue())
+					.and(f.getDomainProperty().eq(domain.getId())));
+			if(dr != null && dr.getId() != null) {
+				AON.deleteDataResponseDetail(domain.getName(), domain.getId(), "", f -> f.getDataResponseProperty().eq(dr.getId()));
+				AON.deleteDataResponse(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(dr.getId()));
+			}
+			setSnapshotAccepted(false);
 		}
-		
-		setSnapshotStatus(DISCONNECTED);
-		setSnapshotActive(false);
-		setSnapshotToken(null);
-		setSnapshotPassword("");
-		onInit( event );
 	}
 	
 	public void onChangeTediCenterStatus(ActionEvent event) {
