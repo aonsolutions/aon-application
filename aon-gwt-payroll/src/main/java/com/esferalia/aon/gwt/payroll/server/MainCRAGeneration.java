@@ -385,8 +385,8 @@ public final class MainCRAGeneration {
 		String mainCRA = null;
 		
 		//ERROR
-		if(null != mainCRAData.get("ERR")){
-			mainCRA = mainCRAData.get("ERR").toString();
+		if(null == mainCRAData.get("DDE") && null == mainCRAData.get("DDEAS") && null == mainCRAData.get("FINIQ") ){
+			mainCRA = ((JSONObject)((JSONArray)mainCRAData.get("ERRS")).get(0)).get("ERR").toString();
 			return mainCRA;
 		}
 		
@@ -399,54 +399,18 @@ public final class MainCRAGeneration {
 		
 		//DDE
 		JSONObject ddeJson = (JSONObject) mainCRAData.get("DDE");
-		DDE dde = new DDE(
-				ddeJson.get("cccRegime").toString(), 
-				ddeJson.get("ccc").toString(),
-				ddeJson.get("year").toString(),
-				ddeJson.get("month").toString());
-		
-		//TRBs
-		JSONArray employees = (JSONArray) ddeJson.get("TRBS");
-		for(int i=0; i<employees.size(); i++) {
-			JSONObject emplJson = (JSONObject) employees.get(i);
-			
-			//TRB
-			TRB trb = new TRB(
-					emplJson.get("numAfilicion").toString());
-			
-			//CREs
-			JSONArray cres = (JSONArray) emplJson.get("CRES");
-			for(int j=0; j<cres.size(); j++) {
-				JSONObject creJson = (JSONObject) cres.get(j);
-				
-				//CRE
-				CRE cre = new CRE(
-						creJson.get("concept").toString(), 
-						creJson.get("include_exclude").toString(), 
-						creJson.get("amount").toString(), 
-						creJson.get("action").toString());
-				
-				trb.addCRE(cre);
-			}
-			
-			dde.addTRB(trb);
-		}
-		
-		//DDEA
-		DDEAS ddeas = new DDEAS();
-		JSONArray ddeaArray = (JSONArray) mainCRAData.get("DDEAS");
-		for(int i=0; i<ddeaArray.size(); i++){
-			JSONObject ddeaJson = (JSONObject) ddeaArray.get(i);
-			DDEA ddea = new DDEA(
-					ddeaJson.get("cccRegime").toString(), 
-					ddeaJson.get("ccc").toString(),
-					ddeaJson.get("year").toString(),
-					ddeaJson.get("month").toString());
+		DDE dde = null;
+		if(null != ddeJson) {
+			dde = new DDE(
+					ddeJson.get("cccRegime").toString(), 
+					ddeJson.get("ccc").toString(),
+					ddeJson.get("year").toString(),
+					ddeJson.get("month").toString());
 			
 			//TRBs
-			JSONArray employeesAtrasos = (JSONArray) ddeaJson.get("TRBS");
-			for(int j=0; j<employeesAtrasos.size(); j++) {
-				JSONObject emplJson = (JSONObject) employeesAtrasos.get(j);
+			JSONArray employees = (JSONArray) ddeJson.get("TRBS");
+			for(int i=0; i<employees.size(); i++) {
+				JSONObject emplJson = (JSONObject) employees.get(i);
 				
 				//TRB
 				TRB trb = new TRB(
@@ -454,8 +418,8 @@ public final class MainCRAGeneration {
 				
 				//CREs
 				JSONArray cres = (JSONArray) emplJson.get("CRES");
-				for(int k=0; k<cres.size(); k++) {
-					JSONObject creJson = (JSONObject) cres.get(k);
+				for(int j=0; j<cres.size(); j++) {
+					JSONObject creJson = (JSONObject) cres.get(j);
 					
 					//CRE
 					CRE cre = new CRE(
@@ -466,10 +430,52 @@ public final class MainCRAGeneration {
 					
 					trb.addCRE(cre);
 				}
-						
-				ddea.addTRB(trb);
+				
+				dde.addTRB(trb);
 			}
-			ddeas.addDDEA(ddea);
+		}
+		
+		//DDEA
+		DDEAS ddeas = null;
+		JSONArray ddeaArray = (JSONArray) mainCRAData.get("DDEAS");
+		if(null != ddeaArray) {
+			ddeas = new DDEAS();
+			for(int i=0; i<ddeaArray.size(); i++){
+				JSONObject ddeaJson = (JSONObject) ddeaArray.get(i);
+				DDEA ddea = new DDEA(
+						ddeaJson.get("cccRegime").toString(), 
+						ddeaJson.get("ccc").toString(),
+						ddeaJson.get("year").toString(),
+						ddeaJson.get("month").toString());
+				
+				//TRBs
+				JSONArray employeesAtrasos = (JSONArray) ddeaJson.get("TRBS");
+				for(int j=0; j<employeesAtrasos.size(); j++) {
+					JSONObject emplJson = (JSONObject) employeesAtrasos.get(j);
+					
+					//TRB
+					TRB trb = new TRB(
+							emplJson.get("numAfilicion").toString());
+					
+					//CREs
+					JSONArray cres = (JSONArray) emplJson.get("CRES");
+					for(int k=0; k<cres.size(); k++) {
+						JSONObject creJson = (JSONObject) cres.get(k);
+						
+						//CRE
+						CRE cre = new CRE(
+								creJson.get("concept").toString(), 
+								creJson.get("include_exclude").toString(), 
+								creJson.get("amount").toString(), 
+								creJson.get("action").toString());
+						
+						trb.addCRE(cre);
+					}
+							
+					ddea.addTRB(trb);
+				}
+				ddeas.addDDEA(ddea);
+			}
 		}
 		
 		//FINIQ
@@ -539,33 +545,35 @@ public final class MainCRAGeneration {
 				eti.getReserved1() +
 				"\r\n";
 		
-		mainCRA +=
-				dde.getEmpHeader() +
-				dde.getCccRegime() +
-				dde.getCcc() +
-				dde.getYear() +
-				dde.getMonth() +
-				dde.getCccRegimeConcert() +
-				dde.getCccConcert() +
-				dde.getReserved31() +
-				"\r\n";
-		
-		for(TRB trb : dde.getTrbs()) {
+		if(null != dde) {
 			mainCRA +=
-					trb.getTrbHeader() +
-					trb.getNumAfilicion() +
-					trb.getReserved55() +
+					dde.getEmpHeader() +
+					dde.getCccRegime() +
+					dde.getCcc() +
+					dde.getYear() +
+					dde.getMonth() +
+					dde.getCccRegimeConcert() +
+					dde.getCccConcert() +
+					dde.getReserved31() +
 					"\r\n";
 			
-			for( CRE cre : trb.getCres()) {
+			for(TRB trb : dde.getTrbs()) {
 				mainCRA +=
-						cre.getCreHeader() +
-						cre.getConcept() +
-						cre.getInclude_exclude() +
-						cre.getAmount() +
-						cre.getAction() +
-						cre.getReserved52() +
+						trb.getTrbHeader() +
+						trb.getNumAfilicion() +
+						trb.getReserved55() +
 						"\r\n";
+				
+				for( CRE cre : trb.getCres()) {
+					mainCRA +=
+							cre.getCreHeader() +
+							cre.getConcept() +
+							cre.getInclude_exclude() +
+							cre.getAmount() +
+							cre.getAction() +
+							cre.getReserved52() +
+							"\r\n";
+				}
 			}
 		}
 		
@@ -601,34 +609,36 @@ public final class MainCRAGeneration {
 			}
 		}
 		
-		for(DDEA ddea: ddeas.getDdeas()){
-			mainCRA +=
-					ddea.getEmpHeader() +
-					ddea.getCccRegime() +
-					ddea.getCcc() +
-					ddea.getYear() +
-					ddea.getMonth() +
-					ddea.getCccRegimeConcert() +
-					ddea.getCccConcert() +
-					ddea.getReserved31() +
-					"\r\n";
-			
-			for(TRB trb : ddea.getTrbs()) {
+		if(null != ddeas){
+			for(DDEA ddea: ddeas.getDdeas()){
 				mainCRA +=
-						trb.getTrbHeader() +
-						trb.getNumAfilicion() +
-						trb.getReserved55() +
+						ddea.getEmpHeader() +
+						ddea.getCccRegime() +
+						ddea.getCcc() +
+						ddea.getYear() +
+						ddea.getMonth() +
+						ddea.getCccRegimeConcert() +
+						ddea.getCccConcert() +
+						ddea.getReserved31() +
 						"\r\n";
 				
-				for( CRE cre : trb.getCres()) {
+				for(TRB trb : ddea.getTrbs()) {
 					mainCRA +=
-							cre.getCreHeader() +
-							cre.getConcept() +
-							cre.getInclude_exclude() +
-							cre.getAmount() +
-							cre.getAction() +
-							cre.getReserved52() +
+							trb.getTrbHeader() +
+							trb.getNumAfilicion() +
+							trb.getReserved55() +
 							"\r\n";
+					
+					for( CRE cre : trb.getCres()) {
+						mainCRA +=
+								cre.getCreHeader() +
+								cre.getConcept() +
+								cre.getInclude_exclude() +
+								cre.getAmount() +
+								cre.getAction() +
+								cre.getReserved52() +
+								"\r\n";
+					}
 				}
 			}
 		}
