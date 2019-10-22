@@ -718,7 +718,7 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 						@Override
 						public void onSuccess(JSON<JsObject> result) {
 							result.getData().stream().forEach(r -> {
-								Label label = new Label(r.getName());
+								Label label = new Label(r.getName() != null ? r.getName() : "Error Inesperado");
 								String str = r.getId() + "";
 								String color = "red";
 								if(str.equals("200")) color = "green";
