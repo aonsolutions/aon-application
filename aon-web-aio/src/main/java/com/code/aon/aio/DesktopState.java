@@ -52,6 +52,7 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import net.aonsolutions.core.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.PortalInfo;
+import com.code.aon.ui.admin.controller.TediConfigurationController;
 import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.BasicOption;
@@ -119,6 +120,7 @@ public class DesktopState implements Serializable {
 		}
 		User user = UserUtils.getInstance().getLoggedUser();
 		initPortal(user, ds);
+		initTediCenter(user, ds);
 		initUser(user);
 		initSupport();
 		checkSerialization();
@@ -205,6 +207,16 @@ public class DesktopState implements Serializable {
 	
 	public boolean isAdminRole() {
 		return this.adminRole;
+	}
+	
+	public boolean isTediCenter() {
+		TediConfigurationController tedi = (TediConfigurationController) AonUtil.getRegisteredBean("tediConfiguration");
+		return tedi.isActive();
+	}
+	
+	public boolean isTediCenterSnapshot() {
+		TediConfigurationController tedi = (TediConfigurationController) AonUtil.getRegisteredBean("tediConfiguration");
+		return tedi.isSnapshotActive();
 	}
 
 	private boolean calculateAdminRole() {
@@ -343,6 +355,11 @@ public class DesktopState implements Serializable {
 				adc.getManager().enableCategories(enableCategories);
 			}
 		}
+	}
+	
+	private void initTediCenter(User user, DomainSwitcher ds) {
+		TediConfigurationController tedi = (TediConfigurationController) AonUtil.getRegisteredBean("tediConfiguration");
+		tedi.init();
 	}
 
 	private void initHotel() {

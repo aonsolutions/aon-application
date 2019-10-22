@@ -60,7 +60,7 @@ public class TediConfigurationController implements IAdminConstants, Serializabl
 		init();
 	}	
 	
-	private void init() {
+	public void init() {
 		Domain domain = AON.getDomain(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "");
 		
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
@@ -321,13 +321,11 @@ public class TediConfigurationController implements IAdminConstants, Serializabl
 	}
 	
 	public void onClose(ActionEvent event){
-		System.out.println(status);
 		setActive(!DISCONNECTED.equals(status));
 		setShowTediCenterWindow(false);
 	}
 
 	public void onSnapshotClose(ActionEvent event){
-		System.out.println(snapshotStatus);
 		setSnapshotActive(!DISCONNECTED.equals(snapshotStatus));
 		setShowTediCenterSnapshotWindow(false);
 	}

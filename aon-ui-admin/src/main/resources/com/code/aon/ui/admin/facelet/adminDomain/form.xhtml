@@ -335,7 +335,7 @@
 							value="#{bundle.aon_external_tediCenter}" />		
 						<aon:commandLink id="tediCenter-link" immediate="true"
 							value="&#160;" title="#{bundle.aon_edit}"
-							styleClass="aon-icon-edit-add-simple" 
+							styleClass="aon-icon-config" 
 							style="margin-left: 5px; padding-right: 12px;"
 							rendered="#{tediConfiguration.active}"
 							actionListener="#{tediConfiguration.onChangeTediCenterStatus}"
@@ -354,7 +354,7 @@
 								value="#{bundle.aon_external_tediCenterSnapshot}" />		
 							<aon:commandLink id="tediCenterSnapshot-link" immediate="true"
 								value="&#160;" title="#{bundle.aon_edit}"
-								styleClass="aon-icon-edit-add-simple" 
+								styleClass="aon-icon-config" 
 								style="margin-left: 5px; padding-right: 12px;"
 								rendered="#{tediConfiguration.snapshotActive}"
 								actionListener="#{tediConfiguration.onChangeTediCenterSnapshotStatus}"
@@ -383,10 +383,6 @@
 		<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
 			<ui:param name="auditableController" value="#{adminDomain}" />
 		</ui:include>		
-		
-		<ui:include src="/com/code/aon/ui/admin/facelet/adminDomain/conexflow.xhtml">
-			<ui:param name="controller" value="#{conexflow}" />
-		</ui:include>
 		
 		<ui:include src="/com/code/aon/ui/admin/facelet/adminDomain/tedicenter.xhtml">
 			<ui:param name="controller" value="#{tediConfiguration}" />
