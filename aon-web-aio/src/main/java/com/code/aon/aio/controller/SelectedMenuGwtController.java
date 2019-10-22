@@ -24,4 +24,14 @@ public class SelectedMenuGwtController implements Serializable {
 		smc.setLastMenuAction("gwt_issues");
 	}
 	
+	public void onTediCenter(ActionEvent event){
+		SelectedMenuController smc = (SelectedMenuController) AonUtil.getRegisteredBean(IRichConstants.SELECTED_MENU_CONTROLLER_NAME);
+		smc.setLastMenuAction("gwt_tediCenter-child");
+	}
+	
+	public void onTediCenterSnapshot(ActionEvent event){
+		SelectedMenuController smc = (SelectedMenuController) AonUtil.getRegisteredBean(IRichConstants.SELECTED_MENU_CONTROLLER_NAME);
+		smc.setLastMenuAction("gwt_tediCenter_beta-child");
+	}
+	
 }

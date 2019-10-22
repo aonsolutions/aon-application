@@ -144,6 +144,42 @@
 		<rich:jQuery timing="onload"
 			selector="body" query="removeClass('aon-overflow-hidden')" />						
 	</ui:define>
+
+	<ui:define name="tediCenterMenuContent"> 
+		<aon:if test="#{desktop.state.tediCenter}">
+			<aon:if test="#{!selectedMenu.tediCenter}">
+				<aon:commandLink 
+					action="gwt_tediCenter-child"
+					actionListener="#{gwtSelectedMenu.onTediCenter}"
+					title="TEDI CENTER" 
+					value="&#160;"
+					inmediate="true"
+					styleClass="aon-menu-icon aon-icon-tedi" />
+			</aon:if>
+			<aon:if test="#{selectedMenu.tediCenter}">
+				<a 
+					onclick="onreload();"
+					class="aon-menu-icon-tedi aon-icon-tedi aon-height-20"/>
+			</aon:if>
+		</aon:if>
+		
+		<aon:if test="#{desktop.state.tediCenterSnapshot}">
+			<aon:if test="#{!selectedMenu.tediCenterSnapshot}">
+				<aon:commandLink 
+					action="gwt_tediCenter_beta-child"
+					actionListener="#{gwtSelectedMenu.onTediCenterSnapshot}"
+					title="TEDI CENTER [TEST]" 
+					value="&#160;"
+					inmediate="true"
+					styleClass="aon-menu-icon aon-icon-tedi" />
+			</aon:if>
+			<aon:if test="#{selectedMenu.tediCenterSnapshot}">
+				<a 
+					onclick="onreload();"
+					class="aon-menu-icon-tedi aon-icon-tedi aon-height-20"/>
+			</aon:if>
+		</aon:if>
+	</ui:define>
 	
 	<ui:define name="callCenterMenuContent">
 		<aon:if test="#{aonRole.callCenter}">

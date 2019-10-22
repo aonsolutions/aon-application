@@ -464,6 +464,9 @@ color:#000;
  .aon-icon-beta-text{
 	background:transparent url(images/aon-icon/aon-beta-icon.png) scroll left center no-repeat;
  }
+ .aon-icon-tedi{
+   background:transparent url(images/aon-icon/aon-icon-tedi.png) scroll left center no-repeat;
+ }
  .aon-icon-tree{
    background:transparent url(images/aon-icon/aon-icon-tree.png) scroll left center no-repeat;
  }
@@ -2807,6 +2810,14 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
  	display:block;
  	padding:2px 6px 1px 10px;
 }
+
+.aon-menu-icon-tedi{
+	padding-left: 8px;
+	cursor:pointer;
+ 	display:block;
+ 	padding:2px 10px 1px 10px;
+}
+
 .aon-icon-email{
 	background:transparent url(images/aon-main-menu/aon-icon-mail2.png) no-repeat scroll center left;
 }

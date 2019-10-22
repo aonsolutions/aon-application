@@ -24,6 +24,17 @@
 				<rich:toolBarGroup id="rightMenuContent"
 					style="padding-right: 5px;padding-left: 5px"
 					location="right" itemSeparator="line">
+
+		
+					<aon:componentGroup
+						family="javax.faces.Command"
+						method="#{selectedMenu.updateCommands}">	
+						<aon:componentGroupMethod
+							family="javax.faces.Command"
+							rendered="#{aonConfiguration.bean.actionDenied.modulesEnabled}"
+							method="#{actionDenied.renderedModule}" />
+						<ui:insert name="tediCenterMenuContent"/>
+					</aon:componentGroup>		
 					
 					<aon:componentGroup
 						family="javax.faces.Command"

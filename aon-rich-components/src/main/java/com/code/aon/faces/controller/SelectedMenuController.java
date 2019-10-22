@@ -99,8 +99,22 @@ public class SelectedMenuController implements Serializable {
 		else return false;
 	}
 	
+	public boolean isTediCenter() {
+		if(getLastMenuAction()!=null)
+			return getLastMenuAction().equals("gwt_tediCenter-child");
+		else return false;
+	}
+	
+	public boolean isTediCenterSnapshot() {
+		if(getLastMenuAction()!=null)
+			return getLastMenuAction().equals("gwt_tediCenter_beta-child");
+		else return false;
+	}
+	
 	public boolean checkIssues(String id){
-		if(getLastMenuAction() != null && getLastMenuAction().equals("gwt_issues")){
+		if(getLastMenuAction() != null && getLastMenuAction().equals("gwt_issues")
+				&& getLastMenuAction().equals("gwt_tediCenter-child") 
+				&& getLastMenuAction().equals("gwt_tediCenter_beta-child")){
 			switch (id) {
 			case "pendingAlarms": return false;
 			case "home": return false;
