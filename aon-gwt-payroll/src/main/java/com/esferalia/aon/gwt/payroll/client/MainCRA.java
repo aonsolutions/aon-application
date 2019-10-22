@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -100,7 +101,7 @@ public class MainCRA extends MainEntryPoint {
 	
 	private Enterprise enterpriseInfo = new Enterprise();
 	private String enterpriseName = "";
-	private Map<String, CCC> enterpriseCCCs = new HashMap<>();
+	private Map<String, List<CCC>> enterpriseCCCs = new HashMap<>();
 	private Integer cccId = 0;
 	private String ccc = "";
 	
@@ -160,6 +161,8 @@ public class MainCRA extends MainEntryPoint {
 	}
 	
 	private void initLogic() {
+		enterpriseCCCs.clear();
+		
 		impl.getEnterprises(0, Integer.MAX_VALUE, new AsyncCallback<List<Enterprise>>() {
 			
 			@Override
@@ -183,11 +186,22 @@ public class MainCRA extends MainEntryPoint {
 						for (Enterprise enterprise: enterprises)
 							for(Activity activity : enterprise.getActivities())
 								for(CCC ccc : activity.getCccs())
-									enterpriseCCCs.put(activity.getDescription(), ccc);
+									addCCCToActivity(activity.getDescription(), ccc);
+//									enterpriseCCCs.put(activity.getDescription(), ccc);
 						
 						cras = result;
 						
 						initializeView();
+					}
+
+					private void addCCCToActivity(String activityDescription, CCC ccc) {
+						if(enterpriseCCCs.get(activityDescription) == null) {
+							List<CCC> cccs = new ArrayList<CCC>();
+							cccs.add(ccc);
+							enterpriseCCCs.put(activityDescription, cccs);
+						} else {
+							enterpriseCCCs.get(activityDescription).add(ccc);
+						}
 					}
 					
 				});
@@ -217,9 +231,12 @@ public class MainCRA extends MainEntryPoint {
 			warning.center();
 			warning.show();
 		}else{
-			for(Entry<String, CCC> entry : this.enterpriseCCCs.entrySet()){
-				this.cccs.addItem(entry.getKey() + " - " + getRegimeName(entry.getValue().getRegime()) + " - " 
-						+ entry.getValue().getCode() + " - (" + ProvinceContract.getName(entry.getValue().getGeozone()) +")");
+			for(Entry<String, List<CCC>> entry : this.enterpriseCCCs.entrySet()){
+				for(CCC ccc : entry.getValue()) {
+					this.cccs.addItem(entry.getKey() + " - " + getRegimeName(ccc.getRegime()) + " - " 
+							+ ccc.getCode() + " - (" + ProvinceContract.getName(ccc.getGeozone()) +")");
+				}
+				
 			}
 			
 			setFindingCCC( this.cccs.getSelectedItemText().split("- ")[2].split(" ")[0] );
@@ -573,6 +590,8 @@ public class MainCRA extends MainEntryPoint {
 		mainCRAsPanel.addStyleName(style.hide());
 		//Hide RectificativoCRAPanel
 		mainRectificativoCRAsPanel.addStyleName(style.hide());
+		//Clear cccs Listbox
+		cccs.clear();
 		initLogic();
 	}
 
