@@ -46,6 +46,7 @@ public class DomainBookingController extends DataScrollerState {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainBookingController.class);
 	
+	private int totalManagementUsers;
 	private int totalOneUsers;
 	private int totalAiOUsers;
 	private int totalPortals;
@@ -145,6 +146,16 @@ public class DomainBookingController extends DataScrollerState {
 								.eq((byte) Module.AON_ONE.ordinal())))
 				.fetchOne(0, int.class);
 		data.setAonOne(aonOneModule > 0);
+		
+		int managementModule = ctx
+				.getDslContext()
+				.selectCount()
+				.from(DOMAIN_APPLICATION_MODULE)
+				.where(DOMAIN_APPLICATION_MODULE.DOMAIN.eq(data.getId()).and(
+						DOMAIN_APPLICATION_MODULE.MODULE
+								.eq((byte) Module.MANAGEMENT.ordinal())))
+				.fetchOne(0, int.class);
+		data.setAonOne(managementModule > 0);
 	}	
 	
 	private List<DomainBookingData> getDomainBookingDatas( AONContext ctx, Condition condition ) {
@@ -165,10 +176,12 @@ public class DomainBookingController extends DataScrollerState {
 	
 	private void initializeModel() {
 		List<DomainBookingData> domains = Collections.emptyList();
+		this.totalManagementUsers = 0;
 		this.totalAiOUsers = 0;
 		this.totalOneUsers = 0;
 		this.totalPortals = 0;
-		this.setTotalTedis(0);
+		this.totalTedis = 0;
+		
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 		Condition condition = ds.getDomainCondition(domain.getId(), isShowInactive(), isShowExpired());
@@ -178,6 +191,8 @@ public class DomainBookingController extends DataScrollerState {
 			if ( data.getPayerDomain() == null ) {
 				if ( data.isAonOne() ) {
 					this.totalOneUsers += data.getMaxDefinedUsers();
+				} else if (data.isManagement()){
+					this.totalManagementUsers += data.getMaxDefinedUsers();
 				} else {
 					this.totalAiOUsers += data.getMaxDefinedUsers();
 				}				
@@ -233,6 +248,8 @@ public class DomainBookingController extends DataScrollerState {
 				modules.add( dim.getDescription() );
 			}
 		}
+		TediConfigurationController tedi = (TediConfigurationController) AonUtil.getRegisteredBean("tediConfiguration");
+		if(tedi.isAccepted()) modules.add("Tedi Center");
 		return StringUtils.join(modules, ", ");					
 	}
 
@@ -252,8 +269,8 @@ public class DomainBookingController extends DataScrollerState {
 		return totalTedis;
 	}
 
-	public void setTotalTedis(int totalTedis) {
-		this.totalTedis = totalTedis;
-	}	
+	public int getTotalManagementUsers() {
+		return totalManagementUsers;
+	}
 
 }

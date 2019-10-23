@@ -151,13 +151,13 @@
 				<aon:commandLink 
 					action="gwt_tediCenter-child"
 					actionListener="#{gwtSelectedMenu.onTediCenter}"
-					title="TEDI CENTER" 
+					title="tEDI Center" 
 					value="&#160;"
 					inmediate="true"
 					styleClass="aon-menu-icon aon-icon-tedi" />
 			</aon:if>
 			<aon:if test="#{selectedMenu.tediCenter}">
-				<a	title="TEDI CENTER"  
+				<a	title="tEDI Center"  
 					onclick="onreload();"
 					class="aon-menu-icon-tedi aon-icon-tedi aon-height-20"/>
 			</aon:if>
@@ -168,13 +168,13 @@
 				<aon:commandLink 
 					action="gwt_tediCenter_beta-child"
 					actionListener="#{gwtSelectedMenu.onTediCenterSnapshot}"
-					title="TEDI CENTER [TEST]" 
+					title="tEDI Center [TEST]" 
 					value="&#160;"
 					inmediate="true"
 					styleClass="aon-menu-icon aon-icon-tedi" />
 			</aon:if>
 			<aon:if test="#{selectedMenu.tediCenterSnapshot}">
-				<a 	title="TEDI CENTER [TEST]"
+				<a 	title="tEDI Center [TEST]"
 					onclick="onreload();"
 					class="aon-menu-icon-tedi aon-icon-tedi aon-height-20"/>
 			</aon:if>
@@ -187,13 +187,14 @@
 				<aon:commandLink id="menu_call_center" 
 					action="gwt_issues"
 					actionListener="#{gwtSelectedMenu.onIssues}"
-					title="C.A.U. POLYMER" 
+					title="Call Center" 
 					value="&#160;"
 					inmediate="true"
 					styleClass="aon-menu-icon aon-icon-helpdesk" />
 			</aon:if>
 			<aon:if test="#{selectedMenu.issues}">
-				<a id="menu_call_center" 
+				<a 	id="menu_call_center" 
+					title="Call Center" 
 					onclick="onreload();"
 					class="aon-menu-icon aon-icon-helpdesk aon-height-20"/>
 			</aon:if>

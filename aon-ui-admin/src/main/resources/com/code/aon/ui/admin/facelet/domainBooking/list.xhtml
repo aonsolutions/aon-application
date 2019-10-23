@@ -168,16 +168,37 @@
 							</f:facet>							
 							<aon:outputText value="#{to.maxTotalDocumentSize}" />
 						</aon:column>
-										
+						
+						<aon:column styleClass="aon-text-center aon-width-40 aon-nowrap">
+							<f:facet name="header">
+								<aon:outputText style="text-transform: none;"
+									value="#{bundle.aon_module_management}" />
+							</f:facet>							
+							<aon:outputText rendered="#{!to.management}" value="-" />
+							<aon:outputText rendered="#{to.management and to.maxDefinedUsers > 0}"
+								style="#{(to.payerDomain != null)?'color:blue;':((to.activeUsers!=to.maxDefinedUsers)?'color:red;':'')}"
+								value="#{to.activeUsers} / #{to.maxDefinedUsers}" />
+							<aon:outputText rendered="#{to.management and to.maxDefinedUsers == 0}" 
+								styleClass="aon-icon-check-black" style="padding-left:12px" value=""/>
+							<f:facet name="footer">
+								<aon:div style="float:right">
+									<aon:outputText	styleClass="aon-italic"
+										value="#{controller.totalManagementUsers}" />
+								</aon:div>
+							</f:facet>																					
+						</aon:column>				
+						
 						<aon:column styleClass="aon-text-center aon-width-40 aon-nowrap">
 							<f:facet name="header">
 								<aon:outputText style="text-transform: none;"
 									value="#{bundle.aon_module_aonOne}" />
 							</f:facet>							
 							<aon:outputText rendered="#{!to.aonOne}" value="-" />
-							<aon:outputText rendered="#{to.aonOne}"
+							<aon:outputText rendered="#{to.aonOne and to.maxDefinedUsers > 0}"
 								style="#{(to.payerDomain != null)?'color:blue;':((to.activeUsers!=to.maxDefinedUsers)?'color:red;':'')}"
 								value="#{to.activeUsers} / #{to.maxDefinedUsers}" />
+							<aon:outputText rendered="#{to.aonOne and to.maxDefinedUsers == 0}" 
+								styleClass="aon-icon-check-black" style="padding-left:12px" value=""/>
 							<f:facet name="footer">
 								<aon:div style="float:right">
 									<aon:outputText	styleClass="aon-italic"
@@ -190,10 +211,13 @@
 								<aon:outputText style="text-transform: none;"
 									 value="#{bundle.admin_domain_aonAIO}" />
 							</f:facet>							
-							<aon:outputText rendered="#{to.aonOne}" value="-" />
-							<aon:outputText rendered="#{!to.aonOne}"
+							<aon:outputText rendered="#{to.aonOne or to.management}" value="-" />
+							<aon:outputText rendered="#{!to.aonOne and !to.management and to.maxDefinedUsers > 0}"
 								style="#{(to.payerDomain != null)?'color:blue;':((to.activeUsers!=to.maxDefinedUsers)?'color:red;':'')}"
 								value="#{to.activeUsers} / #{to.maxDefinedUsers}" />
+							<aon:outputText rendered="#{!to.aonOne and !to.management and to.maxDefinedUsers == 0}" 
+								styleClass="aon-icon-check-black" style="padding-left:12px" value=""/>
+							
 							<f:facet name="footer">
 								<aon:div style="float:right">
 									<aon:outputText	styleClass="aon-italic"

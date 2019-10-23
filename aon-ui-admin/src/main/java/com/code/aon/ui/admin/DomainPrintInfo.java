@@ -34,7 +34,6 @@ import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.admin.controller.IAdminConstants;
 import com.code.aon.ui.admin.event.DomainSearchListener;
 import com.code.aon.ui.audit.AuditManager;
-import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.registry.controller.DocumentManager;
 import com.code.aon.ui.util.AonUtil;

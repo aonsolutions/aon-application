@@ -20,6 +20,8 @@ public class DomainBookingData extends DomainData {
 	
 	private int maxDefinedUsers;
 	
+	private boolean management;
+	
 	private boolean aonOne;
 	
 	private boolean portal;
@@ -58,6 +60,14 @@ public class DomainBookingData extends DomainData {
 		this.activeUsers = activeUsers;
 	}
 
+	public boolean isManagement() {
+		return management;
+	}
+
+	public void setManagement(boolean management) {
+		this.management = management;
+	}
+	
 	public boolean isAonOne() {
 		return aonOne;
 	}
