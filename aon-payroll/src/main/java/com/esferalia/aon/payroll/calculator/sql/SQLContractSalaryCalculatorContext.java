@@ -673,16 +673,27 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					// Adds 'BASE_REGULADORA' variable for guaranteed period
 					exprCtx.setVariable(IT_START, leaveStart, guarenteeStart, guarenteeEnd);
 					
-					int guaranteedDays = (int) getGuaranteedDays(exprCtx,
-							new Period(Period.max(guarenteeStart, startDate), guarenteeEnd));
-					exprCtx.setVariable(GUARANTEED_DAYS, guaranteedDays, guarenteeStart, guarenteeEnd);
+					//int guaranteedDays = (int) getGuaranteedDays(exprCtx,
+					//		new Period(Period.max(guarenteeStart, startDate), guarenteeEnd));
+					
+					//exprCtx.setVariable(GUARANTEED_DAYS, guaranteedDays, guarenteeStart, guarenteeEnd);
+					
+					exprCtx.putVariable(GUARANTEED_DAYS, new LazyTimedVariable<Double>() {
+						@Override
+						public Double create() {
+							return getGuaranteedDays(exprCtx,
+									new Period(Period.max(guarenteeStart, startDate), guarenteeEnd));
+						}
+					});
 
 					ExpressionImpl exp = new ExpressionImpl();
 					exp.setName(EVERYTHING.getName());
 					if (dailyRegBase != null) {
-						exp.setExpression(String.format("%f * %d ", dailyRegBase, guaranteedDays));
+						//exp.setExpression(String.format("%f * %d ", dailyRegBase, guaranteedDays));
+						exp.setExpression(String.format("%f * %s ", dailyRegBase, GUARANTEED_DAYS));
 					} else {
-						exp.setExpression(String.format("SELF.br(%s) * %d", IT_START, guaranteedDays));
+						//exp.setExpression(String.format("SELF.br(%s) * %d", IT_START, guaranteedDays));
+						exp.setExpression(String.format("SELF.br(%s) * %s", IT_START, GUARANTEED_DAYS));
 					}
 					exprCtx.addLazyExpression(exp, guarenteeStart, guarenteeEnd);
 
