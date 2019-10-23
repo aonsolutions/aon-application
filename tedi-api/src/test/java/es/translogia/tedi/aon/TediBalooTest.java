@@ -34,7 +34,7 @@ public class TediBalooTest {
 	
 	@Test
 	public void test001PutInvoices() throws Exception {
-		int times = 50;
+		int times = 40;
 		System.out.print( "\t-test Tedi put UDAPA " + times + " invoices");
 		for (int i = 0; i < times ; i ++) {
 			JSONObject inv = TediUdapaFaker.getTediInvoice();

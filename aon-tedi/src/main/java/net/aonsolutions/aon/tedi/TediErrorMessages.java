@@ -29,6 +29,7 @@ public enum TediErrorMessages implements Serializable {
 	C008("El a\u00F1o de la factura no es v\u00E1lido, es anterior cinco a\u00F1os al actual"),
 	C009("No se ha encontrado un {0} v\u00E1lido para el titular \"{1}\""),
 	C010("La factura no tiene l\u00EDneas de detalle"),
+	C011("La factura tiene varios posibles titulares"),
 	C500("Error desconocido");
 	;
 	private String message;

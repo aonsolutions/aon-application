@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -18,6 +19,7 @@ public class TediResult implements Serializable {
 	private TediInvoice tedi;
 	private AccountingInvoice ai;
 	private LinkedList<TediError> messages = new LinkedList<TediError>();
+	private LinkedList<AccountingRegistry> posibleRegistries;
 
 	public TediResult() {
 
@@ -55,7 +57,14 @@ public class TediResult implements Serializable {
 		this.ai = aon;
 		return this;
 	}
-
+	
+	public LinkedList<AccountingRegistry> getPosibleRegistries() {
+		return posibleRegistries;
+	}
+	public TediResult setPosibleRegistries(LinkedList<AccountingRegistry> posibleRegistries) {
+		this.posibleRegistries = posibleRegistries;
+		return this;
+	}
 
 	public LinkedList<TediError> getMessages() {
 		return messages;
@@ -81,8 +90,12 @@ public class TediResult implements Serializable {
 		TediLevel level = getMoreSeriousLevel();;
 		return ( level == null || level.ordinal() < TediLevel.ERR.ordinal() );
 	}
+	public boolean isEmptyTicket() {
+		return isEmpty() && tedi.isTicket();
+	}
 	public boolean isEmpty() {
-		return (getInvoice().getRegistry() == null && (getInvoice().getDetails() == null || getInvoice().getDetails().size() == 0));
+		boolean empty =  (getInvoice().getRegistry() == null && (getInvoice().getDetails() == null || getInvoice().getDetails().size() == 0));
+		return empty;
 	}
 	public boolean hasAttach() {
 		return (getTedi() != null && getTedi().getFile() != null);
@@ -90,8 +103,14 @@ public class TediResult implements Serializable {
 	public boolean hasPDFAttach() {
 		return hasAttach() && (AonStringUtils.equals(getTedi().getFile().getContentType(), MimeType.PDF.getName())); 
 	}
-	public boolean hasJPEGAttach() {
+	public boolean hasImageAttach() {
+		return hasJPEGAttach() || hasPNGAttach(); 
+	}
+	private boolean hasJPEGAttach() {
 		return hasAttach() && (AonStringUtils.equals(getTedi().getFile().getContentType(), MimeType.JPEG.getName())); 
+	}
+	private boolean hasPNGAttach() {
+		return hasAttach() && (AonStringUtils.equals(getTedi().getFile().getContentType(), MimeType.PNG.getName())); 
 	}
 	
 	public void clearMessages() {

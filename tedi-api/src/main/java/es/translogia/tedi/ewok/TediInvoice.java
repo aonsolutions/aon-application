@@ -257,5 +257,21 @@ public class TediInvoice implements Serializable{
 	public boolean isEmitida() {
 		return (getType() == TediInvoiceType.EMITIDA);
 	}
+	public boolean isRecibida() {
+		return (getType() == TediInvoiceType.RECIBIDA);
+	}
+	public boolean isTicket() {
+		return (getType() == TediInvoiceType.TICKET);
+	}
+	public boolean isExpense() {
+		return isRecibida() 
+			&& getCategory() != null
+			&& getCategory() != TediInvoiceCategory.C6000
+			&& getCategory() != TediInvoiceCategory.C6070
+			;
+	}
+	public boolean isPurchase() {
+		return isRecibida() && !isExpense(); 
+	}
 
 }

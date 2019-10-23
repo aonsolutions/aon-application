@@ -206,7 +206,7 @@ public class TediCenter extends MainEntryPoint {
 			mainTabLayoutPanel.selectTab(mainTabLayoutPanel.getWidgetCount() - 1);
 		}
 		if (paint) {
-			if (result.hasPDFAttach() || result.hasJPEGAttach()) {
+			if (result.hasPDFAttach() || result.hasImageAttach()) {
 				SimpleLayoutPanel attachContainer = new SimpleLayoutPanel();
 				tediSplitPanel.addEast(attachContainer, 350);
 				tediSplitPanel.setWidgetToggleDisplayAllowed(attachContainer, true);
@@ -476,7 +476,7 @@ public class TediCenter extends MainEntryPoint {
 				}
 			});
 		}
-		if (result.hasJPEGAttach()) {
+		if (result.hasImageAttach()) {
 			DockLayoutPanel attachSplit = new DockLayoutPanel( Unit.PX );
 			container.setWidget(attachSplit);
 			ScrollPanel scrollPanel = new ScrollPanel();

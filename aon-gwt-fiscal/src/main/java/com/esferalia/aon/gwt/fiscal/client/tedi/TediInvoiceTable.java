@@ -4,6 +4,9 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonCellTable;
 import com.esferalia.aon.occam.api.model.tedi.TediLevel;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
+import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.cell.client.Cell;
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.ImageResourceCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -20,12 +23,12 @@ public class TediInvoiceTable extends CellTable<TediResult> {
 	private static final CellTable.Resources TABLE_STYLE = GWT.create(AonCellTable.class);
 
 	private NoSelectionModel<TediResult> model;
-	
+
 	public TediInvoiceTable(ProvidesKey<TediResult> providesKey) {
-		super(1,TABLE_STYLE, providesKey);
+		super(1, TABLE_STYLE, providesKey);
 		this.setKeyboardPagingPolicy(KeyboardPagingPolicy.CHANGE_PAGE);
 		this.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
-		
+
 		addStatusColumn();
 		addInvoiceTypeColumn();
 		addAttachColumn();
@@ -40,7 +43,7 @@ public class TediInvoiceTable extends CellTable<TediResult> {
 	}
 
 	public void addSelectionChangeHandler(SelectionChangeEvent.Handler handler) {
-		model.addSelectionChangeHandler( handler );
+		model.addSelectionChangeHandler(handler);
 	}
 
 	private void addStatusColumn() {
@@ -63,6 +66,23 @@ public class TediInvoiceTable extends CellTable<TediResult> {
 		this.setColumnWidth(statusColumn, 20, Unit.PX);
 	}
 
+	private static interface GetValue<C> {
+		C getValue(TediResult contact);
+	}
+
+	private <C> Column<TediResult, C> addColumn(Cell<C> cell, final GetValue<C> getter,
+			FieldUpdater<TediResult, C> fieldUpdater) {
+		Column<TediResult, C> column = new Column<TediResult, C>(cell) {
+			@Override
+			public C getValue(TediResult object) {
+				return getter.getValue(object);
+			}
+		};
+		column.setFieldUpdater(fieldUpdater);
+		this.addColumn(column, "");
+		return column;
+	}
+
 	private void addInvoiceTypeColumn() {
 		final TextColumn<TediResult> invoiceTypeColumn = new TextColumn<TediResult>() {
 			@Override
@@ -70,16 +90,16 @@ public class TediInvoiceTable extends CellTable<TediResult> {
 				return result.getInvoice().getType().getDescription();
 			}
 		};
-		this.addColumn(invoiceTypeColumn, AON.MSG.type() );
+		this.addColumn(invoiceTypeColumn, AON.MSG.type());
 		this.setColumnWidth(invoiceTypeColumn, 80, Unit.PX);
 	}
-	
+
 	private void addAttachColumn() {
 		final Column<TediResult, ImageResource> attachColumn = new Column<TediResult, ImageResource>(
 				new ImageResourceCell()) {
 			@Override
 			public ImageResource getValue(TediResult result) {
-				return result.hasAttach()?AON.AON_RESOURCES.aonIconAttach():null;
+				return result.hasAttach() ? AON.AON_RESOURCES.aonIconAttach() : null;
 			}
 		};
 		this.addColumn(attachColumn);
@@ -90,31 +110,36 @@ public class TediInvoiceTable extends CellTable<TediResult> {
 		final TextColumn<TediResult> issueDateColumn = new TextColumn<TediResult>() {
 			@Override
 			public String getValue(TediResult result) {
-				return result.getInvoice().getIssueDate() != null ? AON.DATE_FORMAT.format(result.getInvoice().getIssueDate()) : "";
+				return result.getInvoice().getIssueDate() != null
+						? AON.DATE_FORMAT.format(result.getInvoice().getIssueDate())
+						: "";
 			}
 		};
 		this.addColumn(issueDateColumn, AON.MSG.date());
 		issueDateColumn.setCellStyleNames(AON.AON_CSS.aonTextCenter());
 		this.setColumnWidth(issueDateColumn, 50, Unit.PX);
 	}
-	
+
 	private void addTotalColumn() {
 		final TextColumn<TediResult> amountColumn = new TextColumn<TediResult>() {
 			@Override
 			public String getValue(TediResult result) {
-				return AON.FMT.format(result.getInvoice().getTotal()) ;
+				return AON.FMT.format(result.getInvoice().getTotal());
 			}
 		};
 		this.addColumn(amountColumn, AON.MSG.total());
 		amountColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
 		this.setColumnWidth(amountColumn, 100, Unit.PX);
-	}	
-	
+	}
+
 	private void addNumberColumn() {
 		final TextColumn<TediResult> nameColumn = new TextColumn<TediResult>() {
 			@Override
 			public String getValue(TediResult result) {
-				return result.getInvoice().getReferenceCode();
+				return result.getInvoice().isSales()
+						? AonStringUtils.appendIfMissing(result.getInvoice().getSeries(), "/")
+								+ result.getInvoice().getNumber()
+						: result.getInvoice().getReferenceCode();
 			}
 		};
 		this.addColumn(nameColumn, AON.MSG.invoiceNumber());

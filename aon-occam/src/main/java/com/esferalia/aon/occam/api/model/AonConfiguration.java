@@ -6,6 +6,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.product.Tax;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 
@@ -53,6 +54,7 @@ public class AonConfiguration implements Serializable {
 	private Account salaryDedAdvPayment;
 	private Account salaryDedSeize;
 	
+	private AccountingRegistry defaultCreditor;
 	
 	private Date	operationsDeadline;
 
@@ -425,6 +427,14 @@ public class AonConfiguration implements Serializable {
 		return this;
 	}
 
+	public AccountingRegistry getDefaultCreditor() {
+		return defaultCreditor;
+	}
+	public AonConfiguration setDefaultCreditor(AccountingRegistry defaultCreditor) {
+		this.defaultCreditor = defaultCreditor;
+		return this;
+	}
+	
 	public Account getSalaryDedSeize() {
 		return salaryDedSeize;
 	}

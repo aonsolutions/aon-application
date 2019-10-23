@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -88,6 +90,7 @@ public class ConfigurationDAO {
 				.setSalaryOtherDeductions(getAccount(ctx, AppParam.ACC_SALARY_DED_OTHER_ACC))
 				.setSalaryDedSeize(getAccount(ctx, AppParam.ACC_SALARY_DED_SEIZE_ACC))
 				.setChildDomains(DomainDAO.getActiveChildDomains(ctx))
+				.setDefaultCreditor(getDefaultCreditor(ctx))
 		;
 		SeriesDAO
 			.getSeries(ctx,
@@ -105,6 +108,12 @@ public class ConfigurationDAO {
 		return conf;
 	}
 	
+	private static AccountingRegistry getDefaultCreditor(AONContext ctx) {
+		return RegistryDAO.getAccountingRegistries(ctx, f -> f.getDocumentProperty().isNull().and(f.getNameProperty().like("%vario%")))
+				.filter( ar -> ar.getType() == AccountingRegistryType.CREDITOR)
+				.findFirst().orElse(null);
+	}
+
 	private static Account getAccount(AONContext ctx, AppParam param ) {
 		String value = AppParamDAO.fetchValue(ctx, param);
 		if (AonStringUtils.isNotBlank(value)) {

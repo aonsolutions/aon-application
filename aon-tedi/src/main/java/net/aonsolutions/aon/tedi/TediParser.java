@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.tedi;
 
 import java.util.LinkedList;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -24,11 +25,8 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.tedi.TediContextKey;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
-import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
-import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
-import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
@@ -69,6 +67,7 @@ public class TediParser {
 	}
 	
 	private enum TediFinanceTransfer {
+		PAYMENT( (aonCtx,result,tedi,aon) -> aon.setPayment( !result.getInvoice().isSales())),
 		DUE_DATE( (aonCtx,result,tedi,aon) -> aon.setDueDate( tedi.getDueDate())),
 		AMOUNT( (aonCtx,result,tedi,aon) -> aon.setAmount( tedi.getAmount())),
 		IBAN( (aonCtx,result,tedi,aon) -> aon.setBankAccount( new BankAccount(tedi.getIban()))),
@@ -222,78 +221,11 @@ public class TediParser {
 				TediInvoiceDetailTransfer.toAon(result,tid,id);
 			}
 		}),
-		REGISTRY ( (ctx, aonCtx,result) -> {
-			if (result.getTedi().getRegistry() != null) {
-				Invoice invoice = result.getInvoice();
-				invoice.setDomain(ctx.getDomainId());
-				
-				if (invoice.getRegistry() == null) {
-					LinkedList<AccountingRegistry> registries = 
-						RegistryDAO.getAccountingRegistries(ctx, f -> f.getDocumentProperty().eq(result.getTedi().getRdocument()))
-							.filter( ar -> (invoice.isSales() && ar.getType() == AccountingRegistryType.CUSTOMER) 
-										|| (!invoice.isSales() && ar.getType() != AccountingRegistryType.CUSTOMER))
-							.collect(Collectors.toCollection(LinkedList::new));
-					boolean ok = false;
-					if (registries != null && registries.size() == 1) {
-						AccountingRegistry ar = registries.get(0);
-						if (invoice.isSales()) {
-							if (ar.getType() == AccountingRegistryType.CUSTOMER) {
-								ok = true;
-							}
-						} else {
-							if (ar.getType() == AccountingRegistryType.CREDITOR) {
-								if (invoice.getType() == InvoiceType.PURCHASE) {
-									invoice.setType( InvoiceType.EXPENSES );
-									result.add( TediErrorMessages.C003.inf(TediContextKey.TYPE,TediContextKey.TYPE.getDescription(),InvoiceType.EXPENSES.getDescription()));
-								}
-								ok = true;
-							}
-							if (ar.getType() == AccountingRegistryType.SUPPLIER) {
-								if (invoice.getType() != InvoiceType.PURCHASE) {
-									invoice.setType( InvoiceType.PURCHASE );
-									result.add( TediErrorMessages.C003.inf(TediContextKey.TYPE,TediContextKey.TYPE.getDescription(),InvoiceType.PURCHASE.getDescription()));
-								}
-								ok = true;
-							}
-						}
-						if (ok) {
-							AccountingInvoice ai = result.getAccountingInvoice();
-							ai.setRegistry(ar);
-							ai.setSuggestedAccounts(AccountingInvoiceDAO.getSuggestedAccounts(ctx,ar.getId()));
-							invoice.setRegistry(ar.getId())
-//								.setType(ar.getType().getInvoiceType())
-								.setTransaction(ar.getTransaction());
-							ar.getType().visit(ar, new  InvoiceRegistryInitializer(ctx, ai.getInvoice(), aonCtx));
-						}
-					}
-					
-					// Gestion para cuando hay mas de un registry válido.
-					
-					if (!ok) {
-						result.getInvoice().setRegistryDocument(result.getTedi().getRegistry().getDocument());
-						result.getInvoice().setRegistryDocumentCountry(Country.safeValueOf(result.getTedi().getRegistry().getDocumentCountry()));
-						if (result.getInvoice().getRegistryDocumentCountry() == null) {
-							result.getInvoice().setRegistryDocumentCountry(Country.ES);
-							result.add( TediErrorMessages.C003.inf(TediContextKey.RDOCUMENT_COUNTRY,TediContextKey.RDOCUMENT_COUNTRY.getDescription(),Country.ES.getIso2()));
-						}
-						if (result.getInvoice().getRegistryDocumentType() == null) {
-							// TDOO 
-						}
-						result.getInvoice().setRegistryName(result.getTedi().getRegistry().getName());
-						if (result.getInvoice().getRegistryDocumentCountry() == null || result.getInvoice().getRegistryDocumentCountry() == Country.ES) {
-							result.getInvoice().setTransaction( InvoiceTransactionType.NATIONAL);
-							result.add( TediErrorMessages.C003.inf(TediContextKey.TRANSACTION,TediContextKey.TRANSACTION.getDescription(),InvoiceTransactionType.NATIONAL.getDescription()));
-						} else if ( result.getInvoice().getRegistryDocumentCountry().isIntracommunityCountry() ) {
-							result.getInvoice().setTransaction( InvoiceTransactionType.INTRACOMMUNITY);
-							result.add( TediErrorMessages.C003.inf(TediContextKey.TRANSACTION,TediContextKey.TRANSACTION.getDescription(),InvoiceTransactionType.INTRACOMMUNITY.getDescription()));
-						}
-					}
-				}
-			} else {
-				result.getInvoice().setRegistryDocument(result.getTedi().getRdocument());
-				result.getInvoice().setRegistryName(result.getTedi().getRname());
-			}
-		}),
+		DOMAIN ( (ctx, aonCtx,result) -> {
+			Invoice invoice = result.getInvoice();
+			invoice.setDomain(ctx.getDomainId());
+		}),		
+		REGISTRY ( (ctx, aonCtx,result) -> TediParser.fillRegistry(ctx, aonCtx,result)),
 		SERIES	( (ctx, aonCtx,result) -> {
 			if (result.getTedi().isEmitida()) {
 				result.getInvoice().setSeries(result.getTedi().getSeries());
@@ -309,7 +241,12 @@ public class TediParser {
 				}
 			}
 		}), 
-		REFERENCE_CODE( (ctx, aonCtx,result) -> result.getInvoice().setReferenceCode(result.getTedi().getReference())), 
+		REFERENCE_CODE( (ctx, aonCtx,result) -> {
+			result.getInvoice().setReferenceCode(result.getTedi().getReference());
+			if (result.getTedi().isTicket() && AonStringUtils.isBlank(result.getTedi().getReference())) {
+				result.getInvoice().setReferenceCode("<auto>"); 
+			}
+		}), 
 		COMMENTS( (ctx, aonCtx,result) -> {
 				if (result.getTedi().getComments() != null) {
 					StringBuilder builder = new StringBuilder();
@@ -408,6 +345,14 @@ public class TediParser {
 					result.getAccountingInvoice().getFinances().add(fin);
 					TediFinanceTransfer.toAon(aonCtx,result,tfin,fin);
 				}
+			} else if (result.getTedi().isTicket()) {
+				TediFinance tfin = new TediFinance()
+					.setDueDate(result.getInvoice().getIssueDate())
+					.setAmount( result.getInvoice().getTotal())
+					.setPayMethod(TediPayMethod.CASH);
+				Finance fin = new Finance();
+				result.getAccountingInvoice().getFinances().add(fin);
+				TediFinanceTransfer.toAon(aonCtx,result,tfin,fin);
 			}
 		})
 		;
@@ -553,4 +498,189 @@ public class TediParser {
 		}
 		
 	}
+	
+	public static void fillRegistry(AONContext ctx, AonConfiguration aonCtx, TediResult result) {
+		for ( IRegistryFiller filler : FILLERS ) {
+			boolean accepted = filler.accept(result);
+			if (accepted) {
+				filler.fill(ctx, aonCtx, result);
+				break;
+			}
+		}
+	}
+
+	private static interface IRegistryFiller {
+		boolean accept(TediResult result);
+		void fill(AONContext ctx, AonConfiguration aonCtx, TediResult result);	
+	}
+	private static IRegistryFiller[] FILLERS = new IRegistryFiller[] {new EmitidaFiller(),new RecibidaFiller(),new TicketFiller() };
+
+	private static abstract class RegistryFiller implements IRegistryFiller {
+		
+		protected boolean fillRegistry(AONContext ctx, AonConfiguration aonCtx, TediResult result,Predicate<AccountingRegistry> filterExpression) {
+			Invoice invoice = result.getInvoice();
+			LinkedList<AccountingRegistry> registries = RegistryDAO
+					.getAccountingRegistries(ctx, f -> f.getDocumentProperty().eq(result.getTedi().getRdocument()))
+					.filter(filterExpression)
+					.collect(Collectors.toCollection(LinkedList::new));
+			if (registries != null && registries.size() > 0) {
+				if (registries.size() == 1) {
+					AccountingRegistry ar = registries.get(0);
+					AccountingInvoice ai = result.getAccountingInvoice();
+					ai.setRegistry(ar);
+					ai.setSuggestedAccounts(AccountingInvoiceDAO.getSuggestedAccounts(ctx, ar.getId()));
+					invoice.setRegistry(ar.getId())
+						.setTransaction(ar.getTransaction());
+					ar.getType().visit(ar, new InvoiceRegistryInitializer(ctx, ai.getInvoice(), aonCtx));
+					return true;
+				} else {
+					result.setPosibleRegistries(registries);
+					result.add( TediErrorMessages.C011.err(TediContextKey.REGISTRY,TediContextKey.REGISTRY.getDescription()));
+				}
+			}
+			return false;
+		}		
+	}
+	
+	private static class EmitidaFiller extends RegistryFiller {
+		@Override
+		public boolean accept(TediResult result) {
+			return result.getTedi().isEmitida();
+		}
+
+		@Override
+		public void fill(AONContext ctx, AonConfiguration aonCtx, TediResult result) {
+			fillRegistry(ctx, aonCtx, result, ar -> result.getInvoice().isSales() && ar.getType() == AccountingRegistryType.CUSTOMER);
+		}
+	}
+
+	private static class RecibidaFiller extends RegistryFiller {
+		@Override
+		public boolean accept(TediResult result) {
+			return result.getTedi().isRecibida();
+		}
+
+		@Override
+		public void fill(AONContext ctx, AonConfiguration aonCtx, TediResult result) {
+			fillRegistry(ctx, aonCtx, result, ar -> !result.getInvoice().isSales() 
+				&& (ar.getType() == AccountingRegistryType.SUPPLIER || ar.getType() == AccountingRegistryType.CREDITOR));
+		}
+		
+	}
+	private static class TicketFiller extends RegistryFiller {
+		@Override
+		public boolean accept(TediResult result) {
+			return result.getTedi().isTicket();
+		}
+
+		@Override
+		public void fill(AONContext ctx, AonConfiguration aonCtx, TediResult result) {
+			if (!fillRegistry(ctx, aonCtx, result, ar -> !result.getInvoice().isSales() && ar.getType() == AccountingRegistryType.CREDITOR)){
+				if (aonCtx.getDefaultCreditor() != null) {
+					AccountingRegistry ar = aonCtx.getDefaultCreditor();
+					AccountingInvoice ai = result.getAccountingInvoice();
+					Invoice invoice = result.getInvoice();
+					TediInvoice tedi = result.getTedi();
+					ai.setRegistry(ar);
+					ai.setSuggestedAccounts(AccountingInvoiceDAO.getSuggestedAccounts(ctx, ar.getId()));
+					invoice
+						.setRegistry(ar.getId())
+						.setTransaction(ar.getTransaction());
+					ar.getType().visit(ar, new InvoiceRegistryInitializer(ctx, ai.getInvoice(), aonCtx));
+					if ( AonStringUtils.isNotBlank( tedi.getRdocument() )) {
+						invoice.setRegistryDocument(tedi.getRdocument());
+					}
+					if ( AonStringUtils.isNotBlank( tedi.getRname())) {
+						invoice.setRegistryName(tedi.getRname());
+					}
+				}
+			};
+		}
+	}
+
 }
+	
+	/*				
+if (!result.getTedi().isTicket()) {
+	if (result.getTedi().getRegistry() != null) {
+		Invoice invoice = result.getInvoice();
+		invoice.setDomain(ctx.getDomainId());
+		
+	}
+}
+
+// ** **
+
+
+if (result.getTedi().getRegistry() != null) {
+	Invoice invoice = result.getInvoice();
+	invoice.setDomain(ctx.getDomainId());
+	
+	if (invoice.getRegistry() == null) {
+		LinkedList<AccountingRegistry> registries = 
+			RegistryDAO.getAccountingRegistries(ctx, f -> f.getDocumentProperty().eq(result.getTedi().getRdocument()))
+				.filter( ar -> (invoice.isSales() && ar.getType() == AccountingRegistryType.CUSTOMER) 
+							|| (!invoice.isSales() && ar.getType() != AccountingRegistryType.CUSTOMER))
+				.collect(Collectors.toCollection(LinkedList::new));
+		boolean ok = false;
+		if (registries != null && registries.size() == 1) {
+			AccountingRegistry ar = registries.get(0);
+			if (invoice.isSales()) {
+				if (ar.getType() == AccountingRegistryType.CUSTOMER) {
+					ok = true;
+				}
+			} else {
+				if (ar.getType() == AccountingRegistryType.CREDITOR) {
+					if (invoice.getType() == InvoiceType.PURCHASE) {
+						invoice.setType( InvoiceType.EXPENSES );
+						result.add( TediErrorMessages.C003.inf(TediContextKey.TYPE,TediContextKey.TYPE.getDescription(),InvoiceType.EXPENSES.getDescription()));
+					}
+					ok = true;
+				}
+				if (ar.getType() == AccountingRegistryType.SUPPLIER) {
+					if (invoice.getType() != InvoiceType.PURCHASE) {
+						invoice.setType( InvoiceType.PURCHASE );
+						result.add( TediErrorMessages.C003.inf(TediContextKey.TYPE,TediContextKey.TYPE.getDescription(),InvoiceType.PURCHASE.getDescription()));
+					}
+					ok = true;
+				}
+			}
+			if (ok) {
+				AccountingInvoice ai = result.getAccountingInvoice();
+				ai.setRegistry(ar);
+				ai.setSuggestedAccounts(AccountingInvoiceDAO.getSuggestedAccounts(ctx,ar.getId()));
+				invoice.setRegistry(ar.getId())
+//					.setType(ar.getType().getInvoiceType())
+					.setTransaction(ar.getTransaction());
+				ar.getType().visit(ar, new  InvoiceRegistryInitializer(ctx, ai.getInvoice(), aonCtx));
+			}
+		}
+		
+		// Gestion para cuando hay mas de un registry válido.
+		
+		if (!ok) {
+			result.getInvoice().setRegistryDocument(result.getTedi().getRegistry().getDocument());
+			result.getInvoice().setRegistryDocumentCountry(Country.safeValueOf(result.getTedi().getRegistry().getDocumentCountry()));
+			if (result.getInvoice().getRegistryDocumentCountry() == null) {
+				result.getInvoice().setRegistryDocumentCountry(Country.ES);
+				result.add( TediErrorMessages.C003.inf(TediContextKey.RDOCUMENT_COUNTRY,TediContextKey.RDOCUMENT_COUNTRY.getDescription(),Country.ES.getIso2()));
+			}
+			if (result.getInvoice().getRegistryDocumentType() == null) {
+				// TDOO 
+			}
+			result.getInvoice().setRegistryName(result.getTedi().getRegistry().getName());
+			if (result.getInvoice().getRegistryDocumentCountry() == null || result.getInvoice().getRegistryDocumentCountry() == Country.ES) {
+				result.getInvoice().setTransaction( InvoiceTransactionType.NATIONAL);
+				result.add( TediErrorMessages.C003.inf(TediContextKey.TRANSACTION,TediContextKey.TRANSACTION.getDescription(),InvoiceTransactionType.NATIONAL.getDescription()));
+			} else if ( result.getInvoice().getRegistryDocumentCountry().isIntracommunityCountry() ) {
+				result.getInvoice().setTransaction( InvoiceTransactionType.INTRACOMMUNITY);
+				result.add( TediErrorMessages.C003.inf(TediContextKey.TRANSACTION,TediContextKey.TRANSACTION.getDescription(),InvoiceTransactionType.INTRACOMMUNITY.getDescription()));
+			}
+		}
+	}
+} else {
+	result.getInvoice().setRegistryDocument(result.getTedi().getRdocument());
+	result.getInvoice().setRegistryName(result.getTedi().getRname());
+}
+}),
+*/		

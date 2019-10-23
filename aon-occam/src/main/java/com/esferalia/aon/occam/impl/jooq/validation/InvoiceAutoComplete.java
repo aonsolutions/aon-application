@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.validation;
 
+import java.util.Date;
 import java.util.function.BiConsumer;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -74,9 +75,18 @@ public class InvoiceAutoComplete {
 	/**
 	 * Se rellena las serie y numero para las facturas de compras y gastos.
 	 */
+	public static BiConsumer<Invoice,AonConfigurationContext> COMPLETE_UNDEDUCTIBLE_REFERENCE_CODE = (inv,ctx) -> {
+		if (inv.isUndeductible() || AonStringUtils.equals("<auto>",inv.getReferenceCode())) {
+			inv.setReferenceCode( inv.getDocumentNumber());
+		} 
+	};
+
+	/**
+	 * Se rellena las serie y numero para las facturas de compras y gastos.
+	 */
 	public static BiConsumer<Invoice,AonConfigurationContext> COMPLETE_UNDEDUCTIBLE_SERIES = (inv,ctx) -> {
 		if (inv.isUndeductible()) {
-			inv.setSeries(Integer.toString(AonDateUtils.getYear(inv.getIssueDate())));
+			inv.setSeries(Integer.toString(AonDateUtils.getYear(inv.getIssueDate()==null?new Date():inv.getIssueDate())));
 			if (inv.getNumber() == 0) {
 				Byte[] types = new Byte[]{InvoiceType.UNDEDUCTIBLE.value()};
 				int number = InvoiceDAO.getNextNumber(ctx.getContext(),types, inv.getSeries());
@@ -142,6 +152,7 @@ public class InvoiceAutoComplete {
 		COMPLETE_SALES_SERIES
 		.andThen(COMPLETE_PURCHASE_EXPENSES_SERIES)
 		.andThen(COMPLETE_UNDEDUCTIBLE_SERIES)
+		.andThen(COMPLETE_UNDEDUCTIBLE_REFERENCE_CODE)
 		.andThen(COMPLETE_TAX_DATE)
 		.andThen(COMPLETE_RECTIFICATION_TYPE)
 		.andThen(ENSURE_REGISTRY_DATA)
