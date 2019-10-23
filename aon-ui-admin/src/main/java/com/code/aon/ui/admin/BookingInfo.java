@@ -26,6 +26,7 @@ import com.code.aon.config.Domain;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.ui.admin.controller.DomainController;
+import com.code.aon.ui.admin.controller.TediConfigurationController;
 import com.code.aon.ui.audit.AuditManager;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.registry.controller.DocumentManager;
@@ -51,7 +52,7 @@ public class BookingInfo implements Serializable {
 	private List<DomainModuleInfo> displayModules;
 	
 	private DomainModuleInfo documental;
-	
+
 	private Domain payerDomain;
 	
 	public BookingInfo(Domain domain, Domain parentDomain) {
@@ -87,7 +88,6 @@ public class BookingInfo implements Serializable {
 		this.aioInfo.sortApplicationModules(this.displayModules);
 		return retValue;
 	}
-
 	
 	private void initPayerDomain() throws ManagerBeanException {
 		this.payerDomain = null;
@@ -329,6 +329,11 @@ public class BookingInfo implements Serializable {
 		return (getDomain().getType() == DomainType.ENTERPRISE) && aonFinance.isChecked();
 	}
 
+	public boolean isTediCenter() {
+		TediConfigurationController tedi = (TediConfigurationController) AonUtil.getRegisteredBean("tediConfiguration");
+		return tedi.isAccepted();
+	}
+	
 	private List<DomainModuleInfo> calculateDisplayModules() throws ManagerBeanException {
 		List<DomainModuleInfo> list = new LinkedList<DomainModuleInfo>();
 		list.add(aioInfo.getModuleInfo(Module.CRM));

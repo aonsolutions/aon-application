@@ -513,6 +513,9 @@ public class DomainController extends BasicController {
 				String name = StringEscapeUtils.escapeHtml(module.getName(locale));
 				body.append( "<li>" ).append(name).append( "</li>" );
 			}
+			if(di.isTediCenter()) {
+				body.append( "<li>" ).append("tEDI Center").append( "</li>" );
+			}
 			body.append( "</ul>" );
 		}
 		body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_FOOTER_1) );

@@ -49,6 +49,7 @@ public interface ICommonMessages {
 	String EMAIL = "aon_email";
 	String ENTITY = "aon_entity";
 	String EXPENSE = "aon_expense";
+	String EXTERNAL_TEDI_CENTER = "aon_external_tediCenter";
 	String ERROR = "aon_error";
 	String FAVORITES_MANAGEMENT = "aon_favorites_management";
 	String FAX = "aon_fax";
