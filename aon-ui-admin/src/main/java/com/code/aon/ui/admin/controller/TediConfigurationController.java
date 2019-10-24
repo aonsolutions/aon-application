@@ -122,6 +122,9 @@ public class TediConfigurationController implements IAdminConstants, Serializabl
 		Tedi tedi = Tedi.login(getEmail(), getPassword());
 		setToken(tedi.getToken());
 		setStatus(CONNECTED + " - " + getEmail());
+		if(DomainManager.getCurrentDomain() == 0) {
+			save();
+		}
 	}
 	
 	public void disconnect(ActionEvent event){
@@ -129,6 +132,9 @@ public class TediConfigurationController implements IAdminConstants, Serializabl
 		setActive(false);
 		setToken(null);
 		setPassword("");
+		if(DomainManager.getCurrentDomain() == 0) {
+			save();
+		}
 	}
 	
 	public void save() {
@@ -291,7 +297,10 @@ public class TediConfigurationController implements IAdminConstants, Serializabl
 	public void snapshotConnect(ActionEvent event){
 		Tedi tedi = Tedi.login(getSnapshotEmail(), getSnapshotPassword(),true);
 		setSnapshotToken(tedi.getToken());
-		setStatus(CONNECTED + " - " + getSnapshotEmail());
+		setSnapshotStatus(CONNECTED + " - " + getSnapshotEmail());
+		if(DomainManager.getCurrentDomain() == 0) {
+			snapshotSave();;
+		}
 	}
 
 	public void snapshotDisconnect(ActionEvent event){
@@ -299,6 +308,9 @@ public class TediConfigurationController implements IAdminConstants, Serializabl
 		setSnapshotActive(false);
 		setSnapshotToken(null);
 		setSnapshotPassword("");
+		if(DomainManager.getCurrentDomain() == 0) {
+			snapshotSave();;
+		}
 	}
 	
 	public void snapshotSave() {

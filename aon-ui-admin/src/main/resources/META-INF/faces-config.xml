@@ -542,6 +542,13 @@
 	</navigation-rule>	
 	
 	<!-- =================== Service Account ================= -->
+
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>adminTediCenter_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/admin/facelet/serviceAccount/formTediCenter.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>adminGoogle_form</from-outcome>
