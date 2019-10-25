@@ -317,7 +317,7 @@ public class TediCenter extends MainEntryPoint {
 		toolbarPanel.add(toolbar);
 		return toolbarPanel;
 	}
-
+ 
 	private void onRefresh() {
 		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
 	}
@@ -337,11 +337,13 @@ public class TediCenter extends MainEntryPoint {
 				new AsyncCallback<LinkedList<TediResult>>() {
 
 					@Override
-					public void onSuccess(LinkedList<TediResult> i) {
-						for (TediResult result : i ) {
-							SimpleLayoutPanel tabPanel = (SimpleLayoutPanel) tabs.get(result.getTedi().getUuid() );
-							tabs.remove( result.getTedi().getUuid());
-							mainTabLayoutPanel.remove(tabPanel);
+					public void onSuccess(LinkedList<TediResult> list) {
+						if (list != null) {
+							for (TediResult result : list ) {
+								SplitLayoutPanel tabPanel = (SplitLayoutPanel) tabs.get(result.getTedi().getUuid() );
+								tabs.remove( result.getTedi().getUuid());
+								mainTabLayoutPanel.remove(tabPanel);
+							}
 						}
 						onRefresh();
 					}
@@ -443,7 +445,7 @@ public class TediCenter extends MainEntryPoint {
 						LinkedList<TediResult> accepted = new LinkedList<TediResult>();
 						accepted.add(result);
 						onAcceptAll(accepted);
-						onRefresh( );
+						// onRefresh( );
 					}
 				})
 			);

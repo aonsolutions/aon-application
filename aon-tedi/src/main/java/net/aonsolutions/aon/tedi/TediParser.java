@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
@@ -443,22 +444,13 @@ public class TediParser {
 		
 		Account expAccount = null;
 		if (invoice.isSales() ) {
-			expAccount = aonCtx.getDefaultSalesAccount();
-		} else {
-			if (invoice.isPurchase() ) {
-				expAccount = aonCtx.getDefaultPurchaseAccount();	
-			} else {
-				if ( ai.getSuggestedAccounts() != null && ai.getSuggestedAccounts().size() > 0) {
-					expAccount = ai.getSuggestedAccounts().get(0);
-				} else {
-					expAccount = AccountDAO.get(ctx, "629000000");
-					if (expAccount == null) {
-						expAccount = AccountDAO.getAccounts(ctx, filter -> filter.getCodeProperty().like("629%") )
-								.findFirst()
-								.orElse(null);
-					}
-				}
-			}
+			expAccount = getSalesAccount( ctx,aonCtx,result);
+		} else if (invoice.isPurchase() ) {
+			expAccount = getPurchaseAccount( ctx,aonCtx,result);
+		} else if (invoice.isExpenses() ) {
+			expAccount = getExpenseAccount( ctx,aonCtx,result);
+		} else if (invoice.isUndeductible() ) {
+			expAccount = getUndeductibleAccount( ctx,aonCtx,result);
 		}
 		if (invoice.getDetails() != null) {
 			for (InvoiceDetail detail : invoice.getDetails()) {
@@ -562,8 +554,22 @@ public class TediParser {
 
 		@Override
 		public void fill(AONContext ctx, AonConfiguration aonCtx, TediResult result) {
-			fillRegistry(ctx, aonCtx, result, ar -> !result.getInvoice().isSales() 
+			boolean filled = fillRegistry(ctx, aonCtx, result, ar -> !result.getInvoice().isSales() 
 				&& (ar.getType() == AccountingRegistryType.SUPPLIER || ar.getType() == AccountingRegistryType.CREDITOR));
+			if (filled) {
+				AccountingRegistry ar = result.getAccountingInvoice().getRegistry();
+				if (ar.getType() == AccountingRegistryType.CREDITOR) {
+					if (result.getInvoice().getType() == InvoiceType.PURCHASE) {
+						result.getInvoice().setType( InvoiceType.EXPENSES );
+						result.add( TediErrorMessages.C003.inf(TediContextKey.TYPE,TediContextKey.TYPE.getDescription(),InvoiceType.EXPENSES.getDescription()));
+					}
+				} else  if (ar.getType() == AccountingRegistryType.SUPPLIER) {
+					if (result.getInvoice().getType() != InvoiceType.PURCHASE) {
+						result.getInvoice().setType( InvoiceType.PURCHASE );
+						result.add( TediErrorMessages.C003.inf(TediContextKey.TYPE,TediContextKey.TYPE.getDescription(),InvoiceType.PURCHASE.getDescription()));
+					}
+				}
+			}
 		}
 		
 	}
@@ -598,20 +604,37 @@ public class TediParser {
 		}
 	}
 
+	private static Account getSalesAccount(AONContext ctx, AonConfiguration aonCtx, TediResult result) {
+		return aonCtx.getDefaultSalesAccount();
+	}
+	
+	private static Account getPurchaseAccount(AONContext ctx, AonConfiguration aonCtx, TediResult result) {
+		Account purchaseAccount = aonCtx.getDefaultPurchaseAccount(); 
+		return purchaseAccount;
+	}
+	private static Account getUndeductibleAccount(AONContext ctx, AonConfiguration aonCtx, TediResult result) {
+		return getExpenseAccount(ctx, aonCtx, result);
+	}
+	
+	private static Account getExpenseAccount(AONContext ctx, AonConfiguration aonCtx, TediResult result) {
+		AccountingInvoice ai = result.getAccountingInvoice();
+		Account expAccount;
+		if ( ai.getSuggestedAccounts() != null && ai.getSuggestedAccounts().size() > 0) {
+			expAccount = ai.getSuggestedAccounts().get(0);
+		} else {
+			expAccount = AccountDAO.get(ctx, "629000000");
+			if (expAccount == null) {
+				expAccount = AccountDAO.getAccounts(ctx, filter -> filter.getCodeProperty().like("629%") )
+						.findFirst()
+						.orElse(null);
+			}
+		}
+		return expAccount;
+	}
+	
 }
 	
-	/*				
-if (!result.getTedi().isTicket()) {
-	if (result.getTedi().getRegistry() != null) {
-		Invoice invoice = result.getInvoice();
-		invoice.setDomain(ctx.getDomainId());
-		
-	}
-}
-
-// ** **
-
-
+/*				
 if (result.getTedi().getRegistry() != null) {
 	Invoice invoice = result.getInvoice();
 	invoice.setDomain(ctx.getDomainId());
