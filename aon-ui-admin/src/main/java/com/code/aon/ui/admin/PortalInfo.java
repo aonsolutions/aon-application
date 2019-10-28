@@ -39,6 +39,10 @@ public class PortalInfo implements Serializable {
 		return (value != 0) && ((value & IAdminConstants.INACTIVE_PORTAL) == 0);
 	}
 	
+	public static boolean getPortalValue(int value, int bitwise) {
+		return (value & bitwise) != 0;
+	}
+	
 	public void reset() {
 		this.value = 0;
 	}

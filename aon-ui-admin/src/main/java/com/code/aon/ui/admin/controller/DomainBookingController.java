@@ -46,8 +46,7 @@ public class DomainBookingController extends DataScrollerState {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainBookingController.class);
 	
-	private int totalManagementUsers;
-	private int totalOneUsers;
+	private int totalSmbUsers;
 	private int totalAiOUsers;
 	private int totalPortals;
 	private int totalTedis;
@@ -127,7 +126,23 @@ public class DomainBookingController extends DataScrollerState {
 		if (!StringUtils.isEmpty(portalValue)) {
 			int value = NumberUtils.toInt(portalValue);
 			data.setPortal(PortalInfo.isPortalActive(value));
+			String portalDescription = "";
+			if(PortalInfo.getPortalValue(value, IAdminConstants.DOCUMENTAL_MANAGEMENT_PORTAL)){
+				portalDescription = "D";
+			}
+			if(PortalInfo.getPortalValue(value, IAdminConstants.FINANCE_MANAGEMENT_PORTAL)) {
+				portalDescription = portalDescription + "G";
+			}
+			if(PortalInfo.getPortalValue(value, IAdminConstants.DOCUMENTAL_INFO_PORTAL)
+				|| PortalInfo.getPortalValue(value, IAdminConstants.FISCAL_INFO_PORTAL)
+				|| PortalInfo.getPortalValue(value, IAdminConstants.ACCOUNTING_PORTAL)
+				|| PortalInfo.getPortalValue(value, IAdminConstants.PAYROLL_INFO_PORTAL)) {
+				portalDescription = portalDescription + "I";
+			}
+			data.setPortalDescription(portalDescription);
 		}
+		
+
 
 		int activeUsers = ctx
 				.getDslContext()
@@ -137,6 +152,7 @@ public class DomainBookingController extends DataScrollerState {
 						.and(USER.ACTIVE.eq((byte) 1))
 						.and(USER.ENTERPRISE.isNull())).fetchOne(0, int.class);
 		data.setActiveUsers(activeUsers);
+				
 		int aonOneModule = ctx
 				.getDslContext()
 				.selectCount()
@@ -145,17 +161,18 @@ public class DomainBookingController extends DataScrollerState {
 						DOMAIN_APPLICATION_MODULE.MODULE
 								.eq((byte) Module.AON_ONE.ordinal())))
 				.fetchOne(0, int.class);
-		data.setAonOne(aonOneModule > 0);
 		
-		int managementModule = ctx
+		int aonFinanceModule = ctx
 				.getDslContext()
 				.selectCount()
 				.from(DOMAIN_APPLICATION_MODULE)
 				.where(DOMAIN_APPLICATION_MODULE.DOMAIN.eq(data.getId()).and(
 						DOMAIN_APPLICATION_MODULE.MODULE
-								.eq((byte) Module.MANAGEMENT.ordinal())))
+								.eq((byte) Module.AON_FINANCE.ordinal())))
 				.fetchOne(0, int.class);
-		data.setAonOne(managementModule > 0);
+		
+		data.setAonAio(aonOneModule == 0 && aonFinanceModule == 0);
+		data.setAonSmb(aonOneModule > 0);
 	}	
 	
 	private List<DomainBookingData> getDomainBookingDatas( AONContext ctx, Condition condition ) {
@@ -176,9 +193,8 @@ public class DomainBookingController extends DataScrollerState {
 	
 	private void initializeModel() {
 		List<DomainBookingData> domains = Collections.emptyList();
-		this.totalManagementUsers = 0;
 		this.totalAiOUsers = 0;
-		this.totalOneUsers = 0;
+		this.totalSmbUsers = 0;
 		this.totalPortals = 0;
 		this.totalTedis = 0;
 		
@@ -189,11 +205,9 @@ public class DomainBookingController extends DataScrollerState {
 		for (DomainBookingData data : domains) {
 			fillDomainData(ctx, data);
 			if ( data.getPayerDomain() == null ) {
-				if ( data.isAonOne() ) {
-					this.totalOneUsers += data.getMaxDefinedUsers();
-				} else if (data.isManagement()){
-					this.totalManagementUsers += data.getMaxDefinedUsers();
-				} else {
+				if ( data.isAonSmb() ) {
+					this.totalSmbUsers += data.getMaxDefinedUsers();
+				} else if (data.isAonAio()){
 					this.totalAiOUsers += data.getMaxDefinedUsers();
 				}				
 			}
@@ -208,8 +222,8 @@ public class DomainBookingController extends DataScrollerState {
 		setModel(new SerializableListDataModel(domains));
 	}
 
-	public int getTotalOneUsers() {
-		return totalOneUsers;
+	public int getTotalSmbUsers() {
+		return totalSmbUsers;
 	}
 
 	public int getTotalAiOUsers() {
@@ -268,9 +282,4 @@ public class DomainBookingController extends DataScrollerState {
 	public int getTotalTedis() {
 		return totalTedis;
 	}
-
-	public int getTotalManagementUsers() {
-		return totalManagementUsers;
-	}
-
 }

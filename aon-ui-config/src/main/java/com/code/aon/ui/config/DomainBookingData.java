@@ -20,11 +20,13 @@ public class DomainBookingData extends DomainData {
 	
 	private int maxDefinedUsers;
 	
-	private boolean management;
+	private boolean aonSmb;
 	
-	private boolean aonOne;
+	private boolean aonAio;
 	
 	private boolean portal;
+	
+	private String portalDescription;
 	
 	private DomainType type;
 	
@@ -60,20 +62,20 @@ public class DomainBookingData extends DomainData {
 		this.activeUsers = activeUsers;
 	}
 
-	public boolean isManagement() {
-		return management;
+	public boolean isAonSmb() {
+		return aonSmb;
 	}
 
-	public void setManagement(boolean management) {
-		this.management = management;
+	public void setAonSmb(boolean aonSmb) {
+		this.aonSmb = aonSmb;
 	}
 	
-	public boolean isAonOne() {
-		return aonOne;
+	public boolean isAonAio() {
+		return aonAio;
 	}
 
-	public void setAonOne(boolean aonOne) {
-		this.aonOne = aonOne;
+	public void setAonAio(boolean aonAio) {
+		this.aonAio = aonAio;
 	}
 
 	public boolean isPortal() {
@@ -82,6 +84,14 @@ public class DomainBookingData extends DomainData {
 
 	public void setPortal(boolean portal) {
 		this.portal = portal;
+	}
+	
+	public String getPortalDescription() {
+		return portalDescription;
+	}
+
+	public void setPortalDescription(String portalDescription) {
+		this.portalDescription = portalDescription;
 	}
 	
 	public boolean isTediCenter() {
