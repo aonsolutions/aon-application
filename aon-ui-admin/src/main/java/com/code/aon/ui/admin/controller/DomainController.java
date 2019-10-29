@@ -150,8 +150,7 @@ public class DomainController extends BasicController {
 	@Override
 	protected void accept() {
 		TediConfigurationController tedi = (TediConfigurationController) AonUtil.getRegisteredBean("tediConfiguration");
-		tedi.save();
-		tedi.snapshotSave();
+		tedi.contract();
 		super.accept();
 	}
 	

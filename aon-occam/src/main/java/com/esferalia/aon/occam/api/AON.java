@@ -758,6 +758,29 @@ public class AON {
 		}
 	}
 	
+	public static Stream<Company> getUserCompanyStream(String domainName, Integer domainId, String login, Integer[] scopes){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getUserCompanyStream(ctx, scopes);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Stream<Company> getUserCompanyStream(String domainName, Integer domainId, String login, Integer[] scopes, CompanyFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getUserCompanyStream(ctx, scopes, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	
 	public static Stream<Company> getCompanyStream(String domainName, Integer domainId, String login, CompanyFilter filter){
 		AONContext ctx = null;
 		try {

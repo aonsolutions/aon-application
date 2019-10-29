@@ -194,6 +194,26 @@ public class CompanyDAO {
 		.orElse(null);
 	}
 	
+	public static Stream<Company> getUserCompanyStream(AONContext ctx, Integer[] userScopes){
+		return ctx.getDslContext().select()
+				.from(DOMAIN)
+				.join(COMPANY).on(DOMAIN.ID.eq(COMPANY.DOMAIN))
+				.join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
+				.where(DOMAIN.PARENT.eq(ctx.getDomainId())).and(DOMAIN.SCOPE.in(userScopes).or(DOMAIN.SCOPE.isNull()))
+				.fetch().stream().map(new CompanyFiller());
+	}
+	
+	public static Stream<Company> getUserCompanyStream(AONContext ctx, Integer[] userScopes, CompanyFilter filter){
+		return COMPANY_PROPERTIES.build(ctx.getDslContext().select()
+				.from(DOMAIN)
+				.join(COMPANY).on(DOMAIN.ID.eq(COMPANY.DOMAIN)
+						.and(DOMAIN.SCOPE.in(userScopes).or(DOMAIN.SCOPE.isNull()))
+						.and(DOMAIN.ID.eq(ctx.getDomainId()).or(DOMAIN.PARENT.eq(ctx.getDomainId()))))
+				.join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
+			, filter)
+			.fetch().stream().map(new CompanyFiller());
+	}
+	
 	public static Stream<Company> getCompanyStream(AONContext ctx, CompanyFilter filter){
 		return COMPANY_PROPERTIES.build(ctx.getDslContext().select()
 				.from(COMPANY).join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID)), filter)

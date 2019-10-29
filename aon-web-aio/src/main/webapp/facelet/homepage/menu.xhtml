@@ -161,22 +161,22 @@
 					onclick="onreload();"
 					class="aon-menu-icon-tedi aon-icon-tedi aon-height-20"/>
 			</aon:if>
-		</aon:if>
 		
-		<aon:if test="#{desktop.state.tediCenterSnapshot}">
-			<aon:if test="#{!selectedMenu.tediCenterSnapshot}">
-				<aon:commandLink 
-					action="gwt_tediCenter_beta-child"
-					actionListener="#{gwtSelectedMenu.onTediCenterSnapshot}"
-					title="tEDI Center [TEST]" 
-					value="&#160;"
-					inmediate="true"
-					styleClass="aon-menu-icon aon-icon-tedi" />
-			</aon:if>
-			<aon:if test="#{selectedMenu.tediCenterSnapshot}">
-				<a 	title="tEDI Center [TEST]"
-					onclick="onreload();"
-					class="aon-menu-icon-tedi aon-icon-tedi aon-height-20"/>
+			<aon:if test="#{domainSwitcher.betaDomain}">
+				<aon:if test="#{!selectedMenu.tediCenterSnapshot}">
+					<aon:commandLink 
+						action="gwt_tediCenter_beta-child"
+						actionListener="#{gwtSelectedMenu.onTediCenterSnapshot}"
+						title="tEDI Center [TEST]" 
+						value="&#160;"
+						inmediate="true"
+						styleClass="aon-menu-icon aon-icon-tedi" />
+				</aon:if>
+				<aon:if test="#{selectedMenu.tediCenterSnapshot}">
+					<a 	title="tEDI Center [TEST]"
+						onclick="onreload();"
+						class="aon-menu-icon-tedi aon-icon-tedi aon-height-20"/>
+				</aon:if>
 			</aon:if>
 		</aon:if>
 	</ui:define>

@@ -213,11 +213,6 @@ public class DesktopState implements Serializable {
 		TediConfigurationController tedi = (TediConfigurationController) AonUtil.getRegisteredBean("tediConfiguration");
 		return tedi.isAccepted();
 	}
-	
-	public boolean isTediCenterSnapshot() {
-		TediConfigurationController tedi = (TediConfigurationController) AonUtil.getRegisteredBean("tediConfiguration");
-		return tedi.isSnapshotAccepted();
-	}
 
 	private boolean calculateAdminRole() {
 		Integer applicationUser = AdminUtil.getApplicationUser(AonUtil.getAuthPrincipal());

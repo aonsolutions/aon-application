@@ -3680,6 +3680,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Lista de facturas")
 	String invoiceList();
+	
+	@DefaultMessage("Lista de empresas")
+	String companyList();
 
 	@DefaultMessage("Adjunto")
 	String attach();

@@ -324,25 +324,26 @@
 					<aon:div id="Domain_externalApplications">
 						
 						<!-- TEDI CENTER -->
-						<aon:selectBooleanCheckbox id="ExternalApplication_TediCenter"
-							value="#{tediConfiguration.active}" disabled="#{tediConfiguration.active}" 
+						<aon:selectBooleanCheckbox
+							id="ExternalApplication_TediCenter"
+							value="#{tediConfiguration.active}" 
 							reRender="aonContent" onclick="this.blur();">
-							<a4j:support event="onchange" reRender="Domain_externalApplications,showTediCenterWindow"
+							<!-- <a4j:support event="onchange" reRender="Domain_externalApplications,showTediCenterWindow"
 								actionListener="#{tediConfiguration.onChangeTediCenterStatus}"
-								ajaxSingle="true" />
+								ajaxSingle="true" /> -->
 						</aon:selectBooleanCheckbox>
 						<aon:outputLabel for="ExternalApplication_TediCenter"
-							value="#{bundle.aon_external_tediCenter}" />		
-						<aon:commandLink id="tediCenter-link" immediate="true"
+							value="#{bundle.aon_external_tediCenter}" />
+						<!-- <aon:commandLink id="tediCenter-link" immediate="true"
 							value="&#160;" title="#{bundle.aon_edit}"
 							styleClass="aon-icon-config" 
 							style="margin-left: 5px; padding-right: 12px;"
 							rendered="#{tediConfiguration.active}"
 							actionListener="#{tediConfiguration.onChangeTediCenterStatus}"
-							reRender="showTediCenterWindow" />
+							reRender="showTediCenterWindow" /> -->
 						
 						<!-- TEDI CENTER SNAPSHOT-->
-						<aon:if test="#{domainSwitcher.betaUser}">
+						<!-- <aon:if test="#{domainSwitcher.betaUser}">
 							<aon:selectBooleanCheckbox id="ExternalApplication_TediCenterSnapshot"
 								value="#{tediConfiguration.snapshotActive}" disabled="#{tediConfiguration.snapshotActive}" 
 								reRender="aonContent" onclick="this.blur();">
@@ -359,7 +360,7 @@
 								rendered="#{tediConfiguration.snapshotActive}"
 								actionListener="#{tediConfiguration.onChangeTediCenterSnapshotStatus}"
 								reRender="showTediCenterSnapshotWindow" />
-						</aon:if>					
+						</aon:if> -->					
 					</aon:div>			
 				</aon:panelGrid>								
 
