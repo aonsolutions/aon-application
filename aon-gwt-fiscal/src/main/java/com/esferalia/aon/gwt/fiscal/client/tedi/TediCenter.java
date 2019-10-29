@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.tedi.ICallback;
 import com.esferalia.aon.occam.api.model.tedi.TediError;
 import com.esferalia.aon.occam.api.model.tedi.TediLevel;
@@ -63,6 +64,13 @@ public class TediCenter extends MainEntryPoint {
 			return (result != null && result.getTedi() != null) ? result.getTedi().getUuid() : null;
 		}
 	}
+    
+    private static class CompanyProvidesKey implements ProvidesKey<Company> {
+		@Override
+		public Object getKey(Company result) {
+			return (result != null) ? result.getDocument() : null;
+		}
+	}
 
 	private static TediServiceAsync SERVICE;
 	
@@ -83,11 +91,13 @@ public class TediCenter extends MainEntryPoint {
 	private LinkedList<TediResult> resultList;
 	private TediInvoiceTable table = new TediInvoiceTable(new TediResultProvidesKey());
 	
+	private LinkedList<Company> companyList;
+	private TediCompanyTable companyTable = new TediCompanyTable(new CompanyProvidesKey());
+	
 	public TediCenter(String domainName, int domain, String user) {
 		currentDomainName = domainName;
 		currentDomain = domain;
 		currentUser = user;
-
 	}
 
 	private int getDomain() {
@@ -121,48 +131,12 @@ public class TediCenter extends MainEntryPoint {
 			@Override
 			public void onSuccess(AonConfiguration result) {
 				configuration = result;
-				DockLayoutPanel dockLayoutPanel = new DockLayoutPanel(Unit.PX);
-				dockLayoutPanel.addStyleName(AON.AON_CSS.aonMarginTop());
-				dockLayoutPanel.addNorth(getToolbarPanel(), 25);
-				SimpleLayoutPanel sidebarContent = new SimpleLayoutPanel();
-				dockLayoutPanel.add(sidebarContent);
-				mainTabLayoutPanel.add(dockLayoutPanel,new CloseTab(AON.MSG.invoiceList(), false));
-				ScrollPanel tableScrollPanel = new ScrollPanel();
-				tableScrollPanel.setStyleName(AON.AON_CSS.aonScrollArea());
-				sidebarContent.add(tableScrollPanel);
-				tableScrollPanel.add(table);
 				
-				table.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-					public void onSelectionChange(SelectionChangeEvent event) {
-						TediResult inv = table.getSelected();
-						onSelect( inv );
-					}
-				});
-				table.addRangeChangeHandler( new RangeChangeEvent.Handler() {
-					
-					@Override
-					public void onRangeChange(RangeChangeEvent event) {
-						SERVICE.getVerifiedInvoices(getDomainName(), getUser(), getDomain(), isTediSnapshot(),
-								new AsyncCallback<LinkedList<TediResult>>() {
-
-									@Override
-									public void onSuccess(LinkedList<TediResult> results) {
-										resultList = results;
-										if (resultList == null) {
-											resultList  = new LinkedList<TediResult>();
-										}
-										table.setRowData(resultList);
-									}
-
-									@Override
-									public void onFailure(Throwable caught) {
-										showMessage(AON.MSG.error() + " [Interno: " + caught.getMessage() + "]");
-									}
-
-								});
-					}
-				});
-				table.setVisibleRangeAndClearData(table.getVisibleRange(), true);				
+				if(configuration.getChildDomains().size() > 0) {
+					companyListPanel();
+				} else {
+					companyInvoicePanel(configuration.getCompany());
+				}			
 			}
 
 			@Override
@@ -170,8 +144,108 @@ public class TediCenter extends MainEntryPoint {
 				showMessage(AON.MSG.error() + " [Interno: " + caught.getMessage() + "]");
 			}
 		});
-
 	}
+	
+	private void companyListPanel() {
+		DockLayoutPanel dockLayoutPanel2 = new DockLayoutPanel(Unit.PX);
+		dockLayoutPanel2.addStyleName(AON.AON_CSS.aonMarginTop());
+		dockLayoutPanel2.addNorth(getToolbarPanel(false, ""), 25);
+		SimpleLayoutPanel sidebarContent2 = new SimpleLayoutPanel();
+		dockLayoutPanel2.add(sidebarContent2);
+		mainTabLayoutPanel.add(dockLayoutPanel2,new CloseTab(AON.MSG.companyList(), false));
+		ScrollPanel tableScrollPanel2 = new ScrollPanel();
+		tableScrollPanel2.setStyleName(AON.AON_CSS.aonScrollArea());
+		sidebarContent2.add(tableScrollPanel2);
+		tableScrollPanel2.add(companyTable);
+		
+		companyTable.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+			public void onSelectionChange(SelectionChangeEvent event) {
+				Company company = companyTable.getSelected();
+				onSelect( company );
+			}
+		});
+		
+		companyTable.addRangeChangeHandler( new RangeChangeEvent.Handler() {
+			
+			@Override
+			public void onRangeChange(RangeChangeEvent event) {
+				SERVICE.getCompanies(getDomainName(), getUser(), getDomain(), isTediSnapshot(),
+						new AsyncCallback<LinkedList<Company>>() {
+
+							@Override
+							public void onSuccess(LinkedList<Company> results) {
+								companyList = results;
+								if (companyList == null) {
+									companyList  = new LinkedList<Company>();
+								}
+								companyTable.setRowData(companyList);
+							}
+
+							@Override
+							public void onFailure(Throwable caught) {
+								showMessage(AON.MSG.error() + " [Interno: " + caught.getMessage() + "]");
+							}
+
+						});
+			}
+		});
+		companyTable.setVisibleRangeAndClearData(companyTable.getVisibleRange(), true);	
+	}
+	
+	private void companyInvoicePanel(Company company) {
+		DockLayoutPanel dockLayoutPanel = new DockLayoutPanel(Unit.PX);
+		dockLayoutPanel.addStyleName(AON.AON_CSS.aonMarginTop());
+		dockLayoutPanel.addNorth(getToolbarPanel(true, company.getName()), 25);
+		SimpleLayoutPanel sidebarContent = new SimpleLayoutPanel();
+		dockLayoutPanel.add(sidebarContent);
+		mainTabLayoutPanel.add(dockLayoutPanel,new CloseTab(AON.MSG.invoiceList(), false));
+		ScrollPanel tableScrollPanel = new ScrollPanel();
+		tableScrollPanel.setStyleName(AON.AON_CSS.aonScrollArea());
+		sidebarContent.add(tableScrollPanel);
+		tableScrollPanel.add(table);
+	
+		table.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+			public void onSelectionChange(SelectionChangeEvent event) {
+				TediResult inv = table.getSelected();
+				onSelect( inv );
+			}
+		});
+		table.addRangeChangeHandler( new RangeChangeEvent.Handler() {
+			
+			@Override
+			public void onRangeChange(RangeChangeEvent event) {
+				SERVICE.getVerifiedInvoices(getDomainName(), getUser(), getDomain(), isTediSnapshot(), company,
+					new AsyncCallback<LinkedList<TediResult>>() {
+
+						@Override
+						public void onSuccess(LinkedList<TediResult> results) {
+							resultList = results;
+							if (resultList == null) {
+								resultList  = new LinkedList<TediResult>();
+							}
+							table.setRowData(resultList);
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {
+							showMessage(AON.MSG.error() + " [Interno: " + caught.getMessage() + "]");
+						}
+
+					});
+			}
+		});
+		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
+	}
+	
+	private void onSelect(Company company) {
+		for(Integer i =  mainTabLayoutPanel.getWidgetCount() - 1;  i > 0; i--) {
+			mainTabLayoutPanel.remove(i);
+		}
+		table = new TediInvoiceTable(new TediResultProvidesKey());
+		companyInvoicePanel(company);
+		mainTabLayoutPanel.selectTab(1);
+	}
+	
 	private void onSelect(TediResult result) {
 		onSelect(result,false);
 	}
@@ -229,7 +303,7 @@ public class TediCenter extends MainEntryPoint {
 		MessageDialog.error(msg);
 	}
 
-	private Widget getToolbarPanel() {
+	private Widget getToolbarPanel(Boolean isInvoicePanel, String title) {
 		toolbarPanel = new FlowPanel();
 		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
 		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -240,7 +314,7 @@ public class TediCenter extends MainEntryPoint {
 		FlowPanel titlePanel = new FlowPanel();
 		titlePanel.setStyleName(AON.AON_CSS.aonFindingTitleInternal());
 		toolbar.setWidget(0, 0, titlePanel);
-		toolbar.setWidget(0, 0, new Label("tEDI center"));
+		toolbar.setWidget(0, 0, new Label("tEDI center" + (isInvoicePanel ? " - " + title : "")));
 		toolbar.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonFindingTitle());
 		toolbar.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonBold());
 		toolbar.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonNowrap());
@@ -252,6 +326,7 @@ public class TediCenter extends MainEntryPoint {
 		toolbar.getCellFormatter().setStyleName(0, 2, AON.AON_CSS.aonFindingToolbar());
 
 		final Button clean = new Button();
+		clean.setVisible(isInvoicePanel);
 		clean.setText(AON.MSG.refresh());
 		clean.setTitle(AON.MSG.refresh());
 		clean.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
@@ -265,6 +340,21 @@ public class TediCenter extends MainEntryPoint {
 		});
 		buttonContainer.add(clean);
 
+		final Button sync = new Button();
+		sync.setVisible(!isInvoicePanel);
+		sync.setText("Sincronizar");
+		sync.setTitle("Sincronizar");
+		sync.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		sync.addStyleName(AON.AON_CSS.aonIconRefresh());
+		sync.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				onSync( );
+			}
+		});
+		buttonContainer.add(sync);
+		
 		acceptAll = new Button();
 		acceptAll.setVisible(false);
 		acceptAll.setText(AON.MSG.accept());
@@ -320,6 +410,22 @@ public class TediCenter extends MainEntryPoint {
 	private void onRefresh() {
 		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
 	}
+	
+	private void onSync() {
+		SERVICE.tediSync(getDomainName(), getUser(), getDomain(), isTediSnapshot(), new AsyncCallback<LinkedList<Company>>() {
+			@Override public void onFailure(Throwable caught) {}
+
+			@Override
+			public void onSuccess(LinkedList<Company> results) {
+				companyList = results;
+				if (companyList == null) {
+					companyList  = new LinkedList<Company>();
+				}
+				companyTable.setRowData(companyList);
+			}
+		});
+	}
+	
 	
 	protected void onAcceptAll() {
 		LinkedList<TediResult> accepted = new LinkedList<TediResult>();

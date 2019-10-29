@@ -6,8 +6,6 @@ import javax.faces.event.ActionEvent;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.domain.DomainManager;
-import com.code.aon.ui.config.controller.ConfigConstants;
-import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
@@ -65,31 +63,27 @@ public class TediConfigurationController implements IAdminConstants, Serializabl
 	public void init() {
 		Domain domain = AON.getDomain(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "");
 		
-		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
-		boolean betaUser = ds.isBetaUser();
-		
-		DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), "", DataResponseSource.TEDI_INVOICE,
+		if (domain.getId() == 0) {
+			DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), "", DataResponseSource.TEDI_INVOICE,
 				f -> f.getCodeProperty().eq(AppParam.TEDI_TOKEN.getValue())
 				.and(f.getDomainProperty().eq(domain.getId())));
 		
-		if(dr != null && dr.getId() != null) {
-			DataResponseDetail drd = AON.getDataResponseDetail(domain.getName(), domain.getId(), "", 
-				f -> f.getDataResponseProperty().eq(dr.getId())
-					.and(f.getDataVariableProperty().eq(AppParam.TEDI_TOKEN.getValue())))
-				.orElse(new DataResponseDetail());
+			if(dr != null && dr.getId() != null) {
+				DataResponseDetail drd = AON.getDataResponseDetail(domain.getName(), domain.getId(), "", 
+						f -> f.getDataResponseProperty().eq(dr.getId())
+						.and(f.getDataVariableProperty().eq(AppParam.TEDI_TOKEN.getValue())))
+						.orElse(new DataResponseDetail());
 		
-			setToken(drd.getDataValue());
-		}
-		ApplicationParameter apEmail = AON.getApplicationParameter(domain.getName(), domain.getId(), "", AppParam.TEDI_EMAIL.getValue());
-		if(hasToken()) {
-			setStatus(CONNECTED + " - " + apEmail.getValue());
-			setActive(true);
-			setAccepted(true);
-		}
-		if(apEmail.getValue() != null) {
-			setEmail(apEmail.getValue());
-		}
-		if (betaUser) {
+				setToken(drd.getDataValue());
+			}
+			ApplicationParameter apEmail = AON.getApplicationParameter(domain.getName(), domain.getId(), "", AppParam.TEDI_EMAIL.getValue());
+			if(hasToken()) {
+				setStatus(CONNECTED + " - " + apEmail.getValue());
+			}
+			if(apEmail.getValue() != null) {
+				setEmail(apEmail.getValue());
+			}
+		
 			DataResponse dsr = AON.getDataResponse(domain.getName(), domain.getId(), "", DataResponseSource.TEDI_INVOICE,
 					f -> f.getCodeProperty().eq(AppParam.TEDI_SNAPSHOT_TOKEN.getValue())
 					.and(f.getDomainProperty().eq(domain.getId())));
@@ -105,12 +99,14 @@ public class TediConfigurationController implements IAdminConstants, Serializabl
 			ApplicationParameter apSnapshotEmail = AON.getApplicationParameter(domain.getName(), domain.getId(), "", AppParam.TEDI_SNAPSHOT_EMAIL.getValue());
 			if(hasSnapshotToken()) {
 				setSnapshotStatus(CONNECTED + " - " + apSnapshotEmail.getValue());
-				setSnapshotActive(true);
-				setSnapshotAccepted(true);
 			}
 			if(apSnapshotEmail.getValue() != null) {
 				setSnapshotEmail(apSnapshotEmail.getValue());
 			}
+		} else {
+			ApplicationParameter apActive = AON.getApplicationParameter(domain.getName(), domain.getId(), "", AppParam.TEDI_ACTIVE.getValue());
+			setAccepted("1".equals(apActive.getValue()));
+			setActive("1".equals(apActive.getValue()));	
 		}
 	}
 	
@@ -174,6 +170,20 @@ public class TediConfigurationController implements IAdminConstants, Serializabl
 			}
 			setAccepted(false);
 		}
+	}
+	
+	public void contract() {
+
+		Domain domain = AON.getDomain(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "");
+		ApplicationParameter apActive = new ApplicationParameter()
+			.setDomain(domain.getId())
+			.setName(AppParam.TEDI_ACTIVE.getValue())
+			.setValue(isActive() ? "1" : "0");
+		AON.deleteApplicationParameter(domain.getName(), domain.getId(), "", 
+			f -> f.getDomainProperty().eq(domain.getId())
+			.and(f.getNameProperty().eq(AppParam.TEDI_ACTIVE.getValue())));
+		AON.insertApplicationParameter(domain.getName(), domain.getId(), "", apActive);
+		setAccepted(isActive());
 	}
 
 	public Boolean hasToken(){

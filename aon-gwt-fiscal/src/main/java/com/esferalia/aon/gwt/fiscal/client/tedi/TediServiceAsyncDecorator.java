@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -26,10 +27,10 @@ public class TediServiceAsyncDecorator implements TediServiceAsync {
 	}
 	
 	@Override
-	public void getVerifiedInvoices(String domainName, String user, int domain, boolean snapshot,
+	public void getVerifiedInvoices(String domainName, String user, int domain, boolean snapshot, Company company,
 			AsyncCallback<LinkedList<TediResult>> callback) {
 		AON.start();
-		fsa.getVerifiedInvoices(domainName, user, domain,snapshot, new AsyncCallbackWrapper<LinkedList<TediResult>>(callback));
+		fsa.getVerifiedInvoices(domainName, user, domain, snapshot, company, new AsyncCallbackWrapper<LinkedList<TediResult>>(callback));
 	}
 
 	@Override
@@ -71,5 +72,19 @@ public class TediServiceAsyncDecorator implements TediServiceAsync {
 	public void getInvoiceAttachURL(String domainName, String user, int domain, boolean snapshot, String uuid, AsyncCallback<String> callback) {
 		AON.start();
 		fsa.getInvoiceAttachURL(domainName, user, domain,snapshot, uuid, new AsyncCallbackWrapper<String>(callback));
+	}
+
+	@Override
+	public void getCompanies(String domainName, String user, int domain, boolean snapshot,
+			AsyncCallback<LinkedList<Company>> callback) {
+		AON.start();
+		fsa.getCompanies(domainName, user, domain,snapshot, new AsyncCallbackWrapper<LinkedList<Company>>(callback));
+	}
+
+	@Override
+	public void tediSync(String domainName, String user, int domain, boolean snapshot,
+			AsyncCallback<LinkedList<Company>> callback) {
+		AON.start();
+		fsa.tediSync(domainName, user, domain,snapshot, new AsyncCallbackWrapper<LinkedList<Company>>(callback));
 	}
 }

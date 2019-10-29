@@ -8,8 +8,10 @@ import java.util.stream.StreamSupport;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import es.translogia.tedi.ewok.TediCompany;
 import es.translogia.tedi.ewok.TediInvoice;
 import es.translogia.tedi.ewok.TediInvoiceStatus;
+import es.translogia.tedi.json.TediCompanyJSON;
 import es.translogia.tedi.json.TediInvoiceJSON;
 
 public class Tedi extends TediRequest {
@@ -21,6 +23,9 @@ public class Tedi extends TediRequest {
 	String DOWNLOAD_INVOICE;
 	String GET_INVOICE_BY_UUID;
 	String GET_VERIFIED_INVOICES;
+	
+	String COMPANY_BASE;
+	String GET_COMPANIES_BY_COMPANY;
 
 	private String token;
 	public static Tedi login(String token) {
@@ -53,6 +58,9 @@ public class Tedi extends TediRequest {
 		DOWNLOAD_INVOICE = INVOICE_BASE + "/d/{0}"; // uuid
 		GET_INVOICE_BY_UUID = INVOICE_BASE + "/{0}/{1}/{2}";
 		GET_VERIFIED_INVOICES = INVOICE_BASE + "?company={0}&status=" + TediInvoiceStatus.verified;
+		COMPANY_BASE = TEDI_URL	+ "/company";
+		GET_COMPANIES_BY_COMPANY = COMPANY_BASE + "?company={0}";
+		
 	}
 
 	private Tedi(String token,boolean snapshot) {
@@ -119,11 +127,21 @@ public class Tedi extends TediRequest {
 //	}
 
 	// COMPANY
-//	public LinkedList<TediCompany> getCompanies() {
-//		JSONArray array = getArray(TEDI + COMPANY_SRC, getToken());
-//		return StreamSupport.stream(array.spliterator(), false).map(r -> new TediCompany((JSONObject) r))
-//			.collect(Collectors.toCollection(LinkedList::new));
-//	}
+	public LinkedList<TediCompany> getCompanies(String company) throws TediException{
+		String url = MessageFormat.format(COMPANY_BASE, company);
+
+		
+		TediResponse tediResponse = get(url, getToken());
+		if (tediResponse.ok()) {
+			JSONArray array = tediResponse.getJSONArray();
+			return StreamSupport.stream(array.spliterator(), false).map(r -> TediCompanyJSON.fromJSON((JSONObject) r))
+					.collect(Collectors.toCollection(LinkedList::new));
+		}
+		throw new TediException(
+				"getCompanies: " + tediResponse.getResponseCode() + " - " + tediResponse.getResponseMessage());
+
+		
+	}
 //	
 //	public TediCompany getCompany(String document) {
 //		JSONObject json = getObject(TEDI + COMPANY_SRC + "/" + document, getToken());

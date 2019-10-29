@@ -22,6 +22,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 import es.translogia.tedi.baloo.Tedi;
 import es.translogia.tedi.baloo.TediException;
+import es.translogia.tedi.ewok.TediCompany;
 import es.translogia.tedi.ewok.TediInvoice;
 import es.translogia.tedi.ewok.TediInvoiceStatus;
 
@@ -36,7 +37,7 @@ public class TEDI {
 		Domain domain = AON.getDomain(ctx.getDomainName(), ctx.getDomainId(),ctx.getUser());
 		DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), "", DataResponseSource.TEDI_INVOICE,
 				f -> f.getCodeProperty().eq(tediTokenParam)
-				.and(f.getDomainProperty().eq(domain.getId())));
+				.and(f.getDomainProperty().eq(0)));
 		if(dr != null && dr.getId() != null) {
 			DataResponseDetail drd = AON.getDataResponseDetail(domain.getName(), domain.getId(), "", 
 				f -> f.getDataResponseProperty().eq(dr.getId())
@@ -49,12 +50,12 @@ public class TEDI {
 				"No se han definido parámetros válidos para conectarse a tEDI Center");
 	}
 	
-	public static LinkedList<TediResult> getVerifiedInvoices(String domainName, int domain, boolean snapshot, String user)
+	public static LinkedList<TediResult> getVerifiedInvoices(String domainName, int domain, boolean snapshot, String user, Company company)
 			throws TediException {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, user);
-			return getVerifiedInvoices(ctx , snapshot);
+			return company != null ? getVerifiedInvoices(ctx , snapshot, company) :getVerifiedInvoices(ctx , snapshot);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -63,6 +64,10 @@ public class TEDI {
 
 	public static LinkedList<TediResult> getVerifiedInvoices(AONContext ctx, boolean snapshot) throws TediException {
 		Company company = CompanyDAO.getCompany(ctx, ctx.getDomainId());
+		return getVerifiedInvoices(ctx, snapshot, company);
+	}
+	
+	public static LinkedList<TediResult> getVerifiedInvoices(AONContext ctx, boolean snapshot, Company company) throws TediException {
 		if (company == null) {
 			throw new TediException(
 					"No se ha encontrado una compa\u00F1ia v\u00E1lida para el dominio " + ctx.getDomainId());
@@ -81,7 +86,7 @@ public class TEDI {
 		}
 		return null;
 	}
-
+	
 	public static TediResult getInvoice(String domainName, int domain, boolean snapshot, String user, String uuid, String status) throws TediException {
 		if (AonStringUtils.isEmpty(uuid)) {
 			throw new TediException("No se ha indicado un identificador de factura que recuperar");
@@ -236,5 +241,33 @@ public class TEDI {
 			}
 		}
 		return returned;
+	}
+	
+	public static LinkedList<TediCompany> getCompanies(String domainName, int domain, boolean snapshot, String user)
+			throws TediException {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getCompanies(ctx , snapshot);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static LinkedList<TediCompany> getCompanies(AONContext ctx, boolean snapshot) throws TediException {
+		Company company = CompanyDAO.getCompany(ctx, ctx.getDomainId());
+		if (company == null) {
+			throw new TediException(
+					"No se ha encontrado una compa\u00F1ia v\u00E1lida para el dominio " + ctx.getDomainId());
+		}
+		if (AonStringUtils.isEmpty(company.getDocument())) {
+			throw new TediException(
+					"No se ha indicado un NIF/CIF/DNI v\u00E1lido para la compa\u00F1ia (Configuraci\u00F3n global)");
+		}
+		Tedi tedi = getTedi(ctx, snapshot);
+		LOGGER.info("[TEDI] Attempt to recover companies for [" + company.getDocument() + "]");
+		return tedi.getCompanies(company.getDocument());
+		
 	}
 }
