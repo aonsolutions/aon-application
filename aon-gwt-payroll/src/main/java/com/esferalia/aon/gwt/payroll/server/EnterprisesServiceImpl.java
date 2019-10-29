@@ -82,6 +82,8 @@ import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemDeductionColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemPaymentColumns;
+import com.esferalia.aon.payroll.tgss.cra.Cra;
+import com.esferalia.aon.payroll.tgss.cra.MainCRAGenerator;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
 /**
@@ -1743,8 +1745,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			connection = AonServletUtils.getConnection(domainName);
 			
-			JSONObject mainCRAJSON = JooqCRA.getMainCRAByCRA(ccc, findingDate, connection);
-			String agrarianAFI = MainCRAGeneration.generateMainCRA(mainCRAJSON);
+			JSONObject mainCRAJSON = Cra.getMainCRAByCRA(ccc, findingDate, connection);
+			String agrarianAFI = MainCRAGenerator.generateMainCRA(mainCRAJSON);
 			
 			return JooqCRA.setMainCra(domainName, cccId.toString(), agrarianAFI, findingDate, craType, connection);
 			

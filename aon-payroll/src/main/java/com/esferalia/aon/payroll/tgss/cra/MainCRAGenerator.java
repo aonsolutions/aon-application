@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.payroll.server;
+package com.esferalia.aon.payroll.tgss.cra;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -6,9 +6,7 @@ import java.util.Date;
 import org.jooq.tools.json.JSONArray;
 import org.jooq.tools.json.JSONObject;
 
-import com.esferalia.aon.gwt.payroll.shared.StringUtils;
-
-public final class MainCRAGeneration {
+public class MainCRAGenerator {
 	
 	public static class ETI{
 		String etiHeader;
@@ -117,8 +115,7 @@ public final class MainCRAGeneration {
 			this.empHeader = "DDE";
 			this.cccRegime = cccRegime;
 			this.ccc = ccc;
-//			Date actualDate = new Date();
-			this.year = (Integer.parseInt(year) + 1900) + "";
+			this.year = Integer.parseInt(year)+ "";
 			this.month = StringUtils.leftPad((Integer.parseInt(month)+1)+"", 2, '0');
 			this.cccRegimeConcert = StringUtils.leftPad("", 4, '0');
 			this.cccConcert = StringUtils.leftPad("", 11, '0');
@@ -334,7 +331,6 @@ public final class MainCRAGeneration {
 			this.empHeader = "DDE";
 			this.cccRegime = cccRegime;
 			this.ccc = ccc;
-			Date actualDate = new Date();
 			this.year = (Integer.parseInt(year) + 1900) + "";
 			this.month = StringUtils.leftPad((Integer.parseInt(month)+1)+"", 2, '0');
 			this.cccRegimeConcert = StringUtils.leftPad("", 4, '0');
@@ -645,5 +641,4 @@ public final class MainCRAGeneration {
 		
 		return mainCRA;
 	}
-	
 }
