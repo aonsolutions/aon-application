@@ -249,7 +249,7 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		};
 
 		dataGrid.addColumn(checkColumn, new CheckboxHeader(selectionModel, dataProvider));
-		dataGrid.setColumnWidth(checkColumn, 40, Unit.PX);
+		dataGrid.setColumnWidth(checkColumn, 3, Unit.PCT);
 		
 		/** code Column **/
 		Column<JsInvoice, String> codeColumn = new Column<JsInvoice, String>(new TextCell()) {
