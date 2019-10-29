@@ -16,6 +16,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.jooq.DSLContext;
@@ -27,7 +28,6 @@ import org.jooq.tools.json.JSONArray;
 import org.jooq.tools.json.JSONObject;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Payment.Type;
@@ -48,153 +48,34 @@ public class JooqCRA {
 	// ********************************************************************************************************************************************
 	//													GENERATE JSON AGRARIAN
 	// ********************************************************************************************************************************************
-
-//	@SuppressWarnings({ "unchecked", "null" })
-//	public static JSONObject getMainCRA(String _domainId, String domainName, String _enterpriseId, String _enterpriseName, 
-//			String _ccc, long _startDate, long _endDate) {
-//		
-//		java.util.Date startDate = new java.util.Date(_startDate);
-//		java.util.Date endDate = new java.util.Date(_endDate);
-//		
-//		Date startDateSQL = new Date(startDate.getTime());
-//		Date endDateSQL = new Date(endDate.getTime());
-//		
-//		AONContext context = null;
-//		JSONObject mainCRAJSON = new JSONObject();
-//		
-//		try {
-//			DSLContext dslContext = AONContext.getAONContext(domainName, Integer.parseInt(_domainId),
-//					AonServletUtils.getLoggedUser()).getDslContext();
-//			
-//			//GET AuthKey from DB
-//			Record domainRecord = dslContext.select().from(DOMAIN)
-//					.where(DOMAIN.ID.eq(Integer.parseInt(_domainId)))
-//					.fetchOne();
-//			
-//			Integer parentDomainId = domainRecord.get(DOMAIN.PARENT);
-//			
-//			Record appParamRecord = dslContext.select().from(APP_PARAM)
-//					.where(APP_PARAM.NAME.eq("PAY_authorization_key_PAY"))
-//						.and(APP_PARAM.DOMAIN.eq(Integer.parseInt(_domainId)))
-//					.fetchOne();
-//			
-//			String authKey = "";
-//			if(null == appParamRecord || null == appParamRecord.get(APP_PARAM.VALUE)) {
-//				appParamRecord = dslContext.select().from(APP_PARAM)
-//						.where(APP_PARAM.NAME.eq("PAY_authorization_key_PAY"))
-//							.and(APP_PARAM.DOMAIN.eq(parentDomainId))
-//						.fetchOne();
-//				if(null == appParamRecord || null == appParamRecord.get(APP_PARAM.VALUE)) 
-//					authKey = "00000";
-//				else
-//					authKey = appParamRecord.get(APP_PARAM.VALUE);
-//			} else
-//				authKey = appParamRecord.get(APP_PARAM.VALUE);
-//			
-//			
-//			//ETI
-//			JSONObject eti = new JSONObject();
-//			eti.put("authkey", authKey);
-//			eti.put("fileName", null);
-//			eti.put("prorityCode", "N");
-//			
-//			mainCRAJSON.put("ETI", eti);
-//			
-//			
-//			//GET Salaries from DB (employees)
-//			Result<Record> salaryRecords = dslContext.select().from(SALARY)
-//					.where(SALARY.START_DATE.ge(startDateSQL))
-//						.and(SALARY.END_DATE.le(endDateSQL))
-//						.and(SALARY.ENTERPRISE_NAME.equalIgnoreCase(_enterpriseName))
-//						.and(SALARY.CCC.eq(_ccc))
-//					.fetch();
-//			
-//			//DDE
-//			JSONObject dde = new JSONObject();
-//			dde.put("cccRegime", parseSS_Regime(salaryRecords.get(0).get(SALARY.SS_REGIME)));
-//			dde.put("ccc", salaryRecords.get(0).get(SALARY.CCC));
-//			dde.put("year", startDateSQL.getYear());
-//			dde.put("month", startDateSQL.getMonth());
-//			
-//			JSONArray trbs = new JSONArray();
-//			
-//			for(Record salary: salaryRecords) {
-//				JSONObject trb = new JSONObject();
-//				
-//				trb.put("numAfilicion", salary.get(SALARY.SOCIAL_SECURITY_NUMBER));
-//				
-//				JSONArray cres = new JSONArray();
-//				
-//				//GET Salaries from DB (employees)
-//				Result<Record> salaryPaymentRecords = dslContext.select().from(SALARY_PAYMENT)
-//						.where(SALARY_PAYMENT.SALARY.eq(salary.get(SALARY.ID)))
-//						.fetch();
-//				
-//				Type typeCRA = null;
-//				
-//				for (int i=0; i<salaryPaymentRecords.size(); i++) {
-//					
-//					JSONObject cre = new JSONObject();
-//					Type craType = Payment.Type.values()[salaryPaymentRecords.get(i).get(SALARY_PAYMENT.TYPE)];
-//					Double craAmount = salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT);
-//					String craAmountStr = String.format( "%.2f", craAmount );
-//					String amount = craAmountStr.split("[.]")[0] + craAmountStr.split("[.]")[1];
-//					cre.put("concept", craType.getDescription().split(" ")[0]);
-//					cre.put("include_exclude", craType.isBBCCIncluded() ? "I" : "E");
-//					cre.put("amount", amount);
-//					
-//					
-//					if(typeCRA == craType) {
-//						cre.put("action", "C");
-//					}else {
-//						cre.put("action", " ");
-//						typeCRA = craType;
-//					}
-//					
-//					cres.add(cre);
-//					
-//				}
-//				
-//				trb.put("CRES", cres);
-//				
-//				trbs.add(trb);
-//			}
-//			
-//			dde.put("TRBS", trbs);
-//			
-//			mainCRAJSON.put("DDE", dde);
-//			
-//			System.out.println(mainCRAJSON);
-//			
-//		} finally {
-//			if (context != null)
-//				context.close();
-//		}
-//		
-//		
-//		return mainCRAJSON;
-//	}
 	
-	@SuppressWarnings({ "unchecked", "deprecation" })
-	public static JSONObject getMainCRAByCRA(String domainName, String _enterpriseId, String _enterpriseName, 
-			String _ccc, long _startDate, long _endDate, Connection connection)  {
+	@SuppressWarnings("unchecked")
+	public static JSONObject getMainCRAByCRA(String ccc, long findingDate, Connection connection)  {
 		
-		java.util.Date startDate = new java.util.Date(_startDate);
-		java.util.Date endDate = new java.util.Date(_endDate);
-		
-		//TODO: fix date new dates when payroll emit
-		DateUtils.addDays2Date(endDate, 1);
-		
-		Date startDateSQL = new Date(startDate.getTime());
-		Date endDateSQL = new Date(endDate.getTime());
-		
-		JSONObject mainCRAJSON = new JSONObject();
-		
+		// Get dslContext for given connection
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		
+		// Given findingDate set start and end date
+		Calendar startDate = Calendar.getInstance();
+		startDate.setTimeInMillis(findingDate);
+		startDate.set(Calendar.DAY_OF_MONTH, 1);
+		
+		Calendar endDate = Calendar.getInstance();
+		endDate.setTimeInMillis(findingDate);
+		endDate.set(Calendar.DAY_OF_MONTH, endDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+		
+		Date startDateSQL = new Date(startDate.getTimeInMillis());
+		Date endDateSQL = new Date(endDate.getTimeInMillis());
+		
+		// Create JSONObject mainCra
+		JSONObject mainCRAJSON = new JSONObject();
 			
 		//GET AuthKey from DB
 		Record domainRecord = dslContext.select().from(DOMAIN)
-				.where(DOMAIN.NAME.eq(domainName))
+				.where(DOMAIN.ID.in(
+						dslContext.select(ENTERPRISE_CCC.DOMAIN).from(ENTERPRISE_CCC)
+							.where(ENTERPRISE_CCC.CCC.eq(ccc))
+				))
 				.fetchOne();
 		
 		Integer parentDomainId = domainRecord.get(DOMAIN.PARENT);
@@ -230,10 +111,9 @@ public class JooqCRA {
 		
 		//GET Salaries from DB (employees)
 		Result<Record> salaryRecords = dslContext.select().from(SALARY)
-				.where(SALARY.START_DATE.ge(startDateSQL))
-					.and(SALARY.END_DATE.le(endDateSQL))
-//					.and(SALARY.ENTERPRISE_NAME.equalIgnoreCase(_enterpriseName))
-					.and(SALARY.CCC.eq(_ccc))
+				.where(SALARY.CHARGE_DATE.between(startDateSQL, endDateSQL))
+					.and(SALARY.CCC.eq(ccc))
+					.and(SALARY.TYPE.eq((byte)0))
 					.and(SALARY.SS_REGIME.notEqual((byte)3))
 				.fetch();
 		
@@ -255,8 +135,10 @@ public class JooqCRA {
 			
 			dde.put("cccRegime", parseSS_Regime(enterpriseCCCRecords.get(0).get(ENTERPRISE_CCC.TYPE)));
 			dde.put("ccc", salaryRecords.get(0).get(SALARY.CCC));
-			dde.put("year", startDateSQL.getYear());
-			dde.put("month", startDateSQL.getMonth());
+			dde.put("year", startDate.get(Calendar.YEAR));
+			dde.put("month", startDate.get(Calendar.MONTH));
+//			dde.put("year", startDateSQL.getYear());
+//			dde.put("month", startDateSQL.getMonth());
 			
 			JSONArray trbs = new JSONArray();
 			
@@ -363,19 +245,11 @@ public class JooqCRA {
 		// 											NOMINA ATRASOS
 		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		
-		//TODO: fix date new dates when payroll emit, needed?
-		java.util.Date endDateFirst = DateUtils.copyDateOnly(endDate);
-		DateUtils.deleteDays2Date(endDateFirst, 1);
-		
-		Date endDateFirstSQL = new Date(endDateFirst.getTime());
-		endDateSQL = new Date(endDate.getTime());
-		
 		//GET Atrasos SALARY from DB (employees)
 		salaryRecords = dslContext.select().from(SALARY)
-				.where(SALARY.ENTERPRISE_NAME.equalIgnoreCase(_enterpriseName))
-					.and(SALARY.CCC.eq(_ccc))
+				.where(SALARY.CHARGE_DATE.between(startDateSQL, endDateSQL))
+					.and(SALARY.CCC.eq(ccc))
 					.and(SALARY.TYPE.eq((byte)3))
-					.and(SALARY.END_DATE.between(endDateFirstSQL, endDateSQL))
 					.and(SALARY.SS_REGIME.notEqual((byte)3))
 				.fetch();
 		
@@ -396,11 +270,13 @@ public class JooqCRA {
 						.and(SALARY_DATA.NAME.eq("BASE_CGC"))
 						.fetch();
 				
-				for(Record salatyData: salaryDatas){
-					Double craAmount = Double.parseDouble(salatyData.get(SALARY_DATA.EXPRESSION));
+				Byte salaryPaymentType = dslContext.select(SALARY_PAYMENT.TYPE).from(SALARY_PAYMENT).where(SALARY_PAYMENT.SALARY.eq(salaryId)).limit(1).fetchOne().getValue(SALARY_PAYMENT.TYPE);
+				
+				for(Record salaryData: salaryDatas){
+					Double craAmount = Double.parseDouble(salaryData.get(SALARY_DATA.EXPRESSION));
 					
 					if(craAmount > 0){
-						if(salatyData.get(SALARY_DATA.START_DATE).before(endDateSQL)){		
+						if(salaryData.get(SALARY_DATA.START_DATE).before(endDateSQL)){		
 							JSONObject ddea = new JSONObject();
 							enterpriseCCCRecords = dslContext.select().from(ENTERPRISE_CCC)
 									.where(ENTERPRISE_CCC.CCC.eq(salary.get(SALARY.CCC)))
@@ -408,8 +284,14 @@ public class JooqCRA {
 							
 							ddea.put("cccRegime", parseSS_Regime(enterpriseCCCRecords.get(0).get(ENTERPRISE_CCC.TYPE)));
 							ddea.put("ccc", salary.get(SALARY.CCC));
-							ddea.put("year", salatyData.get(SALARY_DATA.START_DATE).getYear() + 1900);
-							ddea.put("month", salatyData.get(SALARY_DATA.START_DATE).getMonth() + 1);
+							
+							Calendar salaryDataStartDate = Calendar.getInstance();
+							salaryDataStartDate.setTimeInMillis(salaryData.get(SALARY_DATA.START_DATE).getTime());
+							
+							ddea.put("year", salaryDataStartDate.get(Calendar.YEAR));
+							ddea.put("month", salaryDataStartDate.get(Calendar.MONTH) + 1);
+//							ddea.put("year", salaryData.get(SALARY_DATA.START_DATE).getYear() + 1900);
+//							ddea.put("month", salaryData.get(SALARY_DATA.START_DATE).getMonth() + 1);
 						
 							JSONArray trbsa = new JSONArray();
 							JSONObject trba = new JSONObject();
@@ -418,8 +300,7 @@ public class JooqCRA {
 						
 							JSONArray cres = new JSONArray();
 							
-							Type typeCRA = Payment.Type.values()[8];;
-	//							Double craAmount = Double.parseDouble(salatyData.get(SALARY_DATA.EXPRESSION));
+							Type typeCRA = Payment.Type.values()[salaryPaymentType];
 							JSONObject cre = new JSONObject();
 							
 							String craAmountStr = String.format( "%.2f", craAmount );
@@ -453,8 +334,7 @@ public class JooqCRA {
 		
 		//GET Finiquitos SALARY from DB (employees) se usa ISSUE_DATE por que el finiquito puede tener un startDate de hace mil..
 		salaryRecords = dslContext.select().from(SALARY)
-				.where(SALARY.ENTERPRISE_NAME.equalIgnoreCase(_enterpriseName))
-					.and(SALARY.CCC.eq(_ccc))
+				.where(SALARY.CCC.eq(ccc))
 					.and(SALARY.ISSUE_DATE.between(startDateSQL, endDateSQL)
 							.or(SALARY.END_DATE.between(startDateSQL, endDateSQL)))
 					.and(SALARY.TYPE.eq((byte)2))
@@ -470,8 +350,10 @@ public class JooqCRA {
 			JSONObject finiq = new JSONObject();
 			finiq.put("cccRegime", parseSS_Regime(enterpriseCCCRecords.get(0).get(ENTERPRISE_CCC.TYPE)));
 			finiq.put("ccc", salaryRecords.get(0).get(SALARY.CCC));
-			finiq.put("year", startDateSQL.getYear());
-			finiq.put("month", startDateSQL.getMonth());
+			finiq.put("year", startDate.get(Calendar.YEAR));
+			finiq.put("month", startDate.get(Calendar.MONTH));
+//			finiq.put("year", startDateSQL.getYear());
+//			finiq.put("month", startDateSQL.getMonth());
 			JSONArray trbsf = new JSONArray();
 			for(Record salary: salaryRecords) {
 				Integer salaryId = salary.get(SALARY.ID);
@@ -526,7 +408,7 @@ public class JooqCRA {
 		
 		return mainCRAJSON;
 	}
-
+	
 	@SuppressWarnings({ "unchecked", "deprecation" })
 	private static JSONArray parseDDEAS(JSONArray ddeas) {
 		JSONArray result = new JSONArray();

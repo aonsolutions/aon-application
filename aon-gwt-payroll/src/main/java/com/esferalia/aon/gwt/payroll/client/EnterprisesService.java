@@ -114,8 +114,7 @@ public interface EnterprisesService extends RemoteService {
 
 	List<CRA> getCRAs(String domain);
 
-	String createNewCRA(String domainName, Integer enterpriseId, String enterpriseName, long startDate, long endDate,
-			String ccc, Integer cccId, String type);
+	String createNewCRA(String domainName, long findingDate, String ccc, Integer cccId, String type);
 
 	String deleteCRA(String currentDomainName, Integer code);
 

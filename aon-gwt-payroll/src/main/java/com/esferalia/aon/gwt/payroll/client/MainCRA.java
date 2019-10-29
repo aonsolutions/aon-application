@@ -435,7 +435,7 @@ public class MainCRA extends MainEntryPoint {
 	void exportButton(ClickEvent event){
 		if(checkDate()){
 			if(checkRectificavo()) {
-				impl.createNewCRA(enterpriseInfo.getId(), enterpriseName, startDate.getTime(), endDate.getTime(), ccc, cccId, "N", new AsyncCallback<String>() {
+				impl.createNewCRA(startDate.getTime(), ccc, cccId, "N", new AsyncCallback<String>() {
 					@Override
 					public void onFailure(Throwable caught) {
 //						Window.alert(caught.toString());	
@@ -452,7 +452,7 @@ public class MainCRA extends MainEntryPoint {
 					
 					@Override
 					protected void onAccept() {
-						impl.createNewCRA(enterpriseInfo.getId(), enterpriseName, startDate.getTime(), endDate.getTime(), ccc, cccId, "R", new AsyncCallback<String>() {
+						impl.createNewCRA(startDate.getTime(), ccc, cccId, "R", new AsyncCallback<String>() {
 							@Override
 							public void onFailure(Throwable caught) {
 								// TODO Auto-generated method stub	
