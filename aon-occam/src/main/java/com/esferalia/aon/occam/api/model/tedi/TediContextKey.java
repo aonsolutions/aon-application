@@ -15,98 +15,104 @@ public enum TediContextKey  implements Serializable {
 	
 	DOMAIN("Dominio") {
 		@Override
-		public void visit(TediResult result,ITediContextVisitor visitor,ICallback callback) {
-			visitor.visitDomain(result, callback);
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitDomain(callback);
 		}
 	},
 	TYPE("Tipo de factura") {
 		@Override
-		public void visit(TediResult result,ITediContextVisitor visitor,ICallback callback) {
-			visitor.visitType(result, callback);
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitType(callback);
 		}
 	}, 
 	SERIES("Serie") {
 		@Override
-		public void visit(TediResult result,ITediContextVisitor visitor,ICallback callback) {
-			visitor.visitSeries(result, callback);
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitSeries(callback);
 		}
 	},
 	NUMBER("N\u00FAmero") {
 		@Override
-		public void visit(TediResult result,ITediContextVisitor visitor,ICallback callback) {
-			visitor.visitNumber(result, callback);
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitNumber(callback);
 		}
 	},
 	REFERENCE_CODE("N\u00BA factura") {
 		@Override
-		public void visit(TediResult result,ITediContextVisitor visitor,ICallback callback) {
-			visitor.visitReferenceCode(result, callback);
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitReferenceCode(callback);
 		}
 	},
 	TRANSACTION("Tipo de transacci\u00F3n") {
 		@Override
-		public void visit(TediResult result,ITediContextVisitor visitor,ICallback callback) {
-			visitor.visitTransaction(result, callback);
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitTransaction(callback);
 		}
 	},
 	ISSUE_DATE ("Fecha de factura") {
 		@Override
-		public void visit(TediResult result,ITediContextVisitor visitor,ICallback callback) {
-			visitor.visitIssueDate(result, callback);
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitIssueDate(callback);
 		}
 	},
 	TAX_DATE ("Fecha de IVA") {
 		@Override
-		public void visit(TediResult result,ITediContextVisitor visitor,ICallback callback) {
-			visitor.visitTaxDate(result, callback);
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitTaxDate(callback);
 		}
 	},
 	SCOPE("\u00C1mbito") {
 		@Override
-		public void visit(TediResult result,ITediContextVisitor visitor,ICallback callback) {
-			visitor.visitScope(result, callback);
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitScope(callback);
 		}
 	},
 	REGISTRY ("Titular de la factura") {
 		@Override
-		public void visit(TediResult result,ITediContextVisitor visitor,ICallback callback) {
-			visitor.visitRegistry(result, callback);
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitRegistry(callback);
+		}
+	},
+	AMBIGUOUS_REGISTRY ("Titular de la factura") {
+		@Override
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitAmbiguousRegistry(callback);
 		}
 	},
 	RDOCUMENT ("N\u00BA documento del titular") {
 		@Override
-		public void visit(TediResult result,ITediContextVisitor visitor,ICallback callback) {
-			visitor.visitRdocument(result, callback);
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitRdocument(callback);
 		}
 	},
 	RDOCUMENT_COUNTRY("Pa\u00CDs del documento del titular") {
 		@Override
-		public void visit(TediResult result,ITediContextVisitor visitor,ICallback callback) {
-			visitor.visitRdocumentCountry(result, callback);
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitRdocumentCountry(callback);
 		}
 	},
 	RNAME("Raz\u00F3n social del titular") {
 		@Override
-		public void visit(TediResult result,ITediContextVisitor visitor,ICallback callback) {
-			visitor.visitRname(result, callback);
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitRname(callback);
 		}
 	},
 	ADDRESS("Direcci\u00F3n del titular") {
 		@Override
-		public void visit(TediResult result,ITediContextVisitor visitor,ICallback callback) {
-			visitor.visitAddress(result, callback);
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitAddress(callback);
 		}
 	},
 	DETAIL_DESCRIPTION("Descripci\u00F3n de la l\u00EDnea") {
 		@Override
-		public void visit(TediResult result,ITediContextVisitor visitor,ICallback callback) {
-			visitor.visitDetailDescription(result, callback);
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitDetailDescription(callback);
 		}
 	}, 
 	DETAILS ("Detalles de la factura") {
 		@Override
-		public void visit(TediResult result,ITediContextVisitor visitor,ICallback callback) {
-			visitor.visitDetails(result, callback);
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitDetails(callback);
 		}
 	}
 	;
@@ -123,5 +129,5 @@ public enum TediContextKey  implements Serializable {
 	public String getDescription() {
 		return description;
 	}
-	public abstract void visit(TediResult result , ITediContextVisitor visitor,ICallback callback);
+	public abstract void visit(ITediContextVisitor visitor,ICallback callback);
 }

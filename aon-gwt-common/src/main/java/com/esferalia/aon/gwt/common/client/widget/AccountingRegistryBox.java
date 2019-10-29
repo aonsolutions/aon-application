@@ -415,7 +415,7 @@ public class AccountingRegistryBox extends ResizeComposite implements HasValue<S
 		accountingRegistry.setEnabled(enabled);
 	}
 	
-	private void showDialog(final String domainName, final int domain, final AonConfiguration config) {
+	public void showDialog(final String domainName, final int domain, final AonConfiguration config) {
 		final CustomDialog dialog = new CustomDialog();
 		dialog.setCaption(AON.MSG.titular());
 		final AccountingRegistryPanel accountPanel = new AccountingRegistryPanel( domainName, domain

@@ -4,7 +4,6 @@ import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryBox;
-import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
@@ -17,67 +16,75 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.tedi.ICallback;
 import com.esferalia.aon.occam.api.model.tedi.ITediCallback;
 import com.esferalia.aon.occam.api.model.tedi.ITediContextVisitor;
-import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.event.logical.shared.CloseEvent;
-import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 
 import es.translogia.tedi.ewok.TediInvoiceType;
 
 public class TediContextVisitor implements ITediContextVisitor {
-	
+
 	private static FiscalServiceAsync FISCAL_SERVICE;
 	private String currentDomainName;
 	private int currentDomain;
 	private AonConfiguration configuration;
-	
-	public TediContextVisitor(String domainName, int domain,AonConfiguration configuration) {
+	private SimplePanel container;
+
+	public TediContextVisitor(String domainName, int domain, AonConfiguration configuration, SimplePanel container) {
 		this.currentDomainName = domainName;
 		this.currentDomain = domain;
 		this.configuration = configuration;
+		this.container = container;
 		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
 		FISCAL_SERVICE = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
 	}
-	
+
 	private String getCurrentDomainName() {
 		return currentDomainName;
 	}
+
 	private int getCurrentDomain() {
 		return currentDomain;
 	}
-	
-	private void noVisit(TediResult result) {
+
+	public SimplePanel getContainer() {
+		return container;
+	}
+
+	private void noVisit() {
 		MessageDialog.show("No hay ninguna utilidad para corregir el aviso/error.");
 	}
 
 	@Override
-	public void visitIssueDate(TediResult result, ICallback callback) {
-		showDateDialog(AON.MSG.issueDate(), result.getInvoice().getIssueDate(), new ITediCallback<Date>() {
-
+	public void visitIssueDate(ICallback callback) {
+		showDateDialog(AON.MSG.issueDate(), callback.getResult().getInvoice().getIssueDate(), new ITediCallback<Date>() {
+			@Override
+			public ICallback getCallback() {
+				return callback;
+			}
 			@Override
 			public void onAccept(Date date) {
-				result.getInvoice().setIssueDate(date);
-				callback.onAccept(result);
+				callback.getResult().getInvoice().setIssueDate(date);
+				callback.getResult().getInvoice().setTaxDate(date);
+				callback.onAccept(callback.getResult());
 			}
 
 			@Override
@@ -88,13 +95,16 @@ public class TediContextVisitor implements ITediContextVisitor {
 	}
 
 	@Override
-	public void visitTaxDate(TediResult result, ICallback callback) {
-		showDateDialog(AON.MSG.issueDate(), result.getInvoice().getTaxDate(), new ITediCallback<Date>() {
-
+	public void visitTaxDate(ICallback callback) {
+		showDateDialog(AON.MSG.issueDate(), callback.getResult().getInvoice().getTaxDate(), new ITediCallback<Date>() {
+			@Override
+			public ICallback getCallback() {
+				return callback;
+			}
 			@Override
 			public void onAccept(Date date) {
-				result.getInvoice().setTaxDate(date);
-				callback.onAccept(result);
+				callback.getResult().getInvoice().setTaxDate(date);
+				callback.onAccept(callback.getResult());
 			}
 
 			@Override
@@ -105,84 +115,126 @@ public class TediContextVisitor implements ITediContextVisitor {
 	}
 
 	@Override
-	public void visitType(TediResult result, ICallback callback) {
-		noVisit(result);
+	public void visitType(ICallback callback) {
+		noVisit();
 	}
 
 	@Override
-	public void visitTransaction(TediResult result, ICallback callback) {
-		noVisit(result);
+	public void visitTransaction(ICallback callback) {
+		noVisit();
 	}
 
 	@Override
-	public void visitSeries(TediResult result, ICallback callback) {
-		noVisit(result);
+	public void visitSeries(ICallback callback) {
+		noVisit();
 	}
 
 	@Override
-	public void visitScope(TediResult result, ICallback callback) {
-		noVisit(result);
+	public void visitScope(ICallback callback) {
+		noVisit();
 	}
 
 	@Override
-	public void visitRname(TediResult result, ICallback callback) {
-		noVisit(result);
+	public void visitRname(ICallback callback) {
+		noVisit();
 	}
 
 	@Override
-	public void visitRegistry(TediResult result, ICallback callback) {
-		showRegistryDialog(AON.MSG.titular(), 
-				new ITediCallback<AccountingRegistry>() {
+	public void visitAmbiguousRegistry(ICallback callback) {
+		showAmbiguousRegistryDialog(AON.MSG.titular(), new ITediCallback<AccountingRegistry>() {
+			@Override
+			public ICallback getCallback() {
+				return callback;
+			}
+			@Override
+			public void onAccept(AccountingRegistry registry) {
+				final AccountingRegistry ar = registry;
+				FISCAL_SERVICE.initializeInvoice(getCurrentDomainName(), getCurrentDomain(), ar, null,
+						callback.getResult().getInvoice().getIssueDate(), new AsyncCallback<AccountingInvoice>() {
 
-					@Override
-					public void onAccept(AccountingRegistry registry) {
-						final AccountingRegistry ar = registry;
-							FISCAL_SERVICE.initializeInvoice(
-										getCurrentDomainName()
-										,getCurrentDomain()
-										,ar
-										,null
-										,result.getTedi().getDate()
-										,new AsyncCallback<AccountingInvoice>() {
-											
-											@Override
-											public void onSuccess(AccountingInvoice ai) {
-												result.getAccountingInvoice().setRegistry(ai.getRegistry());
-												result.getInvoice().setRegistry(ai.getRegistry().getId());
-												result.getInvoice().setRegistryDocumentType(ai.getRegistry().getDocumentType());
-												result.getInvoice().setRegistryDocumentCountry(ai.getRegistry().getDocumentCountry());
-												result.getInvoice().setRegistryDocument(ai.getRegistry().getDocument());
-												result.getInvoice().setRegistryName(ai.getRegistry().getName());
-												result.getInvoice().setScope(new Scope().setId(ai.getRegistry().getScope()));
-												if (result.getTedi().getType() == TediInvoiceType.TICKET) {
-													result.getInvoice().setType( InvoiceType.UNDEDUCTIBLE );	
-												}
-												callback.onAccept(result);
-											}
-											
-											@Override
-											public void onFailure(Throwable caught) {
-												Window.alert(caught.getMessage());
-											}
-										});
-					}
+							@Override
+							public void onSuccess(AccountingInvoice ai) {
+								callback.getResult().getAccountingInvoice().setRegistry(ai.getRegistry());
+								callback.getResult().getInvoice().setRegistry(ai.getRegistry().getId());
+								callback.getResult().getInvoice().setRegistryDocumentType(ai.getRegistry().getDocumentType());
+								callback.getResult().getInvoice().setRegistryDocumentCountry(ai.getRegistry().getDocumentCountry());
+								callback.getResult().getInvoice().setRegistryDocument(ai.getRegistry().getDocument());
+								callback.getResult().getInvoice().setRegistryName(ai.getRegistry().getName());
+								callback.getResult().getInvoice().setScope(new Scope().setId(ai.getRegistry().getScope()));
+								if (callback.getResult().getTedi().getType() == TediInvoiceType.TICKET) {
+									callback.getResult().getInvoice().setType(InvoiceType.UNDEDUCTIBLE);
+								}
+								callback.onAccept(callback.getResult());
+							}
 
-					@Override
-					public void onCancel() {
-						callback.onCancel();
-					}
-				});
+							@Override
+							public void onFailure(Throwable caught) {
+								Window.alert(caught.getMessage());
+							}
+						});
+			}
+
+			@Override
+			public void onCancel() {
+				callback.onCancel();
+			}
+		});
+	}
+	
+	@Override
+	public void visitRegistry(ICallback callback) {
+		showRegistryDialog(AON.MSG.titular(), new ITediCallback<AccountingRegistry>() {
+			@Override
+			public ICallback getCallback() {
+				return callback;
+			}
+			@Override
+			public void onAccept(AccountingRegistry registry) {
+				final AccountingRegistry ar = registry;
+				FISCAL_SERVICE.initializeInvoice(getCurrentDomainName(), getCurrentDomain(), ar, null,
+						callback.getResult().getInvoice().getIssueDate(), new AsyncCallback<AccountingInvoice>() {
+
+							@Override
+							public void onSuccess(AccountingInvoice ai) {
+								callback.getResult().getAccountingInvoice().setRegistry(ai.getRegistry());
+								callback.getResult().getInvoice().setRegistry(ai.getRegistry().getId());
+								callback.getResult().getInvoice().setRegistryDocumentType(ai.getRegistry().getDocumentType());
+								callback.getResult().getInvoice().setRegistryDocumentCountry(ai.getRegistry().getDocumentCountry());
+								callback.getResult().getInvoice().setRegistryDocument(ai.getRegistry().getDocument());
+								callback.getResult().getInvoice().setRegistryName(ai.getRegistry().getName());
+								callback.getResult().getInvoice().setScope(new Scope().setId(ai.getRegistry().getScope()));
+								if (callback.getResult().getTedi().getType() == TediInvoiceType.TICKET) {
+									callback.getResult().getInvoice().setType(InvoiceType.UNDEDUCTIBLE);
+								}
+								callback.onAccept(callback.getResult());
+							}
+
+							@Override
+							public void onFailure(Throwable caught) {
+								Window.alert(caught.getMessage());
+							}
+						});
+			}
+
+			@Override
+			public void onCancel() {
+				callback.onCancel();
+			}
+		});
 	}
 
 	@Override
-	public void visitReferenceCode(TediResult result, ICallback callback) {
-		showReferenceCodeDialog(AON.MSG.invoiceNumber(), result.getInvoice().getReferenceCode(),
+	public void visitReferenceCode(ICallback callback) {
+		showReferenceCodeDialog(AON.MSG.invoiceNumber(), callback.getResult().getInvoice().getReferenceCode(),
 				new ITediCallback<String>() {
-
+					@Override
+					public ICallback getCallback() {
+						return callback;
+					}
 					@Override
 					public void onAccept(String referenceCode) {
-						result.getInvoice().setReferenceCode(referenceCode);
-						callback.onAccept(result);
+						callback.getResult().getInvoice().setReferenceCode(referenceCode);
+						callback.onAccept(callback.getResult());
 					}
 
 					@Override
@@ -193,236 +245,201 @@ public class TediContextVisitor implements ITediContextVisitor {
 	}
 
 	@Override
-	public void visitRdocumentCountry(TediResult result, ICallback callback) {
-		noVisit(result);
+	public void visitRdocumentCountry(ICallback callback) {
+		noVisit();
 	}
 
 	@Override
-	public void visitRdocument(TediResult result, ICallback callback) {
-		showDocumentDialog(AON.MSG.document(), result.getInvoice().getRegistryDocument(),
-				new ITediCallback<String>() {
+	public void visitRdocument(ICallback callback) {
+		showDocumentDialog(AON.MSG.document(), callback.getResult().getInvoice().getRegistryDocument(), new ITediCallback<String>() {
+			@Override
+			public ICallback getCallback() {
+				return callback;
+			}
+			@Override
+			public void onAccept(String document) {
+				callback.getResult().getInvoice().setRegistryDocument(document);
+				callback.onAccept(callback.getResult());
+			}
 
-					@Override
-					public void onAccept(String document) {
-						result.getInvoice().setRegistryDocument(document);
-						callback.onAccept(result);
-					}
-
-					@Override
-					public void onCancel() {
-						callback.onCancel();
-					}
-				});
+			@Override
+			public void onCancel() {
+				callback.onCancel();
+			}
+		});
 	}
 
 	@Override
-	public void visitNumber(TediResult result, ICallback callback) {
-		noVisit(result);
+	public void visitNumber(ICallback callback) {
+		noVisit();
 	}
 
 	@Override
-	public void visitDomain(TediResult result, ICallback callback) {
-		noVisit(result);
+	public void visitDomain(ICallback callback) {
+		noVisit();
 	}
 
 	@Override
-	public void visitDetailDescription(TediResult result, ICallback callback) {
-		noVisit(result);
+	public void visitDetailDescription(ICallback callback) {
+		noVisit();
 	}
 
 	@Override
-	public void visitDetails(TediResult result, ICallback callback) {
-		noVisit(result);
+	public void visitDetails(ICallback callback) {
+		noVisit();
 	}
 
 	@Override
-	public void visitAddress(TediResult result, ICallback callback) {
-		noVisit(result);
+	public void visitAddress(ICallback callback) {
+		noVisit();
 	}
 
 	private void showDateDialog(String label, Date date, ITediCallback<Date> callback) {
-	final DateBoxEx dateBox = new DateBoxEx();
-	dateBox.setValue(date);
-	BasicDialog<Date> dialog = new BasicDialog<Date>(callback) {
+		final DateBoxEx dateBox = new DateBoxEx();
+		dateBox.setValue(date);
+		dateBox.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				callback.onAccept(event.getValue());
+			}
+		});
+		BasicDialog dialog = new BasicDialog();
+		dialog.setContent(label, dateBox);
+		container.add(dialog);
+	}
 
-		@Override
-		protected Date getValue() {
-			return dateBox.getValue();
+	private void showDocumentDialog(String label, String document, ITediCallback<String> callback) {
+		final TextBox documentBox = new TextBox();
+		documentBox.setStyleName(AON.AON_CSS.aonInputText());
+		documentBox.setValue(document);
+		documentBox.addValueChangeHandler(new ValueChangeHandler<String>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				callback.onAccept(event.getValue());
+			}
+		});
+		BasicDialog dialog = new BasicDialog();
+		dialog.setContent(label, documentBox);
+		container.add(dialog);
+	}
+
+	private void showRegistryDialog(String label, ITediCallback<AccountingRegistry> callback) {
+		final AccountingRegistryBox registryBox = new AccountingRegistryBox(getCurrentDomainName(), getCurrentDomain(),
+				configuration, false);
+		registryBox.addSelectionHandler(new SelectionHandler<AccountingRegistry>() {
+			@Override
+			public void onSelection(SelectionEvent<AccountingRegistry> event) {
+				callback.onAccept(event.getSelectedItem());
+			}
+		});
+		BasicDialog dialog = new BasicDialog();
+		dialog.setContent(label, registryBox);
+		if (callback.getCallback().getResult().getInvoice().isExpenses()) {
+			AccountingRegistry dc = callback.getCallback().getConfiguration().getDefaultCreditor();
+			if (dc != null) {
+				Label defaultCreditor = new Label("Asignar a " + dc.getName() + " (" + dc.getAccountCode() + ")");
+				defaultCreditor.setStyleName(AON.AON_CSS.aonClickableLabel());
+				defaultCreditor.addStyleName(AON.AON_CSS.aonIconRowSelector());
+				defaultCreditor.addStyleName(AON.AON_CSS.aonPaddingLeft20());
+				defaultCreditor.addClickHandler( new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						callback.onAccept(dc);
+					}
+				});
+				dialog.setContent("", defaultCreditor);		
+			}
 		}
-
-	};
-	dialog.setContent(label, dateBox);
-	dialog.centerShow();
-}
-
-private void showDocumentDialog(String label, String document, ITediCallback<String> callback) {
-	final TextBox documentBox = new TextBox();
-	documentBox.setStyleName(AON.AON_CSS.aonInputText());
-	documentBox.setValue(document);
-	BasicDialog<String> dialog = new BasicDialog<String>(callback) {
-
-		@Override
-		protected String getValue() {
-			return documentBox.getValue();
+		if (AonStringUtils.isNotBlank( callback.getCallback().getResult().getTedi().getRdocument() )
+		 && AonStringUtils.isNotBlank( callback.getCallback().getResult().getTedi().getRname() ) ) {
+			AccountingRegistry dc = callback.getCallback().getConfiguration().getDefaultCreditor();
+			if (dc != null) {
+				Label newCreditor = new Label("Crear el acreedor " + dc.getName());
+				newCreditor.setStyleName(AON.AON_CSS.aonClickableLabel());
+				newCreditor.addStyleName(AON.AON_CSS.aonIconReset());
+				newCreditor.addStyleName(AON.AON_CSS.aonPaddingLeft20());
+				newCreditor.addClickHandler( new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						registryBox.showDialog(getCurrentDomainName(), getCurrentDomain(),configuration);
+					}
+				});
+				dialog.setContent("", newCreditor);		
+			}
 		}
+		container.add(dialog);
+	}
 
-	};
-	dialog.setContent(label, documentBox);
-	dialog.centerShow();
-}
-
-private void showRegistryDialog(String label, ITediCallback<AccountingRegistry> callback) {
-	final AccountingRegistryBox registryBox = new AccountingRegistryBox(getCurrentDomainName(),getCurrentDomain(),configuration,false);
-	BasicDialog<AccountingRegistry> dialog = new BasicDialog<AccountingRegistry>(callback) {
-		private AccountingRegistry ar;
-
-		@Override
-		protected void afterConstruct() {
-			registryBox.addSelectionHandler( new SelectionHandler<AccountingRegistry>() {
+	private void showAmbiguousRegistryDialog(String label, ITediCallback<AccountingRegistry> callback) {
+		
+		ListBox registryBox = new ListBox();
+		registryBox.addItem("<Selecciones un valor>", (String) null);
+		if (callback.getCallback().getResult().getPosibleRegistries() != null) {
+			int index = 0;
+			for (AccountingRegistry ar : callback.getCallback().getResult().getPosibleRegistries() ) {
+				registryBox.addItem(ar.getDocument()  + " - " + ar.getName() + " (" + ar.getAccountCode() + ")", AonNumberUtils.toString(index));		
+			}
+		}
 				
-				@Override
-				public void onSelection(SelectionEvent<AccountingRegistry> event) {
-					ar = event.getSelectedItem();
-				}
-			});
-		}
-
-		@Override
-		protected AccountingRegistry getValue() {
-			return ar;
-		}
-
-	};
-	dialog.setContent(label, registryBox);
-	dialog.centerShow();
-	Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-		public void execute() {
-			registryBox.setFocus(true);
-		}
-	});
-}
-
-private void showReferenceCodeDialog(String label, String referenceCode, ITediCallback<String> callback) {
-	final TextBox documentBox = new TextBox();
-	documentBox.setStyleName(AON.AON_CSS.aonInputText());
-	documentBox.setValue(referenceCode);
-	BasicDialog<String> dialog = new BasicDialog<String>(callback) {
-
-		@Override
-		protected String getValue() {
-			return documentBox.getValue();
-		}
-
-	};
-	dialog.setContent(label, documentBox);
-	dialog.centerShow();
-}
-
-private static abstract class BasicDialog<T> extends CustomDialog {
-	private FlexTable container = new FlexTable();
-
-	public BasicDialog(ITediCallback<T> callback) {
-
-		setAnimationEnabled(true);
-		setGlassEnabled(true);
-		setModal(true);
-		setCaption(AON.MSG.inputData());
-		setWidth("500px");
-		setHeight("120px");
-
-		container.setStyleName(AON.AON_CSS.aonBlockCenter());
-		container.addStyleName(AON.AON_CSS.aonPanelGrid());
-		container.addStyleName(AON.AON_CSS.aonWidth90Percent());
-		container.getColumnFormatter().setWidth(0, "100px");
-		container.getColumnFormatter().setWidth(1, "auto");
-
-		ScrollPanel scrollPanel = new ScrollPanel();
-		scrollPanel.setStyleName(AON.AON_CSS.aonScrollArea());
-
-		FlowPanel panel = new FlowPanel();
-
-		panel.add(container);
-
-		FlowPanel buttons = new FlowPanel();
-		buttons.setStyleName(AON.AON_CSS.aonTextCenter());
-		buttons.addStyleName(AON.AON_CSS.aonMarginTop());
-
-		final Button okButton = new Button();
-		okButton.setStyleName(AON.AON_CSS.aonConfirmDialogOkButton());
-		okButton.setText(AON.MSG.accept());
-		okButton.addKeyUpHandler(new KeyUpHandler() {
+		registryBox.addChangeHandler(new ChangeHandler() {
+			
 			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
-					hide();
-					callback.onCancel();
-				}
+			public void onChange(ChangeEvent event) {
+				Integer index = AonNumberUtils.toInteger( registryBox.getSelectedValue() );
+				callback.onAccept(callback.getCallback().getResult().getPosibleRegistries().get(index));
 			}
 		});
-		okButton.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				okButton.setEnabled(false);
-				hide();
-				callback.onAccept(getValue());
-			}
-		});
-		buttons.add(okButton);
-
-		final Button cancelButton = new Button();
-		cancelButton.setStyleName(AON.AON_CSS.aonConfirmDialogCancelButton());
-		cancelButton.addStyleName(AON.AON_CSS.aonMarginLeft());
-		cancelButton.setText(AON.MSG.cancelAction());
-		cancelButton.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				cancelButton.setEnabled(false);
-				hide();
-				callback.onCancel();
-			}
-		});
-		cancelButton.addKeyUpHandler(new KeyUpHandler() {
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
-					hide();
-					callback.onCancel();
-				}
-			}
-		});
-		addCloseHandler(new CloseHandler<PopupPanel>() {
-			@Override
-			public void onClose(CloseEvent<PopupPanel> event) {
-				callback.onCancel();
-			}
-		});
-		buttons.add(cancelButton);
-		panel.add(buttons);
-		scrollPanel.setWidget(panel);
-		setWidget(scrollPanel);
-		afterConstruct();
+		BasicDialog dialog = new BasicDialog();
+		dialog.setContent(label, registryBox);
+		container.add(dialog);
 	}
 
-	protected void afterConstruct() {
+	private void showReferenceCodeDialog(String label, String referenceCode, ITediCallback<String> callback) {
+		final TextBox referenceBox = new TextBox();
+		referenceBox.setStyleName(AON.AON_CSS.aonInputText());
+		referenceBox.setValue(referenceCode);
+		referenceBox.addValueChangeHandler(new ValueChangeHandler<String>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				callback.onAccept(event.getValue());
+			}
+		});
+		BasicDialog dialog = new BasicDialog();
+		dialog.setContent(label, referenceBox);
+		container.add(dialog);
 	}
 
-	public void setContent(String label, IsWidget child) {
-		int row = container.getRowCount();
-		container.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
-		container.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextLeft());
-		container.setWidget(row, 0, new Label(label));
+	private static class BasicDialog extends FlowPanel {
+		private FlexTable container = new FlexTable();
 
-		container.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-		container.setWidget(row, 1, child);
+		public BasicDialog() {
+			super();
+			container.setStyleName(AON.AON_CSS.aonBlockCenter());
+			container.addStyleName(AON.AON_CSS.aonPanelGrid());
+			container.addStyleName(AON.AON_CSS.aonWidth90Percent());
+			container.getColumnFormatter().setWidth(0, "100px");
+			container.getColumnFormatter().setWidth(1, "auto");
+			FlowPanel panel = new FlowPanel();
+			panel.add(container);
+			FlowPanel buttons = new FlowPanel();
+			buttons.setStyleName(AON.AON_CSS.aonTextCenter());
+			buttons.addStyleName(AON.AON_CSS.aonMarginTop());
+			add(container);
+		}
+
+		public void setContent(String label, IsWidget child) {
+			int row = container.getRowCount();
+			container.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+			container.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextLeft());
+			container.setWidget(row, 0, new Label(label));
+
+			container.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+			container.setWidget(row, 1, child);
+		}
 	}
-
-	public void centerShow() {
-		center();
-		show();
-	}
-
-	protected abstract T getValue();
-}
 }

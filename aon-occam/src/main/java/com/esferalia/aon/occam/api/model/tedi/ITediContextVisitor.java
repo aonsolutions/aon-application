@@ -1,22 +1,21 @@
 package com.esferalia.aon.occam.api.model.tedi;
 
-import java.util.Date;
-
 public interface ITediContextVisitor {
-	void visitDomain( TediResult result, ICallback callback );
-	void visitType( TediResult result, ICallback callback  );
-	void visitSeries( TediResult result, ICallback callback  );
-	void visitNumber( TediResult result, ICallback callback  );
-	void visitReferenceCode( TediResult result, ICallback callback  );
-	void visitTransaction( TediResult result, ICallback callback  );
-	void visitIssueDate( TediResult result, ICallback callback );
-	void visitTaxDate( TediResult result, ICallback callback );
-	void visitScope( TediResult result, ICallback callback  );
-	void visitRegistry( TediResult result, ICallback callback  );
-	void visitRdocument( TediResult result, ICallback callback );
-	void visitRdocumentCountry( TediResult result , ICallback callback );
-	void visitRname( TediResult result , ICallback callback );
-	void visitAddress( TediResult result , ICallback callback );
-	void visitDetailDescription( TediResult result , ICallback callback );
-	void visitDetails( TediResult result , ICallback callback );
+	void visitDomain(ICallback callback );
+	void visitType(ICallback callback  );
+	void visitSeries(ICallback callback  );
+	void visitNumber(ICallback callback  );
+	void visitReferenceCode(ICallback callback  );
+	void visitTransaction(ICallback callback  );
+	void visitIssueDate(ICallback callback );
+	void visitTaxDate(ICallback callback );
+	void visitScope(ICallback callback  );
+	void visitRegistry(ICallback callback  );
+	void visitAmbiguousRegistry(ICallback callback  );
+	void visitRdocument(ICallback callback );
+	void visitRdocumentCountry(ICallback callback );
+	void visitRname(ICallback callback );
+	void visitAddress(ICallback callback );
+	void visitDetailDescription(ICallback callback );
+	void visitDetails(ICallback callback );
 }

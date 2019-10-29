@@ -7,6 +7,8 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.ModuleCallback;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.CloseTab;
+import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
@@ -31,7 +33,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
@@ -64,7 +65,6 @@ public class TediCenter extends MainEntryPoint {
 	}
 
 	private static TediServiceAsync SERVICE;
-	private TediContextVisitor tediContextVisitor;
 	
 	private String currentDomainName;
 	private int currentDomain;
@@ -121,8 +121,6 @@ public class TediCenter extends MainEntryPoint {
 			@Override
 			public void onSuccess(AonConfiguration result) {
 				configuration = result;
-				tediContextVisitor = new TediContextVisitor(getDomainName(), getDomain(), configuration);
-				
 				DockLayoutPanel dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 				dockLayoutPanel.addStyleName(AON.AON_CSS.aonMarginTop());
 				dockLayoutPanel.addNorth(getToolbarPanel(), 25);
@@ -216,12 +214,13 @@ public class TediCenter extends MainEntryPoint {
 			tediSplitPanel.add(contentPanel);
 			if (result.isImportable()) {
 				paintInvoice(contentPanel,result);
-			} else if (result.isEmpty()) {
-				paintInvoice(contentPanel,result);
-			} else if (result.getInvoice().getRegistry() != null) {
+			} else if (result.getInvoice().isUndeductible() 
+				&& result.getInvoice().getRegistry() == null
+				&& result.getInvoice().getIssueDate() != null
+				&& (result.getInvoice().getDetails() == null || result.getInvoice().getDetails().size() == 0)) {
 				paintInvoice(contentPanel,result);
 			} else {
-				contentPanel.setWidget( getProblemsWidget( result ) );
+				paintProblemsWidget(contentPanel, result );
 			}
 		}
 	}
@@ -397,12 +396,10 @@ public class TediCenter extends MainEntryPoint {
 		}
 		
 		if (!result.isImportable()) {
-			if (result.getInvoice().getRegistry() == null 
+			if (result.getInvoice().isUndeductible() 
+			&& result.getInvoice().getRegistry() == null
+			&& result.getInvoice().getIssueDate() != null
 			&& (result.getInvoice().getDetails() == null || result.getInvoice().getDetails().size() == 0)) {
-				paintAccountEntryModule(container, result );
-			}
-			if (result.getInvoice().getRegistry() != null) {
-				// TODO !!!! Aquí puede pasar cualquier cosa!!
 				paintAccountEntryModule(container, result );
 			}
 		}
@@ -504,22 +501,18 @@ public class TediCenter extends MainEntryPoint {
 		}
 	}
 
-	private Widget getProblemsWidget(TediResult result) {
+	private void paintProblemsWidget(SimpleLayoutPanel contentPanel, TediResult result) {
 		ScrollPanel scrollPanel = new ScrollPanel();
 		scrollPanel.setStyleName(AON.AON_CSS.aonScrollArea());
-		FlowPanel panel = new FlowPanel();
-		scrollPanel.setWidget(panel);
+		FlowPanel mainPanel = new FlowPanel();
+		scrollPanel.setWidget(mainPanel);
 		if (result.getMessages() != null && result.getMessages().size() > 0) {
-			panel.setStyleName(AON.AON_CSS.aonMarginTop5());
-			panel.addStyleName(AON.AON_CSS.aonMarginLeft());
-			panel.addStyleName(AON.AON_CSS.aonSimpleBorder());
-			panel.addStyleName(AON.AON_CSS.aonFixedFont());
+			mainPanel.setStyleName(AON.AON_CSS.aonMarginTop5());
+			mainPanel.addStyleName(AON.AON_CSS.aonMarginLeft());
+			mainPanel.addStyleName(AON.AON_CSS.aonSimpleBorder());
+			mainPanel.addStyleName(AON.AON_CSS.aonFixedFont());
 			for (TediError error : result.getMessages()) {
-				FocusPanel focuspanel = new FocusPanel();
-				focuspanel.addStyleName(AON.AON_CSS.aonClickableLabel());
 				FlowPanel flowPanel = new FlowPanel();
-				focuspanel.setWidget(flowPanel);
-	
 				InlineLabel colorLabel = new InlineLabel("");
 				colorLabel.setStyleName(AON.AON_CSS.aonPaddingLeft());
 				colorLabel.addStyleName(AON.AON_CSS.aonPaddingRight());
@@ -535,43 +528,99 @@ public class TediCenter extends MainEntryPoint {
 	
 				InlineLabel msgLabel = new InlineLabel(error.getMessage());
 				msgLabel.setStyleName(AON.AON_CSS.aonMarginLeft());
+				msgLabel.addStyleName(AON.AON_CSS.aonBorderBottomImportant());
+				flowPanel.add(msgLabel);
+				
 				if (error.canBeFixed()) {
-					focuspanel.addClickHandler(new ClickHandler() {
-	
+					SimplePanel container = new SimplePanel();
+					container.setStyleName(AON.AON_CSS.aonMarginTop());
+					container.addStyleName(AON.AON_CSS.aonMarginBottom());
+					flowPanel.add(container);			
+					TediContextVisitor tediContextVisitor = new TediContextVisitor(getDomainName(), getDomain(), configuration, container);
+					error.getContext().getKey().visit(tediContextVisitor, new ICallback() {
+
 						@Override
-						public void onClick(ClickEvent event) {
-							error.getContext().getKey().visit(result, tediContextVisitor, new ICallback() {
-	
-								@Override
-								public void onCancel() {
-	
-								}
-	
-								@Override
-								public void onAccept(TediResult result) {
-									SERVICE.validateInvoice(getDomainName(), getUser(), getDomain(), isTediSnapshot(), result,
-											new AsyncCallback<TediResult>() {
-	
-												@Override
-												public void onSuccess(TediResult result) {
-													onSelect(result, true);
-												}
-	
-												@Override
-												public void onFailure(Throwable caught) {
-													showMessage(AON.MSG.error() + " [Interno: " + caught.getMessage() + "]");
-												}
-											});
-								}
-							});
+						public TediResult getResult() {
+							return result;
+						}
+						@Override
+						public AonConfiguration getConfiguration() {
+							return configuration;
+						}
+						
+						@Override
+						public void onCancel() {
+
+						}
+
+						@Override
+						public void onAccept(TediResult result) {
+							SERVICE.validateInvoice(getDomainName(), getUser(), getDomain(), isTediSnapshot(), result,
+									new AsyncCallback<TediResult>() {
+
+										@Override
+										public void onSuccess(TediResult result) {
+											onSelect(result, true);
+										}
+
+										@Override
+										public void onFailure(Throwable caught) {
+											showMessage(AON.MSG.error() + " [Interno: " + caught.getMessage() + "]");
+										}
+									});
 						}
 					});
 				}
-				flowPanel.add(msgLabel);
-				panel.add(focuspanel);
+				mainPanel.add(flowPanel);
 			}
 		}
-		return scrollPanel;
+		FlowPanel buttonsPanel = new FlowPanel();
+		buttonsPanel.setStyleName(AON.AON_CSS.aonSimpleBorder());
+		buttonsPanel.addStyleName(AON.AON_CSS.aonMargin());
+		buttonsPanel.addStyleName(AON.AON_CSS.aonTextCenter());
+		Button rejectButton = new Button("Rechazar factura");
+		rejectButton.setStyleName(AON.AON_CSS.aonIconCommandButton());
+		rejectButton.addStyleName(AON.AON_CSS.aonIconDelete());
+		rejectButton.addStyleName(AON.AON_CSS.aonMarginTop());
+		rejectButton.addStyleName(AON.AON_CSS.aonMarginBottom());
+		rejectButton.setTitle("Rechazar factura");
+		rejectButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				ConfirmDialog cd = new ConfirmDialog();
+				cd.confirm("Desea rechazar la factura?", new ConfirmDialogCallback() {
+					
+					@Override
+					public void onCancel() {
+						// Nothing
+					}
+					
+					@Override
+					public void onAccept() {
+						SERVICE.rejectInvoice(getDomainName(), getUser(), getDomain(),isTediSnapshot(), result.getTedi(),
+								new AsyncCallback<TediResult>() {
+
+									@Override
+									public void onSuccess(TediResult result ) {
+										mainTabLayoutPanel.remove(contentPanel);
+										tabs.remove( result.getTedi().getUuid());
+										onRefresh();
+									}
+
+									@Override
+									public void onFailure(Throwable caught) {
+										showMessage(AON.MSG.error() + " [Interno: " + caught.getMessage() + "]");
+									}
+
+								});
+					}
+				});
+			}
+		});
+		buttonsPanel.add(rejectButton);
+		mainPanel.add(buttonsPanel);
+		contentPanel.setWidget( scrollPanel );
 	}
 
 }

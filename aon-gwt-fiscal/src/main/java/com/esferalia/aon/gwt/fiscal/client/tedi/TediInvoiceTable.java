@@ -5,8 +5,6 @@ import com.esferalia.aon.gwt.common.client.css.AonCellTable;
 import com.esferalia.aon.occam.api.model.tedi.TediLevel;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.cell.client.Cell;
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.ImageResourceCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -65,24 +63,7 @@ public class TediInvoiceTable extends CellTable<TediResult> {
 		this.addColumn(statusColumn);
 		this.setColumnWidth(statusColumn, 20, Unit.PX);
 	}
-
-	private static interface GetValue<C> {
-		C getValue(TediResult contact);
-	}
-
-	private <C> Column<TediResult, C> addColumn(Cell<C> cell, final GetValue<C> getter,
-			FieldUpdater<TediResult, C> fieldUpdater) {
-		Column<TediResult, C> column = new Column<TediResult, C>(cell) {
-			@Override
-			public C getValue(TediResult object) {
-				return getter.getValue(object);
-			}
-		};
-		column.setFieldUpdater(fieldUpdater);
-		this.addColumn(column, "");
-		return column;
-	}
-
+	
 	private void addInvoiceTypeColumn() {
 		final TextColumn<TediResult> invoiceTypeColumn = new TextColumn<TediResult>() {
 			@Override

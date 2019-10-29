@@ -142,6 +142,30 @@ public class TEDI {
 		}
 	}
 
+	public static TediResult rejectInvoice(String domainName, int domain, boolean snapshot, String user, TediInvoice invoice)
+			throws TediException {
+		if (invoice == null) {
+			throw new TediException("No se ha indicado una factura");
+		}
+		if (AonStringUtils.isBlank(invoice.getCompany())) {
+			throw new TediException("La factura no tiene el atributo compa\u00F1ia");
+		}
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			final AonConfiguration aonCtx = ConfigurationDAO.getConfiguration(ctx);
+			Tedi tedi = getTedi(ctx, snapshot);
+			invoice.setOldStatus( invoice.getStatus() );
+			invoice.setStatus( TediInvoiceStatus.refused);
+			
+			LOGGER.info("[TEDI] Attempt to reject invoice [" + invoice.getCompany() + "," + invoice.getUuid() + "]");
+			return TediParser.toFullInvoice(ctx, aonCtx, tedi.putInvoice(invoice));
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	public static TediResult putInvoice(String domainName, int domain, boolean snapshot, String user, TediInvoice invoice)
 			throws TediException {
 		if (invoice == null) {

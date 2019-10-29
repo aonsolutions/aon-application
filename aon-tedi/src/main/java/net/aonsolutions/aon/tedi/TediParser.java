@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.tedi.TediContextKey;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
+import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
@@ -69,7 +70,7 @@ public class TediParser {
 	
 	private enum TediFinanceTransfer {
 		PAYMENT( (aonCtx,result,tedi,aon) -> aon.setPayment( !result.getInvoice().isSales())),
-		DUE_DATE( (aonCtx,result,tedi,aon) -> aon.setDueDate( tedi.getDueDate())),
+		DUE_DATE( (aonCtx,result,tedi,aon) -> aon.setDueDate( tedi.getDueDate() == null? result.getTedi().getDate() : tedi.getDueDate() )),
 		AMOUNT( (aonCtx,result,tedi,aon) -> aon.setAmount( tedi.getAmount())),
 		IBAN( (aonCtx,result,tedi,aon) -> aon.setBankAccount( new BankAccount(tedi.getIban()))),
 		PAYMETHOD( (aonCtx,result,tedi,aon) -> {
@@ -527,7 +528,14 @@ public class TediParser {
 					return true;
 				} else {
 					result.setPosibleRegistries(registries);
-					result.add( TediErrorMessages.C011.err(TediContextKey.REGISTRY,TediContextKey.REGISTRY.getDescription()));
+					result.add( TediErrorMessages.C011.err(TediContextKey.AMBIGUOUS_REGISTRY));
+					result.getInvoice().setRegistryDocument(result.getTedi().getRdocument());
+					result.getInvoice().setRegistryDocumentCountry(Country.safeValueOf(result.getTedi().getRegistry().getDocumentCountry()));
+					if (result.getInvoice().getRegistryDocumentCountry() == null) {
+						result.getInvoice().setRegistryDocumentCountry(Country.ES);
+						result.add( TediErrorMessages.C003.inf(TediContextKey.RDOCUMENT_COUNTRY,TediContextKey.RDOCUMENT_COUNTRY.getDescription(),Country.ES.getIso2()));
+					}
+					result.getInvoice().setRegistryName(result.getTedi().getRname());
 				}
 			}
 			return false;

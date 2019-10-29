@@ -17,6 +17,7 @@ public class Tedi extends TediRequest {
 	String AUTH;
 	String INVOICE_BASE;
 	String PUT_INVOICE;
+	String UPDATE_INVOICE;
 	String DOWNLOAD_INVOICE;
 	String GET_INVOICE_BY_UUID;
 	String GET_VERIFIED_INVOICES;
@@ -48,6 +49,7 @@ public class Tedi extends TediRequest {
 		AUTH = TEDI_URL + "/auth";
 		INVOICE_BASE = TEDI_URL + "/invoice";
 		PUT_INVOICE = INVOICE_BASE;
+		UPDATE_INVOICE = INVOICE_BASE;
 		DOWNLOAD_INVOICE = INVOICE_BASE + "/d/{0}"; // uuid
 		GET_INVOICE_BY_UUID = INVOICE_BASE + "/{0}/{1}/{2}";
 		GET_VERIFIED_INVOICES = INVOICE_BASE + "?company={0}&status=" + TediInvoiceStatus.verified;
