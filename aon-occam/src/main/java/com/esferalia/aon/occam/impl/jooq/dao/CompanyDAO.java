@@ -232,6 +232,7 @@ public class CompanyDAO {
 			.map(rec -> new Company()
 					.setId(rec.getValue(COMPANY.REGISTRY))
 					.setDocument(rec.getValue(REGISTRY.DOCUMENT))
+					.setDomain(domain)
 					.setName(rec.getValue(REGISTRY.NAME))
 					.setSurcharge(rec.getValue(COMPANY.SURCHARGE)==1)
 					.setWithholding(rec.getValue(COMPANY.WITHHOLDING)==1)
