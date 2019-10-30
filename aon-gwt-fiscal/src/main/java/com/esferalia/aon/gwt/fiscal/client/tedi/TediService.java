@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.tedi.TediCompanyResult;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -22,8 +23,8 @@ public interface TediService extends RemoteService {
 	LinkedList<TediResult> putInvoices(String domainName, String user, int domain, boolean snapshot, LinkedList<TediResult> results) throws AonCoreException;
 	TediResult validateInvoice(String domainName, String user, int domain, boolean snapshot, TediResult result) throws AonCoreException;
 	String getInvoiceAttachURL(String domainName, String user, int domain, boolean snapshot, String uuid) throws AonCoreException;
-	LinkedList<Company> getCompanies(String domainName, String user, int domain, boolean snapshot);
-	LinkedList<Company> tediSync(String domainName, String user, int domain, boolean snapshot);
-	
+	LinkedList<TediCompanyResult> getCompanies(String domainName, String user, int domain, boolean snapshot);
+	LinkedList<TediCompanyResult> tediSync(String domainName, String user, int domain, boolean snapshot);
+	Integer getCountInboxInvoices(String domainName, String user, int domain, boolean snapshot, Company company);
 	
 }

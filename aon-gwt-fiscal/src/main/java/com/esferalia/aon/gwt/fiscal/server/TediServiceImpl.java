@@ -12,12 +12,14 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.tedi.TediCompanyResult;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 import es.translogia.tedi.baloo.TediException;
 import es.translogia.tedi.ewok.TediInvoice;
+import es.translogia.tedi.ewok.TediInvoiceStatus;
 import net.aonsolutions.aon.tedi.TEDI;
 
 @WebServlet(name = "TEDI Servlet", urlPatterns = { "/aon_gwt_fiscal/roms/Tedi" })
@@ -34,6 +36,15 @@ public class TediServiceImpl extends AonStatelessRemoteServiceServlet implements
 	public LinkedList<TediResult> getVerifiedInvoices(String domainName, String user, int domain, boolean snapshot, Company company) throws AonCoreException {
 		try {
 			return TEDI.getVerifiedInvoices(domainName, company.getDomain(), snapshot, user, company);
+		} catch ( TediException t) {
+			throw new AonCoreException(t);
+		}
+	}
+	
+	@Override
+	public Integer getCountInboxInvoices(String domainName, String user, int domain, boolean snapshot, Company company) throws AonCoreException {
+		try {
+			return TEDI.getCountInvoices(domainName, company.getDomain(), snapshot, user, company, TediInvoiceStatus.inbox);
 		} catch ( TediException t) {
 			throw new AonCoreException(t);
 		}
@@ -90,11 +101,12 @@ public class TediServiceImpl extends AonStatelessRemoteServiceServlet implements
 	}
 	
 	@Override
-	public LinkedList<Company> getCompanies(String domainName, String user, int domain, boolean snapshot ) throws AonCoreException {
+	public LinkedList<TediCompanyResult> getCompanies(String domainName, String user, int domain, boolean snapshot ) throws AonCoreException {
 		User u =  AON.getUser(domainName, domain, user);
 		Integer[] scopes = AON.getUserScopes(domainName, domain, user, u.getId());
 		return AON.getUserCompanyStream(domainName, domain, user, scopes)
 				.filter(cp -> isTediCenter(domainName,  cp, snapshot))
+				.map(cp -> new TediCompanyResult(cp))
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
@@ -104,7 +116,7 @@ public class TediServiceImpl extends AonStatelessRemoteServiceServlet implements
 	}
 
 	@Override
-	public LinkedList<Company> tediSync(String domainName, String user, int domain, boolean snapshot) {
+	public LinkedList<TediCompanyResult> tediSync(String domainName, String user, int domain, boolean snapshot) {
 		try {
 			TEDI.getCompanies(domainName, domain, snapshot, user).forEach(cp -> {
 				System.out.println("------------ " + cp.getDocument() + " --------------------");

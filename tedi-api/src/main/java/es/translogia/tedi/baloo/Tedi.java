@@ -23,6 +23,7 @@ public class Tedi extends TediRequest {
 	String DOWNLOAD_INVOICE;
 	String GET_INVOICE_BY_UUID;
 	String GET_VERIFIED_INVOICES;
+	String GET_COUNT_INVOICES;
 	
 	String COMPANY_BASE;
 	String GET_COMPANIES_BY_COMPANY;
@@ -60,7 +61,7 @@ public class Tedi extends TediRequest {
 		GET_VERIFIED_INVOICES = INVOICE_BASE + "?company={0}&status=" + TediInvoiceStatus.verified;
 		COMPANY_BASE = TEDI_URL	+ "/company";
 		GET_COMPANIES_BY_COMPANY = COMPANY_BASE + "?company={0}";
-		
+		GET_COUNT_INVOICES = INVOICE_BASE + "/count/{0}/{1}"; // '/cout/:company/:status'
 	}
 
 	private Tedi(String token,boolean snapshot) {
@@ -87,6 +88,16 @@ public class Tedi extends TediRequest {
 		}
 		throw new TediException(
 				"getVerifiedInvoices: " + tediResponse.getResponseCode() + " - " + tediResponse.getResponseMessage());
+	}
+	
+	public Integer getCountInvoices(String company, TediInvoiceStatus status) throws TediException {
+		String url = MessageFormat.format(GET_COUNT_INVOICES ,company, status);
+		TediResponse tediResponse = get(url, getToken());
+		if (tediResponse.ok()) {
+			return Integer.parseInt(tediResponse.getContent());
+		}
+		throw new TediException(
+				"getCountInvoices: " + tediResponse.getResponseCode() + " - " + tediResponse.getResponseMessage());
 	}
 
 	public TediInvoice getInvoice(String status,String company, String uuid) throws TediException {

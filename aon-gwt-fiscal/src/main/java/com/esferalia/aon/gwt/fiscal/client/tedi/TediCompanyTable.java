@@ -2,7 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.tedi;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonCellTable;
-import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.tedi.TediCompanyResult;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.cellview.client.CellTable;
@@ -12,19 +12,21 @@ import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
 
-public class TediCompanyTable extends CellTable<Company> {
+public class TediCompanyTable extends CellTable<TediCompanyResult> {
 	private static final CellTable.Resources TABLE_STYLE = GWT.create(AonCellTable.class);
 
-	private NoSelectionModel<Company> model;
+	private NoSelectionModel<TediCompanyResult> model;
 
-	public TediCompanyTable(ProvidesKey<Company> providesKey) {
+	public TediCompanyTable(ProvidesKey<TediCompanyResult> providesKey) {
 		super(1, TABLE_STYLE, providesKey);
 		this.setKeyboardPagingPolicy(KeyboardPagingPolicy.CHANGE_PAGE);
 		this.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
 
 		addDocumentColumn();
 		addNameColumn();
-		model = new NoSelectionModel<Company>(providesKey);
+		addInboxCountColumn();
+
+		model = new NoSelectionModel<TediCompanyResult>(providesKey);
 		this.setSelectionModel(model);
 		this.setEmptyTableWidget(new HTML(AON.MSG.noData()));
 	}
@@ -34,10 +36,10 @@ public class TediCompanyTable extends CellTable<Company> {
 	}
 
 	private void addDocumentColumn() {
-		final TextColumn<Company> documentColumn = new TextColumn<Company>() {
+		final TextColumn<TediCompanyResult> documentColumn = new TextColumn<TediCompanyResult>() {
 			@Override
-			public String getValue(Company result) {
-				return result.getDocument();
+			public String getValue(TediCompanyResult result) {
+				return result.getCompany().getDocument();
 			}
 		};
 		this.addColumn(documentColumn, AON.MSG.document());
@@ -45,17 +47,28 @@ public class TediCompanyTable extends CellTable<Company> {
 	}
 
 	private void addNameColumn() {
-		final TextColumn<Company> nameColumn = new TextColumn<Company>() {
+		final TextColumn<TediCompanyResult> nameColumn = new TextColumn<TediCompanyResult>() {
 			@Override
-			public String getValue(Company result) {
-				return result.getName();
+			public String getValue(TediCompanyResult result) {
+				return result.getCompany().getName();
 			}
 		};
 		this.addColumn(nameColumn, AON.MSG.name());
 		this.setColumnWidth(nameColumn, "auto");
 	}
-
-	public Company getSelected() {
+	
+	private void addInboxCountColumn() {
+		final TextColumn<TediCompanyResult> inboxCountColumn = new TextColumn<TediCompanyResult>() {
+			@Override
+			public String getValue(TediCompanyResult result) {
+				return result.getInboxCount() != null ? result.getInboxCount() +"" : "-" ;
+			}
+		};
+		this.addColumn(inboxCountColumn, "Pendientes");
+		this.setColumnWidth(inboxCountColumn, 100, Unit.PX);
+	}
+	
+	public TediCompanyResult getSelected() {
 		return model.getLastSelectedObject();
 	}
 }

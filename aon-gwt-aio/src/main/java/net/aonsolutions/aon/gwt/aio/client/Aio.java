@@ -279,7 +279,6 @@ public class Aio implements EntryPoint {
 	public void onReload(){
 		String entryPoint = getParameter(GWT.getModuleName(), Constants.ENTRY_POINT_PARAM);
 		if(entryPoint.equals(Modules.ISSUES)) issues.remove();
-		//if(entryPoint.equals(Modules.DOCUMENT)) documents.remove();
 		if(entryPoint.equals(Modules.DOCUMENT)) documental.remove();
 		onModuleLoad();
 	}

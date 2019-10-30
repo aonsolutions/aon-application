@@ -61,7 +61,34 @@ public class TEDI {
 				ctx.close();
 		}
 	}
+	
+	public static Integer getCountInvoices(String domainName, int domain, boolean snapshot, String user, Company company, TediInvoiceStatus status)
+			throws TediException {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return company != null ? getCountInvoices(ctx , snapshot, company, status) : 0;
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
+	public static Integer getCountInvoices(AONContext ctx, boolean snapshot, Company company, TediInvoiceStatus status) throws TediException {
+		if (company == null) {
+			throw new TediException(
+					"No se ha encontrado una compa\u00F1ia v\u00E1lida para el dominio " + ctx.getDomainId());
+		}
+		if (AonStringUtils.isEmpty(company.getDocument())) {
+			throw new TediException(
+					"No se ha indicado un NIF/CIF/DNI v\u00E1lido para la compa\u00F1ia (Configuraci\u00F3n global)");
+		}
+		Tedi tedi = getTedi(ctx, snapshot);
+		LOGGER.info("[TEDI] Attempt to recover verified invoices for [" + company.getDocument() + "]");
+		Integer count = tedi.getCountInvoices(company.getDocument(), status);
+		return count;
+	}
+	
 	public static LinkedList<TediResult> getVerifiedInvoices(AONContext ctx, boolean snapshot) throws TediException {
 		Company company = CompanyDAO.getCompany(ctx, ctx.getDomainId());
 		return getVerifiedInvoices(ctx, snapshot, company);

@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.tedi.ICallback;
+import com.esferalia.aon.occam.api.model.tedi.TediCompanyResult;
 import com.esferalia.aon.occam.api.model.tedi.TediError;
 import com.esferalia.aon.occam.api.model.tedi.TediLevel;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
@@ -65,10 +66,10 @@ public class TediCenter extends MainEntryPoint {
 		}
 	}
     
-    private static class CompanyProvidesKey implements ProvidesKey<Company> {
+    private static class CompanyProvidesKey implements ProvidesKey<TediCompanyResult> {
 		@Override
-		public Object getKey(Company result) {
-			return (result != null) ? result.getDocument() : null;
+		public Object getKey(TediCompanyResult result) {
+			return (result != null) ? result.getCompany().getDocument() : null;
 		}
 	}
 
@@ -91,7 +92,7 @@ public class TediCenter extends MainEntryPoint {
 	private LinkedList<TediResult> resultList;
 	private TediInvoiceTable table = new TediInvoiceTable(new TediResultProvidesKey());
 	
-	private LinkedList<Company> companyList;
+	private LinkedList<TediCompanyResult> companyList;
 	private TediCompanyTable companyTable = new TediCompanyTable(new CompanyProvidesKey());
 	
 	public TediCenter(String domainName, int domain, String user) {
@@ -160,8 +161,8 @@ public class TediCenter extends MainEntryPoint {
 		
 		companyTable.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 			public void onSelectionChange(SelectionChangeEvent event) {
-				Company company = companyTable.getSelected();
-				onSelect( company );
+				TediCompanyResult company = companyTable.getSelected();
+				onSelect( company.getCompany() );
 			}
 		});
 		
@@ -170,15 +171,31 @@ public class TediCenter extends MainEntryPoint {
 			@Override
 			public void onRangeChange(RangeChangeEvent event) {
 				SERVICE.getCompanies(getDomainName(), getUser(), getDomain(), isTediSnapshot(),
-						new AsyncCallback<LinkedList<Company>>() {
+						new AsyncCallback<LinkedList<TediCompanyResult>>() {
 
 							@Override
-							public void onSuccess(LinkedList<Company> results) {
+							public void onSuccess(LinkedList<TediCompanyResult> results) {
 								companyList = results;
 								if (companyList == null) {
-									companyList  = new LinkedList<Company>();
+									companyList  = new LinkedList<TediCompanyResult>();
 								}
 								companyTable.setRowData(companyList);
+								
+								companyList.stream().forEach(cp -> {
+									SERVICE.getCountInboxInvoices(getDomainName(), getUser(), getDomain(), isTediSnapshot(), cp.getCompany(), new AsyncCallback<Integer>() {
+										
+										@Override
+										public void onSuccess(Integer result) {
+											cp.setInboxCount(result);
+											companyTable.setRowData(companyList);
+										}
+										
+										@Override
+										public void onFailure(Throwable caught) {
+											
+										}
+									});
+								});
 							}
 
 							@Override
@@ -412,16 +429,32 @@ public class TediCenter extends MainEntryPoint {
 	}
 	
 	private void onSync() {
-		SERVICE.tediSync(getDomainName(), getUser(), getDomain(), isTediSnapshot(), new AsyncCallback<LinkedList<Company>>() {
+		SERVICE.tediSync(getDomainName(), getUser(), getDomain(), isTediSnapshot(), new AsyncCallback<LinkedList<TediCompanyResult>>() {
 			@Override public void onFailure(Throwable caught) {}
 
 			@Override
-			public void onSuccess(LinkedList<Company> results) {
+			public void onSuccess(LinkedList<TediCompanyResult> results) {
 				companyList = results;
 				if (companyList == null) {
-					companyList  = new LinkedList<Company>();
+					companyList  = new LinkedList<TediCompanyResult>();
 				}
 				companyTable.setRowData(companyList);
+				
+				companyList.stream().forEach(cp -> {
+					SERVICE.getCountInboxInvoices(getDomainName(), getUser(), getDomain(), isTediSnapshot(), cp.getCompany(), new AsyncCallback<Integer>() {
+						
+						@Override
+						public void onSuccess(Integer result) {
+							cp.setInboxCount(result);
+							companyTable.setRowData(companyList);
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+							
+						}
+					});
+				});
 			}
 		});
 	}

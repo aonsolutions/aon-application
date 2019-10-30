@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.tedi.TediCompanyResult;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -19,6 +20,8 @@ public interface TediServiceAsync {
 	void rejectInvoice(String domainName, String user, int domain, boolean snapshot, TediInvoice invoice, AsyncCallback<TediResult> callback);
 	void validateInvoice(String domainName, String user, int domain, boolean snapshot, TediResult result, AsyncCallback<TediResult> callback);
 	void getInvoiceAttachURL(String domainName, String user, int domain, boolean snapshot, String uuid, AsyncCallback<String> callback);
-	void getCompanies(String domainName, String user, int domain, boolean snapshot, AsyncCallback<LinkedList<Company>> callback);
-	void tediSync(String domainName, String user, int domain, boolean snapshot, AsyncCallback<LinkedList<Company>> callback);
+	void getCompanies(String domainName, String user, int domain, boolean snapshot, AsyncCallback<LinkedList<TediCompanyResult>> callback);
+	void tediSync(String domainName, String user, int domain, boolean snapshot, AsyncCallback<LinkedList<TediCompanyResult>> callback);
+	void getCountInboxInvoices(String domainName, String user, int domain, boolean snapshot, Company company,
+			AsyncCallback<Integer> callback);
 }
