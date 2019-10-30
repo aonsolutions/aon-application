@@ -71,7 +71,9 @@ public class TediParser {
 	private enum TediFinanceTransfer {
 		PAYMENT( (aonCtx,result,tedi,aon) -> aon.setPayment( !result.getInvoice().isSales())),
 		DUE_DATE( (aonCtx,result,tedi,aon) -> aon.setDueDate( tedi.getDueDate() == null? result.getTedi().getDate() : tedi.getDueDate() )),
-		AMOUNT( (aonCtx,result,tedi,aon) -> aon.setAmount( tedi.getAmount())),
+		AMOUNT( (aonCtx,result,tedi,aon) ->{
+			aon.setAmount( tedi != null && tedi.getAmount() != null ? tedi.getAmount() : 0.0);
+		}),
 		IBAN( (aonCtx,result,tedi,aon) -> aon.setBankAccount( new BankAccount(tedi.getIban()))),
 		PAYMETHOD( (aonCtx,result,tedi,aon) -> {
 			if ( tedi.getPayMethod() != null) {
