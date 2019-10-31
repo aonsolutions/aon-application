@@ -15,7 +15,6 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.domain.DomainManager;
 import com.code.aon.company.enumeration.ReportPrintOption;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
@@ -23,14 +22,7 @@ import com.code.aon.registry.IAddress;
 import com.code.aon.registry.RecordData;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.company.util.ReportScriptlet;
-import com.code.aon.ui.config.util.UserUtils;
-import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.Domain;
 
-import es.translogia.tedi.ewok.TediInvoice;
-import es.translogia.tedi.json.TediInvoiceJSON;
-import net.aonsolutions.aon.tedi.AonParser;
 import net.sf.jasperreports.engine.JRScriptletException;
 
 public class InvoiceReportScriptlet extends ReportScriptlet implements Serializable {
@@ -239,25 +231,6 @@ public class InvoiceReportScriptlet extends ReportScriptlet implements Serializa
 			}
 		}
 		return builder.toString();
-	}
-	
-	public String getTedi() throws JRScriptletException {
-		String domainName = AonUtil.getDomainName();
-		Integer domainId = DomainManager.getCurrentDomain();
-		String login = UserUtils.getInstance().getLoggedUser().getLogin();
-		com.esferalia.aon.occam.api.model.Domain domain = 
-				AON.getDomain(domainName, domainId, login);
-		try {
-			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
-			Invoice invoice = (Invoice) invoiceBean.get((Integer)super.getFieldValue(FIELD_ID));			
-			AonParser ap = new AonParser();
-			TediInvoice ti = ap.aon2Tedi(domain, login, invoice.getId());
-			return TediInvoiceJSON.toJSON(ti).toString();
-		} catch (ManagerBeanException e) {
-			String msg = "ERROR: no se ha podido convertir la factura";
-			LOGGER.error(msg,e);
-		}
-		return null;
 	}
 	
 }
