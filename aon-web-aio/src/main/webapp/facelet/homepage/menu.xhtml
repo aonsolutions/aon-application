@@ -107,12 +107,14 @@
 				value="#{bundle.aon_module_document}"
 				action="gwt_documents"
 				actionListener="#{gwtSelectedMenu.onDocumental}"
+				title="Documental *"
 				immediate="true"
 				styleClass="aon-top-menu-item" />
 		</aon:if>
 		<aon:if test="#{selectedMenu.document}">
 			<a id="menu_document"
 				onclick="onreload();"
+				title="Documental *"
 				class="aon-top-menu-item-select aon-top-menu-item" >Documental</a>
 		</aon:if>
 		
@@ -159,7 +161,7 @@
 					styleClass="aon-menu-icon aon-icon-tedi" />
 			</aon:if>
 			<aon:if test="#{selectedMenu.tediCenter}">
-				<a	title="tEDI Center"  
+				<a	title="tEDI Center *"  
 					onclick="onreloadtc();"
 					class="aon-menu-icon-tedi aon-icon-tedi aon-height-20"/>
 			</aon:if>
@@ -175,7 +177,7 @@
 						styleClass="aon-menu-icon aon-icon-tedi" />
 				</aon:if>
 				<aon:if test="#{selectedMenu.tediCenterSnapshot}">
-					<a 	title="tEDI Center [TEST]"
+					<a 	title="tEDI Center [TEST] *"
 						onclick="onreloadtc();"
 						class="aon-menu-icon-tedi aon-icon-tedi aon-height-20"/>
 				</aon:if>
@@ -196,7 +198,7 @@
 			</aon:if>
 			<aon:if test="#{selectedMenu.issues}">
 				<a 	id="menu_call_center" 
-					title="Call Center" 
+					title="Call Center *" 
 					onclick="onreload();"
 					class="aon-menu-icon aon-icon-helpdesk aon-height-20"/>
 			</aon:if>
