@@ -177,7 +177,6 @@
 		<module>aon-gwt-udapa</module>
 		<module>aon-gwt-dump</module>
 		<module>aon-gwt-sii</module>
-		<module>aon-gwt-invoice</module>
 		<module>aon-gwt-seres</module>
 		<module>aon-gwt-commercial</module>
 		<module>aon-gwt-communication</module>
