@@ -17,6 +17,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
@@ -180,9 +181,17 @@ public class JooqPayrollSalaries {
 		
 		Result<Record> salaryRecords = null;
 		
+		// SalaryType
+		Condition salaryTypeCondition = SALARY.TYPE.ne((byte)5); // Always TRUE
+		if(null != filter.getSalaryType()) {
+			salaryTypeCondition = SALARY.TYPE.eq((byte)filter.getSalaryType().intValue());
+		}
+		
+		
 		if(filter.isNoDateFilter()) {
 			salaryRecords = dslContext.select().from(SALARY)
 					.where(SALARY.CONTRACT.eq(employeeId))
+					.and(salaryTypeCondition)
 					.orderBy(SALARY.END_DATE.desc())
 					.fetch();
 		} else if(filter.isDateMYFilter()) {
@@ -193,6 +202,7 @@ public class JooqPayrollSalaries {
 			
 			salaryRecords = dslContext.select().from(SALARY)
 					.where(SALARY.CONTRACT.eq(employeeId))
+					.and(salaryTypeCondition)
 					.and(SALARY.END_DATE.between(startDate, endDate))
 					.orderBy(SALARY.END_DATE.desc())
 					.fetch();
@@ -204,6 +214,7 @@ public class JooqPayrollSalaries {
 			
 			salaryRecords = dslContext.select().from(SALARY)
 					.where(SALARY.CONTRACT.eq(employeeId))
+					.and(salaryTypeCondition)
 					.and(SALARY.END_DATE.between(startDate, endDate))
 					.orderBy(SALARY.END_DATE.desc())
 					.fetch();

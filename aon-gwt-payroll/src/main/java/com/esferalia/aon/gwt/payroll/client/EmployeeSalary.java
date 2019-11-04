@@ -7,16 +7,17 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
-import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -28,6 +29,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
@@ -45,6 +47,7 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
+import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public class EmployeeSalary extends Composite implements ContextMenuHandler {
 
@@ -52,6 +55,15 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 
 	interface EmployeeSalaryUiBinder extends UiBinder<Widget, EmployeeSalary> {
 	}
+	
+	// Cell Table Resource for redifine Style
+	public interface CellTableResource extends CellTable.Resources
+	{
+	   public interface CellTableStyle extends CellTable.Style {};
+
+	   @Source({"SalaryCellTable.css"})
+	   CellTableStyle cellTableStyle();
+	}; 
 	
 	//Listener to Publish Salaries
 	static interface Listener {
@@ -64,6 +76,7 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	interface MyStyle extends CssResource {
 		String tableStyle();
 		String mAuto();
+		String selectedRow();
 		String hide();
 	}
 	
@@ -80,6 +93,9 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	Button publishButton;
 	
 	@UiField
+	Button emailButton;
+	
+	@UiField
 	HTMLPanel mainContainer;
 	
 	@UiField
@@ -87,6 +103,9 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 
 	@UiField
 	DisclosurePanel collapsePanel;
+	
+	@UiField
+	ListBox typeList;
 	
 	@UiField
 	RadioButton noDateRB;
@@ -128,13 +147,21 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	}
 
 	private void initListBox() {
-		// Clear listboxies
+		// Clear listboxes
+		typeList.clear();
 		monthMY.clear();
 		yearMY.clear();
 		monthTillT.clear();
 		yearTillT.clear();
 		monthTTo.clear();
 		yearTTo.clear();
+		
+		// Add types to typeList
+		typeList.addItem("Todas");
+		typeList.addItem("Nomina");
+		typeList.addItem("Extra");
+		typeList.addItem("Atraso");
+		typeList.addItem("Finiquito");
 		
 		// Add months to listboxes
 		String[] monthList = new String[] {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
@@ -145,9 +172,12 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 		}
 		
 		// Add year to listboxes
-		Integer actualYear = new Date().getYear() + 1900;
-		Integer firstPayroll = this.employeeSalaryObject.getEmployeeSalaries().get(this.employeeSalaryObject.getEmployeeSalaries().size()-1).getStartDate().getYear() + 1900;
-		Integer diffYears = actualYear - firstPayroll;
+		Integer actualYear = new Date().getYear()+1900;
+		
+		Date firstPayrollDate = this.employeeSalaryObject.getEmployeeSalaries().get(this.employeeSalaryObject.getEmployeeSalaries().size()-1).getStartDate();
+		Integer firstPayrollYear = firstPayrollDate.getYear()+1900;
+		
+		Integer diffYears = actualYear - firstPayrollYear;
 		for(int i = 0; i <= diffYears; i++) {
 			yearMY.addItem((actualYear - i)+"");
 			yearTillT.addItem((actualYear - i)+"");
@@ -158,6 +188,7 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	private EmployeeSalaryObject employeeSalaryObject;
 	private MultiSelectionModel<SalaryInfo> selectionModel;
 	private List<Listener> listeners;
+	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
 	public void setEmployeeSalaryObject(EmployeeSalaryObject employeeSalaryObject) {
 		this.employeeSalaryObject = employeeSalaryObject;
@@ -223,8 +254,11 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 		saveButton.setEnabled(false);
 		publishButton.setEnabled(false);
 		
+		// Resource Style CellTable
+		CellTableResource resource = GWT.create(CellTableResource.class);
+		
 		// Create a CellTable.
-	    CellTable<SalaryInfo> table = new CellTable<SalaryInfo>(SalaryInfo.KEY_PROVIDER);
+	    CellTable<SalaryInfo> table = new CellTable<SalaryInfo>(5, resource, SalaryInfo.KEY_PROVIDER);
 	   
 	    // Do not refresh the headers and footers every time the data is updated.
 	    table.setAutoHeaderRefreshDisabled(true);
@@ -250,7 +284,7 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	    addColumns(table, salaryList);
 	    
 	    // Create a SimplePager.
-	    SimplePager pager = new SimplePager();
+	    SimplePager pager = new SimplePager(TextLocation.CENTER, false, false);
 
 	    // Set the cellList as the display.
 	    pager.setDisplay(table);
@@ -290,6 +324,7 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	            }
 	            
 	        }
+	        
 	    });
 	    
 	    // Checkbox column. This table will uses a checkbox column for selection.
@@ -334,45 +369,12 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	}
 	
 	private void addColumns(CellTable<SalaryInfo> table, List<SalaryInfo> salaryList) {
-//		// Create employee name column.
-//	    TextColumn<SalaryInfo> employeeNameColumn = new TextColumn<SalaryInfo>() {
-//	      @Override
-//	      public String getValue(SalaryInfo salaryInfo) {
-//	        return salaryInfo.getEmployeeName();
-//	      }
-//	    };
-//
-//	    // Make the employee name column sortable.
-//	    employeeNameColumn.setSortable(true);
-//	    
-//	    // Create workplace name column.
-//	    TextColumn<SalaryInfo> workplaceNameColumn = new TextColumn<SalaryInfo>() {
-//	      @Override
-//	      public String getValue(SalaryInfo salaryInfo) {
-//	        return salaryInfo.getWorkplaceName();
-//	      }
-//	    };
-//
-//	    // Make the workplace name column sortable.
-//	    workplaceNameColumn.setSortable(true);
-//	    
-//	    // Create enterprise name column.
-//	    TextColumn<SalaryInfo> enterpriseNameColumn = new TextColumn<SalaryInfo>() {
-//	      @Override
-//	      public String getValue(SalaryInfo salaryInfo) {
-//	        return salaryInfo.getEnterpriseName();
-//	      }
-//	    };
 	    
 	    // Create start date column.
 	    TextColumn<SalaryInfo> startDateColumn = new TextColumn<SalaryInfo>() {
 	      @Override
 	      public String getValue(SalaryInfo salaryInfo) {
-	    	  Date endDate = salaryInfo.getStartDate();
-	    	  String year = (endDate.getYear() + 1900) + "";
-	    	  String month = StringUtils.leftPad((endDate.getMonth() + 1) + "", 2, '0');
-	    	  String date = StringUtils.leftPad((endDate.getDate()) + "", 2, '0');
-	    	  return date+"/"+month+"/"+year;
+	    	  return formatFullDate.format(salaryInfo.getStartDate());
 	      }
 	    };
 
@@ -383,11 +385,7 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	    TextColumn<SalaryInfo> endtDateColumn = new TextColumn<SalaryInfo>() {
 	      @Override
 	      public String getValue(SalaryInfo salaryInfo) {
-	    	  Date endDate = salaryInfo.getEndDate();
-	    	  String year = (endDate.getYear() + 1900) + "";
-	    	  String month = StringUtils.leftPad((endDate.getMonth() + 1) + "", 2, '0');
-	    	  String date = StringUtils.leftPad((endDate.getDate()) + "", 2, '0');
-	    	  return date+"/"+month+"/"+year;
+	    	  return formatFullDate.format(salaryInfo.getEndDate());
 	      }
 	    };
 
@@ -419,6 +417,8 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	    TextColumn<SalaryInfo> totalDeductionColumn = new TextColumn<SalaryInfo>() {
 	      @Override
 	      public String getValue(SalaryInfo salaryInfo) {
+	    	  if(null == salaryInfo.getTotalDecuction() || 0 == salaryInfo.getTotalDecuction())
+	    		  return "00,00";
 	    	  return NumberFormat.getFormat("#.00").format(salaryInfo.getTotalDecuction());
 	      }
 	    };
@@ -482,31 +482,6 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	    
 	    // Add a ColumnSortEvent.ListHandler to connect sorting to the java.util.List.
 	    ListHandler<SalaryInfo> columnSortHandler = new ListHandler<SalaryInfo>(salaryList);
-//	    columnSortHandler.setComparator(employeeNameColumn, new Comparator<SalaryInfo>() {
-//	          public int compare(SalaryInfo o1, SalaryInfo o2) {
-//	            if (o1 == o2) {
-//	              return 0;
-//	            }
-//
-//	            if (o1 != null) {
-//	              return (o2 != null) ? o1.getEmployeeName().compareTo(o2.getEmployeeName()) : 1;
-//	            }
-//	            return -1;
-//	          }
-//	        });
-//	    
-//	    columnSortHandler.setComparator(workplaceNameColumn, new Comparator<SalaryInfo>() {
-//	          public int compare(SalaryInfo o1, SalaryInfo o2) {
-//	            if (o1 == o2) {
-//	              return 0;
-//	            }
-//
-//	            if (o1 != null) {
-//	              return (o2 != null) ? o1.getWorkplaceName().compareTo(o2.getWorkplaceName()) : 1;
-//	            }
-//	            return -1;
-//	          }
-//	        });
 	    
 	    columnSortHandler.setComparator(typeColumn, new Comparator<SalaryInfo>() {
 	          public int compare(SalaryInfo o1, SalaryInfo o2) {
@@ -589,6 +564,22 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 		onPublish();
 	}
 	
+	@UiHandler("emailButton")
+	public void onEmailSalary(ClickEvent event) {
+//		String fileDownloadURL = GWT.getModuleBaseURL()+ "/salary_email/";
+//		Window.open(fileDownloadURL, "_blank", null);
+//		post(fileDownloadURL, "");
+	}
+	
+	protected <T extends JavaScriptObject> void post(String url, String requestData) {
+		String requestUrl = GWT.getModuleBaseURL()+ "/salary_email/";
+
+		XMLHttpRequest xhr = XMLHttpRequest.create();
+		xhr.open("POST", requestUrl);
+		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		xhr.send(requestData);
+	}
+	
 	@UiHandler("noDateRB")
 	public void onNoDateRBCahnge(ValueChangeEvent<Boolean> event) {
 		if(event.getValue()) {
@@ -628,6 +619,7 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	@UiHandler("filterButton")
 	public void onFilterButtonClick(ClickEvent event) {
 		SalaryInfoFilter filter = this.employeeSalaryObject.getFilter();
+		// Date filter
 		if(noDateRB.getValue()) {
 			filter.setNoDateFilter(true);
 			filter.setDateMYFilter(false);
@@ -651,6 +643,10 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 			filter.setDateTTo(new Date(yearTToValue, monthTToValue, 1));
 		}
 		
+		// Salary Type
+		Integer salaryType = getSalaryType(this.typeList.getSelectedIndex());
+		filter.setSalaryType(salaryType);
+		
 		this.employeeSalaryObject.getFilterEmployeeSalariesDB(
 				s -> {
 					resetPage();
@@ -658,7 +654,7 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 				}, f -> { }
 		);
 	}
-	
+
 	// --------------------------------------------------
 	//					Aux Methods
 	// --------------------------------------------------
@@ -675,5 +671,20 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 		for (Listener listener : listeners)
 			for(SalaryInfo salary : selectionModel.getSelectedSet())
 			listener.onPublishSalaries(salary);
+	}
+	
+	private Integer getSalaryType(int selectedIndex) {
+		switch (selectedIndex) {
+		case 1:
+			return 0;
+		case 2:
+			return 1;
+		case 3:
+			return 2;
+		case 4:
+			return 3;
+		default:
+			return null;
+		}
 	}
 }

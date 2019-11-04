@@ -19,7 +19,8 @@
 	    
 	    .tableStyle{
 			margin: auto;
-			padding-top: 1em;
+			/*width: 100%;*/
+			padding-top: 10px;
 		}
 		
 		.mAuto{
@@ -55,6 +56,10 @@
 			margin: 3px;
 		}
 		
+		.ml5{
+			margin-left: 5px;
+		}
+		
 		.tillTo{
 			margin-left: 43px !important;
 		}
@@ -76,6 +81,10 @@
 		.hide{
 			display: none;
 		}
+		
+		.selectedRow {
+			background: red;
+		}
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX">
@@ -96,9 +105,9 @@
 					<g:HorizontalPanel styleName="aon-finding-toolbar">
 						<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
 							<g:Button ui:field='deleteButton' styleName='aon-finding-toolbar-item aon-icon-delete' text="BORRAR"/>
-							<!--  g:Button ui:field='printButton' styleName='aon-finding-toolbar-item aon-icon-pdf' text="IMPRIMIR" /-->
 							<g:Button debugId='saveButton' ui:field='saveButton' styleName='aon-finding-toolbar-item aon-icon-pdf' text="PDF" />
 							<g:Button ui:field='publishButton' styleName='aon-finding-toolbar-item aon-icon-google-drive' text="PUBLICAR" />
+							<g:Button ui:field='emailButton' styleName='aon-finding-toolbar-item aon-icon-mail {style.hide}' text="EMAIL" />
 						</g:HTMLPanel>
 					</g:HorizontalPanel>
 				</g:HorizontalPanel>
@@ -115,6 +124,14 @@
 						   <g:HTMLPanel>
 							   	<table>
 							   		<tbody>
+							   			<tr>
+							   				<td>
+							   					<div>Tipo nómina</div>
+							   				</td>
+							   				<td>
+							   					<g:ListBox styleName="{style.ml5}" ui:field="typeList"></g:ListBox>
+							   				</td>
+							   			</tr>
 				  						<tr>
 				    						<td>
 					      						<div>Periodo</div>
