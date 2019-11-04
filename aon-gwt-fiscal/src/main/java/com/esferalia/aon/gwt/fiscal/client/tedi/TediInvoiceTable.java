@@ -131,7 +131,7 @@ public class TediInvoiceTable extends CellTable<TediResult> {
 		final TextColumn<TediResult> documentColumn = new TextColumn<TediResult>() {
 			@Override
 			public String getValue(TediResult result) {
-				return result.getInvoice().getRegistryDocument();
+				return result.getTedi().getRdocument();
 			}
 		};
 		this.addColumn(documentColumn, AON.MSG.document());
@@ -142,7 +142,7 @@ public class TediInvoiceTable extends CellTable<TediResult> {
 		final TextColumn<TediResult> nameColumn = new TextColumn<TediResult>() {
 			@Override
 			public String getValue(TediResult result) {
-				return result.getInvoice().getRegistryName();
+				return result.getTedi().getRname();
 			}
 		};
 		this.addColumn(nameColumn, AON.MSG.name());

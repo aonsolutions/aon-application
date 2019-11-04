@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.tedi.ICallback;
 import com.esferalia.aon.occam.api.model.tedi.ITediCallback;
 import com.esferalia.aon.occam.api.model.tedi.ITediContextVisitor;
+import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -38,7 +39,10 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 
+import es.translogia.tedi.ewok.TediAddress;
+import es.translogia.tedi.ewok.TediInvoice;
 import es.translogia.tedi.ewok.TediInvoiceType;
+import es.translogia.tedi.ewok.TediRegistry;
 
 public class TediContextVisitor implements ITediContextVisitor {
 
@@ -355,21 +359,38 @@ public class TediContextVisitor implements ITediContextVisitor {
 		}
 		if (AonStringUtils.isNotBlank( callback.getCallback().getResult().getTedi().getRdocument() )
 		 && AonStringUtils.isNotBlank( callback.getCallback().getResult().getTedi().getRname() ) ) {
-			AccountingRegistry dc = callback.getCallback().getConfiguration().getDefaultCreditor();
-			if (dc != null) {
-				Label newCreditor = new Label("Crear el acreedor " + dc.getName());
-				newCreditor.setStyleName(AON.AON_CSS.aonClickableLabel());
-				newCreditor.addStyleName(AON.AON_CSS.aonIconReset());
-				newCreditor.addStyleName(AON.AON_CSS.aonPaddingLeft20());
-				newCreditor.addClickHandler( new ClickHandler() {
-					
-					@Override
-					public void onClick(ClickEvent event) {
-						registryBox.showDialog(getCurrentDomainName(), getCurrentDomain(),configuration);
+			String d = AonStringUtils.defaultString( callback.getCallback().getResult().getTedi().getRdocument());
+			String n = AonStringUtils.defaultString(callback.getCallback().getResult().getTedi().getRname());
+			Label newCreditor = new Label("Crear el acreedor (" + d + " " + n + ")");
+			newCreditor.setStyleName(AON.AON_CSS.aonClickableLabel());
+			newCreditor.addStyleName(AON.AON_CSS.aonIconReset());
+			newCreditor.addStyleName(AON.AON_CSS.aonPaddingLeft20());
+			newCreditor.addClickHandler( new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					AccountingRegistry ar = new AccountingRegistry();
+					TediInvoice tedi = callback.getCallback().getResult().getTedi();
+					TediRegistry tr = tedi.getRegistry();
+					if (tr != null) {
+						ar.setDocument(tr.getDocument());
+						ar.setDocumentCountry(Country.safeValueOf(tr.getDocumentCountry()));
+						ar.setName(tr.getName());
+						TediAddress ad = tr.getAddress();
+						if (ad != null) {
+							ar.setAddress(ad.getAddress());
+							ar.setAddressTown(ad.getCity());
+//							ad.getCountry()
+//							ad.getProvince()
+							ar.setAddressZIP(ad.getPostalCode());
+						}
+						
 					}
-				});
-				dialog.setContent("", newCreditor);		
-			}
+					// TODO Inicializar los datos del registry.
+					registryBox.showDialog(getCurrentDomainName(), getCurrentDomain(),configuration,ar);
+				}
+			});
+			dialog.setContent("", newCreditor);		
 		}
 		container.add(dialog);
 	}

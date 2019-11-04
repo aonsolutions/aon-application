@@ -57,10 +57,17 @@ public class AccountingRegistryPanel extends SimpleLayoutPanel implements Focusa
 	static CommonServiceAsync commonService;
 	final AccountingRegistryTypeListBox type = new AccountingRegistryTypeListBox();
 	FlowPanel documentWarningContainer = new FlowPanel();
+	public AccountingRegistryPanel(final String domainName,final int domain
+			, Integer id 
+			, AonConfiguration config
+			, final AccountingRegistryPanelCallback callback) {
+		this(domainName, domain, id, config, null, callback);
+	}
 	
 	public AccountingRegistryPanel(final String domainName,final int domain
 			, Integer id 
 			, AonConfiguration config
+			, AccountingRegistry initial
 			, final AccountingRegistryPanelCallback callback) {
 		
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
@@ -76,7 +83,7 @@ public class AccountingRegistryPanel extends SimpleLayoutPanel implements Focusa
 				@Override
 				public void onSuccess(LinkedList<AccountingRegistry> result) {
 					if (result == null || result.size() == 0) {
-						show(domainName,domain, config, newAccountingRegistry(domain),callback);
+						show(domainName,domain, config, newAccountingRegistry(domain,initial),callback);
 					} else if (result.size() == 1) {
 						show(domainName,domain, config, result.get(0),callback);
 					} else {
@@ -87,23 +94,50 @@ public class AccountingRegistryPanel extends SimpleLayoutPanel implements Focusa
 				
 				@Override
 				public void onFailure(Throwable caught) {
-					show(domainName,domain, config, newAccountingRegistry(domain),callback);
+					show(domainName,domain, config, newAccountingRegistry(domain,initial),callback);
 				}
 			});
 		} else {
-			show(domainName,domain, config, newAccountingRegistry(domain),callback);
+			show(domainName,domain, config, newAccountingRegistry(domain,initial),callback);
 		}
 	}
 		
-	protected AccountingRegistry newAccountingRegistry(int domain) {
-		return new AccountingRegistry()
-				.setDomain(domain)
-				.setType(AccountingRegistryType.CREDITOR)
-				.setDocumentType(DocumentType.CIF)
-				.setDocumentCountry(Country.ES)
-				.setNationality(Country.ES)
-				.setTransaction(InvoiceTransactionType.NATIONAL)
-				.cleanDirty();
+	protected AccountingRegistry newAccountingRegistry(int domain,AccountingRegistry initial) {
+		AccountingRegistry ar = new AccountingRegistry()
+			.setDomain(domain)
+			.setType(AccountingRegistryType.CREDITOR)
+			.setDocumentType(DocumentType.CIF)
+			.setDocumentCountry(Country.ES)
+			.setNationality(Country.ES)
+			.setTransaction(InvoiceTransactionType.NATIONAL)
+			;
+		if (initial != null) {
+			ar
+				.setType(initial.getType()!=null?initial.getType(): ar.getType())
+				.setDocumentType(initial.getDocumentType()!=null?initial.getDocumentType():ar.getDocumentType())
+				.setDocumentCountry(initial.getDocumentCountry()!=null?initial.getDocumentCountry():ar.getDocumentCountry())
+				.setNationality(initial.getNationality()!=null?initial.getDocumentCountry():ar.getNationality())
+				.setTransaction(initial.getTransaction()!=null?initial.getTransaction():ar.getTransaction())
+				.setDocument(initial.getDocument())
+				.setName(initial.getName())
+				.setAlias(initial.getAlias())
+				.setAddressStreetType(initial.getAddressStreetType())
+				.setAddress(initial.getAddress())
+				.setAddressNumber(initial.getAddressNumber())
+				.setAddressTown(initial.getAddressTown())
+				.setAddressZIP(initial.getAddressZIP())
+				.setGeozone(initial.getGeozone())
+				.setPhone(initial.getPhone())
+				.setPhoneComments(initial.getPhoneComments())
+				.setCellular(initial.getCellular())
+				.setCellularComments(initial.getCellularComments())
+				.setFax(initial.getFax())
+				.setFaxComments(initial.getFaxComments())
+				.setEmail(initial.getEmail())
+				.setWeb(initial.getWeb())
+			;
+		}
+		return ar.cleanDirty();
 	}
 
 	public void show(final String domainName,final int domain
@@ -856,7 +890,7 @@ public class AccountingRegistryPanel extends SimpleLayoutPanel implements Focusa
 				
 				@Override
 				public void onFailure(Throwable caught) {
-					show(domainName,domain, config, newAccountingRegistry(domain),callback);
+					show(domainName,domain, config, newAccountingRegistry(domain,null),callback);
 				}
 			});
 		}
