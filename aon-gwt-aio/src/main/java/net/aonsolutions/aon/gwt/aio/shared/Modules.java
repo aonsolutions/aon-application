@@ -11,7 +11,6 @@ public interface Modules {
 	public static final String QUALITY = "quality";
 	public static final String TEMPLATES = "templates";
 	public static final String SII = "sii";
-	public static final String INVOICE = "invoice";
 	@Deprecated public static final String SERES = "seres";
 	public static final String COMMUNICATION = "communication";
 	public static final String COMMISSION = "commission_calculate";

@@ -33,7 +33,6 @@
 					  <compileSourcesArtifact>net.aonsolutions.polymer:aon.gwt.polymer</compileSourcesArtifact>  
 					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.templates</compileSourcesArtifact>
 					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.sii</compileSourcesArtifact>
-					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.invoice</compileSourcesArtifact>
 					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.seres</compileSourcesArtifact>
 					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.communication</compileSourcesArtifact>
   					  <compileSourcesArtifact>net.aonsolutions:aon.gwt.commercial</compileSourcesArtifact>
@@ -207,19 +206,6 @@
 		<dependency>
 			<groupId>net.aonsolutions</groupId>
 			<artifactId>aon.gwt.sii</artifactId>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-			<classifier>sources</classifier>
-		</dependency>
-		
-		<dependency>
-			<groupId>net.aonsolutions</groupId>
-			<artifactId>aon.gwt.invoice</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>net.aonsolutions</groupId>
-			<artifactId>aon.gwt.invoice</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 			<classifier>sources</classifier>

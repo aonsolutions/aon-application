@@ -17,7 +17,6 @@
 	<inherits name='net.aonsolutions.aon.gwt.warehouse.WarehouseAio' />
 	<inherits name='net.aonsolutions.aon.gwt.udapa.UdapaAio' />
 	<inherits name='net.aonsolutions.aon.gwt.sii.SiiAio' />
-	<inherits name='net.aonsolutions.aon.gwt.invoice.InvoiceAio' />
 	<inherits name='net.aonsolutions.aon.gwt.seres.SeresAio' />
 	<inherits name='net.aonsolutions.aon.gwt.communication.CommunicationAio' />
 	<inherits name='net.aonsolutions.aon.gwt.commercial.CommercialAio' />

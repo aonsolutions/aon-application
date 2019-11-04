@@ -134,16 +134,6 @@
 		</navigation-case>
 	</navigation-rule>
 
-
-	<!-- AON GWT INVOICE -->
-	
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>gwt_sabbatic</from-outcome>
-			<to-view-id>/net/aonsolutions/aon/gwt/aio/facelet/invoice/sabbatic.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	
 	<!-- AON GWT SERES -->
 	
 	<navigation-rule>

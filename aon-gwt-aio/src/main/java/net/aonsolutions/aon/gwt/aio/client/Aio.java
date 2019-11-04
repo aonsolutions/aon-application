@@ -20,7 +20,6 @@ import net.aonsolutions.aon.gwt.aio.shared.Modules;
 import net.aonsolutions.aon.gwt.commercial.client.Commercial;
 import net.aonsolutions.aon.gwt.communication.client.Communication;
 import net.aonsolutions.aon.gwt.document.client.Documental;
-import net.aonsolutions.aon.gwt.invoice.client.Invoice;
 import net.aonsolutions.aon.gwt.seres.client.Seres;
 import net.aonsolutions.aon.gwt.sii.client.Sii;
 import net.aonsolutions.aon.gwt.udapa.client.Udapa;
@@ -32,7 +31,6 @@ public class Aio implements EntryPoint {
 
 	private Issues issues;
 	private Documental documental;
-	
 	
 	public static native String getCurrentDomainName()
 	/*-{
@@ -191,20 +189,6 @@ public class Aio implements EntryPoint {
 				@Override
 				public void onSuccess() {
 					new Sii(aonData).onModuleLoad();
-				}
-			});		
-			break;
-		case Modules.INVOICE:
-			GWT.runAsync(Invoice.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
-				}
-
-				@Override
-				public void onSuccess() {
-					new Invoice(aonData).onModuleLoad();
 				}
 			});		
 			break;
