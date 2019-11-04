@@ -71,6 +71,9 @@ public class Aio implements EntryPoint {
 	
 	private void selection(String entryPoint, AonData aonData) {
 		switch (entryPoint) {
+		case Modules.BEFORE_UNLOAD:
+			JsAio.addOnBeforeUnloadHandler(this);
+			break;
 		case Modules.ISSUES:
 			JsAio.addOnBeforeUnloadHandler(this);
 			JsAio.addOnReloadHandler(this);
