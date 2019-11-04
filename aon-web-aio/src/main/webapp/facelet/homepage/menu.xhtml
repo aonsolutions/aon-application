@@ -149,7 +149,7 @@
 		<aon:if test="#{desktop.state.tediCenter}">
 			<aon:if test="#{!selectedMenu.tediCenter}">
 				<aon:commandLink 
-					action="gwt_tediCenter-child"
+					action="gwt_tediCenter"
 					actionListener="#{gwtSelectedMenu.onTediCenter}"
 					title="tEDI Center" 
 					value="&#160;"
@@ -158,14 +158,14 @@
 			</aon:if>
 			<aon:if test="#{selectedMenu.tediCenter}">
 				<a	title="tEDI Center"  
-					onclick="onreload();"
+					onclick="onreloadtc();"
 					class="aon-menu-icon-tedi aon-icon-tedi aon-height-20"/>
 			</aon:if>
 		
 			<aon:if test="#{domainSwitcher.betaDomain}">
 				<aon:if test="#{!selectedMenu.tediCenterSnapshot}">
 					<aon:commandLink 
-						action="gwt_tediCenter_beta-child"
+						action="gwt_tediCenter_beta"
 						actionListener="#{gwtSelectedMenu.onTediCenterSnapshot}"
 						title="tEDI Center [TEST]" 
 						value="&#160;"
@@ -174,7 +174,7 @@
 				</aon:if>
 				<aon:if test="#{selectedMenu.tediCenterSnapshot}">
 					<a 	title="tEDI Center [TEST]"
-						onclick="onreload();"
+						onclick="onreloadtc();"
 						class="aon-menu-icon-tedi aon-icon-tedi aon-height-20"/>
 				</aon:if>
 			</aon:if>

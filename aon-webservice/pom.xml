@@ -15,6 +15,13 @@
 	<dependencies>
 	
 		<!-- AON DEPENDENCIES -->
+
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.rich.components</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
 		
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>

@@ -28,6 +28,16 @@ public class TediServiceImpl extends AonStatelessRemoteServiceServlet implements
 	private static final long serialVersionUID = -2121272613749054639L;
 
 	@Override
+	public void initFacesContext() {
+		initFacesContext();
+	}
+	
+	@Override
+	public void releaseFacesContext() {
+		releaseFacesContext();
+	}
+	
+	@Override
 	public AonConfiguration getAonConfiguration(String domainName, String user, int domain) {
 		return AON.getConfiguration(domainName, domain,user, null);
 	}

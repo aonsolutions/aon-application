@@ -14,7 +14,10 @@ import es.translogia.tedi.ewok.TediInvoice;
 
 @RemoteServiceRelativePath("roms/Tedi")
 public interface TediService extends RemoteService {
-
+	
+	
+	void initFacesContext();
+	void releaseFacesContext();
 	AonConfiguration getAonConfiguration(String domainName, String user, int domain) throws AonCoreException; 	
 	LinkedList<TediResult> getVerifiedInvoices(String domainName, String user, int domain, boolean snapshot, Company company) throws AonCoreException;
 	TediResult getInvoice(String domainName, String user, int domain, boolean snapshot, String uuid, String tediStatus) throws AonCoreException;
