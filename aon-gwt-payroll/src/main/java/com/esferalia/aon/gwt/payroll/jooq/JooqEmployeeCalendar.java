@@ -480,6 +480,16 @@ public class JooqEmployeeCalendar {
 		
 		Boolean fullTimeEmployee = updateInfo.getFullTimeEmployee();
 		
+		Date realEndDate = dslContext.select(CONTRACT.END_DATE)
+				.from(CONTRACT)
+				.where(CONTRACT.ID.eq(contract))
+				.fetchOne().value1();
+	
+		Date realStartDate = dslContext.select(CONTRACT.START_DATE)
+				.from(CONTRACT)
+				.where(CONTRACT.ID.eq(contract))
+				.fetchOne().value1();
+		
 		if(updateInfo.isHasChangeHours() && !fullTimeEmployee) {
 			dslContext.delete(CONTRACT_DATA)
 					   .where(CONTRACT_DATA.CONTRACT.eq(contract))
@@ -493,15 +503,7 @@ public class JooqEmployeeCalendar {
 							  ,ContextVariable.SUNDAY_HOURS.getName()))
 					   .execute();
 			
-			Date realEndDate = dslContext.select(CONTRACT.END_DATE)
-							.from(CONTRACT)
-							.where(CONTRACT.ID.eq(contract))
-							.fetchOne().value1();
 			
-			Date realStartDate = dslContext.select(CONTRACT.START_DATE)
-					.from(CONTRACT)
-					.where(CONTRACT.ID.eq(contract))
-					.fetchOne().value1();
 			
 			HashMap<java.util.Date, Double> updateHoursMap = updateInfo.getDaysHourMap();
 			
@@ -690,6 +692,11 @@ public class JooqEmployeeCalendar {
 				endDateType = DateUtils.copyDateOnly(entry.getKey());
 		}
 		
+		if(endDateType.after(realEndDate)) {
+			endDateType = DateUtils.copyDateOnly(realEndDate);
+			DateUtils.addDays2Date(endDateType, 1);
+		}
+		
 		java.util.Date dateType = DateUtils.copyDateOnly(startDateType);
 		java.util.Date auxStartDateType = DateUtils.copyDateOnly(dateType);
 		String dayType = "";
@@ -761,6 +768,57 @@ public class JooqEmployeeCalendar {
 			}
 			
 			DateUtils.addDays2Date(dateType, 1);
+		}
+		
+		// Last Iteration
+		if(validDayType(dayType)){
+			
+			Date sqlStartDateType = new Date(auxStartDateType.getTime());
+			java.util.Date javaEndDateType = DateUtils.copyDateOnly(dateType);
+			DateUtils.addDays2Date(javaEndDateType, -1);
+			Date sqlEndDateType = new Date(javaEndDateType.getTime());
+			
+			if(dayType.equals("DIAS_HUELGA")){
+				String coeficiente = strikeDaysValues.get(auxStartDateType).toString();
+				dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+							CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+							CONTRACT_DATA.END_DATE)
+							.values(domain, "COEFICIENTE_HUELGA", contract, coeficiente, 
+									sqlStartDateType, sqlEndDateType).execute();
+			}else if(dayType.equals("DIAS_ERE")){
+				String coeficiente = ereDaysValues.get(auxStartDateType).toString();
+				dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+						CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+						CONTRACT_DATA.END_DATE)
+						.values(domain, "COEFICIENTE_ERE", contract, coeficiente, 
+								sqlStartDateType, sqlEndDateType).execute();
+			}else if(dayType.equals("DIAS_INACTIVIDAD")){
+				String typeInactivity = inactivityDaysValues.get(auxStartDateType);
+				dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+						CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+						CONTRACT_DATA.END_DATE)
+						.values(domain, 
+								"CAUSA_INACTIVIDAD", 
+								contract, 
+								String.format("\"%s\"",typeInactivity.toUpperCase()), 
+								sqlStartDateType, 
+								sqlEndDateType)
+								.execute();
+			}
+			
+			if(sqlStartDateType.getMonth() == sqlEndDateType.getMonth()){
+				String expression = calculateExpression(DateUtils.copyDateOnly(auxStartDateType),
+						DateUtils.copyDateOnly(javaEndDateType));
+				
+				dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+						CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+						CONTRACT_DATA.END_DATE)
+						.values(domain, dayType, contract, expression, 
+								sqlStartDateType, sqlEndDateType).execute();
+			}else{
+				createAndUpdateStrech(dslContext, domain, dayType, contract, sqlStartDateType, sqlEndDateType);
+			}
+			
 		}
 		
 		creteRealJourneyDB(dslContext, contract);
