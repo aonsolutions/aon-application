@@ -187,17 +187,12 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	List<SalaryInfo> getWorkplaceSalaries(String currentDomainName, Integer workplaceId);
 
-	List<SalaryInfo> getFilterEmployeeSalaries(String currentDomainName, Integer id, SalaryInfoFilter filter);
-
-	List<SalaryInfo> getFilterWorkplaceSalaries(String currentDomainName, Integer workplaceId, SalaryInfoFilter filter);
-
 	WorkplaceEmployees getWorkplaceActiveEmployees(String currentDomainName, Integer workplaceId);
 
 	List<SalaryInfo> getEnterpriseSalaries(String currentDomainName, Integer enterpriseId);
 
 	List<EmployeeInfo> getEnterpriseActiveEmployees(String currentDomainName, Integer enterpriseId);
 
-	List<SalaryInfo> getFilterEnterpriseSalaries(String currentDomainName, Integer enterpriseId,
-			SalaryInfoFilter filter);
+	List<SalaryInfo> getFilterSalaries(String currentDomainName, SalaryInfoFilter filter);
 
 }

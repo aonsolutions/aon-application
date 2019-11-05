@@ -51,9 +51,8 @@ public class JooqPayrollSalaries {
 		return getEmployeeSalariesDB(DSL.using(connection, getDefaultSettings()), employeeId);
 	}
 	
-	public static List<SalaryInfo> getFilterEmployeeSalaries(Connection connection, Integer employeeId,
-			SalaryInfoFilter filter) {
-		return getFilterEmployeeSalariesDB(DSL.using(connection, getDefaultSettings()), employeeId, filter);
+	public static List<SalaryInfo> getFilterEmployeeSalaries(Connection connection, SalaryInfoFilter filter) {
+		return getFilterEmployeeSalariesDB(DSL.using(connection, getDefaultSettings()), filter);
 	}
 	
 	// --------------------------------------------------------------------------------------------
@@ -169,15 +168,8 @@ public class JooqPayrollSalaries {
 	 * @param filter
 	 * @return List of salaries
 	 */
-	private static List<SalaryInfo> getFilterEmployeeSalariesDB(DSLContext dslContext, Integer employeeId, SalaryInfoFilter filter) {
+	private static List<SalaryInfo> getFilterEmployeeSalariesDB(DSLContext dslContext, SalaryInfoFilter filter) {
 		List<SalaryInfo> salaries = new ArrayList<SalaryInfo>();
-		
-		Integer enterpriseId =  dslContext.select(WORKPLACE.ENTERPRISE).from(WORKPLACE)
-				.where(WORKPLACE.ID.eq(
-						dslContext.select(CONTRACT.WORKPLACE).from(CONTRACT)
-							.where(CONTRACT.ID.eq(employeeId))
-				)).fetchOne()
-				.get(WORKPLACE.ENTERPRISE);
 		
 		Result<Record> salaryRecords = null;
 		
@@ -187,10 +179,30 @@ public class JooqPayrollSalaries {
 			salaryTypeCondition = SALARY.TYPE.eq((byte)filter.getSalaryType().intValue());
 		}
 		
+		// Contracts condition
+		Condition contractsCondition = DSL.noCondition();
+		if(null != filter.getEnterpriseId()) {
+			contractsCondition = SALARY.CONTRACT.in(
+					dslContext.select(CONTRACT.ID).from(CONTRACT)
+					.where(CONTRACT.ID.ge(0))
+					.and(CONTRACT.WORKPLACE.in(
+							dslContext.select(WORKPLACE.ID).from(WORKPLACE)
+								.where(WORKPLACE.ID.gt(0))
+								.and(WORKPLACE.ENTERPRISE.eq(filter.getEnterpriseId()))
+					)));
+		} else if(null != filter.getWorkplaceId()) {
+			contractsCondition = SALARY.CONTRACT.in(
+					dslContext.select(CONTRACT.ID).from(CONTRACT)
+					.where(CONTRACT.ID.ge(0))
+					.and(CONTRACT.WORKPLACE.eq(filter.getWorkplaceId())));
+		} else if(null != filter.getEmployeeId()) {
+			contractsCondition = SALARY.CONTRACT.eq(filter.getEmployeeId());
+		}
+		
 		
 		if(filter.isNoDateFilter()) {
 			salaryRecords = dslContext.select().from(SALARY)
-					.where(SALARY.CONTRACT.eq(employeeId))
+					.where(contractsCondition)
 					.and(salaryTypeCondition)
 					.orderBy(SALARY.END_DATE.desc())
 					.fetch();
@@ -201,7 +213,7 @@ public class JooqPayrollSalaries {
 			Date endDate = new Date(lastDayOfMonth.getYear(), lastDayOfMonth.getMonth(), lastDayOfMonth.getDate());
 			
 			salaryRecords = dslContext.select().from(SALARY)
-					.where(SALARY.CONTRACT.eq(employeeId))
+					.where(contractsCondition)
 					.and(salaryTypeCondition)
 					.and(SALARY.END_DATE.between(startDate, endDate))
 					.orderBy(SALARY.END_DATE.desc())
@@ -213,7 +225,7 @@ public class JooqPayrollSalaries {
 			Date endDate = new Date(lastDayOfMonth.getYear(), lastDayOfMonth.getMonth(), lastDayOfMonth.getDate());
 			
 			salaryRecords = dslContext.select().from(SALARY)
-					.where(SALARY.CONTRACT.eq(employeeId))
+					.where(contractsCondition)
 					.and(salaryTypeCondition)
 					.and(SALARY.END_DATE.between(startDate, endDate))
 					.orderBy(SALARY.END_DATE.desc())
@@ -246,6 +258,12 @@ public class JooqPayrollSalaries {
 			salaryInfo.setWorkplaceId(workplaceRecord.get(WORKPLACE.ID));
 			
 			// Enterprise ID
+			Integer enterpriseId =  dslContext.select(WORKPLACE.ENTERPRISE).from(WORKPLACE)
+					.where(WORKPLACE.ID.eq(
+							dslContext.select(CONTRACT.WORKPLACE).from(CONTRACT)
+								.where(CONTRACT.ID.eq(salaryRecord.get(SALARY.CONTRACT)))
+					)).fetchOne()
+					.get(WORKPLACE.ENTERPRISE);
 			salaryInfo.setEnterpriseId(enterpriseId);
 			
 			// Add to salaries list

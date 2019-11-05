@@ -20,6 +20,15 @@ public class SalaryInfoFilter implements Serializable {
 	// Salary type filter
 	private Integer salaryType; // 0 == salary // 2 == delay // 3 == settlement
 	
+	// Emplyee filter
+	private Integer employeeId; // employeeId == contractId;
+	
+	// Workplace filter
+	private Integer workplaceId;
+	
+	// Workplace filter
+	private Integer enterpriseId;
+	
 	public SalaryInfoFilter() {
 		super();
 		this.noDateFilter = false;
@@ -30,6 +39,12 @@ public class SalaryInfoFilter implements Serializable {
 		this.dateTTo = null;
 		
 		this.salaryType = null;
+		
+		this.employeeId = null;
+		
+		this.workplaceId = null;
+		
+		this.enterpriseId = null;
 	}
 
 	public Boolean isNoDateFilter() {
@@ -77,6 +92,23 @@ public class SalaryInfoFilter implements Serializable {
 	public void setSalaryType(Integer salaryType) {
 		this.salaryType = salaryType;
 	}
-	
+	public Integer getEmployeeId() {
+		return employeeId;
+	}
+	public void setEmployeeId(Integer employeeId) {
+		this.employeeId = employeeId;
+	}
+	public Integer getWorkplaceId() {
+		return workplaceId;
+	}
+	public void setWorkplaceId(Integer workplaceId) {
+		this.workplaceId = workplaceId;
+	}
+	public Integer getEnterpriseId() {
+		return enterpriseId;
+	}
+	public void setEnterpriseId(Integer enterpriseId) {
+		this.enterpriseId = enterpriseId;
+	}
 	
 }

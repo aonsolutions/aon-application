@@ -196,20 +196,6 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		}
 
 		@Override
-		public void getFilterEmployeeSalaries(String currentDomainName, Integer id, SalaryInfoFilter filter,
-				AsyncCallback<List<SalaryInfo>> callback) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void getFilterWorkplaceSalaries(String currentDomainName, Integer workplaceId, SalaryInfoFilter filter,
-				AsyncCallback<List<SalaryInfo>> callback) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
 		public void getWorkplaceActiveEmployees(String currentDomainName, Integer workplaceId,
 				AsyncCallback<WorkplaceEmployees> callback) {
 			// TODO Auto-generated method stub
@@ -231,7 +217,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		}
 
 		@Override
-		public void getFilterEnterpriseSalaries(String currentDomainName, Integer enterpriseId, SalaryInfoFilter filter,
+		public void getFilterSalaries(String currentDomainName, SalaryInfoFilter filter,
 				AsyncCallback<List<SalaryInfo>> callback) {
 			// TODO Auto-generated method stub
 			
@@ -412,20 +398,6 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					}
 
 					@Override
-					public void getFilterEmployeeSalaries(String currentDomainName, Integer id, SalaryInfoFilter filter,
-							AsyncCallback<List<SalaryInfo>> callback) {
-						// TODO Auto-generated method stub
-						
-					}
-
-					@Override
-					public void getFilterWorkplaceSalaries(String currentDomainName, Integer workplaceId,
-							SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback) {
-						// TODO Auto-generated method stub
-						
-					}
-
-					@Override
 					public void getWorkplaceActiveEmployees(String currentDomainName, Integer workplaceId,
 							AsyncCallback<WorkplaceEmployees> callback) {
 						// TODO Auto-generated method stub
@@ -447,8 +419,8 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					}
 
 					@Override
-					public void getFilterEnterpriseSalaries(String currentDomainName, Integer enterpriseId,
-							SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback) {
+					public void getFilterSalaries(String currentDomainName, SalaryInfoFilter filter,
+							AsyncCallback<List<SalaryInfo>> callback) {
 						// TODO Auto-generated method stub
 						
 					}

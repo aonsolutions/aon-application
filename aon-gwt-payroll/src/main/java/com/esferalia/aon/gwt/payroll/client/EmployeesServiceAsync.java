@@ -210,11 +210,6 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void getWorkplaceSalaries(String currentDomainName, Integer workplaceId, AsyncCallback<List<SalaryInfo>> callback);
 
-	void getFilterEmployeeSalaries(String currentDomainName, Integer id, SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback);
-
-	void getFilterWorkplaceSalaries(String currentDomainName, Integer workplaceId, SalaryInfoFilter filter,
-			AsyncCallback<List<SalaryInfo>> callback);
-
 	void getWorkplaceActiveEmployees(String currentDomainName, Integer workplaceId,
 			AsyncCallback<WorkplaceEmployees> callback);
 
@@ -222,8 +217,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void getEnterpriseActiveEmployees(String currentDomainName, Integer enterpriseId, AsyncCallback<List<EmployeeInfo>> callback);
 
-	void getFilterEnterpriseSalaries(String currentDomainName, Integer enterpriseId, SalaryInfoFilter filter,
-			AsyncCallback<List<SalaryInfo>> callback);
+	void getFilterSalaries(String currentDomainName, SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback);
 
 	
 }

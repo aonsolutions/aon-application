@@ -423,14 +423,6 @@ public class DomainEmployeesServiceAsync {
 	public void getWorkplaceSalaries(Integer workplaceId, AsyncCallback<List<SalaryInfo>> callback) {
 		employeesServiceAsync.getWorkplaceSalaries(getCurrentDomainName(), workplaceId, callback);
 	}
-	
-	public void getFilterEmployeeSalaries(Integer id, SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback) {
-		employeesServiceAsync.getFilterEmployeeSalaries(getCurrentDomainName(), id, filter, callback);
-	}
-	
-	public void getFilterWorkplaceSalaries(Integer workplaceId, SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback) {
-		employeesServiceAsync.getFilterWorkplaceSalaries(getCurrentDomainName(), workplaceId, filter, callback);
-	}
 
 	public void getWorkplaceActiveEmployees(Integer workplaceId, AsyncCallback<WorkplaceEmployees> callback) {
 		employeesServiceAsync.getWorkplaceActiveEmployees(getCurrentDomainName(), workplaceId, callback);
@@ -444,8 +436,8 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.getEnterpriseActiveEmployees(getCurrentDomainName(), enterpriseId, callback);
 	}
 	
-	public void getFilterEnterpriseSalaries(Integer enterpriseId, SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback) {
-		employeesServiceAsync.getFilterEnterpriseSalaries(getCurrentDomainName(), enterpriseId, filter, callback);
+	public void getFilterSalaries(SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback) {
+		employeesServiceAsync.getFilterSalaries(getCurrentDomainName(), filter, callback);
 	}
 	
 	// ------------------------------------------------------------------------

@@ -648,18 +648,6 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 
 	@Override
-	public void getFilterEmployeeSalaries(String currentDomainName, Integer id, SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback) {
-		AON.start();
-		employeesServiceAsync.getFilterEmployeeSalaries(currentDomainName, id, filter, new AsyncCallbackWrapper<List<SalaryInfo>>(callback));
-	}
-
-	@Override
-	public void getFilterWorkplaceSalaries(String currentDomainName, Integer workplaceId, SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback) {
-		AON.start();
-		employeesServiceAsync.getFilterWorkplaceSalaries(currentDomainName, workplaceId, filter, new AsyncCallbackWrapper<List<SalaryInfo>>(callback));
-	}
-
-	@Override
 	public void getWorkplaceActiveEmployees(String currentDomainName, Integer workplaceId, AsyncCallback<WorkplaceEmployees> callback) {
 		AON.start();
 		employeesServiceAsync.getWorkplaceActiveEmployees(currentDomainName, workplaceId, new AsyncCallbackWrapper<WorkplaceEmployees>(callback));
@@ -678,10 +666,9 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 
 	@Override
-	public void getFilterEnterpriseSalaries(String currentDomainName, Integer enterpriseId, SalaryInfoFilter filter,
-			AsyncCallback<List<SalaryInfo>> callback) {
+	public void getFilterSalaries(String currentDomainName, SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback) {
 		AON.start();
-		employeesServiceAsync.getFilterEnterpriseSalaries(currentDomainName, enterpriseId, filter, new AsyncCallbackWrapper<List<SalaryInfo>>(callback));
+		employeesServiceAsync.getFilterSalaries(currentDomainName, filter, new AsyncCallbackWrapper<List<SalaryInfo>>(callback));
 	}
 
 	

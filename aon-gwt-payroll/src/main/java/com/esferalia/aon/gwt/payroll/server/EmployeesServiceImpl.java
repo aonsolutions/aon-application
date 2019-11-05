@@ -4926,43 +4926,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<SalaryInfo> getFilterEmployeeSalaries(String currentDomainName, Integer id, SalaryInfoFilter filter) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(currentDomainName);
-			return JooqPayrollSalaries.getFilterEmployeeSalaries(connection, id, filter);
-		} catch (SQLException e) {
-			throw new IllegalArgumentException(e);
-		} finally {
-			if ( connection != null ) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-				}
-			}
-		}
-	}
-
-	@Override
-	public List<SalaryInfo> getFilterWorkplaceSalaries(String currentDomainName, Integer workplaceId,
-			SalaryInfoFilter filter) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(currentDomainName);
-			return JooqPayrollSalaries.getFilterWorkplaceSalaries(connection, workplaceId, filter);
-		} catch (SQLException e) {
-			throw new IllegalArgumentException(e);
-		} finally {
-			if ( connection != null ) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-				}
-			}
-		}
-	}
-
-	@Override
 	public WorkplaceEmployees getWorkplaceActiveEmployees(String currentDomainName, Integer workplaceId) {
 		Connection connection = null;
 		try {
@@ -5017,12 +4980,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<SalaryInfo> getFilterEnterpriseSalaries(String currentDomainName, Integer enterpriseId,
-			SalaryInfoFilter filter) {
+	public List<SalaryInfo> getFilterSalaries(String currentDomainName, SalaryInfoFilter filter) {
 		Connection connection = null;
 		try {
 			connection = AonServletUtils.getConnection(currentDomainName);
-			return JooqPayrollSalaries.getFilterEnterpriseSalaries(connection, enterpriseId, filter);
+			return JooqPayrollSalaries.getFilterEmployeeSalaries(connection, filter);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
