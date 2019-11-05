@@ -72,44 +72,11 @@ public class EnterpriseSalaryObject {
 		});
 	}
 	
-	public void getFilterEnterpriseSalariesDB(Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){		
-		employeesService.getFilterEnterpriseSalaries(enterpriseId, filter, new AsyncCallback<List<SalaryInfo>>(){
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-
-			@Override
-			public void onSuccess(List<SalaryInfo> result) {
-				enterpriseSalaries = result;
-				success.accept(result);
-			}
-			
-		});
+	public void getFilterSalariesDB(Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){
+		if(null == filter.getWorkplaceId() && null == filter.getEmployeeId() && null == filter.getEnterpriseId())
+			filter.setEnterpriseId(enterpriseId);
 		
-	}
-	
-	public void getFilterEnterpriseEmployeeSalariesDB(Integer contractId, Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){		
-		employeesService.getFilterEmployeeSalaries(contractId, filter, new AsyncCallback<List<SalaryInfo>>(){
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-
-			@Override
-			public void onSuccess(List<SalaryInfo> result) {
-				enterpriseSalaries = result;
-				success.accept(result);
-			}
-			
-		});
-		
-	}
-	
-	public void getFilterEnterpriseWorkplaceSalariesDB(Integer workplaceId, Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){		
-		employeesService.getFilterWorkplaceSalaries(workplaceId, filter, new AsyncCallback<List<SalaryInfo>>(){
+		employeesService.getFilterSalaries(filter, new AsyncCallback<List<SalaryInfo>>(){
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -193,6 +160,10 @@ public class EnterpriseSalaryObject {
 		}
 		
 		return workplaceInfo;
+	}
+	
+	public Integer getEnterpriseId() {
+		return this.enterpriseId;
 	}
 
 		

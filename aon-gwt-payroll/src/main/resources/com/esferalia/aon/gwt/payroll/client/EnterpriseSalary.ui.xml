@@ -41,6 +41,10 @@
 			margin: 3px;
 		}
 		
+		.ml5{
+			margin-left: 5px;
+		}
+		
 		.tillTo{
 			margin-left: 43px !important;
 		}
@@ -64,8 +68,9 @@
 		}
 		
 		.suggestBox{
-			width: 90%;
-			margin-left: 5px;
+			width: 100%;
+			margin: 3px;
+			margin-left: 10px;
 		}
 	</ui:style>
 
@@ -87,9 +92,9 @@
 					<g:HorizontalPanel styleName="aon-finding-toolbar">
 						<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
 							<g:Button ui:field='deleteButton' styleName='aon-finding-toolbar-item aon-icon-delete' text="BORRAR"/>
-							<!--  g:Button ui:field='printButton' styleName='aon-finding-toolbar-item aon-icon-pdf' text="IMPRIMIR" /-->
 							<g:Button debugId='saveButton' ui:field='saveButton' styleName='aon-finding-toolbar-item aon-icon-pdf' text="PDF" />
 							<g:Button ui:field='publishButton' styleName='aon-finding-toolbar-item aon-icon-google-drive' text="PUBLICAR" />
+							<g:Button ui:field='emailButton' styleName='aon-finding-toolbar-item aon-icon-mail {style.hide}' text="EMAIL" />
 						</g:HTMLPanel>
 					</g:HorizontalPanel>
 				</g:HorizontalPanel>
@@ -107,19 +112,31 @@
 							   	<table>
 							   		<tbody>
 							   			<tr>
-							   				<td colspan="2">
-							   					<g:HorizontalPanel styleName="{style.widthAll}">
-							   						<g:RadioButton name="employeeWorkplaceFilter" ui:field="workplaceRB">C. Trabajo</g:RadioButton>
-							   						<g:SuggestBox ui:field="workplaceSB"></g:SuggestBox>
-							   					</g:HorizontalPanel>
-							   				</td>
+							   				<td>
+					      						<div>Para</div>
+					    					</td>
+					    					<td>
+					    						<g:VerticalPanel>
+					    							<g:HorizontalPanel styleName="{style.widthAll}">
+								   						<g:RadioButton name="employeeWorkplaceFilter" ui:field="allRB">Todo</g:RadioButton>
+								   					</g:HorizontalPanel>
+								   					<g:HorizontalPanel styleName="{style.widthAll}">
+								   						<g:RadioButton name="employeeWorkplaceFilter" ui:field="workplaceRB">C. Trabajo</g:RadioButton>
+								   						<g:SuggestBox ui:field="workplaceSB"></g:SuggestBox>
+								   					</g:HorizontalPanel>
+								   					<g:HorizontalPanel styleName="{style.widthAll}">
+								   						<g:RadioButton name="employeeWorkplaceFilter" ui:field="employeeRB">Empleado</g:RadioButton>
+								   						<g:SuggestBox ui:field="employeeSB"></g:SuggestBox>
+								   					</g:HorizontalPanel>
+					    						</g:VerticalPanel>
+					    					</td>
 							   			</tr>
 							   			<tr>
-							   				<td colspan="2">
-							   					<g:HorizontalPanel styleName="{style.widthAll}">
-							   						<g:RadioButton name="employeeWorkplaceFilter" ui:field="employeeRB">Empleado</g:RadioButton>
-							   						<g:SuggestBox ui:field="employeeSB"></g:SuggestBox>
-							   					</g:HorizontalPanel>
+							   				<td>
+							   					<div>Tipo nómina</div>
+							   				</td>
+							   				<td>
+							   					<g:ListBox styleName="{style.ml5}" ui:field="typeList"></g:ListBox>
 							   				</td>
 							   			</tr>
 				  						<tr>
