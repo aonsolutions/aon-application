@@ -45,8 +45,9 @@ public class EmployeeSalaryObject {
 		});
 	}
 	
-	public void getFilterEmployeeSalariesDB(Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){		
-		employeesService.getFilterEmployeeSalaries(employee.getId(), filter, new AsyncCallback<List<SalaryInfo>>(){
+	public void getFilterSalariesDB(Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){
+		filter.setEmployeeId(this.employee.getId());
+		employeesService.getFilterSalaries(filter, new AsyncCallback<List<SalaryInfo>>(){
 
 			@Override
 			public void onFailure(Throwable caught) {

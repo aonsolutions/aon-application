@@ -258,7 +258,7 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 		CellTableResource resource = GWT.create(CellTableResource.class);
 		
 		// Create a CellTable.
-	    CellTable<SalaryInfo> table = new CellTable<SalaryInfo>(5, resource, SalaryInfo.KEY_PROVIDER);
+	    CellTable<SalaryInfo> table = new CellTable<SalaryInfo>(15, resource, SalaryInfo.KEY_PROVIDER);
 	   
 	    // Do not refresh the headers and footers every time the data is updated.
 	    table.setAutoHeaderRefreshDisabled(true);
@@ -407,6 +407,8 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	    TextColumn<SalaryInfo> totalPaymentColumn = new TextColumn<SalaryInfo>() {
 	      @Override
 	      public String getValue(SalaryInfo salaryInfo) {
+	    	  if(null == salaryInfo.getTotalPayment() || 0 == salaryInfo.getTotalPayment())
+	    		  return "00,00";
 	    	  return NumberFormat.getFormat("#.00").format(salaryInfo.getTotalPayment());
 	      }
 	    };
@@ -429,6 +431,8 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	    TextColumn<SalaryInfo> totalLiquidColumn = new TextColumn<SalaryInfo>() {
 	      @Override
 	      public String getValue(SalaryInfo salaryInfo) {
+	    	  if(null == salaryInfo.getTotalLiquid() || 0 == salaryInfo.getTotalLiquid())
+	    		  return "00,00";
 	    	  return NumberFormat.getFormat("#.00").format(salaryInfo.getTotalLiquid())+" "+String.valueOf("\u20AC");
 	      }
 	    };
@@ -647,7 +651,7 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 		Integer salaryType = getSalaryType(this.typeList.getSelectedIndex());
 		filter.setSalaryType(salaryType);
 		
-		this.employeeSalaryObject.getFilterEmployeeSalariesDB(
+		this.employeeSalaryObject.getFilterSalariesDB(
 				s -> {
 					resetPage();
 					initSalariesTable();
@@ -680,9 +684,9 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 		case 2:
 			return 1;
 		case 3:
-			return 2;
-		case 4:
 			return 3;
+		case 4:
+			return 2;
 		default:
 			return null;
 		}
