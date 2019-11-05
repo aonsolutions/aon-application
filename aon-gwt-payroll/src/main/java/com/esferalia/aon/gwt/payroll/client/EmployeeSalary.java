@@ -550,18 +550,25 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	
 	@UiHandler("saveButton")
 	public void onPrintSalary(ClickEvent event) {
-		String fileDownloadURL = GWT.getModuleBaseURL()+ "salary/"
-	            + "?selectedSalaries=" + selectionModel.getSelectedSet().size()
+		String fileDownloadURL = GWT.getModuleBaseURL()+ "salary_exporter/";
+		String query = "?selectedSalaries=" + selectionModel.getSelectedSet().size()
 	            + "&enterprise=" + ((SalaryInfo)selectionModel.getSelectedSet().toArray()[0]).getEnterpriseId()
 		        ;
 			
 		for(int i=0; i<selectionModel.getSelectedSet().size(); i++) {
-			fileDownloadURL += "&salary"+i+"Id=" + ((SalaryInfo)selectionModel.getSelectedSet().toArray()[i]).getId();
+			query += "&salary"+i+"Id=" + ((SalaryInfo)selectionModel.getSelectedSet().toArray()[i]).getId();
 		}
 		
-		fileDownloadURL += "&name=salaries.pdf";
-		Window.open(fileDownloadURL, "_blank", null);
+		query += "&name=salaries.pdf";
+		
+		String paramsBase64 = b64decode(query);
+		
+		Window.open(fileDownloadURL+paramsBase64, "_blank", null);
 	}
+
+	private static native String b64decode(String a) /*-{
+	  return window.btoa(a);
+	}-*/;
 	
 	@UiHandler("publishButton")
 	public void onPublichalary(ClickEvent event) {
