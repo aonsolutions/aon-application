@@ -27,7 +27,6 @@ import com.esferalia.aon.jooq.tables.Salary;
 import com.esferalia.aon.jooq.tables.Workplace;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.ui.payroll.utils.ReportUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.api.client.util.Base64;
 
 @SuppressWarnings("serial")
@@ -81,7 +80,7 @@ public class SalaryPDFServlet extends HttpServlet {
 			OutputStream os = resp.getOutputStream();
 			
 			// TODO : SalaryType????
-			SalaryType salaryType = getSalaryType(req);
+			SalaryType salaryType = params.get("type").equals("settle") ? SalaryType.SETTLE : SalaryType.SALARY;
 			Integer enterpriseID = Integer.parseInt(params.get("enterprise"));
 			String salaryReport = getReportKey(domain, enterpriseID, salaryType); 
 			
@@ -144,20 +143,6 @@ public class SalaryPDFServlet extends HttpServlet {
 
 	private static OutputFormat getOutputFormat(String extension) {
 		return OUTPUT_FORMATS.get(extension);
-	}
-
-	private static SalaryType getSalaryType(HttpServletRequest req) {
-		String queryString = req.getQueryString();
-		if ( AonStringUtils.isBlank(queryString) ) 
-			return SalaryType.SALARY;
-
-		String typeName = queryString.trim();
-		try {
-			return SalaryType.valueOf(typeName);
-		} catch ( Throwable t ) {
-		}
-		
-		return SalaryType.SALARY;
 	}
 	
 	public String decode(byte[] value){

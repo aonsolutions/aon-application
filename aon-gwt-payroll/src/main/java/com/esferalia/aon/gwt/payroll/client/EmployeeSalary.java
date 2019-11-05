@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.google.gwt.cell.client.ActionCell;
@@ -94,6 +95,9 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	
 	@UiField
 	Button emailButton;
+	
+	@UiField
+	Button settleLetterButton;
 	
 	@UiField
 	HTMLPanel mainContainer;
@@ -189,6 +193,8 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	private MultiSelectionModel<SalaryInfo> selectionModel;
 	private List<Listener> listeners;
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
+	private Integer settleId = null; // Only used for setlle letter assign on hasSettleSalary()
+	private Integer settleEnterpriseId = null; // Only used for setlle letter assign on hasSettleSalary()
 	
 	public void setEmployeeSalaryObject(EmployeeSalaryObject employeeSalaryObject) {
 		this.employeeSalaryObject = employeeSalaryObject;
@@ -233,6 +239,7 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 			this.deleteButton.setVisible(false);
 			this.saveButton.setVisible(false);
 			this.publishButton.setVisible(false);
+			this.settleLetterButton.setVisible(false);
 			
 			// Show warning dialog
 			WarningDialog warningDialog = new WarningDialog("Aviso", "No existen nominas para este empleado. Si ha filtrado la informacion por favor revise los parametros.");
@@ -248,11 +255,13 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 		this.deleteButton.setVisible(true);
 		this.saveButton.setVisible(true);
 		this.publishButton.setVisible(true);
+		this.settleLetterButton.setVisible(true);
 		
 		//Disable buttons till any salary selected
 		deleteButton.setEnabled(false);
 		saveButton.setEnabled(false);
 		publishButton.setEnabled(false);
+		settleLetterButton.setEnabled(hasSettleSalary());
 		
 		// Resource Style CellTable
 		CellTableResource resource = GWT.create(CellTableResource.class);
@@ -551,7 +560,7 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	@UiHandler("saveButton")
 	public void onPrintSalary(ClickEvent event) {
 		String fileDownloadURL = GWT.getModuleBaseURL()+ "salary_exporter/";
-		String query = "?selectedSalaries=" + selectionModel.getSelectedSet().size()
+		String query = "?type=salary&selectedSalaries=" + selectionModel.getSelectedSet().size()
 	            + "&enterprise=" + ((SalaryInfo)selectionModel.getSelectedSet().toArray()[0]).getEnterpriseId()
 		        ;
 			
@@ -589,6 +598,14 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 		xhr.open("POST", requestUrl);
 		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		xhr.send(requestData);
+	}
+	
+	@UiHandler("settleLetterButton")
+	public void onPrintSettleLetter(ClickEvent event) {
+		String fileDownloadURL = GWT.getModuleBaseURL()+ "salary_exporter/";
+		String query = "?type=settle&selectedSalaries=1&enterprise=" + settleEnterpriseId + "&salary0Id=" + settleId + "&name=settleLetter.pdf";
+		String paramsBase64 = b64decode(query);
+		Window.open(fileDownloadURL+paramsBase64, "_blank", null);
 	}
 	
 	@UiHandler("noDateRB")
@@ -697,5 +714,18 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 		default:
 			return null;
 		}
+	}
+	
+	private boolean hasSettleSalary() {
+		for(SalaryInfo salaryInfo : this.employeeSalaryObject.getEmployeeSalaries()) {
+			if(salaryInfo.getType() == Type.SETTLE) {
+				settleId = salaryInfo.getId();
+				settleEnterpriseId = salaryInfo.getEnterpriseId();
+				return true;
+			}
+		}
+		settleId = null;
+		settleEnterpriseId = null;
+		return false;
 	}
 }
