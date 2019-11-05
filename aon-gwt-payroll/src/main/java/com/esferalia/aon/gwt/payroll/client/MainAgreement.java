@@ -207,6 +207,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 		@Override
 		public void onFailure(Throwable caught) {
+			if ( !isSelected() ) return;
 			// TODO Auto-generated method stub
 			MainAgreement.this.agreementDraft
 					.setAgreementDraftObject(agreementDraftObject);
@@ -214,6 +215,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 		@Override
 		public void onSuccess(SortedSet<Date> result) {
+			if ( !isSelected() ) return;
 			// TODO Auto-generated method stub
 			if (!CollectionUtils.isEmpty(result)) {
 				Date lastChange = result.last();
@@ -226,6 +228,13 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			MainAgreement.this.agreementDraft
 					.setAgreementDraftObject(agreementDraftObject);
 
+		}
+		
+		private boolean isSelected() {
+			TreeItem treeItem = agreements.getAgreementsTree().getSelectedItem();
+			int selectedId = ((Agreement)treeItem.getUserObject()).getId();
+			int callbackId =  agreementDraftObject.getAgreementDraft().getId();
+			return selectedId == callbackId;
 		}
 	}
 	
