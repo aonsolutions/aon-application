@@ -41,6 +41,10 @@
 			margin: 3px;
 		}
 		
+		.ml5{
+			margin-left: 5px;
+		}
+		
 		.tillTo{
 			margin-left: 43px !important;
 		}
@@ -87,9 +91,9 @@
 					<g:HorizontalPanel styleName="aon-finding-toolbar">
 						<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
 							<g:Button ui:field='deleteButton' styleName='aon-finding-toolbar-item aon-icon-delete' text="BORRAR"/>
-							<!--  g:Button ui:field='printButton' styleName='aon-finding-toolbar-item aon-icon-pdf' text="IMPRIMIR" /-->
 							<g:Button debugId='saveButton' ui:field='saveButton' styleName='aon-finding-toolbar-item aon-icon-pdf' text="PDF" />
 							<g:Button ui:field='publishButton' styleName='aon-finding-toolbar-item aon-icon-google-drive' text="PUBLICAR" />
+							<g:Button ui:field='emailButton' styleName='aon-finding-toolbar-item aon-icon-mail {style.hide}' text="EMAIL" />
 						</g:HTMLPanel>
 					</g:HorizontalPanel>
 				</g:HorizontalPanel>
@@ -112,6 +116,14 @@
 							   				</td>
 							   				<td>
 							   					<g:SuggestBox ui:field="employeeSB"></g:SuggestBox>
+							   				</td>
+							   			</tr>
+							   			<tr>
+							   				<td>
+							   					<div>Tipo nómina</div>
+							   				</td>
+							   				<td>
+							   					<g:ListBox styleName="{style.ml5}" ui:field="typeList"></g:ListBox>
 							   				</td>
 							   			</tr>
 				  						<tr>

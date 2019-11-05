@@ -70,26 +70,9 @@ public class WorkplaceSalaryObject {
 		});
 	}
 	
-	public void getFilterWorkplaceSalariesDB(Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){		
-		employeesService.getFilterWorkplaceSalaries(workplaceId, filter, new AsyncCallback<List<SalaryInfo>>(){
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-
-			@Override
-			public void onSuccess(List<SalaryInfo> result) {
-				workplaceSalaries = result;
-				success.accept(result);
-			}
-			
-		});
-		
-	}
-	
-	public void getFilterWorkplaceEmployeeSalariesDB(Integer contractId, Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){		
-		employeesService.getFilterEmployeeSalaries(contractId, filter, new AsyncCallback<List<SalaryInfo>>(){
+	public void getFilterSalariesDB(Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){		
+		filter.setWorkplaceId(workplaceId);
+		employeesService.getFilterSalaries(filter, new AsyncCallback<List<SalaryInfo>>(){
 
 			@Override
 			public void onFailure(Throwable caught) {
