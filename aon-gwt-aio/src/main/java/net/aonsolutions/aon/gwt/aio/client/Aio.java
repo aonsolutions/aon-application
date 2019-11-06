@@ -75,6 +75,7 @@ public class Aio implements EntryPoint {
 			JsAio.addOnBeforeUnloadHandler(this);
 			break;
 		case Modules.ISSUES:
+			JsAio.addOnBeforeUnloadHandler(this);
 			JsAio.addOnReloadHandler(this);
 			GWT.runAsync(Issues.class, new RunAsyncCallback() {
 
@@ -91,6 +92,7 @@ public class Aio implements EntryPoint {
 			});
 			break;
 		case Modules.DOCUMENT:
+			JsAio.addOnBeforeUnloadHandler(this);
 			JsAio.addOnReloadHandler(this);
 			GWT.runAsync(Documental.class, new RunAsyncCallback() {
 
