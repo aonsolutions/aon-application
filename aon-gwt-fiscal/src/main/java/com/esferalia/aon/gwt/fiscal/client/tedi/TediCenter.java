@@ -27,6 +27,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.ScrollEvent;
+import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -81,8 +83,7 @@ public class TediCenter extends MainEntryPoint {
 	private HashMap<String,Widget> tabs = new HashMap<String,Widget>();
 
 	private AonConfiguration configuration;
-
-	// private SplitLayoutPanel mainSplitLayoutPanel;
+;
 	private TabLayoutPanel mainTabLayoutPanel;
 
 	private FlowPanel toolbarPanel;
@@ -93,7 +94,8 @@ public class TediCenter extends MainEntryPoint {
 	private TediInvoiceTable table = new TediInvoiceTable(new TediResultProvidesKey());
 	
 	private LinkedList<TediCompanyResult> companyList;
-	private TediCompanyTable companyTable = new TediCompanyTable(new CompanyProvidesKey());
+	private Integer start = 0; 
+	private TediCompanyTable companyTable;
 	
 	public TediCenter(String domainName, int domain, String user) {
 		currentDomainName = domainName;
@@ -149,6 +151,8 @@ public class TediCenter extends MainEntryPoint {
 	}
 	
 	private void companyListPanel() {
+		companyTable = new TediCompanyTable(new CompanyProvidesKey());
+		start = 0;
 		DockLayoutPanel dockLayoutPanel2 = new DockLayoutPanel(Unit.PX);
 		dockLayoutPanel2.addStyleName(AON.AON_CSS.aonMarginTop());
 		dockLayoutPanel2.addNorth(getToolbarPanel(false, ""), 25);
@@ -160,55 +164,73 @@ public class TediCenter extends MainEntryPoint {
 		sidebarContent2.add(tableScrollPanel2);
 		tableScrollPanel2.add(companyTable);
 		
+		
+		tableScrollPanel2.addDomHandler(new ScrollHandler() {
+			@Override
+			public void onScroll(ScrollEvent event) {
+				Integer scrollTop = tableScrollPanel2.getElement().getScrollTop();
+				Integer offsetHeight = tableScrollPanel2.getElement().getOffsetHeight();
+				Integer physicalSize = tableScrollPanel2.getElement().getScrollHeight();
+				Integer maxScrollPosition = physicalSize - offsetHeight;
+				if(scrollTop > maxScrollPosition && start < companyList.size()){
+					Integer s = start;
+					Integer e = start + 50;
+					companyTable.setRowData(companyList.subList(s, companyList.size() < e ? companyList.size() : e ));
+					start = companyList.size() < e ? companyList.size() : e;
+					getCountInbox(s);
+				}
+			}
+		}, ScrollEvent.getType());
+		
+		
 		companyTable.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 			public void onSelectionChange(SelectionChangeEvent event) {
 				TediCompanyResult company = companyTable.getSelected();
 				onSelect( company.getCompany() );
 			}
 		});
-		
-		companyTable.addRangeChangeHandler( new RangeChangeEvent.Handler() {
-			
-			@Override
-			public void onRangeChange(RangeChangeEvent event) {
-				SERVICE.getCompanies(getDomainName(), getUser(), getDomain(), isTediSnapshot(),
-						new AsyncCallback<LinkedList<TediCompanyResult>>() {
-
-							@Override
-							public void onSuccess(LinkedList<TediCompanyResult> results) {
-								companyList = results;
-								if (companyList == null) {
-									companyList  = new LinkedList<TediCompanyResult>();
-								}
-								companyTable.setRowData(companyList);
+		SERVICE.getCompanies(getDomainName(), getUser(), getDomain(), isTediSnapshot(),
+			new AsyncCallback<LinkedList<TediCompanyResult>>() {
+				@Override
+				public void onSuccess(LinkedList<TediCompanyResult> results) {
+					companyList = results;
+					
+					if (companyList == null) {
+						companyList  = new LinkedList<TediCompanyResult>();
+					}
 								
-								companyList.stream().forEach(cp -> {
-									SERVICE.getCountInboxInvoices(getDomainName(), getUser(), getDomain(), isTediSnapshot(), cp.getCompany(), new AsyncCallback<Integer>() {
-										
-										@Override
-										public void onSuccess(Integer result) {
-											cp.setInboxCount(result);
-											companyTable.setRowData(companyList);
-										}
-										
-										@Override
-										public void onFailure(Throwable caught) {
-											
-										}
-									});
-								});
-							}
+					companyTable.setRowData(companyList.subList(start, companyList.size() < 50 ? companyList.size() : 50 ));
+					start = companyList.size() < 50 ? companyList.size() : 50;
+					getCountInbox(0);
+				}
 
-							@Override
-							public void onFailure(Throwable caught) {
-								showMessage(AON.MSG.error() + " [Interno: " + caught.getMessage() + "]");
-							}
+				@Override
+				public void onFailure(Throwable caught) {
+					showMessage(AON.MSG.error() + " [Interno: " + caught.getMessage() + "]");
+				}
 
-						});
-			}
-		});
-		companyTable.setVisibleRangeAndClearData(companyTable.getVisibleRange(), true);	
+			});
 	}
+	
+	private void getCountInbox(Integer index) {
+		if(index < start) {
+			SERVICE.getCountInboxInvoices(getDomainName(), getUser(), getDomain(), isTediSnapshot(), companyList.get(index).getCompany(), new AsyncCallback<Integer>() {
+			
+				@Override
+				public void onSuccess(Integer result) {
+					companyList.get(index).setInboxCount(result);
+					companyTable.setRowData(index, companyList.subList(index, index + 1));
+					getCountInbox(index + 1);
+				}
+			
+				@Override
+				public void onFailure(Throwable caught) {
+					
+				}
+			});
+		}
+	}
+	
 	
 	private void companyInvoicePanel(Company company) {
 		DockLayoutPanel dockLayoutPanel = new DockLayoutPanel(Unit.PX);
@@ -436,26 +458,14 @@ public class TediCenter extends MainEntryPoint {
 			@Override
 			public void onSuccess(LinkedList<TediCompanyResult> results) {
 				companyList = results;
+				
 				if (companyList == null) {
 					companyList  = new LinkedList<TediCompanyResult>();
 				}
-				companyTable.setRowData(companyList);
-				
-				companyList.stream().forEach(cp -> {
-					SERVICE.getCountInboxInvoices(getDomainName(), getUser(), getDomain(), isTediSnapshot(), cp.getCompany(), new AsyncCallback<Integer>() {
-						
-						@Override
-						public void onSuccess(Integer result) {
-							cp.setInboxCount(result);
-							companyTable.setRowData(companyList);
-						}
-						
-						@Override
-						public void onFailure(Throwable caught) {
-							
-						}
-					});
-				});
+			
+				companyTable.setRowData(companyList.subList(start, companyList.size() < 50 ? companyList.size() : 50 ));
+				start = companyList.size() < 50 ? companyList.size() : 50;
+				getCountInbox(0);
 			}
 		});
 	}
