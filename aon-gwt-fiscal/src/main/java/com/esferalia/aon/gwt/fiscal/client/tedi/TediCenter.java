@@ -3,6 +3,9 @@ package com.esferalia.aon.gwt.fiscal.client.tedi;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import com.esferalia.aon.gwt.api.client.API;
+import com.esferalia.aon.gwt.api.client.JSON;
+import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.ModuleCallback;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
@@ -118,6 +121,7 @@ public class TediCenter extends MainEntryPoint {
 	@Override
 	public void onModuleLoad() {
 		AON.ensureInjected();
+		JsTediCenter.addOnBeforeUnloadHandlerTC(this);
 		JsTediCenter.addOnReloadHandlerTC(this);
 		
 		TediServiceAsync serviceRaw = GWT.create(TediService.class);
@@ -776,7 +780,39 @@ public class TediCenter extends MainEntryPoint {
 	public void remove() {
 		mainTabLayoutPanel.removeFromParent();
 	}
-
+	
+	public void onBeforeUnloadTC(){
+		SERVICE.initFacesContext((new AsyncCallback<Void>() {
+			@Override public void onSuccess(Void result) {
+				API api = new API("", "", getDomainName(), getDomain(), getUser());
+				api.getCommon().selectedMenu(new AsyncCallback<JSON<JsObject>>() {
+					
+					@Override
+					public void onSuccess(JSON<JsObject> result) {
+						SERVICE.releaseFacesContext(new AsyncCallback<Void>() {
+							@Override public void onSuccess(Void result) {}							
+							@Override public void onFailure(Throwable caught) {}
+						});
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						SERVICE.releaseFacesContext(new AsyncCallback<Void>() {
+							@Override public void onSuccess(Void result) {}							
+							@Override public void onFailure(Throwable caught) {}
+						});
+					}
+				});
+			}
+			@Override public void onFailure(Throwable caught) {
+				SERVICE.releaseFacesContext(new AsyncCallback<Void>() {
+					@Override public void onSuccess(Void result) {}							
+					@Override public void onFailure(Throwable caught) {}
+				});
+			}
+		}));
+	}
+	
 	public void onReloadTC(){
 		remove();
 		onModuleLoad();

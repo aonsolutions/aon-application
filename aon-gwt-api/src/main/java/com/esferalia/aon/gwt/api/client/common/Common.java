@@ -93,4 +93,11 @@ public class Common extends Methods{
 	public void insertDataResponseDetail(String requestData){
 		post(getUrl()+ "common/" + getDomainName() + "/" + getUserName() + "/data_response/detail", requestData);
 	}
+	
+	// -------------------- Selected menu... 
+	
+	public void selectedMenu(AsyncCallback<JSON<JsObject>> callback){
+		get(getUrl() + "common/" + getDomainName() + "/" + getUserName() + "/selectedMenu", callback);
+	}
+	
 }

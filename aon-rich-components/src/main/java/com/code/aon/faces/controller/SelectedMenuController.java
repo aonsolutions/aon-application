@@ -88,25 +88,33 @@ public class SelectedMenuController implements Serializable {
 	}
 
 	public boolean isDocument() {
-		return getLastMenuAction() != null && getLastMenuAction().equals("gwt_documents");
+		if(getLastMenuAction()!=null)
+			return getLastMenuAction().equals("gwt_documents");
+		else return false;
 	}
 	
 	public boolean isIssues() {
-		return getLastMenuAction() != null && getLastMenuAction().equals("gwt_issues");
+		if(getLastMenuAction()!=null)
+			return getLastMenuAction().equals("gwt_issues");
+		else return false;
 	}
 	
 	public boolean isTediCenter() {
-		return getLastMenuAction() != null && getLastMenuAction().equals("gwt_tediCenter");
+		if(getLastMenuAction()!=null)
+			return getLastMenuAction().equals("gwt_tediCenter-child");
+		else return false;
 	}
 	
 	public boolean isTediCenterSnapshot() {
-		return getLastMenuAction() != null && getLastMenuAction().equals("gwt_tediCenter_beta");
+		if(getLastMenuAction()!=null)
+			return getLastMenuAction().equals("gwt_tediCenter_beta-child");
+		else return false;
 	}
 	
 	public boolean checkIssues(String id){
-		if(getLastMenuAction() != null && (getLastMenuAction().equals("gwt_issues")
-				|| getLastMenuAction().equals("gwt_tediCenter") 
-				|| getLastMenuAction().equals("gwt_tediCenter_beta"))){
+		if(getLastMenuAction() != null && getLastMenuAction().equals("gwt_issues")
+				&& getLastMenuAction().equals("gwt_tediCenter-child") 
+				&& getLastMenuAction().equals("gwt_tediCenter_beta-child")){
 			switch (id) {
 			case "pendingAlarms": return false;
 			case "home": return false;

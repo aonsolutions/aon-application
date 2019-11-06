@@ -21,6 +21,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.code.aon.faces.controller.IRichConstants;
+import com.code.aon.faces.controller.SelectedMenuController;
+import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.DataResponse;
@@ -80,6 +83,11 @@ public class CommonServlet extends HttpServlet{
 				break;
 			case MSG.DATA_RESPONSE: 
 				object = getDataResponseList(domain, userName, req.getParameterMap());
+				break;
+			case "selectedMenu": 
+				SelectedMenuController smc = (SelectedMenuController) AonUtil.getRegisteredBean(IRichConstants.SELECTED_MENU_CONTROLLER_NAME);
+				smc.setLastMenuAction(null);
+				object = new JSONObject();
 				break;
 			default:
 				break;
