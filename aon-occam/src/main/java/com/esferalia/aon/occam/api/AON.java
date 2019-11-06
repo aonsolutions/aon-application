@@ -135,6 +135,8 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;
+import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
 import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferFilter;
@@ -5488,6 +5490,27 @@ public class AON {
 				ctx.close();
 		}
 	}
+
+	public static FinanceUtilitiesResult missingFinanceInvoices(String domainName, String user, Integer domain,FinanceUtilitiesParams params) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getFinance().missingFinanceInvoices(ctx,params);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 	
+	public static Invoice missingFinanceInvoicesFix(String domainName, String user, Integer domain, Integer invoice) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getFinance().missingFinanceInvoicesFix(ctx,invoice);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 	
 }

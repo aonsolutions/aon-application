@@ -2,35 +2,31 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 
-	<!-- =================== INVOICE ========================== -->
+	<!-- =================== FINANCE ========================== -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_invoiceReport</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/invoice/gwt.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_vatReport</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/invoice/vatReport.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_irpfReport</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/invoice/irpfReport.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_operationReport</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/invoice/operationReport.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_invoiceSeriesBreakdown</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/invoice/InvoiceSeriesBreakdown.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>gwt_financeUtilities</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/invoice/financeUtilities.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.wizard;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -242,6 +243,52 @@ public class InvoiceViewer extends SimpleLayoutPanel {
 			}
 		}
 		
+		tab.setWidget(row, 0, new Label(""));
+		tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPaddingTop());
+		row++;
+		if (invoice.getFinances() != null && !invoice.getFinances().isEmpty()) {
+			FlexTable financeTab = new FlexTable();
+			financeTab.setStyleName(AON.AON_CSS.aonPanelGrid());
+			financeTab.addStyleName(AON.AON_CSS.aonBlockRight());
+			
+			financeTab.getColumnFormatter().setWidth(0, "150px"); // Fecha
+			financeTab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonDataTableHeader());
+			financeTab.setWidget(0, 0, new Label(AON.MSG.dueDate()));
+			
+			financeTab.getColumnFormatter().setWidth(1, "150px"); // paymethod
+			financeTab.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonDataTableHeader());
+			financeTab.setWidget(0, 1, new Label(AON.MSG.payMethod()));
+			
+			financeTab.getColumnFormatter().setWidth(2, "250px"); // bank
+			financeTab.getCellFormatter().setStyleName(0, 2, AON.AON_CSS.aonDataTableHeader());
+			financeTab.setWidget(0, 2, new Label(AON.MSG.bankAccount()));
+			
+			financeTab.getColumnFormatter().setWidth(3, "150px"); // amount
+			financeTab.getCellFormatter().setStyleName(0, 3, AON.AON_CSS.aonDataTableHeader());
+			financeTab.getCellFormatter().addStyleName(0, 3, AON.AON_CSS.aonTextRight());
+			financeTab.setWidget(0, 3, new Label(AON.MSG.amount()));
+			
+			tab.getFlexCellFormatter().setColSpan(row, 0, 6);
+			tab.setWidget(row, 0, financeTab);
+
+			for (Finance finance : invoice.getFinances()) {
+				financeTab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+				financeTab.setWidget(row, 0, new Label(DateTimeFormat.getFormat(DATE_PATTERN).format(finance.getDueDate())));
+				
+				financeTab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+				financeTab.setWidget(row, 1, new Label(finance.getPayMethodName()));
+	
+				financeTab.getCellFormatter().setStyleName(row, 2, AON.AON_CSS.aonPanelGridEven());
+				financeTab.setWidget(row, 2, new Label(finance.getBankAccount()!=null?finance.getBankAccount().getIban():""));
+	
+				financeTab.getCellFormatter().setStyleName(row, 3, AON.AON_CSS.aonPanelGridEven());
+				financeTab.getCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonTextRight());
+				financeTab.setWidget(row, 3, new Label(FORMATTER.format( finance.getAmount())));
+				
+				row++;
+			}
+		}
+
 		scroll.setWidget(tab);
 		setWidget(scroll);
 	}

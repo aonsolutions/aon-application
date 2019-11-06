@@ -401,6 +401,20 @@ public class InvoiceDAO {
 			.map(new FullInvoiceDetailFiller());
 	}
 
+	public static Invoice getFullInvoice(AONContext ctx, Integer id) {
+		Invoice invoice = getInvoice(ctx, id);
+		if(invoice != null) {
+			invoice.setDetails(getInvoiceDetails(ctx, prop -> prop.getIdProperty().eq(id) )
+					.collect(Collectors.toCollection(LinkedList::new)));
+			invoice.setFinances( FinanceDAO.getFinanceStream(ctx, prop -> prop.getInvoiceProperty().eq(id))
+					.collect(Collectors.toCollection(LinkedList::new))
+					);
+			AccountingInvoiceDAO.fillBreakdown(ctx, invoice);
+		}
+		return invoice;
+	}
+	
+	
 	public static Stream<InvoiceTax> getInvoiceTaxStream(AONContext ctx, Integer invoiceId) {
 		return ctx.getDslContext().select(INVOICE_TAX.TAX_TYPE,  INVOICE_TAX.PERCENTAGE, DSL.sum(INVOICE_TAX.BASE),
 					DSL.sum(INVOICE_TAX.SURCHARGE), DSL.sum(INVOICE_TAX.QUOTA), DSL.sum(INVOICE_TAX.SURCHARGE_QUOTA))

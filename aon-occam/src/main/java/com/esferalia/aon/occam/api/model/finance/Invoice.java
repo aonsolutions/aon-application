@@ -80,6 +80,7 @@ public class Invoice implements Serializable, HasAudit {
 
 	private LinkedList<InvoiceDetail> details;
 	private LinkedList<InvoiceBreakdown> breakdown;
+	private LinkedList<Finance> finances;
 	
 	public Integer getId() {
 		return id;
@@ -494,6 +495,14 @@ public class Invoice implements Serializable, HasAudit {
 		return this;
 	}
 
+	public LinkedList<Finance> getFinances() {
+		return finances;
+	}
+	public Invoice setFinances(LinkedList<Finance> finances) {
+		this.finances = finances;
+		return this;
+	}
+	
 	public Byte getStatus() {
 		return status;
 	}

@@ -302,7 +302,7 @@ public class AccountingInvoiceDAO {
 		}
 	}
 
-	private static void fillBreakdown(AONContext ctx, Invoice invoice) {
+	public static void fillBreakdown(AONContext ctx, Invoice invoice) {
 		if (invoice.getBreakdown() == null) {
 			invoice.setBreakdown(new LinkedList<InvoiceBreakdown>());
 		}

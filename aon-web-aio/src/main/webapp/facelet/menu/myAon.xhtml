@@ -376,6 +376,15 @@
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_financeUtilities-myAon"
+											action="gwt_financeUtilities-myAon"
+											title="#{bundle.aon_utilities_treasury}">
+											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
+												style="margin-left: 5px; padding-left: 20px;" 
+												value="#{bundle.aon_utilities_treasury}" />												
+										</aon:commandLink>
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="checks-myAon"
 											action="financePrint_checking-myAon"
 											value="#{bundle.finance_checking_module}" />

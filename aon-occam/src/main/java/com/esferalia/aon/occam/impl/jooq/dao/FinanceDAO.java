@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.AccountEntryFbatch.ACCOUNT_ENTRY_FBATCH;
 import static com.esferalia.aon.jooq.tables.AccountEntryFinanceTracking.ACCOUNT_ENTRY_FINANCE_TRACKING;
+import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
 import static com.esferalia.aon.jooq.tables.FbatchDetail.FBATCH_DETAIL;
 import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.FinanceTracking.FINANCE_TRACKING;
@@ -9,9 +10,9 @@ import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
-import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
 
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.function.Function;
@@ -36,13 +37,18 @@ import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.FinanceProperties;
 import com.esferalia.aon.occam.api.model.finance.FinanceRecorder;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.FinanceTrackingType;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.validation.FinanceValidation;
@@ -51,6 +57,7 @@ import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FinanceDAO {
@@ -720,5 +727,93 @@ public class FinanceDAO {
 		return ctx.getDslContext().fetchCount(FINANCE_TRACKING
 			,FINANCE_TRACKING.FINANCE.eq(financeId)
 			.and(FINANCE_TRACKING.TYPE.eq(FinanceTrackingType.RETURNED.value())));
+	}
+	
+	public static Invoice insertFinancesForInvoice(AONContext ctx, Integer invoiceId) {
+		Invoice invoice = InvoiceDAO.getInvoice(ctx, invoiceId);
+		if (invoice == null) {
+			throw new AonCoreException(AonError.INVOICE_NOT_FOUND.getMessage());
+		}
+		return insertFinancesForInvoice(ctx,invoice);
+	}
+	
+	public static Invoice insertFinancesForInvoice(AONContext ctx, Invoice invoice) {
+		LinkedList<Finance> finances = new LinkedList<Finance>();
+		RegistryPayMethod rPayMethod = RegistryDAO.getRPayMethodStream(ctx, prop -> prop.getDomainProperty()
+				.eq(ctx.getDomainId()).and(prop.getRegistryProperty().eq(invoice.getRegistry()))).findFirst()
+				.orElse(null);
+		;
+		RegistryBank rBank = null;
+		if (rPayMethod != null && rPayMethod.getRbank() != null) {
+			rBank = RegistryDAO.getRBankStream(ctx, prop -> prop.getDomainProperty().eq(ctx.getDomainId())
+					.and(prop.getIdProperty().eq(rPayMethod.getRbank()))).findFirst().orElse(null);
+		}
+		Date date = invoice.getIssueDate();
+		if ((rPayMethod == null) || (rPayMethod.getNumberOfPymnts() == 1)) {
+			date = (rPayMethod==null) ? date : calculatePaymentDate(rPayMethod.getDaysToFirstPymnt(), rPayMethod.getPymnt_days(), date);
+			finances.add(createFinance(invoice, date, (rPayMethod==null) ? null : rPayMethod.getPayMethod(), rBank, invoice.getTotal()));
+		} else {
+			double paymentPrice = AonMathUtils.round((invoice.getTotal() / rPayMethod.getNumberOfPymnts()));
+			date = calculatePaymentDate(rPayMethod.getDaysToFirstPymnt(), rPayMethod.getPymnt_days(), date);
+			finances.add(createFinance(invoice, date, rPayMethod.getPayMethod(), rBank, paymentPrice));
+			for(int i=2; i<=rPayMethod.getNumberOfPymnts()-1; i++) {
+				date = calculatePaymentDate(rPayMethod.getDaysBetwenPymnts(), rPayMethod.getPymnt_days(), date);
+				finances.add(createFinance(invoice, date, rPayMethod.getPayMethod(), rBank, paymentPrice));
+			}
+			paymentPrice = AonMathUtils.round(invoice.getTotal() - (paymentPrice * (rPayMethod.getNumberOfPymnts() - 1)));
+			date = calculatePaymentDate(rPayMethod.getDaysBetwenPymnts(), rPayMethod.getPymnt_days(), date);
+			finances.add(createFinance(invoice, date, rPayMethod.getPayMethod(), rBank, paymentPrice));
+		}
+		for (Finance finance : finances) {
+			insertFinance(ctx, finance);
+		}
+		invoice.setFinances(finances);
+		return invoice;
+	}
+
+	private static Date calculatePaymentDate(int daysNumber, String paymentDays, Date date) {
+		Date paymentDate = AonDateUtils.addDays(date, daysNumber);
+		String[] paymentDaysArray = AonStringUtils.split(paymentDays, ' ');
+		if (paymentDaysArray.length > 0) {
+			for (int i=0; i<paymentDaysArray.length; i++) {
+				int daysInMonth = AonDateUtils.daysInMonth(paymentDate);
+				int day = AonNumberUtils.toint(paymentDaysArray[i]);
+				day = day>daysInMonth ? daysInMonth : day;
+				if (AonDateUtils.getFragmentInDays(paymentDate, Calendar.MONTH) <= day) {
+					return AonDateUtils.setDays(paymentDate, day);
+				}
+			}
+			int day = AonNumberUtils.toint(paymentDaysArray[0]);
+			if (day != 0) {
+				paymentDate = AonDateUtils.addMonths(paymentDate, 1);
+				int daysInMonth = AonDateUtils.daysInMonth(paymentDate);
+				day = (day>daysInMonth) ? daysInMonth : day;
+				return AonDateUtils.setDays(paymentDate, day);
+			}
+		}
+		return paymentDate;
+	}
+
+	private static Finance createFinance(Invoice invoice, Date date, Integer payMethod, RegistryBank rBank, double totalPrice) {
+		Finance finance = new Finance();
+		finance.setDomain(invoice.getDomain());
+		finance.setPayment(!invoice.getType().equals(InvoiceType.SALES));
+		finance.setRegistry( new Registry().setId(invoice.getRegistry()));
+		finance.setRegistryName(invoice.getRegistryName());
+		finance.setRegistryDocument(invoice.getRegistryDocument());
+		finance.setRegistryDocumentType(invoice.getRegistryDocumentType());
+		finance.setRegistryDocumentCountry(invoice.getRegistryDocumentCountry());
+		finance.setAmount(totalPrice);
+		finance.setConcept(invoice.getDocumentNumber());
+		finance.setInvoice(invoice);
+		finance.setDueDate(date);
+		finance.setPayMethod(payMethod);
+		finance.setBankAccount((rBank==null) ? null : new BankAccount(rBank.getBankAccount()) );
+		finance.setBankAlias((rBank==null) ? null : rBank.getAlias());
+		finance.setBic((rBank==null) ? null : rBank.getBic());
+		finance.setFinanceStatus(FinanceStatus.PENDING);
+		finance.setSecurityLevel(invoice.getSecurityLevel());
+		finance.setScope(invoice.getScope());
+		return finance;
 	}
 }

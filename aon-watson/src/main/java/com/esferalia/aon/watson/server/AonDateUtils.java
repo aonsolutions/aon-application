@@ -12,7 +12,28 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AonDateUtils {
-	private final static SimpleDateFormat ORDER_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd"); 
+    /**
+     * Number of milliseconds in a standard second.
+     * @since 2.1
+     */
+    public static final long MILLIS_PER_SECOND = 1000;
+    /**
+     * Number of milliseconds in a standard minute.
+     * @since 2.1
+     */
+    public static final long MILLIS_PER_MINUTE = 60 * MILLIS_PER_SECOND;
+    /**
+     * Number of milliseconds in a standard hour.
+     * @since 2.1
+     */
+    public static final long MILLIS_PER_HOUR = 60 * MILLIS_PER_MINUTE;
+    /**
+     * Number of milliseconds in a standard day.
+     * @since 2.1
+     */
+    public static final long MILLIS_PER_DAY = 24 * MILLIS_PER_HOUR;
+
+    private final static SimpleDateFormat ORDER_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd"); 
 	private final static SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy"); 
 	private final static SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 	private final static SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm");
@@ -1057,4 +1078,190 @@ public class AonDateUtils {
 			return null;
 		}
 	}
+	
+    /**
+     * Sets the day of month field to a date returning a new object.
+     * The original date object is unchanged.
+     *
+     * @param date  the date, not null
+     * @param amount the amount to set
+     * @return a new Date object set with the specified value
+     * @throws IllegalArgumentException if the date is null
+     * @since 2.4
+     */
+    public static Date setDays(Date date, int amount) {
+        return set(date, Calendar.DAY_OF_MONTH, amount);
+    }
+
+    /**
+     * Sets the specified field to a date returning a new object.  
+     * This does not use a lenient calendar.
+     * The original date object is unchanged.
+     *
+     * @param date  the date, not null
+     * @param calendarField  the calendar field to set the amount to
+     * @param amount the amount to set
+     * @return a new Date object set with the specified value
+     * @throws IllegalArgumentException if the date is null
+     * @since 2.4
+     */
+    private static Date set(Date date, int calendarField, int amount) {
+        if (date == null) {
+            throw new IllegalArgumentException("The date must not be null");
+        }
+        // getInstance() returns a new object, so this method is thread safe.
+        Calendar c = Calendar.getInstance();
+        c.setLenient(false);
+        c.setTime(date);
+        c.set(calendarField, amount);
+        return c.getTime();
+    }   
+    
+    /**
+     * <p>Returns the number of days within the 
+     * fragment. All datefields greater than the fragment will be ignored.</p> 
+     * 
+     * <p>Asking the days of any date will only return the number of days
+     * of the current month (resulting in a number between 1 and 31). This 
+     * method will retrieve the number of days for any fragment. 
+     * For example, if you want to calculate the number of days past this year, 
+     * your fragment is Calendar.YEAR. The result will be all days of the 
+     * past month(s).</p> 
+     * 
+     * <p>Valid fragments are: Calendar.YEAR, Calendar.MONTH, both 
+     * Calendar.DAY_OF_YEAR and Calendar.DATE, Calendar.HOUR_OF_DAY, 
+     * Calendar.MINUTE, Calendar.SECOND and Calendar.MILLISECOND
+     * A fragment less than or equal to a DAY field will return 0.</p> 
+     *  
+     * <p>
+     * <ul>
+     *  <li>January 28, 2008 with Calendar.MONTH as fragment will return 28
+     *   (equivalent to deprecated date.getDay())</li>
+     *  <li>February 28, 2008 with Calendar.MONTH as fragment will return 28
+     *   (equivalent to deprecated date.getDay())</li>
+     *  <li>January 28, 2008 with Calendar.YEAR as fragment will return 28</li>
+     *  <li>February 28, 2008 with Calendar.YEAR as fragment will return 59</li>
+     *  <li>January 28, 2008 with Calendar.MILLISECOND as fragment will return 0
+     *   (a millisecond cannot be split in days)</li>
+     * </ul>
+     * </p>
+     * 
+     * @param date the date to work with, not null
+     * @param fragment the Calendar field part of date to calculate 
+     * @return number of days  within the fragment of date
+     * @throws IllegalArgumentException if the date is <code>null</code> or 
+     * fragment is not supported
+     * @since 2.4
+     */
+    public static long getFragmentInDays(Date date, int fragment) {
+        return getFragment(date, fragment, Calendar.DAY_OF_YEAR);
+    }
+	
+    /**
+     * Date-version for fragment-calculation in any unit
+     * 
+     * @param date the date to work with, not null
+     * @param fragment the Calendar field part of date to calculate 
+     * @param unit Calendar field defining the unit
+     * @return number of units within the fragment of the date
+     * @throws IllegalArgumentException if the date is <code>null</code> or 
+     * fragment is not supported
+     * @since 2.4
+     */
+    private static long getFragment(Date date, int fragment, int unit) {
+        if(date == null) {
+            throw  new IllegalArgumentException("The date must not be null");
+        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        return getFragment(calendar, fragment, unit);
+    }
+
+    /**
+     * Calendar-version for fragment-calculation in any unit
+     * 
+     * @param calendar the calendar to work with, not null
+     * @param fragment the Calendar field part of calendar to calculate 
+     * @param unit Calendar field defining the unit
+     * @return number of units within the fragment of the calendar
+     * @throws IllegalArgumentException if the date is <code>null</code> or 
+     * fragment is not supported
+     * @since 2.4
+     */
+    private static long getFragment(Calendar calendar, int fragment, int unit) {
+        if(calendar == null) {
+            throw  new IllegalArgumentException("The date must not be null"); 
+        }
+        long millisPerUnit = getMillisPerUnit(unit);
+        long result = 0;
+        
+        // Fragments bigger than a day require a breakdown to days
+        switch (fragment) {
+            case Calendar.YEAR:
+                result += (calendar.get(Calendar.DAY_OF_YEAR) * MILLIS_PER_DAY) / millisPerUnit;
+                break;
+            case Calendar.MONTH:
+                result += (calendar.get(Calendar.DAY_OF_MONTH) * MILLIS_PER_DAY) / millisPerUnit;
+                break;
+        }
+
+        switch (fragment) {
+            // Number of days already calculated for these cases
+            case Calendar.YEAR:
+            case Calendar.MONTH:
+            
+            // The rest of the valid cases
+            case Calendar.DAY_OF_YEAR:
+            case Calendar.DATE:
+                result += (calendar.get(Calendar.HOUR_OF_DAY) * MILLIS_PER_HOUR) / millisPerUnit;
+                //$FALL-THROUGH$
+            case Calendar.HOUR_OF_DAY:
+                result += (calendar.get(Calendar.MINUTE) * MILLIS_PER_MINUTE) / millisPerUnit;
+                //$FALL-THROUGH$
+            case Calendar.MINUTE:
+                result += (calendar.get(Calendar.SECOND) * MILLIS_PER_SECOND) / millisPerUnit;
+                //$FALL-THROUGH$
+            case Calendar.SECOND:
+                result += (calendar.get(Calendar.MILLISECOND) * 1) / millisPerUnit;
+                break;
+            case Calendar.MILLISECOND: 
+                break;//never useful
+            default: 
+                throw new IllegalArgumentException("The fragment " + fragment + " is not supported");
+        }
+        return result;
+    }
+    
+    /**
+     * Returns the number of millis of a datefield, if this is a constant value
+     * 
+     * @param unit A Calendar field which is a valid unit for a fragment
+     * @return number of millis
+     * @throws IllegalArgumentException if date can't be represented in millisenconds
+     * @since 2.4 
+     */
+    private static long getMillisPerUnit(int unit) {
+        long result = Long.MAX_VALUE;
+        switch (unit) {
+            case Calendar.DAY_OF_YEAR:
+            case Calendar.DATE:
+                result = MILLIS_PER_DAY;
+                break;
+            case Calendar.HOUR_OF_DAY:
+                result = MILLIS_PER_HOUR;
+                break;
+            case Calendar.MINUTE:
+                result = MILLIS_PER_MINUTE;
+                break;
+            case Calendar.SECOND:
+                result = MILLIS_PER_SECOND;
+                break;
+            case Calendar.MILLISECOND:
+                result = 1;
+                break;
+            default: throw new IllegalArgumentException("The unit " + unit + " cannot be represented is milleseconds");
+        }
+        return result;
+    }
+    
 }

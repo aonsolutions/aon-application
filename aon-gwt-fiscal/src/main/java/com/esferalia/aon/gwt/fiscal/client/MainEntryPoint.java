@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.AccountOperatingReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountStatementReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountTrialBalanceReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.utilities.AccountingUtilities;
+import com.esferalia.aon.gwt.fiscal.client.finance.utilities.FinanceUtilities;
 import com.esferalia.aon.gwt.fiscal.client.invoice.IRPFReport;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceReport;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceSeriesBreakdown;
@@ -68,9 +69,9 @@ public class MainEntryPoint implements EntryPoint {
 	//
 	private static final String FS_INVOICE_REPORT_ENTRY_POINT = "InvoiceReport";
 	private static final String FS_INVOICE_SERIES_BREAKDOWN_ENTRY_POINT = "InvoiceSeriesBreakdown";
-	
 	private static final String FS_VAT_REPORT_ENTRY_POINT = "VATReport";
 	private static final String FS_IRPF_REPORT_ENTRY_POINT = "IRPFReport";
+	private static final String FS_FINANCE_UTILITIES_ENTRY_POINT = "FinanceUtilities";
 	
 	//
 	//    ================================================================== ACCOUNTING
@@ -419,6 +420,21 @@ public class MainEntryPoint implements EntryPoint {
 				public void onSuccess() {
 					InvoiceSeriesBreakdown invoiceSeriesBreakdown = new InvoiceSeriesBreakdown();
 					invoiceSeriesBreakdown.onModuleLoad();
+				}
+				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(FS_FINANCE_UTILITIES_ENTRY_POINT)) {
+			GWT.runAsync(FinanceUtilities.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					FinanceUtilities financeUtilities = new FinanceUtilities();
+					financeUtilities.onModuleLoad();
 				}
 				
 			});

@@ -21,11 +21,14 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;
+import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.impl.jooq.dao.FeeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.FinanceUtilitiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 
 public class FinanceImpl implements IFinance {
@@ -211,4 +214,18 @@ public class FinanceImpl implements IFinance {
 		return ctx.getDslContext().transactionResult(configuration
 				-> InvoiceDAO.getInvoiceTaxStream(ctx, invoiceId));
 	}
+
+	// UTILITIES
+	@Override
+	public FinanceUtilitiesResult missingFinanceInvoices(AONContext ctx,FinanceUtilitiesParams params) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> FinanceUtilitiesDAO.missingFinanceInvoices( ctx , params));
+	}
+	@Override
+	public Invoice missingFinanceInvoicesFix(AONContext ctx,Integer invoice) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> FinanceUtilitiesDAO.missingFinanceInvoicesFix( ctx , invoice));
+	}
+	
+	
 }
