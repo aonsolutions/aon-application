@@ -122,4 +122,16 @@
 		</params>
 	</report>		
 	
+	
+	<report id="projectCommercial" description="Project Commercial Report">
+		<template path="/com/code/aon/ui/commercial/report/projectCommercial.jasper" />
+		<bean key="com.code.aon.commercial.ProjectCommercial" />
+		<criteria provider="#{projectCommercial}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+		</params>
+	</report>
+	
 </report-config>
