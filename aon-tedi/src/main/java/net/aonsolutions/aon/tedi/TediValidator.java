@@ -100,7 +100,7 @@ public class TediValidator {
 	 * La fecha IVA de la factura es un dato obligatorio.
 	 */
 	public static Consumer<TediResult> EMPTY_TAX_DATE = (ctx) -> {
-		if (ctx.getInvoice().getTaxDate() == null) {
+		if (ctx.getInvoice().getIssueDate() != null && ctx.getInvoice().getTaxDate() == null) {
 			ctx.add( TediErrorMessages.C001.err(TediContextKey.TAX_DATE) );
 		}
 	};

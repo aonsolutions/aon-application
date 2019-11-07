@@ -86,6 +86,7 @@ public class TediContextVisitor implements ITediContextVisitor {
 			}
 			@Override
 			public void onAccept(Date date) {
+				callback.getResult().getAccountingInvoice().getAccountEntry().setEntryDate(date);
 				callback.getResult().getInvoice().setIssueDate(date);
 				callback.getResult().getInvoice().setTaxDate(date);
 				callback.onAccept(callback.getResult());
