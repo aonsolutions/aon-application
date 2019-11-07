@@ -156,28 +156,17 @@
 					inmediate="true"
 					styleClass="aon-menu-icon aon-icon-tedi" />
 			</aon:if>
-			<aon:if test="#{selectedMenu.tediCenter}">
-				<a	title="tEDI Center"  
-					onclick="onreloadtc();"
-					class="aon-menu-icon-tedi aon-icon-tedi aon-height-20"/>
-			</aon:if>
-		
 			<aon:if test="#{domainSwitcher.betaUser}">
 				<aon:if test="#{!selectedMenu.tediCenterSnapshot}">
 					<aon:commandLink 
 						action="gwt_tediCenter_beta"
 						actionListener="#{gwtSelectedMenu.onTediCenterSnapshot}"
-						title="tEDI Center [TEST]" 
-						value="&#160;"
+						title="tEDI Center [TESTT]" 
 						inmediate="true"
+						value="&#160;"
 						styleClass="aon-menu-icon aon-icon-tedi" />
 				</aon:if>
-				<aon:if test="#{selectedMenu.tediCenterSnapshot}">
-					<a 	title="tEDI Center [TEST]"
-						onclick="onreloadtc();"
-						class="aon-menu-icon-tedi aon-icon-tedi aon-height-20"/>
-				</aon:if>
-			</aon:if>
+ 			</aon:if>
 		</aon:if>
 	</ui:define>
 	

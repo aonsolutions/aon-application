@@ -121,8 +121,6 @@ public class TediCenter extends MainEntryPoint {
 	@Override
 	public void onModuleLoad() {
 		AON.ensureInjected();
-		JsTediCenter.addOnBeforeUnloadHandlerTC(this);
-		JsTediCenter.addOnReloadHandlerTC(this);
 		
 		TediServiceAsync serviceRaw = GWT.create(TediService.class);
 		SERVICE = new TediServiceAsyncDecorator(serviceRaw);
