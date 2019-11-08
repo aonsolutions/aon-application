@@ -72,8 +72,6 @@ public class Aio implements EntryPoint {
 	private void selection(String entryPoint, AonData aonData) {
 		switch (entryPoint) {
 		case Modules.ISSUES:
-			JsAio.addOnBeforeUnloadHandler(this);
-			JsAio.addOnReloadHandler(this);
 			GWT.runAsync(Issues.class, new RunAsyncCallback() {
 
 				@Override
@@ -89,8 +87,6 @@ public class Aio implements EntryPoint {
 			});
 			break;
 		case Modules.DOCUMENT:
-			JsAio.addOnBeforeUnloadHandler(this);
-			JsAio.addOnReloadHandler(this);
 			GWT.runAsync(Documental.class, new RunAsyncCallback() {
 
 				@Override
@@ -252,19 +248,4 @@ public class Aio implements EntryPoint {
 			break;
 		}
 	}
-	
-	public void onBeforeUnload(){
-		impl.selectedMenu(new AsyncCallback<Void>() {
-			@Override public void onSuccess(Void result) {}
-			@Override public void onFailure(Throwable caught) {}
-		});
-	}
-	
-	public void onReload(){
-		String entryPoint = getParameter(GWT.getModuleName(), Constants.ENTRY_POINT_PARAM);
-		if(entryPoint.equals(Modules.ISSUES)) issues.remove();
-		if(entryPoint.equals(Modules.DOCUMENT)) documental.remove();
-		onModuleLoad();
-	}
-	
 }

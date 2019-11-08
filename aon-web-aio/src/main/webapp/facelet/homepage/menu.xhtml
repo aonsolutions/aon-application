@@ -100,19 +100,11 @@
 			</aon:if>
 		</aon:if>
 		
-		<aon:if test="#{!selectedMenu.document}">
-			<aon:commandLink id="menu_document" 
-				value="#{bundle.aon_module_document}"
-				action="gwt_documents"
-				actionListener="#{gwtSelectedMenu.onDocumental}"
-				immediate="true"
-				styleClass="aon-top-menu-item" />
-		</aon:if>
-		<aon:if test="#{selectedMenu.document}">
-			<a id="menu_document"
-				onclick="onreload();"
-				class="aon-top-menu-item-select aon-top-menu-item" >Documental</a>
-		</aon:if>
+		<aon:commandLink id="menu_document" 
+			value="#{bundle.aon_module_document}"
+			action="gwt_documents"
+			immediate="true"
+			styleClass="aon-top-menu-item" />
 		
 		<aon:commandLink id="menu_aonOne"
 			value="#{bundle.admin_domain_aonSMB}"
@@ -147,46 +139,31 @@
 
 	<ui:define name="tediCenterMenuContent"> 
 		<aon:if test="#{desktop.state.tediCenter}">
-			<aon:if test="#{!selectedMenu.tediCenter}">
-				<aon:commandLink 
-					action="gwt_tediCenter"
-					actionListener="#{gwtSelectedMenu.onTediCenter}"
-					title="tEDI Center" 
-					value="&#160;"
-					inmediate="true"
-					styleClass="aon-menu-icon aon-icon-tedi" />
-			</aon:if>
+			<aon:commandLink 
+				action="gwt_tediCenter"
+				title="tEDI Center" 
+				value="&#160;"
+				inmediate="true"
+				styleClass="aon-menu-icon aon-icon-tedi" />
 			<aon:if test="#{domainSwitcher.betaUser}">
-				<aon:if test="#{!selectedMenu.tediCenterSnapshot}">
-					<aon:commandLink 
-						action="gwt_tediCenter_beta"
-						actionListener="#{gwtSelectedMenu.onTediCenterSnapshot}"
-						title="tEDI Center [TESTT]" 
-						inmediate="true"
-						value="&#160;"
-						styleClass="aon-menu-icon aon-icon-tedi" />
-				</aon:if>
+				<aon:commandLink 
+					action="gwt_tediCenter_beta"
+					title="tEDI Center [TESTT]" 
+					inmediate="true"
+					value="&#160;"
+					styleClass="aon-menu-icon aon-icon-tedi" />
  			</aon:if>
 		</aon:if>
 	</ui:define>
 	
 	<ui:define name="callCenterMenuContent">
 		<aon:if test="#{aonRole.callCenter}">
-			<aon:if test="#{!selectedMenu.issues}">
-				<aon:commandLink id="menu_call_center" 
-					action="gwt_issues"
-					actionListener="#{gwtSelectedMenu.onIssues}"
-					title="Call Center" 
-					value="&#160;"
-					inmediate="true"
-					styleClass="aon-menu-icon aon-icon-helpdesk" />
-			</aon:if>
-			<aon:if test="#{selectedMenu.issues}">
-				<a 	id="menu_call_center" 
-					title="Call Center" 
-					onclick="onreload();"
-					class="aon-menu-icon aon-icon-helpdesk aon-height-20"/>
-			</aon:if>
+			<aon:commandLink id="menu_call_center" 
+				action="gwt_issues"
+				title="Call Center" 
+				value="&#160;"
+				inmediate="true"
+				styleClass="aon-menu-icon aon-icon-helpdesk" />
 		</aon:if>
 	</ui:define>	
 	

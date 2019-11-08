@@ -5,10 +5,7 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.servlet.annotation.WebServlet;
 
-import com.code.aon.faces.controller.IRichConstants;
-import com.code.aon.faces.controller.SelectedMenuController;
-import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
+import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -17,20 +14,9 @@ import com.esferalia.aon.occam.api.model.security.User;
 import net.aonsolutions.aon.gwt.aio.client.IAio;
 
 @WebServlet(name = "AioGwtServlet", urlPatterns = { "/aon_gwt_aio/gwt_aio" })
-public class AioImpl extends AonRemoteServiceServlet implements IAio{
+public class AioImpl extends AonStatelessRemoteServiceServlet implements IAio{
 
 	private static final long serialVersionUID = 1L;
-	
-	@Override
-	public void selectedMenu() {
-		try{
-			initFacesContext();
-			SelectedMenuController smc = (SelectedMenuController) AonUtil.getRegisteredBean(IRichConstants.SELECTED_MENU_CONTROLLER_NAME);
-			smc.setLastMenuAction(null);
-		}finally{
-			releaseFacesContext();
-		}
-	}
 	
 	public AonData getAonData(String domainName, Integer domainId, String login){
 		Domain domain = AON.getDomain(domainName, domainId, login);

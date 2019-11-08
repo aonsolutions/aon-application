@@ -32,8 +32,7 @@ public class SelectedMenuController implements Serializable {
 	private String lastMenuAction;
 		
 	public void onMenuReset( ActionEvent event ) {
-		if(!checkIssues(event.getComponent().getId()))
-			setLastMenuAction(null);
+		setLastMenuAction(null);
 	}
 
 	private String getLastMenuAction() {
@@ -85,51 +84,5 @@ public class SelectedMenuController implements Serializable {
 			UICommand command = (UICommand) component;
 			addActionListener(command, ON_MENU_RESET);
 		}
-	}
-
-	public boolean isDocument() {
-		if(getLastMenuAction()!=null)
-			return getLastMenuAction().equals("gwt_documents");
-		else return false;
-	}
-	
-	public boolean isIssues() {
-		if(getLastMenuAction()!=null)
-			return getLastMenuAction().equals("gwt_issues");
-		else return false;
-	}
-	
-	public boolean isTediCenter() {
-		if(getLastMenuAction()!=null)
-			return getLastMenuAction().equals("gwt_tediCenter-child");
-		else return false;
-	}
-	
-	public boolean isTediCenterSnapshot() {
-		if(getLastMenuAction()!=null)
-			return getLastMenuAction().equals("gwt_tediCenter_beta-child");
-		else return false;
-	}
-	
-	public boolean checkIssues(String id){
-		if(getLastMenuAction() != null && getLastMenuAction().equals("gwt_issues")
-				&& getLastMenuAction().equals("gwt_tediCenter-child") 
-				&& getLastMenuAction().equals("gwt_tediCenter_beta-child")){
-			switch (id) {
-			case "pendingAlarms": return false;
-			case "home": return false;
-			case "menu-quickIssue": return false;
-			case "alarm": return false;
-			case "favorites": return false;
-			case "advancedMode": return false;
-			case "config_userProfile": return false;
-			case "changePassword": return false;
-			case "webmap": return false;
-			case "spanishLanguage": return false;
-			case "englishLanguage": return false;
-			default: return true;	
-			}
-		}	
-		return false;
 	}
 }
