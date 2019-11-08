@@ -214,7 +214,7 @@ public class PackingListDownload extends HttpServlet{
 					.and(f.getDomainProperty().eq(domain.getId())),
 				AttachType.REGISTRY);
 		
-		File file = PackingList.createPdf(json, attach.getData());
+		File file = PackingList.createPdf(domain, json, attach.getData());
 		
         Utils.addCorsHeader(resp);
         resp.setContentType(MimeType.PDF.getName());

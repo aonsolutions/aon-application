@@ -29,8 +29,10 @@ import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "QRServlet", urlPatterns = {"/udapa/qr/*",
-												   "/aon_gwt_aio/udapa/qr/*"})
+@WebServlet(name = "QRServlet", urlPatterns = {"/qr/*",
+												"/aon_gwt_aio/qr/*",
+												"/udapa/qr/*",
+												"/aon_gwt_aio/udapa/qr/*"})
 public class QRServlet extends HttpServlet{
 	
 	@Override

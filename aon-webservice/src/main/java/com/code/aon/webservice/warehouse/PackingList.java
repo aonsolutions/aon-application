@@ -20,6 +20,7 @@ import org.json.JSONObject;
 
 import com.code.aon.webservice.common.MSG;
 import com.code.aon.webservice.common.PdfUtils;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.esferalia.aon.occam.server.warehouse.XMLUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -47,7 +48,7 @@ public class PackingList extends PdfUtils{
 	    throw new IllegalAccessError("Utility class");
 	}
 	
-	public static File createPdf(JSONObject json, byte [] image) {
+	public static File createPdf(Domain domain, JSONObject json, byte [] image) {
 		File archivoPDF = null;
 		try {
 			archivoPDF = File.createTempFile("packingList", "pdf");
@@ -104,7 +105,7 @@ public class PackingList extends PdfUtils{
 				document.add(new Paragraph(" "));
 			}
 			Integer cpId = json.getJSONObject(MSG.CARRIER_PACKING).getInt(MSG.ID);
-			BarcodeQRCode qrcode = new BarcodeQRCode("https://udapa.aonsolutions.net/udapa/qr?cp=" + cpId, 100, 100, null);
+			BarcodeQRCode qrcode = new BarcodeQRCode("https://" + domain.getName() + "/qr?cp=" + cpId, 100, 100, null);
 			PdfPTable table = new PdfPTable(2);
 			PdfPCell firma = new PdfPCell(new Phrase("Firma Transportista", getFont1()));
 			firma.setBorder(PdfPCell.NO_BORDER);

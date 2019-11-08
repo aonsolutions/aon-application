@@ -298,8 +298,8 @@ public class PackingListMailServlet extends HttpServlet{
 				+"</tr>";
 	}
 	
-	private byte[] createQRImage(Integer cpId) {
-		BarcodeQRCode qrcode2 = new BarcodeQRCode("https://udapa.aonsolutions.net/udapa/qr?cp=" + cpId, 100, 100, null);
+	private byte[] createQRImage(Domain domain, Integer cpId) {
+		BarcodeQRCode qrcode2 = new BarcodeQRCode("https://" + domain.getName() +"/qr?cp=" + cpId, 100, 100, null);
 		java.awt.Image im = qrcode2.createAwtImage(Color.BLACK, Color.WHITE);
 
 		BufferedImage buffImg = new BufferedImage(im.getWidth(null), im.getWidth(null), BufferedImage.TYPE_4BYTE_ABGR);
@@ -348,7 +348,7 @@ public class PackingListMailServlet extends HttpServlet{
 				.put("login", login)
 				.put("domainName", domain.getName())
 				.put("domainId", domain.getId())
-				.put("md5", Base64.getEncoder().encodeToString(createQRImage(carrierPacking.getId())))
+				.put("md5", Base64.getEncoder().encodeToString(createQRImage(domain, carrierPacking.getId())))
 				.put("attachName", "QR.png")
 				.put("mimetype", MimeType.PNG.ordinal())
 				.put("bcc", bcc);
