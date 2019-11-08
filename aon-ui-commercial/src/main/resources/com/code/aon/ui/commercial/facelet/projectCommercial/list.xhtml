@@ -17,21 +17,13 @@
 				<ui:param name="controller" value="#{projectCommercial}" />
 				<ui:define name="additionalToolbarContent">
 					<aon:htmlCommandLink id="projectCommercial-excel-report"
-						value="&#160;" target="_blank"
+						value="#{bundle.aon_listing}" target="_blank"
 						action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border"
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="projectCommercial" />
 						<f:param name="outputFormat" value="MS Excel" />
 					</aon:htmlCommandLink>	
-					<aon:htmlCommandLink id="projectCommercial-report"
-						value="#{bundle.aon_listing}" target="_blank"
-						action="#{report.onExecute}"
-						styleClass="aon-finding-toolbar-item aon-icon-pdf"
-						accesskey="#{bundle.aon_key_print}">
-						<f:param name="reportKey" value="projectCommercial" />
-						<f:param name="outputFormat" value="PDF" />
-					</aon:htmlCommandLink>
 				</ui:define>
 			</ui:decorate>
 
