@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
-import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
@@ -28,6 +27,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -79,7 +79,16 @@ public class MainCRA extends MainEntryPoint {
 	Label enterprise;
 	
 	@UiField
+	ListBox enterpriseList;
+	
+	@UiField
 	ListBox cccs;
+	
+	@UiField
+	CheckBox allCCCs;
+	
+	@UiField
+	Label allCCCsLabel;
 	
 	@UiField
 	ListBox monthList;
@@ -99,17 +108,26 @@ public class MainCRA extends MainEntryPoint {
 	@UiField
 	Grid mainRectificativoCRAsTable;
 	
-	private Enterprise enterpriseInfo = new Enterprise();
-	private String enterpriseName = "";
-	private Map<String, List<CCC>> enterpriseCCCs = new HashMap<>();
-	private Integer cccId = 0;
-	private String ccc = "";
-	
-	private Date startDate = null;
-	private Date endDate = null;
-	
-	private List<CRA> cras;
+	// All enterpises of a domain
 	private List<Enterprise> enterprisesList;
+	
+	// Selected enterprise, if only one that is the one selected
+	private Enterprise selectedEnterprise;
+	
+	// All the CCCs of the selected enterprise
+	private Map<String, List<CCC>> enterpriseCCCs = new HashMap<>();
+		
+	// The list of CCCs we are going to generate CRA
+	private List<String> cccList = new ArrayList<String>();;
+	
+	// List of generated CRAs
+	private List<CRA> cras;
+	
+	// The date to generate CRA
+	private Date startDate = null;
+	
+	// CCC Id we are going to generate CRA of
+	private Integer cccId = 0;
 	
 	// ------------------------------------------------------------------------
 	//						On Module Load
@@ -157,67 +175,63 @@ public class MainCRA extends MainEntryPoint {
 		mainRectificativoCRAsPanel.addStyleName(style.hide());
 		
 		initLogic();
-				
+		
 	}
 	
 	private void initLogic() {
 		enterpriseCCCs.clear();
+		enterpriseList.clear();
 		
 		impl.getEnterprises(0, Integer.MAX_VALUE, new AsyncCallback<List<Enterprise>>() {
 			
 			@Override
 			public void onSuccess(List<Enterprise> enterprises) {
+				// Set all enterprises of a domain
 				enterprisesList = enterprises;
 				
 				impl.getCRAs(new AsyncCallback<List<CRA>>() {
 
 					@Override
-					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub
-					}
+					public void onFailure(Throwable caught) { }
 
 					@Override
 					public void onSuccess(List<CRA> result) {
 						if(enterprises.size() == 1){
-							enterpriseName = enterprises.get(0).getName();
-							enterpriseInfo = enterprises.get(0);
+							enterpriseList.addStyleName(style.hide());
+							enterprise.removeStyleName(style.hide());
+						} else {
+							enterpriseList.removeStyleName(style.hide());
+							enterprise.addStyleName(style.hide());
+							
+							// Fill enterprise list box
+							for (Enterprise enterprise: enterprises)
+								enterpriseList.addItem(enterprise.getName());
 						}
 						
-						for (Enterprise enterprise: enterprises)
-							for(Activity activity : enterprise.getActivities())
-								for(CCC ccc : activity.getCccs())
-									addCCCToActivity(activity.getDescription(), ccc);
-//									enterpriseCCCs.put(activity.getDescription(), ccc);
+						selectedEnterprise = enterprises.get(0);
+						
+						for(Activity activity : selectedEnterprise.getActivities())
+							for(CCC ccc : activity.getCccs())
+								addCCCToActivity(activity.getDescription(), ccc);
 						
 						cras = result;
 						
 						initializeView();
-					}
-
-					private void addCCCToActivity(String activityDescription, CCC ccc) {
-						if(enterpriseCCCs.get(activityDescription) == null) {
-							List<CCC> cccs = new ArrayList<CCC>();
-							cccs.add(ccc);
-							enterpriseCCCs.put(activityDescription, cccs);
-						} else {
-							enterpriseCCCs.get(activityDescription).add(ccc);
-						}
 					}
 					
 				});
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-			}
+			public void onFailure(Throwable caught) { }
 		});
 	}
 
 	@SuppressWarnings("deprecation")
 	private void initializeView(){
 		//Enterprise Name
-		enterprise.setText(this.enterpriseName);
+		enterprise.setText(this.selectedEnterprise.getName());
+		allCCCsLabel.setText(" Todos los CCCs de " + this.selectedEnterprise.getName());
 		enterprise.addStyleName(style.bold());
 		enterprise.addStyleName(style.paddingText());
 		this.cccs.clear();
@@ -239,7 +253,7 @@ public class MainCRA extends MainEntryPoint {
 				
 			}
 			
-			setFindingCCC( this.cccs.getSelectedItemText().split("- ")[2].split(" ")[0] );
+			setFindingCCC( this.cccs.getSelectedItemText().split("- ")[2].split(" ")[0], false );
 		}
 		
 		//Set current date
@@ -387,9 +401,7 @@ public class MainCRA extends MainEntryPoint {
 			public void onClick(ClickEvent event) {
 				impl.deleteCRA(cra.getCode(), new AsyncCallback<String>() {
 					@Override
-					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub
-					}
+					public void onFailure(Throwable caught) { }
 
 					@Override
 					public void onSuccess(String result) {
@@ -415,10 +427,7 @@ public class MainCRA extends MainEntryPoint {
 			@Override
 			public void onClick(ClickEvent event) {
 				String fileDownloadURL = GWT.getModuleBaseURL()+ "/download_cra/"
-			            + "?craBatchId=" + cra.getCode()
-				        ;
-				
-//				Window.alert(fileDownloadURL);
+			            + "?craBatchId=" + cra.getCode();
 				
 				Window.open(fileDownloadURL, "_blank", null);
 			}
@@ -435,7 +444,7 @@ public class MainCRA extends MainEntryPoint {
 	void exportButton(ClickEvent event){
 		if(checkDate()){
 			if(checkRectificavo()) {
-				impl.createNewCRA(startDate.getTime(), ccc, cccId, "N", new AsyncCallback<String>() {
+				impl.createNewCRA(startDate.getTime(), cccList, cccId, "N", new AsyncCallback<String>() {
 					@Override
 					public void onFailure(Throwable caught) {
 //						Window.alert(caught.toString());	
@@ -452,11 +461,9 @@ public class MainCRA extends MainEntryPoint {
 					
 					@Override
 					protected void onAccept() {
-						impl.createNewCRA(startDate.getTime(), ccc, cccId, "R", new AsyncCallback<String>() {
+						impl.createNewCRA(startDate.getTime(), cccList, cccId, "R", new AsyncCallback<String>() {
 							@Override
-							public void onFailure(Throwable caught) {
-								// TODO Auto-generated method stub	
-							}
+							public void onFailure(Throwable caught) { }
 			
 							@Override
 							public void onSuccess(String result) {
@@ -482,9 +489,48 @@ public class MainCRA extends MainEntryPoint {
 		
 	}
 
+	@UiHandler("enterpriseList")
+	void changeEnterpriseList(ChangeEvent event){
+		cccs.clear();
+		
+		for(Enterprise enterprise: enterprisesList) {
+			if(enterpriseList.getSelectedValue().equals(enterprise.getName())) {
+				this.selectedEnterprise = enterprise;
+				continue;
+			}
+		}
+		
+		enterpriseCCCs.clear();
+		
+		for(Activity activity : selectedEnterprise.getActivities())
+			for(CCC ccc : activity.getCccs())
+				addCCCToActivity(activity.getDescription(), ccc);
+		
+		for(Entry<String, List<CCC>> entry : this.enterpriseCCCs.entrySet()){
+			for(CCC ccc : entry.getValue()) {
+				this.cccs.addItem(entry.getKey() + " - " + getRegimeName(ccc.getRegime()) + " - " 
+						+ ccc.getCode() + " - (" + ProvinceContract.getName(ccc.getGeozone()) +")");
+			}
+			
+		}
+		
+		allCCCsLabel.setText(" Todos los CCCs de " + this.selectedEnterprise.getName());
+	}
+	
 	@UiHandler("cccs")
 	void changeCCCList(ChangeEvent event){
-		setFindingCCC( this.cccs.getSelectedItemText().split("- ")[2].split(" ")[0] );
+		setFindingCCC( this.cccs.getSelectedItemText().split("- ")[2].split(" ")[0], false);
+	}
+	
+	@UiHandler("allCCCs")
+	void clickAllCCCs(ClickEvent event){
+		cccs.setEnabled(!allCCCs.getValue());
+		
+		if(allCCCs.getValue()) {
+			setFindingCCC( "", true);
+		}else {
+			setFindingCCC( this.cccs.getSelectedItemText().split("- ")[2].split(" ")[0], false);
+		}
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -540,34 +586,37 @@ public class MainCRA extends MainEntryPoint {
 		}
 	}
 	
-	private void setFindingCCC(String selectedCCC) {
+	private void setFindingCCC(String selectedCCC, Boolean all) {
 		
-		for (Enterprise enterprise: enterprisesList)
-			for(Activity activity : enterprise.getActivities())
-				for(CCC ccc : activity.getCccs())
-					if(ccc.getCode().equals(selectedCCC)) {
-						this.cccId = ccc.getId();
-						enterpriseInfo = enterprise;
-						break;
-					}
-		
-//		for(CCC ccc : enterpriseCCCs.values()) {
-//			Window.alert(ccc.getCode() + " == " + selectedCCC);
-//			if(ccc.getCode().equals(selectedCCC)) {
-//				Window.alert("CCC Id : " + ccc.getId());
-//				this.cccId = ccc.getId();
-//				break;
-//			}
-//		}
-		
-		this.enterpriseName = this.enterpriseInfo.getName();
-		this.enterprise.setText(this.enterpriseInfo.getName());
-		this.ccc = selectedCCC;
+		if(all) {
+			this.cccList.clear();
+			for(Activity activity : this.selectedEnterprise.getActivities()) {
+				for(CCC ccc : activity.getCccs()) {
+					this.cccList.add(ccc.getCode());
+				}
+			}
+			
+			this.enterprise.setText(this.selectedEnterprise.getName());
+			this.cccId = this.selectedEnterprise.getActivities().get(0).getCccs().get(0).getId();
+			
+		} else {
+			this.cccList.clear();
+			for (Enterprise enterprise: enterprisesList)
+				for(Activity activity : enterprise.getActivities())
+					for(CCC ccc : activity.getCccs())
+						if(ccc.getCode().equals(selectedCCC)) {
+							this.cccId = ccc.getId();
+							selectedEnterprise = enterprise;
+							continue;
+						}
+			
+			this.enterprise.setText(this.selectedEnterprise.getName());
+			this.cccList.add(selectedCCC);
+		}
 	}
 
 	private void setFindingDates(Date selectedDate) {
 		this.startDate = selectedDate;
-		this.endDate = DateUtils.getLastDayOfMonth(selectedDate);
 	}
 	
 	private boolean checkRectificavo() {
@@ -575,7 +624,7 @@ public class MainCRA extends MainEntryPoint {
 			if(null == cra.getCreationDate())
 				continue;
 			if(new Date(cra.getCreationDate().getTime()).equals(new Date(this.startDate.getTime()))) {
-				if(cra.getCcc().substring(4) == this.ccc) {
+				if(this.cccList.contains(cra.getCcc().substring(4))) {
 					return false;
 				}
 			}
@@ -593,6 +642,16 @@ public class MainCRA extends MainEntryPoint {
 		//Clear cccs Listbox
 		cccs.clear();
 		initLogic();
+	}
+	
+	private void addCCCToActivity(String activityDescription, CCC ccc) {
+		if(enterpriseCCCs.get(activityDescription) == null) {
+			List<CCC> cccs = new ArrayList<CCC>();
+			cccs.add(ccc);
+			enterpriseCCCs.put(activityDescription, cccs);
+		} else {
+			enterpriseCCCs.get(activityDescription).add(ccc);
+		}
 	}
 
 }
