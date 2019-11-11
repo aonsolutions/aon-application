@@ -354,7 +354,7 @@ public class Documental implements EntryPoint {
 						+ "&tag=" + ids +""
 						+ "&scope=" + (scope != null ? scope.getId() : "")
 						+ "&confidential=" + confidential.getChecked();
-				upload.setTarget(GWT.getModuleBaseURL() + "uploadDocumentalx"+ dataRequest);
+				upload.setTarget(GWT.getModuleBaseURL() + "ms/uploadDocumentalx"+ dataRequest);
 				ScrollPanel scroll = new ScrollPanel();
 				scroll.setHeight("300px");
 				scroll.add(upload);
@@ -444,11 +444,7 @@ public class Documental implements EntryPoint {
 			@Override public void onFailure(Throwable caught) {}
 		});   
 	}
-	
-	public void remove() {
-		dockLayoutPanel.removeFromParent();
-	}
-	
+
 	String ids = "" ;
 	String ids2 = "" ;
 

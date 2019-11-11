@@ -422,8 +422,4 @@ public class Issues implements EntryPoint {
 				+ "\"number\":\""+ issue.getNumber() +"\",}";
 		incidence.sendNotification(issue, r);
 	}
-
-	public void remove(){
-		dockLayoutPanel.removeFromParent();
-	}
 }

@@ -30,7 +30,7 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "UploadImages", urlPatterns = {"/aon_gwt_aio/uploadImages/*"})
+@WebServlet(name = "UploadImages", urlPatterns = {"/aon_gwt_aio/ms/uploadImages/*"})
 public class UploadServlet extends HttpServlet{
 	
 	 private static final String UPLOAD_DIRECTORY = "upload";

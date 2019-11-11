@@ -36,7 +36,7 @@ import net.aonsolutions.aon.gwt.udapa.client.IUdapa;
 import net.aonsolutions.aon.gwt.udapa.shared.quality.Destiny;
 import net.aonsolutions.aon.gwt.udapa.shared.quality.QualitySheetCode;
 
-@WebServlet(name = "UdapaGwtServlet", urlPatterns = { "/aon_gwt_aio/gwt_udapa" })
+@WebServlet(name = "UdapaGwtServlet", urlPatterns = { "/aon_gwt_aio/ms/gwt_udapa" })
 public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 
 	/**

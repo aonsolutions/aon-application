@@ -175,7 +175,7 @@ public class Warehouse extends Methods{
 			
 			@Override
 			public void onSuccess(String result) {
-				Window.open(getUrl() + "download_udapa_quality/" + result, "_blank", null);
+				Window.open(getUrl() + "ms/download_udapa_quality/" + result, "_blank", null);
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -189,7 +189,7 @@ public class Warehouse extends Methods{
 			
 			@Override
 			public void onSuccess(String result) {
-				Window.open(getUrl() + "download_udapa_quality_list/" + result, "_blank", null);
+				Window.open(getUrl() + "ms/download_udapa_quality_list/" + result, "_blank", null);
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -203,7 +203,7 @@ public class Warehouse extends Methods{
 			
 			@Override
 			public void onSuccess(String result) {
-				Window.open(getUrl() + "download_paturpat_quality_list/" + result, "_blank", null);
+				Window.open(getUrl() + "ms/download_paturpat_quality_list/" + result, "_blank", null);
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -217,7 +217,7 @@ public class Warehouse extends Methods{
 			
 			@Override
 			public void onSuccess(String result) {
-				Window.open(getUrl() + "download_udapa_liq_list/" + result, "_blank", null);
+				Window.open(getUrl() + "ms/download_udapa_liq_list/" + result, "_blank", null);
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -235,7 +235,7 @@ public class Warehouse extends Methods{
 			
 			@Override
 			public void onSuccess(String result) {
-				Window.open(getUrl() + "download_udapa_tag/" + result, "_blank", null);
+				Window.open(getUrl() + "ms/download_udapa_tag/" + result, "_blank", null);
 			}
 			
 			@Override public void onFailure(Throwable caught) {}

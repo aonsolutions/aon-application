@@ -3,7 +3,7 @@ package net.aonsolutions.aon.gwt.document.server;
 import javax.servlet.annotation.WebServlet;
 
 import com.code.aon.google.apis.DriveUtils;
-import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
+import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
@@ -17,20 +17,21 @@ import net.aonsolutions.aon.google.apis.drive.AonDrive;
 import net.aonsolutions.aon.google.apis.drive.SearchFiles;
 import net.aonsolutions.aon.gwt.document.client.IDocumental;
 
-@WebServlet(name = "DocumentalGwtServlet", urlPatterns = { "/aon_gwt_aio/gwt_documental",
-														   "/aon_gwt_document/gwt_documental"})
-public class DocumentalServlet  extends AonRemoteServiceServlet implements IDocumental {
+@WebServlet(name = "DocumentalGwtServlet", urlPatterns = { "/aon_gwt_aio/ms/gwt_documental",
+														   "/aon_gwt_document/ms/gwt_documental"})
+public class DocumentalServlet  extends AonStatelessRemoteServiceServlet implements IDocumental {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	public String getAttachLink(Domain domain, Integer id){
+	@Override 
+	public String getAttachLink(Domain domain, String login, Integer id){
 		Attach attach = AON.getAttach(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(id), AttachType.REGISTRY, false);
 
 		if(attach.getDriveId() != null){
-			DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), "");
+			DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), login);
 			Drive drive = AonDrive.getInstace().serviceInitialize(g);
 			String[] keys = {"fileId", "aontype", "domain"};
 			String[] values = {attach.getId() + "", "registry", attach.getDomain().getName()};

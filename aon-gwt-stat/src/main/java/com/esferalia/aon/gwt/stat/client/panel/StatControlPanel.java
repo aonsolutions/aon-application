@@ -262,7 +262,7 @@ public class StatControlPanel extends MainEntryPoint {
 		statParams.setValue( JsonParams.convert( filter.getParams() ) );
 		diskForm.setMethod(FormPanel.METHOD_POST);
 		diskForm.setEncoding(FormPanel.ENCODING_URLENCODED);
-		diskForm.setAction(GWT.getHostPageBaseURL() + "aon_gwt_stat/StatTableExcel");
+		diskForm.setAction(GWT.getModuleBaseURL() + "ms/StatTableExcel");
 		diskForm.submit();
 	}
 

@@ -36,8 +36,8 @@ import com.esferalia.aon.occam.api.model.stat.invoice.InvoiceChartType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-@WebServlet(name = "Stat Table Report (excel)", urlPatterns = { "/aon_gwt_stat/StatTableExcel",
-																"/aon_gwt_aio/StatTableExcel" })
+@WebServlet(name = "Stat Table Report (excel)", urlPatterns = { "/aon_gwt_stat/ms/StatTableExcel",
+																"/aon_gwt_aio/ms/StatTableExcel" })
 public class StatTableExcelServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 2715328290565919810L;

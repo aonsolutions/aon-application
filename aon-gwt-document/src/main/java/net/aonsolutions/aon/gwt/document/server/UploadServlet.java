@@ -31,7 +31,7 @@ import com.google.api.services.drive.Drive;
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Upload Documental Filesx", urlPatterns = {"/aon_gwt_aio/uploadDocumentalx/*"})
+@WebServlet(name = "Upload Documental Filesx", urlPatterns = {"/aon_gwt_aio/ms/uploadDocumentalx/*"})
 public class UploadServlet extends HttpServlet{
 	
 	 private static final String UPLOAD_DIRECTORY = "upload";

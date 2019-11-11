@@ -13,7 +13,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 
 import net.aonsolutions.aon.gwt.aio.client.IAio;
 
-@WebServlet(name = "AioGwtServlet", urlPatterns = { "/aon_gwt_aio/gwt_aio" })
+@WebServlet(name = "AioGwtServlet", urlPatterns = { "/aon_gwt_aio/ms/gwt_aio" })
 public class AioImpl extends AonStatelessRemoteServiceServlet implements IAio{
 
 	private static final long serialVersionUID = 1L;

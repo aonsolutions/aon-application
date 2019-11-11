@@ -25,37 +25,37 @@ public class Commission extends Methods{
 	
 	public void getOfferCalculatedCommission(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsCommission>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "commission/" + getDomainName() + "/" + getUserName() + "/calculated/offer" + filter, callback);
+		get(getUrl() + "ms/commission/" + getDomainName() + "/" + getUserName() + "/calculated/offer" + filter, callback);
 	}
 	
 	public void getInvoiceCalculatedCommission(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsCommission>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "commission/" + getDomainName() + "/" + getUserName() + "/calculated/invoice" + filter, callback);
+		get(getUrl() + "ms/commission/" + getDomainName() + "/" + getUserName() + "/calculated/invoice" + filter, callback);
 	}
 	
 	public void updateOfferCommissionCalculate(String requestData){
-		post(getUrl()+ "commission/"+ getDomainName() + "/" + getUserName() + "/calculated/offer", requestData);
+		post(getUrl()+ "ms/commission/"+ getDomainName() + "/" + getUserName() + "/calculated/offer", requestData);
 	}
 	
 	public void updateInvoiceCommissionCalculate(String requestData){
-		post(getUrl()+ "commission/" + getDomainName() + "/" + getUserName() + "/calculated/invoice", requestData);
+		post(getUrl()+ "ms/commission/" + getDomainName() + "/" + getUserName() + "/calculated/invoice", requestData);
 	}
 	
 	// aon-ui-commercial
 	public void offerCommissionCalculate(String requestData){
-		post(getUrl()+ "commission_calculation/offer", requestData);
+		post(getUrl()+ "ms/commission_calculation/offer", requestData);
 	}
 	
 	public void invoiceCommissionCalculate(String requestData){
-		post(getUrl()+ "commission_calculation/invoice", requestData);
+		post(getUrl()+ "ms/commission_calculation/invoice", requestData);
 	}
 	
 	public void deleteInvoiceCommission(String requestData, AsyncCallback<JSON<JsCommission>> callback) {
-		post(getUrl() + "commission/" + getDomainName() + "/" + getUserName() + "/delete/invoice", requestData, callback);
+		post(getUrl() + "ms/commission/" + getDomainName() + "/" + getUserName() + "/delete/invoice", requestData, callback);
 	}
 	
 	public void deleteOfferCommission(String requestData, AsyncCallback<JSON<JsCommission>> callback) {
-		post(getUrl() + "commission/" + getDomainName() + "/" + getUserName() + "/delete/offer", requestData, callback);
+		post(getUrl() + "ms/commission/" + getDomainName() + "/" + getUserName() + "/delete/offer", requestData, callback);
 	}
 	
 }

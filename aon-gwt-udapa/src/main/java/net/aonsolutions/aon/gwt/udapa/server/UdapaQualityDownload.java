@@ -26,7 +26,7 @@ import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
-@WebServlet(name = "udapaQualistyDownload", urlPatterns = {"/aon_gwt_aio/download_udapa_quality/*"})
+@WebServlet(name = "udapaQualistyDownload", urlPatterns = {"/aon_gwt_aio/ms/download_udapa_quality/*"})
 public class UdapaQualityDownload extends HttpServlet{
 	
 	/**

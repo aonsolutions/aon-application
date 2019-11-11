@@ -5,7 +5,7 @@ import java.util.HashMap;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-@RemoteServiceRelativePath("gwt_udapa")
+@RemoteServiceRelativePath("ms/gwt_udapa")
 public interface IUdapa extends RemoteService{
 	
 	public HashMap<String, String> getValues(String domainName, Integer domainId, Integer drId);

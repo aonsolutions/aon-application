@@ -65,7 +65,7 @@ import net.aonsolutions.aon.gwt.udapa.shared.quality.Destiny;
 import net.aonsolutions.aon.gwt.udapa.shared.quality.QualitySheetCode;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "pruebawwwwww", urlPatterns = {"/aon_gwt_aio/download_udapa_quality_list/*"})
+@WebServlet(name = "DownloadUdapaQualityList", urlPatterns = {"/aon_gwt_aio/ms/download_udapa_quality_list/*"})
 public class printQualityList extends HttpServlet{
 
 	private static final Logger LOGGER  = Logger.getLogger(printQualityList.class.getName());

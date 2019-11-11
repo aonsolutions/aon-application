@@ -307,7 +307,7 @@ public class AttachListPanel extends Composite {
    }
   
    public void viewDocument(String id) {
-	   parent.getIDoc().getAttachLink(parent.getAonData().getDomain(), Integer.parseInt(id), new AsyncCallback<String>() {
+	   parent.getIDoc().getAttachLink(parent.getAonData().getDomain(), parent.getAonData().getUser().getLogin(), Integer.parseInt(id), new AsyncCallback<String>() {
 			
 		@Override
 		public void onSuccess(String result) {

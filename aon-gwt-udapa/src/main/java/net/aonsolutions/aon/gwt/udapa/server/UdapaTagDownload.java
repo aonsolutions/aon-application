@@ -37,7 +37,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 import net.aonsolutions.aon.gwt.udapa.server.printQuality.Title;
 
-@WebServlet(name = "udapaTagDownload", urlPatterns = {"/aon_gwt_aio/download_udapa_tag/*"})
+@WebServlet(name = "udapaTagDownload", urlPatterns = {"/aon_gwt_aio/ms/download_udapa_tag/*"})
 public class UdapaTagDownload extends HttpServlet{
 	
 	/**

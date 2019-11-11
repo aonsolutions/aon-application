@@ -5,7 +5,7 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-@RemoteServiceRelativePath("gwt_sii")
+@RemoteServiceRelativePath("ms/gwt_sii")
 public interface ISii extends RemoteService{
 
 	public Administration getAdministration(Domain domain, String login);

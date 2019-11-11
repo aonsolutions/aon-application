@@ -51,7 +51,7 @@ import net.aonsolutions.aon.gwt.udapa.shared.quality.Destiny;
 import net.aonsolutions.aon.gwt.udapa.shared.quality.QualitySheetCode;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Download Udapa Liq List", urlPatterns = {"/aon_gwt_aio/download_udapa_liq_list/*"})
+@WebServlet(name = "Download Udapa Liq List", urlPatterns = {"/aon_gwt_aio/ms/download_udapa_liq_list/*"})
 public class printLiqList extends HttpServlet{
 
 	private static final Logger LOGGER  = Logger.getLogger(printLiqList.class.getName());

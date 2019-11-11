@@ -5,7 +5,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import net.aonsolutions.aon.gwt.warehouse.shared.CarrierPackingParams;
 
-@RemoteServiceRelativePath("gwt_warehouse")
+@RemoteServiceRelativePath("ms/gwt_warehouse")
 public interface IWarehouse extends RemoteService{
 
 	public CarrierPackingParams readXml(String xml);

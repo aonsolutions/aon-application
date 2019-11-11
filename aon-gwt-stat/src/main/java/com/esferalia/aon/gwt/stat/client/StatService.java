@@ -6,7 +6,7 @@ import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-@RemoteServiceRelativePath("Stats")
+@RemoteServiceRelativePath("ms/Stats")
 public interface StatService extends RemoteService {
 	
 	StatParams createStatParams(String domainName, String user, int domain) throws AonCoreException;

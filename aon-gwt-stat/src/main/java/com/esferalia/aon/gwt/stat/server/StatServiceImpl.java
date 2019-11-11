@@ -10,8 +10,8 @@ import com.esferalia.aon.occam.api.model.stat.StatParams;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Stats Servlet", urlPatterns = { "/aon_gwt_stat/Stats" 
-													,"/aon_gwt_aio/Stats"})
+@WebServlet(name = "Stats Servlet", urlPatterns = { "/aon_gwt_stat/ms/Stats" 
+													,"/aon_gwt_aio/ms/Stats"})
 public class StatServiceImpl extends AonStatelessRemoteServiceServlet implements StatService {
 
 	@Override

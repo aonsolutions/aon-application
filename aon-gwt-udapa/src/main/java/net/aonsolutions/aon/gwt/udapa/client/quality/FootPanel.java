@@ -104,7 +104,7 @@ public class FootPanel extends Composite {
 						+ "&login="+ parent.getAonData().getUser().getLogin()
 						+ "&id="+ parent.getDataResponse().getId()
 						+ "&attach_type=" + AttachType.DATA.getName();
-				upload.setTarget(GWT.getModuleBaseURL() + "uploadImages"+ dataRequest);
+				upload.setTarget(GWT.getModuleBaseURL() + "ms/uploadImages"+ dataRequest);
 				upload.setAccept("image/*");
 				upload.addUploadSuccessHandler(new UploadSuccessEventHandler() {
 					

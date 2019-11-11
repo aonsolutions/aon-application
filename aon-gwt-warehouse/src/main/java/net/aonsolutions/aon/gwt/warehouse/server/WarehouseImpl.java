@@ -7,7 +7,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import net.aonsolutions.aon.gwt.warehouse.client.IWarehouse;
 import net.aonsolutions.aon.gwt.warehouse.shared.CarrierPackingParams;
 
-@WebServlet(name = "WarehouseGwtServlet", urlPatterns = { "/aon_gwt_aio/gwt_warehouse" })
+@WebServlet(name = "WarehouseGwtServlet", urlPatterns = { "/aon_gwt_aio/ms/gwt_warehouse" })
 public class WarehouseImpl extends RemoteServiceServlet implements IWarehouse{
 
 	/**

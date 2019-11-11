@@ -31,8 +31,8 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "CommissionServlet", urlPatterns = {"/commission/*",
-												   "/aon_gwt_aio/commission/*",
-												   "/aon_gwt_commercial/commission/*"})
+												   "/aon_gwt_aio/ms/commission/*",
+												   "/aon_gwt_commercial/ms/commission/*"})
 public class CommissionServlet extends HttpServlet{
 		
 	private static final Logger LOGGER  = Logger.getLogger(CommissionServlet.class.getName());

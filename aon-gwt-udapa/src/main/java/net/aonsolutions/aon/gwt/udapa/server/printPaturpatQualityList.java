@@ -69,7 +69,7 @@ import net.aonsolutions.aon.gwt.udapa.shared.quality.paturpat.Sabor;
 import net.aonsolutions.aon.gwt.udapa.shared.quality.paturpat.Textura;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Download Paturpat Quality List", urlPatterns = {"/aon_gwt_aio/download_paturpat_quality_list/*"})
+@WebServlet(name = "Download Paturpat Quality List", urlPatterns = {"/aon_gwt_aio/ms/download_paturpat_quality_list/*"})
 public class printPaturpatQualityList extends HttpServlet{
 
 	private static final Logger LOGGER  = Logger.getLogger(printPaturpatQualityList.class.getName());

@@ -42,8 +42,8 @@ import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 @WebServlet(name = "CommissionCalculationServlet", urlPatterns = {"/commission_calculation/*",
-												   "/aon_gwt_aio/commission_calculation/*",
-												   "/aon_gwt_commercial/commission_calculation/*"})
+												   "/aon_gwt_aio/ms/commission_calculation/*",
+												   "/aon_gwt_commercial/ms/commission_calculation/*"})
 public class CommissionCalculationServlet extends HttpServlet implements Serializable {
 	private static final Logger LOGGER  = Logger.getLogger(CommissionCalculationServlet.class.getName());
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;

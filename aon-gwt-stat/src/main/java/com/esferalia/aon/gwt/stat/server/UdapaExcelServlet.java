@@ -43,8 +43,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.stat.DirectSalesChartTypeVisitor;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-@WebServlet(name = "Udapa Stat Report (excel)", urlPatterns = { "/aon_gwt_stat/UdapaStatExcel",
-																"/aon_gwt_aio/UdapaStatExcel" })
+@WebServlet(name = "Udapa Stat Report (excel)", urlPatterns = { "/aon_gwt_stat/ms/UdapaStatExcel",
+																"/aon_gwt_aio/ms/UdapaStatExcel" })
 public class UdapaExcelServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = -4825807448151446413L;

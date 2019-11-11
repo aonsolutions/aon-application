@@ -5,6 +5,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface IDocumentalAsync {
 
-	void getAttachLink(Domain domain, Integer id, AsyncCallback<String> callback);
+	void getAttachLink(Domain domain, String login, Integer id, AsyncCallback<String> callback);
 	
 }
