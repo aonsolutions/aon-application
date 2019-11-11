@@ -8,10 +8,8 @@ import java.net.URL;
 import java.text.ParseException;
 import java.util.Arrays;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import com.google.gwt.user.server.Base64Utils;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -127,17 +125,6 @@ public class AonStatelessRemoteServiceServlet extends RemoteServiceServlet {
 
 	static ClassLoader getResourceLoader() {
 		return Thread.currentThread().getContextClassLoader();
-	}
-	
-	protected void initFacesContext() {
-		ServletContext context = getServletContext();
-		HttpServletRequest request = getThreadLocalRequest();
-		HttpServletResponse response = getThreadLocalResponse();
-		AonServletUtils.initFacesContext(context, request, response);
-	}
-
-	protected void releaseFacesContext() {
-		AonServletUtils.releaseFacesContext();
 	}
 
 }

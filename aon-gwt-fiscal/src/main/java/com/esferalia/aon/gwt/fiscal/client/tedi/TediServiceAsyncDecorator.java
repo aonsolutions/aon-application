@@ -19,18 +19,6 @@ public class TediServiceAsyncDecorator implements TediServiceAsync {
 	public TediServiceAsyncDecorator(TediServiceAsync mod190ServiceAsync) {
 		this.fsa = mod190ServiceAsync;
 	}
-
-	@Override
-	public void initFacesContext(AsyncCallback<Void> callback) {
-		AON.start();
-		fsa.initFacesContext(new AsyncCallbackWrapper<Void>(callback));
-	}
-	
-	@Override
-	public void releaseFacesContext(AsyncCallback<Void> callback) {
-		AON.start();
-		fsa.releaseFacesContext(new AsyncCallbackWrapper<Void>(callback));
-	}
 	
 	@Override
 	public void getAonConfiguration(String domainName, String user, int domain,
