@@ -642,7 +642,7 @@ public class EnterpriseSalary extends Composite implements ContextMenuHandler {
 	@UiHandler("saveButton")
 	public void onPrintSalary(ClickEvent event) {
 		String fileDownloadURL = GWT.getModuleBaseURL()+ "salary_exporter/";
-		String query = "?selectedSalaries=" + selectionModel.getSelectedSet().size()
+		String query = "?type=salary&selectedSalaries=" + selectionModel.getSelectedSet().size()
 	            + "&enterprise=" + ((SalaryInfo)selectionModel.getSelectedSet().toArray()[0]).getEnterpriseId()
 		        ;
 			
