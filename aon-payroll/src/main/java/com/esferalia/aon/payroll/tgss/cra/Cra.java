@@ -17,6 +17,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -79,10 +80,13 @@ public class Cra {
 					cmd.getOptionValue(user.getLongOpt()),
 					cmd.getOptionValue(password.getLongOpt()));
 			
-			String ccc = cmd.getOptionValue(cccOpt.getLongOpt());
+			
+			String cccs = cmd.getOptionValue(cccOpt.getLongOpt());
+			List<String> cccList = parseCCCsToArray(cccs);
+			
 			Long findingDate = parseDate(cmd.getOptionValue(findingDateOpt.getLongOpt()));
 			
-			String agrarianAFI = MainCRAGenerator.generateMainCRA(getMainCRAByCRA(ccc, findingDate, connection));
+			String agrarianAFI = MainCRAGenerator.generateMainCRA(getMainCRAByCRA(cccList, findingDate, connection));
 			System.out.println(agrarianAFI);
 
 		} catch (ParseException e) {
@@ -94,6 +98,20 @@ public class Cra {
 
 		}
 
+	}
+
+	private static List<String> parseCCCsToArray(String cccs) {
+		List<String> cccList = new ArrayList<String>();
+		
+		if(cccs.contains(",")) {
+			String[] cccsArr = cccs.split(", ");
+			for( int i = 0; i < cccsArr.length; i++) {
+				cccList.add(cccsArr[i]);
+			}
+		}else { //Only one ccc
+			cccList.add(cccs);
+		}
+		return cccList;
 	}
 
 	private static Long parseDate(String dateStr) {
@@ -110,8 +128,8 @@ public class Cra {
 
 	private static Option getCCCOption() {
 		return Option.builder("c")
-				.longOpt("ccc")
-				.desc("CCC to find CRA.")
+				.longOpt("cccs")
+				.desc("CCCs to find CRA. 'ccc1, ccc2, ccc3 ...'")
 				.required()
 				.argName("name")
 				.hasArg()
@@ -133,11 +151,14 @@ public class Cra {
 	// ********************************************************************************************************************************************
 	
 	@SuppressWarnings("unchecked")
-	public static JSONObject getMainCRAByCRA(String ccc, long findingDate, Connection connection)  {
+	public static JSONObject getMainCRAByCRA(List<String> cccList, long findingDate, Connection connection)  {
 		
 		// Get dslContext for given connection
 		AONContext ctx = new AONContext(connection);
 		DSLContext dslContext = ctx.getDslContext();
+		
+		//TEMP CCC
+		//String ccc = cccList.get(0);
 		
 		// Given findingDate set start and end date
 		Calendar startDate = Calendar.getInstance();
@@ -155,7 +176,7 @@ public class Cra {
 		JSONObject mainCRAJSON = new JSONObject();
 			
 		// GET AuthKey from DB
-		String authKey = getAuthKeyFromDomain(dslContext, ccc);
+		String authKey = getAuthKeyFromDomain(dslContext, cccList.get(0));
 		
 		// ETI
 		JSONObject eti = new JSONObject();
@@ -165,311 +186,326 @@ public class Cra {
 		
 		mainCRAJSON.put("ETI", eti);
 		
-		// GET Salaries from DB (employees)
-		Result<Record> salaryRecords = dslContext.select().from(SALARY)
-				.where(SALARY.CHARGE_DATE.between(startDateSQL, endDateSQL))
-				.and(SALARY.CCC.eq(ccc))
-				.and(SALARY.TYPE.eq((byte)0))
-				.and(SALARY.SS_REGIME.notEqual((byte)3))
-				.fetch();
+		// Prepare JSON CCCs
+		JSONArray jsonCCCs = new JSONArray();
 		
-		// EnterpriseCCCRecord
-		Record enterpriseCCCRecord = dslContext.select().from(ENTERPRISE_CCC)
-				.where(ENTERPRISE_CCC.CCC.eq(ccc))
-				.fetchOne();
-		
-		// Prepare ERRORS
-		JSONArray errors = new JSONArray();
-		
-		if(salaryRecords.isEmpty()){
+		for(int k=0; k<cccList.size(); k++) {
 			
-			JSONObject err = new JSONObject();
-			err.put("ERR", "No hay ninguna nómina emitida para este periodo.");
-			errors.add(err);
+			String ccc = cccList.get(k);
 		
-		}else {
-		
-			// Prepare DDE
-			JSONObject dde = new JSONObject();
-
-			dde.put("cccRegime", parseSS_Regime(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE)));
-			dde.put("ccc", ccc);
-			dde.put("year", startDate.get(Calendar.YEAR));
-			dde.put("month", startDate.get(Calendar.MONTH));
+			// GET Salaries from DB (employees)
+			Result<Record> salaryRecords = dslContext.select().from(SALARY)
+					.where(SALARY.CHARGE_DATE.between(startDateSQL, endDateSQL))
+					.and(SALARY.CCC.eq(ccc))
+					.and(SALARY.TYPE.eq((byte)0))
+					.and(SALARY.SS_REGIME.notEqual((byte)3))
+					.fetch();
 			
-			// Prepare TRBS
-			JSONArray trbs = new JSONArray();
+			// EnterpriseCCCRecord
+			Record enterpriseCCCRecord = dslContext.select().from(ENTERPRISE_CCC)
+					.where(ENTERPRISE_CCC.CCC.eq(ccc))
+					.fetchOne();
 			
-			for(Record salary: salaryRecords) {
-				// Prepare TRB
-				JSONObject trb = new JSONObject();
-				
-				trb.put("numAfilicion", salary.get(SALARY.SOCIAL_SECURITY_NUMBER));
-				
-				// Prepare CRES
-				JSONArray cres = new JSONArray();
-				
-				// GET Salaries_Payment from Salary to get CRA type 
-				Result<Record> salaryPaymentRecords = dslContext.select().from(SALARY_PAYMENT)
-						.where(SALARY_PAYMENT.SALARY.eq(salary.get(SALARY.ID)))
-						.orderBy(SALARY_PAYMENT.TYPE)
-						.fetch();
-				
-				// Get first typeCRA to compare with to accumulate, first iteration will be true always
-				PaymentType typeCRA = (salaryPaymentRecords.size() == 0) ? null : PaymentType.values()[salaryPaymentRecords.get(0).get(SALARY_PAYMENT.TYPE)];;
-				
-				// Initialice craAmount for accumulation
-				Double craAmount = 0.00;
-				
-				for (int i=0; i<salaryPaymentRecords.size(); i++) {
-					
-					PaymentType craType = PaymentType.values()[salaryPaymentRecords.get(i).get(SALARY_PAYMENT.TYPE)];
-					
-					if(typeCRA == craType) {
-						
-						// Accumulate craAmount
-						craAmount += (salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE) > 0) ? salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE) : salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT);
-						
-						// Last iteration
-						if(i+1 == salaryPaymentRecords.size()) {
-							
-							// Try to add Cre to Cres
-							addCreToCres(craAmount, craType, cres);
-							
-						}
-						
-						continue;
-						
-					} else {
-						
-						// Try to add Cre to Cres
-						addCreToCres(craAmount, typeCRA, cres);
-						
-						// Update typeCra
-						typeCRA = craType;
-						
-						// Update craAmount
-						craAmount = (salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE) > 0) ? salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE) : salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT);
-						
-						// Last iteration
-						if(i+1 == salaryPaymentRecords.size()) {
-							
-							// Try to add Cre to Cres
-							addCreToCres(craAmount, craType, cres);
-						}
-					}
-					
-				}
-				
-				// If having CRES add to TRB and TRB to TRBS
-				if(cres.size() > 0) {
-					
-					trb.put("CRES", cres);
-					trbs.add(trb);
-				
-				}
-					
-			}
+			// Prepare ERRORS
+			JSONArray errors = new JSONArray();
 			
-			// Adding TRBS to DDE
-			dde.put("TRBS", trbs);
+			// Prepare CCCi
+			JSONObject ccci = new JSONObject();
 			
-			// Adding DDE (Normal salaries) to MainCRAJSON 
-			mainCRAJSON.put("DDE", dde);
-		}
-		
-		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-		// 											NOMINA ATRASOS
-		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-		
-		// GET Atrasos SALARY from DB (employees)
-		salaryRecords = dslContext.select().from(SALARY)
-				.where(SALARY.CHARGE_DATE.between(startDateSQL, endDateSQL))
-				.and(SALARY.CCC.eq(ccc))
-				.and(SALARY.TYPE.eq((byte)3))
-				.and(SALARY.SS_REGIME.notEqual((byte)3))
-				.fetch();
-		
-		if(salaryRecords.isEmpty()){
+			if(salaryRecords.isEmpty()){
+				
+				JSONObject err = new JSONObject();
+				err.put("ERR", "No hay ninguna nómina emitida para este periodo.");
+				errors.add(err);
 			
-			JSONObject err = new JSONObject();
-			err.put("ERR1", "No hay ninguna nómina emitida para este periodo.");
-			errors.add(err);
-		
-		}else {
-		
-			// Prepare DDEAS
-			JSONArray ddeas = new JSONArray();
+			}else {
 			
-			for(Record salary: salaryRecords) {
+				// Prepare DDE
+				JSONObject dde = new JSONObject();
+	
+				dde.put("cccRegime", parseSS_Regime(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE)));
+				dde.put("ccc", ccc);
+				dde.put("year", startDate.get(Calendar.YEAR));
+				dde.put("month", startDate.get(Calendar.MONTH));
 				
-				// Get salaryId
-				Integer salaryId = salary.get(SALARY.ID);
+				// Prepare TRBS
+				JSONArray trbs = new JSONArray();
 				
-				// Get salaryPayment type of salary
-				Byte salaryPaymentType = dslContext.select(SALARY_PAYMENT.TYPE).from(SALARY_PAYMENT)
-						.where(SALARY_PAYMENT.SALARY.eq(salaryId))
-						.limit(1)
-						.fetchOne()
-						.getValue(SALARY_PAYMENT.TYPE);
-				
-				// Get salaryData of salary
-				Result<Record> salaryDatas = dslContext.select().from(SALARY_DATA)
-						.where(SALARY_DATA.SALARY.eq(salaryId))
-						.and(SALARY_DATA.NAME.eq("BASE_CGC"))
-						.fetch();
-				
-				for(Record salaryData: salaryDatas){
+				for(Record salary: salaryRecords) {
+					// Prepare TRB
+					JSONObject trb = new JSONObject();
 					
-					// Get craAmount
-					Double craAmount = Double.parseDouble(salaryData.get(SALARY_DATA.EXPRESSION));
+					trb.put("numAfilicion", salary.get(SALARY.SOCIAL_SECURITY_NUMBER));
 					
-					if(craAmount > 0){
+					// Prepare CRES
+					JSONArray cres = new JSONArray();
+					
+					// GET Salaries_Payment from Salary to get CRA type 
+					Result<Record> salaryPaymentRecords = dslContext.select().from(SALARY_PAYMENT)
+							.where(SALARY_PAYMENT.SALARY.eq(salary.get(SALARY.ID)))
+							.orderBy(SALARY_PAYMENT.TYPE)
+							.fetch();
+					
+					// Get first typeCRA to compare with to accumulate, first iteration will be true always
+					PaymentType typeCRA = (salaryPaymentRecords.size() == 0) ? null : PaymentType.values()[salaryPaymentRecords.get(0).get(SALARY_PAYMENT.TYPE)];;
+					
+					// Initialice craAmount for accumulation
+					Double craAmount = 0.00;
+					
+					for (int i=0; i<salaryPaymentRecords.size(); i++) {
 						
-						if(salaryData.get(SALARY_DATA.START_DATE).before(endDateSQL)){
-							
-							// Prepare DDEA
-							JSONObject ddea = new JSONObject();
-							
-							ddea.put("cccRegime", parseSS_Regime(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE)));
-							ddea.put("ccc", ccc);
-							
-							// Instance Calendar with actual iteration salary_data startDate
-							Calendar salaryDataStartDate = Calendar.getInstance();
-							salaryDataStartDate.setTimeInMillis(salaryData.get(SALARY_DATA.START_DATE).getTime());
-							
-							ddea.put("year", salaryDataStartDate.get(Calendar.YEAR));
-							ddea.put("month", salaryDataStartDate.get(Calendar.MONTH) + 1);
+						PaymentType craType = PaymentType.values()[salaryPaymentRecords.get(i).get(SALARY_PAYMENT.TYPE)];
 						
-							// Prepare TRBSA
-							JSONArray trbsa = new JSONArray();
+						if(typeCRA == craType) {
 							
-							// Prepare TRBA
-							JSONObject trba = new JSONObject();
-						
-							trba.put("numAfilicion", salary.get(SALARY.SOCIAL_SECURITY_NUMBER));
-						
-							// Prepare CRES
-							JSONArray cres = new JSONArray();
+							// Accumulate craAmount
+							craAmount += (salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE) > 0) ? salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE) : salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT);
 							
-							// Get CRA type -> Same CRA type for all salaryData of a Salary
-							PaymentType typeCRA = PaymentType.values()[salaryPaymentType];
+							// Last iteration
+							if(i+1 == salaryPaymentRecords.size()) {
+								
+								// Try to add Cre to Cres
+								addCreToCres(craAmount, craType, cres);
+								
+							}
+							
+							continue;
+							
+						} else {
 							
 							// Try to add Cre to Cres
 							addCreToCres(craAmount, typeCRA, cres);
 							
-							// Add CRES to TRBA
-							trba.put("CRES", cres);
+							// Update typeCra
+							typeCRA = craType;
 							
-							// Add TRBA to TRBAS
-							trbsa.add(trba);
+							// Update craAmount
+							craAmount = (salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE) > 0) ? salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE) : salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT);
 							
-							// Add TRBAS to DDEA
-							ddea.put("TRBS", trbsa);
+							// Last iteration
+							if(i+1 == salaryPaymentRecords.size()) {
+								
+								// Try to add Cre to Cres
+								addCreToCres(craAmount, craType, cres);
+							}
+						}
+						
+					}
+					
+					// If having CRES add to TRB and TRB to TRBS
+					if(cres.size() > 0) {
+						
+						trb.put("CRES", cres);
+						trbs.add(trb);
+					
+					}
+						
+				}
+				
+				// Adding TRBS to DDE
+				dde.put("TRBS", trbs);
+				
+				// Adding DDE (Normal salaries) to MainCRAJSON 
+				ccci.put("DDE", dde);
+			}
+			
+			// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+			// 											NOMINA ATRASOS
+			// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+			
+			// GET Atrasos SALARY from DB (employees)
+			salaryRecords = dslContext.select().from(SALARY)
+					.where(SALARY.CHARGE_DATE.between(startDateSQL, endDateSQL))
+					.and(SALARY.CCC.eq(ccc))
+					.and(SALARY.TYPE.eq((byte)3))
+					.and(SALARY.SS_REGIME.notEqual((byte)3))
+					.fetch();
+			
+			if(salaryRecords.isEmpty()){
+				
+				JSONObject err = new JSONObject();
+				err.put("ERR1", "No hay ninguna nómina emitida para este periodo.");
+				errors.add(err);
+			
+			}else {
+			
+				// Prepare DDEAS
+				JSONArray ddeas = new JSONArray();
+				
+				for(Record salary: salaryRecords) {
+					
+					// Get salaryId
+					Integer salaryId = salary.get(SALARY.ID);
+					
+					// Get salaryPayment type of salary
+					Byte salaryPaymentType = dslContext.select(SALARY_PAYMENT.TYPE).from(SALARY_PAYMENT)
+							.where(SALARY_PAYMENT.SALARY.eq(salaryId))
+							.limit(1)
+							.fetchOne()
+							.getValue(SALARY_PAYMENT.TYPE);
+					
+					// Get salaryData of salary
+					Result<Record> salaryDatas = dslContext.select().from(SALARY_DATA)
+							.where(SALARY_DATA.SALARY.eq(salaryId))
+							.and(SALARY_DATA.NAME.eq("BASE_CGC"))
+							.fetch();
+					
+					for(Record salaryData: salaryDatas){
+						
+						// Get craAmount
+						Double craAmount = Double.parseDouble(salaryData.get(SALARY_DATA.EXPRESSION));
+						
+						if(craAmount > 0){
 							
-							// Add DDEA to DDEAS
-							ddeas.add(ddea);
+							if(salaryData.get(SALARY_DATA.START_DATE).before(endDateSQL)){
+								
+								// Prepare DDEA
+								JSONObject ddea = new JSONObject();
+								
+								ddea.put("cccRegime", parseSS_Regime(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE)));
+								ddea.put("ccc", ccc);
+								
+								// Instance Calendar with actual iteration salary_data startDate
+								Calendar salaryDataStartDate = Calendar.getInstance();
+								salaryDataStartDate.setTimeInMillis(salaryData.get(SALARY_DATA.START_DATE).getTime());
+								
+								ddea.put("year", salaryDataStartDate.get(Calendar.YEAR));
+								ddea.put("month", salaryDataStartDate.get(Calendar.MONTH) + 1);
+							
+								// Prepare TRBSA
+								JSONArray trbsa = new JSONArray();
+								
+								// Prepare TRBA
+								JSONObject trba = new JSONObject();
+							
+								trba.put("numAfilicion", salary.get(SALARY.SOCIAL_SECURITY_NUMBER));
+							
+								// Prepare CRES
+								JSONArray cres = new JSONArray();
+								
+								// Get CRA type -> Same CRA type for all salaryData of a Salary
+								PaymentType typeCRA = PaymentType.values()[salaryPaymentType];
+								
+								// Try to add Cre to Cres
+								addCreToCres(craAmount, typeCRA, cres);
+								
+								// Add CRES to TRBA
+								trba.put("CRES", cres);
+								
+								// Add TRBA to TRBAS
+								trbsa.add(trba);
+								
+								// Add TRBAS to DDEA
+								ddea.put("TRBS", trbsa);
+								
+								// Add DDEA to DDEAS
+								ddeas.add(ddea);
+							}
+						}
+					}	
+				}
+				
+				// Adding DDEAS (Delay salaries) to MainCRAJSON, but first parseDDEAS to accumulate amount of same craType 
+				ccci.put("DDEAS", parseDDEAS(ddeas));
+			}
+			
+			// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+			// 											FINIQUITOS
+			// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+			
+			//GET Settlements SALARY from DB (employees) use ISSUE_DATE cause settlement can have OLD startDate...
+			salaryRecords = dslContext.select().from(SALARY)
+					.where(SALARY.CCC.eq(ccc))
+						.and(SALARY.ISSUE_DATE.between(startDateSQL, endDateSQL)
+								.or(SALARY.END_DATE.between(startDateSQL, endDateSQL)))
+						.and(SALARY.TYPE.eq((byte)2))
+						.and(SALARY.SS_REGIME.notEqual((byte)3))
+					.fetch();
+			
+			if(!salaryRecords.isEmpty()){
+				
+				// Prepare FINIQ
+				JSONObject finiq = new JSONObject();
+				
+				finiq.put("cccRegime", parseSS_Regime(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE)));
+				finiq.put("ccc", ccc);
+				finiq.put("year", startDate.get(Calendar.YEAR));
+				finiq.put("month", startDate.get(Calendar.MONTH));
+				
+				// Prepare TRBSF
+				JSONArray trbsf = new JSONArray();
+				
+				for(Record salary: salaryRecords) {
+					
+					// Get salaryId
+					Integer salaryId = salary.get(SALARY.ID);
+					
+					// Get salaryDatas of Settelment salary
+					Result<Record> salaryDatas = dslContext.select().from(SALARY_DATA)
+							.where(SALARY_DATA.SALARY.eq(salaryId))
+							.and(SALARY_DATA.NAME.eq("BASE_CGC"))
+							.and(SALARY_DATA.START_DATE.between(startDateSQL, endDateSQL))
+							.fetch();
+					
+					// Prepare TRBF
+					JSONObject trbf = new JSONObject();
+					
+					trbf.put("numAfilicion", salary.get(SALARY.SOCIAL_SECURITY_NUMBER));
+					
+					// Prepare CRES
+					JSONArray cres = new JSONArray();
+					
+					for(Record salatyData: salaryDatas){
+						
+						// Get CRA amount
+						Double craAmount = Double.parseDouble(salatyData.get(SALARY_DATA.EXPRESSION));
+						
+						if(craAmount > 0){
+							
+							// Get typeCRA ¿always 6?
+							PaymentType typeCRA = PaymentType.values()[6];
+							
+							// Try to add Cre to Cres
+							addCreToCres(craAmount, typeCRA, cres);
+							
 						}
 					}
-				}	
-			}
-			
-			// Adding DDEAS (Delay salaries) to MainCRAJSON, but first parseDDEAS to accumulate amount of same craType 
-			mainCRAJSON.put("DDEAS", parseDDEAS(ddeas));
-		}
-		
-		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-		// 											FINIQUITOS
-		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-		
-		//GET Settlements SALARY from DB (employees) use ISSUE_DATE cause settlement can have OLD startDate...
-		salaryRecords = dslContext.select().from(SALARY)
-				.where(SALARY.CCC.eq(ccc))
-					.and(SALARY.ISSUE_DATE.between(startDateSQL, endDateSQL)
-							.or(SALARY.END_DATE.between(startDateSQL, endDateSQL)))
-					.and(SALARY.TYPE.eq((byte)2))
-					.and(SALARY.SS_REGIME.notEqual((byte)3))
-				.fetch();
-		
-		if(!salaryRecords.isEmpty()){
-			
-			// Prepare FINIQ
-			JSONObject finiq = new JSONObject();
-			
-			finiq.put("cccRegime", parseSS_Regime(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE)));
-			finiq.put("ccc", ccc);
-			finiq.put("year", startDate.get(Calendar.YEAR));
-			finiq.put("month", startDate.get(Calendar.MONTH));
-			
-			// Prepare TRBSF
-			JSONArray trbsf = new JSONArray();
-			
-			for(Record salary: salaryRecords) {
-				
-				// Get salaryId
-				Integer salaryId = salary.get(SALARY.ID);
-				
-				// Get salaryDatas of Settelment salary
-				Result<Record> salaryDatas = dslContext.select().from(SALARY_DATA)
-						.where(SALARY_DATA.SALARY.eq(salaryId))
-						.and(SALARY_DATA.NAME.eq("BASE_CGC"))
-						.and(SALARY_DATA.START_DATE.between(startDateSQL, endDateSQL))
-						.fetch();
-				
-				// Prepare TRBF
-				JSONObject trbf = new JSONObject();
-				
-				trbf.put("numAfilicion", salary.get(SALARY.SOCIAL_SECURITY_NUMBER));
-				
-				// Prepare CRES
-				JSONArray cres = new JSONArray();
-				
-				for(Record salatyData: salaryDatas){
 					
-					// Get CRA amount
-					Double craAmount = Double.parseDouble(salatyData.get(SALARY_DATA.EXPRESSION));
+					Result<Record> salaryPayments = dslContext.select().from(SALARY_PAYMENT)
+							.where(SALARY_PAYMENT.SALARY.eq(salaryId))
+							.and(SALARY_PAYMENT.TYPE.ne((byte)6))
+							.fetch();
 					
-					if(craAmount > 0){
-						
+					for(Record salaryPayment : salaryPayments) {
 						// Get typeCRA ¿always 6?
-						PaymentType typeCRA = PaymentType.values()[6];
+						PaymentType typeCRA = PaymentType.values()[salaryPayment.get(SALARY_PAYMENT.TYPE)];
 						
 						// Try to add Cre to Cres
-						addCreToCres(craAmount, typeCRA, cres);
-						
+						addCreToCres(salaryPayment.get(SALARY_PAYMENT.AMOUNT), typeCRA, cres);
 					}
-				}
-				
-				Result<Record> salaryPayments = dslContext.select().from(SALARY_PAYMENT)
-						.where(SALARY_PAYMENT.SALARY.eq(salaryId))
-						.and(SALARY_PAYMENT.TYPE.ne((byte)6))
-						.fetch();
-				
-				for(Record salaryPayment : salaryPayments) {
-					// Get typeCRA ¿always 6?
-					PaymentType typeCRA = PaymentType.values()[salaryPayment.get(SALARY_PAYMENT.TYPE)];
 					
-					// Try to add Cre to Cres
-					addCreToCres(salaryPayment.get(SALARY_PAYMENT.AMOUNT), typeCRA, cres);
+					// Add CRES to TRBF
+					trbf.put("CRES", cres);
+					
+					// Add TRBF to TRBSF
+					trbsf.add(trbf);
+					
 				}
 				
-				// Add CRES to TRBF
-				trbf.put("CRES", cres);
+				// Add TRBSF to FINIQ
+				finiq.put("TRBS", trbsf);
 				
-				// Add TRBF to TRBSF
-				trbsf.add(trbf);
-				
+				// Adding FINIQ (Settelment salaries) to MainCRAJSON  
+				ccci.put("FINIQ", finiq);
 			}
 			
-			// Add TRBSF to FINIQ
-			finiq.put("TRBS", trbsf);
+			// Adding ERRORS to MainCRAJSON  
+			ccci.put("ERRS", errors);
 			
-			// Adding FINIQ (Settelment salaries) to MainCRAJSON  
-			mainCRAJSON.put("FINIQ", finiq);
+			jsonCCCs.add(ccci);
 		}
 		
-		// Adding ERRORS to MainCRAJSON  
-		mainCRAJSON.put("ERRS", errors);
+		mainCRAJSON.put("CCCs", jsonCCCs);
 		
 		System.out.println(mainCRAJSON);
 		
@@ -485,15 +521,15 @@ public class Cra {
 		// Prepare aunthKey
 		String authKey = "";
 		
-		Record domainRecord = dslContext.select().from(DOMAIN)
+		Result<Record> domainRecords = dslContext.select().from(DOMAIN)
 				.where(DOMAIN.ID.in(
 						dslContext.select(ENTERPRISE_CCC.DOMAIN).from(ENTERPRISE_CCC)
 							.where(ENTERPRISE_CCC.CCC.eq(ccc))
 				))
-				.fetchOne();
+				.fetch();
 		
-		Integer parentDomainId = domainRecord.get(DOMAIN.PARENT);
-		Integer domainId = domainRecord.get(DOMAIN.ID);
+		Integer parentDomainId = domainRecords.get(0).get(DOMAIN.PARENT);
+		Integer domainId = domainRecords.get(0).get(DOMAIN.ID);
 		
 		Record appParamRecord = dslContext.select().from(APP_PARAM)
 				.where(APP_PARAM.NAME.eq("PAY_authorization_key_PAY"))
@@ -662,7 +698,21 @@ public class Cra {
 	
 	private static String parseSS_Regime(Byte ss_regime) {
 		switch (ss_regime) {
+		case 0:
+			return "0111";
+		case 1:
+			return "0111";
+		case 2:
+			return "0111";
 		case 3:
+			return "0111";
+		case 4:
+			return "0111";
+		case 5:
+			return "0111";
+		case 6:
+			return "0138";
+		case 7:
 			return "0163";
 		default:
 			return "0111";

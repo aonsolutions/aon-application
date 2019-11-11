@@ -98,7 +98,21 @@ public class JooqCRA {
 
 	private static String getCCCType(Byte cccType) {
 		switch (cccType) {
+		case 0:
+			return "0111";
+		case 1:
+			return "0111";
+		case 2:
+			return "0111";
 		case 3:
+			return "0111";
+		case 4:
+			return "0111";
+		case 5:
+			return "0111";
+		case 6:
+			return "0138";
+		case 7:
 			return "0163";
 		default:
 			return "0111";
@@ -107,10 +121,24 @@ public class JooqCRA {
 	
 	private static String getCCCTypeName(Byte cccType) {
 		switch (cccType) {
+		case 0:
+			return "Principal";
+		case 1:
+			return "Formacion y aprendizaje";
+		case 2:
+			return "Aprendizaje";
 		case 3:
-			return "Agraria";
+			return "Representantes de comercio";
+		case 4:
+			return "Asimilados R.General";
+		case 5:
+			return "Becarios";
+		case 6:
+			return "Emploead@s de hogar";
+		case 7:
+			return "Trabajadores cuenta ajena agrarios";
 		default:
-			return "Pricipal";
+			return "Principal";
 		}
 	}
 

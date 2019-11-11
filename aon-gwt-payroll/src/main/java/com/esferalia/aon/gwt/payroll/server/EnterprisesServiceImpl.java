@@ -1740,12 +1740,12 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public String createNewCRA(String domainName, long findingDate, String ccc, Integer cccId, String craType) {
+	public String createNewCRA(String domainName, long findingDate, List<String> cccList, Integer cccId, String craType) {
 		Connection connection = null;
 		try {
 			connection = AonServletUtils.getConnection(domainName);
 			
-			JSONObject mainCRAJSON = Cra.getMainCRAByCRA(ccc, findingDate, connection);
+			JSONObject mainCRAJSON = Cra.getMainCRAByCRA(cccList, findingDate, connection);
 			String agrarianAFI = MainCRAGenerator.generateMainCRA(mainCRAJSON);
 			
 			return JooqCRA.setMainCra(domainName, cccId.toString(), agrarianAFI, findingDate, craType, connection);
