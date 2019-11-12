@@ -42,7 +42,7 @@ import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 @WebServlet(name = "NotificationGwtServlet2", urlPatterns = { "/notification/*",
-															  "/aon_gwt_aio/notification/*"})
+															  "/aon_gwt_aio/ms/notification/*"})
 public class NotificationServlet extends HttpServlet{
 	
 	private static final Logger LOGGER  = Logger.getLogger(NotificationServlet.class.getName());

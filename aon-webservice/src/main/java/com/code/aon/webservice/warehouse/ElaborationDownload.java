@@ -58,7 +58,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.DottedLineSeparator;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 
-@WebServlet(name = "elaborationProjection", urlPatterns = { "/aon_gwt_aio/download_elaboration/*" })
+@WebServlet(name = "elaborationProjection", urlPatterns = { "/aon_gwt_aio/ms/download_elaboration/*" })
 public class ElaborationDownload extends HttpServlet {
 
 	/**

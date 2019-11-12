@@ -28,15 +28,15 @@ public class Communication extends Methods{
 	
 	public void getSummary(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsSummary>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "communication/"+getDomainName()+"/"+getUserName()+"/summary"+filter, callback);
+		get(getUrl() + "ms/communication/"+getDomainName()+"/"+getUserName()+"/summary"+filter, callback);
 	}
 	
 	public void getHistory(AsyncCallback<JSON<JsDataResponse>> callback){
-		get(getUrl() + "communication/"+getDomainName()+"/"+getUserName()+"/history", callback);
+		get(getUrl() + "ms/communication/"+getDomainName()+"/"+getUserName()+"/history", callback);
 	}
 	
 	public void getHistoryDetail(Integer id, AsyncCallback<JSON<JsObject>> callback){
-		get(getUrl() + "communication/"+getDomainName()+"/"+getUserName()+"/history_detail?id="+id, callback);
+		get(getUrl() + "ms/communication/"+getDomainName()+"/"+getUserName()+"/history_detail?id="+id, callback);
 	}
 	
 	
@@ -47,42 +47,42 @@ public class Communication extends Methods{
 
 	public void getOutcomeDelivery(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsCommunicationInfo>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "communication/"+getDomainName()+"/"+getUserName()+"/seres/outcome_delivery"+filter, callback);
+		get(getUrl() + "ms/communication/"+getDomainName()+"/"+getUserName()+"/seres/outcome_delivery"+filter, callback);
 	}
 
 	public void getOutcomeInvoice(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsCommunicationInfo>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "communication/"+getDomainName()+"/"+getUserName()+"/seres/outcome_invoice"+filter, callback);
+		get(getUrl() + "ms/communication/"+getDomainName()+"/"+getUserName()+"/seres/outcome_invoice"+filter, callback);
 	}
 
 	public void getIncomeSales(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsCommunicationInfo>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "communication/"+getDomainName()+"/"+getUserName()+"/seres/income_sales"+filter, callback);
+		get(getUrl() + "ms/communication/"+getDomainName()+"/"+getUserName()+"/seres/income_sales"+filter, callback);
 	}
 
 	public void getIncomeInvoice(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsCommunicationInfo>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "communication/"+getDomainName()+"/"+getUserName()+"/seres/income_invoice"+filter, callback);
+		get(getUrl() + "ms/communication/"+getDomainName()+"/"+getUserName()+"/seres/income_invoice"+filter, callback);
 	}
 	
 	public void sendInvoices(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsObject>> callback){
 		String str = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "communication/"+getDomainName()+"/"+getUserName()+"/seres/ftp/outcome_invoice" + str, callback);
+		get(getUrl() + "ms/communication/"+getDomainName()+"/"+getUserName()+"/seres/ftp/outcome_invoice" + str, callback);
 	}
 	
 	public void sendDeliveries(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsObject>> callback){
 		String str = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "communication/"+getDomainName()+"/"+getUserName()+"/seres/ftp/outcome_delivery" + str, callback);
+		get(getUrl() + "ms/communication/"+getDomainName()+"/"+getUserName()+"/seres/ftp/outcome_delivery" + str, callback);
 	}
 	
 	public void retrieveInvoices(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsObject>> callback){
 		String str = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "communication/"+getDomainName()+"/"+getUserName()+"/seres/ftp/income_invoice" + str, callback);
+		get(getUrl() + "ms/communication/"+getDomainName()+"/"+getUserName()+"/seres/ftp/income_invoice" + str, callback);
 	}
 	
 	public void retrieveSales(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsObject>> callback){
 		String str = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "communication/"+getDomainName()+"/"+getUserName()+"/seres/ftp/income_sales" + str, callback);
+		get(getUrl() + "ms/communication/"+getDomainName()+"/"+getUserName()+"/seres/ftp/income_sales" + str, callback);
 	}
 	
 	/*
@@ -91,24 +91,21 @@ public class Communication extends Methods{
 	 */
 	public void getIngenetDelivery(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsAttachFile>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "communication/"+getDomainName()+"/"+getUserName()+"/ingenet/delivery"+filter, callback);
+		get(getUrl() + "ms/communication/"+getDomainName()+"/"+getUserName()+"/ingenet/delivery"+filter, callback);
 	}
 	
 	public void getIngenetSales(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsCommunicationInfo>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "communication/"+getDomainName()+"/"+getUserName()+"/ingenet/sales"+filter, callback);
+		get(getUrl() + "ms/communication/"+getDomainName()+"/"+getUserName()+"/ingenet/sales"+filter, callback);
 	}
 	
 	public void reopenIngenetSales(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsObject>> callback){
 		String str = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		post(getUrl() + "communication/"+getDomainName()+"/"+getUserName()+"/ingenet/sales/reopen"+str, str, callback);
+		post(getUrl() + "ms/communication/"+getDomainName()+"/"+getUserName()+"/ingenet/sales/reopen"+str, str, callback);
 	}
 	
 	public void processIngenetAttach(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsObject>> callback){
 		String str = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
 		get(getUrl() + "ingenet_attach/"+getDomainName()+"/"+getUserName()+"/delivery" + str, callback);
 	}
-	
-	
-	
 }

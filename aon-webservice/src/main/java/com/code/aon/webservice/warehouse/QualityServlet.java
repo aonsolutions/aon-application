@@ -36,7 +36,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "QualityServlet", urlPatterns = {"/quality/*",
-												   "/aon_gwt_aio/quality/*"})
+												   "/aon_gwt_aio/ms/quality/*"})
 public class QualityServlet extends HttpServlet{
 	
 	private static final Logger LOGGER  = Logger.getLogger(CommonServlet.class.getName());

@@ -33,7 +33,7 @@ import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
-@WebServlet(name = "packinglistProjection", urlPatterns = {"/aon_gwt_aio/download_packing_list/*"})
+@WebServlet(name = "packinglistProjection", urlPatterns = {"/aon_gwt_aio/ms/download_packing_list/*"})
 public class PackingListDownload extends HttpServlet{
 	
 	/**

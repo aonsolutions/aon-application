@@ -21,7 +21,7 @@ import com.esferalia.aon.occam.api.model.type.AppParam;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "DepositServletWebservice", urlPatterns = { "/deposit/*",
-													 "/aon_gwt_aio/deposit/*"})
+													 "/aon_gwt_aio/ms/deposit/*"})
 public class DepositServlet extends HttpServlet{
 		
 	private static final Logger LOGGER  = Logger.getLogger(DepositServlet.class.getName());

@@ -49,7 +49,7 @@ import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "CommunicationServlet", urlPatterns = { "/communication/*", "/aon_gwt_aio/communication/*" })
+@WebServlet(name = "CommunicationServlet", urlPatterns = { "/communication/*", "/aon_gwt_aio/ms/communication/*" })
 public class CommunicationServlet extends HttpServlet {
 
 	private static final Logger LOGGER = Logger.getLogger(CommunicationServlet.class.getName());

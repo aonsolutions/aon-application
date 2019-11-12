@@ -22,18 +22,18 @@ public class Registry extends Methods{
 	}
 	
 	public void getCustomers(AsyncCallback<JSON<JsObject>> callback){
-		get(getUrl() + "registry/"+getDomainName()+"/"+getUserName()+"/customer/", callback);
+		get(getUrl() + "ms/registry/"+getDomainName()+"/"+getUserName()+"/customer/", callback);
 	}
 	
 	public void getSuppliers(AsyncCallback<JSON<JsObject>> callback){
-		get(getUrl() + "registry/"+getDomainName()+"/"+getUserName()+"/supplier/", callback);
+		get(getUrl() + "ms/registry/"+getDomainName()+"/"+getUserName()+"/supplier/", callback);
 	}
 	
 	public void getSellers(AsyncCallback<JSON<JsObject>> callback){
-		get(getUrl() + "registry/"+getDomainName()+"/"+getUserName()+"/seller/", callback);
+		get(getUrl() + "ms/registry/"+getDomainName()+"/"+getUserName()+"/seller/", callback);
 	}
 	
 	public void getTargets(AsyncCallback<JSON<JsObject>> callback){
-		get(getUrl() + "registry/"+getDomainName()+"/"+getUserName()+"/seller/", callback);
+		get(getUrl() + "ms/registry/"+getDomainName()+"/"+getUserName()+"/seller/", callback);
 	}
 }

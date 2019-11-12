@@ -63,7 +63,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "WarehouseServlet", urlPatterns = { "/warehouse/*",
-													 "/aon_gwt_aio/warehouse/*"})
+													 "/aon_gwt_aio/ms/warehouse/*"})
 public class WarehouseServlet extends HttpServlet{
 
 	private static final Logger LOGGER  = Logger.getLogger(WarehouseServlet.class.getName());

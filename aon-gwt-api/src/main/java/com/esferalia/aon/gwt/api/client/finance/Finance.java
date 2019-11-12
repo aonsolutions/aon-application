@@ -27,12 +27,12 @@ public class Finance extends Methods{
 	}
 	
 	public void getBillingPeriods( AsyncCallback<JSON<JsObject>> callback){
-		get(getUrl() + "finance/" + getDomainName()+ "/" + getUserName() + "/billing_period/", callback);
+		get(getUrl() + "ms/finance/" + getDomainName()+ "/" + getUserName() + "/billing_period/", callback);
 	}
 	
 	public void getStatDataFeeProjection(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsStatData>> callback){
 		String str = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "stat/" + getDomainName() + "/" +getUserName() + "/fee" + str, callback);
+		get(getUrl() + "ms/stat/" + getDomainName() + "/" +getUserName() + "/fee" + str, callback);
 	}
 	
 	public void downloadExcelFeeProjection(HashMap<String, LinkedList<String>> filterMap){
@@ -41,7 +41,7 @@ public class Finance extends Methods{
 			
 			@Override
 			public void onSuccess(String result) {
-				Window.open(getUrl() + "download_fee_projection/" + result, "_blank", null);
+				Window.open(getUrl() + "ms/download_fee_projection/" + result, "_blank", null);
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -54,7 +54,7 @@ public class Finance extends Methods{
 			
 			@Override
 			public void onSuccess(String result) {
-				Window.open(getUrl() + "download_fee_projection/" + result, "_blank", null);
+				Window.open(getUrl() + "ms/download_fee_projection/" + result, "_blank", null);
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -63,12 +63,12 @@ public class Finance extends Methods{
 	
 	public void getInvoices(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsInvoice>> callback){	
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "finance/" + getDomainName() + "/" + getUserName() + "/invoice" + filter, callback);
+		get(getUrl() + "ms/finance/" + getDomainName() + "/" + getUserName() + "/invoice" + filter, callback);
 	}
 	
 	public void getInvoiceMovements(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsInvoiceDetail>> callback){	
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "finance/" + getDomainName() + "/" + getUserName() + "/invoice/movements" + filter, callback);
+		get(getUrl() + "ms/finance/" + getDomainName() + "/" + getUserName() + "/invoice/movements" + filter, callback);
 	}
 	
 	
@@ -88,10 +88,10 @@ public class Finance extends Methods{
 	// ---------- SERIES
 	
 	public void getInvoiceSeries(AsyncCallback<JSON<JsObject>> callback){	
-		get(getUrl() + "series/" + getDomainName() + "/" + getUserName() + "/invoice", callback);
+		get(getUrl() + "ms/series/" + getDomainName() + "/" + getUserName() + "/invoice", callback);
 	}
 	
 	public void getOfferSeries(AsyncCallback<JSON<JsObject>> callback){	
-		get(getUrl() + "series/" + getDomainName() + "/" + getUserName() + "/offer", callback);
+		get(getUrl() + "ms/series/" + getDomainName() + "/" + getUserName() + "/offer", callback);
 	}
 }

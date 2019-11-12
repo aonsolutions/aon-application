@@ -28,7 +28,7 @@ public class Expedient extends Methods{
 			
 			@Override
 			public void onSuccess(String result) {
-				Window.open(getUrl() + "print_resume_expedient/" + result, "_blank", null);
+				Window.open(getUrl() + "ms/print_resume_expedient/" + result, "_blank", null);
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -41,7 +41,7 @@ public class Expedient extends Methods{
 			
 			@Override
 			public void onSuccess(String result) {
-				Window.open(getUrl() + "print_full_expedient/" + result, "_blank", null);
+				Window.open(getUrl() + "ms/print_full_expedient/" + result, "_blank", null);
 			}
 			
 			@Override public void onFailure(Throwable caught) {}

@@ -26,8 +26,8 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "RegistryServlet", urlPatterns = { "/registry/*",
-													  "/aon_gwt_aio/registry/*",
-													  "/aon_gwt_commercial/registry/*"})
+													  "/aon_gwt_aio/ms/registry/*",
+													  "/aon_gwt_commercial/ms/registry/*"})
 public class RegistryServlet extends HttpServlet{
 			
 	@Override

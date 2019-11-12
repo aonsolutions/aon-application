@@ -34,7 +34,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.StatDAO;
 import com.esferalia.aon.watson.AonMonth;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
-@WebServlet(name = "DownloadFeeProjection", urlPatterns = {"/aon_gwt_aio/download_fee_projection/*",
+@WebServlet(name = "DownloadFeeProjection", urlPatterns = {"/aon_gwt_aio/ms/download_fee_projection/*",
 																"/download_fee_projection/*"})
 public class FeeProjectionDownload extends HttpServlet{
 	

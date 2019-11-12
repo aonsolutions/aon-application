@@ -30,7 +30,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "StatServlet", urlPatterns = { "/stat/*",
-												  "/aon_gwt_aio/stat/*"})
+												  "/aon_gwt_aio/ms/stat/*"})
 public class StatServlet extends HttpServlet{
 	private static final Logger LOGGER  = Logger.getLogger(StatServlet.class.getName());
 

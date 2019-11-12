@@ -20,7 +20,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "ProjectServlet", urlPatterns = { "/project/*",
-													 "/aon_gwt_aio/project/*"})
+													 "/aon_gwt_aio/ms/project/*"})
 public class ProjectServlet extends HttpServlet{
 			
 	@Override

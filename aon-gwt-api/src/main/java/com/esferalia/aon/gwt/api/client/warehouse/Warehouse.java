@@ -22,138 +22,138 @@ public class Warehouse extends Methods{
 	
 	public void getCarrierPacking(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsCarrierPacking>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/carrier_packing" + filter, callback);
+		get(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/carrier_packing" + filter, callback);
 	}
 	
 	public void getCarrierPackingSeries(AsyncCallback<JSON<JsObject>> callback){
-		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/carrier_packing/series", callback);
+		get(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/carrier_packing/series", callback);
 	}
 	
 	public void getCarrierPackingTypes(AsyncCallback<JSON<JsObject>> callback){
-		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/carrier_packing/type", callback);
+		get(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/carrier_packing/type", callback);
 	}
 	
 	public void getCarrierPackingStatuses(AsyncCallback<JSON<JsObject>> callback){
-		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/carrier_packing/status", callback);
+		get(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/carrier_packing/status", callback);
 	}
 	
 	public void getCarrierPackingCarriers(AsyncCallback<JSON<JsObject>> callback){
-		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/carrier_packing/carrier", callback);
+		get(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/carrier_packing/carrier", callback);
 	}
 	
 	public void insertCarrierPacking(String requestData, AsyncCallback<JsCarrierPacking> callback) {
-		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/carrier_packing", requestData, callback);
+		post(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/carrier_packing", requestData, callback);
 	}
 	
 	public void updateCarrierPacking(Integer id, String requestData, AsyncCallback<JsCarrierPacking> callback) {
-		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/carrier_packing/update/" + id, requestData, callback);
+		post(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/carrier_packing/update/" + id, requestData, callback);
 	}
 	
 	public void updateReceptionQuantity(String requestData, AsyncCallback<JsObject> callback) {
-		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/update_reception_quantity", requestData, callback);
+		post(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/update_reception_quantity", requestData, callback);
 	}
 	
 	public void updateReceptionDetailQuantity(String requestData, AsyncCallback<JsObject> callback) {
-		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/update_reception_detail_quantity", requestData, callback);
+		post(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/update_reception_detail_quantity", requestData, callback);
 	}
 	
 	public void deleteCarrierPacking(Integer id) {
-		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/carrier_packing/delete/" + id, "{}");
+		post(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/carrier_packing/delete/" + id, "{}");
 	}
 	
 	public void deleteCarrierPacking(Integer id,AsyncCallback<JSON<JsObject>> callback) {
-		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/carrier_packing/delete/" + id, "{}", callback);
+		post(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/carrier_packing/delete/" + id, "{}", callback);
 	}
 	
 	public void getOrders(String order, HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsOrder>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() +"/" + order + filter, callback);
+		get(getUrl() + "ms/warehouse/" + getDomainName() + "/" + getUserName() +"/" + order + filter, callback);
 	}
 	
 	public void deleteOrder(String orderType, String requestData, AsyncCallback<JsOrder> callback){
-		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/"+ orderType +"/delete", requestData, callback);
+		post(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/"+ orderType +"/delete", requestData, callback);
 	}
 	
 	public void getPurchases(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsOrder>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() +"/purchase" + filter, callback);
+		get(getUrl() + "ms/warehouse/" + getDomainName() + "/" + getUserName() +"/purchase" + filter, callback);
 	}
 	
 	public void getPurchase(Integer id, AsyncCallback<JSON<JsOrder>> callback){
-		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() +"/purchase/"+id , callback);
+		get(getUrl() + "ms/warehouse/" + getDomainName() + "/" + getUserName() +"/purchase/"+id , callback);
 	}
 	
 	public void getPurchaseDetails(Integer id, AsyncCallback<JSON<JsOrderDetail>> callback){
-		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() +"/purchase/"+id + "/detail" , callback);
+		get(getUrl() + "ms/warehouse/" + getDomainName() + "/" + getUserName() +"/purchase/"+id + "/detail" , callback);
 	}
 	
 	public void updatePurchase(Integer id, String requestData, AsyncCallback<JsOrder> callback){
-		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/purchase/update/" + id, requestData, callback);
+		post(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/purchase/update/" + id, requestData, callback);
 	}
 	
 	public void insertDetail(String orderType, String requestData, AsyncCallback<JsOrderDetail> callback) {
-		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/"+ orderType +"/detail", requestData, callback);
+		post(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/"+ orderType +"/detail", requestData, callback);
 	}
 	
 	public void updateDetail(String orderType, String requestData, AsyncCallback<JsOrder> callback){
-		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/"+ orderType +"/detail/update", requestData, callback);
+		post(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/"+ orderType +"/detail/update", requestData, callback);
 	}
 	
 	public void deleteDetail(String orderType, String requestData, AsyncCallback<JsOrder> callback){
-		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/"+ orderType +"/detail/delete", requestData, callback);
+		post(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/"+ orderType +"/detail/delete", requestData, callback);
 	}
 	
 	public void getDeliveries(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsOrder>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() +"/delivery" + filter, callback);
+		get(getUrl() + "ms/warehouse/" + getDomainName() + "/" + getUserName() +"/delivery" + filter, callback);
 	}
 	
 	public void getDelivery(Integer id, AsyncCallback<JSON<JsOrder>> callback){
-		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() +"/delivery/"+id , callback);
+		get(getUrl() + "ms/warehouse/" + getDomainName() + "/" + getUserName() +"/delivery/"+id , callback);
 	}
 	
 	public void getDeliveryDetails(Integer id, AsyncCallback<JSON<JsOrderDetail>> callback){
-		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() +"/delivery/"+id + "/detail" , callback);
+		get(getUrl() + "ms/warehouse/" + getDomainName() + "/" + getUserName() +"/delivery/"+id + "/detail" , callback);
 	}
 	
 	public void getDeliveryMovements(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsDeliveryDetail>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() +"/delivery/movements" + filter, callback);
+		get(getUrl() + "ms/warehouse/" + getDomainName() + "/" + getUserName() +"/delivery/movements" + filter, callback);
 	}
 	
 	public void updateDelivery(Integer id, String requestData, AsyncCallback<JsOrder> callback){
-		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/delivery/update/" + id, requestData, callback);
+		post(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/delivery/update/" + id, requestData, callback);
 	}
 	
 	public void updateDelivery(Integer id, String requestData){
-		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/delivery/update/" + id, requestData);
+		post(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/delivery/update/" + id, requestData);
 	}
 	
 	public void getIncomes(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsOrder>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() +"/income" + filter, callback);
+		get(getUrl() + "ms/warehouse/" + getDomainName() + "/" + getUserName() +"/income" + filter, callback);
 	}
 	
 	public void getIncomeMovements(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsIncomeDetail>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() +"/income/movements" + filter, callback);
+		get(getUrl() + "ms/warehouse/" + getDomainName() + "/" + getUserName() +"/income/movements" + filter, callback);
 	}
 
 	public void getDetails(Integer id, String orderType, AsyncCallback<JSON<JsOrderDetail>> callback){
-		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() + "/" + orderType + "/" +id + "/detail" , callback);
+		get(getUrl() + "ms/warehouse/" + getDomainName() + "/" + getUserName() + "/" + orderType + "/" +id + "/detail" , callback);
 	}
 	
 	public void getDetails(String orderType, HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsOrderDetail>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() + "/" + orderType + "/detail" + filter , callback);
+		get(getUrl() + "ms/warehouse/" + getDomainName() + "/" + getUserName() + "/" + orderType + "/detail" + filter , callback);
 	}
 	
 	public void addCarrierPacking(String orderType, String requestData, AsyncCallback<JSON<JsOrderDetail>> callback){
-		post(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() + "/" + orderType + "/carrier_packing" , requestData, callback);
+		post(getUrl() + "ms/warehouse/" + getDomainName() + "/" + getUserName() + "/" + orderType + "/carrier_packing" , requestData, callback);
 	}
 	
 	public void addAllCarrierPacking(String orderType, String requestData, AsyncCallback<JSON<JsOrderDetail>> callback){
-		post(getUrl() + "warehouse/" + getDomainName() + "/" + getUserName() + "/" + orderType + "/all_carrier_packing" , requestData, callback);
+		post(getUrl() + "ms/warehouse/" + getDomainName() + "/" + getUserName() + "/" + orderType + "/all_carrier_packing" , requestData, callback);
 	}
 	
 	public void downloadPackingList(Integer id){
@@ -162,7 +162,7 @@ public class Warehouse extends Methods{
 			
 			@Override
 			public void onSuccess(String result) {
-				Window.open(getUrl() + "download_packing_list/" + result, "_blank", null);
+				Window.open(getUrl() + "ms/download_packing_list/" + result, "_blank", null);
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -243,7 +243,7 @@ public class Warehouse extends Methods{
 	}
 	
 	public void sendPackingList(String requestData){
-		post(getUrl() + "packing_list_notification/" + getDomainName() + "/" + getUserName()  , requestData);
+		post(getUrl() + "ms/packing_list_notification/" + getDomainName() + "/" + getUserName()  , requestData);
 	}
 	
 	/*
@@ -251,56 +251,56 @@ public class Warehouse extends Methods{
 	 */
 	public void getElaborationList(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsElaboration>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration" + filter, callback);
+		get(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration" + filter, callback);
 	}
 	public void getElaboration(Integer id, AsyncCallback<JSON<JsElaboration>> callback){
-		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/" + id, callback);
+		get(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/" + id, callback);
 	}
 	public void getElaborationSeries(AsyncCallback<JSON<JsObject>> callback){
-		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/series", callback);
+		get(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/series", callback);
 	}
 	public void getElaborationStatuses(AsyncCallback<JSON<JsObject>> callback){
-		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/status", callback);
+		get(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/status", callback);
 	}
 	public void getElaborationDetail(Integer id, AsyncCallback<JSON<JsElaborationDetail>> callback){
-		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail/" + id, callback);
+		get(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail/" + id, callback);
 	}
 	public void getElaborationDetail(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsElaborationDetail>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail" + filter, callback);
+		get(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail" + filter, callback);
 	}
 	public void getElaborationDetailComposition(Integer id, AsyncCallback<JSON<JsElaborationDetailComposition>> callback){
-		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail_composition/" + id, callback);
+		get(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail_composition/" + id, callback);
 	}
 	public void createElaboration(AsyncCallback<JSON<JsElaboration>> callback) {
-		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/create", callback);
+		get(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/create", callback);
 	}
 	
 	public void insertElaboration(String requestData, AsyncCallback<JsElaboration> callback) {
-		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration", requestData, callback);
+		post(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration", requestData, callback);
 	}
 	public void insertElaborationDetail(String requestData, AsyncCallback<JsElaborationDetail> callback) {
-		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail", requestData, callback);
+		post(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail", requestData, callback);
 	}
 	public void insertElaborationDetailComposition(String requestData, AsyncCallback<JsElaborationDetailComposition> callback) {
-		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail_composition", requestData, callback);
+		post(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail_composition", requestData, callback);
 	}
 	
 	public void updateElaboration(Integer id, String requestData, AsyncCallback<JsElaboration> callback) {
-		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/update/"+id, requestData, callback);
+		post(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/update/"+id, requestData, callback);
 	}
 	public void updateElaborationDetail(Integer id, String requestData, AsyncCallback<JsElaborationDetail> callback) {
-		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail/update/"+id, requestData, callback);
+		post(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail/update/"+id, requestData, callback);
 	}
 	
 	public void deleteElaboration(Integer id, String requestData, AsyncCallback<JsElaboration> callback) {
-		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/delete/"+id, requestData, callback);
+		post(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/delete/"+id, requestData, callback);
 	}
 	public void deleteElaborationDetail(Integer id, String requestData, AsyncCallback<JsElaborationDetail> callback) {
-		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail/delete/"+id, requestData, callback);
+		post(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail/delete/"+id, requestData, callback);
 	}
 	public void deleteElaborationDetailComposition(Integer id, String requestData, AsyncCallback<JsElaborationDetailComposition> callback) {
-		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail_composition/delete/"+id, requestData, callback);
+		post(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/elaboration/detail_composition/delete/"+id, requestData, callback);
 	}
 	
 	public void downloadElaboration(Integer id){
@@ -309,7 +309,7 @@ public class Warehouse extends Methods{
 			
 			@Override
 			public void onSuccess(String result) {
-				Window.open(getUrl() + "download_elaboration/" + result, "_blank", null);
+				Window.open(getUrl() + "ms/download_elaboration/" + result, "_blank", null);
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -319,7 +319,7 @@ public class Warehouse extends Methods{
 	/* STOCK FORECAST */
 	public void getStockForecast(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsStockStat>> callback) {
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/stock_forecast" + filter, callback);
+		get(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/stock_forecast" + filter, callback);
 	}
 	public void downloadStockForecast(HashMap<String, LinkedList<String>> filterMap){
 		String filter = filterMap.size() > 0 ? getFilter(filterMap) : "";
@@ -328,7 +328,7 @@ public class Warehouse extends Methods{
 			
 			@Override
 			public void onSuccess(String result) {
-				Window.open(getUrl() + "download_stockForecast/" + result, "_blank", null);
+				Window.open(getUrl() + "ms/download_stockForecast/" + result, "_blank", null);
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -337,50 +337,50 @@ public class Warehouse extends Methods{
 	/* MOVEMENTS LISTSTOCK FORECAST */
 	public void getProductMovements(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsStockStat>> callback) {
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/movements/product" + filter, callback);
+		get(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/movements/product" + filter, callback);
 	}
 	public void getItemMovements(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsStockStat>> callback) {
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/movements/item" + filter, callback);
+		get(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/movements/item" + filter, callback);
 	}
 	public void getElaborationMovements(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsStockStat>> callback) {
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/movements/elaboration" + filter, callback);
+		get(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/movements/elaboration" + filter, callback);
 	}
 	
 	/* WAREHOUSE */
 	public void getWarehouseList(AsyncCallback<JSON<JsObject>> callback){ 
 		// Se usa en elaboration cambia la clase JavaScript, por lo mas es igual a getWarehouses(callback)!
-		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/warehouse", callback);
+		get(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/warehouse", callback);
 	}
 	
 	public void getWarehouses(AsyncCallback<JSON<JsWarehouse>> callback) {
-		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/warehouse", callback);
+		get(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/warehouse", callback);
 	}
 	
 	public void getWarehouse(Integer id, AsyncCallback<JSON<JsWarehouse>> callback) {
-		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/warehouse/" + id, callback);
+		get(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/warehouse/" + id, callback);
 	}
 	
 	public void getWarehouseTransferDetail(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsWarehouseTransferDetail>> callback) {
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/transfer/detail" + filter, callback);
+		get(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/transfer/detail" + filter, callback);
 	}
 	
 	/* INCOME */
 	public void insertIncome(String requestData, AsyncCallback<JsOrder> callback) {
-		post(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/income", requestData, callback);
+		post(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/income", requestData, callback);
 	}
 	
 	public void getIncomeLastLote(String serie, AsyncCallback<JSON<JsObject>> callback) {
-		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/income/last_lote/"+serie, callback);
+		get(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/income/last_lote/"+serie, callback);
 	}
 
 	/* SALES */
 	public void getSales(Integer id, AsyncCallback<JSON<JsSalesDetail>> callback){
-		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/sales/"+id , callback);
+		get(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/sales/"+id , callback);
 	}
 	public void getSalesDetail(Integer id, AsyncCallback<JSON<JsSalesDetail>> callback){
-		get(getUrl() + "warehouse/"+getDomainName()+"/"+getUserName()+"/sales/detail/"+id , callback);
+		get(getUrl() + "ms/warehouse/"+getDomainName()+"/"+getUserName()+"/sales/detail/"+id , callback);
 	}
 }

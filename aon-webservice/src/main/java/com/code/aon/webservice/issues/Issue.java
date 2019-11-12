@@ -73,12 +73,12 @@ public class Issue {
 		this.id = task.getId();
 		this.parent = task.getParent();
 		this.title = Utils.getShortString(task.getDescription());
-		this.url = url + "repos/" + userName + "/" + domain.getName() + "/issues/"+task.getNumber();
-		this.repositoryUrl = url + "repos/" + userName + "/" + domain.getName();
+		this.url = url + "ms/repos/" + userName + "/" + domain.getName() + "/issues/"+task.getNumber();
+		this.repositoryUrl = url + "ms/repos/" + userName + "/" + domain.getName();
 		this.number =  task.getNumber();
-		this.labelsUrl = url + "repos/" + userName + "/" + domain.getName() + "/issues/"+task.getNumber() + "/labels";
-		this.commentsUrl = url + "repos/" + userName + "/" + domain.getName() + "/issues/"+task.getNumber() + "/comments";
-		this.eventsUrl = url + "repos/" + userName + "/" + domain.getName() + "/issues/"+task.getNumber() + "/events";
+		this.labelsUrl = url + "ms/repos/" + userName + "/" + domain.getName() + "/issues/"+task.getNumber() + "/labels";
+		this.commentsUrl = url + "ms/repos/" + userName + "/" + domain.getName() + "/issues/"+task.getNumber() + "/comments";
+		this.eventsUrl = url + "ms/repos/" + userName + "/" + domain.getName() + "/issues/"+task.getNumber() + "/events";
 		this.state = TaskStatus.values()[task.getStatus()].getGwtName();
 		this.body = task.getComments();
 		this.closedAt = task.getEndDate() != null ? AonDateUtils.dateTimeFormat(task.getEndDate()) : "";

@@ -15,8 +15,8 @@ import com.esferalia.aon.occam.api.model.Domain;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "SeriesServlet", urlPatterns = {"/series/*",
-												   "/aon_gwt_aio/series/*",
-												   "/aon_gwt_commercial/series/*"})
+												   "/aon_gwt_aio/ms/series/*",
+												   "/aon_gwt_commercial/ms/series/*"})
 public class SeriesServlet extends HttpServlet{
 		
 	private static final Logger LOGGER  = Logger.getLogger(SeriesServlet.class.getName());

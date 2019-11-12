@@ -33,7 +33,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.StatDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 
-@WebServlet(name = "stockForecastProjection", urlPatterns = { "/aon_gwt_aio/download_stockForecast/*" })
+@WebServlet(name = "stockForecastProjection", urlPatterns = { "/aon_gwt_aio/ms/download_stockForecast/*" })
 public class StockForecastDownload extends HttpServlet {
 
 	/**

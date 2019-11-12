@@ -47,7 +47,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "ReposServlet", urlPatterns = { "/repos/*" ,
-													"/aon_gwt_aio/repos/*"})
+													"/aon_gwt_aio/ms/repos/*"})
 public class ReposServlet extends HttpServlet{
 	private static final Logger LOGGER  = Logger.getLogger(ReposServlet.class.getName());
 	private static final DBConsults DB = DBConsults.getInstance();
@@ -758,7 +758,7 @@ public class ReposServlet extends HttpServlet{
 		NotificationInfo ni = NS.buildNotificationInfo(domain, login, task, NotificationType.ASSIGNEE);
 		ni.setNotifyAssignee(true);
 		LinkedList<NotificationInfo> list = NS.buildNotificationInfoList(domain, login, task, NotificationType.ASSIGNEE);
- 		String url = "http://"+domain.getName()+ "/emailFunction/"+ thName + "/" + domain.getName() + "/close/" + task.getId();
+ 		String url = "http://"+domain.getName()+ "/ms/emailFunction/"+ thName + "/" + domain.getName() + "/close/" + task.getId();
 		NS.sendNotification(domain, login, ni, list, NotificationType.ASSIGNEE, url, r.getId());
 	}
 	

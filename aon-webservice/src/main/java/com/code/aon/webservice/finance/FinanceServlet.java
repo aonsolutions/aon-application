@@ -34,7 +34,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "FinanceServlet", urlPatterns = { "/finance/*",
-													 "/aon_gwt_aio/finance/*"})
+													 "/aon_gwt_aio/ms/finance/*"})
 public class FinanceServlet extends HttpServlet{
 		
 	private static final Logger LOGGER  = Logger.getLogger(FinanceServlet.class.getName());

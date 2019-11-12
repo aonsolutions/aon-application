@@ -51,7 +51,7 @@ import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.itextpdf.text.pdf.BarcodeQRCode;
 
 @WebServlet(name = "PackingListNotification", urlPatterns = { "/packing_list_notification/*",
-															  "/aon_gwt_aio/packing_list_notification/*"})
+															  "/aon_gwt_aio/ms/packing_list_notification/*"})
 public class PackingListMailServlet extends HttpServlet{
 	private static final long serialVersionUID = 7426471939221433842L;
 

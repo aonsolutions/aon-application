@@ -15,7 +15,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 
-@WebServlet(name = "ImageServletXXX", urlPatterns = { "/aon_gwt_aio/image_servlet/*" })
+@WebServlet(name = "ImageServletXXX", urlPatterns = { "/aon_gwt_aio/ms/image_servlet/*" })
 public class ImageServlet  extends HttpServlet {
 	
 

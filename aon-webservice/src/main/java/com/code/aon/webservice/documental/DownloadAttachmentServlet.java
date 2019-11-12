@@ -26,8 +26,8 @@ import net.aonsolutions.aon.google.apis.drive.SearchFiles;
 
 
 
-@WebServlet(name = "DownloadAttachment", urlPatterns = {"/aon_gwt_aio/download_attachment/*",
-														"/aon_gwt_fiscal/download_attachment/*"})
+@WebServlet(name = "DownloadAttachment", urlPatterns = {"/aon_gwt_aio/ms/download_attachment/*",
+														"/aon_gwt_fiscal/ms/download_attachment/*"})
 public class DownloadAttachmentServlet extends HttpServlet {
 
 	/**

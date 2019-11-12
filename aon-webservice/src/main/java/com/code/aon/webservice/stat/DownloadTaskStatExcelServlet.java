@@ -297,7 +297,7 @@ public class DownloadTaskStatExcelServlet extends HttpServlet {
 			return new Label().setId(r.getId())
 					.setName(r.getName())
 					.setColor(r.getColor())
-					.setUrl(AonUrlApi.AONTEST.getUrl() + "repos/" + userName + "/" + domain.getName() + "/labels/" + r.getName());  
+					.setUrl(AonUrlApi.AONTEST.getUrl() + "ms/repos/" + userName + "/" + domain.getName() + "/labels/" + r.getName());  
 		}
 	}
 }

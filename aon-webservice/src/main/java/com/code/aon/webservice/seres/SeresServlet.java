@@ -43,7 +43,7 @@ import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "SeresServlet", urlPatterns = { "/seres/*", "/aon_gwt_aio/seres/*" })
+@WebServlet(name = "SeresServlet", urlPatterns = { "/seres/*", "/aon_gwt_aio/ms/seres/*" })
 public class SeresServlet extends HttpServlet {
 
 	private static final Logger LOGGER = Logger.getLogger(SeresServlet.class.getName());

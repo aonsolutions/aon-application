@@ -37,7 +37,7 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.User;
 
 @WebServlet(name = "DocumentalNotification", urlPatterns = { "/documental_notification/*",
-															  "/aon_gwt_aio/documental_notification/*"})
+															  "/aon_gwt_aio/ms/documental_notification/*"})
 public class DocumentalMailServlet extends HttpServlet{
 	private static final long serialVersionUID = 7426471939221433842L;
 

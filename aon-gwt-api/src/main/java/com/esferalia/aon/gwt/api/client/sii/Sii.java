@@ -25,23 +25,23 @@ public class Sii extends Methods{
 	}
 	
 	public void getSiiHistory(Integer page, Integer perPage, AsyncCallback<JSON<JsDataResponse>> callback){
-		get(getUrl() + "s11/"+getDomainName()+"/"+getUserName()+"/history?page="+ page + "&per_page=" +perPage, callback);
+		get(getUrl() + "ms/s11/"+getDomainName()+"/"+getUserName()+"/history?page="+ page + "&per_page=" +perPage, callback);
 	}
 	
 	public void getSiiInvoiceHistory(Integer invoice, AsyncCallback<JSON<JsObject>> callback){
-		get(getUrl() + "s11/"+getDomainName()+"/"+getUserName()+"/invoiceHistory?id="+ invoice, callback);
+		get(getUrl() + "ms/s11/"+getDomainName()+"/"+getUserName()+"/invoiceHistory?id="+ invoice, callback);
 	}
 	
 	public void getSiiHistoryDetail(Integer id, AsyncCallback<JSON<JsInvoice>> callback){
-		get(getUrl() + "s11/"+getDomainName()+"/"+getUserName()+"/historyDetail?id="+id, callback);
+		get(getUrl() + "ms/s11/"+getDomainName()+"/"+getUserName()+"/historyDetail?id="+id, callback);
 	}
 	
 	public void getSiiConfiguration(AsyncCallback<JSON<JsSiiConfiguration>> callback){
-		get(url + "s11/"+getDomainName()+"/"+getUserName()+"/configuration",callback);
+		get(url + "ms/s11/"+getDomainName()+"/"+getUserName()+"/configuration",callback);
 	}
 	
 	public void setSiiConfiguration(String requestData){
-		post(url + "s11/" + getDomainName() + "/" + getUserName() + "/configuration", requestData);
+		post(url + "ms/s11/" + getDomainName() + "/" + getUserName() + "/configuration", requestData);
 	}
 
 	public void downloadSiiXml(Integer id, String option){
@@ -50,7 +50,7 @@ public class Sii extends Methods{
 			
 			@Override
 			public void onSuccess(String result) {
-				Window.open(getUrl() + "download_sii_xml/" + result, "_blank", null);
+				Window.open(getUrl() + "ms/download_sii_xml/" + result, "_blank", null);
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -63,7 +63,7 @@ public class Sii extends Methods{
 			
 			@Override
 			public void onSuccess(String result) {
-				Window.open(getUrl() + "download_sii_xml/" + result, "_blank", null);
+				Window.open(getUrl() + "ms/download_sii_xml/" + result, "_blank", null);
 			}
 			
 			@Override public void onFailure(Throwable caught) {}

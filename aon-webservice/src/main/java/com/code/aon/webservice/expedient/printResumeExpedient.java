@@ -35,7 +35,7 @@ import com.esferalia.aon.occam.api.model.Properties.ProjectProperties;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "PrintResumeExpedient", urlPatterns = {"/aon_gwt_aio/print_resume_expedient/*"})
+@WebServlet(name = "PrintResumeExpedient", urlPatterns = {"/aon_gwt_aio/ms/print_resume_expedient/*"})
 public class printResumeExpedient extends HttpServlet {
 
 	private static final Logger LOGGER  = Logger.getLogger(printResumeExpedient.class.getName());

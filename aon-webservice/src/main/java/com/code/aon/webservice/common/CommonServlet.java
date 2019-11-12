@@ -21,9 +21,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.code.aon.faces.controller.IRichConstants;
-import com.code.aon.faces.controller.SelectedMenuController;
-import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.DataResponse;
@@ -38,9 +35,9 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "CommonServlet", urlPatterns = {"/common/*",
-												   "/aon_gwt_aio/common/*",
-												   "/aon_gwt_commercial/common/*",
-												   "/aon_gwt_fiscal/common/*"})
+												   "/aon_gwt_aio/ms/common/*",
+												   "/aon_gwt_commercial/ms/common/*",
+												   "/aon_gwt_fiscal/ms/common/*"})
 public class CommonServlet extends HttpServlet{
 		
 	private static final Logger LOGGER  = Logger.getLogger(CommonServlet.class.getName());
@@ -83,11 +80,6 @@ public class CommonServlet extends HttpServlet{
 				break;
 			case MSG.DATA_RESPONSE: 
 				object = getDataResponseList(domain, userName, req.getParameterMap());
-				break;
-			case "selectedMenu": 
-				SelectedMenuController smc = (SelectedMenuController) AonUtil.getRegisteredBean(IRichConstants.SELECTED_MENU_CONTROLLER_NAME);
-				smc.setLastMenuAction(null);
-				object = new JSONObject();
 				break;
 			default:
 				break;

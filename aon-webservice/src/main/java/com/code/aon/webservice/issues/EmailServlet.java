@@ -19,7 +19,7 @@ import com.esferalia.aon.occam.api.model.task.TaskStatus;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "EmailFunctionServlet", urlPatterns = { "/emailFunction/*",
-														   "/aon_gwt_aio/emailFunction/*"})
+														   "/aon_gwt_aio/ms/emailFunction/*"})
 public class EmailServlet extends HttpServlet{
 
 	private static final DBConsults DB = DBConsults.getInstance();

@@ -31,8 +31,8 @@ import com.esferalia.aon.occam.api.model.type.CategoryType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "DocumentalServlet", urlPatterns = { "/aon_gwt_aio/attachment/*",
-														"/aon_gwt_fiscal/attachment/*"})
+@WebServlet(name = "DocumentalServlet", urlPatterns = { "/aon_gwt_aio/ms/attachment/*",
+														"/aon_gwt_fiscal/ms/attachment/*"})
 public class DocumentalServlet extends HttpServlet{
 	
 	private static final Logger LOGGER  = Logger.getLogger(DocumentalServlet.class.getName());
@@ -223,7 +223,7 @@ public class DocumentalServlet extends HttpServlet{
 				.perPage(30)
 			, AttachType.DATA, false).forEach(a -> {
 				JSONObject json = ToJSON.attachToJSON(a);
-				String url = "/aon_gwt_aio/image_servlet?type=data&id="+ a.getId() +"&domain="+ domain.getName() +"&login="+ login;
+				String url = "/aon_gwt_aio/ms/image_servlet?type=data&id="+ a.getId() +"&domain="+ domain.getName() +"&login="+ login;
 				json.put("attach_type", "data");
 				json.put("url", url);
 				array.put(json);

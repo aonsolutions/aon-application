@@ -21,7 +21,7 @@ import com.esferalia.aon.occam.api.model.type.TagType;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "DeleteReposServlet", urlPatterns = { "/delete/repos/*",
-														 "/aon_gwt_aio/delete/repos/*"})
+														 "/aon_gwt_aio/ms/delete/repos/*"})
 public class DeleteReposServlet extends HttpServlet{
 
 	private static final Logger LOGGER  = Logger.getLogger(DeleteReposServlet.class.getName());

@@ -30,11 +30,11 @@ public class Fiscal extends Methods{
 	}
 	
 	public void getDepositConfiguration(AsyncCallback<JSON<JsDepositConfiguration>> callback){
-		get(url + "deposit/"+getDomainName()+"/"+getUserName()+"/configuration",callback);
+		get(url + "ms/deposit/"+getDomainName()+"/"+getUserName()+"/configuration",callback);
 	}
 	
 	public void setDepositConfiguration(String requestData){
-		post(url + "deposit/" + getDomainName() + "/" + getUserName() + "/configuration", requestData);
+		post(url + "ms/deposit/" + getDomainName() + "/" + getUserName() + "/configuration", requestData);
 	}
 	
 	public void send2AEAT(String url, String requestData, AsyncCallback<JavaScriptObject> callback){
@@ -47,7 +47,7 @@ public class Fiscal extends Methods{
 			
 			@Override
 			public void onSuccess(String result) {
-				Window.open(getUrl() + "download_attachment/" + result, "_blank", null);
+				Window.open(getUrl() + "ms/download_attachment/" + result, "_blank", null);
 			}
 			
 			@Override public void onFailure(Throwable caught) {}

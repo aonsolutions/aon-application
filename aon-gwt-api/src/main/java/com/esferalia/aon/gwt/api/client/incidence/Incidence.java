@@ -55,55 +55,34 @@ public class Incidence extends Methods{
 	}
 	
 	public void solutions() {
-		post(url + "repos/" + getUserName() + "/" + getRepositoryName() + "/solutions","");
+		post(url + "ms/repos/" + getUserName() + "/" + getRepositoryName() + "/solutions","");
 	}
 	
-	//-------------------- ORGANIZATIONS
-	
-	public void getOrganizations(AsyncCallback<JSON<JsOrganization>> callback){
-		get(url+ "user/orgs",callback);
-	}
 	
 	//-------------------- REPOSITORIES
 	
 	public void getUserRepository(AsyncCallback<JsRepository> callback){
-		get(url + "repos/"+getUserName()+"/"+getRepositoryName(),callback);
-	}
-	
-	public void getAllUserRepositories(AsyncCallback<JSON<JsRepository>> callback){
-		get(url + "users/"+getUserName()+"/repos?type=all", callback);
-	}
-	
-	public void getPublicUserRepositories(AsyncCallback<JSON<JsRepository>> callback){
-		get(url + "users/"+getUserName()+"/repos?type=public", callback);
-	}
-	
-	public void getPrivateUserRepositories(AsyncCallback<JSON<JsRepository>> callback){
-		get(url + "users/"+getUserName()+"/repos?type=private", callback);
+		get(url + "ms/repos/"+getUserName()+"/"+getRepositoryName(),callback);
 	}
 
 	public void getOrgRepository(AsyncCallback<JSON<JsRepository>> callback){
-		get(url + "repos/"+getOrganizationName()+"/"+getRepositoryName(),callback);
+		get(url + "ms/repos/"+getOrganizationName()+"/"+getRepositoryName(),callback);
 	}
 	
 	public void getAllOrgRepositories(AsyncCallback<JSON<JsRepository>> callback){
-		get(url + "orgs/"+getOrganizationName()+"/repos?type=all", callback);
+		get(url + "ms/orgs/"+getOrganizationName()+"/repos?type=all", callback);
 	}
 	
 	public void getPublicOrgRepositories(AsyncCallback<JSON<JsRepository>> callback){
-		get(url + "orgs/"+getOrganizationName()+"/repos?type=public", callback);
+		get(url + "ms/orgs/"+getOrganizationName()+"/repos?type=public", callback);
 	}
 	
 	public void getPrivateOrgRepositories(AsyncCallback<JSON<JsRepository>> callback){
-		get(url + "orgs/"+getOrganizationName()+"/repos?type=private", callback);
+		get(url + "ms/orgs/"+getOrganizationName()+"/repos?type=private", callback);
 	}
-	
-	public void createUserRepository(String requestData, AsyncCallback<JsRepository> callback){
-		post(url + "user/repos", requestData, callback);
-	}
-	
+
 	public void createOrgRepository(String requestData, AsyncCallback<JsRepository> callback){
-		post(url + "orgs/"+ getOrganizationName() +"/repos", requestData, callback);
+		post(url + "ms/orgs/"+ getOrganizationName() +"/repos", requestData, callback);
 	}
 	
 	public void deleteRepository(AsyncCallback<JsRepository> callback){
@@ -117,22 +96,22 @@ public class Incidence extends Methods{
 	}
 	
 	public void getUserIssues(IssueFilter filter, AsyncCallback<JSON<JsIssue>> callback){
-		get(url + "repos/" + getUserName() + "/" + getRepositoryName() + "/issues"
+		get(url + "ms/repos/" + getUserName() + "/" + getRepositoryName() + "/issues"
 				+ getIssueFilter(filter), callback);
 	}
 	
 	public void getOrgIssues(IssueFilter filter, AsyncCallback<JSON<JsIssue>> callback){
-		get(url + "repos/" + getOrganizationName() + "/" + getRepositoryName() + "/issues"
+		get(url + "ms/repos/" + getOrganizationName() + "/" + getRepositoryName() + "/issues"
 				+ getIssueFilter(filter), callback);
 	}
 	
 	public void getLightIssues(Integer id, IssueFilter filter, AsyncCallback<JSON<JsIssue>> callback){
-		get(url + "repos/" + getOrganizationName() + "/" + getRepositoryName() + "/issues_light/" + id
+		get(url + "ms/repos/" + getOrganizationName() + "/" + getRepositoryName() + "/issues_light/" + id
 				+ getIssueFilter(filter), callback);
 	}
 	
 	public void getFaqIssues(IssueFilter filter, AsyncCallback<JSON<JsIssue>> callback){
-		get(url + "repos/" + getOrganizationName() + "/" + getRepositoryName() + "/faqs/"
+		get(url + "ms/repos/" + getOrganizationName() + "/" + getRepositoryName() + "/faqs/"
 				+ getIssueFilter(filter), callback);
 	}
 	
@@ -159,288 +138,284 @@ public class Incidence extends Methods{
 	}
 	
 	public void getDuplicateIssues(Integer parent, AsyncCallback<JSON<JsIssue>> callback){
-		get(url + "repos/" + getOrganizationName() + "/" + getRepositoryName() + "/duplicates/"+parent, callback);
+		get(url + "ms/repos/" + getOrganizationName() + "/" + getRepositoryName() + "/duplicates/"+parent, callback);
 	}
 
 	public void getEnterpriseIssues(Integer enterprise, AsyncCallback<JSON<JsIssue>> callback){
-		get(url + "repos/" + getOrganizationName() + "/" + getRepositoryName() + "/enterprise/"+enterprise, callback);
+		get(url + "ms/repos/" + getOrganizationName() + "/" + getRepositoryName() + "/enterprise/"+enterprise, callback);
 	}
 	
 	public void createUserIssue(String requestData,	AsyncCallback<JsIssue> callback) {
-		post(url + "repos/" + getUserName() + "/" + getRepositoryName() + "/issues", requestData, callback);
+		post(url + "ms/repos/" + getUserName() + "/" + getRepositoryName() + "/issues", requestData, callback);
 	}
 	
 	public void createOrgIssue(String requestData, AsyncCallback<JsIssue> callback) {
-		post(url + "repos/" + getOrganizationName() + "/" + getRepositoryName() + "/issues", requestData, callback);
+		post(url + "ms/repos/" + getOrganizationName() + "/" + getRepositoryName() + "/issues", requestData, callback);
 	}
 	
 	public void updateUserIssue(JsIssue issue, String requestData, AsyncCallback<JsIssue> callback){
-		post(url + "repos/" + getUserName() + "/" + getRepositoryName() + "/issues/"
+		post(url + "ms/repos/" + getUserName() + "/" + getRepositoryName() + "/issues/"
 						+ issue.getNumber(), requestData, callback);
 	}
 	
 	public void updateOrgIssue(JsIssue issue, String requestData, AsyncCallback<JsIssue> callback) {
-		post(url + "repos/" + getOrganizationName() + "/" + getRepositoryName() + "/issues/"
+		post(url + "ms/repos/" + getOrganizationName() + "/" + getRepositoryName() + "/issues/"
 						+ issue.getNumber(), requestData, callback);
 	}
 	
 	public void deleteTask(JsIssue issue, AsyncCallback<JsIssue> callback) {
-		post(url + "delete/repos/" + getOrganizationName() + "/" + getRepositoryName() + "/issues/"
+		post(url + "ms/delete/repos/" + getOrganizationName() + "/" + getRepositoryName() + "/issues/"
 						+ issue.getNumber(), "", callback);
 	}
 
 	//-------------------- TAGS
 	
 	public void createTag(String requestData, AsyncCallback<JsLabel> callback){
-		post(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/tag", requestData, callback);
+		post(url + "ms/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/tag", requestData, callback);
 	}
 	
 	public void updateTag(JsLabel tag, String requestData, AsyncCallback<JsLabel> callback){
-		post(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/tag/"
+		post(url + "ms/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/tag/"
 				+ tag.getId(), requestData, callback);
 	}	
 	
 	public void deleteTag(JsLabel tag, AsyncCallback<JsLabel> callback){
-		post(url + "delete/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/tag/"
+		post(url + "ms/delete/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/tag/"
 				+ tag.getId(), "{}", callback);
 	}
 	
 	//-------------------- LABELS
 	
 	public void getLabels(AsyncCallback<JSON<JsLabel>> callback){
-		get(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/labels",callback);
+		get(url + "ms/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/labels",callback);
 	}	
 	
 	public void getLabels(String filter, AsyncCallback<JSON<JsLabel>> callback){
-		get(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/labels?filter=" + filter,callback);
+		get(url + "ms/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/labels?filter=" + filter,callback);
 	}	
 	
 	public void addLabel2Issue(String name, Integer number, AsyncCallback<JsLabel> callback){
-		post(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/labels/"+name, "{}", callback);
+		post(url + "ms/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/labels/"+name, "{}", callback);
 	}
 	
 	public void deleteLabel2Issue(String name, Integer number, AsyncCallback<JsLabel> callback){
-		post(url + "delete/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/labels/"+name, "{}", callback);
+		post(url + "ms/delete/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/labels/"+name, "{}", callback);
 	}
 	
 	//-------------------- TYPES
 	
 	public void getTypes(AsyncCallback<JSON<JsLabel>> callback){
-		get(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/types",callback);
+		get(url + "ms/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/types",callback);
 	}	
 	
 	public void getTypes(String filter, AsyncCallback<JSON<JsLabel>> callback){
-		get(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/types?filter=" + filter,callback);
+		get(url + "ms/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/types?filter=" + filter,callback);
 	}	
 	
 	public void addType2Issue(String name, Integer number, AsyncCallback<JsLabel> callback){
-		post(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/type/"+name, "{}", callback);
+		post(url + "ms/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/type/"+name, "{}", callback);
 	}
 	
 	public void deleteType2Issue(Integer number, AsyncCallback<JsLabel> callback){
-		post(url + "delete/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/type/", "{}",callback);
+		post(url + "ms/delete/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/type/", "{}",callback);
 	}
 	
 	//-------------------- PRIORITIES
 	
 	public void getPriorities(AsyncCallback<JSON<JsLabel>> callback){
-		get(url+ "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/priorities",callback);
+		get(url+ "ms/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/priorities",callback);
 	}	
 	
 	public void getPriorities(String filter, AsyncCallback<JSON<JsLabel>> callback){
-		get(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/priorities?filter=" + filter,callback);
+		get(url + "ms/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/priorities?filter=" + filter,callback);
 	}	
 	
 	public void createPriority(String requestData, AsyncCallback<JsLabel> callback){
-		post(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/priorities", requestData, callback);
+		post(url + "ms/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/priorities", requestData, callback);
 	}	
 
 	public void updatePriority(JsLabel label, String requestData, AsyncCallback<JsLabel> callback){
-		post(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/priorities/"
+		post(url + "ms/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/priorities/"
 				+ label.getName(), requestData, callback);
 	}	
 	
 	public void deletePriority(JsLabel label, AsyncCallback<JsLabel> callback){
-		post(url + "delete/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/priorities/"
+		post(url + "ms/delete/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/priorities/"
 				+ label.getName(), "{}", callback);
 	}
 	
 	public void addPriority2Issue(String name, Integer number, AsyncCallback<JsLabel> callback){
-		post(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/priority/"+name, "{}", callback);
+		post(url + "ms/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/priority/"+name, "{}", callback);
 	}
 	
 	public void deletePriority2Issue(Integer number, AsyncCallback<JsLabel> callback){
-		post(url + "delete/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/priority/", "{}",callback);
+		post(url + "ms/delete/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/priority/", "{}",callback);
 	}
 	
 	//-------------------- USERS
 	
 	public void getUsers(AsyncCallback<JSON<JsUser>> callback){
-		get(url + "orgs/"+getOrganizationName()+"/"+getRepositoryName()+ "/members",callback);
-		//GITHUB get(url.getUrl() + "orgs/"+getOrganizationName()+ "/members",callback);
+		get(url + "ms/orgs/"+getOrganizationName()+"/"+getRepositoryName()+ "/members",callback);
 	}	
 	
 	public void getUsers(JsUser workgroup, AsyncCallback<JSON<JsUser>> callback){
 		if(workgroup != null && workgroup.getId() != null)
-			get(url + "orgs/"+getOrganizationName()+"/"+getRepositoryName()+ "/members?w="+ workgroup.getId(),callback);
+			get(url + "ms/orgs/"+getOrganizationName()+"/"+getRepositoryName()+ "/members?w="+ workgroup.getId(),callback);
 		else getUsers(callback);
-		//GITHUB get(url.getUrl() + "orgs/"+getOrganizationName()+ "/members",callback);
 	}	
 	
 	public void getApplicationUsers(AsyncCallback<JSON<JsUser>> callback){
-		get(url + "orgs/"+getOrganizationName()+"/"+getRepositoryName()+ "/app_users",callback);
-		//GITHUB get(url.getUrl() + "orgs/"+getOrganizationName()+ "/members",callback);
+		get(url + "ms/orgs/"+getOrganizationName()+"/"+getRepositoryName()+ "/app_users",callback);
 	}	
 	
 	public void getUsers(String filter, AsyncCallback<JSON<JsUser>> callback){
-		get(url + "orgs/"+getOrganizationName()+"/"+getRepositoryName()+"/members?filter=" + filter,callback);
-		//GITHUB get(url.getUrl() + "orgs/"+getOrganizationName()+"/members?filter=" + filter,callback);
+		get(url + "ms/orgs/"+getOrganizationName()+"/"+getRepositoryName()+"/members?filter=" + filter,callback);
 	}
 	
 	public void getWorkgroups(AsyncCallback<JSON<JsUser>> callback){
-		get(url + "orgs/"+getOrganizationName()+"/"+getRepositoryName()+"/workgroups",callback);
+		get(url + "ms/orgs/"+getOrganizationName()+"/"+getRepositoryName()+"/workgroups",callback);
 	}	
 	
 	public void getWorkgroups(String filter, AsyncCallback<JSON<JsUser>> callback){
-		get(url + "orgs/"+getOrganizationName()+"/"+getRepositoryName()+"/workgroups?filter=" + filter, callback);
+		get(url + "ms/orgs/"+getOrganizationName()+"/"+getRepositoryName()+"/workgroups?filter=" + filter, callback);
 	}	
 	
 	public void addUser2Issue(Integer id, Integer number, AsyncCallback<JsUser> callback){
-		post(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/user/"+id, "", callback);
+		post(url + "ms/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/user/"+id, "", callback);
 	}
 	
 	public void deleteUser2Issue(Integer number, AsyncCallback<JsUser> callback){
-		post(url + "delete/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/user", "{}", callback);
+		post(url + "ms/delete/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/user", "{}", callback);
 	}
 	
 	public void addWorkgroup2Issue(Integer id, Integer number, AsyncCallback<JsUser> callback){
-		post(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/workgroup/"+id, "", callback);
+		post(url + "ms/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/workgroup/"+id, "", callback);
 	}
 	
 	public void deleteWorkgroup2Issue(Integer number, AsyncCallback<JsUser> callback){
-		post(url + "delete/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/workgroup/", "{}", callback);
+		post(url + "ms/delete/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/workgroup/", "{}", callback);
 	}
 	
 	// -------------------- OPERATOR (OPERARIO)
 	
 	public void getOperators(AsyncCallback<JSON<JsUser>> callback){
-		get(url + "work/" + getDomainName() + "/" + getUserName() + "/operator", callback);
+		get(url + "ms/work/" + getDomainName() + "/" + getUserName() + "/operator", callback);
 	}
 	
 	public void addOperator(String requestData, AsyncCallback<JsUser> callback){
-		post(url + "work/" + getDomainName() + "/" + getUserName() + "/operator", requestData, callback);
+		post(url + "ms/work/" + getDomainName() + "/" + getUserName() + "/operator", requestData, callback);
 	}
 	
 	public void updateOperator(Integer id, String requestData, AsyncCallback<JsUser> callback){
-		post(url + "work/" + getDomainName() + "/" + getUserName() + "/operator/update/" + id, requestData, callback);
+		post(url + "ms/work/" + getDomainName() + "/" + getUserName() + "/operator/update/" + id, requestData, callback);
 	}
 	
 	public void removeOperator(Integer id, AsyncCallback<JsUser> callback){
-		post(url + "work/" + getDomainName() + "/" + getUserName() + "/operator/remove/" + id, "{}", callback);
+		post(url + "ms/work/" + getDomainName() + "/" + getUserName() + "/operator/remove/" + id, "{}", callback);
 	}
 	
 	// -------------------- WORKGROUP (GRUPO DE TRABAJO)
 	
 	public void getGroups(AsyncCallback<JSON<JsUser>> callback){
-		get(url + "work/" + getDomainName() + "/" + getUserName() + "/workgroup", callback);
+		get(url + "ms/work/" + getDomainName() + "/" + getUserName() + "/workgroup", callback);
 	}
 	
 	public void addGroup(String requestData, AsyncCallback<JsUser> callback){
-		post(url + "work/" + getDomainName() + "/" + getUserName() + "/workgroup", requestData, callback);
+		post(url + "ms/work/" + getDomainName() + "/" + getUserName() + "/workgroup", requestData, callback);
 	}
 	
 	public void updateGroup(Integer id, String requestData, AsyncCallback<JsUser> callback){
-		post(url + "work/" + getDomainName() + "/" + getUserName() + "/workgroup/update/" + id, requestData, callback);
+		post(url + "ms/work/" + getDomainName() + "/" + getUserName() + "/workgroup/update/" + id, requestData, callback);
 	}
 	
 	public void removeGroup(Integer id, AsyncCallback<JsUser> callback){
-		post(url + "work/" + getDomainName() + "/" + getUserName() + "/workgroup/remove/" + id, "{}",callback);
+		post(url + "ms/work/" + getDomainName() + "/" + getUserName() + "/workgroup/remove/" + id, "{}",callback);
 	}
 	
 	//-------------------- EVENTS
 	
 	public void getEvents(JsIssue issue, AsyncCallback<JSON<JsEvent>> callback){
-		get(url + "repos/" + getUserName() + "/" + getDomainName() + "/issues/" + issue.getNumber() + "/events", callback);
+		get(url + "ms/repos/" + getUserName() + "/" + getDomainName() + "/issues/" + issue.getNumber() + "/events", callback);
 	}
 	
 	//-------------------- COMMENTS
 	
 	public void getComments(JsIssue issue, AsyncCallback<JSON<JsComment>> callback){
-		get(url + "repos/" + getUserName() + "/" + getDomainName() + "/issues/" + issue.getNumber() + "/comments", callback);
+		get(url + "ms/repos/" + getUserName() + "/" + getDomainName() + "/issues/" + issue.getNumber() + "/comments", callback);
 	}
 	
 	public void newComment(JsIssue issue, String requestData, AsyncCallback<JsComment> callback){
-		post(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"
+		post(url + "ms/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"
 				+ issue.getNumber() + "/comments", requestData, callback);
 	}
 	
 	public void updateComment(JsIssue issue, JsComment comment, String requestData, AsyncCallback<JsComment> callback){
-		post(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"
+		post(url + "ms/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"
 				+ issue.getNumber() + "/comments/" + comment.getId(), requestData, callback);
 	}
 	
 	//-------------------- REGISTRIES
 	
 	public void getRegistries(AsyncCallback<JSON<JsUser>> callback){
-		get(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/registries",callback);
+		get(url + "ms/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/registries",callback);
 	}
 	
 	public void getRegistries(String value, AsyncCallback<JSON<JsUser>> callback){
-		get(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/registries?filter=" + value,callback);
+		get(url + "ms/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/registries?filter=" + value,callback);
 	}
 	
 	public void getEnterpriseRmediaList(Integer enterprise, AsyncCallback<JSON<JsRmedia>> callback){
-		get(url + "registry/" + getDomainName() + "/" + getUserName() + "/rmedia/registry/"+enterprise, callback);
+		get(url + "ms/registry/" + getDomainName() + "/" + getUserName() + "/rmedia/registry/"+enterprise, callback);
 	}
 	
 	public void getEnterpriseRaddressList(Integer enterprise, AsyncCallback<JSON<JsObject>> callback){
-		get(url + "registry/" + getDomainName() + "/" + getUserName() + "/raddress/registry/"+enterprise, callback);
+		get(url + "ms/registry/" + getDomainName() + "/" + getUserName() + "/raddress/registry/"+enterprise, callback);
 	}
 	
 	public void getEnterpriseRnoteList(Integer enterprise, AsyncCallback<JSON<JsRnote>> callback){
-		get(url + "registry/" + getDomainName() + "/" + getUserName() + "/rnote/registry/"+enterprise, callback);
+		get(url + "ms/registry/" + getDomainName() + "/" + getUserName() + "/rnote/registry/"+enterprise, callback);
 	}
 	
 	public void getEnterpriseGeneralList(Integer enterprise, AsyncCallback<JSON<JsGeneral>> callback){
-		get(url + "registry/" + getDomainName() + "/" + getUserName() + "/general/registry/"+enterprise, callback);
+		get(url + "ms/registry/" + getDomainName() + "/" + getUserName() + "/general/registry/"+enterprise, callback);
 	}
 	
 	public void getEnterpriseProfileList(Integer enterprise, AsyncCallback<JSON<JsProfile>> callback){
-		get(url + "registry/" + getDomainName() + "/" + getUserName() + "/rprofile/registry/"+enterprise, callback);
+		get(url + "ms/registry/" + getDomainName() + "/" + getUserName() + "/rprofile/registry/"+enterprise, callback);
 	}
 	
 	//-------------------- FINANCE
 	
 	public void getEnterpriseInvoiceList(Integer enterprise, AsyncCallback<JSON<JsInvoice>> callback){
-		get(url + "finance/" + getDomainName() + "/" + getUserName() + "/invoice/registry/"+enterprise, callback);
+		get(url + "ms/finance/" + getDomainName() + "/" + getUserName() + "/invoice/registry/"+enterprise, callback);
 	}
 	
 	public void getEnterpriseFeeList(Integer enterprise, AsyncCallback<JSON<JsFee>> callback){
-		get(url + "finance/" + getDomainName() + "/" + getUserName() + "/fee/customer/"+enterprise, callback);
+		get(url + "ms/finance/" + getDomainName() + "/" + getUserName() + "/fee/customer/"+enterprise, callback);
 	}
 
 	public void getEnterpriseBoughtProductList(Integer enterprise, AsyncCallback<JSON<JsBoughtProduct>> callback){
-		get(url + "finance/" + getDomainName() + "/" + getUserName() + "/bought_product/registry/"+enterprise, callback);
+		get(url + "ms/finance/" + getDomainName() + "/" + getUserName() + "/bought_product/registry/"+enterprise, callback);
 	}
 	
 	//-------------------- NOTIFICATIONS
 	
 	public void getNotificationInfo(AsyncCallback<JSON<JsNotify>> callback){
-		get(url + "notification/"+ getOrganizationName() + "/" + getRepositoryName(), callback);
+		get(url + "ms/notification/"+ getOrganizationName() + "/" + getRepositoryName(), callback);
 	}	
 	
 	public void updateNotificationInfo(String requestData){
-		post(url + "notification/"+ getOrganizationName() + "/" + getRepositoryName() + "/configuration", requestData);
+		post(url + "ms/notification/"+ getOrganizationName() + "/" + getRepositoryName() + "/configuration", requestData);
 	}
 
 	public void sendNotification(JsIssue issue, String requestData){
-		post(url + "notification/"+ getOrganizationName() + "/" + getRepositoryName(), requestData);
+		post(url + "ms/notification/"+ getOrganizationName() + "/" + getRepositoryName(), requestData);
 	}
 	
 	//-------------------- PROJECT - COMMERCIAL
 	
 	public void getProjectCommercialList(Integer enterprise, AsyncCallback<JSON<JsProject>> callback){
-		get(url + "project/"+ getDomainName() + "/" + getUserName() + "/commercial/registry/" + enterprise, callback);
+		get(url + "ms/project/"+ getDomainName() + "/" + getUserName() + "/commercial/registry/" + enterprise, callback);
 	}	
 		
 	//-------------------- TASK
@@ -449,85 +424,85 @@ public class Incidence extends Methods{
 	 * @param callback
 	 */
 	public void getTask(Integer id, AsyncCallback<JSON<JsIssue>> callback){
-		get(url + "repos/" + getUserName() + "/" + getDomainName() + "/issues/" + id, callback);
+		get(url + "ms/repos/" + getUserName() + "/" + getDomainName() + "/issues/" + id, callback);
 	}
 	
 	
 	// FILTER OPTIONS.. 
 	
 	public void getOrderOptions(AsyncCallback<JSON<JsObject>> callback){
-		get(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/order_options",callback);
+		get(url + "ms/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/order_options",callback);
 	}
 	
 	public void getDateOptions(AsyncCallback<JSON<JsObject>> callback){
-		get(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/date_options",callback);
+		get(url + "ms/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/date_options",callback);
 	}
 	
 	// FAST FILTER
 	
 	public void getFastFilter(AsyncCallback<JSON<JsFastFilter>> callback){
-		get(url + "repos/"+getUserName()+"/"+getDomainName()+"/fast_filter",callback);
+		get(url + "ms/repos/"+getUserName()+"/"+getDomainName()+"/fast_filter",callback);
 	}
 	
 	public void setFastFilter(String requestData){
-		post(url + "repos/"+getUserName()+"/"+getDomainName()+"/fast_filter", requestData);
+		post(url + "ms/repos/"+getUserName()+"/"+getDomainName()+"/fast_filter", requestData);
 	}
 	
 	// GITHUB CONFIGURATION
 	
 	public void getGithubConfiguration(AsyncCallback<JSON<JsGithub>> callback){
-		get(url + "repos/"+getUserName() + "/" + getDomainName() + "/github", callback);
+		get(url + "ms/repos/"+getUserName() + "/" + getDomainName() + "/github", callback);
 	}
 	
 	public void setGithubConfiguration(String requestData){
-		post(url + "repos/"+getUserName()+"/"+getDomainName()+"/github", requestData);
+		post(url + "ms/repos/"+getUserName()+"/"+getDomainName()+"/github", requestData);
 	}
 	
 	// STAT
 	
 	public void getStatDataByStatus(IssueFilter filter, AsyncCallback<JSON<JsStatData>> callback){
-		get(url + "stat/"+getDomainName()+"/"+getUserName()+"/task/status"
+		get(url + "ms/stat/"+getDomainName()+"/"+getUserName()+"/task/status"
 				+ getIssueFilter(filter), callback);
 	}
 	
 	public void getStatDataByType(IssueFilter filter, AsyncCallback<JSON<JsStatData>> callback){
-		get(url + "stat/"+getDomainName()+"/"+getUserName()+"/task/type"
+		get(url + "ms/stat/"+getDomainName()+"/"+getUserName()+"/task/type"
 				+ getIssueFilter(filter), callback);
 	}
 	
 	public void getStatDataByTag(IssueFilter filter, AsyncCallback<JSON<JsStatData>> callback){
-		get(url + "stat/"+getDomainName()+"/"+getUserName()+"/task/tag"
+		get(url + "ms/stat/"+getDomainName()+"/"+getUserName()+"/task/tag"
 				+ getIssueFilter(filter), callback);
 	}
 	
 	public void getStatDataBySchedule(IssueFilter filter, AsyncCallback<JSON<JsStatData>> callback){
-		get(url + "stat/"+getDomainName()+"/"+getUserName()+"/task/schedule"
+		get(url + "ms/stat/"+getDomainName()+"/"+getUserName()+"/task/schedule"
 				+ getIssueFilter(filter), callback);
 	}
 	
 	public void getStatDataByDayOfWeek(IssueFilter filter, AsyncCallback<JSON<JsStatData>> callback){
-		get(url + "stat/"+getDomainName()+"/"+getUserName()+"/task/day_of_week"
+		get(url + "ms/stat/"+getDomainName()+"/"+getUserName()+"/task/day_of_week"
 				+ getIssueFilter(filter), callback);
 	}
 	
 	public void getStatDataByMonth(IssueFilter filter, AsyncCallback<JSON<JsStatData>> callback){
-		get(url + "stat/"+getDomainName()+"/"+getUserName()+"/task/month"
+		get(url + "ms/stat/"+getDomainName()+"/"+getUserName()+"/task/month"
 				+ getIssueFilter(filter), callback);
 	}
 	
 	public void getStatDataByDay(IssueFilter filter, AsyncCallback<JSON<JsStatData>> callback){
-		get(url + "stat/"+getDomainName()+"/"+getUserName()+"/task/day"
+		get(url + "ms/stat/"+getDomainName()+"/"+getUserName()+"/task/day"
 				+ getIssueFilter(filter), callback);
 	}
 	
 	public void getStatDataByCustomer(IssueFilter filter, AsyncCallback<JSON<JsStatData>> callback){
-		get(url + "stat/"+getDomainName()+"/"+getUserName()+"/task/customer"
+		get(url + "ms/stat/"+getDomainName()+"/"+getUserName()+"/task/customer"
 				+ getIssueFilter(filter), callback);
 	}
 	
 	// -------------------- STATUS
 	public void getStatuses( AsyncCallback<JSON<JsObject>> callback){
-		get(url + "repos/"+getUserName()+"/"+getDomainName()+"/statuses", callback);
+		get(url + "ms/repos/"+getUserName()+"/"+getDomainName()+"/statuses", callback);
 	}
 	
 	// -------------------- DOWNLOAD

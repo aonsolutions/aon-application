@@ -22,7 +22,7 @@ import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "OrgsServlet", urlPatterns = { "/orgs/*",
-												  "/aon_gwt_aio/orgs/*"})
+												  "/aon_gwt_aio/ms/orgs/*"})
 public class OrgsServlet extends HttpServlet{
 	
 	@Override

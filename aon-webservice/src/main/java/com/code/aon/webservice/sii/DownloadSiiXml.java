@@ -25,7 +25,7 @@ import com.google.api.services.drive.Drive;
 
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
-@WebServlet(name = "DownloadSiiXml", urlPatterns = {"/aon_gwt_aio/download_sii_xml/*"})
+@WebServlet(name = "DownloadSiiXml", urlPatterns = {"/aon_gwt_aio/ms/download_sii_xml/*"})
 public class DownloadSiiXml extends HttpServlet{
 	
 	/**

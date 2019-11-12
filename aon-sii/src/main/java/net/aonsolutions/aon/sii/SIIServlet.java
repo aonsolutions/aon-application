@@ -40,7 +40,7 @@ import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "SIIServlet22", urlPatterns = { "/sii22/*",
-												 "/aon_gwt_aio/sii22/*"})
+												 "/aon_gwt_aio/ms/sii22/*"})
 public class SIIServlet extends HttpServlet{
 
 	private static final Logger LOGGER  = Logger.getLogger(SIIServlet.class.getName());

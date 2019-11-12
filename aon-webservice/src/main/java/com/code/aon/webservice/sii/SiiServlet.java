@@ -26,7 +26,7 @@ import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "SiiServletS11", urlPatterns = { "/s11/*",
-													 "/aon_gwt_aio/s11/*"})
+													 "/aon_gwt_aio/ms/s11/*"})
 public class SiiServlet extends HttpServlet{
 		
 	private static final Logger LOGGER  = Logger.getLogger(SiiServlet.class.getName());
