@@ -143,7 +143,7 @@ public class AccountEntryModule extends MainEntryPoint {
 			@Override public void visit(IEntryTypeVisitor visitor) {visitor.visitManual();}})
 		,INVOICE( AON.MSG.invoice(), new  IEntryTypeVisitorWalker() {
 			@Override public void visit(IEntryTypeVisitor visitor) {visitor.visitInvoice();}})
-		,TICKET( "Ticket/Gasto no Ded.", new  IEntryTypeVisitorWalker() {
+		,TICKET( "Gasto no Ded./Ticket", new  IEntryTypeVisitorWalker() {
 			@Override public void visit(IEntryTypeVisitor visitor) {visitor.visitTicket();}})
 		,SALARY( AON.MSG.salary(), new  IEntryTypeVisitorWalker() {
 			@Override public void visit(IEntryTypeVisitor visitor) {visitor.visitSalary();}})
