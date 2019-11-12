@@ -121,7 +121,6 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	private BankAccountHelper accountHelper;
 	private UdapaDeliveryHandler udapaDeliveryHandler;
 	private boolean showEdiFtpWindow;
-	private CarrierPacking carrierPacking;
 	private RegistryAddressFilter addressesFilter;
 	
 	private FtpDeliveryUploadHandler ftpEdiUploader;
@@ -290,14 +289,7 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	public CarrierPacking getCarrierPacking() {
 		Delivery delivery = (Delivery)this.getTo();
 		Domain domain = AON.getDomain(AonUtil.getDomainName(), delivery.getDomain(), "");
-		CarrierPacking carrierPacking = AON.getCarrierPacking(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(delivery.getCarrierPacking()));
-		setCarrierPacking(carrierPacking);
-		
-		return carrierPacking;
-	}
-	
-	public void setCarrierPacking(CarrierPacking carrierPacking) {
-		this.carrierPacking = carrierPacking;
+		return AON.getCarrierPacking(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(delivery.getCarrierPacking()));	
 	}
 	
 	public String getCarrierPackingLastModification() {
@@ -443,7 +435,7 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 			IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_REGISTRY_ID), id);
-			criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_ACTIVE), new Boolean(true));
+			criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_ACTIVE), true);
 			criteria.addOrder(projectBean.getFieldName(IEntityAlias.PROJECT_NAME));
 			Iterator<?> iterator = projectBean.getList(criteria).iterator();
 			while(iterator.hasNext()) {
@@ -761,6 +753,8 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 							+ ", "
 							+ delivery.getShippingAlternativeAddress2()
 							: delivery.getRegistryAddress().getFullAddress());
+			
+			Boolean geozone = delivery.getRegistryAddress().getGeozone() != null;
 			controller.getIdentityReport().setLabel_to_address2(
 					shippingAlternativeAddressDefined ? (delivery
 							.getShippingAlternativeZip() + " " + delivery
@@ -768,9 +762,9 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 							.getRegistryAddress().getZip()
 							+ " "
 							+ delivery.getRegistryAddress().getCity()
-							+ "  ("
-							+ delivery.getRegistryAddress().getGeozone()
-									.getName() + ")"));
+							+ (geozone ? "  (" : "")
+							+ (geozone ? delivery.getRegistryAddress().getGeozone().getName() + ")" : ""))
+			);
 			controller.getIdentityReport().setLabel_to_phone(
 					shippingAlternativeAddressDefined ? delivery
 							.getShippingAlternativePhone() : "");
@@ -861,6 +855,7 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 					null, size);
 			InputStream fileIn = new BufferedInputStream(
 					new ByteArrayInputStream(data));
+			
 			IOUtils.copy(fileIn, out);
 			IOUtils.closeQuietly(fileIn);
 		} catch (IOException e) {
