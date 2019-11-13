@@ -20,6 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.SalarioBaseReadOnlyUpdate;
+import net.aonsolutions.db.up2date.management.KaldeviFinanceFix;
 import net.aonsolutions.db.up2date.payroll.DefaultAgreementUpdate;
 import net.aonsolutions.db.up2date.payroll.NetoAndBrutoReadOnlyUpdate;
 import net.aonsolutions.db.up2date.payroll.PlusSalarialInsert;
@@ -86,7 +87,8 @@ public class Up2Date {
     		//SalarioBaseReadOnlyUpdate.SALARIOBASEREADONLYUPDATE,
     		//NetoAndBrutoReadOnlyUpdate.NETOBRUTOREADONLYUPDATE,
     		//DefaultAgreementUpdate.DEFAULTAGREEMENTUPDATE,
-    		SalaryHours2019Insert.SALARYHOURS2019INSERT
+    		//SalaryHours2019Insert.SALARYHOURS2019INSERT
+    		KaldeviFinanceFix.KALDEVIFINANCEFIX
     		
     };
 
