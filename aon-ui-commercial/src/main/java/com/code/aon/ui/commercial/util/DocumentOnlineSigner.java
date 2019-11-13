@@ -25,7 +25,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -258,7 +257,7 @@ public class DocumentOnlineSigner implements Serializable {
 			pnUrl = (pnUrl.startsWith("http://")?"":"http://") + pnUrl;
 			opt.put("pushNotificationUrl", pnUrl);
 			opt.put("pushNotificationFilter", filter);
-			opt.put("signatureRequestInfoText", "Adjuntamos a continuación el documento para su firma, según conversación telefónica mantenida.");
+			opt.put("signatureRequestInfoText", "Tras la aceptación del presupuesto vamos a proceder a su firma. Por favor, pinche en \"LEER DOCUMENTO\" y siga los pasos indicados.");
 			json.put("options", opt);
 			
 			JSONObject responseJson = postObject(json.toString());
@@ -449,10 +448,6 @@ public class DocumentOnlineSigner implements Serializable {
 			}
 			conn.disconnect();
 			return response;
-//		} catch (MalformedURLException e) {
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			e.printStackTrace();
 		} catch (Exception e) {
 			throw new AbortProcessingException(e.getMessage());
 		}
