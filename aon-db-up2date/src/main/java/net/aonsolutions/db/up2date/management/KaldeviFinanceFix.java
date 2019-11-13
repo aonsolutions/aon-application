@@ -76,8 +76,10 @@ public class KaldeviFinanceFix implements Update {
 		settings.setParamType(ParamType.INLINED);
 
 		dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
-		System.out.println();
+		
+		System.out.println("[START]");
 		System.out.println( "Arreglo vencimientos de Kaldevi" );
+		
 		final Counters c = new Counters();
 		
 		Field<Integer> COUNT = DSL.count(BANK_STATEMENT_LINK.ID); 
@@ -102,15 +104,16 @@ public class KaldeviFinanceFix implements Update {
 					.fetch()
 					.stream()
 					.forEach( rec -> {
-						int ftId = rec.get(BANK_STATEMENT_LINK.SOURCE_ID);
-						c.ft_deleted += dslContext.delete(FINANCE_TRACKING)
-							.where(FINANCE_TRACKING.DOMAIN.eq(KALDEVI_DOMAIN))
-							.and(FINANCE_TRACKING.ID.eq(ftId))
-							.execute();
 						int bslId = rec.get(BANK_STATEMENT_LINK.ID);
+						int ftId = rec.get(BANK_STATEMENT_LINK.SOURCE_ID);
+						
 						c.bsl_deleted += dslContext.delete(BANK_STATEMENT_LINK)
 								.where(BANK_STATEMENT_LINK.DOMAIN.eq(KALDEVI_DOMAIN))
 								.and(BANK_STATEMENT_LINK.ID.eq(bslId))
+								.execute();
+						c.ft_deleted += dslContext.delete(FINANCE_TRACKING)
+								.where(FINANCE_TRACKING.DOMAIN.eq(KALDEVI_DOMAIN))
+								.and(FINANCE_TRACKING.ID.eq(ftId))
 								.execute();
 					});
 				c.bs_updated = dslContext.update(BANK_STATEMENT)
