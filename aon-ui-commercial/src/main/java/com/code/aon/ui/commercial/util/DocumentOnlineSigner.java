@@ -234,7 +234,7 @@ public class DocumentOnlineSigner implements Serializable {
 				spTargetCommercial.put("name", offer.getTarget().getRegistry().getName());
 				spTargetCommercial.put("address", targetCommercialEmail);
 				spTargetCommercial.put("signingMethod", "WebClick");
-				spDirStaff.put("signingOrder", 1);
+				spTargetCommercial.put("signingOrder", 1);
 				spTargetCommercial.put("role", "Reviewer");
 				sp.put(spTargetCommercial);
 			}
@@ -258,6 +258,7 @@ public class DocumentOnlineSigner implements Serializable {
 			pnUrl = (pnUrl.startsWith("http://")?"":"http://") + pnUrl;
 			opt.put("pushNotificationUrl", pnUrl);
 			opt.put("pushNotificationFilter", filter);
+			opt.put("signatureRequestInfoText", "Adjuntamos a continuación el documento para su firma, según conversación telefónica mantenida.");
 			json.put("options", opt);
 			
 			JSONObject responseJson = postObject(json.toString());
