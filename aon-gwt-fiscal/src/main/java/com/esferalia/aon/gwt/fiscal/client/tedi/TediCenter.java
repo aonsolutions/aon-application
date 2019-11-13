@@ -171,10 +171,11 @@ public class TediCenter extends MainEntryPoint {
 				Integer offsetHeight = tableScrollPanel2.getElement().getOffsetHeight();
 				Integer physicalSize = tableScrollPanel2.getElement().getScrollHeight();
 				Integer maxScrollPosition = physicalSize - offsetHeight;
-				if(scrollTop > maxScrollPosition && start < companyList.size()){
+
+				if(scrollTop >= maxScrollPosition && start < companyList.size()){
 					Integer s = start;
 					Integer e = start + 50;
-					companyTable.setRowData(companyList.subList(s, companyList.size() < e ? companyList.size() : e ));
+					companyTable.setRowData(companyList.subList(0, companyList.size() < e ? companyList.size() : e ));
 					start = companyList.size() < e ? companyList.size() : e;
 					getCountInbox(s);
 				}
@@ -197,7 +198,6 @@ public class TediCenter extends MainEntryPoint {
 					if (companyList == null) {
 						companyList  = new LinkedList<TediCompanyResult>();
 					}
-								
 					companyTable.setRowData(companyList.subList(start, companyList.size() < 50 ? companyList.size() : 50 ));
 					start = companyList.size() < 50 ? companyList.size() : 50;
 					getCountInbox(0);
