@@ -78,7 +78,7 @@ public class Finance extends Methods{
 			
 			@Override
 			public void onSuccess(String result) {
-				get(getUrl() + "sii22/" + result, callback);
+				get(getUrl() + "ms/sii22/" + result, callback);
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
