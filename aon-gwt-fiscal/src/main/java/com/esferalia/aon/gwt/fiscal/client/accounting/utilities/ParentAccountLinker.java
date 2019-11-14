@@ -233,6 +233,7 @@ class ParentAccountLinker extends OptionBase {
 							@Override public void visitCreditorAccount(AccUtilitiesItemType type) {}
 							@Override public void visitEmptyEntry(AccUtilitiesItemType type) {}
 							@Override public void visitAccountIntegrity(AccUtilitiesItemType type) {}
+							@Override public void visitDomainIntegrity(AccUtilitiesItemType type) {}
 							@Override public void visitNoLowLevelAccount(AccUtilitiesItemType type) {}
 							
 							@Override 

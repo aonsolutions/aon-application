@@ -23,6 +23,10 @@ public interface AccountingUtilitiesServiceAsync {
 	void accountIntegrity(String domainName, String user, Domain domain, AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException;
 	void accountIntegrityFix(String domainName, String user, Integer domain, Account account, AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException;
 
+	// Chequeo de integridad de dominios en asientos contables
+	void domainIntegrity(String domainName, String user, Domain domain, AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException;
+	void domainIntegrityFix(String domainName, String user, Integer domain, Account account, AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException;
+
 	// Chequeo de cuentas contables sin niveles inferiores.
 	void noLowLevelAccounts(String domainName, String user, Domain domain, AsyncCallback<AccUtilitiesResult> asyncCallback) throws AonCoreException;
 	

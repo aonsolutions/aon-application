@@ -111,7 +111,7 @@ public class AccountingUtilities extends MainEntryPoint{
 				accIntegrity.run();
 			}
 		});
-				
+
 		NoLowLevelAccountFinder noLowLevel = new NoLowLevelAccountFinder(getDomainName(),getUser(),domain);
 		checksPanel.add(noLowLevel.getSidebarWidget());
 		noLowLevel.addSelectionHandler( new SelectionHandler<AccountingUtilities.IOption>() {
@@ -143,6 +143,19 @@ public class AccountingUtilities extends MainEntryPoint{
 		});
 		sidebarMenu.add(checksDisclosurePanel);
 		
+		
+		if (!domain.isParent()) {
+			DomainIntegrityCheck domainIntegrity = new DomainIntegrityCheck(getDomainName(),getUser(),domain);
+			checksPanel.add(domainIntegrity.getSidebarWidget());
+			domainIntegrity.addSelectionHandler( new SelectionHandler<AccountingUtilities.IOption>() {
+				@Override
+				public void onSelection(SelectionEvent<IOption> event) {
+					content.setWidget( domainIntegrity );
+					domainIntegrity.run();
+				}
+			});
+		}
+
 		DisclosurePanel utilitiesDisclosurePanel = new DisclosurePanel("UTILIDADES");
 		utilitiesDisclosurePanel.setOpen(false);
 		FlowPanel utilitiesPanel = new FlowPanel();

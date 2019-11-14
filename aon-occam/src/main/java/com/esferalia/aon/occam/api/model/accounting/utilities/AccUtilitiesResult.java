@@ -36,6 +36,22 @@ public class AccUtilitiesResult implements Serializable {
 		}
 		return false;
 	}
+	public boolean hasInfoMessages() {
+		for (IAccUtilitiesItem item : getItems()) {
+			if (item.getType() == AccUtilitiesItemType.INFO_MESSAGE) {
+				return true;
+			}
+		}
+		return false;
+	}
+	public String getFirstInfoMessage() {
+		for (IAccUtilitiesItem item : getItems()) {
+			if (item.getType() == AccUtilitiesItemType.INFO_MESSAGE) {
+				return item.getMessage();
+			}
+		}
+		return null;
+	}
 	public boolean isEmpty() {
 		return messages == null || messages.isEmpty();
 	}

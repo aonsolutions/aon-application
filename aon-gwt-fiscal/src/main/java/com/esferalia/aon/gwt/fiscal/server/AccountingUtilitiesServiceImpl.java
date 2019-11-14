@@ -57,6 +57,15 @@ public class AccountingUtilitiesServiceImpl extends AonRemoteServiceServlet impl
 	}
 
 	@Override
+	public AccUtilitiesResult domainIntegrity(String domainName, String user, Domain domain)  throws AonCoreException {
+		return ACCOUNTING.domainIntegrity(domainName, user, domain);
+	}
+	@Override
+	public AccUtilitiesResult domainIntegrityFix(String domainName, String user, Integer domain, Account account) throws AonCoreException {
+		return ACCOUNTING.domainIntegrityFix(domainName, user, domain, account);
+	}
+
+	@Override
 	public AccUtilitiesResult emptyEntries(String domainName, String user, Domain domain) {
 		return ACCOUNTING.emptyEntries(domainName, user, domain);
 	}

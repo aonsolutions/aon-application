@@ -362,6 +362,18 @@ public class AccountingImpl implements IAccounting {
 			 );		
 	}
 	@Override
+	public AccUtilitiesResult domainIntegrity(AONContext ctx) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> AccountingUtilitiesDAO.domainIntegrity(ctx)
+			 );		
+	}
+	@Override
+	public AccUtilitiesResult domainIntegrityFix(AONContext ctx, Account account) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> AccountingUtilitiesDAO.domainIntegrityFix(ctx, account)
+			 );		
+	}
+	@Override
 	public AccUtilitiesResult noLowLevelAccounts(AONContext ctx) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> AccountingUtilitiesDAO.noLowLevelAccounts(ctx)

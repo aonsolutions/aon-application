@@ -175,7 +175,7 @@ public class AccountDAO {
 			.findFirst()
 			.orElse(null);
 		if (last != null){
-			return new Long(Long.parseLong(last.getCode()) + 1).toString();
+			return Long.valueOf(Long.parseLong(last.getCode()) + 1).toString();
 		}
 		return zerofill(prefix); 
 	}

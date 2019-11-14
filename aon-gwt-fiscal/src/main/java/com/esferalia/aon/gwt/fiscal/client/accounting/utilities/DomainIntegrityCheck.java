@@ -1,19 +1,21 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.utilities;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
+import com.esferalia.aon.gwt.common.client.widget.MessageDialog.MessageDialogCallback;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountIntegritItem;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesDomainIntegrityItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.accounting.utilities.IAccUtilitiesItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.IAccUtilitiesItem.AccUtilitiesItemType;
 import com.esferalia.aon.occam.api.model.accounting.utilities.IAccUtilitiesItem.IAccUtilitiesItemTypeVisitor;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -23,7 +25,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-class AccountIntegrityCheck extends OptionBase {
+class DomainIntegrityCheck extends OptionBase {
 
 	private static AccountingUtilitiesServiceAsync SERVICE;
 	 
@@ -33,7 +35,7 @@ class AccountIntegrityCheck extends OptionBase {
 	private String user;
 	private Domain domain;
 	
-	protected AccountIntegrityCheck(String domainName, String user, Domain domain) {
+	protected DomainIntegrityCheck(String domainName, String user, Domain domain) {
 		super(domainName, user, domain);
 		this.domainName = domainName;
 		this.user = user;
@@ -51,7 +53,7 @@ class AccountIntegrityCheck extends OptionBase {
 	
 	@Override
 	public String getOptionDescription() {
-		return AonStringUtils.BULLET + " Chequeo de integridad cuentas contables.";
+		return AonStringUtils.BULLET + " Chequeo de integridad de dominios de cuentas en asientos contables.";
 	}
 
 	protected Widget getToolbarPanel() {
@@ -103,7 +105,7 @@ class AccountIntegrityCheck extends OptionBase {
 		popup.setAnimationEnabled(true);
 		popup.center();
 		
-		SERVICE.accountIntegrity(domainName, user, domain, new AsyncCallback<AccUtilitiesResult>(){
+		SERVICE.domainIntegrity(domainName, user, domain, new AsyncCallback<AccUtilitiesResult>(){
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -123,59 +125,58 @@ class AccountIntegrityCheck extends OptionBase {
 
 	@Override
 	protected Widget paintResults(AccUtilitiesResult result) {
-		FlowPanel log = new FlowPanel();
-		log.setStyleName(AON.AON_CSS.aonWidth98Percent());
-		log.addStyleName(AON.AON_CSS.aonBlockCenter());
-		log.addStyleName(AON.AON_CSS.aonMarginTop());
-		log.addStyleName(AON.AON_CSS.aonMarginBottom());
-		log.addStyleName(AON.AON_CSS.aonFixedFont());
-		log.addStyleName(AON.AON_CSS.aonFontMedium());
-		log.addStyleName(AON.AON_CSS.aonNowrap());
-		if (result != null && !result.isEmpty()) {
-			String lastDomain = null;
-			DisclosurePanel disclosurePanel = null;
-			FlowPanel domainPanel = null;
+		FlowPanel tabContainer = new FlowPanel();
+		if (result.getItems() != null && result.getItems().size() > 0) {
+			FlexTable tab = new FlexTable();
+			tab.setStyleName(AON.AON_CSS.aonDataTable());
+			tab.addStyleName(AON.AON_CSS.aonBlockCenter());
+			
+			tab.getColumnFormatter().setWidth(0, "50px");
+			tab.getColumnFormatter().setWidth(1, "auto");
+			tab.getColumnFormatter().setWidth(2, "100px");
+			
+	
+			tab.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonDataTableHeader());
+			tab.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonDataTableHeader());
+			tab.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonDataTableHeader());
+			
+			tab.setWidget(0, 0, new Label("*"));
+			tab.setWidget(0, 1, new Label("Mensaje"));
+			tab.setWidget(0, 2, new Label(""));
+			
+			int row = 1;
 			for (IAccUtilitiesItem item : result.getItems()) {
-				if (!AonStringUtils.equals(lastDomain, item.getDomainName())) {
-					if (disclosurePanel != null) {
-						String header = lastDomain + " (" + domainPanel.getWidgetCount() + ")";
-						disclosurePanel.getHeaderTextAccessor().setText(header);
-						disclosurePanel.getHeader().addStyleName(AON.AON_CSS.aonFixedFont());
-						disclosurePanel.getHeader().addStyleName(AON.AON_CSS.aonFontMedium());
-						log.add(disclosurePanel);
-					}
-					
-					disclosurePanel = new DisclosurePanel(item.getDomainName());
-					if (AonStringUtils.isBlank(lastDomain)) disclosurePanel.setOpen(true);
-					lastDomain = item.getDomainName();
-					domainPanel = new FlowPanel();
-					disclosurePanel.add(domainPanel);
-					disclosurePanel.addStyleName(AON.AON_CSS.aonMarginTop());
-					disclosurePanel.addStyleName(AON.AON_CSS.aonFixedFont());
-					disclosurePanel.addStyleName(AON.AON_CSS.aonFontMedium());
-					disclosurePanel.addStyleName(AON.AON_CSS.aonNowrap());
-				}
-				item.getType().visit( new AccountIntegritVisitor(domainPanel,(AccUtilitiesAccountIntegritItem) item) );
+				AccUtilitiesDomainIntegrityItem it = (AccUtilitiesDomainIntegrityItem) item;
+				
+				tab.setWidget(row, 0, new Label(AonNumberUtils.toString(it.getCount())));
+				tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonTextRight());
+				
+				tab.setWidget(row, 1, new Label(it.getMessage()));
+				
+				FlowPanel fixPanel = new FlowPanel();
+				item.getType().visit( new DomainIntegritVisitor(fixPanel,it) );
+				tab.setWidget(row, 2, fixPanel);
+				
+				row++;
 			}
-			if (disclosurePanel != null) {
-				String header = lastDomain + " (" + domainPanel.getWidgetCount() + ")";
-				disclosurePanel.getHeaderTextAccessor().setText(header);
-				disclosurePanel.getHeader().addStyleName(AON.AON_CSS.aonFixedFont());
-				disclosurePanel.getHeader().addStyleName(AON.AON_CSS.aonFontMedium());
-				log.add(disclosurePanel);
-			}
+			
+			tabContainer.add(tab);
 		} else {
-			Label label = new Label(AON.MSG.noData());
-			log.add(label);
+			Label noData = new Label( AON.MSG.noData());
+			noData.setStyleName(AON.AON_CSS.aonTextCenter());
+			noData.addStyleName(AON.AON_CSS.aonBold());
+			noData.addStyleName(AON.AON_CSS.aonMarginTop());
+			tabContainer.add(noData);	
 		}
-		return log;
+		
+		return tabContainer;
 	}
 	
-	private class AccountIntegritVisitor implements IAccUtilitiesItemTypeVisitor {
+	private class DomainIntegritVisitor implements IAccUtilitiesItemTypeVisitor {
 		private FlowPanel domainPanel;
-		private AccUtilitiesAccountIntegritItem item;
+		private AccUtilitiesDomainIntegrityItem item;
 		
-		public AccountIntegritVisitor(FlowPanel domainPanel, AccUtilitiesAccountIntegritItem item) {
+		public DomainIntegritVisitor(FlowPanel domainPanel, AccUtilitiesDomainIntegrityItem item) {
 			this.domainPanel = domainPanel;
 			this.item = item;
 		}
@@ -190,40 +191,82 @@ class AccountIntegrityCheck extends OptionBase {
 		@Override public void visitCreditorAccount(AccUtilitiesItemType type) {}
 		@Override public void visitEmptyEntry(AccUtilitiesItemType type) {}
 		@Override public void visitNoLowLevelAccount(AccUtilitiesItemType type) {}
-		@Override public void visitDomainIntegrity(AccUtilitiesItemType type) {}
-		@Override public void visitAccountIntegrity(AccUtilitiesItemType type) {
-			FlowPanel itemPanel = new FlowPanel();
-			InlineLabel msgLabel = new InlineLabel(item.getMessage());
-			itemPanel.add(msgLabel);
+		@Override public void visitAccountIntegrity(AccUtilitiesItemType type) {}
+		@Override public void visitDomainIntegrity(AccUtilitiesItemType type) {
+			InlineLabel fixLabel = new InlineLabel();
+			fixLabel.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
+			fixLabel.addStyleName(AON.AON_CSS.aonClickableBlock());
+			fixLabel.addStyleName(AON.AON_CSS.aonMarginLeft());
+			if (item.getRightAccount() == null) {
+				fixLabel.addStyleName(AON.AON_CSS.aonIconBlocked());
+				fixLabel.setText("No existe");
+				fixLabel.addClickHandler( new ClickHandler() {
 
-			InlineLabel removeLabel = new InlineLabel("Arreglar");
-			removeLabel.setTitle("Arreglar");
-			removeLabel.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-			removeLabel.addStyleName(AON.AON_CSS.aonIconDelete());
-			removeLabel.addStyleName(AON.AON_CSS.aonClickableBlock());
-			removeLabel.addStyleName(AON.AON_CSS.aonMarginLeft());
-			itemPanel.add(removeLabel);
-			removeLabel.addClickHandler( new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					SERVICE.accountIntegrityFix(domainName, user, item.getDomain(), item.getAccount(), new AsyncCallback<AccUtilitiesResult>() {
+					@Override
+					public void onClick(ClickEvent event) {
+						MessageDialog.show("No existe la cuenta " + item.getWrongAccount().getFullName() + " en el dominio actual");
+					}
+					
+				});
+			} else {
+				if (!AonStringUtils.equals(item.getRightAccount().getDescription(), item.getWrongAccount().getDescription())) {
+					fixLabel.addStyleName(AON.AON_CSS.aonIconBlocked());
+					fixLabel.setText("No coincide");
+					fixLabel.addClickHandler( new ClickHandler() {
 
 						@Override
-						public void onFailure(Throwable caught) {
-							openFootPanelIfNeeded();
-							showErrorPanel(caught.getMessage());
+						public void onClick(ClickEvent event) {
+							MessageDialog.show("La cuenta [" + item.getWrongAccount().getFullName() + "] no coincide con la cuenta [" + item.getRightAccount().getFullName() + "] del dominio actual");
 						}
-
+						
+					});
+				} else {
+					fixLabel.setText("Arreglar");
+					fixLabel.setTitle("Arreglar");
+					fixLabel.addStyleName(AON.AON_CSS.aonIconPointRed());
+					fixLabel.addClickHandler( new ClickHandler() {
 						@Override
-						public void onSuccess(AccUtilitiesResult result) {
-							run();
+						public void onClick(ClickEvent event) {
+							if (item.getRightAccount() == null) {
+								MessageDialog.show("La cuenta [" + item.getWrongAccount().getFullName() +"] no existe en el dominio en curso. Se creará." );
+							}
+							SERVICE.domainIntegrityFix(domainName, user, item.getDomain(), item.getWrongAccount(), new AsyncCallback<AccUtilitiesResult>() {
+								
+								@Override
+								public void onFailure(Throwable caught) {
+									openFootPanelIfNeeded();
+									showErrorPanel(caught.getMessage());
+								}
+								
+								@Override
+								public void onSuccess(AccUtilitiesResult result) {
+									StringBuilder msg = new StringBuilder();
+									for (IAccUtilitiesItem item : result.getItems()) {
+										if (item.getType() == AccUtilitiesItemType.INFO_MESSAGE) {
+											msg.append(item.getMessage() + " ");
+										}
+									}
+									if (AonStringUtils.isNotBlank(msg.toString())) {
+										MessageDialog.show( msg.toString(), new MessageDialogCallback() {
+											
+											@Override
+											public void onClose() {
+												run();
+											}
+										});
+									} else {
+										run();
+									}
+									
+								}
+							});
 						}
 					});
 				}
-			});
+			}
 
-			domainPanel.add(itemPanel);
+			domainPanel.add(fixLabel);
+			
 		}
 	}
-	
 }

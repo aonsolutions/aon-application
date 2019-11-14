@@ -13,6 +13,7 @@ public interface IAccUtilitiesItem extends Serializable {
 		void visitErrorMessage(AccUtilitiesItemType type);
 		void visitInfoMessage(AccUtilitiesItemType type);
 		void visitParentAccountLinker(AccUtilitiesItemType type);
+		void visitDomainIntegrity(AccUtilitiesItemType accUtilitiesItemType);
 		void visitAccountIntegrity(AccUtilitiesItemType accUtilitiesItemType);
 		void visitNoLowLevelAccount(AccUtilitiesItemType type);
 		void visitEmptyEntry(AccUtilitiesItemType type);
@@ -36,6 +37,12 @@ public interface IAccUtilitiesItem extends Serializable {
 			}
 		 }
 		 		 
+		,DOMAIN_INTEGRITY{
+			@Override
+			public void visit(IAccUtilitiesItemTypeVisitor visitor) {
+				visitor.visitDomainIntegrity(this);		
+			}
+		}
 		,ACCOUNT_INTEGRITY{
 			@Override
 			public void visit(IAccUtilitiesItemTypeVisitor visitor) {

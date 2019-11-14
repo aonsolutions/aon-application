@@ -591,6 +591,28 @@ public class ACCOUNTING {
 		}
 	}
 
+	public static AccUtilitiesResult domainIntegrity(String domainName, String user, Domain domain) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain.getId(), user);
+			return getAccounting().domainIntegrity(ctx);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static AccUtilitiesResult domainIntegrityFix(String domainName, String user, Integer domain, Account account) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getAccounting().domainIntegrityFix(ctx,account);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	public static AccUtilitiesResult noLowLevelAccounts(String domainName, String user, Domain domain) {
 		AONContext ctx = null;
 		try {

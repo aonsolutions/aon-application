@@ -60,6 +60,19 @@ public class AccountingUtilitiesServiceAsyncDecorator implements AccountingUtili
 	}
 
 	@Override
+	public void domainIntegrity(String domainName, String user, Domain domain,
+			AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException {
+		AON.start();
+		fsa.domainIntegrity(domainName, user, domain, new AsyncCallbackWrapper<AccUtilitiesResult>(callback));
+	}
+
+	@Override
+	public void domainIntegrityFix(String domainName,String user, Integer domain, Account account, AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException {
+		AON.start();
+		fsa.domainIntegrityFix(domainName, user, domain, account, new AsyncCallbackWrapper<AccUtilitiesResult>(callback));
+	}
+
+	@Override
 	public void noLowLevelAccounts(String domainName, String user, Domain domain,
 			AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException {
 		AON.start();
