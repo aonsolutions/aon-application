@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.payroll.server;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,7 +17,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jooq.tools.json.JSONObject;
 
-import com.esferalia.aon.gwt.payroll.jooq.JooqAgrarian;
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
+import com.esferalia.aon.payroll.tgss.afi.AgrarianAFI;
+import com.esferalia.aon.payroll.tgss.afi.MainAgrarianAFIGenerator;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Agrarian-AFI", urlPatterns = { "/aon_gwt_payroll/agrarian_afi/*" })
@@ -28,20 +32,26 @@ public class AgrarianAFIServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
-		//Get Request Parametrers
-		String _domainId = request.getParameter("domainId");
-		String _enterpriseId = request.getParameter("enterpriseId");
-		String _enterpriseName = request.getParameter("enterpriseName");
-		String _startDate = request.getParameter("startDate");
-		String _endDate = request.getParameter("endDate");
-		String _ccc = request.getParameter("ccc");
+		//Get Request Parametrers		
+		String findingDateStr = request.getParameter("findingDate");
+		Long findingDate = Long.parseLong(findingDateStr);
+		
+		String _selectedCCCs = request.getParameter("selectedCCCs");
+		ArrayList<String> cccList = new ArrayList<String>();
+		Integer numCCCs = Integer.parseInt(_selectedCCCs);
+		if(0 != numCCCs) {
+			for(int i=0; i<numCCCs; i++) {
+				cccList.add(request.getParameter("ccc"+i+"Code"));
+			}
+		}
+		
 		String _selectedEmployees = request.getParameter("selectedEmployees");
-		ArrayList<Integer> _selectedContracts = new ArrayList<>();
+		ArrayList<Integer> selectedContracts = new ArrayList<>();
 		
 		Integer numEmployee = Integer.parseInt(_selectedEmployees);
 		if(0 != numEmployee) {
 			for(int i=0; i<numEmployee; i++) {
-				_selectedContracts.add(Integer.parseInt(request.getParameter("employee"+i+"Id")));
+				selectedContracts.add(Integer.parseInt(request.getParameter("employee"+i+"Id")));
 			}
 		}
 		
@@ -49,11 +59,11 @@ public class AgrarianAFIServlet extends HttpServlet {
 		JSONObject agrarianJSON = null; 
 		
 		//Get domain Name
-		//Get domain Name
 		String domainName = request.getServerName();
-//		String _domainName = AonServletUtils.getRequestDomainName(request);
 		
 		try {
+			Connection connection = AonServletUtils.getConnection(domainName);
+			
 			Date currentDate = new Date();
 			String day = currentDate.getDate() < 10 ? "0"+currentDate.getDate() : currentDate.getDate()+"";
 			String month = (currentDate.getMonth()+1) < 10 ? "0"+(currentDate.getMonth()+1) : (currentDate.getMonth()+1)+"";
@@ -69,8 +79,9 @@ public class AgrarianAFIServlet extends HttpServlet {
 			if(0 == numEmployee)
 				output.write("Fallo al crear el archivo -> No hay empleados seleccionados".getBytes());
 			else {
-				agrarianJSON = JooqAgrarian.getAgrarianInfo(_domainId, domainName, _enterpriseId, _enterpriseName, _ccc, _startDate, _endDate, _selectedContracts);
-				String agrarianAFI = AgrarianAFIGeneration.generateAgrarianAFI(agrarianJSON);
+				agrarianJSON = AgrarianAFI.getAgrarianInfo(cccList, findingDate, selectedContracts, connection);
+				String agrarianAFI = MainAgrarianAFIGenerator.generateAgrarianAFI(agrarianJSON);
+				
 				output.write(agrarianAFI.getBytes());
 			}
 			
@@ -78,6 +89,9 @@ public class AgrarianAFIServlet extends HttpServlet {
 		
 		}catch (IOException e) {
 			throw new AbortProcessingException(e.getMessage(), e);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 	}
