@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.tedi;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.ModuleCallback;
@@ -94,6 +95,8 @@ public class TediCenter extends MainEntryPoint {
 	private TediInvoiceTable table = new TediInvoiceTable(new TediResultProvidesKey());
 	
 	private LinkedList<TediCompanyResult> companyList;
+	private String document = "";
+	private String name = "";
 	private Integer start = 0; 
 	private TediCompanyTable companyTable;
 	
@@ -161,7 +164,36 @@ public class TediCenter extends MainEntryPoint {
 		ScrollPanel tableScrollPanel2 = new ScrollPanel();
 		tableScrollPanel2.setStyleName(AON.AON_CSS.aonScrollArea());
 		sidebarContent2.add(tableScrollPanel2);
-		tableScrollPanel2.add(companyTable);
+		VerticalPanel vp = new VerticalPanel();
+		vp.setWidth("100%");
+		FilterPanel fp = new FilterPanel() {
+			
+			@Override
+			protected void onDocumentChange(String value) {
+				document = value;
+				LinkedList<TediCompanyResult> list = companyList.stream().filter(f ->  f.getCompany().getDocument().toUpperCase().contains(value.toUpperCase())
+						&& f.getCompany().getName().toUpperCase().contains(name.toUpperCase()))
+				.collect(Collectors.toCollection(LinkedList::new));
+				Integer size = list.size() < 50 ? list.size() : 50;
+				companyTable.setRowData(list.subList(0, size));
+				start = size;
+			}
+
+			@Override
+			protected void onNameChange(String value) {
+				name = value;
+				LinkedList<TediCompanyResult> list = companyList.stream().filter(f ->  f.getCompany().getName().toUpperCase().contains(value.toUpperCase())
+						&& f.getCompany().getDocument().toUpperCase().contains(document.toUpperCase()))
+				.collect(Collectors.toCollection(LinkedList::new));
+				Integer size = list.size() < 50 ? list.size() : 50;
+				companyTable.setRowData(list.subList(0, size ));
+				start = size; 
+			}
+		};
+		fp.getElement().getStyle().setMarginBottom(10, Unit.PX);
+		vp.add(fp);
+		vp.add(companyTable);
+		tableScrollPanel2.add(vp);
 		
 		
 		tableScrollPanel2.addDomHandler(new ScrollHandler() {
@@ -175,8 +207,12 @@ public class TediCenter extends MainEntryPoint {
 				if(scrollTop >= maxScrollPosition && start < companyList.size()){
 					Integer s = start;
 					Integer e = start + 50;
-					companyTable.setRowData(companyList.subList(0, companyList.size() < e ? companyList.size() : e ));
-					start = companyList.size() < e ? companyList.size() : e;
+
+					LinkedList<TediCompanyResult> list = companyList.stream().filter(f ->  f.getCompany().getName().toUpperCase().contains(name.toUpperCase())
+							&& f.getCompany().getDocument().toUpperCase().contains(document.toUpperCase()))
+							.collect(Collectors.toCollection(LinkedList::new));
+					companyTable.setRowData(list.subList(0, list.size() < e ? list.size() : e ));
+					start = companyList.size() < e ? list.size() : e;
 					getCountInbox(s);
 				}
 			}
@@ -212,21 +248,25 @@ public class TediCenter extends MainEntryPoint {
 	}
 	
 	private void getCountInbox(Integer index) {
-		if(index < start) {
-			SERVICE.getCountInboxInvoices(getDomainName(), getUser(), getDomain(), isTediSnapshot(), companyList.get(index).getCompany(), new AsyncCallback<Integer>() {
+		if(index < start ) {
+			if(companyList.get(index).getInboxCount() != null) {
+				getCountInbox(index + 1);
+			} else {
+				SERVICE.getCountInboxInvoices(getDomainName(), getUser(), getDomain(), isTediSnapshot(), companyList.get(index).getCompany(), new AsyncCallback<Integer>() {
 			
-				@Override
-				public void onSuccess(Integer result) {
-					companyList.get(index).setInboxCount(result);
-					companyTable.setRowData(index, companyList.subList(index, index + 1));
-					getCountInbox(index + 1);
-				}
+					@Override
+					public void onSuccess(Integer result) {
+						companyList.get(index).setInboxCount(result);
+						companyTable.setRowData(index, companyList.subList(index, index + 1));
+						getCountInbox(index + 1);
+					}
 			
-				@Override
-				public void onFailure(Throwable caught) {
+					@Override
+					public void onFailure(Throwable caught) {
 					
-				}
-			});
+					}
+				});
+			}
 		}
 	}
 	
