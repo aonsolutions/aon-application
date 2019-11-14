@@ -205,8 +205,8 @@ public class DocumentOnlineSigner implements Serializable {
 			if(targetCommercialEmail == null || "".equals(targetCommercialEmail)) {
 				throw new Exception("El Cliente Potencial no tiene cuenta de correo electrónico comercial.");
 			}
-			String rDirStaffEmail = getRDirStaffEmail(offer);
-			String rDirStaffName = getRDirStaffName(offer);
+			String rDirStaffEmail = getRDirStaffEmail(offer) != null && !getRDirStaffEmail(offer).equals("") ? getRDirStaffEmail(offer) : targetCommercialEmail;
+			String rDirStaffName = getRDirStaffName(offer) != null && !getRDirStaffName(offer).equals("") ? getRDirStaffName(offer) : offer.getTarget().getRegistry().getName();
 			String sellerEmail = getSellerEmail(offer);
 			
 			byte[] data = mergePdf(list);
