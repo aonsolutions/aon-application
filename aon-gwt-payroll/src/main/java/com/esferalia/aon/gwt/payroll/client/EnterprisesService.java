@@ -109,8 +109,7 @@ public interface EnterprisesService extends RemoteService {
 
 	EnterpriseInfo updateEnterprise(EnterpriseInfo enterpriseInfo, String domain);
 
-	Map<Integer, List<AgrarianJourney>> getAgrarianJourney(Date startDate, Date endDate, Integer enterprise_ccc,
-			String domain);
+	Map<Integer, List<AgrarianJourney>> getAgrarianJourney(long findingDate, List<String> cccList, String domain);
 
 	List<CRA> getCRAs(String domain);
 

@@ -189,8 +189,8 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.updateEnterprise(enterpriseInfo, getCurrentDomainName(), asyncCallback);
 	}
 	
-	public void getEmployeeAgrarianJourney(Date startDate, Date endDate, Integer enterprise_ccc, AsyncCallback<Map<Integer, List<AgrarianJourney>>> asyncCallback) {
-		enterprisesServiceAsync.getAgrarianJourney(startDate, endDate, enterprise_ccc, getCurrentDomainName(), asyncCallback);
+	public void getEmployeeAgrarianJourney(long findingDate, List<String> cccList, AsyncCallback<Map<Integer, List<AgrarianJourney>>> asyncCallback) {
+		enterprisesServiceAsync.getAgrarianJourney(findingDate, cccList, getCurrentDomainName(), asyncCallback);
 	}
 	
 	public void getCRAs(AsyncCallback<List<CRA>> asyncCallback) {

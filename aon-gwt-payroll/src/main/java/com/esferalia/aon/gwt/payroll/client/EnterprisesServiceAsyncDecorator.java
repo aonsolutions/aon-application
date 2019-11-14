@@ -318,10 +318,9 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getAgrarianJourney(Date startDate, Date endDate, Integer enterprise_ccc, String domain,
-			AsyncCallback<Map<Integer, List<AgrarianJourney>>> callback) {
+	public void getAgrarianJourney(long findingDate, List<String> cccList, String domain, AsyncCallback<Map<Integer, List<AgrarianJourney>>> callback) {
 		AON.start();
-		enterprisesServiceAsync.getAgrarianJourney(startDate, endDate, enterprise_ccc, domain, new AsyncCallbackWrapper<Map<Integer, List<AgrarianJourney>>>(callback));
+		enterprisesServiceAsync.getAgrarianJourney(findingDate, cccList, domain, new AsyncCallbackWrapper<Map<Integer, List<AgrarianJourney>>>(callback));
 		
 	}
 

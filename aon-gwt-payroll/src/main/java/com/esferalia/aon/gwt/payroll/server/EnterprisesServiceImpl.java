@@ -1702,12 +1702,11 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public Map<Integer, List<AgrarianJourney>> getAgrarianJourney(java.util.Date startDate, java.util.Date endDate, Integer enterprise_ccc,
-			String domain) {
+	public Map<Integer, List<AgrarianJourney>> getAgrarianJourney(long findingDate, List<String> cccList, String domain) {
 		Connection connection = null;
 		try {
 			connection = AonServletUtils.getConnection(domain);
-			return JooqAgrarian.getAgrarianJourney(startDate, endDate, domain, enterprise_ccc, connection);
+			return JooqAgrarian.getAgrarianJourney(findingDate, cccList, connection);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		} finally {
