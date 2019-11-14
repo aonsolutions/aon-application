@@ -461,8 +461,8 @@ public class TediCenter extends MainEntryPoint {
 				if (companyList == null) {
 					companyList  = new LinkedList<TediCompanyResult>();
 				}
-			
-				companyTable.setRowData(companyList.subList(start, companyList.size() < 50 ? companyList.size() : 50 ));
+				
+				companyTable.setRowData(companyList.subList(0, companyList.size() < 50 ? companyList.size() : 50 ));
 				start = companyList.size() < 50 ? companyList.size() : 50;
 				getCountInbox(0);
 			}
