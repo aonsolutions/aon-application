@@ -70,7 +70,16 @@ public class AgrarianAFI extends MainEntryPoint {
 	Label enterprise;
 	
 	@UiField
+	ListBox enterpriseList;
+	
+	@UiField
 	ListBox cccs;
+	
+	@UiField
+	CheckBox allCCCs;
+	
+	@UiField
+	Label allCCCsLabel;
 	
 	@UiField
 	ListBox monthList;
@@ -87,18 +96,26 @@ public class AgrarianAFI extends MainEntryPoint {
 	@UiField
 	Grid employeeTable;
 	
-	private Enterprise enterpriseInfo = new Enterprise();
-	private String enterpriseName = "";
-	private Map<String, CCC> agrarianCCCs = new HashMap<>();
-	private Integer cccId = 0;
-	private String ccc = "";
 	private Map<Integer, List<AgrarianJourney>> agrarianJourney = new HashMap<>();
 	private ArrayList<Integer> selectedEmployees = new ArrayList<>();
 	
-	private Date startDate = null;
-	private Date endDate = null;
+	// All enterpises of a domain
+	private List<Enterprise> enterprisesList;
 	
-	private List<Enterprise> enterprisesList = new ArrayList<>();
+	// Selected enterprise, if only one that is the one selected
+	private Enterprise selectedEnterprise;
+	
+	// All the CCCs of the selected enterprise
+	private Map<String, List<CCC>> agrarianCCCs = new HashMap<>();
+	
+	// The list of CCCs we are going to generate CRA
+	private List<String> cccList = new ArrayList<String>();
+	
+	// The date to generate AFI
+	private Date startDate = null;
+	
+	// CCC Id we are going to generate AFI of
+	private Integer cccId = 0;
 	
 	@SuppressWarnings("deprecation")
 	@Override
@@ -138,32 +155,47 @@ public class AgrarianAFI extends MainEntryPoint {
 		//Hide EmployeePanel
 		employeePanel.addStyleName(style.hide());
 		
+		initLogic();
+				
+	}
+
+	private void initLogic() {
+		agrarianCCCs.clear();
+		enterpriseList.clear();
+		
 		impl.getEnterprises(0, Integer.MAX_VALUE, new AsyncCallback<List<Enterprise>>() {
 			
 			@Override
 			public void onSuccess(List<Enterprise> enterprises) {
-				if(enterprises.size() == 1){
-					enterpriseName = enterprises.get(0).getName();
-					enterpriseInfo = enterprises.get(0);
-				}
-				
+				// Set all enterprises of a domain
 				enterprisesList = enterprises;
 				
-				for (Enterprise enterprise: enterprises)
-					for(Activity activity : enterprise.getActivities())
-						for(CCC ccc : activity.getCccs())
-							if(ccc.getRegime() == "0163")
-								agrarianCCCs.put(activity.getDescription(), ccc);
+				if(enterprises.size() == 1){
+					enterpriseList.addStyleName(style.hide());
+					enterprise.removeStyleName(style.hide());
+				} else {
+					enterpriseList.removeStyleName(style.hide());
+					enterprise.addStyleName(style.hide());
+					
+					// Fill enterprise list box
+					for (Enterprise enterprise: enterprises)
+						enterpriseList.addItem(enterprise.getName());
+				}
+				
+				selectedEnterprise = enterprises.get(0);
+				
+				for(Activity activity : selectedEnterprise.getActivities())
+					for(CCC ccc : activity.getCccs())
+						if(ccc.getRegime() == "0163")
+							addCCCToActivity(activity.getDescription(), ccc);
 				
 				initializeView();
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-			}
+			public void onFailure(Throwable caught) { }
+			
 		});
-				
 	}
 
 	@SuppressWarnings("deprecation")
@@ -239,14 +271,14 @@ public class AgrarianAFI extends MainEntryPoint {
 	@UiHandler("exportButton")
 	void exportButton(ClickEvent event){
 		String fileDownloadURL = GWT.getModuleBaseURL()+ "/agrarian_afi/"
-            + "?domainId=" + enterpriseInfo.getDomain()
-            + "&enterpriseId=" + enterpriseInfo.getId()
-            + "&enterpriseName=" + enterpriseName
-	        + "&startDate=" + startDate.getTime()
-	        + "&endDate=" + endDate.getTime()
-	        + "&ccc=" + ccc
-	        + "&selectedEmployees=" + selectedEmployees.size()
-	        ;
+            + "?findingDate=" + startDate.getTime()
+            + "&selectedCCCs="+cccList.size();
+		
+		for(int i=0; i<cccList.size(); i++) {
+			fileDownloadURL += "&ccc"+i+"Code=" + cccList.get(i);
+		}
+		
+		fileDownloadURL += "&selectedEmployees=" + selectedEmployees.size();
 		
 		for(int i=0; i<selectedEmployees.size(); i++) {
 			fileDownloadURL += "&employee"+i+"Id=" + selectedEmployees.get(i);
@@ -266,19 +298,15 @@ public class AgrarianAFI extends MainEntryPoint {
 			Integer selectedMonth = this.monthList.getSelectedIndex();
 			Integer selectedYear = Integer.parseInt(this.yearList.getSelectedItemText()) - 1900;
 			Date selectedDate = new Date(selectedYear, selectedMonth, 1);
-			setFindingDates(selectedDate);
-			
-			//Set CCC to find
-			String selectedCCC =  this.cccs.getSelectedItemText().split("- ")[2].split(" ")[0] ; //this.cccs.getSelectedItemText().split("- ")[1];
-			setFindingCCC(selectedCCC);
-			this.ccc = selectedCCC;
+			this.startDate = selectedDate;
 			
 			//Get Journies
-			impl.getEmployeeAgrarianJourney(this.startDate, this.endDate, this.cccId, new AsyncCallback<Map<Integer, List<AgrarianJourney>>>() {
+			impl.getEmployeeAgrarianJourney(this.startDate.getTime(), this.cccList, new AsyncCallback<Map<Integer, List<AgrarianJourney>>>() {
 				
 				@Override
 				public void onSuccess(Map<Integer, List<AgrarianJourney>> result) {
 					agrarianJourney = result;
+					selectedEmployees.clear();
 					initializeTableJourney();
 				}
 				
@@ -347,6 +375,7 @@ public class AgrarianAFI extends MainEntryPoint {
 						CheckBox checkBox = (CheckBox) employeeTable.getWidget(i, 0);
 						checkBox.setValue(true);
 					}
+					selectedEmployees.clear();
 					for(Integer contractId : agrarianJourney.keySet())
 						selectedEmployees.add(contractId);
 					
@@ -373,29 +402,97 @@ public class AgrarianAFI extends MainEntryPoint {
 		employeeTable.setWidget(newRow, 3, month);
 	}
 	
+	@UiHandler("enterpriseList")
+	void changeEnterpriseList(ChangeEvent event){
+		cccs.clear();
+		
+		for(Enterprise enterprise: enterprisesList) {
+			if(enterpriseList.getSelectedValue().equals(enterprise.getName())) {
+				this.selectedEnterprise = enterprise;
+				continue;
+			}
+		}
+		
+		agrarianCCCs.clear();
+		
+		for(Activity activity : selectedEnterprise.getActivities())
+			for(CCC ccc : activity.getCccs())
+				if(ccc.getRegime() == "0163")
+					addCCCToActivity(activity.getDescription(), ccc);
+		
+		for(Entry<String, List<CCC>> entry : this.agrarianCCCs.entrySet()){
+			for(CCC ccc : entry.getValue()) {
+				this.cccs.addItem(entry.getKey() + " - " + getRegimeName(ccc.getRegime()) + " - " 
+						+ ccc.getCode() + " - (" + ProvinceContract.getName(ccc.getGeozone()) +")");
+			}
+			
+		}
+		
+		if(this.agrarianCCCs.isEmpty()){
+			this.cccs.setEnabled(false);
+			this.monthList.setEnabled(false);
+			this.yearList.setEnabled(false);
+			this.searchAgrarian.setEnabled(false);
+			WarningDialog warning = new WarningDialog("Aviso", "No existe ninguna cuenta de cotizaci"+String.valueOf("\u00F3")+"n de tipo agrario.");
+			warning.center();
+			warning.show();
+		}else{
+			this.cccs.setEnabled(true);
+			this.monthList.setEnabled(true);
+			this.yearList.setEnabled(true);
+			this.searchAgrarian.setEnabled(true);
+			
+			setFindingCCC(this.cccs.getSelectedItemText().split("- ")[2].split(" ")[0], false);
+		}
+		
+		allCCCsLabel.setText(" Todos los CCCs de " + this.selectedEnterprise.getName());
+	}
+	
 	@UiHandler("cccs")
 	void changeCCCList(ChangeEvent event){
-		setFindingCCC( this.cccs.getSelectedItemText().split("- ")[2].split(" ")[0] );
+		setFindingCCC( this.cccs.getSelectedItemText().split("- ")[2].split(" ")[0], false);
+	}
+	
+	@UiHandler("allCCCs")
+	void clickAllCCCs(ClickEvent event){
+		cccs.setEnabled(!allCCCs.getValue());
+		
+		if(allCCCs.getValue()) {
+			setFindingCCC( "", true);
+		}else {
+			setFindingCCC( this.cccs.getSelectedItemText().split("- ")[2].split(" ")[0], false);
+		}
 	}
 
-	private void setFindingCCC(String selectedCCC) {
-		for (Enterprise enterprise: this.enterprisesList)
-			for(Activity activity : enterprise.getActivities())
-				for(CCC ccc : activity.getCccs())
-					if(ccc.getCode().equals(selectedCCC)) {
-						this.cccId = ccc.getId();
-						enterpriseInfo = enterprise;
-						break;
-					}
+	private void setFindingCCC(String selectedCCC, Boolean all) {
+		
+		if(all) {
+			this.cccList.clear();
+			for(Activity activity : this.selectedEnterprise.getActivities()) {
+				for(CCC ccc : activity.getCccs()) {
+					if(ccc.getRegime() == "0163")
+						this.cccList.add(ccc.getCode());
+				}
+			}
+			
+			this.enterprise.setText(this.selectedEnterprise.getName());
+			this.cccId = this.selectedEnterprise.getActivities().get(0).getCccs().get(0).getId();
+			
+		} else {
+			this.cccList.clear();
+			for (Enterprise enterprise: enterprisesList)
+				for(Activity activity : enterprise.getActivities())
+					for(CCC ccc : activity.getCccs())
+						if(ccc.getCode().equals(selectedCCC)) {
+							this.cccId = ccc.getId();
+							selectedEnterprise = enterprise;
+							continue;
+						}
+			
+			this.enterprise.setText(this.selectedEnterprise.getName());
+			this.cccList.add(selectedCCC);
+		}
 
-		this.enterpriseName = this.enterpriseInfo.getName();
-		this.enterprise.setText(this.enterpriseInfo.getName());
-		this.ccc = selectedCCC;
-	}
-
-	private void setFindingDates(Date selectedDate) {
-		this.startDate = selectedDate;
-		this.endDate = DateUtils.getLastDayOfMonth(selectedDate);
 	}
 
 	// ------------------------------------------------------------------------
@@ -404,7 +501,8 @@ public class AgrarianAFI extends MainEntryPoint {
 	
 	private void initializeView(){
 		//Enterprise Name
-		enterprise.setText(this.enterpriseName);
+		enterprise.setText(this.selectedEnterprise.getName());
+		allCCCsLabel.setText(" Todos los CCCs de " + this.selectedEnterprise.getName());
 		enterprise.addStyleName(style.bold());
 		enterprise.addStyleName(style.paddingText());
 		
@@ -417,12 +515,14 @@ public class AgrarianAFI extends MainEntryPoint {
 			warning.center();
 			warning.show();
 		}else{
-			for(Entry<String, CCC> entry : this.agrarianCCCs.entrySet()){
-				this.cccs.addItem(entry.getKey() + " - " + getRegimeName(entry.getValue().getRegime()) + " - " 
-						+ entry.getValue().getCode() + " - (" + ProvinceContract.getName(entry.getValue().getGeozone()) +")");
+			for(Entry<String, List<CCC>> entry : this.agrarianCCCs.entrySet()){
+				for(CCC ccc : entry.getValue()) {
+					this.cccs.addItem(entry.getKey() + " - " + getRegimeName(ccc.getRegime()) + " - " 
+							+ ccc.getCode() + " - (" + ProvinceContract.getName(ccc.getGeozone()) +")");
+				}
 			}
-			String selectedCCC =  this.cccs.getSelectedItemText().split("- ")[2].split(" ")[0] ;
-			setFindingCCC(selectedCCC);
+			
+			setFindingCCC(this.cccs.getSelectedItemText().split("- ")[2].split(" ")[0], false);
 		}
 	}
 	
@@ -450,6 +550,16 @@ public class AgrarianAFI extends MainEntryPoint {
 			return "Principal";
 		default:
 			return "Desconocido";
+		}
+	}
+	
+	private void addCCCToActivity(String activityDescription, CCC ccc) {
+		if(agrarianCCCs.get(activityDescription) == null) {
+			List<CCC> cccs = new ArrayList<CCC>();
+			cccs.add(ccc);
+			agrarianCCCs.put(activityDescription, cccs);
+		} else {
+			agrarianCCCs.get(activityDescription).add(ccc);
 		}
 	}
 

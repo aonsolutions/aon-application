@@ -57,10 +57,15 @@
 		
 		.margingListBox{
 			margin: 0px 0px 0px 5px;
+			width: 600px;
 		}
 		
 		.widthFirstColumn{
 			width: 200px;
+		}
+		
+		.m5{
+			margin: 5px;
 		}
 	
 	</ui:Style>
@@ -85,7 +90,7 @@
 		</g:north>
 		<g:center>
 			<g:DockLayoutPanel unit="EM" styleName="aondockLayoutPanel-template">
-				<g:north size="12">
+				<g:north size="16">
 					<g:HTMLPanel styleName="aon-width-all aon-height-all {style.paddingTable}"> 
 						<table class="aon-width-all aon-height-all">
 							<tr>
@@ -101,14 +106,23 @@
 														</td>
 														<td>
 															<g:Label ui:field="enterprise"></g:Label>
+															<g:ListBox ui:field="enterpriseList" styleName="{style.margingListBox}"></g:ListBox>
 														</td>
 													</tr>
 													<tr>
-														<td style="background-color: #eaeaea; width: 100px; height: 22px;">
+														<td rowspan="2" style="background-color: #eaeaea; width: 100px; height: 22px;">
 															<g:Label>CCC:</g:Label>
 														</td>
 														<td>
 															<g:ListBox ui:field="cccs" styleName="{style.margingListBox}"></g:ListBox>
+														</td>
+													</tr>
+													<tr>
+														<td>
+															<g:HorizontalPanel>
+																<g:CheckBox ui:field="allCCCs" styleName="{style.m5}"></g:CheckBox>
+																<g:Label ui:field="allCCCsLabel" styleName="{style.m5}"> Todos los CCCs</g:Label>
+															</g:HorizontalPanel>
 														</td>
 													</tr>
 													<tr>
