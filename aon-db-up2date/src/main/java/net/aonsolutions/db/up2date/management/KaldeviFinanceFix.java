@@ -107,13 +107,13 @@ public class KaldeviFinanceFix implements Update {
 						int bslId = rec.get(BANK_STATEMENT_LINK.ID);
 						int ftId = rec.get(BANK_STATEMENT_LINK.SOURCE_ID);
 						
+						c.ft_deleted += dslContext.delete(FINANCE_TRACKING)
+								.where(FINANCE_TRACKING.DOMAIN.eq(KALDEVI_DOMAIN))
+								.and(FINANCE_TRACKING.BANK_STATEMENT_LINK.eq(bslId))
+								.execute();
 						c.bsl_deleted += dslContext.delete(BANK_STATEMENT_LINK)
 								.where(BANK_STATEMENT_LINK.DOMAIN.eq(KALDEVI_DOMAIN))
 								.and(BANK_STATEMENT_LINK.ID.eq(bslId))
-								.execute();
-						c.ft_deleted += dslContext.delete(FINANCE_TRACKING)
-								.where(FINANCE_TRACKING.DOMAIN.eq(KALDEVI_DOMAIN))
-								.and(FINANCE_TRACKING.ID.eq(ftId))
 								.execute();
 					});
 				c.bs_updated = dslContext.update(BANK_STATEMENT)
