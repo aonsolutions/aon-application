@@ -94,7 +94,7 @@ public class PackingListMailServlet extends HttpServlet{
 		Boolean isSC = CarrierPackingType.SHIPMENT_REQUEST.equals(carrierPacking.getType());
 		String str = "domain="+ domain.getName() + "&login="+ login + "&id="+carrierPacking.getId();
 		String base = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
-		String url = scheme + "://" + domain.getName() + "/aon_gwt_aio/download_packing_list/"+base;
+		String url = scheme + "://" + domain.getName() + "/aon_gwt_aio/ms/download_packing_list/"+base;
 		String pdf = "Le adjuntamos copia de la" + (isSC ? " solicitud de carga ": " hoja de ruta ")
 				+ carrierPacking.getSeries() +"/" + carrierPacking.getNumber()
 				+ " en formato pdf, pulse " + "<a href=\""+ url+"\"> AQUI </a>" + " para descargar.";
@@ -224,7 +224,7 @@ public class PackingListMailServlet extends HttpServlet{
 				+		"<span>" + carrierPacking.getType().getName() + "</span>"
 				+  	"</td>"
 				+	"<td style=\"color: #222;border: 0px;font-family: Arial,sans-serif; padding: 5px 21px 5px 21px;vertical-align: top;\">"
-				+		"<span><b>Fecha de Emisión</b></span>"
+				+		"<span><b>Fecha de Emisi\u00f3n</b></span>"
 				+  	"</td>"
 				+	"<td style=\"color: #222;border: 0px;font-family: Arial,sans-serif; padding: 5px 21px 5px 21px;vertical-align: top;\">"
 				+		"<span>" +(carrierPacking.getIssueDate() != null ? format.format(carrierPacking.getIssueDate()):"") + "</span>"
@@ -232,7 +232,7 @@ public class PackingListMailServlet extends HttpServlet{
 				+"</tr>"
 				+"<tr>"
 				+	"<td style=\"color: #222;border: 0px;font-family: Arial,sans-serif; padding: 5px 21px 5px 21px;vertical-align: top;\">"
-				+		"<span><b>Serie/Número</b></span>"
+				+		"<span><b>Serie/N\u00famero</b></span>"
 				+  	"</td>"
 				+	"<td style=\"color: #222;border: 0px;font-family: Arial,sans-serif; padding: 5px 21px 5px 21px;vertical-align: top;\">"
 				+		"<span>" + carrierPacking.getSeries() + "/" + carrierPacking.getNumber() + "</span>"

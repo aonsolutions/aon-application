@@ -163,7 +163,7 @@ public class QualityServlet extends HttpServlet{
 				}
 				a = a.and(c);
 			}
-			a.orderBy(DataResponse.DATA_RESPONSE.ID);
+			a.orderBy(DataResponse.DATA_RESPONSE.RESPONSE_DATE.desc());
 
 			SelectForUpdateStep<Record> b = null;
 			SelectOffsetStep<Record> c = null;
