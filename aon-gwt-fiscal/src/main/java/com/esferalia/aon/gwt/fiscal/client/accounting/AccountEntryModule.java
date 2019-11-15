@@ -550,7 +550,8 @@ public class AccountEntryModule extends MainEntryPoint {
 		if (getOptions().isJournalTabVisible()) {
 			search.setVisible(!getOptions().hasExternalCallback());
 		}
-		duplicate.setVisible(!getOptions().hasExternalCallback() && !isNew());
+		//duplicate.setVisible(!getOptions().hasExternalCallback() && !isNew());
+		duplicate.setVisible(!isNew());
 		
 		period.setEnabled(canEdit);
 		entryDate.setEnabled(canEdit);
