@@ -208,7 +208,7 @@ public class InvoiceRectificationDataPanel extends SimplePanel implements Focusa
 		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		final TextArea commentsBox = new TextArea();		
 		commentsBox.setValue(data.getCause());
-		commentsBox.setCharacterWidth(35);
+		commentsBox.setCharacterWidth(25);
 		commentsBox.setStyleName(AON.AON_CSS.aonInputText());
 		commentsBox.addKeyUpHandler( keyUpHandler);
 		commentsBox.addValueChangeHandler(new ValueChangeHandler<String>() {

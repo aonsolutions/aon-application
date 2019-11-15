@@ -498,8 +498,15 @@ public class AccountEntryModule extends MainEntryPoint {
 	}
 	
 	private void syncCurrent() {
-		boolean canRemove = (!isNew() && (wizardContent.isUpdatable() || wizardContent.isRemovable()));
-		boolean canEdit = isNew() || (!isNew() && wizardContent.isUpdatable());
+		
+		boolean canRemove = false;
+		boolean canEdit = false;
+		
+		boolean guest = getOptions().getConfiguration().getUser().hasGuestRole() && !getOptions().getConfiguration().getUser().hasAdminRole(); 
+		if (!guest) {
+			canRemove = (!isNew() && (wizardContent.isUpdatable() || wizardContent.isRemovable()));
+			canEdit = (isNew() || (!isNew() && wizardContent.isUpdatable()));
+		}
 		
 		// Populate header values
 		period.select(wizardContent.getMainEntry().getPeriod());
@@ -546,12 +553,12 @@ public class AccountEntryModule extends MainEntryPoint {
 		wizardContent.manageWidgets(canRemove,canEdit);
 
 		// Enable/Disable header values
-		reset.setVisible(!getOptions().hasExternalCallback());
+		reset.setVisible(!guest && !getOptions().hasExternalCallback());
 		if (getOptions().isJournalTabVisible()) {
 			search.setVisible(!getOptions().hasExternalCallback());
 		}
 		//duplicate.setVisible(!getOptions().hasExternalCallback() && !isNew());
-		duplicate.setVisible(!isNew());
+		duplicate.setVisible(!guest && !isNew());
 		
 		period.setEnabled(canEdit);
 		entryDate.setEnabled(canEdit);

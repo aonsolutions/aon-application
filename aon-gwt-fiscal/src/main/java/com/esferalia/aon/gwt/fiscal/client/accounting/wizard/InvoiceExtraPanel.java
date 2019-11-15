@@ -550,7 +550,8 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 	}
 	
 	private void paintButtons(final IInvoicePanelCallback callback) {
-		if (!callback.getInvoice().getInvoice().isRectifier() && !callback.getInvoice().isUndeductible()) {
+		boolean guest = callback.getConfiguration().getUser().hasGuestRole() && !callback.getConfiguration().getUser().hasAdminRole();
+		if (!guest && !callback.getInvoice().getInvoice().isRectifier() && !callback.getInvoice().isUndeductible()) {
 			FlowPanel panel = new  FlowPanel();
 			panel.setStyleName(AON.AON_CSS.aonInvoicePanelInner());
 			panel.addStyleName(AON.AON_CSS.aonMarginTop());
