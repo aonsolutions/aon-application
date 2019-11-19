@@ -21,7 +21,7 @@ import static com.esferalia.aon.jooq.tables.WorkplaceDepartment.WORKPLACE_DEPART
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.LinkedList;
-import java.util.Vector;
+import java.util.stream.Collectors;
 
 import org.jooq.CaseConditionStep;
 import org.jooq.Condition;
@@ -44,7 +44,6 @@ import org.jooq.Record9;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.gwt.template.server.AuditInfo;
 import com.esferalia.aon.gwt.template.server.ProposalInfo;
 import com.esferalia.aon.gwt.template.server.StockInfo;
 import com.esferalia.aon.gwt.template.server.TransferInfo;
@@ -79,17 +78,17 @@ public class DBStock {
 	private CaseConditionStep<Double> caseB;
 	private InsertValuesStep10<InventoryDetailRecord, Double, Double, Double, Integer, Integer, Integer, Timestamp, String, Timestamp, String> insert;
 	
-	public Error insertStock(String domain, Integer domainId,Vector<StockInfo> stock, TransferInfo ti, Integer inventoryId, AuditInfo ai, String login){
+	public Error insertStock(String domain, Integer domainId, String login, LinkedList<StockInfo> stock, TransferInfo ti, Integer inventoryId){
 		Error error = new Error();
 		error.setError(true);
-		Vector<String> verror = new Vector<String>();
+		LinkedList<String> verror = new LinkedList<String>();
 		verror.add("");
 		error.setTextError(verror);
 		AONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domain, domainId, login);
 			 
-			Vector<String> v = new Vector<String>();
+			LinkedList<String> v = new LinkedList<String>();
 			caseA =null;
 			caseB =null;
 			insert = ctx.getDslContext().insertInto(INVENTORY_DETAIL, INVENTORY_DETAIL.ACTUAL_QUANTITY, INVENTORY_DETAIL.COST, INVENTORY_DETAIL.REAL_QUANTITY, INVENTORY_DETAIL.DOMAIN, INVENTORY_DETAIL.INVENTORY, INVENTORY_DETAIL.ITEM
@@ -237,13 +236,14 @@ public class DBStock {
 		return new Double[]{a.value1().doubleValue(), a.value2()};	
 	}
 	
-	public Error insertProposal(Domain domain,Vector<StockInfo> stock,Integer proposal, AuditInfo ai, Integer workplace, String login){
+	public Error insertProposal(Domain domain, String login, LinkedList<StockInfo> stock,Integer proposal, Integer workplace){
+		Timestamp timestamp = new Timestamp(new java.util.Date().getTime());
 		Error error = new Error();
 		error.setError(true);
-		Vector<String> verror = new Vector<String>();
+		LinkedList<String> verror = new LinkedList<String>();
 		verror.add("");
 		error.setTextError(verror);
-		Vector<String> v = new Vector<String>();
+		LinkedList<String> v = new LinkedList<String>();
 		AONContext ctx = null;
 		try{
 			System.out.println("GWT TEMPLATES - (Solicitud de compra) - dentro de la funcion de insertar!!");
@@ -253,7 +253,7 @@ public class DBStock {
 			 InsertValuesStep12<ProposalDetailRecord, Integer, Integer, Integer, Integer, String, Double, Double, String, Byte, Integer, String, Timestamp> proposalUpdateQuery = ctx.getDslContext().insertInto(PROPOSAL_DETAIL, PROPOSAL_DETAIL.ID, PROPOSAL_DETAIL.DOMAIN, PROPOSAL_DETAIL.PROPOSAL, PROPOSAL_DETAIL.ITEM, PROPOSAL_DETAIL.DESCRIPTION,  PROPOSAL_DETAIL.QUANTITY, PROPOSAL_DETAIL.PRICE, PROPOSAL_DETAIL.DISCOUNT_EXPR, PROPOSAL_DETAIL.STATUS, PROPOSAL_DETAIL.SUPPLIER, PROPOSAL_DETAIL.MODIFICATION_USER, PROPOSAL_DETAIL.MODIFICATION_DATE);
 			
 			AONContext sctx = ctx;
-			Vector<Integer> updateIds = new Vector<Integer>();
+			LinkedList<Integer> updateIds = new LinkedList<Integer>();
 			
 			stock.stream().forEach(s ->{
 				String code = s.getProduct();
@@ -344,14 +344,14 @@ public class DBStock {
 							if (supplier[0] != -1){
 								pi.setPrice(supplier[1]);
 								if(isCatalogue(sctx,pi)){
-									Timestamp t = new Timestamp(ai.getDate().getTime());
+									
 									if(isProposal(sctx,pi)){
 										pi = getProposal(sctx,pi);
 										updateIds.add(pi.getId());
-										proposalUpdateQuery.values(pi.getId(), pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), supplier[0].intValue(), ai.getUsername(), t);
+										proposalUpdateQuery.values(pi.getId(), pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), supplier[0].intValue(), login, timestamp);
 									}
 									else
-										proposalInsertQuery.values(pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), supplier[0].intValue(), ai.getUsername(), t, ai.getUsername(), t);
+										proposalInsertQuery.values(pi.getDomain(), pi.getProposal(), pi.getItem(), pi.getDescription(), pi.getQuantity(), pi.getPrice(), pi.getDiscount().toString(), pi.getStatus(), supplier[0].intValue(), login, timestamp, login, timestamp);
 								}
 								else{
 									v.add("*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");
@@ -441,10 +441,10 @@ public class DBStock {
 	
 	
 	
-	public Error insertTransferStock(Domain domain,Vector<StockInfo> stock, TransferInfo ti,AuditInfo ai, String login){
+	public Error insertTransferStock(Domain domain, String login, LinkedList<StockInfo> stock, TransferInfo ti){
 		Error error = new Error();
 		error.setError(true);
-		Vector<String> verror = new Vector<String>();
+		LinkedList<String> verror = new LinkedList<String>();
 		verror.add("");
 		error.setTextError(verror);
 		AONContext ctx = null;
@@ -458,8 +458,8 @@ public class DBStock {
 			InsertValuesStep4<WarehouseTransferDetailRecord, Integer, Integer, Integer, Double> transferInsert = ctx.getDslContext().insertInto(WAREHOUSE_TRANSFER_DETAIL, WAREHOUSE_TRANSFER_DETAIL.DOMAIN, WAREHOUSE_TRANSFER_DETAIL.ITEM, WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER, WAREHOUSE_TRANSFER_DETAIL.QUANTITY);
 			InsertValuesStep5<WarehouseTransferDetailRecord, Integer, Integer, Integer, Integer, Double> transferUpdate = ctx.getDslContext().insertInto(WAREHOUSE_TRANSFER_DETAIL,WAREHOUSE_TRANSFER_DETAIL.ID, WAREHOUSE_TRANSFER_DETAIL.DOMAIN, WAREHOUSE_TRANSFER_DETAIL.ITEM, WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER, WAREHOUSE_TRANSFER_DETAIL.QUANTITY);
 			
-			Vector<Integer> stockDeleteIds = new Vector<Integer>();
-			Vector<Integer> transferDeleteIds = new Vector<Integer>();
+			LinkedList<Integer> stockDeleteIds = new LinkedList<Integer>();
+			LinkedList<Integer> transferDeleteIds = new LinkedList<Integer>();
 			LinkedList<StockAux> updateStockList = new LinkedList<StockAux>();
 			Integer transferId;
 			if(ti.getSeries().getCode() != null){
@@ -477,7 +477,7 @@ public class DBStock {
 						.and(WAREHOUSE_TRANSFER.NUMBER.eq(ti.getNumber()))
 						.fetchOne().value1();
 			}
-			Vector<String> v = new Vector<String>();
+			LinkedList<String> v = new LinkedList<String>();
 			AONContext sctx = ctx;
 			stock.stream().forEach(s ->{
 				if(s.getProduct() != null){
@@ -675,7 +675,6 @@ public class DBStock {
 				transferInsert.execute();
 			}
 			return error;
-			
 		}finally {
 			if (ctx != null) ctx.close();	
 		}
@@ -689,7 +688,7 @@ public class DBStock {
 			.where(STOCK.ID.eq(stockId)).execute();
 	}
 
-	public Vector<StockInfo> getStocks(Domain domain,Integer wid, Condition c, boolean onlyNonCero, String login) {
+	public LinkedList<StockInfo> getStocks(Domain domain,Integer wid, Condition c, boolean onlyNonCero, String login) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
@@ -710,7 +709,7 @@ public class DBStock {
 				.orderBy(PRODUCT.NAME)
 				.fetch();
 				
-			Vector<StockInfo> v = new Vector<StockInfo>();
+			LinkedList<StockInfo> v = new LinkedList<StockInfo>();
 			for (Record6<Integer, Integer, Integer, Double, Integer, String> d : data) {
 				Item i = getItem(domain, login, d.value2());
 				if ( (d.value4() == 0) && ((i.getStatus() == ProductStatus.DISCONTINUED.value()) || (!i.getProduct().isInventoriable()) ) ) {
@@ -735,7 +734,7 @@ public class DBStock {
 		}
 	}
 	
-	public Vector<StockInfo> getInventoryClosed(Domain domain, Integer inventoryId, Condition c, String login) {
+	public LinkedList<StockInfo> getInventoryClosed(Domain domain, Integer inventoryId, Condition c, String login) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
@@ -752,7 +751,7 @@ public class DBStock {
 					.fetch();
 			
 				
-			Vector<StockInfo> v = new Vector<StockInfo>();
+			LinkedList<StockInfo> v = new LinkedList<StockInfo>();
 			for (Record9<Double, String, String, String, String, String, String, Integer, Integer> d : data) {
 				StockInfo si = new StockInfo();
 				Item i = getItem(domain, login, d.getValue(ITEM.ID));
@@ -844,7 +843,7 @@ public class DBStock {
 		}
 	}
 	
-	public Vector<Series> getSeries(Domain domain, Warehouse warehouse, Workplace workplace, String login){
+	public LinkedList<Series> getSeries(Domain domain, Warehouse warehouse, Workplace workplace, String login){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
@@ -857,7 +856,7 @@ public class DBStock {
 					.and(SERIES.DELIVERY.eq((byte) 1))
 					.fetch();
 			
-			Vector<Series> v = new Vector<Series>();
+			LinkedList<Series> v = new LinkedList<Series>();
 			for(Record3<Integer, String,String> r : data){
 				Series s = new Series();
 				s.setId(r.value1());
@@ -872,7 +871,7 @@ public class DBStock {
 		}
 	}
 	
-	public Vector<Series> getSeries(Domain domain, String login){
+	public LinkedList<Series> getSeries(Domain domain, String login){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(),  login);
@@ -884,7 +883,7 @@ public class DBStock {
 				.and(SERIES.DELIVERY.eq((byte)1))
 				.fetch();
 			
-			Vector<Series> v = new Vector<Series>();
+			LinkedList<Series> v = new LinkedList<Series>();
 			
 			for(Record3<Integer, String,String> r : data){
 				Series s = new Series();
@@ -936,7 +935,7 @@ public class DBStock {
 		}
 	}
 	
-	public Vector<Warehouse> getWarehouse(Domain domain, User user){
+	public LinkedList<Warehouse> getWarehouse(Domain domain, User user){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
@@ -958,23 +957,19 @@ public class DBStock {
 				.fetch();
 			}
 			
-			Vector<Warehouse> v = new Vector<Warehouse>();
-			for(Record3<Integer, String,Integer> r : data){
-				Warehouse w = new Warehouse();
-				w.setDomain(domain.getId());
-				w.setId(r.value1());
-				w.setName(r.value2());
-				w.setWorkplace(0);//
-				v.add(w);
-			}
-			return v;
-
+			return data.stream().map(r -> 
+				new Warehouse()
+				.setDomain(domain.getId())
+				.setId(r.value1())
+				.setName(r.value2())
+				.setWorkplace(0)
+			).collect(Collectors.toCollection(LinkedList::new));
 		} finally {
 			if (ctx != null) ctx.close();
 		}
 	}
 	
-	public Vector<Warehouse> getWarehouse(Domain domain, User user, Integer workplaceId){
+	public LinkedList<Warehouse> getWarehouse(Domain domain, User user, Integer workplaceId){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
@@ -989,34 +984,30 @@ public class DBStock {
 						.fetch();
 			}
 			else{
-			data = ctx.getDslContext().select(WAREHOUSE.ID,WAREHOUSE.NAME,WAREHOUSE.WORKPLACE)
-				.from(WAREHOUSE).join(WORKPLACE).on(WAREHOUSE.WORKPLACE.eq(WORKPLACE.ID))
-				.join(USER_SCOPE).on(USER_SCOPE.SCOPE.eq(WORKPLACE.SCOPE))
-				.where(WAREHOUSE.DOMAIN.eq(domain.getId()))
-				.and(USER_SCOPE.USER_ID.eq(user.getId()))
-				.and(WAREHOUSE.WORKPLACE.eq(workplaceId))
-				.and(WAREHOUSE.ACTIVE.eq((byte) 1))
-				.orderBy(WAREHOUSE.NAME)
-				.fetch();
+				data = ctx.getDslContext().select(WAREHOUSE.ID,WAREHOUSE.NAME,WAREHOUSE.WORKPLACE)
+						.from(WAREHOUSE).join(WORKPLACE).on(WAREHOUSE.WORKPLACE.eq(WORKPLACE.ID))
+						.join(USER_SCOPE).on(USER_SCOPE.SCOPE.eq(WORKPLACE.SCOPE))
+						.where(WAREHOUSE.DOMAIN.eq(domain.getId()))
+						.and(USER_SCOPE.USER_ID.eq(user.getId()))
+						.and(WAREHOUSE.WORKPLACE.eq(workplaceId))
+						.and(WAREHOUSE.ACTIVE.eq((byte) 1))
+						.orderBy(WAREHOUSE.NAME)
+						.fetch();
 			}
-			Vector<Warehouse> v = new Vector<Warehouse>();
 			
-			for(Record3<Integer, String,Integer> r : data){
-				Warehouse w = new Warehouse();
-				w.setDomain(domain.getId());
-				w.setId(r.value1());
-				w.setName(r.value2());
-				w.setWorkplace(0);//
-				v.add(w);
-			}
-			return v;
-
+			return data.map(r -> 
+				new Warehouse()
+				.setDomain(domain.getId())
+				.setId(r.value1())
+				.setName(r.value2())
+				.setWorkplace(0)
+			).stream().collect(Collectors.toCollection(LinkedList::new));
 		} finally {
 			if (ctx != null) ctx.close();
 		}
 	}
 	
-	public Vector<StockInfo> getProposal(Domain domain, Integer proposalId, String login){
+	public LinkedList<StockInfo> getProposal(Domain domain, Integer proposalId, String login){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
@@ -1030,7 +1021,7 @@ public class DBStock {
 								.orderBy(PRODUCT.NAME)
 								.fetch();
 			
-			Vector<StockInfo> v = new Vector<StockInfo>();
+			LinkedList<StockInfo> v = new LinkedList<StockInfo>();
 			
 			for(Record16<Integer, Integer, Integer, Integer, Integer, Integer, String, Double, Double, String, Byte, Integer, String, Timestamp, String, Timestamp> r : data){
 				StockInfo si  = new StockInfo();
@@ -1059,7 +1050,7 @@ public class DBStock {
 		}
 	}
 	
-	public Vector<StockInfo> getIncome(Domain domain, Integer incomeId, String login){
+	public LinkedList<StockInfo> getIncome(Domain domain, Integer incomeId, String login){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
@@ -1072,7 +1063,7 @@ public class DBStock {
 								.orderBy(PRODUCT.NAME)
 								.fetch();
 			
-			Vector<StockInfo> v = new Vector<StockInfo>();
+			LinkedList<StockInfo> v = new LinkedList<StockInfo>();
 			
 			for(Record8<Double, String, String, String, String, String, String,Integer> r : data){
 				StockInfo si  = new StockInfo();

@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -25,12 +24,10 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.jooq.DBInventory;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.security.User;
 
 @WebServlet(name = "DownloadTemplatesInventory", urlPatterns = { "/aon_gwt_template/gwt_download_inventory/*"
 																 ,"/aon_gwt_aio/gwt_download_inventory/*"})
@@ -49,17 +46,16 @@ public class DownloadInventoryServlet extends HttpServlet {
         String closed = p_request.getParameter("closed");
         String inventory_id = p_request.getParameter("inventory");
         String login = p_request.getParameter("username");
-        User user = new User().setLogin(login);
         Integer inventoryId = Integer.parseInt(inventory_id);
         Integer domainId = Integer.parseInt(domain_id);
         Boolean close = closed.equals("true");
-        String domainName = AonServletUtils.getRequestDomainName(p_request);
+        String domainName = p_request.getParameter("domain_name");
         Domain domain = new Domain().setId(domainId).setName(domainName);
         byte[] b = null ;
         
         if(fileId!=""){
         	Integer id = Integer.parseInt(fileId);
-        	b = DBConsults.getTemplate(domain, user, id);
+        	b = DBConsults.getTemplate(domain, login, id);
         }
         else return;
        

@@ -11,7 +11,6 @@ import static com.esferalia.aon.jooq.tables.WorkplaceDepartment.WORKPLACE_DEPART
 
 import java.sql.Date;
 import java.util.LinkedList;
-import java.util.Vector;
 
 import org.jooq.Record2;
 import org.jooq.Record7;
@@ -30,7 +29,7 @@ import com.esferalia.aon.occam.api.model.warehouse.Department;
 
 public class DBCatalogue {
 	
-	public static Vector<com.esferalia.aon.gwt.template.shared.WorkPlace> getWorkplaces(Domain domain, User user){
+	public static LinkedList<com.esferalia.aon.gwt.template.shared.WorkPlace> getWorkplaces(Domain domain, User user){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
@@ -53,7 +52,7 @@ public class DBCatalogue {
 					.orderBy(WORKPLACE.DESCRIPTION)
 					.fetch();
 			}
-			Vector<com.esferalia.aon.gwt.template.shared.WorkPlace> v = new Vector<com.esferalia.aon.gwt.template.shared.WorkPlace>();
+			LinkedList<com.esferalia.aon.gwt.template.shared.WorkPlace> v = new LinkedList<com.esferalia.aon.gwt.template.shared.WorkPlace>();
 			record.stream().forEach(r -> {
 				com.esferalia.aon.gwt.template.shared.WorkPlace w = new com.esferalia.aon.gwt.template.shared.WorkPlace() ;
 				w.setId(r.value1());
@@ -92,7 +91,7 @@ public class DBCatalogue {
 				f -> f.getDomainProperty().eq(domain.getId()).and(f.getIdProperty().eq(departmentId)));
 	}
 	
-	public static Vector<CatalogueInfo> getCatalogues(Domain domain, Workplace wp, Department dt, String login){
+	public static LinkedList<CatalogueInfo> getCatalogues(Domain domain, Workplace wp, Department dt, String login){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
@@ -151,9 +150,9 @@ public class DBCatalogue {
 				.orderBy(PRODUCT.NAME)
 				.fetch();
 			}
-			AONContext sctx = ctx;
+			
 			if(record != null){
-				Vector<CatalogueInfo> cs = new Vector<CatalogueInfo>();
+				LinkedList<CatalogueInfo> cs = new LinkedList<CatalogueInfo>();
 				record.stream().forEach(r -> {
 					CatalogueInfo c = new CatalogueInfo();
 					Workplace w = getWorkplace(domain, new User().setLogin(login), r.value3());

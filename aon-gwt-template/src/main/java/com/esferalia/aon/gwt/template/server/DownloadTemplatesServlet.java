@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -23,14 +22,15 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 
-import com.code.aon.google.apis.DriveUtils;
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
+import com.google.api.services.drive.Drive;
+
+import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 @WebServlet(name = "DownloadTemplates", urlPatterns = { "/aon_gwt_template/gwt_download/*"
 														,"/aon_gwt_aio/gwt_download/*"})
@@ -48,19 +48,19 @@ public class DownloadTemplatesServlet extends HttpServlet {
         String name = p_request.getParameter("name");
         String login = p_request.getParameter("username");
         String domain_id = p_request.getParameter("domain_id");
-        User user = new User().setLogin(login);
-        String domainName = AonServletUtils.getRequestDomainName(p_request);
+        String domainName = p_request.getParameter("domain_name");
         Integer domainId = Integer.parseInt(domain_id);
         Domain domain = AON.getDomain(domainName, domainId, login);
-        Integer idFile = Integer.parseInt(fileId);
         byte[] b = null ;
         
         if (driveId != ""){
-        	b = DriveUtils.getByteFile(domain, user, driveId, idFile);	
+        	DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), "");
+			Drive drive = AonDrive.getInstace().serviceInitialize(g);
+        	b = AonDrive.getInstace().downloadFileByteArray(drive, driveId);
         }
         else if(fileId!=""){
         	Integer id = Integer.parseInt(fileId);
-            b = DBConsults.getTemplate(domain, user, id);
+            b = DBConsults.getTemplate(domain, login, id);
         }
         else return;
         

@@ -8,9 +8,9 @@ import java.util.Vector;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.ContextMenu;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.template.client.ITemplate;
 import com.esferalia.aon.gwt.template.client.ITemplateAsync;
-import com.esferalia.aon.gwt.template.client.JsTemplates;
 import com.esferalia.aon.gwt.template.client.ProgressBarDialog;
 import com.esferalia.aon.gwt.template.client.TemplatesDialog;
 import com.esferalia.aon.gwt.template.client.Utils;
@@ -21,6 +21,7 @@ import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.Seller;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.ActionCell.Delegate;
 import com.google.gwt.cell.client.Cell;
@@ -166,14 +167,15 @@ public class ProductTemplates  extends ResizeComposite{
 	@UiField Button nameSearchButton;
 	@UiField Button typeSearchButton;
 	
+	AonData aonData;
+	
 	List<EcommerceProduct> templateList;
-	String login;
 	ProgressBarDialog pbd;
 
 	
-	public ProductTemplates(List<EcommerceProduct> templateList, String login) {
+	public ProductTemplates(AonData aonData, List<EcommerceProduct> templateList) {
+		this.aonData = aonData;
 		setTemplateList(templateList);
-		setLogin(login);
 		
 		dataGrid = new DataGrid<EcommerceProduct>(Integer.MAX_VALUE, resources); 
 		new_button = new Button();
@@ -188,6 +190,18 @@ public class ProductTemplates  extends ResizeComposite{
 		Widget ui = binder.createAndBindUi(this);
 		initWidget(ui);
 		load();
+	}
+	
+	public AonData getAonData() {
+		return aonData;
+	}
+	
+	public Domain getDomain() {
+		return getAonData().getDomain();
+	}
+	
+	public User getUser() {
+		return getAonData().getUser();
 	}
 	
 	private void load() {
@@ -248,10 +262,10 @@ public class ProductTemplates  extends ResizeComposite{
 		ecommerce();
 	}
 	public void ecommerce(){
-		item.getSellerList(getDomain(), new AsyncCallback<List<Seller>>() {
+		item.getSellerList(getDomain(), getUser(), new AsyncCallback<LinkedList<Seller>>() {
 			
 			@Override
-			public void onSuccess(List<Seller> result) {
+			public void onSuccess(LinkedList<Seller> result) {
 				importEcommerce(result, null);				
 			}
 			
@@ -260,10 +274,10 @@ public class ProductTemplates  extends ResizeComposite{
 		});
 	}
 	public void ecommerce(final EcommerceProduct object){
-		item.getSellerList(getDomain(), new AsyncCallback<List<Seller>>() {
+		item.getSellerList(getDomain(), getUser(), new AsyncCallback<LinkedList<Seller>>() {
 			
 			@Override
-			public void onSuccess(List<Seller> result) {
+			public void onSuccess(LinkedList<Seller> result) {
 				importEcommerce(result, object);				
 			}
 			
@@ -273,7 +287,7 @@ public class ProductTemplates  extends ResizeComposite{
 	}
 	
 	private void importEcommerce(final List<Seller> sellerList,final EcommerceProduct object) {
-		impl.getMarketplaceTagList(getDomain(), new AsyncCallback<LinkedList<Tag>>() {
+		impl.getMarketplaceTagList(getDomain(), getUser(), new AsyncCallback<LinkedList<Tag>>() {
 	
 			@Override
 			public void onSuccess(LinkedList<Tag> result) {
@@ -288,7 +302,7 @@ public class ProductTemplates  extends ResizeComposite{
 					.setSellerList(sellerList)
 					.setEcommerceProduct(object);
 				
-				TemplatesDialog popup = new TemplatesDialog(d) {
+				TemplatesDialog popup = new TemplatesDialog(getAonData(), d) {
 					
 					@Override
 					protected void onCancel() {
@@ -321,13 +335,13 @@ public class ProductTemplates  extends ResizeComposite{
 							tag.setName(tagListBox.getSelectedItemText())
 								.setId(Integer.parseInt(tagListBox.getSelectedValue()));
 
-						item.executeExcelEcommerce(getDomain(), ecommerce, seller, type, tag, new AsyncCallback<Error>() {
+						item.executeExcelEcommerce(getDomain(), getUser(), ecommerce, seller, type, tag, new AsyncCallback<Error>() {
 							@Override
 							public void onSuccess(Error result) {		
 								pbd.hide();
 								Dialog d2 = new Dialog("Importar Plantilla Ecommerce","Aceptar",true,"Cancelar",false,"importResponse");
 								d2.setError(result);
-								TemplatesDialog popup2 = new TemplatesDialog(d2){
+								TemplatesDialog popup2 = new TemplatesDialog(getAonData(), d2){
 
 									@Override
 									protected void onAccept() {
@@ -366,14 +380,14 @@ public class ProductTemplates  extends ResizeComposite{
 	}
 	
 	private void exportEcommerce(){
-		item.getTypeList(getDomain(), new AsyncCallback<LinkedList<String>>() {
+		item.getTypeList(getDomain(), getUser(), new AsyncCallback<LinkedList<String>>() {
 			
 			@Override
 			public void onSuccess(LinkedList<String> result) {
 				Dialog d = new Dialog("Exportar Productos Ecommerce","Exportar",true,"Cancelar",true,"exportEcommerce");
 				d.setUrl(GWT.getModuleBaseURL());
 				d.setTypeList(result);
-				TemplatesDialog popup = new TemplatesDialog(d) {
+				TemplatesDialog popup = new TemplatesDialog(getAonData(), d) {
 					
 					@Override
 					protected void onCancel() {
@@ -387,7 +401,7 @@ public class ProductTemplates  extends ResizeComposite{
 						
 						String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_amazon_product/"
 				            	+ "?domain_id=" + getDomain().getId()
-				            	+ "&username="+ getLogin()
+				            	+ "&username="+ getUser().getLogin()
 				            	+ "&description=" + listBox.getSelectedItemText();
 						Window.open( fileDownloadURL, "_blank",null);
 					}
@@ -420,7 +434,7 @@ public class ProductTemplates  extends ResizeComposite{
 	private void delete(final EcommerceProduct object){
 		Dialog d = new Dialog("Eliminar Plantilla Ecommerce","Borrar",true,"Cancelar",true,"deleteEcommerce");
 		d.setEcommerceProduct(object);
-		TemplatesDialog popup = new TemplatesDialog(d) {
+		TemplatesDialog popup = new TemplatesDialog(getAonData(), d) {
 			
 			@Override
 			protected void onCancel() {
@@ -432,7 +446,7 @@ public class ProductTemplates  extends ResizeComposite{
 				hide();
 				String description = object.getTemplate().getEcommerce() + "-"
 						+ object.getTemplate().getType();
-				impl.deleteTemplate(getDomain(), description, new AsyncCallback<Void>() {
+				impl.deleteTemplate(getDomain(), getUser(), description, new AsyncCallback<Void>() {
 			
 					@Override
 					public void onSuccess(Void result) {
@@ -503,7 +517,7 @@ public class ProductTemplates  extends ResizeComposite{
 	//------------------------------ DataGrid Utils
 
 	private void refreshDataGrid(){
-		impl.getProductTemplatesList(getDomain(), new AsyncCallback<List<EcommerceProduct>>() {
+		impl.getProductTemplatesList(getDomain(), getUser(), new AsyncCallback<List<EcommerceProduct>>() {
 			
 			@Override
 			public void onSuccess(List<EcommerceProduct> result) {
@@ -826,19 +840,6 @@ public class ProductTemplates  extends ResizeComposite{
 	
 	public void setTemplateList(List<EcommerceProduct> templateList){
 		this.templateList = templateList;
-	}
-
-	public String getLogin() {
-		return login;
-	}
-
-	public void setLogin(String login) {
-		this.login = login;
-	}
-	
-	
-	private Domain getDomain() {
-		return new Domain().setId(JsTemplates.getCurrentDomain()).setName(JsTemplates.getCurrentDomainName());
 	}
 	
 }

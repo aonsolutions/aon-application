@@ -9,7 +9,6 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -52,7 +51,7 @@ public class Utils {
 	 
 		TemplateInfo ti = new TemplateInfo();
 		ti.sethasWarehouse(false);
-		Vector<String> columns = new Vector<String>();
+		LinkedList<String> columns = new LinkedList<String>();
 		for (int temp = 0; temp < nList.getLength(); temp++) {
 			String column = nList.item(temp).getTextContent();
 			if(column.equals("Almac\u00e9n Destino"))
@@ -80,7 +79,7 @@ public class Utils {
 	 
 		TemplateInfo ti = new TemplateInfo();
 		ti.sethasWarehouse(false);
-		Vector<String> columns = new Vector<String>();
+		LinkedList<String> columns = new LinkedList<String>();
 		for (int temp = 0; temp < nList.getLength(); temp++) {
 			String column = nList.item(temp).getTextContent();
 			if(column.equals("Almac\u00e9n Destino"))
@@ -110,7 +109,7 @@ public class Utils {
 	 
 		TemplateInfo ti = new TemplateInfo();
 		ti.sethasWarehouse(false);
-		Vector<String> columns = new Vector<String>();
+		LinkedList<String> columns = new LinkedList<String>();
 		for (int temp = 0; temp < nList.getLength(); temp++) {
 			String column = nList.item(temp).getTextContent();
 			if(column.equals("Almac\u00e9n Destino"))
@@ -139,7 +138,7 @@ public class Utils {
 	 
 		TemplateInfo ti = new TemplateInfo();
 		ti.sethasWarehouse(false);
-		Vector<String> columns = new Vector<String>();
+		LinkedList<String> columns = new LinkedList<String>();
 		for (int temp = 0; temp < nList.getLength(); temp++) {
 			String column = nList.item(temp).getTextContent();
 			if(column.equals("Almac\u00e9n Destino"))
@@ -166,6 +165,7 @@ public class Utils {
 				</column>
 			</columns>
 		</template>*/
+
 		byte[] b = null;
 		  try {
 	 
@@ -187,78 +187,6 @@ public class Utils {
 			rootElement.setAttributeNode(attr);
 			rootElement.setAttributeNode(attr2);
 	 
-			// shorten way
-			// staff.setAttribute("id", "1");
-	 
-			// firstname elements
-			Element columns = doc.createElement("columns");
-			rootElement.appendChild(columns);
-	 
-			for (String value : ti.getColumns()) {
-				Element column = doc.createElement("column");
-				columns.appendChild(column);
-				column.appendChild(doc.createTextNode(value));
-			}
-
-			// write the content into xml file
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer = transformerFactory.newTransformer();
-			DOMSource source = new DOMSource(doc);
-			
-				
-			
-			ByteArrayOutputStream bos=new ByteArrayOutputStream();
-			StreamResult result = new StreamResult(bos);
-	 
-			transformer.transform(source, result);
-			
-			b = bos.toByteArray();
-			
-		  } catch (ParserConfigurationException pce) {
-			pce.printStackTrace();
-		  } catch (TransformerException tfe) {
-			tfe.printStackTrace();
-		  }
-		  return b;
-	}
-	
-	public static byte[] newXmlFileWithVersion(TemplateInfo ti) {
-		/*<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-		<template name="lalala" type="product" version="">
-			<columns>
-				<column id = 1>
-
-				</column>
-				.....
-				<column id = N>
-
-				</column>
-			</columns>
-		</template>*/
-		byte[] b = null;
-		  try {
-	 
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-	 
-			// root elements
-			Document doc = docBuilder.newDocument();
-			Element rootElement = doc.createElement("template");
-			doc.appendChild(rootElement);
-	 
-			// set attribute to staff element
-			Attr attr = doc.createAttribute("name");
-			attr.setValue(ti.getName());
-			
-			Attr attr2 = doc.createAttribute("type");
-			attr2.setValue(ti.getType());
-			
-			Attr attr3 = doc.createAttribute("version");
-			attr3.setValue(ti.getVersion());
-			
-			rootElement.setAttributeNode(attr);
-			rootElement.setAttributeNode(attr2);
-			rootElement.setAttributeNode(attr3);
 			// shorten way
 			// staff.setAttribute("id", "1");
 	 
@@ -607,7 +535,7 @@ public class Utils {
 		Integer day = AonDateUtils.getDay(date);
 		Integer month = (AonDateUtils.getMonth(date) +1);
 		Integer year = AonDateUtils.getYear(date);
-	
+
 		String mes = month.toString();
 		if(month< 10) mes = "0"+ month;
 		String dia = day.toString();

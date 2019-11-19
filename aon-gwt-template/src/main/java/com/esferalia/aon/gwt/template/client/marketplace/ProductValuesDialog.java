@@ -2,12 +2,13 @@ package com.esferalia.aon.gwt.template.client.marketplace;
 
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialogB;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.template.client.ITemplate;
 import com.esferalia.aon.gwt.template.client.ITemplateAsync;
-import com.esferalia.aon.gwt.template.client.JsTemplates;
 import com.esferalia.aon.gwt.template.client.ProgressBarDialog;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct.ProductData.Ecommerce;
@@ -15,6 +16,7 @@ import com.esferalia.aon.gwt.template.shared.Seller;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -64,6 +66,8 @@ public class ProductValuesDialog extends CustomDialogB {
 	@UiField(provided = true) FlexTable templatesGrid;
 	@UiField(provided = true) FlexTable valuesGrid;
 	
+	AonData aonData; 
+	
 	private ListBox productTemplateList;
 	private ListBox sellerList;
 	private List<Widget> valuesWidgetList;
@@ -73,11 +77,10 @@ public class ProductValuesDialog extends CustomDialogB {
 	private EcommerceProduct ecommerceProduct;
 	private EcommerceProduct ecommerceTemplate;
 	private Item item;
-	private String login;
-	
-	public ProductValuesDialog(Item item, String login){
+
+	public ProductValuesDialog(AonData aonData, Item item){
+		this.aonData = aonData;
 		this.item = item;
-		this.login = login;
 		
 		templatesGrid = new FlexTable();
 		productTemplateList = new ListBox();
@@ -97,6 +100,17 @@ public class ProductValuesDialog extends CustomDialogB {
 		this.center();
 	}
 	
+	public AonData getAonData() {
+		return aonData;
+	}
+
+	public Domain getDomain() {
+		return getAonData().getDomain();
+	}
+
+	public User getUser() {
+		return getAonData().getUser();
+	}
 	
 	private void loadTemplatesGrid() {
 		templatesGrid.setStyleName("aon-panelGrid");
@@ -123,9 +137,9 @@ public class ProductValuesDialog extends CustomDialogB {
 
 	private void loadSellerList() {
 		sellerList.addItem("-", null, null);
-		templateImpl.getSellerList(getDomain(), new AsyncCallback<List<Seller>>() {
+		templateImpl.getSellerList(getDomain(), getUser(), new AsyncCallback<LinkedList<Seller>>() {
 			@Override
-			public void onSuccess(List<Seller> result) {				
+			public void onSuccess(LinkedList<Seller> result) {				
 				for(Seller seller: result){
 					sellerList.addItem(seller.getRegistryName(), seller.getId().toString());
 				}
@@ -147,7 +161,7 @@ public class ProductValuesDialog extends CustomDialogB {
 	private void loadTemplateList() {
 		productTemplateList.clear();
 		productTemplateList.addItem("-", null, null);
-		marketImpl.obtainEcommerceProductTemplates(getDomain(), sellerList.getSelectedValue(), new AsyncCallback<List<Attach>>(){
+		marketImpl.obtainEcommerceProductTemplates(getDomain(), getUser(), sellerList.getSelectedValue(), new AsyncCallback<List<Attach>>(){
 			@Override
 			public void onSuccess(List<Attach> result){
 				for(Attach attach: result){
@@ -186,7 +200,7 @@ public class ProductValuesDialog extends CustomDialogB {
 	}
 	
 	private void loadEcommerceTemplateValues(){
-		marketImpl.obtainEcommerceProductValues(getDomain(), item, productTemplateList.getSelectedItemText(), new AsyncCallback<EcommerceProduct>(){
+		marketImpl.obtainEcommerceProductValues(getDomain(), getUser(), item, productTemplateList.getSelectedItemText(), new AsyncCallback<EcommerceProduct>(){
 			@Override
 			public void onSuccess(EcommerceProduct result){
 				ecommerceTemplate = result;
@@ -200,7 +214,7 @@ public class ProductValuesDialog extends CustomDialogB {
 	}
 
 	private void loadEcommerceProductAttach(){
-		marketImpl.obtainEcommerceProductAttach(getDomain(), item, productTemplateList.getSelectedItemText(), new AsyncCallback<Attach>(){
+		marketImpl.obtainEcommerceProductAttach(getDomain(), getUser(), item, productTemplateList.getSelectedItemText(), new AsyncCallback<Attach>(){
 			@Override
 			public void onSuccess(Attach result){
 				ecommerceProductAttach = result;
@@ -219,7 +233,7 @@ public class ProductValuesDialog extends CustomDialogB {
 	}
 	
 	private void loadEcommerceProductValues(){
-		marketImpl.obtainEcommerceProductValues(getDomain(), ecommerceProductAttach, item, new AsyncCallback<EcommerceProduct>(){
+		marketImpl.obtainEcommerceProductValues(getDomain(), getUser(), ecommerceProductAttach, item, new AsyncCallback<EcommerceProduct>(){
 			@Override
 			public void onSuccess(EcommerceProduct result){
 				ecommerceProduct = result;
@@ -421,7 +435,7 @@ public class ProductValuesDialog extends CustomDialogB {
 				}
 				ecommerce.setValue(value);
 			}
-			marketImpl.acceptEcommerceProductValues(getDomain(), login, item, productTemplateList.getSelectedItemText(), ecommerceProduct, ecommerceProductAttach, new AsyncCallback<Boolean>() {
+			marketImpl.acceptEcommerceProductValues(getDomain(), getUser().getLogin(), item, productTemplateList.getSelectedItemText(), ecommerceProduct, ecommerceProductAttach, new AsyncCallback<Boolean>() {
 				@Override
 				public void onSuccess(Boolean result) {
 					pbd.hide();
@@ -460,10 +474,6 @@ public class ProductValuesDialog extends CustomDialogB {
 				}
 			}
 		}	
-	}
-	
-	private Domain getDomain() {
-		return new Domain().setId(JsTemplates.getCurrentDomain()).setName(JsTemplates.getCurrentDomainName());
 	}
 	
 	public class CustomTextArea extends HorizontalPanel {

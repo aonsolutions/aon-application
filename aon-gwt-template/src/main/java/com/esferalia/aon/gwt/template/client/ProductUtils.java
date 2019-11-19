@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.template.client;
 
 import java.util.LinkedList;
-import java.util.Vector;
 
 import com.esferalia.aon.gwt.template.client.i18n.TemplatesMessages;
 import com.esferalia.aon.gwt.template.shared.Dialog;
@@ -13,8 +12,8 @@ public class ProductUtils {
 	
 	private static final TemplatesMessages MSG = GWT.create(TemplatesMessages.class);
 	
-	public static Vector<String> productList(){
-		Vector<String> v = new Vector<String>();
+	public static LinkedList<String> productList(){
+		LinkedList<String> v = new LinkedList<String>();
 		v.add(MSG.name());
 		v.add(MSG.code());
 		v.add(MSG.priceCost());
@@ -49,8 +48,8 @@ public class ProductUtils {
 		return v;
 	}
 	
-	public static Vector<String> productOptionalList(){
-		Vector<String> v = new Vector<String>();
+	public static LinkedList<String> productOptionalList(){
+		LinkedList<String> v = new LinkedList<String>();
 		v.add(MSG.category());
 		v.add(MSG.brand());
 		v.add(MSG.tag());

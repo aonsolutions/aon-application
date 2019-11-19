@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.template.server;
 
 import java.util.LinkedList;
 import java.util.Set;
-import java.util.Vector;
 
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -13,7 +12,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class ProductInfo implements IsSerializable{
 	Product product;
 	LinkedList<Tag> tagList;
-	Vector<Item> item;
+	LinkedList<Item> item;
 	Integer row;
 	Boolean isProduct;
 	Set<ProductTag> tags;
@@ -47,10 +46,10 @@ public class ProductInfo implements IsSerializable{
 		this.tagList = tagList;
 		return this;
 	}
-	public Vector<Item> getItem() {
+	public LinkedList<Item> getItem() {
 		return item;
 	}
-	public ProductInfo setItem(Vector<Item> item) {
+	public ProductInfo setItem(LinkedList<Item> item) {
 		this.item = item;
 		return this;
 	}

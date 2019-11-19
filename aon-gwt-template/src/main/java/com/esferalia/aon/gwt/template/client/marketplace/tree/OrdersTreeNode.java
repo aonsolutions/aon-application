@@ -22,11 +22,11 @@ public class OrdersTreeNode extends TreeNode<Ecommerce>{
 	public void select(Marketplace marketplace) {
 		m= marketplace;
 		//if(getEcommerce().equals(Ecommerce.AMAZON)){
-			marketplace.getImpl().getAmazonOrdersList(getDomain(), m.getLogin(),new AsyncCallback<List<Order>>() {
+			marketplace.getImpl().getAmazonOrdersList(getDomain(), m.getUser().getLogin(),new AsyncCallback<List<Order>>() {
 			
 				@Override
 				public void onSuccess(List<Order> result) {
-					AmazonOrders ao = new AmazonOrders(result, m.getLogin());
+					AmazonOrders ao = new AmazonOrders(result, m.getUser().getLogin());
 					m.setContent(ao);
 				}
 			

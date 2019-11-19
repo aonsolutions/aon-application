@@ -10,19 +10,17 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.servlet.ServletException;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
@@ -51,7 +49,7 @@ public class ConsumptionUtil {
 
 	private static final String PDF = "pdf";
 
-    public static File generateConsumption(Domain domain, Vector<Warehouse> warehouses, String fileType, Boolean onlyNegative,
+    public static File generateConsumption(Domain domain, LinkedList<Warehouse> warehouses, String fileType, Boolean onlyNegative,
     		Boolean detail, Integer size, String login, Boolean packaged, Boolean withoutInv, Integer category, Boolean dif) throws ServletException, IOException{
 
     	Collections.sort(warehouses, (Warehouse s1, Warehouse s2) -> s1.getName().compareTo(s2.getName()));
@@ -70,7 +68,7 @@ public class ConsumptionUtil {
         FileOutputStream archivo = new FileOutputStream(archivoXLS);
         Integer columns = aux.getColumns().size();
 
-        Map<String, Vector<ConsumptionItem>> allMap = new HashMap<String, Vector<ConsumptionItem>>();
+        Map<String, LinkedList<ConsumptionItem>> allMap = new HashMap<String, LinkedList<ConsumptionItem>>();
         for(Warehouse w : warehouses){
         	ConsumptionItem consumptionItem = DBConsumption.getTwoLastInventory(domain, w.getId(), login);
         	Integer initialId = consumptionItem.getInitialId(), finalId = consumptionItem.getFinalId();
@@ -87,7 +85,7 @@ public class ConsumptionUtil {
         			? DBConsumption.getConsumptionWithoutInventory(domain, login, initialId, finalId, w.getId(), consumptionItem.getWarehouseName(), category)
         			: DBConsumption.getConsumption(domain, login, initialId, finalId, w.getId(), new java.sql.Date(initialDate.getTime()), new java.sql.Date(finalDate.getTime()), consumptionItem.getWarehouseName(), category);
 
-        	Vector<ConsumptionItem> v =  new Vector<ConsumptionItem>(map.values());
+        	LinkedList<ConsumptionItem> v =  new LinkedList<ConsumptionItem>(map.values());
 
         	allMap.put(w.getName(), v);
         }
@@ -157,7 +155,7 @@ public class ConsumptionUtil {
         		cell2.setCellValue("Etiqueta");
         		cell2.setCellStyle(style);
         	}
-         	Vector<ConsumptionItem> v =  allMap.get(warehouses.get(index).getName());
+         	LinkedList<ConsumptionItem> v =  allMap.get(warehouses.get(index).getName());
 
         	Integer num = 0;
         	for(Integer j = 0; j< v.size();j++){
@@ -377,7 +375,7 @@ public class ConsumptionUtil {
     }
 
 
-    public static File generateConsumption(Domain domain, Vector<Warehouse> warehouses, String fileType, Boolean onlyNegative,
+    public static File generateConsumption(Domain domain, LinkedList<Warehouse> warehouses, String fileType, Boolean onlyNegative,
     		Boolean detail, Integer size, String login, Date startDate, Date endDate, Boolean packaged, Integer category, Boolean dif) throws ServletException, IOException{
     	Collections.sort(warehouses, (Warehouse s1, Warehouse s2) -> s1.getName().compareTo(s2.getName()));
 
@@ -395,7 +393,7 @@ public class ConsumptionUtil {
         FileOutputStream archivo = new FileOutputStream(archivoXLS);
         Integer columns = aux.getColumns().size();
 
-        Map<String, Vector<ConsumptionItem>> allMap = new HashMap<String, Vector<ConsumptionItem>>();
+        Map<String, LinkedList<ConsumptionItem>> allMap = new HashMap<String, LinkedList<ConsumptionItem>>();
         for(Warehouse w : warehouses){
 
         	Inventory initialInventory = DBConsumption.getInitialInventory(domain, login, w.getId(), AonDateUtils.toSql(startDate), AonDateUtils.toSql(endDate));
@@ -422,12 +420,12 @@ public class ConsumptionUtil {
 
         		Map<Integer, ConsumptionItem> map = DBConsumption.getConsumption(domain, login, initialId, finalId, w.getId(), new java.sql.Date(initialDate.getTime()), new java.sql.Date(finalDate.getTime()), consumptionItem.getWarehouseName(), category);
 
-        		Vector<ConsumptionItem> v =  new Vector<ConsumptionItem>(map.values());
+        		LinkedList<ConsumptionItem> v =  new LinkedList<ConsumptionItem>(map.values());
 
         		allMap.put(w.getName(), v);
         	} else{
         		cisMap.put(w.getId(), new ConsumptionItem());
-        		allMap.put(w.getName(), new Vector<ConsumptionItem>());
+        		allMap.put(w.getName(), new LinkedList<ConsumptionItem>());
         	}
         }
         libro2(domain.getName(), domain.getId(), login, warehouses, libro, onlyNegative, allMap, getTemplateInfoC(), 0, dif);
@@ -501,7 +499,7 @@ public class ConsumptionUtil {
         		cell2.setCellStyle(style);
         	}
 
-         	Vector<ConsumptionItem> v =  allMap.get(warehouses.get(index).getName());
+         	LinkedList<ConsumptionItem> v =  allMap.get(warehouses.get(index).getName());
 
         	Integer num = 0;
         	for(Integer j = 0; j< v.size();j++){
@@ -733,7 +731,7 @@ public class ConsumptionUtil {
 	}
 
 	private static TemplateInfo getTemplateInfoA() {
-		Vector<String> v = new Vector<String>();
+		LinkedList<String> v = new LinkedList<String>();
 		v.add("Hotel");
 		v.add("Almac\u00e9n");
 		v.add("Producto");
@@ -747,7 +745,7 @@ public class ConsumptionUtil {
 	}
 
 	private static  TemplateInfo getTemplateInfoB() {
-		Vector<String> v = new Vector<String>();
+		LinkedList<String> v = new LinkedList<String>();
 		v.add("Hotel");
 		v.add("Desde");
 		v.add("Hasta");
@@ -770,7 +768,7 @@ public class ConsumptionUtil {
 	}
 
 	private static TemplateInfo getTemplateInfoC() {
-		Vector<String> v = new Vector<String>();
+		LinkedList<String> v = new LinkedList<String>();
 		v.add("Hotel");
 		v.add("Desde");
 		v.add("Hasta");
@@ -785,7 +783,7 @@ public class ConsumptionUtil {
 	}
 
 	private static TemplateInfo getTemplateInfo(Boolean detail) {
-		Vector<String> v = new Vector<String>();
+		LinkedList<String> v = new LinkedList<String>();
 		v.add("Producto");
 		v.add("Nombre");
 		v.add("Inicial");
@@ -803,7 +801,7 @@ public class ConsumptionUtil {
 		return new TemplateInfo().setColumns(v);
 	}
 
-	private static  void libro(String domain, Integer domainId, String login, Vector<Warehouse>  warehouses, HSSFWorkbook libro,  boolean onlyNegative, Map<String, Vector<ConsumptionItem>> map, TemplateInfo special1, Integer hoja, Boolean packaged, Boolean dif){
+	private static  void libro(String domain, Integer domainId, String login, LinkedList<Warehouse>  warehouses, HSSFWorkbook libro,  boolean onlyNegative, Map<String, LinkedList<ConsumptionItem>> map, TemplateInfo special1, Integer hoja, Boolean packaged, Boolean dif){
 
 		Integer columns = special1.getColumns().size();
 
@@ -870,7 +868,7 @@ public class ConsumptionUtil {
     	SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 
     	for (Warehouse w : warehouses) {
-        	Vector<ConsumptionItem> v2 = map.get(w.getName());
+        	LinkedList<ConsumptionItem> v2 = map.get(w.getName());
             Collections.sort(v2, (ConsumptionItem c1, ConsumptionItem c2) -> c1.getConsumValue().compareTo(c2.getConsumValue()));
         	for(ConsumptionItem ci : v2){
         		ci.setConsumption(ci.getInitialQuantity()+ci.getPurchasesAlb()+ci.getPurchasesFac()+ci.getTransfersPlus()-ci.getSalesAlb()-ci.getSalesFac()-ci.getTransfersMinus()-ci.getFinalQuantity());
@@ -958,7 +956,7 @@ public class ConsumptionUtil {
     	}
 	}
 
-	private static  void libro2(String domain, Integer domainId, String login, Vector<Warehouse>  warehouses, HSSFWorkbook libro,  boolean onlyNegative, Map<String, Vector<ConsumptionItem>> map, TemplateInfo special1, Integer hoja, Boolean dif){
+	private static  void libro2(String domain, Integer domainId, String login, LinkedList<Warehouse>  warehouses, HSSFWorkbook libro,  boolean onlyNegative, Map<String, LinkedList<ConsumptionItem>> map, TemplateInfo special1, Integer hoja, Boolean dif){
 
 		Integer columns = special1.getColumns().size();
 
@@ -1011,7 +1009,7 @@ public class ConsumptionUtil {
 
     	Integer l = 0;
     	for (Warehouse w : warehouses) {
-        	Vector<ConsumptionItem> v2 = map.get(w.getName());
+        	LinkedList<ConsumptionItem> v2 = map.get(w.getName());
         	Double consumo = 0.0;
         	Double traspaso = 0.0;
         	Double fin = 0.0;

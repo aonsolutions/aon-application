@@ -5,7 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Date;
-import java.util.Vector;
+import java.util.LinkedList;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -26,12 +25,10 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.jooq.DBStock;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 @WebServlet(name = "DownloadTemplatesIncome", urlPatterns = { "/aon_gwt_template/gwt_download_income/*"
@@ -49,16 +46,15 @@ public class DownloadIncomeServlet extends HttpServlet {
 		String domain_id = p_request.getParameter("domain_id");
 		String income_id = p_request.getParameter("income");
 		String login = p_request.getParameter("username");
-		User user = new User().setLogin(login);
 		Integer incomeId = Integer.parseInt(income_id);
 		Integer domainId = Integer.parseInt(domain_id);
-		String domainName = AonServletUtils.getRequestDomainName(p_request);
+		String domainName = p_request.getParameter("domain_name");
 		Domain domain = new Domain().setId(domainId).setName(domainName);
 		byte[] b = null ;
 
 		if(fileId!=""){
 			Integer id = Integer.parseInt(fileId);
-			b = DBConsults.getTemplate(domain, user, id);
+			b = DBConsults.getTemplate(domain, login, id);
 		}
 		else return;
 	        
@@ -121,7 +117,7 @@ public class DownloadIncomeServlet extends HttpServlet {
 		}
 		Cell celdaf = fila.createCell(columns);
 		celdaf.setCellStyle(style);
-		Vector<StockInfo> v = DBStock.getInstance().getIncome(domain, incomeId, login);
+		LinkedList<StockInfo> v = DBStock.getInstance().getIncome(domain, incomeId, login);
 		
 		for(Integer j = 0; j< v.size();j++){
 			Row row = hoja.createRow(j+2);

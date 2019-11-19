@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.template.client;
 
 import java.util.LinkedList;
-import java.util.Vector;
 
 import com.esferalia.aon.gwt.template.client.i18n.TemplatesMessages;
 import com.esferalia.aon.gwt.template.shared.Dialog;
@@ -13,8 +12,8 @@ public class InventoryUtils {
 	
 	private static final TemplatesMessages MSG = GWT.create(TemplatesMessages.class);
 
-	public static Vector<String> inventoryList(){
-		Vector<String> v = new Vector<String>();
+	public static LinkedList<String> inventoryList(){
+		LinkedList<String> v = new LinkedList<String>();
 		v.add(MSG.product());
 		v.add(MSG.name());
 		v.add(MSG.category());
@@ -28,8 +27,8 @@ public class InventoryUtils {
 		return v;
 	}
 	
-	public static Vector<String> inventoryOptionalList(){
-		Vector<String> v = new Vector<String>();
+	public static LinkedList<String> inventoryOptionalList(){
+		LinkedList<String> v = new LinkedList<String>();
 		v.add(MSG.name());
 		v.add(MSG.detail1());
 		v.add(MSG.detail2());
@@ -38,8 +37,8 @@ public class InventoryUtils {
 		return v;
 	}
 	
-	public static Vector<String> inventoryCloseList(){
-		Vector<String> v = new Vector<String>();
+	public static LinkedList<String> inventoryCloseList(){
+		LinkedList<String> v = new LinkedList<String>();
 		v.add(MSG.product());
 		v.add(MSG.name());
 		v.add(MSG.category());
@@ -52,8 +51,8 @@ public class InventoryUtils {
 		return v;
 	}
 
-	public static Vector<String> inventoryCloseOptionalList(){
-		Vector<String> v = new Vector<String>();
+	public static LinkedList<String> inventoryCloseOptionalList(){
+		LinkedList<String> v = new LinkedList<String>();
 		v.add(MSG.name());
 		v.add(MSG.detail1());
 		v.add(MSG.detail2());

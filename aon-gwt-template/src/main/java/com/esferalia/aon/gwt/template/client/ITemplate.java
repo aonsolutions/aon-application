@@ -2,8 +2,6 @@ package com.esferalia.aon.gwt.template.client;
 
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Vector;
 
 import com.esferalia.aon.gwt.template.shared.Ecommerce;
 import com.esferalia.aon.gwt.template.shared.Error;
@@ -13,9 +11,9 @@ import com.esferalia.aon.gwt.template.shared.ProductCategory;
 import com.esferalia.aon.gwt.template.shared.Seller;
 import com.esferalia.aon.gwt.template.shared.Series;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
-import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -25,70 +23,70 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("gwt_template")
 public interface ITemplate extends RemoteService{
 	
-	public TemplateList getTemplates(Domain domain);
+	public LinkedList<TemplateInfo> getTemplates(Domain domain, User user);
 	
-	public TemplateInfo newTemplate(Domain domain, TemplateInfo ti );
+	public TemplateInfo newTemplate(Domain domain, User user, TemplateInfo ti );
 	
-	public TemplateInfo editTemplate(Domain domain, TemplateInfo ti);
+	public TemplateInfo editTemplate(Domain domain, User user, TemplateInfo ti);
 	
-	public void deleteTemplate(Domain domain, TemplateInfo ti);
+	public void deleteTemplate(Domain domain, User user, TemplateInfo ti);
 	
-	public Vector<TemplateInfo> searchTypeTemplate(String searchStr, Vector<TemplateInfo> templates);
+	public LinkedList<TemplateInfo> searchTypeTemplate(String searchStr, LinkedList<TemplateInfo> templates);
 	
-	public Vector<TemplateInfo> searchNameTemplate(String searchStr, Vector<TemplateInfo> templates);
+	public LinkedList<TemplateInfo> searchNameTemplate(String searchStr, LinkedList<TemplateInfo> templates);
 	
-	public Vector<Warehouse> getWarehouses(Domain domain);
+	public LinkedList<Warehouse> getWarehouses(Domain domain, User user);
 	
-	public Vector<Warehouse> getWarehousesToConsumption(Domain domain);
+	public LinkedList<Warehouse> getWarehousesToConsumption(Domain domain, User user);
 	
-	public List<Hotel> getHotelsToConsumption(Domain domain);
+	public LinkedList<Hotel> getHotelsToConsumption(Domain domain, User user);
 	
-	public List<Hotel> getWorkplacesToConsumption(Domain domain);
+	public LinkedList<Hotel> getWorkplacesToConsumption(Domain domain, User user);
 	
-	public Vector<Series> getSeries(Domain domain, String warehouse);
+	public LinkedList<Series> getSeries(Domain domain, User user, String warehouse);
 	
-	public Vector<Series> getSeries(Domain domain);
+	public LinkedList<Series> getSeries(Domain domain, User user);
 	
-	public Error insertStock(Domain domain);
+	public Error insertStock(Domain domain, User user);
 	
-	public Error insertProduct(Domain domain, String value);
+	public Error insertProduct(Domain domain, User user, String value);
 
-	public Error insertDelivery(Domain domain);
+	public Error insertDelivery(Domain domain, User user);
 
-	public Integer executeExcel(Domain domain, TemplateInfo ti, ImportType importType, Boolean ignoreInactiveClient, 
+	public Integer executeExcel(Domain domain, User user, TemplateInfo ti, ImportType importType, Boolean ignoreInactiveClient, 
 			Integer inventory, String warehouse1,String warehouse2 , String series, String comments,Boolean istransfer ,Integer number);
 	
-	public Error insertFee(Domain domain);
+	public Error insertFee(Domain domain, User user);
 	
-	public Error insertTransferStock(Domain domain);
+	public Error insertTransferStock(Domain domain, User user);
 
-	public Vector<com.esferalia.aon.gwt.template.shared.WorkPlace> getWorkplaces(Domain domain);
+	public LinkedList<com.esferalia.aon.gwt.template.shared.WorkPlace> getWorkplaces(Domain domain, User user);
 	
-	public LinkedList<Department> getDepartments(Domain domain, String workplace);
+	public LinkedList<Department> getDepartments(Domain domain, User user, String workplace);
 	
-	public Error insertProposal(Domain domain, Integer proposal, Integer workplace);
+	public Error insertProposal(Domain domain, User user, Integer proposal, Integer workplace);
 	
-	public Vector<Warehouse> getWarehousesToConsumption(Domain domain, Integer workplaceId);
+	public LinkedList<Warehouse> getWarehousesToConsumption(Domain domain, User user, Integer workplaceId);
 
-	public List<ProductCategory> getProductCategories(Domain domain);
+	public LinkedList<ProductCategory> getProductCategories(Domain domain, User user);
 		
-	Error executeExcelEcommerce(Domain domain, Ecommerce ecommerce,
+	Error executeExcelEcommerce(Domain domain, User user, Ecommerce ecommerce,
 			Seller seller, String type,
 			Tag tag);
 	
-	public String generateConsumptionExcel(Domain domain,Vector<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail, 
+	public String generateConsumptionExcel(Domain domain, User user, LinkedList<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail, 
 			Integer size, Boolean packaged, Boolean withoutInv, Integer category, Boolean dif);
 	
-	public String generateConsumptionExcel(Domain domain,Vector<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail, 
+	public String generateConsumptionExcel(Domain domain, User user, LinkedList<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail, 
 			Integer size, Date startDate, Date endDate, Boolean packaged, Integer category, Boolean dif);
 	
 	public Integer excelRowNumber();
 	
-	public List<Seller> getSellerList(Domain domain);
+	public LinkedList<Seller> getSellerList(Domain domain, User user);
 	
-	public LinkedList<String> getProductRoles(Domain domain);
+	public LinkedList<String> getProductRoles(Domain domain, User user);
 	
-	public LinkedList<String> getTypeList(Domain domain);
+	public LinkedList<String> getTypeList(Domain domain, User user);
 	
 	public void print(String text);
 }

@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.template.client.marketplace;
 
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
@@ -13,13 +12,14 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("gwt_marketplace")
 public interface IMarketplace extends RemoteService{
 
-	List<EcommerceProduct> getProductTemplatesList(Domain domain);
+	List<EcommerceProduct> getProductTemplatesList(Domain domain, User user);
 	
 	List<Order> getAmazonOrdersList(Domain domain, String login);
 	
@@ -27,17 +27,15 @@ public interface IMarketplace extends RemoteService{
 
 	public Vector<EcommerceProduct> searchTypeTemplate(String searchStr, Vector<EcommerceProduct> templates);
 
-	public String getDateStr(Date date);
-
-	public void deleteTemplate(Domain domain, String description);
+	public void deleteTemplate(Domain domain, User user, String description);
 	
-	public Tag addMarketplaceTag(Domain domain, String name);
+	public Tag addMarketplaceTag(Domain domain, User user, String name);
 	
-	public void removeMarketplaceTag(Domain domain, Tag tag);
+	public void removeMarketplaceTag(Domain domain, User user, Tag tag);
 	
-	public Tag updateMarketplaceTag(Domain domain, Tag tag);
+	public Tag updateMarketplaceTag(Domain domain, User user, Tag tag);
 	
-	public LinkedList<Tag> getMarketplaceTagList(Domain domain);
+	public LinkedList<Tag> getMarketplaceTagList(Domain domain, User user);
 	
 	List<Product> getProductList(Domain domain, String login, Integer category);
 
@@ -51,13 +49,13 @@ public interface IMarketplace extends RemoteService{
 	
 	List<RegistryAttachTag> getAttachTemplateTagList(Domain domain, String login, List<Integer> pTagList);
 	
-	public List<Attach> obtainEcommerceProductTemplates(Domain domain, String sellerId);
+	public List<Attach> obtainEcommerceProductTemplates(Domain domain, User user, String sellerId);
 	
-	public Attach obtainEcommerceProductAttach(Domain domain, Item item, String templateName);
+	public Attach obtainEcommerceProductAttach(Domain domain, User user, Item item, String templateName);
 
-	public EcommerceProduct obtainEcommerceProductValues(Domain domain, Attach attach, Item item);
+	public EcommerceProduct obtainEcommerceProductValues(Domain domain, User user, Attach attach, Item item);
 	
-	public EcommerceProduct obtainEcommerceProductValues(Domain domain, Item item, String templateName);
+	public EcommerceProduct obtainEcommerceProductValues(Domain domain, User user, Item item, String templateName);
 	
 	public Boolean acceptEcommerceProductValues(Domain domain, String login, Item item, String templateName, EcommerceProduct eProduct, Attach iattach);
 }

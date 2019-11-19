@@ -11,38 +11,40 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
+import java.util.stream.Collectors;
 
 import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Record4;
 import org.jooq.Result;
 
-import com.code.aon.AonVersion;
-import com.code.aon.google.apis.DriveUtils;
 import com.esferalia.aon.gwt.template.server.Utils;
 import com.esferalia.aon.gwt.template.shared.Hotel;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
-import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.gwt.template.shared.marketplace.AmazonDelivery;
 import com.esferalia.aon.jooq.tables.records.DeliveryRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.ShipmentStatus;
 import com.esferalia.aon.occam.api.model.type.TagType;
+import com.google.api.services.drive.Drive;
+
+import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 public class DBConsults {
 	
-	public static TemplateList getTemplates(Domain domain, User user){
+	public static LinkedList<TemplateInfo> getTemplates(Domain domain, String login){
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 
 				// DOMAIN + DOMAIN SON
 				Result<Record4<Integer, String, Byte, String>> record = ctx.getDslContext()
@@ -68,7 +70,7 @@ public class DBConsults {
 						.where(RATTACH.TYPE.eq((byte)15).and(RATTACH.DOMAIN.eq(0)))
 						.fetch();
 				
-				Vector<TemplateInfo> v = new Vector<TemplateInfo>();
+				LinkedList<TemplateInfo> list = new LinkedList<TemplateInfo>();
 				record.stream().forEach(r -> {
 					TemplateInfo ti = new TemplateInfo();
 					ti.setId(r.value1());
@@ -77,10 +79,12 @@ public class DBConsults {
 					byte[] b;
 					if(r.value4()!=null){
 						ti.setDriveId(r.value4());
-						b = DriveUtils.getByteFile(domain, user, ti.getDriveId(), ti.getId());
+						DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), "");
+						Drive drive = AonDrive.getInstace().serviceInitialize(g);
+						b = AonDrive.getInstace().downloadFileByteArray(drive, ti.getDriveId());
 					}
 					else{ 
-						b = getXml(domain, user, ti.getId());
+						b = getXml(domain, login, ti.getId());
 					}
 					TemplateInfo aux = null;
 					try {
@@ -94,7 +98,7 @@ public class DBConsults {
 						ti.setType(aux.getType());
 						ti.setIsParent(false);
 						ti.setDomainId(domain.getId());
-						v.add(ti);
+						list.add(ti);
 					}
 				});
 				
@@ -110,7 +114,7 @@ public class DBConsults {
 						b = null;
 					}
 					else{
-						b = getXml(domain, user, ti.getId());
+						b = getXml(domain, login, ti.getId());
 					}
 					TemplateInfo aux = null;
 					try {
@@ -122,26 +126,11 @@ public class DBConsults {
 						ti.setColumns(aux.getColumns());
 						ti.setType(aux.getType());
 						ti.setIsParent(true);
-						v.add(ti);
+						list.add(ti);
 					}
 				});
-				Boolean version = false;
-				if(recordDefault.isNotEmpty()){
-					byte[] b = getXml(domain, user, recordDefault.get(0).value1());
-					TemplateInfo aux = null;
-					try {
-						aux = Utils.readxmlWithVersion(new ByteArrayInputStream(b));
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					String ver = AonVersion.VERSION;
-					version = ver.compareTo(aux.getVersion()) == 1;
-					
-					if(version){
-						DBConsults.deleteDefaultTemplates(ctx);
-					}
-				}
-				if(recordDefault.isEmpty() || version){
+				
+				if(recordDefault.isEmpty()){
 					
 					Result<Record1<Integer>> data = ctx.getDslContext()
 							.select(DOMAIN.ID)
@@ -151,7 +140,7 @@ public class DBConsults {
 					if (data.isNotEmpty()){
 						
 						TemplateInfo stockTemplate = new TemplateInfo();
-						Vector<String> v2 = new Vector<String>();
+						LinkedList<String> v2 = new LinkedList<String>();
 						v2.add("Producto");v2.add("Nombre");v2.add("Cantidad");
 						v2.add("Detalle 1");v2.add("Detalle 2");v2.add("Detalle 3");
 						stockTemplate.setColumns(v2);
@@ -161,30 +150,14 @@ public class DBConsults {
 						stockTemplate.setType("Stock");
 						stockTemplate.sethasWarehouse(false);
 						stockTemplate.setIsParent(true);
-						stockTemplate.setVersion(AonVersion.VERSION);
+
 						Integer id = insertTemplate(new Domain().setId(0).setName(domain.getName()),
-								stockTemplate,Utils.newXmlFileWithVersion(stockTemplate), user.getLogin());
+								stockTemplate,Utils.newXmlFile(stockTemplate), login);
 						stockTemplate.setId(id);
-						v.add(stockTemplate);
+						list.add(stockTemplate);
 					
-						/*TemplateInfo stockPurchaseTemplate = new TemplateInfo();
-						v2 = new Vector<String>();
-						v2.add("Centro de Trabajo");v2.add("Departamento");
-						v2.add("Producto");v2.add("Nombre");v2.add("Cantidad");
-						v2.add("Detalle 1");v2.add("Detalle 2");v2.add("Detalle 3");
-						stockPurchaseTemplate.setColumns(v2);
-						stockPurchaseTemplate.setDomain(domain);
-						stockPurchaseTemplate.setDomainId(0);
-						stockPurchaseTemplate.setName("Solicitud de Compra");
-						stockPurchaseTemplate.setType("Catalogo");
-						stockPurchaseTemplate.sethasWarehouse(false);
-						stockPurchaseTemplate.setIsParent(true);
-						id = insertTemplate(domain, stockPurchaseTemplate,Utils.newXmlFile(stockPurchaseTemplate), 0);
-						stockPurchaseTemplate.setId(id);
-						v.add(stockPurchaseTemplate);
-					 	*/
 						TemplateInfo productTemplate = new TemplateInfo();
-						v2 = new Vector<String>();
+						v2 = new LinkedList<String>();
 						v2.add("Nombre");v2.add("Código");v2.add("Precio Coste");v2.add("Precio Venta Base");
 						v2.add("Detalle 1");v2.add("Detalle 2");v2.add("Detalle 3");
 						productTemplate.setColumns(v2);
@@ -194,14 +167,14 @@ public class DBConsults {
 						productTemplate.setType("Producto");
 						productTemplate.sethasWarehouse(false);
 						productTemplate.setIsParent(true);
-						productTemplate.setVersion(AonVersion.VERSION);
+
 						id = insertTemplate(new Domain().setId(0).setName(domain.getName()),
-								productTemplate,Utils.newXmlFileWithVersion(productTemplate), user.getLogin());
+								productTemplate,Utils.newXmlFile(productTemplate), login);
 						productTemplate.setId(id);
-						v.add(productTemplate);
+						list.add(productTemplate);
 						
 						TemplateInfo feeTemplate = new TemplateInfo();
-						v2 = new Vector<String>();
+						v2 = new LinkedList<String>();
 						v2.add("Cliente");v2.add("Producto");v2.add("Cantidad");v2.add("Precio");v2.add("Descuento");
 						v2.add("Fecha Inicio");v2.add("Fecha Facturaci\u00f3n");v2.add("Centro de Trabajo");
 						feeTemplate.setColumns(v2);
@@ -211,14 +184,14 @@ public class DBConsults {
 						feeTemplate.setType("Cuota");
 						feeTemplate.sethasWarehouse(false);
 						feeTemplate.setIsParent(true);
-						feeTemplate.setVersion(AonVersion.VERSION);
+
 						id = insertTemplate(new Domain().setId(0).setName(domain.getName()),
-								feeTemplate,Utils.newXmlFileWithVersion(feeTemplate), user.getLogin());
+								feeTemplate,Utils.newXmlFile(feeTemplate), login);
 						feeTemplate.setId(id);
-						v.add(feeTemplate);
+						list.add(feeTemplate);
 						
 						TemplateInfo inventoryTemplate1 = new TemplateInfo();
-						v2 = new Vector<String>();
+						v2 = new LinkedList<String>();
 						v2.add("Producto");v2.add("Nombre");v2.add("Categor\u00eda");v2.add("Recuento");
 						v2.add("Detalle 1");v2.add("Detalle 2");v2.add("Detalle 3");
 						inventoryTemplate1.setColumns(v2);
@@ -228,14 +201,14 @@ public class DBConsults {
 						inventoryTemplate1.setType("Inventario Cerrado");
 						inventoryTemplate1.sethasWarehouse(false);
 						inventoryTemplate1.setIsParent(true);
-						inventoryTemplate1.setVersion(AonVersion.VERSION);
+
 						id = insertTemplate(new Domain().setId(0).setName(domain.getName()),
-								inventoryTemplate1,Utils.newXmlFileWithVersion(inventoryTemplate1), user.getLogin());
+								inventoryTemplate1,Utils.newXmlFile(inventoryTemplate1), login);
 						inventoryTemplate1.setId(id);
-						v.add(inventoryTemplate1);
+						list.add(inventoryTemplate1);
 						
 						TemplateInfo inventoryTemplate2 = new TemplateInfo();
-						v2 = new Vector<String>();
+						v2 = new LinkedList<String>();
 						v2.add("Producto");v2.add("Nombre");v2.add("Categor\u00eda");v2.add("Inventario");v2.add("Coste");
 						v2.add("Total");v2.add("Detalle 1");v2.add("Detalle 2");v2.add("Detalle 3");
 						inventoryTemplate2.setColumns(v2);
@@ -245,11 +218,11 @@ public class DBConsults {
 						inventoryTemplate2.setType("Inventario Valorado");
 						inventoryTemplate2.sethasWarehouse(false);
 						inventoryTemplate2.setIsParent(true);
-						inventoryTemplate2.setVersion(AonVersion.VERSION);
+						
 						id = insertTemplate(new Domain().setId(0).setName(domain.getName()),
-								inventoryTemplate2,Utils.newXmlFileWithVersion(inventoryTemplate2), user.getLogin());
+								inventoryTemplate2,Utils.newXmlFile(inventoryTemplate2), login);
 						inventoryTemplate2.setId(id);
-						v.add(inventoryTemplate2);
+						list.add(inventoryTemplate2);
 					}
 				}
 				else{
@@ -265,7 +238,7 @@ public class DBConsults {
 						b = null;
 					}
 					else{
-						b = getXml(domain, user, ti.getId());
+						b = getXml(domain, login, ti.getId());
 					}
 					TemplateInfo aux = null;
 					try {
@@ -277,13 +250,11 @@ public class DBConsults {
 					ti.setType(aux.getType());
 					ti.setIsParent(true);
 					ti.setDomainId(0);
-					v.add(ti);
+					list.add(ti);
 				});
 				}
 				
-				TemplateList tl = new TemplateList();
-				tl.setList(v);
-				return tl;
+				return list;
 			}finally {
 				if (ctx != null) ctx.close();
 			}
@@ -318,17 +289,17 @@ public class DBConsults {
 		}
 	}
 	
-	public static byte[] getTemplate(Domain domain, User user, Integer attachId) {
-		return getXml(domain, user, attachId);
+	public static byte[] getTemplate(Domain domain, String login, Integer attachId) {
+		return getXml(domain, login, attachId);
 	}
 	
-	public static byte[] getXml(Domain domain, User user, Integer attachId){
-		return AON.getAttach(domain.getName(), domain.getId(), user.getLogin(), 
+	public static byte[] getXml(Domain domain, String login, Integer attachId){
+		return AON.getAttach(domain.getName(), domain.getId(), login, 
 				filter -> filter.getIdProperty().eq(attachId), AttachType.REGISTRY).getData();
 	}
 	
 	public static void removeTemplate(Domain domain, User user, Integer attachId){
-		AON.delete(domain.getName(), domain.getId(), user.getLogin(),
+		AON.deleteAttach(domain.getName(), domain.getId(), user.getLogin(),
 				filter -> filter.getIdProperty().eq(attachId), AttachType.REGISTRY);
 	}
 	
@@ -354,7 +325,7 @@ public class DBConsults {
 	}
 	
 	
-	public static Vector<Hotel> getHotels(Domain domain, User user) {
+	public static LinkedList<Hotel> getHotels(Domain domain, User user) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
@@ -368,23 +339,19 @@ public class DBConsults {
 				.orderBy(WORKPLACE.DESCRIPTION)
 				.fetch();
 			
-			Vector<Hotel> hs = new Vector<Hotel>();
-			
-			result.stream().forEach(r ->{
-				Hotel h = new Hotel();
-				h.setDomain(domain.getId());
-				h.setId(r.value1());
-				h.setWorkplaceId(r.value1());
-				h.setName(r.value2());
-				hs.add(h);
-			});
-			return hs;
+			return result.stream().map(r ->
+				new Hotel()
+					.setDomain(domain.getId())
+					.setId(r.value1())
+					.setWorkplaceId(r.value1())
+					.setName(r.value2())
+			).collect(Collectors.toCollection(LinkedList::new));
 		} finally {
 			if (ctx != null) ctx.close();
 		}
 	}
 
-	public static Vector<Hotel> getWorkplaces(Domain domain, User user) {
+	public static LinkedList<Hotel> getWorkplaces(Domain domain, User user) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
@@ -397,17 +364,13 @@ public class DBConsults {
 				.orderBy(WORKPLACE.DESCRIPTION)
 				.fetch();
 			
-			Vector<Hotel> hs = new Vector<Hotel>();
-			
-			result.stream().forEach(r ->{
-				Hotel h = new Hotel();
-				h.setDomain(domain.getId());
-				h.setId(r.value1());
-				h.setWorkplaceId(r.value1());
-				h.setName(r.value2());
-				hs.add(h);
-			});
-			return hs;
+			return result.stream().map(r ->
+				new Hotel()
+					.setDomain(domain.getId())
+					.setId(r.value1())
+					.setWorkplaceId(r.value1())
+					.setName(r.value2())
+			).collect(Collectors.toCollection(LinkedList::new));
 		} finally {
 			if (ctx != null) ctx.close();
 		}
@@ -430,9 +393,6 @@ public class DBConsults {
 				ad.setOrderItemId("");
 				ad.setQuantity(dr.getTotalPackages().intValue());
 				ad.setShipDate(dr.getStatusModificationDate());
-				ad.setShipDateStr(dr.getStatusModificationDate());
-				//ad.setCarrierCode();
-				//ad.setCarrierName();
 				ad.setTrackingNumber(dr.getTrackingNumber());
 				ad.setShipMethod("");
 				list.add(ad);

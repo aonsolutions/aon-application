@@ -4,7 +4,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
 
+import com.esferalia.aon.gwt.common.shared.AonData;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
@@ -55,15 +58,14 @@ public class ProductList extends ResizeComposite{
 	
 	@UiField(provided = true) Button searchButton;
 	
-	private List<Item> list;
-	private String login;
-	private ListDataProvider<Item> dataProvider = new ListDataProvider<Item>();
-
+	private AonData aonData;
 	
-	public ProductList(List<Item> list, String login) {
+	private List<Item> list;
+	private ListDataProvider<Item> dataProvider = new ListDataProvider<Item>();
+	
+	public ProductList(AonData aonData, List<Item> list) {
+		this.aonData = aonData;
 		setList(list);
-		setLogin(login);
-		
 		dataGrid = new DataGrid<Item>(Integer.MAX_VALUE, resources); 
 		nameSearchBox = new TextBox();
 		
@@ -76,20 +78,23 @@ public class ProductList extends ResizeComposite{
 		loadDataGrid();
 	}
 	
+	public AonData getAonData() {
+		return aonData;
+	}
+
+	public Domain getDomain() {
+		return getAonData().getDomain();
+	}
+
+	public User getUser() {
+		return getAonData().getUser();
+	}
 	public List<Item> getList(){
 		return list;
 	}
 	
 	public void setList(List<Item> list){
 		this.list = list;
-	}
-	
-	public String getLogin(){
-		return login;
-	}
-	
-	public void setLogin(String login){
-		this.login = login;
 	}
 	
 	//------------------------------ Actions
@@ -136,7 +141,7 @@ public class ProductList extends ResizeComposite{
 			public void onDoubleClick(final DoubleClickEvent event) {
 				Item selected = selectionModel.getSelectedObject();
 				if (selected != null) {
-				    new ProductValuesDialog(selected, getLogin()).show();
+				    new ProductValuesDialog(getAonData(), selected).show();
 				}
 			}
 		}, DoubleClickEvent.getType());

@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.template.server.marketplace;
 
 import java.text.Collator;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -9,19 +8,15 @@ import java.util.Vector;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.lang.math.NumberUtils;
-
-import com.code.aon.google.apis.DriveUtils;
-import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
+import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.template.client.marketplace.IMarketplace;
 import com.esferalia.aon.gwt.template.jooq.DBMarketplace;
-import com.esferalia.aon.gwt.template.server.Utils;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
-
 import com.esferalia.aon.gwt.template.shared.RegistryAttachTag;
 import com.esferalia.aon.gwt.template.shared.marketplace.Order;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
@@ -30,28 +25,28 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.TagType;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.google.api.services.drive.Drive;
+
+import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 
-public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketplace{
+public class MarketplaceImpl extends AonStatelessRemoteServiceServlet implements IMarketplace{
 
 	
 	private static final long serialVersionUID = 6871016881549113129L;
-	
-	public User getUser() {
-		return new User()
-				.setId(getUserID())
-				.setLogin(getUserLogin())
-				.setDomain(getUserDomainID());
-	}
 
-	public List<EcommerceProduct> getProductTemplatesList(Domain domain){
-		return DBMarketplace.getProductTemplatesList(domain, getUser());
+	@Override
+	public List<EcommerceProduct> getProductTemplatesList(Domain domain, User user){
+		return DBMarketplace.getProductTemplatesList(domain, user);
 	}
 	
+	@Override
 	public List<Order> getAmazonOrdersList(Domain domain, String login){
 		return DBMarketplace.getOrderList(domain, login);
 	}
 	
+	@Override
 	public Vector<EcommerceProduct> searchNameTemplate(String searchStr, Vector<EcommerceProduct> templates){
 		Vector<EcommerceProduct> vector = new Vector<EcommerceProduct>();
 		for (EcommerceProduct templateInfo : templates) {
@@ -61,7 +56,8 @@ public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketp
 		}
 		return vector;
 	}
-	
+
+	@Override
 	public Vector<EcommerceProduct> searchTypeTemplate(String searchStr, Vector<EcommerceProduct> templates){
 		Vector<EcommerceProduct> vector = new Vector<EcommerceProduct>();
 		for (EcommerceProduct templateInfo : templates) {
@@ -72,44 +68,54 @@ public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketp
 		return vector;
 	}
 	
-	public void deleteTemplate(Domain domain, String description){
-		DBMarketplace.deleteTemplate(domain, getUser(), description);
+	@Override
+	public void deleteTemplate(Domain domain, User user, String description){
+		DBMarketplace.deleteTemplate(domain, user, description);
 	}
 	
-	public Tag addMarketplaceTag(Domain domain, String name){
-		return DBMarketplace.insertMarketplaceTag(domain, getUser(),new Tag()
+	@Override
+	public Tag addMarketplaceTag(Domain domain, User user, String name){
+		return DBMarketplace.insertMarketplaceTag(domain, user,new Tag()
 			.setDomain(domain.getId()).setName(name).setType(TagType.MARKETPLACE.value()));
 	}
-	
-	public void removeMarketplaceTag(Domain domain, Tag tag){
-		DBMarketplace.deleteMarketplaceTag(domain, getUser(), tag);
+
+	@Override
+	public void removeMarketplaceTag(Domain domain, User user, Tag tag){
+		DBMarketplace.deleteMarketplaceTag(domain, user, tag);
 	}
 	
-	public Tag updateMarketplaceTag(Domain domain, Tag tag){
-		DBMarketplace.updateMarketplaceTag(domain, getUser(), tag);
+	@Override
+	public Tag updateMarketplaceTag(Domain domain, User user, Tag tag){
+		DBMarketplace.updateMarketplaceTag(domain, user, tag);
 		return tag;
 	}
 	
-	public LinkedList<Tag> getMarketplaceTagList(Domain domain){
-		return DBMarketplace.getMarketplaceTagList(domain, getUser());
+	@Override
+	public LinkedList<Tag> getMarketplaceTagList(Domain domain, User user){
+		return DBMarketplace.getMarketplaceTagList(domain, user);
 	}
-	
+
+	@Override
 	public List<Product> getProductList(Domain domain, String login, Integer category){
 		return DBMarketplace.getProductList(domain, login, category);
 	}
 	
+	@Override	
 	public List<Product> getProductList(Domain domain, String login, Integer category, Boolean active){
 		return DBMarketplace.getProductList(domain, login, category, active, null, null);
 	}
 
+	@Override
 	public List<Product> getSalesProductList(Domain domain, String login, Integer category, Boolean active, Boolean sales){
 		return DBMarketplace.getProductList(domain, login, category, active, sales, null);
 	} 
 	
+	@Override
 	public List<Item> getMarketItemList(Domain domain, String login, Integer category, Boolean active, Boolean sales){
 		return DBMarketplace.getMarketItemList(domain, login, category, active, sales);
 	} 
 	
+	@Override
 	public Vector<Item> searchItemByProductName(String searchStr, Vector<Item> list){
 		Vector<Item> vector = new Vector<Item>();
 		for (Item i : list) {
@@ -120,32 +126,37 @@ public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketp
 		return vector;
 	}
 	
+	@Override
 	public List<RegistryAttachTag> getAttachTemplateTagList(Domain domain, String login, List<Integer> pTagList){
 		return DBMarketplace.getAttachTemplateTagList(domain, login, pTagList);
 	}
 	
-	public List<Attach> obtainEcommerceProductTemplates(Domain domain, String sellerId){
-		Integer id = NumberUtils.isNumber(sellerId)?Integer.parseInt(sellerId):null;
+	@Override
+	public List<Attach> obtainEcommerceProductTemplates(Domain domain, User user, String sellerId){
+		Integer id = AonNumberUtils.toInteger(sellerId);
 		return AON.getAttachList(
 						domain.getName(),
 						domain.getId(),
-						getUserLogin(),
+						user.getLogin(),
 						filter -> filter.getTypeProperty().eq(RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.value())
 								.and(sellerId != null ? filter.getAttachModuleProperty().eq(id): filter.getAttachModuleProperty().isNotNull()), 
 						AttachType.REGISTRY);
 	}
 	
-	public Attach obtainEcommerceProductAttach(Domain domain, Item item, String templateName){
-		return DBMarketplace.getItemTemplateAttach(domain, getUserLogin(), templateName, item);
+	@Override
+	public Attach obtainEcommerceProductAttach(Domain domain, User user, Item item, String templateName){
+		return DBMarketplace.getItemTemplateAttach(domain, user.getLogin(), templateName, item);
 	}
 
-	public EcommerceProduct obtainEcommerceProductValues(Domain domain, Attach attach, Item item){
+	@Override
+	public EcommerceProduct obtainEcommerceProductValues(Domain domain, User user, Attach attach, Item item){
 		EcommerceProduct ecommerceProduct = null;
 
 		if(attach!=null){
 			if(attach.getData() == null && attach.getDriveId() != null){
-				byte[] data = DriveUtils.getByteFile(domain.getName(), domain.getId(), getUserLogin(), attach.getDriveId(), attach.getId());
-				attach.setData(data);
+				DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), "");
+				Drive drive = AonDrive.getInstace().serviceInitialize(g);
+				attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
 			}
 			try {
 				ecommerceProduct = XMLUtils.readXml(attach.getData());
@@ -161,15 +172,16 @@ public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketp
 		return ecommerceProduct;
 	}
 	
-	public EcommerceProduct obtainEcommerceProductValues(Domain domain, Item item, String templateName){
+	@Override
+	public EcommerceProduct obtainEcommerceProductValues(Domain domain, User user, Item item, String templateName){
 		Attach attach = AON.getAttach(domain.getName()
 				, domain.getId()
-				, getUserLogin()
+				, user.getLogin()
 				, filter -> filter.getTypeProperty().eq(RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.value())
 				.and(filter.getDescriptionProperty().eq(templateName))
 				, AttachType.REGISTRY);
 		
-		return obtainEcommerceProductValues(domain, attach, item);
+		return obtainEcommerceProductValues(domain, user, attach, item);
 	}
 	
 	public Boolean acceptEcommerceProductValues(Domain domain, String login, Item item, String templateName, EcommerceProduct ecommerceProduct, Attach attach){
@@ -218,7 +230,4 @@ public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketp
 	    return false;
 	}
 	
-	public String getDateStr(Date date){
-		return Utils.getDateStr(date);
-	}
 }

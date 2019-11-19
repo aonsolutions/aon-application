@@ -3,15 +3,15 @@ package com.esferalia.aon.gwt.template.client;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.template.client.i18n.TemplatesMessages;
 import com.esferalia.aon.gwt.template.shared.Dialog;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
-import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.ActionCell.Delegate;
 import com.google.gwt.cell.client.Cell;
@@ -171,13 +171,15 @@ public class TemplatesPage extends Composite{
 	@UiField Button nameSearchButton;
 	@UiField Button typeSearchButton;
 	
+	AonData aonData;
 	Integer column = 1;
 	ListBox list_box = new ListBox();
-	TemplateList template_list;
+	LinkedList<TemplateInfo> templateList;
 	TemplatesDialog popup;
 	
-	public TemplatesPage(TemplateList template_list) {
-		this.template_list = template_list;
+	public TemplatesPage(AonData aonData, LinkedList<TemplateInfo> template_list) {
+		this.aonData = aonData;
+		this.templateList = template_list;
 		
 		new_button = new Button();
 		edit_button = new Button();
@@ -194,6 +196,18 @@ public class TemplatesPage extends Composite{
 	
 		RootLayoutPanel.get("rootPanel").add(ui);
 		Load();
+	}
+	
+	public AonData getAonData() {
+		return aonData;
+	}
+	
+	public Domain getDomain(){
+		return getAonData().getDomain();
+	}
+	
+	public User getUser(){
+		return getAonData().getUser();
 	}
 	
 	public void Load() {
@@ -300,7 +314,7 @@ public class TemplatesPage extends Composite{
 	private ListDataProvider<TemplateInfo> dataProvider = new ListDataProvider<TemplateInfo>();
 
 	public void addDataDisplay(HasData<TemplateInfo> display) {
-		dataProvider = new ListDataProvider<TemplateInfo>(template_list.getList());
+		dataProvider = new ListDataProvider<TemplateInfo>(templateList);
 		dataProvider.addDataDisplay(display);
 	}
 	
@@ -311,7 +325,7 @@ public class TemplatesPage extends Composite{
 				super.setList(dataProvider.getList());
 				super.onColumnSort(event);
 				List<TemplateInfo> aux  = super.getList();
-				List<TemplateInfo> aux2 = new Vector<TemplateInfo>();
+				List<TemplateInfo> aux2 = new LinkedList<TemplateInfo>();
  				for(Integer i = 0 ; i< aux.size()-1;i++){
  					aux2.set(i, aux.get(aux.size()-1-i ));
  				} 				
@@ -492,7 +506,8 @@ public class TemplatesPage extends Composite{
             	+ "?id=" + Integer.toString(object.getId())
             	+ "&drive_id=" +URL.encode(driveId)
             	+ "&name=" +URL.encode(object.getName())
-            	+ "&username="+ template_list.getLogin()
+            	+ "&username="+ getUser().getLogin()
+            	+ "&domain_name=" + getDomain().getName()
             	+ "&domain_id="+ getDomain().getId();
 		Window.open( fileDownloadURL, "_blank",null);
 	}
@@ -500,7 +515,7 @@ public class TemplatesPage extends Composite{
 	private void edit(TemplateInfo object){
 		Dialog d = new Dialog("Editar Plantilla","Grabar",true,"Cancelar",true,"edit");
 		d.setTemplateInfo(object);
-		TemplatesDialog popup = new TemplatesDialog(d) {
+		TemplatesDialog popup = new TemplatesDialog(getAonData(), d) {
 			
 			@Override
 			protected void onCancel() {
@@ -522,7 +537,7 @@ public class TemplatesPage extends Composite{
 				ti2.setType(lb.getItemText(lb.getSelectedIndex()));
 				
 				ti2.sethasWarehouse(false);
-				Vector<String> v = new Vector<String>();
+				LinkedList<String> v = new LinkedList<String>();
 				Integer i = 2;
 				while(flex_table.isCellPresent(i, 1)){
 					ListBox lbn = (ListBox) flex_table.getWidget(i, 1);
@@ -534,11 +549,11 @@ public class TemplatesPage extends Composite{
 				}
 				ti2.setColumns(v);
 				ti =  ti2;
-				item.editTemplate(getDomain(), ti2, new AsyncCallback<TemplateInfo>() {
+				item.editTemplate(getDomain(), getUser(), ti2, new AsyncCallback<TemplateInfo>() {
 					@Override
 					public void onSuccess(TemplateInfo result) { 
 						Integer index = dataGrid.getKeyboardSelectedRow();
-						template_list.getList().set(index, result);
+						templateList.set(index, result);
 						addDataDisplay(dataGrid);
 						dataGrid.redraw();
 					}
@@ -558,7 +573,7 @@ public class TemplatesPage extends Composite{
 	private void delete(TemplateInfo object){
 		Dialog d = new Dialog("Eliminar Plantilla","Borrar",true,"Cancelar",true,"delete");
 		d.setTemplateInfo(object);
-		TemplatesDialog popup = new TemplatesDialog(d) {
+		TemplatesDialog popup = new TemplatesDialog(getAonData(), d) {
 			
 			@Override
 			protected void onCancel() {
@@ -568,11 +583,11 @@ public class TemplatesPage extends Composite{
 			@Override
 			protected void onAccept() {
 				hide();
-				item.deleteTemplate(getDomain(), ti, new AsyncCallback<Void>() {
+				item.deleteTemplate(getDomain(), getUser(), ti, new AsyncCallback<Void>() {
 					TemplateInfo templateInfo = ti;
 					@Override
 					public void onSuccess(Void result) {
-						template_list.getList().remove(templateInfo);
+						templateList.remove(templateInfo);
 						addDataDisplay(dataGrid);
 						dataGrid.redraw();
 					}
@@ -604,14 +619,14 @@ public class TemplatesPage extends Composite{
 	void namesbutton(ClickEvent event) {
 		typeSearchBox.setText("");
 		String searchStr = nameSearchBox.getText();
-		Vector<TemplateInfo> vaux = new Vector<TemplateInfo>();
-		vaux.addAll(template_list.getList());
+		LinkedList<TemplateInfo> vaux = new LinkedList<TemplateInfo>();
+		vaux.addAll(templateList);
 		//dataProvider.getList().stream().forEach(f-> vaux.add(f));
  		
-		item.searchNameTemplate(searchStr, vaux, new AsyncCallback<Vector<TemplateInfo>>() {
+		item.searchNameTemplate(searchStr, vaux, new AsyncCallback<LinkedList<TemplateInfo>>() {
 
 			@Override
-			public void onSuccess(Vector<TemplateInfo> result) {
+			public void onSuccess(LinkedList<TemplateInfo> result) {
 				dataProvider = new ListDataProvider<TemplateInfo>(result);
 				dataProvider.addDataDisplay(dataGrid);
 				dataGrid.redraw();
@@ -628,12 +643,12 @@ public class TemplatesPage extends Composite{
 	void typesbutton(ClickEvent event) {
 		nameSearchBox.setText("");
 		String searchStr = typeSearchBox.getText();
-		Vector<TemplateInfo> vaux = new Vector<TemplateInfo>();
-		vaux.addAll(template_list.getList()); 		
-		item.searchTypeTemplate(searchStr, vaux, new AsyncCallback<Vector<TemplateInfo>>() {
+		LinkedList<TemplateInfo> vaux = new LinkedList<TemplateInfo>();
+		vaux.addAll(templateList); 		
+		item.searchTypeTemplate(searchStr, vaux, new AsyncCallback<LinkedList<TemplateInfo>>() {
 
 			@Override
-			public void onSuccess(Vector<TemplateInfo> result) {
+			public void onSuccess(LinkedList<TemplateInfo> result) {
 				dataProvider = new ListDataProvider<TemplateInfo>(result);
 				dataProvider.addDataDisplay(dataGrid);
 				dataGrid.redraw();
@@ -649,7 +664,7 @@ public class TemplatesPage extends Composite{
 	@UiHandler("new_button")
 	void newButton(ClickEvent event){
 		Dialog d = new Dialog("Nueva Plantilla","Guardar",true,"Cancelar",true,"new");
-		popup = new TemplatesDialog(d) {
+		popup = new TemplatesDialog(getAonData(), d) {
 			
 			@Override
 			protected void onCancel() {
@@ -668,7 +683,7 @@ public class TemplatesPage extends Composite{
 				ti.setType(lb.getSelectedItemText());
 				
 				ti.sethasWarehouse(false);
-				Vector<String> v = new Vector<String>();
+				LinkedList<String> v = new LinkedList<String>();
 				Integer index = mandatoryIndex(lb.getSelectedItemText());
 				for(Integer j = 2; j< index-1 ; j++){
 					Label label = (Label) flex_table.getWidget(j, 1);
@@ -685,10 +700,10 @@ public class TemplatesPage extends Composite{
 					i++;
 				}
 				ti.setColumns(v);
-				item.newTemplate(getDomain(), ti, new AsyncCallback<TemplateInfo>() {
+				item.newTemplate(getDomain(), getUser(), ti, new AsyncCallback<TemplateInfo>() {
 					@Override
 					public void onSuccess(TemplateInfo result) {
-						template_list.getList().add(result);
+						templateList.add(result);
 						addDataDisplay(dataGrid);
 						dataGrid.redraw();				
 					}
@@ -717,10 +732,5 @@ public class TemplatesPage extends Composite{
 		object= dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
 		delete(object);
 	}	
-	
-	
-	private Domain getDomain() {
-		return new Domain().setId(JsTemplates.getCurrentDomain()).setName(JsTemplates.getCurrentDomainName());
-	}
 }
 

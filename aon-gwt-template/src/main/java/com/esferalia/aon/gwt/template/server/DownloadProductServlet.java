@@ -13,7 +13,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.Locale;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -24,7 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -35,18 +33,21 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.jooq.Condition;
 
-import com.code.aon.google.apis.DriveUtils;
-import com.code.aon.product.enumeration.ProductStatus;
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.jooq.DBProduct;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonRole;
+import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.google.api.services.drive.Drive;
+
+import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 @WebServlet(name = "DownloadTemplatesProduct", urlPatterns = { "/aon_gwt_template/gwt_download_product/*"
 															   ,"/aon_gwt_aio/gwt_download_product/*"})
@@ -63,8 +64,10 @@ public class DownloadProductServlet extends HttpServlet {
         String driveId = p_request.getParameter("drive_id");
         String fileId = p_request.getParameter("id");
         String name = p_request.getParameter("name");
+        String domainName = p_request.getParameter("domain_name");
         String domain_id = p_request.getParameter("domain_id");
-        
+        Integer domainId = Integer.parseInt(domain_id);
+
         String description = p_request.getParameter("description");
         String code = p_request.getParameter("code");
         String category = p_request.getParameter("category");
@@ -105,21 +108,20 @@ public class DownloadProductServlet extends HttpServlet {
         
         String tags = p_request.getParameter("tags");
         
-        Integer domainId = Integer.parseInt(domain_id);
-        String domainName = AonServletUtils.getRequestDomainName(p_request);
         Domain domain = AON.getDomain(domainName, domainId, login);
-        Integer idFile = Integer.parseInt(fileId);
         
         User user = AON.getUser(domainName, domainId, login);
         
         byte[] b = null ;
         
         if (driveId != ""){
-        	b = DriveUtils.getByteFile(domain, user, driveId, idFile);
+        	DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), "");
+			Drive drive = AonDrive.getInstace().serviceInitialize(g);
+        	b = AonDrive.getInstace().downloadFileByteArray(drive, driveId);
         }
         else if(fileId!=""){
         	Integer id = Integer.parseInt(fileId);
-        	b = DBConsults.getTemplate(domain, user, id);
+        	b = DBConsults.getTemplate(domain, login, id);
         }
         else return;
         
@@ -453,14 +455,14 @@ public class DownloadProductServlet extends HttpServlet {
         		case "Categor\u00eda": celda.setCellValue(pi.getDownloadItem().getCategory());celda.setCellStyle(style2);break;
         		case "Marca": celda.setCellValue(pi.getDownloadItem().getBrand());celda.setCellStyle(style2);break;
         		case "Etiqueta":  celda.setCellValue(tags2);celda.setCellStyle(style2);break;
-        		case "Tipo": celda.setCellValue(com.code.aon.product.enumeration.ProductType.values()[pi.getDownloadItem().getType().ordinal()].getName(new Locale("es_ES")));celda.setCellStyle(style2);break;
+        		case "Tipo": celda.setCellValue(ProductType.values()[pi.getDownloadItem().getType().ordinal()].getName());celda.setCellStyle(style2);break;
         		case "IVA": celda.setCellValue(pi.getDownloadItem().getVat().getName());celda.setCellStyle(style2);break;
         		case "IRPF": celda.setCellValue(pi.getDownloadItem().getRetention().getName());celda.setCellStyle(style2);break;
         		case "Inventoriable":
         		case "Inventariable":celda.setCellValue(pi.getDownloadItem().isInventoriable());celda.setCellStyle(style2);break;
         		case "Producto Compuesto": celda.setCellValue(pi.getDownloadItem().isComposition());celda.setCellStyle(style2);break;
         		case "Precio Composici\u00f3n": celda.setCellValue(pi.getDownloadItem().isCompositionPrice());celda.setCellStyle(style2);break;
-        		case "Estado": celda.setCellValue(ProductStatus.values()[pi.getDownloadItem().getStatus()].getName(new Locale("es_ES")));celda.setCellStyle(style2);break;
+        		case "Estado": celda.setCellValue(ProductStatus.values()[pi.getDownloadItem().getStatus()].getName());celda.setCellStyle(style2);break;
         		case "C\u00f3digo de Barras":  celda.setCellValue(pi.getDownloadItem().getBarcode());celda.setCellStyle(style2);break;
         		case "Descripci\u00f3n":  celda.setCellValue(pi.getDownloadItem().getDescription());celda.setCellStyle(style2);break;
         		case "Detalle 1":  celda.setCellValue(pi.getDownloadItem().getDetail());celda.setCellStyle(style2);break;

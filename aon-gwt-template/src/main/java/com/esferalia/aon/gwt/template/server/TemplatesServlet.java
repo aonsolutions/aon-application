@@ -16,7 +16,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -36,7 +35,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
+import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.template.client.ITemplate;
 import com.esferalia.aon.gwt.template.jooq.DBCatalogue;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
@@ -58,7 +57,6 @@ import com.esferalia.aon.gwt.template.shared.Hotel;
 import com.esferalia.aon.gwt.template.shared.ImportType;
 import com.esferalia.aon.gwt.template.shared.Seller;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
-import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -89,7 +87,7 @@ import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 
 
-public class TemplatesServlet extends AonRemoteServiceServlet implements ITemplate{
+public class TemplatesServlet extends AonStatelessRemoteServiceServlet implements ITemplate{
 
 	private static final long serialVersionUID = 6871016881549113129L;
 
@@ -142,76 +140,73 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		size = sizea;
 	}
 
-	public User getUser(){
-		return new User()
-				.setId(getUserID())
-				.setLogin(getUserLogin())
-				.setDomain(getUserDomainID());
+	@Override
+	public LinkedList<TemplateInfo> getTemplates(Domain domain, User user){
+		return DBConsults.getTemplates(domain, user.getLogin());
 	}
-
-	public TemplateList getTemplates(Domain domain){
-		TemplateList tl = null;
-		tl = DBConsults.getTemplates(domain, getUser());
-		tl.setDomainId(domain.getId());
-		tl.setLogin(getUser().getLogin());
-		return tl;
-	}
-
-	public List<Hotel> getHotelsToConsumption(Domain domain){
-		return DBConsults.getHotels(domain, getUser());
-	}
-
-	public List<Hotel> getWorkplacesToConsumption(Domain domain){
-		return DBConsults.getWorkplaces(domain, getUser());
-	}
-
-	public Vector<Warehouse> getWarehousesToConsumption(Domain domain, Integer workplaceId){
-		return DBStock.getInstance().getWarehouse(domain, getUser(), workplaceId);
-	}
-
-	public Vector<Warehouse> getWarehousesToConsumption(Domain domain){
-		Vector<Warehouse> v = DBStock.getInstance().getWarehouse(domain, getUser());
-		Vector<Warehouse> v2 = new Vector<Warehouse>();
-		for (Warehouse w : v) {
-			ConsumptionItem ci = DBConsumption.getTwoLastInventory(domain, w.getId(), getUser().getLogin());
-			if(ci.getInitialId() != null && ci.getFinalId() != null)
-				v2.add(w);
-		}
-		return v2;
-	}
-
-	public Vector<Warehouse> getWarehouses(Domain domain){
-		return DBStock.getInstance().getWarehouse(domain, getUser());
-	}
-
-	public TemplateInfo newTemplate(Domain domain, TemplateInfo ti ){
+	
+	@Override
+	public TemplateInfo newTemplate(Domain domain, User user, TemplateInfo ti ){
 		byte[] b = Utils.newXmlFile(ti);
-		Integer id = DBConsults.insertTemplate(domain, ti, b, getUser().getLogin());
+		Integer id = DBConsults.insertTemplate(domain, ti, b, user.getLogin());
 		ti.setId(id);
 		ti.setIsParent(false);
 
 		return ti;
 	}
 
-	public TemplateInfo editTemplate(Domain domain, TemplateInfo ti){
+	@Override
+	public TemplateInfo editTemplate(Domain domain, User user, TemplateInfo ti){
 		byte[] b = Utils.newXmlFile(ti);
-		DBConsults.updateTemplate(domain, ti, b, getUser().getLogin());
+		DBConsults.updateTemplate(domain, ti, b, user.getLogin());
 		return ti;
 	}
 
-	public void deleteTemplate(Domain domain, TemplateInfo ti){
-		DBConsults.removeTemplate(domain,getUser(), ti.getId());
+	@Override
+	public void deleteTemplate(Domain domain, User user, TemplateInfo ti){
+		DBConsults.removeTemplate(domain, user, ti.getId());
 	}
+	
+	@Override
+	public LinkedList<Hotel> getHotelsToConsumption(Domain domain, User user){
+		return DBConsults.getHotels(domain, user);
+	}
+
+	@Override
+	public LinkedList<Hotel> getWorkplacesToConsumption(Domain domain, User user){
+		return DBConsults.getWorkplaces(domain, user);
+	}
+
+	@Override
+	public LinkedList<Warehouse> getWarehousesToConsumption(Domain domain, User user, Integer workplaceId){
+		return DBStock.getInstance().getWarehouse(domain, user, workplaceId);
+	}
+
+	public LinkedList<Warehouse> getWarehousesToConsumption(Domain domain, User user){
+		LinkedList<Warehouse> v = DBStock.getInstance().getWarehouse(domain, user);
+		LinkedList<Warehouse> v2 = new LinkedList<Warehouse>();
+		for (Warehouse w : v) {
+			ConsumptionItem ci = DBConsumption.getTwoLastInventory(domain, w.getId(), user.getLogin());
+			if(ci.getInitialId() != null && ci.getFinalId() != null)
+				v2.add(w);
+		}
+		return v2;
+	}
+
+	public LinkedList<Warehouse> getWarehouses(Domain domain, User user){
+		return DBStock.getInstance().getWarehouse(domain, user);
+	}
+
 
 	//-------------------- IMPORTAR
 	DeliveryInfo di;
-	Vector<String> verror;
-	public Integer executeExcel(Domain domain, TemplateInfo ti, ImportType importType, Boolean ignoreInactiveClient,
+	LinkedList<String> verror;
+	public Integer executeExcel(Domain domain, User user, TemplateInfo ti, ImportType importType, Boolean ignoreInactiveClient,
 		Integer inventory, String warehouse1,String warehouse2 , String series, String comments,Boolean istransfer ,Integer number){
 
 		this.ti = ti;
 		error = new Error();
-		verror = new Vector<String>();
+		verror = new LinkedList<String>();
 		error.setTextError(verror);
 		textError = "";
 
@@ -239,13 +234,13 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			rowIterator = sheet.iterator();
 
 			if(importType.equals(ImportType.PRODUCT))
-				executeExcelProduct(domain, rowIterator, error, evaluator);
+				executeExcelProduct(domain, user, rowIterator, error, evaluator);
 			else if(importType.equals(ImportType.FEE))
-				executeExcelFee(domain, rowIterator, error, ignoreInactiveClient, evaluator);
+				executeExcelFee(domain, user, rowIterator, error, ignoreInactiveClient, evaluator);
 			else if(importType.equals(ImportType.PROPOSAL))
-				executeExcelProposal(domain, rowIterator, error);
+				executeExcelProposal(domain, user, rowIterator, error);
 			else if(importType.equals(ImportType.STOCK))
-				executeExcelStock(domain, rowIterator, error, inventory, warehouse1, warehouse2, series, comments, istransfer, number);
+				executeExcelStock(domain, user, rowIterator, error, inventory, warehouse1, warehouse2, series, comments, istransfer, number);
 			else if(ImportType.DELIVERY.equals(importType)) {
 				di = DeliveryImport.getInstance().importation(data);
 			}
@@ -272,13 +267,13 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				rowIterator = sheet.iterator();
 
 				if(importType.equals(ImportType.PRODUCT))
-					executeExcelProduct(domain, rowIterator, error, evaluator);
+					executeExcelProduct(domain, user,  rowIterator, error, evaluator);
 				else if(importType.equals(ImportType.FEE))
-					executeExcelFee(domain, rowIterator, error, ignoreInactiveClient, evaluator);
+					executeExcelFee(domain, user, rowIterator, error, ignoreInactiveClient, evaluator);
 				else if(importType.equals(ImportType.PROPOSAL))
-					executeExcelProposal(domain, rowIterator, error);
+					executeExcelProposal(domain, user, rowIterator, error);
 				else if(importType.equals(ImportType.STOCK))
-					executeExcelStock(domain, rowIterator, error, inventory, warehouse1, warehouse2, series, comments, istransfer, number);
+					executeExcelStock(domain, user, rowIterator, error, inventory, warehouse1, warehouse2, series, comments, istransfer, number);
 
 				workbook.close();
 			} catch (IOException e1) {
@@ -296,18 +291,18 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	}
 
 	//-------------------- IMPORTAR FEE
-	Vector<FeeInfo> fees;
+	LinkedList<FeeInfo> fees;
 	FeeInfo fi;
-	List<Seller> sellers = new Vector<Seller>();
+	List<Seller> sellers = new LinkedList<Seller>();
 	LinkedList<Workplace> workplaces = new LinkedList<Workplace>();
 	LinkedList<InvoicingGroup> invoicingGroupList = new LinkedList<InvoicingGroup>();
 	Boolean feeBool;
-	private void executeExcelFee(final Domain domain, Iterator<Row> rowIterator, Error error, Boolean ignoreInactiveClient, FormulaEvaluator evaluator){
-		Vector<FeeInfo> fees = new Vector<FeeInfo>();
+	private void executeExcelFee(final Domain domain, User user, Iterator<Row> rowIterator, Error error, Boolean ignoreInactiveClient, FormulaEvaluator evaluator){
+		LinkedList<FeeInfo> fees = new LinkedList<FeeInfo>();
 
-		sellers = DBFee.getInstance().getSellers(domain, getUser().getLogin());
-		workplaces = DBFee.getInstance().getWorkplaceList(domain, getUser());
-		invoicingGroupList = DBFee.getInstance().getInvoicingGroupList(domain, getUser());
+		sellers = DBFee.getInstance().getSellers(domain, user.getLogin());
+		workplaces = DBFee.getInstance().getWorkplaceList(domain, user);
+		invoicingGroupList = DBFee.getInstance().getInvoicingGroupList(domain, user);
 
 		feeBool = true;
 		/* LAMBDA java 1.8 */
@@ -350,7 +345,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 							}
 
 							if(!ti.getColumns().get(cell.getColumnIndex()).equals("Texto Libre")){
-								fi = checkFee(domain, ti.getColumns().get(cell.getColumnIndex()),fi,cell, ignoreInactiveClient, evaluator);
+								fi = checkFee(domain, user, ti.getColumns().get(cell.getColumnIndex()),fi,cell, ignoreInactiveClient, evaluator);
 								if(fi == null){
 									verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto ");
 									textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n";
@@ -402,20 +397,14 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				|| s.equals("Centro de Trabajo") ||  s.equals("Centro Trabajo") ;
 	}
 
-	public Error insertFee(Domain domain) {
-		Vector<String> verror = error.getTextError();
+	public Error insertFee(Domain domain, User user) {
+		LinkedList<String> verror = error.getTextError();
 		Error error = new Error();
 		if(textError.equals("")){
 			error.setError(true);
 			verror.add("");
 			error.setTextError(verror);
-
-			//insertar Fee en base de datos.!!
-			AuditInfo ai = new AuditInfo();
-			ai.setDate(new Date());
-			ai.setUserId(getUser().getId());
-			ai.setUsername(getUser().getLogin());
-			error = DBFee.getInstance().insertFee(domain,fees,ai, getUser().getLogin());
+			error = DBFee.getInstance().insertFee(domain, user.getLogin(), fees);
 		}
 		else{
 			//Alguna de las filas contiene datos erroneos.
@@ -437,10 +426,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		return feeInfo;
 	}
 
-	private FeeInfo checkFee(Domain domain, String template,FeeInfo fee, Cell cell, Boolean ignoreInactiveCliente, FormulaEvaluator evaluator) {
+	private FeeInfo checkFee(Domain domain, User user, String template,FeeInfo fee, Cell cell, Boolean ignoreInactiveCliente, FormulaEvaluator evaluator) {
 		Integer row = cell.getRowIndex()+1;
 		String column = Utils.getColumn(cell.getColumnIndex());
-		String username = getUser().getLogin();
+		String username = user.getLogin();
 		CellType type = cell.getCellTypeEnum();
 		Object value = getObjectValue(cell, evaluator);
 		switch (template) {
@@ -610,9 +599,9 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			break;
 		case "Expediente": case "Record":  //BD
 			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
-				Project project = DBFee.getInstance().getProject(domain, toString(value), fee.getClientId(), getUser().getLogin());
+				Project project = DBFee.getInstance().getProject(domain, toString(value), fee.getClientId(), user.getLogin());
 				if(project == null && fee.getClientId() != null){
-					project = new Project().setId(DBFee.getInstance().insertProject(domain, getUser(), toString(value), fee.getClientId()));
+					project = new Project().setId(DBFee.getInstance().insertProject(domain, user, toString(value), fee.getClientId()));
 				}
 				if(project != null){
 					fee.setProject(cell.getStringCellValue());
@@ -651,7 +640,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	}
 
 	//-------------------- IMPORTAR STOCK
-	Vector<StockInfo> stock;
+	LinkedList<StockInfo> stock;
 	TransferInfo transferInfo;
 	String textError;
 	Error error;
@@ -660,8 +649,8 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	TemplateInfo ti;
 	Row rowAux ;
 	Boolean proposalBool;
-	public Integer executeExcelProposal(Domain domain, Iterator<Row> rowIterator, Error error){
-		Vector<StockInfo> stock = new Vector<StockInfo>();
+	public Integer executeExcelProposal(Domain domain, User user, Iterator<Row> rowIterator, Error error){
+		LinkedList<StockInfo> stock = new LinkedList<StockInfo>();
 		proposalBool = true;
 		/* LAMBDA java 1.8 */
 		Iterable<Row> rowIterable = () -> rowIterator;
@@ -726,7 +715,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 							if(ti.getColumns().get(cell.getColumnIndex()).equals("Cantidad") || ti.getColumns().get(cell.getColumnIndex()).equals("Producto")
 									|| ti.getColumns().get(cell.getColumnIndex()).equals("Detalle 1") || ti.getColumns().get(cell.getColumnIndex()).equals("Detalle 2")
 									|| ti.getColumns().get(cell.getColumnIndex()).equals("Detalle 3")){
-								si = check(domain, cell.getRowIndex()+1, Utils.getColumn(cell.getColumnIndex()),ti.getColumns().get(cell.getColumnIndex()),object,si,cell.getCellTypeEnum());
+								si = check(domain, user, cell.getRowIndex()+1, Utils.getColumn(cell.getColumnIndex()),ti.getColumns().get(cell.getColumnIndex()),object,si,cell.getCellTypeEnum());
 								if(si == null){
 									textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n";
 									verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n");
@@ -778,21 +767,14 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		return rowCount;
 	}
 
-	public Error insertProposal(Domain domain, Integer proposal,Integer workplace){
-		Vector<String> verror = error.getTextError();
+	public Error insertProposal(Domain domain, User user, Integer proposal, Integer workplace){
+		LinkedList<String> verror = error.getTextError();
 		Error error = new Error();
 		if(textError.equals("")){
 			error.setError(true);
 			verror.add("");
 			error.setTextError(verror);
-		//TODO proposal
-			AuditInfo ai = new AuditInfo();
-			ai.setDate(new Date());
-			ai.setUserId(getUser().getId());
-			ai.setUsername(getUser().getLogin());
-			error = DBStock.getInstance().insertProposal(domain, stock,proposal,ai,workplace, getUser().getLogin());
-
-	        //insertar STOCK en base de datos.!!
+			error = DBStock.getInstance().insertProposal(domain, user.getLogin(), stock,proposal,workplace);
 		}
 		else{
 			//Alguna de las filas contiene datos erroneos.
@@ -806,10 +788,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	Boolean transfer;
 	Map<String, StockInfo> stockMap;
 	Boolean stockBool;
-	public Integer executeExcelStock(Domain domain,Iterator<Row> rowIterator, Error error, Integer inventory, String warehouse1,String warehouse2 , String series, String comments,Boolean istransfer ,Integer number){
+	public Integer executeExcelStock(Domain domain, User user, Iterator<Row> rowIterator, Error error, Integer inventory, String warehouse1,String warehouse2 , String series, String comments,Boolean istransfer ,Integer number){
 		transfer = istransfer;
 		inventoryId = inventory;
-		Vector<StockInfo> stock = new Vector<StockInfo>();
+		LinkedList<StockInfo> stock = new LinkedList<StockInfo>();
 		Map<String, StockInfo> stockMap =  new HashMap<String, StockInfo>();
 
 		if((warehouse1 == null || warehouse1.equals("-")) && (warehouse2 == null || warehouse2.equals("-"))){
@@ -830,9 +812,9 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		if (ti.getDomainId().equals(0)) domId = domain.getId();
 		else domId = ti.getDomainId();
 		// DBSTOCK GET WAREHOUSE TARDA!! EL 1
-		if(warehouse1 != null && !warehouse1.equals("-")) w = DBStock.getInstance().getWarehouse(new Domain().setId(domId).setName(domain.getName()), getUser(), warehouse1);
-		if(warehouse2 != null && !warehouse2.equals("-")) 	w2 = DBStock.getInstance().getWarehouse(new Domain().setId(domId).setName(domain.getName()), getUser(), warehouse2);
-		s = DBStock.getInstance().getSeries(domain, series, getUser().getLogin());
+		if(warehouse1 != null && !warehouse1.equals("-")) w = DBStock.getInstance().getWarehouse(new Domain().setId(domId).setName(domain.getName()), user, warehouse1);
+		if(warehouse2 != null && !warehouse2.equals("-")) 	w2 = DBStock.getInstance().getWarehouse(new Domain().setId(domId).setName(domain.getName()), user, warehouse2);
+		s = DBStock.getInstance().getSeries(domain, series, user.getLogin());
 
     	//Boolean b = true;
 
@@ -911,7 +893,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 								}
 							}
 							if(!ti.getColumns().get(cell.getColumnIndex()).equals("Texto Libre") && !ti.getColumns().get(cell.getColumnIndex()).equals("Nombre")){
-								si = check(domain, cell.getRowIndex()+1, Utils.getColumn(cell.getColumnIndex()),ti.getColumns().get(cell.getColumnIndex()),object,si,cell.getCellTypeEnum());
+								si = check(domain, user, cell.getRowIndex()+1, Utils.getColumn(cell.getColumnIndex()),ti.getColumns().get(cell.getColumnIndex()),object,si,cell.getCellTypeEnum());
 								if(si == null){
 									textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n";
 									verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n");
@@ -974,18 +956,14 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	public Boolean isRequiredStock(String s){
 		return s.equals("Producto") ||s.equals("Cantidad");
 	}
-	public Error insertStock(Domain domain) {
-		Vector<String> verror = error.getTextError();
+	public Error insertStock(Domain domain, User user) {
+		LinkedList<String> verror = error.getTextError();
 		Error error = new Error();
 		if(textError.equals("")){
 			error.setError(true);
 			verror.add("");
 			error.setTextError(verror);
-			AuditInfo ai = new AuditInfo();
-			ai.setDate(new Date());
-			ai.setUserId(getUser().getId());
-			ai.setUsername(getUser().getLogin());
-			error = DBStock.getInstance().insertStock(domain.getName(), domain.getId(), new Vector<>(stockMap.values()) ,transferInfo, inventoryId,ai, getUser().getLogin());
+			error = DBStock.getInstance().insertStock(domain.getName(), domain.getId(), user.getLogin(), new LinkedList<>(stockMap.values()) ,transferInfo, inventoryId);
 		}
 		else{
 			error.setError(false);
@@ -994,26 +972,17 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		return error;
 	}
 
-	public Error insertTransferStock(Domain domain){
-		Vector<String> verror = error.getTextError();
+	public Error insertTransferStock(Domain domain, User user){
+		LinkedList<String> verror = error.getTextError();
 		Error error = new Error();
 		if(textError.equals("")){
 			error.setError(true);
 			verror.add("");
 			error.setTextError(verror);
-			AuditInfo ai = new AuditInfo();
-			ai.setDate(new Date());
-			ai.setUserId(getUser().getId());
-			ai.setUsername(getUser().getLogin());
-
-			Vector<StockInfo> v = new Vector<StockInfo>();
+			LinkedList<StockInfo> v = new LinkedList<StockInfo>();
 			v.addAll(stockMap.values());
-			error = DBStock.getInstance().insertTransferStock(domain,v,transferInfo,ai, getUser().getLogin());
-
-	        //insertar STOCK en base de datos.!!
-		}
-		else{
-			//Alguna de las filas contiene datos erroneos.
+			error = DBStock.getInstance().insertTransferStock(domain, user.getLogin(), v,transferInfo);
+		} else{
 			error.setError(false);
  			error.setTextError(verror);
 		}
@@ -1021,7 +990,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		return error;
 	}
 
-	private StockInfo check(Domain domain, Integer row, String column, String template, Object value,StockInfo stock, CellType type) {
+	private StockInfo check(Domain domain, User user, Integer row, String column, String template, Object value,StockInfo stock, CellType type) {
 
 		switch (template) {
 		case "Producto": case "Product":
@@ -1080,7 +1049,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			break;
 		case "Formato":
 			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
-				Tag tag = DBConsults.getTag(domain, getUser().getLogin(), toString(value), TagType.PACKING);
+				Tag tag = DBConsults.getTag(domain, user.getLogin(), toString(value), TagType.PACKING);
 				if(tag.getId() != null) stock.getItem().setPackFormatTag(tag);
 				else{
 					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TAG_NOT_EXIST.getMessage());
@@ -1098,7 +1067,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			break;
 		case "Formato Unidades":
 			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
-				Tag tag = DBConsults.getTag(domain, getUser().getLogin(), toString(value), TagType.PACKING);
+				Tag tag = DBConsults.getTag(domain, user.getLogin(), toString(value), TagType.PACKING);
 				if(tag.getId() != null)stock.getItem().setPackUnitsTag(tag);
 				else{
 					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TAG_NOT_EXIST.getMessage());
@@ -1116,7 +1085,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			break;
 		case "Formato Medida":
 			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
-				Tag tag = DBConsults.getTag(domain, getUser().getLogin(), toString(value), TagType.PACKING);
+				Tag tag = DBConsults.getTag(domain, user.getLogin(), toString(value), TagType.PACKING);
 				if(tag.getId() != null) stock.getItem().setPackMeasurementTag(tag);
 				else{
 					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TAG_NOT_EXIST.getMessage());
@@ -1139,12 +1108,12 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		return stock;
 	}
 
-	public Vector<com.esferalia.aon.gwt.template.shared.Series> getSeries(Domain domain, String warehouse){
-		Warehouse w = DBStock.getInstance().getWarehouse(domain, getUser(),warehouse);
-		Workplace workplace = DBCatalogue.getWorkplace(domain, getUser(), w.getWorkplace());
-		Vector<Series> series = DBStock.getInstance().getSeries(domain,w, workplace,getUser().getLogin());
+	public LinkedList<com.esferalia.aon.gwt.template.shared.Series> getSeries(Domain domain, User user, String warehouse){
+		Warehouse w = DBStock.getInstance().getWarehouse(domain, user, warehouse);
+		Workplace workplace = DBCatalogue.getWorkplace(domain, user, w.getWorkplace());
+		LinkedList<Series> series = DBStock.getInstance().getSeries(domain,w, workplace, user.getLogin());
 
-		Vector<com.esferalia.aon.gwt.template.shared.Series> seriesCode = new Vector<com.esferalia.aon.gwt.template.shared.Series>();
+		LinkedList<com.esferalia.aon.gwt.template.shared.Series> seriesCode = new LinkedList<com.esferalia.aon.gwt.template.shared.Series>();
 		series.parallelStream().forEach(s ->{
 			com.esferalia.aon.gwt.template.shared.Series serie = new com.esferalia.aon.gwt.template.shared.Series();
 			serie.setId(s.getId());
@@ -1154,10 +1123,10 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		return seriesCode;
 	}
 
-	public Vector<com.esferalia.aon.gwt.template.shared.Series> getSeries(Domain domain){
-		Vector<Series> series = new Vector<Series>();
-		series = DBStock.getInstance().getSeries(domain, getUser().getLogin());
-		Vector<com.esferalia.aon.gwt.template.shared.Series> seriesCode = new Vector<com.esferalia.aon.gwt.template.shared.Series>();
+	public LinkedList<com.esferalia.aon.gwt.template.shared.Series> getSeries(Domain domain, User user){
+		LinkedList<Series> series = new LinkedList<Series>();
+		series = DBStock.getInstance().getSeries(domain, user.getLogin());
+		LinkedList<com.esferalia.aon.gwt.template.shared.Series> seriesCode = new LinkedList<com.esferalia.aon.gwt.template.shared.Series>();
 		series.parallelStream().forEach(s ->{
 			com.esferalia.aon.gwt.template.shared.Series serie = new com.esferalia.aon.gwt.template.shared.Series();
 			serie.setId(s.getId());
@@ -1169,33 +1138,33 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 
 	//-------------------- IMPORTAR PRODUCTOS
 	Boolean productBool;
-	Vector<ProductInfo> products;
+	LinkedList<ProductInfo> products;
 	ProductInfo pi;
 
 	private Boolean checkInventariable(Cell cell){
 		return cell.getStringCellValue().equalsIgnoreCase("inventoriable")
 			&& ti.getColumns().get(cell.getColumnIndex()).equalsIgnoreCase("inventariable");
 	}
-	private void executeExcelProduct(Domain domain, Iterator<Row> rowIterator, com.esferalia.aon.gwt.template.shared.Error error, FormulaEvaluator evaluator) {
-		Vector<ProductInfo> products = new Vector<ProductInfo>();
+	private void executeExcelProduct(Domain domain, User user, Iterator<Row> rowIterator, com.esferalia.aon.gwt.template.shared.Error error, FormulaEvaluator evaluator) {
+		LinkedList<ProductInfo> products = new LinkedList<ProductInfo>();
 		/* LAMBDA java 1.8 */
 		Iterable<Row> rowIterable = () -> rowIterator;
 		Stream<Row> rowStream = StreamSupport.stream(rowIterable.spliterator(),false);
 		map = new HashMap<String, ProductInfo>();
 		productBool = true;
 
-		LinkedList<ProductCategory> productCategoryList = AON.getProductCategoryList(domain.getName(), domain.getId(), getUserLogin(), f -> f.getDomainProperty().eq(domain.getId()));
-		LinkedList<Brand> brandList = AON.getBrandStream(domain.getName(), domain.getId(), getUserLogin(), f -> f.getDomainProperty().eq(domain.getId())).collect(Collectors.toCollection(LinkedList::new));
+		LinkedList<ProductCategory> productCategoryList = AON.getProductCategoryList(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()));
+		LinkedList<Brand> brandList = AON.getBrandStream(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId())).collect(Collectors.toCollection(LinkedList::new));
 
-		Domain d = AON.getDomain(domain.getName(), domain.getId(), getUserLogin());
-		LinkedList<Tag> tagList = AON.getTagList(domain.getName(), domain.getId(), getUserLogin(), f -> f.getDomainProperty().eq(domain.getId()));
-		LinkedList<Tax> taxList = d.getParentId() != null ? AON.getTaxList(domain.getName(), domain.getId(), getUserLogin(), f -> f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(d.getParentId())))
-				: AON.getTaxList(domain.getName(), domain.getId(), getUserLogin(), f -> f.getDomainProperty().eq(domain.getId()));
+		Domain d = AON.getDomain(domain.getName(), domain.getId(), user.getLogin());
+		LinkedList<Tag> tagList = AON.getTagList(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()));
+		LinkedList<Tax> taxList = d.getParentId() != null ? AON.getTaxList(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(d.getParentId())))
+				: AON.getTaxList(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()));
 		rowStream.forEach(row ->{
 			if(row.getRowNum() !=0 && row.getPhysicalNumberOfCells()> 3){
 				Iterator<Cell> cellIterator = row.cellIterator();
 				Iterable<Cell> cellIterable = () -> cellIterator;
-				pi = newProduct(domain);
+				pi = newProduct(domain, user);
 				Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
 				cellStream.forEach(cell ->{
 					if(cell.getColumnIndex() != ti.getColumns().size()){
@@ -1229,12 +1198,12 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 								}
 
 								if(!ti.getColumns().get(cell.getColumnIndex()).equals("Texto Libre")){
-									pi = check(domain, cell.getRowIndex()+1, Utils.getColumn(cell.getColumnIndex()), ti.getColumns().get(cell.getColumnIndex()),object,pi,cell.getCellTypeEnum()
+									pi = check(domain, user, cell.getRowIndex()+1, Utils.getColumn(cell.getColumnIndex()), ti.getColumns().get(cell.getColumnIndex()),object,pi,cell.getCellTypeEnum()
 										, productCategoryList, brandList, tagList, taxList);
 									if(pi == null){
 										verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto ");
 										textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n";
-										pi = newProduct(domain);
+										pi = newProduct(domain, user);
 									}
 								}
 							}
@@ -1295,7 +1264,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		setOut(null);setMimetype(null);
 	}
 
-	public Boolean esta(com.esferalia.aon.occam.api.model.product.ProductTag pt, Vector<com.esferalia.aon.occam.api.model.product.ProductTag> pts){
+	public Boolean esta(com.esferalia.aon.occam.api.model.product.ProductTag pt, LinkedList<com.esferalia.aon.occam.api.model.product.ProductTag> pts){
 		for (com.esferalia.aon.occam.api.model.product.ProductTag productTag : pts) {
 			if(productTag.getId().equals(pt.getId())) return true;
 		}
@@ -1306,7 +1275,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		return s.equals("Nombre") || s.equals("C\u00f3digo") || s.equals("Precio Coste") || s.equals("Precio Venta Base");
 	}
 
-	public Error insertProduct(Domain domain, String kind) {
+	public Error insertProduct(Domain domain, User user, String kind) {
 		Error error = new Error();
 		if(textError.equals("")){
 			error.setError(true);
@@ -1314,12 +1283,8 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			error.setTextError(verror);
 
 			java.util.List<ProductInfo> l = new ArrayList<ProductInfo>(map.values());
-			Vector<ProductInfo> v = new Vector<ProductInfo>(l);
-			AuditInfo ai = new AuditInfo();
-			ai.setDate(new Date());
-			ai.setUserId(getUser().getId());
-			ai.setUsername(getUser().getLogin());
- 			error = DBProduct.insertProducts2(domain, v, ti,ai, getUser().getLogin(), kind);
+			LinkedList<ProductInfo> v = new LinkedList<ProductInfo>(l);
+ 			error = DBProduct.insertProducts2(domain, user.getLogin(), v, ti, kind);
 		}
 		else{
 			//Alguna de las filas contiene datos erroneos.
@@ -1329,21 +1294,15 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		return error;
 	}
 
-	public Error insertDelivery(Domain domain) {
-		domain = AON.getDomain(domain.getName(), domain.getId(), getUserLogin());
+	public Error insertDelivery(Domain domain, User user) {
+		domain = AON.getDomain(domain.getName(), domain.getId(), user.getLogin());
 		if(di.getError().getTextError().isEmpty()) {
-			java.util.List<ProductInfo> l = new ArrayList<ProductInfo>(map.values());
-			Vector<ProductInfo> v = new Vector<ProductInfo>(l);
-			AuditInfo ai = new AuditInfo();
-			ai.setDate(new Date());
-			ai.setUserId(getUser().getId());
-			ai.setUsername(getUser().getLogin());
- 			di = DeliveryImport.getInstance().insertDelivery(domain, getUser(), di, error);
+ 			di = DeliveryImport.getInstance().insertDelivery(domain, user, di, error);
 		}
 		return di.getError();
 	}
 
-	private ProductInfo check(Domain domain, Integer row, String column, String template, Object value,ProductInfo product, CellType type
+	private ProductInfo check(Domain domain, User user, Integer row, String column, String template, Object value,ProductInfo product, CellType type
 			, LinkedList<ProductCategory> productCategoryList, LinkedList<Brand> brandList, LinkedList<Tag> tagList, LinkedList<Tax> taxList) {
 		switch (template) {
 		case "Nombre":
@@ -1395,7 +1354,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 					ProductCategory pc = productCategoryList.stream().filter(c -> strAux.equalsIgnoreCase(c.getName())).findFirst().orElse(new ProductCategory());
 					if(pc.getId() == null){
 						Long c = ti.getColumns().stream().filter(f -> f.contains("Detalle")).count();
-						ProductCategory productCategory = AON.insertProductCategory(domain.getName(), domain.getId(), getUser().getLogin(),
+						ProductCategory productCategory = AON.insertProductCategory(domain.getName(), domain.getId(), user.getLogin(),
 							new ProductCategory().setDomain(domain.getId()).setName(strAux)
 							.setDetail(c==1 || c==2 || c==3 ? " " : null)
 							.setDetail2(c==2 || c==3 ? " " : null)
@@ -1416,7 +1375,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				} else {
 					Brand brand = brandList.stream().filter(b -> strAux.equalsIgnoreCase(b.getName())).findFirst().orElse(new Brand());
 					if(brand.getId() == null){
-						brand = AON.insertBrand(domain.getName(), domain.getId(), getUser().getLogin(),
+						brand = AON.insertBrand(domain.getName(), domain.getId(), user.getLogin(),
 								new Brand().setDomain(domain.getId()).setName(strAux));
 						product.getProduct().setBrand(brand.getId());
 						brandList.add(brand);
@@ -1435,7 +1394,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 					if(!s.isEmpty() && !" ".equals(s)){
 						Tag tag = tagList.stream().filter(t -> t.getType() == TagType.PRODUCT.value() && t.getName().equals(s)).findFirst().orElse(new Tag());
 						if(tag.getId() == null){
-							tag = AON.insertTag(domain.getName(), domain.getId(), getUser().getLogin(),
+							tag = AON.insertTag(domain.getName(), domain.getId(), user.getLogin(),
 								new Tag().setDomain(domain.getId()).setName(s).setType(TagType.PRODUCT.value()));
 							tagList.add(tag);
 						}
@@ -1814,7 +1773,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		return product;
 	}
 
-	public ProductInfo newProduct(Domain domain) {
+	public ProductInfo newProduct(Domain domain, User user) {
 		ProductInfo pi = new ProductInfo();
 		com.esferalia.aon.occam.api.model.product.Product p2 = new com.esferalia.aon.occam.api.model.product.Product();
 		p2.setDomain(domain.getId());
@@ -1825,7 +1784,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		p2.setType((byte)ProductType.COMMERCIAL_PRODUCT.ordinal());
 
 		// IVA (product)
-		Tax vat = DBProduct.getIVAName(domain.getName(), domain.getId(),"GENERAL", getUser().getLogin());
+		Tax vat = DBProduct.getIVAName(domain.getName(), domain.getId(),"GENERAL", user.getLogin());
 		p2.setVat(vat.getId());
 
 		// IRPF (product)
@@ -1855,41 +1814,43 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		// detail3
 		i2.setDetail3("");
 		i2.setStatus((byte) 0);
-		Vector<com.esferalia.aon.occam.api.model.product.Item> is= new Vector<com.esferalia.aon.occam.api.model.product.Item>();
+		LinkedList<com.esferalia.aon.occam.api.model.product.Item> is= new LinkedList<com.esferalia.aon.occam.api.model.product.Item>();
 		is.add(0, i2);
 		pi.setProduct(p2);
 		pi.setItem(is);
 		pi.setTagList(new LinkedList<>());
 		return pi;
 	}
-
-	public Vector<TemplateInfo> searchNameTemplate(String searchStr, Vector<TemplateInfo> templates){
-		Vector<TemplateInfo> vector = new Vector<TemplateInfo>();
+	
+	@Override
+	public LinkedList<TemplateInfo> searchNameTemplate(String searchStr, LinkedList<TemplateInfo> templates){
+		LinkedList<TemplateInfo> list = new LinkedList<TemplateInfo>();
 		for (TemplateInfo templateInfo : templates) {
 			if(containsIgnoreCase2(templateInfo.getName(), searchStr)){
-				vector.add(templateInfo);
+				list.add(templateInfo);
 			}
 		}
-		return vector;
+		return list;
 	}
 
-	public Vector<TemplateInfo> searchTypeTemplate(String searchStr, Vector<TemplateInfo> templates){
-		Vector<TemplateInfo> vector = new Vector<TemplateInfo>();
+	@Override
+	public LinkedList<TemplateInfo> searchTypeTemplate(String searchStr, LinkedList<TemplateInfo> templates){
+		LinkedList<TemplateInfo> list = new LinkedList<TemplateInfo>();
 		for (TemplateInfo templateInfo : templates) {
 			if(containsIgnoreCase2(templateInfo.getType(), searchStr)){
-				vector.add(templateInfo);
+				list.add(templateInfo);
 			}
 		}
-		return vector;
+		return list;
 	}
 
 
-	public Vector<com.esferalia.aon.gwt.template.shared.WorkPlace> getWorkplaces(Domain domain){
-		return DBCatalogue.getWorkplaces(domain,getUser());
+	public LinkedList<com.esferalia.aon.gwt.template.shared.WorkPlace> getWorkplaces(Domain domain, User user){
+		return DBCatalogue.getWorkplaces(domain, user);
 	}
-	public LinkedList<Department> getDepartments(Domain domain, String workplaceDescription){
-		Workplace w = DBCatalogue.getWorkplace(domain, getUser(), workplaceDescription);
-		return DBCatalogue.getDepartments(domain, w.getId(), getUser().getLogin());
+	public LinkedList<Department> getDepartments(Domain domain, User user, String workplaceDescription){
+		Workplace w = DBCatalogue.getWorkplace(domain, user, workplaceDescription);
+		return DBCatalogue.getDepartments(domain, w.getId(), user.getLogin());
 	}
 
 	/**
@@ -1935,16 +1896,17 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	}
 
 	@Override
-	public List<com.esferalia.aon.gwt.template.shared.ProductCategory> getProductCategories(Domain domain) {
-		return DBProduct.getCategoriesShared(domain.getName(), domain.getId(), getUser().getLogin());
+	public LinkedList<com.esferalia.aon.gwt.template.shared.ProductCategory> getProductCategories(Domain domain, User user) {
+		return DBProduct.getCategoriesShared(domain.getName(), domain.getId(), user.getLogin());
 	}
 
-	public Error executeExcelEcommerce(Domain domain, Ecommerce ecommerce, Seller seller, String type, Tag tag) {
+	@Override
+	public Error executeExcelEcommerce(Domain domain, User user, Ecommerce ecommerce, Seller seller, String type, Tag tag) {
 		Error error = new Error();
 		error.setError(true);
     	if(getOut() == null){
 			error.setError(false);
-			Vector<String> verror = new Vector<String>();
+			LinkedList<String> verror = new LinkedList<String>();
 			verror.add("*No ha importado ning�n archivo.");
 			error.setTextError(verror);
 			return error;
@@ -1962,7 +1924,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			xml = excelToXmlEbayXXX(data, ecommerce.getName(), type, tag.getName(), seller.getRegistryName());
 
 		if(xml != null){
-			Attach attach = AON.getAttach(domain.getName(), domain.getId(), getUser().getLogin(),
+			Attach attach = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(),
 					filter -> filter.getDescriptionProperty().eq(ecommerce.getName()+"-"+type)
 					.and(filter.getTypeProperty().eq(((byte) RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.ordinal())))
 					, AttachType.REGISTRY);
@@ -1970,8 +1932,8 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			if(attach != null && attach.getId() != null){
 				attach.setData(xml);
 				attach.setModificationDate(Calendar.getInstance().getTime());
-				attach.setModificationUser(getUser().getLogin());
-				AON.update(domain.getName(), domain.getId(), getUser().getLogin(), attach);
+				attach.setModificationUser(user.getLogin());
+				AON.updateAttach(domain.getName(), domain.getId(), user.getLogin(), attach);
 			}
 			else{
 				attach = new Attach(AttachType.REGISTRY);
@@ -1983,26 +1945,26 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				attach.setDate(Calendar.getInstance().getTime());
 
 				attach.setCreationDate(Calendar.getInstance().getTime());
-				attach.setCreationUser(getUser().getLogin());
+				attach.setCreationUser(user.getLogin());
 
 				attach.setModificationDate(Calendar.getInstance().getTime());
-				attach.setModificationUser(getUser().getLogin());
+				attach.setModificationUser(user.getLogin());
 
 				attach.setDomain(domain);
 				attach.setMimeType(MimeType.XML);
 
 				if(seller.getRegistryName().equals("-"))
-					attach.setAttachModule(getCompany(domain).getId());
+					attach.setAttachModule(getCompany(domain, user).getId());
 				else attach.setAttachModule(seller.getId());
 
-				attach.setId(AON.insert(domain.getName(), domain.getId(), getUser().getLogin(), attach));
-				AON.insertRegistryAttachTag(domain.getName(), domain.getId(), getUser().getLogin(),
+				attach.setId(AON.insertAttach(domain.getName(), domain.getId(), user.getLogin(), attach));
+				AON.insertRegistryAttachTag(domain.getName(), domain.getId(), user.getLogin(),
 						attach.getId(), tag.getId());
 			}
 		}
 		else{
 			error.setError(false);
-			Vector<String> verror = new Vector<String>();
+			LinkedList<String> verror = new LinkedList<String>();
 			verror.add("*El archivo importado no es correcto.");
 			error.setTextError(verror);
 		}
@@ -2461,11 +2423,11 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		}
 	}
 
-	public String generateConsumptionExcel(Domain domain, Vector<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail,
+	public String generateConsumptionExcel(Domain domain, User user, LinkedList<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail,
 								 Integer size, Boolean packaged, Boolean withoutInv, Integer category, Boolean dif) {
 		File file = null;
 		try {
-			file = ConsumptionUtil.generateConsumption(domain, warehouses, type, onlyNegative, detail, size, getUser().getLogin(), packaged, withoutInv, category, dif);
+			file = ConsumptionUtil.generateConsumption(domain, warehouses, type, onlyNegative, detail, size, user.getLogin(), packaged, withoutInv, category, dif);
 		} catch (ServletException | IOException e) {
 			e.printStackTrace();
 		}
@@ -2491,11 +2453,11 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		return key;
 	}
 
-	public String generateConsumptionExcel(Domain domain, Vector<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail,
+	public String generateConsumptionExcel(Domain domain, User user, LinkedList<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail,
 			 Integer size, Date startDate, Date endDate, Boolean packaged, Integer category, Boolean dif) {
 		File file = null;
 		try {
-			file = ConsumptionUtil.generateConsumption(domain, warehouses, type, onlyNegative, detail, size, getUser().getLogin()
+			file = ConsumptionUtil.generateConsumption(domain, warehouses, type, onlyNegative, detail, size, user.getLogin()
 					, startDate, endDate, packaged, category, dif);
 		} catch (ServletException | IOException e) {
 			e.printStackTrace();
@@ -2536,16 +2498,15 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		return 1;
 	}
 
-	public Company getCompany(Domain domain){
-		return AON.getCompanyForDomain(domain.getName(), domain.getId(), getUserLogin());
+	public Company getCompany(Domain domain, User user){
+		return AON.getCompanyForDomain(domain.getName(), domain.getId(), user.getLogin());
 	}
 
-	public List<Seller> getSellerList(Domain domain){
-		return DBFee.getInstance().getSellers(domain, getUser().getLogin());
+	public LinkedList<Seller> getSellerList(Domain domain, User user){
+		return DBFee.getInstance().getSellers(domain, user.getLogin());
 	}
 
-	public LinkedList<String> getProductRoles(Domain domain) {
-		User user = AON.getUser(domain.getName(), domain.getId(), getUser().getLogin());
+	public LinkedList<String> getProductRoles(Domain domain, User user) {
 		LinkedList<String> list = new LinkedList<String>();
 		for (AonRole role : user.getUserRoles()) {
 			if(role.equals(AonRole.PURCHASE))
@@ -2556,8 +2517,8 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		return list;
 	}
 
-	public LinkedList<String> getTypeList(Domain domain){
-		return AON.getAttachStream(domain.getName(), domain.getId(), getUser().getLogin(),
+	public LinkedList<String> getTypeList(Domain domain, User user){
+		return AON.getAttachStream(domain.getName(), domain.getId(), user.getLogin(),
 				filter -> filter.getDomainProperty().eq(domain.getId())
 				.and(filter.getTypeProperty().eq(RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.value())),
 				AttachType.REGISTRY, false).map(r -> r.getDescription())

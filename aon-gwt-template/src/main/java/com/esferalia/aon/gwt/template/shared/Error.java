@@ -1,14 +1,14 @@
 package com.esferalia.aon.gwt.template.shared;
 
-import java.util.Vector;
+import java.util.LinkedList;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class Error implements IsSerializable{
 
 	Boolean error;
-	Vector<String> textError;
-	Vector<String> textWarning;
+	LinkedList<String> textError;
+	LinkedList<String> textWarning;
 	
 	public Boolean getError() {
 		return error;
@@ -18,24 +18,24 @@ public class Error implements IsSerializable{
 		return this;
 	}
 	
-	public Vector<String> getTextError() {
+	public LinkedList<String> getTextError() {
 		return textError;
 	}
-	public Error setTextError(Vector<String> textError) {
+	public Error setTextError(LinkedList<String> textError) {
 		this.textError = textError;
 		return this;
 	}
 	
 	public Error setTextError(String textError) {
-		Vector<String> vector = new Vector<>();
-		vector.add(textError);
-		this.textError = vector;
+		LinkedList<String> LinkedList = new LinkedList<>();
+		LinkedList.add(textError);
+		this.textError = LinkedList;
 		return this;
 	}
-	public Vector<String> getTextWarning() {
+	public LinkedList<String> getTextWarning() {
 		return textWarning;
 	}
-	public Error setTextWarning(Vector<String> textWarning) {
+	public Error setTextWarning(LinkedList<String> textWarning) {
 		this.textWarning = textWarning;
 		return this;
 	}

@@ -4,8 +4,8 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.template.client.ContextMenu;
-import com.esferalia.aon.gwt.template.client.JsTemplates;
 import com.esferalia.aon.gwt.template.client.TemplatesDialog;
 import com.esferalia.aon.gwt.template.client.marketplace.tree.TreeNode;
 import com.esferalia.aon.gwt.template.client.marketplace.tree.TreeNodeTypes;
@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.template.shared.Ecommerce;
 import com.esferalia.aon.gwt.template.shared.marketplace.DisclosureImages;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -62,9 +63,10 @@ public class Marketplace extends Composite {
 	@UiField Button tagButton;
 	@UiField SimpleLayoutPanel content;
 	
-	String login;
+	AonData aonData;
 	
-	public Marketplace(){
+	public Marketplace(AonData aonData){
+		this.aonData = aonData;
 		splitLayoutPanel = new SplitLayoutPanel();
 		sidebar = new ScrollPanel();
 		tree = new Tree();
@@ -77,31 +79,21 @@ public class Marketplace extends Composite {
 		load();
 	}
 	
-	public Marketplace(String login){
-		splitLayoutPanel = new SplitLayoutPanel();
-		sidebar = new ScrollPanel();
-		tree = new Tree();
-		content = new SimpleLayoutPanel();
-		setLogin(login);
-		DisclosureImages di = new DisclosureImages();
-		epanel = new DisclosurePanel(di.getClosed(), di.getOpen(), "Etiquetas");
-		tagButton = new Button();
-		Widget ui = binder.createAndBindUi(this);
-		RootLayoutPanel.get("rootPanel").add(ui);
-		load();
+	public AonData getAonData() {
+		return aonData;
+	}
+	
+	public Domain getDomain() {
+		return getAonData().getDomain();
+	}
+	
+	public User getUser() {
+		return getAonData().getUser();
 	}
 	
 	private void load() {
 		TreeNode<Ecommerce> amazon = TreeNodeTypes.ECOMMERCE.getInstance().render(tree, Ecommerce.AMAZON);
 		amazon.setState(true);
-		TreeNode<Ecommerce> amazonOrders = TreeNodeTypes.ORDERS.getInstance().render(amazon, Ecommerce.AMAZON);
-		//amazonOrders.select(this);
-		//TreeNodeTypes.PRODUCTS.getInstance().render(amazon, getDomainId());
-
-		//TreeNode<Ecommerce> ebay = TreeNodeTypes.ECOMMERCE.getInstance().render(tree, Ecommerce.EBAY);
-		//TreeNodeTypes.ORDERS.getInstance().render(ebay, Ecommerce.EBAY);
-		//TreeNodeTypes.PRODUCTS.getInstance().render(ebay, getDomainId());
-		
 		TreeNodeTypes.PRODUCT_TEMPLATES.getInstance().render(tree, getDomain().getId());
 		
 		final TreeNode<Integer> productTemplateValues = TreeNodeTypes.PRODUCT_TEMPLATE_VALUES.getInstance().render(tree, null);
@@ -126,22 +118,11 @@ public class Marketplace extends Composite {
 	public IMarketplaceAsync getImpl() {
 		return impl;
 	}
-
-	public String getLogin(){
-		return login;
-	}
-	public void setLogin(String login){
-		this.login = login;
-	}
-
-	private Domain getDomain() {
-		return new Domain().setId(JsTemplates.getCurrentDomain()).setName(JsTemplates.getCurrentDomainName());
-	}
 	
 	//-------------------- TAG 
 	
 	private void loadTagPanel(){
-		impl.getMarketplaceTagList(getDomain(), new AsyncCallback<LinkedList<Tag>>() {
+		impl.getMarketplaceTagList(getDomain(), getUser(), new AsyncCallback<LinkedList<Tag>>() {
 			
 			@Override
 			public void onSuccess(LinkedList<Tag> result) {
@@ -192,7 +173,7 @@ public class Marketplace extends Composite {
 				if(event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER){
 					final VerticalPanel vp = (VerticalPanel) epanel.getContent();
 					TextBox tb = (TextBox) vp.getWidget(vp.getWidgetCount() - 1);
-					impl.addMarketplaceTag(getDomain(), tb.getText(), new AsyncCallback<Tag>() {
+					impl.addMarketplaceTag(getDomain(), getUser(), tb.getText(), new AsyncCallback<Tag>() {
 						@Override public void onSuccess(Tag result) {
 							Button button = new Button(result.getName());
 							button.setStyleName("aon-editDataTable-button aon-icon-tag");
@@ -226,7 +207,7 @@ public class Marketplace extends Composite {
 		Dialog dialog = new Dialog("Editar Etiqueta","Editar",true,"Cancelar",true,"editTag")
 				.setTag(tag);
 		final Tag tagAux = tag;
-		TemplatesDialog popup = new TemplatesDialog(dialog) {
+		TemplatesDialog popup = new TemplatesDialog(getAonData(), dialog) {
 			@Override protected void onCancel() {
 				hide();
 			}
@@ -236,7 +217,7 @@ public class Marketplace extends Composite {
 				TextBox tb = (TextBox) flex_table.getWidget(0, 1); 
 				tagAux.setName(tb.getText());
 				tagAux.setType(TagType.MARKETPLACE.value());
-				impl.updateMarketplaceTag(getDomain(), tagAux, new AsyncCallback<Tag>() {
+				impl.updateMarketplaceTag(getDomain(), getUser(), tagAux, new AsyncCallback<Tag>() {
 					@Override public void onSuccess(Tag result) {
 						loadTagPanel();
 					}
@@ -254,14 +235,14 @@ public class Marketplace extends Composite {
 		Dialog dialog = new Dialog("Eliminar Etiqueta","Borrar",true,"Cancelar",true,"deleteTag")
 			.setTag(tag);
 		final Tag tagAux = tag; 
-		TemplatesDialog popup = new TemplatesDialog(dialog) {
+		TemplatesDialog popup = new TemplatesDialog(getAonData(), dialog) {
 			@Override protected void onCancel() {
 				hide();
 			}
 			
 			@Override protected void onAccept() {
 				hide();
-				impl.removeMarketplaceTag(getDomain(), tagAux, new AsyncCallback<Void>() {
+				impl.removeMarketplaceTag(getDomain(), getUser(), tagAux, new AsyncCallback<Void>() {
 					@Override public void onSuccess(Void result) {
 						loadTagPanel();
 					}

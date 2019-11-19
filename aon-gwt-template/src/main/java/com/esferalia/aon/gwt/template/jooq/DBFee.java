@@ -11,8 +11,6 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import java.sql.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Vector;
 
 import org.jooq.Condition;
 import org.jooq.InsertValuesStep17;
@@ -22,7 +20,6 @@ import org.jooq.Record5;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.gwt.template.server.AuditInfo;
 import com.esferalia.aon.gwt.template.server.FeeInfo;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.Seller;
@@ -45,10 +42,10 @@ public class DBFee {
 		return new DBFee();
 	}
 				
-	public Error insertFee(Domain domain, Vector<FeeInfo> fees, AuditInfo ai, String login){
+	public Error insertFee(Domain domain, String login, LinkedList<FeeInfo> fees ){
 		Error error = new Error();
 		error.setError(true);
-		Vector<String> verror = new Vector<String>();
+		LinkedList<String> verror = new LinkedList<String>();
 		verror.add("");
 		error.setTextError(verror);
 		AONContext ctx = null;
@@ -56,7 +53,7 @@ public class DBFee {
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
-			Vector<String> v = new Vector<String>();
+			LinkedList<String> v = new LinkedList<String>();
 			InsertValuesStep17<CustomerFeeRecord, Integer, Integer, Integer, Short, Integer, String, Double, Double, String, java.sql.Date, java.sql.Date, java.sql.Date, Short, Byte, Integer, Integer, Integer> customerFeeInsertQuery = ctx.getDslContext().insertInto(CUSTOMER_FEE, CUSTOMER_FEE.DOMAIN, CUSTOMER_FEE.PROJECT, CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE, CUSTOMER_FEE.ITEM, CUSTOMER_FEE.DESCRIPTION, CUSTOMER_FEE.QUANTITY, CUSTOMER_FEE.PRICE, CUSTOMER_FEE.DISCOUNT_EXPR, CUSTOMER_FEE.INITIAL_DATE, CUSTOMER_FEE.FINAL_DATE, CUSTOMER_FEE.BILLING_DATE, CUSTOMER_FEE.PERIOD, CUSTOMER_FEE.SECURITY_LEVEL, CUSTOMER_FEE.INVOICING_GROUP, CUSTOMER_FEE.SELLER, CUSTOMER_FEE.WORKPLACE);
 			
 			AONContext sctx = ctx;
@@ -218,7 +215,7 @@ public class DBFee {
 		}
 	}
 	
-	public Vector<Customer> getCustomers(Domain domain, String login) {
+	public LinkedList<Customer> getCustomers(Domain domain, String login) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
@@ -230,7 +227,7 @@ public class DBFee {
 			
 	
 
-			Vector<Customer> v = new Vector<Customer>();
+			LinkedList<Customer> v = new LinkedList<Customer>();
 
 			for (Record4<Integer, String,String,String> r : data) {
 				Customer customer = new Customer();
@@ -253,7 +250,7 @@ public class DBFee {
 	
 	
 	
-	public List<Seller> getSellers(Domain domain,  String login){
+	public LinkedList<Seller> getSellers(Domain domain,  String login){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
@@ -264,7 +261,7 @@ public class DBFee {
 					.and(SELLER.STATUS.eq(SellerStatus.ACTIVE.value()))
 					.orderBy(REGISTRY.NAME)
 					.fetch();
-			Vector<Seller> v = new Vector<Seller>();
+			LinkedList<Seller> v = new LinkedList<Seller>();
 			for (Record4<Integer, String, String, String> r : data) {
 				Seller seller = new Seller();
 				seller.setId(r.value1());

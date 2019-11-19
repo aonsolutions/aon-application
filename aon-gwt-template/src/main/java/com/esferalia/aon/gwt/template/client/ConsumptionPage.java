@@ -1,17 +1,18 @@
 package com.esferalia.aon.gwt.template.client;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.template.shared.Hotel;
 import com.esferalia.aon.gwt.template.shared.ProductCategory;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
-import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -71,6 +72,7 @@ public class ConsumptionPage extends Composite{
 	@UiField CheckBox twoLastCheckBox;
 	@UiField CheckBox withoutInvCheckBox;
 	
+	AonData aonData;
 	
 	ListBox hotelBox;
 	ListBox warehouseBox;
@@ -80,10 +82,12 @@ public class ConsumptionPage extends Composite{
 	Map<String, String> hwMap;
 	
 	List<Hotel> hotels;
-	TemplateList templateList;
+	LinkedList<TemplateInfo> templateList;
 	Boolean detail = false;
 	
-	public ConsumptionPage(TemplateList templateList) {
+	public ConsumptionPage(AonData aonData, LinkedList<TemplateInfo> templateList) {
+		this.aonData = aonData;
+		this.templateList = templateList;
 		titleLabel = new Label();
 
 		hotelBoxPanel = new VerticalPanel();hotelBoxPanel.setSpacing(4);
@@ -95,20 +99,31 @@ public class ConsumptionPage extends Composite{
 		excelButton = new Button();
 		cleanButton = new Button();
 		categoryListBox = new ListBox();
-		this.templateList = templateList;
-		
+
 		Widget ui = pageBinder.createAndBindUi(this);
 		RootLayoutPanel.get("rootPanel").add(ui);
 		
 		init();
 	}
 
+	public AonData getAonData() {
+		return aonData;
+	}
+	
+	public Domain getDomain() {
+		return getAonData().getDomain();
+	}
+	
+	public User getUser() {
+		return getAonData().getUser();
+	}
+	
 	private void init() {
 		
-	item.getProductCategories(getDomain(), new AsyncCallback<List<ProductCategory>>() {
+	item.getProductCategories(getDomain(), getUser(), new AsyncCallback<LinkedList<ProductCategory>>() {
 		
 		@Override
-		public void onSuccess(List<ProductCategory> result) {
+		public void onSuccess(LinkedList<ProductCategory> result) {
 			categoryListBox.addItem("-", "0");
 			result.stream().forEach(c -> {				
 				categoryListBox.addItem(c.getName(), c.getId().toString());
@@ -171,10 +186,10 @@ public class ConsumptionPage extends Composite{
 			}
 		});
 
-		item.getWorkplacesToConsumption(getDomain(), new AsyncCallback<List<Hotel>>() {
+		item.getWorkplacesToConsumption(getDomain(), getUser(), new AsyncCallback<LinkedList<Hotel>>() {
 			
 			@Override
-			public void onSuccess(List<Hotel> result) {
+			public void onSuccess(LinkedList<Hotel> result) {
 				hotels = result;
 				for(Hotel h : result){
 					hotelBox.addItem(h.getName(), h.getId().toString());
@@ -227,10 +242,10 @@ public class ConsumptionPage extends Composite{
 					Hotel hotel = hotels.get(index);
 					if(hotel.getWarehouses() == null || hotel.getWarehouses().isEmpty()){
 						indexAux = index;
-						item.getWarehousesToConsumption(getDomain(), hotel.getId(), new AsyncCallback<Vector<Warehouse>>() {
+						item.getWarehousesToConsumption(getDomain(), getUser(), hotel.getId(), new AsyncCallback<LinkedList<Warehouse>>() {
 							Integer index = indexAux;
 							@Override
-							public void onSuccess(Vector<Warehouse> result) {
+							public void onSuccess(LinkedList<Warehouse> result) {
 								Hotel hotel = hotels.get(index);
 								hotel.setWarehouses(result);
 								warehouseCheckBox.setValue(map.get(hotel.getId().toString()));
@@ -335,18 +350,14 @@ public class ConsumptionPage extends Composite{
 	//------------------------------ Actions
 	ProgressBarDialog pbd;
 	public void download(String type){
-		Vector<Warehouse> warehouses = new Vector<Warehouse>();
+		LinkedList<Warehouse> warehouses = new LinkedList<Warehouse>();
 		for (Integer index= 0; index < selectedBox.getItemCount(); index++) {
 			Warehouse warehouse = new Warehouse();
 			warehouse.setId(Integer.parseInt(selectedBox.getValue(index)));
 			warehouse.setName(selectedBox.getItemText(index));
 			warehouses.add(warehouse);
 		}
-		TemplateInfo templateInfo = null;
-		for (TemplateInfo ti : templateList.getList()) {
-			if(ti.getType().equals("Consumo"))
-				templateInfo = ti;
-		}
+		
 		Integer size = selectedBox.getItemCount();
 		
 		Double time = 20.0;
@@ -363,14 +374,14 @@ public class ConsumptionPage extends Composite{
 		Integer category = "0".equals(categoryListBox.getSelectedValue()) ? null : Integer.parseInt(categoryListBox.getSelectedValue());
 	
 		if(!twoLastCheckBox.getValue() && !withoutInvCheckBox.getValue()){
-			item.generateConsumptionExcel(getDomain(), warehouses, type, errorCheckBox.getValue(), detail,  selectedBox.getItemCount(),
+			item.generateConsumptionExcel(getDomain(), getUser(), warehouses, type, errorCheckBox.getValue(), detail,  selectedBox.getItemCount(),
 					startDate.getValue(), endDate.getValue(), packagedCheckBox.getValue(), category, difCheckBox.getValue(), new AsyncCallback<String>() {
 	
 				@Override
 				public void onSuccess(String result) {
 					final String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_aggregate_consumption/"
 								+ "?tmpkey="+result
-								+ "&username="+ templateList.getLogin()
+								+ "&username="+ getUser().getLogin()
 								+ "&dname=" + getDomain().getName()
 								+ "&did=" + getDomain().getId();
 				
@@ -384,13 +395,13 @@ public class ConsumptionPage extends Composite{
 				public void onFailure(Throwable caught) {}
 			});
 		} else {
-			item.generateConsumptionExcel(getDomain(), warehouses, type, errorCheckBox.getValue(), detail,  selectedBox.getItemCount(), packagedCheckBox.getValue(), withoutInvCheckBox.getValue(), category, difCheckBox.getValue(), new AsyncCallback<String>() {
+			item.generateConsumptionExcel(getDomain(), getUser(), warehouses, type, errorCheckBox.getValue(), detail,  selectedBox.getItemCount(), packagedCheckBox.getValue(), withoutInvCheckBox.getValue(), category, difCheckBox.getValue(), new AsyncCallback<String>() {
 				
 				@Override
 				public void onSuccess(String result) {
 					final String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_aggregate_consumption/"
 								+ "?tmpkey="+result
-								+ "&username="+ templateList.getLogin()
+								+ "&username="+ getUser().getLogin()
 								+ "&dname=" + getDomain().getName()
 								+ "&did=" + getDomain().getId();
 				
@@ -421,10 +432,6 @@ public class ConsumptionPage extends Composite{
 	private void deactiveDownloadButtons() {
 		excelButton.setEnabled(false);
 		// pdfButton.setEnabled(false);
-	}
-	
-	private Domain getDomain() {
-		return new Domain().setId(JsTemplates.getCurrentDomain()).setName(JsTemplates.getCurrentDomainName());
 	}
 
 }

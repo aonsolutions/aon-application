@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import org.apache.commons.lang.StringUtils;
 import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Record3;
@@ -37,6 +36,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class DBConsumption {
 	
@@ -825,13 +825,13 @@ public class DBConsumption {
 			Boolean serializable, String serialNumber) {
 		String details = getDetails(detail, detail2, detail3);
 		StringBuffer sb = new StringBuffer();
-		if (StringUtils.isNotEmpty(name)) {
+		if (AonStringUtils.isNotEmpty(name)) {
 			sb.append(name);
 		}
-		if (StringUtils.isNotEmpty(details)) {
+		if (AonStringUtils.isNotEmpty(details)) {
 			sb.append(" [" + details + "]");
 		}
-		if (serializable && StringUtils.isNotEmpty(serialNumber)) {
+		if (serializable && AonStringUtils.isNotEmpty(serialNumber)) {
 			sb.append(" #" + serialNumber);
 		}
 		return (sb.length() > 0) ? sb.toString() : "";
@@ -839,16 +839,16 @@ public class DBConsumption {
 	
 	private static String getDetails(String detail, String detail2, String detail3) {
 		StringBuffer sb = new StringBuffer();
-		if (StringUtils.isNotEmpty(detail)) {
+		if (AonStringUtils.isNotEmpty(detail)) {
 			sb.append(detail);
 		}
-		if (StringUtils.isNotEmpty(detail2)) {
+		if (AonStringUtils.isNotEmpty(detail2)) {
 			if (sb.length() > 0) {
 				sb.append(" / ");
 			}
 			sb.append(detail2);
 		}
-		if (StringUtils.isNotEmpty(detail3)) {
+		if (AonStringUtils.isNotEmpty(detail3)) {
 			if (sb.length() > 0) {
 				sb.append(" / ");
 			}

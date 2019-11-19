@@ -1,6 +1,6 @@
 package com.esferalia.aon.gwt.template.shared;
 
-import java.util.Vector;
+import java.util.LinkedList;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.view.client.ProvidesKey;
@@ -9,7 +9,7 @@ public class TemplateInfo implements IsSerializable{
 	Integer id;
 	String name;
 	String type;
-	Vector<String> columns;
+	LinkedList<String> columns;
 	String version;
 	Integer domainId;
 	String domain;
@@ -40,10 +40,10 @@ public class TemplateInfo implements IsSerializable{
 		this.type = type;
 		return this;
 	}
-	public Vector<String> getColumns() {
+	public LinkedList<String> getColumns() {
 		return columns;
 	}
-	public TemplateInfo setColumns(Vector<String> columns) {
+	public TemplateInfo setColumns(LinkedList<String> columns) {
 		this.columns = columns;
 		return this;
 	}

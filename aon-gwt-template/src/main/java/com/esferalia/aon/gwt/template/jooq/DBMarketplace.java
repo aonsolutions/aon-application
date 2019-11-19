@@ -143,10 +143,7 @@ public class DBMarketplace {
 				order.setOrderId(record.value4() != null?record.value4():"");
 				ad.setOrderId(record.value4() != null?record.value4():"");
 				ad.setOrderItemId("");
-				//ad.setQuantity(record.value5() != null?record.value5().intValue():0);
 				ad.setShipDate(record.value6() != null?record.value6():new Date()); 
-				String dateStr = Utils.getDateStr(record.value6() != null?record.value6():new Date());
-				ad.setShipDateStr(dateStr);
 				AONContext sctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 				if(record.value8() != null){
 					Result<RegistryRecord> registryRecord = sctx.getDslContext().select().from(REGISTRY).where(REGISTRY.ID.eq(record.value8())).fetchInto(REGISTRY);
@@ -193,7 +190,7 @@ public class DBMarketplace {
 	}
 	
 	public static void deleteTemplate(Domain domain, User user, String description){
-		AON.delete(domain.getName(), domain.getId(), user.getLogin(), 
+		AON.deleteAttach(domain.getName(), domain.getId(), user.getLogin(), 
 				filter -> filter.getDescriptionProperty().eq(description)
 				.and(filter.getTypeProperty().eq((RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.value()))
 				.and(filter.getDomainProperty().eq(domain.getId())))
@@ -459,9 +456,9 @@ public class DBMarketplace {
 			attach.setConfidential(false);
 			attach.setData(data);
 			if(attach.getId()==null){
-				AON.insert(domain.getName(), domain.getId(), login, attach);
+				AON.insertAttach(domain.getName(), domain.getId(), login, attach);
 			} else {
-				AON.update(domain.getName(), domain.getId(), login, attach);
+				AON.updateAttach(domain.getName(), domain.getId(), login, attach);
 			}
 			return true;
 		}

@@ -5,7 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Date;
-import java.util.Vector;
+import java.util.LinkedList;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -26,7 +25,6 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.template.jooq.DBCatalogue;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
@@ -44,7 +42,8 @@ public class DownloadCatalogueServlet extends HttpServlet {
 
 	@Override
     protected void doGet(HttpServletRequest p_request, HttpServletResponse p_response)throws ServletException, IOException{
-        String domain_id = p_request.getParameter("domain_id");
+        String domainName = p_request.getParameter("domain_name");
+		String domain_id = p_request.getParameter("domain_id");
         String workplace = p_request.getParameter("workplace");
         if(workplace.contains("*")){
         	Integer i = workplace.indexOf('*');
@@ -53,9 +52,8 @@ public class DownloadCatalogueServlet extends HttpServlet {
         String department = p_request.getParameter("department");
         String template_id = p_request.getParameter("template_id");
         String login = p_request.getParameter("username");
-        User user = new User().setLogin(login);
         Integer domainId = Integer.parseInt(domain_id);
-        String domainName = AonServletUtils.getRequestDomainName(p_request);
+       
         Domain domain = new Domain().setName(domainName).setId(domainId);
         Workplace wp = null;
         if(!workplace.equals("-"))
@@ -69,7 +67,7 @@ public class DownloadCatalogueServlet extends HttpServlet {
         
         if(template_id!=""){
         	Integer id = Integer.parseInt(template_id);
-        	b = DBConsults.getTemplate(domain, user, id);
+        	b = DBConsults.getTemplate(domain, login, id);
         }
         else return;
 
@@ -151,7 +149,7 @@ public class DownloadCatalogueServlet extends HttpServlet {
         */
 
         
-        Vector<CatalogueInfo> v = DBCatalogue.getCatalogues(domain, wp, dt, login);
+        LinkedList<CatalogueInfo> v = DBCatalogue.getCatalogues(domain, wp, dt, login);
 
         for(Integer j = 0; j< v.size();j++){
         	Row row = hoja.createRow(j+2);

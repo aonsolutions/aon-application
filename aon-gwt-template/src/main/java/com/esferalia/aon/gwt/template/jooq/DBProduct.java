@@ -10,11 +10,11 @@ import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.Tax.TAX;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
-import java.util.Vector;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -28,7 +28,6 @@ import org.jooq.Record3;
 import org.jooq.Record5;
 import org.jooq.Result;
 
-import com.esferalia.aon.gwt.template.server.AuditInfo;
 import com.esferalia.aon.gwt.template.server.ProductInfo;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
@@ -133,24 +132,25 @@ public class DBProduct {
 		return count > 0;
 	}
 	
-	public static Error insertProducts2(Domain domain, Vector<ProductInfo> products, TemplateInfo templateInfo, AuditInfo ai, String login, String kind){
+	public static Error insertProducts2(Domain domain, String login, LinkedList<ProductInfo> products, TemplateInfo templateInfo, String kind){
 		long start = System.currentTimeMillis();
+		Timestamp timestamp = new Timestamp(new Date().getTime());
 		Error error = new Error();
 		error.setError(true);
-		Vector<String> verror = new Vector<String>();
+		LinkedList<String> verror = new LinkedList<String>();
 		verror.add("");
 		error.setTextError(verror);
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
-			Vector<com.esferalia.aon.occam.api.model.product.Product> uproducts = new Vector<com.esferalia.aon.occam.api.model.product.Product>();
-			Vector<com.esferalia.aon.occam.api.model.product.Product> iproducts = new Vector<com.esferalia.aon.occam.api.model.product.Product>();
-			Vector<com.esferalia.aon.occam.api.model.product.ProductTag> uproductsTag = new Vector<com.esferalia.aon.occam.api.model.product.ProductTag>();
-			Vector<com.esferalia.aon.occam.api.model.product.ProductTag> iproductsTag = new Vector<com.esferalia.aon.occam.api.model.product.ProductTag>();
+			LinkedList<com.esferalia.aon.occam.api.model.product.Product> uproducts = new LinkedList<com.esferalia.aon.occam.api.model.product.Product>();
+			LinkedList<com.esferalia.aon.occam.api.model.product.Product> iproducts = new LinkedList<com.esferalia.aon.occam.api.model.product.Product>();
+			LinkedList<com.esferalia.aon.occam.api.model.product.ProductTag> uproductsTag = new LinkedList<com.esferalia.aon.occam.api.model.product.ProductTag>();
+			LinkedList<com.esferalia.aon.occam.api.model.product.ProductTag> iproductsTag = new LinkedList<com.esferalia.aon.occam.api.model.product.ProductTag>();
 			HashMap<String, LinkedList<com.esferalia.aon.occam.api.model.product.ProductTag>> iNewProductsTag = new HashMap<String, LinkedList<com.esferalia.aon.occam.api.model.product.ProductTag>>();
-			Vector<com.esferalia.aon.occam.api.model.product.Item> iitems = new Vector<com.esferalia.aon.occam.api.model.product.Item>();
-			Vector<com.esferalia.aon.occam.api.model.product.Item> uitems = new Vector<com.esferalia.aon.occam.api.model.product.Item>();
+			LinkedList<com.esferalia.aon.occam.api.model.product.Item> iitems = new LinkedList<com.esferalia.aon.occam.api.model.product.Item>();
+			LinkedList<com.esferalia.aon.occam.api.model.product.Item> uitems = new LinkedList<com.esferalia.aon.occam.api.model.product.Item>();
 
 			AONContext sctx = ctx;
 			
@@ -208,14 +208,16 @@ public class DBProduct {
 								}
 								else{
 									i.setProductId(product.getId());
-									i.setCreationUser(ai.getUsername());i.setModificationUser(ai.getUsername());
-									i.setCreationDate(new Timestamp(ai.getDate().getTime()));i.setModificationDate(new Timestamp(ai.getDate().getTime()));
+									i.setCreationUser(login);
+									i.setModificationUser(login);
+									i.setCreationDate(timestamp);
+									i.setModificationDate(timestamp);
 									iitems.add(i);	
 								}
 							});
 						}
-						product.setModificationDate(new Timestamp(ai.getDate().getTime()));
-						product.setModificationUser(ai.getUsername());
+						product.setModificationDate(timestamp);
+						product.setModificationUser(login);
 						uproducts.add(product);
 						r.getProduct().setId(product.getId());
 					}
@@ -234,8 +236,10 @@ public class DBProduct {
 					
 					com.esferalia.aon.occam.api.model.product.Product product2 = r.getProduct();
 					product2.setKind(Byte.parseByte(kind));
-					product2.setCreationUser(ai.getUsername());product2.setModificationUser(ai.getUsername());
-					product2.setCreationDate(new Timestamp(ai.getDate().getTime()));product2.setModificationDate(new Timestamp(ai.getDate().getTime()));
+					product2.setCreationUser(login);
+					product2.setModificationUser(login);
+					product2.setCreationDate(timestamp);
+					product2.setModificationDate(timestamp);
 					iproducts.add(product2);
 				}
 				
@@ -272,8 +276,10 @@ public class DBProduct {
 					if(r.getItem() != null){	
 						r.getItem().stream().forEach(i ->{
 							i.setProductId(productId);
-							i.setCreationUser(ai.getUsername());i.setModificationUser(ai.getUsername());
-							i.setCreationDate(new Timestamp(ai.getDate().getTime()));i.setModificationDate(new Timestamp(ai.getDate().getTime()));
+							i.setCreationUser(login);
+							i.setModificationUser(login);
+							i.setCreationDate(timestamp);
+							i.setModificationDate(timestamp);
 							iitems.add(i);	
 						});
 					}
@@ -288,8 +294,8 @@ public class DBProduct {
 		return error;
 	}
 	
-	private static Boolean esta(com.esferalia.aon.occam.api.model.product.Item code, Vector<com.esferalia.aon.occam.api.model.product.Item> vector) {
-		for (com.esferalia.aon.occam.api.model.product.Item item : vector) {
+	private static Boolean esta(com.esferalia.aon.occam.api.model.product.Item code, LinkedList<com.esferalia.aon.occam.api.model.product.Item> LinkedList) {
+		for (com.esferalia.aon.occam.api.model.product.Item item : LinkedList) {
 			if(item.getId().equals(code.getId())) return true;
 		}
 		return false;
@@ -319,7 +325,7 @@ public class DBProduct {
 		}	
 	}
 	
-	public static  Vector<ProductCategory> getCategories(String domain, Integer domainId, String login)  {
+	public static  LinkedList<ProductCategory> getCategories(String domain, Integer domainId, String login)  {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId, login);
@@ -336,7 +342,7 @@ public class DBProduct {
 					.from(PCATEGORY).join(DOMAIN).on(PCATEGORY.DOMAIN.eq(DOMAIN.PARENT))
 					.where(DOMAIN.ID.eq(domainId)).fetch();
 			
-			Vector<ProductCategory> v = new Vector<ProductCategory>();
+			LinkedList<ProductCategory> v = new LinkedList<ProductCategory>();
 			
 			for(Record5<Integer, String, String, String, String> r : data){
 				ProductCategory pc = new ProductCategory();
@@ -372,7 +378,7 @@ public class DBProduct {
 		}
 	}
 	
-	public static  Vector<com.esferalia.aon.gwt.template.shared.ProductCategory> getCategoriesShared(String domain, Integer domainId, String login)  {
+	public static  LinkedList<com.esferalia.aon.gwt.template.shared.ProductCategory> getCategoriesShared(String domain, Integer domainId, String login)  {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId, login);
@@ -388,7 +394,7 @@ public class DBProduct {
 					.from(PCATEGORY).join(DOMAIN).on(PCATEGORY.DOMAIN.eq(DOMAIN.PARENT))
 					.where(DOMAIN.ID.eq(domainId)).fetch();
 			
-			Vector<com.esferalia.aon.gwt.template.shared.ProductCategory> v = new Vector<com.esferalia.aon.gwt.template.shared.ProductCategory>();
+			LinkedList<com.esferalia.aon.gwt.template.shared.ProductCategory> v = new LinkedList<com.esferalia.aon.gwt.template.shared.ProductCategory>();
 			
 			for(Record2<Integer, String> r : data){
 				com.esferalia.aon.gwt.template.shared.ProductCategory pc = new com.esferalia.aon.gwt.template.shared.ProductCategory();
@@ -603,7 +609,7 @@ public class DBProduct {
 		
 	}
 	
-	public static  Vector<ProductTag> getTags(String domain, Integer domainId, String login){
+	public static  LinkedList<ProductTag> getTags(String domain, Integer domainId, String login){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId, login);
@@ -620,7 +626,7 @@ public class DBProduct {
 					.from(TAG).join(DOMAIN).on(TAG.DOMAIN.eq(DOMAIN.PARENT))
 					.where(DOMAIN.ID.eq(domainId)).fetch();
 			
-			Vector<ProductTag> v = new Vector<ProductTag>();
+			LinkedList<ProductTag> v = new LinkedList<ProductTag>();
 			
 			for(Record2<Integer, String> r : data){
 				ProductTag tag = new ProductTag();
@@ -654,7 +660,7 @@ public class DBProduct {
 		}
 	}
 	
-	public static  Vector<Brand> getBrands(String domain, Integer domainId, String login) {
+	public static  LinkedList<Brand> getBrands(String domain, Integer domainId, String login) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId, login);
@@ -671,7 +677,7 @@ public class DBProduct {
 					.from(BRAND).join(DOMAIN).on(BRAND.DOMAIN.eq(DOMAIN.PARENT))
 					.where(DOMAIN.ID.eq(domainId)).fetch();
 			
-			Vector<Brand> v = new Vector<Brand>();
+			LinkedList<Brand> v = new LinkedList<Brand>();
 			
 			for(Record2<Integer, String> r : data){
 				Brand brand = new Brand();
@@ -715,8 +721,8 @@ public class DBProduct {
 		return AON.getTax(domainName, domainId, login, id);
 	}
 	
-	public static Vector<Tax> getRetentions(String domainName, Integer domainId, String login)  {
-		Vector<Tax> v = new Vector<Tax>();
+	public static LinkedList<Tax> getRetentions(String domainName, Integer domainId, String login)  {
+		LinkedList<Tax> v = new LinkedList<Tax>();
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -762,8 +768,8 @@ public class DBProduct {
 		}
 	}
 	
-	public static Vector<Tax> getIVA(String domain, Integer domainId, String login) {
-		Vector<Tax> v = new Vector<Tax>();
+	public static LinkedList<Tax> getIVA(String domain, Integer domainId, String login) {
+		LinkedList<Tax> v = new LinkedList<Tax>();
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId, login);

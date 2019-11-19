@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.template.shared;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
 
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
@@ -18,13 +17,13 @@ public class Dialog implements IsSerializable{
 	String type;
 	TemplateInfo templateInfo;
 	String url;
-	TemplateList templateList;
+	LinkedList<TemplateInfo> templateList;
 	Error error;
-	Vector<Warehouse> warehouses;
+	LinkedList<Warehouse> warehouses;
 	String warehouseName;
-	Vector<String> series;
-	Vector<Series> series2;
-	List<ProductCategory> categories;
+	LinkedList<String> series;
+	LinkedList<Series> series2;
+	LinkedList<ProductCategory> categories;
 	List<Seller> sellerList;
 	Boolean closed;
 	EcommerceProduct ecommerceProduct;
@@ -108,11 +107,11 @@ public class Dialog implements IsSerializable{
 		return this;
 	}
 
-	public TemplateList getTemplateList() {
+	public LinkedList<TemplateInfo> getTemplateList() {
 		return templateList;
 	}
 
-	public Dialog setTemplateList(TemplateList templateList) {
+	public Dialog setTemplateList(LinkedList<TemplateInfo> templateList) {
 		this.templateList = templateList;
 		return this;
 	}
@@ -126,20 +125,20 @@ public class Dialog implements IsSerializable{
 		return this;
 	}
 
-	public Vector<Warehouse> getWarehouses() {
+	public LinkedList<Warehouse> getWarehouses() {
 		return warehouses;
 	}
 
-	public Dialog setWarehouses(Vector<Warehouse> warehouses) {
+	public Dialog setWarehouses(LinkedList<Warehouse> warehouses) {
 		this.warehouses = warehouses;
 		return this;
 	}
 
-	public Vector<String> getSeries() {
+	public LinkedList<String> getSeries() {
 		return series;
 	}
 
-	public Dialog setSeries(Vector<String> series) {
+	public Dialog setSeries(LinkedList<String> series) {
 		this.series = series;
 		return this;
 	}
@@ -153,11 +152,11 @@ public class Dialog implements IsSerializable{
 		return this;
 	}
 
-	public Vector<Series> getSeries2() {
+	public LinkedList<Series> getSeries2() {
 		return series2;
 	}
 
-	public Dialog setSeries2(Vector<Series> series2) {
+	public Dialog setSeries2(LinkedList<Series> series2) {
 		this.series2 = series2;
 		return this;
 	}
@@ -171,11 +170,11 @@ public class Dialog implements IsSerializable{
 		return this;
 	}
 
-	public List<ProductCategory> getCategories() {
+	public LinkedList<ProductCategory> getCategories() {
 		return categories;
 	}
 
-	public Dialog setCategories(List<ProductCategory> categories) {
+	public Dialog setCategories(LinkedList<ProductCategory> categories) {
 		this.categories = categories;
 		return this;
 	}

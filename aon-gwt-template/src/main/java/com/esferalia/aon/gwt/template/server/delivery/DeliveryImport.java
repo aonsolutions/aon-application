@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
-import java.util.Vector;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -62,16 +61,17 @@ public class DeliveryImport {
 	AlbvDet albvDet = new AlbvDet();
 	DeliveryInfo di;
 	public DeliveryInfo importation(byte[] data){
+		HSSFWorkbook workbook = null;
 		try {
 			ByteArrayInputStream bais = new ByteArrayInputStream(data);
-			HSSFWorkbook workbook = new HSSFWorkbook(bais);
+			workbook = new HSSFWorkbook(bais);
 
 			HSSFSheet customerSheet = workbook.getSheet("CLIENTES");
 			HSSFSheet deliverySheet = workbook.getSheet("ALBV");
 			HSSFSheet deliveryDetailSheet = workbook.getSheet("ALBVDET");
 
 			di = new DeliveryInfo();
-			di.setError(new Error().setError(true).setTextError(new Vector<>()).setTextWarning(new Vector<>()));
+			di.setError(new Error().setError(true).setTextError(new LinkedList<>()).setTextWarning(new LinkedList<>()));
 			// CUSTOMER
 
 			LinkedList<String> titleList = new LinkedList<>();
@@ -187,6 +187,14 @@ public class DeliveryImport {
 				.setAlbvDetList(albvDetList);
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			if(workbook != null) {
+				try {
+					workbook.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return null;
 	}
@@ -1071,7 +1079,7 @@ public class DeliveryImport {
 				}
 				Warehouse warehouse = AON.getWarehouse(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getNameProperty().eq(r.getAlmacen())));
 				if(warehouse == null) {
-					di.getError().getTextError().addElement("ERROR! ALBV: El almac�n " + r.getAlmacen() + " del albar�n " + r.getSerie() + "/" + r.getNumero()  + " no existe.");
+					di.getError().getTextError().add("ERROR! ALBV: El almac�n " + r.getAlmacen() + " del albar�n " + r.getSerie() + "/" + r.getNumero()  + " no existe.");
 					di.getError().setError(false);
 				} else {
 					PayMethod pm = new PayMethod();
@@ -1118,7 +1126,7 @@ public class DeliveryImport {
 					map.put(r.getId(), new Delivery().setId(delivery.getId()).setNumber(warehouse.getId()));
 				}
 			} else {
-				di.getError().getTextError().addElement("ERROR! ALBV: El albar�n de venta " + r.getSerie() + "/" + r.getNumero()  + " ya existe.");
+				di.getError().getTextError().add("ERROR! ALBV: El albar�n de venta " + r.getSerie() + "/" + r.getNumero()  + " ya existe.");
 				di.getError().setError(false);
 			}
 		});

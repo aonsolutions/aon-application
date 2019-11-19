@@ -21,7 +21,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.jooq.Record1;
 import org.jooq.Result;
 
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.template.server.marketplace.XMLUtils;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
 import com.esferalia.aon.occam.api.AON;
@@ -47,7 +46,7 @@ public class DownloadAmazonProductServlet extends HttpServlet{
         String login = p_request.getParameter("username");
         String description = p_request.getParameter("description");
         Integer domainId = Integer.parseInt(domain_id);
-        String domainName = AonServletUtils.getRequestDomainName(p_request);
+        String domainName = p_request.getParameter("domain_name");;
         
 		LinkedList<Attach> iattachList = AON.getAttachList(domainName, domainId, login,
 				filter -> filter.getTypeProperty().eq(ItemAttachmentType.ECOMMERCE_PRODUCT.value())

@@ -9,7 +9,7 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Date;
-import java.util.Vector;
+import java.util.LinkedList;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -31,17 +30,20 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.jooq.Condition;
 
-import com.code.aon.google.apis.DriveUtils;
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.jooq.DBStock;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.google.api.services.drive.Drive;
+
+import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 @WebServlet(name = "DownloadTemplatesStock", urlPatterns = { "/aon_gwt_template/gwt_download_stock/*"
 															 ,"/aon_gwt_aio/gwt_download_stock/*"})
@@ -54,9 +56,11 @@ public class DownloadStockServlet extends HttpServlet {
         String driveId = p_request.getParameter("drive_id");
         String fileId = p_request.getParameter("id");
         String name = p_request.getParameter("name");
+        String domainName = p_request.getParameter("domain_name");
         String domain_id = p_request.getParameter("domain_id");
-        String warehouse = p_request.getParameter("warehouse");
+        Integer domainId = Integer.parseInt(domain_id);
         
+        String warehouse = p_request.getParameter("warehouse");
         String category = p_request.getParameter("category");
         String brand = p_request.getParameter("brand");
         String code = p_request.getParameter("code");
@@ -69,28 +73,32 @@ public class DownloadStockServlet extends HttpServlet {
         String quantity = p_request.getParameter("quantity");
         String close_inventory = p_request.getParameter("close");
         String only_non_cero = p_request.getParameter("only_non_cero");
+        
+        String user_id = p_request.getParameter("user_id");
         String login = p_request.getParameter("username");
+        Integer userId = AonNumberUtils.toInteger(user_id);
+
         String packagedInfo = p_request.getParameter("packaged_info");
         Boolean packaged = packagedInfo.equals("1");
         
         Boolean closeInventory = close_inventory.equals("true");
-        Integer domainId = Integer.parseInt(domain_id);
-        String domainName = AonServletUtils.getRequestDomainName(p_request);
+
         Domain domain = AON.getDomain(domainName, domainId, login);
-        Integer idFile  = Integer.parseInt(fileId);
-        Integer userId = AonServletUtils.getRequestUserId(p_request);
-        User user = new User().setId(userId).setLogin(login);
+        User user = AON.getUser(domainId, domainName, login, userId);
+       
         Warehouse w = new Warehouse();
         if(!warehouse.equals("-"))
         	w = DBStock.getInstance().getWarehouse(domain, user, warehouse);
         byte[] b = null ;
         
         if (driveId != ""){
-        	b = DriveUtils.getByteFile(domain, user, driveId, idFile);
+        	DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), "");
+			Drive drive = AonDrive.getInstace().serviceInitialize(g);
+        	b = AonDrive.getInstace().downloadFileByteArray(drive, driveId);
         }
         else if(fileId!=""){
         	Integer id = Integer.parseInt(fileId);
-        	b = DBConsults.getTemplate(domain, user, id);
+        	b = DBConsults.getTemplate(domain, login, id);
         }
         else return;
         
@@ -292,7 +300,7 @@ public class DownloadStockServlet extends HttpServlet {
         	c2 = c2.and(ITEM.BARCODE.like("%"+barcode+"%"));
         }
         
-        Vector<StockInfo> v;
+        LinkedList<StockInfo> v;
         if(closeInventory){
         	String inventory_id = p_request.getParameter("inventory");
         	Integer inventoryId = Integer.parseInt(inventory_id);

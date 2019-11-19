@@ -1,20 +1,20 @@
 package com.esferalia.aon.gwt.template.client;
 
 import java.util.LinkedList;
-import java.util.Vector;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialogB;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.template.client.i18n.TemplatesMessages;
 import com.esferalia.aon.gwt.template.shared.Dialog;
 import com.esferalia.aon.gwt.template.shared.Ecommerce;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.Series;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
-import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.gwt.template.shared.WorkPlace;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.google.gwt.core.shared.GWT;
@@ -67,16 +67,18 @@ public abstract class TemplatesDialog extends CustomDialogB {
 	@UiField Button cancel_button;
 	@UiField(provided = true) ScrollPanel scroll;
 	
+	AonData aonData; 
 	Integer column = 1;
 	HandlerRegistration handler;
 	TemplateInfo ti;
 	Dialog d;
-	TemplateList tlist;
-	Vector<Warehouse> w;
-	Vector<Series> series;
+	LinkedList<TemplateInfo> tlist;
+	LinkedList<Warehouse> w;
+	LinkedList<Series> series;
 	Boolean closed;
 	
-	public TemplatesDialog(Dialog dialog) {
+	public TemplatesDialog(AonData aonData, Dialog dialog) {
+		this.aonData = aonData;
 		if(dialog.isClosed() != null) closed = dialog.isClosed();
 		setCaption(dialog.getTitle());
 		if(dialog.getTemplateList()!= null) tlist = dialog.getTemplateList();
@@ -159,6 +161,18 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		});
 	}
 	
+	public AonData getAonData() {
+		return aonData;
+	}
+	
+	public Domain getDomain() {
+		return getAonData().getDomain();
+	}
+	
+	public User getUser() {
+		return getAonData().getUser();
+	}
+	
 	private void build(Dialog dialog) {
 		switch (dialog.getType()) {
 		case "new": newTemplate();break;
@@ -215,9 +229,9 @@ public abstract class TemplatesDialog extends CustomDialogB {
 				if(lb.getSelectedItemText().equalsIgnoreCase(MSG.product()))
 					 importProduct(dialog.getUrl(),dialog.getTemplateList());
 				else if(lb.getSelectedItemText().equalsIgnoreCase(MSG.stock()))
-					item.getWarehouses(getDomain(), new AsyncCallback<Vector<Warehouse>>() {
+					item.getWarehouses(getDomain(), getUser(), new AsyncCallback<LinkedList<Warehouse>>() {
 						@Override
-						public void onSuccess(Vector<Warehouse> result) {
+						public void onSuccess(LinkedList<Warehouse> result) {
 							dialog.setWarehouses(result);
 							importStock(dialog);
 						}
@@ -402,7 +416,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flexTableCss();
 	}
 	
-	private void exportProposal(String url,TemplateList templates){
+	private void exportProposal(String url, LinkedList<TemplateInfo> templates){
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
 		flex_table.setBorderWidth(1);
@@ -411,7 +425,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		
 		lb.addItem("-");
 		
-		for(TemplateInfo ti : templates.getList()){
+		for(TemplateInfo ti : templates){
 			if(ti.getType().equals(MSG.stock()))
 				lb.addItem(ti.getName());
 		}
@@ -430,7 +444,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		
 		lb.addItem("-");
 		
-		for(TemplateInfo ti : dialog.getTemplateList().getList()){
+		for(TemplateInfo ti : dialog.getTemplateList()){
 			if(ti.getType().equals(MSG.stock()))
 				lb.addItem(ti.getName());
 		}
@@ -449,7 +463,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		
 		lb.addItem("-");
 		
-		for(TemplateInfo ti : dialog.getTemplateList().getList()){
+		for(TemplateInfo ti : dialog.getTemplateList()){
 			if(closed && ti.getType().equals(MSG.closedInventory()))
 				lb.addItem(ti.getName());
 			if(!closed && ti.getType().equals(MSG.valuedInventory()))
@@ -462,7 +476,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 	}
 
 	
-	private void importProposal(String url,TemplateList templates) {
+	private void importProposal(String url, LinkedList<TemplateInfo> templates) {
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
 		flex_table.setBorderWidth(1);
@@ -470,7 +484,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		
 		ListBox lb = new ListBox();
 		lb.addItem("-");
-		for(TemplateInfo ti : templates.getList()){
+		for(TemplateInfo ti : templates){
 			if(ti.getType().equals(MSG.stock()) )
 				lb.addItem(ti.getName());
 		}
@@ -484,7 +498,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flexTableCss();
 	}
 	
-	private void exportCatalogue(TemplateList templateList) {
+	private void exportCatalogue(LinkedList<TemplateInfo> templateList) {
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
 		flex_table.setBorderWidth(1);
@@ -493,17 +507,17 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		ListBox lb0 = new ListBox();
 		lb0.addItem("-");
 		
-		for(TemplateInfo t : templateList.getList()){
+		for(TemplateInfo t : templateList){
 			if(t.getType().equals(MSG.stock()))
 				lb0.addItem(t.getName());
 		}
 		flex_table.setWidget(0, 0, new Label(MSG.template()));
 		flex_table.setWidget(0, 1, lb0);
 		
-		item.getWorkplaces(getDomain(), new AsyncCallback<Vector<WorkPlace>>() {
+		item.getWorkplaces(getDomain(), getUser(), new AsyncCallback<LinkedList<WorkPlace>>() {
 			
 			@Override
-			public void onSuccess(Vector<WorkPlace> result) {
+			public void onSuccess(LinkedList<WorkPlace> result) {
 
 				ListBox lb1 = new ListBox();
 				lb1.addItem("-");
@@ -515,7 +529,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 					ListBox lb = lbaux;
 					@Override
 					public void onChange(ChangeEvent event) {
-						item.getDepartments(getDomain(), lb.getItemText(lb.getSelectedIndex()), new AsyncCallback<LinkedList<Department>>() {
+						item.getDepartments(getDomain(), getUser(), lb.getItemText(lb.getSelectedIndex()), new AsyncCallback<LinkedList<Department>>() {
 							
 							@Override
 							public void onSuccess(LinkedList<Department> result) {
@@ -612,14 +626,14 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		scroll.add(vp);
 	}
 	
-	private void exportProduct(TemplateList templates){	
+	private void exportProduct(LinkedList<TemplateInfo> templates){	
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
 		flex_table.setBorderWidth(1);
 		flex_table.setCellSpacing(0);
 		ListBox lb = new ListBox();
 		lb.addItem("-");
-		for(TemplateInfo ti : templates.getList()){
+		for(TemplateInfo ti : templates){
 			if(ti.getType().equals(MSG.product()))
 				lb.addItem(ti.getName());
 		}
@@ -628,15 +642,15 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flexTableCss();
 	}
 	
-	private void exportFee(TemplateList templates){
+	private void exportFee(LinkedList<TemplateInfo> templates){
 		//TODO 
 	}
 	
-	private void exportTransferStock(TemplateList templates){
+	private void exportTransferStock(LinkedList<TemplateInfo> templates){
 		//TODO 
 	}
 	
-	private void exportStock(TemplateList templates){
+	private void exportStock(LinkedList<TemplateInfo> templates){
 		//TODO 
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
@@ -645,7 +659,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		
 		ListBox lb = new ListBox();
 		lb.addItem("-");
-		for(TemplateInfo ti : templates.getList()){
+		for(TemplateInfo ti : templates){
 			if(ti.getType().equals(MSG.stock()))
 				lb.addItem(ti.getName());
 		}
@@ -697,7 +711,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 	}
 
 	
-	private void importProduct(String url,TemplateList templates) {
+	private void importProduct(String url,LinkedList<TemplateInfo> templates) {
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
 		flex_table.setBorderWidth(1);
@@ -705,7 +719,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		
 		ListBox lb = new ListBox();
 		lb.addItem("-");
-		for(TemplateInfo ti : templates.getList()){
+		for(TemplateInfo ti : templates){
 			if(ti.getType().equals(MSG.product()))
 				lb.addItem(ti.getName());
 		}
@@ -716,7 +730,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flex_table.setWidget(1, 0, new Label(MSG.file()));
 		flex_table.setWidget(1, 1, upload);
 		
-		item.getProductRoles(getDomain(), new AsyncCallback<LinkedList<String>>() {
+		item.getProductRoles(getDomain(), getUser(), new AsyncCallback<LinkedList<String>>() {
 			
 			@Override
 			public void onSuccess(LinkedList<String> result) {
@@ -740,7 +754,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flexTableCss();
 	}
 	
-	private void importFee(String url,TemplateList templates) {
+	private void importFee(String url, LinkedList<TemplateInfo> templates) {
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
 		flex_table.setBorderWidth(1);
@@ -748,7 +762,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		
 		ListBox lb = new ListBox();
 		lb.addItem("-");
-		for(TemplateInfo ti : templates.getList()){
+		for(TemplateInfo ti : templates){
 			if(ti.getType().equals(MSG.fee()))
 				lb.addItem(ti.getName());
 		}
@@ -776,7 +790,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 
 		ListBox lb = new ListBox();
 		lb.addItem("-");
-		for(TemplateInfo ti : dialog.getTemplateList().getList()){
+		for(TemplateInfo ti : dialog.getTemplateList()){
 			if(ti.getType().equals(MSG.stock()))
 				lb.addItem(ti.getName());
 		}
@@ -798,7 +812,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		
 		flexTableCss();
 	}
-	private Boolean esta(Series series,Vector<Series> series2){
+	private Boolean esta(Series series,LinkedList<Series> series2){
 		for (Series series3 : series2) {
 			if(series3.getName().equals(series.getName()))
 				return true;
@@ -813,7 +827,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 
 		ListBox lb = new ListBox();
 		lb.addItem("-");
-		for(TemplateInfo ti : dialog.getTemplateList().getList()){
+		for(TemplateInfo ti : dialog.getTemplateList()){
 			if(ti.getType().equals(MSG.stock()))
 				lb.addItem(ti.getName());
 		}
@@ -833,22 +847,22 @@ public abstract class TemplatesDialog extends CustomDialogB {
 			public void onChange(ChangeEvent event) {
 				ListBox lb = (ListBox)flex_table.getWidget(1, 1);
 				if(!lb.getSelectedItemText().equals("-")){
-				item.getSeries(getDomain(), lb.getSelectedItemText(), new AsyncCallback<Vector<Series>>() {
+				item.getSeries(getDomain(), getUser(), lb.getSelectedItemText(), new AsyncCallback<LinkedList<Series>>() {
 					
 					@Override
-					public void onSuccess(Vector<Series> result) {
+					public void onSuccess(LinkedList<Series> result) {
 						
 						ListBox lb4 = (ListBox) flex_table.getWidget(2, 1);
 						String w2 = lb4.getSelectedItemText();
 						
 						if(!w2.equals("-")){
 							
-							series = new Vector<Series>();
+							series = new LinkedList<Series>();
 							series.addAll(result);
-							item.getSeries(getDomain(), w2, new AsyncCallback<Vector<Series>>() {
-								Vector<Series> series2 = series;
+							item.getSeries(getDomain(), getUser(), w2, new AsyncCallback<LinkedList<Series>>() {
+								LinkedList<Series> series2 = series;
 								@Override
-								public void onSuccess(Vector<Series> result) {
+								public void onSuccess(LinkedList<Series> result) {
 									
 									for (Series series : result) {
 										if(!esta(series, series2)){
@@ -901,21 +915,21 @@ public abstract class TemplatesDialog extends CustomDialogB {
 			@Override
 			public void onChange(ChangeEvent event) {
 				ListBox lb = (ListBox)flex_table.getWidget(2, 1);
-				item.getSeries(getDomain(), lb.getSelectedItemText(), new AsyncCallback<Vector<Series>>() {
+				item.getSeries(getDomain(), getUser(), lb.getSelectedItemText(), new AsyncCallback<LinkedList<Series>>() {
 					
 					@Override
-					public void onSuccess(Vector<Series> result) {
+					public void onSuccess(LinkedList<Series> result) {
 						
 						ListBox lb2 = (ListBox) flex_table.getWidget(1, 1);
 						String w2 = lb2.getSelectedItemText();
 						
 						if(!w2.equals("-")){
-							series = new Vector<Series>();
+							series = new LinkedList<Series>();
 							series.addAll(result);
-							item.getSeries(getDomain(), w2, new AsyncCallback<Vector<Series>>() {
-								Vector<Series> series2 = series;
+							item.getSeries(getDomain(), getUser(), w2, new AsyncCallback<LinkedList<Series>>() {
+								LinkedList<Series> series2 = series;
 								@Override
-								public void onSuccess(Vector<Series> result) {
+								public void onSuccess(LinkedList<Series> result) {
 									for (Series series : result) {
 										if(!esta(series, series2)){
 											series2.add(series);
@@ -1307,7 +1321,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 	ListBox list_box;
 	Integer max;
 	private void listBox(String type){
-		Vector<String> v = new Vector<String>();
+		LinkedList<String> v = new LinkedList<String>();
 		if(type.equals(MSG.product()))
 			v = ProductUtils.productList();
 		else if(type.equals(MSG.stock()))
@@ -1328,7 +1342,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 	
 	ListBox list_box_edit;
 	private void listBoxEdit(String type){
-		Vector<String> v = new Vector<String>();
+		LinkedList<String> v = new LinkedList<String>();
 		if(type.equals(MSG.product()))
 			v = ProductUtils.productList();
 		else if(type.equals(MSG.stock()))
@@ -1346,7 +1360,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 	}
 	
 	private void optionalListBox(Integer index, String type){
-		Vector<String> v = new Vector<String>();
+		LinkedList<String> v = new LinkedList<String>();
 		if(type.equals(MSG.product()))
 			v = ProductUtils.productOptionalList();
 		else if(type.equals(MSG.stock()))
@@ -1495,9 +1509,5 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flex_table.getCellFormatter().setStyleName(index, 1, "aon-panelGrid-even");
 		flex_table.getCellFormatter().setStyleName(index, 2, "aon-panelGrid-aux");	
 		column++;
-	}
-	
-	private Domain getDomain() {
-		return new Domain().setId(JsTemplates.getCurrentDomain()).setName(JsTemplates.getCurrentDomainName());
 	}
 }

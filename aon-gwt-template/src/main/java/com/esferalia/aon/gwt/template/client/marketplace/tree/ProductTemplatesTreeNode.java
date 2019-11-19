@@ -19,13 +19,13 @@ public class ProductTemplatesTreeNode extends TreeNode<Integer>{
 	@Override
 	public void select(Marketplace marketplace) {
 		m= marketplace;
-		marketplace.getImpl().getProductTemplatesList(getDomain(),  new AsyncCallback<List<EcommerceProduct>>() {
+		marketplace.getImpl().getProductTemplatesList(getDomain(), marketplace.getUser() , new AsyncCallback<List<EcommerceProduct>>() {
 			@Override
 			public void onFailure(Throwable caught) {}
 
 			@Override
 			public void onSuccess(List<EcommerceProduct> result) {
-				ProductTemplates pt = new ProductTemplates(result,m.getLogin());
+				ProductTemplates pt = new ProductTemplates(m.getAonData(), result);
 				m.setContent(pt);
 			}
 		});

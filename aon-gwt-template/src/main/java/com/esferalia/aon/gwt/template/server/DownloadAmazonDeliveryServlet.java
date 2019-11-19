@@ -18,7 +18,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
+import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.template.jooq.DBMarketplace;
 import com.esferalia.aon.gwt.template.shared.marketplace.AmazonDelivery;
 import com.esferalia.aon.gwt.template.shared.marketplace.Order;
@@ -40,7 +40,7 @@ public class DownloadAmazonDeliveryServlet extends HttpServlet {
         String domain_id = p_request.getParameter("domain_id");
         String login = p_request.getParameter("username");
         Integer domainId = Integer.parseInt(domain_id);
-        String domainName = AonServletUtils.getRequestDomainName(p_request);
+        String domainName =  p_request.getParameter("domain_name");
         Domain domain = new Domain().setId(domainId).setName(domainName); 
         
         HSSFWorkbook libro = new HSSFWorkbook();
@@ -67,7 +67,7 @@ public class DownloadAmazonDeliveryServlet extends HttpServlet {
         	 row.createCell(0).setCellValue(ad.getOrderId());
         	 row.createCell(1).setCellValue(ad.getOrderItemId());
         	 if(ad.getQuantity()!= null)row.createCell(2).setCellValue(ad.getQuantity());
-        	 row.createCell(3).setCellValue(ad.getShipDateStr());
+        	 row.createCell(3).setCellValue(AonDateUtils.format("dd-MM-yyyy", ad.getShipDate()));
         	 Cell c4 = row.createCell(4);
         	 if(ad.getCarrierCode() != null && ad.getCarrierCode().getName()!= null)
         		 c4.setCellValue(ad.getCarrierCode().getName());

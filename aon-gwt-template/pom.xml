@@ -103,24 +103,6 @@
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
- 
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.google.apis</artifactId>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-	
-    		<exclusions>
-				<exclusion>
-					<groupId>asm</groupId>
-					<artifactId>asm</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>asm</groupId>
-					<artifactId>asm-attrs</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 		
 		<dependency>
 			<groupId>org.apache.poi</groupId>
@@ -151,13 +133,6 @@
 			<groupId>com.googlecode.gwtupload</groupId>
 			<artifactId>gwtupload</artifactId>
 			<version>1.0.1</version>
-		</dependency>
-			
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.jaas</artifactId>
-			<version>${project.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		
 	</dependencies>

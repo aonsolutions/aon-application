@@ -3,8 +3,6 @@ package com.esferalia.aon.gwt.template.client;
 
 
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Vector;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
@@ -24,9 +22,9 @@ import com.esferalia.aon.gwt.template.shared.ImportType;
 import com.esferalia.aon.gwt.template.shared.Seller;
 import com.esferalia.aon.gwt.template.shared.Series;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
-import com.esferalia.aon.gwt.template.shared.TemplateList;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -67,7 +65,7 @@ public class Templates extends Composite implements EntryPoint {
 	@UiField FlowPanel pagesPanel;
 	
 	ListBox list_box = new ListBox();
-	TemplateList template_list;
+	LinkedList<TemplateInfo> templateList;
 	TemplatesDialog popup;
 	ProgressBarDialog pbd;
 	ExportInfo eiAux;
@@ -85,7 +83,19 @@ public class Templates extends Composite implements EntryPoint {
 				aonData.getUser().getLogin());
 	}
 
-	Vector<Warehouse> ws;
+	public AonData getAonData() {
+		return aonData;
+	}
+	
+	public Domain getDomain() {
+		return getAonData().getDomain();
+	}
+	
+	public User getUser() {
+		return getAonData().getUser();
+	}
+	
+	LinkedList<Warehouse> ws;
 	Integer inventory, workplaceId, proposalId, num, inventoryId;
 	String closedAux, inventoryIdAux, warehouseAux, warehouse2Aux, initialDateAux, finalDateAux, initialIdAux,
 			finalIdAux, onlyNegativeAux, detailAux, w, wAux, incomeId, seriesAux, commentsAux;
@@ -99,10 +109,10 @@ public class Templates extends Composite implements EntryPoint {
 			GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 			pagesPanel = new FlowPanel();
 			if (SILENT.equals(entryPoint)){
-				item.getTemplates(getDomain(),new AsyncCallback<TemplateList>() {		
+				item.getTemplates(getDomain(), getUser(), new AsyncCallback<LinkedList<TemplateInfo>>() {		
 					@Override
-					public void onSuccess(TemplateList result) {
-						template_list = result;
+					public void onSuccess(LinkedList<TemplateInfo> result) {
+						templateList = result;
 						exportEcommerce(me);
 						exportEcommercex(me);
 						exportProduct(me);
@@ -131,18 +141,18 @@ public class Templates extends Composite implements EntryPoint {
 			} else if(DOWNLOAD_AMAZON_DELIVERY.equals(entryPoint)){
 				deliveryx();
 			} else {
-				item.getTemplates(getDomain(),new AsyncCallback<TemplateList>() {		
+				item.getTemplates(getDomain(), getUser(), new AsyncCallback<LinkedList<TemplateInfo>>() {		
 					@Override
-					public void onSuccess(TemplateList result) {
-						template_list = result;						
+					public void onSuccess(LinkedList<TemplateInfo> result) {
+						templateList = result;						
 						if(entryPoint.equals(TEMPLATES)){
-							Widget w = new TemplatesPage(template_list);
+							Widget w = new TemplatesPage(getAonData(), templateList);
 							pagesPanel.add(w);
 						} else if(entryPoint.equals(MARKETPLACE)){
-							Marketplace marketplace = new Marketplace(template_list.getLogin());		
+							Marketplace marketplace = new Marketplace(getAonData());		
 							pagesPanel.add(marketplace);
 						} else if(entryPoint.equals(CONSUMPTION)){
-							ConsumptionPage cp = new ConsumptionPage(template_list);		
+							ConsumptionPage cp = new ConsumptionPage(getAonData(), templateList);		
 				 			pagesPanel.add(cp);
 						}
 					}
@@ -169,8 +179,8 @@ public class Templates extends Composite implements EntryPoint {
 	private void importFee(){
 		Dialog d = new Dialog("Importar Cuotas","Importar",true,"Cancelar",true,"importFee");
 		d.setUrl(GWT.getModuleBaseURL());
-		d.setTemplateList(template_list);
-		TemplatesDialog popup = new TemplatesDialog(d) {
+		d.setTemplateList(templateList);
+		TemplatesDialog popup = new TemplatesDialog(getAonData(), d) {
 			@Override
 			protected void onCancel() {
 				hide();
@@ -182,7 +192,7 @@ public class Templates extends Composite implements EntryPoint {
 				String template = lb.getItemText(lb.getSelectedIndex());
 				TemplateInfo ti = new TemplateInfo();
 				
-				for(TemplateInfo t : tlist.getList()) {
+				for(TemplateInfo t : tlist) {
 					if(t.getName().equals(template) && t.getType().equals("Cuota")){
 						ti = t;
 					}
@@ -206,18 +216,18 @@ public class Templates extends Composite implements EntryPoint {
 						pbd.addStyleName("gwt-PopupPanel-template");
 						pbd.setGlassEnabled(true);
 						pbd.show();
-						item.executeExcel(getDomain(),ti, ImportType.FEE, ignoreInactiveClient,
+						item.executeExcel(getDomain(), getUser(), ti, ImportType.FEE, ignoreInactiveClient,
 								null, null, null, null, null, null, null, new AsyncCallback<Integer>() {
 							@Override
 							public void onSuccess(Integer result) {
-								item.insertFee(getDomain(),new AsyncCallback<Error>() {
+								item.insertFee(getDomain(), getUser(), new AsyncCallback<Error>() {
 									@Override
 									public void onSuccess(Error result) {
 										pbd.completed();
 										pbd.hide();
 										Dialog d2 = new Dialog("Importar Cuotas","Aceptar",true,"Cancelar",false,"importResponse");
 										d2.setError(result);
-										TemplatesDialog popup2 = new TemplatesDialog(d2){
+										TemplatesDialog popup2 = new TemplatesDialog(getAonData(), d2){
 
 											@Override
 											protected void onAccept() {
@@ -261,7 +271,7 @@ public class Templates extends Composite implements EntryPoint {
 	private void importDelivery(){
 		Dialog d = new Dialog("Importar Albaranes de Venta","Importar",true,"Cancelar",true,"importDelivery");
 		d.setUrl(GWT.getModuleBaseURL());
-		TemplatesDialog popup = new TemplatesDialog(d) {
+		TemplatesDialog popup = new TemplatesDialog(getAonData(), d) {
 			
 			@Override
 			protected void onCancel() {
@@ -282,7 +292,7 @@ public class Templates extends Composite implements EntryPoint {
 						pbd.setGlassEnabled(true);
 						pbd.show();
 						
-						item.executeExcel(getDomain(), null, ImportType.DELIVERY, null,
+						item.executeExcel(getDomain(), getUser(), null, ImportType.DELIVERY, null,
 								null, null, null, null, null, null, null, new AsyncCallback<Integer>() {
 							
 							@Override
@@ -296,7 +306,7 @@ public class Templates extends Composite implements EntryPoint {
 										pbd.hide();
 										Dialog d2 = new Dialog("Importar Albaranes de Venta","Aceptar",true,"Cancelar",false,"importResponse");
 										d2.setError(result);
-										TemplatesDialog popup2 = new TemplatesDialog(d2){
+										TemplatesDialog popup2 = new TemplatesDialog(getAonData(), d2){
 
 											@Override
 											protected void onAccept() {
@@ -320,7 +330,7 @@ public class Templates extends Composite implements EntryPoint {
 										pbd.hide();
 									}
 								};
-								item.insertDelivery(getDomain(),callback);
+								item.insertDelivery(getDomain(), getUser(), callback);
 							}
 						
 							@Override
@@ -341,8 +351,8 @@ public class Templates extends Composite implements EntryPoint {
 	private void importProduct(){
 		Dialog d = new Dialog("Importar Productos","Importar",true,"Cancelar",true,"importProduct");
 		d.setUrl(GWT.getModuleBaseURL());
-		d.setTemplateList(template_list);
-		TemplatesDialog popup = new TemplatesDialog(d) {
+		d.setTemplateList(templateList);
+		TemplatesDialog popup = new TemplatesDialog(getAonData(), d) {
 			
 			@Override
 			protected void onCancel() {
@@ -355,7 +365,7 @@ public class Templates extends Composite implements EntryPoint {
 				String template = lb.getItemText(lb.getSelectedIndex());
 				TemplateInfo ti = new TemplateInfo();
 				
-				for(TemplateInfo t : tlist.getList()) {
+				for(TemplateInfo t : tlist) {
 					if(t.getName().equals(template) && t.getType().equals("Producto")){
 						ti = t;
 					}
@@ -378,7 +388,7 @@ public class Templates extends Composite implements EntryPoint {
 						pbd.setGlassEnabled(true);
 						pbd.show();
 						
-						item.executeExcel(getDomain(),ti, ImportType.PRODUCT, null,
+						item.executeExcel(getDomain(), getUser(), ti, ImportType.PRODUCT, null,
 								null, null, null, null, null, null, null, new AsyncCallback<Integer>() {
 							
 							@Override
@@ -393,7 +403,7 @@ public class Templates extends Composite implements EntryPoint {
 										pbd.hide();
 										Dialog d2 = new Dialog("Importar Productos","Aceptar",true,"Cancelar",false,"importResponse");
 										d2.setError(result);
-										TemplatesDialog popup2 = new TemplatesDialog(d2){
+										TemplatesDialog popup2 = new TemplatesDialog(getAonData(), d2){
 
 											@Override
 											protected void onAccept() {
@@ -418,40 +428,7 @@ public class Templates extends Composite implements EntryPoint {
 									}
 								};
 
-								item.insertProduct(getDomain(),value,callback);/* new AsyncCallback<Error>() {
-										
-								
-										@Override
-										public void onSuccess(Error result) {
-								
-											pbd.completed();
-											pbd.hide();
-											Dialog d2 = new Dialog("Importar Productos","Aceptar",true,"Cancelar",false,"importResponse");
-											d2.setError(result);
-											TemplatesDialog popup2 = new TemplatesDialog(d2){
-
-												@Override
-												protected void onAccept() {
-													hide();			
-												}
-
-												@Override
-												protected void onCancel() {
-													hide();
-												}
-											};
-											popup2.addStyleName("gwt-PopupPanel-template");
-											popup2.setGlassEnabled(true);
-											popup2.show();
-										}
-											
-										@Override
-										public void onFailure(Throwable caught) {
-											
-											Window.alert("RPC Failed:" + caught);  
-									
-										}
-								});*/
+								item.insertProduct(getDomain(), getUser(), value, callback);
 							}
 						
 							@Override
@@ -472,8 +449,8 @@ public class Templates extends Composite implements EntryPoint {
 	private void exportProducts(ExportInfo ei){
 		Dialog d = new Dialog("Exportar Productos","Descargar",true,"Cancelar",true,"exportProduct");
 		d.setUrl(GWT.getModuleBaseURL());
-		d.setTemplateList(template_list);
-		TemplatesDialog popup = new TemplatesDialog(d) {
+		d.setTemplateList(templateList);
+		TemplatesDialog popup = new TemplatesDialog(getAonData(), d) {
 			@Override
 			protected void onCancel() {
 				hide();
@@ -484,7 +461,7 @@ public class Templates extends Composite implements EntryPoint {
 				ListBox lb = (ListBox) flex_table.getWidget(0, 1);
 				String template = lb.getItemText(lb.getSelectedIndex());
 				TemplateInfo ti = new TemplateInfo();
-				for(TemplateInfo t : tlist.getList()) {
+				for(TemplateInfo t : tlist) {
 					if(t.getName().equals(template) && t.getType().equals("Producto")){
 						ti = t;
 					}
@@ -495,7 +472,8 @@ public class Templates extends Composite implements EntryPoint {
 		            	+ "?id=" + Integer.toString(ti.getId())
 		            	+ "&drive_id=" +URL.encode(driveId)
 		            	+ "&name=" +URL.encode(ti.getName()
-		            	+ "&domain_id=" + getDomain().getId())
+		            	+ "&domain_name=" + getDomain().getName())
+		            	+ "&domain_id=" + getDomain().getId()
 						+ "&description="+ei.getName()
 						+ "&code="+ei.getCode()
 						+ "&category="+ei.getCategory()
@@ -532,7 +510,7 @@ public class Templates extends Composite implements EntryPoint {
 						+ "&modificationUser="+ei.getModificationUser()
 						+ "&modificationDate1="+ei.getModificationDate1()
 						+ "&modificationDate2="+ei.getModificationDate1()
-						+ "&username="+ template_list.getLogin();
+						+ "&username="+ getUser().getLogin();
 
 				Window.open( fileDownloadURL, "_blank",null);
 				hide();
@@ -547,9 +525,9 @@ public class Templates extends Composite implements EntryPoint {
 		inventoryId =  inventory;
 		Dialog d = new Dialog("Importar Stock","Importar",true,"Cancelar",true,"importStock");
 		d.setUrl(GWT.getModuleBaseURL());
-		d.setTemplateList(template_list);
+		d.setTemplateList(templateList);
 		d.setWarehouseName(warehouse);
-		TemplatesDialog popup = new TemplatesDialog(d) {
+		TemplatesDialog popup = new TemplatesDialog(getAonData(), d) {
 			
 			@Override
 			protected void onCancel() {
@@ -565,7 +543,7 @@ public class Templates extends Composite implements EntryPoint {
 				ListBox  lb2 = (ListBox) flex_table.getWidget(1, 1);
 				warehouse = lb2.getItemText(lb2.getSelectedIndex());				
 
-				for(TemplateInfo t : tlist.getList()) {
+				for(TemplateInfo t : tlist) {
 					if(t.getName().equals(template) && t.getType().equals("Stock")){
 						ti = t;
 					}
@@ -583,19 +561,19 @@ public class Templates extends Composite implements EntryPoint {
 						pbd.addStyleName("gwt-PopupPanel-template");
 						pbd.setGlassEnabled(true);
 						pbd.show();						
-						item.executeExcel(getDomain(), ti, ImportType.STOCK, null,
+						item.executeExcel(getDomain(), getUser(), ti, ImportType.STOCK, null,
 								inventoryId, warehouse,null, "" , "",false,-1,new AsyncCallback<Integer>() {
 							
 							@Override
 							public void onSuccess(Integer result) {
-								item.insertStock(getDomain(),new AsyncCallback<Error>() {
+								item.insertStock(getDomain(), getUser(), new AsyncCallback<Error>() {
 									@Override
 									public void onSuccess(Error result) {
 										pbd.completed();
 										pbd.hide();
 										Dialog d2 = new Dialog("Importar Stock","Aceptar",true,"Cancelar",false,"importResponse");
 										d2.setError(result);
-										TemplatesDialog popup2 = new TemplatesDialog(d2){
+										TemplatesDialog popup2 = new TemplatesDialog(getAonData(), d2){
 
 											@Override
 											protected void onAccept() {
@@ -635,14 +613,14 @@ public class Templates extends Composite implements EntryPoint {
 
 	}
 	
-	private void importTransferStock( Vector<Warehouse> w, Vector<Series> series, Integer number){
+	private void importTransferStock( LinkedList<Warehouse> w, LinkedList<Series> series, Integer number){
 		num = number;
 		Dialog d = new Dialog("Traspaso entre almacenes","Importar",true,"Cancelar",true,"importTransferStock");
 		d.setUrl(GWT.getModuleBaseURL());
-		d.setTemplateList(template_list);
+		d.setTemplateList(templateList);
 		d.setWarehouses(w);
 		d.setSeries2(series);
-		TemplatesDialog popup = new TemplatesDialog(d) {
+		TemplatesDialog popup = new TemplatesDialog(getAonData(), d) {
 			Integer number = num;
 			@Override
 			protected void onCancel() {
@@ -669,7 +647,7 @@ public class Templates extends Composite implements EntryPoint {
 				TextBox tb = (TextBox) flex_table.getWidget(4, 1);
 				comments = tb.getText();
 		
-				for(TemplateInfo t : tlist.getList()) {
+				for(TemplateInfo t : tlist) {
 					if(t.getName().equals(template) && t.getType().equals("Stock")){
 						ti = t;
 					}
@@ -688,19 +666,19 @@ public class Templates extends Composite implements EntryPoint {
 						pbd.addStyleName("gwt-PopupPanel-template");
 						pbd.setGlassEnabled(true);
 						pbd.show();	
-						item.executeExcel(getDomain(), ti, ImportType.STOCK, null,
+						item.executeExcel(getDomain(), getUser(), ti, ImportType.STOCK, null,
 								0, warehouse, warehouse2, series, comments,true,number, new AsyncCallback<Integer>() {
 							
 							@Override
 							public void onSuccess(Integer result) {
-								item.insertTransferStock(getDomain(),new AsyncCallback<Error>() {
+								item.insertTransferStock(getDomain(), getUser(), new AsyncCallback<Error>() {
 										@Override
 										public void onSuccess(Error result) {
 											pbd.completed();
 											pbd.hide();
 											Dialog d2 = new Dialog("Traspaso entre almacenes","Aceptar",true,"Cancelar",false,"importResponse");
 											d2.setError(result);
-											TemplatesDialog popup2 = new TemplatesDialog(d2){
+											TemplatesDialog popup2 = new TemplatesDialog(getAonData(), d2){
 												
 												@Override
 												protected void onAccept() {
@@ -746,14 +724,14 @@ public class Templates extends Composite implements EntryPoint {
 
 	}
 
-	private void exportStocks(Vector<Warehouse> w,ExportInfo ei, Boolean closeInventory){
+	private void exportStocks(LinkedList<Warehouse> w,ExportInfo ei, Boolean closeInventory){
 		eiAux = ei;
 		closeInventoryAux = closeInventory;
 		Dialog d = new Dialog("Exportar Stock","Descargar",true,"Cancelar",true,"exportStock");
 		d.setUrl(GWT.getModuleBaseURL());
-		d.setTemplateList(template_list);
+		d.setTemplateList(templateList);
 		d.setWarehouses(w);
-		TemplatesDialog popup = new TemplatesDialog(d) {
+		TemplatesDialog popup = new TemplatesDialog(getAonData(), d) {
 			ExportInfo ei = eiAux;
 			Boolean closeInventory = closeInventoryAux;
 			@Override
@@ -768,7 +746,7 @@ public class Templates extends Composite implements EntryPoint {
 				String template = lb.getItemText(lb.getSelectedIndex());
 				TemplateInfo ti = new TemplateInfo();
 				
-				for(TemplateInfo t : tlist.getList()) {
+				for(TemplateInfo t : tlist) {
 					if(t.getName().equals(template) && t.getType().equals("Stock")){
 						ti = t;
 					}
@@ -789,6 +767,7 @@ public class Templates extends Composite implements EntryPoint {
 		            	+ "?id=" + Integer.toString(ti.getId())
 		            	+ "&drive_id=" +URL.encode(driveId)
 		            	+ "&name=" +URL.encode(ti.getName())
+		            	+ "&domain_name=" + getDomain().getName()
 		            	+ "&domain_id=" + getDomain().getId()
 		            	+ "&warehouse=" + warehouse
 		            	+ "&category="+ei.getCategory()
@@ -805,7 +784,7 @@ public class Templates extends Composite implements EntryPoint {
 						+ "&close="+closeInventory
 						+ "&inventory="+ ei.getInventory()
 						+ "&only_non_cero="+ onlyNonCero
-						+ "&username="+ template_list.getLogin()
+						+ "&username="+ getUser().getLogin()
 						+ "&packaged_info=" + addPackagedInfo;
 				
 				Window.open( fileDownloadURL, "_blank",null);
@@ -817,12 +796,12 @@ public class Templates extends Composite implements EntryPoint {
 		popup.show();
 	}
 	
-	private void exportTransferStocks(Vector<Warehouse> w){
+	private void exportTransferStocks(LinkedList<Warehouse> w){
 		Dialog d = new Dialog("Exportar Stock","Descargar",true,"Cancelar",true,"exportStock");
 		d.setUrl(GWT.getModuleBaseURL());
-		d.setTemplateList(template_list);
+		d.setTemplateList(templateList);
 		d.setWarehouses(w);
-		TemplatesDialog popup = new TemplatesDialog(d) {
+		TemplatesDialog popup = new TemplatesDialog(getAonData(), d) {
 			
 			@Override
 			protected void onCancel() {
@@ -836,7 +815,7 @@ public class Templates extends Composite implements EntryPoint {
 				String template = lb.getItemText(lb.getSelectedIndex());
 				TemplateInfo ti = new TemplateInfo();
 				
-				for(TemplateInfo t : tlist.getList()) {
+				for(TemplateInfo t : tlist) {
 					if(t.getName().equals(template) && t.getType().equals("Stock")){
 						ti = t;
 					}
@@ -850,9 +829,10 @@ public class Templates extends Composite implements EntryPoint {
 		            	+ "?id=" + Integer.toString(ti.getId())
 		            	+ "&drive_id=" +URL.encode(driveId)
 		            	+ "&name=" +URL.encode(ti.getName())
+		            	+ "&domain_name=" + getDomain().getName()
 		            	+ "&domain_id=" + getDomain().getId()
 		            	+ "&warehouse=" + warehouse
-		            	+ "&username="+ template_list.getLogin();
+		            	+ "&username="+ getUser().getLogin();
 				
 				Window.open( fileDownloadURL, "_blank",null);
 				hide();
@@ -866,8 +846,8 @@ public class Templates extends Composite implements EntryPoint {
 	private void exportCatalogue(){
 		Dialog d = new Dialog("Exportar Catalogo","Descargar",true,"Cancelar",true,"exportCatalogue");
 		d.setUrl(GWT.getModuleBaseURL());
-		d.setTemplateList(template_list);
-		TemplatesDialog popup = new TemplatesDialog(d) {
+		d.setTemplateList(templateList);
+		TemplatesDialog popup = new TemplatesDialog(getAonData(), d) {
 			
 			@Override
 			protected void onCancel() {
@@ -879,7 +859,7 @@ public class Templates extends Composite implements EntryPoint {
 				ListBox lb0 = (ListBox) flex_table.getWidget(0,1);
 				String template = lb0.getSelectedItemText();
 				
-				for(TemplateInfo t : tlist.getList()) {
+				for(TemplateInfo t : tlist) {
 					if(t.getName().equals(template) && t.getType().equals("Stock")){
 						ti = t;
 					}
@@ -899,12 +879,12 @@ public class Templates extends Composite implements EntryPoint {
 				
 				
 				String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_catalogue"
-	
 		            	+ "?domain_id=" + getDomain().getId()
+		            	+ "&domain_name=" + getDomain().getName()
 		            	+ "&workplace=" + workplace
 		            	+ "&department="+ department
 		            	+ "&template_id="+ti.getId()
-		            	+ "&username="+ template_list.getLogin();
+		            	+ "&username="+ getUser().getLogin();
 				
 				Window.open( fileDownloadURL, "_blank",null);
 				hide();
@@ -920,8 +900,8 @@ public class Templates extends Composite implements EntryPoint {
 		workplaceId = workplace;
 		Dialog d = new Dialog("Importar Solicitudes de Compra","Importar",true,"Cancelar",true,"importProposal");
 		d.setUrl(GWT.getModuleBaseURL());
-		d.setTemplateList(template_list);
-		TemplatesDialog popup = new TemplatesDialog(d) {
+		d.setTemplateList(templateList);
+		TemplatesDialog popup = new TemplatesDialog(getAonData(), d) {
 			
 			@Override
 			protected void onCancel() {
@@ -935,7 +915,7 @@ public class Templates extends Composite implements EntryPoint {
 				String template = lb.getItemText(lb.getSelectedIndex());
 				TemplateInfo ti = new TemplateInfo();
 				
-				for(TemplateInfo t : tlist.getList()) {
+				for(TemplateInfo t : tlist) {
 					if(t.getName().equals(template) && t.getType().equals("Stock")){
 						ti = t;
 					}
@@ -953,19 +933,19 @@ public class Templates extends Composite implements EntryPoint {
 						pbd.addStyleName("gwt-PopupPanel-template");
 						pbd.setGlassEnabled(true);
 						pbd.show();	
-						item.executeExcel(getDomain(),tiAux, ImportType.PROPOSAL, null,
+						item.executeExcel(getDomain(), getUser(), tiAux, ImportType.PROPOSAL, null,
 								null, null, null, null, null, null, null, new AsyncCallback<Integer>() {
 							
 							@Override
 							public void onSuccess(Integer result) {
-								item.insertProposal(getDomain(),proposalId,workplaceId,new AsyncCallback<Error>() {
+								item.insertProposal(getDomain(), getUser(), proposalId,workplaceId,new AsyncCallback<Error>() {
 											@Override
 											public void onSuccess(Error result) {
 												pbd.completed();
 												pbd.hide();
 												Dialog d2 = new Dialog("Importar Solicitudes de Compra","Aceptar",true,"Cancelar",false,"importResponse");
 												d2.setError(result);
-												TemplatesDialog popup2 = new TemplatesDialog(d2){
+												TemplatesDialog popup2 = new TemplatesDialog(getAonData(), d2){
 
 													@Override
 													protected void onAccept() {
@@ -1011,8 +991,8 @@ public class Templates extends Composite implements EntryPoint {
 		proposalId = proposal;
 		Dialog d = new Dialog("Exportar Compra","Descargar",true,"Cancelar",true,"exportProposal");
 		d.setUrl(GWT.getModuleBaseURL());
-		d.setTemplateList(template_list);
-		TemplatesDialog popup = new TemplatesDialog(d) {
+		d.setTemplateList(templateList);
+		TemplatesDialog popup = new TemplatesDialog(getAonData(), d) {
 			
 			@Override
 			protected void onCancel() {
@@ -1026,7 +1006,7 @@ public class Templates extends Composite implements EntryPoint {
 				String template = lb.getItemText(lb.getSelectedIndex());
 				TemplateInfo ti = new TemplateInfo();
 				
-				for(TemplateInfo t : tlist.getList()) {
+				for(TemplateInfo t : tlist) {
 					if(t.getName().equals(template) && t.getType().equals("Stock")){
 						ti = t;
 					}
@@ -1035,8 +1015,9 @@ public class Templates extends Composite implements EntryPoint {
 				String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_proposal/"
 		            	+ "?id=" + Integer.toString(ti.getId())
 		            	+ "&domain_id=" + getDomain().getId()
+		            	+ "&domain_name=" + getDomain().getName()
 		            	+ "&proposal=" + proposalId
-		            	+ "&username="+ template_list.getLogin();
+		            	+ "&username="+ getUser().getLogin();
 				
 				Window.open( fileDownloadURL, "_blank",null);
 				hide();
@@ -1051,8 +1032,8 @@ public class Templates extends Composite implements EntryPoint {
 		incomeId = income;
 		Dialog d = new Dialog("Exportar Albarán","Descargar",true,"Cancelar",true,"exportIncome");
 		d.setUrl(GWT.getModuleBaseURL());
-		d.setTemplateList(template_list);
-		TemplatesDialog popup = new TemplatesDialog(d) {
+		d.setTemplateList(templateList);
+		TemplatesDialog popup = new TemplatesDialog(getAonData(), d) {
 			
 			@Override
 			protected void onCancel() {
@@ -1066,7 +1047,7 @@ public class Templates extends Composite implements EntryPoint {
 				String template = lb.getItemText(lb.getSelectedIndex());
 				TemplateInfo ti = new TemplateInfo();
 				
-				for(TemplateInfo t : tlist.getList()) {
+				for(TemplateInfo t : tlist) {
 					if(t.getName().equals(template) && t.getType().equals("Stock")){
 						ti = t;
 					}
@@ -1075,8 +1056,9 @@ public class Templates extends Composite implements EntryPoint {
 				String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_income/"
 		            	+ "?id=" + Integer.toString(ti.getId())
 		            	+ "&domain_id=" + getDomain().getId()
+		            	+ "&domain_name=" + getDomain().getName()
 		            	+ "&income=" + incomeId
-		            	+ "&username="+ template_list.getLogin();
+		            	+ "&username="+ getUser().getLogin();
 				
 				Window.open( fileDownloadURL, "_blank",null);
 				hide();
@@ -1092,7 +1074,7 @@ public class Templates extends Composite implements EntryPoint {
 		inventoryIdAux = inventoryId;
 		Integer size = 0;
 		TemplateInfo templateInfo = null;
-		for (TemplateInfo ti : template_list.getList()) {
+		for (TemplateInfo ti : templateList) {
 			if(closed.equals("true") && ti.getType().equals("Inventario Cerrado")){
 				templateInfo = ti;
 				size++;
@@ -1108,9 +1090,9 @@ public class Templates extends Composite implements EntryPoint {
 			else title = "Listado Valorado";
 			Dialog d = new Dialog(title,"Descargar",true,"Cancelar",true,"exportInventory");
 			d.setUrl(GWT.getModuleBaseURL());
-			d.setTemplateList(template_list);
+			d.setTemplateList(templateList);
 			d.setClosed(closed.equals("true"));
-			TemplatesDialog popup = new TemplatesDialog(d) {
+			TemplatesDialog popup = new TemplatesDialog(getAonData(), d) {
 				String closed = closedAux;
 				String inventoryId = inventoryIdAux;
 				@Override
@@ -1123,7 +1105,7 @@ public class Templates extends Composite implements EntryPoint {
 					ListBox lb = (ListBox) flex_table.getWidget(0, 1);
 					String template = lb.getItemText(lb.getSelectedIndex());
 					TemplateInfo ti = new TemplateInfo();
-					for (TemplateInfo t : tlist.getList()) {
+					for (TemplateInfo t : tlist) {
 						if(closed.equals("true") && t.getName().equals(template) && t.getType().equals("Inventario Cerrado")){
 							ti = t;
 						}
@@ -1134,9 +1116,10 @@ public class Templates extends Composite implements EntryPoint {
 					String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_inventory/"
 		            	+ "?id=" + Integer.toString(ti.getId())
 		            	+ "&domain_id=" + getDomain().getId()
+		            	+ "&domain_name=" + getDomain().getName()
 		            	+ "&closed="+closed
 		            	+ "&inventory="+inventoryId
-		            	+ "&username="+ template_list.getLogin();
+		            	+ "&username="+ getUser().getLogin();
 				
 				
 					Window.open( fileDownloadURL, "_blank",null);
@@ -1151,23 +1134,24 @@ public class Templates extends Composite implements EntryPoint {
 			String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_inventory/"
 	            	+ "?id=" + Integer.toString(templateInfo.getId())
 	            	+ "&domain_id=" + getDomain().getId()
+	            	+ "&domain_name=" + getDomain().getName()
 	            	+ "&closed="+closed
 	            	+ "&inventory="+inventoryId
-	            	+ "&username="+ template_list.getLogin();
+	            	+ "&username="+ getUser().getLogin();
 			
 			Window.open( fileDownloadURL, "_blank",null);
 		}
 	}
 	
 	private void exportEcommerce(){
-		item.getTypeList(getDomain(), new AsyncCallback<LinkedList<String>>() {
+		item.getTypeList(getDomain(), getUser(), new AsyncCallback<LinkedList<String>>() {
 			
 			@Override
 			public void onSuccess(LinkedList<String> result) {
 				Dialog d = new Dialog("Exportar Productos Ecommerce","Exportar",true,"Cancelar",true,"exportEcommerce");
 				d.setUrl(GWT.getModuleBaseURL());
 				d.setTypeList(result);
-				TemplatesDialog popup = new TemplatesDialog(d) {
+				TemplatesDialog popup = new TemplatesDialog(getAonData(), d) {
 					
 					@Override
 					protected void onCancel() {
@@ -1181,7 +1165,8 @@ public class Templates extends Composite implements EntryPoint {
 						
 						String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_amazon_product/"
 				            	+ "?domain_id=" + getDomain().getId()
-				            	+ "&username="+ template_list.getLogin()
+				            	+ "&domain_name=" + getDomain().getName()
+				            	+ "&username="+ getUser().getLogin()
 				            	+ "&description=" + listBox.getSelectedItemText();
 						Window.open( fileDownloadURL, "_blank",null);
 					}
@@ -1196,8 +1181,8 @@ public class Templates extends Composite implements EntryPoint {
 		});
 	}
 	
-	private void importEcommerce(final List<Seller> sellerList) {
-		mpimpl.getMarketplaceTagList(getDomain(), new AsyncCallback<LinkedList<Tag>>() {
+	private void importEcommerce(final LinkedList<Seller> sellerList) {
+		mpimpl.getMarketplaceTagList(getDomain(), getUser(), new AsyncCallback<LinkedList<Tag>>() {
 			
 			@Override
 			public void onSuccess(LinkedList<Tag> result) {
@@ -1205,7 +1190,7 @@ public class Templates extends Composite implements EntryPoint {
 						.setUrl(GWT.getModuleBaseURL())
 						.setTagList(result)
 						.setSellerList(sellerList);
-				TemplatesDialog popup = new TemplatesDialog(d) {
+				TemplatesDialog popup = new TemplatesDialog(getAonData(), d) {
 					
 					@Override
 					protected void onCancel() {
@@ -1238,13 +1223,13 @@ public class Templates extends Composite implements EntryPoint {
 								.setName(tagListBox.getSelectedItemText())
 								.setId(Integer.parseInt(tagListBox.getSelectedValue()));
 						
-						item.executeExcelEcommerce(getDomain(), ecommerce, seller, type, tag, new AsyncCallback<Error>() {
+						item.executeExcelEcommerce(getDomain(), getUser(), ecommerce, seller, type, tag, new AsyncCallback<Error>() {
 							@Override
 							public void onSuccess(Error result) {
 								pbd.hide();
 								Dialog d2 = new Dialog("Importar Plantilla Ecommerce","Aceptar",true,"Cancelar",false,"importResponse");
 								d2.setError(result);
-								TemplatesDialog popup2 = new TemplatesDialog(d2){
+								TemplatesDialog popup2 = new TemplatesDialog(getAonData(), d2){
 
 									@Override
 									protected void onAccept() {
@@ -1358,11 +1343,11 @@ public class Templates extends Composite implements EntryPoint {
 		ei.setDescription(name);
 		eiAux=ei;
 		wAux = warehouse;
-		item.getWarehouses(getDomain(), new AsyncCallback<Vector<Warehouse>>() {
+		item.getWarehouses(getDomain(), getUser(), new AsyncCallback<LinkedList<Warehouse>>() {
 			ExportInfo ei = eiAux; String warehouse =  wAux;
 			@Override
-			public void onSuccess(Vector<Warehouse> result) {
-				Vector<Warehouse> v = new Vector<Warehouse>();
+			public void onSuccess(LinkedList<Warehouse> result) {
+				LinkedList<Warehouse> v = new LinkedList<Warehouse>();
 				if(!warehouse.equals("") && !warehouse.equals("null") && warehouse != null){
 					for (Warehouse w : result) {
 						if(w.getId() == Integer.parseInt(warehouse))
@@ -1396,7 +1381,7 @@ public class Templates extends Composite implements EntryPoint {
 		ei.setStock(stock);
 		ei.setInventory(inventory);
 		
-		Vector<Warehouse> v = new Vector<Warehouse>();
+		LinkedList<Warehouse> v = new LinkedList<Warehouse>();
 		Warehouse w = new Warehouse();
 		w.setName(warehouse);
 		v.add(w);
@@ -1434,9 +1419,9 @@ public class Templates extends Composite implements EntryPoint {
 		w1.setName(sourceWarehouse);
 		Warehouse w2 = new Warehouse();
 		w2.setName(targetWarehouse);
-		Vector<Warehouse> warehouses = new Vector<Warehouse>();
+		LinkedList<Warehouse> warehouses = new LinkedList<Warehouse>();
 		warehouses.add(0,w1);warehouses.add(1,w2);
-		Vector<Series> series = new Vector<Series>();
+		LinkedList<Series> series = new LinkedList<Series>();
 		Series s = new Series();
 		s.setName(serie);
 		series.add(s);
@@ -1450,10 +1435,10 @@ public class Templates extends Composite implements EntryPoint {
 	}-*/;
 	
 	public void transferStockx(){
-		item.getWarehouses(getDomain(), new AsyncCallback<Vector<Warehouse>>() {
+		item.getWarehouses(getDomain(), getUser(), new AsyncCallback<LinkedList<Warehouse>>() {
 			
 			@Override
-			public void onSuccess(Vector<Warehouse> result) {
+			public void onSuccess(LinkedList<Warehouse> result) {
 				exportTransferStocks(result);
 			}
 			
@@ -1531,10 +1516,10 @@ public class Templates extends Composite implements EntryPoint {
 	}-*/;
 	
 	public void ecommerce(){
-		item.getSellerList(getDomain(), new AsyncCallback<List<Seller>>() {
+		item.getSellerList(getDomain(), getUser(), new AsyncCallback<LinkedList<Seller>>() {
 			
 			@Override
-			public void onSuccess(List<Seller> result) {
+			public void onSuccess(LinkedList<Seller> result) {
 				importEcommerce(result);				
 			}
 			
@@ -1566,7 +1551,7 @@ public class Templates extends Composite implements EntryPoint {
 		String fileDownloadURL = GWT.getModuleBaseURL()+ "download_offer_excel/"
 				+ "?domain=" + getDomain().getName()
 				+ "&domain_id=" + getDomain().getId()
-            	+ "&username="+ template_list.getLogin()
+            	+ "&username="+ getUser().getLogin()
             	+ "&statuses=" + statuses
             	+ "&target=" + target
             	+ "&seller=" + seller
@@ -1595,7 +1580,8 @@ public class Templates extends Composite implements EntryPoint {
 	public void deliveryx(){		
 		String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_amazon_delivery/"
             	+ "?domain_id=" + getDomain().getId()
-            	+ "&username="+ template_list.getLogin();
+            	+ "&domain_name=" + getDomain().getName()
+            	+ "&username="+ getUser().getLogin();
 		Window.open( fileDownloadURL, "_blank",null);
 	}
 	
@@ -1655,11 +1641,6 @@ public class Templates extends Composite implements EntryPoint {
 		}
 	}-*/;
 
-	
-	private Domain getDomain() {
-		return new Domain().setId(JsTemplates.getCurrentDomain()).setName(JsTemplates.getCurrentDomainName());
-	}
-	
 	private void print(Throwable caught){
 		item.print(caught.getMessage(), new AsyncCallback<Void>() {
 			@Override public void onSuccess(Void result) {}
