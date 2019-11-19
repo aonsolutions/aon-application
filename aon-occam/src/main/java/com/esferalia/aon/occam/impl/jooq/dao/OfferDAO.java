@@ -325,28 +325,19 @@ public class OfferDAO {
 			return new Offer()
 					.setId(record.getValue(OFFER.ID))
 					.setDomain(record.getValue(OFFER.DOMAIN))
-					.setType(
-							AonEnumUtils.enumValue(OfferType.class,
-									record.getValue(OFFER.TYPE)))
-					.setStatus(
-							AonEnumUtils.enumValue(OfferStatus.class,
-									record.getValue(OFFER.STATUS)))
+					.setType(AonEnumUtils.enumValue(OfferType.class, record.getValue(OFFER.TYPE)))
+					.setStatus(AonEnumUtils.enumValue(OfferStatus.class, record.getValue(OFFER.STATUS)))
 					.setSeries(record.getValue(OFFER.SERIES))
 					.setNumber(record.getValue(OFFER.NUMBER))
 					.setIssueDate(record.getValue(OFFER.ISSUE_DATE))
-					.setTarget((Target) new Target()
-							.setId(record.getValue(OFFER.TARGET))
-					)
-					.setSeller((record.getValue(OFFER.SELLER) == null)
-							? null
-							: new Seller()
-							.setId( record.getValue(OFFER.SELLER) ))
+					.setTarget((Target) new Target().setId(record.getValue(OFFER.TARGET)))
+					.setSeller((record.getValue(OFFER.SELLER) == null) 
+							? null : new Seller().setId( record.getValue(OFFER.SELLER) ))
 					.setSupplier((Supplier) 
 						((record.getValue(OFFER.SUPPLIER) == null)
-							? null
-							: new Supplier()
-							.setId( record.getValue(OFFER.SUPPLIER))))
-					.setWorkPlace(new Workplace().setId(record.getValue(OFFER.WORKPLACE)));
+							? null : new Supplier().setId( record.getValue(OFFER.SUPPLIER))))
+					.setWorkPlace(new Workplace().setId(record.getValue(OFFER.WORKPLACE)))
+					.setExternalReference(record.getValue(OFFER.EXTERNAL_REFERENCE));
 		}
 		
 	}
