@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -25,6 +26,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +68,9 @@ public class DocumentOnlineSigner implements Serializable {
 
 	
 	static final String URL_ECERTIA = "https://app.ecertia.com/api/json/reply/EviSignSubmit";
+	static final String URL_QUERY_ECERTIA = "https://app.ecertia.com/api/json/reply/EviSignQuery";
 	static final String URL_EVICERTIA = "https://app.evicertia.com/api/json/reply/EviSignSubmit";
+	static final String URL_QUERY_EVICERTIA = "https://app.evicertia.com/api/json/reply/EviSignQuery";
 	
 	private String username;
 	private String password;
@@ -153,6 +157,17 @@ public class DocumentOnlineSigner implements Serializable {
 		setUrl(URL_ECERTIA);
 		setNotifyCommercial(true);
 		loadParams();
+	}
+	
+	public void init(String username, String password, Integer signingType) {
+		// Test Url by default
+		setUsername(username);
+		setPassword(password);
+		setSigningType(signingType);
+		setCollapsed(false);
+		setTesting(false);
+		setUrl(URL_ECERTIA);
+		setNotifyCommercial(true);
 	}
 	
 	private void loadParams() {
@@ -270,6 +285,17 @@ public class DocumentOnlineSigner implements Serializable {
 				AonUtil.addInfoMessage("No response obtained...");
 			}
 		}
+	}
+	
+	public byte[] getEvicertiaData(String externalReference) throws UnsupportedEncodingException, JSONException {
+		JSONObject json = new JSONObject();
+		JSONArray uniqueIds = new JSONArray();
+		uniqueIds.put(externalReference);
+		json.put("withUniqueIds", uniqueIds);
+		json.put("includeAffidavitsOnResult", true);
+		JSONObject response = getObject(json.toString());	
+		String base64 = response.getJSONArray("results").getJSONObject(0).getJSONArray("affidavits").getJSONObject(0).getString("bytes");
+		return Base64.getDecoder().decode(base64.getBytes("UTF-8"));
 	}
 	
 	private String getTargetCommercialEmail(Offer offer) {
@@ -429,6 +455,41 @@ public class DocumentOnlineSigner implements Serializable {
 			HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
 			conn.setDoOutput(true);
 			conn.setRequestMethod("POST");
+			conn.setRequestProperty("Accept", "application/json");
+			conn.setRequestProperty("Content-Type", "application/json");
+			String encoding = new String(Base64.getEncoder().encode((getUsername() + ":" + getPassword()).getBytes())); 
+			conn.setRequestProperty("Authorization", "Basic " + encoding);
+			
+			OutputStream os = conn.getOutputStream();
+			os.write(requestData.getBytes());
+			os.flush();
+			
+			BufferedReader br = new BufferedReader(new InputStreamReader(
+				(conn.getInputStream())));
+			
+			String output;	
+			String response = "";
+			while ((output = br.readLine()) != null) {
+				response = output;	
+			}
+			conn.disconnect();
+			return response;
+		} catch (Exception e) {
+			throw new AbortProcessingException(e.getMessage());
+		}
+	}
+	
+	protected JSONObject getObject(String requestData) {
+		String response = get(requestData);
+		return response != null ? new JSONObject(response) : new JSONObject();
+	}
+	
+	protected String get(String requestData) {
+		try {
+			URL url = new URL( isTesting() ? URL_QUERY_ECERTIA : URL_QUERY_EVICERTIA);
+			HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+			conn.setDoOutput(true);
+			conn.setRequestMethod("GET");
 			conn.setRequestProperty("Accept", "application/json");
 			conn.setRequestProperty("Content-Type", "application/json");
 			String encoding = new String(Base64.getEncoder().encode((getUsername() + ":" + getPassword()).getBytes())); 

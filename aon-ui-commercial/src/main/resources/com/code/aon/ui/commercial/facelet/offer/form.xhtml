@@ -189,12 +189,12 @@
 									styleClass="aon-icon-commandButton aon-icon-unlock aon-margin-left">
 								</aon:commandButton>
 								
-								<aon:if test="#{not empty offer.documentOnlineSignParam}">
-									<aon:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;"
-										rendered="#{!offer.nevv and offer.to.externalReference != null}"
+								<aon:if test="#{not empty offer.documentOnlineSignParam and !offer.nevv and offer.to.externalReference != null}">
+									<a href="/download_evicertia/#{offer.to.domain}/#{offer.to.externalReference}"
+										target="_blank"
 										title="#{offer.documentOnlineSignParam.value}"
 										style="padding-left: 45px;"
-										styleClass="aon-evicertia aon-margin-left" />
+										class="aon-evicertia aon-margin-left" />
 								</aon:if>
 								
 							</aon:div>
