@@ -1304,5 +1304,8 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-report-table-bold")
 	String aonReportTableBold();
 
+	@ClassName("aon-loader")
+	String aonLoader();
+
 	
 }

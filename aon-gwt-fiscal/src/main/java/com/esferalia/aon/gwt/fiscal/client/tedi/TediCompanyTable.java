@@ -3,8 +3,10 @@ package com.esferalia.aon.gwt.fiscal.client.tedi;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonCellTable;
 import com.esferalia.aon.occam.api.model.tedi.TediCompanyResult;
+import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.HTML;
@@ -60,8 +62,17 @@ public class TediCompanyTable extends CellTable<TediCompanyResult> {
 	private void addInboxCountColumn() {
 		final TextColumn<TediCompanyResult> inboxCountColumn = new TextColumn<TediCompanyResult>() {
 			@Override
+			public void render(Context context, TediCompanyResult object, SafeHtmlBuilder sb) {
+				if(object.getInboxCount() != null){
+					sb.appendHtmlConstant("<span>"+object.getInboxCount()+"</span>");
+				}
+				else {
+					sb.appendHtmlConstant("<div class='aon-loader'>&nbsp;</div>");
+				}
+			}
+			@Override
 			public String getValue(TediCompanyResult result) {
-				return result.getInboxCount() != null ? result.getInboxCount() +"" : "-" ;
+				return result.getInboxCount() != null ? result.getInboxCount() +"" : "" ;
 			}
 		};
 		this.addColumn(inboxCountColumn, "Pendientes");
