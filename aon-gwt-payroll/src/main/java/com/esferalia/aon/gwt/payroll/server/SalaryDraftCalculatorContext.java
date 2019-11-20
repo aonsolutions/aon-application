@@ -182,6 +182,8 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 				return true;
 			if ( id == Integer.MIN_VALUE) 
 				return true;
+			if ( id <= Integer.MIN_VALUE + 1000) 
+				return true;
 			if  ( payment instanceof IsDraft) // Draft
 				return ids.add(payment.getId());
 			return !ids.contains(id);
