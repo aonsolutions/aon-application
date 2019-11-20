@@ -1705,6 +1705,74 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		Assert.assertEquals( 1750.00 *1.10 / 12 * 4.50 , settle.getTotalPayment(), DELTA);
 	}
+
+	@Test
+	public void testSettleWithExtrasIX() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { new Extra() {
+					{
+						this.expression = "P_0 + P_1 + P_2";
+						this.month = Month.DECEMBER;
+						this.start = "01/01";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, new Extra() {
+					{
+						this.expression = "(P_0 + P_1 + P_2)";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, });
+		
+		Date contractStart = getFirstDayOfYear(getToday());
+		contractStart = add(contractStart, Calendar.MONTH,7);
+		
+		ContractRecord contract = newContract(aonContext, 
+				contractStart,
+				new HashMap<String, String>() {
+				{
+					put(TC2.getName(), "\"100\"");
+					put(MONTH_DAYS.getName(), "30");
+					put(QUOTE_GROUP.getName(), "\"01\"");
+				}
+				}, 
+				new String[] { 
+					"( P_1 + P_2 ) * 0.10 ",
+					"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+					"250.00 * DIAS_TRABAJADOS / DIAS_MES" 
+				}, 
+				new String[] {
+					"BASE_CGC * 0.10", 
+					"BASE_CGP * 0.05",
+					"BASE_IRPF * 0.00/100" 
+				}, 
+				category);
+		//@formatter:off		
+		
+		addSSRegimeStuff(aonContext);
+		
+		
+
+		Date endDate = add(add(getFirstDayOfYear(getToday()), Calendar.MONTH, 10), Calendar.DATE, 14 ); // 15/11
+		
+		ISQLContractSalaryCalculatorContext settleCtx = 
+				getSmartSQLContractSettleContext(connection, contractStart, endDate, contract);
+		
+		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(settleCtx);
+		
+		for ( SalaryPayment p : settle.getSalaryPayments() ) 
+			System.out.println(p.getDescription() + "= " + p.getAmount() );
+		
+		Assert.assertEquals( 1750.00 *1.10 / 12 * 3.50 * 2 , settle.getTotalPayment(), DELTA);
+	}
 	// ------------------------------------------------------------------------
 
 	@Test

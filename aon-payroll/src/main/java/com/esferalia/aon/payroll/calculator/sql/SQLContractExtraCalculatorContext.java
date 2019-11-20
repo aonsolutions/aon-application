@@ -107,9 +107,19 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 				new FilterCollection<IContractPayment>(
 				getExtraPaymentFilter(), 
 				new CompositePayments<IContractPayment>(super.getContractPayments(),getWarnPayment(monthlyQuotedPayments)));
+
 		return extraPayments;
 	}
 
+	@Override
+	protected void loadContractData(ExpressionContext ctx) throws SQLException {
+		super.loadContractData(ctx);
+		try {
+			fixMonthVariables(ctx);
+		} catch (ExpressionException e) {
+		}
+	}
+	
 	@Override
 	protected void initContractExpressionCtx(NextHook hook) throws SQLException, ExpressionException {
 		super.initContractExpressionCtx(hook);
@@ -407,34 +417,69 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 				ctx.getTimedVariables(NATURAL_MONTH_DAYS.getName()));
 
 		int months = monthDaysList.size();
-
+		
 		for (ITimedVariable<?> monthDays : monthDaysList) {
 
 			Period month = monthDays.getPeriod();
-			List<ITimedVariable<Object>> vars = ctx.getVariables(WORKED_DAYS, month.getStart(), month.getEnd());
-			for (ITimedVariable<Object> var : vars) {
-				List<ITimedResult<Double>> workedDays = ctx.eval(String.format("%s/%d", WORKED_DAYS, months),
-						var.getPeriod().getStart(), var.getPeriod().getEnd(), Double.class);
-				for (ITimedResult<Double> workedDay : workedDays) {
-					ctx.setVariable(WORKED_DAYS, workedDay.getValue(), workedDay.getPeriod().getStart(),
-							workedDay.getPeriod().getEnd());
-
+			{
+				List<ITimedVariable<Object>> vars = ctx.getVariables(WORKED_DAYS, month.getStart(), month.getEnd());
+				for (ITimedVariable<Object> var : vars) {
+					List<ITimedResult<Double>> workedDays = ctx.eval(String.format("%s/%d", WORKED_DAYS, months),
+							var.getPeriod().getStart(), var.getPeriod().getEnd(), Double.class);
+					for (ITimedResult<Double> workedDay : workedDays) {
+						ctx.setVariable(WORKED_DAYS, workedDay.getValue(), workedDay.getPeriod().getStart(),
+								workedDay.getPeriod().getEnd());
+	
+					}
+					// Number days = (Number) var.getValue(var.getPeriod());
+					// ctx.setVariable(WORKED_DAYS, days.doubleValue() / months,
+					// var.getPeriod().getStart(), var.getPeriod().getEnd());
 				}
-				// Number days = (Number) var.getValue(var.getPeriod());
-				// ctx.setVariable(WORKED_DAYS, days.doubleValue() / months,
-				// var.getPeriod().getStart(), var.getPeriod().getEnd());
 			}
-
+			
 			// ctx.setVariable(MONTH_DAYS, days.doubleValue() * months,
 			// month.getStart(), month.getEnd());
 			// ctx.setVariable(PAY_DAYS, days.doubleValue() * months,
 			// month.getStart(), month.getEnd());
 		}
-
 	}
 	
+	private void fixMonthVariables(ExpressionContext ctx) throws UndefinedVariablesException, ExpressionException {
+		List<ITimedVariable<?>> monthDaysList = new ArrayList<ITimedVariable<?>>(
+				ctx.getTimedVariables(NATURAL_MONTH_DAYS.getName()));
+
+		int months = monthDaysList.size();
+		
+		String monthVariables [] =
+		ctx.variablesSet().stream()
+		.filter((String name) -> !ContextVariable.isContextVariable(name) )
+		.filter((String name) -> ctx.getVariables(name).size() > 1 )
+		.toArray(String[]::new);
+		
+
+		for (ITimedVariable<?> monthDays : monthDaysList) {
+			Period month = monthDays.getPeriod();
+			for ( String monthVariable: monthVariables ) {
+				List<ITimedVariable<Object>> vars = ctx.getVariables(monthVariable, month.getStart(), month.getEnd());
+				for (ITimedVariable<Object> var : vars) {
+					List<ITimedResult<Double>> monthResults = ctx.eval(String.format("%s/%d", monthVariable, months),
+							var.getPeriod().getStart(), var.getPeriod().getEnd(), Double.class);
+					for (ITimedResult<Double> monthResult : monthResults) {
+						ctx.setVariable(monthVariable, monthResult.getValue(), monthResult.getPeriod().getStart(),
+								monthResult.getPeriod().getEnd());
+
+					}
+				}
+			}
+		}
+	}
+
 	private int getMonths() {
-		return getExpressionContext().getTimedVariables(NATURAL_MONTH_DAYS.getName()).size();
+		try {
+			return getExpressionContext().eval(NATURAL_MONTH_DAYS.getName(), getStartDate(), getEndDate()).size();
+		} catch ( Throwable t ) {
+			return getExpressionContext().getTimedVariables(NATURAL_MONTH_DAYS.getName()).size();
+		}
 	}
 	
 	private String getMissed( Collection<IContractPayment> payments) {
