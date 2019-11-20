@@ -28,8 +28,6 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.commercial.Offer;
@@ -61,8 +59,7 @@ import com.lowagie.text.pdf.PdfReader;
 public class DocumentOnlineSigner implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(DocumentOnlineSigner.class.getName());
+
 	
 	static final String REPORT_TEMPLATE_SDD_MANDATE = "sddMandate";
 
@@ -153,8 +150,8 @@ public class DocumentOnlineSigner implements Serializable {
 	
 	public void init() {
 		// Test Url by default
-		setTesting(true);
-		setUrl(URL_ECERTIA);
+		setTesting(false);
+		setUrl(URL_EVICERTIA);
 		setNotifyCommercial(true);
 		loadParams();
 	}
@@ -166,7 +163,7 @@ public class DocumentOnlineSigner implements Serializable {
 		setSigningType(signingType);
 		setCollapsed(false);
 		setTesting(false);
-		setUrl(URL_ECERTIA);
+		setUrl(URL_EVICERTIA);
 		setNotifyCommercial(true);
 	}
 	
@@ -272,7 +269,7 @@ public class DocumentOnlineSigner implements Serializable {
 			pnUrl = (pnUrl.startsWith("http://")?"":"http://") + pnUrl;
 			opt.put("pushNotificationUrl", pnUrl);
 			opt.put("pushNotificationFilter", filter);
-			opt.put("signatureRequestInfoText", "Tras la aceptación del presupuesto vamos a proceder a su firma. Por favor, pinche en \"LEER DOCUMENTO\" y siga los pasos indicados.");
+			opt.put("signatureRequestInfoText", "Según conversación mantenida, para consultar el presupuesto y proceder a su firma, por favor haga click en \"Leer Documento\".");
 			json.put("options", opt);
 			
 			JSONObject responseJson = postObject(json.toString());
