@@ -453,9 +453,11 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		String monthVariables [] =
 		ctx.variablesSet().stream()
 		.filter((String name) -> !ContextVariable.isContextVariable(name) )
+		.filter((String name) -> name.startsWith("DIAS"))
 		.filter((String name) -> ctx.getVariables(name).size() > 1 )
 		.toArray(String[]::new);
 		
+		 
 
 		for (ITimedVariable<?> monthDays : monthDaysList) {
 			Period month = monthDays.getPeriod();
