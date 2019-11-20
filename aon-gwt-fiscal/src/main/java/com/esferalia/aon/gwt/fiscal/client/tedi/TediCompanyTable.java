@@ -145,11 +145,19 @@ public class TediCompanyTable extends CellTable<TediCompanyResult> {
 	
 	public void addTediCompany(TediCompanyResult object) {
 		if(object.getTedi() != null && !object.getTedi()) {
-			SERVICE.addTediCompany(domainName, user, domainId, snapshot, object, new AsyncCallback<Void>() {
-		
-				@Override public void onFailure(Throwable caught) {}
-				@Override public void onSuccess(Void result) {}
-			});
+			SyncDialog d = new SyncDialog(true) {
+				
+				@Override
+				protected void onAccept() {
+					hide();
+					SERVICE.addTediCompany(domainName, user, domainId, snapshot, object, new AsyncCallback<Void>() {
+						
+						@Override public void onFailure(Throwable caught) {}
+						@Override public void onSuccess(Void result) {}
+					});
+				}
+			};
+			d.center();
 		}
 	}
 	
