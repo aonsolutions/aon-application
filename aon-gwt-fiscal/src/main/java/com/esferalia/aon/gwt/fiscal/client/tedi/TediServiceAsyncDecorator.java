@@ -83,10 +83,10 @@ public class TediServiceAsyncDecorator implements TediServiceAsync {
 	}
 
 	@Override
-	public void tediSync(String domainName, String user, int domain, boolean snapshot,
+	public void tediSync(String domainName, String user, int domain, boolean snapshot, boolean showNotTedi,
 			AsyncCallback<LinkedList<TediCompanyResult>> callback) {
 		AON.start();
-		fsa.tediSync(domainName, user, domain,snapshot, new AsyncCallbackWrapper<LinkedList<TediCompanyResult>>(callback));
+		fsa.tediSync(domainName, user, domain,snapshot, showNotTedi, new AsyncCallbackWrapper<LinkedList<TediCompanyResult>>(callback));
 	}
 
 	@Override
@@ -94,5 +94,11 @@ public class TediServiceAsyncDecorator implements TediServiceAsync {
 			AsyncCallback<Integer> callback) {
 		AON.start();
 		fsa.getCountInboxInvoices(domainName, user, domain,snapshot, company, new AsyncCallbackWrapper<Integer>(callback));		
+	}
+
+	@Override
+	public void addTediCompany(String domainName, String user, int domain, boolean snapshot, TediCompanyResult company, AsyncCallback<Void> callback) {
+		AON.start();
+		fsa.addTediCompany(domainName, user, domain, snapshot, company, new AsyncCallbackWrapper<Void>(callback));		
 	}
 }

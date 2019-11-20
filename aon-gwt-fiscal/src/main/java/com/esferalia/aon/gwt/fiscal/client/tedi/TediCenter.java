@@ -153,7 +153,7 @@ public class TediCenter extends MainEntryPoint {
 	}
 	
 	private void companyListPanel() {
-		companyTable = new TediCompanyTable(new CompanyProvidesKey());
+		companyTable = new TediCompanyTable(getDomainName(), getDomain(), getUser(), isTediSnapshot(), new CompanyProvidesKey());
 		start = 0;
 		DockLayoutPanel dockLayoutPanel2 = new DockLayoutPanel(Unit.PX);
 		dockLayoutPanel2.addStyleName(AON.AON_CSS.aonMarginTop());
@@ -171,8 +171,10 @@ public class TediCenter extends MainEntryPoint {
 			@Override
 			protected void onDocumentChange(String value) {
 				document = value;
-				LinkedList<TediCompanyResult> list = companyList.stream().filter(f ->  f.getCompany().getDocument().toUpperCase().contains(value.toUpperCase())
-						&& f.getCompany().getName().toUpperCase().contains(name.toUpperCase()))
+
+				LinkedList<TediCompanyResult> list = companyList.stream().filter(f ->  
+					f.getCompany().getDocument() != null && f.getCompany().getDocument().toUpperCase().contains(value.toUpperCase())
+					&& f.getCompany().getName() != null && f.getCompany().getName().toUpperCase().contains(name.toUpperCase()))
 				.collect(Collectors.toCollection(LinkedList::new));
 				Integer size = list.size() < 50 ? list.size() : 50;
 				companyTable.setRowData(list.subList(0, size));
@@ -182,8 +184,9 @@ public class TediCenter extends MainEntryPoint {
 			@Override
 			protected void onNameChange(String value) {
 				name = value;
-				LinkedList<TediCompanyResult> list = companyList.stream().filter(f ->  f.getCompany().getName().toUpperCase().contains(value.toUpperCase())
-						&& f.getCompany().getDocument().toUpperCase().contains(document.toUpperCase()))
+				LinkedList<TediCompanyResult> list = companyList.stream().filter(f ->  
+					f.getCompany().getName() != null && f.getCompany().getName().toUpperCase().contains(value.toUpperCase())
+					&& f.getCompany().getDocument() != null && f.getCompany().getDocument().toUpperCase().contains(document.toUpperCase()))
 				.collect(Collectors.toCollection(LinkedList::new));
 				Integer size = list.size() < 50 ? list.size() : 50;
 				companyTable.setRowData(list.subList(0, size ));
@@ -222,7 +225,9 @@ public class TediCenter extends MainEntryPoint {
 		companyTable.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 			public void onSelectionChange(SelectionChangeEvent event) {
 				TediCompanyResult company = companyTable.getSelected();
-				onSelect( company.getCompany() );
+				if(company.getTedi() != null && !company.getTedi()) {
+					
+				} else onSelect( company.getCompany() );
 			}
 		});
 		SERVICE.getCompanies(getDomainName(), getUser(), getDomain(), isTediSnapshot(),
@@ -248,8 +253,8 @@ public class TediCenter extends MainEntryPoint {
 	}
 	
 	private void getCountInbox(Integer index) {
-		if(index < start ) {
-			if(companyList.get(index).getInboxCount() != null) {
+		if(index < start) {
+			if(companyList.get(index).getInboxCount() != null || (companyList.get(index).getTedi() != null && !companyList.get(index).getTedi())) {
 				getCountInbox(index + 1);
 			} else {
 				SERVICE.getCountInboxInvoices(getDomainName(), getUser(), getDomain(), isTediSnapshot(), companyList.get(index).getCompany(), new AsyncCallback<Integer>() {
@@ -429,7 +434,15 @@ public class TediCenter extends MainEntryPoint {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				onSync( );
+				SyncDialog d = new SyncDialog() {
+					
+					@Override
+					protected void onAccept() {
+						hide();
+						onSync(check.getValue());
+					}
+				};
+				d.center();
 			}
 		});
 		buttonContainer.add(sync);
@@ -490,9 +503,11 @@ public class TediCenter extends MainEntryPoint {
 		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
 	}
 	
-	private void onSync() {
-		SERVICE.tediSync(getDomainName(), getUser(), getDomain(), isTediSnapshot(), new AsyncCallback<LinkedList<TediCompanyResult>>() {
-			@Override public void onFailure(Throwable caught) {}
+	private void onSync(Boolean showNotTedi) {
+		SERVICE.tediSync(getDomainName(), getUser(), getDomain(), isTediSnapshot(), showNotTedi, new AsyncCallback<LinkedList<TediCompanyResult>>() {
+			@Override public void onFailure(Throwable caught) {
+				
+			}
 
 			@Override
 			public void onSuccess(LinkedList<TediCompanyResult> results) {

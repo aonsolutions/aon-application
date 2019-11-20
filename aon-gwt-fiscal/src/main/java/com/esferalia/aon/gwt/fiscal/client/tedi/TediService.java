@@ -24,7 +24,8 @@ public interface TediService extends RemoteService {
 	TediResult validateInvoice(String domainName, String user, int domain, boolean snapshot, TediResult result) throws AonCoreException;
 	String getInvoiceAttachURL(String domainName, String user, int domain, boolean snapshot, String uuid) throws AonCoreException;
 	LinkedList<TediCompanyResult> getCompanies(String domainName, String user, int domain, boolean snapshot);
-	LinkedList<TediCompanyResult> tediSync(String domainName, String user, int domain, boolean snapshot);
+	LinkedList<TediCompanyResult> tediSync(String domainName, String user, int domain, boolean snapshot, boolean showNotTedi);
 	Integer getCountInboxInvoices(String domainName, String user, int domain, boolean snapshot, Company company);
+	void addTediCompany(String domainName, String user, int domain, boolean snapshot, TediCompanyResult company);
 	
 }

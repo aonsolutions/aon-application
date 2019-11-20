@@ -10,6 +10,7 @@ public class TediCompanyResult implements Serializable {
 
 	Company company;
 	Integer inboxCount;
+	Boolean tedi;
 	
 	public TediCompanyResult() {
 
@@ -23,16 +24,28 @@ public class TediCompanyResult implements Serializable {
 		return company;
 	}
 
-	public void setCompany(Company company) {
+	public TediCompanyResult setCompany(Company company) {
 		this.company = company;
+		return this;
 	}
 
 	public Integer getInboxCount() {
 		return inboxCount;
 	}
 
-	public void setInboxCount(Integer inboxCount) {
+	public TediCompanyResult setInboxCount(Integer inboxCount) {
 		this.inboxCount = inboxCount;
+		return this;
 	}
+
+	public Boolean getTedi() {
+		return tedi;
+	}
+
+	public TediCompanyResult setTedi(Boolean tedi) {
+		this.tedi = tedi;
+		return this;
+	}
+	
 	
 }

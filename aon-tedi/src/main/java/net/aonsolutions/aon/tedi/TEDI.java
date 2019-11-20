@@ -297,4 +297,31 @@ public class TEDI {
 		return tedi.getCompanies(company.getDocument());
 		
 	}
+
+	public static TediCompany createCompany(String domainName, int domain, boolean snapshot, String user, TediCompany tediCompany) throws TediException {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return createCompany(ctx , snapshot, tediCompany);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static TediCompany createCompany(AONContext ctx, boolean snapshot, TediCompany tediCompany) throws TediException {
+		Company company = CompanyDAO.getCompany(ctx, ctx.getDomainId());
+		if (company == null) {
+			throw new TediException(
+					"No se ha encontrado una compa\u00F1ia v\u00E1lida para el dominio " + ctx.getDomainId());
+		}
+		if (AonStringUtils.isEmpty(company.getDocument())) {
+			throw new TediException(
+					"No se ha indicado un NIF/CIF/DNI v\u00E1lido para la compa\u00F1ia (Configuraci\u00F3n global)");
+		}
+		Tedi tedi = getTedi(ctx, snapshot);
+		LOGGER.info("[TEDI] Attempt to recover companies for [" + company.getDocument() + "]");
+		tediCompany.setCompany(company.getDocument());
+		return tedi.createCompany(tediCompany);
+	}
 }

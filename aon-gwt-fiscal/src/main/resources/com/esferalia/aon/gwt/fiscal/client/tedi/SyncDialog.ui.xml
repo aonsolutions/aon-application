@@ -1,0 +1,25 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
+	
+	<ui:Style>
+
+
+
+	</ui:Style>
+	
+	<g:HTMLPanel styleName="form-template">
+			
+		<div>
+			<g:CheckBox ui:field="check"> Mostrar empresas no existentes en tEDI. </g:CheckBox>
+		</div>
+			<g:Label></g:Label>
+		<div>
+		</div>
+		<div class="buttons-template">
+			<g:Button ui:field="accept_button">Aceptar</g:Button>
+		</div>
+	
+	</g:HTMLPanel>
+
+</ui:UiBinder>

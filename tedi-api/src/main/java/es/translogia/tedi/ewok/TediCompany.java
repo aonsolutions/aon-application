@@ -7,6 +7,7 @@ public class TediCompany implements Serializable{
 	private static final long serialVersionUID = 8685884818179111880L;
 	
 	private String document;
+	private String company;
 	private String name;
 	private String alias;
 	private Boolean active;
@@ -21,6 +22,15 @@ public class TediCompany implements Serializable{
 
 	public TediCompany setDocument(String document) {
 		this.document = document;
+		return this;
+	}
+	
+	public String getCompany() {
+		return company;
+	}
+
+	public TediCompany setCompany(String company) {
+		this.company = company;
 		return this;
 	}
 

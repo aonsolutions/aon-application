@@ -159,10 +159,14 @@ public class Tedi extends TediRequest {
 //		return new TediCompany(json);
 //	}
 //	
-//	public TediCompany createCompany(TediCompany company) {
-//		TediResponse response = post(TEDI + COMPANY_SRC, getToken(), company.toJSON().toString()); 
-//		return new TediCompany(response.getJsonContent());
-//	}
+	public TediCompany createCompany(TediCompany company) throws TediException {
+		TediResponse response = post(COMPANY_BASE, getToken(), TediCompanyJSON.toJSON(company).toString()); 
+		if (response.ok()) {
+			return company;
+		}
+		throw new TediException(
+				"createCompany: " + response.getResponseCode() + " - " + response.getResponseMessage());
+	}
 //	
 //	public TediCompany updateCompany(TediCompany company) {
 //		return new TediCompany(put(TEDI + COMPANY_SRC + "/" + company.getDocument(), getToken(), company.toJSON().toString()));

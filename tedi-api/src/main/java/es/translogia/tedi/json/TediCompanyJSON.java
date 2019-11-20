@@ -10,6 +10,8 @@ import es.translogia.tedi.json.FunctionalInterfaces.ITediCompanyToJSON;
 public enum TediCompanyJSON {
 	DOCUMENT((company, json) -> company.setDocument(json.getString(IConstants.DOCUMENT)),
 			(company, json) -> json.put(IConstants.DOCUMENT, company.getDocument())),
+	COMPANY((company, json) -> company.setCompany(json.getString(IConstants.COMPANY)),
+			(company, json) -> json.put(IConstants.COMPANY, company.getCompany())),
 	NAME((company, json) -> company.setName(json.getString(IConstants.NAME)),
 			(company, json) -> json.put(IConstants.NAME, company.getName())),
 	ALIAS((company, json) -> company.setAlias(json.optString(IConstants.ALIAS)),

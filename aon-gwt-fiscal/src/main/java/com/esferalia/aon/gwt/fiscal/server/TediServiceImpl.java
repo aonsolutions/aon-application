@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 import es.translogia.tedi.baloo.TediException;
+import es.translogia.tedi.ewok.TediCompany;
 import es.translogia.tedi.ewok.TediInvoice;
 import es.translogia.tedi.ewok.TediInvoiceStatus;
 import net.aonsolutions.aon.tedi.TEDI;
@@ -110,13 +111,26 @@ public class TediServiceImpl extends AonStatelessRemoteServiceServlet implements
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
+	public LinkedList<TediCompanyResult> getCompanies(String domainName, String user, int domain, boolean snapshot, boolean showNotTedi) throws AonCoreException {
+		if(showNotTedi) {
+			User u =  AON.getUser(domainName, domain, user);
+			Integer[] scopes = AON.getUserScopes(domainName, domain, user, u.getId());
+			return AON.getUserCompanyStream(domainName, domain, user, scopes)
+					.map(cp -> new TediCompanyResult(cp)
+						.setTedi(isTediCenter(domainName, cp, snapshot)))
+					.collect(Collectors.toCollection(LinkedList::new));
+		} else {
+			return getCompanies(domainName, user, domain, snapshot);
+		}
+	}
+	
 	private Boolean isTediCenter(String domainName, Company company, boolean snapshot) {
 		ApplicationParameter apActive = AON.getApplicationParameter(domainName, company.getDomain(), "", snapshot ? AppParam.TEDI_SNAPSHOT_ACTIVE.getValue() : AppParam.TEDI_ACTIVE.getValue());
 		return "1".equals(apActive.getValue());
 	}
 
 	@Override
-	public LinkedList<TediCompanyResult> tediSync(String domainName, String user, int domain, boolean snapshot) {
+	public LinkedList<TediCompanyResult> tediSync(String domainName, String user, int domain, boolean snapshot, boolean showNotTedi) {
 		try {
 			TEDI.getCompanies(domainName, domain, snapshot, user).forEach(cp -> {
 				System.out.println("------------ " + cp.getDocument() + " --------------------");
@@ -143,9 +157,23 @@ public class TediServiceImpl extends AonStatelessRemoteServiceServlet implements
 
 				});	
 			});
-			return getCompanies(domainName, user, domain, snapshot);
+			return getCompanies(domainName, user, domain, snapshot, showNotTedi);
 		} catch (TediException e) {
 			throw new AonCoreException(e);
 		}
+	}
+
+	@Override
+	public void addTediCompany(String domainName, String user, int domain, boolean snapshot, TediCompanyResult company) {
+		try { 
+			TediCompany tc = new TediCompany()
+				.setActive(true)
+				.setDocument(company.getCompany().getDocument())
+				.setName(company.getCompany().getName());
+			TEDI.createCompany(domainName, domain, snapshot, user, tc);
+		} catch (TediException e) {
+			throw new AonCoreException(e);
+		}
+
 	}
 }
