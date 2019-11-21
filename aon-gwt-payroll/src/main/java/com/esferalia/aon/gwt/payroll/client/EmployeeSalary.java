@@ -13,7 +13,6 @@ import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
@@ -48,7 +47,6 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
-import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public class EmployeeSalary extends Composite implements ContextMenuHandler {
 
@@ -195,6 +193,7 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	private Integer settleId = null; // Only used for setlle letter assign on hasSettleSalary()
 	private Integer settleEnterpriseId = null; // Only used for setlle letter assign on hasSettleSalary()
+	private Boolean ready = new Boolean(false);
 	
 	public void setEmployeeSalaryObject(EmployeeSalaryObject employeeSalaryObject) {
 		this.employeeSalaryObject = employeeSalaryObject;
@@ -208,11 +207,13 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 					} else {
 						// Hide everything
 						mainContainer.addStyleName(style.hide());
+						this.emailButton.removeStyleName(style.hide());
 						
 						//Hide buttons
 						this.deleteButton.setVisible(false);
 						this.saveButton.setVisible(false);
 						this.publishButton.setVisible(false);
+						this.emailButton.setVisible(false);
 						
 						// Show warning dialog
 						WarningDialog warningDialog = new WarningDialog("Aviso", "No existen nominas para este empleado.");
@@ -240,6 +241,7 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 			this.saveButton.setVisible(false);
 			this.publishButton.setVisible(false);
 			this.settleLetterButton.setVisible(false);
+			this.emailButton.setVisible(false);
 			
 			// Show warning dialog
 			WarningDialog warningDialog = new WarningDialog("Aviso", "No existen nominas para este empleado. Si ha filtrado la informacion por favor revise los parametros.");
@@ -251,17 +253,22 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 		// Show everything
 		mainContainer.removeStyleName(style.hide());
 		
+		//Ready set false for email confirmation
+		this.ready = false;
+		
 		//Show buttons
 		this.deleteButton.setVisible(true);
 		this.saveButton.setVisible(true);
 		this.publishButton.setVisible(true);
 		this.settleLetterButton.setVisible(true);
+		this.emailButton.setVisible(true);
 		
 		//Disable buttons till any salary selected
 		deleteButton.setEnabled(false);
 		saveButton.setEnabled(false);
 		publishButton.setEnabled(false);
 		settleLetterButton.setEnabled(hasSettleSalary());
+		emailButton.setEnabled(false);
 		
 		// Resource Style CellTable
 		CellTableResource resource = GWT.create(CellTableResource.class);
@@ -326,10 +333,12 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	            	deleteButton.setEnabled(true);
 	            	saveButton.setEnabled(true);
 	            	publishButton.setEnabled(true);
+	            	emailButton.setEnabled(true);
 	            }else {
 	            	deleteButton.setEnabled(false);
 	            	saveButton.setEnabled(false);
 	            	publishButton.setEnabled(false);
+	            	emailButton.setEnabled(false);
 	            }
 	            
 	        }
@@ -586,18 +595,48 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	
 	@UiHandler("emailButton")
 	public void onEmailSalary(ClickEvent event) {
-//		String fileDownloadURL = GWT.getModuleBaseURL()+ "/salary_email/";
-//		Window.open(fileDownloadURL, "_blank", null);
-//		post(fileDownloadURL, "");
-	}
-	
-	protected <T extends JavaScriptObject> void post(String url, String requestData) {
-		String requestUrl = GWT.getModuleBaseURL()+ "/salary_email/";
-
-		XMLHttpRequest xhr = XMLHttpRequest.create();
-		xhr.open("POST", requestUrl);
-		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		xhr.send(requestData);
+		Integer enterpriseID = ((SalaryInfo)selectionModel.getSelectedSet().toArray()[0]).getEnterpriseId();
+		
+		// PARAMS TO DOWNLOAD PAYROLLS
+		String query = "?type=salary&selectedSalaries=" + selectionModel.getSelectedSet().size()
+	            + "&enterprise=" + ((SalaryInfo)selectionModel.getSelectedSet().toArray()[0]).getEnterpriseId();
+			
+		for(int i=0; i<selectionModel.getSelectedSet().size(); i++) {
+			query += "&salary"+i+"Id=" + ((SalaryInfo)selectionModel.getSelectedSet().toArray()[i]).getId();
+		}
+		
+		query += "&name=salaries.pdf";
+		
+		String paramsBase64 = b64decode(query);
+		
+		// DIALOG TO SEND EMAIL
+		PayrollEmailDialog dialog = new PayrollEmailDialog(enterpriseID, paramsBase64) {
+			
+			@Override
+			protected void onAccept() {
+				if(null == this.getFromMAilAccount()) {
+					WarningDialog warning = new WarningDialog("AVISO", "No existe cuenta de correo desde la que enviar este mensaje.");
+					warning.center();
+					warning.show();
+				} else {
+					String from = this.getFromMAilAccount().getId().toString();
+					String to = this.getSendTo();
+					String bodyHTML = this.getBody();
+					
+					employeeSalaryObject.sendPayrollEmail(from, to, bodyHTML,
+						s -> {
+							WarningDialog warning = new WarningDialog("AVISO", employeeSalaryObject.getEmailStatus());
+							warning.center();
+							warning.show();
+							hide();
+						},f -> {}
+					);
+				}
+			}
+		};
+		
+		dialog.center();
+		dialog.show();
 	}
 	
 	@UiHandler("settleLetterButton")
