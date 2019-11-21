@@ -1909,11 +1909,14 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<MailAccount> getDomainMailAccounts(String currentDomainName) {
+	public List<MailAccount> getDomainMailAccounts(String currentDomainName, String currentUser) {
 		Connection connection = null;
 		try {
 			connection = AonServletUtils.getConnection(currentDomainName);
-			return JooqDomain.getMailAccounts(connection, AonServletUtils.getDomainID(currentDomainName));
+			Integer domainId = AonServletUtils.getDomainID(currentDomainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(currentDomainName);
+			Integer userId = AonServletUtils.getUserID(connection, currentUser, domainId, parentDomainId);
+			return JooqDomain.getMailAccounts(connection, userId);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {

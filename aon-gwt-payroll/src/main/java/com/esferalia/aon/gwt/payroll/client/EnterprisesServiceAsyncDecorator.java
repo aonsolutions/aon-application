@@ -390,9 +390,9 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getDomainMailAccounts(String currentDomainName, AsyncCallback<List<MailAccount>> callback) {
+	public void getDomainMailAccounts(String currentDomainName, String currentUser, AsyncCallback<List<MailAccount>> callback) {
 		AON.start();
-		enterprisesServiceAsync.getDomainMailAccounts(currentDomainName, new AsyncCallbackWrapper<List<MailAccount>>(callback));
+		enterprisesServiceAsync.getDomainMailAccounts(currentDomainName, currentUser, new AsyncCallbackWrapper<List<MailAccount>>(callback));
 	}
 
 	@Override

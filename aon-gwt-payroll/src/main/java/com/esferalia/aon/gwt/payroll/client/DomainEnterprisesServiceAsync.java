@@ -236,7 +236,7 @@ public class DomainEnterprisesServiceAsync {
 	}
 	
 	public void getDomainMailAccounts(AsyncCallback<List<MailAccount>> asyncCallback) {
-		enterprisesServiceAsync.getDomainMailAccounts(getCurrentDomainName(), asyncCallback);
+		enterprisesServiceAsync.getDomainMailAccounts(getCurrentDomainName(), getCurrentUser(), asyncCallback);
 	}
 
 	public void getPayrollEmailSendTo(Integer enterpriseID, AsyncCallback<String> asyncCallback) {

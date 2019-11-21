@@ -132,7 +132,7 @@ public interface EnterprisesService extends RemoteService {
 
 	AFIChanges getEmployeeAFIChanges(String currentDomainName, Integer contractId);
 
-	List<MailAccount> getDomainMailAccounts(String currentDomainName);
+	List<MailAccount> getDomainMailAccounts(String currentDomainName, String currentUser);
 
 	String getPayrollEmailSendTo(String currentDomainName, Integer enterpriseID);
 
