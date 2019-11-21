@@ -14,9 +14,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -32,6 +34,7 @@ import org.json.JSONObject;
 import com.code.aon.AonVersion;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferAttachment;
+import com.code.aon.commercial.enumeration.OfferType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
@@ -40,17 +43,21 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.User;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryDirStaff;
 import com.code.aon.report.ReportException;
+import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.finance.SddMandateObject;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfCopyFields;
@@ -69,6 +76,7 @@ public class DocumentOnlineSigner implements Serializable {
 	static final String URL_EVICERTIA = "https://app.evicertia.com/api/json/reply/EviSignSubmit";
 	static final String URL_QUERY_EVICERTIA = "https://app.evicertia.com/api/json/reply/EviSignQuery";
 	
+	private Offer offer;
 	private String username;
 	private String password;
 	private Integer signingType;
@@ -76,6 +84,13 @@ public class DocumentOnlineSigner implements Serializable {
 	private boolean collapsed;
 	private boolean testing;
 	private boolean notifyCommercial;
+	
+	public Offer getOffer() {
+		return offer;
+	}
+	public void setOffer(Offer offer) {
+		this.offer = offer;
+	}
 	
 	public String getUsername() {
 		return username;
@@ -148,6 +163,15 @@ public class DocumentOnlineSigner implements Serializable {
 		setUrl(testing?URL_ECERTIA:URL_EVICERTIA);
 	}
 	
+	public void init(Offer offer) {
+		setOffer(offer);
+		// Test Url by default
+		setTesting(false);
+		setUrl(URL_EVICERTIA);
+		setNotifyCommercial(true);
+		loadParams();
+	}
+	
 	public void init() {
 		// Test Url by default
 		setTesting(false);
@@ -168,30 +192,105 @@ public class DocumentOnlineSigner implements Serializable {
 	}
 	
 	private void loadParams() {
+		Boolean representation  = OfferType.DEALERSHIP.equals(offer.getType());
+		
 		ApplicationParameter ap_username = AppParamUtil.getParameter("DOCUMENT_ONLINE_SIGN_username");
 		ApplicationParameter ap_password = AppParamUtil.getParameter("DOCUMENT_ONLINE_SIGN_password");
 		ApplicationParameter ap_signingType = AppParamUtil.getParameter("DOCUMENT_ONLINE_SIGN_signingType");
 		
-		if(ap_username!=null && ap_username.getValue().trim().length()>0
-				&& ap_password!=null && ap_password.getValue().trim().length()>0
-				&& ap_signingType!=null && ap_signingType.getValue().trim().length()>0
-				&& NumberUtils.isNumber(ap_signingType.getValue().trim())) {
-			setUsername(ap_username.getValue().trim());
-			setPassword(ap_password.getValue().trim());
-			setSigningType(Integer.parseInt(ap_signingType.getValue().trim()));
-			setCollapsed(true);
+		if(representation) {
+			Supplier s = offer.getSupplier();
+			Optional<RegistryAddInfo> usOpt = AON.getRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), "", f -> f.getRegistryProperty().eq(s.getId()).and(f.getAttributeProperty().eq("DOCUMENT_ONLINE_SIGN_username")));
+			Optional<RegistryAddInfo> passOpt = AON.getRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), "", f -> f.getRegistryProperty().eq(s.getId()).and(f.getAttributeProperty().eq("DOCUMENT_ONLINE_SIGN_password")));
+			Optional<RegistryAddInfo> stOpt = AON.getRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), "", f -> f.getRegistryProperty().eq(s.getId()).and(f.getAttributeProperty().eq("DOCUMENT_ONLINE_SIGN_signingType")));
+	
+			if(usOpt.isPresent()) {
+				setUsername(usOpt.get().getValue());
+				setPassword(passOpt.get().getValue());
+				setSigningType(Integer.parseInt(stOpt.get().getValue()));
+			} else {
+				if(ap_username!=null && ap_username.getValue().trim().length()>0
+						&& ap_password!=null && ap_password.getValue().trim().length()>0
+						&& ap_signingType!=null && ap_signingType.getValue().trim().length()>0
+						&& NumberUtils.isNumber(ap_signingType.getValue().trim())) {
+					setUsername(ap_username.getValue().trim());
+					setPassword(ap_password.getValue().trim());
+					setSigningType(Integer.parseInt(ap_signingType.getValue().trim()));
+					setCollapsed(true);
+				} else {
+					setUsername(null);
+					setPassword(null);
+					setSigningType(1);
+					setCollapsed(false);
+				}
+			}
 		} else {
-			setUsername(null);
-			setPassword(null);
-			setSigningType(1);
-			setCollapsed(false);
+			if(ap_username!=null && ap_username.getValue().trim().length()>0
+					&& ap_password!=null && ap_password.getValue().trim().length()>0
+					&& ap_signingType!=null && ap_signingType.getValue().trim().length()>0
+					&& NumberUtils.isNumber(ap_signingType.getValue().trim())) {
+				setUsername(ap_username.getValue().trim());
+				setPassword(ap_password.getValue().trim());
+				setSigningType(Integer.parseInt(ap_signingType.getValue().trim()));
+				setCollapsed(true);
+			} else {
+				setUsername(null);
+				setPassword(null);
+				setSigningType(1);
+				setCollapsed(false);
+			}
 		}
+
+		
+
 	}
 	
 	private void saveParams() {
-		AppParamUtil.insertParameter("DOCUMENT_ONLINE_SIGN_username", getUsername());
-		AppParamUtil.insertParameter("DOCUMENT_ONLINE_SIGN_password", getPassword());
-		AppParamUtil.insertParameter("DOCUMENT_ONLINE_SIGN_signingType", String.valueOf(getSigningType()));
+		User user = UserUtils.getInstance().getLoggedUser();
+		Boolean representation  = OfferType.DEALERSHIP.equals(offer.getType());
+		ApplicationParameter ap_username = AppParamUtil.getParameter("DOCUMENT_ONLINE_SIGN_username");		
+
+		if(representation) {
+			Supplier s = offer.getSupplier();
+			Optional<RegistryAddInfo> usOpt = AON.getRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), "", f -> f.getIdProperty().eq(s.getId()).and(f.getAttributeProperty().eq("DOCUMENT_ONLINE_SIGN_username")));
+			Optional<RegistryAddInfo> passOpt = AON.getRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), "", f -> f.getIdProperty().eq(s.getId()).and(f.getAttributeProperty().eq("DOCUMENT_ONLINE_SIGN_password")));
+			Optional<RegistryAddInfo> stOpt = AON.getRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), "", f -> f.getIdProperty().eq(s.getId()).and(f.getAttributeProperty().eq("DOCUMENT_ONLINE_SIGN_signingType")));
+			if(usOpt.isPresent()) {
+				AON.updateRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), user.getLogin(), usOpt.get().setValue(getUsername()));
+				AON.updateRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), user.getLogin(), passOpt.get().setValue(getPassword()));
+				AON.updateRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), user.getLogin(), stOpt.get().setValue(String.valueOf(getSigningType())));
+			} else if(!ap_username.getValue().equals(getUsername())){
+				AON.insertRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), user.getLogin(),
+					new RegistryAddInfo()
+						.setAttribute("DOCUMENT_ONLINE_SIGN_username")
+						.setDomain(offer.getDomain())
+						.setValue(getUsername())
+						.setDate(new Date())
+						.setRegistry(s.getId()));
+				AON.insertRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), user.getLogin(), 
+					new RegistryAddInfo()
+						.setAttribute("DOCUMENT_ONLINE_SIGN_password")
+						.setDomain(offer.getDomain())
+						.setValue(getPassword())
+						.setDate(new Date())
+						.setRegistry(s.getId()));
+				AON.insertRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), user.getLogin(), 
+					new RegistryAddInfo()
+						.setAttribute("DOCUMENT_ONLINE_SIGN_signingType")
+						.setDomain(offer.getDomain())
+						.setValue(String.valueOf(getSigningType()))
+						.setDate(new Date())
+						.setRegistry(s.getId()));
+			} else {
+				AppParamUtil.insertParameter("DOCUMENT_ONLINE_SIGN_username", getUsername());
+				AppParamUtil.insertParameter("DOCUMENT_ONLINE_SIGN_password", getPassword());
+				AppParamUtil.insertParameter("DOCUMENT_ONLINE_SIGN_signingType", String.valueOf(getSigningType()));	
+			}
+		} else {
+			AppParamUtil.insertParameter("DOCUMENT_ONLINE_SIGN_username", getUsername());
+			AppParamUtil.insertParameter("DOCUMENT_ONLINE_SIGN_password", getPassword());
+			AppParamUtil.insertParameter("DOCUMENT_ONLINE_SIGN_signingType", String.valueOf(getSigningType()));
+		}
 	}
 		
 	public void sendData(Offer offer, boolean includeOffer, boolean includeOfferAttach, boolean includeSddMandate) throws Exception {
@@ -270,6 +369,9 @@ public class DocumentOnlineSigner implements Serializable {
 			opt.put("pushNotificationUrl", pnUrl);
 			opt.put("pushNotificationFilter", filter);
 			opt.put("signatureRequestInfoText", "Según conversación mantenida, para consultar el presupuesto y proceder a su firma, por favor haga click en \"Leer Documento\".");
+
+			opt.put("onlineRetentionPeriod", 5);
+			opt.put("notaryRetentionPeriod", 0);
 			json.put("options", opt);
 			
 			JSONObject responseJson = postObject(json.toString());

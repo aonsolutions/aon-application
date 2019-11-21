@@ -930,7 +930,8 @@ public class OfferController extends HeaderObjectController implements ISignatur
 		getSddMandate().setRegistry(offer.getTarget().getRegistry());
 		getSddMandate().setReference(String.valueOf(offer.getTarget().getRegistry().getId()));
 		setDocumentOnlineSigner(new DocumentOnlineSigner());
-		getDocumentOnlineSigner().init();
+
+		getDocumentOnlineSigner().init(getOffer());
 	}
 
 	public void onSendEmail(ActionEvent event) {

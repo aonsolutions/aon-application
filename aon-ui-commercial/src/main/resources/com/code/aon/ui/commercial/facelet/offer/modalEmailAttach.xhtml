@@ -180,15 +180,14 @@
  											<aon:selectBooleanCheckbox id="documentOnlineSign_notifyCommercial"
 												value="#{offer.documentOnlineSigner.notifyCommercial}" />
  											
- 											<aon:if test="#{domainSwitcher.betaUser}">
-												<aon:outputLabel  for="documentOnlineSign_test" title="Entorno de pruebas o produccion"
-													value="Test" />	
-	 											<aon:selectBooleanCheckbox id="documentOnlineSign_test" title="Entorno de pruebas o produccion"
-													value="#{offer.documentOnlineSigner.testing}" >	
-													<a4j:support event="onclick" reRender="documentOnlineSign_url"
-														actionListener="#{offer.documentOnlineSigner.onUpdateUrl}" />
-												</aon:selectBooleanCheckbox>
-											</aon:if>												
+ 											<aon:outputLabel  for="documentOnlineSign_test" title="Entorno de pruebas o produccion"
+												value="Test" />	
+	 										<aon:selectBooleanCheckbox id="documentOnlineSign_test" title="Entorno de pruebas o produccion"
+												value="#{offer.documentOnlineSigner.testing}" >	
+												<a4j:support event="onclick" reRender="documentOnlineSign_url"
+													actionListener="#{offer.documentOnlineSigner.onUpdateUrl}" />
+											</aon:selectBooleanCheckbox>
+																						
 											<aon:outputLabel for="documentOnlineSign_url"
 												value="URL" />
 											<aon:inputText id="documentOnlineSign_url" size="45" disabled="true"

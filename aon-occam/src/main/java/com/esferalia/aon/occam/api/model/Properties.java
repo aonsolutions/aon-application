@@ -233,6 +233,15 @@ public interface Properties {
 		Property<Date> getValueDate();
 	}
 	
+	public interface RegistryAddInfoProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getRegistryProperty();
+		Property<String> getAttributeProperty();
+		Property<String> getValueProperty();
+		Property<Date> getValueDate();
+	}
+	
 	public interface DomainProperties extends AuditProperties{
 		Property<Byte> getActiveProperty();
 		Property<String> getDescriptionProperty();

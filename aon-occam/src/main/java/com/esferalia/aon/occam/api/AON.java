@@ -76,6 +76,7 @@ import com.esferalia.aon.occam.api.model.Filter.ProjectReservationFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
 import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistryAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryBankFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
@@ -167,6 +168,7 @@ import com.esferalia.aon.occam.api.model.registry.Question;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
@@ -1180,6 +1182,45 @@ public class AON {
 		}
 	}
 
+	// --------------------------------- RADDINFO
+	
+	public static Optional<RegistryAddInfo> getRegistryAddInfo(String domainName, Integer domainId, String login, RegistryAddInfoFilter filter){
+		return getRegistryAddInfoStream(domainName, domainId, login, filter).findFirst();
+	}
+	
+	public static Stream<RegistryAddInfo> getRegistryAddInfoStream(String domainName, Integer domainId, String login, RegistryAddInfoFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getRegistryAddInfoStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static void insertRegistryAddInfo(String domainName, Integer domainId, String login, RegistryAddInfo raddinfo) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getRegistry().insertRegistryAddInfo(ctx, raddinfo);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static void updateRegistryAddInfo(String domainName, Integer domainId, String login, RegistryAddInfo raddinfo) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getRegistry().updateRegistryAddInfo(ctx, raddinfo);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	// ------------------------------------ BRAND
 	public static Brand getBrand(String domainName, Integer domainId, String login,
 			Integer id){

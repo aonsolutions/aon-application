@@ -8,6 +8,7 @@ import static com.esferalia.aon.jooq.tables.Category.CATEGORY;
 import static com.esferalia.aon.jooq.tables.Commission.COMMISSION;
 import static com.esferalia.aon.jooq.tables.CommissionCategory.COMMISSION_CATEGORY;
 import static com.esferalia.aon.jooq.tables.CommissionItem.COMMISSION_ITEM;
+import static com.esferalia.aon.jooq.tables.CommissionType.COMMISSION_TYPE;
 import static com.esferalia.aon.jooq.tables.CommissionTypeCommission.COMMISSION_TYPE_COMMISSION;
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
@@ -26,6 +27,8 @@ import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailCommission.INVOICE_DETAIL_COMMISSION;
 import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.ItemAddinfo.ITEM_ADDINFO;
+import static com.esferalia.aon.jooq.tables.MkTemplate.MK_TEMPLATE;
 import static com.esferalia.aon.jooq.tables.Offer.OFFER;
 import static com.esferalia.aon.jooq.tables.OfferDetailCommission.OFFER_DETAIL_COMMISSION;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
@@ -40,14 +43,10 @@ import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
 import static com.esferalia.aon.jooq.tables.Rpaymethod.RPAYMETHOD;
 import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
+import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.Target.TARGET;
-import static com.esferalia.aon.jooq.tables.CommissionType.COMMISSION_TYPE;
-import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
-import static com.esferalia.aon.jooq.tables.MkTemplate.MK_TEMPLATE;
-import static com.esferalia.aon.jooq.tables.ItemAddinfo.ITEM_ADDINFO;
-
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -57,6 +56,7 @@ import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectJoinStep;
 
+import com.esferalia.aon.jooq.tables.Raddinfo;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
@@ -89,6 +89,7 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
 import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistryAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryBankFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
@@ -130,6 +131,7 @@ import com.esferalia.aon.occam.api.model.Properties.PersonProperties;
 import com.esferalia.aon.occam.api.model.Properties.PurchaseDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.PurchaseProperties;
 import com.esferalia.aon.occam.api.model.Properties.RecordDataProperties;
+import com.esferalia.aon.occam.api.model.Properties.RegistryAddInfoProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryBankProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryNoteProperties;
@@ -880,6 +882,31 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getDaysBetweenPymntsProperty() {return null;} // new FilterDAO.PropertyDAO<>(RPAYMETHOD.DAYS_BETWEEN_PYMNTS);}
 		@Override public Property<String> getPymntDaysProperty() {return new FilterDAO.PropertyDAO<>(RPAYMETHOD.PYMNT_DAYS);}
 	}
+	
+	
+	protected static class RegistryAddInfoPropertiesDAO implements RegistryAddInfoProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, RegistryAddInfoFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(RegistryAddInfoFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(Raddinfo.RADDINFO.DOMAIN);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(Raddinfo.RADDINFO.ID);}
+		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(Raddinfo.RADDINFO.REGISTRY);}
+		@Override public Property<String> getAttributeProperty() {return new FilterDAO.PropertyDAO<>(Raddinfo.RADDINFO.ATTRIBUTE);}
+		@Override public Property<String> getValueProperty() {return new FilterDAO.PropertyDAO<>(Raddinfo.RADDINFO.VALUE);}
+		@Override public Property<Date> getValueDate() {return new FilterDAO.PropertyDAO<>(Raddinfo.RADDINFO.VALUE_DATE);}
+
+	}
+	
 	
 	protected static class CompanyPropertiesDAO extends RegistryPropertiesDAO implements CompanyProperties {
 		protected Select<Record> build(SelectJoinStep<Record> select, CompanyFilter filter) {

@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
 import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistryAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryBankFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
@@ -33,6 +34,7 @@ import com.esferalia.aon.occam.api.model.registry.Question;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
@@ -350,4 +352,22 @@ public class RegistryImpl implements IRegistry{
 				configuration -> RegistryDAO.deleteRPayMethod(ctx, filter));
 	}
 
+
+	@Override
+	public Stream<RegistryAddInfo> getRegistryAddInfoStream(AONContext ctx, RegistryAddInfoFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.getRegistryAddInfoStream(ctx, filter));
+	}
+	
+	@Override
+	public RegistryAddInfo insertRegistryAddInfo(AONContext ctx, RegistryAddInfo raddinfo) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.insertRegistryAddInfo(ctx, raddinfo));
+	}
+	
+	@Override
+	public RegistryAddInfo updateRegistryAddInfo(AONContext ctx, RegistryAddInfo raddinfo) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.insertRegistryAddInfo(ctx, raddinfo));
+	}
 }
