@@ -83,10 +83,10 @@ public class TediServiceAsyncDecorator implements TediServiceAsync {
 	}
 
 	@Override
-	public void getCompanies(String domainName, String user, int domain, boolean snapshot,
+	public void getCompanies(String domainName, String user, int domain, boolean snapshot, boolean showNotTedi,
 			AsyncCallback<LinkedList<TediCompanyResult>> callback) {
 		AON.start();
-		fsa.getCompanies(domainName, user, domain,snapshot, new AsyncCallbackWrapper<LinkedList<TediCompanyResult>>(callback));
+		fsa.getCompanies(domainName, user, domain,snapshot, showNotTedi, new AsyncCallbackWrapper<LinkedList<TediCompanyResult>>(callback));
 	}
 
 	@Override

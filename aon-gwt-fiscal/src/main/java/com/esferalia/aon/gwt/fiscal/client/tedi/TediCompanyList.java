@@ -36,6 +36,7 @@ public class TediCompanyList  extends DockLayoutPanel {
 	private TediCenterCallback callback;
 	private SimpleLayoutPanel tabContainer = new SimpleLayoutPanel();
 	private LinkedList<TediCompanyResult> list;
+	private Boolean filterShowNotTedi = false;
 	
 	private int colorIndex = 0;
 
@@ -63,7 +64,8 @@ public class TediCompanyList  extends DockLayoutPanel {
 	private Widget paintFilterWidget() {
 		SimpleLayoutPanel northPanel = new SimpleLayoutPanel();
 		northPanel.setStyleName(AON.AON_CSS.aonScrollArea());
-		
+		northPanel.getElement().getStyle().setMarginLeft(1.5, Unit.EM);
+		northPanel.getElement().getStyle().setMarginRight(1.5, Unit.EM);
 		FilterPanel fp = new FilterPanel() {
 			@Override
 			protected void onDocumentChange(String value) {
@@ -88,6 +90,24 @@ public class TediCompanyList  extends DockLayoutPanel {
 							)
 					)
 					.collect(Collectors.toCollection(LinkedList::new));
+			}
+
+			@Override
+			protected void onShowNotTediChange(Boolean value) {
+				TediCompanyList.this.filterShowNotTedi = value;
+				SERVICE.getCompanies(TediCompanyList.this.currentDomainName, TediCompanyList.this.currentUser, TediCompanyList.this.currentDomain, callback.isSnapshot(), value,
+						new AsyncCallback<LinkedList<TediCompanyResult>>() {
+							@Override
+							public void onSuccess(LinkedList<TediCompanyResult> results) {
+								setData(results);
+							}
+
+							@Override
+							public void onFailure(Throwable caught) {
+								MessageDialog.error(AON.MSG.error() + " [Interno: " + caught.getMessage() + "]");
+							}
+
+						});
 			}
 
 		};
@@ -134,8 +154,8 @@ public class TediCompanyList  extends DockLayoutPanel {
 		wait.addStyleName(AON.AON_CSS.aonMarginTop());
 		p.add(wait);
 		tabContainer.setWidget(p);
-
-		SERVICE.getCompanies(this.currentDomainName, this.currentUser, this.currentDomain, callback.isSnapshot(),
+		
+		SERVICE.getCompanies(this.currentDomainName, this.currentUser, this.currentDomain, callback.isSnapshot(), this.filterShowNotTedi,
 				new AsyncCallback<LinkedList<TediCompanyResult>>() {
 					@Override
 					public void onSuccess(LinkedList<TediCompanyResult> results) {
@@ -346,15 +366,7 @@ public class TediCompanyList  extends DockLayoutPanel {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				SyncDialog d = new SyncDialog() {
-					
-					@Override
-					protected void onAccept() {
-						hide();
-						onSync(check.getValue());
-					}
-				};
-				d.center();
+				onSync(filterShowNotTedi);
 			}
 		});
 		buttonContainer.add(sync);

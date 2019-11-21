@@ -6,8 +6,11 @@ import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesResources;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -31,6 +34,8 @@ public abstract class FilterPanel extends Composite {
     protected abstract void onDocumentChange(String value);
     	
     protected abstract void onNameChange(String value);
+    
+    protected abstract void onShowNotTediChange(Boolean value);
 
     private String document = null;
 	private String name = null;
@@ -73,6 +78,16 @@ public abstract class FilterPanel extends Composite {
 			}
 		});
 		panel.add(nameBox);
+		
+		CheckBox showNotTedi = new CheckBox("Mostrar empresas no existentes en tEDI.");
+		showNotTedi.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				onShowNotTediChange(showNotTedi.getValue());
+			}
+		});
+		panel.add(showNotTedi);
     }
 
 	public String getDocument() {

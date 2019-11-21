@@ -21,7 +21,7 @@ public interface TediServiceAsync {
 	void rejectInvoices(String domainName, String user, int domain, boolean tediSnapshot, LinkedList<TediResult> accepted, AsyncCallback<LinkedList<TediResult>> callback);
 	void validateInvoice(String domainName, String user, int domain, boolean snapshot, TediResult result, AsyncCallback<TediResult> callback);
 	void getInvoiceAttachURL(String domainName, String user, int domain, boolean snapshot, String uuid, AsyncCallback<String> callback);
-	void getCompanies(String domainName, String user, int domain, boolean snapshot, AsyncCallback<LinkedList<TediCompanyResult>> callback);
+	void getCompanies(String domainName, String user, int domain, boolean snapshot, boolean showNotTedi, AsyncCallback<LinkedList<TediCompanyResult>> callback);
 	void tediSync(String domainName, String user, int domain, boolean snapshot, boolean showNotTedi, AsyncCallback<LinkedList<TediCompanyResult>> callback);
 	void getCountInboxInvoices(String domainName, String user, int domain, boolean snapshot, Company company, AsyncCallback<Integer> callback);
 	void addTediCompany(String domainName, String user, int domain, boolean snapshot, TediCompanyResult company, AsyncCallback<Void> callback);

@@ -112,7 +112,6 @@ public class TediServiceImpl extends AonStatelessRemoteServiceServlet implements
 		}
 	}
 	
-	@Override
 	public LinkedList<TediCompanyResult> getCompanies(String domainName, String user, int domain, boolean snapshot ) throws AonCoreException {
 		User u =  AON.getUser(domainName, domain, user);
 		Integer[] scopes = AON.getUserScopes(domainName, domain, user, u.getId());
@@ -121,7 +120,8 @@ public class TediServiceImpl extends AonStatelessRemoteServiceServlet implements
 				.map(cp -> new TediCompanyResult(cp))
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
-	
+
+	@Override
 	public LinkedList<TediCompanyResult> getCompanies(String domainName, String user, int domain, boolean snapshot, boolean showNotTedi) throws AonCoreException {
 		if(showNotTedi) {
 			User u =  AON.getUser(domainName, domain, user);
