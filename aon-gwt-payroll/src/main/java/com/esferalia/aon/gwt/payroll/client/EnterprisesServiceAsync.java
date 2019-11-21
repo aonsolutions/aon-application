@@ -23,6 +23,7 @@ import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
+import com.esferalia.aon.occam.api.model.MailAccount;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -80,5 +81,10 @@ public interface EnterprisesServiceAsync {
 	void setEmployeeAFIChanges(String currentDomainName, Integer contractId, AFIChanges afiChangesMap,
 			AsyncCallback<String> asyncCallback);
 	void getEmployeeAFIChanges(String currentDomainName, Integer contractId, AsyncCallback<AFIChanges> asyncCallback);
+	void getDomainMailAccounts(String currentDomainName, AsyncCallback<List<MailAccount>> asyncCallback);
+	void getPayrollEmailSendTo(String currentDomainName, Integer enterpriseID, AsyncCallback<String> asyncCallback);
+	void getPayrollEmailBody(String currentDomainName, String paramsBase64, AsyncCallback<String> asyncCallback);
+	void sendPayrollEmail(String currentDomainName, String from, String to, String bodyHTML,
+			AsyncCallback<String> asyncCallback);
 
 }

@@ -23,6 +23,7 @@ import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
+import com.esferalia.aon.occam.api.model.MailAccount;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -130,5 +131,13 @@ public interface EnterprisesService extends RemoteService {
 	String setEmployeeAFIChanges(String currentDomainName, Integer contractId, AFIChanges afiChangesMap);
 
 	AFIChanges getEmployeeAFIChanges(String currentDomainName, Integer contractId);
+
+	List<MailAccount> getDomainMailAccounts(String currentDomainName);
+
+	String getPayrollEmailSendTo(String currentDomainName, Integer enterpriseID);
+
+	String getPayrollEmailBody(String currentDomainName, String paramsBase64);
+
+	String sendPayrollEmail(String currentDomainName, String from, String to, String bodyHTML);
 	
 }

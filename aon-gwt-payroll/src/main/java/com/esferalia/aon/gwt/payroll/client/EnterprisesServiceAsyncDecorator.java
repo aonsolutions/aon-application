@@ -27,6 +27,7 @@ import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
+import com.esferalia.aon.occam.api.model.MailAccount;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -386,5 +387,29 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void getEmployeeAFIChanges(String domain, Integer contractId, AsyncCallback<AFIChanges> callback) {
 		AON.start();
 		enterprisesServiceAsync.getEmployeeAFIChanges(domain, contractId, new AsyncCallbackWrapper<AFIChanges>(callback));
+	}
+
+	@Override
+	public void getDomainMailAccounts(String currentDomainName, AsyncCallback<List<MailAccount>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getDomainMailAccounts(currentDomainName, new AsyncCallbackWrapper<List<MailAccount>>(callback));
+	}
+
+	@Override
+	public void getPayrollEmailSendTo(String currentDomainName, Integer enterpriseID, AsyncCallback<String> callback) {
+		AON.start();
+		enterprisesServiceAsync.getPayrollEmailSendTo(currentDomainName, enterpriseID, new AsyncCallbackWrapper<String>(callback));
+	}
+
+	@Override
+	public void getPayrollEmailBody(String currentDomainName, String paramsBase64, AsyncCallback<String> callback) {
+		AON.start();
+		enterprisesServiceAsync.getPayrollEmailBody(currentDomainName, paramsBase64, new AsyncCallbackWrapper<String>(callback));
+	}
+
+	@Override
+	public void sendPayrollEmail(String currentDomainName, String from, String to, String bodyHTML, AsyncCallback<String> callback) {
+		AON.start();
+		enterprisesServiceAsync.sendPayrollEmail(currentDomainName, from, to, bodyHTML, new AsyncCallbackWrapper<String>(callback));
 	}
 }

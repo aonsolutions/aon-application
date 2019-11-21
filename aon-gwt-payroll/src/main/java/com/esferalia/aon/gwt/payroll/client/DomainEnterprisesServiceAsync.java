@@ -23,6 +23,7 @@ import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
+import com.esferalia.aon.occam.api.model.MailAccount;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -234,6 +235,22 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getEmployeeAFIChanges(getCurrentDomainName(), contractId, asyncCallback);
 	}
 	
+	public void getDomainMailAccounts(AsyncCallback<List<MailAccount>> asyncCallback) {
+		enterprisesServiceAsync.getDomainMailAccounts(getCurrentDomainName(), asyncCallback);
+	}
+
+	public void getPayrollEmailSendTo(Integer enterpriseID, AsyncCallback<String> asyncCallback) {
+		enterprisesServiceAsync.getPayrollEmailSendTo(getCurrentDomainName(), enterpriseID, asyncCallback);
+	}
+	
+	public void getPayrollEmailBody(String paramsBase64, AsyncCallback<String> asyncCallback) {
+		enterprisesServiceAsync.getPayrollEmailBody(getCurrentDomainName(), paramsBase64, asyncCallback);
+	}
+	
+	public void sendPayrollEmail(String from, String to, String bodyHTML, AsyncCallback<String> asyncCallback) {
+		enterprisesServiceAsync.sendPayrollEmail(getCurrentDomainName(), from, to, bodyHTML, asyncCallback);
+	}
+	
 	// ----------------------------------------------------------------- static
 	
 	private static String getCurrentUser() {
@@ -243,6 +260,5 @@ public class DomainEnterprisesServiceAsync {
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
 	}
-
 
 }
