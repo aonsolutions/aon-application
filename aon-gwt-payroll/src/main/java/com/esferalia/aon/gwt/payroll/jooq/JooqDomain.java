@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.EnterpriseData.ENTERPRISE_DATA;
 import static com.esferalia.aon.jooq.tables.MailAccount.MAIL_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
@@ -43,16 +42,16 @@ public class JooqDomain {
 		return SETTINGS;
 	}
 	
-	public static List<MailAccount> getMailAccounts(Connection connection, Integer domainID) {
-		return getMailAccountsDB(DSL.using(connection, getDefaultSettings()), domainID);
+	public static List<MailAccount> getMailAccounts(Connection connection, Integer userId) {
+		return getMailAccountsDB(DSL.using(connection, getDefaultSettings()), userId);
 	}
 	
 	public static String getPayrollEmailSendTo(Connection connection, Integer enterpriseID) {
 		return getPayrollEmailSendToDB(DSL.using(connection, getDefaultSettings()), enterpriseID);
 	}
 	
-	public static String getPayrollEmailBody(Connection connection, String paramsBase64) {
-		return getPayrollEmailBodyDB(DSL.using(connection, getDefaultSettings()), paramsBase64);
+	public static String getPayrollEmailBody(Connection connection, String completeURL) {
+		return getPayrollEmailBodyDB(DSL.using(connection, getDefaultSettings()), completeURL);
 	}
 	
 	public static String sendPayrollEmail(Connection connection, String from, String to, String bodyHTML) {
@@ -115,18 +114,11 @@ public class JooqDomain {
 	   
 	}
 
-	private static List<MailAccount> getMailAccountsDB(DSLContext dslContext, Integer domainID) {
+	private static List<MailAccount> getMailAccountsDB(DSLContext dslContext, Integer userId) {
 		List<MailAccount> mailAccounts = new LinkedList<MailAccount>();
 		
-		Record domainRecord = dslContext.select().from(DOMAIN)
-				.where(DOMAIN.ID.eq(domainID)).fetchOne();
-		
 		Result<Record> mailAccountRecords = dslContext.select().from(MAIL_ACCOUNT)
-				.where(MAIL_ACCOUNT.DOMAIN.eq(domainID)).fetch();
-		
-		if(mailAccountRecords.isEmpty())
-			mailAccountRecords = dslContext.select().from(MAIL_ACCOUNT)
-				.where(MAIL_ACCOUNT.DOMAIN.eq(domainRecord.get(DOMAIN.PARENT))).fetch();
+				.where(MAIL_ACCOUNT.USER_ID.eq(userId)).fetch();
 		
 		for(Record r : mailAccountRecords) {
 			MailAccount mailAccount = new MailAccount();
@@ -170,120 +162,140 @@ public class JooqDomain {
 		return enterpriseDataRegistry.get(ENTERPRISE_DATA.EXPRESSION);
 	}
 	
-	private static String getPayrollEmailBodyDB(DSLContext dslContext, String paramsBase64) {
+	private static String getPayrollEmailBodyDB(DSLContext dslContext, String completeURL) {
+		
+		String paramsBase64 = completeURL.split("salary_exporter/")[1];
 		
 		String paramsStr = decode(paramsBase64.getBytes());
 		Map<String, String> paramsMap = createParams(paramsStr);
 		
-		String url = "http://payroll-test.aonsolutions.org:8080/aon-aio/aon_gwt_payroll/salary_exporter/";
-		String downloadURL = url + paramsBase64;
-		
 		String html = "";
 		
-		html += 	"<table style=\"padding: 10px 0 20px 0;\" align=\"center\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"600\">";
-		html += 		"<tr>";
-		html +=				"<td align=\"center\" bgcolor=\"#70bbd9\" style=\"padding: 20px 0 20px 0;\">";
-		html +=					"<img src=\"https://static.comunicae.com/photos/notas/1042089/1357208241_aonsolutions-lgonubeconborde-alwayson.png\" alt=\"Creating Email Magic\" width=\"300\" style=\"display: block;\" />";
-		html +=				"</td>";
-		html +=			"</tr>";
-		html += 		"<tr>";
-		html +=				"<td bgcolor=\"#ffffff\" style=\"padding: 20px 30px 20px 30px;\">";
-		html +=					"<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">";
-		html +=						"<tr>";
-		html +=							"<td style=\"padding: 10px 0 10px 0;\" style=\"color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 20px;\">";
-		html +=								"Descargue las n" + String.valueOf("\u00F3") + "minas de la empresa: <a style=\"font-weight: bold;\">" + getEnterpriseName(dslContext, paramsMap) +"</a> a trav" + String.valueOf("\u00E9") + "s del siguiente enlace. <br> Las n" + String.valueOf("\u00F3") + "minas inclu" + String.valueOf("\u00ED") + "das corresponden a los siguientes trabajadores: ";
-		html +=							"</td>";
-		html +=						"</tr>";
-		html +=						"<tr>";
-		html +=							"<td style=\"padding: 10px 0 20px 0;\" style=\"color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 20px;\">";
-		html +=								"<ul>";
+		html += "<p>Estimado cliente:</p>";
+		html += "<p>Le adjuntamos las n&oacute;minas de la empresa <a style=\"font-weight: bold;\">" + getEnterpriseName(dslContext, paramsMap) +"</a> que corresponden a los siguientes trabajadores:</p>";
+		html += "<ul>";
 		
 		for(int i=0; i < Integer.parseInt(paramsMap.get("selectedSalaries")); i++) {
 			html +=	getSalaryItem(dslContext, Integer.parseInt(paramsMap.get("salary"+i+"Id")));
 		}
+
+		html += "</ul>";
+		html += "<p>Para descargar y visualizar el documento adjunto, por favor haga click en el siguiente enlace:</p>";
 		
-		html +=								"</ul>";
-		html +=							"</td>";
-		html +=						"</tr>";
-		html +=						"<tr style=\"text-decoration: none; color: black;\">";
-		html +=							"<td style=\"height:25px;border: 2px solid gray;padding:5px;text-align:center;color: #153643; font-family: Arial, sans-serif;\">";
-		html +=								"<img src=\"http://simpleicon.com/wp-content/uploads/cloud-download-2.png\" style=\"width:20px;display: table-cell;vertical-align: middle;\" />";
-		html +=								"<a type=\"button\" href=\"" + downloadURL + "\"  style=\"padding-left:10px;text-decoration: none; color: black;\"><b>DESCARGAR NOMINAS</b></a>";
-		html +=							"</td>";
-		html +=						"</tr>";
-		html +=						"<tr>";
-		html +=							"<td>";
-		html +=								"<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">";
-		html +=									"<tr>";
-		html +=										"<td width=\"260\" align=\"top\">";
-		html +=											"<table style=\"margin-top: 30px;\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">";
-		html +=												"<tr>";
-		html +=													"<td>";
-		html +=														"<img href=\"https://translogia.es/\" src=\"https://translogia.es/wp-content/uploads/2019/03/logoo-1-e1554365403288.png\" alt=\"\" width=\"100%\" height=\"140\" style=\"display: block;\" />";
-		html +=													"</td>";
-		html +=												"</tr>";
-		html +=												"<tr>";
-		html +=													"<td style=\"padding: 25px 0 0 0;\" style=\"color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 20px;\">";
-		html +=														"La herramienta que falta en tu despacho para conseguir el tiempo que necesitas TODO lo que necesitas para la automatizaci" + String.valueOf("\u00F3") + "n eficaz en la contabilizaci" + String.valueOf("\u00F3") + "n de FACTURAS, sin instalaciones y sin cambiar tu contabilidad.";
-		html +=													"</td>";
-		html +=												"</tr>";
-		html +=											"</table>";
-		html +=										"</td>";
-		html +=										"<td style=\"font-size: 0; line-height: 0;\" width=\"20\">";
-		html +=											"&nbsp;";
-		html +=										"</td>";
-		html +=										"<td width=\"260\" align=\"top\">";
-		html +=											"<table style=\"margin-top: 30px;\"  border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">";
-		html +=												"<tr>";
-		html +=													"<td>";
-		html +=														"<img href=\"https://translogia.es/gestion-en-la-nube/\" src=\"https://i0.wp.com/translogia.es/wp-content/uploads/2019/05/image-2019-05-15.jpg?resize=360%2C240&ssl=1\" alt=\"\" width=\"100%\" height=\"140\" style=\"display: block;\" />";
-		html +=													"</td>";
-		html +=												"</tr>";
-		html +=												"<tr>";
-		html +=													"<td style=\"padding: 25px 0 0 0;\" style=\"color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 20px;\">";
-		html +=														"La gesti" + String.valueOf("\u00F3") + "n en la nube, llamada tambi" + String.valueOf("\u00E9") + "n simplemente " + String.valueOf("\u00AB") + "la nube" + String.valueOf("\u00BB") + ", es cada vez m" + String.valueOf("\u00E1") + "s utilizada en todos los " + String.valueOf("\u00E1") + "mbitos, pero sobre todo destaca en el empresarial. " + String.valueOf("\u00BF") + "Por qu" + String.valueOf("\u00E9") + "? Muy f" + String.valueOf("\u00E1") + "cil, en este blog te lo contamos.";
-		html +=													"</td>";
-		html +=												"</tr>";
-		html +=											"</table>";
-		html +=										"</td>";
-		html +=									"</tr>";
-		html +=								"</table>";
-		html +=							"</td>";
-		html +=						"</tr>";
-		html +=					"</table>";
-		html +=				"</td>";
-		html +=			"</tr>";
-		html += 		"<tr>";
-		html +=				"<td bgcolor=\"#b7b7b7\" style=\"padding: 30px 30px 30px 30px;\">";
-		html +=					"<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">";
-		html +=						"<tr>";
-		html +=							"<td  style=\"color: #ffffff !important; text-docaration: none; font-family: Arial, sans-serif; font-size: 14px;\">";
-		html +=								 String.valueOf("\u00AE") + " AON SOLUTIONS S.L. 2018<br/>";
-		html +=								" 902 121 009 - 945 121 010<br/>";
-		html +=								" info@aonsolutions.es";
-		html +=							"</td>";
-		html +=							"<td align=\"right\">";
-		html +=								"<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\">";
-		html +=									"<tr>";
-		html +=										"<td>";
-		html +=											"<a href=\"https://twitter.com/aonsolutions\">";
-		html +=												"<img src=\"http://www.bancoalimentoslpa.org/wp-content/uploads/2019/01/Twitter.ico\" alt=\"Twitter\" width=\"30px\" style=\"display: block;\" border=\"0\" />";
-		html +=											"</a>";
-		html +=										"</td>";
-		html +=										"<td style=\"font-size: 0; line-height: 0;\" width=\"20\">&nbsp;</td>";
-		html +=										"<td>";
-		html +=											"<a href=\"https://www.facebook.com/aonSolutions\">";
-		html +=												"<img src=\"https://i2.wp.com/alesteplaza.es/wp-content/uploads/2017/05/facebook.png?ssl=1\" alt=\"Facebook\" width=\"30px\" style=\"display: block;\" border=\"0\" />";
-		html +=											"</a>";
-		html +=										"</td>";
-		html +=									"</tr>";
-		html +=								"</table>";
-		html +=							"</td>";
-		html +=						"</tr>";
-		html +=					"</table>";
-		html +=				"</td>";
-		html +=			"</tr>";
-		html += 	"</table>";
+		html +=	"<a type=\"button\" href=\" " + completeURL + " \" style=\"border: 1px solid gray;text-decoration:none;padding:5px;text-align:center;color: #153643; font-family: Arial, sans-serif;\">";
+		html +=		"<img src=\"http://simpleicon.com/wp-content/uploads/cloud-download-2.png\" style=\"width:20px;display: table-cell;vertical-align: middle;\" />";
+		html +=		"<b style=\"color: black;padding-left: 4px;font-size: x-small;\">DESCARGAR NOMINAS</b>";
+		html +=	"</a>";
+
+		html += "<p>Este archivo est&aacute; en formato PDF Adobe y se puede leer usando Acrobat Reader. Si no tiene instalado el Acrobat Reader pulse aqu&iacute; para conseguir su copia gratuita: http://get.adobe.com/es/reader. Para cualquier aclaraci&oacute;n sobre el documento adjunto p&oacute;ngase en contacto con nosotros.</p>";
+		html += "<p>AON SOLUTIONS, S.L.<br/> Tel&eacute;fono: 902121009<br/> Fax: 945121011<br/> <a style=\"text-decoration: none; color: black;\" href=\"www.aonsolutions.es\">www.aonsolutions.es</a></p>";
+		
+//		String html = "";
+//		
+//		html += 	"<table style=\"padding: 10px 0 20px 0;\" align=\"center\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"600\">";
+//		html += 		"<tr>";
+//		html +=				"<td align=\"center\" bgcolor=\"#70bbd9\" style=\"padding: 20px 0 20px 0;\">";
+//		html +=					"<img src=\"https://static.comunicae.com/photos/notas/1042089/1357208241_aonsolutions-lgonubeconborde-alwayson.png\" alt=\"Creating Email Magic\" width=\"300\" style=\"display: block;\" />";
+//		html +=				"</td>";
+//		html +=			"</tr>";
+//		html += 		"<tr>";
+//		html +=				"<td bgcolor=\"#ffffff\" style=\"padding: 20px 30px 20px 30px;\">";
+//		html +=					"<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">";
+//		html +=						"<tr>";
+//		html +=							"<td style=\"padding: 10px 0 10px 0;\" style=\"color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 20px;\">";
+//		html +=								"Descargue las n" + String.valueOf("\u00F3") + "minas de la empresa: <a style=\"font-weight: bold;\">" + getEnterpriseName(dslContext, paramsMap) +"</a> a trav" + String.valueOf("\u00E9") + "s del siguiente enlace. <br> Las n" + String.valueOf("\u00F3") + "minas inclu" + String.valueOf("\u00ED") + "das corresponden a los siguientes trabajadores: ";
+//		html +=							"</td>";
+//		html +=						"</tr>";
+//		html +=						"<tr>";
+//		html +=							"<td style=\"padding: 10px 0 20px 0;\" style=\"color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 20px;\">";
+//		html +=								"<ul>";
+//		
+//		for(int i=0; i < Integer.parseInt(paramsMap.get("selectedSalaries")); i++) {
+//			html +=	getSalaryItem(dslContext, Integer.parseInt(paramsMap.get("salary"+i+"Id")));
+//		}
+//		
+//		html +=								"</ul>";
+//		html +=							"</td>";
+//		html +=						"</tr>";
+//		html +=						"<tr style=\"text-decoration: none; color: black;\">";
+//		html +=							"<td style=\"height:25px;border: 2px solid gray;padding:5px;text-align:center;color: #153643; font-family: Arial, sans-serif;\">";
+//		html +=								"<img src=\"http://simpleicon.com/wp-content/uploads/cloud-download-2.png\" style=\"width:20px;display: table-cell;vertical-align: middle;\" />";
+//		html +=								"<a type=\"button\" href=\"" + completeURL + "\"  style=\"padding-left:10px;text-decoration: none; color: black;\"><b>DESCARGAR NOMINAS</b></a>";
+//		html +=							"</td>";
+//		html +=						"</tr>";
+//		html +=						"<tr>";
+//		html +=							"<td>";
+//		html +=								"<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">";
+//		html +=									"<tr>";
+//		html +=										"<td width=\"260\" align=\"top\">";
+//		html +=											"<table style=\"margin-top: 30px;\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">";
+//		html +=												"<tr>";
+//		html +=													"<td>";
+//		html +=														"<img href=\"https://translogia.es/\" src=\"https://translogia.es/wp-content/uploads/2019/03/logoo-1-e1554365403288.png\" alt=\"\" width=\"100%\" height=\"140\" style=\"display: block;\" />";
+//		html +=													"</td>";
+//		html +=												"</tr>";
+//		html +=												"<tr>";
+//		html +=													"<td style=\"padding: 25px 0 0 0;\" style=\"color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 20px;\">";
+//		html +=														"La herramienta que falta en tu despacho para conseguir el tiempo que necesitas TODO lo que necesitas para la automatizaci" + String.valueOf("\u00F3") + "n eficaz en la contabilizaci" + String.valueOf("\u00F3") + "n de FACTURAS, sin instalaciones y sin cambiar tu contabilidad.";
+//		html +=													"</td>";
+//		html +=												"</tr>";
+//		html +=											"</table>";
+//		html +=										"</td>";
+//		html +=										"<td style=\"font-size: 0; line-height: 0;\" width=\"20\">";
+//		html +=											"&nbsp;";
+//		html +=										"</td>";
+//		html +=										"<td width=\"260\" align=\"top\">";
+//		html +=											"<table style=\"margin-top: 30px;\"  border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">";
+//		html +=												"<tr>";
+//		html +=													"<td>";
+//		html +=														"<img href=\"https://translogia.es/gestion-en-la-nube/\" src=\"https://i0.wp.com/translogia.es/wp-content/uploads/2019/05/image-2019-05-15.jpg?resize=360%2C240&ssl=1\" alt=\"\" width=\"100%\" height=\"140\" style=\"display: block;\" />";
+//		html +=													"</td>";
+//		html +=												"</tr>";
+//		html +=												"<tr>";
+//		html +=													"<td style=\"padding: 25px 0 0 0;\" style=\"color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 20px;\">";
+//		html +=														"La gesti" + String.valueOf("\u00F3") + "n en la nube, llamada tambi" + String.valueOf("\u00E9") + "n simplemente " + String.valueOf("\u00AB") + "la nube" + String.valueOf("\u00BB") + ", es cada vez m" + String.valueOf("\u00E1") + "s utilizada en todos los " + String.valueOf("\u00E1") + "mbitos, pero sobre todo destaca en el empresarial. " + String.valueOf("\u00BF") + "Por qu" + String.valueOf("\u00E9") + "? Muy f" + String.valueOf("\u00E1") + "cil, en este blog te lo contamos.";
+//		html +=													"</td>";
+//		html +=												"</tr>";
+//		html +=											"</table>";
+//		html +=										"</td>";
+//		html +=									"</tr>";
+//		html +=								"</table>";
+//		html +=							"</td>";
+//		html +=						"</tr>";
+//		html +=					"</table>";
+//		html +=				"</td>";
+//		html +=			"</tr>";
+//		html += 		"<tr>";
+//		html +=				"<td bgcolor=\"#b7b7b7\" style=\"padding: 30px 30px 30px 30px;\">";
+//		html +=					"<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">";
+//		html +=						"<tr>";
+//		html +=							"<td  style=\"color: #ffffff !important; text-docaration: none; font-family: Arial, sans-serif; font-size: 14px;\">";
+//		html +=								 String.valueOf("\u00AE") + " AON SOLUTIONS S.L. 2018<br/>";
+//		html +=								" 902 121 009 - 945 121 010<br/>";
+//		html +=								" info@aonsolutions.es";
+//		html +=							"</td>";
+//		html +=							"<td align=\"right\">";
+//		html +=								"<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\">";
+//		html +=									"<tr>";
+//		html +=										"<td>";
+//		html +=											"<a href=\"https://twitter.com/aonsolutions\">";
+//		html +=												"<img src=\"http://www.bancoalimentoslpa.org/wp-content/uploads/2019/01/Twitter.ico\" alt=\"Twitter\" width=\"30px\" style=\"display: block;\" border=\"0\" />";
+//		html +=											"</a>";
+//		html +=										"</td>";
+//		html +=										"<td style=\"font-size: 0; line-height: 0;\" width=\"20\">&nbsp;</td>";
+//		html +=										"<td>";
+//		html +=											"<a href=\"https://www.facebook.com/aonSolutions\">";
+//		html +=												"<img src=\"https://i2.wp.com/alesteplaza.es/wp-content/uploads/2017/05/facebook.png?ssl=1\" alt=\"Facebook\" width=\"30px\" style=\"display: block;\" border=\"0\" />";
+//		html +=											"</a>";
+//		html +=										"</td>";
+//		html +=									"</tr>";
+//		html +=								"</table>";
+//		html +=							"</td>";
+//		html +=						"</tr>";
+//		html +=					"</table>";
+//		html +=				"</td>";
+//		html +=			"</tr>";
+//		html += 	"</table>";
 		
 		return html;
 	}

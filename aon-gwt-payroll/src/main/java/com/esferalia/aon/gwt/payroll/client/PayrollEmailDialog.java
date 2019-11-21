@@ -54,7 +54,7 @@ public abstract class PayrollEmailDialog extends CustomDialog {
 	private List<MailAccount> mailAccounts = new ArrayList<MailAccount>();
 	private RichTextArea richTextArea = null;
 	
-	public PayrollEmailDialog(Integer enterpriseID, String paramsBase64) {
+	public PayrollEmailDialog(Integer enterpriseID, String completeURL) {
 		
 		setCaption("Envio nominas por email");
 		
@@ -81,7 +81,7 @@ public abstract class PayrollEmailDialog extends CustomDialog {
 					public void onSuccess(String sendToEmail) {
 						sendTo.setText(null == sendToEmail ? "" : sendToEmail);
 						
-						impl.getPayrollEmailBody(paramsBase64, new AsyncCallback<String>() {
+						impl.getPayrollEmailBody(completeURL, new AsyncCallback<String>() {
 
 							@Override
 							public void onFailure(Throwable caught) { }
@@ -122,7 +122,7 @@ public abstract class PayrollEmailDialog extends CustomDialog {
 	private void initView(String emailBody) {
 		richTextArea = new RichTextArea();
 		richTextArea.setWidth("650px");
-		richTextArea.setHeight("500px");
+		richTextArea.setHeight("430px");
 		
 		richTextArea.setHTML(emailBody);
 		
