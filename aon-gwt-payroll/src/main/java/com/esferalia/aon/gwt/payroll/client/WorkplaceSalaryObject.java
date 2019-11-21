@@ -13,11 +13,15 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class WorkplaceSalaryObject {
 	
+	//Starting Service
+	final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
+	
 	private DomainEmployeesServiceAsync employeesService;
 	private Integer workplaceId;
 	private List<SalaryInfo> workplaceSalaries;
 	private SalaryInfoFilter filter;
 	private WorkplaceEmployees workplaceEmployees;
+	private String emailStatus;
 	
 	public WorkplaceSalaryObject() {
 		super();
@@ -110,6 +114,23 @@ public class WorkplaceSalaryObject {
 		});
 	}
 	
+	public void sendPayrollEmail(String from, String to, String bodyHTML, Consumer<String> success, Consumer<Throwable> failure) {
+		impl.sendPayrollEmail(from, to, bodyHTML, new AsyncCallback<String>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(String result) {
+				emailStatus = result;
+				success.accept(result);
+			}
+			
+		});
+	}
+	
 	public List<SalaryInfo> getWorkplaceSalaries() {
 		return this.workplaceSalaries;
 	}
@@ -129,6 +150,10 @@ public class WorkplaceSalaryObject {
 				employeeInfo = employee;
 			}
 		return employeeInfo;
+	}
+	
+	public String getEmailStatus(){
+		return this.emailStatus;
 	}
 
 		
