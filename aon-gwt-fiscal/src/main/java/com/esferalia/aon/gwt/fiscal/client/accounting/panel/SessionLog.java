@@ -134,7 +134,11 @@ public class SessionLog extends ScrollPanel
 		buf.append(AON.MSG.date());
 		buf.append(AonStringUtils.COLON);
 		buf.append(AonStringUtils.SPACE);
-		buf.append(AON.DATE_FORMAT.format(entry.getEntryDate()));
+		if (entry.getEntryDate() != null) {
+			buf.append(AON.DATE_FORMAT.format(entry.getEntryDate()));
+		} else {
+			buf.append("??/??/????");
+		}
 		buf.append(AonStringUtils.SPACE);
 		if (entry.getJournal() != null) {
 			buf.append(AON.MSG.journal());

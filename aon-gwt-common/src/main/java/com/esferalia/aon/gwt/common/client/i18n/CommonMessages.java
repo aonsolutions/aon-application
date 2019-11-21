@@ -3687,5 +3687,8 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Adjunto")
 	String attach();
 
+	@DefaultMessage("Rechazar")
+	String reject();
+
 }
 

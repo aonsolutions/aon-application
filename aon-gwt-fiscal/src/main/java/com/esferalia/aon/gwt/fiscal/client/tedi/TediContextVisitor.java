@@ -5,7 +5,6 @@ import java.util.Date;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryBox;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
-import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
@@ -74,7 +73,7 @@ public class TediContextVisitor implements ITediContextVisitor {
 	}
 
 	private void noVisit() {
-		MessageDialog.show("No hay ninguna utilidad para corregir el aviso/error.");
+		// MessageDialog.show("No hay ninguna utilidad para corregir el aviso/error.");
 	}
 
 	@Override
@@ -86,6 +85,7 @@ public class TediContextVisitor implements ITediContextVisitor {
 			}
 			@Override
 			public void onAccept(Date date) {
+				callback.getResult().getTedi().setDate(date);
 				callback.getResult().getAccountingInvoice().getAccountEntry().setEntryDate(date);
 				callback.getResult().getInvoice().setIssueDate(date);
 				callback.getResult().getInvoice().setTaxDate(date);
@@ -133,7 +133,17 @@ public class TediContextVisitor implements ITediContextVisitor {
 	public void visitSeries(ICallback callback) {
 		noVisit();
 	}
+	
+	@Override
+	public void visitDuplicatedSeriesNumber(ICallback callback) {
+		noVisit();
+	}
 
+	@Override
+	public void visitDuplicatedReferenceCode(ICallback callback) {
+		noVisit();
+	}
+	
 	@Override
 	public void visitScope(ICallback callback) {
 		noVisit();
@@ -293,7 +303,11 @@ public class TediContextVisitor implements ITediContextVisitor {
 	public void visitDetails(ICallback callback) {
 		noVisit();
 	}
-
+	@Override
+	public void visitAccountEntry(ICallback callback) {
+		noVisit();
+	}
+	
 	@Override
 	public void visitAddress(ICallback callback) {
 		noVisit();
@@ -341,7 +355,8 @@ public class TediContextVisitor implements ITediContextVisitor {
 		});
 		BasicDialog dialog = new BasicDialog();
 		dialog.setContent(label, registryBox);
-		if (callback.getCallback().getResult().getInvoice().isExpenses()) {
+		if (callback.getCallback().getResult().getInvoice().isExpenses() 
+			|| callback.getCallback().getResult().getInvoice().isUndeductible() ) {
 			AccountingRegistry dc = callback.getCallback().getConfiguration().getDefaultCreditor();
 			if (dc != null) {
 				Label defaultCreditor = new Label("Asignar a " + dc.getName() + " (" + dc.getAccountCode() + ")");
@@ -464,4 +479,5 @@ public class TediContextVisitor implements ITediContextVisitor {
 			container.setWidget(row, 1, child);
 		}
 	}
+
 }

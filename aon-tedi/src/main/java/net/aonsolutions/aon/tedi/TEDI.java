@@ -198,6 +198,44 @@ public class TEDI {
 		}
 	}
 
+	public static LinkedList<TediResult> rejectInvoices(String domainName, int domain, boolean snapshot, String user,
+			LinkedList<TediResult> invoices) throws TediException {
+		if (invoices == null) {
+			throw new TediException("No se han indicado una facturas");
+		}
+		AONContext ctx = null;
+		LinkedList<TediResult> returned = new LinkedList<TediResult>();	
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			Tedi tedi = getTedi(ctx,snapshot);
+			for (TediResult result : invoices) {
+				TediInvoice inv = result.getTedi();
+				if (AonStringUtils.isBlank(inv.getCompany())) {
+					throw new TediException("La factura no tiene el atributo compa\u00F1ia");
+				}
+				inv.setOldStatus( inv.getStatus() );
+				inv.setStatus( TediInvoiceStatus.refused);
+				if ( result.getAccountingInvoice() != null) {
+					Invoice aonInvoice = result.getAccountingInvoice().getInvoice();
+					LOGGER.info("[TEDI] Attempt to reject invoice [" + aonInvoice.getType() 
+						+ "," + aonInvoice.getSeries()
+						+ "," + aonInvoice.getNumber()
+						+ "," + aonInvoice.getReferenceCode()
+						+ "," + aonInvoice.getRegistryDocument()
+						+ "," + aonInvoice.getRegistryName()
+						+ "]");
+				}
+				tedi.putInvoice(inv);
+				returned.add(result);
+			}
+		} finally {
+			if (ctx != null) {
+				ctx.close();
+			}
+		}
+		return returned;
+	}	
+	
 	public static TediResult putInvoice(String domainName, int domain, boolean snapshot, String user, TediInvoice invoice)
 			throws TediException {
 		if (invoice == null) {
@@ -223,8 +261,15 @@ public class TEDI {
 	}
 
 	public static TediResult validateInvoice(String domainName, int domain, String user, TediResult result) {
-		result.clearMessages();
-		TediValidator.validateInvoice(result);
+		AONContext ctx = null;
+		try {
+			result.clearMessages();
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			TediValidator.validateInvoice(ctx,result);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
 		return result;
 	}
 	

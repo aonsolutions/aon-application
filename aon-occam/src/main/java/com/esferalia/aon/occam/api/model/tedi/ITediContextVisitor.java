@@ -18,4 +18,7 @@ public interface ITediContextVisitor {
 	void visitAddress(ICallback callback );
 	void visitDetailDescription(ICallback callback );
 	void visitDetails(ICallback callback );
+	void visitAccountEntry(ICallback callback );
+	void visitDuplicatedSeriesNumber(ICallback callback);
+	void visitDuplicatedReferenceCode(ICallback callback);
 }

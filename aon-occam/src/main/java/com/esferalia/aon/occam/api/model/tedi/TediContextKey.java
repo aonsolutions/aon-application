@@ -37,10 +37,22 @@ public enum TediContextKey  implements Serializable {
 			visitor.visitNumber(callback);
 		}
 	},
+	DUPLICATED_SERIES_NUMBER("Serie/N\u00FAmero") {
+		@Override
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitDuplicatedSeriesNumber(callback);
+		}
+	},
 	REFERENCE_CODE("N\u00BA factura") {
 		@Override
 		public void visit(ITediContextVisitor visitor,ICallback callback) {
 			visitor.visitReferenceCode(callback);
+		}
+	},
+	DUPLICATED_REFERENCE_CODE("N\u00FAmero") {
+		@Override
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitDuplicatedReferenceCode(callback);
 		}
 	},
 	TRANSACTION("Tipo de transacci\u00F3n") {
@@ -113,6 +125,12 @@ public enum TediContextKey  implements Serializable {
 		@Override
 		public void visit(ITediContextVisitor visitor,ICallback callback) {
 			visitor.visitDetails(callback);
+		}
+	},
+	ACCOUNT_ENTRY ("Apunte contable") {
+		@Override
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitAccountEntry(callback);
 		}
 	}
 	;

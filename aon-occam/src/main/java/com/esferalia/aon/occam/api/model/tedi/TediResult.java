@@ -30,6 +30,10 @@ public class TediResult implements Serializable {
 		this.ai = ai;
 	}
 	
+	public String getUuid() {
+		return getTedi() != null ? getTedi().getUuid() : null;
+	}
+
 	public boolean isChecked() {
 		return checked;
 	}

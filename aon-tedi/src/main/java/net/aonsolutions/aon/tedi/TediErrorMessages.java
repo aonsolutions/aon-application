@@ -30,6 +30,8 @@ public enum TediErrorMessages implements Serializable {
 	C009("No se ha encontrado un {0} v\u00E1lido para el titular \"{1}\""),
 	C010("La factura no tiene l\u00EDneas de detalle"),
 	C011("La factura tiene varios posibles titulares"),
+	C012("Apunte contable descuadrado"),
+	C013("Apunte contable vacio"),
 	C500("Error desconocido");
 	;
 	private String message;

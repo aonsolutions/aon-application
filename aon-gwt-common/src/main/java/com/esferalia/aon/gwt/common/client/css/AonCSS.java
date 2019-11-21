@@ -235,6 +235,9 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-dataTable_td")
 	String aonDataTableTD();
 
+	@ClassName("aon-dataTable-row-highlight")
+	String aonDataTableRowHighlight();	
+
 	@ClassName("aon-table-row-link")
 	String aonTableRowLink();
 
@@ -1306,6 +1309,5 @@ public interface AonCSS extends CssResource {
 
 	@ClassName("aon-loader")
 	String aonLoader();
-
 	
 }

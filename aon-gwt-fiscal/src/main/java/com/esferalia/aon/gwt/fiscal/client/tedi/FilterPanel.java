@@ -31,7 +31,10 @@ public abstract class FilterPanel extends Composite {
     protected abstract void onDocumentChange(String value);
     	
     protected abstract void onNameChange(String value);
-    
+
+    private String document = null;
+	private String name = null;
+
     public FilterPanel() {
     	initWidget(binder.createAndBindUi(this));       
     
@@ -48,6 +51,7 @@ public abstract class FilterPanel extends Composite {
 			
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
+				setDocument(documentBox.getValue());
 				onDocumentChange(documentBox.getValue());
 			}
 		});
@@ -64,9 +68,27 @@ public abstract class FilterPanel extends Composite {
 			
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
+				setName(nameBox.getValue());
 				onNameChange(nameBox.getValue());
 			}
 		});
 		panel.add(nameBox);
     }
+
+	public String getDocument() {
+		return document;
+	}
+
+	public void setDocument(String document) {
+		this.document = document;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+    
  }

@@ -135,16 +135,26 @@ public class InvoiceRecorder {
 	}
 	
 	private static Integer obtainRegistryAccount(AccountingInvoice invoice) {
-		return invoice.getRegistry().getAccountId();
+		return (invoice.getRegistry() != null)?invoice.getRegistry().getAccountId() : null;
 	}
 	private static String obtainRegistryAccountCode(AccountingInvoice invoice) {
-		String code = invoice.getRegistry().getAccountCode();
-		if (AonStringUtils.isBlank(code)) code = invoice.getRegistry().getType().getAccountPrefix() + "?????";
+		String code = "?????????";
+		if ( invoice.getRegistry() != null ) {
+			code = invoice.getRegistry().getAccountCode();
+			if (AonStringUtils.isBlank(code)) {
+				code = invoice.getRegistry().getType().getAccountPrefix() + "?????";
+			}
+		}
 		return code;
 	}
 	private static String obtainRegistryAccountDescription(AccountingInvoice invoice) {
-		String description = invoice.getRegistry().getAccountDescription();
-		if (AonStringUtils.isBlank(description)) description = invoice.getRegistry().getName();
+		String description = "";
+		if ( invoice.getRegistry() != null ) {
+			description = invoice.getRegistry().getAccountDescription();
+			if (AonStringUtils.isBlank(description)) {
+				description = invoice.getRegistry().getName();
+			}
+		}
 		return description;
 	}
 	private static void fillBalancingAccount(AccountEntryDetail detail, AccountingInvoice invoice) {
@@ -176,8 +186,8 @@ public class InvoiceRecorder {
 
 			@Override
 			public void visit(AccountingInvoice invoice, LinkedHashMap<Integer,AccountEntryDetail> map) {
-				double amount = invoice.getTotalInvoice(); 
-				if (invoice.getRegistry().getType() == AccountingRegistryType.CUSTOMER) {
+				if (invoice.getRegistry() != null && invoice.getRegistry().getType() == AccountingRegistryType.CUSTOMER) {
+					double amount = invoice.getTotalInvoice(); 
 					AccountEntryDetail detail = map.get(invoice.getRegistry().getAccountId());
 					if (detail == null) {
 						Integer account = obtainRegistryAccount(invoice); 
@@ -197,10 +207,12 @@ public class InvoiceRecorder {
 
 			@Override
 			public void visit(AccountingInvoice invoice, LinkedHashMap<Integer,AccountEntryDetail> map) {
-				double amount = invoice.getTotalInvoice();
-				if ((invoice.getRegistry().getType() == AccountingRegistryType.SUPPLIER 
-					||invoice.getRegistry().getType() == AccountingRegistryType.CREDITOR
-					||invoice.getRegistry().getType() == AccountingRegistryType.UNDED_CREDITOR)) {
+				if (invoice.getRegistry() != null 
+					&& (invoice.getRegistry().getType() == AccountingRegistryType.SUPPLIER 
+					|| invoice.getRegistry().getType() == AccountingRegistryType.CREDITOR
+					|| invoice.getRegistry().getType() == AccountingRegistryType.UNDED_CREDITOR)) {
+					
+					double amount = invoice.getTotalInvoice();
 					AccountEntryDetail detail = map.get(invoice.getRegistry().getAccountId());
 					if (detail == null) {
 						Integer account = obtainRegistryAccount(invoice);

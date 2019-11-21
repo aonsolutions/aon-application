@@ -109,7 +109,9 @@ public class ConfigurationDAO {
 	}
 	
 	private static AccountingRegistry getDefaultCreditor(AONContext ctx) {
-		return RegistryDAO.getAccountingRegistries(ctx, f -> f.getDocumentProperty().isNull().and(f.getNameProperty().like("%vario%")))
+		return RegistryDAO.getAccountingRegistries(ctx, f -> 
+				(f.getDocumentProperty().isNull().or(f.getDocumentProperty().eq(" ")).or(f.getDocumentProperty().eq("")))
+				.and(f.getNameProperty().like("%vario%")))
 				.filter( ar -> ar.getType() == AccountingRegistryType.CREDITOR)
 				.findFirst().orElse(null);
 	}

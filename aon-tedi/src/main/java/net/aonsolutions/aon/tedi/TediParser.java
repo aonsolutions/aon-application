@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceRecorder;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -393,7 +394,10 @@ public class TediParser {
 		TediInvoiceTransfer.toAon(ctx, aonCtx,result);
 		fillVats(ctx, aonCtx, result);
 		ai.setAccountEntry(getEntryBase(ctx,aonCtx,ai));
-		TediValidator.validateInvoice(result);
+		if (result.isImportable()) {
+			ai.setAccountEntry(InvoiceRecorder.getInvoiceEntry(ai));
+		}
+		TediValidator.validateInvoice(ctx,result);
 		return result; 
 	}
 	
@@ -532,12 +536,14 @@ public class TediParser {
 					result.setPosibleRegistries(registries);
 					result.add( TediErrorMessages.C011.err(TediContextKey.AMBIGUOUS_REGISTRY));
 					result.getInvoice().setRegistryDocument(result.getTedi().getRdocument());
-					result.getInvoice().setRegistryDocumentCountry(Country.safeValueOf(result.getTedi().getRegistry().getDocumentCountry()));
-					if (result.getInvoice().getRegistryDocumentCountry() == null) {
-						result.getInvoice().setRegistryDocumentCountry(Country.ES);
-						result.add( TediErrorMessages.C003.inf(TediContextKey.RDOCUMENT_COUNTRY,TediContextKey.RDOCUMENT_COUNTRY.getDescription(),Country.ES.getIso2()));
-					}
 					result.getInvoice().setRegistryName(result.getTedi().getRname());
+				}
+				if (result.getTedi().getRegistry() != null) {
+					result.getInvoice().setRegistryDocumentCountry(Country.safeValueOf(result.getTedi().getRegistry().getDocumentCountry()));
+				}
+				if (result.getInvoice().getRegistryDocumentCountry() == null) {
+					result.getInvoice().setRegistryDocumentCountry(Country.ES);
+					result.add( TediErrorMessages.C003.inf(TediContextKey.RDOCUMENT_COUNTRY,TediContextKey.RDOCUMENT_COUNTRY.getDescription(),Country.ES.getIso2()));
 				}
 			}
 			return false;
@@ -643,77 +649,4 @@ public class TediParser {
 	}
 	
 }
-	
-/*				
-if (result.getTedi().getRegistry() != null) {
-	Invoice invoice = result.getInvoice();
-	invoice.setDomain(ctx.getDomainId());
-	
-	if (invoice.getRegistry() == null) {
-		LinkedList<AccountingRegistry> registries = 
-			RegistryDAO.getAccountingRegistries(ctx, f -> f.getDocumentProperty().eq(result.getTedi().getRdocument()))
-				.filter( ar -> (invoice.isSales() && ar.getType() == AccountingRegistryType.CUSTOMER) 
-							|| (!invoice.isSales() && ar.getType() != AccountingRegistryType.CUSTOMER))
-				.collect(Collectors.toCollection(LinkedList::new));
-		boolean ok = false;
-		if (registries != null && registries.size() == 1) {
-			AccountingRegistry ar = registries.get(0);
-			if (invoice.isSales()) {
-				if (ar.getType() == AccountingRegistryType.CUSTOMER) {
-					ok = true;
-				}
-			} else {
-				if (ar.getType() == AccountingRegistryType.CREDITOR) {
-					if (invoice.getType() == InvoiceType.PURCHASE) {
-						invoice.setType( InvoiceType.EXPENSES );
-						result.add( TediErrorMessages.C003.inf(TediContextKey.TYPE,TediContextKey.TYPE.getDescription(),InvoiceType.EXPENSES.getDescription()));
-					}
-					ok = true;
-				}
-				if (ar.getType() == AccountingRegistryType.SUPPLIER) {
-					if (invoice.getType() != InvoiceType.PURCHASE) {
-						invoice.setType( InvoiceType.PURCHASE );
-						result.add( TediErrorMessages.C003.inf(TediContextKey.TYPE,TediContextKey.TYPE.getDescription(),InvoiceType.PURCHASE.getDescription()));
-					}
-					ok = true;
-				}
-			}
-			if (ok) {
-				AccountingInvoice ai = result.getAccountingInvoice();
-				ai.setRegistry(ar);
-				ai.setSuggestedAccounts(AccountingInvoiceDAO.getSuggestedAccounts(ctx,ar.getId()));
-				invoice.setRegistry(ar.getId())
-//					.setType(ar.getType().getInvoiceType())
-					.setTransaction(ar.getTransaction());
-				ar.getType().visit(ar, new  InvoiceRegistryInitializer(ctx, ai.getInvoice(), aonCtx));
-			}
-		}
-		
-		// Gestion para cuando hay mas de un registry válido.
-		
-		if (!ok) {
-			result.getInvoice().setRegistryDocument(result.getTedi().getRegistry().getDocument());
-			result.getInvoice().setRegistryDocumentCountry(Country.safeValueOf(result.getTedi().getRegistry().getDocumentCountry()));
-			if (result.getInvoice().getRegistryDocumentCountry() == null) {
-				result.getInvoice().setRegistryDocumentCountry(Country.ES);
-				result.add( TediErrorMessages.C003.inf(TediContextKey.RDOCUMENT_COUNTRY,TediContextKey.RDOCUMENT_COUNTRY.getDescription(),Country.ES.getIso2()));
-			}
-			if (result.getInvoice().getRegistryDocumentType() == null) {
-				// TDOO 
-			}
-			result.getInvoice().setRegistryName(result.getTedi().getRegistry().getName());
-			if (result.getInvoice().getRegistryDocumentCountry() == null || result.getInvoice().getRegistryDocumentCountry() == Country.ES) {
-				result.getInvoice().setTransaction( InvoiceTransactionType.NATIONAL);
-				result.add( TediErrorMessages.C003.inf(TediContextKey.TRANSACTION,TediContextKey.TRANSACTION.getDescription(),InvoiceTransactionType.NATIONAL.getDescription()));
-			} else if ( result.getInvoice().getRegistryDocumentCountry().isIntracommunityCountry() ) {
-				result.getInvoice().setTransaction( InvoiceTransactionType.INTRACOMMUNITY);
-				result.add( TediErrorMessages.C003.inf(TediContextKey.TRANSACTION,TediContextKey.TRANSACTION.getDescription(),InvoiceTransactionType.INTRACOMMUNITY.getDescription()));
-			}
-		}
-	}
-} else {
-	result.getInvoice().setRegistryDocument(result.getTedi().getRdocument());
-	result.getInvoice().setRegistryName(result.getTedi().getRname());
-}
-}),
-*/		
+ 
