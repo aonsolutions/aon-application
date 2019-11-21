@@ -10,7 +10,7 @@ import es.translogia.tedi.json.FunctionalInterfaces.ITediCompanyToJSON;
 public enum TediCompanyJSON {
 	DOCUMENT((company, json) -> company.setDocument(json.getString(IConstants.DOCUMENT)),
 			(company, json) -> json.put(IConstants.DOCUMENT, company.getDocument())),
-	COMPANY((company, json) -> company.setCompany(json.getString(IConstants.COMPANY)),
+	COMPANY((company, json) -> company.setCompany(json.optString(IConstants.COMPANY)),
 			(company, json) -> json.put(IConstants.COMPANY, company.getCompany())),
 	NAME((company, json) -> company.setName(json.getString(IConstants.NAME)),
 			(company, json) -> json.put(IConstants.NAME, company.getName())),
@@ -56,7 +56,7 @@ public enum TediCompanyJSON {
 
 	public static TediCompany fromJSON(JSONObject json) {
 		TediCompany emailInfo = new TediCompany();
-		if (json != null) {
+		if (json != null && !json.isEmpty()) {
 			for (TediCompanyJSON p : TediCompanyJSON.values()) {
 				p.fromJSON.from(emailInfo, json);
 			}

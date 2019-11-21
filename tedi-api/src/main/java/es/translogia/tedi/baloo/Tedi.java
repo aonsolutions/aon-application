@@ -28,6 +28,8 @@ public class Tedi extends TediRequest {
 	String COMPANY_BASE;
 	String GET_COMPANIES_BY_COMPANY;
 
+	String REGISTRY_BASE;
+	
 	private String token;
 	public static Tedi login(String token) {
 		return Tedi.login(token,false);
@@ -62,6 +64,7 @@ public class Tedi extends TediRequest {
 		COMPANY_BASE = TEDI_URL	+ "/company";
 		GET_COMPANIES_BY_COMPANY = COMPANY_BASE + "?company={0}";
 		GET_COUNT_INVOICES = INVOICE_BASE + "/count/{0}/{1}"; // '/cout/:company/:status'
+		REGISTRY_BASE = TEDI_URL	+ "/registry/{0}";
 	}
 
 	private Tedi(String token,boolean snapshot) {
@@ -176,4 +179,18 @@ public class Tedi extends TediRequest {
 //		return new TediCompany(delete(TEDI + COMPANY_SRC + "/" + document , getToken()));
 //	}
 
+	
+	// REGISTRY
+	
+	public TediCompany getRegistry(String company) throws TediException{
+		String url = MessageFormat.format(REGISTRY_BASE, company);
+
+		TediResponse tediResponse = get(url, getToken());
+		if (tediResponse.ok()) {
+			JSONObject object = tediResponse.getJSONObject();
+			return TediCompanyJSON.fromJSON(object);
+		}
+		throw new TediException(
+				"getRegistry: " + tediResponse.getResponseCode() + " - " + tediResponse.getResponseMessage());
+	}
 }

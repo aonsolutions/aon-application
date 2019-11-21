@@ -48,10 +48,14 @@ public class TediResponse {
 		return this;
 	}
 	public JSONObject getJSONObject() {
-		return this.content != null ? new JSONObject(this.content) : new JSONObject();	
+		return !isEmpty() ? new JSONObject(this.content) : new JSONObject();	
 	}
 	public JSONArray getJSONArray() {
-		return this.content != null ? new JSONArray(this.content) : new JSONArray();	
+		return !isEmpty() ? new JSONArray(this.content) : new JSONArray();	
+	}
+	
+	private boolean isEmpty() {
+		return this.content == null || this.content == "";
 	}
 
 	public boolean ok() {

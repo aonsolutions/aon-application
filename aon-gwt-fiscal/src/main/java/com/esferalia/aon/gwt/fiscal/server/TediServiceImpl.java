@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.tedi.TediCompanyResult;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
@@ -18,6 +19,7 @@ import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 import es.translogia.tedi.baloo.TediException;
+import es.translogia.tedi.ewok.TediAddress;
 import es.translogia.tedi.ewok.TediCompany;
 import es.translogia.tedi.ewok.TediInvoice;
 import es.translogia.tedi.ewok.TediInvoiceStatus;
@@ -144,17 +146,7 @@ public class TediServiceImpl extends AonStatelessRemoteServiceServlet implements
 					System.out.println(company.getDocument() + " - " + company.getName());
 					System.out.println(company.getDomain());
 					System.out.println("");
-					ApplicationParameter apActive = AON.getApplicationParameter(domainName, company.getDomain(), "", snapshot ? AppParam.TEDI_SNAPSHOT_ACTIVE.getValue() : AppParam.TEDI_ACTIVE.getValue());
-					if(apActive.getId() != null) {
-						apActive.setValue("1");
-						AON.updateApplicationParameter(domainName, domain, user, apActive, f -> f.getIdProperty().eq(apActive.getId()));
-					} else {
-						AON.insertApplicationParameter(domainName, company.getDomain(), user, new ApplicationParameter()
-								.setDomain(company.getDomain())
-								.setName(snapshot ? AppParam.TEDI_SNAPSHOT_ACTIVE.getValue() : AppParam.TEDI_ACTIVE.getValue())
-								.setValue("1"));
-					}
-
+					activeAonCompany(domainName, domain, user, snapshot, company);
 				});	
 			});
 			return getCompanies(domainName, user, domain, snapshot, showNotTedi);
@@ -166,14 +158,39 @@ public class TediServiceImpl extends AonStatelessRemoteServiceServlet implements
 	@Override
 	public void addTediCompany(String domainName, String user, int domain, boolean snapshot, TediCompanyResult company) {
 		try { 
-			TediCompany tc = new TediCompany()
-				.setActive(true)
-				.setDocument(company.getCompany().getDocument())
-				.setName(company.getCompany().getName());
+			TediCompany tc = TEDI.getRegistry(domainName, domain, user, snapshot, company.getCompany().getDocument());
+			
+			tc.setActive(true)
+				.setDocument(tc.getDocument() != null ? tc.getDocument() : company.getCompany().getDocument())
+				.setName(tc.getName() != null ? tc.getName() : company.getCompany().getName());
+			if(tc.getAddress() == null) {
+				RAddress ra = AON.getRAddres(domainName, domain, user, company.getCompany().getId());
+				TediAddress ta = new TediAddress()
+						.setAddress(ra.getFullAddress())
+						.setCity(ra.getCity())
+						.setPostalCode(ra.getZip());
+								
+				tc.setAddress(ta);
+			}
+			
 			TEDI.createCompany(domainName, domain, snapshot, user, tc);
+			activeAonCompany(domainName, domain, user, snapshot, company.getCompany());
 		} catch (TediException e) {
 			throw new AonCoreException(e);
 		}
 
+	}
+	
+	private void activeAonCompany(String domainName, Integer domainId, String user, boolean snapshot, Company company) {
+		ApplicationParameter apActive = AON.getApplicationParameter(domainName, company.getDomain(), "", snapshot ? AppParam.TEDI_SNAPSHOT_ACTIVE.getValue() : AppParam.TEDI_ACTIVE.getValue());
+		if(apActive.getId() != null) {
+			apActive.setValue("1");
+			AON.updateApplicationParameter(domainName, domainId, user, apActive, f -> f.getIdProperty().eq(apActive.getId()));
+		} else {
+			AON.insertApplicationParameter(domainName, company.getDomain(), user, new ApplicationParameter()
+					.setDomain(company.getDomain())
+					.setName(snapshot ? AppParam.TEDI_SNAPSHOT_ACTIVE.getValue() : AppParam.TEDI_ACTIVE.getValue())
+					.setValue("1"));
+		}
 	}
 }

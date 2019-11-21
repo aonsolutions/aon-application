@@ -324,4 +324,22 @@ public class TEDI {
 		tediCompany.setCompany(company.getDocument());
 		return tedi.createCompany(tediCompany);
 	}
+	
+	public static TediCompany getRegistry(String domainName, int domain, String user, boolean snapshot, String document) throws TediException {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getRegistry(ctx , snapshot, document);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static TediCompany getRegistry(AONContext ctx, boolean snapshot, String document) throws TediException {
+		Tedi tedi = getTedi(ctx, snapshot);
+		return tedi.getRegistry(document);
+		
+	}
+
 }
