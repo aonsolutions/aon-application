@@ -676,6 +676,7 @@ public class EnterpriseSalary extends Composite implements ContextMenuHandler {
 		Integer enterpriseID = ((SalaryInfo)selectionModel.getSelectedSet().toArray()[0]).getEnterpriseId();
 		
 		// PARAMS TO DOWNLOAD PAYROLLS
+		String url = GWT.getModuleBaseURL()+ "salary_exporter/";
 		String query = "?type=salary&selectedSalaries=" + selectionModel.getSelectedSet().size()
 	            + "&enterprise=" + ((SalaryInfo)selectionModel.getSelectedSet().toArray()[0]).getEnterpriseId();
 			
@@ -687,8 +688,10 @@ public class EnterpriseSalary extends Composite implements ContextMenuHandler {
 		
 		String paramsBase64 = b64decode(query);
 		
+		url += paramsBase64;
+		
 		// DIALOG TO SEND EMAIL
-		PayrollEmailDialog dialog = new PayrollEmailDialog(enterpriseID, paramsBase64) {
+		PayrollEmailDialog dialog = new PayrollEmailDialog(enterpriseID, url) {
 			
 			@Override
 			protected void onAccept() {
