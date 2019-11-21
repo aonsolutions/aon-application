@@ -37,6 +37,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RadioButton;
@@ -93,6 +94,9 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	
 	@UiField
 	Button emailButton;
+	
+	@UiField
+	HorizontalPanel settleLetterPanel;
 	
 	@UiField
 	Button settleLetterButton;
@@ -240,6 +244,7 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 			this.deleteButton.setVisible(false);
 			this.saveButton.setVisible(false);
 			this.publishButton.setVisible(false);
+			this.settleLetterPanel.addStyleName(style.hide());
 			this.settleLetterButton.setVisible(false);
 			this.emailButton.setVisible(false);
 			
@@ -260,6 +265,7 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 		this.deleteButton.setVisible(true);
 		this.saveButton.setVisible(true);
 		this.publishButton.setVisible(true);
+		this.settleLetterPanel.removeStyleName(style.hide());
 		this.settleLetterButton.setVisible(true);
 		this.emailButton.setVisible(true);
 		
@@ -267,6 +273,10 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 		deleteButton.setEnabled(false);
 		saveButton.setEnabled(false);
 		publishButton.setEnabled(false);
+		if(hasSettleSalary())
+			this.settleLetterPanel.removeStyleName(style.hide());
+		else
+			this.settleLetterPanel.addStyleName(style.hide());
 		settleLetterButton.setEnabled(hasSettleSalary());
 		emailButton.setEnabled(false);
 		
@@ -598,6 +608,7 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 		Integer enterpriseID = ((SalaryInfo)selectionModel.getSelectedSet().toArray()[0]).getEnterpriseId();
 		
 		// PARAMS TO DOWNLOAD PAYROLLS
+		String url = GWT.getModuleBaseURL()+ "salary_exporter/";
 		String query = "?type=salary&selectedSalaries=" + selectionModel.getSelectedSet().size()
 	            + "&enterprise=" + ((SalaryInfo)selectionModel.getSelectedSet().toArray()[0]).getEnterpriseId();
 			
@@ -609,8 +620,11 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 		
 		String paramsBase64 = b64decode(query);
 		
+		//Complete URL
+		url += paramsBase64;
+		
 		// DIALOG TO SEND EMAIL
-		PayrollEmailDialog dialog = new PayrollEmailDialog(enterpriseID, paramsBase64) {
+		PayrollEmailDialog dialog = new PayrollEmailDialog(enterpriseID, url) {
 			
 			@Override
 			protected void onAccept() {

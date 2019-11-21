@@ -93,7 +93,7 @@
 
 	<g:DockLayoutPanel unit="PX">
 		<!-- INIT HEADER MENU -->
-		<g:north size="50">
+		<g:north size="25">
 			<g:FlowPanel styleName="aon-finding-title-toolbar">
 				<g:HorizontalPanel >
 					<g:HTMLPanel styleName="aon-finding-title">
@@ -114,22 +114,20 @@
 							<g:Button ui:field='emailButton' styleName='aon-finding-toolbar-item aon-icon-mail' text="EMAIL" />
 						</g:HTMLPanel>
 					</g:HorizontalPanel>
-				</g:HorizontalPanel>
-				<g:HorizontalPanel ui:field="settleLetterPanel" >
-					<g:HTMLPanel styleName="aon-finding-title">
+					<g:HorizontalPanel ui:field="settleLetterPanel" >
 						<g:HTMLPanel styleName="aon-finding-title-internal" >
 							<g:Label styleName="aon-outputText">Finiquito</g:Label>
 						</g:HTMLPanel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="aon-finding-subtitle {style.ml3}">
-						<g:HTMLPanel styleName="aon-finding-aubtitle-internal" >
-							<g:Label styleName="aon-outputText" text=" "/> 
+						<g:HTMLPanel styleName="aon-finding-subtitle {style.ml3}">
+							<g:HTMLPanel styleName="aon-finding-aubtitle-internal" >
+								<g:Label styleName="aon-outputText" text=" "/> 
+							</g:HTMLPanel>
 						</g:HTMLPanel>
-					</g:HTMLPanel>
-					<g:HorizontalPanel styleName="aon-finding-toolbar">
-						<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
-							<g:Button debugId='settleLetterButton' ui:field='settleLetterButton' styleName='aon-finding-toolbar-item aon-icon-pdf' text="CARTA FINIQUITO" />
-						</g:HTMLPanel>
+						<g:HorizontalPanel styleName="aon-finding-toolbar">
+							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
+								<g:Button debugId='settleLetterButton' ui:field='settleLetterButton' styleName='aon-finding-toolbar-item aon-icon-pdf' text="CARTA FINIQUITO" />
+							</g:HTMLPanel>
+						</g:HorizontalPanel>
 					</g:HorizontalPanel>
 				</g:HorizontalPanel>
 			</g:FlowPanel>
