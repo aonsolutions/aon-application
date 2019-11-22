@@ -32,6 +32,8 @@ public enum TediErrorMessages implements Serializable {
 	C011("La factura tiene varios posibles titulares"),
 	C012("Apunte contable descuadrado"),
 	C013("Apunte contable vacio"),
+	C014("El importe del vencimiento no puede ser cero."),
+	C015("Cuenta Bancaria incorrecta."),
 	C500("Error desconocido");
 	;
 	private String message;

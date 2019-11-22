@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.tedi;
 
 import java.util.Date;
+import java.util.LinkedHashSet;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryBox;
@@ -10,6 +11,8 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.finance.BankAccount;
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.tedi.ICallback;
@@ -312,7 +315,43 @@ public class TediContextVisitor implements ITediContextVisitor {
 	public void visitAddress(ICallback callback) {
 		noVisit();
 	}
-
+	
+	@Override
+	public void visitFinanceAccountBank(ICallback callback) {
+		LinkedHashSet<String> banks = new LinkedHashSet<String>();
+		for ( Finance finance : callback.getResult().getAccountingInvoice().getFinances()) {
+			banks.add(finance.getBankAccount().toString());
+		}
+		if (banks.size() > 0) {
+			showBankAccountDialog(AON.MSG.bankAccount(), banks.iterator().next() , new ITediCallback<String>() {
+				
+				@Override
+				public void onCancel() {
+					callback.onCancel();
+				}
+				
+				@Override
+				public void onAccept(String t) {
+					for ( Finance finance : callback.getResult().getAccountingInvoice().getFinances()) {
+						BankAccount bankAccount = new BankAccount( t ); 
+						finance.setBankAccount(bankAccount);
+					}
+					callback.onAccept(callback.getResult());
+				}
+				
+				@Override
+				public ICallback getCallback() {
+					return callback;
+				}
+			});
+		}
+	}
+	
+	@Override
+	public void visitFinanceAmountZero(ICallback callback) {
+		noVisit();
+	}
+	
 	private void showDateDialog(String label, Date date, ITediCallback<Date> callback) {
 		final DateBoxEx dateBox = new DateBoxEx();
 		dateBox.setValue(date);
@@ -436,6 +475,22 @@ public class TediContextVisitor implements ITediContextVisitor {
 	}
 
 	private void showReferenceCodeDialog(String label, String referenceCode, ITediCallback<String> callback) {
+		final TextBox referenceBox = new TextBox();
+		referenceBox.setStyleName(AON.AON_CSS.aonInputText());
+		referenceBox.setValue(referenceCode);
+		referenceBox.addValueChangeHandler(new ValueChangeHandler<String>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				callback.onAccept(event.getValue());
+			}
+		});
+		BasicDialog dialog = new BasicDialog();
+		dialog.setContent(label, referenceBox);
+		container.add(dialog);
+	}
+	             
+	private void showBankAccountDialog(String label, String referenceCode, ITediCallback<String> callback) {
 		final TextBox referenceBox = new TextBox();
 		referenceBox.setStyleName(AON.AON_CSS.aonInputText());
 		referenceBox.setValue(referenceCode);

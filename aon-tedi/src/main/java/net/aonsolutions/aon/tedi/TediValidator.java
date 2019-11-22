@@ -14,6 +14,7 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.tedi.TediContext;
@@ -252,9 +253,6 @@ public class TediValidator {
 		}
 	};
 
-	/**
-	 * La dirección de la factura no debe superar caracters definido en BD.
-	 */
 	public static Consumer<ValidationContext> DETAILS_VALIDATION = (ctx) -> {
 		if (ctx.getInvoice().getDetails() != null) {
 			for (InvoiceDetail detail : ctx.getInvoice().getDetails()) {
@@ -264,6 +262,36 @@ public class TediValidator {
 		}
 	};
 
+	public static BiConsumer<Finance,ValidationContext> CHECK_FINANCE_AMOUNT_ZERO = (finance,ctx) -> {
+		if (AonMathUtils.isZero(finance.getAmount())) {
+			TediContext context = new TediContext(TediContextKey.FINANCE_AMOUNT_ZERO);
+			ctx.add( TediErrorMessages.C014.err(context, TediContextKey.FINANCE_AMOUNT_ZERO.getDescription()));
+		}
+	};
+
+	public static BiConsumer<Finance,ValidationContext> CHECK_BANK_ACCOUNT = (finance,ctx) -> {
+		if (finance.getBankAccount() == null || AonStringUtils.isEmpty(finance.getBankAccount().getBban())) {
+			finance.setBankAccount(null);
+			finance.setBankAlias(null);
+			finance.setBic(null);
+		}
+		if (finance.getBankAccount() != null && !finance.getBankAccount().isValidBankAccount()) {
+			TediContext context = new TediContext(TediContextKey.FINANCE_WRONG_ACCOUNT_BANK);
+			ctx.add( TediErrorMessages.C014.err(context, TediContextKey.FINANCE_WRONG_ACCOUNT_BANK.getDescription()));
+		}
+	};
+	
+	public static Consumer<ValidationContext> FINANCES_VALIDATION = (ctx) -> {
+		if (ctx.getResult().getAccountingInvoice() != null && ctx.getResult().getAccountingInvoice().getFinances() != null) {
+			for (Finance finance : ctx.getResult().getAccountingInvoice().getFinances()) {
+				CHECK_FINANCE_AMOUNT_ZERO
+				.andThen(CHECK_BANK_ACCOUNT)			
+			 	.accept(finance, ctx);
+			}
+		}
+	};
+
+	
 	/**
 	 * Si el año de la factura no es anterior en cinco años al actual.
 	 */
@@ -352,10 +380,15 @@ public class TediValidator {
 			.andThen(EMPTY_REGISTRY_NAME)
 			.andThen(OVERFLOW_REGISTRY_NAME)
 			.andThen(OVERFLOW_ADDRESS)
-			.andThen(DETAILS_VALIDATION)
 			.andThen(CHECK_FIVE_YEARS)
 			.andThen(CHECK_LINES)
+			
+			.andThen(DETAILS_VALIDATION)
+			
+			.andThen(FINANCES_VALIDATION)
+			
 			.andThen(ENTRY_SETTLED)
+			
 		.accept(new ValidationContext(ctx,result));
 		
 //		.andThen(EMPTY_TRANSACTION)

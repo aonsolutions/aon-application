@@ -226,7 +226,7 @@ public class TediInvoiceList extends DockLayoutPanel {
 	}
 
 	private void onAccept(TediResult result) {
-		SERVICE.putInvoice(this.currentDomainName, this.currentUser, this.currentDomain, isTediSnapshot(),
+		SERVICE.acceptInvoice(this.currentDomainName, this.currentUser, this.currentDomain, isTediSnapshot(),
 				result.getTedi(), new AsyncCallback<TediResult>() {
 
 					@Override
@@ -256,7 +256,7 @@ public class TediInvoiceList extends DockLayoutPanel {
 
 				@Override
 				public void onAccept() {
-					SERVICE.putInvoices(currentDomainName, currentUser, currentDomain, isTediSnapshot(), selectedList,
+					SERVICE.acceptInvoices(currentDomainName, currentUser, currentDomain, isTediSnapshot(), selectedList,
 							new AsyncCallback<LinkedList<TediResult>>() {
 
 								@Override

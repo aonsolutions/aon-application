@@ -132,6 +132,18 @@ public enum TediContextKey  implements Serializable {
 		public void visit(ITediContextVisitor visitor,ICallback callback) {
 			visitor.visitAccountEntry(callback);
 		}
+	},
+	FINANCE_AMOUNT_ZERO("importe del vencimiento no puede ser cero") {
+		@Override
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitFinanceAmountZero(callback);
+		}
+	},
+	FINANCE_WRONG_ACCOUNT_BANK("Cuenta bancaria incorrecta.") {
+		@Override
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitFinanceAccountBank(callback);
+		}
 	}
 	;
 

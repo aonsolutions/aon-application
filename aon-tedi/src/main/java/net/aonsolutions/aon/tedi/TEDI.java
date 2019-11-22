@@ -174,28 +174,37 @@ public class TEDI {
 		}
 	}
 
-	public static TediResult rejectInvoice(String domainName, int domain, boolean snapshot, String user, TediInvoice invoice)
-			throws TediException {
+	private static void ensureInvoice(TediInvoice invoice) throws TediException {
 		if (invoice == null) {
 			throw new TediException("No se ha indicado una factura");
 		}
 		if (AonStringUtils.isBlank(invoice.getCompany())) {
 			throw new TediException("La factura no tiene el atributo compa\u00F1ia");
 		}
+	}
+
+	private static TediResult putInvoice(String domainName, int domain, boolean snapshot, String user, TediInvoice invoice)
+			throws TediException {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			final AonConfiguration aonCtx = ConfigurationDAO.getConfiguration(ctx);
 			Tedi tedi = getTedi(ctx, snapshot);
-			invoice.setOldStatus( invoice.getStatus() );
-			invoice.setStatus( TediInvoiceStatus.refused);
-			
-			LOGGER.info("[TEDI] Attempt to reject invoice [" + invoice.getCompany() + "," + invoice.getUuid() + "]");
+			LOGGER.info("[TEDI] Attempt to put invoice [" + invoice.getCompany() + "," + invoice.getUuid() + "]");
 			return TediParser.toFullInvoice(ctx, aonCtx, tedi.putInvoice(invoice));
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
+	}
+
+	public static TediResult rejectInvoice(String domainName, int domain, boolean snapshot, String user, TediInvoice invoice)
+			throws TediException {
+		ensureInvoice( invoice );
+		invoice.setOldStatus( invoice.getStatus() );
+		invoice.setStatus( TediInvoiceStatus.refused);
+		LOGGER.info("[TEDI] Attempt to reject invoice [" + invoice.getCompany() + "," + invoice.getUuid() + "]");
+		return putInvoice(domainName, domain, snapshot, user, invoice);
 	}
 
 	public static LinkedList<TediResult> rejectInvoices(String domainName, int domain, boolean snapshot, String user,
@@ -236,30 +245,78 @@ public class TEDI {
 		return returned;
 	}	
 	
-	public static TediResult putInvoice(String domainName, int domain, boolean snapshot, String user, TediInvoice invoice)
+	public static TediResult acceptInvoice(String domainName, int domain, boolean snapshot, String user, TediInvoice invoice)
 			throws TediException {
-		if (invoice == null) {
-			throw new TediException("No se ha indicado una factura");
-		}
-		if (AonStringUtils.isBlank(invoice.getCompany())) {
-			throw new TediException("La factura no tiene el atributo compa\u00F1ia");
-		}
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domain, user);
-			final AonConfiguration aonCtx = ConfigurationDAO.getConfiguration(ctx);
-			Tedi tedi = getTedi(ctx, snapshot);
-			invoice.setOldStatus( invoice.getStatus() );
-			invoice.setStatus( TediInvoiceStatus.accepted );
-			
-			LOGGER.info("[TEDI] Attempt to put invoice [" + invoice.getCompany() + "," + invoice.getUuid() + "]");
-			return TediParser.toFullInvoice(ctx, aonCtx, tedi.putInvoice(invoice));
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
+		ensureInvoice( invoice );
+		invoice.setOldStatus( invoice.getStatus() );
+		invoice.setStatus( TediInvoiceStatus.accepted );
+		LOGGER.info("[TEDI] Attempt to accept invoice [" + invoice.getCompany() + "," + invoice.getUuid() + "]");
+		return putInvoice(domainName, domain, snapshot, user, invoice);
 	}
 
+	public static LinkedList<TediResult> acceptInvoices(String domainName, int domain, boolean snapshot, String user,
+			LinkedList<TediResult> invoices) throws TediException {
+		if (invoices == null) {
+			throw new TediException("No se han indicado una facturas");
+		}
+		
+		AONContext ctx = null;
+		LinkedList<TediResult> returned = new LinkedList<TediResult>();	
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			Tedi tedi = getTedi(ctx,snapshot);
+			final AonConfiguration aonCtx = ConfigurationDAO.getConfiguration(ctx);
+			final AONContext dupCtx = ctx;
+			LOGGER.info("[TEDI] Attempt to accept " + invoices.size() + " invoices ");
+			LinkedList<TediInvoice> acceptedInvoices = new LinkedList<TediInvoice>();
+			try {
+				ctx.getDslContext().transaction( (config) -> {
+					int x = 1;
+					for (TediResult result : invoices) {
+						TediInvoice invoice = result.getTedi();
+						ensureInvoice(invoice);
+						if ( result.getAccountingInvoice() == null) {
+							String msg = "[TEDI] \t (" +x+ ") Invoice [" + invoice.getCompany() + "," + invoice.getUuid() + "] has no valid AON invoice";
+							LOGGER.severe(msg);
+							throw new TediException(msg);			
+						}
+						invoice.setOldStatus( invoice.getStatus() );
+						invoice.setStatus( TediInvoiceStatus.accepted );
+						LOGGER.info("[TEDI] \t (" +x+ ") Attempt to accept invoice [" + invoice.getCompany() + "," + invoice.getUuid() + "]");
+						TediInvoice accepted = tedi.putInvoice(invoice);
+						acceptedInvoices.add(accepted);		
+						Invoice aonInvoice = result.getAccountingInvoice().getInvoice();
+						LOGGER.info("[TEDI] \t (" +x+ ") Attempt to save AON invoice [" + aonInvoice.getType() 
+							+ "," + aonInvoice.getSeries()
+							+ "," + aonInvoice.getNumber()
+							+ "," + aonInvoice.getReferenceCode()
+							+ "," + aonInvoice.getRegistryDocument()
+							+ "," + aonInvoice.getRegistryName()
+							+ "]");
+						AccountingInvoiceDAO.save(dupCtx, aonCtx, result.getAccountingInvoice());
+						returned.add(result);
+						x++;
+					}
+				});
+			} catch ( RuntimeException e) {
+				int x = 1;
+				for (TediInvoice invoice : acceptedInvoices ) {
+					invoice.setOldStatus( invoice.getStatus() );
+					invoice.setStatus( TediInvoiceStatus.inbox);
+					LOGGER.info("[TEDI] \t\t (" +x+ ") Attempt to rollback provious accepted invoice [" + invoice.getCompany() + "," + invoice.getUuid() + "]");
+					tedi.putInvoice(invoice);
+					x++;
+				}
+				throw e;
+			}
+		} finally {
+			if (ctx != null) {
+				ctx.close();
+			}
+		}
+		return returned;
+	}
+	
 	public static TediResult validateInvoice(String domainName, int domain, String user, TediResult result) {
 		AONContext ctx = null;
 		try {
@@ -272,49 +329,7 @@ public class TEDI {
 		}
 		return result;
 	}
-	
 
-	
-	public static LinkedList<TediResult> putInvoices(String domainName, int domain, boolean snapshot, String user,
-			LinkedList<TediResult> invoices) throws TediException {
-		if (invoices == null) {
-			throw new TediException("No se han indicado una facturas");
-		}
-		AONContext ctx = null;
-		LinkedList<TediResult> returned = new LinkedList<TediResult>();	
-		try {
-			ctx = AONContext.getAONContext(domainName, domain, user);
-			Tedi tedi = getTedi(ctx,snapshot);
-			final AonConfiguration aonCtx = ConfigurationDAO.getConfiguration(ctx);
-			for (TediResult result : invoices) {
-				TediInvoice inv = result.getTedi();
-				if (AonStringUtils.isBlank(inv.getCompany())) {
-					throw new TediException("La factura no tiene el atributo compa\u00F1ia");
-				}
-				inv.setOldStatus( inv.getStatus() );
-				inv.setStatus( TediInvoiceStatus.accepted );
-				if ( result.getAccountingInvoice() != null) {
-					Invoice aonInvoice = result.getAccountingInvoice().getInvoice();
-					LOGGER.info("[TEDI] Attempt to put invoice [" + aonInvoice.getType() 
-						+ "," + aonInvoice.getSeries()
-						+ "," + aonInvoice.getNumber()
-						+ "," + aonInvoice.getReferenceCode()
-						+ "," + aonInvoice.getRegistryDocument()
-						+ "," + aonInvoice.getRegistryName()
-						+ "]");
-					AccountingInvoiceDAO.save(ctx, aonCtx, result.getAccountingInvoice());
-				}
-				tedi.putInvoice(inv);
-				returned.add(result);
-			}
-		} finally {
-			if (ctx != null) {
-				ctx.close();
-			}
-		}
-		return returned;
-	}
-	
 	public static LinkedList<TediCompany> getCompanies(String domainName, int domain, boolean snapshot, String user)
 			throws TediException {
 		AONContext ctx = null;

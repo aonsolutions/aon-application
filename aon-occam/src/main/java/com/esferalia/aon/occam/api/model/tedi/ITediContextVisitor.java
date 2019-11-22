@@ -21,4 +21,6 @@ public interface ITediContextVisitor {
 	void visitAccountEntry(ICallback callback );
 	void visitDuplicatedSeriesNumber(ICallback callback);
 	void visitDuplicatedReferenceCode(ICallback callback);
+	void visitFinanceAmountZero(ICallback callback);
+	void visitFinanceAccountBank(ICallback callback);
 }
