@@ -22,6 +22,15 @@
 					<ui:param name="skipRemoveButton" value="#{!undeductibleInvoice.removable or !undeductibleInvoiceFinance.allPending}" />
 					<ui:param name="saveButtonReRender" value="undeductibleInvoiceForm" />
 					<ui:param name="showMoreMenu" value="#{!undeductibleInvoice.nevv and undeductibleInvoiceDetail.to == null}" />
+					<ui:define name="beforeSpinToolbarContent">
+						<aon:htmlCommandLink id="saleInvoice-report"
+							value="#{bundle.finance_invoice}" target="_new" 
+							rendered="#{undeductibleInvoice.attachmentAvailable}"
+							action="#{undeductibleInvoiceSigner.onReport}"
+							accesskey="#{bundle.aon_key_print}"
+							styleClass="aon-finding-toolbar-item aon-icon-pdf">
+						</aon:htmlCommandLink>
+					</ui:define>
 					<ui:define name="moreMenuContent">
 						<aon:menuItem id="finances"
 							value="#{bundle.aon_key_finance_description}"
