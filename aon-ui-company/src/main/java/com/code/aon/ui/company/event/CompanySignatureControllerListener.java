@@ -84,6 +84,7 @@ public class CompanySignatureControllerListener extends ControllerAdapter {
 					attach.setDescription("aon-signature");
 					attach.setRegistry((Company) event.getController().getTo());
 					attach.setMimeType(aonFile.getMimeType());
+					attach.setDriveId(null);
 					IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
 					attachBean.insertOrUpdate(attach);
 					companyController.setSignatureAttach(attach);
