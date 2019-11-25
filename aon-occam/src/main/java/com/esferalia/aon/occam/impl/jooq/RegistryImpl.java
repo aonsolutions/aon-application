@@ -368,6 +368,6 @@ public class RegistryImpl implements IRegistry{
 	@Override
 	public RegistryAddInfo updateRegistryAddInfo(AONContext ctx, RegistryAddInfo raddinfo) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> RegistryDAO.insertRegistryAddInfo(ctx, raddinfo));
+				configuration -> RegistryDAO.updateRegistryAddInfo(ctx, raddinfo));
 	}
 }

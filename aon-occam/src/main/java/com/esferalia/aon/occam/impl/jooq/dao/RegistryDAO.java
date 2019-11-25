@@ -1074,6 +1074,15 @@ public class RegistryDAO {
 			.returning()
 			.fetch().stream().map(new RegistryAddInfoFiller()).findFirst().orElse(new RegistryAddInfo());
 	}
+	
+	public static RegistryAddInfo updateRegistryAddInfo(AONContext ctx, RegistryAddInfo raddinfo){
+		return ctx.getDslContext().update(RADDINFO)
+				.set(RADDINFO.VALUE, raddinfo.getValue())
+				.set(RADDINFO.VALUE_DATE, new java.sql.Date(raddinfo.getDate().getTime()))
+				.where(RADDINFO.ID.eq(raddinfo.getId()))
+			.returning()
+			.fetch().stream().map(new RegistryAddInfoFiller()).findFirst().orElse(new RegistryAddInfo());
+	}
 		
 	// ------------------- REGISTRY PROFILE
 	

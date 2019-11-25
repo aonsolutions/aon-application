@@ -252,9 +252,9 @@ public class DocumentOnlineSigner implements Serializable {
 
 		if(representation) {
 			Supplier s = offer.getSupplier();
-			Optional<RegistryAddInfo> usOpt = AON.getRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), "", f -> f.getIdProperty().eq(s.getId()).and(f.getAttributeProperty().eq("DOCUMENT_ONLINE_SIGN_username")));
-			Optional<RegistryAddInfo> passOpt = AON.getRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), "", f -> f.getIdProperty().eq(s.getId()).and(f.getAttributeProperty().eq("DOCUMENT_ONLINE_SIGN_password")));
-			Optional<RegistryAddInfo> stOpt = AON.getRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), "", f -> f.getIdProperty().eq(s.getId()).and(f.getAttributeProperty().eq("DOCUMENT_ONLINE_SIGN_signingType")));
+			Optional<RegistryAddInfo> usOpt = AON.getRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), "", f -> f.getRegistryProperty().eq(s.getId()).and(f.getAttributeProperty().eq("DOCUMENT_ONLINE_SIGN_username")));
+			Optional<RegistryAddInfo> passOpt = AON.getRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), "", f -> f.getRegistryProperty().eq(s.getId()).and(f.getAttributeProperty().eq("DOCUMENT_ONLINE_SIGN_password")));
+			Optional<RegistryAddInfo> stOpt = AON.getRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), "", f -> f.getRegistryProperty().eq(s.getId()).and(f.getAttributeProperty().eq("DOCUMENT_ONLINE_SIGN_signingType")));
 			if(usOpt.isPresent()) {
 				AON.updateRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), user.getLogin(), usOpt.get().setValue(getUsername()));
 				AON.updateRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), user.getLogin(), passOpt.get().setValue(getPassword()));
