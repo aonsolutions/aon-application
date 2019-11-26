@@ -1966,11 +1966,11 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public String sendPayrollEmail(String currentDomainName, String from, String to, String bodyHTML) {
+	public String sendPayrollEmail(String currentDomainName, String from, String to, String cc, String cco, String bodyHTML) {
 		Connection connection = null;
 		try {
 			connection = AonServletUtils.getConnection(currentDomainName);
-			return JooqDomain.sendPayrollEmail(connection, from, to, bodyHTML);
+			return JooqDomain.sendPayrollEmail(connection, from, to, cc, cco, bodyHTML);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {

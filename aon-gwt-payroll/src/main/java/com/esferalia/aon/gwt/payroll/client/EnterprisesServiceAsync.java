@@ -84,7 +84,7 @@ public interface EnterprisesServiceAsync {
 	void getDomainMailAccounts(String currentDomainName, String currentUser, AsyncCallback<List<MailAccount>> asyncCallback);
 	void getPayrollEmailSendTo(String currentDomainName, Integer enterpriseID, AsyncCallback<String> asyncCallback);
 	void getPayrollEmailBody(String currentDomainName, String paramsBase64, AsyncCallback<String> asyncCallback);
-	void sendPayrollEmail(String currentDomainName, String from, String to, String bodyHTML,
+	void sendPayrollEmail(String currentDomainName, String from, String to, String cc, String cco, String bodyHTML,
 			AsyncCallback<String> asyncCallback);
 
 }

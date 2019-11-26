@@ -247,8 +247,8 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getPayrollEmailBody(getCurrentDomainName(), paramsBase64, asyncCallback);
 	}
 	
-	public void sendPayrollEmail(String from, String to, String bodyHTML, AsyncCallback<String> asyncCallback) {
-		enterprisesServiceAsync.sendPayrollEmail(getCurrentDomainName(), from, to, bodyHTML, asyncCallback);
+	public void sendPayrollEmail(String from, String to, String cc, String cco, String bodyHTML, AsyncCallback<String> asyncCallback) {
+		enterprisesServiceAsync.sendPayrollEmail(getCurrentDomainName(), from, to, cc, cco, bodyHTML, asyncCallback);
 	}
 	
 	// ----------------------------------------------------------------- static

@@ -408,8 +408,8 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void sendPayrollEmail(String currentDomainName, String from, String to, String bodyHTML, AsyncCallback<String> callback) {
+	public void sendPayrollEmail(String currentDomainName, String from, String to, String cc, String cco, String bodyHTML, AsyncCallback<String> callback) {
 		AON.start();
-		enterprisesServiceAsync.sendPayrollEmail(currentDomainName, from, to, bodyHTML, new AsyncCallbackWrapper<String>(callback));
+		enterprisesServiceAsync.sendPayrollEmail(currentDomainName, from, to, cc, cco, bodyHTML, new AsyncCallbackWrapper<String>(callback));
 	}
 }

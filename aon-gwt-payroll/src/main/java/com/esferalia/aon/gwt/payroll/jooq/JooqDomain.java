@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
+import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.EnterpriseData.ENTERPRISE_DATA;
 import static com.esferalia.aon.jooq.tables.MailAccount.MAIL_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
@@ -55,15 +56,15 @@ public class JooqDomain {
 		return getPayrollEmailBodyDB(DSL.using(connection, getDefaultSettings()), completeURL);
 	}
 	
-	public static String sendPayrollEmail(Connection connection, String from, String to, String bodyHTML) {
-		return sendPayrollEmailDB(DSL.using(connection, getDefaultSettings()), from, to, bodyHTML);
+	public static String sendPayrollEmail(Connection connection, String from, String to, String cc, String cco, String bodyHTML) {
+		return sendPayrollEmailDB(DSL.using(connection, getDefaultSettings()), from, to, cc, cco, bodyHTML);
 	}
 	
 	// ----------------------------------------------------------------------------------------------------------------
 	// ----------------------------------------------------------------------------------------------------------------
 	// ----------------------------------------------------------------------------------------------------------------
 
-	private static String sendPayrollEmailDB(DSLContext dslContext, String from, String to, String bodyHTML) {
+	private static String sendPayrollEmailDB(DSLContext dslContext, String from, String to, String cc, String cco, String bodyHTML) {
 		
 		if(to.length() == 0){
 			return "No existe destinatario al que enviar el email. Por favor inserte un destinatario.";
@@ -107,8 +108,13 @@ public class JooqDomain {
 			message.setContent(bodyHTML, "text/html");
 			//message.setText(bodyHTML,"UTF-8", "text/html");
 		    message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+		    if(null != cc)
+		    	message.addRecipient(Message.RecipientType.CC, new InternetAddress(cc));
+		    if(null != cco)
+		    	message.addRecipient(Message.RecipientType.BCC, new InternetAddress(cco));
 		    
-		    transport.sendMessage(message, message.getRecipients(Message.RecipientType.TO));
+//		    transport.sendMessage(message, message.getRecipients(Message.RecipientType.TO));
+		    transport.sendMessage(message, message.getAllRecipients());
 		    transport.close();	
 		} catch (MessagingException e) {
 			// TODO Auto-generated catch block
@@ -122,8 +128,14 @@ public class JooqDomain {
 	private static List<MailAccount> getMailAccountsDB(DSLContext dslContext, Integer userId) {
 		List<MailAccount> mailAccounts = new LinkedList<MailAccount>();
 		
+		Record userRecord = dslContext.select().from(USER).where(USER.ID.eq(userId)).fetchOne();
+		
+		Integer userDomain = userRecord.get(USER.DOMAIN);
+		
 		Result<Record> mailAccountRecords = dslContext.select().from(MAIL_ACCOUNT)
-				.where(MAIL_ACCOUNT.USER_ID.eq(userId)).fetch();
+				.where(MAIL_ACCOUNT.USER_ID.eq(userId))
+				.or(MAIL_ACCOUNT.DOMAIN.eq(userDomain))
+				.fetch();
 		
 		for(Record r : mailAccountRecords) {
 			MailAccount mailAccount = new MailAccount();
@@ -176,6 +188,7 @@ public class JooqDomain {
 		
 		String html = "";
 		
+		html += "<div style=\"font-family: \"Lucida Sans Unicode\", \"Lucida Grande\", sans-serif;font-size: 12px;letter-spacing: 2px;word-spacing: 0px;color: #000000;font-weight: normal;text-decoration: none;font-style: normal;font-variant: normal;text-transform: none;\">";
 		html += "<p>Estimado cliente:</p>";
 		html += "<p>Le adjuntamos las n&oacute;minas de la empresa <a style=\"font-weight: bold;\">" + getEnterpriseName(dslContext, paramsMap) +"</a> que corresponden a los siguientes trabajadores:</p>";
 		html += "<ul>";
@@ -188,7 +201,7 @@ public class JooqDomain {
 		html += "<p>Para descargar y visualizar el documento adjunto, por favor haga click en el siguiente enlace:</p>";
 		
 		html += "<div style=\"width:200px;border: 1px solid gray;text-align:center;\">";
-		html +=	"<a type=\"button\" href=\" " + completeURL + " \" style=\"text-decoration:none;padding:5px;text-align:center;color: #153643; font-family: Arial, sans-serif;\">";
+		html +=	"<a type=\"button\" href=\" " + completeURL + " \" style=\"text-decoration:none;padding:5px;text-align:center;color: #153643;\">";
 		html +=		"<img src=\"http://simpleicon.com/wp-content/uploads/cloud-download-2.png\" style=\"width:20px;vertical-align: middle;\" />";
 		html +=		"<b style=\"color: black;padding-left: 4px;font-size: x-small;\">DESCARGAR NOMINAS</b>";
 		html +=	"</a>";
@@ -196,6 +209,7 @@ public class JooqDomain {
 
 		html += "<p>Este archivo est&aacute; en formato PDF Adobe y se puede leer usando Acrobat Reader. Si no tiene instalado el Acrobat Reader pulse aqu&iacute; para conseguir su copia gratuita: http://get.adobe.com/es/reader. Para cualquier aclaraci&oacute;n sobre el documento adjunto p&oacute;ngase en contacto con nosotros.</p>";
 		html += "<p>AON SOLUTIONS, S.L.<br/> Tel&eacute;fono: 902121009<br/> Fax: 945121011<br/> <a style=\"text-decoration: none; color: black;\" href=\"www.aonsolutions.es\">www.aonsolutions.es</a></p>";
+		html += "</div>";
 		
 		return html;
 	}

@@ -138,6 +138,6 @@ public interface EnterprisesService extends RemoteService {
 
 	String getPayrollEmailBody(String currentDomainName, String paramsBase64);
 
-	String sendPayrollEmail(String currentDomainName, String from, String to, String bodyHTML);
+	String sendPayrollEmail(String currentDomainName, String from, String to, String cc, String cco, String bodyHTML);
 	
 }
