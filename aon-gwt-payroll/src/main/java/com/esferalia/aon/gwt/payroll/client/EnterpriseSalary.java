@@ -702,9 +702,11 @@ public class EnterpriseSalary extends Composite implements ContextMenuHandler {
 				} else {
 					String from = this.getFromMAilAccount().getId().toString();
 					String to = this.getSendTo();
+					String cc = this.getCC();
+					String cco = this.getCCO();
 					String bodyHTML = this.getBody();
 					
-					enterpriseSalaryObject.sendPayrollEmail(from, to, bodyHTML,
+					enterpriseSalaryObject.sendPayrollEmail(from, to, cc, cco, bodyHTML,
 						s -> {
 							WarningDialog warning = new WarningDialog("AVISO", enterpriseSalaryObject.getEmailStatus());
 							warning.center();

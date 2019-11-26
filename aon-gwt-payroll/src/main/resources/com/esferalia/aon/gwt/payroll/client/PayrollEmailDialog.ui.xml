@@ -35,6 +35,22 @@
 					<g:TextBox ui:field="sendTo"></g:TextBox>
 				</td>
 			</tr>
+			<tr>
+				<td style="background-color: #d7d7d7;">
+					CC:
+				</td>
+				<td>
+					<g:TextBox ui:field="cc"></g:TextBox>
+				</td>
+			</tr>
+			<tr>
+				<td style="background-color: #d7d7d7;">
+					CCO:
+				</td>
+				<td>
+					<g:TextBox ui:field="cco"></g:TextBox>
+				</td>
+			</tr>
 			<br></br>
 			<tr>
 			    

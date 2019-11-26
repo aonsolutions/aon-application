@@ -94,7 +94,7 @@
 							<g:Button ui:field='deleteButton' styleName='aon-finding-toolbar-item aon-icon-delete' text="BORRAR"/>
 							<g:Button debugId='saveButton' ui:field='saveButton' styleName='aon-finding-toolbar-item aon-icon-pdf' text="PDF" />
 							<g:Button ui:field='publishButton' styleName='aon-finding-toolbar-item aon-icon-google-drive' text="PUBLICAR" />
-							<g:Button ui:field='emailButton' styleName='aon-finding-toolbar-item aon-icon-mail' text="EMAIL" />
+							<g:Button ui:field='emailButton' styleName='aon-finding-toolbar-item aon-icon-mail' text="EMAIL EMPRESA" />
 						</g:HTMLPanel>
 					</g:HorizontalPanel>
 				</g:HorizontalPanel>

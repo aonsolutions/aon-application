@@ -43,6 +43,12 @@ public abstract class PayrollEmailDialog extends CustomDialog {
 	TextBox sendTo;
 	
 	@UiField
+	TextBox cc;
+	
+	@UiField
+	TextBox cco;
+	
+	@UiField
 	HTMLPanel textAreaPanel;
 	
 	@UiField
@@ -61,6 +67,8 @@ public abstract class PayrollEmailDialog extends CustomDialog {
 		setWidget(binder.createAndBindUi(this));
 		
 		sendTo.addStyleName(style.w96());
+		cc.addStyleName(style.w96());
+		cco.addStyleName(style.w96());
 		
 		impl.getDomainMailAccounts(new AsyncCallback<List<MailAccount>>() {
 			
@@ -148,5 +156,19 @@ public abstract class PayrollEmailDialog extends CustomDialog {
 	
 	public String getBody() {
 		return this.richTextArea.getHTML();
+	}
+	
+	public String getCC(){
+		if(this.cc.getText().length() == 0)
+			return null;
+		
+		return this.cc.getText();
+	}
+	
+	public String getCCO() {
+		if(this.cco.getText().length() == 0)
+			return null;
+		
+		return this.cco.getText();
 	}
 }

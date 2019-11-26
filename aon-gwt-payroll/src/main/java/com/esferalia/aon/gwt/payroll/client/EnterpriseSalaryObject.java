@@ -118,8 +118,8 @@ public class EnterpriseSalaryObject {
 		});
 	}
 	
-	public void sendPayrollEmail(String from, String to, String bodyHTML, Consumer<String> success, Consumer<Throwable> failure) {
-		impl.sendPayrollEmail(from, to, bodyHTML, new AsyncCallback<String>() {
+	public void sendPayrollEmail(String from, String to, String cc, String cco, String bodyHTML, Consumer<String> success, Consumer<Throwable> failure) {
+		impl.sendPayrollEmail(from, to, cc, cco, bodyHTML, new AsyncCallback<String>() {
 
 			@Override
 			public void onFailure(Throwable caught) {

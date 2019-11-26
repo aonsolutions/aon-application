@@ -648,9 +648,11 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 				} else {
 					String from = this.getFromMAilAccount().getId().toString();
 					String to = this.getSendTo();
+					String cc = this.getCC();
+					String cco = this.getCCO();
 					String bodyHTML = this.getBody();
 					
-					workplaceSalaryObject.sendPayrollEmail(from, to, bodyHTML,
+					workplaceSalaryObject.sendPayrollEmail(from, to, cc, cco, bodyHTML,
 						s -> {
 							WarningDialog warning = new WarningDialog("AVISO", workplaceSalaryObject.getEmailStatus());
 							warning.center();
