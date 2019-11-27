@@ -72,6 +72,10 @@
 			margin: 3px;
 			margin-left: 10px;
 		}
+		
+		.pl-20{
+			padding-left: 20px;
+		}
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX">
@@ -91,10 +95,11 @@
 					</g:HTMLPanel>
 					<g:HorizontalPanel styleName="aon-finding-toolbar">
 						<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
-							<g:Button ui:field='deleteButton' styleName='aon-finding-toolbar-item aon-icon-delete' text="BORRAR"/>
-							<g:Button debugId='saveButton' ui:field='saveButton' styleName='aon-finding-toolbar-item aon-icon-pdf' text="PDF" />
-							<g:Button ui:field='publishButton' styleName='aon-finding-toolbar-item aon-icon-google-drive' text="PUBLICAR" />
-							<g:Button ui:field='emailButton' styleName='aon-finding-toolbar-item aon-icon-mail' text="EMAIL EMPRESA" />
+							<g:Button ui:field='deleteButton' styleName='aon-finding-toolbar-item aon-icon-delete {style.pl-20}' text=" BORRAR"/>
+							<g:Button debugId='saveButton' ui:field='saveButton' styleName='aon-finding-toolbar-item aon-icon-pdf {style.pl-20}' text=" PDF" />
+							<g:Button ui:field='publishButton' styleName='aon-finding-toolbar-item aon-icon-google-drive {style.pl-20}' text=" PUBLICAR" />
+							<g:Button ui:field='emailEnterpriseButton' styleName='aon-finding-toolbar-item aon-icon-mail {style.pl-20}' text=" EMAIL EMPRESA" />
+							<g:Button ui:field='emailEmployeesButton' styleName='aon-finding-toolbar-item aon-icon-mail {style.pl-20}' text=" EMAIL EMPLEADOS" />
 						</g:HTMLPanel>
 					</g:HorizontalPanel>
 				</g:HorizontalPanel>

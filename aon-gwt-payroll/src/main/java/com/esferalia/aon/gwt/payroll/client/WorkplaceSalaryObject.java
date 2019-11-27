@@ -22,6 +22,7 @@ public class WorkplaceSalaryObject {
 	private SalaryInfoFilter filter;
 	private WorkplaceEmployees workplaceEmployees;
 	private String emailStatus;
+	private String checkEmailEmployeesStatus;
 	
 	public WorkplaceSalaryObject() {
 		super();
@@ -131,6 +132,45 @@ public class WorkplaceSalaryObject {
 		});
 	}
 	
+	public void checkEmployeesEmails(Set<SalaryInfo> salaries, Consumer<String> success, Consumer<Throwable> failure) {
+		ArrayList<Integer> salaryIds = new ArrayList<Integer>();
+		for(SalaryInfo salary : salaries) {
+			salaryIds.add(salary.getId());
+		}
+		
+		impl.checkEmployeesEmails(salaryIds, new AsyncCallback<String>(){
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(String result) {
+				checkEmailEmployeesStatus = result;
+				success.accept(result);
+			}
+			
+		});
+	}
+	
+	public void sendPayrollEmailToEmployees(String from, String cc, String cco, String bodyHTML, String completeURL, Consumer<String> success, Consumer<Throwable> failure) {
+		impl.sendPayrollEmailToEmployees(from, cc, cco, bodyHTML, completeURL, new AsyncCallback<String>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(String result) {
+				emailStatus = result;
+				success.accept(result);
+			}
+			
+		});
+	}
+	
 	public List<SalaryInfo> getWorkplaceSalaries() {
 		return this.workplaceSalaries;
 	}
@@ -155,6 +195,11 @@ public class WorkplaceSalaryObject {
 	public String getEmailStatus(){
 		return this.emailStatus;
 	}
+	
+	public String getCheckEmailEmployeesStatus(){
+		return this.checkEmailEmployeesStatus;
+	}
+
 
 		
 }

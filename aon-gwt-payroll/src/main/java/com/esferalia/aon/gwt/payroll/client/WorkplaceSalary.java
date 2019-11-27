@@ -95,7 +95,10 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 	Button publishButton;
 	
 	@UiField
-	Button emailButton;
+	Button emailEnterpriseButton;
+	
+	@UiField
+	Button emailEmployeesButton;
 	
 	@UiField
 	HTMLPanel mainContainer;
@@ -206,13 +209,13 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 					} else {
 						// Hide everything
 						mainContainer.addStyleName(style.hide());
-						this.emailButton.removeStyleName(style.hide());
 						
 						//Hide buttons
 						this.deleteButton.setVisible(false);
 						this.saveButton.setVisible(false);
 						this.publishButton.setVisible(false);
-						this.emailButton.setVisible(false);
+						this.emailEnterpriseButton.setVisible(false);
+						this.emailEmployeesButton.setVisible(false);
 						
 						// Show warning dialog
 						WarningDialog warningDialog = new WarningDialog("Aviso", "No existen nominas para este empleado.");
@@ -251,7 +254,8 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 			this.deleteButton.setVisible(false);
 			this.saveButton.setVisible(false);
 			this.publishButton.setVisible(false);
-			this.emailButton.setVisible(false);
+			this.emailEnterpriseButton.setVisible(false);
+			this.emailEmployeesButton.setVisible(false);
 			
 			// Show warning dialog
 			WarningDialog warningDialog = new WarningDialog("Aviso", "No existen nominas para este empleado. Si ha filtrado la informacion por favor revise los parametros.");
@@ -267,13 +271,15 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 		this.deleteButton.setVisible(true);
 		this.saveButton.setVisible(true);
 		this.publishButton.setVisible(true);
-		this.emailButton.setVisible(true);
+		this.emailEnterpriseButton.setVisible(true);
+		this.emailEmployeesButton.setVisible(true);
 		
 		//Disable buttons till any salary selected
 		deleteButton.setEnabled(false);
 		saveButton.setEnabled(false);
 		publishButton.setEnabled(false);
-		emailButton.setEnabled(false);
+		emailEnterpriseButton.setEnabled(false);
+		emailEmployeesButton.setEnabled(false);
 		
 		// Resource Style CellTable
 		CellTableResource resource = GWT.create(CellTableResource.class);
@@ -338,12 +344,14 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 	            	deleteButton.setEnabled(true);
 	            	saveButton.setEnabled(true);
 	            	publishButton.setEnabled(true);
-	            	emailButton.setEnabled(true);
+	            	emailEnterpriseButton.setEnabled(true);
+	            	emailEmployeesButton.setEnabled(true);
 	            }else {
 	            	deleteButton.setEnabled(false);
 	            	saveButton.setEnabled(false);
 	            	publishButton.setEnabled(false);
-	            	emailButton.setEnabled(false);
+	            	emailEnterpriseButton.setEnabled(false);
+	            	emailEmployeesButton.setEnabled(false);
 	            }
 	            
 	        }
@@ -616,7 +624,7 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 		onPublish();
 	}
 	
-	@UiHandler("emailButton")
+	@UiHandler("emailEnterpriseButton")
 	public void onEmailSalary(ClickEvent event) {
 		Integer enterpriseID = ((SalaryInfo)selectionModel.getSelectedSet().toArray()[0]).getEnterpriseId();
 		
@@ -637,7 +645,7 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 		url += paramsBase64;
 		
 		// DIALOG TO SEND EMAIL
-		PayrollEmailDialog dialog = new PayrollEmailDialog(enterpriseID, url) {
+		PayrollEmailToEnterpriseDialog dialog = new PayrollEmailToEnterpriseDialog(enterpriseID, url) {
 			
 			@Override
 			protected void onAccept() {
@@ -666,6 +674,69 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 		
 		dialog.center();
 		dialog.show();
+	}
+	
+	@UiHandler("emailEmployeesButton")
+	public void onEmailEmployeesSalary(ClickEvent event) {
+		Integer enterpriseID = ((SalaryInfo)selectionModel.getSelectedSet().toArray()[0]).getEnterpriseId();
+		
+		// PARAMS TO DOWNLOAD PAYROLLS
+		String query = "?type=salary&selectedSalaries=" + selectionModel.getSelectedSet().size()
+	            + "&enterprise=" + ((SalaryInfo)selectionModel.getSelectedSet().toArray()[0]).getEnterpriseId();
+			
+		for(int i=0; i<selectionModel.getSelectedSet().size(); i++) {
+			query += "&salary"+i+"Id=" + ((SalaryInfo)selectionModel.getSelectedSet().toArray()[i]).getId();
+		}
+		
+		query += "&name=salaries.pdf";
+		
+		String paramsBase64 = b64decode(query);
+		
+		final String url = GWT.getModuleBaseURL()+ "salary_exporter/" + paramsBase64;
+		
+		// CHECK SELECTED EMPLOYEES EMAILS
+		workplaceSalaryObject.checkEmployeesEmails(
+				selectionModel.getSelectedSet(), 
+				s -> {
+					if(workplaceSalaryObject.getCheckEmailEmployeesStatus().length() != 0) {
+						WarningDialog warningDialog = new WarningDialog("REVISAR EMAILS", workplaceSalaryObject.getCheckEmailEmployeesStatus());
+						warningDialog.center();
+						warningDialog.show();
+					} else {
+						PayrollEmailToEmployeesDialog dialog = new PayrollEmailToEmployeesDialog(enterpriseID, url) {
+							
+							@Override
+							protected void onAccept() {
+								
+								if(null == this.getFromMAilAccount()) {
+									WarningDialog warning = new WarningDialog("AVISO", "No existe cuenta de correo desde la que enviar este mensaje.");
+									warning.center();
+									warning.show();
+								} else {
+									String from = this.getFromMAilAccount().getId().toString();
+									String cc = this.getCC();
+									String cco = this.getCCO();
+									String bodyHTML = this.getBody();
+									
+									workplaceSalaryObject.sendPayrollEmailToEmployees(from, cc, cco, bodyHTML, url,
+										s -> {
+											WarningDialog warning = new WarningDialog("AVISO", workplaceSalaryObject.getEmailStatus());
+											warning.center();
+											warning.show();
+											hide();
+										},f -> {}
+									);
+								}
+							}
+						}; 
+						
+						dialog.center();
+						dialog.show();
+					}
+				}, 
+				f -> {}
+		);
+		
 	}
 	
 	@UiHandler("noDateRB")
