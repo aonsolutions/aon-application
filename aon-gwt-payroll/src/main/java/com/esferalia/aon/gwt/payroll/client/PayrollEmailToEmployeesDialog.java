@@ -20,12 +20,12 @@ import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class PayrollEmailToEnterpriseDialog extends CustomDialog {
+public abstract class PayrollEmailToEmployeesDialog extends CustomDialog {
 	
 	//Starting Service
 	final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
 
-	interface Binder extends UiBinder<Widget, PayrollEmailToEnterpriseDialog> {}
+	interface Binder extends UiBinder<Widget, PayrollEmailToEmployeesDialog> {}
 
 	private static final Binder binder = GWT.create(Binder.class);
 	
@@ -38,9 +38,6 @@ public abstract class PayrollEmailToEnterpriseDialog extends CustomDialog {
 	
 	@UiField
 	ListBox mailAccountsListBox;
-	
-	@UiField
-	TextBox sendTo;
 	
 	@UiField
 	TextBox cc;
@@ -60,13 +57,12 @@ public abstract class PayrollEmailToEnterpriseDialog extends CustomDialog {
 	private List<MailAccount> mailAccounts = new ArrayList<MailAccount>();
 	private RichTextArea richTextArea = null;
 	
-	public PayrollEmailToEnterpriseDialog(Integer enterpriseID, String completeURL) {
+	public PayrollEmailToEmployeesDialog(Integer enterpriseID, String completeURL) {
 		
 		setCaption("Envio nominas por email");
 		
 		setWidget(binder.createAndBindUi(this));
 		
-		sendTo.addStyleName(style.w96());
 		cc.addStyleName(style.w96());
 		cco.addStyleName(style.w96());
 		
@@ -80,27 +76,7 @@ public abstract class PayrollEmailToEnterpriseDialog extends CustomDialog {
 					mailAccountsListBox.addItem(mailAccount.getName() + " - ( " + mailAccount.getEmail() + " )");
 				}
 				
-				impl.getPayrollEmailSendTo(enterpriseID, new AsyncCallback<String>() {
-
-					@Override
-					public void onFailure(Throwable caught) { }
-
-					@Override
-					public void onSuccess(String sendToEmail) {
-						sendTo.setText(null == sendToEmail ? "" : sendToEmail);
-						
-						impl.getPayrollEmailBody(completeURL, new AsyncCallback<String>() {
-
-							@Override
-							public void onFailure(Throwable caught) { }
-
-							@Override
-							public void onSuccess(String emailBody) {
-								initView(emailBody);
-							}
-						});
-					}
-				});
+				initView();
 				
 			}
 			
@@ -127,15 +103,15 @@ public abstract class PayrollEmailToEnterpriseDialog extends CustomDialog {
 		});
 	}
 
-	private void initView(String emailBody) {
+	private void initView() {
 		richTextArea = new RichTextArea();
-		richTextArea.setWidth("650px");
-		richTextArea.setHeight("430px");
+		richTextArea.setWidth("730px");
+		richTextArea.setHeight("380px");
 		
-		richTextArea.setHTML(emailBody);
+		richTextArea.setHTML(getDefaultMessage());
 		
 		RichTextToolbar toolbar = new RichTextToolbar(richTextArea);
-		toolbar.setWidth("650px");
+		toolbar.setWidth("730px");
 		
 		textAreaPanel.add(toolbar);
 		textAreaPanel.add(richTextArea);
@@ -148,10 +124,6 @@ public abstract class PayrollEmailToEnterpriseDialog extends CustomDialog {
 			return null;
 		
 		return this.mailAccounts.get(this.mailAccountsListBox.getSelectedIndex());
-	}
-	
-	public String getSendTo() {
-		return this.sendTo.getText();
 	}
 	
 	public String getBody() {
@@ -170,5 +142,32 @@ public abstract class PayrollEmailToEnterpriseDialog extends CustomDialog {
 			return null;
 		
 		return this.cco.getText();
+	}
+	
+	public String getDefaultMessage() {
+		String html = "";
+		
+		html += "<div style=\"font-family: \"Lucida Sans Unicode\", \"Lucida Grande\", sans-serif;font-size: 12px;letter-spacing: 2px;word-spacing: 0px;color: #000000;font-weight: normal;text-decoration: none;font-style: normal;font-variant: normal;text-transform: none;\">";
+		html += 	"<p>Estimado NOMBRE_EMPLEADO :</p>";
+		html += 	"<p>Le adjuntamos las n&oacute;minas que corresponden a los siguientes periodos :</p>";
+		html += 	"<ul>";
+		
+		html += 		"<li>PERIODOS_NOMINA</li>";
+
+		html += 	"</ul>";
+		html += 	"<p>Para descargar y visualizar el documento adjunto, por favor haga click en el siguiente enlace:</p>";
+		
+		html += 	"<div style=\"width:200px;border: 1px solid gray;text-align:center;\">";
+		html +=			"<a type=\"button\" href=\"URL_DOWNLOAD\" style=\"text-decoration:none;padding:5px;text-align:center;color: #153643;\">";
+		html +=				"<img src=\"http://simpleicon.com/wp-content/uploads/cloud-download-2.png\" style=\"width:20px;vertical-align: middle;\" />";
+		html +=				"<b style=\"color: black;padding-left: 4px;font-size: x-small;\">DESCARGAR NOMINAS</b>";
+		html +=			"</a>";
+		html += 	"</div>";
+
+		html += 	"<p>Este archivo est&aacute; en formato PDF Adobe y se puede leer usando Acrobat Reader. Si no tiene instalado el Acrobat Reader pulse aqu&iacute; para conseguir su copia gratuita: http://get.adobe.com/es/reader. Para cualquier aclaraci&oacute;n sobre el documento adjunto p&oacute;ngase en contacto con nosotros.</p>";
+		html += 	"<p>AON SOLUTIONS, S.L.<br/> Tel&eacute;fono: 902121009<br/> Fax: 945121011<br/> <a style=\"text-decoration: none; color: black;\" href=\"www.aonsolutions.es\">www.aonsolutions.es</a></p>";
+		html += "</div>";
+		
+		return html;
 	}
 }

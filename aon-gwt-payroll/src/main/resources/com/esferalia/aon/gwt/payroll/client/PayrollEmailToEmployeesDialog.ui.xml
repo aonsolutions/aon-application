@@ -8,10 +8,15 @@
 		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
     
     
-	<ui:style type="com.esferalia.aon.gwt.payroll.client.PayrollEmailToEnterpriseDialog.MyStyle">
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.PayrollEmailToEmployeesDialog.MyStyle">
 
 		.w96{
 			width: 99%;
+		}
+		
+		.label{
+			padding: 2px;
+			font-weight: bold;
 		}
 
 	</ui:style>
@@ -32,7 +37,7 @@
 					Para:
 				</td>
 				<td>
-					<g:TextBox ui:field="sendTo"></g:TextBox>
+					<g:Label styleName="aon-width-all {style.label}">Cuenta definida en el perfil del empleado</g:Label>
 				</td>
 			</tr>
 			<tr>
@@ -51,17 +56,19 @@
 					<g:TextBox ui:field="cco"></g:TextBox>
 				</td>
 			</tr>
-			<br></br>
-			<tr>
-			    
-			</tr>
+			<tr> </tr>
 			<tr>
 				<td colspan="2">
 					<g:HTMLPanel ui:field="textAreaPanel"></g:HTMLPanel>
 				</td>
 			</tr>
+			<tr style="background-color: #d7d7d7;">
+				<td colspan="2">
+					<g:Label styleName="aon-width-all {style.label}">* Los valores NOMBRE_EMPLEADO y PERIODOS_NOMINA serán sustituidos por la información correspondiente en cada caso.</g:Label> 
+				</td>
+			</tr>
 			<tr>
-				<td colspan="2" align="right">
+				<td colspan="2" align="right" style="padding-top: 10px;">
 					<g:Button ui:field="cancelButton" debugId="activityDialogCancelButton">Cancelar</g:Button>
 					<g:Button ui:field="acceptButton" debugId="activityDialogAcceptButton" >Enviar</g:Button>
 				</td>
