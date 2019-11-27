@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -139,5 +140,10 @@ public interface EnterprisesService extends RemoteService {
 	String getPayrollEmailBody(String currentDomainName, String paramsBase64);
 
 	String sendPayrollEmail(String currentDomainName, String from, String to, String cc, String cco, String bodyHTML);
+
+	String checkEmployeesEmails(String currentDomainName, ArrayList<Integer> salaryIds);
+
+	String sendPayrollEmailToEmployees(String currentDomainName, String from, String cc, String cco, String bodyHTML,
+			String completeURL);
 	
 }

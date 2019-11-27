@@ -3,6 +3,7 @@
  */
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -412,4 +413,18 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.sendPayrollEmail(currentDomainName, from, to, cc, cco, bodyHTML, new AsyncCallbackWrapper<String>(callback));
 	}
+
+	@Override
+	public void checkEmployeesEmails(String currentDomainName, ArrayList<Integer> salaryIds, AsyncCallback<String> callback) {
+		AON.start();
+		enterprisesServiceAsync.checkEmployeesEmails(currentDomainName, salaryIds, new AsyncCallbackWrapper<String>(callback));
+	}
+
+	@Override
+	public void sendPayrollEmailToEmployees(String currentDomainName, String from, String cc, String cco,
+			String bodyHTML, String completeURL, AsyncCallback<String> callback) {
+		AON.start();
+		enterprisesServiceAsync.sendPayrollEmailToEmployees(currentDomainName, from, cc, cco, bodyHTML, completeURL, new AsyncCallbackWrapper<String>(callback));
+	}
+
 }

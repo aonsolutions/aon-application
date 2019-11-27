@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -249,6 +250,14 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void sendPayrollEmail(String from, String to, String cc, String cco, String bodyHTML, AsyncCallback<String> asyncCallback) {
 		enterprisesServiceAsync.sendPayrollEmail(getCurrentDomainName(), from, to, cc, cco, bodyHTML, asyncCallback);
+	}
+	
+	public void checkEmployeesEmails(ArrayList<Integer> salaryIds, AsyncCallback<String> asyncCallback) {
+		enterprisesServiceAsync.checkEmployeesEmails(getCurrentDomainName(), salaryIds, asyncCallback);
+	}
+	
+	public void sendPayrollEmailToEmployees(String from, String cc, String cco, String bodyHTML, String completeURL, AsyncCallback<String> asyncCallback) {
+		enterprisesServiceAsync.sendPayrollEmailToEmployees(getCurrentDomainName(), from, cc, cco, bodyHTML, completeURL, asyncCallback);
 	}
 	
 	// ----------------------------------------------------------------- static

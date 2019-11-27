@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -86,5 +87,9 @@ public interface EnterprisesServiceAsync {
 	void getPayrollEmailBody(String currentDomainName, String paramsBase64, AsyncCallback<String> asyncCallback);
 	void sendPayrollEmail(String currentDomainName, String from, String to, String cc, String cco, String bodyHTML,
 			AsyncCallback<String> asyncCallback);
+	void checkEmployeesEmails(String currentDomainName, ArrayList<Integer> salaryIds,
+			AsyncCallback<String> asyncCallback);
+	void sendPayrollEmailToEmployees(String currentDomainName, String from, String cc, String cco, String bodyHTML,
+			String completeURL, AsyncCallback<String> asyncCallback);
 
 }

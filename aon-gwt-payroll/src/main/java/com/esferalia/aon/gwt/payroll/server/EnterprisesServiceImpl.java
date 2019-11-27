@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,10 +30,10 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqActivity;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgrarian;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCRA;
-import com.esferalia.aon.gwt.payroll.jooq.JooqDomain;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeAFI;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeePeculiarities;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEnterprise;
+import com.esferalia.aon.gwt.payroll.jooq.JooqMail;
 import com.esferalia.aon.gwt.payroll.jooq.JooqPayments;
 import com.esferalia.aon.gwt.payroll.jooq.JooqSSBonus;
 import com.esferalia.aon.gwt.payroll.jooq.JooqWorkplace;
@@ -1916,7 +1917,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer domainId = AonServletUtils.getDomainID(currentDomainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(currentDomainName);
 			Integer userId = AonServletUtils.getUserID(connection, currentUser, domainId, parentDomainId);
-			return JooqDomain.getMailAccounts(connection, userId);
+			return JooqMail.getMailAccounts(connection, userId, domainId);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
@@ -1934,7 +1935,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		Connection connection = null;
 		try {
 			connection = AonServletUtils.getConnection(currentDomainName);
-			return JooqDomain.getPayrollEmailSendTo(connection, enterpriseID);
+			return JooqMail.getPayrollEmailSendTo(connection, enterpriseID);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
@@ -1952,7 +1953,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		Connection connection = null;
 		try {
 			connection = AonServletUtils.getConnection(currentDomainName);
-			return JooqDomain.getPayrollEmailBody(connection, paramsBase64);
+			return JooqMail.getPayrollEmailBody(connection, paramsBase64);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
@@ -1970,7 +1971,44 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		Connection connection = null;
 		try {
 			connection = AonServletUtils.getConnection(currentDomainName);
-			return JooqDomain.sendPayrollEmail(connection, from, to, cc, cco, bodyHTML);
+			return JooqMail.sendPayrollEmail(connection, from, to, cc, cco, bodyHTML);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if ( connection != null ) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
+
+	@Override
+	public String checkEmployeesEmails(String currentDomainName, ArrayList<Integer> salaryIds) {
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection(currentDomainName);
+			return JooqMail.checkEmployeesEmails(connection, salaryIds);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if ( connection != null ) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
+
+	@Override
+	public String sendPayrollEmailToEmployees(String currentDomainName, String from, String cc, String cco,
+			String bodyHTML, String completeURL) {
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection(currentDomainName);
+			return JooqMail.sendPayrollEmailToEmployees(connection, from, cc, cco, bodyHTML, completeURL);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
