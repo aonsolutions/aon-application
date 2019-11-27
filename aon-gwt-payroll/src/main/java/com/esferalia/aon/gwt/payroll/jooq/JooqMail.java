@@ -5,10 +5,13 @@ import static com.esferalia.aon.jooq.tables.EnterpriseData.ENTERPRISE_DATA;
 import static com.esferalia.aon.jooq.tables.MailAccount.MAIL_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
+import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,7 +34,7 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.google.api.client.util.Base64;
 
-public class JooqDomain {
+public class JooqMail {
 
 	private static Settings SETTINGS = null;
 	private static SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -44,8 +47,8 @@ public class JooqDomain {
 		return SETTINGS;
 	}
 	
-	public static List<MailAccount> getMailAccounts(Connection connection, Integer userId) {
-		return getMailAccountsDB(DSL.using(connection, getDefaultSettings()), userId);
+	public static List<MailAccount> getMailAccounts(Connection connection, Integer userId, Integer domainId) {
+		return getMailAccountsDB(DSL.using(connection, getDefaultSettings()), userId, domainId);
 	}
 	
 	public static String getPayrollEmailSendTo(Connection connection, Integer enterpriseID) {
@@ -58,6 +61,15 @@ public class JooqDomain {
 	
 	public static String sendPayrollEmail(Connection connection, String from, String to, String cc, String cco, String bodyHTML) {
 		return sendPayrollEmailDB(DSL.using(connection, getDefaultSettings()), from, to, cc, cco, bodyHTML);
+	}
+	
+	public static String checkEmployeesEmails(Connection connection, ArrayList<Integer> salaryIds) {
+		return checkEmployeesEmailsDB(DSL.using(connection, getDefaultSettings()), salaryIds);
+	}
+	
+	public static String sendPayrollEmailToEmployees(Connection connection, String from, String cc, String cco,
+			String bodyHTML, String completeURL) {
+		return sendPayrollEmailToEmployeesDB(DSL.using(connection, getDefaultSettings()), from, cc, cco, bodyHTML, completeURL);
 	}
 	
 	// ----------------------------------------------------------------------------------------------------------------
@@ -97,7 +109,6 @@ public class JooqDomain {
 	    props.setProperty("mail.user", user);
 	    props.setProperty("mail.password", password);
 	    props.setProperty("mail.smtp.starttls.enable", "true");
-	    props.setProperty("mail.mime.charset", StandardCharsets.UTF_8.name());
 	   
 	    try {
 	    	Session session = Session.getInstance(props, null);
@@ -105,7 +116,7 @@ public class JooqDomain {
 			transport.connect(host, user, password);
 			MimeMessage message = new MimeMessage(session);
 			message.setSubject("N" + String.valueOf("\u00F3") + "minas");
-			message.setContent(bodyHTML, "text/html");
+			message.setContent(bodyHTML, "text/html; charset=UTF-8");
 			//message.setText(bodyHTML,"UTF-8", "text/html");
 		    message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
 		    if(null != cc)
@@ -125,7 +136,7 @@ public class JooqDomain {
 	    
 	}
 
-	private static List<MailAccount> getMailAccountsDB(DSLContext dslContext, Integer userId) {
+	private static List<MailAccount> getMailAccountsDB(DSLContext dslContext, Integer userId, Integer domainId) {
 		List<MailAccount> mailAccounts = new LinkedList<MailAccount>();
 		
 		Record userRecord = dslContext.select().from(USER).where(USER.ID.eq(userId)).fetchOne();
@@ -134,7 +145,8 @@ public class JooqDomain {
 		
 		Result<Record> mailAccountRecords = dslContext.select().from(MAIL_ACCOUNT)
 				.where(MAIL_ACCOUNT.USER_ID.eq(userId))
-				.or(MAIL_ACCOUNT.DOMAIN.eq(userDomain))
+				.or(MAIL_ACCOUNT.DOMAIN.eq(userDomain).and(MAIL_ACCOUNT.USER_ID.isNull()))
+				.or(MAIL_ACCOUNT.DOMAIN.eq(domainId).and(MAIL_ACCOUNT.USER_ID.isNull()))
 				.fetch();
 		
 		for(Record r : mailAccountRecords) {
@@ -208,7 +220,7 @@ public class JooqDomain {
 		html += "</div>";
 
 		html += "<p>Este archivo est&aacute; en formato PDF Adobe y se puede leer usando Acrobat Reader. Si no tiene instalado el Acrobat Reader pulse aqu&iacute; para conseguir su copia gratuita: http://get.adobe.com/es/reader. Para cualquier aclaraci&oacute;n sobre el documento adjunto p&oacute;ngase en contacto con nosotros.</p>";
-		html += "<p>AON SOLUTIONS, S.L.<br/> Tel&eacute;fono: 902121009<br/> Fax: 945121011<br/> <a style=\"text-decoration: none; color: black;\" href=\"www.aonsolutions.es\">www.aonsolutions.es</a></p>";
+		html += "<p>AON SOLUTIONS, S.L.<br/> Tel&eacute;fono: 902121009<br/> Fax: 945121011<br/> <a style=\"text-decoration: none; color: black;\" href=\"https://www.aonsolutions.es\">www.aonsolutions.es</a></p>";
 		html += "</div>";
 		
 		return html;
@@ -218,6 +230,12 @@ public class JooqDomain {
 		String decode = "";
 		decode = new String(Base64.decodeBase64(value));
 		return decode;
+	}
+	
+	private static String encode(byte[] value){
+		String encode = "";
+		encode = new String(Base64.encodeBase64(value));
+		return encode;
 	}
 	
 	private static Map<String, String> createParams(String paramsStr) {
@@ -254,6 +272,121 @@ public class JooqDomain {
 		return enterpriseRegistry.get(REGISTRY.NAME);
 	}
 
+	private static String checkEmployeesEmailsDB(DSLContext dslContext, ArrayList<Integer> salaryIds) {
+		ArrayList<Integer> visitedContracts = new ArrayList<Integer>();
+		String message = "";
+		
+		for(Integer salaryId : salaryIds) {
+			Record salaryRecord = dslContext.select().from(SALARY)
+					.where(SALARY.ID.eq(salaryId))
+					.fetchOne();
+			
+			Integer contractId = salaryRecord.get(SALARY.CONTRACT);
+			
+			if(!visitedContracts.contains(contractId)) {
+				Record rMediaEmailRecord = dslContext.select().from(RMEDIA)
+						.where(RMEDIA.MEDIA.eq((byte)4))
+						.and(RMEDIA.REGISTRY.eq(
+								dslContext.select(CONTRACT.PERSON).from(CONTRACT)
+									.where(CONTRACT.ID.eq(contractId))
+								)
+						).fetchOne();
+				
+				if(null == rMediaEmailRecord || rMediaEmailRecord.get(RMEDIA.VALUE).length() == 0) {
+					message += "<p>" + salaryRecord.get(SALARY.EMPLOYEE_NAME) + " no tiene email definido, reviselo en su perfil. </p>";
+				}
+				
+				visitedContracts.add(contractId);
+			}
+		}
+		
+		return message;
+	}
 
+	private static String sendPayrollEmailToEmployeesDB(DSLContext dslContext, String from, String cc, String cco, String bodyHTML, String completeURL) {
+		String baseURL = completeURL.split("salary_exporter/")[0] + "salary_exporter/";
+		String paramsBase64 = completeURL.split("salary_exporter/")[1];
+		
+		String paramsStr = decode(paramsBase64.getBytes());
+		Map<String, String> paramsMap = createParams(paramsStr);
+		
+		ArrayList<Integer> salaryIds = getSalaryIds(paramsMap);
+		ArrayList<Integer> visitedContracts = new ArrayList<Integer>();
+		
+		for(Integer salaryId : salaryIds) {
+			Record salaryRecord = dslContext.select().from(SALARY)
+					.where(SALARY.ID.eq(salaryId))
+					.fetchOne();
+			
+			Integer contractId = salaryRecord.get(SALARY.CONTRACT);
+			
+			if(!visitedContracts.contains(contractId)) {
+				Record rMediaEmailRecord = dslContext.select().from(RMEDIA)
+						.where(RMEDIA.MEDIA.eq((byte)4))
+						.and(RMEDIA.REGISTRY.eq(
+								dslContext.select(CONTRACT.PERSON).from(CONTRACT)
+									.where(CONTRACT.ID.eq(contractId))
+								)
+						).fetchOne();
+				
+				String emailTo = rMediaEmailRecord.get(RMEDIA.VALUE);
+				
+				Result<Record> salariesRecords = dslContext.select().from(SALARY).where(SALARY.CONTRACT.eq(contractId)).and(SALARY.ID.in(salaryIds)).fetch();
+				
+				String parseHTMLBody = parseHTMLBody(bodyHTML, salariesRecords, paramsMap.get("enterprise"), baseURL);
+				
+				sendPayrollEmailDB(dslContext, from, emailTo, cc, cco, parseHTMLBody);
+				
+				visitedContracts.add(contractId);
+			}
+		}
+		
+		
+		return "Emails enviados correctamente.";
+	}
+
+	private static String parseHTMLBody(String bodyHTML, Result<Record> salariesRecords, String enterprise, String baseURL) {
+		
+		// GENERATE URL
+		String params = "?type=salary&selectedSalaries=" + salariesRecords.size() + "&enterprise=" + enterprise;
+		for(int i=0; i<salariesRecords.size(); i++) {
+			params += "&salary"+i+"Id=" + salariesRecords.get(i).get(SALARY.ID);
+		}
+		params += "&name=salaries.pdf";
+		
+		String encodedParamas = encode(params.getBytes()); 
+		String url = baseURL + encodedParamas;
+		
+		//GENERATE BODY HTML
+		String[] x = bodyHTML.split("NOMBRE_EMPLEADO");
+		String html = bodyHTML.split("NOMBRE_EMPLEADO")[0] + salariesRecords.get(0).get(SALARY.EMPLOYEE_NAME) + bodyHTML.split("NOMBRE_EMPLEADO")[1];
+		
+		html = html.split("<li>PERIODOS_NOMINA</li>")[0] + createPeriods(salariesRecords) + html.split("<li>PERIODOS_NOMINA</li>")[1];
+		
+		html = html.split("URL_DOWNLOAD")[0] + url + html.split("URL_DOWNLOAD")[1];
+		
+		return html;
+	}
+
+	private static String createPeriods(Result<Record> salariesRecords) {
+		String html = "";
+		for(Record salaryRecord : salariesRecords) {
+			html += "<li> N&oacute;mina del " + dateFormatter.format(salaryRecord.get(SALARY.END_DATE));
+		}
+		
+		return html;
+	}
+
+	private static ArrayList<Integer> getSalaryIds(Map<String, String> paramsMap) {
+		ArrayList<Integer> salaryIds = new ArrayList<Integer>();
+		
+		for(String key : paramsMap.keySet()) {
+			if(key.contains("salary")) {
+				salaryIds.add(Integer.parseInt(paramsMap.get(key)));
+			}
+		}
+		
+		return salaryIds;
+	}
 
 }
