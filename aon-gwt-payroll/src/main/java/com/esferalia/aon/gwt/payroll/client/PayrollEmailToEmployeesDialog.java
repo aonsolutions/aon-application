@@ -148,11 +148,11 @@ public abstract class PayrollEmailToEmployeesDialog extends CustomDialog {
 		String html = "";
 		
 		html += "<div style=\"font-family: \"Lucida Sans Unicode\", \"Lucida Grande\", sans-serif;font-size: 12px;letter-spacing: 2px;word-spacing: 0px;color: #000000;font-weight: normal;text-decoration: none;font-style: normal;font-variant: normal;text-transform: none;\">";
-		html += 	"<p>Estimado NOMBRE_EMPLEADO :</p>";
-		html += 	"<p>Le adjuntamos las n&oacute;minas que corresponden a los siguientes periodos :</p>";
+		html += 	"<p>Estimado/a [=NOMBRE_EMPLEADO] :</p>";
+		html += 	"<p>Le adjuntamos la(s) n&oacute;mina(s) que corresponden a los siguientes periodos :</p>";
 		html += 	"<ul>";
 		
-		html += 		"<li>PERIODOS_NOMINA</li>";
+		html += 		"<li>[=PERIODOS_NOMINA]</li>";
 
 		html += 	"</ul>";
 		html += 	"<p>Para descargar y visualizar el documento adjunto, por favor haga click en el siguiente enlace:</p>";

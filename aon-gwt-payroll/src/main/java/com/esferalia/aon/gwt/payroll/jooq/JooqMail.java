@@ -335,6 +335,9 @@ public class JooqMail {
 				
 				String parseHTMLBody = parseHTMLBody(bodyHTML, salariesRecords, paramsMap.get("enterprise"), baseURL);
 				
+				if(parseHTMLBody.length() == 0)
+					return "No se ha encontrado la variable [=NOMBRE_EMPLEADO] y/o[=PERIODOS_NOMINA]";
+				
 				sendPayrollEmailDB(dslContext, from, emailTo, cc, cco, parseHTMLBody);
 				
 				visitedContracts.add(contractId);
@@ -358,10 +361,17 @@ public class JooqMail {
 		String url = baseURL + encodedParamas;
 		
 		//GENERATE BODY HTML
-		String[] x = bodyHTML.split("NOMBRE_EMPLEADO");
-		String html = bodyHTML.split("NOMBRE_EMPLEADO")[0] + salariesRecords.get(0).get(SALARY.EMPLOYEE_NAME) + bodyHTML.split("NOMBRE_EMPLEADO")[1];
+		String[] aux = bodyHTML.split("\\[=NOMBRE_EMPLEADO\\]");
 		
-		html = html.split("<li>PERIODOS_NOMINA</li>")[0] + createPeriods(salariesRecords) + html.split("<li>PERIODOS_NOMINA</li>")[1];
+		if(aux.length != 2) 
+			return "";
+		
+		String html = bodyHTML.split("\\[=NOMBRE_EMPLEADO\\]")[0] + salariesRecords.get(0).get(SALARY.EMPLOYEE_NAME) + bodyHTML.split("\\[=NOMBRE_EMPLEADO\\]")[1];
+		
+		if(html.split("<li>\\[=PERIODOS_NOMINA\\]</li>").length != 2) 
+			return "";
+		
+		html = html.split("<li>\\[=PERIODOS_NOMINA\\]</li>")[0] + createPeriods(salariesRecords) + html.split("<li>\\[=PERIODOS_NOMINA\\]</li>")[1];
 		
 		html = html.split("URL_DOWNLOAD")[0] + url + html.split("URL_DOWNLOAD")[1];
 		
