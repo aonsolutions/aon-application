@@ -80,6 +80,7 @@ public class DocumentOnlineSigner implements Serializable {
 	private String username;
 	private String password;
 	private Integer signingType;
+	private Integer time;
 	private String url;
 	private boolean collapsed;
 	private boolean testing;
@@ -133,6 +134,13 @@ public class DocumentOnlineSigner implements Serializable {
 	}
 	public void setSigningType(Integer signingType) {
 		this.signingType = signingType;
+	}
+	
+	public Integer getTime() {
+		return time;
+	}
+	public void setTime(Integer time) {
+		this.time = time;
 	}
 	
 	private String signingType() {
@@ -197,17 +205,19 @@ public class DocumentOnlineSigner implements Serializable {
 		ApplicationParameter ap_username = AppParamUtil.getParameter("DOCUMENT_ONLINE_SIGN_username");
 		ApplicationParameter ap_password = AppParamUtil.getParameter("DOCUMENT_ONLINE_SIGN_password");
 		ApplicationParameter ap_signingType = AppParamUtil.getParameter("DOCUMENT_ONLINE_SIGN_signingType");
+		ApplicationParameter ap_time = AppParamUtil.getParameter("DOCUMENT_ONLINE_SIGN_time");
 		
 		if(representation) {
 			Supplier s = offer.getSupplier();
 			Optional<RegistryAddInfo> usOpt = AON.getRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), "", f -> f.getRegistryProperty().eq(s.getId()).and(f.getAttributeProperty().eq("DOCUMENT_ONLINE_SIGN_username")));
 			Optional<RegistryAddInfo> passOpt = AON.getRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), "", f -> f.getRegistryProperty().eq(s.getId()).and(f.getAttributeProperty().eq("DOCUMENT_ONLINE_SIGN_password")));
 			Optional<RegistryAddInfo> stOpt = AON.getRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), "", f -> f.getRegistryProperty().eq(s.getId()).and(f.getAttributeProperty().eq("DOCUMENT_ONLINE_SIGN_signingType")));
-	
+			Optional<RegistryAddInfo> tOpt = AON.getRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), "", f -> f.getRegistryProperty().eq(s.getId()).and(f.getAttributeProperty().eq("DOCUMENT_ONLINE_SIGN_time")));
 			if(usOpt.isPresent()) {
 				setUsername(usOpt.get().getValue());
 				setPassword(passOpt.get().getValue());
 				setSigningType(Integer.parseInt(stOpt.get().getValue()));
+				setTime(tOpt.isPresent() ? Integer.parseInt(tOpt.get().getValue()): 7);
 			} else {
 				if(ap_username!=null && ap_username.getValue().trim().length()>0
 						&& ap_password!=null && ap_password.getValue().trim().length()>0
@@ -216,11 +226,13 @@ public class DocumentOnlineSigner implements Serializable {
 					setUsername(ap_username.getValue().trim());
 					setPassword(ap_password.getValue().trim());
 					setSigningType(Integer.parseInt(ap_signingType.getValue().trim()));
+					setTime(Integer.parseInt(ap_time.getValue()));
 					setCollapsed(true);
 				} else {
 					setUsername(null);
 					setPassword(null);
 					setSigningType(1);
+					setTime(7);
 					setCollapsed(false);
 				}
 			}
@@ -232,6 +244,7 @@ public class DocumentOnlineSigner implements Serializable {
 				setUsername(ap_username.getValue().trim());
 				setPassword(ap_password.getValue().trim());
 				setSigningType(Integer.parseInt(ap_signingType.getValue().trim()));
+				setTime(ap_time != null && ap_time.getValue() != null ? Integer.parseInt(ap_time.getValue()) : 7);
 				setCollapsed(true);
 			} else {
 				setUsername(null);
@@ -255,10 +268,23 @@ public class DocumentOnlineSigner implements Serializable {
 			Optional<RegistryAddInfo> usOpt = AON.getRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), "", f -> f.getRegistryProperty().eq(s.getId()).and(f.getAttributeProperty().eq("DOCUMENT_ONLINE_SIGN_username")));
 			Optional<RegistryAddInfo> passOpt = AON.getRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), "", f -> f.getRegistryProperty().eq(s.getId()).and(f.getAttributeProperty().eq("DOCUMENT_ONLINE_SIGN_password")));
 			Optional<RegistryAddInfo> stOpt = AON.getRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), "", f -> f.getRegistryProperty().eq(s.getId()).and(f.getAttributeProperty().eq("DOCUMENT_ONLINE_SIGN_signingType")));
+			Optional<RegistryAddInfo> tOpt = AON.getRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), "", f -> f.getRegistryProperty().eq(s.getId()).and(f.getAttributeProperty().eq("DOCUMENT_ONLINE_SIGN_time")));
+
 			if(usOpt.isPresent()) {
 				AON.updateRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), user.getLogin(), usOpt.get().setValue(getUsername()));
 				AON.updateRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), user.getLogin(), passOpt.get().setValue(getPassword()));
 				AON.updateRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), user.getLogin(), stOpt.get().setValue(String.valueOf(getSigningType())));
+				if(tOpt.isPresent()) {	
+					AON.updateRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), user.getLogin(), tOpt.get().setValue(String.valueOf(getTime())));
+				} else {
+					AON.insertRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), user.getLogin(), 
+							new RegistryAddInfo()
+								.setAttribute("DOCUMENT_ONLINE_SIGN_time")
+								.setDomain(offer.getDomain())
+								.setValue(String.valueOf(getTime()))
+								.setDate(new Date())
+								.setRegistry(s.getId()));
+				}
 			} else if(!ap_username.getValue().equals(getUsername())){
 				AON.insertRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), user.getLogin(),
 					new RegistryAddInfo()
@@ -281,15 +307,24 @@ public class DocumentOnlineSigner implements Serializable {
 						.setValue(String.valueOf(getSigningType()))
 						.setDate(new Date())
 						.setRegistry(s.getId()));
+				AON.insertRegistryAddInfo(AonUtil.getDomainName(), s.getDomain(), user.getLogin(), 
+					new RegistryAddInfo()
+						.setAttribute("DOCUMENT_ONLINE_SIGN_time")
+						.setDomain(offer.getDomain())
+						.setValue(String.valueOf(getTime()))
+						.setDate(new Date())
+						.setRegistry(s.getId()));
 			} else {
 				AppParamUtil.insertParameter("DOCUMENT_ONLINE_SIGN_username", getUsername());
 				AppParamUtil.insertParameter("DOCUMENT_ONLINE_SIGN_password", getPassword());
 				AppParamUtil.insertParameter("DOCUMENT_ONLINE_SIGN_signingType", String.valueOf(getSigningType()));	
+				AppParamUtil.insertParameter("DOCUMENT_ONLINE_SIGN_time", String.valueOf(getTime()));	
 			}
 		} else {
 			AppParamUtil.insertParameter("DOCUMENT_ONLINE_SIGN_username", getUsername());
 			AppParamUtil.insertParameter("DOCUMENT_ONLINE_SIGN_password", getPassword());
 			AppParamUtil.insertParameter("DOCUMENT_ONLINE_SIGN_signingType", String.valueOf(getSigningType()));
+			AppParamUtil.insertParameter("DOCUMENT_ONLINE_SIGN_time", String.valueOf(getTime()));
 		}
 	}
 		
@@ -372,6 +407,7 @@ public class DocumentOnlineSigner implements Serializable {
 
 			opt.put("onlineRetentionPeriod", 5);
 			opt.put("notaryRetentionPeriod", 0);
+			opt.put("timeToLive", getTime() * 24 * 60);
 			json.put("options", opt);
 			
 			JSONObject responseJson = postObject(json.toString());
