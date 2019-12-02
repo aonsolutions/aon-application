@@ -2883,7 +2883,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 						this.month = Month.DECEMBER;
 						this.start = "01/01";
 						this.end = "31/12";
-						this.issue = "15/12";
+						this.issue = "31/12";
 					}
 				}
 				});
