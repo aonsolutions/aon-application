@@ -116,6 +116,11 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 
 		Date endDate = getEndDate();
 		Date startDate = getFirstDayOfYear(endDate);
+		
+		Date dbContractEndDate = getDate(CONTRACT, END_DATE);
+		if ( dbContractEndDate != null && dbContractEndDate.before(startDate)) {
+			startDate = AonDateUtils.add(startDate, Calendar.YEAR, -1);
+		}
 
 		Criteria contractCriteria = getContractCriteria();
 
