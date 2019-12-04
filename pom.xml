@@ -246,6 +246,20 @@
 	<repositories>
 	
 		<repository>
+			<id>external_free</id>
+			<name>External Free Repository</name>
+			<url>http://aonsolutions.github.io/aon-application/maven/2/external_free</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+		</repository>
+
+		<repository>
 			<id>maven2-repository.dev.java.net</id>
 			<name>Java.net Repository for Maven 2</name>
 			<url>http://download.java.net/maven/2</url>
@@ -303,61 +317,6 @@
 			</snapshots>
 		</repository>
 
-		<repository>
-			<id>inhouse</id>
-			<name>Inhouse Repository</name>
-			<url>http://dev.esferalia.net/maven2_repositories/inhouse</url>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-				<updatePolicy>never</updatePolicy>
-			</snapshots>
-		</repository>
-
-		<repository>
-			<id>inhouse_snaphot</id>
-			<name>Inhouse Snapshot Repository</name>
-			<url>http://dev.esferalia.net/maven2_repositories/inhouse_snapshot</url>
-			<releases>
-				<enabled>false</enabled>
-				<updatePolicy>never</updatePolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-			</snapshots>
-		</repository>
-
-		<repository>
-			<id>external_free</id>
-			<name>External Free Repository</name>
-			<url>http://dev.esferalia.net/maven2_repositories/external_free</url>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-				<updatePolicy>never</updatePolicy>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>maven2-aonsolutions.net</id>
-			<name>aon Solutions.net</name>
-			<url>http://repo.maven.aonsolutions.net/maven2</url>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-			</snapshots>
-		</repository>
-
 
 	</repositories>
 
@@ -386,30 +345,8 @@
 		</pluginRepository>
 
 		<pluginRepository>
-			<id>aon</id>
-			<url>http://dev.esferalia.net/maven2_repositories/inhouse</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-		</pluginRepository>
-
-		<pluginRepository>
-			<id>aon.snapshots</id>
-			<url>http://dev.esferalia.net/maven2_repositories/inhouse_snapshot</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-		</pluginRepository>
-
-		<pluginRepository>
 			<id>aon.external.free</id>
-			<url>http://dev.esferalia.net/maven2_repositories/external_free</url>
+			<url>http://aonsolutions.github.io/aon-application/maven/2/external_free</url>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
@@ -488,7 +425,6 @@
 				<version>2.5.3</version>
 				<configuration>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
-					<tagBase>http://dev.esferalia.net/repos/aon-application/releases</tagBase>
 				</configuration>
 				<dependencies>
 					<dependency>
@@ -571,18 +507,4 @@
 		</plugins>
 	</build>
 	
-	<distributionManagement>
-		<repository>
-			<id>inhouse</id>
-			<name>Inhouse Internal Release Repository</name>
-			<url>scp://dev.esferalia.net/var/www/maven2_repositories/inhouse</url>
-		</repository>
-		<snapshotRepository>
-			<id>inhouse_snapshot</id>
-			<name>Inhouse Internal Snapshot Repository</name>
-			<url>scp://dev.esferalia.net/var/www/maven2_repositories/inhouse_snapshot</url>
-			<uniqueVersion>false</uniqueVersion>
-		</snapshotRepository>
-	</distributionManagement>
-
 </project>

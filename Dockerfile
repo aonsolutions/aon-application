@@ -7,7 +7,6 @@ ENV CATALINA_HOME /usr/local/tomcat
 ENV AON_AIO_HOME $CATALINA_HOME/webapps/ROOT
 
 ARG NET_MAVEN_REPOSITORY_URL=http://repo.maven.aonsolutions.net/maven2/net/aonsolutions/
-ARG AON_MAVEN_REPOSITORY_URL=http://dev.esferalia.net/maven2_repositories/inhouse_snapshot/com/code/aon
 
 ENV TOMCAT_LIBDIR $CATALINA_HOME/lib
 
@@ -31,7 +30,7 @@ ENV MYSQL_JDBC_URL=http://central.maven.org/maven2/mysql/mysql-connector-java/8.
 ENV MCHANGE_COMMONS_URL=http://central.maven.org/maven2/com/mchange/mchange-commons-java/0.2.15/mchange-commons-java-0.2.15.jar
 ENV COMMONS_LOGGING_URL=http://central.maven.org/maven2/commons-logging/commons-logging-api/1.1/commons-logging-api-1.1.jar
 ENV COMMONS_COLLECTIONS_URL=http://central.maven.org/maven2/commons-collections/commons-collections/3.1/commons-collections-3.1.jar
-ENV IZENPESIGNER_APPLET=http://dev.esferalia.net/maven2_repositories/external_free/izenpe/izenpesigner-applet/1.0/izenpesigner-applet-1.0.jar
+ENV IZENPESIGNER_APPLET=http://aonsolutions.github.io/aon-application/maven/2/external_free/izenpe/izenpesigner-applet/1.0/izenpesigner-applet-1.0.jar
 ENV DYNAMODB_SESSION_MANAGER=https://github.com/aws/aws-dynamodb-session-tomcat/releases/download/v2.0.4/aws-dynamodb-session-tomcat-2.0.4.jar
 
 RUN set -x \
