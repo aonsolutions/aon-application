@@ -226,7 +226,7 @@ public class DocumentOnlineSigner implements Serializable {
 					setUsername(ap_username.getValue().trim());
 					setPassword(ap_password.getValue().trim());
 					setSigningType(Integer.parseInt(ap_signingType.getValue().trim()));
-					setTime(Integer.parseInt(ap_time.getValue()));
+					setTime(ap_time != null && ap_time.getValue() != null ? Integer.parseInt(ap_time.getValue()) : 7);
 					setCollapsed(true);
 				} else {
 					setUsername(null);
