@@ -86,6 +86,8 @@ public class JooqEmployeeCalendar {
 		varNames.add("JORNADAS_REALES");
 		// CAUSA INACTIVITY
 		varNames.add("CAUSA_INACTIVIDAD");
+		// DROPDAY (AUSENCIA)
+		varNames.add("DIAS_AUSENCIA");
 		
 		dslContext.delete(CONTRACT_DATA)
 			.where(CONTRACT_DATA.CONTRACT.eq(contractId))
@@ -255,6 +257,7 @@ public class JooqEmployeeCalendar {
 							,ContextVariable.HOLIDAYS.getName()
 							,"NO_LABORABLE"
 							,"DIAS_INACTIVIDAD"
+							,"DIAS_AUSENCIA"
 							,"PEONADAS"))
 					.fetch();
 		
@@ -672,6 +675,7 @@ public class JooqEmployeeCalendar {
 				  ,"DIAS_INACTIVIDAD"
 				  ,"NO_LABORABLE"
 				  ,"CAUSA_INACTIVIDAD"
+				  ,"DIAS_AUSENCIA"
 				  ,"PEONADAS"
 				  ,"FESTIVE_WORKING"))
 		   .execute();
@@ -1033,7 +1037,8 @@ public class JooqEmployeeCalendar {
 	
 	private static boolean validDayType(String dayType) {
 		return dayType.equals("DIAS_ERE") || dayType.equals("DIAS_HUELGA") || dayType.equals("NO_LABORABLE") 
-				|| dayType.equals("DIAS_VACACIONES") || dayType.equals("DIAS_INACTIVIDAD") || dayType.equals("PEONADAS");
+				|| dayType.equals("DIAS_VACACIONES") || dayType.equals("DIAS_INACTIVIDAD") || dayType.equals("PEONADAS")
+				|| dayType.equals("DIAS_AUSENCIA");
 	}
 
 	private static String calculateDayType(DayType dayType) {
@@ -1041,6 +1046,9 @@ public class JooqEmployeeCalendar {
 		switch (dayType) {
 		case EREDAY:
 			result = "DIAS_ERE";
+			break;
+		case DROPDAY:
+			result = "DIAS_AUSENCIA";
 			break;
 		case STRIKEDAY:
 			result = "DIAS_HUELGA";

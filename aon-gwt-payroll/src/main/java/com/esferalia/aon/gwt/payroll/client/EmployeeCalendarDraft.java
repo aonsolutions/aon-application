@@ -379,6 +379,9 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	Button peonadasDayButton;
 	
 	@UiField
+	Button dropDayButton;
+	
+	@UiField
 	Button holidayDayButton;
 
 	@UiField
@@ -864,6 +867,12 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	public void onPeonadasClick(ClickEvent event) {
 		addPeonadas();
 	}
+	
+	@UiHandler("dropDayButton")
+	public void onDropDaysClick(ClickEvent event) {
+		addDropDay();
+	}
+	
 	
 	@UiHandler("strikeDayButton")
 	public void onStrikeClick(ClickEvent event) {
@@ -2024,7 +2033,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	private void addInactivityDays(String typeInactivity) {
 		applyInactivityDaySelectedDates(DayType.INACTIVITY, typeInactivity);
 	}
-
+	
 	private void addDropDay() {
 		applyDayTypeSelectedDates(DayType.DROPDAY);
 	}

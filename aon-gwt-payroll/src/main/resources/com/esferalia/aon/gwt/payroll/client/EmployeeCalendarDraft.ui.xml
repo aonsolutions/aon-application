@@ -77,6 +77,10 @@
 		.inactivityColor{
 			background-color: #71b1e8;
 		}
+	
+		.dropColor{
+			background-color: #733969;
+		}
 
 		.peonadasColor{
 			background-color: #d692f9;
@@ -407,6 +411,8 @@
 						<g:Label styleName="{style.paddingLabels} {style.cursorPointer}">ERE</g:Label>
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.inactivityColor} {style.cursorPointer}" ui:field="inactivityDayButton"/>
 						<g:Label styleName="{style.paddingLabels} {style.cursorPointer}">Inactividad</g:Label>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.dropColor} {style.cursorPointer}" ui:field="dropDayButton"/>
+						<g:Label styleName="{style.paddingLabels} {style.cursorPointer}">Ausencia</g:Label>
 						<g:HorizontalPanel ui:field="peonadasPanel" styleName="{style.hide}">
 						    <g:Button styleName="{style.typeButtonUpperMenuStyle} {style.peonadasColor} {style.cursorPointer}" ui:field="peonadasDayButton"/>
 							<g:Label styleName="{style.paddingLabels} {style.cursorPointer}">Peonadas</g:Label>

@@ -83,6 +83,7 @@ public class EmployeeCalendarDraftObjectData {
 			put("DIAS_INACTIVIDAD", DayType.INACTIVITY);
 			put("PEONADAS", DayType.PEONADAS);
 			put("NO_LABORABLE", DayType.NOWORKINGDAY);
+			put("DIAS_AUSENCIA", DayType.DROPDAY);
 		}
 	};
 	
