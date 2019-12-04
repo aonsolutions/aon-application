@@ -692,7 +692,7 @@ public class JooqEmployeeCalendar {
 				endDateType = DateUtils.copyDateOnly(entry.getKey());
 		}
 		
-		if(endDateType.after(realEndDate)) {
+		if(null != realEndDate && endDateType.after(realEndDate)) {
 			endDateType = DateUtils.copyDateOnly(realEndDate);
 			DateUtils.addDays2Date(endDateType, 1);
 		}
