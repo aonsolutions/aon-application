@@ -64,7 +64,7 @@
 			</tr>
 			<tr style="background-color: #d7d7d7;">
 				<td colspan="2">
-					<g:Label styleName="aon-width-all {style.label}">* Los valores [=NOMBRE_EMPLEADO] y [=PERIODOS_NOMINA] serán sustituidos por la información correspondiente en cada caso.</g:Label> 
+					<g:Label styleName="aon-width-all {style.label}">* Los valores [=NOMBRE_EMPLEADO], [=PERIODOS_NOMINA] y [=INFORMACION_EMPRESA] serán sustituidos por la información correspondiente en cada caso.</g:Label> 
 				</td>
 			</tr>
 			<tr>

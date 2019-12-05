@@ -1,14 +1,13 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
-import static com.esferalia.aon.jooq.tables.User.USER;
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.EnterpriseData.ENTERPRISE_DATA;
 import static com.esferalia.aon.jooq.tables.MailAccount.MAIL_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
-import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
-import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.Salary.SALARY;
+import static com.esferalia.aon.jooq.tables.User.USER;
 
-import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -220,12 +219,51 @@ public class JooqMail {
 		html += "</div>";
 
 		html += "<p>Este archivo est&aacute; en formato PDF Adobe y se puede leer usando Acrobat Reader. Si no tiene instalado el Acrobat Reader pulse aqu&iacute; para conseguir su copia gratuita: http://get.adobe.com/es/reader. Para cualquier aclaraci&oacute;n sobre el documento adjunto p&oacute;ngase en contacto con nosotros.</p>";
-		html += "<p>AON SOLUTIONS, S.L.<br/> Tel&eacute;fono: 902121009<br/> Fax: 945121011<br/> <a style=\"text-decoration: none; color: black;\" href=\"https://www.aonsolutions.es\">www.aonsolutions.es</a></p>";
+		// html += "<p>AON SOLUTIONS, S.L.<br/> Tel&eacute;fono: 902121009<br/> Fax: 945121011<br/> <a style=\"text-decoration: none; color: black;\" href=\"https://www.aonsolutions.es\">www.aonsolutions.es</a></p>";
+		html += getEnterpriseInfo(dslContext, Integer.parseInt(paramsMap.get("enterprise")));
 		html += "</div>";
 		
 		return html;
 	}
 	
+	private static String getEnterpriseInfo(DSLContext dslContext, Integer enterpriseId) {
+		// <p>AON SOLUTIONS, S.L.<br/> Tel&eacute;fono: 902121009<br/> Fax: 945121011<br/> <a style=\"text-decoration: none; color: black;\" href=\"https://www.aonsolutions.es\">www.aonsolutions.es</a></p>
+		String enterpriseInfo = "";
+		
+		Record registryRecord = dslContext.select().from(REGISTRY)
+				.where(REGISTRY.ID.eq(enterpriseId))
+				.fetchOne();
+		
+		enterpriseInfo += "<p>" + registryRecord.get(REGISTRY.NAME);
+		
+		Result<Record> rmediaRecords = dslContext.select().from(RMEDIA)
+				.where(RMEDIA.REGISTRY.eq(enterpriseId))
+				.fetch();
+		
+		for(Record r : rmediaRecords) {
+			switch (r.get(RMEDIA.MEDIA)) {
+			case (byte)1:
+				if(null != r.get(RMEDIA.VALUE) && r.get(RMEDIA.VALUE).length() != 0)
+					enterpriseInfo += "<br/> Tel&eacute;fono: " + r.get(RMEDIA.VALUE);
+				break;
+			case (byte)4:
+				if(null != r.get(RMEDIA.VALUE) && r.get(RMEDIA.VALUE).length() != 0)
+					enterpriseInfo += "<br/> Email: " + r.get(RMEDIA.VALUE);
+				break;
+			case (byte)5:
+				if(null != r.get(RMEDIA.VALUE) && r.get(RMEDIA.VALUE).length() != 0)
+					enterpriseInfo += "<br/> <a style=\"text-decoration: none; color: black;\" href=\"" + r.get(RMEDIA.VALUE) + "\">" + r.get(RMEDIA.VALUE) + "</a>";
+				break;
+			default:
+				break;
+			}
+		}
+		
+		enterpriseInfo += "</p>";
+		
+		return enterpriseInfo;
+	}
+
 	private static String decode(byte[] value){
 		String decode = "";
 		decode = new String(Base64.decodeBase64(value));
@@ -333,10 +371,10 @@ public class JooqMail {
 				
 				Result<Record> salariesRecords = dslContext.select().from(SALARY).where(SALARY.CONTRACT.eq(contractId)).and(SALARY.ID.in(salaryIds)).fetch();
 				
-				String parseHTMLBody = parseHTMLBody(bodyHTML, salariesRecords, paramsMap.get("enterprise"), baseURL);
+				String parseHTMLBody = parseHTMLBody(bodyHTML, salariesRecords, paramsMap.get("enterprise"), baseURL, dslContext);
 				
 				if(parseHTMLBody.length() == 0)
-					return "No se ha encontrado la variable [=NOMBRE_EMPLEADO] y/o[=PERIODOS_NOMINA]";
+					return "No se ha encontrado la variable [=NOMBRE_EMPLEADO], [=PERIODOS_NOMINA] y/o [=INFORMACION_EMPRESA]";
 				
 				sendPayrollEmailDB(dslContext, from, emailTo, cc, cco, parseHTMLBody);
 				
@@ -348,7 +386,7 @@ public class JooqMail {
 		return "Emails enviados correctamente.";
 	}
 
-	private static String parseHTMLBody(String bodyHTML, Result<Record> salariesRecords, String enterprise, String baseURL) {
+	private static String parseHTMLBody(String bodyHTML, Result<Record> salariesRecords, String enterprise, String baseURL, DSLContext dslContext) {
 		
 		// GENERATE URL
 		String params = "?type=salary&selectedSalaries=" + salariesRecords.size() + "&enterprise=" + enterprise;
@@ -374,6 +412,11 @@ public class JooqMail {
 		html = html.split("<li>\\[=PERIODOS_NOMINA\\]</li>")[0] + createPeriods(salariesRecords) + html.split("<li>\\[=PERIODOS_NOMINA\\]</li>")[1];
 		
 		html = html.split("URL_DOWNLOAD")[0] + url + html.split("URL_DOWNLOAD")[1];
+		
+		if(html.split("\\[=INFORMACION_EMPRESA\\]").length != 2)
+			return "";
+		
+		html = html.split("\\[=INFORMACION_EMPRESA\\]")[0] + getEnterpriseInfo(dslContext, Integer.parseInt(enterprise));
 		
 		return html;
 	}

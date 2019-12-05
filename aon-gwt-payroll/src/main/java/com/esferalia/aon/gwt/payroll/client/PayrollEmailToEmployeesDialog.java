@@ -105,13 +105,13 @@ public abstract class PayrollEmailToEmployeesDialog extends CustomDialog {
 
 	private void initView() {
 		richTextArea = new RichTextArea();
-		richTextArea.setWidth("730px");
-		richTextArea.setHeight("380px");
+		richTextArea.setWidth("935px");
+		richTextArea.setHeight("330px");
 		
 		richTextArea.setHTML(getDefaultMessage());
 		
 		RichTextToolbar toolbar = new RichTextToolbar(richTextArea);
-		toolbar.setWidth("730px");
+		toolbar.setWidth("935px");
 		
 		textAreaPanel.add(toolbar);
 		textAreaPanel.add(richTextArea);
@@ -165,7 +165,8 @@ public abstract class PayrollEmailToEmployeesDialog extends CustomDialog {
 		html += 	"</div>";
 
 		html += 	"<p>Este archivo est&aacute; en formato PDF Adobe y se puede leer usando Acrobat Reader. Si no tiene instalado el Acrobat Reader pulse aqu&iacute; para conseguir su copia gratuita: http://get.adobe.com/es/reader. Para cualquier aclaraci&oacute;n sobre el documento adjunto p&oacute;ngase en contacto con nosotros.</p>";
-		html += 	"<p>AON SOLUTIONS, S.L.<br/> Tel&eacute;fono: 902121009<br/> Fax: 945121011<br/> <a style=\"text-decoration: none; color: black;\" href=\"www.aonsolutions.es\">www.aonsolutions.es</a></p>";
+		// html += 	"<p>AON SOLUTIONS, S.L.<br/> Tel&eacute;fono: 902121009<br/> Fax: 945121011<br/> <a style=\"text-decoration: none; color: black;\" href=\"www.aonsolutions.es\">www.aonsolutions.es</a></p>";
+		html += 	"[=INFORMACION_EMPRESA]";
 		html += "</div>";
 		
 		return html;
