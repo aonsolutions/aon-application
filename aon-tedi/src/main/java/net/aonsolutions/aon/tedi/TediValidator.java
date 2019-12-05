@@ -265,7 +265,7 @@ public class TediValidator {
 	public static BiConsumer<Finance,ValidationContext> CHECK_FINANCE_AMOUNT_ZERO = (finance,ctx) -> {
 		if (AonMathUtils.isZero(finance.getAmount())) {
 			TediContext context = new TediContext(TediContextKey.FINANCE_AMOUNT_ZERO);
-			ctx.add( TediErrorMessages.C014.err(context, TediContextKey.FINANCE_AMOUNT_ZERO.getDescription()));
+			ctx.add( TediErrorMessages.C014.wrn(context, TediContextKey.FINANCE_AMOUNT_ZERO.getDescription()));
 		}
 	};
 

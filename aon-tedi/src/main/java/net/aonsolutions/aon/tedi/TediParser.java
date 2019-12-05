@@ -518,6 +518,20 @@ public class TediParser {
 		
 		protected boolean fillRegistry(AONContext ctx, AonConfiguration aonCtx, TediResult result,Predicate<AccountingRegistry> filterExpression) {
 			Invoice invoice = result.getInvoice();
+			if ( AonStringUtils.isBlank( result.getTedi().getRdocument() ) ) {
+				if (invoice.isSales()) {
+					if (result.getTedi().getReceiver() != null) {
+						result.getTedi().setRdocument( result.getTedi().getReceiver().getDocument() );
+						result.getTedi().setRname( result.getTedi().getReceiver().getName() );
+					}
+				} else {
+					if (result.getTedi().getSender() != null) {
+						result.getTedi().setRdocument( result.getTedi().getSender().getDocument() );
+						result.getTedi().setRname( result.getTedi().getSender().getName() );
+					}
+				}
+			}
+			
 			LinkedList<AccountingRegistry> registries = RegistryDAO
 					.getAccountingRegistries(ctx, f -> f.getDocumentProperty().eq(result.getTedi().getRdocument()))
 					.filter(filterExpression)

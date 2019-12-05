@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
+import java.io.ByteArrayInputStream;
+import java.net.MalformedURLException;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
@@ -17,6 +19,9 @@ import com.esferalia.aon.occam.api.model.tedi.TediCompanyResult;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.server.io.DataUrl;
+import com.esferalia.aon.watson.server.io.DataUrlSerializer;
+import com.esferalia.aon.watson.server.io.IDataUrlSerializer;
 
 import es.translogia.tedi.baloo.TediException;
 import es.translogia.tedi.ewok.TediAddress;
@@ -200,6 +205,25 @@ public class TediServiceImpl extends AonStatelessRemoteServiceServlet implements
 					.setDomain(company.getDomain())
 					.setName(snapshot ? AppParam.TEDI_SNAPSHOT_ACTIVE.getValue() : AppParam.TEDI_ACTIVE.getValue())
 					.setValue("1"));
+		}
+	}
+	
+	
+	@Override
+	public TediResult parseInvoice(String domainName, String user, int domain, boolean snapshot, String content)
+			throws AonCoreException {
+		try {
+			IDataUrlSerializer serializer = new DataUrlSerializer();
+			DataUrl unserialized = serializer.unserialize(content);
+			ByteArrayInputStream input = new ByteArrayInputStream(unserialized.getData());
+			TediResult result = TEDI.parseInvoice(domainName, domain, snapshot, user, input); 
+			return result;
+		} catch ( TediException t) {
+			t.printStackTrace();
+			throw new AonCoreException(t);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			throw new AonCoreException(e);
 		}
 	}
 }

@@ -1,5 +1,6 @@
 package es.translogia.tedi.baloo;
 
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
@@ -24,6 +25,7 @@ public class Tedi extends TediRequest {
 	String GET_INVOICE_BY_UUID;
 	String GET_VERIFIED_INVOICES;
 	String GET_COUNT_INVOICES;
+	String PARSE_INVOICE;
 	
 	String COMPANY_BASE;
 	String GET_COMPANIES_BY_COMPANY;
@@ -65,6 +67,7 @@ public class Tedi extends TediRequest {
 		GET_COMPANIES_BY_COMPANY = COMPANY_BASE + "?company={0}";
 		GET_COUNT_INVOICES = INVOICE_BASE + "/count/{0}/{1}"; // '/cout/:company/:status'
 		REGISTRY_BASE = TEDI_URL	+ "/registry/{0}";
+		PARSE_INVOICE = TEDI_URL + "/parse/{0}";
 	}
 
 	private Tedi(String token,boolean snapshot) {
@@ -134,12 +137,21 @@ public class Tedi extends TediRequest {
 		throw new TediException(
 				"getInvoiceAttach: " + tediResponse.getResponseCode() + " - " + tediResponse.getResponseMessage());
 	}
-	
-//	
-//	public TediInvoice deleteInvoice(String uuid) {
-//		return new TediInvoice(delete(TEDI + INVOICE_SRC + "/" + uuid, getToken()));
-//	}
 
+	public TediInvoice parseInvoice(String company, InputStream input) throws TediException {
+		String url = MessageFormat.format(PARSE_INVOICE,company);
+		TediResponse tediResponse = postMultipartFile(url, getToken(), input);
+		if (tediResponse.ok()) {
+			
+			JSONArray array = tediResponse.getJSONArray();
+			if (array.length() > 0) {
+				return TediInvoiceJSON.fromJSON(array.getJSONObject(0));
+			}
+			return null;
+		}
+		throw new TediException("parseInvoice: " + tediResponse.getResponseCode() + " - " + tediResponse.getResponseMessage() );
+	}
+	
 	// COMPANY
 	public LinkedList<TediCompany> getCompanies(String company) throws TediException{
 		String url = MessageFormat.format(COMPANY_BASE, company);
@@ -156,12 +168,7 @@ public class Tedi extends TediRequest {
 
 		
 	}
-//	
-//	public TediCompany getCompany(String document) {
-//		JSONObject json = getObject(TEDI + COMPANY_SRC + "/" + document, getToken());
-//		return new TediCompany(json);
-//	}
-//	
+
 	public TediCompany createCompany(TediCompany company) throws TediException {
 		TediResponse response = post(COMPANY_BASE, getToken(), TediCompanyJSON.toJSON(company).toString()); 
 		if (response.ok()) {
@@ -170,14 +177,6 @@ public class Tedi extends TediRequest {
 		throw new TediException(
 				"createCompany: " + response.getResponseCode() + " - " + response.getResponseMessage());
 	}
-//	
-//	public TediCompany updateCompany(TediCompany company) {
-//		return new TediCompany(put(TEDI + COMPANY_SRC + "/" + company.getDocument(), getToken(), company.toJSON().toString()));
-//	}
-//	
-//	public TediCompany removeCompany(String document) {
-//		return new TediCompany(delete(TEDI + COMPANY_SRC + "/" + document , getToken()));
-//	}
 
 	
 	// REGISTRY

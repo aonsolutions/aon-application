@@ -898,7 +898,7 @@ input[type="checkbox"]:focus + label {
 }
 
 @sprite .aon-tedi-timer {
-	gwt-image: "aonTediTimer";
+	gwt-image: "aonTediLogoTransparent";
 	background-color: transparent;
 	background-repeat: no-repeat;
 	background-position: 10px center;
@@ -914,7 +914,7 @@ input[type="checkbox"]:focus + label {
 }
 
 @sprite .aon-tedi-no-data {
-	gwt-image: "aonTediTimer";
+	gwt-image: "aonTediLogoTransparent";
 	background-color: transparent;
 	background-repeat: no-repeat;
 	background-position: 10px center;
@@ -3170,3 +3170,38 @@ right
 }
 
 
+
+
+
+@sprite .aon-drop-zone {
+	gwt-image: "aonTediLogoGray";
+	background-position: center right;
+	background-size: 50%;
+	background-color: white;
+	min-height: 150px;
+	height: 150px;
+	min-width: 180px;
+	display: table;
+	margin-top: 1em;
+	margin-left: auto;
+	margin-right: auto;
+	width: 80%;
+	border-width: 2px;
+	border-style: dashed;
+	border-color: #bbb;
+	border-radius: 2em;
+	text-align: center;
+	vertical-align: middle;	
+
+    padding-top: 28px;
+    padding-bottom: 28px;
+    font-size: 1.2em;
+    color: #2d4b6d;
+    font-weight: bold;
+    
+}
+
+.aon-drop-zone-hover {
+    border: 2px solid #444444;
+    color: #7c9647;
+}

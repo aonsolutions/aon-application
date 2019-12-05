@@ -97,4 +97,5 @@ public interface IRequestParamsNames {
 	String LEDGER_DEBIT_BALANCE = "ledgerDebitBalance";
 	String LEDGER_UNPAID_BALANCE = "ledgerUnpaidBalance";
 
+	String FILE_DATA = "fileData";
 }

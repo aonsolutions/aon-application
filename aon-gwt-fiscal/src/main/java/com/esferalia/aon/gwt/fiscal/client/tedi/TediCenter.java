@@ -130,6 +130,7 @@ public class TediCenter extends MainEntryPoint {
 					Company company = configuration.getCompany(); 
 					mainTabLayoutPanel.add(getTediInvoiceList(getDomainName(), getDomain(), getUser(),company,null),new CloseTab(AON.MSG.invoiceList(), false));
 				}			
+//				mainTabLayoutPanel.add(getTediFileUploader(getDomainName(), getDomain(), getUser()),new CloseTab("Carga de facturas", false));
 			}
 
 			@Override
@@ -147,4 +148,7 @@ public class TediCenter extends MainEntryPoint {
 		return new TediInvoiceList(currentDomainName, currentDomain, currentUser, color, tediCenterCallback);
 	}
 	
+	private TediUploaderPanel getTediFileUploader(String currentDomainName,int currentDomain, String currentUser) {
+		return new TediUploaderPanel(currentDomainName, currentDomain, currentUser, tediCenterCallback);
+	}
 }

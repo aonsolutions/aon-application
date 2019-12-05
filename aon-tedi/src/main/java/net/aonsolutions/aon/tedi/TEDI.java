@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.tedi;
 
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -162,8 +163,9 @@ public class TEDI {
 						"No se ha indicado un NIF/CIF/DNI v\u00E1lido para la compa\u00F1ia (Configuraci\u00F3n global)");
 			}
 			Tedi tedi = getTedi(ctx, snapshot);
-			LOGGER.info("[TEDI] Attempt to recover invoice [" + company.getDocument() + "," + uuid + "]");
+			LOGGER.info("[TEDI] Attempt to recover invoice attach [" + company.getDocument() + "," + uuid + "]");
 			String url = tedi.getInvoiceAttach(company.getDocument(), uuid);
+			LOGGER.info("[TEDI] URL for "+ uuid +" [" + url + "]");
 			if (url != null) {
 				return url;
 			}
@@ -180,6 +182,24 @@ public class TEDI {
 		}
 		if (AonStringUtils.isBlank(invoice.getCompany())) {
 			throw new TediException("La factura no tiene el atributo compa\u00F1ia");
+		}
+	}
+
+	public static TediResult parseInvoice(String domainName, int domain, boolean snapshot, String user, InputStream input) throws TediException {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			Company company = CompanyDAO.getCompany(ctx, domain);
+			if (company == null) {
+				throw new TediException("No se ha encontrado una compa\u00F1ia v\u00E1lida para el dominio " + domain);
+			}
+			final AonConfiguration aonCtx = ConfigurationDAO.getConfiguration(ctx);
+			Tedi tedi = getTedi(ctx, snapshot);
+			LOGGER.info("[TEDI] Attempt to parse invoice []");
+			return TediParser.toFullInvoice(ctx, aonCtx, tedi.parseInvoice(company.getDocument(),input));
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
 	}
 

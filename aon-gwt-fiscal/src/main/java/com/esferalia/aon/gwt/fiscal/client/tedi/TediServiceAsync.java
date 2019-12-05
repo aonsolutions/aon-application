@@ -25,5 +25,6 @@ public interface TediServiceAsync {
 	void tediSync(String domainName, String user, int domain, boolean snapshot, boolean showNotTedi, AsyncCallback<LinkedList<TediCompanyResult>> callback);
 	void getCountInboxInvoices(String domainName, String user, int domain, boolean snapshot, Company company, AsyncCallback<Integer> callback);
 	void addTediCompany(String domainName, String user, int domain, boolean snapshot, TediCompanyResult company, AsyncCallback<Void> callback);
+	void parseInvoice(String domainName, String user, int domain, boolean snapshot, String content, AsyncCallback<TediResult> callback);
 
 }

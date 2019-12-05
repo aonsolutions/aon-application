@@ -582,6 +582,8 @@ public class TediInvoiceList extends DockLayoutPanel {
 							Label label =  new Label("Se ha producido un error al intentar mostrar el documento de la factura.");
 							label.setStyleName(AON.AON_CSS.aonBold());
 							label.addStyleName(AON.AON_CSS.aonColorRed());
+							label.addStyleName(AON.AON_CSS.aonMargin());
+							label.addStyleName(AON.AON_CSS.aonTextCenter());
 							attachSplit.addNorth(label, 100);
 						}
 					});

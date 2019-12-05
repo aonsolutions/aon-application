@@ -1310,4 +1310,10 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-loader")
 	String aonLoader();
 	
+	@ClassName("aon-drop-zone")
+	String aonDropZone();
+
+	@ClassName("aon-drop-zone-hover")
+	String aonDropZoneHover();
+
 }
