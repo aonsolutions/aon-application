@@ -31,7 +31,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ProvidesKey;
 
 public class Model190 extends MainEntryPoint {
-
 	public static final ProvidesKey<Mod190Detail> MOD190_DETAIL_PROVIDES_KEY = new ProvidesKey<Mod190Detail>() {
 		@Override
 		public Object getKey(Mod190Detail det) {
@@ -187,7 +186,7 @@ public class Model190 extends MainEntryPoint {
 
 	private void newModel() {
 		cleanErrorPanel();
-		SERVICE.initialize(getCurrentDomainName(), getCurrentUser(),getCurrentDomain(), 2018,
+		SERVICE.initialize(getCurrentDomainName(), getCurrentUser(),getCurrentDomain(), 2019,
 				new AsyncCallback<Mod190>() {
 					@Override
 					public void onSuccess(Mod190 m190) {
