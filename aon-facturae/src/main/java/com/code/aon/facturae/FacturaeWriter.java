@@ -43,6 +43,7 @@ import com.code.aon.registry.RecordData;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
+import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.sales.Sales;
@@ -351,6 +352,24 @@ public class FacturaeWriter {
 		return legalEntityType;
 	}
 	
+	private BusinessType getBusinessEnterpriseType( Registry registry, String name, String tradeName, String document, IAddress address ) throws ManagerBeanException {
+		BusinessType party = new BusinessType();
+		TaxIdentificationType taxIdentification = new TaxIdentificationType();
+		PersonTypeCodeType personType = DocumentType.CIF.equals(registry.getDocumentType()) 
+			? PersonTypeCodeType.J : PersonTypeCodeType.F;
+		taxIdentification.setPersonTypeCode( personType );
+		taxIdentification.setResidenceTypeCode( getResidenceTypeCode(registry) );
+		taxIdentification.setTaxIdentificationNumber( Util.toTextMax30Type(document) );
+		party.setTaxIdentification(taxIdentification);
+		party.setPartyIdentification( Util.toTextMax10Type(String.valueOf(registry.getId())) );
+		if ( personType == PersonTypeCodeType.F ) {
+			party.setIndividual( getIndividual(registry, name, address) );
+		} else {
+			party.setLegalEntity( getLegalEntity(registry, name, tradeName, address) );
+		}
+		return party;
+	}
+	
 	private BusinessType getBusinessType( Registry registry, String name, String tradeName, String document, IAddress address ) throws ManagerBeanException {
 		BusinessType party = new BusinessType();
 		TaxIdentificationType taxIdentification = new TaxIdentificationType();
@@ -444,7 +463,7 @@ public class FacturaeWriter {
 		String document = registry.getDocument();
 		IAddress address = registry.getDefaultAddress();
 		String tradeName = StringUtils.defaultIfEmpty(registry.getAlias(), workPlace.getDescription() );
-		BusinessType party = getBusinessType(registry, name, tradeName, document, address);
+		BusinessType party = getBusinessEnterpriseType(registry, name, tradeName, document, address);
 		AdministrativeCentresType centres = new AdministrativeCentresType();
 		centres.getAdministrativeCentre().add( getAdministrativeCentre(workPlace) );
 		party.setAdministrativeCentres(centres);
