@@ -583,7 +583,8 @@ public class Model3902018 extends DockLayoutPanel  {
 	
 	private void validate(Mod3902018 m390, Model390Callback cbk) {
 		LinkedList<ValidationMessage> msg = new LinkedList<ValidationMessage>();
-		if (m390.getYear() != 2018 
+		if (m390.getYear() != 2019 
+			&& m390.getYear() != 2018 
 			&& m390.getYear() != 2016
 			&& m390.getYear() != 2017) msg.add(ValidationMessages.EMPTY_YEAR.getMsg());
 		if (!m390.isLegalEntity()) {

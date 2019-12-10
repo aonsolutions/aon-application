@@ -185,7 +185,7 @@ public class Model390 extends MainEntryPoint {
 			} else if (selected.getYear() == 2015 || selected.getYear() == 2016 || selected.getYear() == 2017) {
 				Model3902015 model3902015 = new Model3902015(selected,new Model390Callback(), getAonData());
 				declarationContainer.setWidget(model3902015);
-			}  else if (selected.getYear() == 2018) {
+			}  else if (selected.getYear() == 2018 || selected.getYear() == 2019) {
 				Model3902018 model3902018 = new Model3902018(selected,new Model390Callback(), getAonData());
 				declarationContainer.setWidget(model3902018);
 			} else {

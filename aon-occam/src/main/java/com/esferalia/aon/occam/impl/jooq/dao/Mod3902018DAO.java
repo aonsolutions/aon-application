@@ -482,7 +482,7 @@ public class Mod3902018DAO {
 		mod390.setModificationDate(model.getModificationDate());
 		
 		int year = mod390.getYear();
-		if (year == 2018) {
+		if (year == 2018 || year == 2019) {
 			LinkedList<Mod390> mod390s = Mod390DAO.getByDomain(ctx, ctx.getDomainId());
 			for (Mod390 m390 : mod390s) {
 				if ( m390.getYear() == 2015 || m390.getYear() == 2016 || m390.getYear() == 2017) {
@@ -557,7 +557,7 @@ public class Mod3902018DAO {
 		if (AonStringUtils.contains(model, "<AEATIVA2018>"))  {
 			StringReader reader = new StringReader(record.getValue(FS_MODEL390.MODEL));
 			try {
-				if (mod390.getYear() == 2018) {
+				if (mod390.getYear() == 2019 || mod390.getYear() == 2018) {
 					JAXBContext context = JAXBContext.newInstance(AEATIVA2018.class);
 					Unmarshaller um = context.createUnmarshaller();
 					AEATIVA2018 iva = (AEATIVA2018) um.unmarshal(reader);
@@ -596,7 +596,7 @@ public class Mod3902018DAO {
 	
 	private static String getXMLModel( Mod3902018 mod390 ) {
 		try {
-			if (mod390.getYear() == 2018 || mod390.getYear() == 2016 || mod390.getYear() == 2017) {
+			if (mod390.getYear() == 2019 || mod390.getYear() == 2018 || mod390.getYear() == 2016 || mod390.getYear() == 2017) {
 				AEATIVA2018 iva = Mod390toAEATIVA2018.getAEATIVA2018(mod390);
 				StringWriter writer = new StringWriter();
 				JAXBContext context = JAXBContext.newInstance(AEATIVA2018.class);
