@@ -10,10 +10,12 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class EmployeeCalendarInactivityDialog extends CustomDialog {
@@ -51,6 +53,15 @@ public abstract class EmployeeCalendarInactivityDialog extends CustomDialog {
 	DateBoxEx endDateBox;
 	
 	@UiField
+	Label typePercent;
+	
+	@UiField
+	TextBox percentBox;
+	
+	@UiField
+	Label messageLabel;
+	
+	@UiField
 	HorizontalPanel buttons;
 	
 	@UiField
@@ -58,6 +69,8 @@ public abstract class EmployeeCalendarInactivityDialog extends CustomDialog {
 	
 	@UiField
 	Button acceptButton;
+	
+	Double journeyHours;
 
 	public EmployeeCalendarInactivityDialog(String caption) {
 		setCaption(caption);
@@ -103,18 +116,20 @@ public abstract class EmployeeCalendarInactivityDialog extends CustomDialog {
 		
 	}
 	
-	public EmployeeCalendarInactivityDialog(String caption, String message) {
+	public EmployeeCalendarInactivityDialog(String caption, String hoursContract) {
 		setCaption(caption);
 		
 		setWidget(binder.createAndBindUi(this));
 		
 		messageBlock.removeStyleName(style.hideElement());
+		messageLabel.setText("Horas Jornada = "+hoursContract);
 		//date.addStyleName(style.dateStyle());
 		buttons.addStyleName(style.paddingButtons());
 		acceptButton.addStyleName(style.margingButton());
 		
 		this.message.setVisible(true);
-		this.message.setText(message);
+		this.journeyHours = Double.parseDouble(hoursContract);
+//		this.message.setText(message);
 		
 		this.message.addStyleName(style.messageStyle());
 		
@@ -175,6 +190,18 @@ public abstract class EmployeeCalendarInactivityDialog extends CustomDialog {
 	
 	public String getTypeInactivity() {
 		return typeInactivity.getSelectedItemText();
+	}
+	
+	public double getPercentValue() {
+		Double hoursStrike = Double.parseDouble(percentBox.getValue());
+		if(hoursStrike >= this.journeyHours)
+			return 1.00;
+		
+		return hoursStrike/this.journeyHours;
+	}
+	
+	public void setLabelText(String label){
+		typePercent.setText(label);
 	}
 
 }

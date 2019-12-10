@@ -22,6 +22,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
@@ -868,11 +869,39 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		addPeonadas();
 	}
 	
+//	@UiHandler("dropDayButton")
+//	public void onDropDaysClick(ClickEvent event) {
+//		addDropDay();
+//	}
+	
 	@UiHandler("dropDayButton")
 	public void onDropDaysClick(ClickEvent event) {
-		addDropDay();
+		EmployeeCalendarPercentDialog dropDialog;
+		if(fullTimeJourney){
+			dropDialog = new EmployeeCalendarPercentDialog("Horas Ausencia", "8") {
+				
+				@Override
+				protected void onAccept() {
+					double cs = this.getPercentValue();
+					addDropDay(cs);
+				}
+			};
+		}else{
+			Date date = selectedDates.getSelectedList().get(0);
+			Double hours = calendarEmployeeInfo.getHourByDay(date);
+			dropDialog = new EmployeeCalendarPercentDialog("Horas Ausencia", hours.toString()) {
+				
+				@Override
+				protected void onAccept() {
+					double cs = this.getPercentValue();
+					addDropDay(cs);
+				}
+			};
+		}
+		dropDialog.setLabelText("Horas Ausencia:");
+		dropDialog.show();
+		dropDialog.center();
 	}
-	
 	
 	@UiHandler("strikeDayButton")
 	public void onStrikeClick(ClickEvent event) {
@@ -934,8 +963,15 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	}
 	
 	@UiHandler("inactivityDayButton")
-	public void onInactivityClick(ClickEvent event) {
-		EmployeeCalendarInactivityDialog inactivityDialog = new EmployeeCalendarInactivityDialog("D"+String.valueOf("\u00cd")+"as de inactivad") {
+	public void onInactivityClick(ClickEvent event) {		
+		Double hours = 8.0;
+		
+		if(!fullTimeJourney) {
+			Date date = selectedDates.getSelectedList().get(0);
+			hours = calendarEmployeeInfo.getHourByDay(date);
+		}
+		
+		EmployeeCalendarInactivityDialog inactivityDialog = new EmployeeCalendarInactivityDialog("D"+String.valueOf("\u00cd")+"as de inactivad", hours.toString()) {
 			@Override
 			protected void onAccept() {
 				Date startDate = this.getStartDate();
@@ -952,7 +988,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 					DateUtils.addDays2Date(startDate, 1);
 				}
 				
-				addInactivityDays(typeInactivity);
+				double cs = this.getPercentValue();
+				addInactivityDays(typeInactivity, cs);
 			}
 		};
 						
@@ -1855,7 +1892,25 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		selectedDates.clear();
 	}
 	
-	private void applyInactivityDaySelectedDates(DayType inactivity, String typeInactivity) {
+	private void applyDropDayTypeSelectedDates(double ce, DayType dropday) {
+		cleanStyles(selectedDates.getSelectedList());
+		List<Date> dropDatesList = new LinkedList<Date>();
+		
+		for (Date date : selectedDates.getSelectedList()) {
+			int pos = calculateDatePosition(date);
+			if(pos != -1){
+				int column = calculatePositionCol(pos);
+				int row = calculatePositionRow(pos);
+				cells[row][column].unSelect(row, column);
+				cellsType[row][column].setAsType(dropday, row, column);
+				dropDatesList.add(cellsDates[row][column]);
+			}
+		}
+		calendarEmployeeInfo.setDropCoefficientDays(dropDatesList, dropday, ce);
+		selectedDates.clear();
+	}
+	
+	private void applyInactivityDaySelectedDates(DayType inactivity, String typeInactivity, double cs) {
 		cleanStyles(selectedDates.getSelectedList());
 		List<Date> dates = new LinkedList<Date>();
 		
@@ -1869,7 +1924,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				dates.add(cellsDates[row][column]);
 			}
 		}
-		calendarEmployeeInfo.setInactiveDays(dates, inactivity, typeInactivity);
+//		calendarEmployeeInfo.setInactiveDays(dates, inactivity, typeInactivity);
+		calendarEmployeeInfo.setInactivityCoefficientDays(dates, inactivity, typeInactivity, cs);
 		selectedDates.clear();
 		
 	}
@@ -2030,12 +2086,19 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	private void addEreDay(double ce) {
 		applyEREDayTypeSelectedDates(ce, DayType.EREDAY);
 	}
-	private void addInactivityDays(String typeInactivity) {
-		applyInactivityDaySelectedDates(DayType.INACTIVITY, typeInactivity);
+//	private void addInactivityDays(String typeInactivity) {
+//		applyInactivityDaySelectedDates(DayType.INACTIVITY, typeInactivity);
+//	}
+	private void addInactivityDays(String typeInactivity, double ce) {
+		applyInactivityDaySelectedDates(DayType.INACTIVITY, typeInactivity, ce);
 	}
 	
-	private void addDropDay() {
-		applyDayTypeSelectedDates(DayType.DROPDAY);
+//	private void addDropDay() {
+//		applyDayTypeSelectedDates(DayType.DROPDAY);
+//	}
+	
+	private void addDropDay(double ce) {
+		applyDropDayTypeSelectedDates(ce, DayType.DROPDAY);
 	}
 
 	private void cleanSelectedDates() {

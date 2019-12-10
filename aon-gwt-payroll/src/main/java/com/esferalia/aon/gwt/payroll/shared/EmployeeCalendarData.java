@@ -17,6 +17,8 @@ public class EmployeeCalendarData implements Serializable {
 	private ArrayList<Quartet<Date, Date, String, String>> contractITDayTypeList;
 	private ArrayList<Quartet<Date, Date, String, String>> contractCoefficientEREDayTypeList;
 	private ArrayList<Quartet<Date, Date, String, String>> contractCoefficientStrikeDayTypeList;
+	private ArrayList<Quartet<Date, Date, String, String>> contractCoefficientInactivityDayTypeList;
+	private ArrayList<Quartet<Date, Date, String, String>> contractCoefficientDropDayTypeList;
 	private HashMap<java.util.Date, String> contractFestivesDaysList;
 	private ArrayList<Byte> contractNonWorkingDaysList;
 	private boolean fullTimeJourney;
@@ -40,6 +42,8 @@ public class EmployeeCalendarData implements Serializable {
 			boolean fullTimeJourney,
 			ArrayList<Quartet<Date, Date, String, String>> contractCoefficientEREDayTypeList,
 			ArrayList<Quartet<Date, Date, String, String>> contractCoefficientStrikeDayTypeList,
+			ArrayList<Quartet<Date, Date, String, String>> contractCoefficientInactivityDayTypeList,
+			ArrayList<Quartet<Date, Date, String, String>> contractCoefficientDropDayTypeList,
 			ArrayList<Quartet<Date, Date, String, String>> typeInactivityList,
 			Integer contractType,
 			ArrayList<Date> contractFestiveWorkingDays) {
@@ -53,6 +57,8 @@ public class EmployeeCalendarData implements Serializable {
 		this.fullTimeJourney = fullTimeJourney;
 		this.contractCoefficientEREDayTypeList = contractCoefficientEREDayTypeList;
 		this.contractCoefficientStrikeDayTypeList = contractCoefficientStrikeDayTypeList;
+		this.contractCoefficientInactivityDayTypeList = contractCoefficientInactivityDayTypeList;
+		this.contractCoefficientDropDayTypeList = contractCoefficientDropDayTypeList;
 		this.typeInactivityList = typeInactivityList;
 		this.contractType = contractType;
 		this.contractFestiveWorkingDays = contractFestiveWorkingDays;
@@ -129,6 +135,14 @@ public class EmployeeCalendarData implements Serializable {
 
 	public ArrayList<Quartet<Date, Date, String, String>> getContractCoefficientStrikeDayTypeList() {
 		return contractCoefficientStrikeDayTypeList;
+	}
+	
+	public ArrayList<Quartet<Date, Date, String, String>> getContractCoefficientInactivityDayTypeList() {
+		return contractCoefficientInactivityDayTypeList;
+	}
+	
+	public ArrayList<Quartet<Date, Date, String, String>> getContractCoefficientDropDayTypeList() {
+		return contractCoefficientDropDayTypeList;
 	}
 
 	public ArrayList<Quartet<Date, Date, String, String>> getTypeInactivityList() {

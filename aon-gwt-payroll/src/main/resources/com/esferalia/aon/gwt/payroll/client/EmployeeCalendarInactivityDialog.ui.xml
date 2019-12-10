@@ -74,6 +74,30 @@
 		.widthDateBox{
 			width: 110px !important;
 		}
+		
+		.paddingTypePercentStyle{
+			padding-right: 7px;
+    		padding-top: 4px;
+		}
+
+		.paddingPercentStyle{
+			padding-left: 7px;
+    		padding-top: 4px;
+		}
+		
+		.widthDoubleBox{
+			width: 55px;
+		}
+
+		.messageStyle{
+			padding-right: 70px;
+			font: 13px/ 1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
+		}
+
+		.paddingBlocks{
+			padding-bottom: 15px;
+			padding-top: 10px;
+		}
 
 	</ui:style>
 
@@ -94,6 +118,13 @@
 		    <g:HorizontalPanel styleName="{style.paddingBlocks}">
 		    	<g:Label styleName="{style.paddingLabelStyle3}">Fecha fin:</g:Label>
 		    	<a:DateBoxEx styleName="{style.widthDateBox}" ui:field="endDateBox"></a:DateBoxEx>
+		    </g:HorizontalPanel>
+		    <g:HorizontalPanel styleName="{style.paddingBlocks}">
+		    	<g:Label ui:field="typePercent" styleName="{style.paddingTypePercentStyle}"></g:Label>
+		    	<g:TextBox ui:field="percentBox" styleName="{style.widthDoubleBox}"></g:TextBox>
+		    </g:HorizontalPanel>
+		    <g:HorizontalPanel styleName="{style.paddingBlocks}"> 
+		    	<g:Label ui:field="messageLabel" styleName="{style.messageStyle}"></g:Label>
 		    </g:HorizontalPanel>
 		    <g:HorizontalPanel ui:field="buttons" styleName="{style.paddingBlocks}">
 		    	<g:Button styleName="{style.closeButton}" ui:field="cancelButton">Cerrar</g:Button>
