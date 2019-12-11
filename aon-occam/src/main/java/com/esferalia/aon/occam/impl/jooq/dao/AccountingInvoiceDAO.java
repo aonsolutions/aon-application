@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.AccountEntryFinanceTracking.ACCOUNT_
 import static com.esferalia.aon.jooq.tables.AccountEntryInvoice.ACCOUNT_ENTRY_INVOICE;
 import static com.esferalia.aon.jooq.tables.FinanceTracking.FINANCE_TRACKING;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+import static com.esferalia.aon.jooq.tables.InvoiceAttach.INVOICE_ATTACH;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
@@ -28,6 +29,8 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.InvoiceCalculator;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
@@ -47,6 +50,7 @@ import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.FinanceTrackingType;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
@@ -175,6 +179,24 @@ public class AccountingInvoiceDAO {
 					fillBreakdown(ctx, ai.getInvoice());
 				}
 				ai.setFinances(FinanceDAO.getInvoiceFinances(ctx, invoiceId));
+				
+				ai.setAttach(
+					ctx.getDslContext()
+						.select(INVOICE_ATTACH.ID,INVOICE_ATTACH.INVOICE,INVOICE_ATTACH.DRIVEID,INVOICE_ATTACH.MIMETYPE)
+							.from(INVOICE_ATTACH)
+							.where(INVOICE_ATTACH.INVOICE.eq(invoice.getId()))
+							.fetch()
+							.stream()
+							.map(rec -> new Attach()
+									.setId(rec.getValue(INVOICE_ATTACH.ID))
+									.setAttachModule(rec.getValue(INVOICE_ATTACH.INVOICE))
+									.setAttachType(AttachType.INVOICE)
+									.setDriveId(rec.getValue(INVOICE_ATTACH.DRIVEID))
+									.setMimeType(MimeType.safeValueOf(rec.getValue(INVOICE_ATTACH.MIMETYPE)))
+								)
+							.findFirst()
+							.orElse(null)
+					);
 				return ai;
 			}
 		}

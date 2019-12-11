@@ -115,4 +115,27 @@ public enum MimeType implements Serializable {
     			|| this.equals(MS_POWER_POINT) || this.equals(MS_POWER_POINT_2007)
     			|| this.equals(MS_WORD) || this.equals(MS_WORD_2007);
     }
+    
+    public boolean isImage(){
+    	return this == JPEG 
+			|| this == GIF
+    		|| this == PNG 
+    		|| this == BMP
+			|| this == TIFF;
+    }
+	
+    public boolean isPDF(){
+    	return this == PDF || this == SIGNED_PDF;
+    }
+    
+	public static MimeType safeValueOf( Byte i ) {
+		if (i == null) return null;
+		return safeValueOf( i.intValue() ); 
+	}
+	public static MimeType safeValueOf( Integer i ) {
+		if (i == null) return null;
+		if (i < 0 || i >= MimeType.values().length) return null;
+		return MimeType.values()[i];
+	}
+    
 }

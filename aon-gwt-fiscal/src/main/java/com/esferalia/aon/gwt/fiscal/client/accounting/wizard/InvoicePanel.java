@@ -37,6 +37,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -52,19 +53,27 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.logging.client.ConsoleLogHandler;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
+
+import net.aonsolutions.gwt.pdfjs.client.Viewer;
 
 public class InvoicePanel extends WizardContentBase<AccountingInvoice> implements HasSelectionHandlers<AccountingInvoice> {
 	
@@ -72,6 +81,12 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	static {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
+
+	interface TabLayoutFolderSafeTemplate extends SafeHtmlTemplates {
+		@Template ("<span class=\"gwt-InlineLabel .aon-padding-right aon-padding-left-20 {1}\">{0}</span>")
+		SafeHtml tab(String title, String icon);
+	}
+	private static final TabLayoutFolderSafeTemplate TABLAYOUT_FOLDER_TEMPLATE = GWT.create(TabLayoutFolderSafeTemplate.class);
 
 	static final String BACKGROUND_COLOR = "#DDDDDD";
 
@@ -86,14 +101,17 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	
 	private AccountingRegistry lastRegistry;
 
-	private DeckLayoutPanel rootPanel;
+	private TabLayoutPanel rootPanel;
 	private SimpleLayoutPanel nonEditablePanel; 
+	
+	private SimpleLayoutPanel attachPanel;
 			
 	private FlexTable regTable;
 	private FlexTable flexTable;
 	private InvoiceVATPanel vatPanel;
 	private InvoiceWithholdingPanel withholdingPanel;
 	
+	private SplitLayoutPanel editablePanel;
 	private FlexTable payTable;
 	private InvoiceExtraPanel extraPanel;
 	
@@ -110,6 +128,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	private PayMethodListBox payMethodList;
 	private InlineLabel payStatusLabel; 
 
+	private Viewer pdfViewer = new Viewer();
 	
 	private final KeyUpHandler f9KeyHandler = new KeyUpHandler() {
 		@Override
@@ -133,9 +152,9 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		invoicePanelRegistryVisitor = new InvoicePanelRegistryVisitor();
 		InvoicePanelCallback invoiceCallback = new InvoicePanelCallback();
 		
-		rootPanel = new DeckLayoutPanel();
+		rootPanel = new TabLayoutPanel(30,Unit.PX);
 		
-		SplitLayoutPanel editablePanel = new SplitLayoutPanel(4);
+		editablePanel = new SplitLayoutPanel(4);
 		
 		//  -------------------------- WORKING LOG ------------------------------
 
@@ -172,7 +191,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			}
 		});
 		editablePanel.addEast(extraPanel, 380);
-
+		
 		SimpleLayoutPanel centerContainerPanel = new SimpleLayoutPanel();
 		ScrollPanel scrollCenterContainer = new ScrollPanel();
 		FlowPanel centerContainer = new FlowPanel();
@@ -241,15 +260,90 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		centerPanel.setWidget(centerContainerPanel);
 		editablePanel.add(centerPanel);
 		
-		rootPanel.add(editablePanel);
+		// rootPanel.add(editablePanel);
+		rootPanel.add(editablePanel,TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.invoice(), AON.AON_CSS.aonIconInvoice()));
 		
 		nonEditablePanel = new SimpleLayoutPanel();
-		rootPanel.add(nonEditablePanel);
+		// rootPanel.add(nonEditablePanel);
+		rootPanel.add(nonEditablePanel,TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.invoice(), AON.AON_CSS.aonIconInvoice()));
 
-		rootPanel.showWidget(0);
+		selectTab(0);
+		
+		attachPanel = new SimpleLayoutPanel();
+		rootPanel.add(attachPanel,TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.attach(), AON.AON_CSS.aonIconAttach()));
+		
+		
+		rootPanel.addSelectionHandler(new SelectionHandler<Integer>() {
+
+			@Override
+			public void onSelection(SelectionEvent<Integer> event) {
+				int tab = event.getSelectedItem();
+				if (tab == 2) {
+					paintAttach();
+				}
+			}
+			
+		});
+		
 		initWidget(rootPanel);
 	}
 	
+	protected void paintAttach() {
+		AccountingInvoice ai = getWrapper();
+		if (attachPanel.getWidget() == null) {
+			ScrollPanel scrollPanel = new ScrollPanel();
+			attachPanel.add(scrollPanel);
+			VerticalPanel verticalPanel = new VerticalPanel();
+			verticalPanel.setStyleName(AON.AON_CSS.aonBlockCenter());
+			verticalPanel.addStyleName(AON.AON_CSS.aonMarginTop());
+			verticalPanel.addStyleName(AON.AON_CSS.aonMarginBottom());
+			scrollPanel.setWidget(verticalPanel);
+
+			if (ai != null && ai.isDocumentAttached() ) {
+				String params = "domain="+ getCallback().getCurrentDomainId() + "&id=" +  ai.getAttach().getId() + "&attach_type=invoice";
+				params = InvoicePanel.b64encode(params);
+				String url = URL.encode(GWT.getModuleBaseURL() + "ms/download_attachment/"  + getCallback().getCurrentDomainName() + "/" + getCallback().getCurrentUser() + "/" +  params);
+				
+				FlowPanel anchorContainer = new FlowPanel();
+				anchorContainer.setStyleName(AON.AON_CSS.aonPadding());
+				anchorContainer.addStyleName(AON.AON_CSS.aonSimpleBorder());
+				Anchor anchor = new Anchor("Descargar" ,url, "_blank");
+				anchor.addStyleName(AON.AON_CSS.aonIconDownload());
+				anchor.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
+				anchor.addStyleName(AON.AON_CSS.aonClickableLabel());
+				anchorContainer.add(anchor);
+				verticalPanel.add(anchorContainer);
+				
+				if ( ai.getAttach().getMimeType() != null && ai.getAttach().getMimeType().isPDF()) {
+					verticalPanel.add(pdfViewer);
+					pdfViewer.addStyleName(AON.AON_CSS.aonWidthAll());
+					pdfViewer.addStyleName(AON.AON_CSS.aonHeightAll());
+					pdfViewer.setDocument(url, 1.5);
+				} else if ( ai.getAttach().getMimeType() != null && ai.getAttach().getMimeType().isImage()) {
+					Image image = new Image( url );
+					verticalPanel.add(image);
+				} else {
+					Label unknown = new Label("No se ha podido determinar un visor para este tipo de documento.");
+					unknown.setStyleName(AON.AON_CSS.aonBlockCenter());
+					unknown.addStyleName(AON.AON_CSS.aonMarginTop());
+					unknown.addStyleName(AON.AON_CSS.aonBold());
+					verticalPanel.add(unknown);			
+				}
+			} else {
+				Label unknown = new Label("La factura no tiene documentos adjuntos.");
+				unknown.setStyleName(AON.AON_CSS.aonBlockCenter());
+				unknown.addStyleName(AON.AON_CSS.aonMarginTop());
+				unknown.addStyleName(AON.AON_CSS.aonBold());
+				verticalPanel.add(unknown);			
+			}
+		}
+
+	}
+	
+	private static native String b64encode(String a) /*-{
+	  return window.btoa(a);
+	}-*/;	
+
 	@Override
 	public AccountingInvoice getWrapper() {
 		return invoice;
@@ -650,7 +744,8 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		if (base == null) {
 			getCallback().getModule().onError("[ERROR INTERNO] No hay un apunte base del que crear la factura");
 		}
-		rootPanel.showWidget(0);
+		selectTab(0);
+		
 		AccountingInvoice ai = new AccountingInvoice();
 		ai.setAccountEntry(new AccountEntry()
 			.setPeriod(base.getPeriod())
@@ -665,6 +760,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	@Override
 	public void select(final Integer id,final IAccountEntryWrapper wrp,final ISelectionCallback cbk) {
 		getCallback().getModule().onClearSessionLog();
+		attachPanel.clear();
 		if (id != null) {
 			getFiscalService().getAccountingInvoice(getCallback().getCurrentDomainName()
 				,getCallback().getCurrentDomainId(),id
@@ -721,12 +817,14 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		if (getWrapper() != null && getWrapper().getRegistry() != null) {
 			if (isAccountSource()) {
 				LOGGER.info("Editing invoice as account source");
-				rootPanel.showWidget(0);
+				selectTab(0);
+				
 				vatPanel.setVisible(true);
 				extraPanel.setVisible(true);
 				InvoicePanelCallback invoiceCallback = new InvoicePanelCallback();
 				fillSalesSeries();
 				extraPanel.paint(invoiceCallback);
+				
 				vatPanel.paint();
 				withholdingPanel.paint();
 				_paintEntry();
@@ -738,11 +836,20 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 				LOGGER.info("Viewing invoice as management source");
 				nonEditablePanel.clear();
 				nonEditablePanel.setWidget( new InvoiceViewer(getWrapper().getInvoice()));
-				rootPanel.showWidget(1);
+				selectTab(1);
+				
 				_paintEntry();
 			}
 		}
 	}
+	private void selectTab( int tab ) {
+		rootPanel.selectTab(tab);
+		rootPanel.getTabWidget(tab).setVisible(true);
+		rootPanel.getTabWidget(tab).getParent().setVisible(true);
+		rootPanel.getTabWidget(tab==0?1:0).setVisible(false);
+		rootPanel.getTabWidget(tab==0?1:0).getParent().setVisible(false);
+	}
+	
 	
 	private void fillSalesSeries() {
 		series.clear();

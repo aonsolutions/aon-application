@@ -262,6 +262,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		dockLayoutPanel.addNorth(getToolbarPanel() , 26);
 		splitLayoutPanel = new SplitLayoutPanel();
 		wizardPanel = new SimpleLayoutPanel();
+		wizardPanel.setStyleName(AON.AON_CSS.aonSelector());
 		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
 		splitLayoutPanel.add(wizardPanel);
 		centerDockLayoutPanel = new DockLayoutPanel(Unit.PX);

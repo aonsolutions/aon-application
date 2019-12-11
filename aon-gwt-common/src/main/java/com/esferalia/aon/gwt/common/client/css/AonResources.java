@@ -324,6 +324,13 @@ public interface AonResources extends ClientBundle, Images {
 	
 	@Source("images/aon-icon-synchronize.png")
 	ImageResource aonIconSynchronize();
+
+	@Source("images/aon-icon-document-image.png")
+	ImageResource aonIconDocumentImage();
+	
+	@Source("images/aon-icon-download.png")
+	ImageResource aonIconDownload();
+
 	// ------------------------------------------------------------------------
 
 //	@Source("images/checkyes.png")

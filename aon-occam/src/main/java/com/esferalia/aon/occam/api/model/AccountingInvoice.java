@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model;
 import java.io.Serializable;
 import java.util.LinkedList;
 
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
@@ -20,6 +21,8 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	private AccountingRegistry registry;
 	private Integer workplace;
 	private boolean accountSource;
+	
+	private Attach attach;
 
 	private LinkedList<Finance> finances;
 	private boolean financeRecordable;
@@ -72,6 +75,19 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 		this.accountSource = accountSource;
 		return this;
 	}
+	
+	public boolean isDocumentAttached() {
+		return this.attach != null;
+	}
+	
+	public Attach getAttach() {
+		return attach;
+	}
+	public AccountingInvoice setAttach(Attach attach) {
+		this.attach = attach;
+		return this;
+	}
+	
 	public InvoiceTransactionType getTransaction() {
 		return invoice != null?invoice.getTransaction():null;
 	}

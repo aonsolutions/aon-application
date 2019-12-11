@@ -2015,6 +2015,16 @@ input:disabled+label {
 	width: auto;
 }
 
+@sprite .aon-icon-document-image {
+	gwt-image: "aonIconDocumentImage";
+	width: auto;
+}
+
+@sprite .aon-icon-download {
+	gwt-image: "aonIconDownload";
+	width: auto;
+}
+
 @sprite .aon-icon-modules {
 	gwt-image: "aonIconModules";
 }

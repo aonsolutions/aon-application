@@ -310,6 +310,12 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-icon-unlock")
 	String aonIconUnlock();
 
+	@ClassName("aon-icon-document-image")
+	String aonIconDocumentImage();
+
+	@ClassName("aon-icon-download")
+	String aonIconDownload();
+
 	@ClassName("aon-editDataTable-iconColumn")
 	String aonDataTableIconColumn();
 
