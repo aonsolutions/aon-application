@@ -288,62 +288,6 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		initWidget(rootPanel);
 	}
 	
-	protected void paintAttach() {
-		AccountingInvoice ai = getWrapper();
-		if (attachPanel.getWidget() == null) {
-			ScrollPanel scrollPanel = new ScrollPanel();
-			attachPanel.add(scrollPanel);
-			VerticalPanel verticalPanel = new VerticalPanel();
-			verticalPanel.setStyleName(AON.AON_CSS.aonBlockCenter());
-			verticalPanel.addStyleName(AON.AON_CSS.aonMarginTop());
-			verticalPanel.addStyleName(AON.AON_CSS.aonMarginBottom());
-			scrollPanel.setWidget(verticalPanel);
-
-			if (ai != null && ai.isDocumentAttached() ) {
-				String params = "domain="+ getCallback().getCurrentDomainId() + "&id=" +  ai.getAttach().getId() + "&attach_type=invoice";
-				params = InvoicePanel.b64encode(params);
-				String url = URL.encode(GWT.getModuleBaseURL() + "ms/download_attachment/"  + getCallback().getCurrentDomainName() + "/" + getCallback().getCurrentUser() + "/" +  params);
-				
-				FlowPanel anchorContainer = new FlowPanel();
-				anchorContainer.setStyleName(AON.AON_CSS.aonPadding());
-				anchorContainer.addStyleName(AON.AON_CSS.aonSimpleBorder());
-				Anchor anchor = new Anchor("Descargar" ,url, "_blank");
-				anchor.addStyleName(AON.AON_CSS.aonIconDownload());
-				anchor.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-				anchor.addStyleName(AON.AON_CSS.aonClickableLabel());
-				anchorContainer.add(anchor);
-				verticalPanel.add(anchorContainer);
-				
-				if ( ai.getAttach().getMimeType() != null && ai.getAttach().getMimeType().isPDF()) {
-					verticalPanel.add(pdfViewer);
-					pdfViewer.addStyleName(AON.AON_CSS.aonWidthAll());
-					pdfViewer.addStyleName(AON.AON_CSS.aonHeightAll());
-					pdfViewer.setDocument(url, 1.5);
-				} else if ( ai.getAttach().getMimeType() != null && ai.getAttach().getMimeType().isImage()) {
-					Image image = new Image( url );
-					verticalPanel.add(image);
-				} else {
-					Label unknown = new Label("No se ha podido determinar un visor para este tipo de documento.");
-					unknown.setStyleName(AON.AON_CSS.aonBlockCenter());
-					unknown.addStyleName(AON.AON_CSS.aonMarginTop());
-					unknown.addStyleName(AON.AON_CSS.aonBold());
-					verticalPanel.add(unknown);			
-				}
-			} else {
-				Label unknown = new Label("La factura no tiene documentos adjuntos.");
-				unknown.setStyleName(AON.AON_CSS.aonBlockCenter());
-				unknown.addStyleName(AON.AON_CSS.aonMarginTop());
-				unknown.addStyleName(AON.AON_CSS.aonBold());
-				verticalPanel.add(unknown);			
-			}
-		}
-
-	}
-	
-	private static native String b64encode(String a) /*-{
-	  return window.btoa(a);
-	}-*/;	
-
 	@Override
 	public AccountingInvoice getWrapper() {
 		return invoice;
@@ -1247,4 +1191,61 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			getWrapper().getInvoice().setConfidential(confidential);
 		}
 	}
+	
+	protected void paintAttach() {
+		AccountingInvoice ai = getWrapper();
+		if (attachPanel.getWidget() == null) {
+			ScrollPanel scrollPanel = new ScrollPanel();
+			attachPanel.add(scrollPanel);
+			VerticalPanel verticalPanel = new VerticalPanel();
+			verticalPanel.setStyleName(AON.AON_CSS.aonBlockCenter());
+			verticalPanel.addStyleName(AON.AON_CSS.aonMarginTop());
+			verticalPanel.addStyleName(AON.AON_CSS.aonMarginBottom());
+			scrollPanel.setWidget(verticalPanel);
+
+			if (ai != null && ai.isDocumentAttached() ) {
+				String params = "domain="+ getCallback().getCurrentDomainId() + "&id=" +  ai.getAttach().getId() + "&attach_type=invoice";
+				params = InvoicePanel.b64encode(params);
+				String url = URL.encode(GWT.getModuleBaseURL() + "ms/download_attachment/"  + getCallback().getCurrentDomainName() + "/" + getCallback().getCurrentUser() + "/" +  params);
+				
+				FlowPanel anchorContainer = new FlowPanel();
+				anchorContainer.setStyleName(AON.AON_CSS.aonPadding());
+				anchorContainer.addStyleName(AON.AON_CSS.aonSimpleBorder());
+				Anchor anchor = new Anchor("Descargar" ,url, "_blank");
+				anchor.addStyleName(AON.AON_CSS.aonIconDownload());
+				anchor.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
+				anchor.addStyleName(AON.AON_CSS.aonClickableLabel());
+				anchorContainer.add(anchor);
+				verticalPanel.add(anchorContainer);
+				
+				if ( ai.getAttach().getMimeType() != null && ai.getAttach().getMimeType().isPDF()) {
+					verticalPanel.add(pdfViewer);
+					pdfViewer.addStyleName(AON.AON_CSS.aonWidthAll());
+					pdfViewer.addStyleName(AON.AON_CSS.aonHeightAll());
+					pdfViewer.setDocument(url, 1.5);
+				} else if ( ai.getAttach().getMimeType() != null && ai.getAttach().getMimeType().isImage()) {
+					Image image = new Image( url );
+					verticalPanel.add(image);
+				} else {
+					Label unknown = new Label("No se ha podido determinar un visor para este tipo de documento.");
+					unknown.setStyleName(AON.AON_CSS.aonBlockCenter());
+					unknown.addStyleName(AON.AON_CSS.aonMarginTop());
+					unknown.addStyleName(AON.AON_CSS.aonBold());
+					verticalPanel.add(unknown);			
+				}
+			} else {
+				Label unknown = new Label("La factura no tiene documentos adjuntos.");
+				unknown.setStyleName(AON.AON_CSS.aonBlockCenter());
+				unknown.addStyleName(AON.AON_CSS.aonMarginTop());
+				unknown.addStyleName(AON.AON_CSS.aonBold());
+				verticalPanel.add(unknown);			
+			}
+		}
+
+	}
+	
+	private static native String b64encode(String a) /*-{
+	  return window.btoa(a);
+	}-*/;	
+	
 }
