@@ -15,6 +15,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,6 +58,118 @@ public class ExpressionContext {
 		public abstract <T> List<ITimedResult<T>> eval(ExpressionContext context, Class<T> toType)
 				throws ExpressionException;
 
+	}
+	
+	private static class DelegateMap<K,V> implements Map<K,V> {
+		
+		Map<K,V> map;
+
+		public DelegateMap(Map<K, V> map) {
+			this.map = map;
+		}
+
+		public void clear() {
+			map.clear();
+		}
+
+		public V compute(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
+			return map.compute(key, remappingFunction);
+		}
+
+		public V computeIfAbsent(K arg0, Function<? super K, ? extends V> arg1) {
+			return map.computeIfAbsent(arg0, arg1);
+		}
+
+		public V computeIfPresent(K arg0, BiFunction<? super K, ? super V, ? extends V> arg1) {
+			return map.computeIfPresent(arg0, arg1);
+		}
+
+		public boolean containsKey(Object arg0) {
+			return map.containsKey(arg0);
+		}
+
+		public boolean containsValue(Object arg0) {
+			return map.containsValue(arg0);
+		}
+
+		public Set<Entry<K, V>> entrySet() {
+			return map.entrySet();
+		}
+
+		public boolean equals(Object arg0) {
+			return map.equals(arg0);
+		}
+
+		public void forEach(BiConsumer<? super K, ? super V> arg0) {
+			map.forEach(arg0);
+		}
+
+		public V get(Object arg0) {
+			return map.get(arg0);
+		}
+
+		public V getOrDefault(Object key, V defaultValue) {
+			return map.getOrDefault(key, defaultValue);
+		}
+
+		public int hashCode() {
+			return map.hashCode();
+		}
+
+		public boolean isEmpty() {
+			return map.isEmpty();
+		}
+
+		public Set<K> keySet() {
+			return map.keySet();
+		}
+
+		public V merge(K key, V value, BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
+			return map.merge(key, value, remappingFunction);
+		}
+
+		public V put(K arg0, V arg1) {
+			return map.put(arg0, arg1);
+		}
+
+		public void putAll(Map<? extends K, ? extends V> arg0) {
+			map.putAll(arg0);
+		}
+
+		public V putIfAbsent(K key, V value) {
+			return map.putIfAbsent(key, value);
+		}
+
+		public boolean remove(Object key, Object value) {
+			return map.remove(key, value);
+		}
+
+		public V remove(Object arg0) {
+			return map.remove(arg0);
+		}
+
+		public boolean replace(K key, V oldValue, V newValue) {
+			return map.replace(key, oldValue, newValue);
+		}
+
+		public V replace(K key, V value) {
+			return map.replace(key, value);
+		}
+
+		public void replaceAll(BiFunction<? super K, ? super V, ? extends V> arg0) {
+			map.replaceAll(arg0);
+		}
+
+		public int size() {
+			return map.size();
+		}
+
+		public Collection<V> values() {
+			return map.values();
+		}
+		
+		
+		
 	}
 
 	private static ThreadLocal<PeriodMap> currentBindings = new ThreadLocal<Variables.PeriodMap>();
@@ -641,12 +756,30 @@ public class ExpressionContext {
 		}
 
 	}
+	
+	
 
 
 	public String evalTemplate(String template, Date start, Date end) throws ExpressionException {
 		try {
 			Map<String, Object> vars = variables.getPeriodMap(start, end);
-			Object result = TemplateRuntime.eval(template, vars);
+			Map<String, Object> printVars = new DelegateMap<String,Object>(vars){
+				@Override
+				public Object get(Object arg0) {
+					Object object = super.get(arg0);
+					
+					if ( object == null )
+						return "";
+					if ( object instanceof Float )
+						return Math.round((( Float) object) * 100.00 )/  100.00;
+					if ( object instanceof Double )
+						return Math.round((( Double) object) * 100.00 )/  100.00;
+					
+					return object;
+				}
+			};
+			
+			Object result = TemplateRuntime.eval(template, printVars);
 			return result != null ? result.toString() : null;
 		} catch (PropertyAccessException e) {
 			throwExpressionException(e);

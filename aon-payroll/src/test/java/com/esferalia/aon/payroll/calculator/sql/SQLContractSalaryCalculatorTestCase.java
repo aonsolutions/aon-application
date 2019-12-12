@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -35,6 +36,7 @@ import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
@@ -48,6 +50,7 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
+import com.esferalia.aon.salary.payment.IPayment;
 
 /**
  * @author rtrepiana
@@ -815,6 +818,50 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals( 1250.00 + 1250.00/12, salary.getTotalPayment());
 	}
 
+	@Test
+	public void testDescriptionRoundVariable()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext,
+				new String[] { 
+				},
+				new String[] { 
+				});
+		
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), "CUALESQUIERA", "100.00/3.00");
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), "DIAS", "12");
+		addPayment(aonContext, 
+				contract, 
+				"DESCRIPTION WITH UNDEFINED VAR @{CUALESQUIERA} @{DIAS}", 
+				"666.66 * DIAS_TRABAJADOS / DIAS_MES", 
+				"_P", 
+				"_P", 
+				PaymentType.CRA_0001);
+		
+		
+		Date start = getFirstDayOfMonth(add(getToday(), Calendar.MONTH, 1));
+		Date end = getLastDayOfMonth(start);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, start, end, end, contract);
+
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder());
+
+		
+		Salary salary = calculator.calculate(ctx);
+		
+		for (IPayment payment : salary.getSalaryPayments()) {
+			Assert.assertEquals("DESCRIPTION WITH UNDEFINED VAR 33.33 12", payment.getDescription());
+		}
+		
+		Assert.assertEquals(666.66 * 1, salary.getTotalPayment());
+		
+		
+	}
+	
 	private static void load(Map<String, ITimedVariable<?>> context,
 			Map<String, Object> data) {
 		for (Entry<String, ITimedVariable<?>> entry : context.entrySet()) {
