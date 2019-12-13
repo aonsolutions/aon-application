@@ -40,7 +40,6 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.api.services.drive.Drive;
 
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
@@ -73,10 +72,8 @@ public class DownloadStockServlet extends HttpServlet {
         String quantity = p_request.getParameter("quantity");
         String close_inventory = p_request.getParameter("close");
         String only_non_cero = p_request.getParameter("only_non_cero");
-        
-        String user_id = p_request.getParameter("user_id");
         String login = p_request.getParameter("username");
-        Integer userId = AonNumberUtils.toInteger(user_id);
+
 
         String packagedInfo = p_request.getParameter("packaged_info");
         Boolean packaged = packagedInfo.equals("1");
@@ -84,7 +81,7 @@ public class DownloadStockServlet extends HttpServlet {
         Boolean closeInventory = close_inventory.equals("true");
 
         Domain domain = AON.getDomain(domainName, domainId, login);
-        User user = AON.getUser(domainId, domainName, login, userId);
+        User user = AON.getUser(domainName, domainId, login);
        
         Warehouse w = new Warehouse();
         if(!warehouse.equals("-"))
