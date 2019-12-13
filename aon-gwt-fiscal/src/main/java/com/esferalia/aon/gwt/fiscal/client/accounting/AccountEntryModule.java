@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.accounting;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
@@ -74,6 +75,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.layout.client.Layout.AnimationCallback;
 import com.google.gwt.layout.client.Layout.Layer;
+import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.Command;
@@ -104,6 +106,11 @@ public class AccountEntryModule extends MainEntryPoint {
 		SafeHtml tab(String title, String icon);
 	}
 	private static final TabLayoutFolderSafeTemplate TABLAYOUT_FOLDER_TEMPLATE = GWT.create(TabLayoutFolderSafeTemplate.class);
+
+	private static final Logger LOGGER = Logger.getLogger(AccountEntryModule.class.getName());
+	static {
+		LOGGER.addHandler( new ConsoleLogHandler() );
+	}
 
 	private int errorLogTabIndex;
 	private int sessionLogTabIndex;
@@ -300,12 +307,13 @@ public class AccountEntryModule extends MainEntryPoint {
 			public void onBlur(BlurEvent event) {
 				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 					public void execute() {
+						LOGGER.info("BLUR entryType");
 						AccountEntryModule.this.wizardContent.setFocus(true);
 					}
 				});
 			}
-			
 		});
+		
 		if (getOptions().getConfiguration() != null) {
 			loadModule();
 		} else {
@@ -1622,6 +1630,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridOdd());
 		
 		period = new AccountPeriodBox();
+		period.setTabIndex(1);
 		period.addChangeHandler( new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -1635,6 +1644,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		tab.getCellFormatter().setStyleName(0, 2, AON.AON_CSS.aonPanelGridOdd());
 		
 		entryDate = new DateBoxEx();
+		entryDate.setTabIndex(2);
 		entryDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			
 			@Override
@@ -1650,6 +1660,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		tab.getCellFormatter().setStyleName(0, 4, AON.AON_CSS.aonPanelGridOdd());
 		
 		entryType = new ListBox();
+		entryType.setTabIndex(3);
 		entryType.addChangeHandler(new ChangeHandler() {
 			
 			@Override
