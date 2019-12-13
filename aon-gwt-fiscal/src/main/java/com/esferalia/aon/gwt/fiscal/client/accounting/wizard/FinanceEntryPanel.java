@@ -292,7 +292,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 	}
 
 	@Override
-	public void save(final AsyncCallback<AccountEntry[]> callback) {
+	public void save(final AsyncCallback<IAccountEntryWrapper> callback) {
 		
 		getFiscalService().save(getCallback().getCurrentDomainName()
 				,getCallback().getCurrentDomainId()
@@ -301,7 +301,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 			@Override
 			public void onSuccess(FinanceEntry result) {
 				setWrapper(result);
-				callback.onSuccess(new AccountEntry[]{result.getAccountEntry()});
+				callback.onSuccess(getWrapper());
 			}
 
 			@Override

@@ -603,13 +603,13 @@ public class AccountEntryModule extends MainEntryPoint {
 	public void onAccept(ClickEvent event) {
 		accept.setEnabled(false);
 		remove.setEnabled(false);
-		wizardContent.save(new AsyncCallback<AccountEntry[]>() {
+		wizardContent.save(new AsyncCallback<IAccountEntryWrapper>() {
 
 			@Override
-			public void onSuccess(AccountEntry[] result) {
-				base = result[0];
+			public void onSuccess(IAccountEntryWrapper result) {
+				base = result.getAccountEntry();
 				if (getOptions().isSessionLogTabVisible()) {
-					sessionLog.addSaved(AccountEntryModule.getWrapperArray(result));
+					sessionLog.addSaved(AccountEntryModule.getWrapperArray(result.getAccountEntries()));
 				}
 				reset();
 				
@@ -628,7 +628,7 @@ public class AccountEntryModule extends MainEntryPoint {
 					}
 				});
 				if (getOptions().hasExternalCallback()) {
-					getOptions().getExternalCallback().onChange(base);
+					getOptions().getExternalCallback().onChange(result);
 				}
 			}
 
@@ -709,7 +709,7 @@ public class AccountEntryModule extends MainEntryPoint {
 
 					@Override
 					public void onSuccess(Void result) {
-						AccountEntry removed = wizardContent.getMainEntry();
+						IAccountEntryWrapper wrapper = wizardContent.getEntryWrapper(); 
 						if (getOptions().isSessionLogTabVisible() &&
 							wizardContent.getMainEntry().getId() != null) {
 							wizardContent.getMainEntry().setId(wizardContent.getMainEntry().getId() * -1);
@@ -718,7 +718,7 @@ public class AccountEntryModule extends MainEntryPoint {
 						remove.setEnabled(true);
 						reset();
 						if (getOptions().hasExternalCallback() ) {
-							getOptions().getExternalCallback().onRemove(removed);
+							getOptions().getExternalCallback().onRemove(wrapper);
 						}
 					}
 
@@ -1122,7 +1122,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		}
 	}
 	
-	public static AccountEntryWrapper[] getWrapperArray(AccountEntry[] entries ) {
+	public static AccountEntryWrapper[] getWrapperArray(LinkedList<AccountEntry> entries ) {
 		LinkedList<AccountEntryWrapper> list = new LinkedList<AccountEntryWrapper>();
 		for (AccountEntry entry : entries) {
 			list.add(new AccountEntryWrapper(entry));
@@ -1130,6 +1130,14 @@ public class AccountEntryModule extends MainEntryPoint {
 		return list.toArray(new AccountEntryWrapper[list.size()]);
 	}
 	
+	public static AccountEntryWrapper[] getWrapperArray(AccountEntry[] entries ) {
+		LinkedList<AccountEntryWrapper> list = new LinkedList<AccountEntryWrapper>();
+		for (AccountEntry entry : entries) {
+			list.add(new AccountEntryWrapper(entry));
+		}
+		return list.toArray(new AccountEntryWrapper[list.size()]);
+	}
+
 	private void ensureBalanceTab() {
 		openFootPanelIfNeeded();
 		tabLayout.selectTab(getBalancesTabIndex());

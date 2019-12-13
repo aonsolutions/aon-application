@@ -8,7 +8,7 @@ public class AccountEntrySelectionEvent extends GwtEvent<AccountEntrySelectionHa
 
 	private static Type<AccountEntrySelectionHandler> TYPE;
 
-	public static <T> void fire(HasAccountEntrySelectionHandlers source, AccountEntry selectedItem, ModuleCallback<AccountEntry> callback) {
+	public static <T> void fire(HasAccountEntrySelectionHandlers source, AccountEntry selectedItem, ModuleCallback callback) {
 		if (TYPE != null) {
 			AccountEntrySelectionEvent event = new AccountEntrySelectionEvent(selectedItem, callback);
 			source.fireEvent(event);
@@ -23,9 +23,9 @@ public class AccountEntrySelectionEvent extends GwtEvent<AccountEntrySelectionHa
 	}
 
 	private final AccountEntry selectedItem;
-	private final ModuleCallback<AccountEntry> callback;
+	private final ModuleCallback callback;
 
-	protected AccountEntrySelectionEvent(AccountEntry selectedItem, ModuleCallback<AccountEntry> callback) {
+	protected AccountEntrySelectionEvent(AccountEntry selectedItem, ModuleCallback callback) {
 		this.selectedItem = selectedItem;
 		this.callback = callback;
 	}
@@ -39,7 +39,7 @@ public class AccountEntrySelectionEvent extends GwtEvent<AccountEntrySelectionHa
 		return selectedItem;
 	}
 
-	public ModuleCallback<AccountEntry> getCallback() {
+	public ModuleCallback getCallback() {
 		return this.callback;
 	}
 

@@ -25,7 +25,7 @@ public interface IWizardContent extends IsWidget,Focusable {
 	
 	public void reset(AccountEntry moduleEntry, ISelectionCallback selectionCallback);
 	public void select(Integer id,IAccountEntryWrapper t,ISelectionCallback cbk);
-	public void save( final AsyncCallback<AccountEntry[]> callback);
+	public void save( final AsyncCallback<IAccountEntryWrapper> callback);
 	public void remove( final AsyncCallback<Void> callback);
 
 	public void manageWidgets(boolean canRemove, boolean canEdit);

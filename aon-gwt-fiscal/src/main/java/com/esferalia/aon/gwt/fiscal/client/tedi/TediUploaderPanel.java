@@ -8,9 +8,9 @@ import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.tedi.TediCenter.TediCenterCallback;
-import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -181,10 +181,10 @@ public class TediUploaderPanel extends DockLayoutPanel {
 				.setConfiguration(this.configuration).setAccountingInvoice(ai).setBackButtonVisible(false)
 				.setSessionLogTabVisible(false).setPreviewSectionVisible(true).setBalancesSectionVisible(false)
 				.setStatementTabVisible(false).setJournalTabVisible(false).setExtraInfoTabVisible(false)
-				.setExternalCallback(new ModuleCallback<AccountEntry>() {
+				.setExternalCallback(new ModuleCallback() {
 
 					@Override
-					public void onRemove(AccountEntry removed) {
+					public void onRemove(IAccountEntryWrapper removed) {
 					}
 
 					@Override
@@ -196,8 +196,8 @@ public class TediUploaderPanel extends DockLayoutPanel {
 					}
 
 					@Override
-					public void onChange(AccountEntry changed) {
-						result.setAon(null);
+					public void onChange(IAccountEntryWrapper changed) {
+						result.setAon((AccountingInvoice) changed);
 						// TODO clear ALL
 					}
 				}));

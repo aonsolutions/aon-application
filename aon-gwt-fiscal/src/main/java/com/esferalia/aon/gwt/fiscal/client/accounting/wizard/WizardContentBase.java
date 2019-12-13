@@ -51,15 +51,14 @@ public abstract class WizardContentBase<T extends IAccountEntryWrapper> extends 
 	}
 	
 	@Override
-	public void save(final AsyncCallback<AccountEntry[]> callback) {
+	public void save(final AsyncCallback<IAccountEntryWrapper> callback) {
 		getFiscalService().save(getCallback().getCurrentDomainName(), getCallback().getCurrentDomainId(), getWrapper().getAccountEntry()
 			, new AsyncCallback<AccountEntry>() {
 
 			@Override
 			public void onSuccess(AccountEntry result) {
 				getWrapper().setAccountEntry(result);
-				AccountEntry[] entries = new AccountEntry[]{result}; 	
-				callback.onSuccess(entries);
+				callback.onSuccess(getWrapper());
 			}
 
 			@Override

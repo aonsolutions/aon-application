@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.TreeMap;
 
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -29,6 +30,13 @@ public class FinanceEntry implements Serializable, IAccountEntryWrapper {
 	@Override
 	public void setAccountEntry(AccountEntry accountEntry) {
 		this.accountEntry = accountEntry;
+	}
+	
+	@Override
+	public LinkedList<AccountEntry> getAccountEntries() {
+		LinkedList<AccountEntry> list = new LinkedList<AccountEntry>();
+		list.add(getAccountEntry());
+		return list;
 	}
 	
 	public boolean isMultipleGeneration() {

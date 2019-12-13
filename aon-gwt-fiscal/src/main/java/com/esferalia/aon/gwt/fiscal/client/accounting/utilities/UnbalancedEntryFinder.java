@@ -4,8 +4,8 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.ModuleCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
-import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesUnbalancedEntryItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.IAccUtilitiesItem;
@@ -151,16 +151,16 @@ class UnbalancedEntryFinder extends OptionBase {
 			.setUser( user )
 			.setDomain( domain)
 			.setAccountEntryId( entryId )
-			.setExternalCallback( new ModuleCallback<AccountEntry>() {
+			.setExternalCallback( new ModuleCallback() {
 			
-				@Override public void onRemove(AccountEntry removed) {
+				@Override public void onRemove(IAccountEntryWrapper removed) {
 					entryDialog.hide();
 				}
 				@Override public void onFailure(Throwable caught) {}
 				@Override public void onExit() {
 					entryDialog.hide();
 				}
-				@Override public void onChange(AccountEntry changed) {
+				@Override public void onChange(IAccountEntryWrapper changed) {
 					entryDialog.hide();
 				}
 			})

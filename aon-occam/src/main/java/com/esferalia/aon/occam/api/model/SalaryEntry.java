@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 
 import com.esferalia.aon.watson.util.AonMathUtils;
 
@@ -58,6 +59,13 @@ public class SalaryEntry implements Serializable, IAccountEntryWrapper {
 	public void setAccountEntry(AccountEntry accountEntry) {
 		this.accountEntry = accountEntry;
 	}
+	@Override
+	public LinkedList<AccountEntry> getAccountEntries() {
+		LinkedList<AccountEntry> list = new LinkedList<AccountEntry>();
+		list.add(getAccountEntry());
+		return list;
+	}
+	
 	public int getSalaryCount() {
 		return salaryCount;
 	}

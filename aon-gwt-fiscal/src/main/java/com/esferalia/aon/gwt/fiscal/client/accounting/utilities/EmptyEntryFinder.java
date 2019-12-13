@@ -9,8 +9,8 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
-import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesEmptyEntryItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.accounting.utilities.IAccUtilitiesItem;
@@ -201,16 +201,16 @@ class EmptyEntryFinder extends OptionBase {
 			.setUser( user ) 
 			.setDomain( domain )
 			.setAccountEntryId( entryId )
-			.setExternalCallback( new ModuleCallback<AccountEntry>() {
+			.setExternalCallback( new ModuleCallback() {
 			
-				@Override public void onRemove(AccountEntry removed) {
+				@Override public void onRemove(IAccountEntryWrapper removed) {
 					entryDialog.hide();
 				}
 				@Override public void onFailure(Throwable caught) {}
 				@Override public void onExit() {
 					entryDialog.hide();
 				}
-				@Override public void onChange(AccountEntry changed) {
+				@Override public void onChange(IAccountEntryWrapper changed) {
 					entryDialog.hide();
 				}
 			})

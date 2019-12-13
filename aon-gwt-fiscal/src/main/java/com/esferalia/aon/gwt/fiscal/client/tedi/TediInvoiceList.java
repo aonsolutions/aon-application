@@ -11,14 +11,17 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.accounting.utilities.CustomPopup;
 import com.esferalia.aon.gwt.fiscal.client.tedi.TediCenter.TediCenterCallback;
-import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.tedi.ICallback;
 import com.esferalia.aon.occam.api.model.tedi.TediError;
 import com.esferalia.aon.occam.api.model.tedi.TediLevel;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -42,6 +45,7 @@ import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import es.translogia.tedi.ewok.TediInvoiceFile;
 import net.aonsolutions.gwt.pdfjs.client.Viewer;
 
 public class TediInvoiceList extends DockLayoutPanel {
@@ -572,9 +576,10 @@ public class TediInvoiceList extends DockLayoutPanel {
 					result.getTedi().getUuid(), new AsyncCallback<String>() {
 
 						@Override
-						public void onSuccess(String result) {
-							attachSplit.addNorth(getAttachToolbarPanel(result), 25);
-							pdfViewer.setDocument(result, 1.0);
+						public void onSuccess(String invoiceAttachURL) {
+							attachSplit.addNorth(getAttachToolbarPanel(invoiceAttachURL), 25);
+							fillAttach( result, invoiceAttachURL );  
+							pdfViewer.setDocument(invoiceAttachURL, 1.0);
 						}
 
 						@Override
@@ -601,9 +606,10 @@ public class TediInvoiceList extends DockLayoutPanel {
 					result.getTedi().getUuid(), new AsyncCallback<String>() {
 
 						@Override
-						public void onSuccess(String result) {
-							attachSplit.addNorth(getAttachToolbarPanel(result), 25);
-							image.setUrl(result);
+						public void onSuccess(String invoiceAttachURL) {
+							attachSplit.addNorth(getAttachToolbarPanel(invoiceAttachURL), 25);
+							fillAttach( result, invoiceAttachURL );
+							image.setUrl(invoiceAttachURL);
 						}
 
 						@Override
@@ -614,6 +620,22 @@ public class TediInvoiceList extends DockLayoutPanel {
 							attachSplit.addNorth(label, 100);
 						}
 					});
+		}
+	}
+
+	protected void fillAttach(TediResult result, String invoiceAttachURL) {
+		Attach attach = result.getAccountingInvoice().getAttach();
+		if (AonStringUtils.isNotBlank( invoiceAttachURL) ) {
+			if (attach == null) {
+				attach = new Attach();
+				result.getAccountingInvoice().setAttach( attach ); 		
+			}
+			TediInvoiceFile file = result.getTedi().getFile();
+			if (file != null) {
+				attach.setMimeType(MimeType.safeValueFromContenType( file.getContentType() ));
+			}
+			attach.setAttachType(AttachType.INVOICE);
+			attach.setAttachURL(invoiceAttachURL );
 		}
 	}
 
@@ -639,10 +661,10 @@ public class TediInvoiceList extends DockLayoutPanel {
 				.setConfiguration(this.configuration).setAccountingInvoice(ai).setBackButtonVisible(false)
 				.setSessionLogTabVisible(false).setPreviewSectionVisible(true).setBalancesSectionVisible(false)
 				.setStatementTabVisible(false).setJournalTabVisible(false).setExtraInfoTabVisible(false)
-				.setExternalCallback(new ModuleCallback<AccountEntry>() {
+				.setExternalCallback(new ModuleCallback() {
 
 					@Override
-					public void onRemove(AccountEntry removed) {
+					public void onRemove(IAccountEntryWrapper removed) {
 					}
 
 					@Override
@@ -654,8 +676,8 @@ public class TediInvoiceList extends DockLayoutPanel {
 					}
 
 					@Override
-					public void onChange(AccountEntry changed) {
-						result.setAon(null);
+					public void onChange(IAccountEntryWrapper changed) {
+						result.setAon((AccountingInvoice) changed);
 						onAccept(result);
 					}
 				}));

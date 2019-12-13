@@ -1017,7 +1017,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	}
 
 	@Override
-	public void save(final AsyncCallback<AccountEntry[]> cbk) {
+	public void save(final AsyncCallback<IAccountEntryWrapper> cbk) {
 		fastSave.setVisible(false);
 		vatPanel.hideButtons(false);
 		extraPanel.hideButtons(false);
@@ -1029,12 +1029,10 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			public void onSuccess(AccountingInvoice result) {
 				setWrapper(result);
 				lastRegistry = result.getRegistry();
-				int entriesSize = getWrapper().getAccountEntries().size();
-				AccountEntry[] entries = new AccountEntry[entriesSize];  
 				fastSave.setVisible(true);
 				vatPanel.hideButtons(true);
 				extraPanel.hideButtons(true);
-				cbk.onSuccess(getWrapper().getAccountEntries().toArray(entries));
+				cbk.onSuccess(getWrapper());
 			}
 
 			@Override

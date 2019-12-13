@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
+import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.mutable.MutableInt;
@@ -270,10 +271,10 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 				entryPanel.addClickHandler(new ClickHandler() {
 					@Override
 					public void onClick(ClickEvent event) {
-						AccountEntrySelectionEvent.fire( JournalPanel.this, entry, new ModuleCallback<AccountEntry>() {
+						AccountEntrySelectionEvent.fire( JournalPanel.this, entry, new ModuleCallback() {
 							
 							@Override
-							public void onRemove(AccountEntry removed) {
+							public void onRemove(IAccountEntryWrapper removed) {
 								entrycontainer.remove(entryPanel);
 							}
 							
@@ -284,9 +285,10 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 							public void onExit() {}
 							
 							@Override
-							public void onChange(AccountEntry changed) {
+							public void onChange(IAccountEntryWrapper changed) {
 								entrycontainer.remove(entryPanel);
-								FocusPanel newEntryPanel = paintEntry(entrycontainer, changed);
+								AccountEntry entry = changed.getAccountEntry();
+								FocusPanel newEntryPanel = paintEntry(entrycontainer, entry);
 								newEntryPanel.addStyleName(AON.AON_CSS.aonValueChanged());
 								new Timer() {
 									@Override

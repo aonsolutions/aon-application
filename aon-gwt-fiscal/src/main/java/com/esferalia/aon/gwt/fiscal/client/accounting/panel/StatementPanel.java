@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.type.AccountStatementPeriod;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -325,10 +326,10 @@ public class StatementPanel extends ScrollPanel implements HasAccountEntrySelect
 								AccountEntry ae = new AccountEntry()
 										.setId(as.getAccountEntry())
 										.setDomain( currentDomainId );
-								AccountEntrySelectionEvent.fire(StatementPanel.this, ae, new ModuleCallback<AccountEntry>() {
+								AccountEntrySelectionEvent.fire(StatementPanel.this, ae, new ModuleCallback() {
 									
 									@Override
-									public void onRemove(AccountEntry removed) {
+									public void onRemove(IAccountEntryWrapper removed) {
 										int scrollPosition = StatementPanel.this.getVerticalScrollPosition();
 										search(allowChecks);
 										StatementPanel.this.setVerticalScrollPosition(scrollPosition);
@@ -343,7 +344,7 @@ public class StatementPanel extends ScrollPanel implements HasAccountEntrySelect
 									}
 									
 									@Override
-									public void onChange(AccountEntry changed) {
+									public void onChange(IAccountEntryWrapper changed) {
 										int scrollPosition = StatementPanel.this.getVerticalScrollPosition();
 										search(allowChecks);
 										StatementPanel.this.setVerticalScrollPosition(scrollPosition);

@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -241,10 +242,10 @@ public class LedgerPanel extends ScrollPanel implements HasAccountEntrySelection
 									AccountEntry ae = new AccountEntry()
 											.setId(flatEntry.getEntryId())
 											.setDomain( LedgerPanel.this.domainId );
-									AccountEntrySelectionEvent.fire(LedgerPanel.this, ae, new ModuleCallback<AccountEntry>() {
+									AccountEntrySelectionEvent.fire(LedgerPanel.this, ae, new ModuleCallback() {
 										
 										@Override
-										public void onRemove(AccountEntry removed) {
+										public void onRemove(IAccountEntryWrapper removed) {
 											int scrollPosition = LedgerPanel.this.getVerticalScrollPosition();
 											container.clear();
 											oldId = -1;
@@ -260,7 +261,7 @@ public class LedgerPanel extends ScrollPanel implements HasAccountEntrySelection
 										}
 										
 										@Override
-										public void onChange(AccountEntry changed) {
+										public void onChange(IAccountEntryWrapper changed) {
 											int scrollPosition = LedgerPanel.this.getVerticalScrollPosition();
 											container.clear();
 											oldId = -1;

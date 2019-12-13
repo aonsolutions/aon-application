@@ -13,6 +13,11 @@ import static com.esferalia.aon.jooq.tables.InvoiceTaxAccount.INVOICE_TAX_ACCOUN
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
@@ -28,9 +33,11 @@ import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
@@ -57,6 +64,7 @@ import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -681,12 +689,44 @@ public class AccountingInvoiceDAO {
 			if (accInvoice.hasFinances() && accInvoice.isFinanceRecordable()) {
 				entries.addAll( recordFinances(ctx, accInvoice) );				
 			}
+			if (accInvoice.getAttach() != null) {
+				insertInvoiceAttach( ctx, accInvoice);
+			}
 			ctx.log().info("------ [END OK] INSERT INVOICE");
 			return entries;
+		} catch (IOException t) {
+			ctx.log().info("------ [END FAIL] INSERT INVOICE [" + t.getMessage() + "]");
+			throw new AonCoreException( t );
 		} catch (Throwable t) {
 			ctx.log().info("------ [END FAIL] INSERT INVOICE [" + t.getMessage() + "]");
 			throw t;
 		}
+	}
+
+	private static void insertInvoiceAttach(AONContext ctx, AccountingInvoice accInvoice) throws IOException {
+		Attach attach = accInvoice.getAttach();
+		attach.setDomain(new Domain().setId(accInvoice.getInvoice().getDomain()));
+		attach.setAttachModule(accInvoice.getInvoice().getId());
+		attach.setAttachType( AttachType.INVOICE );
+		attach.setType( InvoiceAttachmentType.INVOICE.value() );
+		attach.setDate(accInvoice.getInvoice().getIssueDate());
+		attach.setDescription("Factura");
+		if (attach.getData() == null) {
+			if (attach.getAttachURL() != null) {
+				InputStream in = null;
+				try {
+					URL url = new URL(attach.getAttachURL());
+					URLConnection conn = url.openConnection();
+					conn.connect();
+					in = new BufferedInputStream(conn.getInputStream());
+					attach.setData( AonIOUtils.toByteArray(in) );
+				} finally {
+					AonIOUtils.closeQuietly(in);
+				}
+			}
+		}
+		Integer attachId = AttachmentDAO.insertInvoiceAttach(ctx, accInvoice.getAttach());
+		ctx.log().info("INSERT INVOICE ATTACH (invoice: "+ accInvoice.getAttach().getAttachModule() + " id : " +  attachId + ")");
 	}
 
 	private static void saveFinances(AONContext ctx, AccountingInvoice accInvoice) {

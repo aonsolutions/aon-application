@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.ReportMetadata;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -191,7 +192,7 @@ public class AccountLedgerReport extends MainEntryPoint {
 		root.add(dockLayoutPanel);
 	}
 	
-	private void showEntry(int domain,Integer entryId, ModuleCallback<AccountEntry> moduleCallback) {
+	private void showEntry(int domain,Integer entryId, ModuleCallback moduleCallback) {
 		CustomPopup entryDialog = new CustomPopup();
 		entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
 		entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
@@ -206,10 +207,10 @@ public class AccountLedgerReport extends MainEntryPoint {
 			.setUser(getCurrentUser())
 			.setDomain(domain)
 			.setAccountEntryId(entryId)
-			.setExternalCallback(new ModuleCallback<AccountEntry>() {
+			.setExternalCallback(new ModuleCallback() {
 				
 				@Override
-				public void onRemove(AccountEntry removed) {
+				public void onRemove(IAccountEntryWrapper removed) {
 					entryDialog.hide();
 					moduleCallback.onRemove(removed);
 				}
@@ -226,7 +227,7 @@ public class AccountLedgerReport extends MainEntryPoint {
 				}
 				
 				@Override
-				public void onChange(AccountEntry changed) {
+				public void onChange(IAccountEntryWrapper changed) {
 					entryDialog.hide();
 					moduleCallback.onChange(changed);
 				}

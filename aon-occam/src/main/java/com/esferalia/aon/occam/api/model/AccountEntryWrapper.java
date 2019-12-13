@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 
 public class AccountEntryWrapper implements IAccountEntryWrapper, Serializable {
 	
@@ -20,6 +21,13 @@ public class AccountEntryWrapper implements IAccountEntryWrapper, Serializable {
 	@Override
 	public void setAccountEntry(AccountEntry entry) {
 		this.ae = entry;
+	}
+
+	@Override
+	public LinkedList<AccountEntry> getAccountEntries() {
+		LinkedList<AccountEntry> list = new LinkedList<AccountEntry>();
+		list.add(getAccountEntry());
+		return list;
 	}
 
 }

@@ -137,5 +137,14 @@ public enum MimeType implements Serializable {
 		if (i < 0 || i >= MimeType.values().length) return null;
 		return MimeType.values()[i];
 	}
+	public static MimeType safeValueFromContenType( String name ) {
+		if (AonStringUtils.isBlank(name)) return null;
+		for (MimeType mimeType : MimeType.values() ) {
+			if (mimeType.getName().equals(name)) {
+				return mimeType;
+			}
+		}
+		return null;
+	}
     
 }

@@ -19,6 +19,7 @@ public class Attach implements Serializable {
 	
 	AttachType attachType;
 	private Integer attachModule;
+	private String attachURL;
 	
 	//---------- Generic
 	private Integer id;
@@ -246,6 +247,13 @@ public class Attach implements Serializable {
 	}
 	public Attach setAttachModule(Integer attachModule) {
 		this.attachModule = attachModule;
+		return this;
+	}
+	public String getAttachURL() {
+		return attachURL;
+	}
+	public Attach setAttachURL(String attachURL) {
+		this.attachURL = attachURL;
 		return this;
 	}
 	public Integer getSourceBatch() {

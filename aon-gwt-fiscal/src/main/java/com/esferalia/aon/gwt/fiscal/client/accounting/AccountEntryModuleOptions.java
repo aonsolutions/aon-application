@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.fiscal.client.accounting;
 import java.io.Serializable;
 
 import com.esferalia.aon.gwt.common.client.ModuleCallback;
-import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -20,7 +19,7 @@ public class AccountEntryModuleOptions implements Serializable {
 	private HasWidgets parentWidget;
 	private AonConfiguration configuration;
 	private AccountingInvoice accountingInvoice;
-	private ModuleCallback<AccountEntry> externalCallback;
+	private ModuleCallback externalCallback;
 
 	private boolean embedded = false;
 	private boolean backButtonVisible = true;
@@ -95,7 +94,7 @@ public class AccountEntryModuleOptions implements Serializable {
 		return this;
 	}
 
-	public ModuleCallback<AccountEntry> getExternalCallback() {
+	public ModuleCallback getExternalCallback() {
 		return externalCallback;
 	}
 
@@ -103,7 +102,7 @@ public class AccountEntryModuleOptions implements Serializable {
 		return getExternalCallback() != null;
 	}
 
-	public AccountEntryModuleOptions setExternalCallback(ModuleCallback<AccountEntry> externalCallback) {
+	public AccountEntryModuleOptions setExternalCallback(ModuleCallback externalCallback) {
 		this.externalCallback = externalCallback;
 		return this;
 	}
