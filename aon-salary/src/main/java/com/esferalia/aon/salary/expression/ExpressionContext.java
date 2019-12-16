@@ -763,24 +763,25 @@ public class ExpressionContext {
 	public String evalTemplate(String template, Date start, Date end) throws ExpressionException {
 		try {
 			Map<String, Object> vars = variables.getPeriodMap(start, end);
-			Map<String, Object> printVars = new DelegateMap<String,Object>(vars){
-				@Override
-				public Object get(Object arg0) {
-					Object object = super.get(arg0);
-					
-					if ( object == null )
-						return "";
-					if ( object instanceof Float )
-						return Math.round((( Float) object) * 100.00 )/  100.00;
-					if ( object instanceof Double )
-						return Math.round((( Double) object) * 100.00 )/  100.00;
-					
-					return object;
-				}
-			};
+//			Map<String, Object> printVars = new DelegateMap<String,Object>(vars){
+//				@Override
+//				public Object get(Object arg0) {
+//					Object object = super.get(arg0);
+//					
+//					if ( object == null )
+//						return "";
+//					if ( object instanceof Float )
+//						return Math.round((( Float) object) * 100.00 )/  100.00;
+//					if ( object instanceof Double )
+//						return Math.round((( Double) object) * 100.00 )/  100.00;
+//					
+//					return object;
+//				}
+//			};
 			
-			Object result = TemplateRuntime.eval(template, printVars);
-			return result != null ? result.toString() : null;
+			Object result = TemplateRuntime.eval(template, vars);
+			
+			return result != null ? round(result.toString()) : null;
 		} catch (PropertyAccessException e) {
 			throwExpressionException(e);
 			throw new UndefinedVariablesException(getUndefinedProperty(e, (PeriodMap) null));
@@ -994,6 +995,9 @@ public class ExpressionContext {
 		return true;
 	}
 
+	private static String round(String str) {
+		return str.replaceAll("([0-9,]+\\.[0-9]{2})[0-9]+", "$1");
+	}
 
 	// ------------------------------------------------------------------------
 

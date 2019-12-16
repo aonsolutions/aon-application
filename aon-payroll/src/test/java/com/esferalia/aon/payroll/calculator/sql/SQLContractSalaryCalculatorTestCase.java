@@ -862,6 +862,50 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 		
 	}
 	
+	@Test
+	public void testDescriptionRoundExpression()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext,
+				new String[] { 
+				},
+				new String[] { 
+				});
+		
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), "CUALESQUIERA", "100.00");
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), "DIAS", "12");
+		addPayment(aonContext, 
+				contract, 
+				"DESCRIPTION WITH UNDEFINED VAR @{CUALESQUIERA/3.00} @{DIAS}", 
+				"666.66 * DIAS_TRABAJADOS / DIAS_MES", 
+				"_P", 
+				"_P", 
+				PaymentType.CRA_0001);
+		
+		
+		Date start = getFirstDayOfMonth(add(getToday(), Calendar.MONTH, 1));
+		Date end = getLastDayOfMonth(start);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, start, end, end, contract);
+
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder());
+
+		
+		Salary salary = calculator.calculate(ctx);
+		
+		for (IPayment payment : salary.getSalaryPayments()) {
+			Assert.assertEquals("DESCRIPTION WITH UNDEFINED VAR 33.33 12", payment.getDescription());
+		}
+		
+		Assert.assertEquals(666.66 * 1, salary.getTotalPayment());
+		
+		
+	}
+
 	private static void load(Map<String, ITimedVariable<?>> context,
 			Map<String, Object> data) {
 		for (Entry<String, ITimedVariable<?>> entry : context.entrySet()) {
