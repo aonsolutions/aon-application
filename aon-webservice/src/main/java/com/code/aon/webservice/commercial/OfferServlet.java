@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.OfferDetailStatus;
@@ -119,6 +120,8 @@ public class OfferServlet extends HttpServlet{
 					.setStatus(OfferStatus.PENDING)
 					.setScope(scope)
 					.setNumber(o.getNumber() + 1)
+					.setSeller(getPromoSeller(domain, "", tc.getPlan().getPromo()))
+					.setRemarks(getPromoText(tc.getPlan().getPromo()))
 					.setVersion(1)
 					.setWorkPlace(wp)
 					.setBankAccount(tc.getIban())
@@ -178,4 +181,28 @@ public class OfferServlet extends HttpServlet{
 		os.close();
 	}
 
+
+	private Seller getPromoSeller(Domain domain, String login, String promo) {
+		if(promo != null && !"".equals(promo)) {
+			String alias = promo.substring(0,3);
+			return AON.getSeller(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()).and(f.getAliasProperty().eq(alias)));
+		} else return null;		
+	}
+	
+	private String getPromoText(String promo) {
+	    String value = "";
+	    if (promo != null && !"".equals(promo)) {
+	       	Integer days = Integer.parseInt(promo.substring(7, 9));
+	    	Integer months = days / 3;
+	    	String op = promo.substring(9);
+	    	Integer v = Integer.parseInt(promo.substring(10));
+	    	if ("x".equals(op)) {
+	    		value = "Promoción aplicada: " + (months == 1 ? "1 mes " : months + " meses") + "a" + v + " euros";
+			} else if ("-".equals(op)) {
+				value = "Promoción aplicada: " + (months == 1 ? "1 mes " : months + " meses") + "al" + v + " %";
+			}
+	    }
+	    return value;
+	}
+	
 }

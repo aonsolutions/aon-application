@@ -661,7 +661,7 @@ public interface Properties {
 		Property<Integer> getAccountProperty();
 	}
 	
-	public interface SellerProperties{
+	public interface SellerProperties extends RegistryProperties{
 		Property<Integer> getRegistryProperty();
 		Property<Integer> getDomainProperty();
 		Property<Integer> getCommissionTypeProperty();

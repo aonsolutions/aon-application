@@ -8,8 +8,8 @@ public class TediPlan implements Serializable {
 
 	private String plan;
 	private String period;
+	private String promo;
 
-	
 	public TediPlan() {}
 	
 	public String getPlan() {
@@ -27,5 +27,16 @@ public class TediPlan implements Serializable {
 		this.period = period;
 		return this;
 	}
+
+	public String getPromo() {
+		return promo;
+	}
+
+	public TediPlan setPromo(String promo) {
+		this.promo = promo;
+		return this;
+	}
+	
+	
 
 }

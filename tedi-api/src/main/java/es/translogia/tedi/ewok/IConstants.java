@@ -41,6 +41,7 @@ public interface IConstants {
 	String PLAN = "plan";
 	String POSTAL_CODE = "postal_code";
 	String PRICE = "price";
+	String PROMO = "promo";
 	String PROVINCE = "province";
 	String QUANTITY = "quantity";
 	String QUOTA = "quota";

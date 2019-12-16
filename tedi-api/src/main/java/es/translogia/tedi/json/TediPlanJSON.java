@@ -14,7 +14,11 @@ public enum TediPlanJSON {
 	),
 	PERIOD(
 		(plan, json) -> plan.setPeriod(json.optString(IConstants.PERIOD)),
-		(plan, json) -> json.put(IConstants.CITY, plan.getPeriod())
+		(plan, json) -> json.put(IConstants.PERIOD, plan.getPeriod())
+	),
+	PROMO(
+		(plan, json) -> plan.setPromo(json.optString(IConstants.PROMO)),
+		(plan, json) -> json.put(IConstants.PROMO, plan.getPeriod())
 	);
 	
 	private ITediPlanFromJSON fromJSON;

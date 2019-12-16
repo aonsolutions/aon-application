@@ -33,7 +33,9 @@ public class Offer implements Serializable {
 	private OfferType type;
 	private String externalReference;
 	private Boolean signed;
-	
+	private String comments;
+	private String remarks;
+
 	private String bankAccount;
 	private String bic;
 
@@ -168,6 +170,24 @@ public class Offer implements Serializable {
 	}
 	public Offer setBic(String bic) {
 		this.bic = bic;
+		return this;
+	}
+	
+	public String getComments() {
+		return comments;
+	}
+	
+	public Offer setComments(String comments) {
+		this.comments = comments;
+		return this;
+	}
+	
+	public String getRemarks() {
+		return remarks;
+	}
+	
+	public Offer setRemarks(String remarks) {
+		this.remarks = remarks;
 		return this;
 	}
 	
