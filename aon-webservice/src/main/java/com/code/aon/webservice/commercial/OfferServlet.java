@@ -193,13 +193,12 @@ public class OfferServlet extends HttpServlet{
 	    String value = "";
 	    if (promo != null && !"".equals(promo)) {
 	       	Integer days = Integer.parseInt(promo.substring(7, 9));
-	    	Integer months = days / 3;
 	    	String op = promo.substring(9);
 	    	Integer v = Integer.parseInt(promo.substring(10));
 	    	if ("x".equals(op)) {
-	    		value = "Promoción aplicada: " + (months == 1 ? "1 mes " : months + " meses") + "a" + v + " euros";
+	    		value = "Promoción aplicada: " + days + " días" + "a" + v + " euros";
 			} else if ("-".equals(op)) {
-				value = "Promoción aplicada: " + (months == 1 ? "1 mes " : months + " meses") + "al" + v + " %";
+				value = "Promoción aplicada: " +  days + " días" + "al" + v + " %";
 			}
 	    }
 	    return value;
