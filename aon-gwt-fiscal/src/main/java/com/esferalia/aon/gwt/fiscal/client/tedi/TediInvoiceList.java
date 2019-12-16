@@ -418,13 +418,18 @@ public class TediInvoiceList extends DockLayoutPanel {
 						@Override
 						public void onClick(ClickEvent event) {
 							CustomPopup popup = new CustomPopup();
-							popup.setWidth("400px");
+							popup.setWidth("600px");
 							popup.setHeight("300px");
 							popup.setAnimationEnabled(true);
 							popup.setGlassEnabled(true);
 							popup.setModal(true);
 							popup.setCaption("Avisos");
+							ScrollPanel scr = new ScrollPanel();
 							FlowPanel toastPanel = new FlowPanel();
+							toastPanel.setStyleName(AON.AON_CSS.aonMarginTop());
+							toastPanel.addStyleName(AON.AON_CSS.aonMarginLeft());
+							toastPanel.addStyleName(AON.AON_CSS.aonMarginRight());
+							scr.setWidget(toastPanel);
 							for (TediError error : result.getMessages()) {
 								FlowPanel flowPanel = new FlowPanel();
 								InlineLabel colorLabel = new InlineLabel("");
@@ -447,7 +452,8 @@ public class TediInvoiceList extends DockLayoutPanel {
 								flowPanel.add(msgLabel);
 								toastPanel.add(flowPanel);
 							}
-							popup.add(toastPanel);
+							popup.add(scr);
+							popup.center();
 							popup.show();
 						}
 					});
