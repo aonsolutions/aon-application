@@ -9,6 +9,8 @@ public interface SalaryProperties{
 	Property<Integer> getIdProperty();
 	
 	Property<String> getCCCProperty();
+	
+	Property<String> getSSProperty();
 
 	Property<Integer> getContractProperty();
 	

@@ -31,7 +31,6 @@ import org.jooq.Record;
 import org.jooq.TableField;
 import org.jooq.lambda.Seq;
 
-import com.esferalia.aon.jooq.Keys;
 import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -416,6 +415,8 @@ public class SalaryDAO {
 					.setEnterpriseDocument(rootRecord.getValue(SALARY.ENTERPRISE_DOCUMENT))
 					.setEnterpriseName(rootRecord.getValue(SALARY.ENTERPRISE_NAME))
 					.setEnterpriseCCC(rootRecord.getValue(SALARY.CCC))
+					.setStartDate(rootRecord.getValue(SALARY.START_DATE))
+					.setEndDate(rootRecord.getValue(SALARY.END_DATE))
 					;
 					
 					
@@ -512,6 +513,11 @@ public class SalaryDAO {
 			return new FilterDAO.PropertyDAO<String>(SALARY.CCC);
 		}
 
+		@Override
+		public Property<String> getSSProperty() {
+			return new FilterDAO.PropertyDAO<String>(SALARY.SOCIAL_SECURITY_NUMBER);
+		}
+		
 		@Override
 		public Property<Integer> getContractProperty() {
 			return new FilterDAO.PropertyDAO<Integer>(SALARY.CONTRACT);
