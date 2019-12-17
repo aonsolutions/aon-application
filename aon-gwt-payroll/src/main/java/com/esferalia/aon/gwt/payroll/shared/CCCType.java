@@ -18,6 +18,8 @@ public enum CCCType implements Serializable {
 	
 	HOME_EMPLOYEES,
 	
-	AGRICULTURAL;
+	AGRICULTURAL,
+	
+	ARTIST;
 
 }
