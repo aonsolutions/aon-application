@@ -293,6 +293,7 @@ public class SQLSystemDataTestCase extends AbstractSQLTestCase {
 		Date firstDayOfYear = getFirstDayOfYear(getToday());
 
 		cleanSystemData(aonContext);
+		cleanSalaries(aonContext);
 
 		//@formatter:off
 		addCCCData(aonContext,
