@@ -214,12 +214,13 @@ public class OfferDAO {
 				.insertInto(OFFER, OFFER.DOMAIN, OFFER.EXTERNAL_REFERENCE, OFFER.ISSUE_DATE, OFFER.NUMBER, 
 						OFFER.PROJECT, OFFER.SCOPE, OFFER.SELLER, OFFER.SERIES, OFFER.SIGNED, OFFER.STATUS,
 						OFFER.SUPPLIER, OFFER.TARGET, OFFER.TYPE, OFFER.VERSION, OFFER.WORKPLACE,
-						OFFER.BANK_ACCOUNT, OFFER.BIC,
+						OFFER.BANK_ACCOUNT, OFFER.BIC, OFFER.COMMENTS, OFFER.REMARKS,
 						OFFER.CREATION_DATE, OFFER.CREATION_USER, OFFER.MODIFICATION_DATE, OFFER.MODIFICATION_USER)
 				.values(offer.getDomain(), offer.getExternalReference(), issueDate, offer.getNumber(), offer.getProject() != null ? offer.getProject().getId() : null, offer.getScope().getId(),
 						offer.getSeller() != null ? offer.getSeller().getId(): null, offer.getSeries(),signed , offer.getStatus().value(), 
 						offer.getSupplier() != null ? offer.getSupplier().getId(): null, offer.getTarget().getId(), offer.getType().value(), (Short) offer.getVersion().shortValue(), 
 						offer.getWorkPlace() != null ? offer.getWorkPlace().getId(): null, offer.getBankAccount(), offer.getBic(),
+						offer.getComments(), offer.getRemarks(),
 						modificationDate, ctx.getUser(),modificationDate, ctx.getUser())
 				.returning(OFFER.ID).fetchOne().getId();;
 		offer.setId(id);
