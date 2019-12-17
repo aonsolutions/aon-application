@@ -177,7 +177,6 @@ public class ExpenseInvoiceController extends InvoiceController {
 		try {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.INVOICE_ATTACHMENT_INVOICE_ID), ((Invoice)to).getId());
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.INVOICE_ATTACHMENT_MIME_TYPE), MimeType.MIME_PDF);
 			List<ITransferObject> list = bean.getList(criteria);
 			if (!list.isEmpty()) {
 				return (IAttachment)list.get(0);

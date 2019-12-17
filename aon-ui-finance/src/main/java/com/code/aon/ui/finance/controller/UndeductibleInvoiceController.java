@@ -191,9 +191,6 @@ public class UndeductibleInvoiceController extends InvoiceController {
 			Criteria criteria = new Criteria();
 			String invoiceAlias = bean.getFieldName(IEntityAlias.INVOICE_ATTACHMENT_INVOICE_ID);
 			criteria.addEqualExpression(invoiceAlias, ((Invoice)to).getId());
-			String typeAlias;
-			typeAlias = bean.getFieldName(IEntityAlias.INVOICE_ATTACHMENT_MIME_TYPE);
-			criteria.addEqualExpression(typeAlias, MimeType.MIME_PDF);
 			List<ITransferObject> list = bean.getList(criteria);
 			if (! list.isEmpty() ) {
 				return (IAttachment) list.get(0);
