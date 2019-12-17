@@ -10,6 +10,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.BONUS_AGE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.BONUS_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.BONUS_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.BR;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SUM;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTEXT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTRACT_END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTRACT_START;
@@ -119,7 +120,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -141,8 +141,8 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.calendar.enumeration.DayType;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.payroll.DelegateCollection;
-import com.esferalia.aon.payroll.DelegateContractPayment;
 import com.esferalia.aon.payroll.DelegateIterator;
 import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.Pair;
@@ -219,13 +219,12 @@ import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.TimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
-import com.esferalia.aon.salary.expression.Variables;
 import com.esferalia.aon.salary.expression.Variables.NotFoundHandler;
 import com.esferalia.aon.salary.expression.Variables.PeriodMap;
-import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
+import com.sun.tools.javac.resources.ct;
 
 public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCalculatorContext
 		implements IContractSalaryCalculatorContext, NotFoundHandler, ISQLContractSalaryCalculatorContext {
@@ -3150,6 +3149,36 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return years + months / 12d;
 
 	}
+	
+	public Double sum(String varName) {
+		
+		// Get Period
+		Date firsDayOfMonth = AonDateUtils.getFirstDayOfMonth(getStartDate());
+		Date lastDayOfMonth = AonDateUtils.getLastDayOfMonth(getStartDate());
+		
+		Stream<com.esferalia.aon.occam.api.model.Salary> salariesData = AON.getSalaryData(
+				new AONContext(connection), 
+				p -> p.getIsSalaryProperty().eq(true)
+					.and(p.getSSProperty().eq(getSocialSecurityNumber()))
+					.and(p.getStartDateProperty().ge(firsDayOfMonth))
+					.and(p.getEndDateProperty().le(lastDayOfMonth))
+				);
+		
+		List<ContextData> varNameCtxData = new ArrayList<ContextData>();
+		salariesData.forEach(s -> varNameCtxData.addAll(s.getContextData(varName, firsDayOfMonth, lastDayOfMonth)));
+
+		Stream<ContextData> filteredVarNameCtxData = varNameCtxData.stream().filter(ctxData -> !ctxData.getStartDate().equals(getStartDate()) && !ctxData.getEndDate().equals(getEndDate()));
+		
+		Double sum = filteredVarNameCtxData.collect(Collectors.summingDouble(ctxData -> {
+						try { 
+							return Double.parseDouble(ctxData.getExpression()); 
+						} catch (Exception e){
+							return 0.00;
+						}
+					}));
+		
+		return sum;
+	}
 
 	public Object br(Date date) throws ExpressionException, SQLException, SalaryException {
 		
@@ -3708,6 +3737,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		// TODO: at implicitExpressionContext ?
 		loadExpression(this.contractExpressionContext, BR, "def(x){ SELF.br(x)};", this.startDate, this.getEnd());
+		
+		loadExpression(this.contractExpressionContext, SUM, "def(x){ SELF.sum(x)};", this.startDate, this.getEnd());
+		
 		loadExpression(this.contractExpressionContext, GROSS,
 				String.format(
 						"def(x){ x=%1$s.checkParametersNotConstant(x, '%4$s', '%2$s', '%3$s'); return %1$s.gross(x, %2$s, %3$s ); };",

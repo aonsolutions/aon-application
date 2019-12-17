@@ -4,22 +4,14 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang.StringUtils;
-import org.mvel2.MVEL;
-import org.mvel2.util.MethodStub;
 
 import com.code.aon.common.enumeration.IResourceable;
-import com.esferalia.aon.salary.expression.ITimedVariable;
-import com.esferalia.aon.salary.expression.Period;
-import com.esferalia.aon.salary.expression.TimedObject;
 
 public enum ContextVariable implements IResourceable {
 
@@ -218,6 +210,7 @@ public enum ContextVariable implements IResourceable {
 	public static final String CONTEXT = "CONTEXT";
 
 	public static final String BR = "BR";
+	public static final String SUM = "SUM";
 	public static final String GROSS = "BRUTO";
 	public static final String LIQUID = "NETO";
 	public static final String SYSTEM = "SISTEMA";
@@ -256,6 +249,7 @@ public enum ContextVariable implements IResourceable {
 			REMOVE,
 			CONTEXT,
 			BR,
+			SUM,
 			GROSS,
 			LIQUID,
 			SYSTEM,
