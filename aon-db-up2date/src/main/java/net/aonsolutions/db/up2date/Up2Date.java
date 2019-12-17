@@ -19,18 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.payroll.SalarioBaseReadOnlyUpdate;
-import net.aonsolutions.db.up2date.management.KaldeviFinanceFix;
-import net.aonsolutions.db.up2date.payroll.DefaultAgreementUpdate;
-import net.aonsolutions.db.up2date.payroll.FundUpvUpdateIII;
-import net.aonsolutions.db.up2date.payroll.NetoAndBrutoReadOnlyUpdate;
-import net.aonsolutions.db.up2date.payroll.PlusSalarialInsert;
-import net.aonsolutions.db.up2date.payroll.SystemPaymentReadOnlyUpdate;
-import net.aonsolutions.db.up2date.tgss.AgriculturalITInsert;
-import net.aonsolutions.db.up2date.tgss.Bases2019UpdateIII;
-import net.aonsolutions.db.up2date.tgss.FellowsPercentages2019Update;
-import net.aonsolutions.db.up2date.tgss.SalaryHours2019Insert;
-import net.aonsolutions.db.up2date.tgss.TrainningPercentages2019Update;
+import net.aonsolutions.db.up2date.tgss.Artist2019Insert;
 
 public class Up2Date {
 
@@ -90,7 +79,8 @@ public class Up2Date {
     		//DefaultAgreementUpdate.DEFAULTAGREEMENTUPDATE,
     		//SalaryHours2019Insert.SALARYHOURS2019INSERT
     		//KaldeviFinanceFix.KALDEVIFINANCEFIX
-    		FundUpvUpdateIII.FUNDUPV_UPDATE_III
+    		//FundUpvUpdateIII.FUNDUPV_UPDATE_III
+    		Artist2019Insert.ARTIST2019INSERT
     		
     };
 
