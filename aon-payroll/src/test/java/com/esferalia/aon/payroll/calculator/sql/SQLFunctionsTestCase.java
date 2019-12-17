@@ -4,8 +4,16 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.Salary.SALARY;
+import static com.esferalia.aon.jooq.tables.SalaryBonus.SALARY_BONUS;
+import static com.esferalia.aon.jooq.tables.SalaryCost.SALARY_COST;
+import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
+import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
+import static com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO;
+import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGREEMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SYSTEM;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
@@ -21,22 +29,31 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
+import com.esferalia.aon.jooq.tables.records.DomainRecord;
+import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
+import com.esferalia.aon.jooq.tables.records.EnterpriseCccRecord;
+import com.esferalia.aon.jooq.tables.records.RegistryRecord;
+import com.esferalia.aon.jooq.tables.records.ScopeRecord;
+import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
+import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.esferalia.aon.salary.ISalary;
+import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
-import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
-import com.esferalia.aon.watson.util.AonDateUtils;
+
+import junit.framework.Assert;
 
 /**
  * @author rtrepiana
@@ -78,7 +95,7 @@ public class SQLFunctionsTestCase extends
 						, endDate, java.util.Date.class);
 		Assert.assertEquals(today, new Date(date.get(0).getValue().getTime()));
 	}
-		
+
 	@Test
 	public void testDateFunctionII() throws ExpressionException, SQLException {
 
@@ -796,7 +813,217 @@ public class SQLFunctionsTestCase extends
 		Assert.assertEquals(1000.00, results.get(0).getValue());
 
 	}
+	
+	@Test
+	public void testSumFunction() throws ExpressionException, SQLException {
 
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSalaries(aonContext);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		ContractRecord contract = newContract(aonContext, add(getToday(), Calendar.YEAR, -5), Collections.emptyMap());
+		
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				contract);
+		//@formatter:on
+		
+		List<ITimedResult<Double>> results =  ctx.getExpressionContext().eval("SUM(\"BASE_CGC\")", 
+				startDate
+				,endDate, 
+				Double.class);
+	
+		Assert.assertEquals(startDate, results.get(0).getPeriod().getStart());
+		Assert.assertEquals(endDate, results.get(0).getPeriod().getEnd());
+		Assert.assertEquals(0.00, results.get(0).getValue());
+		
+	}
+
+	@Test
+	public void testSumFunctionI() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSalaries(aonContext);
+		
+		Date firsDayOfMonth = getFirstDayOfMonth(getToday());
+		Date lastDayOfMonth = getLastDayOfMonth(getToday());
+		
+		
+		Date endDate = add(firsDayOfMonth, DAY_OF_MONTH, 9);
+		ContractRecord contract = newContract(aonContext, "03", firsDayOfMonth, endDate);
+		
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+						firsDayOfMonth, 
+						lastDayOfMonth, 
+						endDate, 
+						contract);
+		//@formatter:on
+		calculateAndSave(connection, ctx);
+		
+		Date startDate = add(endDate, DAY_OF_MONTH, 5);
+		
+		contract = newContract(aonContext, "03", startDate, lastDayOfMonth);
+		
+		//@formatter:off
+		ctx = getContractSalaryCalculatorContext(connection, 
+						firsDayOfMonth, 
+						lastDayOfMonth, 
+						endDate, 
+						contract);
+		//@formatter:on
+		
+		List<ITimedResult<Double>> results =  ctx.getExpressionContext().eval("SUM(\"BASE_CGC\")", 
+				startDate
+				,lastDayOfMonth, 
+				Double.class);
+	
+		Assert.assertEquals(1750.00 * 10 / 30, results.get(0).getValue(), DELTA);
+		
+	}
+	
+	@Test
+	public void testSumFunctionII() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSalaries(aonContext);
+		
+		Date firsDayOfMonth = getFirstDayOfMonth(getToday());
+		Date lastDayOfMonth = getLastDayOfMonth(getToday());
+		
+		
+		Date endDate = add(firsDayOfMonth, DAY_OF_MONTH, 9);
+		ContractRecord contract = newContract(aonContext, "03", firsDayOfMonth, endDate);
+		
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+						firsDayOfMonth, 
+						lastDayOfMonth, 
+						endDate, 
+						contract);
+		//@formatter:on
+		calculateAndSave(connection, ctx);
+		
+		Date startDate = add(endDate, DAY_OF_MONTH, 5);
+		
+		contract = newContract(aonContext, "03", startDate, lastDayOfMonth);
+		
+		//@formatter:off
+		ctx = getContractSalaryCalculatorContext(connection, 
+						firsDayOfMonth, 
+						lastDayOfMonth, 
+						endDate, 
+						contract);
+		//@formatter:on
+		
+		List<ITimedResult<Double>> results =  ctx.getExpressionContext().eval("SUM(\"BASE_CGC\")", 
+				startDate
+				,lastDayOfMonth, 
+				Double.class);
+	
+		Assert.assertEquals(1750.00 * 10 / 30, results.get(0).getValue(), DELTA);
+	
+		calculateAndSave(connection, ctx);
+		
+		// TODO: Esto es necesario?
+		// contract = newContract(aonContext, "03", startDate, lastDayOfMonth);
+		
+		//@formatter:off
+		ctx = getContractSalaryCalculatorContext(connection, 
+						firsDayOfMonth, 
+						lastDayOfMonth, 
+						endDate, 
+						contract);
+		//@formatter:on
+		
+		results =  ctx.getExpressionContext().eval("SUM(\"BASE_CGC\")", 
+				startDate
+				,lastDayOfMonth, 
+				Double.class);
+	
+		Assert.assertEquals(1750.00 * 10 / 30, results.get(0).getValue(), DELTA);
+		
+	}
+	
+	@Test
+	public void testSumFunctionIII() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSalaries(aonContext);
+		
+		Date firsDayOfMonth = getFirstDayOfMonth(getToday());
+		Date lastDayOfMonth = getLastDayOfMonth(getToday());
+		
+		
+		Date endDate = add(firsDayOfMonth, DAY_OF_MONTH, 9);
+		ContractRecord contract = newContract(aonContext, "03", firsDayOfMonth, endDate);
+		
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+						firsDayOfMonth, 
+						lastDayOfMonth, 
+						endDate, 
+						contract);
+		//@formatter:on
+		calculateAndSave(connection, ctx);
+		
+		Date startDate = add(endDate, DAY_OF_MONTH, 5);
+		
+		contract = newContract(aonContext, "03", startDate, lastDayOfMonth);
+		
+		//@formatter:off
+		ctx = getContractSalaryCalculatorContext(connection, 
+						firsDayOfMonth, 
+						lastDayOfMonth, 
+						endDate, 
+						contract);
+		//@formatter:on
+		
+		List<ITimedResult<Double>> results =  ctx.getExpressionContext().eval("SUM(\"BASE_CGC\")", 
+				startDate
+				,lastDayOfMonth, 
+				Double.class);
+	
+		Assert.assertEquals(1750.00 * 10 / 30, results.get(0).getValue(), DELTA);
+	
+		calculateAndSave(connection, ctx);
+		
+		// TODO: Esto es necesario?
+		// contract = newContract(aonContext, "03", startDate, lastDayOfMonth);
+		
+		//@formatter:off
+		ctx = getContractSalaryCalculatorContext(connection, 
+						firsDayOfMonth, 
+						lastDayOfMonth, 
+						endDate, 
+						contract);
+		//@formatter:on
+		
+		results =  ctx.getExpressionContext().eval("SUM(\"BASE_CGC\")", 
+				startDate
+				,lastDayOfMonth, 
+				Double.class);
+	
+		Assert.assertEquals(1750.00 * 10 / 30, results.get(0).getValue(), DELTA);
+		
+	}
+	
 	@Test
 	public void testOnAccountAgreement() throws ExpressionException, SQLException {
 
@@ -830,5 +1057,92 @@ public class SQLFunctionsTestCase extends
 
 	}
 	//------------------------------------------------------------------------
+	
+	protected ContractRecord newContract(AONContext aonContext, String quoteGroup, Date startDate, Date endDate ) {
+		DomainRecord domain = newDomain(aonContext);
+		
+		ScopeRecord scope = newScope(aonContext, domain.getId());
+
+		EnterpriseActivityRecord enterpriseActivity = newEnterpriseActivity(
+				aonContext, 
+				domain.getId(), 
+				scope.getId(), 
+				SSRegimeType.GENERAL);
+
+		EnterpriseCccRecord enterpriseCcc = newEnterpriseCcc(aonContext, 
+				domain.getId(), 
+				scope.getId(), 
+				enterpriseActivity.getId(), 
+				CCCType.PRINCIPAL,
+				"0123456789" );
+
+		WorkplaceRecord workplace = newWorkplace(aonContext, 
+				domain.getId(), 
+				scope.getId(), 
+				enterpriseActivity.getEnterprise());
+
+		RegistryRecord person = newPerson(
+				aonContext, 
+				domain.getId(),
+				"00000000B");
+
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext,
+				SSRegimeType.GENERAL, 
+				CCCType.PRINCIPAL,			
+				startDate, //getFirstDayOfYear(getToday()),
+				endDate,
+				new HashMap<String, String>() {
+					{
+						//put(MONTH_DAYS.getName(), String.format("%f", 30.00));
+						put(QUOTE_GROUP.getName(), String.format("'%s'", quoteGroup));
+						put(MONTH_DAYS.getName(), String.format("{'%s':30}[%s]", quoteGroup, QUOTE_GROUP.getName()));
+						
+					}
+				},
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+				}, 
+				new String[] {						
+				"BASE_CGC * 0.10", 
+				"BASE_CGP * 0.05",
+				"BASE_IRPF * PORCENTAJE_IRPF/100" ,
+				},
+				null
+				,
+				domain.getId(), 			//domainId, 
+				person.getId(),				//personId, 
+				workplace.getId(),			//workplaceId, 
+				enterpriseCcc.getId(),		//enterpriseCccId,
+				enterpriseActivity.getId()	//enterpriseActivityId
+				);
+		
+
+		//@formatter:on
+		return contract;
+	}
+	
+	private static int calculateAndSave(Connection connection,
+			ISQLContractSalaryCalculatorContext ctx) throws SalaryException {
+		JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder(connection);
+		new SmartContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
+		return jooqSalaryBuilder.execute();
+	}
+	
+	private static final void cleanSalaries(AONContext aonContext) {
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
+		
+		aonContext.getDslContext().delete(SALARY_BONUS).execute();
+		aonContext.getDslContext().delete(SALARY_EMBARGO).execute();
+		aonContext.getDslContext().delete(SALARY_COST).execute();
+		aonContext.getDslContext().delete(SALARY_DEDUCTION).execute();
+		aonContext.getDslContext().delete(SALARY_PAYMENT).execute();
+		aonContext.getDslContext().delete(SALARY_DATA).execute();
+		aonContext.getDslContext().delete(SALARY).execute();
+
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
+	}
 	
 }
