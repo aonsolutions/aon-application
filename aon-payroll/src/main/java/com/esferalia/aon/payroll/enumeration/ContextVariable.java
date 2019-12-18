@@ -56,6 +56,7 @@ public enum ContextVariable implements IResourceable {
 	THURSDAY_DAYS("DIAS_JUEVES", VariableType.DOUBLE, false), FRIDAY_DAYS("DIAS_VIERNES", VariableType.DOUBLE, false),
 	SATURDAY_DAYS("DIAS_SABADO", VariableType.DOUBLE, false), SUNDAY_DAYS("DIAS_DOMINGO", VariableType.DOUBLE, false),
 	PARTY_DAYS("DIAS_FESTIVOS", VariableType.DOUBLE, false), OFF_DAYS("DIAS_INACTIVIDAD", VariableType.DOUBLE, false),
+	DROP_DAYS("DIAS_AUSENCIA", VariableType.DOUBLE, false),
 
 	// ADVANCE_NOTICE_DATE("FECHA_PREAVISO", VariableType.DATE, false),
 	// ADVANCE_NOTICE_DAYS("DIAS_PREAVISO", VariableType.INTEGER, false),

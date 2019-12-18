@@ -16,6 +16,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTRACT_END
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTRACT_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DELAY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY_START;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.DROP_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTOR;
@@ -3960,6 +3961,31 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		List<Period> offs = ctx.getPeriods(OFF_DAYS);
 		intersects = Period.sub(intersects, offs);
 
+		// DropDays
+		List<Period> drops = ctx.getPeriods(DROP_DAYS);
+		intersects = Period.sub(intersects, drops);
+		
+		for(Period p: drops) {
+			ITimedVariable<Double> salaryDays = new ITimedVariable<Double>() {
+				@Override
+				public Period getPeriod() {
+					return p;
+				}
+
+				@Override
+				public Double getValue(Period p) {
+					Long availableDays = getAvailableDays(p.getStart(), p.getEnd());
+					double monthDays = getMax(p.getStart(), DAY_OF_MONTH);
+					double ctxMonthDays = getContexVariable(ctx, p, MONTH_DAYS);
+					return ctxMonthDays == monthDays ? availableDays : (30 - (monthDays - availableDays));
+				}
+
+			};
+			
+			ctx.putVariable(SALARY_DAYS, salaryDays);
+		}
+
+		
 		// for (Period period : quote) {
 		// if (!containsVariable(QUOTE_DAYS, period)) {
 		// ITimedVariable<Double> quoteDays = new ITimedVariable<Double>() {
