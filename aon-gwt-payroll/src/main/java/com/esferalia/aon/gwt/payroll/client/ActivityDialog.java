@@ -432,6 +432,7 @@ public class ActivityDialog extends CustomDialog {
 		cccRegime.addItem("Becarios");
 		cccRegime.addItem("Emploead@s de hogar");
 		cccRegime.addItem("Trabajadores cuenta ajena agrarios");
+		cccRegime.addItem("Artistas");
 		cccRegime.getElement().getElementsByTagName("option").getItem(2).setAttribute("disabled", "disabled");
 		cccRegime.addStyleName("aon-selectOneMenu");
 		cccRegime.addStyleName(activity.style.elementWidth80());
@@ -471,6 +472,8 @@ public class ActivityDialog extends CustomDialog {
 			return "0138";
 		case 7:
 			return "0163";
+		case 8:
+			return "0112";
 		default:
 			return "0111";
 		}
