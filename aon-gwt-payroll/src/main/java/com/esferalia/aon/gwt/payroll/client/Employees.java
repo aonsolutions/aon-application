@@ -157,18 +157,18 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 	private static final int EMPLOYEE_SCROLL_GAP = 5;
 	private static final int ENTERPRISE_COSTS_INDEX = 0;
-	private static final int ENTERPRISE_SALARIES_INDEX = 1;
+	private static final int ENTERPRISE_SALARIES_INDEX = 3;
 	private static final int ENTERPRISE_STATISTICS_INDEX = 2;
-	private static final int ENTERPRISE_PARTSIT_INDEX = 3;
-	private static final int ENTERPRISE_REPORTS_INDEX = 4;
+	private static final int ENTERPRISE_PARTSIT_INDEX = 4;
+	private static final int ENTERPRISE_REPORTS_INDEX = 6;
 
 	private static final int WORKPLACE_COSTS_INDEX = 0;
-	private static final int WORKPLACE_SALARIES_INDEX = 1;
+	private static final int WORKPLACE_SALARIES_INDEX = 5;
 	private static final int WORKPLACE_CALENDAR_INDEX = 2;
 	private static final int WORKPLACE_STATISTICS_INDEX = 3;
 	private static final int WORKPLACE_PARTSIT_INDEX = 4;
 
-	private static final int EMPLOYEE_SALARIES_INDEX = 0;
+	private static final int EMPLOYEE_SALARIES_INDEX = 1;
 	private static final int EMPLOYEE_IRPFOUTCOMES_INDEX = 2; // TODO : It's not
 	private static final int EMPLOYEE_CALENDAR_INDEX = 3;
 	private static final int EMPLOYEE_EVENTS_INDEX = 4;
@@ -311,13 +311,14 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		tree.addItem(enterpriseItem);
 
 		addImageItem(enterpriseItem, "Costes", images.costs());
-		addImageItem(enterpriseItem, "N\u00F3minas", images.salaries());
-		addImageItem(enterpriseItem, "Estad\u00EDsticas", images.statistics());
-		
 		// Nominas Beta Empresa
-		addImageItem(enterpriseItem, "N\u00F3minas (Beta)", images.salaries())
-			.setUserObject(new EnterpriseSalaryObject(enterprise, employeesService));
+				addImageItem(enterpriseItem, "N\u00F3minas", images.salaries())
+					.setUserObject(new EnterpriseSalaryObject(enterprise, employeesService));
 
+		addImageItem(enterpriseItem, "Estad\u00EDsticas", images.statistics());
+		addImageItem(enterpriseItem, "N\u00F3minas (Old)", images.salaries());
+		
+		
 		if (extended) {
 			List<Activity> activities = enterprise.getActivities();
 			for (Activity activity : activities) {
@@ -712,15 +713,17 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		workplaceItem.ensureDebugId(getId(workplace));
 
 		addImageItem(workplaceItem, "Costes", images.costs());
-		addImageItem(workplaceItem, "N\u00F3minas", images.salaries());
+		
+		addImageItem(workplaceItem, "N\u00F3minas", images.salaries())
+			.setUserObject(new WorkplaceSalaryObject(workplace.getId(), employeesService));
+
 		addImageItem(workplaceItem, "Calendario", images.laboralCalendar())
 				.setUserObject(new CalendarDraftObjectData(workplace.getId(), employeesService));
 		addImageItem(workplaceItem, "Estad\u00EDsticas", images.statistics());
 		addImageItem(workplaceItem, "Partes IT", images.itDatas())
 				.setUserObject(new ITDataObject(workplace.getId(), employeesService));
 		
-		addImageItem(workplaceItem, "N\u00F3minas (Beta)", images.salaries())
-				.setUserObject(new WorkplaceSalaryObject(workplace.getId(), employeesService));
+		addImageItem(workplaceItem, "N\u00F3minas (Old)", images.salaries());
 		
 		if (extended) {
 
@@ -1402,16 +1405,16 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		employeeItem.setUserObject(employeeDraftObject);
 		employeeItem.ensureDebugId(getId(employee));
 
-		TreeItem salariestItem = addImageItem(employeeItem, "N\u00F3minas", images.salaries());
-		salariestItem.ensureDebugId(getId(employee)+"-salaries");
-		
-		TreeItem salarytItem = addImageItem(employeeItem, "N\u00F3minas (Beta)", images.salaries());
+		TreeItem salarytItem = addImageItem(employeeItem, "N\u00F3minas", images.salaries());
 		EmployeeSalaryObject employeeSalaryObject = new EmployeeSalaryObject(
 				employee, 
 				employeesService);
 		salarytItem.setUserObject(employeeSalaryObject);
 		salarytItem.ensureDebugId(getId(employee)+"-employeesalary");
-
+		
+		TreeItem salariestItem = addImageItem(employeeItem, "N\u00F3minas (Old)", images.salaries());
+		salariestItem.ensureDebugId(getId(employee)+"-salaries");
+		
 		TreeItem calendarDraftItem = addImageItem(employeeItem, "Calendario", images.laboralCalendar());
 		EmployeeCalendarDraftObjectData employeeCalendarDraftobjectData = new EmployeeCalendarDraftObjectData(employee.getId(), 
 				employee.getStartDate(), employee.getEndDate(), employeesService);
