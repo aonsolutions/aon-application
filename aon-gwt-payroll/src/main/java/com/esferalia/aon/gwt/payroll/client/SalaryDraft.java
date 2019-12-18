@@ -282,6 +282,8 @@ public class SalaryDraft extends ResizeComposite
 			"DIAS_ENFERMEDAD_COMUN_CARENCIA", // internals
 			"DIAS_ERE", "DIAS_PATERNIDAD", // internals
 			"DIAS_TRABAJADOS", 
+			"DIAS_AUSENCIA",
+			"DIAS_INACTIVIDAD",
 
 			"CONTEXT", "SELF", "THIS", // context
 
