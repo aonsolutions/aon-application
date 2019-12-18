@@ -64,7 +64,6 @@ public class Artist2019Insert implements Update {
 		
 		InsertValuesStep7<SystemDataRecord, Integer, String, String, Date, Date, Byte, String> insertArtist = 
 			dslContext.insertInto(SYSTEM_DATA, SYSTEM_DATA.DOMAIN, SYSTEM_DATA.NAME, SYSTEM_DATA.EXPRESSION, SYSTEM_DATA.START_DATE, SYSTEM_DATA.END_DATE, SYSTEM_DATA.READ_ONLY, SYSTEM_DATA.COMMENTS)
-				.values(-108, "COTIZACION_MENSUAL", "TRUE", _2019StartDate, (Date) null, (byte) 1, (String) null)
 				.values(-108, "BASE_CGP_MIN", "BASE_CGC_MIN", _2019StartDate, (Date) null, (byte) 1, (String) null)
 				.values(-108, "BASE_CGP_MAX", "BASE_CGC_MAX", _2019StartDate, (Date) null, (byte) 1, (String) null)
 				.values(-108, "BASE_CGC_MIN", "[\"01\":48.88, \"02\":40.53, \"03\":35.26, \"05\":35.00, \"07\":35.00][GRUPO_COTIZACION] * DIAS_NOMINA", _2019StartDate, (Date) null, (byte) 1, (String) null)
