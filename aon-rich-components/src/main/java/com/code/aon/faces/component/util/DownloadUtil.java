@@ -30,6 +30,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 
@@ -75,7 +76,7 @@ public class DownloadUtil {
 			} catch (IOException e) {
 				LOGGER.error(e.getMessage()); 
 			} finally {
-				IOUtils.closeQuietly(in);
+				AonIOUtils.closeQuietly(in);
 			}
 		} else {
 			data = attach.getData();
@@ -160,7 +161,8 @@ public class DownloadUtil {
 		}
 		if (! StringUtils.isEmpty(fileName) ) {
 			String name = getFileName(fileName, mimeType);
-			if ( (mimeType != MimeType.MIME_PDF) && (mimeType != MimeType.MIME_SIGNED_PDF) ) {
+			if ( mimeType != MimeType.MIME_PDF && mimeType != MimeType.MIME_SIGNED_PDF
+					&& !mimeType.getName().contains("image")) {
 				response.setHeader("Content-Disposition", "attachment; filename=\"" + name + "\"");	
 			} else {
 				response.setHeader("Content-Disposition", "inline; filename=\"" + name + "\"");
@@ -215,7 +217,7 @@ public class DownloadUtil {
 	 * @param out the out
 	 */
 	public static void finishDownload( HttpServletResponse response, OutputStream out ) {
-		IOUtils.closeQuietly(out);
+		AonIOUtils.closeQuietly(out);
 		if ( response != null ) {
 			try {
 				response.flushBuffer();
