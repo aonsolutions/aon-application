@@ -20,6 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.tgss.Artist2019Insert;
+import net.aonsolutions.db.up2date.tgss.DropDays2019Insert;
 
 public class Up2Date {
 
@@ -80,7 +81,8 @@ public class Up2Date {
     		//SalaryHours2019Insert.SALARYHOURS2019INSERT
     		//KaldeviFinanceFix.KALDEVIFINANCEFIX
     		//FundUpvUpdateIII.FUNDUPV_UPDATE_III
-    		Artist2019Insert.ARTIST2019INSERT
+    		//Artist2019Insert.ARTIST2019INSERT
+    		DropDays2019Insert.DROPDAYS2019INSERT
     		
     };
 
