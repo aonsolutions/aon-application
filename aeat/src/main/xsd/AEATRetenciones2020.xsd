@@ -79,7 +79,7 @@
 	<xs:complexType name="tipo_Retenciones">
 		<xs:sequence>
 			<xs:element name="CodModelo" type="xs:string" fixed="RET"/>
-			<xs:element name="Ejercicio" type="xs:int" fixed="2019"/>
+			<xs:element name="Ejercicio" type="xs:int" fixed="2020"/>
 		</xs:sequence>
 	</xs:complexType>
 	<!-- CAUSAS DE REGULARIZACIñN -->
@@ -92,7 +92,7 @@
 	<xs:simpleType name="tipo_AñoNacimiento">
 		<xs:restriction base="xs:int">
 			<xs:minInclusive value="1905" fixed="false"/>
-			<xs:maxInclusive value="2019" fixed="false"/>
+			<xs:maxInclusive value="2020" fixed="false"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<!-- TIPOS DE CONTRATO -->
@@ -192,36 +192,36 @@
 			<xs:enumeration value="Por entero"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:complexType name="tipo_RetenedorEntrada2019">
+	<xs:complexType name="tipo_RetenedorEntrada2020">
 		<xs:sequence>
 			<xs:element name="Nif" type="tipo_Nif"/>
 			<xs:element name="ApellidosNombre" type="tipo_RazonSocial"/>
-			<xs:element name="Retenido" type="tipo_RetenidoEntrada2019" maxOccurs="unbounded"/>
+			<xs:element name="Retenido" type="tipo_RetenidoEntrada2020" maxOccurs="unbounded"/>
 		</xs:sequence>
 	</xs:complexType>
-	<xs:complexType name="tipo_RetenedorSalida2019">
+	<xs:complexType name="tipo_RetenedorSalida2020">
 		<xs:sequence>
 			<xs:element name="Nif" type="tipo_Nif"/>
 			<xs:element name="ApellidosNombre" type="tipo_RazonSocial"/>
-			<xs:element name="Retenido" type="tipo_RetenidoSalida2019" maxOccurs="unbounded"/>
+			<xs:element name="Retenido" type="tipo_RetenidoSalida2020" maxOccurs="unbounded"/>
 		</xs:sequence>
 	</xs:complexType>
-	<xs:complexType name="tipo_RetenedorError2019">
+	<xs:complexType name="tipo_RetenedorError2020">
 		<xs:sequence>
 			<xs:element name="Nif" type="tipo_Nif"/>
 			<xs:element name="Orden" type="xs:int"/>
 			<xs:element name="Error" type="tipo_Error" minOccurs="0"/>
-			<xs:element name="Retenido" type="tipo_RetenidoError2019" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Retenido" type="tipo_RetenidoError2020" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 	</xs:complexType>
-	<xs:complexType name="tipo_RetenidoEntrada2019">
+	<xs:complexType name="tipo_RetenidoEntrada2020">
 		<xs:sequence>
 			<xs:element name="Nif" type="tipo_Nif"/>
 			<xs:element name="ApellidosNombre" type="tipo_ApellidosyNombre"/>
 			<xs:element name="AñoNacimiento">
 				<xs:simpleType>
 					<xs:restriction base="tipo_AñoNacimiento">
-						<xs:maxInclusive value="2019"/>
+						<xs:maxInclusive value="2020"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
@@ -485,9 +485,9 @@
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
-	<xs:complexType name="tipo_RetenidoSalida2019">
+	<xs:complexType name="tipo_RetenidoSalida2020">
 		<xs:complexContent>
-			<xs:extension base="tipo_RetenidoEntrada2019">
+			<xs:extension base="tipo_RetenidoEntrada2020">
 				<xs:sequence>
 					<xs:element name="Gastos">
 						<xs:complexType>
@@ -851,7 +851,7 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
-	<xs:complexType name="tipo_RetenidoError2019">
+	<xs:complexType name="tipo_RetenidoError2020">
 		<xs:sequence>
 			<xs:element name="Nif" type="tipo_Nif"/>
 			<xs:element name="Orden" type="xs:int"/>
@@ -875,30 +875,30 @@
 		</xs:sequence>
 	</xs:complexType>
 	<!--ELEMENTOS GLOBALES-->
-	<xs:element name="AEATRetencionesEntrada2019">
+	<xs:element name="AEATRetencionesEntrada2020">
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="IdDoc" type="tipo_Retenciones"/>
-				<xs:element name="Retenedor" type="tipo_RetenedorEntrada2019" maxOccurs="unbounded"/>
+				<xs:element name="Retenedor" type="tipo_RetenedorEntrada2020" maxOccurs="unbounded"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="AEATRetencionesSalida2019">
+	<xs:element name="AEATRetencionesSalida2020">
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="IdDoc" type="tipo_Retenciones"/>
-				<xs:element name="Retenedor" type="tipo_RetenedorSalida2019" maxOccurs="unbounded"/>
+				<xs:element name="Retenedor" type="tipo_RetenedorSalida2020" maxOccurs="unbounded"/>
 			</xs:sequence>
 			<xs:attribute name="Sello" type="tipo_Sello" use="required"/>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="AEATRetencionesError2019">
+	<xs:element name="AEATRetencionesError2020">
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="IdDoc" type="tipo_Retenciones"/>
 				<xs:choice>
 					<xs:element name="ErrorGeneral" type="tipo_ErrorGeneral" maxOccurs="unbounded"/>
-					<xs:element name="Retenedor" type="tipo_RetenedorError2019" maxOccurs="unbounded"/>
+					<xs:element name="Retenedor" type="tipo_RetenedorError2020" maxOccurs="unbounded"/>
 				</xs:choice>
 			</xs:sequence>
 		</xs:complexType>
