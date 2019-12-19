@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.tedi;
 
 import java.util.LinkedList;
+import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.ModuleCallback;
@@ -30,7 +31,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -42,14 +42,14 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import es.translogia.tedi.ewok.TediInvoiceFile;
-import net.aonsolutions.gwt.pdfjs.client.Viewer;
+import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
 public class TediInvoiceList extends DockLayoutPanel {
-
+	private static  final Logger LOGGER = Logger.getLogger(TediInvoiceList.class.getName());
+	
 	private static TediServiceAsync SERVICE;
 
 	private String currentDomainName;
@@ -57,8 +57,6 @@ public class TediInvoiceList extends DockLayoutPanel {
 	private String currentUser;
 	private AonConfiguration configuration;
 	private Company company;
-
-	private Viewer pdfViewer = new Viewer();
 
 	private TediCenterCallback callback;
 	private SimpleLayoutPanel tabContainer = new SimpleLayoutPanel();
@@ -329,7 +327,7 @@ public class TediInvoiceList extends DockLayoutPanel {
 		scrollPanel.setStyleName(AON.AON_CSS.aonScrollArea());
 
 		if (list == null || list.size() == 0) {
-			Label noData = new Label(AON.MSG.noData());
+			Label noData = new Label("No se han encontrado facturas pendientes");
 			noData.setStyleName(AON.AON_CSS.aonTextCenter());
 			noData.addStyleName(AON.AON_CSS.aonBold());
 			noData.addStyleName(AON.AON_CSS.aonMarginTop());
@@ -480,6 +478,7 @@ public class TediInvoiceList extends DockLayoutPanel {
 
 				Label referenceCode = new Label(result.getInvoice().getReferenceCode());
 				tab.setWidget(row, cell, referenceCode);
+				tab.getCellFormatter().setStyleName(row, cell, AON.AON_CSS.aonNowrap());
 				cell++;
 
 				Label document = new Label(result.getInvoice().getRegistryDocument());
@@ -568,24 +567,14 @@ public class TediInvoiceList extends DockLayoutPanel {
 
 	private void paintAttach(TediResult result, SimpleLayoutPanel container) {
 		if (result.hasPDFAttach()) {
-			DockLayoutPanel attachSplit = new DockLayoutPanel(Unit.PX);
-			container.setWidget(attachSplit);
-			ScrollPanel scrollPanel = new ScrollPanel();
-			attachSplit.add(scrollPanel);
-
-			VerticalPanel verticalPanel = new VerticalPanel();
-			verticalPanel.add(pdfViewer);
-			scrollPanel.setWidget(verticalPanel);
-			pdfViewer.addStyleName(AON.AON_CSS.aonWidthAll());
-			pdfViewer.addStyleName(AON.AON_CSS.aonHeightAll());
 			SERVICE.getInvoiceAttachURL(this.currentDomainName, this.currentUser, this.currentDomain, isTediSnapshot(),
 					result.getTedi().getUuid(), new AsyncCallback<String>() {
 
 						@Override
 						public void onSuccess(String invoiceAttachURL) {
-							attachSplit.addNorth(getAttachToolbarPanel(invoiceAttachURL), 25);
-							fillAttach( result, invoiceAttachURL );  
-							pdfViewer.setDocument(invoiceAttachURL, 1.0);
+							fillAttach( result, invoiceAttachURL );
+							LOGGER.info("Attemp to view PDF fr from [" + invoiceAttachURL + "]");
+							container.setWidget(new FullViewer(invoiceAttachURL));
 						}
 
 						@Override
@@ -595,25 +584,20 @@ public class TediInvoiceList extends DockLayoutPanel {
 							label.addStyleName(AON.AON_CSS.aonColorRed());
 							label.addStyleName(AON.AON_CSS.aonMargin());
 							label.addStyleName(AON.AON_CSS.aonTextCenter());
-							attachSplit.addNorth(label, 100);
+							container.setWidget(label);
 						}
 					});
 		}
 		if (result.hasImageAttach()) {
-			DockLayoutPanel attachSplit = new DockLayoutPanel(Unit.PX);
-			container.setWidget(attachSplit);
-			ScrollPanel scrollPanel = new ScrollPanel();
-			attachSplit.add(scrollPanel);
 			Image image = new Image();
 			image.setStyleName(AON.AON_CSS.aonWidthAll());
 			image.addStyleName(AON.AON_CSS.aonHeightAll());
-			scrollPanel.setWidget(image);
+			container.setWidget(image);
 			SERVICE.getInvoiceAttachURL(this.currentDomainName, this.currentUser, this.currentDomain, isTediSnapshot(),
 					result.getTedi().getUuid(), new AsyncCallback<String>() {
 
 						@Override
 						public void onSuccess(String invoiceAttachURL) {
-							attachSplit.addNorth(getAttachToolbarPanel(invoiceAttachURL), 25);
 							fillAttach( result, invoiceAttachURL );
 							image.setUrl(invoiceAttachURL);
 						}
@@ -623,7 +607,7 @@ public class TediInvoiceList extends DockLayoutPanel {
 							Label label =  new Label("Se ha producido un error al intentar mostrar el documento de la factura.");
 							label.setStyleName(AON.AON_CSS.aonBold());
 							label.addStyleName(AON.AON_CSS.aonColorRed());
-							attachSplit.addNorth(label, 100);
+							container.setWidget(label);
 						}
 					});
 		}
@@ -687,39 +671,6 @@ public class TediInvoiceList extends DockLayoutPanel {
 						onAccept(result);
 					}
 				}));
-	}
-
-	private Widget getAttachToolbarPanel(final String url) {
-		FlowPanel toolbarPanel = new FlowPanel();
-		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
-		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
-		FlexTable toolbar = new FlexTable();
-		toolbar.setCellPadding(0);
-		toolbar.setCellSpacing(0);
-		toolbar.setStyleName(AON.AON_CSS.aonWidthAll());
-		FlowPanel titlePanel = new FlowPanel();
-		titlePanel.setStyleName(AON.AON_CSS.aonFindingTitleInternal());
-		toolbar.setWidget(0, 0, titlePanel);
-		toolbar.setWidget(0, 0, new Label(AON.MSG.attach()));
-		toolbar.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonFindingTitle());
-		toolbar.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonBold());
-		toolbar.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonNowrap());
-		toolbar.setWidget(0, 1, new Label());
-		toolbar.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonFindingSubtitleIternal());
-
-		FlowPanel buttonContainer = new FlowPanel();
-		buttonContainer.setStyleName(AON.AON_CSS.aonFindingToolbarItemGroup());
-		toolbar.setWidget(0, 2, buttonContainer);
-		toolbar.getCellFormatter().setStyleName(0, 2, AON.AON_CSS.aonFindingToolbar());
-
-		Anchor download = new Anchor(AON.MSG.download(), url, "_blank");
-		download.setTitle(AON.MSG.download());
-		download.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		download.addStyleName(AON.AON_CSS.aonIconNewWindow());
-		buttonContainer.add(download);
-
-		toolbarPanel.add(toolbar);
-		return toolbarPanel;
 	}
 
 	private void paintProblemsWidget(SimpleLayoutPanel contentPanel, TediResult result) {

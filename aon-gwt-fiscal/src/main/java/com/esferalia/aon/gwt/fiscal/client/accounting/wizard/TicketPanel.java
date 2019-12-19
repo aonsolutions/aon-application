@@ -73,11 +73,6 @@ import net.aonsolutions.gwt.pdfjs.client.Viewer;
 
 public class TicketPanel extends WizardContentBase<AccountingInvoice> implements HasSelectionHandlers<AccountingInvoice> {
 	
-	// No borrar. Necesario para la carga del script.
-	@SuppressWarnings("unused")
-	private Viewer pdfViewer = new Viewer();
-	// ----------------------------------------------
-
 	private static final Logger LOGGER = Logger.getLogger(TicketPanel.class.getName());
 	static {
 		LOGGER.addHandler( new ConsoleLogHandler() );

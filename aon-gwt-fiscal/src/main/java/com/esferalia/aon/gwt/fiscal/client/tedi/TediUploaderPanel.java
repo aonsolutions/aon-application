@@ -26,14 +26,12 @@ import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import net.aonsolutions.gwt.pdfjs.client.Viewer;
+import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
 public class TediUploaderPanel extends DockLayoutPanel {
 
@@ -49,7 +47,7 @@ public class TediUploaderPanel extends DockLayoutPanel {
 	private SimpleLayoutPanel content = new SimpleLayoutPanel();
 	private SimpleLayoutPanel southContent = new SimpleLayoutPanel();
 	private FileUpload fileUpload;
-	private final Viewer pdfViewer = new Viewer();
+	private final FullViewer pdfViewer = new FullViewer();
 	
 	
 	public TediUploaderPanel(String currentDomainName, int currentDomain, String currentUser,
@@ -144,20 +142,14 @@ public class TediUploaderPanel extends DockLayoutPanel {
 		this.add( splitPanel );
 		
 		splitPanel.addSouth(southContent,300);
-		ScrollPanel scrollPanel = new ScrollPanel();
-		southContent.add(scrollPanel);
-		VerticalPanel verticalPanel = new VerticalPanel();
-		verticalPanel.add(pdfViewer);
-		scrollPanel.setWidget(verticalPanel);
+		southContent.add(pdfViewer);
 		pdfViewer.addStyleName(AON.AON_CSS.aonWidthAll());
 		pdfViewer.addStyleName(AON.AON_CSS.aonHeightAll());
-		
 		splitPanel.add( content );
-		
 	}
 
 	private void setDocument(String doc) {
-		pdfViewer.setDocument(doc, 1.5);
+		pdfViewer.open(doc);
 		SERVICE.parseInvoice(domainName, user, domain, callback.isSnapshot(), doc, new AsyncCallback<TediResult>() {
 			
 			@Override
@@ -208,7 +200,7 @@ public class TediUploaderPanel extends DockLayoutPanel {
 		return (window.File && window.FileList && window.FileReader);
 	}-*/;
 	
-	private native void fileSelectHandler(Viewer viewer,Element fileselect, NativeEvent event) /*-{
+	private native void fileSelectHandler(FullViewer viewer,Element fileselect, NativeEvent event) /*-{
 		var self = this;		
 		event.preventDefault();
 		var file = fileselect.files[0];
