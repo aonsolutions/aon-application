@@ -24,7 +24,6 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
-import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
 
@@ -59,8 +58,7 @@ public class QRServlet extends HttpServlet{
 				company.getDocument() : "");
 		json.put("address", addressJSON);
 		JSONArray array = new JSONArray();
-		if(CarrierPackingType.SHIPMENT_REQUEST.equals(carrierPacking.getType())
-			&& !CarrierPackingStatus.FINISHED.equals(carrierPacking.getStatus())){
+		if(CarrierPackingType.SHIPMENT_REQUEST.equals(carrierPacking.getType())){
 			json.put("type", carrierPacking.getType().getName());
 			AON.getPurchaseStream(domain.getName(), domain.getId(), login, 
 					f -> f.getCarrierPackingProperty().eq(carrierPackingId)
@@ -165,40 +163,41 @@ public class QRServlet extends HttpServlet{
 				deliveryJSON.put("details", details);
 				array.put(deliveryJSON);
 			});
-		} else if(CarrierPackingType.SHIPMENT_REQUEST.equals(carrierPacking.getType())
-				&& CarrierPackingStatus.FINISHED.equals(carrierPacking.getStatus())){ // TODO RECEPTION
-			json.put("type", "reception");
-			AON.getIncomeStream(domain.getName(), domain.getId(), login, f -> f.getCarrierPackingProperty().eq(carrierPackingId))
-			.forEach(income -> {
-				JSONObject incomeJSON = DBIncome.incomeToJSON(income);
-				RAddress ra = AON.getRAddress(domain.getName(), domain.getId(), login,f -> f.getIdProperty().eq(income.getAddress()));
-				JSONObject addressJSON3 = ToJSON.raddressToJSON(ra);
-				addressJSON3.put("document", AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument() != null ?
-						AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument() : "");
-				incomeJSON.put("address", addressJSON3);
-
-				JSONArray details = new JSONArray();
-				AON.getIncomeDetailStream(domain.getName(), domain.getId(), login, f -> f.getIncomeProperty().eq(income.getId()))
-				.forEach(detail -> {
-					JSONObject detailJSON = DBIncome.incomeDetailToJSON(detail);
-					Optional<Item> item = getItem(domain, login, detail.getItem().getId(), detail.getItem().getProductId());
-					
-					String code = AON.getRItem(domain.getName(), domain.getId(), login, f2 -> 
-						f2.getRegistryProperty().eq(income.getSupplier())
-						.and(f2.getItemProperty().eq(detail.getItem().getId()))).getCode();
-					detailJSON.put("code", code);
-					
-					detailJSON.put("format_tag", item.isPresent() ? item.get().getPackFormatTag().getName() : "");
-					detailJSON.put("measurements", item.isPresent() ? item.get().getPackMeasurement() : 0.0);
-					detailJSON.put("measurements_tag", item.isPresent() ? item.get().getPackMeasurementTag().getName() : "");
-					detailJSON.put("units", item.isPresent() ? item.get().getPackUnits() : 0.0);
-					details.put(detailJSON);	
-				});
-				
-				incomeJSON.put("details", details);
-				array.put(incomeJSON);
-			});
-		}
+		} 
+//		else if(CarrierPackingType.SHIPMENT_REQUEST.equals(carrierPacking.getType())
+//				&& CarrierPackingStatus.FINISHED.equals(carrierPacking.getStatus())){ // TODO RECEPTION
+//			json.put("type", "reception");
+//			AON.getIncomeStream(domain.getName(), domain.getId(), login, f -> f.getCarrierPackingProperty().eq(carrierPackingId))
+//			.forEach(income -> {
+//				JSONObject incomeJSON = DBIncome.incomeToJSON(income);
+//				RAddress ra = AON.getRAddress(domain.getName(), domain.getId(), login,f -> f.getIdProperty().eq(income.getAddress()));
+//				JSONObject addressJSON3 = ToJSON.raddressToJSON(ra);
+//				addressJSON3.put("document", AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument() != null ?
+//						AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument() : "");
+//				incomeJSON.put("address", addressJSON3);
+//
+//				JSONArray details = new JSONArray();
+//				AON.getIncomeDetailStream(domain.getName(), domain.getId(), login, f -> f.getIncomeProperty().eq(income.getId()))
+//				.forEach(detail -> {
+//					JSONObject detailJSON = DBIncome.incomeDetailToJSON(detail);
+//					Optional<Item> item = getItem(domain, login, detail.getItem().getId(), detail.getItem().getProductId());
+//					
+//					String code = AON.getRItem(domain.getName(), domain.getId(), login, f2 -> 
+//						f2.getRegistryProperty().eq(income.getSupplier())
+//						.and(f2.getItemProperty().eq(detail.getItem().getId()))).getCode();
+//					detailJSON.put("code", code);
+//					
+//					detailJSON.put("format_tag", item.isPresent() ? item.get().getPackFormatTag().getName() : "");
+//					detailJSON.put("measurements", item.isPresent() ? item.get().getPackMeasurement() : 0.0);
+//					detailJSON.put("measurements_tag", item.isPresent() ? item.get().getPackMeasurementTag().getName() : "");
+//					detailJSON.put("units", item.isPresent() ? item.get().getPackUnits() : 0.0);
+//					details.put(detailJSON);	
+//				});
+//				
+//				incomeJSON.put("details", details);
+//				array.put(incomeJSON);
+//			});
+//		}
 		json.put("orders", array);
 		// --------------- //
 		Utils.giveBack(req, resp, json, new JSONObject());
