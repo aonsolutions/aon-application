@@ -185,7 +185,7 @@ public class TEDI {
 		}
 	}
 
-	public static TediResult parseInvoice(String domainName, int domain, boolean snapshot, String user, InputStream input) throws TediException {
+	public static TediResult parseInvoice(String domainName, int domain, boolean snapshot, String user, String fileName, InputStream input) throws TediException {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, user);
@@ -196,7 +196,7 @@ public class TEDI {
 			final AonConfiguration aonCtx = ConfigurationDAO.getConfiguration(ctx);
 			Tedi tedi = getTedi(ctx, snapshot);
 			LOGGER.info("[TEDI] Attempt to parse invoice []");
-			return TediParser.toFullInvoice(ctx, aonCtx, tedi.parseInvoice(company.getDocument(),input));
+			return TediParser.toFullInvoice(ctx, aonCtx, tedi.parseInvoice(company.getDocument(),fileName,input));
 		} finally {
 			if (ctx != null)
 				ctx.close();

@@ -138,9 +138,9 @@ public class Tedi extends TediRequest {
 				"getInvoiceAttach: " + tediResponse.getResponseCode() + " - " + tediResponse.getResponseMessage());
 	}
 
-	public TediInvoice parseInvoice(String company, InputStream input) throws TediException {
+	public TediInvoice parseInvoice(String company, String fileName, InputStream input) throws TediException {
 		String url = MessageFormat.format(PARSE_INVOICE,company);
-		TediResponse tediResponse = postMultipartFile(url, getToken(), input);
+		TediResponse tediResponse = postMultipartFile(url, getToken(), fileName, input);
 		if (tediResponse.ok()) {
 			
 			JSONArray array = tediResponse.getJSONArray();

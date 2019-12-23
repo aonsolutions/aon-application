@@ -146,5 +146,29 @@ public enum MimeType implements Serializable {
 		}
 		return null;
 	}
+
+	public static MimeType safeValueFromExtension( String extension ) {
+		if (AonStringUtils.equalsIgnoreCase("JPEG",extension)) {
+			return JPEG;
+		}
+		if (AonStringUtils.isBlank(extension)) return null;
+		for (MimeType mimeType : MimeType.values() ) {
+			if (mimeType.getExtension().equals(extension)) {
+				return mimeType;
+			}
+		}
+		return null;
+	}
+
+	public static MimeType guessFromFileName(String fileName) {
+		if (AonStringUtils.isNotBlank(fileName)) {
+			int i = fileName.lastIndexOf('.');
+			if (i > 0) {
+				String extension = fileName.substring(i+1);
+				return safeValueFromExtension(extension);
+			}
+		}
+		return null;
+	}
     
 }

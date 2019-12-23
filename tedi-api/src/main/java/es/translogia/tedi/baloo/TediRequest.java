@@ -91,11 +91,10 @@ public class TediRequest {
 		}
 	}
 
-	protected TediResponse postMultipartFile(String tediUrl, String token, InputStream input) {
+	protected TediResponse postMultipartFile(String tediUrl, String token, String fileName, InputStream input) {
 		HttpsURLConnection conn = null;
 		Integer responseCode = null;
 		try {
-			String fileName = "invoice.pdf"; 
 			String charset = "UTF-8";
 			String boundary = "===" + System.currentTimeMillis() + "===";
 		    

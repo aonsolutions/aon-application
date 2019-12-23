@@ -210,13 +210,13 @@ public class TediServiceImpl extends AonStatelessRemoteServiceServlet implements
 	
 	
 	@Override
-	public TediResult parseInvoice(String domainName, String user, int domain, boolean snapshot, String content)
+	public TediResult parseInvoice(String domainName, String user, int domain, boolean snapshot, String fileName, String content)
 			throws AonCoreException {
 		try {
 			IDataUrlSerializer serializer = new DataUrlSerializer();
 			DataUrl unserialized = serializer.unserialize(content);
 			ByteArrayInputStream input = new ByteArrayInputStream(unserialized.getData());
-			TediResult result = TEDI.parseInvoice(domainName, domain, snapshot, user, input); 
+			TediResult result = TEDI.parseInvoice(domainName, domain, snapshot, user, fileName, input); 
 			return result;
 		} catch ( TediException t) {
 			t.printStackTrace();

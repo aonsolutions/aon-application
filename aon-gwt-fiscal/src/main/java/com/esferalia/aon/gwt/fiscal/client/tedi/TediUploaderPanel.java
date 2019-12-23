@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
@@ -21,10 +22,12 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -45,9 +48,11 @@ public class TediUploaderPanel extends DockLayoutPanel {
 	private TediCenterCallback callback;
 	
 	private SimpleLayoutPanel content = new SimpleLayoutPanel();
-	private SimpleLayoutPanel southContent = new SimpleLayoutPanel();
+
+	private DeckLayoutPanel southContent = new DeckLayoutPanel();
 	private FileUpload fileUpload;
-	private final FullViewer pdfViewer = new FullViewer();
+	private FullViewer viewer = new FullViewer();
+	private SimpleLayoutPanel imageContainer = new SimpleLayoutPanel();
 	
 	
 	public TediUploaderPanel(String currentDomainName, int currentDomain, String currentUser,
@@ -122,7 +127,7 @@ public class TediUploaderPanel extends DockLayoutPanel {
 		fileUpload.addChangeHandler(new ChangeHandler() {
 			public void onChange(ChangeEvent event) {
 				
-				fileSelectHandler(pdfViewer, fileUpload.getElement() ,event.getNativeEvent());
+				fileSelectHandler(fileUpload.getElement() ,event.getNativeEvent());
 			}
 		});
 		
@@ -140,29 +145,50 @@ public class TediUploaderPanel extends DockLayoutPanel {
 		
 		SplitLayoutPanel splitPanel = new SplitLayoutPanel();
 		this.add( splitPanel );
+
 		
+		viewer = new FullViewer();		
+		southContent.add(viewer);
+		southContent.add(imageContainer);
+		clearPage();
 		splitPanel.addSouth(southContent,300);
-		southContent.add(pdfViewer);
-		pdfViewer.addStyleName(AON.AON_CSS.aonWidthAll());
-		pdfViewer.addStyleName(AON.AON_CSS.aonHeightAll());
 		splitPanel.add( content );
 	}
 
-	private void setDocument(String doc) {
-		pdfViewer.open(doc);
-		SERVICE.parseInvoice(domainName, user, domain, callback.isSnapshot(), doc, new AsyncCallback<TediResult>() {
-			
-			@Override
-			public void onSuccess(TediResult result) {
-				content.clear();
-				paintAccountEntryModule(content, result);
+	private void clearPage() {
+		imageContainer.clear();
+		southContent.showWidget(1);
+	}
+
+	private void setDocument(String doc, String type, String name) {
+		clearPage();
+		MimeType mimeType = MimeType.safeValueFromContenType(type);
+		if (mimeType == null) {
+			mimeType = MimeType.guessFromFileName(name);	
+		}
+		if (mimeType != null && (mimeType.isPDF() || mimeType.isImage())) {
+			if (mimeType.isPDF()) {
+				southContent.showWidget(0);
+				viewer.open(doc);
+			} if (mimeType.isImage()) {
+				southContent.showWidget(1);
+				Image image = new Image( doc );
+				imageContainer.setWidget(image);
 			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert(caught.getMessage());
-			}
-		});		
+			SERVICE.parseInvoice(domainName, user, domain, callback.isSnapshot(), name, doc, new AsyncCallback<TediResult>() {
+				
+				@Override
+				public void onSuccess(TediResult result) {
+					content.clear();
+					paintAccountEntryModule(content, result);
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					Window.alert(caught.getMessage());
+				}
+			});		
+		}
 	}
 
 	private void paintAccountEntryModule(SimplePanel container, TediResult result) {
@@ -200,13 +226,13 @@ public class TediUploaderPanel extends DockLayoutPanel {
 		return (window.File && window.FileList && window.FileReader);
 	}-*/;
 	
-	private native void fileSelectHandler(FullViewer viewer,Element fileselect, NativeEvent event) /*-{
+	private native void fileSelectHandler(Element fileselect, NativeEvent event) /*-{
 		var self = this;		
 		event.preventDefault();
 		var file = fileselect.files[0];
 		var reader = new FileReader();
 		reader.addEventListener("load", function () {
-			self.@com.esferalia.aon.gwt.fiscal.client.tedi.TediUploaderPanel::setDocument(Ljava/lang/String;)(reader.result); 
+			self.@com.esferalia.aon.gwt.fiscal.client.tedi.TediUploaderPanel::setDocument(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(reader.result,file.name,file.type); 
 			}, false);
 		reader.readAsDataURL( file );
 	}-*/;

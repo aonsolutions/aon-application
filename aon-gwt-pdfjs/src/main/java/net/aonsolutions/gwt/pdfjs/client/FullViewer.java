@@ -2,13 +2,16 @@ package net.aonsolutions.gwt.pdfjs.client;
 
 import java.util.logging.Logger;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.FrameElement;
 import com.google.gwt.user.client.ui.Frame;
 
 public class FullViewer extends Frame {
 	
-	private static  final Logger LOGGER = Logger.getLogger(FullViewer.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(FullViewer.class.getName());
+	private static final String URL_TO_AVOID_CORS = GWT.getModuleBaseURL() + "ms/AonPDFBridgeServlet?URL=";
+	private static final String VIEWER_PATH = GWT.getModuleName() + "/pdfjs/web/viewer.html";
 	
 	public FullViewer() {
 		this( null );
@@ -17,15 +20,25 @@ public class FullViewer extends Frame {
 	public FullViewer(String url) {
 		setWidth("100%");
 		setHeight("100%");
-		String viewerPath = GWT.getModuleName() + "/pdfjs/web/viewer.html"; 
+		String fileURL = null;
 		if (url != null) {
-			viewerPath = viewerPath + "?file=" + encodeURIComponent(url);
-			LOGGER.info("Attemp to load PDF file [" + viewerPath + "]");
+			if (isURLocal(url)) {
+				fileURL = url;
+			} else {
+				fileURL = URL_TO_AVOID_CORS + url;
+			}
+			fileURL = VIEWER_PATH + "?file=" + encodeURIComponent(url);
+			LOGGER.info("Attemp to load PDF file [" + fileURL + "]");
 		}
-		setUrl(viewerPath);
+		setUrl(fileURL);
+	}
+
+	private boolean isURLocal(String url) {
+		return AonStringUtils.contains(url,"/ms/download_attachment");
 	}
 
 	public void open(String dataURI) {
+		LOGGER.info("Attemp to native OPEN");
 		nativeOpen( this.getElement().cast() ,dataURI);
 	}
 
@@ -34,6 +47,9 @@ public class FullViewer extends Frame {
 	}-*/;
 	
 	private native void nativeOpen(FrameElement el, String dataURI) /*-{
-		el.contentWindow.PDFViewerApplication.open(dataURI);
+		var pdfjsLib = window['pdfjs-dist/build/pdf'];
+		console.log("pdfjsLib loaded!");
+		pdfjsLib.PDFViewerApplication.open(dataURI);
+		// el.contentWindow.PDFViewerApplication.open(dataURI);
 	}-*/;
 }

@@ -1887,7 +1887,7 @@ var PDFViewerApplication = {
 var validateFileURL = void 0;
 {
   var HOSTED_VIEWER_ORIGINS = ['null', 'http://mozilla.github.io', 'https://mozilla.github.io','https://firebasestorage.googleapis.com'];
-  var AON_ALLOWED_URLS = ['aonsolutions.net','esferalia.com','ecastellano.euk'];
+  var AON_ALLOWED_URLS = ['aonsolutions.net','aonsolutions.es','esferalia.com','ecastellano.euk'];
   validateFileURL = function validateFileURL(file) {
     if (file === undefined) {
       return;
