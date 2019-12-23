@@ -20,9 +20,6 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.irpf.Irpf2020Update;
-import net.aonsolutions.db.up2date.payroll.AyudaTUpdate;
-import net.aonsolutions.db.up2date.tgss.Artist2019Insert;
-import net.aonsolutions.db.up2date.tgss.DropDays2019Insert;
 
 public class Up2Date {
 
