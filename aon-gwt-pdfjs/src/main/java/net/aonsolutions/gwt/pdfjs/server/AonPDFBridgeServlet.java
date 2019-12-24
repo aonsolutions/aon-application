@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.watson.server.io.AonIOUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 @WebServlet(name = "AonPDFBridgeServlet", urlPatterns = { "/aon_gwt_aio/ms/AonPDFBridgeServlet/*",
 		"/aon_gwt_fiscal/ms/AonPDFBridgeServlet/*" })
@@ -23,7 +24,8 @@ public class AonPDFBridgeServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String url = req.getParameter("URL");
+		String qs = req.getQueryString();
+		String url = AonStringUtils.removeStart(qs,"URL=");
 		if (url != null) {
 			InputStream in = null;
 			try {

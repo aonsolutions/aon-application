@@ -11,7 +11,7 @@ public class FullViewer extends Frame {
 	
 	private static final Logger LOGGER = Logger.getLogger(FullViewer.class.getName());
 	private static final String URL_TO_AVOID_CORS = GWT.getModuleBaseURL() + "ms/AonPDFBridgeServlet?URL=";
-	private static final String VIEWER_PATH = GWT.getModuleName() + "/pdfjs/web/viewer.html";
+	private static final String VIEWER_PATH = GWT.getModuleName() + "/pdfjs/web/FullViewer.html";
 	
 	public FullViewer() {
 		this( null );
@@ -27,14 +27,14 @@ public class FullViewer extends Frame {
 			} else {
 				fileURL = URL_TO_AVOID_CORS + url;
 			}
-			fileURL = VIEWER_PATH + "?file=" + encodeURIComponent(url);
+			fileURL = VIEWER_PATH + "?file=" + encodeURIComponent(fileURL);
 			LOGGER.info("Attemp to load PDF file [" + fileURL + "]");
 		}
 		setUrl(fileURL);
 	}
 
 	private boolean isURLocal(String url) {
-		return AonStringUtils.contains(url,"/ms/download_attachment");
+		return AonStringUtils.contains(url,"ms/download_attachment");
 	}
 
 	public void open(String dataURI) {

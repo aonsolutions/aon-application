@@ -1886,8 +1886,7 @@ var PDFViewerApplication = {
 };
 var validateFileURL = void 0;
 {
-  var HOSTED_VIEWER_ORIGINS = ['null', 'http://mozilla.github.io', 'https://mozilla.github.io','https://firebasestorage.googleapis.com'];
-  var AON_ALLOWED_URLS = ['aonsolutions.net','aonsolutions.es','esferalia.com','ecastellano.euk'];
+  var HOSTED_VIEWER_ORIGINS = ['null', 'http://mozilla.github.io', 'https://mozilla.github.io'];
   validateFileURL = function validateFileURL(file) {
     if (file === undefined) {
       return;
@@ -1896,11 +1895,6 @@ var validateFileURL = void 0;
       var viewerOrigin = new URL(window.location.href).origin || 'null';
       if (HOSTED_VIEWER_ORIGINS.indexOf(viewerOrigin) >= 0) {
         return;
-      }
-      for (var x in AON_ALLOWED_URLS) {
-    	  if ( viewerOrigin.includes( x ) ) {
-    		  return;	  
-    	  }
       }
       var fileOrigin = new URL(file, window.location.href).origin;
       if (fileOrigin !== viewerOrigin) {
