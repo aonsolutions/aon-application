@@ -76,7 +76,7 @@ public class InvoiceAutoComplete {
 	 * Se rellena las serie y numero para las facturas de compras y gastos.
 	 */
 	public static BiConsumer<Invoice,AonConfigurationContext> COMPLETE_UNDEDUCTIBLE_REFERENCE_CODE = (inv,ctx) -> {
-		if (inv.isUndeductible() || AonStringUtils.equals("<auto>",inv.getReferenceCode())) {
+		if (inv.isUndeductible() && AonStringUtils.equalsIgnoreCase("<auto>",inv.getReferenceCode())) {
 			inv.setReferenceCode( inv.getDocumentNumber());
 		} 
 	};
