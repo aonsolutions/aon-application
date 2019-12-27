@@ -6,6 +6,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
 import net.aonsolutions.gwt.pdfjs.client.FullViewer;
@@ -28,8 +29,10 @@ public class InvoiceAttachPanel extends SimpleLayoutPanel {
 			if ( ai.getAttach().getMimeType() != null && ai.getAttach().getMimeType().isPDF()) {
 				this.setWidget(new FullViewer(url));
 			} else if ( ai.getAttach().getMimeType() != null && ai.getAttach().getMimeType().isImage()) {
+				ScrollPanel imagePanel = new ScrollPanel();  
 				Image image = new Image( url );
-				this.setWidget(image);
+				imagePanel.setWidget(image);
+				this.setWidget(imagePanel);
 			} else {
 				Label unknown = new Label("No se ha podido determinar un visor para este tipo de documento.");
 				unknown.setStyleName(AON.AON_CSS.aonBlockCenter());
