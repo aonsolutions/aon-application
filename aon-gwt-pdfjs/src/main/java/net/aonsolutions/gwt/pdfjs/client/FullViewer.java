@@ -29,8 +29,10 @@ public class FullViewer extends Frame {
 			}
 			fileURL = VIEWER_PATH + "?file=" + encodeURIComponent(fileURL);
 			LOGGER.info("Attemp to load PDF file [" + fileURL + "]");
+			setUrl(fileURL);
+		} else {
+			setUrl(VIEWER_PATH);
 		}
-		setUrl(fileURL);
 	}
 
 	private boolean isURLocal(String url) {
@@ -42,14 +44,16 @@ public class FullViewer extends Frame {
 		nativeOpen( this.getElement().cast() ,dataURI);
 	}
 
+	
 	private native String encodeURIComponent(String URI) /*-{
 		return encodeURIComponent(URI);
 	}-*/;
 	
 	private native void nativeOpen(FrameElement el, String dataURI) /*-{
-		var pdfjsLib = window['pdfjs-dist/build/pdf'];
-		console.log("pdfjsLib loaded!");
-		pdfjsLib.PDFViewerApplication.open(dataURI);
-		// el.contentWindow.PDFViewerApplication.open(dataURI);
+		if (el.contentWindow.PDFViewerApplication.pdfDocument) {
+			console.log("Destroing previous document");
+			el.contentWindow.PDFViewerApplication.pdfDocument.destroy();
+		}  
+    	el.contentWindow.PDFViewerApplication.open(dataURI);
 	}-*/;
 }

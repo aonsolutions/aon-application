@@ -20,6 +20,8 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.LoadEvent;
+import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
@@ -50,8 +52,10 @@ public class TediUploaderPanel extends DockLayoutPanel {
 	private SimpleLayoutPanel content = new SimpleLayoutPanel();
 
 	private DeckLayoutPanel southContent = new DeckLayoutPanel();
+	
 	private FileUpload fileUpload;
-	private FullViewer viewer = new FullViewer();
+	
+	private SimpleLayoutPanel viewerContainer = new SimpleLayoutPanel();
 	private SimpleLayoutPanel imageContainer = new SimpleLayoutPanel();
 	
 	
@@ -147,29 +151,39 @@ public class TediUploaderPanel extends DockLayoutPanel {
 		this.add( splitPanel );
 
 		
-		viewer = new FullViewer();		
-		southContent.add(viewer);
+		southContent.add(viewerContainer);
 		southContent.add(imageContainer);
 		clearPage();
+		
 		splitPanel.addSouth(southContent,300);
 		splitPanel.add( content );
 	}
 
 	private void clearPage() {
+		viewerContainer.clear();
 		imageContainer.clear();
 		southContent.showWidget(1);
 	}
 
-	private void setDocument(String doc, String type, String name) {
+	private void setDocument(String doc, String name, String type) {
 		clearPage();
 		MimeType mimeType = MimeType.safeValueFromContenType(type);
 		if (mimeType == null) {
 			mimeType = MimeType.guessFromFileName(name);	
 		}
+		LOGGER.info("MimeType ..: " + (mimeType==null?"NULL":mimeType.getName()));
 		if (mimeType != null && (mimeType.isPDF() || mimeType.isImage())) {
 			if (mimeType.isPDF()) {
 				southContent.showWidget(0);
-				viewer.open(doc);
+				FullViewer viewer = new FullViewer();
+				viewer.addLoadHandler( new LoadHandler() {
+					
+					@Override
+					public void onLoad(LoadEvent event) {
+						viewer.open(doc);
+					}
+				});
+				viewerContainer.setWidget(viewer);
 			} if (mimeType.isImage()) {
 				southContent.showWidget(1);
 				Image image = new Image( doc );
