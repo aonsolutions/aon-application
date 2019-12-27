@@ -9,6 +9,7 @@ import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvestAsset.INVEST_ASSET;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+import static com.esferalia.aon.jooq.tables.InvoiceAttach.INVOICE_ATTACH;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
@@ -1228,11 +1229,17 @@ public class InvoiceDAO {
 		
 		deleteDetails(ctx, config, inv);
 		
-		ctx.getDslContext()
+		int count = ctx.getDslContext()
+			.delete(INVOICE_ATTACH)
+			.where(INVOICE_ATTACH.INVOICE.equal(id))
+			.execute();
+		ctx.log().info("DELETE INVOICE_ATTACH adjuntos de la factura: " + id + " ("+count+" filas)");
+		
+		count = ctx.getDslContext()
 			.delete(INVOICE)
 			.where(INVOICE.ID.equal(id))
 			.execute();
-		ctx.log().info("DELETE INVOICE factura: " + id);
+		ctx.log().info("DELETE INVOICE factura: " + id + " ("+count+" filas)");
 	}
 
 	private static void deleteDetails(AONContext ctx, AonConfiguration config, Invoice invoice) {
