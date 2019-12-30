@@ -45,8 +45,8 @@ public interface IConstants {
 	String PROVINCE = "province";
 	String QUANTITY = "quantity";
 	String QUOTA = "quota";
-	String RDOCUMENT = "rdocument";
-	String RNAME = "rname";
+//	String RDOCUMENT = "rdocument";
+//	String RNAME = "rname";
 	String RECEIVER = "receiver";
 	String REFERENCE = "reference";
 	String SENDER = "sender";

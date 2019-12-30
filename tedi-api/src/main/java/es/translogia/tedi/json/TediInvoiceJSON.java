@@ -62,14 +62,6 @@ public enum TediInvoiceJSON {
 		(invoice, json) -> invoice.setTotal(TediJSONUtils.optDouble(json, IConstants.TOTAL)),
 		(invoice, json) -> json.put(IConstants.TOTAL, invoice.getTotal())
 	),
-	RDOCUMENT(
-		(invoice, json) -> invoice.setRdocument(json.optString(IConstants.RDOCUMENT)),
-		(invoice, json) -> json.put(IConstants.RDOCUMENT, invoice.getRdocument())
-	),
-	RNAME(
-		(invoice, json) -> invoice.setRname(json.optString(IConstants.RNAME)),
-		(invoice, json) -> json.put(IConstants.RNAME, invoice.getRname())
-	),
 	SENDER(
 		(invoice, json) -> {
 			JSONObject jsonSender = json.optJSONObject(IConstants.SENDER);

@@ -209,7 +209,7 @@ public class TediInvoiceTable extends CellTable<TediResult> implements HasSelect
 		final TextColumn<TediResult> documentColumn = new TextColumn<TediResult>() {
 			@Override
 			public String getValue(TediResult result) {
-				return result.getTedi().getRdocument();
+				return result.getTedi().getRegistry() != null ? result.getTedi().getRegistry().getDocument() : "";
 			}
 		};
 		this.addColumn(documentColumn, AON.MSG.document());
@@ -220,7 +220,7 @@ public class TediInvoiceTable extends CellTable<TediResult> implements HasSelect
 		final TextColumn<TediResult> nameColumn = new TextColumn<TediResult>() {
 			@Override
 			public String getValue(TediResult result) {
-				return result.getTedi().getRname();
+				return result.getTedi().getRegistry() != null ? result.getTedi().getRegistry().getName() : "";
 			}
 		};
 		this.addColumn(nameColumn, AON.MSG.name());

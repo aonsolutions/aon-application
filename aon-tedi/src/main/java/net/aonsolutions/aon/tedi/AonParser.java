@@ -48,8 +48,6 @@ public class AonParser {
 				.setTransaction(getTransaction(invoice.getTransaction()))
 //				.setCategory()
 				.setTotal(invoice.getTotal())
-				.setRdocument(invoice.getRegistryDocument())
-				.setRname(invoice.getRegistryName())
 				.setSender(InvoiceType.SALES.equals(invoice.getType())
 						? getRegistry(company)
 						: getRegistry((Company) registry)

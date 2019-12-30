@@ -18,8 +18,6 @@ public class TediInvoice implements Serializable{
 	private TediInvoiceTransaction transaction;
 	private TediInvoiceCategory category;
 	private Double total;
-	private String rdocument;
-	private String rname;
 	private TediRegistry sender;
 	private TediRegistry receiver;
 	private LinkedList<TediInvoiceDetail> details;
@@ -119,24 +117,6 @@ public class TediInvoice implements Serializable{
 
 	public TediInvoice setTotal(Double total) {
 		this.total = total;
-		return this;
-	}
-
-	public String getRdocument() {
-		return rdocument;
-	}
-
-	public TediInvoice setRdocument(String rdocument) {
-		this.rdocument = rdocument;
-		return this;
-	}
-
-	public String getRname() {
-		return rname;
-	}
-
-	public TediInvoice setRname(String rname) {
-		this.rname = rname;
 		return this;
 	}
 

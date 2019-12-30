@@ -320,8 +320,6 @@ public class TediEwokTest {
 		assertEquals(invoice.getTransaction(), json.optEnum(TediInvoiceTransaction.class, IConstants.TRANSACTION));
 		assertEquals(invoice.getCategory(), json.optEnum(TediInvoiceCategory.class, IConstants.CATEGORY));
 		assertEquals(invoice.getTotal(), json.optDouble(IConstants.TOTAL));
-		assertEquals(invoice.getRdocument(), json.optString(IConstants.RDOCUMENT));
-		assertEquals(invoice.getRname(), json.optString(IConstants.RNAME));
 		JSONObject jsonSender = json.optJSONObject(IConstants.SENDER);
 		if (invoice.getSender() == null && jsonSender == null) {
 			// OK

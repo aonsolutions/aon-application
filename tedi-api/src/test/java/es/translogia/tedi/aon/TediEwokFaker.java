@@ -148,8 +148,6 @@ public class TediEwokFaker {
 		optPut(json,IConstants.INVESTMENT, faker.random().nextBoolean());
 		optPut(json,IConstants.CATEGORY, TediInvoiceCategory.values()[(faker.random().nextInt(TediInvoiceCategory.values().length))].toString());
 		optPut(json,IConstants.TOTAL, faker.commerce().price());
-		optPut(json,IConstants.RDOCUMENT, faker.regexify(documentRegexp));
-		optPut(json,IConstants.RNAME, faker.company().name());
 		if (faker.random().nextBoolean()) json.put(IConstants.SENDER, getTediRegistry());
 		if (faker.random().nextBoolean()) json.put(IConstants.RECEIVER, getTediRegistry());
 		if (faker.random().nextBoolean()) {

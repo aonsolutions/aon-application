@@ -412,10 +412,12 @@ public class TediContextVisitor implements ITediContextVisitor {
 				dialog.setContent("", defaultCreditor);		
 			}
 		}
-		if (AonStringUtils.isNotBlank( callback.getCallback().getResult().getTedi().getRdocument() )
-		 && AonStringUtils.isNotBlank( callback.getCallback().getResult().getTedi().getRname() ) ) {
-			String d = AonStringUtils.defaultString( callback.getCallback().getResult().getTedi().getRdocument());
-			String n = AonStringUtils.defaultString(callback.getCallback().getResult().getTedi().getRname());
+		
+		if (callback.getCallback().getResult().getTedi().getRegistry() != null
+		  && AonStringUtils.isNotBlank( callback.getCallback().getResult().getTedi().getRegistry().getDocument() )
+		  && AonStringUtils.isNotBlank( callback.getCallback().getResult().getTedi().getRegistry().getName() ) ) {
+			String d = AonStringUtils.defaultString( callback.getCallback().getResult().getTedi().getRegistry().getDocument());
+			String n = AonStringUtils.defaultString(callback.getCallback().getResult().getTedi().getRegistry().getName());
 			Label newCreditor = new Label("Crear el acreedor (" + d + " " + n + ")");
 			newCreditor.setStyleName(AON.AON_CSS.aonClickableLabel());
 			newCreditor.addStyleName(AON.AON_CSS.aonIconReset());

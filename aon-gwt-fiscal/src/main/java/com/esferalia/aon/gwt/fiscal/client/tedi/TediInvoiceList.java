@@ -533,7 +533,7 @@ public class TediInvoiceList extends DockLayoutPanel {
 			tediSplitPanel = new SplitLayoutPanel(10);
 			String tabLabel = AonStringUtils.trim(AonStringUtils.abbreviate(
 					(result.getInvoice().getType() != null ? result.getInvoice().getType().getDescription() : " ") + " "
-							+ AonStringUtils.defaultString(result.getTedi().getRname()),
+							+ AonStringUtils.defaultString((result.getTedi().getRegistry() != null ? result.getTedi().getRegistry().getName() : ""),"?"),
 					25));
 			InvoicesCloseTab closeTab = new InvoicesCloseTab(tabLabel,this.color, true);
 			closeTab.addCloseHandler(new CloseHandler<Integer>() {

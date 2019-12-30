@@ -143,10 +143,6 @@ public class TediEwokFaker {
 		JSONObject reg =  opt(90)?getTediRegistry():null;
 		if (opt(95)) json.put(IConstants.SENDER, reg);
 		if (opt(95)) json.put(IConstants.RECEIVER, reg);
-		if (reg != null) {
-			optPut(90,json,IConstants.RDOCUMENT, reg.optString(IConstants.DOCUMENT));
-			optPut(90,json,IConstants.RNAME, reg.optString(IConstants.NAME));
-		}
 		if (opt(90)) {
 			JSONArray details = new JSONArray();
 			int x = faker.random().nextInt(0, 10);
