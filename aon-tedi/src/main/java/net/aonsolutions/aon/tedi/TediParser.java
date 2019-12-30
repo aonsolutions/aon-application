@@ -73,7 +73,9 @@ public class TediParser {
 		PAYMENT( (aonCtx,result,tedi,aon) -> aon.setPayment( !result.getInvoice().isSales())),
 		DUE_DATE( (aonCtx,result,tedi,aon) -> aon.setDueDate( tedi.getDueDate() == null? result.getTedi().getDate() : tedi.getDueDate() )),
 		AMOUNT( (aonCtx,result,tedi,aon) ->{
-			aon.setAmount( tedi != null && tedi.getAmount() != null ? tedi.getAmount() : result.getTedi().getTotal());
+			aon.setAmount( tedi != null && tedi.getAmount() != null && AonMathUtils.isNotZero(tedi.getAmount())
+					? tedi.getAmount() 
+					: result.getTedi().getTotal());
 		}),
 		IBAN( (aonCtx,result,tedi,aon) -> aon.setBankAccount( new BankAccount(tedi.getIban()))),
 		PAYMETHOD( (aonCtx,result,tedi,aon) -> {
