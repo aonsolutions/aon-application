@@ -847,7 +847,7 @@ public class AccountingInvoiceDAO {
 					.setInvestAsset(vat.getInvestAsset())
 					.setWorkPlace( accInvoice.getWorkplace())
 					.setLine(line)
-					.setDescription(null)
+					.setDescription( vat.getExpAccountDescription() )
 					.setQuantity(1)
 					.setPrice(vat.getBase())
 					.setDiscountExpression("0.0")
