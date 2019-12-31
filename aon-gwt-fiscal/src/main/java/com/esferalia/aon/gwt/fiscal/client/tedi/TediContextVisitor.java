@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
+import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
@@ -92,6 +93,19 @@ public class TediContextVisitor implements ITediContextVisitor {
 				callback.getResult().getAccountingInvoice().getAccountEntry().setEntryDate(date);
 				callback.getResult().getInvoice().setIssueDate(date);
 				callback.getResult().getInvoice().setTaxDate(date);
+				if (date != null) {
+					for (AccountPeriod period : getCallback().getConfiguration().getPeriods()) {
+						if (!date.before(period.getInitiationDate()) && !date.after(period.getDeadline())) {
+							callback.getResult().getAccountingInvoice().getAccountEntry().setPeriod(period.getId());		
+							callback.getResult().getAccountingInvoice().getAccountEntry().setPeriodName(period.getName());
+							callback.getResult().getAccountingInvoice().getAccountEntry().setPeriodStatus(period.getStatus());
+						}
+					}
+				} else {
+					callback.getResult().getAccountingInvoice().getAccountEntry().setPeriod(null);		
+					callback.getResult().getAccountingInvoice().getAccountEntry().setPeriodName(null);
+					callback.getResult().getAccountingInvoice().getAccountEntry().setPeriodStatus(null);
+				}
 				callback.onAccept(callback.getResult());
 			}
 
