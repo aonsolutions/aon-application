@@ -2819,12 +2819,15 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		
 		extra = getExtra(aonContext, agreement.getId(), "15/07");
 		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, get(getToday(), Calendar.YEAR), getLastDayOfYear(getToday()));
+		ExpressionContext expressionContext = ctx.getExpressionContext();
+		// TODO: Fix this
+		expressionContext.setVariable("GARANTIZADO", 0.00, ctx.getStartDate(), ctx.getEndDate());
 		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
 
 		extra = getExtra(aonContext, agreement.getId(), "15/12");
 		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, get(getToday(), Calendar.YEAR), getLastDayOfYear(getToday()));
-		ExpressionContext expressionContext = ctx.getExpressionContext();
+		expressionContext = ctx.getExpressionContext();
 		// TODO: Fix this
 		expressionContext.setVariable("GARANTIZADO", 0.00, ctx.getStartDate(), ctx.getEndDate());
 		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder(){

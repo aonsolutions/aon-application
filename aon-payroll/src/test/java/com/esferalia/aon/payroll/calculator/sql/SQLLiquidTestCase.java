@@ -130,7 +130,7 @@ public class SQLLiquidTestCase extends AbstractSQLTestCase {
 		
 
 		ContractRecord contract = newContract(aonContext,  
-				getFirstDayOfYear(getToday()),
+				AonDateUtils.add(getFirstDayOfMonth(getToday()), Calendar.MONTH, -2),
 				new HashMap<String, String>() {
 				}, new String[] { 
 						"( P_1 + P_2 )* 0.10 ",

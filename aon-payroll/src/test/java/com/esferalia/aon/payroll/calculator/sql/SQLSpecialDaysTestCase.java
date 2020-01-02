@@ -99,13 +99,9 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 		
 		// Add InactivityDays Period -> 14/12/2019 - 24/12/2019
 		Calendar startDateIDay = Calendar.getInstance();
-		startDateIDay.set(Calendar.MONTH, 11);
-		startDateIDay.set(Calendar.YEAR, 2019);
 		startDateIDay.set(Calendar.DAY_OF_MONTH, 13);
 		
 		Calendar endDateIDay = Calendar.getInstance();
-		endDateIDay.set(Calendar.MONTH, 11);
-		endDateIDay.set(Calendar.YEAR, 2019);
 		endDateIDay.set(Calendar.DAY_OF_MONTH, 23);
 
 		addInactivityContractData(aonContext, contract, startDateIDay.getTime(), endDateIDay.getTime());
@@ -168,13 +164,9 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 		
 		// Add InactivityDays Period -> 13/12/2019 - 20/12/2019
 		Calendar startDateIDay = Calendar.getInstance();
-		startDateIDay.set(Calendar.MONTH, 11);
-		startDateIDay.set(Calendar.YEAR, 2019);
 		startDateIDay.set(Calendar.DAY_OF_MONTH, 13);
 		
 		Calendar endDateIDay = Calendar.getInstance();
-		endDateIDay.set(Calendar.MONTH, 11);
-		endDateIDay.set(Calendar.YEAR, 2019);
 		endDateIDay.set(Calendar.DAY_OF_MONTH, 20);
 
 		addInactivityContractData(aonContext, contract, startDateIDay.getTime(), endDateIDay.getTime());
@@ -196,13 +188,9 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 		
 		// Add InactivityDays Period -> 24/12/2019 - 27/12/2019
 		Calendar startDateIDay2 = Calendar.getInstance();
-		startDateIDay2.set(Calendar.MONTH, 11);
-		startDateIDay2.set(Calendar.YEAR, 2019);
 		startDateIDay2.set(Calendar.DAY_OF_MONTH, 24);
 		
 		Calendar endDateIDay2 = Calendar.getInstance();
-		endDateIDay2.set(Calendar.MONTH, 11);
-		endDateIDay2.set(Calendar.YEAR, 2019);
 		endDateIDay2.set(Calendar.DAY_OF_MONTH, 27);
 
 		addInactivityContractData(aonContext, contract, startDateIDay2.getTime(), endDateIDay2.getTime());
@@ -283,13 +271,9 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 		
 		// Add DropDays Period -> 14/12/2019 - 24/12/2019
 		Calendar startDateIDay = Calendar.getInstance();
-		startDateIDay.set(Calendar.MONTH, 11);
-		startDateIDay.set(Calendar.YEAR, 2019);
 		startDateIDay.set(Calendar.DAY_OF_MONTH, 13);
 		
 		Calendar endDateIDay = Calendar.getInstance();
-		endDateIDay.set(Calendar.MONTH, 11);
-		endDateIDay.set(Calendar.YEAR, 2019);
 		endDateIDay.set(Calendar.DAY_OF_MONTH, 23);
 
 		addDropContractData(aonContext, contract, startDateIDay.getTime(), endDateIDay.getTime());
