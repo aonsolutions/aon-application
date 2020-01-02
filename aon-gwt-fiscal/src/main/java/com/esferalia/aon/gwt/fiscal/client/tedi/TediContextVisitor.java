@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.tedi.ICallback;
 import com.esferalia.aon.occam.api.model.tedi.ITediCallback;
@@ -428,11 +429,27 @@ public class TediContextVisitor implements ITediContextVisitor {
 		}
 		
 		if (callback.getCallback().getResult().getTedi().getRegistry() != null
-		  && AonStringUtils.isNotBlank( callback.getCallback().getResult().getTedi().getRegistry().getDocument() )
-		  && AonStringUtils.isNotBlank( callback.getCallback().getResult().getTedi().getRegistry().getName() ) ) {
+//		  && AonStringUtils.isNotBlank( callback.getCallback().getResult().getTedi().getRegistry().getDocument() )
+//		  && AonStringUtils.isNotBlank( callback.getCallback().getResult().getTedi().getRegistry().getName() ) 
+		  ) {
 			String d = AonStringUtils.defaultString( callback.getCallback().getResult().getTedi().getRegistry().getDocument());
 			String n = AonStringUtils.defaultString(callback.getCallback().getResult().getTedi().getRegistry().getName());
-			Label newCreditor = new Label("Crear el acreedor (" + d + " " + n + ")");
+			String t = "";
+			AccountingRegistryType ty = null;
+			if (callback.getCallback().getResult().getInvoice().isExpenses() || callback.getCallback().getResult().getInvoice().isUndeductible()) {
+				t = "acreedor";
+				ty = AccountingRegistryType.CREDITOR;
+			} else if (callback.getCallback().getResult().getInvoice().isPurchase()) {
+				t = "proveedor";
+				ty = AccountingRegistryType.SUPPLIER;
+			} else if (callback.getCallback().getResult().getInvoice().isSales()) {
+				t = "cliente";
+				ty = AccountingRegistryType.CUSTOMER;
+			} else {
+				t = "titular";
+			}
+			final AccountingRegistryType type = ty;	
+			Label newCreditor = new Label("Crear el " + t + " (" + d + " " + n + ")");
 			newCreditor.setStyleName(AON.AON_CSS.aonClickableLabel());
 			newCreditor.addStyleName(AON.AON_CSS.aonIconReset());
 			newCreditor.addStyleName(AON.AON_CSS.aonPaddingLeft20());
@@ -441,6 +458,7 @@ public class TediContextVisitor implements ITediContextVisitor {
 				@Override
 				public void onClick(ClickEvent event) {
 					AccountingRegistry ar = new AccountingRegistry();
+					ar.setType(type);
 					TediInvoice tedi = callback.getCallback().getResult().getTedi();
 					TediRegistry tr = tedi.getRegistry();
 					if (tr != null) {
