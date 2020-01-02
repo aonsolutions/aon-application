@@ -10,38 +10,20 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class EmployeeCalendarInactivityDialog extends CustomDialog {
 
-	interface Binder extends UiBinder<Widget, EmployeeCalendarInactivityDialog> {
-
-	}
+	interface Binder extends UiBinder<Widget, EmployeeCalendarInactivityDialog> {}
 
 	private static final Binder binder = GWT.create(Binder.class);
 	
 	@UiField
 	MyStyle style;
 
-	interface MyStyle extends CssResource {
-		String messageStyle();
-		String hideElement();
-		String dateStyle();
-		String paddingButtons();
-		String margingButton();
-	}
-	
-	@UiField
-	HorizontalPanel messageBlock;
-	
-	@UiField
-	Label message;
+	interface MyStyle extends CssResource {}
 	
 	@UiField
 	ListBox typeInactivity;
@@ -53,85 +35,15 @@ public abstract class EmployeeCalendarInactivityDialog extends CustomDialog {
 	DateBoxEx endDateBox;
 	
 	@UiField
-	Label typePercent;
-	
-	@UiField
-	TextBox percentBox;
-	
-	@UiField
-	Label messageLabel;
-	
-	@UiField
-	HorizontalPanel buttons;
-	
-	@UiField
 	Button cancelButton;
 	
 	@UiField
 	Button acceptButton;
-	
-	Double journeyHours;
 
 	public EmployeeCalendarInactivityDialog(String caption) {
 		setCaption(caption);
 		
 		setWidget(binder.createAndBindUi(this));
-		
-		messageBlock.addStyleName(style.hideElement());
-		
-		typeInactivity.clear();
-		typeInactivity.addItem("Excedencia");
-		typeInactivity.addItem("Fijo/Discontinuo");
-		typeInactivity.addItem("Permiso no Retribuido");
-		typeInactivity.addItem("Suspensi\u00f3n de Emploeo y Sueldo");
-		
-		startDateBox.getTextBox().addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				startDateBox.getDatePicker().getElement().setAttribute("style", "visibility: visible; overflow: visible; position: absolute; left: 0px; z-index: 108; ");
-			}
-		});
-		
-		endDateBox.getTextBox().addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				endDateBox.getDatePicker().getElement().setAttribute("style", "visibility: visible; overflow: visible; position: absolute; left: 0px; z-index: 108; ");
-			}
-		});
-		
-		cancelButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				hide();
-			}
-		});
-		
-		acceptButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				hide();
-				onAccept();
-			}
-		});	
-		
-	}
-	
-	public EmployeeCalendarInactivityDialog(String caption, String hoursContract) {
-		setCaption(caption);
-		
-		setWidget(binder.createAndBindUi(this));
-		
-		messageBlock.removeStyleName(style.hideElement());
-		messageLabel.setText("Horas Jornada = "+hoursContract);
-		//date.addStyleName(style.dateStyle());
-		buttons.addStyleName(style.paddingButtons());
-		acceptButton.addStyleName(style.margingButton());
-		
-		this.message.setVisible(true);
-		this.journeyHours = Double.parseDouble(hoursContract);
-//		this.message.setText(message);
-		
-		this.message.addStyleName(style.messageStyle());
 		
 		typeInactivity.clear();
 		typeInactivity.addItem("Excedencia");
@@ -190,18 +102,6 @@ public abstract class EmployeeCalendarInactivityDialog extends CustomDialog {
 	
 	public String getTypeInactivity() {
 		return typeInactivity.getSelectedItemText();
-	}
-	
-	public double getPercentValue() {
-		Double hoursStrike = Double.parseDouble(percentBox.getValue());
-		if(hoursStrike >= this.journeyHours)
-			return 1.00;
-		
-		return hoursStrike/this.journeyHours;
-	}
-	
-	public void setLabelText(String label){
-		typePercent.setText(label);
 	}
 
 }
