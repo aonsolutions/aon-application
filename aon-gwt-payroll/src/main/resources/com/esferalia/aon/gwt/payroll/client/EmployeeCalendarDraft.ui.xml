@@ -52,10 +52,19 @@
 		}
 
 		.typeButtonUpperMenuStyle{
+			/*
 			height: 15px;
 			padding-right: 5px;
     		border-radius: 20%;
     		border: none;
+			*/
+			
+    		border-radius: 8%;
+			border: none;
+			margin-right: 3px;
+			padding: 3px;
+			color:white;
+			font-weight: bold;
 		}
 
 		.noWorkingColor{
@@ -307,6 +316,56 @@
 		.hide{
 			display : none;
 		}
+		
+		.hourPanelStyle{
+			border-radius: 8%;
+			/*border-color: gray;*/
+			border-color: #e3e3e3;
+			border-width: 1px;
+			padding-left: 5px;
+			border-style: solid;
+			background-color: #e3e3e3;
+		}
+		
+		.hourStyle{
+			font-weight: bold;
+			height: 20px;
+			padding-left: 20px !important;
+		}
+		
+		.clearPanelStyle{
+			border-radius: 8%;
+			/*border-color: gray;*/
+			border-width: 1px;
+			border-style: solid;
+			margin-right: 5px;
+			border-color: #e3e3e3;
+			background-color: #e3e3e3;
+		}
+		
+		.clearStyle{
+			font-weight: bold;
+			height: 20px;
+			padding-left: 25px !important;
+			border: none;
+		}
+		
+		.leyendPanelStyle{
+			border-radius: 8%;
+			/*border-color: gray;*/
+			border-width: 1px;
+			border-style: solid;
+			padding-left: 10px;
+			border-color: #e3e3e3;
+			background-color: #e3e3e3;
+		}
+		
+		.leyendStyle{
+			font-weight: bold;
+			height: 20px;
+			padding-left: 20px !important;
+			border: none;
+		}
 
 		@external holidayStyle;	
 
@@ -401,7 +460,13 @@
 				<g:HorizontalPanel styleName="{style.upperMenuStyle}">
 					<g:Label styleName="{style.paddingLabels}">Dias seleccionables:</g:Label>
 					<g:HorizontalPanel>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.noWorkingColor} {style.cursorPointer}" ui:field="nonWorkingDayButton"/>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.noWorkingColor} {style.cursorPointer}" ui:field="nonWorkingDayButton">No Laborables</g:Button>
+						<!-- g:Button styleName="{style.typeButtonUpperMenuStyle} {style.strikeColor} {style.cursorPointer}" ui:field="strikeDayButton">Huelga</g:Button>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.ereColor}" ui:field="ereDayButton">ERE</g:Button -->
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.inactivityColor} {style.cursorPointer}" ui:field="inactivityDayButton">Inactividad</g:Button>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.dropColor} {style.cursorPointer}" ui:field="dropDayButton">Ausencia</g:Button>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.holidayColor} {style.cursorPointer}" ui:field="holidayDayButton">Vacaciones</g:Button>
+						<!-- g:Button styleName="{style.typeButtonUpperMenuStyle} {style.noWorkingColor} {style.cursorPointer}" ui:field="nonWorkingDayButton"/>
 						<g:Label styleName="{style.paddingLabels} {style.cursorPointer}">No Laborables</g:Label>
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.holidayColor} {style.cursorPointer}" ui:field="holidayDayButton"/>
 						<g:Label styleName="{style.paddingLabels} {style.cursorPointer}">Vacaciones</g:Label>
@@ -412,19 +477,37 @@
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.inactivityColor} {style.cursorPointer}" ui:field="inactivityDayButton"/>
 						<g:Label styleName="{style.paddingLabels} {style.cursorPointer}">Inactividad</g:Label>
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.dropColor} {style.cursorPointer}" ui:field="dropDayButton"/>
-						<g:Label styleName="{style.paddingLabels} {style.cursorPointer}">Ausencia</g:Label>
-						<g:HorizontalPanel ui:field="peonadasPanel" styleName="{style.hide}">
+						<g:Label styleName="{style.paddingLabels} {style.cursorPointer}">Ausencia</g:Label -->
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.peonadasColor} {style.cursorPointer} {style.hide}" ui:field="peonadasDayButton">Peonadas</g:Button>
+						<!-- g:HorizontalPanel ui:field="peonadasPanel" styleName="{style.hide}">
 						    <g:Button styleName="{style.typeButtonUpperMenuStyle} {style.peonadasColor} {style.cursorPointer}" ui:field="peonadasDayButton"/>
 							<g:Label styleName="{style.paddingLabels} {style.cursorPointer}">Peonadas</g:Label>
+						</g:HorizontalPanel -->
+						<g:HorizontalPanel ui:field="hourButtonPanel" styleName="{style.hourPanelStyle}">
+							<g:Button styleName="{style.hourStyle} {style.cursorPointer} aon-icon-time" ui:field="hourButton">Horas</g:Button>
 						</g:HorizontalPanel>
-						<g:Button styleName="{style.borderButtonUpperMenuStyle} {style.imagenButtonUpperMenuStyle} {style.cursorPointer}" ui:field="hourButton"/>
-						<g:Button styleName="{style.borderButtonUpperMenuStyle} {style.imagenButtonUpperMenuStyle} {style.cursorPointer}" ui:field="extraHoursButton"/>
-						<g:Label styleName="{style.paddingLabels} {style.cursorPointer}" ui:field="hourLabelUpperMenu"/>
+						<!-- <g:Button styleName="{style.hourStyle} {style.cursorPointer} aon-icon-time" ui:field="hourButton">Horas</g:Button> -->
+						<g:HorizontalPanel ui:field="extraHoursButtonPanel" styleName="{style.hourPanelStyle}">
+							<g:Button styleName="{style.hourStyle} {style.cursorPointer} aon-icon-time" ui:field="extraHoursButton">H. Extras</g:Button>
+						</g:HorizontalPanel>
+						<!-- <g:Button styleName="{style.hourStyle} {style.cursorPointer} aon-icon-time" ui:field="extraHoursButton">H. Extras</g:Button> -->
+						<!-- g:Label styleName="{style.paddingLabels} {style.cursorPointer}" ui:field="hourLabelUpperMenu"/>  -->
+						<!-- <g:Button styleName="{style.borderButtonUpperMenuStyle} {style.imagenButtonUpperMenuStyle} {style.cursorPointer} aon-icon-time" ui:field="extraHoursButton">H. Extras</g:Button> 
+							<g:Button styleName="{style.borderButtonUpperMenuStyle} {style.imagenButtonUpperMenuStyle} {style.cursorPointer}" ui:field="hourButton"/>
+						-->
 						<!--g:Label styleName="{style.paddingLabels}" ui:field="extraHoursButtonBlock">Horas extras</g:Label-->
 					</g:HorizontalPanel>
 					<g:HorizontalPanel styleName="{style.upperRightMenuStyle}" ui:field="upperRightMenu">
-						<g:Button styleName="{style.borderButtonUpperMenuStyle} {style.paddingEraseButtonUpperMenuStyle} {style.imagenButtonUpperMenuStyle} {style.cursorPointer}" ui:field="eraseEventButton"/>
-						<g:Label styleName="{style.paddingLabels} {style.cursorPointer}">Limpiar</g:Label>
+						<g:HorizontalPanel ui:field="eraseEventButtonPanel" styleName="{style.clearPanelStyle}">
+							<g:Button styleName="{style.clearStyle} {style.cursorPointer} aon-icon-close2" ui:field="eraseEventButton">Limpiar</g:Button>
+						</g:HorizontalPanel>
+						<g:HorizontalPanel ui:field="leyendButtonPanel" styleName="{style.leyendPanelStyle}">
+							<g:Button styleName="{style.leyendStyle} {style.cursorPointer} aon-icon-help" ui:field="leyendButton">Leyenda</g:Button>
+						</g:HorizontalPanel>
+						<!-- 
+							<g:Button styleName="{style.borderButtonUpperMenuStyle} {style.paddingEraseButtonUpperMenuStyle} {style.imagenButtonUpperMenuStyle} {style.cursorPointer}" ui:field="eraseEventButton"/>
+							<g:Label styleName="{style.paddingLabels} {style.cursorPointer}">Limpiar</g:Label>
+						 -->
 					</g:HorizontalPanel>
 				</g:HorizontalPanel>
 				
