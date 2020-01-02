@@ -116,7 +116,10 @@ public class JooqEmployeeAFI {
 					.orderBy(ENTERPRISE_CCC.ID)
 					.fetch();
 			
-			Record geozoneCCCPrincipal = dslContext.select().from(GEOZONE).where(GEOZONE.ID.eq(enterpriseCCCPrincipalRecords.get(0).get(ENTERPRISE_CCC.GEOZONE))).fetchOne();
+			Record geozoneCCCPrincipal = null;
+			
+			if(enterpriseCCCPrincipalRecords.size() > 0)
+				geozoneCCCPrincipal = dslContext.select().from(GEOZONE).where(GEOZONE.ID.eq(enterpriseCCCPrincipalRecords.get(0).get(ENTERPRISE_CCC.GEOZONE))).fetchOne();
 			
 			Record enterpriseRegistryRecord = dslContext.select().from(REGISTRY).where(REGISTRY.ID.in(
 						dslContext.select(ENTERPRISE_ACTIVITY.ENTERPRISE).from(ENTERPRISE_ACTIVITY)
@@ -132,8 +135,8 @@ public class JooqEmployeeAFI {
 			emp.put("country", "011");
 			emp.put("ident", enterpriseRegistryRecord.get(REGISTRY.DOCUMENT));
 			emp.put("cccRegimePrincipal", "0111");
-			emp.put("cccProvincePrincipal", geozoneCCCPrincipal.get(GEOZONE.CODE));
-			emp.put("cccPrincipal", parseCCC(enterpriseCCCPrincipalRecords.get(0).get(ENTERPRISE_CCC.CCC)));
+			emp.put("cccProvincePrincipal", geozoneCCCPrincipal == null ? "00" : geozoneCCCPrincipal.get(GEOZONE.CODE));
+			emp.put("cccPrincipal", parseCCC(enterpriseCCCPrincipalRecords.size() == 0 ? "000000000" : enterpriseCCCPrincipalRecords.get(0).get(ENTERPRISE_CCC.CCC)));
 			employeeAFIJSON.put("EMP", emp);
 			
 			//RZS

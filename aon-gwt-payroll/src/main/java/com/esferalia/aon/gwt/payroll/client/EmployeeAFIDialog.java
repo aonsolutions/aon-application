@@ -849,7 +849,7 @@ public class EmployeeAFIDialog extends CustomDialog {
 		saveAFIChanges(s -> {
 			if(isGenerationAFI()) {
 
-				String fileDownloadURL = GWT.getModuleBaseURL()+ "/employee_afi/"
+				String fileDownloadURL = GWT.getModuleBaseURL()+ "employee_afi/"
 						+ "?domainId=" + domainId
 						+ "&contractId=" + contractId
 			            + "&workplaceId=" + workplaceId
