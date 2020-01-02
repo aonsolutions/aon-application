@@ -478,8 +478,8 @@ public class MainAgreementTest {
 				htmlPage -> "PAGAS EXTRAS ANULAES, SEMESTRALES Y TRIMESTREALES".equals(((HtmlInput)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +"descriptionTextBox")).getValueAttribute()));
 
 		for ( int i = 1; i < 8; i++ ) {
-			Assert.assertTrue(((HtmlInput) getElementById("endDateBox" + i)).getValueAttribute().endsWith("2019"));
-			Assert.assertTrue(((HtmlInput) getElementById("startDateBox" + i)).getValueAttribute().endsWith("2019"));
+			Assert.assertTrue(((HtmlInput) getElementById("endDateBox" + i)).getValueAttribute().endsWith("2020"));
+			Assert.assertTrue(((HtmlInput) getElementById("startDateBox" + i)).getValueAttribute().endsWith("2020"));
 		}
 	}
 
