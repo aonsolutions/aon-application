@@ -10,6 +10,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DoubleBox;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -27,6 +28,9 @@ public abstract class EmployeeCalendarPercentDialog extends CustomDialog {
 	interface MyStyle extends CssResource {
 		
 	}
+	
+	@UiField
+	ListBox typeDrop;
 	
 	@UiField
 	Label typePercent;
@@ -48,9 +52,14 @@ public abstract class EmployeeCalendarPercentDialog extends CustomDialog {
 	public EmployeeCalendarPercentDialog(String caption, String hoursContract) {
 		setCaption(caption);
 		
-		setWidget(binder.createAndBindUi(this));	
+		setWidget(binder.createAndBindUi(this));
 		
-		messageLabel.setText("Horas Jornada = "+hoursContract);
+		typeDrop.clear();
+		typeDrop.addItem("Huelga");
+		typeDrop.addItem("ERE");
+		typeDrop.addItem("Ausencia Injustificada");
+		
+		messageLabel.setText("Horas Jornada = " + hoursContract);
 		
 		cancelButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -84,6 +93,10 @@ public abstract class EmployeeCalendarPercentDialog extends CustomDialog {
 	
 	public void setLabelText(String label){
 		typePercent.setText(label);
+	}
+	
+	public Integer getTypeDrop(){
+		return typeDrop.getSelectedIndex();
 	}
 
 }

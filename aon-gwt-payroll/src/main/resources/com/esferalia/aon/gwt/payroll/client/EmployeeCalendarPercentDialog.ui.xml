@@ -2,7 +2,8 @@
     xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:es3='urn:import:com.google.gwt.user.client.ui'
-	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
+	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'
+	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 
     <ui:with field='res'
 		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
@@ -45,12 +46,55 @@
 			border-radius: 3px;
 			cursor: pointer;
 		}
+		
+		.w200{
+			width: 143px;
+			text-align: center;
+		}
+		
+		.hourLabel{
+			color: #0000a1;
+		}
 
 	</ui:style>
 
 	<g:HTMLPanel styleName="{style.form}">
+	
+		<g:HTMLPanel styleName="aon-width-all aon-height-all">
+	
+		<table class="aon-width-all aon-height-all" style="padding: 5px;">
+			<tr>
+				<td>
+					<g:Label>Tipos de ausencia:</g:Label>
+				</td>
+				<td>
+					<g:ListBox ui:field="typeDrop"></g:ListBox>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label ui:field="typePercent"></g:Label>
+				</td>
+				<td>
+					<g:TextBox ui:field="percentBox" styleName="{style.w200}"></g:TextBox>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<g:Label ui:field="messageLabel" styleName="{style.hourLabel}"></g:Label>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" align="right" style="padding-top: 15px;">
+					<g:Button ui:field="cancelButton">Cerrar</g:Button>
+		    		<g:Button ui:field="acceptButton">OK</g:Button>
+				</td>
+			</tr>
+		</table>
+			
+	</g:HTMLPanel>
 
-		<g:VerticalPanel>
+		<!-- g:VerticalPanel>
 		    <g:HorizontalPanel styleName="{style.paddingBlocks}">
 		    	<g:Label ui:field="typePercent" styleName="{style.paddingTypePercentStyle}"></g:Label>
 		    	<g:TextBox ui:field="percentBox" styleName="{style.widthDoubleBox}"></g:TextBox>
@@ -62,7 +106,7 @@
 		    	<g:Button styleName="{style.closeButton}" ui:field="cancelButton">Cerrar</g:Button>
 		    	<g:Button styleName="{style.closeButton}" ui:field="acceptButton">OK</g:Button>
 		    </g:HorizontalPanel>
-		</g:VerticalPanel>
+		</g:VerticalPanel -->
 			
 	</g:HTMLPanel>
 
