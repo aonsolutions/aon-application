@@ -10,6 +10,8 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.BankStatementLink;
+import com.code.aon.finance.FinanceBatch;
+import com.code.aon.finance.FinanceTracking;
 import com.code.aon.ui.form.BasicController;
 
 public class BankStatementLinkController extends BasicController {
@@ -64,5 +66,18 @@ public class BankStatementLinkController extends BasicController {
 	public void checkNone(ActionEvent event) {
 		clearCheckedStatementLinks();
 	}
+	
+	public String getErrorMessage() throws ManagerBeanException {
+		BankStatementLink to = (BankStatementLink) model.getRowData();
+		if (to.isFinanceTracking()) {
+			FinanceTracking ft = (FinanceTracking) to.getSourceTo();
+			return ft == null ? "No existe ning\u00fan Pago/Cobro asociado." : null;
+		} else if(to.isFinanceBatch()) {
+			FinanceBatch fb = (FinanceBatch) to.getSourceTo();
+			return fb == null ? "No Existe ninguna Remesa asociada." : null;
+		}
+		return null;
+	}
+
 
 }

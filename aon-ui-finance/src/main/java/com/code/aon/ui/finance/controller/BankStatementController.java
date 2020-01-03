@@ -439,6 +439,16 @@ public class BankStatementController extends BasicController implements IFinance
 		}
 		onSearch(null);
 	}
+	
+	@Override
+	protected void remove() throws ManagerBeanException {
+		BankStatement statement = (BankStatement) getTo();
+		if (statement.getStatus() == StatementStatus.PENDING) {
+			super.remove();
+		} else {
+			getErrors().put(statement.getId(), "No se puede borrar la línea del Extracto ya que no esta pendiente.");
+		}
+	}
 
 	public void onFullReset(ActionEvent event) {
 		try {

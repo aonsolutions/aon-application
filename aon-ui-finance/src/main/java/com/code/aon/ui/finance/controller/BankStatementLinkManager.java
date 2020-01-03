@@ -597,13 +597,13 @@ public class BankStatementLinkManager implements IFinanceConstants, Serializable
 		BankStatement statement = statementLink.getBankStatement();
 
 		IManagerBean trackingBean = BeanManager.getManagerBean(FinanceTracking.class);
-		if (!FinanceTrackingWriter.isLastTracking(tracking) || 
+		if (tracking != null && (!FinanceTrackingWriter.isLastTracking(tracking) || 
 			(statement.getCommonConcept() != StatementConcept.RETURNED && statementLink.getStatus() == StatementLinkStatus.PAID) ||
-			(statement.getCommonConcept() == StatementConcept.RETURNED && statementLink.getStatus() == StatementLinkStatus.RETURNED)) {
+			(statement.getCommonConcept() == StatementConcept.RETURNED && statementLink.getStatus() == StatementLinkStatus.RETURNED))) {
 			tracking.setTrackingDate(statementLink.getSourceDate());
 			tracking.setBankStatementLink(null);
 			trackingBean.update(tracking);
-		} else {
+		} else if(tracking != null){
 			trackingBean.remove(tracking);
 
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
@@ -655,10 +655,12 @@ public class BankStatementLinkManager implements IFinanceConstants, Serializable
 	}
 
 	private void removeLink(FinanceBatch batch) throws ManagerBeanException {
-		IManagerBean batchBean = BeanManager.getManagerBean(FinanceBatch.class);
-		batch.setBankStatementLink(null);
-		batch.setLines(null);
-		batchBean.update(batch);
+		if(batch != null) { 
+			IManagerBean batchBean = BeanManager.getManagerBean(FinanceBatch.class);
+			batch.setBankStatementLink(null);
+			batch.setLines(null);
+			batchBean.update(batch);
+		}
 	}
 
 	private void cancelLinkedBankStatementLinks(int sourceId) throws ManagerBeanException {

@@ -124,7 +124,7 @@ public class BankStatementSearchListener extends ControllerSearchListener {
 	protected void init() throws ManagerBeanException {
 		initData();
 
-		StatementStatus[] defaultStatementStatus = {StatementStatus.PENDING};
+		StatementStatus[] defaultStatementStatus = {StatementStatus.PENDING, StatementStatus.CHECKED};
 		setStatementStatuses(defaultStatementStatus);
 	}
 

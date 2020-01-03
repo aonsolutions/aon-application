@@ -125,6 +125,20 @@
 																valueChangeListener="#{bankStatementLink.rowSelected}" />	
 				 										</aon:column>
 				
+														<aon:column styleClass="aon-editDataTable-iconColumn">
+															<f:facet name="header">
+																<aon:outputText value="" />
+															</f:facet>
+															<aon:div style="display:inline; cursor:pointer;"
+																rendered="#{controller.errorMessage != null}">
+																<aon:outputText value="&#160;" styleClass="aon-icon-exception"
+																style="padding-left:12px" />
+																<rich:toolTip>
+																	<aon:outputText value="#{controller.errorMessage}" />
+																</rich:toolTip>
+															</aon:div>
+														</aon:column>
+					
 														<aon:column styleClass="aon-editDataTable-textColumn">
 															<f:facet name="header">
 																<aon:outputText value="#{bundle.finance_finance_date_abbrv}" />

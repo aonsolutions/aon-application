@@ -67,9 +67,11 @@ public class BankStatementLink extends BankStatementLinkDB {
 	@Transient
 	public Date getDate() throws ManagerBeanException {
 		if (isFinanceTracking()) {
-			return (getBankStatement().isExact() ? ((FinanceTracking)getSourceTo()).getTrackingDate() : getSourceDate());
+			FinanceTracking ft = (FinanceTracking)getSourceTo();
+			return getBankStatement().isExact() && ft != null ? ft.getTrackingDate() : getSourceDate();
 		} else if (isFinanceBatch()) {
-			return ((FinanceBatch)getSourceTo()).getIssueDate();
+			FinanceBatch fb = (FinanceBatch)getSourceTo();
+			return fb != null ? fb.getIssueDate() : getSourceDate();
 		} else if (isBankConcept()) {
 			return (getLinkedBankStatementLink() == null) ? getBankStatement().getOperationDate() : getLinkedBankStatementLink().getSourceDate();
 		} else if (isAccount()) {
@@ -80,25 +82,30 @@ public class BankStatementLink extends BankStatementLinkDB {
 	@Transient
 	public Date getDueDate() throws ManagerBeanException {
 		if (isFinanceTracking()) {
-			return ((FinanceTracking)getSourceTo()).getFinance().getDueDate();
+			FinanceTracking ft = (FinanceTracking)getSourceTo();
+			return ft != null ? ft.getFinance().getDueDate() : null;
 		}
 		return null;
 	}
 	@Transient
 	public boolean isConfidential() throws ManagerBeanException {
 		if (isFinanceTracking()) {
-			return ((FinanceTracking)getSourceTo()).getFinance().isConfidential();
+			FinanceTracking ft = (FinanceTracking)getSourceTo();
+			return ft != null ? ft.getFinance().isConfidential() : getBankStatement().isConfidential();
 		} else if (isFinanceBatch()) {
-			return ((FinanceBatch)getSourceTo()).isConfidential();
+			FinanceBatch fb = (FinanceBatch)getSourceTo();
+			return fb != null ? fb.isConfidential() : getBankStatement().isConfidential();
 		}
 		return getBankStatement().isConfidential();
 	}
 	@Transient
 	public String getConcept() throws ManagerBeanException {
 		if (isFinanceTracking()) {
-			return ((FinanceTracking)getSourceTo()).getFinance().getDocumentNumber();
+			FinanceTracking ft = (FinanceTracking)getSourceTo();
+			return ft != null ? ft.getFinance().getDocumentNumber() : null;
 		} else if (isFinanceBatch()) {
-			return Integer.toString(((FinanceBatch)getSourceTo()).getId());
+			FinanceBatch fb = (FinanceBatch)getSourceTo();
+			return fb != null ? Integer.toString(fb.getId()) : null;
 		} else if (isBankConcept()) {
 			BankConcept bankConcept = (BankConcept)getSourceTo();
 			if (bankConcept != null) {
@@ -106,34 +113,39 @@ public class BankStatementLink extends BankStatementLinkDB {
 				return (bankConceptAccount != null) ? bankConceptAccount.getCode() : "";
 			} 
 		} else if (isAccount()) {
-			return ((Account)getSourceTo()).getCode();
+			Account account = (Account)getSourceTo();
+			return account != null ? account.getCode() : "";
 		}
 		return null;
 	}
 	@Transient
 	public String getDescription() throws ManagerBeanException {
 		if (isFinanceTracking()) {
-			return ((FinanceTracking)getSourceTo()).getFinance().getRegistryName();
+			FinanceTracking ft = (FinanceTracking)getSourceTo();
+			return ft != null ? ft.getFinance().getRegistryName() : null;
 		} else if (isFinanceBatch()) {
-			return ((FinanceBatch)getSourceTo()).getDescription();
+			FinanceBatch fb = (FinanceBatch)getSourceTo();
+			return fb != null ? fb.getDescription() : null;
 		} else if (isBankConcept()) {
 			BankConcept bankConcept = (BankConcept)getSourceTo();
 			if (bankConcept != null) {
 				return bankConcept.getName();
 			}
 		} else if (isAccount()) {
-			return ((Account)getSourceTo()).getDescription();
+			Account account = (Account)getSourceTo();
+			return account != null ? account.getDescription() : null;
 		}
 		return null;
 	}
 	@Transient
 	public boolean isPayment() throws ManagerBeanException {
 		if (isFinanceTracking()) {
-			return ((FinanceTracking)getSourceTo()).getFinance().isPayment();
+			FinanceTracking ft = (FinanceTracking)getSourceTo();
+			return ft!= null ? ft.getFinance().isPayment(): getBankStatement().isPayment();
 		} else if (isFinanceBatch()) {
-			return ((FinanceBatch)getSourceTo()).isPayment();
+			FinanceBatch fb = (FinanceBatch)getSourceTo();
+			return fb != null ? fb.isPayment() : getBankStatement().isPayment();
 		}
 		return getBankStatement().isPayment();
 	}
-
 }
