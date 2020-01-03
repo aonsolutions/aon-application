@@ -549,7 +549,7 @@ public class Mod3902018Writer {
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.unsigned(m390.getYear(), 4,0))
 		   ,(wr,m390) -> wr.append("0A")
 		   ,(wr,m390) -> wr.append("0000>")
-		   ,(wr,m390) -> wr.append("\r\n")
+//		   ,(wr,m390) -> wr.append("\r\n")
 		})
 		;
 
