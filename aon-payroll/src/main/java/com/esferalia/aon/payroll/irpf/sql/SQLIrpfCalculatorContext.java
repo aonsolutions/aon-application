@@ -72,8 +72,8 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 	private static final String SALARY_SQL = "SELECT  * FROM  "
 			+ SQLConstants.SALARY + " WHERE " + SalaryColumns.CONTRACT
 			+ " = ? " + " AND " + SalaryColumns.CHARGE_DATE
-			+ " BETWEEN   ? AND  ?   ORDER BY " + SalaryColumns.CHARGE_DATE
-			+ " ASC";
+			+ " BETWEEN   ? AND  ?   ORDER BY " + SalaryColumns.END_DATE 
+			+ " ASC" + ", " + SalaryColumns.TYPE + " ASC";
 
 	private static final String IRPF_DATA_SQL = "SELECT * " + " FROM  "
 			+ SQLConstants.IRPF_DATA + " WHERE " + IrpfDataColumns.CONTRACT
@@ -526,6 +526,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 	private double totalIrpf;
 	private double irpfBase;
+	private double proExtBase;
 	private double socialSecurityContributons;
 	private PreparedStatement salaryStmt;
 
@@ -860,6 +861,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 	@Override
 	public BigDecimal getRetribAnuales() {
 		Double retribAnuales = irpfBase;
+		retribAnuales += proExtBase;
 		retribAnuales += nextIrpfBase;
 		return round(BigDecimal.valueOf(retribAnuales));
 	}
@@ -1029,6 +1031,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		TreeSet<Date> dates = new TreeSet<Date>();
 		irpfBase = 0.00;
 		totalIrpf = 0.00;
+		proExtBase = 0.00;
 		socialSecurityContributons = 0.00;
 		ResultSet salaryRs = null;
 		try {
@@ -1036,11 +1039,17 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			salaryRs = salaryStmt.executeQuery();
 			while (salaryRs.next()) {
 				irpfBase += salaryRs.getDouble(SalaryColumns.IRPF_BASE);
+				proExtBase += salaryRs.getDouble(SalaryColumns.PRO_EXT_BASE);
 				totalIrpf += salaryRs.getDouble(SalaryColumns.TOTAL_IRPF);
 				socialSecurityContributons += salaryRs
 						.getDouble(SalaryColumns.SOCIAL_SECURITY_CONTRIBUTIONS);
 				dates.add(salaryRs.getDate(SalaryColumns.START_DATE));
+				int type = salaryRs.getInt(SalaryColumns.TYPE);
+				if ( type == 1)  {
+					proExtBase -= salaryRs.getDouble(SalaryColumns.IRPF_BASE);
+				}
 			}
+			//irpfBase += proExtBase;
 		} finally {
 			if (salaryRs != null)
 				salaryRs.close();
