@@ -11,49 +11,22 @@
     
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeeCalendarPercentDialog.MyStyle">
 
-		.paddingTypePercentStyle{
-			padding-right: 7px;
-    		padding-top: 4px;
-		}
-
-		.paddingPercentStyle{
-			padding-left: 7px;
-    		padding-top: 4px;
-		}
-		
-		.widthDoubleBox{
-			width: 55px;
-		}
-
-		.messageStyle{
-			padding-right: 70px;
-			font: 13px/ 1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
-		}
-
-		.paddingBlocks{
-			padding-bottom: 15px;
-			padding-top: 10px;
-		}
-
 		.form {
 			padding: 10px;
 		}
-
-		.closeButton {
-			position: relative;
-    		left: 90px;
-			border: 1px solid #bbb;
-			border-radius: 3px;
-			cursor: pointer;
-		}
 		
-		.w200{
-			width: 143px;
+		.hourTBx{
+			width: 100%;
 			text-align: center;
+			border: solid #808080 1px;
 		}
 		
 		.hourLabel{
 			color: #0000a1;
+		}
+		
+		.w100{
+			width: 102%;
 		}
 
 	</ui:style>
@@ -62,51 +35,37 @@
 	
 		<g:HTMLPanel styleName="aon-width-all aon-height-all">
 	
-		<table class="aon-width-all aon-height-all" style="padding: 5px;">
-			<tr>
-				<td>
-					<g:Label>Tipos de ausencia:</g:Label>
-				</td>
-				<td>
-					<g:ListBox ui:field="typeDrop"></g:ListBox>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<g:Label ui:field="typePercent"></g:Label>
-				</td>
-				<td>
-					<g:TextBox ui:field="percentBox" styleName="{style.w200}"></g:TextBox>
-				</td>
-			</tr>
-			<tr>
-				<td colspan="2">
-					<g:Label ui:field="messageLabel" styleName="{style.hourLabel}"></g:Label>
-				</td>
-			</tr>
-			<tr>
-				<td colspan="2" align="right" style="padding-top: 15px;">
-					<g:Button ui:field="cancelButton">Cerrar</g:Button>
-		    		<g:Button ui:field="acceptButton">OK</g:Button>
-				</td>
-			</tr>
-		</table>
-			
-	</g:HTMLPanel>
-
-		<!-- g:VerticalPanel>
-		    <g:HorizontalPanel styleName="{style.paddingBlocks}">
-		    	<g:Label ui:field="typePercent" styleName="{style.paddingTypePercentStyle}"></g:Label>
-		    	<g:TextBox ui:field="percentBox" styleName="{style.widthDoubleBox}"></g:TextBox>
-		    </g:HorizontalPanel>
-		    <g:HorizontalPanel styleName="{style.paddingBlocks}"> 
-		    	<g:Label ui:field="messageLabel" styleName="{style.messageStyle}"></g:Label>
-		    </g:HorizontalPanel>
-		   	<g:HorizontalPanel styleName="{style.paddingBlocks}">
-		    	<g:Button styleName="{style.closeButton}" ui:field="cancelButton">Cerrar</g:Button>
-		    	<g:Button styleName="{style.closeButton}" ui:field="acceptButton">OK</g:Button>
-		    </g:HorizontalPanel>
-		</g:VerticalPanel -->
+			<table class="aon-width-all aon-height-all" style="padding: 5px;">
+				<tr>
+					<td>
+						<g:Label>Tipos de ausencia:</g:Label>
+					</td>
+					<td>
+						<g:ListBox ui:field="typeDrop" styleName="{style.w100}"></g:ListBox>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<g:Label>Horas:</g:Label>
+					</td>
+					<td>
+						<g:TextBox ui:field="percentBox" styleName="{style.hourTBx}"></g:TextBox>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<g:Label ui:field="messageLabel" styleName="{style.hourLabel}"></g:Label>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" align="right" style="padding-top: 15px;">
+						<g:Button ui:field="cancelButton">Cerrar</g:Button>
+			    		<g:Button ui:field="acceptButton">OK</g:Button>
+					</td>
+				</tr>
+			</table>
+				
+		</g:HTMLPanel>
 			
 	</g:HTMLPanel>
 

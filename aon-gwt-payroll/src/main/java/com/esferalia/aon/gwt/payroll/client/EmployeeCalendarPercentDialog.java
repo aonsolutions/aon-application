@@ -8,7 +8,6 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DoubleBox;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
@@ -16,24 +15,17 @@ import com.google.gwt.user.client.ui.Widget;
 
 public abstract class EmployeeCalendarPercentDialog extends CustomDialog {
 
-	interface Binder extends UiBinder<Widget, EmployeeCalendarPercentDialog> {
-
-	}
+	interface Binder extends UiBinder<Widget, EmployeeCalendarPercentDialog> {}
 
 	private static final Binder binder = GWT.create(Binder.class);
 	
 	@UiField
 	MyStyle style;
 
-	interface MyStyle extends CssResource {
-		
-	}
+	interface MyStyle extends CssResource {}
 	
 	@UiField
 	ListBox typeDrop;
-	
-	@UiField
-	Label typePercent;
 	
 	@UiField
 	TextBox percentBox;
@@ -46,6 +38,10 @@ public abstract class EmployeeCalendarPercentDialog extends CustomDialog {
 	
 	@UiField
 	Button acceptButton;
+	
+	// -------------------------------------------------------------------------------
+	// --------------------------------- MAIN CLASS ----------------------------------
+	// -------------------------------------------------------------------------------
 	
 	Double journeyHours;
 
@@ -65,7 +61,6 @@ public abstract class EmployeeCalendarPercentDialog extends CustomDialog {
 			@Override
 			public void onClick(ClickEvent event) {
 				hide();
-				
 			}
 		});
 		
@@ -78,25 +73,27 @@ public abstract class EmployeeCalendarPercentDialog extends CustomDialog {
 		});	
 		
 		this.journeyHours = Double.parseDouble(hoursContract);
-		
 	}
 
 	protected abstract void onAccept();
 	
+	// -------------------------------------------------------------------------------
+	// -------------------------------- AUX METHODS ----------------------------------
+	// -------------------------------------------------------------------------------
+	
+	public Integer getTypeDrop(){
+		return typeDrop.getSelectedIndex();
+	}
+	
 	public double getPercentValue() {
+		if(percentBox.getValue().length() == 0)
+			return 1.00;
+		
 		Double hoursStrike = Double.parseDouble(percentBox.getValue());
 		if(hoursStrike >= this.journeyHours)
 			return 1.00;
 		
 		return hoursStrike/this.journeyHours;
-	}
-	
-	public void setLabelText(String label){
-		typePercent.setText(label);
-	}
-	
-	public Integer getTypeDrop(){
-		return typeDrop.getSelectedIndex();
-	}
+	}	
 
 }
