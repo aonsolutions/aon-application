@@ -42,6 +42,11 @@ public class SQLDraftIrpfTestCase extends SQLIrpfTestCase {
 	
 	@Test
 	@Override
+	public void testExtrasI() throws ExpressionException, SQLException, SalaryException {
+	}
+
+	@Test
+	@Override
 	public void testTotalLiquid() throws ExpressionException, SQLException {
 	}
 	
