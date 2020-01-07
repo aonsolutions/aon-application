@@ -10,34 +10,18 @@
     
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeeCalendarLeyendDialog.MyStyle">
 
-		.typeButtonUpperMenuStyle{
-			height: 15px;
-			padding-right: 15px;
-    		border-radius: 50px;
-		}
-
-		.typeButtonUpperMenuStyle2{
-			height: 15px;
-			padding-right: 15px;
-		}
-
-		.paddingLabels{
-			padding-left: 5px;
-    		padding-right: 5px;
-		}
-
-		.paddingBlocks{
-			padding-bottom: 15px;
-		}
-
 		.noWorkingColor{
 			background-color: salmon;
 		}
 
-		.holidayColor{
-			background-color: green;
+		.inactivityColor{
+			background-color: #71b1e8;
 		}
-
+		
+		.dropColor{
+			background-color: #733969;
+		}
+		
 		.strikeColor{
 			background-color: #a09c13;
     	}
@@ -46,12 +30,12 @@
 			background-color: #b91257;
 		}
 
-		.sundayColor{
-			background-color: rgb(68, 90, 105);
+		.holidayColor{
+			background-color: green;
 		}
 
-		.dropColor{
-			background-color: #733969;
+		.sundayColor{
+			background-color: rgb(68, 90, 105);
 		}
 
 		.suspensionColor{
@@ -66,26 +50,15 @@
 			background-color: #065b69;
 		}
 
-		.form {
-			padding: 10px;
-		}
-
-		.closeButton {
-			position: relative;
-    		left: 250px;
-			border: 1px solid #bbb;
-			border-radius: 3px;
-			cursor: pointer;
-		}
-		
 		.colorButton{
 			border-radius: 8%;
 			border: none;
 			margin-right: 3px;
 			padding: 3px;
 			height: 10px;
+			width: 10px;
 		}
-
+		
 	</ui:style>
 
 	<g:HTMLPanel styleName="aon-width-all aon-height-all">
@@ -101,10 +74,10 @@
 			</tr>
 			<tr>
 				<td>
-					<g:Label>Vacaciones</g:Label>
+					<g:Label>Inactividad</g:Label>
 				</td>
 				<td>
-					<g:Label styleName="{style.colorButton} {style.holidayColor}"/>
+					<g:Label styleName="{style.colorButton} {style.inactivityColor}"/>
 				</td>
 			</tr>
 			<tr>
@@ -125,18 +98,26 @@
 			</tr>
 			<tr>
 				<td>
-					<g:Label>Festivos</g:Label>
-				</td>
-				<td>
-					<g:Label styleName="{style.colorButton} {style.sundayColor}"/>
-				</td>
-			</tr>
-			<tr>
-				<td>
 					<g:Label>Ausencia</g:Label>
 				</td>
 				<td>
 					<g:Label styleName="{style.colorButton} {style.dropColor}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label>Vacaciones</g:Label>
+				</td>
+				<td>
+					<g:Label styleName="{style.colorButton} {style.holidayColor}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label>Festivos</g:Label>
+				</td>
+				<td>
+					<g:Label styleName="{style.colorButton} {style.sundayColor}"/>
 				</td>
 			</tr>
 			<tr>
@@ -161,12 +142,6 @@
 				</td>
 				<td>
 					<g:Label styleName="{style.colorButton} {style.reductionColor}"/>
-				</td>
-			</tr>
-			<tr>
-				<td colspan="2" align="right" style="padding-top: 15px;">
-					<g:Button ui:field="cancelButton">Cerrar</g:Button>
-		    		<g:Button ui:field="acceptButton">OK</g:Button>
 				</td>
 			</tr>
 		</table>
