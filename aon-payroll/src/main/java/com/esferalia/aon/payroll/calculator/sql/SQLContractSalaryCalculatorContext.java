@@ -225,7 +225,6 @@ import com.esferalia.aon.salary.expression.Variables.PeriodMap;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
-import com.sun.tools.javac.resources.ct;
 
 public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCalculatorContext
 		implements IContractSalaryCalculatorContext, NotFoundHandler, ISQLContractSalaryCalculatorContext {
@@ -2766,7 +2765,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	@Override
 	public double getIrpf() {
 		Calendar endCalendar = Calendar.getInstance();
-		endCalendar.setTime(startDate);
+//		endCalendar.setTime(startDate);
+		endCalendar.setTime(issueDate);
 		endCalendar.set(Calendar.DAY_OF_YEAR, endCalendar.getActualMaximum(Calendar.DAY_OF_YEAR));
 		Date endYear = endCalendar.getTime();
 
