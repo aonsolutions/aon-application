@@ -11,67 +11,58 @@
     
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeeCalendarExtraDialog.MyStyle">
 
-		.paddingLabelStyle{
-			padding-left: 7px;
-    		padding-top: 2px;
+		.form {
+			padding: 10px;
 		}
-
-		.paddingLabel2Style{
-			padding-left: 7px;
-			padding-right: 7px;
-    		padding-top: 2px;
-		}
-
-		.suggestMonthBoxStyle {
-			margin-left: 52px;
-			margin-top: 0px;
-			font-size: 1em;
-		}
-
+		
 		.bottonExpandStyle{
 			height: 10px;
     		border: none;
     		padding-top: 15px;
     		margin-left: 5px;
+    		width: 20px;
 		}
-
-		.paddingBlocks{
-			padding-bottom: 15px;
-			padding-top: 10px;
-		}
-
-		.form {
-			padding: 10px;
-		}
-
-		.closeButton {
-			position: relative;
-    		left: 140px;
-			border: 1px solid #bbb;
-			border-radius: 3px;
-			cursor: pointer;
+		
+		.borderBx{
+			border: solid #808080 1px;
 		}
 
 	</ui:style>
 
 	<g:HTMLPanel styleName="{style.form}">
-
-		<g:VerticalPanel>
-		    <g:HorizontalPanel styleName="{style.paddingBlocks}">
-		    	<g:Label styleName="{style.paddingLabelStyle}">Mes:</g:Label>
-		    	<g:SuggestBox ui:field="monthOpt" styleName="{style.suggestMonthBoxStyle}"/>
-		    	<g:Button ui:field="expandMonths"/>
-		    </g:HorizontalPanel>
-		    <g:HorizontalPanel styleName="{style.paddingBlocks}">
-		    	<g:Label styleName="{style.paddingLabel2Style}">Horas extras:</g:Label>
-		    	<g:DoubleBox ui:field="extraHoursBox"/>
-		    </g:HorizontalPanel>
-		    <g:HorizontalPanel styleName="{style.paddingBlocks}">
-		    	<g:Button styleName="{style.closeButton}" ui:field="cancelButton">Cerrar</g:Button>
-		    	<g:Button styleName="{style.closeButton}" ui:field="acceptButton">OK</g:Button>
-		    </g:HorizontalPanel>
-		</g:VerticalPanel>
-			
+	
+		<g:HTMLPanel styleName="aon-width-all aon-height-all">
+	
+			<table class="aon-width-all aon-height-all" style="padding: 5px;">
+				<tr>
+					<td>
+						<g:Label>Mes:</g:Label>
+					</td>
+					<td>
+						<g:HorizontalPanel>
+							<g:SuggestBox ui:field="monthOpt" styleName="{style.borderBx}"/>
+		    				<g:Button ui:field="expandMonths" styleName="{style.bottonExpandStyle}"/>
+						</g:HorizontalPanel>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<g:Label>Horas extras:</g:Label>
+					</td>
+					<td>
+						<g:DoubleBox ui:field="extraHoursBox" styleName="{style.borderBx}"/>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" align="right" style="padding-top: 15px;">
+						<g:Button ui:field="cancelButton">Cerrar</g:Button>
+			    		<g:Button ui:field="acceptButton">OK</g:Button>
+					</td>
+				</tr>
+			</table>
+				
+		</g:HTMLPanel>
+		
 	</g:HTMLPanel>
 
 </ui:UiBinder>

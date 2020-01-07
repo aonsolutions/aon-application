@@ -17,9 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public abstract class EmployeeCalendarExtraDialog extends CustomDialog {
 
-	interface Binder extends UiBinder<Widget, EmployeeCalendarExtraDialog> {
-
-	}
+	interface Binder extends UiBinder<Widget, EmployeeCalendarExtraDialog> {}
 
 	private static final Binder binder = GWT.create(Binder.class);
 	
@@ -44,6 +42,10 @@ public abstract class EmployeeCalendarExtraDialog extends CustomDialog {
 	
 	@UiField
 	Button acceptButton;
+	
+	// -------------------------------------------------------------------------------
+	// --------------------------------- MAIN CLASS ----------------------------------
+	// -------------------------------------------------------------------------------
 
 	public EmployeeCalendarExtraDialog(String caption) {
 		setCaption(caption);
@@ -97,6 +99,10 @@ public abstract class EmployeeCalendarExtraDialog extends CustomDialog {
 	}
 
 	protected abstract void onAccept();
+	
+	// -------------------------------------------------------------------------------
+	// -------------------------------- AUX METHODS ----------------------------------
+	// -------------------------------------------------------------------------------
 	
 	public String getSelectedMonth() {
 		return monthOpt.getValue();
