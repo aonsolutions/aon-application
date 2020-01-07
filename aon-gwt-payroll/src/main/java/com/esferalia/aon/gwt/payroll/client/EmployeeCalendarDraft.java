@@ -306,10 +306,10 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	MenuItem holidayDayMenuItem;
 	
 	@UiField
-	MenuItem strikeDayMenuItem;
+	MenuItem inactivityDayMenuItem;
 	
 	@UiField
-	MenuItem ereDayMenuItem;
+	MenuItem dropDayMenuItem;
 	
 	@UiField
 	MenuItem eraseEventMenuItem;
@@ -361,18 +361,9 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 
 	@UiField
 	Button nonWorkingDayButton;
-
-//	@UiField
-//	Button strikeDayButton;
-//
-//	@UiField
-//	Button ereDayButton;
 	
 	@UiField
 	Button inactivityDayButton;
-	
-//	@UiField
-//	HorizontalPanel peonadasPanel;
 	
 	@UiField
 	Button peonadasDayButton;
@@ -382,9 +373,6 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	
 	@UiField
 	Button holidayDayButton;
-	
-//	@UiField
-//	Label hourLabelUpperMenu;
 	
 	@UiField
 	HorizontalPanel extraHoursButtonPanel;
@@ -439,96 +427,110 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		
 		calendarGrid.addDomHandler(this, ContextMenuEvent.getType());
 		
+		initializeMenuItems();
 		initializeUpperMenu();
 		initializeCellsCalendar();
 		initializeCellsTypeCalendar();
 		
 		//Gestion boton horas
 		hourMenuItem.setEnabled(false);
-		hourButton.setEnabled(false);
+		hourButton.setEnabled(false);	
 		
-		nonWorkingDayMenuItem.setScheduledCommand(new Command() {
-			
+		//#ifndef env.SNAPSHOT
+		saveButton.setVisible(false);
+		//#endif
+		
+		//TODO: para probar el boton de guardar del calendario -> saveButton.setVisible(true);
+		saveButton.setVisible(true);
+	}
+
+	private void initializeMenuItems() {
+		
+		nonWorkingDayMenuItem.setScheduledCommand(new Command() {	
 			@Override
 			public void execute() {
 				addNoWorkingDay();	
 			}
 		});
 		
-		holidayDayMenuItem.setScheduledCommand(new Command() {
-			
+		holidayDayMenuItem.setScheduledCommand(new Command() {		
 			@Override
 			public void execute() {
 				addHolidays();	
 			}
+		});
+		
+		inactivityDayMenuItem.setScheduledCommand(new Command() {
+			@Override
+			public void execute() {
+				EmployeeCalendarInactivityDialog inactivityDialog = new EmployeeCalendarInactivityDialog("D"+String.valueOf("\u00cd")+"as de inactivad"/*, hours.toString()*/) {
+					@Override
+					protected void onAccept() {
+						Date startDate = this.getStartDate();
+						Date endDate = this.getEndDate();
+						if(endDate == null){
+							endDate = DateUtils.getLastDayOfYear(new Date());
+							DateUtils.addYears2Date(endDate, 2);
+						}
+			
+						String typeInactivity = this.getTypeInactivity();
+						
+						while (startDate.before(endDate) || startDate.equals(endDate)) {
+							selectedDates.setSelected(DateUtils.copyDateOnly(startDate), true);
+							DateUtils.addDays2Date(startDate, 1);
+						}
+						
+						addInactivityDays(typeInactivity);
+					}
+				};
+								
+				if(!selectedDates.getSelectedList().isEmpty()){
+					Collections.sort(selectedDates.getSelectedList());
+					inactivityDialog.setStartDate(selectedDates.getSelectedList().get(0));
+					inactivityDialog.setEndDate(selectedDates.getSelectedList().get(selectedDates.getSelectedList().size()-1));
+				}
+				
+				inactivityDialog.show();
+				inactivityDialog.center();
+			}
+		});
+		
+		dropDayMenuItem.setScheduledCommand(new Command() {
+			@Override
+			public void execute() {
+				String hours = "8";
+				
+				if(!fullTimeJourney) {
+					Date date = selectedDates.getSelectedList().get(0);
+					Double hoursDouble = calendarEmployeeInfo.getHourByDay(date);
+					hours = hoursDouble.toString();
+				}
+				
+				EmployeeCalendarPercentDialog percentDialog = new EmployeeCalendarPercentDialog("Dias Ausencia", hours) {
+					
+					@Override
+					protected void onAccept() {
+						double cs = this.getPercentValue();
+						switch (this.getTypeDrop()) {
+						case 0:
+							addStrikeDay(cs);
+							break;
+						case 1:
+							addEreDay(cs);
+							break;
+						case 2:
+							addDropDay(cs);
+							break;
+						default:
+							break;
+						}
+					}
+					
+				};
 
-		});
-		
-		strikeDayMenuItem.setScheduledCommand(new Command() {
-			
-			@Override
-			public void execute() {
-				EmployeeCalendarPercentDialog strikeDialog;
-				if(fullTimeJourney){
-					strikeDialog = new EmployeeCalendarPercentDialog("Horas Huelga", "8") {
-						
-						@Override
-						protected void onAccept() {
-							double cs = this.getPercentValue();
-							addStrikeDay(cs);
-						}
-					};
-				}
-				else{
-					Date date = selectedDates.getSelectedList().get(0);
-					Double hours = calendarEmployeeInfo.getHourByDay(date);
-					strikeDialog = new EmployeeCalendarPercentDialog("Horas Huelga", hours.toString()) {
-						
-						@Override
-						protected void onAccept() {
-							double cs = this.getPercentValue();
-							addStrikeDay(cs);
-						}
-					};
-				}
-				strikeDialog.setLabelText("Horas Huelga:");
-				strikeDialog.show();
-				strikeDialog.center();	
-			}
-			
-		});
-		
-		ereDayMenuItem.setScheduledCommand(new Command() {
-			
-			@Override
-			public void execute() {
-				EmployeeCalendarPercentDialog ereDialog;
-				if(fullTimeJourney){
-					ereDialog = new EmployeeCalendarPercentDialog("Horas ERE", "8") {
-						
-						@Override
-						protected void onAccept() {
-							double cs = this.getPercentValue();
-							addEreDay(cs);
-						}
-					};
-				}else{
-					Date date = selectedDates.getSelectedList().get(0);
-					Double hours = calendarEmployeeInfo.getHourByDay(date);
-					ereDialog = new EmployeeCalendarPercentDialog("Horas Huelga", hours.toString()) {
-						
-						@Override
-						protected void onAccept() {
-							double cs = this.getPercentValue();
-							addEreDay(cs);
-						}
-					};
-				}
-				ereDialog.setLabelText("Horas ERE:");
-				ereDialog.show();
-				ereDialog.center();
-			}
-			
+				percentDialog.show();
+				percentDialog.center();
+			}	
 		});
 		
 		eraseEventMenuItem.setScheduledCommand(new Command() {
@@ -698,41 +700,12 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				else
 					showHours();
 			}
-		});		
-		
-		//#ifndef env.SNAPSHOT
-		saveButton.setVisible(false);
-		//#endif
-		
-		//TODO: para probar el boton de guardar del calendario -> saveButton.setVisible(true);
-		saveButton.setVisible(true);
+		});	
 	}
 
 // ----------------------------------------------------------------- UiHandlers ----------------------------------------------------------
 	
 	private void initializeUpperMenu() {
-//		Image help = new Image();
-//		help.setUrl("aonResource/9.23-SNAPSHOT/images/aon-main-menu/aon-icon-help.png");
-//		help.addClickHandler(new ClickHandler() {
-//			
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				EmployeeCalendarLeyendDialog leyendDialog = new EmployeeCalendarLeyendDialog() {
-//					
-//					@Override
-//					protected void onAccept() {
-//					}
-//				};
-//				leyendDialog.show();
-//				leyendDialog.center();
-//			}
-//		});
-//		upperRightMenu.add(help);
-//		Label leyendLabel = new Label("Leyenda");
-//		leyendLabel.setStyleName(style.paddingLeyendButtonUpperMenuStyle());
-//		upperRightMenu.add(leyendLabel);
-		
-//		extraHoursButton.setStyleName("aon-icon-time");
 		extraHoursButton.addStyleName(style.borderButtonUpperMenuStyle());
 		extraHoursButton.addStyleName(style.imagenButtonUpperMenuStyle());
 		extraHoursButton.addClickHandler(new ClickHandler() {
@@ -757,15 +730,10 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				extraDialog.center();
 			}
 		});
-//		extraHoursButton.setVisible(false);
+		
 		hideElement(extraHoursButtonPanel);
-//		hourButton.setStyleName("aon-icon-time");
 		hourButton.addStyleName(style.borderButtonUpperMenuStyle());
 		hourButton.addStyleName(style.imagenButtonUpperMenuStyle());
-//		eraseEventButton.setStyleName("aon-icon-close2");
-//		eraseEventButton.addStyleName(style.borderButtonUpperMenuStyle());
-//		eraseEventButton.addStyleName(style.imagenButtonUpperMenuStyle());
-//		eraseEventButton.addStyleName(style.paddingEraseButtonUpperMenuStyle());
 	}
 	
 	@UiHandler("calendarGrid")
@@ -864,12 +832,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	
 	@UiHandler("leyendButton")
 	public void onLeyendButtonPanelClick(ClickEvent event) {
-		EmployeeCalendarLeyendDialog leyendDialog = new EmployeeCalendarLeyendDialog() {
-			
-			@Override
-			protected void onAccept() {
-			}
-		};
+		EmployeeCalendarLeyendDialog leyendDialog = new EmployeeCalendarLeyendDialog();
 		leyendDialog.show();
 		leyendDialog.center();
 	}
@@ -888,11 +851,6 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	public void onPeonadasClick(ClickEvent event) {
 		addPeonadas();
 	}
-	
-//	@UiHandler("dropDayButton")
-//	public void onDropDaysClick(ClickEvent event) {
-//		addDropDay();
-//	}
 	
 	@UiHandler("dropDayButton")
 	public void onDropDaysClick(ClickEvent event) {
@@ -944,80 +902,14 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				
 			};
 		}
-//		percentDialog.setLabelText("Horas Ausencia:");
-		percentDialog.setLabelText("Horas:");
+
+//		percentDialog.setLabelText("Horas:");
 		percentDialog.show();
 		percentDialog.center();
 	}
 	
-//	@UiHandler("strikeDayButton")
-//	public void onStrikeClick(ClickEvent event) {
-//		EmployeeCalendarPercentDialog strikeDialog;
-//		if(fullTimeJourney){
-//			strikeDialog = new EmployeeCalendarPercentDialog("Horas Huelga", "8") {
-//				
-//				@Override
-//				protected void onAccept() {
-//					double cs = this.getPercentValue();
-//					addStrikeDay(cs);
-//				}
-//			};
-//		}
-//		else{
-//			Date date = selectedDates.getSelectedList().get(0);
-//			Double hours = calendarEmployeeInfo.getHourByDay(date);
-//			strikeDialog = new EmployeeCalendarPercentDialog("Horas Huelga", hours.toString()) {
-//				
-//				@Override
-//				protected void onAccept() {
-//					double cs = this.getPercentValue();
-//					addStrikeDay(cs);
-//				}
-//			};
-//		}
-//		strikeDialog.setLabelText("Horas Huelga:");
-//		strikeDialog.show();
-//		strikeDialog.center();	
-//	}
-	
-//	@UiHandler("ereDayButton")
-//	public void onEreClick(ClickEvent event) {
-//		EmployeeCalendarPercentDialog ereDialog;
-//		if(fullTimeJourney){
-//			ereDialog = new EmployeeCalendarPercentDialog("Horas ERE", "8") {
-//				
-//				@Override
-//				protected void onAccept() {
-//					double cs = this.getPercentValue();
-//					addEreDay(cs);
-//				}
-//			};
-//		}else{
-//			Date date = selectedDates.getSelectedList().get(0);
-//			Double hours = calendarEmployeeInfo.getHourByDay(date);
-//			ereDialog = new EmployeeCalendarPercentDialog("Horas Huelga", hours.toString()) {
-//				
-//				@Override
-//				protected void onAccept() {
-//					double cs = this.getPercentValue();
-//					addEreDay(cs);
-//				}
-//			};
-//		}
-//		ereDialog.setLabelText("Horas ERE:");
-//		ereDialog.show();
-//		ereDialog.center();
-//	}
-	
-	
 	@UiHandler("inactivityDayButton")
 	public void onInactivityClick(ClickEvent event) {		
-//		Double hours = 8.0;
-//		
-//		if(!fullTimeJourney) {
-//			Date date = selectedDates.getSelectedList().get(0);
-//			hours = calendarEmployeeInfo.getHourByDay(date);
-//		}
 
 		EmployeeCalendarInactivityDialog inactivityDialog = new EmployeeCalendarInactivityDialog("D"+String.valueOf("\u00cd")+"as de inactivad"/*, hours.toString()*/) {
 			@Override
@@ -1036,8 +928,6 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 					DateUtils.addDays2Date(startDate, 1);
 				}
 				
-//				double cs = this.getPercentValue();
-//				addInactivityDays(typeInactivity, cs);
 				addInactivityDays(typeInactivity);
 			}
 		};
@@ -1225,18 +1115,10 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			totalHours.setText("Horas Mensuales");
 		}
 		
-//		if(this.fullTimeJourney) {
-//			//hourLabelUpperMenu.setText("Horas Extras");
-//		}else{
-//			hourLabelUpperMenu.setText("Horas");
-//		}
-		
 		if(this.calendarEmployeeInfo.getContractType() == 7) {
 			this.peonadasDayButton.removeStyleName(style.hide());
-//			this.peonadasPanel.removeStyleName(style.hide());
 		}else {
 			this.peonadasDayButton.addStyleName(style.hide());
-//			this.peonadasPanel.addStyleName(style.hide());
 		}
 		
 		cleanStyleChanges();
@@ -1255,16 +1137,12 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		
 		if(this.fullTimeJourney){
 			hourMenuItem.setVisible(false);
-//			hourButton.setVisible(false);
 			hideElement(hourButtonPanel);
-//			extraHoursButton.setVisible(true);
 			showElement(extraHoursButtonPanel);
 			viewMenuItem.setVisible(false);
 		}else{
 			hourMenuItem.setVisible(true);
-//			hourButton.setVisible(true);
 			showElement(hourButtonPanel);
-//			extraHoursButton.setVisible(false);
 			hideElement(extraHoursButtonPanel);
 			viewMenuItem.setVisible(true);
 		}
@@ -2282,7 +2160,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 							}
 						};
 					}
-					strikeDialog.setLabelText("Horas Huelga:");
+//					strikeDialog.setLabelText("Horas Huelga:");
 					strikeDialog.show();
 					strikeDialog.center();	
 				}
@@ -2312,7 +2190,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 							}
 						};
 					}
-					ereDialog.setLabelText("Horas ERE:");
+//					ereDialog.setLabelText("Horas ERE:");
 					ereDialog.show();
 					ereDialog.center();
 				}
