@@ -6,14 +6,14 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -21,9 +21,7 @@ import com.google.gwt.view.client.OrderedMultiSelectionModel;
 
 public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 
-	interface Binder extends UiBinder<Widget, EmployeeCalendarHoursDialog> {
-
-	}
+	interface Binder extends UiBinder<Widget, EmployeeCalendarHoursDialog> {}
 
 	private static final Binder binder = GWT.create(Binder.class);
 	
@@ -32,11 +30,10 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 
 	interface MyStyle extends CssResource {
 		String bottonExpandStyle();
-		String hidePanel();
 	}
 	
 	@UiField
-	HorizontalPanel mondayBlock;
+	TableRowElement mondayBlock;
 	
 	@UiField(provided = true)
 	SuggestBox mondayHoursOpt;
@@ -45,7 +42,7 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 	Button expandMondayHours;
 	
 	@UiField
-	HorizontalPanel tuesdayBlock;
+	TableRowElement tuesdayBlock;
 	
 	@UiField(provided = true)
 	SuggestBox tuesdayHoursOpt;
@@ -54,7 +51,7 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 	Button expandTuesdayHours;
 	
 	@UiField
-	HorizontalPanel wednesdayBlock;
+	TableRowElement wednesdayBlock;
 	
 	@UiField(provided = true)
 	SuggestBox wednesdayHoursOpt;
@@ -63,7 +60,7 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 	Button expandWednesdayHours;
 	
 	@UiField
-	HorizontalPanel thursdayBlock;
+	TableRowElement thursdayBlock;
 	
 	@UiField(provided = true)
 	SuggestBox thursdayHoursOpt;
@@ -72,7 +69,7 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 	Button expandThursdayHours;
 	
 	@UiField
-	HorizontalPanel fridayBlock;
+	TableRowElement fridayBlock;
 	
 	@UiField(provided = true)
 	SuggestBox fridayHoursOpt;
@@ -81,7 +78,7 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 	Button expandFridayHours;
 	
 	@UiField
-	HorizontalPanel saturdayBlock;
+	TableRowElement saturdayBlock;
 	
 	@UiField(provided = true)
 	SuggestBox saturdayHoursOpt;
@@ -90,7 +87,7 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 	Button expandSaturdayHours;
 	
 	@UiField
-	HorizontalPanel sundayBlock;
+	TableRowElement sundayBlock;
 	
 	@UiField(provided = true)
 	SuggestBox sundayHoursOpt;
@@ -104,6 +101,10 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 	@UiField
 	Button acceptButton;
 	
+	// -------------------------------------------------------------------------------
+	// --------------------------------- MAIN CLASS ----------------------------------
+	// -------------------------------------------------------------------------------
+	
 	private final static int MONDAY = 0;
 	private final static int TUESDAY = 1;
 	private final static int WEDNESDAY = 2;
@@ -113,13 +114,14 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 	private final static int SUNDAY = 6;
 
 	private final SuggestBox suggestOpts[] = new SuggestBox[7];
-	private final HorizontalPanel blockDays[] = new HorizontalPanel[7];
+	private final TableRowElement blockDays[] = new TableRowElement[7];
 	private Double listOldHours[] = new Double[7];
 	private OrderedMultiSelectionModel<Date> selectedDates;
 	private EmployeeCalendarDraftObjectData calendarEmployeeInfo;
 	
 	public EmployeeCalendarHoursDialog(String caption, OrderedMultiSelectionModel<Date> selectedDates,
 			EmployeeCalendarDraftObjectData calendarEmployeeInfo) {
+		
 		this.selectedDates = selectedDates;
 		this.calendarEmployeeInfo = calendarEmployeeInfo;
 		
@@ -158,7 +160,13 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 		checkShowingUpDays();
 		
 	}
+	
+	protected abstract void onAccept();
 
+	// -------------------------------------------------------------------------------
+	// -------------------------------- AUX METHODS ----------------------------------
+	// -------------------------------------------------------------------------------
+			
 	private void initSuggestBox() {
 		//Inicializamos todos los SuggestBox para insertar horas nuevas
 		ArrayList<String> suggestHours = new ArrayList<String>();
@@ -225,7 +233,7 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 	private void checkShowingUpDays() {
 		//Ocultar todos los dias
 		for (int i=0; i<7; i++)
-			blockDays[i].addStyleName(style.hidePanel());
+			blockDays[i].getStyle().setDisplay(Display.NONE);
 		
 		//Gestionar los dias seleccionados (mostrar y actualizar valor)
 		for (int i = 0; i < 7; i++){
@@ -239,7 +247,7 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 				Double value = selectedDates.getSelectedList().stream()
 						.filter(d -> d.getDay() == days[c])
 						.map(d-> calendarEmployeeInfo.getHourByDay(d))
-						.peek(p -> blockDays[c].removeStyleName(style.hidePanel()))
+						.peek(p -> blockDays[c].getStyle().clearDisplay())
 						.collect(Collectors.reducing(Double.MIN_VALUE,(h1,h2) -> minValue.equals(h1) || h2.equals(h1) ? h2: null ))
 						;
 
@@ -253,24 +261,25 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 				}
 				
 			} catch (Exception e) {
-				//Window.alert("Fallo!"+", "+c + "," + e.getMessage());
+				
 			}
 		}
 	}
-
-	protected abstract void onAccept();
 	
 	public Double[] getListOldHours() {
 		return listOldHours;
 	}
 	
+	// -------------------------------------------------------------------------------
+	// ---------------------------------- GET HOURS ----------------------------------
+	// -------------------------------------------------------------------------------
+	
 	public Double getMondayHours(){
 		Double hour = null;
 		try{
 			hour = Double.parseDouble(mondayHoursOpt.getValue());
-		}catch (NumberFormatException e) {
-			
-		}
+		}catch (NumberFormatException e) {}
+		
 		return hour;
 	}
 	
@@ -278,9 +287,8 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 		Double hour = null;
 		try{
 			hour = Double.parseDouble(tuesdayHoursOpt.getValue());
-		}catch (NumberFormatException e) {
-			
-		}
+		}catch (NumberFormatException e) {}
+		
 		return hour;
 	}
 	
@@ -288,9 +296,8 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 		Double hour = null;
 		try{
 			hour = Double.parseDouble(wednesdayHoursOpt.getValue());
-		}catch (NumberFormatException e) {
-			
-		}
+		}catch (NumberFormatException e) {}
+		
 		return hour;
 	}
 	
@@ -298,9 +305,8 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 		Double hour = null;
 		try{
 			hour = Double.parseDouble(thursdayHoursOpt.getValue());
-		}catch (NumberFormatException e) {
-			
-		}
+		}catch (NumberFormatException e) {}
+		
 		return hour;
 	}
 	
@@ -308,9 +314,8 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 		Double hour = null;
 		try{
 			hour = Double.parseDouble(fridayHoursOpt.getValue());
-		}catch (NumberFormatException e) {
-			
-		}
+		}catch (NumberFormatException e) {}
+		
 		return hour;
 	}
 	
@@ -318,9 +323,8 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 		Double hour = null;
 		try{
 			hour = Double.parseDouble(saturdayHoursOpt.getValue());
-		}catch (NumberFormatException e) {
-			
-		}
+		}catch (NumberFormatException e) {}
+		
 		return hour;
 	}
 	
@@ -328,9 +332,8 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 		Double hour = null;
 		try{
 			hour = Double.parseDouble(sundayHoursOpt.getValue());
-		}catch (NumberFormatException e) {
-			
-		}
+		}catch (NumberFormatException e) {}
+		
 		return hour;
 	}
 }

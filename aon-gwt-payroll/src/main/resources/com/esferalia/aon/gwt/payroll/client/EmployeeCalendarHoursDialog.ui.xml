@@ -10,51 +10,25 @@
     
     
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeeCalendarHoursDialog.MyStyle">
-
-		.paddingLabelStyle{
-			padding-left: 7px;
-    		padding-top: 2px;
+	
+		.form {
+			padding: 10px;
 		}
-
-		.paddingLabel2Style{
-			padding-left: 7px;
-			padding-right: 7px;
-    		padding-top: 2px;
+		
+		.bottonExpandStyle{
+			height: 10px;
+    		border: none;
+    		padding-top: 15px;
+    		margin-left: 5px;
+    		width: 20px;
 		}
-
-		.suggestMonthBoxStyle {
-			margin-top: 0px;
-			font-size: 1em;
+		
+		.borderBx{
+			border: solid #808080 1px;
+			text-align: center;
+			width: 100px;
 		}
-
-		.suggestMondayStyle{
-			margin-left: 47px;
-		}
-
-		.suggestTuesdayStyle{
-			margin-left: 44px;
-		}
-
-		.suggestWednesdayStyle{
-			margin-left: 30px;
-		}
-
-		.suggestThursdayStyle{
-			margin-left: 43px;
-		}
-
-		.suggestFridayStyle{
-			margin-left: 41px;
-		}
-
-		.suggestSaturdayStyle{
-			margin-left: 40px;
-		}
-
-		.suggestSundayStyle{
-			margin-left: 33px;
-		}
-
+		
 		.bottonExpandStyle{
 			height: 10px;
     		border: none;
@@ -62,73 +36,100 @@
     		margin-left: 5px;
 		}
 
-		.paddingBlocks{
-			padding-bottom: 15px;
-			padding-top: 10px;
-		}
-
-		.form {
-			padding: 10px;
-		}
-
-		.closeButton {
-			position: relative;
-    		left: 140px;
-			border: 1px solid #bbb;
-			border-radius: 3px;
-			cursor: pointer;
-		}
-
-		.hidePanel{
-			display: none;
-		}
-
 	</ui:style>
 
 	<g:HTMLPanel styleName="{style.form}">
 
-		<g:VerticalPanel>
-		    <g:HorizontalPanel ui:field="mondayBlock" styleName="{style.paddingBlocks}">
-		    	<g:Label styleName="{style.paddingLabelStyle}">Lunes:</g:Label>
-		    	<g:SuggestBox ui:field="mondayHoursOpt" styleName="{style.suggestMonthBoxStyle} {style.suggestMondayStyle}"/>
-		    	<g:Button ui:field="expandMondayHours"/>
-		    </g:HorizontalPanel>
-		    <g:HorizontalPanel ui:field="tuesdayBlock" styleName="{style.paddingBlocks}">
-		    	<g:Label styleName="{style.paddingLabelStyle}">Martes:</g:Label>
-		    	<g:SuggestBox ui:field="tuesdayHoursOpt" styleName="{style.suggestMonthBoxStyle} {style.suggestTuesdayStyle}"/>
-		    	<g:Button ui:field="expandTuesdayHours"/>
-		    </g:HorizontalPanel>
-		    <g:HorizontalPanel ui:field="wednesdayBlock" styleName="{style.paddingBlocks}">
-		    	<g:Label styleName="{style.paddingLabelStyle}">Miercoles:</g:Label>
-		    	<g:SuggestBox ui:field="wednesdayHoursOpt" styleName="{style.suggestMonthBoxStyle} {style.suggestWednesdayStyle}"/>
-		    	<g:Button ui:field="expandWednesdayHours"/>
-		    </g:HorizontalPanel>
-		    <g:HorizontalPanel ui:field="thursdayBlock" styleName="{style.paddingBlocks}">
-		    	<g:Label styleName="{style.paddingLabelStyle}">Jueves:</g:Label>
-		    	<g:SuggestBox ui:field="thursdayHoursOpt" styleName="{style.suggestMonthBoxStyle} {style.suggestThursdayStyle}"/>
-		    	<g:Button ui:field="expandThursdayHours"/>
-		    </g:HorizontalPanel>
-		    <g:HorizontalPanel ui:field="fridayBlock" styleName="{style.paddingBlocks}">
-		    	<g:Label styleName="{style.paddingLabelStyle}">Viernes:</g:Label>
-		    	<g:SuggestBox ui:field="fridayHoursOpt" styleName="{style.suggestMonthBoxStyle} {style.suggestFridayStyle}"/>
-		    	<g:Button ui:field="expandFridayHours"/>
-		    </g:HorizontalPanel>
-		    <g:HorizontalPanel ui:field="saturdayBlock" styleName="{style.paddingBlocks}">
-		    	<g:Label styleName="{style.paddingLabelStyle}">Sabado:</g:Label>
-		    	<g:SuggestBox ui:field="saturdayHoursOpt" styleName="{style.suggestMonthBoxStyle} {style.suggestSaturdayStyle}"/>
-		    	<g:Button ui:field="expandSaturdayHours"/>
-		    </g:HorizontalPanel>
-		    <g:HorizontalPanel ui:field="sundayBlock" styleName="{style.paddingBlocks}">
-		    	<g:Label styleName="{style.paddingLabelStyle}">Domingo:</g:Label>
-		    	<g:SuggestBox ui:field="sundayHoursOpt" styleName="{style.suggestMonthBoxStyle} {style.suggestSundayStyle}"/>
-		    	<g:Button ui:field="expandSundayHours"/>
-		    </g:HorizontalPanel>
-		    <g:HorizontalPanel styleName="{style.paddingBlocks}">
-		    	<g:Button styleName="{style.closeButton}" ui:field="cancelButton">Cerrar</g:Button>
-		    	<g:Button styleName="{style.closeButton}" ui:field="acceptButton">OK</g:Button>
-		    </g:HorizontalPanel>
-		</g:VerticalPanel>
-			
+		<g:HTMLPanel styleName="aon-width-all aon-height-all">
+	
+			<table class="aon-width-all aon-height-all" style="padding: 5px;">
+				<tr ui:field="mondayBlock">
+					<td>
+						<g:Label>Lunes:</g:Label>
+					</td>
+					<td>
+						<g:HorizontalPanel>
+							<g:SuggestBox ui:field="mondayHoursOpt" styleName="{style.borderBx}"/>
+		    				<g:Button ui:field="expandMondayHours" styleName="{style.bottonExpandStyle}"/>
+						</g:HorizontalPanel>
+					</td>
+				</tr>
+				<tr ui:field="tuesdayBlock">
+					<td>
+						<g:Label>Martes:</g:Label>
+					</td>
+					<td>
+						<g:HorizontalPanel>
+							<g:SuggestBox ui:field="tuesdayHoursOpt" styleName="{style.borderBx}"/>
+		    				<g:Button ui:field="expandTuesdayHours" styleName="{style.bottonExpandStyle}"/>
+						</g:HorizontalPanel>
+					</td>
+				</tr>
+				<tr ui:field="wednesdayBlock">
+					<td>
+						<g:Label>Miércoles:</g:Label>
+					</td>
+					<td>
+						<g:HorizontalPanel>
+							<g:SuggestBox ui:field="wednesdayHoursOpt" styleName="{style.borderBx}"/>
+		    				<g:Button ui:field="expandWednesdayHours" styleName="{style.bottonExpandStyle}"/>
+						</g:HorizontalPanel>
+					</td>
+				</tr>
+				<tr ui:field="thursdayBlock">
+					<td>
+						<g:Label>Jueves:</g:Label>
+					</td>
+					<td>
+						<g:HorizontalPanel>
+							<g:SuggestBox ui:field="thursdayHoursOpt" styleName="{style.borderBx}"/>
+		    				<g:Button ui:field="expandThursdayHours" styleName="{style.bottonExpandStyle}"/>
+						</g:HorizontalPanel>
+					</td>
+				</tr>
+				<tr ui:field="fridayBlock">
+					<td>
+						<g:Label>Viernes:</g:Label>
+					</td>
+					<td>
+						<g:HorizontalPanel>
+							<g:SuggestBox ui:field="fridayHoursOpt" styleName="{style.borderBx}"/>
+		    				<g:Button ui:field="expandFridayHours" styleName="{style.bottonExpandStyle}"/>
+						</g:HorizontalPanel>
+					</td>
+				</tr>
+				<tr ui:field="saturdayBlock">
+					<td>
+						<g:Label>Sábado:</g:Label>
+					</td>
+					<td>
+						<g:HorizontalPanel>
+							<g:SuggestBox ui:field="saturdayHoursOpt" styleName="{style.borderBx}"/>
+		    				<g:Button ui:field="expandSaturdayHours" styleName="{style.bottonExpandStyle}"/>
+						</g:HorizontalPanel>
+					</td>
+				</tr>
+				<tr ui:field="sundayBlock">
+					<td>
+						<g:Label>Domingo:</g:Label>
+					</td>
+					<td>
+						<g:HorizontalPanel>
+							<g:SuggestBox ui:field="sundayHoursOpt" styleName="{style.borderBx}"/>
+		    				<g:Button ui:field="expandSundayHours" styleName="{style.bottonExpandStyle}"/>
+						</g:HorizontalPanel>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" align="right" style="padding-top: 15px;">
+						<g:Button ui:field="cancelButton">Cerrar</g:Button>
+			    		<g:Button ui:field="acceptButton">OK</g:Button>
+					</td>
+				</tr>
+			</table>
+				
+		</g:HTMLPanel>
+		
 	</g:HTMLPanel>
 
 </ui:UiBinder>
