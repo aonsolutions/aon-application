@@ -20,6 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.irpf.Irpf2020Update;
+import net.aonsolutions.db.up2date.irpf.Irpf2020UpdateII;
 import net.aonsolutions.db.up2date.payroll.AyudaTUpdate;
 
 public class Up2Date {
@@ -84,7 +85,8 @@ public class Up2Date {
     		//Artist2019Insert.ARTIST2019INSERT,
     		//DropDays2019Insert.DROPDAYS2019INSERT
 //    		Irpf2020Update.IRPF2020UPDATE
-    		AyudaTUpdate.AYUDATUPDATE
+//    		AyudaTUpdate.AYUDATUPDATE
+    		Irpf2020UpdateII.IRPF2020UPDATEII
     };
 
 
