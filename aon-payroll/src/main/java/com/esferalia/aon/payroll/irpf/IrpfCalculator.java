@@ -2549,7 +2549,7 @@ public class IrpfCalculator {
 			SQLIrpfCalculatorContext sqlCtx = (SQLIrpfCalculatorContext) ctx;
 			
 			Date chargeDate = sqlCtx.getChargeDate();
-			chargeDate = AonDateUtils.add(chargeDate, Calendar.YEAR, -1) ;
+//			chargeDate = AonDateUtils.add(chargeDate, Calendar.YEAR, -1) ;
 			
 			Double percent = JooqGeozoneIrpf.getPercent(sqlCtx.getConnection(),
 					geozone, amount, descendants, handicap, new java.sql.Date(
