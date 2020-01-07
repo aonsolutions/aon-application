@@ -39,6 +39,10 @@ public abstract class EmployeeCalendarInactivityDialog extends CustomDialog {
 	
 	@UiField
 	Button acceptButton;
+	
+	// -------------------------------------------------------------------------------
+	// --------------------------------- MAIN CLASS ----------------------------------
+	// -------------------------------------------------------------------------------
 
 	public EmployeeCalendarInactivityDialog(String caption) {
 		setCaption(caption);
@@ -83,6 +87,10 @@ public abstract class EmployeeCalendarInactivityDialog extends CustomDialog {
 	}
 
 	protected abstract void onAccept();
+	
+	// -------------------------------------------------------------------------------
+	// -------------------------------- AUX METHODS ----------------------------------
+	// -------------------------------------------------------------------------------
 	
 	public Date getStartDate() {
 		return startDateBox.getValue();
