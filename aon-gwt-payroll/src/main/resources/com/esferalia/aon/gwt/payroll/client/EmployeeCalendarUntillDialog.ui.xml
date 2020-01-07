@@ -11,83 +11,41 @@
     
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeeCalendarUntillDialog.MyStyle">
 
-		.paddingLabelStyle{
-			padding-left: 7px;
-    		padding-top: 2px;
-		}
-
-		.paddingBlocks{
-			padding-bottom: 15px;
-			padding-top: 10px;
-		}
-
 		.form {
 			padding: 10px;
 		}
-
-		.closeButton {
-			position: relative;
-    		left: 60px;
-			border: 1px solid #bbb;
-			border-radius: 3px;
-			cursor: pointer;
-		}
-
-		.hideElement{
-			visibility: hidden;
-		}
-
-		.messageStyle{
-			color: red;
-    		font-size: small;
-    		padding-bottom: 10px;
-    		width: 300px;
-		}
-
-		.dateStyle{
-			font-size: small;
-    		padding-right: 20px;
-    		padding-left: 50px;
-		}
-
-		.paddingButtons{
-			padding-left: 58px;
-		}
-
-		.margingButton{
-			margin-left: 10px;
-		}
 		
-		.marginTop{
-			margin-top: 20px;
+		.dateBox{
+			width: 100% !important;
+			text-align: center;
+			border: solid #808080 1px;
 		}
 
 	</ui:style>
 
 	<g:HTMLPanel styleName="{style.form}">
-		<table class="aon-width-all aon-height-all" >
-			<tr>
-				<td  colspan="2" >
-					<g:Label ui:field="message"/>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<g:Label ui:field="date" styleName="{style.paddingLabelStyle}">Fecha fin:</g:Label>
-				</td>
-				<td>
-					<a:DateBoxEx ui:field="endDateBox"></a:DateBoxEx>
-				</td>
-			</tr>
-			<tr>
-			</tr>
-			<tr>
-				<td colspan="2" align="right">
-					<g:Button ui:field="cancelButton" styleName="{style.marginTop}" debugId="paymetDialogCancelButton">Cancelar</g:Button>
-					<g:Button ui:field="acceptButton" styleName="{style.marginTop}" debugId="paymetDialogAcceptButton" >Aceptar</g:Button>
-				</td>
-			</tr>
-		</table>
+		
+		<g:HTMLPanel styleName="aon-width-all aon-height-all">
+	
+			<table class="aon-width-all aon-height-all" style="padding: 5px;">
+				<tr>
+					<td>
+						<g:Label>Fecha fin:</g:Label>
+					</td>
+					<td>
+						<a:DateBoxEx ui:field="endDateBox" styleName="{style.dateBox}"></a:DateBoxEx>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" align="right" style="padding-top: 15px;">
+						<g:Button ui:field="cancelButton">Cerrar</g:Button>
+			    		<g:Button ui:field="acceptButton">OK</g:Button>
+					</td>
+				</tr>
+			</table>
+				
+		</g:HTMLPanel>
+		
 	</g:HTMLPanel>
 
 </ui:UiBinder>
