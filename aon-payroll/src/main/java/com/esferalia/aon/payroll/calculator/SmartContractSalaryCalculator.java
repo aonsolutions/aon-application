@@ -475,6 +475,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				return subtractITPart(results, its, expressionContext);
 			} else if (results.size() == 1
 				&& isWholeMonth(results.get(0))	
+				&& contractPayment.getScope() == ExpressionScope.AGREEMENT
 				&& allAgreementConstants(results.get(0).getContext()) ) {
 				return subtractITPart(results, its, expressionContext);
 			}
