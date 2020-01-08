@@ -80,6 +80,7 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.HideException;
 import com.esferalia.aon.salary.expression.IExpression;
+import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InterruptedException;
@@ -1053,6 +1054,12 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		return Collections.singletonList(result);
 	}
 
+	protected List<ITimedResult<Double>> fixConstantAgreementResult(IContractPayment contractPayment, ITimedResult<Double> result, Date start, Date end, ExpressionContext expressionContext) 
+	throws UnsupportedOperationException, UndefinedVariablesException
+	{
+		return Collections.singletonList(result);
+	}
+
 	protected List<ITimedResult<Double>> fixGuaranteedResults(IContractPayment contractPayment, List<ITimedResult<Double>> results, List<Period> its , Date start, Date end, ExpressionContext expressionContext) 
 	throws UnsupportedOperationException, UndefinedVariablesException
 	{
@@ -1158,6 +1165,16 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					results.get(0).getContext().size() == 0 ) {
 				try {
 					results = fixConstantResult(contractPayment, results.get(0), start, end, expressionContext);
+				} catch (UnsupportedOperationException e) {
+					onCheckError(contractPayment, e.getMessage());
+				}
+			} else if ( results.size() == 1 && 
+					results.get(0).getValue() != null && 
+					results.get(0).getValue() > 0.00 && 
+					isPartialMonth(results.get(0)) &&
+					allAgreementConstants(results.get(0).getContext()) ) {
+				try {
+					results = fixConstantAgreementResult(contractPayment, results.get(0), start, end, expressionContext);
 				} catch (UnsupportedOperationException e) {
 					onCheckError(contractPayment, e.getMessage());
 				}
@@ -1277,7 +1294,32 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 	}
 
+	// -------------------------------------------------------------- Protected
+
+	protected static boolean allAgreementConstants(Map<String, ITimedVariable<?>> context) {
+		return context.values().stream()
+		.allMatch(var -> {
+			if (!( var instanceof IExpressionVariable<?> ) ) 
+				return false;
+			
+			IExpression expression = ((IExpressionVariable<?>)var).getExpression();
+			return expression.getScope() == ExpressionScope.AGREEMENT;
+		}
+		);
+	}
+
 	// ---------------------------------------------------------------- Private
+	
+	private static boolean isPartialMonth(ITimedResult<?> result) {
+		int startDay = AonDateUtils.getDay(result.getPeriod().getStart());
+		if ( startDay > 1 ) 
+			return true;
+		
+		int endDay = AonDateUtils.getDay(result.getPeriod().getEnd());
+		int lastDay = AonDateUtils.getDay(AonDateUtils.getMonthLastDay(result.getPeriod().getEnd()));
+		return endDay < lastDay;
+	}
+
 
 	private static void addResult(ExpressionContext expressionContext, String name, Date resultStart, Date resultEnd,
 			Double resultValue) {

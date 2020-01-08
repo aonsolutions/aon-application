@@ -28,6 +28,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.net.whois.WhoisClient;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
@@ -472,6 +473,10 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				// so we'll subtract the proportional part of IT.
 
 				return subtractITPart(results, its, expressionContext);
+			} else if (results.size() == 1
+				&& isWholeMonth(results.get(0))	
+				&& allAgreementConstants(results.get(0).getContext()) ) {
+				return subtractITPart(results, its, expressionContext);
 			}
 			
 			
@@ -486,6 +491,28 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 
 		throw new UnsupportedOperationException(String.format(IT_PAY_MSG, contractPayment.getDescription(),
 					contractPayment.getExpression())); 
+	}
+	
+	@Override
+	protected List<ITimedResult<Double>> fixConstantAgreementResult(IContractPayment contractPayment,
+			ITimedResult<Double> result, Date start, Date end, ExpressionContext expressionContext)
+			throws UnsupportedOperationException, UndefinedVariablesException {
+		Period period = result.getPeriod();
+		long days = getDays(period);
+		
+		double monthDays = AonDateUtils.get(getLastDayOfMonth(period.getEnd()), Calendar.DAY_OF_MONTH);
+		try {
+			monthDays = expressionContext.eval(ContextVariable.MONTH_DAYS.getName(), period.getStart(), period.getEnd(), Number.class).get(0).getValue().doubleValue();
+		} catch ( Throwable t ) {
+		}
+		
+		
+		double value = result.getValue() * days / monthDays;
+		
+		ITimedResult<Double> fixed = 
+				new TimedResult<Double>(value, period, result.getContext());
+
+		return Collections.singletonList(fixed);
 	}
 
 	private List<ITimedResult<Double>> subtractITPart(List<ITimedResult<Double>> results, List<Period> its,
@@ -785,8 +812,12 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		expressionContext.setVariable(ContextVariable.PAYMENT_VARIABLE, contractPayment, result.getPeriod().getStart(), result.getPeriod().getEnd());
 		ContextFunctions.loadFunctions(expressionContext, result.getPeriod().getStart(), result.getPeriod().getEnd());
 		
+		String quoteExpression = contractPayment.getQuoteExpression();
+		if ( AonStringUtils.isBlank(quoteExpression)) 
+			quoteExpression = ContextVariable.ALL;
+		
 		Double value = 0.00;
-		for ( ITimedResult<Number> quote : expressionContext.eval(contractPayment.getQuoteExpression(), result.getPeriod().getStart(), result.getPeriod().getEnd(), Number.class) )
+		for ( ITimedResult<Number> quote : expressionContext.eval(quoteExpression, result.getPeriod().getStart(), result.getPeriod().getEnd(), Number.class) )
 			value += quote.getValue().doubleValue();
 		
 		
@@ -876,6 +907,14 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		
 	}
 	
+	private static boolean isWholeMonth ( ITimedResult<?> result ) {
+		Period period = result.getPeriod();
+		int lastDayOfMonth =AonDateUtils.get(AonDateUtils.getLastDayOfMonth(period.getEnd()), Calendar.DAY_OF_MONTH);
+		
+		return ( AonDateUtils.get(period.getStart(), Calendar.DAY_OF_MONTH) == 1) 
+				&& ( AonDateUtils.get(period.getEnd(), Calendar.DAY_OF_MONTH) == lastDayOfMonth);
+	}
+
 	private static boolean notOnly4ThisMonth ( Date date, IContractPayment payment) {
 		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(date);
 		Date endDayOfMonth = AonDateUtils.getFirstDayOfMonth(date);
