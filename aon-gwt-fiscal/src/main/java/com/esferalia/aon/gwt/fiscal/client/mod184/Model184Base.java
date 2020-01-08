@@ -859,7 +859,7 @@ abstract class Model184Base extends DockLayoutPanel {
 		});
 		tab.setWidget(6, 1, lrDocument);
 		
-		tab.setWidget(6, 0, new MediumLabel(AON.MSG.lrName()));
+		tab.setWidget(6, 2, new MediumLabel(AON.MSG.lrName()));
 		TextBox lrName = new TextBox();
 		lrName.setStyleName(AON.AON_CSS.aonInputText());
 		lrName.setMaxLength(40);
@@ -873,7 +873,7 @@ abstract class Model184Base extends DockLayoutPanel {
 				markAsDirty();
 			}
 		});
-		tab.setWidget(6, 1, lrDocument);
+		tab.setWidget(6, 3, lrName);
 
 		entityScrollPanel.setWidget(tab);
 		tabPanel.add(entityScrollPanel, TAB_TEMPLATE.render(AON.MSG.entity(), AON.AON_CSS.aonIconModel()));
@@ -1102,8 +1102,10 @@ abstract class Model184Base extends DockLayoutPanel {
 			incomeManager = new Model184Income2014( getCallback() , selectedIndex );	
 		} else if (getCallback().getMod184().getYear() == 2015) {
 			incomeManager = new Model184Income2015( getCallback() , selectedIndex );
-		} else {
+		} else if (getCallback().getMod184().getYear() > 2015 && getCallback().getMod184().getYear() < 2019) {
 			incomeManager = new Model184Income2016( getCallback() , selectedIndex );
+		} else {
+			incomeManager = new Model184Income2019( getCallback() , selectedIndex );
 		}
 		tabPanel.add( (Widget) incomeManager,  TAB_TEMPLATE.render(AON.MSG.entityIncomes(), AON.AON_CSS.aonIconInvoice()) );
 	}
@@ -1114,8 +1116,10 @@ abstract class Model184Base extends DockLayoutPanel {
 			partnerManager = new Model184Partner2014( getCallback() , selectedIndex );
 		} else if (getCallback().getMod184().getYear() == 2015) {
 			partnerManager = new Model184Partner2015( getCallback() , selectedIndex );
-		} else {
+		} else if (getCallback().getMod184().getYear() > 2015 && getCallback().getMod184().getYear() < 2019) {
 			partnerManager = new Model184Partner2016( getCallback() , selectedIndex );
+		} else {
+			partnerManager = new Model184Partner2019( getCallback() , selectedIndex );
 		}
 		tabPanel.add( (Widget) partnerManager,  TAB_TEMPLATE.render(AON.MSG.entityPartners(), AON.AON_CSS.aonIconEmployee()) );
 	}

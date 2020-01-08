@@ -31,11 +31,59 @@ public class Mod184Income implements Serializable {
 	private double retention;
 	private String location;
 	private String cadasdralReference;
-	private double staffExpenses;
+	
+	
 	private double assetAcquisition;
+	
+	// Detalle de gastos / Rendimientos de actividades económicas
+	// Gastos Personal
+	private double staffExpenses;
+	// Consumos de explotación
+	private double consumosExplotacion;
+	// Tributos Fiscalmente deducibles
 	private double taxDeduction;
+	// Arrendamientos y cánones
+	private double arrendamientosCanones;
+	// Reparaciones y conservación
+	private double reparacionConservacion;
+	// Servicios profesionales independientes
+	private double servProfIndependientes;
+	// Suministros
+	private double suministros;
+	// Gastos financieros
+	private double gastosFinancieros;
+	// Amortizaciones
+	private double amortizaciones;
+	// Provisiones
+	private double provisiones;
+	// Otros Gastos Fiscalmente Deducibles
 	private double otherTaxDeduction;
+	// Criterio de cobros y pagos
 	private boolean vatAccrualPayment; 
+	 
+	// Detalle de gastos / Rendimientos de capital inmobiliario
+	// Intereses y demás gastos de financiación
+	private double inmInteresFinanciacion;
+	// Conservación y reparación
+	private double inmReparacionConservacion;
+	// Intereses / Gastos de reparación y conservación pendientes
+	private double inmGastosReparacionConservacionPendientes;
+	// Tributos y recargos
+	private double inmTributosRecargos;
+	// Saldos de dudoso cobro
+	private double inmSaldoDudosoCobro;
+	// Cantidades devengadas por terceros
+	private double inmCantidadesDevengadas;
+	// Primas de seguros
+	private double inmPrimasSeguro;
+	// Amortización del inmueble
+	private double inmAmortizacionInmueble;	
+	// Amortización de bienes muebles
+	private double inmAmortizacionMueble;	
+	// Otros gastos deducibles
+	private double inmOtrosGastosDeducible;	
+	// Número de días de arrendamiento o cesión de uso y disfrute	
+	private int inmNumeroDiasArrendamiento;
 
 	private boolean dirty;
 	private boolean deleted;
@@ -298,6 +346,177 @@ public class Mod184Income implements Serializable {
 		this.vatAccrualPayment = vatAccrualPayment;
 		return this;
 	}
+	public double getConsumosExplotacion() {
+		return consumosExplotacion;
+	}
+
+	public Mod184Income setConsumosExplotacion(double consumosExplotacion) {
+		this.consumosExplotacion = consumosExplotacion;
+		return this;
+	}
+
+	public double getArrendamientosCanones() {
+		return arrendamientosCanones;
+	}
+
+	public Mod184Income setArrendamientosCanones(double arrendamientosCanones) {
+		this.arrendamientosCanones = arrendamientosCanones;
+		return this;
+	}
+
+	public double getReparacionConservacion() {
+		return reparacionConservacion;
+	}
+
+	public Mod184Income setReparacionConservacion(double reparacionConservacion) {
+		this.reparacionConservacion = reparacionConservacion;
+		return this;
+	}
+
+	public double getServProfIndependientes() {
+		return servProfIndependientes;
+	}
+
+	public Mod184Income setServProfIndependientes(double servProfIndependientes) {
+		this.servProfIndependientes = servProfIndependientes;
+		return this;
+	}
+
+	public double getSuministros() {
+		return suministros;
+	}
+
+	public Mod184Income setSuministros(double suministros) {
+		this.suministros = suministros;
+		return this;
+	}
+
+	public double getGastosFinancieros() {
+		return gastosFinancieros;
+	}
+
+	public Mod184Income setGastosFinancieros(double gastosFinancieros) {
+		this.gastosFinancieros = gastosFinancieros;
+		return this;
+	}
+
+	public double getAmortizaciones() {
+		return amortizaciones;
+	}
+
+	public Mod184Income setAmortizaciones(double amortizaciones) {
+		this.amortizaciones = amortizaciones;
+		return this;
+	}
+
+	public double getProvisiones() {
+		return provisiones;
+	}
+
+	public Mod184Income setProvisiones(double provisiones) {
+		this.provisiones = provisiones;
+		return this;
+	}
+
+	public double getInmInteresFinanciacion() {
+		return inmInteresFinanciacion;
+	}
+
+	public Mod184Income setInmInteresFinanciacion(double inmInteresFinanciacion) {
+		this.inmInteresFinanciacion = inmInteresFinanciacion;
+		return this;
+	}
+
+	public double getInmReparacionConservacion() {
+		return inmReparacionConservacion;
+	}
+
+	public Mod184Income setInmReparacionConservacion(double inmReparacionConservacion) {
+		this.inmReparacionConservacion = inmReparacionConservacion;
+		return this;
+	}
+
+	public double getInmGastosReparacionConservacionPendientes() {
+		return inmGastosReparacionConservacionPendientes;
+	}
+
+	public Mod184Income setInmGastosReparacionConservacionPendientes(double inmGastosReparacionConservacionPendientes) {
+		this.inmGastosReparacionConservacionPendientes = inmGastosReparacionConservacionPendientes;
+		return this;
+	}
+
+	public double getInmTributosRecargos() {
+		return inmTributosRecargos;
+	}
+
+	public Mod184Income setInmTributosRecargos(double inmTributosRecargos) {
+		this.inmTributosRecargos = inmTributosRecargos;
+		return this;
+	}
+
+	public double getInmSaldoDudosoCobro() {
+		return inmSaldoDudosoCobro;
+	}
+
+	public Mod184Income setInmSaldoDudosoCobro(double inmSaldoDudosoCobro) {
+		this.inmSaldoDudosoCobro = inmSaldoDudosoCobro;
+		return this;
+	}
+
+	public double getInmCantidadesDevengadas() {
+		return inmCantidadesDevengadas;
+	}
+
+	public Mod184Income setInmCantidadesDevengadas(double inmCantidadesDevengadas) {
+		this.inmCantidadesDevengadas = inmCantidadesDevengadas;
+		return this;
+	}
+
+	public double getInmPrimasSeguro() {
+		return inmPrimasSeguro;
+	}
+
+	public Mod184Income setInmPrimasSeguro(double inmPrimasSeguro) {
+		this.inmPrimasSeguro = inmPrimasSeguro;
+		return this;
+	}
+
+	public double getInmAmortizacionInmueble() {
+		return inmAmortizacionInmueble;
+	}
+
+	public Mod184Income setInmAmortizacionInmueble(double inmAmortizacionInmueble) {
+		this.inmAmortizacionInmueble = inmAmortizacionInmueble;
+		return this;
+	}
+
+	public double getInmAmortizacionMueble() {
+		return inmAmortizacionMueble;
+	}
+
+	public Mod184Income setInmAmortizacionMueble(double inmAmortizacionMueble) {
+		this.inmAmortizacionMueble = inmAmortizacionMueble;
+		return this;
+	}
+
+	public double getInmOtrosGastosDeducible() {
+		return inmOtrosGastosDeducible;
+	}
+
+	public Mod184Income setInmOtrosGastosDeducible(double inmOtrosGastosDeducible) {
+		this.inmOtrosGastosDeducible = inmOtrosGastosDeducible;
+		return this;
+	}
+
+	public int getInmNumeroDiasArrendamiento() {
+		return inmNumeroDiasArrendamiento;
+	}
+
+	public Mod184Income setInmNumeroDiasArrendamiento(int inmNumeroDiasArrendamiento) {
+		this.inmNumeroDiasArrendamiento = inmNumeroDiasArrendamiento;
+		return this;
+	}
+
 	public boolean isDirty() {
 		return dirty;
 	}

@@ -19,9 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.irpf.Irpf2020Update;
-import net.aonsolutions.db.up2date.irpf.Irpf2020UpdateII;
-import net.aonsolutions.db.up2date.payroll.AyudaTUpdate;
+import net.aonsolutions.db.up2date.fiscal.AlterFsMod184Detail2019;
 
 public class Up2Date {
 
@@ -86,7 +84,8 @@ public class Up2Date {
     		//DropDays2019Insert.DROPDAYS2019INSERT
 //    		Irpf2020Update.IRPF2020UPDATE
 //    		AyudaTUpdate.AYUDATUPDATE
-    		Irpf2020UpdateII.IRPF2020UPDATEII
+//    		Irpf2020UpdateII.IRPF2020UPDATEII
+    		AlterFsMod184Detail2019.ALTER_FS_MODEL_184_DETAIL_2019
     };
 
 
