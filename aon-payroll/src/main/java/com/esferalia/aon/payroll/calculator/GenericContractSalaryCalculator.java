@@ -1339,7 +1339,10 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				Number prevValue = prev.getValue(prev.getPeriod());
 				if (valueStart.compareTo(prevStart) < 0)
 					expressionContext.setVariable(name, resultValue, valueStart, prev(prevStart));
-				expressionContext.setVariable(name, resultValue + prevValue.doubleValue(), prevStart, prevEnd);
+				if (prev instanceof IExpressionVariable<?>)
+					expressionContext.setVariable(name, resultValue, prevStart, prevEnd);
+				else
+					expressionContext.setVariable(name, resultValue + prevValue.doubleValue(), prevStart, prevEnd);
 				valueStart = next(prevEnd);
 			} catch (Exception e) {
 				System.err.println(String.format("ERROR [%s]: %s", name, e.getLocalizedMessage()));
