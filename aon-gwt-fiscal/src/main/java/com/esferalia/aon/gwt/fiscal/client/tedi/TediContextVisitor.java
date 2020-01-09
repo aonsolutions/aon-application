@@ -174,86 +174,90 @@ public class TediContextVisitor implements ITediContextVisitor {
 
 	@Override
 	public void visitAmbiguousRegistry(ICallback callback) {
-		showAmbiguousRegistryDialog(AON.MSG.titular(), new ITediCallback<AccountingRegistry>() {
-			@Override
-			public ICallback getCallback() {
-				return callback;
-			}
-			@Override
-			public void onAccept(AccountingRegistry registry) {
-				final AccountingRegistry ar = registry;
-				FISCAL_SERVICE.initializeInvoice(getCurrentDomainName(), getCurrentDomain(), ar, null,
-						callback.getResult().getInvoice().getIssueDate(), new AsyncCallback<AccountingInvoice>() {
-
-							@Override
-							public void onSuccess(AccountingInvoice ai) {
-								callback.getResult().getAccountingInvoice().setRegistry(ai.getRegistry());
-								callback.getResult().getInvoice().setRegistry(ai.getRegistry().getId());
-								callback.getResult().getInvoice().setRegistryDocumentType(ai.getRegistry().getDocumentType());
-								callback.getResult().getInvoice().setRegistryDocumentCountry(ai.getRegistry().getDocumentCountry());
-								callback.getResult().getInvoice().setRegistryDocument(ai.getRegistry().getDocument());
-								callback.getResult().getInvoice().setRegistryName(ai.getRegistry().getName());
-								callback.getResult().getInvoice().setScope(new Scope().setId(ai.getRegistry().getScope()));
-								if (callback.getResult().getTedi().getType() == TediInvoiceType.TICKET) {
-									callback.getResult().getInvoice().setType(InvoiceType.UNDEDUCTIBLE);
-								}
-								callback.onAccept(callback.getResult());
+		if ( callback.getResult().getInvoice().getIssueDate() != null) {
+			showAmbiguousRegistryDialog(AON.MSG.titular(), new ITediCallback<AccountingRegistry>() {
+				@Override
+				public ICallback getCallback() {
+					return callback;
+				}
+				@Override
+				public void onAccept(AccountingRegistry registry) {
+					final AccountingRegistry ar = registry;
+					FISCAL_SERVICE.initializeInvoice(getCurrentDomainName(), getCurrentDomain(), ar, null,
+							callback.getResult().getInvoice().getIssueDate(), new AsyncCallback<AccountingInvoice>() {
+						
+						@Override
+						public void onSuccess(AccountingInvoice ai) {
+							callback.getResult().getAccountingInvoice().setRegistry(ai.getRegistry());
+							callback.getResult().getInvoice().setRegistry(ai.getRegistry().getId());
+							callback.getResult().getInvoice().setRegistryDocumentType(ai.getRegistry().getDocumentType());
+							callback.getResult().getInvoice().setRegistryDocumentCountry(ai.getRegistry().getDocumentCountry());
+							callback.getResult().getInvoice().setRegistryDocument(ai.getRegistry().getDocument());
+							callback.getResult().getInvoice().setRegistryName(ai.getRegistry().getName());
+							callback.getResult().getInvoice().setScope(new Scope().setId(ai.getRegistry().getScope()));
+							if (callback.getResult().getTedi().getType() == TediInvoiceType.TICKET) {
+								callback.getResult().getInvoice().setType(InvoiceType.UNDEDUCTIBLE);
 							}
-
-							@Override
-							public void onFailure(Throwable caught) {
-								Window.alert(caught.getMessage());
-							}
-						});
-			}
-
-			@Override
-			public void onCancel() {
-				callback.onCancel();
-			}
-		});
+							callback.onAccept(callback.getResult());
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+							Window.alert(caught.getMessage());
+						}
+					});
+				}
+				
+				@Override
+				public void onCancel() {
+					callback.onCancel();
+				}
+			});
+		}
 	}
 	
 	@Override
 	public void visitRegistry(ICallback callback) {
-		showRegistryDialog(AON.MSG.titular(), new ITediCallback<AccountingRegistry>() {
-			@Override
-			public ICallback getCallback() {
-				return callback;
-			}
-			@Override
-			public void onAccept(AccountingRegistry registry) {
-				final AccountingRegistry ar = registry;
-				FISCAL_SERVICE.initializeInvoice(getCurrentDomainName(), getCurrentDomain(), ar, null,
-						callback.getResult().getInvoice().getIssueDate(), new AsyncCallback<AccountingInvoice>() {
-
-							@Override
-							public void onSuccess(AccountingInvoice ai) {
-								callback.getResult().getAccountingInvoice().setRegistry(ai.getRegistry());
-								callback.getResult().getInvoice().setRegistry(ai.getRegistry().getId());
-								callback.getResult().getInvoice().setRegistryDocumentType(ai.getRegistry().getDocumentType());
-								callback.getResult().getInvoice().setRegistryDocumentCountry(ai.getRegistry().getDocumentCountry());
-								callback.getResult().getInvoice().setRegistryDocument(ai.getRegistry().getDocument());
-								callback.getResult().getInvoice().setRegistryName(ai.getRegistry().getName());
-								callback.getResult().getInvoice().setScope(new Scope().setId(ai.getRegistry().getScope()));
-								if (callback.getResult().getTedi().getType() == TediInvoiceType.TICKET) {
-									callback.getResult().getInvoice().setType(InvoiceType.UNDEDUCTIBLE);
+		if ( callback.getResult().getInvoice().getIssueDate() != null) {
+			showRegistryDialog(AON.MSG.titular(), new ITediCallback<AccountingRegistry>() {
+				@Override
+				public ICallback getCallback() {
+					return callback;
+				}
+				@Override
+				public void onAccept(AccountingRegistry registry) {
+					final AccountingRegistry ar = registry;
+					FISCAL_SERVICE.initializeInvoice(getCurrentDomainName(), getCurrentDomain(), ar, null,
+							callback.getResult().getInvoice().getIssueDate(), new AsyncCallback<AccountingInvoice>() {
+	
+								@Override
+								public void onSuccess(AccountingInvoice ai) {
+									callback.getResult().getAccountingInvoice().setRegistry(ai.getRegistry());
+									callback.getResult().getInvoice().setRegistry(ai.getRegistry().getId());
+									callback.getResult().getInvoice().setRegistryDocumentType(ai.getRegistry().getDocumentType());
+									callback.getResult().getInvoice().setRegistryDocumentCountry(ai.getRegistry().getDocumentCountry());
+									callback.getResult().getInvoice().setRegistryDocument(ai.getRegistry().getDocument());
+									callback.getResult().getInvoice().setRegistryName(ai.getRegistry().getName());
+									callback.getResult().getInvoice().setScope(new Scope().setId(ai.getRegistry().getScope()));
+									if (callback.getResult().getTedi().getType() == TediInvoiceType.TICKET) {
+										callback.getResult().getInvoice().setType(InvoiceType.UNDEDUCTIBLE);
+									}
+									callback.onAccept(callback.getResult());
 								}
-								callback.onAccept(callback.getResult());
-							}
-
-							@Override
-							public void onFailure(Throwable caught) {
-								Window.alert(caught.getMessage());
-							}
-						});
-			}
-
-			@Override
-			public void onCancel() {
-				callback.onCancel();
-			}
-		});
+	
+								@Override
+								public void onFailure(Throwable caught) {
+									Window.alert(caught.getMessage());
+								}
+							});
+				}
+	
+				@Override
+				public void onCancel() {
+					callback.onCancel();
+				}
+			});
+		}
 	}
 
 	@Override
