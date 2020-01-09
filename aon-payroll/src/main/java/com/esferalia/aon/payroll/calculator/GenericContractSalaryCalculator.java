@@ -1070,6 +1070,12 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		return results;
 	}
 
+	protected List<ITimedResult<Double>> fixConstantAgreementGuaranteed(IContractPayment contractPayment, ITimedResult<Double> results, List<Period> its , Date start, Date end, ExpressionContext expressionContext) 
+	throws UnsupportedOperationException, UndefinedVariablesException
+	{
+		return Collections.singletonList(results);
+	}
+
 	protected List<ITimedResult<Double>> fixItResults(IContractPayment contractPayment, List<ITimedResult<Double>> results, List<Period> its , Date start, Date end, ExpressionContext expressionContext) 
 	throws UnsupportedOperationException, UndefinedVariablesException
 	{
@@ -1183,7 +1189,18 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				} catch (UnsupportedOperationException e) {
 					onCheckError(contractPayment, e.getMessage());
 				}
-			}  
+			} else if ( results.size() == 1 && 
+					results.get(0).getValue() != null && 
+					results.get(0).getValue() > 0.00 && 
+					(contractPaymentType == PaymentType.CRA_0055) &&
+					contractPayment.getScope() == ExpressionScope.AGREEMENT &&
+					allAgreementConstants(results.get(0).getContext()) ) {
+				try {
+					results = fixConstantAgreementGuaranteed(contractPayment, results.get(0), leavePeriods, start, end, expressionContext);
+				} catch (UnsupportedOperationException e) {
+					onCheckError(contractPayment, e.getMessage());
+				}
+			} 
 			
 			if ( !results.isEmpty() && 
 					contractPaymentType == PaymentType.CRA_0004 && 

@@ -8,6 +8,7 @@ import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.payroll.calculator.ContextFunctions.parseExtraDate;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARENTEED;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.salary.enumeration.PaymentType.CRA_0001;
 import static com.esferalia.aon.watson.util.AonDateUtils.add;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
@@ -40,6 +41,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.DelegateContractPayment;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
+import com.esferalia.aon.payroll.calculator.ContractLeaveLoader.Leave;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory.IExtraPayment;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
@@ -598,6 +600,35 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		} catch ( ClassCastException | ExpressionException | SalaryException e ) {
 			
 			return super.fixGuaranteedResults(contractPayment, results, its, start, end, expressionContext);
+		}
+	}
+	
+	@Override
+	protected List<ITimedResult<Double>> fixConstantAgreementGuaranteed(IContractPayment contractPayment,
+			ITimedResult<Double> result, List<Period> its, Date start, Date end,
+			ExpressionContext expressionContext) throws UnsupportedOperationException, UndefinedVariablesException {
+		Double totalPayment = expressionContext.getVariable(ContextVariable.TOTAL_PAYMENT, start, end, Double.class);
+		if ( totalPayment == null )
+			throw new UndefinedContextVariablesException(ContextVariable.TOTAL_PAYMENT);
+		try {
+			
+			List<ITimedResult<Double>> results = new ArrayList<ITimedResult<Double>>();
+			
+			double total = result.getValue() - totalPayment;
+			long itDays = its.stream().collect(Collectors.summingLong(it -> it.daysStream().count()));
+			double byDay = total / itDays;
+			
+			for ( Period it : its ) {
+				double guaranteed = byDay * it.daysStream().count();
+				double prestIt = expressionContext.getVariable(PREST_IT, it.getStart(), it.getEnd(), Double.class);
+				results.add(new TimedResult<Double>(guaranteed-prestIt, it, result.getContext()));
+			}
+			
+			
+			return results;
+			
+		} catch (Exception e) {
+			return super.fixConstantAgreementGuaranteed(contractPayment, result, its, start, end, expressionContext);
 		}
 	}
 
