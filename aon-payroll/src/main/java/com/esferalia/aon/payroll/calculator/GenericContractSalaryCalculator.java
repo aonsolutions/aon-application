@@ -146,8 +146,9 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				&& getScope() != ExpressionScope.APPLICATION
 				&& AonStringUtils.isNotBlank(description) && 
 				!AonStringUtils.equalsIgnoreCase(description, expression) 
-				)
-				return description.toUpperCase()
+				) {
+				String surname = 
+						description.toUpperCase()
 						.replaceAll("\\s", "_")
 						.replaceAll("\u00c1", "A")
 						.replaceAll("\u00c9", "E")
@@ -158,6 +159,9 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 						.replaceAll("\u00d1", "N")
 						.replaceAll("\\W", "")
 						;
+				if ( !AonStringUtils.equalsIgnoreCase(surname, expression) )
+					return surname;
+			}
 			
 			return super.getName();
 		}
