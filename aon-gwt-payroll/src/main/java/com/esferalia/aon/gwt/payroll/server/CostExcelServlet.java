@@ -74,7 +74,7 @@ public class CostExcelServlet extends HttpServlet {
 			// Print salary types
 			List<Byte> _types = new ArrayList<Byte>();
 			_types.add((_salary.equals("1")) ? (byte) 0 : (byte) -1);
-			//_types.add((_extra.equals("1")) ? (byte) 1 : (byte) -1);
+			_types.add((_extra.equals("1")) ? (byte) 1 : (byte) -1);
 			_types.add((_settle.equals("1")) ? (byte) 2 : (byte) -1);
 			_types.add((_delay.equals("1")) ? (byte) 3 : (byte) -1);
 			
@@ -100,6 +100,7 @@ public class CostExcelServlet extends HttpServlet {
 	private class ExcelAction extends AbsExcelAction implements Consumer<MainCost>{
 		private XSSFCellStyle entryHeaderStyle;
 		private XSSFCellStyle footerStyle;
+		private XSSFCellStyle footerDecimalStyle;
 		private Date startDate;
 		private Date endDate;
 		
@@ -193,6 +194,15 @@ public class CostExcelServlet extends HttpServlet {
 			footerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 			footerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
 			footerStyle.setFont(footerFont);
+			
+			footerDecimalStyle = (XSSFCellStyle) workbook.createCellStyle();
+			footerDecimalStyle.setVerticalAlignment( VerticalAlignment.CENTER);
+			footerDecimalStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+			footerDecimalStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+			footerDecimalStyle.setFont(footerFont);
+			footerDecimalStyle.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
+			footerDecimalStyle.setAlignment( HorizontalAlignment.RIGHT );
+			
 		    
 			XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerStyle.clone();
 			rightHeaderCellStyle.setAlignment(HorizontalAlignment.RIGHT);
@@ -322,21 +332,21 @@ public class CostExcelServlet extends HttpServlet {
 			cell = addCell(costsArr[i].getSalaryType());
 			cell.setCellStyle(footerStyle);
 			cell = addCell(costsArr[i].getTotalPayment());
-			cell.setCellStyle(footerStyle);
+			cell.setCellStyle(footerDecimalStyle);
 			cell = addCell(costsArr[i].getEmployeeSS());
-			cell.setCellStyle(footerStyle);
+			cell.setCellStyle(footerDecimalStyle);
 			cell = addCell(costsArr[i].getTotalIRPF());
-			cell.setCellStyle(footerStyle);
+			cell.setCellStyle(footerDecimalStyle);
 			cell = addCell(costsArr[i].getTotalDeductions());
-			cell.setCellStyle(footerStyle);
+			cell.setCellStyle(footerDecimalStyle);
 			cell = addCell(costsArr[i].getTotalLiquid());
-			cell.setCellStyle(footerStyle);
+			cell.setCellStyle(footerDecimalStyle);
 			cell = addCell(costsArr[i].getEnterpriseSS());
-			cell.setCellStyle(footerStyle);
+			cell.setCellStyle(footerDecimalStyle);
 			cell = addCell(costsArr[i].getTotalCost());
-			cell.setCellStyle(footerStyle);
+			cell.setCellStyle(footerDecimalStyle);
 			cell = addCell(costsArr[i].getTotalSS());
-			cell.setCellStyle(footerStyle);
+			cell.setCellStyle(footerDecimalStyle);
 			
 		}
 

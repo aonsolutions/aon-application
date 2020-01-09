@@ -185,6 +185,8 @@ public class JooqCost {
 
 	private static String parseSalaryType(Byte salaryType) {
 		switch (salaryType) {
+		case ((byte)1):	
+			return "Extra";
 		case ((byte)2):	
 			return "Finiquito";
 		case ((byte)3):
