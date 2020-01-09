@@ -75,7 +75,7 @@ public class TediParser {
 		AMOUNT( (aonCtx,result,tedi,aon) ->{
 			aon.setAmount( tedi != null && tedi.getAmount() != null && AonMathUtils.isNotZero(tedi.getAmount())
 					? tedi.getAmount() 
-					: result.getTedi().getTotal());
+					: AonNumberUtils.zeroIfNull( result.getTedi().getTotal()));
 		}),
 		IBAN( (aonCtx,result,tedi,aon) -> aon.setBankAccount( new BankAccount(tedi.getIban()))),
 		PAYMETHOD( (aonCtx,result,tedi,aon) -> {
