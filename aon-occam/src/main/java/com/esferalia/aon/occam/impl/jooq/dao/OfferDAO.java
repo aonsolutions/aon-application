@@ -338,7 +338,12 @@ public class OfferDAO {
 						((record.getValue(OFFER.SUPPLIER) == null)
 							? null : new Supplier().setId( record.getValue(OFFER.SUPPLIER))))
 					.setWorkPlace(new Workplace().setId(record.getValue(OFFER.WORKPLACE)))
-					.setExternalReference(record.getValue(OFFER.EXTERNAL_REFERENCE));
+					.setExternalReference(record.getValue(OFFER.EXTERNAL_REFERENCE))
+					.setComments(record.getValue(OFFER.COMMENTS))
+					.setRemarks(record.getValue(OFFER.REMARKS))
+					.setBankAccount(record.getValue(OFFER.BANK_ACCOUNT))
+					.setBic(record.getValue(OFFER.BIC));
+			
 		}
 		
 	}

@@ -1098,8 +1098,13 @@ public class OfferController extends HeaderObjectController implements ISignatur
 
 	public String getReportTemplate() throws ManagerBeanException {
 		Offer offer = (Offer) this.getTo();
+
+		String value = AppParamUtil.getValue(AppParam.REPORT_offer);
+		if(value != null) {
+			return value;
+		}
 		if(offer!=null && offer.getType()!=OfferType.PROFORMA) {
-			String value = AppParamUtil.getValue(AppParam.APP_OFFER_TEMPLATE_PARAM);
+			value = AppParamUtil.getValue(AppParam.APP_OFFER_TEMPLATE_PARAM);
 			if ( value != null ) {
 				return value;
 			}

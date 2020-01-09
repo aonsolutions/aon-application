@@ -47,6 +47,7 @@ import com.esferalia.aon.occam.api.model.Properties.ProjectCommercialProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProjectReservationProperties;
 import com.esferalia.aon.occam.api.model.Properties.PurchaseDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.PurchaseProperties;
+import com.esferalia.aon.occam.api.model.Properties.RDirStaffProperties;
 import com.esferalia.aon.occam.api.model.Properties.RecordDataProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryAddInfoProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryAddressProperties;
@@ -161,6 +162,11 @@ public interface Filter {
 	@FunctionalInterface
 	public interface RegistryAddInfoFilter {
 		Filter filter(RegistryAddInfoProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface RDirStaffFilter {
+		Filter filter(RDirStaffProperties properties);
 	}
 	
 	@FunctionalInterface

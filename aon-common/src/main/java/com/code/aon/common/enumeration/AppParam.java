@@ -195,6 +195,8 @@ public enum AppParam {
 	
 	REPORT_invoiceTaxBreakDown,
 	
+	REPORT_offer,
+	
 	WEBINFO_FTP_PASSWORD,
 
 	WEBINFO_FTP_SERVER,

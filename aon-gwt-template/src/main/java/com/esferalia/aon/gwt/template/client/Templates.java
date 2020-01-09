@@ -132,6 +132,7 @@ public class Templates extends Composite implements EntryPoint {
 						exportDeliveryx(me);
 						exportDelivery(me);
 						exportOfferx(me);
+						exportOfferPdfx(me);
 						exportFullExpedient(me);
 						exportResumeExpedient(me);
 					}
@@ -1574,6 +1575,22 @@ public class Templates extends Composite implements EntryPoint {
 	public static native void exportOfferx(Templates thiz) /*-{
 		$wnd.offerx = function(statuses, target, seller, supplier, project, type, series, fromNumber, toNumber, fromDate, toDate, workplace, scope, confidential, signed) {
 			thiz.@com.esferalia.aon.gwt.template.client.Templates::offerx(*)(statuses, target, seller, supplier, project, type, series, fromNumber, toNumber, fromDate, toDate, workplace, scope, confidential, signed);
+		}
+	}-*/;
+	
+	public void offerpdfx(String id){
+		String fileDownloadURL = GWT.getModuleBaseURL()+ "download_offer_pdf/"
+				+ "?domain=" + getDomain().getName()
+				+ "&domain_id=" + getDomain().getId()
+            	+ "&username="+ getUser().getLogin()
+            	+ "&id=" + id;
+		
+		Window.open( fileDownloadURL, "_blank",null);
+	}
+
+	public static native void exportOfferPdfx(Templates thiz) /*-{
+		$wnd.offerpdfx = function(id) {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::offerpdfx(*)(id);
 		}
 	}-*/;
 	

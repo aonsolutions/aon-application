@@ -28,11 +28,14 @@ import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
+import com.code.aon.ui.commercial.servlet.OfferPdfServlet;
 import com.code.aon.ui.company.util.CompanyEmailUtil;
 import com.code.aon.ui.finance.SddMandateObject;
 import com.code.aon.ui.finance.util.FinanceEmailUtil;
@@ -180,18 +183,28 @@ public class CommercialEmailUtil extends CompanyEmailUtil {
 	}
 	
 	public AonFile getOfferFile( Offer offer ) throws IOException, ReportException, ManagerBeanException {
-		SignerController signer = (SignerController) AonUtil.getRegisteredBean(ICommercialConstants.OFFER_SIGNER_CONTROLLER_NAME);
-		File file = File.createTempFile( signer.getReportKey(), ".pdf" );
-		IAttachment attach = null;
-		if ( offer.isSigned() ) {
-			attach = signer.getSignedAttachment(offer.getId());
+		String value = AppParamUtil.getValue(AppParam.REPORT_offer);
+		File file = null;
+		String description = "";
+		if(value != null && value.equals("offerTranslogia")) {
+			file = OfferPdfServlet.createPdf(offer);
+			description = "translogia";
 		} else {
-			attach = signer.getReport(offer);
+			SignerController signer = (SignerController) AonUtil.getRegisteredBean(ICommercialConstants.OFFER_SIGNER_CONTROLLER_NAME);
+			file = File.createTempFile( signer.getReportKey(), ".pdf" );
+			IAttachment attach = null;
+			if ( offer.isSigned()) {
+				attach = signer.getSignedAttachment(offer.getId());
+			} else {
+				attach = signer.getReport(offer);
+			}
+			FileUtils.writeByteArrayToFile(file, attach.getData());
+			description = attach.getDescription();
 		}
-		FileUtils.writeByteArrayToFile(file, attach.getData());
+		
 		AonFile aonFile = new AonFile();
 		aonFile.setFile(file);	
-		aonFile.setFileName( attach.getDescription() + ".pdf" );
+		aonFile.setFileName(description + ".pdf" );
 		aonFile.setMimeType(MimeType.MIME_PDF);
 		return aonFile;
 	}

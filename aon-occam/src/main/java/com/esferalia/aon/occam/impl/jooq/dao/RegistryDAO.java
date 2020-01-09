@@ -22,6 +22,7 @@ import static com.esferalia.aon.jooq.tables.Rpaymethod.RPAYMETHOD;
 import static com.esferalia.aon.jooq.tables.Rprofile.RPROFILE;
 import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
 import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
+import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Segment.SEGMENT;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
@@ -54,6 +55,7 @@ import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Filter.RDirStaffFilter;
 import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
@@ -79,6 +81,7 @@ import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.registry.Question;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
+import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
@@ -114,6 +117,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CategoryPropertiesDAO
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CustomerPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.PersonPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RBankPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RDirStaffPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RNotePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RPayMethodPropertiesDAO;
@@ -160,6 +164,7 @@ public class RegistryDAO {
 	private static final RBankPropertiesDAO RBANK_PROPERTIES = new RBankPropertiesDAO();
 	private static final RPayMethodPropertiesDAO RPAYMETHOD_PROPERTIES = new RPayMethodPropertiesDAO();
 	private static final RegistryAddInfoPropertiesDAO RADDINFO_PROPERTIES = new RegistryAddInfoPropertiesDAO();
+	private static final RDirStaffPropertiesDAO RDIRSTAFF_PROPERTIES = new RDirStaffPropertiesDAO();
 	private static final SupplierPropertiesDAO SUPPLIER_PROPERTIES = new SupplierPropertiesDAO();
 	private static final TargetPropertiesDAO TARGET_PROPERTIES = new TargetPropertiesDAO();
 	private static final RegistryPropertiesDAO REGISTRY_PROPERTIES = new RegistryPropertiesDAO();
@@ -1083,7 +1088,17 @@ public class RegistryDAO {
 			.returning()
 			.fetch().stream().map(new RegistryAddInfoFiller()).findFirst().orElse(new RegistryAddInfo());
 	}
-		
+	
+	// ------------------- RDIRSTAFF
+	
+	public static Stream<RDirStaff> getRDirStaffStream(AONContext ctx, RDirStaffFilter filter){
+		return ctx.getDslContext().select()
+				.from(RDIR_STAFF)
+				.where(RDIRSTAFF_PROPERTIES.getConditions(filter))
+				.fetch().stream().map(new RDirStaffFiller());
+	}
+	
+	
 	// ------------------- REGISTRY PROFILE
 	
 	public static Stream<Question> getRegistryQuestionStream(AONContext ctx, Integer registry){
@@ -1179,6 +1194,27 @@ public class RegistryDAO {
 					.setAttribute(r.getValue(RADDINFO.ATTRIBUTE))
 					.setValue(r.getValue(RADDINFO.VALUE))
 					.setDate(r.getValue(RADDINFO.VALUE_DATE));
+		}
+	}
+	
+	public static class RDirStaffFiller  implements Function<Record, RDirStaff> {
+
+		@Override
+		public RDirStaff apply(Record r) {
+			return new RDirStaff()
+					.setId(r.getValue(RDIR_STAFF.ID))
+					.setRegistry(r.getValue(RDIR_STAFF.REGISTRY))
+					.setDomain(r.getValue(RDIR_STAFF.DOMAIN))
+					.setChargeDescription(r.getValue(RDIR_STAFF.CHARGE_DESCRIPTION))
+					.setDirector(r.getValue(RDIR_STAFF.DIRECTOR) == 1)
+					.setDocument(r.getValue(RDIR_STAFF.DOCUMENT))
+					.setName(r.getValue(RDIR_STAFF.NAME))
+					.setDueDate(r.getValue(RDIR_STAFF.DUE_DATE))
+					.setNominalValue(r.getValue(RDIR_STAFF.NOMINAL_VALUE))
+					.setPercentShare(r.getValue(RDIR_STAFF.PERCENT_SHARE))
+					.setRepresentative(r.getValue(RDIR_STAFF.REPRESENTATIVE) == 1)
+					.setRepresentativeLabor(r.getValue(RDIR_STAFF.REPRESENTATIVE_LABOR) == 1)
+					.setShareHolder(r.getValue(RDIR_STAFF.SHAREHOLDER) == 1);
 		}
 	}
 	

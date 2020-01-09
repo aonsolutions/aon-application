@@ -33,12 +33,21 @@
 						</aon:commandButton>
 						<aon:htmlCommandLink id="offer-report" value="#{bundle.aon_invoice_offer}"
 							target="_blank" action="#{offerSigner.onReport}"
-							rendered="#{!offer.nevv and offerDetail.model.rowCount > 0}" disabled="#{offerDetail.to != null}"
+							rendered="#{offer.reportTemplate != 'offerTranslogia' and !offer.nevv and offerDetail.model.rowCount > 0}" disabled="#{offerDetail.to != null}"
 							accesskey="#{bundle.aon_key_print}"
 							styleClass="aon-finding-toolbar-item aon-icon-pdf">
 							<f:param name="reportKey" value="#{offer.reportTemplate}" />
 							<f:param name="outputFormat" value="PDF" />
 						</aon:htmlCommandLink>
+						
+						<ui:include src="/net/aonsolutions/aon/gwt/aio/facelet/templates/silent.xhtml" />
+
+						<aon:commandLink id="offer-pdf" value="#{bundle.aon_invoice_offer}"
+							rendered="#{offer.reportTemplate == 'offerTranslogia' and !offer.nevv and offerDetail.model.rowCount > 0}" 
+							onclick="offerpdfx('#{offer.to.id}')"
+							styleClass="aon-finding-toolbar-item aon-icon-pdf">
+
+						</aon:commandLink>
 					</ui:define>
 					<ui:define name="moreMenuContent">
 						<ui:include src="/com/code/aon/ui/sign/facelet/signer/signMenuItem.xhtml">

@@ -242,6 +242,16 @@ public interface Properties {
 		Property<Date> getValueDate();
 	}
 	
+	public interface RDirStaffProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getRegistryProperty();
+		Property<Byte> getShareHolderProperty();
+		Property<Byte> getRepresentativeProperty();
+		Property<Byte> getRepresentativeLaborProperty();
+		Property<Byte> getDirectorProperty();
+	}
+	
 	public interface DomainProperties extends AuditProperties{
 		Property<Byte> getActiveProperty();
 		Property<String> getDescriptionProperty();

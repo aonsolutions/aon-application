@@ -43,6 +43,7 @@ import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
 import static com.esferalia.aon.jooq.tables.Rpaymethod.RPAYMETHOD;
 import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
+import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
@@ -88,6 +89,7 @@ import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
+import com.esferalia.aon.occam.api.model.Filter.RDirStaffFilter;
 import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryBankFilter;
@@ -130,6 +132,7 @@ import com.esferalia.aon.occam.api.model.Properties.OfferDetailCommissionPropert
 import com.esferalia.aon.occam.api.model.Properties.PersonProperties;
 import com.esferalia.aon.occam.api.model.Properties.PurchaseDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.PurchaseProperties;
+import com.esferalia.aon.occam.api.model.Properties.RDirStaffProperties;
 import com.esferalia.aon.occam.api.model.Properties.RecordDataProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryAddInfoProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryBankProperties;
@@ -891,6 +894,29 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getDaysToFirstPymntProperty() {return null;} // new FilterDAO.PropertyDAO<>(RPAYMETHOD.DAYS_TO_FIRST_PYMNT);}
 		@Override public Property<Integer> getDaysBetweenPymntsProperty() {return null;} // new FilterDAO.PropertyDAO<>(RPAYMETHOD.DAYS_BETWEEN_PYMNTS);}
 		@Override public Property<String> getPymntDaysProperty() {return new FilterDAO.PropertyDAO<>(RPAYMETHOD.PYMNT_DAYS);}
+	}
+	
+	protected static class RDirStaffPropertiesDAO implements RDirStaffProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select,RDirStaffFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(RDirStaffFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(RDIR_STAFF.ID);} 
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(RDIR_STAFF.DOMAIN);}
+		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(RDIR_STAFF.REGISTRY);}
+		@Override public Property<Byte> getShareHolderProperty() {return new FilterDAO.PropertyDAO<>(RDIR_STAFF.SHAREHOLDER);}
+		@Override public Property<Byte> getRepresentativeProperty() {return new FilterDAO.PropertyDAO<>(RDIR_STAFF.REPRESENTATIVE);}
+		@Override public Property<Byte> getRepresentativeLaborProperty() {return new FilterDAO.PropertyDAO<>(RDIR_STAFF.REPRESENTATIVE_LABOR);}
+		@Override public Property<Byte> getDirectorProperty() {return new FilterDAO.PropertyDAO<>(RDIR_STAFF.DIRECTOR);}
+	
 	}
 	
 	

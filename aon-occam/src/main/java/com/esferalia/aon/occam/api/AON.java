@@ -75,6 +75,7 @@ import com.esferalia.aon.occam.api.model.Filter.ProjectCommercialFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectReservationFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
+import com.esferalia.aon.occam.api.model.Filter.RDirStaffFilter;
 import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
@@ -166,6 +167,7 @@ import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Question;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
+import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
@@ -828,6 +830,24 @@ public class AON {
 		}
 	}
 
+	// ------------------------------------ RDIRSTAFF	
+	
+	public static Stream<RDirStaff> getRDirStaffStream(String domainName, Integer domainId, String login, RDirStaffFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getRDirStaffStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static RDirStaff getRDirStaff(String domainName, Integer domainId, String login, RDirStaffFilter filter){
+		return getRDirStaffStream(domainName, domainId, login, filter)
+				.findFirst().orElse(new RDirStaff());
+	}
+	
 	// ------------------------------------ WORKPLACE
 
 	public static Workplace getWorkplace(String domainName, Integer domainId,
