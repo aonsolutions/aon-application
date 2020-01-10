@@ -275,6 +275,13 @@
 													value="&#160;" title="#{bundle.aon_confidential}"
 													rendered="#{prepayment.chargeReadOnly and prepayment.invoiceDetail.invoice.confidential}" />
 											</aon:if>
+											<aon:outputLabel for="Prepayment_customerFee_finalDate" value="#{bundle.aon_date_to}"
+													styleClass="aon-margin-right aon-bold" />
+			
+											<aon:selectInputDate id="Prepayment_customerFee_finalDate"
+													value="#{prepayment.customerFee.finalDate}" 
+													timeZone="#{timeZoneController.timeZone}"
+													popupDateFormat="#{bundle.aon_date_pattern}" />
 										</aon:div>
 
 										<aon:outputLabel for="Prepayment_customerFee_project_id" value="#{bundle.aon_project}"
