@@ -1,5 +1,6 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
+import static com.code.aon.common.util.CommonUtil.getDaysBetweenDates;
 import static com.esferalia.aon.payroll.calculator.sql.SQLSystemExpressionContextFactory.DEFAULT_AGRREEMENT_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ACTUAL_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGE;
@@ -637,7 +638,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 					Calendar leaveCalendar = Calendar.getInstance();
 					leaveCalendar.setTime(leaveStart);
-					leaveCalendar.add(Calendar.DATE, start /*- (int) parentDays*/);
+//					leaveCalendar.add(Calendar.DATE, start /*- (int) parentDays*/);
+					
+					if ( leaveStart.compareTo(startDate) < 0 )
+						parentDays = Math.max(parentDays - getDaysBetweenDates(leaveStart, startDate), 0);
+					
+					leaveCalendar.add(Calendar.DATE, Math.max(start - (int) parentDays, 0));
 					Date guarenteeStart = leaveCalendar.getTime();
 					leaveCalendar.add(Calendar.DATE, end - start);
 					Date guarenteeEnd = Period.min(leaveEnd, leaveCalendar.getTime());
@@ -672,16 +678,19 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					// Adds 'BASE_REGULADORA' variable for guaranteed period
 					exprCtx.setVariable(IT_START, leaveStart, guarenteeStart, guarenteeEnd);
 					
-					//int guaranteedDays = (int) getGuaranteedDays(exprCtx,
-					//		new Period(Period.max(guarenteeStart, startDate), guarenteeEnd));
-					
-					//exprCtx.setVariable(GUARANTEED_DAYS, guaranteedDays, guarenteeStart, guarenteeEnd);
-					
-					exprCtx.putVariable(GUARANTEED_DAYS, new LazyTimedVariable<Double>() {
+					Period period = new Period(Period.max(guarenteeStart, startDate), guarenteeEnd);
+//					int guaranteedDays = (int) getGuaranteedDays(exprCtx,period);
+//					exprCtx.setVariable(GUARANTEED_DAYS, guaranteedDays, guarenteeStart, guarenteeEnd);
+
+					exprCtx.putVariable(GUARANTEED_DAYS, new ITimedVariable<Double>() {
+						
 						@Override
-						public Double create() {
-							return getGuaranteedDays(exprCtx,
-									new Period(Period.max(guarenteeStart, startDate), guarenteeEnd));
+						public Period getPeriod() {
+							return period;
+						}
+						@Override
+						public Double getValue(Period p ) {
+							return getGuaranteedDays(exprCtx,p);
 						}
 					});
 
@@ -2383,6 +2392,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 //			double coefficient = value / all;
 			
 			double prestIt = getDayDoubleVariable(PREST_IT, start,end);
+			
+			double max = getDayDoubleVariable( ContextVariable.CGC_BASE.getName() , start, end );
+			if ( max > 0.00 )
+				value = Math.min(max, value);
 			
 			guarantee += value - prestIt;
 		}
