@@ -702,7 +702,7 @@ public class AccountStatementDAO {
 		conditions.put(AccountStatementPeriod.IN_PERIOD
 			,getTrialBalanceCondition(ctx, params)
 			.and(ap==null?DSL.trueCondition():ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(ap.getId()))
-			.and(ACCOUNT_ENTRY.ENTRY_TYPE.ne(AccountEntryType.OPENING.getValue()))
+			.and(ap==null?DSL.trueCondition():ACCOUNT_ENTRY.ENTRY_TYPE.ne(AccountEntryType.OPENING.getValue()))
 			.and(ACCOUNT_ENTRY.ENTRY_DATE.ge(sqlStart))
 			.and(ACCOUNT_ENTRY.ENTRY_DATE.le(sqlEnd))
 		);
