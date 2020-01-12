@@ -44,8 +44,8 @@ import com.esferalia.aon.gwt.payroll.shared.PaymentEvent;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
-import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
+import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.google.gwt.core.client.GWT;
@@ -69,6 +69,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.logical.shared.CloseEvent;
@@ -79,7 +81,6 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.text.client.DateTimeFormatRenderer;
 import com.google.gwt.text.shared.Parser;
@@ -110,6 +111,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestBox.DefaultSuggestionDisplay;
@@ -223,9 +225,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 	}
 
-	interface Binder extends UiBinder<Widget, AgreementDraft> {
-
-	}
+	interface Binder extends UiBinder<Widget, AgreementDraft> {}
 
 	private static final Binder binder = GWT.create(Binder.class);
 
@@ -1127,6 +1127,25 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		contentAssistManager = new ContentAsistManager();
 		
 		showDraft();
+		
+		// Add extra hide option
+		KeyDownHandler myHandler = new KeyDownHandler() {
+			
+			@Override
+			public void onKeyDown(KeyDownEvent event) {
+				if(event.isShiftKeyDown()) {
+					if(event.getNativeKeyCode() == 79)
+	                {
+	                    extrasTable.addStyleName(style.hide());
+	                } else if(event.getNativeKeyCode() == 77) {
+	                	extrasTable.removeStyleName(style.hide());
+	                }
+				}	
+			}
+		};
+		
+		RootPanel.get().addDomHandler(myHandler , KeyDownEvent.getType());
+		
 	}
 	
 	private Button initCategoryPanel(boolean readOnly) {
