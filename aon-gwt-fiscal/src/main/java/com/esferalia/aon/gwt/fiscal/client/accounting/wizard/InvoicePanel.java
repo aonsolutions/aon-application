@@ -69,8 +69,6 @@ import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 
-import net.aonsolutions.gwt.pdfjs.client.Viewer;
-
 public class InvoicePanel extends WizardContentBase<AccountingInvoice> implements HasSelectionHandlers<AccountingInvoice> {
 	
 	private static final Logger LOGGER = Logger.getLogger(InvoicePanel.class.getName());
