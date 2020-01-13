@@ -31,6 +31,8 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.DelegateContractPayment;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
+import com.esferalia.aon.payroll.calculator.IContractBonus;
+import com.esferalia.aon.payroll.calculator.IContractCost;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.SimpleContractPayment;
@@ -80,6 +82,16 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 	@Override
 	public SalaryType getSalaryType() {
 		return SalaryType.EXTRA;
+	}
+	
+	@Override
+	public Collection<IContractCost> getContractCosts() throws AonException {
+		return Collections.emptyList();
+	}
+
+	@Override
+	public Collection<IContractBonus> getContractBonus() throws AonException {
+		return Collections.emptyList();
 	}
 
 	@Override

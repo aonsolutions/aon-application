@@ -149,6 +149,7 @@ public class SQLExtraSalaryCalculatorContext implements
 				extraIssueDate, 
 				chargeDate, 
 				agreementCriteria) {
+			
 			@Override
 			protected Date getContractEndDate() {
 				return Period.min(endDate, super.getContractEndDate());
@@ -285,11 +286,11 @@ public class SQLExtraSalaryCalculatorContext implements
 	}
 
 	public Collection<IContractCost> getContractCosts() throws AonException {
-		return ctx.getContractCosts();
+		return Collections.emptyList(); // ctx.getContractCosts();
 	}
 
 	public Collection<IContractBonus> getContractBonus() throws AonException {
-		return ctx.getContractBonus();
+		return Collections.emptyList(); //ctx.getContractBonus();
 	}
 
 	public Collection<IContractEmbargo> getContractEmbargos()
