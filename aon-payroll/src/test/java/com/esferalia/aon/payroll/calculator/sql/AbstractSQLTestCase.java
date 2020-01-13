@@ -80,6 +80,7 @@ import com.esferalia.aon.jooq.tables.records.BonusConceptRecord;
 import com.esferalia.aon.jooq.tables.records.CalendarRecord;
 import com.esferalia.aon.jooq.tables.records.ContractBonusRecord;
 import com.esferalia.aon.jooq.tables.records.ContractEmbargoRecord;
+import com.esferalia.aon.jooq.tables.records.ContractLeaveRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
@@ -1205,8 +1206,9 @@ public abstract class AbstractSQLTestCase {
 
 	}
 
-	public static final void addIT(AONContext aonContext, ContractRecord contract, LeaveType type, Date startDate,
+	public static final ContractLeaveRecord addIT(AONContext aonContext, ContractRecord contract, LeaveType type, Date startDate,
 			Date endDate, Double regulatoryBase) {
+		return
 		aonContext.getDslContext().insertInto(CONTRACT_LEAVE).set(CONTRACT_LEAVE.DOMAIN, contract.getDomain())
 				.set(CONTRACT_LEAVE.CONTRACT, contract.getId())
 				.set(CONTRACT_LEAVE.START_DATE, startDate)
@@ -1215,7 +1217,25 @@ public abstract class AbstractSQLTestCase {
 				// .set(CONTRACT_LEAVE.DAILY_CGC_BASE, regulatoryBase)
 				// .set(CONTRACT_LEAVE.DAILY_CGP_BASE, regulatoryBase)
 				.set(CONTRACT_LEAVE.TYPE, (byte) type.ordinal())
-				.set(CONTRACT_LEAVE.DISCHARGE_CAUSE, (byte) type.ordinal()).execute();
+				.set(CONTRACT_LEAVE.DISCHARGE_CAUSE, (byte) type.ordinal())
+				.returning()
+				.fetchOne();
+
+	}
+
+	public static final ContractLeaveRecord addIT(AONContext aonContext, ContractRecord contract, LeaveType type, Date startDate,
+			Date endDate, Double regulatoryBase, Integer parent) {
+		return 
+		aonContext.getDslContext().insertInto(CONTRACT_LEAVE).set(CONTRACT_LEAVE.DOMAIN, contract.getDomain())
+				.set(CONTRACT_LEAVE.CONTRACT, contract.getId())
+				.set(CONTRACT_LEAVE.START_DATE, startDate)
+				.set(CONTRACT_LEAVE.END_DATE, endDate)
+				.set(CONTRACT_LEAVE.DAILY_REG_BASE, regulatoryBase)
+				.set(CONTRACT_LEAVE.TYPE, (byte) type.ordinal())
+				.set(CONTRACT_LEAVE.DISCHARGE_CAUSE, (byte) type.ordinal())
+				.set(CONTRACT_LEAVE.PARENT, parent )
+				.returning()
+				.fetchOne();
 
 	}
 
