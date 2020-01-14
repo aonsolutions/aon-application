@@ -316,13 +316,22 @@ public class TediParser {
 				}
 				for ( int i = 0; i < result.getTedi().getTaxes().size(); i++) {
 					TediInvoiceTax tit = result.getTedi().getTaxes().get(i);
+					double quota = result.getInvoice().isUndeductible()
+						?0.0
+						:AonNumberUtils.todouble(tit.getQuota());
+					double base = result.getInvoice().isUndeductible()
+						?AonMathUtils.round(AonNumberUtils.zeroIfNull(tit.getBase()) + quota)
+						:AonNumberUtils.zeroIfNull(tit.getBase());
+					double percent = result.getInvoice().isUndeductible()
+						?0.0
+						:AonNumberUtils.zeroIfNull(tit.getPercentage());
 					InvoiceBreakdown ib = new InvoiceBreakdown()
 							.setTaxType(tit.getTaxType() == TediTaxType.IVA? TaxType.VAT : TaxType.RETENTION )
-							.setBase( AonNumberUtils.zeroIfNull(tit.getBase()) )
-							.setPercentage( AonNumberUtils.zeroIfNull(tit.getPercentage()) )
-							.setQuota( AonNumberUtils.todouble(tit.getQuota()) )
-							.setSurcharge( AonNumberUtils.todouble( tit.getSurcharge()) )
-							.setSurchargeQuota( AonNumberUtils.todouble( tit.getSurchargeQuota()))
+							.setBase( base )
+							.setPercentage( percent )
+							.setQuota( quota )
+							.setSurcharge( result.getInvoice().isUndeductible()?0.0:AonNumberUtils.todouble( tit.getSurcharge()) )
+							.setSurchargeQuota( result.getInvoice().isUndeductible()?0.0:AonNumberUtils.todouble( tit.getSurchargeQuota()))
 							;
 					if (tit.getTaxType() == TediTaxType.IRPF) {
 						irpfTax = ib;
