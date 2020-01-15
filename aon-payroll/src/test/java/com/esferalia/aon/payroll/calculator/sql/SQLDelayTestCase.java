@@ -5,6 +5,8 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARENTEED;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
@@ -38,6 +40,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
+import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
@@ -360,6 +363,209 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(150.00 + 15.00/12*10 + 15.00/12*10, delay.getIrpfBase(), DELTA);
 		
 
+	}
+
+	@Test
+	public void testMaternityITI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(getToday()),
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+					"BASE_CGC * 4.70/100", 
+					"BASE_CGP * 1.55/100",
+					"BASE_CGP * 0.10/100",
+					"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				}, null);
+		//@formatter:on
+		
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), "DIAS_MES", "30.00");
+		
+		//@formatter:off
+		PaymentConceptRecord prestIT = addConcept(aonContext, MATERNITY.getName());
+		addPayment(aonContext, contract, prestIT, 
+				String.format("0.00 * %s",  MATERNITY_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		
+		addPayment(aonContext, contract, 
+				"TRACE('BASE_REGULADORA = %f\r\n', (BASE_REGULADORA )); 0.00",
+				String.format("0.00",  QUOTE_DAYS)
+				);
+		//@formatter:on
+
+		Date startITDate = 
+				add(add(getFirstDayOfYear(getToday()), MONTH, 6), DAY_OF_MONTH,9);
+		addIT(aonContext, contract, LeaveType.PREGNANCY_RISK, startITDate, null, null);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		for ( int i = 0 ; i < 11 ; i++ ) {
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+			SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
+			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+			calculator.setSalaryBuilder(jooqSalaryBuilder);
+			calculator.calculate(ctx);
+			jooqSalaryBuilder.execute();
+			startDate = add(endDate, DAY_OF_MONTH, 1);
+			endDate = getLastDayOfMonth(startDate);
+		}
+		PaymentConceptRecord bono = addConcept(aonContext, "BONO", PaymentType.CRA_0005);
+		addPayment(aonContext, contract, contract.getStartDate(), null, bono, "BONO BENEFICIOS", "3000.00", "_P", "_P", PaymentType.CRA_0005, (byte) Month.DECEMBER.getValue());
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
+				getFirstDayOfYear(getToday()),
+				add(startDate, DAY_OF_MONTH, -1),
+				endDate, 
+				criteria);
+		delayCtx.next();
+		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
+		
+		SalaryBuilder salaryBuilder = new SalaryBuilder() {
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date startDate, java.util.Date endDate, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+				System.out.println( startDate + " [" +payment.getName() + "] " + payment.getDescription() + ": " + amount +", " + quote);
+			}
+		};
+		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
+		CompositeSalaryBuilder<Salary, ISalaryBuilder<Salary>> compositeSalaryBuilder = 
+				new CompositeSalaryBuilder<Salary, ISalaryBuilder<Salary>>(jooqSalaryBuilder, salaryBuilder);
+		
+		delayCalculator.setSalaryBuilder(compositeSalaryBuilder);
+		Salary salary = delayCalculator.calculate(delayCtx);
+		jooqSalaryBuilder.execute();
+		
+		org.junit.Assert.assertEquals(0.00  , salary.getIrpfBase(), DELTA);
+		org.junit.Assert.assertEquals(0.00  , salary.getTotalPayment(), DELTA);
+		org.junit.Assert.assertEquals( 3000.00 /12 * 11  , salary.getCommonBase(), DELTA);
+
+//		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+//				connection, startDate, endDate, endDate, contract);
+//		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
+//		
+//		for (SalaryPayment p : salary.getSalaryPayments()) {
+//			System.out.println( p.getDescription() + ": " + p.getAmount() );
+//		}
+//		
+//		org.junit.Assert.assertEquals(3000.00/12 * 6.3 , salary.getTotalPayment(), DELTA);
+		
+	}
+
+	@Test
+	public void testMaternityITII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(getToday()),
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+					"BASE_CGC * 4.70/100", 
+					"BASE_CGP * 1.55/100",
+					"BASE_CGP * 0.10/100",
+					"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				}, null);
+		//@formatter:on
+		
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), "DIAS_MES", "30.00");
+		
+		//@formatter:off
+		PaymentConceptRecord prestIT = addConcept(aonContext, MATERNITY.getName());
+		addPayment(aonContext, contract, prestIT, 
+				String.format("0.00 * %s",  MATERNITY_DAYS),
+				String.format("DIAS_COTIZADOS * COEFICIENTE_MATERNIDAD * BASE_REGULADORA")
+				);
+		
+		addPayment(aonContext, contract, 
+				"TRACE('BASE_REGULADORA = %f\r\n', (BASE_REGULADORA )); 0.00",
+				String.format("0.00",  QUOTE_DAYS)
+				);
+		//@formatter:on
+
+		Date startITDate = 
+				add(add(getFirstDayOfYear(getToday()), MONTH, 6), DAY_OF_MONTH,9);
+		addIT(aonContext, contract, LeaveType.MATERNITY, startITDate, null, null);
+		addData(aonContext, contract, startITDate, null, ContextVariable.MATERNITY_FACTOR.getName(), "0.5");
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		for ( int i = 0 ; i < 11 ; i++ ) {
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+			SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
+			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+			calculator.setSalaryBuilder(jooqSalaryBuilder);
+			calculator.calculate(ctx);
+			jooqSalaryBuilder.execute();
+			startDate = add(endDate, DAY_OF_MONTH, 1);
+			endDate = getLastDayOfMonth(startDate);
+		}
+		PaymentConceptRecord bono = addConcept(aonContext, "BONO", PaymentType.CRA_0005);
+		addPayment(aonContext, contract, contract.getStartDate(), null, bono, "BONO BENEFICIOS", "3000.00", "_P", "_P", PaymentType.CRA_0005, (byte) Month.DECEMBER.getValue());
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
+//				getFirstDayOfMonth(add(startITDate, Calendar.MONTH, 2)),
+//				getLastDayOfMonth(add(startITDate, Calendar.MONTH, 2)),
+				getFirstDayOfYear(getToday()),
+				add(startDate, DAY_OF_MONTH, -1),
+				endDate, 
+				criteria);
+		delayCtx.next();
+		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
+		
+		SalaryBuilder salaryBuilder = new SalaryBuilder() {
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date startDate, java.util.Date endDate, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+				System.out.println( startDate + " [" +payment.getName() + "] " + payment.getDescription() + ": " + amount +", " + quote);
+			}
+		};
+		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
+		CompositeSalaryBuilder<Salary, ISalaryBuilder<Salary>> compositeSalaryBuilder = 
+				new CompositeSalaryBuilder<Salary, ISalaryBuilder<Salary>>(jooqSalaryBuilder, salaryBuilder);
+		
+		delayCalculator.setSalaryBuilder(compositeSalaryBuilder);
+		Salary salary = delayCalculator.calculate(delayCtx);
+		jooqSalaryBuilder.execute();
+		
+		org.junit.Assert.assertEquals( 3000.00 /12 * 11  , salary.getCommonBase(), DELTA);
+		org.junit.Assert.assertEquals(0.00  , salary.getIrpfBase(), DELTA);
+		org.junit.Assert.assertEquals(0.00  , salary.getTotalPayment(), DELTA);
+
+//		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+//				connection, startDate, endDate, endDate, contract);
+//		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
+//		
+//		for (SalaryPayment p : salary.getSalaryPayments()) {
+//			System.out.println( p.getDescription() + ": " + p.getAmount() );
+//		}
+//		
+//		org.junit.Assert.assertEquals(250.00 * 6.3 + 125.00 * 5.7  + 1750 * 0.5, salary.getTotalPayment(), DELTA);
+//		
 	}
 
 	@Test

@@ -29,7 +29,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.net.whois.WhoisClient;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
@@ -41,7 +40,6 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.DelegateContractPayment;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
-import com.esferalia.aon.payroll.calculator.ContractLeaveLoader.Leave;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory.IExtraPayment;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
@@ -518,7 +516,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		return Collections.singletonList(fixed);
 	}
 
-	private List<ITimedResult<Double>> subtractITPart(List<ITimedResult<Double>> results, List<Period> its,
+	protected List<ITimedResult<Double>> subtractITPart(List<ITimedResult<Double>> results, List<Period> its,
 			ExpressionContext expressionContext) throws UndefinedVariablesException, ExpressionException {
 		Period period = results.get(0).getPeriod();
 		double days = getDays(period, expressionContext);
@@ -733,6 +731,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		return brResults;
 	}
 	
+
 	private static Double calculateExtra(ISQLContractSalaryCalculatorContext ctx, IExtraPayment extraPayment, Date issueDate) throws AonException {
 		SQLExtraSalaryCalculatorContext extraCtx = null;
 		try {
@@ -816,6 +815,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			}
 		}
 	}
+
 
 	private static boolean extraEmited(Date issueDate, IContractPayment payment, ISQLContractSalaryCalculatorContext ctx) {
 		

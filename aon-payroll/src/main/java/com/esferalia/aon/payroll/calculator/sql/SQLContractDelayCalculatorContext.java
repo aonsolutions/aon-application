@@ -3,7 +3,10 @@ package com.esferalia.aon.payroll.calculator.sql;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT_LEAVE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
@@ -156,15 +159,22 @@ public class SQLContractDelayCalculatorContext extends
 			} catch ( ExpressionException e ) {
 				activeDays = monthDays.get(month);
 			}
-			double resultDays = AonDateUtils.getDay(result.getPeriod().getEnd()) 
-					- AonDateUtils.getDay(result.getPeriod().getStart()) + 1;
+			
+			double resultDays ;
+			try {
+				resultDays = getResultDays(expressionContext, result);
+			} catch ( ExpressionException e ) {
+				resultDays = AonDateUtils.getDay(result.getPeriod().getEnd()) 
+				- AonDateUtils.getDay(result.getPeriod().getStart()) + 1;
+			}
 			
 			if ( resultDays == (double) monthDays.get(month) )
 				resultDays = activeDays;
 
 			if ( !result.getContext().isEmpty() )
 				activeDays  -= itDays.get(month);
-
+			
+			
 			
 			double value = result.getValue() / activeDays * resultDays;
 			
@@ -431,7 +441,7 @@ public class SQLContractDelayCalculatorContext extends
 				+" AND " + SALARY + "." + SalaryColumns.START_DATE + " >= ? " 
 				+" AND " + SALARY + "." + SalaryColumns.END_DATE + " <= ? "
 				+" AND " + SALARY_DATA + "." + SalaryDataColumns.NAME 
-				+ " IN( '" + CGC_BASE.getName() + "', '" + DIRECT_BASE.getName() + "')"
+				+ " IN( '" + CGC_BASE.getName() + "', '" + MATERNITY_BASE.getName() + "', '" + DIRECT_BASE.getName() + "')"
 				+" GROUP BY 1, 2"
 				); 
 			stmt.setInt(1, contract);
@@ -662,19 +672,6 @@ public class SQLContractDelayCalculatorContext extends
 				+ ")"
 				;
 
-		private static final String MATERNITY_BASE = 
-				"IFNULL((SELECT"
-				+ " SUM(" + SalaryDataColumns.EXPRESSION + ")"
-				+ " FROM " + SALARY_DATA 
-				+ " WHERE " + SalaryDataColumns.SALARY + " = " + SALARY +"." + SalaryColumns.ID 
-				+ " AND " + SalaryDataColumns.NAME + " = 'BASE_MTNAD'"
-				+ " AND " + SalaryDataColumns.START_DATE + " = ? " 
-				+ " AND " + SalaryDataColumns.END_DATE + " =  ? " 
-				+ "),0.00)"
-				;
-
-				;
-
 		private static final String PREST_IT = 
 				"(SELECT"
 				+ " SUM(" + SalaryDataColumns.EXPRESSION + ")"
@@ -700,9 +697,8 @@ public class SQLContractDelayCalculatorContext extends
 				+ ", @GTZDOIT:=IFNULL((@GTZDO / @ALL_IT_DAYS " + " * " + IT_DAYS+"),0.00)"
 				+ " AS GTZDOIT" 
 
-				+ ", " + SALARY_DATA + "."+ SalaryDataColumns.EXPRESSION 
-				+ " + " + MATERNITY_BASE
-				+ " AS " + SalaryColumns.CGC_BASE
+				+ ", SUM(" + SALARY_DATA + "."+ SalaryDataColumns.EXPRESSION 
+				+ ") AS " + SalaryColumns.CGC_BASE
 				
 				+ ", @IRPF:=(IFNULL( " + "IFNULL(" + SALARY_PAYMENT +"." + SalaryPaymentColumns.IRPF +","+ PREST_IT + ")" + " + @GTZDOIT"
 				+ ", (" + SalaryColumns.IRPF_BASE + "- (" + PREST_IT_IRPF_SQL + " + @GTZDO )) / " + ALL_WORKED_DAYS + " * " + WORKED_DAYS + ")"
@@ -734,7 +730,7 @@ public class SQLContractDelayCalculatorContext extends
 				+ " AND " + SALARY + "." + SalaryColumns.TYPE + "  = ? " 
 				+ " AND " + SALARY_DATA + "." + SalaryDataColumns.START_DATE + "  = ? " 
 				+ " AND " + SALARY_DATA + "." + SalaryDataColumns.END_DATE + " = ? "
-				+ " AND " + SALARY_DATA + "." + SalaryDataColumns.NAME + "  IN ('" + CGC_BASE.getName() + "', '" + DIRECT_BASE.getName() +"')" 
+				+ " AND " + SALARY_DATA + "." + SalaryDataColumns.NAME + "  IN ('" + CGC_BASE.getName() + "', '" + MATERNITY_BASE.getName() + "', '" + DIRECT_BASE.getName() +"')" 
 				;
 
 		protected static final class DelayContractPayment extends ContractPayment {
@@ -952,8 +948,6 @@ public class SQLContractDelayCalculatorContext extends
 			int i = 1;
 			java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());
 			java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());
-			stmt.setDate(i++, sqlStartDate); 
-			stmt.setDate(i++, sqlEndDate); 
 			stmt.setDate(i++, sqlStartDate); 
 			stmt.setDate(i++, sqlEndDate); 
 			stmt.setDate(i++, sqlStartDate); 
@@ -1221,4 +1215,18 @@ public class SQLContractDelayCalculatorContext extends
 		throw new UndefinedContextVariablesException(MONTH_DAYS);
 	}
 
+	private static double getResultDays(ExpressionContext expressionContext, ITimedResult<?> result ) throws ExpressionException {
+		
+		Date start = result.getPeriod().getStart();
+		Date end = result.getPeriod().getEnd();
+		
+		double resultDays = expressionContext.eval(QUOTE_DAYS.getName(), start, end, Number.class).stream().collect(Collectors.summingDouble(v -> v.getValue().doubleValue()));
+		
+		for ( ITimedResult<Number> maternityFactor : expressionContext.eval(MATERNITY_FACTOR.getName(), start, end, Number.class) ) {
+			resultDays  -= (1.00 - maternityFactor.getValue().doubleValue()) * Math.min(maternityFactor.getPeriod().daysStream().count(), resultDays); 
+		}
+		
+		return resultDays;
+		
+	}
 }
