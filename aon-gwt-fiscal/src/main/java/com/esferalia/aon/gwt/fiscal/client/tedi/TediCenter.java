@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -129,8 +130,15 @@ public class TediCenter extends MainEntryPoint {
 				} else {
 					Company company = configuration.getCompany(); 
 					mainTabLayoutPanel.add(getTediInvoiceList(getDomainName(), getDomain(), getUser(),company,null),new CloseTab(AON.MSG.invoiceList(), false));
-				}			
-//				mainTabLayoutPanel.add(getTediFileUploader(getDomainName(), getDomain(), getUser()),new CloseTab("Carga de facturas", false));
+				}
+				if (result.getCompany() != null) {
+					if (AonStringUtils.containsIgnoreCase(result.getCompany().getName(), "aon solutions")
+					 || AonStringUtils.containsIgnoreCase(result.getCompany().getName(), "translogia")
+					 || AonStringUtils.containsIgnoreCase(result.getCompany().getName(), "udapa")) {
+						mainTabLayoutPanel.add(getTediFileUploader(getDomainName(), getDomain(), getUser()),new CloseTab("Carga de facturas", false));
+					}
+				}
+				  
 			}
 
 			@Override
@@ -152,3 +160,5 @@ public class TediCenter extends MainEntryPoint {
 		return new TediUploaderPanel(currentDomainName, currentDomain, currentUser, tediCenterCallback);
 	}
 }
+
+

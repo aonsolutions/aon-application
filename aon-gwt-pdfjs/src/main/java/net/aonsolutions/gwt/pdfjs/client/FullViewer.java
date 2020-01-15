@@ -31,7 +31,7 @@ public class FullViewer extends Frame {
 			LOGGER.info("Attemp to load PDF file [" + fileURL + "]");
 			setUrl(fileURL);
 		} else {
-			setUrl(VIEWER_PATH);
+			setUrl(VIEWER_PATH + "?file=");
 		}
 	}
 

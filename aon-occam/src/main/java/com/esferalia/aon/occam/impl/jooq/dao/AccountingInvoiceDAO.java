@@ -65,6 +65,8 @@ import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
+import com.esferalia.aon.watson.server.io.DataUrl;
+import com.esferalia.aon.watson.server.io.DataUrlSerializer;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -724,6 +726,15 @@ public class AccountingInvoiceDAO {
 					AonIOUtils.closeQuietly(in);
 				}
 			}
+		} else {
+			
+			// Si se cambia este método de sitio, se debería tener en cuenta  
+			// que attach.data puede ser ya binario y no necesite unserialize.
+			
+			String data = new String(attach.getData());
+			DataUrlSerializer serializer = new DataUrlSerializer();
+			DataUrl unserialized = serializer.unserialize(data);
+			attach.setData( unserialized.getData() );
 		}
 		Integer attachId = AttachmentDAO.insertInvoiceAttach(ctx, accInvoice.getAttach());
 		ctx.log().info("INSERT INVOICE ATTACH (invoice: "+ accInvoice.getAttach().getAttachModule() + " id : " +  attachId + ")");
