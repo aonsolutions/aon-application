@@ -2,26 +2,26 @@
 @def selectionBorderWidth 2px;
 .cellTableWidget {
 	width: 100%;
-	padding: 10px;
+	font-family: arial,verdana, "sans serif";
+	border: #ccc 1px solid;
+	border-collapse: collapse;
 }
-.cellTableFirstColumn {}
-.cellTableLastColumn {}
+.cellTableFirstColumn {
+	text-align: center;
+}
+.cellTableLastColumn {
+	text-align: center;
+}
 .cellTableFooter {}
 
 .cellTableHeader {
 	cursor: pointer;
-	border-bottom: 2px solid #6f7277;
-	padding: 3px 15px;
-	text-align: left;
-	color:#4b4a4a;
-	text-shadow:#ddf 1px 1px 0;
-	overflow: hidden;
 }
 
 .cellTableCell {
-	border: 2px solid #fff;
-	padding: 2px 15px;
-	overflow: hidden;
+	font-size: 13px;
+	color:#000;
+	font-family: lucida Grande,Trebuchet MS,Arial,sans-serif;
 }
 .cellTableFirstColumnFooter {}
 .cellTableFirstColumnHeader {}
@@ -30,44 +30,37 @@
 
 .cellTableSortableHeader {
 	cursor: pointer;
-	border-bottom: 2px solid #6f7277;
-	padding: 3px 15px;
-	text-align: left;
-	text-shadow: #ddf 1px 1px 0;
-	overflow: hidden;
 }
-.cellTableSortableHeader:hover {
-	color: #6c6b6b;
-}
-
+.cellTableSortableHeader:hover {}
 .cellTableSortedHeaderAscending {}
 .cellTableSortedHeaderDescending {}
 
 .cellTableEvenRow {
-	background: #fff;
+	background-color: #f8f9f9;
 }
 .cellTableEvenRowCell {
-	border: 2px solid #fff;
-	padding: 2px 15px;
-	overflow: hidden;
+	padding-top: 1px;
+	padding-bottom: 1px;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+	border: #ccc 1px solid;
 }
 
 .cellTableOddRow {
-	background: #f3f7fb;
+	background-color: #fff;
 }
 .cellTableOddRowCell {
-	border: 2px solid #f3f7fb;
-	adding: 2px 15px;
-	overflow: hidden;
+	padding-top: 1px;
+	padding-bottom: 1px;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+	border: #ccc 1px solid;
 }
 .cellTableHoveredRow {
-	background: #eee;
+	background-color: #e2f1f5 !important;
+	cursor: pointer;
 }
-.cellTableHoveredRowCell {
-	border: 2px solid #eee;
-	adding: 2px 15px;
-	overflow: hidden;
-}
+.cellTableHoveredRowCell {}
 .cellTableKeyboardSelectedRow {}
 .cellTableKeyboardSelectedRowCell {}
 
@@ -75,14 +68,18 @@
 	background: rgba(255, 255, 0, 0.3);
 }
 .cellTableSelectedRowCell {
+	/*
 	border: 2px solid rgba(255, 255, 0, 0);
 	adding: 2px 15px;
 	overflow: hidden;
+	*/
 }
 .cellTableKeyboardSelectedCell {
+	/*
 	border: 2px solid rgba(255, 255, 0, 0);
 	adding: 2px 15px;
 	overflow: hidden;
+	*/
 }
 
 @sprite .cellTableLoading {

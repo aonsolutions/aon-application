@@ -76,7 +76,9 @@ public class WorkplaceSalaryObject {
 	}
 	
 	public void getFilterSalariesDB(Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){		
-		filter.setWorkplaceId(workplaceId);
+		if(filter.getEmployeeId() == null)
+			filter.setWorkplaceId(workplaceId);
+		
 		employeesService.getFilterSalaries(filter, new AsyncCallback<List<SalaryInfo>>(){
 
 			@Override

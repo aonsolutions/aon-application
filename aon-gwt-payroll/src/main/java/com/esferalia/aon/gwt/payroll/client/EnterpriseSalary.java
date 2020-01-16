@@ -340,6 +340,18 @@ public class EnterpriseSalary extends Composite implements ContextMenuHandler {
 	    // Add rest of columns and activate sorteable if its needed
 	    addColumns(table, salaryList);
 	    
+	    // Add style to table header
+	    table.getHeader(0).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		table.getHeader(1).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		table.getHeader(2).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		table.getHeader(3).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		table.getHeader(4).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		table.getHeader(5).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		table.getHeader(6).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		table.getHeader(7).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		table.getHeader(8).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		table.getHeader(9).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+	    
 	    // Create a SimplePager.
 	    SimplePager pager = new SimplePager(TextLocation.CENTER, false, false);
 
@@ -541,7 +553,7 @@ public class EnterpriseSalary extends Composite implements ContextMenuHandler {
 			@Override
 			public void render(Context context, SalaryInfo object, SafeHtmlBuilder sb) {
 				if(null != object) {
-					sb.appendHtmlConstant("<button type=\"button\" class=\"aon-finding-toolbar-item aon-icon-edit\" style=\"border: none !important;\"></button>");
+					sb.appendHtmlConstant("<button type=\"button\" class=\"aon-finding-toolbar-item aon-icon-edit\" style=\"border: none !important; height: 20px;\"></button>");
 				}
 			}
 		};
