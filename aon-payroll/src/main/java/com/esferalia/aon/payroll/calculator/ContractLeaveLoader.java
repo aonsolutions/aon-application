@@ -524,8 +524,12 @@ public class ContractLeaveLoader {
 	protected double getQuoteDays(ExpressionContext ctx, Period p) {
 
 		Long days = getDaysBetweenDates(p.getStart(), p.getEnd()) + 1;
+		
+		Date lastDayOfMonth = AonDateUtils.getMonthLastDay(p.getEnd());
 
-		if (leaves.last().getEnd().compareTo(p.getEnd()) != 0)
+		if (
+			(p.getEnd().compareTo(lastDayOfMonth) != 0 ) && 
+			(leaves.last().getEnd().compareTo(p.getEnd()) != 0))
 			return days;
 		
 		Date contractEnd = 

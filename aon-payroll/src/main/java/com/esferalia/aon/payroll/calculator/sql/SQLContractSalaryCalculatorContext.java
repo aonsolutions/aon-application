@@ -4479,6 +4479,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		Date leaveStart = rs.getDate(SQLConstants.CONTRACT_LEAVE + "." + ContractLeaveColumns.START_DATE);
 		Date leaveEnd = rs.getDate(SQLConstants.CONTRACT_LEAVE + "." + ContractLeaveColumns.END_DATE);
 		
+		
 		if ( name.equals(DIRECT_PAY_START.getName())  ) {
 			try {
 				ctx.addExpression(expr, start, end);
@@ -4487,6 +4488,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			return;
 		}
 			
+		if ( Period.compare(end, start) < 0)
+			return;
 		
 		try {
 			List<ITimedResult<Number>> factors = ctx.addExpression(expr, start, end, Number.class);

@@ -398,7 +398,7 @@ public abstract class QuoteCalculator {
 			String name = payment.getName();
 
 			if (!StringUtils.isBlank(name)) {
-				bases.put(name, quote);
+				bases.put(name, quote +bases.getOrDefault(name, 0.00));
 				add(String.format("BASE_%s", name), quote, context, start, end);
 
 				if (AonStringUtils.equals(MATERNITY.getName(), name)

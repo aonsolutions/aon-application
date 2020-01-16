@@ -2,6 +2,7 @@ package com.esferalia.aon.payroll.calculator;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
@@ -101,11 +102,20 @@ public abstract class TaxCalculator {
 			ExpressionContext expressionContext = context.getExpressionContext();
 			List<ITimedResult<Double>> taxes;
 			taxes = expressionContext.eval(irpfExpr, start, end, Double.class);
-			double total = 0.00;
-			for (ITimedObject<Double> quote : taxes) {
-				total += quote.getValue();
-			}
-			return total;
+			
+			return taxes.stream()
+			.filter(t -> t.getValue() != null )
+			.collect(Collectors.summingDouble(t -> t.getValue()));
+			
+			
+//			double total = 0.00;
+//			
+//			for (ITimedObject<Double> quote : taxes) {
+//				Double value = quote.getValue();
+//				total += value != null ? value: 0.00;
+//			}
+//			
+//			return total;
 		}
 
 		@Override
