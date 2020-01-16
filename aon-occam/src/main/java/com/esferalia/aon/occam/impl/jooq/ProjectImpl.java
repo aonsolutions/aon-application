@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.Filter.ProjectReservationFilter;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
+import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.impl.jooq.dao.ProjectDAO;
 
@@ -48,6 +49,18 @@ public class ProjectImpl implements IProject{
 	public Stream<ProjectCommercial> getProjectCommercialStream(AONContext ctx, ProjectCommercialFilter filter) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> ProjectDAO.getProjectCommercialStream(ctx, filter));
+	}
+
+	@Override
+	public ProjectType getProjectType(AONContext ctx, String description) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> ProjectDAO.getProjectType(ctx, description));
+	}
+
+	@Override
+	public Integer insertProjectCommercial(AONContext ctx, ProjectCommercial pc) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> ProjectDAO.insertProjectCommercial(ctx, pc));
 	}
 	
 	

@@ -46,6 +46,7 @@ import com.esferalia.aon.gwt.template.jooq.DBStock;
 import com.esferalia.aon.gwt.template.server.delivery.DeliveryImport;
 import com.esferalia.aon.gwt.template.server.delivery.DeliveryInfo;
 import com.esferalia.aon.gwt.template.server.marketplace.XMLUtils;
+import com.esferalia.aon.gwt.template.server.projectCommercial.ProjectCommercialImport;
 import com.esferalia.aon.gwt.template.shared.ConsumptionItem;
 import com.esferalia.aon.gwt.template.shared.Ecommerce;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
@@ -72,6 +73,7 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.product.Tax;
+import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonRole;
@@ -199,7 +201,8 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 
 
 	//-------------------- IMPORTAR
-	DeliveryInfo di;
+	LinkedList<ProjectCommercial> pcs;
+ 	DeliveryInfo di;
 	LinkedList<String> verror;
 	public Integer executeExcel(Domain domain, User user, TemplateInfo ti, ImportType importType, Boolean ignoreInactiveClient,
 		Integer inventory, String warehouse1,String warehouse2 , String series, String comments,Boolean istransfer ,Integer number){
@@ -243,6 +246,9 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 				executeExcelStock(domain, user, rowIterator, error, inventory, warehouse1, warehouse2, series, comments, istransfer, number);
 			else if(ImportType.DELIVERY.equals(importType)) {
 				di = DeliveryImport.getInstance().importation(data);
+			}
+			else if(ImportType.PROJECT_COMMERCIAL.equals(importType)) {
+				pcs = ProjectCommercialImport.getInstance().importation(domain, user.getLogin(), data);
 			}
 
 			workbook.close();
@@ -2572,5 +2578,12 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 
 	public void print(String text){
 		System.out.println(text);
+	}
+
+	@Override
+	public Error insertProjectCommercial(Domain domain, User user) {
+		domain = AON.getDomain(domain.getName(), domain.getId(), user.getLogin());
+		ProjectCommercialImport.getInstance().insertProjectCommercial(domain, user, pcs);
+		return new Error();
 	}
 }

@@ -159,6 +159,7 @@ import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
+import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
@@ -3058,6 +3059,17 @@ public class AON {
 	// ********************************************
 	// ********************************* Project **
 	// ********************************************
+	public static ProjectType getProjectType(String domainName, Integer domainId, String login, String description){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getProject().getProjectType(ctx, description);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 
 	public static Stream<Project> getProjectStream(String domainName, Integer domainId, String login, ProjectFilter filter){
 		AONContext ctx = null;
@@ -3086,6 +3098,18 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getProject().insertProject(ctx, project);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Integer insertProjectCommercial(String domainName, Integer domainId,
+			String login, ProjectCommercial projectCommercial) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getProject().insertProjectCommercial(ctx, projectCommercial);
 		} finally {
 			if (ctx != null)
 				ctx.close();

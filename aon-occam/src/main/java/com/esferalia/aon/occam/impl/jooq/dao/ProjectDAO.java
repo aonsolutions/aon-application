@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
+import static com.esferalia.aon.jooq.tables.ProjectType.PROJECT_TYPE;
 import static com.esferalia.aon.jooq.tables.ProjectCommercial.PROJECT_COMMERCIAL;
 import static com.esferalia.aon.jooq.tables.ProjectReservation.PROJECT_RESERVATION;
 
@@ -14,6 +15,7 @@ import org.jooq.Record;
 
 import com.esferalia.aon.jooq.tables.records.ProjectRecord;
 import com.esferalia.aon.jooq.tables.records.ProjectReservationRecord;
+import com.esferalia.aon.jooq.tables.records.ProjectTypeRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.ProjectCommercialFilter;
@@ -25,7 +27,9 @@ import com.esferalia.aon.occam.api.model.Properties.ProjectProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProjectReservationProperties;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
+import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class ProjectDAO {
 	private static final ProjectPropertiesDAO PROJECT_PROPERTIES = new ProjectPropertiesDAO();
@@ -130,6 +134,12 @@ public class ProjectDAO {
 				.fetchInto(PROJECT).stream().map(new FullProjectFiller());
 	}
 
+	public static ProjectType getProjectType(AONContext ctx, String description){
+		return ctx.getDslContext()
+				.select().from(PROJECT_TYPE).where(PROJECT_TYPE.DESCRIPTION.eq(description))
+				.fetchInto(PROJECT_TYPE).stream().map(new ProjectTypeFiller()).findFirst().orElse(null);
+	}
+	
 	public static ProjectReservation getProjectReservation(AONContext ctx, ProjectReservationFilter filter){	
 		return ctx.getDslContext()
 				.select().from(PROJECT_RESERVATION).where(PROJECT_RESERVATION_PROPERTIES.getConditions(filter))
@@ -158,6 +168,14 @@ public class ProjectDAO {
 						new Date(project.getDate().getTime()), project.getDomain(), project.getName(), project.getProjectTypeId(),
 						project.getRegistryId(), project.isReservation()?(byte)1:(byte)0, project.isTas()?(byte)1:(byte)0)
 				.returning(PROJECT.ID).fetchOne().getId();
+	}
+	
+	public static Integer insertProjectCommercial(AONContext ctx, ProjectCommercial pc){
+		ctx.getDslContext().insertInto(PROJECT_COMMERCIAL, PROJECT_COMMERCIAL.PROJECT, PROJECT_COMMERCIAL.DOMAIN, PROJECT_COMMERCIAL.TARGET, PROJECT_COMMERCIAL.SELLER,
+				PROJECT_COMMERCIAL.SOURCE, PROJECT_COMMERCIAL.COMMENTS, PROJECT_COMMERCIAL.STATUS, PROJECT_COMMERCIAL.STATUS_DATE)
+				.values(pc.getId(), ctx.getDomainId(), pc.getTarget(), pc.getSeller(), pc.getSource(), pc.getComments(), pc.getStatus(), AonDateUtils.toSql(pc.getStatusDate())).execute();
+		
+		return pc.getId();
 	}
 	
 	private static class FullProjectReservationFiller implements Function<ProjectReservationRecord, ProjectReservation> {
@@ -210,6 +228,19 @@ public class ProjectDAO {
 					.setToken(r.getToken())
 					.setPenaltyAmount(r.getPenaltyAmount())
 					.setPenaltyDate(r.getPenaltyDate());
+		}
+
+	}
+	
+	private static class ProjectTypeFiller implements Function<ProjectTypeRecord, ProjectType> {
+		
+		@Override
+		public ProjectType apply(ProjectTypeRecord r) {
+			return new ProjectType()
+					.setActive(r.getActive().equals(0))
+					.setDomain(r.getDomain())
+					.setId(r.getId())
+					.setDescription(r.getDescription());
 		}
 
 	}

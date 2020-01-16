@@ -29,6 +29,7 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -116,9 +117,10 @@ public abstract class TemplatesDialog extends CustomDialogB {
 				}
 				else if(dialog.getType().contains("import") || dialog.getType().contains("export") 
 						|| dialog.getType().equals("editEcommerceTemplate")){
-					if("importResponse".equals(dialog.getType()) || "importDelivery".equals(dialog.getType())){
+					if("importResponse".equals(dialog.getType()) || "importDelivery".equals(dialog.getType())
+							|| "importProjectCommercial".equals(dialog.getType())){
 						onAccept();
-					} else{
+					} else {
 						ListBox lb1 = (ListBox) flex_table.getWidget(0, 1);
 						Label label1 = (Label) flex_table.getWidget(0, 0);
 						if(label1.getText().equals("Plantilla")){
@@ -201,6 +203,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		case "editEcommerceTemplate": editEcommerce(dialog);break;
 		case "exportEcommerce":exportEcommerce(dialog);break;
 		case "importDelivery":importDelivery(dialog.getUrl());break;
+		case "importProjectCommercial":importProjectCommercial(dialog.getUrl());break;
 		default:
 			break;
 		}
@@ -698,6 +701,19 @@ public abstract class TemplatesDialog extends CustomDialogB {
 	}
 	
 	private void importDelivery(String url) {
+		flex_table.setStyleName("aon-panelGrid");
+		flex_table.setWidth("400px");
+		flex_table.setBorderWidth(1);
+		flex_table.setCellSpacing(0);
+		
+		SingleUploader upload = newUploader(null, url, 1);
+		flex_table.setWidget(0, 0, new Label(MSG.file()));
+		flex_table.setWidget(0, 1, upload);
+			
+		flexTableCss();
+	}
+	
+	private void importProjectCommercial(String url) {
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
 		flex_table.setBorderWidth(1);

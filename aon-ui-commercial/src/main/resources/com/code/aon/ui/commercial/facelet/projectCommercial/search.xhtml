@@ -7,13 +7,21 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 	
 	<ui:define name="content">
-
+		<ui:include
+			src="/net/aonsolutions/aon/gwt/aio/facelet/templates/silent.xhtml" />
 		<aon:form id="projectCommercialSearch">
 
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{bundle.commercial_operation_module}" />
 				<ui:param name="controller" value="#{projectCommercial}" />
-			</ui:include>
+				
+				<ui:define name="additionalToolbarContent">
+					<aon:commandLink id="projectCommercial-import" value="#{bundle.aon_import}"
+						onclick="projectCommercial()"
+						styleClass="aon-finding-toolbar-item aon-icon-import-excel-trans">
+					</aon:commandLink>
+				</ui:define>
+			</ui:decorate>
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:param name="controller" value="#{projectCommercial}" />

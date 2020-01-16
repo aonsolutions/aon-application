@@ -47,6 +47,7 @@ public interface ITemplateAsync {
 	void insertProduct(Domain domain, User user, String value, AsyncCallback<Error> callback);
 	
 	void insertDelivery(Domain domain, User user, AsyncCallback<Error> callback);
+	void insertProjectCommercial(Domain domain, User user, AsyncCallback<Error> callback);
 
 	void insertFee(Domain domain, User user, AsyncCallback<Error> callback);
 

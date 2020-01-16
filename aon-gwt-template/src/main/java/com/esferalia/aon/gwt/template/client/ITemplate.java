@@ -52,6 +52,8 @@ public interface ITemplate extends RemoteService{
 	public Error insertProduct(Domain domain, User user, String value);
 
 	public Error insertDelivery(Domain domain, User user);
+	
+	public Error insertProjectCommercial(Domain domain, User user);
 
 	public Integer executeExcel(Domain domain, User user, TemplateInfo ti, ImportType importType, Boolean ignoreInactiveClient, 
 			Integer inventory, String warehouse1,String warehouse2 , String series, String comments,Boolean istransfer ,Integer number);
