@@ -4,12 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class OptionsToolbar extends Composite {
@@ -25,6 +30,8 @@ public class OptionsToolbar extends Composite {
 		void onDraftButtonClick(ClickEvent event);
 				
 		void onCollapseAllButtonClick(ClickEvent event);
+		
+		void onKeyUpSearchTextBox(KeyUpEvent event);
 	}
 	
 	private static EditOptionsTooltbarUiBinder uiBinder = GWT
@@ -47,12 +54,19 @@ public class OptionsToolbar extends Composite {
 	@UiField
 	Button collapseAllButton;
 	
+	@UiField
+	TextBox searchTextBox;
+
 	private List<Listener> listeners;
 
 	public OptionsToolbar() {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		this.listeners = new ArrayList<Listener>();
+	}
+
+	public void setSearchTextBox(boolean visible) {
+		searchTextBox.setVisible(visible);
 	}
 	
 	public void setVisiblePasteButton(boolean visible) {
@@ -132,10 +146,21 @@ public class OptionsToolbar extends Composite {
 		for(Listener listener : listeners)
 			listener.onCollapseAllButtonClick(event);
 	}
+
+	@UiHandler("searchTextBox")
+	void onKeyPressSearchTextBox(KeyUpEvent event) {
+		for(Listener listener : listeners)
+			listener.onKeyUpSearchTextBox(event);
+	}
 	
 	public Button getViewButton() {
 		return this.viewButton;
 	}
+
+	public TextBox getSearchTextBox() {
+		return searchTextBox;
+	}
+	
 	
 	public void addListener(Listener listener) {
 		listeners.add(listener);

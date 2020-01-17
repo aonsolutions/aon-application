@@ -6,6 +6,10 @@
 	.newButton {
 		float: right;
 	}
+	.searchTextBox {
+		float: left;
+		margin-top: 2px;
+	}
 	
 	.legend-icon {
 		margin-top: 3px;
@@ -13,6 +17,8 @@
 	</ui:style>
 
 	<g:FlowPanel styleName="gwt-MenuBar-horizontal" debugId='buttonBar' ui:field='buttonBar'>
+		<g:TextBox styleName="gwt-TextBox {style.searchTextBox}" debugId='searchTextBox' ui:field='searchTextBox' visible="false"/>
+		
 		<g:HTMLPanel styleName="{style.legend-icon}">
 
 			<g:Button styleName="gwt-MenuItem aon-icon-view" debugId='viewButton' ui:field='viewButton' />

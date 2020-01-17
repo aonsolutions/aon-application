@@ -44,6 +44,7 @@ import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
@@ -1982,6 +1983,10 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	@Override
 	public void onCollapseAllButtonClick(ClickEvent event) {
 		collapse();
+	}
+	
+	@Override
+	public void onKeyUpSearchTextBox(KeyUpEvent event) {
 	}
 	
 	

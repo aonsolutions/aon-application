@@ -371,7 +371,10 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				))
 				.or(AGREEMENT.ID.eq(0))
 				
-				.orderBy(AGREEMENT.DESCRIPTION).fetchInto(AGREEMENT);
+				.orderBy(AGREEMENT.DESCRIPTION)
+				.offset(offset)
+				.limit(limit)
+				.fetchInto(AGREEMENT);
 		// @formatter:on
 
 		List<Agreement> agreements = new LinkedList<Agreement>();

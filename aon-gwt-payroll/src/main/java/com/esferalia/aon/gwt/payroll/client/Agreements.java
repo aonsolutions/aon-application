@@ -8,10 +8,11 @@ import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.esferalia.aon.gwt.common.client.widget.OptionsToolbar;
 import com.esferalia.aon.gwt.common.shared.NumberUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
-import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
+import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -19,6 +20,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -69,6 +71,7 @@ public class Agreements extends ResizeComposite implements
 	public Agreements() {
 
 		initWidget(BINDER.createAndBindUi(this));
+		
 
 		this.listeners = new LinkedList<Listener>();
 		this.toolbars = new LinkedList<Toolbar>();
@@ -95,40 +98,7 @@ public class Agreements extends ResizeComposite implements
 	@Override
 	public void getAgreements() {
 		agreementsTree.clearTree();
-		agreementsTree.getEnterpriseService().getAgreements(0, 100,
-				new AsyncCallback<List<Agreement>>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						Window.alert(caught.getMessage());
-					}
-
-					@Override
-					public void onSuccess(List<Agreement> agreements) {
-						int item2Select = -1;
-						for (int i = 0; i < agreements.size(); i++) {
-
-							Agreement agreement = agreements.get(i);
-							if (evaluateId(agreement))
-								addAgreementItem(agreement);
-
-							if (agreement.isRedefined()) {
-								if (item2Select == -1)
-									item2Select = i;
-							}
-							if (agreement.hasEmployees()) {
-								if (item2Select == -1)
-									item2Select = i;
-							}
-
-						}
-						// Select the first one.
-						if (agreementsTree.getTree().getItemCount() > 0)
-							agreementsTree.getTree().setSelectedItem(
-									agreementsTree.getTree().getItem(
-											Math.max(item2Select, 0)), true);
-					}
-				});
+		getAgreements(0, 10);
 	}
 
 	public void addListener(Listener listener) {
@@ -292,9 +262,70 @@ public class Agreements extends ResizeComposite implements
 	@Override
 	public void onCollapseAllButtonClick(ClickEvent event) {
 		// TODO Auto-generated method stub
-		
 	}
 	
+	@Override
+	public void onKeyUpSearchTextBox(KeyUpEvent event) {
+		filter(toolbar.getSearchTextBox().getValue());
+	}
+	
+	private void filter(String pattern) {
+		Tree tree = agreementsTree.tree;
+		for ( int i = 0; i < tree.getItemCount(); i++ ) {
+			TreeItem item = tree.getItem(i);
+			Agreement agreement = (Agreement) item.getUserObject();
+			
+			boolean visible = AonStringUtils.isBlank(pattern) || 
+					( agreement.getDescription().toUpperCase().indexOf(pattern.trim().toUpperCase()) >= 0 );
+			
+			item.setVisible(visible);
+		}
+	}
+	
+	private void getAgreements (int offset, int limit) {
+		
+		agreementsTree.getEnterpriseService().getAgreements(offset, limit,
+				new AsyncCallback<List<Agreement>>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert(caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(List<Agreement> agreements) {
+						int item2Select = -1;
+						for (int i = 0; i < agreements.size(); i++) {
+
+							Agreement agreement = agreements.get(i);
+							if (evaluateId(agreement))
+								addAgreementItem(agreement);
+
+							if (agreement.isRedefined()) {
+								if (item2Select == -1)
+									item2Select = i;
+							}
+							if (agreement.hasEmployees()) {
+								if (item2Select == -1)
+									item2Select = i;
+							}
+
+						}
+						
+						// Select the first one.
+						if (offset == 0 && agreementsTree.getTree().getItemCount() > 0)
+							agreementsTree.getTree().setSelectedItem(
+									agreementsTree.getTree().getItem(
+											Math.max(item2Select, 0)), true);
+						// Get remainning
+						if ( agreements.size() == limit )
+							getAgreements(offset + limit, limit);
+						else 
+							toolbar.setSearchTextBox(true);
+
+					}
+				});
+	}
 	
 	private static String getId(Agreement agreement) {
 		return agreement.getDescription()
@@ -303,7 +334,6 @@ public class Agreements extends ResizeComposite implements
 				;
 	}
 
-	
 	
 
 }
