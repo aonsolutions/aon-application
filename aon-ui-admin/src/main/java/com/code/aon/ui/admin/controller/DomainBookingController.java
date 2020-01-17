@@ -57,6 +57,10 @@ public class DomainBookingController extends DataScrollerState {
 	
 	private BookingInfo bookingInfo;
 	
+	private boolean showSMB;
+	
+	private boolean showAio;
+	
 	private boolean showInactive;
 	
 	private boolean showExpired;
@@ -79,6 +83,22 @@ public class DomainBookingController extends DataScrollerState {
 		initBookingInfo();
 	}
 	
+	public boolean isShowSMB() {
+		return showSMB;
+	}
+
+	public void setShowSMB(boolean showSMB) {
+		this.showSMB = showSMB;
+	}
+	
+	public boolean isShowAio() {
+		return showAio;
+	}
+
+	public void setShowAio(boolean showAio) {
+		this.showAio = showAio;
+	}
+	
 	public boolean isShowInactive() {
 		return showInactive;
 	}
@@ -95,11 +115,7 @@ public class DomainBookingController extends DataScrollerState {
 		this.showExpired = showExpired;
 	}
 
-	public void onChangeShowInactive(ActionEvent event) {
-		initializeModel();
-	}	
-
-	public void onChangeShowExpired(ActionEvent event) {
+	public void onChangeShow(ActionEvent event) {
 		initializeModel();
 	}	
 	
@@ -202,6 +218,7 @@ public class DomainBookingController extends DataScrollerState {
 		AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 		Condition condition = ds.getDomainCondition(domain.getId(), isShowInactive(), isShowExpired());
 		domains = getDomainBookingDatas(ctx, condition);
+		LinkedList<DomainBookingData> domainList = new LinkedList<DomainBookingData>();
 		for (DomainBookingData data : domains) {
 			fillDomainData(ctx, data);
 			if ( data.getPayerDomain() == null ) {
@@ -217,9 +234,13 @@ public class DomainBookingController extends DataScrollerState {
 			if(data.isTediCenter()) {
 				this.totalTedis++;
 			}
+			
+			if((isShowSMB() && data.isAonSmb())  || (isShowAio() && data.isAonAio())) {	
+				domainList.add(data);
+			}
 		}
 		ctx.finalize();
-		setModel(new SerializableListDataModel(domains));
+		setModel(new SerializableListDataModel(isShowSMB() || isShowAio() ? domainList : domains));
 	}
 
 	public int getTotalSmbUsers() {

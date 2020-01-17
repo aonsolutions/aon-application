@@ -32,13 +32,42 @@
 						value="#{bundle.admin_domain_show}:" />
 					<aon:outputLabel for="Domains_showInactive"
 						styleClass="aon-italic" 
+						value="SMB" />
+					<aon:selectBooleanCheckbox id="Domains_showSMB"
+						value="#{domainBooking.showSMB}" >
+						<a4j:support 
+							event="onclick"
+							reRender="domainBookingList"
+							actionListener="#{domainBooking.onChangeShow}"
+							requestDelay="500"
+							ajaxSingle="true"
+							ignoreDupResponses="true"
+							limitToList="true"/>						
+					</aon:selectBooleanCheckbox>
+					<aon:outputLabel for="Domains_showInactive"
+						styleClass="aon-italic" 
+						value="AiO" />
+					<aon:selectBooleanCheckbox id="Domains_showAio"
+						value="#{domainBooking.showAio}" >
+						<a4j:support 
+							event="onclick"
+							reRender="domainBookingList"
+							actionListener="#{domainBooking.onChangeShow}"
+							requestDelay="500"
+							ajaxSingle="true"
+							ignoreDupResponses="true"
+							limitToList="true"/>						
+					</aon:selectBooleanCheckbox>
+					
+					<aon:outputLabel for="Domains_showInactive"
+						styleClass="aon-italic" 
 						value="#{bundle.admin_domain_show_inactives}" />
 					<aon:selectBooleanCheckbox id="Domains_showInactive"
 						value="#{domainBooking.showInactive}" >
 						<a4j:support 
 							event="onclick"
 							reRender="domainBookingList"
-							actionListener="#{domainBooking.onChangeShowInactive}"
+							actionListener="#{domainBooking.onChangeShow}"
 							requestDelay="500"
 							ajaxSingle="true"
 							ignoreDupResponses="true"
@@ -52,7 +81,7 @@
 						<a4j:support 
 							event="onclick"
 							reRender="domainBookingList"
-							actionListener="#{domainBooking.onChangeShowExpired}"
+							actionListener="#{domainBooking.onChangeShow}"
 							requestDelay="500"
 							ajaxSingle="true"
 							ignoreDupResponses="true"
