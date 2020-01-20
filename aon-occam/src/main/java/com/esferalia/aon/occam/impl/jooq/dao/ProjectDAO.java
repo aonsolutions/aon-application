@@ -136,7 +136,7 @@ public class ProjectDAO {
 
 	public static ProjectType getProjectType(AONContext ctx, String description){
 		return ctx.getDslContext()
-				.select().from(PROJECT_TYPE).where(PROJECT_TYPE.DESCRIPTION.eq(description))
+				.select().from(PROJECT_TYPE).where(PROJECT_TYPE.DOMAIN.eq(ctx.getDomainId())).and(PROJECT_TYPE.DESCRIPTION.eq(description))
 				.fetchInto(PROJECT_TYPE).stream().map(new ProjectTypeFiller()).findFirst().orElse(null);
 	}
 	
@@ -160,6 +160,18 @@ public class ProjectDAO {
 	}
 	
 	public static Integer insertProject(AONContext ctx, Project project){
+		
+		System.out.println("PROJECT ACTIVE - " + project.isActive());
+		System.out.println("PROJECT ALIAS - " + project.getAlias());
+		System.out.println("PROJECT COMMERCIAL - " + project.isCommercial());
+		System.out.println("PROJECT DATE - " + project.getDate());
+		System.out.println("PROJECT DOMAIN - " + project.getDomain());
+		System.out.println("PROJECT NAME - " + project.getName());
+		System.out.println("PROJECT PROJECT TYPE - " + project.getProjectTypeId());
+		System.out.println("PROJECT PROJECT NAME - " + project.getProjectTypeName());
+		System.out.println("PROJECT REGISTRY - " + project.getRegistryId());
+		System.out.println("PROJECT RESERVATION - " + project.isReservation());
+		System.out.println("PROJECT TAS - " + project.isTas());
 
 		return ctx.getDslContext().insertInto(PROJECT, PROJECT.ACTIVE, PROJECT.ALIAS,
 					PROJECT.COMMERCIAL, PROJECT.DATE, PROJECT.DOMAIN, PROJECT.NAME, PROJECT.PROJECT_TYPE,
