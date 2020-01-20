@@ -81,6 +81,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.text.client.DateTimeFormatRenderer;
 import com.google.gwt.text.shared.Parser;
@@ -95,6 +96,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
+import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Focusable;
@@ -137,6 +139,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	public static final String ONLY_THIS_YEAR = "ONLY_THIS_YEAR";
 	public static final String ONLY_THIS_MONTH = "ONLY_THIS_MONTH";
 	public static final String FROM_THIS_MONTH = "FROM_THIS_MONTH";
+	private static final DateTimeFormat MONTH_FORMAT = DateTimeFormat
+			.getFormat(PredefinedFormat.MONTH_ABBR);
 
 	static class TypeListBox<T extends Enum<?> & HasDescription> extends ListBox {
 
@@ -222,6 +226,12 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		String panelButtons();
 		
 		String hide();
+		
+		String issueLabel();
+		
+		String issueTextBox();
+		
+		String p2();
 
 	}
 
@@ -877,6 +887,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 					Suggestion suggestion = event.getSelectedItem();
 					Payment concept = getPayment(suggestion.getReplacementString());
+					
 					if (concept == null)
 						return;
 
@@ -1030,6 +1041,21 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	@UiField
 	HorizontalPanel moreToggleButtonsPanel;
 	
+	@UiField
+	HorizontalPanel periodTypePanel;
+	
+	@UiField
+	DeckPanel deckPanelExtras;
+	
+	@UiField
+	DeckPanel deckPanelPayPeriod;
+	
+	@UiField
+	ListBox payPeriod;
+	
+	@UiField
+	Label payPeriodLabel;
+	
 //	@UiField
 //	TabLayoutPanel salaryTabLayoutPanel;
 
@@ -1133,18 +1159,27 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			
 			@Override
 			public void onKeyDown(KeyDownEvent event) {
-				if(event.isShiftKeyDown()) {
+				if(event.isAltKeyDown()) {
 					if(event.getNativeKeyCode() == 79)
-	                {
-	                    extrasTable.addStyleName(style.hide());
-	                } else if(event.getNativeKeyCode() == 77) {
-	                	extrasTable.removeStyleName(style.hide());
-	                }
+						deckPanelExtras.showWidget(0);
+	                else if(event.getNativeKeyCode() == 77) 
+	                	deckPanelExtras.showWidget(1);
 				}	
 			}
 		};
 		
 		RootPanel.get().addDomHandler(myHandler , KeyDownEvent.getType());
+		
+		//Show new payPeriod
+		deckPanelExtras.showWidget(0);
+		periodTypePanel.getElement().getStyle().clearWidth();
+		
+		//Add options to payPeriod ListBox
+		this.payPeriod.addItem("ANUALES");
+		this.payPeriod.addItem("SEMESTRALES");
+		
+		//Add style to payPeriodLabel
+		this.payPeriodLabel.getElement().getStyle().setPadding(2.00, Unit.PX);
 		
 	}
 	
@@ -1451,8 +1486,23 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		
 		setReadOnly(/*object.isSystem() &&*/ !object.isMine() );
 		
+		if(!checkIfExtrasExist())
+			deckPanelExtras.showWidget(2);
+		else
+			deckPanelExtras.showWidget(0);
+		
 		if ( agreementDraftObject.getDatesWithChanges().isEmpty() )
 			categoryButton.click();
+		
+	}
+
+	private boolean checkIfExtrasExist() {
+		int countExtras = 0;
+		for (Extra extra : agreementDraftObject.getExtras()) {
+			if(extra.getIssueDate() != null)
+				countExtras++;
+		}
+		return countExtras > 1;
 	}
 
 	// ------------------------------------------
@@ -1556,6 +1606,44 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		});
 	}
+	
+	@UiHandler("payPeriod")
+	void onPayPeriodChangeValue(ChangeEvent event) {
+		for(Extra extra: agreementDraftObject.getExtras()) {
+			String monthIssueDate = extra.getIssueDate().split("/")[1];
+			Integer monthIssue = Integer.parseInt(monthIssueDate);
+			if(payPeriod.getSelectedIndex() == 0) { // ANUAL
+				if(monthIssue == 12) { //PAGA NAVIDAD
+					extra.setStartDate("01/01");
+					extra.setEndDate("31/12");
+				}
+				if(monthIssue == 7 || monthIssue == 6) { //PAGA VERANO
+					extra.setStartDate("01/07 -1");
+					extra.setEndDate("30/06");
+				}
+				if(monthIssue == 3) { //PAGA BENEFICIOS
+					extra.setStartDate("01/01 -1");
+					extra.setEndDate("31/12 -1");
+				}
+			} else { // SEMESTRAL
+				if(monthIssue == 12) { //PAGA NAVIDAD
+					extra.setStartDate("01/07");
+					extra.setEndDate("31/12");
+				}
+				if(monthIssue == 7 || monthIssue == 6) { //PAGA VERANO
+					extra.setStartDate("01/01");
+					extra.setEndDate("30/06");
+				}
+				if(monthIssue == 3) { //PAGA BENEFICIOS
+					extra.setStartDate("01/01 -1");
+					extra.setEndDate("31/12 -1");
+				}
+			}
+			
+			AgreementDraft.this.agreementDraftObject.addDraftExtra(extra);
+			AgreementDraft.this.calculate();
+		}
+	}
 
 	// ------------------------------------------------------------------------
 
@@ -1577,6 +1665,11 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		acceptButton.setEnabled(!readOnly);
 		deleteButton.setEnabled(!readOnly);
 		
+		if(readOnly)
+			deckPanelPayPeriod.showWidget(1);
+		else
+			deckPanelPayPeriod.showWidget(0);
+			
 		descriptionTextBox.setReadOnly(readOnly);
 
 		setReadOnly(salaryTableFirstColumn, readOnly);
@@ -2331,11 +2424,18 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		TypeListBox<Payment.Type> paymentTypeListBox = new TypeListBox<Payment.Type>(Payment.Type.class, 10);
 		paymentTypeListBox.setSelected(payment.getType());
+		
 		TextBox descriptionBox = new TextBox();
 		descriptionBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
 		descriptionBox.setText(payment.getDescription());
 		descriptionBox.getElement().getStyle().setWidth(98, Unit.PCT);
-		paymentsTable.setWidget(row, 1, descriptionBox);
+		
+		// If CRA_004 or CRA_005 set issue_date and ListBox
+		if(payment.getType() == Payment.Type.CRA_0004 || payment.getType() == Payment.Type.CRA_0005) {
+			paymentsTable.setWidget(row, 1, createSpecialPay(payment, descriptionBox));
+		}else {
+			paymentsTable.setWidget(row, 1, descriptionBox);
+		}
 		
 		TextBox expressionBox = new ExpressionBox();
 		expressionBox.setMaxLength(EXPRESSION_MAX_LENGTH);
@@ -2353,7 +2453,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		deleteButton.setStyleName(AON.AON_ICON_DELETE);
 		deleteButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 		paymentsTable.setWidget(row, 3, deleteButton);
-		paymentsTable.getCellFormatter().addStyleName(row, 3, AON.AON_TEXT_RIGHT);
+		paymentsTable.getCellFormatter().addStyleName(row, 4, AON.AON_TEXT_RIGHT);
 		formatPaymentRow(row);
 
 		PaymentEditor paymentEditor = new PaymentEditor(payment);
@@ -2383,6 +2483,195 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		ensureDebugId(paymentsTable.getRowFormatter().getElement(row), "payment-row-" + row);
 		
 		return paymentEditor;
+	}
+
+	private HorizontalPanel createSpecialPay(Payment payment, TextBox descriptionBox) {
+		//Horizontal panel for concept and issue date
+		HorizontalPanel descriptionHPanel = new HorizontalPanel();
+		descriptionHPanel.setWidth("100%");
+		descriptionHPanel.getElement().getStyle().setPaddingRight(3.00, Unit.PX);
+		
+		descriptionBox.setWidth("100%");
+		descriptionHPanel.add(descriptionBox);
+		
+		descriptionBox.getElement().getParentElement().getStyle().setPadding(0.00, Unit.PX);
+		descriptionBox.getElement().getParentElement().getStyle().setBorderStyle(BorderStyle.NONE);
+		descriptionBox.getElement().getParentElement().getStyle().setWidth(100, Unit.PCT);
+		
+		//Issue label and value
+		Label issueLabel = new Label("COBRO");
+		issueLabel.addStyleName(style.issueLabel());
+		
+		descriptionHPanel.add(issueLabel);
+		issueLabel.getElement().getParentElement().getStyle().setBorderStyle(BorderStyle.NONE);
+		issueLabel.getElement().getParentElement().getStyle().setPaddingRight(0, Unit.PX);
+		
+		//Create widget
+		Widget issueValue = null;
+		
+		//Find extra, if not its a new payment
+		boolean findExtra = false;
+		
+		for (Extra extra : agreementDraftObject.getExtras()) {
+			if(extra.getPaymentId().equals(payment.getId())) {
+				//Find it
+				findExtra = true;
+				
+				//Check type payPeriod ListBox
+				Date startDate = parseExtraDate(extra.getStartDate());
+				Date endDate = parseExtraDate(extra.getEndDate());
+				int daysBetween = DateUtils.getDaysBetween(startDate, endDate);
+				if(daysBetween > 186) {
+					this.payPeriod.setSelectedIndex(0);
+					this.payPeriodLabel.setText(this.payPeriod.getSelectedItemText());
+				}else {
+					this.payPeriod.setSelectedIndex(1);
+					this.payPeriodLabel.setText(this.payPeriod.getSelectedItemText());
+				}
+				
+				if(!agreementDraftObject.isMine()) {
+					issueValue = new Label();
+					issueValue.addStyleName(style.p2());
+					if(null != extra.getIssueDate())
+						((Label)issueValue).setText(extra.getIssueDate());
+				} else {
+					issueValue = new TextBox();
+					issueValue.getElement().setPropertyString("placeholder", "dd/mm");
+					issueValue.addStyleName(style.issueTextBox());
+					((TextBox) issueValue).addValueChangeHandler(new ValueChangeHandler<String>() {
+						
+						@Override
+						public void onValueChange(ValueChangeEvent<String> event) {
+							if(event.getValue().length() == 0) {
+								extra.setIssueDate("REMOVE()");
+								AgreementDraft.this.agreementDraftObject.addDraftExtra(extra);
+								AgreementDraft.this.calculate();
+							}else {
+								extra.setIssueDate(event.getValue());
+								AgreementDraft.this.agreementDraftObject.addDraftExtra(extra);
+								AgreementDraft.this.calculate();
+							}
+						}
+					});
+					
+					if(null != extra.getIssueDate())
+						((TextBox)issueValue).setText(extra.getIssueDate());
+				}
+			}
+		}
+		
+		//Its a new payment
+		if(!findExtra && payment.getType() == Payment.Type.CRA_0004) {
+			if(!agreementDraftObject.isMine()) {
+				issueValue = new Label();
+				((Label)issueLabel).setText("PRORRATEADO");
+				((Label)issueLabel).getElement().getStyle().setWidth(90.00, Unit.PX);
+			}else {
+				issueValue = new TextBox();
+				issueValue.getElement().setPropertyString("placeholder", "dd/mm");
+				issueValue.addStyleName(style.issueTextBox());
+				((TextBox) issueValue).setTitle("PRORRATEADO");
+				((TextBox) issueValue).addValueChangeHandler(new ValueChangeHandler<String>() {
+					
+					@Override
+					public void onValueChange(ValueChangeEvent<String> event) {
+						Extra newExtra = agreementDraftObject.newDraftExtra();
+						newExtra.setIssueDate(event.getValue());
+						
+						String monthIssueDate = event.getValue().split("/")[1];
+						Integer monthIssue = Integer.parseInt(monthIssueDate);
+						//Check type payPeriod ListBox
+						if(payPeriod.getSelectedIndex() == 0) { // ANUAL
+							if(monthIssue == 12) { //PAGA NAVIDAD
+								newExtra.setStartDate("01/01");
+								newExtra.setEndDate("31/12");
+							}
+							if(monthIssue == 7 || monthIssue == 6) { //PAGA VERANO
+								newExtra.setStartDate("01/07 -1");
+								newExtra.setEndDate("30/06");
+							}
+							if(monthIssue == 3) { //PAGA BENEFICIOS
+								newExtra.setStartDate("01/01 -1");
+								newExtra.setEndDate("31/12 -1");
+							}
+						} else { // SEMESTRAL
+							if(monthIssue == 12) { //PAGA NAVIDAD
+								newExtra.setStartDate("01/07");
+								newExtra.setEndDate("31/12");
+							}
+							if(monthIssue == 7 || monthIssue == 6) { //PAGA VERANO
+								newExtra.setStartDate("01/01");
+								newExtra.setEndDate("30/06");
+							}
+							if(monthIssue == 3) { //PAGA BENEFICIOS
+								newExtra.setStartDate("01/01 -1");
+								newExtra.setEndDate("31/12 -1");
+							}
+						}
+						
+						newExtra.setDomain(payment.getDomain());
+						newExtra.setPaymentId(payment.getId());
+						newExtra.setPaymentDescription(payment.getDescription());
+						newExtra.setAgreementDescription(descriptionTextBox.getValue());
+						
+						AgreementDraft.this.agreementDraftObject.addDraftExtra(newExtra);
+						AgreementDraft.this.calculate();
+					}
+				});
+			}
+			
+		}else if(payment.getType() == Payment.Type.CRA_0005){
+			Date date = new Date();
+			date.setDate(1);
+			
+			if(!agreementDraftObject.isMine()) {
+				issueValue = new Label();
+				Short month = payment.getMonth();
+				
+				if(null == month) {
+					((Label)issueLabel).setText("PRORRATEADO");
+					((Label)issueLabel).getElement().getStyle().setWidth(90.00, Unit.PX);
+				}else {
+					date.setMonth(month);
+					((Label)issueValue).setText(MONTH_FORMAT.format(date));
+					issueValue.addStyleName(style.p2());
+				}
+				
+			}else {
+				Widget innerIssueValue = new ListBox();
+				((ListBox)innerIssueValue).addItem("Prorrat.");
+				
+				for (int month = 0; month < 12; month++) {
+					date.setMonth(month);
+					((ListBox)innerIssueValue).addItem(MONTH_FORMAT.format(date));
+				}
+				
+				((ListBox)innerIssueValue).setWidth("56px");
+				
+				Short month = payment.getMonth();
+				((ListBox) innerIssueValue).setSelectedIndex(month == null ? 0 : month + 1);
+				
+				innerIssueValue.addStyleName(style.issueTextBox());
+				((ListBox) innerIssueValue).addChangeHandler(new ChangeHandler() {
+					
+					@Override
+					public void onChange(ChangeEvent event) {
+						int index = ((ListBox)innerIssueValue).getSelectedIndex();
+						payment.setMonth(index == 0 ? null : (short) (index - 1));
+						AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
+						AgreementDraft.this.calculate();
+					}
+				});
+				
+				issueValue = innerIssueValue;
+			}
+		}
+		
+		descriptionHPanel.add(issueValue);
+		issueValue.getElement().getParentElement().getStyle().setPadding(0.00, Unit.PX);
+		issueValue.getElement().getParentElement().getStyle().setBorderStyle(BorderStyle.NONE);
+		
+		return descriptionHPanel;
 	}
 
 	private ExtraEditor insertNewExtraRow(int row, SortedSet<Payment> payments) {
@@ -2561,6 +2850,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		paymentsTable.setText(0, 0, "CONCEPTO");
 		paymentsTable.getFlexCellFormatter().setColSpan(0, 0, 2);
+		
 		paymentsTable.setText(0, 1, "DEVENGO");
 		paymentsTable.getFlexCellFormatter().setColSpan(0, 1, 2);
 

@@ -283,6 +283,30 @@
 		 @external gwt-ListBox;
 		 @external gwt-SuggestBox;
 		 
+		.issueLabel{
+			font-weight: bold;
+			width: 40px;
+			text-align: center;
+			font-size: 10px;
+			padding: 2px;
+		}
+		
+		.issueTextBox{
+			text-align: center;
+			width: 50px;
+		}
+		
+		.p2{
+			padding: 2px;
+			width: 40px;
+			text-align: center;
+		}
+		
+		.payPeriodLabel{
+			font-weight: bold;
+			padding: 2px;
+			margin-right: 5px;
+		}
 
 	</ui:style>
 
@@ -405,11 +429,18 @@
 							<g:FlexTable debugId='paymentsTable' ui:field='paymentsTable'
 								styleName="aon-dataTable {style.edit-rows}" />
 							<g:HTML styleName="{style.vertical-space}" />
-
-							<g:FlexTable debugId='extrasTable' ui:field='extrasTable'
+							<g:DeckPanel ui:field="deckPanelExtras">
+								<g:HorizontalPanel ui:field="periodTypePanel">
+									<g:Label styleName="{style.payPeriodLabel}">Pagas extras:</g:Label>
+									<g:DeckPanel ui:field="deckPanelPayPeriod">
+										<g:ListBox ui:field="payPeriod"></g:ListBox>
+										<g:Label ui:field="payPeriodLabel"></g:Label>
+									</g:DeckPanel>
+								</g:HorizontalPanel>
+								<g:FlexTable debugId='extrasTable' ui:field='extrasTable'
 								styleName="aon-dataTable {style.edit-rows}" />
-							<g:HTML styleName="{style.vertical-space}" />
-
+								<g:HTML styleName="{style.vertical-space}" />
+							</g:DeckPanel>
 						</g:VerticalPanel>
 					</g:VerticalPanel>
 				</g:ScrollPanel>
