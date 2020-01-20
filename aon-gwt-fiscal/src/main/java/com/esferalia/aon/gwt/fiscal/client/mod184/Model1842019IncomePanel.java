@@ -628,10 +628,10 @@ public class Model1842019IncomePanel extends SimpleLayoutPanel implements Focusa
 		tab2.setWidget(15, 3, arrendamientosCanones);
 		
 		
-		tab2.setWidget(16, 0, new MediumLabel("Servicios profesionales independientes"));
-		tab2.setWidget(16, 1, new MediumLabel("Suministros"));
- 		tab2.setWidget(16, 2, new MediumLabel("Gastos financieros"));
-		tab2.setWidget(16, 3, new MediumLabel("Amortizaciones"));
+		tab2.setWidget(16, 0, new MediumLabel("Reparaciones y conservaci\u00F3n"));
+		tab2.setWidget(16, 1, new MediumLabel("Servicios profesionales independientes"));
+		tab2.setWidget(16, 2, new MediumLabel("Suministros"));
+ 		tab2.setWidget(16, 3, new MediumLabel("Gastos financieros"));
 
 		reparacionConservacion.setValue(income.getReparacionConservacion());
 		reparacionConservacion.addValueChangeHandler(new ValueChangeHandler<Double>() {
