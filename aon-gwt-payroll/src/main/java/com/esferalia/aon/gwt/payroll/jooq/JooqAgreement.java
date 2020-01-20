@@ -25,6 +25,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -385,7 +386,8 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 			agreement.setDomain(record.getDomain());
 			agreement.setDescription(record.getDescription());
 			
-			agreement.setLevels(getAgreementLevel(dslContext, record.getId(), agreement));
+			agreement.setLevels(Collections.emptySet());
+			//agreement.setLevels(getAgreementLevel(dslContext, record.getId(), agreement));
 
 			boolean hasContracts = hasContract(dslContext, record.getId());
 			agreement.setHasContract(hasContracts);
