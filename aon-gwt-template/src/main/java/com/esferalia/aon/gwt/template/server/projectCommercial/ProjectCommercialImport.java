@@ -222,6 +222,7 @@ public class ProjectCommercialImport {
 
 	public void insertProjectCommercial(Domain domain, User user,LinkedList<ProjectCommercial> pcs) {
 		pcs.stream().forEach(pc -> {
+			System.out.println("PROJECT COMMERCIAL - " + pc.getName());
 			if(pc.getName() == null) {
 				pc.setName("-");
 			}
