@@ -184,7 +184,7 @@ public class ProjectCommercialImport {
 			}
 			Seller seller = AON.getSeller(domain.getName(), domain.getId(), login, f -> f.getNameProperty().eq(o.toString()));
 			sellers.add(seller);
-			pc.setProjectTypeId(seller.getId());
+			pc.setSeller(seller.getId());
 			return ;
 		}
 		if("fecha".equalsIgnoreCase(title)) {
@@ -222,7 +222,10 @@ public class ProjectCommercialImport {
 
 	public void insertProjectCommercial(Domain domain, User user,LinkedList<ProjectCommercial> pcs) {
 		pcs.stream().forEach(pc -> {
-			System.out.println("PROJECT COMMERCIAL - " + pc.getName());
+			System.out.println("PROJECT COMMERCIAL: ");
+			System.out.println("Name: " + pc.getName());
+			System.out.println("Domain: " + pc.getDomain());
+			
 			if(pc.getName() == null) {
 				pc.setName("-");
 			}

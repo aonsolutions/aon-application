@@ -2582,9 +2582,6 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 
 	@Override
 	public Error insertProjectCommercial(Domain domain, User user) {
-		System.out.println("INSERT PROJECT COMMERCIAL - " + domain.getId() + " - " + domain.getName());
-		System.out.println("User - " + user.getLogin());
-		System.out.println("PCS - " + pcs.size());
 		ProjectCommercialImport.getInstance().insertProjectCommercial(domain, user, pcs);
 		return new Error();
 	}
