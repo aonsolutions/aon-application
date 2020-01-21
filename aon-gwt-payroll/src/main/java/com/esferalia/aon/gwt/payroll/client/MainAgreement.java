@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 
-import com.code.aon.config.Domain;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
@@ -219,8 +218,9 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			// TODO Auto-generated method stub
 			if (!CollectionUtils.isEmpty(result)) {
 				Date lastChange = result.last();
-				agreementDraftObject.setStartDate(DateUtils
-						.getFirstDayOfMonth(lastChange));
+				agreementDraftObject.setStartDate(lastChange);
+//				agreementDraftObject.setStartDate(DateUtils
+//						.getFirstDayOfMonth(lastChange));
 				agreementDraftObject.setEndDate(DateUtils
 						.getLastDayOfMonth(lastChange));
 			}
