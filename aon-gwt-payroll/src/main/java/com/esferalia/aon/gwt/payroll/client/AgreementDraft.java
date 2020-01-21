@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
@@ -71,6 +72,8 @@ import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.logical.shared.CloseEvent;
@@ -662,7 +665,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			expressionBox.addValueChangeHandler(new ValueChangeHandler<String>() {
 				@Override
 				public void onValueChange(ValueChangeEvent<String> event) {
-					
 					if ( expressionBox.isReadOnly() ) return;
 					
 					reset.cancel();
@@ -1133,6 +1135,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	
 //	private boolean firstCalculate;
 	
+	private TextBox filterSearchTxtBox;
+	private String filterPattern;
+	private FilterPatternTimer filterPatternTimer;
+	
 	public AgreementDraft() {
 		initWidget(binder.createAndBindUi(this));
 		initPaymentsTable();
@@ -1180,6 +1186,11 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		
 		//Add style to payPeriodLabel
 		this.payPeriodLabel.getElement().getStyle().setPadding(2.00, Unit.PX);
+		
+		//Initialize filterPatternTimer
+		filterPatternTimer = new FilterPatternTimer();
+		filterSearchTxtBox = new TextBox();
+		filterPattern = "";
 		
 	}
 	
@@ -1432,9 +1443,14 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	}
 
 	public void setAgreementDraftObject(AgreementDraftObject agreementDraftObject) {
+		
 		if (this.agreementDraftObject != null) {
 			agreementDraftObject.removeListener(undoListener);
+			
+			if(this.agreementDraftObject != agreementDraftObject)
+				this.filterPattern = "";
 		}
+		
 		showDraft();
 		this.agreementDraftObject = agreementDraftObject;
 		this.agreementDraftObject.calculate(this);
@@ -1680,12 +1696,67 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	}
 
 	protected Widget createWidget4Level(Level level, LevelEditor levelEditor) {
-		TextBox descriptionTextBox = new TextBox();
-		descriptionTextBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
-		descriptionTextBox.setText(level.getDescription());
-		descriptionTextBox.setVisibleLength(5);
-		levelEditor.setDescriptionTextBox(descriptionTextBox);
-		return descriptionTextBox;
+		if(level.getId() == 0)
+			return createSearchLevelWidget();
+		else {
+			TextBox descriptionTextBox = new TextBox();
+			descriptionTextBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
+			descriptionTextBox.setText(level.getDescription());
+			descriptionTextBox.setVisibleLength(5);
+			levelEditor.setDescriptionTextBox(descriptionTextBox);
+			return descriptionTextBox;
+		}
+	}
+
+	private Widget createSearchLevelWidget() {
+		TextBox searchTextBox = new TextBox();
+		searchTextBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
+		searchTextBox.setVisibleLength(5);
+		searchTextBox.getElement().setPropertyString("placeholder", "Filtrar");
+		
+		if(!StringUtils.isBlank(this.filterPattern))
+			searchTextBox.setValue(this.filterPattern);
+		
+		searchTextBox.addKeyUpHandler(new KeyUpHandler() {
+			
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				filterPatternTimer.cancel();
+				filterPatternTimer.schedule(1000);
+				
+				if(StringUtils.isBlank(searchTextBox.getValue()))
+					filterPattern = "";
+				else 
+					filterPattern = searchTextBox.getValue();
+			}
+		});
+		
+		filterSearchTxtBox = searchTextBox;
+		return searchTextBox;
+	}
+	
+	class FilterPatternTimer extends Timer {
+		@Override
+		public void run() {
+			boolean isCategorySelected = isCategorySelected();
+			
+			onCalculateSucces(agreementDraftObject);
+			
+			if(isCategorySelected)
+				categoryButton.click();
+			
+			filterSearchTxtBox.setFocus(true);
+		}
+		
+		private boolean isCategorySelected() {
+			for(int i=0; i<salaryToggleButtonsPanel.getWidgetCount(); i+=2){
+				HorizontalPanel hPanel = (HorizontalPanel) salaryToggleButtonsPanel.getWidget(i);
+				ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
+				if(toggleButton.isDown())
+					return false;
+			}
+			return true;
+		}
 	}
 
 	protected void formatRow(Level level, int row, RowFormatter formatter) {
@@ -1815,7 +1886,14 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		SortedSet<Level> levels = new TreeSet<Level>(new LevelComparator());
 		levels.addAll(agreementDraftObject.getLevels());
-
+		
+		//Filter levels if filterPattern not blank
+		if(!StringUtils.isBlank(this.filterPattern)) {
+			List<Level> filteredLevels = levels.stream().filter(l -> l.getDescription() == null || l.getDescription().toUpperCase().indexOf(this.filterPattern.trim().toUpperCase()) >= 0).collect(Collectors.toList());
+			levels.clear();
+			levels.addAll(filteredLevels);
+		}
+		
 		Set<Level> changedLevels = agreementDraftObject.getChangedLevels();
 
 		int cols = variables.size() + 2;
@@ -1831,7 +1909,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			LevelEditor levelEditor = new LevelEditor(level);
 			Widget levelWidget = createWidget4Level(level, levelEditor);
 
-			hide(levelWidget, level.getId() == 0);
+//			hide(levelWidget, level.getId() == 0);
 
 			salaryTable.setWidget(row, 0, levelWidget);
 
@@ -1945,6 +2023,13 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		SortedSet<Level> levels = new TreeSet<Level>(new LevelComparator());
 		levels.addAll(agreementDraftObject.getLevels());
+		
+		//Filter levels if filterPattern not blank
+		if(!StringUtils.isBlank(this.filterPattern)) {
+			List<Level> filteredLevels = levels.stream().filter(l -> l.getDescription() == null || l.getDescription().toUpperCase().indexOf(this.filterPattern.trim().toUpperCase()) >= 0).collect(Collectors.toList());
+			levels.clear();
+			levels.addAll(filteredLevels);
+		}
 
 		Set<Level> changedLevels = agreementDraftObject.getChangedLevels();
 
@@ -1961,7 +2046,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			LevelEditor levelEditor = new LevelEditor(level);
 			Widget levelWidget = createWidget4Level(level, levelEditor);
 
-			hide(levelWidget, level.getId() == 0);
+//			hide(levelWidget, level.getId() == 0);
 
 			salaryTable.setWidget(row, 0, levelWidget);
 
@@ -3794,10 +3879,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		Iterator<Date> datesIt = dates.iterator();
 		while ( datesIt.hasNext() ) {
 			Date date = datesIt.next();
-			
 			if ( date.equals(startDate ))  
 				return new Period(date, datesIt.hasNext() ? DateUtils.getPrevDay(datesIt.next()): null );
-			
 		}
 		
 		throw new IndexOutOfBoundsException();
