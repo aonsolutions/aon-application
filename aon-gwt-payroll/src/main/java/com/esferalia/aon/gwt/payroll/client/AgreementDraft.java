@@ -1477,11 +1477,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		setDescription();
 
-		clearSalaryTable();
-		salaryTableEditors.clear();
-		salaryTableEditors.addAll(dumpSalaryTable());
-		salaryTableEditors.add(insertNewLevelRow(salaryTable.getRowCount()));
-		initSalaryTableFrozenColsAndRows();
+		createSalaryTable();
 		
 		clearPaymentsTable();
 		paymentEditors.clear();
@@ -1510,6 +1506,14 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		if ( agreementDraftObject.getDatesWithChanges().isEmpty() )
 			categoryButton.click();
 		
+	}
+	
+	private void createSalaryTable() {
+		clearSalaryTable();
+		salaryTableEditors.clear();
+		salaryTableEditors.addAll(dumpSalaryTable());
+		salaryTableEditors.add(insertNewLevelRow(salaryTable.getRowCount()));
+		initSalaryTableFrozenColsAndRows();
 	}
 
 	private boolean checkIfExtrasExist() {
@@ -1740,7 +1744,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		public void run() {
 			boolean isCategorySelected = isCategorySelected();
 			
-			onCalculateSucces(agreementDraftObject);
+			createSalaryTable();
 			
 			if(isCategorySelected)
 				categoryButton.click();
