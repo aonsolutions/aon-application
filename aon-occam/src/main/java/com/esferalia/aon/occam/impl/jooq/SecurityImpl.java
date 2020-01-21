@@ -28,6 +28,12 @@ public class SecurityImpl implements ISecurity {
 		return SecurityDAO.getUser(ctx, userId);
 	}
 
+	
+	@Override
+	public String getUserPassword(AONContext ctx, Integer userId) {
+		return SecurityDAO.getUserPassword(ctx, userId);
+	}
+
 	@Override
 	public Integer[] getUserScopes(AONContext ctx, Integer userId) {
 		return SecurityDAO.getUserScopes(ctx, userId);

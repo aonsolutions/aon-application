@@ -1,12 +1,14 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
-import static com.esferalia.aon.jooq.tables.ProjectType.PROJECT_TYPE;
 import static com.esferalia.aon.jooq.tables.ProjectCommercial.PROJECT_COMMERCIAL;
 import static com.esferalia.aon.jooq.tables.ProjectReservation.PROJECT_RESERVATION;
+import static com.esferalia.aon.jooq.tables.ProjectType.PROJECT_TYPE;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -29,6 +31,7 @@ import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class ProjectDAO {
@@ -160,19 +163,6 @@ public class ProjectDAO {
 	}
 	
 	public static Integer insertProject(AONContext ctx, Project project){
-		
-		System.out.println("PROJECT ACTIVE - " + project.isActive());
-		System.out.println("PROJECT ALIAS - " + project.getAlias());
-		System.out.println("PROJECT COMMERCIAL - " + project.isCommercial());
-		System.out.println("PROJECT DATE - " + project.getDate());
-		System.out.println("PROJECT DOMAIN - " + project.getDomain());
-		System.out.println("PROJECT NAME - " + project.getName());
-		System.out.println("PROJECT PROJECT TYPE - " + project.getProjectTypeId());
-		System.out.println("PROJECT PROJECT NAME - " + project.getProjectTypeName());
-		System.out.println("PROJECT REGISTRY - " + project.getRegistryId());
-		System.out.println("PROJECT RESERVATION - " + project.isReservation());
-		System.out.println("PROJECT TAS - " + project.isTas());
-
 		return ctx.getDslContext().insertInto(PROJECT, PROJECT.ACTIVE, PROJECT.ALIAS,
 					PROJECT.COMMERCIAL, PROJECT.DATE, PROJECT.DOMAIN, PROJECT.NAME, PROJECT.PROJECT_TYPE,
 					PROJECT.REGISTRY, PROJECT.RESERVATION, PROJECT.TAS)
@@ -299,5 +289,59 @@ public class ProjectDAO {
 					.setStatusDate(r.getValue(PROJECT_COMMERCIAL.STATUS_DATE));	
 		}
 
+	}
+	
+	private static class FixProjectCommercial  {
+		Integer project;
+		String document;
+		
+		public FixProjectCommercial() {}
+
+		public Integer getProject() {
+			return project;
+		}
+
+		public FixProjectCommercial setProject(Integer project) {
+			this.project = project;
+			return this;
+		}
+
+		public String getDocument() {
+			return document;
+		}
+
+		public FixProjectCommercial setDocument(String document) {
+			this.document = document;
+			return this;
+		}
+	}
+	
+	private static class FixProjectCommercialFiller implements Function<Record, FixProjectCommercial> {
+		
+		@Override
+		public FixProjectCommercial apply(Record r) {
+			return new FixProjectCommercial()
+					.setProject(r.getValue(PROJECT_COMMERCIAL.PROJECT))
+					.setDocument(r.getValue(REGISTRY.DOCUMENT));	
+		}
+
+	}
+	
+	
+
+	public static void fixProjectCommercial(AONContext ctx) {
+		ctx.getDslContext().select(PROJECT_COMMERCIAL.PROJECT, REGISTRY.DOCUMENT)
+		.from(PROJECT_COMMERCIAL).join(REGISTRY).on(PROJECT_COMMERCIAL.TARGET.eq(REGISTRY.ID))
+		.where(PROJECT_COMMERCIAL.DOMAIN.eq(ctx.getDomainId()))
+		.and(PROJECT_COMMERCIAL.DOMAIN.ne(REGISTRY.DOMAIN))
+		.fetch().stream().map(new FixProjectCommercialFiller())
+		.forEach(r -> {
+			Optional<Target> target = RegistryDAO.getTargetStream(ctx, f-> f.getDomainProperty().eq(ctx.getDomainId())
+					.and(f.getDocumentProperty().eq(r.getDocument()))).findFirst();
+			if(target.isPresent()) {
+				ctx.getDslContext().update(PROJECT).set(PROJECT.REGISTRY, target.get().getId()).where(PROJECT.ID.eq(r.getProject())).execute();
+				ctx.getDslContext().update(PROJECT_COMMERCIAL).set(PROJECT_COMMERCIAL.TARGET, target.get().getId()).where(PROJECT_COMMERCIAL.PROJECT.eq(r.getProject())).execute();
+			}
+		});
 	}
 }

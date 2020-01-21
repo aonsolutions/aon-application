@@ -144,9 +144,6 @@ public class ProjectCommercialImport {
 		String column = getColumn(cell.getColumnIndex());
 		Integer row = cell.getRowIndex() + 1;
 		if("Nombre".equalsIgnoreCase(title)) {
-			if(o.toString() == null || "".equals(o.toString())) {
-				System.out.println("A" + o.toString() + "A");
-			}
 			pc.setName( o.toString() == null || "".equals(o.toString()) ? "-" : o.toString());
 			return;
 		}
@@ -169,7 +166,7 @@ public class ProjectCommercialImport {
 			return ;
 		}
 		if("Cliente Potencial".equalsIgnoreCase(title)) {
-			Target target = AON.getTarget(domain.getName(), domain.getId(), login, f -> f.getDocumentProperty().eq(o.toString())).get();
+			Target target = AON.getTarget(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(o.toString()))).get();
 			pc.setTarget(target.getId());
 			pc.setRegistryId(target.getId());
 			return ;
@@ -222,9 +219,6 @@ public class ProjectCommercialImport {
 
 	public void insertProjectCommercial(Domain domain, User user,LinkedList<ProjectCommercial> pcs) {
 		pcs.stream().forEach(pc -> {
-			System.out.println("PROJECT COMMERCIAL: ");
-			System.out.println("Name: " + pc.getName());
-			System.out.println("Domain: " + pc.getDomain());
 			
 			if(pc.getName() == null) {
 				pc.setName("-");

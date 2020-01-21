@@ -21,5 +21,6 @@ public interface IProject {
 	
 	public ProjectReservation getProjectReservation(AONContext ctx, ProjectReservationFilter filter);
 	public Stream<ProjectReservation> getProjectReservationStream(AONContext ctx, ProjectReservationFilter filter);
+	public void fixProjectCommercial(AONContext ctx);
 
 }

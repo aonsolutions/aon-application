@@ -350,6 +350,16 @@ public class AON {
 				ctx.close();
 		}
 	}
+	public static String getUserPassword(String domainName, int domainId, String login, Integer userId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getSecurity().getUserPassword(ctx, userId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
 	public static Integer[] getUserScopes(String domainName, int domainId,
 			String login, Integer userId) {
@@ -3152,6 +3162,17 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getProject().getProjectCommercialStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static void fixProjectCommercial(String domainName, Integer domainId, String login) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getProject().fixProjectCommercial(ctx);
 		} finally {
 			if (ctx != null)
 				ctx.close();

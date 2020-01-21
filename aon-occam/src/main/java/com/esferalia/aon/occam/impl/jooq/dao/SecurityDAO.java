@@ -103,6 +103,11 @@ public class SecurityDAO {
 		}
 		return user;
 	}
+	
+	public static String getUserPassword(AONContext ctx, Integer userId) {
+		return ctx.getDslContext().select(USER.PASSWORD)
+				.from(USER).where(USER.ID.eq(userId)).fetchOne().getValue(USER.PASSWORD);
+	}
 
 	public static User getUser(AONContext ctx) {
 		return getUser(ctx,ctx.getUser());

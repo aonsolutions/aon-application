@@ -62,6 +62,11 @@ public class ProjectImpl implements IProject{
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> ProjectDAO.insertProjectCommercial(ctx, pc));
 	}
+
+	@Override
+	public void fixProjectCommercial(AONContext ctx) {
+		ctx.getDslContext().transaction(configuration -> ProjectDAO.fixProjectCommercial(ctx));
+	}
 	
 	
 }
