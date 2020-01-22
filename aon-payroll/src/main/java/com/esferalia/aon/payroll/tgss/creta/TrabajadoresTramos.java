@@ -20,11 +20,11 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -36,7 +36,6 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.hibernate.tool.hbm2x.pojo.SkipBackRefPropertyIterator;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -228,10 +227,10 @@ public class TrabajadoresTramos {
 			String ccc,
 			String tipo) {
 		
-		LiquidacionMesBuilder liquidacionMesBuilder = new LiquidacionMesBuilder();
 		
-		liquidacionMesBuilder.setMes(mes);
-		liquidacionMesBuilder.setAnho(anho);
+		Set<Date> mesesLiquidativos = new HashSet<Date>();
+		
+		LiquidacionMesBuilder liquidacionMesBuilder = new LiquidacionMesBuilder();
 		
 		Date startDate = getFirstDayOf(mes, anho);
 		Date endDate = AonStringUtils.equalsIgnoreCase("L13", tipo) ? 
@@ -320,6 +319,9 @@ public class TrabajadoresTramos {
 						tramoBuilder.setDiaDesde(start.get(Calendar.DATE));
 						tramoBuilder.setMesDesde(start.get(Calendar.MONTH)+1);
 						tramoBuilder.setAnhoDesde(start.get(Calendar.YEAR));
+						
+						start.set(Calendar.DAY_OF_MONTH, 1);
+						mesesLiquidativos.add(start.getTime());
 
 						Calendar end = Calendar.getInstance();
 						end.setTime(p.getEnd());
@@ -327,7 +329,9 @@ public class TrabajadoresTramos {
 						tramoBuilder.setDiaHasta(end.get(Calendar.DATE));
 						tramoBuilder.setMesHasta(end.get(Calendar.MONTH)+1);
 						tramoBuilder.setAnhoHasta(end.get(Calendar.YEAR));
-						
+
+						end.set(Calendar.DAY_OF_MONTH, 1);
+						mesesLiquidativos.add(end.getTime());
 
 						int diasCotizados = getQuoteDays(salary, p);
 						
@@ -730,11 +734,22 @@ public class TrabajadoresTramos {
 						
 					}
 					
+					
+					
 					Trabajador trabajador = trabajadorBuilder.create();
 					liquidacionMesBuilder.add(trabajador);
 				}
 		)
 		;
+		
+		if ( mesesLiquidativos.size() == 1 ) {
+			Date mesLiquidativo = mesesLiquidativos.iterator().next();
+			anho = AonDateUtils.get(mesLiquidativo, Calendar.YEAR);
+			mes = Month.values()[AonDateUtils.get(mesLiquidativo, Calendar.MONTH)];
+		}
+		liquidacionMesBuilder.setMes(mes);
+		liquidacionMesBuilder.setAnho(anho);
+		
 		LiquidacionMes liquidacionMes = liquidacionMesBuilder.create();
 		trabajadoresTramosBuilder.addLiquidacionMes(liquidacionMes);
 	}

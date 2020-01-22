@@ -105,6 +105,7 @@ import net.aonsolutions.core.tgss.creta.jaxb.bases.Dato;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.DatoSolicitado;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Liquidacion;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.LiquidacionMes;
+import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Periodo;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajador;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajadores;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Tramo;
@@ -3012,6 +3013,143 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		
 		
 	}
+
+	@Test
+	public void testCretaL13II()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C100, "01");
+		
+		Date firstDayOfMonth = getFirstDayOfMonth(getToday());
+
+		Date startDate = firstDayOfMonth;
+		//Date endDate = add(startDate, Calendar.DAY_OF_MONTH, 25 );
+		Date lastDayOfMonth = getLastDayOfMonth(startDate);
+		int lastDay = get(lastDayOfMonth, Calendar.DAY_OF_MONTH); 
+		
+		
+		addData(aonContext, contract, 
+				add(firstDayOfMonth, Calendar.MONTH,1)
+				,null
+				, new HashMap<String, String>() {
+			{
+				put("DIAS_VACACIONES_NO_DISFRUTADOS", format("%d", 19));
+			}
+		});
+		// VACACIONES RETRIBUIDAS NO DISFRUTADAS
+		addPayment(aonContext, 
+				contract,
+				"DIAS VACACIONES NO DISFRUTADOS",
+				"DIAS_VACACIONES_NO_DISFRUTADOS * ( 100.00 )",
+				"_P" ,
+				"_P", 
+				PaymentType.CRA_0006, 
+				SalaryType.SETTLE);
+
+		ISQLContractSalaryCalculatorContext ctx = 
+				getSmartSQLContractSettleContext(connection, contract.getStartDate(), lastDayOfMonth, contract);
+
+		int salaries = calculateAndSave(connection, ctx);
+		
+		// Only one salary saved to DB.
+		Assert.assertEquals(1, salaries);
+
+		AON.getSalaryData(aonContext,
+				props -> props.getContractProperty().eq(contract.getId()))
+				.forEach(salary -> {
+					// 500 Base de contingencias comunes.
+					List<ContextData> datas = salary.getContextData()
+							.get(CGC_BASE.getName());
+					Assert.assertEquals(1, datas.size());
+					Assert.assertEquals(add(lastDayOfMonth, Calendar.DAY_OF_MONTH,1), datas.get(0).getStartDate());
+					Assert.assertEquals(add(lastDayOfMonth, Calendar.DAY_OF_MONTH, 19), datas.get(0).getEndDate());
+					
+				});
+		;
+
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(lastDayOfMonth);
+		String mes = Integer.toString(calendar.get(MONTH)+1);
+		String anho = Integer.toString(calendar.get(YEAR));
+		
+		
+		
+		PipedInputStream trabajadoresTramosIs = new PipedInputStream();
+		
+		new Thread( () ->  {
+								try { 
+									PipedOutputStream trabajadoresTramosOs = new PipedOutputStream(trabajadoresTramosIs);
+									TrabajadoresTramos.generate(connection, 
+											"0000", 	//autorizado, 
+											mes, 		//desdeAnhoMes, 
+											anho , 		//desdeAnho, 
+											mes, 		//hastaMes, 
+											anho , 		//hastaAnho, 
+											mes, 		//ctrlMes, 
+											anho , 		//ctrlAnho, 
+											"L13",		//tipo, 
+											new String[]
+											{
+											"0111" + "" + ccc
+											}, 			//cccs
+											trabajadoresTramosOs);
+									trabajadoresTramosOs.close();
+								} catch ( JAXBException | IOException e ){
+									throw new AssertException(e.getMessage());
+								} finally {
+									
+								}
+							}
+		).start();
+		
+		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = Utils
+				.unmarshal(
+						net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class,
+						trabajadoresTramosIs);
+		
+		trabajadoresTramosIs.close();
+		
+		
+		Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
+		org.junit.Assert.assertEquals(Integer.parseInt(anho), Integer.parseInt(liquidacion.getPeriodoDesde().getAnho()));
+		org.junit.Assert.assertEquals(Integer.parseInt(mes), Integer.parseInt(liquidacion.getPeriodoDesde().getMes()));
+		org.junit.Assert.assertEquals(Integer.parseInt(anho), Integer.parseInt(liquidacion.getPeriodoHasta().getAnho()));
+		org.junit.Assert.assertEquals(Integer.parseInt(mes), Integer.parseInt(liquidacion.getPeriodoHasta().getMes()));
+		
+		org.junit.Assert.assertEquals(1,liquidacion.getLiquidacionMes().size());
+		
+		LiquidacionMes liquidacionMes = liquidacion.getLiquidacionMes().get(0);
+		org.junit.Assert.assertEquals(Integer.parseInt(anho), Integer.parseInt(liquidacionMes.getMesLiquidativo().getAnho()));
+		org.junit.Assert.assertEquals(Integer.parseInt(mes)+1, Integer.parseInt(liquidacionMes.getMesLiquidativo().getMes()));
+		
+		Trabajadores trabajadores = liquidacionMes.getTrabajadores();
+		Trabajador trabajador = trabajadores.getTrabajador().get(0);
+		org.junit.Assert.assertEquals(1,  trabajador.getTramos().getTramo().size());
+		
+		Tramo tramo1 = trabajador.getTramos().getTramo().get(0);
+		calendar.setTime(add(firstDayOfMonth, Calendar.MONTH,1));
+		org.junit.Assert.assertEquals(calendar.get(Calendar.MONTH)+1, Integer.parseInt(tramo1.getFechaDesde().getMes()));
+		org.junit.Assert.assertEquals(calendar.get(Calendar.YEAR), Integer.parseInt(tramo1.getFechaDesde().getAnho()));
+		
+		
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, trabajadoresTramos);
+		
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo bases2 = bases.get(0);
+		assertDato(bases2.getDatosTramo().getDato(), "C", "500", "190000");
+		assertDato(bases2.getDatosTramo().getDato(), "C", "601", "190000");
+		
+	}
+	
 
 	protected ContractRecord newContract(AONContext aonContext, String ccc) {
 		return newContract(aonContext, ccc, ContractCode.C100, "03", CCCType.PRINCIPAL);
