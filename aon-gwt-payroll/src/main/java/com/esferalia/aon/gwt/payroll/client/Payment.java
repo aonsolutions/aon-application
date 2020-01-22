@@ -932,10 +932,15 @@ public class Payment extends ResizeComposite {
 		int rows = mainGrid.getRowCount();
 		com.google.gwt.user.client.Element monthRow = mainGrid.getRowFormatter().getElement(rows-1);
 		com.esferalia.aon.gwt.payroll.shared.Payment.Type type = getType();
-		UIObject.setVisible(monthRow, type == Type.CRA_0004 || type== Type.CRA_0005);
+		UIObject.setVisible(monthRow, type== Type.CRA_0005);
+//		UIObject.setVisible(monthRow, type == Type.CRA_0004 || type== Type.CRA_0005);
 	}
 
 	private void enableOrDisableTaxAndQuote() {
+		int rows = mainGrid.getRowCount();
+		com.google.gwt.user.client.Element quoteRow = mainGrid.getRowFormatter().getElement(rows-2);
+		com.google.gwt.user.client.Element taxRow = mainGrid.getRowFormatter().getElement(rows-3);
+		
 		if ( taxAndQuoteFull() ) {
 			taxDeckPanel.showWidget(taxFullPanelIndex);
 			quoteDeckPanel.showWidget(quoteFullPanelIndex);
@@ -946,6 +951,9 @@ public class Payment extends ResizeComposite {
 			taxDeckPanel.showWidget(taxEditPanelIndex);
 			quoteDeckPanel.showWidget(quoteEditPanelIndex);
 		}
+		
+		UIObject.setVisible(quoteRow, !taxAndQuoteFull() && !taxAndQuoteNone());
+		UIObject.setVisible(taxRow, !taxAndQuoteFull() && !taxAndQuoteNone());
 	}
 	
 	private void enableOrDisablePayments() {
