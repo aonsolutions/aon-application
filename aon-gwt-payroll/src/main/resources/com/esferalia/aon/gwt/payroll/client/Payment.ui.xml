@@ -96,16 +96,19 @@
 					<g:Label>Tipo</g:Label>
 				</g:customCell>
 				<g:customCell styleName="{style.field}">
-					<g:HorizontalPanel styleName="aon-width">
-						<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE"
-							styleName="aon-width-all">
-							<g:ListBox debugId="typeListBox" ui:field="typeListBox" />
-							<g:cell horizontalAlignment="ALIGN_RIGHT" width="24px">
-								<g:Button debugId="resetTypeButton" ui:field="resetTypeButton" styleName="aon-lookupButton-clear "
-									visible="false" />
-							</g:cell>
+					<g:DeckPanel styleName="aon-width" ui:field="typeDeckPanel">
+						<g:HorizontalPanel styleName="aon-width">
+							<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE"
+								styleName="aon-width-all">
+								<g:ListBox debugId="typeListBox" ui:field="typeListBox" />
+								<g:cell horizontalAlignment="ALIGN_RIGHT" width="24px">
+									<g:Button debugId="resetTypeButton" ui:field="resetTypeButton" styleName="aon-lookupButton-clear "
+										visible="false" />
+								</g:cell>
+							</g:HorizontalPanel>
 						</g:HorizontalPanel>
-					</g:HorizontalPanel>
+						<g:Label ui:field="typeLabel"></g:Label>
+					</g:DeckPanel>
 				</g:customCell>
 			</g:row>
 			<g:row>
@@ -155,11 +158,14 @@
 						</g:HorizontalPanel>
 						<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE"
 							styleName="aon-width-all" debugId="taxEditPanel" ui:field="taxEditPanel">
-							<g:ListBox debugId="taxListBox" ui:field="taxListBox" styleName="gwt-ListBox aon-width-all" >
-								<g:item value="{ALL}">Importe &Iacute;ntegro</g:item>
-								<g:item value="{NONE}">Exento</g:item>
-								<g:item value="{CUSTOM}">Personalizado...</g:item>
-							</g:ListBox>
+							<g:DeckPanel ui:field="taxTypeDeckPanel">
+								<g:ListBox debugId="taxListBox" ui:field="taxListBox" styleName="gwt-ListBox aon-width-all" >
+									<g:item value="{ALL}">Importe &Iacute;ntegro</g:item>
+									<g:item value="{NONE}">Exento</g:item>
+									<g:item value="{CUSTOM}">Personalizado...</g:item>
+								</g:ListBox>
+								<g:Label ui:field="taxLabel"></g:Label>
+							</g:DeckPanel>
 							<g:Label>&nbsp;</g:Label>
 							<g:TextBox debugId="taxTextBox" ui:field="taxTextBox" styleName="aon-width-all aon-inputText" maxLength="{EXPRESSION_MAX_LENGTH}" />
 							<g:cell horizontalAlignment="ALIGN_CENTER" width="24px">
@@ -189,12 +195,15 @@
 						</g:HorizontalPanel>
 						<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE"
 							styleName="aon-width-all" debugId="quoteEditPanel" ui:field="quoteEditPanel">
-							<g:ListBox debugId="quoteListBox" ui:field="quoteListBox" styleName="gwt-ListBox aon-width-all">
-								<g:item value="{ALL}">Importe &Iacute;ntegro</g:item>
-								<g:item value="{NONE}">Exento</g:item>
-								<g:item value="{PRORATED}">Prorrateado</g:item>
-								<g:item value="{CUSTOM}">Personalizado...</g:item>
-							</g:ListBox>
+							<g:DeckPanel ui:field="quoteTypeDeckPanel">
+								<g:ListBox debugId="quoteListBox" ui:field="quoteListBox" styleName="gwt-ListBox aon-width-all">
+									<g:item value="{ALL}">Importe &Iacute;ntegro</g:item>
+									<g:item value="{NONE}">Exento</g:item>
+									<g:item value="{PRORATED}">Prorrateado</g:item>
+									<g:item value="{CUSTOM}">Personalizado...</g:item>
+								</g:ListBox>
+								<g:Label ui:field="quoteLabel"></g:Label>
+							</g:DeckPanel>
 							<g:Label>&nbsp;</g:Label>
 							<g:TextBox debugId="quoteTextBox" ui:field="quoteTextBox" styleName="aon-width-all aon-inputText" maxLength="{EXPRESSION_MAX_LENGTH}"/>
 							<g:cell horizontalAlignment="ALIGN_CENTER" width="24px">

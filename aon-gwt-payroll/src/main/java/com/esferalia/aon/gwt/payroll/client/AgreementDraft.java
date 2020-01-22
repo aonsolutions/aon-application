@@ -514,8 +514,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		public void setReadOnly(boolean readOnly) {
 			if ( this.deleteButton != null )
 				this.deleteButton.setEnabled(!readOnly);
-			if ( this.descriptionTextBox != null)
-				this.descriptionTextBox.setReadOnly(readOnly);
+			if ( this.descriptionTextBox != null) {
+				if(level.getId() != 0)
+					this.descriptionTextBox.setReadOnly(readOnly);
+			}
 		}
 
 		CalculateCallback getNextFocusCallback() {
@@ -755,6 +757,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				@Override
 				public void onClick(ClickEvent event) {
 					PaymentDialog dialog = new PaymentDialog();
+					dialog.setTypeListVisible();
 					dialog.setNumberFormat(AON.CURRENCY_FORMAT);
 					dialog.setConcept(PaymentEditor.this.getConcept());
 					dialog.setName(payment.getName()); // Not if ???
@@ -769,6 +772,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 					dialog.setEnabledMonthListBox(!isExtraPayment(payment));
 					dialog.setAvailablePayments(agreementDraftObject.getPayments());
 					
+					if(!agreementDraftObject.isMine())
+						dialog.setReadOnly(!agreementDraftObject.isMine());
 
 					dialog.center();
 					dialog.show(this);
@@ -1515,6 +1520,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		salaryTableEditors.addAll(dumpSalaryTable());
 		salaryTableEditors.add(insertNewLevelRow(salaryTable.getRowCount()));
 		initSalaryTableFrozenColsAndRows();
+		
+		setReadOnly(!agreementDraftObject.isMine() );
 	}
 
 	private boolean checkIfExtrasExist() {
@@ -3923,7 +3930,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	private static void setReadOnly(Element el, boolean readOnly) {
 		NodeList<com.google.gwt.dom.client.Element> inputs = el.getElementsByTagName(InputElement.TAG);
 		for ( int i = 0; i < inputs.getLength(); i++) {
-			((InputElement)inputs.getItem(i)).setReadOnly(readOnly);
+			if(i == 0)
+				((InputElement)inputs.getItem(i)).setReadOnly(false);
+			else
+				((InputElement)inputs.getItem(i)).setReadOnly(readOnly);
 		}
 		
 	}

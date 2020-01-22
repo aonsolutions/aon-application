@@ -17,7 +17,7 @@
 				</td>
 			</tr>
 
-			<tr>
+			<tr ui:field="buttonsRow">
 				<td colspan="2" align="right">
 					<g:Button ui:field="cancelButton" debugId="paymetDialogCancelButton">Cancelar</g:Button>
 					<g:Button ui:field="acceptButton" debugId="paymetDialogAcceptButton" >Aceptar</g:Button>

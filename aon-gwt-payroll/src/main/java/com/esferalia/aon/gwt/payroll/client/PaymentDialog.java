@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.TableRowElement;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -30,6 +32,9 @@ public class PaymentDialog extends CustomDialog {
 	
 	@UiField 
 	Payment payment;
+	
+	@UiField
+	TableRowElement buttonsRow;
 	
 	private Callback cb;
 	
@@ -133,6 +138,17 @@ public class PaymentDialog extends CustomDialog {
 
 	public void setAvailablePayments(List<com.esferalia.aon.gwt.payroll.shared.Payment> payments) {
 		payment.setAvailablePayments(payments);
+	}
+	
+	public void setReadOnly(boolean readOnly) {
+		payment.setReadOnly(readOnly);
+		buttonsRow.getStyle().setDisplay(Display.NONE);
+	}
+	
+	public void setTypeListVisible() {
+		payment.typeDeckPanel.showWidget(0);
+		payment.taxTypeDeckPanel.showWidget(0);
+		payment.quoteTypeDeckPanel.showWidget(0);
 	}
 
 	public void show(Callback cb) {

@@ -307,11 +307,15 @@ public class Payment extends ResizeComposite {
 	@UiField
 	Grid paymentsGrid;
 	
-
+	@UiField
+	DeckPanel typeDeckPanel;
 	@UiField
 	ListBox typeListBox;
 	@UiField
 	Button resetTypeButton;
+	@UiField
+	Label typeLabel;
+	
 	@UiField
 	ListBox receiptListBox;
 
@@ -331,12 +335,21 @@ public class Payment extends ResizeComposite {
 	MyExpressionBox paymentTextBox;
 	@UiField
 	Button resetPaymentButton;
+	
+	@UiField
+	DeckPanel taxTypeDeckPanel;
 	@UiField
 	ListBox taxListBox;
 	@UiField
+	Label taxLabel;
+	@UiField
 	Button resetTaxButton;
 	@UiField
+	DeckPanel quoteTypeDeckPanel;
+	@UiField
 	ListBox quoteListBox;
+	@UiField
+	Label quoteLabel;
 	@UiField
 	Button resetQuoteButton;
 	@UiField
@@ -569,6 +582,48 @@ public class Payment extends ResizeComposite {
 	public void setAvailablePayments(List<com.esferalia.aon.gwt.payroll.shared.Payment> payments) {
 		this.payments = payments;
 		enableOrDisablePayments();
+	}
+	
+	public void setReadOnly(boolean readOnly) {
+		conceptSuggestBox.getValueBox().setReadOnly(readOnly);
+		conceptSuggestBox.getElement().setAttribute("disabled", "disabled");
+		
+		if(readOnly) {
+			typeLabel.setText(typeListBox.getSelectedItemText());
+			typeDeckPanel.showWidget(1);
+		}
+		
+		descriptionSuggestBox.getValueBox().setReadOnly(readOnly);
+		descriptionSuggestBox.getElement().setAttribute("disabled", "disabled");
+		resetDescriptionButton.setEnabled(!readOnly);
+		
+		paymentTextBox.setReadOnly(readOnly);
+		paymentTextBox.getElement().setAttribute("disabled", "disabled");
+		fxPaymentButton.setEnabled(!readOnly);
+		resetPaymentButton.setEnabled(!readOnly);
+		
+		if(readOnly) {
+			taxLabel.setText(taxListBox.getSelectedItemText());
+			taxTypeDeckPanel.showWidget(1);
+		}
+		
+		taxTextBox.setReadOnly(readOnly);
+		taxTextBox.getElement().setAttribute("disabled", "disabled");
+		fxTaxButton.setEnabled(!readOnly);
+		resetTaxButton.setEnabled(!readOnly);
+		
+		if(readOnly) {
+			quoteLabel.setText(quoteListBox.getSelectedItemText());
+			quoteTypeDeckPanel.showWidget(1);
+		}
+		
+		quoteTextBox.setReadOnly(readOnly);
+		quoteTextBox.getElement().setAttribute("disabled", "disabled");
+		fxQuoteButton.setEnabled(!readOnly);
+		resetQuoteButton.setEnabled(!readOnly);
+		
+		paymentsGrid.setVisible(false);
+		
 	}
 	
 	// ------------------------------------------
