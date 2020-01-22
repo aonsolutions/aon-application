@@ -67,6 +67,7 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -3672,9 +3673,25 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	}
 
 	private void initPreviewMonthListBox() {
-		previewMonthListBox.setHighLightMonths(agreementDraftObject.getDatesWithChanges());
-		previewMonthListBox.setSelectedMonth(agreementDraftObject.getStartDate());
-
+			
+		Date startDate = DateUtils.copyDateOnly(agreementDraftObject.getStartDate());
+		SortedSet<Date> datesWithChanges = agreementDraftObject.getDatesWithChanges();
+		
+		if(startDate.getDate() != 1) { // Not first day of month
+			
+			DateUtils.addMonths2Date(startDate, 1);
+			startDate = DateUtils.getFirstDayOfMonth(startDate);
+			
+			Date lastDayOfMonth = DateUtils.getLastDayOfMonth(startDate);
+			
+			datesWithChanges.tailSet(lastDayOfMonth);
+		}
+		
+		previewMonthListBox.setFirstMonth(startDate);
+		previewMonthListBox.setSelectedMonth(startDate);
+		previewMonthListBox.setHighLightMonths(datesWithChanges);
+		
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), previewMonthListBox);
 	}
 
 	private void showDraft() {
