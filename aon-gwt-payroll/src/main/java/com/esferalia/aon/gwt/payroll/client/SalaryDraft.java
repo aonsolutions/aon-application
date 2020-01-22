@@ -2162,6 +2162,10 @@ public class SalaryDraft extends ResizeComposite
 		
 		@ClassName("margin-top30")
 		String marginTop30();
+		
+		String issueLabel();
+
+		String issueTextBox();
 	}
 
 	interface Binder extends UiBinder<Widget, SalaryDraft> {
@@ -2353,7 +2357,9 @@ public class SalaryDraft extends ResizeComposite
 	
 	private boolean dummies = false;
 	private MenuItem dummiesMenuItem;
-
+	
+	private static final DateTimeFormat MONTH_FORMAT = DateTimeFormat
+			.getFormat(PredefinedFormat.MONTH_ABBR);
 
 	public SalaryDraft() {
 		initWidget(binder.createAndBindUi(this));
@@ -3939,10 +3945,14 @@ public class SalaryDraft extends ResizeComposite
 		descriptionBox.setText(description != null ? description : item.getDescriptionTemplate());
 		descriptionBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		descriptionBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
-		paymentsTable.setWidget(row, 2, descriptionBox);
 		handler.setDescriptionWidget(descriptionBox);
 		descriptionBox.ensureDebugId("description-box-" + row );
-
+		if(item.getType() == Payment.Type.CRA_0004 || item.getType() == Payment.Type.CRA_0005) {
+			paymentsTable.setWidget(row, 2, createSpecialPay(item, descriptionBox));
+		}else {
+			paymentsTable.setWidget(row, 2, descriptionBox);
+		}
+		
 		String expression = item.getExpression();
 		boolean isReadOnly = SpecialExpresion.isReadOnly(expression);
 		TextBox amountBox = new ExpressionBox();
@@ -4014,6 +4024,68 @@ public class SalaryDraft extends ResizeComposite
 			paymentsTable.getRowFormatter().addStyleName(row, AON.AON_DATA_TABLE_ROW_HIGHLIGHT);
 			paymentsTable.getRowFormatter().addStyleName(row - 1, AON.AON_DATA_TABLE_ROW_HIGHLIGHT_TOP);
 		} // highlight dirty, not saved items.
+		
+	}
+	
+	private <I extends Item> HorizontalPanel createSpecialPay(I item, TextBox descriptionBox) {
+		//Horizontal panel for concept and issue date
+		HorizontalPanel descriptionHPanel = new HorizontalPanel();
+		descriptionHPanel.setWidth("100%");
+		descriptionHPanel.getElement().getStyle().setPaddingRight(3.00, Unit.PX);
+
+		descriptionBox.setWidth("100%");
+		descriptionHPanel.add(descriptionBox);
+
+		descriptionBox.getElement().getParentElement().getStyle().setPadding(0.00, Unit.PX);
+		descriptionBox.getElement().getParentElement().getStyle().setBorderStyle(BorderStyle.NONE);
+		descriptionBox.getElement().getParentElement().getStyle().setWidth(100, Unit.PCT);
+
+		//Issue label and value
+		Label issueLabel = new Label("COBRO");
+		issueLabel.addStyleName(style.issueLabel());
+
+		descriptionHPanel.add(issueLabel);
+		issueLabel.getElement().getParentElement().getStyle().setBorderStyle(BorderStyle.NONE);
+		issueLabel.getElement().getParentElement().getStyle().setPaddingRight(0, Unit.PX);
+
+		//Create widget
+		Widget issueValue = null;
+		
+		Date date = new Date();
+		date.setDate(1);
+
+		Widget innerIssueValue = new ListBox();
+		((ListBox)innerIssueValue).addItem("Prorrat.");
+
+		for (int month = 0; month < 12; month++) {
+			date.setMonth(month);
+			((ListBox)innerIssueValue).addItem(MONTH_FORMAT.format(date));
+		}
+
+		((ListBox)innerIssueValue).setWidth("56px");
+
+		Short month = item.getMonth();
+		((ListBox) innerIssueValue).setSelectedIndex(month == null ? 0 : month + 1);
+
+		innerIssueValue.addStyleName(style.issueTextBox());
+		((ListBox) innerIssueValue).addChangeHandler(new ChangeHandler() {
+
+			@Override
+			public void onChange(ChangeEvent event) {
+				int index = ((ListBox)innerIssueValue).getSelectedIndex();
+				item.setMonth(index == 0 ? null : (short) (index - 1));
+				salaryDraftObject.addDraftPayment((Payment)item);
+				calculate();
+			}
+		});
+
+		issueValue = innerIssueValue;
+		
+		descriptionHPanel.add(issueValue);
+		issueValue.getElement().getParentElement().getStyle().setPadding(0.00, Unit.PX);
+		issueValue.getElement().getParentElement().getStyle().setBorderStyle(BorderStyle.NONE);
+
+		return descriptionHPanel;
 		
 	}
 
