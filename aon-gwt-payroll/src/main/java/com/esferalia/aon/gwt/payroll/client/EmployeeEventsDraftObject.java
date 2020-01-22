@@ -19,7 +19,6 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.VariableDescriptor;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeEventsDraftObject {
@@ -355,6 +354,7 @@ public class EmployeeEventsDraftObject {
 				employeeContractVariables.add("HORAS_EXTRAS");
 				employeeContractVariables.add("HORAS_COMPLEMENTARIAS");
 				employeeContractVariables.add("KMS");
+				
 				employeeContractVariablesDB.add("DIAS_VACACIONES");
 				employeeContractVariablesDB.add("DIAS_AUSENCIA");
 				employeeContractVariablesDB.add("DIAS_HUELGA");
@@ -366,30 +366,43 @@ public class EmployeeEventsDraftObject {
 
 				for (String varName : context.getVariables()){
 					ArrayList<EmployeeEventsVariable> varList = new ArrayList<EmployeeEventsVariable>();
-					employeeContractVariables.add(varName);
+					
 					if(context.getList(varName).isEmpty()){
 						mapEventsVar.put(varName, varList);
+						employeeContractVariables.add(varName);
 						continue;
 					}
-					for (VariableDescriptor var : context.getList(varName)){
-						Date startDate = var.getStartDate();
-						Date endDate = var.getEndDate();
-						Double value = Double.valueOf(var.getValue());
-						if(startDate.getMonth() == endDate.getMonth()){
-							EmployeeEventsVariable eVar = new EmployeeEventsVariable(startDate, endDate, value);
-							varList.add(eVar);
-						}else{
-							for(int i = startDate.getMonth(); i <= endDate.getMonth(); i++){
-								Date auxStartDate = new Date(startDate.getYear(), i, 1);
-								Date auxEndDate = new Date(startDate.getYear(), i+1, 0);
-								EmployeeEventsVariable eVar = new EmployeeEventsVariable(auxStartDate, auxEndDate, value);
-								varList.add(eVar);
+					
+					try {
+						for (VariableDescriptor var : context.getList(varName)){
+							Date startDate = var.getStartDate();
+							Date endDate = var.getEndDate();
+							try {
+								Double value = Double.valueOf(var.getValue());
+								if(startDate.getMonth() == endDate.getMonth()){
+									EmployeeEventsVariable eVar = new EmployeeEventsVariable(startDate, endDate, value);
+									varList.add(eVar);
+								}else{
+									for(int i = startDate.getMonth(); i <= endDate.getMonth(); i++){
+										Date auxStartDate = new Date(startDate.getYear(), i, 1);
+										Date auxEndDate = new Date(startDate.getYear(), i+1, 0);
+										EmployeeEventsVariable eVar = new EmployeeEventsVariable(auxStartDate, auxEndDate, value);
+										varList.add(eVar);
+									}
+								}
+							}catch (Exception e) {
+								throw new Exception();
 							}
 						}
+						
+						sortListByStartDate(varList);
+						
+						mapEventsVar.put(varName, varList);
+						
+						employeeContractVariables.add(varName);
+					}catch (Exception e) {
+						continue;
 					}
-					sortListByStartDate(varList);
-					
-					mapEventsVar.put(varName, varList);
 				}
 				
 				initializeDBCalendar(
