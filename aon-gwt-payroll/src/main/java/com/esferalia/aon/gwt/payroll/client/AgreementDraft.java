@@ -1483,7 +1483,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		setDescription();
 
-		createSalaryTable();
+		if ( agreementDraftObject.getDatesWithChanges().isEmpty() )
+			categoryButton.click();
+		else
+			createSalaryTable();
 		
 		clearPaymentsTable();
 		paymentEditors.clear();
@@ -1508,9 +1511,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			deckPanelExtras.showWidget(2);
 		else
 			deckPanelExtras.showWidget(0);
-		
-		if ( agreementDraftObject.getDatesWithChanges().isEmpty() )
-			categoryButton.click();
 		
 	}
 	
@@ -2142,7 +2142,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		salaryTableHead = getFreezeTableHead(salaryTable);
 		salaryTableUpperLeftCorner = getFreezeTableUpperLeftCorner(salaryTable);
 		salaryTableUpperRightCorner = getFreezeTableUpperRightCorner(salaryTable, salaryTableScrollPane);
-		salaryTableFirstColumn = getFreezeTableFirstCol(salaryTable);
+		salaryTableFirstColumn = getFreezeTableFirstCol(salaryTable, salaryTableScrollPane);
 		salaryTableLastColumn = getFreezeTableLastCol(salaryTable, salaryTableScrollPane);
 
 		Element scroller = salaryTableScrollPane.getElement();
@@ -3374,30 +3374,48 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		return table;
 	}
 
-	private static Element getFreezeTableFirstCol(FlexTable flexTable) {
-		Element table = getFreezeTableCol(flexTable, 0);
+	private static Element getFreezeTableFirstCol(FlexTable flexTable, ScrollPanel salaryTableScrollPane) {
+		Element table = getFreezeTableCol(flexTable, 0, salaryTableScrollPane);
 		int width = flexTable.getCellFormatter().getElement(0, 0).getOffsetWidth();
 		table.getStyle().setWidth(width + 2, Unit.PX);
 
 		return table;
 	}
 
-	private static Element getFreezeTableLastCol(FlexTable flexTable, ScrollPanel scrollPanel) {
+	private static Element getFreezeTableLastCol(FlexTable flexTable, ScrollPanel salaryTableScrollPane) {
 		int col = flexTable.getCellCount(0) - 1;
-		Element table = getFreezeTableCol(flexTable, col);
+		Element table = getFreezeTableCol(flexTable, col, salaryTableScrollPane);
 
 		int width = flexTable.getCellFormatter().getElement(0, col).getOffsetWidth();
-		int left = scrollPanel.getElement().getClientWidth() - width;
+		int left = salaryTableScrollPane.getElement().getClientWidth() - width;
 		table.getStyle().setLeft(left - 1, Unit.PX);
 
 		return table;
 	}
 
-	private static Element getFreezeTableCol(FlexTable flexTable, int col) {
+	private static Element getFreezeTableCol(FlexTable flexTable, int col, ScrollPanel salaryTableScrollPane) {
 
 		Element table = DOM.createTable();
 		Element tbody = DOM.createTBody();
 
+		if(salaryTableScrollPane.getMaximumHorizontalScrollPosition() > 10) 
+			getFreezeTableColII(flexTable, col, tbody);
+
+		int width = flexTable.getCellFormatter().getElement(0, col).getOffsetWidth();
+		int height = flexTable.getCellFormatter().getElement(0, col).getOffsetHeight();
+
+		DOM.appendChild(table, tbody);
+		table.getStyle().setPosition(Position.ABSOLUTE);
+		table.getStyle().setTop(height, Unit.PX);
+		table.getStyle().setWidth(width + 1, Unit.PX);
+		table.getStyle().setBackgroundColor("white");
+		table.setClassName(flexTable.getElement().getClassName());
+
+		return table;
+	}
+	
+	//Only use this method when we have horizontal scroll in salaryTableScrollPane
+	private static void getFreezeTableColII(FlexTable flexTable, int col, Element tbody) {
 		for (int row = 1; row < flexTable.getRowCount(); row++) {
 			Element tr = DOM.createTR();
 			tr.setClassName(flexTable.getRowFormatter().getElement(row).getClassName());
@@ -3427,18 +3445,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			DOM.appendChild(tr, clone);
 			DOM.appendChild(tbody, tr);
 		}
-
-		int width = flexTable.getCellFormatter().getElement(0, col).getOffsetWidth();
-		int height = flexTable.getCellFormatter().getElement(0, col).getOffsetHeight();
-
-		DOM.appendChild(table, tbody);
-		table.getStyle().setPosition(Position.ABSOLUTE);
-		table.getStyle().setTop(height, Unit.PX);
-		table.getStyle().setWidth(width + 1, Unit.PX);
-		table.getStyle().setBackgroundColor("white");
-		table.setClassName(flexTable.getElement().getClassName());
-
-		return table;
 	}
 
 	private static void toFixedPosition(Element el, int width, int height) {
