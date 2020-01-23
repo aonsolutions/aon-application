@@ -340,6 +340,17 @@ public class AON {
 	// ********************************************
 	// ******************************** SECURITY **
 	// ********************************************
+
+	public static User getUser(String token) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(token);
+			return getSecurity().getUser(ctx, ctx.getUser());
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 	public static User getUser(String domainName, int domainId, String login) {
 		AONContext ctx = null;
 		try {
@@ -417,6 +428,17 @@ public class AON {
 
 	// --------------------- DOMAIN
 
+	public static Domain getDomain(String token) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(token);
+			return getCommon().getDomain(ctx, ctx.getDomainId());
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static Domain getDomain(String domainName, Integer domainId,
 			String user) {
 		AONContext ctx = null;

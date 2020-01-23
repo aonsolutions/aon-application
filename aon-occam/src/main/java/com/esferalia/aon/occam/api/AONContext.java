@@ -16,6 +16,7 @@ import org.jooq.TransactionalRunnable;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
+import org.json.JSONObject;
 
 import net.aonsolutions.core.pool.AonConnectionException;
 import net.aonsolutions.core.pool.AonDataSource;
@@ -70,6 +71,14 @@ public class AONContext {
 		}
 	}
 
+	public static AONContext getAONContext(String token) {
+		JSONObject json = SECURITY.decodeJWT(token);	
+		String domainName = json.getString("domainName");
+		Integer domainId = json.getInt("domainId");
+		String user = json.getString("username");
+		return getAONContext(domainName, domainId, user);
+	}
+	
 	public static AONContext getAONContext(String domainName, int domainId, String user) {
 		try {
 			return new AONContext(AonDataSource.getInstance().getConnection(
