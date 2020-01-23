@@ -17,12 +17,27 @@ import net.aonsolutions.aon.gwt.aio.client.IAio;
 public class AioImpl extends AonStatelessRemoteServiceServlet implements IAio{
 
 	private static final long serialVersionUID = 1L;
+
+	public AonData getAonData(String token){
+		Domain domain = AON.getDomain(token);
+		User user = AON.getUser(token);
+		Integer operator = AON.getTaskHolder(domain.getName(), domain.getId(), user.getLogin(), 
+				f -> f.getDomainProperty().eq(domain.getId()).and(f.getUserIdProperty().eq(user.getId()))).getId();
+		return new AonData().setUser(user)
+				.setMd5(getMd5(user.getLogin()+domain.getName()))
+				.setDomain(domain)
+				.setUserOperator(operator);
+	}
 	
 	public AonData getAonData(String domainName, Integer domainId, String login){
+		System.out.println("AON DATA - " + domainName + " - " + domainId + " - " + login);
 		Domain domain = AON.getDomain(domainName, domainId, login);
+		System.out.println("AON DATA - Domain " + domain.getName());
 		User user = AON.getUser(domain.getName(), domain.getId(), login);
+		System.out.println("AON DATA - Login " + user.getLogin());
 		Integer operator = AON.getTaskHolder(domain.getName(), domainId, login, 
 				f -> f.getDomainProperty().eq(domainId).and(f.getUserIdProperty().eq(user.getId()))).getId();
+		System.out.println("AON DATA - Operator " + operator);
 		return new AonData().setUser(user)
 				.setMd5(getMd5(user.getLogin()+domain.getName()))
 				.setDomain(domain)
