@@ -1289,6 +1289,7 @@ public class SalaryDraft extends ResizeComposite
 		@Override
 		void onEdit() {
 			PaymentDialog paymentDialog = new PaymentDialog();
+			paymentDialog.setTypeListVisible();
 			paymentDialog.setNumberFormat(AON.CURRENCY_FORMAT);
 			paymentDialog.setContextProvider(salaryDraftObject);
 			paymentDialog.setConcept(getConcept());
@@ -1806,6 +1807,7 @@ public class SalaryDraft extends ResizeComposite
 		@Override
 		protected void onEdit() {
 			PaymentDialog paymentDialog = new PaymentDialog();
+			paymentDialog.setTypeListVisible();
 			paymentDialog.setNumberFormat(AON.CURRENCY_FORMAT);
 			paymentDialog.setContextProvider(salaryDraftObject);
 
