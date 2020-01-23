@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.hibernate.property.Getter;
-
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.common.shared.EvalException;
@@ -24,7 +22,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
@@ -34,8 +31,6 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
-import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -67,7 +62,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
-import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionModel.AbstractSelectionModel;
 
 public class Payment extends ResizeComposite {
@@ -412,6 +406,7 @@ public class Payment extends ResizeComposite {
 		initMonthListBox();
 		initTaxDeckPanel();
 		showReceipt(false);
+		paymentsGrid.setVisible(false);
 	}
 
 	public void setNumberFormat(NumberFormat numberFormat) {
@@ -838,6 +833,8 @@ public class Payment extends ResizeComposite {
 		paymentsDataGrid.getElement().getStyle()
 				.setPropertyPx("minHeight", Window.getClientHeight() / 6);
 		paymentsDataGrid.setWidth("100%");
+			
+		new ListDataProvider<com.esferalia.aon.gwt.payroll.shared.Payment>(Collections.emptyList()).addDataDisplay(paymentsDataGrid);
 		
 		return paymentsDataGrid;
 	}
