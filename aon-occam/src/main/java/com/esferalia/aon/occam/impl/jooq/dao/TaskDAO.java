@@ -828,11 +828,11 @@ public class TaskDAO {
 			taskHolder.setName(t.getValue(REGISTRY.NAME));
 			taskHolder.setDocument(t.getValue(REGISTRY.DOCUMENT));
 			taskHolder.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(t.getValue(REGISTRY.SECURITY_LEVEL)));
-			taskHolder.setDocumentCountry(Country.valueOf(t.getValue(REGISTRY.DOCUMENT_COUNTRY))); // TODO
+			taskHolder.setDocumentCountry(Country.safeValueOf(t.getValue(REGISTRY.DOCUMENT_COUNTRY))); // TODO
 			taskHolder.setDocumentType(DocumentType.values()[t.getValue(REGISTRY.DOCUMENT_TYPE)]);
-			taskHolder.setNationality(Country.valueOf(t.getValue(REGISTRY.NATIONALITY))); // TODO
+			taskHolder.setNationality(Country.safeValueOf(t.getValue(REGISTRY.NATIONALITY))); // TODO
 			taskHolder.setSecurityLevel(SecurityLevel.values()[t.getValue(REGISTRY.SECURITY_LEVEL)]);
-			taskHolder.setType(t.getValue(REGISTRY.TYPE));	
+			taskHolder.setType(t.getValue(REGISTRY.TYPE));
 			
 			return taskHolder
 					.setActive(t.getValue(TASK_HOLDER.ACTIVE))
