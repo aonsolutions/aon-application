@@ -26,16 +26,11 @@ import org.jooq.Condition;
 import org.jooq.impl.DSL;
 
 import com.code.aon.common.ICollectionProvider;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.google.apis.DriveUtils;
-import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.RelationalExpression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.report.controller.ReportManager;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.report.StatelessReportManager;
 import com.esferalia.aon.gwt.payroll.shared.ShareService;
@@ -88,7 +83,7 @@ public class ShareServlet extends HttpServlet implements ShareService {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		
-		Connection connection;
+		Connection connection = null;
 
 		try {
 			
@@ -144,6 +139,13 @@ public class ShareServlet extends HttpServlet implements ShareService {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
+			if(connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}	
 		}
 	}
 
