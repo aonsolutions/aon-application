@@ -180,7 +180,14 @@ public class JooqCost {
 			
 		}catch (SQLException e) {
 			throw new RuntimeException(e);
-		} 
+		} finally {
+			if ( connection != null ) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
 	}
 
 	private static String parseSalaryType(Byte salaryType) {

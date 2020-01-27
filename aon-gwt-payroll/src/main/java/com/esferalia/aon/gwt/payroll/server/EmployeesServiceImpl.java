@@ -1623,8 +1623,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		Connection conn = null;
 		try {
 			conn = AonServletUtils.getConnection(domain);
-			int domainId = AonServletUtils.getDomainID(domain);
-			int parentDomainId = AonServletUtils.getParentDomainID(domain);
+			Integer domainId = AonServletUtils.getDomainID(domain);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domain);
 
 			return JooqDeductions.getConcepts(conn, domainId,
 					parentDomainId);
@@ -3069,15 +3069,18 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 				if (StringUtils.equals(REMOVE, payment.getExpression()))
 					continue;
-
-				Set<String> paymentVars = ExpressionContext
-						.getVariableSet(payment.getExpression());
-
-				for (String var : paymentVars) {
-					if (var.endsWith("_ACTUAL"))
-						continue; // This is awfull ... very awful
-					variables.put(var, String.format("%s",
-							payment.getDescription(), payment.getExpression()));
+				try {
+					Set<String> paymentVars = ExpressionContext
+							.getVariableSet(payment.getExpression());
+	
+					for (String var : paymentVars) {
+						if (var.endsWith("_ACTUAL"))
+							continue; // This is awfull ... very awful
+						variables.put(var, String.format("%s",
+								payment.getDescription(), payment.getExpression()));
+					}
+				} catch (Exception e ) {
+					//TODO : Error
 				}
 
 				variables.remove(payment.getName());
@@ -3149,15 +3152,18 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 				if (StringUtils.equals(REMOVE, payment.getExpression()))
 					continue;
-
-				Set<String> paymentVars = ExpressionContext
-						.getVariableSet(payment.getExpression());
-
-				for (String var : paymentVars) {
-					if (var.endsWith("_ACTUAL"))
-						continue; // This is awfull ... very awful
-					variables.put(var, String.format("%s",
-							payment.getDescription(), payment.getExpression()));
+				try {
+					Set<String> paymentVars = ExpressionContext
+							.getVariableSet(payment.getExpression());
+	
+					for (String var : paymentVars) {
+						if (var.endsWith("_ACTUAL"))
+							continue; // This is awfull ... very awful
+						variables.put(var, String.format("%s",
+								payment.getDescription(), payment.getExpression()));
+					}
+				}catch ( Exception e ) {
+					//TODO: Error
 				}
 
 				variables.remove(payment.getName());
@@ -3224,16 +3230,19 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 				if (StringUtils.equals(REMOVE, payment.getExpression()))
 					continue;
-
-				Set<String> paymentVars = ExpressionContext
-						.getVariableSet(payment.getExpression());
-
-				for (String var : paymentVars) {
-					if (var.endsWith("_ACTUAL"))
-						continue; // This is awfull ... very awful
-
-					result.add(var);
+				
+				try {
+					Set<String> paymentVars = ExpressionContext
+							.getVariableSet(payment.getExpression());
+					for (String var : paymentVars) {
+						if (var.endsWith("_ACTUAL"))
+							continue; // This is awfull ... very awful
+						result.add(var);
+					}
+				} catch ( Exception e ) {
+					// TODO: Error...
 				}
+
 
 				result.remove(payment.getName());
 
@@ -4737,6 +4746,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
+			if ( connection != null ) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+				}
+			}
 		}
 	}
 
@@ -4749,6 +4764,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
+			if ( connection != null ) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+				}
+			}
 		}
 	}
 
