@@ -1,7 +1,9 @@
 package com.esferalia.aon.payroll.calculator;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.code.aon.AonVersion;
@@ -21,7 +23,7 @@ public abstract class TaxCalculator {
 	double renumeration = 0;
 	double totalPayment = 0;
 	double inKindIrpfBase = 0 ;
-
+	
 
 	public double getIrpfBase() {
 		return irpfBase;
@@ -44,6 +46,7 @@ public abstract class TaxCalculator {
 		return irpfBase - inKindIrpfBase;
 	}
 	
+	public abstract double getAmount(PaymentType type);
 	
 	public abstract double tax(IContractPayment payment, Date start, Date end, 
 			Date issueDate, double amount ) throws AonException;
@@ -80,10 +83,12 @@ public abstract class TaxCalculator {
 	
 	private static class DefaultTaxCalculator extends TaxCalculator {
 		
+		private Map<PaymentType, Double> typeAmounts;
 		private IContractSalaryCalculatorContext context;
 		
 		public DefaultTaxCalculator(IContractSalaryCalculatorContext context) {
 			this.context = context;
+			this.typeAmounts = new HashMap<PaymentType, Double>();
 		}
 		
 		
@@ -116,6 +121,11 @@ public abstract class TaxCalculator {
 //			}
 //			
 //			return total;
+		}
+		
+		@Override
+		public double getAmount(PaymentType type) {
+			return typeAmounts.getOrDefault(type, 0.00);
 		}
 
 		@Override
@@ -175,6 +185,9 @@ public abstract class TaxCalculator {
 			} catch ( NullPointerException e) {
 				typeVisitor.visitOther(PaymentType.CRA_0001);
 			}
+
+			typeAmounts.put(paymentType, typeAmounts.getOrDefault(paymentType, 0.00) + tax);
+			
 			return tax;
 		}
 	}

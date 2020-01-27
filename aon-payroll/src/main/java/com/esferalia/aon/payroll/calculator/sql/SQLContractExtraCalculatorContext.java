@@ -2,6 +2,7 @@ package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.payroll.calculator.ContextFunctions.parseExtraDate;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ACTUAL_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTHLY_PAYMENTS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NATURAL_MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static java.util.Calendar.DAY_OF_MONTH;
@@ -288,7 +289,7 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			if ( Period.compare(paymentStart, paymentEnd)> 0)
 				continue;
 
-			if (StringUtils.isNotBlank(p.getName()) && p.getSalaryType() == SalaryType.SALARY) {
+			if (isSalaryPayment(p)) {
 				try {
 					addSalaryPayment(expressionContext, p, paymentStart, paymentEnd);
 				}catch (com.esferalia.aon.salary.expression.InterruptedException e) {
@@ -314,7 +315,7 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 				if ( Period.compare(paymentStart, paymentEnd)> 0)
 					continue;
 	
-				if (StringUtils.isNotBlank(p.getName()) && p.getSalaryType() == SalaryType.SALARY) {
+				if (isSalaryPayment(p)) {
 					try {
 						addSalaryPayment(expressionContext, p, paymentStart, paymentEnd);
 						resolved.add(p);
@@ -368,9 +369,10 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		if ( results.isEmpty() )
 			expressionContext.setVariable(payment.getName(), 0.00, paymentStart, paymentEnd);
 		
-		if ( results.size() == 1 && isConstant(payment, results))
+		if ( results.size() == 1 && isConstant(payment, results)) {
 			results = expressionContext.eval(String.format("%s(%s)", ContextVariable.FRACTIONATE, payment.getExpression()), paymentStart, paymentEnd,
 					Double.class);
+		}
 		
 		for (ITimedResult<Double> result : results) {
 
@@ -395,8 +397,28 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 
 	protected void addResult(ExpressionContext expressionContext, IContractPayment payment, Date resultStart,
 			Date resultEnd, double resultValue) {
+		
+		addResult(
+		expressionContext,  
+		resultStart, 
+		resultEnd, 
+		resultValue, 
+		payment.getName(),
+		isMonthlyPayment(payment) ? MONTHLY_PAYMENTS: null 
+		);
+	}
+
+	protected void addResult(ExpressionContext expressionContext, Date resultStart,
+			Date resultEnd, double resultValue, String ...names ) {
+		Arrays.asList(names).stream()
+		.filter(n -> AonStringUtils.isNotBlank(n))
+		.forEach(n -> addResult(expressionContext, n, resultStart, resultEnd, resultValue)) ;
+		;
+	}
+	protected void addResult(ExpressionContext expressionContext, String name, Date resultStart,
+			Date resultEnd, double resultValue ) {
 		Date valueStart = resultStart;
-		List<ITimedVariable<Number>> prevs = expressionContext.getVariables(payment.getName(), resultStart,
+		List<ITimedVariable<Number>> prevs = expressionContext.getVariables(name, resultStart,
 				resultEnd);
 
 		for (ITimedVariable<Number> prev : prevs) {
@@ -405,13 +427,13 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			try {
 				Number prevValue = prev.getValue(prev.getPeriod());
 				if (valueStart.compareTo(prevStart) < 0)
-					expressionContext.setVariable(payment.getName(), resultValue, valueStart, prev(prevStart));
+					expressionContext.setVariable(name, resultValue, valueStart, prev(prevStart));
 				
 				double value = resultValue ; 
 				if (isResultVariabl(prev))
 					value += prevValue.doubleValue();
 				
-				expressionContext.setVariable(payment.getName(), value, prevStart,
+				expressionContext.setVariable(name, value, prevStart,
 						prevEnd);
 				
 				
@@ -422,7 +444,7 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		}
 		
 		if (valueStart.compareTo(resultEnd) <= 0)
-			expressionContext.setVariable(payment.getName(), resultValue, valueStart, resultEnd);
+			expressionContext.setVariable(name, resultValue, valueStart, resultEnd);
 	}
 
 	private void initMonthVariables(ExpressionContext ctx) throws UndefinedVariablesException, ExpressionException {
@@ -606,5 +628,15 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		
 		return true;
 	}
+	
+	private static boolean isSalaryPayment(IContractPayment p) {
+		return ( StringUtils.isNotBlank(p.getName())
+				|| p.getType() == PaymentType.CRA_0001
+				) && p.getSalaryType() == SalaryType.SALARY;		
+	}
 
+	private static boolean isMonthlyPayment(IContractPayment p) {
+		return ( p.getType() == PaymentType.CRA_0001 ) 
+				&& !AonStringUtils.equals(ContextVariable.PREST_IT, p.getName());		
+	}
 }

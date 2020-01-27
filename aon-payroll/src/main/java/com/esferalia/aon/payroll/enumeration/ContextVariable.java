@@ -239,6 +239,7 @@ public enum ContextVariable implements IResourceable {
 	public static final String BASE_SALARY = "SALARIO_BASE";
 	public static final String GUARENTEED = "GARANTIZADO";
 	public static final String GUARENTEE_IT = "GARANTIZADO_IT";
+	public static final String MONTHLY_PAYMENTS = "MENSUALIDAD";
 
 	public static final String PAYMENT_VARIABLE = "CONCEPTO";
 	

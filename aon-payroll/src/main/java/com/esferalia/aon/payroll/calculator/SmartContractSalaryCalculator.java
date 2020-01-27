@@ -200,6 +200,10 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		public double getMoneyIrpfBase() {
 			return delegate.getMoneyIrpfBase();
 		}
+		
+		public double getAmount(PaymentType type) {
+			return delegate.getAmount(type);
+		}
 
 		public double tax(IContractPayment payment, Date start, Date end, Date issueDate, double amount)
 				throws AonException {

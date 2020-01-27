@@ -17,6 +17,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTHLY_PAYMENTS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
@@ -32,7 +33,6 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMEN
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_HOURS;
 import static com.esferalia.aon.salary.expression.ExpressionScope.APPLICATION;
 
 import java.util.ArrayList;
@@ -479,12 +479,14 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			TaxCalculator taxCalculator = getTaxCalculator(ctx);
 
 			Date issueDate = ctx.getIssueDate();
-
+			
+			
 			Set<String> paymentsVars = new HashSet<String>();
 			LinkedList<UndefPayment> undefPayments = new LinkedList<UndefPayment>();
 			Collection<IContractPayment> contractPayments = ctx.getContractPayments();
-
+			
 			LinkedList<UndefPayment> undefTotalPayments = new LinkedList<UndefPayment>();
+			LinkedList<UndefPayment> undefMonthlyPayments = new LinkedList<UndefPayment>();
 
 			HashSet<String> alreadyDefined = new HashSet<String>();
 
@@ -514,7 +516,9 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					addResult(expressionContext, contractPayment.getSurName(), start, end, 0.00);
 				} catch (UndefinedVariablesException e) {
 					UndefPayment undefPayment = new UndefPayment(contractPayment, e);
-					if (!undefPayment.isSelfUndefined()) {
+					if (undefPayment.dependsOn(MONTHLY_PAYMENTS)) {
+						undefMonthlyPayments.add(undefPayment);
+					} else if (!undefPayment.isSelfUndefined()) {
 						undefPayments.add(undefPayment);
 					} else {
 						undefPayment.onUndefinedData(this);
@@ -613,6 +617,21 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 			totalPayment = taxCalculator.getTotalPayment();
 			expressionContext.setVariable(TOTAL_PAYMENT, totalPayment, start, end);
+
+			double monthlyPayments = taxCalculator.getAmount(PaymentType.CRA_0001);
+			double prestIts = expressionContext.getVariables(PREST_IT).stream()
+			.collect(Collectors.summingDouble(v -> (Double) v.getValue(v.getPeriod())));
+			
+			expressionContext.setVariable(MONTHLY_PAYMENTS, monthlyPayments - prestIts, start, end);
+			for (UndefPayment undefMonthlyPayment : undefMonthlyPayments) {
+				try {
+					resolvePayment(undefMonthlyPayment, start, end, issueDate, expressionContext, taxCalculator,
+							quoteCalculator, leavePeriods, strikePeriods);
+					copyResults(expressionContext, undefMonthlyPayment);
+				} catch (UndefinedVariablesException e) {
+					onUndefinedData(undefMonthlyPayment, e.getMessage(), e.getVariableNames());
+				}
+			}
 
 			salaryBuilder.setTotalPayment(totalPayment);
 
