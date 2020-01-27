@@ -42,6 +42,7 @@ import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2018.AEATIVA2018;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2018.AEATIVA2018toMod390;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2018.Mod390toAEATIVA2018;
+import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableDouble;
@@ -771,6 +772,12 @@ public class Mod3902018DAO {
 			}
 			
 		});
+		// Regimen especial de criterio de caja.
+		map.get(Mod3902018DetailKey.C0654).setTaxableBase( getVatAccrualPaymentOutputBase(ctx, mod390) );
+		map.get(Mod3902018DetailKey.C0654).setQuota( getVatAccrualPaymentOutputQuota(ctx, mod390) );
+		map.get(Mod3902018DetailKey.C0656).setTaxableBase( getVatAccrualPaymentInputBase(ctx, mod390) );
+		map.get(Mod3902018DetailKey.C0656).setQuota( getVatAccrualPaymentInputQuota(ctx, mod390) );
+		
 		// Cálculo de la Regularizacion por aplicacion del porcentaje definitivo de prorrata 
 		Record1<BigDecimal> record = ctx.getDslContext()
 			.select(DSL.sum(FS_VAT_DETAIL.QUOTA))
@@ -1151,6 +1158,30 @@ public class Mod3902018DAO {
 		} catch (Throwable t) {
 			throw new AonCoreException(t.getMessage());
 		}
+	}
+
+	public static double getVatAccrualPaymentOutputBase(AONContext ctx, Mod390 mod390) {
+		Date fromDate = AonDateUtils.getYearFirstDay(mod390.getYear());
+		Date toDate = FiscalUtils.getPeriodEnd(mod390);
+		return VATDAO.getVatAccrualPaymentOutputBase(ctx,fromDate,toDate);
+	}
+
+	public static double getVatAccrualPaymentOutputQuota(AONContext ctx, Mod390 mod390) {
+		Date fromDate = AonDateUtils.getYearFirstDay(mod390.getYear());
+		Date toDate = FiscalUtils.getPeriodEnd(mod390);
+		return VATDAO.getVatAccrualPaymentOutputQuota(ctx,fromDate,toDate);
+	}
+
+	public static double getVatAccrualPaymentInputBase(AONContext ctx, Mod390 mod390) {
+		Date fromDate = AonDateUtils.getYearFirstDay(mod390.getYear());
+		Date toDate = FiscalUtils.getPeriodEnd(mod390);
+		return VATDAO.getVatAccrualPaymentInputBase(ctx,fromDate,toDate);
+	}
+
+	public static double getVatAccrualPaymentInputQuota(AONContext ctx, Mod390 mod390) {
+		Date fromDate = AonDateUtils.getYearFirstDay(mod390.getYear());
+		Date toDate = FiscalUtils.getPeriodEnd(mod390);
+		return VATDAO.getVatAccrualPaymentInputQuota(ctx,fromDate,toDate);
 	}
 
 }
