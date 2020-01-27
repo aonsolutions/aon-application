@@ -16,15 +16,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONObject;
 
 import com.code.aon.webservice.util.SecurityUtils;
@@ -128,13 +128,13 @@ public class printFullExpedient extends HttpServlet {
 		byte[] data = null; 
 		try {
 			ByteArrayOutputStream archivo = new ByteArrayOutputStream();
-			HSSFWorkbook libro = new HSSFWorkbook();		
+			XSSFWorkbook libro = new XSSFWorkbook();		
 			
 			
 			CellStyle style = getStyle(libro);
 			CellStyle style3 = getStyle3(libro);
 			
-			HSSFSheet hoja = libro.createSheet("Expendientes");
+			XSSFSheet hoja = libro.createSheet("Expendientes");
 			
 			Row fila = hoja.createRow(onlyOne ? 1 : 0);
 			Integer column = onlyOne ? -2 : 0;
@@ -189,7 +189,7 @@ public class printFullExpedient extends HttpServlet {
 
 	// -------------------- EXCEL UTILS
 	
-	private Cell boldCell(HSSFWorkbook libro, Row row, CellStyle style, Integer index, String str) {
+	private Cell boldCell(XSSFWorkbook libro, Row row, CellStyle style, Integer index, String str) {
 		Cell cell = row.createCell(index);
 		cell.setCellValue(str);
 		row.setHeightInPoints(16);
@@ -198,7 +198,7 @@ public class printFullExpedient extends HttpServlet {
 		return cell;
 	}
 	
-	private Cell cell(HSSFWorkbook libro, Row row, CellStyle style, Integer index, String str) {
+	private Cell cell(XSSFWorkbook libro, Row row, CellStyle style, Integer index, String str) {
 		Cell cell = row.createCell(index);
 		cell.setCellValue(str);
 		row.setHeightInPoints(16);
@@ -206,7 +206,7 @@ public class printFullExpedient extends HttpServlet {
 		return cell;
 	}
 	
-	private Cell cell(HSSFWorkbook libro, Row row, CellStyle style, Integer index, Double dbl) {
+	private Cell cell(XSSFWorkbook libro, Row row, CellStyle style, Integer index, Double dbl) {
 		Cell cell = row.createCell(index);
 		cell.setCellValue(dbl);
 		row.setHeightInPoints(16);
@@ -214,10 +214,10 @@ public class printFullExpedient extends HttpServlet {
 		return cell;
 	}
 	
-	private CellStyle getStyle(HSSFWorkbook libro){		
+	private CellStyle getStyle(XSSFWorkbook libro){		
 		CellStyle style = libro.createCellStyle();
 		
-		HSSFFont font = libro.createFont();
+		XSSFFont font = libro.createFont();
 		font.setFontHeightInPoints((short)10);
 		font.setBold(true);
 		
@@ -236,9 +236,9 @@ public class printFullExpedient extends HttpServlet {
 		return style;
 	}
 	
-	private CellStyle getStyle3(HSSFWorkbook libro){	
+	private CellStyle getStyle3(XSSFWorkbook libro){	
 		CellStyle style3 = libro.createCellStyle();
-     	HSSFFont font2 = libro.createFont();
+     	XSSFFont font2 = libro.createFont();
      	font2.setFontHeightInPoints((short)12);
 		style3.setFont(font2);
 		style3.setAlignment(HorizontalAlignment.LEFT);
