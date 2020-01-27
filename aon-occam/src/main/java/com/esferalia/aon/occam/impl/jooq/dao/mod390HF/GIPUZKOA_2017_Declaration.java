@@ -235,7 +235,7 @@ public class GIPUZKOA_2017_Declaration extends Mod390HFDeclaration {
 		// Total INGRESOS efectuados durante el presente ejercicion
 		,GP_C038(Mod390Key.GP_C038,null,null,
 				(ctx,mod) -> {
-					add( Mod390Key.GP_C035, mod, Mod390HFDAO.getM303YearModels(ctx, mod)
+					add( Mod390Key.GP_C038, mod, Mod390HFDAO.getM303YearModels(ctx, mod)
 							.mapToDouble(fm -> fm.getAmount(Mod303Key.GP_C035))
 							.filter(result -> AonMathUtils.isGreatherThanZero(result))
 							.sum());
