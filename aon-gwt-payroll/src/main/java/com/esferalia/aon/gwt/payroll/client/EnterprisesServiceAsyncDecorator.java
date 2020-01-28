@@ -129,6 +129,14 @@ public class EnterprisesServiceAsyncDecorator implements
 		enterprisesServiceAsync.getWorkplacesExtras(domain, workplaceIds,
 				new AsyncCallbackWrapper<List<Extra>>(callback));
 	}
+	
+	@Override
+	public void getAgreement(String domain, Integer agreementId, AsyncCallback<Agreement> callback) {
+		AON.start();
+		enterprisesServiceAsync.getAgreement(domain, agreementId,
+				new AsyncCallbackWrapper<Agreement>(callback));
+	}
+	
 
 	@Override
 	public void getAgreements(String domain, int offset, int limit,

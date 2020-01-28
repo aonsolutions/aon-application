@@ -26,6 +26,7 @@ import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.esferalia.aon.gwt.payroll.shared.StreetType;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeDraftObject extends AbstractDraftObject{
@@ -201,6 +202,10 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		return this.contractData.getAgreementId();
 	}
 	
+	public Integer getContractAgreementLevelId() {
+		return this.contractData.getAgreementLevelId();
+	}
+
 	public Integer getContractAgreement() {
 		return getAgreementIndex(this.contractData.getAgreementId());
 	}
@@ -218,47 +223,6 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		}
 	}
 	
-	public Integer getAgreementLevel() {
-		return getAgreementLevelCategoryIndex(this.contractData.getAgreementId(), this.contractData.getAgreementLevelId(), this.contractData.getAgreementCategory());
-	}
-	
-	private Integer getAgreementLevelCategoryIndex(Integer agreementId, Integer agreementLevelId, String category_description) {
-		if (null == agreementId || null == agreementLevelId || category_description == "")
-			return -1;
-
-		Integer result = 0;
-		for (Agreement a : getActiveAgreements()) {
-			if (a.getId() > 0 && a.getId().equals(agreementId)) {
-				Set<Level> levels = a.getLevels();
-				for (Level levelRecord : levels) {
-					Set<String> categories = a.getCategoriesMap().get(levelRecord.getId());
-					for (String categoryRecord : categories) {
-						if (levelRecord.getId().equals(agreementLevelId) && categoryRecord == category_description)
-							return result;
-						else
-							result++;
-					}
-				}
-			}
-		}
-
-		result = 0;
-		for (Agreement a : getActiveAgreements()) {
-			if (a.getId() > 0 && a.getId().equals(agreementId)) {
-				Set<Level> levels = a.getLevels();
-				for (Level levelRecord : levels) {
-					Set<String> categories = a.getCategoriesMap().get(levelRecord.getId());
-					for (String categoryRecord : categories) {
-						if (levelRecord.getId().equals(agreementLevelId))
-							return result;
-						else
-							result++;
-					}
-				}
-			}
-		}
-		return -1;
-	}
 	
 	public String getContractAgreementCategory() {
 		return this.contractData.getAgreementCategory();
@@ -481,18 +445,6 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		return -1;
 	}
 	
-	public Integer getAgreementLevelId(String agreementName, String agreementLevelName) {
-		String levelDescription = (agreementLevelName == null || agreementLevelName == "-") ? null : agreementLevelName.split(" ")[0];
-		for(Agreement a : getAgreements()){
-			if(a.getDescription() == agreementName && a.getId() > 0)
-				for(Level level : a.getLevels()){
-					if(level.getId() > 0 && level.getDescription() == levelDescription){
-						return level.getId();
-					}
-				}
-		}
-		return -1;
-	}
 	
 	private String getQuoteByIndex(Integer index) {
 		if(null == index)
@@ -580,8 +532,24 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		});
 	}
 	
+	public void getAgreement(Integer agreementId, Consumer<Agreement> success, Consumer<Throwable> failure) {
+		
+		enterprisesService.getAgreement(agreementId, new AsyncCallback<Agreement>() {
+			
+			@Override
+			public void onSuccess(Agreement result) {
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+		});	
+	}
+
 	public void getAgreements(Consumer<List<Agreement>> success, Consumer<Throwable> failure) {
-		enterprisesService.getAgreements(0, 0, new AsyncCallback<List<Agreement>>() {
+		enterprisesService.getAgreements(0, Integer.MAX_VALUE, new AsyncCallback<List<Agreement>>() {
 			
 			@Override
 			public void onSuccess(List<Agreement> result) {
@@ -598,6 +566,8 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 			}
 		});	
 	}
+	
+	
 	
 	public void getActivitiesCCC(Consumer<ActivitiesCCC> success, Consumer<Throwable> failure) {
 		enterprisesService.getActivitiesCCC(workplace.getId(), new AsyncCallback<ActivitiesCCC>() {

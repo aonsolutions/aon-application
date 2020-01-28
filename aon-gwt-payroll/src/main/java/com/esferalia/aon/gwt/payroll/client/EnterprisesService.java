@@ -63,6 +63,8 @@ public interface EnterprisesService extends RemoteService {
 	
 	Agreement copyAgreement(String domain, Agreement agreement);
 
+	Agreement getAgreement(String domain, Integer agreementId) ;
+
 	List<Agreement> getAgreements(String domain, int offset, int limit) ;
 
 	List<Enterprise> getEnterprises(String domain, String user, int offset, int limit) ;

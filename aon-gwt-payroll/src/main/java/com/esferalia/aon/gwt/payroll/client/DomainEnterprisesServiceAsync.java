@@ -94,6 +94,10 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getWorkplacesExtras(getCurrentDomainName(), workplaceIds, callback);
 	}
 
+	public void getAgreement(Integer agreementId, AsyncCallback<Agreement> callback) {
+		enterprisesServiceAsync.getAgreement(getCurrentDomainName(), agreementId, callback);
+	}
+
 	public void getAgreements(int offset, int limit, AsyncCallback<List<Agreement>> callback) {
 		enterprisesServiceAsync.getAgreements(getCurrentDomainName(), offset, limit, callback);
 	}

@@ -348,6 +348,10 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				limit, domains);
 	}
 
+	public static Agreement getAgreement(Connection conn, Integer agreementId) throws SQLException {
+		return getAgreement(DSL.using(conn, getDefaultSettings()), agreementId);
+	}
+
 	public static List<Agreement> getAgreements(DSLContext dslContext,
 			int offset, int limit, Integer... domains) throws SQLException {
 		
@@ -398,6 +402,28 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 
 		}
 		return agreements;
+	}
+
+	public static Agreement getAgreement(DSLContext dslContext,
+			Integer agrementId) throws SQLException {
+		
+		
+		// @formatter:off
+		AgreementRecord record = dslContext.select().from(AGREEMENT)
+				.where(AGREEMENT.ID.eq(agrementId))
+				.fetchOneInto(AGREEMENT)
+				;
+		// @formatter:on
+
+		Agreement agreement = new Agreement();
+
+		agreement.setId(record.getId()); // Not NULL
+		agreement.setDomain(record.getDomain());
+		agreement.setDescription(record.getDescription());
+		
+		agreement.setLevels(getAgreementLevel(dslContext, record.getId(), agreement));
+
+		return agreement;
 	}
 
 	private static Set<Level> getAgreementLevel(DSLContext dslContext, Integer id, Agreement agreement) {

@@ -297,7 +297,7 @@ public class JooqEmployee {
 			Record agreementLevelTable = dslContext.select().from(AGREEMENT_LEVEL)
 					.where(AGREEMENT_LEVEL.ID.eq(agreementLevel))
 					.fetchOne();
-			
+			try {
 			contractData.setAgreementLevelId(agreementLevelTable.get(AGREEMENT_LEVEL.ID));
 			//employee.setAgreement_level(agreementLevelTable.get(AGREEMENT_LEVEL.DESCRIPTION)); //Can be null
 			
@@ -309,7 +309,11 @@ public class JooqEmployee {
 					.fetchOne();
 			
 			contractData.setAgreementId(agreementTable.get(AGREEMENT.ID));
-			//employee.setAgreement(agreementTable.get(AGREEMENT.DESCRIPTION)); //Can be null	
+			//employee.setAgreement(agreementTable.get(AGREEMENT.DESCRIPTION)); //Can be null
+			} catch ( Throwable t ) {
+				contractData.setAgreementLevelId(null);
+				contractData.setAgreementId(null);
+			}
 			
 		}
 		

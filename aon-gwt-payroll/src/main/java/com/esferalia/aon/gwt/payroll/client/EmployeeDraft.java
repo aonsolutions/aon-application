@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 
@@ -26,6 +25,7 @@ import com.esferalia.aon.gwt.payroll.shared.StreetType;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.AonUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Display;
@@ -48,7 +48,8 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class EmployeeDraft extends Composite implements ContextMenuHandler {
-
+	
+	
 	private class EmployeeImplementation extends Employee{
 		ContractType contractTypeClass = new ContractType();
 		
@@ -256,32 +257,39 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		@Override
 		public void onContractAgreementChange() {
 			this.level.clear();
-			String agreementName = this.agreement.getSelectedItemText();
-			List<Agreement> agreements = employeeDraftObject.getAgreements();
-			this.level.addItem("-");
-			for (Agreement a : agreements) {
-				if (a.getId() > 0 && a.getDescription() == agreementName) {
-					Set<Level> levels = a.getLevels();
-					for (Level levelRecord : levels) {
-						Set<String> categories = a.getCategoriesMap().get(levelRecord.getId());
-						for (String categoryRecord : categories) {
-							this.level.addItem(levelRecord.getDescription() + " - " + categoryRecord);
-						}
-					}
-				}
+			
+			if (this.agreement.getSelectedIndex() == 0 ) {
+				employeeDraftObject.setContractAgreementId(null);
+				employeeDraftObject.setContractAgreementLevelId(null);
+				this.category.setValue("");
+				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.category);
+				saving();
+				return;
 			}
 			
-			if (this.agreement.getSelectedIndex() == 0) {
+			Integer agreementId = 
+			Integer.valueOf(this.agreement.getSelectedValue()); 
+			
+			this.level.addItem("-", "-1");
+			
+			employeeDraftObject.getAgreement(agreementId,  
+			(agreement) -> {
+				for (Level levelRecord : agreement.getLevels())
+					for (String categoryRecord : agreement.getCategoriesMap().get(levelRecord.getId()))
+						this.level.addItem(levelRecord.getDescription() + " - " + categoryRecord, String.valueOf(levelRecord.getId()));
+
+				employeeDraftObject.setContractAgreementId(agreement.getId());
+				employeeDraftObject.setContractAgreementLevelId(null);
+				saving();
+			},
+			(throwable) -> {
 				employeeDraftObject.setContractAgreementId(null);
 				employeeDraftObject.setContractAgreementLevelId(null);
 				this.category.setEnabled(false);
 				this.category.setValue("");
 				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.category);
-			} else {
-				Integer agreementId = employeeDraftObject.getAgreementId(this.agreement.getSelectedItemText());
-				employeeDraftObject.setContractAgreementId(agreementId);
-			}
-			saving();
+				saving();
+			});
 		}
 
 		@Override
@@ -292,8 +300,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 				this.category.setValue("");
 				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.category);
 			} else {
-				Integer agreementLevelId = employeeDraftObject.getAgreementLevelId(this.agreement.getSelectedItemText(),
-						this.level.getSelectedItemText());
+				Integer agreementLevelId = Integer.parseInt(this.level.getSelectedValue());
 				employeeDraftObject.setContractAgreementLevelId(agreementLevelId);
 				String levelDescription = (this.level.getSelectedItemText() == null
 						|| this.level.getSelectedItemText() == "-") ? null
@@ -932,24 +939,21 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 	}
 	
 	private void initWorkplaces() {
-		//WORKPLACE
 		for(Workplace workplace : employeeDraftObject.getWorkplaces())
 			this.employee.workplace.addItem(workplace.getDescription());
 	}
 	
 	private void initContractType() {
-		// TIPO DE CONTRATO
 		this.employee.contractType.addItem("-");
 		for (Entry<Integer, ContractTypeRecord> entry : contractType.getContractTypes().entrySet())
 			this.employee.contractType.addItem(entry.getKey() + " - " + entry.getValue().getContractTypeDescription());	
 	}
 	
 	private void initAgreements() {
-		// CONVENIO
-		this.employee.agreement.addItem("-");
+		this.employee.agreement.addItem("-", "-1");
 		List<Agreement> agreements = employeeDraftObject.getActiveAgreements();
-		for (Agreement a : agreements)
-			this.employee.agreement.addItem(a.getDescription());
+		for (Agreement agreement : agreements)
+			this.employee.agreement.addItem(agreement.getDescription(), String.valueOf(agreement.getId()));
 	}
 
 	private void fillContractFreelancerTable() {
@@ -971,8 +975,7 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		checkValidationSeniorityDate();
 		this.employee.end_date.setValue(employeeDraftObject.getContractEndDate());
 		this.employee.agreement.setSelectedIndex(employeeDraftObject.getContractAgreement() + 1);
-		getAgreementLevels(employeeDraftObject.getContractAgreementId());
-		this.employee.level.setSelectedIndex(employeeDraftObject.getAgreementLevel() + 1);
+		setSelectedAgreementLevel();
 		this.employee.category.setValue(employeeDraftObject.getContractAgreementCategory());
 		this.employee.journeyType.setSelectedIndex(employeeDraftObject.getContractJourneyType());
 		//Contract Partial Journey
@@ -1075,29 +1078,43 @@ public class EmployeeDraft extends Composite implements ContextMenuHandler {
 		this.employee.end_date.setValue(employeeDraftObject.getContractEndDate());
 		
 		this.employee.agreement.setSelectedIndex(employeeDraftObject.getContractAgreement() + 1);
-		getAgreementLevels(employeeDraftObject.getContractAgreementId());
-		this.employee.level.setSelectedIndex(employeeDraftObject.getAgreementLevel() + 1);
+		setSelectedAgreementLevel();
 		this.employee.category.setValue(employeeDraftObject.getContractAgreementCategory());
 		
 		this.employee.quote_group.setSelectedIndex(employeeDraftObject.getContractQuoteGroup());
 		this.employee.occupation.setSelectedIndex(employeeDraftObject.getContractOcupation());
 	}
 	
-	private void getAgreementLevels(Integer agreementId) {
+	private void setSelectedAgreementLevel() {
+		
 		this.employee.level.clear();
-		List<Agreement> agreements = employeeDraftObject.getActiveAgreements();
+		
+		if ( employeeDraftObject.getContractAgreementId() == null ) 
+			return;
+		
 		this.employee.level.addItem("-");
-		for (Agreement a : agreements) {
-			if (a.getId() > 0 && a.getId().equals(agreementId)) {
-				Set<Level> levels = a.getLevels();
-				for (Level levelRecord : levels) {
-					Set<String> categories = a.getCategoriesMap().get(levelRecord.getId());
-					for (String categoryRecord : categories) {
-						this.employee.level.addItem(levelRecord.getDescription() + " - " + categoryRecord);
-					}
+		
+		employeeDraftObject.getAgreement(employeeDraftObject.getContractAgreementId(),  
+		(agreement) -> {
+			int selectedIndex = 0;
+			Integer agreementLevel = employeeDraftObject.getContractAgreementLevelId();
+			String agreementCategory = employeeDraftObject.getContractAgreementCategory();
+			
+			for (Level levelRecord : agreement.getLevels()) {
+				for (String categoryRecord : agreement.getCategoriesMap().get(levelRecord.getId())) {
+					this.employee.level.addItem(levelRecord.getDescription() + " - " + categoryRecord, String.valueOf(levelRecord.getId()));
+					if (AonUtils.equals(levelRecord.getId(),agreementLevel) 
+						&& AonStringUtils.equals(categoryRecord, agreementCategory) )
+						selectedIndex =  this.employee.level.getItemCount() - 1;
+				}
+				if ( selectedIndex == 0 && AonUtils.equals(levelRecord.getId(),agreementLevel) ) {
+					selectedIndex = this.employee.level.getItemCount() -1;
 				}
 			}
-		}
+			this.employee.level.setSelectedIndex(selectedIndex);
+		},
+		(throwable) -> {
+		});
 	}
 
 	private void fillEmployeeTable() {

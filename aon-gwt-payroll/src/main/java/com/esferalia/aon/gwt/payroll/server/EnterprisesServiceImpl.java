@@ -375,6 +375,29 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			}
 		}
 	}
+	
+	@Override
+	public Agreement getAgreement(String domain, Integer agreementId) {
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection(domain);
+			Integer domainID = AonServletUtils.getDomainID(domain);
+
+			return JooqAgreement.getAgreement(connection, agreementId);
+
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} catch (NullPointerException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+		}
+	}
 
 	@Override
 	public void updateAgreementId(String domain, Agreement agreement) {
