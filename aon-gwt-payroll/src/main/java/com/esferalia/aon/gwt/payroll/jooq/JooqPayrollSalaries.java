@@ -15,6 +15,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import java.sql.Connection;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.jooq.Condition;
@@ -26,6 +27,7 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
@@ -220,9 +222,9 @@ public class JooqPayrollSalaries {
 					.fetch();
 		} else if(filter.isDateTTFilter()) {
 			// TODO: PORQUE NO ME BUSCA BIEN LAS FECHAS
-			Date startDate = new Date(filter.getDateTillT().getYear(), filter.getDateTillT().getMonth(), filter.getDateTillT().getDate()+1);
-			java.util.Date lastDayOfMonth = DateUtils.addDays2Date(DateUtils.getLastDayOfMonth(filter.getDateTTo()), 1);
-			Date endDate = new Date(lastDayOfMonth.getYear(), lastDayOfMonth.getMonth(), lastDayOfMonth.getDate());
+			Period filterPeriod = createPeriod(filter.getDateTillT(), filter.getDateTTo());
+			Date startDate = new Date(filterPeriod.getStart().getTime());
+			Date endDate = new Date(filterPeriod.getEnd().getTime());
 			
 			salaryRecords = dslContext.select().from(SALARY)
 					.where(contractsCondition)
@@ -274,6 +276,31 @@ public class JooqPayrollSalaries {
 		return salaries;
 	}
 	
+	private static Period createPeriod(java.util.Date dateTillT, java.util.Date dateTTo) {
+		Period period = new Period();
+		
+		java.util.Date startDate = DateUtils.copyDateOnly(dateTillT);
+		java.util.Date endDate = DateUtils.copyDateOnly(dateTTo);
+		
+		if(dateTillT.after(dateTTo)) {
+			startDate = DateUtils.copyDateOnly(dateTTo);
+			endDate = DateUtils.copyDateOnly(dateTillT);
+		}
+		
+		Calendar startCal = Calendar.getInstance();
+		startCal.setTime(startDate);
+		startCal.set(Calendar.DAY_OF_MONTH, 1);
+		
+		Calendar endCal = Calendar.getInstance();
+		endCal.setTime(endDate);
+		endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
+		
+		period.setStart(startCal.getTime());
+		period.setEnd(endCal.getTime());
+		
+		return period;
+	}
+
 	// --------------------------------------------------------------------------------------------
 	//									WORKPLACE METHODS
 	// --------------------------------------------------------------------------------------------
