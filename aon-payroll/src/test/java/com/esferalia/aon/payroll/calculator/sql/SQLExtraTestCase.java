@@ -4025,6 +4025,51 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 	}
 	
+	@Test
+	public void testProrratedBaseI() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()) 
+				,Collections.emptyMap() 
+				,new String[] {} 
+				,new String[] {} 
+				,null);
+		
+		PaymentConceptRecord pagaExtra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+		PaymentConceptRecord salarioBase = addConcept(aonContext, "SALARIO_BASE", PaymentType.CRA_0001);
+		PaymentConceptRecord plusSalarial = addConcept(aonContext, "PLUS_SALARIAL", PaymentType.CRA_0001);
+		
+		addPayment(aonContext, contract, salarioBase, "1000.00 *DIAS_TRABAJADOS /DIAS_MES");
+		addPayment(aonContext, contract, plusSalarial, "200.00 *DIAS_TRABAJADOS /DIAS_MES");
+		addPayment(aonContext, contract, pagaExtra, "PRORRATEAR(MENSUALIDAD)", "_P", PaymentType.CRA_0004);
+		addPayment(aonContext, contract, pagaExtra, "PRORRATEAR(MENSUALIDAD)", "_P", PaymentType.CRA_0004);
+		//@formatter:off
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Salary salary = 
+		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract))
+		;
+		
+		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
+			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
+
+		Assert.assertEquals(1200.00 + 1200.00 / 6 , salary.getIrpfBase(), DELTA);
+		Assert.assertEquals(1200.00 + 1200.00 / 6 , salary.getCommonBase(), DELTA);
+		Assert.assertEquals(1200.00 + 1200.00 / 6 , salary.getRemuneration(), DELTA);
+		Assert.assertEquals(1200.00 / 6 , salary.getExtraPayProration(), DELTA);
+		
+		
+
+	}
+
 	protected void addBaseCgcMin(AONContext aonContext) {
 		addSystemData(aonContext, getFirstDayOfYear(getToday()), null,
 				new HashMap<String,String>() {
