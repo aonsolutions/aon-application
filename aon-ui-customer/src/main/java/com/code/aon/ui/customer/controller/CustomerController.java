@@ -47,6 +47,10 @@ public class CustomerController extends CustomerListController implements ICusto
 	private boolean updateCourseAlumn;
 	private boolean showAuditInfoWindow;
 	
+	public boolean isCeconsulting() {
+		return AonUtil.getDomainName().contains("ceconsulting");
+	}
+	
 	public boolean isUpdateCourseAlumn() {
 		return updateCourseAlumn;
 	}

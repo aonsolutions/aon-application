@@ -15,10 +15,12 @@
 				<ui:param name="controller" value="#{customer}" />
 				
 				<ui:define name="additionalToolbarContent">
-					<aon:commandLink id="customerIban-import" value="Importar IBAN"
-						onclick="customerIban()"
-						styleClass="aon-finding-toolbar-item aon-icon-import-excel-trans">
-					</aon:commandLink>
+					<aon:if test="#{customer.ceconsulting}">
+						<aon:commandLink id="customerIban-import" value="Importar IBAN"
+							onclick="customerIban()"
+							styleClass="aon-finding-toolbar-item aon-icon-import-excel-trans">
+						</aon:commandLink>
+					</aon:if>
 				</ui:define>
 			</ui:decorate>
 			
