@@ -46,6 +46,8 @@ import com.esferalia.aon.gwt.template.jooq.DBStock;
 import com.esferalia.aon.gwt.template.server.delivery.DeliveryImport;
 import com.esferalia.aon.gwt.template.server.delivery.DeliveryInfo;
 import com.esferalia.aon.gwt.template.server.marketplace.XMLUtils;
+import com.esferalia.aon.gwt.template.server.projectCommercial.CustomerIban;
+import com.esferalia.aon.gwt.template.server.projectCommercial.CustomerIbanImport;
 import com.esferalia.aon.gwt.template.server.projectCommercial.ProjectCommercialImport;
 import com.esferalia.aon.gwt.template.shared.ConsumptionItem;
 import com.esferalia.aon.gwt.template.shared.Ecommerce;
@@ -202,6 +204,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 
 	//-------------------- IMPORTAR
 	LinkedList<ProjectCommercial> pcs;
+	LinkedList<CustomerIban> cis;
  	DeliveryInfo di;
 	LinkedList<String> verror;
 	public Integer executeExcel(Domain domain, User user, TemplateInfo ti, ImportType importType, Boolean ignoreInactiveClient,
@@ -250,6 +253,9 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 			else if(ImportType.PROJECT_COMMERCIAL.equals(importType)) {
 				pcs = ProjectCommercialImport.getInstance().importation(domain, user.getLogin(), data);
 			}
+			else if(ImportType.CUSTOMER_IBAN.equals(importType)) {
+				cis = CustomerIbanImport.getInstance().importation(domain, user.getLogin(), data);
+			}
 
 			workbook.close();
 		} catch (IOException e) {
@@ -280,7 +286,15 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 					executeExcelProposal(domain, user, rowIterator, error);
 				else if(importType.equals(ImportType.STOCK))
 					executeExcelStock(domain, user, rowIterator, error, inventory, warehouse1, warehouse2, series, comments, istransfer, number);
-
+				else if(ImportType.DELIVERY.equals(importType)) {
+					di = DeliveryImport.getInstance().importationX(data);
+				}
+				else if(ImportType.PROJECT_COMMERCIAL.equals(importType)) {
+					pcs = ProjectCommercialImport.getInstance().importationX(domain, user.getLogin(), data);
+				}
+				else if(ImportType.CUSTOMER_IBAN.equals(importType)) {
+					cis = CustomerIbanImport.getInstance().importationX(domain, user.getLogin(), data);
+				}
 				workbook.close();
 			} catch (IOException e1) {
 					//El archivo no es un fichero Excel.
@@ -2583,6 +2597,12 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	@Override
 	public Error insertProjectCommercial(Domain domain, User user) {
 		ProjectCommercialImport.getInstance().insertProjectCommercial(domain, user, pcs);
+		return new Error();
+	}
+
+	@Override
+	public Error insertCustomerIban(Domain domain, User user) {
+		CustomerIbanImport.getInstance().insertCustomerIban(domain, user, cis);
 		return new Error();
 	}
 }

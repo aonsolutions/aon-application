@@ -13,6 +13,7 @@ import static com.esferalia.aon.jooq.tables.Raddinfo.RADDINFO;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
+import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
@@ -22,7 +23,6 @@ import static com.esferalia.aon.jooq.tables.Rpaymethod.RPAYMETHOD;
 import static com.esferalia.aon.jooq.tables.Rprofile.RPROFILE;
 import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
 import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
-import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Segment.SEGMENT;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
@@ -1096,6 +1096,13 @@ public class RegistryDAO {
 				.from(RDIR_STAFF)
 				.where(RDIRSTAFF_PROPERTIES.getConditions(filter))
 				.fetch().stream().map(new RDirStaffFiller());
+	}
+	
+	public static RDirStaff insertRDirStaff(AONContext ctx, RDirStaff rdirstaff){
+		return ctx.getDslContext().insertInto(RDIR_STAFF,RDIR_STAFF.DOMAIN, RDIR_STAFF.REGISTRY, RDIR_STAFF.NAME, RDIR_STAFF.DOCUMENT)
+			.values(rdirstaff.getDomain(), rdirstaff.getRegistry(), rdirstaff.getName(), rdirstaff.getDocument())
+			.returning()
+			.fetch().stream().map(new RDirStaffFiller()).findFirst().orElse(new RDirStaff());
 	}
 	
 	

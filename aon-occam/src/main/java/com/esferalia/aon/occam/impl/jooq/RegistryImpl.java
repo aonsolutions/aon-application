@@ -378,8 +378,13 @@ public class RegistryImpl implements IRegistry{
 
 	@Override
 	public Stream<RDirStaff> getRDirStaffStream(AONContext ctx, RDirStaffFilter filter) {
-		// TODO Auto-generated method stub
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryDAO.getRDirStaffStream(ctx, filter));
+	}
+	
+	@Override
+	public RDirStaff insertRDirStaff(AONContext ctx, RDirStaff rdirstaff) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.insertRDirStaff(ctx, rdirstaff));
 	}
 }

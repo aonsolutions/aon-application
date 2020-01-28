@@ -136,6 +136,7 @@ public class Templates extends Composite implements EntryPoint {
 						exportOfferPdfx(me);
 						exportFullExpedient(me);
 						exportResumeExpedient(me);
+						exportCustomerIban(me);
 					}
 					@Override
 					public void onFailure(Throwable caught) {print(caught);}
@@ -431,6 +432,89 @@ public class Templates extends Composite implements EntryPoint {
 		popup.setGlassEnabled(true);
 		popup.show();
 	}
+	
+	private void importCustomerIban(){
+		
+		Dialog d = new Dialog("Importar Cuenta Bancaria","Importar",true,"Cancelar",true,"importCustomerIban");
+		d.setUrl(GWT.getModuleBaseURL());
+		TemplatesDialog popup = new TemplatesDialog(getAonData(), d) {
+			
+			@Override
+			protected void onCancel() {
+				hide();
+			}
+			
+			@Override
+			protected void onAccept() {
+				item.excelRowNumber(new AsyncCallback<Integer>() {
+					@Override
+					public void onSuccess(Integer result) {
+						hide();
+						Double doubleValue = result.doubleValue();
+						pbd = new ProgressBarDialog(doubleValue , 0.46) {
+							
+						};
+						pbd.addStyleName("gwt-PopupPanel-template");
+						pbd.setGlassEnabled(true);
+						pbd.show();
+						
+						item.executeExcel(getDomain(), getUser(), null, ImportType.CUSTOMER_IBAN, null,
+								null, null, null, null, null, null, null, new AsyncCallback<Integer>() {
+							
+							@Override
+							public void onSuccess(Integer result) {
+								AsyncCallback<Error> callback = new AsyncCallback<Error>() {
+									
+									@Override
+									public void onSuccess(Error result) {
+							
+										pbd.completed();
+										pbd.hide();
+										Dialog d2 = new Dialog("Importar Cuenta Bancaria","Aceptar",true,"Cancelar",false,"importResponse");
+										d2.setError(result);
+										TemplatesDialog popup2 = new TemplatesDialog(getAonData(), d2){
+
+											@Override
+											protected void onAccept() {
+												hide();			
+											}
+
+											@Override
+											protected void onCancel() {
+												hide();
+											}
+										};
+										popup2.addStyleName("gwt-PopupPanel-template");
+										popup2.setGlassEnabled(true);
+										popup2.show();
+									}
+										
+									@Override
+									public void onFailure(Throwable caught) {
+										//TODO 
+										pbd.completed();
+										pbd.hide();
+									}
+								};
+								item.insertCustomerIban(getDomain(), getUser(), callback);
+							}
+						
+							@Override
+							public void onFailure(Throwable caught) {}
+						});
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {}
+				});
+				
+			}
+		};
+		popup.addStyleName("gwt-PopupPanel-template");
+		popup.setGlassEnabled(true);
+		popup.show();
+	}
+	
 	private void importProduct(){
 		Dialog d = new Dialog("Importar Productos","Importar",true,"Cancelar",true,"importProduct");
 		d.setUrl(GWT.getModuleBaseURL());
@@ -1709,6 +1793,18 @@ public class Templates extends Composite implements EntryPoint {
 			thiz.@com.esferalia.aon.gwt.template.client.Templates::projectCommercial(*)();
 		}
 	}-*/;
+	
+	
+	public void customerIban(){
+		importCustomerIban();
+	}
+
+	public static native void exportCustomerIban(Templates thiz) /*-{
+		$wnd.customerIban = function() {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::customerIban(*)();
+		}
+	}-*/;
+	
 	
 	public void fullExpedient(String project, String name, String alias, String registry, String type, String active, String from, String to){
 		JSONObject json = new JSONObject();

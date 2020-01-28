@@ -881,6 +881,17 @@ public class AON {
 				.findFirst().orElse(new RDirStaff());
 	}
 	
+	public static RDirStaff insertRDirStaff(String domainName, Integer domainId, String login, RDirStaff rdirstaff) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().insertRDirStaff(ctx, rdirstaff);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	// ------------------------------------ WORKPLACE
 
 	public static Workplace getWorkplace(String domainName, Integer domainId,
@@ -4143,11 +4154,11 @@ public class AON {
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	public static RegistryBank insertRBank(String domainName, Integer domainId, String login, RegistryBank rmedia) {
+	public static RegistryBank insertRBank(String domainName, Integer domainId, String login, RegistryBank rbank) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getRegistry().insertRBank(ctx, rmedia);
+			return getRegistry().insertRBank(ctx, rbank);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -4188,11 +4199,11 @@ public class AON {
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	public static RegistryPayMethod insertRPayMethod(String domainName, Integer domainId, String login, RegistryPayMethod rmedia) {
+	public static RegistryPayMethod insertRPayMethod(String domainName, Integer domainId, String login, RegistryPayMethod rpaymethod) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getRegistry().insertRPayMethod(ctx, rmedia);
+			return getRegistry().insertRPayMethod(ctx, rpaymethod);
 		} finally {
 			if (ctx != null)
 				ctx.close();

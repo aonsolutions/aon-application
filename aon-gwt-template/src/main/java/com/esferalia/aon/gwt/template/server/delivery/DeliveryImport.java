@@ -15,6 +15,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.esferalia.aon.gwt.template.jooq.DBProduct;
 import com.esferalia.aon.gwt.template.shared.Error;
@@ -69,6 +71,145 @@ public class DeliveryImport {
 			HSSFSheet customerSheet = workbook.getSheet("CLIENTES");
 			HSSFSheet deliverySheet = workbook.getSheet("ALBV");
 			HSSFSheet deliveryDetailSheet = workbook.getSheet("ALBVDET");
+
+			di = new DeliveryInfo();
+			di.setError(new Error().setError(true).setTextError(new LinkedList<>()).setTextWarning(new LinkedList<>()));
+			// CUSTOMER
+
+			LinkedList<String> titleList = new LinkedList<>();
+			LinkedList<Clientes> clientList = new LinkedList<>();
+			Iterator<Row> rowIterator = customerSheet.iterator();
+			Iterable<Row> rowIterable = () -> rowIterator;
+			Stream<Row> rowStream = StreamSupport.stream(rowIterable.spliterator(),false);
+
+			rowStream.forEach(row ->{
+				Iterator<Cell> cellIterator = row.cellIterator();
+				Iterable<Cell> cellIterable = () -> cellIterator;
+				Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
+				cli = new Clientes();
+				cellStream.forEach(cell -> {
+					if(row.getRowNum() == 0) {
+						titleList.add(cell.getStringCellValue());
+					} else {
+						String title = titleList.get(cell.getColumnIndex());
+						try {
+							checkClientes(title, cell);
+						} catch (Exception e) {
+							e.printStackTrace();
+							di.getError().getTextError().add(e.getCause() != null ? e.getCause().getMessage() : e.getMessage());
+							di.getError().setError(false);
+						}
+					}
+				});
+				if(row.getRowNum() != 0) {
+					if(hasClientRequiredParameters()) {
+						clientList.add(cli);
+					} else {
+						di.getError().getTextError().add("ERROR! CLIENTES: linea " + (row.getRowNum() + 1) + " -  Faltan datos obligatorios.");
+						di.getError().setError(false);
+					}
+				}
+			});
+
+			// ALBV
+
+			LinkedList<String> titleList2 = new LinkedList<>();
+			LinkedList<Albv> albvList = new LinkedList<>();
+			Iterator<Row> rowIterator2 = deliverySheet.iterator();
+			Iterable<Row> rowIterable2 = () -> rowIterator2;
+			Stream<Row> rowStream2 = StreamSupport.stream(rowIterable2.spliterator(),false);
+
+			rowStream2.forEach(row ->{
+				Iterator<Cell> cellIterator = row.cellIterator();
+				Iterable<Cell> cellIterable = () -> cellIterator;
+				Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
+				albv = new Albv();
+				cellStream.forEach(cell -> {
+					if(row.getRowNum() == 0) {
+						titleList2.add(cell.getStringCellValue());
+					} else {
+						String title = titleList2.get(cell.getColumnIndex());
+						try {
+							checkAlbv(title, cell);
+						} catch (Exception e) {
+							e.printStackTrace();
+							di.getError().getTextError().add(e.getCause() != null ? e.getCause().getMessage() : e.getMessage());
+							di.getError().setError(false);
+						}
+					}
+				});
+				if(row.getRowNum() != 0) {
+					if(hasAlbvRequiredParameters()) {
+						albvList.add(albv);
+					} else {
+						di.getError().getTextError().add("ERROR! ALBV: linea " + (row.getRowNum() + 1)  + " -  Faltan datos obligatorios.");
+						di.getError().setError(false);
+					}
+				}
+			});
+
+			// ALBVDET
+
+			LinkedList<String> titleList3 = new LinkedList<>();
+			LinkedList<AlbvDet> albvDetList = new LinkedList<>();
+			Iterator<Row> rowIterator3 = deliveryDetailSheet.iterator();
+			Iterable<Row> rowIterable3 = () -> rowIterator3;
+			Stream<Row> rowStream3 = StreamSupport.stream(rowIterable3.spliterator(),false);
+
+			rowStream3.forEach(row ->{
+				Iterator<Cell> cellIterator = row.cellIterator();
+				Iterable<Cell> cellIterable = () -> cellIterator;
+				Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
+				albvDet = new AlbvDet();
+				cellStream.forEach(cell -> {
+					if(row.getRowNum() == 0) {
+						titleList3.add(cell.getStringCellValue());
+					} else {
+						String title = titleList3.get(cell.getColumnIndex());
+						try {
+							checkAlbvDet(title, cell);
+						} catch (Exception e) {
+							e.printStackTrace();
+							di.getError().getTextError().add(e.getCause() != null ? e.getCause().getMessage() : e.getMessage());
+							di.getError().setError(false);
+						}
+					}
+				});
+				if(row.getRowNum() != 0) {
+					if(hasAlbvDetRequiredParameters()) {
+						albvDetList.add(albvDet);
+					} else {
+						di.getError().getTextError().add("ERROR! ALBVDET: linea " + (row.getRowNum() + 1) + " -  Faltan datos obligatorios.");
+						di.getError().setError(false);
+					}
+				}
+			});
+			return di.setClientList(clientList)
+				.setAlbvList(albvList)
+				.setAlbvDetList(albvDetList);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if(workbook != null) {
+				try {
+					workbook.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return null;
+	}
+	
+	public DeliveryInfo importationX(byte[] data){
+		XSSFWorkbook workbook = null;
+		try {
+			ByteArrayInputStream bais = new ByteArrayInputStream(data);
+			workbook = new XSSFWorkbook(bais);
+
+			XSSFSheet customerSheet = workbook.getSheet("CLIENTES");
+			XSSFSheet deliverySheet = workbook.getSheet("ALBV");
+			XSSFSheet deliveryDetailSheet = workbook.getSheet("ALBVDET");
 
 			di = new DeliveryInfo();
 			di.setError(new Error().setError(true).setTextError(new LinkedList<>()).setTextWarning(new LinkedList<>()));

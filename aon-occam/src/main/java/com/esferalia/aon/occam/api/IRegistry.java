@@ -137,6 +137,6 @@ public interface IRegistry {
 	// ------------------- RDIRSTAFF
 	
 	public Stream<RDirStaff> getRDirStaffStream(AONContext ctx, RDirStaffFilter filter);
-	
+	public RDirStaff insertRDirStaff(AONContext ctx, RDirStaff rdirstaff);
 	
 }

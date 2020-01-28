@@ -29,7 +29,6 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -118,7 +117,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 				else if(dialog.getType().contains("import") || dialog.getType().contains("export") 
 						|| dialog.getType().equals("editEcommerceTemplate")){
 					if("importResponse".equals(dialog.getType()) || "importDelivery".equals(dialog.getType())
-							|| "importProjectCommercial".equals(dialog.getType())){
+							|| "importProjectCommercial".equals(dialog.getType()) || "importCustomerIban".equals(dialog.getType())){
 						onAccept();
 					} else {
 						ListBox lb1 = (ListBox) flex_table.getWidget(0, 1);
@@ -202,8 +201,10 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		case "importEcommerceTemplate": importEcommerce(dialog);break;
 		case "editEcommerceTemplate": editEcommerce(dialog);break;
 		case "exportEcommerce":exportEcommerce(dialog);break;
-		case "importDelivery":importDelivery(dialog.getUrl());break;
-		case "importProjectCommercial":importProjectCommercial(dialog.getUrl());break;
+		case "importDelivery":importOnly(dialog.getUrl());break;
+		case "importProjectCommercial":importOnly(dialog.getUrl());break;
+		case "importCustomerIban":importOnly(dialog.getUrl());break;
+
 		default:
 			break;
 		}
@@ -700,7 +701,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flexTableCss();
 	}
 	
-	private void importDelivery(String url) {
+	private void importOnly(String url) {
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
 		flex_table.setBorderWidth(1);
@@ -712,20 +713,6 @@ public abstract class TemplatesDialog extends CustomDialogB {
 			
 		flexTableCss();
 	}
-	
-	private void importProjectCommercial(String url) {
-		flex_table.setStyleName("aon-panelGrid");
-		flex_table.setWidth("400px");
-		flex_table.setBorderWidth(1);
-		flex_table.setCellSpacing(0);
-		
-		SingleUploader upload = newUploader(null, url, 1);
-		flex_table.setWidget(0, 0, new Label(MSG.file()));
-		flex_table.setWidget(0, 1, upload);
-			
-		flexTableCss();
-	}
-
 	
 	private void importProduct(String url,LinkedList<TemplateInfo> templates) {
 		flex_table.setStyleName("aon-panelGrid");

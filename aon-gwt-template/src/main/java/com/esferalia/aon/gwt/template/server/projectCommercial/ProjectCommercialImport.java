@@ -13,6 +13,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -90,6 +92,62 @@ public class ProjectCommercialImport {
 		return null;
 	}
 
+	public LinkedList<ProjectCommercial> importationX(Domain domain, String login, byte[] data){
+		XSSFWorkbook workbook = null;
+		try {
+			ByteArrayInputStream bais = new ByteArrayInputStream(data);
+			workbook = new XSSFWorkbook(bais);
+
+			XSSFSheet sheet = workbook.getSheet("OPERACIONES COMERCIALES");
+
+			// CUSTOMER
+
+			LinkedList<String> titleList = new LinkedList<>();
+			LinkedList<ProjectCommercial> list = new LinkedList<>();
+			types = new LinkedList<>();
+			sellers = new LinkedList<>();
+			Iterator<Row> rowIterator = sheet.iterator();
+			Iterable<Row> rowIterable = () -> rowIterator;
+			Stream<Row> rowStream = StreamSupport.stream(rowIterable.spliterator(),false);
+
+			rowStream.forEach(row ->{
+				Iterator<Cell> cellIterator = row.cellIterator();
+				Iterable<Cell> cellIterable = () -> cellIterator;
+				Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
+				pc = new ProjectCommercial();
+				pc.setDomain(domain.getId());
+				pc.setCommercial(true);
+				pc.setActive(true);
+				
+				cellStream.forEach(cell -> {
+					if(row.getRowNum() == 0) {
+						titleList.add(cell.getStringCellValue());
+					} else {
+						String title = titleList.get(cell.getColumnIndex());
+						check(domain, login, title, cell);			
+					}
+				});
+				if(row.getRowNum() != 0) {
+					list.add(pc);
+				}
+			});
+
+			return list;
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if(workbook != null) {
+				try {
+					workbook.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return null;
+	}
+
+	
 	private Object getObjectValue(Cell cell){
 		if(CellType.STRING == cell.getCellTypeEnum())
 			return cell.getStringCellValue();

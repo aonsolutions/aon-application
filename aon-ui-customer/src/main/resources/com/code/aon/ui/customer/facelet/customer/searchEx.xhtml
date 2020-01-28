@@ -8,11 +8,20 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
+		<ui:include src="/net/aonsolutions/aon/gwt/aio/facelet/templates/silent.xhtml" />
 		<aon:form id="customerForm">
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{(customer.showAlumnData)?(bundle.aon_alumns):(bundle.customer_finance_checking)}" />
 				<ui:param name="controller" value="#{customer}" />
-			</ui:include>
+				
+				<ui:define name="additionalToolbarContent">
+					<aon:commandLink id="customerIban-import" value="Importar IBAN"
+						onclick="customerIban()"
+						styleClass="aon-finding-toolbar-item aon-icon-import-excel-trans">
+					</aon:commandLink>
+				</ui:define>
+			</ui:decorate>
+			
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
