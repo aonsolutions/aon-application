@@ -19,7 +19,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.payroll.FundUpvUpdate2020;
+import net.aonsolutions.db.up2date.payroll.PagaExtraUpdate;
+import net.aonsolutions.db.up2date.payroll.TempPaymentInsert;
 import net.aonsolutions.db.up2date.tgss.SMI2020Update;
 
 public class Up2Date {
@@ -83,13 +84,15 @@ public class Up2Date {
     		//FundUpvUpdateIII.FUNDUPV_UPDATE_III                                                                                    
     		//Artist2019Insert.ARTIST2019INSERT,
     		//DropDays2019Insert.DROPDAYS2019INSERT
-//    		Irpf2020Update.IRPF2020UPDATE
-//    		AyudaTUpdate.AYUDATUPDATE
-//    		Irpf2020UpdateII.IRPF2020UPDATEII
-//    		AlterFsMod184Detail2019.ALTER_FS_MODEL_184_DETAIL_2019
-//    		Holidays2020Insert.HOLIDAYS2020INSERT
-    		FundUpvUpdate2020.FUNDUPV_UPDATE_2020,
-    		SMI2020Update.SMI2020UPDATE
+    		//Irpf2020Update.IRPF2020UPDATE
+    		//AyudaTUpdate.AYUDATUPDATE
+    		//Irpf2020UpdateII.IRPF2020UPDATEII
+    		//AlterFsMod184Detail2019.ALTER_FS_MODEL_184_DETAIL_2019
+    		//Holidays2020Insert.HOLIDAYS2020INSERT
+    		//FundUpvUpdate2020.FUNDUPV_UPDATE_2020,
+    		//SMI2020Update.SMI2020UPDATE,
+    		PagaExtraUpdate.PAGAEXTRAUPDATE,
+    		TempPaymentInsert.TEMPPAYMENTINSERT
     };
 
 

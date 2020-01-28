@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
@@ -33,6 +34,7 @@ import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.js.payroll.client.Reports.Payroll;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -308,6 +310,8 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 	public void save(final CalculateCallback callback) {
 		removeCalendarDraft();
 		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), salaryDraft);
+		setIsolatedDraftPeriod(salaryDraft);
+
 		addCalendarVariablesDraft();
 		addEventsVariablesDraft();
 		removeSalaryPart(salaryDraft);
@@ -1189,8 +1193,20 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 				draft.getDraftEmbargos());
 		setStartAndEndDates(draftStartDate, draftEndDate,
 				draft.getDraftBonuses());
+		
+	}
+	private static void setIsolatedDraftPeriod(SalaryDraft draft ) {
+		setDraftPeriod(draft, p -> AonStringUtils.equals(p.getName(), "DEVENGO_TEMPORAL"));
 	}
 	
+	private static void setDraftPeriod(SalaryDraft draft, Predicate<Payment> filter ) {
+		setStartAndEndDates(
+				draft.getStartDate(), 
+				draft.getEndDate(),
+				draft.getDraftPayments().stream().filter(filter).collect(Collectors.toList()));
+		
+	}
+
 	private static List<Variable> filterWithOutTimeLineVars(List<Variable> draftContext) {
 		List<Variable> vars = (List<Variable>) draftContext.stream()
 				.filter(v -> !(v instanceof StringTimeLineVariable))

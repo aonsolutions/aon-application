@@ -9,6 +9,7 @@ import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.payroll.calculator.ContextFunctions.parseExtraDate;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARENTEED;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TEMP_PAYMENT;
 import static com.esferalia.aon.salary.enumeration.PaymentType.CRA_0001;
 import static com.esferalia.aon.watson.util.AonDateUtils.add;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
@@ -435,6 +436,8 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				return fixGtzdo(results , its, expressionContext, gtzdo);
 			} catch (ExpressionException e) {
 			}
+		} else if (AonStringUtils.equals(contractPayment.getName(), TEMP_PAYMENT)) {
+			return Collections.singletonList(result);
 		}
 		
 		return super.fixConstantResult(contractPayment, result, start, end, expressionContext);
@@ -477,12 +480,16 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				// so we'll subtract the proportional part of IT.
 
 				return subtractITPart(results, its, expressionContext);
+			} else if (
+					results.size() == 1 
+					&& AonStringUtils.equals(contractPayment.getName(), TEMP_PAYMENT)) {
+				return moveITPart(results, its, contractPayment);
 			} else if (results.size() == 1
 				&& isWholeMonth(results.get(0))	
 				&& contractPayment.getScope() == ExpressionScope.AGREEMENT
 				&& allAgreementConstants(results.get(0).getContext()) ) {
 				return subtractITPart(results, its, expressionContext);
-			}
+			} ;
 			
 			
 		} catch ( Exception e ) {
@@ -539,6 +546,31 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		return fixed;
 	}
 	
+	protected List<ITimedResult<Double>> moveITPart(List<ITimedResult<Double>> results, List<Period> its, IContractPayment contractPayment) throws UndefinedVariablesException, ExpressionException {
+		Period period = results.get(0).getPeriod();
+		Double value = results.get(0).getValue();
+		Map<String,ITimedVariable<?>> context = results.get(0).getContext();
+		
+		List<Period> actives = Period.sub(period, its);
+		List<ITimedResult<Double>> fixed = 
+				new ArrayList<ITimedResult<Double>>(actives.size());
+		
+		int days = 0;
+		for ( Period active : actives  )
+			days += active.daysStream().count();
+		
+		if ( days == 0 )
+			throw new UnsupportedOperationException(String.format(IT_PAY_MSG, contractPayment.getDescription(),
+					contractPayment.getExpression())); 
+		
+		for ( Period active : actives  ) {
+			double activeDays = active.daysStream().count();
+			Double activeValue = value / days * activeDays; 
+			fixed.add( new TimedResult<Double>(activeValue, active, context));
+		}
+		return fixed;
+	}
+
 	@Override
 	protected List<ITimedResult<Double>> fixExtraResults(IContractPayment contractPayment,
 			List<ITimedResult<Double>> results, Date start, Date end, ExpressionContext expressionContext) {
