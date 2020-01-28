@@ -317,7 +317,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 					.setUserObject(new EnterpriseSalaryObject(enterprise, employeesService));
 
 		addImageItem(enterpriseItem, "Estad\u00EDsticas", images.statistics());
-		addImageItem(enterpriseItem, "N\u00F3minas (Old)", images.salaries());
+//		addImageItem(enterpriseItem, "N\u00F3minas (Old)", images.salaries());
 		
 		
 		if (extended) {
@@ -724,7 +724,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		addImageItem(workplaceItem, "Partes IT", images.itDatas())
 				.setUserObject(new ITDataObject(workplace.getId(), employeesService));
 		
-		addImageItem(workplaceItem, "N\u00F3minas (Old)", images.salaries());
+//		addImageItem(workplaceItem, "N\u00F3minas (Old)", images.salaries());
 		
 		if (extended) {
 
@@ -1413,8 +1413,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		salarytItem.setUserObject(employeeSalaryObject);
 		salarytItem.ensureDebugId(getId(employee)+"-employeesalary");
 		
-		TreeItem salariestItem = addImageItem(employeeItem, "N\u00F3minas (Old)", images.salaries());
-		salariestItem.ensureDebugId(getId(employee)+"-salaries");
+//		TreeItem salariestItem = addImageItem(employeeItem, "N\u00F3minas (Old)", images.salaries());
+//		salariestItem.ensureDebugId(getId(employee)+"-salaries");
 		
 		TreeItem calendarDraftItem = addImageItem(employeeItem, "Calendario", images.laboralCalendar());
 		EmployeeCalendarDraftObjectData employeeCalendarDraftobjectData = new EmployeeCalendarDraftObjectData(employee.getId(), 
