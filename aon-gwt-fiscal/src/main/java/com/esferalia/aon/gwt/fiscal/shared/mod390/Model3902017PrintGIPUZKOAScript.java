@@ -60,7 +60,7 @@ public enum Model3902017PrintGIPUZKOAScript implements IModelScript<Mod390Key> {
 	,AVG08 ("Gastos",null,TITLE)
 	,AVG09 (null								,new Mod390Key[]{Mod390Key.GP_C057	,Mod390Key.GP_X057	,Mod390Key.GP_C058})
 	,AVG10 (null								,new Mod390Key[]{Mod390Key.GP_C059	,Mod390Key.GP_X059	,Mod390Key.GP_C060})
-	,AVG11 (null								,new Mod390Key[]{Mod390Key.GP_C061	,Mod390Key.GP_X061	,Mod390Key.GP_C061})
+	,AVG11 (null								,new Mod390Key[]{Mod390Key.GP_C061	,Mod390Key.GP_X061	,Mod390Key.GP_C062})
 	,AVG12 (null								,new Mod390Key[]{Mod390Key.GP_C063	,null				,Mod390Key.GP_C063})
 	,AVG13 ("Total"								,new Mod390Key[]{null				,null				,Mod390Key.GP_C065})
 	,AVG14 ("Bienes de inversi\u00F3n",null,TITLE)
