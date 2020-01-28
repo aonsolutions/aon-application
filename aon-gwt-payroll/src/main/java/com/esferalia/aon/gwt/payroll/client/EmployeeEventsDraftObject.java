@@ -351,17 +351,26 @@ public class EmployeeEventsDraftObject {
 				employeeContractVariables.add("DIAS_AUSENCIA");
 				employeeContractVariables.add("DIAS_HUELGA");
 				employeeContractVariables.add("DIAS_ERE");
-				employeeContractVariables.add("HORAS_EXTRAS");
 				employeeContractVariables.add("HORAS_COMPLEMENTARIAS");
+				employeeContractVariables.add("HORAS_EXTRAS");
+				employeeContractVariables.add("IMPORTE_HORA_EXTRA");
+				employeeContractVariables.add("HORAS_FORMACION_PRESENCIAL");
+				employeeContractVariables.add("HORAS_FORMACION_DISTANCIA");
+				employeeContractVariables.add("HORAS_TUTORIA");
+				employeeContractVariables.add("BONIFICACION_TUTORIA");
 				employeeContractVariables.add("KMS");
 				
 				employeeContractVariablesDB.add("DIAS_VACACIONES");
 				employeeContractVariablesDB.add("DIAS_AUSENCIA");
 				employeeContractVariablesDB.add("DIAS_HUELGA");
 				employeeContractVariablesDB.add("DIAS_ERE");
-				employeeContractVariablesDB.add("HORAS_EXTRAS");
 				employeeContractVariablesDB.add("HORAS_COMPLEMENTARIAS");
+				employeeContractVariablesDB.add("HORAS_EXTRAS");
 				employeeContractVariablesDB.add("IMPORTE_HORA_EXTRA");
+				employeeContractVariablesDB.add("HORAS_FORMACION_PRESENCIAL");
+				employeeContractVariablesDB.add("HORAS_FORMACION_DISTANCIA");
+				employeeContractVariablesDB.add("HORAS_TUTORIA");
+				employeeContractVariablesDB.add("BONIFICACION_TUTORIA");
 				employeeContractVariablesDB.add("KMS");
 
 				for (String varName : context.getVariables()){

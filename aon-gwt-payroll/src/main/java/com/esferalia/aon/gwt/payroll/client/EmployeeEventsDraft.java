@@ -4,13 +4,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.client.EmployeeEventsDraftObject.EmployeeEventsVariable;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style.TextAlign;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.CssResource;
@@ -19,7 +26,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
@@ -470,8 +476,11 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			
 			headPanel.add(calendarButton);
 			headLabel.addStyleName(style.setBlockVariableStyle());
-		}else
+		}else {
 			headLabel.removeStyleName(style.setBlockVariableStyle());
+			headPanel.getElement().getStyle().setWidth(100, Unit.PCT);
+			headLabel.getElement().getStyle().setTextAlign(TextAlign.LEFT);;
+		}
 		
 		if (newRow % 2 == 1)
 			headLabel.addStyleName(style.cellOddFormat());
@@ -496,13 +505,31 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 					//Borrar selecciones anteriores
 					eraseSelectedPositions();
 					selectPosition(eventCell.getRow(), eventCell.getColumn());
-					if(eventCell.getText() == "" || eventCell.getText() == "-"){
+					if(StringUtils.isBlank(eventCell.getValue()) || eventCell.getValue() == "-"){
 						addValueSelectedPositions(null);
 						eventCell.setText("-");
 					}else
 						addValueSelectedPositions(Double.parseDouble(eventCell.getText()));
 					eraseSelectedPositions();
 					eventCell.addStyleName(style.onChange());	
+				}
+			});
+			
+			eventCell.addFocusHandler(new FocusHandler() {
+				
+				@Override
+				public void onFocus(FocusEvent event) {
+					if(StringUtils.isBlank(eventCell.getValue()) || eventCell.getValue() == "-")
+						eventCell.setValue("");
+				}
+			});
+			
+			eventCell.addBlurHandler(new BlurHandler() {
+				
+				@Override
+				public void onBlur(BlurEvent event) {
+					if(StringUtils.isBlank(eventCell.getValue()))
+						eventCell.setValue("-");
 				}
 			});
 			
