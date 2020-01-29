@@ -462,7 +462,7 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 		
 		// Add year to listboxes
 		Integer actualYear = new Date().getYear() + 1900;
-		Integer firstPayroll = this.workplaceSalaryObject.getWorkplaceSalaries().get(this.workplaceSalaryObject.getWorkplaceSalaries().size()-1).getStartDate().getYear() + 1900;
+		Integer firstPayroll = (null == this.workplaceSalaryObject.getWorkplaceSalaries() || this.workplaceSalaryObject.getWorkplaceSalaries().isEmpty()) ? new Date().getYear() + 1900 : this.workplaceSalaryObject.getWorkplaceSalaries().get(this.workplaceSalaryObject.getWorkplaceSalaries().size()-1).getStartDate().getYear() + 1900;
 		Integer diffYears = actualYear - firstPayroll;
 		for(int i = 0; i <= diffYears; i++) {
 			yearTillT.addItem((actualYear - i)+"");

@@ -477,7 +477,7 @@ public class EnterpriseSalary extends Composite implements ContextMenuHandler {
 		
 		// Add year to listboxes
 		Integer actualYear = new Date().getYear() + 1900;
-		Integer firstPayroll = this.enterpriseSalaryObject.getEnterpriseSalaries().get(this.enterpriseSalaryObject.getEnterpriseSalaries().size()-1).getStartDate().getYear() + 1900;
+		Integer firstPayroll = (null == this.enterpriseSalaryObject.getEnterpriseSalaries() || this.enterpriseSalaryObject.getEnterpriseSalaries().isEmpty()) ? new Date().getYear() + 1900 : this.enterpriseSalaryObject.getEnterpriseSalaries().get(this.enterpriseSalaryObject.getEnterpriseSalaries().size()-1).getStartDate().getYear() + 1900;
 		Integer diffYears = actualYear - firstPayroll;
 		for(int i = 0; i <= diffYears; i++) {
 			yearTillT.addItem((actualYear - i)+"");

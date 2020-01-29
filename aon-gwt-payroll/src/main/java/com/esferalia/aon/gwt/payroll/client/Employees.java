@@ -158,18 +158,18 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 	private static final int EMPLOYEE_SCROLL_GAP = 5;
 	private static final int ENTERPRISE_COSTS_INDEX = 0;
-	private static final int ENTERPRISE_SALARIES_INDEX = 3;
+//	private static final int ENTERPRISE_SALARIES_INDEX = 3;
 	private static final int ENTERPRISE_STATISTICS_INDEX = 2;
 	private static final int ENTERPRISE_PARTSIT_INDEX = 4;
 	private static final int ENTERPRISE_REPORTS_INDEX = 6;
 
 	private static final int WORKPLACE_COSTS_INDEX = 0;
-	private static final int WORKPLACE_SALARIES_INDEX = 5;
+//	private static final int WORKPLACE_SALARIES_INDEX = 5;
 	private static final int WORKPLACE_CALENDAR_INDEX = 2;
 	private static final int WORKPLACE_STATISTICS_INDEX = 3;
 	private static final int WORKPLACE_PARTSIT_INDEX = 4;
 
-	private static final int EMPLOYEE_SALARIES_INDEX = 1;
+//	private static final int EMPLOYEE_SALARIES_INDEX = 1;
 	private static final int EMPLOYEE_IRPFOUTCOMES_INDEX = 2; // TODO : It's not
 	private static final int EMPLOYEE_CALENDAR_INDEX = 3;
 	private static final int EMPLOYEE_EVENTS_INDEX = 4;
@@ -409,7 +409,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		// If not, onSalariesSelected(SalariesDocuments) method won't be called.
 		else if (userObject instanceof SalariesDocuments) {
 			// onSalariesSelected((SalariesDocuments) userObject);
-			onSalariesDocumentsSelected(item);
+//			onSalariesDocumentsSelected(item);
 		} else if (userObject instanceof CostDocuments) {
 			// onCostsSelected((CostDocuments) userObject); 
 			onCostsDocumentsSelected(item);
@@ -863,7 +863,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		final TreeItem costsItem = enterpriseItem.getChild(ENTERPRISE_COSTS_INDEX);
 
 		if (null == costsItem.getUserObject()) {
-			final TreeItem salariesItem = enterpriseItem.getChild(ENTERPRISE_SALARIES_INDEX);
+//			final TreeItem salariesItem = enterpriseItem.getChild(ENTERPRISE_SALARIES_INDEX);
 
 			employeesService.getEnterpriseCosts(enterprise.getId(), new AsyncCallback<List<Cost>>() {
 				@Override
@@ -878,8 +878,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 					CostDocuments documents = new CostDocuments(costs, employeesService);
 					costsItem.setUserObject(documents);
 
-					SalariesDocuments salariesDocuments = new SalariesDocuments(costs, employeesService);
-					salariesItem.setUserObject(salariesDocuments);
+//					SalariesDocuments salariesDocuments = new SalariesDocuments(costs, employeesService);
+//					salariesItem.setUserObject(salariesDocuments);
 				}
 			});
 		} // end-if: Cost of enterprise have been already loaded.
@@ -932,7 +932,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 		final TreeItem costsItem = workplaceItem.getChild(WORKPLACE_COSTS_INDEX);
 
-		final TreeItem salariesItem = workplaceItem.getChild(WORKPLACE_SALARIES_INDEX);
+//		final TreeItem salariesItem = workplaceItem.getChild(WORKPLACE_SALARIES_INDEX);
 
 		if (costsItem.getUserObject() == null) {
 			employeesService.getWorkplaceCosts(workplace.getId(), new AsyncCallback<List<Cost>>() {
@@ -948,8 +948,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 					CostDocuments costDocuments = new CostDocuments(costs, employeesService);
 					costsItem.setUserObject(costDocuments);
 
-					SalariesDocuments salariesDocuments = new SalariesDocuments(costs, employeesService);
-					salariesItem.setUserObject(salariesDocuments);
+//					SalariesDocuments salariesDocuments = new SalariesDocuments(costs, employeesService);
+//					salariesItem.setUserObject(salariesDocuments);
 				}
 			});
 		} // end-if: Costs of this workplace haven't been loaded yet.
@@ -997,26 +997,26 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 	private void onEmployeeOpen(TreeItem employeeItem) {
 
-		final TreeItem salariesItem = employeeItem.getChild(EMPLOYEE_SALARIES_INDEX);
-		if (salariesItem.getUserObject() != null) {
-			return;
-		} // end-if: Salaries of this employee have been already loaded.
+//		final TreeItem salariesItem = employeeItem.getChild(EMPLOYEE_SALARIES_INDEX);
+//		if (salariesItem.getUserObject() != null) {
+//			return;
+//		} // end-if: Salaries of this employee have been already loaded.
 
 		Employee employee = ((EmployeeDraftObject) employeeItem.getUserObject()).getEmployee();
-		employeesService.getSalaries(employee, new AsyncCallback<List<Salary>>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				Window.alert(caught.getLocalizedMessage());
-
-			}
-
-			@Override
-			public void onSuccess(List<Salary> salaries) {
-				SalaryDocuments documents = new SalaryDocuments(salaries, employeesService);
-				salariesItem.setUserObject(documents);
-			}
-		});
+//		employeesService.getSalaries(employee, new AsyncCallback<List<Salary>>() {
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				// TODO Auto-generated method stub
+//				Window.alert(caught.getLocalizedMessage());
+//
+//			}
+//
+//			@Override
+//			public void onSuccess(List<Salary> salaries) {
+//				SalaryDocuments documents = new SalaryDocuments(salaries, employeesService);
+//				salariesItem.setUserObject(documents);
+//			}
+//		});
 		final TreeItem irpfOutcomesItem = employeeItem.getChild(EMPLOYEE_IRPFOUTCOMES_INDEX);
 		if (irpfOutcomesItem.getUserObject() != null) {
 			return;
