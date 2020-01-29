@@ -172,14 +172,14 @@ public class CustomerIbanImport {
 		cis.stream().forEach(ci -> {	
 			Customer c = AON.getCustomer(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(ci.getCif())));
 			if(c != null && c.getId() != null) {
-				if(ci.getIban() != null) {
-					String bic = BankBic11.getBankBic11(ci.getIban().substring(4,8)).getBic();
+				if(ci.getIban() != null && !"".equals(ci.getIban())) {
+					BankBic11 bbc = BankBic11.getBankBic11(ci.getIban().substring(4,8));
 					RegistryBank rbank = new RegistryBank()
 							.setDomain(domain.getId())
 							.setRegistry(c.getId())
 							.setBankAccount(ci.getIban())
 							.setActive(true)
-							.setBic(bic);
+							.setBic(bbc != null && bbc.getBic() != null ? bbc.getBic() : "");
 					rbank = AON.insertRBank(domain.getName(), domain.getId(), user.getLogin(), rbank);
 					RegistryPayMethod rpaymethod = new RegistryPayMethod()
 							.setDomain(domain.getId())
