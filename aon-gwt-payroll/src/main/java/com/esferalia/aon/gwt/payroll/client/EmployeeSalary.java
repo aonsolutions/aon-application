@@ -285,8 +285,6 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 
 	    // Make the workplace name column sortable.
 	    workplaceNameColumn.setSortable(true);
-	    salaryDataGrid.setColumnWidth(workplaceNameColumn, 250, Unit.PX);
-	    
 	    
 	    // Create start date column.
 	    TextColumn<SalaryInfo> startDateColumn = new TextColumn<SalaryInfo>() {
@@ -298,8 +296,6 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 
 	    // Make the  start date column sortable.
 	    startDateColumn.setSortable(true);
-	    salaryDataGrid.setColumnWidth(startDateColumn, 100, Unit.PX);
-	    
 	    
 	    // Create end date column.
 	    TextColumn<SalaryInfo> endDateColumn = new TextColumn<SalaryInfo>() {
@@ -323,7 +319,6 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	    
 	    // Make the type column sortable.
 	    typeColumn.setSortable(true);
-	    salaryDataGrid.setColumnWidth(typeColumn, 100, Unit.PX);
 	    
 	    // Create total payment column.
 	    TextColumn<SalaryInfo> totalPaymentColumn = new TextColumn<SalaryInfo>() {
@@ -336,7 +331,6 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	    };
 	 
 	    totalPaymentColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-	    salaryDataGrid.setColumnWidth(totalPaymentColumn, 100, Unit.PX);
 	    
 	    // Create total deduction column.
 	    TextColumn<SalaryInfo> totalDeductionColumn = new TextColumn<SalaryInfo>() {
@@ -349,7 +343,6 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	    };
 	    
 	    totalDeductionColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-	    salaryDataGrid.setColumnWidth(totalDeductionColumn, 100, Unit.PX);
 	    
 	    // Create total liquid column.
 	    TextColumn<SalaryInfo> totalLiquidColumn = new TextColumn<SalaryInfo>() {
@@ -362,7 +355,6 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 	    };
 	    
 	    totalLiquidColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-	    salaryDataGrid.setColumnWidth(totalLiquidColumn, 100, Unit.PX);
 	    
 	    ActionCell<SalaryInfo> draftActionCell = new ActionCell<SalaryInfo>("Borrador", new ActionCell.Delegate<SalaryInfo>() {
 

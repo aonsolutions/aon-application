@@ -22,7 +22,6 @@
 			/*margin: auto;*/
 			height: 100%;
 		    width: 100%;
-		    padding: 5px;
 		}
 		
 		.widthAll{
@@ -62,6 +61,10 @@
 			margin-top: 10px;
 		}
 		
+		.p5{
+			padding: 5px;
+		}
+		
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX">
@@ -94,115 +97,117 @@
 		<!-- END HEADER MENU -->
 		<g:center>
 			<g:HTMLPanel ui:field="mainContainer" styleName="{style.widthAll}">
-				<g:VerticalPanel styleName="{style.tableStylePanel}">
-				
-					<g:HTMLPanel styleName="aon-panelGrid-search">
-						<g:HTMLPanel styleName="aon-panelGrid-search-info">
-							<g:Label ui:field="workplaceNameLabel" styleName="aon-panelGrid-search-info-internal"></g:Label>
-						</g:HTMLPanel>
-						<g:DisclosurePanel ui:field="collapsePanel" styleName="{style.widthAll}">
-							<g:header>FILTRAR BUSQUEDA</g:header>
-							<g:HTMLPanel>
-								<table class="aon-panelGrid">
-									<tr>
-										<td class="aon-panelGrid-odd">
-											<g:Label styleName="aon-outputLabel {style.pt9}">Para</g:Label>
-										</td>
-										<td class="aon-panelGrid-even">
-											<table>
-												<tr>
-													<td colspan="2">
-														<g:RadioButton name="employeeWorkplaceFilter" ui:field="allRB">Todo</g:RadioButton>
-													</td>
-												</tr>
-												<tr>
-													<td>
-														<g:RadioButton name="employeeWorkplaceFilter" ui:field="workplaceRB">C. Trabajo</g:RadioButton>
-													</td>
-													<td>
-														<g:SuggestBox ui:field="workplaceSB" styleName="aon-lookupSuggestText"></g:SuggestBox>
-													</td>
-												</tr>
-												<tr>
-													<td>
-														<g:RadioButton name="employeeWorkplaceFilter" ui:field="employeeRB">Empleado</g:RadioButton>
-							  						</td>
-													<td>
-														<g:SuggestBox ui:field="employeeSB" styleName="aon-lookupSuggestText {style.ml12}"></g:SuggestBox>
-							  						</td>
-												</tr>
-											</table>
-										</td>
-									</tr>
-									<tr>
-										<td class="aon-panelGrid-odd">
-											<g:Label styleName="aon-outputLabel  {style.pt4}">Tipo nómina</g:Label>
-										</td>
-										<td class="aon-panelGrid-even" colspan="2">
-											<g:ListBox styleName="aon-selectOneMenu {style.ml9}" ui:field="typeList"></g:ListBox>
-										</td>
-									</tr>
-									<tr>
-										<td class="aon-panelGrid-odd">
-											<g:Label styleName="aon-outputLabel {style.pt9}">Periodo</g:Label>
-										</td>
-										<td class="aon-panelGrid-even">
-											<table>
-												<tr>
-													<td colspan="3">
-														<g:RadioButton name="dateFilter" ui:field="noDateRB">Cualquier fecha</g:RadioButton>
-													</td>
-												</tr>
-												<tr>
-													<td>
-														<g:RadioButton name="dateFilter" ui:field="dateTTRB">Desde/Hasta</g:RadioButton>
-													</td>
-													<td>
-														<table>
-															<tr>
-																<td>
-																	<g:ListBox styleName="aon-selectOneMenu {style.ml8}" ui:field="monthTillT"></g:ListBox>
-																</td>
-																<td>
-																	<g:ListBox styleName="aon-selectOneMenu" ui:field="yearTillT"></g:ListBox>
-																</td>
-															</tr>
-														</table>
-													</td>
-													<td>
-														<table>
-															<tr>
-																<td>
-																	<g:ListBox styleName="aon-selectOneMenu {style.ml8}" ui:field="monthTTo"></g:ListBox>
-																</td>
-																<td>
-																	<g:ListBox styleName="aon-selectOneMenu" ui:field="yearTTo"></g:ListBox>
-																</td>
-															</tr>
-														</table>
-													</td>
-												</tr>
-											</table>
-										</td>
-									</tr>
-									<tr>
-										<td class="aon-panelGrid-odd">
-											<g:Label styleName="aon-outputLabel"></g:Label>
-										</td>
-										<td class="aon-panelGrid-even">
-											<g:Button ui:field="filterButton" styleName="aon-search-lookup-button {style.hide}">Filtrar</g:Button>
-										</td>
-									</tr>
-								</table>
+				<g:ScrollPanel height="100%" styleName="{style.p5}">
+					<g:VerticalPanel styleName="{style.tableStylePanel}">
+					
+						<g:HTMLPanel styleName="aon-panelGrid-search">
+							<g:HTMLPanel styleName="aon-panelGrid-search-info">
+								<g:Label ui:field="workplaceNameLabel" styleName="aon-panelGrid-search-info-internal"></g:Label>
 							</g:HTMLPanel>
-						</g:DisclosurePanel>
-					</g:HTMLPanel>
-				
-				 	<g:HTMLPanel ui:field="mainTablePanel" styleName="{style.mt10}">
-				 		<c:DataGrid ui:field="salaryDataGrid"></c:DataGrid>
-				 	</g:HTMLPanel>
-			 		
-				</g:VerticalPanel>
+							<g:DisclosurePanel ui:field="collapsePanel" styleName="{style.widthAll}">
+								<g:header>FILTRAR BUSQUEDA</g:header>
+								<g:HTMLPanel>
+									<table class="aon-panelGrid">
+										<tr>
+											<td class="aon-panelGrid-odd">
+												<g:Label styleName="aon-outputLabel {style.pt9}">Para</g:Label>
+											</td>
+											<td class="aon-panelGrid-even">
+												<table>
+													<tr>
+														<td colspan="2">
+															<g:RadioButton name="employeeWorkplaceFilter" ui:field="allRB">Todo</g:RadioButton>
+														</td>
+													</tr>
+													<tr>
+														<td>
+															<g:RadioButton name="employeeWorkplaceFilter" ui:field="workplaceRB">C. Trabajo</g:RadioButton>
+														</td>
+														<td>
+															<g:SuggestBox ui:field="workplaceSB" styleName="aon-lookupSuggestText"></g:SuggestBox>
+														</td>
+													</tr>
+													<tr>
+														<td>
+															<g:RadioButton name="employeeWorkplaceFilter" ui:field="employeeRB">Empleado</g:RadioButton>
+								  						</td>
+														<td>
+															<g:SuggestBox ui:field="employeeSB" styleName="aon-lookupSuggestText {style.ml12}"></g:SuggestBox>
+								  						</td>
+													</tr>
+												</table>
+											</td>
+										</tr>
+										<tr>
+											<td class="aon-panelGrid-odd">
+												<g:Label styleName="aon-outputLabel  {style.pt4}">Tipo nómina</g:Label>
+											</td>
+											<td class="aon-panelGrid-even" colspan="2">
+												<g:ListBox styleName="aon-selectOneMenu {style.ml9}" ui:field="typeList"></g:ListBox>
+											</td>
+										</tr>
+										<tr>
+											<td class="aon-panelGrid-odd">
+												<g:Label styleName="aon-outputLabel {style.pt9}">Periodo</g:Label>
+											</td>
+											<td class="aon-panelGrid-even">
+												<table>
+													<tr>
+														<td colspan="3">
+															<g:RadioButton name="dateFilter" ui:field="noDateRB">Cualquier fecha</g:RadioButton>
+														</td>
+													</tr>
+													<tr>
+														<td>
+															<g:RadioButton name="dateFilter" ui:field="dateTTRB">Desde/Hasta</g:RadioButton>
+														</td>
+														<td>
+															<table>
+																<tr>
+																	<td>
+																		<g:ListBox styleName="aon-selectOneMenu {style.ml8}" ui:field="monthTillT"></g:ListBox>
+																	</td>
+																	<td>
+																		<g:ListBox styleName="aon-selectOneMenu" ui:field="yearTillT"></g:ListBox>
+																	</td>
+																</tr>
+															</table>
+														</td>
+														<td>
+															<table>
+																<tr>
+																	<td>
+																		<g:ListBox styleName="aon-selectOneMenu {style.ml8}" ui:field="monthTTo"></g:ListBox>
+																	</td>
+																	<td>
+																		<g:ListBox styleName="aon-selectOneMenu" ui:field="yearTTo"></g:ListBox>
+																	</td>
+																</tr>
+															</table>
+														</td>
+													</tr>
+												</table>
+											</td>
+										</tr>
+										<tr>
+											<td class="aon-panelGrid-odd">
+												<g:Label styleName="aon-outputLabel"></g:Label>
+											</td>
+											<td class="aon-panelGrid-even">
+												<g:Button ui:field="filterButton" styleName="aon-search-lookup-button {style.hide}">Filtrar</g:Button>
+											</td>
+										</tr>
+									</table>
+								</g:HTMLPanel>
+							</g:DisclosurePanel>
+						</g:HTMLPanel>
+					
+					 	<g:HTMLPanel ui:field="mainTablePanel" styleName="{style.mt10}">
+					 		<c:DataGrid ui:field="salaryDataGrid"></c:DataGrid>
+					 	</g:HTMLPanel>
+				 		
+					</g:VerticalPanel>
+				</g:ScrollPanel>
 			</g:HTMLPanel>
 		</g:center>
 		<!-- Pager. -->
