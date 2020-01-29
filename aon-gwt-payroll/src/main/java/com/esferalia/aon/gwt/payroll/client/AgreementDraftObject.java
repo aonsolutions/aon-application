@@ -987,7 +987,9 @@ public class AgreementDraftObject {
 				add("HOMBRE");
 				add("MUJER");
 				add("MAYOR_65");
-
+				
+				// BASES
+				add("BASE_CGC");
 
 				// DIAS
 				add("DIAS_AÑO");
@@ -1071,8 +1073,9 @@ public class AgreementDraftObject {
 
 				add("ASIMILADO_REGIMEN_GRAL");
 				add("INGRESO_AC_EMPRESA");
+				
+				add("MENSUALIDAD");
 
-				add("BASE_CGC");
 			}
 		}.contains(var) 
 		|| var.startsWith("DIAS")
