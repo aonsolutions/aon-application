@@ -251,6 +251,7 @@ public class SalaryDraft extends ResizeComposite
 
 	private static final String PORCENTAJE_IRPF = "PORCENTAJE_IRPF";
 	private static final String PORCENTAJE_DESMPL = "PORCENTAJE_DESMPL";
+	private static final String PORCENTAJE_FOGASA = "PORCENTAJE_FOGASA";
 	private static final String PORCENTAJE_SHORT = "PORCENTAJE_CORTA_DURACION";
 
 	// @formatter:off
@@ -5071,6 +5072,8 @@ public class SalaryDraft extends ResizeComposite
 		switch (type) {
 		case IRPF:
 			return getContextVariable(PORCENTAJE_IRPF);
+		case FOGASA:
+			return getContextVariable(PORCENTAJE_FOGASA);
 		case UNEMPLOYMENT:
 			return getContextVariable(PORCENTAJE_DESMPL);
 		default:
@@ -5737,10 +5740,36 @@ public class SalaryDraft extends ResizeComposite
 		} catch ( Exception e ) {
 			
 		}
+		
+		
 
-		return getPercent(deduction.getType(), deduction.getAmount(), draftObject.getIrpfBase(),
-				draftObject.getCgcBase(), draftObject.getCgpBase(), draftObject.gethExtraBase(),
-				draftObject.getNonHExtraBase());
+		return getPercent(deduction.getType(), 
+				deduction.getAmount(), 
+				draftObject.getIrpfBase(),
+				getContextVariable("BASE_CGC", draftObject), 
+				getContextVariable("BASE_CGP", draftObject),
+				draftObject.gethExtraBase(),
+				draftObject.getNonHExtraBase()
+				);
+	}
+	
+	private static double getContextVariable(String name, SalaryDraftObject draftObject) {
+		
+		return 
+		draftObject.getContext().stream()
+		.filter(v -> AonStringUtils.equals(name, v.getName()))
+		.filter(v -> v.getValue() != null )
+		.map( v -> v.getValue().toString() )
+		.collect(Collectors.summingDouble(v -> {
+			try {
+				return Double.parseDouble(v.toString());
+			} 
+			catch (Throwable t) { 
+				return 0.00; 
+			}
+		}))
+		;
+		
 	}
 
 	private static Double getPercent(Deduction.Type type, Double amount, Double irpfBase, Double cgcBase,
@@ -5817,6 +5846,14 @@ public class SalaryDraft extends ResizeComposite
 		return format(amount) + " %";
 	}
 
+	private static String formatPercent(Object amount) {
+		try {
+			return format(Double.parseDouble(String.valueOf(amount))) + " %";
+		} catch ( Throwable t ) {
+			return "";
+		}
+	}
+
 	private static String _toMVELExpression(String str) {
 		StringBuffer buffer = new StringBuffer();
 		int inOutPos[] = { 0 };
@@ -5841,7 +5878,7 @@ public class SalaryDraft extends ResizeComposite
 
 	private static Widget newPercentLabel(Item<?> item, Double percent, Variable percentVar) {
 		if (NumberUtils.isNotValid(percent))
-			return newPercentLabel(percentVar == null ? item.getDescription() : String.valueOf(percentVar.getValue()));
+			return newPercentLabel(percentVar == null ? item.getDescription() : formatPercent(percentVar.getValue()));
 		else
 			return newPercentLabel(formatPercent(percent));
 	}
