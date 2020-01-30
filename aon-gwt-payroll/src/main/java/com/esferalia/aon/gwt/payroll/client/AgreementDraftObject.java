@@ -722,7 +722,11 @@ public class AgreementDraftObject {
 	}
 
 	public void strechDate(Date date) {
-		strechDate(date, getEndDate(date));
+		strechDate(date, getPrevDate(date));
+	}
+	
+	public void strechNewDate(Date newDate) {
+		
 	}
 
 	private void syncShowVariables(AgreementDraft agreementDraft,
@@ -837,14 +841,15 @@ public class AgreementDraftObject {
 			}
 		}
 	}
-	private void strechDate(Date startDate, Date endDate) {
+	private void strechDate(Date startDate, Date prevDate) {
 		for ( String name: getVariables() ) {
 			for ( Level level: getLevels() ) {
 				Variable var = getVariable(level, name);
-				if ( var == null )
+				if ( var == null || !var.getStartDate().equals(prevDate) )
 					continue;
-				var.setStartDate(startDate);
-				var.setEndDate(endDate);
+				//var.setStartDate(startDate);
+				Date endDate = DateUtils.copyDateOnly(startDate);
+				var.setEndDate(DateUtils.addDays2Date(endDate, -1));
 				addDraftVariable(level, var);
 			}
 		}

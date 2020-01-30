@@ -1212,6 +1212,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			@Override
 			public void onClick(ClickEvent event) {
 				isOnCategoryTab = true;
+				
 				putAllSalaryToggleButtonsUp(readOnly);
 				button.removeStyleName(style.categoryStyleButtonUp());
 				button.addStyleName(style.categoryStyleButtonDown());
@@ -1262,22 +1263,20 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		if (datesList.length != 0){
 			for(int i=0; i<datesList.length; i++){
 				
-				Date date = datesList[i];
-				Date _endDate =  (i < datesList.length -1) ? DateUtils.getPrevDay(datesList[i+1]) : null;
+				Date startDate = datesList[i];
+//				Date endDate =  (i < datesList.length -1) ? DateUtils.getPrevDay(datesList[i+1]) : null;
 				
-				if (
-						(date.equals(draftStratDate) || 
-						(date.getMonth() == draftStratDate.getMonth() && date.getYear() == draftStratDate.getYear()))
-					){
+				//Find startTab -> agreementDraftObjecto.startDate == date on actual tab
+				if ((startDate.equals(draftStratDate) || (startDate.getMonth() == draftStratDate.getMonth() && startDate.getYear() == draftStratDate.getYear()))){
 					startTab = i;
 					startTab = startTab*2;
 				}
 				
 				HorizontalPanel hPanel = new HorizontalPanel();
-				hPanel.ensureDebugId("panel_" + DateTimeFormat.getFormat("dd_MM_yyyy").format(date));
+				hPanel.ensureDebugId("panel_" + DateTimeFormat.getFormat("dd_MM_yyyy").format(startDate));
 
-				ToggleButton button = new ToggleButton(date.getDate()+"/"+(date.getMonth()+1)+"/"+(date.getYear()+1900));
-				button.ensureDebugId("toggleButton_" + DateTimeFormat.getFormat("dd_MM_yyyy").format(date));
+				ToggleButton button = new ToggleButton(startDate.getDate()+"/"+(startDate.getMonth()+1)+"/"+(startDate.getYear()+1900));
+				button.ensureDebugId("toggleButton_" + DateTimeFormat.getFormat("dd_MM_yyyy").format(startDate));
 				button.addClickHandler(new ClickHandler() {
 					
 					@Override
@@ -1287,30 +1286,38 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 							button.setDown(true);
 							int selectedButton = 0;
 							
-							for(int i=0; i<salaryToggleButtonsPanel.getWidgetCount(); i++){
-								if(i%2 !=0){
-									continue;
-								}
+							for(int i=0; i<salaryToggleButtonsPanel.getWidgetCount(); i+=2){
+//								if(i%2 !=0){
+//									continue;
+//								}
+								
 								HorizontalPanel hPanel = (HorizontalPanel) salaryToggleButtonsPanel.getWidget(i);
 								ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
+								
 								if(button.equals(toggleButton)){
 									break;
 								}
+								
 								selectedButton++;
 							}
 							
 						
-							Date month = datesList[selectedButton];
+							Date clickedDate = datesList[selectedButton];
+							Date clickedDateEndDate = getClickedTabEndDate(clickedDate);
+							
+//							Window.alert("clickedDate : " + clickedDate + ", clickedDateEndDate : " + clickedDateEndDate);
+							
 							isOnCategoryTab = false;
-							agreementDraftObject.setStartDate(month);
-							agreementDraftObject.setEndDate(DateUtils.getLastDayOfMonth(month));
+							
+							agreementDraftObject.setStartDate(clickedDate);
+							agreementDraftObject.setEndDate(clickedDateEndDate);
 							calculate();
 						
 						}else{
 							return;
 						}
 					}
-	
+
 					private void putAllToggleButtonsUp() {
 						for(int i=0; i<salaryToggleButtonsPanel.getWidgetCount(); i+=2){
 							HorizontalPanel hPanel = (HorizontalPanel) salaryToggleButtonsPanel.getWidget(i);
@@ -1324,16 +1331,16 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				
 				if(!readOnly){
 					Button deleteButton = new Button("x");
-					deleteButton.ensureDebugId("deleteButton_" +DateTimeFormat.getFormat("dd_MM_yyyy").format(date) );
+					deleteButton.ensureDebugId("deleteButton_" +DateTimeFormat.getFormat("dd_MM_yyyy").format(startDate) );
 					deleteButton.addClickHandler(new ClickHandler() {
 						@Override
 						public void onClick(ClickEvent event) {
 							int selectedButton = 0;
 							
 							for(int i=0; i<salaryToggleButtonsPanel.getWidgetCount(); i+=2){
-								if(i%2 !=0){
-									continue;
-								}
+//								if(i%2 !=0){
+//									continue;
+//								}
 								HorizontalPanel hPanel = (HorizontalPanel) salaryToggleButtonsPanel.getWidget(i);
 								ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
 								if(button.equals(toggleButton)){
@@ -1342,39 +1349,54 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 								selectedButton++;
 							}
 							
-							Date month = datesList[selectedButton];
-							agreementDraftObject.addDeleteDatesChanges(month);
-							Date newSelectMonth = null;
-							if(selectedButton==0) {
-								newSelectMonth = datesList[selectedButton+1];
-								agreementDraftObject.cleanDeleteDate(month);
-							}
-							else {
-								newSelectMonth = datesList[selectedButton-1];
-							}
+							Date deleteDate = datesList[selectedButton];
+//							Window.alert("Delete Date : " + deleteDate);
+							agreementDraftObject.addDeleteDatesChanges(deleteDate);
+							agreementDraftObject.cleanDeleteDate(deleteDate);
+							agreementDraftObject.getDatesWithChanges().remove(deleteDate);
 							
-							if(newSelectMonth == null)
-								newSelectMonth = TODAY;
+							Date newSelectTabDate = null;
 							
-							int finalSelectedButton = selectedButton;
-							Date finalnewSelectMonth = newSelectMonth;
-							
-							agreementDraftObject.setStartDate(newSelectMonth);
-							agreementDraftObject.setEndDate(DateUtils.getLastDayOfMonth(newSelectMonth));
-							
-							calculate( new CalculateCallback() {
-
-								@Override
-								public void onCalculateSucces(AgreementDraftObject object) {
-									if ( finalSelectedButton > 0 )
-										agreementDraftObject.strechDate(finalnewSelectMonth);
-								}
+							if(agreementDraftObject.getDatesWithChanges().size() == 0) { //Nos quedamos sin pestañas
+								calculate();
+							}else {
+								if(selectedButton == 0) 
+									newSelectTabDate = datesList[selectedButton+1];
+								else
+									newSelectTabDate = datesList[selectedButton-1];
 								
-								@Override
-								public void onCalculateFailure(Throwable throwable) {
-								}
-
-							});
+								//TODO: No se para que esto...
+								if(newSelectTabDate == null)
+									newSelectTabDate = TODAY;
+								
+								//Indice del boton seleccionado que coincide con la posicion en DatesList
+								int finalSelectedButton = selectedButton;
+								
+								Date finalNewSelectTabDate = newSelectTabDate;
+								Date finalNewSelectTabEndDate = getClickedTabEndDate(finalNewSelectTabDate);
+								
+//								Window.alert("finalNewSelectTabDate : " + finalNewSelectTabDate + ", finalNewSelectTabEndDate : " + finalNewSelectTabEndDate);
+								
+								agreementDraftObject.setStartDate(finalNewSelectTabDate);
+								agreementDraftObject.setEndDate(finalNewSelectTabEndDate);
+								//calculate();
+							
+								Date newSelectedDate  = DateUtils.copyDateOnly(newSelectTabDate);
+								
+								calculate( new CalculateCallback() {
+	
+									@Override
+									public void onCalculateSucces(AgreementDraftObject object) {
+										if ( finalSelectedButton > 0 )
+											agreementDraftObject.strechDate(newSelectedDate);
+									}
+									
+									@Override
+									public void onCalculateFailure(Throwable throwable) {
+									}
+	
+								});
+							}
 							
 						}	
 					});
@@ -1407,7 +1429,28 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				deleteButton.addStyleName(style.deleteButtonDown());
 			}
 			hPanel.addStyleName(style.selectButtonSalaryToggleButton());
+		}else {
+			
 		}
+	}
+	
+	private Date getClickedTabEndDate(Date clickedDate) {
+		if(agreementDraftObject.getDatesWithChanges().size() == 1) {
+			//TODO: deberia ser asi!!
+			//return null;
+			return DateUtils.getLastDayOfMonth(clickedDate);
+		}else {
+			Date[] datesList = agreementDraftObject.getDatesWithChanges().toArray(new Date[]{});
+			
+			for(int i=0; i<datesList.length; i++){
+				if(clickedDate.equals(datesList[i])) {
+					//TODO: deberia ser asi!!
+					//return  (i < datesList.length -1) ? DateUtils.getPrevDay(datesList[i+1]) : null;
+					return  (i < datesList.length -1) ? DateUtils.getPrevDay(datesList[i+1]) : DateUtils.getLastDayOfMonth(datesList[i]);
+				}
+			}
+		}
+		return null;
 	}
 
 	private Button addMoreButton() {
@@ -1422,11 +1465,37 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 					@Override
 					public void onValueChange(ValueChangeEvent<Date> event) {
 						popup.hide();
-						Date month = event.getValue();
-						agreementDraftObject.addNewDatesWithChanges(month);
-						agreementDraftObject.setStartDate(month);
-						agreementDraftObject.setEndDate(DateUtils.getLastDayOfMonth(month));
+						Date newDate = event.getValue();
+						agreementDraftObject.getDatesWithChanges().add(newDate);
+						agreementDraftObject.addNewDatesWithChanges(newDate);
+						
+						//addStrech(newDate);
+						Date endDate = getNextDateWithChanges(newDate);
+						
+//						Window.alert("New Start Date : " + newDate + ", New End Date : " + endDate);
+						
+						agreementDraftObject.setStartDate(newDate);
+						agreementDraftObject.setEndDate(endDate);
 						calculate();
+					}
+
+					private Date getNextDateWithChanges(Date newDate) {
+						Date[] datesList = agreementDraftObject.getDatesWithChanges().toArray(new Date[]{});
+						Date endDate = null;
+						
+						for(int i=0; i<datesList.length; i++){
+							if(datesList[i].before(newDate) || datesList[i].equals(newDate))
+								continue;
+							
+							endDate = DateUtils.copyDateOnly(datesList[i]);
+							return DateUtils.addDays2Date(endDate, -1);
+						}
+						//TODO: si lo hago con null no funciona
+						return DateUtils.getLastDayOfMonth(newDate) ;
+					}
+
+					private void addStrech(Date newDate) {
+						agreementDraftObject.strechNewDate(newDate);
 					}
 				});
 				popup.setWidget(picker);

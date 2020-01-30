@@ -1099,6 +1099,11 @@ public class SQLAgreementDraft {
 				removeLevelData(conn, dbVariable.getId());
 				continue;
 			}
+			
+			if(StringUtils.isBlank(variable.getExpression()) && dbVariable.getStartDate().equals(variable.getStartDate())){
+				removeLevelData(conn, dbVariable.getId());
+				continue;
+			}
 
 			Period first = subs.get(0);
 			if (first.equals(dbPeriod)) {
