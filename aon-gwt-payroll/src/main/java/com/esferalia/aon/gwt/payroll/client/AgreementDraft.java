@@ -566,6 +566,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 					String text = event.getValue();
 					AgreementDraft.this.agreementDraftObject.addDraftCategories(level, text);
 					// TODO: really need to go server side.
+					isOnCategoryTab = true;
 					AgreementDraft.this.calculate(getNextFocusCallback());
 				}
 			});
@@ -684,6 +685,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 					var.setEndDate(draftPeriod.getEnd());
 					var.setStartDate(draftPeriod.getStart());
 					AgreementDraft.this.agreementDraftObject.addDraftVariable(level, var);
+					isOnCategoryTab = false;
 					AgreementDraft.this.calculate(getNextFocusCallback());
 				}
 			});
@@ -1144,6 +1146,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	private TextBox filterSearchTxtBox;
 	private String filterPattern;
 	private FilterPatternTimer filterPatternTimer;
+	private boolean isOnCategoryTab = false;
 	
 	public AgreementDraft() {
 		initWidget(binder.createAndBindUi(this));
@@ -1208,6 +1211,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			
 			@Override
 			public void onClick(ClickEvent event) {
+				isOnCategoryTab = true;
 				putAllSalaryToggleButtonsUp(readOnly);
 				button.removeStyleName(style.categoryStyleButtonUp());
 				button.addStyleName(style.categoryStyleButtonDown());
@@ -1297,6 +1301,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 							
 						
 							Date month = datesList[selectedButton];
+							isOnCategoryTab = false;
 							agreementDraftObject.setStartDate(month);
 							agreementDraftObject.setEndDate(DateUtils.getLastDayOfMonth(month));
 							calculate();
@@ -1483,7 +1488,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		setDescription();
 
-		if ( agreementDraftObject.getDatesWithChanges().isEmpty() )
+		if ( agreementDraftObject.getDatesWithChanges().isEmpty() || isOnCategoryTab )
 			categoryButton.click();
 		else
 			createSalaryTable();

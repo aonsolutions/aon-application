@@ -22,8 +22,8 @@ import com.esferalia.aon.gwt.common.shared.HasStartAndEndDate;
 import com.esferalia.aon.gwt.common.shared.NumberUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.client.UndoManager.Listener;
-import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
+import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Event;
@@ -34,7 +34,6 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.VariableDescriptor;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
@@ -831,11 +830,9 @@ public class AgreementDraftObject {
 		for ( String name: getVariables() ) {
 			for ( Level level: getLevels() ) {
 				Variable var = getVariable(level, name);
-				if ( var == null )
+				if ( var == null || !var.getStartDate().equals(startDate) )
 					continue;
 				var.setExpression(""); // DELETE
-				var.setStartDate(startDate);
-				var.setEndDate(endDate);
 				addDraftVariable(level, var);
 			}
 		}
@@ -857,16 +854,13 @@ public class AgreementDraftObject {
 		Iterator<Date> datesIt = getDatesWithChanges().iterator();
 		while  ( datesIt.hasNext() ) {
 			Date date = datesIt.next();
-			if ( !date.equals(startDate ))
+			if ( date.equals(startDate ))
 				continue;
-				
-			if ( !datesIt.hasNext() ) 
-				return null;
-			
-			Date endDate = CalendarUtil.copyDate(datesIt.next());
-			CalendarUtil.addDaysToDate(endDate, -1);
-			return endDate;
-			
+			else {
+				Date endDate = CalendarUtil.copyDate(date);
+				CalendarUtil.addDaysToDate(endDate, -1);
+				return endDate;
+			}
 		}
 		return null; // Really an Exception ?
 	}
