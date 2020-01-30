@@ -17,15 +17,11 @@ import java.util.function.Consumer;
 import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraftObject.EventMetaData;
-import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
-import com.esferalia.aon.gwt.payroll.shared.VariableDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EventsDraftObject {
@@ -275,12 +271,20 @@ public class EventsDraftObject {
 				
 				createAllVariables("HORAS_EXTRAS");
 				createAllVariables("HORAS_COMPLEMENTARIAS");
+				createAllVariables("HORAS_FORMACION_PRESENCIAL");
+				createAllVariables("HORAS_FORMACION_DISTANCIA");
+				createAllVariables("HORAS_TUTORIA");
+				createAllVariables("BONIFICACION_TUTORIA");
 				
 				//Lista con las variables a descargar de la base de datos
 				employeeContractVariablesDB.add("HORAS_EXTRAS");
 				employeeContractVariablesDB.add("HORAS_COMPLEMENTARIAS");
-				employeeContractVariablesDB.add("IMPORTE_HORA_EXTRA");
-				employeeContractVariablesDB.add("VENTAS");
+				employeeContractVariablesDB.add("HORAS_FORMACION_PRESENCIAL");
+				employeeContractVariablesDB.add("HORAS_FORMACION_DISTANCIA");
+				employeeContractVariablesDB.add("HORAS_TUTORIA");
+				employeeContractVariablesDB.add("BONIFICACION_TUTORIA");
+//				employeeContractVariablesDB.add("IMPORTE_HORA_EXTRA");
+//				employeeContractVariablesDB.add("VENTAS");
 				
 				for(Entry<String, String> entry : result.entrySet()){
 					createAllVariables(entry.getKey());
@@ -580,7 +584,7 @@ public class EventsDraftObject {
 	public void updateEventsWorkplace(Consumer<EventsWorkplace> success, Consumer<Throwable> failure) {
 		EventsWorkplace updateEventsWorkplace = new EventsWorkplace();
 		updateEventsWorkplace.setUpdateEventsWorkplace(createUpdateEventsWorkplace());
-		
+
 		employeesServiceAsync.setEventsWorkplace(updateEventsWorkplace, new AsyncCallback<EventsWorkplace>(){
 
 			@Override
@@ -635,7 +639,7 @@ public class EventsDraftObject {
 					java.sql.Date sqlStartDate = new java.sql.Date(var.getStartDate().getTime());
 					java.sql.Date sqlEndDate = new java.sql.Date(var.getEndDate().getTime());
 					
-					updateList.add(new Quintet<Integer, String, Date, Date, String>(employeeId, varName, sqlStartDate, sqlEndDate, var.getValue().toString()));
+					updateList.add(new Quintet<Integer, String, Date, Date, String>(employeeId, varName, sqlStartDate, sqlEndDate, var.getValue() == null ? null : var.getValue().toString()));
 				}
 			}
 		}
@@ -646,7 +650,6 @@ public class EventsDraftObject {
 
 	private void addUpdateEventVarToMap(Map<Integer, Map<String, ArrayList<EmployeeEventsVariable>>> updateMap,
 			Integer employeeId, String varName, EmployeeEventsVariable var) {
-		
 		EmployeeEventsVariable removeVar = null;
 		if(updateMap.containsKey(employeeId)){
 			if(updateMap.get(employeeId).containsKey(varName)){

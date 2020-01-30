@@ -6,13 +6,18 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.EmployeeEventsVariable;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.EventEmployee;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Visibility;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -420,15 +425,39 @@ public class EventsDraft extends ResizeComposite {
 					
 					@Override
 					public void onValueChange(ValueChangeEvent<String> event) {
-						Double value = Double.parseDouble(eventCell.getValue());
+						Double value = null;
+						if(StringUtils.isBlank(eventCell.getValue()) || eventCell.getValue() == "-")
+							value = null;
+						else
+							Double.parseDouble(eventCell.getValue());
+						
 						Date startDate = new Date(actualYear, actualMonth, 1);
 						Date endDate = DateUtils.getLastDayOfMonth(startDate);
+						
 						Integer employeeId = draftObject.getEventEmployeeId(eventsTable.getText(eventCell.getRow(), 0));
 						String varName = eventsTable.getText(0, eventCell.getColumn());
 						
 						draftObject.addEvent(employeeId, varName, value, startDate, endDate);
 						
 						eventCell.setOnChangeStyle();
+					}
+				});
+				
+				eventCell.addFocusHandler(new FocusHandler() {
+					
+					@Override
+					public void onFocus(FocusEvent event) {
+						if(StringUtils.isBlank(eventCell.getValue()) || eventCell.getValue() == "-")
+							eventCell.setValue("");
+					}
+				});
+				
+				eventCell.addBlurHandler(new BlurHandler() {
+					
+					@Override
+					public void onBlur(BlurEvent event) {
+						if(StringUtils.isBlank(eventCell.getValue()))
+							eventCell.setValue("-");
 					}
 				});
 				
