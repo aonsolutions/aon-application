@@ -641,9 +641,27 @@ public abstract class AbstractSQLTestCase {
 	public static void addData(AONContext aonContext, AgreementRecord agreement, Date startDate,
 			Map<String, String> datas) {
 		for (Map.Entry<String, String> data : datas.entrySet()) {
-			aonContext.getDslContext().insertInto(AGREEMENT_DATA).set(AGREEMENT_DATA.DOMAIN, agreement.getDomain())
-					.set(AGREEMENT_DATA.AGREEMENT, agreement.getId()).set(AGREEMENT_DATA.START_DATE, startDate)
-					.set(AGREEMENT_DATA.NAME, data.getKey()).set(AGREEMENT_DATA.EXPRESSION, data.getValue()).execute();
+			aonContext.getDslContext()
+			.insertInto(AGREEMENT_DATA)
+			.set(AGREEMENT_DATA.DOMAIN, agreement.getDomain())
+			.set(AGREEMENT_DATA.AGREEMENT, agreement.getId())
+			.set(AGREEMENT_DATA.START_DATE, startDate)
+			.set(AGREEMENT_DATA.NAME, data.getKey())
+			.set(AGREEMENT_DATA.EXPRESSION, data.getValue()).execute();
+
+		}
+	}
+
+	public static void addData(AONContext aonContext, AgreementRecord agreement, Date startDate,
+			Date endDate, Map<String, String> datas) {
+		for (Map.Entry<String, String> data : datas.entrySet()) {
+			aonContext.getDslContext()
+			.insertInto(AGREEMENT_DATA).set(AGREEMENT_DATA.DOMAIN, agreement.getDomain())
+			.set(AGREEMENT_DATA.AGREEMENT, agreement.getId())
+			.set(AGREEMENT_DATA.START_DATE, startDate)
+			.set(AGREEMENT_DATA.END_DATE, endDate)
+			.set(AGREEMENT_DATA.NAME, data.getKey())
+			.set(AGREEMENT_DATA.EXPRESSION, data.getValue()).execute();
 
 		}
 	}
@@ -1041,6 +1059,21 @@ public abstract class AbstractSQLTestCase {
 					.set(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL, category.getAgreementLevel())
 					.set(AGREEMENT_LEVEL_DATA.START_DATE, startDate).set(AGREEMENT_LEVEL_DATA.END_DATE, endDate)
 					.set(AGREEMENT_LEVEL_DATA.NAME, data.getKey()).set(AGREEMENT_LEVEL_DATA.EXPRESSION, data.getValue())
+					.execute();
+
+		}
+	}
+
+	public static final void addData(AONContext aonContext, Integer domain, AgreementRecord agreement,
+			Date startDate, Date endDate, Map<String, String> datas) {
+		for (Map.Entry<String, String> data : datas.entrySet()) {
+			aonContext.getDslContext().insertInto(AGREEMENT_DATA)
+					.set(AGREEMENT_DATA.DOMAIN, domain)
+					.set(AGREEMENT_DATA.AGREEMENT, agreement.getId())
+					.set(AGREEMENT_DATA.START_DATE, startDate)
+					.set(AGREEMENT_DATA.END_DATE, endDate)
+					.set(AGREEMENT_DATA.NAME, data.getKey())
+					.set(AGREEMENT_DATA.EXPRESSION, data.getValue())
 					.execute();
 
 		}

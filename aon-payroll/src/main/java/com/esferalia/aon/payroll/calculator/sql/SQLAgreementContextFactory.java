@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.OrderByList;
@@ -25,7 +26,6 @@ import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
-import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.util.Pair;
 
 public class SQLAgreementContextFactory implements
@@ -35,14 +35,16 @@ public class SQLAgreementContextFactory implements
 	private static final String AGREEMENT_DATA_SQL = "SELECT * "
 			+ " FROM `agreement_data`" + " WHERE domain = ? "
 			+ " AND agreement = ? " + " AND start_date <= ? "
-			+ " AND ( end_date IS NULL " + " OR end_date >= ? )";
+			+ " ORDER BY start_date"
+			;
 	// @formatter:on
 
 	// @formatter:off
 	private static final String AGREEMENT_LEVEL_DATA_SQL = "SELECT * "
 			+ " FROM `agreement_level_data`" + " WHERE domain = ? "
 			+ " AND agreement_level = ? " + " AND start_date <= ? "
-			+ " AND ( end_date IS NULL " + " OR end_date >= ? )";
+			+ " ORDER BY start_date"
+			;
 	// @formatter:on
 
 	// @formatter:off
@@ -181,12 +183,20 @@ public class SQLAgreementContextFactory implements
 				expr.setName(rs.getString(AgreementLevelDataColumns.NAME));
 				expr.setExpression(rs
 						.getString(AgreementLevelDataColumns.EXPRESSION));
-				Date start = Period.max(
-						rs.getDate(AgreementLevelDataColumns.START_DATE),
-						startDate);
-				Date end = Period
-						.min(rs.getDate(AgreementLevelDataColumns.END_DATE),
-								endDate);
+				Date start = rs.getDate(AgreementLevelDataColumns.START_DATE);
+				
+				Date end  = endDate;
+
+				List<IExpressionVariable<?>> definedVariables = 
+				context.getVariables(expr.getName()).stream()
+				.filter(v -> v instanceof IExpressionVariable<?>)
+				.filter(v -> ((IExpressionVariable<?>) v).getExpression().getScope() == ExpressionScope.AGREEMENT)
+				.filter( v -> v.getPeriod().getStart().after(start))
+				.sorted((v1,v2) -> v1.getPeriod().getStart().compareTo(v2.getPeriod().getStart()))
+				.map ( v -> ((IExpressionVariable<?>)v ) )
+				.collect(Collectors.toList())
+				;
+				
 				ITimedVariable<?> implicit = context.getVariable(
 						expr.getName(), start, end);
 				try {
@@ -198,6 +208,14 @@ public class SQLAgreementContextFactory implements
 					if ( redefined != null )
 						redefinedMap.put(expr.getName(), redefined);
 
+					definedVariables.stream()
+					.forEach( v -> {
+						try { 
+							context.addExpression(v.getExpression(), v.getPeriod().getStart(), end);
+						} catch ( Exception e ) {
+						}
+					})
+					;
 				} catch (Exception e) {
 					DeferredExpressionVariable<Object> variable = new DeferredExpressionVariable<Object>(
 							start, end, expr);
@@ -207,6 +225,8 @@ public class SQLAgreementContextFactory implements
 					if ( redefined != null )
 						redefinedMap.put(expr.getName(), redefined);
 				}
+				
+				
 			}
 			return redefinedMap;
 		} finally {
@@ -271,7 +291,6 @@ public class SQLAgreementContextFactory implements
 
 		agreementDataStmt = connection.prepareStatement(agreementDataSql);
 		agreementDataStmt.setDate(3, new java.sql.Date(endDate.getTime()));
-		agreementDataStmt.setDate(4, new java.sql.Date(startDate.getTime()));
 		dataStmts[0] = agreementDataStmt;
 
 		String agreementLevelDataSql = SQLContractSalaryCalculatorContext
@@ -279,8 +298,6 @@ public class SQLAgreementContextFactory implements
 		agreementLevelDataStmt = connection
 				.prepareStatement(agreementLevelDataSql);
 		agreementLevelDataStmt.setDate(3, new java.sql.Date(endDate.getTime()));
-		agreementLevelDataStmt.setDate(4,
-				new java.sql.Date(startDate.getTime()));
 		dataStmts[1] = agreementLevelDataStmt;
 
 		isAgreementDomainStmt = connection

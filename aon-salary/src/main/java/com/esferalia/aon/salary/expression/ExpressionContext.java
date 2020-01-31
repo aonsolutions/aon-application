@@ -288,9 +288,9 @@ public class ExpressionContext {
 
 		@Override
 		public <T> List<ITimedResult<T>> eval(ExpressionContext context, Class<T> toType) throws ExpressionException {
-
-			List<ITimedResult<T>> results = context.eval(expression.getExpression(), start, end, toType);
-
+			
+			
+			List<ITimedResult<T>> results = context.eval(expression, start, end, toType);
 
 			for (ITimedResult<T> result : results)
 				context.putVariable(expression.getName(), new ExpressionResult<T>(result, expression));
@@ -838,6 +838,45 @@ public class ExpressionContext {
 	// ------------------------------------------------------------------------
 	//
 	// ------------------------------------------------------------------------
+	private <T> List<ITimedResult<T>> eval(IExpression expression, Date start, Date end, Class<T> toType)
+			throws ExpressionException, UndefinedVariablesException {
+		String script = expression.getExpression();
+		
+		if (script == null) {
+			ITimedResult<T> result = (new TimedResult<T>((T) null, new Period(start, end),
+					Collections.<String, ITimedVariable<?>> emptyMap()));
+			return Collections.singletonList(result);
+		}
+		Set<String> inputs = getVarNames(script);
+		List<PeriodMap> bindingsList = variables.getBindings(inputs, start, end);
+		try {
+
+			do {
+				try {
+					return eval(script, bindingsList, toType);
+				} catch (MacroException e) {
+					script = e.doMacro(script);
+					inputs.addAll(getVarNames(script));
+					bindingsList = variables.getBindings(inputs, start, end);
+				}
+			} while (true);
+
+		} catch (DeferredExpressionException e) {
+			if ( e.getExpression() == expression )
+				throw new UndefinedVariablesException(script, expression.getName());
+			e.eval(this, toType);
+			return eval(script, start, end, toType);
+		} catch (DeferredException e) {
+			e.eval(this, toType);
+			return eval(script, start, end, toType);
+		} catch (UnknownUndefVarException e) {
+			return evalUnknowUndefVariable(script, inputs, start, end, toType);
+		} catch (CompileException e) {
+			throw e;
+		}
+
+	}
+
 	private <T> List<ITimedResult<T>> eval(String script, List<PeriodMap> bindingsList, Class<T> toType)
 			throws ExpressionException {
 		if (script == null) {
