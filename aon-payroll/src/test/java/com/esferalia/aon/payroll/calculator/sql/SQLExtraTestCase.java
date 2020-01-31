@@ -2492,7 +2492,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(MONTH, Calendar.FEBRUARY);
+		calendar.set(DAY_OF_MONTH, 1);
+		calendar.set(Calendar.MONTH, Calendar.FEBRUARY);
 		calendar.set(DAY_OF_MONTH, calendar.getActualMaximum(DAY_OF_MONTH) - 14);
 		Date contractDate = new Date(calendar.getTimeInMillis());
 
@@ -2665,6 +2666,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 
 		Calendar calendar = Calendar.getInstance();
+		calendar.set(DAY_OF_MONTH, 1);
 		calendar.set(MONTH, Calendar.FEBRUARY);
 		calendar.set(DAY_OF_MONTH, calendar.getActualMaximum(DAY_OF_MONTH) - 14);
 		Date contractDate = new Date(calendar.getTimeInMillis());
