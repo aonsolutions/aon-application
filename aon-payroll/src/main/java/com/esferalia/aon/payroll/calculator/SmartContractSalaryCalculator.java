@@ -582,10 +582,11 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			
 			try {
 				double cgcBaseMin = getCgcBaseMin(expressionContext, period);
+				double paymentMin = (( cgcBaseMin * 12 ) / 14) * 0.90; // 90% of 14th Base Min 
 				if ( contractPayment.getSalaryType() == SalaryType.SALARY
 					&& contractPayment.getMonth() != null )
 					fixed.add( result );
-				else if ( value == null || value == 0.00 || cgcBaseMin <= 0.00 || value < cgcBaseMin )
+				else if ( value == null || value == 0.00 || paymentMin <= 0.00 || value < paymentMin )
 					fixed.add( result );
 				else
 					fixed.add( new TimedResult<Double>(value/12, period, result.getContext())); // TODO: 12?

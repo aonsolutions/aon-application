@@ -1945,6 +1945,116 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testAutoProrrationIII() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		
+		addBaseCgcMin(aonContext);
+		
+
+		ContractRecord contract = newContract(
+				aonContext,
+				getFirstDayOfYear(getToday()), 
+				new HashMap<String, String>() {
+					{
+						put("TC2", "\"100\"");
+						put("GRUPO_COTIZACION", "\"04\"");
+						put("BASE_CGC_MIN", "1108.33");
+					}
+				}, 
+				new String[] {},
+				new String[] {}, 
+				null
+				);
+		//@formatter:off
+		
+		PaymentConceptRecord conceptSalarioBase = addConcept(aonContext, "SALARIO_BASE");
+		addPayment(aonContext, contract, conceptSalarioBase, String.format("950 * %s / %s", WORKED_DAYS , MONTH_DAYS ));
+		PaymentConceptRecord conceptPlusSalarial = addConcept(aonContext, "PLUS_SALARIAL");
+		addPayment(aonContext, contract, conceptPlusSalarial, String.format("0.00 * %s / %s", WORKED_DAYS , MONTH_DAYS ));
+		addPayment(aonContext, contract, conceptPlusSalarial, String.format("0.00 * %s / %s", WORKED_DAYS , MONTH_DAYS ));
+		PaymentConceptRecord conceptAntiguedad = addConcept(aonContext, "ANTIGUEDAD");
+		addPayment(aonContext, contract, conceptAntiguedad, String.format("0.00 * %s / %s", WORKED_DAYS , MONTH_DAYS ));
+
+		PaymentConceptRecord conceptPagaExtra = addConcept(aonContext, "CUALESQUIERA");
+		addPayment(aonContext, contract, conceptPagaExtra, "SALARIO_BASE + PLUS_SALARIAL + ANTIGUEDAD", "_P", PaymentType.CRA_0004);
+		addPayment(aonContext, contract, conceptPagaExtra, "SALARIO_BASE + PLUS_SALARIAL + ANTIGUEDAD", "_P", PaymentType.CRA_0004);
+		
+		
+		Date startDate =getFirstDayOfMonth(getToday());
+		Date endDate =getLastDayOfMonth(startDate);
+		Date issueDate = endDate;
+		
+		Salary salary = 
+		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, contract))
+		;
+		
+		Assert.assertEquals((950.00) * ( 1.00 + 1.00/6.00 ), salary.getTotalPayment());
+		Assert.assertEquals((950.00) * ( 1.00 + 1.00/6.00 ), salary.getIrpfBase());
+		Assert.assertEquals((950.00) * ( 1.00 + 1.00/6.00 ), salary.getCommonBase());
+	}
+
+	@Test
+	public void testAutoProrrationIV() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		
+		addBaseCgcMin(aonContext);
+		
+
+		ContractRecord contract = newContract(
+				aonContext,
+				getFirstDayOfYear(getToday()), 
+				new HashMap<String, String>() {
+					{
+						//put("TC2", "\"100\"");
+						put("GRUPO_COTIZACION", "\"04\"");
+						put("TIEMPO_COMPLETO", "FALSO()");
+						put("COEFICIENTE_PARCIALIDAD", "0.50");
+						put("BASE_CGC_MIN", "[\"04\":(1050.00 * COEFICIENTE_PARCIALIDAD)][GRUPO_COTIZACION]");
+					}
+				}, 
+				new String[] {},
+				new String[] {}, 
+				null
+				);
+		//@formatter:off
+		
+		PaymentConceptRecord conceptSalarioBase = addConcept(aonContext, "SALARIO_BASE");
+		addPayment(aonContext, contract, conceptSalarioBase, String.format("900 * %s / %s", WORKED_DAYS , MONTH_DAYS ));
+		PaymentConceptRecord conceptPlusSalarial = addConcept(aonContext, "PLUS_SALARIAL");
+		addPayment(aonContext, contract, conceptPlusSalarial, String.format("0.00 * %s / %s", WORKED_DAYS , MONTH_DAYS ));
+		addPayment(aonContext, contract, conceptPlusSalarial, String.format("0.00 * %s / %s", WORKED_DAYS , MONTH_DAYS ));
+		PaymentConceptRecord conceptAntiguedad = addConcept(aonContext, "ANTIGUEDAD");
+		addPayment(aonContext, contract, conceptAntiguedad, String.format("0.00 * %s / %s", WORKED_DAYS , MONTH_DAYS ));
+
+		PaymentConceptRecord conceptPagaExtra = addConcept(aonContext, "CUALESQUIERA");
+		addPayment(aonContext, contract, conceptPagaExtra, "SALARIO_BASE + PLUS_SALARIAL + ANTIGUEDAD", "_P", PaymentType.CRA_0004);
+		addPayment(aonContext, contract, conceptPagaExtra, "SALARIO_BASE + PLUS_SALARIAL + ANTIGUEDAD", "_P", PaymentType.CRA_0004);
+		
+		
+		Date startDate =getFirstDayOfMonth(getToday());
+		Date endDate =getLastDayOfMonth(startDate);
+		Date issueDate = endDate;
+		
+		Salary salary = 
+		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, contract))
+		;
+		
+		Assert.assertEquals((900.00/2.00) * ( 1.00 + 1.00/6.00 ), salary.getTotalPayment());
+		Assert.assertEquals((900.00/2.00) * ( 1.00 + 1.00/6.00 ), salary.getIrpfBase());
+		Assert.assertEquals((900.00/2.00) * ( 1.00 + 1.00/6.00 ), salary.getCommonBase());
+	}
+
+	@Test
 	@Ignore("But...not yet")
 	public void testIRPF() throws ExpressionException,
 			SQLException, SalaryException {
@@ -4028,6 +4138,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 	}
 	
 	@Test
+	@Ignore("Rollback")
 	public void testProrratedBaseI() throws ExpressionException,
 			SQLException, SalaryException {
 		Connection connection = getConnection();
