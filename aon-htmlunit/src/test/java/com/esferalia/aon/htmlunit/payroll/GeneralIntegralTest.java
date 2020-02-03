@@ -1,6 +1,5 @@
 package com.esferalia.aon.htmlunit.payroll;
 
-import static com.esferalia.aon.htmlunit.HtmlUnitIT.GWT_DEBUG_ID_PREFIX;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_PASSWORD;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_USER;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.LOGGER;
@@ -906,6 +905,19 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.MAY);
 		assertText("prorationBaseLabel", ( 1027.65 * 1.04 / 6 ) / 12.00 * 2.00 );
 		
+		draft("EXTRAS PRORRATEAR, CONSTANTES");
+		double salarioBase = getValue("db-amount-label-1");
+		double quotePaga1 = getText("quote-label-2");
+		double quotePaga2 = getText("quote-label-3");
+		Assert.assertEquals(quotePaga1, salarioBase/12.00, 0.005);
+		Assert.assertEquals(quotePaga2, salarioBase/12.00, 0.005);
+
+		selectOption("issueDate-listbox-2", "-1");
+		wait4Class("payment-row-2", "aon-dataTable-row-highlight");
+		wait4Class("payment-row-3", "aon-dataTable-row-highlight");
+		assertValue("db-amount-label-2", quotePaga1);
+		assertValue("db-amount-label-3", quotePaga2);
+		
 		click("viewButton");
 		wait4Id("formerMenuItem");
 		click("formerMenuItem");
@@ -941,7 +953,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		double paga2 = getValue("db-amount-label-2");
 		double paga1 = getValue("db-amount-label-1");
 
-		double salarioBase = getValue("db-amount-label-4");
+		salarioBase = getValue("db-amount-label-4");
 		Assert.assertEquals(paga1, salarioBase/12.00, 0.005);
 		Assert.assertEquals(paga2, salarioBase/12.00, 0.005);
 		Assert.assertEquals(paga3, salarioBase/12.00, 0.005);

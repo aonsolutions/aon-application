@@ -1022,7 +1022,6 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 		
 
 		List<Payment> twins = new LinkedList<Payment>();
-		twins.add(payment);
 
 
 		if ( payment.getConceptId() == null ) 
@@ -1054,6 +1053,13 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 				twins.add(p);
 			}
 		}
+		
+		twins.forEach(p -> {
+			p.setMonth(payment.getMonth());
+			p.setSalaryType(payment.getSalaryType());
+		});
+		
+		twins.add(0, payment);
 
 		return twins;
 	}

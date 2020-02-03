@@ -1248,6 +1248,18 @@ public class SalaryDraft extends ResizeComposite
 			});
 		}
 
+		public void setIssueDateListBox(final ListBox listBox) {
+			listBox.addChangeHandler( new ChangeHandler() {
+				
+				@Override
+				public void onChange(ChangeEvent event) {
+					Short month = Short.parseShort(listBox.getSelectedValue());
+					onIssueDateChange(item, month == -1 ? null: month  );
+				}
+			});
+			
+		}
+
 		abstract void onEdit();
 
 		abstract void onExpand(ClickEvent event);
@@ -1255,6 +1267,8 @@ public class SalaryDraft extends ResizeComposite
 		abstract void onCollapse(ClickEvent event);
 
 		abstract void onRecover(I item, String expression);
+
+		abstract void onIssueDateChange(I item, Short month);
 
 		abstract void onExpressionChange(I item, String expression);
 
@@ -1342,6 +1356,15 @@ public class SalaryDraft extends ResizeComposite
 			salaryDraftObject.addDraftPayment(payment);
 			SalaryDraft.this.calculate(getNextPaymentFocusCallback());
 		}
+		
+		@Override
+		void onIssueDateChange(Payment payment, Short month) {
+			payment.setScope(Scope.SALARY);
+			payment.setMonth(month);
+			payment.setSalaryType(Type.SALARY);
+			salaryDraftObject.addDraftPayment(payment);
+			salaryDraftObject.calculate(SalaryDraft.this);
+		}
 
 		@Override
 		void onRecover(Payment payment, String expression) {
@@ -1350,6 +1373,7 @@ public class SalaryDraft extends ResizeComposite
 			salaryDraftObject.recoverDraftPayment(payment);
 			SalaryDraft.this.calculate(getNextPaymentFocusCallback());
 		}
+		
 		// --------------------------------------------------------------------
 		private Payment getConcept() {
 			if (item.getName() == null)
@@ -1508,6 +1532,10 @@ public class SalaryDraft extends ResizeComposite
 
 			salaryDraftObject.calculate(SalaryDraft.this);
 		}
+		
+		@Override
+		void onIssueDateChange(Deduction item, Short month) {
+		}
 
 		@Override
 		void onRecover(Deduction item, String expression) {
@@ -1590,6 +1618,10 @@ public class SalaryDraft extends ResizeComposite
 
 			salaryDraftObject.addDraftBonus(item);
 			salaryDraftObject.calculate(SalaryDraft.this);
+		}
+		
+		@Override
+		void onIssueDateChange(Bonus item, Short month) {
 		}
 
 		@Override
@@ -3860,6 +3892,7 @@ public class SalaryDraft extends ResizeComposite
 
 		if (amount != null && !amount.equals(quote)) {
 			labelWidget = newPercentLabel(format(quote));
+			labelWidget.ensureDebugId("quote-label-" + row );
 			labelWidget.addStyleName(AON.AON_ICON_BONUS_SMALL);
 			labelWidget.getElement().getStyle().setPaddingRight(16, Unit.PX);
 			labelWidget.getElement().getStyle().setProperty("backgroundPosition", "center right");
@@ -3950,8 +3983,9 @@ public class SalaryDraft extends ResizeComposite
 		descriptionBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
 		handler.setDescriptionWidget(descriptionBox);
 		descriptionBox.ensureDebugId("description-box-" + row );
-		if(item.getType() == Payment.Type.CRA_0004 || item.getType() == Payment.Type.CRA_0005) {
-			paymentsTable.setWidget(row, 2, createSpecialPay(item, descriptionBox));
+		if(item.getType() == Payment.Type.CRA_0004 
+		|| item.getType() == Payment.Type.CRA_0005) {
+			paymentsTable.setWidget(row, 2, createSpecialPay(item, descriptionBox, row, handler));
 		}else {
 			paymentsTable.setWidget(row, 2, descriptionBox);
 		}
@@ -4030,7 +4064,7 @@ public class SalaryDraft extends ResizeComposite
 		
 	}
 	
-	private <I extends Item> HorizontalPanel createSpecialPay(I item, TextBox descriptionBox) {
+	private <I extends Item> HorizontalPanel createSpecialPay(I item, TextBox descriptionBox, int row, ItemChangeHandler<TextBox, I> handler) {
 		//Horizontal panel for concept and issue date
 		HorizontalPanel descriptionHPanel = new HorizontalPanel();
 		descriptionHPanel.setWidth("100%");
@@ -4044,49 +4078,38 @@ public class SalaryDraft extends ResizeComposite
 		descriptionBox.getElement().getParentElement().getStyle().setWidth(100, Unit.PCT);
 
 		//Issue label and value
-		Label issueLabel = new Label("COBRO");
-		issueLabel.addStyleName(style.issueLabel());
+		Label issueDateLabel = new Label("COBRO");
+		issueDateLabel.addStyleName(style.issueLabel());
 
-		descriptionHPanel.add(issueLabel);
-		issueLabel.getElement().getParentElement().getStyle().setBorderStyle(BorderStyle.NONE);
-		issueLabel.getElement().getParentElement().getStyle().setPaddingRight(0, Unit.PX);
+		descriptionHPanel.add(issueDateLabel);
+		issueDateLabel.getElement().getParentElement().getStyle().setBorderStyle(BorderStyle.NONE);
+		issueDateLabel.getElement().getParentElement().getStyle().setPaddingRight(0, Unit.PX);
 
-		//Create widget
-		Widget issueValue = null;
 		
 		Date date = new Date();
 		date.setDate(1);
 
-		Widget innerIssueValue = new ListBox();
-		((ListBox)innerIssueValue).addItem("Prorrat.");
+		ListBox issueDateListBox = new ListBox();
+		issueDateListBox.ensureDebugId("issueDate-listbox-" + row);
+		
+		issueDateListBox.addItem("Prorrat.", "-1");
 
 		for (int month = 0; month < 12; month++) {
 			date.setMonth(month);
-			((ListBox)innerIssueValue).addItem(MONTH_FORMAT.format(date));
+			issueDateListBox.addItem(MONTH_FORMAT.format(date), Integer.toString(month));
 		}
 
-		((ListBox)innerIssueValue).setWidth("56px");
+		issueDateListBox.setWidth("56px");
 
 		Short month = item.getMonth();
-		((ListBox) innerIssueValue).setSelectedIndex(month == null ? 0 : month + 1);
+		issueDateListBox.setSelectedIndex(month == null ? 0 : month + 1);
 
-		innerIssueValue.addStyleName(style.issueTextBox());
-		((ListBox) innerIssueValue).addChangeHandler(new ChangeHandler() {
+		issueDateListBox.addStyleName(style.issueTextBox());
+		handler.setIssueDateListBox(issueDateListBox);
 
-			@Override
-			public void onChange(ChangeEvent event) {
-				int index = ((ListBox)innerIssueValue).getSelectedIndex();
-				item.setMonth(index == 0 ? null : (short) (index - 1));
-				salaryDraftObject.addDraftPayment((Payment)item);
-				calculate();
-			}
-		});
-
-		issueValue = innerIssueValue;
-		
-		descriptionHPanel.add(issueValue);
-		issueValue.getElement().getParentElement().getStyle().setPadding(0.00, Unit.PX);
-		issueValue.getElement().getParentElement().getStyle().setBorderStyle(BorderStyle.NONE);
+		descriptionHPanel.add(issueDateListBox);
+		issueDateListBox.getElement().getParentElement().getStyle().setPadding(0.00, Unit.PX);
+		issueDateListBox.getElement().getParentElement().getStyle().setBorderStyle(BorderStyle.NONE);
 
 		return descriptionHPanel;
 		

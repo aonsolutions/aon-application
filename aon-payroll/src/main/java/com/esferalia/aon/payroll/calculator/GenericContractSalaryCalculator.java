@@ -1201,7 +1201,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					results.get(0).getValue() != null && 
 					results.get(0).getValue() > 0.00 && 
 					isPartialMonth(results.get(0)) &&
-					contractPayment.getScope() == ExpressionScope.AGREEMENT &&
+//					contractPayment.getScope() == ExpressionScope.AGREEMENT &&
 					allAgreementConstants(results.get(0).getContext()) ) {
 				try {
 					results = fixConstantAgreementResult(contractPayment, results.get(0), start, end, expressionContext);
