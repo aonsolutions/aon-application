@@ -119,7 +119,9 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 		
 		salary = calculator.calculate(ctx);
 		
-		Assert.assertEquals(1000.00 * 20 / 30, salary.getTotalPayment(), DELTA);
+		int lastDayOfMonth = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
+		
+		Assert.assertEquals(1000.00 * (lastDayOfMonth - 11) / 30, salary.getTotalPayment(), DELTA);
 		
 	}
 	
@@ -208,9 +210,11 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 		
 		salary = calculator.calculate(ctx);
 		
+		int lastDayOfMonth = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
+		
 		Assert.assertEquals(3, salary.getSalaryDatas().stream().filter(sd -> sd.getName().equals("DIAS_COTIZADOS")).count(), DELTA);
-		Assert.assertEquals(1000.00 * 19 /30, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals(1000.00 * 19 /30, salary.getCommonBase(), DELTA);
+		Assert.assertEquals(1000.00 * (lastDayOfMonth - 12) /30, salary.getTotalPayment(), DELTA);
+		Assert.assertEquals(1000.00 * (lastDayOfMonth - 12) /30, salary.getCommonBase(), DELTA);
 		
 	}
 	
@@ -294,9 +298,12 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 		for(SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getDescription() + " = " + p.getAmount() + " = " + p.getQuote());
 		
-		Assert.assertEquals(1500.00 * 20 / 30, salary.getTotalPayment(), DELTA);
+		int lastDayOfMonth = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
+		int activeDays = (lastDayOfMonth - 11);
+		int itDays = 30 - activeDays; // adjust
+		Assert.assertEquals(1500.00 * activeDays / 30, salary.getTotalPayment(), DELTA);
 		Assert.assertEquals(3, salary.getSalaryDatas().stream().filter(sd -> sd.getName().equals("BASE_CGC")).count(), DELTA);
-		Assert.assertEquals(1500.00 * 20 / 30 + 35.00 * 10, salary.getCommonBase(), DELTA);
+		Assert.assertEquals(1500.00 * activeDays / 30 + 35.00 * itDays, salary.getCommonBase(), DELTA);
 		
 	}
 	
