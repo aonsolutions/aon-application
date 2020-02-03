@@ -3,7 +3,12 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:a='urn:import:com.esferalia.aon.gwt.payroll.client' >
 
-	<ui:Style  >
+	<ui:Style type="com.esferalia.aon.gwt.payroll.client.ActivityDialog.MyStyle">
+		
+		.warningColor{
+			font-weight: bold;
+			color: #be0000;
+		}
 	
 	</ui:Style>
 
