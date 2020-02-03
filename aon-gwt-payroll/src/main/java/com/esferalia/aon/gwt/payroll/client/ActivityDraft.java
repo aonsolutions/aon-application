@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.google.gwt.core.client.GWT;
@@ -11,8 +12,9 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.ContextMenuEvent;
-import com.google.gwt.event.dom.client.ContextMenuHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -25,7 +27,7 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ActivityDraft extends Composite implements ContextMenuHandler {
+public class ActivityDraft extends Composite{
 
 	private class ActivityImplementation extends Activity{
 
@@ -76,38 +78,53 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 			geozone.addStyleName(style.elementWidth80());
 			
 			HorizontalPanel hPanel = new HorizontalPanel();
+			
+			// Type Code CCC
 			Label typeCode = new Label("0111");
 			typeCode.addStyleName(style.paddingTop());
+			
+			// Account Status if it correct CCC or not
 			Label accountStatus = new Label();
+			
 			TextBox account = new TextBox();
 			account.setMaxLength(11);
 			account.setValue("");
 			account.addStyleName("aon-inputText");
 			account.addStyleName(style.elementWidth95());
-			account.addChangeHandler(new ChangeHandler() {
+			account.addValueChangeHandler(new ValueChangeHandler<String>() {
 				@Override
-				public void onChange(ChangeEvent event) {
-					if(account.getValue().length() >= 2) {
-						String province = ProvinceContract.getName(account.getValue().substring(0, 2));
-						if(null != province && checkCCC(account.getValue())) {
+				public void onValueChange(ValueChangeEvent<String> event) {
+					String accountValue = event.getValue();
+					if(!StringUtils.isBlank(accountValue) && accountValue.length() >= 2) {
+						
+						String province = ProvinceContract.getName(accountValue.substring(0, 2));
+						
+						if(checkCCC(accountValue)) {
 							geozone.setText(province);
+							geozone.removeStyleName(ActivityDraft.this.style.warningColor());
 							accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
 							accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
-							newId--;
-							activityDraftObject.insertCCC(newId, account.getValue(), typeCode.getText(), account.getValue(), (byte) types.getSelectedIndex(), province, false);
-							initPreview();
 						}else {
+							geozone.setText("DESCONOCIDA");
+							geozone.addStyleName(ActivityDraft.this.style.warningColor());
 							accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
 							accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
 						}
 						
+						// Add new CCC and initPreview
+						newId--;
+						id.setText(newId.toString());
+						activityDraftObject.insertCCC(newId, accountValue, typeCode.getText(), accountValue, (byte) types.getSelectedIndex(), province, false);
+						initPreview();
 					}
 				}
 			});
+			
 			hPanel.add(typeCode);
 			hPanel.add(account);
 			hPanel.add(accountStatus);
 			
+			// Add CCC Type change handler
 			types.addChangeHandler(new ChangeHandler() {
 				@Override
 				public void onChange(ChangeEvent event) {
@@ -117,10 +134,13 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 			});
 			
 			Button delete = new Button();
-			delete.setStyleName("aon-editDataTable-button aon-icon-cancel");
+			delete.setStyleName("aon-editDataTable-button aon-icon-delete");
 			delete.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
+					if(!StringUtils.isBlank(id.getText()))
+						activityDraftObject.deleteCCC(Integer.parseInt(id.getText()));
+					
 					cccDataTable.removeRow(0);
 				}
 			});
@@ -136,11 +156,16 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 	
 	// -------------------------------------------------- UiBinder --------------------------------------------------
 	
-	interface ActivityDraftUiBinder extends UiBinder<Widget, ActivityDraft> {
-	
-	}
+	interface ActivityDraftUiBinder extends UiBinder<Widget, ActivityDraft> {}
 	
 	private static ActivityDraftUiBinder uiBinder = GWT.create(ActivityDraftUiBinder.class);
+	
+	@UiField
+	MyStyle style;
+
+	interface MyStyle extends CssResource {
+		String warningColor();
+	}
 	
 	@UiField (provided = true)
 	Activity activity;
@@ -167,16 +192,10 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 	@UiHandler("saveButton")
 	public void onSaveClick(ClickEvent event) {
 		if(checkIfSaveIsPossible()){
-			if(checkIfCCCSaveIsPossible())
-				activityDraftObject.updateActivity(
+			activityDraftObject.updateActivity(
 					s -> {},
 					f -> {}
-				);
-			else {
-				WarningDialog dialog = new WarningDialog("Aviso", "Compruebe que las cuentas de cotizacion son correctas.");
-				dialog.center();
-				dialog.show();
-			}
+			);
 		}else{
 			WarningDialog dialog = new WarningDialog("Aviso", "Hay que rellenar los campos azules obligatoriamente.");
 			dialog.center();
@@ -185,29 +204,10 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 	}
 	
 	private boolean checkIfSaveIsPossible() {
-		if(
-			"" != activity.activityDescription.getValue() &&
-			"" != activity.activityCNAE2009.getValue() &&
-			"" != activity.activityRegime.getText()
-		){
+		if(!StringUtils.isBlank(activity.activityDescription.getValue()) && !StringUtils.isBlank(activity.activityCNAE2009.getValue())){
 			return true;
 		}else
 			return false;
-	}
-	
-	private boolean checkIfCCCSaveIsPossible() {
-		if(activity.cccDataTable.getRowCount() == 0)
-			return true;
-		else{
-			for(int i = 0; i < activity.cccDataTable.getRowCount(); i++){
-				HorizontalPanel hPanel = (HorizontalPanel) activity.cccDataTable.getWidget(i, 2);
-				TextBox ccc = (TextBox) hPanel.getWidget(1);
-				String province = ProvinceContract.getName(ccc.getValue().substring(0, 2));
-				if(null == province || !checkCCC(ccc.getValue()))
-					return false;
-			}
-			return true;
-		}
 	}
 
 	// ----------------------------------------------- METODOS DE LA CLASE ------------------------------------------------
@@ -233,7 +233,7 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 	
 		MultiWordSuggestOracle orclCNAE2009 = (MultiWordSuggestOracle) activity.activityCNAE2009.getSuggestOracle();
 		orclCNAE2009.addAll(cnae2009Suggest);
-		activity.activityCNAE2009.setAutoSelectEnabled(false);
+		activity.activityCNAE2009.setAutoSelectEnabled(true);
 	}
 	
 	private void fillActivityInfo() {
@@ -289,8 +289,16 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 			ListBox types = createCCCRegimeListBox();
 			types.setSelectedIndex(cccInfo.getType());
 			
-			Label geozone = new Label(cccInfo.getGeozone());
-			geozone.addStyleName(activity.style.elementWidth80());
+			Label geozone = new Label();
+			String geozoneValue = "DESCONOCIDA";
+			if(null != cccInfo.getGeozone()) {
+				geozoneValue = cccInfo.getGeozone();
+				geozone.removeStyleName(style.warningColor());
+			}else 
+				geozone.addStyleName(style.warningColor());
+			
+			geozone.setText(geozoneValue);
+			String province = ProvinceContract.getName(cccInfo.getCcc().substring(0, 2));
 			
 			HorizontalPanel hPanel = new HorizontalPanel();
 			Label typeCode = new Label(cccInfo.getCccRegimeCode());
@@ -301,35 +309,39 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 			account.setValue(cccInfo.getCcc());
 			account.addStyleName("aon-inputText");
 			account.addStyleName(activity.style.elementWidth95());
-			account.addChangeHandler(new ChangeHandler() {
+			account.addValueChangeHandler(new ValueChangeHandler<String>() {
 				@Override
-				public void onChange(ChangeEvent event) {
-					if(account.getValue().length() >= 2) {
-						String province = ProvinceContract.getName(account.getValue().substring(0, 2));
-						if(null != province && checkCCC(account.getValue())) {
+				public void onValueChange(ValueChangeEvent<String> event) {
+					String accountValue = event.getValue();
+					if(!StringUtils.isBlank(accountValue) && accountValue.length() >= 2) {
+						String province = ProvinceContract.getName(accountValue.substring(0, 2));
+						if(checkCCC(accountValue)) {
 							geozone.setText(province);
+							geozone.removeStyleName(style.warningColor());
 							accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
 							accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
-							activityDraftObject.insertCCC(cccInfo.getCccId(), account.getValue(), typeCode.getText(), account.getValue(), (byte) types.getSelectedIndex(), province);
 						}else {
+							geozone.setText("DESCONOCIDA");
+							geozone.addStyleName(style.warningColor());
 							accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
 							accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
 						}
-						
+						activityDraftObject.insertCCC(cccInfo.getCccId(), account.getValue(), typeCode.getText(), account.getValue(), (byte) types.getSelectedIndex(), province);
 					}
 				}
 			});
-			hPanel.add(typeCode);
-			hPanel.add(account);
-			hPanel.add(accountStatus);
-			String province = ProvinceContract.getName(account.getValue().substring(0, 2));
-			if(null != province && checkCCC(account.getValue())) {
+			
+			if(checkCCC(cccInfo.getCcc())) {
 				accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
 				accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
 			}else {
 				accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
 				accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
 			}
+			
+			hPanel.add(typeCode);
+			hPanel.add(account);
+			hPanel.add(accountStatus);
 			
 			types.addChangeHandler(new ChangeHandler() {
 				@Override
@@ -351,7 +363,6 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 						warnignDialog.center();
 						warnignDialog.show();
 					}else {
-//						Window.alert("Borrar Id : " + cccInfo.getCccId());
 						activityDraftObject.deleteCCC(cccInfo.getCccId());
 						initPreview();
 					}
@@ -460,11 +471,6 @@ public class ActivityDraft extends Composite implements ContextMenuHandler {
 		default:
 			return "0111";
 		}
-	}
-
-	@Override
-	public void onContextMenu(ContextMenuEvent event) {
-		// TODO Auto-generated method stub
 	}
 
 }

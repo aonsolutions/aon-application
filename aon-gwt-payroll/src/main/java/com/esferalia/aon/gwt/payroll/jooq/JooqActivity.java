@@ -132,13 +132,15 @@ public class JooqActivity {
 			if(null != contractRecord && !contractRecord.isEmpty())
 				useByContracts = true;
 			
-			Result<Record> geozoneName = dslContext.select()
-					.from(GEOZONE)
-					.where(GEOZONE.ID.eq(geozoneId))
-						//.and(GEOZONE.DOMAIN.eq(domain))
-					.fetch();
-			
-			String geozone = geozoneName.get(0).get(GEOZONE.NAME);
+			String geozone = null;
+			if(null != geozoneId) {
+				Result<Record> geozoneName = dslContext.select()
+						.from(GEOZONE)
+						.where(GEOZONE.ID.eq(geozoneId))
+						.fetch();
+				
+				geozone = geozoneName.get(0).get(GEOZONE.NAME);
+			}
 			
 			activityInfo.insertCCC(cccId, ccc, cccRegimeCode, ccc, cccRegime, geozone, useByContracts);
 		}
@@ -195,34 +197,39 @@ public class JooqActivity {
 			CCCInfo cccInfo = entry.getValue();
 			
 			Result<Record> geozoneRecords = null;
+			Integer geozoneId = null;
 			
-			if(hasHerefity) {
-				geozoneRecords = dslContext.select().from(GEOZONE)
-						.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
-						.and(GEOZONE.DOMAIN.eq(parentDomain))
-						.fetch();
-			}else {
-				geozoneRecords = dslContext.select().from(GEOZONE)
-						.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
-						.and(GEOZONE.DOMAIN.eq(activityInfo.getDomain()))
-						.fetch();
-			}
+			if(null != cccInfo.getGeozone()) {
 			
-			Integer geozoneId = 0;
-			if(null == geozoneRecords || geozoneRecords.isEmpty()) {
-				//TODO: No existe este geozone
-				Result<Record> gezoneRecordsInfo = dslContext.select().from(GEOZONE)
-						.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
-						.fetch();
+				if(hasHerefity) {
+					geozoneRecords = dslContext.select().from(GEOZONE)
+							.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
+							.and(GEOZONE.DOMAIN.eq(parentDomain))
+							.fetch();
+				}else {
+					geozoneRecords = dslContext.select().from(GEOZONE)
+							.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
+							.and(GEOZONE.DOMAIN.eq(activityInfo.getDomain()))
+							.fetch();
+				}
 				
-				geozoneId = dslContext.insertInto(GEOZONE)
-						.set(GEOZONE.DOMAIN, activityInfo.getDomain())
-						.set(GEOZONE.NAME, gezoneRecordsInfo.get(0).get(GEOZONE.NAME))
-						.set(GEOZONE.CODE, gezoneRecordsInfo.get(0).get(GEOZONE.CODE))
-						.returning(GEOZONE.ID)
-						.fetchOne().get(GEOZONE.ID);
-			}else {
-				geozoneId = geozoneRecords.get(0).get(GEOZONE.ID);
+				
+				if(null == geozoneRecords || geozoneRecords.isEmpty()) {
+					//TODO: No existe este geozone
+					Result<Record> gezoneRecordsInfo = dslContext.select().from(GEOZONE)
+							.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
+							.fetch();
+					
+					geozoneId = dslContext.insertInto(GEOZONE)
+							.set(GEOZONE.DOMAIN, activityInfo.getDomain())
+							.set(GEOZONE.NAME, gezoneRecordsInfo.get(0).get(GEOZONE.NAME))
+							.set(GEOZONE.CODE, gezoneRecordsInfo.get(0).get(GEOZONE.CODE))
+							.returning(GEOZONE.ID)
+							.fetchOne().get(GEOZONE.ID);
+				}else {
+					geozoneId = geozoneRecords.get(0).get(GEOZONE.ID);
+					
+				}
 				
 			}
 			
@@ -291,34 +298,36 @@ public class JooqActivity {
 			CCCInfo cccInfo = entry.getValue();
 			
 			Result<Record> geozoneRecords = null;
+			Integer geozoneId = null;
 			
-			if(hasHerefity) {
-				geozoneRecords = dslContext.select().from(GEOZONE)
-						.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
-						.and(GEOZONE.DOMAIN.eq(parentDomain))
-						.fetch();
-			}else {
-				geozoneRecords = dslContext.select().from(GEOZONE)
-						.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
-						.and(GEOZONE.DOMAIN.eq(activityInfo.getDomain()))
-						.fetch();
-			}
-			
-			Integer geozoneId = 0;
-			if(null == geozoneRecords || geozoneRecords.isEmpty()) {
-				//TODO: No existe este geozone
-				Result<Record> gezoneRecordsInfo = dslContext.select().from(GEOZONE)
-						.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
-						.fetch();
+			if(null != cccInfo.getGeozone()) {
+				if(hasHerefity) {
+					geozoneRecords = dslContext.select().from(GEOZONE)
+							.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
+							.and(GEOZONE.DOMAIN.eq(parentDomain))
+							.fetch();
+				}else {
+					geozoneRecords = dslContext.select().from(GEOZONE)
+							.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
+							.and(GEOZONE.DOMAIN.eq(activityInfo.getDomain()))
+							.fetch();
+				}
 				
-				geozoneId = dslContext.insertInto(GEOZONE)
-						.set(GEOZONE.DOMAIN, activityInfo.getDomain())
-						.set(GEOZONE.NAME, gezoneRecordsInfo.get(0).get(GEOZONE.NAME))
-						.set(GEOZONE.CODE, gezoneRecordsInfo.get(0).get(GEOZONE.CODE))
-						.returning(GEOZONE.ID)
-						.fetchOne().get(GEOZONE.ID);
-			}else {
-				geozoneId = geozoneRecords.get(0).get(GEOZONE.ID);
+				if(null == geozoneRecords || geozoneRecords.isEmpty()) {
+					//TODO: No existe este geozone
+					Result<Record> gezoneRecordsInfo = dslContext.select().from(GEOZONE)
+							.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
+							.fetch();
+					
+					geozoneId = dslContext.insertInto(GEOZONE)
+							.set(GEOZONE.DOMAIN, activityInfo.getDomain())
+							.set(GEOZONE.NAME, gezoneRecordsInfo.get(0).get(GEOZONE.NAME))
+							.set(GEOZONE.CODE, gezoneRecordsInfo.get(0).get(GEOZONE.CODE))
+							.returning(GEOZONE.ID)
+							.fetchOne().get(GEOZONE.ID);
+				}else {
+					geozoneId = geozoneRecords.get(0).get(GEOZONE.ID);
+				}
 			}
 			
 			dslContext.insertInto(ENTERPRISE_CCC, ENTERPRISE_CCC.DOMAIN, ENTERPRISE_CCC.CCC, ENTERPRISE_CCC.TYPE, ENTERPRISE_CCC.ENTERPRISE_ACTIVITY, ENTERPRISE_CCC.GEOZONE)
