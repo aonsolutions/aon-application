@@ -474,6 +474,9 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 	}
 
 	private void initSalariesTable() {		
+		//Reset Selection Model 
+		selectionModel.clear();
+		
 		//Show buttons
 		this.deleteButton.setVisible(true);
 		this.saveButton.setVisible(true);

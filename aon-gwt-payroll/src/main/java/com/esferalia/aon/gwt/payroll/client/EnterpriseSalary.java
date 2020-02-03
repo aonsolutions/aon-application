@@ -429,7 +429,7 @@ public class EnterpriseSalary extends Composite implements ContextMenuHandler {
 					//Workplace Name Title
 					if(!this.enterpriseSalaryObject.getEnterpriseSalaries().isEmpty())
 						workplaceNameLabel.setText(this.enterpriseSalaryObject.getEnterpriseSalaries().get(0).getEnterpriseName());
-				    
+					
 					initListBox();
 					initSuggestBox();
 					this.allRB.setValue(true, false);
@@ -509,6 +509,9 @@ public class EnterpriseSalary extends Composite implements ContextMenuHandler {
 	
 
 	private void initSalariesTable() {		
+		//Reset Selection Model 
+		selectionModel.clear();
+				
 		//Show buttons
 		this.deleteButton.setVisible(true);
 		this.saveButton.setVisible(true);
