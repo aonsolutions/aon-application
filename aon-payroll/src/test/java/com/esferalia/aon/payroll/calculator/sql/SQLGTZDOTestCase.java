@@ -747,6 +747,11 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		ContractRecord contract = newContract(aonContext,  
 				AonDateUtils.getFirstDayOfYear(getToday()),
 				Collections.emptyMap()
+//				new HashMap<String,String>(){
+//					{
+//						put("DIAS_MES", "30");
+//					}
+//				}
 				, new String[] { 
 						"GTZDO(P_1+P_2+P_3+P_4+P_5+P_6+P_7+P_8+P_9+P_10)" ,
 						"100.00 * DIAS_TRABAJADOS / DIAS_MES",
@@ -769,7 +774,9 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		//@formatter:on
 		
 		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
-		addPayment(aonContext, contract, prestIT, String.format("30 * 0.75 * %s",  OCCUPATIONAL_DISEASE_DAYS), String.format("1000.00/31 * %s",  OCCUPATIONAL_DISEASE_DAYS));
+		addPayment(aonContext, contract, prestIT, 
+				String.format("30 * 0.75 * %s",  OCCUPATIONAL_DISEASE_DAYS), 
+				String.format("BASE_REGULADORA * %s",  QUOTE_DAYS));
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
