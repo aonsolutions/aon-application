@@ -488,7 +488,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				&& isWholeMonth(results.get(0))	
 				&& contractPayment.getScope() == ExpressionScope.AGREEMENT
 				&& allAgreementConstants(results.get(0).getContext()) ) {
-				return subtractITPart(results, its, expressionContext);
+				return fixPartialFactor(subtractITPart(results, its, expressionContext), expressionContext);
 			} ;
 			
 			
@@ -518,8 +518,9 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		} catch ( Throwable t ) {
 		}
 		
+		double factor = getPartialFactor(expressionContext, period);
 		
-		double value = result.getValue() * days / monthDays;
+		double value = result.getValue() * days / monthDays * factor;
 		
 		ITimedResult<Double> fixed = 
 				new TimedResult<Double>(value, period, result.getContext());
@@ -543,6 +544,22 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			Double activeValue = value / days * activeDays; 
 			fixed.add( new TimedResult<Double>(activeValue, active, context));
 		}
+		return fixed;
+	}
+	
+	protected List<ITimedResult<Double>> fixPartialFactor(
+			List<ITimedResult<Double>> results, 
+			ExpressionContext expressionContext) 
+			throws UndefinedVariablesException, ExpressionException {
+
+		List<ITimedResult<Double>> fixed = 
+				new ArrayList<ITimedResult<Double>>(results.size());
+		
+		for (ITimedResult<Double> result : results) {
+			double factor = getPartialFactor(expressionContext, result.getPeriod());
+			fixed.add(new TimedResult<Double>(result.getValue()* factor, result.getPeriod(), result.getContext()));
+		}
+		
 		return fixed;
 	}
 	
@@ -1064,6 +1081,21 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	}
 
 	
+	private static double getPartialFactor(ExpressionContext expressionContext, Period period) {
+		double factor = 1.00;
+		try {
+			double factors = 0.00;
+			List<ITimedResult<Number>> vars = expressionContext.eval(String.format("%s ? 1.00 : %s", ContextVariable.FULL_TIME.getName(), ContextVariable.PARTIAL_FACTOR.getName()), period.getStart(), period.getEnd(), Number.class);
+			for (ITimedResult<Number> var : vars) {
+				factors += var.getValue().doubleValue();
+			}
+			factor = factors / vars.size();
+		} catch ( Throwable t ) {
+		}
+		
+		return factor;
+	}
+
 	private static String normalize(String description) {
 		
 		return description
