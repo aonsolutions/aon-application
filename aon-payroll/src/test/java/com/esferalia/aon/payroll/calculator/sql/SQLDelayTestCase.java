@@ -506,7 +506,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		addIT(aonContext, contract, LeaveType.MATERNITY, startITDate, null, null);
 		addData(aonContext, contract, startITDate, null, ContextVariable.MATERNITY_FACTOR.getName(), "0.5");
 
-		Date startDate = getFirstDayOfMonth(getToday());
+		Date startDate = getFirstDayOfYear(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
 
 		for ( int i = 0 ; i < 11 ; i++ ) {
