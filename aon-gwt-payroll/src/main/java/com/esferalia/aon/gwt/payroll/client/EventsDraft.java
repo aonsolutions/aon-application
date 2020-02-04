@@ -429,7 +429,7 @@ public class EventsDraft extends ResizeComposite {
 						if(StringUtils.isBlank(eventCell.getValue()) || eventCell.getValue() == "-")
 							value = null;
 						else
-							Double.parseDouble(eventCell.getValue());
+							value = Double.parseDouble(eventCell.getValue());
 						
 						Date startDate = new Date(actualYear, actualMonth, 1);
 						Date endDate = DateUtils.getLastDayOfMonth(startDate);
@@ -544,14 +544,38 @@ public class EventsDraft extends ResizeComposite {
 					
 					@Override
 					public void onValueChange(ValueChangeEvent<String> event) {
-						Double value = Double.parseDouble(eventCell.getValue());
+						Double value = null;
+						if(StringUtils.isBlank(eventCell.getValue()) || eventCell.getValue() == "-")
+							value = null;
+						else
+							value = Double.parseDouble(eventCell.getValue());
+						
 						Date startDate = new Date(actualYear, eventCell.getColumn()-1, 1);
 						Date endDate = DateUtils.getLastDayOfMonth(startDate);
+						
 						Integer employeeId = draftObject.getEventEmployeeId(eventsTable.getText(eventCell.getRow(), 0));
 						
 						draftObject.addEvent(employeeId, varName, value, startDate, endDate);
 						
 						eventCell.setOnChangeStyle();
+					}
+				});
+				
+				eventCell.addFocusHandler(new FocusHandler() {
+					
+					@Override
+					public void onFocus(FocusEvent event) {
+						if(StringUtils.isBlank(eventCell.getValue()) || eventCell.getValue() == "-")
+							eventCell.setValue("");
+					}
+				});
+				
+				eventCell.addBlurHandler(new BlurHandler() {
+					
+					@Override
+					public void onBlur(BlurEvent event) {
+						if(StringUtils.isBlank(eventCell.getValue()))
+							eventCell.setValue("-");
 					}
 				});
 				
