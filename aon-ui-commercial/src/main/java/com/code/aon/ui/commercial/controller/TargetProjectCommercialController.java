@@ -7,11 +7,12 @@ import static com.code.aon.ui.commercial.controller.ICommercialConstants.TARGET_
 
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.AonVersion;
 import com.code.aon.commercial.ProjectCommercial;
 import com.code.aon.commercial.Target;
-import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.commercial.event.ProjectCommercialSearchListener;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -31,6 +32,14 @@ public class TargetProjectCommercialController extends BasicController {
 	public void onSelectProject( ActionEvent event ) throws ManagerBeanException {	
 		ITransferObject to = (ITransferObject) getSelectedTO();
 		BasicController projectBean = getProjectController();
+		Integer size = projectBean.getListeners().size();
+		for(Integer i = size; i > 0; i--) {
+			try {
+				ProjectCommercialSearchListener listener = (ProjectCommercialSearchListener) projectBean.getListeners().get(i-1);
+				listener.setSeller(null);
+				listener.setTarget(null);
+			} catch (Exception e) {}	
+		}
 		projectBean.setBackAction(NAVIGATION_TARGET_FORM);
 		projectBean.setBackActionListener(TARGET_PROJECT_COMMERCIAL_CONTROLLER_NAME + ".onBackToTarget");
 		projectBean.select(event, to);

@@ -16,10 +16,12 @@
 				<ui:param name="controller" value="#{projectCommercial}" />
 				
 				<ui:define name="additionalToolbarContent">
-					<aon:commandLink id="projectCommercial-import" value="#{bundle.aon_import}"
-						onclick="projectCommercial()"
-						styleClass="aon-finding-toolbar-item aon-icon-import-excel-trans">
-					</aon:commandLink>
+					<aon:if test="#{domainSwitcher.betaUser}">
+						<aon:commandLink id="projectCommercial-import" value="#{bundle.aon_import}"
+							onclick="projectCommercial()"
+							styleClass="aon-finding-toolbar-item aon-icon-import-excel-trans">
+						</aon:commandLink>
+					</aon:if>
 				</ui:define>
 			</ui:decorate>
 

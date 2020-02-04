@@ -1,16 +1,12 @@
 package com.code.aon.ui.commercial.controller;
 
-import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
-
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.AonVersion;
 import com.code.aon.commercial.ProjectCommercial;
-import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.stat.controller.ProjectStatEngineController;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.occam.api.AON;
 
 public class ProjectCommercialController extends BasicController {
 	
@@ -37,7 +33,6 @@ public class ProjectCommercialController extends BasicController {
 	
 	@Override
 	public void onSearch(ActionEvent event) {
-		fixProjectCommercial();
 		super.onSearch(event);
 	}
 
@@ -47,11 +42,4 @@ public class ProjectCommercialController extends BasicController {
 		statController.initializeProjectData();
 	}
 
-	public void fixProjectCommercial() {
-		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-		String domainName = ds.getDomainNameURL();
-		String user = ds.getCurrentUser();
-		Integer domainId = ds.getDomainId();
-		AON.fixProjectCommercial(domainName, domainId, user);
-	}
 }
