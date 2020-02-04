@@ -37,6 +37,7 @@ import com.esferalia.aon.js.payroll.client.Reports.Payroll;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
@@ -1023,6 +1024,7 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 
 		List<Payment> twins = new LinkedList<Payment>();
 
+		twins.add(payment);
 
 		if ( payment.getConceptId() == null ) 
 			return twins;
@@ -1059,7 +1061,6 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 			p.setSalaryType(payment.getSalaryType());
 		});
 		
-		twins.add(0, payment);
 
 		return twins;
 	}
