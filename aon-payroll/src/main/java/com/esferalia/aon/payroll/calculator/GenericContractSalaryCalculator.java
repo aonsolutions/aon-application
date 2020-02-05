@@ -1521,6 +1521,16 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		ExpressionContext expressionContext = ctx.getExpressionContext();
 		for (String name : names) {
 			try {
+				ITimedVariable<?> data = expressionContext.getVariable(name, ctx.getStartDate(), ctx.getEndDate());
+				try {
+					salaryBuilder.addData(name, data);
+					continue;
+				} catch (Throwable t) {
+				}
+			}catch (Throwable t) {
+			}
+			
+			try {
 				for (ITimedVariable<Object> data :expressionContext.eval(name, ctx.getStartDate(), ctx.getEndDate())){
 					try {
 						salaryBuilder.addData(name, data);
