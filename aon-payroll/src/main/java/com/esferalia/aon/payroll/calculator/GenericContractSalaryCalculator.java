@@ -1524,7 +1524,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			try {
 				for (ITimedVariable<?> data :expressionContext.eval(name, ctx.getStartDate(), ctx.getEndDate())){
 					try {
-						data = ((IExpressionVariable<?>) data).getContext().getOrDefault(name, data);
+						data = ((ITimedResult<?>) data).getContext().getOrDefault(name, data);
 					} catch (Throwable t) {
 					}
 					
