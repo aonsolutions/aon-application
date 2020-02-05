@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -93,7 +94,13 @@ public class SalaryDraftBuilder
 	public void setDefined(Map<String, boolean[]> defined) {
 		this.defined = defined;
 	}
-
+	
+	public void setAgreementPayments(Collection<IContractPayment> payments) {
+		for (IContractPayment contractPayment : payments) {
+			salaryDraft.addAgreementPayment(newAgreementPayment(contractPayment));
+		}
+	}
+	
 	public void clearDb() {
 		salaryDraft.clearDb();
 	}
@@ -992,6 +999,28 @@ public class SalaryDraftBuilder
 		embargo.setDescriptionTemplate(contractEmbargo.getDescription());
 
 		return embargo;
+	}
+
+
+	private Payment newAgreementPayment(IContractPayment contractPayment) {
+
+		Payment payment = new Payment();
+
+		payment.setId(contractPayment.getId());
+		payment.setConceptId(contractPayment.getConceptId());
+		payment.setType(getPaymentType(contractPayment.getType()));
+		payment.setName(contractPayment.getName());
+		payment.setMonth(getMonth(contractPayment.getMonth()));
+		payment.setSalaryType(getSalaryType(contractPayment.getSalaryType()));
+		payment.setStartDate(contractPayment.getStartDate());
+		payment.setEndDate(contractPayment.getEndDate());
+		payment.setExpression(contractPayment.getExpression());
+		payment.setScope(getScope(contractPayment.getScope()));
+		payment.setIrpfExpression(contractPayment.getIrpfExpression());
+		payment.setQuoteExpression(contractPayment.getQuoteExpression());
+		payment.setDescriptionTemplate(contractPayment.getDescription());
+
+		return payment;
 	}
 
 	private Payment newPayment(IContractPayment contractPayment) {

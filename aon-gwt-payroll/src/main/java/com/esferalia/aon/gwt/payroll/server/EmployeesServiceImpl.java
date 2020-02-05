@@ -3445,6 +3445,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		ISQLContractSalaryCalculatorContext ctx;
 		try {
 			ctx = getSalaryCalculatorContext(conn, draft, draftBuilder);
+			draftBuilder.setAgreementPayments(ctx.getAgreementPayments());
 			draftBuilder.setDefined(EmployeesServiceHelper.getDefinedMap(ctx));
 			calculator.calculate(ctx);
 		} catch (ExpressionException e) {

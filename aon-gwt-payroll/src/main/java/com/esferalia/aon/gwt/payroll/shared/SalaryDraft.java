@@ -11,7 +11,11 @@ public class SalaryDraft extends SalaryPreview {
 
 	public static enum Scope {
 
-		SYSTEM, APPLICATION, AGREEMENT, CONTRACT, SALARY;
+		SYSTEM, 
+		APPLICATION, 
+		AGREEMENT, 
+		CONTRACT, 
+		SALARY;
 
 		public static final int NUM_VALUES = Scope.values().length;
 
@@ -82,6 +86,8 @@ public class SalaryDraft extends SalaryPreview {
 
 	private List<ITDataPerson> draftLeaveIts;
 
+	private List<Payment> agreementPayments;
+
 	public SalaryDraft() {
 		context = new LinkedList<Variable>();
 		dbContext = new LinkedList<Variable>();
@@ -98,6 +104,8 @@ public class SalaryDraft extends SalaryPreview {
 		draftEmbargos = new Stack<Deduction>();
 		draftLeaveIts = new Stack<ITDataPerson>();
 		draftBonuses = new Stack<Bonus>();
+		
+		agreementPayments = new LinkedList<Payment>();
 	}
 
 	public SalaryDraft clear() {
@@ -875,6 +883,14 @@ public class SalaryDraft extends SalaryPreview {
 		return this;
 	}
 	
+	public List<Payment> getAgreementPayments() {
+		return agreementPayments;
+	}
+	
+	public SalaryDraft addAgreementPayment(Payment payment) {
+		this.agreementPayments.add(payment);
+		return this;
+	}
 	// ------------------------------------------------------------------------
 
 }

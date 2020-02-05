@@ -35,6 +35,7 @@ import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.js.payroll.client.Reports.Payroll;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.AonUtils;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.Window;
@@ -813,6 +814,21 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 		return salaryDraft.getType() == Type.SETTLE;
 	}
 	
+	
+	public List<Payment> getAgreementPayments() {
+		return salaryDraft.getAgreementPayments();
+	}
+	
+	public boolean hasAgreementCounterPart(Payment payment) {
+		for (Payment p : salaryDraft.getAgreementPayments() ) {
+			if ( AonUtils.equals(p.getConceptId(), payment.getConceptId()) &&
+				AonStringUtils.equals(p.getExpression(), payment.getExpression()) && 
+				AonStringUtils.equals(p.getDescriptionTemplate(), payment.getDescriptionTemplate()) 
+				)
+				return true;
+		}
+		return false;
+	}
 	// ------------------------------------------
 	// Payroll
 	//
