@@ -28,18 +28,18 @@ public class BOEBalanceAsocAbbreviateScript extends BalanceScript {
 	private static enum AccBOEBalanceAsocAbbreviateKey implements IBalanceKey{
 		// ACTIVO
 		 ANC(0,HEADER0,"A)","ACTIVO NO CORRIENTE",null,"ANCI+ANCII+ANCIII+ANCIV+ANCV+ANCVI+ANCVII")
-			,ANCI	(1,LEAF,"I"	 ,"Inmovilizado intangible","sdb({20})-sab({280,290})",null)
-			,ANCII	(1,LEAF,"II" ,"Bienes del Patrimonio Hist\u00F3rico","sdb({240,241,242,243,244,249})-sab({299})",null)
+			,ANCI	(1,LEAF,"I"	 ,"Inmovilizado intangible","sdb({20})-sab({280,2830,290})",null)
+			,ANCII	(1,LEAF,"II" ,"Bienes del Patrimonio Hist\u00F3rico","sdb({24})-sab({299})",null)
 			,ANCIII	(1,LEAF,"III","Inmovilizado material","sdb({21,23})-sab({281,2831,291})",null)
 			,ANCIV	(1,LEAF,"IV" ,"Inversiones inmobiliarias","sdb({22})-sab({282,2832,292})",null)
-			,ANCV	(1,LEAF,"V"	 ,"Inversiones en entidades del grupo y asociadas a largo plazo","sdb({2503,2504,2513,2514,2523,2524})-sab({2593,2594,293,2943,2944,2953,2954})",null)
-			,ANCVI	(1,LEAF,"VI" ,"Inversiones financieras a largo plazo","sdb({2505,2515,2525,260,261,262,263,264,265,267,268,27})-sab({2595,269,2945,2955,297,298})",null)
+			,ANCV	(1,LEAF,"V"	 ,"Inversiones en entidades del grupo y asociadas a largo plazo","sdb({2503,2504,2513,2514,2523,2524})-sab({2593,2594,2933,2934,2943,2944,2953,2954})",null)
+			,ANCVI	(1,LEAF,"VI" ,"Inversiones financieras a largo plazo","sdb({2505,2515,2525,260,261,262,263,264,265,268,27})-sab({2595,269,2935,2945,2955,296,297,298})",null)
 			,ANCVII	(1,LEAF,"VII","Activos por impuesto diferido","sdb({474})",null)
 		
 		,AC(0,HEADER0,"B)","ACTIVO CORRIENTE",null,"ACI+ACII+ACIII+ACIV+ACV+ACVI+ACVII")
 			,ACI(1,LEAF,"I","Existencias","sdb({30,31,32,33,34,35,36,407})-sab({(39)})",null)
 			,ACII(1,LEAF,"II","Usuarios y otros deudores de la actividad propia","sdb({447,448}) - sab({495})",null)
-			,ACIII(1,HEADER1,"III","Deudores comerciales y otras cuentas a cobrar","sdb({430,431,432,433,434,435,436})-sab({437,490,493,440,441,446,449,460,464,470,471,472,558,544})",null)
+			,ACIII(1,HEADER1,"III","Deudores comerciales y otras cuentas a cobrar","sdb({430,431,432,433,434,435,436})-sab({437,490,493,440,441,446,449,460,464,470,471,472,473,558,544,558})",null)
 			,ACIV(1,LEAF,"IV","Inversiones en empresas del grupo y asociadas a corto plazo","sdb({5303,5304,5313,5314, 5323, 5324,5333, 5334, 5343,5344, 5353, 5354})+sdbPositivo({5523,5524})-sab({5393,5394,593,5943,5944,5953,5954})",null)
 			
 			,ACV(1,LEAF,"V","Inversiones financieras a corto plazo"
