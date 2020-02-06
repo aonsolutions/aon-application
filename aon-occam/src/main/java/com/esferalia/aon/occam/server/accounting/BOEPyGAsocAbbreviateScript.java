@@ -69,7 +69,7 @@ public class BOEPyGAsocAbbreviateScript extends BalanceScript {
  	  ,CEF	(0,TOTAL0,"F)" ,"Ajustes por errores",null,null)
  	  ,CEG	(0,TOTAL0,"G)" ,"Variaciones en la dotaci\u00F3n fundacional o fondo social",null,null)
  	  ,CEH	(0,TOTAL0,"H)" ,"Otras variaciones",null,null)
- 	  ,CEI	(0,TOTAL0,"H)" ,"RESULTADO TOTAL, VARIACI\u00D3N DEL PATRIMONIO NETO EN EL EJERCICIO (A.4+D+E+F+G+H)",null,"CEA4+CED+CEE+CEF+CEG+CEH")
+ 	  ,CEI	(0,TOTAL0,"I)" ,"RESULTADO TOTAL, VARIACI\u00D3N DEL PATRIMONIO NETO EN EL EJERCICIO (A.4+D+E+F+G+H)",null,"CEA4+CED+CEE+CEF+CEG+CEH")
  	 	;
 			
 		private int level;
