@@ -55,7 +55,7 @@ public class BOEBalanceAsocAbbreviateScript extends BalanceScript {
 					,PNA1I1(3,LEAF,"1","Dotación fundacional / Fondo social","sab({100,101})",null)
 					,PNA1I2(3,LEAF,"2","(Dotación fundacional no exigido / Fondo social no exigido)","sdb({103,104})",null)
 				,PNA1II(2,LEAF,"II","Reservas","sab({111,113,114,115})",null)
-				,PNA1III(2,LEAF,"III","Excedentes de ejercicios anteriores","sab({120})-sab({121})"	,null)
+				,PNA1III(2,LEAF,"III","Excedentes de ejercicios anteriores","sab({120})-sdb({121})"	,null)
 				,PNA1IV(2,LEAF,"IV","Excedentes del ejercicio","sab({129,7}) - sdb({6})",null)
 			,PNA2(1,LEAF,"A-2)","Ajustes por cambio de valor","sab({133,1340,137})",null)
 			,PNA3(1,LEAF,"A-3)","Subvenciones, donaciones y legados recibidos","sab({130,131,132})",null)

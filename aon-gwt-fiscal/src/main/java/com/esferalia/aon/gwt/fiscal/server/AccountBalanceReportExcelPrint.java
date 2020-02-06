@@ -68,7 +68,8 @@ public class AccountBalanceReportExcelPrint extends HttpServlet {
 					.forEach(action);
 			}
 			resp.setContentType(MimeType.MS_EXCEL.getName());
-			resp.setHeader("Content-disposition", "attachment; filename=\"Balance_Situacion."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
+			String balName = (params != null && params.getBalanceType() != null)?params.getBalanceType().getName():"Balance";
+			resp.setHeader("Content-disposition", "attachment; filename=\""+balName+"."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
 			action.finalize(resp.getOutputStream());
 			resp.flushBuffer();
 		} catch (Throwable e) {

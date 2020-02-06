@@ -30,9 +30,10 @@ public class AccountBalanceReportPDFPrint extends HttpServlet {
 			params.setDomain(Integer.parseInt(req.getParameter(IRequestParamsNames.DOMAIN_ID)));
 			params.setUser(req.getParameter(IRequestParamsNames.USER));
 			
-
 			resp.setContentType(MimeType.PDF.getName());
-			resp.setHeader("Content-disposition", "attachment; filename=\"Balance_Oficial."+ MimeType.PDF.getExtension()+ "\";");
+			
+			String balName = (params != null && params.getBalanceType() != null)?params.getBalanceType().getName():"Balance";
+			resp.setHeader("Content-disposition", "attachment; filename=\""+balName+"."+ MimeType.PDF.getExtension()+ "\";");
 			AccountBalanceReportPDF reportPDF = new AccountBalanceReportPDF();
 			reportPDF.printBalanceReport(resp.getOutputStream(), params);
 			resp.flushBuffer();

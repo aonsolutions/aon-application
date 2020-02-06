@@ -26,9 +26,9 @@ public enum BalanceType implements Serializable {
 	,PYG_COOP_ABBREV	(true ,"Cuenta de explotaci\u00F3n (COOPERATIVAS Abreviado)","https://www.boe.es/buscar/pdf/2010/BOE-A-2010-20034-consolidado.pdf")
 		{ @Override public void visit(IBalanceTypeVisitor visitor) { visitor.visitPygCoopAbbreviate(); }}
 
-	,BALANCE_ASOC_ABBREV(false,"Balance de Situaci\u00F3n (Entidades sin fines lucrativos)","https://www.boe.es/boe/dias/2011/11/24/pdfs/BOE-A-2011-18458.pdf")
+	,BALANCE_ASOC_ABBREV(false,"Balance (Entidades sin fines lucrativos)","https://www.boe.es/boe/dias/2013/04/09/pdfs/BOE-A-2013-3736.pdf")
 		{ @Override public void visit(IBalanceTypeVisitor visitor) { visitor.visitBalanceAsocAbbreviate(); }}
-	,PYG_ASOC_ABBREV(true,"Cuenta de explotaci\u00F3n (Entidades sin fines lucrativos)","https://www.boe.es/boe/dias/2011/11/24/pdfs/BOE-A-2011-18458.pdf")
+	,PYG_ASOC_ABBREV(true,"Cuenta de resultados (Entidades sin fines lucrativos)","https://www.boe.es/boe/dias/2013/04/09/pdfs/BOE-A-2013-3736.pdf")
 		{ @Override public void visit(IBalanceTypeVisitor visitor) { visitor.visitPygAsocAbbreviate(); }}
 	;
 	

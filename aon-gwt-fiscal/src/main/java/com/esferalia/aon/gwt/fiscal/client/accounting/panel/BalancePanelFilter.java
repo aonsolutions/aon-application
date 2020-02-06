@@ -390,8 +390,8 @@ public class BalancePanelFilter extends SimpleLayoutPanel implements HasValueCha
 			}
 			@Override public void visitPygCoopNormal() 			{balanceType.addItem( "Cuenta de Explotaci\u00F3n COOPERATIVAS (Normal)");}
 			@Override public void visitPygCoopAbbreviate() 		{balanceType.addItem( "Cuenta de Explotaci\u00F3n COOPERATIVAS (Abreviado)");}
-			@Override public void visitBalanceAsocAbbreviate()  {balanceType.addItem( "Balance de situaci\u00F3n ASOC.SIN LUCRO (Abreviado)");}
-			@Override public void visitPygAsocAbbreviate() 		{balanceType.addItem( "Cuenta de Explotaci\u00F3n ASOC.SIN LUCRO (Abreviado)");}
+			@Override public void visitBalanceAsocAbbreviate()  {balanceType.addItem( "Balance ASOC.SIN LUCRO (Abreviado)");}
+			@Override public void visitPygAsocAbbreviate() 		{balanceType.addItem( "Cuenta de Resultados ASOC.SIN LUCRO (Abreviado)");}
 			
 		};
 		
