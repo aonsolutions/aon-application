@@ -499,16 +499,18 @@ public class SalaryDraftBuilder
 
 		addContext(context);
 
-		Deduction myCost = new Deduction();
-		myCost.setAmount(amount);
-		myCost.setName(cost.getName());
-		myCost.setDescription(description);
-		myCost.setExpression(cost.getExpression());
-		myCost.setType(getDeductionType(cost.getType()));
-		myCost.setDescriptionTemplate(cost.getDescription());
+		IContractDeduction contractCost = (IContractDeduction) cost;
+		
+		Deduction draftCost = newDeduction(contractCost);
+		draftCost.setAmount(amount);
+		draftCost.setDescription(description);
 
-		salaryDraft.addCost(myCost);
+		CompositeDeduction compositeCost = getCost(contractCost.getId());
 
+		if (compositeCost != null)
+			compositeCost.addChild(draftCost);
+		else
+			salaryDraft.addCost(draftCost);
 	}
 
 	@Override
@@ -1095,6 +1097,24 @@ public class SalaryDraftBuilder
 				CompositeDeduction composite = new CompositeDeduction();
 				composite.addChild(deduction);
 				deductions.set(i, composite);
+				return composite;
+
+			}
+		}
+		return null;
+	}
+
+	private CompositeDeduction getCost(Integer id) {
+		List<Deduction> costs = salaryDraft.getCosts();
+		for (int i = 0; i < costs.size(); i++) {
+			Deduction cost = costs.get(i);
+			if (cost.getId().equals(id)) {
+				if (cost instanceof CompositeDeduction)
+					return (CompositeDeduction) cost;
+
+				CompositeDeduction composite = new CompositeDeduction();
+				composite.addChild(cost);
+				costs.set(i, composite);
 				return composite;
 
 			}

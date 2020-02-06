@@ -1,16 +1,11 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import static com.esferalia.aon.gwt.common.shared.DateUtils.addMonths2Date;
-import static com.esferalia.aon.gwt.common.shared.DateUtils.getFirstDayOfMonth;
-import static com.esferalia.aon.gwt.common.shared.DateUtils.getLastDayOfMonth;
 import static com.esferalia.aon.gwt.payroll.client.Constants.DESCRIPTION_MAX_LENGTH;
 import static com.esferalia.aon.gwt.payroll.client.Constants.EXPRESSION_MAX_LENGTH;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -18,7 +13,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -55,11 +49,6 @@ import com.esferalia.aon.gwt.payroll.shared.UndefinedDeductionVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
-import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart;
-import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options;
-import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options.RowLabelStyle;
-import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options.Timeline;
-import com.esferalia.aon.gwt.visualization.client.visualizations.Tooltip;
 import com.esferalia.aon.js.payroll.client.Reports;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -85,8 +74,6 @@ import com.google.gwt.event.dom.client.HasAllFocusHandlers;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseMoveEvent;
-import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -135,7 +122,6 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestBox.DefaultSuggestionDisplay;
 import com.google.gwt.user.client.ui.SuggestBox.SuggestionCallback;
@@ -147,10 +133,6 @@ import com.google.gwt.user.client.ui.ValueBoxBase;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
-import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
-import com.google.gwt.visualization.client.DataTable;
-import com.google.gwt.visualization.client.VisualizationUtils;
-import com.google.gwt.visualization.client.events.OnMouseOverHandler;
 
 import net.aonsolutions.gwt.pdfjs.client.Viewer;
 
@@ -290,11 +272,15 @@ public class SalaryDraft extends ResizeComposite
 			"DIAS_TRABAJADOS", 
 			"DIAS_AUSENCIA",
 			"DIAS_INACTIVIDAD",
+			"DIAS_NOMINA",
+			"DIAS_NATURALES_MES",
+			"DIAS_COTIZADOS",
 
 			"CONTEXT", 
 			"SELF", 
 			"THIS", 
 			"CONCEPTO", // context
+			"MENUSALIDAD",
 
 			"HORAS_LUNES", 
 			"HORAS_MARTES", 
@@ -312,6 +298,13 @@ public class SalaryDraft extends ResizeComposite
 			"POR_HORAS", "CONTEXT", "UTILIZADA", "IS_READ"
 	};
 
+	// @formatter:off
+	private static String[] SKIP_NULL_VARIABLES = {
+		"DIAS_ERE",	
+		"DIAS_HUELGA",	
+		"COEFICIENTE_ERE",	
+		"COEFICIENTE_HUELGA",	
+	};
 
 	// @formatter:on
 
@@ -2291,14 +2284,6 @@ public class SalaryDraft extends ResizeComposite
 	@UiField
 	FlexTable contextTable;
 	@UiField
-	SimplePanel contextTimeLinePanel;
-	@UiField
-	Button contextTableButton;
-	@UiField
-	Button contextTimeLineButton;
-	@UiField
-	DeckPanel contextDeckPanel;
-	@UiField
 	FlexTable eventsTable;
 	@UiField
 	Widget eventsTableSpace;
@@ -2467,7 +2452,6 @@ public class SalaryDraft extends ResizeComposite
 		scope = Scope.CONTRACT;
 		salarySelect.addListener(this);
 		showDraft();
-		showContextTable();
 
 		zoom = Constants.DEFAULT_ZOOM;
 		initEvents();
@@ -2478,7 +2462,6 @@ public class SalaryDraft extends ResizeComposite
 
 	public void setSalaryDraftObject(SalaryDraftObject salaryDraftObject) {
 		showDraft();
-		showContextTable();
 		this.salaryDraftObject = salaryDraftObject;
 		onChangedSalaryDraftObject(salaryDraftObject);
 	}
@@ -2852,13 +2835,6 @@ public class SalaryDraft extends ResizeComposite
 		return visibleWidget == w;
 	}
 
-	private void showContextTable() {
-		contextDeckPanel.showWidget(contextDeckPanel.getWidgetIndex(contextTable));
-		contextDeckPanel.addStyleName(style.marginTop30());
-		contextTableButton.addStyleName(style.contextTabButtonSelected());
-		contextTimeLineButton.removeStyleName(style.contextTabButtonSelected());
-	}
-
 	protected boolean isSettle() {
 		return salaryDraftObject == null ? false : salaryDraftObject.getType() == Type.SETTLE;
 	}
@@ -2871,255 +2847,6 @@ public class SalaryDraft extends ResizeComposite
 		return salaryDraftObject == null ? false : Arrays.asList(Type.EXTRA, Type.DELAY, Type.SETTLE).contains(salaryDraftObject.getType());
 	}
 
-
-	private void showContextTimeLine() {
-
-		// Date startDate = getFirstDayOfYear(salaryDraftObject.getStartDate());
-		// Date endDate = getLastDayOfYear(salaryDraftObject.getEndDate());
-
-		final Date startDate = addMonths2Date(getFirstDayOfMonth(salaryDraftObject.getStartDate()), -1);
-		final Date endDate = addMonths2Date(getLastDayOfMonth(salaryDraftObject.getEndDate()), 1);
-
-		final TreeSet<String> names = new TreeSet<String>();
-		for (Variable v : salaryDraftObject.getContext())
-			names.add(v.getName());
-		for (Variable v : salaryDraftObject.getDrafContext())
-			names.add(v.getName());
-
-		salaryDraftObject.getVariables(names.toArray(new String[names.size()]), startDate, endDate,
-				new AsyncCallback<List<Variable>>() {
-
-					private int clientX = -1;
-					private int clientY = -1;
-					private Tooltip tooltip = new Tooltip(){
-						Tooltip setup(){
-							this.addListener(new Listener() {
-								
-								@Override
-								public void onStartDateChangeEvent(ValueChangeEvent<Date> event) {
-									// TODO Auto-generated method stub
-									
-								}
-								
-								@Override
-								public void onEndDateChangeEvent(ValueChangeEvent<Date> event) {
-									// TODO Auto-generated method stub
-									
-								}
-								
-								@Override
-								public void onAcceptButtonClickEvent(ClickEvent event) {
-
-									StringTimeLineVariable var = SalaryDraft.this.newStringTimeLineVariable(tooltip.getName());
-									
-									var.setStartDate(tooltip.getStartDate());
-									var.setEndDate(tooltip.getEndDate());
-									var.setName(tooltip.getName());
-									var.setValue(tooltip.getValue());
-									var.setExpression(tooltip.getValue());
-									
-//									Window.alert("StartDate : " + tooltip.getStartDate());
-//									Window.alert("EndDate : " + tooltip.getEndDate());
-//									Window.alert("Name : " + tooltip.getName());
-//									Window.alert("Value : " + tooltip.getValue());
-//									Window.alert("Expression : " + tooltip.getValue());
-									
-									salaryDraftObject.addDraftVariable(var);
-									salaryDraftObject.calculate(new CalculateCallback() {
-										
-										@Override
-										public void onCalculateSucces(SalaryDraftObject object) {
-											tooltip.hide();
-											SalaryDraft.this.onCalculateSucces(object);
-											showContextTable();
-											contextTableButton.setEnabled(false);
-											contextTimeLineButton.setEnabled(true);
-										}
-										
-										@Override
-										public void onCalculateFailure(Throwable throwable) {
-											// TODO Auto-generated method stub	
-										}
-										
-										@Override
-										public Calculate getCalculate() {
-											// TODO Auto-generated method stub
-											return null;
-										}
-									});
-								}
-								
-							});
-							
-							titlePanel.setVisible(false);
-							return this;
-						}
-					}.setup(); 
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub
-					}
-
-					@Override
-					public void onSuccess(final List<Variable> variables) {
-
-						final int offsetWidth = contextTable.getOffsetWidth();
-
-						contextDeckPanel.showWidget(contextDeckPanel.getWidgetIndex(contextTimeLinePanel));
-						contextTableButton.removeStyleName(style.contextTabButtonSelected());
-						contextTimeLineButton.addStyleName(style.contextTabButtonSelected());
-						contextTimeLinePanel.setWidth(offsetWidth + "px");
-
-						VisualizationUtils.loadVisualizationApi(new Runnable() {
-							@Override
-							public void run() {
-
-								Options options = Options.create();
-								options.setWidth(offsetWidth);
-
-								Timeline timeline = Timeline.create();
-
-								RowLabelStyle rowStyle = RowLabelStyle.create();
-								rowStyle.setFontSize("12");
-								rowStyle.setTextAlign("left");
-								timeline.setRowLabelStyle(rowStyle);
-
-								options.setTimeline(timeline);
-
-								DataTable data = DataTable.create();
-								data.addColumn(ColumnType.STRING, "Variable");
-								data.addColumn(ColumnType.STRING, "Value");
-								data.addColumn(ColumnType.DATE, "Start");
-								data.addColumn(ColumnType.DATE, "End");
-
-								// for (Variable variable : salaryDraftObject
-								// .getContext()) {
-								// if (skipVariable(variable.getName()))
-								// continue;
-								// if (variable instanceof UndefinedVariable)
-								// variables.add(variable);
-								// }
-
-								Collections.sort(variables, new Comparator<Variable>() {
-									@Override
-									public int compare(Variable v1, Variable v2) {
-										return v1.getName().compareTo(v2.getName());
-									}
-								});
-
-								for (Variable variable : variables) {
-									int row = data.addRow();
-
-									data.setValue(row, 0, variable.getName());
-
-									data.setValue(row, 2,
-											variable.getStartDate() != null ? variable.getStartDate() : startDate);
-									data.setValue(row, 3,
-											variable.getEndDate() != null ? variable.getEndDate() : endDate);
-
-									Object value = variable.getValue();
-									if (value == null)
-										data.setValue(row, 1, "Sin definir");
-									else
-										data.setValue(row, 1, getValueAsString(variable));
-
-								}
-
-								final TimeLineChart timeLineChart = new TimeLineChart(data, options);
-								contextTimeLinePanel.setWidget(timeLineChart);
-								contextTimeLinePanel.addStyleName(style.marginTop30());
-								timeLineChart.addOnMouseOverHandler(new OnMouseOverHandler() {
-									@Override
-									public void onMouseOverEvent(OnMouseOverEvent event) {
-										Variable variable = variables.get(event.getRow());
-										tooltip.setName(variable.getName());
-										tooltip.setStartDate(variable.getStartDate());
-										tooltip.setEndDate(variable.getEndDate());
-
-										tooltip.setValueEditor(newVariableEditor(variable));
-										
-										tooltip.setVisibleAcceptButton(variable.getName().equals("COEFICIENTE_PARCIALIDAD") ||
-												   variable.getName().equals("GRUPO_COTIZACION"));
-										
-										tooltip.showToolTip(clientX, clientY);
-
-									}
-								});
-								timeLineChart.addMouseMoveHandler(new MouseMoveHandler() {
-
-									@Override
-									public void onMouseMove(MouseMoveEvent event) {
-										clientX = event.getClientX();
-										clientY = event.getClientY();
-									}
-								});
-							}
-						}, TimeLineChart.PACKAGE);
-					}
-
-					private String getValueAsString(Variable v) {
-						Object value = v.getValue();
-						if ("true".equalsIgnoreCase(value.toString()))
-							return "SI";
-						else if ("false".equalsIgnoreCase(value.toString()))
-							return "NO";
-						else if (v.getName().equalsIgnoreCase("TC2"))
-							return Employee.TC2.getDescriptionByCode(value.toString());
-						else if (v.getName().equalsIgnoreCase("OCUPACION"))
-							return Employee.Occupation.valueOf(value.toString()).getDescription();
-						else if (v.getName().startsWith("PORCENTAJE"))
-							try {
-								return formatPercent(Double.parseDouble(value.toString()));
-							} catch (NumberFormatException e) {
-								return v.getValue().toString();
-							}
-						else if (v.getName().startsWith("COEFICIENTE"))
-							try {
-								return formatPercent(Double.parseDouble(value.toString()) * 100);
-							} catch (NumberFormatException e) {
-								return v.getValue().toString();
-							}
-						else {
-							try {
-								return format(Double.parseDouble(value.toString()));
-							} catch (NumberFormatException e) {
-								return v.getValue().toString();
-							}
-						}
-					}
-
-					private <T extends IsWidget & HasValue<String> & HasAllFocusHandlers & Focusable> T newVariableEditor(
-							Variable variable) {
-						T editor = createEditor(variable);
-						int width = editor instanceof ListBox ? size2px(25) + 6 : size2px(25);
-						editor.asWidget().getElement().getStyle().setWidth(width, Unit.PX);
-						editor.setValue(getValueAsString(variable));
-
-						VariableChangeHandler<T> variableChangeHandler = new VariableChangeHandler<T>(variable){
-							@Override
-							public void onValueChange(ValueChangeEvent<String> event) {
-								
-							}
-							@Override
-							public void onFocus(FocusEvent event) {
-								// TODO Auto-generated method stub
-								super.onFocus(event);
-							}
-							@Override
-							public void onBlur(BlurEvent event) {
-								fxButton.setEnabled(false);
-							}
-						};
-						
-						variableChangeHandler.setEditor(editor);
-
-						return editor;
-					}
-
-				});
-
-	}
 
 	private void onChangedSalaryDraftObject(SalaryDraftObject salaryDraftObject) {
 		
@@ -3429,20 +3156,6 @@ public class SalaryDraft extends ResizeComposite
 		});
 	}
 
-	@UiHandler("contextTableButton")
-	void onContextTableButtonClick(ClickEvent event) {
-		showContextTable();
-		contextTableButton.setEnabled(false);
-		contextTimeLineButton.setEnabled(true);
-	}
-
-	@UiHandler("contextTimeLineButton")
-	void onContextTimeLineButtonClick(ClickEvent event) {
-		showContextTimeLine();
-		contextTimeLineButton.setEnabled(false);
-		contextTableButton.setEnabled(true);
-	}
-	
 	@UiHandler("tgssCheck")
 	void onTgssCheckChanged(ValueChangeEvent<Boolean> event) {
 		showTimeRulePanel();
@@ -5801,6 +5514,23 @@ public class SalaryDraft extends ResizeComposite
 		if (variable instanceof UndefinedPaymentVariable && !displayNow((UndefinedPaymentVariable) variable))
 			return true;
 		
+		Object value = variable.getValue(); 
+		for (String skip : SKIP_NULL_VARIABLES) {
+			if (skip.equals(name)) {
+				if ( value == null )
+					return true;
+				String str = String.valueOf(value);
+				if ( AonStringUtils.isBlank(str))
+					return true;
+				try {
+					return Double.parseDouble(str) == 0.00;
+				} catch ( Exception e ) {
+					
+				}
+				break;
+			}
+		}
+
 		return false;
 	}
 
@@ -6018,7 +5748,7 @@ public class SalaryDraft extends ResizeComposite
 			new StringsListBoxFactory("GRUPO_COTIZACION",
 					new String[] { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11" }),
 			new StringsListBoxFactory("TC2", Employee.TC2.getCodes(), Employee.TC2.getDescriptions()),
-			new CalendarConstantEditorFactory("HORAS_NOMINA", "HORAS_TRABAJADAS", "HORAS_SEMANA", "DIAS_NOMINA", "DIAS_TRABAJADOS", "DIAS_PAGA", "DIAS_COTIZADOS", "DIAS_HUELGA", "DIAS_NATURALES_MES", "COEFICIENTE_ERE" ), 
+			new CalendarConstantEditorFactory("HORAS_NOMINA", "HORAS_TRABAJADAS", "HORAS_SEMANA", "DIAS_NOMINA", "DIAS_TRABAJADOS", "DIAS_PAGA", "DIAS_COTIZADOS", "DIAS_HUELGA", "DIAS_NATURALES_MES", "COEFICIENTE_ERE", "COEFICIENTE_HUELGA"  ), 
 			new AgreementConstantEditorFactory(), 
 			new ConstantEditorFactory("SMI"), 
 			new BooleanEditorFactory(), 

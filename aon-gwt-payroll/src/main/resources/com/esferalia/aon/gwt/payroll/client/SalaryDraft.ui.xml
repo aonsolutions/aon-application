@@ -44,6 +44,10 @@
 			margin-bottom: 15px;
 		}
 		
+		.eventsTable tr{
+			margin-top: 15px;
+		}
+		
 		.value-changed {
 			color: #897820;
 			font-weight: bold;
@@ -127,11 +131,6 @@
 		}
 		
 		
-		.context-tab-voffset{
-			top: -24px;
-			position: relative;
-		}
-		
 		.context-tab-button {	
 			top: 22px;
 			right: -28px;
@@ -162,8 +161,6 @@
 		.aon-ReadOnly .aon-icon-reset,
 		.aon-ReadOnly .aon-icon-delete,
 		.aon-ReadOnly .aon-icon-rowSelector,
-		.aon-ReadOnly .aon-icon-rowSelector-C,
-		.aon-ReadOnly .aon-icon-rowSelector-S,
 		.aon-ReadOnly .aon-icon-rowSelector-Parent,
 		.aon-ReadOnly .aon-icon-rowSelector-Changed
 		{
@@ -232,6 +229,11 @@
 			width: 50px;
 		}
 		
+		.aon-icon-rowSelector-S[disabled],
+		.aon-icon-rowSelector-C[disabled] {
+			display:inherit  !important;
+			visibility:inherit !important;
+		}
 
 		@external gwt-ListBox;
 		@external gwt-TextBox;
@@ -495,29 +497,22 @@
 								</g:row>
 							</g:Grid>
 
-							<!--  g:HTML styleName="{style.vertical-space}" /-->
-							<g:Button ui:field='contextTableButton'
-									styleName="aon-icon-offer aon-no-margin aon-editDataTable-button {style.context-tab-button} {style.context-tab-button-selected}" />
-							<g:Button ui:field='contextTimeLineButton'
-									styleName="aon-icon-statistics aon-no-margin aon-editDataTable-button {style.context-tab-button}" />
-							<g:DeckPanel ui:field="contextDeckPanel" styleName="{style.context-tab-voffset}">
-								<g:FlexTable ui:field="contextTable"
-									styleName="aon-dataTable {style.edit-cells}" />
-								<g:SimplePanel ui:field="contextTimeLinePanel" />
-							</g:DeckPanel>
+							<g:HTML styleName="{style.vertical-space}" />
+							<g:FlexTable ui:field="contextTable"
+								styleName="aon-dataTable {style.edit-cells}" />
 							
-							<g:HTML styleName="{style.vertical-space} {style.context-tab-voffset}" />
+							<g:HTML styleName="{style.vertical-space}" />
 
-							<g:FlexTable debugId="eventsTable" ui:field="eventsTable" styleName="aon-dataTable {style.context-tab-voffset}" />
-							<g:HTML ui:field="eventsTableSpace" styleName="{style.vertical-space} {style.context-tab-voffset}"
+							<g:FlexTable debugId="eventsTable" ui:field="eventsTable" styleName="aon-dataTable {style.eventsTable}" />
+							<g:HTML ui:field="eventsTableSpace" styleName="{style.vertical-space}"
 								visible="false" />
 
 							<g:FlexTable debugId="paymentsTable" ui:field="paymentsTable"
-								styleName="aon-dataTable {style.edit-rows} {style.context-tab-voffset}" />
+								styleName="aon-dataTable {style.edit-rows}" />
 
-							<g:HTML styleName="{style.vertical-space} {style.context-tab-voffset}" />
+							<g:HTML styleName="{style.vertical-space}" />
 
-							<g:HorizontalPanel styleName="aon-width-all {style.context-tab-voffset}">
+							<g:HorizontalPanel styleName="aon-width-all">
 
 								<g:Grid ui:field="basesTable" styleName="aon-dataTable">
 									<g:row styleName="aon-dataTable-row-odd">
