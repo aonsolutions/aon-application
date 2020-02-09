@@ -15,6 +15,7 @@ import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -466,10 +467,8 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 		selectionModel.clear();
 		
 		//Show buttons
-		this.deleteButton.setVisible(true);
 		this.saveButton.setVisible(true);
 		this.publishButton.setVisible(true);
-		this.emailEnterpriseButton.setVisible(true);
 		this.emailEmployeesButton.setVisible(true);
 		
 		//Ready set false for email confirmation
@@ -871,5 +870,10 @@ public class EmployeeSalary extends Composite implements ContextMenuHandler {
 		settleId = null;
 		settleEnterpriseId = null;
 		return false;
+	}
+
+	public void hideEnterpriseSiteButtons() {
+		deleteButton.getElement().getStyle().setDisplay(Display.NONE);
+		emailEnterpriseButton.getElement().getStyle().setDisplay(Display.NONE);
 	}
 }

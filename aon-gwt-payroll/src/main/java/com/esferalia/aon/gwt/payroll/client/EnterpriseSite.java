@@ -123,7 +123,6 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		employees.getOptionsToolbar().setVisiblePasteButton(false);		
 		employees.addListener(this);
 		
-		
 	}
 
 	@Override
@@ -182,8 +181,12 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	}
 	
 	@Override
-	public void onEmployeeSalarySelected(EmployeeSalaryObject employeeSalary) {
-
+	public void onEmployeeSalarySelected(EmployeeSalaryObject employeeSalaryObject) {
+		EmployeeSalary employeeSalary = new EmployeeSalary();
+		detailPanel.setWidget(employeeSalary);
+		employeeSalary.setEmployeeSalaryObject(employeeSalaryObject);
+		employeeSalary.hideEnterpriseSiteButtons();
+		
 	}
 
 	
@@ -319,14 +322,20 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 
 	@Override
 	public void onWorkplaceSalarySelected(WorkplaceSalaryObject workplaceSalaryObject) {
-//		detailPanel.setWidget(workplaceSalary);
-//		workplaceSalary.setWorkplaceSalaryObject(workplaceSalaryObject);
+		WorkplaceSalary workplaceSalary = new WorkplaceSalary();
+		detailPanel.setWidget(workplaceSalary);
+		workplaceSalary.setWorkplaceSalaryObject(workplaceSalaryObject);
+		workplaceSalary.hideEnterpriseSiteButtons();
+		
 	}
 
 	@Override
 	public void onEnterpriseSalariesSelected(EnterpriseSalaryObject enterpiseSalaryObject) {
-//		detailPanel.setWidget(enterpriseSalary);
-//		enterpriseSalary.setEnterpriseSalaryObject(enterpiseSalaryObject);
+		EnterpriseSalary enterpriseSalary = new EnterpriseSalary();
+		detailPanel.setWidget(enterpriseSalary);
+		enterpriseSalary.setEnterpriseSalaryObject(enterpiseSalaryObject);
+		enterpriseSalary.hideEnterpriseSiteButtons();
+				
 	}
 
 	
