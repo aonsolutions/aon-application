@@ -321,6 +321,7 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 		if (datePanel != null && config.getUser() != null && config.getUser().hasConfidentialityRole()) {
 			confidential.addStyleName(AON.AON_CSS.aonMarginLeft());
 			entryTypePanel.add(confidential);
+			entryTypePanel.addStyleName(AON.AON_CSS.aonNowrap());
 		}
 		tab.setWidget(0, 3, entryTypePanel);
 		tab.getCellFormatter().setStyleName(0,3, AON.AON_CSS.aonPanelGridEven());
