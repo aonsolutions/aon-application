@@ -52,6 +52,7 @@ import com.esferalia.aon.occam.api.model.Properties.SignatureProperties;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.type.AonRole;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ScopePropertiesDAO;
@@ -311,6 +312,11 @@ public class SecurityDAO {
 			.values(scope.getDomain(), scope.getDescription())
 			.returning().fetch().stream().map(new ScopeFiller())
 			.findFirst().orElse(new Scope());
+	}
+	
+	public static void insertUserScope(AONContext ctx, UserScope userScope){
+		ctx.getDslContext().insertInto(USER_SCOPE, USER_SCOPE.DOMAIN, USER_SCOPE.SCOPE, USER_SCOPE.USER_ID)
+			.values(userScope.getDomain(), userScope.getScope(), userScope.getUserId()).execute();
 	}
 	
 	private static class ScopeFiller implements Function<Record, Scope> {

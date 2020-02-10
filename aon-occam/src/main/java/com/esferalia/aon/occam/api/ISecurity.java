@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.security.UserScope;
 
 public interface ISecurity {
 	public User getUser(AONContext ctx, String login);
@@ -21,6 +22,8 @@ public interface ISecurity {
 	public Stream<Scope> getScopeStream(AONContext ctx, ScopeFilter filter);
 	public Stream<Scope> getUserScopeStream(AONContext ctx, Integer userId, ScopeFilter filter);
 	public Scope insertScope(AONContext ctx, Scope scope);
+	
+	public void insertUserScope(AONContext ctx, UserScope userScope);
 	
 	// SIGNATURE
 	public Signature getSignature(AONContext ctx, Integer signatureId);

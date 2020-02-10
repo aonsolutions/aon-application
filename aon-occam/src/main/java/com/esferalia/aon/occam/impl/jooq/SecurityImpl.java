@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.Filter.ScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.SignatureFilter;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 
 public class SecurityImpl implements ISecurity {
@@ -52,6 +53,11 @@ public class SecurityImpl implements ISecurity {
 	@Override
 	public Scope insertScope(AONContext ctx, Scope scope) {
 		return SecurityDAO.insertScope(ctx, scope);
+	}
+	
+	@Override
+	public void insertUserScope(AONContext ctx, UserScope userScope) {
+		SecurityDAO.insertUserScope(ctx, userScope);
 	}
 
 	// ------------------ SIGNATURE

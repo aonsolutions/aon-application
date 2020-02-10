@@ -140,7 +140,9 @@ public class UserScopeController implements Serializable {
 
 	public String getParentDomainDescription() {
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-		return AdminUtil.getDomainDescription(ds.getParentDomainId());
+		return ds.getParentDomainId() != null 
+				? AdminUtil.getDomainDescription(ds.getParentDomainId())
+				: null;
 	}
 	
 	

@@ -184,6 +184,7 @@ import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
@@ -378,6 +379,17 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getSecurity().getUserScopes(ctx, userId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static void insertUserScope(String domainName, Integer domainId, String login, UserScope userScope) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getSecurity().insertUserScope(ctx, userScope);
 		} finally {
 			if (ctx != null)
 				ctx.close();

@@ -17,6 +17,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.security.UserScope;
 
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
@@ -43,6 +45,7 @@ public class ScopeController extends BasicController implements Serializable {
 	
 	public void generateCompanyScopes(ActionEvent event) {
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+		User user = AON.getUser(ds.getDomainNameURL(), ds.getDomainId(), ds.getCurrentUser());
 		AON.getDomainList(ds.getDomainNameURL(), ds.getDomainId(), ds.getCurrentUser(), f-> f.getParentProperty().eq(ds.getDomainId()))
 		.stream().forEach(d -> {
 			Company cp = AON.getCompany(d.getName(), d.getId(), ds.getCurrentUser(), f-> f.getDomainProperty().eq(d.getId()));
@@ -53,6 +56,11 @@ public class ScopeController extends BasicController implements Serializable {
 						.setDomain(ds.getDomainId())
 						.setDescription(cp.getDocument());
 				scope = AON.insertScope(ds.getDomainNameURL(), ds.getDomainId(), ds.getCurrentUser(), scope);
+				UserScope us = new UserScope()
+						.setDomain(ds.getDomainId())
+						.setScope(scope.getId())
+						.setUserId(user.getId());
+				AON.insertUserScope(ds.getDomainNameURL(), ds.getDomainId(), ds.getCurrentUser(), us);
 				d.setScope(scope.getId());
 				AON.updateDomainScope(d.getName(), d.getId(), ds.getCurrentUser(), d);
 			}
