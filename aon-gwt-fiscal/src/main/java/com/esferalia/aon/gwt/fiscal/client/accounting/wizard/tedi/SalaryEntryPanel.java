@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.accounting.wizard;
+package com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -8,7 +8,7 @@ import com.esferalia.aon.gwt.common.client.widget.AccountBox;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI.IAccountEntryModuleCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.ISelectionCallback;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;

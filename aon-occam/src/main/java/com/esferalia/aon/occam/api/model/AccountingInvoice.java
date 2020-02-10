@@ -16,6 +16,8 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	
 	private static final long serialVersionUID = -4435280253306756102L;
 	
+	private boolean tediParsed;
+	
 	private AccountEntry accountEntry;
 	private Invoice invoice;
 	private AccountingRegistry registry;
@@ -34,6 +36,14 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	private LinkedList<InvoiceVAT> vats;
 	
 	private LinkedList<AccountEntry> accountEntries;
+	
+	public boolean isTediParsed() {
+		return tediParsed;
+	}
+	public AccountingInvoice setTediParsed(boolean tediParsed) {
+		this.tediParsed = tediParsed;
+		return this;
+	}
 	
 	@Override
 	public AccountEntry getAccountEntry() {

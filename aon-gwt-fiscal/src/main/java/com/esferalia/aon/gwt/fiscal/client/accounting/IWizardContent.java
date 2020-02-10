@@ -1,9 +1,7 @@
-package com.esferalia.aon.gwt.fiscal.client.accounting.wizard;
+package com.esferalia.aon.gwt.fiscal.client.accounting;
 
 import java.util.Date;
 
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IContentAttachCallback;
-import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.WizardContentBase.ISelectionCallback;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;

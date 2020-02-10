@@ -1,10 +1,10 @@
-package com.esferalia.aon.gwt.fiscal.client.accounting.wizard;
+package com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi;
 
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI.IAccountEntryModuleCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.IContentAttachCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.IWizardContent;
 import com.esferalia.aon.occam.api.model.AccountEntry;

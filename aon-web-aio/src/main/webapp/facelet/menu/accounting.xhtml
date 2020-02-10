@@ -55,6 +55,18 @@
 										actionListener="#{financeTrackingEntry.onReset}"
 										value="#{bundle.accounting_entry_finance_tracking_module}" />
 								</aon:div>
+								<aon:if test="#{desktop.state.tediCenter and domainSwitcher.betaUser}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_accountEntryTEDI"
+											action="gwt_accountEntryTEDI-deposit"
+											title="#{bundle.accounting_entry_module}">
+											<aon:outputText
+												styleClass="aon-fiscal-link-label aon-icon-beta-text"
+												style="margin-left: 5px; padding-left: 20px;"
+												value="#{bundle.accounting_entry_module} (powered by tEDI)" />
+										</aon:commandLink>
+									</aon:div>
+								</aon:if>
 							</aon:div>
 						</aon:panelGrid>
 					</aon:if>

@@ -91,6 +91,9 @@ public class ConfigurationDAO {
 				.setSalaryDedSeize(getAccount(ctx, AppParam.ACC_SALARY_DED_SEIZE_ACC))
 				.setChildDomains(DomainDAO.getActiveChildDomains(ctx))
 				.setDefaultCreditor(getDefaultCreditor(ctx))
+				.setTediActive(getTediActive(ctx))
+				.setTediUser(getTediUser(ctx))
+				.setTediSnapshotUser(getTediSnapshotUser(ctx))
 		;
 		SeriesDAO
 			.getSeries(ctx,
@@ -108,6 +111,21 @@ public class ConfigurationDAO {
 		return conf;
 	}
 	
+	private static boolean getTediActive(AONContext ctx) {
+		String value = AppParamDAO.fetchValue(ctx, AppParam.TEDI_ACTIVE);
+		return AonStringUtils.equals(value,"1") || AonStringUtils.equals(value,"true");
+	}
+
+	private static boolean getTediSnapshotUser(AONContext ctx) {
+		String value = AppParamDAO.fetchValue(ctx, AppParam.TEDI_SNAPSHOT_EMAIL);
+		return AonStringUtils.isNotBlank(value);
+	}
+
+	private static boolean getTediUser(AONContext ctx) {
+		String value = AppParamDAO.fetchValue(ctx, AppParam.TEDI_EMAIL);
+		return AonStringUtils.isNotBlank(value);
+	}
+
 	private static AccountingRegistry getDefaultCreditor(AONContext ctx) {
 		return RegistryDAO.getAccountingRegistries(ctx, f -> 
 				(f.getDocumentProperty().isNull().or(f.getDocumentProperty().eq(" ")).or(f.getDocumentProperty().eq("")))

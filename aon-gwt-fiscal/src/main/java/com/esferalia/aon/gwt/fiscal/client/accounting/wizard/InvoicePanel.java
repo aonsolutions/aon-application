@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
+import com.esferalia.aon.gwt.fiscal.client.accounting.ISelectionCallback;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;

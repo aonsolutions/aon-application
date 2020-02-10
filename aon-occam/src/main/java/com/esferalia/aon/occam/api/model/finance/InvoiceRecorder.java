@@ -490,6 +490,9 @@ public class InvoiceRecorder {
 	
 	public static AccountEntry getInvoiceEntry(AccountingInvoice invoice) {
 		AccountEntry ae = AccountEntry.clone(invoice.getAccountEntry());
+		if (invoice.getRegistry() != null && invoice.getRegistry().getType() != null) {
+			ae.setEntryType( invoice.getRegistry().getType().getAccountEntryType() );
+		}
 		LinkedHashMap<Integer,AccountEntryDetail> map = new LinkedHashMap<Integer, AccountEntryDetail>();
 		InvoiceEntryDetailType.visit(invoice,map);	
 		ae.setDetails(new LinkedList<AccountEntryDetail>());

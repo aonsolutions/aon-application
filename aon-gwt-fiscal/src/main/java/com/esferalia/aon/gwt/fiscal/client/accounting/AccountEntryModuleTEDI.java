@@ -31,11 +31,10 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.panel.AccountBalancePanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.JournalPanelReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.SessionLog;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.StatementPanelReport;
-import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.FinanceEntryPanel;
-import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.InvoicePanel;
-import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.Manual;
-import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.SalaryEntryPanel;
-import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.TicketPanel;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.FinanceEntryPanel;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.InvoicePanel;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.Manual;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.SalaryEntryPanel;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
@@ -98,14 +97,14 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class AccountEntryModule extends MainEntryPoint {
+public class AccountEntryModuleTEDI extends MainEntryPoint {
 	interface TabLayoutFolderSafeTemplate extends SafeHtmlTemplates {
 		@Template ("<span class=\"gwt-InlineLabel .aon-padding-right aon-padding-left-20 {1}\">{0}</span>")
 		SafeHtml tab(String title, String icon);
 	}
 	private static final TabLayoutFolderSafeTemplate TABLAYOUT_FOLDER_TEMPLATE = GWT.create(TabLayoutFolderSafeTemplate.class);
 
-	private static final Logger LOGGER = Logger.getLogger(AccountEntryModule.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(AccountEntryModuleTEDI.class.getName());
 	static {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
@@ -129,7 +128,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		String getCurrentDomainName();
 		int getCurrentDomainId();
 		String getCurrentUser();
-		AccountEntryModule getModule();
+		AccountEntryModuleTEDI getModule();
 		AonConfiguration getConfiguration();
 	}
 
@@ -171,26 +170,26 @@ public class AccountEntryModule extends MainEntryPoint {
 	}
 	private IAccountEntryModuleCallback moduleCallback = new IAccountEntryModuleCallback() {
 		@Override
-		public AccountEntryModule getModule() {
-			return AccountEntryModule.this;
+		public AccountEntryModuleTEDI getModule() {
+			return AccountEntryModuleTEDI.this;
 		}
 		@Override
 		public AonConfiguration getConfiguration() {
-			return AccountEntryModule.this.getOptions().getConfiguration();
+			return AccountEntryModuleTEDI.this.getOptions().getConfiguration();
 		};
 		@Override
 		public String getCurrentDomainName() {
-			return AccountEntryModule.this.getOptions().getDomainName();
+			return AccountEntryModuleTEDI.this.getOptions().getDomainName();
 		}
 
 		@Override
 		public int getCurrentDomainId() {
-			return AccountEntryModule.this.getOptions().getDomain();
+			return AccountEntryModuleTEDI.this.getOptions().getDomain();
 		}
 
 		@Override
 		public String getCurrentUser() {
-			return AccountEntryModule.this.getOptions().getUser();
+			return AccountEntryModuleTEDI.this.getOptions().getUser();
 		}
 	};
 
@@ -294,7 +293,7 @@ public class AccountEntryModule extends MainEntryPoint {
 			public void onKeyUp(KeyUpEvent event) {
 				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
 					entryDate.hideDatePicker();
-					AccountEntryModule.this.wizardContent.setFocus(true);
+					AccountEntryModuleTEDI.this.wizardContent.setFocus(true);
 		        }
 			}
 		});
@@ -306,7 +305,7 @@ public class AccountEntryModule extends MainEntryPoint {
 				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 					public void execute() {
 						LOGGER.info("BLUR entryType");
-						AccountEntryModule.this.wizardContent.setFocus(true);
+						AccountEntryModuleTEDI.this.wizardContent.setFocus(true);
 					}
 				});
 			}
@@ -615,7 +614,7 @@ public class AccountEntryModule extends MainEntryPoint {
 			public void onSuccess(IAccountEntryWrapper result) {
 				base = result.getAccountEntry();
 				if (getOptions().isSessionLogTabVisible()) {
-					sessionLog.addSaved(AccountEntryModule.getWrapperArray(result.getAccountEntries()));
+					sessionLog.addSaved(AccountEntryModuleTEDI.getWrapperArray(result.getAccountEntries()));
 				}
 				reset();
 				
@@ -661,7 +660,7 @@ public class AccountEntryModule extends MainEntryPoint {
 				public void onAnimationComplete() {
 					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 						public void execute() {
-							tabLayout.selectTab( AccountEntryModule.this.getJournalTabIndex() );
+							tabLayout.selectTab( AccountEntryModuleTEDI.this.getJournalTabIndex() );
 							journalPanel.setFocus(true);
 						}
 					});
@@ -670,7 +669,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		} else {
 			Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 				public void execute() {
-					tabLayout.selectTab(AccountEntryModule.this.getJournalTabIndex());
+					tabLayout.selectTab(AccountEntryModuleTEDI.this.getJournalTabIndex());
 					journalPanel.setFocus(true);
 				}
 			});
@@ -744,26 +743,6 @@ public class AccountEntryModule extends MainEntryPoint {
 	}
 
 	private void addSelectionEvent(final InvoicePanel panel) {
-		panel.addSelectionHandler(new SelectionHandler<AccountingInvoice>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<AccountingInvoice> event) {
-				panel.select(event.getSelectedItem(), new ISelectionCallback() {
-					@Override
-					public void onSuccess() {
-						syncCurrent();
-					}
-					
-					@Override
-					public void onFailure() {
-						invalidateModule("");
-					}
-				});
-			}
-		});
-	}
-
-	private void addSelectionEvent(final TicketPanel panel) {
 		panel.addSelectionHandler(new SelectionHandler<AccountingInvoice>() {
 			
 			@Override
@@ -857,13 +836,13 @@ public class AccountEntryModule extends MainEntryPoint {
 		final IContentAttachCallback cbk = new IContentAttachCallback() {
 			@Override
 			public void onAttach() {
-				AccountEntryModule.this.wizardContent.reset(wrp.getAccountEntry(),new ISelectionCallback() {
+				AccountEntryModuleTEDI.this.wizardContent.reset(wrp.getAccountEntry(),new ISelectionCallback() {
 					
 					@Override
 					public void onSuccess() {
 						Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 							public void execute() {
-								AccountEntryModule.this.wizardContent.setFocus(true);
+								AccountEntryModuleTEDI.this.wizardContent.setFocus(true);
 							}
 						});
 					}
@@ -887,7 +866,7 @@ public class AccountEntryModule extends MainEntryPoint {
 			}
 			@Override
 			public void visitTicket() {
-				createAndAttachTicketPanel(cbk);
+				createAndAttachInvoicePanel(cbk);
 			}
 			@Override
 			public void visitSalary() {
@@ -943,12 +922,6 @@ public class AccountEntryModule extends MainEntryPoint {
 	
 	private void createAndAttachInvoicePanel(IContentAttachCallback wizardCbk) {
 		InvoicePanel panel = new InvoicePanel(moduleCallback);
-		addSelectionEvent(panel);
-		panel.attach(wizardCbk);
-	}
-
-	private void createAndAttachTicketPanel(IContentAttachCallback wizardCbk) {
-		TicketPanel panel = new TicketPanel(moduleCallback);
 		addSelectionEvent(panel);
 		panel.attach(wizardCbk);
 	}
@@ -1010,7 +983,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		final IContentAttachCallback wizardCbk = new IContentAttachCallback() {
 			@Override
 			public void onAttach() {
-				AccountEntryModule.this.wizardContent.select(id,wrp,new ISelectionCallback() {
+				AccountEntryModuleTEDI.this.wizardContent.select(id,wrp,new ISelectionCallback() {
 					
 					@Override
 					public void onSuccess() {
@@ -1028,13 +1001,8 @@ public class AccountEntryModule extends MainEntryPoint {
 		wrp.getAccountEntry().getEntryType().visit(wrp.getAccountEntry(), new  AccountEntryTypeVisitorAdapter() {
 			@Override
 			public void visitExpenseInvoice(AccountEntry entry) {
-				if (entry.isUndeductible()) {
-					entryType.setSelectedIndex(EntryType.TICKET.ordinal());
-					createAndAttachTicketPanel(wizardCbk);
-				} else {
-					entryType.setSelectedIndex(EntryType.INVOICE.ordinal());
-					createAndAttachInvoicePanel(wizardCbk);
-				}
+				entryType.setSelectedIndex(EntryType.INVOICE.ordinal());
+				createAndAttachInvoicePanel(wizardCbk);
 			}
 
 			@Override
@@ -1110,7 +1078,7 @@ public class AccountEntryModule extends MainEntryPoint {
 				public void onAnimationComplete() {
 					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 						public void execute() {
-							tabLayout.selectTab(AccountEntryModule.this.getErrorLogTabIndex());
+							tabLayout.selectTab(AccountEntryModuleTEDI.this.getErrorLogTabIndex());
 						}
 					});
 				}
@@ -1118,7 +1086,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		} else {
 			Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 				public void execute() {
-					tabLayout.selectTab(AccountEntryModule.this.getErrorLogTabIndex());
+					tabLayout.selectTab(AccountEntryModuleTEDI.this.getErrorLogTabIndex());
 				}
 			});
 		}
@@ -1447,7 +1415,7 @@ public class AccountEntryModule extends MainEntryPoint {
 				@Override
 				public void onSelection(AccountEntrySelectionEvent event) {
 					final AccountEntry entry = event.getSelectedItem();
-					AccountEntryModule.this.selectEntry(entry.getId());
+					AccountEntryModuleTEDI.this.selectEntry(entry.getId());
 				}
 			});
 			journalPanelContainer.setWidget(journalPanel);
