@@ -92,7 +92,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	private static FinanceServiceAsync FINANCE_SERVICE;
 	private static FiscalServiceAsync FISCAL_SERVICE;
 	
-//	private FlowPanel invoicePanel;
 	private SimplePanel invoicePanelContainer;
 	private AccountingRegistryBox registryBox;
 	private InlineLabel invoiceTypeLabel;
@@ -341,6 +340,20 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		IntegerBox number = new IntegerBox();
 		TextBox manualConcept = new TextBox();
 		
+		invoiceCallback.getModule().getEntryDateBox().addValueChangeHandler(new ValueChangeHandler<Date>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				invoiceCallback.getInvoice().getAccountEntry().setEntryDate(event.getValue());
+				if (invoiceCallback.getInvoice().getInvoice() != null) {
+					invoiceCallback.getInvoice().getInvoice().setIssueDate(event.getValue());
+					invoiceCallback.getInvoice().getInvoice().setTaxDate(event.getValue());
+					taxDate.setValue(event.getValue());
+					invoiceCallback.paintEntry();					
+				}
+			}
+		});
+
 		fullDocument.setValue(inv.getRegistry().getDocumentType(),inv.getRegistry().getDocumentCountry(),inv.getRegistry().getDocument());
 		rName.setValue(inv.getInvoice().getRegistryName());
 		taxDate.setValue(inv.getInvoice().getTaxDate());

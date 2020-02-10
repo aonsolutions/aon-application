@@ -64,15 +64,6 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 
-//	static final String INNER_BACKGROUND_COLOR = "WhiteSmoke";
-//	static final String LABEL_BACKGROUND_COLOR = "Silver";
-	
-//	public final static int TAB_OFFSET = 1000;
-//	public final static int VAT_PANEL_TAB_OFFSET = 50000;
-//	public final static int WITHHOLDING_PANEL_TAB_OFFSET = 200000;
-//	public final static int PAY_PANEL_TAB_OFFSET = 250000;
-//	public final static int EXTRA_PANEL_TAB_OFFSET = 500000;
-
 	private SplitLayoutPanel rootPanel;
 	private SimpleLayoutPanel centerContainer;
 	private SimpleLayoutPanel attachPanel;
@@ -83,7 +74,6 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		TEDI_SERVICE = new TediServiceAsyncDecorator(serviceRaw);
 		
 		setCallback(callback);
-		// rootPanel = new TabLayoutPanel(30,Unit.PX);
 		rootPanel = new SplitLayoutPanel();
 		centerContainer = new SimpleLayoutPanel();
 		attachPanel = new SimpleLayoutPanel();
@@ -127,8 +117,8 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			}
 			paintAttach();
 		}
-//		getCallback().getModule().onBalance(getWrapper());
-//		getCallback().getModule().onPreview(getWrapper());
+		getCallback().getModule().onBalance(getWrapper());
+		getCallback().getModule().onPreview(getWrapper());
 		if (cbk != null) {
 			cbk.onSuccess();
 		}
@@ -180,12 +170,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		} else {
 			if (wrp != null) {
 				AccountingInvoice ai = (AccountingInvoice) wrp;
-//				if (ai.getInvoice() != null) {
-					select(ai,cbk);
-//				} else {
-//					setWrapper(ai);
-//					if (cbk != null) cbk.onSuccess();
-//				}
+				select(ai,cbk);
 			} else {
 				getCallback().getModule().onError("[ERROR INTERNO] No hay que seleccionar.");
 			}

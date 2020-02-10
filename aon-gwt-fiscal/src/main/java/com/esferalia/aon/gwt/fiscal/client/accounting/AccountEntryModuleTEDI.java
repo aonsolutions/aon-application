@@ -1173,6 +1173,9 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		showError(msg);
 	}
 
+	public DateBoxEx getEntryDateBox() {
+		return entryDate;
+	}
 	public Date getEntryDate() {
 		return entryDate.getValue();
 	}
