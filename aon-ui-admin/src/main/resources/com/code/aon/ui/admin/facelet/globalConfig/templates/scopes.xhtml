@@ -14,6 +14,16 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.config_scopes}" />
 				<ui:param name="controller" value="#{scope}" />
+				
+				<ui:define name="additionalToolbarContent">
+					<aon:if  test="#{domainSwitcher.parentDomain and scope.ayudaT}">
+						<aon:commandButton id="send"
+							value="Generar por Empresa"
+							styleClass="aon-icon-accept aon-finding-toolbar-item"
+							actionListener="#{scope.generateCompanyScopes}">
+						</aon:commandButton>
+					</aon:if>		
+				</ui:define>
 			</ui:decorate>
 		</aon:div>				
 		<aon:div styleClass="aon-scroll-area">

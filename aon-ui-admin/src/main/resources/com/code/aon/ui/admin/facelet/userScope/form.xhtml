@@ -26,8 +26,12 @@
 	</aon:if>
 
 	<aon:div styleClass="aon-scroll-area">
-	
-		<rich:listShuttle var="to"
+		<aon:if  test="#{domainSwitcher.parentDomain and scope.ayudaT}">
+			<aon:inputText value="#{userScopeEx.searchValue}">
+				<a4j:support event="onchange" reRender="userScopeListShuttle" actionListener="#{userScopeEx.onChange}"/>
+			</aon:inputText>
+		</aon:if>
+		<rich:listShuttle id="userScopeListShuttle" var="to"
 			sourceValue="#{userScopeEx.scopes}" targetValue="#{userScopeEx.selected}"
 			listsHeight="250" sourceListWidth="400" targetListWidth="400"
 			orderControlsVisible="false" fastOrderControlsVisible="false"

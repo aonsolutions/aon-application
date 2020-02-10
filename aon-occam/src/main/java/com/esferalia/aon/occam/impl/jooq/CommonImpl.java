@@ -346,4 +346,10 @@ public class CommonImpl implements ICommon {
 			MailDAO.getMailTemplateStream(ctx, filter));
 	}
 
+	
+	@Override
+	public void updateDomainScope(AONContext ctx, Domain domain){
+		 ctx.getDslContext().transaction(configuration -> 
+		 	DomainDAO.updateDomainScope(ctx, domain));
+	}
 }

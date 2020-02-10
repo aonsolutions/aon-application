@@ -16,6 +16,7 @@ public class Domain implements Serializable {
 	private boolean enableHeredity;
 	private boolean domainManagement;
 	private boolean active;
+	private Integer scope;
 
 	public Integer getId() {
 		return id;
@@ -98,7 +99,13 @@ public class Domain implements Serializable {
 		this.domainManagement = domainManagement;
 		return this;
 	}
-	
-	
+
+	public Integer getScope() {
+		return scope;
+	}
+
+	public void setScope(Integer scope) {
+		this.scope = scope;
+	}
 
 }

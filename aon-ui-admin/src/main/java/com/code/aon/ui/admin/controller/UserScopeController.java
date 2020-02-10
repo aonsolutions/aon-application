@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -26,6 +27,7 @@ import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class UserScopeController implements Serializable {
 	
@@ -33,6 +35,8 @@ public class UserScopeController implements Serializable {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(UserScopeController.class);
 	
+	private List<Scope> scopeList;
+	private String searchValue;
 	private Scope[] scopes;
 	
 	private Scope[] selected;
@@ -53,6 +57,14 @@ public class UserScopeController implements Serializable {
 
 	public void setSelected(Scope[] selected) {
 		this.selected = selected;
+	}
+	
+	public String getSearchValue() {
+		return searchValue;
+	}
+
+	public void setSearchValue(String searchValue) {
+		this.searchValue = searchValue;
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -110,16 +122,19 @@ public class UserScopeController implements Serializable {
 			throw new AbortProcessingException(e.getMessage(), e);
 		}		
 	}
-	
+
 	public void init( User user ) {
 		this.user = user;
+		this.searchValue = "";
 		List<Scope> list = getScopeList();
+		
 		List<UserScope> userScopes = getUserScopes();
 		this.selected = new Scope[userScopes.size()];
 		for( int i = 0; i < this.selected.length; i++ ) {
 			this.selected[i] = userScopes.get(i).getScope();
 			list.remove(this.selected[i]);
 		}
+		scopeList = list;
 		this.scopes = list.toArray(new Scope[list.size()]);
 	}
 
@@ -128,4 +143,9 @@ public class UserScopeController implements Serializable {
 		return AdminUtil.getDomainDescription(ds.getParentDomainId());
 	}
 	
+	
+	public void onChange( ActionEvent event ) {
+		List<Scope> list = scopeList.stream().filter(f -> AonStringUtils.containsIgnoreCase(f.getDescription(), getSearchValue())).collect(Collectors.toCollection(LinkedList::new));
+		this.scopes = list.toArray(new Scope[list.size()]);
+	}
 }

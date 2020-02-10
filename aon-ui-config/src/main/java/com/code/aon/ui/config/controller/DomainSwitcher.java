@@ -256,7 +256,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		if (!isAdminDomain()) {
 			Condition scopeCondition = DOMAIN.SCOPE.isNull();
 			List<Integer> scopes = getUserScopes();
-			if (!scopes.isEmpty()) {
+			if (scopes != null && !scopes.isEmpty()) {
 				scopeCondition = scopeCondition.or(DOMAIN.SCOPE.in(scopes));
 			}
 			condition = condition.and(scopeCondition);

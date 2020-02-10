@@ -463,6 +463,18 @@ public class AON {
 		}
 	}
 	
+	public static void updateDomainScope(String domainName, Integer domainId,
+			String user, Domain domain) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			getCommon().updateDomainScope(ctx, domain);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static Domain getCompanyDomain(String domainName, Integer domainId,
 			String user, String document) {
 		AONContext ctx = null;

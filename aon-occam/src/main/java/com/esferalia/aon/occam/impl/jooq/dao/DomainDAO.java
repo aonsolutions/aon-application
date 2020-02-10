@@ -479,6 +479,14 @@ public class DomainDAO {
 		}
 	}
 	
+	public static void updateDomainScope(AONContext ctx, Domain domain) {
+		ctx.getDslContext()
+			.update(DOMAIN)
+			.set(DOMAIN.SCOPE, domain.getScope())
+			.where(DOMAIN.ID.eq(domain.getId()))
+			.execute();
+	}
+	
 	public static Integer[] getSonsDomains(AONContext ctx){
 		Object[] oArray = ctx.getDslContext().select(DOMAIN.ID).from(DOMAIN).where(DOMAIN.PARENT.eq(ctx.getDomainId())).fetch().stream().map(d -> d.getValue(DOMAIN.ID)).toArray();
 		return Arrays.copyOf(oArray, oArray.length, Integer[].class);
