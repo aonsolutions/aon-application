@@ -386,6 +386,10 @@ input[type="checkbox"]:focus + label {
 .aon-margin {
 	margin: 1em;
 }
+.aon-margin5 {
+	margin: 5px;
+}
+
 .aon-margin-auto {
 	margin: auto;
 }
@@ -2116,9 +2120,7 @@ input:disabled+label {
 	width: 400px;
 }
 .aon-invoice-panel{
-    background-color: #cceeff;
-    border: 1px solid black;
-    margin-left: 1.5em;
+    background-color: #E9E9E9;
     margin-bottom: 5px;
     min-height: 200px;
 }
@@ -3184,6 +3186,32 @@ right
 
 
 @sprite .aon-drop-zone {
+	gwt-image: "aonTediLogoRed";
+	background-position: center right;
+	background-size: 50%;
+	background-color: white;
+	min-height: 150px;
+	height: 150px;
+	min-width: 180px;
+	display: table;
+	margin-top: 1em;
+	margin-left: auto;
+	margin-right: auto;
+	width: 80%;
+	border-width: 2px;
+	border-style: dashed;
+	border-color: #bbb;
+	border-radius: 2em;
+	text-align: center;
+	vertical-align: middle;	
+    padding-top: 28px;
+    padding-bottom: 28px;
+    font-size: 1.2em;
+    color: #2d4b6d;
+    font-weight: bold;
+}
+
+@sprite .aon-tedi-drop-zone {
 	gwt-image: "aonTediLogoGray";
 	background-position: center right;
 	background-size: 50%;
@@ -3202,16 +3230,53 @@ right
 	border-radius: 2em;
 	text-align: center;
 	vertical-align: middle;	
-
     padding-top: 28px;
     padding-bottom: 28px;
     font-size: 1.2em;
     color: #2d4b6d;
     font-weight: bold;
-    
+}
+
+@sprite .aon-tedi-snapshot-drop-zone {
+	gwt-image: "aonTediSnapshotLogo";
+	background-position: center right;
+	background-size: 50%;
+	background-color: white;
+	min-height: 150px;
+	height: 150px;
+	min-width: 180px;
+	display: table;
+	margin-top: 1em;
+	margin-left: auto;
+	margin-right: auto;
+	width: 80%;
+	border-width: 2px;
+	border-style: dashed;
+	border-color: #bbb;
+	border-radius: 2em;
+	text-align: center;
+	vertical-align: middle;	
+    padding-top: 28px;
+    padding-bottom: 28px;
+    font-size: 1.2em;
+    color: #2d4b6d;
+    font-weight: bold;
 }
 
 .aon-drop-zone-hover {
     border: 2px solid #444444;
     color: #7c9647;
+}
+
+.aon-text-vertical {
+	transform: rotate(-90deg);
+	text-indent: 0em;
+	font-size: 1.1em !important;	
+}
+
+.aon-account-table {
+	fon-size: 0.9em !important;
+}
+.aon-account-table td {
+	
 }

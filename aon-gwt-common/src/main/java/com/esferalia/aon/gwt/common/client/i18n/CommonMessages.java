@@ -2366,6 +2366,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("R\u00E9gimen agri., gan. y pesca.")
 	String withholdingFarmer();
 	
+	@DefaultMessage("R\u00E9g. agri, gan y pesca.")
+	String withholdingFarmerAbbr();
+
 	@DefaultMessage("R\u00E9gimen de criterio de caja")
 	String vatAccrualPayment();
 
@@ -2422,6 +2425,9 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Titular")
 	String titular();
+
+	@DefaultMessage("Titular de la Factura")
+	String invoiceTitular();
 
 	@DefaultMessage("Tipo de titular")
 	String titularType();

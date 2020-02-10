@@ -156,6 +156,12 @@ public interface AonResources extends ClientBundle, Images {
 	@Source("images/logo-tedi-gray.png")
 	ImageResource aonTediLogoGray();
 
+	@Source("images/logo-tedi-red.png")
+	ImageResource aonTediLogoRed();
+
+	@Source("images/logo-tedi-snapshot.png")
+	ImageResource aonTediSnapshotLogo();
+	
 	@Source("images/aon-aeat-header-image.png")
 	ImageResource aonAeatHeaderImage();
 	@Source("images/aon-aeat.png")

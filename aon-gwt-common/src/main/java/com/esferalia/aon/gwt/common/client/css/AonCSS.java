@@ -376,6 +376,9 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-margin")
 	String aonMargin();
 
+	@ClassName("aon-margin5")
+	String aonMargin5();
+
 	@ClassName("aon-no-margin")
 	String aonNoMargin();
 
@@ -1319,7 +1322,19 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-drop-zone")
 	String aonDropZone();
 
+	@ClassName("aon-tedi-drop-zone")
+	String aonTediDropZone();
+
+	@ClassName("aon-tedi-snapshot-drop-zone")
+	String aonTediSnapshotDropZone();
+
 	@ClassName("aon-drop-zone-hover")
 	String aonDropZoneHover();
 
+	@ClassName("aon-text-vertical")
+	String aonTextVertical();
+
+	@ClassName("aon-account-table")
+	String aonAccountTable();
+	
 }
