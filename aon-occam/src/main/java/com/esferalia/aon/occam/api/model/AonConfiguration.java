@@ -54,6 +54,10 @@ public class AonConfiguration implements Serializable {
 	private Account salaryDedAdvPayment;
 	private Account salaryDedSeize;
 	
+	private boolean tediActive;
+	private boolean tediUser;
+	private boolean tediSnapshotUser;
+	
 	private AccountingRegistry defaultCreditor;
 	
 	private Date	operationsDeadline;
@@ -444,5 +448,31 @@ public class AonConfiguration implements Serializable {
 		return this;
 	}
 
+	public boolean isTediActive() {
+		return tediActive && ( isTediUser() || isTediSnapshotUser());
+	}
+	public AonConfiguration setTediActive(boolean tediActive) {
+		this.tediActive = tediActive;
+		return this;
+	}
 
+	public boolean isTediUser() {
+		return tediUser;
+	}
+
+	public AonConfiguration setTediUser(boolean tediUser) {
+		this.tediUser = tediUser;
+		return this;
+	}
+
+	public boolean isTediSnapshotUser() {
+		return tediSnapshotUser;
+	}
+
+	public AonConfiguration setTediSnapshotUser(boolean tediSnapshotUser) {
+		this.tediSnapshotUser = tediSnapshotUser;
+		return this;
+	}
+
+	
 }
