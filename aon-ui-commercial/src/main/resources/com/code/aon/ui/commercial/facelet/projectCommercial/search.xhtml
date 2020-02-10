@@ -16,7 +16,7 @@
 				<ui:param name="controller" value="#{projectCommercial}" />
 				
 				<ui:define name="additionalToolbarContent">
-					<aon:if test="#{domainSwitcher.betaUser}">
+					<aon:if test="#{domainSwitcher.betaUser or customer.ceconsulting}">
 						<aon:commandLink id="projectCommercial-import" value="#{bundle.aon_import}"
 							onclick="projectCommercial()"
 							styleClass="aon-finding-toolbar-item aon-icon-import-excel-trans">
