@@ -69,13 +69,7 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Category;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.jooq.tables.Contract;
-import com.esferalia.aon.jooq.tables.PayMethod;
 import com.esferalia.aon.jooq.tables.Person;
-import com.esferalia.aon.jooq.tables.Raddress;
-import com.esferalia.aon.jooq.tables.Rattach;
-import com.esferalia.aon.jooq.tables.Rbank;
-import com.esferalia.aon.jooq.tables.Rmedia;
-import com.esferalia.aon.jooq.tables.Rpaymethod;
 import com.esferalia.aon.jooq.tables.records.ContractBonusRecord;
 import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
 import com.esferalia.aon.jooq.tables.records.ContractDeductionRecord;
@@ -531,22 +525,22 @@ public class JooqEmployees {
 			Date startDate, Date endDate) {
 
 		// @formatter:off
-		Record person = create.select().from(Person.PERSON).join(REGISTRY)
+		 Result<Record> person = create.select().from(Person.PERSON).join(REGISTRY)
 				.on(PERSON.REGISTRY.eq(REGISTRY.ID))
 				.where(REGISTRY.DOCUMENT.eq(document))
 				.and(PERSON.DOMAIN.eq(domain))
-				.fetchOne();
+				.fetch();
 		// @formatter:on
 
 		Employee employee = new Employee();
 
 		employee.setStartDate(startDate);
 		employee.setEndDate(endDate);
-		employee.setDocument(person.getValue(REGISTRY.DOCUMENT));
-		employee.setPerson(person.getValue(PERSON.REGISTRY));
-		employee.setName(person.getValue(PERSON.NAME));
-		employee.setFirstSurname(person.getValue(PERSON.FIRST_SURNAME));
-		employee.setSecondSurName(person.getValue(PERSON.SECOND_SURNAME));
+		employee.setDocument(person.get(0).getValue(REGISTRY.DOCUMENT));
+		employee.setPerson(person.get(0).getValue(PERSON.REGISTRY));
+		employee.setName(person.get(0).getValue(PERSON.NAME));
+		employee.setFirstSurname(person.get(0).getValue(PERSON.FIRST_SURNAME));
+		employee.setSecondSurName(person.get(0).getValue(PERSON.SECOND_SURNAME));
 
 		return employee;
 

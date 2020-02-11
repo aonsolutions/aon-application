@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -16,11 +15,9 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -80,7 +77,7 @@ public class EmployeePopupCopy extends CustomDialog {
 		this.endDate.getTextBox().setReadOnly(true);
 
 		this.listeners = new ArrayList<Listener>();
-
+		
 		setAnimationEnabled(true);
 		setGlassEnabled(true);
 		
@@ -97,18 +94,19 @@ public class EmployeePopupCopy extends CustomDialog {
 	// -------------------------------------------------------Private Methods
 	
 	private final void initSuggestBox(Map<String, String> map) {
-		
 		names.clear();		
 		Iterator<String> iterator = map.keySet().iterator();
 		while (iterator.hasNext()) {
 			String document = iterator.next();
-			String name = map.get(document);
-			
-			if (name.compareToIgnoreCase(employee.getFullname()) == 0) {
-				this.document = document;
-				suggest.getValueBox().setText(name.concat(separator).concat(document));
+			if(null != document) {
+				String name = map.get(document);
+				
+				if (name.compareToIgnoreCase(employee.getFullname()) == 0) {
+					this.document = document;
+					suggest.getValueBox().setText(name.concat(separator).concat(document));
+				}
+				names.add(name.concat(separator).concat(document));
 			}
-			names.add(name.concat(separator).concat(document));
 		}		
 	}
 	
