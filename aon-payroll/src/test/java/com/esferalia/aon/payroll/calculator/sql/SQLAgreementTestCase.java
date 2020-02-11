@@ -826,6 +826,145 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testFixedAmountsX() throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext, new Extra[] { new Extra() {
+			{
+				this.expression = "SALARIO_MENSUAL + PLUS_SALARIAL";
+				this.month = Month.JULY;
+				this.start = "01/07 -1";
+				this.end = "30/06";
+				this.issue = "01/07";
+			}
+		}, new Extra() {
+			{
+				this.expression = "SALARIO_MENSUAL + PLUS_SALARIAL";
+				this.month = Month.DECEMBER;
+				this.start = "01/01";
+				this.end = "31/12";
+				this.issue = "15/12";
+			}
+		}, }, new Payment[] { new Payment() {
+			{
+				this.expression = "SALARIO_MENSUAL";
+			}
+		}, new Payment() {
+			{
+				this.expression = "PLUS_SALARIAL";
+			}
+		}, new Payment() {
+			{
+				this.expression = "PLUS_TRANSPORTE";
+			}
+		} });
+
+		addData(aonContext, category, getFirstDayOfYear(getToday()), null, new HashMap<String, String>() {
+			{
+				put("PLUS_SALARIAL", "300.00");
+				put("PLUS_TRANSPORTE", "30.00");
+				put("SALARIO_MENSUAL", "3000.00");
+				
+			}
+		});
+
+		Date firstDayOfYear = getFirstDayOfYear(getToday());
+		Date contractStartDate = AonDateUtils.add(firstDayOfYear, Calendar.DAY_OF_MONTH, 16);
+
+		ContractRecord contract = newContract(aonContext, contractStartDate, new HashMap<String, String>() {
+			{
+				put("DIAS_MES", "30.00");
+				put("TIEMPO_COMPLETO", "false");
+				put("COEFICIENTE_PARCIALIDAD", "0.50");
+				
+			}
+		}, new String[] {}, new String[] { 
+				"BASE_CGC * 4.70 / 100.00", 
+				"BASE_CGP * 1.55 / 100.00",
+				"BASE_CGP * 0.10 / 100.00", 
+				"BASE_IRPF * PORCENTAJE_IRPF / 100.00" }, category);
+		Date endDate = getLastDayOfMonth(contractStartDate);
+
+		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(
+				getContractSalaryCalculatorContext(connection, contractStartDate, endDate, endDate, contract))
+
+		;
+		org.junit.Assert.assertEquals((3330) / 2 * 0.50, salary.getTotalPayment(), 0.00);
+	}
+
+	@Test
+	public void testFixedAmountsXI() throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext, new Extra[] { new Extra() {
+			{
+				this.expression = "SALARIO_MENSUAL + PLUS_SALARIAL";
+				this.month = Month.JULY;
+				this.start = "01/07 -1";
+				this.end = "30/06";
+				this.issue = "01/07";
+			}
+		}, new Extra() {
+			{
+				this.expression = "SALARIO_MENSUAL + PLUS_SALARIAL";
+				this.month = Month.DECEMBER;
+				this.start = "01/01";
+				this.end = "31/12";
+				this.issue = "15/12";
+			}
+		}, }, new Payment[] { new Payment() {
+			{
+				this.expression = "SALARIO_MENSUAL";
+			}
+		}, new Payment() {
+			{
+				this.expression = "PLUS_SALARIAL";
+			}
+		}, new Payment() {
+			{
+				this.expression = "PLUS_TRANSPORTE";
+			}
+		} });
+
+		addData(aonContext, category, getFirstDayOfYear(getToday()), null, new HashMap<String, String>() {
+			{
+				put("PLUS_SALARIAL", "300.00");
+				put("PLUS_TRANSPORTE", "30.00");
+				put("SALARIO_MENSUAL", "3000.00");
+				
+			}
+		});
+
+		Date contractStartDate = getFirstDayOfYear(getToday());
+
+		ContractRecord contract = newContract(aonContext, contractStartDate, new HashMap<String, String>() {
+			{
+				put("DIAS_MES", "30.00");
+				put("TIEMPO_COMPLETO", "false");
+				put("COEFICIENTE_PARCIALIDAD", "0.50");
+				
+			}
+		}, new String[] {}, new String[] { 
+				"BASE_CGC * 4.70 / 100.00", 
+				"BASE_CGP * 1.55 / 100.00",
+				"BASE_CGP * 0.10 / 100.00", 
+				"BASE_IRPF * PORCENTAJE_IRPF / 100.00" }, category);
+
+		Date startDate = add(contractStartDate, Calendar.MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(
+				getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract))
+
+		;
+		org.junit.Assert.assertEquals((3330) * 0.50, salary.getTotalPayment(), 0.00);
+	}
+
+	@Test
 	public void testRedefinedDataI() throws ExpressionException, SQLException, SalaryException {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);

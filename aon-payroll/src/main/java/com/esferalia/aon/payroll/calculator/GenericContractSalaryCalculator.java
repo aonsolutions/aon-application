@@ -618,11 +618,14 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			totalPayment = taxCalculator.getTotalPayment();
 			expressionContext.setVariable(TOTAL_PAYMENT, totalPayment, start, end);
 
-			double monthlyPayments = taxCalculator.getAmount(PaymentType.CRA_0001);
-			double prestIts = expressionContext.getVariables(PREST_IT).stream()
-			.collect(Collectors.summingDouble(v -> (Double) v.getValue(v.getPeriod())));
 			
-			expressionContext.setVariable(MONTHLY_PAYMENTS, monthlyPayments - prestIts, start, end);
+			Map<Period, Double> monthlyPayments = taxCalculator.getAmounts(PaymentType.CRA_0001);
+			for (Period p : Period.sub(List.copyOf(monthlyPayments.keySet()), leavePeriods ) ) {
+				expressionContext.setVariable(MONTHLY_PAYMENTS, monthlyPayments.get(p), p.getStart(), p.getEnd());
+			}
+			
+			
+			
 			for (UndefPayment undefMonthlyPayment : undefMonthlyPayments) {
 				try {
 					resolvePayment(undefMonthlyPayment, start, end, issueDate, expressionContext, taxCalculator,
@@ -1200,8 +1203,10 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			} else if ( results.size() == 1 && 
 					results.get(0).getValue() != null && 
 					results.get(0).getValue() > 0.00 && 
-					isPartialMonth(results.get(0)) &&
-//					contractPayment.getScope() == ExpressionScope.AGREEMENT &&
+					( 
+					isPartialMonth(results.get(0))  
+					|| isPartial(expressionContext, results.get(0).getPeriod())
+					) &&
 					allAgreementConstants(results.get(0).getContext()) ) {
 				try {
 					results = fixConstantAgreementResult(contractPayment, results.get(0), start, end, expressionContext);
@@ -1361,6 +1366,18 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		return endDay < lastDay;
 	}
 
+	private static boolean isPartial(ExpressionContext expressionContext, Period p) {
+		try {
+			for ( ITimedResult<Double> factor : expressionContext.eval(ContextVariable.PARTIAL_FACTOR.toString(), p.getStart(), p.getEnd(), Double.class) ) {
+				if ( factor.getValue() < 1.00 ) 
+					return true;
+			}
+			return false;
+			
+		} catch ( Exception e ) {
+			return false;
+		}
+	}
 
 	private static void addResult(ExpressionContext expressionContext, String name, Date resultStart, Date resultEnd,
 			Double resultValue) {
