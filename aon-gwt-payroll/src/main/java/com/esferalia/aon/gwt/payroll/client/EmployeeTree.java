@@ -27,7 +27,6 @@ import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.IndeterminateTas
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasId;
-import com.esferalia.aon.gwt.payroll.client.EmployeeSalary.Listener;
 import com.esferalia.aon.gwt.payroll.client.MainCreta.AbstractBaseCretaDetail;
 import com.esferalia.aon.gwt.payroll.client.MainCreta.AbstractCCCCretaRequestCommand;
 import com.esferalia.aon.gwt.payroll.client.MainCreta.SyncCallback;
@@ -259,8 +258,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		public void execute() {
 			paste = new EmployeePopupCopy();
 			paste.addListener(this);
-			Employee aux = singlenton.getEmployeeContextMenu()
-					.getEmployeeCopy();
+			Employee aux = singlenton.getEmployeeContextMenu().getEmployeeCopy();
+			
 			if (singlenton.avaiableEmployees
 					.containsKey(aux.getDocument()) == false)
 				existPerson(aux);
@@ -269,9 +268,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		}
 
 		private void showPopUpPanel() {
-			setEmployeePaste(
-					singlenton.getEmployeeContextMenu().getEmployeeCopy());
+			setEmployeePaste(singlenton.getEmployeeContextMenu().getEmployeeCopy());
+			
 			setMapAvaiableEmployees(singlenton.avaiableEmployees);
+			//TODO: FIX FIRST THIS, DONT KNOW HOW REALLY WORKS
 			paste.showPopUpPanel();
 		}
 
@@ -2348,6 +2348,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	public void onEmployeeDraftSelected(EmployeeDraftObject employeeDraftObject) {
 		employeeDetail.setWidget(getEmployeeDraft());
 		getEmployeeDraft().setEmployeeDraftObject(employeeDraftObject);
+		singlenton.employee = employeeDraftObject.getEmployee();
 	}
 	
 	@Override
@@ -2365,9 +2366,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	@Override
 	public void onEmployeePaste(Workplace workplace) {
-
 		singlenton.getWorkplaceContextMenu().pasteContract();
-
 	}
 
 	@Override
