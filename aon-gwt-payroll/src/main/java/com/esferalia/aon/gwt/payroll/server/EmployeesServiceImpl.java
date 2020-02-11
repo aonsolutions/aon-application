@@ -23,6 +23,7 @@ import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.USER;
 import static com.esferalia.aon.payroll.sql.SQLConstants.USER_SCOPE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.WORKPLACE;
+import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -221,6 +222,7 @@ import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.TimedObject;
+import com.esferalia.aon.salary.expression.TimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.salary.payment.Payments;
@@ -956,7 +958,42 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public SalaryDraft calculateSalaryDraft(String domain, SalaryDraft salaryDraft ,Date sections [])
 			throws IllegalArgumentException {
-		calculate(domain, salaryDraft, new SmartContractSalaryCalculator<ISalary>(), sections);
+		
+		long draftDays = new com.esferalia.aon.salary.expression.Period(salaryDraft.getStartDate(),salaryDraft.getEndDate())
+		.daysStream().count(); 
+		
+		calculate(domain, salaryDraft, new SmartContractSalaryCalculator<ISalary>() {
+			
+			@Override
+			protected List<ITimedResult<Double>> fixConstantResult(IContractPayment contractPayment,
+					ITimedResult<Double> result, Date start, Date end, ExpressionContext expressionContext)
+					throws UnsupportedOperationException, UndefinedVariablesException {
+				long sectionDays = new com.esferalia.aon.salary.expression.Period(start, end).daysStream().count();
+				ITimedResult<Double> sectionResult = new TimedResult<Double>(result.getValue() / draftDays * sectionDays, result.getPeriod(), result.getContext());
+				return super.fixConstantResult(contractPayment, sectionResult, start, end, expressionContext);
+			}
+			
+			@Override
+			protected List<ITimedResult<Double>> fixConstantAgreementResult(IContractPayment contractPayment,
+					ITimedResult<Double> result, Date start, Date end, ExpressionContext expressionContext)
+					throws UnsupportedOperationException, UndefinedVariablesException {
+
+				long days = getDays(result.getPeriod());
+				double monthDays = com.esferalia.aon.watson.util.AonDateUtils
+						.get(getLastDayOfMonth(result.getPeriod().getEnd()), Calendar.DAY_OF_MONTH);
+				
+				double factor = getPartialFactor(expressionContext, result.getPeriod());
+				
+				double value = result.getValue() * days / monthDays * factor;
+				
+				ITimedResult<Double> fixed = 
+						new TimedResult<Double>(value, result.getPeriod(), result.getContext());
+
+				return Collections.singletonList(fixed);
+			}
+			
+			
+		}, sections);
 		return salaryDraft;
 	}
 

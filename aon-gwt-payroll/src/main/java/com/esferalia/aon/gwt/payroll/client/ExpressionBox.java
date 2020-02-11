@@ -50,8 +50,8 @@ public class ExpressionBox extends TextBox {
 	}
 
 	private String getExpression() {
-
-		return specialExpresion.replace(StringUtils.uppercase(super.getText()));
+		return specialExpresion.replace(super.getText());
+//		return specialExpresion.replace(StringUtils.uppercase(super.getText()));
 	}
 
 	// ------------------------------------------------------------------------
