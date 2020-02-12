@@ -419,6 +419,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 				scrollpanel.setStyleName(AON.AON_CSS.aonScrollArea());
 				scrollpanel.addStyleName(AON.AON_CSS.aonTextCenter());
 				Image image = new Image( doc );
+				image.setWidth("100%");
 				scrollpanel.setWidget(image);
 				attachPanel.setWidget(scrollpanel);
 				if (rootPanel.getWidgetSize(attachPanel) <= 30) {

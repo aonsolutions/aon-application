@@ -203,15 +203,14 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 	private void decorateHeader(int row, int col, String width) {
 		tab.getCellFormatter().setWidth(row, col, width);
 		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextCenter());
-		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
+		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonFontMedium());
 		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
 		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBold());
 	}
 
 	private void paintButtons() {
 		FlowPanel panel = new FlowPanel();
-		panel.setStyleName(AON.AON_CSS.aonBorderTop());
-		panel.addStyleName(AON.AON_CSS.aonPadding2Top());
+		panel.setStyleName(AON.AON_CSS.aonPadding2Top());
 		
 		addButton = new Button();
 		addButton.setAccessKey( 'L' );

@@ -186,14 +186,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 								
 								invoiceCallback.paintEntry();
 								invoicePanelContainer.setWidget(editInvoice(invoiceCallback));
-								Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-									public void execute() {
-										if (invoiceCallback.getInvoice().isSales()) {
-											series.setFocus(true);
-										} else {
-											referenceCode.setFocus(true);
-										}
-								}});
 							}
 							
 							@Override
@@ -960,7 +952,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		vatTable.setWidget(0, 0, baseDescription);
 		vatTable.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonSimpleBorder());
 		vatTable.getCellFormatter().getElement(0, 0).getStyle().setBackgroundColor(LABEL_BACKGROUND_COLOR);
-		vatTable.getCellFormatter().getElement(0, 0).getStyle().setHeight(80.0, Unit.PX);
+		//vatTable.getCellFormatter().getElement(0, 0).getStyle().setHeight(80.0, Unit.PX);
 		vatTable.setWidget(0, 1, vatPanel);
 		invoicePanel.add(vatTable);
 
@@ -1127,6 +1119,15 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		
 		invoiceTypeLabel.setText( getInvoiceLabel(invoiceCallback.getInvoice()));
 		
+		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+			public void execute() {
+				if (invoiceCallback.getInvoice().isSales()) {
+					series.setFocus(true);
+				} else {
+					referenceCode.setFocus(true);
+				}
+		}});
+
 		return invoicePanel;
 	}
 
