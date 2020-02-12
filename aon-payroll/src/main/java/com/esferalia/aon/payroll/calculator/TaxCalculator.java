@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import com.code.aon.AonVersion;
@@ -14,8 +15,8 @@ import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.PaymentTypeVisitor;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
-import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.salary.expression.ITimedResult;
+import com.esferalia.aon.salary.expression.Period;
 
 public abstract class TaxCalculator {
 
@@ -46,7 +47,7 @@ public abstract class TaxCalculator {
 		return irpfBase - inKindIrpfBase;
 	}
 	
-	public abstract double getAmount(PaymentType type);
+	public abstract Map<Period,Double> getAmounts(PaymentType type);
 	
 	public abstract double tax(IContractPayment payment, Date start, Date end, 
 			Date issueDate, double amount ) throws AonException;
@@ -83,12 +84,12 @@ public abstract class TaxCalculator {
 	
 	private static class DefaultTaxCalculator extends TaxCalculator {
 		
-		private Map<PaymentType, Double> typeAmounts;
+		private Map<Period, Double> cra001Amounts;
 		private IContractSalaryCalculatorContext context;
 		
 		public DefaultTaxCalculator(IContractSalaryCalculatorContext context) {
 			this.context = context;
-			this.typeAmounts = new HashMap<PaymentType, Double>();
+			this.cra001Amounts = new TreeMap<Period, Double>();
 		}
 		
 		
@@ -124,8 +125,8 @@ public abstract class TaxCalculator {
 		}
 		
 		@Override
-		public double getAmount(PaymentType type) {
-			return typeAmounts.getOrDefault(type, 0.00);
+		public Map<Period, Double> getAmounts(PaymentType type) {
+			return cra001Amounts;
 		}
 
 		@Override
@@ -186,7 +187,10 @@ public abstract class TaxCalculator {
 				typeVisitor.visitOther(PaymentType.CRA_0001);
 			}
 
-			typeAmounts.put(paymentType, typeAmounts.getOrDefault(paymentType, 0.00) + tax);
+			if ( paymentType == PaymentType.CRA_0001 ) {
+				Period period = new Period(start, end);
+				cra001Amounts.put(period, cra001Amounts.getOrDefault(period, 0.00) + tax);
+			}
 			
 			return tax;
 		}
