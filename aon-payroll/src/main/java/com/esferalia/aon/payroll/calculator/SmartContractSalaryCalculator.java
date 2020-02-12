@@ -601,7 +601,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			Double value = result.getValue(result.getPeriod());
 			
 			try {
-				double cgcBaseMin = getCgcBaseMin(expressionContext, period);
+				double cgcBaseMin = get(expressionContext, period, ContextVariable.CGC_BASE_MIN, ContextVariable.MONTHLY_PAYMENTS, ContextVariable.BASE_SALARY);
 				double paymentMin = (( cgcBaseMin * 12 ) / 14) * 0.90; // 90% of 14th Base Min 
 				if ( contractPayment.getSalaryType() == SalaryType.SALARY
 					&& contractPayment.getMonth() != null )
@@ -959,6 +959,21 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		return getCgcBaseMin(expressionContext, new Period(start,end));
 	}
 	
+	protected double get(ExpressionContext expressionContext, Period period, Object ... names) throws ExpressionException {
+		ExpressionException expressionException = null;
+		for (int i = 0; i < names.length; i++) {
+			try {
+				double value = expressionContext.eval(String.valueOf(names[i]), period.getStart(), period.getEnd()).stream()
+				.map(v->v.getValue(v.getPeriod())).filter(v -> v != null && v instanceof Number)
+				.collect(Collectors.summingDouble(v -> ((Number)v).doubleValue()));
+				return value;
+			} catch ( ExpressionException e ) {
+				expressionException = e;
+			}
+		}
+		throw expressionException;
+	}
+
 	// ------------------------------------------------------------------------
 	
 	protected static long getDays(Period period){

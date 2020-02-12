@@ -599,11 +599,29 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			for (UndefPayment undefPayment : undefPayments)
 				undefPayment.onUndefinedData(this);
 			
+			
+			Map<Period, Double> monthlyPayments = taxCalculator.getAmounts(PaymentType.CRA_0001);
+			for (Period p : Period.sub(List.copyOf(monthlyPayments.keySet()), leavePeriods ) ) {
+				expressionContext.setVariable(MONTHLY_PAYMENTS, monthlyPayments.get(p), p.getStart(), p.getEnd());
+			}
+			
+			
+			for (UndefPayment undefMonthlyPayment : undefMonthlyPayments) {
+				try {
+					resolvePayment(undefMonthlyPayment, start, end, issueDate, expressionContext, taxCalculator,
+							quoteCalculator, leavePeriods, strikePeriods);
+					copyResults(expressionContext, undefMonthlyPayment);
+				} catch (UndefinedVariablesException e) {
+					onUndefinedData(undefMonthlyPayment, e.getMessage(), e.getVariableNames());
+				}
+			}
+
 			double totalPayment = taxCalculator.getTotalPayment();
 			expressionContext.setVariable(TOTAL_PAYMENT, totalPayment, start, end);
 
 			Date irpfDate = ctx.getIrpfDate();
 			expressionContext.setVariable(IRPF_BASE, taxCalculator.getIrpfBase(), irpfDate, irpfDate);
+
 
 			for (UndefPayment undefTotalPayment : undefTotalPayments) {
 				try {
@@ -617,24 +635,6 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 			totalPayment = taxCalculator.getTotalPayment();
 			expressionContext.setVariable(TOTAL_PAYMENT, totalPayment, start, end);
-
-			
-			Map<Period, Double> monthlyPayments = taxCalculator.getAmounts(PaymentType.CRA_0001);
-			for (Period p : Period.sub(List.copyOf(monthlyPayments.keySet()), leavePeriods ) ) {
-				expressionContext.setVariable(MONTHLY_PAYMENTS, monthlyPayments.get(p), p.getStart(), p.getEnd());
-			}
-			
-			
-			
-			for (UndefPayment undefMonthlyPayment : undefMonthlyPayments) {
-				try {
-					resolvePayment(undefMonthlyPayment, start, end, issueDate, expressionContext, taxCalculator,
-							quoteCalculator, leavePeriods, strikePeriods);
-					copyResults(expressionContext, undefMonthlyPayment);
-				} catch (UndefinedVariablesException e) {
-					onUndefinedData(undefMonthlyPayment, e.getMessage(), e.getVariableNames());
-				}
-			}
 
 			salaryBuilder.setTotalPayment(totalPayment);
 
