@@ -202,8 +202,8 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			return delegate.getMoneyIrpfBase();
 		}
 		
-		public double getAmount(PaymentType type) {
-			return delegate.getAmount(type);
+		public Map<Period, Double> getAmounts(PaymentType type) {
+			return delegate.getAmounts(type);
 		}
 
 		public double tax(IContractPayment payment, Date start, Date end, Date issueDate, double amount)
@@ -513,9 +513,12 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		long days = getDays(period);
 		
 		double monthDays = AonDateUtils.get(getLastDayOfMonth(period.getEnd()), Calendar.DAY_OF_MONTH);
-		try {
-			monthDays = expressionContext.eval(ContextVariable.MONTH_DAYS.getName(), period.getStart(), period.getEnd(), Number.class).get(0).getValue().doubleValue();
-		} catch ( Throwable t ) {
+		
+		if ( days < monthDays ) {
+			try {
+				monthDays = expressionContext.eval(ContextVariable.MONTH_DAYS.getName(), period.getStart(), period.getEnd(), Number.class).get(0).getValue().doubleValue();
+			} catch ( Throwable t ) {
+			}
 		}
 		
 		double factor = getPartialFactor(expressionContext, period);
@@ -958,9 +961,25 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	
 	// ------------------------------------------------------------------------
 	
-	private static long getDays(Period period){
+	protected static long getDays(Period period){
 		return period.daysStream().count();
 	}
+
+	protected static double getPartialFactor(ExpressionContext expressionContext, Period period) {
+		double factor = 1.00;
+		try {
+			double factors = 0.00;
+			List<ITimedResult<Number>> vars = expressionContext.eval(String.format("%s ? 1.00 : %s", ContextVariable.FULL_TIME.getName(), ContextVariable.PARTIAL_FACTOR.getName()), period.getStart(), period.getEnd(), Number.class);
+			for (ITimedResult<Number> var : vars) {
+				factors += var.getValue().doubleValue();
+			}
+			factor = factors / vars.size();
+		} catch ( Throwable t ) {
+		}
+		
+		return factor;
+	}
+	// ------------------------------------------------------------------------
 
 	private static long getDays(List<Period> periods){
 		return periods.stream().collect(Collectors.summingLong(p->p.daysStream().count()));
@@ -1081,20 +1100,6 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	}
 
 	
-	private static double getPartialFactor(ExpressionContext expressionContext, Period period) {
-		double factor = 1.00;
-		try {
-			double factors = 0.00;
-			List<ITimedResult<Number>> vars = expressionContext.eval(String.format("%s ? 1.00 : %s", ContextVariable.FULL_TIME.getName(), ContextVariable.PARTIAL_FACTOR.getName()), period.getStart(), period.getEnd(), Number.class);
-			for (ITimedResult<Number> var : vars) {
-				factors += var.getValue().doubleValue();
-			}
-			factor = factors / vars.size();
-		} catch ( Throwable t ) {
-		}
-		
-		return factor;
-	}
 
 	private static String normalize(String description) {
 		
