@@ -154,6 +154,7 @@ import com.esferalia.aon.payroll.calculator.AbstractContractSalaryCalculatorCont
 import com.esferalia.aon.payroll.calculator.CompositeCosts;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
 import com.esferalia.aon.payroll.calculator.ContextFunctions;
+import com.esferalia.aon.payroll.calculator.ContractLeaveLoader;
 import com.esferalia.aon.payroll.calculator.ContractLeaveLoader.Leave;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.DelegateSystemPayment;
@@ -2828,7 +2829,76 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			
 			
 		};
-		ctx.leaveLoader = new SQLContractLeaveLoader(this.startDate, this.getEnd()); //leaveLoader; 
+		ctx.leaveLoader = new SQLContractLeaveLoader(this.startDate, this.getEnd()) {
+			
+			@Override
+			public boolean isEmpty() {
+				return true;
+			}
+			
+			@Override
+			public Long getCommonDiseaseDays(Period p) {
+				return 0L;
+			}
+			
+			@Override
+			public Long getLeaveDays(Period p, LeaveType type) {
+				return 0L;
+			}
+			
+			@Override
+			public SortedSet<Leave> getLeaves() {
+				return Collections.emptySortedSet();
+			}
+			
+			@Override
+			public Long getProfessionalDiseaseDays(Period p) {
+				return 0L;
+			}
+			
+			@Override
+			public Long getLeavesDays(Period p) {
+				return 0L;
+			}
+			
+			@Override
+			public boolean isLeaveDay(Calendar day) {
+				return false;
+			}
+			
+			@Override
+			public void clear() {
+			}
+			
+			@Override
+			public void clean(ExpressionContext exprCtx, Leave leave) {
+			}
+			
+			@Override
+			public void loadContractLeave(ResultSet rs, ExpressionContext exprCtx)
+					throws SQLException, ExpressionException {
+			}
+			
+			@Override
+			public void loadContractLeave(Integer id, Date leaveStart, Date leaveEnd, long parentDays, LeaveType type,
+					String dailyRegBase, ExpressionContext exprCtx) throws ExpressionException {
+			}
+			
+			@Override
+			public void loadContractLeave(Integer id, Date leaveStart, Date leaveEnd, long parentDays, LeaveType type,
+					Double dailyRegBase, ExpressionContext exprCtx) throws ExpressionException {
+			}
+
+			@Override
+			protected void remove(Leave leave) {
+			}
+			
+			@Override
+			protected void add(Leave leave) {
+			}
+			
+		}; 
+		//new SQLContractLeaveLoader(this.startDate, this.getEnd()); //leaveLoader;
 		return ctx;
 	}
 

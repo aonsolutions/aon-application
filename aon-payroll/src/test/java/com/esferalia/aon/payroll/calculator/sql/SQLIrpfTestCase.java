@@ -12,6 +12,7 @@ import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
 import static java.util.Calendar.YEAR;
 import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -657,6 +658,118 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		//ctx.getIrpf();
 		
 		Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
+		
+	}
+
+	@Test
+	public void testSimpleWithITI() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemPayments(aonContext);
+		
+		addSSRegimePayment(aonContext 
+				,SSRegimeType.GENERAL 
+				,getFirstDayOfYear(getToday()) 
+				,PaymentType.CRA_0000
+				,"TRACE('BASE_REGULADORA: %f \r\n',BASE_REGULADORA);0.00"
+				,"TRACE('DIAS_ENFERMEDAD_COMUN_21: %d \r\n',DIAS_ENFERMEDAD_COMUN_21);0.00"
+				,"TRACE('P_0 + P_1 + P_2 : %f \r\n',P_0 + P_1 + P_2);0.00"
+				);
+
+		addSSRegimePayment(aonContext 
+				,SSRegimeType.GENERAL 
+				,getFirstDayOfYear(getToday()) 
+				,PaymentType.CRA_0000
+				,String.format("BASE_REGULADORA * 0.75 * %s_21",  COMMON_DISEASE_DAYS)
+				,String.format("BASE_REGULADORA * 1.00 * %s_21",  COMMON_DISEASE_DAYS)
+				,"_P"
+				);
+		
+		Extra extras [] = new Extra[] {
+							new Extra() {
+								{
+									this.expression = "P_0 + P_1 + P_2";
+									this.month = Month.DECEMBER;
+									this.start = "01/12";
+									this.end = "31/12";
+									this.issue = "15/12";
+								}
+							}, new Extra() {
+								{
+									this.expression = "P_0 + P_1 + P_2";
+									this.month = Month.JULY;
+									this.start = "01/07 -1";
+									this.end = "30/06";
+									this.issue = "01/07";
+								}
+							}
+						};
+		
+		AgreementLevelCategoryRecord category = null;
+		if (extras != null && extras.length > 0)
+			category = newAgreement(aonContext, extras);
+
+		Date startContract = AonDateUtils.getFirstDayOfYear(getToday());
+
+		ContractRecord contract = newContract(aonContext, 
+				startContract, 
+				null, 
+				new HashMap<String, String>() {
+					{
+						put(TC2.getName(), C100.getValue());
+						put(ContextVariable.MONTH_DAYS.getName(), "30.00");
+						put(ContextVariable.QUOTE_GROUP.getName(), "'01'");
+					}
+				}, 
+				new String[] { 
+				"( P_1 + P_2 ) * 0.10 ",
+				"150.00 * DIAS_TRABAJADOS / DIAS_MES",
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" 
+				}, 
+				new String[] {
+				"BASE_CGC * 0.10", 
+				"BASE_CGP * 0.05", 
+				"BASE_ESTR * 0.10",
+				"BASE_NESTR * 0.20", 
+				"BASE_IRPF * PORCENTAJE_IRPF" 
+				},
+				null);
+
+		
+		Date salaryStart = getFirstDayOfMonth(add(startContract, Calendar.MONTH,1));
+		Date salaryEnd = getLastDayOfMonth(salaryStart);
+		Date salaryIssue = salaryEnd;
+
+		Date startITDate = add(add(startContract, MONTH, 2), DAY_OF_MONTH, 10);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				null, null);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, salaryStart, salaryEnd, salaryIssue, contract);
+		
+		Boolean []  asserts = {false}; 
+
+		ctx.setListener(new Listener() {
+
+			@Override
+			public void onIrpf(IrpfOutcome irpfOutcome) {
+				System.out.println("Irpf : " + irpfOutcome.getIrpfResult().getIrpf() );
+				System.out.println("AnnualIrpf : " + irpfOutcome.getIrpfResult().getAnnualIrpf() );
+				System.out.println("AnnualRemuneration : " + irpfOutcome.getIrpfResult().getAnnualRemuneration() );
+				
+				assertAnnualRemuneration(400.00 * 1.10 * 12 , irpfOutcome.getIrpfResult().getAnnualRemuneration(), 12, 0.009);
+				asserts[0] = true;
+			}
+		});
+
+		try {
+			Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
+			assertTrue(asserts[0]);
+		} catch ( RuntimeException e ) {
+			
+		}
 		
 	}
 
