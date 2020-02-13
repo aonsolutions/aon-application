@@ -544,8 +544,24 @@ public class EmployeeDialogObject {
 		});
 	}
 	
+	public void getAgreement(Integer agreementId, Consumer<Agreement> success, Consumer<Throwable> failure) {
+		
+		enterprisesService.getAgreement(agreementId, new AsyncCallback<Agreement>() {
+			
+			@Override
+			public void onSuccess(Agreement result) {
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+		});	
+	}
+	
 	public void getAgreements(Consumer<List<Agreement>> success, Consumer<Throwable> failure) {
-		enterprisesService.getAgreements(0, 0, new AsyncCallback<List<Agreement>>() {
+		enterprisesService.getAgreements(0, Integer.MAX_VALUE, new AsyncCallback<List<Agreement>>() {
 			
 			@Override
 			public void onSuccess(List<Agreement> result) {
