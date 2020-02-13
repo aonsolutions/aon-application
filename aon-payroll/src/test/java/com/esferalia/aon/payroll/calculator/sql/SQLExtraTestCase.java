@@ -1132,8 +1132,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		addPayment(aonContext, contract, startDate, endDate, "ESTANCIA", "500", "_P", "_P", PaymentType.CRA_0042, SalaryType.SALARY);
 		
 		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
-		Assert.assertEquals( 1600.00 + 1000.00 / 12 * 3 + 500.00, salary.getTotalPayment(), DELTA);
-		Assert.assertEquals( 1600.00 + 1000.00 / 12 * 3 + 500.00, salary.getCommonBase(), DELTA);
+		Assert.assertEquals( 1600.00/2.00 + 1000.00/2.00 / 12 * 3 + 500.00, salary.getTotalPayment(), DELTA);
+		Assert.assertEquals( 1600.00/2.00 + 1000.00/2.00 / 12 * 3 + 500.00, salary.getCommonBase(), DELTA);
 
 	}
 
