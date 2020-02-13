@@ -319,31 +319,61 @@ public class EmployeeDialog extends CustomDialog {
 		@Override
 		public void onContractAgreementChange() {
 			this.level.clear();
-			String agreementName = this.agreement.getSelectedItemText();
-			List<Agreement> agreements = employeeDialogObject.getAgreements();
-			this.level.addItem("-");
-			for (Agreement a : agreements) {
-				if (a.getId() > 0 && a.getDescription() == agreementName) {
-					Set<Level> levels = a.getLevels();
-					for (Level levelRecord : levels) {
-						Set<String> categories = a.getCategoriesMap().get(levelRecord.getId());
-						for (String categoryRecord : categories) {
-							this.level.addItem(levelRecord.getDescription() + " - " + categoryRecord);
-						}
-					}
-				}
+			
+			if (this.agreement.getSelectedIndex() == 0 ) {
+				employeeDialogObject.setContractAgreementId(null);
+				employeeDialogObject.setContractAgreementLevelId(null);
+				this.category.setValue("");
+				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.category);
 			}
 			
-			if (this.agreement.getSelectedIndex() == 0) {
+			Integer agreementId =  Integer.valueOf(this.agreement.getSelectedValue()); 
+			
+			this.level.addItem("-", "-1");
+			
+			employeeDialogObject.getAgreement(agreementId,  
+			(agreement) -> {
+				for (Level levelRecord : agreement.getLevels())
+					for (String categoryRecord : agreement.getCategoriesMap().get(levelRecord.getId()))
+						this.level.addItem(levelRecord.getDescription() + " - " + categoryRecord, String.valueOf(levelRecord.getId()));
+
+				employeeDialogObject.setContractAgreementId(agreement.getId());
+				employeeDialogObject.setContractAgreementLevelId(null);
+			},
+			(throwable) -> {
 				employeeDialogObject.setContractAgreementId(null);
 				employeeDialogObject.setContractAgreementLevelId(null);
 				this.category.setEnabled(false);
 				this.category.setValue("");
 				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.category);
-			} else {
-				Integer agreementId = employeeDialogObject.getAgreementId(this.agreement.getSelectedItemText());
-				employeeDialogObject.setContractAgreementId(agreementId);
-			}
+			});
+			
+//			this.level.clear();
+//			String agreementName = this.agreement.getSelectedItemText();
+//			List<Agreement> agreements = employeeDialogObject.getAgreements();
+//			this.level.addItem("-");
+//			for (Agreement a : agreements) {
+//				if (a.getId() > 0 && a.getDescription() == agreementName) {
+//					Set<Level> levels = a.getLevels();
+//					for (Level levelRecord : levels) {
+//						Set<String> categories = a.getCategoriesMap().get(levelRecord.getId());
+//						for (String categoryRecord : categories) {
+//							this.level.addItem(levelRecord.getDescription() + " - " + categoryRecord);
+//						}
+//					}
+//				}
+//			}
+//			
+//			if (this.agreement.getSelectedIndex() == 0) {
+//				employeeDialogObject.setContractAgreementId(null);
+//				employeeDialogObject.setContractAgreementLevelId(null);
+//				this.category.setEnabled(false);
+//				this.category.setValue("");
+//				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.category);
+//			} else {
+//				Integer agreementId = employeeDialogObject.getAgreementId(this.agreement.getSelectedItemText());
+//				employeeDialogObject.setContractAgreementId(agreementId);
+//			}
 		}
 
 		@Override
@@ -354,8 +384,7 @@ public class EmployeeDialog extends CustomDialog {
 				this.category.setValue("");
 				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.category);
 			} else {
-				Integer agreementLevelId = employeeDialogObject.getAgreementLevelId(this.agreement.getSelectedItemText(),
-						this.level.getSelectedItemText());
+				Integer agreementLevelId = Integer.parseInt(this.level.getSelectedValue());
 				employeeDialogObject.setContractAgreementLevelId(agreementLevelId);
 				String levelDescription = (this.level.getSelectedItemText() == null
 						|| this.level.getSelectedItemText() == "-") ? null
@@ -364,6 +393,22 @@ public class EmployeeDialog extends CustomDialog {
 				employeeDialogObject.setContractCategory(levelDescription);
 				this.category.setEnabled(true);
 			}
+//			if (this.agreement.getSelectedIndex() == 0 || this.level.getSelectedIndex() == 0) {
+//				employeeDialogObject.setContractAgreementLevelId(null);
+//				this.category.setEnabled(false);
+//				this.category.setValue("");
+//				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.category);
+//			} else {
+//				Integer agreementLevelId = employeeDialogObject.getAgreementLevelId(this.agreement.getSelectedItemText(),
+//						this.level.getSelectedItemText());
+//				employeeDialogObject.setContractAgreementLevelId(agreementLevelId);
+//				String levelDescription = (this.level.getSelectedItemText() == null
+//						|| this.level.getSelectedItemText() == "-") ? null
+//								: this.level.getSelectedItemText().split("- ")[1];
+//				this.category.setValue(levelDescription);
+//				employeeDialogObject.setContractCategory(levelDescription);
+//				this.category.setEnabled(true);
+//			}
 		}
 		
 		@Override
@@ -870,10 +915,14 @@ public class EmployeeDialog extends CustomDialog {
 	
 	private void initAgreements() {
 		// CONVENIO
-		this.employee.agreement.addItem("-");
+		this.employee.agreement.addItem("-", "-1");
 		List<Agreement> agreements = employeeDialogObject.getActiveAgreements();
-		for (Agreement a : agreements)
-			this.employee.agreement.addItem(a.getDescription());
+		for (Agreement agreement : agreements)
+			this.employee.agreement.addItem(agreement.getDescription(), String.valueOf(agreement.getId()));
+//		this.employee.agreement.addItem("-");
+//		List<Agreement> agreements = employeeDialogObject.getActiveAgreements();
+//		for (Agreement a : agreements)
+//			this.employee.agreement.addItem(a.getDescription());
 	}
 	
 	private void fillDefaultFields() {
