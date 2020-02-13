@@ -439,6 +439,16 @@ public class TediParser {
 		aonCtx.setPayMethods(FinanceDAO.getPayMethodsById(ctx));
 		TediInvoiceTransfer.toAon(ctx, aonCtx,result);
 		fillVats(ctx, aonCtx, result);
+		if (ai.getFinances() == null) {
+			ai.setFinances(new LinkedList<Finance>());
+		}
+		if (ai.getFinances().size() == 0) {
+			ai.getFinances().add(new Finance()
+					.setDueDate(ai.getInvoice().getIssueDate())
+					.setAmount(ai.getInvoice().getTotal())
+					.setPayment(!ai.isSales())
+					.setFinanceStatus(FinanceStatus.PENDING));
+		}
 		ai.setAccountEntry(getEntryBase(ctx,aonCtx,ai));
 		if (result.isImportable()) {
 			ai.setAccountEntry(InvoiceRecorder.getInvoiceEntry(ai));
