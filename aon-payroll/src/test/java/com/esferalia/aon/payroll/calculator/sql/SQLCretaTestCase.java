@@ -3238,9 +3238,9 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		org.junit.Assert.assertEquals( 10, Integer.parseInt(bonusBases.get(1).getFechaDesde().getDia()));
 		org.junit.Assert.assertEquals( get(endDate, DAY_OF_MONTH), Integer.parseInt(bonusBases.get(1).getFechaHasta().getDia()));
 		
-		org.junit.Assert.assertEquals( 175000 * 9 / get(endDate, DAY_OF_MONTH), Integer.parseInt(bonusBases.get(0).getDatosTramo().getDato().get(0).getValor()));
+		org.junit.Assert.assertEquals( Math.round(175000.00 * 9 / get(endDate, DAY_OF_MONTH)), Integer.parseInt(bonusBases.get(0).getDatosTramo().getDato().get(0).getValor()));
 
-		org.junit.Assert.assertEquals( 175000 * ( get(endDate, DAY_OF_MONTH) -9 ) / get(endDate, DAY_OF_MONTH), Integer.parseInt(bonusBases.get(1).getDatosTramo().getDato().get(1).getValor()));
+		org.junit.Assert.assertEquals( Math.round(175000.00 * ( get(endDate, DAY_OF_MONTH) -9 ) / get(endDate, DAY_OF_MONTH)), Integer.parseInt(bonusBases.get(1).getDatosTramo().getDato().get(1).getValor()));
 	}
 
 	protected ContractRecord newContract(AONContext aonContext, String ccc) {
