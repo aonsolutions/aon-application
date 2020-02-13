@@ -28,6 +28,7 @@ import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -94,6 +95,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	
 	private SimplePanel invoicePanelContainer;
 	private AccountingRegistryBox registryBox;
+	private CheckBox undeductible;
 	private InlineLabel invoiceTypeLabel;
 	private FlowPanel dropPanel; 	
 	private ListBox series = new ListBox();
@@ -126,7 +128,8 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		FlexTable regTable = new FlexTable();
 		regTable.getColumnFormatter().setWidth(0, "185px");
 		regTable.getColumnFormatter().setWidth(1, "auto");
-		regTable.getColumnFormatter().setWidth(2, "250px");
+		regTable.getColumnFormatter().setWidth(2, "185px");
+		regTable.getColumnFormatter().setWidth(3, "250px");
 		
 		regTable.setStyleName(AON.AON_CSS.aonWidthAll());
 		registryPanel.add(regTable);
@@ -136,6 +139,9 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		label.addStyleName(AON.AON_CSS.aonBold());
 		label.addStyleName(AON.AON_CSS.aonWidth180());
 		regTable.setWidget(0, 0, label);
+		
+		undeductible = new CheckBox("Gastos no deducibles");
+		undeductible.setValue(false);
 		
 		registryBox = new AccountingRegistryBox(
 				invoiceCallback.getCurrentDomainName()
@@ -159,44 +165,26 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			@Override
 			public void onSelection(SelectionEvent<AccountingRegistry> event) {
 				final AccountingRegistry ar = event.getSelectedItem();
-				FISCAL_SERVICE.initializeInvoice(
-						invoiceCallback.getCurrentDomainName()
-						,invoiceCallback.getCurrentDomainId()
-						,ar
-						,invoiceCallback.getModule().getActivity()
-						,invoiceCallback.getModule().getEntryDate()
-						,new AsyncCallback<AccountingInvoice>() {
-							
-							@Override
-							public void onSuccess(AccountingInvoice result) {
-								if (invoiceCallback.getInvoice().isDocumentAttached()) {
-									result.setAttach(invoiceCallback.getInvoice().getAttach());
-								}
-								AccountEntry ae = invoiceCallback.getInvoice().getAccountEntry();
-								invoiceCallback.setInvoice(result);
-								invoiceCallback.setAccountEntry(ae);
-								
-								Account account = new Account();
-								account.setId(ar.getAccountId());
-								account.setCode(ar.getAccountCode());
-								account.setDescription(ar.getAccountDescription());
-								if (ar.getAccountId() != null) {
-									invoiceCallback.getModule().onBalance(account);
-								}
-								
-								invoiceCallback.paintEntry();
-								invoicePanelContainer.setWidget(editInvoice(invoiceCallback));
-							}
-							
-							@Override
-							public void onFailure(Throwable caught) {
-								invoiceCallback.getModule().onError(caught.getMessage());
-							}
-						});
-				
+				undeductible.setValue(false);
+				initializeInvoice(invoiceCallback, ar );
 			}
 		});
 		regTable.setWidget(0, 1, registryBox);
+		
+		undeductible.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				final AccountingRegistry ar = invoiceCallback.getInvoice().getRegistry();
+				if (undeductible.getValue()) {
+					ar.setType(AccountingRegistryType.UNDED_CREDITOR);
+				} else {
+					ar.setType(AccountingRegistryType.CREDITOR);
+				}
+				initializeInvoice(invoiceCallback, ar );
+			}
+		});
+		regTable.setWidget(0, 2, undeductible);
 		
 		invoiceTypeLabel = new InlineLabel();
 		invoiceTypeLabel.setText( getInvoiceLabel(invoiceCallback.getInvoice()));
@@ -205,7 +193,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		invoiceTypeLabel.addStyleName(AON.AON_CSS.aonTextRight());
 		invoiceTypeLabel.addStyleName(AON.AON_CSS.aonNowrap());
 		invoiceTypeLabel.getElement().getStyle().setProperty("flex-grow", "1");
-		regTable.setWidget(0, 2, invoiceTypeLabel);
+		regTable.setWidget(0, 3, invoiceTypeLabel);
 		
 		FlowPanel invoiceRootPanel = new FlowPanel();
 		invoiceRootPanel.add(registryPanel);
@@ -232,6 +220,44 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		
 		setStyleName(AON.AON_CSS.aonWidthAll());
 		setWidget(rootScrollPanel);
+	}
+
+	protected void initializeInvoice(InvoicePanelCallback invoiceCallback, AccountingRegistry ar) {
+		FISCAL_SERVICE.initializeInvoice(
+				invoiceCallback.getCurrentDomainName()
+				,invoiceCallback.getCurrentDomainId()
+				,ar
+				,invoiceCallback.getModule().getActivity()
+				,invoiceCallback.getModule().getEntryDate()
+				,new AsyncCallback<AccountingInvoice>() {
+					
+					@Override
+					public void onSuccess(AccountingInvoice result) {
+						undeductible.setVisible(result.isExpenses() || result.isUndeductible());
+						if (invoiceCallback.getInvoice().isDocumentAttached()) {
+							result.setAttach(invoiceCallback.getInvoice().getAttach());
+						}
+						AccountEntry ae = invoiceCallback.getInvoice().getAccountEntry();
+						invoiceCallback.setInvoice(result);
+						invoiceCallback.setAccountEntry(ae);
+						
+						Account account = new Account();
+						account.setId(ar.getAccountId());
+						account.setCode(ar.getAccountCode());
+						account.setDescription(ar.getAccountDescription());
+						if (ar.getAccountId() != null) {
+							invoiceCallback.getModule().onBalance(account);
+						}
+						
+						invoiceCallback.paintEntry();
+						invoicePanelContainer.setWidget(editInvoice(invoiceCallback));
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						invoiceCallback.getModule().onError(caught.getMessage());
+					}
+				});
 	}
 
 	@Override
@@ -319,9 +345,11 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	private FlowPanel editInvoice(InvoicePanelCallback invoiceCallback) {
 		AccountingInvoice inv = invoiceCallback.getInvoice();
 		
+		undeductible.setVisible(invoiceCallback.getInvoice().isUndeductible() || invoiceCallback.getInvoice().isExpenses());
+		
 		FullDocument fullDocument = new FullDocument();
 		TextBox rName = new TextBox();
-		taxDate = new DateBoxEx();		
+		taxDate = new DateBoxEx();
 		CheckBox service = new CheckBox(AON.MSG.service());
 		CheckBox investment = new CheckBox(AON.MSG.investAsset());
 		CheckBox surcharge = new CheckBox(AON.MSG.surcharge());
@@ -527,21 +555,12 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		InlineLabel taxDateLabel = new InlineLabel(AON.MSG.taxDate());
 		taxDateLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		taxDateLabel.addStyleName(AON.AON_CSS.aonWidth80());
+		taxDateLabel.setVisible(!invoiceCallback.getInvoice().isUndeductible());
 		headerPanel2.add(taxDateLabel);
 		
 		FlowPanel taxDateContainer = new FlowPanel();
 		taxDateContainer.setStyleName(AON.AON_CSS.aonWidth150());
 		
-		taxDate.getTextBox().addKeyUpHandler(new KeyUpHandler() {
-			
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
-					taxDate.hideDatePicker();
-					registryBox.setFocus(true);
-		        }
-			}
-		});
 		taxDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			
 			@Override
@@ -550,11 +569,13 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				decorateTaxDate(invoiceCallback.getInvoice());
 			}
 		});
+		taxDate.setVisible(!invoiceCallback.getInvoice().isUndeductible());
 		taxDateContainer.add(taxDate);
 		headerPanel2.add(taxDateContainer);
 		
 		service.setStyleName(AON.AON_CSS.aonInline());
 		service.addStyleName(AON.AON_CSS.aonWidth150());
+		service.setVisible(!invoiceCallback.getInvoice().isUndeductible());		
 		service.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			
 			@Override
@@ -564,16 +585,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				headerDataChanged(invoiceCallback);
 			}
 		});
-		service.addKeyUpHandler(new KeyUpHandler() {
-			
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
-					registryBox.setFocus(true);
-		        }
-			}
-		});
-
 		headerPanel2.add(service);
 		
 		investment.setStyleName(AON.AON_CSS.aonInline());
@@ -585,15 +596,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				invoiceCallback.getInvoice().getInvoice().setInvestment(investment.getValue());
 			}
 		});
-		investment.addKeyUpHandler(new KeyUpHandler() {
-			
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
-					registryBox.setFocus(true);
-		        }
-			}
-		});
+		investment.setVisible(!invoiceCallback.getInvoice().isUndeductible());
 		headerPanel2.add(investment);
 		
 		surcharge.setStyleName(AON.AON_CSS.aonInline());
@@ -607,15 +610,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				headerDataChanged(invoiceCallback);
 			}
 		});
-		surcharge.addKeyUpHandler(new KeyUpHandler() {
-			
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
-					registryBox.setFocus(true);
-		        }
-			}
-		});
+		surcharge.setVisible(!invoiceCallback.getInvoice().isUndeductible());
 		headerPanel2.add(surcharge);
 		
 		// *************************************************************************
@@ -627,6 +622,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		InlineLabel transactionLabel = new InlineLabel(AON.MSG.transaction());
 		transactionLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		transactionLabel.addStyleName(AON.AON_CSS.aonWidth80());
+		transactionLabel.setVisible(!invoiceCallback.getInvoice().isUndeductible());
 		headerPanel3.add(transactionLabel);
 		
 		FlowPanel transactionContainer = new FlowPanel();
@@ -641,16 +637,8 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				headerDataChanged(invoiceCallback);
 			}
 		});
-		transactionBox.addKeyUpHandler(new KeyUpHandler() {
-			
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
-					registryBox.setFocus(true);
-		        }
-			}
-		});
 		transactionContainer.add(transactionBox);
+		transactionBox.setVisible(!invoiceCallback.getInvoice().isUndeductible());
 		headerPanel3.add(transactionContainer);
 
 		vatAccrualPayment.setStyleName(AON.AON_CSS.aonInline());
@@ -662,15 +650,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				invoiceCallback.getInvoice().getInvoice().setVatAccrualPayment(vatAccrualPayment.getValue());
 			}
 		});
-		vatAccrualPayment.addKeyUpHandler(new KeyUpHandler() {
-			
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
-					registryBox.setFocus(true);
-		        }
-			}
-		});
+		vatAccrualPayment.setVisible(!invoiceCallback.getInvoice().isUndeductible());
 		headerPanel3.add(vatAccrualPayment);
 		
 		withholding.setStyleName(AON.AON_CSS.aonInline());
@@ -684,15 +664,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				headerDataChanged(invoiceCallback);
 			}
 		});
-		withholding.addKeyUpHandler(new KeyUpHandler() {
-			
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
-					registryBox.setFocus(true);
-		        }
-			}
-		});
+		withholding.setVisible(!invoiceCallback.getInvoice().isUndeductible());
 		headerPanel3.add(withholding);
 		
 		withholdingFarmer.setStyleName(AON.AON_CSS.aonInline());
@@ -706,15 +678,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				headerDataChanged(invoiceCallback);
 			}
 		});
-		withholdingFarmer.addKeyUpHandler(new KeyUpHandler() {
-			
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
-					registryBox.setFocus(true);
-		        }
-			}
-		});
+		withholdingFarmer.setVisible(!invoiceCallback.getInvoice().isUndeductible());
 		headerPanel3.add(withholdingFarmer);
 		
 		// *************************************************************************

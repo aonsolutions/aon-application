@@ -46,6 +46,8 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 	private LinkedList<InvoicePanelRow> rows;
 	private LinkedList<Account> suggestedAccounts;
 	
+	private Label vatPercentLabel;
+	private Label vatQuotaLabel;
 	private Label reLabel;
 	private Label reQuotaLabel;
 	private Label investAssetLabel;
@@ -106,6 +108,10 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 	public void setSuggestedAccounts(LinkedList<Account> suggestedAccounts) {
 		this.suggestedAccounts = suggestedAccounts;
 	}
+	
+	private boolean isUndeductible() {
+		return this.callback != null && this.callback.getInvoice() != null && this.callback.getInvoice().isUndeductible();
+	}
 
 	void paint() {
 		container.clear();
@@ -132,14 +138,16 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		tab.setWidget(row, col, label);
 		decorateHeader(row, col, "1%");
 		++col;
-		label = new Label("% IVA");
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		tab.setWidget(row, col, label);
+		
+		vatPercentLabel = new Label("% IVA");
+		vatPercentLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+		tab.setWidget(row, col, vatPercentLabel);
 		decorateHeader(row, col, "1%");
 		++col;
-		label = new Label(AON.MSG.vatQuota());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		tab.setWidget(row, col, label);
+		
+		vatQuotaLabel = new Label(AON.MSG.vatQuota());
+		vatQuotaLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+		tab.setWidget(row, col, vatQuotaLabel);
 		decorateHeader(row, col, "1%");
 		++col;
 		reLabel = new Label("% RE");
@@ -368,6 +376,8 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			vatPercent.setStyleName(AON.AON_CSS.aonInputText());
 			vatPercent.addStyleName(AON.AON_CSS.aonTextRight());
 			vatPercent.addStyleName(AON.AON_CSS.aonWidth40());
+			vatPercentLabel.setVisible(!callback.getInvoice().isUndeductible());
+			vatPercent.setVisible(!callback.getInvoice().isUndeductible());
 			vatPercent.setValue(vat.getPercentage());
 			vatPercent.addValueChangeHandler(new ValueChangeHandler<Double>() {
 				
@@ -381,9 +391,11 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			tab.setWidget(currentRow, col, vatPercent);
 			++col;
 			
+			vatQuotaLabel.setVisible(!callback.getInvoice().isUndeductible());
 			vatQuota.setStyleName(AON.AON_CSS.aonInputText());
 			vatQuota.addStyleName(AON.AON_CSS.aonTextRight());
 			vatQuota.addStyleName(AON.AON_CSS.aonPaddingLeft10Important());
+			vatQuota.setVisible(!callback.getInvoice().isUndeductible());
 			vatQuota.setValue(vat.getQuota());
 			vatQuota.addValueChangeHandler(new ValueChangeHandler<Double>() {
 				
@@ -711,36 +723,43 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			return false;
 		}
 
-		public void enableSurcharge(boolean enabled) {
+		private void enableSurcharge(boolean enabled) {
 			surchargePercent.setValue(0.0,true);
-			surchargePercent.setVisible(enabled);
-			reLabel.setVisible(enabled);
+			surchargePercent.setVisible(!isUndeductible() && enabled);
+			reLabel.setVisible(!isUndeductible() && enabled);
 			surchargeQuota.setValue(0.0,true);
-			surchargeQuota.setVisible(enabled);
-			reQuotaLabel.setVisible(enabled);
+			surchargeQuota.setVisible(!isUndeductible() && enabled);
+			reQuotaLabel.setVisible(!isUndeductible() && enabled);
 			
-			investAssetLabel.setVisible(callback.isInvestAssetsAvailable());
-			investAsset.setVisible(callback.isInvestAssetsAvailable());
-			dedPercentLabel.setVisible(callback.isInvestAssetsAvailable());
-			dedPercent.setVisible(callback.isInvestAssetsAvailable());
+			investAssetLabel.setVisible(!isUndeductible() && callback.isInvestAssetsAvailable());
+			investAsset.setVisible(!isUndeductible() && callback.isInvestAssetsAvailable());
+			dedPercentLabel.setVisible(!isUndeductible() && callback.isInvestAssetsAvailable());
+			dedPercent.setVisible(!isUndeductible() && callback.isInvestAssetsAvailable());
 			dedPercent.setValue(100.0,true);
-			dedQuotaLabel.setVisible(callback.isInvestAssetsAvailable());
-			dedQuota.setVisible(callback.isInvestAssetsAvailable());
-			adjAccountLabel.setVisible(callback.isInvestAssetsAvailable());
-			adjAccount.setVisible(callback.isInvestAssetsAvailable());
+			dedQuotaLabel.setVisible(!isUndeductible() && callback.isInvestAssetsAvailable());
+			dedQuota.setVisible(!isUndeductible() && callback.isInvestAssetsAvailable());
+			adjAccountLabel.setVisible(!isUndeductible() && callback.isInvestAssetsAvailable());
+			adjAccount.setVisible(!isUndeductible() && callback.isInvestAssetsAvailable());
 		}
 		
-		public void enableInputVat(boolean enabled) {
-			inputVatAccount.setVisible(enabled);
-			inputVatLabel.setVisible(enabled);
+		private void enableVat( boolean undeductible ) {
+			vatPercent.setValue(0.0,true);
+			vatPercent.setVisible(undeductible);
+			vatQuota.setValue(0.0,true);
+			vatQuota.setVisible(undeductible);
 		}
-		public void enableOutputVat(boolean enabled) {
-			outputVatAccount.setVisible(enabled);
-			outputVatLabel.setVisible(enabled);
+		
+		private void enableInputVat(boolean enabled) {
+			inputVatAccount.setVisible(!isUndeductible() && enabled);
+			inputVatLabel.setVisible(!isUndeductible() && enabled);
 		}
-		public void enableWithholding(boolean enabled) {
-			withholding.setVisible(enabled);
-			withholdingLabel.setVisible(enabled);
+		private void enableOutputVat(boolean enabled) {
+			outputVatAccount.setVisible(!isUndeductible() && enabled);
+			outputVatLabel.setVisible(!isUndeductible() && enabled);
+		}
+		private void enableWithholding(boolean enabled) {
+			withholding.setVisible(!isUndeductible() && enabled);
+			withholdingLabel.setVisible(!isUndeductible() && enabled);
 		}
 		
 		private void checkCalculate(final InvoiceVAT vat, DoubleBox toFocus) {
@@ -830,6 +849,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			row.enableInputVat(callback.getInvoice().isInputVatEnabled());
 			row.enableOutputVat(callback.getInvoice().isOutputVatEnabled());
 			row.enableSurcharge(callback.getInvoice().isSurcharge());
+			row.enableVat(callback.getInvoice().isUndeductible());
 		}
 	}
 
