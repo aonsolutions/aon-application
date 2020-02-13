@@ -1230,11 +1230,11 @@ public class Bases {
 			
 
 			for (Dato datoCreta : tramoCreta.getDatosTramo().getDato()) {
-				if (!datoCreta.getTipoDato()
-						.equalsIgnoreCase(datoAon.getTipoDato()))
+				if (!AonStringUtils.equalsIgnoreCase(datoCreta.getTipoDato(),
+						datoAon.getTipoDato()))
 					continue;
-				if (!datoCreta.getCodigo()
-						.equalsIgnoreCase(datoAon.getCodigo()))
+				if (!AonStringUtils.equalsIgnoreCase(datoCreta.getCodigo(),
+						datoAon.getCodigo()))
 					continue;
 
 				if (AonStringUtils.isEmpty(datoCreta.getValor()))
@@ -2710,7 +2710,9 @@ public class Bases {
 		callbacksList.add(comment);
 
 		FixConceptUnMatchedCallback fixConceptsUnMatched = new FixConceptUnMatchedCallback(
-				"500", "501", "502", "601", "611");
+				"500", "501", "502", "509",
+				"601", "603",  "611"
+				);
 		callbacksList.add(fixConceptsUnMatched);
 
 		DefaultsCallback defaultsCb = new DefaultsCallback();

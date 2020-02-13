@@ -79,7 +79,6 @@ import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.calculator.CollectSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
-import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase.Extra;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -103,9 +102,11 @@ import junit.framework.AssertionFailedError;
 import net.aonsolutions.core.tgss.creta.jaxb.Utils;
 import net.aonsolutions.core.tgss.creta.jaxb.bases.Dato;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.DatoSolicitado;
+import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.DatosTramo;
+import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Fecha;
+import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.InformacionAfiliacion;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Liquidacion;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.LiquidacionMes;
-import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Periodo;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajador;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajadores;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Tramo;
@@ -3151,6 +3152,97 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	}
 	
 
+	@Test
+	public void testCretaITMaternityWithBonusPeriod()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		//@formatter:off
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C100, "04");
+		//@formatter:on
+
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		//@formatter:off
+		addIT(aonContext, 
+				contract, 
+				MATERNITY, 
+				getFirstDayOfYear(startDate), 
+				null, 
+				null/*1750.00/30*/);
+		//@formatter:on
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		int salaries = calculateAndSave(connection, ctx);
+
+		// Only one salary saved to DB.
+		Assert.assertEquals(1, salaries);
+
+		AON.getSalaryData(aonContext,
+				props -> props.getContractProperty().eq(contract.getId()))
+				.forEach(salary -> {
+
+					int monthDays = AonDateUtils.getMax(startDate,
+							DAY_OF_MONTH);
+
+					// 500 Base de contingencias comunes.
+					List<ContextData> datas = salary.getContextData()
+							.get(CGC_BASE.getName());
+					Assert.assertEquals(1, datas.size());
+
+					Assert.assertEquals(startDate, datas.get(0).getStartDate());
+					Assert.assertEquals(endDate, datas.get(0).getEndDate());
+					Assert.assertEquals(1750.00,
+							Double.parseDouble(datas.get(0).getExpression()),
+							DELTA);
+
+				});
+		;
+		
+		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = 
+				getTrabajadoresTramos(connection, contract, startDate, endDate, ccc);
+
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, trabajadoresTramos);
+		org.junit.Assert.assertEquals( 1, bases.size());
+		org.junit.Assert.assertEquals( 1, Integer.parseInt(bases.get(0).getFechaDesde().getDia()));
+		org.junit.Assert.assertEquals( get(endDate, DAY_OF_MONTH), Integer.parseInt(bases.get(0).getFechaHasta().getDia()));
+		org.junit.Assert.assertEquals( 175000, Integer.parseInt(bases.get(0).getDatosTramo().getDato().get(0).getValor()));
+		
+		
+
+		Trabajador trabajador = trabajadoresTramos.getLiquidacion().getLiquidacionMes().get(0).getTrabajadores().getTrabajador().get(0);
+		List<Tramo> tramos = trabajador.getTramos().getTramo();
+		Tramo tramo = tramos.get(0);
+		Tramo bonusTramo = clone(tramo);
+		tramo.getFechaHasta().setDia("09");
+		bonusTramo.getFechaDesde().setDia("10");
+		tramos.add(bonusTramo);
+		
+		
+		
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bonusBases = getBases(connection, trabajadoresTramos);
+		org.junit.Assert.assertEquals( 2, bonusBases.size());
+		
+		org.junit.Assert.assertEquals( 1, Integer.parseInt(bonusBases.get(0).getFechaDesde().getDia()));
+		org.junit.Assert.assertEquals( 9, Integer.parseInt(bonusBases.get(0).getFechaHasta().getDia()));
+		
+		org.junit.Assert.assertEquals( 10, Integer.parseInt(bonusBases.get(1).getFechaDesde().getDia()));
+		org.junit.Assert.assertEquals( get(endDate, DAY_OF_MONTH), Integer.parseInt(bonusBases.get(1).getFechaHasta().getDia()));
+		
+		org.junit.Assert.assertEquals( 175000 * 9 / get(endDate, DAY_OF_MONTH), Integer.parseInt(bonusBases.get(0).getDatosTramo().getDato().get(0).getValor()));
+
+		org.junit.Assert.assertEquals( 175000 * ( get(endDate, DAY_OF_MONTH) -9 ) / get(endDate, DAY_OF_MONTH), Integer.parseInt(bonusBases.get(1).getDatosTramo().getDato().get(1).getValor()));
+	}
+
 	protected ContractRecord newContract(AONContext aonContext, String ccc) {
 		return newContract(aonContext, ccc, ContractCode.C100, "03", CCCType.PRINCIPAL);
 	}
@@ -3276,7 +3368,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	}
 
 	// -------------------------------------------------------------------------
-	private List<Tramo> getTramos ( Connection connection, ContractRecord contract, Date startDate, Date endDate, String ccc) throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
+	private net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos getTrabajadoresTramos ( Connection connection, ContractRecord contract, Date startDate, Date endDate, String ccc) throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
 		
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
@@ -3327,7 +3419,20 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 						net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class,
 						trabajadoresTramosIs);
 		
+		
+		
+		
 		trabajadoresTramosIs.close();
+		
+		return trabajadoresTramos;
+		
+	}
+
+	private List<Tramo> getTramos ( Connection connection, ContractRecord contract, Date startDate, Date endDate, String ccc) throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
+		
+		
+		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = 
+				getTrabajadoresTramos(connection, contract, startDate, endDate, ccc);
 		
 		return
 			trabajadoresTramos
@@ -3661,5 +3766,58 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
 	}
 	
+	private static Tramo clone ( Tramo tramo ) {
+		Tramo clone = new Tramo();
+
+		clone.setDiasCotizados(tramo.getDiasCotizados());
+		clone.setFechaDesde(clone(tramo.getFechaDesde()));
+		clone.setFechaHasta(clone(tramo.getFechaHasta()));
+		clone.setDatosTramo(clone(tramo.getDatosTramo()));
+		clone.setInformacionAfiliacion(clone(tramo.getInformacionAfiliacion()));
+		
+		return clone;
+	}
+	
+	private static Fecha clone ( Fecha fecha) {
+		Fecha clone = new Fecha();
+		clone.setDia(fecha.getDia());
+		clone.setAnho(fecha.getAnho());
+		clone.setMes(fecha.getMes());
+		return clone;
+	}
+	
+	private static DatosTramo clone (DatosTramo datosTramo) {
+		DatosTramo clone  = new DatosTramo();
+		
+		List<DatoSolicitado> datoSolicitado = new ArrayList<DatoSolicitado>();
+		datosTramo.getDatoSolicitado().forEach(d -> datoSolicitado.add(clone(d)));
+		clone.setDatoSolicitado(datoSolicitado);
+		
+		return clone;
+	}
+
+	private static DatoSolicitado clone (DatoSolicitado datoSolicitado) {
+		DatoSolicitado clone  = new DatoSolicitado();
+//		clone.getValor(datoSolicitado.getValor());
+		clone.setCodigo(datoSolicitado.getCodigo());
+		clone.setTipoDato(datoSolicitado.getTipoDato());
+		clone.setIndicadorObligatoriedad(datoSolicitado.getIndicadorObligatoriedad());
+		return clone;
+	}
+
+	private static InformacionAfiliacion clone ( InformacionAfiliacion informacionAfiliacion) {
+		InformacionAfiliacion clone = new InformacionAfiliacion();
+		clone.setCNAE(informacionAfiliacion.getCNAE());
+		clone.setCoeficienteTiempoParcial(informacionAfiliacion.getCoeficienteTiempoParcial());
+//		clone.setColectivoEspecial(informacionAfiliacion.getColectivoEspecial());
+		clone.setCatProfesional(informacionAfiliacion.getCatProfesional());
+//		clone.setEpigrafe(informacionAfiliacion.getEpigrafe());
+		clone.setGrupoCotizacion(informacionAfiliacion.getGrupoCotizacion());
+//		clone.setTRL(informacionAfiliacion.getTRL());
+//		clone.setModalidadCotizSEA(informacionAfiliacion.getGrupoCotizacion());
+		clone.setTipoContrato(informacionAfiliacion.getGrupoCotizacion());
+		
+		return clone;
+	}
 
 }
