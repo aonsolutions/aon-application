@@ -8,6 +8,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_ENT
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_ENTERPRISE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.DROP_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMBARGO_PAID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMPLOYEE_QUOTA;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ENTERPRISE_QUOTA;
@@ -19,6 +20,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BA
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTHLY_PAYMENTS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.OFF_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_HOURS;
@@ -495,16 +497,24 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				if ( expressionContext.getVariable(WORKED_DAYS, p.getStart(), p.getEnd()) == null)
 					leavePeriods.add(p);
 
-			List<Period> strikePeriods = new ArrayList<Period>(); 
+			List<Period> offPeriods = new ArrayList<Period>(); 
 			for ( Period p : expressionContext.getPeriods(STRIKE_FACTOR))
 				if ( expressionContext.getVariable(WORKED_DAYS, p.getStart(), p.getEnd()) == null)
-					strikePeriods.add(p);
+					offPeriods.add(p);
+
+			for ( Period p : expressionContext.getPeriods(DROP_DAYS))
+				if ( expressionContext.getVariable(WORKED_DAYS, p.getStart(), p.getEnd()) == null)
+					offPeriods.add(p);
+
+			for ( Period p : expressionContext.getPeriods(OFF_DAYS))
+				if ( expressionContext.getVariable(WORKED_DAYS, p.getStart(), p.getEnd()) == null)
+					offPeriods.add(p);
 
 			for (IContractPayment icontractPayment : contractPayments) {
 				INamedContractPayment contractPayment = new NamedContractPayment(icontractPayment);
 				try {
 					resolvePayment(contractPayment, start, end, issueDate, expressionContext, taxCalculator,
-							quoteCalculator, leavePeriods, strikePeriods);
+							quoteCalculator, leavePeriods, offPeriods);
 					alreadyDefined.add(contractPayment.getName());
 					alreadyDefined.add(contractPayment.getSurName());
 					copyResults(expressionContext, contractPayment);
@@ -571,7 +581,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				UndefPayment undefPayment = undefPayments.pop();
 				try {
 					resolvePayment(undefPayment, start, end, issueDate, expressionContext, taxCalculator,
-							quoteCalculator, leavePeriods, strikePeriods);
+							quoteCalculator, leavePeriods, offPeriods);
 					paymentsVars.add(undefPayment.getName());
 					paymentsVars.add(undefPayment.getSurName());
 					copyResults(expressionContext, undefPayment);
@@ -609,7 +619,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			for (UndefPayment undefMonthlyPayment : undefMonthlyPayments) {
 				try {
 					resolvePayment(undefMonthlyPayment, start, end, issueDate, expressionContext, taxCalculator,
-							quoteCalculator, leavePeriods, strikePeriods);
+							quoteCalculator, leavePeriods, offPeriods);
 					copyResults(expressionContext, undefMonthlyPayment);
 				} catch (UndefinedVariablesException e) {
 					onUndefinedData(undefMonthlyPayment, e.getMessage(), e.getVariableNames());
@@ -626,7 +636,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			for (UndefPayment undefTotalPayment : undefTotalPayments) {
 				try {
 					resolvePayment(undefTotalPayment, start, end, issueDate, expressionContext, taxCalculator,
-							quoteCalculator, leavePeriods, strikePeriods);
+							quoteCalculator, leavePeriods, offPeriods);
 					copyResults(expressionContext, undefTotalPayment);
 				} catch (UndefinedVariablesException e) {
 					onUndefinedData(undefTotalPayment, e.getMessage(), e.getVariableNames());
