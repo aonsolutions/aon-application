@@ -1626,7 +1626,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 
 			List<Payment> paymentConcepts = JooqPayments.getPaymentConcepts(
-					conn, domainId, AonServletUtils.getParentDomainID(domain));
+					conn, 0, 0);
+//			List<Payment> paymentConcepts = JooqPayments.getPaymentConcepts(
+//					conn, domainId, AonServletUtils.getParentDomainID(domain));
 			List<Payment> employeePayments = Collections.emptyList();
 			/* getEmployeePayments(conn, employeeId); */
 			List<Payment> enterprisePayments = Collections.emptyList();

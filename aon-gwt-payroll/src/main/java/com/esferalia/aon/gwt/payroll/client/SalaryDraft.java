@@ -295,7 +295,19 @@ public class SalaryDraft extends ResizeComposite
 			"OCUPACION_IT", "OCUPACION_IMS", 
 			"PREST_IT", "SALARIO_BASE", "GARANTIZADO",
 			
-			"POR_HORAS", "CONTEXT", "UTILIZADA", "IS_READ"
+			"POR_HORAS", "CONTEXT", "UTILIZADA", "IS_READ",
+			
+			// PERCENTS
+			"TARIFA_IT",
+			"TARIFA_IMS",
+			"PORCENTAJE_IRPF", 
+			"PORCENTAJE_CGC",
+			"PORCENTAJE_CGC_E",
+			"PORCENTAJE_FOGASA",
+			"PORCENTAJE_FP",
+			"PORCENTAJE_FP_E",
+			"PORCENTAJE_DESMPL",
+			"PORCENTAJE_DESMPL_E",
 	};
 
 	// @formatter:off
