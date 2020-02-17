@@ -2073,24 +2073,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return ctx;
 	}
 
-	private void onRedefinedImplicitAtAgreement() {
-		if (listener == null)
-			return;
-
-		Integer agreementId = getAgreementId();
-		Integer agreementLevelId = getAgreementLevel();
-		Integer agreementDomain = getAgreementDomain();
-
-		AgreementContextKey agreementAndLevelKey = new AgreementContextKey(agreementDomain, agreementId,
-				agreementLevelId);
-
-		agreementContextFactory.getImplicitRedefined(agreementAndLevelKey)
-				
-				.entrySet().stream().filter( e -> !ContextVariable.AGREEMENT_HOURS.getName().equals(e.getKey())) // TODO: Only this???
-				
-				.forEach(e -> onRedefinedImplicit(e.getKey(), e.getValue().getLeft(), e.getValue().getRight()));
-	}
-
 	private Collection<IContractCost> getCCCCosts() throws AonException {
 		List<IContractCost> costs = new ArrayList<IContractCost>(systemPayments.size());
 		CCCType cccType = getCCCType();
@@ -2748,19 +2730,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				total += result.getValue();
 		}
 		return total;
-	}
-
-	public Object redefined(String name, Object value) throws ExpressionException, SQLException {
-
-		ITimedVariable<?> implicit = contractExpressionContext.getVariable(name, getStart(), getEnd());
-		if (implicit == null)
-			return value;
-
-		ITimedVariable<?> redefined = new TimedObject<Object>(value, getStart(), getEnd());
-
-		onRedefinedImplicit(name, redefined, implicit);
-
-		return value;
 	}
 
 	public Object agreement(String name) throws ExpressionException, SQLException {
@@ -3661,7 +3630,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		};
 
 		ExpressionContext agreementCtx = getAgreementContext();
-		onRedefinedImplicitAtAgreement();
 
 		this.implicitExpressionContext = new ExpressionContext(agreementCtx, this);
 
@@ -4172,7 +4140,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			if (userWorkedDays == null) {
 				ctx.putVariable(WORKED_DAYS, workedDays);
 			} else {
-				onRedefinedImplicit(WORKED_DAYS.getName(), userWorkedDays, workedDays);
 			}
 
 			ITimedVariable<Double> workedHours = new ITimedVariable<Double>() {
@@ -4226,7 +4193,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			if (userWorkedHours == null) {
 				ctx.putVariable(WORKED_HOURS, workedHours);
 			} else {
-				onRedefinedImplicit(WORKED_HOURS.getName(), userWorkedHours, workedHours);
 			}
 
 			ITimedVariable<Double> quoteDays = new ITimedVariable<Double>() {
@@ -4248,7 +4214,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			if (userQuoteDays == null) {
 				ctx.putVariable(QUOTE_DAYS, quoteDays);
 			} else {
-				onRedefinedImplicit(QUOTE_DAYS.getName(), userQuoteDays, quoteDays);
 			}
 			
 			
@@ -4271,7 +4236,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			if (userActualDays == null) {
 				ctx.putVariable(ACTUAL_DAYS, actualDays);
 			} else {
-				onRedefinedImplicit(QUOTE_DAYS.getName(), userActualDays, actualDays);
 			}
 			
 			class WeekDays implements ITimedVariable<Double> {
@@ -4341,11 +4305,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			ctx.putVariable(WEEK_HOURS, new WeekHours(period));
 		}
 
-		for (Period period : redefined) {
-
-			ITimedVariable<?> userWeekHours = ctx.getVariable(WEEK_HOURS, period.getStart(), period.getEnd());
-			onRedefinedImplicit(WEEK_HOURS.getName(), userWeekHours, new WeekHours(period));
-		}
 
 	}
 
@@ -4421,11 +4380,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				Date start = Period.max(dataStart, startDate);
 				Date end = Period.min(dataEnd, endDate);
 
-				ITimedVariable<?> implicit = ctx.getVariable(expr.getName(), start, end);
 				try {
-					List<ITimedResult<Object>> results = ctx.addExpression(expr, start, end);
-
-					onRedefinedImplicit(ctx, expr.getName(), expr.getExpression(), implicit, results);
+					ctx.addExpression(expr, start, end);
 
 				} catch (UndefinedVariablesException e) {
 					failed.add(new TimedObject<IExpression>(expr, new Period(start, end)));
@@ -4440,11 +4396,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				try {
 					Period period = timedExpr.getPeriod();
 					IExpression expr = timedExpr.getValue();
-
-					ITimedVariable<?> implicit = ctx.getVariable(expr.getName(), period.getStart(), period.getEnd());
-					List<ITimedResult<Object>> results = ctx.addExpression(expr, period.getStart(), period.getEnd());
-
-					onRedefinedImplicit(ctx, expr.getName(), expr.getExpression(), implicit, results);
+					ctx.addExpression(expr, period.getStart(), period.getEnd());
 
 				} catch (UndefinedVariablesException e) {
 					onUndefinedData(timedExpr.getValue(), e.getMessage(), timedExpr.getPeriod().getStart(),
@@ -4460,31 +4412,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 	}
 
-	protected void onRedefinedImplicit(ExpressionContext ctx, String name, String expr, ITimedVariable<?> implicit,
-			List<ITimedResult<Object>> results) {
-		if (listener == null)
-			return;
-		if (results == null)
-			return;
-		if (results.isEmpty())
-			return;
-
-		if (implicit == null)
-			return;
-
-		if (implicit instanceof IExpressionVariable<?> && ((IExpressionVariable<?>) implicit).getExpression().getScope()
-				.compareTo(ExpressionScope.AGREEMENT) >= 0)
-			return;
-
-		if (isUndefined(implicit))
-			return;
-
-		if (isSystem(name, expr))
-			return;
-
-		onRedefinedImplicit(name, results.get(0), implicit);
-	}
-
 	protected void onIrpf(IrpfOutcome irpfOutcome) {
 		if (listener != null)
 			listener.onIrpf(irpfOutcome);
@@ -4496,13 +4423,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			for (String variable : variables)
 				listener.onUndefinedData(expression, variable, message, start, end);
 
-	}
-
-	protected void onRedefinedImplicit(String name, ITimedVariable<?> redefined, ITimedVariable<?> implicit) {
-		if (listener == null)
-			return;
-
-		listener.onRedefinedImplicit(name, redefined, implicit);
 	}
 
 	protected void onMistakenPartialFactor(double monthHours, double workedHours, double factor) {

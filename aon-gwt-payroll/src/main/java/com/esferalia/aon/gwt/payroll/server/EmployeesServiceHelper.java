@@ -741,11 +741,6 @@ public class EmployeesServiceHelper {
 							return Collections.emptyList();
 						}
 
-						@Override
-						protected void onRedefinedImplicit(String name,
-								ITimedVariable<?> redefined,
-								ITimedVariable<?> implicit) {
-						}
 					};
 					SQLSalaryDraftCalculatorContext sqlDraftSalaryCalculatorCtx = new SQLSalaryDraftCalculatorContext(
 							draft, sqlContractSalaryCalculatorCtx);
@@ -872,12 +867,6 @@ public class EmployeesServiceHelper {
 							} catch (ExpressionException e) {
 								throw new ExpressionExceptionWrapper(e);
 							}
-						}
-
-						@Override
-						protected void onRedefinedImplicit(String name,
-								ITimedVariable<?> redefined,
-								ITimedVariable<?> implicit) {
 						}
 
 					};

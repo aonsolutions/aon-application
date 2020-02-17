@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 
 import junit.framework.Assert;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.code.aon.common.AonException;
@@ -176,6 +177,7 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 	}
 
 	@Test
+	@Ignore("Deprecated...")
 	public void testRedefinedImplicit() throws ExpressionException,
 			SQLException, SalaryException {
 		Connection connection = getConnection();

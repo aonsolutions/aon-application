@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
@@ -31,6 +32,7 @@ public class SQLRedefinedTestCase extends AbstractSQLTestCase {
 	private static final double DELTA = 0.000001;
 
 	@Test
+	@Ignore("Deprecated...")
 	public void testLiquid()
 			throws ExpressionException, SQLException, SalaryException {
 		Connection connection = getConnection();
@@ -95,6 +97,7 @@ public class SQLRedefinedTestCase extends AbstractSQLTestCase {
 	
 	
 	@Test
+	@Ignore("Deprecated...")
 	public void testGross()
 			throws ExpressionException, SQLException, SalaryException {
 		Connection connection = getConnection();
@@ -156,6 +159,7 @@ public class SQLRedefinedTestCase extends AbstractSQLTestCase {
 
 
 	@Test
+	@Ignore("Deprecated...")
 	public void testIrpf()
 			throws ExpressionException, SQLException, SalaryException {
 		Connection connection = getConnection();
