@@ -826,9 +826,13 @@ public class EmployeesServiceHelper {
 													SQLException {
 										return solve * (_liquid / liquid);
 									}
+									
+									@Override
+									protected void loadContractLeave(ExpressionContext ctx) throws SQLException, ExpressionException {
+									}
 
 								};
-
+								
 								SQLSalaryDraftCalculatorContext sqlDraftSalaryCalculatorCtx = new SQLSalaryDraftCalculatorContext(
 										draft, sqlContractSalaryCalculatorCtx);
 
