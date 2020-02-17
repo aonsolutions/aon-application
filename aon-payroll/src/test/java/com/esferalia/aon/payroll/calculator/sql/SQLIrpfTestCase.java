@@ -432,6 +432,32 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testPaymentExtrasII() throws ExpressionException, SQLException {
+
+		Consumer<IrpfResult> asserts = result -> {
+			assertAnnualRemuneration(
+					CommonUtil.round(1200.00 * 14 + 100.00 * 12 , 3)
+							, result.getAnnualRemuneration());
+		};
+
+		test(asserts,
+				new String[] { 
+				"1000.00 * DIAS_TRABAJADOS/DIAS_MES", 
+				"100.00 * DIAS_TRABAJADOS/DIAS_MES", 
+				"100.00 * DIAS_TRABAJADOS/DIAS_MES", 
+				"P_0 * 10 / 100", 
+				},
+				new String[] { 
+				"BASE_CGC * 0.10", "BASE_CGP * 0.05",
+				"BASE_ESTR * 0.10", "BASE_NESTR * 0.20",
+				"BASE_IRPF * PORCENTAJE_IRPF/100" }, 
+				new String [] {
+				"(P_0 + P_1 + P_2)/12", 
+				"(P_0 + P_1 + P_2)/12", 
+				});
+	}
+
+	@Test
 	public void testLiquidExtras() throws ExpressionException, SQLException {
 
 		Consumer<IrpfResult> asserts = result -> {
@@ -1284,6 +1310,116 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		});
 		extraCtx.getIrpf();
 
+	}
+
+	@Test
+	public void testExtrasII() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		PaymentConceptRecord conceptPagaExtra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+		PaymentConceptRecord conceptSalarioBase = addConcept(aonContext, "SALARIO_BASE");
+		PaymentConceptRecord conceptPlusSalarial = addConcept(aonContext, "PLUS_SALARIAL");
+		PaymentConceptRecord conceptAntiguedad = addConcept(aonContext, "ANTIGUEDAD");
+		PaymentConceptRecord conceptPlusExtraSalarial = addConcept(aonContext, "PLUS_EXTRA_SALARIAL");
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { 
+				},
+				new Payment[] {
+						new Payment() {
+							{
+								this.concept = conceptSalarioBase.getId();
+								this.expression = "SALARIO_ANUAL / PAGAS * DIAS_TRABAJADOS/DIAS_MES";
+							}
+						},
+						new Payment() {
+							{
+								this.concept = conceptPlusSalarial.getId();
+								this.expression = "PLUS_ANUAL / PAGAS * DIAS_TRABAJADOS/DIAS_MES";
+							}
+						},
+						new Payment() {
+							{
+								this.concept = conceptAntiguedad.getId();
+								this.expression = "(SALARIO_BASE + PLUS_SALARIAL + PAGA_EXTRA) * 5 / 100";
+							}
+						},
+						new Payment() {
+							{
+								this.concept = conceptAntiguedad.getId();
+								this.expression = "(SALARIO_BASE + PLUS_SALARIAL + PAGA_EXTRA) * 0 / 100";
+							}
+						},
+						new Payment() {
+							{
+								this.concept = conceptPagaExtra.getId();
+								this.expression = "SALARIO_BASE + PLUS_SALARIAL";
+							}
+						},
+						new Payment() {
+							{
+								this.concept = conceptPagaExtra.getId();
+								this.expression = "SALARIO_BASE + PLUS_SALARIAL";
+							}
+						},
+						new Payment() {
+							{
+								this.concept = conceptPlusExtraSalarial.getId();
+								this.expression = "MEJORA * DIAS_TRABAJADOS/DIAS_MES";
+							}
+						}
+				});
+		
+		addData(aonContext, category, getFirstDayOfYear(getToday()), null, new HashMap<String,String>(){
+			{
+				put("PAGAS", "14");
+				put("PLUS_ANUAL", "4200.00");
+				put("SALARIO_ANUAL", "42000.00");
+			}
+		});
+		
+
+
+		ContractRecord contract = newContract(
+				aonContext
+				,getFirstDayOfYear(getToday())
+				, new HashMap<String,String>(){
+					{
+						put("MEJORA", "100.00");
+						put("DIAS_MES", "30.00");
+					}
+				}
+				, new String [] {}
+				, new String [] {
+						"BASE_CGC * 4.70 / 100.00"
+						,"BASE_CGP * 1.55 / 100.00"
+						,"BASE_CGP * 0.10 / 100.00"
+						,"BASE_IRPF * PORCENTAJE_IRPF / 100.00"
+				}
+				,category);
+		
+		addPayment(aonContext, contract, conceptPlusExtraSalarial, "FRACCIONAR((SALARIO_BASE+PLUS_SALARIAL+PAGA_EXTRA+ANTIGUEDAD) * 10 / 100)");
+		addPayment(aonContext, contract, conceptPlusExtraSalarial, "MEJORA * DIAS_TRABAJADOS/DIAS_MES");
+		
+		Date startDate = getFirstDayOfYear(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		
+		double irpf []  = { 0.00 }; 
+		ctx.setListener(new Listener() {
+			@Override
+			public void onIrpf(IrpfOutcome irpfOutcome) {
+				irpf[0] = irpfOutcome.getIrpfResult().getIrpf();
+				assertAnnualRemuneration( 42000.00 + 4200.00 + 100.00*12 + (42000.00+ 4200.00) * 5 / 100.00 + (42000.00+ 4200.00 + (42000.00+ 4200.00) * 5 / 100.00) * 10 / 100.00 , irpfOutcome.getIrpfResult().getAnnualRemuneration());
+//				org.junit.Assert.assertEquals( 3300.00 * 14.00 * irpf[0] / 100.00, irpfOutcome.getIrpfResult().getAnnualIrpf(), 0.0);
+			}
+		});
+		ctx.getIrpf();
+		
 	}
 	// ------------------------------------------------------------------------
 

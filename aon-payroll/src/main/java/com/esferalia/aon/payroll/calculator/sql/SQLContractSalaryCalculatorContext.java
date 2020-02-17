@@ -414,6 +414,78 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 	};
 
+	private static final class NoopSQLContractLeaveLoader extends SQLContractLeaveLoader {
+		private NoopSQLContractLeaveLoader(Date startDate, Date endDate) {
+			super(startDate, endDate);
+		}
+
+		@Override
+		public boolean isEmpty() {
+			return true;
+		}
+
+		@Override
+		public Long getCommonDiseaseDays(Period p) {
+			return 0L;
+		}
+
+		@Override
+		public Long getLeaveDays(Period p, LeaveType type) {
+			return 0L;
+		}
+
+		@Override
+		public SortedSet<Leave> getLeaves() {
+			return Collections.emptySortedSet();
+		}
+
+		@Override
+		public Long getProfessionalDiseaseDays(Period p) {
+			return 0L;
+		}
+
+		@Override
+		public Long getLeavesDays(Period p) {
+			return 0L;
+		}
+
+		@Override
+		public boolean isLeaveDay(Calendar day) {
+			return false;
+		}
+
+		@Override
+		public void clear() {
+		}
+
+		@Override
+		public void clean(ExpressionContext exprCtx, Leave leave) {
+		}
+
+		@Override
+		public void loadContractLeave(ResultSet rs, ExpressionContext exprCtx)
+				throws SQLException, ExpressionException {
+		}
+
+		@Override
+		public void loadContractLeave(Integer id, Date leaveStart, Date leaveEnd, long parentDays, LeaveType type,
+				String dailyRegBase, ExpressionContext exprCtx) throws ExpressionException {
+		}
+
+		@Override
+		public void loadContractLeave(Integer id, Date leaveStart, Date leaveEnd, long parentDays, LeaveType type,
+				Double dailyRegBase, ExpressionContext exprCtx) throws ExpressionException {
+		}
+
+		@Override
+		protected void remove(Leave leave) {
+		}
+
+		@Override
+		protected void add(Leave leave) {
+		}
+	}
+
 	public static interface NextHook {
 		default void beforeLoadLeaves(ExpressionContext ctx) throws ExpressionException{};
 		void beforeLoadDaysContextVariables(ExpressionContext ctx) throws ExpressionException;
@@ -2424,7 +2496,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					});
 
 					ISalary salary = calculator.calculate(((ISQLContractSalaryCalculatorContext) ctx));
-
+					
 					return liquid - salary.getTotalLiquid();
 
 				} catch (SalaryException e) {
@@ -2577,7 +2649,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 							}
 
 						};
-						ctx.leaveLoader = leaveLoader;
+						ctx.leaveLoader = new NoopSQLContractLeaveLoader(startDate, endDate);
 						return new SQLIrpfCalculatorContext(connection, startDate, endDate, ctx) {
 							@Override
 							public String getNif() {
@@ -2750,18 +2822,21 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		Calendar endCalendar = Calendar.getInstance();
 //		endCalendar.setTime(startDate);
 		endCalendar.setTime(issueDate);
+		endCalendar.set(Calendar.DAY_OF_MONTH, endCalendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+		Date endMonth = endCalendar.getTime();
 		endCalendar.set(Calendar.DAY_OF_YEAR, endCalendar.getActualMaximum(Calendar.DAY_OF_YEAR));
 		Date endYear = endCalendar.getTime();
 
 		Criteria contractCriteria = getContractCriteria();
 
-		IIrpfCalculatorContext irpfCalculatorContext = getIrpfCalculatorContext(connection, startDate, endYear,
+		IIrpfCalculatorContext irpfCalculatorContext = getIrpfCalculatorContext(connection, startDate, endMonth,
 				contractCriteria);
 
-		IrpfOutcome irpfOutcome = IrpfCalculator.calculateIrpf(irpfCalculatorContext, endYear);
+		
+		IrpfOutcome irpfOutcome = IrpfCalculator.calculateIrpf(irpfCalculatorContext, endMonth);
 
 		onIrpf(irpfOutcome);
-
+		
 		return irpfOutcome.getIrpfResult().getIrpf();
 	}
 
@@ -2798,75 +2873,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			
 			
 		};
-		ctx.leaveLoader = new SQLContractLeaveLoader(this.startDate, this.getEnd()) {
-			
-			@Override
-			public boolean isEmpty() {
-				return true;
-			}
-			
-			@Override
-			public Long getCommonDiseaseDays(Period p) {
-				return 0L;
-			}
-			
-			@Override
-			public Long getLeaveDays(Period p, LeaveType type) {
-				return 0L;
-			}
-			
-			@Override
-			public SortedSet<Leave> getLeaves() {
-				return Collections.emptySortedSet();
-			}
-			
-			@Override
-			public Long getProfessionalDiseaseDays(Period p) {
-				return 0L;
-			}
-			
-			@Override
-			public Long getLeavesDays(Period p) {
-				return 0L;
-			}
-			
-			@Override
-			public boolean isLeaveDay(Calendar day) {
-				return false;
-			}
-			
-			@Override
-			public void clear() {
-			}
-			
-			@Override
-			public void clean(ExpressionContext exprCtx, Leave leave) {
-			}
-			
-			@Override
-			public void loadContractLeave(ResultSet rs, ExpressionContext exprCtx)
-					throws SQLException, ExpressionException {
-			}
-			
-			@Override
-			public void loadContractLeave(Integer id, Date leaveStart, Date leaveEnd, long parentDays, LeaveType type,
-					String dailyRegBase, ExpressionContext exprCtx) throws ExpressionException {
-			}
-			
-			@Override
-			public void loadContractLeave(Integer id, Date leaveStart, Date leaveEnd, long parentDays, LeaveType type,
-					Double dailyRegBase, ExpressionContext exprCtx) throws ExpressionException {
-			}
-
-			@Override
-			protected void remove(Leave leave) {
-			}
-			
-			@Override
-			protected void add(Leave leave) {
-			}
-			
-		}; 
+		ctx.leaveLoader = new NoopSQLContractLeaveLoader(this.startDate, this.getEnd()); 
 		//new SQLContractLeaveLoader(this.startDate, this.getEnd()); //leaveLoader;
 		return ctx;
 	}

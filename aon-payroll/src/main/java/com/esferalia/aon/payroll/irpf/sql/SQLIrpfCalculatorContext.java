@@ -1125,6 +1125,8 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		
 		if ( (issuedSalaries.size() + contexts.size())  == 12) {
 			size = contexts.size();
+		} else if ( (issuedSalaries.size() >  0 )) {
+			size = 12 - issuedSalaries.size();
 		} else {
 			size = 12;
 			irpfBase = 0.00;
@@ -1151,8 +1153,9 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 				((Salary) salary).setTotalIrpf(irpf / 100
 						* salary.getIrpfBase());
 			}
-			
+
 			if ( irpfCtx.isFullStandard() ) {
+				
 				nextIrpfBase = (
 						( salary.getIrpfBase() != null ? salary.getIrpfBase() : 0.00)
 						+ ( salary.getExtraPayProration() != null ? salary.getExtraPayProration() : 0.00 ) 
@@ -1161,7 +1164,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 				
 				break;
 			}
-			
+//			
 			nextIrpfBase += ( salary.getIrpfBase() != null ? salary.getIrpfBase() : 0.00);
 			nextSocialSecurityContributons += ( salary.getSocialSecurityContributions() != null ? salary.getSocialSecurityContributions() : 0.00 );
 
