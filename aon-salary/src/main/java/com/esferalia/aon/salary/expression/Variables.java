@@ -203,12 +203,28 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 			return t;
 		}
 		
+		public <T> T look(Object key, Function<Object,T> mapper, T def) {
+			return look(key.toString(), mapper, def);	
+		}
+
+		public <T> T look(String key, Function<Object,T> mapper, T def) {
+			ITimedVariable<?> var = Variables.this.getVariable(key,
+					period);
+			
+			if ( var == null )
+				var = new TimedObject<T>(def, period);
+			
+			Object value = var.getValue(period);
+			
+			T t = value == null ? def : mapper.apply(value);
+			return t;
+		}
+
 		public <T> ITimedVariable<T> get(Object key, Class<T> clazz) {
 			return (ITimedVariable<T>) Variables.this.getVariable(key.toString(),
 					period);
-			
 		}
-		
+
 		private <T>  void read(Map<String,ITimedVariable<?>> map) {
 			for( Map.Entry<String,ITimedVariable<?>> entry : map.entrySet())
 				read(entry.getKey(), entry.getValue(), entry.getValue().getValue(period));
