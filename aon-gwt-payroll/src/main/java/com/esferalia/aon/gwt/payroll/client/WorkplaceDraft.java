@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
+import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
@@ -47,9 +48,27 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 
 		@Override
 		public void onWorkplaceAgreementChange() {
-			Integer agreementId = workplaceDraftObject.getAgreementId(this.workpalceAgreement.getSelectedItemText());
-			workplaceDraftObject.setWorkplaceAgreement(agreementId);
-			saving();
+			if (this.workpalceAgreement.getSelectedIndex() == 0 ) {
+				workplaceDraftObject.setWorkplaceAgreement(null);
+				saving();
+				return;
+			}
+			
+			Integer agreementId = Integer.valueOf(this.workpalceAgreement.getSelectedValue()); 
+			
+			workplaceDraftObject.getAgreement(agreementId,  
+			(agreement) -> {
+				workplaceDraftObject.setWorkplaceAgreement(agreement.getId());
+				saving();
+			},
+			(throwable) -> {
+				workplaceDraftObject.setWorkplaceAgreement(null);
+				saving();
+			});
+			
+//			Integer agreementId = workplaceDraftObject.getAgreementId(this.workpalceAgreement.getSelectedItemText());
+//			workplaceDraftObject.setWorkplaceAgreement(agreementId);
+//			saving();
 		}
 		
 	}
@@ -281,11 +300,16 @@ public class WorkplaceDraft extends Composite implements ContextMenuHandler {
 		initializeCalendarCell();
 		
 		// CONVENIO
-		workplace.workpalceAgreement.addItem("-");
+		this.workplace.workpalceAgreement.addItem("-", "-1");
 		List<Agreement> agreements = workplaceDraftObject.getActiveAgreements();
-		for (Agreement a : agreements) {
-			workplace.workpalceAgreement.addItem(a.getDescription());
-		}
+		for (Agreement agreement : agreements)
+			this.workplace.workpalceAgreement.addItem(agreement.getDescription(), String.valueOf(agreement.getId()));
+		
+//		workplace.workpalceAgreement.addItem("-");
+//		List<Agreement> agreements = workplaceDraftObject.getActiveAgreements();
+//		for (Agreement a : agreements) {
+//			workplace.workpalceAgreement.addItem(a.getDescription());
+//		}
 		
 		//ACTIVIDADES
 		initializeActivityCell();

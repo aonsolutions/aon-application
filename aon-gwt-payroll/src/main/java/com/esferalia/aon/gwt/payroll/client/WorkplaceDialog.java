@@ -37,8 +37,23 @@ public class WorkplaceDialog extends CustomDialog {
 
 		@Override
 		public void onWorkplaceAgreementChange() {
-			Integer agreementId = workplaceDialogObject.getAgreementId(this.workpalceAgreement.getSelectedItemText());
-			workplaceDialogObject.setWorkplaceAgreement(agreementId);
+			if (this.workpalceAgreement.getSelectedIndex() == 0 ) {
+				workplaceDialogObject.setWorkplaceAgreement(null);
+				return;
+			}
+			
+			Integer agreementId = Integer.valueOf(this.workpalceAgreement.getSelectedValue()); 
+			
+			workplaceDialogObject.getAgreement(agreementId,  
+			(agreement) -> {
+				workplaceDialogObject.setWorkplaceAgreement(agreement.getId());
+			},
+			(throwable) -> {
+				workplaceDialogObject.setWorkplaceAgreement(null);
+			});
+			
+//			Integer agreementId = workplaceDialogObject.getAgreementId(this.workpalceAgreement.getSelectedItemText());
+//			workplaceDialogObject.setWorkplaceAgreement(agreementId);
 		}
 		
 	}
@@ -179,11 +194,16 @@ public class WorkplaceDialog extends CustomDialog {
 		initializeCalendarCell();
 		
 		// CONVENIO
-		workplace.workpalceAgreement.addItem("-");
+		this.workplace.workpalceAgreement.addItem("-", "-1");
 		List<Agreement> agreements = workplaceDialogObject.getActiveAgreements();
-		for (Agreement a : agreements) {
-			workplace.workpalceAgreement.addItem(a.getDescription());
-		}
+		for (Agreement agreement : agreements)
+			this.workplace.workpalceAgreement.addItem(agreement.getDescription(), String.valueOf(agreement.getId()));
+		
+//		workplace.workpalceAgreement.addItem("-");
+//		List<Agreement> agreements = workplaceDialogObject.getActiveAgreements();
+//		for (Agreement a : agreements) {
+//			workplace.workpalceAgreement.addItem(a.getDescription());
+//		}
 		
 		//ACTIVIDADES
 		initializeActivityCell();
