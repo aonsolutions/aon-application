@@ -15,6 +15,8 @@ import java.util.stream.Stream;
 
 import javax.faces.el.PropertyNotFoundException;
 
+import org.mvel2.ast.FunctionInstance;
+import org.mvel2.ast.PrototypalFunctionInstance;
 import org.mvel2.util.MethodStub;
 
 import com.code.aon.common.enumeration.Month;
@@ -952,6 +954,8 @@ public class SalaryDraftBuilder
 		Object value = var.getValue(period);
 
 		if (value instanceof MethodStub)
+			return;
+		if (value instanceof FunctionInstance)
 			return;
 		if ( isPayment(name) )
 			return;
