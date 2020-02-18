@@ -4197,7 +4197,7 @@ public class SalaryDraft extends ResizeComposite
 
 		HTMLPanel htmlPanel = new HTMLPanel("");
 
-		T editor = createEditor(variable);
+		T editor = createEditor(variable, salaryDraftObject);
 		int width = editor instanceof ListBox ? size2px(20) + 6 : size2px(20);
 		editor.asWidget().getElement().getStyle().setWidth(width, Unit.PX);
 
@@ -5580,8 +5580,28 @@ public class SalaryDraft extends ResizeComposite
 	}
 
 	static <T extends IsWidget & HasValue<String> & HasAllFocusHandlers & Focusable & HasEnabled> T createEditor(
+			Variable variable, SalaryDraftObject salaryDraftObject) {
+		
+		VariableEditorFactory [] empty = {};
+		
+		Object quoteGroup = salaryDraftObject.getVariable("GRUPO_COTIZACION"); 
+		
+		for (VariableEditorFactory<T> factory : QUOTE_VARIABLE_EDITOR_FACTORIES.getOrDefault(quoteGroup, empty)) {
+			if (factory.accept(variable))
+				return factory.create(variable);
+		}
+
+		for (VariableEditorFactory<T> factory : COMMON_VARIABLE_EDITOR_FACTORIES) {
+			if (factory.accept(variable))
+				return factory.create(variable);
+		}
+		return null;
+	}
+
+	static <T extends IsWidget & HasValue<String> & HasAllFocusHandlers & Focusable & HasEnabled> T createEditor(
 			Variable variable) {
-		for (VariableEditorFactory<T> factory : VARIABLE_EDITOR_FACTORIES) {
+		
+	for (VariableEditorFactory<T> factory : COMMON_VARIABLE_EDITOR_FACTORIES) {
 			if (factory.accept(variable))
 				return factory.create(variable);
 		}
@@ -5784,7 +5804,7 @@ public class SalaryDraft extends ResizeComposite
 	}
 
 	// @formatter:off
-	private final static VariableEditorFactory VARIABLE_EDITOR_FACTORIES[] = { 
+	private final static VariableEditorFactory COMMON_VARIABLE_EDITOR_FACTORIES[] = { 
 			new MonthDaysEditorFactory("DIAS_MES"),
 			new DateEditorFactory("FECHA_PREAVISO"),
 			//new DateEditorFactory("INICIO_PAGO_DIRECTO"),
@@ -5798,6 +5818,21 @@ public class SalaryDraft extends ResizeComposite
 			new ConstantEditorFactory("SMI"), 
 			new BooleanEditorFactory(), 
 			new DefaultEditorFactory() };
+	
+	private final static VariableEditorFactory MONTHLY_VARIABLE_EDITOR_FACTORIES[] = { 
+			new ConstantEditorFactory("DIAS_MES")};
+	
+	private final static Map<Object,VariableEditorFactory[] > QUOTE_VARIABLE_EDITOR_FACTORIES = new HashMap() {
+		{
+			put("01", MONTHLY_VARIABLE_EDITOR_FACTORIES);
+			put("02", MONTHLY_VARIABLE_EDITOR_FACTORIES);
+			put("03", MONTHLY_VARIABLE_EDITOR_FACTORIES);
+			put("04", MONTHLY_VARIABLE_EDITOR_FACTORIES);
+			put("05", MONTHLY_VARIABLE_EDITOR_FACTORIES);
+			put("06", MONTHLY_VARIABLE_EDITOR_FACTORIES);
+			put("07", MONTHLY_VARIABLE_EDITOR_FACTORIES);
+		}
+	};
 
 	// @formatter:on
 

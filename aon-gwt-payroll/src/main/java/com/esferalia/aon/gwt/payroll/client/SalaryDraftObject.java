@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -829,6 +830,15 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 		}
 		return false;
 	}
+	
+	public Object getVariable(String name) {
+		return salaryDraft.getContext().stream()
+		.filter(v-> AonStringUtils.equalsIgnoreCase(name, v.getName()))
+		.map(v-> v.getValue()).filter(v -> v != null)
+		.map(v -> String.valueOf(v).replaceAll("^[\"'](.*)[\"']$", "$1") )
+		.findFirst().orElse(null);
+	}
+	
 	// ------------------------------------------
 	// Payroll
 	//
