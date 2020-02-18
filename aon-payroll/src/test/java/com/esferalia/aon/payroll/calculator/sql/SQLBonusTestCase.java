@@ -330,7 +330,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				connection, getFirstDayOfMonth(add(getToday(), MONTH, 1)),
 				getLastDayOfMonth(add(getToday(), MONTH, 1)),
 				getLastDayOfMonth(add(getToday(), MONTH, 1)), contract));
-		Assert.assertEquals((1500.00) * 23.60 / 100,
+		Assert.assertEquals((1500.00) * 23.60 / 100 * 0.25,
 				salary.getTotalEnterprise(), DELTA);
 		
 
@@ -637,7 +637,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				connection, getFirstDayOfMonth(add(getToday(), MONTH, 1)),
 				getLastDayOfMonth(add(getToday(), MONTH, 1)),
 				getLastDayOfMonth(add(getToday(), MONTH, 1)), contract));
-		Assert.assertEquals((1500.00) * 23.60 / 100,
+		Assert.assertEquals((1500.00) * 23.60 / 100 * 0.25,
 				salary.getTotalEnterprise(), DELTA);
 
 		addData(aonContext, contract, getToday(), null,

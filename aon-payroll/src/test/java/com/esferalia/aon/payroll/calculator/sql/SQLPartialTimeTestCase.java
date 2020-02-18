@@ -11,6 +11,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_HOU
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C100;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C200;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C209;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C230;
@@ -663,6 +664,102 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 		}
 		
 		cleanSystemData(aonContext);
+
+	}
+
+	@Test
+	public void testPartialMonthlyXIV()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfMonth(getToday()),
+				new HashMap<String, String>() {
+					{
+						put(ContextVariable.TC2.getName(), format("\"%s\"",C100.getValue()));
+
+						put(MONDAY_HOURS.getName(), format("%d", 4));
+						put(TUESDAY_HOURS.getName(), format("%d", 4));
+						put(WEDNESDAY_HOURS.getName(), format("%d", 4));
+						put(THURSDAY_HOURS.getName(), format("%d", 4));
+						put(FRIDAY_HOURS.getName(), format("%d", 4));
+						
+						put(MONTH_DAYS.getName(), format("%f", 30.00));
+					}
+				},
+
+				new String[] { 
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES" 
+				},
+
+				new String[] { 
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						"BASE_IRPF * PORCENTAJE_IRPF/100" },
+				null);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		for ( int i = 0; i < 12 ; i++ ) {
+			Date endDate = getLastDayOfMonth(startDate);
+			Date issueDate = endDate;
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, issueDate, contract);
+			Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+			org.junit.Assert.assertEquals( 1750.00 / 2,  salary.getTotalPayment() , DELTA );
+			for ( SalaryData data: salary.getSalaryDatas() ) {
+				System.out.println(data.getName() + "= " + data.getExpression() );
+			}
+			startDate = add(startDate, Calendar.MONTH, 1); 
+			
+		}
+
+	}
+
+	@Test
+	public void testPartialMonthlyXV()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfMonth(getToday()),
+				new HashMap<String, String>() {
+					{
+						put(ContextVariable.TC2.getName(), format("\"%s\"",C100.getValue()));
+						put(ContextVariable.PARTIAL_FACTOR.getName(), format("%f", 0.5));
+						put(MONTH_DAYS.getName(), format("%f", 30.00));
+					}
+				},
+
+				new String[] { 
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES" 
+				},
+
+				new String[] { 
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						"BASE_IRPF * PORCENTAJE_IRPF/100" },
+				null);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		for ( int i = 0; i < 12 ; i++ ) {
+			Date endDate = getLastDayOfMonth(startDate);
+			Date issueDate = endDate;
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, issueDate, contract);
+			Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+			org.junit.Assert.assertEquals( 1750.00 / 2,  salary.getTotalPayment() , DELTA );
+			for ( SalaryData data: salary.getSalaryDatas() ) {
+				System.out.println(data.getName() + "= " + data.getExpression() );
+			}
+			startDate = add(startDate, Calendar.MONTH, 1); 
+			
+		}
 
 	}
 	// ------------------------------------------------------------------------

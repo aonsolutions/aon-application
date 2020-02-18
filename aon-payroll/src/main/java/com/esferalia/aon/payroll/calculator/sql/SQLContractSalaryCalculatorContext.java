@@ -3877,12 +3877,20 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					@Override
 					public Double getValue(Period p) {
 						try {
-							if ( getVariable(FULL_TIME, p, Boolean.class) != Boolean.TRUE /*!isFullTime()*/) {
+							boolean definedWeekHours = false;
+							for ( ContextVariable hourVar : WEEK_HOURS_VARIABLES.values() ) {
+								definedWeekHours |= getCurrentBindings().look(hourVar,
+										obj -> ((Number) obj).doubleValue(), 0.00) > 0.00;
+							}
+
+							if ( (getVariable(FULL_TIME, p, Boolean.class) != Boolean.TRUE) || definedWeekHours  /*!isFullTime()*/) {
+								
 								double agreementWeekHours = getCurrentBindings().get(AGREEMENT_HOURS,
 										obj -> ((Number) obj).doubleValue(), DEFAULT_AGRREEMENT_HOURS);
 
 								double weekHours = getCurrentBindings().get(WEEK_HOURS,
 										obj -> ((Number) obj).doubleValue(), DEFAULT_AGRREEMENT_HOURS);
+
 								
 								double wholeFactor = weekHours / agreementWeekHours;
 
@@ -4131,10 +4139,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				public Double getValue(Period p) {
 					double workDays = getWorkDays(ctx, p);
 					try {
-						if ( getVariable(FULL_TIME, p, Boolean.class) != Boolean.TRUE /*!isFullTime()*/) {
+//						if ( getVariable(FULL_TIME, p, Boolean.class) != Boolean.TRUE /*!isFullTime()*/) {
 							return workDays * getCurrentBindings().get(PARTIAL_FACTOR,
 									obj -> ((Number) obj).doubleValue(), 1.00);
-						}
+//						}
 					} catch (ExpressionExceptionWrapper e) {
 					}
 					return workDays;
