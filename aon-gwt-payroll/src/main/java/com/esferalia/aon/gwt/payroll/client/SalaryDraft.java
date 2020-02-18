@@ -1970,11 +1970,11 @@ public class SalaryDraft extends ResizeComposite
 
 				SafeHtmlBuilder htmlBuilder = new SafeHtmlBuilder();
 
-				String clazz = null;
-				if (StringUtils.isEmpty(payment.getName()))
-					clazz = payment.getScope() == Scope.CONTRACT ? "employee_payment" : "enterprise_payment";
-				else
-					clazz = "payment_concept";
+				String clazz = "payment_concept";
+//				if (StringUtils.isEmpty(payment.getName()))
+//					clazz = payment.getScope() == Scope.CONTRACT ? "employee_payment" : "enterprise_payment";
+//				else
+//					clazz = "payment_concept";
 
 				htmlBuilder.appendHtmlConstant("<span class=\"" + clazz + "\" >");
 				htmlBuilder.appendHtmlConstant(suggestion.getDisplayString());

@@ -53,6 +53,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
 
@@ -229,6 +230,7 @@ import com.esferalia.aon.salary.payment.Payments;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.utils.ReportUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
@@ -1633,7 +1635,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			/* getEmployeePayments(conn, employeeId); */
 			List<Payment> enterprisePayments = Collections.emptyList();
 			/* getEnterprisePayments(conn, domainId); */
-
+			List<Payment> systemPayments = JooqPayments.getPayments(conn, 0,0);
+			
+			paymentConcepts  = sub(paymentConcepts, systemPayments);
+			
 			List<Payment> payments = new ArrayList<Payment>(
 					paymentConcepts.size() + employeePayments.size()
 							+ enterprisePayments.size());
@@ -5057,6 +5062,18 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 		}
 	}
+	
+	
+	private static List<Integer> getConceptIds(List<Payment> systemPayments) {
+		return systemPayments.stream().filter(p -> p.getConceptId() != null).map(p -> p.getConceptId()).distinct().collect(Collectors.toList());
+	}
+
+	private static List<Payment> sub(List<Payment> paymentConcepts, List<Payment> systemPayments) {
+		List<Integer> systemConceptsIds = getConceptIds(systemPayments);
+		return paymentConcepts.stream().filter(p -> AonStringUtils.isBlank(p.getName()) ||  !systemConceptsIds.contains(p.getId())).collect(Collectors.toList());
+	}
+
+
 	
 
 }

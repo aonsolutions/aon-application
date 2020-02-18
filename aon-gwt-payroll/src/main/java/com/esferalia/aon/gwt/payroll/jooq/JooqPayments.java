@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
+import static com.esferalia.aon.jooq.tables.SystemPayment.SYSTEM_PAYMENT;
 import static com.esferalia.aon.payroll.calculator.jooq.JooqCommon.getDefaultSettings;
 
 import java.sql.Connection;
@@ -32,6 +33,12 @@ public class JooqPayments {
 				domainId, parentDomainId);
 	}
 		
+	public static List<Payment> getPayments(Connection connection,
+			Integer domainId, Integer parentDomainId) throws SQLException {
+		return getPayments(DSL.using(connection, getDefaultSettings()),
+				domainId, parentDomainId);
+	}
+
 	private static List<Payment> getPaymentConcepts(DSLContext context,
 			Integer domainId, Integer parentDomainId) throws SQLException {
 		Cursor<Record> cursor = null;
@@ -71,6 +78,44 @@ public class JooqPayments {
 		}
 	}
 
+	private static List<Payment> getPayments(DSLContext context,
+			Integer domainId, Integer parentDomainId) throws SQLException {
+		Cursor<Record> cursor = null;
+		
+		Collection<Integer> domains = getDomains(0,domainId, parentDomainId);
+		
+		try {
+		//@formatter:off
+		cursor = 
+		context.select()
+		.from(SYSTEM_PAYMENT)
+		.where(SYSTEM_PAYMENT.ID.greaterThan(0)
+		.and(SYSTEM_PAYMENT.DOMAIN.in(domains)))
+		.orderBy(SYSTEM_PAYMENT.TYPE)
+		.fetchLazy();
+		//@formatter:on
+		
+		List<Payment> concepts = new LinkedList<Payment>();
+		for ( Record record: cursor) {
+			Payment concept = new Payment();
+			
+			concept.setId(record.getValue(SYSTEM_PAYMENT.ID));
+			concept.setConceptId(record.getValue(SYSTEM_PAYMENT.PAYMENT_CONCEPT));
+			concept.setType(getType(record.getValue(SYSTEM_PAYMENT.TYPE)));
+			concept.setDescription(record.getValue(SYSTEM_PAYMENT.DESCRIPTION));
+			concept.setExpression(record.getValue(SYSTEM_PAYMENT.EXPRESSION));
+			concept.setIrpfExpression(record.getValue(SYSTEM_PAYMENT.IRPF_EXPRESSION));
+			concept.setQuoteExpression(record.getValue(SYSTEM_PAYMENT.QUOTE_EXPRESSION));
+			
+			concepts.add(concept);
+		}
+		
+		return concepts;
+		} finally {
+			if ( cursor != null )
+				cursor.close();
+		}
+	}
 
 	private static Payment.Type getType(Byte ordinal) {
 		if (ordinal == null || ordinal < 0) {
