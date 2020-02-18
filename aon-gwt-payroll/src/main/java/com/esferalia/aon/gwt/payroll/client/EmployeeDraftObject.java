@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 
@@ -14,7 +13,6 @@ import com.esferalia.aon.gwt.common.shared.Dni;
 import com.esferalia.aon.gwt.common.shared.SocialSecurity;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
-import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractJourneyDuration;
@@ -22,11 +20,9 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
-import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.esferalia.aon.gwt.payroll.shared.StreetType;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.occam.api.model.type.Country;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeDraftObject extends AbstractDraftObject{
@@ -44,6 +40,8 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	private List<Workplace> workplaces;
 	
 	private ActivitiesCCC activitiesCCC;
+	
+	private EmployeeCalendarDraftObjectData employeeCalendar;
 		
 	// ------------------------------------------------- CLASS METHODS -------------------------------------------------	
 	
@@ -1000,6 +998,14 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 
 	public Date getPayrollDate() {
 		return this.contractData.getPayrollDate();
+	}
+
+	public void setEmployeeCalendar(EmployeeCalendarDraftObjectData employeeCalendarDraftobjectData) {
+		this.employeeCalendar = employeeCalendarDraftobjectData;
+	}
+	
+	public EmployeeCalendarDraftObjectData getEmployeeCalendar() {
+		return this.employeeCalendar;
 	}
 
 	

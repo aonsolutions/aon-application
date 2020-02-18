@@ -1422,6 +1422,9 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		calendarDraftItem.setUserObject(employeeCalendarDraftobjectData);
 		calendarDraftItem.ensureDebugId(getId(employee)+"-employeecalendar");
 		
+		//Add employeeCalendar to Draft
+		employeeDraftObject.setEmployeeCalendar(employeeCalendarDraftobjectData);
+		
 
 		if (extended) {
 			ITDataObject dataObject = getITDataObject(workplaceItem);

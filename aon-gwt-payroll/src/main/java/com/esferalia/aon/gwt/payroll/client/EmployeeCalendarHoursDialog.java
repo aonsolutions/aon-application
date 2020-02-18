@@ -204,6 +204,14 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 		fridayHoursOpt = suggestOpts[FRIDAY];
 		saturdayHoursOpt = suggestOpts[SATURDAY];
 		sundayHoursOpt = suggestOpts[SUNDAY];
+		
+		suggestOpts[MONDAY].setAutoSelectEnabled(false);
+		suggestOpts[TUESDAY].setAutoSelectEnabled(false);
+		suggestOpts[WEDNESDAY].setAutoSelectEnabled(false);
+		suggestOpts[THURSDAY].setAutoSelectEnabled(false);
+		suggestOpts[FRIDAY].setAutoSelectEnabled(false);
+		suggestOpts[SATURDAY].setAutoSelectEnabled(false);
+		suggestOpts[SUNDAY].setAutoSelectEnabled(false);
 	}
 	
 	private void initBlockDays() {

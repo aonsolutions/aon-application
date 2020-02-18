@@ -1757,7 +1757,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		//if(hora != Double.parseDouble("-1")){
 		if(hora != null){
 			Integer pos = calculateDatePosition(date);
-			if(cellsType[calculatePositionRow(pos)][calculatePositionCol(pos)].getType().equals(DayType.NOWORKINGDAY))
+			if( cellsType[calculatePositionRow(pos)][calculatePositionCol(pos)] != null &&
+				cellsType[calculatePositionRow(pos)][calculatePositionCol(pos)].getType().equals(DayType.NOWORKINGDAY))
 				calendarEmployeeInfo.setTypeByDay(date, DayType.NOTYPEDAY);
 		}
 	}
