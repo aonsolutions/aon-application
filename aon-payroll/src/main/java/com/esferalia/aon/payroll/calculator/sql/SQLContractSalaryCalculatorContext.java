@@ -3330,6 +3330,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 						throws UnsupportedOperationException {
 					return Collections.emptyList();
 				};
+				
+				protected TaxCalculator getTaxCalculator(IContractSalaryCalculatorContext ctx) {
+					return TaxCalculator.getTaxCalculator(ctx);
+				};
 
 			}.calculate(ctx);
 			Object br =  salary.getCommonBase() / ctx.getExpressionContext().getVariable(QUOTE_DAYS, ctx.getStartDate(),

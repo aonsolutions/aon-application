@@ -38,9 +38,11 @@ import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractIrpfCalculatorContext;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.SimpleContractDeduction;
 import com.esferalia.aon.payroll.calculator.SimpleContractPayment;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.TaxCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqCommon;
 import com.esferalia.aon.payroll.calculator.sql.FilterCollection;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
@@ -1113,7 +1115,12 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		nextIrpfBase = 0.00;
 		nextSocialSecurityContributons = 0.00;
 
-		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>() {
+			@Override
+			protected TaxCalculator getTaxCalculator(IContractSalaryCalculatorContext ctx) {
+				return TaxCalculator.getTaxCalculator(ctx);
+			}
+		};
 
 		SalaryBuilder builder = new SalaryBuilder();
 		calculator.setSalaryBuilder(builder);
