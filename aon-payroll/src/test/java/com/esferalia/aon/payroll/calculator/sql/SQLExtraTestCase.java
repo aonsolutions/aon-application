@@ -49,6 +49,7 @@ import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator.Listener;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.CompositeSalaryBuilder;
 import com.esferalia.aon.salary.ISalary;
@@ -4591,6 +4592,230 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(1200.00 / 6 , salary.getExtraPayProration(), DELTA);
 		
 		
+
+	}
+
+	@Test
+	public void testProrratedBaseII() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()) 
+				,new HashMap<String, String>(){
+				{
+					put("BASE_CGC_MIN", "1050.00");
+				}
+				}
+				,new String[] {} 
+				,new String[] {} 
+				,null);
+		
+		PaymentConceptRecord pagaExtra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+		PaymentConceptRecord salarioBase = addConcept(aonContext, "SALARIO_BASE", PaymentType.CRA_0001);
+		PaymentConceptRecord plusSalarial = addConcept(aonContext, "PLUS_SALARIAL", PaymentType.CRA_0001);
+		
+		addPayment(aonContext, contract, pagaExtra, "SALARIO_BASE", "_P", PaymentType.CRA_0004);
+		addPayment(aonContext, contract, pagaExtra, "SALARIO_BASE", "_P", PaymentType.CRA_0004);
+		addPayment(aonContext, contract, salarioBase, "100.00 *DIAS_TRABAJADOS /DIAS_MES");
+		//@formatter:off
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Salary salary = 
+		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract))
+		;
+		
+		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
+			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
+
+		Assert.assertEquals(100.00 + 100.00 / 6 , salary.getIrpfBase(), DELTA);
+		Assert.assertEquals(1050.00 , salary.getCommonBase(), DELTA);
+		Assert.assertEquals(100.00 + 100.00 / 6 , salary.getRemuneration(), DELTA);
+
+	}
+
+	@Test
+	public void testProrratedBaseIII() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()) 
+				,new HashMap<String, String>(){
+				{
+					put("BASE_CGC_MIN", "75.00");
+				}
+				}
+				,new String[] {} 
+				,new String[] {} 
+				,null);
+		
+		PaymentConceptRecord pagaExtra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+		PaymentConceptRecord salarioBase = addConcept(aonContext, "SALARIO_BASE", PaymentType.CRA_0001);
+		PaymentConceptRecord plusSalarial = addConcept(aonContext, "PLUS_SALARIAL", PaymentType.CRA_0001);
+		
+		addPayment(aonContext, contract, pagaExtra, "70.00", "_P", PaymentType.CRA_0004);
+		addPayment(aonContext, contract, pagaExtra, "70.00", "_P", PaymentType.CRA_0004);
+		addPayment(aonContext, contract, salarioBase, "100.00 *DIAS_TRABAJADOS /DIAS_MES");
+		//@formatter:off
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Salary salary = 
+		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract))
+		;
+		
+		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
+			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
+
+		Assert.assertEquals(100.00 + 70.00 / 6 , salary.getIrpfBase(), DELTA);
+		Assert.assertEquals(100.00 + 70.00 / 6 , salary.getCommonBase(), DELTA);
+		Assert.assertEquals(100.00 + 70.00 / 6 , salary.getRemuneration(), DELTA);
+
+	}
+
+	@Test
+	public void testProrratedBaseIV() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()) 
+				,new HashMap<String, String>(){
+				{
+					put("BASE_CGC_MIN", "75.00");
+				}
+				}
+				,new String[] {} 
+				,new String[] {} 
+				,null);
+		
+		PaymentConceptRecord pagaExtra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+		PaymentConceptRecord salarioBase = addConcept(aonContext, "SALARIO_BASE", PaymentType.CRA_0001);
+		PaymentConceptRecord plusSalarial = addConcept(aonContext, "PLUS_SALARIAL", PaymentType.CRA_0001);
+		
+		addPayment(aonContext, contract, pagaExtra, "10.00", "_P", PaymentType.CRA_0004);
+		addPayment(aonContext, contract, pagaExtra, "10.00", "_P", PaymentType.CRA_0004);
+		addPayment(aonContext, contract, salarioBase, "100.00 *DIAS_TRABAJADOS /DIAS_MES");
+		//@formatter:off
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Salary salary = 
+		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract))
+		;
+		
+		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
+			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
+
+		Assert.assertEquals(100.00 + 20.00 , salary.getIrpfBase(), DELTA);
+		Assert.assertEquals(100.00 + 20.00, salary.getCommonBase(), DELTA);
+		Assert.assertEquals(100.00 + 20.00 , salary.getRemuneration(), DELTA);
+
+	}
+
+	@Test
+	public void testProrratedBaseV() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()) 
+				,new HashMap<String, String>(){
+				{
+					put("BASE_CGC_MIN", "1050.00");
+				}
+				}
+				,new String[] {} 
+				,new String[] {} 
+				,null);
+		
+		PaymentConceptRecord pagaExtra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+		PaymentConceptRecord salarioBase = addConcept(aonContext, "SALARIO_BASE", PaymentType.CRA_0001);
+		PaymentConceptRecord plusSalarial = addConcept(aonContext, "PLUS_SALARIAL", PaymentType.CRA_0001);
+		
+		addPayment(aonContext, contract, pagaExtra, "SALARIO_BASE/12", "_P", PaymentType.CRA_0004);
+		addPayment(aonContext, contract, pagaExtra, "SALARIO_BASE/12", "_P", PaymentType.CRA_0004);
+		addPayment(aonContext, contract, salarioBase, "100.00 *DIAS_TRABAJADOS /DIAS_MES");
+		//@formatter:off
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Salary salary = 
+		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract))
+		;
+		
+		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
+			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
+
+		Assert.assertEquals(100.00 + 100.00 / 6 , salary.getIrpfBase(), DELTA);
+		Assert.assertEquals(1050.00 , salary.getCommonBase(), DELTA);
+		Assert.assertEquals(100.00 + 100.00 / 6 , salary.getRemuneration(), DELTA);
+
+	}
+
+	@Test
+	public void testProrratedBaseVI() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()) 
+				,new HashMap<String, String>(){
+				{
+					put("BASE_CGC_MIN", "1050.00");
+				}
+				}
+				,new String[] {} 
+				,new String[] {} 
+				,null);
+		
+		PaymentConceptRecord pagaExtra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+		PaymentConceptRecord salarioBase = addConcept(aonContext, "SALARIO_BASE", PaymentType.CRA_0001);
+		PaymentConceptRecord plusSalarial = addConcept(aonContext, "PLUS_SALARIAL", PaymentType.CRA_0001);
+		
+		addPayment(aonContext, contract, pagaExtra, "SALARIO_BASE/6", "_P", PaymentType.CRA_0004);
+		addPayment(aonContext, contract, salarioBase, "100.00 *DIAS_TRABAJADOS /DIAS_MES");
+		//@formatter:off
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Salary salary = 
+		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract))
+		;
+		
+		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
+			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
+
+		Assert.assertEquals(100.00 + 100.00 / 6 , salary.getIrpfBase(), DELTA);
+		Assert.assertEquals(1050.00 , salary.getCommonBase(), DELTA);
+		Assert.assertEquals(100.00 + 100.00 / 6 , salary.getRemuneration(), DELTA);
 
 	}
 

@@ -960,17 +960,20 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	}
 	
 	protected double get(ExpressionContext expressionContext, Period period, Object ... names) throws ExpressionException {
+		double min = Double.MAX_VALUE;
 		ExpressionException expressionException = null;
 		for (int i = 0; i < names.length; i++) {
 			try {
 				double value = expressionContext.eval(String.valueOf(names[i]), period.getStart(), period.getEnd()).stream()
 				.map(v->v.getValue(v.getPeriod())).filter(v -> v != null && v instanceof Number)
 				.collect(Collectors.summingDouble(v -> ((Number)v).doubleValue()));
-				return value;
+				min =  Math.min(value, min);
 			} catch ( ExpressionException e ) {
 				expressionException = e;
 			}
 		}
+		if ( min < Double.MAX_VALUE )
+			return min;
 		throw expressionException;
 	}
 
