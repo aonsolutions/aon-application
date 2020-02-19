@@ -2044,6 +2044,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		activeDays = getExpressionContext().getVariables(ContextVariable.WORKED_DAYS, start, end)
 		.stream().map( v -> (Double) v.getValue(v.getPeriod()) ).collect(Collectors.summingDouble( v -> v ))
 		;
+		
+		double partialFactor = getCurrentBindings().get(PARTIAL_FACTOR,
+				obj -> ((Number) obj).doubleValue(), 1.00);
+		activeDays /= partialFactor;
+		
 		activeDays += getExpressionContext().getVariables(ContextVariable.STRIKE_FACTOR, start, end)
 		.stream().map( v -> ((Number) v.getValue(v.getPeriod())).doubleValue() ).collect(Collectors.summingDouble( v -> v ))
 		;

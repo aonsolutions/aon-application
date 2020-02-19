@@ -3,10 +3,13 @@
  */
 package com.esferalia.aon.payroll.calculator.sql;
 
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ISREAD;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_HOURS;
@@ -46,10 +49,12 @@ import java.util.HashMap;
 import org.junit.Test;
 
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
+import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryData;
+import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -761,6 +766,141 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 			
 		}
 
+	}
+
+	@Test
+	public void testAdjustPartialMonthlyI()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>() {
+					{
+						put(ContextVariable.TC2.getName(), format("\"%s\"",C200.getValue()));
+						put(MONTH_DAYS.getName(), format("%f", 30.00));
+					}
+				},
+
+				new String[] { 
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES" 
+				},
+
+				new String[] { 
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						"BASE_IRPF * PORCENTAJE_IRPF/100" },
+				null);
+
+		Date startDate = getFirstDayOfYear(getToday());
+		for ( int i = 0; i < 12 ; i++ ) {
+			Date endDate = getLastDayOfMonth(startDate);
+			Date issueDate = endDate;
+			
+			addData(aonContext, contract, startDate, add(startDate, DAY_OF_MONTH , 14 ), ContextVariable.PARTIAL_FACTOR, 0.25);
+			addData(aonContext, contract, add(startDate, DAY_OF_MONTH , 15 ), endDate, ContextVariable.PARTIAL_FACTOR, 0.75);
+
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, issueDate, contract);
+			Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+//			for ( SalaryPayment payment: salary.getSalaryPayments() ) {
+//				System.out.println(payment.getName() + " = " + payment.getAmount()  + ", " + payment.getQuote() );
+//			}
+//			for ( SalaryData data: salary.getSalaryDatas() ) {
+//				System.out.println(data.getName() + " = " + data.getExpression() );
+//			}
+			org.junit.Assert.assertEquals( 1750.00 / 2,  salary.getTotalPayment() , DELTA );
+			org.junit.Assert.assertEquals( 1750.00 / 2,  salary.getCommonBase() , DELTA );
+			startDate = add(startDate, Calendar.MONTH, 1); 
+			
+		}
+
+	}
+
+	@Test
+	public void testAdjustPartialMonthlyII()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>() {
+					{
+						put(ContextVariable.TC2.getName(), format("\"%s\"",C200.getValue()));
+						put(MONTH_DAYS.getName(), format("%f", 30.00));
+					}
+				},
+
+				new String[] { 
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES" 
+				},
+
+				new String[] { 
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						"BASE_IRPF * PORCENTAJE_IRPF/100" },
+				null);
+
+		Date startDate = getFirstDayOfYear(getToday());
+		for ( int i = 0; i < 12 ; i++ ) {
+			Date endDate = getLastDayOfMonth(startDate);
+			Date issueDate = endDate;
+
+			addData(aonContext, contract, startDate, endDate, ContextVariable.PARTIAL_FACTOR, 0.50);
+
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, issueDate, contract);
+			Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+
+			org.junit.Assert.assertEquals( 1750.00 / 2,  salary.getTotalPayment() , DELTA );
+			org.junit.Assert.assertEquals( 1750.00 / 2,  salary.getCommonBase() , DELTA );
+			startDate = add(startDate, Calendar.MONTH, 1); 
+			
+		}
+
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_1_3",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_4_15",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_16_20",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+
+		startDate = getFirstDayOfYear(getToday());
+		for ( int i = 0; i < 12 ; i++ ) {
+			Date endDate = getLastDayOfMonth(startDate);
+			Date issueDate = endDate;
+			
+//			addData(aonContext, contract, startDate, add(startDate, DAY_OF_MONTH , 14 ), ContextVariable.PARTIAL_FACTOR, 0.25);
+//			addData(aonContext, contract, add(startDate, DAY_OF_MONTH , 15 ), endDate, ContextVariable.PARTIAL_FACTOR, 0.75);
+			addIT(aonContext, contract, LeaveType.COMMON_DISEASE, add(startDate, DAY_OF_MONTH , 15 ), endDate, null);
+			
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, issueDate, contract);
+			Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+			for ( SalaryPayment payment: salary.getSalaryPayments() ) {
+				System.out.println(payment.getName() + " = " + payment.getAmount()  + ", " + payment.getQuote() );
+			}
+			for ( SalaryData data: salary.getSalaryDatas() ) {
+				System.out.println(data.getName() + " = " + data.getExpression() );
+			}
+//			org.junit.Assert.assertEquals( 1750.00 / 2,  salary.getTotalPayment() , DELTA );
+			org.junit.Assert.assertEquals( 1750.00 / 2,  salary.getCommonBase() , DELTA );
+			startDate = add(startDate, Calendar.MONTH, 1); 
+			
+		}
 	}
 	// ------------------------------------------------------------------------
 

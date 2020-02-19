@@ -1237,12 +1237,12 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		.count();
 		Assert.assertEquals(1, count);
 		
-		// + 7 ( NO ADJUST )
+		// + 6 ( ADJUST )
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == 25)
 		.peek(data->Assert.assertEquals(data.getEndDate().getDate(),31))
-		.peek(data->Assert.assertEquals(100.00 * 7.00, Double.parseDouble(data.getExpression())))
+		.peek(data->Assert.assertEquals(100.00 * 6.00, Double.parseDouble(data.getExpression())))
 		.count();
 		Assert.assertEquals(1, count);
 		
@@ -1273,10 +1273,10 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		salary = calculator.calculate(ctx);
 		
-		// One period , 31 ( NO adjust ) 
+		// One period , 30 ( adjust ) 
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
-		.peek(data->Assert.assertEquals(100.00 * 31.00, Double.parseDouble(data.getExpression())))
+		.peek(data->Assert.assertEquals(100.00 * 30.00, Double.parseDouble(data.getExpression())))
 		.count();
 		Assert.assertEquals(1, count);
 	}
