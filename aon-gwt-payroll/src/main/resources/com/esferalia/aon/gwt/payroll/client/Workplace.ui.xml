@@ -3,32 +3,9 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 
-	<ui:with field='res'
-		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
+	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
 
-	<ui:style 
-		type="com.esferalia.aon.gwt.payroll.client.Workplace.MyStyle">
-		
-		.noselect {
-			-webkit-touch-callout: none; /* iOS Safari */
-			-webkit-user-select: none; /* Safari */
-			-khtml-user-select: none; /* Konqueror HTML */
-			-moz-user-select: none; /* Firefox */
-			-ms-user-select: none; /* Internet Explorer/Edge */
-			user-select: none; /* Non-prefixed version, currently
-				                                  supported by Chrome and Opera */
-		}
-		
-		@external gwt-Selector;
-		@external gwt-SuggestBoxPopup;
-		.gwt-SuggestBoxPopup {
-			z-index: 105;
-		}
-
-		.gwt-Selector .gwt-SuggestBoxPopup{
-			z-index: 105;
-			height: inherit;
-		}
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.Workplace.MyStyle">
 
 		.headerStyle{
 			top: -0.5em;
@@ -46,75 +23,8 @@
     		font-weight: bold;
 		}
 
-		.hide{
-			display: none;
-		}
-
-		.maxWidth{
-			width: 100%;
-		}
-
-		.maxWidthTextBox{
-			width: 99.7%;
-		}
-		
-		.maxWidthTextBox2{
-			width: 99.4%;
-		}
-
-		.alignTextCenter{
-			text-align: center;
-		}
-
 		.firstColumnTextStyle{
 			padding: 5px !important;
-		}
-
-		.lookupStyle{
-			height: 20px;
-    		border: none !important;
-   		 	margin-left: 15px;
-    		width: 100%;
-		}
-
-		.paddingTop{
-			padding-top: 5px !important;
-		}
-
-		.paddingEnableDisable{
-			position: fixed;
-    		padding-top: 0px;
-    		border: none;
-    		top: 99px;
-    		width: 32px;
-		}
-
-		.fontEnableStyle{
-			font-weight: bold;
-    		color: #000;
-    		white-space: nowrap;
-    		font-size: smaller;
-    		padding-left: 30px;
-    		width: 80px;
-			cursor: pointer;
-		}
-
-		.fontDisableStyle{
-			font-weight: bold;
-    		color: #000;
-    		white-space: nowrap;
-    		font-size: smaller;
-    		padding-left: 30px;
-    		width: 100px;
-			cursor: pointer;
-		}
-
-		.estiloBorrarCuandoSeActiveBoton{
-			background: none !important;
-		}
-		
-		.borderNone{
-			border: none;
 		}
 		
 		.styleBorder{
@@ -131,6 +41,14 @@
 			border-width: 1px; 
 			margin-top: 40px; 
 			margin-left: 10px;
+		}
+		
+		.w100{
+			width: 100%;
+		}
+		
+		.wTextBox{
+			width: 99.5%;
 		}
 		
 	</ui:style>
@@ -155,7 +73,7 @@
 										<g:Label styleName="{style.firstColumnTextStyle} {style.requiredColor}">Descripción</g:Label>
 									</td>
 									<td colspan="3">
-										<g:TextBox ui:field="workplaceDescription" styleName='aon-inputText {style.maxWidthTextBox2}'></g:TextBox>
+										<g:TextBox ui:field="workplaceDescription" styleName='aon-inputText {style.wTextBox}'></g:TextBox>
 									</td>
 								</tr>
 								<tr>
@@ -163,7 +81,7 @@
 										<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Dirección</g:Label>
 									</td>
 									<td colspan="3">
-									    <g:HorizontalPanel ui:field="workplaceAddressPanel" styleName="{style.maxWidth}"></g:HorizontalPanel>
+									    <g:HorizontalPanel ui:field="workplaceAddressPanel" styleName='{style.w100}'></g:HorizontalPanel>
 									</td>
 								</tr>
 								<tr>
@@ -171,7 +89,7 @@
 										<g:Label styleName='{style.firstColumnTextStyle}'>Concierto económico</g:Label>
 									</td>
 									<td colspan="3">
-										<g:ListBox ui:field="workplaceEconomicConcert" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+										<g:ListBox ui:field="workplaceEconomicConcert" styleName='aon-selectOneMenu {style.w100}'></g:ListBox>
 									</td>
 								</tr>
 								<tr style="display: none;">
@@ -179,7 +97,7 @@
 										<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Ámbito</g:Label>
 									</td>
 									<td colspan="3">
-										<g:HorizontalPanel ui:field="workplaceScopePanel" styleName="{style.maxWidth}"></g:HorizontalPanel>
+										<g:HorizontalPanel ui:field="workplaceScopePanel" styleName='{style.w100}'></g:HorizontalPanel>
 									</td>
 								</tr>
 							</body>
@@ -204,7 +122,7 @@
 										<g:Label styleName='{style.firstColumnTextStyle}'>Calendario</g:Label>
 									</td>
 									<td colspan="3">
-										 <g:HorizontalPanel ui:field="workplaceCalendarPanel" styleName="{style.maxWidth}"></g:HorizontalPanel>
+										 <g:HorizontalPanel ui:field="workplaceCalendarPanel" styleName='{style.w100}'></g:HorizontalPanel>
 									</td>
 								</tr>
 								<tr>
@@ -212,7 +130,7 @@
 										<g:Label styleName='{style.firstColumnTextStyle}'>Convenio</g:Label>
 									</td>
 									<td colspan="3">
-										<g:ListBox ui:field="workpalceAgreement" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+										<g:ListBox ui:field="workpalceAgreement" styleName='aon-selectOneMenu {style.w100}'></g:ListBox>
 									</td>
 								</tr>
 								<tr>
@@ -220,7 +138,7 @@
 										<g:Label styleName='{style.firstColumnTextStyle}'>Actividad</g:Label>
 									</td>
 									<td colspan="3">
-									    <g:HorizontalPanel ui:field="workplaceActivityPanel" styleName="{style.maxWidth}"></g:HorizontalPanel>
+									    <g:HorizontalPanel ui:field="workplaceActivityPanel" styleName='{style.w100}'></g:HorizontalPanel>
 									</td>
 								</tr>
 							</tbody>

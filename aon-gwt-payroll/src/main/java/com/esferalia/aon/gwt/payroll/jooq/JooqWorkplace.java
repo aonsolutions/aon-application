@@ -1,16 +1,15 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
 import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
-import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.Calendar.CALENDAR;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
-import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -28,7 +27,6 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
-import com.esferalia.aon.jooq.tables.records.ScopeRecord;
 import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 
 public class JooqWorkplace {
@@ -68,7 +66,6 @@ public class JooqWorkplace {
 		String workplaceDescription = workplaceRecord.get(WORKPLACE.DESCRIPTION);
 		Integer workplaceAddress = workplaceRecord.get(WORKPLACE.ADDRESS);
 		Byte workplaceEconomicConcert = workplaceRecord.get(WORKPLACE.ECONOMICAGREEMENT) == null ? (byte) -1 : workplaceRecord.get(WORKPLACE.ECONOMICAGREEMENT);
-		Byte workplaceActive = workplaceRecord.get(WORKPLACE.ACTIVE);
 		
 		Result<Record> raddressRecords = dslContext.select().from(RADDRESS)
 				.where(RADDRESS.REGISTRY.eq(workplaceEnterprise))
@@ -156,23 +153,15 @@ public class JooqWorkplace {
 				.where(AGREEMENT.ID.eq(workplaceAgreement))
 				.fetchOne();
 		
-		String agreementDescription = (null == agreementRecord) ? null : agreementRecord.get(AGREEMENT.DESCRIPTION);
-		
 		//SET General Data
 		workplaceInfo.setDomain(workplaceDomain);
 		workplaceInfo.setDescription(workplaceDescription);
-		workplaceInfo.setAddresses(addresses);
 		workplaceInfo.setAddressId(workplaceAddress);
 		workplaceInfo.setEconomicConcert(workplaceEconomicConcert);
-		workplaceInfo.setActive(workplaceActive);
 		
 		//SET Payroll Data
-		workplaceInfo.setCalendar(null);
-		workplaceInfo.setCalendar(calendars);
 		workplaceInfo.setCalendarId(workplaceCalendar);
 		workplaceInfo.setAgreementId(workplaceAgreement);
-		workplaceInfo.setAgreementDescription(agreementDescription);
-		workplaceInfo.setActivities(activities);
 		workplaceInfo.setActivityId(workplaceActivity);
 		
 		//TablesID
@@ -206,7 +195,6 @@ public class JooqWorkplace {
 			.set(WORKPLACE.DESCRIPTION, workplaceInfo.getDescription())
 			.set(WORKPLACE.ADDRESS, workplaceInfo.getAddressId())
 			.set(WORKPLACE.ECONOMICAGREEMENT, workplaceInfo.getEconomicConcert() == -1 ? null : workplaceInfo.getEconomicConcert())
-			.set(WORKPLACE.ACTIVE, workplaceInfo.isActive())
 			.where(WORKPLACE.ID.eq(workplaceInfo.getWorkplaceId()))
 			.execute();
 		
@@ -298,7 +286,6 @@ public class JooqWorkplace {
 			.set(WORKPLACE.ENTERPRISE, enterpriseId)
 			.set(WORKPLACE.DESCRIPTION, workplaceInfo.getDescription())
 			.set(WORKPLACE.ADDRESS, workplaceInfo.getAddressId())
-//			.set(WORKPLACE.SCOPE, workplaceInfo.getScopeId())
 			.set(WORKPLACE.SCOPE, scopeId)
 			.set(WORKPLACE.ECONOMICAGREEMENT, workplaceInfo.getEconomicConcert() == 0 ? null : workplaceInfo.getEconomicConcert())
 			.returning(WORKPLACE.ID)
