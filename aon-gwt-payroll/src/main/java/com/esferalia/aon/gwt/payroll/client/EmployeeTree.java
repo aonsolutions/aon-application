@@ -2126,12 +2126,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	@Override
 	public void onWorkplaceSelected(Workplace workplace) {
-		EmployeesServiceAsync employeesServiceRaw = GWT.create(EmployeesService.class);
-		EmployeesServiceAsync employeesService = new EmployeesServiceAsyncDecorator(employeesServiceRaw);
 		
 		DomainEnterprisesServiceAsync domainEnterprisesServiceAsync = DomainEnterprisesServiceAsync.newInstance();
 		
-		WorkplaceDraftObject employeeNewDraftObject = new WorkplaceDraftObject(workplace, employeesService, domainEnterprisesServiceAsync);
+		WorkplaceDraftObject employeeNewDraftObject = new WorkplaceDraftObject(enterprise, workplace, domainEnterprisesServiceAsync);
 		
 		employeeDetail.setWidget(getWorkplaceDraft());
 		getWorkplaceDraft().setWorkplaceDraftObject(employeeNewDraftObject);
@@ -2858,7 +2856,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	protected static void showNewWorkplace() {
 		DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
 		
-		WorkplaceDialog workplaceDialog = new WorkplaceDialog();
+		WorkplaceDialog workplaceDialog = new WorkplaceDialog()
+												.setOnSaved(w -> refreshEnterprise());
 		WorkplaceDialogObject workplaceDialogObject = new WorkplaceDialogObject(getEmployeeTree().enterprise, enterprisesService);
 		workplaceDialog.setWorkplaceDialogObject(workplaceDialogObject);
 		workplaceDialog.center();
