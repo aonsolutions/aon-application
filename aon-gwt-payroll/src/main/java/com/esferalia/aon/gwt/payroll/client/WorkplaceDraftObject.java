@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
+import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
@@ -16,124 +17,31 @@ public class WorkplaceDraftObject extends AbstractDraftObject {
 	
 	// ------------------------------------------------------------------------
 	
-	private EmployeesServiceAsync employeesService;
 	private DomainEnterprisesServiceAsync enterprisesService;
 	
+	private Enterprise enterprise;
 	private Workplace workplace;
+	
+	private Map<Integer, String> addresses;
+	private Map<Integer, String> calendars;
 	private List<Agreement> agreements;
+	private Map<Integer, String> activities;
 	
 	private WorkplaceInfo workplaceInfo;
 	private WorkplaceInfo workplaceInfo_Old;
 		
 	// ------------------------------------------------- CLASS METHODS -------------------------------------------------	
 	
-	public WorkplaceDraftObject(Workplace workplace, EmployeesServiceAsync employeesService, DomainEnterprisesServiceAsync enterprisesService) {
+	public WorkplaceDraftObject(Enterprise enterprise, Workplace workplace, DomainEnterprisesServiceAsync enterprisesService) {
 		
-		this.employeesService = employeesService;
 		this.enterprisesService = enterprisesService;
 
+		this.enterprise = enterprise;
 		this.workplace = workplace;
 		this.agreements = new ArrayList<>();
 		
 		this.undoManager = new UndoManager<Undoable>();
 		
-	}
-	
-	public WorkplaceInfo getWorkplaceInfo(){
-		return this.workplaceInfo;
-	}
-	
-	public List<Agreement> getAgreements(){
-		return this.agreements;
-	}
-	
-	public String getWorkplaceAgreementDescription(){
-		return this.workplaceInfo.getAgreementDescription();
-	}
-	
-	public List<Agreement> getActiveAgreements(){
-		List<Agreement> activeAgreements = new ArrayList<>();
-		for(Agreement a : getAgreements()){
-			if(a.getId() > 0)
-				activeAgreements.add(a);
-		}
-		return activeAgreements;
-	}
-	
-	public Integer getAgreementIndex(String agreementDescription){
-		List<Agreement> activeAgreements = getActiveAgreements();
-		for(int i = 0; i<activeAgreements.size(); i++)
-			if(activeAgreements.get(i).getDescription() == agreementDescription)
-				return i;
-			
-		return -1;
-	}
-	
-	public Integer getAgreementId(String agreementName){
-		for(Agreement a : getAgreements()){
-			if(a.getDescription() == agreementName && a.getId() > 0)
-				return a.getId();
-		}
-		return -1;
-	}
-	
-	public Map<Integer, String> getWorkplaceAddresses(){
-		return this.workplaceInfo.getAddresses();
-	}
-	
-	public Integer getWorkplaceAddressId(){
-		if (null != workplaceInfo.getAddressId())
-			return workplaceInfo.getAddressId();
-		else
-			return null;
-	}
-	
-	public Integer getWorkplaceAddressIndex(){
-		Integer index = 0;
-		for(Integer value : this.workplaceInfo.getAddresses().keySet()){
-			if(value.equals(workplaceInfo.getAddressId())) 
-				break;
-			index ++;
-		}
-		return index;
-	}
-	
-	public Integer getWorkplaceEconomicConcert(){
-		return (int) workplaceInfo.getEconomicConcert() + 1;
-	} 
-	
-	public Map<Integer, String> getWorkplacesCalendars(){
-		return this.workplaceInfo.getCalendars();
-	}
-	
-	public Integer getWorkplaceCalendarIndex(){
-		Integer index = 0;
-		for(Integer value : this.workplaceInfo.getCalendars().keySet()){
-			if(value.equals(workplaceInfo.getCalendarId())) 
-				break;
-			index ++;
-		}
-		return index;
-	}
-	
-	public Map<Integer, String> getWorkplaceActivities(){
-		return this.workplaceInfo.getActivities();
-	}
-	
-	public Integer getWorkplaceActivityIndex(){
-//		Window.alert("Select Activity Id : " + workplaceInfo.getActivityId());
-		
-		if(null == workplaceInfo.getActivityId())
-			return -1;
-		else{
-			Integer index = 0;
-			for(Integer value : this.workplaceInfo.getActivities().keySet()){
-				if(value.equals(workplaceInfo.getActivityId())) 
-					break;
-				index ++;
-			}
-			return index;
-		}
 	}
 	
 	// ---------------------------------------------- DATABASE METHODS SYNC  ---------------------------------------------
@@ -143,18 +51,19 @@ public class WorkplaceDraftObject extends AbstractDraftObject {
 		enterprisesService.getWorkplaceInfo(this.workplace.getId(), new AsyncCallback<WorkplaceInfo>() {
 
 			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
-			}
-
-			@Override
 			public void onSuccess(WorkplaceInfo result) {
 				workplaceInfo = result;
 				workplaceInfo_Old = new WorkplaceInfo(result);
+				
 				getAgreements(
 						r ->{success.accept(result);},
 						f->{}
 				);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
 			}
 		});
 		
@@ -165,8 +74,21 @@ public class WorkplaceDraftObject extends AbstractDraftObject {
 			
 			@Override
 			public void onSuccess(List<Agreement> result) {
-				agreements = result;
-				success.accept(result);
+				agreements = getActiveAgreements(result);
+				
+				getEnterpriseAddresses(
+						s -> {success.accept(result);},
+						f ->{}
+				);
+			}
+			
+			private List<Agreement> getActiveAgreements(List<Agreement> agreements) {
+				List<Agreement> activeAgreements = new ArrayList<>();
+				for(Agreement agreement : agreements){
+					if(agreement.getId() > 0)
+						activeAgreements.add(agreement);
+				}
+				return activeAgreements;
 			}
 			
 			@Override
@@ -176,39 +98,62 @@ public class WorkplaceDraftObject extends AbstractDraftObject {
 		});	
 	}
 	
-	public void getAgreement(Integer agreementId, Consumer<Agreement> success, Consumer<Throwable> failure) {
+	private void getEnterpriseAddresses(Consumer<Map<Integer, String>> success, Consumer<Throwable> failure) {
+		enterprisesService.getEnterpiseAddresses(this.enterprise.getId(), new AsyncCallback<Map<Integer,String>>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void onSuccess(Map<Integer, String> result) {
+				addresses = result;
+				
+				getEnterpriseCalendars(
+					s -> {success.accept(result);},
+					f -> {}
+				);
+			}
+		});
+	}
+	
+	private void getEnterpriseCalendars(Consumer<Map<Integer, String>> success, Consumer<Throwable> failure) {
+		enterprisesService.getEnterpiseCalendars(this.enterprise.getId(), new AsyncCallback<Map<Integer,String>>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void onSuccess(Map<Integer, String> result) {
+				calendars = result;
+
+				getEnterpriseActivities(
+					s -> {success.accept(result);},
+					f -> {}
+				);	
+			}
+		});
+	}
+	
+	private void getEnterpriseActivities(Consumer<Map<Integer, String>> success, Consumer<Throwable> failure) {
+		enterprisesService.getEnterpiseActivities(this.enterprise.getId(), new AsyncCallback<Map<Integer,String>>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void onSuccess(Map<Integer, String> result) {
+				activities = result;
+				success.accept(result);
+			}
+		});
+	}
 		
-		enterprisesService.getAgreement(agreementId, new AsyncCallback<Agreement>() {
-			
-			@Override
-			public void onSuccess(Agreement result) {
-				success.accept(result);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
-			}
-		});	
-	}
-	
-//	public void getAgreements(Consumer<List<Agreement>> success, Consumer<Throwable> failure) {
-//		enterprisesService.getAgreements(0, 0, new AsyncCallback<List<Agreement>>() {
-//			
-//			@Override
-//			public void onSuccess(List<Agreement> result) {
-//				agreements = result;
-//				success.accept(result);
-//			}
-//			
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				// TODO Auto-generated method stub
-//			}
-//		});
-//		
-//	}
-	
 	public void updateWorkplace(Consumer<WorkplaceInfo> success, Consumer<Throwable> failure){
 		
 		enterprisesService.setWorkplaceInfo(this.workplaceInfo, new AsyncCallback<WorkplaceInfo>() {
@@ -225,6 +170,98 @@ public class WorkplaceDraftObject extends AbstractDraftObject {
 			}
 		});
 		
+	}
+	
+	// ---------------------------------------------- GETTERS / SETTERS  -------------------------------------------------
+	
+	public WorkplaceInfo getWorkplaceInfo(){
+		return this.workplaceInfo;
+	}
+	
+	public String getWorkplaceDescription() {
+		return getWorkplaceInfo().getDescription();
+	}
+	
+	public Map<Integer, String> getWorkplaceAddresses(){
+		return this.addresses;
+	}
+	
+	public Map<Integer, String> getWorkplaceCalendars(){
+		return this.calendars;
+	}
+	
+	public List<Agreement> getWorkplaceAgreements(){
+		return this.agreements;
+	}
+	
+	public Map<Integer, String> getWorkplaceActivities(){
+		return this.activities;
+	}
+	
+	public Integer getWorkplaceAddressIndex(){
+		Integer index = 0;
+		
+		if(!getWorkplaceAddresses().isEmpty() && null != workplaceInfo.getAddressId()) {
+			for(Integer value : getWorkplaceAddresses().keySet()){
+				if(value.equals(workplaceInfo.getAddressId())) {
+					index++;
+					break;
+				}
+				index++;
+			}
+		}
+		
+		return index;
+	}
+	
+	public Integer getWorkplaceEconomicConcert(){
+		return (int) workplaceInfo.getEconomicConcert() + 1;
+	} 
+	
+	public Integer getWorkplaceCalendarIndex(){
+		Integer index = 0;
+		
+		if(!getWorkplaceCalendars().isEmpty() && null != workplaceInfo.getCalendarId()) {
+			for(Integer value : getWorkplaceCalendars().keySet()){
+				if(value.equals(workplaceInfo.getCalendarId())) {
+					index++;
+					break;
+				}
+				index++;
+			}
+		}
+		return index;
+	}
+	
+	public Integer getWorkplaceAgreementIndex(){
+		Integer index = 0;
+		
+		if(!getWorkplaceAgreements().isEmpty() && null != workplaceInfo.getAgreementId()) {
+			for(Agreement agreement : getWorkplaceAgreements()) {
+				if(agreement.getId().equals(workplaceInfo.getAgreementId())) {
+					index++;
+					break;
+				}
+				index++;
+			}
+		}
+		
+		return index;
+	}
+	
+	public Integer getWorkplaceActivityIndex(){
+		Integer index = 0;
+		
+		if(!getWorkplaceActivities().isEmpty() && null != workplaceInfo.getActivityId()) {
+			for(Integer value : getWorkplaceActivities().keySet()){
+				if(value.equals(workplaceInfo.getActivityId())) {
+					index++;
+					break;
+				}
+				index++;
+			}
+		}
+		return index;
 	}
 	
 	public void setWorkplaceDescription(String description) {
@@ -246,13 +283,6 @@ public class WorkplaceDraftObject extends AbstractDraftObject {
 				workplaceInfo.getEconomicConcert(), 
 				(byte) economicCocncert);
 		workplaceInfo.setEconomicConcert((byte) economicCocncert);
-	}
-
-	public void setWorkplaceActive(Boolean active) {
-		add(workplaceInfo::setActive, 
-				workplaceInfo.isActive(), 
-				active ? (byte)1 : (byte)0);
-		workplaceInfo.setActive(active ? (byte)1 : (byte)0);
 	}
 
 	public void setWorkplaceCalendar(Integer calendarId) {
@@ -278,16 +308,7 @@ public class WorkplaceDraftObject extends AbstractDraftObject {
 
 	public boolean hasChanged() {
 		boolean changed = workplaceInfo.hasChanged(workplaceInfo_Old);
-//		Window.alert("Has Changed? : " + changed);
 		return changed;
 	}
-	
-	
-	
-	// ------------------------------------------------------------------------
-
-	
-	// ------------------------------------------------------------------------
-
 	
 }
