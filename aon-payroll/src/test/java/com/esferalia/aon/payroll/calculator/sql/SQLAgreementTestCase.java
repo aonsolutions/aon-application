@@ -819,10 +819,10 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 
 		;
 		int monthDays = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
-		org.junit.Assert.assertEquals((3330 * 0.25) / monthDays * 15, salary.getTotalPayment(), DELTA);
-		org.junit.Assert.assertEquals((3300 / 6 * 0.25) / monthDays * 15, salary.getExtraPayProration(), DELTA);
+		org.junit.Assert.assertEquals((3330 * 0.25) / 30 * 15, salary.getTotalPayment(), DELTA);
+		org.junit.Assert.assertEquals((3300 / 6 * 0.25) / 30 * 15, salary.getExtraPayProration(), DELTA);
 
-		org.junit.Assert.assertEquals(( (3330 * 0.25) + (3300 / 6 * 0.25) ) / monthDays * 15, salary.getCommonBase(), DELTA);
+		org.junit.Assert.assertEquals(( (3330 * 0.25) + (3300 / 6 * 0.25) ) / 30 * 15, salary.getCommonBase(), DELTA);
 	}
 
 	@Test
