@@ -15,7 +15,11 @@ public class WorkplaceDialogObject {
 	private DomainEnterprisesServiceAsync enterprisesService;
 	
 	private Enterprise enterprise;
+	
+	private Map<Integer, String> addresses;
+	private Map<Integer, String> calendars;
 	private List<Agreement> agreements;
+	private Map<Integer, String> activities;
 	
 	private WorkplaceInfo workplaceInfo;
 		
@@ -29,88 +33,30 @@ public class WorkplaceDialogObject {
 		this.agreements = new ArrayList<>();
 	}
 	
-	public List<Agreement> getActiveAgreements(){
-		List<Agreement> activeAgreements = new ArrayList<>();
-		for(Agreement a : this.agreements){
-			if(a.getId() > 0)
-				activeAgreements.add(a);
-		}
-		return activeAgreements;
-	}
-	
-	public Integer getAgreementId(String agreementName){
-		for(Agreement a : getActiveAgreements()){
-			if(a.getDescription() == agreementName && a.getId() > 0)
-				return a.getId();
-		}
-		return -1;
-	}
-	
-	public Map<Integer, String> getWorkplaceAddresses(){
-		return this.workplaceInfo.getAddresses();
-	}
-	
-	public Map<Integer, String> getWorkplaceScopes(){
-		return this.workplaceInfo.getScopes();
-	}
-	
-	public Map<Integer, String> getWorkplacesCalendars(){
-		return this.workplaceInfo.getCalendars();
-	}
-	
-	public Map<Integer, String> getWorkplaceActivities(){
-		return this.workplaceInfo.getActivities();
-	}
-	
 	// ---------------------------------------------- DATABASE METHODS SYNC  ---------------------------------------------
-	
-//	public void getAgreements(Consumer<List<Agreement>> success, Consumer<Throwable> failure) {
-//		enterprisesService.getAgreements(0, 0, new AsyncCallback<List<Agreement>>() {
-//			
-//			@Override
-//			public void onSuccess(List<Agreement> result) {
-//				agreements = result;
-//				getEnterpriseAddresses(
-//						s -> {success.accept(result);},
-//						f ->{}
-//				);	
-//			}
-//
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				// TODO Auto-generated method stub
-//			}
-//		});
-//	}
 	
 	public void getAgreements(Consumer<List<Agreement>> success, Consumer<Throwable> failure) {
 		enterprisesService.getAgreements(0, Integer.MAX_VALUE, new AsyncCallback<List<Agreement>>() {
 			
 			@Override
 			public void onSuccess(List<Agreement> result) {
-				agreements = result;
+				agreements = getActiveAgreements(result);
+				
 				getEnterpriseAddresses(
 						s -> {success.accept(result);},
 						f ->{}
 				);	
 			}
 			
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
+			private List<Agreement> getActiveAgreements(List<Agreement> agreements) {
+				List<Agreement> activeAgreements = new ArrayList<>();
+				for(Agreement agreement : agreements){
+					if(agreement.getId() > 0)
+						activeAgreements.add(agreement);
+				}
+				return activeAgreements;
 			}
-		});	
-	}
-	
-	public void getAgreement(Integer agreementId, Consumer<Agreement> success, Consumer<Throwable> failure) {
-		
-		enterprisesService.getAgreement(agreementId, new AsyncCallback<Agreement>() {
-			
-			@Override
-			public void onSuccess(Agreement result) {
-				success.accept(result);
-			}
-			
+
 			@Override
 			public void onFailure(Throwable caught) {
 				// TODO Auto-generated method stub	
@@ -128,7 +74,8 @@ public class WorkplaceDialogObject {
 
 			@Override
 			public void onSuccess(Map<Integer, String> result) {
-				workplaceInfo.setAddresses(result);
+				addresses = result;
+				
 				getEnterpriseCalendars(
 					s -> {success.accept(result);},
 					f -> {}
@@ -147,7 +94,8 @@ public class WorkplaceDialogObject {
 
 			@Override
 			public void onSuccess(Map<Integer, String> result) {
-				workplaceInfo.setCalendar(result);
+				calendars = result;
+
 				getEnterpriseActivities(
 					s -> {success.accept(result);},
 					f -> {}
@@ -166,26 +114,7 @@ public class WorkplaceDialogObject {
 
 			@Override
 			public void onSuccess(Map<Integer, String> result) {
-				workplaceInfo.setActivities(result);
-				getEnterpriseScopes(
-						s -> {success.accept(result);},
-						f -> {}
-					);
-			}
-		});
-	}
-	
-	private void getEnterpriseScopes(Consumer<Map<Integer, String>> success, Consumer<Throwable> failure) {
-		enterprisesService.getEnterpiseScopes(this.enterprise.getId(), new AsyncCallback<Map<Integer,String>>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-			}
-
-			@Override
-			public void onSuccess(Map<Integer, String> result) {
-				workplaceInfo.setScopes(result);
+				activities = result;
 				success.accept(result);
 			}
 		});
@@ -208,6 +137,24 @@ public class WorkplaceDialogObject {
 		
 	}
 	
+	// ---------------------------------------------- GETTERS / SETTERS  -------------------------------------------------
+	
+	public Map<Integer, String> getWorkplaceAddresses(){
+		return this.addresses;
+	}
+	
+	public Map<Integer, String> getWorkplacesCalendars(){
+		return this.calendars;
+	}
+	
+	public List<Agreement> getWorkplacesAgreements(){
+		return this.agreements;
+	}
+	
+	public Map<Integer, String> getWorkplaceActivities(){
+		return this.activities;
+	}
+	
 	public void setWorkplaceDescription(String description) {
 		workplaceInfo.setDescription(description);
 	}
@@ -218,15 +165,6 @@ public class WorkplaceDialogObject {
 
 	public void setWorkplaceEconomicConcert(int economicCocncert) {
 		workplaceInfo.setEconomicConcert((byte) economicCocncert);
-	}
-	
-	public void setWorkplaceScope(Integer scopeId) {
-		workplaceInfo.setScopeId(scopeId);
-	}
-
-	public void setWorkplaceActive(Boolean active) {
-		if (active) workplaceInfo.setActive((byte) 1);
-		else workplaceInfo.setActive((byte) 0);
 	}
 
 	public void setWorkplaceCalendar(Integer calendarId) {

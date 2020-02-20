@@ -2,13 +2,16 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
-import com.esferalia.aon.gwt.payroll.client.EmployeeDialog.Callback;
+import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -32,7 +35,8 @@ public class WorkplaceDialog extends CustomDialog {
 
 		@Override
 		public void onWorkplaceEconomicConcertChange() {
-			workplaceDialogObject.setWorkplaceEconomicConcert(workplaceEconomicConcert.getSelectedIndex() - 1);
+			Byte economicConcert = Byte.valueOf(this.workplaceEconomicConcert.getSelectedValue());
+			workplaceDialogObject.setWorkplaceEconomicConcert(economicConcert);
 		}
 
 		@Override
@@ -42,31 +46,15 @@ public class WorkplaceDialog extends CustomDialog {
 				return;
 			}
 			
-			Integer agreementId = Integer.valueOf(this.workpalceAgreement.getSelectedValue()); 
-			
-			workplaceDialogObject.getAgreement(agreementId,  
-			(agreement) -> {
-				workplaceDialogObject.setWorkplaceAgreement(agreement.getId());
-			},
-			(throwable) -> {
-				workplaceDialogObject.setWorkplaceAgreement(null);
-			});
-			
-//			Integer agreementId = workplaceDialogObject.getAgreementId(this.workpalceAgreement.getSelectedItemText());
-//			workplaceDialogObject.setWorkplaceAgreement(agreementId);
+			Integer agreementId = Integer.valueOf(this.workpalceAgreement.getSelectedValue());
+			workplaceDialogObject.setWorkplaceAgreement(agreementId);
 		}
 		
 	}
 	
-	interface Callback {
-		void onAccept(WorkplaceDialog dialog);
-	}
-	
 	// -------------------------------------------------- UiBinder --------------------------------------------------
 	
-	interface WorkplaceDialogUiBinder extends UiBinder<Widget, WorkplaceDialog> {
-	
-	}
+	interface WorkplaceDialogUiBinder extends UiBinder<Widget, WorkplaceDialog> {}
 	
 	private static WorkplaceDialogUiBinder binder = GWT.create(WorkplaceDialogUiBinder.class);
 	
@@ -81,8 +69,8 @@ public class WorkplaceDialog extends CustomDialog {
 	
 	// -------------------------------------------- Variables de la clase---------------------------------------------
 	
-	private Callback cb;
 	private WorkplaceDialogObject workplaceDialogObject;
+	private Consumer<WorkplaceDialog> onSaved ;
 	
 	// ------------------------------------------------- CONSTRUCTOR --------------------------------------------------
 
@@ -94,17 +82,8 @@ public class WorkplaceDialog extends CustomDialog {
 		
 		//SCOPE HIDE
 		workplace.generalDataTable.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
-				
-	}
-	
-	public void show(Callback cb) {
-		this.cb = cb;
-		super.show();
-	}
-	
-	public void setPopupPositionAndShow(PositionCallback positionCallback, Callback callback) {
-		this.cb = callback;
-		super.setPopupPositionAndShow(positionCallback);
+		
+		onSaved = this::onSavedNoop;		
 	}
 	
 	// -------------------------------------------------- UiHandlers --------------------------------------------------
@@ -117,16 +96,10 @@ public class WorkplaceDialog extends CustomDialog {
 	@UiHandler("acceptButton")
 	public void onSaveClick(ClickEvent event) {
 		if(canSaveWorkplace()) {
-			if(workplaceDialogObject.getWorkplaceAddresses().size() > 1)
-				onAddressChage();
-//			if(workplaceDialogObject.getWorkplaceScopes().size() > 1)
-//				onScopeChange();
-			
 			workplaceDialogObject.createWorkplace(
 					s -> {
 						hide();
-						EmployeeTree.invokeRefreshEnterprise();
-						cb.onAccept(this);
+						saved();
 					},
 					f -> {}
 			);
@@ -136,245 +109,192 @@ public class WorkplaceDialog extends CustomDialog {
 			warningDialog.show();
 		}
 	}
+	
+	private boolean canSaveWorkplace() {
+		if(StringUtils.isBlank(workplace.workplaceDescription.getValue()) || checkAddressWidget())
+			return false;
+		else
+			return true;
+	}
+
+	private boolean checkAddressWidget() {
+		ListBox addressListBox = (ListBox) workplace.workplaceAddressPanel.getWidget(0);
+		return addressListBox.getSelectedIndex() == 0;
+	}
 
 	// ----------------------------------------------- METODOS DE LA CLASE ------------------------------------------------
-
-	private boolean canSaveWorkplace() {
-		if("" != workplace.workplaceDescription.getValue())
-			return true;
-		else
-			return false;
-	}
 
 	public void setWorkplaceDialogObject(WorkplaceDialogObject workplaceDialogObject) {
 		this.workplaceDialogObject = workplaceDialogObject;
 		this.workplaceDialogObject.getAgreements(
 				s -> { 
-						initializeView();
+					initializeListBox();
 					 }
 				, f -> {}
 		);
-	}
-	
-	private void initializeView() {
-		resetElements();
-		initializeListBox();
-	}
-	
-	private void resetElements() {	
-		// Clear general elements
-		workplace.workplaceDescription.setValue("");
-		workplace.workplaceAddressPanel.clear();
-		workplace.workplaceEconomicConcert.clear();
-		workplace.workplaceScopePanel.clear();
-
-		// Clear payroll elements
-		workplace.workplaceCalendarPanel.clear();
-		workplace.workpalceAgreement.clear();
-		workplace.workplaceActivityPanel.clear();
-		
 	}
 
 	private void initializeListBox() {
 		//DIRECCION
 		initializeAddressCell();
 		
-		//CONCIERTO ECONOMICO
-		workplace.workplaceEconomicConcert.addItem("-");
-		workplace.workplaceEconomicConcert.addItem(String.valueOf("\u00C1")+"lava");
-		workplace.workplaceEconomicConcert.addItem("Bizkaia");
-		workplace.workplaceEconomicConcert.addItem("Gipuzkoa");
-		workplace.workplaceEconomicConcert.addItem("Navarra");
-		workplace.workplaceEconomicConcert.addItem("Territorio Com"+ String.valueOf("\u00FA") +"n");
-		
-		//SCOPE
-//		initializeScopeCell();
-		
 		//CALENDARIO
 		initializeCalendarCell();
 		
 		// CONVENIO
-		this.workplace.workpalceAgreement.addItem("-", "-1");
-		List<Agreement> agreements = workplaceDialogObject.getActiveAgreements();
-		for (Agreement agreement : agreements)
-			this.workplace.workpalceAgreement.addItem(agreement.getDescription(), String.valueOf(agreement.getId()));
-		
-//		workplace.workpalceAgreement.addItem("-");
-//		List<Agreement> agreements = workplaceDialogObject.getActiveAgreements();
-//		for (Agreement a : agreements) {
-//			workplace.workpalceAgreement.addItem(a.getDescription());
-//		}
+		initializeAgreementCell();
 		
 		//ACTIVIDADES
 		initializeActivityCell();
-
 	}
-	
+
 	private void initializeAddressCell() {
 		Widget workplaceAddressWidget;
-		if(workplaceDialogObject.getWorkplaceAddresses().values().size() == 1){
-			Integer addressId = (Integer) workplaceDialogObject.getWorkplaceAddresses().keySet().toArray()[0];
-			workplaceAddressWidget = new Label((null == addressId) ? "" : workplaceDialogObject.getWorkplaceAddresses().get(addressId));
-			workplaceAddressWidget.setStyleName("aon-inputText");
-			workplaceAddressWidget.addStyleName(workplace.style.maxWidthTextBox());
-			workplace.workplaceAddressPanel.add(workplaceAddressWidget);
-			workplaceDialogObject.setWorkplaceAddress(addressId); //AutoSeleccion
-		}else{
-			workplaceAddressWidget = new ListBox();
-			for(String address : workplaceDialogObject.getWorkplaceAddresses().values()){
-				((ListBox) workplaceAddressWidget).addItem(address);
-			}
-			workplaceAddressWidget.setStyleName("aon-selectOneMenu");
-			workplaceAddressWidget.addStyleName(workplace.style.maxWidth());
-			((ListBox) workplaceAddressWidget).addChangeHandler(new ChangeHandler() {
+		
+		if(workplaceDialogObject.getWorkplaceAddresses().values().size() == 0)
+			workplaceAddressWidget = createEmptyListLabel();
+		else{
+			ListBox addressListBox = new ListBox();
+			addressListBox.addItem("-", "-1");
+			for(Entry<Integer, String> entry : workplaceDialogObject.getWorkplaceAddresses().entrySet())
+				addressListBox.addItem(entry.getValue(), entry.getKey().toString());
+			
+			addressListBox.setStyleName("aon-selectOneMenu");
+			addressListBox.getElement().getStyle().setWidth(100.00, Unit.PCT);
+			
+			addressListBox.addChangeHandler(new ChangeHandler() {
 				
 				@Override
 				public void onChange(ChangeEvent event) {
-					onAddressChage();
-					//save();
+					Integer activityId = Integer.valueOf(addressListBox.getSelectedValue());
+					workplaceDialogObject.setWorkplaceAddress(activityId);
 				}
 			});
-			workplace.workplaceAddressPanel.add(workplaceAddressWidget);
-		}
-	}
-	
-	private void onAddressChage() {
-		String address = ((ListBox) workplace.workplaceAddressPanel.getWidget(0)).getSelectedItemText();
-		Integer addressId = -1;
-		for(Entry<Integer, String> entry : workplaceDialogObject.getWorkplaceAddresses().entrySet()){
-			if(address == entry.getValue()){
-				addressId = entry.getKey();
-				break;
+			
+			// If only one activity, selected it and fire event
+			if(addressListBox.getItemCount() != 0 && addressListBox.getItemCount() == 1){
+				addressListBox.setSelectedIndex(1);
+				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), addressListBox);
 			}
+			
+			workplaceAddressWidget = addressListBox;
 		}
-		workplaceDialogObject.setWorkplaceAddress(addressId);
-	}
-	
-	private void initializeScopeCell() {
-		Widget workplaceScopeWidget;
-		if(workplaceDialogObject.getWorkplaceScopes().values().size() == 1){
-			Integer scopeId = (Integer) workplaceDialogObject.getWorkplaceScopes().keySet().toArray()[0];
-			workplaceScopeWidget = new Label((null == scopeId) ? "" : workplaceDialogObject.getWorkplaceScopes().get(scopeId));
-			workplaceScopeWidget.setStyleName("aon-inputText");
-			workplaceScopeWidget.addStyleName(workplace.style.maxWidthTextBox());
-			workplace.workplaceScopePanel.add(workplaceScopeWidget);
-			workplaceDialogObject.setWorkplaceScope(scopeId); //AutoSeleccion
-		}else{
-			workplaceScopeWidget = new ListBox();
-			for(String scope : workplaceDialogObject.getWorkplaceScopes().values()){
-				((ListBox) workplaceScopeWidget).addItem(scope);
-			}
-			workplaceScopeWidget.setStyleName("aon-selectOneMenu");
-			workplaceScopeWidget.addStyleName(workplace.style.maxWidth());
-			((ListBox) workplaceScopeWidget).addChangeHandler(new ChangeHandler() {
-				
-				@Override
-				public void onChange(ChangeEvent event) {
-					onScopeChange();
-					//save();
-				}
-			});
-			workplace.workplaceScopePanel.add(workplaceScopeWidget);
-		}
-	}
-	
-	private void onScopeChange() {
-		String scope = ((ListBox) workplace.workplaceScopePanel.getWidget(0)).getSelectedItemText();
-		Integer scopeId = -1;
-		for(Entry<Integer, String> entry : workplaceDialogObject.getWorkplaceScopes().entrySet()){
-			if(scope == entry.getValue()){
-				scopeId = entry.getKey();
-				break;
-			}
-		}
-		workplaceDialogObject.setWorkplaceScope(scopeId);
+		
+		workplace.workplaceAddressPanel.add(workplaceAddressWidget);
 	}
 	
 	private void initializeCalendarCell() {
 		Widget workplaceCalendarWidget;
-		if(workplaceDialogObject.getWorkplacesCalendars().values().size() == 0){
-			workplaceCalendarWidget = new Label("No hay calendarios disponibles");
-			workplaceCalendarWidget.setStyleName("aon-inputText");
-			workplaceCalendarWidget.addStyleName(workplace.style.maxWidthTextBox());
-			workplaceCalendarWidget.addStyleName(workplace.style.warningColor());
-			workplaceCalendarWidget.addStyleName(workplace.style.borderNone());
-			workplace.workplaceCalendarPanel.add(workplaceCalendarWidget);
-		}else if(workplaceDialogObject.getWorkplacesCalendars().values().size() == 1){
-			Integer calendarId = (Integer) workplaceDialogObject.getWorkplacesCalendars().keySet().toArray()[0];
-			workplaceCalendarWidget = new Label(workplaceDialogObject.getWorkplacesCalendars().get(calendarId));
-			workplaceCalendarWidget.setStyleName("aon-inputText");
-			workplaceCalendarWidget.addStyleName(workplace.style.maxWidthTextBox());
-			workplace.workplaceCalendarPanel.add(workplaceCalendarWidget);
-			workplaceDialogObject.setWorkplaceCalendar(calendarId); //AutoSeleccion
-		}else{
-			workplaceCalendarWidget = new ListBox();
-			for(String calendar : workplaceDialogObject.getWorkplacesCalendars().values()){
-				if(null != calendar)
-					((ListBox) workplaceCalendarWidget).addItem(calendar);
-			}
-			workplaceCalendarWidget.setStyleName("aon-selectOneMenu");
-			workplaceCalendarWidget.addStyleName(workplace.style.maxWidth());
-			((ListBox) workplaceCalendarWidget).addChangeHandler(new ChangeHandler() {
+		
+		if(workplaceDialogObject.getWorkplacesCalendars().values().size() == 0)
+			workplaceCalendarWidget = createEmptyListLabel();
+		else{
+			ListBox calendarListBox = new ListBox();
+			calendarListBox.addItem("-", "-1");
+			for(Entry<Integer, String> entry : workplaceDialogObject.getWorkplacesCalendars().entrySet())
+				calendarListBox.addItem(entry.getValue(), entry.getKey().toString());
+			
+			calendarListBox.setStyleName("aon-selectOneMenu");
+			calendarListBox.getElement().getStyle().setWidth(100.00, Unit.PCT);
+			
+			calendarListBox.addChangeHandler(new ChangeHandler() {
 				
 				@Override
 				public void onChange(ChangeEvent event) {
-					String calendar = ((ListBox) workplaceCalendarWidget).getSelectedItemText();
-					Integer calendarId = -1;
-					for(Entry<Integer, String> entry : workplaceDialogObject.getWorkplacesCalendars().entrySet()){
-						if(calendar.equals(entry.getValue())){
-							calendarId = entry.getKey();
-							break;
-						}
-					}
+					Integer calendarId = Integer.valueOf(calendarListBox.getSelectedValue());
 					workplaceDialogObject.setWorkplaceCalendar(calendarId);
-					//save();
 				}
 			});
-			workplace.workplaceCalendarPanel.add(workplaceCalendarWidget);
-		}	
+			
+			// If only one calendar, selected it and fire event
+			if(calendarListBox.getItemCount() != 0 && calendarListBox.getItemCount() == 2){
+				calendarListBox.setSelectedIndex(1);
+				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), calendarListBox);
+			}
+			
+			workplaceCalendarWidget = calendarListBox;
+		}
+		
+		workplace.workplaceCalendarPanel.add(workplaceCalendarWidget);
+	}
+	
+	private void initializeAgreementCell() {
+		this.workplace.workpalceAgreement.addItem("-", "-1");
+		List<Agreement> agreements = workplaceDialogObject.getWorkplacesAgreements();
+		for (Agreement agreement : agreements)
+			this.workplace.workpalceAgreement.addItem(agreement.getDescription(), String.valueOf(agreement.getId()));
 	}
 
 	private void initializeActivityCell() {
 		Widget workplaceActivityWidget;
-		if(workplaceDialogObject.getWorkplaceActivities().values().size() == 0){
-			workplaceActivityWidget = new Label("No hay actividades disponibles");
-			workplaceActivityWidget.setStyleName("aon-inputText");
-			workplaceActivityWidget.addStyleName(workplace.style.maxWidthTextBox());
-			workplaceActivityWidget.addStyleName(workplace.style.warningColor());
-			workplaceActivityWidget.addStyleName(workplace.style.borderNone());
-			workplace.workplaceActivityPanel.add(workplaceActivityWidget);
-		}else{
-			workplaceActivityWidget = new ListBox();
-			((ListBox) workplaceActivityWidget).addItem("-");
-			for(String activity : workplaceDialogObject.getWorkplaceActivities().values()){
-				((ListBox) workplaceActivityWidget).addItem(activity);
-			}
-			workplaceActivityWidget.setStyleName("aon-selectOneMenu");
-			workplaceActivityWidget.addStyleName(workplace.style.maxWidth());
-			((ListBox) workplaceActivityWidget).addChangeHandler(new ChangeHandler() {
+		
+		if(workplaceDialogObject.getWorkplaceActivities().values().size() == 0)
+			workplaceActivityWidget = createEmptyListLabel();
+		else{
+			ListBox activityListBox = new ListBox();
+			activityListBox.addItem("-", "-1");
+			for(Entry<Integer, String> entry : workplaceDialogObject.getWorkplaceActivities().entrySet())
+				activityListBox.addItem(entry.getValue(), entry.getKey().toString());
+			
+			activityListBox.setStyleName("aon-selectOneMenu");
+			activityListBox.getElement().getStyle().setWidth(100.00, Unit.PCT);
+			
+			activityListBox.addChangeHandler(new ChangeHandler() {
 				
 				@Override
 				public void onChange(ChangeEvent event) {
-					String activity = ((ListBox) workplaceActivityWidget).getSelectedItemText();
-					Integer activityId = -1;
-					for(Entry<Integer, String> entry : workplaceDialogObject.getWorkplaceActivities().entrySet()){
-						if(activity.equals(entry.getValue())){
-							activityId = entry.getKey();
-							break;
-						}
-					}
+					Integer activityId = Integer.valueOf(activityListBox.getSelectedValue());
 					workplaceDialogObject.setWorkplaceActivity(activityId);
-					//save();
 				}
 			});
-			workplace.workplaceActivityPanel.add(workplaceActivityWidget);	
-			if(((ListBox) workplaceActivityWidget).getItemCount() != 0){
-				if(((ListBox) workplaceActivityWidget).getItemCount() == 2){
-					((ListBox) workplaceActivityWidget).setSelectedIndex(1);
-					DomEvent.fireNativeEvent(Document.get().createChangeEvent(), workplaceActivityWidget);
-				}
+			
+			// If only one activity, selected it and fire event
+			if(activityListBox.getItemCount() != 0 && activityListBox.getItemCount() == 2){
+				activityListBox.setSelectedIndex(1);
+				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), activityListBox);
 			}
+			
+			workplaceActivityWidget = activityListBox;
 		}
 		
+		workplace.workplaceActivityPanel.add(workplaceActivityWidget);
 	}
+	
+	public Label createEmptyListLabel() {
+		Label label = new Label();
+		
+		label.setText("No hay entradas disponibles");
+		label.setStyleName("aon-inputText");
+		label.addStyleName(workplace.style.warningColor());
+		label.getElement().getStyle().setWidth(99.7, Unit.PCT);	
+		label.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
+		
+		return label;
+	}
+	
+	public Label createEmptyListLabel(String labelMessage) {
+		Label label = new Label();
+		
+		label.setText(labelMessage);
+		label.setStyleName("aon-inputText");
+		label.addStyleName(workplace.style.warningColor());
+		label.getElement().getStyle().setWidth(99.7, Unit.PCT);	
+		label.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
+		
+		return label;
+	}
+	
+	// ----------------------------------------------- CALLBACK TO SAVE ------------------------------------------------
+	//TOO: ¿Como puedo recargar todo el arbol de laboral? (Esto iria en EmployeeTree)
+	
+	public WorkplaceDialog setOnSaved(Consumer<WorkplaceDialog> onSaved) {
+		this.onSaved = onSaved;
+		return this;
+	}
+	
+	private void saved() {
+		onSaved.accept(this);
+	}
+	
+	protected void onSavedNoop(WorkplaceDialog workplaceDialog) {}
 }
