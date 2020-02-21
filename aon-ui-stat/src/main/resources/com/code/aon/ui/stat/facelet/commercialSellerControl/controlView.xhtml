@@ -98,7 +98,7 @@
 	
 							<rich:columnGroup>
 	
-								<rich:column colspan="8">
+								<rich:column colspan="12">
 									<h:panelGrid columns="3">
 										<aon:div>
 											<aon:if test="#{commercialStat.controlType==0}">
@@ -141,6 +141,12 @@
 								<rich:column breakBefore="true" colspan="1">
 									<rich:spacer />
 								</rich:column>
+
+								<rich:column
+									rendered="#{commercialStat.controlType==0}"
+									colspan="4">
+									<aon:outputText value="OPERACIONES COMERCIALES" />
+								</rich:column>
 	
 								<rich:column
 									rendered="#{commercialStat.showCommercialActivities}"
@@ -179,6 +185,78 @@
 								</aon:outputText>
 							</f:facet>
 						</aon:column>
+						
+						
+						<aon:column styleClass="aon-editDataTable-numberColumn"
+							rendered="#{commercialStat.controlType==0}">
+							<f:facet name="header">
+								<aon:outputText value="Pendientes" />
+							</f:facet>
+	
+							<aon:commandLink styleClass="aon-dataTable-link"
+									actionListener="#{commercialStat.onSellerActivities}"
+									action="commercial_activity_view" value="#{to.numOpPending}"
+									reRender="aonContent" />
+							
+							<f:facet name="footer">
+								<aon:outputText value="#{commercialStat.numOpPendingTot}"
+									style="float:right" />
+							</f:facet>
+						</aon:column>
+						
+						<aon:column styleClass="aon-editDataTable-numberColumn"
+							rendered="#{commercialStat.controlType==0}">
+							<f:facet name="header">
+								<aon:outputText value="Aprobadas" />
+							</f:facet>
+	
+							<aon:commandLink styleClass="aon-dataTable-link"
+									actionListener="#{commercialStat.onSellerActivities}"
+									action="commercial_activity_view" value="#{to.numOpAccepted}"
+									reRender="aonContent" />
+							
+							<f:facet name="footer">
+								<aon:outputText value="#{commercialStat.numOpAcceptedTot}"
+									style="float:right" />
+							</f:facet>
+						</aon:column>
+						
+						<aon:column styleClass="aon-editDataTable-numberColumn"
+							rendered="#{commercialStat.controlType==0}">
+							<f:facet name="header">
+								<aon:outputText value="Rechazadas" />
+							</f:facet>
+	
+							
+							<aon:commandLink styleClass="aon-dataTable-link"
+									actionListener="#{commercialStat.onSellerActivities}"
+									action="commercial_activity_view" value="#{to.numOpRefused}"
+									reRender="aonContent" />
+	
+							<f:facet name="footer">
+								<aon:outputText value="#{commercialStat.numOpRefusedTot}"
+									style="float:right" />
+							</f:facet>
+						</aon:column>
+						
+						<aon:column styleClass="aon-editDataTable-numberColumn"
+							rendered="#{commercialStat.controlType==0}">
+							<f:facet name="header">
+								<aon:outputText value="Cerradas" />
+							</f:facet>
+	
+							<aon:commandLink styleClass="aon-dataTable-link"
+									actionListener="#{commercialStat.onSellerActivities}"
+									action="commercial_activity_view" value="#{to.numOpClosed}"
+									reRender="aonContent" />
+		
+							<f:facet name="footer">
+								<aon:outputText value="#{commercialStat.numOpClosedTot}"
+									style="float:right" />
+							</f:facet>
+						</aon:column>
+						
+						
 						<aon:column styleClass="aon-editDataTable-numberColumn"
 							rendered="#{commercialStat.showCommercialActivities}">
 							<f:facet name="header">

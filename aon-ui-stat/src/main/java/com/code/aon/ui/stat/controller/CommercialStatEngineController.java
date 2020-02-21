@@ -16,8 +16,11 @@ import static com.code.aon.ui.common.ICommonMessages.STAT_REPORT_COMMERCIAL_PROD
 import static com.code.aon.ui.common.ICommonMessages.STAT_REPORT_COMMERCIAL_SELLER;
 import static com.code.aon.ui.common.ICommonMessages.STAT_REPORT_COMMERCIAL_TARGET;
 import static com.code.aon.ui.common.ICommonMessages.TARGET;
+import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 import static com.code.aon.ui.stat.controller.IStatConstants.COMMERCIAL_TRACKING_CONTROLLER_NAME;
 import static com.code.aon.ui.stat.controller.IStatConstants.OFFER_CONTROLLER_NAME;
+import static com.esferalia.aon.jooq.tables.Project.PROJECT;
+import static com.esferalia.aon.jooq.tables.ProjectCommercial.PROJECT_COMMERCIAL;
 
 import java.io.Serializable;
 import java.sql.PreparedStatement;
@@ -37,9 +40,12 @@ import javax.faces.model.DataModel;
 import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.jooq.Record1;
+import org.jooq.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.commercial.CommercialActivity;
 import com.code.aon.commercial.CommercialTracking;
 import com.code.aon.commercial.Offer;
@@ -47,8 +53,8 @@ import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.Target;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.commercial.enumeration.OfferStatus;
+import com.code.aon.commercial.enumeration.ProjectStatus;
 import com.code.aon.commercial.enumeration.TargetStatus;
-import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -72,12 +78,15 @@ import com.code.aon.stat.StatParams;
 import com.code.aon.stat.engine.StatEngine;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
+import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class CommercialStatEngineController implements Serializable {
 	
@@ -118,6 +127,16 @@ public class CommercialStatEngineController implements Serializable {
 	private List<ControlSummary> activitySummary;
 	private List<Integer> summaryGraph;
 	private List<Offer> offerList;
+	
+	private Integer numOpPending;
+	private Integer numOpAccepted;
+	private Integer numOpRefused;
+	private Integer numOpClosed;
+	private Integer numOpPendingTot;
+	private Integer numOpAcceptedTot;
+	private Integer numOpRefusedTot;
+	private Integer numOpClosedTot;
+	
 	private Integer numVisits;
 	private Integer numPendingVisits;
 	private Integer numOffers;
@@ -319,6 +338,70 @@ public class CommercialStatEngineController implements Serializable {
 
 	public void setCount(Integer count) {
 		this.count = count;
+	}
+
+	public Integer getNumOpPending() {
+		return numOpPending;
+	}
+
+	public void setNumOpPending(Integer numOpPending) {
+		this.numOpPending = numOpPending;
+	}
+
+	public Integer getNumOpAccepted() {
+		return numOpAccepted;
+	}
+
+	public void setNumOpAccepted(Integer numOpAccepted) {
+		this.numOpAccepted = numOpAccepted;
+	}
+
+	public Integer getNumOpRefused() {
+		return numOpRefused;
+	}
+
+	public void setNumOpRefused(Integer numOpRefused) {
+		this.numOpRefused = numOpRefused;
+	}
+
+	public Integer getNumOpClosed() {
+		return numOpClosed;
+	}
+
+	public void setNumOpClosed(Integer numOpClosed) {
+		this.numOpClosed = numOpClosed;
+	}
+	
+	public Integer getNumOpPendingTot() {
+		return numOpPendingTot;
+	}
+
+	public void setNumOpPendingTot(Integer numOpPendingTot) {
+		this.numOpPendingTot = numOpPendingTot;
+	}
+
+	public Integer getNumOpAcceptedTot() {
+		return numOpAcceptedTot;
+	}
+
+	public void setNumOpAcceptedTot(Integer numOpAcceptedTot) {
+		this.numOpAcceptedTot = numOpAcceptedTot;
+	}
+
+	public Integer getNumOpRefusedTot() {
+		return numOpRefusedTot;
+	}
+
+	public void setNumOpRefusedTot(Integer numOpRefusedTot) {
+		this.numOpRefusedTot = numOpRefusedTot;
+	}
+
+	public Integer getNumOpClosedTot() {
+		return numOpClosedTot;
+	}
+
+	public void setNumOpClosedTot(Integer numOpClosedTot) {
+		this.numOpClosedTot = numOpClosedTot;
 	}
 
 	public Integer getNumVisitsTot() {
@@ -859,6 +942,17 @@ public class CommercialStatEngineController implements Serializable {
 
 	public void onSellerControlStats(ActionEvent e) {
 		try {
+		
+			setNumOpAccepted(0);
+			setNumOpClosed(0);
+			setNumOpPending(0);
+			setNumOpRefused(0);
+			
+			setNumOpAcceptedTot(0);
+			setNumOpClosedTot(0);		
+			setNumOpPendingTot(0);
+			setNumOpRefusedTot(0);
+			
 			setNumAprovedOffers(0);
 			setNumLostOffers(0);
 			setNumVisits(0);
@@ -866,6 +960,7 @@ public class CommercialStatEngineController implements Serializable {
 			setNumPendingOffers(0);
 			setNumOffers(0);
 
+			
 			setNumVisitsTot(0);
 			setNumAprovedOffersTot(0);
 			setNumLostOffersTot(0);
@@ -883,6 +978,7 @@ public class CommercialStatEngineController implements Serializable {
 			getDoneOffers();
 			getDoneVisitsModel();
 			getPendingVisitModel();
+			getDoneOpModel();
 
 		} catch (ManagerBeanException e1) {
 			LOGGER.error(e1.getMessage(), e1);
@@ -891,6 +987,12 @@ public class CommercialStatEngineController implements Serializable {
 
 	public void getSellerControlStats() {
 		try {
+			
+			setNumOpAccepted(0);
+			setNumOpClosed(0);
+			setNumOpPending(0);
+			setNumOpRefused(0);
+			
 			setNumAprovedOffers(0);
 			setNumLostOffers(0);
 			setNumVisits(0);
@@ -905,6 +1007,11 @@ public class CommercialStatEngineController implements Serializable {
 				setNumPendingVisitsTot(0);
 				setNumOffersTot(0);
 				setNumPendingOffersTot(0);
+				
+				setNumOpAcceptedTot(0);
+				setNumOpClosedTot(0);		
+				setNumOpPendingTot(0);
+				setNumOpRefusedTot(0);
 			}
 
 			setClosedOffersModel(null);
@@ -918,6 +1025,7 @@ public class CommercialStatEngineController implements Serializable {
 			getDoneOffers();
 			getDoneVisitsModel();
 			getPendingVisitModel();
+			getDoneOpModel();
 
 		} catch (ManagerBeanException e1) {
 			LOGGER.error(e1.getMessage(), e1);			
@@ -1045,6 +1153,38 @@ public class CommercialStatEngineController implements Serializable {
 		visitsList = query.list();
 		setNumVisits(visitsList.size());
 	}
+	
+	
+	private void getDoneOpModel()  throws ManagerBeanException {
+		setNumOpAccepted(getDoneOpModel(ProjectStatus.APPROVED));
+		setNumOpClosed(getDoneOpModel(ProjectStatus.CLOSED));
+		setNumOpPending(getDoneOpModel(ProjectStatus.PENDING));
+		setNumOpRefused(getDoneOpModel(ProjectStatus.REFUSED));
+	}
+	
+	private Integer getDoneOpModel(ProjectStatus ps) {
+		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+		String domainName = ds.getDomainNameURL();
+		Integer domainId = ds.getDomainId();
+		String user = "";
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			Result<Record1<Integer>> a = ctx.getDslContext().selectCount()
+			.from(PROJECT_COMMERCIAL)	
+			.join(PROJECT).on(PROJECT.ID.eq(PROJECT_COMMERCIAL.PROJECT))
+			.where(PROJECT_COMMERCIAL.DOMAIN.eq(domainId))
+			.and(PROJECT_COMMERCIAL.STATUS.eq((byte)ps.ordinal()))
+			.and(PROJECT_COMMERCIAL.SELLER.eq(seller.getId()))
+			.and(PROJECT.DATE.greaterOrEqual(AonDateUtils.toSql(this.params.getFromDate())))
+			.and(PROJECT.DATE.lessOrEqual(AonDateUtils.toSql(this.params.getToDate())))
+			.fetch();
+			return a.get(0).value1();
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
 	private void getPendingVisitModel() throws ManagerBeanException {
 		String select = "select CommercialTracking "
@@ -1120,6 +1260,14 @@ public class CommercialStatEngineController implements Serializable {
 			s.setNumAprovedOffers(numAprovedOffers);
 			s.setNumLostOffers(numLostOffers);
 			s.setNumPendingOffers(numPendingOffers);
+			s.setNumOpAccepted(numOpAccepted);
+			s.setNumOpClosed(numOpClosed);
+			s.setNumOpPending(numOpPending);
+			s.setNumOpRefused(numOpRefused);
+			numOpAcceptedTot += numOpAccepted;
+			numOpPendingTot += numOpPending;
+			numOpClosedTot += numOpClosed;
+			numOpRefusedTot += numOpRefused;
 			numVisitsTot += numVisits;
 			numOffersTot += numOffers;
 			numPendingVisitsTot += numPendingVisits;
@@ -1677,6 +1825,11 @@ public class CommercialStatEngineController implements Serializable {
 		private Integer numLostOffers;
 		private Integer numPendingOffers;
 
+		private Integer numOpPending;
+		private Integer numOpAccepted;
+		private Integer numOpRefused;
+		private Integer numOpClosed;
+
 		public Integer getId() {
 			return id;
 		}
@@ -1739,6 +1892,38 @@ public class CommercialStatEngineController implements Serializable {
 
 		public void setNumPendingOffers(Integer numPendingOffers) {
 			this.numPendingOffers = numPendingOffers;
+		}
+
+		public Integer getNumOpPending() {
+			return numOpPending;
+		}
+
+		public void setNumOpPending(Integer numOpPending) {
+			this.numOpPending = numOpPending;
+		}
+
+		public Integer getNumOpAccepted() {
+			return numOpAccepted;
+		}
+
+		public void setNumOpAccepted(Integer numOpAccepted) {
+			this.numOpAccepted = numOpAccepted;
+		}
+
+		public Integer getNumOpRefused() {
+			return numOpRefused;
+		}
+
+		public void setNumOpRefused(Integer numOpRefused) {
+			this.numOpRefused = numOpRefused;
+		}
+
+		public Integer getNumOpClosed() {
+			return numOpClosed;
+		}
+
+		public void setNumOpClosed(Integer numOpClosed) {
+			this.numOpClosed = numOpClosed;
 		}
 
 	}
