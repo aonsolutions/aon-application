@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -3039,7 +3040,7 @@ public class SalaryDraft extends ResizeComposite
 
 			@Override
 			public void onSuccess(List<Payment> result) {
-				availablePaymens.addAll(result);
+				availablePaymens.addAll(filterPayments(result, Scope.AGREEMENT));
 				SalaryDraft.this.newPaymentHandler.initSuggestionItems();
 			}
 		});
@@ -5539,6 +5540,20 @@ public class SalaryDraft extends ResizeComposite
 	
 	private boolean isFromAgreemen(Payment payment) {
 		return salaryDraftObject.hasAgreementCounterPart(payment);
+	}
+	
+	private List<Payment> filterPayments(List<Payment> payments, Scope scope) {
+		Set<String> names = 
+		salaryDraftObject.getPayments().stream()
+		.filter(p -> p.getScope() == scope )
+		.map(p -> p.getName() )
+		.filter ( n -> n != null)
+		.collect(Collectors.toSet())
+		;
+		
+		return payments.stream()
+		.filter( p-> p.getName() == null || !names.contains(p.getName()) )
+		.collect(Collectors.toList());
 	}
 	
 	// ------------------------------------------------------- Static 'Library'
