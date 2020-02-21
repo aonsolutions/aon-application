@@ -31,7 +31,6 @@
 		</resources>
 	</build>
 
-
 	<dependencies>
 		<dependency>
 			<groupId>com.google.gwt</groupId>
@@ -73,7 +72,13 @@
 			<artifactId>aon.gwt.common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
+		<dependency>
+     		<groupId>com.vaadin.polymer</groupId>
+      		<artifactId>vaadin-gwt-polymer-elements</artifactId>
+      		<version>1.7.0.0</version>
+      		<scope>provided</scope>
+    	</dependency>
+    
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.gwt.common</artifactId>

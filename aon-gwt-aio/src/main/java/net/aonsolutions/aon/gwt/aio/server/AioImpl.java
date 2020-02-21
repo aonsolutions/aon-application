@@ -30,14 +30,10 @@ public class AioImpl extends AonStatelessRemoteServiceServlet implements IAio{
 	}
 	
 	public AonData getAonData(String domainName, Integer domainId, String login){
-		System.out.println("AON DATA - " + domainName + " - " + domainId + " - " + login);
 		Domain domain = AON.getDomain(domainName, domainId, login);
-		System.out.println("AON DATA - Domain " + domain.getName());
 		User user = AON.getUser(domain.getName(), domain.getId(), login);
-		System.out.println("AON DATA - Login " + user.getLogin());
 		Integer operator = AON.getTaskHolder(domain.getName(), domainId, login, 
 				f -> f.getDomainProperty().eq(domainId).and(f.getUserIdProperty().eq(user.getId()))).getId();
-		System.out.println("AON DATA - Operator " + operator);
 		return new AonData().setUser(user)
 				.setMd5(getMd5(user.getLogin()+domain.getName()))
 				.setDomain(domain)

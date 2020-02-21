@@ -72,6 +72,7 @@ public class MSG {
 	public static final String ITEM = "item";
 	public static final String LABELS = "labels";
 	public static final String LINE = "line";
+	public static final String LOGIN = "login";	
 	public static final String MAIL_ACCOUNT = "mail_account";
 	public static final String NAME = "name";
 	public static final String MODIFICATION_DATE = "modification_date";

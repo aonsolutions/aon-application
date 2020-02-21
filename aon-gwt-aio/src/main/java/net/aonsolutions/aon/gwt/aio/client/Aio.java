@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.DepositEntryPoint;
 import com.esferalia.aon.gwt.issues.client.Issues;
 import com.esferalia.aon.gwt.stat.client.MainEntryPoint;
 import com.esferalia.aon.gwt.template.client.Templates;
+import com.esferalia.aon.gwt.template.client.scope.ScopeMain;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
@@ -31,6 +32,11 @@ public class Aio implements EntryPoint {
 
 	private Issues issues;
 	private Documental documental;
+	
+	public static native String getToken()
+	/*-{
+		return $wnd.localStorage.getItem("session_id");
+	}-*/;
 	
 	public static native String getCurrentDomainName()
 	/*-{
@@ -58,14 +64,27 @@ public class Aio implements EntryPoint {
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
 		
 		String entryPoint = getParameter(GWT.getModuleName(), Constants.ENTRY_POINT_PARAM);
-		impl.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
-			
-			@Override public void onSuccess(AonData result) {
-				selection(entryPoint, result);
-			}
-			
-			@Override public void onFailure(Throwable arg0) {}
-		});
+
+		if(getToken() != null) {
+			impl.getAonData(getToken(), new AsyncCallback<AonData>() {
+				
+				@Override public void onSuccess(AonData result) {
+					selection(entryPoint, result);
+				}
+				
+				@Override public void onFailure(Throwable arg0) {}
+			});
+		} else {
+			impl.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
+				
+				@Override public void onSuccess(AonData result) {
+					selection(entryPoint, result);
+				}
+				
+				@Override public void onFailure(Throwable arg0) {}
+			});			
+		}
+
 		
 	}
 	
@@ -185,6 +204,21 @@ public class Aio implements EntryPoint {
 				@Override
 				public void onSuccess() {
 					new Sii(aonData).onModuleLoad();
+				}
+			});		
+			break;
+			
+		case Modules.SCOPE:
+			GWT.runAsync(ScopeMain.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					new ScopeMain(aonData).onModuleLoad();
 				}
 			});		
 			break;

@@ -352,6 +352,40 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static LinkedList<User> getUsersByEmail(String domainName, Integer domainId, String userName, String email) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, userName);			
+			return getSecurity().getUsersByEmail(ctx, email);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static LinkedList<User> getUsersByScope(String domainName, Integer domainId, String userName, Integer scope) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, userName);			
+			return getSecurity().getUsersByScope(ctx, scope);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static LinkedList<Domain> getCompaniesByScope(String domainName, Integer domainId, String userName, Integer scope) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, userName);			
+			return getSecurity().getCompaniesByScope(ctx, scope);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static User getUser(String domainName, int domainId, String login) {
 		AONContext ctx = null;
 		try {
@@ -373,6 +407,16 @@ public class AON {
 		}
 	}
 
+	public static UserScope getUserScope(String domainName, Integer domainId, String login, Integer userId, Integer scope ) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getSecurity().getUserScope(ctx, userId, scope);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 	public static Integer[] getUserScopes(String domainName, int domainId,
 			String login, Integer userId) {
 		AONContext ctx = null;
@@ -396,6 +440,17 @@ public class AON {
 		}
 	}
 
+	public static void deleteUserScope(String domainName, Integer domainId, String login, Integer userId, Integer scope) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getSecurity().deleteUserScope(ctx, userId, scope);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static Scope getScope(String domainName, Integer domainId, String login, Integer scopeId) {
 		return getScopeStream(domainName, domainId, login, f -> f.getIdProperty().eq(scopeId))
 				.findFirst().orElse(new Scope());

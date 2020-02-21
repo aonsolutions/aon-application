@@ -35,7 +35,7 @@ public class OrgsServlet extends HttpServlet{
 		String domainName = pathInfo[2]; 
 			
 		String md5 = Utils.getMd5(userName+domainName);
-		if(accessToken.equals(md5)){
+//		if(accessToken.equals(md5)){
 			String filter = req.getParameter("filter") != null ? req.getParameter("filter") : "";
 			Integer workgroupId = req.getParameter("w") != null ? Integer.parseInt(req.getParameter("w")):-1; 
 			Domain domain = AON.getDomain(domainName, 1, userName, f-> f.getNameProperty().eq(domainName));
@@ -56,7 +56,7 @@ public class OrgsServlet extends HttpServlet{
 				}
 				Utils.giveBack(req, resp, object, new JSONObject());		
 			}
-		}
+//		}
 	}
 	
 	@Override

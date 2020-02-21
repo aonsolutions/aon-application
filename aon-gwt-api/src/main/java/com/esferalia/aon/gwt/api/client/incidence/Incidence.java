@@ -265,8 +265,11 @@ public class Incidence extends Methods{
 	}	
 	
 	public void getApplicationUsers(AsyncCallback<JSON<JsUser>> callback){
-		get(url + "ms/orgs/"+getOrganizationName()+"/"+getRepositoryName()+ "/app_users",callback);
-	}	
+		String orgName = getOrganizationName() != null ? getOrganizationName() : getUserName();
+		String repName = getRepositoryName() != null ? getRepositoryName(): getDomainName();
+		get(url + "ms/orgs/"+orgName+"/"+repName+ "/app_users",callback);
+	}
+	
 	
 	public void getUsers(String filter, AsyncCallback<JSON<JsUser>> callback){
 		get(url + "ms/orgs/"+getOrganizationName()+"/"+getRepositoryName()+"/members?filter=" + filter,callback);

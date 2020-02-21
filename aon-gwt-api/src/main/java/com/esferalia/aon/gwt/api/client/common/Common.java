@@ -9,7 +9,9 @@ import com.esferalia.aon.gwt.api.client.IApiAsync;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.Methods;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
+import com.esferalia.aon.gwt.api.client.incidence.JsUser;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class Common extends Methods{
@@ -24,6 +26,39 @@ public class Common extends Methods{
 		this.userName = userName;
 		this.scheme = url.contains("https") ? "https" : "http";
 	}
+
+	public void getScopes(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsObject>> callback){
+		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		String url = getUrl() + "ms/scope/" + getDomainName() + "/" + getUserName() + filter;
+		get(url, callback);
+	}
+	
+	public void getScopeUsers(Integer scope, AsyncCallback<JSON<JsUser>> callback){
+		String url = getUrl() + "ms/scope/" + getDomainName() + "/" + getUserName() + "/user/" + scope;
+		get(url, callback);
+	}
+	
+	public void getScopeCompanies(Integer scope, AsyncCallback<JSON<JsObject>> callback){
+		String url = getUrl() + "ms/scope/" + getDomainName() + "/" + getUserName() + "/company/" + scope;
+		get(url, callback);
+	}
+	
+	public void updateUserScope(String requestData, AsyncCallback<JavaScriptObject> callback){
+		post(getUrl()+ "ms/scope/"+getDomainName()+"/"+getUserName()+"/user", requestData, callback);
+	}
+	
+	public void removeUserScope(String requestData, AsyncCallback<JavaScriptObject> callback){
+		delete(getUrl()+ "ms/scope/"+getDomainName()+"/"+getUserName()+"/user", requestData, callback);
+	}
+	
+	public void updateCompanyScope(String requestData, AsyncCallback<JavaScriptObject> callback){
+		post(getUrl()+ "ms/scope/"+getDomainName()+"/"+getUserName()+"/company", requestData, callback);
+	}
+	
+	public void removeCompanyScope(String requestData, AsyncCallback<JavaScriptObject> callback){
+		delete(getUrl()+ "ms/scope/"+getDomainName()+"/"+getUserName()+"/company", requestData, callback);
+	}
+	
 	
 	public void getWorkplaces(AsyncCallback<JSON<JsObject>> callback){
 		get(getUrl() + "ms/common/" + getDomainName() + "/" + getUserName() + "/workplace", callback);

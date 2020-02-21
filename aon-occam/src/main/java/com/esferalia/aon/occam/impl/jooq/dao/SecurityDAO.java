@@ -114,6 +114,58 @@ public class SecurityDAO {
 		return getUser(ctx,ctx.getUser());
 	}
 
+	public static LinkedList<User> getUsersByEmail(AONContext ctx, String email){
+		return ctx.getDslContext().select()
+		.from(USER).join(MAIL_ACCOUNT).on(USER.ID.eq(MAIL_ACCOUNT.USER_ID))
+		.where(MAIL_ACCOUNT.EMAIL.eq(email))
+		.fetch().stream().map(new UserFiller()).collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static LinkedList<User> getUsersByScope(AONContext ctx, Integer scope){
+		return ctx.getDslContext().select()
+		.from(USER).join(USER_SCOPE).on(USER.ID.eq(USER_SCOPE.USER_ID))
+		.where(USER.DOMAIN.eq(ctx.getDomainId()))
+		.and(USER_SCOPE.SCOPE.eq(scope))
+		.fetch().stream().map(new UserFiller()).collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	
+	public static LinkedList<Domain> getCompaniesByScope(AONContext ctx, Integer scope){
+		return ctx.getDslContext().select()
+		.from(DOMAIN).join(SCOPE).on(DOMAIN.SCOPE.eq(SCOPE.ID))
+		.where(DOMAIN.PARENT.eq(ctx.getDomainId()))
+		.and(SCOPE.ID.eq(scope))
+		.fetch().stream().map(new DomainFiller()).collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+
+	public static class DomainFiller  implements Function<Record, Domain> {
+
+		@Override
+		public Domain apply(Record record) {
+			return new Domain()
+				.setId(record.getValue(DOMAIN.ID))
+				.setName(record.getValue(DOMAIN.NAME))
+				.setDescription(record.getValue(DOMAIN.DESCRIPTION));
+		}
+		
+	}
+	
+	public static class UserFiller  implements Function<Record,User> {
+
+		@Override
+		public User apply(Record record) {
+			return new User()
+				.setId(record.getValue(USER.ID))
+				.setDomain(record.getValue(USER.DOMAIN))
+				.setLogin(record.getValue(USER.LOGIN))
+				.setActive(AonEnumUtils.getBoolean(record.getValue(USER.ACTIVE)))
+				.setRegistry(record.getValue(USER.REGISTRY));
+				//.setRoles( SecurityDAO.getUserRoles(ctx, user.getId()));
+		}
+		
+	}
+	
 	public static User getUser(AONContext ctx, String login) {
 		ctx.checkRead();
 		Record6<Integer, Integer, String, String, Byte, Integer> record = 
@@ -229,6 +281,19 @@ public class SecurityDAO {
 		return getUserScopes(ctx, user.getId());
 	}
 	
+	public static UserScope getUserScope(AONContext ctx, Integer userId, Integer scope) {
+		return ctx.getDslContext().select()
+				.from(USER_SCOPE)
+				.where(USER_SCOPE.USER_ID.eq(userId))
+				.and(USER_SCOPE.SCOPE.eq(scope))
+				.fetch().stream().map(r -> new UserScope()
+						.setDomain(r.getValue(USER_SCOPE.DOMAIN))
+						.setId(r.getValue(USER_SCOPE.ID))
+						.setScope(r.getValue(USER_SCOPE.SCOPE))
+						.setUserId(r.getValue(USER_SCOPE.USER_ID)))
+				.findFirst().orElse(null);
+	}
+	
 	public static Integer[] getUserScopes (AONContext ctx, Integer userId) {
 		ctx.checkRead();
 		User user = getUser(ctx, userId);
@@ -317,6 +382,14 @@ public class SecurityDAO {
 	public static void insertUserScope(AONContext ctx, UserScope userScope){
 		ctx.getDslContext().insertInto(USER_SCOPE, USER_SCOPE.DOMAIN, USER_SCOPE.SCOPE, USER_SCOPE.USER_ID)
 			.values(userScope.getDomain(), userScope.getScope(), userScope.getUserId()).execute();
+	}
+	
+	public static void deleteUserScope(AONContext ctx, Integer userId, Integer scope){
+		ctx.getDslContext()
+			.delete(USER_SCOPE)
+			.where(USER_SCOPE.USER_ID.eq(userId))
+			.and(USER_SCOPE.SCOPE.eq(scope))
+			.execute();
 	}
 	
 	private static class ScopeFiller implements Function<Record, Scope> {

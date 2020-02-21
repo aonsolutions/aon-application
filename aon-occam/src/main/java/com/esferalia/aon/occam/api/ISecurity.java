@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Contact;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.ScopeFilter;
@@ -16,8 +17,13 @@ import com.esferalia.aon.occam.api.model.security.UserScope;
 
 public interface ISecurity {
 	public User getUser(AONContext ctx, String login);
+	public LinkedList<User> getUsersByEmail(AONContext ctx, String email);
+	public LinkedList<User> getUsersByScope(AONContext ctx, Integer scope);
+	public LinkedList<Domain> getCompaniesByScope(AONContext ctx, Integer scope);
 	public User getUser(AONContext ctx, Integer userId);
 	public String getUserPassword(AONContext ctx, Integer userId);
+	public UserScope getUserScope(AONContext ctx, Integer userId, Integer scope);
+	public void deleteUserScope(AONContext ctx, Integer userId, Integer scope);
 	public Integer[] getUserScopes(AONContext ctx, Integer userId);
 	public Stream<Scope> getScopeStream(AONContext ctx, ScopeFilter filter);
 	public Stream<Scope> getUserScopeStream(AONContext ctx, Integer userId, ScopeFilter filter);

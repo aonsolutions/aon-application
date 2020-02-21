@@ -1,0 +1,20 @@
+
+<!DOCTYPE html [
+    <!ENTITY nbsp "&#160;"> 
+]>
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+
+<ui:style>
+
+
+</ui:style>
+<g:HTMLPanel > 
+	
+	<g:Label ui:field="title"> </g:Label>
+	<g:VerticalPanel ui:field="vertical">
+        
+	</g:VerticalPanel>
+    
+</g:HTMLPanel>
+</ui:UiBinder>

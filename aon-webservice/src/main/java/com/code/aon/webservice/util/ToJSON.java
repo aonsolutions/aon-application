@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.ElaborationSource;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
@@ -573,6 +574,14 @@ public class ToJSON {
 			.put(MSG.NAME, name)
 			.put(MSG.DATE, AonDateUtils.dateTimeFormat(date));
 		
+	}
+	
+	public static JSONObject userToJSON(User user) {
+		return new JSONObject()
+			.put(MSG.ID, user.getId())
+			.put(MSG.NAME, user.getName())
+			.put(MSG.DOMAIN, user.getDomain())
+			.put(MSG.LOGIN, user.getLogin());		
 	}
 	
 	public static String getPeriod(BillingPeriod period){

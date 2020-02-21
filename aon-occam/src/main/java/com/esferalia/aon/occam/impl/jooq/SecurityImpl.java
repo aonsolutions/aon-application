@@ -5,13 +5,14 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.ISecurity;
-import com.esferalia.aon.occam.api.model.MailAccount;
-import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.Contact;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.ScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.SignatureFilter;
+import com.esferalia.aon.occam.api.model.MailAccount;
+import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
@@ -25,6 +26,21 @@ public class SecurityImpl implements ISecurity {
 	}
 	
 	@Override
+	public LinkedList<User> getUsersByEmail(AONContext ctx, String email) {
+		return SecurityDAO.getUsersByEmail(ctx, email);
+	}
+	
+	@Override
+	public LinkedList<User> getUsersByScope(AONContext ctx, Integer scope) {
+		return SecurityDAO.getUsersByScope(ctx, scope);
+	}
+	
+	@Override
+	public LinkedList<Domain> getCompaniesByScope(AONContext ctx, Integer scope) {
+		return SecurityDAO.getCompaniesByScope(ctx, scope);
+	}
+	
+	@Override
 	public User getUser(AONContext ctx, Integer userId) {
 		return SecurityDAO.getUser(ctx, userId);
 	}
@@ -35,6 +51,11 @@ public class SecurityImpl implements ISecurity {
 		return SecurityDAO.getUserPassword(ctx, userId);
 	}
 
+	@Override
+	public UserScope getUserScope(AONContext ctx, Integer userId, Integer scope) {
+		return SecurityDAO.getUserScope(ctx, userId, scope);
+	}
+	
 	@Override
 	public Integer[] getUserScopes(AONContext ctx, Integer userId) {
 		return SecurityDAO.getUserScopes(ctx, userId);
@@ -58,6 +79,12 @@ public class SecurityImpl implements ISecurity {
 	@Override
 	public void insertUserScope(AONContext ctx, UserScope userScope) {
 		SecurityDAO.insertUserScope(ctx, userScope);
+	}
+
+	
+	@Override
+	public void deleteUserScope(AONContext ctx, Integer userId, Integer scope) {
+		SecurityDAO.deleteUserScope(ctx, userId, scope);
 	}
 
 	// ------------------ SIGNATURE
