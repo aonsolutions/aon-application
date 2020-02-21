@@ -120,6 +120,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	static final String CONSTANT_PAY_MSG = "Revise el concepto <span style='color:orange;'>%s</span>. ¿ Falta mutiplicar por <span style='color:orange;'>DIAS_TRABAJADOS / DIAS_MES</span> ?."
 			;
 	
+	
 	private static interface INamedContractPayment extends IContractPayment{
 		public String getSurName();
 	}
@@ -631,8 +632,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 			Date irpfDate = ctx.getIrpfDate();
 			expressionContext.setVariable(IRPF_BASE, taxCalculator.getIrpfBase(), irpfDate, irpfDate);
-
-
+			
+			undefTotalPayments.sort((p1,p2)-> AonNumberUtils.compare(p1.getId(),p2.getId() ) );
 			for (UndefPayment undefTotalPayment : undefTotalPayments) {
 				try {
 					resolvePayment(undefTotalPayment, start, end, issueDate, expressionContext, taxCalculator,
@@ -667,13 +668,16 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				onInvalidData(e.getVariableNames());
 			}
 
-			if (AonNumberUtils.compare(rawCgcbase, cgcBase, 3) > 0) // rawCgcbase
-																	// > cgcBase
+			if (AonNumberUtils.compare(rawCgcbase, cgcBase, 3) > 0) 
 				onCheckError(String.format(BASE_CGC_MAX_MSG, CGC_BASE.getDescription(), rawCgcbase, cgcBase));
-			else if (AonNumberUtils.compare(rawCgcbase, cgcBase, 3) < 0) // rawCgcbase
-																			// <
-																			// cgcBase
-				onCheckError(String.format(BASE_CGC_MIN_MSG, CGC_BASE.getDescription(), rawCgcbase, cgcBase));
+			else if (AonNumberUtils.compare(rawCgcbase, cgcBase, 3) < 0) {
+				fixBaseCgcMin(expressionContext, start, end, quoteCalculator, taxCalculator, issueDate, leavePeriods,
+							offPeriods, rawCgcbase, cgcBase);
+				rawCgcbase = quoteCalculator.getRawCgcBase();
+				salaryBuilder.setRawCgcBase(rawCgcbase);
+				cgcBase = quoteCalculator.getCgcBase();
+			}
+
 
 			Double ereBase = quoteCalculator.getEreBase();
 			if (ereBase != null)
@@ -746,6 +750,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			// TODO: handle exception
 		}
 	}
+
 
 	protected QuoteCalculator getQuoteCalculator(IContractSalaryCalculatorContext ctx) {
 		return QuoteCalculator.getQuoteCalculator(ctx);
@@ -1107,6 +1112,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	{
 		return Collections.singletonList(results);
 	}
+	
 
 	protected List<ITimedResult<Double>> fixItResults(IContractPayment contractPayment, List<ITimedResult<Double>> results, List<Period> its , Date start, Date end, ExpressionContext expressionContext) 
 	throws UnsupportedOperationException, UndefinedVariablesException
@@ -1137,6 +1143,12 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		return results;
 	}
 	
+	protected void fixBaseCgcMin(ExpressionContext expressionContext, Date start, Date end,
+			QuoteCalculator quoteCalculator, TaxCalculator taxCalculator, Date issueDate, List<Period> leavePeriods,
+			List<Period> offPeriods, Double rawCgcbase, Double cgcBase) throws AonException {
+		onCheckError(String.format(BASE_CGC_MIN_MSG, CGC_BASE.getDescription(), rawCgcbase, cgcBase));
+	}
+
 	protected PaymentType getPaymentType(IContractPayment contractPayment) {
 		return contractPayment.getType();
 	}

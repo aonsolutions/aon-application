@@ -4,6 +4,7 @@ import static com.esferalia.aon.watson.util.AonStringUtils.romanIntValue;
 
 import java.util.Comparator;
 
+import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 
@@ -39,6 +40,17 @@ public class  ItemComparator<E extends Enum<?>> implements Comparator<Item<E>> {
 				return compareTo;
 		}
 			
+		// By scope ( reverse )
+		Scope scope0 = p0.getScope();
+		Scope scope1 = p1.getScope();
+		if ( scope0 != null && scope1 == null )
+			return -1;
+		if ( scope0 == null && scope1 != null )
+			return 1;
+		int compareTo = scope0 == scope1 ? 0 : scope1.ordinal()-scope0.ordinal();
+		if (compareTo != 0) 
+			return compareTo;
+
 		// By type
 		E type0 = p0.getType();
 		E type1 = p1.getType();
@@ -46,7 +58,7 @@ public class  ItemComparator<E extends Enum<?>> implements Comparator<Item<E>> {
 			return 1;
 		if ( type0 == null && type1 != null )
 			return -1;
-		int compareTo = type0 == type1 ? 0 : type0.ordinal()-type1.ordinal();
+		compareTo = type0 == type1 ? 0 : type0.ordinal()-type1.ordinal();
 		if (compareTo != 0) 
 			return compareTo;
 

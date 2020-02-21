@@ -334,6 +334,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 
 			if ( type == PaymentType.CRA_0033						// TODO: PLANES PENgit statusSIONES Y SIST. ALTERNATIVOS 					
 				|| type == PaymentType.CRA_0000 					// TODO: This must be the only one check 
+				|| isFixBaseCgcMin(payment) 
 				|| ContextVariable.ERE.getName().equals(payment.getName()) 
 				|| ContextVariable.PREST_IT.equals(payment.getName()) 
 				|| ContextVariable.MATERNITY.getName().equals(payment.getName())
@@ -708,6 +709,53 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		return its.stream().map(it -> new  TimedResult<Double>(gtzdo4Day * getDays(it), it, finalContext)).collect(Collectors.toList());
 	}
 
+	
+	@Override
+	protected void fixBaseCgcMin(ExpressionContext expressionContext, Date start, Date end,
+			QuoteCalculator quoteCalculator, TaxCalculator taxCalculator, Date issueDate, List<Period> leavePeriods,
+			List<Period> offPeriods, Double rawCgcbase, Double cgcBase) throws AonException {
+		
+//		double diffBase = cgcBase - rawCgcbase;
+//		
+//		List<Period> activePeriods = Period.sub(new Period(start,end), leavePeriods );
+//		double activeQuoteDays = 0.00;
+//		for (Period period : activePeriods) {
+//			try {
+//				activeQuoteDays += 
+//				expressionContext.eval(ContextVariable.QUOTE_DAYS.getName(), period.getStart(), period.getEnd(), Number.class)
+//				.stream().collect( Collectors.summingDouble( r -> r.getValue().doubleValue() ));
+//			} catch ( ExpressionException | NullPointerException e ) {
+//				activeQuoteDays += period.daysStream().count();
+//			}
+//		}
+		
+		try {
+			resolvePayment(
+			new SimpleContractPayment()
+			.setId(Integer.MAX_VALUE)
+			.setStartDate(start)
+			.setEndDate(end)
+			.setExpression("/*default*/(/*user*/0.00/**/)+(0.00 * TOTAL_DEVENGADO * DIAS_TRABAJADOS)")
+			.setIrpfExpression("_P")
+			.setType(PaymentType.CRA_0001)
+			.setSalaryType(SalaryType.SALARY)
+	//		.setQuoteExpression(format((cgcBase - rawCgcbase) / activeQuoteDays ) + " * DIAS_COTIZADOS " )
+			.setQuoteExpression("/*fixBaseCgcMin*/MAX(_P,(BASE_CGC_MIN - BASE_CGC_BRUTA))" )
+			.setDescription("COTIZACIÓN MÍNIMA POR CONTINGENCIAS COMUNES")
+			, 
+			start, 
+			end, 
+			issueDate, 
+			expressionContext, 
+			taxCalculator, 
+			quoteCalculator, 
+			leavePeriods, 
+			offPeriods
+			);
+		} catch ( UndefinedContextVariablesException e ) {
+			
+		}
+	}
 	
 	@Override
 	protected List<ITimedResult<Double>> fixStrikeResults(
@@ -1126,6 +1174,15 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		.replaceAll("\\s","")
 		.replaceAll("\\[([^\\]])*\\]","")
 		;
+	}
+	
+	private static String format(double d) {
+		return Double.toString(d);		
+//		return Double.toString(Math.round(d * 10000000.00) / 10000000.00 );		
+	}
+	
+	private static boolean isFixBaseCgcMin(IContractPayment p) {
+		return AonStringUtils.startsWith(p.getQuoteExpression(), "/*fixBaseCgcMin*/");
 	}
 	
 }

@@ -318,6 +318,7 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 		};
 
 		sPayment.setSalary(salary);
+		sPayment.setIrpf(tax);
 		sPayment.setQuote(quote);
 		sPayment.setAmount(amount);
 		sPayment.setType(payment.getType());

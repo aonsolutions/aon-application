@@ -43,7 +43,7 @@ public class AonNumberUtils {
 			return -1;
 		if (n2 == null)
 			return 1;
-		return Double.compare(Math.round(n1.doubleValue() * 10*decimals), Math.round(n2.doubleValue() * 10 * decimals ));
+		return Double.compare(Math.round(n1.doubleValue() * Math.pow(10,decimals)), Math.round(n2.doubleValue() * Math.pow(10,decimals)));
 	}
 
 	public static Byte toByte(String value) {

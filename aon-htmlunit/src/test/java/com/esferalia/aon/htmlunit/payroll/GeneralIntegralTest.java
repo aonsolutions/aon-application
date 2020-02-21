@@ -88,6 +88,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertNotElement("editor-salario_base");
 		assertNotElement("editor-prest_it");
 		
+		//assertElement("editor-dias_nomina");
+		
 		// PLUS_EXTRA_SALARIAL
 		// Expression : PLUS_EXTRA_SALARIAL
 		// Description : PLUS REGIMEN GENERAL ( VARIABLE == DEVENGO ) 
@@ -466,32 +468,32 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		draft("BASE, MÍNIMA ( GRUPO 01 )");
 		calculate(Calendar.DECEMBER,2016);
 		assertValue("cgcBaseLabel", 1067.40);
-		assertValue("cgpBaseLabel", 764.40);
+		assertValue("cgpBaseLabel", 1067.40);
 		calculate(Calendar.JANUARY,2017);
 		assertValue("cgcBaseLabel", 1152.90);
-		assertValue("cgpBaseLabel",  825.60);
+		assertValue("cgpBaseLabel", 1152.90);
 		calculate(Calendar.JANUARY,2018);
 		assertValue("cgcBaseLabel", 1199.10);
-		assertValue("cgpBaseLabel",  858.60);
+		assertValue("cgpBaseLabel", 1199.10);
 		calculate(Calendar.JANUARY,2019);
 		assertValue("cgcBaseLabel", 1466.40);
-		assertValue("cgpBaseLabel", 1050.00);
+		assertValue("cgpBaseLabel", 1466.40);
 		
 		draft("BASE, MÍNIMA ( GRUPO 02 )");
 		calculate(Calendar.JANUARY,2018);
 		assertValue("cgcBaseLabel", 994.20);
-		assertValue("cgpBaseLabel",  858.60);
+		assertValue("cgpBaseLabel",  994.20);
 		calculate(Calendar.JANUARY,2019);
 		assertValue("cgcBaseLabel", 1215.90);
-		assertValue("cgpBaseLabel", 1050.00);
+		assertValue("cgpBaseLabel", 1215.90);
 
 		draft("BASE, MÍNIMA ( GRUPO 03 )");
 		calculate(Calendar.JANUARY,2018);
 		assertValue("cgcBaseLabel", 864.90);
-		assertValue("cgpBaseLabel",  858.60);
+		assertValue("cgpBaseLabel",  864.90);
 		calculate(Calendar.JANUARY,2019);
 		assertValue("cgcBaseLabel", 1057.80);
-		assertValue("cgpBaseLabel", 1050.00);
+		assertValue("cgpBaseLabel", 1057.80);
 
 		draft("BASE, MÍNIMA ( GRUPO 04 )");
 		calculate(Calendar.JANUARY,2018);
@@ -541,7 +543,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		draft("BASE, MÍNIMA ( GRUPO 10 )");
 		calculate(Calendar.AUGUST,2019);
 		assertValue("cgcBaseLabel", 35.00 * 31);
-		assertValue("cgpBaseLabel", 1050.00 );
+		assertValue("cgpBaseLabel", 35.00 * 31);
 		calculate(Calendar.SEPTEMBER,2019);
 		assertValue("cgcBaseLabel", 1050.00);
 		assertValue("cgpBaseLabel", 1050.00);
@@ -549,19 +551,19 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		draft("BASE, MÍNIMA IT ( GRUPO 01 )");
 		calculate(Calendar.JUNE,2016);
 		assertValue("cgcBaseLabel", 1067.40);
-		assertValue("cgpBaseLabel", 764.40);
+		assertValue("cgpBaseLabel", 1067.40);
 		calculate(Calendar.JULY,2016);
 		assertValue("cgcBaseLabel", 1067.40);
-		assertValue("cgpBaseLabel", 13 * 1067.40 / 30 + 764.40 * 17 / 30);
+		assertValue("cgpBaseLabel", 1067.40);
 		calculate(Calendar.JANUARY,2017);
 		assertValue("cgcBaseLabel", 1152.90);
-		assertValue("cgpBaseLabel",  825.60);
+		assertValue("cgpBaseLabel",  1152.90);
 		calculate(Calendar.JANUARY,2018);
 		assertValue("cgcBaseLabel", 1199.10);
-		assertValue("cgpBaseLabel",  858.60);
+		assertValue("cgpBaseLabel", 1199.10);
 		calculate(Calendar.JANUARY,2019);
 		assertValue("cgcBaseLabel", 1466.40);
-		assertValue("cgpBaseLabel", 1050.00);
+		assertValue("cgpBaseLabel", 1466.40);
 
 		draft("BASE, MÍNIMA PARCIAL ( HORAS )");
 		calculate(Calendar.AUGUST,2019);
@@ -782,7 +784,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.JUNE, 2016);
 		assertValue("totalPaymentsLabel", 1067.40 / 30 * 5 * 0.60 + 1000.00 * 22 / 30);
 		assertValue("cgcBaseLabel", 1067.40);
-		assertValue("cgpBaseLabel", 1067.40 / 30 * 8 + 1000.00 * 22 / 30);
+		assertValue("cgpBaseLabel", 1067.40);
 
 		draft("BRUTO TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
 		calculate(Calendar.MAY, 2016);
@@ -913,10 +915,10 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		Assert.assertEquals(quotePaga2, salarioBase/12.00, 0.005);
 
 		selectOption("issueDate-listbox-2", "-1");
+		wait4Class("payment-row-1", "aon-dataTable-row-highlight");
 		wait4Class("payment-row-2", "aon-dataTable-row-highlight");
-		wait4Class("payment-row-3", "aon-dataTable-row-highlight");
-		assertValue("db-amount-label-2", quotePaga1);
-		assertValue("db-amount-label-3", quotePaga2);
+		assertValue("db-amount-label-1", quotePaga1);
+		assertValue("db-amount-label-2", quotePaga2);
 		
 		click("viewButton");
 		wait4Id("formerMenuItem");
@@ -1267,19 +1269,22 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 		calculate(Calendar.JUNE, 2018);
 		
-		assertInputDisabled( "db-amount-label-1" , true); // PREST. POR ENFERMEDAD COMÚN
-		assertDisabled("delete-button-1", true);
-		assertInputDisabled( "db-amount-label-2" , true); // PREST. POR ENFERMEDAD COMÚN A CARGO DE LA EMPRESA
-		assertDisabled("delete-button-2", true);
-		assertInputDisabled( "db-amount-label-3" , true); // PREST. POR ENFERMEDAD COMÚN A CARGO DEL INSS		
+		assertInputDisabled( "db-amount-label-1" , false); // PLUS SALARIAL MENSUAL
+		assertDisabled("delete-button-1", false);
+		assertInputDisabled( "db-amount-label-2" , true); // SALARIO BASE MENSUAL
+		assertDisabled("delete-button-2", false);
+		assertInputDisabled( "db-amount-label-3" , true); // PREST. POR ENFERMEDAD COMÚN
+		assertInputDisabled( "description-box-3" , true); 
 		assertDisabled("delete-button-3", true);
-		assertInputDisabled( "db-amount-label-4" , false); // PLUS SALARIAL MENSUAL
-		assertDisabled("delete-button-4", false);
-		assertInputDisabled( "db-amount-label-5" , true); // SALARIO BASE MENSUAL
-		assertDisabled("delete-button-5", false);
+		assertInputDisabled( "db-amount-label-4" , true); // PREST. POR ENFERMEDAD COMÚN 
+		assertInputDisabled( "description-box-4" , true); 
+		assertDisabled("delete-button-4", true);
+		assertInputDisabled( "db-amount-label-5" , true); // PREST. POR ENFERMEDAD COMÚN 		
+		assertInputDisabled( "description-box-5" , true); 
+		assertDisabled("delete-button-5", true);
 		
 		
-		setValue("description-box-1", "P. POR ENFERMEDAD COMÚN");
+		setValue("description-box-3", "P. POR ENFERMEDAD COMÚN");
 		
 		wait4Class("payment-row-1", "aon-dataTable-row-highlight");
 		wait4Class("payment-row-2", "aon-dataTable-row-highlight");
@@ -1323,14 +1328,14 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 		calculate(Calendar.JUNE, 2018);
 		
-		assertInputDisabled( "db-amount-label-1" , true); // PREST. POR ACCIDENTE DE TRABAJO Y/O ENFERMEDAD PROFESIONAL
-		assertDisabled("delete-button-1", true);
-		assertInputDisabled( "db-amount-label-2" , false); // PLUS SALARIAL MENSUAL
+		assertInputDisabled( "db-amount-label-1" , false); // PLUS SALARIAL MENSUAL
+		assertDisabled("delete-button-1", false);
+		assertInputDisabled( "db-amount-label-2" , true); // SALARIO BASE MENSUAL
 		assertDisabled("delete-button-2", false);
-		assertInputDisabled( "db-amount-label-3" , true); // SALARIO BASE MENSUAL
-		assertDisabled("delete-button-3", false);
+		assertInputDisabled( "db-amount-label-3" , true); // PREST. POR ACCIDENTE DE TRABAJO Y/O ENFERMEDAD PROFESIONAL
+		assertDisabled("delete-button-3", true);
 		
-		setValue("description-box-1", "P. POR ACCIDENTE DE TRABAJO Y/O ENFERMEDAD PROFESIONAL");
+		setValue("description-box-3", "P. POR ACCIDENTE DE TRABAJO Y/O ENFERMEDAD PROFESIONAL");
 		
 		wait4Class("payment-row-1", "aon-dataTable-row-highlight");
 		assertInputDisabled( "db-amount-label-1" , true); // P. POR ACCIDENTE DE TRABAJO Y/O ENFERMEDAD PROFESIONAL
@@ -1355,12 +1360,12 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 		calculate(Calendar.JUNE, 2018);
 		
-		assertInputDisabled( "db-amount-label-1" , true); // PREST. POR MATERNIDAD Y/O RIESGO DURANTE EL EMBARAZO
-		assertInputDisabled( "db-amount-label-2" , false); // PLUS SALARIAL MENSUAL
-		assertInputDisabled( "db-amount-label-3" , true); // SALARIO BASE MENSUAL
-		assertDisabled("delete-button-3", false);
+		assertInputDisabled( "db-amount-label-1" , false); // PLUS SALARIAL MENSUAL
+		assertInputDisabled( "db-amount-label-2" , true); // SALARIO BASE MENSUAL
+		assertInputDisabled( "db-amount-label-3" , true); // PREST. POR MATERNIDAD Y/O RIESGO DURANTE EL EMBARAZO
+		assertDisabled("delete-button-1", false);
 		
-		setValue("description-box-1", "P.POR MATERNIDAD Y/O RIESGO DURANTE EL EMBARAZO");
+		setValue("description-box-3", "P.POR MATERNIDAD Y/O RIESGO DURANTE EL EMBARAZO");
 		
 		wait4Class("payment-row-1", "aon-dataTable-row-highlight");
 		assertInputDisabled( "db-amount-label-1" , true); // P. POR MATERNIDAD Y/O RIESGO DURANTE EL EMBARAZO
@@ -1383,14 +1388,14 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 		calculate(Calendar.JUNE, 2018);
 		
-		assertInputDisabled( "db-amount-label-1" , true); // PREST. POR PATERNIDAD
-		assertInputDisabled( "db-amount-label-1" , true); // PRESTACIÓN POR PATERNIDAD
-		assertInputDisabled( "db-amount-label-2" , false); // PLUS SALARIAL MENSUAL
+		assertInputDisabled( "db-amount-label-3" , true); // PREST. POR PATERNIDAD
+		assertInputDisabled( "db-amount-label-3" , true); // PRESTACIÓN POR PATERNIDAD
+		assertInputDisabled( "db-amount-label-1" , false); // PLUS SALARIAL MENSUAL
+		assertDisabled("delete-button-1", false);
+		assertInputDisabled( "db-amount-label-2" , true); // SALARIO BASE MENSUAL
 		assertDisabled("delete-button-2", false);
-		assertInputDisabled( "db-amount-label-3" , true); // SALARIO BASE MENSUAL
-		assertDisabled("delete-button-3", false);
 		
-		setValue("description-box-1", "P. POR PATERNIDAD");
+		setValue("description-box-3", "P. POR PATERNIDAD");
 		
 		wait4Class("payment-row-1", "aon-dataTable-row-highlight");
 		assertInputDisabled( "db-amount-label-1" , true); // P. POR PATERNIDAD

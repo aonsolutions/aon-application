@@ -136,6 +136,8 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 		
+		cleanSystemData(aonContext);
+		
 		Calendar calendar = Calendar.getInstance();
 		// Be care that the first day of the month has value 1.
 		calendar.set(DAY_OF_MONTH, 1);
