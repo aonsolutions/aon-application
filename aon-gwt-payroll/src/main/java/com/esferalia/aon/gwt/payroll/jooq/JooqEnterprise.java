@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
+import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
 import static com.esferalia.aon.jooq.tables.Calendar.CALENDAR;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
@@ -32,8 +33,32 @@ public class JooqEnterprise {
 
 	private static Settings SETTINGS = null;
 	
+	protected static Settings getDefaultSettings() {
+		if (SETTINGS == null) {
+			SETTINGS = new Settings();
+			SETTINGS.setRenderSchema(false);
+		}
+		return SETTINGS;
+	}
+	
+	// --------------------------------- GETTER / SETTER ---------------------------------------------
+	
+	public static EnterpriseInfo getEnterpriseInfo(Connection conn, Integer enterpriseId) {
+		return getEnterpriseInfoDB(DSL.using(conn, getDefaultSettings()), enterpriseId);
+	}
+	
+	public static EnterpriseInfo setEnterpriseInfo(Connection conn, EnterpriseInfo enterpriseInfo) {
+		return setEnterpriseInfoDB(DSL.using(conn, getDefaultSettings()), enterpriseInfo);
+	}
+	
+	// --------------------------------- GET ENTERPRISES INFO ----------------------------------------
+	
 	public static Map<Integer, String> getEnterpriseAddresses(Connection conn, Integer enterpriseId) {
 		return getEnterpriseAddressesInfoDB(DSL.using(conn, getDefaultSettings()), enterpriseId);
+	}
+	
+	public static Map<Integer, String> getEnterpriseScopes(Connection conn, Integer enterpriseId) {
+		return getEnterpriseScopesInfoDB(DSL.using(conn, getDefaultSettings()), enterpriseId);
 	}
 
 	public static Map<Integer, String> getEnterpriseCalendars(Connection conn, Integer enterpriseId) {
@@ -44,159 +69,14 @@ public class JooqEnterprise {
 		return getEnterpriseActivitiesInfoDB(DSL.using(conn, getDefaultSettings()), enterpriseId);
 	}
 	
-	public static Map<Integer, String> getEnterpriseScopes(Connection conn, Integer enterpriseId) {
-		return getEnterpriseScopesInfoDB(DSL.using(conn, getDefaultSettings()), enterpriseId);
-	}
 	
-	public static EnterpriseInfo getEnterpriseInfo(Connection conn, Integer enterpriseId) {
-		return getEnterpriseInfoDB(DSL.using(conn, getDefaultSettings()), enterpriseId);
-	}
-	
-	public static EnterpriseInfo setEnterpriseInfo(Connection conn, EnterpriseInfo enterpriseInfo) {
-		return setEnterpriseInfoDB(DSL.using(conn, getDefaultSettings()), enterpriseInfo);
-	}
-
-	protected static Settings getDefaultSettings() {
-		if (SETTINGS == null) {
-			SETTINGS = new Settings();
-			SETTINGS.setRenderSchema(false);
-		}
-		return SETTINGS;
-	}
-	
-	private static Map<Integer, String> getEnterpriseAddressesInfoDB(DSLContext dslContext, Integer enterpriseId) {
-		Map<Integer, String> addresses = new HashMap<Integer, String>();
-		
-		Result<Record> raddressRecords = dslContext.select().from(RADDRESS)
-				.where(RADDRESS.REGISTRY.eq(enterpriseId))
-				.fetch();
-		
-		for(Record r : raddressRecords){
-			Record1<String> geozoneName = dslContext.select(GEOZONE.NAME).from(GEOZONE)
-					.where(GEOZONE.ID.eq(r.get(RADDRESS.GEOZONE)))
-					.fetchOne();
-			
-			String addressStr = "";
-			
-			if(r.get(RADDRESS.STREET_TYPE) != "")
-				addressStr += r.get(RADDRESS.STREET_TYPE) + " ";
-			if(null == r.get(RADDRESS.ADDRESS))
-				continue;
-			if(!r.get(RADDRESS.ADDRESS).isEmpty())
-				addressStr += r.get(RADDRESS.ADDRESS) + " ";
-			if(null !=r.get(RADDRESS.NUMBER))
-				if(!r.get(RADDRESS.NUMBER).isEmpty())
-					addressStr += r.get(RADDRESS.NUMBER) + " ";
-			
-			if(null != geozoneName)
-				addressStr += geozoneName.get(0);
-			
-			addresses.put(r.get(RADDRESS.ID), addressStr);
-		}
-		
-		return addresses;
-	}
-	
-	private static Map<Integer, String> getEnterpriseCalendarsInfoDB(DSLContext dslContext, Integer enterpriseId) {
-		Map<Integer, String> calendars = new HashMap<Integer, String>();
-		
-		Record enterpriseRecord = dslContext.select().from(ENTERPRISE)
-				.where(ENTERPRISE.REGISTRY.eq(enterpriseId))
-				.fetchOne();
-		
-		Integer domain = enterpriseRecord.get(ENTERPRISE.DOMAIN);
-		
-		Record domainRecord = dslContext.select().from(DOMAIN)
-				.where(DOMAIN.ID.eq(domain))
-				.fetchOne();
-		
-		Integer parentDomain = domainRecord.get(DOMAIN.PARENT);
-		
-		Result<Record> caledarRecords = null;
-		if(null == parentDomain)
-			caledarRecords = dslContext.select().from(CALENDAR)
-					.where(CALENDAR.DOMAIN.eq(domain))
-					.or(CALENDAR.DOMAIN.eq(0))
-					.fetch();
-		else
-			caledarRecords = dslContext.select().from(CALENDAR)
-				.where(CALENDAR.DOMAIN.eq(domain))
-				.or(CALENDAR.DOMAIN.eq(parentDomain))
-				.or(CALENDAR.DOMAIN.eq(0))
-				.fetch();
-				
-		for(Record r : caledarRecords){
-			if(null != r.get(CALENDAR.DESCRIPTION))
-				calendars.put(r.get(CALENDAR.ID), r.get(CALENDAR.DESCRIPTION));
-		}
-		
-		return calendars;	
-	}
-	
-	private static Map<Integer, String> getEnterpriseActivitiesInfoDB(DSLContext dslContext, Integer enterpriseId) {
-		Map<Integer, String> activities = new HashMap<Integer, String>();
-		
-		Result<Record> enterpriseActivityRecords = dslContext.select().from(ENTERPRISE_ACTIVITY)
-				.where(ENTERPRISE_ACTIVITY.ENTERPRISE.eq(enterpriseId))
-				.fetch();
-		
-		for(Record r : enterpriseActivityRecords){
-			activities.put(r.get(ENTERPRISE_ACTIVITY.ID), r.get(ENTERPRISE_ACTIVITY.DESCRIPTION));
-		}
-		
-		return activities;
-	}
-	
-	private static Map<Integer, String> getEnterpriseScopesInfoDB(DSLContext dslContext, Integer enterpriseId) {
-		Map<Integer, String> scopes = new HashMap<Integer, String>();
-		
-		Record enterpriseRecord = dslContext.select().from(ENTERPRISE)
-					.where(ENTERPRISE.REGISTRY.eq(enterpriseId))
-					.fetchOne();
-		
-		Integer domainId = enterpriseRecord.get(ENTERPRISE.DOMAIN);
-		
-		Record domainRecord = dslContext.select().from(DOMAIN)
-				.where(DOMAIN.ID.eq(domainId))
-				.fetchOne();
-		
-		Integer parentDomianId = domainRecord.get(DOMAIN.PARENT);
-		String domainDescription = domainRecord.get(DOMAIN.DESCRIPTION);
-		
-		if(null == parentDomianId) {
-			Result<Record> scopeRecords = dslContext.select().from(SCOPE)
-					.where(SCOPE.DOMAIN.eq(domainId))
-					.fetch();
-			
-			if(null != scopeRecords && !scopeRecords.isEmpty())
-				for(Record r : scopeRecords)
-					scopes.put(r.get(SCOPE.ID), r.get(SCOPE.DESCRIPTION) + " (" + domainDescription +")");
-			
-		}else {
-			Result<Record> scopeRecords = dslContext.select().from(SCOPE)
-					.where(SCOPE.DOMAIN.eq(domainId)
-							.or(SCOPE.DOMAIN.eq(parentDomianId))
-					)
-					.fetch();
-			
-			if(null != scopeRecords && !scopeRecords.isEmpty()) {
-				Record parentDomainRecord = dslContext.select().from(DOMAIN)
-					.where(DOMAIN.ID.eq(parentDomianId))
-					.fetchOne();
-			
-				String parentDescription = parentDomainRecord.get(DOMAIN.DESCRIPTION);
-			
-				for(Record r : scopeRecords)			
-					scopes.put(r.get(SCOPE.ID), r.get(SCOPE.DESCRIPTION) + " (" + parentDescription +")");
-		
-			}
-		}
-		
-		return scopes;
-	}
+	// --------------------------------- GETTER / SETTER ---------------------------------------------
 	
 	private static EnterpriseInfo getEnterpriseInfoDB(DSLContext dslContext, Integer enterpriseId) {
+		
 		EnterpriseInfo enterpriseInfo = new EnterpriseInfo();
+		
+		// --------- ENTERPRISE TABLE
 		
 		Record enterpriseRecord = dslContext.select().from(ENTERPRISE)
 				.where(ENTERPRISE.REGISTRY.eq(enterpriseId))
@@ -205,6 +85,8 @@ public class JooqEnterprise {
 		Integer domainId = enterpriseRecord.get(ENTERPRISE.DOMAIN);
 		Integer scopeId = enterpriseRecord.get(ENTERPRISE.SCOPE);
 		Integer calendarId = enterpriseRecord.get(ENTERPRISE.CALENDAR);
+		
+		// --------- REGISTRY TABLE
 		
 		Record registryRecord = dslContext.select().from(REGISTRY)
 				.where(REGISTRY.ID.eq(enterpriseId))
@@ -216,7 +98,8 @@ public class JooqEnterprise {
 		String name = registryRecord.get(REGISTRY.NAME);
 		String alias = registryRecord.get(REGISTRY.ALIAS);
 		
-		//¿COMO SE IDENTIFICA LA DIRECCION PRINCIPAL DE UNA EMPRESA? ¿TYPE = 0?
+		// --------- RADDRESS TABLE
+		
 		Result<Record> raddressRecords = dslContext.select().from(RADDRESS)
 				.where(RADDRESS.REGISTRY.eq(enterpriseId))
 					.and(RADDRESS.TYPE.eq((byte)0))
@@ -232,6 +115,7 @@ public class JooqEnterprise {
 		String addressProvince = null;
 		
 		if(null != raddressRecords && !raddressRecords.isEmpty()) {
+			
 			raddressId = raddressRecords.get(0).get(RADDRESS.ID);
 			streetType = raddressRecords.get(0).get(RADDRESS.STREET_TYPE);
 			address = raddressRecords.get(0).get(RADDRESS.ADDRESS);
@@ -240,12 +124,16 @@ public class JooqEnterprise {
 			addressCity = raddressRecords.get(0).get(RADDRESS.CITY);
 			geozoneId = raddressRecords.get(0).get(RADDRESS.GEOZONE);
 			
-			Record geozoneRecord = dslContext.select().from(GEOZONE)
-					.where(GEOZONE.ID.eq(geozoneId))
-					.fetchOne();
-			
-			addressProvince = geozoneRecord.get(GEOZONE.NAME);
+			if(null != geozoneId) {
+				Record geozoneRecord = dslContext.select().from(GEOZONE)
+						.where(GEOZONE.ID.eq(geozoneId))
+						.fetchOne();
+				
+				addressProvince = geozoneRecord.get(GEOZONE.NAME);
+			}
 		}
+		
+		// --------- RMEDIA TABLE
 		
 		Result<Record> rmediaRecords = dslContext.select().from(RMEDIA)
 				.where(RMEDIA.REGISTRY.eq(enterpriseId))
@@ -276,6 +164,8 @@ public class JooqEnterprise {
 			}
 		}
 		
+		// --------- ENTERPRISE DATA TABLE
+		
 		Result<Record> enterpriseDataRecords = dslContext.select().from(ENTERPRISE_DATA)
 				.where(ENTERPRISE_DATA.ENTERPRISE.eq(enterpriseId))
 				.fetch();
@@ -291,7 +181,6 @@ public class JooqEnterprise {
 		Integer paysheetEmailId = null;
 		String paysheetEmail = null;
 		Integer enterpriseAgreementId = null;
-		String enterpriseAgreement = null;
 		
 		for(Record r : enterpriseDataRecords) {
 			if(r.get(ENTERPRISE_DATA.NAME).equals("PAY_REPORT_salary_PAY")) {
@@ -310,28 +199,11 @@ public class JooqEnterprise {
 				paysheetEmailId = r.get(ENTERPRISE_DATA.ID);
 				paysheetEmail = r.get(ENTERPRISE_DATA.EXPRESSION);
 			}else if(r.get(ENTERPRISE_DATA.NAME).equals("agreement")) {
-				enterpriseAgreementId = r.get(ENTERPRISE_DATA.ID);
-				enterpriseAgreement = r.get(ENTERPRISE_DATA.EXPRESSION);	
+				enterpriseAgreementId = r.get(ENTERPRISE_DATA.ID);	
 			}			
 		}
 		
-		Record logoRecord = dslContext.select().from(RATTACH)
-				.where(RATTACH.REGISTRY.eq(enterpriseId))
-					.and(RATTACH.TYPE.eq((byte)0))
-				.fetchOne();
-		
-		byte[] logo = null;
-		if(null != logoRecord)
-			logo = logoRecord.get(RATTACH.DATA);
-		
-		Record signatureRecord = dslContext.select().from(RATTACH)
-				.where(RATTACH.REGISTRY.eq(enterpriseId))
-					.and(RATTACH.TYPE.eq((byte)8))
-				.fetchOne();
-		
-		byte[] signature = null;
-		if(null != signatureRecord)
-			signature = signatureRecord.get(RATTACH.DATA);
+		// --------- SET ENTERPRISE INFO
 		
 		enterpriseInfo.setDomainId(domainId);
 		enterpriseInfo.setScopeId(scopeId);
@@ -369,64 +241,21 @@ public class JooqEnterprise {
 		enterpriseInfo.setPaysheetEmailId(paysheetEmailId);
 		enterpriseInfo.setPaysheetEmail(paysheetEmail);
 		enterpriseInfo.setEnterpriseAgreementId(enterpriseAgreementId);
-		enterpriseInfo.setEnterpriseAgreement(enterpriseAgreement);
-//		enterpriseInfo.setSignature("data:image/png;base64," + Base64Utils.toBase64(signature));
 		
 		return enterpriseInfo;
 	}
-
-	private static Byte getIndexSendType(String sendType) {
-		switch (sendType) {
-		case "EMAIL":
-			return (byte)0;
-		case "PAPER":
-			return (byte)1;
-		default:
-			return (byte)2;
-		}
-	}
-
-	private static Byte getModelIndexCosts(String costsModel) {
-		switch (costsModel) {
-		case "salaryExpense":
-			return (byte)0;
-		default:
-			return (byte)1;
-		}
-	}
-
-	private static Byte getModelIndexPaysheet(String paysheetModel) {
-		switch (paysheetModel) {
-		case "salary":
-			return (byte)0;
-		case "salary_dualColumn":
-			return (byte)1;
-		case "salary_invoiceSimple":
-			return (byte)2;
-		default:
-			return (byte)3;
-		}
-	}
-	
-	private static Byte getModelIndexPaysheetDraft(String paysheetModel) {
-		switch (paysheetModel) {
-		case "salaryDraft":
-			return (byte)0;
-		case "salaryDraft_dualColumn":
-			return (byte)1;
-		case "salaryDraft_invoiceSimple":
-			return (byte)2;
-		default:
-			return (byte)3;
-		}
-	}
 	
 	private static EnterpriseInfo setEnterpriseInfoDB(DSLContext dslContext, EnterpriseInfo enterpriseInfo) {
+		
+		// --------- ENTERPRISE TABLE
+		
 		dslContext.update(ENTERPRISE)
 			.set(ENTERPRISE.SCOPE, enterpriseInfo.getScopeId())
 			.set(ENTERPRISE.CALENDAR, enterpriseInfo.getCalendarId())
 			.where(ENTERPRISE.REGISTRY.eq(enterpriseInfo.getEnterpriseId()))
 			.execute();
+		
+		// --------- REGISTRY TABLE
 		
 		dslContext.update(REGISTRY)
 			.set(REGISTRY.DOCUMENT, enterpriseInfo.getDocument())
@@ -438,25 +267,27 @@ public class JooqEnterprise {
 			.where(REGISTRY.ID.eq(enterpriseInfo.getEnterpriseId()))
 			.execute();
 		
+		// --------- RADDRESS TABLE
+		
 		Record1<Integer> geozone = dslContext.select(GEOZONE.ID)
 				.from(GEOZONE)
-				.where(GEOZONE.NAME.eq(enterpriseInfo.getAddressProvince()))
+				.where(GEOZONE.CODE.eq(enterpriseInfo.getAddressProvince()))
 					.and(GEOZONE.DOMAIN.eq(enterpriseInfo.getDomainId()))
 				.fetchOne();
 		
 		Integer geozoneId = null;
 		
 		if(geozone == null){
-			Result<Record1<String>> codes = dslContext.select(GEOZONE.CODE)
+			Result<Record1<String>> names = dslContext.select(GEOZONE.NAME)
 				.from(GEOZONE)
-				.where(GEOZONE.NAME.like(enterpriseInfo.getAddressProvince()+"%"))
+				.where(GEOZONE.CODE.eq(enterpriseInfo.getAddressProvince()))
 				.fetch();
 			
-			if(!codes.isEmpty()){
+			if(!names.isEmpty()){
 				GeozoneRecord geozoneRecord  = dslContext.insertInto(GEOZONE)
 						.set(GEOZONE.DOMAIN, enterpriseInfo.getDomainId())
-						.set(GEOZONE.NAME, enterpriseInfo.getAddressProvince())
-						.set(GEOZONE.CODE, codes.get(0).value1())
+						.set(GEOZONE.NAME, names.get(0).value1())
+						.set(GEOZONE.CODE, enterpriseInfo.getAddressProvince())
 						.returning(GEOZONE.ID)
 						.fetchOne();
 					
@@ -519,6 +350,8 @@ public class JooqEnterprise {
 			.execute();
 		}
 		
+		// --------- RMEDIA TABLE
+		
 		dslContext.insertInto(RMEDIA, RMEDIA.ID, RMEDIA.DOMAIN, RMEDIA.REGISTRY, RMEDIA.MEDIA, RMEDIA.VALUE, RMEDIA.COMMENT, 
 				  RMEDIA.ADMINISTRATIVE, RMEDIA.COMMERCIAL, RMEDIA.TECHNICAL, RMEDIA.RADDRESS)
 			.values(enterpriseInfo.getPhoneId(), enterpriseInfo.getDomainId(), enterpriseInfo.getEnterpriseId(), (byte) 1, enterpriseInfo.getPhone(), (String) null, 
@@ -555,6 +388,8 @@ public class JooqEnterprise {
 			.set(RMEDIA.RADDRESS, rAddressId)
 			.execute();
 		
+		// --------- ENTERPRISE DATA TABLE
+		
 		dslContext.update(ENTERPRISE_DATA)
 			.set(ENTERPRISE_DATA.EXPRESSION, getCostsModel(enterpriseInfo.getCostsModel()))
 			.where(ENTERPRISE_DATA.ID.eq(enterpriseInfo.getCostsModelId()))
@@ -581,13 +416,18 @@ public class JooqEnterprise {
 				.where(ENTERPRISE_DATA.ID.eq(enterpriseInfo.getPaysheetEmailId()))
 				.execute();
 
-		if("-1" != enterpriseInfo.getEnterpriseAgreement()) {
+		if(null != enterpriseInfo.getEnterpriseAgreementId() && -1 != enterpriseInfo.getEnterpriseAgreementId()) {
+			String agreementDescription = dslContext.select().from(AGREEMENT)
+					.where(AGREEMENT.ID.eq(enterpriseInfo.getEnterpriseAgreementId()))
+					.fetchOne()
+					.get(AGREEMENT.DESCRIPTION);
+					
 			dslContext.insertInto(ENTERPRISE_DATA, ENTERPRISE_DATA.ID, ENTERPRISE_DATA.DOMAIN, ENTERPRISE_DATA.ENTERPRISE, ENTERPRISE_DATA.NAME,
 					ENTERPRISE_DATA.EXPRESSION, ENTERPRISE_DATA.START_DATE, ENTERPRISE_DATA.END_DATE)
 				.values(enterpriseInfo.getEnterpriseAgreementId(), enterpriseInfo.getDomainId(),  enterpriseInfo.getEnterpriseId(), "agreement", 
-						enterpriseInfo.getEnterpriseAgreement(), null, null)
+						agreementDescription, null, null)
 				.onDuplicateKeyUpdate()
-				.set(ENTERPRISE_DATA.EXPRESSION, enterpriseInfo.getEnterpriseAgreement())
+				.set(ENTERPRISE_DATA.EXPRESSION, agreementDescription)
 				.execute();
 		}else {
 			if(null != enterpriseInfo.getEnterpriseAgreementId())
@@ -598,7 +438,188 @@ public class JooqEnterprise {
 		
 		return enterpriseInfo;
 	}
+	
+	// --------------------------------- GET ENTERPRISES INFO ----------------------------------------
+	
+	private static Map<Integer, String> getEnterpriseAddressesInfoDB(DSLContext dslContext, Integer enterpriseId) {
+		Map<Integer, String> addresses = new HashMap<Integer, String>();
+		
+		Result<Record> raddressRecords = dslContext.select().from(RADDRESS)
+				.where(RADDRESS.REGISTRY.eq(enterpriseId))
+				.fetch();
+		
+		for(Record r : raddressRecords){
+			Record1<String> geozoneName = dslContext.select(GEOZONE.NAME).from(GEOZONE)
+					.where(GEOZONE.ID.eq(r.get(RADDRESS.GEOZONE)))
+					.fetchOne();
+			
+			String addressStr = "";
+			
+			if(r.get(RADDRESS.STREET_TYPE) != "")
+				addressStr += r.get(RADDRESS.STREET_TYPE) + " ";
+			if(null == r.get(RADDRESS.ADDRESS))
+				continue;
+			if(!r.get(RADDRESS.ADDRESS).isEmpty())
+				addressStr += r.get(RADDRESS.ADDRESS) + " ";
+			if(null !=r.get(RADDRESS.NUMBER))
+				if(!r.get(RADDRESS.NUMBER).isEmpty())
+					addressStr += r.get(RADDRESS.NUMBER) + " ";
+			
+			if(null != geozoneName)
+				addressStr += geozoneName.get(0);
+			
+			addresses.put(r.get(RADDRESS.ID), addressStr);
+		}
+		
+		return addresses;
+	}
+	
+	private static Map<Integer, String> getEnterpriseScopesInfoDB(DSLContext dslContext, Integer enterpriseId) {
+		Map<Integer, String> scopes = new HashMap<Integer, String>();
+		
+		Record enterpriseRecord = dslContext.select().from(ENTERPRISE)
+					.where(ENTERPRISE.REGISTRY.eq(enterpriseId))
+					.fetchOne();
+		
+		Integer domainId = enterpriseRecord.get(ENTERPRISE.DOMAIN);
+		
+		Record domainRecord = dslContext.select().from(DOMAIN)
+				.where(DOMAIN.ID.eq(domainId))
+				.fetchOne();
+		
+		Integer parentDomianId = domainRecord.get(DOMAIN.PARENT);
+		String domainDescription = domainRecord.get(DOMAIN.DESCRIPTION);
+		
+		if(null == parentDomianId) {
+			Result<Record> scopeRecords = dslContext.select().from(SCOPE)
+					.where(SCOPE.DOMAIN.eq(domainId))
+					.fetch();
+			
+			if(null != scopeRecords && !scopeRecords.isEmpty())
+				for(Record r : scopeRecords)
+					scopes.put(r.get(SCOPE.ID), r.get(SCOPE.DESCRIPTION) + " (" + domainDescription +")");
+			
+		}else {
+			Result<Record> scopeRecords = dslContext.select().from(SCOPE)
+					.where(SCOPE.DOMAIN.eq(domainId)
+							.or(SCOPE.DOMAIN.eq(parentDomianId))
+					)
+					.fetch();
+			
+			if(null != scopeRecords && !scopeRecords.isEmpty()) {
+				Record parentDomainRecord = dslContext.select().from(DOMAIN)
+					.where(DOMAIN.ID.eq(parentDomianId))
+					.fetchOne();
+			
+				String parentDescription = parentDomainRecord.get(DOMAIN.DESCRIPTION);
+			
+				for(Record r : scopeRecords)			
+					scopes.put(r.get(SCOPE.ID), r.get(SCOPE.DESCRIPTION) + " (" + parentDescription +")");
+		
+			}
+		}
+		
+		return scopes;
+	}
+	
+	private static Map<Integer, String> getEnterpriseCalendarsInfoDB(DSLContext dslContext, Integer enterpriseId) {
+		Map<Integer, String> calendars = new HashMap<Integer, String>();
+		
+		Record enterpriseRecord = dslContext.select().from(ENTERPRISE)
+				.where(ENTERPRISE.REGISTRY.eq(enterpriseId))
+				.fetchOne();
+		
+		Integer domain = enterpriseRecord.get(ENTERPRISE.DOMAIN);
+		
+		Record domainRecord = dslContext.select().from(DOMAIN)
+				.where(DOMAIN.ID.eq(domain))
+				.fetchOne();
+		
+		Integer parentDomain = domainRecord.get(DOMAIN.PARENT);
+		
+		Result<Record> caledarRecords = null;
+		if(null == parentDomain)
+			caledarRecords = dslContext.select().from(CALENDAR)
+					.where(CALENDAR.DOMAIN.eq(domain))
+					.or(CALENDAR.DOMAIN.eq(0))
+					.fetch();
+		else
+			caledarRecords = dslContext.select().from(CALENDAR)
+				.where(CALENDAR.DOMAIN.eq(domain))
+				.or(CALENDAR.DOMAIN.eq(parentDomain))
+				.or(CALENDAR.DOMAIN.eq(0))
+				.fetch();
+				
+		for(Record r : caledarRecords){
+			if(null != r.get(CALENDAR.DESCRIPTION))
+				calendars.put(r.get(CALENDAR.ID), r.get(CALENDAR.DESCRIPTION));
+		}
+		
+		return calendars;	
+	}
+	
+	private static Map<Integer, String> getEnterpriseActivitiesInfoDB(DSLContext dslContext, Integer enterpriseId) {
+		Map<Integer, String> activities = new HashMap<Integer, String>();
+		
+		Result<Record> enterpriseActivityRecords = dslContext.select().from(ENTERPRISE_ACTIVITY)
+				.where(ENTERPRISE_ACTIVITY.ENTERPRISE.eq(enterpriseId))
+				.fetch();
+		
+		for(Record r : enterpriseActivityRecords){
+			activities.put(r.get(ENTERPRISE_ACTIVITY.ID), r.get(ENTERPRISE_ACTIVITY.DESCRIPTION));
+		}
+		
+		return activities;
+	}
+	
+	// ------------------------------------ AUX METHODS ----------------------------------------
 
+	private static Byte getIndexSendType(String sendType) {
+		switch (sendType) {
+		case "EMAIL":
+			return (byte)0;
+		case "PAPER":
+			return (byte)1;
+		default:
+			return (byte)2;
+		}
+	}
+
+	private static Byte getModelIndexCosts(String costsModel) {
+		switch (costsModel) {
+		case "salaryExpense":
+			return (byte)0;
+		default:
+			return (byte)1;
+		}
+	}
+
+	private static Byte getModelIndexPaysheet(String paysheetModel) {
+		switch (paysheetModel) {
+		case "salary":
+			return (byte)0;
+		case "salary_dualColumn":
+			return (byte)1;
+		case "salary_invoiceSimple":
+			return (byte)2;
+		default:
+			return (byte)3;
+		}
+	}
+	
+	private static Byte getModelIndexPaysheetDraft(String paysheetModel) {
+		switch (paysheetModel) {
+		case "salaryDraft":
+			return (byte)0;
+		case "salaryDraft_dualColumn":
+			return (byte)1;
+		case "salaryDraft_invoiceSimple":
+			return (byte)2;
+		default:
+			return (byte)3;
+		}
+	}
+	
 	private static String getPaysheetSendType(Byte paysheetSendType) {
 		switch (paysheetSendType) {
 		case (byte)0 :

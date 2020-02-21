@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 public class EnterpriseInfo implements Serializable {
 	
 	//Enterprise table
@@ -51,11 +52,6 @@ public class EnterpriseInfo implements Serializable {
 	private Integer paysheetEmailId;
 	private String paysheetEmail;
 	private Integer enterpriseAgreementId;
-	private String enterpriseAgreement;
-	
-	//Rattach
-	String signature;
-	String logo;
 	
 	public EnterpriseInfo() {
 		super();
@@ -341,36 +337,12 @@ public class EnterpriseInfo implements Serializable {
 		this.enterpriseAgreementId = enterpriseAgreementId;
 	}
 
-	public String getEnterpriseAgreement() {
-		return enterpriseAgreement;
-	}
-
-	public void setEnterpriseAgreement(String enterpriseAgreement) {
-		this.enterpriseAgreement = enterpriseAgreement;
-	}
-
 	public Integer getCalendarId() {
 		return calendarId;
 	}
 
 	public void setCalendarId(Integer calendarId) {
 		this.calendarId = calendarId;
-	}
-
-	public String getSignature() {
-		return signature;
-	}
-
-	public void setSignature(String signature) {
-		this.signature = signature;
-	}
-
-	public String getLogo() {
-		return logo;
-	}
-
-	public void setLogo(String logo) {
-		this.logo = logo;
 	}
 
 }

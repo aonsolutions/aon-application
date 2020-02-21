@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
@@ -36,34 +35,118 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 		this.undoManager = new UndoManager<Undoable>();
 	}
 	
-	public List<Agreement> getActiveAgreements(){
-		List<Agreement> activeAgreements = new ArrayList<>();
-		for(Agreement a : this.agreements){
-			if(a.getId() > 0)
-				activeAgreements.add(a);
-		}
-		return activeAgreements;
-	}
+	// ---------------------------------------------- DATABASE METHODS SYNC  ---------------------------------------------
 	
-	public Integer getAgreementId(String agreementName){
-		for(Agreement a : getActiveAgreements()){
-			if(a.getDescription() == agreementName && a.getId() > 0)
-				return a.getId();
-		}
-		return -1;
-	}
+	public void initializeEnterprise(Consumer<EnterpriseInfo> success, Consumer<Throwable> failure) {
 	
+		enterprisesService.getEnterpriseInfo(this.enterprise.getId() , new AsyncCallback<EnterpriseInfo>() {
 
-	public Integer getAgreementIndex() {
-		if(null == getAgreement())
-			return -1;
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+
+			@Override
+			public void onSuccess(EnterpriseInfo result) {
+				enterpriseInfo = result;
+				
+				getAgreements(
+						r ->{success.accept(result);},
+						f->{}
+				);
+			}
+		});	
+	}
+	
+	public void getAgreements(Consumer<List<Agreement>> success, Consumer<Throwable> failure) {
+		enterprisesService.getAgreements(0, Integer.MAX_VALUE, new AsyncCallback<List<Agreement>>() {
+			
+			@Override
+			public void onSuccess(List<Agreement> result) {
+				agreements = getActiveAgreements(result);
+				
+				getEnterpriseCalendars(
+						s -> {success.accept(result);},
+						f ->{}
+				);
+			}
+			
+			private List<Agreement> getActiveAgreements(List<Agreement> agreements) {
+				List<Agreement> activeAgreements = new ArrayList<>();
+				for(Agreement agreement : agreements){
+					if(agreement.getId() > 0)
+						activeAgreements.add(agreement);
+				}
+				return activeAgreements;
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+		});	
+	}
+	
+	private void getEnterpriseCalendars(Consumer<Map<Integer, String>> success, Consumer<Throwable> failure) {
+		enterprisesService.getEnterpiseCalendars(this.enterprise.getId(), new AsyncCallback<Map<Integer,String>>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void onSuccess(Map<Integer, String> result) {
+				calendars = result;
+				
+				getEnterpriseScopes(
+					s -> {success.accept(result);},
+					f -> {}
+				);	
+			}
+		});
+	}
+	
+	private void getEnterpriseScopes(Consumer<Map<Integer, String>> success, Consumer<Throwable> failure) {
+		enterprisesService.getEnterpiseScopes(this.enterprise.getId(), new AsyncCallback<Map<Integer,String>>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void onSuccess(Map<Integer, String> result) {
+				scopes = result;	
+				success.accept(result);
+			}
+		});
+	}
+	
+	public void updateEnterprise(Consumer<EnterpriseInfo> success, Consumer<Throwable> failure) {
 		
-		List<Agreement> activeAgreements = getActiveAgreements();
-		for(int i = 0; i<activeAgreements.size(); i++) {
-			if(activeAgreements.get(i).getId().equals(getAgreement()))
-				return i;
-		}
-		return -1;
+		enterprisesService.updateEnterprise(this.enterpriseInfo , new AsyncCallback<EnterpriseInfo>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+
+			@Override
+			public void onSuccess(EnterpriseInfo result) {
+				success.accept(result);
+			}
+		});	
+	}
+	
+	// ---------------------------------------------- GETTERS  -------------------------------------------------
+	
+	public EnterpriseInfo getEnterpriseInfo() {
+		return this.enterpriseInfo;
+	}
+
+	public List<Agreement> getEnterpriseAgreements() {
+		return agreements;
 	}
 	
 	public Map<Integer, String> getEnterprisecopes(){
@@ -162,6 +245,16 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 		return this.enterpriseInfo.getScopeId();
 	}
 	
+	public Integer getScopeIndex(){
+		Integer index = 0;
+		for(Integer value : getEnterprisecopes().keySet()){
+			if(value.equals(getScope())) 
+				break;
+			index ++;
+		}
+		return index;
+	}
+	
 	public Integer getPaySheetModelIndex() {
 		return (int)this.enterpriseInfo.getPaysheetModel();
 	}
@@ -178,11 +271,24 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 		return this.enterpriseInfo.getPaysheetEmail();
 	}
 	
-	public Integer getAgreement() {
-		if(null == this.enterpriseInfo.getEnterpriseAgreement())
-			return null;
+	public Integer getEnterpriseAgreementIndex(){
+		Integer index = 0;
 		
-		return Integer.parseInt(this.enterpriseInfo.getEnterpriseAgreement());
+		if(!getEnterpriseAgreements().isEmpty() && null != enterpriseInfo.getEnterpriseAgreementId()) {
+			for(Agreement agreement : getEnterpriseAgreements()) {
+				if(agreement.getId().equals(enterpriseInfo.getEnterpriseAgreementId())) {
+					index++;
+					break;
+				}
+				index++;
+			}
+		}
+		
+		return index;
+	}
+	
+	public Integer getAgreement() {
+		return this.enterpriseInfo.getEnterpriseAgreementId();
 	}
 	
 	public Integer getCalendar() {
@@ -199,6 +305,201 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 		return index;
 	}
 	
+	// ----------------------------------------------  SETTERS  -------------------------------------------------
+	
+	public void setName(String name) {
+		add(enterpriseInfo::setName, 
+			enterpriseInfo.getName(), 
+			name );
+		
+		enterpriseInfo.setName(name);
+	}
+	
+	public void setAlias(String alias) {
+		add(enterpriseInfo::setAlias, 
+			enterpriseInfo.getAlias(), 
+			alias );
+		
+		enterpriseInfo.setAlias(alias);
+	}
+	
+	public void setDocumentType(String documentType) {
+		byte documentTypeByte = getDocumentTypeByte(documentType);
+		
+		add(enterpriseInfo::setDocumentType, 
+			enterpriseInfo.getDocumentType(), 
+			documentTypeByte );
+		
+		enterpriseInfo.setDocumentType(documentTypeByte);
+	}
+	
+	public byte getDocumentTypeByte(String documentType) {
+		switch (documentType) {
+		case "DNI":
+			return (byte) 0;
+		case "CIF":
+			return (byte) 1;
+		case "Pasaporte":
+			return (byte) 3;
+		default:
+			return (byte) 0;
+		}
+	}
+	
+	public void setDocument(String document) {
+		add(enterpriseInfo::setDocument, 
+			enterpriseInfo.getDocument(), 
+			document );
+		
+		enterpriseInfo.setDocument(document);
+	}
+	
+	public void setNationality(String nationality) {
+		add(enterpriseInfo::setDocumentCountry, 
+			enterpriseInfo.getDocumentCountry(), 
+			nationality );
+		
+		enterpriseInfo.setDocumentCountry(nationality);
+	}
+	
+	public void setAddressStreetType(String streetType){
+		add(enterpriseInfo::setStreetType, 
+			enterpriseInfo.getStreetType(), 
+			streetType);
+		
+		enterpriseInfo.setStreetType(streetType);
+	}
+	
+	public void setAddress(String address) {
+		add(enterpriseInfo::setAddress, 
+			enterpriseInfo.getAddress(), 
+			address );
+		
+		enterpriseInfo.setAddress(address);
+	}
+	
+	public void setAddressNum(String addressNum) {
+		add(enterpriseInfo::setAddressNum, 
+			enterpriseInfo.getAddressNum(), 
+			addressNum );
+		
+		enterpriseInfo.setAddressNum(addressNum);
+	}
+	
+	public void setAddressZip(String addressZip) {
+		add(enterpriseInfo::setAddressZip, 
+			enterpriseInfo.getAddressZip(), 
+			addressZip );
+		
+		enterpriseInfo.setAddressZip(addressZip);
+	}
+	
+	public void setAddressCity(String addressCity) {
+		add(enterpriseInfo::setAddressCity, 
+			enterpriseInfo.getAddressCity(), 
+			addressCity );
+		
+		enterpriseInfo.setAddressCity(addressCity);
+	}
+	
+	public void setAddressProvince(String addressProvince) {
+		add(enterpriseInfo::setAddressProvince, 
+			enterpriseInfo.getAddressProvince(), 
+			addressProvince );
+		
+		enterpriseInfo.setAddressProvince(addressProvince);
+	}
+	
+	public void setMobile (String mobile) {
+		add(enterpriseInfo::setMobile, 
+			enterpriseInfo.getMobile(), 
+			mobile );
+		
+		enterpriseInfo.setMobile(mobile);
+	}
+	
+	public void setPhone(String phone) {
+		add(enterpriseInfo::setPhone, 
+			enterpriseInfo.getPhone(), 
+			phone );
+		
+		enterpriseInfo.setPhone(phone);
+	}
+	
+	public void setEmail(String email) {
+		add(enterpriseInfo::setEmail, 
+			enterpriseInfo.getEmail(), 
+			email );
+		
+		enterpriseInfo.setEmail(email);
+	}
+	
+	public void setWeb(String web) {
+		add(enterpriseInfo::setWeb, 
+			enterpriseInfo.getWeb(), 
+			web );
+		
+		enterpriseInfo.setWeb(web);
+	}
+	
+	public void setScope(Integer scopeId) {
+		add(enterpriseInfo::setScopeId, 
+			enterpriseInfo.getScopeId(), 
+			scopeId );
+		
+		enterpriseInfo.setScopeId(scopeId);
+	}
+	
+	public void setPaySheetModel(byte paySheetModel) {
+		add(enterpriseInfo::setPaysheetModel, 
+			enterpriseInfo.getPaysheetModel(), 
+			paySheetModel );
+		
+		enterpriseInfo.setPaysheetModel(paySheetModel);
+	}
+	
+	public void setCostModel(byte costModel) {
+		add(enterpriseInfo::setCostsModel, 
+			enterpriseInfo.getCostsModel(), 
+			costModel );
+		
+		enterpriseInfo.setCostsModel(costModel);
+	}
+	
+	public void setPaySheetSendType(byte paySheetModelTypeSend) {
+		add(enterpriseInfo::setPaysheetSendType, 
+			enterpriseInfo.getPaysheetSendType(), 
+			paySheetModelTypeSend );
+		
+		enterpriseInfo.setPaysheetSendType(paySheetModelTypeSend);
+	}
+	
+	public void setPaySheetSendEmail(String email) {
+		add(enterpriseInfo::setPaysheetEmail, 
+			enterpriseInfo.getPaysheetEmail(), 
+			email );
+		
+		enterpriseInfo.setPaysheetEmail(email);
+	}
+	
+	public void setAgreement(Integer agreementId) {
+		add(enterpriseInfo::setEnterpriseAgreementId, 
+			enterpriseInfo.getEnterpriseAgreementId(), 
+			agreementId);
+		
+		enterpriseInfo.setEnterpriseAgreementId(agreementId);
+	}
+	
+	public void setCalendar(Integer calendarId) {
+		add(enterpriseInfo::setCalendarId, 
+				enterpriseInfo.getCalendarId(), 
+				calendarId );
+		
+		enterpriseInfo.setCalendarId(calendarId);
+	}
+		
+	// ------------------------------------------------- AUX METHODS -------------------------------------------------
+	
 	public boolean checkDocumentValidation(String document_type_string, String document_string) {
 		if("DNI".equals(document_type_string)){
 			Dni dni = new Dni(document_string);
@@ -210,356 +511,6 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 			return false;
 		}else
 			return true;
-	}
-	
-	public Integer getScopeIndex(){
-		Integer index = 0;
-		for(Integer value : getEnterprisecopes().keySet()){
-			if(value.equals(getScope())) 
-				break;
-			index ++;
-		}
-		return index;
-	}
-	
-	public String getLogo() {
-		return this.enterpriseInfo.getLogo();
-	}
-	
-	public String getSignature() {
-		return this.enterpriseInfo.getSignature();
-	}
-	
-	// ---------------------------------------------- DATABASE METHODS SYNC  ---------------------------------------------
-	
-	public void initializeEnterprise(Consumer<EnterpriseInfo> success, Consumer<Throwable> failure) {
-	
-		enterprisesService.getEnterpriseInfo(this.enterprise.getId() , new AsyncCallback<EnterpriseInfo>() {
+	}	
 
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
-			}
-
-			@Override
-			public void onSuccess(EnterpriseInfo result) {
-				enterpriseInfo = result;
-				
-				getAgreements(
-						r ->{success.accept(result);},
-						f->{}
-				);
-			}
-		});	
-	}
-	
-	private void getAgreements(Consumer<List<Agreement>> success, Consumer<Throwable> failure) {
-		enterprisesService.getAgreements(0, 0, new AsyncCallback<List<Agreement>>() {
-			
-			@Override
-			public void onSuccess(List<Agreement> result) {
-				agreements = result;
-				
-				getEnterpriseCalendars(
-						s -> {success.accept(result);},
-						f ->{}
-				);	
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-			}
-		});
-	}
-	
-	private void getEnterpriseCalendars(Consumer<Map<Integer, String>> success, Consumer<Throwable> failure) {
-		enterprisesService.getEnterpiseCalendars(this.enterprise.getId(), new AsyncCallback<Map<Integer,String>>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-			}
-
-			@Override
-			public void onSuccess(Map<Integer, String> result) {
-				calendars = result;
-				
-				getEnterpriseScopes(
-					s -> {success.accept(result);},
-					f -> {}
-				);	
-			}
-		});
-	}
-	
-	private void getEnterpriseScopes(Consumer<Map<Integer, String>> success, Consumer<Throwable> failure) {
-		enterprisesService.getEnterpiseScopes(this.enterprise.getId(), new AsyncCallback<Map<Integer,String>>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-			}
-
-			@Override
-			public void onSuccess(Map<Integer, String> result) {
-				scopes = result;
-				
-				success.accept(result);
-			}
-		});
-	}
-	
-	public void updateEnterprise(Consumer<EnterpriseInfo> success, Consumer<Throwable> failure) {
-		
-		enterprisesService.updateEnterprise(this.enterpriseInfo , new AsyncCallback<EnterpriseInfo>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
-			}
-
-			@Override
-			public void onSuccess(EnterpriseInfo result) {
-				success.accept(result);
-			}
-		});	
-	}
-	
-	// ------------------------------------------------- SETTER METHODS -------------------------------------------------
-	
-	public void setName(String name) {
-		add(enterpriseInfo::setName, 
-				enterpriseInfo.getName(), 
-				name );
-		
-		enterpriseInfo.setName(name);
-	}
-	
-	public void setAlias(String alias) {
-		add(enterpriseInfo::setAlias, 
-				enterpriseInfo.getAlias(), 
-				alias );
-		
-		enterpriseInfo.setAlias(alias);
-	}
-	
-	public void setDocumentType(String documentType) {
-		Byte type = null;
-		if(documentType == "DNI")
-			type = (byte) 0; 
-		else if(documentType == "CIF")
-			type = (byte) 1;
-		else if(documentType == "Pasaporte")
-			type = (byte) 3; 
-		else
-			type = (byte) 0; 
-		
-		add(enterpriseInfo::setDocumentType, 
-				enterpriseInfo.getDocumentType(), 
-				type );
-		
-		enterpriseInfo.setDocumentType(type);
-	}
-	
-	public void setDocument(String document) {
-		add(enterpriseInfo::setDocument, 
-				enterpriseInfo.getDocument(), 
-				document );
-		
-		enterpriseInfo.setDocument(document);
-	}
-	
-	public void setNationality(String nationality) {
-		add(enterpriseInfo::setDocumentCountry, 
-				enterpriseInfo.getDocumentCountry(), 
-				nationality );
-		
-		enterpriseInfo.setDocumentCountry(nationality);
-	}
-	
-	public void setAddressStreetType(String streetType){
-		add(enterpriseInfo::setStreetType, 
-				enterpriseInfo.getStreetType(), 
-				getStreetType2(streetType) );
-		
-		enterpriseInfo.setStreetType(getStreetType2(streetType));
-	}
-	
-	private String getStreetType2(String streetType) {
-		for(int i=0; i<StreetType.values().length; i++){
-			if(streetType == StreetType.values()[i].getDescription())
-				return StreetType.values()[i].getShortCode();
-		}
-		return null;
-	}
-	
-	public void setAddress(String address) {
-		add(enterpriseInfo::setAddress, 
-				enterpriseInfo.getAddress(), 
-				address );
-		
-		enterpriseInfo.setAddress(address);
-	}
-	
-	public void setAddressNum(String addressNum) {
-		add(enterpriseInfo::setAddressNum, 
-				enterpriseInfo.getAddressNum(), 
-				addressNum );
-		
-		enterpriseInfo.setAddressNum(addressNum);
-	}
-	
-	public void setAddressZip(String addressZip) {
-		add(enterpriseInfo::setAddressZip, 
-				enterpriseInfo.getAddressZip(), 
-				addressZip );
-		
-		enterpriseInfo.setAddressZip(addressZip);
-	}
-	
-	public void setAddressCity(String addressCity) {
-		add(enterpriseInfo::setAddressCity, 
-				enterpriseInfo.getAddressCity(), 
-				addressCity );
-		
-		enterpriseInfo.setAddressCity(addressCity);
-	}
-	
-	public void setAddressProvince(String addressProvince) {
-		add(enterpriseInfo::setAddressProvince, 
-				enterpriseInfo.getAddressProvince(), 
-				addressProvince );
-		
-		enterpriseInfo.setAddressProvince(addressProvince);
-	}
-	
-	public void setMobile (String mobile) {
-		add(enterpriseInfo::setMobile, 
-				enterpriseInfo.getMobile(), 
-				mobile );
-		
-		enterpriseInfo.setMobile(mobile);
-	}
-	
-	public void setPhone(String phone) {
-		add(enterpriseInfo::setPhone, 
-				enterpriseInfo.getPhone(), 
-				phone );
-		
-		enterpriseInfo.setPhone(phone);
-	}
-	
-	public void setEmail(String email) {
-		add(enterpriseInfo::setEmail, 
-				enterpriseInfo.getEmail(), 
-				email );
-		
-		enterpriseInfo.setEmail(email);
-	}
-	
-	public void setWeb(String web) {
-		add(enterpriseInfo::setWeb, 
-				enterpriseInfo.getWeb(), 
-				web );
-		
-		enterpriseInfo.setWeb(web);
-	}
-
-	public void setScope(String scope) {
-		Integer scopeId = getScopeId(scope);
-		
-		add(enterpriseInfo::setScopeId, 
-				enterpriseInfo.getScopeId(), 
-				scopeId );
-		
-		enterpriseInfo.setScopeId(scopeId);
-	}
-	
-	private Integer getScopeId(String scope) {
-		for(Entry<Integer, String> entry : getEnterprisecopes().entrySet()) {
-			if(entry.getValue().equals(scope))
-				return entry.getKey();
-		}
-
-		return null;
-	}
-
-	public void setScopeId(Integer scopeId) {
-//		add(enterpriseInfo::setScopeId, 
-//				enterpriseInfo.getScopeId(), 
-//				scopeId );
-		
-		enterpriseInfo.setScopeId(scopeId);
-	}
-	
-	public void setPaySheetModel(int paySheetModel) {
-		add(enterpriseInfo::setPaysheetModel, 
-				enterpriseInfo.getPaysheetModel(), 
-				(byte) paySheetModel );
-		
-		enterpriseInfo.setPaysheetModel((byte) paySheetModel);
-	}
-	
-	public void setCostModel(int costModel) {
-		add(enterpriseInfo::setCostsModel, 
-				enterpriseInfo.getCostsModel(), 
-				(byte) costModel );
-		
-		enterpriseInfo.setCostsModel((byte) costModel);
-	}
-	
-	public void setPaySheetSendType(int paySheetModelTypeSend) {
-		add(enterpriseInfo::setPaysheetSendType, 
-				enterpriseInfo.getPaysheetSendType(), 
-				(byte) paySheetModelTypeSend );
-		
-		enterpriseInfo.setPaysheetSendType((byte) paySheetModelTypeSend);
-	}
-	
-	public void setPaySheetSendEmail(String email) {
-		add(enterpriseInfo::setPaysheetEmail, 
-				enterpriseInfo.getPaysheetEmail(), 
-				email );
-		
-		enterpriseInfo.setPaysheetEmail(email);
-	}
-	
-	public void setAgreement(String agreement) {
-		Integer agreementId = getAgreementId(agreement);
-		add(enterpriseInfo::setEnterpriseAgreement, 
-				enterpriseInfo.getEnterpriseAgreement(), 
-				agreementId.toString() );
-		
-		enterpriseInfo.setEnterpriseAgreement(agreementId.toString());
-	}
-	
-	public void setCalendar(String calendar) {
-		Integer calendarId = getCalendarId(calendar);
-		add(enterpriseInfo::setCalendarId, 
-				enterpriseInfo.getCalendarId(), 
-				calendarId );
-		
-		enterpriseInfo.setCalendarId(calendarId);
-	}
-	
-	private Integer getCalendarId(String calendar) {
-		for(Entry<Integer, String> entry : getEnterpriseCalendars().entrySet()) {
-			if(entry.getValue().equals(calendar))
-				return entry.getKey();
-		}
-		return null;
-	}
-
-	public void setCalendarId(Integer calendarId) {
-//		add(enterpriseInfo::setCalendarId, 
-//				enterpriseInfo.getCalendarId(), 
-//				calendarId );
-		
-		enterpriseInfo.setCalendarId(calendarId);
-	}
-
-	public EnterpriseInfo getEnterpriseInfo() {
-		return this.enterpriseInfo;
-	}
 }

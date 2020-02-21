@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map.Entry;
 
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.esferalia.aon.gwt.payroll.shared.StreetType;
@@ -10,8 +11,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ContextMenuEvent;
-import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -26,7 +25,7 @@ import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class Enterprise extends ResizeComposite implements ContextMenuHandler {
+public abstract class Enterprise extends ResizeComposite {
 	
 	// -------------------------------------------------- UiBinder --------------------------------------------------
 
@@ -42,19 +41,10 @@ public abstract class Enterprise extends ResizeComposite implements ContextMenuH
 
 	interface MyStyle extends CssResource {
 		String hide();
-		String paddingEnableDisable();
-		String maxWidth();
-		String fontDisableStyle();
-		String fontEnableStyle();
 		String warningColor();
-		String maxWidthTextBox();
-		String borderNone();
 	}
-
-	// TABLA DATOS EMPRESA
 	
-	@UiField
-	TableElement enterpriseDataTable;
+	// TABLA DATOS EMPRESA
 	
 	@UiField
 	TextBox enterpriseName;
@@ -112,14 +102,6 @@ public abstract class Enterprise extends ResizeComposite implements ContextMenuH
 	
 	@UiField
 	HorizontalPanel enterpriseScopePanel;
-	
-	// TABLA LOGOS EMPRESA
-	
-//	@UiField
-//	HorizontalPanel enterpriseLogoPanel;
-//	
-//	@UiField
-//	HorizontalPanel enterpriseSignPanel;
 	
 	// TABLA OTRO DATOS
 	
@@ -332,33 +314,28 @@ public abstract class Enterprise extends ResizeComposite implements ContextMenuH
 	private void initializeListBox() {
 		//STREET TYPE
 		for(int i=0; i<StreetType.values().length; i++){
-			this.streetType.addItem(StreetType.values()[i].getDescription());
+			this.streetType.addItem(StreetType.values()[i].getDescription(), StreetType.values()[i].getShortCode());
 		}
 		
 		//PROVINCE
 		this.addressProvince.addItem("-");
-		for(String province : ProvinceContract.getProvinces().values())
-			this.addressProvince.addItem(province);
+		for( Entry<String, String> provinces : ProvinceContract.getProvinces().entrySet())
+			this.addressProvince.addItem(provinces.getValue(), provinces.getKey());
 		
 		//PAYSHEET MODEL
-		this.enterprisePaysheetModel.addItem("Estandar");
-		this.enterprisePaysheetModel.addItem("Estandar (2 columnas)");
-		this.enterprisePaysheetModel.addItem("Factura Simple");
-		this.enterprisePaysheetModel.addItem("Factura (Agrupada CRA)");
+		this.enterprisePaysheetModel.addItem("Estandar", "0");
+		this.enterprisePaysheetModel.addItem("Estandar (2 columnas)", "1");
+		this.enterprisePaysheetModel.addItem("Factura Simple", "2");
+		this.enterprisePaysheetModel.addItem("Factura (Agrupada CRA)", "3");
 		
 		//COST MODEL
-		this.enterpriseCostModel.addItem("Por defecto");
-		this.enterpriseCostModel.addItem("Extendida");
+		this.enterpriseCostModel.addItem("Por defecto", "0");
+		this.enterpriseCostModel.addItem("Extendida", "1");
 		
 		//SEND PAYSHEET
-		this.enterprisePaysheetSendType.addItem("Email");
-		this.enterprisePaysheetSendType.addItem("Papel");
-		this.enterprisePaysheetSendType.addItem("Otro");
-	}
-
-	@Override
-	public void onContextMenu(ContextMenuEvent event) {
-		// TODO Auto-generated method stub
+		this.enterprisePaysheetSendType.addItem("Email", "0");
+		this.enterprisePaysheetSendType.addItem("Papel", "1");
+		this.enterprisePaysheetSendType.addItem("Otro", "2");
 	}
 
 }

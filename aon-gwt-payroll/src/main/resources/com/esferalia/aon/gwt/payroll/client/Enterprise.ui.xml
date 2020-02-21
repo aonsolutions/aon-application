@@ -6,29 +6,7 @@
 	<ui:with field='res'
 		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
 
-	<ui:style 
-		type="com.esferalia.aon.gwt.payroll.client.Enterprise.MyStyle">
-		
-		.noselect {
-			-webkit-touch-callout: none; /* iOS Safari */
-			-webkit-user-select: none; /* Safari */
-			-khtml-user-select: none; /* Konqueror HTML */
-			-moz-user-select: none; /* Firefox */
-			-ms-user-select: none; /* Internet Explorer/Edge */
-			user-select: none; /* Non-prefixed version, currently
-				                                  supported by Chrome and Opera */
-		}
-		
-		@external gwt-Selector;
-		@external gwt-SuggestBoxPopup;
-		.gwt-SuggestBoxPopup {
-			z-index: 105;
-		}
-
-		.gwt-Selector .gwt-SuggestBoxPopup{
-			z-index: 105;
-			height: inherit;
-		}
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.Enterprise.MyStyle">
 
 		.headerStyle{
 			top: -0.5em;
@@ -40,7 +18,7 @@
 			color: #2152A5;
 			font-weight: bold !important;
 		}
-
+		
 		.warningColor{
 			color: #f90303;
     		font-weight: bold;
@@ -80,53 +58,6 @@
 
 		.firstColumnTextStyle{
 			padding: 5px !important;
-		}
-
-		.lookupStyle{
-			height: 20px;
-    		border: none !important;
-   		 	margin-left: 15px;
-    		width: 100%;
-		}
-
-		.paddingTop{
-			padding-top: 5px !important;
-		}
-
-		.paddingEnableDisable{
-			position: fixed;
-    		padding-top: 0px;
-    		border: none;
-    		top: 99px;
-    		width: 32px;
-		}
-
-		.fontEnableStyle{
-			font-weight: bold;
-    		color: #000;
-    		white-space: nowrap;
-    		font-size: smaller;
-    		padding-left: 30px;
-    		width: 80px;
-			cursor: pointer;
-		}
-
-		.fontDisableStyle{
-			font-weight: bold;
-    		color: #000;
-    		white-space: nowrap;
-    		font-size: smaller;
-    		padding-left: 30px;
-    		width: 100px;
-			cursor: pointer;
-		}
-
-		.estiloBorrarCuandoSeActiveBoton{
-			background: none !important;
-		}
-		
-		.borderNone{
-			border: none;
 		}
 		
 		.styleBorder{
@@ -288,40 +219,7 @@
 						</table>
 					</g:HTMLPanel>
 				</g:VerticalPanel>
-				<!-- g:VerticalPanel styleName="{style.styleBorder2}">
-					<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Logo y Firma</g:Label>
-					<g:HTMLPanel>
-						<table ui:field="enterpriseLogoTable"
-							style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
-							<tbody>
-							    <tr>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-								</tr>
-								<tr>
-									<td style="background-color: #eaeaea; width: 100px;">
-										<g:Label styleName='{style.firstColumnTextStyle}'>Logo</g:Label>
-									</td>
-									<td>
-										 <g:HorizontalPanel ui:field="enterpriseLogoPanel" styleName="{style.maxWidth}">
-										 	
-										 </g:HorizontalPanel>
-									</td>
-									<td style="background-color: #eaeaea; width: 100px;">
-										<g:Label styleName='{style.firstColumnTextStyle}'>Firma</g:Label>
-									</td>
-									<td>
-										 <g:HorizontalPanel ui:field="enterpriseSignPanel" styleName="{style.maxWidth}">
-										 	
-										 </g:HorizontalPanel>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</g:HTMLPanel>
-				</g:VerticalPanel -->
+				
 				<g:VerticalPanel styleName="{style.styleBorder2}">
 					<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Otros Datos</g:Label>
 					<g:HTMLPanel>

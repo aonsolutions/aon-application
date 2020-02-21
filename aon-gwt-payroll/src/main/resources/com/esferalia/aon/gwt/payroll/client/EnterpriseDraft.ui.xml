@@ -7,86 +7,10 @@
 	<ui:with field='res'
 		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
 
-	<ui:style
-		type="com.esferalia.aon.gwt.payroll.client.EnterpriseDraft.MyStyle">
-
-		.noselect {
-			-webkit-touch-callout: none; /* iOS Safari */
-			-webkit-user-select: none; /* Safari */
-			-khtml-user-select: none; /*Konqueror HTML */
-			-moz-user-select: none; /* Firefox */
-			-ms-user-select: none; /* Internet Explorer/Edge */
-			user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
-		}
-
-		@external gwt-Selector;
-		@external gwt-SuggestBoxPopup;
-		.gwt-SuggestBoxPopup {
-			z-index: 105;
-		}
-
-		.gwt-Selector .gwt-SuggestBoxPopup{
-			z-index: 105;
-			height: inherit;
-		}
-
-		.headerStyle{
-			top: -0.5em;
-			font-size: 12px;
-			margin-left: 10px;
-		}
-
-		.requiredColor{
-			color: #2152A5;
-			font-weight: bold !important;
-		}
-
-		.warningColor{
-			color: #f90303;
-    		font-weight: bold;
-		}
-
-		.hide{
-			display: none;
-		}
-
-		.maxWidth{
-			width: 100%;
-		}
-
-		.maxWidthTextBox{
-			width: 99.7%;
-		}
-		
-		.maxWidthTextBox2{
-			width: 99.4%;
-		}
-
-		.alignTextCenter{
-			text-align: center;
-		}
-
-		.firstColumnTextStyle{
-			padding: 5px !important;
-		}
-
-		.lookupStyle{
-			height: 20px;
-    		border: none !important;
-   		 	margin-left: 15px;
-    		width: 100%;
-		}
+	<ui:style>
 
 		.paddingTop{
 			padding-top: 5px !important;
-		}
-
-		.paddingEnableDisable{
-			position: fixed;
-    		padding-top: 0px;
-    		border: none;
-    		top: 99px;
-    		width: 32px;
 		}
 
 		.fontEnableStyle{
@@ -97,40 +21,6 @@
     		padding-left: 30px;
     		width: 200px;
 			cursor: pointer;
-		}
-
-		.fontDisableStyle{
-			font-weight: bold;
-    		color: #000;
-    		white-space: nowrap;
-    		font-size: smaller;
-    		padding-left: 30px;
-    		width: 100px;
-			cursor: pointer;
-		}
-
-		.estiloBorrarCuandoSeActiveBoton{
-			background: none !important;
-		}
-		
-		.borderNone{
-			border: none;
-		}
-		
-		.styleBorder{
-			border-style: solid; 
-			width: 975px; 
-			border-width: 1px; 
-			margin-top: 20px; 
-			margin-left: 10px;
-		}
-		
-		.styleBorder2{
-			border-style: solid; 
-			width: 975px; 
-			border-width: 1px; 
-			margin-top: 40px; 
-			margin-left: 10px;
 		}
 
 	</ui:style>
@@ -151,11 +41,6 @@
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
-							<!--g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-								<g:Button ui:field='saveButton'
-									styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR"
-									enabled="true" />
-							</g:HTMLPanel-->
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 								<g:Button ui:field='newWorkplaceButton'
 									styleName='aon-finding-toolbar-item aon-icon-reset' text="NUEVO CENTRO TRABAJO"
