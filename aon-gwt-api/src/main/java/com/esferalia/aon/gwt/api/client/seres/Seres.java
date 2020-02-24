@@ -28,40 +28,40 @@ public class Seres extends Methods{
 	
 	public void getSummary(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsSummary>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "seres/"+getDomainName()+"/"+getUserName()+"/summary"+filter, callback);
+		get(getUrl() + "ms/seres/"+getDomainName()+"/"+getUserName()+"/summary"+filter, callback);
 	}
 
 	public void getOutcomeDelivery(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsSeresFile>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "seres/"+getDomainName()+"/"+getUserName()+"/outcome_delivery"+filter, callback);
+		get(getUrl() + "ms/seres/"+getDomainName()+"/"+getUserName()+"/outcome_delivery"+filter, callback);
 	}
 
 	public void getOutcomeInvoice(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsSeresFile>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "seres/"+getDomainName()+"/"+getUserName()+"/outcome_invoice"+filter, callback);
+		get(getUrl() + "ms/seres/"+getDomainName()+"/"+getUserName()+"/outcome_invoice"+filter, callback);
 	}
 
 	public void getIncomeSales(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsSeresFile>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "seres/"+getDomainName()+"/"+getUserName()+"/income_sales"+filter, callback);
+		get(getUrl() + "ms/seres/"+getDomainName()+"/"+getUserName()+"/income_sales"+filter, callback);
 	}
 
 	public void getIncomeInvoice(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsSeresFile>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "seres/"+getDomainName()+"/"+getUserName()+"/income_invoice"+filter, callback);
+		get(getUrl() + "ms/seres/"+getDomainName()+"/"+getUserName()+"/income_invoice"+filter, callback);
 	}
 	
 	public void getIngenetDeliveryAttach(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsAttachFile>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
-		get(getUrl() + "seres/"+getDomainName()+"/"+getUserName()+"/ingenet_delivery"+filter, callback);
+		get(getUrl() + "ms/seres/"+getDomainName()+"/"+getUserName()+"/ingenet_delivery"+filter, callback);
 	}
 	
 	public void getHistory(AsyncCallback<JSON<JsDataResponse>> callback){
-		get(getUrl() + "seres/"+getDomainName()+"/"+getUserName()+"/history", callback);
+		get(getUrl() + "ms/seres/"+getDomainName()+"/"+getUserName()+"/history", callback);
 	}
 	
 	public void getHistoryDetail(Integer id, AsyncCallback<JSON<JsObject>> callback){
-		get(getUrl() + "seres/"+getDomainName()+"/"+getUserName()+"/history_detail?id="+id, callback);
+		get(getUrl() + "ms/seres/"+getDomainName()+"/"+getUserName()+"/history_detail?id="+id, callback);
 	}
 	
 	@Deprecated
