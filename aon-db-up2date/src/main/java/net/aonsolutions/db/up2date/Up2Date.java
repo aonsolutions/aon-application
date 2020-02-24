@@ -22,6 +22,7 @@ import org.apache.commons.cli.ParseException;
 import net.aonsolutions.db.up2date.payroll.PagaExtraUpdate;
 import net.aonsolutions.db.up2date.payroll.TempPaymentInsert;
 import net.aonsolutions.db.up2date.tgss.SMI2020Update;
+import net.aonsolutions.db.up2date.tgss.SalaryHoursUpdate;
 
 public class Up2Date {
 
@@ -91,8 +92,9 @@ public class Up2Date {
     		//Holidays2020Insert.HOLIDAYS2020INSERT
     		//FundUpvUpdate2020.FUNDUPV_UPDATE_2020,
     		//SMI2020Update.SMI2020UPDATE,
-    		PagaExtraUpdate.PAGAEXTRAUPDATE,
-    		TempPaymentInsert.TEMPPAYMENTINSERT
+    		//PagaExtraUpdate.PAGAEXTRAUPDATE,
+    		//TempPaymentInsert.TEMPPAYMENTINSERT
+    		SalaryHoursUpdate.SALARYHOURSUPDATE
     };
 
 
