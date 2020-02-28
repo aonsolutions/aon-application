@@ -8,21 +8,19 @@ import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CCCType;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
-import com.esferalia.aon.gwt.payroll.shared.ContractJourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.ContractType;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ModelRecord;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.Iban;
-import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Municipalities;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
-import com.esferalia.aon.gwt.payroll.shared.StreetType;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -30,6 +28,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -38,12 +37,14 @@ import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class EmployeeDialog extends CustomDialog {
 	
+	@SuppressWarnings("deprecation")
 	private class EmployeeImplementation extends Employee{
 		ContractType contractTypeClass = new ContractType();
 		
@@ -54,44 +55,46 @@ public class EmployeeDialog extends CustomDialog {
 			employeeDialogObject.resetEmptyInfo();
 			fillExistingEmployee();
 			unblockVariablesExistingContract();
+			employee.clear_employee.getElement().getStyle().setDisplay(Display.NONE);
 		}
 		
 		@Override
 		public void onEmployeeDocumentSuggestionChange() {
 			String document = this.document.getValue();
-			EmployeeInfo employeeData = employeeDialogObject.getEmployeeDataByDocument(document);
-			if(null == employeeData.getEmployeeId())
-				employeeDialogObject.setEmployeeDocument(document);
-			else
-				employeeDialogObject.initializeEmployee(
-						employeeData.getContractId(),
-						r -> { fillExistingEmployee();
-							   if(employeeData.getContractActive())
-								   blockVariablesExistingContract();
-							   employee.clear_employee.removeStyleName(employee.style.hide());
-							 }, 
-						t -> {}
-				);	
+			if(!StringUtils.isBlank(document)) {
+				EmployeeInfo existingEmployee = employeeDialogObject.getEmployeeDataByDocument(document);
+				if(null == existingEmployee)
+					employeeDialogObject.setEmployeeDocument(document);
+				else {
+					employeeDialogObject.initializeEmployee(
+							existingEmployee.getContractId(),
+							s -> { 
+								initExistingEmployee(existingEmployee.getContractActive());
+							}, 
+							f -> {}
+					);	
+				}
+			}
 		}
 		
 		@Override
 		public void onEmployeeDocumentChange() {
 			String document = this.document.getValue();
-			String document_type = checkDocumentType(document);
-			
-			this.document_type.setText(document_type);
-			if(employeeDialogObject.checkDocumentValidation(document_type, document)) {
-				employeeDialogObject.setEmployeeDocument(this.document.getValue());
+			if(!StringUtils.isBlank(document)) {
+				
+				String document_type = checkDocumentType(document);
+				this.document_type.setText(document_type);
+				
+				employeeDialogObject.setEmployeeDocument(document);
 				employeeDialogObject.setEmployeeDocumentType(document_type);
-				this.documentStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-				this.documentStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
-			}else {
-				employeeDialogObject.setEmployeeDocument(this.document.getValue());
-				employeeDialogObject.setEmployeeDocumentType(document_type);
-				this.documentStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
-				this.documentStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+				
+				if(employeeDialogObject.checkDocumentValidation(document_type, document))
+					addSuccessStyle(this.documentStatus);
+				else
+					addWarningStyle(this.documentStatus);
+					
+				showNationality(document_type);	
 			}
-			showNationality(document_type);				
 		}
 		
 		@Override
@@ -103,93 +106,100 @@ public class EmployeeDialog extends CustomDialog {
 		@Override
 		public void onEmployeeSSNumSuggestionChange() {
 			String ssNum = this.security_social_num.getValue();
-			EmployeeInfo employeeData = employeeDialogObject.getEmployeeDataBySSNum(ssNum);
-			if(null == employeeData.getEmployeeId()){
-				employeeDialogObject.setEmployeeSocialSecurityNum(ssNum);
-			}else
-				employeeDialogObject.initializeEmployee(
-						employeeData.getContractId(),
-						r -> { fillExistingEmployee();
-							   if(employeeData.getContractActive())
-								   blockVariablesExistingContract();
-							   employee.clear_employee.removeStyleName(employee.style.hide());
-							 }, 
-						t -> {}
-				);	
+			if(!StringUtils.isBlank(ssNum)) {
+				EmployeeInfo existingEmployee = employeeDialogObject.getEmployeeDataBySSNum(ssNum);
+				if(null == existingEmployee.getEmployeeId())
+					employeeDialogObject.setEmployeeSocialSecurityNum(ssNum);
+				else
+					employeeDialogObject.initializeEmployee(
+							existingEmployee.getContractId(),
+							s -> { 
+								initExistingEmployee(existingEmployee.getContractActive());
+							}, 
+							f -> {}
+					);		
+			}	
 		}
 
 		@Override
 		public void onEmployeeSSNumChange() {
 			String ssNum = this.security_social_num.getValue();
-			if(employeeDialogObject.checkSSNumValidation(ssNum)) {
+			
+			if(!StringUtils.isBlank(ssNum)) {
 				employeeDialogObject.setEmployeeSocialSecurityNum(ssNum);
-				this.ssNumberStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-				this.ssNumberStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
-			}else {
-				employeeDialogObject.setEmployeeSocialSecurityNum(ssNum);
-				this.ssNumberStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
-				this.ssNumberStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+				if(employeeDialogObject.checkSSNumValidation(ssNum))
+					addSuccessStyle(this.ssNumberStatus);
+				else
+					addWarningStyle(this.ssNumberStatus);
 			}
 		}
 		
 		@Override
 		public void onEmployeeNameSuggestionChange() {
 			String nameSurname = this.name.getValue();
-			String name = nameSurname.split(", ")[0];
-			String surname = nameSurname.split(", ")[1];
-			EmployeeInfo employeeData = employeeDialogObject.getEmployeeDataByNameSurname(name, surname);
-			if(null == employeeData.getEmployeeId())
-				employeeDialogObject.setEmployeeName(name);
-			else
-				employeeDialogObject.initializeEmployee(
-						employeeData.getContractId(),
-						r -> { fillExistingEmployee();
-							   if(employeeData.getContractActive())
-								   blockVariablesExistingContract();
-							   employee.clear_employee.removeStyleName(employee.style.hide());
-							 }, 
-						t -> {}
-				);				
+			
+			if(!StringUtils.isBlank(nameSurname)) {
+				EmployeeInfo existingEmployee = employeeDialogObject.getEmployeeDataByNameSurname(nameSurname);
+				
+				if(null == existingEmployee.getEmployeeId()) {
+					String name = nameSurname.split(", ")[0];
+					employeeDialogObject.setEmployeeName(name);
+				}else
+					employeeDialogObject.initializeEmployee(
+							existingEmployee.getContractId(),
+							r -> { 
+								initExistingEmployee(existingEmployee.getContractActive());
+							}, 
+							t -> {}
+					);
+			}
 		}
 		
 		@Override
 		public void onEmployeeNameChange() {
-			employeeDialogObject.setEmployeeName(this.name.getValue());	
+			String name = this.name.getValue();
+			if(!StringUtils.isBlank(name)) 
+				employeeDialogObject.setEmployeeName(name);	
 		}
 
 		@Override
 		public void onEmployeeFirstSurnameSuggestionChange() {
 			String nameSurname = this.first_surname.getValue();
-			String name = nameSurname.split(", ")[0];
-			String surName = nameSurname.split(", ")[1];
-			EmployeeInfo employeeData = employeeDialogObject.getEmployeeDataByNameSurname(name, surName);
-			if(null == employeeData.getEmployeeId())
-				employeeDialogObject.setEmployeeFirstSurname(surName);
-			else
-				employeeDialogObject.initializeEmployee(
-						employeeData.getContractId(),
-						r -> { fillExistingEmployee();
-							   if(employeeData.getContractActive())
-								   blockVariablesExistingContract();
-							   employee.clear_employee.removeStyleName(employee.style.hide());
-							 }, 
-						t -> {}
-				);	
+			
+			if(!StringUtils.isBlank(nameSurname)) {
+				EmployeeInfo existingEmployee = employeeDialogObject.getEmployeeDataByNameSurname(nameSurname);
+				
+				if(null == existingEmployee.getEmployeeId()) {
+					String surName = nameSurname.split(", ")[1];
+					employeeDialogObject.setEmployeeFirstSurname(surName);
+				}else
+					employeeDialogObject.initializeEmployee(
+							existingEmployee.getContractId(),
+							r -> { 
+								initExistingEmployee(existingEmployee.getContractActive());
+							}, 
+							t -> {}
+					);	
+			}
 		}
 		
 		@Override
 		public void onEmployeeFirstSurnameChange() {
-			employeeDialogObject.setEmployeeFirstSurname(this.first_surname.getValue());
+			String surname = this.first_surname.getValue();
+			if(!StringUtils.isBlank(surname)) 
+				employeeDialogObject.setEmployeeFirstSurname(surname);
 		}
 
 		@Override
 		public void onEmployeeSecondSurnameChange() {
-			employeeDialogObject.setEmployeeSecondSurname(this.second_surname.getValue());
+			String secondSurname = this.second_surname.getValue();
+			if(!StringUtils.isBlank(secondSurname)) 
+				employeeDialogObject.setEmployeeSecondSurname(secondSurname);
 		}
 
 		@Override
 		public void onContractSSRegimenChange() {
-			int ssRegime = this.ssRegimeType.getSelectedIndex();
+			byte ssRegime = Byte.valueOf(this.ssRegimeType.getSelectedValue()).byteValue();
 			employeeDialogObject.setSSRegime(ssRegime);
 			
 			if(1 == ssRegime){
@@ -202,38 +212,17 @@ public class EmployeeDialog extends CustomDialog {
 		
 		@Override
 		public void onContractActiviesCCCChange() {
-			String activityCCC = this.activityCCC.getSelectedItemText();
-			if(activityCCC.equals("-")){
-				employeeDialogObject.setContractActivityId(null);
-				employeeDialogObject.setContractCCCId(null);
-				employeeDialogObject.setContractCCCType((Byte)null);
-			}else{
-				String activityStr = activityCCC.split(" -")[0];
-				String cccStr = activityCCC.split("\\[")[1].split("\\]")[0];
-				String cccTypeStr = activityCCC.split("- ")[1].split("\\[")[0];
-				String cccGeozoneStr = activityCCC.split("- ")[2];
-//				Window.alert("ActivityStr : " + activityStr + ", CCCStr : " + cccStr + ", CCCTypeStr : " + cccTypeStr + ", CCCGeozoneStr : "+ cccGeozoneStr);
-				int cccTypeInt = -1;
-				for(int i=0; i< CCCType.values().length; i++){
-					if(CCCType.values()[i].name().equals(cccTypeStr)){
-						cccTypeInt = i;
-						break;
-					}
-				}
-				byte cccType = (byte) cccTypeInt;
-				
-				Integer activityId = employeeDialogObject.getActivityIdByName(activityStr);
-				Integer cccId = employeeDialogObject.getCCCIdByNumber(cccStr, cccType, cccGeozoneStr);
-				employeeDialogObject.setContractActivityId(activityId);
-				employeeDialogObject.setContractCCCId(cccId);
-				employeeDialogObject.setContractCCCType(cccType);
-			}
+			String activityCCC = String.valueOf(this.activityCCC.getSelectedValue());
+			
+			if(this.activityCCC.getSelectedIndex() == 0)
+				employeeDialogObject.setActivityInfo(null);
+			else
+				employeeDialogObject.setActivityInfo(activityCCC);
 		}
 		
 		@Override
 		public void onContractWorkplaceChange() {
-			String workplaceName = this.workplace.getSelectedItemText();
-			Integer workplaceId = employeeDialogObject.getWorkplaceIdByName(workplaceName);
+			Integer workplaceId = Integer.parseInt(this.workplace.getSelectedValue());
 			employeeDialogObject.setContractWorkplaceId(workplaceId);
 		}
 
@@ -241,43 +230,36 @@ public class EmployeeDialog extends CustomDialog {
 		public void onContractTypeChange() {
 			this.modality.clear();
 			this.modality.addItem("-");
-			Integer contractTypeId = -1;
-			if (this.contractType.getSelectedIndex() != 0) {
-				String contract_type_id_str = this.contractType.getSelectedItemText().split(" -")[0];
-				contractTypeId = Integer.parseInt(contract_type_id_str);
-				if((contractTypeId >= 200 && contractTypeId<300) || (contractTypeId >= 500 && contractTypeId<600)) {
-					this.showElementsPartialTimeContract();
-					this.journeyDuration.addStyleName(style.journeyDurationWarning());
-					this.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
-				}else
-					this.showElementsFullTimeContract();
-			}
-
-			List<ModelRecord> contractTypeModels = contractTypeClass.getModelsContractType(contractTypeId);
 			
-			for (ModelRecord m : contractTypeModels)
-				this.modality.addItem(m.getModelDescription());
-						
-			if (this.contractType.getSelectedIndex() == 0) {
-				employeeDialogObject.setContractType(null);
+			String contractType = null;
+			
+			if(this.contractType.getSelectedIndex() == 0) {
+				employeeDialogObject.setContractType(contractType);
 				employeeDialogObject.setContractModel(null);
-			} else {
-				String contract_type_id_str = this.contractType.getSelectedItemText().split(" -")[0];
-				employeeDialogObject.setContractType(contract_type_id_str);
+			}else {
+				contractType = String.valueOf(this.contractType.getSelectedValue());
+				Integer contractTypeInt = Integer.parseInt(contractType);
+				
+				if((contractTypeInt >= 200 && contractTypeInt<300) || (contractTypeInt >= 500 && contractTypeInt<600))
+					showPartialTimeContract();
+				else
+					this.showElementsFullTimeContract();
+				
+				List<ModelRecord> contractTypeModels = contractTypeClass.getModelsContractType(contractTypeInt);
+				for (ModelRecord model : contractTypeModels)
+					this.modality.addItem(model.getModelDescription(), model.getEnumeration().toString());
+				
+				employeeDialogObject.setContractType(contractType);
 			}
 		}
 		
 		@Override
 		public void onContractModalityChange() {
-			if (this.contractType.getSelectedIndex() == 0 || this.modality.getSelectedIndex() == 0) {
+			if (this.modality.getSelectedIndex() == 0)
 				employeeDialogObject.setContractModel(null);
-			} else {
-				String contract_type_id_str = this.contractType.getSelectedItemText().split(" -")[0];
-				Integer contractTypeId = Integer.parseInt(contract_type_id_str);
-
-				String contractModelDescription = modality.getSelectedItemText();
-				Integer contractModelEnum = contractTypeClass.getContractModelId(contractTypeId, contractModelDescription);
-				employeeDialogObject.setContractModel(contractModelEnum); // GET String of enum in JooqEmployee.java
+			else {
+				Integer contractModel = Integer.parseInt(this.modality.getSelectedValue());
+				employeeDialogObject.setContractModel(contractModel); // GET String of enum in JooqEmployee.java
 			}
 		}
 		
@@ -293,87 +275,40 @@ public class EmployeeDialog extends CustomDialog {
 
 		@Override
 		public void onContractSeniorityDateChange() {
-			employeeDialogObject.setContractSeniorityDate(this.seniority_date.getValue());
-			if(null == this.start_date.getValue() || null == this.seniority_date.getValue()) {
-				this.seniority_dateStatus.setStyleName("aon-finding-toolbar-item aon-icon-info aon-finding-toolbar-item-no-border");
-				this.seniority_dateStatus.removeStyleName(style.hide());
-				this.seniority_dateStatus.addStyleName(style.marginTop());
-				this.seniority_dateStatus.setTitle("La fecha de inicio no coincide con la de antig" + String.valueOf("\u00FC") + "edad.");
-			}else {
-				Date startDate = this.start_date.getValue();
+			Date startDate = this.start_date.getValue();
+			Date seniorityDate = this.seniority_date.getValue();
+			
+			if(null == startDate)
+				addWarningDateStyle(this.seniority_dateStatus);
+			else if(null != seniorityDate) {
 				DateUtils.resetTime(startDate);
-				Date seniorityDate = this.seniority_date.getValue();
 				DateUtils.resetTime(seniorityDate);
 				
-				if(startDate.equals(seniorityDate)) {
-					this.seniority_dateStatus.addStyleName(style.hide());
-				}else {
-					this.seniority_dateStatus.setStyleName("aon-finding-toolbar-item aon-icon-info aon-finding-toolbar-item-no-border");
-					this.seniority_dateStatus.removeStyleName(style.hide());
-					this.seniority_dateStatus.addStyleName(style.marginTop());
-					this.seniority_dateStatus.setTitle("La fecha de inicio no coincide con la de antig" + String.valueOf("\u00FC") + "edad.");
-				}
-			}
+				if(startDate.equals(seniorityDate))
+					this.seniority_dateStatus.getElement().getStyle().setDisplay(Display.NONE);
+				else
+					addWarningDateStyle(this.seniority_dateStatus);
+			} else
+				this.seniority_dateStatus.getElement().getStyle().setDisplay(Display.NONE);
+			
+			employeeDialogObject.setContractSeniorityDate(seniorityDate);	
 		}
 
 		@Override
 		public void onContractAgreementChange() {
-			this.level.clear();
 			
 			if (this.agreement.getSelectedIndex() == 0 ) {
 				employeeDialogObject.setContractAgreementId(null);
 				employeeDialogObject.setContractAgreementLevelId(null);
+				this.level.clear();
 				this.category.setValue("");
 				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.category);
+				return;
 			}
 			
 			Integer agreementId =  Integer.valueOf(this.agreement.getSelectedValue()); 
+			getAgreementLevels(agreementId);
 			
-			this.level.addItem("-", "-1");
-			
-			employeeDialogObject.getAgreement(agreementId,  
-			(agreement) -> {
-				for (Level levelRecord : agreement.getLevels())
-					for (String categoryRecord : agreement.getCategoriesMap().get(levelRecord.getId()))
-						this.level.addItem(levelRecord.getDescription() + " - " + categoryRecord, String.valueOf(levelRecord.getId()));
-
-				employeeDialogObject.setContractAgreementId(agreement.getId());
-				employeeDialogObject.setContractAgreementLevelId(null);
-			},
-			(throwable) -> {
-				employeeDialogObject.setContractAgreementId(null);
-				employeeDialogObject.setContractAgreementLevelId(null);
-				this.category.setEnabled(false);
-				this.category.setValue("");
-				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.category);
-			});
-			
-//			this.level.clear();
-//			String agreementName = this.agreement.getSelectedItemText();
-//			List<Agreement> agreements = employeeDialogObject.getAgreements();
-//			this.level.addItem("-");
-//			for (Agreement a : agreements) {
-//				if (a.getId() > 0 && a.getDescription() == agreementName) {
-//					Set<Level> levels = a.getLevels();
-//					for (Level levelRecord : levels) {
-//						Set<String> categories = a.getCategoriesMap().get(levelRecord.getId());
-//						for (String categoryRecord : categories) {
-//							this.level.addItem(levelRecord.getDescription() + " - " + categoryRecord);
-//						}
-//					}
-//				}
-//			}
-//			
-//			if (this.agreement.getSelectedIndex() == 0) {
-//				employeeDialogObject.setContractAgreementId(null);
-//				employeeDialogObject.setContractAgreementLevelId(null);
-//				this.category.setEnabled(false);
-//				this.category.setValue("");
-//				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.category);
-//			} else {
-//				Integer agreementId = employeeDialogObject.getAgreementId(this.agreement.getSelectedItemText());
-//				employeeDialogObject.setContractAgreementId(agreementId);
-//			}
 		}
 
 		@Override
@@ -393,22 +328,6 @@ public class EmployeeDialog extends CustomDialog {
 				employeeDialogObject.setContractCategory(levelDescription);
 				this.category.setEnabled(true);
 			}
-//			if (this.agreement.getSelectedIndex() == 0 || this.level.getSelectedIndex() == 0) {
-//				employeeDialogObject.setContractAgreementLevelId(null);
-//				this.category.setEnabled(false);
-//				this.category.setValue("");
-//				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.category);
-//			} else {
-//				Integer agreementLevelId = employeeDialogObject.getAgreementLevelId(this.agreement.getSelectedItemText(),
-//						this.level.getSelectedItemText());
-//				employeeDialogObject.setContractAgreementLevelId(agreementLevelId);
-//				String levelDescription = (this.level.getSelectedItemText() == null
-//						|| this.level.getSelectedItemText() == "-") ? null
-//								: this.level.getSelectedItemText().split("- ")[1];
-//				this.category.setValue(levelDescription);
-//				employeeDialogObject.setContractCategory(levelDescription);
-//				this.category.setEnabled(true);
-//			}
 		}
 		
 		@Override
@@ -420,16 +339,20 @@ public class EmployeeDialog extends CustomDialog {
 		public void onContractQuoteGroupChange() {
 			if (quote_group.getSelectedIndex() == 0)
 				employeeDialogObject.setContractQuoteGroup(null);
-			else
-				employeeDialogObject.setContractQuoteGroup(this.quote_group.getSelectedIndex());
+			else {
+				String quoteGroup = String.valueOf(this.quote_group.getSelectedValue()); 
+				employeeDialogObject.setContractQuoteGroup(quoteGroup);
+			}
 		}
 
 		@Override
 		public void onContractOccupationChange() {
 			if (this.occupation.getSelectedIndex() == 0)
 				employeeDialogObject.setContractOccupation(null);
-			else
-				employeeDialogObject.setContractOccupation(this.occupation.getSelectedIndex());
+			else {
+				String occupation = String.valueOf(this.occupation.getSelectedValue());
+				employeeDialogObject.setContractOccupation(occupation);
+			}
 		}
 
 		@Override
@@ -438,84 +361,70 @@ public class EmployeeDialog extends CustomDialog {
 			 employeeDialogObject.setContractJourneyType(journey_type);
 			 if(this.journeyType.getSelectedIndex() == 0)
 				 employee.showElementsFullTimeContract();
-			 else {
-				 this.showElementsPartialTimeContract();
-				 this.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-				 this.journeyDuration.addStyleName(style.journeyDurationWarning());
-				 this.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
-				 employee.showElementsPartialTimeContract();
-			 } 
+			 else
+				 showPartialTimeContract();
 		}
-		
+
 		@Override
 		public void onContractJourneyDurationClick() {
-			ContractJourneyDialog dialog = new ContractJourneyDialog(employeeDialogObject.getContractStartDate(), employeeDialogObject.getContractEndDate(),
-					employeeDialogObject.getContractJourneyDuration()) {
-
-				@Override
-				protected void onSave() {
-					ContractJourneyDuration contractJourneyDuration = this.getContractJourneyDuration();
-					if(contractJourneyDuration.getJourniesSize() != 0) {
-						String result = "Desde ";
-						for(JourneyDuration journeyDuration : contractJourneyDuration.getContractJourneyDuration().descendingMap().entrySet().iterator().next().getValue()) {
-							if("HORAS_LUNES" == journeyDuration.getName()) result += formatDate(journeyDuration.getStartDate()) + " ( L : " + journeyDuration.getExpression() + " ";
-							if("HORAS_MARTES" == journeyDuration.getName()) result += ", M : " + journeyDuration.getExpression() + " ";
-							if("HORAS_MIERCOLES" == journeyDuration.getName()) result += ", X : " + journeyDuration.getExpression() + " ";
-							if("HORAS_JUEVES" == journeyDuration.getName()) result += ", J : " + journeyDuration.getExpression() + " ";
-							if("HORAS_VIERNES" == journeyDuration.getName()) result += ", V : " + journeyDuration.getExpression() + " ";
-							if("HORAS_SABADO" == journeyDuration.getName()) result += ", S : " + journeyDuration.getExpression() + " ";
-							if("HORAS_DOMINGO" == journeyDuration.getName()) result += ", D : " + journeyDuration.getExpression() + " )";
-						}
-						employee.journeyDuration.setText(result);
-						employee.journeyDuration.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-					}else {
-						employee.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-						employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
-						employee.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
-					}
-					employeeDialogObject.setContractJourneyDuration(contractJourneyDuration.getContractJourneyDuration());
-				}	
-			};
-			dialog.center();
-			dialog.show();			
-		}
-		
-		private String formatDate(Date date) {
-			return date.getDate() + "/" + (date.getMonth()+1) + "/" + (date.getYear()+1900);
+//			ContractJourneyDialog dialog = new ContractJourneyDialog(employeeDialogObject.getContractStartDate(), employeeDialogObject.getContractEndDate(),
+//					employeeDialogObject.getContractJourneyDuration()) {
+//
+//				@Override
+//				protected void onSave() {
+//					ContractJourneyDuration contractJourneyDuration = this.getContractJourneyDuration();
+//					if(contractJourneyDuration.getJourniesSize() != 0) {
+//						String result = "Desde ";
+//						for(JourneyDuration journeyDuration : contractJourneyDuration.getContractJourneyDuration().descendingMap().entrySet().iterator().next().getValue()) {
+//							if("HORAS_LUNES" == journeyDuration.getName()) result += formatDate(journeyDuration.getStartDate()) + " ( L : " + journeyDuration.getExpression() + " ";
+//							if("HORAS_MARTES" == journeyDuration.getName()) result += ", M : " + journeyDuration.getExpression() + " ";
+//							if("HORAS_MIERCOLES" == journeyDuration.getName()) result += ", X : " + journeyDuration.getExpression() + " ";
+//							if("HORAS_JUEVES" == journeyDuration.getName()) result += ", J : " + journeyDuration.getExpression() + " ";
+//							if("HORAS_VIERNES" == journeyDuration.getName()) result += ", V : " + journeyDuration.getExpression() + " ";
+//							if("HORAS_SABADO" == journeyDuration.getName()) result += ", S : " + journeyDuration.getExpression() + " ";
+//							if("HORAS_DOMINGO" == journeyDuration.getName()) result += ", D : " + journeyDuration.getExpression() + " )";
+//						}
+//						employee.journeyDuration.setText(result);
+//						employee.journeyDuration.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+//					}else {
+//						employee.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+//						employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
+//						employee.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
+//					}
+//					employeeDialogObject.setContractJourneyDuration(contractJourneyDuration.getContractJourneyDuration());
+//				}	
+//			};
+//			dialog.center();
+//			dialog.show();			
 		}
 		
 		// TABLA DATOS EMPLEADO
 
-		@SuppressWarnings("deprecation")
 		@Override
 		public void onEmployeeBirthDateChange() {
-			employeeDialogObject.setEmployeeBirthDate(this.birth_date.getValue());
-			if(null != this.birth_date.getValue()) {
-				Integer year = this.birth_date.getValue().getYear();
-				Integer actualYear = new Date().getYear();
-				Integer month = this.birth_date.getValue().getMonth();
-				Integer actualMonth = new Date().getMonth();
-				
-				Integer age = actualYear - year;
-				if(month > actualMonth)
-					age--;
-				
+			Date birthDate = this.birth_date.getValue();
+			
+			if(null != birthDate) {
+				Date actualDay = new Date();
+				Integer age = getYears(actualDay, birthDate);
 				this.age.setText("( " + (age) + " a" + String.valueOf("\u00F1") + "os )");
-			}else
+			} else
 				this.age.setText("");
+			
+			employeeDialogObject.setEmployeeBirthDate(this.birth_date.getValue());
 			
 		}
 
 		@Override
 		public void onEmployeeGenderChange() {
-			employeeDialogObject.setEmployeeGender(this.gender.getSelectedIndex());
+			byte gender = Byte.valueOf(this.gender.getSelectedValue()).byteValue();
+			employeeDialogObject.setEmployeeGender(gender);
 		}
 		
 		@Override
 		public void onEmployeeStreetTypeChange() {
-			Integer streetTypeIdx = this.street_type.getSelectedIndex();
-			String shortCode = StreetType.values()[streetTypeIdx].getShortCode();
-			employeeDialogObject.setEmployeeStreetType(shortCode);
+			String streetType = String.valueOf(this.street_type.getSelectedValue());
+			employeeDialogObject.setEmployeeStreetType(streetType);
 		}
 
 		@Override
@@ -539,7 +448,7 @@ public class EmployeeDialog extends CustomDialog {
 			if(this.addressZip.getValue().length() >= 2) {
 				String zip = this.addressZip.getValue().substring(0, 2);
 				this.addressProvince.setSelectedIndex( ProvinceContract.getProvinceIndex(ProvinceContract.getName(zip)));
-				onEmployeeAddressProvinceChange();
+				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), addressProvince);
 			}
 		}
 
@@ -550,7 +459,8 @@ public class EmployeeDialog extends CustomDialog {
 
 		@Override
 		public void onEmployeeAddressProvinceChange() {
-			employeeDialogObject.setEmployeeAddressProvince(this.addressProvince.getSelectedItemText());
+			String addressProvinceCode = String.valueOf(this.addressProvince.getSelectedValue());
+			employeeDialogObject.setEmployeeAddressProvince(addressProvinceCode);
 			employeeDialogObject.setEmployeeAddressCity("-1");
 			updateMunicipalities();
 		}
@@ -572,13 +482,20 @@ public class EmployeeDialog extends CustomDialog {
 
 		@Override
 		public void onEmployeePayMethodChange() {
-			String methodPay = this.payMethod.getSelectedItemText(); 
+			byte methodPay = Byte.valueOf(this.payMethod.getSelectedValue()).byteValue();
 			employeeDialogObject.setEmployeePayMethod(methodPay);
-			if("TRANSFERENCEIA" != methodPay){
-				this.account.setValue(null);
-				onEmployeeAccountChange();
-				this.bic.setValue(null);
-				onEmployeeBICChange();
+			
+			this.account.setValue(null);
+			this.bic.setValue(null);
+			
+			if(this.payMethod.getSelectedIndex() == 3) { //TRANFERENCIA
+				this.account.setEnabled(true);
+				this.bic.setEnabled(true);
+				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), account);
+				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), bic);
+			} else {
+				this.account.setEnabled(false);
+				this.bic.setEnabled(false);
 			}
 		}
 
@@ -592,254 +509,149 @@ public class EmployeeDialog extends CustomDialog {
 			String account = this.account.getValue();
 			account = account.replaceAll("\\W+", "");
 			if(account.length() > 0) {
-				if(Iban.validateIBAN(account)) {
-					this.accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-					this.accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
-				}else {
-					this.accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-					this.accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
-				}
+				if(Iban.validateIBAN(account))
+					addSuccessStyle(this.accountStatus);
+				else
+					addWarningStyle(this.accountStatus);
 			}
 			
 			employeeDialogObject.setEmployeeAccount(account);
 		}
 		
-		// ------------------------------------------------------------------------
-		//								Aux Methods
-		// ------------------------------------------------------------------------
-		
-		private void fillExistingEmployee() {
-			EmployeeInfo employeeData = employeeDialogObject.getEmployeeData();
-			ContractInfo contractData = employeeDialogObject.getContractData();
-			
-			if (null != contractData.getSsRegimen() && contractData.getSsRegimen() == 3) { //RETA, había algo mas que determinaba si era o no RETA
-				this.showElementsFreelancerTable();
-				fillContractFreelancerTable();
-			} else {
-				this.hideElementsFreelancerTable();
-				fillContractTable();
-			}
-			
-			this.document.setValue(employeeData.getDocument());
-			this.onEmployeeDocumentChange();
-			this.nationality.setValue(null == employeeData.getNationality() ? "" : Country.valueOf(employeeData.getNationality()).getName());
-			this.security_social_num.setValue(employeeData.getSsNumber());
-			this.onEmployeeSSNumChange();
-			this.name.setValue(employeeData.getName());
-			this.first_surname.setValue(employeeData.getSurName());
-			this.second_surname.setValue(employeeData.getSecondSurName());
-			this.birth_date.setValue(employeeData.getBirthdate());
-			this.gender.setSelectedIndex(employeeData.getGender());
-			this.street_type.setSelectedIndex(getStreetTypeIndex(employeeData.getStreetType()));
-			this.address.setValue(employeeData.getAddress());
-			this.addressNum.setValue(employeeData.getAddresNum());
-			this.addressZip.setValue(employeeData.getAddressZip());
-			this.addressMunicipality.setSelectedIndex(municipalities.getMunicipalityIndex(ProvinceContract.getProvinceCode(employeeData.getAddressProvinces()), employeeData.getAddressCity())+1);
-			Integer provinceIndex = ProvinceContract.getProvinceIndex(employeeData.getAddressProvinces());
-			this.addressProvince.setSelectedIndex(provinceIndex);
-			this.mobile.setValue(employeeData.getMobile());
-			this.phone.setValue(employeeData.getPhone());
-			this.email.setValue(employeeData.getEmail());
-			this.payMethod.setSelectedIndex(getPayMethodIndex(employeeData.getPayMethodType()));
-			this.account.setValue(employeeData.getAccount());
-			this.bic.setValue(employeeData.getBic());
-		}
-		
-		private void fillContractTable() {
-			this.ssRegimeType.setSelectedIndex(employeeDialogObject.getContractSSRegimen());
-			this.activityCCC.setSelectedIndex(employeeDialogObject.getContractActivityCCC());
-			this.workplace.setSelectedIndex(employeeDialogObject.getContractWorkplace());
-			
-			Integer contractTypeId = employeeDialogObject.getContractType();
-			
-			this.contractType.setSelectedIndex(EmployeeDialog.this.contractType.getContractTypeIndex(contractTypeId) + 1);
-			if((contractTypeId >= 200 && contractTypeId<300) || (contractTypeId >= 500 && contractTypeId<600)) {
-				this.showElementsPartialTimeContract();
-				this.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-				this.journeyDuration.addStyleName(style.journeyDurationWarning());
-				this.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
-			}else
-				this.showElementsFullTimeContract();
-			
-			this.modality.clear();
-			this.modality.addItem("-");
-			
-			List<ModelRecord> contractTypeModels = EmployeeDialog.this.contractType.getModelsContractType(employeeDialogObject.getContractType());
-			
-			for (ModelRecord m : contractTypeModels)
-				this.modality.addItem(m.getModelDescription());
-			
-			
-			Integer modelIndex = EmployeeDialog.this.contractType.getContractModelIndex(employeeDialogObject.getContractType(), employeeDialogObject.getContractModel());
-			if (null == modelIndex) {
-				this.modality.setSelectedIndex(0);
-			} else {
-				this.modality.setSelectedIndex(modelIndex + 1);
-			}
-			
-			this.start_date.setValue(employeeDialogObject.getContractStartDate());
-			this.seniority_date.setValue(employeeDialogObject.getContractSeniorityDate());
-			this.onContractSeniorityDateChange();
-			this.end_date.setValue(employeeDialogObject.getContractEndDate());
-			
-			this.agreement.setSelectedIndex(employeeDialogObject.getContractAgreement() + 1);
-			getAgreementLevels(employeeDialogObject.getContractAgreementId());
-			this.level.setSelectedIndex(employeeDialogObject.getAgreementLevel() + 1);
-			this.category.setValue(employeeDialogObject.getContractAgreementCategory());
-			this.category.setEnabled(true);
-			
-			this.quote_group.setSelectedIndex(employeeDialogObject.getContractQuoteGroup());
-			this.occupation.setSelectedIndex(employeeDialogObject.getContractOcupation());
-		}
+	}	
 
-		private void fillContractFreelancerTable() {
-			this.ssRegimeType.setSelectedIndex(1);
-			this.workplace.setSelectedIndex(employeeDialogObject.getContractWorkplace());
-			this.start_date.setValue(employeeDialogObject.getContractStartDate());
-			this.seniority_date.setValue(employeeDialogObject.getContractSeniorityDate());
-			this.onContractSeniorityDateChange();
-			this.end_date.setValue(employeeDialogObject.getContractEndDate());
-			this.agreement.setSelectedIndex(employeeDialogObject.getContractAgreement() + 1);
-			getAgreementLevels(employeeDialogObject.getContractAgreementId());
-			this.level.setSelectedIndex(employeeDialogObject.getAgreementLevel() + 1);
-			this.category.setValue(employeeDialogObject.getContractAgreementCategory());
-			this.category.setEnabled(true);
-			this.journeyType.setSelectedIndex(employeeDialogObject.getContractJourneyType());
-		}
-		
-		private void getAgreementLevels(Integer agreementId) {
-			this.level.clear();
-			List<Agreement> agreements = employeeDialogObject.getActiveAgreements();
-			this.level.addItem("-");
-			for (Agreement a : agreements) {
-				if (a.getId() > 0 && a.getId().equals(agreementId)) {
-					Set<Level> levels = a.getLevels();
-					for (Level levelRecord : levels) {
-						Set<String> categories = a.getCategoriesMap().get(levelRecord.getId());
-						for (String categoryRecord : categories) {
-							this.level.addItem(levelRecord.getDescription() + " - " + categoryRecord);
-						}
-					}
-				}
-			}
-		}
-		
-		public void showNationality(String document_type_str) {
-			if (document_type_str == "CIF" || document_type_str == "Pasaporte" || document_type_str == "NIE") {
-				this.nationalityLabelCell.getStyle().clearDisplay();
-				this.nationalityCell.getStyle().clearDisplay();
-			} else {
-				this.nationalityLabelCell.getStyle().setDisplay(Display.NONE);
-				this.nationalityCell.getStyle().setDisplay(Display.NONE);
-				this.nationality.setValue("ESPA\u00D1A");
-				onEmployeeNationalityChange();
-			}
-		}
-		
-		private String getIso2(String country) {
-			for (int i = 0; i < Country.values().length; i++)
-				if (Country.values()[i].getName() == country)
-					return Country.values()[i].getIso2();
-			
-			return null;
-		}
-
-		private int getStreetTypeIndex(String streetType) {
-			for(int i=0; i<StreetType.values().length; i++)
-				if(streetType == StreetType.values()[i].getShortCode())
-					return i;
-			
-			return -1;
-		}
-		
-		private int getPayMethodIndex(String payMethodType) {
-			switch (payMethodType) {
-			case "EFECTIVO":
-				return 1;
-			case "GIRO":
-				return 2;
-			case "CHEQUE":
-				return 3;
-			case "TRANSFERENCIA":
-				return 4;
-			default:
-				return 0;
-			}
-		}
-
-	}
+	// -------------------------------------------------- UiBinder --------------------------------------------------
 	
-	interface Callback {
-		void onAccept(EmployeeDialog dialog);
-	}
-	
-	interface Binder extends UiBinder<Widget, EmployeeDialog> {
-
-	}
+	interface Binder extends UiBinder<Widget, EmployeeDialog> {}
 	
 	private static final Binder binder = GWT.create(Binder.class);
 	
 	@UiField (provided = true)
 	Employee employee;
 	
+	// -------------------------------------------- Variables de la clase---------------------------------------------
+	
+	interface Callback {
+		void onAccept(EmployeeDialog dialog);
+	}
+	
 	private Callback cb;
 	private EmployeeDialogObject employeeDialogObject;
 	private ContractType contractType;
 	private Municipalities municipalities;
-	private Iban ibanValidator;
 	
+	// ------------------------------------------------- CONSTRUCTOR --------------------------------------------------
+
 	public EmployeeDialog() {
 		employee = new EmployeeImplementation();
 		
 		setCaption("Trabajador");
 		setWidget(binder.createAndBindUi(this));
 		
-		employee.clear_employee.addStyleName(employee.style.hide());
-		employee.account.addBlurHandler(new BlurHandler() {
-			
+		employee.clear_employee.getElement().getStyle().setDisplay(Display.NONE);
+		employee.account.addBlurHandler(new BlurHandler() {		
 			@Override
 			public void onBlur(BlurEvent event) {
-				reformatPhone(employee.account);
+				reformatAccount(employee.account);
 			}
 		});
+	}
+	
+	// -------------------------------------------------- UiHandlers --------------------------------------------------
+	
+	@UiHandler("cancelButton")
+	void onCancelButtonClick(ClickEvent clickEvent) {
+		hide();
+	}
+	
+	@UiHandler("acceptButton")
+	void onAcceptButtonClick(ClickEvent clickEvent) {
+		int ssRegime = employee.ssRegimeType.getSelectedIndex();
+		employeeDialogObject.setSSRegime(ssRegime);
 		
+		if(checkIfSaveIsPossible())
+			if(checkDates())
+				if(checkPayMethod())
+					this.employeeDialogObject.createEmployeeContract(
+							r -> { 
+									hide();
+									EmployeeTree.invokeRefreshWorkplace();
+									cb.onAccept(this);
+								 }, 
+							t -> {}
+					);
+				else {
+					WarningDialog dialog = new WarningDialog("Aviso", "Si el metodo de pago es transferencia, debe rellenar obligatoriamente los campos de BIC y cuenta.");
+					dialog.center();
+					dialog.show();
+				}
+					
+			else{
+				WarningDialog dialog = new WarningDialog("Aviso", "La fecha de inicio no puede ser posterior a la fecha de fin.");
+				dialog.center();
+				dialog.show();
+			}
+		else {
+			WarningDialog dialog = new WarningDialog("Aviso", "Hay que rellenar los campos azules correcta y obligatoriamente.");
+			dialog.center();
+			dialog.show();
+		}
 	}
 	
-	private void reformatPhone(TextBox accountField) {
-	    String accountText = accountField.getText();
-	    accountText = accountText.replaceAll("\\W+", "");
-	    if (accountText.length() >= 24) {
-	    	accountField.setText(accountText.substring(0, 4) + "  " + accountText.substring(4, 8) + "  " + accountText.substring(8, 12) + "  " + accountText.substring(12, 16)
-	    	+ "  " + accountText.substring(16, 20) + "  " + accountText.substring(20, 24));
-	    }
-	}
-
-	public void show(Callback cb) {
-		this.cb = cb;
-		super.show();
+	private boolean checkIfSaveIsPossible() {
+		//Check name, birthDate and contract startDate
+		if( "" == this.employee.name.getValue() || null == this.employee.start_date.getValue())
+			return false;
+		
+		//Check SSRegime RETA
+		if(1 == this.employee.ssRegimeType.getSelectedIndex())
+			return true;
+		
+		//Check Contract type
+		if(0 == this.employee.contractType.getSelectedIndex())
+			return false;
+		
+		//Check Activity if SSRegime not RETA
+		if( 0 == this.employee.activityCCC.getSelectedIndex())
+			return false;
+		else
+			return true;
 	}
 	
-	public void setPopupPositionAndShow(PositionCallback positionCallback, Callback callback) {
-		this.cb = callback;
-		super.setPopupPositionAndShow(positionCallback);
+	private boolean checkDates() {
+		if(null == this.employee.end_date.getValue())
+			return true;
+		else if(this.employee.end_date.getValue().after(this.employee.start_date.getValue()))
+			return true;
+		else
+			return false;
 	}
+	
+	private boolean checkPayMethod() {
+		if(4 == this.employee.payMethod.getSelectedIndex()) {
+			if("" == this.employee.bic.getValue() || "" == this.employee.account.getValue())
+				return false;
+			else
+				return true;
+		}else
+			return true;
+	}
+	
+	// ----------------------------------------------- METODOS DE LA CLASE ------------------------------------------------
 	
 	public void setEmployeeDialogObject(EmployeeDialogObject employeeDialogObject) {
 		this.employeeDialogObject = employeeDialogObject;
 		this.contractType = new ContractType();
 		this.municipalities = new Municipalities();
-		this.ibanValidator = new Iban();
 		
 		this.employeeDialogObject.getWorkplaceEmployees(
-				r -> { initLogicWindow();}, 
+				r -> {
+					initLogicWindow();
+				}, 
 				t -> {}
 		);
 	}
-
-	// ------------------------------------------------------------------------
-	//						Initialize Logic Window
-	// ------------------------------------------------------------------------
-		
+	
 	private void initLogicWindow() {
 		initSuggestBox();
 		initActivitiesCCC();
@@ -889,7 +701,7 @@ public class EmployeeDialog extends CustomDialog {
 		orclSurNames.addAll(employeesSurNamesSuggest);
 		this.employee.first_surname.setAutoSelectEnabled(false);
 	}
-
+	
 	private void initActivitiesCCC() {
 		//ACTIVITY - CCC
 		this.employee.activityCCC.addItem("-");
@@ -897,20 +709,20 @@ public class EmployeeDialog extends CustomDialog {
 			for(Entry<Integer,String> entry : this.employeeDialogObject.getActivities().entrySet())
 				for(CCCInfo cccInfo :  this.employeeDialogObject.getCCCs().values())
 					if(cccInfo.getActivityId() == entry.getKey()) 
-						this.employee.activityCCC.addItem(entry.getValue() + " - " + CCCType.values()[cccInfo.getType()] + "[" + cccInfo.getCcc() + "] - " +  cccInfo.getGeozone());
+						this.employee.activityCCC.addItem(entry.getValue() + " - " + CCCType.values()[cccInfo.getType()] + "[" + cccInfo.getCcc() + "] - " +  cccInfo.getGeozone(), cccInfo.getActivityId() + "/" + cccInfo.getCccId() + "/" + cccInfo.getType());
 	}
 	
 	private void initWorkplaces() {
 		//WORKPLACE
 		for(Workplace workplace : employeeDialogObject.getWorkplaces())
-			this.employee.workplace.addItem(workplace.getDescription());
+			this.employee.workplace.addItem(workplace.getDescription(), workplace.getId().toString());
 	}
 
 	private void initContractType() {
 		// TIPO DE CONTRATO
-		this.employee.contractType.addItem("-");
+		this.employee.contractType.addItem("-", "-1");
 		for (Entry<Integer, ContractTypeRecord> entry : contractType.getContractTypes().entrySet())
-			this.employee.contractType.addItem(entry.getKey() + " - " + entry.getValue().getContractTypeDescription());	
+			this.employee.contractType.addItem(entry.getKey() + " - " + entry.getValue().getContractTypeDescription(), entry.getKey().toString());	
 	}
 	
 	private void initAgreements() {
@@ -919,10 +731,6 @@ public class EmployeeDialog extends CustomDialog {
 		List<Agreement> agreements = employeeDialogObject.getActiveAgreements();
 		for (Agreement agreement : agreements)
 			this.employee.agreement.addItem(agreement.getDescription(), String.valueOf(agreement.getId()));
-//		this.employee.agreement.addItem("-");
-//		List<Agreement> agreements = employeeDialogObject.getActiveAgreements();
-//		for (Agreement a : agreements)
-//			this.employee.agreement.addItem(a.getDescription());
 	}
 	
 	private void fillDefaultFields() {
@@ -937,13 +745,11 @@ public class EmployeeDialog extends CustomDialog {
 		}
 		
 		//WORKPLACE
-		Integer workplaceIndex = this.employeeDialogObject.getWorkplaceIndex();
-		this.employee.workplace.setSelectedIndex(workplaceIndex);
+		setSelectedValueLB(employee.workplace, this.employeeDialogObject.getWorkplaceId().toString());
 		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.employee.workplace);
 		
 		//AGREEMENT
-		Integer agreementIndex = this.employeeDialogObject.getAgreementIndex(this.employeeDialogObject.getWorkplaceAgreement());
-		this.employee.agreement.setSelectedIndex(agreementIndex + 1);
+		setSelectedValueLB(employee.agreement, this.employeeDialogObject.getWorkplaceAgreement().toString());
 		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.employee.agreement);
 		
 		//GENDER
@@ -963,89 +769,19 @@ public class EmployeeDialog extends CustomDialog {
 	        }
 		});
 	}
-
-	// ------------------------------------------------------------------------
-	//							UiHandler Accept/Cancel
-	// ------------------------------------------------------------------------
 	
-	@UiHandler("cancelButton")
-	void onCancelButtonClick(ClickEvent clickEvent) {
-		hide();
-	}
+	// ----------------------------------------------- METODOS AUXILIARES ------------------------------------------------
 	
-	@UiHandler("acceptButton")
-	void onAcceptButtonClick(ClickEvent clickEvent) {
-		int ssRegime = employee.ssRegimeType.getSelectedIndex();
-		employeeDialogObject.setSSRegime(ssRegime);
-		
-		if(checkIfSaveIsPossible())
-			if(checkDates())
-				if(checkPayMethod())
-					this.employeeDialogObject.createEmployeeContract(
-							r -> { 
-									hide();
-									EmployeeTree.invokeRefreshWorkplace();
-									cb.onAccept(this);
-								 }, 
-							t -> {}
-					);
-				else {
-					WarningDialog dialog = new WarningDialog("Aviso", "Si el metodo de pago es transferencia, debe rellenar obligatoriamente los campos de BIC y cuenta.");
-					dialog.center();
-					dialog.show();
-				}
-					
-			else{
-				WarningDialog dialog = new WarningDialog("Aviso", "La fecha de inicio no puede ser posterior a la fecha de fin.");
-				dialog.center();
-				dialog.show();
-			}
-		else {
-			WarningDialog dialog = new WarningDialog("Aviso", "Hay que rellenar los campos azules correcta y obligatoriamente.");
-			dialog.center();
-			dialog.show();
-		}
-	}
-
-	private boolean checkPayMethod() {
-		if(4 == this.employee.payMethod.getSelectedIndex()) {
-			if("" == this.employee.bic.getValue() || "" == this.employee.account.getValue())
-				return false;
-			else
-				return true;
-		}else
-			return true;
-	}
-
-	private boolean checkIfSaveIsPossible() {
-		//Check name, birthDate and contract startDate
-		if( "" == this.employee.name.getValue() || null == this.employee.start_date.getValue())
-			return false;
-		
-		//Check SSRegime RETA
-		if(1 == this.employee.ssRegimeType.getSelectedIndex())
-			return true;
-		
-		//Check Contract type
-		if(0 == this.employee.contractType.getSelectedIndex())
-			return false;
-		
-		//Check Activity if SSRegime not RETA
-		if( 0 == this.employee.activityCCC.getSelectedIndex())
-			return false;
-		else
-			return true;
-	
+	private void reformatAccount(TextBox accountField) {
+	    String accountText = accountField.getText();
+	    accountText = accountText.replaceAll("\\W+", "");
+	    if (accountText.length() >= 24) {
+	    	accountField.setText(accountText.substring(0, 4) + "  " + accountText.substring(4, 8) + "  " + accountText.substring(8, 12) + "  " + accountText.substring(12, 16)
+	    	+ "  " + accountText.substring(16, 20) + "  " + accountText.substring(20, 24));
+	    }
 	}
 	
-	private boolean checkDates() {
-		if(null == this.employee.end_date.getValue())
-			return true;
-		else if(this.employee.end_date.getValue().after(this.employee.start_date.getValue()))
-			return true;
-		else
-			return false;
-	}
+	// ----------------------------------------- METODOS AUXILIARES (EMPLOYEE) -------------------------------------------
 	
 	public String checkDocumentType(String document) {
 		
@@ -1064,6 +800,135 @@ public class EmployeeDialog extends CustomDialog {
 			return "CIF";
 		else
 			return "Pasaporte";
+	}
+	
+	public void initExistingEmployee( boolean isContractActive){
+		fillExistingEmployee();
+		if(isContractActive)
+		   blockVariablesExistingContract();
+		employee.clear_employee.getElement().getStyle().clearDisplay();
+	}
+	
+	private void fillExistingEmployee() {
+		EmployeeInfo employeeData = employeeDialogObject.getEmployeeData();
+		ContractInfo contractData = employeeDialogObject.getContractData();
+		
+		if (null != contractData.getSsRegimen() && contractData.getSsRegimen() == 3) { //RETA, había algo mas que determinaba si era o no RETA
+			employee.showElementsFreelancerTable();
+			fillContractFreelancerTable();
+		} else {
+			employee.hideElementsFreelancerTable();
+			fillContractTable();
+		}
+		
+		employee.document.setValue(employeeData.getDocument());
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.document);
+		
+		employee.nationality.setValue(employeeData.getNationality());
+		
+		employee.security_social_num.setValue(employeeData.getSsNumber());
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.security_social_num);
+		
+		employee.name.setValue(employeeData.getName());
+		employee.first_surname.setValue(employeeData.getSurName());
+		employee.second_surname.setValue(employeeData.getSecondSurName());
+		
+		employee.birth_date.setValue(employeeData.getBirthdate());
+		employee.gender.setSelectedIndex(employeeData.getGender());
+		
+		setSelectedValueLB(employee.street_type, employeeData.getStreetType());
+		
+		employee.address.setValue(employeeData.getAddress());
+		employee.addressNum.setValue(employeeData.getAddresNum());
+		employee.addressZip.setValue(employeeData.getAddressZip());
+		
+		setSelectedValueLB(employee.addressProvince, employeeData.getAddressProvinces());
+		if(null != employeeData.getAddressProvinces()) {
+			updateMunicipalities();
+			employee.addressMunicipality.setSelectedIndex(getMunicipalityIndex(employeeData.getAddressProvinces(), employeeData.getAddressCity()));
+		}
+		
+		employee.mobile.setValue(employeeData.getMobile());
+		employee.phone.setValue(employeeData.getPhone());
+		employee.email.setValue(employeeData.getEmail());
+		
+		employee.payMethod.setSelectedIndex(getPayMethodIndex(employeeData.getPayMethodTypeB()));
+		employee.account.setValue(employeeData.getAccount());
+		employee.bic.setValue(employeeData.getBic());
+		reformatAccount(this.employee.account);
+	}
+
+	private void fillContractFreelancerTable() {
+		ContractInfo contractData = employeeDialogObject.getContractData();
+		
+		employee.ssRegimeType.setSelectedIndex(1); // RETA
+		
+		setSelectedValueLB(employee.workplace, contractData.getWorkplaceId().toString());
+		
+		employee.start_date.setValue(contractData.getStartDate());
+		employee.seniority_date.setValue(contractData.getSeniorityDate());
+		employee.end_date.setValue(contractData.getEndDate());
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.seniority_date);
+
+		if(null != contractData.getAgreementId()) {
+			setSelectedValueLB(employee.agreement, contractData.getAgreementId().toString());
+			getAgreementLevelsAndSetLevel(contractData.getAgreementId(), contractData.getAgreementLevelId(), contractData.getAgreementCategory());
+		} else {
+			employee.agreement.setSelectedIndex(0);
+			employee.level.clear();
+			employee.level.addItem("-", "-1");
+		}
+		
+		employee.category.setValue(contractData.getAgreementCategory());
+		employee.category.setEnabled(true);
+		
+		employee.journeyType.setSelectedIndex(contractData.getJourneyType());
+	}
+	
+	private void fillContractTable() {
+		ContractInfo contractData = employeeDialogObject.getContractData();
+		
+		employee.ssRegimeType.setSelectedIndex(employeeDialogObject.getContractSSRegimen());
+		
+		setSelectedValueLB(employee.activityCCC, contractData.getActivityId()+"/"+contractData.getCccId()+"/"+contractData.getCccType());
+		setSelectedValueLB(employee.workplace, contractData.getWorkplaceId().toString());
+		
+		setSelectedValueLB(employee.contractType, contractData.getContractType());
+		
+		Integer contractTypeId = employeeDialogObject.getContractType();
+		if((contractTypeId >= 200 && contractTypeId<300) || (contractTypeId >= 500 && contractTypeId<600)) {
+			employee.showElementsPartialTimeContract();
+			employee.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+			employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
+			employee.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
+		} else
+			employee.showElementsFullTimeContract();
+		
+		employee.modality.clear();
+		employee.modality.addItem("-");
+		
+		List<ModelRecord> contractTypeModels = this.contractType.getModelsContractType(contractTypeId);
+		for (ModelRecord model : contractTypeModels)
+			employee.modality.addItem(model.getModelDescription(), model.getEnumeration().toString());
+		
+		if(null != contractData.getContractModel())
+			setSelectedValueLB(employee.modality, contractData.getContractModel().toString());
+		
+		employee.start_date.setValue(contractData.getStartDate());
+		employee.seniority_date.setValue(contractData.getSeniorityDate());
+		employee.end_date.setValue(contractData.getEndDate());
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.seniority_date);
+		
+		if(null != contractData.getAgreementId()) {
+			setSelectedValueLB(employee.agreement, contractData.getAgreementId().toString());
+			getAgreementLevelsAndSetLevel(contractData.getAgreementId(), contractData.getAgreementLevelId(), contractData.getAgreementCategory());
+		}
+
+		employee.category.setValue(contractData.getAgreementCategory());
+		employee.category.setEnabled(true);
+		
+		employee.quote_group.setSelectedIndex(employeeDialogObject.getContractQuoteGroup());
+		employee.occupation.setSelectedIndex(employeeDialogObject.getContractOcupation());
 	}
 	
 	public void blockVariablesExistingContract(){
@@ -1122,10 +987,168 @@ public class EmployeeDialog extends CustomDialog {
 		municipalitiesOfProvince.forEach(m -> {employee.addressMunicipality.addItem(m);});
 	}
 	
+	private void addSuccessStyle(Widget widget) {
+		widget.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+		widget.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
+	}
 	
-	// ------------------------------------------------------------------------
-	//							CHECK IBAN
-	// ------------------------------------------------------------------------
+	private void addWarningStyle(Widget widget) {
+		widget.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
+		widget.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+	}
 	
+	private void addWarningDateStyle(Widget widget) {
+		widget.getElement().getStyle().clearDisplay();
+		widget.setTitle("La fecha de inicio no coincide con la de antig" + String.valueOf("\u00FC") + "edad.");
+		
+		widget.setStyleName("aon-finding-toolbar-item aon-icon-info aon-finding-toolbar-item-no-border");widget.getElement().getStyle().setMarginTop(3.00, Unit.PX);
+		widget.getElement().getStyle().setMarginTop(3.00, Unit.PX);
+	}
+	
+	private void showPartialTimeContract() {
+		employee.showElementsPartialTimeContract();
+		employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
+		employee.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
+		employee.journeyDuration.setTitle("Las horas se deben definir en el calendario del empleado.");
+	}
+	
+	@SuppressWarnings("deprecation")
+	private Integer getYears(Date actualDay, Date birthDate) {
+		DateUtils.resetTime(actualDay);
+		DateUtils.resetTime(birthDate);
+		
+		Integer age = actualDay.getYear() - birthDate.getYear() - 1;
+		
+		if(actualDay.getMonth() >= birthDate.getMonth()) {
+			age++;
+			
+			if(actualDay.getDate() < birthDate.getDate())
+				age--;
+		}
+		
+		return age;
+	}
+	
+	private void getAgreementLevels(Integer agreementId) {
+		employee.level.clear();
+		employee.level.addItem("-", "-1");
+		
+		employeeDialogObject.getAgreement(agreementId,  
+		(agreement) -> {
+			for (Level levelRecord : agreement.getLevels())
+				for (String categoryRecord : agreement.getCategoriesMap().get(levelRecord.getId()))
+					employee.level.addItem(levelRecord.getDescription() + " - " + categoryRecord, String.valueOf(levelRecord.getId()));
+
+			employeeDialogObject.setContractAgreementId(agreement.getId());
+			employeeDialogObject.setContractAgreementLevelId(null);
+		},
+		(throwable) -> {
+			employeeDialogObject.setContractAgreementId(null);
+			employeeDialogObject.setContractAgreementLevelId(null);
+			employee.category.setEnabled(false);
+			employee.category.setValue("");
+			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.category);
+		});
+	}
+	
+	private void getAgreementLevelsAndSetLevel(Integer agreementId, Integer agreementLevelId, String category_description) {
+		employee.level.clear();
+		employee.level.addItem("-", "-1");
+		
+		employeeDialogObject.getAgreement(agreementId,  
+		(agreement) -> {
+			for (Level levelRecord : agreement.getLevels())
+				for (String categoryRecord : agreement.getCategoriesMap().get(levelRecord.getId()))
+					employee.level.addItem(levelRecord.getDescription() + " - " + categoryRecord, String.valueOf(levelRecord.getId()));
+
+			employeeDialogObject.setContractAgreementId(agreement.getId());
+			Integer agreementIdx = getAgreementLevelIdx(agreement, agreement.getLevels(), agreementId, agreementLevelId, category_description) + 1;
+			employee.level.setSelectedIndex(agreementIdx);
+		},
+		(throwable) -> {
+			employeeDialogObject.setContractAgreementId(null);
+			employeeDialogObject.setContractAgreementLevelId(null);
+			employee.category.setEnabled(false);
+			employee.category.setValue("");
+			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.category);
+		});
+	}
+	
+	private int getAgreementLevelIdx(Agreement agreement, Set<Level> levels, Integer agreementId, Integer agreementLevelId,
+			String category_description) {
+		
+		Integer result = 0;
+		for (Level levelRecord : levels) {
+			Set<String> categories = agreement.getCategoriesMap().get(levelRecord.getId());
+			for (String categoryRecord : categories) {
+				if (levelRecord.getId().equals(agreementLevelId) && (categoryRecord == category_description || category_description.contains(categoryRecord)))
+					return result;
+				else
+					result++;
+			}
+		}
+		return -1;
+	}
+
+	public void showNationality(String document_type_str) {
+		if (document_type_str == "CIF" || document_type_str == "Pasaporte" || document_type_str == "NIE") {
+			employee.nationalityLabelCell.getStyle().clearDisplay();
+			employee.nationalityCell.getStyle().clearDisplay();
+		} else {
+			employee.nationalityLabelCell.getStyle().setDisplay(Display.NONE);
+			employee.nationalityCell.getStyle().setDisplay(Display.NONE);
+			employee.nationality.setValue("ESPA\u00D1A");
+			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.nationality);
+		}
+	}
+	
+	private String getIso2(String country) {
+		for (int i = 0; i < Country.values().length; i++)
+			if (Country.values()[i].getName() == country)
+				return Country.values()[i].getIso2();
+		
+		return null;
+	}
+	
+	private int getPayMethodIndex(byte payMethodType) {
+		switch (payMethodType) {
+		case (byte) 0: //EFECTIVO
+			return 1;
+		case (byte) 4: //CHEQUE
+			return 2;
+		case (byte) 5: //TRANSFERENCIA
+			return 3;
+		default:
+			return 0;
+		}
+	}
+	
+	private void setSelectedValueLB(ListBox lBox, String str) {
+	    String text = str;
+	    int indexToFind = 0;
+	    for (int i = 0; i < lBox.getItemCount(); i++) {
+	        if (lBox.getValue(i).equals(text)) {
+	            indexToFind = i;
+	            break;
+	        }
+	    }
+	    lBox.setSelectedIndex(indexToFind);
+	}
+	
+	private int getMunicipalityIndex(String province, String city) {
+		return municipalities.getMunicipalityIndex(province, city) + 1;
+	}
+	
+	// ----------------------------------------------- CALLBACK TO SAVE ------------------------------------------------
+	
+	public void show(Callback cb) {
+		this.cb = cb;
+		super.show();
+	}
+	
+	public void setPopupPositionAndShow(PositionCallback positionCallback, Callback callback) {
+		this.cb = callback;
+		super.setPopupPositionAndShow(positionCallback);
+	}
 	
 }
