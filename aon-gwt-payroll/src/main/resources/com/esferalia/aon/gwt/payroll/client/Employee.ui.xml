@@ -44,10 +44,6 @@
 			font-weight: bold !important;
 		}
 
-		.hide{
-			display: none;
-		}
-
 		.maxWidth{
 		width: 100%;
 		}
@@ -98,10 +94,6 @@
 		.retaTopLabel{
 			top: 330px;
 		}
-
-		.warning{
-			border-color: red;
-		}
 		
 		.styleBorder{
 			border-style: solid; 
@@ -137,10 +129,6 @@
 		.journeyDuration{
 			font-size: 11px;
 			cursor: pointer;
-		}
-		
-		.marginTop{
-			margin-top: 3px;
 		}
 		
 		.addressPadding{

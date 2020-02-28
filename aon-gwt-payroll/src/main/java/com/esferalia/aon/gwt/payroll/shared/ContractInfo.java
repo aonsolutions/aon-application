@@ -125,6 +125,10 @@ public class ContractInfo implements Serializable{
 		else
 			this.contractType = contractType;
 	}
+	
+//	public void setContractType(String contractType) {
+//		this.contractType = contractType;
+//	}
 
 	public Integer getContractModel() {
 		return contractModel;
@@ -322,7 +326,7 @@ public class ContractInfo implements Serializable{
 		result += "---------------- NEW CONTRACT INFO ---------------- \n";
 		result += " **** Contract Table **** \n";
 		result += "Contract Id : " + contractId + "\n";
-		result += "Workplace Id : " + workplaceId + "\n";
+		result += "Workplace Id : " + getWorkplaceId() + "\n";
 		result += "Enterprise CCC Id : " + cccId + "\n";
 		result += "Start Date : " + startDate + "\n";
 		result += "End Date : " + endDate + "\n";

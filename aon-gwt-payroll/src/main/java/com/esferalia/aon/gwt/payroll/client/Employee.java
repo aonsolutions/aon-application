@@ -3,26 +3,18 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Map.Entry;
 
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
-import com.esferalia.aon.gwt.payroll.shared.ContractType;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeInfoDataBase;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.esferalia.aon.gwt.payroll.shared.StreetType;
 import com.esferalia.aon.occam.api.model.type.Country;
-import com.google.gwt.ajaxloader.client.AjaxLoader;
-import com.google.gwt.ajaxloader.client.AjaxLoader.AjaxLoaderOptions;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.core.client.JsArray;
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ContextMenuEvent;
-import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.resources.client.CssResource;
@@ -40,55 +32,13 @@ import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class Employee extends ResizeComposite implements ContextMenuHandler {
-
-	// ------------------------------------------ GOOGLE MAP ADDRESS INFO (INACTIVO) --------------------------------------------------
-
-	private static class Place extends JavaScriptObject {
-
-		protected Place() {
-		}
-
-		public final AddressComponent get(String type) {
-			for (int i = 0; i < getAddressComponents().length(); i++) {
-				if (getAddressComponents().get(i).getTypes()[0] == type)
-					return getAddressComponents().get(i);
-			}
-			return null;
-		}
-
-		// ----------------------------------- JSNI (Native JavaScript Methods)
-		public final native JsArray<AddressComponent> getAddressComponents() /*-{
-			return this.address_components;
-		}-*/;
-
-	}
-
-	private static class AddressComponent extends JavaScriptObject {
-
-		protected AddressComponent() {
-		}
-
-		// ----------------------------------- JSNI (Native JavaScript Methods)
-		public final native String[] getTypes() /*-{
-			return this.types;
-		}-*/;
-
-		public final native String getLongName() /*-{
-			return this.long_name;
-		}-*/;
-
-		public final native String getShortName() /*-{
-			return this.short_name;
-		}-*/;
-	}
+public abstract class Employee extends ResizeComposite {
 
 	// -------------------------------------------------- UiBinder --------------------------------------------------
 
 	private static EmployeeDraftUiBinder uiBinder = GWT.create(EmployeeDraftUiBinder.class);
 
-	interface EmployeeDraftUiBinder extends UiBinder<Widget, Employee> {
-	}
+	interface EmployeeDraftUiBinder extends UiBinder<Widget, Employee> {}
 
 	// -------------------------------------------------- UiFields --------------------------------------------------
 
@@ -96,13 +46,7 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 	MyStyle style;
 
 	interface MyStyle extends CssResource {
-		String hide();
-		String nssWidht();
-		String retaTopLabel();
-		String warning();
 		String journeyDurationWarning();
-		String journeyDuration();
-		String marginTop();
 	}
 
 	// TABLA DATOS CONTRATO
@@ -267,12 +211,6 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 	@UiField
 	Label journeyDuration;
 
-	// ------------------------------------------------------ VARIABLES DE LA CLASE -------------------------------------------------
-
-	private EmployeeDraftObject employeeDraftObject;
-	private ContractType contract_type;
-	private EmployeeInfoDataBase employeeInfo;
-
 	// --------------------------------------------------------- CONSTRUCTOR --------------------------------------------------------
 
 	public Employee() {
@@ -282,54 +220,12 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 		for (Country c : countries)
 			oracleCountries.add(c.getName());
 		this.nationality = new SuggestBox(oracleCountries);
-
+		this.nationality.setAutoSelectEnabled(true);
+		
 		// Inicializamos la vista del empleado
 		initWidget(uiBinder.createAndBindUi(this));
 		initializeView();
-
-		// Init Google Maps Places API (INACTIVO)
-		// initGoogleMapsPlaces();
 	}
-
-	private void initGoogleMapsPlaces() {
-		loadMapsPlacesAPI(() -> {
-			initializeAutocomplete(this.address.getElement(), (js) -> {
-				Place place = js.cast();
-
-				employeeDraftObject.setEmployeeAddress(place.get("route").getLongName());
-				employeeDraftObject.setEmployeeAddressNumber(place.get("street_number").getShortName());
-				employeeDraftObject.setEmployeeAddressZip(place.get("postal_code").getLongName());
-//				employeeDraftObject.setEmployeeAddressLacality(place.get("locality").getLongName());
-				employeeDraftObject.setEmployeeAddressProvince(place.get("administrative_area_level_2").getLongName());
-
-				// Calle
-				// Window.alert("route :"+place.get("route").getLongName());
-				// Window.alert("route :"+place.get("route").getShortName());
-				
-				// Numero domicilio
-				// Window.alert("street_number :"+place.get("street_number").getShortName()); 
-				
-				// Localidad
-				// Window.alert("locality :"+place.get("locality").getLongName()); 
-				
-				// Provincia
-				// Window.alert("administrative_area_level_2 :"+place.get("administrative_area_level_2").getLongName());
-				
-				// Comunidad autonoma
-				// Window.alert("administrative_area_level_1 :"+place.get("administrative_area_level_1").getLongName());
-				
-				// Codigo pais
-				// Window.alert("country :"+place.get("country").getShortName());
-				
-				// Pais
-				// Window.alert("country :"+place.get("country").getLongName());
-				
-				// Codigo postal
-				// Window.alert("postal_code :"+place.get("postal_code").getLongName()); 
-			});
-		});
-	}
-
 	
 	// ------------------------------------------------------------------------
 	//								UiHandlers
@@ -653,67 +549,67 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 		// TABLA DATOS CONTRATO
 		
 		// TIPO DE COTIZACIÓN
-		this.ssRegimeType.addItem("COMUN");
-		this.ssRegimeType.addItem("RETA");
-		this.ssRegimeType.addItem("SOCIOS COOP");
-		this.ssRegimeType.addItem("JUBILACION ACTIVA");
-		this.ssRegimeType.addItem("GARANTIA JUVENIL");
+		this.ssRegimeType.addItem("COMUN", "0");
+		this.ssRegimeType.addItem("RETA", "3");
+		this.ssRegimeType.addItem("SOCIOS COOP", "1");
+		this.ssRegimeType.addItem("JUBILACION ACTIVA", "2");
+		this.ssRegimeType.addItem("GARANTIA JUVENIL", "4");
 		
 		// MODALIDAD
-		this.modality.addItem("-");
+		this.modality.addItem("-", "-1");
 
 		// GRUPO DE COTIZACION
-		this.quote_group.addItem("-");
-		this.quote_group.addItem("01. Alta direcci" + String.valueOf("\u00F3") + "n y personal no incluido en el E.T.");
-		this.quote_group.addItem("02. Ingenieros t" + String.valueOf("\u00E9") + "cnicos, peritos y ayudantes titulados");
-		this.quote_group.addItem("03. Jefes administrativos y de taller");
-		this.quote_group.addItem("04. Ayudantes no titulados");
-		this.quote_group.addItem("05. Oficiales administrativos");
-		this.quote_group.addItem("06. Subalternos");
-		this.quote_group.addItem("07. Axiliares administrativos");
-		this.quote_group.addItem("08. Oficiales de primera y segunda");
-		this.quote_group.addItem("09. Oficiales de tercera y especialista");
-		this.quote_group.addItem("10. Peones");
-		this.quote_group.addItem("11. Trabajadores menos de dieciocho a" + String.valueOf("\u00F1") + "os");
+		this.quote_group.addItem("-", "-1");
+		this.quote_group.addItem("01. Alta direcci" + String.valueOf("\u00F3") + "n y personal no incluido en el E.T.", "01");
+		this.quote_group.addItem("02. Ingenieros t" + String.valueOf("\u00E9") + "cnicos, peritos y ayudantes titulados", "02");
+		this.quote_group.addItem("03. Jefes administrativos y de taller", "03");
+		this.quote_group.addItem("04. Ayudantes no titulados", "04");
+		this.quote_group.addItem("05. Oficiales administrativos", "05");
+		this.quote_group.addItem("06. Subalternos", "06");
+		this.quote_group.addItem("07. Axiliares administrativos", "07");
+		this.quote_group.addItem("08. Oficiales de primera y segunda", "08");
+		this.quote_group.addItem("09. Oficiales de tercera y especialista", "09");
+		this.quote_group.addItem("10. Peones", "10");
+		this.quote_group.addItem("11. Trabajadores menos de dieciocho a" + String.valueOf("\u00F1") + "os", "11");
 
 		// OCUPACION
-		this.occupation.addItem("-");
-		this.occupation.addItem("a. Personal en trabajos exclusivos de oficina");
-		this.occupation.addItem("b. Tipo de cotizaci" + String.valueOf("\u00F3") + "n para todos los trabajadores que deban desplazarse habitalmente");
-		this.occupation.addItem("d. Personal de oficios en instalaciones y reparaciones en edificios, obras y trabajos de construcci" + String.valueOf("\u00F3") + "n en general");
-		this.occupation.addItem("e. Conductores de veh" + String.valueOf("\u00ED") + "culo autom" + String.valueOf("\u00F3") + "vil de transporte de pasajeros en general (taxis, autom" + String.valueOf("\u00F3") + "viles, autobuses, etc)");
-		this.occupation.addItem("f. Conductores de veh" + String.valueOf("\u00ED") + "culo autom" + String.valueOf("\u00F3") + "vil de transporte de mercanc" + String.valueOf("\u00ED") + "as que tengan una capacidad de carga " + String.valueOf("\u00FA") + "til superior a 3,5 Tm.");
-		this.occupation.addItem("g. Personal de limpieza en general. Limpieza de edificios y de todo tipo de establecimientos. Limpieza de calles");
-		this.occupation.addItem("h. Vigilantes, guardas, guardas jurados y personal de seguridad");
+		this.occupation.addItem("-", "-1");
+		this.occupation.addItem("a. Personal en trabajos exclusivos de oficina", "a");
+		this.occupation.addItem("b. Tipo de cotizaci" + String.valueOf("\u00F3") + "n para todos los trabajadores que deban desplazarse habitalmente", "b");
+		this.occupation.addItem("d. Personal de oficios en instalaciones y reparaciones en edificios, obras y trabajos de construcci" + String.valueOf("\u00F3") + "n en general", "d");
+		this.occupation.addItem("e. Conductores de veh" + String.valueOf("\u00ED") + "culo autom" + String.valueOf("\u00F3") + "vil de transporte de pasajeros en general (taxis, autom" + String.valueOf("\u00F3") + "viles, autobuses, etc)", "e");
+		this.occupation.addItem("f. Conductores de veh" + String.valueOf("\u00ED") + "culo autom" + String.valueOf("\u00F3") + "vil de transporte de mercanc" + String.valueOf("\u00ED") + "as que tengan una capacidad de carga " + String.valueOf("\u00FA") + "til superior a 3,5 Tm.", "f");
+		this.occupation.addItem("g. Personal de limpieza en general. Limpieza de edificios y de todo tipo de establecimientos. Limpieza de calles", "g");
+		this.occupation.addItem("h. Vigilantes, guardas, guardas jurados y personal de seguridad", "h");
 
 		// TIPO DE JORNADA
-		this.journeyType.addItem("Tiempo Completo");
-		this.journeyType.addItem("Tiempo Parcial");
+		this.journeyType.addItem("Tiempo Completo", "true");
+		this.journeyType.addItem("Tiempo Parcial", "false");
 		
 		// TABLA DATOS EMPLEADO
 		
 		// SEXO
-		this.gender.addItem("Hombre");
-		this.gender.addItem("Mujer");
-		this.gender.addItem("Desconocido");
+		this.gender.addItem("Hombre", "0");
+		this.gender.addItem("Mujer", "1");
+		this.gender.addItem("Desconocido", "2");
 		
 		//TIPO DE VIA
 		for(int i=0; i<StreetType.values().length; i++){
-			this.street_type.addItem(StreetType.values()[i].getDescription());
+			this.street_type.addItem(StreetType.values()[i].getDescription(), StreetType.values()[i].getShortCode());
 		}
 		
 		//PROVINCIA
 		this.addressProvince.addItem("-");
-		for(String province : ProvinceContract.getProvinces().values())
-			this.addressProvince.addItem(province);
+		for(Entry<String, String> provinces : ProvinceContract.getProvinces().entrySet())
+			this.addressProvince.addItem(provinces.getValue(), provinces.getKey());
 
 		
 		// TIPO DE PAGO
-		this.payMethod.addItem("-");
-		this.payMethod.addItem("EFECTIVO");
-//		this.payMethod.addItem("GIRO");
-		this.payMethod.addItem("CHEQUE");
-		this.payMethod.addItem("TRANSFERENCIA");	
+		this.payMethod.addItem("-", "-1");
+		this.payMethod.addItem("EFECTIVO", "0");
+//		this.payMethod.addItem("GIRO", "1");
+		this.payMethod.addItem("CHEQUE", "4");
+		this.payMethod.addItem("TRANSFERENCIA", "5");	
 	}
 	
 	private void initDisplayElements() {
@@ -763,38 +659,5 @@ public abstract class Employee extends ResizeComposite implements ContextMenuHan
 	public void showElementsFullTimeContract() {
 		this.contractDataTable.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 	}
-
-	@Override
-	public void onContextMenu(ContextMenuEvent event) {
-		// TODO Auto-generated method stub
-	}
-
-	// ---------------------------------------------- GOOGLE MAPS PLACES (INACTIVO) -------------------------------------------------
-
-	private static void loadMapsPlacesAPI(Runnable onLoad) {
-		String version = "3";
-
-		String otherParms = "&key=AIzaSyDpG4n4z6L7xP_pRmeelNfSb-StmZOHBR4&libraries=places&lenguage=es";
-
-		AjaxLoaderOptions settings = AjaxLoaderOptions.newInstance();
-		settings.setOtherParms(otherParms);
-		AjaxLoader.init();
-		AjaxLoader.loadApi("maps", version, onLoad, settings);
-	}
-
-	public final native void initializeAutocomplete(Element element, Consumer callback) /*-{
-		var autocomplete;
-		
-		// Create the autocomplete object, restricting the search to geographical location types.
-		autocomplete = new $wnd.google.maps.places.Autocomplete(element, {types: ['geocode']});
-		
-		// When the user selects an address from the dropdown, accept this address.
-		listener = function() {
-			callback.@com.esferalia.aon.gwt.payroll.client.Consumer::accept(Lcom/google/gwt/core/client/JavaScriptObject;)(autocomplete.getPlace());
-		}
-		
-		autocomplete.addListener('place_changed', listener);	
-		
-	}-*/;
 
 }

@@ -3,6 +3,8 @@ package com.esferalia.aon.gwt.payroll.shared;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.type.Country;
+
 public class EmployeeInfo implements Serializable{
 	
 	private Integer domain;
@@ -51,6 +53,7 @@ public class EmployeeInfo implements Serializable{
 	//Paymethod
 	private Integer paymethodId;
 	private String payMethodType;
+	private byte payMethodTypeB;
 	
 	//Rbank
 	private Integer rbankId;
@@ -139,7 +142,7 @@ public class EmployeeInfo implements Serializable{
 	}
 
 	public String getSurName() {
-		return surName;
+		return null == surName ? "" : surName;
 	}
 
 	public String getDocument() {
@@ -151,6 +154,10 @@ public class EmployeeInfo implements Serializable{
 	}
 
 	public String getNationality() {
+		return nationality != null ? Country.valueOf(nationality).getName() : "";
+	}
+	
+	public String getNationalityCode() {
 		return nationality;
 	}
 
@@ -170,7 +177,7 @@ public class EmployeeInfo implements Serializable{
 	}
 
 	public String getSecondSurName() {
-		return secondSurName;
+		return null == secondSurName ? "" : secondSurName;
 	}
 
 	public void setSecondSurName(String secondSurName) {
@@ -280,6 +287,14 @@ public class EmployeeInfo implements Serializable{
 	public void setPayMethodType(String payMethodType) {
 		this.payMethodType = payMethodType;
 	}
+	
+	public byte getPayMethodTypeB() {
+		return payMethodTypeB;
+	}
+
+	public void setPayMethodTypeB(byte payMethodType) {
+		this.payMethodTypeB = payMethodType;
+	}
 
 	public String getAccount() {
 		return account;
@@ -381,6 +396,12 @@ public class EmployeeInfo implements Serializable{
 		this.rbankId = rbankId;
 	}
 	
+	public String getFullName() {
+		return (null == getSurName() ? "" :  getSurName() + " ") + 
+		(null == getSecondSurName() ? "" : getSecondSurName() + ", ") + 
+		getName();
+	}
+	
 	public String toString(){
 		String result = "";
 		
@@ -418,7 +439,7 @@ public class EmployeeInfo implements Serializable{
 		result += "RPayMethod Id : " + rpaymethodId + "\n";
 		result += " **** PayMethod Table **** \n";
 		result += "Pay Method Id : " + paymethodId + "\n";
-		result += "Pay Method : " + payMethodType + "\n";
+		result += "Pay Method : " + payMethodTypeB + "\n";
 		result += " **** RBank Table **** \n";
 		result += "RBank Id : " + rbankId + "\n";
 		result += "Account : " + account + "\n";

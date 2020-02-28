@@ -63,6 +63,18 @@ import com.esferalia.aon.jooq.tables.records.RpaymethodRecord;
 public class JooqEmployee {
 
 	private static Settings SETTINGS = null;
+	
+	protected static Settings getDefaultSettings() {
+		if (SETTINGS == null) {
+			SETTINGS = new Settings();
+			SETTINGS.setRenderSchema(false);
+		}
+		return SETTINGS;
+	}
+	
+	public static EmployeeContractInfo createEmployeeContract(Connection conn, EmployeeContractInfo employeeContractData) {
+		return createEmployeeContractDB(DSL.using(conn, getDefaultSettings()), employeeContractData);
+	}
 
 	public static EmployeeContractInfo getEmployeeInfo(Connection conn, Integer contract) {
 		return getEmployeeInfoDB(DSL.using(conn, getDefaultSettings()), contract);
@@ -72,10 +84,6 @@ public class JooqEmployee {
 		return setEmployeeInfoDB(DSL.using(conn, getDefaultSettings()), newEmployeeInfo);
 	}
 	
-	public static EmployeeContractInfo createEmployeeContract(Connection conn, EmployeeContractInfo employeeContractData) {
-		return createEmployeeContractDB(DSL.using(conn, getDefaultSettings()), employeeContractData);
-	}
-	
 	public static String setEmployeeAFIChanges(Connection conn, Integer contractId, java.util.Date newDate,
 			boolean isChangeContract, String tc2, boolean isQuoteContract, Integer quoteGroup,
 			boolean isOcupationContract, String ocupation) {
@@ -83,15 +91,349 @@ public class JooqEmployee {
 		return setEmployeeAFIChangesDB(DSL.using(conn, getDefaultSettings()), contractId, newDate, isChangeContract, tc2,
 				isQuoteContract, quoteGroup, isOcupationContract, ocupation);
 	}
-
-	protected static Settings getDefaultSettings() {
-		if (SETTINGS == null) {
-			SETTINGS = new Settings();
-			SETTINGS.setRenderSchema(false);
-		}
-		return SETTINGS;
-	}
 	
+	private static EmployeeContractInfo createEmployeeContractDB(DSLContext dslContext, EmployeeContractInfo employeeContractData) {
+		System.out.println("GUARDANDO EN DB ...");
+		
+		ContractInfo contractData = employeeContractData.getContractInfo();
+		EmployeeInfo employeeData = employeeContractData.getEmployeeInfo();
+		Municipalities municipalities = new Municipalities();
+		
+//		System.out.println(contractData.toString());
+//		System.out.println(employeeData.toString());
+		
+		// ------------------------------------------------------------------------------------------------------------------------
+		// ------------------------------------------------ EMPLOYEE INFO ---------------------------------------------------------
+		// ------------------------------------------------------------------------------------------------------------------------		
+		
+		Record workplaceRecord = dslContext.select()
+									.from(WORKPLACE)
+									.where(WORKPLACE.ID.eq(contractData.getWorkplaceId()))
+									.fetchOne();
+		
+		Integer domain = workplaceRecord.get(WORKPLACE.DOMAIN);
+		Integer registryId = 0;
+		
+		Record domainRecord = dslContext.select().from(DOMAIN)
+				.where(DOMAIN.ID.eq(domain))
+				.fetchOne();
+		
+		Integer parentDomain = domainRecord.get(DOMAIN.PARENT);
+		
+		if(employeeData.getEmployeeId() == null){ //NUEVO EMPLEADO
+			
+			RegistryRecord registryRecord = dslContext.insertInto(REGISTRY)
+				.set(REGISTRY.DOMAIN, domain)
+				.set(REGISTRY.DOCUMENT, employeeData.getDocument())
+				.set(REGISTRY.DOCUMENT_TYPE, null == employeeData.getDocumentType() ? (byte) 0 : employeeData.getDocumentType())
+				.set(REGISTRY.DOCUMENT_COUNTRY, null == employeeData.getNationality() ? "ES" : employeeData.getNationalityCode())
+				.set(REGISTRY.NATIONALITY, null == employeeData.getNationality() ? "ES" : employeeData.getNationalityCode())
+				.set(REGISTRY.NAME, employeeData.getFullName())
+				.returning(REGISTRY.ID)
+				.fetchOne();
+			
+			registryId = registryRecord.getId();
+			
+			dslContext.insertInto(PERSON)
+				.set(PERSON.REGISTRY, registryId)
+				.set(PERSON.DOMAIN, domain)
+				.set(PERSON.BIRTH_DATE, parseDate(employeeData.getBirthdate()))
+				.set(PERSON.GENDER, employeeData.getGender())
+				.set(PERSON.SOCIAL_SECURITY_NUM, employeeData.getSsNumber())
+				.set(PERSON.NAME, employeeData.getName())
+				.set(PERSON.FIRST_SURNAME, employeeData.getSurName())
+				.set(PERSON.SECOND_SURNAME, employeeData.getSecondSurName())
+				.execute();
+			
+			Integer rAddressId = null;
+			
+			if(null != employeeData.getAddressProvinces()) {
+				
+				Result<Record> geozone = dslContext.select()
+						.from(GEOZONE)
+						.where(GEOZONE.CODE.eq(employeeData.getAddressProvinces()))
+							.and(GEOZONE.DOMAIN.eq(domain)
+									.or(GEOZONE.DOMAIN.eq(parentDomain)))
+						.orderBy(GEOZONE.DOMAIN.desc())
+						.fetch();
+				
+				Integer geozoneId = null;
+				
+				if(geozone == null){
+					Result<Record1<String>> names = dslContext.select(GEOZONE.NAME)
+						.from(GEOZONE)
+						.where(GEOZONE.CODE.eq(employeeData.getAddressProvinces()))
+						.fetch();
+					
+					if(!names.isEmpty()){
+						GeozoneRecord geozoneRecord  = dslContext.insertInto(GEOZONE)
+								.set(GEOZONE.DOMAIN, domain)
+								.set(GEOZONE.NAME, names.get(0).value1())
+								.set(GEOZONE.CODE, employeeData.getAddressProvinces())
+								.returning(GEOZONE.ID)
+								.fetchOne();
+							
+						geozoneId = geozoneRecord.getId();
+					}
+				}else
+					geozoneId = geozone.get(0).get(GEOZONE.ID);
+				
+				RaddressRecord rAddressRecord = dslContext.insertInto(RADDRESS)
+					.set(RADDRESS.DOMAIN, domain)
+					.set(RADDRESS.REGISTRY, registryId)
+					.set(RADDRESS.STREET_TYPE, employeeData.getStreetType())
+					.set(RADDRESS.ADDRESS, employeeData.getAddress())
+					.set(RADDRESS.ADDRESS2, employeeData.getAddressInfo())
+					.set(RADDRESS.NUMBER, employeeData.getAddresNum())
+					.set(RADDRESS.ZIP, employeeData.getAddressZip())
+					.set(RADDRESS.CITY, municipalities.getMunicipalityByZip(employeeData.getAddressCity()))
+					.set(RADDRESS.MUNICIPALITY_CODE, StringUtils.leftPad(employeeData.getAddressCity(), 5, '0'))
+					.set(RADDRESS.GEOZONE, geozoneId)
+					.returning(RADDRESS.ID, RADDRESS.GEOZONE)
+					.fetchOne();
+				
+				rAddressId = rAddressRecord.getId();
+				
+				if(geozone == null && null != geozoneId){
+					Integer rAddressGeozone = rAddressRecord.getGeozone();
+					
+					GeozoneRecord geozoneParentRecord  = dslContext.insertInto(GEOZONE)
+							.set(GEOZONE.DOMAIN, domain)
+							.set(GEOZONE.NAME, "ESPA" + String.valueOf("\u00D1") +"A")
+							.set(GEOZONE.CODE, "ES")
+							.set(GEOZONE.SYSTEM, (byte) 1)
+							.returning(GEOZONE.ID)
+							.fetchOne();
+					
+					Integer geozoneParentId = geozoneParentRecord.getId();
+					
+					dslContext.insertInto(GEOTREE)
+					.set(GEOTREE.DOMAIN, domain)
+					.set(GEOTREE.PARENT, geozoneParentId)
+					.set(GEOTREE.CHILD, rAddressGeozone)
+					.execute();
+					
+					dslContext.insertInto(GEOTREE)
+					.set(GEOTREE.DOMAIN, domain)
+					.set(GEOTREE.PARENT, (Integer) null)
+					.set(GEOTREE.CHILD, geozoneParentId)
+					.execute();
+				}
+			}
+			
+			if(null != employeeData.getPhone())
+				dslContext.insertInto(RMEDIA)
+					.set(RMEDIA.DOMAIN, domain)
+					.set(RMEDIA.REGISTRY, registryId)
+					.set(RMEDIA.MEDIA, (byte) 1)
+					.set(RMEDIA.VALUE, employeeData.getPhone())
+					.set(RMEDIA.RADDRESS, rAddressId)
+					.execute();
+			
+			if(null != employeeData.getMobile())
+				dslContext.insertInto(RMEDIA)
+					.set(RMEDIA.DOMAIN, domain)
+					.set(RMEDIA.REGISTRY, registryId)
+					.set(RMEDIA.MEDIA, (byte) 2)
+					.set(RMEDIA.VALUE, employeeData.getMobile())
+					.set(RMEDIA.RADDRESS, rAddressId)
+					.execute();
+			
+			if(null != employeeData.getEmail())
+				dslContext.insertInto(RMEDIA)
+					.set(RMEDIA.DOMAIN, domain)
+					.set(RMEDIA.REGISTRY, registryId)
+					.set(RMEDIA.MEDIA, (byte) 4)
+					.set(RMEDIA.VALUE, employeeData.getEmail())
+					.set(RMEDIA.RADDRESS, rAddressId)
+					.execute();
+			
+			byte typePayMethod = employeeData.getPayMethodTypeB();
+			if(-1 != typePayMethod){
+				PayMethodRecord payMethodRecord = dslContext.insertInto(PAY_METHOD)
+						.set(PAY_METHOD.DOMAIN, domain)
+						.set(PAY_METHOD.NAME, getPaymentTypeName(typePayMethod))
+						.set(PAY_METHOD.TYPE, typePayMethod)
+						.returning(PAY_METHOD.ID)
+						.fetchOne();
+				
+				Integer payMethodTableId = payMethodRecord.get(PAY_METHOD.ID);
+				Integer rbankTableId = null;
+				String account = employeeData.getAccount();
+				if(!StringUtils.isBlank(account)){
+					RbankRecord rbankRecord = dslContext.insertInto(RBANK)
+							.set(RBANK.DOMAIN, domain)
+							.set(RBANK.REGISTRY, registryId)
+							.set(RBANK.BANK_ACCOUNT, employeeData.getAccount())
+							.set(RBANK.BIC, employeeData.getBic())
+							.set(RBANK.ALIAS, "CUENTA")
+							.set(RBANK.ACTIVE, (byte) 1)
+							.returning(RBANK.ID)
+							.fetchOne();
+					 
+					 rbankTableId = rbankRecord.get(RBANK.ID); 
+				}
+				
+				dslContext.insertInto(RPAYMETHOD)
+					.set(RPAYMETHOD.DOMAIN, domain)
+					.set(RPAYMETHOD.REGISTRY, registryId)
+					.set(RPAYMETHOD.PAY_METHOD, payMethodTableId)
+					.set(RPAYMETHOD.RBANK, rbankTableId)
+					.set(RPAYMETHOD.NUMBER_OF_PYMNTS, (short) 1)
+					.set(RPAYMETHOD.PYMNT_DAYS, "")
+					.execute();
+			}
+			
+		}else{ //EMPLEADO YA EXISTENTE
+			
+			registryId = employeeData.getEmployeeId();
+				
+		}
+		
+		// ------------------------------------------------------------------------------------------------------------------------
+		// ------------------------------------------------ CONTRACT INFO ---------------------------------------------------------
+		// ------------------------------------------------------------------------------------------------------------------------
+		
+		Date contractStartDate =  parseDate(contractData.getStartDate());
+		Date contractEndDate =  parseDate(contractData.getEndDate());
+		
+		ContractRecord contractRecord = dslContext.insertInto(CONTRACT)
+			.set(CONTRACT.DOMAIN, domain)
+			.set(CONTRACT.PERSON, registryId)
+			.set(CONTRACT.WORKPLACE, contractData.getWorkplaceId())
+			.set(CONTRACT.START_DATE, contractStartDate)
+			.set(CONTRACT.END_DATE, contractEndDate)
+			.set(CONTRACT.SENIORITY_DATE, parseDate(contractData.getSeniorityDate()) == null ? contractStartDate :  parseDate(contractData.getSeniorityDate()))
+			.set(CONTRACT.CATEGORY_DESCRIPTION, (null == contractData.getAgreementCategory() || "" == contractData.getAgreementCategory()) ? null : contractData.getAgreementCategory())
+			.set(CONTRACT.AGREEMENT_LEVEL, contractData.getAgreementLevelId())
+			.returning(CONTRACT.ID)
+			.fetchOne();
+		
+		Integer contractId = contractRecord.getId();
+		
+		if(contractData.getSsRegimen() != 3){ //NO ES RETA
+			
+			if(null != contractData.getActivityId())
+				dslContext.update(CONTRACT)
+				.set(CONTRACT.ENTERPRISE_CCC, contractData.getCccId())
+				.set(CONTRACT.ENTERPRISE_ACTIVITY, contractData.getActivityId())
+				.where(CONTRACT.ID.eq(contractId))
+				.execute();
+		
+			if(null != contractData.getContractType())
+				dslContext.insertInto(CONTRACT_DATA)
+					.set(CONTRACT_DATA.DOMAIN, domain)
+					.set(CONTRACT_DATA.NAME, "TC2")
+					.set(CONTRACT_DATA.CONTRACT, contractId)
+					.set(CONTRACT_DATA.EXPRESSION, parseContractTableStr(contractData.getContractType()))
+					.set(CONTRACT_DATA.START_DATE, contractStartDate)
+					.set(CONTRACT_DATA.END_DATE, contractEndDate)
+					.execute();
+		
+			/*ModelOption.values()[employeeContractData.getContract_model()].toString()*/
+			if(null != contractData.getContractModel())
+				dslContext.insertInto(CONTRACT_INFO)
+					.set(CONTRACT_INFO.DOMAIN, domain)
+					.set(CONTRACT_INFO.NAME, "OPCION_CONTRATO")
+					.set(CONTRACT_INFO.CONTRACT, contractId)
+					.set(CONTRACT_INFO.EXPRESSION, (contractData.getContractModel() == null) ? (String) null : "\""+ ModelOption.values()[contractData.getContractModel()].toString() +"\"")
+					.set(CONTRACT_INFO.START_DATE, contractStartDate)
+					.set(CONTRACT_INFO.END_DATE, contractEndDate)
+					.execute();
+		
+			if(null != contractData.getQuoteGroup())
+				dslContext.insertInto(CONTRACT_DATA)
+					.set(CONTRACT_DATA.DOMAIN, domain)
+					.set(CONTRACT_DATA.NAME, "GRUPO_COTIZACION")
+					.set(CONTRACT_DATA.CONTRACT, contractId)
+					.set(CONTRACT_DATA.EXPRESSION, parseContractTableStr(contractData.getQuoteGroup()))
+					.set(CONTRACT_DATA.START_DATE, contractStartDate)
+					.set(CONTRACT_DATA.END_DATE, contractEndDate)
+					.execute();
+		
+			if(null != contractData.getOcupation())
+				dslContext.insertInto(CONTRACT_DATA)
+					.set(CONTRACT_DATA.DOMAIN, domain)
+					.set(CONTRACT_DATA.NAME, "OCUPACION")
+					.set(CONTRACT_DATA.CONTRACT, contractId)
+					.set(CONTRACT_DATA.EXPRESSION, parseContractTableStr(contractData.getOcupation()))
+					.set(CONTRACT_DATA.START_DATE, contractStartDate)
+					.set(CONTRACT_DATA.END_DATE, contractEndDate)
+					.execute();	
+				
+		}else{//ES RETA
+		
+			dslContext.insertInto(CONTRACT_DATA)
+				.set(CONTRACT_DATA.DOMAIN, domain)
+				.set(CONTRACT_DATA.NAME, "TIEMPO_COMPLETO")
+				.set(CONTRACT_DATA.CONTRACT, contractId)
+				.set(CONTRACT_DATA.EXPRESSION, (contractData.getJourneyType() == 0) ? "FALSE" : "TRUE")
+				.set(CONTRACT_DATA.START_DATE, contractStartDate)
+				.set(CONTRACT_DATA.END_DATE, contractEndDate)
+				.execute();
+			
+			dslContext.insertInto(CONTRACT_INFO)
+				.set(CONTRACT_INFO.DOMAIN, domain)
+				.set(CONTRACT_INFO.CONTRACT, contractId)
+				.set(CONTRACT_INFO.NAME, "RETA")
+				.set(CONTRACT_INFO.EXPRESSION, "true")
+				.set(CONTRACT_INFO.START_DATE, contractStartDate)
+				.set(CONTRACT_INFO.END_DATE, contractEndDate)
+				.execute();
+			
+			dslContext.update(CONTRACT)
+				.set(CONTRACT.ENTERPRISE_CCC, (Integer) null)
+				.set(CONTRACT.ENTERPRISE_ACTIVITY, (Integer) null)
+				.set(CONTRACT.SS_REGIME, (byte) 3)
+				.where(CONTRACT.ID.eq(contractId))
+				.execute();
+			
+		}
+		
+		dslContext.insertInto(CONTRACT_INFO)
+			.set(CONTRACT_INFO.DOMAIN, domain)
+			.set(CONTRACT_INFO.CONTRACT, contractId)
+			.set(CONTRACT_INFO.NAME, "SEPE_CONTRATO")
+			.set(CONTRACT_INFO.EXPRESSION, "PENDING")
+			.set(CONTRACT_INFO.START_DATE, contractStartDate)
+			.set(CONTRACT_INFO.END_DATE, contractEndDate)
+			.set(CONTRACT_INFO.CREATION_USER, "admin")
+			.set(CONTRACT_INFO.CREATION_DATE, new Timestamp(new java.util.Date().getTime()))
+			.execute();
+		
+		dslContext.insertInto(CONTRACT_INFO)
+			.set(CONTRACT_INFO.DOMAIN, domain)
+			.set(CONTRACT_INFO.CONTRACT, contractId)
+			.set(CONTRACT_INFO.NAME, "SS_ALTA")
+			.set(CONTRACT_INFO.EXPRESSION, "PENDING")
+			.set(CONTRACT_INFO.START_DATE, contractStartDate)
+			.set(CONTRACT_INFO.END_DATE, contractEndDate)
+			.set(CONTRACT_INFO.CREATION_USER, "admin")
+			.set(CONTRACT_INFO.CREATION_DATE, new Timestamp(new java.util.Date().getTime()))
+			.execute();
+		
+		//ACTUALIZAR DURACION JORNADA
+//		TreeMap<java.util.Date, ArrayList<JourneyDuration>> contractJourneyDuration = contractData.getContractJourneyDuration().getContractJourneyDuration();
+//		if(null != contractJourneyDuration)
+//			for(Entry<java.util.Date, ArrayList<JourneyDuration>> entry : contractJourneyDuration.entrySet()) {
+//				 for(JourneyDuration journey : entry.getValue()) {
+//					 
+//					 java.util.Date endDateAux = null;
+//					 if(null == journey.getEndDate() && null != contractData.getEndDate())
+//						 endDateAux = DateUtils.copyDateOnly(contractData.getEndDate());
+//					 else
+//						 endDateAux = DateUtils.copyDateOnly(journey.getEndDate());
+//					 
+//					 dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+//								CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+//							.values(domain, journey.getName(), contractId, journey.getExpression(), 
+//									new Date(journey.getStartDate().getTime()), (null == endDateAux) ? null : new Date(endDateAux.getTime()))
+//							.execute();
+//				 }
+//			}
+		
+		return null;
+	}
 
 	private static EmployeeContractInfo getEmployeeInfoDB(DSLContext dslContext, Integer contract) {
 		
@@ -154,7 +496,7 @@ public class JooqEmployee {
 						.fetchOne();
 				
 				employeeData.setGeozoneId(geozoneTable.get(GEOZONE.ID));
-				employeeData.setAddressProvinces(geozoneTable.get(GEOZONE.NAME));
+				employeeData.setAddressProvinces(geozoneTable.get(GEOZONE.CODE));
 			}
 		}
 		
@@ -199,6 +541,7 @@ public class JooqEmployee {
 			
 			employeeData.setPaymethodId(payMethodTable.get(PAY_METHOD.ID));
 			employeeData.setPayMethodType(payMethodTable.get(PAY_METHOD.NAME));
+			employeeData.setPayMethodTypeB(payMethodTable.get(PAY_METHOD.TYPE));
 			
 			Integer rbank = rPayMethodRecord.get(RPAYMETHOD.RBANK);
 			
@@ -478,34 +821,6 @@ public class JooqEmployee {
 		return employeeContractInfo;
 	}
 	
-	private static ArrayList<JourneyDuration> orderByWeekDay(ArrayList<JourneyDuration> journeyList) {
-		ArrayList<JourneyDuration> result = new ArrayList<>();
-		
-		for(JourneyDuration journey : journeyList)
-			if(journey.getName().equals("HORAS_LUNES"))
-				result.add(journey);
-		for(JourneyDuration journey : journeyList)
-			if(journey.getName().equals("HORAS_MARTES"))
-				result.add(journey);
-		for(JourneyDuration journey : journeyList)
-			if(journey.getName().equals("HORAS_MIERCOLES"))
-				result.add(journey);
-		for(JourneyDuration journey : journeyList)
-			if(journey.getName().equals("HORAS_JUEVES"))
-				result.add(journey);
-		for(JourneyDuration journey : journeyList)
-			if(journey.getName().equals("HORAS_VIERNES"))
-				result.add(journey);
-		for(JourneyDuration journey : journeyList)
-			if(journey.getName().equals("HORAS_SABADO"))
-				result.add(journey);
-		for(JourneyDuration journey : journeyList)
-			if(journey.getName().equals("HORAS_DOMINGO"))
-				result.add(journey);
-		
-		return result;
-	}
-
 	private static EmployeeContractInfo setEmployeeInfoDB(DSLContext dslContext, EmployeeContractInfo employeeContractInfo) {
 		
 		ContractInfo contractData = employeeContractInfo.getContractInfo();
@@ -1353,6 +1668,8 @@ public class JooqEmployee {
 		return employeeContractInfo;
 	}
 
+	// --------------------------------------- AUX METHODS -----------------------------
+	
 	private static byte getType(String typePayMethod) {
 		switch (typePayMethod) {
 		case "EFECTIVO":
@@ -1367,347 +1684,61 @@ public class JooqEmployee {
 			return (byte) -1;
 		}
 	}
-
-	private static EmployeeContractInfo createEmployeeContractDB(DSLContext dslContext, EmployeeContractInfo employeeContractData) {
-		System.out.println("GUARDANDO EN DB ...");
+	
+	public static Date parseDate(java.util.Date date) {
+		if(null == date)
+			return null;
 		
-		ContractInfo contractData = employeeContractData.getContractInfo();
-		EmployeeInfo employeeData = employeeContractData.getEmployeeInfo();
-		Municipalities municipalities = new Municipalities();
+		DateUtils.resetTime(date);
+		return new Date(date.getTime());
+	}
+	
+	public static String parseContractTableStr(String exp) {
+		if(null == exp)
+			return null;
 		
-//		System.out.println(contractData.toString());
-//		System.out.println(employeeData.toString());
-		
-		// ------------------------------------------------------------------------------------------------------------------------
-		// ------------------------------------------------ EMPLOYEE INFO ---------------------------------------------------------
-		// ------------------------------------------------------------------------------------------------------------------------		
-		
-		Record workplaceRecord = dslContext.select()
-									.from(WORKPLACE)
-									.where(WORKPLACE.ID.eq(contractData.getWorkplaceId()))
-									.fetchOne();
-		
-		Integer domain = workplaceRecord.get(WORKPLACE.DOMAIN);
-		Integer registryId = 0;
-		
-		Record domainRecord = dslContext.select().from(DOMAIN)
-				.where(DOMAIN.ID.eq(domain))
-				.fetchOne();
-		
-		Integer parentDomain = domainRecord.get(DOMAIN.PARENT);
-		
-		if(employeeData.getEmployeeId() == null){ //NUEVO EMPLEADO
-			
-			RegistryRecord registryRecord = dslContext.insertInto(REGISTRY)
-				.set(REGISTRY.DOMAIN, domain)
-				.set(REGISTRY.DOCUMENT, employeeData.getDocument())
-				.set(REGISTRY.DOCUMENT_TYPE, null == employeeData.getDocumentType() ? (byte) 0 : employeeData.getDocumentType())
-				.set(REGISTRY.DOCUMENT_COUNTRY, null == employeeData.getNationality() ? "ES" : employeeData.getNationality())
-				.set(REGISTRY.NATIONALITY, null == employeeData.getNationality() ? "ES" : employeeData.getNationality())
-				.set(REGISTRY.NAME, (null == employeeData.getSurName() ? "" :  employeeData.getSurName() + " ") + 
-									(null == employeeData.getSecondSurName() ? "" : employeeData.getSecondSurName() + ", ") + 
-									employeeData.getName())
-				.returning(REGISTRY.ID)
-				.fetchOne();
-			
-			registryId = registryRecord.getId();
-			
-			dslContext.insertInto(PERSON)
-				.set(PERSON.REGISTRY, registryId)
-				.set(PERSON.DOMAIN, domain)
-				.set(PERSON.BIRTH_DATE, (employeeData.getBirthdate() == null) ? null : new Date(employeeData.getBirthdate().getTime()))
-				.set(PERSON.GENDER, employeeData.getGender())
-				.set(PERSON.SOCIAL_SECURITY_NUM, employeeData.getSsNumber())
-				.set(PERSON.NAME, employeeData.getName())
-				.set(PERSON.FIRST_SURNAME, null == employeeData.getSurName() ? "" : employeeData.getSurName())
-				.set(PERSON.SECOND_SURNAME, null == employeeData.getSecondSurName() ? "" : employeeData.getSecondSurName())
-				.execute();
-			
-			Integer rAddressId = null;
-			
-			if(null != employeeData.getAddressProvinces()) {
-			
-				Result<Record> geozone = dslContext.select()
-						.from(GEOZONE)
-						.where(GEOZONE.NAME.eq(employeeData.getAddressProvinces()))
-							.and(GEOZONE.DOMAIN.eq(domain)
-									.or(GEOZONE.DOMAIN.eq(parentDomain)))
-						.fetch();
-				
-				Integer geozoneId = null;
-				
-				if(geozone == null){
-					Result<Record1<String>> codes = dslContext.select(GEOZONE.CODE)
-						.from(GEOZONE)
-						.where(GEOZONE.NAME.like(employeeData.getAddressProvinces()+"%"))
-						.fetch();
-					
-					if(!codes.isEmpty()){
-						GeozoneRecord geozoneRecord  = dslContext.insertInto(GEOZONE)
-								.set(GEOZONE.DOMAIN, domain)
-								.set(GEOZONE.NAME, employeeData.getAddressProvinces())
-								.set(GEOZONE.CODE, codes.get(0).value1())
-								.returning(GEOZONE.ID)
-								.fetchOne();
-							
-							geozoneId = geozoneRecord.getId();
-					}
-				}else
-					geozoneId = geozone.get(0).get(GEOZONE.ID);
-				
-				RaddressRecord rAddressRecord = dslContext.insertInto(RADDRESS)
-					.set(RADDRESS.DOMAIN, domain)
-					.set(RADDRESS.REGISTRY, registryId)
-					.set(RADDRESS.STREET_TYPE, employeeData.getStreetType())
-					.set(RADDRESS.ADDRESS, employeeData.getAddress())
-					.set(RADDRESS.ADDRESS2, employeeData.getAddressInfo())
-					.set(RADDRESS.NUMBER, employeeData.getAddresNum())
-					.set(RADDRESS.ZIP, employeeData.getAddressZip())
-					.set(RADDRESS.CITY, municipalities.getMunicipalityByZip(employeeData.getAddressCity()))
-					.set(RADDRESS.MUNICIPALITY_CODE, StringUtils.leftPad(employeeData.getAddressCity(), 5, '0'))
-					.set(RADDRESS.GEOZONE, geozoneId)
-					.returning(RADDRESS.ID, RADDRESS.GEOZONE)
-					.fetchOne();
-				
-				rAddressId = rAddressRecord.getId();
-				
-				if(geozone == null && null != geozoneId){
-					Integer rAddressGeozone = rAddressRecord.getGeozone();
-					
-					GeozoneRecord geozoneParentRecord  = dslContext.insertInto(GEOZONE)
-							.set(GEOZONE.DOMAIN, domain)
-							.set(GEOZONE.NAME, "ESPA�A")
-							.set(GEOZONE.CODE, "ES")
-							.set(GEOZONE.SYSTEM, (byte) 1)
-							.returning(GEOZONE.ID)
-							.fetchOne();
-					
-					Integer geozoneParentId = geozoneParentRecord.getId();
-					
-					dslContext.insertInto(GEOTREE)
-					.set(GEOTREE.DOMAIN, domain)
-					.set(GEOTREE.PARENT, geozoneParentId)
-					.set(GEOTREE.CHILD, rAddressGeozone)
-					.execute();
-					
-					dslContext.insertInto(GEOTREE)
-					.set(GEOTREE.DOMAIN, domain)
-					.set(GEOTREE.PARENT, (Integer) null)
-					.set(GEOTREE.CHILD, geozoneParentId)
-					.execute();
-				}
-			}
-			
-			if(null != employeeData.getPhone())
-				dslContext.insertInto(RMEDIA)
-					.set(RMEDIA.DOMAIN, domain)
-					.set(RMEDIA.REGISTRY, registryId)
-					.set(RMEDIA.MEDIA, (byte) 1)
-					.set(RMEDIA.VALUE, employeeData.getPhone())
-					.set(RMEDIA.RADDRESS, rAddressId)
-					.execute();
-			
-			if(null != employeeData.getMobile())
-				dslContext.insertInto(RMEDIA)
-					.set(RMEDIA.DOMAIN, domain)
-					.set(RMEDIA.REGISTRY, registryId)
-					.set(RMEDIA.MEDIA, (byte) 2)
-					.set(RMEDIA.VALUE, employeeData.getMobile())
-					.set(RMEDIA.RADDRESS, rAddressId)
-					.execute();
-			
-			if(null != employeeData.getEmail())
-				dslContext.insertInto(RMEDIA)
-					.set(RMEDIA.DOMAIN, domain)
-					.set(RMEDIA.REGISTRY, registryId)
-					.set(RMEDIA.MEDIA, (byte) 4)
-					.set(RMEDIA.VALUE, employeeData.getEmail())
-					.set(RMEDIA.RADDRESS, rAddressId)
-					.execute();
-			
-			if(employeeData.getPayMethodType() != null && employeeData.getPayMethodType() != ""){
-				byte typePayMethod = getType(employeeData.getPayMethodType());
-				if(-1 != typePayMethod){
-					PayMethodRecord payMethodRecord = dslContext.insertInto(PAY_METHOD)
-							.set(PAY_METHOD.DOMAIN, domain)
-							.set(PAY_METHOD.NAME, employeeData.getPayMethodType())
-							.set(PAY_METHOD.TYPE, typePayMethod)
-							.returning(PAY_METHOD.ID)
-							.fetchOne();
-					
-					Integer payMethodTableId = payMethodRecord.get(PAY_METHOD.ID);
-					Integer rbankTableId = null;
-					if(employeeData.getAccount() != null && !employeeData.getAccount().equals("")){
-						RbankRecord rbankRecord = dslContext.insertInto(RBANK)
-								.set(RBANK.DOMAIN, domain)
-								.set(RBANK.REGISTRY, registryId)
-								.set(RBANK.BANK_ACCOUNT, employeeData.getAccount())
-								.set(RBANK.BIC, employeeData.getBic())
-								.set(RBANK.ALIAS, "CUENTA")
-								.set(RBANK.ACTIVE, (byte) 1)
-								.returning(RBANK.ID)
-								.fetchOne();
-						 
-						 rbankTableId = rbankRecord.get(RBANK.ID); 
-					}
-					
-					dslContext.insertInto(RPAYMETHOD)
-						.set(RPAYMETHOD.DOMAIN, domain)
-						.set(RPAYMETHOD.REGISTRY, registryId)
-						.set(RPAYMETHOD.PAY_METHOD, payMethodTableId)
-						.set(RPAYMETHOD.RBANK, rbankTableId)
-						.set(RPAYMETHOD.NUMBER_OF_PYMNTS, (short) 1)
-						.set(RPAYMETHOD.PYMNT_DAYS, "")
-						.execute();
-				}
-			}
-			
-		}else{ //EMPLEADO YA EXISTENTE
-			
-			registryId = employeeData.getEmployeeId();
-				
+		return "\""+ exp +"\"";
+	}
+	
+	public static String getPaymentTypeName(byte type) {
+		switch (type) {
+		case (byte) 0:
+			return "EFECTIVO";
+		case (byte) 4:
+			return "CHEQUE";
+		case (byte) 5:
+			return "TRANSFERENCIA";
+		default:
+			return "";
 		}
+	}
+	
+	private static ArrayList<JourneyDuration> orderByWeekDay(ArrayList<JourneyDuration> journeyList) {
+		ArrayList<JourneyDuration> result = new ArrayList<>();
 		
-		// ------------------------------------------------------------------------------------------------------------------------
-		// ------------------------------------------------ CONTRACT INFO ---------------------------------------------------------
-		// ------------------------------------------------------------------------------------------------------------------------
+		for(JourneyDuration journey : journeyList)
+			if(journey.getName().equals("HORAS_LUNES"))
+				result.add(journey);
+		for(JourneyDuration journey : journeyList)
+			if(journey.getName().equals("HORAS_MARTES"))
+				result.add(journey);
+		for(JourneyDuration journey : journeyList)
+			if(journey.getName().equals("HORAS_MIERCOLES"))
+				result.add(journey);
+		for(JourneyDuration journey : journeyList)
+			if(journey.getName().equals("HORAS_JUEVES"))
+				result.add(journey);
+		for(JourneyDuration journey : journeyList)
+			if(journey.getName().equals("HORAS_VIERNES"))
+				result.add(journey);
+		for(JourneyDuration journey : journeyList)
+			if(journey.getName().equals("HORAS_SABADO"))
+				result.add(journey);
+		for(JourneyDuration journey : journeyList)
+			if(journey.getName().equals("HORAS_DOMINGO"))
+				result.add(journey);
 		
-		ContractRecord contractRecord = dslContext.insertInto(CONTRACT)
-			.set(CONTRACT.DOMAIN, domain)
-			.set(CONTRACT.PERSON, registryId)
-			.set(CONTRACT.WORKPLACE, contractData.getWorkplaceId())
-			.set(CONTRACT.START_DATE, new Date(contractData.getStartDate().getTime()))
-			.set(CONTRACT.END_DATE, (contractData.getEndDate() == null) ? null : new Date(contractData.getEndDate().getTime()))
-			.set(CONTRACT.SENIORITY_DATE, (contractData.getSeniorityDate() == null) ? new Date(contractData.getStartDate().getTime()) : new Date(contractData.getSeniorityDate().getTime()))
-			.set(CONTRACT.CATEGORY_DESCRIPTION, (null == contractData.getAgreementCategory() || "" == contractData.getAgreementCategory()) ? null : contractData.getAgreementCategory())
-			.set(CONTRACT.AGREEMENT_LEVEL, contractData.getAgreementLevelId())
-			.returning(CONTRACT.ID)
-			.fetchOne();
-		
-		Integer contractId = contractRecord.getId();
-		
-		if(contractData.getSsRegimen() != 3){ //NO ES RETA
-			
-			if(null != contractData.getActivityId())
-				dslContext.update(CONTRACT)
-				.set(CONTRACT.ENTERPRISE_CCC, contractData.getCccId())
-				.set(CONTRACT.ENTERPRISE_ACTIVITY, contractData.getActivityId())
-				.where(CONTRACT.ID.eq(contractId))
-				.execute();
-		
-			if(null != contractData.getContractType())
-				dslContext.insertInto(CONTRACT_DATA)
-					.set(CONTRACT_DATA.DOMAIN, domain)
-					.set(CONTRACT_DATA.NAME, "TC2")
-					.set(CONTRACT_DATA.CONTRACT, contractId)
-					.set(CONTRACT_DATA.EXPRESSION, (contractData.getContractType() == null) ? (String) null : "\""+contractData.getContractType()+"\"")
-					.set(CONTRACT_DATA.START_DATE, new Date(contractData.getStartDate().getTime()))
-					.set(CONTRACT_DATA.END_DATE, (contractData.getEndDate() == null) ? null : new Date(contractData.getEndDate().getTime()))
-					.execute();
-		
-			/*ModelOption.values()[employeeContractData.getContract_model()].toString()*/
-			if(null != contractData.getContractModel())
-				dslContext.insertInto(CONTRACT_INFO)
-					.set(CONTRACT_INFO.DOMAIN, domain)
-					.set(CONTRACT_INFO.NAME, "OPCION_CONTRATO")
-					.set(CONTRACT_INFO.CONTRACT, contractId)
-					.set(CONTRACT_INFO.EXPRESSION, (contractData.getContractModel() == null) ? (String) null : "\""+ ModelOption.values()[contractData.getContractModel()].toString() +"\"")
-					.set(CONTRACT_INFO.START_DATE, new Date(contractData.getStartDate().getTime()))
-					.set(CONTRACT_INFO.END_DATE, (contractData.getEndDate() == null) ? null : new Date(contractData.getEndDate().getTime()))
-					.execute();
-		
-			if(null != contractData.getQuoteGroup())
-				dslContext.insertInto(CONTRACT_DATA)
-					.set(CONTRACT_DATA.DOMAIN, domain)
-					.set(CONTRACT_DATA.NAME, "GRUPO_COTIZACION")
-					.set(CONTRACT_DATA.CONTRACT, contractId)
-					.set(CONTRACT_DATA.EXPRESSION, (contractData.getQuoteGroup() == null) ? (String) null : "\""+ contractData.getQuoteGroup() +"\"")
-					.set(CONTRACT_DATA.START_DATE, new Date(contractData.getStartDate().getTime()))
-					.set(CONTRACT_DATA.END_DATE, (contractData.getEndDate() == null) ? null : new Date(contractData.getEndDate().getTime()))
-					.execute();
-		
-			if(null != contractData.getOcupation())
-				dslContext.insertInto(CONTRACT_DATA)
-					.set(CONTRACT_DATA.DOMAIN, domain)
-					.set(CONTRACT_DATA.NAME, "OCUPACION")
-					.set(CONTRACT_DATA.CONTRACT, contractId)
-					.set(CONTRACT_DATA.EXPRESSION, (contractData.getOcupation() == null) ? (String) null : "\""+ contractData.getOcupation() +"\"")
-					.set(CONTRACT_DATA.START_DATE, new Date(contractData.getStartDate().getTime()))
-					.set(CONTRACT_DATA.END_DATE, (contractData.getEndDate() == null) ? null : new Date(contractData.getEndDate().getTime()))
-					.execute();	
-				
-		}else{//ES RETA
-		
-			dslContext.insertInto(CONTRACT_DATA)
-				.set(CONTRACT_DATA.DOMAIN, domain)
-				.set(CONTRACT_DATA.NAME, "TIEMPO_COMPLETO")
-				.set(CONTRACT_DATA.CONTRACT, contractId)
-				.set(CONTRACT_DATA.EXPRESSION, (contractData.getJourneyType() == 0) ? "FALSE" : "TRUE")
-				.set(CONTRACT_DATA.START_DATE, new Date(contractData.getStartDate().getTime()))
-				.set(CONTRACT_DATA.END_DATE, (contractData.getEndDate() == null) ? null : new Date(contractData.getEndDate().getTime()))
-				.execute();
-			
-			dslContext.insertInto(CONTRACT_INFO)
-				.set(CONTRACT_INFO.DOMAIN, domain)
-				.set(CONTRACT_INFO.CONTRACT, contractId)
-				.set(CONTRACT_INFO.NAME, "RETA")
-				.set(CONTRACT_INFO.EXPRESSION, "true")
-				.set(CONTRACT_INFO.START_DATE, new Date(contractData.getStartDate().getTime()))
-				.set(CONTRACT_INFO.END_DATE, (contractData.getEndDate() == null) ? null : new Date(contractData.getEndDate().getTime()))
-				.execute();
-			
-			dslContext.update(CONTRACT)
-				.set(CONTRACT.ENTERPRISE_CCC, (Integer) null)
-				.set(CONTRACT.ENTERPRISE_ACTIVITY, (Integer) null)
-				.set(CONTRACT.SS_REGIME, (byte) 3)
-				.where(CONTRACT.ID.eq(contractId))
-				.execute();
-			
-		}
-		
-		dslContext.insertInto(CONTRACT_INFO)
-			.set(CONTRACT_INFO.DOMAIN, domain)
-			.set(CONTRACT_INFO.CONTRACT, contractId)
-			.set(CONTRACT_INFO.NAME, "SEPE_CONTRATO")
-			.set(CONTRACT_INFO.EXPRESSION, "PENDING")
-			.set(CONTRACT_INFO.START_DATE, new Date(contractData.getStartDate().getTime()))
-			.set(CONTRACT_INFO.END_DATE, (contractData.getEndDate() == null) ? null : new Date(contractData.getEndDate().getTime()))
-			.set(CONTRACT_INFO.CREATION_USER, "admin")
-			.set(CONTRACT_INFO.CREATION_DATE, new Timestamp(new java.util.Date().getTime()))
-			.execute();
-		
-		dslContext.insertInto(CONTRACT_INFO)
-			.set(CONTRACT_INFO.DOMAIN, domain)
-			.set(CONTRACT_INFO.CONTRACT, contractId)
-			.set(CONTRACT_INFO.NAME, "SS_ALTA")
-			.set(CONTRACT_INFO.EXPRESSION, "PENDING")
-			.set(CONTRACT_INFO.START_DATE, new Date(contractData.getStartDate().getTime()))
-			.set(CONTRACT_INFO.END_DATE, (contractData.getEndDate() == null) ? null : new Date(contractData.getEndDate().getTime()))
-			.set(CONTRACT_INFO.CREATION_USER, "admin")
-			.set(CONTRACT_INFO.CREATION_DATE, new Timestamp(new java.util.Date().getTime()))
-			.execute();
-		
-		//ACTUALIZAR DURACION JORNADA
-		TreeMap<java.util.Date, ArrayList<JourneyDuration>> contractJourneyDuration = contractData.getContractJourneyDuration().getContractJourneyDuration();
-		if(null != contractJourneyDuration)
-			for(Entry<java.util.Date, ArrayList<JourneyDuration>> entry : contractJourneyDuration.entrySet()) {
-				 for(JourneyDuration journey : entry.getValue()) {
-					 
-					 java.util.Date endDateAux = null;
-					 if(null == journey.getEndDate() && null != contractData.getEndDate())
-						 endDateAux = DateUtils.copyDateOnly(contractData.getEndDate());
-					 else
-						 endDateAux = DateUtils.copyDateOnly(journey.getEndDate());
-					 
-					 dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
-								CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-							.values(domain, journey.getName(), contractId, journey.getExpression(), 
-									new Date(journey.getStartDate().getTime()), (null == endDateAux) ? null : new Date(endDateAux.getTime()))
-							.execute();
-				 }
-			}
-		
-		return null;
+		return result;
 	}
 
 	// ---------------------------------------------------------------------------------------------------------------------------
