@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 
@@ -20,9 +19,7 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
-import com.esferalia.aon.gwt.payroll.shared.StreetType;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
-import com.esferalia.aon.occam.api.model.type.Country;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeDraftObject extends AbstractDraftObject{
@@ -63,15 +60,171 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		this.undoManager = new UndoManager<Undoable>();
 	}
 	
+	// ---------------------------------------------- DATABASE METHODS SYNC  ---------------------------------------------
+	
+	public void initializeEmployee(Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure) {
+		employeesService.getEmployeeInfoDataBase(this.employee.getId(), new AsyncCallback<EmployeeContractInfo>() {
+			
+			@Override
+			public void onSuccess(EmployeeContractInfo result) {
+				employeeContractData = result;
+				employeeData = result.getEmployeeInfo();
+				contractData = result.getContractInfo();
+				employeeContractData.setEmployeeInfo(employeeData);
+				employeeContractData.setContractInfo(contractData);
+
+				getAgreements(
+						r ->{success.accept(result);},
+						f->{}
+				);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+
+	public void getAgreements(Consumer<List<Agreement>> success, Consumer<Throwable> failure) {
+		enterprisesService.getAgreements(0, Integer.MAX_VALUE, new AsyncCallback<List<Agreement>>() {
+			
+			@Override
+			public void onSuccess(List<Agreement> result) {
+				agreements = result;
+				getActivitiesCCC(
+						r->{success.accept(result);},
+						f->{}
+					);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+		});	
+	}
+	
+	public void getActivitiesCCC(Consumer<ActivitiesCCC> success, Consumer<Throwable> failure) {
+		enterprisesService.getActivitiesCCC(workplace.getId(), new AsyncCallback<ActivitiesCCC>() {
+			
+			@Override
+			public void onSuccess(ActivitiesCCC result) {
+				activitiesCCC = result;
+				getWorkplaces(
+						r->{success.accept(result);},
+						f->{}
+					);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+			}
+		});
+	}
+	
+	public void getWorkplaces(Consumer<List<Workplace>> success, Consumer<Throwable> failure) {
+		enterprisesService.getWorkplaces(workplace.getId(), new AsyncCallback<List<Workplace>>() {
+			
+			@Override
+			public void onSuccess(List<Workplace> result) {
+				workplaces = result;
+				success.accept(result);	
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+			}
+		});
+	}
+	
+	public void getAgreement(Integer agreementId, Consumer<Agreement> success, Consumer<Throwable> failure) {
+		
+		enterprisesService.getAgreement(agreementId, new AsyncCallback<Agreement>() {
+			
+			@Override
+			public void onSuccess(Agreement result) {
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+		});	
+	}
+	
+	public void updateEmployee(Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure){
+//		new_employeeContractData.setContractInfo(new_contractData);
+//		new_employeeContractData.setEmployeeInfo(new_employeeData);
+		
+		employeesService.setEmployeeInfoDataBase(this.employeeContractData, new AsyncCallback<EmployeeContractInfo>() {
+			
+			@Override
+			public void onSuccess(EmployeeContractInfo result) {
+				employeeContractData = result;
+				employeeData = result.getEmployeeInfo();
+				contractData = result.getContractInfo();
+				employeeContractData.setEmployeeInfo(employeeData);
+				employeeContractData.setContractInfo(contractData);
+				success.accept(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
+	public void saveAFIChanges(Date newDate, boolean isChangeContract, String tc2, boolean isQuoteContract, Integer quoteGroup, 
+			boolean isOcupationContract, String ocupation, Consumer<String> success, Consumer<Throwable> failure) {
+		
+			employeesService.setEmployeeAFIChanges(getContractId(),	newDate, isChangeContract, tc2, isQuoteContract, 
+					quoteGroup, isOcupationContract, ocupation, new AsyncCallback<String>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							failure.accept(caught);
+						}
+
+						@Override
+						public void onSuccess(String result) {
+							success.accept(result);
+						}
+				
+			});
+	}
+	
+	// ---------------------------------------------- GETTERS  -------------------------------------------------
+	
 	public Employee getEmployee() {
 		return employee;
 	}
 	
-	// -----------------------------------------------------------------------------------------------------------------------------------------
-	// -----------------------------------------------------  METHODS LOGIC WINDOW -------------------------------------------------------------
-	// -----------------------------------------------------------------------------------------------------------------------------------------
+	public EmployeeContractInfo getEmployeeContractInfo() {
+		return this.employeeContractData;
+	}
 	
-	//CONTRACT TABLE
+	public List<Workplace> getWorkplaces() {
+		return this.workplaces;
+	}
+	
+	public List<Agreement> getAgreements(){
+		return this.agreements;
+	}
+	
+	public Map<Integer, String> getActivities() {
+		return activitiesCCC.getActivities();
+	}
+	
+	public Map<Integer, CCCInfo> getCCCs() {
+		return activitiesCCC.getCccs();
+	}
+	
+	//AFI CHANGES
 	
 	public Integer getContractId(){
 		return this.contractData.getContractId();
@@ -85,20 +238,14 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		return this.contractData.hasPayroll();
 	}
 	
+	//CONTRACT TABLE
+	
 	public String getEmployeeDocument(){
 		return this.employeeData.getDocument();
 	}
 	
 	public String getEmployeeNationality() {
-		return getNationality(this.employeeData.getNationality());
-	}
-	
-	private String getNationality(String iso2) {
-		for (int i = 0; i < Country.values().length; i++) {
-			if (Country.values()[i].getIso2() == iso2)
-				return Country.values()[i].getName();
-		}
-		return null;
+		return this.employeeData.getNationality();
 	}
 	
 	public String getEmployeeSSNumber() {
@@ -121,63 +268,19 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		return (int)this.contractData.getSsRegimen();
 	}
 	
-	public Integer getContractActivityCCC() {
-		return getActivityAccountIndex();
-	}
-	
-	public Integer getActivityAccountIndex() {
-		if(null == this.contractData.getActivityId())
-			return 0;
-		
-		Integer index = 0;
-		
-		if(null == this.contractData.getCccId())
-			return 0;
-		
-		for(Entry<Integer,String> entry : getActivities().entrySet())
-			if(entry.getKey().equals(this.contractData.getActivityId()))
-				for(CCCInfo cccInfo :  getCCCsByActivity(entry.getKey()))
-					if(cccInfo.getCCCId().equals(this.contractData.getCccId())) {
-						index++;
-						return index;
-					}else
-						index++;
-			else
-				index += getCCCsByActivity(entry.getKey()).size();
-			
-		return 0;
-	}
-	
-	private List<CCCInfo> getCCCsByActivity(Integer activityId) {
-		List<CCCInfo> cccs = new ArrayList<>();
-		for(CCCInfo cccInfo : getCCCs().values())
-			if(cccInfo.getActivityId().equals(activityId))
-				cccs.add(cccInfo);
-		return cccs;
-	}
-
-	public Integer getContractWorkplace() {
-		return getWorkplaceIndex();
-	}
-	
-	public Integer getWorkplaceIndex() {
-		Integer index = 0;
-		
-		for(Workplace workplace : workplaces){
-			if(this.contractData.getWorkplaceId().equals(workplace.getId()))
-				break;
-			index++;
-		}
-		
-		return index;
-	}
-	
 	public Integer getWorkplaceId(){
 		return this.contractData.getWorkplaceId();
 	}
 	
-	public Integer getContractType() {
-		return Integer.parseInt(this.contractData.getContractType());
+	public String getContractType() {
+		return this.contractData.getContractType();
+	}
+	
+	public Integer getContractTypeN() {
+		if(null == this.contractData.getContractType())
+			return -1;
+		else
+			return Integer.parseInt(this.contractData.getContractType());
 	}
 	
 	public Integer getContractModel() {
@@ -188,39 +291,21 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		return this.contractData.getStartDate();
 	}
 	
-	public Date getContractSeniorityDate() {
-		return this.contractData.getSeniorityDate();
-	}
-	
 	public Date getContractEndDate() {
 		return this.contractData.getEndDate();
 	}
 	
-	public Integer getContractAgreementId() {
+	public Date getContractSeniorityDate() {
+		return this.contractData.getSeniorityDate();
+	}
+	
+	public Integer getContractAgreement() {
 		return this.contractData.getAgreementId();
 	}
 	
 	public Integer getContractAgreementLevelId() {
 		return this.contractData.getAgreementLevelId();
 	}
-
-	public Integer getContractAgreement() {
-		return getAgreementIndex(this.contractData.getAgreementId());
-	}
-	
-	public Integer getAgreementIndex(Integer agreementId){
-		if(null == agreementId)
-			return -1;
-		else {
-			List<Agreement> activeAgreements = getActiveAgreements();
-			for(int i = 0; i< activeAgreements.size(); i++) {
-				if(activeAgreements.get(i).getId().equals(agreementId))
-					return i;
-			}	
-			return -1;
-		}
-	}
-	
 	
 	public String getContractAgreementCategory() {
 		return this.contractData.getAgreementCategory();
@@ -232,27 +317,6 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	
 	public Integer getContractOcupation() {
 		return getCharIndex(this.contractData.getOcupation());
-	}
-	
-	public int getCharIndex(String ocupation) {
-		switch (ocupation) {
-		case "a":
-			return 1;
-		case "b":
-			return 2;
-		case "d":
-			return 3;
-		case "e":
-			return 4;
-		case "f":
-			return 5;
-		case "g":
-			return 6;
-		case "h":
-			return 7;
-		default:
-			return 0;
-		}
 	}
 	
 	public Integer getContractJourneyType() {
@@ -273,16 +337,8 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		return (int) this.employeeData.getGender();
 	}
 	
-	public Integer getEmployeeAddressStreetTypeIndex(){
-		return getStreetTypeIndex(this.employeeData.getStreetType());
-	}
-	
-	private Integer getStreetTypeIndex(String streetType) {
-		for(int i=0; i<StreetType.values().length; i++){
-			if(streetType == StreetType.values()[i].getShortCode())
-				return i;
-		}
-		return 14;
+	public String getEmployeeAddressStreetType(){
+		return this.employeeData.getStreetType();
 	}
 	
 	public String getEmployeeAddress() {
@@ -348,305 +404,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		return this.employeeData.getAccount();
 	}
 	
-	// -----------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------- AUX METHODS -------------------------------------------------------------------
-	// -----------------------------------------------------------------------------------------------------------------------------------------
-
-	public Map<Integer, String> getActivities() {
-		return activitiesCCC.getActivities();
-	}
-	
-	public Map<Integer, CCCInfo> getCCCs() {
-		return activitiesCCC.getCccs();
-	}
-	
-	public Integer getActivityIdByName(String activityStr) {
-		for(Entry<Integer, String> activityEntry : activitiesCCC.getActivities().entrySet()){
-			if(activityStr.equals(activityEntry.getValue()))
-				return activityEntry.getKey();
-		}
-		return null;
-	}
-	
-	public Integer getCCCIdByNumber(String cccStr, byte cccType, String cccGeozoneStr) {
-		CCCInfo cccInfo = getCCCInfo(cccStr, cccType, cccGeozoneStr);
-		if(null == cccInfo)
-			return null;
-		else{
-			for(Entry<Integer, CCCInfo> cccEntry : activitiesCCC.getCccs().entrySet())
-				if(cccEntry.getValue().equals(cccInfo)){
-					return cccEntry.getKey();
-				}
-			return null;
-		}
-	}
-	
-	private CCCInfo getCCCInfo(String cccStr, byte cccType, String cccGeozoneStr) {
-		for(CCCInfo cccInfo : activitiesCCC.getCccs().values()){
-			if(cccStr.equals(cccInfo.getCcc()) && cccType == cccInfo.getType() && cccGeozoneStr.equals(cccInfo.getGeozone()))
-				return cccInfo;
-		}
-		return null;
-	}
-	
-	public List<Workplace> getWorkplaces() {
-		return this.workplaces;
-	}
-	
-	public List<Agreement> getAgreements(){
-		return this.agreements;
-	}
-	
-	public boolean checkDocumentValidation(String document_type_string, String document_string) {
-		if("DNI".equals(document_type_string)){
-			Dni dni = new Dni(document_string);
-			if(dni.checkDNI())
-				return true;
-			else
-				return false;
-		}else if("" == document_string) {
-			return false;
-		}else
-			return true;
-	}
-	
-	public boolean checkSSNumValidation(String ssNum_string) {
-		SocialSecurity ss = new SocialSecurity(ssNum_string);
-		if(ss.checkSS())
-			return true;
-		else
-			return false;
-	}
-	
-	public Integer getWorkplaceIdByName(String workplaceName) {
-		for(Workplace workplace : workplaces)
-			if(workplaceName.equals(workplace.getDescription()))
-				return workplace.getId();
-		
-		return null;
-	}
-	
-	public List<Agreement> getActiveAgreements(){
-		List<Agreement> activeAgreements = new ArrayList<>();
-		for(Agreement a : this.agreements){
-			if(a.getId() > 0)
-				activeAgreements.add(a);
-		}
-		return activeAgreements;
-	}
-	
-	public Integer getAgreementId(String agreementName){
-		for(Agreement a : getAgreements()){
-			if(a.getDescription() == agreementName && a.getId() > 0)
-				return a.getId();
-		}
-		return -1;
-	}
-	
-	
-	private String getQuoteByIndex(Integer index) {
-		if(null == index)
-			return null;
-		
-		switch (index) {
-		case 1:
-			return "\"01\"";
-		case 2:
-			return "\"02\"";
-		case 3:
-			return "\"03\"";
-		case 4:
-			return "\"04\"";
-		case 5:
-			return "\"05\"";
-		case 6:
-			return "\"06\"";
-		case 7:
-			return "\"07\"";
-		case 8:
-			return "\"08\"";
-		case 9:
-			return "\"09\"";
-		case 10:
-			return "\"10\"";
-		case 11:
-			return "\"11\"";
-		default:
-			return null;
-		}
-	}
-	
-	public String getOcupationByIndex(Integer index) {
-		if(null == index)
-			return null;
-		
-		switch (index) {
-		case 1:
-			return "\"a\"";
-		case 2:
-			return "\"b\"";
-		case 3:
-			return "\"d\"";
-		case 4:
-			return "\"e\"";
-		case 5:
-			return "\"f\"";
-		case 6:
-			return "\"g\"";
-		case 7:
-			return "\"h\"";
-		default:
-			return null;
-		}
-	}
-	
-	// ---------------------------------------------- DATABASE METHODS SYNC  ---------------------------------------------
-	
-	public void initializeEmployee(Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure) {
-		employeesService.getEmployeeInfoDataBase(this.employee.getId(), new AsyncCallback<EmployeeContractInfo>() {
-			
-			@Override
-			public void onSuccess(EmployeeContractInfo result) {
-				employeeContractData = result;
-				employeeData = result.getEmployeeInfo();
-				contractData = result.getContractInfo();
-				employeeContractData.setEmployeeInfo(employeeData);
-				employeeContractData.setContractInfo(contractData);
-				
-//				new_employeeContractData = result;
-//				new_employeeData = result.getEmployeeInfo();
-//				new_contractData = result.getContractInfo();
-
-				getAgreements(
-						r ->{success.accept(result);},
-						f->{}
-				);
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-		});
-	}
-	
-	public void getAgreement(Integer agreementId, Consumer<Agreement> success, Consumer<Throwable> failure) {
-		
-		enterprisesService.getAgreement(agreementId, new AsyncCallback<Agreement>() {
-			
-			@Override
-			public void onSuccess(Agreement result) {
-				success.accept(result);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
-			}
-		});	
-	}
-
-	public void getAgreements(Consumer<List<Agreement>> success, Consumer<Throwable> failure) {
-		enterprisesService.getAgreements(0, Integer.MAX_VALUE, new AsyncCallback<List<Agreement>>() {
-			
-			@Override
-			public void onSuccess(List<Agreement> result) {
-				agreements = result;
-				getActivitiesCCC(
-						r->{success.accept(result);},
-						f->{}
-					);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
-			}
-		});	
-	}
-	
-	
-	
-	public void getActivitiesCCC(Consumer<ActivitiesCCC> success, Consumer<Throwable> failure) {
-		enterprisesService.getActivitiesCCC(workplace.getId(), new AsyncCallback<ActivitiesCCC>() {
-			
-			@Override
-			public void onSuccess(ActivitiesCCC result) {
-				activitiesCCC = result;
-				getWorkplaces(
-						r->{success.accept(result);},
-						f->{}
-					);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-			}
-		});
-	}
-	
-	public void getWorkplaces(Consumer<List<Workplace>> success, Consumer<Throwable> failure) {
-		enterprisesService.getWorkplaces(workplace.getId(), new AsyncCallback<List<Workplace>>() {
-			
-			@Override
-			public void onSuccess(List<Workplace> result) {
-				workplaces = result;
-				success.accept(result);	
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-			}
-		});
-	}
-	
-	public void updateEmployee(Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure){
-//		new_employeeContractData.setContractInfo(new_contractData);
-//		new_employeeContractData.setEmployeeInfo(new_employeeData);
-		
-		employeesService.setEmployeeInfoDataBase(this.employeeContractData, new AsyncCallback<EmployeeContractInfo>() {
-			
-			@Override
-			public void onSuccess(EmployeeContractInfo result) {
-				employeeContractData = result;
-				employeeData = result.getEmployeeInfo();
-				contractData = result.getContractInfo();
-				employeeContractData.setEmployeeInfo(employeeData);
-				employeeContractData.setContractInfo(contractData);
-				success.accept(result);
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-		});
-	}
-	
-	public void saveAFIChanges(Date newDate, boolean isChangeContract, String tc2, boolean isQuoteContract, Integer quoteGroup, 
-			boolean isOcupationContract, String ocupation, Consumer<String> success, Consumer<Throwable> failure) {
-		
-			employeesService.setEmployeeAFIChanges(getContractId(),	newDate, isChangeContract, tc2, isQuoteContract, 
-					quoteGroup, isOcupationContract, ocupation, new AsyncCallback<String>() {
-
-						@Override
-						public void onFailure(Throwable caught) {
-							failure.accept(caught);
-						}
-
-						@Override
-						public void onSuccess(String result) {
-							success.accept(result);
-						}
-				
-			});
-	}
-	
-	// -----------------------------------------------------------------------------------------------------------------------------------------
-	// ------------------------------------------------------- SETTERS NEW EMPLOYEE INFO -------------------------------------------------------
-	// -----------------------------------------------------------------------------------------------------------------------------------------
+	// ---------------------------------------------- SETTERS  -------------------------------------------------
 	
 	// CONTRACT TABLE
 	
@@ -745,14 +503,6 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		
 		contractData.setCccId(cccId);
 	}
-
-	public void setContractCCCType(byte cccType) {
-		add(contractData::setCccType, 
-				contractData.getCccType(), 
-				cccType );
-		
-		contractData.setCccType(cccType);
-	}
 	
 	public void setContractWorkplaceId(Integer workplaceId) {
 		add(contractData::setWorkplaceId, 
@@ -760,6 +510,14 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 				workplaceId );
 		
 		contractData.setWorkplaceId(workplaceId);
+	}
+
+	public void setContractCCCType(byte cccType) {
+		add(contractData::setCccType, 
+				contractData.getCccType(), 
+				cccType );
+		
+		contractData.setCccType(cccType);
 	}
 	
 	public void setContractType(String contract_type) {
@@ -787,20 +545,20 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		contractData.setStartDate(start_date);		
 	}
 	
-	public void setContractSeniorityDate(Date seniority_date) {
-		add(contractData::setSeniorityDate, 
-				contractData.getSeniorityDate(), 
-				seniority_date );
-		
-		contractData.setSeniorityDate(seniority_date);		
-	}
-	
 	public void setContractEndDate(Date end_date) {
 		add(contractData::setEndDate, 
 				contractData.getEndDate(), 
 				end_date );
 		
 		contractData.setEndDate(end_date);		
+	}
+	
+	public void setContractSeniorityDate(Date seniority_date) {
+		add(contractData::setSeniorityDate, 
+				contractData.getSeniorityDate(), 
+				seniority_date );
+		
+		contractData.setSeniorityDate(seniority_date);		
 	}
 	
 	public void setContractAgreementId(Integer agreement_table_id) {
@@ -827,22 +585,20 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		contractData.setAgreementCategory(category_description);		
 	}
 	
-	public void setContractQuoteGroup(Integer quoteGroupIndex) {
-		String quoteGroup = getQuoteByIndex(quoteGroupIndex);
+	public void setContractQuoteGroup(String quoteGroup) {
 		add(contractData::setQuoteGroup, 
 				contractData.getQuoteGroup(), 
 				quoteGroup );
 		
 		contractData.setQuoteGroup(quoteGroup);		
 	}
-	
-	public void setContractOccupation(Integer occupationIndex) {
-		String contractOccupation = getOcupationByIndex(occupationIndex);
+
+	public void setContractOccupation(String occupation) {
 		add(contractData::setOcupation, 
 				contractData.getOcupation(), 
-				contractOccupation );
+				occupation );
 		
-		contractData.setOcupation(contractOccupation);		
+		contractData.setOcupation(occupation);		
 	}
 	
 	public void setContractJourneyType(Boolean journey_type) {
@@ -855,10 +611,6 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	}
 	
 	public void setContractJourneyDuration(TreeMap<Date, ArrayList<JourneyDuration>> contractJourneyDuration) {
-//		add(new_contractData::setContractJourneyDuration, 
-//				new_contractData.getContractJourneyDuration(), 
-//				contractJourneyDuration );
-//		
 		contractData.setContractJourneyDuration(contractJourneyDuration);
 	}
 	
@@ -872,20 +624,12 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		employeeData.setBirthdate(birth_date);
 	}
 
-	public void setEmployeeGender(int gender) {
+	public void setEmployeeGender(byte gender) {
 		add(employeeData::setGender, 
 				employeeData.getGender(), 
-				(byte) gender );
+				gender );
 		
-		employeeData.setGender((byte) gender);
-	}
-	
-	public void setEmployeeGenderNull() {
-		add(employeeData::setGender, 
-				employeeData.getGender(), 
-				null );
-		
-		employeeData.setGender(null);
+		employeeData.setGender(gender);
 	}
 
 	public void setEmployeeStreetType(String shortCode) {
@@ -928,20 +672,20 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		employeeData.setAddressZip(zip_code);
 	}
 
-	public void setEmployeeAddressCity(String city) {
-		add(employeeData::setAddressCity, 
-				employeeData.getAddressCity(), 
-				city );
-		
-		employeeData.setAddressCity(city);
-	}
-
 	public void setEmployeeAddressProvince(String province) {
 		add(employeeData::setAddressProvinces, 
 				employeeData.getAddressProvinces(), 
 				province );
 		
 		employeeData.setAddressProvinces(province);
+	}
+
+	public void setEmployeeAddressCity(String city) {
+		add(employeeData::setAddressCity, 
+				employeeData.getAddressCity(), 
+				city );
+		
+		employeeData.setAddressCity(city);
 	}
 
 	public void setEmployeeMobile(String mobile) {
@@ -967,13 +711,13 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		
 		employeeData.setEmail(email);
 	}
-
-	public void setEmployeePayMethod(String payMethodType) {
-		add(employeeData::setPayMethodType, 
-				employeeData.getPayMethodType(), 
+	
+	public void setEmployeePayMethod(byte payMethodType) {
+		add(employeeData::setPayMethodTypeB, 
+				employeeData.getPayMethodTypeB(), 
 				payMethodType );
 		
-		employeeData.setPayMethodType(payMethodType);
+		employeeData.setPayMethodTypeB(payMethodType);
 	}
 
 	public void setEmployeeAccount(String rbankAccount) {
@@ -991,23 +735,101 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		
 		employeeData.setBic(rbankBIC);
 	}
+	
+	// ---------------------------------------------- AUX METHODS  -------------------------------------------------
+	
 
-	public EmployeeContractInfo getEmployeeContractInfo() {
-		return this.employeeContractData;
-	}
-
-	public Date getPayrollDate() {
-		return this.contractData.getPayrollDate();
-	}
-
+	
 	public void setEmployeeCalendar(EmployeeCalendarDraftObjectData employeeCalendarDraftobjectData) {
 		this.employeeCalendar = employeeCalendarDraftobjectData;
 	}
 	
-	public EmployeeCalendarDraftObjectData getEmployeeCalendar() {
-		return this.employeeCalendar;
+	public Date getPayrollDate() {
+		return this.contractData.getPayrollDate();
 	}
 
 	
+	public EmployeeCalendarDraftObjectData getEmployeeCalendar() {
+		return this.employeeCalendar;
+	}
+	
+	public List<Agreement> getActiveAgreements(){
+		List<Agreement> activeAgreements = new ArrayList<>();
+		for(Agreement a : this.agreements){
+			if(a.getId() > 0)
+				activeAgreements.add(a);
+		}
+		return activeAgreements;
+	}
+	
+	public void setActivityInfo(String activityInfo) {
+		Integer activityId = null;
+		Integer cccId = null;
+		Byte cccType = null;
+		
+		if(null != activityInfo) {
+			activityId = Integer.parseInt(activityInfo.split("/")[0]);
+			cccId = Integer.parseInt(activityInfo.split("/")[1]);
+			cccType = Byte.parseByte(activityInfo.split("/")[2]);
+		}
+		
+		setContractActivityId(activityId);
+		setContractCCCId(cccId);
+		setContractCCCType(cccType);
+	}
+	
+	public int getCccId() {
+		return this.contractData.getCccId();
+	}
 
+	public int getCccType() {
+		return this.contractData.getCccType();
+	}
+	
+	public int getActivityId() {
+		return this.contractData.getActivityId();
+	}
+
+	public int getCharIndex(String ocupation) {
+		switch (ocupation) {
+		case "a":
+			return 1;
+		case "b":
+			return 2;
+		case "d":
+			return 3;
+		case "e":
+			return 4;
+		case "f":
+			return 5;
+		case "g":
+			return 6;
+		case "h":
+			return 7;
+		default:
+			return 0;
+		}
+	}
+	
+	public boolean checkDocumentValidation(String document_type_string, String document_string) {
+		if("DNI".equals(document_type_string)){
+			Dni dni = new Dni(document_string);
+			if(dni.checkDNI())
+				return true;
+			else
+				return false;
+		}else if("" == document_string) {
+			return false;
+		}else
+			return true;
+	}
+	
+	public boolean checkSSNumValidation(String ssNum_string) {
+		SocialSecurity ss = new SocialSecurity(ssNum_string);
+		if(ss.checkSS())
+			return true;
+		else
+			return false;
+	}
+	
 }
