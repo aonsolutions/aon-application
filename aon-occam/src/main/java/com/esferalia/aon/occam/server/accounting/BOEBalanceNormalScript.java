@@ -100,7 +100,7 @@ public class BOEBalanceNormalScript extends BalanceScript {
 					,PNA1V2		(3, LEAF, "2", "(Resultados negativos de ejercicios anteriores)", "sab({121})", null)
 				,PNA1VI		(2, LEAF, "VI", "Otras aportaciones de socios", "sab({118})", null)
 				,PNA1VII	(2, LEAF, "VII", "Resultado del ejercicio", "sab({129,7}) - sdb({6})", null)
-				,PNA1VIII	(2, LEAF, "VIII", "(Dividendo a cuenta)", "sdb({557})", null)
+				,PNA1VIII	(2, LEAF, "VIII", "(Dividendo a cuenta)", "sab({557})", null)
 				,PNA1IX		(2, LEAF, "IX", "Otros instrumentos de patrimonio neto", "sab({111})", null)
 			,PNA2		(1, HEADER1, "A-2)", "Ajustes por cambio de valor", null, "PNA2I+PNA2II+PNA2III+PNA2IV+PNA2V")
 				,PNA2I		(2, LEAF, "I", "Activos financieros disponibles para la venta", "sab({133})", null)

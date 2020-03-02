@@ -111,7 +111,7 @@ public class BOEBalanceCoopNormalScript extends BalanceScript {
 		 			,PNA1III2(3,LEAF,"2","(Resultados negativos de ejercicios anteriores)","sab({121})",null)
 	 			,PNA1IV(2,LEAF,"IV","Otras aportaciones de socios","sab({118})",null)
 	 			,PNA1V(2,LEAF,"V","Resultado de la cooperativa","sab({129,7}) - sdb({6})",null)
-	 			,PNA1VI(2,LEAF,"VI","(Retorno cooperativo y remuneración discrecional a cuenta entregada en el ejercicio)","sdb({557})",null)
+	 			,PNA1VI(2,LEAF,"VI","(Retorno cooperativo y remuneración discrecional a cuenta entregada en el ejercicio)","sab({557})",null)
 	 			,PNA1VII(2,LEAF,"VII","Fondos capitalizados","sab({1070,1071})",null)
 	 			,PNA1VIII(2,LEAF,"VIII","Otros instrumentos de patrimonio neto","sab({111})",null)
 		 	,PNA2(1,HEADER1,"A-2)","Ajustes por cambio de valor",null,"PNA2I+PNA2II+PNA2III")

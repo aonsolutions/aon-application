@@ -51,7 +51,7 @@ public class BOEBalanceAbbreviateScript extends BalanceScript {
 				,PNA1V(2,LEAF,"V","Resultados de ejercicios anteriores","sab({120})-sdb({121})",null)
 				,PNA1VI(2,LEAF,"VI","Otras aportaciones de socios","sab({118})",null)
 				,PNA1VII(2,LEAF,"VII","Resultado del ejercicio","sab({129,7}) - sdb({6})",null)
-				,PNA1VIII(2,LEAF,"VIII","(Dividendo a cuenta)","sdb({557})",null)
+				,PNA1VIII(2,LEAF,"VIII","(Dividendo a cuenta)","sab({557})",null)
 				,PNA1IX(2,LEAF,"IX","Otros instrumentos de patrimonio neto","sab({111})",null)
 			,PNA2(1,LEAF,"A-2)","Ajustes por cambio de valor","sab({133,1340,137})",null)
 			,PNA3(1,LEAF,"A-3)","Subvenciones, donaciones y legados recibidos","sab({130,131,132})",null)
