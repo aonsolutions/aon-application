@@ -21,6 +21,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
@@ -238,10 +239,10 @@ public class WorkplaceDraft extends Composite {
 			});
 			
 			// If only one activity, selected it and fire event
-			if(addressListBox.getItemCount() != 0 && addressListBox.getItemCount() == 1){
-				addressListBox.setSelectedIndex(1);
-				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), addressListBox);
-			}
+			//if(addressListBox.getItemCount() != 0 && addressListBox.getItemCount() == 1){
+			//	addressListBox.setSelectedIndex(1);
+			//	DomEvent.fireNativeEvent(Document.get().createChangeEvent(), addressListBox);
+			//}
 			
 			workplaceAddressWidget = addressListBox;
 		}
@@ -274,10 +275,10 @@ public class WorkplaceDraft extends Composite {
 			});
 			
 			// If only one calendar, selected it and fire event
-			if(calendarListBox.getItemCount() != 0 && calendarListBox.getItemCount() == 2){
-				calendarListBox.setSelectedIndex(1);
-				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), calendarListBox);
-			}
+			//if(calendarListBox.getItemCount() != 0 && calendarListBox.getItemCount() == 2){
+			//	calendarListBox.setSelectedIndex(1);
+			//	DomEvent.fireNativeEvent(Document.get().createChangeEvent(), calendarListBox);
+			//}
 			
 			workplaceCalendarWidget = calendarListBox;
 		}
@@ -317,10 +318,10 @@ public class WorkplaceDraft extends Composite {
 			});
 			
 			// If only one activity, selected it and fire event
-			if(activityListBox.getItemCount() != 0 && activityListBox.getItemCount() == 2){
-				activityListBox.setSelectedIndex(1);
-				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), activityListBox);
-			}
+			//if(activityListBox.getItemCount() != 0 && activityListBox.getItemCount() == 2){
+			//	activityListBox.setSelectedIndex(1);
+			//	DomEvent.fireNativeEvent(Document.get().createChangeEvent(), activityListBox);
+			//}
 			
 			workplaceActivityWidget = activityListBox;
 		}
