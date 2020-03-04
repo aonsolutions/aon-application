@@ -45,6 +45,10 @@ import com.esferalia.aon.gwt.template.jooq.DBProduct;
 import com.esferalia.aon.gwt.template.jooq.DBStock;
 import com.esferalia.aon.gwt.template.server.delivery.DeliveryImport;
 import com.esferalia.aon.gwt.template.server.delivery.DeliveryInfo;
+import com.esferalia.aon.gwt.template.server.invoice.InvoiceImport;
+import com.esferalia.aon.gwt.template.server.invoice.InvoiceImportClass;
+import com.esferalia.aon.gwt.template.server.invoice.RegistryImport;
+import com.esferalia.aon.gwt.template.server.invoice.RegistryImport.RegistryImportClass;
 import com.esferalia.aon.gwt.template.server.marketplace.XMLUtils;
 import com.esferalia.aon.gwt.template.server.projectCommercial.CustomerIban;
 import com.esferalia.aon.gwt.template.server.projectCommercial.CustomerIbanImport;
@@ -205,6 +209,8 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	//-------------------- IMPORTAR
 	LinkedList<ProjectCommercial> pcs;
 	LinkedList<CustomerIban> cis;
+	LinkedList<InvoiceImportClass> ivs;
+	LinkedList<RegistryImportClass> rvs;
  	DeliveryInfo di;
 	LinkedList<String> verror;
 	public Integer executeExcel(Domain domain, User user, TemplateInfo ti, ImportType importType, Boolean ignoreInactiveClient,
@@ -256,6 +262,12 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 			else if(ImportType.CUSTOMER_IBAN.equals(importType)) {
 				cis = CustomerIbanImport.getInstance().importation(domain, user.getLogin(), data);
 			}
+			else if(ImportType.INVOICE.equals(importType)) {
+				ivs = InvoiceImport.getInstance().importation(domain, user.getLogin(), data);
+			}
+			else if(ImportType.REGISTRY.equals(importType)) {
+				rvs = RegistryImport.getInstance().importation(domain, user.getLogin(), data);
+			}
 
 			workbook.close();
 		} catch (IOException e) {
@@ -294,6 +306,12 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 				}
 				else if(ImportType.CUSTOMER_IBAN.equals(importType)) {
 					cis = CustomerIbanImport.getInstance().importationX(domain, user.getLogin(), data);
+				}
+				else if(ImportType.INVOICE.equals(importType)) {
+					ivs = InvoiceImport.getInstance().importationX(domain, user.getLogin(), data);
+				}
+				else if(ImportType.REGISTRY.equals(importType)) {
+					rvs = RegistryImport.getInstance().importationX(domain, user.getLogin(), data);
 				}
 				workbook.close();
 			} catch (IOException e1) {
@@ -2596,13 +2614,51 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 
 	@Override
 	public Error insertProjectCommercial(Domain domain, User user) {
-		ProjectCommercialImport.getInstance().insertProjectCommercial(domain, user, pcs);
+		try {
+			ProjectCommercialImport.getInstance().insertProjectCommercial(domain, user, pcs);
+		} catch (Exception e) {
+			return new Error()
+				.setError(false)
+				.setTextError(e.getMessage());
+		}
 		return new Error();
 	}
 
 	@Override
 	public Error insertCustomerIban(Domain domain, User user) {
-		CustomerIbanImport.getInstance().insertCustomerIban(domain, user, cis);
+		try {
+			CustomerIbanImport.getInstance().insertCustomerIban(domain, user, cis);
+		} catch (Exception e) {
+			return new Error()
+				.setError(false)
+				.setTextError(e.getMessage());
+		}
 		return new Error();
+	}
+
+	@Override
+	public Error insertInvoices(Domain domain, User user) {
+		try {
+			InvoiceImport.insertInvoices(domain, user, ivs);
+			return new Error();
+		} catch (Exception e) {
+			return new Error()
+				.setError(false)
+				.setTextError(e.getMessage());
+		}
+
+	}
+	
+	@Override
+	public Error insertRegistries(Domain domain, User user) {
+		try {
+			RegistryImport.insertRegistries(domain, user, rvs);			
+			return new Error();
+		} catch (Exception e) {
+			return new Error()
+				.setError(false)
+				.setTextError(e.getMessage());
+		}
+
 	}
 }

@@ -117,7 +117,8 @@ public abstract class TemplatesDialog extends CustomDialogB {
 				else if(dialog.getType().contains("import") || dialog.getType().contains("export") 
 						|| dialog.getType().equals("editEcommerceTemplate")){
 					if("importResponse".equals(dialog.getType()) || "importDelivery".equals(dialog.getType())
-							|| "importProjectCommercial".equals(dialog.getType()) || "importCustomerIban".equals(dialog.getType())){
+							|| "importProjectCommercial".equals(dialog.getType()) || "importCustomerIban".equals(dialog.getType())
+							|| "importInvoices".equals(dialog.getType())|| "importRegistries".equals(dialog.getType())){
 						onAccept();
 					} else {
 						ListBox lb1 = (ListBox) flex_table.getWidget(0, 1);
@@ -204,6 +205,8 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		case "importDelivery":importOnly(dialog.getUrl());break;
 		case "importProjectCommercial":importOnly(dialog.getUrl());break;
 		case "importCustomerIban":importOnly(dialog.getUrl());break;
+		case "importInvoices":importOnly(dialog.getUrl());break;
+		case "importRegistries":importOnly(dialog.getUrl());break;
 
 		default:
 			break;

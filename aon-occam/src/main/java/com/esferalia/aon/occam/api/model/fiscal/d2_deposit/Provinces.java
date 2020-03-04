@@ -77,6 +77,17 @@ public enum Provinces implements Serializable {
 		return this.name;
 	}
 	
+	public static Provinces getProvince(String value) {
+		Provinces pr = ARABA;
+		for(Integer i = 0; i < Provinces.values().length; i++) {
+			if(Provinces.values()[i].getName().equalsIgnoreCase(value)
+			 || Provinces.values()[i].toString().equalsIgnoreCase(value)) {
+				pr = Provinces.values()[i];
+			}
+		}
+		return pr;
+	}
+	
 	public static void main(String[] args) {
 		
 	}

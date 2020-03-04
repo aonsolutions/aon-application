@@ -104,8 +104,9 @@ public class Domain implements Serializable {
 		return scope;
 	}
 
-	public void setScope(Integer scope) {
+	public Domain setScope(Integer scope) {
 		this.scope = scope;
+		return this;
 	}
 
 }

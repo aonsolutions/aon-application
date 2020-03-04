@@ -78,6 +78,8 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
+import com.esferalia.aon.occam.api.model.registry.Creditor;
+import com.esferalia.aon.occam.api.model.registry.CreditorFilter;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.registry.Question;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
@@ -105,6 +107,7 @@ import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.SupplierStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CarrierFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CreditorFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CustomerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.PersonFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.RItemFiller;
@@ -114,6 +117,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.SupplierFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.TargetFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CarrierPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CategoryPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CreditorPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CustomerPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.PersonPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RBankPropertiesDAO;
@@ -166,10 +170,14 @@ public class RegistryDAO {
 	private static final RegistryAddInfoPropertiesDAO RADDINFO_PROPERTIES = new RegistryAddInfoPropertiesDAO();
 	private static final RDirStaffPropertiesDAO RDIRSTAFF_PROPERTIES = new RDirStaffPropertiesDAO();
 	private static final SupplierPropertiesDAO SUPPLIER_PROPERTIES = new SupplierPropertiesDAO();
+
 	private static final TargetPropertiesDAO TARGET_PROPERTIES = new TargetPropertiesDAO();
 	private static final RegistryPropertiesDAO REGISTRY_PROPERTIES = new RegistryPropertiesDAO();
 	private static final CategoryPropertiesDAO CATEGORY_PROPERTIES = new CategoryPropertiesDAO();
 	private static final PersonPropertiesDAO PERSON_PROPERTIES = new PersonPropertiesDAO();
+	
+	private static final CreditorPropertiesDAO CREDITOR_PROPERTIES = new CreditorPropertiesDAO();
+
 	
 	private static final AccountingRegistryPropertiesDAO ACCOUNTING_REGISTRY_PROPERTIES = new AccountingRegistryPropertiesDAO();
 	private static class AccountingRegistryPropertiesDAO implements AccountingRegistryProperties {
@@ -267,10 +275,14 @@ public class RegistryDAO {
 	}
 	
 	
-	public static Registry getRegistry(AONContext ctx, RegistryFilter filter){
+	public static Stream<Registry> getRegistryStream(AONContext ctx, RegistryFilter filter){
 		return ctx.getDslContext().select().from(REGISTRY)
 				.where(REGISTRY_PROPERTIES.getConditions(filter)).fetch()
-			.stream().map(new RegistryFiller()).findFirst().orElse(new Registry());
+			.stream().map(new RegistryFiller());
+	}
+	
+	public static Registry getRegistry(AONContext ctx, RegistryFilter filter){
+		return getRegistryStream(ctx, filter).findFirst().orElse(new Registry());
 	}
 	
 	private static class FullCategoryFiller implements Function<CategoryRecord, Category> {
@@ -876,10 +888,13 @@ public class RegistryDAO {
 	public static Customer insertCustomer(AONContext ctx, Customer customer){
 		ctx.getDslContext().insertInto(CUSTOMER, CUSTOMER.ACCOUNT, CUSTOMER.DELIVERY_GROUPED, CUSTOMER.DELIVERY_VALUATED,
 				CUSTOMER.DOMAIN, CUSTOMER.E_INVOICE, CUSTOMER.INVOICING_GROUP, CUSTOMER.PROJECT_GROUPED, CUSTOMER.REGISTRY,
-				CUSTOMER.SCOPE, CUSTOMER.STATUS, CUSTOMER.SURCHARGE, CUSTOMER.TARIFF, CUSTOMER.TRANSACTION, CUSTOMER.WITHHOLDING)
+				CUSTOMER.SCOPE, CUSTOMER.STATUS, CUSTOMER.SURCHARGE, CUSTOMER.TARIFF, CUSTOMER.TRANSACTION, CUSTOMER.WITHHOLDING,
+				CUSTOMER.CREATION_USER, CUSTOMER.CREATION_DATE, CUSTOMER.MODIFICATION_USER, CUSTOMER.MODIFICATION_DATE)
 			.values(customer.getAccount(), customer.getDeliveryGrouped(), customer.getDeliveryValuated(), 
 					customer.getDomain(), customer.geteInvoice(), customer.getInvoicingGroup(), customer.getProjectGrouped(), customer.getRegistry().getId(),
-					customer.getScope(), customer.getStatus().value(), customer.getSurcharge(), customer.getTariff(), customer.getTransaction(), customer.getWithholding()).execute();
+					customer.getScope(), customer.getStatus().value(), customer.getSurcharge(), customer.getTariff(), customer.getTransaction(), customer.getWithholding(),
+					ctx.getUser(), new Timestamp(new Date().getTime()), ctx.getUser(), new Timestamp(new Date().getTime()))
+			.execute();
 		return customer;
 	}
 	// ------------------- SELLER
@@ -945,6 +960,27 @@ public class RegistryDAO {
 			.execute();
 		carrier.setId(registry.getId());
 		return carrier;
+	}
+	
+	// ------------------- CREDITOR
+
+	public static Stream<Creditor> getCreditorStream(AONContext ctx, CreditorFilter filter){
+		return CREDITOR_PROPERTIES.build(ctx.getDslContext().select()
+					.from(CREDITOR).join(SCOPE).on(CREDITOR.SCOPE.eq(SCOPE.ID))
+					.join(REGISTRY).on(REGISTRY.ID.eq(CREDITOR.REGISTRY))
+			,filter).fetch().stream().map(new CreditorFiller());
+	}
+	
+	public static Creditor insertCreditor(AONContext ctx, Creditor creditor){
+		ctx.getDslContext().insertInto(CREDITOR, CREDITOR.ACCOUNT, CREDITOR.DOMAIN, CREDITOR.REGISTRY,
+				CREDITOR.SCOPE, CREDITOR.STATUS, CREDITOR.TRANSACTION, CREDITOR.WITHHOLDING,
+				CREDITOR.CREATION_USER, CREDITOR.CREATION_DATE, CREDITOR.MODIFICATION_USER, CREDITOR.MODIFICATION_DATE)
+			.values(creditor.getAccount().getId(), creditor.getDomain(), creditor.getRegistry().getId(),
+					creditor.getScope(), creditor.getStatus().value(), creditor.getTransaction().value(), 
+					creditor.isWithholding() ? (byte) 1 : (byte) 0,	ctx.getUser(), new Timestamp(new Date().getTime()),
+					ctx.getUser(), new Timestamp(new Date().getTime()))
+			.execute();
+		return creditor;
 	}
 	
 	// ------------------- SUPPLIER

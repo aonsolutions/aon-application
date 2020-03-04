@@ -47,6 +47,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class Templates extends Composite implements EntryPoint {
 
 	private static final String SILENT = "silent";
+	private static final String IMPORT = "import";
 	private static final String MARKETPLACE = "marketplace";
 	private static final String CONSUMPTION = "consumption";
 	private static final String TEMPLATES = "templates";
@@ -103,6 +104,12 @@ public class Templates extends Composite implements EntryPoint {
 	public void onModuleLoad(String entryPoint){
 		if(CONTRACT_MEDIA.equals(entryPoint)){
 			new ContractMediaPage(aonData).onModuleLoad();
+		} else if(IMPORT.equals(entryPoint)){
+			GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
+			GWT.<AonResources> create(AonResources.class).css().ensureInjected();
+			GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
+			
+			new ImportPage(aonData).onModuleLoad();
 		} else {
 			GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 			GWT.<AonResources> create(AonResources.class).css().ensureInjected();
@@ -137,6 +144,7 @@ public class Templates extends Composite implements EntryPoint {
 						exportFullExpedient(me);
 						exportResumeExpedient(me);
 						exportCustomerIban(me);
+						exportImportInvoice(me);
 					}
 					@Override
 					public void onFailure(Throwable caught) {print(caught);}
@@ -415,6 +423,89 @@ public class Templates extends Composite implements EntryPoint {
 									}
 								};
 								item.insertProjectCommercial(getDomain(), getUser(), callback);
+							}
+						
+							@Override
+							public void onFailure(Throwable caught) {}
+						});
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {}
+				});
+				
+			}
+		};
+		popup.addStyleName("gwt-PopupPanel-template");
+		popup.setGlassEnabled(true);
+		popup.show();
+	}
+	
+	
+	private void importInvoices(){
+		
+		Dialog d = new Dialog("Importar Invoice","Importar",true,"Cancelar",true,"importInvoices");
+		d.setUrl(GWT.getModuleBaseURL());
+		TemplatesDialog popup = new TemplatesDialog(getAonData(), d) {
+			
+			@Override
+			protected void onCancel() {
+				hide();
+			}
+			
+			@Override
+			protected void onAccept() {
+				item.excelRowNumber(new AsyncCallback<Integer>() {
+					@Override
+					public void onSuccess(Integer result) {
+						hide();
+						Double doubleValue = result.doubleValue();
+						pbd = new ProgressBarDialog(doubleValue , 0.46) {
+							
+						};
+						pbd.addStyleName("gwt-PopupPanel-template");
+						pbd.setGlassEnabled(true);
+						pbd.show();
+						
+						item.executeExcel(getDomain(), getUser(), null, ImportType.INVOICE, null,
+								null, null, null, null, null, null, null, new AsyncCallback<Integer>() {
+							
+							@Override
+							public void onSuccess(Integer result) {
+								AsyncCallback<Error> callback = new AsyncCallback<Error>() {
+									
+									@Override
+									public void onSuccess(Error result) {
+							
+										pbd.completed();
+										pbd.hide();
+										Dialog d2 = new Dialog("Importar Facturas","Aceptar",true,"Cancelar",false,"importResponse");
+										d2.setError(result);
+										TemplatesDialog popup2 = new TemplatesDialog(getAonData(), d2){
+
+											@Override
+											protected void onAccept() {
+												hide();			
+											}
+
+											@Override
+											protected void onCancel() {
+												hide();
+											}
+										};
+										popup2.addStyleName("gwt-PopupPanel-template");
+										popup2.setGlassEnabled(true);
+										popup2.show();
+									}
+										
+									@Override
+									public void onFailure(Throwable caught) {
+										//TODO 
+										pbd.completed();
+										pbd.hide();
+									}
+								};
+								item.insertInvoices(getDomain(), getUser(), callback);
 							}
 						
 							@Override
@@ -1802,6 +1893,16 @@ public class Templates extends Composite implements EntryPoint {
 	public static native void exportCustomerIban(Templates thiz) /*-{
 		$wnd.customerIban = function() {
 			thiz.@com.esferalia.aon.gwt.template.client.Templates::customerIban(*)();
+		}
+	}-*/;
+	
+	public void importInvoice(){
+		importInvoices();
+	}
+
+	public static native void exportImportInvoice(Templates thiz) /*-{
+		$wnd.importInvoices= function() {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::importInvoice(*)();
 		}
 	}-*/;
 	

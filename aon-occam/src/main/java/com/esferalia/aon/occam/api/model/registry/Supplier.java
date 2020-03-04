@@ -27,6 +27,14 @@ public class Supplier extends Registry implements Serializable{
 	private String modificationUser;
 	private Date modificationDate;
 	
+	public Supplier() {
+		withholding = (byte) 0;
+		withholdingFarmer = (byte) 0;
+		vatAccrualPayment = (byte) 0;
+		transaction = (byte) 0;
+		purchaseValuated = (byte) 0;
+	}
+	
 	public Integer getScope() {
 		return scope;
 	}

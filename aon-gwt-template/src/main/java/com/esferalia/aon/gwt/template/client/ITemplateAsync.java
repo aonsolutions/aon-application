@@ -49,6 +49,10 @@ public interface ITemplateAsync {
 	void insertDelivery(Domain domain, User user, AsyncCallback<Error> callback);
 
 	void insertProjectCommercial(Domain domain, User user, AsyncCallback<Error> callback);
+	
+	void insertInvoices(Domain domain, User user, AsyncCallback<Error> callback);
+	
+	void insertRegistries(Domain domain, User user, AsyncCallback<Error> callback);
 
 	void insertCustomerIban(Domain domain, User user, AsyncCallback<Error> callback);
 

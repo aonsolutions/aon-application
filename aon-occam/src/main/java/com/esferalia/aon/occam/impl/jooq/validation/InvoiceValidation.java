@@ -128,7 +128,7 @@ public class InvoiceValidation {
 	 * En facturas recibidas, el Domain/Registry/Numero Referencia no puede estar duplicado
 	 */
 	public static BiConsumer<Invoice,AonConfigurationContext> DUPLICATED_REFERENCE_CODE = (inv,ctx) -> {
-		if (!inv.isSales()) {
+		if (!inv.isSales() || (inv.getReferenceCode() != null && !"".equals(inv.getReferenceCode()))) {
 			if (ctx.getContext().getDslContext().fetchExists( 
 					ctx.getContext().getDslContext().selectOne()
 					.from(INVOICE)
@@ -139,7 +139,7 @@ public class InvoiceValidation {
 					.and(inv.getId() == null ? DSL.trueCondition() : INVOICE.ID.ne(inv.getId()))					
 					.and(DSL.year(INVOICE.ISSUE_DATE).eq(AonDateUtils.getYear( inv.getIssueDate())))
 				)) {
-				throw new AonCoreException(AonError.INVOICE_DUPLICATED_REFERENCE_CODE.getMessage());
+				throw new AonCoreException("[Factura "+ inv.getReferenceCode()+ "] " + AonError.INVOICE_DUPLICATED_REFERENCE_CODE.getMessage());
 			}
 		}
 	};

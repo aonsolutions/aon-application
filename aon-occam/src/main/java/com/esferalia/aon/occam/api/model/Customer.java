@@ -28,6 +28,16 @@ public class Customer  extends Registry implements Serializable{
 	Byte transaction;
 	Byte withholding;
 	
+	public Customer() {
+		surcharge = (byte) 0;
+		withholding = (byte) 0;
+		transaction = (byte) 0;
+		eInvoice = (byte) 0;
+		projectGrouped = (byte) 1;
+		deliveryGrouped = (byte) 1;
+		deliveryValuated = (byte) 1;
+	}
+	
 	public Integer getId() {
 		return id;
 	}

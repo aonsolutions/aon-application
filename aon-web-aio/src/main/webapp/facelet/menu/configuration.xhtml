@@ -297,7 +297,14 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:if test="#{aonRole.config}">
-
+									<aon:if  test="#{domainSwitcher.parentDomain and (scope.ayudaT or domainSwitcher.betaUser)}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="template-import-configuration"
+													action="gwt_import" title="Importar Excel">
+												<aon:outputText value="Importar Excel - Carga de Datos" />
+											</aon:commandLink>
+										</aon:div>
+									</aon:if>								
 									<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="template-configuration"
 													action="gwt_templates" title="#{bundle.aon_templates}">

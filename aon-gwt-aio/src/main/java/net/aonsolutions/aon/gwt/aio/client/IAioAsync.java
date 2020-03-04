@@ -6,5 +6,5 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface IAioAsync {
 	
 	void getAonData(String domainName, Integer domainId, String login, AsyncCallback<AonData> callback);
-	void getAonData(String token, AsyncCallback<AonData> callback);
+	void getAonData(String token, Integer domainId, AsyncCallback<AonData> callback);
 }

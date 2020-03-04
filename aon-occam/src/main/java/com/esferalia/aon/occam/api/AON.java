@@ -495,11 +495,11 @@ public class AON {
 
 	// --------------------- DOMAIN
 
-	public static Domain getDomain(String token) {
+	public static Domain getDomain(String token, Integer domainId) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(token);
-			return getCommon().getDomain(ctx, ctx.getDomainId());
+			return getCommon().getDomain(ctx, domainId);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -2311,6 +2311,17 @@ public class AON {
 		}
 	}
 
+	public static Stream<Registry> getRegistryStream(String domainName, Integer domainId, String login, RegistryFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getRegistryStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static Registry getRegistry(String domainName, Integer domainId, String login, RegistryFilter filter){
 		AONContext ctx = null;
 		try {
@@ -4508,6 +4519,37 @@ public class AON {
 	// ******************************** CREDITOR **
 	// ********************************************
 
+	public static Stream<Creditor> getCreditorStream(String domainName, Integer domainId, String login, CreditorFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getCreditorStream(ctx, filter);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static LinkedList<Creditor> getCreditorList(String domainName, Integer domainId, String login, CreditorFilter filter) {
+		return getCreditorStream(domainName, domainId, login, filter)
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static Optional<Creditor> getCreditor(String domainName, Integer domainId, String login, CreditorFilter filter) {
+		return getCreditorStream(domainName, domainId, login, filter)
+				.findFirst();
+	}
+	
+	public static Creditor insertCreditor(String domainName, Integer domainId, String login, Creditor creditor) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().insertCreditor(ctx, creditor);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static Stream<Creditor> getBasicCreditors(String domainName,
 			int domainId, String login, CreditorFilter filter) {
 		AONContext ctx = null;

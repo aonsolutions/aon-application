@@ -8,6 +8,9 @@ public enum ImportType {
 	STOCK,
 	DELIVERY,
 	PROJECT_COMMERCIAL,
-	CUSTOMER_IBAN;
+	CUSTOMER_IBAN,
+	INVOICE,
+	REGISTRY
+	;
 	
 }

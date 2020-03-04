@@ -50,11 +50,13 @@ public class InvoiceAutoComplete {
 				int number = InvoiceDAO.getNextNumber(ctx.getContext(),types, inv.getSeries());
 				inv.setNumber(number);
 			}
-			String referenceCode = AonStringUtils.leftPad(Integer.toString(inv.getNumber()), 6, "0");
-			if (!AonStringUtils.isBlank(inv.getSeries())) {
-				referenceCode = inv.getSeries() + "/" + referenceCode;
+			if(inv.getReferenceCode() == null || "".equals(inv.getReferenceCode())) {
+				String referenceCode = AonStringUtils.leftPad(Integer.toString(inv.getNumber()), 6, "0");
+				if (!AonStringUtils.isBlank(inv.getSeries())) {
+					referenceCode = inv.getSeries() + "/" + referenceCode;
+				}
+				inv.setReferenceCode(referenceCode);
 			}
-			inv.setReferenceCode(referenceCode);
 		} 
 	};
 

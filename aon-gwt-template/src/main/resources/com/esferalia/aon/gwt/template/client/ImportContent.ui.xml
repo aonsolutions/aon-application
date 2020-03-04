@@ -1,0 +1,46 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages"
+		field="msg"></ui:with>
+		
+	<ui:style>
+	
+		.aon-html-style{
+			height: 50px;
+    		margin-left: 10px;
+		    margin-right: 10px;
+			background-colo: #ddd !important;
+		}
+		
+		.aon-horizontal-style{
+    		margin-top: 20px;
+		}
+		
+		.aon-horizontal-content-style{
+    		margin-left: 20px;
+		}
+
+		@external .gwt-MenuBarPopup;
+		.gwt-MenuBarPopup {
+			margin: 0px !important;
+			background: none repeat scroll 0% 0% #FFF !important;
+			border: 1px solid #DDDDDD !important;
+			padding: 4px 0px !important;
+			box-shadow: 2px 2px 5px 1px #EBEBEF !important;
+		}
+
+	</ui:style>
+
+
+	<g:HTMLPanel styleName="aon-panelGrid-search searchPanel-template {style.aon-html-style}">
+		<g:HorizontalPanel styleName="{style.aon-horizontal-style}">
+			<g:Label styleName="{style.aon-horizontal-content-style}" text="Tipo"></g:Label>
+			<g:ListBox styleName="{style.aon-horizontal-content-style}" ui:field="typeList"></g:ListBox>
+			<g:Button ui:field="importButton" text="Importar"
+				styleName=" {style.aon-horizontal-content-style} aon-icon-commandButton aon-icon-accept">
+			</g:Button>
+		</g:HorizontalPanel>		
+	</g:HTMLPanel>
+
+</ui:UiBinder>

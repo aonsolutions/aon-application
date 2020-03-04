@@ -26,6 +26,12 @@ public class Creditor implements Serializable, HasAudit {
 	private String modificationUser;
 	private Date modificationDate;
 
+	public Creditor() {
+		withholding = false;
+		vatAccrualPayment = false;
+		transaction = InvoiceTransactionType.NATIONAL;
+	}
+	
 	public Integer getId() {
 		return id;
 	}
@@ -53,7 +59,7 @@ public class Creditor implements Serializable, HasAudit {
 		return this;
 	}
 
-	public int getScope() {
+	public Integer getScope() {
 		return scope;
 	}
 
@@ -62,7 +68,7 @@ public class Creditor implements Serializable, HasAudit {
 		return this;
 	}
 
-	public int getDomain() {
+	public Integer getDomain() {
 		return domain;
 	}
 

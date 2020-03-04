@@ -82,6 +82,8 @@ public interface ICommon {
 	// DOMAIN
 	// --------------------------------------------
 	
+	public Stream<Domain> getDomainStream(AONContext ctx);
+	
 	public LinkedList<Domain> getDriveDomainList(AONContext ctx);
 	
 	public Domain getDomain(AONContext ctx, Integer domainId);

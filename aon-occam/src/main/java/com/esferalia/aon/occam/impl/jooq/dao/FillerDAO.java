@@ -40,12 +40,14 @@ import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.Target.TARGET;
+import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 
 import java.util.function.Function;
 
 import org.jooq.Record;
 
 import com.esferalia.aon.jooq.tables.records.WarehouseRecord;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -76,6 +78,7 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
+import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -88,6 +91,7 @@ import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.CreditorStatus;
 import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
@@ -246,6 +250,28 @@ public class FillerDAO {
 					.setCreationUser(r.getValue(SUPPLIER.CREATION_USER))
 					.setModificationDate(r.getValue(SUPPLIER.MODIFICATION_DATE))
 					.setModificationUser(r.getValue(SUPPLIER.MODIFICATION_USER));				
+		}
+	}
+	
+	public static class CreditorFiller implements Function<Record, Creditor> {
+		@Override
+		public Creditor apply(Record r) {
+			Creditor creditor = new Creditor();
+			creditor.setDomain(r.getValue(REGISTRY.DOMAIN));
+			creditor.setId(r.getValue(REGISTRY.ID));
+			creditor.setRegistry(new Registry().setId(r.getValue(REGISTRY.ID))
+					.setDocument(r.getValue(REGISTRY.DOCUMENT))
+					.setName(r.getValue(REGISTRY.NAME)));
+			return creditor.setScope(r.getValue(CREDITOR.SCOPE))
+					.setAccount(new Account().setId(r.getValue(CREDITOR.ACCOUNT)))
+					.setWithholding(r.getValue(CREDITOR.WITHHOLDING).shortValue() == 1)
+					.setVatAccrualPayment(r.getValue(CREDITOR.VAT_ACCRUAL_PAYMENT).shortValue() == 1)
+					.setTransaction(InvoiceTransactionType.safeValueOf(r.getValue(CREDITOR.TRANSACTION).intValue()))
+					.setStatus(CreditorStatus.safeValueOf(r.getValue(CREDITOR.STATUS)))
+					.setCreationDate(r.getValue(CREDITOR.CREATION_DATE))
+					.setCreationUser(r.getValue(CREDITOR.CREATION_USER))
+					.setModificationDate(r.getValue(CREDITOR.MODIFICATION_DATE))
+					.setModificationUser(r.getValue(CREDITOR.MODIFICATION_USER));				
 		}
 	}
 	

@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
@@ -82,6 +83,7 @@ public class DomainDAO {
 						.setDescription(rec.getValue(DOMAIN.DESCRIPTION))
 						.setDomainType(DomainType.values()[rec.getValue(DOMAIN.TYPE)])
 						.setName(rec.getValue(DOMAIN.NAME))
+						.setScope(rec.getValue(DOMAIN.SCOPE))
 						.setParentId(rec.getValue(DOMAIN.PARENT))
 						.setEnableHeredity(AonEnumUtils.getBoolean(rec.getValue(DOMAIN.ENABLEHEREDITY)))
 						.setDomainManagement(AonEnumUtils.getBoolean(rec.getValue(DOMAIN.DOMAINMANAGEMENT)))
@@ -89,6 +91,14 @@ public class DomainDAO {
 				.findFirst()
 				.orElse(null)
 				;
+	}
+	
+	public static Stream<Domain> getDomainStream(AONContext ctx) {
+		return ctx.getDslContext().selectDistinct()
+				.from(DOMAIN)
+				.where(DOMAIN.ID.in(ctx.getDomains()))
+				.or(DOMAIN.PARENT.in(ctx.getDomains()))
+				.fetchInto(DOMAIN).stream().map(new FullDomainFiller());
 	}
 	
 	public static Domain getCompanyDomain(AONContext ctx, String document){

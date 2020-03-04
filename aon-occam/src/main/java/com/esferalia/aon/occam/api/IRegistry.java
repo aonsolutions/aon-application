@@ -59,6 +59,7 @@ public interface IRegistry {
 	public Stream<Creditor> getBasicCreditors(AONContext ctx, CreditorFilter filter);
 	
 	public Registry getRegistry(AONContext ctx, RegistryFilter filter);
+	public Stream<Registry> getRegistryStream(AONContext ctx, RegistryFilter filter);
 	
 	public Stream<RegistryMedia> getRMediaStream(AONContext ctx, RegistryMediaFilter filter);
 	public Stream<RegistryNote> getRNoteStream(AONContext ctx, RegistryNoteFilter filter);
@@ -95,6 +96,10 @@ public interface IRegistry {
 	// ------------------- SUPPLIER
 	public Stream<Supplier> getSupplierStream(AONContext ctx, SupplierFilter filter);
 	public Supplier insertSupplier(AONContext ctx, Supplier supplier);
+
+	// ------------------- CREDITOR
+	public Stream<Creditor> getCreditorStream(AONContext ctx, CreditorFilter filter);
+	public Creditor insertCreditor(AONContext ctx, Creditor creditor);
 
 	// ------------------- TARGET
 	public Stream<Target> getTargetStream(AONContext ctx, TargetFilter filter);

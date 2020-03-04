@@ -93,6 +93,19 @@ public class RegistryImpl implements IRegistry{
 
 	// ------------------------------------- CREDITOR
 
+	
+	@Override
+	public Stream<Creditor> getCreditorStream(AONContext ctx, CreditorFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.getCreditorStream(ctx, filter));
+	}
+	
+	@Override
+	public Creditor insertCreditor(AONContext ctx, Creditor creditor) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.insertCreditor(ctx, creditor));
+	}
+	
 	@Override
 	public Stream<Creditor> getBasicCreditors(AONContext ctx, CreditorFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
@@ -103,6 +116,12 @@ public class RegistryImpl implements IRegistry{
 	public Registry getRegistry(AONContext ctx, RegistryFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryDAO.getRegistry(ctx, filter));
+	}
+	
+	@Override
+	public Stream<Registry> getRegistryStream(AONContext ctx, RegistryFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.getRegistryStream(ctx, filter));
 	}
 	
 	// ------------------------------------- RMEDIA

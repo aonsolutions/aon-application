@@ -13,6 +13,7 @@ import static com.esferalia.aon.jooq.tables.CommissionTypeCommission.COMMISSION_
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
+import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
 import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DETAIL;
@@ -147,6 +148,8 @@ import com.esferalia.aon.occam.api.model.Properties.SupplierProperties;
 import com.esferalia.aon.occam.api.model.Properties.TargetProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
+import com.esferalia.aon.occam.api.model.registry.CreditorFilter;
+import com.esferalia.aon.occam.api.model.registry.CreditorProperties;
 
 public class PropertiesDAO {
 	
@@ -302,6 +305,28 @@ public class PropertiesDAO {
  		@Override public Property<Integer> getSellerProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.SELLER);}
 		@Override public Property<Date> getStartDateProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.START_DATE);}
 		@Override public Property<Date> getEndDateProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.END_DATE);}
+	}
+	
+	
+	public static class CreditorPropertiesDAO implements CreditorProperties {
+		
+		protected Select<Record> build(SelectJoinStep<Record> select, CreditorFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(CreditorFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(CREDITOR.REGISTRY);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(CREDITOR.DOMAIN);}
+		@Override public Property<String> getDocumentProperty() {return new FilterDAO.PropertyDAO<String>(REGISTRY.DOCUMENT);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(REGISTRY.NAME);}
+		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<String>(REGISTRY.ALIAS);}
+		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<Byte>(CREDITOR.STATUS);}
+		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<Byte>(REGISTRY.SECURITY_LEVEL);}
 	}
 	
 	public static class SupplierPropertiesDAO implements SupplierProperties {
