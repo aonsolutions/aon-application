@@ -847,8 +847,8 @@ public class JooqEmployee {
 		dslContext.update(REGISTRY)
 			.set(REGISTRY.DOCUMENT, employeeData.getDocument())
 			.set(REGISTRY.DOCUMENT_TYPE, employeeData.getDocumentType())
-			.set(REGISTRY.DOCUMENT_COUNTRY, employeeData.getNationality())
-			.set(REGISTRY.NATIONALITY, employeeData.getNationality())
+			.set(REGISTRY.DOCUMENT_COUNTRY, null == employeeData.getNationality() ? "ES" : employeeData.getNationalityCode())
+			.set(REGISTRY.NATIONALITY, null == employeeData.getNationality() ? "ES" : employeeData.getNationalityCode())
 			.set(REGISTRY.NAME, (null == employeeData.getSurName() ? "" :  employeeData.getSurName() + " ") + 
 					(null == employeeData.getSecondSurName() ? "" : employeeData.getSecondSurName() + ", ") + 
 					employeeData.getName())

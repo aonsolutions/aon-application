@@ -12,7 +12,6 @@ import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
-import com.esferalia.aon.gwt.payroll.shared.CCCType;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractType;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
@@ -708,10 +707,11 @@ public class EmployeeDialog extends CustomDialog {
 		if(null != this.employeeDialogObject.getActivities())
 			for(Entry<Integer,String> entry : this.employeeDialogObject.getActivities().entrySet())
 				for(CCCInfo cccInfo :  this.employeeDialogObject.getCCCs().values())
-					if(cccInfo.getActivityId() == entry.getKey()) 
-						this.employee.activityCCC.addItem(entry.getValue() + " - " + CCCType.values()[cccInfo.getType()] + "[" + cccInfo.getCcc() + "] - " +  cccInfo.getGeozone(), cccInfo.getActivityId() + "/" + cccInfo.getCccId() + "/" + cccInfo.getType());
+					if(cccInfo.getActivityId() == entry.getKey())
+						this.employee.activityCCC.addItem(entry.getValue() + " - " + getCCCType(cccInfo.getType()) + "[" + cccInfo.getCcc() + "] - " +  cccInfo.getGeozone(), cccInfo.getActivityId() + "/" + cccInfo.getCccId() + "/" + cccInfo.getType());
+//						this.employee.activityCCC.addItem(entry.getValue() + " - " + CCCType.values()[cccInfo.getType()] + "[" + cccInfo.getCcc() + "] - " +  cccInfo.getGeozone(), cccInfo.getActivityId() + "/" + cccInfo.getCccId() + "/" + cccInfo.getType());
 	}
-	
+
 	private void initWorkplaces() {
 		//WORKPLACE
 		for(Workplace workplace : employeeDialogObject.getWorkplaces())
@@ -1137,6 +1137,29 @@ public class EmployeeDialog extends CustomDialog {
 	
 	private int getMunicipalityIndex(String province, String city) {
 		return municipalities.getMunicipalityIndex(province, city) + 1;
+	}
+	
+	private String getCCCType(Byte type) {
+		switch (type) {
+			case (byte) 0:
+				return "PRINCIPAL";
+			case (byte) 1:
+				return "FORMACION Y APRENDIZAJE";
+			case (byte) 3:
+				return "REPRESENTANTES DE COMERCIO";
+			case (byte) 4:
+				return "ASIMILADOS R.GENERAL";
+			case (byte) 5:
+				return "BECARIOS";
+			case (byte) 6:
+				return "EMPLEADOS DE HOGAR";
+			case (byte) 7:
+				return "TRABAJADOR CUENTA AJENA";
+			case (byte) 8:
+				return "ARTISTA";
+			default:
+				return "PRINCIPAL";
+		}
 	}
 	
 	// ----------------------------------------------- CALLBACK TO SAVE ------------------------------------------------

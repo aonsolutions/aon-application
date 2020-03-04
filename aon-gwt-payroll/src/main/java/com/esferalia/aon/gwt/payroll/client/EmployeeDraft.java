@@ -11,7 +11,6 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
-import com.esferalia.aon.gwt.payroll.shared.CCCType;
 import com.esferalia.aon.gwt.payroll.shared.ContractJourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.ContractType;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
@@ -1007,7 +1006,7 @@ public class EmployeeDraft extends Composite {
 			for(Entry<Integer,String> entry : this.employeeDraftObject.getActivities().entrySet())
 				for(CCCInfo cccInfo :  this.employeeDraftObject.getCCCs().values())
 					if(cccInfo.getActivityId() == entry.getKey()) 
-						this.employee.activityCCC.addItem(entry.getValue() + " - " + CCCType.values()[cccInfo.getType()] + "[" + cccInfo.getCcc() + "] - " +  cccInfo.getGeozone(), cccInfo.getActivityId() + "/" + cccInfo.getCccId() + "/" + cccInfo.getType());
+						this.employee.activityCCC.addItem(entry.getValue() + " - " + getCCCType(cccInfo.getType()) + "[" + cccInfo.getCcc() + "] - " +  cccInfo.getGeozone(), cccInfo.getActivityId() + "/" + cccInfo.getCccId() + "/" + cccInfo.getType());
 	}
 	
 	private void initWorkplaces() {
@@ -1122,6 +1121,7 @@ public class EmployeeDraft extends Composite {
 		this.employee.document.setValue(employeeDraftObject.getEmployeeDocument());
 		checkValidationDocument();
 		this.employee.nationality.setValue(employeeDraftObject.getEmployeeNationality());
+		
 		this.employee.security_social_num.setValue(employeeDraftObject.getEmployeeSSNumber());
 		checkValidationSSNumber();
 		//Fullname
@@ -1339,6 +1339,29 @@ public class EmployeeDraft extends Composite {
 	    	accountField.setText(accountText.substring(0, 4) + "  " + accountText.substring(4, 8) + "  " + accountText.substring(8, 12) + "  " + accountText.substring(12, 16)
 	    	+ "  " + accountText.substring(16, 20) + "  " + accountText.substring(20, 24));
 	    }
+	}
+	
+	private String getCCCType(Byte type) {
+		switch (type) {
+			case (byte) 0:
+				return "PRINCIPAL";
+			case (byte) 1:
+				return "FORMACION Y APRENDIZAJE";
+			case (byte) 3:
+				return "REPRESENTANTES DE COMERCIO";
+			case (byte) 4:
+				return "ASIMILADOS R.GENERAL";
+			case (byte) 5:
+				return "BECARIOS";
+			case (byte) 6:
+				return "EMPLEADOS DE HOGAR";
+			case (byte) 7:
+				return "TRABAJADOR CUENTA AJENA";
+			case (byte) 8:
+				return "ARTISTA";
+			default:
+				return "PRINCIPAL";
+		}
 	}
 	
 	private void addSuccessStyle(Widget widget) {
