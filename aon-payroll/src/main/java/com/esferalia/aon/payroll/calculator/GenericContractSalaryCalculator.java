@@ -1101,6 +1101,12 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		return Collections.singletonList(result);
 	}
 
+	protected List<ITimedResult<Double>> fixConstantExtraResult(IContractPayment contractPayment, ITimedResult<Double> result, Date start, Date end, ExpressionContext expressionContext) 
+	throws UnsupportedOperationException, UndefinedVariablesException
+	{
+		return Collections.singletonList(result);
+	}
+
 	protected List<ITimedResult<Double>> fixGuaranteedResults(IContractPayment contractPayment, List<ITimedResult<Double>> results, List<Period> its , Date start, Date end, ExpressionContext expressionContext) 
 	throws UnsupportedOperationException, UndefinedVariablesException
 	{
@@ -1222,6 +1228,13 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				} catch (UnsupportedOperationException e) {
 					onCheckError(contractPayment, e.getMessage());
 				}
+			} else if ( results.size() == 1 && 
+					results.get(0).getValue() != null && 
+					results.get(0).getValue() > 0.00 &&
+					isExtra(expressionContext) &&
+					(contractPaymentType == PaymentType.CRA_0004) &&
+					allAgreementConstants(results.get(0).getContext()) ) {
+				results = fixConstantExtraResult(contractPayment, results.get(0), paymentStart, paymentEnd, expressionContext);
 			} else if ( results.size() == 1 && 
 					results.get(0).getValue() != null && 
 					results.get(0).getValue() > 0.00 && 
@@ -1399,6 +1412,14 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		} catch ( Exception e ) {
 			return false;
 		}
+	}
+
+	private static boolean isExtra(ExpressionContext expressionContext) {
+		return 
+		expressionContext.getVariables(ContextVariable.EXTRA_PAY)
+		.stream().map(v -> (Boolean) v.getValue(v.getPeriod()))
+		.findAny().orElse(Boolean.FALSE)
+		;
 	}
 
 	private static void addResult(ExpressionContext expressionContext, String name, Date resultStart, Date resultEnd,

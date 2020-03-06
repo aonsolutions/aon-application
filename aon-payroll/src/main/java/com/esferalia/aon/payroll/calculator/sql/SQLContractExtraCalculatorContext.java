@@ -390,7 +390,7 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		}
 		
 		Date end = results.get(results.size()-1).getPeriod().getEnd();
-		if ( end.before(paymentEnd) )
+		if ( end.before(paymentEnd) && AonStringUtils.isNotBlank(payment.getName()))
 			expressionContext.setVariable(payment.getName(), 0.00, next(end), paymentEnd);
 		
 	}

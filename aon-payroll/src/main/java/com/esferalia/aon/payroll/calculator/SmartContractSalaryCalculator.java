@@ -531,6 +531,20 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 
 		return Collections.singletonList(fixed);
 	}
+	
+	@Override
+	protected List<ITimedResult<Double>> fixConstantExtraResult(IContractPayment contractPayment,
+			ITimedResult<Double> result, Date start, Date end, ExpressionContext expressionContext)
+			throws UnsupportedOperationException, UndefinedVariablesException {
+		try {
+			return expressionContext.eval(
+					String.format("(%s) * %s / %s ", contractPayment.getExpression(),ContextVariable.WORKED_DAYS, ContextVariable.MONTH_DAYS), 
+					start, end, Double.class);
+		} catch (ExpressionException e) {
+			return super.fixConstantExtraResult(contractPayment, result, start, end, expressionContext);
+		}
+		
+	}
 
 	protected List<ITimedResult<Double>> subtractITPart(List<ITimedResult<Double>> results, List<Period> its,
 			ExpressionContext expressionContext) throws UndefinedVariablesException, ExpressionException {
