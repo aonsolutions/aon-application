@@ -19,10 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.payroll.PagaExtraUpdate;
-import net.aonsolutions.db.up2date.payroll.TempPaymentInsert;
-import net.aonsolutions.db.up2date.tgss.SMI2020Update;
-import net.aonsolutions.db.up2date.tgss.SalaryHoursUpdate;
+import net.aonsolutions.db.up2date.payroll.FundUpvUpdateIV;
 
 public class Up2Date {
 
@@ -94,7 +91,9 @@ public class Up2Date {
     		//SMI2020Update.SMI2020UPDATE,
     		//PagaExtraUpdate.PAGAEXTRAUPDATE,
     		//TempPaymentInsert.TEMPPAYMENTINSERT
-    		SalaryHoursUpdate.SALARYHOURSUPDATE
+    		//SalaryHoursUpdate.SALARYHOURSUPDATE
+    		//RegistryInsert.REGISTRYINSERT
+    		FundUpvUpdateIV.FUNDUPV_UPDATE_IV
     };
 
 
