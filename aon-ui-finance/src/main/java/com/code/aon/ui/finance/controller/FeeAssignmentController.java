@@ -120,13 +120,13 @@ public class FeeAssignmentController extends CustomerListController {
 			getFee().setCustomer(customer);
 			getFee().setLine(calculateFeeLine(customer));
 			getFee().setInvoicingGroup((isAssignToInvoicingGroup()) ? customer.getInvoicingGroup() : null);
-			customerFeeBean.restoreNullSubPOJOs(getFee());				
-			customerFeeBean.insert(getFee());				
+			customerFeeBean.restoreNullSubPOJOs(getFee());
+			customerFeeBean.insert(getFee());
 		}
 
 		AonUtil.addInfoMessage("Se han creado " + getCheckedCount() + " Cuotas.");
 		checkNone(event);
-		onEditSearch(null);
+		initializeFee();
 	}
 
 	private int calculateFeeLine(Customer customer) throws ManagerBeanException {
