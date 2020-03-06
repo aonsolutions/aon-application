@@ -1282,6 +1282,7 @@ public class InvoiceDAO {
 		if (inv.isSales()) {
 			inv.setSeries(data.getSeries());
 			inv.setNumber(data.getNumber());
+			inv.setReferenceCode(null);
 		} else {
 			inv.setSeries(null);
 			inv.setNumber(0);
