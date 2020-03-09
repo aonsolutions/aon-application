@@ -25,7 +25,6 @@ import com.esferalia.aon.occam.api.model.tedi.ICallback;
 import com.esferalia.aon.occam.api.model.tedi.TediError;
 import com.esferalia.aon.occam.api.model.tedi.TediLevel;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
-import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.google.gwt.core.client.GWT;
@@ -200,28 +199,24 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	
 	@Override
 	public boolean isUpdatable() {
-		
 		return (super.isUpdatable()
 				&& getAccountEntry().isInvoice()
 				&& isAccountSource()
-				&& !hasPaidFinances()
+				&& hasPendingFinances()
 				);
 	}
 	
-	private boolean hasPaidFinances() {
-		boolean paidFinances = false;
-		for (Finance finance : getWrapper().getFinances()) {
-			paidFinances = paidFinances 
-				|| finance.getFinanceStatus() == FinanceStatus.PAID
-				|| finance.getFinanceStatus() == FinanceStatus.BATCHED
-				|| finance.getFinanceStatus() == FinanceStatus.SETTLED;
+	private boolean hasPendingFinances() {
+		boolean pendingFinances = false;
+		for (Finance finance : getWrapper().getInvoice().getFinances()) {
+			pendingFinances = pendingFinances || finance.isFullPending();
 		}
-		return paidFinances;
+		return pendingFinances;
 	}
 	
 	@Override
 	public String getNoUpdatableCause() {
-		if (hasPaidFinances()) {
+		if (!hasPendingFinances()) {
 			return AON.MSG.hasPaidFinances();
 		}
 		if (!isAccountSource()) {
@@ -335,24 +330,10 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	}
 
 	public void entryDateChanged(Date entryDate) {
-//		getWrapper().getAccountEntry().setEntryDate(entryDate);
-//		if (getWrapper().getInvoice() != null) {
-//			getWrapper().getInvoice().setIssueDate(entryDate);
-//			getWrapper().getInvoice().setTaxDate(entryDate);
-//			taxDate.setValue(entryDate);
-//		}
 	}
 	public void activityChanged(Integer activty) {
-//		getWrapper().getAccountEntry().setActivity(activty);
-//		if (getWrapper().getInvoice() != null) {
-//			getWrapper().getInvoice().setActivity(activty);
-//		}
 	}
 	public void confidentialChanged(boolean confidential) {
-//		getWrapper().getAccountEntry().setConfidential(confidential);
-//		if (getWrapper().getInvoice() != null) {
-//			getWrapper().getInvoice().setConfidential(confidential);
-//		}
 	}
 	
 	protected void paintAttach() {
@@ -412,7 +393,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 				});
 				attachPanel.setWidget(viewer);
 				if (rootPanel.getWidgetSize(attachPanel) <= 30) {
-					rootPanel.setWidgetSize(attachPanel, Window.getClientWidth() / 3);
+					rootPanel.setWidgetSize(attachPanel, Window.getClientWidth() - 900);
 				}
 			} if (mimeType.isImage()) {
 				ScrollPanel scrollpanel = new ScrollPanel();
@@ -423,7 +404,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 				scrollpanel.setWidget(image);
 				attachPanel.setWidget(scrollpanel);
 				if (rootPanel.getWidgetSize(attachPanel) <= 30) {
-					rootPanel.setWidgetSize(attachPanel, Window.getClientWidth() / 3);
+					rootPanel.setWidgetSize(attachPanel, Window.getClientWidth() - 900);
 				}
 			}
 			

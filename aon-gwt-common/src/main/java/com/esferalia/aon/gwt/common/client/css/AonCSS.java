@@ -121,6 +121,9 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-width-auto")
 	String aonWidthAuto();
 
+	@ClassName("aon-width-auto-important")
+	String aonWidthAutoImportant();
+
 	@ClassName("aon-width-20")
 	String aonWidth20();
 
@@ -1178,6 +1181,9 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-padding2-left")
 	String aonPadding2Left();
 	
+	@ClassName("aon-padding2-right")
+	String aonPadding2Right();
+
 	@ClassName("aon-stat-menu-style")
 	String aonStatMenuStyle();	
 

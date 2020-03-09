@@ -424,6 +424,7 @@ public class FinanceDAO {
 				.setModificationDate(record.getValue(FINANCE.MODIFICATION_DATE))
 				.setPayMethodName(record.getValue(PAY_METHOD.NAME))
 				.setPayMethodType( PayMethodType.safeValueOf(  record.getValue(PAY_METHOD.TYPE)))
+				.setDirty(false)
 				;
 		}
 
@@ -676,6 +677,30 @@ public class FinanceDAO {
 		}
 	}
 	
+	public static class FinanceTrackingFiller  implements Function<Record,FinanceTracking> {
+		@Override
+		public FinanceTracking apply(Record record) {
+			return new FinanceTracking()
+				.setId(record.getValue(FINANCE_TRACKING.ID))
+				.setDomain(record.getValue(FINANCE_TRACKING.DOMAIN))
+				.setRegistryBank(record.getValue(FINANCE_TRACKING.RBANK))
+				.setBankStatementLink(record.getValue(FINANCE_TRACKING.BANK_STATEMENT_LINK))
+				.setFinance(new Finance().setId(record.getValue(FINANCE_TRACKING.FINANCE)))
+				.setPayMethodTypeDetail(record.getValue(FINANCE_TRACKING.PM_TYPE_DETAIL))
+				.setTrackingDate(record.getValue(FINANCE_TRACKING.TRACKING_DATE))
+				.setType( FinanceTrackingType.safeValueOf(record.getValue(FINANCE_TRACKING.TYPE)))
+				.setDescription(record.getValue(FINANCE_TRACKING.DESCRIPTION))
+				.setAmount(record.getValue(FINANCE_TRACKING.AMOUNT))
+				.setRecorded(AonEnumUtils.getBoolean( record.getValue(FINANCE_TRACKING.RECORDED)))
+				.setAccountEntry(record.getValue(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY))
+				.setCreationUser(record.getValue(FINANCE_TRACKING.CREATION_USER))
+				.setCreationDate(record.getValue(FINANCE_TRACKING.CREATION_DATE))
+				.setModificationUser(record.getValue(FINANCE_TRACKING.MODIFICATION_USER))
+				.setModificationDate(record.getValue(FINANCE_TRACKING.MODIFICATION_DATE))
+				;
+		}
+	}
+
 	private static boolean isLastTracking(AONContext ctx, FinanceTracking ft) {
 		return !ctx.getDslContext()
 			.select()
@@ -738,6 +763,14 @@ public class FinanceDAO {
 	}
 	
 	public static Invoice insertFinancesForInvoice(AONContext ctx, Invoice invoice) {
+		LinkedList<Finance> finances = getFinancesForInvoice(ctx, invoice);
+		for (Finance finance : finances) {
+			insertFinance(ctx, finance);
+		}
+		invoice.setFinances(finances);
+		return invoice;
+	}
+	public static LinkedList<Finance> getFinancesForInvoice(AONContext ctx, Invoice invoice) {
 		LinkedList<Finance> finances = new LinkedList<Finance>();
 		RegistryPayMethod rPayMethod = RegistryDAO.getRPayMethodStream(ctx, prop -> prop.getDomainProperty()
 				.eq(ctx.getDomainId()).and(prop.getRegistryProperty().eq(invoice.getRegistry()))).findFirst()
@@ -749,28 +782,40 @@ public class FinanceDAO {
 					.and(prop.getIdProperty().eq(rPayMethod.getRbank()))).findFirst().orElse(null);
 		}
 		Date date = invoice.getIssueDate();
-		if ((rPayMethod == null) || (rPayMethod.getNumberOfPymnts() == 1)) {
-			date = (rPayMethod==null) ? date : calculatePaymentDate(rPayMethod.getDaysToFirstPymnt(), rPayMethod.getPymnt_days(), date);
-			finances.add(createFinance(invoice, date, (rPayMethod==null) ? null : rPayMethod.getPayMethod(), rBank, invoice.getTotal()));
-		} else {
-			double paymentPrice = AonMathUtils.round((invoice.getTotal() / rPayMethod.getNumberOfPymnts()));
-			date = calculatePaymentDate(rPayMethod.getDaysToFirstPymnt(), rPayMethod.getPymnt_days(), date);
-			finances.add(createFinance(invoice, date, rPayMethod.getPayMethod(), rBank, paymentPrice));
-			for(int i=2; i<=rPayMethod.getNumberOfPymnts()-1; i++) {
-				date = calculatePaymentDate(rPayMethod.getDaysBetwenPymnts(), rPayMethod.getPymnt_days(), date);
-				finances.add(createFinance(invoice, date, rPayMethod.getPayMethod(), rBank, paymentPrice));
-			}
-			paymentPrice = AonMathUtils.round(invoice.getTotal() - (paymentPrice * (rPayMethod.getNumberOfPymnts() - 1)));
-			date = calculatePaymentDate(rPayMethod.getDaysBetwenPymnts(), rPayMethod.getPymnt_days(), date);
-			finances.add(createFinance(invoice, date, rPayMethod.getPayMethod(), rBank, paymentPrice));
+		int numberOfPymnts =  ((rPayMethod == null) || (rPayMethod.getNumberOfPymnts() == 0)) ? 1 : rPayMethod.getNumberOfPymnts();
+		int daysToFirstPymnt = ((rPayMethod == null) || (rPayMethod.getDaysToFirstPymnt() == 0)) ? 0 : rPayMethod.getDaysToFirstPymnt();
+		int daysBetwenPymnts = ((rPayMethod == null) || (rPayMethod.getDaysBetwenPymnts() == 0)) ? 0 : rPayMethod.getDaysBetwenPymnts();
+		Integer pm =  (rPayMethod==null) ? null : rPayMethod.getPayMethod();
+		double paymentPrice = AonMathUtils.round(invoice.getTotal() / numberOfPymnts);
+		for (int i = 0; i < numberOfPymnts; i++) {
+			int days = (i==0?daysToFirstPymnt:daysBetwenPymnts);
+			date = (rPayMethod==null? date : calculatePaymentDate(days, rPayMethod.getPymnt_days(), date));
+			Finance finance = createFinance(invoice, date, pm , rBank, paymentPrice );  
+			finances.add(finance);
 		}
-		for (Finance finance : finances) {
-			insertFinance(ctx, finance);
+		double lastPaymentPrice = AonMathUtils.round(invoice.getTotal() - (paymentPrice * (numberOfPymnts - 1)));
+		if ( !AonMathUtils.equals(paymentPrice, lastPaymentPrice)) {
+			finances.getLast().setAmount(lastPaymentPrice);
 		}
-		invoice.setFinances(finances);
-		return invoice;
+		
+//		if ((rPayMethod == null) || (rPayMethod.getNumberOfPymnts() == 1)) {
+//			date = (rPayMethod==null) ? date : calculatePaymentDate(rPayMethod.getDaysToFirstPymnt(), rPayMethod.getPymnt_days(), date);
+//			finances.add(createFinance(invoice, date, (rPayMethod==null) ? null : rPayMethod.getPayMethod(), rBank, invoice.getTotal()));
+//		} else {
+//			double paymentPrice = AonMathUtils.round((invoice.getTotal() / rPayMethod.getNumberOfPymnts()));
+//			date = calculatePaymentDate(rPayMethod.getDaysToFirstPymnt(), rPayMethod.getPymnt_days(), date);
+//			finances.add(createFinance(invoice, date, rPayMethod.getPayMethod(), rBank, paymentPrice));
+//			for(int i=2; i<=rPayMethod.getNumberOfPymnts()-1; i++) {
+//				date = calculatePaymentDate(rPayMethod.getDaysBetwenPymnts(), rPayMethod.getPymnt_days(), date);
+//				finances.add(createFinance(invoice, date, rPayMethod.getPayMethod(), rBank, paymentPrice));
+//			}
+//			paymentPrice = AonMathUtils.round(invoice.getTotal() - (paymentPrice * (rPayMethod.getNumberOfPymnts() - 1)));
+//			date = calculatePaymentDate(rPayMethod.getDaysBetwenPymnts(), rPayMethod.getPymnt_days(), date);
+//			finances.add(createFinance(invoice, date, rPayMethod.getPayMethod(), rBank, paymentPrice));
+//		}
+		return finances;
 	}
-
+	
 	private static Date calculatePaymentDate(int daysNumber, String paymentDays, Date date) {
 		Date paymentDate = AonDateUtils.addDays(date, daysNumber);
 		String[] paymentDaysArray = AonStringUtils.split(paymentDays, ' ');
@@ -816,4 +861,19 @@ public class FinanceDAO {
 		finance.setScope(invoice.getScope());
 		return finance;
 	}
+
+	public static LinkedList<FinanceTracking> getFinanceTracking(AONContext ctx, Integer finance) {
+		return ctx.getDslContext()
+			.select(FINANCE_TRACKING.fields())
+			.select(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY)
+			.from(FINANCE_TRACKING)
+			.leftOuterJoin(ACCOUNT_ENTRY_FINANCE_TRACKING).on(FINANCE_TRACKING.ID.equal(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING))
+			.where(FINANCE_TRACKING.FINANCE.eq(finance))
+			.orderBy(FINANCE_TRACKING.ID)
+			.fetch()
+			.stream()
+			.map( new FinanceTrackingFiller() )
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+
 }

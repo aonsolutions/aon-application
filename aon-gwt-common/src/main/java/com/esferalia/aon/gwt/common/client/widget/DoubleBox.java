@@ -24,9 +24,26 @@ import com.google.gwt.user.client.ui.ValueBox;
 
 public class DoubleBox extends ValueBox<Double> implements HasErrorHandlers{
 
+	private native static double resolve(String expression) /*-{
+		d = eval(expression);
+		return d;
+	}-*/;	
+
 	public static interface ExpressionResolver {
 		void resolve(String expression, AsyncCallback<Double> callback);
 	}
+	private static final ExpressionResolver ARITHMETIC_RESOLVER = new ExpressionResolver() {
+		@Override
+		public void resolve(String expression, AsyncCallback<Double> callback) {
+			try {
+				double ret = DoubleBox.resolve(expression);
+				callback.onSuccess(ret);
+			} catch (Throwable t) {
+				callback.onFailure(t);
+			}
+		}
+		
+	};
 	
 	public static final String EQUAL = AonStringUtils.EQUAL;
 	public static final int VISIBLE_LENGTH = 12;
@@ -89,8 +106,9 @@ public class DoubleBox extends ValueBox<Double> implements HasErrorHandlers{
 				}
 			}
 		});
+		this.setResolver(ARITHMETIC_RESOLVER);
 	}
-	
+
 	public void setResolver(final ExpressionResolver resolver) {
 		addKeyUpHandler(new KeyUpHandler() {
 			@Override

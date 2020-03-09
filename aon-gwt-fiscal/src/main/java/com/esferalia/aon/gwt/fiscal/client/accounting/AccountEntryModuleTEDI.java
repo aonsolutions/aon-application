@@ -1179,13 +1179,20 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 	public Date getEntryDate() {
 		return entryDate.getValue();
 	}
-	public Integer getActivity() {
-		return AonNumberUtils.toInteger(activity.getSelectedValue());
-	}
 	public void changeEntryDate(Date date) {
 		entryDate.setValue( date , true);
 	}
 
+	public Integer getActivity() {
+		return AonNumberUtils.toInteger(activity.getSelectedValue());
+	}
+	public ListBox getActivityBox() {
+		return activity;
+	}
+	public CheckBox getConfidentialBox() {
+		return confidential;
+	}
+	
 	public void addExtraInfo( String htmlText) {
 		if (getOptions().isExtraInfoTabVisible()) {
 			openFootPanelIfNeeded();
@@ -1196,6 +1203,15 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		}
 	}
 	
+	public void addExtraInfo( Widget widget) {
+		if (getOptions().isExtraInfoTabVisible()) {
+			openFootPanelIfNeeded();
+			tabLayout.selectTab(getExtraInfoTabIndex());
+			extraInfoContainer.setWidget(widget);
+			extraInfoContainer.scrollToTop();
+		}
+	}
+
 	public void onBack(ClickEvent event) {
 		if (getOptions().hasExternalCallback()) {
 			getOptions().getExternalCallback().onExit();

@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
@@ -25,17 +24,13 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	private boolean accountSource;
 	
 	private Attach attach;
-
-	private LinkedList<Finance> finances;
-	private boolean financeRecordable;
-	
 	private String manualConcept;
 
 	private InvoiceWithholding withholdingData;
 	private LinkedList<Account> suggestedAccounts;
 	private LinkedList<InvoiceVAT> vats;
-	
 	private LinkedList<AccountEntry> accountEntries;
+	private boolean prepayments;
 	
 	public boolean isTediParsed() {
 		return tediParsed;
@@ -238,30 +233,16 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	public InvoiceVAT getFirstVat() {
 		return getVats().get(0);
 	}
-
-	public LinkedList<Finance> getFinances() {
-		if (finances == null) {
-			finances = new LinkedList<Finance>();
-		}
-		return finances;
-	}
-	public AccountingInvoice setFinances(LinkedList<Finance> finances) {
-		this.finances = finances;
-		return this;
-	}
-	public boolean hasFinances() {
-		return getFinances() != null && !getFinances().isEmpty(); 
-	}
-	public boolean isFinanceRecordable() {
-		return financeRecordable;
-	}
-	public AccountingInvoice setFinanceRecordable(boolean financeRecordable) {
-		this.financeRecordable = financeRecordable;
-		return this;
-	}
 	private void ensureWithholdingData() {
 		if (this.withholdingData == null) {
 			setWithholdingData( new InvoiceWithholding() );
 		}
+	}
+	public boolean hasPrepayments() {
+		return prepayments;
+	}
+	public AccountingInvoice setPrepayments(boolean prepayments) {
+		this.prepayments = prepayments;
+		return this;
 	}
 }

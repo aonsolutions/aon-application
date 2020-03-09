@@ -1,10 +1,8 @@
-// AON-ENTITY Nov 6, 2012 12:29:06 PM - 3.2.2.GA
 package com.esferalia.aon.occam.api.model.finance;
 
 import java.io.Serializable;
 import java.util.Date;
 
-import com.esferalia.aon.jooq.tables.records.FinanceRecord;
 import com.esferalia.aon.occam.api.model.HasAudit;
 import com.esferalia.aon.occam.api.model.type.FinanceTrackingType;
 

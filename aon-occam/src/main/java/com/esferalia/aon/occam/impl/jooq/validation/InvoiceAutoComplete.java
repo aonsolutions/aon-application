@@ -127,6 +127,15 @@ public class InvoiceAutoComplete {
 
 
 	/**
+	 * Si solo hay un vencimiento, el importe será igual al total factura.
+	 */
+	public static BiConsumer<Invoice,AonConfigurationContext> COMPLETE_FIRST_FINANCE = (inv,ctx) -> {
+		if (inv.hasFinances() && inv.getFinances().size() == 1 && inv.getFinances().get(0).isPending()) {
+			inv.getFinances().get(0).setAmount( inv.getTotal());
+		}
+	};
+
+	/**
 	 * Aseguramos la fecha de IVA..
 	 */
 	public static BiConsumer<Invoice,AonConfigurationContext> COMPLETE_RECTIFICATION_TYPE = (inv,ctx) -> {
@@ -159,6 +168,7 @@ public class InvoiceAutoComplete {
 		.andThen(COMPLETE_RECTIFICATION_TYPE)
 		.andThen(ENSURE_REGISTRY_DATA)
 		.andThen(COMPLETE_ACTIVITY)
+		.andThen(COMPLETE_FIRST_FINANCE)
 		.accept(inv, new AonConfigurationContext(ctx,config));
 
 	}

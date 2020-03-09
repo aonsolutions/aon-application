@@ -17,6 +17,9 @@ public class AccountEntryUtils {
 		if (params.getPeriod()  != null && params.getPeriod().intValue() != 0 ) {
 			prop = prop.and(p.getAccountPeriodProperty().eq(params.getPeriod()));
 		}
+		if (params.getAccountEntryId() != null && params.getAccountEntryId().intValue() != 0 ) {
+			prop = prop.and(p.getIdProperty().eq(params.getAccountEntryId()));
+		}
 		if (params.getJournal()  != null && params.getJournal().intValue() != 0 ) {
 			prop = prop.and(p.getJournalProperty().eq(params.getJournal()));
 		}

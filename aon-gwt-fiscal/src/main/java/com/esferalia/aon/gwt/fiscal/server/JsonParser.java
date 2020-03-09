@@ -29,6 +29,10 @@ public class JsonParser {
 		Long domain = (Long) jsonParams.get(IRequestParamsNames.DOMAIN);
 		params.setDomain(domain.intValue());
 		
+		Long accountEntryId = (Long) jsonParams.get(IRequestParamsNames.ACCOUNT_ENTRY_ID);
+		if (accountEntryId!= null) {
+			params.setAccountEntryId(accountEntryId.intValue());	
+		}
 		Long period = (Long) jsonParams.get(IRequestParamsNames.PERIOD);
 		if (period != null) {
 			params.setPeriod(period.intValue());	

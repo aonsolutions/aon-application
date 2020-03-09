@@ -345,7 +345,7 @@ public class TediContextVisitor implements ITediContextVisitor {
 	@Override
 	public void visitFinanceAccountBank(ICallback callback) {
 		LinkedHashSet<String> banks = new LinkedHashSet<String>();
-		for ( Finance finance : callback.getResult().getAccountingInvoice().getFinances()) {
+		for ( Finance finance : callback.getResult().getAccountingInvoice().getInvoice().getFinances()) {
 			banks.add(finance.getBankAccount().toString());
 		}
 		if (banks.size() > 0) {
@@ -358,7 +358,7 @@ public class TediContextVisitor implements ITediContextVisitor {
 				
 				@Override
 				public void onAccept(String t) {
-					for ( Finance finance : callback.getResult().getAccountingInvoice().getFinances()) {
+					for ( Finance finance : callback.getResult().getAccountingInvoice().getInvoice().getFinances()) {
 						BankAccount bankAccount = new BankAccount( t ); 
 						finance.setBankAccount(bankAccount);
 					}

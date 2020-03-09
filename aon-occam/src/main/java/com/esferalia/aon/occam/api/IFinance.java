@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
+import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
@@ -28,12 +29,13 @@ import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 public interface IFinance {
 	
 	// 	****************************************
-	// 	**************************** INVOICE ***
+	// 	**************************** FINANCES ***
 	// 	****************************************
 	
 	Stream<Finance> getFinanceStream(AONContext ctx, FinanceFilter filter);
 	Finance insertFinance(AONContext ctx, Finance finance);
 	Stream<Finance> getSiiFinanceStream(AONContext ctx, FinanceFilter filter);
+	LinkedList<FinanceTracking> getFinanceTracking(AONContext ctx, Integer finance);
 	
 	// 	****************************************
 	// 	**************************** INVOICE ***
@@ -94,5 +96,7 @@ public interface IFinance {
 	// 	***********************************************
 	public FinanceUtilitiesResult missingFinanceInvoices(AONContext ctx,FinanceUtilitiesParams params);
 	public Invoice missingFinanceInvoicesFix(AONContext ctx, Integer invoice);
+	public LinkedList<Finance> getFinancesForInvoice(AONContext ctx, Invoice invoice);
+	
 }
 	

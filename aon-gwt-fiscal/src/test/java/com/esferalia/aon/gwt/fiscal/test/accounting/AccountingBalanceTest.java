@@ -20,7 +20,7 @@ public class AccountingBalanceTest {
 	
 	public static void main(String[] args) throws ClassNotFoundException, FileNotFoundException {
 		
-		Class.forName( com.mysql.jdbc.Driver.class.getName() );
+		Class.forName( org.mariadb.jdbc.Driver.class.getName() );
 		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID, USER);
 		AccountingReportParams params = new AccountingReportParams()
 				.setPeriod(37200)

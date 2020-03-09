@@ -74,6 +74,7 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 	private TextBox document;
 	private ListBox activity;
 	private TextBox comments;
+	private IntegerBox id;
 	private ListBox order;
 	private Button cleanButton;
 
@@ -269,6 +270,16 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 			});
 		}
 		
+		id = new IntegerBox();
+		id.setVisibleLength(8);
+		id.addValueChangeHandler(new ValueChangeHandler<Integer>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Integer> event) {
+				onSearch();
+			}
+		});
+
 		order = new ListBox();
 		order.setWidth("200px");
 		order.addItem("Ejerc., n\u00BA diario, fecha");
@@ -409,15 +420,24 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 		
 		tab.setWidget(2, 1, comments);
 		tab.getCellFormatter().setStyleName(2, 1, AON.AON_CSS.aonPanelGridEven());
-		tab.getFlexCellFormatter().setColSpan(2, 1, 5);
+
+		tab.setWidget(2, 2, new Label("Id Interno"));
+		tab.getCellFormatter().setStyleName(2,2, AON.AON_CSS.aonPanelGridOdd());
+		tab.getCellFormatter().addStyleName(2,2, AON.AON_CSS.aonTextRight());
 		
-		tab.setWidget(2, 2, order);
-		tab.getCellFormatter().setStyleName(2,2, AON.AON_CSS.aonPanelGridEven());
-		tab.getFlexCellFormatter().setColSpan(2, 2, 2);
+		tab.setWidget(2, 3, id);
+		tab.getCellFormatter().setStyleName(2,3, AON.AON_CSS.aonPanelGridEven());
+
+		tab.setWidget(2, 4, new Label("Orden"));
+		tab.getCellFormatter().setStyleName(2,4, AON.AON_CSS.aonPanelGridOdd());
+		
+		tab.setWidget(2, 5, order);
+		tab.getCellFormatter().setStyleName(2,5, AON.AON_CSS.aonPanelGridEven());
+		tab.getFlexCellFormatter().setColSpan(2, 5, 2);
 		
 		cleanButton.setTitle(AON.MSG.clean());
-		tab.setWidget(2, 3, cleanButton);
-		tab.getCellFormatter().setStyleName(2,3, AON.AON_CSS.aonPanelGridEven());
+		tab.setWidget(2, 6, cleanButton);
+		tab.getCellFormatter().setStyleName(2,6, AON.AON_CSS.aonPanelGridEven());
 
 		ScrollPanel scrollPanel = new ScrollPanel();
 		scrollPanel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -474,6 +494,7 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 			}
 		}
 		return new AccountEntryParams()
+			.setAccountEntryId(id.getValue())
 			.setDomain(this.currentDomainId)
 			.setPeriod(period.getValue())
 			.setFromDate(fromDate.getValue())

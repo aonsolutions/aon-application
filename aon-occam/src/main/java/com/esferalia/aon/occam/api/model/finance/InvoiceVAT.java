@@ -22,6 +22,7 @@ public class InvoiceVAT implements Serializable {
 	private double deductiblePercent;
 	private double deductibleQuota;
 	private boolean withholding;
+	private boolean prepayment;
 	
 	private Integer outputAccountId;
 	private String outputAccountCode;
@@ -129,6 +130,13 @@ public class InvoiceVAT implements Serializable {
 	}
 	public InvoiceVAT setWithholding(boolean withholding) {
 		this.withholding = withholding;
+		return this;
+	}
+	public boolean isPrepayment() {
+		return prepayment;
+	}
+	public InvoiceVAT setPrepayment(boolean prepayment) {
+		this.prepayment = prepayment;
 		return this;
 	}
 	

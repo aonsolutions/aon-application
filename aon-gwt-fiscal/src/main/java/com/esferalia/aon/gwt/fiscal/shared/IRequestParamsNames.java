@@ -34,6 +34,7 @@ public interface IRequestParamsNames {
 	String GROUP_BY_NIF = "groupByNif";
 		
 	String PERIOD = "period";
+	String ACCOUNT_ENTRY_ID = "accountEntryId";
 	String JOURNAL = "journal";
 	String CONFIDENTIAL = "confidential";
 	String ACCOUNT = "account";

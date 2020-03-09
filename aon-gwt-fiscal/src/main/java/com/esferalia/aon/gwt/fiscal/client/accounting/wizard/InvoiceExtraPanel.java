@@ -575,6 +575,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 					final InvoiceRectificationDataPanel rectPanel = new InvoiceRectificationDataPanel();
 					rectPanel.show(callback.getCurrentDomainName()
 						,callback.getCurrentDomainId()
+						,callback.getCurrentUser()
 						,callback.getConfiguration()
 						,data
 						, new InvoiceRectificationDataPanelCallback() {

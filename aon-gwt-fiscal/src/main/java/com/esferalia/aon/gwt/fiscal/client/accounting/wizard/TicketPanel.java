@@ -365,6 +365,7 @@ public class TicketPanel extends WizardContentBase<AccountingInvoice> implements
 				financeService.getInvoiceNextNumber(
 						getCallback().getCurrentDomainName()
 						,getCallback().getCurrentDomainId()
+						,getCallback().getCurrentUser()
 						,new Byte[]{getWrapper().getInvoice().getType().value()}
 						,getWrapper().getInvoice().getSeries()
 						,new AsyncCallback<Integer>() {
@@ -561,7 +562,7 @@ public class TicketPanel extends WizardContentBase<AccountingInvoice> implements
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
-				getWrapper().getFinances().get(0).setDueDate(event.getValue());
+				getWrapper().getInvoice().getFinances().get(0).setDueDate(event.getValue());
 				getWrapper().getAccountEntry().setDirty(true);
 				getCallback().getModule().refreshIdLabel();
 				_paintEntry();
@@ -594,7 +595,7 @@ public class TicketPanel extends WizardContentBase<AccountingInvoice> implements
 			payMethodList.addChangeHandler(new ChangeHandler() {
 				@Override
 				public void onChange(ChangeEvent event) {
-					getWrapper().getFinances().get(0).setPayMethod(payMethodList.getValue());
+					getWrapper().getInvoice().getFinances().get(0).setPayMethod(payMethodList.getValue());
 					getWrapper().getAccountEntry().setDirty(true);
 					getCallback().getModule().refreshIdLabel();
 				}
@@ -631,17 +632,17 @@ public class TicketPanel extends WizardContentBase<AccountingInvoice> implements
 		payAccount.addSelectionHandler(new SelectionHandler<Account>() {
 			@Override
 			public void onSelection(SelectionEvent<Account> event) {
-				if ( getWrapper().getFinances().get(0).isPending() ) {
+				if ( getWrapper().getInvoice().getFinances().get(0).isPending() ) {
 					if (event.getSelectedItem() != null) {
-						getWrapper().setFinanceRecordable(true);
-						getWrapper().getFinances().get(0).setPayAccountId(event.getSelectedItem().getId());
-						getWrapper().getFinances().get(0).setPayAccountCode(event.getSelectedItem().getCode());
-						getWrapper().getFinances().get(0).setPayAccountDescription(event.getSelectedItem().getDescription());
+						getWrapper().getInvoice().getFinances().get(0).setRecordable(true);
+						getWrapper().getInvoice().getFinances().get(0).setPayAccountId(event.getSelectedItem().getId());
+						getWrapper().getInvoice().getFinances().get(0).setPayAccountCode(event.getSelectedItem().getCode());
+						getWrapper().getInvoice().getFinances().get(0).setPayAccountDescription(event.getSelectedItem().getDescription());
 					} else {
-						getWrapper().setFinanceRecordable(false);
-						getWrapper().getFinances().get(0).setPayAccountId(null);
-						getWrapper().getFinances().get(0).setPayAccountCode(null);
-						getWrapper().getFinances().get(0).setPayAccountDescription(null);
+						getWrapper().getInvoice().getFinances().get(0).setRecordable(false);
+						getWrapper().getInvoice().getFinances().get(0).setPayAccountId(null);
+						getWrapper().getInvoice().getFinances().get(0).setPayAccountCode(null);
+						getWrapper().getInvoice().getFinances().get(0).setPayAccountDescription(null);
 					}
 					_paintEntry();
 					getWrapper().getAccountEntry().setDirty(true);
@@ -814,11 +815,11 @@ public class TicketPanel extends WizardContentBase<AccountingInvoice> implements
 		payMethodList.setEnabled(false);
 		
 		payStatusLabel.setText(AonStringUtils.EMPTY);
-		if (invoice.hasFinances()) {
-			if (invoice.getFinances().size() == 1) {
-				Finance finance = invoice.getFinances().get(0);
+		if (invoice.getInvoice().hasFinances()) {
+			if (invoice.getInvoice().getFinances().size() == 1) {
+				Finance finance = invoice.getInvoice().getFinances().get(0);
 				payDate.setValue(finance.getDueDate());
-				getWrapper().setFinanceRecordable(finance.getPayAccountId() != null);
+				finance.setRecordable(finance.getPayAccountId() != null);
 				if (finance.getId() == null) { // NUEVO
 					payAccount.setValue(finance.getPayAccountId(), finance.getPayAccountCode()
 							, finance.getPayAccountDescription(), false);
@@ -893,7 +894,7 @@ public class TicketPanel extends WizardContentBase<AccountingInvoice> implements
 	
 	private boolean hasPaidFinances() {
 		boolean paidFinances = false;
-		for (Finance finance : getWrapper().getFinances()) {
+		for (Finance finance : getWrapper().getInvoice().getFinances()) {
 			paidFinances = paidFinances 
 				|| finance.getFinanceStatus() == FinanceStatus.PAID
 				|| finance.getFinanceStatus() == FinanceStatus.BATCHED
@@ -1028,8 +1029,8 @@ public class TicketPanel extends WizardContentBase<AccountingInvoice> implements
 							if (!result.getInvoice().isSales()) {
 								result.getInvoice().setReferenceCode(referenceCode.getValue());
 							}
-							if (result.getFinances() != null && result.getFinances().size() > 0) {
-								result.getFinances().get(0).setDueDate(getCallback().getModule().getEntryDate());
+							if (result.getInvoice().hasFinances()) {
+								result.getInvoice().getFinances().get(0).setDueDate(getCallback().getModule().getEntryDate());
 							}
 							populate(result);
 							getCallback().getModule().onBalance(getWrapper().getAccountEntry());

@@ -9,12 +9,14 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceValidation {
@@ -167,6 +169,26 @@ public class InvoiceValidation {
 	};
 	
 	/**
+	 * Si existen vencimientos, las suma debe coincidir con el total factura.
+	 * Sólo se realiza en la creación de la factura.
+	 */
+	public static BiConsumer<Invoice,AonConfigurationContext> CHECK_FINANCES = (inv,ctx) -> {
+//		if (inv.getId() == null) {
+			if (inv.getFinances() != null && inv.getFinances().size() > 0) {
+				double financesTotal = 0.0;
+				for (Finance finance : inv.getFinances()) {
+					if (!finance.isRemoved()) {
+						financesTotal = AonMathUtils.round(financesTotal + finance.getAmount());
+					}
+				}
+				if (!AonMathUtils.equals(inv.getTotal(), financesTotal )) {
+					throw new AonCoreException(AonError.INVOICE_FINANCES_AMOUNT.getMessage());	
+				}
+			}
+//		}
+	};
+
+	/**
 	 * El origen de la linea de factura es un dato obligatorio.
 	 */
 	public static BiConsumer<InvoiceDetail,AonConfigurationContext> EMPTY_SOURCE = (det,ctx) -> {
@@ -205,6 +227,7 @@ public class InvoiceValidation {
 			.andThen(DUPLICATED_REFERENCE_CODE)
 			.andThen(OPERATIONS_DEADLINE)
 			.andThen(CHECK_FIVE_YEARS)
+			.andThen(CHECK_FINANCES)
 			.accept(inv, new AonConfigurationContext(ctx,config));
 
 	}

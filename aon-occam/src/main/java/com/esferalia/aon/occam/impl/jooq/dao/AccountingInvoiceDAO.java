@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.AccountEntryFinanceTracking.ACCOUNT_ENTRY_FINANCE_TRACKING;
 import static com.esferalia.aon.jooq.tables.AccountEntryInvoice.ACCOUNT_ENTRY_INVOICE;
+import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.FinanceTracking.FINANCE_TRACKING;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceAttach.INVOICE_ATTACH;
@@ -138,6 +139,7 @@ public class AccountingInvoiceDAO {
 							INVOICE_DETAIL.DESCRIPTION,
 							INVOICE_DETAIL.DISCOUNT_EXPR,
 							INVOICE_DETAIL.ITEM,
+							INVOICE_DETAIL.PREPAYMENT,
 							PRODUCT.CODE
 							) 
 					.from( INVOICE_DETAIL )
@@ -149,25 +151,27 @@ public class AccountingInvoiceDAO {
 					.forEach( det -> {
 						InvoiceSource source = AonEnumUtils.enumValue(InvoiceSource.class,det.getValue(INVOICE_DETAIL.SOURCE));
 						final Integer invoideDetailId = det.getValue(INVOICE_DETAIL.ID);
-						ai.getInvoice().getDetails().add(new InvoiceDetail()
-								.setId(invoideDetailId)
-								.setDomain(det.getValue(INVOICE_DETAIL.DOMAIN))
-								.setSource(source)
-								.setLine(det.getValue( INVOICE_DETAIL.LINE ))
-								.setDescription(det.getValue( INVOICE_DETAIL.DESCRIPTION ))
-								.setQuantity(AonNumberUtils.zeroIfNull( det.getValue(INVOICE_DETAIL.QUANTITY)))
-								.setPrice(AonNumberUtils.zeroIfNull( det.getValue(INVOICE_DETAIL.PRICE)))
-								.setDiscountExpression(AonStringUtils.defaultIfBlank(det.getValue(INVOICE_DETAIL.DISCOUNT_EXPR),"0.0"))
-								.setTaxableBase(det.getValue(INVOICE_DETAIL.TAXABLE_BASE))
-								.setItem(det.getValue(INVOICE_DETAIL.ITEM) == null? null : new Item().setId(det.getValue(INVOICE_DETAIL.ITEM)).setCode(det.getValue(PRODUCT.CODE)))
-						);
+						InvoiceDetail invoiceDetail = new InvoiceDetail()
+							.setId(invoideDetailId)
+							.setDomain(det.getValue(INVOICE_DETAIL.DOMAIN))
+							.setSource(source)
+							.setLine(det.getValue( INVOICE_DETAIL.LINE ))
+							.setDescription(det.getValue( INVOICE_DETAIL.DESCRIPTION ))
+							.setQuantity(AonNumberUtils.zeroIfNull( det.getValue(INVOICE_DETAIL.QUANTITY)))
+							.setPrice(AonNumberUtils.zeroIfNull( det.getValue(INVOICE_DETAIL.PRICE)))
+							.setDiscountExpression(AonStringUtils.defaultIfBlank(det.getValue(INVOICE_DETAIL.DISCOUNT_EXPR),"0.0"))
+							.setTaxableBase(det.getValue(INVOICE_DETAIL.TAXABLE_BASE))
+							.setItem(det.getValue(INVOICE_DETAIL.ITEM) == null? null : new Item().setId(det.getValue(INVOICE_DETAIL.ITEM)).setCode(det.getValue(PRODUCT.CODE)))
+							.setPrepayment(det.getValue(INVOICE_DETAIL.PREPAYMENT) == 1 )
+							;
+						ai.getInvoice().getDetails().add( invoiceDetail );
 						ai.setAccountSource(ai.isAccountSource() || (source == InvoiceSource.ACCOUNT));
 						// TODO ¿Más de uno?
 						ai.setWorkplace(det.getValue(INVOICE_DETAIL.WORKPLACE));
 						// -----------------
 						
 						ctx.getDslContext()
-						.select(EXP_ACCOUNT.ID,
+							.select(EXP_ACCOUNT.ID,
 								EXP_ACCOUNT.CODE, 
 								EXP_ACCOUNT.DESCRIPTION) 
 						.from( INVOICE_DETAIL_ACCOUNT )
@@ -177,8 +181,9 @@ public class AccountingInvoiceDAO {
 						.fetch()
 						.stream()
 						.forEach( accDet -> {
-							if (ai.isUndeductible()) {
-								fillUndeductibleInvoiceTax(ctx, accDet, det, ai, config);
+							ai.setPrepayments(ai.hasPrepayments() || invoiceDetail.isPrepayment());
+							if (ai.isUndeductible() || invoiceDetail.isPrepayment()) {
+								fillNoInvoiceTax(ctx, accDet, det, ai, config);
 							} else {
 								fillInvoiceTax(ctx, invoideDetailId, accDet, det, ai, config);
 							}
@@ -188,7 +193,7 @@ public class AccountingInvoiceDAO {
 				if ( !ai.isAccountSource() ) {
 					fillBreakdown(ctx, ai.getInvoice());
 				}
-				ai.setFinances(FinanceDAO.getInvoiceFinances(ctx, invoiceId));
+				ai.getInvoice().setFinances(FinanceDAO.getInvoiceFinances(ctx, invoiceId));
 				
 				ai.setAttach(
 					ctx.getDslContext()
@@ -317,7 +322,7 @@ public class AccountingInvoiceDAO {
 		}
 	}
 
-	private static void fillUndeductibleInvoiceTax(AONContext ctx, Record accDet, Record det, AccountingInvoice ai, AonConfiguration config) {
+	private static void fillNoInvoiceTax(AONContext ctx, Record accDet, Record det, AccountingInvoice ai, AonConfiguration config) {
 		final LinkedList<InvoiceVAT> vats = new LinkedList<InvoiceVAT>();
 		final InvoiceVAT vat = new InvoiceVAT();
 		vats.add(vat);
@@ -325,7 +330,8 @@ public class AccountingInvoiceDAO {
 		vat.setBase(base)
 			.setExpAccountId(accDet.getValue(EXP_ACCOUNT.ID))
 			.setExpAccountCode(accDet.getValue(EXP_ACCOUNT.CODE))
-			.setExpAccountDescription(accDet.getValue(EXP_ACCOUNT.DESCRIPTION));
+			.setExpAccountDescription(accDet.getValue(EXP_ACCOUNT.DESCRIPTION))
+			.setPrepayment(det.get( INVOICE_DETAIL.PREPAYMENT) == 1 );
 		vat.setQuotaEdited( false );
 		vat.setSurchargeQuotaEdited( false  );
 		vat.setDeductibleQuotaEdited( false  );
@@ -424,9 +430,10 @@ public class AccountingInvoiceDAO {
 							  || reg.getType().getInvoiceType() == InvoiceType.UNDEDUCTIBLE)
 					.setSeries(null)
 					.setNumber(0)
-					.setReferenceCode(null))
-				.setFinances(new LinkedList<Finance>());
-		ai.getFinances().add(new Finance()
+					.setReferenceCode(null)
+					.setFinances(new LinkedList<Finance>())
+				);
+		ai.getInvoice().getFinances().add(new Finance()
 				.setDueDate(issueDate)
 				.setPayment(!ai.isSales())
 				.setFinanceStatus(FinanceStatus.PENDING));
@@ -665,6 +672,7 @@ public class AccountingInvoiceDAO {
 			AccountEntry newEntry = AccountEntryDAO.getAccountEntry(ctx, entryId);
 			accInvoice.setAccountEntry(newEntry);
 			entries.add(newEntry);
+			saveFinances(ctx, accInvoice);
 			ctx.log().info("------ [END OK] UPDATE INVOICE");
 			return entries;
 		} catch (Throwable t) {
@@ -688,7 +696,7 @@ public class AccountingInvoiceDAO {
 			accInvoice.setAccountEntry(newEntry);
 			entries.add(newEntry);
 			saveFinances(ctx, accInvoice);
-			if (accInvoice.hasFinances() && accInvoice.isFinanceRecordable()) {
+			if (accInvoice.getInvoice().hasFinances()) {
 				entries.addAll( recordFinances(ctx, accInvoice) );				
 			}
 			if (accInvoice.getAttach() != null) {
@@ -742,10 +750,34 @@ public class AccountingInvoiceDAO {
 
 	private static void saveFinances(AONContext ctx, AccountingInvoice accInvoice) {
 		Invoice invoice = accInvoice.getInvoice();
-		for (Finance finance : accInvoice.getFinances() ) {
-			finance.setInvoice(new Invoice().setId(accInvoice.getInvoice().getId()))
+		for (Finance finance : invoice.getFinances() ) {
+			saveFinance(ctx, invoice, finance);
+		}
+	}
+	
+	private static void saveFinance(AONContext ctx, Invoice invoice, Finance finance) {
+		if ( !finance.isFullPending()) {
+			ctx.log().info("** FINANCE NOT SAVED [NOT PENDING]");
+			return;
+		}
+		if (!finance.isDirty() ) {
+			ctx.log().info("** FINANCE NOT SAVED [NOT DIRTY]");
+			return;
+		}
+		if ( finance.getId() == null && finance.isRemoved()) {
+			ctx.log().info("** FINANCE NOT SAVED [MARKED TO DELETE BUT NOT SAVED]");
+			return;
+		}
+		if ( finance.getId() != null && finance.isRemoved()) {
+			ctx.log().info("** FINANCE MARKED TO DELETE");
+			FinanceDAO.delete(ctx, finance.getId());
+			return;
+		} 
+		
+		if (finance.getId() == null) {
+			finance
+				.setInvoice(new Invoice().setId(invoice.getId()))
 				.setDomain(ctx.getDomainId())
-				.setInvoice(new Invoice().setId(accInvoice.getInvoice().getId()))
 				.setRegistry(new Registry().setId(invoice.getRegistry()))
 				.setRegistryDocument(invoice.getRegistryDocument())
 				.setRegistryDocumentType(invoice.getRegistryDocumentType())
@@ -754,48 +786,63 @@ public class AccountingInvoiceDAO {
 				.setScope(invoice.getScope())
 				.setSecurityLevel(invoice.getSecurityLevel())
 				.setConcept(invoice.getDocumentNumber())
-				.setFinanceStatus((accInvoice.isFinanceRecordable()?FinanceStatus.PAID:FinanceStatus.PENDING))
-				.setAmount(accInvoice.getInvoice().getTotal())
+				.setFinanceStatus(FinanceStatus.PENDING)
+			;
+		} else {
+			finance
+				.setSecurityLevel(invoice.getSecurityLevel())
+				.setConcept(invoice.getDocumentNumber())
 				;
-			if ( AonMathUtils.isNotZero(finance.getAmount()) ) {
-				Integer financeId = FinanceDAO.insert(ctx, finance);
-				finance.setId(financeId);
-			} else {
-				ctx.log().info("FINANCE NOT SAVED [AMOUNT 0]");
-			}
+		}
+		if ( AonMathUtils.isNotZero(finance.getAmount()) ) {
+			ctx.log().info("** FINANCE READY TO SAVE");
+			Integer financeId = FinanceDAO.save(ctx, finance);
+			finance.setId(financeId);
+		} else {
+			ctx.log().info("** FINANCE NOT SAVED [AMOUNT 0]");
 		}
 	}
-	
+
 	private static LinkedList<AccountEntry> recordFinances(AONContext ctx, AccountingInvoice accInvoice) {
 		LinkedList<AccountEntry> entries = new LinkedList<AccountEntry>();
-		for (Finance finance : accInvoice.getFinances() ) {
-			if (finance.getId() == null) {
-				ctx.log().info("FINANCE NOT SAVED, NO ENTRY WILL BE RECORDED.");
-			} else {
-				AccountEntry ae = InvoiceRecorder.getFinanceEntry(accInvoice, finance);
-				Integer entryId = AccountEntryDAO.insert(ctx, ae);
-				AccountEntry newEntry = AccountEntryDAO.getAccountEntry(ctx, entryId);
-				entries.add(newEntry);
-				Integer financTrackingId = ctx.getDslContext().insertInto(FINANCE_TRACKING)
-						.set(FINANCE_TRACKING.DOMAIN,ctx.getDomainId())
-						.set(FINANCE_TRACKING.FINANCE, finance.getId() )
-						.set(FINANCE_TRACKING.TRACKING_DATE, AonDateUtils.toSql(finance.getDueDate()))
-						.set(FINANCE_TRACKING.TYPE,FinanceTrackingType.PAID.value())
-						.set(FINANCE_TRACKING.AMOUNT, finance.getAmount())
-						.set(FINANCE_TRACKING.RECORDED, AonEnumUtils.getByte(true))
-						.set(FINANCE_TRACKING.DESCRIPTION, "Asiento: " + entryId)
-						.set(FINANCE_TRACKING.CREATION_USER,ctx.getUser())
-						.set(FINANCE_TRACKING.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
-						.returning(FINANCE_TRACKING.ID)
-						.fetchOne()
-						.getValue(FINANCE_TRACKING.ID);
-				ctx.log().info("INSERT FINANCE_TRACKING (finance: "+ finance.getId()+") Id:" + financTrackingId);			
-				ctx.getDslContext().insertInto(ACCOUNT_ENTRY_FINANCE_TRACKING)
-				.set(ACCOUNT_ENTRY_FINANCE_TRACKING.DOMAIN,ctx.getDomainId())
-				.set(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY, entryId )
-				.set(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING, financTrackingId )
-				.execute();
-				ctx.log().info("INSERT ACCOUNT_ENTRY_FINANCE_TRACKING (financTracking: "+ financTrackingId+") AccountEntry: " + entryId);
+		for (Finance finance : accInvoice.getInvoice().getFinances() ) {
+			if (finance.isPending() && finance.getPayAccountId() != null) {
+				if (finance.getId() == null) {
+					ctx.log().info("** FINANCE NOT SAVED, NO ENTRY WILL BE RECORDED.");
+				} else {
+					ctx.log().info("** READY TO RECORD FINANCE.");
+					AccountEntry ae = InvoiceRecorder.getFinanceEntry(accInvoice, finance);
+					Integer entryId = AccountEntryDAO.insert(ctx, ae);
+					AccountEntry newEntry = AccountEntryDAO.getAccountEntry(ctx, entryId);
+					entries.add(newEntry);
+					Integer financeTrackingId = ctx.getDslContext().insertInto(FINANCE_TRACKING)
+							.set(FINANCE_TRACKING.DOMAIN,ctx.getDomainId())
+							.set(FINANCE_TRACKING.FINANCE, finance.getId() )
+							.set(FINANCE_TRACKING.TRACKING_DATE, AonDateUtils.toSql(finance.getDueDate()))
+							.set(FINANCE_TRACKING.TYPE,FinanceTrackingType.PAID.value())
+							.set(FINANCE_TRACKING.AMOUNT, finance.getAmount())
+							.set(FINANCE_TRACKING.RECORDED, AonEnumUtils.getByte(true))
+							.set(FINANCE_TRACKING.DESCRIPTION, "Asiento: " + entryId)
+							.set(FINANCE_TRACKING.CREATION_USER,ctx.getUser())
+							.set(FINANCE_TRACKING.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+							.returning(FINANCE_TRACKING.ID)
+							.fetchOne()
+							.getValue(FINANCE_TRACKING.ID);
+					ctx.log().info("\tINSERT FINANCE_TRACKING (finance.id: "+ finance.getId()+") finance_tracking.id:" + financeTrackingId);
+					
+					Integer accountEntryFinanceTrackingId = ctx.getDslContext().insertInto(ACCOUNT_ENTRY_FINANCE_TRACKING)
+						.set(ACCOUNT_ENTRY_FINANCE_TRACKING.DOMAIN,ctx.getDomainId())
+						.set(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY, entryId )
+						.set(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING, financeTrackingId )
+						.execute();
+					ctx.log().info("\tINSERT ACCOUNT_ENTRY_FINANCE_TRACKING (account_entry_finance_tracking.id: "+ accountEntryFinanceTrackingId+") account_entry.id: " + entryId);
+					ctx.getDslContext().update(FINANCE)
+						.set(FINANCE.STATUS,FinanceStatus.PAID.value())
+						.where(FINANCE.ID.eq(finance.getId()))
+						.and(FINANCE.DOMAIN.eq(ctx.getDomainId()))
+						.execute();
+					ctx.log().info("UPDATE FINANCE STATUS - PAID (finance.id: "+ finance.getId());
+				}
 			}
 		}
 		return entries;
@@ -853,48 +900,51 @@ public class AccountingInvoiceDAO {
 		LinkedList<InvoiceDetail> details = new LinkedList<InvoiceDetail>();
 		for (InvoiceVAT vat :  accInvoice.getVats()) {
 			InvoiceDetail detail = new InvoiceDetail()
-					.setDomain(accInvoice.getInvoice().getDomain())
-					.setInvoice(accInvoice.getInvoice())
-					.setInvestAsset(vat.getInvestAsset())
-					.setWorkPlace( accInvoice.getWorkplace())
-					.setLine(line)
-					.setDescription( vat.getExpAccountDescription() )
-					.setQuantity(1)
-					.setPrice(vat.getBase())
-					.setDiscountExpression("0.0")
-					.setSource(InvoiceSource.ACCOUNT)
-					.setTaxableBase(vat.getBase())
-					.setAccount(vat.getExpAccountId())
-					.addInvoiceTax(new InvoiceTax()
-						.setTaxType(TaxType.VAT)
-						.setBase(vat.getBase())
-						.setPercentage(vat.getPercentage())
-						.setQuota(vat.getQuota())
-						.setSurcharge(vat.getSurcharge())
-						.setSurchargeQuota(vat.getSurchargeQuota())
-						.setVatDeductionType(vat.getVatDeductionType())
-						.setDeductiblePercent(vat.getDeductiblePercent())
-						.setDeductibleQuota(vat.getDeductibleQuota())
-						// TODO Se deben grabar las dos cuentas!!
-						.setAccount(accInvoice.isSales() ? vat.getOutputAccountId() : vat.getInputAccountId() )
-						// --------------------------------------
+				.setDomain(accInvoice.getInvoice().getDomain())
+				.setInvoice(accInvoice.getInvoice())
+				.setInvestAsset(vat.getInvestAsset())
+				.setWorkPlace( accInvoice.getWorkplace())
+				.setLine(line)
+				.setDescription( vat.getExpAccountDescription() )
+				.setQuantity(1)
+				.setPrice(vat.getBase())
+				.setDiscountExpression("0.0")
+				.setSource(InvoiceSource.ACCOUNT)
+				.setTaxableBase(vat.getBase())
+				.setAccount(vat.getExpAccountId())
+				.setPrepayment(vat.isPrepayment());
+			if (!vat.isPrepayment()) {
+				detail.addInvoiceTax(new InvoiceTax()
+					.setTaxType(TaxType.VAT)
+					.setBase(vat.getBase())
+					.setPercentage(vat.getPercentage())
+					.setQuota(vat.getQuota())
+					.setSurcharge(vat.getSurcharge())
+					.setSurchargeQuota(vat.getSurchargeQuota())
+					.setVatDeductionType(vat.getVatDeductionType())
+					.setDeductiblePercent(vat.getDeductiblePercent())
+					.setDeductibleQuota(vat.getDeductibleQuota())
+					// TODO Se deben grabar las dos cuentas!!
+					.setAccount(accInvoice.isSales() ? vat.getOutputAccountId() : vat.getInputAccountId() )
+					// --------------------------------------
 					);
-					if (vat.isWithholding() && accInvoice.isWithholding()) {
-						double base = 0;
-						if (accInvoice.isWithholdingFarmer()) {
-							base = AonMathUtils.round(vat.getBase() + vat.getQuota()); 
-						} else {
-							base = vat.getBase();
-						}
-						double quota = AonMathUtils.round(base * accInvoice.getWithholdingData().getPercentage() / 100);
-						detail.addInvoiceTax(new InvoiceTax()
-							.setTaxType(TaxType.RETENTION)
-							.setBase(base)
-							.setPercentage(accInvoice.getWithholdingData().getPercentage())
-							.setQuota(quota)
-							.setWithholdingType(accInvoice.getWithholdingData().getWithholdingType())
-							.setAccount(accInvoice.getWithholdingData().getAccountId()));
-					};
+				if (vat.isWithholding() && accInvoice.isWithholding()) {
+					double base = 0;
+					if (accInvoice.isWithholdingFarmer()) {
+						base = AonMathUtils.round(vat.getBase() + vat.getQuota()); 
+					} else {
+						base = vat.getBase();
+					}
+					double quota = AonMathUtils.round(base * accInvoice.getWithholdingData().getPercentage() / 100);
+					detail.addInvoiceTax(new InvoiceTax()
+						.setTaxType(TaxType.RETENTION)
+						.setBase(base)
+						.setPercentage(accInvoice.getWithholdingData().getPercentage())
+						.setQuota(quota)
+						.setWithholdingType(accInvoice.getWithholdingData().getWithholdingType())
+						.setAccount(accInvoice.getWithholdingData().getAccountId()));
+				};
+			}
 			details.add( detail );
 			line++;
 		}
@@ -930,7 +980,7 @@ public class AccountingInvoiceDAO {
 			ai.setAccountEntry(null);
 			AccountingRegistry reg = ai.getRegistry(); 
 			reg.getType().visit(reg, new  InvoiceDuplicator(ctx, ai.getInvoice()));
-			for (Finance finance : ai.getFinances()) {
+			for (Finance finance : ai.getInvoice().getFinances()) {
 				finance.setId(null);
 				finance.setFinanceStatus(FinanceStatus.PENDING);
 			}
@@ -960,7 +1010,7 @@ public class AccountingInvoiceDAO {
 		}
 		ai.getWithholdingData().setBase( AonMathUtils.round(ai.getWithholdingData().getBase() * (-1),4));
 		ai.getWithholdingData().setQuota( AonMathUtils.round(ai.getWithholdingData().getQuota() * (-1)));
-		for (Finance finance : ai.getFinances()) {
+		for (Finance finance : ai.getInvoice().getFinances()) {
 			Integer oldId = finance.getId();
 			if (data.isSettleFinances() && finance.getFinanceStatus() == FinanceStatus.PENDING) {
 				FinanceDAO.settle(ctx, oldId    ,finance.getAmount());
@@ -972,7 +1022,7 @@ public class AccountingInvoiceDAO {
 		AonConfiguration config = ConfigurationDAO.getConfiguration(ctx, ai.getInvoice().getIssueDate());
 		ai = save(ctx, config, ai);
 		InvoiceDAO.rectifyInvoiceUpdate(ctx, invoiceId, ai.getInvoice().getId(), oldRectificationType);
-		for (Finance finance : ai.getFinances()) {
+		for (Finance finance : ai.getInvoice().getFinances()) {
 			if (data.isSettleFinances() && finance.getFinanceStatus() == FinanceStatus.PENDING) {
 				FinanceDAO.settle(ctx, finance.getId() ,finance.getAmount());
 				finance.setFinanceStatus(FinanceStatus.SETTLED);

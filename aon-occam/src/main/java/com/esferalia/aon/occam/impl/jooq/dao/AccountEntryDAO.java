@@ -375,7 +375,7 @@ public class AccountEntryDAO {
 		}
 		if (insertMore != null) {
 			int count = insertMore.execute();
-			ctx.log().info("INSERT ACCOUNT_ENTRY detalles asiento: " + ae.getId() + " ("+count+" filas)");			
+			ctx.log().info("\tINSERT ACCOUNT_ENTRY detalles asiento: " + ae.getId() + " ("+count+" filas)");			
 		}
 	}
 

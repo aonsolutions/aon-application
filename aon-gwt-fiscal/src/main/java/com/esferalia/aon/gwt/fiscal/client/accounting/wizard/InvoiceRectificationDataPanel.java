@@ -52,7 +52,9 @@ public class InvoiceRectificationDataPanel extends SimplePanel implements Focusa
 	private DateBoxEx issueDate; 
 	
 	
-	public void show(final String domainName,final int domain
+	public void show(final String domainName
+			, final int domain
+			, final String user
 			, final AonConfiguration config
 			, final InvoiceRectificationData data
 			, final InvoiceRectificationDataPanelCallback callback) {
@@ -118,6 +120,7 @@ public class InvoiceRectificationDataPanel extends SimplePanel implements Focusa
 					financeService.getInvoiceNextNumber(
 							 domainName
 							,domain
+							,user
 							,new Byte[]{data.getType().value()}
 							 , data.getSeries()
 							, new AsyncCallback<Integer>() {
@@ -147,6 +150,7 @@ public class InvoiceRectificationDataPanel extends SimplePanel implements Focusa
 						financeService.getInvoiceNextNumber(
 								 domainName
 								,domain
+								,user
 								,new Byte[]{data.getType().value()}
 								 , data.getSeries()
 								, new AsyncCallback<Integer>() {

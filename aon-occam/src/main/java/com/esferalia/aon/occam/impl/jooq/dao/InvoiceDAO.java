@@ -1356,10 +1356,10 @@ public class InvoiceDAO {
 		
 	}
 	private static void afterInsertDetail(AONContext ctx, AonConfiguration config, Invoice invoice, InvoiceDetail detail) {
-		if (detail.getInvoice().getType() != InvoiceType.UNDEDUCTIBLE) {
+		if (detail.getInvoice().getType() != InvoiceType.UNDEDUCTIBLE && !detail.isPrepayment()) {
 			insertInvoiceTaxes(ctx,detail);
 		} else {
-			ctx.log().info("\t\tSKIPPING INVOICE TAX CREATION (UNDEDUCTIBLE INVOICE)");
+			ctx.log().info("\t\tSKIPPING INVOICE TAX CREATION ("+ (detail.isPrepayment()?"PREPAYMENT":"UNDEDUCTIBLE INVOICE") + ")");
 		}
 		detail.getSource().visit(detail, new IInvoiceSourceVisitor() {
 			
@@ -1383,7 +1383,7 @@ public class InvoiceDAO {
 					.set(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL, detail.getId())
 					.set(INVOICE_DETAIL_ACCOUNT.ACCOUNT, detail.getAccount())
 					.execute();
-				if (detail.getInvoice().getType() != InvoiceType.UNDEDUCTIBLE) {
+				if (detail.getInvoice().getType() != InvoiceType.UNDEDUCTIBLE && !detail.isPrepayment()) {
 					ctx.log().info("\tINSERT INVOICE_DETAIL_ACCOUNT");
 					for (InvoiceTax tax : detail.getInvoiceTaxes() ) {
 //					if (tax.getAccount() == null) 
@@ -1396,7 +1396,7 @@ public class InvoiceDAO {
 						ctx.log().info("\t\tINSERT INVOICE_TAX_ACCOUNT");
 					}
 				} else {
-					ctx.log().info("\t\tSKIPPING INVOICE TAX ACCOUNT CREATION (UNDEDUCTIBLE INVOICE)");
+					ctx.log().info("\t\tSKIPPING INVOICE TAX ACCOUNT CREATION ("+ (detail.isPrepayment()?"PREPAYMENT":"UNDEDUCTIBLE INVOICE") + ")");
 				}
 			}
 		});

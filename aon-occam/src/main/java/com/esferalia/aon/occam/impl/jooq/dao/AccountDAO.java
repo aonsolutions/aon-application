@@ -130,6 +130,7 @@ public class AccountDAO {
 			.returning(ACCOUNT.ID)
 			.fetchOne()
 			.getValue(ACCOUNT.ID);
+		ctx.log().info("INSERT ACCOUNT id: " + id + " code: " + account.getCode());
 		return get(ctx, id);
 	}
 	
@@ -149,6 +150,7 @@ public class AccountDAO {
 			.set(ACCOUNT.COST_CENTER,account.getCostCenter())
 			.where(ACCOUNT.ID.eq(account.getId()))
 			.execute();
+		ctx.log().info("UPDATE ACCOUNT id: " + account.getId() + " code: " + account.getCode());
 		return account;
 	}
 
@@ -158,6 +160,7 @@ public class AccountDAO {
 			.delete(ACCOUNT)
 			.where(ACCOUNT.ID.eq(account.getId()))
 			.execute();
+		ctx.log().info("DELETE ACCOUNT id: " + account.getId() + " code: " + account.getCode());
 		return account;
 	}
 	

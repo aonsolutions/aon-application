@@ -107,7 +107,7 @@ public class TediParser {
 										aon.setPayAccountId(cashAccount.getId());	
 										aon.setPayAccountCode(cashAccount.getCode());
 										aon.setPayAccountDescription(cashAccount.getDescription());
-										result.getAccountingInvoice().setFinanceRecordable(true);
+										aon.setRecordable(true);
 									}
 								}
 								break;
@@ -393,7 +393,7 @@ public class TediParser {
 				for ( int i = 0; i < result.getTedi().getFinances().size(); i++) {
 					TediFinance tfin = result.getTedi().getFinances().get(i);
 					Finance fin = new Finance();
-					result.getAccountingInvoice().getFinances().add(fin);
+					result.getAccountingInvoice().getInvoice().addFinance(fin);
 					TediFinanceTransfer.toAon(aonCtx,result,tfin,fin);
 				}
 			} else if (result.getTedi().isTicket()) {
@@ -402,7 +402,7 @@ public class TediParser {
 					.setAmount( result.getInvoice().getTotal())
 					.setPayMethod(TediPayMethod.CASH);
 				Finance fin = new Finance();
-				result.getAccountingInvoice().getFinances().add(fin);
+				result.getAccountingInvoice().getInvoice().addFinance(fin);
 				TediFinanceTransfer.toAon(aonCtx,result,tfin,fin);
 			}
 		})
@@ -439,11 +439,8 @@ public class TediParser {
 		aonCtx.setPayMethods(FinanceDAO.getPayMethodsById(ctx));
 		TediInvoiceTransfer.toAon(ctx, aonCtx,result);
 		fillVats(ctx, aonCtx, result);
-		if (ai.getFinances() == null) {
-			ai.setFinances(new LinkedList<Finance>());
-		}
-		if (ai.getFinances().size() == 0) {
-			ai.getFinances().add(new Finance()
+		if (ai.getInvoice().getFinances() == null || ai.getInvoice().getFinances().size() == 0) {
+			ai.getInvoice().addFinance(new Finance()
 					.setDueDate(ai.getInvoice().getIssueDate())
 					.setAmount(ai.getInvoice().getTotal())
 					.setPayment(!ai.isSales())

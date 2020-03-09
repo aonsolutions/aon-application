@@ -5,6 +5,9 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
+import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -16,20 +19,34 @@ public class FinanceServiceAsyncDecorator implements FinanceServiceAsync {
 		this.fsa = financeServiceAsync;
 	}
 
-	// --------------------------------------------------------------- INVOICE
-	// SERIES
+	// --------------------------------------------------------------- INVOICE SERIES
 	@Override
-	public void getInvoiceSeries(String domainName, int domainId, Date from, Date to, boolean taxDate,
+	public void getInvoiceSeries(String domainName, int domainId, String  user, Date from, Date to, boolean taxDate,
 			AsyncCallback<LinkedList<InvoiceSeries>> callback) {
 		AON.start();
-		fsa.getInvoiceSeries(domainName,domainId, from, to, taxDate, new AsyncCallbackWrapper<LinkedList<InvoiceSeries>>(callback));
+		fsa.getInvoiceSeries(domainName,domainId,user, from, to, taxDate, new AsyncCallbackWrapper<LinkedList<InvoiceSeries>>(callback));
 	}
 
 	@Override
-	public void getInvoiceNextNumber(String domainName, Integer domainId, Byte[] types, String series,
+	public void getInvoiceNextNumber(String domainName, Integer domainId, String  user, Byte[] types, String series,
 			AsyncCallback<Integer> callback) {
 		AON.start();
-		fsa.getInvoiceNextNumber(domainName,domainId, types, series, new AsyncCallbackWrapper<Integer>(callback));
+		fsa.getInvoiceNextNumber(domainName,domainId,user, types, series, new AsyncCallbackWrapper<Integer>(callback));
 	}
 
+	// --------------------------------------------------------------- FINANCE
+	@Override
+	public void getFinancesForInvoice(String domainName, int domainId, String user, Invoice invoice, AsyncCallback<LinkedList<Finance>> callback) {
+		AON.start();
+		fsa.getFinancesForInvoice(domainName, domainId, user, invoice, new AsyncCallbackWrapper<LinkedList<Finance>>(callback));
+	}
+	
+	@Override
+	public void getFinanceTracking(String domainName, int domainId, String user, Integer finance,
+			AsyncCallback<LinkedList<FinanceTracking>> callback) {
+		AON.start();
+		fsa.getFinanceTracking(domainName, domainId, user, finance, new AsyncCallbackWrapper<LinkedList<FinanceTracking>>(callback));
+	}
+
+	
 }

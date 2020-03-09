@@ -532,11 +532,13 @@ public class InvoiceRecorder {
 	
 	public static AccountEntry[] recordInvoice(AccountingInvoice invoice) {
 		AccountEntry ae = getInvoiceEntry(invoice);
-		if (invoice.hasFinances() && invoice.isFinanceRecordable()) {
+		if (invoice.getInvoice().hasFinances()) {
 			LinkedList<AccountEntry> entries = new LinkedList<AccountEntry>();
-			for (Finance finance : invoice.getFinances()) {
-				AccountEntry payEntry = getFinanceEntry(invoice,finance);
-				entries.add(payEntry);
+			for (Finance finance : invoice.getInvoice().getFinances()) {
+				if (finance.isRecordable()) {
+					AccountEntry payEntry = getFinanceEntry(invoice,finance);
+					entries.add(payEntry);
+				}
 			}
 			entries.add(ae);
 			return entries.toArray(new AccountEntry[entries.size()]);

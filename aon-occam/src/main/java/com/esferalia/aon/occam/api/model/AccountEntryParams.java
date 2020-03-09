@@ -14,6 +14,7 @@ public class AccountEntryParams implements IAccountParams,Serializable{
 	private String domainName; 
 	private int domain;
 	private String user;
+	private Integer accountEntryId;
 	private Integer period;
 	private Date fromDate;
 	private Date toDate;
@@ -68,6 +69,13 @@ public class AccountEntryParams implements IAccountParams,Serializable{
 	}
 	public AccountEntryParams setUser(String user) {
 		this.user = user;
+		return this;
+	}
+	public Integer getAccountEntryId() {
+		return accountEntryId;
+	}
+	public AccountEntryParams setAccountEntryId(Integer accountEntryId) {
+		this.accountEntryId = accountEntryId;
 		return this;
 	}
 	public Integer getPeriod() {

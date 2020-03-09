@@ -11,12 +11,16 @@ import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonUtils;
 
 public class Finance implements Serializable, HasAudit {
 
 	private static final long serialVersionUID = -1224312562688230254L;
-
+	
+	private boolean dirty;
 	private boolean selected;
+	private boolean removed;
 	
 	private Integer id;
 	private Invoice invoice;
@@ -61,11 +65,14 @@ public class Finance implements Serializable, HasAudit {
 	private String modificationUser;
 	private Date modificationDate;
 
+	private boolean recordable;
+	
 	public Integer getId() {
 		return id;
 	}
 
 	public Finance setId(Integer id) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.id , id) );
 		this.id = id;
 		return this;
 	}
@@ -75,6 +82,7 @@ public class Finance implements Serializable, HasAudit {
 	}
 
 	public Finance setInvoice(Invoice invoice) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.invoice , invoice) );
 		this.invoice = invoice;
 		return this;
 	}
@@ -99,6 +107,7 @@ public class Finance implements Serializable, HasAudit {
 	}
 
 	public Finance setPayMethod(Integer payMethod) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.payMethod , payMethod) );
 		this.payMethod = payMethod;
 		return this;
 	}
@@ -108,6 +117,7 @@ public class Finance implements Serializable, HasAudit {
 	}
 
 	public Finance setPayMethodName(String payMethodName) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.payMethodName , payMethodName) );
 		this.payMethodName = payMethodName;
 		return this;
 	}
@@ -117,6 +127,7 @@ public class Finance implements Serializable, HasAudit {
 	}
 
 	public Finance setRegistry(Registry registry) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.registry , registry) );
 		this.registry = registry;
 		return this;
 	}
@@ -126,6 +137,7 @@ public class Finance implements Serializable, HasAudit {
 	}
 
 	public Finance setFinanceGroup(Integer financeGroup) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.financeGroup , financeGroup) );
 		this.financeGroup = financeGroup;
 		return this;
 	}
@@ -135,6 +147,7 @@ public class Finance implements Serializable, HasAudit {
 	}
 
 	public Finance setScope(Scope scope) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.scope , scope) );
 		this.scope = scope;
 		return this;
 	}
@@ -144,6 +157,7 @@ public class Finance implements Serializable, HasAudit {
 	}
 
 	public Finance setDomain(int domain) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.domain , domain) );
 		this.domain = domain;
 		return this;
 	}
@@ -153,6 +167,7 @@ public class Finance implements Serializable, HasAudit {
 	}
 
 	public Finance setPayment(boolean payment) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.payment , payment) );
 		this.payment = payment;
 		return this;
 	}
@@ -162,6 +177,7 @@ public class Finance implements Serializable, HasAudit {
 	}
 
 	public Finance setRegistryDocument(String registryDocument) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.registryDocument, registryDocument) );
 		this.registryDocument = registryDocument;
 		return this;
 	}
@@ -171,6 +187,7 @@ public class Finance implements Serializable, HasAudit {
 	}
 
 	public Finance setRegistryDocumentType(DocumentType registryDocumentType) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.registryDocumentType, registryDocumentType) );
 		this.registryDocumentType = registryDocumentType;
 		return this;
 	}
@@ -180,6 +197,7 @@ public class Finance implements Serializable, HasAudit {
 	}
 
 	public Finance setRegistryDocumentCountry(Country registryDocumentCountry) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.registryDocumentCountry, registryDocumentCountry) );
 		this.registryDocumentCountry = registryDocumentCountry;
 		return this;
 	}
@@ -189,6 +207,7 @@ public class Finance implements Serializable, HasAudit {
 	}
 
 	public Finance setRegistryName(String registryName) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.registryName, registryName) );
 		this.registryName = registryName;
 		return this;
 	}
@@ -196,6 +215,7 @@ public class Finance implements Serializable, HasAudit {
 		return registryAccountId;
 	}
 	public Finance setRegistryAccountId(Integer registryAccountId) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.registryAccountId, registryAccountId) );
 		this.registryAccountId = registryAccountId;
 		return this;
 	}
@@ -203,6 +223,7 @@ public class Finance implements Serializable, HasAudit {
 		return registryAccountCode;
 	}
 	public Finance setRegistryAccountCode(String registryAccountCode) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.registryAccountCode, registryAccountCode) );
 		this.registryAccountCode = registryAccountCode;
 		return this;
 	}
@@ -210,6 +231,7 @@ public class Finance implements Serializable, HasAudit {
 		return registryAccountDescription;
 	}
 	public Finance setRegistryAccountDescription(String registryAccountDescription) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.registryAccountDescription, registryAccountDescription) );
 		this.registryAccountDescription = registryAccountDescription;
 		return this;
 	}
@@ -219,6 +241,7 @@ public class Finance implements Serializable, HasAudit {
 	}
 
 	public Finance setAmount(double amount) {
+		this.setDirty( isDirty()?true: AonUtils.notEquals(this.amount, amount) );
 		this.amount = amount;
 		return this;
 	}
@@ -228,6 +251,7 @@ public class Finance implements Serializable, HasAudit {
 	}
 
 	public Finance setExpenses(double expenses) {
+		this.setDirty( isDirty()?true:AonNumberUtils.notEquals(this.expenses, expenses) );
 		this.expenses = expenses;
 		return this;
 	}
@@ -237,6 +261,7 @@ public class Finance implements Serializable, HasAudit {
 	}
 
 	public Finance setConcept(String concept) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.concept, concept) );
 		this.concept = concept;
 		return this;
 	}
@@ -246,6 +271,7 @@ public class Finance implements Serializable, HasAudit {
 	}
 
 	public Finance setDueDate(Date dueDate) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.dueDate, dueDate) );
 		this.dueDate = dueDate;
 		return this;
 	}
@@ -253,8 +279,12 @@ public class Finance implements Serializable, HasAudit {
 	public BankAccount getBankAccount() {
 		return bankAccount;
 	}
+	public String getBankAccountSafeValue() {
+		return bankAccount==null?"":bankAccount.toString();
+	}
 
 	public Finance setBankAccount(BankAccount bankAccount) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.bankAccount, bankAccount) );
 		this.bankAccount = bankAccount;
 		return this;
 	}
@@ -264,6 +294,7 @@ public class Finance implements Serializable, HasAudit {
 	}
 
 	public Finance setBankAlias(String bankAlias) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.bankAlias, bankAlias) );
 		this.bankAlias = bankAlias;
 		return this;
 	}
@@ -273,6 +304,7 @@ public class Finance implements Serializable, HasAudit {
 	}
 
 	public Finance setBic(String bic) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.bic, bic) );
 		this.bic = bic;
 		return this;
 	}
@@ -282,6 +314,7 @@ public class Finance implements Serializable, HasAudit {
 	}
 
 	public Finance setChequeNumber(String chequeNumber) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.chequeNumber, chequeNumber) );
 		this.chequeNumber = chequeNumber;
 		return this;
 	}
@@ -291,10 +324,15 @@ public class Finance implements Serializable, HasAudit {
 	}
 
 	public Finance setFinanceStatus(FinanceStatus financeStatus) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.financeStatus, financeStatus) );
 		this.financeStatus = financeStatus;
 		return this;
 	}
 	
+	public boolean isFullPending() {
+		return getFinanceStatus() == null || FinanceStatus.PENDING == getFinanceStatus() || FinanceStatus.RETURNED == getFinanceStatus();
+	}
+
 	public boolean isPending() {
 		return FinanceStatus.PENDING == getFinanceStatus();
 	}
@@ -304,7 +342,15 @@ public class Finance implements Serializable, HasAudit {
 	}
 
 	public Finance setSecurityLevel(SecurityLevel securityLevel) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.securityLevel, securityLevel) );
 		this.securityLevel = securityLevel;
+		return this;
+	}
+	public boolean isConfidential() {
+		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();
+	}
+	public Finance setConfidential(boolean confidential) {
+		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
 		return this;
 	}
 
@@ -313,6 +359,7 @@ public class Finance implements Serializable, HasAudit {
 	}
 
 	public Finance setRemarks(String remarks) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.remarks, remarks) );
 		this.remarks = remarks;
 		return this;
 	}
@@ -322,6 +369,7 @@ public class Finance implements Serializable, HasAudit {
 	}
 
 	public Finance setManual(boolean manual) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.manual, manual) );
 		this.manual = manual;
 		return this;
 	}
@@ -331,6 +379,7 @@ public class Finance implements Serializable, HasAudit {
 	}
 
 	public Finance setAdvance(boolean advance) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.advance, advance) );
 		this.advance = advance;
 		return this;
 	}
@@ -340,6 +389,7 @@ public class Finance implements Serializable, HasAudit {
 	}
 
 	public Finance setPayroll(boolean payroll) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.payroll , payroll ) );
 		this.payroll = payroll;
 		return this;
 	}
@@ -349,6 +399,7 @@ public class Finance implements Serializable, HasAudit {
 	}
 
 	public Finance setPrepayment(boolean prepayment) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.prepayment, prepayment) );
 		this.prepayment = prepayment;
 		return this;
 	}
@@ -358,6 +409,7 @@ public class Finance implements Serializable, HasAudit {
 	}
 
 	public Finance setSourceId(Integer sourceId) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.sourceId, sourceId) );
 		this.sourceId = sourceId;
 		return this;
 	}
@@ -366,6 +418,7 @@ public class Finance implements Serializable, HasAudit {
 		return payAccountId;
 	}
 	public Finance setPayAccountId(Integer payAccountId) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.payAccountId, payAccountId) );
 		this.payAccountId = payAccountId;
 		return this;
 	}
@@ -373,6 +426,7 @@ public class Finance implements Serializable, HasAudit {
 		return payAccountCode;
 	}
 	public Finance setPayAccountCode(String payAccountCode) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.payAccountCode, payAccountCode) );
 		this.payAccountCode = payAccountCode;
 		return this;
 	}
@@ -380,10 +434,30 @@ public class Finance implements Serializable, HasAudit {
 		return payAccountDescription;
 	}
 	public Finance setPayAccountDescription(String payAccountDescription) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.payAccountDescription, payAccountDescription) );
 		this.payAccountDescription = payAccountDescription;
 		return this;
 	}
 
+	public PayMethodType getPayMethodType() {
+		return payMethodType;
+	}
+
+	public Finance setPayMethodType(PayMethodType payMethodType) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.payMethodType, payMethodType) );
+		this.payMethodType = payMethodType;
+		return this;
+	}
+
+	// ---------------------------------------------------------- DIRTY
+	public boolean isDirty() {
+		return dirty;
+	}
+	public Finance setDirty(boolean dirty) {
+		this.dirty = dirty;
+		return this;
+	}
+	// ---------------------------------------------------------- AUDIT
 	public String getCreationUser() {
 		return creationUser;
 	}
@@ -419,16 +493,16 @@ public class Finance implements Serializable, HasAudit {
 		this.modificationDate = modificationDate;
 		return this;
 	}
+	// ---------------------------------------------------------- 
 
-	public boolean isConfidential() {
-		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();
+	
+	public boolean isRemoved() {
+		return removed;
 	}
-	public Finance setConfidential(boolean confidential) {
-		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
+	public Finance setRemoved(boolean removed) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.removed, removed) );
+		this.removed = removed;
 		return this;
-	}
-	public boolean isEmptyInvoice() {
-		return (getInvoice() == null || getInvoice().getId() == null);
 	}
 	
 	public boolean isSelected() {
@@ -438,13 +512,15 @@ public class Finance implements Serializable, HasAudit {
 		this.selected = selected;
 		return this;
 	}
-
-	public PayMethodType getPayMethodType() {
-		return payMethodType;
+	public boolean isEmptyInvoice() {
+		return (getInvoice() == null || getInvoice().getId() == null);
 	}
 
-	public Finance setPayMethodType(PayMethodType payMethodType) {
-		this.payMethodType = payMethodType;
+	public boolean isRecordable() {
+		return recordable;
+	}
+	public Finance setRecordable(boolean recordable) {
+		this.recordable = recordable;
 		return this;
 	}
 

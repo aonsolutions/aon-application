@@ -524,6 +524,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Concepto")
 	String concept();
+	
+	@DefaultMessage("Compl. Concepto")
+	String conceptComplement();
 
 	@DefaultMessage("Cuenta bancaria")
 	String bankAccount();
@@ -539,6 +542,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Fecha IVA")
 	String taxDate();
+
+	@DefaultMessage("Acci\u00F3n")
+	String action();
 
 	@DefaultMessage("No se han encontrado datos")
 	String noData();
@@ -3563,6 +3569,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Cobros / pagos seleccionados")
 	String financeSelected();
 
+	@DefaultMessage("Historial")
+	String tracking();
+
 	@DefaultMessage("El Vencimiento tiene movimientos posteriores")
 	String noLastTracking();
 	
@@ -3695,6 +3704,21 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Rechazar")
 	String reject();
+
+	@DefaultMessage("La suma de los importes de los vencimientos no coincide con el total factura")
+	String invoiceFinancesAmountNotFit();
+
+	@DefaultMessage("El importe del vencimiento no puede ser negativo ni cero")
+	String invoiceFinancesNegativeAmount();
+
+	@DefaultMessage("No se han definido vencimientos para la factura")
+	String invoiceFinancesEmpty();
+
+	@DefaultMessage("Contiene suplidos")
+	String hasPrepayments();
+	
+	@DefaultMessage("Suplido")
+	String prepayment();
 
 }
 

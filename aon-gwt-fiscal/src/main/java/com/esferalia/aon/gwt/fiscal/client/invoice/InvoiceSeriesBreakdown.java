@@ -152,7 +152,7 @@ public class InvoiceSeriesBreakdown extends MainEntryPoint {
 	
 	@UiHandler("showReport")
 	void onShowReportClick(ClickEvent event) {
-		financeService.getInvoiceSeries(getCurrentDomainName(), getCurrentDomain()
+		financeService.getInvoiceSeries(getCurrentDomainName(), getCurrentDomain(), getCurrentUser()
 				, fromDate.getValue(), toDate.getValue(), false, new AsyncCallback<LinkedList<InvoiceSeries>>() {
 			
 			@Override

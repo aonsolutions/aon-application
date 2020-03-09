@@ -282,8 +282,8 @@ public class TediValidator {
 	};
 	
 	public static Consumer<ValidationContext> FINANCES_VALIDATION = (ctx) -> {
-		if (ctx.getResult().getAccountingInvoice() != null && ctx.getResult().getAccountingInvoice().getFinances() != null) {
-			for (Finance finance : ctx.getResult().getAccountingInvoice().getFinances()) {
+		if (ctx.getResult().getAccountingInvoice() != null && ctx.getResult().getAccountingInvoice().getInvoice().getFinances() != null) {
+			for (Finance finance : ctx.getResult().getAccountingInvoice().getInvoice().getFinances()) {
 				CHECK_FINANCE_AMOUNT_ZERO
 				.andThen(CHECK_BANK_ACCOUNT)			
 			 	.accept(finance, ctx);

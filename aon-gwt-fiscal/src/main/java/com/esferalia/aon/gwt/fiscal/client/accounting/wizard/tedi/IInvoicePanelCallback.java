@@ -7,5 +7,4 @@ public interface IInvoicePanelCallback extends IAccountEntryModuleCallback{
 	AccountingInvoice getInvoice();
 	boolean isInvestAssetsAvailable();
 	void paintEntry();
-	
 }

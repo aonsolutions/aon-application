@@ -503,6 +503,17 @@ public class Invoice implements Serializable, HasAudit {
 		return this;
 	}
 	
+	public Invoice addFinance(Finance finance) {
+		if (getFinances() == null) {
+			setFinances(new LinkedList<Finance>());
+		}
+		getFinances().add(finance);
+		return this;
+	}
+	public boolean hasFinances() {
+		return getFinances() != null && !getFinances().isEmpty(); 
+	}
+	
 	public Byte getStatus() {
 		return status;
 	}

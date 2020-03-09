@@ -397,12 +397,12 @@ public class InvoiceImport {
 			}
 			ai.setAccountEntry(getEntryBase(domain, user.getLogin(), aonCtx, ai));
 			
-			ai.setFinances(new LinkedList<Finance>());
 			Finance f = new Finance()
 					.setAmount(invoice.getTotal())
 					.setDueDate(invoice.getIssueDate())
 					.setPayMethod(PayMethodType.BANK_TRANSFER.ordinal());
-			ai.getFinances().add(f);
+			ai.getInvoice().addFinance(f);
+			
 			System.out.println("REGISTRY!!!!! " + ai.getInvoice().getRegistry());
 			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), ai);
 		}

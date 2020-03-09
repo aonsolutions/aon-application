@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
+import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
@@ -227,5 +228,16 @@ public class FinanceImpl implements IFinance {
 				-> FinanceUtilitiesDAO.missingFinanceInvoicesFix( ctx , invoice));
 	}
 	
+	@Override
+	public LinkedList<FinanceTracking> getFinanceTracking(AONContext ctx, Integer finance) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> FinanceDAO.getFinanceTracking(ctx, finance));
+	}
+
+	@Override
+	public LinkedList<Finance> getFinancesForInvoice(AONContext ctx, Invoice invoice) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> FinanceDAO.getFinancesForInvoice(ctx, invoice));
+	}
 	
 }

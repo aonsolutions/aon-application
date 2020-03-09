@@ -1721,7 +1721,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		entryHeader.add(tab);
 		
 		FlowPanel statusPnel = new FlowPanel();
-		statusPnel.setStyleName(AON.AON_CSS.aonTextRight());
+		statusPnel.setStyleName(AON.AON_CSS.aonTextCenter());
 		statusMsg = new InlineLabel();
 		statusPnel.add(statusMsg);
 		entryHeader.add(statusMsg);
