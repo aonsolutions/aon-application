@@ -5369,8 +5369,83 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), (1333.00/12.00)/2.00, extra.getTotalPayment(), 0.005 );
 	}
+
 	// ------------------------------------------------------------------------
 	
+	@Test
+	public void testNoExtraI() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { 
+				new Extra() {
+					{
+						this.expression = "SALARIO_BASE + PLUS_SALARIAL + ANTIGUEDAD";
+						this.month = Month.DECEMBER;
+						this.start = "01/01";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, 
+				new Extra() {
+					{
+						this.expression = "SALARIO_BASE + PLUS_SALARIAL + ANTIGUEDAD";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, 
+				new Extra() {
+					{
+						this.expression = "SALARIO_BASE + PLUS_SALARIAL + ANTIGUEDAD";
+						this.month = Month.MARCH;
+						this.start = "01/01 -1";
+						this.end = "31/12 -1";
+						this.issue = "31/03";
+					}
+				}, 
+				});
+
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()) 
+				,new HashMap<String, String>() {
+				} 
+				,new String[] {
+				} 
+				,new String[] {} 
+				,category);
+		//@formatter:off
+		
+		PaymentConceptRecord salarioBaseConcept = addConcept(aonContext, "SALARIO_BASE");
+		PaymentConceptRecord plusSalarialConcept = addConcept(aonContext, "PLUS_SALARIAL");
+		PaymentConceptRecord antiguedadConcept = addConcept(aonContext, "ANTIGUEDAD");
+		
+		addData(aonContext, contract, contract.getStartDate(), null, "PLUS_SALARIAL", "100.00");
+
+		addPayment(aonContext, contract, contract.getStartDate(), null, salarioBaseConcept, "SALARIO BASE", "1000.00 * DIAS_TRABAJADOS / DIAS_MES", "_P", "_P", PaymentType.CRA_0000);
+		addPayment(aonContext, contract, contract.getStartDate(), null, plusSalarialConcept, "PLUS SALARIAL", "PLUS_SALARIAL", "_P", "_P", PaymentType.CRA_0000);
+		addPayment(aonContext, contract, contract.getStartDate(), null, antiguedadConcept, "ANTIGUEDAD", "10.00", "_P", "_P", PaymentType.CRA_0000);
+		
+		
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH,2);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Salary salary =
+		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract))
+		;
+		
+		org.junit.Assert.assertEquals(1110.00, salary.getTotalPayment(), DELTA);
+		org.junit.Assert.assertEquals(1110.00/12.00 * 3.00, salary.getExtraPayProration(), DELTA);
+
+	}
+	
+	
+
 	protected void addBaseCgcMin(AONContext aonContext) {
 		addSystemData(aonContext, getFirstDayOfYear(getToday()), null,
 				new HashMap<String,String>() {

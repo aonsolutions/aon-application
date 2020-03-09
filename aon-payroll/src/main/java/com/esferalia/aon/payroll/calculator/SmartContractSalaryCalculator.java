@@ -864,7 +864,9 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 					, AonDateUtils.get(issueDate, YEAR)			//year
 					, issueDate									//chargeDate
 					, criteria);
-			extraCtx.next();
+			if ( !extraCtx.next() )
+				return 0.00;
+			
 			return new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()) {
 					@Override
 					protected TaxCalculator getTaxCalculator(IContractSalaryCalculatorContext ctx) {
