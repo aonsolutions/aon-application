@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Provinces;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.CustomerStatus;
@@ -181,7 +182,6 @@ public class RegistryImport {
 		}
 		return null;
 	}
-
 	
 	private Object getObjectValue(Cell cell){
 		if(CellType.STRING == cell.getCellTypeEnum()) {
@@ -218,8 +218,13 @@ public class RegistryImport {
 		}
 		
 		if("NOMBRE".equalsIgnoreCase(title)) {
-			reg.getRegistry().setName(o.toString());
-			reg.getAccount().setDescription(o.toString());
+			if(o.toString().length() > 63) {
+				reg.getRegistry().setName(o.toString().substring(0,63));
+				reg.getAccount().setDescription(o.toString().substring(0, 63));
+			} else {
+				reg.getRegistry().setName(o.toString());
+				reg.getAccount().setDescription(o.toString());
+			}
 			return ;
 		}
 		if("DOMICILIO".equalsIgnoreCase(title)) {
@@ -257,7 +262,7 @@ public class RegistryImport {
 	public static void insertRegistries(Domain domain, User user,LinkedList<RegistryImportClass> rvs) {
 		for (RegistryImportClass r : rvs) {
 			LinkedList<Registry> regList = AON.getRegistryStream(domain.getName(), domain.getId(), user.getLogin(), f -> 
-				f.getDocumentProperty().eq(r.getRegistry().getDocument())).collect(Collectors.toCollection(LinkedList::new));
+				f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(r.getRegistry().getDocument()))).collect(Collectors.toCollection(LinkedList::new));
 			Registry reg = new Registry();
 			if(regList.stream().filter(f -> f.getDomain().equals(domain.getId())).count() > 0) {
 				reg = regList.stream().filter(f -> f.getDomain().equals(domain.getId())).findFirst().get();
@@ -267,9 +272,9 @@ public class RegistryImport {
 			} else if(regList.stream().filter(f -> f.getDomain().equals(0)).count() > 0) {
 				reg = regList.stream().filter(f -> f.getDomain().equals(0)).findFirst().get();
 			} else {
-				r.getRegistry().setDomain(domain.getId())
-				.setDocumentType(getDocumentType(r.getRegistry().getDocument()));
-				
+				r.getRegistry()
+					.setDomain(domain.getId())
+					.setDocumentType(getDocumentType(r.getRegistry().getDocument()));
 				reg = AON.insertRegistry(domain.getName(), domain.getId(), user.getLogin(), r.getRegistry());
 			}
 			
@@ -282,13 +287,21 @@ public class RegistryImport {
 			}
 			
 			if("430".equals(r.getAccount().getCode().substring(0, 3))) {
-				Customer c = new Customer()
+				Integer registryId = reg.getId();
+				Customer customer = AON.getCustomer(domain.getName(), domain.getId(), user.getLogin(), f->
+					f.getDomainProperty().eq(domain.getId()).and(f.getRegistryProperty().eq( registryId )));
+				if(customer == null || customer.getId() == null) {
+					Scope s = AON.getScopeStream(domain.getName(), domain.getId(), user.getLogin(), f ->
+					f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
+						.findFirst().orElse(new Scope());
+					Customer c = new Customer()
 						.setAccount(acc.getId())
 						.setDomain(domain.getId())
 						.setRegistry(reg)
-						.setScope(domain.getScope())
+						.setScope(domain.getScope() != null ? domain.getScope() : s.getId())
 						.setStatus(CustomerStatus.ACTIVE);
-				AON.insertCustomer(domain.getName(), domain.getId(), user.getLogin(), c);
+					AON.insertCustomer(domain.getName(), domain.getId(), user.getLogin(), c);
+				}
 			}
 		}
 	}
