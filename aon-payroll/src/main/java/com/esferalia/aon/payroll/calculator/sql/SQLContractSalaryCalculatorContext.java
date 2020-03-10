@@ -11,7 +11,6 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.BONUS_AGE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.BONUS_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.BONUS_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.BR;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SUM;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTEXT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTRACT_END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTRACT_START;
@@ -68,6 +67,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.SHORT_CONTRA
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_FACTOR;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SUM;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SUNDAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SUNDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SYSTEM;
@@ -154,7 +154,6 @@ import com.esferalia.aon.payroll.calculator.AbstractContractSalaryCalculatorCont
 import com.esferalia.aon.payroll.calculator.CompositeCosts;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
 import com.esferalia.aon.payroll.calculator.ContextFunctions;
-import com.esferalia.aon.payroll.calculator.ContractLeaveLoader;
 import com.esferalia.aon.payroll.calculator.ContractLeaveLoader.Leave;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.DelegateSystemPayment;
@@ -2039,6 +2038,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		if (activeDays > 0.00 )
 			return activeDays;
 		
+		Date contractStart = getContractStartate();
+		if ( contractStart.compareTo(p.getStart() ) == 0) 
+			return getActiveDaysFromAnotherContract(contractStart);
+		
 		end  = AonDateUtils.add(p.getStart(), Calendar.DAY_OF_MONTH,-1);
 		
 		activeDays = getExpressionContext().getVariables(ContextVariable.WORKED_DAYS, start, end)
@@ -2053,6 +2056,59 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		.stream().map( v -> ((Number) v.getValue(v.getPeriod())).doubleValue() ).collect(Collectors.summingDouble( v -> v ))
 		;
 		return activeDays;
+	}
+
+	protected double getActiveDaysFromAnotherContract(Date contractStart) {
+		Date endDate = AonDateUtils.add(contractStart, Calendar.DAY_OF_MONTH,-1);
+		Date startDate = AonDateUtils.getFirstDayOfMonth(contractStart);
+		
+		ResultSet rs  = null;
+		PreparedStatement stmt = null;
+		try {
+			stmt = 
+			connection.prepareStatement(
+			"SELECT DATEDIFF("
+			+ "contract.end_date "
+			+ ", contract.start_date) "
+			+ "AS DAYS "
+			+ "FROM contract  "
+			+ "WHERE contract.person = ? "
+			+ "AND contract.enterprise_ccc = ? "
+			+ "AND contract.start_date <= ? "
+			+ "AND contract.end_date >= ? "
+			+ "AND contract.end_date < ? "
+			);
+			
+			stmt.setInt(1, getInt(SQLConstants.CONTRACT, ContractColumns.PERSON) );
+			stmt.setInt(2, getInt(SQLConstants.CONTRACT, ContractColumns.ENTERPRISE_CCC) );
+			stmt.setDate(3, toSqlDate(endDate) );
+			stmt.setDate(4, toSqlDate(startDate) );
+			stmt.setDate(5, toSqlDate(contractStart));
+			
+			int days = 0;
+			rs = stmt.executeQuery();
+			while ( rs.next() ) {
+				days += rs.getInt("DAYS") + 1;
+			}
+			return days;
+			
+		} catch (Exception e) {
+		} finally {
+			if ( rs != null ) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+				}
+			}
+			if ( stmt != null ) {
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+
+		return 0.00;
 	}
 
 	protected AgreementKey getEnterpriseAgreementKey() {
@@ -3343,6 +3399,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			}.calculate(ctx);
 			Object br =  salary.getCommonBase() / ctx.getExpressionContext().getVariable(QUOTE_DAYS, ctx.getStartDate(),
 					ctx.getEndDate(), Double.class);
+			
 			return br;
 		} catch (Throwable t) {
 			t.printStackTrace();

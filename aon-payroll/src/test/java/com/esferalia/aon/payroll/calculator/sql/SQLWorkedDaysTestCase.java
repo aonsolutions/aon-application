@@ -10,6 +10,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SATURDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_FACTOR;
@@ -83,12 +84,22 @@ import junit.framework.Assert;
 import org.apache.velocity.runtime.parser.node.GetExecutor;
 import org.junit.Test;
 
+import com.code.aon.company.WorkPlace;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
+import com.esferalia.aon.jooq.tables.records.DomainRecord;
+import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
+import com.esferalia.aon.jooq.tables.records.EnterpriseCccRecord;
+import com.esferalia.aon.jooq.tables.records.PersonRecord;
+import com.esferalia.aon.jooq.tables.records.RegistryRecord;
+import com.esferalia.aon.jooq.tables.records.ScopeRecord;
+import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.Period;
@@ -961,6 +972,324 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		}
 	}
 
+	@Test
+	public void testFullTimeWorkDaysAdjustI() throws ExpressionException,
+			SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>() {
+					{
+						put(TC2.getName(),
+								format("\"%s\"", random(FULL_TIME).getValue()));
+						put(MONTH_DAYS.getName(), "30.00");
+					}
+				});
+
+		Date contractStart = contract.getStartDate();
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+
+		Date startDate = getFirstDayOfMonth(contractStart);
+		Date endDate = getLastDayOfMonth(startDate);
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+		getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		
+		assertEquals(ctx, 
+				30.00, 
+				startDate, 
+				endDate, 
+				30.00);
+
+	}
+
+	@Test
+	public void testFullTimeWorkDaysAdjustII() throws ExpressionException,
+			SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>() {
+					{
+						put(MONTH_DAYS.getName(), "30.00");
+					}
+				});
+
+		Date contractStart = contract.getStartDate();
+		
+		addData(aonContext, contract, contractStart, add(contractStart, DAY_OF_MONTH, 5), TC2, random(FULL_TIME).getValue());
+		addData(aonContext, contract, add(contractStart, DAY_OF_MONTH, 6), null, TC2, random(FULL_TIME).getValue());
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+
+		Date startDate = getFirstDayOfMonth(contractStart);
+		Date endDate = getLastDayOfMonth(startDate);
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+		getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		
+		assertEquals(ctx, 
+				6.00, 
+				contractStart, 
+				add(contractStart, DAY_OF_MONTH, 5), 
+				30.00);
+
+		assertEquals(ctx, 
+				24.00, 
+				add(contractStart, DAY_OF_MONTH, 6),
+				endDate,
+				30.00);
+	}
+
+	@Test
+	public void testFullTimeWorkDaysAdjustIII() throws ExpressionException,
+			SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		DomainRecord domain = 
+		newDomain(aonContext);
+
+		ScopeRecord scope = 
+		newScope(aonContext, domain.getId());
+		
+		EnterpriseActivityRecord enterpriseActivity = 
+		newEnterpriseActivity(
+				aonContext, 
+				domain.getId(), 
+				scope.getId(), 
+				SSRegimeType.GENERAL);
+
+		EnterpriseCccRecord enterpriseCcc = 
+		newEnterpriseCcc(
+				aonContext, 
+				domain.getId(), 
+				scope.getId(), 
+				enterpriseActivity.getId(), 
+				CCCType.PRINCIPAL, 
+				ccc);
+		
+		WorkplaceRecord workplace = 
+		newWorkplace(
+		aonContext, 
+		domain.getId(), 
+		scope.getId(), 
+		enterpriseActivity.getEnterprise());
+		
+		RegistryRecord person = 
+		newPerson(
+		aonContext, 
+		domain.getId(), 
+		"66666666M");
+		
+		Date contractStart = getFirstDayOfYear(getToday()) ;
+
+		 
+		newContract(
+		aonContext,
+		SSRegimeType.GENERAL, 
+		CCCType.PRINCIPAL,			
+		contractStart,
+		add(contractStart, DAY_OF_MONTH, 5),
+		new HashMap<String, String>() {
+			{
+				put(MONTH_DAYS.getName(), "30.00");
+				put(TC2.getName(), random(FULL_TIME).getValue() );
+			}
+		},
+		new String[] {
+		}, 
+		new String[] {						
+		},
+		null,
+		domain.getId(), 			//domainId, 
+		person.getId(),				//personId, 
+		workplace.getId(),			//workplaceId, 
+		enterpriseCcc.getId(),		//enterpriseCccId,
+		enterpriseActivity.getId()	//enterpriseActivityId
+		);
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = 
+		newContract(
+		aonContext,
+		SSRegimeType.GENERAL, 
+		CCCType.PRINCIPAL,			
+		add(contractStart, DAY_OF_MONTH, 6),
+		null,
+		new HashMap<String, String>() {
+			{
+				put(MONTH_DAYS.getName(), "30.00");
+				put(TC2.getName(), random(FULL_TIME).getValue() );
+				put(ContextVariable.ACTIVE_DAYS.getName(), "6.00" );
+			}
+		},
+		new String[] {
+		}, 
+		new String[] {						
+		},
+		null,
+		domain.getId(), 			//domainId, 
+		person.getId(),				//personId, 
+		workplace.getId(),			//workplaceId, 
+		enterpriseCcc.getId(),		//enterpriseCccId,
+		enterpriseActivity.getId()	//enterpriseActivityId
+		);
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+
+		Date startDate = getFirstDayOfMonth(contractStart);
+		Date endDate = getLastDayOfMonth(startDate);
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+		getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		
+		assertEquals(ctx, 
+				24.00, 
+				add(contractStart, DAY_OF_MONTH, 6),
+				endDate,
+				30.00);
+	}
+
+	@Test
+	public void testFullTimeWorkDaysAdjustIV() throws ExpressionException,
+			SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		DomainRecord domain = 
+		newDomain(aonContext);
+
+		ScopeRecord scope = 
+		newScope(aonContext, domain.getId());
+		
+		EnterpriseActivityRecord enterpriseActivity = 
+		newEnterpriseActivity(
+				aonContext, 
+				domain.getId(), 
+				scope.getId(), 
+				SSRegimeType.GENERAL);
+
+		EnterpriseCccRecord enterpriseCcc = 
+		newEnterpriseCcc(
+				aonContext, 
+				domain.getId(), 
+				scope.getId(), 
+				enterpriseActivity.getId(), 
+				CCCType.PRINCIPAL, 
+				ccc);
+		
+		WorkplaceRecord workplace = 
+		newWorkplace(
+		aonContext, 
+		domain.getId(), 
+		scope.getId(), 
+		enterpriseActivity.getEnterprise());
+		
+		RegistryRecord person = 
+		newPerson(
+		aonContext, 
+		domain.getId(), 
+		"66666666M");
+		
+		Date contractStart = getFirstDayOfYear(getToday()) ;
+
+		 
+		newContract(
+		aonContext,
+		SSRegimeType.GENERAL, 
+		CCCType.PRINCIPAL,			
+		contractStart,
+		add(contractStart, DAY_OF_MONTH, 5),
+		new HashMap<String, String>() {
+			{
+				put(MONTH_DAYS.getName(), "30.00");
+				put(TC2.getName(), random(FULL_TIME).getValue() );
+			}
+		},
+		new String[] {
+		}, 
+		new String[] {						
+		},
+		null,
+		domain.getId(), 			//domainId, 
+		person.getId(),				//personId, 
+		workplace.getId(),			//workplaceId, 
+		enterpriseCcc.getId(),		//enterpriseCccId,
+		enterpriseActivity.getId()	//enterpriseActivityId
+		);
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = 
+		newContract(
+		aonContext,
+		SSRegimeType.GENERAL, 
+		CCCType.PRINCIPAL,			
+		add(contractStart, DAY_OF_MONTH, 6),
+		null,
+		new HashMap<String, String>() {
+			{
+				put(MONTH_DAYS.getName(), "30.00");
+				put(TC2.getName(), random(FULL_TIME).getValue() );
+			}
+		},
+		new String[] {
+		}, 
+		new String[] {						
+		},
+		null,
+		domain.getId(), 			//domainId, 
+		person.getId(),				//personId, 
+		workplace.getId(),			//workplaceId, 
+		enterpriseCcc.getId(),		//enterpriseCccId,
+		enterpriseActivity.getId()	//enterpriseActivityId
+		);
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+
+		Date startDate = getFirstDayOfMonth(contractStart);
+		Date endDate = getLastDayOfMonth(startDate);
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+		getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		
+		assertEquals(ctx, 
+				24.00, 
+				add(contractStart, DAY_OF_MONTH, 6),
+				endDate,
+				30.00);
+	}
 	// ------------------------------------------------------------------------
 	protected void testWorkedDays(ContractRecord contract, double coefficient,
 			Double monthdays, Double firstMonthDays) throws ExpressionException, SQLException {
