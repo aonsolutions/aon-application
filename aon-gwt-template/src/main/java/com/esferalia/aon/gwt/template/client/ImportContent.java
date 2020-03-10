@@ -38,6 +38,7 @@ public class ImportContent extends Composite {
 	private void init() {
 		typeList.addItem("Clientes y Proveedores","registry");
 		typeList.addItem("Facturas","invoice");
+		typeList.addItem("Libro Diario","diary");
 		typeList.setSelectedIndex(1);
 	}
 	
@@ -48,11 +49,13 @@ public class ImportContent extends Composite {
 			importRegistry();
 		} else if("invoice".equals(value)) {
 			importInvoices();
+		} else if("diary".equals(value)) {
+			importDiary();
 		}
 	}	
 
 	private void importRegistry() {
-		Dialog d = new Dialog("Importar Registry","Importar",true,"Cancelar",true,"importRegistries");
+		Dialog d = new Dialog("Importar Registry","Importar",true,"Cancelar",true,"importOnly");
 		d.setUrl(GWT.getModuleBaseURL());
 		TemplatesDialog popup = new TemplatesDialog(aonData, d) {
 			
@@ -132,8 +135,89 @@ public class ImportContent extends Composite {
 		popup.center();
 	}
 	
+	private void importDiary() {
+		Dialog d = new Dialog("Importar Diario","Importar",true,"Cancelar",true,"importOnly");
+		d.setUrl(GWT.getModuleBaseURL());
+		TemplatesDialog popup = new TemplatesDialog(aonData, d) {
+			
+			@Override
+			protected void onCancel() {
+				hide();
+			}
+			
+			@Override
+			protected void onAccept() {
+				item.excelRowNumber(new AsyncCallback<Integer>() {
+					@Override
+					public void onSuccess(Integer result) {
+						hide();
+						Double doubleValue = result.doubleValue();
+						pbd = new ProgressBarDialog(doubleValue , 0.46) {
+							
+						};
+						pbd.addStyleName("gwt-PopupPanel-template");
+						pbd.setGlassEnabled(true);
+						pbd.show();
+						
+						item.executeExcel(getDomain(), getUser(), null, ImportType.DIARY, null,
+								null, null, null, null, null, null, null, new AsyncCallback<Integer>() {
+							
+							@Override
+							public void onSuccess(Integer result) {
+								AsyncCallback<Error> callback = new AsyncCallback<Error>() {
+									
+									@Override
+									public void onSuccess(Error result) {
+							
+										pbd.completed();
+										pbd.hide();
+										Dialog d2 = new Dialog("Importar Diario","Aceptar",true,"Cancelar",false,"importResponse");
+										d2.setError(result);
+										TemplatesDialog popup2 = new TemplatesDialog(getAonData(), d2){
+
+											@Override
+											protected void onAccept() {
+												hide();			
+											}
+
+											@Override
+											protected void onCancel() {
+												hide();
+											}
+										};
+										popup2.addStyleName("gwt-PopupPanel-template");
+										popup2.setGlassEnabled(true);
+										popup2.show();
+									}
+										
+									@Override
+									public void onFailure(Throwable caught) {
+										//TODO 
+										pbd.completed();
+										pbd.hide();
+									}
+								};
+								item.insertDiary(getDomain(), getUser(), callback);
+							}
+						
+							@Override
+							public void onFailure(Throwable caught) {}
+						});
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {}
+				});
+				
+			}
+		};
+		popup.addStyleName("gwt-PopupPanel-template");
+		popup.setGlassEnabled(true);
+		popup.center();
+	}
+	
 	private void importInvoices(){		
-		Dialog d = new Dialog("Importar Invoice","Importar",true,"Cancelar",true,"importInvoices");
+		Dialog d = new Dialog("Importar Invoice","Importar",true,"Cancelar",true,"importOnly");
 		d.setUrl(GWT.getModuleBaseURL());
 		TemplatesDialog popup = new TemplatesDialog(aonData, d) {
 			

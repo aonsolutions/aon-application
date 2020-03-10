@@ -51,7 +51,7 @@ public interface IAccounting {
 	public AccountPeriod fetchPeriod(AONContext ctx,Date date);
 	public AccountPeriod fetchPeriod(AONContext ctx,Integer id);
 	public AccountPeriod fetchPeriodByYear(AONContext ctx,int year);
-	public void insert(AONContext ctx,AccountPeriod ap);
+	public AccountPeriod insert(AONContext ctx,AccountPeriod ap);
 	public void update(AONContext ctx,AccountPeriod ap);
 	public void delete(AONContext ctx,AccountPeriod ap);
 

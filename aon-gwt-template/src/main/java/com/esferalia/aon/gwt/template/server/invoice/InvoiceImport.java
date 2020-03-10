@@ -237,9 +237,7 @@ public class InvoiceImport {
 		
 		if("CUENTA BASE".equalsIgnoreCase(title)) {
 			String acc = NumberToTextConverter.toText(cell.getNumericCellValue());
-			System.out.println(acc);
 			inv.setAccount(acc.substring(0,4) + acc.substring(7));
-			System.out.println(inv.getAccount() + "  -  length -> " + inv.getAccount().length());
 			return;
 		}
 		if("BASE".equalsIgnoreCase(title)) {
@@ -402,8 +400,7 @@ public class InvoiceImport {
 					.setDueDate(invoice.getIssueDate())
 					.setPayMethod(PayMethodType.BANK_TRANSFER.ordinal());
 			ai.getInvoice().addFinance(f);
-			
-			System.out.println("REGISTRY!!!!! " + ai.getInvoice().getRegistry());
+
 			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), ai);
 		}
 	}
@@ -461,10 +458,13 @@ public class InvoiceImport {
 						.setName(name));
 				}			
 				Account acc = ACCOUNTING.getAccounts(domain.getName(), domain.getId(), login, f -> f.getAliasProperty().eq(nif)).findFirst().orElse(new Account());
+				Scope s = AON.getScopeStream(domain.getName(), domain.getId(), login, f ->
+				f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
+					.findFirst().orElse(new Scope());
 				supplier = new Supplier()
 						.setTransaction((short) transaction.ordinal())
 						.setStatus(SupplierStatus.ACTIVE)
-						.setScope(domain.getScope())
+						.setScope(domain.getScope() != null ? domain.getScope() : s.getId())
 						.setAccount(acc.getId());
 				supplier.setDomain(domain.getId());
 				supplier.setId(reg.getId());
@@ -487,12 +487,15 @@ public class InvoiceImport {
 						.setName(name));
 				}			
 				Account acc = ACCOUNTING.getAccounts(domain.getName(), domain.getId(), login, f -> f.getAliasProperty().eq(nif)).findFirst().orElse(new Account());
+				Scope s = AON.getScopeStream(domain.getName(), domain.getId(), login, f ->
+				f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
+					.findFirst().orElse(new Scope());
 				creditor = new Creditor()
 						.setAccount(acc)
 						.setTransaction(transaction)
 						.setRegistry(reg)
 						.setStatus(CreditorStatus.ACTIVE)
-						.setScope(domain.getScope());
+						.setScope(domain.getScope() != null ? domain.getScope() : s.getId());
 				creditor.setDomain(domain.getId());
 				creditor.setId(reg.getId());
 				AON.insertCreditor(domain.getName(), domain.getId(), login, creditor);

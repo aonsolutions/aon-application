@@ -45,6 +45,7 @@ import com.esferalia.aon.gwt.template.jooq.DBProduct;
 import com.esferalia.aon.gwt.template.jooq.DBStock;
 import com.esferalia.aon.gwt.template.server.delivery.DeliveryImport;
 import com.esferalia.aon.gwt.template.server.delivery.DeliveryInfo;
+import com.esferalia.aon.gwt.template.server.invoice.DiaryImport;
 import com.esferalia.aon.gwt.template.server.invoice.InvoiceImport;
 import com.esferalia.aon.gwt.template.server.invoice.InvoiceImportClass;
 import com.esferalia.aon.gwt.template.server.invoice.RegistryImport;
@@ -65,6 +66,7 @@ import com.esferalia.aon.gwt.template.shared.ImportType;
 import com.esferalia.aon.gwt.template.shared.Seller;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -211,6 +213,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	LinkedList<CustomerIban> cis;
 	LinkedList<InvoiceImportClass> ivs;
 	LinkedList<RegistryImportClass> rvs;
+	LinkedList<AccountEntry> dvs;
  	DeliveryInfo di;
 	LinkedList<String> verror;
 	public Integer executeExcel(Domain domain, User user, TemplateInfo ti, ImportType importType, Boolean ignoreInactiveClient,
@@ -268,6 +271,9 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 			else if(ImportType.REGISTRY.equals(importType)) {
 				rvs = RegistryImport.getInstance().importation(domain, user.getLogin(), data);
 			}
+			else if(ImportType.DIARY.equals(importType)) {
+				dvs = DiaryImport.getInstance().importation(domain, user.getLogin(), data);
+			}
 
 			workbook.close();
 		} catch (IOException e) {
@@ -313,6 +319,10 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 				else if(ImportType.REGISTRY.equals(importType)) {
 					rvs = RegistryImport.getInstance().importationX(domain, user.getLogin(), data);
 				}
+				else if(ImportType.DIARY.equals(importType)) {
+					dvs = DiaryImport.getInstance().importationX(domain, user.getLogin(), data);
+				}
+				
 				workbook.close();
 			} catch (IOException e1) {
 					//El archivo no es un fichero Excel.
@@ -2659,6 +2669,17 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 				.setError(false)
 				.setTextError(e.getMessage());
 		}
-
+	}
+	
+	@Override
+	public Error insertDiary(Domain domain, User user) {
+		try {
+			DiaryImport.insertDiary(domain, user, dvs);			
+			return new Error();
+		} catch (Exception e) {
+			return new Error()
+				.setError(false)
+				.setTextError(e.getMessage());
+		}
 	}
 }

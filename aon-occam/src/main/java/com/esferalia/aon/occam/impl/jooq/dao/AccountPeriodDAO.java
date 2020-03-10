@@ -103,18 +103,19 @@ public class AccountPeriodDAO {
 		return fetchOne(ctx,date);
 	}
 
-	public static void insert(AONContext ctx, AccountPeriod ap) {
+	public static AccountPeriod insert(AONContext ctx, AccountPeriod ap) {
 		ctx.checkWrite();
-		ctx.getDslContext().transaction(configuration -> {
-			AccountPeriodValidation.validatePeriod(ctx, ap);
-			ctx.getDslContext().insertInto(ACCOUNT_PERIOD)
-				.set(ACCOUNT_PERIOD.DOMAIN, ap.getDomain())
-				.set(ACCOUNT_PERIOD.NAME, ap.getName())
-				.set(ACCOUNT_PERIOD.INITIATION_DATE,AonDateUtils.toSql(ap.getInitiationDate()))
-				.set(ACCOUNT_PERIOD.DEADLINE,AonDateUtils.toSql(ap.getDeadline()))
-				.set(ACCOUNT_PERIOD.STATUS,AonEnumUtils.getByte(ap.getStatus()))
-				;
-		});
+		AccountPeriodValidation.validatePeriod(ctx, ap);
+		Integer id = ctx.getDslContext().insertInto(ACCOUNT_PERIOD)
+			.set(ACCOUNT_PERIOD.DOMAIN, ap.getDomain())
+			.set(ACCOUNT_PERIOD.NAME, ap.getName())
+			.set(ACCOUNT_PERIOD.INITIATION_DATE,AonDateUtils.toSql(ap.getInitiationDate()))
+			.set(ACCOUNT_PERIOD.DEADLINE,AonDateUtils.toSql(ap.getDeadline()))
+			.set(ACCOUNT_PERIOD.STATUS,AonEnumUtils.getByte(ap.getStatus()))
+			.returning(ACCOUNT_PERIOD.ID)
+			.fetchOne()
+			.getValue(ACCOUNT_PERIOD.ID);
+		return ap.setId(id);
 	}
 
 	public static void update(AONContext ctx, AccountPeriod ap) {

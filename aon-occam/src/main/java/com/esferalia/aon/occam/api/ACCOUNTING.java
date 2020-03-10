@@ -133,6 +133,18 @@ public class ACCOUNTING {
 	}
 	
 	// ----------------------------- ACCOUNT PERIOD
+	public static AccountPeriod getAccountPeriod(String domainName, Integer domainId, String login, Date date) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return fetchPeriod(ctx, date);
+		} finally {
+			if(ctx != null) {
+				ctx.close();
+			}
+		}
+	}
+	
 	public static AccountPeriod fetchPeriod(AONContext ctx, Date date) {
 		return getAccounting().fetchPeriod(ctx, date);
 	}
@@ -145,8 +157,20 @@ public class ACCOUNTING {
 		return getAccounting().fetchPeriod(ctx, id);
 	}
 
-	public static void insert(AONContext ctx, AccountPeriod ap) {
-		getAccounting().insert(ctx, ap);
+	public static AccountPeriod insert(String domainName, Integer domainId, String login, AccountPeriod ap) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return insert(ctx, ap);
+		} finally {
+			if(ctx != null) {
+				ctx.close();
+			}
+		}
+	}
+	
+	public static AccountPeriod insert(AONContext ctx, AccountPeriod ap) {
+		return getAccounting().insert(ctx, ap);
 	}
 
 	public static void update(AONContext ctx, AccountPeriod ap) {

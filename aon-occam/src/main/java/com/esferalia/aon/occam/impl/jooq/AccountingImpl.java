@@ -113,10 +113,10 @@ public class AccountingImpl implements IAccounting {
 	}
 
 	@Override
-	public void insert(AONContext ctx, AccountPeriod ap) {
-		ctx.getDslContext().transaction(configuration -> {
-			AccountPeriodDAO.insert(ctx, ap);
-		} );		
+	public AccountPeriod insert(AONContext ctx, AccountPeriod ap) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			AccountPeriodDAO.insert(ctx, ap)
+		 );		
 	}
 
 	@Override

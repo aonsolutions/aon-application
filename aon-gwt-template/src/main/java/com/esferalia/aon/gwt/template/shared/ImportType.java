@@ -10,7 +10,8 @@ public enum ImportType {
 	PROJECT_COMMERCIAL,
 	CUSTOMER_IBAN,
 	INVOICE,
-	REGISTRY
+	REGISTRY,
+	DIARY
 	;
 	
 }
