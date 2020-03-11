@@ -304,6 +304,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		registryBox = new AccountingRegistryBox(
 				 getCallback().getCurrentDomainName()
 				,getCallback().getCurrentDomainId()
+				,getCallback().getCurrentUser()
 				,getCallback().getConfiguration()
 				,true);
 		registryBox.setTabIndex(++tabindex);
@@ -635,7 +636,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		payTable.setWidget(row, col, payAccountLabel);
 		col++;
 		
-		payAccount = new AccountBox(getCallback().getCurrentDomainName(),getCallback().getCurrentDomainId());
+		payAccount = new AccountBox(getCallback().getCurrentDomainName(),getCallback().getCurrentDomainId(), getCallback().getCurrentUser());
 		payAccount.setTabIndex(++tabindex);
 		payAccount.addSelectionHandler(new SelectionHandler<Account>() {
 			@Override

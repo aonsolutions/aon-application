@@ -51,6 +51,7 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 	
 	private String domainName;
 	private int domainId;
+	private String currentUser;
 	private User user;
 	
 	final private int limit = 40;
@@ -89,10 +90,11 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 		boolean isSelected( Finance finance);
 	}
 	
-	public FinanceSearchPanel(String domainName,int domainId, IFinancePanelCallback callback, int tabIndex) {
+	public FinanceSearchPanel(String domainName,int domainId, String currentUser, IFinancePanelCallback callback, int tabIndex) {
 		super(Unit.PX);
 		this.domainName = domainName;
 		this.domainId = domainId;
+		this.currentUser = currentUser;
 		this.callback = callback; 
 		
 		addStyleName(AON.AON_CSS.aonScrollArea());
@@ -237,7 +239,7 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 			}
 		});
 
-		registryBox = new AccountingRegistryBox(this.domainName,this.domainId, null, false);
+		registryBox = new AccountingRegistryBox(this.domainName,this.domainId,this.currentUser, null, false);
 		registryBox.setRequired(false);
 		
 		registryBox.setTabIndex(++tabIndex);

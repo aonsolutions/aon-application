@@ -115,11 +115,11 @@ public class CreditorBox extends ResizeComposite implements HasValue<String>
 		
 	}
 	
-	public CreditorBox(final String domainName, final int domain) {
-		this(domainName,domain,true);
+	public CreditorBox(final String domainName, final int domain, final String user) {
+		this(domainName,domain,user,true);
 	}
 	
-	public CreditorBox(final String domainName, final int domain, boolean showDescription) {
+	public CreditorBox(final String domainName, final int domain, final String user, boolean showDescription) {
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle() {
@@ -129,7 +129,7 @@ public class CreditorBox extends ResizeComposite implements HasValue<String>
 				if (AonStringUtils.length(request.getQuery()) >= MIN_CHARACTERS
 				 && AonStringUtils.length(request.getQuery()) <= MAX_CHARACTERS) {
 					reset();
-					commonService.getBasicCreditors(domainName,domain,request.getQuery()
+					commonService.getBasicCreditors(domainName,domain, user,request.getQuery()
 							,new AsyncCallback<LinkedList<Creditor>>() {
 		
 								public void onFailure(Throwable caught) {

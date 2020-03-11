@@ -35,6 +35,10 @@ public class EnterpriseSuggestBox extends ResizeComposite implements
 	Integer domainId;
 	String domainName;
 	
+	private String currentDomainName;
+	private int currentDomainId;
+	private String currentUser;
+	
 	SuggestBox document;
 	TextBox name;
 	
@@ -51,8 +55,11 @@ public class EnterpriseSuggestBox extends ResizeComposite implements
 		return document;
 	}
 
-	public EnterpriseSuggestBox() {
+	public EnterpriseSuggestBox(String currentDomainName, int currentDomainId, String currentUser) {
 		AON.ensureInjected();
+		this.currentDomainName = currentDomainName;
+		this.currentDomainId = currentDomainId;
+		this.currentUser = currentUser;
 
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
@@ -98,23 +105,13 @@ public class EnterpriseSuggestBox extends ResizeComposite implements
 		initWidget(panel);
 	}
 
-	public static native int getCurrentDomain()
-	/*-{
-		return $wnd.getCurrentDomain();
-	}-*/;
-	public static native String getCurrentDomainName()
-	/*-{
-		return $wnd.getCurrentDomainName();
-	}-*/;
-
 	class EnterpriseSuggestOracle extends MultiWordSuggestOracle {
 
 		@Override
 		public void requestSuggestions(final Request request,
 				final Callback callback) {
 			String query = '%' + request.getQuery() + '%';
-			commonService.getParentEnterprises(getCurrentDomainName()
-					,getCurrentDomain()
+			commonService.getParentEnterprises(currentDomainName,currentDomainId, currentUser
 					,query
 					,new AsyncCallback<LinkedList<Enterprise>>() {
 

@@ -202,6 +202,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		registryBox = new AccountingRegistryBox(
 				invoiceCallback.getCurrentDomainName()
 				,invoiceCallback.getCurrentDomainId()
+				,invoiceCallback.getCurrentUser()
 				,invoiceCallback.getConfiguration()
 				,true);
 		registryBox.addKeyUpHandler( new KeyUpHandler() {

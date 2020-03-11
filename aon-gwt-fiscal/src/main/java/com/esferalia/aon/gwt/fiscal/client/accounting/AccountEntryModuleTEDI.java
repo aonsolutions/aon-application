@@ -314,7 +314,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		if (getOptions().getConfiguration() != null) {
 			loadModule();
 		} else {
-			commonService.getAonConfiguration(getOptions().getDomainName(), getOptions().getDomain(),
+			commonService.getAonConfiguration(getOptions().getDomainName(), getOptions().getDomain(), getOptions().getUser(),
 					new AsyncCallback<AonConfiguration>() {
 				@Override
 				public void onSuccess(AonConfiguration result) {
@@ -947,6 +947,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		tabLayout.selectTab(getStatementTabIndex());
 		commonService.getAccount(getOptions().getDomainName()
 				, getOptions().getDomain()
+				, getOptions().getUser()
 				, selectedItem
 				, new AsyncCallback<Account>() {
 			

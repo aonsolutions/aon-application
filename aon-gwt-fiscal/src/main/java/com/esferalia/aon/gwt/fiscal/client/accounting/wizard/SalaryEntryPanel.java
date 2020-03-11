@@ -535,7 +535,7 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 	}
 
 	private AccountBox createAccountBox() {
-		AccountBox ab = new AccountBox(getCallback().getCurrentDomainName(), getCallback().getCurrentDomainId());
+		AccountBox ab = new AccountBox(getCallback().getCurrentDomainName(), getCallback().getCurrentDomainId(), getCallback().getCurrentUser());
 		ab.addSelectionHandler(new SelectionHandler<Account>() {
 			@Override
 			public void onSelection(SelectionEvent<Account> event) {

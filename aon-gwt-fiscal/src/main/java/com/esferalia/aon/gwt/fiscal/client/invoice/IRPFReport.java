@@ -132,7 +132,7 @@ public class IRPFReport extends MainEntryPoint {
 		formatter.overrideFractionDigits(2, 2);
 		
 		commonService.getAonConfiguration(getDomainName(),
-				getDomain(),
+				getDomain(), getCurrentUser(),
 				new AsyncCallback<AonConfiguration>() {
 					@Override
 					public void onSuccess(AonConfiguration result) {
@@ -327,7 +327,7 @@ public class IRPFReport extends MainEntryPoint {
 			});
 		}
 
-		registry = new AccountingRegistryBox(getDomainName(), getDomain());
+		registry = new AccountingRegistryBox(getDomainName(), getDomain(), getCurrentUser()); 
 		registry.setRequired(false);
 		registry.addSelectionHandler(new SelectionHandler<AccountingRegistry>() {
 			

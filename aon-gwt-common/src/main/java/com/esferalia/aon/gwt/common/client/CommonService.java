@@ -17,40 +17,39 @@ import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-@RemoteServiceRelativePath("Common")
+@RemoteServiceRelativePath("ms/Common")
 public interface CommonService extends RemoteService {
 
 	// --------------------------------------------------------- CONFIGURATION
-	AonConfiguration getAonConfiguration(String currentDomainName, int currentDomain) throws AonCoreException;
-	AonConfiguration getAonConfiguration(String currentDomainName, int currentDomain, Date atDate) throws AonCoreException;
+	AonConfiguration getAonConfiguration(String currentDomainName, int currentDomain, String user) throws AonCoreException;
+	AonConfiguration getAonConfiguration(String currentDomainName, int currentDomain, String user, Date atDate) throws AonCoreException;
 	
 	// -------------------------------------------------------------- SECURITY
-	User getCurrentUser(String domainName, int domain) throws AonCoreException;
+	User getCurrentUser(String domainName, int domain, String currentUser) throws AonCoreException;
 	
 	// -------------------------------------------------------------- ENTERPRISE
-	LinkedList<Enterprise> getParentEnterprises(String domainName, int domain,
-			String query) throws AonCoreException;
-	Enterprise getEnterprise(String domainName, int domain, int id) throws AonCoreException;
-	LinkedList<CompanyBank> getCompanyBanks(String domainName,int domain) throws AonCoreException;
-	LinkedList<CompanyBank> getCompanyBanks(String domainName,int domain,int enterprise) throws AonCoreException;
+	LinkedList<Enterprise> getParentEnterprises(String domainName, int domain, String user,String query) throws AonCoreException;
+	Enterprise getEnterprise(String domainName, int domain, String user, int id) throws AonCoreException;
+	LinkedList<CompanyBank> getCompanyBanks(String domainName,int domain, String user) throws AonCoreException;
+	LinkedList<CompanyBank> getCompanyBanks(String domainName,int domain, String user,int enterprise) throws AonCoreException;
 	
 	// -------------------------------------------------------------- ACCOUNT
-	Account getAccount(String domainName,int domain,Integer id) throws AonCoreException;
-	Account getAccount(String domainName,int domain,String code) throws AonCoreException;
-	LinkedList<Account> getAccounts(String domainName,int domain,String query) throws AonCoreException;
-	Account save(String domainName, int domain, Account account) throws AonCoreException;
-	String getAccountNextCode(String domainName, int domain, String prefix);
+	Account getAccount(String domainName,int domain, String user,Integer id) throws AonCoreException;
+	Account getAccount(String domainName,int domain, String user,String code) throws AonCoreException;
+	LinkedList<Account> getAccounts(String domainName,int domain, String user,String query) throws AonCoreException;
+	Account save(String domainName, int domain, String user, Account account) throws AonCoreException;
+	String getAccountNextCode(String domainName, int domain, String user, String prefix);
 	
 	// -------------------------------------------------------------- CREDITOR
-	LinkedList<Creditor> getBasicCreditors(String domainName,int domain,String query) throws AonCoreException;
+	LinkedList<Creditor> getBasicCreditors(String domainName,int domain, String user,String query) throws AonCoreException;
 	
 	// -------------------------------------------------------------- REGISTRY
-	LinkedList<AccountingRegistry> getAccountingRegistries(String domainName,int domain,Integer id) throws AonCoreException;
-	LinkedList<AccountingRegistry> getAccountingRegistries(String domainName,int domain,String query) throws AonCoreException;
-	LinkedList<AccountingRegistry> getAccountingRegistries(String domainName,int domain,AccountingRegistryParams params) throws AonCoreException;
-	LinkedList<InvoiceRegistry> getInvoiceRegistries(String domainName,int domain,String query) throws AonCoreException;
-	LinkedList<Product> getInvoiceProducts(String domainName,int domain,String query) throws AonCoreException;
-	AccountingRegistry insert(String domainName,int domain,AccountingRegistry reg) throws AonCoreException;
+	LinkedList<AccountingRegistry> getAccountingRegistries(String domainName,int domain, String user,Integer id) throws AonCoreException;
+	LinkedList<AccountingRegistry> getAccountingRegistries(String domainName,int domain, String user,String query) throws AonCoreException;
+	LinkedList<AccountingRegistry> getAccountingRegistries(String domainName,int domain, String user,AccountingRegistryParams params) throws AonCoreException;
+	LinkedList<InvoiceRegistry> getInvoiceRegistries(String domainName,int domain, String user,String query) throws AonCoreException;
+	LinkedList<Product> getInvoiceProducts(String domainName,int domain, String user,String query) throws AonCoreException;
+	AccountingRegistry insert(String domainName,int domain, String user,AccountingRegistry reg) throws AonCoreException;
 	
 
 	

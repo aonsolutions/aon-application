@@ -117,11 +117,11 @@ public class InvoiceRegistryBox extends ResizeComposite implements HasValue<Stri
 		
 	}
 	
-	public InvoiceRegistryBox(final String domainName, final int domain) {
-		this(domainName,domain,null,true);
+	public InvoiceRegistryBox(final String domainName, final int domain,final String user) {
+		this(domainName,domain,user, null,true);
 	}
 	
-	public InvoiceRegistryBox(final String domainName, final int domain, final AonConfiguration config, boolean showDescription) {
+	public InvoiceRegistryBox(final String domainName, final int domain, final String user,final AonConfiguration config, boolean showDescription) {
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle() {
@@ -131,7 +131,7 @@ public class InvoiceRegistryBox extends ResizeComposite implements HasValue<Stri
 				if (AonStringUtils.length(request.getQuery()) >= MIN_CHARACTERS
 				 && AonStringUtils.length(request.getQuery()) <= MAX_CHARACTERS) {
 					reset();
-					commonService.getInvoiceRegistries(domainName,domain,request.getQuery()
+					commonService.getInvoiceRegistries(domainName,domain,user, request.getQuery()
 							,new AsyncCallback<LinkedList<InvoiceRegistry>>() {
 		
 								public void onFailure(Throwable caught) {

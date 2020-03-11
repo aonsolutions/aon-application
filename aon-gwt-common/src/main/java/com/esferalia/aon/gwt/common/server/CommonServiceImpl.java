@@ -25,60 +25,55 @@ import com.esferalia.aon.occam.api.model.type.CreditorStatus;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-@SuppressWarnings("serial")
-@WebServlet(name = "Aon Common Servlet", urlPatterns = { "/aon_gwt_fiscal/Common", "/aon_gwt_aio/Common"})
-public class CommonServiceImpl extends AonRemoteServiceServlet implements CommonService {
+@WebServlet(name = "Aon Common Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Common", "/aon_gwt_aio/ms/Common"})
+public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implements CommonService {
+
+	private static final long serialVersionUID = -6555645829679341214L;
 
 	// --------------------------------------------------------- CONFIGURATION
 	@Override
-	public AonConfiguration getAonConfiguration(String currentDomainName, int currentDomain) {
-		return AON.getConfiguration(currentDomainName, currentDomain,AonServletUtils.getLoggedUser(), null);
+	public AonConfiguration getAonConfiguration(String currentDomainName, int currentDomain,String user) {
+		return AON.getConfiguration(currentDomainName, currentDomain,user, null);
 	}
 	@Override
-	public AonConfiguration getAonConfiguration(String currentDomainName, int currentDomain, Date atDate) {
-		return AON.getConfiguration(currentDomainName, currentDomain,AonServletUtils.getLoggedUser(), atDate);
+	public AonConfiguration getAonConfiguration(String currentDomainName, int currentDomain,String user, Date atDate) {
+		return AON.getConfiguration(currentDomainName, currentDomain,user, atDate);
 	}
 
 	// -------------------------------------------------------------- SECURITY
 	@Override
-	public User getCurrentUser(String domainName, int domain)
-			throws AonCoreException {
-		return AON.getUser(domainName,domain,AonServletUtils.getLoggedUser()); 		
+	public User getCurrentUser(String domainName, int domain,String user) throws AonCoreException {
+		return AON.getUser(domainName,domain,user); 		
 	}
 	// -------------------------------------------------------------- ENTERPRISE
 	@Override
-	public LinkedList<Enterprise> getParentEnterprises(String domainName, int domain,
-			String query) throws AonCoreException {
-		return AON.getParentEnterprises(domainName, domain,AonServletUtils.getLoggedUser(), query);		
+	public LinkedList<Enterprise> getParentEnterprises(String domainName, int domain,String user,String query) throws AonCoreException {
+		return AON.getParentEnterprises(domainName, domain,user, query);		
 	}
 
 	@Override
-	public Enterprise getEnterprise(String domainName, int domain, int id)
-			throws AonCoreException {
-		return AON.getEnterprise(domainName, domain,AonServletUtils.getLoggedUser(), id);
+	public Enterprise getEnterprise(String domainName, int domain,String user, int id) throws AonCoreException {
+		return AON.getEnterprise(domainName, domain,user, id);
 	}
 
 	@Override
-	public LinkedList<CompanyBank> getCompanyBanks(String domainName,
-			int domain, int enterprise) throws AonCoreException {
-		return AON.getCompanyBanks(domainName, domain,AonServletUtils.getLoggedUser(), enterprise);
+	public LinkedList<CompanyBank> getCompanyBanks(String domainName,int domain,String user, int enterprise) throws AonCoreException {
+		return AON.getCompanyBanks(domainName, domain,user, enterprise);
 	}
 
 	@Override
-	public LinkedList<CompanyBank> getCompanyBanks(String domainName,
-			int domain) throws AonCoreException {
-		return AON.getCompanyBanks(domainName, domain,AonServletUtils.getLoggedUser());
+	public LinkedList<CompanyBank> getCompanyBanks(String domainName,int domain,String user) throws AonCoreException {
+		return AON.getCompanyBanks(domainName, domain,user);
 	}
 
 	@Override
-	public LinkedList<Account> getAccounts(String domainName, int domain,
-			String query) throws AonCoreException {
+	public LinkedList<Account> getAccounts(String domainName, int domain,String user,String query) throws AonCoreException {
 		final String q = (!AonStringUtils.contains(query, AonStringUtils.PERCENT))
 		 	?((AonStringUtils.isNumeric(query)? AonStringUtils.EMPTY:AonStringUtils.PERCENT) 
 		 			+ query 
 		 			+ AonStringUtils.PERCENT)
 			:(query);
-		return ACCOUNTING.getAccounts(domainName, domain,AonServletUtils.getLoggedUser(),
+		return ACCOUNTING.getAccounts(domainName, domain,user,
 				p ->  p.getActiveProperty().eq((byte) 1)
 					.and(p.getCodeProperty().like(q)
 					 .or(p.getDescriptionProperty().like(q))
@@ -87,30 +82,30 @@ public class CommonServiceImpl extends AonRemoteServiceServlet implements Common
 	}
 
 	@Override
-	public Account getAccount(String domainName, int domain,Integer id) throws AonCoreException {
-		return ACCOUNTING.getAccount(domainName, domain,AonServletUtils.getLoggedUser(), id);
+	public Account getAccount(String domainName, int domain,String user,Integer id) throws AonCoreException {
+		return ACCOUNTING.getAccount(domainName, domain,user, id);
 	}
 	@Override
-	public Account getAccount(String domainName, int domain,String code) throws AonCoreException {
-		return ACCOUNTING.getAccount(domainName, domain,AonServletUtils.getLoggedUser(), code);
+	public Account getAccount(String domainName, int domain,String user,String code) throws AonCoreException {
+		return ACCOUNTING.getAccount(domainName, domain,user, code);
 	}
 	
 	@Override
-	public Account save(String domainName, int domain, Account account) throws AonCoreException {
-		return ACCOUNTING.save(domainName, domain,AonServletUtils.getLoggedUser(), account);
+	public Account save(String domainName, int domain,String user, Account account) throws AonCoreException {
+		return ACCOUNTING.save(domainName, domain,user, account);
 	}
 	@Override
-	public String getAccountNextCode(String domainName, int domain, String prefix) {
-		return ACCOUNTING.getAccountNextCode(domainName, domain,AonServletUtils.getLoggedUser(), prefix);
+	public String getAccountNextCode(String domainName, int domain,String user, String prefix) {
+		return ACCOUNTING.getAccountNextCode(domainName, domain,user, prefix);
 	}
 
 	// -------------------------------------------------------------- CREDITOR
 	@Override
-	public LinkedList<Creditor> getBasicCreditors(String domainName, int domain, String query) throws AonCoreException {
+	public LinkedList<Creditor> getBasicCreditors(String domainName, int domain,String user, String query) throws AonCoreException {
 		final String q = (!AonStringUtils.contains(query, AonStringUtils.PERCENT))
 			 	?(AonStringUtils.PERCENT + query + AonStringUtils.PERCENT)
 				:(query);
-		return AON.getBasicCreditors(domainName, domain,AonServletUtils.getLoggedUser(),
+		return AON.getBasicCreditors(domainName, domain,user,
 				p ->  p.getActiveProperty().eq( CreditorStatus.ACTIVE.value())
 					.and(p.getDocumentProperty().like(q)
 					 .or(p.getNameProperty().like(q))
@@ -118,19 +113,17 @@ public class CommonServiceImpl extends AonRemoteServiceServlet implements Common
 				).collect(Collectors.toCollection(LinkedList::new));
 	}
 	@Override
-	public LinkedList<AccountingRegistry> getAccountingRegistries(String domainName, int domain,
-			Integer id) throws AonCoreException {
-		return ACCOUNTING.getAccountingRegistries(domainName, domain,AonServletUtils.getLoggedUser(),
+	public LinkedList<AccountingRegistry> getAccountingRegistries(String domainName, int domain,String user, Integer id) throws AonCoreException {
+		return ACCOUNTING.getAccountingRegistries(domainName, domain,user,
 				p -> p.getIdProperty().eq(id))
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	@Override
-	public LinkedList<AccountingRegistry> getAccountingRegistries(String domainName, int domain, String query)
-			throws AonCoreException {
+	public LinkedList<AccountingRegistry> getAccountingRegistries(String domainName, int domain,String user, String query) throws AonCoreException {
 		final String q = (!AonStringUtils.contains(query, AonStringUtils.PERCENT))
 			 	?(AonStringUtils.PERCENT + query + AonStringUtils.PERCENT)
 				:(query);
-		return ACCOUNTING.getAccountingRegistries(domainName, domain,AonServletUtils.getLoggedUser(),
+		return ACCOUNTING.getAccountingRegistries(domainName, domain,user,
 				p ->     p.getDocumentProperty().like(q)
 					 .or(p.getNameProperty().like(q))
 					 .or(p.getAliasProperty().like(q))
@@ -140,9 +133,9 @@ public class CommonServiceImpl extends AonRemoteServiceServlet implements Common
 	}
 	
 	@Override
-	public LinkedList<AccountingRegistry> getAccountingRegistries(String domainName, int domain,
+	public LinkedList<AccountingRegistry> getAccountingRegistries(String domainName, int domain, String user,
 			AccountingRegistryParams params) throws AonCoreException {
-		return ACCOUNTING.getAccountingRegistries(domainName, domain,AonServletUtils.getLoggedUser(),
+		return ACCOUNTING.getAccountingRegistries(domainName, domain,user,
 				p -> getFilter(p, params))
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
@@ -154,17 +147,17 @@ public class CommonServiceImpl extends AonRemoteServiceServlet implements Common
 		;
 	}
 	@Override
-	public AccountingRegistry insert(String domainName, int domain, AccountingRegistry reg) throws AonCoreException {
-		return ACCOUNTING.insert(domainName, domain,AonServletUtils.getLoggedUser(), reg);
+	public AccountingRegistry insert(String domainName, int domain, String user, AccountingRegistry reg) throws AonCoreException {
+		return ACCOUNTING.insert(domainName, domain,user, reg);
 	}
 	
 	@Override
-	public LinkedList<InvoiceRegistry> getInvoiceRegistries(String domainName, int domain, String query)
+	public LinkedList<InvoiceRegistry> getInvoiceRegistries(String domainName, int domain, String user, String query)
 			throws AonCoreException {
 		final String q = (!AonStringUtils.contains(query, AonStringUtils.PERCENT))
 			 	?(AonStringUtils.PERCENT + query + AonStringUtils.PERCENT)
 				:(query);
-		return AON.getInvoiceRegistries(domainName, domain,AonServletUtils.getLoggedUser(),
+		return AON.getInvoiceRegistries(domainName, domain,user,
 				p -> p.getDocumentProperty().like(q)
 					 .or(p.getNameProperty().like(q))
 					 .or(p.getAliasProperty().like(q))
@@ -172,12 +165,12 @@ public class CommonServiceImpl extends AonRemoteServiceServlet implements Common
 	}
 
 	@Override
-	public LinkedList<Product> getInvoiceProducts(String domainName, int domain, String query)
+	public LinkedList<Product> getInvoiceProducts(String domainName, int domain, String user, String query)
 			throws AonCoreException {
 		final String q = (!AonStringUtils.contains(query, AonStringUtils.PERCENT))
 			 	?(AonStringUtils.PERCENT + query + AonStringUtils.PERCENT)
 				:(query);
-		return AON.getInvoiceProducts(domainName, domain,AonServletUtils.getLoggedUser()
+		return AON.getInvoiceProducts(domainName, domain,user
 					,p -> p.getNameProperty().like(q)
 						.or(p.getCodeProperty().like(q))
 				).collect(Collectors.toCollection(LinkedList::new));

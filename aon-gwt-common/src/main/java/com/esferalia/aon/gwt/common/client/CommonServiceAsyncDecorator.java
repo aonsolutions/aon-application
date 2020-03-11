@@ -26,155 +26,155 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 
 	// --------------------------------------------------------- CONFIGURATION
 	@Override
-	public void getAonConfiguration(String currentDomainName, int currentDomain, Date atDate,
+	public void getAonConfiguration(String currentDomainName, int currentDomain, String user, Date atDate,
 			AsyncCallback<AonConfiguration> callback) {
 		AON.start();
-		serviceAsync.getAonConfiguration(currentDomainName, currentDomain, atDate,   
+		serviceAsync.getAonConfiguration(currentDomainName, currentDomain, user, atDate,   
 				new AsyncCallbackWrapper<AonConfiguration>(callback));
 	}
 	@Override
-	public void getAonConfiguration(String currentDomainName, int currentDomain,
+	public void getAonConfiguration(String currentDomainName, int currentDomain, String user,
 			AsyncCallback<AonConfiguration> callback) {
 		AON.start();
-		serviceAsync.getAonConfiguration(currentDomainName, currentDomain,   
+		serviceAsync.getAonConfiguration(currentDomainName, currentDomain, user,   
 				new AsyncCallbackWrapper<AonConfiguration>(callback));
 	}
 
 	// -------------------------------------------------------------- SECURITY
 	@Override
-	public void getCurrentUser(String domainName, int domain,
+	public void getCurrentUser(String domainName, int domain, String user,
 			AsyncCallback<User> callback) {
 		AON.start();
-		serviceAsync.getCurrentUser(domainName, domain,  
+		serviceAsync.getCurrentUser(domainName, domain, user,  
 				new AsyncCallbackWrapper<User>(callback));
 	}
 
 	// -------------------------------------------------------------- PARAMS
 	@Override
-	public void getParentEnterprises(String domainName, int domain,
+	public void getParentEnterprises(String domainName, int domain, String user,
 			String query,AsyncCallback<LinkedList<Enterprise>> callback) {
 		AON.start();
-		serviceAsync.getParentEnterprises(domainName, domain, query,  
+		serviceAsync.getParentEnterprises(domainName, domain, user, query,  
 				new AsyncCallbackWrapper<LinkedList<Enterprise>>(callback));
 	}
 
 	@Override
-	public void getEnterprise(String domainName, int domain, int id,
+	public void getEnterprise(String domainName, int domain, String user, int id,
 			AsyncCallback<Enterprise> callback) {
 		AON.start();
-		serviceAsync.getEnterprise(domainName, domain, id,  
+		serviceAsync.getEnterprise(domainName, domain, user, id,  
 				new AsyncCallbackWrapper<Enterprise>(callback));
 	}
 
 	@Override
-	public void getCompanyBanks(String domainName, int domain, int enterprise,
+	public void getCompanyBanks(String domainName, int domain, String user, int enterprise,
 			AsyncCallback<LinkedList<CompanyBank>> callback) {
 		AON.start();
-		serviceAsync.getCompanyBanks(domainName, domain, enterprise,  
+		serviceAsync.getCompanyBanks(domainName, domain, user, enterprise,  
 				new AsyncCallbackWrapper<LinkedList<CompanyBank>>(callback));
 	}
 	@Override
-	public void getCompanyBanks(String domainName, int domain,
+	public void getCompanyBanks(String domainName, int domain, String user,
 			AsyncCallback<LinkedList<CompanyBank>> callback){
 		AON.start();
-		serviceAsync.getCompanyBanks(domainName, domain,   
+		serviceAsync.getCompanyBanks(domainName, domain, user,   
 				new AsyncCallbackWrapper<LinkedList<CompanyBank>>(callback));
 	}
 
 	// -------------------------------------------------------------- ACCOUNT
 	@Override
-	public void getAccount(String domainName, int domain, Integer id,
+	public void getAccount(String domainName, int domain, String user, Integer id,
 			AsyncCallback<Account> callback) {
 		AON.start();
-		serviceAsync.getAccount(domainName, domain, id,   
+		serviceAsync.getAccount(domainName, domain, user, id,   
 				new AsyncCallbackWrapper<Account>(callback));
 	}
 	
 	@Override
-	public void getAccount(String domainName, int domain, String code,
+	public void getAccount(String domainName, int domain, String user, String code,
 			AsyncCallback<Account> callback) {
 		AON.start();
-		serviceAsync.getAccount(domainName, domain, code,   
+		serviceAsync.getAccount(domainName, domain, user, code,   
 				new AsyncCallbackWrapper<Account>(callback));
 	}
 
 	@Override
-	public void getAccounts(String domainName, int domain, String query,
+	public void getAccounts(String domainName, int domain, String user, String query,
 			AsyncCallback<LinkedList<Account>> callback) {
 		AON.start();
-		serviceAsync.getAccounts(domainName, domain, query,   
+		serviceAsync.getAccounts(domainName, domain, user, query,   
 				new AsyncCallbackWrapper<LinkedList<Account>>(callback));
 	}
 
 	@Override
-	public void save(String domainName, int domain, Account account, AsyncCallback<Account> callback) {
+	public void save(String domainName, int domain, String user, Account account, AsyncCallback<Account> callback) {
 		AON.start();
-		serviceAsync.save(domainName, domain, account,   
+		serviceAsync.save(domainName, domain, user, account,   
 				new AsyncCallbackWrapper<Account>(callback));
 	}
 	@Override
-	public void getAccountNextCode(String domainName, int domain, String prefix,
+	public void getAccountNextCode(String domainName, int domain, String user, String prefix,
 			AsyncCallback<String> callback) {
 		AON.start();
-		serviceAsync.getAccountNextCode(domainName, domain, prefix,   
+		serviceAsync.getAccountNextCode(domainName, domain, user, prefix,   
 				new AsyncCallbackWrapper<String>(callback));
 	}
 
 	// -------------------------------------------------------------- CREDITOR
 	@Override
-	public void getBasicCreditors(String domainName, int domain, String query,
+	public void getBasicCreditors(String domainName, int domain, String user, String query,
 			AsyncCallback<LinkedList<Creditor>> callback) {
 		AON.start();
-		serviceAsync.getBasicCreditors(domainName, domain, query,   
+		serviceAsync.getBasicCreditors(domainName, domain, user, query,   
 				new AsyncCallbackWrapper<LinkedList<Creditor>>(callback));
 	}
 
 	// -------------------------------------------------------------- REGISTRY
 	@Override
-	public void getAccountingRegistries(String domainName, int domain, Integer id,
+	public void getAccountingRegistries(String domainName, int domain, String user, Integer id,
 			AsyncCallback<LinkedList<AccountingRegistry>> callback) {
 		AON.start();
-		serviceAsync.getAccountingRegistries(domainName, domain, id,   
+		serviceAsync.getAccountingRegistries(domainName, domain, user, id,   
 				new AsyncCallbackWrapper<LinkedList<AccountingRegistry>>(callback));
 	}
 	@Override
-	public void getAccountingRegistries(String domainName, int domain, String query,
+	public void getAccountingRegistries(String domainName, int domain, String user, String query,
 			AsyncCallback<LinkedList<AccountingRegistry>> callback) {
 		AON.start();
-		serviceAsync.getAccountingRegistries(domainName, domain, query,   
+		serviceAsync.getAccountingRegistries(domainName, domain, user, query,   
 				new AsyncCallbackWrapper<LinkedList<AccountingRegistry>>(callback));
 	}
 
 	@Override
-	public void getAccountingRegistries(String domainName, int domain, AccountingRegistryParams params,
+	public void getAccountingRegistries(String domainName, int domain, String user, AccountingRegistryParams params,
 			AsyncCallback<LinkedList<AccountingRegistry>> callback) {
 		AON.start();
-		serviceAsync.getAccountingRegistries(domainName, domain, params,   
+		serviceAsync.getAccountingRegistries(domainName, domain, user, params,   
 				new AsyncCallbackWrapper<LinkedList<AccountingRegistry>>(callback));
 		
 	}
 	
 	@Override
-	public void getInvoiceRegistries(String domainName, int domain, String query,
+	public void getInvoiceRegistries(String domainName, int domain, String user, String query,
 			AsyncCallback<LinkedList<InvoiceRegistry>> callback) {
 		AON.start();
-		serviceAsync.getInvoiceRegistries(domainName, domain, query,   
+		serviceAsync.getInvoiceRegistries(domainName, domain, user, query,   
 				new AsyncCallbackWrapper<LinkedList<InvoiceRegistry>>(callback));
 	}
 	
 	@Override
-	public void getInvoiceProducts(String domainName, int domain, String query,
+	public void getInvoiceProducts(String domainName, int domain, String user, String query,
 			AsyncCallback<LinkedList<Product>> callback) {
 		AON.start();
-		serviceAsync.getInvoiceProducts(domainName, domain, query,   
+		serviceAsync.getInvoiceProducts(domainName, domain, user, query,   
 				new AsyncCallbackWrapper<LinkedList<Product>>(callback));
 	}
 
 	@Override
-	public void insert(String domainName, int domain, AccountingRegistry reg,
+	public void insert(String domainName, int domain, String user, AccountingRegistry reg,
 			AsyncCallback<AccountingRegistry> callback) {
 		AON.start();
-		serviceAsync.insert(domainName, domain, reg,   
+		serviceAsync.insert(domainName, domain, user, reg,   
 				new AsyncCallbackWrapper<AccountingRegistry>(callback));
 		
 	}

@@ -492,7 +492,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 					container.addStyleName(AON.AON_CSS.aonMarginBottom());
 					flowPanel.add(container);
 					TediContextVisitor tediContextVisitor = new TediContextVisitor(getCallback().getCurrentDomainName(),
-							getCallback().getCurrentDomainId(), getCallback().getConfiguration(), container);
+							getCallback().getCurrentDomainId(),getCallback().getCurrentUser(), getCallback().getConfiguration(), container);
 					error.getContext().getKey().visit(tediContextVisitor, new ICallback() {
 
 						@Override

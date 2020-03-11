@@ -92,7 +92,7 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 		if (config == null) {
 			CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 			commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
-			commonService.getAonConfiguration(domainName, domainId
+			commonService.getAonConfiguration(domainName, domainId, user
 				,new AsyncCallback<AonConfiguration>() {
 					@Override
 					public void onSuccess(AonConfiguration result) {
@@ -170,7 +170,7 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 			}
 		});
 		
-		account = new AccountBox(this.currentDomainName,this.currentDomainId);
+		account = new AccountBox(this.currentDomainName,this.currentDomainId, this.currentUser);
 		account.setRequired(false);
 		account.addSelectionHandler(new SelectionHandler<Account>() {
 			

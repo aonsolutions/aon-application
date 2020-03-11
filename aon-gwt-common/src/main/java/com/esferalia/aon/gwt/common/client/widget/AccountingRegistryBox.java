@@ -122,11 +122,11 @@ public class AccountingRegistryBox extends ResizeComposite implements HasValue<S
 		
 	}
 	
-	public AccountingRegistryBox(final String domainName, final int domain) {
-		this(domainName,domain,null,true);
+	public AccountingRegistryBox(final String domainName, final int domain,final String user) {
+		this(domainName,domain,user,null,true);
 	}
 	
-	public AccountingRegistryBox(final String domainName, final int domain, final AonConfiguration config, boolean showDescription) {
+	public AccountingRegistryBox(final String domainName, final int domain, final String user,final AonConfiguration config, boolean showDescription) {
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle() {
@@ -136,7 +136,7 @@ public class AccountingRegistryBox extends ResizeComposite implements HasValue<S
 				if (AonStringUtils.length(request.getQuery()) >= MIN_CHARACTERS
 				 && AonStringUtils.length(request.getQuery()) <= MAX_CHARACTERS) {
 					reset();
-					commonService.getAccountingRegistries(domainName,domain,request.getQuery()
+					commonService.getAccountingRegistries(domainName,domain,user,request.getQuery()
 							,new AsyncCallback<LinkedList<AccountingRegistry>>() {
 		
 								public void onFailure(Throwable caught) {
@@ -186,7 +186,7 @@ public class AccountingRegistryBox extends ResizeComposite implements HasValue<S
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
 				if ( config != null &&	(isControlF3(event) || isPlusKeyAlone(event))) {
-					showDialog(domainName,domain,config,null);
+					showDialog(domainName,domain,user,config,null);
 				}
 			}
 		});
@@ -415,10 +415,10 @@ public class AccountingRegistryBox extends ResizeComposite implements HasValue<S
 		accountingRegistry.setEnabled(enabled);
 	}
 	
-	public void showDialog(final String domainName, final int domain, final AonConfiguration config, AccountingRegistry ar) {
+	public void showDialog(final String domainName, final int domain, final String user,final AonConfiguration config, AccountingRegistry ar) {
 		final CustomDialog dialog = new CustomDialog();
 		dialog.setCaption(AON.MSG.titular());
-		final AccountingRegistryPanel accountPanel = new AccountingRegistryPanel( domainName, domain
+		final AccountingRegistryPanel accountPanel = new AccountingRegistryPanel( domainName, domain, user
 				, id
 				,config
 				, ar

@@ -134,7 +134,7 @@ public class Model3902014 extends ResizeComposite {
 	@UiField
 	Panel formContainer;
 
-	@UiField
+	@UiField(provided=true)
 	EnterpriseSuggestBox enterpriseSuggest;
 
 	FormPanel diskForm;
@@ -154,7 +154,7 @@ public class Model3902014 extends ResizeComposite {
 		
 		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
 		FISCAL_SERVICE = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
-
+		enterpriseSuggest = new EnterpriseSuggestBox(getCurrentDomainName(), getCurrentDomain(), getCurrentUser());
 		// Create the UI defined in Employee.ui.xml.
 		Widget ui = MODEL_390_BINDER.createAndBindUi(this);
 		

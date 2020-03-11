@@ -709,7 +709,7 @@ public class TediInvoiceList extends DockLayoutPanel {
 					container.addStyleName(AON.AON_CSS.aonMarginBottom());
 					flowPanel.add(container);
 					TediContextVisitor tediContextVisitor = new TediContextVisitor(this.currentDomainName,
-							this.currentDomain, this.configuration, container);
+							this.currentDomain, this.currentUser, this.configuration, container);
 					error.getContext().getKey().visit(tediContextVisitor, new ICallback() {
 
 						@Override

@@ -198,7 +198,7 @@ public class TicketDetailPanel extends ScrollPanel implements HasValueChangeHand
 
 
 	private class InvoicePanelRow implements Focusable {
-		private final AccountBox expAccount = new AccountBox(callback.getCurrentDomainName(), callback.getCurrentDomainId(), false);
+		private final AccountBox expAccount = new AccountBox(callback.getCurrentDomainName(), callback.getCurrentDomainId(), callback.getCurrentUser(), false);
 		private final DoubleBox taxableBase = new DoubleBox(12,4);
 		private final DoubleBox vatPercent = new DoubleBox(6);
 		private final DoubleBox vatQuota = new DoubleBox(8);

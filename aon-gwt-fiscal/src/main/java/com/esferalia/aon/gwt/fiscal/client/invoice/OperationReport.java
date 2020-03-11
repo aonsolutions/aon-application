@@ -127,7 +127,7 @@ public class OperationReport extends MainEntryPoint {
 		formatter.overrideFractionDigits(2, 2);
 		
 		commonService.getAonConfiguration(getDomainName(),
-				getDomain(),
+				getDomain(), getCurrentUser(),
 				new AsyncCallback<AonConfiguration>() {
 					@Override
 					public void onSuccess(AonConfiguration result) {

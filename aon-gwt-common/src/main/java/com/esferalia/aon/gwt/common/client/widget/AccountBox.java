@@ -71,6 +71,7 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 	private boolean required = true;
 	private String domainName;
 	private int domain;
+	private String user;
 	
 	
 	private AccountSuggestionDisplay suggestionDisplay;
@@ -123,13 +124,14 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 		
 	}
 	
-	public AccountBox(final String domainName, final int domain) {
-		this(domainName,domain,true);
+	public AccountBox(final String domainName, final int domain,final String user) {
+		this(domainName,domain,user,true);
 	}
 	
-	public AccountBox(final String domainName, final int domain, boolean showDescription) {
+	public AccountBox(final String domainName, final int domain, final String user,boolean showDescription) {
 		this.domainName = domainName;
 		this.domain = domain;
+		this.user = user;
 			
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
@@ -140,7 +142,7 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 				if (AonStringUtils.length(request.getQuery()) >= MIN_CHARACTERS
 				 && AonStringUtils.length(request.getQuery()) <= MAX_CHARACTERS) {
 					reset();
-					commonService.getAccounts(domainName,domain,request.getQuery()
+					commonService.getAccounts(domainName,domain,user,request.getQuery()
 							,new AsyncCallback<LinkedList<Account>>() {
 		
 								public void onFailure(Throwable caught) {
@@ -252,7 +254,7 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 				SelectionEvent.fire(AccountBox.this, null );
 			} else {
 				accountTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
-				commonService.getAccount(AccountBox.this.domainName,AccountBox.this.domain
+				commonService.getAccount(AccountBox.this.domainName,AccountBox.this.domain,AccountBox.this.user
 						,accountCode,new AsyncCallback<Account>() {
 					@Override
 					public void onSuccess(Account result) {
@@ -424,7 +426,7 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 	private void showAccountDialog() {
 		final CustomDialog dialog = new CustomDialog();
 		dialog.setCaption(AON.MSG.account());
-		final AccountPanel accountPanel = new AccountPanel( domainName, domain, getId(), new AccountPanelCallback() {
+		final AccountPanel accountPanel = new AccountPanel( domainName, domain, user, getId(), new AccountPanelCallback() {
 			
 			@Override
 			public void onCancel() {

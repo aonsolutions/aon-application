@@ -346,7 +346,7 @@ public class VatReport extends MainEntryPoint {
 			});
 		}
 
-		registry = new AccountingRegistryBox(getCurrentDomainName(), getCurrentDomain());
+		registry = new AccountingRegistryBox(getCurrentDomainName(), getCurrentDomain(), getCurrentUser());
 		registry.setRequired(false);
 		registry.addSelectionHandler(new SelectionHandler<AccountingRegistry>() {
 			

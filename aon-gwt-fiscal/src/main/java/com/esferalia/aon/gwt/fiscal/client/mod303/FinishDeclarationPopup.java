@@ -86,7 +86,7 @@ public class FinishDeclarationPopup extends CustomDialog {
 			tab.setWidget(row, 1, new Label( mod303.getDeclarationType().getDescription() ));	
 			row++;
 		} else {
-			final CreditorBox creditorBox = new CreditorBox(Model303.getCurrentDomainName(),Model303.getCurrentDomain() );
+			final CreditorBox creditorBox = new CreditorBox(Model303.getCurrentDomainName(),Model303.getCurrentDomain(),Model303.getCurrentUser());
 			final IbanTextBox iban = new IbanTextBox( new EnterpriseSuggestOracle<Mod303>(callback) );
 			
 			final ListBox listBox = new ListBox();

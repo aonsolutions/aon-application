@@ -76,6 +76,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 		financeSearchPanel = new FinanceSearchPanel(
 			  getCallback().getCurrentDomainName()
 			, getCallback().getCurrentDomainId()
+			, getCallback().getCurrentUser()
 			, new IFinancePanelCallback() {
 
 				@Override
@@ -375,7 +376,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 		
 
 	private AccountBox createAccountBox() {
-		AccountBox ab = new AccountBox(getCallback().getCurrentDomainName(), getCallback().getCurrentDomainId());
+		AccountBox ab = new AccountBox(getCallback().getCurrentDomainName(), getCallback().getCurrentDomainId(), getCallback().getCurrentUser());
 		ab.addSelectionHandler(new SelectionHandler<Account>() {
 			@Override
 			public void onSelection(SelectionEvent<Account> event) {

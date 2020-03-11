@@ -53,12 +53,14 @@ public class TediContextVisitor implements ITediContextVisitor {
 	private static FiscalServiceAsync FISCAL_SERVICE;
 	private String currentDomainName;
 	private int currentDomain;
+	private String currentUser;
 	private AonConfiguration configuration;
 	private SimplePanel container;
 
-	public TediContextVisitor(String domainName, int domain, AonConfiguration configuration, SimplePanel container) {
+	public TediContextVisitor(String domainName, int domain, String user,AonConfiguration configuration, SimplePanel container) {
 		this.currentDomainName = domainName;
 		this.currentDomain = domain;
+		this.currentUser = user;
 		this.configuration = configuration;
 		this.container = container;
 		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
@@ -71,6 +73,9 @@ public class TediContextVisitor implements ITediContextVisitor {
 
 	private int getCurrentDomain() {
 		return currentDomain;
+	}
+	private String getCurrentUser() {
+		return currentUser;
 	}
 
 	public SimplePanel getContainer() {
@@ -411,7 +416,7 @@ public class TediContextVisitor implements ITediContextVisitor {
 
 	private void showRegistryDialog(String label, ITediCallback<AccountingRegistry> callback) {
 		final AccountingRegistryBox registryBox = new AccountingRegistryBox(getCurrentDomainName(), getCurrentDomain(),
-				configuration, false);
+				getCurrentUser(),configuration, false);
 		registryBox.addSelectionHandler(new SelectionHandler<AccountingRegistry>() {
 			@Override
 			public void onSelection(SelectionEvent<AccountingRegistry> event) {
@@ -487,7 +492,7 @@ public class TediContextVisitor implements ITediContextVisitor {
 						
 					}
 					// TODO Inicializar los datos del registry.
-					registryBox.showDialog(getCurrentDomainName(), getCurrentDomain(),configuration,ar);
+					registryBox.showDialog(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(),configuration,ar);
 				}
 			});
 			dialog.setContent("", newCreditor);		

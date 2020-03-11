@@ -296,7 +296,7 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 	private void paintActiveRow(int row, final AccountEntryDetail aed) {
 		setWidget(row, COLS.NUM.ordinal(), new Label()  );
 		
-		final AccountBox detailAccountBox = new AccountBox(getDomainName(),getDomainId());
+		final AccountBox detailAccountBox = new AccountBox(getDomainName(),getDomainId(),getUser());
 		detailAccountBox.setValue(aed.getAccount(), aed.getAccountCode(),aed.getAccountDescription());
 
 		setWidget(row, COLS.ACC.ordinal(), detailAccountBox );
@@ -321,7 +321,7 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 		setWidget(row, COLS.CRE.ordinal(), creditBox );
 		getFlexCellFormatter().addStyleName(row, COLS.CRE.ordinal(),AON.AON_CSS.aonTextRight());
 		
-		final AccountBox balancingAccountBox = new AccountBox(getDomainName(),getDomainId(), false);
+		final AccountBox balancingAccountBox = new AccountBox(getDomainName(),getDomainId(),getUser(), false);
 		balancingAccountBox.setValue(aed.getBalancingAccount(), aed.getBalancingAccountCode(),
 				aed.getBalancingAccountDescription());
 		balancingAccountBox.setRequired(false);

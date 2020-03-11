@@ -165,7 +165,7 @@ public class StatFilter extends ScrollPanel implements HasValueChangeHandlers<St
 		row++;
 		
 		tab.setWidget(row, 0, new MediumLabel(AON.MSG.titular()));
-		InvoiceRegistryBox titular = new InvoiceRegistryBox(getDomainName(),getDomain() );
+		InvoiceRegistryBox titular = new InvoiceRegistryBox(getDomainName(),getDomain(),getCurrentUser() );
 		titular.setRequired(false);
 		titular.addSelectionHandler(new  SelectionHandler<InvoiceRegistry>() {
 			
@@ -184,7 +184,7 @@ public class StatFilter extends ScrollPanel implements HasValueChangeHandlers<St
 		row++;
 		
 		tab.setWidget(row, 0, new MediumLabel(AON.MSG.product()));
-		InvoiceProductBox product = new InvoiceProductBox(getDomainName(),getDomain() );
+		InvoiceProductBox product = new InvoiceProductBox(getDomainName(),getDomain(),getCurrentUser() );
 		product.setRequired(false);
 		product.addSelectionHandler(new  SelectionHandler<Product>() {
 

@@ -96,7 +96,7 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 		if (config == null) {
 			CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 			commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
-			commonService.getAonConfiguration(domainName, domainId
+			commonService.getAonConfiguration(domainName, domainId, user
 				,new AsyncCallback<AonConfiguration>() {
 					@Override
 					public void onSuccess(AonConfiguration result) {

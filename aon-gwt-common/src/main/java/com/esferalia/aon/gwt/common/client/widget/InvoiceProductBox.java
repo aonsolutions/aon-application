@@ -116,11 +116,11 @@ public class InvoiceProductBox extends ResizeComposite implements HasValue<Strin
 		
 	}
 	
-	public InvoiceProductBox(final String domainName, final int domain) {
-		this(domainName,domain,null,true);
+	public InvoiceProductBox(final String domainName, final int domain,final String user) {
+		this(domainName,domain,user, null,true);
 	}
 	
-	public InvoiceProductBox(final String domainName, final int domain, final AonConfiguration config, boolean showDescription) {
+	public InvoiceProductBox(final String domainName, final int domain, final String user, final AonConfiguration config, boolean showDescription) {
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle() {
@@ -130,7 +130,7 @@ public class InvoiceProductBox extends ResizeComposite implements HasValue<Strin
 				if (AonStringUtils.length(request.getQuery()) >= MIN_CHARACTERS
 				 && AonStringUtils.length(request.getQuery()) <= MAX_CHARACTERS) {
 					reset();
-					commonService.getInvoiceProducts(domainName,domain,request.getQuery()
+					commonService.getInvoiceProducts(domainName,domain,user,request.getQuery()
 							,new AsyncCallback<LinkedList<Product>>() {
 		
 								public void onFailure(Throwable caught) {

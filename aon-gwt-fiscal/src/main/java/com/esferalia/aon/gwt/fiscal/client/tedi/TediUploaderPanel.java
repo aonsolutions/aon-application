@@ -399,7 +399,7 @@ public class TediUploaderPanel extends DockLayoutPanel {
 					container.addStyleName(AON.AON_CSS.aonMarginBottom());
 					flowPanel.add(container);
 					TediContextVisitor tediContextVisitor = new TediContextVisitor(this.domainName,
-							this.domain, this.configuration, container);
+							this.domain, this.user, this.configuration, container);
 					error.getContext().getKey().visit(tediContextVisitor, new ICallback() {
 
 						@Override

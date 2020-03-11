@@ -40,29 +40,29 @@ public class AccountPanel extends SimplePanel implements Focusable {
 	private TextBox codeBox = new TextBox();
 	private TextBox descriptionBox = new TextBox();
 	
-	public AccountPanel(final String domainName,final int domain, final AccountPanelCallback callback) {
+	public AccountPanel(final String domainName,final int domain, final String user,final AccountPanelCallback callback) {
 		initializeCommonService();
-		show(domainName,domain, new Account(),callback);
+		show(domainName,domain, user,new Account(),callback);
 	}
 	
-	public AccountPanel(final String domainName,final int domain, Integer id, final AccountPanelCallback callback) {
+	public AccountPanel(final String domainName,final int domain,final String user, Integer id, final AccountPanelCallback callback) {
 		initializeCommonService();
-		commonService.getAccount(domainName, domain, id, new AsyncCallback<Account>() {
+		commonService.getAccount(domainName, domain, user, id, new AsyncCallback<Account>() {
 			
 			@Override
 			public void onSuccess(Account result) {
 				if (result == null) result = new Account();
-				show(domainName,domain, result,callback);
+				show(domainName,domain, user,result,callback);
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				show(domainName,domain, new Account(),callback);
+				show(domainName,domain, user,new Account(),callback);
 			}
 		});
 	}
 	
-	public void show(final String domainName,final int domain, final Account account, final AccountPanelCallback callback) {
+	public void show(final String domainName,final int domain, final String user,final Account account, final AccountPanelCallback callback) {
 		setWidth("500px");
 		setHeight("200px");
 		
@@ -109,7 +109,7 @@ public class AccountPanel extends SimplePanel implements Focusable {
 						)) {
 					String prefix = codeBox.getValue();
 					prefix = AonStringUtils.remove(prefix, '?');
-					commonService.getAccountNextCode(domainName, domain, prefix, new AsyncCallback<String>() {
+					commonService.getAccountNextCode(domainName, domain, user, prefix, new AsyncCallback<String>() {
 
 						@Override
 						public void onSuccess(String result) {
@@ -172,7 +172,7 @@ public class AccountPanel extends SimplePanel implements Focusable {
 					account.setEntryEnabled(true);
 					account.setActive(true);
 				}
-				commonService.save(domainName, domain, account, new AsyncCallback<Account>() {
+				commonService.save(domainName, domain, user, account, new AsyncCallback<Account>() {
 
 					@Override
 					public void onSuccess(Account result) {

@@ -87,7 +87,7 @@ public class FinishDeclarationPopup extends CustomDialog {
 			row++;
 		} else {
 			final CreditorBox creditorBox = new CreditorBox(Model390HF.getCurrentDomainName(),
-					Model390HF.getCurrentDomain());
+					Model390HF.getCurrentDomain(),Model390HF.getCurrentUser());
 			final IbanTextBox iban = new IbanTextBox(new EnterpriseSuggestOracle<Mod390HF>(callback));
 
 			final ListBox listBox = new ListBox();
@@ -231,7 +231,7 @@ public class FinishDeclarationPopup extends CustomDialog {
 
 		@Override
 		public void requestSuggestions(final Request request, final Callback callback) {
-			commonService.getCompanyBanks(Model390HF.getCurrentDomainName(), Model390HF.getCurrentDomain(),
+			commonService.getCompanyBanks(Model390HF.getCurrentDomainName(), Model390HF.getCurrentDomain(),Model390HF.getCurrentUser(),
 					new AsyncCallback<LinkedList<CompanyBank>>() {
 
 						public void onFailure(Throwable caught) {

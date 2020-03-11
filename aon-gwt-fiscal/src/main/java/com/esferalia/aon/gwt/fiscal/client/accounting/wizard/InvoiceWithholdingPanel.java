@@ -197,8 +197,7 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 		withholdingTable.setWidget(row, col, lbl4);
 		col++;
 		
-		withholdingAccount = new AccountBox(callback.getCurrentDomainName()
-				, callback.getCurrentDomainId(), false);
+		withholdingAccount = new AccountBox(callback.getCurrentDomainName(), callback.getCurrentDomainId(), callback.getCurrentUser(), false);
 		withholdingAccount.setTabIndex(++tabindex);
 		withholdingAccount.addSelectionHandler(new SelectionHandler<Account>() {
 			
