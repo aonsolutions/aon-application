@@ -433,16 +433,12 @@ public class InvoiceImport {
 						.setDocument(nif)
 						.setName(name));
 				}			
-				Account acc = ACCOUNTING.getAccounts(domain.getName(), domain.getId(), login, f -> 
-					f.getDomainProperty().eq(domain.getId())
-					.and(f.getAliasProperty().eq(nif))).findFirst().orElse(new Account());
 				customer = new Customer()
 					.setDomain(domain.getId())
 					.setRegistry(reg)
 					.setStatus(CustomerStatus.ACTIVE)
 					.setTransaction(transaction.value())
-					.setScope(domain.getScope())
-					.setAccount(acc.getId());
+					.setScope(domain.getScope());
 				customer.setName(reg.getName());
 				AON.insertCustomer(domain.getName(), domain.getId(), login, customer);
 			}
