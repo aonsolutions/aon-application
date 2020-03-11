@@ -1,7 +1,10 @@
 package com.esferalia.aon.gwt.fiscal.client.mod200;
 
+import java.util.LinkedList;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
+import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -108,6 +111,13 @@ public class Mod2002015ServiceAsyncDecorator implements Mod2002015ServiceAsync {
 		AON.start();
 		fsa.fillMod2002015AccountingData(mod200,
 				new AsyncCallbackWrapper<Mod2002015>(callback));
+	}
+
+	@Override
+	public void getCompanyBanks(String domainName, int domain, AsyncCallback<LinkedList<CompanyBank>> callback) {
+		AON.start();
+		fsa.getCompanyBanks(domainName,domain,
+				new AsyncCallbackWrapper<LinkedList<CompanyBank>>(callback));
 	}
 
 }

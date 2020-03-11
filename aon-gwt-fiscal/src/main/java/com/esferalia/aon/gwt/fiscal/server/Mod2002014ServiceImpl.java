@@ -1,11 +1,15 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
+import java.util.LinkedList;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Mod2002014Service;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb.MOD2002014;
@@ -109,5 +113,10 @@ public class Mod2002014ServiceImpl extends AonRemoteServiceServlet implements Mo
 		} finally {
 			request.getSession().removeAttribute("Mod2002014Accounting");
 		}
+	}
+
+	@Override
+	public LinkedList<CompanyBank> getCompanyBanks(String domainName, int domain) throws AonCoreException {
+		return AON.getCompanyBanks(domainName, domain,this.getUserLogin());
 	}
 }

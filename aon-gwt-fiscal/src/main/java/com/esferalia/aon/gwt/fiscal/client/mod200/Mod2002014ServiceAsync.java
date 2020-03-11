@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.fiscal.client.mod200;
 
+import java.util.LinkedList;
+
+import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -17,5 +20,6 @@ public interface Mod2002014ServiceAsync {
 	void validateMod2002014(Mod2002014 mod200, AsyncCallback<Mod2002014> callback);
 	void importMod2002013(String domainName, int domain, Mod2002014 mod200,AsyncCallback<Mod2002014> callback);
 	void fillMod2002014AccountingData(Mod2002014 mod200, AsyncCallback<Mod2002014> callback);
+	void getCompanyBanks(String domainName, int domain, AsyncCallback<LinkedList<CompanyBank>> asyncCallback);
 
 	}

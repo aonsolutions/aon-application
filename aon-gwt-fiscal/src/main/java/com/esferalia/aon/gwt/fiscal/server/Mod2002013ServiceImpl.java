@@ -1,10 +1,14 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
+import java.util.LinkedList;
+
 import javax.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Mod2002013Service;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.watson.error.AonCoreException;
 
@@ -65,4 +69,10 @@ public class Mod2002013ServiceImpl extends AonRemoteServiceServlet implements Mo
 	public String dumpAEATMod2002013(Mod2002013 mod200) throws AonCoreException {
 		return FISCAL.dumpAEATMod2002013(mod200);
 	}
+	
+	@Override
+	public LinkedList<CompanyBank> getCompanyBanks(String domainName, int domain) throws AonCoreException {
+		return AON.getCompanyBanks(domainName, domain,this.getUserLogin());
+	}
+	
 }

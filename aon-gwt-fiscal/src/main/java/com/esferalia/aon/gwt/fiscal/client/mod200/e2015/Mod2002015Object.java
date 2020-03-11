@@ -259,7 +259,7 @@ public class Mod2002015Object implements Serializable {
 	}
 
 	public void getCompanyBanks(final AsyncCallback<LinkedList<CompanyBank>> callback) {
-		Model200.getCommonService().getCompanyBanks(domainName,mod200.getDomain(),new AsyncCallback<LinkedList<CompanyBank>>() {
+		Model200.getMod2002015Service().getCompanyBanks(domainName,mod200.getDomain(),new AsyncCallback<LinkedList<CompanyBank>>() {
 			
 			@Override
 			public void onSuccess(LinkedList<CompanyBank> result) {

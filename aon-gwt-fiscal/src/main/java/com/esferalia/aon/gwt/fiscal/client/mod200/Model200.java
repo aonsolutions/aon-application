@@ -3,9 +3,6 @@ package com.esferalia.aon.gwt.fiscal.client.mod200;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.CommonService;
-import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
-import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.ContextMenu;
 import com.esferalia.aon.gwt.common.shared.AonData;
@@ -64,7 +61,6 @@ public class Model200 extends MainEntryPoint {
 	static Mod2002017ServiceAsync mod2002017Service;
 	static Mod2002018ServiceAsync mod2002018Service;
 	static FiscalServiceAsync fiscalService;
-	static CommonServiceAsync commonService;
 	final FiscalServiceAsync impl = GWT.create(FiscalService.class);
 	
 	Model200Table table;
@@ -79,14 +75,6 @@ public class Model200 extends MainEntryPoint {
 			fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
 		}
 		return fiscalService;
-	}
-	
-	public static CommonServiceAsync getCommonService() {
-		if (commonService == null) {
-			CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
-			commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
-		}
-		return commonService;
 	}
 	
 	public static Mod2002018ServiceAsync getMod2002018Service() {

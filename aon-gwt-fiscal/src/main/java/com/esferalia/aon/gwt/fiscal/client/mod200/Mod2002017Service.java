@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.fiscal.client.mod200;
 
+import java.util.LinkedList;
+
+import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2017.Mod2002017;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -20,5 +23,6 @@ public interface Mod2002017Service extends RemoteService {
 	String dumpAEATMod2002017(Mod2002017 mod200) throws AonCoreException;
 	Mod2002017 importMod2002016(String domainName,int domain,Mod2002017 mod200) throws AonCoreException;
 	Mod2002017 fillMod2002017AccountingData(Mod2002017 mod200) throws AonCoreException;
+	LinkedList<CompanyBank> getCompanyBanks(String domainName, int domain) throws AonCoreException;
 
 }
