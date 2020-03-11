@@ -2067,10 +2067,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		try {
 			stmt = 
 			connection.prepareStatement(
-			"SELECT DATEDIFF("
+			"SELECT "
 			+ "contract.end_date "
-			+ ", contract.start_date) "
-			+ "AS DAYS "
+			+ ", contract.start_date "
 			+ "FROM contract  "
 			+ "WHERE contract.person = ? "
 			+ "AND contract.enterprise_ccc = ? "
@@ -2079,6 +2078,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			+ "AND contract.end_date < ? "
 			);
 			
+
 			stmt.setInt(1, getInt(SQLConstants.CONTRACT, ContractColumns.PERSON) );
 			stmt.setInt(2, getInt(SQLConstants.CONTRACT, ContractColumns.ENTERPRISE_CCC) );
 			stmt.setDate(3, toSqlDate(endDate) );
@@ -2088,7 +2088,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			int days = 0;
 			rs = stmt.executeQuery();
 			while ( rs.next() ) {
-				days += rs.getInt("DAYS") + 1;
+				Date contractEndDate = rs.getDate(ContractColumns.END_DATE);
+				Date contractStartDate = rs.getDate(ContractColumns.START_DATE);
+				rs.getDate(ContractColumns.END_DATE);
+				days += new Period(Period.max(contractStartDate, startDate), contractEndDate).daysStream().count();
 			}
 			return days;
 			
