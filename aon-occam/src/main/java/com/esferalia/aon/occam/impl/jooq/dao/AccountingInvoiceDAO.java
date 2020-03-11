@@ -119,8 +119,10 @@ public class AccountingInvoiceDAO {
 				}
 				ai.setInvoice(invoice);
 				ai.getInvoice().setDetails(new LinkedList<InvoiceDetail>());
-				AccountingRegistry reg =  RegistryDAO.getAccountingRegistries(ctx
+				
+				AccountingRegistry reg = RegistryDAO.getAccountingRegistries(ctx
 						, filter -> filter.getIdProperty().eq(invoice.getRegistry()))
+						.filter(f -> AccountingRegistryType.getFor(invoice.getType()).equals(f.getType()))
 						.findFirst()
 						.orElse(null);
 				ai.setRegistry(reg);
