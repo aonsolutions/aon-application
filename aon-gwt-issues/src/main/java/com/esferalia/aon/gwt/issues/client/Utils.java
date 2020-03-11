@@ -79,6 +79,9 @@ public class Utils {
 	}
 	
     public static Boolean isAdmin(User user) {
+    	if(user.getUserRoles() == null) {
+    		return true;
+    	}
     	for(Integer i = 0; i < user.getUserRoles().length; i++){
     		if(user.getUserRoles()[i] != null && 	
     			(user.getUserRoles()[i].equals(AonRole.ADMIN) ||

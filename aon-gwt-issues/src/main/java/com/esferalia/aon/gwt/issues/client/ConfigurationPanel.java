@@ -2,8 +2,6 @@ package com.esferalia.aon.gwt.issues.client;
 
 import com.esferalia.aon.gwt.api.client.incidence.Incidence;
 import com.esferalia.aon.gwt.common.shared.AonData;
-import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.occam.api.model.type.AonRole;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.ResizeEvent;
@@ -74,15 +72,4 @@ public class ConfigurationPanel extends Composite {
 		});
                 
     }
-    
-    private Boolean isAdmin(User user) {
-    	for(Integer i = 0; i < user.getUserRoles().length; i++){
-    		if(user.getUserRoles()[i] != null && 	
-    			(user.getUserRoles()[i].equals(AonRole.ADMIN) ||
-    			user.getUserRoles()[i].equals(AonRole.CALL_CENTER_MANAGER))){
-    			return true;
-    		}
-    	}
-    	return false;
-	}
 }

@@ -2,7 +2,6 @@ package net.aonsolutions.aon.gwt.document.client;
 
 import java.util.LinkedList;
 
-import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesCSS;
 import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesResources;
 import com.google.gwt.core.client.GWT;
@@ -12,17 +11,12 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.TextBox;
-import com.vaadin.polymer.iron.widget.IronIcon;
-import com.vaadin.polymer.paper.widget.PaperButton;
 
-public class FilterPanel extends Composite {
+public class TediFilterPanel extends Composite {
 	
-    interface Binder extends UiBinder<HTMLPanel, FilterPanel> {
+    interface Binder extends UiBinder<HTMLPanel, TediFilterPanel> {
     	
     }
     
@@ -30,12 +24,11 @@ public class FilterPanel extends Composite {
 
 	public static final AonGwtIssuesCSS ICSS = GWT.<AonGwtIssuesResources> create(AonGwtIssuesResources.class).css();
 
-    @UiField HorizontalPanel panel;
     @UiField TextBox titleFilter;
     
     Documental parent;
     
-    public FilterPanel(Documental parent) {
+    public TediFilterPanel(Documental parent) {
     	this.parent = parent;
   
     	initWidget(binder.createAndBindUi(this));    
@@ -50,9 +43,5 @@ public class FilterPanel extends Composite {
 				parent.createAttachListPanel();
 			}
 		});
-    	
-    	FlowPanel fpanel = new FlowPanel(); 
-		panel.add(fpanel);
     }
-    
 }

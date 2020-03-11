@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.code.aon</groupId>
+    <artifactId>aon.parent</artifactId>
+    <version>9.23-SNAPSHOT</version>
+  </parent>
+  <groupId>es.translogia</groupId>
+  <artifactId>tedi-center</artifactId>
+  <packaging>war</packaging>
+  <name>TEDI CENTER</name>
+  <description>TEDI CENTER</description>
+  <properties>
+    <maven.build.timestamp.format>dd/MM/yyyy HH:mm:ss</maven.build.timestamp.format>
+  </properties>
+  <build>
+    <finalName>tedi-center</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>parse-version</id>
+            <goals>
+              <goal>parse-version</goal>
+            </goals>
+            <configuration />
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>3.2.2</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+            <manifestEntries>
+              <dbVersion>${dbVersion}</dbVersion>
+              <buildNumber>${env.BUILD_NUMBER}</buildNumber>
+              <buildDate>${maven.build.timestamp}</buildDate>
+              <buildRevision>${buildNumber}</buildRevision>
+            </manifestEntries>
+          </archive>
+        </configuration>
+        <executions>
+          <execution>
+            <id>execution1</id>
+            <phase>package</phase>
+            <configuration />
+            <!--goals>
+              <goal>manifest</goal>
+            </goals-->
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+  	<dependency>
+      <groupId>net.aonsolutions</groupId>
+      <artifactId>aon.gwt.aio</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+	
+    <dependency>
+      <groupId>net.aonsolutions</groupId>
+      <artifactId>aon.webservice</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    
+    <dependency>
+	   	<groupId>com.auth0</groupId>
+	    <artifactId>java-jwt</artifactId>
+	    <version>3.9.0</version>
+	</dependency>
+  	
+  </dependencies>
+</project>

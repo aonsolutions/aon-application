@@ -43,7 +43,6 @@ public abstract class AonToolbar extends Composite {
     
     public AonToolbar(String title) {
         initWidget(binder.createAndBindUi(this));
-
         this.titleButton.setNoink(true);
         this.titleButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -51,7 +50,6 @@ public abstract class AonToolbar extends Composite {
 				onTitleClick();
 			}
 		});
-        
         setTitle(title);
     }
     

@@ -19,6 +19,8 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -44,20 +46,32 @@ public class UploadServlet extends HttpServlet{
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		Object object = new JSONObject();
 
-		String domainName = req.getParameter("domain_name");
-		String domain_id = req.getParameter("domain_id");
-		Integer domainId = Integer.parseInt(domain_id);
-		String login = req.getParameter("login");
-		String categoryStr = req.getParameter("category");
-		Integer category = !"".equals(categoryStr) ?  Integer.parseInt(categoryStr) : null;
-		String tagStr = req.getParameter("tag");
-		String[] tags = tagStr.substring(0, tagStr.length()).split(",");
-		String scopeStr = req.getParameter("scope");
-		Integer scope = !"".equals(scopeStr) ? Integer.parseInt(scopeStr) : null;
-		Boolean confidential = "true".equalsIgnoreCase(req.getParameter("confidential"));
-
+		String token = req.getHeader("session_id");
+		String domainIdStr = req.getHeader("domain_id");
+ 		Integer domainId = domainIdStr != null ? Integer.parseInt(domainIdStr) : null; 
+		Boolean hasToken = token != null;
 		
-		  // checks if the request actually contains upload file
+		JSONObject json = hasToken ? SECURITY.decodeJWT(token) : new JSONObject();
+		Domain domain = null;
+		String login = "";
+		if(hasToken) {
+			domain = AON_SOLUTIONS.getDomain(token, domainId);
+		} else {
+			String domainName = req.getParameter("domain_name");
+			domainId = json.getInt("domainId");
+			login = req.getParameter("login");
+	    	domain = AON.getDomain(domainName, domainId, login);
+		}
+
+		String categoryStr = req.getParameter("category");
+		Integer category = !"".equals(categoryStr) && categoryStr != null?  Integer.parseInt(categoryStr) : null;
+		String tagStr = req.getParameter("tag");
+		String[] tags = tagStr != null ? tagStr.substring(0, tagStr.length()).split(",") : null;
+		String scopeStr = req.getParameter("scope");
+		Integer scope = !"".equals(scopeStr) && scopeStr != null ? Integer.parseInt(scopeStr) : null;
+		Boolean confidential = "true".equalsIgnoreCase(req.getParameter("confidential"));
+	
+		// checks if the request actually contains upload file
         if (!ServletFileUpload.isMultipartContent(req)) {
             // if not, we stop here
             PrintWriter writer = resp.getWriter();
@@ -101,7 +115,7 @@ public class UploadServlet extends HttpServlet{
                 for (FileItem item : formItems) {
                     // processes only fields that are not form fields
                     if (!item.isFormField()) {
-                    	Domain domain = AON.getDomain(domainName, domainId, login);
+
                     	Attach attach = new Attach()
                     			.setAttachModule(1) // TODO
                     			.setAttachType(AttachType.REGISTRY)
@@ -117,20 +131,22 @@ public class UploadServlet extends HttpServlet{
                     			.setDparentId(Long.toString(item.getSize()));
                     	Integer attachId = AON.insertAttach(domain.getName(), domain.getId(), login, attach);
                    	
-                    	for(Integer i = 0 ; i < tags.length ; i++) {
-                    		if(!"".equals(tags[i])){
-                    			Integer tagId = Integer.parseInt(tags[i]);
-                    			AON.insertRegistryAttachTag(domain.getName(), domain.getId(), login, attachId, tagId);
+                    	if(tags != null) {
+                    		for(Integer i = 0 ; i < tags.length ; i++) {
+                    			if(!"".equals(tags[i])){
+                    				Integer tagId = Integer.parseInt(tags[i]);
+                    				AON.insertRegistryAttachTag(domain.getName(), domain.getId(), login, attachId, tagId);
+                    			}
                     		}
                     	}
                    	
                     	attach.setId(attachId);
             			                   	
-                    	DomainGserviceaccount d = AON.getDomainGserviceaccount(domainName, domainId, login);
+                    	DomainGserviceaccount d = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), login);
                     	Drive drive = AonDrive.getInstace().serviceInitialize(d);
-                    	User user = AON.getUser(domainName, domainId, login);
+                    	User user = AON.getUser(domain.getName(), domain.getId(), login);
                     	AonDrive.getInstace().sync(drive, user, attach, false);
-                    	SendNotification.sendGmail(domain, user, attach, true);
+//                    	SendNotification.sendGmail(domain, user, attach, true);
                     }
                 }
             }

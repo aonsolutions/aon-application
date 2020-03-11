@@ -51,9 +51,6 @@ public class Issues implements EntryPoint {
 	}
 	private static final Binder binder = GWT.create(Binder.class);
 	
-	private static final String HTTP = "http://";
-	private static final String HTTPS = "https://";
-	
 	@UiField HTMLPanel searchContent;
 	@UiField HTMLPanel content;
 	@UiField HTMLPanel issueContent;
@@ -68,16 +65,6 @@ public class Issues implements EntryPoint {
 
 	private AonData aonData;
 	private Incidence incidence;
-	
-	public static native String getCurrentDomainName()
-	/*-{
-		return $wnd.getCurrentDomainName();
-	}-*/;
-
-	public static native int getCurrentDomain()
-	/*-{
-		return $wnd.getCurrentDomain();
-	}-*/;
 	
 	public AonData getAonData(){
 		return aonData;
@@ -110,10 +97,8 @@ public class Issues implements EntryPoint {
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
 		me = this;
-			
 		incidence = new Incidence(GWT.getModuleBaseURL(), aonData.getMd5(),
 				aonData.getUser().getLogin(), aonData.getUser().getLogin(), aonData.getDomain().getName(), aonData.getDomain().getId());
-
 		createAonToolbar();
 		createFilterPanel(new FilterPanel(me, incidence));
 		createIssueList(issueFilter = new IssueFilter());

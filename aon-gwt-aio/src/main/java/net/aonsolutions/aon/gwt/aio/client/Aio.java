@@ -38,7 +38,7 @@ public class Aio implements EntryPoint {
 		return $wnd.localStorage.getItem("session_id");
 	}-*/;
 	
-	public static native Integer getDomainId()
+	public static native String getDomainId()
 	/*-{
 		return $wnd.localStorage.getItem("domain_id");
 	}-*/;

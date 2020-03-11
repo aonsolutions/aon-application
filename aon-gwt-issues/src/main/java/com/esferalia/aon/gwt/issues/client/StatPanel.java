@@ -40,17 +40,6 @@ public class StatPanel extends Composite {
 	}
 	private static final Binder binder = GWT.create(Binder.class);
 	
-	public static native String getCurrentDomainName()
-	/*-{
-		return $wnd.getCurrentDomainName();
-	}-*/;
-
-	public static native int getCurrentDomain()
-	/*-{
-		return $wnd.getCurrentDomain();
-	}-*/;
-	
-	
 	@UiField SimpleLayoutPanel content;	
 	@UiField HTMLPanel searchContent;
 

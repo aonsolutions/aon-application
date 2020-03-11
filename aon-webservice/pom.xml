@@ -38,6 +38,14 @@
 		</dependency>
 		
 		<dependency>
+      		<groupId>com.code.aon</groupId>
+     	 	<artifactId>aon.jaas</artifactId>
+      		<version>${project.version}</version>
+      		<scope>provided</scope>
+    	</dependency>
+    
+		
+		<dependency>
 			<groupId>es.translogia</groupId>
 			<artifactId>tedi.api</artifactId>
 			<version>${project.version}</version>

@@ -25,7 +25,7 @@
       	}
     </style>
 	<p:PaperToolbar height="40px" styleName="aon-menuBar" 
-			style="border-top: 0px;">
+			style="border-top: 0px;border-bottom: 1px solid #ddd;background-color:#ffffff">
        	<p:PaperIconButton ui:field="menuButton" title="menu" icon="menu"/>
        	<p:PaperButton ui:field="titleButton">
 		    <g:InlineLabel ui:field="titleLabel" text="Toolbar" styleName="title" />
