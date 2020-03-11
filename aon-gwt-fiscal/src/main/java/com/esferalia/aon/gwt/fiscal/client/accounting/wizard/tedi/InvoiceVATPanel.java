@@ -824,10 +824,13 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 
 		private void populate(InvoiceVAT vat) {
 			taxableBase.setValue( vat.getBase() , false);
+			vatPercent.setValue( vat.getPercentage() , false);
 			vatQuota.setValue( vat.getQuota() , false);
+			surchargePercent.setValue( vat.getSurcharge() , false);
 			surchargeQuota.setValue( vat.getSurchargeQuota() , false);
 			dedPercent.setValue( vat.getDeductiblePercent() , false);
 			dedQuota.setValue( vat.getDeductibleQuota() , false);
+			withholding.setValue(vat.isWithholding() , false);
 		}
 
 		@Override

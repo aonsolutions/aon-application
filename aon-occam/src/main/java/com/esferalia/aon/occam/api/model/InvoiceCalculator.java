@@ -36,6 +36,15 @@ public class InvoiceCalculator {
 	}
 	
 	public static void calculate(AccountingInvoice ai, InvoiceVAT vat) {
+		if (vat.isPrepayment()) {
+			vat.setPercentage(0.0);
+			vat.setSurcharge(0.0);
+			vat.setDeductiblePercent(0.0);
+			vat.setWithholding(false);
+			vat.setQuotaEdited(false);
+			vat.setSurchargeQuotaEdited(false);
+			vat.setDeductibleQuotaEdited(false);
+		}
 		if (!vat.isQuotaEdited()) {
 			vat.setQuota(AonMathUtils.round(vat.getBase() * vat.getPercentage() / 100 ));
 		}
