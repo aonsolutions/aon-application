@@ -2,6 +2,8 @@ package com.esferalia.aon.altai.tgss.creta;
 
 import static com.esferalia.aon.altai.tgss.creta.Utils.fecha2Date;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
@@ -25,15 +27,20 @@ import org.jooq.SQLDialect;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
+import org.mvel2.MVEL;
 
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.jooq.tables.ContractData;
+import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.core.tgss.creta.jaxb.Utils;
 import net.aonsolutions.core.tgss.creta.jaxb.calculos.Calculos;
@@ -81,7 +88,7 @@ public class Calculos2Aon {
 			parse(is);
 //			System.err.printf("Info: '%s' is not a valid 'SLD-Calculos File'\r\n", file.getPath() );
 		} catch ( JAXBException e ) {
-//			System.err.printf("Warnning: '%s' is not an valid 'SLD-Calculos File' %s \r\n", file.getPath(), e.getMessage() );
+			System.err.printf("Warnning: '%s' is not an valid 'SLD-Calculos File' %s \r\n", file.getPath(), e.getMessage() );
 		}
 		finally {
 			if ( is != null )
@@ -131,59 +138,133 @@ public class Calculos2Aon {
 //		.ifPresent(s -> System.out.printf("Salary: %s \r\n", s.getEmployeeName() ));
 //		;
 
-		String datos = tramo.getCalculosTramo().getDatoCalculado().stream()
-		.map(d -> String.format("%s = %s", d.getCodigo(), d.getValorBase()))
-		.collect(Collectors.joining(","))
-		;
-		
-		Map<String, DatoCalculado> datosMap = 
-				tramo.getCalculosTramo().getDatoCalculado().stream().collect(Collectors.toMap(d -> d.getCodigo() , d -> d ));
-		
-		DatoCalculado dato500 = datosMap.get("500");
-		if ( dato500 == null ) 
-			return;
+//		String datos = tramo.getCalculosTramo().getDatoCalculado().stream()
+//		.map(d -> String.format("%s = %s", d.getCodigo(), d.getValorBase()))
+//		.collect(Collectors.joining(","))
+//		;
+//		
+//		Map<String, DatoCalculado> datosMap = 
+//				tramo.getCalculosTramo().getDatoCalculado().stream().collect(Collectors.toMap(d -> d.getCodigo() , d -> d ));
+//		
+//		DatoCalculado dato500 = datosMap.get("500");
+//		if ( dato500 == null ) 
+//			return;
+
+//		dslContext
+//		.select()
+//		.from(CONTRACT)
+//		.innerJoin(PERSON).onKey()
+//		.innerJoin(ENTERPRISE_CCC).onKey()
+//		.where(ENTERPRISE_CCC.CCC.eq(ccc))
+//		.and(PERSON.SOCIAL_SECURITY_NUM.eq(naf))
+//		.and(CONTRACT.START_DATE.le(toDate))
+//		.and(CONTRACT.END_DATE.isNull()
+//			.or(CONTRACT.END_DATE.ge(fromDate)))
+//		.and(CONTRACT.AGREEMENT_LEVEL.isNotNull())
+//		.fetchStreamInto(CONTRACT)
+//		.forEach(contract -> { 
+//			try {
+//
+//				Date startDate = getStartDate(fromDate); 
+//				Date endDate = getEndDate(toDate); 
+//				Salary salary = calculate(contract, startDate, endDate);
+//
+//				double _500 = Double.parseDouble(dato500.getValorBase()) / 100.00;
+//				
+//				System.out.printf(
+//				"%1$td-%1$tm %2$td-%2$tm  %3$s, %4$s %5$f = %6$s \r\n", 
+//				salary.getStartDate(), 
+//				salary.getEndDate(), 
+//				salary.getEnterpriseName(), 
+//				salary.getEmployeeName(), 
+//				salary.getCommonBase(), _500 );
+//				;
+//				
+//				
+//				
+//				
+//			} catch (ExpressionException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (SalaryException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (SQLException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+//		);
 
 		dslContext
 		.select()
 		.from(CONTRACT)
 		.innerJoin(PERSON).onKey()
 		.innerJoin(ENTERPRISE_CCC).onKey()
+		.innerJoin(DOMAIN).on(CONTRACT.DOMAIN.eq(DOMAIN.ID))
 		.where(ENTERPRISE_CCC.CCC.eq(ccc))
 		.and(PERSON.SOCIAL_SECURITY_NUM.eq(naf))
 		.and(CONTRACT.START_DATE.le(toDate))
 		.and(CONTRACT.END_DATE.isNull()
 			.or(CONTRACT.END_DATE.ge(fromDate)))
-		.and(CONTRACT.AGREEMENT_LEVEL.isNotNull())
-		.fetchStreamInto(CONTRACT)
-		.forEach(contract -> { 
-			try {
+		.and(DOMAIN.NAME.startsWith("altai-"))
+		.fetchStream()
+		.forEach(r -> { 
+			Map<String,String> data =
+			dslContext
+			.select()
+			.from(CONTRACT_DATA)
+			.where(CONTRACT_DATA.CONTRACT.eq(r.get(CONTRACT.ID)))
+			.groupBy(CONTRACT_DATA.NAME)
+			.fetchStreamInto(CONTRACT_DATA)
+			.collect(Collectors.toMap(d -> d.getName(), d->d.getExpression()))
+			;
+			
+			String aonQuoteGroup = MVEL.evalToString(data.get(ContextVariable.QUOTE_GROUP.getName()));
+			String tgssQuoteGroup = tramo.getInformacionAfiliacion().getGrupoCotizacion();
 
-				Date startDate = getStartDate(fromDate); 
-				Date endDate = getEndDate(toDate); 
-				Salary salary = calculate(contract, startDate, endDate);
+			String aonTC2 = MVEL.evalToString(data.get(ContextVariable.TC2.getName()));
+			String tgssTC2 = tramo.getInformacionAfiliacion().getTipoContrato();
+			
+			String aonCategory = r.get(CONTRACT.CATEGORY_DESCRIPTION);
+			String tgssCategory = tramo.getInformacionAfiliacion().getCatProfesional();
+			
+			String tgssPartialFactor = tramo.getInformacionAfiliacion().getCoeficienteTiempoParcial();
+			
+			String tgssCNAE = tramo.getInformacionAfiliacion().getCNAE();
 
-				double _500 = Double.parseDouble(dato500.getValorBase()) / 100.00;
-				
-//				if ( salary.getCommonBase() == _500 )
-					System.out.printf(
-					"%1$td-%1$tm %2$td-%2$tm  %3$s, %4$s %5$f = %6$s \r\n", 
-					salary.getStartDate(), 
-					salary.getEndDate(), 
-					salary.getEnterpriseName(), 
-					salary.getEmployeeName(), 
-					salary.getCommonBase(), _500 );
-					;
-				
-			} catch (ExpressionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SalaryException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			if ( !AonStringUtils.equals(aonQuoteGroup, tgssQuoteGroup))
+				System.err.printf(
+				"%s %s: "
+				+ "GRUPO_COTIZACION '%s' = '%s'"
+				+ " \r\n",
+				r.get(PERSON.FIRST_SURNAME),
+				r.get(PERSON.NAME),
+				aonQuoteGroup,
+				tgssQuoteGroup
+				);
+			else if ( !AonStringUtils.equals(aonTC2, tgssTC2) )
+				System.err.printf(
+				"%s %s: "
+				+ "TC2 '%s' = '%s' \r\n",
+				r.get(PERSON.FIRST_SURNAME),
+				r.get(PERSON.NAME),
+				aonTC2, 
+				tgssTC2
+				);
+			else 
+				System.out.printf(
+				"%s %s: "
+//				+ "CATEGORIA '%s' = '%s'"
+				+ ", COEFICIENTE '%s'"
+				+ " \r\n",
+				r.get(PERSON.FIRST_SURNAME),
+				r.get(PERSON.NAME),
+//				aonCategory,
+//				tgssCategory,
+				tgssPartialFactor
+				);
+			
 		}
 		);
 	}
