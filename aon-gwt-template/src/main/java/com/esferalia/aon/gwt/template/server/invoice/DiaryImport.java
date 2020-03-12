@@ -229,6 +229,9 @@ public class DiaryImport {
 		
 		if("CONCEPTO".equalsIgnoreCase(title)) {
 			String concept = o.toString();
+			if(concept.length() > 32) {
+				concept = concept.substring(0,32);
+			}
 			diary.get(asiento).getDetails().get(apunte-1).setConcept(concept);
 			return;
 		}
@@ -245,12 +248,16 @@ public class DiaryImport {
 		}
 		
 		if("DEBE".equalsIgnoreCase(title)) {
+			if(CellType.FORMULA == cell.getCellTypeEnum())
+				return;
 			Double debit = Double.parseDouble(o.toString());
 			diary.get(asiento).getDetails().get(apunte-1).setDebit(debit);
 			return;
 		}
 		
 		if("HABER".equalsIgnoreCase(title)) {
+			if(CellType.FORMULA == cell.getCellTypeEnum())
+				return;
 			Double credit = Double.parseDouble(o.toString());
 			diary.get(asiento).getDetails().get(apunte-1).setCredit(credit);
 			return;
