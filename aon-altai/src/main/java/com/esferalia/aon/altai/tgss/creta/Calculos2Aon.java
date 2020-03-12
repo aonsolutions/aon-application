@@ -1,9 +1,9 @@
 package com.esferalia.aon.altai.tgss.creta;
 
+import static com.esferalia.aon.altai.tgss.creta.Utils.fecha2Date;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
-import static com.esferalia.aon.watson.util.AonDateUtils.add;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 
@@ -14,8 +14,8 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
-import java.util.Calendar;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
@@ -34,24 +34,35 @@ import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
-import com.esferalia.aon.watson.util.AonDateUtils;
 
 import net.aonsolutions.core.tgss.creta.jaxb.Utils;
-import net.aonsolutions.core.tgss.creta.jaxb.bases.Bases;
-import net.aonsolutions.core.tgss.creta.jaxb.bases.CtaCot;
-import net.aonsolutions.core.tgss.creta.jaxb.bases.Dato;
-import net.aonsolutions.core.tgss.creta.jaxb.bases.Fecha;
-import net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion;
-import net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador;
-import net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo;
+import net.aonsolutions.core.tgss.creta.jaxb.calculos.Calculos;
+import net.aonsolutions.core.tgss.creta.jaxb.calculos.CtaCot;
+import net.aonsolutions.core.tgss.creta.jaxb.calculos.DatoCalculado;
+import net.aonsolutions.core.tgss.creta.jaxb.calculos.Fecha;
+import net.aonsolutions.core.tgss.creta.jaxb.calculos.Liquidacion;
+import net.aonsolutions.core.tgss.creta.jaxb.calculos.Trabajador;
+import net.aonsolutions.core.tgss.creta.jaxb.calculos.Tramo;
 
-public class Bases2Aon {
+public class Calculos2Aon {
 	
-	Date date;
+	Optional<Date> date;
 	DSLContext dslContext;
 	Connection connection;
 	
-	public Bases2Aon(Connection connection) {
+	public Calculos2Aon(Connection connection) {
+		this(connection, Optional.empty());
+	}
+
+	public Calculos2Aon(Connection connection, Date date) {
+		this(connection, Optional.ofNullable(date));
+	}
+
+	public Calculos2Aon(Connection connection, java.util.Date date) {
+		this(connection, Optional.ofNullable(date).map( d -> new java.sql.Date(date.getTime())));
+	}
+
+	private Calculos2Aon(Connection connection, Optional<Date> date) {
 		Settings settings;
 		settings = new Settings();
 		settings.setRenderSchema(false);
@@ -68,8 +79,9 @@ public class Bases2Aon {
 		try {
 			is = new FileInputStream(file);
 			parse(is);
+//			System.err.printf("Info: '%s' is not a valid 'SLD-Calculos File'\r\n", file.getPath() );
 		} catch ( JAXBException e ) {
-			System.err.printf("Warnning: '%s' is not an valid 'SLD-Basis File'\r\n", file.getPath() );
+//			System.err.printf("Warnning: '%s' is not an valid 'SLD-Calculos File' %s \r\n", file.getPath(), e.getMessage() );
 		}
 		finally {
 			if ( is != null )
@@ -79,10 +91,9 @@ public class Bases2Aon {
 	}
 	
 	public void parse(InputStream is) throws JAXBException {
-		Bases bases = Utils.unmarshal(Bases.class, is);
-		bases.getLiquidacion().stream()
-		.filter(l -> "L00".equals(l.getTipo()))
-		.forEach(l -> liquidacion2Aon(l) );
+		Calculos calculos = Utils.unmarshal(Calculos.class, is);
+		
+		liquidacion2Aon(calculos.getLiquidacion());
 	}
 	
 	// ------------------------------------------------------------------------
@@ -90,17 +101,15 @@ public class Bases2Aon {
 	private void liquidacion2Aon(Liquidacion liquidacion) {
 		CtaCot ctaCot = liquidacion.getCcc();
 		String ccc = String.format("%s%s", ctaCot.getProvincia() ,ctaCot.getNumero());
-		
-		liquidacion.getLiquidacionMes().stream()
-		.flatMap(liquidacionMes -> liquidacionMes.getTrabajadores().getTrabajador().stream())
+
+		liquidacion.getTrabajadores().getTrabajador().stream()
 		.forEach(trabajador -> trabajador2Aon(ccc, trabajador) );
 		;
 	}
-	
-
 	private void trabajador2Aon(String ccc, Trabajador trabajador) {
 		String naf = trabajador.getNaf();
 		trabajador.getTramos().getTramo().stream()
+		.filter(tramo -> tramo.getCalculosTramo() != null )
 		.forEach(tramo ->tramo2Aon(ccc, naf, tramo));
 	}
 	
@@ -108,8 +117,8 @@ public class Bases2Aon {
 		Fecha fechaDesde = tramo.getFechaDesde();
 		Fecha fechaHasta = tramo.getFechaHasta();
 		
-		Date fromDate = com.esferalia.aon.altai.tgss.creta.Utils.fecha2Date(fechaDesde);
-		Date toDate = com.esferalia.aon.altai.tgss.creta.Utils.fecha2Date(fechaHasta);
+		Date fromDate = fecha2Date(fechaDesde);
+		Date toDate = fecha2Date(fechaHasta);
 		
 //		dslContext
 //		.select()
@@ -122,15 +131,15 @@ public class Bases2Aon {
 //		.ifPresent(s -> System.out.printf("Salary: %s \r\n", s.getEmployeeName() ));
 //		;
 
-		String datos = tramo.getDatosTramo().getDato().stream()
-		.map(d -> String.format("%s = %s", d.getCodigo(), d.getValor()))
+		String datos = tramo.getCalculosTramo().getDatoCalculado().stream()
+		.map(d -> String.format("%s = %s", d.getCodigo(), d.getValorBase()))
 		.collect(Collectors.joining(","))
 		;
 		
-		Map<String, Dato> datosMap = 
-				tramo.getDatosTramo().getDato().stream().collect(Collectors.toMap(d -> d.getCodigo() , d -> d ));
+		Map<String, DatoCalculado> datosMap = 
+				tramo.getCalculosTramo().getDatoCalculado().stream().collect(Collectors.toMap(d -> d.getCodigo() , d -> d ));
 		
-		Dato dato500 = datosMap.get("500");
+		DatoCalculado dato500 = datosMap.get("500");
 		if ( dato500 == null ) 
 			return;
 
@@ -144,20 +153,22 @@ public class Bases2Aon {
 		.and(CONTRACT.START_DATE.le(toDate))
 		.and(CONTRACT.END_DATE.isNull()
 			.or(CONTRACT.END_DATE.ge(fromDate)))
-		.fetchOptionalInto(CONTRACT)
-		.ifPresent(contract -> {
+		.and(CONTRACT.AGREEMENT_LEVEL.isNotNull())
+		.fetchStreamInto(CONTRACT)
+		.forEach(contract -> { 
 			try {
-				
-				Date startDate = add(getFirstDayOfMonth(fromDate), Calendar.MONTH,1); 
-				Date endDate = add(getLastDayOfMonth(toDate),Calendar.MONTH,1); 
+
+				Date startDate = getStartDate(fromDate); 
+				Date endDate = getEndDate(toDate); 
 				Salary salary = calculate(contract, startDate, endDate);
 
-				double _500 = Double.parseDouble(dato500.getValor()) / 100.00;
+				double _500 = Double.parseDouble(dato500.getValorBase()) / 100.00;
 				
 //				if ( salary.getCommonBase() == _500 )
 					System.out.printf(
-					"%1$td-%1$tm-%1$ty  %2$s, %3$s %4$f = %5$s \r\n", 
+					"%1$td-%1$tm %2$td-%2$tm  %3$s, %4$s %5$f = %6$s \r\n", 
 					salary.getStartDate(), 
+					salary.getEndDate(), 
 					salary.getEnterpriseName(), 
 					salary.getEmployeeName(), 
 					salary.getCommonBase(), _500 );
@@ -177,6 +188,14 @@ public class Bases2Aon {
 		);
 	}
 	
+	private Date getEndDate(Date toDate) {
+		return getLastDayOfMonth(date.orElse(toDate));
+	}
+	
+	private Date getStartDate(Date fromDate) {
+		return getFirstDayOfMonth(date.orElse(fromDate));
+	}
+
 	private Salary calculate (ContractRecord contract, Date startDate, Date endDate) throws ExpressionException, SQLException, SalaryException {
 		
 		Criteria criteria = new Criteria();
@@ -189,7 +208,5 @@ public class Bases2Aon {
 		return new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
 		.calculate(ctx);
 	}
-	
-	
 	
 }	

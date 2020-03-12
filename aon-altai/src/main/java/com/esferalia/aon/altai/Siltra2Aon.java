@@ -5,7 +5,10 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.TimeZone;
@@ -20,11 +23,12 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import com.esferalia.aon.altai.tgss.creta.Bases2Aon;
+import com.esferalia.aon.altai.tgss.creta.Calculos2Aon;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Siltra2Aon {
 	
-
-
+	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MM/yyyy");
 
 	 public static void main(String[] args) {
 		
@@ -81,12 +85,28 @@ public class Siltra2Aon {
 	         .create("?");
 
 		@SuppressWarnings("static-access")
+		Option calculosOption = OptionBuilder
+		     .hasArg()
+		     .withLongOpt("calculos")
+		     .withArgName("directory")
+		     .withDescription("SLD-Fichero de Calculos directory.")
+		     .create("c");
+
+		@SuppressWarnings("static-access")
 		Option basesOption = OptionBuilder
 		     .hasArg()
 		     .withLongOpt("bases")
 		     .withArgName("directory")
-		     .withDescription("Siltra's Ficheros de Bases directory.")
+		     .withDescription("SLD-Ficheros de Bases directory.")
 		     .create("b");
+
+		@SuppressWarnings("static-access")
+		Option dateOption = OptionBuilder
+		     .hasArg()
+		     .withLongOpt("date")
+		     .withArgName("date")
+		     .withDescription("Date to compare.")
+		     .create();
 
 		Options options = new Options();
 		options.addOption(basesOption);
@@ -96,6 +116,8 @@ public class Siltra2Aon {
 		options.addOption(userOption);
 		options.addOption(databaseOption);
 		options.addOption(passwordOption);
+		options.addOption(calculosOption);
+		options.addOption(dateOption);
 		 
 		Connection connection = null;
 		try {
@@ -109,7 +131,9 @@ public class Siltra2Aon {
 			String password = commandLine.getOptionValue(passwordOption.getLongOpt());
 			String database = commandLine.getOptionValue(databaseOption.getLongOpt());
 			String basesPaths [] = Optional.ofNullable(commandLine.getOptionValues(basesOption.getLongOpt())).orElse(new String[] {});;
-
+			String calculosPaths [] = Optional.ofNullable(commandLine.getOptionValues(calculosOption.getLongOpt())).orElse(new String[] {});;
+			Date date = Optional.ofNullable(commandLine.getOptionValue(dateOption.getLongOpt())).map(s -> parse(s)).orElse(null);
+			
 			Properties properties = new Properties();
 			properties.setProperty("user", user);
 			properties.setProperty("password", password);
@@ -120,10 +144,11 @@ public class Siltra2Aon {
 			Class.forName("com.mysql.jdbc.Driver");
 			connection = DriverManager.getConnection(url, properties);
 			
+			
 			Bases2Aon bases2Aon = new Bases2Aon(connection);
 			
 			for (String basesPath : basesPaths) {
-				Arrays.stream(new File(basesPath).listFiles(f-> f.isFile()))
+				Arrays.stream(new File(basesPath).listFiles(f-> f.isFile() && AonStringUtils.startsWithIgnoreCase(f.getName(), "BASES")))
 				.forEach(f -> {
 					try {
 						bases2Aon.parse(f);
@@ -131,7 +156,19 @@ public class Siltra2Aon {
 						System.err.printf("Error: '%s' %s ", f.getPath(), e.getMessage());
 					}
 				});
-				
+			}
+			
+			Calculos2Aon calculos2Aon = new Calculos2Aon(connection, date);
+			
+			for (String calculosPath : calculosPaths) {
+				Arrays.stream(new File(calculosPath).listFiles(f-> f.isFile() ))
+				.forEach(f -> {
+					try {
+						calculos2Aon.parse(f);
+					} catch (IOException e) {
+						System.err.printf("Error: '%s' %s ", f.getPath(), e.getMessage());
+					}
+				});
 			}
 
 		} catch (ParseException e) {
@@ -155,5 +192,15 @@ public class Siltra2Aon {
 		}
 		 
 	 }
+	 
+	 private static Date parse(String str) {
+		 try {
+			 return DATE_FORMAT.parse(str);
+		 } catch ( Exception e ) {
+			 e.printStackTrace();
+			 return null;
+		 }
+	 }
+	
 
 }
