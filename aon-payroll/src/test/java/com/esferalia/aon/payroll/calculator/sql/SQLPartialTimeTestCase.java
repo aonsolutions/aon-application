@@ -193,7 +193,7 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 						put(TUESDAY_HOURS.getName(), format("%d", 4));
 						put(WEDNESDAY_HOURS.getName(), format("%d", 2));
 						
-						put(MONTH_DAYS.getName(), format("%f", 30.00));
+						put(MONTH_DAYS.getName(), "30.00");
 					}
 				},
 
@@ -735,8 +735,8 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 				new HashMap<String, String>() {
 					{
 						put(ContextVariable.TC2.getName(), format("\"%s\"",C100.getValue()));
-						put(ContextVariable.PARTIAL_FACTOR.getName(), format("%f", 0.5));
-						put(MONTH_DAYS.getName(), format("%f", 30.00));
+						put(ContextVariable.PARTIAL_FACTOR.getName(), "0.5");
+						put(MONTH_DAYS.getName(), "30.00");
 					}
 				},
 
@@ -758,10 +758,10 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 					connection, startDate, endDate, issueDate, contract);
 			Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-			org.junit.Assert.assertEquals( 1750.00 / 2,  salary.getTotalPayment() , DELTA );
 			for ( SalaryData data: salary.getSalaryDatas() ) {
 				System.out.println(data.getName() + "= " + data.getExpression() );
 			}
+			org.junit.Assert.assertEquals( 1750.00 / 2,  salary.getTotalPayment() , DELTA );
 			startDate = add(startDate, Calendar.MONTH, 1); 
 			
 		}
@@ -780,7 +780,7 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 				new HashMap<String, String>() {
 					{
 						put(ContextVariable.TC2.getName(), format("\"%s\"",C200.getValue()));
-						put(MONTH_DAYS.getName(), format("%f", 30.00));
+						put(MONTH_DAYS.getName(), "30.00");
 					}
 				},
 
