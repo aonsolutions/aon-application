@@ -14,6 +14,7 @@ import java.util.HashMap;
 
 import org.junit.Test;
 
+import com.esferalia.aon.jooq.tables.SalaryPayment;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
@@ -48,7 +49,8 @@ public class SQLExtraHoursTestCase extends AbstractSQLTestCase {
 
 		@SuppressWarnings("serial")
 		ContractRecord contract = newContract(aonContext,
-				getFirstDayOfMonth(getToday()), new HashMap<String, String>() {
+				getFirstDayOfMonth(getToday()), 
+				new HashMap<String, String>() {
 					{
 						put(ContextVariable.TC2.getName(), format("\"%s\"",
 								ContractCode.C100.getValue()));
@@ -72,13 +74,24 @@ public class SQLExtraHoursTestCase extends AbstractSQLTestCase {
 				contract, 
 				contract.getStartDate(), 
 				contract.getEndDate(), 
-				"SALARIO_BASE", 
+				"HORAS_EXTRAS", 
 				"100.00 * DIAS_TRABAJADOS / DIAS_MES", 
 				"_P", 
 				"_P", 
 				PaymentType.CRA_0002, 
 				SalaryType.SALARY);
 		
+		addPayment(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(), 
+				"TRACE", 
+				"TRACE('DIAS_TRABAJADOS = %f\r\n' , DIAS_TRABAJADOS); 0.00", 
+				"_P", 
+				"_P", 
+				PaymentType.CRA_0001, 
+				SalaryType.SALARY);
+
 		//addSSRegimeCost(aonContext, ssRegimetype, startDate, code, type, expression);
 		
 		Date startDate = getFirstDayOfMonth(getToday());
@@ -100,6 +113,8 @@ public class SQLExtraHoursTestCase extends AbstractSQLTestCase {
 		};
 		calculator.setSalaryBuilder(getSalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
+		for ( com.esferalia.aon.payroll.SalaryPayment payment: salary.getSalaryPayments())
+			System.out.println(payment.getExpression() + "= " + payment.getAmount());
 		
 		Assert.assertEquals(1000.00, salary.getCommonBase(), DELTA);
 		Assert.assertEquals(1100.00, salary.getProfessionalBase(), DELTA);
