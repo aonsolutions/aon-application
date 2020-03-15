@@ -58,18 +58,7 @@ public class ACCOUNTING {
 			if (ctx != null)
 				ctx.close();
 		}
-	}
-	
-	public static AccountingRegistry update(String domainName,
-			int domainId, String login, AccountingRegistry reg) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getAccounting().update(ctx, reg);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
+		
 	}
 
 	public static Stream<AccountingRegistry> getAccountingRegistries(String domainName,

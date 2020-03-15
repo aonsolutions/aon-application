@@ -481,8 +481,7 @@ public class RegistryDAO {
 		if (reg == null) throw new AonCoreException("No se puede grabar. Es nulo. (Error Interno)");
 		if (reg.getType() == null) throw new AonCoreException("No se puede determinar el tipo. Es nulo. (Error Interno)");
 		ctx.checkWrite();
-		if(reg.getId() == null) {
-			final Integer registryId = insert(ctx, new Registry()
+		final Integer registryId = insert(ctx, new Registry()
 				.setId(reg.getDomain())
 				.setDomain(reg.getDomain())
 				.setDocument(reg.getDocument())
@@ -494,11 +493,10 @@ public class RegistryDAO {
 				.setSecurityLevel(SecurityLevel.OFFICIAL)
 				.setType(AonEnumUtils.getByte( AonDocumentUtil.isEntity(reg.getDocument())))
 				);
-			reg.setId(registryId);
-		}
+		reg.setId(registryId);
 		ctx.getDslContext().insertInto(RADDRESS)
 			.set(RADDRESS.DOMAIN,reg.getDomain())
-			.set(RADDRESS.REGISTRY, reg.getId())
+			.set(RADDRESS.REGISTRY, registryId)
 			.set(RADDRESS.TYPE, (byte) 0)
 			.set(RADDRESS.STREET_TYPE,reg.getAddressStreetType()==null?null:reg.getAddressStreetType().getAeatCode())
 			.set(RADDRESS.ADDRESS,reg.getAddress())
@@ -510,7 +508,7 @@ public class RegistryDAO {
 		if (!AonStringUtils.isBlank(reg.getPhone())) {
 			ctx.getDslContext().insertInto(RMEDIA)
 				.set(RMEDIA.DOMAIN,reg.getDomain())
-				.set(RMEDIA.REGISTRY, reg.getId())
+				.set(RMEDIA.REGISTRY, registryId)
 				.set(RMEDIA.MEDIA, MediaType.FIXED_PHONE.value())
 				.set(RMEDIA.VALUE,reg.getPhone())
 				.set(RMEDIA.COMMENT,reg.getPhoneComments())
@@ -522,7 +520,7 @@ public class RegistryDAO {
 		if (!AonStringUtils.isBlank(reg.getCellular())) {
 			ctx.getDslContext().insertInto(RMEDIA)
 				.set(RMEDIA.DOMAIN,reg.getDomain())
-				.set(RMEDIA.REGISTRY, reg.getId())
+				.set(RMEDIA.REGISTRY, registryId)
 				.set(RMEDIA.MEDIA, MediaType.CELLULAR.value())
 				.set(RMEDIA.VALUE,reg.getCellular())
 				.set(RMEDIA.COMMENT,reg.getCellularComments())
@@ -534,7 +532,7 @@ public class RegistryDAO {
 		if (!AonStringUtils.isBlank(reg.getFax())) {
 			ctx.getDslContext().insertInto(RMEDIA)
 				.set(RMEDIA.DOMAIN,reg.getDomain())
-				.set(RMEDIA.REGISTRY, reg.getId())
+				.set(RMEDIA.REGISTRY, registryId)
 				.set(RMEDIA.MEDIA, MediaType.FAX.value())
 				.set(RMEDIA.VALUE,reg.getFax())
 				.set(RMEDIA.COMMENT,reg.getFaxComments())
@@ -546,7 +544,7 @@ public class RegistryDAO {
 		if (!AonStringUtils.isBlank(reg.getEmail())) {
 			ctx.getDslContext().insertInto(RMEDIA)
 				.set(RMEDIA.DOMAIN,reg.getDomain())
-				.set(RMEDIA.REGISTRY, reg.getId())
+				.set(RMEDIA.REGISTRY, registryId)
 				.set(RMEDIA.MEDIA, MediaType.EMAIL.value())
 				.set(RMEDIA.VALUE,reg.getEmail())
 				.set(RMEDIA.ADMINISTRATIVE,AonEnumUtils.getByte(true))
@@ -557,7 +555,7 @@ public class RegistryDAO {
 		if (!AonStringUtils.isBlank(reg.getWeb())) {
 			ctx.getDslContext().insertInto(RMEDIA)
 				.set(RMEDIA.DOMAIN,reg.getDomain())
-				.set(RMEDIA.REGISTRY, reg.getId())
+				.set(RMEDIA.REGISTRY, registryId)
 				.set(RMEDIA.MEDIA, MediaType.WEB.value())
 				.set(RMEDIA.VALUE,reg.getWeb())
 				.set(RMEDIA.ADMINISTRATIVE,AonEnumUtils.getByte(true))
@@ -570,7 +568,7 @@ public class RegistryDAO {
 			@Override
 			public void visitSupplier(AccountingRegistry reg) {
 				ctx.getDslContext().insertInto(SUPPLIER)
-					.set(SUPPLIER.REGISTRY, reg.getId())
+					.set(SUPPLIER.REGISTRY, registryId)
 					.set(SUPPLIER.DOMAIN,reg.getDomain())
 					.set(SUPPLIER.WITHHOLDING, AonEnumUtils.getByte(reg.isWithholding()))
 					.set(SUPPLIER.WITHHOLDING_FARMER, AonEnumUtils.getByte(reg.isWithholdingFarmer()))
@@ -589,7 +587,7 @@ public class RegistryDAO {
 			@Override
 			public void visitCustomer(AccountingRegistry reg) {
 				ctx.getDslContext().insertInto(CUSTOMER)
-					.set(CUSTOMER.REGISTRY, reg.getId())
+					.set(CUSTOMER.REGISTRY, registryId)
 					.set(CUSTOMER.DOMAIN,reg.getDomain())
 					.set(CUSTOMER.SURCHARGE, AonEnumUtils.getByte(reg.isSurcharge()))
 					.set(CUSTOMER.WITHHOLDING, AonEnumUtils.getByte(reg.isWithholding()))
@@ -607,7 +605,7 @@ public class RegistryDAO {
 			@Override
 			public void visitCreditor(AccountingRegistry reg) {
 				ctx.getDslContext().insertInto(CREDITOR)
-				.set(CREDITOR.REGISTRY, reg.getId())
+				.set(CREDITOR.REGISTRY, registryId)
 				.set(CREDITOR.DOMAIN,reg.getDomain())
 				.set(CREDITOR.WITHHOLDING, AonEnumUtils.getByte(reg.isWithholding()))
 				.set(CREDITOR.VAT_ACCRUAL_PAYMENT, AonEnumUtils.getByte(reg.isVatAccrualPayment()))
@@ -629,185 +627,6 @@ public class RegistryDAO {
 		}); 
 		return reg;
 	}
-	
-	public static AccountingRegistry update(AONContext ctx, AccountingRegistry reg) {
-		if (reg == null) throw new AonCoreException("No se puede grabar. Es nulo. (Error Interno)");
-		if (reg.getType() == null) throw new AonCoreException("No se puede determinar el tipo. Es nulo. (Error Interno)");
-		ctx.checkWrite();
-		if(reg.getId() == null) {
-			return insert(ctx, reg);
-		} else {
-			ctx.getDslContext().update(REGISTRY)
-			.set(REGISTRY.DOCUMENT_COUNTRY, reg.getDocumentCountry().getIso2())
-			.set(REGISTRY.DOCUMENT_TYPE, reg.getDocumentType().value())
-			.set(REGISTRY.NAME, reg.getName())
-			.set(REGISTRY.ALIAS, reg.getAlias())
-			.set(REGISTRY.NATIONALITY, reg.getNationality().getIso2())
-			.set(REGISTRY.SECURITY_LEVEL, SecurityLevel.OFFICIAL.value())
-			.set(REGISTRY.TYPE, AonEnumUtils.getByte( AonDocumentUtil.isEntity(reg.getDocument())))
-			.execute();
-			
-			ctx.getDslContext().insertInto(RADDRESS)
-			.set(RADDRESS.DOMAIN,reg.getDomain())
-			.set(RADDRESS.REGISTRY, reg.getId())
-			.set(RADDRESS.TYPE, (byte) 0)
-			.set(RADDRESS.STREET_TYPE,reg.getAddressStreetType()==null?null:reg.getAddressStreetType().getAeatCode())
-			.set(RADDRESS.ADDRESS,reg.getAddress())
-			.set(RADDRESS.NUMBER,reg.getAddressNumber())
-			.set(RADDRESS.ZIP,reg.getAddressZIP())
-			.set(RADDRESS.CITY,reg.getAddressTown())
-			.set(RADDRESS.GEOZONE,reg.getGeozone())
-			.execute();
-			if (!AonStringUtils.isBlank(reg.getPhone())) {
-				RegistryMedia rm = getRMediaStream(ctx, f -> 
-					f.getRegistryProperty().eq(reg.getId())
-					.and(f.getValueProperty().eq(reg.getPhone()))).findFirst().orElse(null);
-				if(rm == null) {	
-					ctx.getDslContext().insertInto(RMEDIA)
-						.set(RMEDIA.DOMAIN,reg.getDomain())
-						.set(RMEDIA.REGISTRY, reg.getId())
-						.set(RMEDIA.MEDIA, MediaType.FIXED_PHONE.value())
-						.set(RMEDIA.VALUE,reg.getPhone())
-						.set(RMEDIA.COMMENT,reg.getPhoneComments())
-						.set(RMEDIA.ADMINISTRATIVE,AonEnumUtils.getByte(true))
-						.set(RMEDIA.COMMERCIAL,AonEnumUtils.getByte(true))
-						.set(RMEDIA.TECHNICAL,AonEnumUtils.getByte(true))
-						.execute();
-				}
-			}
-			if (!AonStringUtils.isBlank(reg.getCellular())) {
-				RegistryMedia rm = getRMediaStream(ctx, f -> 
-					f.getRegistryProperty().eq(reg.getId())
-					.and(f.getValueProperty().eq(reg.getCellular()))).findFirst().orElse(null);
-				if(rm == null) {	
-					ctx.getDslContext().insertInto(RMEDIA)
-						.set(RMEDIA.DOMAIN,reg.getDomain())
-						.set(RMEDIA.REGISTRY, reg.getId())
-						.set(RMEDIA.MEDIA, MediaType.CELLULAR.value())
-						.set(RMEDIA.VALUE,reg.getCellular())
-						.set(RMEDIA.COMMENT,reg.getCellularComments())
-						.set(RMEDIA.ADMINISTRATIVE,AonEnumUtils.getByte(true))
-						.set(RMEDIA.COMMERCIAL,AonEnumUtils.getByte(true))
-						.set(RMEDIA.TECHNICAL,AonEnumUtils.getByte(true))
-						.execute();
-				}
-			}
-			if (!AonStringUtils.isBlank(reg.getFax())) {
-				RegistryMedia rm = getRMediaStream(ctx, f -> 
-					f.getRegistryProperty().eq(reg.getId())
-					.and(f.getValueProperty().eq(reg.getFax()))).findFirst().orElse(null);
-				if(rm == null) {	
-					ctx.getDslContext().insertInto(RMEDIA)
-						.set(RMEDIA.DOMAIN,reg.getDomain())
-						.set(RMEDIA.REGISTRY, reg.getId())
-						.set(RMEDIA.MEDIA, MediaType.FAX.value())
-						.set(RMEDIA.VALUE,reg.getFax())
-						.set(RMEDIA.COMMENT,reg.getFaxComments())
-						.set(RMEDIA.ADMINISTRATIVE,AonEnumUtils.getByte(true))
-						.set(RMEDIA.COMMERCIAL,AonEnumUtils.getByte(true))
-						.set(RMEDIA.TECHNICAL,AonEnumUtils.getByte(true))
-						.execute();
-				}
-			}
-			if (!AonStringUtils.isBlank(reg.getEmail())) {
-				RegistryMedia rm = getRMediaStream(ctx, f -> 
-					f.getRegistryProperty().eq(reg.getId())
-					.and(f.getValueProperty().eq(reg.getEmail()))).findFirst().orElse(null);
-				if(rm == null) {	
-					ctx.getDslContext().insertInto(RMEDIA)
-						.set(RMEDIA.DOMAIN,reg.getDomain())
-						.set(RMEDIA.REGISTRY, reg.getId())
-						.set(RMEDIA.MEDIA, MediaType.EMAIL.value())
-						.set(RMEDIA.VALUE,reg.getEmail())
-						.set(RMEDIA.ADMINISTRATIVE,AonEnumUtils.getByte(true))
-						.set(RMEDIA.COMMERCIAL,AonEnumUtils.getByte(true))
-						.set(RMEDIA.TECHNICAL,AonEnumUtils.getByte(true))
-						.execute();
-				}
-			}
-			if (!AonStringUtils.isBlank(reg.getWeb())) {
-				RegistryMedia rm = getRMediaStream(ctx, f -> 
-					f.getRegistryProperty().eq(reg.getId())
-					.and(f.getValueProperty().eq(reg.getWeb()))).findFirst().orElse(null);
-				if(rm == null) {	
-					ctx.getDslContext().insertInto(RMEDIA)
-						.set(RMEDIA.DOMAIN,reg.getDomain())
-						.set(RMEDIA.REGISTRY, reg.getId())
-						.set(RMEDIA.MEDIA, MediaType.WEB.value())
-						.set(RMEDIA.VALUE,reg.getWeb())
-						.set(RMEDIA.ADMINISTRATIVE,AonEnumUtils.getByte(true))
-						.set(RMEDIA.COMMERCIAL,AonEnumUtils.getByte(true))
-						.set(RMEDIA.TECHNICAL,AonEnumUtils.getByte(true))
-						.execute();
-				}
-			}
-			
-			reg.getType().visit(reg, new IAccountingRegistryTypeVisitor() {
-				
-				@Override
-				public void visitSupplier(AccountingRegistry reg) {
-					ctx.getDslContext().insertInto(SUPPLIER)
-						.set(SUPPLIER.REGISTRY, reg.getId())
-						.set(SUPPLIER.DOMAIN,reg.getDomain())
-						.set(SUPPLIER.WITHHOLDING, AonEnumUtils.getByte(reg.isWithholding()))
-						.set(SUPPLIER.WITHHOLDING_FARMER, AonEnumUtils.getByte(reg.isWithholdingFarmer()))
-						.set(SUPPLIER.VAT_ACCRUAL_PAYMENT, AonEnumUtils.getByte(reg.isVatAccrualPayment()))
-						.set(SUPPLIER.TRANSACTION, reg.getTransaction() == null 
-							? InvoiceTransactionType.NATIONAL.value() 
-							: reg.getTransaction().value() )
-						.set(SUPPLIER.STATUS, SupplierStatus.ACTIVE.value() )
-						.set(SUPPLIER.SCOPE, reg.getScope() )
-						.set(SUPPLIER.ACCOUNT, reg.getAccountId() )
-						.set(SUPPLIER.CREATION_USER, ctx.getUser() )
-						.set(SUPPLIER.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
-						.execute();
-				}
-			
-				@Override
-				public void visitCustomer(AccountingRegistry reg) {
-					ctx.getDslContext().insertInto(CUSTOMER)
-						.set(CUSTOMER.REGISTRY, reg.getId())
-						.set(CUSTOMER.DOMAIN,reg.getDomain())
-						.set(CUSTOMER.SURCHARGE, AonEnumUtils.getByte(reg.isSurcharge()))
-						.set(CUSTOMER.WITHHOLDING, AonEnumUtils.getByte(reg.isWithholding()))
-						.set(CUSTOMER.TRANSACTION, reg.getTransaction() == null 
-							? InvoiceTransactionType.NATIONAL.value() 
-							: reg.getTransaction().value() )
-						.set(CUSTOMER.STATUS, CustomerStatus.ACTIVE.value() )
-						.set(CUSTOMER.SCOPE, reg.getScope() )
-						.set(CUSTOMER.ACCOUNT, reg.getAccountId() )
-						.set(CUSTOMER.CREATION_USER, ctx.getUser() )
-						.set(CUSTOMER.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
-						.execute();
-				}
-			
-				@Override
-				public void visitCreditor(AccountingRegistry reg) {
-					ctx.getDslContext().insertInto(CREDITOR)
-						.set(CREDITOR.REGISTRY, reg.getId())
-						.set(CREDITOR.DOMAIN,reg.getDomain())
-						.set(CREDITOR.WITHHOLDING, AonEnumUtils.getByte(reg.isWithholding()))
-						.set(CREDITOR.VAT_ACCRUAL_PAYMENT, AonEnumUtils.getByte(reg.isVatAccrualPayment()))
-						.set(CREDITOR.TRANSACTION, reg.getTransaction() == null 
-							? InvoiceTransactionType.NATIONAL.value() 
-							: reg.getTransaction().value() )
-						.set(CREDITOR.STATUS, CreditorStatus.ACTIVE.value() )
-						.set(CREDITOR.SCOPE, reg.getScope() )
-						.set(CREDITOR.ACCOUNT, reg.getAccountId() )
-						.set(CREDITOR.CREATION_USER, ctx.getUser() )
-						.set(CREDITOR.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
-						.execute();
-				}
-			
-				@Override
-				public void visitUndedCreditor(AccountingRegistry reg) {
-					visitCreditor(reg);
-				}	
-			}); 
-		}
-		return reg;
-	}
-	
 
 	private static Integer insert(AONContext ctx, Registry reg) {
 		ctx.checkWrite();

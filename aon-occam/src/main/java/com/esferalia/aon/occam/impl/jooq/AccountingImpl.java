@@ -69,12 +69,6 @@ public class AccountingImpl implements IAccounting {
 				configuration -> RegistryDAO.insert(ctx, reg));
 	}
 	
-	@Override
-	public AccountingRegistry update(AONContext ctx, AccountingRegistry reg) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> RegistryDAO.update(ctx, reg));
-	}
-	
 	// --------- ACCOUNT -------------------------------------------------
 	@Override
 	public Account getAccount(AONContext ctx, Integer accountId) {
