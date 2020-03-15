@@ -753,7 +753,7 @@ public class AccountingRegistryPanel extends SimpleLayoutPanel implements Focusa
 			public void onClick(ClickEvent event) {
 				okButton.setEnabled(false);
 				if (AonStringUtils.isBlank(reg.getName())) {
-					errorPanel.showError("Debe rellenar el nombre del titutlar" );
+					errorPanel.showError("Debe rellenar el nombre del titular" );
 					okButton.setEnabled(true);
 					name.setFocus(true);
 				} else {
@@ -775,6 +775,41 @@ public class AccountingRegistryPanel extends SimpleLayoutPanel implements Focusa
 			}
 		});
     	buttons.add(okButton);
+
+    	final Button updateButton = new Button();
+    	updateButton.setStyleName(AON.AON_CSS.aonConfirmDialogOkButton());
+    	updateButton.setText( AON.MSG.accept());
+    	updateButton.setEnabled(reg.getId() != null);
+    	updateButton.setVisible(reg.getId() != null);
+    	updateButton.addKeyUpHandler( keyUpHandler);
+    	updateButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				okButton.setEnabled(false);
+				if (AonStringUtils.isBlank(reg.getName())) {
+					errorPanel.showError("Debe rellenar el nombre del titular" );
+					updateButton.setEnabled(true);
+					name.setFocus(true);
+				} else {
+					commonService.update(domainName, domain, user, reg, new AsyncCallback<AccountingRegistry>() {
+
+						@Override
+						public void onSuccess(AccountingRegistry result) {
+							callback.onAccept(result);
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {
+							errorPanel.showError(caught.getMessage());
+							updateButton.setEnabled(true);
+							callback.setFocus(true);
+						}
+					});
+				}
+			}
+		});
+    	buttons.add(updateButton);
     	
     	final Button cancelButton = new Button();
     	cancelButton.setStyleName(AON.AON_CSS.aonConfirmDialogCancelButton());
@@ -838,8 +873,10 @@ public class AccountingRegistryPanel extends SimpleLayoutPanel implements Focusa
 				public void onSuccess(LinkedList<AccountingRegistry> result) {
 					int count = 0;
 					documentWarningContainer.clear();
+					Boolean sameType = false;
 					for (AccountingRegistry reg : result) {
 						String icon = AON.AON_CSS.aonLetterCGreenIcon();
+						sameType = sameType || accountingRegistryType == reg.getType();
 						if (reg.getType() == AccountingRegistryType.SUPPLIER) {
 							icon = AON.AON_CSS.aonLetterPBlueIcon();
 						} else if (reg.getType() == AccountingRegistryType.CREDITOR) {
@@ -879,6 +916,26 @@ public class AccountingRegistryPanel extends SimpleLayoutPanel implements Focusa
 							});
 							documentWarningContainer.add(label);
 						}
+					} 
+					
+					if(!sameType) {
+						AccountingRegistry  ar = newAccountingRegistry(domain, null)
+								.setDocument(fulldocument.getDocument())
+								.setType(accountingRegistryType);
+						commonService.getAccountingRegistry(domainName, domain, user, 
+								ar,  new AsyncCallback<AccountingRegistry>() {
+									
+							@Override
+							public void onSuccess(AccountingRegistry result) {
+								
+								show(domainName, domain, user, config, result, callback);		
+							}
+									
+							@Override
+							public void onFailure(Throwable caught) {
+										
+							}
+						});
 					}
 					if (count > 0) {
 						Label errorLabel = new Label( AON.MSG.existingRegistryWarning(result.size()));

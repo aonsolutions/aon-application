@@ -38,6 +38,8 @@ public interface IAccounting {
 	//		  	REGISTRY
 	public Stream<AccountingRegistry> getAccountingRegistries(AONContext ctx, AccountingRegistryFilter filter);
 	public AccountingRegistry insert(AONContext ctx, AccountingRegistry reg);
+	public AccountingRegistry update(AONContext ctx, AccountingRegistry reg);
+
 	
 	// 			ACCOUNT
 	public Account getAccount(AONContext ctx,Integer accountId);		

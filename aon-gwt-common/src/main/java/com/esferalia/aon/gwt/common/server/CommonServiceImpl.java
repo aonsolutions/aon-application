@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.CompanyBank;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.AccountingRegistryProperties;
@@ -112,6 +113,33 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 					 .or(p.getAliasProperty().like(q)))
 				).collect(Collectors.toCollection(LinkedList::new));
 	}
+
+	
+	@Override
+	public AccountingRegistry getAccountingRegistry(String domainName, int domain, String user,
+			AccountingRegistry ar) throws AonCoreException {
+		Domain d = AON.getDomain(domainName, domain, user);
+		com.esferalia.aon.occam.api.model.registry.Registry reg = AON.getRegistry(domainName, domain, user, f -> 
+			f.getDomainProperty().eq(domain)
+			.and(f.getDocumentProperty().eq(ar.getDocument()))
+		);
+		
+		Account acc = ACCOUNTING.getAccounts(domainName, domain, user, f -> 
+			f.getAliasProperty().eq(ar.getDocument())
+			.and(f.getDomainProperty().eq(domain)
+				.or(f.getDomainProperty().eq(d.getParentId()))))
+			.findFirst().orElse(new Account());
+
+		return ar.setId(reg.getId())
+				.setAccountId(acc.getId())
+				.setAccountCode(acc.getCode())
+				.setAccountDescription(acc.getDescription())
+				.setAlias(reg.getAlias())
+				.setDocumentType(reg.getDocumentType() != null ? reg.getDocumentType() : ar.getDocumentType())
+				.setDocumentCountry(reg.getDocumentCountry() != null ? reg.getDocumentCountry() : ar.getDocumentCountry())
+				.setName(reg.getName());
+	}
+	
 	@Override
 	public LinkedList<AccountingRegistry> getAccountingRegistries(String domainName, int domain,String user, Integer id) throws AonCoreException {
 		return ACCOUNTING.getAccountingRegistries(domainName, domain,user,
@@ -149,6 +177,11 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public AccountingRegistry insert(String domainName, int domain, String user, AccountingRegistry reg) throws AonCoreException {
 		return ACCOUNTING.insert(domainName, domain,user, reg);
+	}
+	
+	@Override
+	public AccountingRegistry update(String domainName, int domain, String user, AccountingRegistry reg) throws AonCoreException {
+		return ACCOUNTING.update(domainName, domain,user, reg);
 	}
 	
 	@Override
