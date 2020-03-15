@@ -2,8 +2,6 @@ package com.esferalia.aon.payroll.irpf;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Calendar;
@@ -15,8 +13,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-
-import org.xml.sax.SAXException;
 
 import com.code.aon.config.enumeration.Administration;
 import com.esferalia.aon.payroll.IrpfData;
@@ -1722,8 +1718,6 @@ public class IrpfCalculator {
 				throw new ExpressionExceptionWrapper(new ExpressionException(e));
 			} catch (SQLException e) {
 				throw new ExpressionExceptionWrapper(new ExpressionException(e));
-			} catch (SAXException e) {
-				throw new ExpressionExceptionWrapper(new ExpressionException(e));
 			} catch (JAXBException e) {
 				throw new ExpressionExceptionWrapper(new ExpressionException(e));
 			} catch (ExpressionException e) {
@@ -1933,7 +1927,7 @@ public class IrpfCalculator {
 			return salida2019;
 		}
 
-		private AEATRetencionesSalida2020 _calculate(
+		private AEATRetencionesSalida2020 calculate(
 				AEATRetencionesEntrada2020 entrada2020)
 				throws IrpfCalculateException, JAXBException, IOException {
 			try {
@@ -1974,45 +1968,6 @@ public class IrpfCalculator {
 			AEATRetencionesSalida2020 salida2020 = (AEATRetencionesSalida2020) unMarshaller
 					.unmarshal(salida2020File);
 			salida2020File.delete();
-			return salida2020;
-		}
-
-		private AEATRetencionesSalida2020 calculate(
-				AEATRetencionesEntrada2020 entrada2020)
-				throws IrpfCalculateException, JAXBException, IOException, SAXException {
-			try {
-				checkNullZeroRetribAnuales(entrada2020);
-			} catch (NullPointerException e) {
-				return newZeroAEATRetencionesSalida2020(entrada2020);
-			} 
-
-			Marshaller marshaller = JAXBContext.newInstance(
-					AEATRetencionesEntrada2020.class).createMarshaller();
-			marshaller.setProperty(Marshaller.JAXB_ENCODING, "ISO-8859-1");
-//			marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			StringWriter stringWriter = new StringWriter();
-			marshaller.marshal(entrada2020, stringWriter);
-			
-			String entrada2020XML = stringWriter.toString();
-			String return2020XML = es.aeat.pret.c200.mc.ModuloCalculo.procesarFicheroXML(entrada2020XML);
-
-			Unmarshaller unMarshaller = JAXBContext.newInstance(
-					AEATRetencionesError2020.class).createUnmarshaller();
-			try {
-				StringReader stringReader = new StringReader(return2020XML);
-				AEATRetencionesError2020 error2020 = (AEATRetencionesError2020) unMarshaller
-						.unmarshal(stringReader);
-				throw new IrpfCalculateException(error2020);
-			} catch (JAXBException e) {
-			} catch (IllegalArgumentException e) {
-			}
-
-			StringReader stringReader = new StringReader(return2020XML);
-			unMarshaller = JAXBContext.newInstance(
-					AEATRetencionesSalida2020.class).createUnmarshaller();
-			AEATRetencionesSalida2020 salida2020 = (AEATRetencionesSalida2020) unMarshaller
-					.unmarshal(stringReader);
 			return salida2020;
 		}
 	}
