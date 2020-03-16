@@ -299,7 +299,7 @@ public class InvoiceImport {
 			ai.setWorkplace(aonCtx.getWorkplaces().get(0).getId());
 
 			Invoice invoice = new Invoice();
-			invoice.setScope(new Scope().setId(domain.getScope()));
+			invoice.setScope(new Scope().setId(getScopeId(domain, user)));
 			
 			invoice.setTransaction(getTransaction(ivs.get(i)));
 			invoice.setDomain(domain.getId());
@@ -312,7 +312,7 @@ public class InvoiceImport {
 			String nif = ivs.get(i).getNif();
 			String name = ivs.get(i).getName();
 			
-			AccountingRegistry ar = getRegistry(domain, user.getLogin(), invoice.getType(), nif, name, invoice.getTransaction());			
+			AccountingRegistry ar = getRegistry(domain, user, invoice.getType(), nif, name, invoice.getTransaction());			
 			invoice.setRegistry(ar.getId());
 			ai.setRegistry(ar);
 			ai.setInvoice(invoice);
@@ -406,8 +406,11 @@ public class InvoiceImport {
 	}
 	
 	private static Registry getDomainRegistry(Domain domain, String login, String nif) {
+		Integer[] rdomains = new Integer[] {domain.getId(), domain.getParentId(), 0};
 		LinkedList<Registry> r = AON.getRegistryStream(domain.getName(), domain.getId(), login, f ->
-		f.getDocumentProperty().eq(nif)).collect(Collectors.toCollection(LinkedList::new));
+			f.getDomainProperty().in(rdomains)
+			.and(f.getDocumentProperty().eq(nif)))
+			.collect(Collectors.toCollection(LinkedList::new));
 		if(r.stream().filter(f-> f.getDomain().equals(domain.getId())).count() > 0) {
 			return r.stream().filter(f-> f.getDomain().equals(domain.getId())).findFirst().get();
 		} else if(domain.getParentId() != null && r.stream().filter(f-> f.getDomain().equals(domain.getParentId())).count() > 0) {
@@ -418,29 +421,30 @@ public class InvoiceImport {
 		return null;
 	}
 	
-	private static AccountingRegistry getRegistry(Domain domain, String login, InvoiceType type, String nif, String name, InvoiceTransactionType transaction) {
+	private static AccountingRegistry getRegistry(Domain domain, User user, InvoiceType type, String nif, String name, InvoiceTransactionType transaction) {
 		// TODO Auto-generated method stub
 		if(InvoiceType.SALES.equals(type)) {
-			Customer customer = AON.getCustomer(domain.getName(), domain.getId(), login, f -> 
+			Customer customer = AON.getCustomer(domain.getName(), domain.getId(), user.getLogin(), f -> 
 				f.getDomainProperty().eq(domain.getId())
 				.and(f.getDocumentProperty().eq(nif)));
 			
 			if(customer == null || customer.getId() == null) {
-				Registry reg = getDomainRegistry(domain, login, nif);
-				if(reg == null) {
-					reg = AON.insertRegistry(domain.getName(), domain.getId(), login, new Registry()
+				Registry reg = getDomainRegistry(domain, user.getLogin(), nif);
+				if(reg == null || !reg.getDomain().equals(domain.getId())) {
+					reg = reg != null ? reg : new Registry();
+					reg = AON.insertRegistry(domain.getName(), domain.getId(), user.getLogin(), reg
 						.setDomain(domain.getId())
 						.setDocument(nif)
 						.setName(name));
-				}			
+				}	
 				customer = new Customer()
 					.setDomain(domain.getId())
 					.setRegistry(reg)
 					.setStatus(CustomerStatus.ACTIVE)
 					.setTransaction(transaction.value())
-					.setScope(domain.getScope());
+					.setScope(getScopeId(domain, user));
 				customer.setName(reg.getName());
-				AON.insertCustomer(domain.getName(), domain.getId(), login, customer);
+				AON.insertCustomer(domain.getName(), domain.getId(), user.getLogin(), customer);
 			}
 			return new AccountingRegistry()
 					.setType(AccountingRegistryType.CUSTOMER)
@@ -448,32 +452,31 @@ public class InvoiceImport {
 					.setName(customer.getName())
 					.setAccountId(customer.getAccount());
 		} else if(InvoiceType.PURCHASE.equals(type)) {
-			Supplier supplier = AON.getSupplier(domain.getName(), domain.getId(), login, f ->
+			Supplier supplier = AON.getSupplier(domain.getName(), domain.getId(), user.getLogin(), f ->
 				f.getDomainProperty().eq(domain.getId())
 				.and(f.getDocumentProperty().eq(nif))).orElse(new Supplier());
 			if(supplier == null || supplier.getId() == null) {
-				Registry reg = getDomainRegistry(domain, login, nif);
-				if(reg == null) {
-					reg = AON.insertRegistry(domain.getName(), domain.getId(), login, new Registry()
+				Registry reg = getDomainRegistry(domain, user.getLogin(), nif);
+				if(reg == null || !reg.getDomain().equals(domain.getId())) {
+					reg = reg != null ? reg : new Registry();
+					reg = AON.insertRegistry(domain.getName(), domain.getId(), user.getLogin(), reg
 						.setDomain(domain.getId())
 						.setDocument(nif)
 						.setName(name));
 				}			
-				Account acc = ACCOUNTING.getAccounts(domain.getName(), domain.getId(), login, f -> 
+				Account acc = ACCOUNTING.getAccounts(domain.getName(), domain.getId(), user.getLogin(), f -> 
 					f.getDomainProperty().eq(domain.getId())
 					.and(f.getAliasProperty().eq(nif))).findFirst().orElse(new Account());
-				Scope s = AON.getScopeStream(domain.getName(), domain.getId(), login, f ->
-				f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
-					.findFirst().orElse(new Scope());
+				
 				supplier = new Supplier()
 						.setTransaction((short) transaction.ordinal())
 						.setStatus(SupplierStatus.ACTIVE)
-						.setScope(domain.getScope() != null ? domain.getScope() : s.getId())
+						.setScope(getScopeId(domain, user))
 						.setAccount(acc.getId());
 				supplier.setDomain(domain.getId());
 				supplier.setId(reg.getId());
 				supplier.setName(reg.getName());
-				AON.insertSupplier(domain.getName(), domain.getId(), login, supplier);
+				AON.insertSupplier(domain.getName(), domain.getId(), user.getLogin(), supplier);
 			}
 			return new AccountingRegistry()
 					.setType(AccountingRegistryType.SUPPLIER)
@@ -481,32 +484,31 @@ public class InvoiceImport {
 					.setName(supplier.getName())
 					.setAccountId(supplier.getAccount());
 		} else if(InvoiceType.EXPENSES.equals(type)) {
-			Creditor creditor = AON.getCreditor(domain.getName(), domain.getId(), login, f -> 
+			Creditor creditor = AON.getCreditor(domain.getName(), domain.getId(), user.getLogin(), f -> 
 				f.getDomainProperty().eq(domain.getId())
 				.and(f.getDocumentProperty().eq(nif))).orElse(new Creditor());
 			if(creditor == null || creditor.getId() == null) {
-				Registry reg = getDomainRegistry(domain, login, nif);
-				if(reg == null) {
-					reg = AON.insertRegistry(domain.getName(), domain.getId(), login, new Registry()
+				Registry reg = getDomainRegistry(domain, user.getLogin(), nif);
+				if(reg == null || !reg.getDomain().equals(domain.getId())) {
+					reg = reg != null ? reg : new Registry();
+					reg = AON.insertRegistry(domain.getName(), domain.getId(), user.getLogin(), reg
 						.setDomain(domain.getId())
 						.setDocument(nif)
 						.setName(name));
 				}			
-				Account acc = ACCOUNTING.getAccounts(domain.getName(), domain.getId(), login, f -> 
+				Account acc = ACCOUNTING.getAccounts(domain.getName(), domain.getId(), user.getLogin(), f -> 
 					f.getDomainProperty().eq(domain.getId())
 					.and(f.getAliasProperty().eq(nif))).findFirst().orElse(new Account());
-				Scope s = AON.getScopeStream(domain.getName(), domain.getId(), login, f ->
-				f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
-					.findFirst().orElse(new Scope());
+			
 				creditor = new Creditor()
 						.setAccount(acc)
 						.setTransaction(transaction)
 						.setRegistry(reg)
 						.setStatus(CreditorStatus.ACTIVE)
-						.setScope(domain.getScope() != null ? domain.getScope() : s.getId());
+						.setScope(getScopeId(domain, user));
 				creditor.setDomain(domain.getId());
 				creditor.setId(reg.getId());
-				AON.insertCreditor(domain.getName(), domain.getId(), login, creditor);
+				AON.insertCreditor(domain.getName(), domain.getId(), user.getLogin(), creditor);
 			}
 			return new AccountingRegistry()
 					.setType(AccountingRegistryType.CREDITOR)
@@ -517,6 +519,19 @@ public class InvoiceImport {
 		return null;
 	}
 
+	private static Integer getScopeId(Domain domain, User user) {
+		Integer scope = domain.getScope();
+		if(domain.getScope() == null) {
+			Scope s = AON.getUserScopeStream(domain.getName(), domain.getId(), user.getLogin(), user.getId(), 
+					f -> f.getDescriptionProperty().eq("GENERAL")).findFirst().orElse(null);
+			if(s == null) {
+				Integer[] scopes = AON.getUserScopes(domain.getName(), domain.getId(), user.getLogin(), user.getId());
+				scope = scopes.length > 0 ? scopes[0] : null;
+			} else scope = s.getId();
+		}
+		return scope;
+	}
+	
 	private static InvoiceType getInvoiceType(String account) {
 		if("7".equals(account.substring(0, 1))) {
 			return InvoiceType.SALES;
