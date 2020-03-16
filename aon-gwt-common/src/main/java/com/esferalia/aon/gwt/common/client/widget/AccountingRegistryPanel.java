@@ -265,7 +265,7 @@ public class AccountingRegistryPanel extends SimpleLayoutPanel implements Focusa
 			public void onChange(ChangeEvent event) {
 				reg.setDocumentType(fulldocument.getType());
 				okButton.setEnabled(reg.isDirty());
-				checkRegistryDocument(domainName,domain, user,config,callback,type.getValue(),reg.getId(),fulldocument,documentWarningContainer);
+				checkRegistryDocument(domainName,domain, user,config,callback,type.getValue(),reg.getId(),fulldocument,documentWarningContainer, false);
 			}
 		});
 		fulldocument.getCountryWidget().addKeyUpHandler( keyUpHandler);
@@ -275,7 +275,7 @@ public class AccountingRegistryPanel extends SimpleLayoutPanel implements Focusa
 			public void onChange(ChangeEvent event) {
 				reg.setDocumentCountry(fulldocument.getCountry());
 				okButton.setEnabled(reg.isDirty());
-				checkRegistryDocument(domainName,domain,user,config,callback,type.getValue(),reg.getId(),fulldocument,documentWarningContainer);
+				checkRegistryDocument(domainName,domain,user,config,callback,type.getValue(),reg.getId(),fulldocument,documentWarningContainer, false);
 			}
 		});
 		fulldocument.getDocumentWidget().addKeyUpHandler( keyUpHandler);
@@ -285,7 +285,7 @@ public class AccountingRegistryPanel extends SimpleLayoutPanel implements Focusa
 			public void onValueChange(ValueChangeEvent<String> event) {
 				reg.setDocument(fulldocument.getDocument());
 				okButton.setEnabled(reg.isDirty());
-				checkRegistryDocument(domainName,domain,user,config,callback,type.getValue(),reg.getId(),fulldocument,documentWarningContainer);
+				checkRegistryDocument(domainName,domain,user,config,callback,type.getValue(),reg.getId(),fulldocument,documentWarningContainer, true);
 			}
 
 		});
@@ -860,7 +860,7 @@ public class AccountingRegistryPanel extends SimpleLayoutPanel implements Focusa
 			, AccountingRegistryType accountingRegistryType
 			, Integer id
 			, FullDocument fulldocument
-			, FlowPanel documentWarningContainer) {
+			, FlowPanel documentWarningContainer, Boolean documentChange) {
 		if ( id == null
 		 && fulldocument.getType() != null 
 		 && fulldocument.getCountry() != null 
@@ -923,8 +923,10 @@ public class AccountingRegistryPanel extends SimpleLayoutPanel implements Focusa
 						}
 					} 
 					
-					if(!sameType) {
+					if(!sameType && documentChange) {
 						AccountingRegistry  ar = newAccountingRegistry(domain, null)
+								.setDocumentCountry(fulldocument.getCountry())
+								.setDocumentType(fulldocument.getType())
 								.setDocument(fulldocument.getDocument())
 								.setType(accountingRegistryType);
 						commonService.getAccountingRegistry(domainName, domain, user, 
