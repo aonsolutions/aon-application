@@ -22,6 +22,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
@@ -139,6 +140,12 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				@Override
 				public Void visitPeonadasDay(DayType dayType) {
 					calendarGrid.getWidget(row, col).addStyleName(style.peonadasStyle());
+					return null;
+				}
+
+				@Override
+				public Void visitPartialityDay(DayType dayType) {
+					calendarGrid.getWidget(row, col).addStyleName(style.partialityStyle());
 					return null;
 				}
 
@@ -272,6 +279,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		String nonWorkingStyle();
 		String sundayStyle();
 		String holidayStyle();
+		String partialityStyle();
 		String ereStyle();
 		String strikeStyle();
 		String reductionStyle();
@@ -373,6 +381,9 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	
 	@UiField
 	Button holidayDayButton;
+	
+	@UiField
+	Button partialityDayButton;
 	
 	@UiField
 	HorizontalPanel extraHoursButtonPanel;
@@ -845,6 +856,43 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	@UiHandler("holidayDayButton")
 	public void onVacacionesClick(ClickEvent event) {
 		addHolidays();
+	}
+	
+	@UiHandler("partialityDayButton")
+	public void onPartialityClick(ClickEvent event) {
+		EmployeeCalendarPartialityDialog partialityDialog = new EmployeeCalendarPartialityDialog("Coeficiente Parcialidad") {
+			
+			@Override
+			protected void onAccept() {
+				Date startDate = this.getStartDate();
+				Date endDate = this.getEndDate();
+				
+				if(endDate == null){
+					endDate = DateUtils.getLastDayOfYear(new Date());
+					DateUtils.addYears2Date(endDate, 2);
+				}
+				
+				Double partialityCoeficient = getPartiality();
+				
+				cleanCalendarSelectedDates();
+				
+				while (startDate.before(endDate) || startDate.equals(endDate)) {
+					selectedDates.setSelected(DateUtils.copyDateOnly(startDate), true);
+					DateUtils.addDays2Date(startDate, 1);
+				}
+				
+				addPartialityDays(partialityCoeficient);
+			}
+		};
+		
+		if(!selectedDates.getSelectedList().isEmpty()){
+			Collections.sort(selectedDates.getSelectedList());
+			partialityDialog.setStartDate(selectedDates.getSelectedList().get(0));
+			partialityDialog.setEndDate(selectedDates.getSelectedList().get(selectedDates.getSelectedList().size()-1));
+		}
+		
+		partialityDialog.center();
+		partialityDialog.show();
 	}
 	
 	@UiHandler("peonadasDayButton")
@@ -1337,6 +1385,11 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 					calendarGrid.getWidget(row+1, i).setTitle("AUSENCIA INJUSTIFICADA");
 				}
 				
+				if(DayType.PARTIALITY == dayType){
+					calendarGrid.getWidget(row, i).setTitle("Parcialidad : " + calendarEmployeeInfo.getPartialityCoeficient(actualDay));
+					calendarGrid.getWidget(row+1, i).setTitle("Parcialidad : " + calendarEmployeeInfo.getPartialityCoeficient(actualDay));
+				}
+				
 				cellsType[row][i].setAsType(dayType, row, i);
 				contDays++;
 			}
@@ -1437,6 +1490,11 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			if(DayType.DROPDAY == dayType){
 				calendarGrid.getWidget(row, 7 + actualDayOfWeek).setTitle("AUSENCIA INJUSTIFICADA");
 				calendarGrid.getWidget(row+1, 7 + actualDayOfWeek).setTitle("AUSENCIA INJUSTIFICADA");
+			}
+			
+			if(DayType.PARTIALITY == dayType){
+				calendarGrid.getWidget(row, 7 + actualDayOfWeek).setTitle("Parcialidad : " + calendarEmployeeInfo.getPartialityCoeficient(actualDay));
+				calendarGrid.getWidget(row+1, 7 + actualDayOfWeek).setTitle("Parcialidad : " + calendarEmployeeInfo.getPartialityCoeficient(actualDay));
 			}
 			
 			
@@ -1906,6 +1964,26 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		
 	}
 	
+
+	private void applyPartialityDaySelectedDate(DayType partiality, Double partialityCoeficient) {
+		cleanStyles(selectedDates.getSelectedList());
+		List<Date> dates = new LinkedList<Date>();
+		
+		for (Date date : selectedDates.getSelectedList()) {
+			int pos = calculateDatePosition(date);
+			if(pos != -1){
+				int column = calculatePositionCol(pos);
+				int row = calculatePositionRow(pos);
+				cells[row][column].unSelect(row, column);
+				cellsType[row][column].setAsType(partiality, row, column);
+				dates.add(cellsDates[row][column]);
+			}
+		}
+		
+		calendarEmployeeInfo.setPartialityDays(dates, partiality, partialityCoeficient);
+		selectedDates.clear();
+	}
+	
 	private void applyStrikeDayTypeSelectedDates(double cs, DayType strikeDay) {
 		cleanStyles(selectedDates.getSelectedList());
 		List<Date> strikeDatesList = new LinkedList<Date>();
@@ -2065,6 +2143,10 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	private void addInactivityDays(String typeInactivity) {
 		applyInactivityDaySelectedDates(DayType.INACTIVITY, typeInactivity);
 	}
+	private void addPartialityDays(Double partialityCoeficient) {
+		applyPartialityDaySelectedDate(DayType.PARTIALITY, partialityCoeficient);
+	}
+
 //	private void addInactivityDays(String typeInactivity, double ce) {
 //		applyInactivityDaySelectedDates(DayType.INACTIVITY, typeInactivity, ce);
 //	}

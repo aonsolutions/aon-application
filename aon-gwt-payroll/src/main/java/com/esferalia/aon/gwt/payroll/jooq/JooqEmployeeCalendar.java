@@ -88,6 +88,9 @@ public class JooqEmployeeCalendar {
 		varNames.add("CAUSA_INACTIVIDAD");
 		// DROPDAY (AUSENCIA)
 		varNames.add("DIAS_AUSENCIA");
+		// PARTIALITY
+		varNames.add("COEFICIENTE_PARCIALIDAD");
+		varNames.add("DIAS_PARCIALIDAD");
 		
 		dslContext.delete(CONTRACT_DATA)
 			.where(CONTRACT_DATA.CONTRACT.eq(contractId))
@@ -112,6 +115,7 @@ public class JooqEmployeeCalendar {
 		ArrayList<Quartet<Date, Date, String, String>> contractCoefficientDropDayTypeList = new ArrayList<Quartet<Date, Date, String, String>>();
 		ArrayList<Quartet<Date, Date, String, String>> contractITDayTypeList = new ArrayList<Quartet<Date, Date, String, String>>();
 		ArrayList<Quartet<Date, Date, String, String>> contractInactivityDaysList = new ArrayList<Quartet<Date, Date, String, String>>();
+		ArrayList<Quartet<Date, Date, String, String>> contractPartialityDaysList = new ArrayList<Quartet<Date, Date, String, String>>();
 		HashMap<java.util.Date, String> contractFestiveDaysList = new HashMap<java.util.Date, String>();
 		ArrayList<Byte> contractNonWorkingDaysList = new ArrayList<Byte>();
 		Boolean fullTimeJourney = false;
@@ -260,7 +264,8 @@ public class JooqEmployeeCalendar {
 							,"NO_LABORABLE"
 							,"DIAS_INACTIVIDAD"
 							,"DIAS_AUSENCIA"
-							,"PEONADAS"))
+							,"PEONADAS"
+							,"DIAS_PARCIALIDAD"))
 					.fetch();
 		
 		for(Record r: contractDayTypesEmployeeInfo){
@@ -373,6 +378,25 @@ public class JooqEmployeeCalendar {
 			contractCoefficientDropDayTypeList.add(quarterCoeficcientDropTypeEmployee);
 		}
 		
+		// ------------- COEFICIETE_PARCIALIDAD
+		Result<Record> partialityTypeRecord = dslContext
+				.select()
+				.from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(contract))
+				.and(CONTRACT_DATA.NAME.eq("COEFICIENTE_PARCIALIDAD"))
+				.fetch();
+	
+		for(Record r: partialityTypeRecord){
+			Quartet<Date, Date, String, String> quarterPartialityTypeEmployee = new Quartet<Date, Date, String, String>();
+			
+			quarterPartialityTypeEmployee.setStartDate(r.get(CONTRACT_DATA.START_DATE))
+			.setEndDate(r.get(CONTRACT_DATA.END_DATE))
+			.setName(r.get(CONTRACT_DATA.NAME))
+			.setExpression(r.get(CONTRACT_DATA.EXPRESSION));
+			
+			contractPartialityDaysList.add(quarterPartialityTypeEmployee);
+		}
+
 		// -------------------------------------- DIAS NO LABRABLES / FESTIVOS ---------------------------------------------------------
 		
 		Integer calendar = dslContext.select(DSL.ifnull(CONTRACT.CALENDAR, PAYROLL_WORKPLACE.CALENDAR).as(CONTRACT.CALENDAR))
@@ -477,7 +501,7 @@ public class JooqEmployeeCalendar {
 		employeeInfoCalendar = new EmployeeCalendarData(contractHoursList, contractExtraHoursList, contractDayTypesList, contractITDayTypeList, 
 				contractFestiveDaysList, contractNonWorkingDaysList, fullTimeJourney, contractCoefficientEREDayTypeList, contractCoefficientStrikeDayTypeList,
 				/*contractCoefficientInactivityDayTypeList,*/ contractCoefficientDropDayTypeList,
-				contractInactivityDaysList, contractType, festiveWorkingDays);
+				contractInactivityDaysList, contractPartialityDaysList, contractType, festiveWorkingDays);
 		
 		return employeeInfoCalendar;
 	}
@@ -720,6 +744,8 @@ public class JooqEmployeeCalendar {
 				  ,"DIAS_INACTIVIDAD"
 				  ,"NO_LABORABLE"
 				  ,"CAUSA_INACTIVIDAD"
+				  ,"DIAS_PARCIALIDAD"
+				  ,"COEFICIENTE_PARCIALIDAD"
 //				  ,"COEFICIENTE_INACTIVIDAD"
 				  ,"COEFICIENTE_AUSENCIA"
 				  ,"DIAS_AUSENCIA"
@@ -733,6 +759,7 @@ public class JooqEmployeeCalendar {
 //		Map<java.util.Date, Double> inactivityCoeficientDaysValues = updateInfo.getMapDaysCoefficientInactivity();
 		Map<java.util.Date, Double> dropDaysValues = updateInfo.getMapDaysCoefficientDrop();
 		Map<java.util.Date, String> inactivityDaysValues = updateInfo.getMapInactivityDays();
+		Map<java.util.Date, String> partialityDaysValues = updateInfo.getMapPartialityDays();
 		
 		java.util.Date startDateType = new java.util.Date();
 		java.util.Date endDateType = new java.util.Date();
@@ -805,6 +832,19 @@ public class JooqEmployeeCalendar {
 //									.values(domain, "COEFICIENTE_INACTIVIDAD", contract, coeficiente, 
 //											sqlStartDateType, sqlEndDateType).execute();
 							
+						}else if(dayType.equals("DIAS_PARCIALIDAD")){
+							String partialityCoeficient = partialityDaysValues.get(auxStartDateType);
+							dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+									CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+									CONTRACT_DATA.END_DATE)
+									.values(domain, 
+											"COEFICIENTE_PARCIALIDAD", 
+											contract, 
+											partialityCoeficient, 
+											sqlStartDateType, 
+											sqlEndDateType)
+											.execute();
+							
 						}else if(dayType.equals("DIAS_AUSENCIA")){
 							String coeficiente = dropDaysValues.get(auxStartDateType).toString();
 							dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
@@ -873,6 +913,19 @@ public class JooqEmployeeCalendar {
 								sqlStartDateType, 
 								sqlEndDateType)
 								.execute();
+			}else if(dayType.equals("DIAS_PARCIALIDAD")){
+				String partialityCoeficient = partialityDaysValues.get(auxStartDateType);
+				dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+						CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+						CONTRACT_DATA.END_DATE)
+						.values(domain, 
+								"COEFICIENTE_PARCIALIDAD", 
+								contract, 
+								partialityCoeficient, 
+								sqlStartDateType, 
+								sqlEndDateType)
+								.execute();
+				
 			}
 			
 			if(sqlStartDateType.getMonth() == sqlEndDateType.getMonth()){
@@ -1103,7 +1156,7 @@ public class JooqEmployeeCalendar {
 	private static boolean validDayType(String dayType) {
 		return dayType.equals("DIAS_ERE") || dayType.equals("DIAS_HUELGA") || dayType.equals("NO_LABORABLE") 
 				|| dayType.equals("DIAS_VACACIONES") || dayType.equals("DIAS_INACTIVIDAD") || dayType.equals("PEONADAS")
-				|| dayType.equals("DIAS_AUSENCIA");
+				|| dayType.equals("DIAS_AUSENCIA") || dayType.equals("DIAS_PARCIALIDAD");
 	}
 
 	private static String calculateDayType(DayType dayType) {
@@ -1129,6 +1182,9 @@ public class JooqEmployeeCalendar {
 			break;
 		case NOWORKINGDAY:
 			result = "NO_LABORABLE";
+			break;
+		case PARTIALITY:
+			result = "DIAS_PARCIALIDAD";
 			break;
 		case FREEDAY:
 			result = "";

@@ -22,6 +22,7 @@ public class EmployeeCalendarUpdate implements Serializable {
 	private Map<java.util.Date, Double> mapDaysCoefficientInactivity;
 	private Map<java.util.Date, Double> mapDaysCoefficientDrop;
 	private Map<java.util.Date, String> mapInactivityDays;
+	private Map<java.util.Date, String> mapPartialityDays;
 	private Double ereCoefficient;
 	private Boolean fullTimeEmployee;
 	private ArrayList<java.util.Date> festiveWorkingDays;
@@ -134,6 +135,14 @@ public class EmployeeCalendarUpdate implements Serializable {
 	public void setMapInactivityDays(Map<java.util.Date, String> mapInactivityDays) {
 		this.mapInactivityDays = mapInactivityDays;
 	}
+	
+	public Map<java.util.Date, String> getMapPartialityDays() {
+		return mapPartialityDays;
+	}
+	
+	public void setMapPartialityDays(Map<java.util.Date, String> mapPartialityDays) {
+		this.mapPartialityDays = mapPartialityDays;
+	}
 
 	public ArrayList<java.util.Date> getFestiveWorkingDays() {
 		return festiveWorkingDays;
@@ -149,8 +158,6 @@ public class EmployeeCalendarUpdate implements Serializable {
 
 	public void setHasChangeHours(boolean hasChangeHours) {
 		this.hasChangeHours = hasChangeHours;
-	}
-	
-	
+	}	
 	
 }

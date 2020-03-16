@@ -68,6 +68,10 @@
 		.holidayColor{
 			background-color: green;
 		}
+		
+		.partialityColor{
+			background-color: #9c85ee;
+		}
 
 		.strikeColor{
 			background-color: #a09c13;
@@ -156,6 +160,13 @@
 		
 		.holidayStyle {
 			background-color: #52ab3c;
+			border-radius: 20%;
+			padding: 3px;
+			color: #ffffff;
+		}
+		
+		.partialityStyle {
+			background-color: #9c85ee;
 			border-radius: 20%;
 			padding: 3px;
 			color: #ffffff;
@@ -456,6 +467,7 @@
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.inactivityColor} {style.cursorPointer}" ui:field="inactivityDayButton">Inactividad</g:Button>
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.dropColor} {style.cursorPointer}" ui:field="dropDayButton">Ausencia</g:Button>
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.holidayColor} {style.cursorPointer}" ui:field="holidayDayButton">Vacaciones</g:Button>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.partialityColor} {style.cursorPointer}" ui:field="partialityDayButton">Parcialidad</g:Button>
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.peonadasColor} {style.cursorPointer} {style.hide}" ui:field="peonadasDayButton">Peonadas</g:Button>
 						<g:HorizontalPanel ui:field="hourButtonPanel" styleName="{style.hourPanelStyle}">
 							<g:Button styleName="{style.hourStyle} {style.cursorPointer} aon-icon-time" ui:field="hourButton">Horas</g:Button>
