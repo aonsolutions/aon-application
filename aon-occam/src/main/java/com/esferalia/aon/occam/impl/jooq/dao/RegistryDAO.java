@@ -648,27 +648,34 @@ public class RegistryDAO {
 			.set(REGISTRY.TYPE, AonEnumUtils.getByte( AonDocumentUtil.isEntity(reg.getDocument())))
 			.where(REGISTRY.ID.eq(reg.getId()))
 			.execute();
-
-			/* [EUKE]
-		 	Si evitas insertar registry porque tiene ID, ¿por qué  insertas las demás tablas "R****"?
-		 	¿No estás duplicando las direcciones, mails, etc?
-		 	
-			El  insert parcial que quieres hacer debería ser otro método. al cual se llame desde éste insert.
-			Pero que sólo insert en customer, supplier o creditor. no?
 			
-			*/
+			if(reg.getAddressId() != null) {
+				ctx.getDslContext().update(RADDRESS)
+				.set(RADDRESS.DOMAIN,reg.getDomain())
+				.set(RADDRESS.REGISTRY, reg.getId())
+				.set(RADDRESS.TYPE, (byte) 0)
+				.set(RADDRESS.STREET_TYPE,reg.getAddressStreetType()==null?null:reg.getAddressStreetType().getAeatCode())
+				.set(RADDRESS.ADDRESS,reg.getAddress())
+				.set(RADDRESS.NUMBER,reg.getAddressNumber())
+				.set(RADDRESS.ZIP,reg.getAddressZIP())
+				.set(RADDRESS.CITY,reg.getAddressTown())
+				.set(RADDRESS.GEOZONE,reg.getGeozone())
+				.where(RADDRESS.ID.eq(reg.getAddressId()))
+				.execute();
+			} else  {
+				ctx.getDslContext().insertInto(RADDRESS)
+				.set(RADDRESS.DOMAIN,reg.getDomain())
+				.set(RADDRESS.REGISTRY, reg.getId())
+				.set(RADDRESS.TYPE, (byte) 0)
+				.set(RADDRESS.STREET_TYPE,reg.getAddressStreetType()==null?null:reg.getAddressStreetType().getAeatCode())
+				.set(RADDRESS.ADDRESS,reg.getAddress())
+				.set(RADDRESS.NUMBER,reg.getAddressNumber())
+				.set(RADDRESS.ZIP,reg.getAddressZIP())
+				.set(RADDRESS.CITY,reg.getAddressTown())
+				.set(RADDRESS.GEOZONE,reg.getGeozone())
+				.execute();
+			}
 
-			ctx.getDslContext().insertInto(RADDRESS)
-			.set(RADDRESS.DOMAIN,reg.getDomain())
-			.set(RADDRESS.REGISTRY, reg.getId())
-			.set(RADDRESS.TYPE, (byte) 0)
-			.set(RADDRESS.STREET_TYPE,reg.getAddressStreetType()==null?null:reg.getAddressStreetType().getAeatCode())
-			.set(RADDRESS.ADDRESS,reg.getAddress())
-			.set(RADDRESS.NUMBER,reg.getAddressNumber())
-			.set(RADDRESS.ZIP,reg.getAddressZIP())
-			.set(RADDRESS.CITY,reg.getAddressTown())
-			.set(RADDRESS.GEOZONE,reg.getGeozone())
-			.execute();
 			if (!AonStringUtils.isBlank(reg.getPhone())) {
 				RegistryMedia rm = getRMediaStream(ctx, f -> 
 					f.getRegistryProperty().eq(reg.getId())

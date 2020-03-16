@@ -379,6 +379,7 @@ public class AccountingRegistryPanel extends SimpleLayoutPanel implements Focusa
 		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		final TextBox phone = new TextBox();
 		phone.setValue(reg.getPhone());
+		phone.setEnabled(!(reg.getId() != null && reg.getPhone() != null && !reg.getPhone().equals("")));
 		phone.setStyleName(AON.AON_CSS.aonInputText());
 		phone.setVisibleLength(15);
 		phone.setMaxLength(15);
@@ -399,6 +400,7 @@ public class AccountingRegistryPanel extends SimpleLayoutPanel implements Focusa
 		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		final TextBox cellular = new TextBox();
 		cellular.setValue(reg.getCellular());
+		cellular.setEnabled(!(reg.getId() != null && reg.getCellular() != null && !reg.getCellular().equals("")));
 		cellular.setStyleName(AON.AON_CSS.aonInputText());
 		cellular.setVisibleLength(15);
 		cellular.setMaxLength(15);
@@ -419,6 +421,7 @@ public class AccountingRegistryPanel extends SimpleLayoutPanel implements Focusa
 		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		final TextBox fax = new TextBox();
 		fax.setValue(reg.getFax());
+		fax.setEnabled(!(reg.getId() != null && reg.getFax() != null && !reg.getFax().equals("")));
 		fax.setStyleName(AON.AON_CSS.aonInputText());
 		fax.setVisibleLength(15);
 		fax.setMaxLength(15);
@@ -439,6 +442,7 @@ public class AccountingRegistryPanel extends SimpleLayoutPanel implements Focusa
 		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		final TextBox email = new TextBox();
 		email.setValue(reg.getEmail());
+		email.setEnabled(!(reg.getId() != null && reg.getEmail() != null && !reg.getEmail().equals("")));
 		email.setStyleName(AON.AON_CSS.aonInputText());
 		email.setVisibleLength(40);
 		email.setMaxLength(64);
@@ -459,6 +463,7 @@ public class AccountingRegistryPanel extends SimpleLayoutPanel implements Focusa
 		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		final TextBox web = new TextBox();
 		web.setValue(reg.getWeb());
+		web.setEnabled(!(reg.getId() != null && reg.getWeb() != null && !reg.getWeb().equals("")));
 		web.setStyleName(AON.AON_CSS.aonInputText());
 		web.setVisibleLength(40);
 		web.setMaxLength(64);

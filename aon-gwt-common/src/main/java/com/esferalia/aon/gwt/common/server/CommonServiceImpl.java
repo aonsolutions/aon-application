@@ -20,8 +20,11 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryParams;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
+import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.CreditorStatus;
+import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -113,7 +116,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 				).collect(Collectors.toCollection(LinkedList::new));
 	}
 
-	
+	public static final Integer ZERO = 0;
 	@Override
 	public AccountingRegistry getAccountingRegistry(String domainName, int domain, String user,
 			AccountingRegistry ar) throws AonCoreException {
@@ -122,25 +125,74 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			f.getDomainProperty().eq(domain)
 			.and(f.getDocumentProperty().eq(ar.getDocument()))
 		);
-		// [EUKE] REG puede se NULL. Evita el NullPointer.
-
-		/* [EUKE]
-		 * 
-		 	Ese filtro de Alias NO MOLA. ¿¿Tiene pinta de de ñapita??
-			NO puedes fiarte del contenido de la columna alias.
-		*/
+		
+		if(reg.getId() == null ) {
+			reg = AON.getRegistry(domainName, domain, user, f -> 
+				f.getDomainProperty().eq(0)
+			.and(f.getDocumentProperty().eq(ar.getDocument())));
+		}
+		RAddress address = new RAddress();
+		String email = null;
+		String phone = null;
+		String cellular = null;
+		String fax = null;
+		String web = null;
+		if(reg.getId() != null) {
+			Integer regId = reg.getId();
+			address = AON.getRAddress(domainName, domain, user, f -> 
+				f.getRegistryProperty().eq(regId)
+				.and(f.getTypeProperty().eq((byte) 0)));
+			
+			email = AON.getRMedia(domainName, domain, user, f -> 
+				f.getRegistryProperty().eq(regId)
+				.and(f.getMediaProperty().eq(MediaType.EMAIL.value())))
+				.getValue();
+			
+			phone = AON.getRMedia(domainName, domain, user, f -> 
+				f.getRegistryProperty().eq(regId)
+				.and(f.getMediaProperty().eq(MediaType.FIXED_PHONE.value())))
+				.getValue();
+			
+			cellular = AON.getRMedia(domainName, domain, user, f -> 
+				f.getRegistryProperty().eq(regId)
+				.and(f.getMediaProperty().eq(MediaType.CELLULAR.value())))
+				.getValue();
+			
+			fax = AON.getRMedia(domainName, domain, user, f -> 
+				f.getRegistryProperty().eq(regId)
+				.and(f.getMediaProperty().eq(MediaType.FAX.value())))
+				.getValue();
+			
+			web = AON.getRMedia(domainName, domain, user, f -> 
+				f.getRegistryProperty().eq(regId)
+				.and(f.getMediaProperty().eq(MediaType.WEB.value())))
+				.getValue();
+		}		
+	
 		Account acc = ACCOUNTING.getAccounts(domainName, domain, user, f -> 
 			f.getAliasProperty().eq(ar.getDocument()))
 			.findFirst().orElse(new Account());
-
-		return ar.setId(reg.getId())
+		
+		return ar.setId(!ZERO.equals(reg.getDomain()) ? reg.getId() : null)
 				.setAccountId(acc.getId())
 				.setAccountCode(acc.getCode())
 				.setAccountDescription(acc.getDescription())
 				.setAlias(reg.getAlias())
 				.setDocumentType(reg.getDocumentType() != null ? reg.getDocumentType() : ar.getDocumentType())
 				.setDocumentCountry(reg.getDocumentCountry() != null ? reg.getDocumentCountry() : ar.getDocumentCountry())
-				.setName(reg.getName());
+				.setName(reg.getName())
+				.setAddress(address.getAddress())
+				.setAddressId(!ZERO.equals(address.getDomain()) ? address.getId() : null)
+				.setAddressNumber(address.getNumber())
+				.setAddressStreetType(StreetType.safeValueOf(address.getStreet_type()))
+				.setAddressTown(address.getCity())
+				.setAddressZIP(address.getZip())
+				.setGeozone(address.getGeozone())	
+				.setPhone(phone)
+				.setCellular(cellular)
+				.setFax(fax)
+				.setEmail(email)
+				.setWeb(web);
 	}
 	
 	@Override
