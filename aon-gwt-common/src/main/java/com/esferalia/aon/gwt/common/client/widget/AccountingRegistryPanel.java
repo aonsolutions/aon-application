@@ -786,7 +786,7 @@ public class AccountingRegistryPanel extends SimpleLayoutPanel implements Focusa
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				okButton.setEnabled(false);
+				updateButton.setEnabled(false);
 				if (AonStringUtils.isBlank(reg.getName())) {
 					errorPanel.showError("Debe rellenar el nombre del titular" );
 					updateButton.setEnabled(true);

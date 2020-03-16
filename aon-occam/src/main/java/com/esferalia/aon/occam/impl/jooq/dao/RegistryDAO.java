@@ -496,6 +496,15 @@ public class RegistryDAO {
 				);
 			reg.setId(registryId);
 		}
+		
+		/* [EUKE]
+		 	Si evitas insertar registry porque tiene ID, ¿por qué  insertas las demás tablas "R****"?
+		 	¿No estás duplicando las direcciones, mails, etc?
+		 	
+			El  insert parcial que quieres hacer debería ser otro método. al cual se llame desde éste insert.
+			Pero que sólo insert en customer, supplier o creditor. no?
+			
+		*/
 		ctx.getDslContext().insertInto(RADDRESS)
 			.set(RADDRESS.DOMAIN,reg.getDomain())
 			.set(RADDRESS.REGISTRY, reg.getId())
@@ -647,7 +656,10 @@ public class RegistryDAO {
 			.set(REGISTRY.TYPE, AonEnumUtils.getByte( AonDocumentUtil.isEntity(reg.getDocument())))
 			.where(REGISTRY.ID.eq(reg.getId()))
 			.execute();
-			
+
+			/* [EUKE]
+			 	Lo mismo que en método anterior. Se puede estar duplicando la información de las tablas "R***"
+			 */
 			ctx.getDslContext().insertInto(RADDRESS)
 			.set(RADDRESS.DOMAIN,reg.getDomain())
 			.set(RADDRESS.REGISTRY, reg.getId())

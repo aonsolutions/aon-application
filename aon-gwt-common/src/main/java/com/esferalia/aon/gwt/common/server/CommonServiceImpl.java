@@ -123,7 +123,16 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			f.getDomainProperty().eq(domain)
 			.and(f.getDocumentProperty().eq(ar.getDocument()))
 		);
-		
+		// [EUKE] REG puede se NULL. Evita el NullPointer.
+
+		/* [EUKE]
+		 * 
+			El Método ACCOUNTING.getAccounts ya aplica el filtro de herencia y se 
+			debe utilizar SecurityDAO.getInheritanceDomainIds(ctx))
+			puesto que en lo siguiente te falta tener en cuenta que un dominio hijo NO tenga herencia habilitada.
+			Ese filtro de Alias NO MOLA. ¿¿Tiene pinta de de ñapita??
+			NO puedes fiarte del contenido de la columna alias.
+		*/
 		Account acc = ACCOUNTING.getAccounts(domainName, domain, user, f -> 
 			f.getAliasProperty().eq(ar.getDocument())
 			.and(f.getDomainProperty().eq(domain)
