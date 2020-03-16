@@ -12,7 +12,6 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.CompanyBank;
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.AccountingRegistryProperties;
@@ -118,7 +117,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public AccountingRegistry getAccountingRegistry(String domainName, int domain, String user,
 			AccountingRegistry ar) throws AonCoreException {
-		Domain d = AON.getDomain(domainName, domain, user);
+
 		com.esferalia.aon.occam.api.model.registry.Registry reg = AON.getRegistry(domainName, domain, user, f -> 
 			f.getDomainProperty().eq(domain)
 			.and(f.getDocumentProperty().eq(ar.getDocument()))
@@ -127,16 +126,11 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 
 		/* [EUKE]
 		 * 
-			El Método ACCOUNTING.getAccounts ya aplica el filtro de herencia y se 
-			debe utilizar SecurityDAO.getInheritanceDomainIds(ctx))
-			puesto que en lo siguiente te falta tener en cuenta que un dominio hijo NO tenga herencia habilitada.
-			Ese filtro de Alias NO MOLA. ¿¿Tiene pinta de de ñapita??
+		 	Ese filtro de Alias NO MOLA. ¿¿Tiene pinta de de ñapita??
 			NO puedes fiarte del contenido de la columna alias.
 		*/
 		Account acc = ACCOUNTING.getAccounts(domainName, domain, user, f -> 
-			f.getAliasProperty().eq(ar.getDocument())
-			.and(f.getDomainProperty().eq(domain)
-				.or(f.getDomainProperty().eq(d.getParentId()))))
+			f.getAliasProperty().eq(ar.getDocument()))
 			.findFirst().orElse(new Account());
 
 		return ar.setId(reg.getId())
