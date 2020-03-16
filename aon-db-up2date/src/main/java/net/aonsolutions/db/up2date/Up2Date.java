@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.FundUpvUpdateIV;
 import net.aonsolutions.db.up2date.payroll.FundUpvUpdateV;
+import net.aonsolutions.db.up2date.payroll.IndemnizacionEditableUpdate;
 
 public class Up2Date {
 
@@ -95,7 +96,8 @@ public class Up2Date {
     		//SalaryHoursUpdate.SALARYHOURSUPDATE
     		//RegistryInsert.REGISTRYINSERT
     		//FundUpvUpdateIV.FUNDUPV_UPDATE_IV,
-    		FundUpvUpdateV.FUNDUPV_UPDATE_V
+    		//FundUpvUpdateV.FUNDUPV_UPDATE_V
+    		IndemnizacionEditableUpdate.INDEMNIZACIONEDITABLEUPDATE
     };
 
 

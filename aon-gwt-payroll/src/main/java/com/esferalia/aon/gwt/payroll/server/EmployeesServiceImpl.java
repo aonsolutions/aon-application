@@ -63,6 +63,7 @@ import org.jooq.DSLContext;
 import org.jooq.SortField;
 import org.mvel2.CompileException;
 import org.mvel2.ast.Function;
+import org.mvel2.ast.IsDef;
 import org.mvel2.util.MethodStub;
 
 import com.code.aon.common.ICollectionProvider;
@@ -133,6 +134,7 @@ import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
+import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
@@ -1636,7 +1638,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			List<Payment> enterprisePayments = Collections.emptyList();
 			/* getEnterprisePayments(conn, domainId); */
 			List<Payment> systemPayments = JooqPayments.getPayments(conn, 0,0);
-			
+			systemPayments = systemPayments.stream()
+			.filter(p -> !isDefault(p))
+			.collect(Collectors.toList() );
+
 			paymentConcepts  = sub(paymentConcepts, systemPayments);
 			
 			List<Payment> payments = new ArrayList<Payment>(
@@ -1660,6 +1665,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 		}
 	}
+
+
 
 	@Override
 	public List<Deduction> getAvailableDeductions(String domain, int employeeId)
@@ -3352,7 +3359,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			throws SQLException {
 		if (draft.hasDbSalary())
 			deleteSalaries(conn, draft.getDbId());
-
+		if ( draft.getType() == Type.SETTLE )
+			deleteAllSettles(conn, draft.getEmployee().getId());
+		
 		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(conn);
 		RoundSalaryBuilder<ISalary> roundSalaryBuilder = new RoundSalaryBuilder<ISalary>(jooqSalaryBuilder,
 				d -> Math.round(d*1000.00)/1000.00);
@@ -3391,6 +3400,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			throws SQLException {
 		if (draft.hasDbSalary())
 			deleteSalaries(conn, draft.getDbId());
+		if ( draft.getType() == Type.SETTLE )
+			deleteAllSettles(conn, draft.getEmployee().getId());
 
 		SalaryDraftBuilder salaryDraftBuilder = new SalaryDraftBuilder(draft);
 
@@ -4549,6 +4560,34 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	private static void deleteAllSettles(Connection conn, int  id)
+			throws SQLException {
+		ResultSet rs = null ; 
+		PreparedStatement settleStmt = null;
+		try {
+			settleStmt = conn.prepareStatement(
+			String.format("SELECT %s FROM %s WHERE %s = ? "
+			, SalaryColumns.ID
+			, SALARY
+			, SalaryColumns.CONTRACT 
+			));
+			
+			settleStmt.setInt(1, id);
+			rs = settleStmt.executeQuery();
+			ArrayList<Integer> ids = new ArrayList<Integer>();
+			while (rs.next() ) 
+				ids.add(rs.getInt(SalaryColumns.ID));
+			
+			JooqPayrollSalaries.deleteSalaries(conn, ids);
+		} finally {
+			if ( rs != null )
+				rs.close();
+			if ( rs != null )
+				settleStmt.close();
+		}
+		
+	}
+	
 	private static void deleteSalaries(Connection conn, int... ids)
 			throws SQLException {
 		PreparedStatement dataStmt = null;
@@ -5074,6 +5113,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 
-	
+	private static boolean isDefault(Payment p) {
+		return AonStringUtils.startsWith(p.getExpression(), "/*default*/" );
+	}
 
 }
