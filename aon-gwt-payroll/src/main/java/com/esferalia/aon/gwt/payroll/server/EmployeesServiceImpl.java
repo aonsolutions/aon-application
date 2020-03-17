@@ -4566,13 +4566,19 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		PreparedStatement settleStmt = null;
 		try {
 			settleStmt = conn.prepareStatement(
-			String.format("SELECT %s FROM %s WHERE %s = ? "
+			String.format(
+					"SELECT %s "
+					+ "FROM %s "
+					+ "WHERE %s = ? "
+					+ "AND %s = ? "
 			, SalaryColumns.ID
 			, SALARY
 			, SalaryColumns.CONTRACT 
+			, SalaryColumns.TYPE
 			));
 			
 			settleStmt.setInt(1, id);
+			settleStmt.setInt(2, SalaryType.SETTLE.ordinal());
 			rs = settleStmt.executeQuery();
 			ArrayList<Integer> ids = new ArrayList<Integer>();
 			while (rs.next() ) 
