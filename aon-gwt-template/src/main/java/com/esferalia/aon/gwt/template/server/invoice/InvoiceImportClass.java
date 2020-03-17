@@ -3,6 +3,8 @@ package com.esferalia.aon.gwt.template.server.invoice;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
+
 
 public class InvoiceImportClass {
 	InvoiceOpType type;
@@ -23,8 +25,8 @@ public class InvoiceImportClass {
 	Double retentionPercentage;
 	Double retentionQuota;
 	Double total;
-	String retentionKey;
-	String retentionSubKey;
+	InvoiceClaveRetencion retentionKey;
+	InvoiceSubClaveRetencion retentionSubKey;
 	
 	public InvoiceImportClass() {
 		// TODO Auto-generated constructor stub
@@ -174,21 +176,101 @@ public class InvoiceImportClass {
 		this.total = total;
 	}
 
-	public String getRetentionKey() {
+	public InvoiceClaveRetencion getRetentionKey() {
 		return retentionKey;
 	}
 
-	public void setRetentionKey(String retentionKey) {
+	public void setRetentionKey(InvoiceClaveRetencion retentionKey) {
 		this.retentionKey = retentionKey;
 	}
 
-	public String getRetentionSubKey() {
+	public InvoiceSubClaveRetencion getRetentionSubKey() {
 		return retentionSubKey;
 	}
 
-	public void setRetentionSubKey(String retentionSubKey) {
+	public void setRetentionSubKey(InvoiceSubClaveRetencion retentionSubKey) {
 		this.retentionSubKey = retentionSubKey;
 	}
 	
+	public enum InvoiceOpType {
+		EX,
+		PIS,
+		ISP,
+		EIB,
+		VI,
+		AI,
+		AIS,
+		AIB,
+		GISP,
+		GE,
+		NAC,
+		INT,
+		EXT,
+		CCM;
+		
+		public static InvoiceOpType safeValueOf(String value) {
+			if(value == null) return null;
+			return valueOf(value);
+		}
+	}
 	
+	public enum InvoiceClaveRetencion {
+		A,
+		B,
+		C,
+		D,
+		E,
+		F,
+		G,
+		H,
+		I,
+		J,
+		K,
+		M,
+		N,
+		O,
+		PR,
+		AR,
+		CM,
+		AG,
+		TA;
+		
+		public static InvoiceClaveRetencion safeValueOf(String value) {
+			if(value == null) return null;
+			return valueOf(value);
+		}
+	}	
+	
+	public enum InvoiceSubClaveRetencion {
+		O1,
+		O2,
+		O3,
+		O4;
+		
+		public static InvoiceSubClaveRetencion safeValueOf(Integer value) {
+			if(value != null && value == 1) {
+				 return O1;
+			} else if(value != null && value == 2) {
+				 return O2;
+			} else if(value != null && value == 3) {
+				 return O3;
+			} else if(value != null && value == 4) {
+				 return O4;
+			}
+			return null;
+		}
+		
+		public static InvoiceSubClaveRetencion safeValueOf(String value) {
+			if(value != null && ("01".equals(value) || "1".equals(value))) {
+				 return O1;
+			} else if(value != null && ("02".equals(value) || "2".equals(value))) {
+				 return O2;
+			} else if(value != null && ("03".equals(value) || "3".equals(value))) {
+				 return O3;
+			} else if(value != null && ("04".equals(value) || "4".equals(value))) {
+				 return O4;
+			}
+			return null;
+		}
+	}
 }

@@ -18,6 +18,9 @@ import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.esferalia.aon.gwt.template.server.invoice.InvoiceImportClass.InvoiceClaveRetencion;
+import com.esferalia.aon.gwt.template.server.invoice.InvoiceImportClass.InvoiceOpType;
+import com.esferalia.aon.gwt.template.server.invoice.InvoiceImportClass.InvoiceSubClaveRetencion;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -183,7 +186,7 @@ public class InvoiceImport {
 		if(o == null) return;
 	
 		if("TIPO OPERACIÓN".equalsIgnoreCase(title)) {
-			opType(o.toString());
+			inv.setType(InvoiceOpType.safeValueOf(o.toString()));
 			return;
 		}
 
@@ -236,8 +239,11 @@ public class InvoiceImport {
 		}
 		
 		if("CUENTA BASE".equalsIgnoreCase(title)) {
-			String acc = NumberToTextConverter.toText(cell.getNumericCellValue());
-			inv.setAccount(acc.substring(0,4) + acc.substring(7));
+			String acc = o.toString();
+			if(CellType.NUMERIC == cell.getCellTypeEnum()) {
+				acc = NumberToTextConverter.toText(cell.getNumericCellValue());
+			}
+			inv.setAccount(calculateAccount(acc));
 			return;
 		}
 		if("BASE".equalsIgnoreCase(title)) {
@@ -278,12 +284,12 @@ public class InvoiceImport {
 		}
 		
 		if("CLAVE RETENCIÓN".equalsIgnoreCase(title)) {
-			inv.setRetentionKey(o.toString());
+			inv.setRetentionKey(InvoiceClaveRetencion.safeValueOf(o.toString()));
 			return;
 		}
 		
 		if("SUBCLAVE RETENCIÓN".equalsIgnoreCase(title)) {
-			inv.setRetentionSubKey(o.toString());
+			inv.setRetentionSubKey(InvoiceSubClaveRetencion.safeValueOf(o.toString()));
 			return;
 		}	
 	}
@@ -307,8 +313,9 @@ public class InvoiceImport {
 			invoice.setTaxDate(ivs.get(i).getDate());
 			invoice.setType(getInvoiceType(ivs.get(i).getAccount()));
 			invoice.setReferenceCode(ivs.get(i).getRef());
-			invoice.setWithholding(ivs.get(i).getRetentionQuota() > 0);
-
+			invoice.setWithholding(ivs.get(i).getRetentionQuota() != null 
+					&& ivs.get(i).getRetentionQuota() > 0);
+			
 			String nif = ivs.get(i).getNif();
 			String name = ivs.get(i).getName();
 			
@@ -324,7 +331,8 @@ public class InvoiceImport {
 			Double retPercentage = 0.0;
 			Integer j = i;
 			while(ivs.size() > j && reference.equals(ivs.get(j).getRef())) {
-				if(ivs.get(i).getRetentionQuota() > 0) {
+				if(ivs.get(i).getRetentionQuota() != null 
+						&& ivs.get(i).getRetentionQuota() > 0) {
 					retBase = retBase + ivs.get(j).getBase();
 					retPercentage = ivs.get(j).getRetentionPercentage();
 					retQuota = retQuota + ivs.get(j).getRetentionQuota();
@@ -344,15 +352,22 @@ public class InvoiceImport {
 				
 				InvoiceVAT vat = new InvoiceVAT()
 						.setVatDeductionType(VatDeductionType.WITH_RIGHT)
-						.setBase(ivs.get(j).getBase())
-						.setPercentage(ivs.get(j).getPercentage())
-						.setQuota(ivs.get(j).getQuota())
-						.setSurcharge(ivs.get(j).getRePercentage())
-						.setSurchargeQuota(ivs.get(j).getReQuota())
+						.setBase(ivs.get(j).getBase() != null 
+								? ivs.get(j).getBase() : 0.0)
+						.setPercentage(ivs.get(j).getPercentage() != null
+								? ivs.get(j).getPercentage() : 0.0)
+						.setQuota(ivs.get(j).getQuota() != null
+								? ivs.get(j).getQuota() : 0.0)
+						.setSurcharge(ivs.get(j).getRePercentage() != null
+								? ivs.get(j).getRePercentage() : 0.0)
+						.setSurchargeQuota(ivs.get(j).getReQuota() != null
+								? ivs.get(j).getReQuota() : 0.0)
 						//.setInvestAsset(ivs.get(j).getInvestAsset())
 						.setDeductiblePercent(100.0)
-						.setDeductibleQuota(ivs.get(j).getQuota())
-						.setWithholding(ivs.get(j).getRetentionQuota() > 0)
+						.setDeductibleQuota(ivs.get(j).getQuota() != null
+								? ivs.get(j).getQuota() : 0.0)
+						.setWithholding(ivs.get(j).getRetentionQuota() != null
+								&& ivs.get(j).getRetentionQuota() > 0)
 						
 						.setExpAccountId(expAccount.getId())
 						.setExpAccountCode(expAccount.getCode())
@@ -384,7 +399,7 @@ public class InvoiceImport {
 					:aonCtx.getDefaultChargedRetAccount();
 			
 				InvoiceWithholding iw = new InvoiceWithholding()
-					.setWithholdingType(WithholdingType.PROFESSIONAL)
+					.setWithholdingType(getWithholdingType(ivs.get(i).getRetentionKey()))
 					.setBase(retBase)
 					.setPercentage(retPercentage)
 					.setQuota(retQuota)
@@ -404,7 +419,23 @@ public class InvoiceImport {
 			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), ai);
 		}
 	}
-	
+	private static WithholdingType getWithholdingType(InvoiceClaveRetencion icr) {
+		if(InvoiceClaveRetencion.PR.equals(icr)
+			|| InvoiceClaveRetencion.G.equals(icr)) {
+			return WithholdingType.PROFESSIONAL;
+		} else if(InvoiceClaveRetencion.AR.equals(icr)) {
+			return WithholdingType.RENTING;
+		} else if(InvoiceClaveRetencion.CM.equals(icr)
+			|| InvoiceClaveRetencion.C.equals(icr)) {
+			return WithholdingType.MOVABLE_CAPITAL;
+		} else if(InvoiceClaveRetencion.AG.equals(icr)
+			|| InvoiceClaveRetencion.H.equals(icr)) {
+			return WithholdingType.FARMER;
+		} else if(InvoiceClaveRetencion.TA.equals(icr)) {
+			return WithholdingType.TRANSPORT_OPERATOR;
+		}
+		return WithholdingType.PROFESSIONAL;
+	}
 	private static Registry getDomainRegistry(Domain domain, String login, String nif) {
 		Integer[] rdomains = new Integer[] {domain.getId(), domain.getParentId(), 0};
 		LinkedList<Registry> r = AON.getRegistryStream(domain.getName(), domain.getId(), login, f ->
@@ -543,77 +574,25 @@ public class InvoiceImport {
 	
 	private static InvoiceTransactionType getTransaction(InvoiceImportClass iic) {
 		if(InvoiceOpType.EX.equals(iic.getType()) 
-				|| InvoiceOpType.EXTRACOMMUNITY.equals(iic.getType())){
+				|| InvoiceOpType.EXT.equals(iic.getType())){
 			return InvoiceTransactionType.EXTRACOMMUNITY;
 		} else if(InvoiceOpType.VI.equals(iic.getType()) 
 				|| InvoiceOpType.AI.equals(iic.getType())
-				|| InvoiceOpType.NATIONAL.equals(iic.getType())) {
+				|| InvoiceOpType.NAC.equals(iic.getType())) {
 			return InvoiceTransactionType.NATIONAL;
 		} else if(InvoiceOpType.ISP.equals(iic.getType())
-				|| InvoiceOpType.GISP.equals(iic.getType())
-				|| InvoiceOpType.OTHER_ISP.equals(iic.getType())) {
+				|| InvoiceOpType.GISP.equals(iic.getType())) {
 			return InvoiceTransactionType.OTHER_ISP;
 		} else if(InvoiceOpType.AIB.equals(iic.getType())
 				|| InvoiceOpType.AIS.equals(iic.getType())
 				|| InvoiceOpType.PIS.equals(iic.getType())
 				|| InvoiceOpType.EIB.equals(iic.getType())
-				|| InvoiceOpType.INTRACOMMUNITY.equals(iic.getType())) {
+				|| InvoiceOpType.INT.equals(iic.getType())) {
 			return InvoiceTransactionType.INTRACOMMUNITY;
-		} else if(InvoiceOpType.CAN_CEU_MEL.equals(iic.getType())) {
+		} else if(InvoiceOpType.CCM.equals(iic.getType())) {
 			return InvoiceTransactionType.CAN_CEU_MEL;
 		}
 		return InvoiceTransactionType.NATIONAL;
-	}
-	
-	private void opType(String type) {
-		switch (type) {
-// INGRESOS
-		case "EX":
-			inv.setType(InvoiceOpType.EX);
-			break;
-		case "PIS":
-			inv.setType(InvoiceOpType.PIS);
-			break;
-		case "ISP":
-			inv.setType(InvoiceOpType.ISP);
-			break;
-		case "EIB":	
-			inv.setType(InvoiceOpType.EIB);
-			break;
-		case "VI":
-			inv.setType(InvoiceOpType.VI);
-			break;
-// GASTOS
-		case "AI":
-			inv.setType(InvoiceOpType.AI);
-			break;
-		case "AIS":
-			inv.setType(InvoiceOpType.AIS);
-			break;
-		case "AIB":
-			inv.setType(InvoiceOpType.AIB);
-			break;
-		case "GE":
-			inv.setType(InvoiceOpType.GE);
-			break;
-		case "NATIONAL":
-			inv.setType(InvoiceOpType.NATIONAL);
-			break;
-		case "INTRACOMMUNITY":
-			inv.setType(InvoiceOpType.INTRACOMMUNITY);
-			break;
-		case "EXTRACOMMUNITY":
-			inv.setType(InvoiceOpType.EXTRACOMMUNITY);
-			break;
-		case "CAN_CEU_MEL":
-			inv.setType(InvoiceOpType.CAN_CEU_MEL);
-			break;
-		case "OTHER_ISP":
-			inv.setType(InvoiceOpType.OTHER_ISP);
-			break;
-		default:
-			break;
-		}
 	}
 	
 	private static AccountEntry getEntryBase(Domain domain, String login, AonConfiguration aonCtx,AccountingInvoice ai) {
@@ -652,5 +631,22 @@ public class InvoiceImport {
 			}
 		});
 		return accountEntry;
+	}
+	
+	private String calculateAccount(String acc) {
+		if(acc.length() > 9) {
+			return acc.substring(0,4) + acc.substring((acc.length() - 9) + 4);
+		} else if(acc.length() < 9) {
+			return acc.substring(0, 4) + generateZeros(9 - acc.length()) + acc.substring(4);
+		}
+		return acc;
+	}
+	
+	private String generateZeros(Integer index) {
+		String zeros = "";
+		for(Integer i = 0; i < index; i++) {
+			zeros = zeros + "0";
+		}
+		return zeros;
 	}
 }
