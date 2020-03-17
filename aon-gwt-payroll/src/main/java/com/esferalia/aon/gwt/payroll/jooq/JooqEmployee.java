@@ -874,13 +874,13 @@ public class JooqEmployee {
 			if(hasHeredity == (byte)0)
 				geozone = dslContext.select()
 						.from(GEOZONE)
-						.where(GEOZONE.NAME.eq(employeeData.getAddressProvinces()))
+						.where(GEOZONE.CODE.eq(employeeData.getAddressProvinces()))
 						.and(GEOZONE.DOMAIN.eq(domain))
 						.fetch();
 			else
 				geozone = dslContext.select()
 				.from(GEOZONE)
-				.where(GEOZONE.NAME.eq(employeeData.getAddressProvinces()))
+				.where(GEOZONE.CODE.eq(employeeData.getAddressProvinces()))
 					.and(GEOZONE.DOMAIN.eq(domain)
 							.or(GEOZONE.DOMAIN.eq(parentDomain)))
 				.fetch();
@@ -888,16 +888,16 @@ public class JooqEmployee {
 			Integer geozoneId = null;
 			
 			if(geozone == null){
-				Result<Record1<String>> codes = dslContext.select(GEOZONE.CODE)
+				Result<Record1<String>> names = dslContext.select(GEOZONE.NAME)
 					.from(GEOZONE)
-					.where(GEOZONE.NAME.like(employeeData.getAddressProvinces()+"%"))
+					.where(GEOZONE.CODE.eq(employeeData.getAddressProvinces()))
 					.fetch();
 				
-				if(!codes.isEmpty()){
+				if(!names.isEmpty()){
 					GeozoneRecord geozoneRecord  = dslContext.insertInto(GEOZONE)
 							.set(GEOZONE.DOMAIN, domain)
-							.set(GEOZONE.NAME, employeeData.getAddressProvinces())
-							.set(GEOZONE.CODE, codes.get(0).value1())
+							.set(GEOZONE.NAME, names.get(0).value1())
+							.set(GEOZONE.CODE, employeeData.getAddressProvinces())
 							.returning(GEOZONE.ID)
 							.fetchOne();
 						
