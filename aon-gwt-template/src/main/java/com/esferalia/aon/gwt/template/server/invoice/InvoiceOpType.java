@@ -10,5 +10,10 @@ public enum InvoiceOpType {
 	AIS,
 	AIB,
 	GISP,
-	GE
+	GE,
+	NATIONAL,
+	INTRACOMMUNITY,
+	EXTRACOMMUNITY,
+	CAN_CEU_MEL,
+	OTHER_ISP
 }

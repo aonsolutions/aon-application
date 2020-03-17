@@ -542,19 +542,25 @@ public class InvoiceImport {
 	}
 	
 	private static InvoiceTransactionType getTransaction(InvoiceImportClass iic) {
-		if(InvoiceOpType.EX.equals(iic.getType())){
+		if(InvoiceOpType.EX.equals(iic.getType()) 
+				|| InvoiceOpType.EXTRACOMMUNITY.equals(iic.getType())){
 			return InvoiceTransactionType.EXTRACOMMUNITY;
 		} else if(InvoiceOpType.VI.equals(iic.getType()) 
-				|| InvoiceOpType.AI.equals(iic.getType())) {
+				|| InvoiceOpType.AI.equals(iic.getType())
+				|| InvoiceOpType.NATIONAL.equals(iic.getType())) {
 			return InvoiceTransactionType.NATIONAL;
 		} else if(InvoiceOpType.ISP.equals(iic.getType())
-				|| InvoiceOpType.GISP.equals(iic.getType())) {
+				|| InvoiceOpType.GISP.equals(iic.getType())
+				|| InvoiceOpType.OTHER_ISP.equals(iic.getType())) {
 			return InvoiceTransactionType.OTHER_ISP;
 		} else if(InvoiceOpType.AIB.equals(iic.getType())
 				|| InvoiceOpType.AIS.equals(iic.getType())
 				|| InvoiceOpType.PIS.equals(iic.getType())
-				|| InvoiceOpType.EIB.equals(iic.getType())) {
+				|| InvoiceOpType.EIB.equals(iic.getType())
+				|| InvoiceOpType.INTRACOMMUNITY.equals(iic.getType())) {
 			return InvoiceTransactionType.INTRACOMMUNITY;
+		} else if(InvoiceOpType.CAN_CEU_MEL.equals(iic.getType())) {
+			return InvoiceTransactionType.CAN_CEU_MEL;
 		}
 		return InvoiceTransactionType.NATIONAL;
 	}
@@ -589,6 +595,21 @@ public class InvoiceImport {
 			break;
 		case "GE":
 			inv.setType(InvoiceOpType.GE);
+			break;
+		case "NATIONAL":
+			inv.setType(InvoiceOpType.NATIONAL);
+			break;
+		case "INTRACOMMUNITY":
+			inv.setType(InvoiceOpType.INTRACOMMUNITY);
+			break;
+		case "EXTRACOMMUNITY":
+			inv.setType(InvoiceOpType.EXTRACOMMUNITY);
+			break;
+		case "CAN_CEU_MEL":
+			inv.setType(InvoiceOpType.CAN_CEU_MEL);
+			break;
+		case "OTHER_ISP":
+			inv.setType(InvoiceOpType.OTHER_ISP);
 			break;
 		default:
 			break;
