@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -832,20 +834,22 @@ public class JooqEmployeeCalendar {
 //									.values(domain, "COEFICIENTE_INACTIVIDAD", contract, coeficiente, 
 //											sqlStartDateType, sqlEndDateType).execute();
 							
-						}else if(dayType.equals("DIAS_PARCIALIDAD")){
-							String partialityCoeficient = partialityDaysValues.get(auxStartDateType);
-							dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
-									CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
-									CONTRACT_DATA.END_DATE)
-									.values(domain, 
-											"COEFICIENTE_PARCIALIDAD", 
-											contract, 
-											partialityCoeficient, 
-											sqlStartDateType, 
-											sqlEndDateType)
-											.execute();
-							
-						}else if(dayType.equals("DIAS_AUSENCIA")){
+						}
+//						else if(dayType.equals("DIAS_PARCIALIDAD")){
+//							String partialityCoeficient = partialityDaysValues.get(auxStartDateType);
+//							dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+//									CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+//									CONTRACT_DATA.END_DATE)
+//									.values(domain, 
+//											"COEFICIENTE_PARCIALIDAD", 
+//											contract, 
+//											partialityCoeficient, 
+//											sqlStartDateType, 
+//											sqlEndDateType)
+//											.execute();
+//							
+//						}
+						else if(dayType.equals("DIAS_AUSENCIA")){
 							String coeficiente = dropDaysValues.get(auxStartDateType).toString();
 							dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
 									CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
@@ -854,7 +858,7 @@ public class JooqEmployeeCalendar {
 											sqlStartDateType, sqlEndDateType).execute();
 						}
 						
-						if(sqlStartDateType.getMonth() == sqlEndDateType.getMonth()){
+						if(sqlStartDateType.getMonth() == sqlEndDateType.getMonth() && !dayType.equals("DIAS_PARCIALIDAD")){
 							String expression = calculateExpression(DateUtils.copyDateOnly(auxStartDateType),
 									DateUtils.copyDateOnly(javaEndDateType));
 							
@@ -913,22 +917,23 @@ public class JooqEmployeeCalendar {
 								sqlStartDateType, 
 								sqlEndDateType)
 								.execute();
-			}else if(dayType.equals("DIAS_PARCIALIDAD")){
-				String partialityCoeficient = partialityDaysValues.get(auxStartDateType);
-				dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
-						CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
-						CONTRACT_DATA.END_DATE)
-						.values(domain, 
-								"COEFICIENTE_PARCIALIDAD", 
-								contract, 
-								partialityCoeficient, 
-								sqlStartDateType, 
-								sqlEndDateType)
-								.execute();
-				
 			}
+//			else if(dayType.equals("DIAS_PARCIALIDAD")){
+//				String partialityCoeficient = partialityDaysValues.get(auxStartDateType);
+//				dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+//						CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+//						CONTRACT_DATA.END_DATE)
+//						.values(domain, 
+//								"COEFICIENTE_PARCIALIDAD", 
+//								contract, 
+//								partialityCoeficient, 
+//								sqlStartDateType, 
+//								sqlEndDateType)
+//								.execute();
+//				
+//			}
 			
-			if(sqlStartDateType.getMonth() == sqlEndDateType.getMonth()){
+			if(sqlStartDateType.getMonth() == sqlEndDateType.getMonth() && !dayType.equals("DIAS_PARCIALIDAD")){
 				String expression = calculateExpression(DateUtils.copyDateOnly(auxStartDateType),
 						DateUtils.copyDateOnly(javaEndDateType));
 				
@@ -944,6 +949,91 @@ public class JooqEmployeeCalendar {
 		}
 		
 		creteRealJourneyDB(dslContext, contract);
+		
+		// ------------------------------------------- ACTUALIZACION COEFICIENTE PARCIALIDAD ----------------------------------------------
+		Map<java.util.Date, String> partialityDaysMap = updateInfo.getMapPartialityDays();
+		
+		SortedMap<java.util.Date, String> partialityDaysSorted = new TreeMap<>();
+		partialityDaysSorted.putAll(partialityDaysMap);
+		
+		if(!partialityDaysSorted.isEmpty()) {
+			
+			java.util.Date[] partilityDates = partialityDaysSorted.keySet().toArray(new java.util.Date[partialityDaysSorted.size()]);
+			String[] partialityValues = partialityDaysSorted.values().toArray(new String[partialityDaysSorted.size()]);
+			
+			Date partialityStartDate = new Date(partilityDates[0].getTime());
+			Date partialityEndDate = null;
+			
+			String partialityValue = partialityValues[0];
+			
+			for(int i=0 ; i < partialityValues.length - 1; i++) {
+				
+				if(partialityValue.equals(partialityValues[i])) {
+					continue;
+				}
+				
+				partialityEndDate = new Date(partilityDates[i-1].getTime());
+				
+				dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+						CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+						CONTRACT_DATA.END_DATE)
+						.values(domain, 
+								"COEFICIENTE_PARCIALIDAD", 
+								contract, 
+								partialityValue, 
+								partialityStartDate, 
+								partialityEndDate)
+								.execute();
+				
+				int daysBetween = DateUtils.getDaysBetween(partialityStartDate, partialityEndDate);
+				daysBetween++;
+				
+				dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+						CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+						CONTRACT_DATA.END_DATE)
+						.values(domain, 
+								"DIAS_PARCIALIDAD", 
+								contract, 
+								daysBetween+"", 
+								partialityStartDate, 
+								partialityEndDate)
+								.execute();
+				
+				partialityStartDate = new Date(partilityDates[i].getTime());
+				partialityEndDate = null;
+				
+				partialityValue = partialityValues[i];
+			}
+			
+			// Last iteration
+			partialityEndDate = new Date(partilityDates[partilityDates.length-1].getTime());
+			
+			dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+					CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+					CONTRACT_DATA.END_DATE)
+					.values(domain, 
+							"COEFICIENTE_PARCIALIDAD", 
+							contract, 
+							partialityValue, 
+							partialityStartDate, 
+							partialityEndDate)
+							.execute();
+			
+			int daysBetween = DateUtils.getDaysBetween(partialityStartDate, partialityEndDate);
+			daysBetween++;
+			
+			dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+					CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+					CONTRACT_DATA.END_DATE)
+					.values(domain, 
+							"DIAS_PARCIALIDAD", 
+							contract, 
+							daysBetween+"", 
+							partialityStartDate, 
+							partialityEndDate)
+							.execute();
+			
+		}
 		
 		// ------------------------------------------- ACTUALIZACION FESTIVOS LABORABLES --------------------------------------------------
 		ArrayList<java.util.Date> festiveWorkingDays = updateInfo.getFestiveWorkingDays();
@@ -1156,7 +1246,8 @@ public class JooqEmployeeCalendar {
 	private static boolean validDayType(String dayType) {
 		return dayType.equals("DIAS_ERE") || dayType.equals("DIAS_HUELGA") || dayType.equals("NO_LABORABLE") 
 				|| dayType.equals("DIAS_VACACIONES") || dayType.equals("DIAS_INACTIVIDAD") || dayType.equals("PEONADAS")
-				|| dayType.equals("DIAS_AUSENCIA") || dayType.equals("DIAS_PARCIALIDAD");
+				|| dayType.equals("DIAS_AUSENCIA") ;
+				//|| dayType.equals("DIAS_PARCIALIDAD");
 	}
 
 	private static String calculateDayType(DayType dayType) {
@@ -1183,9 +1274,9 @@ public class JooqEmployeeCalendar {
 		case NOWORKINGDAY:
 			result = "NO_LABORABLE";
 			break;
-		case PARTIALITY:
-			result = "DIAS_PARCIALIDAD";
-			break;
+//		case PARTIALITY:
+//			result = "DIAS_PARCIALIDAD";
+//			break;
 		case FREEDAY:
 			result = "";
 			break;

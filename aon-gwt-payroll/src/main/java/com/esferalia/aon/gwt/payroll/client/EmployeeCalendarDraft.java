@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.EmployeeCalendarDraftObjectData.DayType;
 import com.esferalia.aon.gwt.payroll.client.EmployeeCalendarDraftObjectData.DayTypeVisitor;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
@@ -22,7 +23,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
@@ -175,8 +175,10 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		}
 		@Override
 		public void unSelect(int row, int col) {
-			if (cellsDates[row][col] != null)
+			if (cellsDates[row][col] != null) {
 				calendarGrid.getWidget(row, col).removeStyleName(style.isSelectedStyle());	
+				calendarGrid.getWidget(row, col).setTitle("");
+			}
 		}
 		@Override
 		public void setHour(int row, int col, double newHour) {
@@ -1195,6 +1197,19 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			viewMenuItem.setVisible(true);
 		}
 		
+		if (!fullTimeJourney)
+			if(calendarEmployeeInfo.isMapHoursEmpty()) {
+				if(calendarEmployeeInfo.isMapPartialityEmpty()) {
+					hourButton.getElement().getStyle().clearDisplay();
+					partialityDayButton.getElement().getStyle().clearDisplay();
+				}else {
+					hourButton.getElement().getStyle().setDisplay(Display.NONE);
+				}
+			}else{
+				hourButton.getElement().getStyle().clearDisplay();
+				partialityDayButton.getElement().getStyle().setDisplay(Display.NONE);
+			}
+		
 		paintMadeHourChanges(calendarEmployeeInfo.getChangesHours());
 		paintMadeTypeChanges(calendarEmployeeInfo.getChangesTypes());
 				
@@ -1386,12 +1401,17 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				}
 				
 				if(DayType.PARTIALITY == dayType){
-					calendarGrid.getWidget(row, i).setTitle("Parcialidad : " + calendarEmployeeInfo.getPartialityCoeficient(actualDay));
-					calendarGrid.getWidget(row+1, i).setTitle("Parcialidad : " + calendarEmployeeInfo.getPartialityCoeficient(actualDay));
+					Double parcialityCoeficient = calendarEmployeeInfo.getPartialityCoeficient(actualDay);
+					
+					calendarGrid.getWidget(row, i).setTitle("Parcialidad : " + parcialityCoeficient);
+					calendarGrid.getWidget(row+1, i).setTitle("Parcialidad : " + parcialityCoeficient);
+					
+					calendarGrid.getWidget(row, i).getElement().getStyle().setOpacity(parcialityCoeficient);
 				}
 				
 				cellsType[row][i].setAsType(dayType, row, i);
 				contDays++;
+				
 			}
 		}
 
@@ -1493,8 +1513,12 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			}
 			
 			if(DayType.PARTIALITY == dayType){
-				calendarGrid.getWidget(row, 7 + actualDayOfWeek).setTitle("Parcialidad : " + calendarEmployeeInfo.getPartialityCoeficient(actualDay));
-				calendarGrid.getWidget(row+1, 7 + actualDayOfWeek).setTitle("Parcialidad : " + calendarEmployeeInfo.getPartialityCoeficient(actualDay));
+				Double parcialityCoeficient = calendarEmployeeInfo.getPartialityCoeficient(actualDay);
+				
+				calendarGrid.getWidget(row, 7 + actualDayOfWeek).setTitle("Parcialidad : " + parcialityCoeficient);
+				calendarGrid.getWidget(row+1, 7 + actualDayOfWeek).setTitle("Parcialidad : " + parcialityCoeficient);
+				
+				calendarGrid.getWidget(row, 7 + actualDayOfWeek).getElement().getStyle().setOpacity(parcialityCoeficient);
 			}
 			
 			
@@ -1522,6 +1546,18 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			if(0 != monthHours)
 				setMonthHours(row, monthHours);
 		}
+		
+		// Ver si tiene parcialiad y que tipo de contrato es
+		if (!fullTimeJourney)
+			if(calendarEmployeeInfo.isMapHoursEmpty()) {
+				if(calendarEmployeeInfo.isMapPartialityEmpty()) {
+					calendarGrid.getRowFormatter().getElement(row+1).getStyle().clearDisplay();
+				}else {
+					calendarGrid.getRowFormatter().getElement(row+1).getStyle().setDisplay(Display.NONE);
+				}
+			}else{
+				calendarGrid.getRowFormatter().getElement(row+1).getStyle().clearDisplay();
+			}
 		
 		month++;
 	}
@@ -1976,6 +2012,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				int row = calculatePositionRow(pos);
 				cells[row][column].unSelect(row, column);
 				cellsType[row][column].setAsType(partiality, row, column);
+				calendarGrid.getWidget(row, column).setTitle("Parcialidad : " + partialityCoeficient);
 				dates.add(cellsDates[row][column]);
 			}
 		}

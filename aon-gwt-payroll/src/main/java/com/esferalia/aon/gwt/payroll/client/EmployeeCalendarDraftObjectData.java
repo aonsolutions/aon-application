@@ -1176,7 +1176,7 @@ public class EmployeeCalendarDraftObjectData {
 			}
 
 			private void initializeHoursMap(List<Quartet<java.sql.Date, java.sql.Date, String, String>> hoursList) {
-				
+				mapDaysHour.clear();
 				for (Quartet<java.sql.Date, java.sql.Date, String, String> quarterHours : hoursList) {
 					
 					Date startDate = DateUtils.copyDateOnly(quarterHours.getStartDate());
@@ -1337,6 +1337,7 @@ public class EmployeeCalendarDraftObjectData {
 			
 			private void initializeMapPartialityDays(
 					List<Quartet<java.sql.Date, java.sql.Date, String, String>> partialityTypeList) {
+				mapPartialityDays.clear();
 				for(Quartet<java.sql.Date, java.sql.Date, String, String> entry : partialityTypeList){
 					Date startDate = entry.getStartDate();
 					while(startDate.before(entry.getEndDate()) || startDate.equals(entry.getEndDate())){
@@ -1726,6 +1727,14 @@ public class EmployeeCalendarDraftObjectData {
 		}
 	}
 
+	
+	public boolean isMapHoursEmpty() {
+		return mapDaysHour.isEmpty();
+	}
+	
+	public boolean isMapPartialityEmpty() {
+		return mapPartialityDays.isEmpty();
+	}
 	
 
 	
