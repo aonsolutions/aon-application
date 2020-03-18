@@ -29,6 +29,10 @@
 		.ereColor{
 			background-color: #b91257;
 		}
+		
+		.ereFzaColor{
+			background-color: rgba(185, 18, 87, 0.7);
+		}
 
 		.holidayColor{
 			background-color: green;
@@ -48,6 +52,10 @@
 
 		.reductionColor{
 			background-color: #065b69;
+		}
+		
+		.partialityColor{
+			background-color: #9c85ee;
 		}
 
 		.colorButton{
@@ -98,6 +106,14 @@
 			</tr>
 			<tr>
 				<td>
+					<g:Label>ERE (Fuerza Mayor)</g:Label>
+				</td>
+				<td>
+					<g:Label styleName="{style.colorButton} {style.ereFzaColor}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
 					<g:Label>Ausencia</g:Label>
 				</td>
 				<td>
@@ -142,6 +158,14 @@
 				</td>
 				<td>
 					<g:Label styleName="{style.colorButton} {style.reductionColor}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label>Parcialidad</g:Label>
+				</td>
+				<td>
+					<g:Label styleName="{style.colorButton} {style.partialityColor}"/>
 				</td>
 			</tr>
 		</table>
