@@ -115,6 +115,12 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				}
 				
 				@Override
+				public Void visitEreFzaDay(DayType dayType) {
+					calendarGrid.getWidget(row, col).addStyleName(style.ereFzaStyle());	
+					return null;
+				}
+				
+				@Override
 				public Void visitDropDay(DayType dayType) {
 					calendarGrid.getWidget(row, col).addStyleName(style.dropStyle());
 					return null;
@@ -178,6 +184,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			if (cellsDates[row][col] != null) {
 				calendarGrid.getWidget(row, col).removeStyleName(style.isSelectedStyle());	
 				calendarGrid.getWidget(row, col).setTitle("");
+				calendarGrid.getWidget(row, col).getElement().getStyle().clearOpacity();
 			}
 		}
 		@Override
@@ -283,6 +290,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		String holidayStyle();
 		String partialityStyle();
 		String ereStyle();
+		String ereFzaStyle();
 		String strikeStyle();
 		String reductionStyle();
 		String dropStyle();
@@ -921,6 +929,9 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 					case 2:
 						addDropDay(cs);
 						break;
+					case 3:
+						addEreFzaDay(cs);
+						break;
 					default:
 						break;
 					}
@@ -945,6 +956,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 					case 2:
 						addDropDay(cs);
 						break;
+					case 3:
+						addEreFzaDay(cs);
 					default:
 						break;
 					}
@@ -1395,6 +1408,11 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 					calendarGrid.getWidget(row+1, i).setTitle("ERE");
 				}
 				
+				if(DayType.EREFZADAY == dayType){
+					calendarGrid.getWidget(row, i).setTitle("ERE (Fuerza Mayor)");
+					calendarGrid.getWidget(row+1, i).setTitle("ERE (Fuerza Mayor)");
+				}
+				
 				if(DayType.DROPDAY == dayType){
 					calendarGrid.getWidget(row, i).setTitle("AUSENCIA INJUSTIFICADA");
 					calendarGrid.getWidget(row+1, i).setTitle("AUSENCIA INJUSTIFICADA");
@@ -1406,7 +1424,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 					calendarGrid.getWidget(row, i).setTitle("Parcialidad : " + parcialityCoeficient);
 					calendarGrid.getWidget(row+1, i).setTitle("Parcialidad : " + parcialityCoeficient);
 					
-					calendarGrid.getWidget(row, i).getElement().getStyle().setOpacity(parcialityCoeficient);
+					if(null != parcialityCoeficient && parcialityCoeficient instanceof Double)
+						calendarGrid.getWidget(row, i).getElement().getStyle().setOpacity(parcialityCoeficient);
 				}
 				
 				cellsType[row][i].setAsType(dayType, row, i);
@@ -1507,6 +1526,11 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				calendarGrid.getWidget(row+1, 7 + actualDayOfWeek).setTitle("ERE");
 			}
 			
+			if(DayType.EREFZADAY == dayType){
+				calendarGrid.getWidget(row, 7 + actualDayOfWeek).setTitle("ERE (Fuerza Mayor)");
+				calendarGrid.getWidget(row+1, 7 + actualDayOfWeek).setTitle("ERE (Fuerza Mayor)");
+			}
+			
 			if(DayType.DROPDAY == dayType){
 				calendarGrid.getWidget(row, 7 + actualDayOfWeek).setTitle("AUSENCIA INJUSTIFICADA");
 				calendarGrid.getWidget(row+1, 7 + actualDayOfWeek).setTitle("AUSENCIA INJUSTIFICADA");
@@ -1518,7 +1542,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				calendarGrid.getWidget(row, 7 + actualDayOfWeek).setTitle("Parcialidad : " + parcialityCoeficient);
 				calendarGrid.getWidget(row+1, 7 + actualDayOfWeek).setTitle("Parcialidad : " + parcialityCoeficient);
 				
-				calendarGrid.getWidget(row, 7 + actualDayOfWeek).getElement().getStyle().setOpacity(parcialityCoeficient);
+				if(null != parcialityCoeficient && parcialityCoeficient instanceof Double)
+					calendarGrid.getWidget(row, 7 + actualDayOfWeek).getElement().getStyle().setOpacity(parcialityCoeficient);
 			}
 			
 			
@@ -1943,6 +1968,24 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		calendarEmployeeInfo.setNonWorkingDays(nonWorkingDatesList, nonWorkingDay, hour);
 		selectedDates.clear();
 	}
+
+	private void applyEREFzaDayTypeSelectedDates(double ce, DayType erefzaday) {
+		cleanStyles(selectedDates.getSelectedList());
+		List<Date> ereDatesList = new LinkedList<Date>();
+		
+		for (Date date : selectedDates.getSelectedList()) {
+			int pos = calculateDatePosition(date);
+			if(pos != -1){
+				int column = calculatePositionCol(pos);
+				int row = calculatePositionRow(pos);
+				cells[row][column].unSelect(row, column);
+				cellsType[row][column].setAsType(erefzaday, row, column);
+				ereDatesList.add(cellsDates[row][column]);
+			}
+		}
+		calendarEmployeeInfo.setEreFzaCoefficientDays(ereDatesList, erefzaday, ce);
+		selectedDates.clear();
+	}
 	
 	private void applyEREDayTypeSelectedDates(double ce, DayType ereday) {
 		cleanStyles(selectedDates.getSelectedList());
@@ -2013,11 +2056,15 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				cells[row][column].unSelect(row, column);
 				cellsType[row][column].setAsType(partiality, row, column);
 				calendarGrid.getWidget(row, column).setTitle("Parcialidad : " + partialityCoeficient);
+				calendarGrid.getWidget(row, column).getElement().getStyle().setOpacity(partialityCoeficient);
 				dates.add(cellsDates[row][column]);
 			}
 		}
 		
 		calendarEmployeeInfo.setPartialityDays(dates, partiality, partialityCoeficient);
+		
+		/* For clear selected Dates */
+		oldHourSelected = 0;
 		selectedDates.clear();
 	}
 	
@@ -2176,6 +2223,9 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	}
 	private void addEreDay(double ce) {
 		applyEREDayTypeSelectedDates(ce, DayType.EREDAY);
+	}
+	private void addEreFzaDay(double ce) {
+		applyEREFzaDayTypeSelectedDates(ce, DayType.EREFZADAY);
 	}
 	private void addInactivityDays(String typeInactivity) {
 		applyInactivityDaySelectedDates(DayType.INACTIVITY, typeInactivity);

@@ -19,6 +19,7 @@ public class EmployeeCalendarUpdate implements Serializable {
 	private List<Quartet<Date, Date, String, String>> monthExtraHoursList;
 	private Map<java.util.Date, Double> mapDaysCoefficientStrike;
 	private Map<java.util.Date, Double> mapDaysCoefficientEre;
+	private Map<java.util.Date, Double> mapDaysCoefficientEreFza;
 	private Map<java.util.Date, Double> mapDaysCoefficientInactivity;
 	private Map<java.util.Date, Double> mapDaysCoefficientDrop;
 	private Map<java.util.Date, String> mapInactivityDays;
@@ -98,8 +99,11 @@ public class EmployeeCalendarUpdate implements Serializable {
 	}
 
 	public void setEreDaysValues(Map<java.util.Date, Double> draftMapDaysCoefficientEre) {
-		this.mapDaysCoefficientEre = draftMapDaysCoefficientEre;
-		
+		this.mapDaysCoefficientEre = draftMapDaysCoefficientEre;	
+	}
+	
+	public void setEreFzaDaysValues(Map<java.util.Date, Double> draftMapDaysCoefficientEreFza) {
+		this.mapDaysCoefficientEreFza = draftMapDaysCoefficientEreFza;
 	}
 	
 	public void setInactivityDaysValues(Map<java.util.Date, Double> draftMapDaysCoefficientInactivity) {
@@ -118,6 +122,10 @@ public class EmployeeCalendarUpdate implements Serializable {
 
 	public Map<java.util.Date, Double> getMapDaysCoefficientEre() {
 		return mapDaysCoefficientEre;
+	}
+	
+	public Map<java.util.Date, Double> getMapDaysCoefficientEreFza() {
+		return mapDaysCoefficientEreFza;
 	}
 	
 	public Map<java.util.Date, Double> getMapDaysCoefficientDrop() {

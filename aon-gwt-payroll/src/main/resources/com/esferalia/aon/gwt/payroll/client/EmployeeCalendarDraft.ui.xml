@@ -178,6 +178,13 @@
 			padding: 3px;
 			color: #ffffff;
 		}
+		
+		.ereFzaStyle {
+			background-color: rgba(185, 18, 87, 0.7);
+			border-radius: 20%;
+			padding: 3px;
+			color: #ffffff;
+		}
 
 		.inactivityStyle {
 			background-color: #71b1e8;
