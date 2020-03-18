@@ -36,10 +36,12 @@ public class ImportContent extends Composite {
 	}
 	
 	private void init() {
-		typeList.addItem("Clientes y Proveedores","registry");
 		typeList.addItem("Facturas","invoice");
-		typeList.addItem("Libro Diario","diary");
-		typeList.setSelectedIndex(1);
+		if(aonData.getDomain().getName().contains("ayudat")){
+			typeList.addItem("Clientes y Proveedores","registry");
+			typeList.addItem("Libro Diario","diary");
+		}
+		typeList.setSelectedIndex(0);
 	}
 	
 	@UiHandler("importButton")

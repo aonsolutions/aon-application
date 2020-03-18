@@ -276,6 +276,11 @@ public class RegistryImport {
 					.setDomain(domain.getId())
 					.setDocumentType(getDocumentType(r.getRegistry().getDocument()));
 				reg = AON.insertRegistry(domain.getName(), domain.getId(), user.getLogin(), r.getRegistry());
+				r.getRegistry().getAddress()
+					.setType((byte) 0)
+					.setDomain(domain.getId())
+					.setRegistry(reg.getId());
+				AON.insertRAddress(domain.getName(), domain.getId(), user.getLogin(), r.getRegistry().getAddress());
 			}
 			
 			Account acc = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), r.getAccount().getCode());

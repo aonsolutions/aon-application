@@ -8,12 +8,18 @@ import com.esferalia.aon.occam.api.model.type.InvoiceType;
 
 public class InvoiceImportClass {
 	InvoiceOpType type;
+	InvoiceType invoiceType;
 	Date date;
+	String serie;
+	Integer number;
 	String ref;
 	String nif;
 	String name;
 	String third;
 	String concept;
+	String address;
+	String city;
+	String province;
 	String zip;
 	Country country;
 	String account;
@@ -36,160 +42,234 @@ public class InvoiceImportClass {
 		return type;
 	}
 
-	public void setType(InvoiceOpType type) {
+	public InvoiceImportClass setType(InvoiceOpType type) {
 		this.type = type;
+		return this;
 	}
 
 	public Date getDate() {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public InvoiceImportClass setDate(Date date) {
 		this.date = date;
+		return this;
 	}
 
 	public String getRef() {
 		return ref;
 	}
 
-	public void setRef(String ref) {
+	public InvoiceImportClass setRef(String ref) {
 		this.ref = ref;
+		return this;
 	}
 
 	public String getNif() {
 		return nif;
 	}
 
-	public void setNif(String nif) {
+	public InvoiceImportClass setNif(String nif) {
 		this.nif = nif;
+		return this;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	public InvoiceImportClass setName(String name) {
 		this.name = name;
+		return this;
 	}
 
 	public String getThird() {
 		return third;
 	}
 
-	public void setThird(String third) {
+	public InvoiceImportClass setThird(String third) {
 		this.third = third;
+		return this;
 	}
 
 	public String getConcept() {
 		return concept;
 	}
 
-	public void setConcept(String concept) {
+	public InvoiceImportClass setConcept(String concept) {
 		this.concept = concept;
+		return this;
 	}
 
 	public String getZip() {
 		return zip;
 	}
 
-	public void setZip(String zip) {
+	public InvoiceImportClass setZip(String zip) {
 		this.zip = zip;
+		return this;
 	}
 
 	public Country getCountry() {
 		return country;
 	}
 
-	public void setCountry(Country country) {
+	public InvoiceImportClass setCountry(Country country) {
 		this.country = country;
+		return this;
 	}
 
 	public String getAccount() {
 		return account;
 	}
 
-	public void setAccount(String account) {
+	public InvoiceImportClass setAccount(String account) {
 		this.account = account;
+		return this;
 	}
 
 	public Double getBase() {
 		return base;
 	}
 
-	public void setBase(Double base) {
+	public InvoiceImportClass setBase(Double base) {
 		this.base = base;
+		return this;
 	}
 
 	public Double getPercentage() {
 		return percentage;
 	}
 
-	public void setPercentage(Double percentage) {
+	public InvoiceImportClass setPercentage(Double percentage) {
 		this.percentage = percentage;
+		return this;
 	}
 
 	public Double getQuota() {
 		return quota;
 	}
 
-	public void setQuota(Double quota) {
+	public InvoiceImportClass setQuota(Double quota) {
 		this.quota = quota;
+		return this;
 	}
 
 	public Double getRePercentage() {
 		return rePercentage;
 	}
 
-	public void setRePercentage(Double rePercentage) {
+	public InvoiceImportClass setRePercentage(Double rePercentage) {
 		this.rePercentage = rePercentage;
+		return this;
 	}
 
 	public Double getReQuota() {
 		return reQuota;
 	}
 
-	public void setReQuota(Double reQuota) {
+	public InvoiceImportClass setReQuota(Double reQuota) {
 		this.reQuota = reQuota;
+		return this;
 	}
 
 	public Double getRetentionPercentage() {
 		return retentionPercentage;
 	}
 
-	public void setRetentionPercentage(Double retentionPercentage) {
+	public InvoiceImportClass setRetentionPercentage(Double retentionPercentage) {
 		this.retentionPercentage = retentionPercentage;
+		return this;
 	}
 
 	public Double getRetentionQuota() {
 		return retentionQuota;
 	}
 
-	public void setRetentionQuota(Double retentionQuota) {
+	public InvoiceImportClass setRetentionQuota(Double retentionQuota) {
 		this.retentionQuota = retentionQuota;
+		return this;
 	}
 
 	public Double getTotal() {
 		return total;
 	}
 
-	public void setTotal(Double total) {
+	public InvoiceImportClass setTotal(Double total) {
 		this.total = total;
+		return this;
 	}
 
 	public InvoiceClaveRetencion getRetentionKey() {
 		return retentionKey;
 	}
 
-	public void setRetentionKey(InvoiceClaveRetencion retentionKey) {
+	public InvoiceImportClass setRetentionKey(InvoiceClaveRetencion retentionKey) {
 		this.retentionKey = retentionKey;
+		return this;
 	}
 
 	public InvoiceSubClaveRetencion getRetentionSubKey() {
 		return retentionSubKey;
 	}
 
-	public void setRetentionSubKey(InvoiceSubClaveRetencion retentionSubKey) {
+	public InvoiceImportClass setRetentionSubKey(InvoiceSubClaveRetencion retentionSubKey) {
 		this.retentionSubKey = retentionSubKey;
+		return this;
+	}
+	
+	public InvoiceType getInvoiceType() {
+		return invoiceType;
+	}
+
+	public InvoiceImportClass setInvoiceType(InvoiceType invoiceType) {
+		this.invoiceType = invoiceType;
+		return this;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public InvoiceImportClass setAddress(String address) {
+		this.address = address;
+		return this;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public InvoiceImportClass setCity(String city) {
+		this.city = city;
+		return this;
+	}
+
+	public String getProvince() {
+		return province;
+	}
+
+	public InvoiceImportClass setProvince(String province) {
+		this.province = province;
+		return this;
+	}
+
+	public String getSerie() {
+		return serie;
+	}
+
+	public InvoiceImportClass setSerie(String serie) {
+		this.serie = serie;
+		return this;
+	}
+
+	public Integer getNumber() {
+		return number;
+	}
+
+	public InvoiceImportClass setNumber(Integer number) {
+		this.number = number;
+		return this;
 	}
 	
 	public enum InvoiceOpType {

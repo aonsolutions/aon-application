@@ -32,14 +32,17 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
+import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Provinces;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
+import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -56,6 +59,7 @@ import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class InvoiceImport {
 
@@ -185,8 +189,14 @@ public class InvoiceImport {
 		Object o = getObjectValue(cell);
 		if(o == null) return;
 	
-		if("TIPO OPERACIÓN".equalsIgnoreCase(title)) {
+		if("TIPO OPERACIÓN".equalsIgnoreCase(title)
+				|| "TIPO OPERACIÓN".equalsIgnoreCase(title)) {
 			inv.setType(InvoiceOpType.safeValueOf(o.toString()));
+			return;
+		}
+		
+		if("TIPO FACTURA".equalsIgnoreCase(title)) {
+			inv.setInvoiceType(InvoiceType.safeValueOf(o.toString()));
 			return;
 		}
 
@@ -201,13 +211,27 @@ public class InvoiceImport {
 			return;
 		}
 		
-		if("NUMERO DE FACTURA".equalsIgnoreCase(title)) {
+		if("SERIE".equalsIgnoreCase(title)) {
+			inv.setSerie(o.toString());
+			return;
+		}
+		
+		if("NUMERO".equalsIgnoreCase(title)
+				|| "NÚMERO".equalsIgnoreCase(title)) {
+			inv.setNumber(AonNumberUtils.toInteger(o.toString()));
+			return;
+		}
+		
+		if("NUMERO DE FACTURA".equalsIgnoreCase(title)
+				|| "NÚMERO DE FACTURA".equalsIgnoreCase(title)
+				|| "REFERENCIA".equalsIgnoreCase(title)) {
 			if(CellType.NUMERIC == cell.getCellTypeEnum()) { 
 				inv.setRef(NumberToTextConverter.toText(cell.getNumericCellValue()));
 			} else inv.setRef(o.toString());
 			return ;
 		}
-		if("NIF".equalsIgnoreCase(title)) {
+		if("NIF".equalsIgnoreCase(title)
+				|| "DOCUMENTO".equalsIgnoreCase(title)) {
 			if(CellType.NUMERIC == cell.getCellTypeEnum()) { 
 				inv.setNif(NumberToTextConverter.toText(cell.getNumericCellValue()));
 			} else inv.setNif(o.toString());
@@ -218,6 +242,7 @@ public class InvoiceImport {
 			inv.setName(o.toString());
 			return ;
 		}
+		
 		if("TERCERO".equalsIgnoreCase(title)) {
 			inv.setThird(o.toString());
 			return;
@@ -228,12 +253,30 @@ public class InvoiceImport {
 			return;
 		}
 		
-		if("CODIGO POSTAL".equalsIgnoreCase(title)) {
+		if("DIRECCIÓN".equalsIgnoreCase(title)
+				|| "DIRECCION".equalsIgnoreCase(title)) {
+			inv.setAddress(o.toString());
+			return;
+		}
+		
+		if("CIUDAD".equalsIgnoreCase(title)) {
+			inv.setCity(o.toString());
+			return;
+		}
+		
+		if("PROVINCIA".equalsIgnoreCase(title)) {
+			inv.setProvince(o.toString());
+			return;
+		}
+		
+		if("CODIGO POSTAL".equalsIgnoreCase(title)
+				|| "CÓDIGO POSTAL".equalsIgnoreCase(title)) {
 			inv.setZip(o.toString());
 			return;
 		}
 		
-		if("PAIS".equalsIgnoreCase(title)) {
+		if("PAIS".equalsIgnoreCase(title)
+				|| "PAÍS".equalsIgnoreCase(title)) {
 			inv.setCountry(Country.safeValueOf(o.toString()));
 			return;
 		}
@@ -312,14 +355,46 @@ public class InvoiceImport {
 			invoice.setIssueDate(ivs.get(i).getDate());
 			invoice.setTaxDate(ivs.get(i).getDate());
 			invoice.setType(getInvoiceType(ivs.get(i).getAccount()));
+			invoice.setSeries(ivs.get(i).getSerie());
+			invoice.setNumber(ivs.get(i).getNumber());	
 			invoice.setReferenceCode(ivs.get(i).getRef());
 			invoice.setWithholding(ivs.get(i).getRetentionQuota() != null 
 					&& ivs.get(i).getRetentionQuota() > 0);
-			
+
+			RAddress address = new RAddress();
+			address.setDomain(domain.getId());
+			address.setType((byte) 0);
+			address.setAddress(ivs.get(i).getAddress());
+			address.setCity(ivs.get(i).getCity());
+			address.setZip(ivs.get(i).getZip());
+			if(ivs.get(i).getProvince() != null) {
+				GeoZone prgz = null;
+				GeoZone crgz = null;
+				Provinces pr = Provinces.getProvince(ivs.get(i).getProvince());
+				for(GeoZone gz : aonCtx.getGeozones()) {
+					if(gz.getCode().equals(ivs.get(i).getCountry().getIso2())) {
+						crgz = gz;
+					}
+					if(gz.getCode().equals(pr.getId())) {
+						prgz = gz;
+					}
+				}
+				
+				if(prgz != null) {
+					address.setGeozone(prgz.getId());
+					address.setGeozoneCode(prgz.getCode());
+					address.setGeozoneName(prgz.getName());
+				} else if(crgz != null) {
+					address.setGeozone(crgz.getId());
+					address.setGeozoneCode(crgz.getCode());
+					address.setGeozoneName(crgz.getName());
+				}
+			}
+
 			String nif = ivs.get(i).getNif();
 			String name = ivs.get(i).getName();
 			
-			AccountingRegistry ar = getRegistry(domain, user, invoice.getType(), nif, name, invoice.getTransaction());			
+			AccountingRegistry ar = getRegistry(domain, user, invoice.getType(), nif, name, invoice.getTransaction(), address);			
 			invoice.setRegistry(ar.getId());
 			ai.setRegistry(ar);
 			ai.setInvoice(invoice);
@@ -452,7 +527,7 @@ public class InvoiceImport {
 		return null;
 	}
 	
-	private static AccountingRegistry getRegistry(Domain domain, User user, InvoiceType type, String nif, String name, InvoiceTransactionType transaction) {
+	private static AccountingRegistry getRegistry(Domain domain, User user, InvoiceType type, String nif, String name, InvoiceTransactionType transaction, RAddress address) {
 		// TODO Auto-generated method stub
 		if(InvoiceType.SALES.equals(type)) {
 			Customer customer = AON.getCustomer(domain.getName(), domain.getId(), user.getLogin(), f -> 
@@ -475,7 +550,13 @@ public class InvoiceImport {
 					.setTransaction(transaction.value())
 					.setScope(getScopeId(domain, user));
 				customer.setName(reg.getName());
+				customer.setId(reg.getId());
 				AON.insertCustomer(domain.getName(), domain.getId(), user.getLogin(), customer);
+			}
+			RAddress ra = AON.getRAddres(domain.getName(), domain.getId(), user.getLogin(), customer.getId());
+			if(ra == null || ra.getId() == null) {
+				address.setRegistry(customer.getId());
+				AON.insertRAddress(domain.getName(), domain.getId(), user.getLogin(), address);
 			}
 			return new AccountingRegistry()
 					.setType(AccountingRegistryType.CUSTOMER)
@@ -509,6 +590,11 @@ public class InvoiceImport {
 				supplier.setName(reg.getName());
 				AON.insertSupplier(domain.getName(), domain.getId(), user.getLogin(), supplier);
 			}
+			RAddress ra = AON.getRAddres(domain.getName(), domain.getId(), user.getLogin(), supplier.getId());
+			if(ra == null || ra.getId() == null) {
+				address.setRegistry(supplier.getId());
+				AON.insertRAddress(domain.getName(), domain.getId(), user.getLogin(), address);
+			}
 			return new AccountingRegistry()
 					.setType(AccountingRegistryType.SUPPLIER)
 					.setId(supplier.getId())
@@ -540,6 +626,11 @@ public class InvoiceImport {
 				creditor.setDomain(domain.getId());
 				creditor.setId(reg.getId());
 				AON.insertCreditor(domain.getName(), domain.getId(), user.getLogin(), creditor);
+			}
+			RAddress ra = AON.getRAddres(domain.getName(), domain.getId(), user.getLogin(), creditor.getId());
+			if(ra == null || ra.getId() == null) {
+				address.setRegistry(creditor.getId());
+				AON.insertRAddress(domain.getName(), domain.getId(), user.getLogin(), address);
 			}
 			return new AccountingRegistry()
 					.setType(AccountingRegistryType.CREDITOR)

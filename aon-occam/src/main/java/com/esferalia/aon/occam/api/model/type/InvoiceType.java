@@ -66,6 +66,7 @@ public enum InvoiceType implements Serializable  {
 	public interface IInvoiceTypeVisitorWalker {
 		void visit( Invoice invoice, IInvoiceTypeVisitor visitor);
 	}
+	
 	public interface IAccountingInvoiceTypeVisitorWalker {
 		void visit( AccountingInvoice invoice, IAccountingInvoiceTypeVisitor visitor);
 	}
@@ -91,16 +92,33 @@ public enum InvoiceType implements Serializable  {
 	public void visit(Invoice invoice, IInvoiceTypeVisitor visitor) {
 		invoiceWalker.visit(invoice,visitor);
 	}
+	
 	public void visit(AccountingInvoice invoice, IAccountingInvoiceTypeVisitor visitor) {
 		accountingInvoiceWalker.visit(invoice,visitor);
 	}
+	
 	public static InvoiceType safeValueOf( Byte i ) {
 		if (i == null) return null;
 		return safeValueOf( i.intValue() ); 
 	}
+	
 	public static InvoiceType safeValueOf( Integer i ) {
 		if (i == null) return null;
 		if (i < 0 || i >= DocumentType.values().length) return null;
 		return InvoiceType.values()[i];
+	}
+	
+	public static InvoiceType safeValueOf( String value ) {
+		if(value == null) return null;
+		if(SALES.getDescription().equalsIgnoreCase(value)) {
+			return SALES;
+		} else if(PURCHASE.getDescription().equalsIgnoreCase(value)) {
+			return PURCHASE;
+		} else if(EXPENSES.getDescription().equalsIgnoreCase(value)) {
+			return EXPENSES;
+		} else if(UNDEDUCTIBLE.getDescription().equalsIgnoreCase(value)) {
+			return UNDEDUCTIBLE;
+		}		
+		return valueOf(value); 
 	}
 }

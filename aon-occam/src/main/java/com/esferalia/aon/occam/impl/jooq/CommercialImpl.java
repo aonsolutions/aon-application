@@ -9,7 +9,6 @@ import com.esferalia.aon.occam.api.model.CommercialActivity;
 import com.esferalia.aon.occam.api.model.CommercialActivityFilter;
 import com.esferalia.aon.occam.api.model.CommercialTracking;
 import com.esferalia.aon.occam.api.model.CommercialTrackingFilter;
-import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.impl.jooq.dao.CommercialDAO;
 
 public class CommercialImpl implements ICommercial {
