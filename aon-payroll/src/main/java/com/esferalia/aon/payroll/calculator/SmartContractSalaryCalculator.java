@@ -336,6 +336,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				|| type == PaymentType.CRA_0000 					// TODO: This must be the only one check 
 				|| isFixBaseCgcMin(payment) 
 				|| ContextVariable.ERE.getName().equals(payment.getName()) 
+				|| ContextVariable.ERE_FORCE.getName().equals(payment.getName()) 
 				|| ContextVariable.PREST_IT.equals(payment.getName()) 
 				|| ContextVariable.MATERNITY.getName().equals(payment.getName())
 				|| ContextVariable.DIRECT_PAY.getName().equals(payment.getName())) {

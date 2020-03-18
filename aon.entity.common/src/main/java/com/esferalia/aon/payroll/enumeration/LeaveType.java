@@ -63,6 +63,13 @@ public enum LeaveType implements IResourceable {
 			return visitor.visitCommonDiseaseAtLack(this);
 		}
 	},
+	COMMON_OCCUPATIONAL_DISEASE
+	{
+		@Override
+		public <T> T accept(LeaveTypeVisitor<T> visitor) {
+			return visitor.visitCommonProfessionalDisease(this);
+		}
+	}
 	;
 	
 	public abstract <T> T accept(LeaveTypeVisitor<T>  visitor );

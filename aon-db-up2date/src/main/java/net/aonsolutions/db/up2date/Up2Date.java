@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.payroll.EreFzaInsert;
 import net.aonsolutions.db.up2date.payroll.FundUpvUpdateIV;
 import net.aonsolutions.db.up2date.payroll.FundUpvUpdateV;
 import net.aonsolutions.db.up2date.payroll.IndemnizacionDescriptionUpdate;
@@ -99,7 +100,8 @@ public class Up2Date {
     		//FundUpvUpdateIV.FUNDUPV_UPDATE_IV,
     		//FundUpvUpdateV.FUNDUPV_UPDATE_V
     		//IndemnizacionEditableUpdate.INDEMNIZACIONEDITABLEUPDATE,
-    		IndemnizacionDescriptionUpdate.INDEMNIZACIONDESCRIPTIONUPDATE
+    		//IndemnizacionDescriptionUpdate.INDEMNIZACIONDESCRIPTIONUPDATE
+    		EreFzaInsert.EREFZAINSERT
     };
 
 

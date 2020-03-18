@@ -12,6 +12,8 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE_FORCE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FORCE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
@@ -299,8 +301,13 @@ public abstract class QuoteCalculator {
 
 		@Override
 		public Double getEreBase() throws AonException {
-			return bases.containsKey(ERE.getName()) ? bases.get(ERE.getName())
-					: 0.00;
+			return (bases.containsKey(ERE.getName()) ? 
+					bases.get(ERE.getName())
+					: 0.00)
+					+(bases.containsKey(ERE_FORCE.getName()) ? 
+					bases.get(ERE_FORCE.getName())
+					: 0.00)
+					;
 		}
 
 		@Override
@@ -403,6 +410,7 @@ public abstract class QuoteCalculator {
 
 				if (AonStringUtils.equals(MATERNITY.getName(), name)
 						|| AonStringUtils.equals(ERE.getName(), name)
+						|| AonStringUtils.equals(ERE_FORCE.getName(), name)
 						|| AonStringUtils.equals(DIRECT_PAY.getName(), name)) {
 
 					if (context.containsVariable(CGC_BASE.getName(), start,
@@ -418,6 +426,7 @@ public abstract class QuoteCalculator {
 								end, 
 								MATERNITY_BASE,
 								ERE_BASE,
+								ERE_BASE_FORCE,
 								DIRECT_BASE
 								));
 						//@formatter:on
@@ -431,6 +440,7 @@ public abstract class QuoteCalculator {
 								context, start, end, 
 								MATERNITY_BASE,
 								ERE_BASE, 
+								ERE_BASE_FORCE,
 								DIRECT_BASE));
 
 					return quotesImpl;
@@ -504,6 +514,7 @@ public abstract class QuoteCalculator {
 							context, start, end, 
 							MATERNITY_BASE,
 							ERE_BASE, 
+							ERE_BASE_FORCE,
 							DIRECT_BASE));
 					GeneralQuote.this.rawCgcBase += quote;
 				}

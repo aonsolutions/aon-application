@@ -19,7 +19,9 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY_S
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DROP_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_DAYS_FORCE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTOR;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FORCE_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EVERYTHING;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EXTRA_PAY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FEMALE;
@@ -388,6 +390,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	private static final List<ContextVariable> DAYS_CONTEXT_VARIABLES = Arrays.asList(new ContextVariable[] {
 			WEEK_HOURS, ERE_DAYS, QUOTE_DAYS, WORKED_DAYS, SALARY_DAYS, PARTIAL_FACTOR, REGULATORY_BASE });
+	
+	private static final Map<ContextVariable, ContextVariable> ERE_VARIABLES = new HashMap<ContextVariable, ContextVariable>() {
+		{
+			put(ERE_DAYS, ERE_FACTOR);
+			put(ERE_DAYS_FORCE, ERE_FORCE_FACTOR);
+		}
+	};
 
 	private static final Map<Integer, ContextVariable> WEEK_HOURS_VARIABLES = new HashMap<Integer, ContextVariable>() {
 		{
@@ -827,6 +836,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 						public Void visitNonOcupationalDisease(LeaveType leaveType) {
 							return visitCommonDisease(leaveType);
 						}
+						
+						@Override
+						public Void visitCommonProfessionalDisease(LeaveType leaveType) {
+							return visitOcupationalDisease(leaveType);
+						}
 
 					});
 
@@ -887,7 +901,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		@Override
 		protected void loadDaysContextVariables(ContractExpressionContext ctx) throws ExpressionException {
 			ctx.removeVariable(ERE_DAYS);
+			ctx.removeVariable(ERE_DAYS_FORCE);
 			ctx.removeVariable(ERE_FACTOR);
+			ctx.removeVariable(ERE_FORCE_FACTOR);
 			super.loadDaysContextVariables(ctx);
 		}
 
@@ -3184,6 +3200,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		double workedDays = availableDays /*- leaveDays*/;
 		workedDays *= 1.00 - getCurrentBindings().get(ERE_FACTOR, obj -> ((Number) obj).doubleValue(), 0.00);
+		workedDays *= 1.00 - getCurrentBindings().get(ERE_FORCE_FACTOR, obj -> ((Number) obj).doubleValue(), 0.00);
 		//workedDays -= getCurrentBindings().get(STRIKE_DAYS, obj -> ((Number) obj).doubleValue(), 0.00);
 		workedDays *= 1.00 - getCurrentBindings().get(STRIKE_FACTOR, obj -> ((Number) obj).doubleValue(), 0.00);
 		getCurrentBindings().get(STRIKE_DAYS);
@@ -3206,7 +3223,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		Long availableDays = getAvailableDays(p.getStart(), p.getEnd());
 		double monthDays = getMax(p.getStart(), DAY_OF_MONTH);
 		double ctxMonthDays = getContexVariable(ctx, p, MONTH_DAYS);
-		return availableDays == monthDays ? ctxMonthDays : availableDays;
+		return (availableDays == monthDays ? ctxMonthDays : availableDays) * factor;
 	}
 
 	private double getQuoteDays(ExpressionContext ctx, Period p, double factor) {
@@ -4142,57 +4159,64 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		// ITs
 		List<Period> leaves = getLeavesPeriods();
 		intersects = Period.sub(intersects, leaves);
+		
+		for ( Map.Entry<ContextVariable,ContextVariable> entry : ERE_VARIABLES.entrySet() ) {
+			
+			ContextVariable daysVar = entry.getKey();
+			ContextVariable factorVar = entry.getValue();
+			
+//			if (!containsVariable(daysVar)) {
 
-		if (!containsVariable(ERE_DAYS)) {
+				// ERE
+				for (ITimedVariable<Object> ereFactor : ctx.getVariables(factorVar)) {
+					Period period = ereFactor.getPeriod();
+					Object value = ereFactor.getValue(period);
+					if (!(value instanceof Number))
+						continue;
 
-			// ERE
-			for (ITimedVariable<Object> ereFactor : ctx.getVariables(ERE_FACTOR)) {
-				Period period = ereFactor.getPeriod();
-				Object value = ereFactor.getValue(period);
-				if (!(value instanceof Number))
-					continue;
+					double factor = ((Number) value).doubleValue();
+					if (((Number) value).doubleValue() >= 1.00)
+						intersects = Period.sub(intersects, Collections.singletonList(period));
+					else
+						intersects = SQLNoItContractSalaryCalculatorContext.split(intersects,
+								Collections.singletonList(period));
 
-				double factor = ((Number) value).doubleValue();
-				if (((Number) value).doubleValue() >= 1.00)
-					intersects = Period.sub(intersects, Collections.singletonList(period));
-				else
-					intersects = SQLNoItContractSalaryCalculatorContext.split(intersects,
-							Collections.singletonList(period));
-
-				ITimedVariable<Double> ereDays = new ITimedVariable<Double>() {
-					@Override
-					public Period getPeriod() {
-						return period;
-					}
-
-					@Override
-					public Double getValue(Period p) {
-						return getDays(ctx, p, factor);
-					}
-
-				};
-				ctx.putVariable(ERE_DAYS, ereDays);
-
-				ITimedVariable<Double> ereBase = new ITimedVariable<Double>() {
-					@Override
-					public Period getPeriod() {
-						return period;
-					}
-
-					@Override
-					public Double getValue(Period p) {
-						try {
-							return (Double) br(p.getStart());
-						} catch (ExpressionException | SalaryException | SQLException e) {
-							throw new ExpressionExceptionWrapper(
-									new UndefinedContextVariablesException(REGULATORY_BASE));
+					ITimedVariable<Double> ereDays = new ITimedVariable<Double>() {
+						@Override
+						public Period getPeriod() {
+							return period;
 						}
-					}
 
-				};
-				ctx.putVariable(REGULATORY_BASE, ereBase);
+						@Override
+						public Double getValue(Period p) {
+							return getDays(ctx, p, factor);
+						}
+
+					};
+					ctx.putVariable(daysVar, ereDays);
+
+					ITimedVariable<Double> ereBase = new ITimedVariable<Double>() {
+						@Override
+						public Period getPeriod() {
+							return period;
+						}
+
+						@Override
+						public Double getValue(Period p) {
+							try {
+								return (Double) br(p.getStart());
+							} catch (ExpressionException | SalaryException | SQLException e) {
+								throw new ExpressionExceptionWrapper(
+										new UndefinedContextVariablesException(REGULATORY_BASE));
+							}
+						}
+
+					};
+					ctx.putVariable(REGULATORY_BASE, ereBase);
+//				}
 			}
 		}
+
 
 		intersects = splitWorkedDays(intersects);
 
@@ -5020,6 +5044,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			public Double visitNonOcupationalDisease(LeaveType leaveType) {
 				// TODO Ap\E9ndice de m\E9todo generado autom\E1ticamente
 				return null;
+			}
+			
+			@Override
+			public Double visitCommonProfessionalDisease(LeaveType leaveType) {
+				return visitOcupationalDisease(leaveType);
 			}
 
 		});

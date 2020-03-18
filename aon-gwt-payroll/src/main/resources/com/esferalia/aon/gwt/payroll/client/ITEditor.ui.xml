@@ -56,6 +56,11 @@
 		.professional {
 			background-color: professionalBackground;
 		}
+		
+		@eval commonProfessionalBackground com.esferalia.aon.gwt.payroll.client.ITEditor.getColor(com.esferalia.aon.gwt.payroll.shared.ITDataPerson.Type.COMMON_OCCUPATIONAL_DISEASE);
+		.commonProfessional {
+			background-color: commonProfessionalBackground;
+		}		
 
 	</ui:style>
 	
@@ -150,6 +155,10 @@
 						    title="Enfermedad Com&uacute;n, Periodo de Carencia"/>		
 						<g:InlineLabel styleName="{style.legend-caption}" >Enfermedad Com&uacute;n, Periodo de Carencia</g:InlineLabel>		
 					
+						<g:HTML  styleName="{style.legend-icon} {style.commonProfessional}" 
+						    title="Enfermedad Com&uacute;n, Prestaci&oacute;n Profesional (COVID-19)"/>		
+						<g:InlineLabel styleName="{style.legend-caption}" >Enfermedad Com&uacute;n, Prestaci&oacute;n Profesional (COVID-19)</g:InlineLabel>		
+
 					</g:HorizontalPanel>				
 					
 					<g:SimplePanel ui:field='timelinePanel'>

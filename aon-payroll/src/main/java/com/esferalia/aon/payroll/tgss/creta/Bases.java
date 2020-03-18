@@ -8,6 +8,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_ENTERPRISE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE_FORCE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EXTRA_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
@@ -1709,6 +1710,7 @@ public class Bases {
 			put("509", new NonNegativeCompositeCCretaData(
 					MATERNITY_BASE.getName(), 		// Base de contigencias comunes en maternidad/parternidad/riesgo
 					ERE_BASE.getName(),				// Base de contingencias comunes empresarial en ERE
+					ERE_BASE_FORCE.getName(),		// Base de contingencias comunes empresarial en ERE por Fuerza Mayor
 					DIRECT_BASE.getName(),			// Base Pago Directo  
 					CGC_BASE.getName(),
 					CGC_BASE_ENTERPRISE.getName()	// Base de contingencias comunes empresarial  
@@ -1717,6 +1719,7 @@ public class Bases {
 			put("603", new NonNegativeCompositeCCretaData(
 					MATERNITY_BASE.getName(),
 					ERE_BASE.getName(), 
+					ERE_BASE_FORCE.getName(), 
 					DIRECT_BASE.getName(),			//   
 					CGP_BASE.getName(),
 					CGC_BASE_ENTERPRISE.getName()	  
@@ -1724,6 +1727,7 @@ public class Bases {
 			put("613", new NonNegativeCompositeCCretaData(
 					MATERNITY_BASE.getName(),
 					ERE_BASE.getName(),
+					ERE_BASE_FORCE.getName(), 
 					CGP_BASE.getName(),
 					DIRECT_BASE.getName(),			//   
 					CGC_BASE_ENTERPRISE.getName()	  

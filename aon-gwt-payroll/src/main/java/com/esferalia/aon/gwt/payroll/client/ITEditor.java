@@ -1223,7 +1223,8 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 			return "#36C";
 		case OCCUPATIONAL_DISEASE:
 			return "#AA0033";
-
+		case COMMON_OCCUPATIONAL_DISEASE:
+			return "#E3DC14";
 		default:
 			return "#FFA500";
 		}

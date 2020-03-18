@@ -397,6 +397,11 @@ public class ContractLeaveLoader {
 			public Void visitNonOcupationalDisease(LeaveType leaveType) {
 				return this.visitCommonDisease(leaveType);
 			}
+			
+			@Override
+			public Void visitCommonProfessionalDisease(LeaveType leaveType) {
+				return this.visitOcupationalDisease(leaveType);
+			}
 
 			private void visit(ContextVariable factorVariable, ContextVariable daysVariable) {
 				List<ITimedVariable<Number>> factors = exprCtx.getVariables(factorVariable, start, end);

@@ -17,4 +17,6 @@ public interface  LeaveTypeVisitor<T> {
 	T visitNonOcupationalDisease(LeaveType leaveType);
 
 	T visitCommonDiseaseAtLack(LeaveType leaveType);
+	
+	T visitCommonProfessionalDisease(LeaveType leaveType);
 }

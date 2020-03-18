@@ -13,6 +13,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMBARGO_PAID
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMPLOYEE_QUOTA;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ENTERPRISE_QUOTA;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE_FORCE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
@@ -1556,6 +1557,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				CGC_BASE.getName(), 
 				CGP_BASE.getName(),
 				ERE_BASE.getName(), 
+				ERE_BASE_FORCE.getName(), 
 				DIRECT_BASE.getName(), 
 				MATERNITY_BASE.getName(), 
 				ADDITIONAL_BASE.getName(), 
