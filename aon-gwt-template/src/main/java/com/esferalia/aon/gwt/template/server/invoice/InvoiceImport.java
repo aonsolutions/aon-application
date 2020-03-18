@@ -190,7 +190,7 @@ public class InvoiceImport {
 		if(o == null) return;
 	
 		if("TIPO OPERACIÓN".equalsIgnoreCase(title)
-				|| "TIPO OPERACIÓN".equalsIgnoreCase(title)) {
+				|| "TIPO OPERACION".equalsIgnoreCase(title)) {
 			inv.setType(InvoiceOpType.safeValueOf(o.toString()));
 			return;
 		}
@@ -350,6 +350,8 @@ public class InvoiceImport {
 			Invoice invoice = new Invoice();
 			invoice.setScope(new Scope().setId(getScopeId(domain, user)));
 			
+			invoice.setService(InvoiceOpType.PIS.equals(ivs.get(i).getType())|| InvoiceOpType.AIS.equals(ivs.get(i).getType()));
+			invoice.setInvestment(InvoiceOpType.EIB.equals(ivs.get(i).getType())|| InvoiceOpType.AIB.equals(ivs.get(i).getType()));
 			invoice.setTransaction(getTransaction(ivs.get(i)));
 			invoice.setDomain(domain.getId());
 			invoice.setIssueDate(ivs.get(i).getDate());
