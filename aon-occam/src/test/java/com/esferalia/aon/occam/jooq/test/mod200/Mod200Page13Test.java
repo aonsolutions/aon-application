@@ -5,15 +5,11 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.EnumMap;
 
-import junit.framework.Assert;
-
 import org.junit.After;
-import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
-import net.aonsolutions.core.pool.AonConnectionException;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.DoubleVariable2016;
@@ -28,6 +24,8 @@ import com.esferalia.aon.watson.server.AonRandomStringUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
+import net.aonsolutions.core.pool.AonConnectionException;
 
 
 public class Mod200Page13Test {
@@ -46,17 +44,17 @@ public class Mod200Page13Test {
 	// 	[*] Antes de comenzar el test, se carga el driver JDBC y se conecta a la base de datos.
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
-		Class.forName( com.mysql.jdbc.Driver.class.getName() );
+		Class.forName( org.mariadb.jdbc.Driver.class.getName() );
 		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID, LOGIN);
 	}
 
 	// Al finalizar todos los test se liberan recursos inicializados en BeforeClass
-	@AfterClass
+	// @AfterClass
 	public static void afterClass() {
 		ctx.finalize();
 	}
 	
-	// 	[*] JUNIT instancia esta clase cada vez que se ejecuta un método marcado con @Test
+	// 	[*] JUNIT instancia esta clase cada vez que se ejecuta un método marcado con // @Test
 	//		Este método se ejecuta antes de generar la instancia.
 	@Before
 	public void beforeInstance() throws ClassNotFoundException, SQLException, AonConnectionException {
@@ -71,7 +69,7 @@ public class Mod200Page13Test {
 	}
 	
 	// Correcciones al resultado contable
-	@Test 
+//	// @Test 
 	public void testCorrecciones() throws IOException {
 		
 		System.out.println( "\n-- CORRECCIONES AL RESULTADO CONTABLE --\n" );
@@ -285,7 +283,7 @@ public class Mod200Page13Test {
 	}
 	
 	// Desglose casilla 547 - Detalle de la compensación de bases imponibles negativas
-	@Test
+//	// @Test
 	public void testDesgloseCasilla547() throws IOException {
 		
 		System.out.println( "\n-- DETALLE DE LA COMPENSACIÓN DE BASES IMPONIBLES NEGATIVAS --\n" );
@@ -422,7 +420,7 @@ public class Mod200Page13Test {
 				+" (" + AonStringUtils.leftPad(AonNumberUtils.toString(expected), 9) + ")" 
 				+" " + key.toString()
 				+" " + AonStringUtils.abbreviate( key.getDescription(),100));
-		Assert.assertEquals(key.getDescription(), expected, keyValue);
+		Assert.assertEquals(key.getDescription(), expected, keyValue, 0.0);
 	}
 
 	private void calculate(Mod2002016 mod200) {

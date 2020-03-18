@@ -6,8 +6,9 @@ import java.sql.SQLException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
-import net.aonsolutions.core.pool.AonConnectionException;
 import com.esferalia.aon.occam.api.AONContext;
+
+import net.aonsolutions.core.pool.AonConnectionException;
 
 
 public class FeeTest {
@@ -19,7 +20,7 @@ public class FeeTest {
 	
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
-		Class.forName( com.mysql.jdbc.Driver.class.getName() );
+		Class.forName( org.mariadb.jdbc.Driver.class.getName() );
 		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID,USER);
 	}
 	

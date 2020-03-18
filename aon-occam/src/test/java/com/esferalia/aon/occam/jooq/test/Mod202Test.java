@@ -9,13 +9,13 @@ import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
-import net.aonsolutions.core.pool.AonConnectionException;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.server.fiscal.format.Mod202Writer;
+
+import net.aonsolutions.core.pool.AonConnectionException;
 
 public class Mod202Test {
 
@@ -27,11 +27,11 @@ public class Mod202Test {
 
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
-		Class.forName( com.mysql.jdbc.Driver.class.getName() );
+		Class.forName( org.mariadb.jdbc.Driver.class.getName() );
 		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID,USER_NAME);
 	}
 	
-	@Test
+	// @Test
 	public void testFile() throws IOException {
 		Writer writer = new OutputStreamWriter( new FileOutputStream( "/tmp/mod202.txt" ),"ISO-8859-15");  
 		List<Mod202> list = FISCAL.getMod202s(DOMAIN_NAME, DOMAIN_ID, USER_NAME);

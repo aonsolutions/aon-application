@@ -8,7 +8,6 @@ import java.util.stream.Stream;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
@@ -30,7 +29,7 @@ public class OperationReportTest {
 
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
-		Class.forName( com.mysql.jdbc.Driver.class.getName() );
+		Class.forName( org.mariadb.jdbc.Driver.class.getName() );
 		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID,LOGIN);
 	}
 	
@@ -70,7 +69,7 @@ public class OperationReportTest {
 	double totalREq = 0;
 	double totalDed = 0;	
 	
-	@Test
+	// @Test
 	public void testStreamingIRPF() throws IOException {
 		
 		System.out.println("--- INICIO TEST IRPF ---");
@@ -149,7 +148,7 @@ public class OperationReportTest {
 		System.out.println();
 	}
 	
-	@Test
+	// @Test
 	public void testStreamingIVA() throws IOException {
 		
 		System.out.println("--- INICIO TEST IVA ---");

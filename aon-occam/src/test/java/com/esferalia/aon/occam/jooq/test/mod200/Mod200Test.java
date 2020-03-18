@@ -5,12 +5,10 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.EnumMap;
 
-import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
-import net.aonsolutions.core.pool.AonConnectionException;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.DoubleVariable2016;
@@ -25,7 +23,7 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import junit.framework.Assert;
+import net.aonsolutions.core.pool.AonConnectionException;
 
 
 public class Mod200Test {
@@ -44,11 +42,11 @@ public class Mod200Test {
 	// 	[*] Antes de comenzar el test, se carga el driver JDBC y se conecta a la base de datos.
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
-		Class.forName( com.mysql.jdbc.Driver.class.getName() );
+		Class.forName( org.mariadb.jdbc.Driver.class.getName() );
 		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID, LOGIN);
 	}
 	
-	// 	[*] JUNIT instancia esta clase cada vez que se ejecuta un método marcado con @Test
+	// 	[*] JUNIT instancia esta clase cada vez que se ejecuta un método marcado con // @Test
 	//		Este método se ejecuta antes de generar la instancia.
 	@Before
 	public void beforeInstance() throws ClassNotFoundException, SQLException, AonConnectionException {
@@ -56,7 +54,7 @@ public class Mod200Test {
 		mod200 = createNormal();
 	}
 	
-	@Test
+//	// @Test
 	public void testBalanceActivoNormal() throws IOException {
 		System.out.println( "\n-- BALANCE: ACTIVO - NORMAL\n" );
 		// BALANCE: ACTIVO - NORMAL
@@ -153,7 +151,7 @@ public class Mod200Test {
 		assertEquals(mod200,Mod2002016Key.BA180, BA180);
 	}
 	
-	@Test
+//	// @Test
 	public void testBalancePasivoNormal() throws IOException {
 		System.out.println( "\n-- BALANCE: PATRIMONIO NETO Y PASIVO - NORMAL\n" );
 		// BALANCE: PATRIMONIO NETO Y PASIVO - NORMAL
@@ -241,7 +239,7 @@ public class Mod200Test {
 		assertEquals(mod200,Mod2002016Key.BP252, BP252);
 	}
 
-	@Test
+//	// @Test
 	public void testPyGNormal() throws IOException {
 		System.out.println( "\n-- CUENTA DE PERDIDAS Y GANANCIAS - NORMAL\n" );
 		// BALANCE: PATRIMONIO NETO Y PASIVO - NORMAL
@@ -329,7 +327,7 @@ public class Mod200Test {
 	}	
 	
 	
-	@Test
+//	// @Test
 	public void testValidation() throws IOException {
 		// [*] se realiza una validación como último paso.
 		validate(mod200);
@@ -342,7 +340,7 @@ public class Mod200Test {
 				+" (" + AonStringUtils.leftPad(AonNumberUtils.toString(expected), 9) + ")" 
 				+" " + key.toString()
 				+" " + AonStringUtils.abbreviate( key.getDescription(),100));
-		Assert.assertEquals(key.getDescription(), expected, keyValue);
+		Assert.assertEquals(key.getDescription(), expected, keyValue,0.0);
 	}
 
 	private void calculate(Mod2002016 mod200) {
@@ -390,7 +388,7 @@ public class Mod200Test {
 		
 	}
 
-	@AfterClass
+//	@AfterClass
 	public static void afterClass() {
 		ctx.finalize();
 	}

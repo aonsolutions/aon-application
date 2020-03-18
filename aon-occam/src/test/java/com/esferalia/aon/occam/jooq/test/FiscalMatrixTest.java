@@ -7,15 +7,11 @@ import java.util.TreeMap;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
-import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalMatrixDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
@@ -33,7 +29,7 @@ public class FiscalMatrixTest {
 	
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
-		Class.forName( com.mysql.jdbc.Driver.class.getName() );
+		Class.forName( org.mariadb.jdbc.Driver.class.getName() );
 		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID,USER);
 	}
 	
@@ -74,7 +70,7 @@ public class FiscalMatrixTest {
 		}
 	}
 
-	@Test
+	// @Test
 	public void testMatrix() throws IOException {
 		User user = SecurityDAO.getUser(ctx, USER);
 		FiscalMatrixParams p = new FiscalMatrixParams();

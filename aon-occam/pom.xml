@@ -18,8 +18,98 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<skipTests>true</skipTests>
+<!-- 	
+ 					<includes>
+ 						<include>**/AccountingTestSuite.class</include>
+ 					</includes>
+ -->
 				</configuration>
 			</plugin>
+<!-- 	
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>sql-maven-plugin</artifactId>
+				<version>1.5</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.mariadb.jdbc</groupId>
+						<artifactId>mariadb-java-client</artifactId>
+						<version>2.3.0</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<driver>org.mariadb.jdbc.Driver</driver>
+					<url>jdbc:mariadb://localhost:3306</url>
+					<username>aonsolutions</username>
+					<password>40ns0lut10ns</password>
+					<settingsKey>sensibleKey</settingsKey>
+					<skip>${maven.test.skip}</skip>
+				</configuration>
+
+				<executions>
+					<execution>
+						<id>create-schema</id>
+						<phase>generate-test-resources</phase>
+						<goals>
+							<goal>execute</goal>
+						</goals>
+						<configuration>
+							<url>jdbc:mariadb://localhost:3306</url>
+							<autocommit>true</autocommit>
+							<srcFiles>
+								<srcFile>src/test/resuorces/com/esferalia/aon/occam/test/sql/create.database.sql</srcFile>
+								<srcFile>src/test/resuorces/com/esferalia/aon/occam/test/sql/standalone-basic-data.sql</srcFile>
+								<srcFile>src/test/resuorces/com/esferalia/aon/occam/test/sql/standalone-data.sql</srcFile>
+							</srcFiles>
+						</configuration>
+					</execution>
+
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.3</version>
+				<executions>
+					<execution>
+						<id>coverage-initialize</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>coverage-report</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>coverage-check</id>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<rule>
+									<element>CLASS</element>
+									<excludes>
+										<exclude>com.asimio.demo.Application</exclude>
+									</excludes>
+									<limits>
+										<limit>
+											<counter>LINE</counter>
+											<value>COVEREDRATIO</value>
+											<minimum>80%</minimum>
+										</limit>
+									</limits>
+								</rule>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin> 
+ -->
 		</plugins>
 	</build>
 	<dependencies>
@@ -111,9 +201,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>8.0.13</version>
+			<groupId>org.mariadb.jdbc</groupId>
+			<artifactId>mariadb-java-client</artifactId>
+			<version>2.4.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

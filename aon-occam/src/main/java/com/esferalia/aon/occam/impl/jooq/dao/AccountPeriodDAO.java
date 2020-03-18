@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.AccountPeriod.ACCOUNT_PERIOD;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -54,6 +55,13 @@ public class AccountPeriodDAO {
 				.findFirst()
 				.orElse(null);
 	}
+	
+	public static AccountPeriod getPeriodByYear(AONContext ctx, int year) {
+		ctx.checkRead();
+		Date date = AonDateUtils.getYearLastDay(year);
+		return getPeriod(ctx,date);
+	}
+	
 	public static AccountPeriod getPeriod(AONContext ctx, Integer id) {
 		ctx.checkRead();
 		return getPeriods(ctx,
@@ -78,6 +86,10 @@ public class AccountPeriodDAO {
 		return getPeriods(ctx,p -> p.getDomainProperty().eq(ctx.getDomainId()));
 	}
 	
+	 /**
+     * @deprecated use AccountPeriodDAO.getPeriod(ctx,date)
+     */	
+	@Deprecated( )
 	public static AccountPeriod fetchOne(AONContext ctx, Date date) {
 		ctx.checkRead();
 		return getPeriods(ctx,
@@ -88,6 +100,10 @@ public class AccountPeriodDAO {
 			.orElse(null);
 	}
 
+	 /**
+     * @deprecated use AccountPeriodDAO.getPeriod(ctx,id)
+     */	
+	@Deprecated( )
 	public static AccountPeriod fetchOne(AONContext ctx, Integer id) {
 		ctx.checkRead();
 		return getPeriods(ctx,
@@ -97,6 +113,10 @@ public class AccountPeriodDAO {
 			.orElse(null);
 	}
 
+	 /**
+     * @deprecated use AccountPeriodDAO.getPeriodByYear(ctx,year)
+     */	
+	@Deprecated( )
 	public static AccountPeriod fetchOneByYear(AONContext ctx, int year) {
 		ctx.checkRead();
 		Date date = AonDateUtils.getYearLastDay(year);
@@ -112,10 +132,12 @@ public class AccountPeriodDAO {
 			.set(ACCOUNT_PERIOD.INITIATION_DATE,AonDateUtils.toSql(ap.getInitiationDate()))
 			.set(ACCOUNT_PERIOD.DEADLINE,AonDateUtils.toSql(ap.getDeadline()))
 			.set(ACCOUNT_PERIOD.STATUS,AonEnumUtils.getByte(ap.getStatus()))
+			.set(ACCOUNT_PERIOD.CREATION_USER,ctx.getUser())
+			.set(ACCOUNT_PERIOD.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
 			.returning(ACCOUNT_PERIOD.ID)
 			.fetchOne()
 			.getValue(ACCOUNT_PERIOD.ID);
-		return ap.setId(id);
+		return getPeriod(ctx, id);
 	}
 
 	public static void update(AONContext ctx, AccountPeriod ap) {
@@ -128,6 +150,8 @@ public class AccountPeriodDAO {
 				.set(ACCOUNT_PERIOD.INITIATION_DATE,AonDateUtils.toSql(ap.getInitiationDate()))
 				.set(ACCOUNT_PERIOD.DEADLINE,AonDateUtils.toSql(ap.getDeadline()))
 				.set(ACCOUNT_PERIOD.STATUS,AonEnumUtils.getByte(ap.getStatus()))
+				.set(ACCOUNT_PERIOD.MODIFICATION_USER,ctx.getUser())
+				.set(ACCOUNT_PERIOD.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 				.where(ACCOUNT_PERIOD.ID.equal(ap.getId()))
 				.execute();
 		});
@@ -223,6 +247,8 @@ public class AccountPeriodDAO {
 		ctx.checkWrite();
 		ctx.getDslContext().update(ACCOUNT_PERIOD)
 			.set(ACCOUNT_PERIOD.STATUS, status.getValue() )
+			.set(ACCOUNT_PERIOD.MODIFICATION_USER,ctx.getUser())
+			.set(ACCOUNT_PERIOD.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 			.where(ACCOUNT_PERIOD.ID.equal(period))
 			.execute();
 	}

@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.jooq.Record4;
-import org.junit.Test;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.FISCAL;
@@ -28,18 +27,18 @@ public class Mod190Test {
 	private static String USER = "admin";
 	private static int YEAR = 2015;
 
-	@Test
+	// @Test
 	public void testDelete() throws IOException {
 		FISCAL.deleteMod190(DOMAIN_NAME, DOMAIN_ID, USER, getYearMod190());		
 	}
 
-	@Test
+	// @Test
 	public void testInsert() throws IOException {
 		Mod190 mod190 = FISCAL.initializeMod190(DOMAIN_NAME, DOMAIN_ID, USER, YEAR);
 		FISCAL.saveMod190(DOMAIN_NAME, DOMAIN_ID, USER, mod190);
 	}
 		
-	@Test
+	// @Test
 	public void testSalary() throws IOException {
 		AONContext ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID, USER );
 		java.sql.Date from = AonDateUtils.toSql( AonDateUtils.getYearFirstDay(YEAR));	
@@ -110,7 +109,7 @@ public class Mod190Test {
 	}
 
 	/*
-	@Test
+	// @Test
 	public void testSalary() throws IOException {
 		Mod180 mod180 = AON.getMod180(DOMAIN_NAME, DOMAIN_ID, USER, 36);
 		mod180.getId(); // Not NullPointer

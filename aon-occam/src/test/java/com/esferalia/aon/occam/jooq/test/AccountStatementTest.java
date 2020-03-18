@@ -4,7 +4,6 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
 import org.junit.Ignore;
-import org.junit.Test;
 
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.model.Account;
@@ -25,7 +24,7 @@ public class AccountStatementTest {
 	private static final DecimalFormat DEC = new DecimalFormat("#,##0.00");
 
 	// ACCOUNT ENTRY
-	@Test
+	// @Test
 	public void testStatement() {
 		AccountingReportParams params = new AccountingReportParams()
 				.setAccount(new Account().setId(604530))
@@ -78,7 +77,7 @@ public class AccountStatementTest {
 	}
 	
 	// ACCOUNT ENTRY
-	@Test
+	// @Test
 	@Ignore
 	public void testBalance() {
 		AccountingReportParams params = new AccountingReportParams()

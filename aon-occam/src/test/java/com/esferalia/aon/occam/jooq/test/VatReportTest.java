@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import java.util.Date;
 
 import org.junit.BeforeClass;
-import org.junit.Test;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.type.Period;
@@ -31,11 +30,11 @@ public class VatReportTest {
 
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
-		Class.forName( com.mysql.jdbc.Driver.class.getName() );
+		Class.forName( org.mariadb.jdbc.Driver.class.getName() );
 		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID,LOGIN);
 	}
 /*	
-	@Test
+	// @Test
 	public void testBreakdown() throws IOException {
 		
 		final Date fromDate = AonDateUtils.getYearFirstDay(2017);
@@ -51,7 +50,7 @@ public class VatReportTest {
 		System.out.println( "FINISH BREAKDOWN");
 	}
 		
-	@Test
+	// @Test
 	public void testSummary() throws IOException {
 		
 		final Date fromDate = AonDateUtils.getYearFirstDay(2017);
@@ -72,7 +71,7 @@ public class VatReportTest {
 		ctx.finalize();
 	}
 */	
-	@Test
+	// @Test
 	public void testStreaming() throws IOException {
 		final Date fromDate = AonDateUtils.getYearFirstDay(2017);
 		final Date toDate = FiscalUtils.getPeriodEnd(2017, Period.M01);

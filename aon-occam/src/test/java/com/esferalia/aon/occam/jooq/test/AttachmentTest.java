@@ -8,15 +8,15 @@ import java.util.LinkedList;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
-import org.junit.Test;
 
-import net.aonsolutions.core.pool.AonConnectionException;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+
+import net.aonsolutions.core.pool.AonConnectionException;
 
 
 public class AttachmentTest {
@@ -38,7 +38,7 @@ public class AttachmentTest {
 	
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
-		Class.forName(com.mysql.jdbc.Driver.class.getName());
+		Class.forName(org.mariadb.jdbc.Driver.class.getName());
 		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID, LOGIN);
 		
 	}
@@ -46,7 +46,7 @@ public class AttachmentTest {
 	// ------------------------------------ ATTACHMENT
 	
 	
-	@Test
+	// @Test
 	@Ignore
 	public void test() {
 		LinkedList<Attach> attachList = new LinkedList<Attach>();
@@ -71,7 +71,7 @@ public class AttachmentTest {
 		testSelect();
 	}
 	
-	@Test
+	// @Test
 	@Ignore
 	public void testInsert() {
 		Date now = new Date();
@@ -82,7 +82,7 @@ public class AttachmentTest {
 		System.out.println( (((new Date()).getTime() - now.getTime() )) + " Ms. ");
 	}
 	
-	@Test
+	// @Test
 	@Ignore
 	public void testSelect() {
 		Date now = new Date();
@@ -95,7 +95,7 @@ public class AttachmentTest {
 		System.out.println( (((new Date()).getTime() - now.getTime() )) + " Ms. ");
 	}
 	
-	@Test
+	// @Test
 	@Ignore
 	public void testUpdate() {
 		Date now = new Date();
@@ -106,7 +106,7 @@ public class AttachmentTest {
 		System.out.println( (((new Date()).getTime() - now.getTime() )) + " Ms. ");
 	}
 	
-	@Test
+	// @Test
 	@Ignore
 	public void testDelete() {
 		Date now = new Date();

@@ -7,9 +7,7 @@ import java.util.Date;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
-import net.aonsolutions.core.pool.AonConnectionException;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.InvoiceCalculator;
@@ -23,6 +21,8 @@ import com.esferalia.aon.watson.server.AonRandomStringUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
+import net.aonsolutions.core.pool.AonConnectionException;
+
 
 public class AccountingInvoiceTest {
 
@@ -35,11 +35,11 @@ public class AccountingInvoiceTest {
 
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
-		Class.forName( com.mysql.jdbc.Driver.class.getName() );
+		Class.forName( org.mariadb.jdbc.Driver.class.getName() );
 		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID,LOGIN);
 	}
 	
-	@Test
+	// @Test
 	public void test1() throws IOException {
 		Integer registryId = 609337;
 		AccountingInvoice ai = AccountingInvoiceDAO.initializeInvoice(ctx, InvoiceType.EXPENSES, registryId, null, new Date());

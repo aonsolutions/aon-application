@@ -9,14 +9,14 @@ import java.sql.SQLException;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
-import net.aonsolutions.core.pool.AonConnectionException;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.Mod140Context;
 import com.esferalia.aon.occam.api.model.fiscal.Mod140Params;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod140DAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
+
+import net.aonsolutions.core.pool.AonConnectionException;
 
 
 public class Mod140Test {
@@ -29,11 +29,11 @@ public class Mod140Test {
 
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
-		Class.forName( com.mysql.jdbc.Driver.class.getName() );
+		Class.forName( org.mariadb.jdbc.Driver.class.getName() );
 		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID,USER);
 	}
 	
-	@Test
+	// @Test
 	public void testInvoices() throws IOException {
 		Mod140Context m140ctx = new Mod140Context();
 		m140ctx.setDocument("72575077A");

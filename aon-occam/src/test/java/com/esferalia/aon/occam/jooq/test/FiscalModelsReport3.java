@@ -9,7 +9,6 @@ import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.function.Consumer;
 
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -29,10 +28,8 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
-import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -50,7 +47,7 @@ public class FiscalModelsReport3 {
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
 	}
 
-	@Test
+	// @Test
 	public void testMatrix() throws IOException {
 // model   year    period  administration  status  name    owner   name
 		FileInputStream fis = new FileInputStream(FILENAME);
@@ -89,40 +86,40 @@ public class FiscalModelsReport3 {
 	}
 
 	private class Model {
-		private String domainDescription;
-		private String domainName;
-		private String owner;
+//		private String domainDescription;
+//		private String domainName;
+//		private String owner;
 		private String model;
 		private Period period;
-		private Administration administration;
+//		private Administration administration;
 		private FiscalStatus status;
 		private int year;
 		private int count;
 
-		public String getDomainDescription() {
-			return domainDescription;
-		}
-		public Model  setDomainDescription(String domainDescription) {
-			this.domainDescription = domainDescription;
-			return this;
-		}
-		public String getDomainName() {
-			return domainName;
-		}
-
-		public Model setDomainName(String domainName) {
-			this.domainName = domainName;
-			return this;
-		}
-
-		public String getOwner() {
-			return owner;
-		}
-
-		public Model setOwner(String owner) {
-			this.owner = owner;
-			return this;
-		}
+//		public String getDomainDescription() {
+//			return domainDescription;
+//		}
+//		public Model  setDomainDescription(String domainDescription) {
+//			this.domainDescription = domainDescription;
+//			return this;
+//		}
+//		public String getDomainName() {
+//			return domainName;
+//		}
+//
+//		public Model setDomainName(String domainName) {
+//			this.domainName = domainName;
+//			return this;
+//		}
+//
+//		public String getOwner() {
+//			return owner;
+//		}
+//
+//		public Model setOwner(String owner) {
+//			this.owner = owner;
+//			return this;
+//		}
 
 		public String getModel() {
 			return model;
@@ -142,15 +139,15 @@ public class FiscalModelsReport3 {
 			return this;
 		}
 
-		public Administration getAdministration() {
-			return administration;
-		}
-
-		public Model setAdministration(Administration administration) {
-			if (administration == null) administration = Administration.UNKNOWN;
-			this.administration = administration;
-			return this;
-		}
+//		public Administration getAdministration() {
+//			return administration;
+//		}
+//
+//		public Model setAdministration(Administration administration) {
+//			if (administration == null) administration = Administration.UNKNOWN;
+//			this.administration = administration;
+//			return this;
+//		}
 
 		public FiscalStatus getStatus() {
 			return this.status;
@@ -318,7 +315,7 @@ public class FiscalModelsReport3 {
 //		String lastDomain = null;
 		int lastYear = -1;
 		String lastModel = null;
-		Period lastPeriod = null;
+//		Period lastPeriod = null;
 //		Administration lastAdmon = null;
 
 		@Override
@@ -327,14 +324,14 @@ public class FiscalModelsReport3 {
 			// String domain = mod.getDomainName();
 			String model = mod.getModel();
 			int year = mod.getYear();
-			Period period = mod.getPeriod();
+//			Period period = mod.getPeriod();
 			if (!AonStringUtils.equals(model, lastModel)
 				|| year != lastYear) {
 
 
 				lastModel = model;
 				lastYear = year;
-				lastPeriod = period;
+//				lastPeriod = period;
 				row = sheet.createRow(rowCount++);
 				cellCount = 0;
 				addCell("DESCRIPTION");

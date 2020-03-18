@@ -1,15 +1,15 @@
 package com.esferalia.aon.occam.jooq.test;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.FsMod347.FS_MOD347;
+import static com.esferalia.aon.jooq.tables.FsMod349.FS_MOD349;
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
-import static com.esferalia.aon.jooq.tables.FsModel390.FS_MODEL390;
 import static com.esferalia.aon.jooq.tables.FsModel180.FS_MODEL180;
 import static com.esferalia.aon.jooq.tables.FsModel184.FS_MODEL184;
 import static com.esferalia.aon.jooq.tables.FsModel190.FS_MODEL190;
 import static com.esferalia.aon.jooq.tables.FsModel193.FS_MODEL193;
 import static com.esferalia.aon.jooq.tables.FsModel200.FS_MODEL200;
-import static com.esferalia.aon.jooq.tables.FsMod347.FS_MOD347;
-import static com.esferalia.aon.jooq.tables.FsMod349.FS_MOD349;
+import static com.esferalia.aon.jooq.tables.FsModel390.FS_MODEL390;
 import static com.esferalia.aon.jooq.tables.FsVat.FS_VAT;
 import static com.esferalia.aon.jooq.tables.FsVatDeclaration.FS_VAT_DECLARATION;
 
@@ -19,12 +19,9 @@ import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 import java.util.function.Consumer;
 
-import java.util.Properties;
-import java.util.TimeZone;
-
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -49,7 +46,6 @@ import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
 import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
@@ -72,7 +68,7 @@ public class FiscalModelsReport {
 
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
-		Class.forName(com.mysql.jdbc.Driver.class.getName());
+		Class.forName(org.mariadb.jdbc.Driver.class.getName());
 
 		Properties properties = new Properties();
 		properties.setProperty("user", USER);
@@ -86,7 +82,7 @@ public class FiscalModelsReport {
 		CTX = DSL.using(conn, settings);
 	}
 
-	@Test
+	// @Test
 	public void testMatrix() throws IOException {
 		final String ID 	= "ID";
 		final String DESCRIPTION 	= "DESCRIPTION";

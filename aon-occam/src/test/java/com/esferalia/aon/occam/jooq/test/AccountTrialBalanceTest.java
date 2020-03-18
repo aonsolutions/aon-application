@@ -1,17 +1,7 @@
 package com.esferalia.aon.occam.jooq.test;
 
 import java.io.FileNotFoundException;
-import java.text.DecimalFormat;
 import java.util.Date;
-
-import org.junit.Test;
-
-import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.Account;
-import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
-import com.esferalia.aon.occam.api.model.AccountingReportParams;
-import com.esferalia.aon.occam.impl.jooq.dao.AccountStatementDAO;
-import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class AccountTrialBalanceTest {
 	
@@ -19,31 +9,31 @@ public class AccountTrialBalanceTest {
 //	private static int DOMAIN_ID = 536;
 //	private static String USER = "mac";
 	
-	private static String DOMAIN_NAME = "udapa.ecastellano.euk";
-	private static int DOMAIN_ID = 3049;
-	private static String USER = "montse";
+//	private static String DOMAIN_NAME = "udapa.ecastellano.euk";
+//	private static int DOMAIN_ID = 3049;
+//	private static String USER = "montse";
 
-	//	private static final SimpleDateFormat FMT = new SimpleDateFormat("dd/MM/yyyy");
-	private static final DecimalFormat DEC = new DecimalFormat("#,##0.00");
+	// private static final SimpleDateFormat FMT = new SimpleDateFormat("dd/MM/yyyy");
+	// private static final DecimalFormat DEC = new DecimalFormat("#,##0.00");
 
 	// ACCOUNT ENTRY
-	@Test
+	// @Test
 	public void testStatement() throws FileNotFoundException {
-		AccountingReportParams params = new AccountingReportParams()
+//		AccountingReportParams params = new AccountingReportParams()
 //				.setPeriod(32705) // 2016	MACAYC
 //				.setPeriod(53762)  // 2018	MACAYC
-				.setPeriod(49062)  // 2017	UDAPA
-				.setAccount(new Account().setCode("572"))
-				.setFromDate( AonDateUtils.getDate(2018, 2, 1))
-				.setToDate( AonDateUtils.getDate(2018, 6, 31))
-				.setLowLevelAccountVisible(true)
+//				.setPeriod(49062)  // 2017	UDAPA
+//				.setAccount(new Account().setCode("572"))
+//				.setFromDate( AonDateUtils.getDate(2018, 2, 1))
+//				.setToDate( AonDateUtils.getDate(2018, 6, 31))
+//				.setLowLevelAccountVisible(true)
 			;
 //		PrintStream out = new PrintStream("/home/ecastellano/balance.txt");
 //		PrintStream out = System.out;
 	
-		AONContext ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID, USER);
+//		AONContext ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID, USER);
 		Date start = new Date();
-		AccountTrialBalanceReport report = AccountStatementDAO.trialBalance(ctx, params);
+//		AccountTrialBalanceReport report = AccountStatementDAO.trialBalance(ctx, params);
 		Date end = new Date();
 		System.out.println((end.getTime() - start.getTime()) + "ms.");
 		

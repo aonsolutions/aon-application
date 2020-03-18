@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.junit.Test;
-
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
@@ -584,7 +582,7 @@ public class AccMiningMVELTest  {
 		COMPUTE_EXPRESSION_MAP.put(BalanceKey.T0355.toString(),"PYMES?0.0:T0500+T0345+T0354");
 	}
 
-	@Test
+//	// @Test
 	public void testBalance() {
 
 		String domainName = "mac.ecastellano.euk";

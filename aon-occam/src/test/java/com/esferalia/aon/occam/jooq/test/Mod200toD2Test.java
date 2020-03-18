@@ -10,9 +10,7 @@ import java.util.Map;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
-import net.aonsolutions.core.pool.AonConnectionException;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
@@ -20,6 +18,8 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Mod2002013toD2;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Mod2002014toD2;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
+import net.aonsolutions.core.pool.AonConnectionException;
 
 
 public class Mod200toD2Test {
@@ -36,10 +36,10 @@ public class Mod200toD2Test {
 
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
-		Class.forName( com.mysql.jdbc.Driver.class.getName() );
+		Class.forName( org.mariadb.jdbc.Driver.class.getName() );
 	}
 	
-	@Test
+	// @Test
 	public void testInitialize() throws IOException {
 		Mod2002014 mod200 = FISCAL.getMod2002014ByYear(DOMAIN_NAME, DOMAIN_ID, LOGIN, 2014);
 		Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();

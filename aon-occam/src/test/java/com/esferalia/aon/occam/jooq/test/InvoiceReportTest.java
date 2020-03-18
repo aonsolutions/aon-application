@@ -7,9 +7,7 @@ import java.util.Date;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
-import net.aonsolutions.core.pool.AonConnectionException;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter;
@@ -17,6 +15,8 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
+
+import net.aonsolutions.core.pool.AonConnectionException;
 
 
 public class InvoiceReportTest {
@@ -30,11 +30,11 @@ public class InvoiceReportTest {
 
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
-		Class.forName( com.mysql.jdbc.Driver.class.getName() );
+		Class.forName( org.mariadb.jdbc.Driver.class.getName() );
 		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID,LOGIN);
 	}
 	
-	@Test
+	// @Test
 	public void testInvoices() throws IOException {
 		
 		final Date fromDate = AonDateUtils.getYearFirstDay(2014);

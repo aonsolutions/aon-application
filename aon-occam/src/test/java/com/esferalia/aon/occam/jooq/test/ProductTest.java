@@ -7,9 +7,7 @@ import java.util.Date;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
-import org.junit.Test;
 
-import net.aonsolutions.core.pool.AonConnectionException;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.office.Tag;
@@ -17,7 +15,8 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
-import com.esferalia.aon.watson.error.AonCoreException;
+
+import net.aonsolutions.core.pool.AonConnectionException;
 
 
 public class ProductTest {
@@ -29,20 +28,20 @@ public class ProductTest {
 
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
-		Class.forName( com.mysql.jdbc.Driver.class.getName() );
+		Class.forName( org.mariadb.jdbc.Driver.class.getName() );
 		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID, LOGIN);
 	}
 	
 	// ------------------------------------ PRODUCT
 	
-	@Test(expected=AonCoreException.class)
+	// @Test(expected=AonCoreException.class)
 	@Ignore
 	public void testEmptyDomain() {
 		Product product = new Product();
 		AON.insert(ctx, product);
 	}
 	
-	@Test(expected=AonCoreException.class)
+	// @Test(expected=AonCoreException.class)
 	@Ignore
 	public void testEmptyName() {
 		Product product = new Product();
@@ -50,7 +49,7 @@ public class ProductTest {
 		AON.insert(ctx, product);
 	}
 	
-	@Test(expected=AonCoreException.class)
+	// @Test(expected=AonCoreException.class)
 	@Ignore
 	public void testEmptyCode() {
 		Product product = new Product();
@@ -59,7 +58,7 @@ public class ProductTest {
 		AON.insert(ctx, product);
 	}
 	
-	@Test(expected=AonCoreException.class)
+	// @Test(expected=AonCoreException.class)
 	@Ignore
 	public void testDuplicateProduct(){
 		Product product = ProductDAO.getProduct(ctx, 1);
@@ -91,7 +90,7 @@ public class ProductTest {
 		AON.insert(ctx, product);
 	}
 	
-	@Test
+	// @Test
 	@Ignore
 	public void testDeleteProduct() {
 		Product product = ProductDAO.getProduct(ctx, 1);
@@ -103,14 +102,14 @@ public class ProductTest {
 	
 	// ------------------------------------ PRODUCT_TAG
 	
-	@Test(expected=AonCoreException.class)
+	// @Test(expected=AonCoreException.class)
 	@Ignore
 	public void testEmptyDomainProductTag() {
 		ProductTag pt = new ProductTag();
 		AON.insertProductTag(ctx, pt);
 	}
 	
-	@Test(expected=AonCoreException.class)
+	// @Test(expected=AonCoreException.class)
 	@Ignore
 	public void testEmptyProductProductTag() {
 		ProductTag pt = new ProductTag();
@@ -118,7 +117,7 @@ public class ProductTest {
 		AON.insertProductTag(ctx, pt);
 	}
 	
-	@Test(expected=AonCoreException.class)
+	// @Test(expected=AonCoreException.class)
 	@Ignore
 	public void testEmptyTagProductTag() {
 		ProductTag pt = new ProductTag();
@@ -127,7 +126,7 @@ public class ProductTest {
 		AON.insertProductTag(ctx, pt);
 	}
 	
-	@Test(expected=AonCoreException.class)
+	// @Test(expected=AonCoreException.class)
 	@Ignore
 	public void testExistProductProductTag() {
 		ProductTag pt = new ProductTag();
@@ -137,7 +136,7 @@ public class ProductTest {
 		AON.insertProductTag(ctx, pt);
 	}
 	
-	@Test(expected=AonCoreException.class)
+	// @Test(expected=AonCoreException.class)
 	@Ignore
 	public void testExistTagProductTag() {
 		ProductTag pt = new ProductTag();
@@ -147,7 +146,7 @@ public class ProductTest {
 		AON.insertProductTag(ctx, pt);
 	}
 	
-	@Test(expected=AonCoreException.class)
+	// @Test(expected=AonCoreException.class)
 	@Ignore
 	public void testDuplicateProductTag(){
 		ProductTag productTag = ProductDAO.getProductTag(ctx, 1);
@@ -161,7 +160,7 @@ public class ProductTest {
 		AON.insertProductTag(ctx, productTag);
 	}
 	
-	@Test
+	// @Test
 	@Ignore
 	public void testDeleteProductTag() {
 		ProductTag productTag = ProductDAO.getProductTag(ctx, 1);
@@ -172,14 +171,14 @@ public class ProductTest {
 	
 	// ------------------------------------ ITEM
 	
-	@Test(expected=AonCoreException.class)
+	// @Test(expected=AonCoreException.class)
 	@Ignore
 	public void testEmptyDomainItem() {
 		Product product = new Product();
 		AON.insert(ctx, product);
 	}
 	
-	@Test(expected=AonCoreException.class)
+	// @Test(expected=AonCoreException.class)
 	@Ignore
 	public void testDuplicateItem(){
 		Item item = AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), 1);
@@ -210,7 +209,7 @@ public class ProductTest {
 		AON.insertItem(ctx, item);
 	}
 	
-	@Test
+	// @Test
 	@Ignore
 	public void testDeleteItem() {
 		Item item = AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), 1);

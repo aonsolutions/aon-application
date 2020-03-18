@@ -9,7 +9,6 @@ import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.function.Consumer;
 
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -29,7 +28,6 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.type.Administration;
@@ -50,7 +48,7 @@ public class FiscalModelsReport2 {
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
 	}
 
-	@Test
+	// @Test
 	public void testMatrix() throws IOException {
 // model   year    period  administration  status  name    owner   name
 		FileInputStream fis = new FileInputStream(FILENAME);

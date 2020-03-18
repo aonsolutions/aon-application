@@ -7,12 +7,12 @@ import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
-import net.aonsolutions.core.pool.AonConnectionException;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
+
+import net.aonsolutions.core.pool.AonConnectionException;
 
 
 public class CompanyTest {
@@ -24,11 +24,11 @@ public class CompanyTest {
 	
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
-		Class.forName( com.mysql.jdbc.Driver.class.getName() );
+		Class.forName( org.mariadb.jdbc.Driver.class.getName() );
 		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID,USER);
 	}
 	
-	@Test
+	// @Test
 	public void testEnterprise() throws IOException {
 		List<Enterprise> list = CompanyDAO.getParentEnterprises(ctx,
 				p -> p.getParentDomainProperty().eq(DOMAIN_ID)

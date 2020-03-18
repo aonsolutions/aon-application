@@ -9,13 +9,13 @@ import java.util.stream.Collectors;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
-import net.aonsolutions.core.pool.AonConnectionException;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
+import net.aonsolutions.core.pool.AonConnectionException;
 
 
 public class AccountingRegistryTest {
@@ -27,11 +27,11 @@ public class AccountingRegistryTest {
 	
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
-		Class.forName( com.mysql.jdbc.Driver.class.getName() );
+		Class.forName( org.mariadb.jdbc.Driver.class.getName() );
 		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID,USER);
 	}
 	
-	@Test
+	// @Test
 	public void testEnterprise() throws IOException {
 		String query = "350";
 		final String q = (!AonStringUtils.contains(query, AonStringUtils.PERCENT))

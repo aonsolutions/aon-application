@@ -4,7 +4,6 @@ package com.esferalia.aon.occam.jooq.test;
 import java.io.IOException;
 
 import org.junit.Ignore;
-import org.junit.Test;
 
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
@@ -22,7 +21,7 @@ public class Mod111Test {
 	private static int DOMAIN_ID = 536;
 	private static String USER = "mac";
 	
-	@Test
+	// @Test
 	public void testInitializeAlava() throws IOException {
 		Mod111 mod111 = FISCAL.initializeMod111(DOMAIN_NAME, DOMAIN_ID, USER, null);
 		mod111.setAdministration(Administration.ALAVA);
@@ -50,7 +49,7 @@ public class Mod111Test {
 		print(mod111);
 	}
 	
-	@Test
+	// @Test
 	@Ignore
 	public void testInitializeBizkaia() throws IOException {
 		Mod111 mod111 = new Mod111();
@@ -62,7 +61,7 @@ public class Mod111Test {
 		print(mod111);
 	}
 
-	@Test
+	// @Test
 	@Ignore
 	public void testInitializeCommonTerritory() throws IOException {
 		Mod111 mod111 = new Mod111();
@@ -74,7 +73,7 @@ public class Mod111Test {
 		print(mod111);
 	}
 
-	@Test
+	// @Test
 	@Ignore
 	public void testInitializeGipuzkoa() throws IOException {
 		Mod111 mod111 = new Mod111();
@@ -86,7 +85,7 @@ public class Mod111Test {
 		print(mod111);
 	}
 
-	@Test
+	// @Test
 	@Ignore
 	public void testInitializeNavarra() throws IOException {
 		Mod111 mod111 = new Mod111();

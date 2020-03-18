@@ -1,102 +1,25 @@
-package com.esferalia.aon.occam.jooq.test;
+package com.esferalia.aon.occam.test.accounting.entry;
 
 
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.stream.Stream;
 
-import org.junit.BeforeClass;
 import org.junit.Ignore;
+import org.junit.Test;
 
 import com.esferalia.aon.occam.api.ACCOUNTING;
-import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
+import com.esferalia.aon.occam.test.accounting.AbstractOccamTest;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
-import net.aonsolutions.core.pool.AonConnectionException;
 
+public class AccountEntryTest extends AbstractOccamTest {
 
-public class AccountEntryTest {
-
-	private static AONContext ctx;
-	private static String DOMAIN_NAME = "inelco-mac.ecastellano.dev";
-	private static int DOMAIN_ID = 400;
-	private static String USER = "jgarcia";
-	
-	@BeforeClass
-	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
-		Class.forName( org.mariadb.jdbc.Driver.class.getName() );
-		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID,USER);
-	}
-	
-	// ACCOUNT ENTRY	
-	// @Test(expected=AonCoreException.class)
-	@Ignore
-	public void testEmptyDomain() {
-		AccountEntry accountEntry = new AccountEntry();
-		ACCOUNTING.save(DOMAIN_NAME, DOMAIN_ID, USER, accountEntry);
-	}
-	
-	// @Test(expected=AonCoreException.class)
-	@Ignore
-	public void testEmptyDate() {
-		AccountEntry accountEntry = new AccountEntry();
-		accountEntry.setDomain(ctx.getDomainId());
-		ACCOUNTING.save(DOMAIN_NAME, DOMAIN_ID, USER, accountEntry);
-	}
-	
-	// @Test(expected=AonCoreException.class)
-	@Ignore
-	public void testEmptyPeriod() {
-		AccountEntry accountEntry = new AccountEntry();
-		accountEntry.setDomain(ctx.getDomainId());
-		accountEntry.setEntryDate( AonDateUtils.getDate(1974, 5, 4) );
-		ACCOUNTING.save(DOMAIN_NAME, DOMAIN_ID, USER, accountEntry);
-	}
-	
-	// @Test(expected=AonCoreException.class)
-	@Ignore
-	public void testWrongDomain() {
-		AccountPeriod period = ACCOUNTING.fetchPeriodByYear(ctx,1974);
-		if (period == null) {
-			period = new AccountPeriod();
-			period.setName("1974");
-			period.setInitiationDate( AonDateUtils.getDate(1974, 0, 1));
-			period.setDeadline( AonDateUtils.getDate(1974, 11, 31));
-			period.setStatus( AccountPeriodStatus.ACTIVE );
-			period.setDomain(ctx.getDomainId());
-			ACCOUNTING.insert(ctx, period);
-		}
-		AccountEntry accountEntry = new AccountEntry();
-		accountEntry.setDomain(100); // Other
-		accountEntry.setEntryDate( AonDateUtils.getDate(1974, 5, 4) );
-		accountEntry.setPeriod(period.getId());
-		ACCOUNTING.save(DOMAIN_NAME, DOMAIN_ID, USER, accountEntry);
-	}
-	
-	// @Test(expected=AonCoreException.class)
-	@Ignore
-	public void testEmptyTypeInsert() {
-		AccountPeriod period = ACCOUNTING.fetchPeriodByYear(ctx,1974);
-		if (period == null) {
-			period = new AccountPeriod();
-			period.setName("1974");
-			period.setInitiationDate( AonDateUtils.getDate(1974, 0, 1));
-			period.setDeadline( AonDateUtils.getDate(1974, 11, 31));
-			period.setStatus( AccountPeriodStatus.ACTIVE );
-			period.setDomain(ctx.getDomainId());
-			ACCOUNTING.insert(ctx, period);
-		}
-		AccountEntry accountEntry = new AccountEntry();
-		accountEntry.setDomain(ctx.getDomainId());
-		accountEntry.setEntryDate( AonDateUtils.getDate(1974, 5, 4) );
-		accountEntry.setPeriod(period.getId());
-		ACCOUNTING.save(DOMAIN_NAME, DOMAIN_ID, USER, accountEntry);
-	}
 	
 	// @Test
 	@Ignore
@@ -185,11 +108,6 @@ public class AccountEntryTest {
 				,0,10);
 		list.forEach(accountEntry -> System.out.println(accountEntry) );
 		System.out.println(" -----------------" );
-	}
-
-//	@AfterClass
-	public static void afterClass() {
-		ctx.finalize();
 	}
 
 	private static AccountEntryDetail getAccountEntryDetail(Integer account, String accountCode,

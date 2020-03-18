@@ -6,11 +6,11 @@ import java.sql.SQLException;
 import java.util.LinkedHashMap;
 
 import org.junit.BeforeClass;
-import org.junit.Test;
 
-import net.aonsolutions.core.pool.AonConnectionException;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
+
+import net.aonsolutions.core.pool.AonConnectionException;
 
 
 public class ProductTagTest {
@@ -23,11 +23,11 @@ public class ProductTagTest {
 	
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
-		Class.forName( com.mysql.jdbc.Driver.class.getName() );
+		Class.forName( org.mariadb.jdbc.Driver.class.getName() );
 		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID,LOGIN);
 	}
 	
-	@Test
+	// @Test
 	public void test1() throws IOException {
 		LinkedHashMap<Integer, String[]> map = ProductDAO.getProductTagMap(ctx);
 		for (Integer i : map.keySet() ) {
