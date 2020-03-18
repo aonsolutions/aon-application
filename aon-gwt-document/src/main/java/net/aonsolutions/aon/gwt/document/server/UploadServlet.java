@@ -20,7 +20,6 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
-import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -50,15 +49,14 @@ public class UploadServlet extends HttpServlet{
 		String domainIdStr = req.getHeader("domain_id");
  		Integer domainId = domainIdStr != null ? Integer.parseInt(domainIdStr) : null; 
 		Boolean hasToken = token != null;
-		
-		JSONObject json = hasToken ? SECURITY.decodeJWT(token) : new JSONObject();
+
 		Domain domain = null;
 		String login = "";
 		if(hasToken) {
 			domain = AON_SOLUTIONS.getDomain(token, domainId);
 		} else {
 			String domainName = req.getParameter("domain_name");
-			domainId = json.getInt("domainId");
+			domainId = Integer.parseInt(req.getParameter("domain_id"));
 			login = req.getParameter("login");
 	    	domain = AON.getDomain(domainName, domainId, login);
 		}
