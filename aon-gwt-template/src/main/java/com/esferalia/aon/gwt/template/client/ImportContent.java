@@ -5,6 +5,8 @@ import com.esferalia.aon.gwt.template.shared.Dialog;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.ImportType;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -12,6 +14,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -21,7 +24,8 @@ public class ImportContent extends Composite {
 	}
 
 	private static final PageBinder pageBinder = GWT.create(PageBinder.class);
-	
+
+	@UiField HTMLPanel htmlPanel;
 	@UiField ListBox typeList;
 	@UiField Button importButton;
 	
@@ -42,6 +46,15 @@ public class ImportContent extends Composite {
 			typeList.addItem("Libro Diario","diary");
 		}
 		typeList.setSelectedIndex(0);
+		typeList.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				if(htmlPanel.getWidgetCount() > 1) {
+					htmlPanel.remove(1);
+				}
+			}
+		});
 	}
 	
 	@UiHandler("importButton")

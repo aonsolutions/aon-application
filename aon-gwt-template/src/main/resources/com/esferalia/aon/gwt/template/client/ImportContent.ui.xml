@@ -33,14 +33,14 @@
 	</ui:style>
 
 
-	<g:HTMLPanel styleName="aon-panelGrid-search searchPanel-template {style.aon-html-style}">
+	<g:HTMLPanel ui:field="htmlPanel" styleName="aon-panelGrid-search searchPanel-template {style.aon-html-style}">
 		<g:HorizontalPanel styleName="{style.aon-horizontal-style}">
 			<g:Label styleName="{style.aon-horizontal-content-style}" text="Tipo"></g:Label>
 			<g:ListBox styleName="{style.aon-horizontal-content-style}" ui:field="typeList"></g:ListBox>
 			<g:Button ui:field="importButton" text="Importar"
 				styleName=" {style.aon-horizontal-content-style} aon-icon-commandButton aon-icon-accept">
 			</g:Button>
-		</g:HorizontalPanel>		
+		</g:HorizontalPanel>	
 	</g:HTMLPanel>
 
 </ui:UiBinder>
