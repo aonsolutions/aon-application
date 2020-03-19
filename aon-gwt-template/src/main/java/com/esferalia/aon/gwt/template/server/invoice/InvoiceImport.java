@@ -281,12 +281,18 @@ public class InvoiceImport {
 			return;
 		}
 		
-		if("CUENTA BASE".equalsIgnoreCase(title)) {
+		if("CUENTA BASE".equalsIgnoreCase(title)
+				|| "CUENTA CONTABLE".equalsIgnoreCase(title)) {
 			String acc = o.toString();
 			if(CellType.NUMERIC == cell.getCellTypeEnum()) {
 				acc = NumberToTextConverter.toText(cell.getNumericCellValue());
 			}
 			inv.setAccount(calculateAccount(acc));
+			return;
+		}
+		
+		if("DESCRIPCIÓN CUENTA".equalsIgnoreCase(title)){
+			inv.setAccountDescription(o.toString());
 			return;
 		}
 		if("BASE".equalsIgnoreCase(title)) {
@@ -321,7 +327,8 @@ public class InvoiceImport {
 			return;
 		}
 		
-		if("TOTAL FACTURA".equalsIgnoreCase(title)) {
+		if("TOTAL FACTURA".equalsIgnoreCase(title)
+				|| "TOTAL".equalsIgnoreCase(title)) {
 			inv.setTotal(Double.parseDouble(o.toString()));
 			return;
 		}
@@ -356,7 +363,9 @@ public class InvoiceImport {
 			invoice.setDomain(domain.getId());
 			invoice.setIssueDate(ivs.get(i).getDate());
 			invoice.setTaxDate(ivs.get(i).getDate());
-			invoice.setType(getInvoiceType(ivs.get(i).getAccount()));
+			invoice.setType(ivs.get(i).getInvoiceType() != null
+					? ivs.get(i).getInvoiceType()
+					: getInvoiceType(ivs.get(i).getAccount()));
 			invoice.setSeries(ivs.get(i).getSerie());
 			invoice.setNumber(ivs.get(i).getNumber());	
 			invoice.setReferenceCode(ivs.get(i).getRef());
@@ -420,8 +429,12 @@ public class InvoiceImport {
 				if(expAccount == null) {
 					expAccount = new Account()
 							.setCode(ivs.get(j).getAccount())
-							.setDescription("IMPORTAR FACTURAS")
-							.setAlias("IMPORTAR FACTURAS")
+							.setDescription(ivs.get(i).getAccountDescription() != null 
+									? ivs.get(i).getAccountDescription()
+									: "SIN DESCRIPCIÓN (CREADO DESDE IMPORTACIÓN DE FACTURAS)")
+							.setAlias(ivs.get(i).getAccountDescription() != null 
+									? ivs.get(i).getAccountDescription()
+									:"SIN DESCRIPCIÓN")
 							.setDomain(domain.getId())
 							.setActive(true);
 					expAccount = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), expAccount);

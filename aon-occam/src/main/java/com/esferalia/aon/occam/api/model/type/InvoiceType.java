@@ -116,7 +116,7 @@ public enum InvoiceType implements Serializable  {
 			return PURCHASE;
 		} else if(EXPENSES.getDescription().equalsIgnoreCase(value)) {
 			return EXPENSES;
-		} else if(UNDEDUCTIBLE.getDescription().equalsIgnoreCase(value)) {
+		} else if(UNDEDUCTIBLE.getDescription().equalsIgnoreCase(value) || "ticket".equalsIgnoreCase(value)) {
 			return UNDEDUCTIBLE;
 		}		
 		return valueOf(value); 

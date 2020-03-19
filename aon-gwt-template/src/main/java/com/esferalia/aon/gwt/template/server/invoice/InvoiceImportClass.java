@@ -23,6 +23,7 @@ public class InvoiceImportClass {
 	String zip;
 	Country country;
 	String account;
+	String accountDescription;
 	Double base;
 	Double percentage;
 	Double quota;
@@ -272,6 +273,15 @@ public class InvoiceImportClass {
 		return this;
 	}
 	
+	public String getAccountDescription() {
+		return accountDescription;
+	}
+
+	public InvoiceImportClass setAccountDescription(String accountDescription) {
+		this.accountDescription = accountDescription;
+		return this;
+	}
+
 	public enum InvoiceOpType {
 		EX,
 		PIS,
