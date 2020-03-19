@@ -139,6 +139,7 @@ public class Templates extends Composite implements EntryPoint {
 						exportDeliveryx(me);
 						exportDelivery(me);
 						exportProjectCommercial(me);
+						exportProjectCommercialx(me);
 						exportOfferx(me);
 						exportOfferPdfx(me);
 						exportFullExpedient(me);
@@ -1885,6 +1886,30 @@ public class Templates extends Composite implements EntryPoint {
 		}
 	}-*/;
 	
+	public void projectCommercialx(String name, String source, String seller, String target, String fromDate,
+			String toDate, String comments, String status, String probability){
+		String fileDownloadURL = GWT.getModuleBaseURL()+ "download_projectCommercial_excel/"
+				+ "?domain=" + getDomain().getName()
+				+ "&domain_id=" + getDomain().getId()
+            	+ "&username="+ getUser().getLogin()
+            	+ "&name=" + name
+            	+ "&target=" + target
+            	+ "&seller=" + seller
+            	+ "&source=" + source
+            	+ "&comments=" + comments
+            	+ "&status=" + status
+            	+ "&probability=" + probability
+            	+ "&from_date=" + fromDate
+				+ "&to_date=" + toDate;
+		
+		Window.open( fileDownloadURL, "_blank",null);
+	}
+
+	public static native void exportProjectCommercialx(Templates thiz) /*-{
+		$wnd.projectCommercialx = function(name, source, seller, target, fromDate, toDate, comments, status, probability) {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::projectCommercialx(*)(name, source, seller, target, fromDate, toDate, comments, status, probability);
+		}
+	}-*/;
 	
 	public void customerIban(){
 		importCustomerIban();

@@ -73,6 +73,9 @@ public class ProjectDAO {
 		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT_COMMERCIAL.SOURCE);}
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT_COMMERCIAL.STATUS);}
 		@Override public Property<Date> getStatusDateProperty() {return new FilterDAO.PropertyDAO<Date>(PROJECT_COMMERCIAL.STATUS_DATE);}
+		@Override public Property<Integer> getProbabilityProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT_COMMERCIAL.PROBABILITY);}
+		@Override public Property<Date> getDateProperty() {return new FilterDAO.PropertyDAO<Date>(PROJECT.DATE);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT.NAME);}
 	}
 	
 	protected static class ProjectReservationPropertiesDAO implements ProjectReservationProperties {
@@ -158,6 +161,7 @@ public class ProjectDAO {
 	public static Stream<ProjectCommercial> getProjectCommercialStream(AONContext ctx, ProjectCommercialFilter filter){	
 		return ctx.getDslContext().select()
 				.from(PROJECT).join(PROJECT_COMMERCIAL).on(PROJECT.ID.eq(PROJECT_COMMERCIAL.PROJECT))
+				.leftOuterJoin(PROJECT_TYPE).on(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE.ID))
 				.where(PROJECT_COMMERCIAL_PROPERTIES.getConditions(filter))
 				.fetch().stream().map(new FullProjectCommercialFiller());
 	}
@@ -279,6 +283,7 @@ public class ProjectDAO {
 			pc.setId(r.getValue(PROJECT.ID));
 			pc.setName(r.getValue(PROJECT.NAME));
 			pc.setProjectTypeId(r.getValue(PROJECT.PROJECT_TYPE));
+			pc.setProjectTypeName(r.getValue(PROJECT_TYPE.DESCRIPTION));
 			pc.setReservation(r.getValue(PROJECT.RESERVATION).equals(0));
 			pc.setTas(r.getValue(PROJECT.TAS).equals(0));
 			return pc.setTarget(r.getValue(PROJECT_COMMERCIAL.TARGET))

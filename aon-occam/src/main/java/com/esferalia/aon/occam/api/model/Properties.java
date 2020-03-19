@@ -644,6 +644,7 @@ public interface Properties {
 	}
 	
 	public interface ProjectCommercialProperties{
+		// PROJECT COMMERCIAL
 		Property<Integer> getProjectProperty();
 		Property<Integer> getDomainProperty();
 		Property<Integer> getTargetProperty();
@@ -652,6 +653,12 @@ public interface Properties {
 		Property<Byte> getSourceProperty();
 		Property<Byte> getStatusProperty();
 		Property<Date> getStatusDateProperty();
+		Property<Integer> getProbabilityProperty();
+		// PROJECT
+		Property<Date> getDateProperty();
+		Property<String> getNameProperty();
+		
+		
 	}
 	
 	public interface CustomerProperties extends RegistryProperties, AuditProperties{
@@ -1211,5 +1218,15 @@ public interface Properties {
 		Property<String> getBackgroundColorProperty();
 		Property<Integer> getHeaderTemplateProperty();
 		Property<Integer> getFooterTemplateProperty();
+	}
+	
+	public interface UserProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getNameProperty();
+		Property<String> getLoginProperty();
+		Property<Byte> getActiveProperty();
+		Property<Integer> getEnterpriseProperty();
+		Property<Integer> getRegistryProperty();
 	}
 }

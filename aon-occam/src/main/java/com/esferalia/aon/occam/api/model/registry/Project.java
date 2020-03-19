@@ -13,7 +13,7 @@ public class Project implements Serializable {
 	private Integer id;
 	private int domain;
 	private Integer projectTypeId;
-	private Integer projectTypeName;
+	private String projectTypeName;
 	
 	private Integer registryId;
 	private DocumentType registryDocumentType;
@@ -53,10 +53,10 @@ public class Project implements Serializable {
 		this.projectTypeId = projectTypeId;
 		return this;
 	}
-	public Integer getProjectTypeName() {
+	public String getProjectTypeName() {
 		return projectTypeName;
 	}
-	public Project setProjectTypeName(Integer projectTypeName) {
+	public Project setProjectTypeName(String projectTypeName) {
 		this.projectTypeName = projectTypeName;
 		return this;
 	}
