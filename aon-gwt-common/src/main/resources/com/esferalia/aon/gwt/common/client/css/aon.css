@@ -3288,3 +3288,20 @@ right
 .aon-account-table td {
 	
 }
+.aon-action-button {
+	padding: 2px;
+	margin-left: 2px;
+	margin-right: 2px;
+	text-align: center;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #bbb;
+	width: auto;
+	overflow: visible;
+	cursor: pointer;
+	background-color: #dee6f4;
+}
+.aon-action-button:hover {
+	background-color: #0071bc; 	
+	color: white;
+}

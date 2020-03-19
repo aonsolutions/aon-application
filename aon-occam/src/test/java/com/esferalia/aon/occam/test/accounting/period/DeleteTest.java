@@ -10,7 +10,7 @@ import org.junit.Test;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
-import com.esferalia.aon.occam.test.accounting.AbstractOccamTest;
+import com.esferalia.aon.occam.jooq.test.AbstractOccamTest;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
@@ -18,7 +18,7 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 public class DeleteTest extends AbstractOccamTest {
 
 	@Test
-	public void testInsert() {
+	public void testDelete() {
 		int year = AonDateUtils.getYear( new Date() );
 		year = year -5;
 		AccountPeriod period = new AccountPeriod();

@@ -20,7 +20,7 @@
 					<skipTests>true</skipTests>
 <!-- 	
  					<includes>
- 						<include>**/AccountingTestSuite.class</include>
+ 						<include>**/OccamTestSuite.class</include>
  					</includes>
  -->
 				</configuration>
@@ -100,7 +100,7 @@
 										<limit>
 											<counter>LINE</counter>
 											<value>COVEREDRATIO</value>
-											<minimum>80%</minimum>
+											<minimum>0%</minimum>
 										</limit>
 									</limits>
 								</rule>
@@ -119,15 +119,6 @@
 			¡¡ANALIZAR EXHAUSTIVAMENTE SI ES NECESARIO CREAR UNA DEPENDENCIA!!  
 			******************************************************************
 		 -->
-
-
-
-
-		<!--
-			******************************************************************
-			******************************************************************
-		 -->
-		
 		<dependency>
 			<groupId>net.aonsolutions.core</groupId>
 			<artifactId>pool</artifactId>
@@ -185,19 +176,50 @@
 			<scope>compile</scope>
 		</dependency>
 	
-		<!-- Used to marshall unmarshall Mod390 declaration --> 
+		<!-- Used to decode JWT objetc --> 
 		<dependency>
-    		<groupId>com.sun.xml.bind</groupId>
-    		<artifactId>jaxb-impl</artifactId>
-	    	<version>2.2.5-2</version>
+	    	<groupId>com.auth0</groupId>
+		    <artifactId>java-jwt</artifactId>
+		    <version>3.9.0</version>
+		    <scope>compile</scope>
+		</dependency>
+
+		<!-- Used to marshall unmarshall Mod390 declaration -->
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>2.2.5-2</version>
 			<scope>compile</scope>
 		</dependency>
-		
-		<!-- TEST DEPENDENCIES -->
+	
+
+		<!--
+			*****************
+			TEST DEPENDENCIES  
+			*****************
+		 -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.13-beta-1</version>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.hamcrest</groupId>
+					<artifactId>hamcrest-core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-library</artifactId>
+			<version>2.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.github.javafaker</groupId>
+			<artifactId>javafaker</artifactId>
+			<version>1.0.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -211,11 +233,6 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>3.17</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-	    	<groupId>com.auth0</groupId>
-		    <artifactId>java-jwt</artifactId>
-		    <version>3.9.0</version>
 		</dependency>
 	</dependencies>
 </project>

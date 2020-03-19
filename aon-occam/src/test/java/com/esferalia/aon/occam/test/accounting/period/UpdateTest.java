@@ -11,14 +11,14 @@ import org.junit.Test;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
-import com.esferalia.aon.occam.test.accounting.AbstractOccamTest;
+import com.esferalia.aon.occam.jooq.test.AbstractOccamTest;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 
 public class UpdateTest extends AbstractOccamTest {
 
 	@Test
-	public void testInsert() {
+	public void testUpdate() {
 		int year = AonDateUtils.getYear( new Date() );
 		AccountPeriod period = ACCOUNTING.fetchPeriodByYear(ctx,year);
 		if (period == null) {

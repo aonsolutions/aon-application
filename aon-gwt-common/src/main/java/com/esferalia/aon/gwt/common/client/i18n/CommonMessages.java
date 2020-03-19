@@ -546,6 +546,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Acci\u00F3n")
 	String action();
 
+	@DefaultMessage("Acciones")
+	String actions();
+
 	@DefaultMessage("No se han encontrado datos")
 	String noData();
 
@@ -3497,6 +3500,33 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Saldar vencimientos pendientes")
 	String settleFinances();
 	
+	@DefaultMessage("Saldar vencimiento")
+	String settleFinance();
+
+	@DefaultMessage("\u00BFDesea saldar el vencimiento?")
+	String settleFinanceAction();
+
+	@DefaultMessage("\u00BFDesea marcar como pendiente vencimiento?")
+	String undoFinanceAction();
+
+	@DefaultMessage("Pagar vencimiento")
+	String payFinance();
+
+	@DefaultMessage("Pagar")
+	String toPay();
+
+	@DefaultMessage("Saldar")
+	String toSettle();
+
+	@DefaultMessage("Cambiar a pendiente")
+	String toPending();
+
+	@DefaultMessage("Devolver")
+	String toReturn();
+
+	@DefaultMessage("Realizar devoluci\u00F3n")
+	String returnFinance();
+
 	@DefaultMessage("No se ha encontrado la factura.")
 	String invoiceNotFound();
 	

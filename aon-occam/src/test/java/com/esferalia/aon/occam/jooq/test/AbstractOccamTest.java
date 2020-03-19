@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.test.accounting;
+package com.esferalia.aon.occam.jooq.test;
 
 import java.io.IOException;
 import java.io.OutputStream;

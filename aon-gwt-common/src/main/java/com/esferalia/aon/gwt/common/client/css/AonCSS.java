@@ -1343,4 +1343,7 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-account-table")
 	String aonAccountTable();
 	
+	@ClassName("aon-action-button")
+	String aonActionButton();
+	
 }

@@ -7,7 +7,7 @@ import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
-import com.esferalia.aon.occam.test.accounting.AbstractOccamTest;
+import com.esferalia.aon.occam.jooq.test.AbstractOccamTest;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 

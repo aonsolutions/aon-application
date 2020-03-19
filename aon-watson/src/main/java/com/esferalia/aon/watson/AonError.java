@@ -127,6 +127,9 @@ public enum AonError implements Serializable{
 	,INVOICE_INVALID_RECTIFICATION_TYPE("No se permite rectificar una factura con el tipo {0}.")
 	,INVOICE_CANT_DELETE_RECTIFIED("No es posible borrar la factura porque est\u00E1 rectificada. Borre primero la factura rectificativa.")
 	// --------------------------------------------- FINANCE
+	,FINANCE_NOT_FOUND("Vencimiento no encontrado.")	
+	,FINANCE_CAN_NOT_BE_SETTLED("El vencimiento no se puede saldar, no está pendiente.")
+	,FINANCE_CAN_NOT_BE_UNSETTLED("El vencimiento no se dejat pendiente, no está saldado.")
 	,FINANCE_AMOUNT_ZERO("El importe del vencimiento no puede ser cero.")	
 	,FINANCE_EMPTY_SCOPE("No es posible encontrar un \u00E1mbito v\u00E1lido para el vencimiento.")
 	,FINANCE_WRONG_IBAN_LENGTH("Longitud de IBAN incorrecta.")
