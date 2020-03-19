@@ -251,7 +251,9 @@ public class DiaryImport {
 			if(CellType.FORMULA == cell.getCellTypeEnum())
 				return;
 			Double debit = Double.parseDouble(o.toString());
-			diary.get(asiento).getDetails().get(apunte-1).setDebit(debit);
+			if(debit != null && debit < 0) {
+				diary.get(asiento).getDetails().get(apunte-1).setCredit(debit);
+			} else diary.get(asiento).getDetails().get(apunte-1).setDebit(debit);
 			return;
 		}
 		
@@ -259,7 +261,9 @@ public class DiaryImport {
 			if(CellType.FORMULA == cell.getCellTypeEnum())
 				return;
 			Double credit = Double.parseDouble(o.toString());
-			diary.get(asiento).getDetails().get(apunte-1).setCredit(credit);
+			if(credit != null && credit < 0) {
+				diary.get(asiento).getDetails().get(apunte-1).setDebit(credit);
+			} else diary.get(asiento).getDetails().get(apunte-1).setCredit(credit);
 			return;
 		}
 	}
